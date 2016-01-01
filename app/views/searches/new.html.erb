@@ -1,5 +1,11 @@
-<h1>New Search</h1>
-
-<%= render 'form' %>
-
-<%= link_to 'Back', searches_path %>
+<form>
+  <h2><%= t('dictionary.app_name') %><br>
+    <small><%= t('dictionary.lead') %></small>
+  </h2>
+  <label for="screen_name" class="sr-only">Twitter ID</label>
+  <div class="input-group">
+    <div class="input-group-addon">@</div>
+    <input type="text" id="screen_name" class="form-control" placeholder="Twitter ID" required autofocus>
+  </div>
+  <button style="margin-top: 10px;" class="btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
+</form>

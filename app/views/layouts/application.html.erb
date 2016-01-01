@@ -1,23 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Egotter</title>
-  <%= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track' => true %>
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+  <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
+
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+
+  <title><%= t('dictionary.app_name') %> <%= t('dictionary.lead') %></title>
   <%= csrf_meta_tags %>
 </head>
 <body>
+<div class="container">
+  <div style="text-align: right;">
+    <% if user_signed_in? %>
+      <%= link_to t('dictionary.sign_out'), destroy_user_session_path %>
+    <% else %>
+      <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter) %>
+    <% end %>
+  </div>
 
-<% if user_signed_in? %>
-  <%= link_to "Sign out", destroy_user_session_path %>
-<% else %>
-  <%= link_to "Sign in with Twitter", user_omniauth_authorize_path(:twitter) %>
-<% end %>
+  <p class="notice"><%= notice %></p>
+  <p class="alert"><%= alert %></p>
 
-<p class="notice"><%= notice %></p>
-<p class="alert"><%= alert %></p>
+  <%= yield %>
 
-<%= yield %>
-
+</div>
 </body>
 </html>
