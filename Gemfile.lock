@@ -167,6 +167,7 @@ PLATFORMS
 DEPENDENCIES
   byebug
   devise
+  hashie
   jbuilder (~> 2.0)
   jquery-rails
   omniauth-twitter
