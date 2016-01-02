@@ -10,7 +10,6 @@
   <%= stylesheet_link_tag 'application', media: 'all', 'data-turbolinks-track' => true %>
 
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
   <title><%= t('dictionary.app_name') %> <%= t('dictionary.lead') %></title>
@@ -26,8 +25,8 @@
     <% end %>
   </div>
 
-  <p class="notice"><%= notice %></p>
-  <p class="alert"><%= alert %></p>
+  <% if notice %><p class="alert alert-info"><%= notice %></p><% end %>
+  <% if alert %><p class="alert alert-warning"><%= alert %></p><% end %>
 
   <%= yield %>
 

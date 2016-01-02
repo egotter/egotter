@@ -1,4 +1,11 @@
-<p id="notice"><%= notice %></p>
-
-<%= link_to 'Edit', edit_search_path(@search) %> |
-<%= link_to 'Back', searches_path %>
+<div class="media">
+  <div class="media-left">
+    <a href="#">
+      <img class="media-object" src="<%= @tw_user.image %>" alt="...">
+    </a>
+  </div>
+  <div class="media-body">
+    <h4 class="media-heading"><%= @tw_user.nickname %></h4>
+    <%= @tw_user.location %>
+  </div>
+</div>
