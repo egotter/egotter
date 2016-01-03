@@ -1,5 +1,5 @@
 class SearchesController < ApplicationController
-  before_action :set_search, only: [:show]
+  before_action :set_search, only: []
 
   # GET /searches
   # GET /searches.json
@@ -10,7 +10,19 @@ class SearchesController < ApplicationController
   # GET /searches/1
   # GET /searches/1.json
   def show
-    @tw_user = Hashie::Mash.new({image: 'http://pbs.twimg.com/profile_images/568734225050767360/cecq__2Y_normal.jpeg', location: 'どん底は大草原♪', name: 'さいころ', nickname: 'ts_3156'})
+    admin_user = User.find_by(provider: 'twitter', uid: '58135830')
+    config = {
+      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
+      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
+      access_token: admin_user.token,
+      access_token_secret: admin_user.secret
+    }
+    config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
+    client = ExTwitter.new(config)
+
+    @searched_tw_user = client.user(params[:id].to_s)
+    @friends, @followers = client.friends_and_followers(@searched_tw_user.id)
+    @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
   end
 
   # GET /searches/new
@@ -26,7 +38,7 @@ class SearchesController < ApplicationController
   # POST /searches.json
   def create
     screen_name = search_params
-    redirect_to search_path(1), notice: "search #{screen_name}"
+    redirect_to search_path(screen_name), notice: "search #{screen_name}"
 
     # respond_to do |format|
     #   if @search.save
@@ -40,13 +52,13 @@ class SearchesController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_search
-      @search = Search.find(params[:id])
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_search
+    @search = Search.find(params[:id])
+  end
 
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def search_params
-      params[:screen_name]
-    end
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def search_params
+    params[:screen_name]
+  end
 end

@@ -1,11 +1,13 @@
-<%= form_tag searches_path, method: :post do %>
-  <h2><%= t('dictionary.app_name') %><br>
-    <small><%= t('dictionary.lead') %></small>
-  </h2>
-  <label for="screen_name" class="sr-only">Twitter ID</label>
-  <div class="input-group">
-    <div class="input-group-addon">@</div>
-    <input type="text" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID" required autofocus>
-  </div>
-  <button style="margin-top: 10px;" class="btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
-<% end %>
+<div class="container">
+  <%= form_tag searches_path, method: :post do %>
+    <h2><%= t('dictionary.app_name') %><br>
+      <small><%= t('dictionary.lead') %></small>
+    </h2>
+    <label for="screen_name" class="sr-only">Twitter ID</label>
+    <div class="input-group">
+      <div class="input-group-addon">@</div>
+      <input type="text" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID" required autofocus>
+    </div>
+    <button style="margin-top: 10px;" class="btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
+  <% end %>
+</div>

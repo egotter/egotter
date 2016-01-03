@@ -16,20 +16,21 @@
   <%= csrf_meta_tags %>
 </head>
 <body>
-<div class="container">
-  <div style="text-align: right;">
-    <% if user_signed_in? %>
-      <%= link_to t('dictionary.sign_out'), destroy_user_session_path %>
-    <% else %>
-      <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter) %>
-    <% end %>
-  </div>
 
-  <% if notice %><p class="alert alert-info"><%= notice %></p><% end %>
-  <% if alert %><p class="alert alert-warning"><%= alert %></p><% end %>
-
-  <%= yield %>
-
+<div style="text-align: right;">
+  <% if user_signed_in? %>
+    <%= link_to t('dictionary.sign_out'), destroy_user_session_path %>
+  <% else %>
+    <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter) %>
+  <% end %>
 </div>
+
+<% if notice %><p class="alert alert-info"><%= notice %></p>
+<% end %>
+<% if alert %><p class="alert alert-warning"><%= alert %></p>
+<% end %>
+
+<%= yield %>
+
 </body>
 </html>
