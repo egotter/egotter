@@ -20,7 +20,7 @@ class SearchesController < ApplicationController
     config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
     client = ExTwitter.new(config)
 
-    @searched_tw_user = client.user(params[:id].to_s)
+    @searched_tw_user = client.user(params[:id].to_s) && client.user(params[:id].to_s) # call 2 times to use cache
     @friends, @followers = client.friends_and_followers(@searched_tw_user.id)
     @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
   end

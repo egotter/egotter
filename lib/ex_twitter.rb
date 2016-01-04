@@ -51,7 +51,7 @@ class ExTwitter < Twitter::REST::Client
         else raise "#{method_name.inspect} #{args.inspect}"
       end
 
-    "#{method_name}_#{identifier}_#{Time.now.strftime('%Y%H')}.json.gz"
+    "#{method_name}_#{identifier}_#{Time.now.strftime('%Y%m%d%H')}.json.gz"
   end
 
   def file_cache_base
@@ -79,9 +79,25 @@ class ExTwitter < Twitter::REST::Client
     if data.kind_of?(Array)
       JSON.pretty_generate(data)
     elsif data.kind_of?(Twitter::User)
-      _data = data.to_hash
-      _data[:profile_banner_url] += '/web'
-      _data[:tweets_count] = _data[:statuses_count]
+      _data = data.to_hash.slice(
+        :id,
+        :name,
+        :screen_name,
+        :location,
+        :description,
+        :url,
+        :protected,
+        :followers_count,
+        :friends_count,
+        :listed_count,
+        :favourites_count,
+        :utc_offset,
+        :time_zone,
+        :geo_enabled,
+        :verified,
+        :statuses_count,
+        :lang,
+        :suspended)
       JSON.pretty_generate(_data)
     else
       raise data.inspect
