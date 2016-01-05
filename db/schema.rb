@@ -11,30 +11,60 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160101161524) do
+ActiveRecord::Schema.define(version: 20160105155839) do
 
-  create_table "searches", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+  create_table "followers", force: :cascade do |t|
+    t.string   "uid",         null: false
+    t.string   "screen_name", null: false
+    t.text     "user_info",   null: false
+    t.integer  "from_id",     null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
   end
 
+  add_index "followers", ["screen_name"], name: "index_followers_on_screen_name"
+  add_index "followers", ["uid"], name: "index_followers_on_uid"
+
+  create_table "friends", force: :cascade do |t|
+    t.string   "uid",         null: false
+    t.string   "screen_name", null: false
+    t.text     "user_info",   null: false
+    t.integer  "from_id",     null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "friends", ["screen_name"], name: "index_friends_on_screen_name"
+  add_index "friends", ["uid"], name: "index_friends_on_uid"
+
+  create_table "twitter_users", force: :cascade do |t|
+    t.string   "uid",         null: false
+    t.string   "screen_name", null: false
+    t.text     "user_info",   null: false
+    t.datetime "created_at",  null: false
+    t.datetime "updated_at",  null: false
+  end
+
+  add_index "twitter_users", ["screen_name"], name: "index_twitter_users_on_screen_name"
+  add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid"
+
   create_table "users", force: :cascade do |t|
-    t.string   "provider",                            null: false
-    t.string   "uid",                                 null: false
-    t.string   "secret",                              null: false
-    t.string   "token",                               null: false
-    t.string   "email",                  default: "", null: false
-    t.string   "encrypted_password",     default: "", null: false
+    t.string   "provider",                           null: false
+    t.string   "uid",                                null: false
+    t.string   "secret",                             null: false
+    t.string   "token",                              null: false
+    t.string   "email",                              null: false
+    t.string   "encrypted_password",                 null: false
     t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          default: 0,  null: false
+    t.integer  "sign_in_count",          default: 0, null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
-    t.datetime "created_at",                          null: false
-    t.datetime "updated_at",                          null: false
+    t.datetime "created_at",                         null: false
+    t.datetime "updated_at",                         null: false
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

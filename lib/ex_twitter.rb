@@ -76,31 +76,13 @@ class ExTwitter < Twitter::REST::Client
 
   # TODO choose necessary data
   def to_json_according_to_type(data)
-    if data.kind_of?(Array)
-      JSON.pretty_generate(data)
-    elsif data.kind_of?(Twitter::User)
-      _data = data.to_hash.slice(
-        :id,
-        :name,
-        :screen_name,
-        :location,
-        :description,
-        :url,
-        :protected,
-        :followers_count,
-        :friends_count,
-        :listed_count,
-        :favourites_count,
-        :utc_offset,
-        :time_zone,
-        :geo_enabled,
-        :verified,
-        :statuses_count,
-        :lang,
-        :suspended)
-      JSON.pretty_generate(_data)
-    else
-      raise data.inspect
+    case
+      when data.kind_of?(Array)
+        JSON.pretty_generate(data.map{|d| d.to_hash.slice(*TwitterUser::SAVE_KEYS) })
+      when data.kind_of?(Twitter::User)
+        JSON.pretty_generate(data.to_hash.slice(*TwitterUser::SAVE_KEYS))
+      else
+        raise data.inspect
     end
   end
 
