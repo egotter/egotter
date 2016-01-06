@@ -25,6 +25,12 @@ class TwitterUser < ActiveRecord::Base
     suspended
   )
 
+  delegate *SAVE_KEYS.reject{|k| k.in?(%i(id screen_name)) }, to: :user_info_hash
+
+  def user_info_hash
+    @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
+  end
+
   def self.save_raw_user(data)
     if data.kind_of?(Twitter::User) || data.kind_of?(Hash) # TODO check keys and values
       create({
@@ -36,6 +42,7 @@ class TwitterUser < ActiveRecord::Base
     end
   end
 
+  # TODO should use bulk insert
   def save_raw_friends(data)
     if data.kind_of?(Array) && (data.first.kind_of?(Twitter::User) || data.first.kind_of?(Hash))
       _data = data.map do |d|
@@ -60,5 +67,9 @@ class TwitterUser < ActiveRecord::Base
     else
       raise
     end
+  end
+
+  def recently_created?
+    Time.now.to_i - created_at.to_i < 1800 # 30 minutes
   end
 end

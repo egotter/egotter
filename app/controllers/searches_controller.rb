@@ -20,14 +20,23 @@ class SearchesController < ApplicationController
     config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
     client = ExTwitter.new(config)
 
-    @searched_tw_user = client.user(params[:id].to_s) && client.user(params[:id].to_s) # call 2 times to use cache
-    @friends, @followers = client.friends_and_followers(@searched_tw_user.id)
+    searched_sn = params[:id].to_s
+    if (tu = TwitterUser.order(created_at: :desc).find_by(screen_name: searched_sn)) && tu.recently_created?
+      @searched_tw_user = tu
+    else
+      searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
+      friends, followers = client.friends_and_followers(searched_raw_tw_user.id) && client.friends_and_followers(searched_raw_tw_user.id)
+      @searched_tw_user = TwitterUser.save_raw_user(searched_raw_tw_user)
+      @searched_tw_user.save_raw_friends(friends)
+      @searched_tw_user.save_raw_followers(followers)
+    end
+
     @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
   end
 
   # GET /searches/new
   def new
-    @search = Search.new
+    # @search = Search.new
   end
 
   # # GET /searches/1/edit
