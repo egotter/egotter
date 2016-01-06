@@ -15,6 +15,10 @@ class ExTwitter < Twitter::REST::Client
     super
   end
 
+  def cache
+    @cache
+  end
+
   def logger
     @_logger ||= Rails.logger
   end
@@ -63,24 +67,11 @@ class ExTwitter < Twitter::REST::Client
         else raise "#{method_name.inspect} #{args.inspect}"
       end
 
-    "#{method_name}_#{identifier}_#{Time.now.strftime('%Y%m%d%H')}.json.gz"
+    "#{method_name}_#{identifier}_#{Time.now.strftime('%Y%m%d%H')}"
   end
 
-  def file_cache_base
-    File.join('tmp', 'file_cache')
-  end
-
-  def file_cache_path(method_name, *args)
-    File.join(file_cache_base, file_cache_key(method_name, *args))
-  end
-
-  def file_cache_exists?(method_name, *args)
-    FileUtils.mkdir_p(file_cache_base) unless FileTest.exist?(file_cache_base)
-    FileTest.exist?(file_cache_path(method_name, *args))
-  end
-
-  def flash_file_cache
-    FileUtils.rm_r(file_cache_base)
+  def namespaced_key(method_name, *args)
+    file_cache_key(method_name, *args)
   end
 
   def delete_file_cache(method_name, *args)
@@ -98,21 +89,7 @@ class ExTwitter < Twitter::REST::Client
     end
   end
 
-  def write_file_cache(str, method_name, *args)
-    JSON.parse(str) # make sure of json
-    FileUtils.mkdir_p(file_cache_base) unless FileTest.exist?(file_cache_base)
-    Zlib::GzipWriter.open(file_cache_path(method_name, *args)) { |gz|
-      gz.write str
-    }
-    logger.debug "#{Time.now} #{method_name} #{args.inspect} write_file_cache #{str.size}"
-  end
-
-  def read_file_cache(method_name, *args)
-    str = ''
-    Zlib::GzipReader.open(file_cache_path(method_name, *args)) {|gz|
-      str = gz.read
-    }
-    logger.debug "#{Time.now} #{method_name} #{args.inspect} read_file_cache #{str.size}"
+  def parse_json_according_to_type(str)
     obj = JSON.parse(str)
     if obj.kind_of?(Array)
       obj.map{|o| o.kind_of?(Hash) ? Hashie::Mash.new(o) : o }
@@ -124,15 +101,15 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def fetch_cache_or_call_api(method_name, args, &block)
-    if file_cache_exists?(method_name, *args)
-      data = read_file_cache(method_name, *args)
+    if cache.exist?(namespaced_key(method_name, *args))
+      data = parse_json_according_to_type(cache.read(namespaced_key(method_name, *args)))
       logger.debug "#{Time.now} #{method_name} #{args.inspect} (cache read)"
       return data
     end
 
     data = yield
 
-    write_file_cache(to_json_according_to_type(data), method_name, *args)
+    cache.write(namespaced_key(method_name, *args), to_json_according_to_type(data))
     logger.debug "#{Time.now} #{method_name} #{args.inspect} (cache wrote)"
 
     data
