@@ -1,10 +1,17 @@
+require 'active_support'
+require 'active_support/cache'
+
 require 'twitter'
 require 'memoist'
+require 'parallel'
+
+
 
 class ExTwitter < Twitter::REST::Client
   extend Memoist
 
   def initialize(options = {})
+    @cache = ActiveSupport::Cache::FileStore.new(File.join('tmp', 'file_cache2'))
     super
   end
 
@@ -21,6 +28,11 @@ class ExTwitter < Twitter::REST::Client
       logger.debug "Retry after #{e.rate_limit.reset_in} seconds."
       raise e
     end
+  end
+
+  # usertimeline, search
+  def collect_with_max_id(method_name, *args)
+
   end
 
   # friends, followers
@@ -156,6 +168,29 @@ class ExTwitter < Twitter::REST::Client
   # memoize :followers
 
   def friends_and_followers(*args)
-    [friends(*args), followers(*args)]
+    result = [nil, nil]
+    Parallel.each_with_index([args, args], in_threads: 2) do |_args, i|
+      if i == 0
+        result[0] = friends(*_args)
+      else
+        result[1] = followers(*_args)
+      end
+    end
+
+    result
+  end
+
+  alias :old_users :users
+  def users(*args)
+    options = args.extract_options!
+    users_per_worker = args.first.each_slice(100).to_a
+    processed_users = []
+
+    Parallel.each_with_index(users_per_worker, in_threads: users_per_worker.size) do |_users, i|
+      result = {i: i, users: old_users(_users, options)}
+      processed_users << result
+    end
+
+    processed_users.sort_by{|p| p[:i] }.map{|p| p[:users] }.flatten.compact
   end
 end

@@ -36,6 +36,7 @@ gem 'hashie'
 gem 'devise'
 gem 'omniauth-twitter'
 gem 'twitter'
+gem 'parallel'
 gem 'memoist'
 
 group :development, :test do
