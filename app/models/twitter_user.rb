@@ -25,7 +25,7 @@ class TwitterUser < ActiveRecord::Base
     suspended
   )
 
-  delegate *SAVE_KEYS.reject{|k| k.in?(%i(id screen_name)) }, to: :user_info_hash
+  delegate *SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_hash
 
   def user_info_hash
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
@@ -42,15 +42,18 @@ class TwitterUser < ActiveRecord::Base
     end
   end
 
-  # TODO should use bulk insert
   def save_raw_friends(data)
     if data.kind_of?(Array) && (data.first.kind_of?(Twitter::User) || data.first.kind_of?(Hash))
-      _data = data.map do |d|
-        {uid: d.id,
-         screen_name: d.screen_name,
-         user_info: d.slice(*SAVE_KEYS).to_json}
+      data.each_slice(100).each do |_data|
+        __data = _data.map do |d|
+          Friend.new({
+                       from_id: id,
+                       uid: d.id,
+                       screen_name: d.screen_name,
+                       user_info: d.slice(*SAVE_KEYS).to_json})
+        end
+        Friend.import(__data)
       end
-      friends.create(_data)
     else
       raise
     end
@@ -58,12 +61,16 @@ class TwitterUser < ActiveRecord::Base
 
   def save_raw_followers(data)
     if data.kind_of?(Array) && (data.first.kind_of?(Twitter::User) || data.first.kind_of?(Hash))
-      _data = data.map do |d|
-        {uid: d.id,
-         screen_name: d.screen_name,
-         user_info: d.slice(*SAVE_KEYS).to_json}
+      data.each_slice(100).each do |_data|
+        __data = _data.map do |d|
+          Follower.new({
+                         from_id: id,
+                         uid: d.id,
+                         screen_name: d.screen_name,
+                         user_info: d.slice(*SAVE_KEYS).to_json})
+        end
+        Follower.import(__data)
       end
-      followers.create(_data)
     else
       raise
     end
