@@ -5,8 +5,18 @@ ja:
     app_name: "えごったー"
     lead: "りむられたユーザーをこっそり検索"
     sign_in_with_twitter: "Twitterでログイン"
+    sign_in: "ログイン"
     sign_out: "ログアウト"
     search: "検索"
+    view_more: "続きを見る"
+  search_menu:
+    friends: "%{user} のフォロー"
+    followers: "%{user} のフォロワー"
+    removed_friends: "%{user} がフォローを外したユーザー"
+    removed_followers: "%{user} がフォローを外されたユーザー"
+    mutual_friends: "%{user} が両思いのユーザー"
+    one_sided_friends: "%{user} が片思いしているユーザー"
+    one_sided_followers: "%{user} が片思いされているユーザー"
   activerecord:
     errors:
       messages:

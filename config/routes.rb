@@ -1,8 +1,12 @@
 Rails.application.routes.draw do
   root "searches#new"
-  resources :searches
 
-  devise_for :users, skip: [:sessions,:registrations, :password], controllers: {
+  resources :searches
+  get 'searches/:screen_name/removed_friends', to: 'searches#removed_friends', as: :removed_friends
+  get 'searches/:screen_name/removed_followers', to: 'searches#removed_followers', as: :removed_followers
+  get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
+
+  devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
     omniauth_callbacks: "users/omniauth_callbacks"
   }
   as :user do

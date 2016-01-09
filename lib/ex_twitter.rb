@@ -20,7 +20,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def logger
-    @_logger ||= Rails.logger
+    @logger ||= Rails.logger
   end
 
   def call_old_method(method_name, *args)

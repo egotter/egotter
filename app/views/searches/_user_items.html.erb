@@ -1,0 +1,20 @@
+<% user_items.each do |user_item| %>
+  <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
+    <%= link_to search_path(id: user_item[:target].screen_name), style: 'color: #333333; text-decoration: none;' do %>
+      <div class="media-left" style="padding-left: 15px;">
+        <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", style="border: 1px solid #eeeeee;" alt="<%= user_item[:target].screen_name %>">
+      </div>
+      <div class="media-body" style="padding-right: 15px;">
+        <h4 style="font-weight: bold; font-size: 14px;" class="media-heading">@<%= user_item[:target].name %>
+          <% if user_item[:target].protected %>
+            &nbsp;<span style="color: #999999; font-size: 13px; font-weight: normal;" class="glyphicon glyphicon-lock"></span>
+          <% end %>
+        </h4>
+        <span style="font-size: 13px; color: #999999;"><%= user_item[:target].screen_name %></span>
+      </div>
+      <div class="media-right">
+        <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info">検索する</button>
+      </div>
+  <% end %>
+  </div>
+<% end %>

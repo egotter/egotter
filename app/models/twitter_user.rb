@@ -31,7 +31,7 @@ class TwitterUser < ActiveRecord::Base
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
-  def self.save_raw_user(data)
+  def self.create_by_raw_user(data)
     if data.kind_of?(Twitter::User) || data.kind_of?(Hash) # TODO check keys and values
       create({
                uid: data.id,
@@ -76,7 +76,32 @@ class TwitterUser < ActiveRecord::Base
     end
   end
 
+  scope :oldest, -> (screen_name){ order(created_at: :asc).find_by(screen_name: screen_name) }
+  scope :latest, -> (screen_name){ order(created_at: :desc).find_by(screen_name: screen_name) }
+
   def recently_created?
     Time.now.to_i - created_at.to_i < 1800 # 30 minutes
+  end
+
+  def oldest_me
+    TwitterUser.oldest(screen_name)
+  end
+
+  def latest_me
+    TwitterUser.latest(screen_name)
+  end
+
+  def mutual_friends
+    ExTwitter.new.mutual_friends(self)
+  end
+
+  def removed_friends
+    return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
+    ExTwitter.new.removed_friends(oldest_me, latest_me)
+  end
+
+  def removed_followers
+    return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
+    ExTwitter.new.removed_followers(oldest_me, latest_me)
   end
 end

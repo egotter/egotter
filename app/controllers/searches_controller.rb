@@ -26,12 +26,47 @@ class SearchesController < ApplicationController
     else
       searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
       friends, followers = client.friends_and_followers(searched_raw_tw_user.id) && client.friends_and_followers(searched_raw_tw_user.id)
-      @searched_tw_user = TwitterUser.save_raw_user(searched_raw_tw_user)
+      @searched_tw_user = TwitterUser.create_by_raw_user(searched_raw_tw_user)
       @searched_tw_user.save_raw_friends(friends)
       @searched_tw_user.save_raw_followers(followers)
     end
 
     @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
+
+    searched_sn = @searched_tw_user.screen_name
+    @menu_items = [
+      {
+        name: I18n.t('search_menu.removed_friends', user: '@' + searched_sn),
+        target: @searched_tw_user.removed_friends,
+        path_method: method(:removed_friends_path).to_proc
+      }, {
+        name: I18n.t('search_menu.removed_followers', user: '@' + searched_sn),
+        target: @searched_tw_user.removed_followers,
+        path_method: method(:removed_followers_path).to_proc
+      }, {
+        name: I18n.t('search_menu.mutual_friends', user: '@' + searched_sn),
+        target: @searched_tw_user.mutual_friends,
+        path_method: method(:mutual_friends_path).to_proc
+      }]
+
+  end
+
+  # GET /searches/:screen_name/removed_friends
+  def removed_friends
+    @searched_tw_user = TwitterUser.latest(params[:screen_name])
+    @user_items = @searched_tw_user.removed_friends.map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/removed_followers
+  def removed_followers
+    @searched_tw_user = TwitterUser.latest(params[:screen_name])
+    @user_items = @searched_tw_user.removed_followers.map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/mutual_friends
+  def mutual_friends
+    @searched_tw_user = TwitterUser.latest(params[:screen_name])
+    @user_items = @searched_tw_user.mutual_friends.map{|f| {target: f} }
   end
 
   # GET /searches/new

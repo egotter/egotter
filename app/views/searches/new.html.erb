@@ -1,8 +1,6 @@
 <div class="container">
   <%= form_tag searches_path, method: :post do %>
-    <h2><%= t('dictionary.app_name') %><br>
-      <small><%= t('dictionary.lead') %></small>
-    </h2>
+    <h2><small><%= t('dictionary.lead') %></small></h2>
     <label for="screen_name" class="sr-only">Twitter ID</label>
     <div class="input-group">
       <div class="input-group-addon">@</div>

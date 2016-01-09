@@ -17,20 +17,50 @@
 </head>
 <body>
 
-<div style="text-align: right;">
-  <% if user_signed_in? %>
-    <%= link_to t('dictionary.sign_out'), destroy_user_session_path %>
-  <% else %>
-    <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter) %>
-  <% end %>
-</div>
+<nav class="navbar navbar-default" style="margin-bottom: 0px; background-color: #ffffff;">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+        <span class="sr-only">Toggle navigation</span>
+        <% if user_signed_in? %>
+          <%= link_to destroy_user_session_path do %>
+            <span style="font-size: 20px" class="glyphicon glyphicon-log-out"></span><br>
+            <span style="font-size: 9px;"><%= t('dictionary.sign_out') %></span>
+          <% end %>
+        <% else %>
+          <%= link_to user_omniauth_authorize_path(:twitter) do %>
+            <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
+            <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
+          <% end %>
+        <% end %>
+      </button>
+      <a style="font-size: 30px; display: block; padding-left: 10px;" class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a></div>
+    </div>
+  </div>
+</nav>
 
-<% if notice %><p class="alert alert-info"><%= notice %></p>
+<% if notice %>
+  <p class="alert alert-info"><%= notice %></p>
 <% end %>
-<% if alert %><p class="alert alert-warning"><%= alert %></p>
+<% if alert %>
+  <p class="alert alert-warning"><%= alert %></p>
 <% end %>
 
 <%= yield %>
+
+<footer class="footer">
+  <div class="container">
+    <p class="text-muted" style="text-align: center; padding-top: 15px; line-height: 200%;">
+      <a href="/">トップページ</a>&nbsp;&nbsp;
+      <a href="/">ログイン</a>&nbsp;&nbsp;
+      <a href="/">ご意見</a>&nbsp;&nbsp;
+      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
+    </p>
+  </div>
+</footer>
 
 </body>
 </html>
