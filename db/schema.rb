@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160105155839) do
+ActiveRecord::Schema.define(version: 20160109124820) do
 
   create_table "followers", force: :cascade do |t|
     t.string   "uid",         null: false
@@ -36,6 +36,22 @@ ActiveRecord::Schema.define(version: 20160105155839) do
 
   add_index "friends", ["screen_name"], name: "index_friends_on_screen_name"
   add_index "friends", ["uid"], name: "index_friends_on_uid"
+
+  create_table "search_logs", force: :cascade do |t|
+    t.boolean  "login",         default: false
+    t.integer  "login_user_id", default: -1
+    t.string   "search_uid",    default: ""
+    t.string   "search_sn",     default: ""
+    t.string   "search_value",  default: ""
+    t.string   "search_menu",   default: ""
+    t.boolean  "same_user",     default: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "search_logs", ["login_user_id"], name: "index_search_logs_on_login_user_id"
+  add_index "search_logs", ["search_menu"], name: "index_search_logs_on_search_menu"
+  add_index "search_logs", ["search_value"], name: "index_search_logs_on_search_value"
 
   create_table "twitter_users", force: :cascade do |t|
     t.string   "uid",         null: false

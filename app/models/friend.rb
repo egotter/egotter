@@ -1,3 +1,21 @@
+# == Schema Information
+#
+# Table name: friends
+#
+#  id          :integer          not null, primary key
+#  uid         :string           not null
+#  screen_name :string           not null
+#  user_info   :text             not null
+#  from_id     :integer          not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  index_friends_on_screen_name  (screen_name)
+#  index_friends_on_uid          (uid)
+#
+
 class Friend < ActiveRecord::Base
   belongs_to :twitter_user
 

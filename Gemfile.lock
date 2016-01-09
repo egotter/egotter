@@ -39,6 +39,9 @@ GEM
       thread_safe (~> 0.3, >= 0.3.4)
       tzinfo (~> 1.1)
     addressable (2.4.0)
+    annotate (2.7.0)
+      activerecord (>= 3.2, < 6.0)
+      rake (~> 10.4)
     arel (6.0.3)
     bcrypt (3.1.10)
     binding_of_caller (0.7.2)
@@ -55,6 +58,7 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     concurrent-ruby (1.0.0)
+    connection_pool (2.2.0)
     debug_inspector (0.0.2)
     devise (3.5.3)
       bcrypt (~> 3.0)
@@ -154,11 +158,16 @@ GEM
       thor (>= 0.18.1, < 2.0)
     rake (10.4.2)
     rdoc (4.2.1)
+    redis (3.2.2)
     responders (2.1.1)
       railties (>= 4.2.0, < 5.1)
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
+    sidekiq (4.0.2)
+      concurrent-ruby (~> 1.0)
+      connection_pool (~> 2.2, >= 2.2.0)
+      redis (~> 3.2, >= 3.2.1)
     simple_oauth (0.3.1)
     slop (3.6.0)
     sprockets (3.5.2)
@@ -205,6 +214,7 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord-import
+  annotate
   byebug
   devise
   hashie
@@ -216,6 +226,7 @@ DEPENDENCIES
   pry-rails
   rails (= 4.2.5)
   sdoc (~> 0.4.0)
+  sidekiq
   sqlite3
   turbolinks
   twitter

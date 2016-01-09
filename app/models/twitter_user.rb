@@ -1,3 +1,20 @@
+# == Schema Information
+#
+# Table name: twitter_users
+#
+#  id          :integer          not null, primary key
+#  uid         :string           not null
+#  screen_name :string           not null
+#  user_info   :text             not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  index_twitter_users_on_screen_name  (screen_name)
+#  index_twitter_users_on_uid          (uid)
+#
+
 class TwitterUser < ActiveRecord::Base
   has_many :friends, foreign_key: :from_id, dependent: :destroy
   has_many :followers, foreign_key: :from_id, dependent: :destroy
@@ -32,7 +49,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def self.create_by_raw_user(data)
-    if data.kind_of?(Twitter::User) || data.kind_of?(Hash) # TODO check keys and values
+    if data.kind_of?(Hash) # TODO check keys and values
       create({
                uid: data.id,
                screen_name: data.screen_name,
@@ -43,7 +60,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def save_raw_friends(data)
-    if data.kind_of?(Array) && (data.first.kind_of?(Twitter::User) || data.first.kind_of?(Hash))
+    if data.kind_of?(Array) && data.first.kind_of?(Hash)
       data.each_slice(100).each do |_data|
         __data = _data.map do |d|
           Friend.new({
@@ -76,19 +93,19 @@ class TwitterUser < ActiveRecord::Base
     end
   end
 
-  scope :oldest, -> (screen_name){ order(created_at: :asc).find_by(screen_name: screen_name) }
-  scope :latest, -> (screen_name){ order(created_at: :desc).find_by(screen_name: screen_name) }
+  scope :oldest, -> (uid){ order(created_at: :asc).find_by(uid: uid) }
+  scope :latest, -> (uid){ order(created_at: :desc).find_by(uid: uid) }
 
   def recently_created?
     Time.now.to_i - created_at.to_i < 1800 # 30 minutes
   end
 
   def oldest_me
-    TwitterUser.oldest(screen_name)
+    TwitterUser.oldest(uid)
   end
 
   def latest_me
-    TwitterUser.latest(screen_name)
+    TwitterUser.latest(uid)
   end
 
   def mutual_friends

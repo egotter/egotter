@@ -21,29 +21,48 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-        <span class="sr-only">Toggle navigation</span>
         <% if user_signed_in? %>
-          <%= link_to destroy_user_session_path do %>
+          <%= link_to destroy_user_session_path, style: 'text-decoration: none;' do %>
             <span style="font-size: 20px" class="glyphicon glyphicon-log-out"></span><br>
             <span style="font-size: 9px;"><%= t('dictionary.sign_out') %></span>
           <% end %>
         <% else %>
-          <%= link_to user_omniauth_authorize_path(:twitter) do %>
+          <%= link_to user_omniauth_authorize_path(:twitter), style: 'text-decoration: none;' do %>
             <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
             <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
           <% end %>
         <% end %>
       </button>
-      <a style="font-size: 30px; display: block; padding-left: 10px;" class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a></div>
+      <a style="font-size: 30px; display: block; padding-left: 10px;" class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
     </div>
-  </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+            <% if user_signed_in? %>
+              <%= link_to destroy_user_session_path, style: 'text-decoration: none;' do %>
+                <span style="font-size: 20px" class="glyphicon glyphicon-log-out"></span><br>
+                <span style="font-size: 9px;"><%= t('dictionary.sign_out') %></span>
+              <% end %>
+            <% else %>
+              <%= link_to user_omniauth_authorize_path(:twitter), style: 'text-decoration: none;' do %>
+                <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
+                <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
+              <% end %>
+            <% end %>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div><!-- /.container-fluid -->
 </nav>
 
 <% if notice %>
-  <p class="alert alert-info"><%= notice %></p>
+  <p class="alert alert-info" style="margin: 0px;"><%= notice %></p>
 <% end %>
 <% if alert %>
-  <p class="alert alert-warning"><%= alert %></p>
+  <p class="alert alert-warning" style="margin: 0px;"><%= alert %></p>
 <% end %>
 
 <%= yield %>

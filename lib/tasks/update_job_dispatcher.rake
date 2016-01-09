@@ -1,0 +1,19 @@
+namespace :update_job_dispatcher do
+  desc 'Dispatch TwitterUserUpdateJob'
+  task run: :environment do
+    puts 'enqueue start'
+
+    # TODO don't enqueue if recently endueued
+    # TODO use queue priority
+    # TODO check the case in which search log exists but TwitterUser don't exist
+
+    count = 0
+    uids = SearchLog.order(created_at: :desc).limit(50).pluck(:search_uid).compact.uniq
+    TwitterUser.where(uid: uids).each do |tu|
+      # next if tu.recently_created?
+      TwitterUserUpdaterJob.perform_later(tu.uid)
+      count += 1
+    end
+    puts 'enqueue finish ' + count.to_s
+  end
+end

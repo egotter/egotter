@@ -10,30 +10,32 @@ class SearchesController < ApplicationController
   # GET /searches/1
   # GET /searches/1.json
   def show
-    admin_user = User.find_by(provider: 'twitter', uid: '58135830')
-    config = {
-      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
-      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: admin_user.token,
-      access_token_secret: admin_user.secret
-    }
-    config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
-    client = ExTwitter.new(config)
 
-    searched_sn = params[:id].to_s
-    if (tu = TwitterUser.order(created_at: :desc).find_by(screen_name: searched_sn)) && tu.recently_created?
+    begin
+      # TODO check with regexp -> screen_name =~ /^\w+$/ && screen_name.length <= 20
+      # TODO check suspended or not exist -> client.user?(screen_name)
+      # TODO check protected
+      # TODO check friends + follower < limit
+
+      searched_sn = params[:id].to_s
+      searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
+      searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
+    rescue => e
+      logger.warn e.message
+      return render text: 'error', layout: false
+    end
+
+    if (tu = TwitterUser.latest(searched_uid)).present? && tu.recently_created?
       @searched_tw_user = tu
     else
-      searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
-      friends, followers = client.friends_and_followers(searched_raw_tw_user.id) && client.friends_and_followers(searched_raw_tw_user.id)
+      friends, followers = client.friends_and_followers(searched_uid) && client.friends_and_followers(searched_uid)
       @searched_tw_user = TwitterUser.create_by_raw_user(searched_raw_tw_user)
       @searched_tw_user.save_raw_friends(friends)
       @searched_tw_user.save_raw_followers(followers)
     end
 
-    @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
+    # @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
 
-    searched_sn = @searched_tw_user.screen_name
     @menu_items = [
       {
         name: I18n.t('search_menu.removed_friends', user: '@' + searched_sn),
@@ -49,23 +51,34 @@ class SearchesController < ApplicationController
         path_method: method(:mutual_friends_path).to_proc
       }]
 
+    SearchLog.create(
+      login: user_signed_in?,
+      login_user_id: user_signed_in? ? current_user.id : -1,
+      search_uid: searched_uid,
+      search_sn: searched_sn,
+      search_value: params[:id].to_s,
+      search_menu: '',
+      same_user: user_signed_in? ? current_user.uid == @searched_tw_user.uid : false) rescue nil
   end
 
   # GET /searches/:screen_name/removed_friends
   def removed_friends
-    @searched_tw_user = TwitterUser.latest(params[:screen_name])
+    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
+    @searched_tw_user = TwitterUser.latest(u.id)
     @user_items = @searched_tw_user.removed_friends.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/removed_followers
   def removed_followers
-    @searched_tw_user = TwitterUser.latest(params[:screen_name])
+    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
+    @searched_tw_user = TwitterUser.latest(u.id)
     @user_items = @searched_tw_user.removed_followers.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/mutual_friends
   def mutual_friends
-    @searched_tw_user = TwitterUser.latest(params[:screen_name])
+    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
+    @searched_tw_user = TwitterUser.latest(u.id)
     @user_items = @searched_tw_user.mutual_friends.map{|f| {target: f} }
   end
 
@@ -104,5 +117,18 @@ class SearchesController < ApplicationController
   # Never trust parameters from the scary internet, only allow the white list through.
   def search_params
     params[:screen_name]
+  end
+
+  def client
+    raise 'create admin' if User.admin.blank?
+    admin_user = User.admin
+    config = {
+      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
+      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
+      access_token: admin_user.token,
+      access_token_secret: admin_user.secret
+    }
+    config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
+    ExTwitter.new(config)
   end
 end
