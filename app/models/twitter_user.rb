@@ -48,6 +48,21 @@ class TwitterUser < ActiveRecord::Base
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
+  def self.create_me_with_friends_and_followers(client, uid)
+    # call 2 times to use cache
+    me = client.user(uid.to_i) && client.user(uid.to_i)
+    friends, followers = client.friends_and_followers(me.id.to_i) && client.friends_and_followers(me.id.to_i)
+    tw_user = nil
+
+    self.transaction do
+      tw_user = self.create_by_raw_user(me)
+      tw_user.save_raw_friends(friends)
+      tw_user.save_raw_followers(followers)
+    end
+
+    tw_user
+  end
+
   def self.create_by_raw_user(data)
     if data.kind_of?(Hash) # TODO check keys and values
       create({

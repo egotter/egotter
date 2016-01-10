@@ -1,14 +1,12 @@
-class TwitterUserUpdaterJob < ActiveJob::Base
-  queue_as :egotter
+class TwitterUserUpdaterWorker
+  include Sidekiq::Worker
+  sidekiq_options queue: :egotter, retry: 3, backtrace: true
 
-  def perform(*args)
-    u = client.user(args[0])
+  def perform(uid)
+    u = client.user(uid.to_i) && client.user(uid.to_i)
     puts "#{u.id},#{u.screen_name} start"
 
-    friends, followers = client.friends_and_followers(u.id) && client.friends_and_followers(u.id)
-    tw_user = TwitterUser.create_by_raw_user(u)
-    tw_user.save_raw_friends(friends)
-    tw_user.save_raw_followers(followers)
+    TwitterUser.create_me_with_friends_and_followers(client, u.id)
 
     puts "#{u.id},#{u.screen_name} finish"
   end
@@ -22,7 +20,9 @@ class TwitterUserUpdaterJob < ActiveJob::Base
       access_token: admin_user.token,
       access_token_secret: admin_user.secret
     }
-    ExTwitter.new(config)
+    c = ExTwitter.new(config)
+    c.verify_credentials
+    c
   end
 
 end

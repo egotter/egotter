@@ -28,10 +28,7 @@ class SearchesController < ApplicationController
     if (tu = TwitterUser.latest(searched_uid)).present? && tu.recently_created?
       @searched_tw_user = tu
     else
-      friends, followers = client.friends_and_followers(searched_uid) && client.friends_and_followers(searched_uid)
-      @searched_tw_user = TwitterUser.create_by_raw_user(searched_raw_tw_user)
-      @searched_tw_user.save_raw_friends(friends)
-      @searched_tw_user.save_raw_followers(followers)
+      @searched_tw_user = TwitterUser.create_me_with_friends_and_followers(client, searched_uid)
     end
 
     # @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
