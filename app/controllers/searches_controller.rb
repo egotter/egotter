@@ -29,8 +29,13 @@ class SearchesController < ApplicationController
       @searched_tw_user = tu
       flash.now[:notice] = "show #{searched_sn}"
     else
-      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, searched_uid).save_raw_twitter_data
-      flash.now[:notice] = "create #{searched_sn}"
+      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, searched_uid)
+      if @searched_tw_user.save_raw_twitter_data
+        flash.now[:notice] = "create #{searched_sn}"
+      else
+        flash.now[:notice] = "show(do nothing) #{searched_sn}"
+      end
+
     end
 
     # @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?

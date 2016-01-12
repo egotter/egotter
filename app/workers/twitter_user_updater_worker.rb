@@ -18,8 +18,11 @@ class TwitterUserUpdaterWorker
     end
 
     new_tu = TwitterUser.build_with_raw_twitter_data(client, u.id)
-    new_tu.save_raw_twitter_data
-    puts "[#{Time.now}] #{user_name(u)} create(new TwitterUser)"
+    if new_tu.save_raw_twitter_data
+      puts "[#{Time.now}] #{user_name(u)} create(new TwitterUser)"
+    else
+      puts "[#{Time.now}] #{user_name(u)} do nothing"
+    end
   end
 
   def user_name(u)

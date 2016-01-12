@@ -108,14 +108,14 @@ class TwitterUser < ActiveRecord::Base
         rescue => e
           self.destroy
         end
+
+        true
       else
-        raise 'make sure that allow_to_create? returns true in advance'
+        false
       end
     else
       raise 'not implemented'
     end
-
-    self
   end
 
   def self.oldest(user)
