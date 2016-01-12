@@ -1,7 +1,7 @@
 namespace :update_job_dispatcher do
   desc 'Dispatch TwitterUserUpdateJob'
   task run: :environment do
-    puts 'enqueue start'
+    puts "[#{Time.now}] enqueue start"
 
     # TODO don't enqueue if recently endueued
     # TODO use queue priority
@@ -16,6 +16,6 @@ namespace :update_job_dispatcher do
       TwitterUserUpdaterWorker.perform_async(uid.to_i)
       count += 1
     end
-    puts 'enqueue finish ' + count.to_s
+    puts "[#{Time.now}] enqueue finish " + count.to_s
   end
 end

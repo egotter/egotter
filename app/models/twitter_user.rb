@@ -54,8 +54,8 @@ class TwitterUser < ActiveRecord::Base
     raise 'something is wrong' if self.uid != other.uid
 
     !(self.user_info == other.user_info &&
-      self.friends.pluck(:uid).map{|f| f.uid.to_i } == other.friends.map{|f| f.uid.to_i } &&
-      self.followers.pluck(:uid).map{|f| f.uid.to_i } == other.followers.map{|f| f.uid.to_i })
+      self.friends.pluck(:uid).map{|uid| uid.to_i } == other.friends.map{|f| f.uid.to_i } &&
+      self.followers.pluck(:uid).map{|uid| uid.to_i } == other.followers.map{|f| f.uid.to_i })
   end
 
   def self.build_with_raw_twitter_data(client, uid)
@@ -118,8 +118,10 @@ class TwitterUser < ActiveRecord::Base
     self
   end
 
-  scope :oldest, -> (uid) { order(created_at: :asc).find_by(uid: uid.to_i) }
-  scope :latest, -> (uid) { order(created_at: :desc).find_by(uid: uid.to_i) }
+  scope :oldest, -> (user) { user.kind_of?(Integer) ?
+    order(created_at: :asc).find_by(uid: user.to_i) : order(created_at: :asc).find_by(screen_name: user.to_s) }
+  scope :latest, -> (user) { user.kind_of?(Integer) ?
+    order(created_at: :desc).find_by(uid: user.to_i) : order(created_at: :desc).find_by(screen_name: user.to_s) }
 
   def recently_created?(minutes = 30)
     Time.now.to_i - created_at.to_i < 60 * minutes
@@ -142,11 +144,11 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def oldest_me
-    TwitterUser.oldest(uid)
+    TwitterUser.oldest(uid.to_i)
   end
 
   def latest_me
-    TwitterUser.latest(uid)
+    TwitterUser.latest(uid.to_i)
   end
 
   def mutual_friends

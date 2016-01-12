@@ -23,8 +23,12 @@ class ExTwitter < Twitter::REST::Client
     @logger ||= Rails.logger
   end
 
+  def now
+    "[#{Time.now}]"
+  end
+
   def call_old_method(method_name, *args)
-    logger.debug "#{Time.now} #{method_name} #{args.inspect}"
+    logger.debug "#{now} #{method_name} #{args.inspect}"
     options = args.extract_options!
     begin
       send(method_name, *args, options)
@@ -103,14 +107,14 @@ class ExTwitter < Twitter::REST::Client
   def fetch_cache_or_call_api(method_name, args, &block)
     if cache.exist?(namespaced_key(method_name, *args))
       data = parse_json_according_to_type(cache.read(namespaced_key(method_name, *args)))
-      logger.debug "#{Time.now} #{method_name} #{args.inspect} (cache read)"
+      logger.debug "#{now} #{method_name} #{args.inspect} (cache read)"
       return data
     end
 
     data = yield
 
     cache.write(namespaced_key(method_name, *args), to_json_according_to_type(data))
-    logger.debug "#{Time.now} #{method_name} #{args.inspect} (cache wrote)"
+    logger.debug "#{now} #{method_name} #{args.inspect} (cache wrote)"
 
     data
   end
