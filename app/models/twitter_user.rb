@@ -118,10 +118,15 @@ class TwitterUser < ActiveRecord::Base
     self
   end
 
-  scope :oldest, -> (user) { user.kind_of?(Integer) ?
-    order(created_at: :asc).find_by(uid: user.to_i) : order(created_at: :asc).find_by(screen_name: user.to_s) }
-  scope :latest, -> (user) { user.kind_of?(Integer) ?
-    order(created_at: :desc).find_by(uid: user.to_i) : order(created_at: :desc).find_by(screen_name: user.to_s) }
+  def self.oldest(user)
+    user.kind_of?(Integer) ?
+      order(created_at: :asc).find_by(uid: user.to_i) : order(created_at: :asc).find_by(screen_name: user.to_s)
+  end
+
+  def self.latest(user)
+    user.kind_of?(Integer) ?
+      order(created_at: :desc).find_by(uid: user.to_i) : order(created_at: :desc).find_by(screen_name: user.to_s)
+  end
 
   def recently_created?(minutes = 30)
     Time.now.to_i - created_at.to_i < 60 * minutes
@@ -139,6 +144,8 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def allow_to_create?
+    me = latest_me
+    return true if me.blank?
     return false unless TwitterUser.appropriate_interval_to_create?(self.uid)
     return latest_me.different_from?(self)
   end
