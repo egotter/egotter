@@ -42,77 +42,103 @@ class TwitterUser < ActiveRecord::Base
     suspended
   )
 
-  delegate *SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_hash
+  delegate *SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
-  def user_info_hash
+  def user_info_mash
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
-  def self.create_me_with_friends_and_followers(client, uid)
+  def different_from?(other)
+    raise 'something is wrong' if self.new_record?
+    raise 'something is wrong' if other.persisted?
+    raise 'something is wrong' if self.uid != other.uid
+
+    !(self.user_info == other.user_info &&
+      self.friends.pluck(:uid).map{|f| f.uid.to_i } == other.friends.map{|f| f.uid.to_i } &&
+      self.followers.pluck(:uid).map{|f| f.uid.to_i } == other.followers.map{|f| f.uid.to_i })
+  end
+
+  def self.build_with_raw_twitter_data(client, uid)
     # call 2 times to use cache
-    me = client.user(uid.to_i) && client.user(uid.to_i)
-    friends, followers = client.friends_and_followers(me.id.to_i) && client.friends_and_followers(me.id.to_i)
-    tw_user = nil
+    _raw_me = client.user(uid.to_i) && client.user(uid.to_i)
+    _friends, _followers = client.friends_and_followers(_raw_me.id.to_i) && client.friends_and_followers(_raw_me.id.to_i)
 
-    self.transaction do
-      tw_user = self.create_by_raw_user(me)
-      tw_user.save_raw_friends(friends)
-      tw_user.save_raw_followers(followers)
+    tu = TwitterUser.new do |tu|
+      tu.uid = _raw_me.id.to_i
+      tu.screen_name = _raw_me.screen_name
+      tu.user_info = _raw_me.slice(*SAVE_KEYS).to_json # TODO check the type of keys and values
     end
 
-    tw_user
-  end
-
-  def self.create_by_raw_user(data)
-    if data.kind_of?(Hash) # TODO check keys and values
-      create({
-               uid: data.id,
-               screen_name: data.screen_name,
-               user_info: data.slice(*SAVE_KEYS).to_json})
-    else
-      raise
+    tu.friends = _friends.map do |f|
+      Friend.new({
+                   from_id: nil,
+                   uid: f.id,
+                   screen_name: f.screen_name,
+                   user_info: f.slice(*SAVE_KEYS).to_json})
     end
+
+    tu.followers = _followers.map do |f|
+      Follower.new({
+                     from_id: nil,
+                     uid: f.id,
+                     screen_name: f.screen_name,
+                     user_info: f.slice(*SAVE_KEYS).to_json})
+    end
+
+    tu
   end
 
-  def save_raw_friends(data)
-    if data.kind_of?(Array) && data.first.kind_of?(Hash)
-      data.each_slice(100).each do |_data|
-        __data = _data.map do |d|
-          Friend.new({
-                       from_id: id,
-                       uid: d.id,
-                       screen_name: d.screen_name,
-                       user_info: d.slice(*SAVE_KEYS).to_json})
+  def save_raw_twitter_data(validate = true)
+    if validate
+      if allow_to_create?
+        _friends, _followers = self.friends.map{|f| f }, self.followers.map{|f| f }
+        self.friends = self.followers = []
+        self.save
+
+        begin
+          self.transaction do
+            _friends.map {|f| f.from_id = self.id }
+            _friends.each_slice(100).each { |f| Friend.import(f) }
+
+            _followers.map {|f| f.from_id = self.id }
+            _followers.each_slice(100).each { |f| Follower.import(f) }
+          end
+
+          self.reload # for friends and followers
+        rescue => e
+          self.destroy
         end
-        Friend.import(__data)
+      else
+        raise 'make sure that allow_to_create? returns true in advance'
       end
     else
-      raise
+      raise 'not implemented'
     end
+
+    self
   end
 
-  def save_raw_followers(data)
-    if data.kind_of?(Array) && (data.first.kind_of?(Twitter::User) || data.first.kind_of?(Hash))
-      data.each_slice(100).each do |_data|
-        __data = _data.map do |d|
-          Follower.new({
-                         from_id: id,
-                         uid: d.id,
-                         screen_name: d.screen_name,
-                         user_info: d.slice(*SAVE_KEYS).to_json})
-        end
-        Follower.import(__data)
-      end
-    else
-      raise
-    end
+  scope :oldest, -> (uid) { order(created_at: :asc).find_by(uid: uid.to_i) }
+  scope :latest, -> (uid) { order(created_at: :desc).find_by(uid: uid.to_i) }
+
+  def recently_created?(minutes = 30)
+    Time.now.to_i - created_at.to_i < 60 * minutes
   end
 
-  scope :oldest, -> (uid){ order(created_at: :asc).find_by(uid: uid) }
-  scope :latest, -> (uid){ order(created_at: :desc).find_by(uid: uid) }
+  def recently_updated?(minutes = 30)
+    Time.now.to_i - updated_at.to_i < 60 * minutes
+  end
 
-  def recently_created?
-    Time.now.to_i - created_at.to_i < 1800 # 30 minutes
+  def self.appropriate_interval_to_create?(uid)
+    me = latest(uid.to_i)
+    return true if me.blank?
+    return false if me.recently_created? || me.recently_updated?
+    true
+  end
+
+  def allow_to_create?
+    return false unless TwitterUser.appropriate_interval_to_create?(self.uid)
+    return latest_me.different_from?(self)
   end
 
   def oldest_me
@@ -136,4 +162,5 @@ class TwitterUser < ActiveRecord::Base
     return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
     ExTwitter.new.removed_followers(oldest_me, latest_me)
   end
+
 end

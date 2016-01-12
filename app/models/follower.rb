@@ -19,9 +19,9 @@
 class Follower < ActiveRecord::Base
   belongs_to :twitter_user
 
-  delegate *TwitterUser::SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_hash
+  delegate *TwitterUser::SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
-  def user_info_hash
+  def user_info_mash
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 end

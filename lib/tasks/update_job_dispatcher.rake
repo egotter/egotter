@@ -10,7 +10,9 @@ namespace :update_job_dispatcher do
     count = 0
     uids = SearchLog.order(created_at: :desc).limit(50).pluck(:search_uid).compact.uniq
     uids.each do |uid|
-      # next if uid.recently_added?
+      # next if uid.recently_added to this queue?
+      # next if TwitterUser.find_by(uid: uid).recently_created?
+      # next if TwitterUser.find_by(uid: uid).recently_updated?
       TwitterUserUpdaterWorker.perform_async(uid.to_i)
       count += 1
     end

@@ -4,11 +4,26 @@ class TwitterUserUpdaterWorker
 
   def perform(uid)
     u = client.user(uid.to_i) && client.user(uid.to_i)
-    puts "#{u.id},#{u.screen_name} start"
+    puts "#{user_name(u)} start"
 
-    TwitterUser.create_me_with_friends_and_followers(client, u.id)
+    tu = TwitterUser.latest(u.id)
+    if tu.blank?
+      puts "#{user_name(u)} something is wrong(TwitterUser doesn't exist)"
+      return
+    end
 
-    puts "#{u.id},#{u.screen_name} finish"
+    if tu.recently_created? || tu.recently_updated?
+      puts "#{user_name(u)} skip"
+      return
+    end
+
+    new_tu = TwitterUser.build_with_raw_twitter_data(client, u.id)
+    new_tu.save_raw_twitter_data
+    puts "#{user_name(u)} create(new TwitterUser)"
+  end
+
+  def user_name(u)
+    "#{u.id},#{u.screen_name}"
   end
 
   def client
