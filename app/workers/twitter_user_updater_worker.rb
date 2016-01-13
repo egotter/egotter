@@ -30,13 +30,13 @@ class TwitterUserUpdaterWorker
   end
 
   def client
-    raise 'create admin' if User.admin.blank?
-    admin_user = User.admin
+    raise 'create bot' if Bot.empty?
+    bot = Bot.sample
     config = {
       consumer_key: ENV['TWITTER_CONSUMER_KEY'],
       consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: admin_user.token,
-      access_token_secret: admin_user.secret
+      access_token: bot.token,
+      access_token_secret: bot.secret
     }
     c = ExTwitter.new(config)
     c.verify_credentials

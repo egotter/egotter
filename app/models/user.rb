@@ -47,7 +47,4 @@ class User < ActiveRecord::Base
     end
     user
   end
-
-  scope :admin, -> { find_by(provider: 'twitter', uid: '58135830') }
-
 end

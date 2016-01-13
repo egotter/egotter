@@ -10,59 +10,24 @@ class SearchesController < ApplicationController
   # GET /searches/1
   # GET /searches/1.json
   def show
-
-    begin
-      # TODO check with regexp -> screen_name =~ /^\w+$/ && screen_name.length <= 20
-      # TODO check suspended or not exist -> client.user?(screen_name)
-      # TODO check protected
-      # TODO check friends + follower < limit
-
-      searched_sn = params[:id].to_s
-      searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
-      searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
-    rescue => e
-      logger.warn e.message
-      return render text: 'error', layout: false
-    end
-
-    if (tu = TwitterUser.latest(searched_uid)).present? && tu.recently_created?
-      @searched_tw_user = tu
-      flash.now[:notice] = "show #{searched_sn}"
-    else
-      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, searched_uid)
-      if @searched_tw_user.save_raw_twitter_data
-        flash.now[:notice] = "create #{searched_sn}"
-      else
-        flash.now[:notice] = "show(do nothing) #{searched_sn}"
-      end
-
-    end
-
-    # @login_tw_user = client.user(current_user.uid.to_i) if user_signed_in?
+    u = client.user(params[:id]) && client.user(params[:id])
+    tu = @searched_tw_user = TwitterUser.latest(u.id)
 
     @menu_items = [
       {
-        name: I18n.t('search_menu.removed_friends', user: '@' + searched_sn),
-        target: @searched_tw_user.removed_friends,
+        name: I18n.t('search_menu.removed_friends', user: '@' + tu.screen_name),
+        target: tu.removed_friends,
         path_method: method(:removed_friends_path).to_proc
       }, {
-        name: I18n.t('search_menu.removed_followers', user: '@' + searched_sn),
-        target: @searched_tw_user.removed_followers,
+        name: I18n.t('search_menu.removed_followers', user: '@' + tu.screen_name),
+        target: tu.removed_followers,
         path_method: method(:removed_followers_path).to_proc
       }, {
-        name: I18n.t('search_menu.mutual_friends', user: '@' + searched_sn),
-        target: @searched_tw_user.mutual_friends,
+        name: I18n.t('search_menu.mutual_friends', user: '@' + tu.screen_name),
+        target: tu.mutual_friends,
         path_method: method(:mutual_friends_path).to_proc
-      }]
-
-    SearchLog.create(
-      login: user_signed_in?,
-      login_user_id: user_signed_in? ? current_user.id : -1,
-      search_uid: searched_uid,
-      search_sn: searched_sn,
-      search_value: params[:id].to_s,
-      search_menu: '',
-      same_user: user_signed_in? ? current_user.uid == @searched_tw_user.uid : false) rescue nil
+      },
+    ]
   end
 
   # GET /searches/:screen_name/removed_friends
@@ -88,7 +53,6 @@ class SearchesController < ApplicationController
 
   # GET /searches/new
   def new
-    # @search = Search.new
   end
 
   # # GET /searches/1/edit
@@ -98,18 +62,42 @@ class SearchesController < ApplicationController
   # POST /searches
   # POST /searches.json
   def create
-    screen_name = search_params
-    redirect_to search_path(screen_name), notice: "search #{screen_name}"
+    begin
+      # TODO check with regexp -> screen_name =~ /^\w+$/ && screen_name.length <= 20
+      # TODO check suspended or not exist -> client.user?(screen_name)
+      # TODO check protected
+      # TODO check friends + follower < limit
 
-    # respond_to do |format|
-    #   if @search.save
-    #     format.html { redirect_to @search, notice: 'Search was successfully created.' }
-    #     format.json { render :show, status: :created, location: @search }
-    #   else
-    #     format.html { render :new }
-    #     format.json { render json: @search.errors, status: :unprocessable_entity }
-    #   end
-    # end
+      searched_sn = search_params.to_s
+      searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
+      searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
+    rescue => e
+      logger.warn e.message
+      return render text: 'error', layout: false
+    end
+
+    if (searched_tu = TwitterUser.latest(searched_uid)).present? && searched_tu.recently_created?
+      notice_msg = "show #{searched_sn}"
+    else
+      searched_tu = TwitterUser.build_with_raw_twitter_data(client, searched_uid)
+      if searched_tu.save_raw_twitter_data
+        notice_msg = "create #{searched_sn}"
+      else
+        notice_msg = "create(not saved) #{searched_sn}"
+      end
+
+    end
+
+    SearchLog.create(
+      login: user_signed_in?,
+      login_user_id: user_signed_in? ? current_user.id : -1,
+      search_uid: searched_uid,
+      search_sn: searched_sn,
+      search_value: search_params.to_s,
+      search_menu: '',
+      same_user: user_signed_in? ? current_user.uid == searched_tu.uid : false) rescue nil
+
+    redirect_to search_path(searched_sn), notice: notice_msg
   end
 
   private
@@ -124,13 +112,13 @@ class SearchesController < ApplicationController
   end
 
   def client
-    raise 'create admin' if User.admin.blank?
-    admin_user = User.admin
+    raise 'create bot' if Bot.empty?
+    bot = Bot.sample
     config = {
       consumer_key: ENV['TWITTER_CONSUMER_KEY'],
       consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: admin_user.token,
-      access_token_secret: admin_user.secret
+      access_token: bot.token,
+      access_token_secret: bot.secret
     }
     config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
     ExTwitter.new(config)

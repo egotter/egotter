@@ -70,13 +70,17 @@
 <footer class="footer">
   <div class="container">
     <p class="text-muted" style="text-align: center; padding-top: 15px; line-height: 200%;">
-      <a href="/">トップページ</a>&nbsp;&nbsp;
-      <a href="/">ログイン</a>&nbsp;&nbsp;
-      <a href="/">ご意見</a>&nbsp;&nbsp;
-      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
-      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
-      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
-      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a style="text-decoration: none;" href="/">トップページ</a>&nbsp;&nbsp;
+      <% if user_signed_in? %>
+        <%= link_to t('dictionary.sign_out'), destroy_user_session_path, style: 'text-decoration: none;' %>&nbsp;&nbsp;
+      <% else %>
+        <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter), style: 'text-decoration: none;' %>&nbsp;&nbsp;
+      <% end %>
+      <a style="text-decoration: none;" href="/">ご意見</a>&nbsp;&nbsp;
+      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
     </p>
   </div>
 </footer>

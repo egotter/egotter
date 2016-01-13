@@ -54,8 +54,8 @@ class TwitterUser < ActiveRecord::Base
     raise 'something is wrong' if self.uid != other.uid
 
     !(self.user_info == other.user_info &&
-      self.friends.pluck(:uid).map{|uid| uid.to_i } == other.friends.map{|f| f.uid.to_i } &&
-      self.followers.pluck(:uid).map{|uid| uid.to_i } == other.followers.map{|f| f.uid.to_i })
+      self.friends.pluck(:uid).map{|uid| uid.to_i }.sort == other.friends.map{|f| f.uid.to_i }.sort &&
+      self.followers.pluck(:uid).map{|uid| uid.to_i }.sort == other.followers.map{|f| f.uid.to_i }).sort
   end
 
   def self.build_with_raw_twitter_data(client, uid)
