@@ -27,7 +27,7 @@
             <span style="font-size: 9px;"><%= t('dictionary.sign_out') %></span>
           <% end %>
         <% else %>
-          <%= link_to user_omniauth_authorize_path(:twitter), style: 'text-decoration: none;' do %>
+          <%= link_to welcome_path, style: 'text-decoration: none;' do %>
             <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
             <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
           <% end %>
@@ -46,7 +46,7 @@
                 <span style="font-size: 9px;"><%= t('dictionary.sign_out') %></span>
               <% end %>
             <% else %>
-              <%= link_to user_omniauth_authorize_path(:twitter), style: 'text-decoration: none;' do %>
+              <%= link_to welcome_path, style: 'text-decoration: none;' do %>
                 <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
                 <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
               <% end %>
@@ -74,7 +74,7 @@
       <% if user_signed_in? %>
         <%= link_to t('dictionary.sign_out'), destroy_user_session_path, style: 'text-decoration: none;' %>&nbsp;&nbsp;
       <% else %>
-        <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter), style: 'text-decoration: none;' %>&nbsp;&nbsp;
+        <%= link_to t('dictionary.sign_in'), welcome_path, style: 'text-decoration: none;' %>&nbsp;&nbsp;
       <% end %>
       <a style="text-decoration: none;" href="/">ご意見</a>&nbsp;&nbsp;
       <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;

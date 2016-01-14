@@ -5,14 +5,10 @@ class SearchesController < ApplicationController
   before_action :set_raw_user, only: SEARCH_MENUS
   before_action :set_searched_tw_user, only: SEARCH_MENUS
 
-  # GET /searches
-  # GET /searches.json
-  # def index
-  #   @searches = Search.all
-  # end
+  def welcome
 
-  # GET /searches/1
-  # GET /searches/1.json
+  end
+
   def show
     tu = @searched_tw_user
     sn = '@' + tu.screen_name
@@ -129,10 +125,15 @@ class SearchesController < ApplicationController
 
   private
   def set_raw_user
+    if search_params.blank?
+      logger.warn 'search value is empty'
+      return redirect_to '/', alert: 'error 004'
+    end
+
     u = client.user(search_params) && client.user(search_params)
     @raw_user = u
   rescue => e
-    logger.warn e.message
+    logger.warn "#{e.message} #{search_params}"
     return redirect_to '/', alert: 'error 001'
   end
 

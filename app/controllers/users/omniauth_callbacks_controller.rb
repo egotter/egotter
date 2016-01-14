@@ -3,7 +3,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     @user = User.find_or_create_for_oauth_by!(user_params)
 
     sign_in_and_redirect @user, :event => :authentication
-    set_flash_message(:notice, :success, :kind => "Twitter") if is_navigational_format?
+    set_flash_message(:notice, :success, :kind => 'Twitter') if is_navigational_format?
   end
 
   private
