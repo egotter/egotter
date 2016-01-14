@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   resources :searches
   get 'welcome', to: 'searches#welcome', as: :welcome
+  get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
+  post 'searches/:screen_name/waiting', to: 'searches#waiting'
   get 'searches/:screen_name/removed_friends', to: 'searches#removed_friends', as: :removed_friends
   get 'searches/:screen_name/removed_followers', to: 'searches#removed_followers', as: :removed_followers
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends

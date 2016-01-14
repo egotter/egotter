@@ -154,7 +154,12 @@ class ExTwitter < Twitter::REST::Client
   def user(*args)
     return old_user if args.empty?
     fetch_cache_or_call_api(:user, args) {
-      old_user(*args)
+      begin
+        old_user(*args)
+      rescue Twitter::Error::NotFound => e
+        logger.warn "#{e.message} #{args.inspect}"
+        raise e
+      end
     }
   end
   # memoize :user

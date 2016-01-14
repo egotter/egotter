@@ -65,7 +65,9 @@ class TwitterUser < ActiveRecord::Base
     true
   end
 
-  def self.build_with_raw_twitter_data(client, uid)
+  def self.build_with_raw_twitter_data(client, uid, option = {})
+    option = {all: true} if option.blank?
+
     # call 2 times to use cache
     _raw_me = client.user(uid.to_i) && client.user(uid.to_i)
     _friends, _followers = client.friends_and_followers(_raw_me.id.to_i) && client.friends_and_followers(_raw_me.id.to_i)
@@ -76,20 +78,22 @@ class TwitterUser < ActiveRecord::Base
       tu.user_info = _raw_me.slice(*SAVE_KEYS).to_json # TODO check the type of keys and values
     end
 
-    tu.friends = _friends.map do |f|
-      Friend.new({
-                   from_id: nil,
-                   uid: f.id,
-                   screen_name: f.screen_name,
-                   user_info: f.slice(*SAVE_KEYS).to_json})
-    end
-
-    tu.followers = _followers.map do |f|
-      Follower.new({
+    if option[:all]
+      tu.friends = _friends.map do |f|
+        Friend.new({
                      from_id: nil,
                      uid: f.id,
                      screen_name: f.screen_name,
                      user_info: f.slice(*SAVE_KEYS).to_json})
+      end
+
+      tu.followers = _followers.map do |f|
+        Follower.new({
+                       from_id: nil,
+                       uid: f.id,
+                       screen_name: f.screen_name,
+                       user_info: f.slice(*SAVE_KEYS).to_json})
+      end
     end
 
     tu

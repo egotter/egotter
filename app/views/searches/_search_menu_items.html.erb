@@ -7,12 +7,12 @@
       <div class="row">
         <div class="col-xs-12">
           <% menu_item[:target].slice(0..3).each do |user| %>
-            <%= link_to searches_path(screen_name: user.screen_name), method: :post do %>
+            <%= link_to searches_path(screen_name: user.screen_name, id: user.uid), method: :post do %>
               <img src="<%= user.profile_image_url_https.to_s %>", style="border: 1px solid #eeeeee;" alt="<%= user.screen_name %>">
             <% end %>
           <% end %>
           <%= link_to(t('dictionary.view_more'),
-                      menu_item[:path_method].call(screen_name: searched_tw_user.screen_name),
+                      menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
                       class: 'btn btn-info btn-block',
                       style: 'margin-top: 15px;') %>
           </a>

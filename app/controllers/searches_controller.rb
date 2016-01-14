@@ -27,11 +27,15 @@ class SearchesController < ApplicationController
         path_method: method(:mutual_friends_path).to_proc
       }, {
         name: I18n.t('search_menu.users_replying', user: sn),
-        target: tu.users_replying(client),
+        target: tu.users_replying(client).map do |u|
+          uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id; uu
+        end,
         path_method: method(:users_replying_path).to_proc
       }, {
         name: I18n.t('search_menu.users_replied', user: sn),
-        target: tu.users_replying(client),
+        target: tu.users_replied(client).map do |u|
+          uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id; uu
+        end,
         path_method: method(:users_replied_path).to_proc
       },
     ]
@@ -54,12 +58,18 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/users_replying
   def users_replying
-    @user_items = @searched_tw_user.users_replying(client).map{|f| {target: f} }
+    @user_items = @searched_tw_user.users_replying(client).map do |u|
+      uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id
+      {target: uu}
+    end
   end
 
   # GET /searches/:screen_name/users_replied
   def users_replied
-    @user_items = @searched_tw_user.users_replied(client).map{|f| {target: f} }
+    @user_items = @searched_tw_user.users_replied(client).map do |u|
+      uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id
+      {target: uu}
+    end
   end
 
   # GET /searches/new
@@ -73,13 +83,14 @@ class SearchesController < ApplicationController
   # POST /searches
   # POST /searches.json
   def create
-    unless search_params =~ /\A\w+\z/ && search_params.length <= 20
-      return redirect_to '/', alert: "invalid Twitter ID #{search_params}"
+    unless search_sn =~ /\A\w+\z/ && search_sn.length <= 20
+      return redirect_to '/', alert: 'invalid Twitter ID'
     end
 
     begin
-      searched_sn = search_params
+      searched_sn = search_sn
       unless client.user?(searched_sn)
+        logger.warn search_sn
         return redirect_to '/', alert: 'the user is suspended or not exist'
       end
 
@@ -98,42 +109,43 @@ class SearchesController < ApplicationController
       return redirect_to '/', alert: 'error 003'
     end
 
-    if (searched_tu = TwitterUser.latest(searched_uid)).present? && searched_tu.recently_created?
-      searched_tu.touch
-      notice_msg = "show #{searched_sn}"
-    else
-      searched_tu = TwitterUser.build_with_raw_twitter_data(client, searched_uid)
-      if searched_tu.save_raw_twitter_data
-        notice_msg = "create #{searched_sn}"
-      else
-        notice_msg = "create(#{searched_tu.errors.full_messages}) #{searched_sn}"
-      end
-
-    end
+    BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
 
     SearchLog.create(
       login: user_signed_in?,
       login_user_id: user_signed_in? ? current_user.id : -1,
       search_uid: searched_uid,
       search_sn: searched_sn,
-      search_value: search_params.to_s,
+      search_value: search_sn.to_s,
       search_menu: '',
       same_user: user_signed_in? ? current_user.uid == searched_tu.uid : false) rescue nil
 
-    redirect_to search_path(id: searched_sn, screen_name: searched_sn), notice: notice_msg
+    redirect_to waiting_path(screen_name: searched_sn, id: searched_uid), notice: 'test'
+  end
+
+  def waiting
+    if request.post?
+      raw_user = client.user(params[:id].to_i)
+      # TODO need to check signing in status if the user is protected
+      render json: {status: TwitterUser.latest(raw_user.id.to_i).present?}
+    else
+      set_raw_user
+      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, params[:id].to_i, all: false)
+      render
+    end
   end
 
   private
   def set_raw_user
-    if search_params.blank?
+    if search_id.blank?
       logger.warn 'search value is empty'
       return redirect_to '/', alert: 'error 004'
     end
 
-    u = client.user(search_params) && client.user(search_params)
+    u = client.user(search_id.to_i) && client.user(search_id.to_i)
     @raw_user = u
   rescue => e
-    logger.warn "#{e.message} #{search_params}"
+    logger.warn "#{e.message} #{search_id}"
     return redirect_to '/', alert: 'error 001'
   end
 
@@ -145,9 +157,12 @@ class SearchesController < ApplicationController
     @searched_tw_user = tu
   end
 
-  # Never trust parameters from the scary internet, only allow the white list through.
-  def search_params
+  def search_sn
     params[:screen_name]
+  end
+
+  def search_id
+    params[:id]
   end
 
   def client

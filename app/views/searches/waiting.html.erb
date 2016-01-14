@@ -1,0 +1,21 @@
+<%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
+
+<div class="container" style="margin-top: 15px;">
+  <%= t('dictionary.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+</div>
+
+<script>
+  $(function () {
+    var refreshIntervalId = setInterval(function () {
+      $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
+          .done(function (res) {
+            console.log(res);
+            if (res.status) {
+              clearInterval(refreshIntervalId);
+              window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
+            } else {
+            }
+          });
+    }, 1000);
+  });
+</script>

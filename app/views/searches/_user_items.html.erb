@@ -1,6 +1,6 @@
 <% user_items.each do |user_item| %>
   <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
-    <%= link_to searches_path(screen_name: user_item[:target].screen_name), style: 'color: #333333; text-decoration: none;', method: :post do %>
+    <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), style: 'color: #333333; text-decoration: none;', method: :post do %>
       <div class="media-left" style="padding-left: 15px;">
         <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", style="border: 1px solid #eeeeee;" alt="<%= user_item[:target].screen_name %>">
       </div>
