@@ -183,7 +183,7 @@ class ExTwitter < Twitter::REST::Client
   # return users which included both a_users and b_users
   # use hash to reduce computational complexity
   def both_included_users(a_users, b_users)
-    return [] if (!a_users || !b_users)
+    return [] if a_users.nil? || b_users.nil?
 
     a_users_hash = a_users.each_with_object({}).with_index{|(u, memo), i| memo[u.uid.to_s] = i }
     a_users_hash.slice!(*b_users.map{|u| u.uid.to_s })
@@ -197,10 +197,10 @@ class ExTwitter < Twitter::REST::Client
   # return users which included in a_users and not included in b_users
   # use hash to reduce computational complexity
   def excluded_users(a_users, b_users)
-    return [] if (!a_users || !b_users)
+    return [] if a_users.nil? || b_users.nil?
 
-    a_users_hash = a_users.each_with_object({}).with_index{|(u, memo), i| memo[u.uid.to_s] = i }
-    a_users_hash.except!(*b_users.map{|u| u.uid.to_s })
+    a_users_hash = a_users.each_with_object({}).with_index{|(u, memo), i| memo[u.uid.to_i] = i }
+    a_users_hash.except!(*b_users.map{|u| u.uid.to_i })
     a_users_hash.values.sort.map{|i| a_users[i] }
   end
 
