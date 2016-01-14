@@ -1,5 +1,4 @@
 class SearchesController < ApplicationController
-  before_action :set_search, only: []
 
   SEARCH_MENUS = %i(show removed_friends removed_followers mutual_friends users_replying users_replied)
 
@@ -78,21 +77,33 @@ class SearchesController < ApplicationController
   # POST /searches
   # POST /searches.json
   def create
-    begin
-      # TODO check with regexp -> screen_name =~ /^\w+$/ && screen_name.length <= 20
-      # TODO check suspended or not exist -> client.user?(screen_name)
-      # TODO check protected
-      # TODO check friends + follower < limit
+    unless search_params =~ /\A\w+\z/ && search_params.length <= 20
+      return redirect_to '/', alert: "invalid Twitter ID #{search_params}"
+    end
 
-      searched_sn = search_params.to_s
+    begin
+      searched_sn = search_params
+      unless client.user?(searched_sn)
+        return redirect_to '/', alert: 'the user is suspended or not exist'
+      end
+
       searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
+      if searched_raw_tw_user.protected && (!user_signed_in? || searched_raw_tw_user.id.to_i != current_user.uid.to_i)
+        return redirect_to '/', alert: 'the user is protected'
+      end
+
+      if searched_raw_tw_user.friends_count + searched_raw_tw_user.followers_count > 1500
+        return redirect_to '/', alert: 'the user has too many friends and followers'
+      end
+
       searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
     rescue => e
       logger.warn e.message
-      return render text: 'error', layout: false
+      return redirect_to '/', alert: 'error 003'
     end
 
     if (searched_tu = TwitterUser.latest(searched_uid)).present? && searched_tu.recently_created?
+      searched_tu.touch
       notice_msg = "show #{searched_sn}"
     else
       searched_tu = TwitterUser.build_with_raw_twitter_data(client, searched_uid)
@@ -118,17 +129,17 @@ class SearchesController < ApplicationController
 
   private
   def set_raw_user
-    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
+    u = client.user(search_params) && client.user(search_params)
     @raw_user = u
   rescue => e
     logger.warn e.message
-    return render text: 'error 001', layout: false
+    return redirect_to '/', alert: 'error 001'
   end
 
   def set_searched_tw_user
     tu = TwitterUser.latest(@raw_user.id)
     if tu.blank?
-      return render text: 'error 002', layout: false
+      return redirect_to '/', alert: 'error 002'
     end
     @searched_tw_user = tu
   end
@@ -149,5 +160,8 @@ class SearchesController < ApplicationController
     }
     config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
     ExTwitter.new(config)
+  rescue => e
+    logger.warn e.message
+    return redirect_to '/', alert: 'error 000'
   end
 end

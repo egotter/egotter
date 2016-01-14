@@ -71,78 +71,90 @@ class ExTwitter < Twitter::REST::Client
   end
 
   # currently ignore options
-  def file_cache_key(method_name, *args)
+  def file_cache_key(method_name, user)
     identifier =
       case
-        when args[0].kind_of?(Fixnum) || args[0].kind_of?(Bignum)
-          "id-#{args[0].to_s}"
-        when args[0].kind_of?(String)
-          "sn-#{args[0]}"
-        when args[0].kind_of?(Twitter::User)
-          "user-#{args[0].id.to_s}"
-        else raise "#{method_name.inspect} #{args.inspect}"
+        when user.kind_of?(Fixnum) || user[0].kind_of?(Bignum)
+          "id-#{user.to_s}"
+        when user.kind_of?(String)
+          "sn-#{user}"
+        when user.kind_of?(Twitter::User)
+          "user-#{user.id.to_s}"
+        else raise "#{method_name.inspect} #{user.inspect}"
       end
 
     "#{method_name}_#{identifier}_#{Time.now.strftime('%Y%m%d%H')}"
   end
 
-  def namespaced_key(method_name, *args)
-    file_cache_key(method_name, *args)
-  end
-
-  def delete_file_cache(method_name, *args)
+  def namespaced_key(method_name, user)
+    file_cache_key(method_name, user)
   end
 
   # TODO choose necessary data
   # encode
   def to_json_according_to_type(obj)
-    case
-      when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
-        JSON.pretty_generate(obj.map { |o| o.attrs })
-      when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
-        JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
-      when obj.kind_of?(Twitter::User) # user
-        JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::SAVE_KEYS))
-      else
-        raise obj.inspect
-    end
+    start_t = Time.now.to_i
+    result =
+      case
+        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
+          JSON.pretty_generate(obj.map { |o| o.attrs })
+        when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
+          JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
+        when obj.kind_of?(Twitter::User) # user
+          JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::SAVE_KEYS))
+        else
+          raise obj.inspect
+      end
+    end_t = Time.now.to_i
+    logger.debug "#{now} to_json_according_to_type (#{end_t - start_t}s)"
+    result
   end
 
   # decode
   def parse_json_according_to_type(str)
+    start_t = Time.now.to_i
     obj = JSON.parse(str)
-    case
-      when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
-        obj.map { |o| Hashie::Mash.new(o.attrs) }
-      when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
-        obj.map { |o| Hashie::Mash.new(o) }
-      when obj.kind_of?(Hash) # user
-        Hashie::Mash.new(obj)
-      else
-        raise obj.inspect
-    end
+    result =
+      case
+        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
+          obj.map { |o| Hashie::Mash.new(o.attrs) }
+        when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
+          obj.map { |o| Hashie::Mash.new(o) }
+        when obj.kind_of?(Hash) # user
+          Hashie::Mash.new(obj)
+        else
+          raise obj.inspect
+      end
+    end_t = Time.now.to_i
+    logger.debug "#{now} parse_json_according_to_type (#{end_t - start_t}s)"
+    result
   end
 
   def fetch_cache_or_call_api(method_name, args, &block)
-    if cache.exist?(namespaced_key(method_name, *args))
-      data = parse_json_according_to_type(cache.read(namespaced_key(method_name, *args)))
+    if cache.exist?(namespaced_key(method_name, args[0]))
+      data = parse_json_according_to_type(cache.read(namespaced_key(method_name, args[0])))
       logger.debug "#{now} #{method_name} #{args.inspect} (cache read)"
       return data
     end
 
     data = yield
 
-    cache.write(namespaced_key(method_name, *args), to_json_according_to_type(data))
+    cache.write(namespaced_key(method_name, args[0]), to_json_according_to_type(data))
     logger.debug "#{now} #{method_name} #{args.inspect} (cache wrote)"
 
     data
+  end
+
+  alias :old_user? :user?
+  def user?(*args)
+    old_user?(*args)
   end
 
   alias :old_user :user
   def user(*args)
     return old_user if args.empty?
     fetch_cache_or_call_api(:user, args) {
-      old_user(args)
+      old_user(*args)
     }
   end
   # memoize :user
