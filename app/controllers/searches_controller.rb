@@ -99,7 +99,7 @@ class SearchesController < ApplicationController
       if searched_tu.save_raw_twitter_data
         notice_msg = "create #{searched_sn}"
       else
-        notice_msg = "create(not saved) #{searched_sn}"
+        notice_msg = "create(#{searched_tu.errors.full_messages}) #{searched_sn}"
       end
 
     end

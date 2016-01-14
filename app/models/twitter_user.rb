@@ -53,9 +53,16 @@ class TwitterUser < ActiveRecord::Base
     raise 'something is wrong' if other.persisted?
     raise 'something is wrong' if self.uid != other.uid
 
-    !(self.user_info == other.user_info &&
-      self.friends.pluck(:uid).map{|uid| uid.to_i }.sort == other.friends.map{|f| f.uid.to_i }.sort &&
-      self.followers.pluck(:uid).map{|uid| uid.to_i }.sort == other.followers.map{|f| f.uid.to_i }.sort)
+    result = (self.user_info == other.user_info &&
+      self.friends.pluck(:uid).map { |uid| uid.to_i }.sort == other.friends.map { |f| f.uid.to_i }.sort &&
+      self.followers.pluck(:uid).map { |uid| uid.to_i }.sort == other.followers.map { |f| f.uid.to_i }.sort)
+
+    unless result
+      errors[:base] << 'user_info and friends and followers are same'
+      return false
+    end
+
+    true
   end
 
   def self.build_with_raw_twitter_data(client, uid)
@@ -107,9 +114,10 @@ class TwitterUser < ActiveRecord::Base
           self.reload # for friends and followers
         rescue => e
           self.destroy
+          false
+        else
+          true
         end
-
-        true
       else
         false
       end
@@ -129,25 +137,21 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def recently_created?(minutes = 30)
-    Time.now.to_i - created_at.to_i < 60 * minutes
+    Time.zone.now.to_i - created_at.to_i < 60 * minutes
   end
 
   def recently_updated?(minutes = 30)
-    Time.now.to_i - updated_at.to_i < 60 * minutes
-  end
-
-  def self.appropriate_interval_to_create?(uid)
-    me = latest(uid.to_i)
-    return true if me.blank?
-    return false if me.recently_created? || me.recently_updated?
-    true
+    Time.zone.now.to_i - updated_at.to_i < 60 * minutes
   end
 
   def allow_to_create?
     me = latest_me
     return true if me.blank?
-    return false unless TwitterUser.appropriate_interval_to_create?(self.uid)
-    return latest_me.different_from?(self)
+    if me.recently_created? || me.recently_updated?
+      errors[:base] << 'recently_created? or recently_updated? is true'
+      return false
+    end
+    latest_me.different_from?(self)
   end
 
   def oldest_me
