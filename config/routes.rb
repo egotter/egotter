@@ -5,6 +5,8 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/removed_friends', to: 'searches#removed_friends', as: :removed_friends
   get 'searches/:screen_name/removed_followers', to: 'searches#removed_followers', as: :removed_followers
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
+  get 'searches/:screen_name/users_replying', to: 'searches#users_replying', as: :users_replying
+  get 'searches/:screen_name/users_replied', to: 'searches#users_replied', as: :users_replied
 
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
     omniauth_callbacks: "users/omniauth_callbacks"

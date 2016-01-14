@@ -55,7 +55,7 @@ class TwitterUser < ActiveRecord::Base
 
     !(self.user_info == other.user_info &&
       self.friends.pluck(:uid).map{|uid| uid.to_i }.sort == other.friends.map{|f| f.uid.to_i }.sort &&
-      self.followers.pluck(:uid).map{|uid| uid.to_i }.sort == other.followers.map{|f| f.uid.to_i }).sort
+      self.followers.pluck(:uid).map{|uid| uid.to_i }.sort == other.followers.map{|f| f.uid.to_i }.sort)
   end
 
   def self.build_with_raw_twitter_data(client, uid)
@@ -172,4 +172,11 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.removed_followers(oldest_me, latest_me)
   end
 
+  def users_replying(client)
+    client.users_replying(self.screen_name)
+  end
+
+  def users_replied(client)
+    client.users_replied(self.screen_name)
+  end
 end

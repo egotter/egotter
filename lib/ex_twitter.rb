@@ -40,7 +40,19 @@ class ExTwitter < Twitter::REST::Client
 
   # usertimeline, search
   def collect_with_max_id(method_name, *args)
+    options = args.extract_options!
+    last_response = call_old_method(method_name, *args, options)
+    return_data = last_response
+    call_count = 1
 
+    while last_response.any? && call_count < 3
+      options[:max_id] = last_response.last.id
+      last_response = call_old_method(method_name, *args, options)
+      return_data += last_response
+      call_count += 1
+    end
+
+    return_data.flatten
   end
 
   # friends, followers
@@ -82,25 +94,32 @@ class ExTwitter < Twitter::REST::Client
   end
 
   # TODO choose necessary data
-  def to_json_according_to_type(data)
+  # encode
+  def to_json_according_to_type(obj)
     case
-      when data.kind_of?(Array)
-        JSON.pretty_generate(data.map{|d| d.to_hash.slice(*TwitterUser::SAVE_KEYS) })
-      when data.kind_of?(Twitter::User)
-        JSON.pretty_generate(data.to_hash.slice(*TwitterUser::SAVE_KEYS))
+      when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
+        JSON.pretty_generate(obj.map { |o| o.attrs })
+      when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
+        JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
+      when obj.kind_of?(Twitter::User) # user
+        JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::SAVE_KEYS))
       else
-        raise data.inspect
+        raise obj.inspect
     end
   end
 
+  # decode
   def parse_json_according_to_type(str)
     obj = JSON.parse(str)
-    if obj.kind_of?(Array)
-      obj.map{|o| o.kind_of?(Hash) ? Hashie::Mash.new(o) : o }
-    elsif obj.kind_of?(Hash)
-      Hashie::Mash.new(obj)
-    else
-      obj
+    case
+      when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
+        obj.map { |o| Hashie::Mash.new(o.attrs) }
+      when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
+        obj.map { |o| Hashie::Mash.new(o) }
+      when obj.kind_of?(Hash) # user
+        Hashie::Mash.new(obj)
+      else
+        raise obj.inspect
     end
   end
 
@@ -213,5 +232,39 @@ class ExTwitter < Twitter::REST::Client
     processed_users.sort_by{|p| p[:i] }.map{|p| p[:users] }.flatten.compact
   end
 
+  # can't get tweets if specified user is protected
+  alias :old_user_timeline :user_timeline
+  def user_timeline(*args)
+    args = [user] if args.empty? # need at least one param to use cache
+    fetch_cache_or_call_api(:user_timeline, args) {
+      options = {count: 200, include_rts: true}.merge(args.extract_options!)
+      collect_with_max_id(:old_user_timeline, *args, options)
+    }
+  end
 
+  # users which specified user is replying
+  # in_reply_to_user_id and in_reply_to_status_id is not used because of distinguishing mentions from replies
+  def users_replying(user)
+    screen_names = user_timeline(user).map do |s|
+      $1 if s.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
+    end.compact.uniq
+
+    users(screen_names) || []
+  end
+
+  # users which specified user is replied
+  # when user is login you had better to call mentions_timeline
+  def users_replied(user)
+    user = self.user(user).screen_name unless user.kind_of?(String)
+
+    search_result = search('@' + user, count: 100).attrs
+    return [] if search_result.blank? || search_result[:statuses].blank?
+
+    uids = search_result[:statuses].map do |s|
+      s = Hashie::Mash.new(s)
+      s.user.id.to_i if s.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
+    end.compact.uniq
+
+    users(uids) || []
+  end
 end

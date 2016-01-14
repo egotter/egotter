@@ -1,6 +1,11 @@
 class SearchesController < ApplicationController
   before_action :set_search, only: []
 
+  SEARCH_MENUS = %i(show removed_friends removed_followers mutual_friends users_replying users_replied)
+
+  before_action :set_raw_user, only: SEARCH_MENUS
+  before_action :set_searched_tw_user, only: SEARCH_MENUS
+
   # GET /searches
   # GET /searches.json
   def index
@@ -10,45 +15,56 @@ class SearchesController < ApplicationController
   # GET /searches/1
   # GET /searches/1.json
   def show
-    u = client.user(params[:id]) && client.user(params[:id])
-    tu = @searched_tw_user = TwitterUser.latest(u.id)
-
+    tu = @searched_tw_user
+    sn = '@' + tu.screen_name
     @menu_items = [
       {
-        name: I18n.t('search_menu.removed_friends', user: '@' + tu.screen_name),
+        name: I18n.t('search_menu.removed_friends', user: sn),
         target: tu.removed_friends,
         path_method: method(:removed_friends_path).to_proc
       }, {
-        name: I18n.t('search_menu.removed_followers', user: '@' + tu.screen_name),
+        name: I18n.t('search_menu.removed_followers', user: sn),
         target: tu.removed_followers,
         path_method: method(:removed_followers_path).to_proc
       }, {
-        name: I18n.t('search_menu.mutual_friends', user: '@' + tu.screen_name),
+        name: I18n.t('search_menu.mutual_friends', user: sn),
         target: tu.mutual_friends,
         path_method: method(:mutual_friends_path).to_proc
+      }, {
+        name: I18n.t('search_menu.users_replying', user: sn),
+        target: tu.users_replying(client),
+        path_method: method(:users_replying_path).to_proc
+      }, {
+        name: I18n.t('search_menu.users_replied', user: sn),
+        target: tu.users_replying(client),
+        path_method: method(:users_replied_path).to_proc
       },
     ]
   end
 
   # GET /searches/:screen_name/removed_friends
   def removed_friends
-    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
-    @searched_tw_user = TwitterUser.latest(u.id)
     @user_items = @searched_tw_user.removed_friends.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/removed_followers
   def removed_followers
-    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
-    @searched_tw_user = TwitterUser.latest(u.id)
     @user_items = @searched_tw_user.removed_followers.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/mutual_friends
   def mutual_friends
-    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
-    @searched_tw_user = TwitterUser.latest(u.id)
     @user_items = @searched_tw_user.mutual_friends.map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/users_replying
+  def users_replying
+    @user_items = @searched_tw_user.users_replying(client).map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/users_replied
+  def users_replied
+    @user_items = @searched_tw_user.users_replied(client).map{|f| {target: f} }
   end
 
   # GET /searches/new
@@ -97,13 +113,24 @@ class SearchesController < ApplicationController
       search_menu: '',
       same_user: user_signed_in? ? current_user.uid == searched_tu.uid : false) rescue nil
 
-    redirect_to search_path(searched_sn), notice: notice_msg
+    redirect_to search_path(id: searched_sn, screen_name: searched_sn), notice: notice_msg
   end
 
   private
-  # Use callbacks to share common setup or constraints between actions.
-  def set_search
-    @search = Search.find(params[:id])
+  def set_raw_user
+    u = client.user(params[:screen_name]) && client.user(params[:screen_name])
+    @raw_user = u
+  rescue => e
+    logger.warn e.message
+    return render text: 'error 001', layout: false
+  end
+
+  def set_searched_tw_user
+    tu = TwitterUser.latest(@raw_user.id)
+    if tu.blank?
+      return render text: 'error 002', layout: false
+    end
+    @searched_tw_user = tu
   end
 
   # Never trust parameters from the scary internet, only allow the white list through.

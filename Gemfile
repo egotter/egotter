@@ -48,6 +48,7 @@ group :development, :test do
   gem 'pry-rails'
   gem 'annotate'
   gem 'whenever', :require => false
+  gem 'rspec-rails'
 end
 
 group :development do

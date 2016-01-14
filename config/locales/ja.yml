@@ -18,6 +18,8 @@ ja:
     mutual_friends: "%{user} が両思いのユーザー"
     one_sided_friends: "%{user} が片思いしているユーザー"
     one_sided_followers: "%{user} が片思いされているユーザー"
+    users_replying: "%{user} がリプライしたユーザー"
+    users_replied: "%{user} がリプライされたユーザー"
   activerecord:
     errors:
       messages:
