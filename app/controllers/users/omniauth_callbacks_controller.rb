@@ -2,6 +2,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def twitter
     @user = User.find_or_create_for_oauth_by!(user_params)
 
+    FollowEgotterWorker.perform_async(@user.uid)
+
     sign_in_and_redirect @user, :event => :authentication
     set_flash_message(:notice, :success, :kind => 'Twitter') if is_navigational_format?
   end
