@@ -3,7 +3,7 @@ class BackgroundSearchWorker
   sidekiq_options queue: :egotter, retry: 3, backtrace: true
 
   def perform(uid, screen_name, login_user_id)
-    puts "[#{Time.zone.now}] background search #{user_name(uid, screen_name)} start"
+    logger.debug "#{user_name(uid, screen_name)} start"
 
     uid = uid.to_i
     screen_name = screen_name.to_s
@@ -20,7 +20,7 @@ class BackgroundSearchWorker
       end
     end
 
-    puts "[#{Time.zone.now}] background search #{user_name(uid, screen_name)} finish"
+    logger.debug "#{user_name(uid, screen_name)} finish"
   end
 
   def user_name(uid, screen_name)

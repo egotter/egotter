@@ -6,7 +6,7 @@ class FollowEgotterWorker
     c = client(uid.to_i)
     u = c.user(uid.to_i)
     c.follow(187385226) # follow @ego_tter
-    puts "[#{Time.zone.now}] #{user_name(u)} follows @ego_tter"
+    logger.debug "#{user_name(u)} follows @ego_tter"
   end
 
   def user_name(u)

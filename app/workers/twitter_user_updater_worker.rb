@@ -4,24 +4,24 @@ class TwitterUserUpdaterWorker
 
   def perform(uid)
     u = client.user(uid.to_i) && client.user(uid.to_i)
-    puts "[#{Time.zone.now}] TwitterUserUpdaterWorker #{user_name(u)} start"
+    logger.debug "#{user_name(u)} start"
 
     tu = TwitterUser.latest(u.id)
     if tu.blank?
-      puts "[#{Time.zone.now}] TwitterUserUpdaterWorker #{user_name(u)} TwitterUser doesn't exist"
+      logger.debug "#{user_name(u)} TwitterUser doesn't exist"
       return
     end
 
     if tu.recently_created? || tu.recently_updated?
-      puts "[#{Time.zone.now}] TwitterUserUpdaterWorker #{user_name(u)} skip(recently created or recently updated)"
+      logger.debug "#{user_name(u)} skip(recently created or recently updated)"
       return
     end
 
     new_tu = TwitterUser.build_with_raw_twitter_data(client, u.id)
     if new_tu.save_raw_twitter_data
-      puts "[#{Time.zone.now}] TwitterUserUpdaterWorker #{user_name(u)} create new TwitterUser"
+      logger.debug "#{user_name(u)} create new TwitterUser"
     else
-      puts "[#{Time.zone.now}] TwitterUserUpdaterWorker #{user_name(u)} do nothing(#{new_tu.errors.full_messages})"
+      logger.debug "#{user_name(u)} do nothing(#{new_tu.errors.full_messages})"
     end
   end
 
