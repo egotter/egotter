@@ -65,23 +65,18 @@ class TwitterUser < ActiveRecord::Base
     raise 'something is wrong' if other.persisted?
     raise 'something is wrong' if self.uid != other.uid
 
-    result = (self.user_info == other.user_info &&
-      self.friends.pluck(:uid).map { |uid| uid.to_i }.sort == other.friends.map { |f| f.uid.to_i }.sort &&
-      self.followers.pluck(:uid).map { |uid| uid.to_i }.sort == other.followers.map { |f| f.uid.to_i }.sort)
+    if self.friends_count != other.friends_count || self.followers_count != other.followers_count
+      errors[:base] << 'friends_count or followers_count is different'
+      return false
+    end
 
-    unless result
-      errors[:base] << 'user_info and friends and followers are same'
+    if self.friends.pluck(:uid).map { |uid| uid.to_i }.sort != other.friends.map { |f| f.uid.to_i }.sort ||
+      self.followers.pluck(:uid).map { |uid| uid.to_i }.sort != other.followers.map { |f| f.uid.to_i }.sort
+      errors[:base] << 'friends or followers are different'
       return false
     end
 
     true
-  end
-
-  # debug method
-  def self.different_from?(a_user, b_user)
-    !(a_user.user_info == b_user.user_info &&
-      a_user.friends.pluck(:uid).map { |uid| uid.to_i }.sort == b_user.friends.pluck(:uid).map { |uid| uid.to_i }.sort &&
-      a_user.followers.pluck(:uid).map { |uid| uid.to_i }.sort == b_user.followers.pluck(:uid).map { |uid| uid.to_i }.sort)
   end
 
   def self.build_with_raw_twitter_data(client, uid, option = {})

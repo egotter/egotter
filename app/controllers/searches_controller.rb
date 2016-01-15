@@ -111,14 +111,18 @@ class SearchesController < ApplicationController
 
     BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
 
-    SearchLog.create(
-      login: user_signed_in?,
-      login_user_id: user_signed_in? ? current_user.id : -1,
-      search_uid: searched_uid,
-      search_sn: searched_sn,
-      search_value: search_sn.to_s,
-      search_menu: '',
-      same_user: user_signed_in? ? current_user.uid == searched_tu.uid : false) rescue nil
+    begin
+      SearchLog.create(
+        login: user_signed_in?,
+        login_user_id: user_signed_in? ? current_user.id : -1,
+        search_uid: searched_uid,
+        search_sn: searched_sn,
+        search_value: search_sn.to_s,
+        search_menu: '',
+        same_user: user_signed_in? ? current_user.uid.to_i == searched_uid.to_i : false)
+    rescue => e
+      logger.warn e.message
+    end
 
     redirect_to waiting_path(screen_name: searched_sn, id: searched_uid), notice: 'test'
   end
