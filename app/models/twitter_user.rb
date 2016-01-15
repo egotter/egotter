@@ -48,6 +48,18 @@ class TwitterUser < ActiveRecord::Base
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
+  validate :allow_to_create?
+
+  def allow_to_create?
+    me = latest_me
+    return true if me.blank?
+    if me.recently_created? || me.recently_updated?
+      errors[:base] << 'recently_created? or recently_updated? is true'
+      return false
+    end
+    latest_me.different_from?(self)
+  end
+
   def different_from?(other)
     raise 'something is wrong' if self.new_record?
     raise 'something is wrong' if other.persisted?
@@ -99,34 +111,31 @@ class TwitterUser < ActiveRecord::Base
     tu
   end
 
-  def save_raw_twitter_data(validate = true)
-    if validate
-      if allow_to_create?
-        _friends, _followers = self.friends.map{|f| f }, self.followers.map{|f| f }
-        self.friends = self.followers = []
-        self.save
+  def save_raw_twitter_data
+    unless valid?
+      logger.debug "[#{Time.zone.now}] #{self.class}#save_raw_twitter_data #{errors.full_messages}"
+      return false
+    end
 
-        begin
-          self.transaction do
-            _friends.map {|f| f.from_id = self.id }
-            _friends.each_slice(100).each { |f| Friend.import(f) }
+    _friends, _followers = self.friends.map{|f| f }, self.followers.map{|f| f }
+    self.friends = self.followers = []
+    self.save
 
-            _followers.map {|f| f.from_id = self.id }
-            _followers.each_slice(100).each { |f| Follower.import(f) }
-          end
+    begin
+      self.transaction do
+        _friends.map {|f| f.from_id = self.id }
+        _friends.each_slice(100).each { |f| Friend.import(f) }
 
-          self.reload # for friends and followers
-        rescue => e
-          self.destroy
-          false
-        else
-          true
-        end
-      else
-        false
+        _followers.map {|f| f.from_id = self.id }
+        _followers.each_slice(100).each { |f| Follower.import(f) }
       end
+
+      self.reload # for friends and followers
+    rescue => e
+      self.destroy
+      false
     else
-      raise 'not implemented'
+      true
     end
   end
 
@@ -146,16 +155,6 @@ class TwitterUser < ActiveRecord::Base
 
   def recently_updated?(minutes = 30)
     Time.zone.now.to_i - updated_at.to_i < 60 * minutes
-  end
-
-  def allow_to_create?
-    me = latest_me
-    return true if me.blank?
-    if me.recently_created? || me.recently_updated?
-      errors[:base] << 'recently_created? or recently_updated? is true'
-      return false
-    end
-    latest_me.different_from?(self)
   end
 
   def oldest_me
