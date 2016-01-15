@@ -16,6 +16,6 @@ namespace :update_job_dispatcher do
       TwitterUserUpdaterWorker.perform_async(uid.to_i)
       count += 1
     end
-    puts "[#{Time.now}] enqueue finish " + count.to_s
+    puts "[#{Time.now}] enqueue finish #{count} #{uids.join(',')}"
   end
 end

@@ -151,11 +151,13 @@ class TwitterUser < ActiveRecord::Base
       order(created_at: :desc).find_by(uid: user.to_i) : order(created_at: :desc).find_by(screen_name: user.to_s)
   end
 
-  def recently_created?(minutes = 30)
+  DEFAULT_MINUTES = Rails.env.production? ? 30 : 5
+
+  def recently_created?(minutes = DEFAULT_MINUTES)
     Time.zone.now.to_i - created_at.to_i < 60 * minutes
   end
 
-  def recently_updated?(minutes = 30)
+  def recently_updated?(minutes = DEFAULT_MINUTES)
     Time.zone.now.to_i - updated_at.to_i < 60 * minutes
   end
 
