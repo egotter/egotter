@@ -10,13 +10,13 @@ class BackgroundSearchWorker
 
     if (tu = TwitterUser.latest(uid)).present? && tu.recently_created?
       tu.touch
-      notice_msg = "show #{screen_name}"
+      logger.debug "show #{screen_name}"
     else
       tu = TwitterUser.build_with_raw_twitter_data(client(login_user_id), uid)
       if tu.save_raw_twitter_data
-        notice_msg = "create #{screen_name}"
+        logger.debug "create #{screen_name}"
       else
-        notice_msg = "create(#{tu.errors.full_messages}) #{screen_name}"
+        logger.debug "create(#{tu.errors.full_messages}) #{screen_name}"
       end
     end
 
