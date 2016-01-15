@@ -77,6 +77,13 @@ class TwitterUser < ActiveRecord::Base
     true
   end
 
+  # debug method
+  def self.different_from?(a_user, b_user)
+    !(a_user.user_info == b_user.user_info &&
+      a_user.friends.pluck(:uid).map { |uid| uid.to_i }.sort == b_user.friends.pluck(:uid).map { |uid| uid.to_i }.sort &&
+      a_user.followers.pluck(:uid).map { |uid| uid.to_i }.sort == b_user.followers.pluck(:uid).map { |uid| uid.to_i }.sort)
+  end
+
   def self.build_with_raw_twitter_data(client, uid, option = {})
     option = {all: true} if option.blank?
 
