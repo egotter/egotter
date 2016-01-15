@@ -109,6 +109,7 @@ class SearchesController < ApplicationController
       return redirect_to '/', alert: 'error 003'
     end
 
+    FetchStatusesWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
     BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
 
     begin
