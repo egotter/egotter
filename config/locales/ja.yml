@@ -13,6 +13,14 @@ ja:
     view_more: "続きを見る"
     last_updated_at: "最終更新日時"
     created_at_and_updated_at: "作成・更新日時"
+  before_sign_in:
+    invalid_twitter_id: "無効な Twitter ID が入力されました。"
+    suspended_user: "%{user} は凍結されています。凍結が解除されてから検索してください。"
+    protected_user: "%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、%{sign_in_link} すれば検索することができます。"
+    too_many_friends: "%{user} のフォロー・フォロワーが多すぎて検索できません。%{sign_in_link} すれば検索できることがあります。"
+    blank_id: "uid が空です。"
+    invalid_uid: "無効な uid です。"
+    blank_search_result: "検索結果がありません。"
   search_menu:
     friends: "%{user} のフォロー"
     followers: "%{user} のフォロワー"

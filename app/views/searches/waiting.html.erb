@@ -14,6 +14,7 @@
           .done(function (res) {
             console.log(res);
             if (res.status) {
+              interval *= 1000;
               window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
             } else {
               interval *= 2;

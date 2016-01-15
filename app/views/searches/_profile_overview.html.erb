@@ -6,7 +6,7 @@
         <img style="margin-top: 20px; border: 4px solid #ffffff;" src="<%= searched_tw_user.profile_image_url_https.to_s %>">
         <div style="margin-top: 20px; font-weight: normal; line-height: 120%; font-size: 18px; color: #ffffff;">
           <div class="full-name">
-            <div><span class="text">&nbsp;<%= searched_tw_user.name %>&nbsp;</span></div>
+            <div><span class="text"><%= searched_tw_user.name %>&nbsp;</span><span class="glyphicon glyphicon-lock"></span></div>
           </div>
           <div class="screen-name">@<%= searched_tw_user.screen_name %></div>
         </div>

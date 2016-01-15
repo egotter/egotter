@@ -1,6 +1,12 @@
 class SearchesController < ApplicationController
 
   SEARCH_MENUS = %i(show removed_friends removed_followers mutual_friends users_replying users_replied)
+  NEED_VALIDATION = SEARCH_MENUS + %i(create)
+
+  before_action :invalid_twitter_id, only: NEED_VALIDATION
+  before_action :suspended_user, only: NEED_VALIDATION
+  before_action :protected_user_and_not_allowed_to_show_result, only: NEED_VALIDATION
+  before_action :too_many_friends_and_followers, only: NEED_VALIDATION
 
   before_action :set_raw_user, only: SEARCH_MENUS
   before_action :set_searched_tw_user, only: SEARCH_MENUS
@@ -72,7 +78,7 @@ class SearchesController < ApplicationController
     end
   end
 
-  # GET /searches/new
+  # GET /
   def new
   end
 
@@ -83,26 +89,9 @@ class SearchesController < ApplicationController
   # POST /searches
   # POST /searches.json
   def create
-    unless search_sn =~ /\A\w+\z/ && search_sn.length <= 20
-      return redirect_to '/', alert: 'invalid Twitter ID'
-    end
-
     begin
       searched_sn = search_sn
-      unless client.user?(searched_sn)
-        logger.warn search_sn
-        return redirect_to '/', alert: 'the user is suspended or not exist'
-      end
-
       searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
-      if searched_raw_tw_user.protected && (!user_signed_in? || searched_raw_tw_user.id.to_i != current_user.uid.to_i)
-        return redirect_to '/', alert: 'the user is protected'
-      end
-
-      if searched_raw_tw_user.friends_count + searched_raw_tw_user.followers_count > 1500
-        return redirect_to '/', alert: 'the user has too many friends and followers'
-      end
-
       searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
     rescue => e
       logger.warn e.message
@@ -128,6 +117,7 @@ class SearchesController < ApplicationController
     redirect_to waiting_path(screen_name: searched_sn, id: searched_uid), notice: 'test'
   end
 
+  # POST /searches/:screen_name/waiting
   def waiting
     if request.post?
       raw_user = client.user(params[:id].to_i)
@@ -135,29 +125,27 @@ class SearchesController < ApplicationController
       render json: {status: TwitterUser.latest(raw_user.id.to_i).present?}
     else
       set_raw_user
-      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, params[:id].to_i, all: false)
-      render
+      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, search_id.to_i, all: false)
     end
   end
 
   private
   def set_raw_user
     if search_id.blank?
-      logger.warn 'search value is empty'
-      return redirect_to '/', alert: 'error 004'
+      return redirect_to '/', alert: t('before_sign_in.blank_id')
     end
 
     u = client.user(search_id.to_i) && client.user(search_id.to_i)
     @raw_user = u
   rescue => e
     logger.warn "#{e.message} #{search_id}"
-    return redirect_to '/', alert: 'error 001'
+    redirect_to '/', alert: t('before_sign_in.invalid_uid')
   end
 
   def set_searched_tw_user
     tu = TwitterUser.latest(@raw_user.id)
     if tu.blank?
-      return redirect_to '/', alert: 'error 002'
+      return redirect_to '/', alert: t('before_sign_in.blank_search_result')
     end
     @searched_tw_user = tu
   end
@@ -167,7 +155,43 @@ class SearchesController < ApplicationController
   end
 
   def search_id
-    params[:id]
+    params[:id].to_i
+  end
+
+  def invalid_twitter_id
+    unless search_sn =~ /\A\w{1,20}\z/
+      redirect_to '/', alert: t('before_sign_in.invalid_twitter_id')
+    end
+  end
+
+  def suspended_user
+    unless client.user?(search_sn)
+      redirect_to '/', alert: t('before_sign_in.suspended_user', user: search_sn)
+    end
+  end
+
+  def protected_user_and_not_allowed_to_show_result
+    alert_msg = t('before_sign_in.protected_user',
+                  user: search_sn,
+                  sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+    raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
+
+    return unless raw_user.protected
+    return redirect_to '/', alert: alert_msg unless user_signed_in?
+    return if raw_user.id.to_i == current_user.uid.to_i
+    return if client.friendship?(current_user.uid.to_i, raw_user.id.to_i)
+
+    redirect_to '/', alert: alert_msg
+  end
+
+  def too_many_friends_and_followers
+    raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
+    if raw_user.friends_count + raw_user.followers_count > 1500
+      alert_msg = t('before_sign_in.too_many_friends',
+                    user: search_sn,
+                    sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+      redirect_to '/', alert: alert_msg
+    end
   end
 
   def client

@@ -59,10 +59,10 @@
 </nav>
 
 <% if notice %>
-  <p class="alert alert-info" style="margin: 0px;"><%= notice %></p>
+  <p class="alert alert-info" style="margin: 0px;"><%= raw notice %></p>
 <% end %>
 <% if alert %>
-  <p class="alert alert-warning" style="margin: 0px;"><%= alert %></p>
+  <p class="alert alert-warning" style="margin: 0px;"><%= raw alert %></p>
 <% end %>
 
 <%= yield %>
