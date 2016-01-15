@@ -1,21 +1,32 @@
 <%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
 
-<div class="container" style="margin-top: 15px;">
-  <%= t('dictionary.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+<div class="container waiting_msg" style="margin-top: 15px;">
+  <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
 
 <script>
   $(function () {
-    var refreshIntervalId = setInterval(function () {
+    var interval = 1000;
+    var call_count = 0;
+
+    function tic() {
       $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
           .done(function (res) {
             console.log(res);
             if (res.status) {
-              clearInterval(refreshIntervalId);
               window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
             } else {
+              interval *= 2;
             }
           });
-    }, 1000);
+      call_count++;
+      if (call_count < 5) {
+        setTimeout(tic, interval);
+      } else {
+        $('.waiting_msg').html('<%= t("dictionary.please_retry", user: @searched_tw_user.name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+      }
+    }
+
+    tic();
   });
 </script>
