@@ -21,7 +21,7 @@
             }
           });
       call_count++;
-      if (call_count < 5) {
+      if (call_count < 10) {
         setTimeout(tic, interval);
       } else {
         $('.waiting_msg').html('<%= t("dictionary.please_retry", user: @searched_tw_user.name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');

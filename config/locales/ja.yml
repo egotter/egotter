@@ -14,6 +14,7 @@ ja:
     last_updated_at: "最終更新日時"
     created_at_and_updated_at: "作成・更新日時"
   before_sign_in:
+    too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     invalid_twitter_id: "無効な Twitter ID が入力されました。"
     suspended_user: "%{user} は凍結されています。凍結が解除されてから検索してください。"
     protected_user: "%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、%{sign_in_link} すれば検索することができます。"

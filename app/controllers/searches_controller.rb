@@ -5,7 +5,7 @@ class SearchesController < ApplicationController
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
   before_action :suspended_user, only: NEED_VALIDATION
-  before_action :protected_user_and_not_allowed_to_show_result, only: NEED_VALIDATION
+  before_action :protected_user_and_not_allowed_to_search, only: NEED_VALIDATION
   before_action :too_many_friends_and_followers, only: NEED_VALIDATION
 
   before_action :set_raw_user, only: SEARCH_MENUS
@@ -133,6 +133,8 @@ class SearchesController < ApplicationController
 
     u = client.user(search_id.to_i) && client.user(search_id.to_i)
     @raw_user = u
+  rescue Twitter::Error::TooManyRequests => e
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   rescue => e
     logger.warn "#{e.message} #{search_id}"
     redirect_to '/', alert: t('before_sign_in.invalid_uid')
@@ -164,12 +166,14 @@ class SearchesController < ApplicationController
     unless client.user?(search_sn)
       redirect_to '/', alert: t('before_sign_in.suspended_user', user: search_sn)
     end
+  rescue Twitter::Error::TooManyRequests => e
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
-  def protected_user_and_not_allowed_to_show_result
+  def protected_user_and_not_allowed_to_search
     alert_msg = t('before_sign_in.protected_user',
                   user: search_sn,
-                  sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+                  sign_in_link: sign_in_link)
     raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
 
     return unless raw_user.protected
@@ -178,6 +182,8 @@ class SearchesController < ApplicationController
     return if client.friendship?(current_user.uid.to_i, raw_user.id.to_i)
 
     redirect_to '/', alert: alert_msg
+  rescue Twitter::Error::TooManyRequests => e
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
   def too_many_friends_and_followers
@@ -185,9 +191,11 @@ class SearchesController < ApplicationController
     if raw_user.friends_count + raw_user.followers_count > TwitterUser::TOO_MANY_FRIENDS
       alert_msg = t('before_sign_in.too_many_friends',
                     user: search_sn,
-                    sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+                    sign_in_link: sign_in_link)
       redirect_to '/', alert: alert_msg
     end
+  rescue Twitter::Error::TooManyRequests => e
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
   def create_search_log(name, search_uid, search_sn, search_value)
@@ -201,6 +209,10 @@ class SearchesController < ApplicationController
       same_user: (user_signed_in? && current_user.uid.to_i == search_uid.to_i))
   rescue => e
     logger.warn "create_search_log #{e.message}"
+  end
+
+  def sign_in_link
+    view_context.link_to(t('dictionary.sign_in'), welcome_path)
   end
 
   def client
