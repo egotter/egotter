@@ -45,6 +45,8 @@ class SearchesController < ApplicationController
         path_method: method(:users_replied_path).to_proc
       },
     ]
+  rescue Twitter::Error::TooManyRequests => e
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
   # GET /searches/:screen_name/removed_friends
@@ -93,6 +95,8 @@ class SearchesController < ApplicationController
       searched_sn = search_sn
       searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
       searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
+    rescue Twitter::Error::TooManyRequests => e
+      return redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
     rescue => e
       logger.warn e.message
       return redirect_to '/', alert: 'error 003'
@@ -122,6 +126,12 @@ class SearchesController < ApplicationController
     else
       set_raw_user
       @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, @raw_user.id.to_i, all: false)
+    end
+  rescue Twitter::Error::TooManyRequests => e
+    if request.post?
+      render json: {status: false}
+    else
+      redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
     end
   end
 
