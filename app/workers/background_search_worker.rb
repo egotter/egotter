@@ -16,6 +16,7 @@ class BackgroundSearchWorker
       if tu.save_raw_twitter_data
         logger.debug "create #{screen_name}"
       else
+        tu.touch
         logger.debug "not create(#{tu.errors.full_messages}) #{screen_name}"
       end
     end
