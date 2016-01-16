@@ -1,6 +1,6 @@
 class FollowEgotterWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: 3, backtrace: true
+  sidekiq_options queue: :egotter, retry: false, backtrace: true
 
   def perform(uid)
     c = client(uid.to_i)

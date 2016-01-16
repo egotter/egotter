@@ -48,34 +48,51 @@ class TwitterUser < ActiveRecord::Base
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
-  validate :allow_to_create?
+  validates :uid, presence: true, numericality: :only_integer
+  validates :screen_name, presence: true, length: {maximum: 75}
+  validates :user_info, presence: true
+  validate :friends_and_followers_zero?
+  validate :recently_created_record_exists?
+  validate :same_record_exists?
 
-  def allow_to_create?
-    me = latest_me
-    return true if me.blank?
-    if me.recently_created? || me.recently_updated?
-      errors[:base] << 'recently_created? or recently_updated? is true'
-      return false
+  def friends_and_followers_zero?
+    if friends.size + followers.size == 0
+      errors[:base] << 'friends + followers is zero'
+      return true
     end
-    latest_me.different_from?(self)
+
+    false
   end
 
-  def different_from?(other)
-    raise 'something is wrong' if self.new_record?
-    raise 'something is wrong' if other.persisted?
+  def recently_created_record_exists?
+    me = latest_me
+    return false if me.blank?
+    if me.recently_created? || me.recently_updated?
+      errors[:base] << 'recently_created? or recently_updated? is true'
+      return true
+    end
+
+    false
+  end
+
+  def same_record_exists?
+    other = latest_me
+    raise 'something is wrong' if self.persisted?
+    raise 'something is wrong' if other.new_record?
     raise 'something is wrong' if self.uid != other.uid
 
-    if self.friends_count != other.friends_count || self.followers_count != other.followers_count
-      errors[:base] << 'friends_count or followers_count is different'
+    if other.friends_count != self.friends_count || other.followers_count != self.followers_count
+      logger.debug "#{screen_name} friends_count or followers_count is different"
       return false
     end
 
-    if self.friends.pluck(:uid).map { |uid| uid.to_i }.sort != other.friends.map { |f| f.uid.to_i }.sort ||
-      self.followers.pluck(:uid).map { |uid| uid.to_i }.sort != other.followers.map { |f| f.uid.to_i }.sort
-      errors[:base] << 'friends or followers are different'
+    if other.friends.pluck(:uid).map { |uid| uid.to_i }.sort != self.friends.map { |f| f.uid.to_i }.sort ||
+      other.followers.pluck(:uid).map { |uid| uid.to_i }.sort != self.followers.map { |f| f.uid.to_i }.sort
+      logger.debug "#{screen_name} friends or followers are different"
       return false
     end
 
+    errors[:base] << 'same record exists'
     true
   end
 
@@ -121,15 +138,15 @@ class TwitterUser < ActiveRecord::Base
 
     _friends, _followers = self.friends.map{|f| f }, self.followers.map{|f| f }
     self.friends = self.followers = []
-    self.save
+    self.save!(false)
 
     begin
       self.transaction do
         _friends.map {|f| f.from_id = self.id }
-        _friends.each_slice(100).each { |f| Friend.import(f) }
+        _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
 
         _followers.map {|f| f.from_id = self.id }
-        _followers.each_slice(100).each { |f| Follower.import(f) }
+        _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
       end
 
       self.reload # for friends and followers
