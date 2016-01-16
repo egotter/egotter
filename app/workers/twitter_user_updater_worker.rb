@@ -1,6 +1,6 @@
 class TwitterUserUpdaterWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: 3, backtrace: true
+  sidekiq_options queue: :egotter, retry: 1, backtrace: 3
 
   def perform(uid)
     u = client.user(uid.to_i) && client.user(uid.to_i)
@@ -23,6 +23,10 @@ class TwitterUserUpdaterWorker
     else
       logger.debug "#{user_name(u)} do nothing(#{new_tu.errors.full_messages})"
     end
+
+  rescue Twitter::Error::TooManyRequests => e
+    logger.warn "#{e.message} retry after #{e.rate_limit.reset_in} seconds"
+    raise e
   end
 
   def user_name(u)

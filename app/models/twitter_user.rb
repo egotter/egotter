@@ -77,6 +77,7 @@ class TwitterUser < ActiveRecord::Base
 
   def same_record_exists?
     other = latest_me
+    return false if other.blank?
     raise 'something is wrong' if self.persisted?
     raise 'something is wrong' if other.new_record?
     raise 'something is wrong' if self.uid != other.uid
@@ -136,9 +137,9 @@ class TwitterUser < ActiveRecord::Base
       return false
     end
 
-    _friends, _followers = self.friends.map{|f| f }, self.followers.map{|f| f }
+    _friends, _followers = self.friends.to_a.dup, self.followers.to_a.dup
     self.friends = self.followers = []
-    self.save!(false)
+    self.save(validate: false)
 
     begin
       self.transaction do
