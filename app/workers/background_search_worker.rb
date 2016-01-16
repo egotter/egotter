@@ -1,6 +1,6 @@
 class BackgroundSearchWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: 3, backtrace: true
+  sidekiq_options queue: :egotter, retry: 1, backtrace: 3
 
   def perform(uid, screen_name, login_user_id)
     logger.debug "#{user_name(uid, screen_name)} start"
@@ -16,7 +16,7 @@ class BackgroundSearchWorker
       if tu.save_raw_twitter_data
         logger.debug "create #{screen_name}"
       else
-        logger.debug "create(#{tu.errors.full_messages}) #{screen_name}"
+        logger.debug "not create(#{tu.errors.full_messages}) #{screen_name}"
       end
     end
 
