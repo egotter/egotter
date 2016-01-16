@@ -8,6 +8,7 @@
   $(function () {
     var interval = 2000;
     var call_count = 0;
+    var too_many_requests = false;
 
     function tic() {
       $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
@@ -17,14 +18,22 @@
               interval *= 1000;
               window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
             } else {
-              interval *= 2;
+              if (res.reason == 'too many requests') {
+                too_many_requests = true;
+              } else {
+                interval *= 2;
+              }
             }
           });
       call_count++;
-      if (call_count < 10) {
-        setTimeout(tic, interval);
+      if (too_many_requests) {
+        $('.waiting_msg').html('<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
       } else {
-        $('.waiting_msg').html('<%= t("dictionary.please_retry", user: @searched_tw_user.name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+        if (call_count < 10) {
+          setTimeout(tic, interval);
+        } else {
+          $('.waiting_msg').html('<%= t("dictionary.please_retry", user: @searched_tw_user.name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+        }
       }
     }
 

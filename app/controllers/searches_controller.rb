@@ -129,7 +129,7 @@ class SearchesController < ApplicationController
     end
   rescue Twitter::Error::TooManyRequests => e
     if request.post?
-      render json: {status: false}
+      render json: {status: false, reason: 'too many requests'}
     else
       redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
     end
