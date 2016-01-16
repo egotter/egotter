@@ -186,7 +186,7 @@ class SearchesController < ApplicationController
 
   def too_many_friends_and_followers
     raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
-    if raw_user.friends_count + raw_user.followers_count > 1500
+    if raw_user.friends_count + raw_user.followers_count > TwitterUser::TOO_MANY_FRIENDS
       alert_msg = t('before_sign_in.too_many_friends',
                     user: search_sn,
                     sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))

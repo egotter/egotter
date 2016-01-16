@@ -48,16 +48,28 @@ class TwitterUser < ActiveRecord::Base
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
+  TOO_MANY_FRIENDS = 1500
+
   validates :uid, presence: true, numericality: :only_integer
   validates :screen_name, presence: true, length: {maximum: 75}
   validates :user_info, presence: true
   validate :friends_and_followers_zero?
+  validate :friends_and_followers_too_many?
   validate :recently_created_record_exists?
   validate :same_record_exists?
 
   def friends_and_followers_zero?
     if friends.size + followers.size == 0
-      errors[:base] << 'friends + followers is zero'
+      errors[:base] << 'sum of friends and followers is zero'
+      return true
+    end
+
+    false
+  end
+
+  def friends_and_followers_too_many?
+    if friends.size + followers.size  > TOO_MANY_FRIENDS
+      errors[:base] << 'too many friends and followers'
       return true
     end
 
