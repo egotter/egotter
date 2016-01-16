@@ -21,7 +21,7 @@
               if (res.reason == 'too many requests') {
                 too_many_requests = true;
               } else {
-                interval *= 2;
+                interval += 2000;
               }
             }
           });
