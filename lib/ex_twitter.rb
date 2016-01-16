@@ -90,7 +90,6 @@ class ExTwitter < Twitter::REST::Client
     file_cache_key(method_name, user)
   end
 
-  # TODO choose necessary data
   # encode
   def to_json_according_to_type(obj)
     start_t = Time.now.to_i
@@ -102,6 +101,8 @@ class ExTwitter < Twitter::REST::Client
           JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
         when obj.kind_of?(Twitter::User) # user
           JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::SAVE_KEYS))
+        when obj === true || obj === false # user?
+          obj
         else
           raise obj.inspect
       end
@@ -113,7 +114,7 @@ class ExTwitter < Twitter::REST::Client
   # decode
   def parse_json_according_to_type(str)
     start_t = Time.now.to_i
-    obj = JSON.parse(str)
+    obj = str.kind_of?(String) ? JSON.parse(str) : str
     result =
       case
         when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
@@ -122,6 +123,8 @@ class ExTwitter < Twitter::REST::Client
           obj.map { |o| Hashie::Mash.new(o) }
         when obj.kind_of?(Hash) # user
           Hashie::Mash.new(obj)
+        when obj === true || obj === false # user?
+          obj
         else
           raise obj.inspect
       end
@@ -147,7 +150,15 @@ class ExTwitter < Twitter::REST::Client
 
   alias :old_user? :user?
   def user?(*args)
-    old_user?(*args)
+    return old_user? if args.empty?
+    fetch_cache_or_call_api(:user?, args) {
+      begin
+        old_user?(*args)
+      rescue Twitter::Error::NotFound => e
+        logger.warn "#{e.message} #{args.inspect}"
+        raise e
+      end
+    }
   end
 
   alias :old_user :user

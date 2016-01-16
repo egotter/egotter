@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
 
   SEARCH_MENUS = %i(show removed_friends removed_followers mutual_friends users_replying users_replied)
-  NEED_VALIDATION = SEARCH_MENUS + %i(create)
+  NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
   before_action :suspended_user, only: NEED_VALIDATION
@@ -98,21 +98,18 @@ class SearchesController < ApplicationController
       return redirect_to '/', alert: 'error 003'
     end
 
-    FetchStatusesWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
-    BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
+    create_search_log('create', searched_uid, searched_sn, search_sn)
 
-    begin
-      SearchLog.create(
-        login: user_signed_in?,
-        login_user_id: user_signed_in? ? current_user.id : -1,
-        search_uid: searched_uid,
-        search_sn: searched_sn,
-        search_value: search_sn.to_s,
-        search_menu: '',
-        same_user: user_signed_in? ? current_user.uid.to_i == searched_uid.to_i : false)
-    rescue => e
-      logger.warn e.message
-    end
+    FetchStatusesWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
+    BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), {
+      login: user_signed_in?,
+      login_user_id: user_signed_in? ? current_user.id : -1,
+      search_uid: searched_uid,
+      search_sn: searched_sn,
+      search_value: search_sn,
+      search_menu: 'background',
+      same_user: (user_signed_in? && current_user.uid.to_i == searched_uid.to_i)}
+    )
 
     redirect_to waiting_path(screen_name: searched_sn, id: searched_uid), notice: 'test'
   end
@@ -121,11 +118,10 @@ class SearchesController < ApplicationController
   def waiting
     if request.post?
       raw_user = client.user(params[:id].to_i)
-      # TODO need to check signing in status if the user is protected
-      render json: {status: TwitterUser.latest(raw_user.id.to_i).present?}
+      render json: {status: SearchLog.background_search_success?(raw_user.id)}
     else
       set_raw_user
-      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, search_id.to_i, all: false)
+      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, @raw_user.id.to_i, all: false)
     end
   end
 
@@ -192,6 +188,19 @@ class SearchesController < ApplicationController
                     sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
       redirect_to '/', alert: alert_msg
     end
+  end
+
+  def create_search_log(name, search_uid, search_sn, search_value)
+    SearchLog.create(
+      login: user_signed_in?,
+      login_user_id: user_signed_in? ? current_user.id : -1,
+      search_uid: search_uid,
+      search_sn: search_sn,
+      search_value: search_value,
+      search_menu: name,
+      same_user: (user_signed_in? && current_user.uid.to_i == search_uid.to_i))
+  rescue => e
+    logger.warn "create_search_log #{e.message}"
   end
 
   def client

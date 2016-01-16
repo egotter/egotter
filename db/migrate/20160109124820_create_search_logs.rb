@@ -14,5 +14,6 @@ class CreateSearchLogs < ActiveRecord::Migration
     add_index :search_logs, :login_user_id
     add_index :search_logs, :search_value
     add_index :search_logs, :search_menu
+    add_index :search_logs, [:search_uid, :search_menu]
   end
 end
