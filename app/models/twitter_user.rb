@@ -88,23 +88,51 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def same_record_exists?
-    other = latest_me
-    return false if other.blank?
-    raise 'something is wrong' if self.persisted?
+    same_record?(latest_me)
+  end
 
-    if other.friends_count != self.friends_count || other.followers_count != self.followers_count
+  def same_record?(tu)
+    raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
+    return false if tu.blank?
+
+    if tu.friends_count != self.friends_count || tu.followers_count != self.followers_count
       logger.debug "#{screen_name} friends_count or followers_count is different"
       return false
     end
 
-    if other.friends.pluck(:uid).map { |uid| uid.to_i }.sort != self.friends.map { |f| f.uid.to_i }.sort ||
-      other.followers.pluck(:uid).map { |uid| uid.to_i }.sort != self.followers.map { |f| f.uid.to_i }.sort
+    if tu.friend_uids != self.friend_uids || tu.follower_uids != self.follower_uids
       logger.debug "#{screen_name} friends or followers are different"
       return false
     end
 
-    errors[:base] << 'same record exists'
+    errors[:base] << "id:#{tu.id} is the same"
     true
+  end
+  
+  def friend_uids
+    if new_record?
+      friends.map { |f| f.uid.to_i }.sort
+    else
+      friends.pluck(:uid).map { |uid| uid.to_i }.sort
+    end
+  end
+
+  def follower_uids
+    if new_record?
+      followers.map { |f| f.uid.to_i }.sort
+    else
+      followers.pluck(:uid).map { |uid| uid.to_i }.sort
+    end
+  end
+
+  def diff(tu)
+    raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
+    diffs = []
+    diffs << "friends_count(#{self.friends_count},#{tu.friends_count})" if self.friends_count != tu.friends_count
+    diffs << "followers_count(#{self.followers_count},#{tu.followers_count})" if self.followers_count != tu.followers_count
+    diffs << "friends(#{self.friend_uids.size},#{tu.friend_uids.size})" if self.friend_uids != tu.friend_uids
+    diffs << "followers(#{self.follower_uids.size},#{tu.follower_uids.size})" if self.follower_uids != tu.follower_uids
+    diffs
   end
 
   def self.build_with_raw_twitter_data(client, uid, option = {})
