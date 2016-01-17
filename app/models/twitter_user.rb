@@ -92,8 +92,8 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def same_record?(tu)
-    raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
     return false if tu.blank?
+    raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
 
     if tu.friends_count != self.friends_count || tu.followers_count != self.followers_count
       logger.debug "#{screen_name} friends_count or followers_count is different"

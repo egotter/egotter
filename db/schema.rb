@@ -17,6 +17,7 @@ ActiveRecord::Schema.define(version: 20160117151244) do
     t.boolean  "login",         default: false
     t.integer  "login_user_id", default: -1
     t.text     "uid",           default: "-1"
+    t.text     "bot_uid",       default: "-1"
     t.boolean  "status",        default: false
     t.text     "reason",        default: ""
     t.datetime "created_at",                    null: false
@@ -27,11 +28,12 @@ ActiveRecord::Schema.define(version: 20160117151244) do
   add_index "background_search_logs", ["uid"], name: "index_background_search_logs_on_uid"
 
   create_table "background_update_logs", force: :cascade do |t|
-    t.text     "uid"
-    t.boolean  "status"
-    t.text     "reason"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.text     "uid",        default: "-1"
+    t.text     "bot_uid",    default: "-1"
+    t.boolean  "status",     default: false
+    t.text     "reason",     default: ""
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
   end
 
   add_index "background_update_logs", ["uid"], name: "index_background_update_logs_on_uid"
@@ -74,6 +76,7 @@ ActiveRecord::Schema.define(version: 20160117151244) do
 
   add_index "search_logs", ["login_user_id"], name: "index_search_logs_on_login_user_id"
   add_index "search_logs", ["search_menu"], name: "index_search_logs_on_search_menu"
+  add_index "search_logs", ["search_uid", "search_menu"], name: "index_search_logs_on_search_uid_and_search_menu"
   add_index "search_logs", ["search_value"], name: "index_search_logs_on_search_value"
 
   create_table "twitter_users", force: :cascade do |t|

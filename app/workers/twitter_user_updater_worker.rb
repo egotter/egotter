@@ -37,14 +37,12 @@ class TwitterUserUpdaterWorker
   end
 
   def create_log(uid, status, reason)
-    BackgroundUpdateLog.create(uid: uid, status: status, reason: reason)
+    BackgroundUpdateLog.create(uid: uid, bot_uid: bot.uid, status: status, reason: reason)
   rescue => e
     logger.warn "create_log #{e.message}"
   end
 
   def client
-    raise 'create bot' if Bot.empty?
-    bot = Bot.sample
     config = {
       consumer_key: ENV['TWITTER_CONSUMER_KEY'],
       consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
@@ -54,6 +52,11 @@ class TwitterUserUpdaterWorker
     c = ExTwitter.new(config)
     c.verify_credentials
     c
+  end
+
+  def bot
+    raise 'create bot' if Bot.empty?
+    @bot ||= Bot.sample
   end
 
 end

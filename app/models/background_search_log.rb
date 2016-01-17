@@ -6,6 +6,7 @@
 #  login         :boolean          default(FALSE)
 #  login_user_id :integer          default(-1)
 #  uid           :text             default("-1")
+#  bot_uid       :text             default("-1")
 #  status        :boolean          default(FALSE)
 #  reason        :text             default("")
 #  created_at    :datetime         not null

@@ -5,6 +5,7 @@ class BackgroundSearchWorker
   def perform(uid, screen_name, login_user_id, log_attrs = {})
     logger.debug "#{user_name(uid, screen_name)} start"
 
+    @user_id = login_user_id
     uid = uid.to_i
     screen_name = screen_name.to_s
 
@@ -36,23 +37,25 @@ class BackgroundSearchWorker
   end
 
   def create_log(attrs, status, reason)
-    BackgroundSearchLog.create(attrs.update(status: status, reason: reason))
+    BackgroundSearchLog.create(attrs.update(bot_uid: bot(@user_id).uid, status: status, reason: reason))
   rescue => e
-    logger.warn "create_log #{e.message}"
+    logger.warn "create_log #{e.message} #{attrs.inspect}"
   end
 
   def client(user_id)
-    raise 'create bot' if Bot.empty?
-    bot = user_id.nil? ? Bot.sample : User.find(user_id)
     config = {
       consumer_key: ENV['TWITTER_CONSUMER_KEY'],
       consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: bot.token,
-      access_token_secret: bot.secret
+      access_token: bot(user_id).token,
+      access_token_secret: bot(user_id).secret
     }
     c = ExTwitter.new(config)
     c.verify_credentials
     c
   end
 
+  def bot(user_id)
+    raise 'create bot' if Bot.empty?
+    @bot ||= user_id.nil? ? Bot.sample : User.find(user_id)
+  end
 end

@@ -15,9 +15,10 @@
 #
 # Indexes
 #
-#  index_search_logs_on_login_user_id  (login_user_id)
-#  index_search_logs_on_search_menu    (search_menu)
-#  index_search_logs_on_search_value   (search_value)
+#  index_search_logs_on_login_user_id               (login_user_id)
+#  index_search_logs_on_search_menu                 (search_menu)
+#  index_search_logs_on_search_uid_and_search_menu  (search_uid,search_menu)
+#  index_search_logs_on_search_value                (search_value)
 #
 
 class SearchLog < ActiveRecord::Base

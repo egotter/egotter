@@ -4,6 +4,7 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
       t.boolean :login,         default: false
       t.integer :login_user_id, default: -1
       t.text :uid,              default: -1
+      t.text :bot_uid,          default: -1
       t.boolean :status,        default: false
       t.text :reason,           default: ''
 
