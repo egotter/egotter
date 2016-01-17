@@ -91,8 +91,6 @@ class TwitterUser < ActiveRecord::Base
     other = latest_me
     return false if other.blank?
     raise 'something is wrong' if self.persisted?
-    raise 'something is wrong' if other.new_record?
-    raise 'something is wrong' if self.uid != other.uid
 
     if other.friends_count != self.friends_count || other.followers_count != self.followers_count
       logger.debug "#{screen_name} friends_count or followers_count is different"

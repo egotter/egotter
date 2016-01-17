@@ -49,6 +49,7 @@ group :development, :test do
   gem 'annotate'
   gem 'whenever', :require => false
   gem 'rspec-rails'
+  gem 'factory_girl_rails'
 end
 
 group :development do
