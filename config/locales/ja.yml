@@ -11,8 +11,7 @@ ja:
     waiting: "%{user} のデータを検索中"
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
     view_more: "続きを見る"
-    last_updated_at: "最終更新日時"
-    created_at_and_updated_at: "作成・更新日時"
+    created_at_and_updated_at: "更新日時"
   before_sign_in:
     too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     invalid_twitter_id: "無効な Twitter ID が入力されました。"

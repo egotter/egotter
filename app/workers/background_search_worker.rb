@@ -2,7 +2,7 @@ class BackgroundSearchWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: 1, backtrace: 3
 
-  def perform(uid, screen_name, login_user_id, option = {})
+  def perform(uid, screen_name, login_user_id, log_attrs = {})
     logger.debug "#{user_name(uid, screen_name)} start"
 
     uid = uid.to_i
@@ -10,31 +10,34 @@ class BackgroundSearchWorker
 
     if (tu = TwitterUser.latest(uid)).present? && tu.recently_created?
       tu.touch
-      create_search_log(option)
+      create_log(log_attrs, true, '')
       logger.debug "show #{screen_name}"
     else
       new_tu = TwitterUser.build(client(login_user_id), uid)
       if new_tu.save_with_bulk_insert
-        create_search_log(option)
+        create_log(log_attrs, true, '')
         logger.debug "create #{screen_name}"
       else
         tu.touch
-        create_search_log(option)
+        create_log(log_attrs, true, '')
         logger.debug "not create(#{new_tu.errors.full_messages}) #{screen_name}"
       end
     end
 
     logger.debug "#{user_name(uid, screen_name)} finish"
+
+  rescue Twitter::Error::TooManyRequests => e
+    create_log(log_attrs, false, BackgroundSearchLog::TooManyRequests)
   end
 
   def user_name(uid, screen_name)
     "#{uid},#{screen_name}"
   end
 
-  def create_search_log(option)
-    SearchLog.create(option)
+  def create_log(attrs, status, reason)
+    BackgroundSearchLog.create(attrs.update(status: status, reason: reason))
   rescue => e
-    logger.warn "create_search_log #{e.message}"
+    logger.warn "create_log #{e.message}"
   end
 
   def client(user_id)

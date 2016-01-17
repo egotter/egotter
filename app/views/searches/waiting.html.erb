@@ -18,7 +18,7 @@
               interval *= 1000;
               window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
             } else {
-              if (res.reason == 'too many requests') {
+              if (res.reason == '<%= BackgroundSearchLog::TooManyRequests %>') {
                 too_many_requests = true;
               } else {
                 interval += 2000;

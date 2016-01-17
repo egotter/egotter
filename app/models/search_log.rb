@@ -22,12 +22,6 @@
 
 class SearchLog < ActiveRecord::Base
 
-  def self.background_search_success?(uid)
-    # TODO I should probably separate background search log
-    record = order(created_at: :desc).find_by(search_uid: uid, search_menu: 'background')
-    record.present? && record.recently_created?
-  end
-
   def recently_created?(minutes = 5)
     Time.zone.now.to_i - created_at.to_i < 60 * minutes
   end

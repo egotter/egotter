@@ -108,11 +108,7 @@ class SearchesController < ApplicationController
     BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), {
       login: user_signed_in?,
       login_user_id: user_signed_in? ? current_user.id : -1,
-      search_uid: searched_uid,
-      search_sn: searched_sn,
-      search_value: search_sn,
-      search_menu: 'background',
-      same_user: (user_signed_in? && current_user.uid.to_i == searched_uid.to_i)}
+      uid: searched_uid}
     )
 
     redirect_to waiting_path(screen_name: searched_sn, id: searched_uid), notice: 'test'
@@ -122,7 +118,17 @@ class SearchesController < ApplicationController
   def waiting
     if request.post?
       raw_user = client.user(params[:id].to_i)
-      render json: {status: SearchLog.background_search_success?(raw_user.id)}
+      uid = raw_user.id.to_i
+      case
+        when BackgroundSearchLog.processing?(uid)
+          render json: {status: false, reason: 'processing'}
+        when BackgroundSearchLog.success?(uid)
+          render json: {status: true}
+        when BackgroundSearchLog.fail?(uid)
+          render json: {status: false, reason: BackgroundSearchLog.fail_reason(uid)}
+        else
+          raise 'something is wrong'
+      end
     else
       set_raw_user
       @searched_tw_user = TwitterUser.build(client, @raw_user.id.to_i, all: false)
