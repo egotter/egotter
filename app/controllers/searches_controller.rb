@@ -125,7 +125,7 @@ class SearchesController < ApplicationController
       render json: {status: SearchLog.background_search_success?(raw_user.id)}
     else
       set_raw_user
-      @searched_tw_user = TwitterUser.build_with_raw_twitter_data(client, @raw_user.id.to_i, all: false)
+      @searched_tw_user = TwitterUser.build(client, @raw_user.id.to_i, all: false)
     end
   rescue Twitter::Error::TooManyRequests => e
     if request.post?

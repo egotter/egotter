@@ -135,7 +135,7 @@ class TwitterUser < ActiveRecord::Base
     diffs
   end
 
-  def self.build_with_raw_twitter_data(client, uid, option = {})
+  def self.build(client, uid, option = {})
     option = {all: true} if option.blank?
 
     # call 2 times to use cache
@@ -169,7 +169,7 @@ class TwitterUser < ActiveRecord::Base
     tu
   end
 
-  def save_raw_twitter_data
+  def save_with_bulk_insert
     unless valid?
       logger.debug "[#{Time.zone.now}] #{self.class}#save_raw_twitter_data #{errors.full_messages}"
       return false

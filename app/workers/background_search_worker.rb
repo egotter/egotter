@@ -13,8 +13,8 @@ class BackgroundSearchWorker
       create_search_log(option)
       logger.debug "show #{screen_name}"
     else
-      new_tu = TwitterUser.build_with_raw_twitter_data(client(login_user_id), uid)
-      if new_tu.save_raw_twitter_data
+      new_tu = TwitterUser.build(client(login_user_id), uid)
+      if new_tu.save_with_bulk_insert
         create_search_log(option)
         logger.debug "create #{screen_name}"
       else

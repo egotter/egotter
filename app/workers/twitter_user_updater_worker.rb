@@ -17,8 +17,8 @@ class TwitterUserUpdaterWorker
       return
     end
 
-    new_tu = TwitterUser.build_with_raw_twitter_data(client, u.id)
-    if new_tu.save_raw_twitter_data
+    new_tu = TwitterUser.build(client, u.id)
+    if new_tu.save_with_bulk_insert
       logger.debug "#{user_name(u)} create new TwitterUser"
     else
       logger.debug "#{user_name(u)} do nothing(#{new_tu.errors.full_messages})"
