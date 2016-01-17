@@ -27,6 +27,7 @@ class BackgroundSearchWorker
     logger.debug "#{user_name(uid, screen_name)} finish"
 
   rescue Twitter::Error::TooManyRequests => e
+    logger.warn "#{e.message} retry after #{e.rate_limit.reset_in} seconds"
     create_log(log_attrs, false, BackgroundSearchLog::TooManyRequests)
   end
 

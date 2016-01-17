@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160117142535) do
+ActiveRecord::Schema.define(version: 20160117151244) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.boolean  "login",         default: false
@@ -25,6 +25,16 @@ ActiveRecord::Schema.define(version: 20160117142535) do
 
   add_index "background_search_logs", ["login_user_id"], name: "index_background_search_logs_on_login_user_id"
   add_index "background_search_logs", ["uid"], name: "index_background_search_logs_on_uid"
+
+  create_table "background_update_logs", force: :cascade do |t|
+    t.text     "uid"
+    t.boolean  "status"
+    t.text     "reason"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "background_update_logs", ["uid"], name: "index_background_update_logs_on_uid"
 
   create_table "followers", force: :cascade do |t|
     t.string   "uid",         null: false
