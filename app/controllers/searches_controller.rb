@@ -18,6 +18,8 @@ class SearchesController < ApplicationController
   def show
     tu = @searched_tw_user
     sn = '@' + tu.screen_name
+    _users_replying = tu.users_replying(client) && tu.users_replying(client)
+    _users_replied = tu.users_replied(client) && tu.users_replied(client)
     @menu_items = [
       {
         name: I18n.t('search_menu.removed_friends', user: sn),
@@ -33,15 +35,11 @@ class SearchesController < ApplicationController
         path_method: method(:mutual_friends_path).to_proc
       }, {
         name: I18n.t('search_menu.users_replying', user: sn),
-        target: tu.users_replying(client).map do |u|
-          uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id; uu
-        end,
+        target: _users_replying.map { |u| u.uid = u.id; u },
         path_method: method(:users_replying_path).to_proc
       }, {
         name: I18n.t('search_menu.users_replied', user: sn),
-        target: tu.users_replied(client).map do |u|
-          uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id; uu
-        end,
+        target: _users_replied.map { |u| u.uid = u.id; u },
         path_method: method(:users_replied_path).to_proc
       },
     ]
@@ -70,18 +68,14 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/users_replying
   def users_replying
-    @user_items = @searched_tw_user.users_replying(client).map do |u|
-      uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id
-      {target: uu}
-    end
+    users = @searched_tw_user.users_replying(client) && @searched_tw_user.users_replying(client)
+    @user_items = users.map { |u| u.uid = u.id; {target: u} }
   end
 
   # GET /searches/:screen_name/users_replied
   def users_replied
-    @user_items = @searched_tw_user.users_replied(client).map do |u|
-      uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id
-      {target: uu}
-    end
+    users = @searched_tw_user.users_replied(client) && @searched_tw_user.users_replied(client)
+    @user_items = users.map { |u| u.uid = u.id; {target: u} }
   end
 
   # GET /searches/:screen_name/update_history

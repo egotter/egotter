@@ -70,12 +70,18 @@ class ExTwitter < Twitter::REST::Client
     return_data
   end
 
+  require 'digest/md5'
+
   # currently ignore options
   def file_cache_key(method_name, user)
     identifier =
       case
-        when user.kind_of?(Fixnum) || user[0].kind_of?(Bignum)
+        when user.kind_of?(Integer)
           "id-#{user.to_s}"
+        when user.kind_of?(Array) && user.first.kind_of?(Integer)
+          "ids-#{Digest::MD5.hexdigest(user.join(','))}"
+        when user.kind_of?(Array) && user.first.kind_of?(String)
+          "sns-#{Digest::MD5.hexdigest(user.join(','))}"
         when user.kind_of?(String)
           "sn-#{user}"
         when user.kind_of?(Twitter::User)
@@ -97,12 +103,22 @@ class ExTwitter < Twitter::REST::Client
       case
         when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
           JSON.pretty_generate(obj.map { |o| o.attrs })
+
         when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
           JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
+
+        when obj.kind_of?(Array) && obj.first.kind_of?(Integer) # friend_ids, follower_ids
+          JSON.pretty_generate(obj)
+
         when obj.kind_of?(Twitter::User) # user
           JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::SAVE_KEYS))
+
+        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::User) # users
+          JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
+
         when obj === true || obj === false # user?
           obj
+
         else
           raise obj.inspect
       end
@@ -119,12 +135,22 @@ class ExTwitter < Twitter::REST::Client
       case
         when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
           obj.map { |o| Hashie::Mash.new(o.attrs) }
+
         when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
           obj.map { |o| Hashie::Mash.new(o) }
+
+        when obj.kind_of?(Array) && obj.first.kind_of?(Integer) # friend_ids, follower_ids
+          obj
+
         when obj.kind_of?(Hash) # user
           Hashie::Mash.new(obj)
+
+        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::User) # users
+          obj.map { |o| Hashie::Mash.new(o.attrs) }
+
         when obj === true || obj === false # user?
           obj
+
         else
           raise obj.inspect
       end
@@ -134,16 +160,17 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def fetch_cache_or_call_api(method_name, args, &block)
-    if cache.exist?(namespaced_key(method_name, args[0]))
-      data = parse_json_according_to_type(cache.read(namespaced_key(method_name, args[0])))
-      logger.debug "#{now} #{method_name} #{args.inspect} (cache read)"
+    key = namespaced_key(method_name, args[0])
+    if cache.exist?(key)
+      data = parse_json_according_to_type(cache.read(key))
+      logger.debug "#{now} #{method_name} #{key} (cache read)"
       return data
     end
 
     data = yield
 
-    cache.write(namespaced_key(method_name, args[0]), to_json_according_to_type(data))
-    logger.debug "#{now} #{method_name} #{args.inspect} (cache wrote)"
+    cache.write(key, to_json_according_to_type(data))
+    logger.debug "#{now} #{method_name} #{key} (cache wrote)"
 
     data
   end
@@ -175,6 +202,24 @@ class ExTwitter < Twitter::REST::Client
   end
   # memoize :user
 
+  alias :old_friend_ids :friend_ids
+  def friend_ids(*args)
+    args = [user] if args.empty? # need at least one param to use cache
+    fetch_cache_or_call_api(:friend_ids, args) {
+      options = {count: 5000, cursor: -1}.merge(args.extract_options!)
+      collect_with_cursor(:old_friend_ids, *args, options)
+    }
+  end
+
+  alias :old_follower_ids :follower_ids
+  def follower_ids(*args)
+    args = [user] if args.empty? # need at least one param to use cache
+    fetch_cache_or_call_api(:follower_ids, args) {
+      options = {count: 5000, cursor: -1}.merge(args.extract_options!)
+      collect_with_cursor(:old_follower_ids, *args, options)
+    }
+  end
+
   alias :old_friends :friends
   def friends(*args)
     args = [user] if args.empty? # need at least one param to use cache
@@ -184,6 +229,10 @@ class ExTwitter < Twitter::REST::Client
     }
   end
   # memoize :friends
+
+  def friends_advanced(*args)
+    users(friend_ids(*args).map { |id| id.to_i })
+  end
 
   alias :old_followers :followers
   def followers(*args)
@@ -195,6 +244,10 @@ class ExTwitter < Twitter::REST::Client
   end
   # memoize :followers
 
+  def followers_advanced(*args)
+    users(follower_ids(*args).map { |id| id.to_i })
+  end
+
   def friends_and_followers(*args)
     result = [nil, nil]
     Parallel.each_with_index([args, args], in_threads: 2) do |_args, i|
@@ -202,6 +255,19 @@ class ExTwitter < Twitter::REST::Client
         result[0] = friends(*_args)
       else
         result[1] = followers(*_args)
+      end
+    end
+
+    result
+  end
+
+  def friends_and_followers_advanced(*args)
+    result = [nil, nil]
+    Parallel.each_with_index([args, args], in_threads: 2) do |_args, i|
+      if i == 0
+        result[0] = friends_advanced(*_args)
+      else
+        result[1] = followers_advanced(*_args)
       end
     end
 
@@ -226,14 +292,19 @@ class ExTwitter < Twitter::REST::Client
   def detailed_removed_followers(pre_me, cur_me)
   end
 
+  # use compact, not use sort and uniq
   alias :old_users :users
   def users(*args)
     options = args.extract_options!
-    users_per_worker = args.first.each_slice(100).to_a
+    users_per_workers = args.first.compact.each_slice(100).to_a
     processed_users = []
 
-    Parallel.each_with_index(users_per_worker, in_threads: users_per_worker.size) do |_users, i|
-      result = {i: i, users: old_users(_users, options)}
+    Parallel.each_with_index(users_per_workers, in_threads: users_per_workers.size) do |users_per_worker, i|
+      _users = fetch_cache_or_call_api(:users, [users_per_worker, options]) {
+        old_users(users_per_worker, options)
+      }
+
+      result = {i: i, users: _users}
       processed_users << result
     end
 

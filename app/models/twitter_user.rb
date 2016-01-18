@@ -53,10 +53,20 @@ class TwitterUser < ActiveRecord::Base
   validates :uid, presence: true, numericality: :only_integer
   validates :screen_name, presence: true, length: {maximum: 75}
   validates :user_info, presence: true
+  validate :friends_or_followers_different?
   validate :friends_and_followers_zero?
   validate :friends_and_followers_too_many?
   validate :recently_created_record_exists?
   validate :same_record_exists?
+
+  def friends_or_followers_different?
+    if friends_count != friends.size || followers_count != followers.size
+      errors[:base] << 'friends_count or followers_count is different from friends.size or followers.size'
+      return true
+    end
+
+    false
+  end
 
   def friends_and_followers_zero?
     if friends.size + followers.size == 0
@@ -142,7 +152,8 @@ class TwitterUser < ActiveRecord::Base
 
     # call 2 times to use cache
     _raw_me = client.user(uid.to_i) && client.user(uid.to_i)
-    _friends, _followers = client.friends_and_followers(_raw_me.id.to_i) && client.friends_and_followers(_raw_me.id.to_i)
+    _friends, _followers =
+      client.friends_and_followers_advanced(_raw_me.id.to_i) && client.friends_and_followers(_raw_me.id.to_i)
 
     tu = TwitterUser.new do |tu|
       tu.uid = _raw_me.id.to_i
