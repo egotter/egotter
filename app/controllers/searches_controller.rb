@@ -80,8 +80,7 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/update_history
   def update_history
-    records = TwitterUser.where(uid: @searched_tw_user.uid).order(created_at: :desc).pluck(:created_at, :updated_at)
-    @update_histories = records.map{|r| Hashie::Mash.new({created_at: r[0], updated_at: r[1]}) }
+    @update_histories = TwitterUser.where(uid: @searched_tw_user.uid).order(created_at: :desc)
   end
 
   # GET /

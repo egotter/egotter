@@ -182,8 +182,8 @@ class TwitterUser < ActiveRecord::Base
     tu
   end
 
-  def save_with_bulk_insert
-    unless valid?
+  def save_with_bulk_insert(validate = true)
+    if validate && !valid?
       logger.debug "[#{Time.zone.now}] #{self.class}#save_raw_twitter_data #{errors.full_messages}"
       return false
     end
