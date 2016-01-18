@@ -15,12 +15,6 @@ RSpec.describe TwitterUser, type: :model do
       new_tu.friends = [new_friend]; new_tu.followers = [new_follower]
     end
 
-    context 'caller is persisted' do
-      it 'raises RuntimeError' do
-        expect { tu.same_record_exists? }.to raise_error RuntimeError
-      end
-    end
-
     context 'same record is persisted' do
       it 'returns true' do
         expect(new_tu.same_record_exists?).to be_truthy
