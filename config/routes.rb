@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
   get 'searches/:screen_name/users_replying', to: 'searches#users_replying', as: :users_replying
   get 'searches/:screen_name/users_replied', to: 'searches#users_replied', as: :users_replied
+  get 'searches/:screen_name/update_history', to: 'searches#update_history', as: :update_history
 
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
     omniauth_callbacks: "users/omniauth_callbacks"

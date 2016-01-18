@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show removed_friends removed_followers mutual_friends users_replying users_replied)
+  SEARCH_MENUS = %i(show removed_friends removed_followers mutual_friends users_replying users_replied update_history)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
@@ -45,6 +45,10 @@ class SearchesController < ApplicationController
         path_method: method(:users_replied_path).to_proc
       },
     ]
+    @menu_update_history = {
+      name: I18n.t('search_menu.update_history', user: sn),
+      path_method: method(:update_history_path).to_proc
+    }
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
@@ -78,6 +82,12 @@ class SearchesController < ApplicationController
       uu = Hashie::Mash.new(u.to_hash.slice(*TwitterUser::SAVE_KEYS)); uu.uid = uu.id
       {target: uu}
     end
+  end
+
+  # GET /searches/:screen_name/update_history
+  def update_history
+    records = TwitterUser.where(uid: @searched_tw_user.uid).order(created_at: :desc).pluck(:created_at, :updated_at)
+    @update_histories = records.map{|r| Hashie::Mash.new({created_at: r[0], updated_at: r[1]}) }
   end
 
   # GET /

@@ -31,6 +31,7 @@ ja:
     one_sided_followers: "%{user} が片思いされているユーザー"
     users_replying: "%{user} がリプライしたユーザー"
     users_replied: "%{user} がリプライされたユーザー"
+    update_history: "更新履歴"
   activerecord:
     errors:
       messages:

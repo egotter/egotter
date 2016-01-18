@@ -15,7 +15,6 @@
                       menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
                       class: 'btn btn-info btn-block',
                       style: 'margin-top: 15px;') %>
-          </a>
         </div>
       </div>
     </div>
@@ -24,7 +23,7 @@
 
 <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
   <div class="media-body" style="padding-left: 15px; padding-right: 15px;">
-    <h4 style="font-size: 16px; margin-bottom: 15px;" class="media-heading"><%= t('dictionary.created_at_and_updated_at') %></h4>
+    <h4 style="font-size: 16px; margin-bottom: 15px;" class="media-heading"><%= menu_update_history[:name] %></h4>
   </div>
   <div class="container">
     <div class="row">
@@ -33,6 +32,12 @@
       </div>
       <div class="col-xs-12">
         <%= searched_tw_user.updated_at %>
+      </div>
+      <div class="col-xs-12">
+        <%= link_to(t('dictionary.view_more'),
+                    menu_update_history[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                    class: 'btn btn-info btn-block',
+                    style: 'margin-top: 15px;') %>
       </div>
     </div>
   </div>

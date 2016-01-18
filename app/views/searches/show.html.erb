@@ -1,5 +1,6 @@
 <%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
 
 <div class="container" style="padding: 15px 0px 0px 0px;">
-  <%= render(partial: 'searches/search_menu_items', locals: {searched_tw_user: @searched_tw_user, menu_items: @menu_items}) %>
+  <%= render(partial: 'searches/search_menu_items',
+             locals: {searched_tw_user: @searched_tw_user, menu_items: @menu_items, menu_update_history: @menu_update_history}) %>
 </div>
