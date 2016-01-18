@@ -24,4 +24,12 @@ class Friend < ActiveRecord::Base
   def user_info_mash
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
+
+  def eql?(other)
+    self.uid.to_i == other.uid.to_i
+  end
+
+  def hash
+    self.uid.to_i.hash
+  end
 end

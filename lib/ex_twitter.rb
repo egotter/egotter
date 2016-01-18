@@ -208,39 +208,19 @@ class ExTwitter < Twitter::REST::Client
     result
   end
 
-  # return users which included both a_users and b_users
-  # use hash to reduce computational complexity
-  def both_included_users(a_users, b_users)
-    return [] if a_users.nil? || b_users.nil?
-
-    a_users_hash = a_users.each_with_object({}).with_index{|(u, memo), i| memo[u.uid.to_s] = i }
-    a_users_hash.slice!(*b_users.map{|u| u.uid.to_s })
-    a_users_hash.values.sort.map{|i| a_users[i] }
-  end
-
   def mutual_friends(me)
-    both_included_users(me.friends, me.followers)
-  end
-
-  # return users which included in a_users and not included in b_users
-  # use hash to reduce computational complexity
-  def excluded_users(a_users, b_users)
-    return [] if a_users.nil? || b_users.nil?
-
-    a_users_hash = a_users.each_with_object({}).with_index{|(u, memo), i| memo[u.uid.to_i] = i }
-    a_users_hash.except!(*b_users.map{|u| u.uid.to_i })
-    a_users_hash.values.sort.map{|i| a_users[i] }
+    me.friends.to_a & me.followers.to_a
   end
 
   def removed_friends(pre_me, cur_me)
-    excluded_users(pre_me.friends, cur_me.friends)
+    pre_me.friends.to_a - cur_me.friends.to_a
   end
 
   def detailed_removed_friends(pre_me, cur_me)
   end
 
   def removed_followers(pre_me, cur_me)
-    excluded_users(pre_me.followers, cur_me.followers)
+    pre_me.followers.to_a - cur_me.followers.to_a
   end
 
   def detailed_removed_followers(pre_me, cur_me)

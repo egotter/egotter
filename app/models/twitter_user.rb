@@ -108,7 +108,8 @@ class TwitterUser < ActiveRecord::Base
     errors[:base] << "id:#{tu.id} is the same"
     true
   end
-  
+
+  # sorting to use eql? method
   def friend_uids
     if new_record?
       friends.map { |f| f.uid.to_i }.sort
@@ -117,6 +118,7 @@ class TwitterUser < ActiveRecord::Base
     end
   end
 
+  # sorting to use eql? method
   def follower_uids
     if new_record?
       followers.map { |f| f.uid.to_i }.sort
@@ -245,5 +247,13 @@ class TwitterUser < ActiveRecord::Base
 
   def users_replied(client)
     client.users_replied(self.screen_name)
+  end
+
+  def eql?(other)
+    self.uid.to_i == other.uid.to_i
+  end
+
+  def hash
+    self.uid.to_i.hash
   end
 end
