@@ -153,7 +153,7 @@ class TwitterUser < ActiveRecord::Base
     # call 2 times to use cache
     _raw_me = client.user(uid.to_i) && client.user(uid.to_i)
     _friends, _followers =
-      client.friends_and_followers_advanced(_raw_me.id.to_i) && client.friends_and_followers(_raw_me.id.to_i)
+      client.friends_and_followers_advanced(_raw_me.id.to_i) && client.friends_and_followers_advanced(_raw_me.id.to_i)
 
     tu = TwitterUser.new do |tu|
       tu.uid = _raw_me.id.to_i
