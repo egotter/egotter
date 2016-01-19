@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends friends_in_common followers_in_common replying replied update_history)
+  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends friends_in_common followers_in_common replying replied clusters_belong_to update_history)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
@@ -18,8 +18,10 @@ class SearchesController < ApplicationController
   def show
     tu = @searched_tw_user
     sn = '@' + tu.screen_name
+    _clusters_belong_to = (tu.clusters_belong_to(client) && tu.clusters_belong_to(client) rescue [])
     _replying = (tu.replying(client) && tu.replying(client) rescue [])
     _replied = (tu.replied(client) && tu.replied(client) rescue [])
+
     @menu_items = [
       {
         name: I18n.t('search_menu.removing', user: sn),
@@ -59,6 +61,13 @@ class SearchesController < ApplicationController
         path_method: method(:replied_path).to_proc
       },
     ]
+
+    @menu_clusters_belong_to = {
+      name: I18n.t('search_menu.clusters_belong_to', user: sn),
+      target: _clusters_belong_to,
+      path_method: method(:clusters_belong_to_path).to_proc
+    }
+
     @menu_update_history = {
       name: I18n.t('search_menu.update_history', user: sn),
       path_method: method(:update_history_path).to_proc
@@ -112,6 +121,12 @@ class SearchesController < ApplicationController
   def replied
     users = (@searched_tw_user.replied(client) && @searched_tw_user.replied(client) rescue [])
     @user_items = users.map { |u| u.uid = u.id; {target: u} }
+  end
+
+  # GET /searches/:screen_name/clusters_belong_to
+  def clusters_belong_to
+    clusters = (@searched_tw_user.clusters_belong_to(client) && @searched_tw_user.clusters_belong_to(client) rescue [])
+    @clusters_belong_to = clusters.map { |c| {target: c} }
   end
 
   # GET /searches/:screen_name/update_history

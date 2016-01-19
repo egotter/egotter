@@ -271,11 +271,16 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def replying(client)
-    client.replying(self.screen_name)
+    client.replying(self.uid.to_i)
   end
 
   def replied(client)
     client.replied(self.screen_name)
+  end
+
+  def clusters_belong_to(client)
+    text = client.user_timeline(self.uid.to_i).map{|s| s.text }.join(' ')
+    ExTwitter.new.clusters_belong_to(text)
   end
 
   def eql?(other)

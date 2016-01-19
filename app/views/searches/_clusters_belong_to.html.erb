@@ -1,0 +1,8 @@
+<% clusters_belong_to.each do |cluster| %>
+  <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
+    <div class="media-body" style="padding-right: 15px;">
+      <h4 style="font-weight: bold; font-size: 14px;" class="media-heading"></h4>
+      <span style="font-size: 13px; color: #999999;"><%= "#{cluster[:target]}#{t('dictionary.cluster')}" %></span>
+    </div>
+  </div>
+<% end %>
