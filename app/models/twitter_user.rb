@@ -270,12 +270,12 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.removed(oldest_me, latest_me)
   end
 
-  def users_replying(client)
-    client.users_replying(self.screen_name)
+  def replying(client)
+    client.replying(self.screen_name)
   end
 
-  def users_replied(client)
-    client.users_replied(self.screen_name)
+  def replied(client)
+    client.replied(self.screen_name)
   end
 
   def eql?(other)

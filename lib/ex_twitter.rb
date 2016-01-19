@@ -33,13 +33,16 @@ class ExTwitter < Twitter::REST::Client
     begin
       send(method_name, *args, options)
     rescue Twitter::Error::TooManyRequests => e
-      logger.warn "Retry after #{e.rate_limit.reset_in} seconds."
+      logger.warn "#{e.class} - Retry after #{e.rate_limit.reset_in} seconds."
       raise e
     rescue Twitter::Error::ServiceUnavailable => e
-      logger.warn e.message
+      logger.warn "#{e.class} - #{e.message}"
+      raise e
+    rescue Twitter::Error::InternalServerError => e
+      logger.warn "#{e.class} - #{e.message}"
       raise e
     rescue => e
-      logger.warn e.message
+      logger.warn "#{e.class} - #{e.message}"
       raise e
     end
   end
@@ -345,7 +348,7 @@ class ExTwitter < Twitter::REST::Client
 
   # users which specified user is replying
   # in_reply_to_user_id and in_reply_to_status_id is not used because of distinguishing mentions from replies
-  def users_replying(user)
+  def replying(user)
     screen_names = user_timeline(user).map do |s|
       $1 if s.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
     end.compact.uniq
@@ -355,7 +358,7 @@ class ExTwitter < Twitter::REST::Client
 
   # users which specified user is replied
   # when user is login you had better to call mentions_timeline
-  def users_replied(user)
+  def replied(user)
     user = self.user(user).screen_name unless user.kind_of?(String)
 
     search_result = search('@' + user, count: 100).attrs
@@ -367,5 +370,40 @@ class ExTwitter < Twitter::REST::Client
     end.compact.uniq
 
     users(uids) || []
+  end
+
+  def clusters_belong_to(text)
+    return [] if text.blank?
+
+    exclude_words = JSON.parse(File.read('cluster_bad_words.json'))
+    special_words = JSON.parse(File.read('cluster_good_words.json'))
+
+    # クラスタ用の単語の出現回数を記録
+    cluster_word_counter =
+      special_words.map { |sw| [sw, text.scan(sw)] }
+        .delete_if { |item| item[1].empty? }
+        .each_with_object(Hash.new(1)) { |item, memo| memo[item[0]] = item[1].size }
+
+    # 同一文字種の繰り返しを見付ける。漢字の繰り返し、ひらがなの繰り返し、カタカナの繰り返し、など
+    text.scan(/[一-龠〆ヵヶ々]+|[ぁ-んー～]+|[ァ-ヴー～]+|[ａ-ｚＡ-Ｚ０-９]+|[、。！!？?]+/).
+
+      # 複数回繰り返される文字を除去
+      map { |w| w.remove /[？！?!。、ｗ]|(ー{2,})/ }.
+
+      # 文字数の少なすぎる単語、ひらがなだけの単語、除外単語を除去する
+      delete_if { |w| w.length <= 1 || (w.length <= 2 && w =~ /^[ぁ-んー～]+$/) || exclude_words.include?(w) }.
+
+      # 出現回数を記録
+      each { |w| cluster_word_counter[w] += 1 }
+
+    # 複数個以上見付かった単語のみを残し、出現頻度順にソート
+    cluster_words = cluster_word_counter.select { |_, v| v > 3 }.sort_by { |_, v| -v }.to_h.keys
+
+    # 出現回数上位の単語のみを返す
+    cluster_words.slice(0, [cluster_words.size, 5].min)
+  end
+
+  def clusters_assigned_to
+
   end
 end

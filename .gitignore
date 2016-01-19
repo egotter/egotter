@@ -20,3 +20,5 @@
 /dump.rdb
 /redis.conf
 /bot.json
+/cluster_bad_words.json
+/cluster_good_words.json
