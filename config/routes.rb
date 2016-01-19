@@ -5,11 +5,13 @@ Rails.application.routes.draw do
   get 'welcome', to: 'searches#welcome', as: :welcome
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   post 'searches/:screen_name/waiting', to: 'searches#waiting'
-  get 'searches/:screen_name/removed_friends', to: 'searches#removed_friends', as: :removed_friends
-  get 'searches/:screen_name/removed_followers', to: 'searches#removed_followers', as: :removed_followers
+  get 'searches/:screen_name/removing', to: 'searches#removing', as: :removing
+  get 'searches/:screen_name/removed', to: 'searches#removed', as: :removed
+  get 'searches/:screen_name/only_following', to: 'searches#only_following', as: :only_following
+  get 'searches/:screen_name/only_followed', to: 'searches#only_followed', as: :only_followed
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
-  get 'searches/:screen_name/users_replying', to: 'searches#users_replying', as: :users_replying
-  get 'searches/:screen_name/users_replied', to: 'searches#users_replied', as: :users_replied
+  get 'searches/:screen_name/replying', to: 'searches#replying', as: :replying
+  get 'searches/:screen_name/replied', to: 'searches#replied', as: :replied
   get 'searches/:screen_name/update_history', to: 'searches#update_history', as: :update_history
 
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {

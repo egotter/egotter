@@ -33,7 +33,13 @@ class ExTwitter < Twitter::REST::Client
     begin
       send(method_name, *args, options)
     rescue Twitter::Error::TooManyRequests => e
-      logger.debug "Retry after #{e.rate_limit.reset_in} seconds."
+      logger.warn "Retry after #{e.rate_limit.reset_in} seconds."
+      raise e
+    rescue Twitter::Error::ServiceUnavailable => e
+      logger.warn e.message
+      raise e
+    rescue => e
+      logger.warn e.message
       raise e
     end
   end
@@ -274,22 +280,30 @@ class ExTwitter < Twitter::REST::Client
     result
   end
 
+  def only_following(me)
+    me.friends.to_a - me.followers.to_a
+  end
+
+  def only_followed(me)
+    me.followers.to_a - me.friends.to_a
+  end
+
   def mutual_friends(me)
     me.friends.to_a & me.followers.to_a
   end
 
-  def removed_friends(pre_me, cur_me)
+  def removing(pre_me, cur_me)
     pre_me.friends.to_a - cur_me.friends.to_a
   end
 
-  def detailed_removed_friends(pre_me, cur_me)
+  def detailed_removing(pre_me, cur_me)
   end
 
-  def removed_followers(pre_me, cur_me)
+  def removed(pre_me, cur_me)
     pre_me.followers.to_a - cur_me.followers.to_a
   end
 
-  def detailed_removed_followers(pre_me, cur_me)
+  def detailed_removed(pre_me, cur_me)
   end
 
   # use compact, not use sort and uniq

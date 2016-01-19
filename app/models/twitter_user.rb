@@ -238,18 +238,26 @@ class TwitterUser < ActiveRecord::Base
     TwitterUser.latest(uid.to_i)
   end
 
+  def only_following
+    ExTwitter.new.only_following(self)
+  end
+
+  def only_followed
+    ExTwitter.new.only_followed(self)
+  end
+
   def mutual_friends
     ExTwitter.new.mutual_friends(self)
   end
 
-  def removed_friends
+  def removing
     return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
-    ExTwitter.new.removed_friends(oldest_me, latest_me)
+    ExTwitter.new.removing(oldest_me, latest_me)
   end
 
-  def removed_followers
+  def removed
     return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
-    ExTwitter.new.removed_followers(oldest_me, latest_me)
+    ExTwitter.new.removed(oldest_me, latest_me)
   end
 
   def users_replying(client)

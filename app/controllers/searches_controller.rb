@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show removed_friends removed_followers mutual_friends users_replying users_replied update_history)
+  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends replying replied update_history)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
@@ -18,29 +18,37 @@ class SearchesController < ApplicationController
   def show
     tu = @searched_tw_user
     sn = '@' + tu.screen_name
-    _users_replying = tu.users_replying(client) && tu.users_replying(client)
-    _users_replied = tu.users_replied(client) && tu.users_replied(client)
+    _replying = (tu.replying(client) && tu.replying(client) rescue [])
+    _replied = (tu.replied(client) && tu.replied(client) rescue [])
     @menu_items = [
       {
-        name: I18n.t('search_menu.removed_friends', user: sn),
-        target: tu.removed_friends,
-        path_method: method(:removed_friends_path).to_proc
+        name: I18n.t('search_menu.removing', user: sn),
+        target: tu.removing,
+        path_method: method(:removing_path).to_proc
       }, {
-        name: I18n.t('search_menu.removed_followers', user: sn),
-        target: tu.removed_followers,
-        path_method: method(:removed_followers_path).to_proc
+        name: I18n.t('search_menu.removed', user: sn),
+        target: tu.removed,
+        path_method: method(:removed_path).to_proc
+      }, {
+        name: I18n.t('search_menu.only_following', user: sn),
+        target: tu.only_following,
+        path_method: method(:only_following_path).to_proc
+      }, {
+        name: I18n.t('search_menu.only_followed', user: sn),
+        target: tu.only_followed,
+        path_method: method(:only_followed_path).to_proc
       }, {
         name: I18n.t('search_menu.mutual_friends', user: sn),
         target: tu.mutual_friends,
         path_method: method(:mutual_friends_path).to_proc
       }, {
-        name: I18n.t('search_menu.users_replying', user: sn),
-        target: _users_replying.map { |u| u.uid = u.id; u },
-        path_method: method(:users_replying_path).to_proc
+        name: I18n.t('search_menu.replying', user: sn),
+        target: _replying.map { |u| u.uid = u.id; u },
+        path_method: method(:replying_path).to_proc
       }, {
-        name: I18n.t('search_menu.users_replied', user: sn),
-        target: _users_replied.map { |u| u.uid = u.id; u },
-        path_method: method(:users_replied_path).to_proc
+        name: I18n.t('search_menu.replied', user: sn),
+        target: _replied.map { |u| u.uid = u.id; u },
+        path_method: method(:replied_path).to_proc
       },
     ]
     @menu_update_history = {
@@ -51,14 +59,24 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
-  # GET /searches/:screen_name/removed_friends
-  def removed_friends
-    @user_items = @searched_tw_user.removed_friends.map{|f| {target: f} }
+  # GET /searches/:screen_name/removing
+  def removing
+    @user_items = @searched_tw_user.removing.map{|f| {target: f} }
   end
 
-  # GET /searches/:screen_name/removed_followers
-  def removed_followers
-    @user_items = @searched_tw_user.removed_followers.map{|f| {target: f} }
+  # GET /searches/:screen_name/removed
+  def removed
+    @user_items = @searched_tw_user.removed.map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/only_following
+  def only_following
+    @user_items = @searched_tw_user.only_following.map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/only_followed
+  def only_followed
+    @user_items = @searched_tw_user.only_followed.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/mutual_friends
@@ -66,15 +84,15 @@ class SearchesController < ApplicationController
     @user_items = @searched_tw_user.mutual_friends.map{|f| {target: f} }
   end
 
-  # GET /searches/:screen_name/users_replying
-  def users_replying
-    users = @searched_tw_user.users_replying(client) && @searched_tw_user.users_replying(client)
+  # GET /searches/:screen_name/replying
+  def replying
+    users = (@searched_tw_user.replying(client) && @searched_tw_user.replying(client) rescue [])
     @user_items = users.map { |u| u.uid = u.id; {target: u} }
   end
 
-  # GET /searches/:screen_name/users_replied
-  def users_replied
-    users = @searched_tw_user.users_replied(client) && @searched_tw_user.users_replied(client)
+  # GET /searches/:screen_name/replied
+  def replied
+    users = (@searched_tw_user.replied(client) && @searched_tw_user.replied(client) rescue [])
     @user_items = users.map { |u| u.uid = u.id; {target: u} }
   end
 

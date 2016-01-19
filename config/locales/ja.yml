@@ -24,13 +24,13 @@ ja:
   search_menu:
     friends: "%{user} のフォロー"
     followers: "%{user} のフォロワー"
-    removed_friends: "%{user} がフォローを外したユーザー"
-    removed_followers: "%{user} がフォローを外されたユーザー"
+    removing: "%{user} がフォローを外したユーザー"
+    removed: "%{user} がフォローを外されたユーザー"
     mutual_friends: "%{user} が両思いのユーザー"
-    one_sided_friends: "%{user} が片思いしているユーザー"
-    one_sided_followers: "%{user} が片思いされているユーザー"
-    users_replying: "%{user} がリプライしたユーザー"
-    users_replied: "%{user} がリプライされたユーザー"
+    only_following: "%{user} が片思いしているユーザー"
+    only_followed: "%{user} が片思いされているユーザー"
+    replying: "%{user} がリプライしたユーザー"
+    replied: "%{user} がリプライされたユーザー"
     update_history: "更新履歴"
   activerecord:
     models:
