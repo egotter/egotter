@@ -250,6 +250,16 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.mutual_friends(self)
   end
 
+  def friends_in_common(other)
+    return [] if other.blank?
+    ExTwitter.new.friends_in_common(self, other)
+  end
+
+  def followers_in_common(other)
+    return [] if other.blank?
+    ExTwitter.new.followers_in_common(self, other)
+  end
+
   def removing
     return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
     ExTwitter.new.removing(oldest_me, latest_me)

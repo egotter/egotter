@@ -291,6 +291,14 @@ class ExTwitter < Twitter::REST::Client
   def mutual_friends(me)
     me.friends.to_a & me.followers.to_a
   end
+  
+  def friends_in_common(me, you)
+    me.friends.to_a & you.friends.to_a
+  end
+
+  def followers_in_common(me, you)
+    me.followers.to_a & you.followers.to_a
+  end
 
   def removing(pre_me, cur_me)
     pre_me.friends.to_a - cur_me.friends.to_a

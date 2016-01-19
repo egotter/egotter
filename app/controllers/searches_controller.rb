@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends replying replied update_history)
+  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends friends_in_common followers_in_common replying replied update_history)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
@@ -42,6 +42,14 @@ class SearchesController < ApplicationController
         target: tu.mutual_friends,
         path_method: method(:mutual_friends_path).to_proc
       }, {
+        name: I18n.t('search_menu.friends_in_common', user: sn, login: t('dictionary.you')),
+        target: tu.friends_in_common(nil),
+        path_method: method(:friends_in_common_path).to_proc
+      }, {
+        name: I18n.t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
+        target: tu.followers_in_common(nil),
+        path_method: method(:followers_in_common_path).to_proc
+      }, {
         name: I18n.t('search_menu.replying', user: sn),
         target: _replying.map { |u| u.uid = u.id; u },
         path_method: method(:replying_path).to_proc
@@ -82,6 +90,16 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/mutual_friends
   def mutual_friends
     @user_items = @searched_tw_user.mutual_friends.map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/friends_in_common
+  def friends_in_common
+    @user_items = @searched_tw_user.friends_in_common(nil).map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/followers_in_common
+  def followers_in_common
+    @user_items = @searched_tw_user.followers_in_common(nil).map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/replying
