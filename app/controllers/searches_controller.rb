@@ -85,6 +85,25 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
+    html =
+      if user_signed_in?
+        key = "searches:new:#{current_user.id}"
+        if flash.empty?
+          redis.fetch(key, 60 * 5) { render_to_string }
+        else
+          redis.del(key)
+          render_to_string
+        end
+      else
+        key = 'searches:new:anonymous'
+        if flash.empty?
+          redis.fetch(key) { render_to_string }
+        else
+          redis.del(key)
+          render_to_string
+        end
+      end
+    render text: html
   end
 
   # # GET /searches/1/edit
@@ -232,6 +251,10 @@ class SearchesController < ApplicationController
 
   def sign_in_link
     view_context.link_to(t('dictionary.sign_in'), welcome_path)
+  end
+
+  def redis
+    @redis ||= Redis.new(driver: :hiredis)
   end
 
   def client
