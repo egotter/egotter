@@ -21,16 +21,17 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-        <% if user_signed_in? %>
-          <%= link_to destroy_user_session_path, style: 'text-decoration: none;' do %>
-            <span style="font-size: 20px" class="glyphicon glyphicon-log-out"></span><br>
-            <span style="font-size: 9px;"><%= t('dictionary.sign_out') %></span>
-          <% end %>
-        <% else %>
+        <% unless user_signed_in? %>
           <%= link_to welcome_path, style: 'text-decoration: none;' do %>
             <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
             <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
           <% end %>
+        <% end %>
+      </button>
+      <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+        <%= link_to menu_path, style: 'text-decoration: none;' do %>
+          <span style="font-size: 20px" class="glyphicon glyphicon-menu-hamburger"></span><br>
+          <span style="font-size: 9px;"><%= t('dictionary.menu') %></span>
         <% end %>
       </button>
       <a style="font-size: 30px; display: block; padding-left: 10px;" class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
@@ -40,16 +41,19 @@
       <ul class="nav navbar-nav navbar-right">
         <li>
           <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-            <% if user_signed_in? %>
-              <%= link_to destroy_user_session_path, style: 'text-decoration: none;' do %>
-                <span style="font-size: 20px" class="glyphicon glyphicon-log-out"></span><br>
-                <span style="font-size: 9px;"><%= t('dictionary.sign_out') %></span>
-              <% end %>
-            <% else %>
+            <% unless user_signed_in? %>
               <%= link_to welcome_path, style: 'text-decoration: none;' do %>
                 <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
                 <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
               <% end %>
+            <% end %>
+          </div>
+        </li>
+        <li>
+          <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+            <%= link_to menu_path, style: 'text-decoration: none;' do %>
+              <span style="font-size: 20px" class="glyphicon glyphicon-menu-hamburger"></span><br>
+              <span style="font-size: 9px;"><%= t('dictionary.menu') %></span>
             <% end %>
           </div>
         </li>
@@ -77,9 +81,10 @@
         <%= link_to t('dictionary.sign_in'), welcome_path, style: 'text-decoration: none;' %>&nbsp;&nbsp;
       <% end %>
       <a style="text-decoration: none;" href="/">ご意見</a>&nbsp;&nbsp;
-      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
-      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
-      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <% if user_signed_in? %>
+        <%= link_to t('dictionary.settings'), menu_path, style: 'text-decoration: none;' %>&nbsp;&nbsp;
+      <% end %>
+      <a style="text-decoration: none;" href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a>&nbsp;&nbsp;
       <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
     </p>
   </div>

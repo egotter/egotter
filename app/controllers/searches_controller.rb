@@ -12,7 +12,18 @@ class SearchesController < ApplicationController
   before_action :set_searched_tw_user, only: SEARCH_MENUS
 
   def welcome
+    redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
+  end
 
+  def menu
+    return redirect_to '/' unless user_signed_in?
+    @raw_user = client.user(current_user.uid.to_i) && client.user(current_user.uid.to_i)
+    if request.post?
+      current_user.update(notification: params[:notification] == 'on')
+      redirect_to menu_path, notice: t('dictionary.settings_saved')
+    else
+      render
+    end
   end
 
   def show
@@ -184,7 +195,7 @@ class SearchesController < ApplicationController
       uid: searched_uid}
     )
 
-    redirect_to waiting_path(screen_name: searched_sn, id: searched_uid), notice: 'test'
+    redirect_to waiting_path(screen_name: searched_sn, id: searched_uid)
   end
 
   # POST /searches/:screen_name/waiting

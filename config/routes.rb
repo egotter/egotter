@@ -3,6 +3,8 @@ Rails.application.routes.draw do
 
   resources :searches
   get 'welcome', to: 'searches#welcome', as: :welcome
+  get 'menu', to: 'searches#menu', as: :menu
+  post 'menu', to: 'searches#menu'
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   post 'searches/:screen_name/waiting', to: 'searches#waiting'
   get 'searches/:screen_name/removing', to: 'searches#removing', as: :removing

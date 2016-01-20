@@ -7,6 +7,7 @@
 #  uid                    :string           not null
 #  secret                 :string           not null
 #  token                  :string           not null
+#  notification           :boolean          default(TRUE), not null
 #  email                  :string           not null
 #  encrypted_password     :string           not null
 #  reset_password_token   :string

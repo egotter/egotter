@@ -5,6 +5,7 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.string :uid,      null: false
       t.string :secret,   null: false
       t.string :token,    null: false
+      t.boolean :notification, default: true, null: false
 
       ## Database authenticatable
       t.string :email,              null: false

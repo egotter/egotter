@@ -1,0 +1,20 @@
+<div class="container">
+  <%= link_to t('dictionary.search_by', user: "@#{@raw_user.screen_name}"),
+              searches_path(screen_name: @raw_user.screen_name),
+              class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;', method: :post %>
+
+  <hr>
+
+  <div>
+    <%= form_tag menu_path, method: :post do %>
+      <div class="checkbox">
+        <label>
+          <input type="checkbox" name="notification" style="margin-top: 12px;" <%= 'checked' if current_user.notification? %>>
+          <span style="font-weight: bold; font-size: 16px;"><%= t('dictionary.notification_settings') %></span>
+          <div><%= t('dictionary.notification_description') %></div>
+        </label>
+      </div>
+      <button style="margin-top: 10px;" class="btn btn-default btn-block" type="submit"><%= t('dictionary.save_settings') %></button>
+    <% end %>
+  </div>
+</div>
