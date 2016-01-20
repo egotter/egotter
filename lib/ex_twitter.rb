@@ -324,7 +324,7 @@ class ExTwitter < Twitter::REST::Client
     users_per_workers = args.first.compact.each_slice(100).to_a
     processed_users = []
 
-    Parallel.each_with_index(users_per_workers, in_threads: users_per_workers.size) do |users_per_worker, i|
+    Parallel.each_with_index(users_per_workers, in_threads: [users_per_workers.size, 10].min) do |users_per_worker, i|
       _users = fetch_cache_or_call_api(:users, [users_per_worker, options]) {
         old_users(users_per_worker, options)
       }

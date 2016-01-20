@@ -2,6 +2,8 @@ class BackgroundSearchWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: 1, backtrace: 3
 
+  # This worker is called after strict validation for uid in searches_controller,
+  # so you don't need to do that in this worker.
   def perform(uid, screen_name, login_user_id, log_attrs = {})
     logger.debug "#{user_name(uid, screen_name)} start"
 
