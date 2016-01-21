@@ -3,21 +3,21 @@
 # Table name: users
 #
 #  id                     :integer          not null, primary key
-#  provider               :string           not null
-#  uid                    :string           not null
-#  secret                 :string           not null
-#  token                  :string           not null
+#  provider               :string(255)      not null
+#  uid                    :string(255)      not null
+#  secret                 :string(255)      not null
+#  token                  :string(255)      not null
 #  notification           :boolean          default(TRUE), not null
-#  email                  :string           not null
-#  encrypted_password     :string           not null
-#  reset_password_token   :string
+#  email                  :string(255)      not null
+#  encrypted_password     :string(255)      not null
+#  reset_password_token   :string(255)
 #  reset_password_sent_at :datetime
 #  remember_created_at    :datetime
 #  sign_in_count          :integer          default(0), not null
 #  current_sign_in_at     :datetime
 #  last_sign_in_at        :datetime
-#  current_sign_in_ip     :string
-#  last_sign_in_ip        :string
+#  current_sign_in_ip     :string(255)
+#  last_sign_in_ip        :string(255)
 #  created_at             :datetime         not null
 #  updated_at             :datetime         not null
 #

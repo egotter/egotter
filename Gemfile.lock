@@ -117,6 +117,7 @@ GEM
     minitest (5.8.3)
     multi_json (1.11.2)
     multipart-post (2.0.0)
+    mysql2 (0.4.2)
     naught (1.1.0)
     newrelic_rpm (3.14.1.311)
     nokogiri (1.6.7.1)
@@ -211,7 +212,6 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
-    sqlite3 (1.3.11)
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
@@ -263,6 +263,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   memoist
+  mysql2
   newrelic_rpm
   omniauth-twitter
   parallel
@@ -273,7 +274,6 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   sidekiq
   sinatra
-  sqlite3
   therubyracer
   turbolinks
   twitter

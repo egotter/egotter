@@ -3,9 +3,9 @@
 # Table name: twitter_users
 #
 #  id          :integer          not null, primary key
-#  uid         :string           not null
-#  screen_name :string           not null
-#  user_info   :text             not null
+#  uid         :string(255)      not null
+#  screen_name :string(255)      not null
+#  user_info   :text(65535)      not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #

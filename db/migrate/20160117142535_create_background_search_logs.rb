@@ -3,10 +3,10 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
     create_table :background_search_logs do |t|
       t.boolean :login,         default: false
       t.integer :login_user_id, default: -1
-      t.text :uid,              default: -1
-      t.text :bot_uid,          default: -1
+      t.string :uid,            default: -1
+      t.string :bot_uid,        default: -1
       t.boolean :status,        default: false
-      t.text :reason,           default: ''
+      t.string :reason,         default: ''
 
       t.timestamps null: false
     end

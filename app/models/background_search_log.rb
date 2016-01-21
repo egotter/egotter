@@ -5,10 +5,10 @@
 #  id            :integer          not null, primary key
 #  login         :boolean          default(FALSE)
 #  login_user_id :integer          default(-1)
-#  uid           :text             default("-1")
-#  bot_uid       :text             default("-1")
+#  uid           :string(255)      default("-1")
+#  bot_uid       :string(255)      default("-1")
 #  status        :boolean          default(FALSE)
-#  reason        :text             default("")
+#  reason        :string(255)      default("")
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
