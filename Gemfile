@@ -43,6 +43,7 @@ gem 'sidekiq'
 gem 'sinatra', require: false
 gem 'redis'
 gem 'hiredis'
+gem 'newrelic_rpm'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
