@@ -9,6 +9,8 @@
     var interval = 2000;
     var call_count = 0;
     var too_many_requests = false;
+    var unauthorized = false;
+    var something_is_wrong = false;
 
     function tic() {
       $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
@@ -20,6 +22,10 @@
             } else {
               if (res.reason == '<%= BackgroundSearchLog::TooManyRequests %>') {
                 too_many_requests = true;
+              } else if (res.reason == '<%= BackgroundSearchLog::Unauthorized %>') {
+                unauthorized = true;
+              } else if (res.reason == '<%= BackgroundSearchLog::SomethingIsWrong %>') {
+                something_is_wrong = true;
               } else {
                 interval += 2000;
               }
@@ -28,6 +34,10 @@
       call_count++;
       if (too_many_requests) {
         $('.waiting_msg').html('<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+      } else if (unauthorized) {
+        $('.waiting_msg').html('<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+      } else if (something_is_wrong) {
+        $('.waiting_msg').html('<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
       } else {
         if (call_count < 10) {
           setTimeout(tic, interval);

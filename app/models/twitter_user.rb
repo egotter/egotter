@@ -48,7 +48,7 @@ class TwitterUser < ActiveRecord::Base
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
-  TOO_MANY_FRIENDS = 1500
+  TOO_MANY_FRIENDS = 5000
 
   validates :uid, presence: true, numericality: :only_integer
   validates :screen_name, presence: true, length: {maximum: 75}

@@ -291,6 +291,8 @@ class SearchesController < ApplicationController
     if raw_user.friends_count + raw_user.followers_count > TwitterUser::TOO_MANY_FRIENDS
       alert_msg = t('before_sign_in.too_many_friends',
                     user: search_sn,
+                    friends: raw_user.friends_count,
+                    followers: raw_user.followers_count,
                     sign_in_link: sign_in_link)
       redirect_to '/', alert: alert_msg
     end

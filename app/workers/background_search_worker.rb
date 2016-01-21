@@ -21,8 +21,14 @@ class BackgroundSearchWorker
         create_log(log_attrs, true, '')
         logger.debug "create #{screen_name}"
       else
-        tu.touch
-        create_log(log_attrs, true, '')
+        # Egotter needs at least one TwitterUser record to show search result,
+        # so this branch should not be executed if TwitterUser is not existed.
+        if tu.present?
+          tu.touch
+          create_log(log_attrs, true, '')
+        else
+          create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong)
+        end
         logger.debug "not create(#{new_tu.errors.full_messages}) #{screen_name}"
       end
     end
@@ -30,12 +36,19 @@ class BackgroundSearchWorker
     logger.debug "#{user_name(uid, screen_name)} finish"
 
   rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{e.message} retry after #{e.rate_limit.reset_in} seconds"
+    logger.warn "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
     create_log(log_attrs, false, BackgroundSearchLog::TooManyRequests)
+  rescue Twitter::Error::Unauthorized => e
+    logger.warn "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} #{e.class} #{e.message}"
+    create_log(log_attrs, false, BackgroundSearchLog::Unauthorized)
   end
 
   def user_name(uid, screen_name)
     "#{uid},#{screen_name}"
+  end
+
+  def bot_name(u)
+    u.kind_of?(User) ? "#{u.uid}" : "#{u.uid},#{u.screen_name}"
   end
 
   def create_log(attrs, status, reason)

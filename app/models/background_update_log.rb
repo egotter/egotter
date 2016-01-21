@@ -18,6 +18,7 @@
 class BackgroundUpdateLog < ActiveRecord::Base
 
   TooManyRequests = 'too many requests'
+  Unauthorized = 'unauthorized'
 
   def self.processing?(uid)
     log = order(created_at: :desc).find_by(uid: uid)

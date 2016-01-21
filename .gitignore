@@ -17,6 +17,7 @@
 /tmp
 
 /.idea
+/.pryrc
 /dump.rdb
 /redis.conf
 /bot.json

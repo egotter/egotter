@@ -21,6 +21,8 @@
 class BackgroundSearchLog < ActiveRecord::Base
 
   TooManyRequests = 'too many requests'
+  Unauthorized = 'unauthorized'
+  SomethingIsWrong = 'something is wrong'
 
   def self.processing?(uid)
     log = order(created_at: :desc).find_by(uid: uid)

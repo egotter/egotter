@@ -32,12 +32,19 @@ class TwitterUserUpdaterWorker
     create_log(uid, true, '')
 
   rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{user_name(u)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
+    logger.warn "#{user_name(u)} #{bot_name(bot)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
     create_log(uid, false, BackgroundUpdateLog::TooManyRequests)
+  rescue Twitter::Error::Unauthorized => e
+    logger.warn "#{user_name(u)} #{bot_name(bot)} #{e.class} #{e.message}"
+    create_log(uid, false, BackgroundUpdateLog::Unauthorized)
   end
 
   def user_name(u)
     "#{u.id},#{u.screen_name}" rescue @uid.to_s
+  end
+
+  def bot_name(b)
+    "#{b.uid},#{b.screen_name}"
   end
 
   def create_log(uid, status, reason)
