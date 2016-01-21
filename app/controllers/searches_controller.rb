@@ -16,7 +16,7 @@ class SearchesController < ApplicationController
   end
 
   def menu
-    return redirect_to '/' unless user_signed_in?
+    return redirect_to welcome_path unless user_signed_in?
     @raw_user = client.user(current_user.uid.to_i) && client.user(current_user.uid.to_i)
     if request.post?
       current_user.update(notification: params[:notification] == 'on')
