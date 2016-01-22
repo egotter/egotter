@@ -54,6 +54,7 @@ group :development, :test do
   gem 'whenever', :require => false
   gem 'rspec-rails'
   gem 'factory_girl_rails'
+  gem 'hirb'
 end
 
 group :development do
