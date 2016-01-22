@@ -16,7 +16,7 @@ namespace :update_job_dispatcher do
     begin
       uids = client.follower_ids('ego_tter').map{|id| id.to_i }
     rescue Twitter::Error::TooManyRequests => e
-      logger.warn "#{bot.uid} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
+      puts "#{bot.uid} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
       next
     end
 
@@ -30,7 +30,7 @@ namespace :update_job_dispatcher do
         encueue_count += 1
       end
 
-      break if encueue_count >= 20
+      break if encueue_count >= 50
     end
 
 
