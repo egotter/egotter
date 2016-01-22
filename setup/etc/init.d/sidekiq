@@ -1,0 +1,49 @@
+# https://cdyer.co.uk/blog/init-script-for-sidekiq-with-rbenv/
+# /etc/init.d/sidekiq
+
+APP_ROOT="/home/ec2-user/egotter"
+
+start() {
+        cd $APP_ROOT
+        sudo -u ec2-user -H bash -l -c "NEWRELIC=xxx TWITTER_CONSUMER_SECRET=xxx TWITTER_CONSUMER_KEY=xxx bundle exec sidekiq" >/dev/null 2>&1 &
+}
+
+stop() {
+    cd $APP_ROOT
+    echo "Stopping sidekiq .."
+    kill -INT `cat ./tmp/pids/sidekiq.pid`
+    RETVAL=$?
+    return $RETVAL
+}
+
+status() {
+  ps -ef | grep 'sidekiq [0-9].[0-9].[0-9]' | grep -v grep
+  return $?
+}
+
+
+case "$1" in
+        start)
+                start
+                ;;
+        stop)
+                stop
+                ;;
+        status)
+                status
+
+                if [ $? -eq 0 ]; then
+                     echo "sidekiq is running .."
+                     RETVAL=0
+                 else
+                     echo "sidekiq is stopped .."
+                     RETVAL=1
+                 fi
+                ;;
+        *)
+                echo "Usage: sidekiq {start|stop|status}" >&2
+                exit 1
+                ;;
+esac
+exit 0
+

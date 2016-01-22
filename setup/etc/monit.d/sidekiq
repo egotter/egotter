@@ -1,0 +1,5 @@
+check process sidekiq with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq.pid
+        every 2 cycle
+        start program = "/bin/bash -l -c '/etc/init.d/sidekiq start'" as uid ec2-user with timeout 90 seconds
+        stop program = "/bin/bash -l -c '/etc/init.d/sidekiq stop'" as uid ec2-user with timeout 90 seconds
+        if 5 restarts within 5 cycles then unmonitor
