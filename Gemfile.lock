@@ -85,6 +85,9 @@ GEM
       activesupport (>= 4.1.0)
     hashie (3.4.3)
     hirb (0.7.3)
+    hirb-unicode (0.0.5)
+      hirb (~> 0.5)
+      unicode-display_width (~> 0.1.1)
     hiredis (0.6.1)
     http (0.9.8)
       addressable (~> 2.3)
@@ -240,6 +243,7 @@ GEM
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.1)
+    unicode-display_width (0.1.1)
     warden (1.2.4)
       rack (>= 1.0)
     web-console (2.2.1)
@@ -261,6 +265,7 @@ DEPENDENCIES
   factory_girl_rails
   hashie
   hirb
+  hirb-unicode
   hiredis
   jbuilder (~> 2.0)
   jquery-rails
