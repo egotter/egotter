@@ -11,9 +11,9 @@ start() {
 stop() {
     cd $APP_ROOT
     echo "Stopping sidekiq .."
-    sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl quiet $(cat ./tmp/pids/sidekiq.pid)"
+    sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl quiet ./tmp/pids/sidekiq.pid"
     sleep 3
-    sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl stop $(cat ./tmp/pids/sidekiq.pid)"
+    sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl stop ./tmp/pids/sidekiq.pid"
     RETVAL=$?
     return $RETVAL
 }

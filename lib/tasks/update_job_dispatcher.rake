@@ -37,6 +37,10 @@ namespace :update_job_dispatcher do
     puts "[#{Time.now}] enqueue finish rem=#{rem_count} encueue=#{encueue_count} #{encueue_uids.join(',')}"
   end
 
+  def logger
+    Rails.logger
+  end
+
   def now_i
     Time.zone.now.to_i
   end
