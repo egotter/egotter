@@ -30,7 +30,7 @@ namespace :update_job_dispatcher do
         encueue_count += 1
       end
 
-      break if encueue_count >= 10
+      break if encueue_count >= 20
     end
 
 
