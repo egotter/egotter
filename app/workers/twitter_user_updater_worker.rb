@@ -9,6 +9,21 @@ class TwitterUserUpdaterWorker
     u = client.user(uid.to_i) && client.user(uid.to_i)
     logger.debug "#{user_name(u)} start"
 
+    if u.friends_count + u.followers_count > TwitterUser::TOO_MANY_FRIENDS
+      create_log(uid, false, BackgroundUpdateLog::TooManyFriends)
+      return
+    end
+
+    if u.protected && u.id.to_i != bot.uid.to_i
+      create_log(uid, false, BackgroundUpdateLog::Unauthorized)
+      return
+    end
+
+    if u.suspended
+      create_log(uid, false, BackgroundUpdateLog::Suspended)
+      return
+    end
+
     tu = TwitterUser.latest(u.id)
 
     # if tu.blank?

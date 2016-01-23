@@ -19,6 +19,8 @@ class BackgroundUpdateLog < ActiveRecord::Base
 
   TooManyRequests = 'too many requests'
   Unauthorized = 'unauthorized'
+  TooManyFriends = 'too many friends'
+  Suspended = 'suspended'
 
   def self.processing?(uid)
     log = order(created_at: :desc).find_by(uid: uid)
