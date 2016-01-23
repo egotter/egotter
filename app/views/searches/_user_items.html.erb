@@ -4,28 +4,21 @@
         <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", style="border: 1px solid #eeeeee;" alt="<%= user_item[:target].screen_name %>">
       </div>
       <div class="media-body" style="padding-right: 15px;">
-        <h4 style="font-weight: bold; font-size: 14px;" class="media-heading">@<%= user_item[:target].name %>
+        <h4 style="font-weight: bold; font-size: 14px;" class="media-heading"><%= user_item[:target].name %>
           <% if user_item[:target].protected %>
             &nbsp;<span style="color: #999999; font-size: 13px; font-weight: normal;" class="glyphicon glyphicon-lock"></span>
           <% end %>
         </h4>
-        <span style="font-size: 13px; color: #999999;"><%= user_item[:target].screen_name %></span>
+        <span style="font-size: 13px; color: #999999;">
+          <%= link_to "https://twitter.com/#{user_item[:target].screen_name}", style: 'color: #333333; text-decoration: none;', target: '_blank' do %>
+            <%= "@#{user_item[:target].screen_name}" %>
+          <% end %>
+        </span>
       </div>
       <div class="media-right">
-        <table border="0" cellspacing="0" cellpadding="0">
-          <tr>
-            <td style="display: none;">
-              <%= link_to "https://twitter.com/#{user_item[:target].screen_name}", style: 'color: #333333; text-decoration: none;', target: '_blank' do %>
-                <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info"><%= t('dictionary.search_by_twitter') %></button>
-              <% end %>
-            </td>
-            <td>
-              <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), style: 'color: #333333; text-decoration: none;', method: :post do %>
-                <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
-              <% end %>
-            </td>
-          </tr>
-        </table>
+        <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), style: 'color: #333333; text-decoration: none;', method: :post do %>
+          <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+        <% end %>
       </div>
   </div>
 <% end %>
