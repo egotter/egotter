@@ -15,8 +15,8 @@ ja:
     settings_saved: "設定を保存しました。"
     search: "検索"
     search_by: "%{user} で検索"
+    retry_search_by: "%{user} で再度検索"
     waiting: "%{user} のデータを検索中"
-    please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
     view_more: "続きを見る"
     created_at_and_updated_at: "更新日時"
     you: "あなた"
@@ -34,6 +34,13 @@ ja:
     blank_id: "uid が空です。"
     invalid_uid: "無効な uid です。"
     blank_search_result: "検索結果がありません。"
+    please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
+  after_sign_in:
+    too_many_requests: "検索数の上限に達しました。時間をおいてから検索してみてください。"
+    unauthorized: "認証に失敗しました。時間をおいてから検索してみてください。"
+    something_is_wrong: "エラーが起きました。時間をおいてから検索してみてください。"
+    please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
+
   search_menu:
     friends: "%{user} のフォロー"
     followers: "%{user} のフォロワー"
@@ -46,6 +53,7 @@ ja:
     followers_in_common: "%{user} と %{login} の共通フォロワー"
     replying: "%{user} がリプライしたユーザー"
     replied: "%{user} がリプライされたユーザー"
+    inactive: "%{user} のフォローのうち最近ツイートしていないユーザー"
     clusters_belong_to: "%{user} が入っているクラスタ"
     update_history: "更新履歴"
   activerecord:
