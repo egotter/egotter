@@ -48,6 +48,7 @@ class TwitterUserUpdaterWorker
 
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{user_name(u)} #{bot_name(bot)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
+    redis.zrem('update_job_dispatcher:recently_added', uid.to_s)
     create_log(uid, false, BackgroundUpdateLog::TooManyRequests)
   rescue Twitter::Error::Unauthorized => e
     logger.warn "#{user_name(u)} #{bot_name(bot)} #{e.class} #{e.message}"
@@ -66,6 +67,10 @@ class TwitterUserUpdaterWorker
     BackgroundUpdateLog.create(uid: uid, bot_uid: bot.uid, status: status, reason: reason)
   rescue => e
     logger.warn "create_log #{e.message}"
+  end
+
+  def redis
+    @redis ||= Redis.new(driver: :hiredis)
   end
 
   # TODO Use the target user's token if I have it.
