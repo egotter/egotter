@@ -12,6 +12,7 @@
 #
 # Indexes
 #
+#  index_followers_on_from_id      (from_id)
 #  index_followers_on_screen_name  (screen_name)
 #  index_followers_on_uid          (uid)
 #

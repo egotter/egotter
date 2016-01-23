@@ -12,6 +12,7 @@
 #
 # Indexes
 #
+#  index_friends_on_from_id      (from_id)
 #  index_friends_on_screen_name  (screen_name)
 #  index_friends_on_uid          (uid)
 #

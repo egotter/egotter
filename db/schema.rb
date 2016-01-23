@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160117151244) do
+ActiveRecord::Schema.define(version: 20160123153606) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.boolean  "login",                     default: false
@@ -47,6 +47,7 @@ ActiveRecord::Schema.define(version: 20160117151244) do
     t.datetime "updated_at",                null: false
   end
 
+  add_index "followers", ["from_id"], name: "index_followers_on_from_id", using: :btree
   add_index "followers", ["screen_name"], name: "index_followers_on_screen_name", using: :btree
   add_index "followers", ["uid"], name: "index_followers_on_uid", using: :btree
 
@@ -59,6 +60,7 @@ ActiveRecord::Schema.define(version: 20160117151244) do
     t.datetime "updated_at",                null: false
   end
 
+  add_index "friends", ["from_id"], name: "index_friends_on_from_id", using: :btree
   add_index "friends", ["screen_name"], name: "index_friends_on_screen_name", using: :btree
   add_index "friends", ["uid"], name: "index_friends_on_uid", using: :btree
 
