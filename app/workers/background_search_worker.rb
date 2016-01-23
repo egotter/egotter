@@ -58,19 +58,14 @@ class BackgroundSearchWorker
   end
 
   def client(user_id)
-    config = {
-      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
-      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: bot(user_id).token,
-      access_token_secret: bot(user_id).secret
-    }
+    config = Bot.config
+    config.update(access_token: bot(user_id).token, access_token_secret: bot(user_id).secret)
     c = ExTwitter.new(config)
     c.verify_credentials
     c
   end
 
   def bot(user_id)
-    raise 'create bot' if Bot.empty?
     @bot ||= user_id.nil? ? Bot.sample : User.find(user_id)
   end
 end

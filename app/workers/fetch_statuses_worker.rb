@@ -18,14 +18,11 @@ class FetchStatusesWorker
   end
 
   def client(user_id)
-    raise 'create bot' if Bot.empty?
-    bot = user_id.nil? ? Bot.sample : User.find(user_id)
-    config = {
-      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
-      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: bot.token,
-      access_token_secret: bot.secret
-    }
+    config = Bot.config
+    unless user_id.nil?
+      u = User.find(user_id)
+      config.update(access_token: u.token, access_token_secret: u.secret)
+    end
     c = ExTwitter.new(config)
     c.verify_credentials
     c

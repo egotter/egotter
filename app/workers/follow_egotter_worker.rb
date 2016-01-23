@@ -14,13 +14,9 @@ class FollowEgotterWorker
   end
 
   def client(uid)
+    config = Bot.config
     u = User.find_by(uid: uid)
-    config = {
-      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
-      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: u.token,
-      access_token_secret: u.secret
-    }
+    config.update(access_token: u.token, access_token_secret: u.secret)
     c = ExTwitter.new(config)
     c.verify_credentials
     c

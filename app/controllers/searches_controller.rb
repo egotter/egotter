@@ -341,14 +341,7 @@ class SearchesController < ApplicationController
   end
 
   def client
-    raise 'create bot' if Bot.empty?
-    bot = Bot.sample
-    config = {
-      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
-      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: bot.token,
-      access_token_secret: bot.secret
-    }
+    config = Bot.config
     config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
     ExTwitter.new(config)
   rescue => e

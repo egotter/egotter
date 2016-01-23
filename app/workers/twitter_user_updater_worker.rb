@@ -56,19 +56,14 @@ class TwitterUserUpdaterWorker
   # TODO Use the target user's token if I have it.
 
   def client
-    config = {
-      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
-      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
-      access_token: bot.token,
-      access_token_secret: bot.secret
-    }
+    config = Bot.config
+    config.update(access_token: bot.token, access_token_secret: bot.secret)
     c = ExTwitter.new(config)
     c.verify_credentials
     c
   end
 
   def bot
-    raise 'create bot' if Bot.empty?
     @bot ||= Bot.sample
   end
 
