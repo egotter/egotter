@@ -106,7 +106,8 @@ class ExTwitter < Twitter::REST::Client
   end
 
   # encode
-  def to_json_according_to_type(obj)
+  def to_json_according_to_type(obj, options = {})
+    options[:reduce] = true unless options.has_key?(:reduce)
     start_t = Time.now.to_i
     result =
       case
@@ -114,7 +115,13 @@ class ExTwitter < Twitter::REST::Client
           JSON.pretty_generate(obj.map { |o| o.attrs })
 
         when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
-          JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
+          data =
+            if options[:reduce]
+              obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) }
+            else
+              obj.map { |o| o.to_hash }
+            end
+          JSON.pretty_generate(data)
 
         when obj.kind_of?(Array) && obj.first.kind_of?(Integer) # friend_ids, follower_ids
           JSON.pretty_generate(obj)
@@ -122,8 +129,14 @@ class ExTwitter < Twitter::REST::Client
         when obj.kind_of?(Twitter::User) # user
           JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::SAVE_KEYS))
 
-        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::User) # users
-          JSON.pretty_generate(obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) })
+        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::User) # users, friends_advanced, followers_advanced
+          data =
+            if options[:reduce]
+              obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) }
+            else
+              obj.map { |o| o.to_hash }
+            end
+          JSON.pretty_generate(data)
 
         when obj === true || obj === false # user?
           obj
@@ -137,7 +150,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   # decode
-  def parse_json_according_to_type(str)
+  def parse_json_according_to_type(str, options = {})
     start_t = Time.now.to_i
     obj = str.kind_of?(String) ? JSON.parse(str) : str
     result =
@@ -168,17 +181,17 @@ class ExTwitter < Twitter::REST::Client
     result
   end
 
-  def fetch_cache_or_call_api(method_name, args, &block)
-    key = namespaced_key(method_name, args[0])
+  def fetch_cache_or_call_api(method_name, user, options = {})
+    key = namespaced_key(method_name, user)
     if cache.exist?(key)
-      data = parse_json_according_to_type(cache.read(key))
+      data = parse_json_according_to_type(cache.read(key), options)
       logger.debug "#{now} #{method_name} #{key} (cache read)"
       return data
     end
 
     data = yield
 
-    cache.write(key, to_json_according_to_type(data))
+    cache.write(key, to_json_according_to_type(data, options))
     logger.debug "#{now} #{method_name} #{key} (cache wrote)"
 
     data
@@ -187,7 +200,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_user? :user?
   def user?(*args)
     return old_user? if args.empty?
-    fetch_cache_or_call_api(:user?, args) {
+    fetch_cache_or_call_api(:user?, args[0]) {
       begin
         old_user?(*args)
       rescue Twitter::Error::NotFound => e
@@ -200,7 +213,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_user :user
   def user(*args)
     return old_user if args.empty?
-    fetch_cache_or_call_api(:user, args) {
+    fetch_cache_or_call_api(:user, args[0]) {
       begin
         old_user(*args)
       rescue Twitter::Error::NotFound => e
@@ -214,7 +227,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_friend_ids :friend_ids
   def friend_ids(*args)
     args = [user] if args.empty? # need at least one param to use cache
-    fetch_cache_or_call_api(:friend_ids, args) {
+    fetch_cache_or_call_api(:friend_ids, args[0]) {
       options = {count: 5000, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_friend_ids, *args, options)
     }
@@ -223,7 +236,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_follower_ids :follower_ids
   def follower_ids(*args)
     args = [user] if args.empty? # need at least one param to use cache
-    fetch_cache_or_call_api(:follower_ids, args) {
+    fetch_cache_or_call_api(:follower_ids, args[0]) {
       options = {count: 5000, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_follower_ids, *args, options)
     }
@@ -232,7 +245,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_friends :friends
   def friends(*args)
     args = [user] if args.empty? # need at least one param to use cache
-    fetch_cache_or_call_api(:friends, args) {
+    fetch_cache_or_call_api(:friends, args[0], reduce: false) {
       options = {count: 200, include_user_entities: true, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_friends, *args, options)
     }
@@ -246,7 +259,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_followers :followers
   def followers(*args)
     args = [user] if args.empty? # need at least one param to use cache
-    fetch_cache_or_call_api(:followers, args) {
+    fetch_cache_or_call_api(:followers, args[0], reduce: false) {
       options = {count: 200, include_user_entities: true, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_followers, *args, options)
     }
@@ -325,7 +338,7 @@ class ExTwitter < Twitter::REST::Client
     processed_users = []
 
     Parallel.each_with_index(users_per_workers, in_threads: [users_per_workers.size, 10].min) do |users_per_worker, i|
-      _users = fetch_cache_or_call_api(:users, [users_per_worker, options]) {
+      _users = fetch_cache_or_call_api(:users, users_per_worker, reduce: false) {
         old_users(users_per_worker, options)
       }
 
@@ -340,7 +353,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_user_timeline :user_timeline
   def user_timeline(*args)
     args = [user] if args.empty? # need at least one param to use cache
-    fetch_cache_or_call_api(:user_timeline, args) {
+    fetch_cache_or_call_api(:user_timeline, args[0]) {
       options = {count: 200, include_rts: true}.merge(args.extract_options!)
       collect_with_max_id(:old_user_timeline, *args, options)
     }
@@ -370,6 +383,22 @@ class ExTwitter < Twitter::REST::Client
     end.compact.uniq
 
     users(uids) || []
+  end
+
+  def select_inactive_users(users)
+    two_weeks_ago = 2.weeks.ago.to_i
+    users.select do |u|
+      !u.has_key?(:status) || !u[:status].has_key?(:created_at) ||
+        Time.parse(u[:status][:created_at]).to_i < two_weeks_ago
+    end
+  end
+
+  def inactive_friends(user)
+    select_inactive_users(friends_advanced(user))
+  end
+
+  def inactive_followers(user)
+    select_inactive_users(followers_advanced(user))
   end
 
   def clusters_belong_to(text)

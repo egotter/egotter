@@ -1,6 +1,7 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends friends_in_common followers_in_common replying replied clusters_belong_to update_history)
+  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends
+    friends_in_common followers_in_common replying replied inactive_friends inactive_followers clusters_belong_to update_history)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
@@ -70,6 +71,14 @@ class SearchesController < ApplicationController
         name: I18n.t('search_menu.replied', user: sn),
         target: _replied.map { |u| u.uid = u.id; u },
         path_method: method(:replied_path).to_proc
+      }, {
+        name: I18n.t('search_menu.inactive_friends', user: sn),
+        target: tu.inactive_friends,
+        path_method: method(:inactive_friends_path).to_proc
+      }, {
+        name: I18n.t('search_menu.inactive_followers', user: sn),
+        target: tu.inactive_followers,
+        path_method: method(:inactive_followers_path).to_proc
       },
     ]
 
@@ -132,6 +141,16 @@ class SearchesController < ApplicationController
   def replied
     users = (@searched_tw_user.replied(client) && @searched_tw_user.replied(client) rescue [])
     @user_items = users.map { |u| u.uid = u.id; {target: u} }
+  end
+
+  # GET /searches/:screen_name/inactive_friends
+  def inactive_friends
+    @user_items = @searched_tw_user.inactive_friends.map{|f| {target: f} }
+  end
+
+  # GET /searches/:screen_name/inactive_followers
+  def inactive_followers
+    @user_items = @searched_tw_user.inactive_followers.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/clusters_belong_to

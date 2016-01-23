@@ -16,6 +16,8 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/followers_in_common', to: 'searches#followers_in_common', as: :followers_in_common
   get 'searches/:screen_name/replying', to: 'searches#replying', as: :replying
   get 'searches/:screen_name/replied', to: 'searches#replied', as: :replied
+  get 'searches/:screen_name/inactive_friends', to: 'searches#inactive_friends', as: :inactive_friends
+  get 'searches/:screen_name/inactive_followers', to: 'searches#inactive_followers', as: :inactive_followers
   get 'searches/:screen_name/clusters_belong_to', to: 'searches#clusters_belong_to', as: :clusters_belong_to
   get 'searches/:screen_name/update_history', to: 'searches#update_history', as: :update_history
 

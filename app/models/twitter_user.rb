@@ -278,6 +278,16 @@ class TwitterUser < ActiveRecord::Base
     client.replied(self.screen_name)
   end
 
+  def inactive_friends
+    # friends relation is not used because of using status which is not saved to db
+    ExTwitter.new.inactive_friends(self.uid.to_i)
+  end
+
+  def inactive_followers
+    # followers relation is not used because of using status which is not saved to db
+    ExTwitter.new.inactive_followers(self.uid.to_i)
+  end
+
   def clusters_belong_to(client)
     text = client.user_timeline(self.uid.to_i).map{|s| s.text }.join(' ')
     ExTwitter.new.clusters_belong_to(text)

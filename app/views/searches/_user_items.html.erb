@@ -1,6 +1,5 @@
 <% user_items.each do |user_item| %>
   <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
-    <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), style: 'color: #333333; text-decoration: none;', method: :post do %>
       <div class="media-left" style="padding-left: 15px;">
         <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", style="border: 1px solid #eeeeee;" alt="<%= user_item[:target].screen_name %>">
       </div>
@@ -13,8 +12,20 @@
         <span style="font-size: 13px; color: #999999;"><%= user_item[:target].screen_name %></span>
       </div>
       <div class="media-right">
-        <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info">検索する</button>
+        <table border="0" cellspacing="0" cellpadding="0">
+          <tr>
+            <td style="display: none;">
+              <%= link_to "https://twitter.com/#{user_item[:target].screen_name}", style: 'color: #333333; text-decoration: none;', target: '_blank' do %>
+                <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info"><%= t('dictionary.search_by_twitter') %></button>
+              <% end %>
+            </td>
+            <td>
+              <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), style: 'color: #333333; text-decoration: none;', method: :post do %>
+                <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+              <% end %>
+            </td>
+          </tr>
+        </table>
       </div>
-  <% end %>
   </div>
 <% end %>
