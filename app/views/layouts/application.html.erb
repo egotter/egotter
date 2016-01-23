@@ -20,47 +20,88 @@
 <nav class="navbar navbar-default" style="margin-bottom: 0px; background-color: #ffffff;">
   <div class="container-fluid">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-        <% unless user_signed_in? %>
-          <%= link_to welcome_path, style: 'text-decoration: none;' do %>
+      <% unless user_signed_in? %>
+        <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+          <%= link_to welcome_path, style: 'text-decoration: none; color: #000000;' do %>
             <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
             <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
           <% end %>
-        <% end %>
-      </button>
+        </button>
+      <% end %>
+
       <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-        <%= link_to menu_path, style: 'text-decoration: none;' do %>
+        <%= link_to menu_path, style: 'text-decoration: none; color: #000000;' do %>
           <span style="font-size: 20px" class="glyphicon glyphicon-menu-hamburger"></span><br>
           <span style="font-size: 9px;"><%= t('dictionary.menu') %></span>
         <% end %>
       </button>
+
+      <% if action_name != 'new' %>
+        <button type="button" class="navbar-toggle" data-toggle="modal" data-target="#search_modal" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+          <span style="font-size: 20px" class="glyphicon glyphicon-search"></span><br>
+          <span style="font-size: 9px;"><%= t('dictionary.search') %></span>
+        </button>
+      <% end %>
+
       <a style="font-size: 30px; display: block; padding-left: 10px;" class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
     </div>
 
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
-        <li>
-          <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-            <% unless user_signed_in? %>
-              <%= link_to welcome_path, style: 'text-decoration: none;' do %>
+        <% unless user_signed_in? %>
+          <li>
+            <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+              <%= link_to welcome_path, style: 'text-decoration: none; color: #000000;' do %>
                 <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
                 <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
               <% end %>
-            <% end %>
-          </div>
-        </li>
+            </div>
+          </li>
+        <% end %>
         <li>
           <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-            <%= link_to menu_path, style: 'text-decoration: none;' do %>
+            <%= link_to menu_path, style: 'text-decoration: none; color: #000000;' do %>
               <span style="font-size: 20px" class="glyphicon glyphicon-menu-hamburger"></span><br>
               <span style="font-size: 9px;"><%= t('dictionary.menu') %></span>
             <% end %>
           </div>
         </li>
+        <% if action_name != 'new' %>
+          <li>
+            <div data-toggle="modal" data-target="#search_modal" style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+              <span style="font-size: 20px" class="glyphicon glyphicon-search"></span><br>
+              <span style="font-size: 9px;"><%= t('dictionary.search') %></span>
+            </div>
+          </li>
+        <% end %>
       </ul>
     </div>
   </div><!-- /.container-fluid -->
 </nav>
+
+<% if action_name != 'new' %>
+  <div class="modal fade" id="search_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel"><%= t('dictionary.search_by_egotter') %></h4>
+        </div>
+        <div class="modal-body">
+          <%= form_tag searches_path, method: :post do %>
+            <label for="screen_name" class="sr-only">Twitter ID</label>
+            <div class="input-group">
+              <div class="input-group-addon">@</div>
+              <input type="text" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
+                     pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required>
+            </div>
+            <button style="margin-top: 10px;" class="btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+<% end %>
 
 <% if notice %>
   <p class="alert alert-info" style="margin: 0px;"><%= raw notice %></p>

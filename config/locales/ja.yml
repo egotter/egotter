@@ -17,6 +17,7 @@ ja:
     search: "検索"
     search_by: "%{user} で検索"
     search_by_twitter: "ツイッターで検索"
+    search_by_egotter: "えごったーで検索"
     retry_search_by: "%{user} で再度検索"
     waiting: "%{user} のデータを検索中"
     view_more: "続きを見る"
