@@ -26,6 +26,8 @@ class Friend < ActiveRecord::Base
     @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
   end
 
+  include Concerns::TwitterUser::Validation
+
   def eql?(other)
     self.uid.to_i == other.uid.to_i
   end

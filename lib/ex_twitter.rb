@@ -20,29 +20,25 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def logger
-    @logger ||= Rails.logger
-  end
-
-  def now
-    "[#{Time.now}]"
+    @logger ||= Logger.new('log/ex_twitter.log')
   end
 
   def call_old_method(method_name, *args)
-    logger.debug "#{now} #{method_name} #{args.inspect}"
+    logger.debug "#{method_name} #{args.inspect}"
     options = args.extract_options!
     begin
       send(method_name, *args, options)
     rescue Twitter::Error::TooManyRequests => e
-      logger.warn "#{e.class} - Retry after #{e.rate_limit.reset_in} seconds."
+      logger.warn "#{__method__}: #{e.class} - Retry after #{e.rate_limit.reset_in} seconds."
       raise e
     rescue Twitter::Error::ServiceUnavailable => e
-      logger.warn "#{e.class} - #{e.message}"
+      logger.warn "#{__method__}: #{e.class} - #{e.message}"
       raise e
     rescue Twitter::Error::InternalServerError => e
-      logger.warn "#{e.class} - #{e.message}"
+      logger.warn "#{__method__}: #{e.class} - #{e.message}"
       raise e
     rescue => e
-      logger.warn "#{e.class} - #{e.message}"
+      logger.warn "#{__method__}: #{e.class} - #{e.message}"
       raise e
     end
   end
@@ -108,7 +104,7 @@ class ExTwitter < Twitter::REST::Client
   # encode
   def to_json_according_to_type(obj, options = {})
     options[:reduce] = true unless options.has_key?(:reduce)
-    start_t = Time.now.to_i
+    start_t = Time.now
     result =
       case
         when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
@@ -144,14 +140,14 @@ class ExTwitter < Twitter::REST::Client
         else
           raise obj.inspect
       end
-    end_t = Time.now.to_i
-    logger.debug "#{now} to_json_according_to_type (#{end_t - start_t}s)"
+    end_t = Time.now
+    logger.debug "#{__method__}: (#{end_t - start_t}s)"
     result
   end
 
   # decode
   def parse_json_according_to_type(str, options = {})
-    start_t = Time.now.to_i
+    start_t = Time.now
     obj = str.kind_of?(String) ? JSON.parse(str) : str
     result =
       case
@@ -176,8 +172,8 @@ class ExTwitter < Twitter::REST::Client
         else
           raise obj.inspect
       end
-    end_t = Time.now.to_i
-    logger.debug "#{now} parse_json_according_to_type (#{end_t - start_t}s)"
+    end_t = Time.now
+    logger.debug "#{__method__}: (#{end_t - start_t}s)"
     result
   end
 
@@ -185,14 +181,14 @@ class ExTwitter < Twitter::REST::Client
     key = namespaced_key(method_name, user)
     if cache.exist?(key)
       data = parse_json_according_to_type(cache.read(key), options)
-      logger.debug "#{now} #{method_name} #{key} (cache read)"
+      logger.debug "#{method_name} #{key} (cache read)"
       return data
     end
 
     data = yield
 
     cache.write(key, to_json_according_to_type(data, options))
-    logger.debug "#{now} #{method_name} #{key} (cache wrote)"
+    logger.debug "#{method_name} #{key} (cache wrote)"
 
     data
   end
@@ -204,7 +200,7 @@ class ExTwitter < Twitter::REST::Client
       begin
         old_user?(*args)
       rescue Twitter::Error::NotFound => e
-        logger.warn "#{e.message} #{args.inspect}"
+        logger.warn "#{__method__}: #{e.message} args=#{args.inspect}"
         raise e
       end
     }
@@ -217,7 +213,7 @@ class ExTwitter < Twitter::REST::Client
       begin
         old_user(*args)
       rescue Twitter::Error::NotFound => e
-        logger.warn "#{e.message} #{args.inspect}"
+        logger.warn "#{__method__}: #{e.message} args=#{args.inspect}"
         raise e
       end
     }

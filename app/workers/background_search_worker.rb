@@ -16,7 +16,7 @@ class BackgroundSearchWorker
       create_log(log_attrs, true, '')
       logger.debug "show #{screen_name}"
     else
-      new_tu = TwitterUser.build(client(login_user_id), uid)
+      new_tu = TwitterUser.build(client(login_user_id), uid.to_i)
       if new_tu.save_with_bulk_insert
         create_log(log_attrs, true, '')
         logger.debug "create #{screen_name}"

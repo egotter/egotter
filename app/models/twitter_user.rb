@@ -16,8 +16,8 @@
 #
 
 class TwitterUser < ActiveRecord::Base
-  has_many :friends, foreign_key: :from_id, dependent: :destroy
-  has_many :followers, foreign_key: :from_id, dependent: :destroy
+  has_many :friends, foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :followers, foreign_key: :from_id, dependent: :destroy, validate: false
 
   SAVE_KEYS = %i(
     id
@@ -45,79 +45,10 @@ class TwitterUser < ActiveRecord::Base
   delegate *SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
   def user_info_mash
-    @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
+    @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info || '{"friends_count": -1, "followers_count": -1}'))
   end
 
-  TOO_MANY_FRIENDS = 5000
-
-  validates :uid, presence: true, numericality: :only_integer
-  validates :screen_name, presence: true, length: {maximum: 75}
-  validates :user_info, presence: true
-  validate :friends_or_followers_different?
-  validate :friends_and_followers_zero?
-  validate :friends_and_followers_too_many?
-  validate :recently_created_record_exists?
-  validate :same_record_exists?
-
-  def friends_or_followers_different?
-    if friends_count != friends.size || followers_count != followers.size
-      errors[:base] << 'friends_count or followers_count is different from friends.size or followers.size'
-      return true
-    end
-
-    false
-  end
-
-  def friends_and_followers_zero?
-    if friends.size + followers.size == 0
-      errors[:base] << 'sum of friends and followers is zero'
-      return true
-    end
-
-    false
-  end
-
-  def friends_and_followers_too_many?
-    if friends.size + followers.size  > TOO_MANY_FRIENDS
-      errors[:base] << 'too many friends and followers'
-      return true
-    end
-
-    false
-  end
-
-  def recently_created_record_exists?
-    me = latest_me
-    return false if me.blank?
-    if me.recently_created? || me.recently_updated?
-      errors[:base] << 'recently_created? or recently_updated? is true'
-      return true
-    end
-
-    false
-  end
-
-  def same_record_exists?
-    same_record?(latest_me)
-  end
-
-  def same_record?(tu)
-    return false if tu.blank?
-    raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
-
-    if tu.friends_count != self.friends_count || tu.followers_count != self.followers_count
-      logger.debug "#{screen_name} friends_count or followers_count is different"
-      return false
-    end
-
-    if tu.friend_uids != self.friend_uids || tu.follower_uids != self.follower_uids
-      logger.debug "#{screen_name} friends or followers are different"
-      return false
-    end
-
-    errors[:base] << "id:#{tu.id} is the same"
-    true
-  end
+  include Concerns::TwitterUser::Validation
 
   # sorting to use eql? method
   def friend_uids
@@ -147,13 +78,11 @@ class TwitterUser < ActiveRecord::Base
     diffs
   end
 
-  def self.build(client, uid, option = {})
-    option = {all: true} if option.blank?
+  def self.build(client, user, option = {})
+    option[:all] = true unless option.has_key?(:all)
 
     # call 2 times to use cache
-    _raw_me = client.user(uid.to_i) && client.user(uid.to_i)
-    _friends, _followers =
-      client.friends_and_followers_advanced(_raw_me.id.to_i) && client.friends_and_followers_advanced(_raw_me.id.to_i)
+    _raw_me = client.user(user) && client.user(user)
 
     tu = TwitterUser.new do |tu|
       tu.uid = _raw_me.id.to_i
@@ -162,6 +91,9 @@ class TwitterUser < ActiveRecord::Base
     end
 
     if option[:all]
+      _friends, _followers =
+        client.friends_and_followers_advanced(_raw_me.id.to_i) && client.friends_and_followers_advanced(_raw_me.id.to_i)
+
       tu.friends = _friends.map do |f|
         Friend.new({
                      from_id: nil,
@@ -183,7 +115,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def save_with_bulk_insert(validate = true)
-    if validate && !valid?
+    if validate && invalid?
       logger.debug "[#{Time.zone.now}] #{self.class}#save_raw_twitter_data #{errors.full_messages}"
       return false
     end

@@ -5,9 +5,9 @@ class SearchesController < ApplicationController
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
-  before_action :suspended_user, only: NEED_VALIDATION
-  before_action :protected_user_and_not_allowed_to_search, only: NEED_VALIDATION
-  before_action :too_many_friends_and_followers, only: NEED_VALIDATION
+  before_action :suspended_account, only: NEED_VALIDATION
+  before_action :unauthorized_account, only: NEED_VALIDATION
+  before_action :too_many_friends, only: NEED_VALIDATION
 
   before_action :set_raw_user, only: SEARCH_MENUS
   before_action :set_searched_tw_user, only: SEARCH_MENUS
@@ -230,7 +230,7 @@ class SearchesController < ApplicationController
         when BackgroundSearchLog.fail?(uid)
           render json: {status: false, reason: BackgroundSearchLog.fail_reason(uid)}
         else
-          raise 'something is wrong'
+          raise BackgroundSearchLog::SomethingIsWrong
       end
     else
       set_raw_user
@@ -281,7 +281,7 @@ class SearchesController < ApplicationController
     end
   end
 
-  def suspended_user
+  def suspended_account
     unless client.user?(search_sn)
       redirect_to '/', alert: t('before_sign_in.suspended_user', user: search_sn)
     end
@@ -289,7 +289,7 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
-  def protected_user_and_not_allowed_to_search
+  def unauthorized_account
     alert_msg = t('before_sign_in.protected_user',
                   user: search_sn,
                   sign_in_link: sign_in_link)
@@ -305,7 +305,7 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
-  def too_many_friends_and_followers
+  def too_many_friends
     raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
     if raw_user.friends_count + raw_user.followers_count > TwitterUser::TOO_MANY_FRIENDS
       alert_msg = t('before_sign_in.too_many_friends',
