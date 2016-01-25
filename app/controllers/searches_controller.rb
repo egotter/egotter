@@ -86,6 +86,7 @@ class SearchesController < ApplicationController
     @menu_clusters_belong_to = {
       name: I18n.t('search_menu.clusters_belong_to', user: sn),
       target: _clusters_belong_to,
+      tweet_text: _clusters_belong_to.map{|c| "#{c}#{t('dictionary.cluster')}" }.join(t('dictionary.delim')),
       path_method: method(:clusters_belong_to_path).to_proc
     }
 
