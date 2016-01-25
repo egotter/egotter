@@ -19,6 +19,8 @@ class TwitterUser < ActiveRecord::Base
   has_many :friends, foreign_key: :from_id, dependent: :destroy, validate: false
   has_many :followers, foreign_key: :from_id, dependent: :destroy, validate: false
 
+  attr_accessor :client, :login_user, :egotter_context
+
   SAVE_KEYS = %i(
     id
     name
@@ -89,10 +91,14 @@ class TwitterUser < ActiveRecord::Base
       tu.screen_name = _raw_me.screen_name
       tu.user_info = _raw_me.slice(*SAVE_KEYS).to_json # TODO check the type of keys and values
     end
+    tu.client = client
+    tu.login_user = option.has_key?(:login_user) ? option[:login_user] : nil
+    tu.egotter_context = option.has_key?(:context) ? option[:context] : nil
 
     if option[:all]
       _friends, _followers =
-        client.friends_and_followers_advanced(_raw_me.id.to_i) && client.friends_and_followers_advanced(_raw_me.id.to_i)
+        client.friends_and_followers_advanced(_raw_me.id.to_i) &&
+          client.friends_and_followers_advanced(_raw_me.id.to_i)
 
       tu.friends = _friends.map do |f|
         Friend.new({
@@ -202,12 +208,12 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.removed(oldest_me, latest_me)
   end
 
-  def replying(client)
-    client.replying(self.uid.to_i)
+  def replying
+    self.client.replying(self.uid.to_i)
   end
 
-  def replied(client)
-    client.replied(self.screen_name)
+  def replied
+    self.client.replied(self.screen_name)
   end
 
   def inactive_friends
@@ -220,8 +226,8 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.inactive_followers(self.uid.to_i)
   end
 
-  def clusters_belong_to(client)
-    text = client.user_timeline(self.uid.to_i).map{|s| s.text }.join(' ')
+  def clusters_belong_to
+    text = self.client.user_timeline(self.uid.to_i).map{|s| s.text }.join(' ')
     ExTwitter.new.clusters_belong_to(text)
   end
 

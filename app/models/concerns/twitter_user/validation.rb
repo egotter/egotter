@@ -18,13 +18,21 @@ module Concerns::TwitterUser::Validation
     validate :recently_created_record_exists?
     validate :same_record_exists?
 
+    # TODO do nothing if this method is included by Friend or Follower
     def unauthorized?
-      if protected && !User.exists?(uid: uid.to_i)
-        errors[:base] << 'unauthorized'
-        return true
+      return false unless protected
+
+      # login_user is protected and search himself
+      if egotter_context == 'search'
+        raise 'must set login_user' if login_user.nil?
+        return (uid.to_i == login_user.uid.to_i ? false : true)
       end
 
-      false
+      # background job
+      return false if User.exists?(uid: uid.to_i)
+
+      errors[:base] << 'unauthorized'
+      true
     end
 
     def suspended_account?

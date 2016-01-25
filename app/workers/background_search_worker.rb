@@ -5,7 +5,7 @@ class BackgroundSearchWorker
   # This worker is called after strict validation for uid in searches_controller,
   # so you don't need to do that in this worker.
   def perform(uid, screen_name, login_user_id, log_attrs = {})
-    logger.debug "#{user_name(uid, screen_name)} start"
+    logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} start"
 
     @user_id = login_user_id
     uid = uid.to_i
@@ -14,12 +14,13 @@ class BackgroundSearchWorker
     if (tu = TwitterUser.latest(uid)).present? && tu.recently_created?
       tu.touch
       create_log(log_attrs, true, '')
-      logger.debug "show #{screen_name}"
+      logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} show #{screen_name}"
     else
-      new_tu = TwitterUser.build(client(login_user_id), uid.to_i)
+      new_tu = TwitterUser.build(client(login_user_id), uid.to_i,
+                                 {login_user: User.find(login_user_id), context: 'search'})
       if new_tu.save_with_bulk_insert
         create_log(log_attrs, true, '')
-        logger.debug "create #{screen_name}"
+        logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} create #{screen_name}"
       else
         # Egotter needs at least one TwitterUser record to show search result,
         # so this branch should not be executed if TwitterUser is not existed.
@@ -29,11 +30,11 @@ class BackgroundSearchWorker
         else
           create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong)
         end
-        logger.debug "not create(#{new_tu.errors.full_messages}) #{screen_name}"
+        logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} not create(#{new_tu.errors.full_messages}) #{screen_name}"
       end
     end
 
-    logger.debug "#{user_name(uid, screen_name)} finish"
+    logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} finish"
 
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} #{e.message} retry after #{e.rate_limit.reset_in} seconds"

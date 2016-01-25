@@ -29,10 +29,11 @@ class SearchesController < ApplicationController
 
   def show
     tu = @searched_tw_user
+    tu.client = client
     sn = '@' + tu.screen_name
-    _clusters_belong_to = (tu.clusters_belong_to(client) && tu.clusters_belong_to(client) rescue [])
-    _replying = (tu.replying(client) && tu.replying(client) rescue [])
-    _replied = (tu.replied(client) && tu.replied(client) rescue [])
+    _clusters_belong_to = (tu.clusters_belong_to && tu.clusters_belong_to rescue [])
+    _replying = (tu.replying && tu.replying rescue [])
+    _replied = (tu.replied && tu.replied rescue [])
 
     @menu_items = [
       {
@@ -133,13 +134,15 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/replying
   def replying
-    users = (@searched_tw_user.replying(client) && @searched_tw_user.replying(client) rescue [])
+    @searched_tw_user.client = client
+    users = (@searched_tw_user.replying && @searched_tw_user.replying rescue [])
     @user_items = users.map { |u| u.uid = u.id; {target: u} }
   end
 
   # GET /searches/:screen_name/replied
   def replied
-    users = (@searched_tw_user.replied(client) && @searched_tw_user.replied(client) rescue [])
+    @searched_tw_user.client = client
+    users = (@searched_tw_user.replied && @searched_tw_user.replied rescue [])
     @user_items = users.map { |u| u.uid = u.id; {target: u} }
   end
 
@@ -155,7 +158,8 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/clusters_belong_to
   def clusters_belong_to
-    clusters = (@searched_tw_user.clusters_belong_to(client) && @searched_tw_user.clusters_belong_to(client) rescue [])
+    @searched_tw_user.client = client
+    clusters = (@searched_tw_user.clusters_belong_to && @searched_tw_user.clusters_belong_to rescue [])
     @clusters_belong_to = clusters.map { |c| {target: c} }
   end
 
