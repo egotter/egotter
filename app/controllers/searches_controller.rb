@@ -84,9 +84,11 @@ class SearchesController < ApplicationController
     ]
 
     @menu_clusters_belong_to = {
-      name: I18n.t('search_menu.clusters_belong_to', user: sn),
+      name: t('search_menu.clusters_belong_to', user: sn),
       target: _clusters_belong_to,
-      tweet_text: _clusters_belong_to.map{|c| "#{c}#{t('dictionary.cluster')}" }.join(t('dictionary.delim')),
+      screen_name: tu.screen_name,
+      text: "#{_clusters_belong_to.map{|c| "#{c}#{t('dictionary.cluster')}" }.join(t('dictionary.delim'))}",
+      tweet_text: "#{t('search_menu.clusters_belong_to', user: sn)}\n#{_clusters_belong_to.map{|c| "##{c}#{t('dictionary.cluster')}" }.join(' ')}\n#{t('dictionary.continue_reading')}http://example.com",
       path_method: method(:clusters_belong_to_path).to_proc
     }
 

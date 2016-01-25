@@ -20,6 +20,7 @@ ja:
     search_by_egotter: "えごったーで検索"
     retry_search_by: "%{user} で再度検索"
     waiting: "%{user} のデータを検索中"
+    continue_reading: "続きはこちら → "
     view_more: "続きを見る"
     tweet_result: "結果をつぶやく"
     created_at_and_updated_at: "更新日時"

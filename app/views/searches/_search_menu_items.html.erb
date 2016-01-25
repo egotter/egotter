@@ -5,10 +5,11 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12">
-        <%= menu_clusters_belong_to[:tweet_text] %>
+        <%= menu_clusters_belong_to[:text] %>
 
         <%= link_to(t('dictionary.tweet_result'),
                     "https://twitter.com/intent/tweet?text=#{URI.escape(menu_clusters_belong_to[:tweet_text])}",
+                    target: '_blank',
                     class: 'btn btn-default pull-right',
                     style: 'margin-top: 5px;') %>
       </div>
