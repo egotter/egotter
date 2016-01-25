@@ -20,6 +20,8 @@
 class Friend < ActiveRecord::Base
   belongs_to :twitter_user
 
+  attr_accessor :client, :login_user, :egotter_context
+
   delegate *TwitterUser::SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
   def user_info_mash
