@@ -16,6 +16,7 @@
 !/log/.keep
 /tmp
 
+/ddagent-install.log
 /.idea
 /.pryrc
 /dump.rdb
