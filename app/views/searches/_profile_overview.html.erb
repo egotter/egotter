@@ -11,7 +11,11 @@
               <% if searched_tw_user.protected %><span class="glyphicon glyphicon-lock"></span><% end %>
             </div>
           </div>
-          <div class="screen-name">@<%= searched_tw_user.screen_name %></div>
+          <div class="screen-name">
+            <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", style: 'color: #ffffff; text-decoration: none;', target: '_blank' do %>
+              @<%= searched_tw_user.screen_name %>
+            <% end %>
+          </div>
         </div>
       </div>
     </div>
