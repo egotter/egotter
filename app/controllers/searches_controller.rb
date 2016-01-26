@@ -29,6 +29,12 @@ class SearchesController < ApplicationController
 
   def show
     tu = @searched_tw_user
+
+    key = "searches:show:#{user_signed_in? ? current_user.id : 'anonymous'}:#{tu.screen_name}"
+    if redis.exists(key)
+      return render text: redis.get(key)
+    end
+
     tu.client = client
     sn = '@' + tu.screen_name
     _clusters_belong_to = (tu.clusters_belong_to && tu.clusters_belong_to rescue [])
@@ -37,47 +43,47 @@ class SearchesController < ApplicationController
 
     @menu_items = [
       {
-        name: I18n.t('search_menu.removing', user: sn),
+        name: t('search_menu.removing', user: sn),
         target: tu.removing,
         path_method: method(:removing_path).to_proc
       }, {
-        name: I18n.t('search_menu.removed', user: sn),
+        name: t('search_menu.removed', user: sn),
         target: tu.removed,
         path_method: method(:removed_path).to_proc
       }, {
-        name: I18n.t('search_menu.only_following', user: sn),
+        name: t('search_menu.only_following', user: sn),
         target: tu.only_following,
         path_method: method(:only_following_path).to_proc
       }, {
-        name: I18n.t('search_menu.only_followed', user: sn),
+        name: t('search_menu.only_followed', user: sn),
         target: tu.only_followed,
         path_method: method(:only_followed_path).to_proc
       }, {
-        name: I18n.t('search_menu.mutual_friends', user: sn),
+        name: t('search_menu.mutual_friends', user: sn),
         target: tu.mutual_friends,
         path_method: method(:mutual_friends_path).to_proc
       }, {
-        name: I18n.t('search_menu.friends_in_common', user: sn, login: t('dictionary.you')),
+        name: t('search_menu.friends_in_common', user: sn, login: t('dictionary.you')),
         target: tu.friends_in_common(nil),
         path_method: method(:friends_in_common_path).to_proc
       }, {
-        name: I18n.t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
+        name: t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
         target: tu.followers_in_common(nil),
         path_method: method(:followers_in_common_path).to_proc
       }, {
-        name: I18n.t('search_menu.replying', user: sn),
+        name: t('search_menu.replying', user: sn),
         target: _replying.map { |u| u.uid = u.id; u },
         path_method: method(:replying_path).to_proc
       }, {
-        name: I18n.t('search_menu.replied', user: sn),
+        name: t('search_menu.replied', user: sn),
         target: _replied.map { |u| u.uid = u.id; u },
         path_method: method(:replied_path).to_proc
       }, {
-        name: I18n.t('search_menu.inactive_friends', user: sn),
+        name: t('search_menu.inactive_friends', user: sn),
         target: tu.inactive_friends,
         path_method: method(:inactive_friends_path).to_proc
       }, {
-        name: I18n.t('search_menu.inactive_followers', user: sn),
+        name: t('search_menu.inactive_followers', user: sn),
         target: tu.inactive_followers,
         path_method: method(:inactive_followers_path).to_proc
       },
@@ -93,9 +99,14 @@ class SearchesController < ApplicationController
     }
 
     @menu_update_history = {
-      name: I18n.t('search_menu.update_history', user: sn),
+      name: t('search_menu.update_history', user: sn),
       path_method: method(:update_history_path).to_proc
     }
+
+    html = render_to_string
+    redis.setex(key, 60 * 10, html)
+    render text: html
+
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
@@ -177,17 +188,15 @@ class SearchesController < ApplicationController
       if user_signed_in?
         key = "searches:new:#{current_user.id}"
         if flash.empty?
-          redis.fetch(key, 60 * 5) { render_to_string }
+          redis.fetch(key, 60 * 10) { render_to_string }
         else
-          redis.del(key)
           render_to_string
         end
       else
         key = 'searches:new:anonymous'
         if flash.empty?
-          redis.fetch(key) { render_to_string }
+          redis.fetch(key, 60 * 10) { render_to_string }
         else
-          redis.del(key)
           render_to_string
         end
       end
@@ -221,6 +230,11 @@ class SearchesController < ApplicationController
       uid: searched_uid}
     )
 
+    key = "searches:show:#{user_signed_in? ? current_user.id : 'anonymous'}:#{searched_sn}"
+    if redis.exists(key)
+      return redirect_to search_path(screen_name: searched_sn, id: searched_uid)
+    end
+
     redirect_to waiting_path(screen_name: searched_sn, id: searched_uid)
   end
 
@@ -245,7 +259,7 @@ class SearchesController < ApplicationController
     end
   rescue Twitter::Error::TooManyRequests => e
     if request.post?
-      render json: {status: false, reason: 'too many requests'}
+      render json: {status: false, reason: BackgroundSearchLog::TooManyRequests}
     else
       redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
     end
