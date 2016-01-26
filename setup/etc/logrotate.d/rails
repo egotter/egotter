@@ -1,7 +1,9 @@
 /home/ec2-user/egotter/log/development.log {
-  hourly
+  dateext
+  dateformat _%Y%m%d
+  daily
   missingok
-  rotate 48
+  rotate 3
   compress
   delaycompress
   notifempty
