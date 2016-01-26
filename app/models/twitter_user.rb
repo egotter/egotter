@@ -218,12 +218,12 @@ class TwitterUser < ActiveRecord::Base
 
   def inactive_friends
     # friends relation is not used because of using status which is not saved to db
-    ExTwitter.new.inactive_friends(self.uid.to_i)
+    self.client.inactive_friends(self.uid.to_i)
   end
 
   def inactive_followers
     # followers relation is not used because of using status which is not saved to db
-    ExTwitter.new.inactive_followers(self.uid.to_i)
+    self.client.inactive_followers(self.uid.to_i)
   end
 
   def clusters_belong_to

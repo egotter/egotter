@@ -29,16 +29,19 @@ class ExTwitter < Twitter::REST::Client
     begin
       send(method_name, *args, options)
     rescue Twitter::Error::TooManyRequests => e
-      logger.warn "#{__method__}: #{e.class} - Retry after #{e.rate_limit.reset_in} seconds."
+      logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} Retry after #{e.rate_limit.reset_in} seconds."
       raise e
     rescue Twitter::Error::ServiceUnavailable => e
-      logger.warn "#{__method__}: #{e.class} - #{e.message}"
+      logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} #{e.message}"
       raise e
     rescue Twitter::Error::InternalServerError => e
-      logger.warn "#{__method__}: #{e.class} - #{e.message}"
+      logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} #{e.message}"
+      raise e
+    rescue Twitter::Error::Forbidden => e
+      logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} #{e.message}"
       raise e
     rescue => e
-      logger.warn "#{__method__}: #{e.class} - #{e.message}"
+      logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} #{e.message}"
       raise e
     end
   end
@@ -341,7 +344,7 @@ class ExTwitter < Twitter::REST::Client
 
     Parallel.each_with_index(users_per_workers, in_threads: [users_per_workers.size, 10].min) do |users_per_worker, i|
       _users = fetch_cache_or_call_api(:users, users_per_worker, reduce: false) {
-        old_users(users_per_worker, options)
+        call_old_method(:old_users, users_per_worker, options)
       }
 
       result = {i: i, users: _users}
