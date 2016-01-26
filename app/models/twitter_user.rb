@@ -131,6 +131,7 @@ class TwitterUser < ActiveRecord::Base
     self.save(validate: false)
 
     begin
+      log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
       self.transaction do
         _friends.map {|f| f.from_id = self.id }
         _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
@@ -138,6 +139,7 @@ class TwitterUser < ActiveRecord::Base
         _followers.map {|f| f.from_id = self.id }
         _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
       end
+      Rails.logger.level = log_level
 
       self.reload # for friends and followers
     rescue => e

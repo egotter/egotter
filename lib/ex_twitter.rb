@@ -142,7 +142,7 @@ class ExTwitter < Twitter::REST::Client
           obj
 
         else
-          raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} #{obj.inspect}"
+          raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} obj=#{obj.inspect}"
       end
     end_t = Time.now
     logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)"
@@ -174,7 +174,7 @@ class ExTwitter < Twitter::REST::Client
           obj
 
         else
-          raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} #{obj.inspect}"
+          raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} obj=#{obj.inspect}"
       end
     end_t = Time.now
     logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)"

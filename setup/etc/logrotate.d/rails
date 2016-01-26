@@ -1,0 +1,9 @@
+/home/ec2-user/egotter/log/development.log {
+  hourly
+  missingok
+  rotate 48
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}
