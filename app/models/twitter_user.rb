@@ -105,7 +105,7 @@ class TwitterUser < ActiveRecord::Base
                      from_id: nil,
                      uid: f.id,
                      screen_name: f.screen_name,
-                     user_info: f.slice(*SAVE_KEYS).to_json})
+                     user_info: f.slice(*SAVE_KEYS).to_json}) # It might be better to call to_hash
       end
 
       tu.followers = _followers.map do |f|
@@ -113,7 +113,7 @@ class TwitterUser < ActiveRecord::Base
                        from_id: nil,
                        uid: f.id,
                        screen_name: f.screen_name,
-                       user_info: f.slice(*SAVE_KEYS).to_json})
+                       user_info: f.slice(*SAVE_KEYS).to_json}) # It might be better to call to_hash
       end
     end
 

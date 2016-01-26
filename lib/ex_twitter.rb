@@ -11,7 +11,7 @@ class ExTwitter < Twitter::REST::Client
   extend Memoist
 
   def initialize(options = {})
-    @cache = ActiveSupport::Cache::FileStore.new(File.join('tmp', 'file_cache2'))
+    @cache = ActiveSupport::Cache::FileStore.new(File.join('tmp', 'api_cache', Time.now.strftime('%Y%m%d%H')))
     super
   end
 
@@ -79,22 +79,23 @@ class ExTwitter < Twitter::REST::Client
 
   # currently ignore options
   def file_cache_key(method_name, user)
+    delim = ':'
     identifier =
       case
         when user.kind_of?(Integer)
-          "id-#{user.to_s}"
+          "id#{delim}#{user.to_s}"
         when user.kind_of?(Array) && user.first.kind_of?(Integer)
-          "ids-#{Digest::MD5.hexdigest(user.join(','))}"
+          "ids#{delim}#{Digest::MD5.hexdigest(user.join(','))}"
         when user.kind_of?(Array) && user.first.kind_of?(String)
-          "sns-#{Digest::MD5.hexdigest(user.join(','))}"
+          "sns#{delim}#{Digest::MD5.hexdigest(user.join(','))}"
         when user.kind_of?(String)
-          "sn-#{user}"
+          "sn#{delim}#{user}"
         when user.kind_of?(Twitter::User)
-          "user-#{user.id.to_s}"
+          "user#{delim}#{user.id.to_s}"
         else raise "#{method_name.inspect} #{user.inspect}"
       end
 
-    "#{method_name}_#{identifier}_#{Time.now.strftime('%Y%m%d%H')}"
+    "#{method_name}#{delim}#{identifier}"
   end
 
   def namespaced_key(method_name, user)
@@ -102,7 +103,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   # encode
-  def to_json_according_to_type(obj, options = {})
+  def encode_json(obj, caller_name, options = {})
     options[:reduce] = true unless options.has_key?(:reduce)
     start_t = Time.now
     result =
@@ -138,17 +139,17 @@ class ExTwitter < Twitter::REST::Client
           obj
 
         else
-          raise obj.inspect
+          raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} #{obj.inspect}"
       end
     end_t = Time.now
-    logger.debug "#{__method__}: (#{end_t - start_t}s)"
+    logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)"
     result
   end
 
   # decode
-  def parse_json_according_to_type(str, options = {})
+  def decode_json(json_str, caller_name, options = {})
     start_t = Time.now
-    obj = str.kind_of?(String) ? JSON.parse(str) : str
+    obj = json_str.kind_of?(String) ? JSON.parse(json_str) : json_str
     result =
       case
         when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
@@ -170,25 +171,27 @@ class ExTwitter < Twitter::REST::Client
           obj
 
         else
-          raise obj.inspect
+          raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} #{obj.inspect}"
       end
     end_t = Time.now
-    logger.debug "#{__method__}: (#{end_t - start_t}s)"
+    logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)"
     result
   end
 
   def fetch_cache_or_call_api(method_name, user, options = {})
     key = namespaced_key(method_name, user)
+    options.update(key: key)
+
     if cache.exist?(key)
-      data = parse_json_according_to_type(cache.read(key), options)
-      logger.debug "#{method_name} #{key} (cache read)"
+      data = decode_json(cache.read(key), method_name, options)
+      logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache read)"
       return data
     end
 
     data = yield
 
-    cache.write(key, to_json_according_to_type(data, options))
-    logger.debug "#{method_name} #{key} (cache wrote)"
+    cache.write(key, encode_json(data, method_name, options))
+    logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache wrote)"
 
     data
   end
@@ -238,6 +241,7 @@ class ExTwitter < Twitter::REST::Client
     }
   end
 
+  # specify reduce: false to use tweet for inactive_*
   alias :old_friends :friends
   def friends(*args)
     args = [user] if args.empty? # need at least one param to use cache
@@ -252,6 +256,7 @@ class ExTwitter < Twitter::REST::Client
     users(friend_ids(*args).map { |id| id.to_i })
   end
 
+  # specify reduce: false to use tweet for inactive_*
   alias :old_followers :followers
   def followers(*args)
     args = [user] if args.empty? # need at least one param to use cache
@@ -327,6 +332,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   # use compact, not use sort and uniq
+  # specify reduce: false to use tweet for inactive_*
   alias :old_users :users
   def users(*args)
     options = args.extract_options!
