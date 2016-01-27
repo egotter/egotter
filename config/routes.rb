@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/inactive_friends', to: 'searches#inactive_friends', as: :inactive_friends
   get 'searches/:screen_name/inactive_followers', to: 'searches#inactive_followers', as: :inactive_followers
   get 'searches/:screen_name/clusters_belong_to', to: 'searches#clusters_belong_to', as: :clusters_belong_to
-  get 'searches/:screen_name/update_history', to: 'searches#update_history', as: :update_history
+  get 'searches/:screen_name/update_histories', to: 'searches#update_histories', as: :update_histories
 
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
     omniauth_callbacks: "users/omniauth_callbacks"

@@ -2,12 +2,14 @@
 #
 # Table name: twitter_users
 #
-#  id          :integer          not null, primary key
-#  uid         :string(255)      not null
-#  screen_name :string(255)      not null
-#  user_info   :text(65535)      not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id           :integer          not null, primary key
+#  uid          :string(255)      not null
+#  screen_name  :string(255)      not null
+#  user_info    :text(65535)      not null
+#  search_count :integer          default(1), not null
+#  update_count :integer          default(0), not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
@@ -231,6 +233,14 @@ class TwitterUser < ActiveRecord::Base
   def clusters_belong_to
     text = self.client.user_timeline(self.uid.to_i).map{|s| s.text }.join(' ')
     ExTwitter.new.clusters_belong_to(text)
+  end
+
+  def search_and_touch
+    update(search_count: search_count + 1)
+  end
+
+  def update_and_touch
+    update(update_count: update_count + 1)
   end
 
   def eql?(other)

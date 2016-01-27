@@ -2,9 +2,11 @@
 <% enum.each do |tu1, tu2| %>
   <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
     <div class="media-body" style="padding-right: 15px;">
-      <h4 style="font-weight: bold; font-size: 14px;" class="media-heading"><%= tu1.diff(tu2).join(',') if tu2.present? %></h4>
-      <span style="display: block; font-size: 13px; color: #999999;"><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= tu1.created_at %></span>
-      <span style="display: block; font-size: 13px; color: #999999;"><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= tu1.updated_at %></span>
+      <h4 style="padding-left: 15px; font-weight: bold; font-size: 14px;" class="media-heading"><%= tu1.diff(tu2).join(',') if tu2.present? %></h4>
+      <span style="padding-left: 15px; display: block; font-size: 13px; color: #999999;"><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(tu1.created_at + 9.hours, format: :short) %></span>
+      <span style="padding-left: 15px; display: block; font-size: 13px; color: #999999;"><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(tu1.updated_at + 9.hours, format: :short) %></span>
+      <span style="padding-left: 15px; display: block; font-size: 13px; color: #999999;"><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= tu1.search_count %></span>
+      <span style="padding-left: 15px; display: block; font-size: 13px; color: #999999;"><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= tu1.update_count %></span>
     </div>
   </div>
 <% end %>

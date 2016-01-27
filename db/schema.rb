@@ -11,15 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160123153606) do
+ActiveRecord::Schema.define(version: 20160117151244) do
 
   create_table "background_search_logs", force: :cascade do |t|
-    t.boolean  "login",                     default: false
-    t.integer  "login_user_id", limit: 4,   default: -1
-    t.string   "uid",           limit: 255, default: "-1"
-    t.string   "bot_uid",       limit: 255, default: "-1"
-    t.boolean  "status",                    default: false
-    t.string   "reason",        limit: 255, default: ""
+    t.boolean  "login",                     default: false, null: false
+    t.integer  "login_user_id", limit: 4,   default: -1,    null: false
+    t.string   "uid",           limit: 255, default: "-1",  null: false
+    t.string   "bot_uid",       limit: 255, default: "-1",  null: false
+    t.boolean  "status",                    default: false, null: false
+    t.string   "reason",        limit: 255, default: "",    null: false
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
   end
@@ -28,10 +28,10 @@ ActiveRecord::Schema.define(version: 20160123153606) do
   add_index "background_search_logs", ["uid"], name: "index_background_search_logs_on_uid", using: :btree
 
   create_table "background_update_logs", force: :cascade do |t|
-    t.string   "uid",        limit: 255, default: "-1"
-    t.string   "bot_uid",    limit: 255, default: "-1"
-    t.boolean  "status",                 default: false
-    t.string   "reason",     limit: 255, default: ""
+    t.string   "uid",        limit: 255, default: "-1",  null: false
+    t.string   "bot_uid",    limit: 255, default: "-1",  null: false
+    t.boolean  "status",                 default: false, null: false
+    t.string   "reason",     limit: 255, default: "",    null: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
   end
@@ -65,13 +65,13 @@ ActiveRecord::Schema.define(version: 20160123153606) do
   add_index "friends", ["uid"], name: "index_friends_on_uid", using: :btree
 
   create_table "search_logs", force: :cascade do |t|
-    t.boolean  "login",                     default: false
-    t.integer  "login_user_id", limit: 4,   default: -1
-    t.string   "search_uid",    limit: 255, default: ""
-    t.string   "search_sn",     limit: 255, default: ""
-    t.string   "search_value",  limit: 255, default: ""
-    t.string   "search_menu",   limit: 255, default: ""
-    t.boolean  "same_user",                 default: false
+    t.boolean  "login",                     default: false, null: false
+    t.integer  "login_user_id", limit: 4,   default: -1,    null: false
+    t.string   "search_uid",    limit: 255, default: "",    null: false
+    t.string   "search_sn",     limit: 255, default: "",    null: false
+    t.string   "search_value",  limit: 255, default: "",    null: false
+    t.string   "search_menu",   limit: 255, default: "",    null: false
+    t.boolean  "same_user",                 default: false, null: false
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
   end
@@ -82,11 +82,13 @@ ActiveRecord::Schema.define(version: 20160123153606) do
   add_index "search_logs", ["search_value"], name: "index_search_logs_on_search_value", using: :btree
 
   create_table "twitter_users", force: :cascade do |t|
-    t.string   "uid",         limit: 255,   null: false
-    t.string   "screen_name", limit: 255,   null: false
-    t.text     "user_info",   limit: 65535, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.string   "uid",          limit: 255,               null: false
+    t.string   "screen_name",  limit: 255,               null: false
+    t.text     "user_info",    limit: 65535,             null: false
+    t.integer  "search_count", limit: 4,     default: 1, null: false
+    t.integer  "update_count", limit: 4,     default: 0, null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
   add_index "twitter_users", ["screen_name"], name: "index_twitter_users_on_screen_name", using: :btree

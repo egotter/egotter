@@ -9,6 +9,7 @@ class CreateFriends < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :friends, :uid
+    add_index :friends, :from_id
     add_index :friends, :screen_name
   end
 end

@@ -9,6 +9,7 @@ class CreateFollowers < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :followers, :uid
+    add_index :followers, :from_id
     add_index :followers, :screen_name
   end
 end

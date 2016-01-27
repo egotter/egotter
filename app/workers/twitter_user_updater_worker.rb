@@ -28,7 +28,7 @@ class TwitterUserUpdaterWorker
     latest_tu = TwitterUser.latest(_tu.uid.to_i)
 
     if latest_tu.present? && (latest_tu.recently_created? || latest_tu.recently_updated?)
-      latest_tu.touch
+      latest_tu.update_and_touch
       logger.debug "#{user_name(_tu)} skip(recently created or recently updated)"
       create_log(uid, true, '')
       return

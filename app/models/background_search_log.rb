@@ -3,12 +3,12 @@
 # Table name: background_search_logs
 #
 #  id            :integer          not null, primary key
-#  login         :boolean          default(FALSE)
-#  login_user_id :integer          default(-1)
-#  uid           :string(255)      default("-1")
-#  bot_uid       :string(255)      default("-1")
-#  status        :boolean          default(FALSE)
-#  reason        :string(255)      default("")
+#  login         :boolean          default(FALSE), not null
+#  login_user_id :integer          default(-1), not null
+#  uid           :string(255)      default("-1"), not null
+#  bot_uid       :string(255)      default("-1"), not null
+#  status        :boolean          default(FALSE), not null
+#  reason        :string(255)      default(""), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #

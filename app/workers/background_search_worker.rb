@@ -12,7 +12,7 @@ class BackgroundSearchWorker
     screen_name = screen_name.to_s
 
     if (tu = TwitterUser.latest(uid)).present? && tu.recently_created?
-      tu.touch
+      tu.search_and_touch
       create_log(log_attrs, true, '')
       logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} show #{screen_name}"
     else
@@ -25,7 +25,7 @@ class BackgroundSearchWorker
         # Egotter needs at least one TwitterUser record to show search result,
         # so this branch should not be executed if TwitterUser is not existed.
         if tu.present?
-          tu.touch
+          tu.search_and_touch
           create_log(log_attrs, true, '')
         else
           create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong)

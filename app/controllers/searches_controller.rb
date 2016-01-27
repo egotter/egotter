@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
 
   SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends
-    friends_in_common followers_in_common replying replied inactive_friends inactive_followers clusters_belong_to update_history)
+    friends_in_common followers_in_common replying replied inactive_friends inactive_followers clusters_belong_to update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :invalid_twitter_id, only: NEED_VALIDATION
@@ -98,9 +98,9 @@ class SearchesController < ApplicationController
       path_method: method(:clusters_belong_to_path).to_proc
     }
 
-    @menu_update_history = {
-      name: t('search_menu.update_history', user: sn),
-      path_method: method(:update_history_path).to_proc
+    @menu_update_histories = {
+      name: t('search_menu.update_histories', user: sn),
+      path_method: method(:update_histories_path).to_proc
     }
 
     html = render_to_string
@@ -162,11 +162,13 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/inactive_friends
   def inactive_friends
+    @searched_tw_user.client = client
     @user_items = @searched_tw_user.inactive_friends.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/inactive_followers
   def inactive_followers
+    @searched_tw_user.client = client
     @user_items = @searched_tw_user.inactive_followers.map{|f| {target: f} }
   end
 
@@ -177,8 +179,8 @@ class SearchesController < ApplicationController
     @clusters_belong_to = clusters.map { |c| {target: c} }
   end
 
-  # GET /searches/:screen_name/update_history
-  def update_history
+  # GET /searches/:screen_name/update_histories
+  def update_histories
     @update_histories = TwitterUser.where(uid: @searched_tw_user.uid).order(created_at: :desc)
   end
 
