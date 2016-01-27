@@ -305,7 +305,7 @@ class SearchesController < ApplicationController
 
   def suspended_account
     unless client.user?(search_sn)
-      redirect_to '/', alert: t('before_sign_in.suspended_user', user: search_sn)
+      redirect_to '/', alert: t('before_sign_in.suspended_user', user: twitter_link(search_sn))
     end
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -313,7 +313,7 @@ class SearchesController < ApplicationController
 
   def unauthorized_account
     alert_msg = t('before_sign_in.protected_user',
-                  user: search_sn,
+                  user: twitter_link(search_sn),
                   sign_in_link: sign_in_link)
     raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
 
@@ -331,7 +331,7 @@ class SearchesController < ApplicationController
     raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
     if raw_user.friends_count + raw_user.followers_count > TwitterUser::TOO_MANY_FRIENDS
       alert_msg = t('before_sign_in.too_many_friends',
-                    user: search_sn,
+                    user: twitter_link(search_sn),
                     friends: raw_user.friends_count,
                     followers: raw_user.followers_count,
                     sign_in_link: sign_in_link)
@@ -356,6 +356,10 @@ class SearchesController < ApplicationController
 
   def sign_in_link
     view_context.link_to(t('dictionary.sign_in'), welcome_path)
+  end
+
+  def twitter_link(screen_name)
+    view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
   end
 
   def redis
