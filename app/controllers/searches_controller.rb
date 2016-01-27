@@ -186,21 +186,12 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
+    key = "searches:new:#{user_signed_in? ? current_user.id : 'anonymous'}"
     html =
-      if user_signed_in?
-        key = "searches:new:#{current_user.id}"
-        if flash.empty?
-          redis.fetch(key, 60 * 10) { render_to_string }
-        else
-          render_to_string
-        end
+      if flash.empty?
+        redis.fetch(key, 60 * 10) { render_to_string }
       else
-        key = 'searches:new:anonymous'
-        if flash.empty?
-          redis.fetch(key, 60 * 10) { render_to_string }
-        else
-          render_to_string
-        end
+        render_to_string
       end
     render text: html
   end

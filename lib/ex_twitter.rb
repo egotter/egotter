@@ -24,10 +24,13 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def call_old_method(method_name, *args)
-    logger.debug "#{method_name} #{args.inspect}"
     options = args.extract_options!
     begin
-      send(method_name, *args, options)
+      start_t = Time.now
+      result = send(method_name, *args, options)
+      end_t = Time.now
+      logger.debug "#{method_name} #{args.inspect} #{options.inspect} (#{end_t - start_t}s)"
+      result
     rescue Twitter::Error::TooManyRequests => e
       logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} Retry after #{e.rate_limit.reset_in} seconds."
       raise e
@@ -38,6 +41,9 @@ class ExTwitter < Twitter::REST::Client
       logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} #{e.message}"
       raise e
     rescue Twitter::Error::Forbidden => e
+      logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} #{e.message}"
+      raise e
+    rescue Twitter::Error::NotFound => e
       logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} #{e.message}"
       raise e
     rescue => e
@@ -188,46 +194,47 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def fetch_cache_or_call_api(method_name, user, options = {})
+    start_t = Time.now
     key = namespaced_key(method_name, user)
     options.update(key: key)
 
     if cache.exist?(key)
       data = decode_json(cache.read(key), method_name, options)
-      logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache read)"
+      end_t = Time.now
+      logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache read) (#{end_t - start_t}s)"
       return data
     end
 
     data = yield
 
     cache.write(key, encode_json(data, method_name, options))
-    logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache wrote)"
+    end_t = Time.now
+    logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache wrote) (#{end_t - start_t}s)"
 
     data
   end
 
+  alias :old_friendship? :friendship?
+  def friendship?(*args)
+    options = args.extract_options!
+    fetch_cache_or_call_api(:friendship?, args) {
+      call_old_method(:old_friendship?, *args, options)
+    }
+  end
+
   alias :old_user? :user?
   def user?(*args)
-    return old_user? if args.empty?
+    options = args.extract_options!
     fetch_cache_or_call_api(:user?, args[0]) {
-      begin
-        old_user?(*args)
-      rescue Twitter::Error::NotFound => e
-        logger.warn "#{__method__}: #{e.message} args=#{args.inspect}"
-        raise e
-      end
+      call_old_method(:old_user?, args[0], options)
     }
   end
 
   alias :old_user :user
   def user(*args)
-    return old_user if args.empty?
+    options = args.extract_options!
     fetch_cache_or_call_api(:user, args[0]) {
-      begin
-        old_user(*args)
-      rescue Twitter::Error::NotFound => e
-        logger.warn "#{__method__}: #{e.message} args=#{args.inspect}"
-        raise e
-      end
+      call_old_method(:old_user, args[0], options)
     }
   end
   # memoize :user
