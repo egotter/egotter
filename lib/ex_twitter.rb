@@ -141,6 +141,9 @@ class ExTwitter < Twitter::REST::Client
         when obj === true || obj === false # user?
           obj
 
+        when obj.kind_of?(Array) && obj.empty?
+          JSON.pretty_generate(obj)
+
         else
           raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} obj=#{obj.inspect}"
       end
@@ -171,6 +174,9 @@ class ExTwitter < Twitter::REST::Client
           obj.map { |o| Hashie::Mash.new(o.attrs) }
 
         when obj === true || obj === false # user?
+          obj
+
+        when obj.kind_of?(Array) && obj.empty?
           obj
 
         else
