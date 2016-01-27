@@ -184,6 +184,7 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
+    return render
     html =
       if user_signed_in?
         key = "searches:new:#{current_user.id}"

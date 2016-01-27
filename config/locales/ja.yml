@@ -16,6 +16,7 @@ ja:
     do_search: "検索する"
     search: "検索"
     search_by: "%{user} で検索"
+    search_by_login_user: "ログインユーザーで検索"
     search_by_twitter: "ツイッターで検索"
     search_by_egotter: "えごったーで検索"
     retry_search_by: "%{user} で再度検索"
