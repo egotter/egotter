@@ -52,7 +52,7 @@ class ExTwitter < Twitter::REST::Client
     end
   end
 
-  # usertimeline, search
+  # user_timeline, search
   def collect_with_max_id(method_name, *args)
     options = args.extract_options!
     last_response = call_old_method(method_name, *args, options)
@@ -392,7 +392,7 @@ class ExTwitter < Twitter::REST::Client
   def replied(user)
     user = self.user(user).screen_name unless user.kind_of?(String)
 
-    search_result = search('@' + user, count: 100).attrs
+    search_result = search('@' + user, count: 100).attrs # TODO must use cache
     return [] if search_result.blank? || search_result[:statuses].blank?
 
     uids = search_result[:statuses].map do |s|

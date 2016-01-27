@@ -6,17 +6,19 @@ module Concerns::TwitterUser::Validation
   TOO_MANY_FRIENDS = 5000
 
   included do
-    validates :uid, presence: true, numericality: :only_integer
-    validates :screen_name, presence: true, length: {maximum: 30}
-    validates :user_info, presence: true
+    with_options on: :create do |obj|
+      obj.validates :uid, presence: true, numericality: :only_integer
+      obj.validates :screen_name, presence: true, length: {maximum: 30}
+      obj.validates :user_info, presence: true
 
-    validate :unauthorized?
-    validate :suspended_account?
-    validate :inconsistent_friends?
-    validate :zero_friends?
-    validate :too_many_friends?
-    validate :recently_created_record_exists?
-    validate :same_record_exists?
+      obj.validate :unauthorized?
+      obj.validate :suspended_account?
+      obj.validate :inconsistent_friends?
+      obj.validate :zero_friends?
+      obj.validate :too_many_friends?
+      obj.validate :recently_created_record_exists?
+      obj.validate :same_record_exists?
+    end
 
     # TODO do nothing if this method is included by Friend or Follower
     def unauthorized?

@@ -30,8 +30,9 @@ class SearchesController < ApplicationController
   def show
     tu = @searched_tw_user
 
-    key = "searches:show:#{user_signed_in? ? current_user.id : 'anonymous'}:#{tu.screen_name}"
+    key = "searches:show:#{user_or_anonymous}:#{uid_and_screen_name(tu.uid, tu.screen_name)}"
     if redis.exists(key)
+      logger.debug "cache found action=#{action_name} key=#{key}"
       return render text: redis.get(key)
     end
 
@@ -104,7 +105,7 @@ class SearchesController < ApplicationController
     }
 
     html = render_to_string
-    redis.setex(key, 60 * 10, html)
+    redis.setex(key, 60 * 60, html) # 60 minutes
     render text: html
 
   rescue Twitter::Error::TooManyRequests => e
@@ -186,7 +187,7 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
-    key = "searches:new:#{user_signed_in? ? current_user.id : 'anonymous'}"
+    key = "searches:new:#{user_or_anonymous}"
     html =
       if flash.empty?
         redis.fetch(key, 60 * 10) { render_to_string }
@@ -204,14 +205,13 @@ class SearchesController < ApplicationController
   # POST /searches.json
   def create
     begin
-      searched_sn = search_sn
-      searched_raw_tw_user = client.user(searched_sn) && client.user(searched_sn) # call 2 times to use cache
+      searched_raw_tw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
       searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
     rescue Twitter::Error::TooManyRequests => e
       return redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
     rescue => e
       logger.warn e.message
-      return redirect_to '/', alert: 'error 003'
+      return redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
     end
 
     create_search_log('create', searched_uid, searched_sn, search_sn)
@@ -223,8 +223,9 @@ class SearchesController < ApplicationController
       uid: searched_uid}
     )
 
-    key = "searches:show:#{user_signed_in? ? current_user.id : 'anonymous'}:#{searched_sn}"
+    key = "searches:show:#{user_or_anonymous}:#{uid_and_screen_name(searched_uid, searched_sn)}"
     if redis.exists(key)
+      logger.debug "cache found action=#{action_name} key=#{key}"
       return redirect_to search_path(screen_name: searched_sn, id: searched_uid)
     end
 
@@ -356,6 +357,14 @@ class SearchesController < ApplicationController
 
   def redis
     @redis ||= Redis.new(driver: :hiredis)
+  end
+
+  def user_or_anonymous
+    user_signed_in? ? current_user.id.to_s : 'anonymous'
+  end
+
+  def uid_and_screen_name(uid, sn)
+    "#{uid}-#{sn}"
   end
 
   def client
