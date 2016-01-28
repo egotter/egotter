@@ -5,7 +5,7 @@ APP_ROOT="/home/ec2-user/egotter"
 
 start() {
         cd $APP_ROOT
-        sudo -u ec2-user -H bash -l -c "NEWRELIC=xxx TWITTER_CONSUMER_SECRET=xxx TWITTER_CONSUMER_KEY=xxx bundle exec sidekiq" >/dev/null 2>&1 &
+        sudo -u ec2-user -H bash -l -c "bundle exec sidekiq" &
 }
 
 stop() {
