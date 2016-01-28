@@ -16,6 +16,7 @@ class SearchesController < ApplicationController
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
   end
 
+  # not using befor_action
   def menu
     return redirect_to welcome_path unless user_signed_in?
     @raw_user = client.user(current_user.uid.to_i) && client.user(current_user.uid.to_i)
@@ -23,6 +24,8 @@ class SearchesController < ApplicationController
       current_user.update(notification: params[:notification] == 'on')
       redirect_to menu_path, notice: t('dictionary.settings_saved')
     else
+      searched_uids = BackgroundSearchLog.where(user_id: current_user.id, status: true).pluck(:uid)
+      @user_items = TwitterUser.where(uid: searched_uids).order(created_at: :desc).map{|f| {target: f} }
       render
     end
   end
@@ -215,8 +218,7 @@ class SearchesController < ApplicationController
 
     FetchStatusesWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
     BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), {
-      login: user_signed_in?,
-      login_user_id: user_signed_in? ? current_user.id : -1,
+      user_id: user_signed_in? ? current_user.id : -1,
       uid: searched_uid}
     )
 

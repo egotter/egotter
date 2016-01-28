@@ -14,18 +14,18 @@
 ActiveRecord::Schema.define(version: 20160117151244) do
 
   create_table "background_search_logs", force: :cascade do |t|
-    t.boolean  "login",                     default: false, null: false
-    t.integer  "login_user_id", limit: 4,   default: -1,    null: false
-    t.string   "uid",           limit: 255, default: "-1",  null: false
-    t.string   "bot_uid",       limit: 255, default: "-1",  null: false
-    t.boolean  "status",                    default: false, null: false
-    t.string   "reason",        limit: 255, default: "",    null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.integer  "user_id",    limit: 4,   default: -1,    null: false
+    t.string   "uid",        limit: 255, default: "-1",  null: false
+    t.string   "bot_uid",    limit: 255, default: "-1",  null: false
+    t.boolean  "status",                 default: false, null: false
+    t.string   "reason",     limit: 255, default: "",    null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
-  add_index "background_search_logs", ["login_user_id"], name: "index_background_search_logs_on_login_user_id", using: :btree
   add_index "background_search_logs", ["uid"], name: "index_background_search_logs_on_uid", using: :btree
+  add_index "background_search_logs", ["user_id", "status"], name: "index_background_search_logs_on_user_id_and_status", using: :btree
+  add_index "background_search_logs", ["user_id"], name: "index_background_search_logs_on_user_id", using: :btree
 
   create_table "background_update_logs", force: :cascade do |t|
     t.string   "uid",        limit: 255, default: "-1",  null: false

@@ -17,4 +17,9 @@
       <button style="margin-top: 10px;" class="btn btn-default btn-block" type="submit"><%= t('dictionary.save_settings') %></button>
     <% end %>
   </div>
+
+  <hr>
+
+  <div style="font-weight: bold; font-size: 16px;"><%= t('search_menu.search_histories') %></div>
+  <%= render(partial: 'searches/user_items', locals: {searched_tw_user: @raw_user, user_items: @user_items}) %>
 </div>

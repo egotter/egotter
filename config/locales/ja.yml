@@ -63,6 +63,7 @@ ja:
     inactive_followers: "%{user} のフォロワーのうち最近ツイートしていないユーザー"
     clusters_belong_to: "%{user} が入っているクラスタ"
     update_histories: "更新履歴"
+    search_histories: "検索履歴"
   activerecord:
     models:
       twitter_user: "ツイッターユーザー"
