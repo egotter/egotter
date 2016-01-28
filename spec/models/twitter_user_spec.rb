@@ -9,9 +9,30 @@ RSpec.describe TwitterUser, type: :model do
   let(:new_friend) { FactoryGirl.build(:friend) }
   let(:new_follower) { FactoryGirl.build(:follower) }
 
+  describe '#invalid_screen_name?' do
+    context 'special chars' do
+      it 'returns true' do
+        (%w(! " # $ % & ' - = ^ ~ ¥ \\ | @ ; + : * [ ] { } < > / ?) + %w[( )]).each do |c|
+          tu.screen_name = c
+          expect(tu.invalid_screen_name?).to be_truthy
+        end
+      end
+    end
+
+    context 'normal chars' do
+      it 'returns false' do
+        tu.screen_name = 'ego_tter'
+        expect(tu.invalid_screen_name?).to be_falsy
+      end
+    end
+  end
+
   describe '#same_record_exists?' do
     before do
-      tu.friends = [friend]; tu.followers = [follower]; tu.save!
+      tu.save(validate: false)
+      friend.from_id = tu.id; friend.save(validate: false)
+      follower.from_id = tu.id; follower.save(validate: false)
+      tu.friends = [friend]; tu.followers = [follower]; tu.save
       new_tu.friends = [new_friend]; new_tu.followers = [new_follower]
     end
 

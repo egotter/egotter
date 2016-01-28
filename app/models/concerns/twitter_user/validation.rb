@@ -8,7 +8,7 @@ module Concerns::TwitterUser::Validation
   included do
     with_options on: :create do |obj|
       obj.validates :uid, presence: true, numericality: :only_integer
-      obj.validates :screen_name, presence: true, length: {maximum: 30}
+      obj.validates :screen_name, format: {with: /\A[a-zA-Z0-9_]{1,20}\z/}
       obj.validates :user_info, presence: true
 
       obj.validate :unauthorized?
@@ -18,6 +18,11 @@ module Concerns::TwitterUser::Validation
       obj.validate :too_many_friends?
       obj.validate :recently_created_record_exists?
       obj.validate :same_record_exists?
+    end
+
+    def invalid_screen_name?
+      valid?
+      errors[:screen_name].any?
     end
 
     # TODO do nothing if this method is included by Friend or Follower

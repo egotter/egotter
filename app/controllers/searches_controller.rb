@@ -4,7 +4,8 @@ class SearchesController < ApplicationController
     friends_in_common followers_in_common replying replied inactive_friends inactive_followers clusters_belong_to update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
-  before_action :invalid_twitter_id, only: NEED_VALIDATION
+  before_action :set_twitter_user, only: NEED_VALIDATION
+  before_action :invalid_screen_name, only: NEED_VALIDATION
   before_action :suspended_account, only: NEED_VALIDATION
   before_action :unauthorized_account, only: NEED_VALIDATION
   before_action :too_many_friends, only: NEED_VALIDATION
@@ -290,8 +291,12 @@ class SearchesController < ApplicationController
     params[:id].to_i
   end
 
-  def invalid_twitter_id
-    unless search_sn =~ /\A\w{1,20}\z/
+  def set_twitter_user
+    @twitter_user = TwitterUser.new(uid: search_id, screen_name: search_sn)
+  end
+
+  def invalid_screen_name
+    if @twitter_user.invalid_screen_name?
       redirect_to '/', alert: t('before_sign_in.invalid_twitter_id')
     end
   end
