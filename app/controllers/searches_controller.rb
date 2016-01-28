@@ -4,13 +4,12 @@ class SearchesController < ApplicationController
     friends_in_common followers_in_common replying replied inactive_friends inactive_followers clusters_belong_to update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
-  before_action :set_twitter_user, only: NEED_VALIDATION
-  before_action :invalid_screen_name, only: NEED_VALIDATION
-  before_action :suspended_account, only: NEED_VALIDATION
-  before_action :unauthorized_account, only: NEED_VALIDATION
-  before_action :too_many_friends, only: NEED_VALIDATION
+  before_action :set_twitter_user,     only: NEED_VALIDATION
+  before_action :invalid_screen_name,  only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :suspended_account,    only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :unauthorized_account, only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :too_many_friends,     only: NEED_VALIDATION, unless: :result_cache_exists?
 
-  before_action :set_raw_user, only: SEARCH_MENUS
   before_action :set_searched_tw_user, only: SEARCH_MENUS
 
   def welcome
@@ -31,10 +30,9 @@ class SearchesController < ApplicationController
   def show
     tu = @searched_tw_user
 
-    key = "searches:show:#{user_or_anonymous}:#{uid_and_screen_name(tu.uid, tu.screen_name)}"
-    if redis.exists(key)
-      logger.debug "cache found action=#{action_name} key=#{key}"
-      return render text: redis.get(key)
+    if result_cache_exists?
+      logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
+      return render text: result_cache
     end
 
     tu.client = client
@@ -105,9 +103,7 @@ class SearchesController < ApplicationController
       path_method: method(:update_histories_path).to_proc
     }
 
-    html = render_to_string
-    redis.setex(key, 60 * 60, html) # 60 minutes
-    render text: html
+    render text: set_result_cache
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -188,7 +184,6 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
-    return render
     key = "searches:new:#{user_or_anonymous}"
     html =
       if flash.empty?
@@ -225,9 +220,8 @@ class SearchesController < ApplicationController
       uid: searched_uid}
     )
 
-    key = "searches:show:#{user_or_anonymous}:#{uid_and_screen_name(searched_uid, searched_sn)}"
-    if redis.exists(key)
-      logger.debug "cache found action=#{action_name} key=#{key}"
+    if result_cache_exists?
+      logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
       return redirect_to search_path(screen_name: searched_sn, id: searched_uid)
     end
 
@@ -250,8 +244,7 @@ class SearchesController < ApplicationController
           raise BackgroundSearchLog::SomethingIsWrong
       end
     else
-      set_raw_user
-      @searched_tw_user = TwitterUser.build(client, @raw_user.id.to_i, all: false)
+      @searched_tw_user = TwitterUser.build(client, @twitter_user.uid.to_i, all: false)
     end
   rescue Twitter::Error::TooManyRequests => e
     if request.post?
@@ -262,22 +255,8 @@ class SearchesController < ApplicationController
   end
 
   private
-  def set_raw_user
-    if search_id.blank?
-      return redirect_to '/', alert: t('before_sign_in.blank_id')
-    end
-
-    u = client.user(search_id.to_i) && client.user(search_id.to_i)
-    @raw_user = u
-  rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
-  rescue => e
-    logger.warn "#{e.message} #{search_id}"
-    redirect_to '/', alert: t('before_sign_in.invalid_uid')
-  end
-
   def set_searched_tw_user
-    tu = TwitterUser.latest(@raw_user.id)
+    tu = TwitterUser.latest(@twitter_user.uid.to_i)
     if tu.blank?
       return redirect_to '/', alert: t('before_sign_in.blank_search_result')
     end
@@ -296,6 +275,9 @@ class SearchesController < ApplicationController
     @twitter_user = TwitterUser.new(uid: search_id, screen_name: search_sn)
     @twitter_user.client = client
     @twitter_user.login_user = current_user
+    @twitter_user.fetch_user?
+    @twitter_user.fetch_user
+    @twitter_user.egotter_context = 'search'
   end
 
   def invalid_screen_name
@@ -314,10 +296,8 @@ class SearchesController < ApplicationController
 
   def unauthorized_account
     alert_msg = t('before_sign_in.protected_user',
-                  user: twitter_link(search_sn),
+                  user: twitter_link(@twitter_user.screen_name),
                   sign_in_link: sign_in_link)
-    @twitter_user.fetch_user
-    @twitter_user.egotter_context = 'search'
     return redirect_to '/', alert: alert_msg if @twitter_user.unauthorized?
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -326,9 +306,9 @@ class SearchesController < ApplicationController
   def too_many_friends
     if @twitter_user.too_many_friends?
       alert_msg = t('before_sign_in.too_many_friends',
-                    user: twitter_link(search_sn),
-                    friends: raw_user.friends_count,
-                    followers: raw_user.followers_count,
+                    user: twitter_link(@twitter_user.screen_name),
+                    friends: @twitter_user.friends_count,
+                    followers: @twitter_user.followers_count,
                     sign_in_link: sign_in_link)
       redirect_to '/', alert: alert_msg
     end
@@ -359,6 +339,24 @@ class SearchesController < ApplicationController
 
   def redis
     @redis ||= Redis.new(driver: :hiredis)
+  end
+
+  def result_cache_key
+    "searches:show:#{user_or_anonymous}:#{uid_and_screen_name(@twitter_user.uid, @twitter_user.screen_name)}"
+  end
+
+  def result_cache_exists?
+    redis.exists(result_cache_key)
+  end
+
+  def result_cache
+    redis.get(result_cache_key)
+  end
+
+  def set_result_cache
+    html = render_to_string
+    redis.setex(result_cache_key, 60 * 60, html) # 60 minutes
+    html
   end
 
   def user_or_anonymous
