@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe Bot, type: :model do
   describe '.init' do
     it 'returns true' do
-      expect(Bot.init).to be_truthy
+      expect(Bot.init).to be_nil
     end
   end
 

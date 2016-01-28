@@ -188,6 +188,7 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
+    return render
     key = "searches:new:#{user_or_anonymous}"
     html =
       if flash.empty?
@@ -293,6 +294,8 @@ class SearchesController < ApplicationController
 
   def set_twitter_user
     @twitter_user = TwitterUser.new(uid: search_id, screen_name: search_sn)
+    @twitter_user.client = client
+    @twitter_user.login_user = current_user
   end
 
   def invalid_screen_name
@@ -302,7 +305,7 @@ class SearchesController < ApplicationController
   end
 
   def suspended_account
-    unless client.user?(search_sn)
+    unless @twitter_user.fetch_user?
       redirect_to '/', alert: t('before_sign_in.suspended_user', user: twitter_link(search_sn))
     end
   rescue Twitter::Error::TooManyRequests => e
@@ -313,21 +316,15 @@ class SearchesController < ApplicationController
     alert_msg = t('before_sign_in.protected_user',
                   user: twitter_link(search_sn),
                   sign_in_link: sign_in_link)
-    raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
-
-    return unless raw_user.protected
-    return redirect_to '/', alert: alert_msg unless user_signed_in?
-    return if raw_user.id.to_i == current_user.uid.to_i
-    return if client.friendship?(current_user.uid.to_i, raw_user.id.to_i)
-
-    redirect_to '/', alert: alert_msg
+    @twitter_user.fetch_user
+    @twitter_user.egotter_context = 'search'
+    return redirect_to '/', alert: alert_msg if @twitter_user.unauthorized?
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
   def too_many_friends
-    raw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
-    if raw_user.friends_count + raw_user.followers_count > TwitterUser::TOO_MANY_FRIENDS
+    if @twitter_user.too_many_friends?
       alert_msg = t('before_sign_in.too_many_friends',
                     user: twitter_link(search_sn),
                     friends: raw_user.friends_count,

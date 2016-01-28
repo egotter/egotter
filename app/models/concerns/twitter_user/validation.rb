@@ -5,10 +5,12 @@ module Concerns::TwitterUser::Validation
 
   TOO_MANY_FRIENDS = 5000
 
+  SCREEN_NAME_REGEXP = /\A[a-zA-Z0-9_]{1,20}\z/
+
   included do
     with_options on: :create do |obj|
       obj.validates :uid, presence: true, numericality: :only_integer
-      obj.validates :screen_name, format: {with: /\A[a-zA-Z0-9_]{1,20}\z/}
+      obj.validates :screen_name, format: {with: SCREEN_NAME_REGEXP}
       obj.validates :user_info, presence: true
 
       obj.validate :unauthorized?
@@ -21,25 +23,30 @@ module Concerns::TwitterUser::Validation
     end
 
     def invalid_screen_name?
-      valid?
-      errors[:screen_name].any?
+      !(screen_name =~ SCREEN_NAME_REGEXP)
     end
 
     # TODO do nothing if this method is included by Friend or Follower
     def unauthorized?
+      return true if user_info.blank? # call fetch_user before colling this method
       return false unless protected
 
       # login_user is protected and search himself
       if egotter_context == 'search'
-        raise 'must set login_user' if login_user.nil?
-        return (uid.to_i == login_user.uid.to_i ? false : true)
+        return true if login_user.nil? # anonymous user's search
+        return false if uid.to_i == login_user.uid.to_i # ego surfing
+        if client.present?
+          return false if client.friendship?(login_user.uid.to_i, uid.to_i) # login user follows searched user
+        end
+
+        true
+      else
+        # background job
+        return false if User.exists?(uid: uid.to_i)
+
+        errors[:base] << 'unauthorized'
+        true
       end
-
-      # background job
-      return false if User.exists?(uid: uid.to_i)
-
-      errors[:base] << 'unauthorized'
-      true
     end
 
     def suspended_account?

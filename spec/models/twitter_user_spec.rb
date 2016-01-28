@@ -9,6 +9,17 @@ RSpec.describe TwitterUser, type: :model do
   let(:new_friend) { FactoryGirl.build(:friend) }
   let(:new_follower) { FactoryGirl.build(:follower) }
 
+  let(:client) {
+    client = Object.new
+    def client.user?(*args)
+      true
+    end
+    def client.user(*args)
+      Hashie::Mash.new({id: 1, screen_name: 'sn'})
+    end
+    client
+  }
+
   describe '#invalid_screen_name?' do
     context 'special chars' do
       it 'returns true' do
@@ -74,6 +85,30 @@ RSpec.describe TwitterUser, type: :model do
       it 'returns false' do
         expect(new_tu.same_record_exists?).to be_falsey
       end
+    end
+  end
+
+  describe '#fetch_user?' do
+    before do
+      tu.client = client
+    end
+
+    it 'returns true' do
+      expect(tu.fetch_user?).to be_truthy
+    end
+  end
+
+  describe '#fetch_user' do
+    before do
+      tu.client = client
+      tu.uid = client.user.id
+      tu.fetch_user
+    end
+
+    it 'set uid, screen_name and user_info' do
+      expect(tu.uid).to eq(client.user.id.to_s)
+      expect(tu.screen_name).to eq(client.user.screen_name)
+      expect(tu.user_info).to be_truthy
     end
   end
 end

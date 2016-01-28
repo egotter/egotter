@@ -49,7 +49,12 @@ class TwitterUser < ActiveRecord::Base
   delegate *SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
   def user_info_mash
-    @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info || '{"friends_count": -1, "followers_count": -1}'))
+    return @user_info_mash if @user_info_mash.present?
+    if user_info.present?
+      @user_info_mash = Hashie::Mash.new(JSON.parse(user_info))
+    else
+      Hashie::Mash.new(JSON.parse('{"friends_count": -1, "followers_count": -1}'))
+    end
   end
 
   include Concerns::TwitterUser::Validation
@@ -82,6 +87,33 @@ class TwitterUser < ActiveRecord::Base
     diffs
   end
 
+  def fetch_user?
+    raise 'must set client' if client.nil?
+    if self.uid.present? && self.uid.to_i != 0
+      client.user?(uid.to_i)
+    elsif self.screen_name.present?
+      client.user?(self.screen_name.to_s)
+    else
+      raise self.inspect
+    end
+  end
+
+  def fetch_user
+    raise 'must set client' if client.nil?
+    user =
+      if self.uid.present? && self.uid.to_i != 0
+        client.user(uid.to_i) && client.user(uid.to_i) # call 2 times to use cache
+      elsif self.screen_name.present?
+        client.user(self.screen_name.to_s) && client.user(self.screen_name.to_s)
+      else
+        raise self.inspect
+      end
+    self.uid = user.id.to_i
+    self.screen_name = user.screen_name
+    self.user_info = user.slice(*SAVE_KEYS).to_json # TODO check the type of keys and values
+    self
+  end
+
   def self.build(client, user, option = {})
     option[:all] = true unless option.has_key?(:all)
 
@@ -95,7 +127,7 @@ class TwitterUser < ActiveRecord::Base
     end
     tu.client = client
     tu.login_user = option.has_key?(:login_user) ? option[:login_user] : nil
-    tu.egotter_context = option.has_key?(:context) ? option[:context] : nil
+    tu.egotter_context = option.has_key?(:egotter_context) ? option[:egotter_context] : nil
 
     if option[:all]
       _friends, _followers =
