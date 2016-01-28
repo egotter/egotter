@@ -163,13 +163,11 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/inactive_friends
   def inactive_friends
-    @searched_tw_user.client = client
     @user_items = @searched_tw_user.inactive_friends.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/inactive_followers
   def inactive_followers
-    @searched_tw_user.client = client
     @user_items = @searched_tw_user.inactive_followers.map{|f| {target: f} }
   end
 

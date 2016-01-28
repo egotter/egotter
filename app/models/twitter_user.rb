@@ -41,6 +41,7 @@ class TwitterUser < ActiveRecord::Base
     verified
     statuses_count
     lang
+    status
     profile_image_url_https
     profile_banner_url
     suspended
@@ -55,6 +56,10 @@ class TwitterUser < ActiveRecord::Base
     else
       Hashie::Mash.new(JSON.parse('{"friends_count": -1, "followers_count": -1}'))
     end
+  end
+
+  def has_key?(key)
+    user_info_mash.has_key?(key)
   end
 
   include Concerns::TwitterUser::Validation
@@ -253,13 +258,11 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def inactive_friends
-    # friends relation is not used because of using status which is not saved to db
-    self.client.inactive_friends(self.uid.to_i)
+    ExTwitter.new.select_inactive_users(friends)
   end
 
   def inactive_followers
-    # followers relation is not used because of using status which is not saved to db
-    self.client.inactive_followers(self.uid.to_i)
+    ExTwitter.new.select_inactive_users(followers)
   end
 
   def clusters_belong_to

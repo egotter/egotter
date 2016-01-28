@@ -25,7 +25,11 @@ class Friend < ActiveRecord::Base
   delegate *TwitterUser::PROFILE_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
   def user_info_mash
-    @user_info_hash ||= Hashie::Mash.new(JSON.parse(user_info))
+    @user_info_mash ||= Hashie::Mash.new(JSON.parse(user_info))
+  end
+
+  def has_key?(key)
+    user_info_mash.has_key?(key)
   end
 
   include Concerns::TwitterUser::Validation
