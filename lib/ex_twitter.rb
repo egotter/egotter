@@ -123,7 +123,7 @@ class ExTwitter < Twitter::REST::Client
         when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
           data =
             if options[:reduce]
-              obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) }
+              obj.map { |o| o.to_hash.slice(*TwitterUser::PROFILE_SAVE_KEYS) }
             else
               obj.map { |o| o.to_hash }
             end
@@ -133,12 +133,12 @@ class ExTwitter < Twitter::REST::Client
           JSON.pretty_generate(obj)
 
         when obj.kind_of?(Twitter::User) # user
-          JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::SAVE_KEYS))
+          JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::PROFILE_SAVE_KEYS))
 
         when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::User) # users, friends_advanced, followers_advanced
           data =
             if options[:reduce]
-              obj.map { |o| o.to_hash.slice(*TwitterUser::SAVE_KEYS) }
+              obj.map { |o| o.to_hash.slice(*TwitterUser::PROFILE_SAVE_KEYS) }
             else
               obj.map { |o| o.to_hash }
             end

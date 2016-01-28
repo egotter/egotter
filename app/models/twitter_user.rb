@@ -23,7 +23,7 @@ class TwitterUser < ActiveRecord::Base
 
   attr_accessor :client, :login_user, :egotter_context
 
-  SAVE_KEYS = %i(
+  PROFILE_SAVE_KEYS = %i(
     id
     name
     screen_name
@@ -46,7 +46,7 @@ class TwitterUser < ActiveRecord::Base
     suspended
   )
 
-  delegate *SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
+  delegate *PROFILE_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
   def user_info_mash
     return @user_info_mash if @user_info_mash.present?
@@ -110,7 +110,7 @@ class TwitterUser < ActiveRecord::Base
       end
     self.uid = user.id.to_i
     self.screen_name = user.screen_name
-    self.user_info = user.slice(*SAVE_KEYS).to_json # TODO check the type of keys and values
+    self.user_info = user.slice(*PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
     self
   end
 
@@ -123,7 +123,7 @@ class TwitterUser < ActiveRecord::Base
     tu = TwitterUser.new do |tu|
       tu.uid = _raw_me.id.to_i
       tu.screen_name = _raw_me.screen_name
-      tu.user_info = _raw_me.slice(*SAVE_KEYS).to_json # TODO check the type of keys and values
+      tu.user_info = _raw_me.slice(*PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
     end
     tu.client = client
     tu.login_user = option.has_key?(:login_user) ? option[:login_user] : nil
@@ -139,7 +139,7 @@ class TwitterUser < ActiveRecord::Base
                      from_id: nil,
                      uid: f.id,
                      screen_name: f.screen_name,
-                     user_info: f.slice(*SAVE_KEYS).to_json}) # It might be better to call to_hash
+                     user_info: f.slice(*PROFILE_SAVE_KEYS).to_json}) # It might be better to call to_hash
       end
 
       tu.followers = _followers.map do |f|
@@ -147,7 +147,7 @@ class TwitterUser < ActiveRecord::Base
                        from_id: nil,
                        uid: f.id,
                        screen_name: f.screen_name,
-                       user_info: f.slice(*SAVE_KEYS).to_json}) # It might be better to call to_hash
+                       user_info: f.slice(*PROFILE_SAVE_KEYS).to_json}) # It might be better to call to_hash
       end
     end
 
