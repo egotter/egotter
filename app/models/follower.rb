@@ -3,8 +3,8 @@
 # Table name: followers
 #
 #  id          :integer          not null, primary key
-#  uid         :string(255)      not null
-#  screen_name :string(255)      not null
+#  uid         :string(191)      not null
+#  screen_name :string(191)      not null
 #  user_info   :text(65535)      not null
 #  from_id     :integer          not null
 #  created_at  :datetime         not null

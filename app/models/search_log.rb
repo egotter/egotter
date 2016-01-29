@@ -5,10 +5,10 @@
 #  id            :integer          not null, primary key
 #  login         :boolean          default(FALSE), not null
 #  login_user_id :integer          default(-1), not null
-#  search_uid    :string(255)      default(""), not null
-#  search_sn     :string(255)      default(""), not null
-#  search_value  :string(255)      default(""), not null
-#  search_menu   :string(255)      default(""), not null
+#  search_uid    :string(191)      default(""), not null
+#  search_sn     :string(191)      default(""), not null
+#  search_value  :string(191)      default(""), not null
+#  search_menu   :string(191)      default(""), not null
 #  same_user     :boolean          default(FALSE), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null

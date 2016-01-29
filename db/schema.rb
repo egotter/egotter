@@ -15,10 +15,10 @@ ActiveRecord::Schema.define(version: 20160117151244) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.integer  "user_id",    limit: 4,   default: -1,    null: false
-    t.string   "uid",        limit: 255, default: "-1",  null: false
-    t.string   "bot_uid",    limit: 255, default: "-1",  null: false
+    t.string   "uid",        limit: 191, default: "-1",  null: false
+    t.string   "bot_uid",    limit: 191, default: "-1",  null: false
     t.boolean  "status",                 default: false, null: false
-    t.string   "reason",     limit: 255, default: "",    null: false
+    t.string   "reason",     limit: 191, default: "",    null: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
   end
@@ -28,10 +28,10 @@ ActiveRecord::Schema.define(version: 20160117151244) do
   add_index "background_search_logs", ["user_id"], name: "index_background_search_logs_on_user_id", using: :btree
 
   create_table "background_update_logs", force: :cascade do |t|
-    t.string   "uid",        limit: 255, default: "-1",  null: false
-    t.string   "bot_uid",    limit: 255, default: "-1",  null: false
+    t.string   "uid",        limit: 191, default: "-1",  null: false
+    t.string   "bot_uid",    limit: 191, default: "-1",  null: false
     t.boolean  "status",                 default: false, null: false
-    t.string   "reason",     limit: 255, default: "",    null: false
+    t.string   "reason",     limit: 191, default: "",    null: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
   end
@@ -39,8 +39,8 @@ ActiveRecord::Schema.define(version: 20160117151244) do
   add_index "background_update_logs", ["uid"], name: "index_background_update_logs_on_uid", using: :btree
 
   create_table "followers", force: :cascade do |t|
-    t.string   "uid",         limit: 255,   null: false
-    t.string   "screen_name", limit: 255,   null: false
+    t.string   "uid",         limit: 191,   null: false
+    t.string   "screen_name", limit: 191,   null: false
     t.text     "user_info",   limit: 65535, null: false
     t.integer  "from_id",     limit: 4,     null: false
     t.datetime "created_at",                null: false
@@ -52,8 +52,8 @@ ActiveRecord::Schema.define(version: 20160117151244) do
   add_index "followers", ["uid"], name: "index_followers_on_uid", using: :btree
 
   create_table "friends", force: :cascade do |t|
-    t.string   "uid",         limit: 255,   null: false
-    t.string   "screen_name", limit: 255,   null: false
+    t.string   "uid",         limit: 191,   null: false
+    t.string   "screen_name", limit: 191,   null: false
     t.text     "user_info",   limit: 65535, null: false
     t.integer  "from_id",     limit: 4,     null: false
     t.datetime "created_at",                null: false
@@ -67,10 +67,10 @@ ActiveRecord::Schema.define(version: 20160117151244) do
   create_table "search_logs", force: :cascade do |t|
     t.boolean  "login",                     default: false, null: false
     t.integer  "login_user_id", limit: 4,   default: -1,    null: false
-    t.string   "search_uid",    limit: 255, default: "",    null: false
-    t.string   "search_sn",     limit: 255, default: "",    null: false
-    t.string   "search_value",  limit: 255, default: "",    null: false
-    t.string   "search_menu",   limit: 255, default: "",    null: false
+    t.string   "search_uid",    limit: 191, default: "",    null: false
+    t.string   "search_sn",     limit: 191, default: "",    null: false
+    t.string   "search_value",  limit: 191, default: "",    null: false
+    t.string   "search_menu",   limit: 191, default: "",    null: false
     t.boolean  "same_user",                 default: false, null: false
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
@@ -82,8 +82,8 @@ ActiveRecord::Schema.define(version: 20160117151244) do
   add_index "search_logs", ["search_value"], name: "index_search_logs_on_search_value", using: :btree
 
   create_table "twitter_users", force: :cascade do |t|
-    t.string   "uid",          limit: 255,               null: false
-    t.string   "screen_name",  limit: 255,               null: false
+    t.string   "uid",          limit: 191,               null: false
+    t.string   "screen_name",  limit: 191,               null: false
     t.text     "user_info",    limit: 65535,             null: false
     t.integer  "search_count", limit: 4,     default: 1, null: false
     t.integer  "update_count", limit: 4,     default: 0, null: false
@@ -95,21 +95,21 @@ ActiveRecord::Schema.define(version: 20160117151244) do
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "provider",               limit: 255,                null: false
-    t.string   "uid",                    limit: 255,                null: false
-    t.string   "secret",                 limit: 255,                null: false
-    t.string   "token",                  limit: 255,                null: false
+    t.string   "provider",               limit: 191,                null: false
+    t.string   "uid",                    limit: 191,                null: false
+    t.string   "secret",                 limit: 191,                null: false
+    t.string   "token",                  limit: 191,                null: false
     t.boolean  "notification",                       default: true, null: false
-    t.string   "email",                  limit: 255,                null: false
-    t.string   "encrypted_password",     limit: 255,                null: false
-    t.string   "reset_password_token",   limit: 255
+    t.string   "email",                  limit: 191,                null: false
+    t.string   "encrypted_password",     limit: 191,                null: false
+    t.string   "reset_password_token",   limit: 191
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
     t.integer  "sign_in_count",          limit: 4,   default: 0,    null: false
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 255
-    t.string   "last_sign_in_ip",        limit: 255
+    t.string   "current_sign_in_ip",     limit: 191
+    t.string   "last_sign_in_ip",        limit: 191
     t.datetime "created_at",                                        null: false
     t.datetime "updated_at",                                        null: false
   end

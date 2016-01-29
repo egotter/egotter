@@ -3,10 +3,10 @@
 # Table name: background_update_logs
 #
 #  id         :integer          not null, primary key
-#  uid        :string(255)      default("-1"), not null
-#  bot_uid    :string(255)      default("-1"), not null
+#  uid        :string(191)      default("-1"), not null
+#  bot_uid    :string(191)      default("-1"), not null
 #  status     :boolean          default(FALSE), not null
-#  reason     :string(255)      default(""), not null
+#  reason     :string(191)      default(""), not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
