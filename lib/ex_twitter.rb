@@ -403,11 +403,15 @@ class ExTwitter < Twitter::REST::Client
     users(uids) || []
   end
 
-  def select_inactive_users(users)
+  def select_inactive_users(users, options = {})
+    options[:authorized] = false unless options.has_key?(:authorized)
     two_weeks_ago = 2.weeks.ago.to_i
     users.select do |u|
-      !u.has_key?(:status) || !u[:status].has_key?(:created_at) ||
-        Time.parse(u[:status][:created_at]).to_i < two_weeks_ago
+      if options[:authorized] || !u.protected
+        (Time.parse(u.status.created_at).to_i < two_weeks_ago) rescue false
+      else
+        false
+      end
     end
   end
 

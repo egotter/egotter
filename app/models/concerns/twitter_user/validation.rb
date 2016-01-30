@@ -26,15 +26,24 @@ module Concerns::TwitterUser::Validation
       !(screen_name =~ SCREEN_NAME_REGEXP)
     end
 
-    # TODO do nothing if this method is included by Friend or Follower
+    def anonymous_search?
+      login_user.nil?
+    end
+
+    def ego_surfing?
+      !anonymous_search? && uid.to_i == login_user.uid.to_i
+    end
+
     def unauthorized?
       return true if user_info.blank? # call fetch_user before colling this method
       return false unless protected
 
       # login_user is protected and search himself
       if egotter_context == 'search'
-        return true if login_user.nil? # anonymous user's search
-        return false if uid.to_i == login_user.uid.to_i # ego surfing
+        return true if anonymous_search?
+        return false if ego_surfing?
+
+        # TODO if this instance has followers, use follower_uids.include?(login_user.uid.to_i)
         if client.present?
           return false if client.friendship?(login_user.uid.to_i, uid.to_i) # login user follows searched user
         end

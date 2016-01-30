@@ -39,6 +39,7 @@ class SearchesController < ApplicationController
     end
 
     tu.client = client
+    tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
     _clusters_belong_to = (tu.clusters_belong_to && tu.clusters_belong_to rescue [])
     _replying = (tu.replying && tu.replying rescue [])
@@ -163,11 +164,13 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/inactive_friends
   def inactive_friends
+    @searched_tw_user.login_user = user_signed_in? ? current_user : nil
     @user_items = @searched_tw_user.inactive_friends.map{|f| {target: f} }
   end
 
   # GET /searches/:screen_name/inactive_followers
   def inactive_followers
+    @searched_tw_user.login_user = user_signed_in? ? current_user : nil
     @user_items = @searched_tw_user.inactive_followers.map{|f| {target: f} }
   end
 
@@ -355,7 +358,7 @@ class SearchesController < ApplicationController
 
   def set_result_cache
     html = render_to_string
-    redis.setex(result_cache_key, 60 * 60, html) # 60 minutes
+    redis.setex(result_cache_key, 60 * 180, html) # 180 minutes
     html
   end
 

@@ -199,7 +199,7 @@ class TwitterUser < ActiveRecord::Base
       order(created_at: :desc).find_by(uid: user.to_i) : order(created_at: :desc).find_by(screen_name: user.to_s)
   end
 
-  DEFAULT_MINUTES = Rails.env.production? ? 30 : 5
+  DEFAULT_MINUTES = 30
 
   def recently_created?(minutes = DEFAULT_MINUTES)
     Time.zone.now.to_i - created_at.to_i < 60 * minutes
@@ -258,11 +258,11 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def inactive_friends
-    ExTwitter.new.select_inactive_users(friends)
+    ExTwitter.new.select_inactive_users(friends, authorized: ego_surfing?)
   end
 
   def inactive_followers
-    ExTwitter.new.select_inactive_users(followers)
+    ExTwitter.new.select_inactive_users(followers, authorized: ego_surfing?)
   end
 
   def clusters_belong_to
