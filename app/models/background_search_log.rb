@@ -49,6 +49,10 @@ class BackgroundSearchLog < ActiveRecord::Base
     order(created_at: :desc).find_by(uid: uid).reason
   end
 
+  def self.success_logs(user_id, limit)
+    where(user_id: user_id, status: true).order(created_at: :desc).limit(limit)
+  end
+
   def recently_created?(minutes = 5)
     Time.zone.now.to_i - created_at.to_i < 60 * minutes
   end

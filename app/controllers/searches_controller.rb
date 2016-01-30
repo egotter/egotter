@@ -24,8 +24,8 @@ class SearchesController < ApplicationController
       current_user.update(notification: params[:notification] == 'on')
       redirect_to menu_path, notice: t('dictionary.settings_saved')
     else
-      searched_uids = BackgroundSearchLog.where(user_id: current_user.id, status: true).pluck(:uid)
-      @user_items = TwitterUser.where(uid: searched_uids).order(created_at: :desc).map{|f| {target: f} }
+      searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
+      @user_items = searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.map { |tu| {target: tu} }
       render
     end
   end
