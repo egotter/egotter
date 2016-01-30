@@ -35,7 +35,7 @@ class SearchesController < ApplicationController
 
     if result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
-      return render text: result_cache
+      return render text: replace_csrf_meta_tags(result_cache)
     end
 
     tu.client = client
@@ -107,7 +107,7 @@ class SearchesController < ApplicationController
       path_method: method(:update_histories_path).to_proc
     }
 
-    render text: set_result_cache
+    render text: replace_csrf_meta_tags(set_result_cache)
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -191,11 +191,11 @@ class SearchesController < ApplicationController
     key = "searches:new:#{user_or_anonymous}"
     html =
       if flash.empty?
-        redis.fetch(key, 60 * 10) { render_to_string }
+        redis.fetch(key, 60 * 180) { render_to_string }
       else
         render_to_string
       end
-    render text: html
+    render text: replace_csrf_meta_tags(html)
   end
 
   # # GET /searches/1/edit
@@ -360,6 +360,10 @@ class SearchesController < ApplicationController
     html = render_to_string
     redis.setex(result_cache_key, 60 * 180, html) # 180 minutes
     html
+  end
+
+  def replace_csrf_meta_tags(html)
+    html.sub(/csrf_meta_tags/, "#{view_context.csrf_meta_tags}<!-- replaced -->")
   end
 
   def user_or_anonymous

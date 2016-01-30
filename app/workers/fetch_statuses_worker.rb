@@ -1,6 +1,6 @@
 class FetchStatusesWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: 1, backtrace: 3
+  sidekiq_options queue: :egotter, retry: false, backtrace: false
 
   def perform(uid, screen_name, login_user_id)
     logger.debug "#{user_name(uid, screen_name)} start"
