@@ -1,12 +1,12 @@
 class FollowEgotterWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: false, backtrace: true
+  sidekiq_options queue: :egotter, retry: false, backtrace: false
 
   def perform(uid)
-    c = client(uid.to_i)
-    u = c.user(uid.to_i)
-    c.follow(187385226) # follow @ego_tter
-    logger.debug "#{user_name(u)} follows @ego_tter"
+    _client = client(uid.to_i)
+    user = _client.user(uid.to_i)
+    _client.follow!(187385226) # follow @ego_tter
+    logger.debug "#{user_name(user)} follows @ego_tter"
   end
 
   def user_name(u)

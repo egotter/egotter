@@ -8,6 +8,7 @@
 #  bot_uid    :string(191)      default("-1"), not null
 #  status     :boolean          default(FALSE), not null
 #  reason     :string(191)      default(""), not null
+#  message    :text(65535)      not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

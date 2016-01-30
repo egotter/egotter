@@ -14,13 +14,14 @@
 ActiveRecord::Schema.define(version: 20160117151244) do
 
   create_table "background_search_logs", force: :cascade do |t|
-    t.integer  "user_id",    limit: 4,   default: -1,    null: false
-    t.string   "uid",        limit: 191, default: "-1",  null: false
-    t.string   "bot_uid",    limit: 191, default: "-1",  null: false
-    t.boolean  "status",                 default: false, null: false
-    t.string   "reason",     limit: 191, default: "",    null: false
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.integer  "user_id",    limit: 4,     default: -1,    null: false
+    t.string   "uid",        limit: 191,   default: "-1",  null: false
+    t.string   "bot_uid",    limit: 191,   default: "-1",  null: false
+    t.boolean  "status",                   default: false, null: false
+    t.string   "reason",     limit: 191,   default: "",    null: false
+    t.text     "message",    limit: 65535,                 null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
   end
 
   add_index "background_search_logs", ["uid"], name: "index_background_search_logs_on_uid", using: :btree

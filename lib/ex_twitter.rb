@@ -241,7 +241,7 @@ class ExTwitter < Twitter::REST::Client
 
   alias :old_friend_ids :friend_ids
   def friend_ids(*args)
-    args = [user] if args.empty? # need at least one param to use cache
+    raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:friend_ids, args[0]) {
       options = {count: 5000, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_friend_ids, *args, options)
@@ -250,7 +250,7 @@ class ExTwitter < Twitter::REST::Client
 
   alias :old_follower_ids :follower_ids
   def follower_ids(*args)
-    args = [user] if args.empty? # need at least one param to use cache
+    raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:follower_ids, args[0]) {
       options = {count: 5000, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_follower_ids, *args, options)
@@ -260,7 +260,7 @@ class ExTwitter < Twitter::REST::Client
   # specify reduce: false to use tweet for inactive_*
   alias :old_friends :friends
   def friends(*args)
-    args = [user] if args.empty? # need at least one param to use cache
+    raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:friends, args[0], reduce: false) {
       options = {count: 200, include_user_entities: true, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_friends, *args, options)
@@ -275,7 +275,7 @@ class ExTwitter < Twitter::REST::Client
   # specify reduce: false to use tweet for inactive_*
   alias :old_followers :followers
   def followers(*args)
-    args = [user] if args.empty? # need at least one param to use cache
+    raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:followers, args[0], reduce: false) {
       options = {count: 200, include_user_entities: true, cursor: -1}.merge(args.extract_options!)
       collect_with_cursor(:old_followers, *args, options)
@@ -370,7 +370,7 @@ class ExTwitter < Twitter::REST::Client
   # can't get tweets if specified user is protected
   alias :old_user_timeline :user_timeline
   def user_timeline(*args)
-    args = [user] if args.empty? # need at least one param to use cache
+    raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:user_timeline, args[0]) {
       options = {count: 200, include_rts: true}.merge(args.extract_options!)
       collect_with_max_id(:old_user_timeline, *args, options)

@@ -1,6 +1,6 @@
 class BackgroundSearchWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: 1, backtrace: 3
+  sidekiq_options queue: :egotter, retry: false, backtrace: false
 
   # This worker is called after strict validation for uid in searches_controller,
   # so you don't need to do that in this worker.
@@ -13,22 +13,22 @@ class BackgroundSearchWorker
 
     if (tu = TwitterUser.latest(uid)).present? && tu.recently_created?
       tu.search_and_touch
-      create_log(log_attrs, true, '')
+      create_log(log_attrs, true)
       logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} show #{screen_name}"
     else
       new_tu = TwitterUser.build(client(login_user_id), uid.to_i,
                                  {login_user: User.find_by(id: login_user_id), egotter_context: 'search'})
       if new_tu.save_with_bulk_insert
-        create_log(log_attrs, true, '')
+        create_log(log_attrs, true)
         logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} create #{screen_name}"
       else
         # Egotter needs at least one TwitterUser record to show search result,
         # so this branch should not be executed if TwitterUser is not existed.
         if tu.present?
           tu.search_and_touch
-          create_log(log_attrs, true, '')
+          create_log(log_attrs, true)
         else
-          create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong)
+          create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong, "save_with_bulk_insert failed and old records does'nt exist")
         end
         logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} not create(#{new_tu.errors.full_messages}) #{screen_name}"
       end
@@ -42,6 +42,9 @@ class BackgroundSearchWorker
   rescue Twitter::Error::Unauthorized => e
     logger.warn "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} #{e.class} #{e.message}"
     create_log(log_attrs, false, BackgroundSearchLog::Unauthorized)
+  rescue => e
+    logger.warn "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} #{e.class} #{e.message}"
+    create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong, e.message)
   end
 
   def user_name(uid, screen_name)
@@ -52,8 +55,8 @@ class BackgroundSearchWorker
     u.kind_of?(User) ? "#{u.uid}" : "#{u.uid},#{u.screen_name}"
   end
 
-  def create_log(attrs, status, reason)
-    BackgroundSearchLog.create(attrs.update(bot_uid: bot(@user_id).uid, status: status, reason: reason))
+  def create_log(attrs, status, reason = '', message = '')
+    BackgroundSearchLog.create(attrs.update(bot_uid: bot(@user_id).uid, status: status, reason: reason, message: message))
   rescue => e
     logger.warn "create_log #{e.message} #{attrs.inspect}"
   end
