@@ -224,6 +224,7 @@ class ExTwitter < Twitter::REST::Client
 
   alias :old_user? :user?
   def user?(*args)
+    raise 'this method needs at least one param to use cache' if args.empty?
     options = args.extract_options!
     fetch_cache_or_call_api(:user?, args[0]) {
       call_old_method(:old_user?, args[0], options)
@@ -232,6 +233,7 @@ class ExTwitter < Twitter::REST::Client
 
   alias :old_user :user
   def user(*args)
+    raise 'this method needs at least one param to use cache' if args.empty?
     options = args.extract_options!
     fetch_cache_or_call_api(:user, args[0]) {
       call_old_method(:old_user, args[0], options)

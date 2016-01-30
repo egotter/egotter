@@ -18,8 +18,9 @@
 #
 
 class TwitterUser < ActiveRecord::Base
-  has_many :friends, foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :friends,   foreign_key: :from_id, dependent: :destroy, validate: false
   has_many :followers, foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :statuses,  foreign_key: :from_id, dependent: :destroy, validate: false
 
   attr_accessor :client, :login_user, :egotter_context
 
