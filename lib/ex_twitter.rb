@@ -96,6 +96,8 @@ class ExTwitter < Twitter::REST::Client
       case
         when method_name == :search
           "str#{delim}#{user.to_s}"
+        when method_name == :mentions_timeline
+          "myself#{delim}#{user.to_s}"
         when user.kind_of?(Integer)
           "id#{delim}#{user.to_s}"
         when user.kind_of?(Array) && user.first.kind_of?(Integer)
@@ -122,7 +124,7 @@ class ExTwitter < Twitter::REST::Client
     start_t = Time.now
     result =
       case caller_name
-        when :user_timeline, :favorites # Twitter::Tweet
+        when :user_timeline, :mentions_timeline, :favorites # Twitter::Tweet
           JSON.pretty_generate(obj.map { |o| o.attrs })
 
         when :search # Hash
@@ -392,13 +394,23 @@ class ExTwitter < Twitter::REST::Client
     processed_users.sort_by{|p| p[:i] }.map{|p| p[:users] }.flatten.compact
   end
 
-  # can't get tweets if specified user is protected
+  # can't get tweets if you are not authenticated by specified user
   alias :old_user_timeline :user_timeline
   def user_timeline(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:user_timeline, args[0]) {
       options = {count: 200, include_rts: true, call_count: 3}.merge(args.extract_options!)
       collect_with_max_id(:old_user_timeline, *args, options)
+    }
+  end
+
+  # can't get tweets if you are not authenticated by specified user
+  alias :old_mentions_timeline :mentions_timeline
+  def mentions_timeline(*args)
+    raise 'this method needs at least one param to use cache' if args.empty?
+    fetch_cache_or_call_api(:mentions_timeline, args[0]) {
+      options = {count: 200, include_rts: true, call_count: 1}.merge(args.extract_options!)
+      collect_with_max_id(:old_mentions_timeline, options)
     }
   end
 
@@ -436,9 +448,13 @@ class ExTwitter < Twitter::REST::Client
   # when user is login you had better to call mentions_timeline
   def replied(user)
     user = self.user(user).screen_name unless user.kind_of?(String)
-    tweets = search('@' + user)
-    uids = select_uids_replying_to(tweets)
-    users(uids)
+    if user == screen_name
+      mentions_timeline.map{|m| m.user }
+    else
+      tweets = search('@' + user)
+      uids = select_uids_replying_to(tweets)
+      users(uids)
+    end
   end
 
   def select_inactive_users(users, options = {})
