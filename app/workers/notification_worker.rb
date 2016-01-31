@@ -3,6 +3,8 @@ class NotificationWorker
   sidekiq_options queue: :egotter, retry: false, backtrace: false
 
   def perform(user_id, options = {})
+    options = options.with_indifferent_access
+
     user = User.find(user_id)
     tu = TwitterUser.find_by(uid: user.uid.to_i)
     text = "#{tu.screen_name} #{options[:text]}"

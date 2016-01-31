@@ -7,6 +7,7 @@ class BackgroundSearchWorker
   def perform(uid, screen_name, login_user_id, log_attrs = {})
     logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} start"
 
+    log_attrs = log_attrs.with_indifferent_access
     @user_id = login_user_id
     uid = uid.to_i
     screen_name = screen_name.to_s
