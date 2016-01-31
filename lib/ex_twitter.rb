@@ -55,12 +55,13 @@ class ExTwitter < Twitter::REST::Client
   # user_timeline, search
   def collect_with_max_id(method_name, *args)
     options = args.extract_options!
+    options[:call_count] = 3 unless options.has_key?(:call_count)
     last_response = call_old_method(method_name, *args, options)
     last_response = yield(last_response) if block_given?
     return_data = last_response
     call_count = 1
 
-    while last_response.any? && call_count < 3
+    while last_response.any? && call_count < options[:call_count]
       options[:max_id] = last_response.last.kind_of?(Hash) ? last_response.last[:id] : last_response.last.id
       last_response = call_old_method(method_name, *args, options)
       last_response = yield(last_response) if block_given?
@@ -419,7 +420,7 @@ class ExTwitter < Twitter::REST::Client
   def search(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:search, args[0]) {
-      options = {count: 100}.merge(args.extract_options!)
+      options = {count: 100, result_type: :recent, call_count: 1}.merge(args.extract_options!)
       collect_with_max_id(:old_search, *args, options) { |response| response.attrs[:statuses] }
     }
   end
