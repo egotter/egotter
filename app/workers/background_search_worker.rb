@@ -5,10 +5,10 @@ class BackgroundSearchWorker
   # This worker is called after strict validation for uid in searches_controller,
   # so you don't need to do that in this worker.
   def perform(uid, screen_name, login_user_id, log_attrs = {})
+    @user_id = login_user_id
     logger.debug "#{user_name(uid, screen_name)} #{bot_name(client)} start"
 
     log_attrs = log_attrs.with_indifferent_access
-    @user_id = login_user_id
     uid = uid.to_i
     screen_name = screen_name.to_s
 
@@ -70,6 +70,6 @@ class BackgroundSearchWorker
   end
 
   def client
-    @client ||= (User.exists?(id: @user_id) ? User.find(@user_id).api_client : Bot.api_client)
+    @client ||= (User.exists?(@user_id) ? User.find(@user_id).api_client : Bot.api_client)
   end
 end

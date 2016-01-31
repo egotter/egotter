@@ -15,5 +15,4 @@ class NotificationWorker
   def client
     @client ||= User.find(@user_id).api_client
   end
-
 end

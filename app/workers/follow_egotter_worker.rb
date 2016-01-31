@@ -12,5 +12,4 @@ class FollowEgotterWorker
   def client
     @client ||= User.find_by(uid: @uid).api_client
   end
-
 end
