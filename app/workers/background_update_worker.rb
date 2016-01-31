@@ -1,4 +1,4 @@
-class TwitterUserUpdaterWorker
+class BackgroundUpdateWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: 1, backtrace: 3
 

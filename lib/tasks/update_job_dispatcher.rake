@@ -57,7 +57,7 @@ namespace :update_job_dispatcher do
         end
       end
 
-      TwitterUserUpdaterWorker.perform_async(uid.to_i)
+      BackgroundUpdateWorker.perform_async(uid.to_i)
       enqueue_uids << uid.to_i
       redis.zadd(key, now_i, uid.to_s)
       enqueue_count += 1
