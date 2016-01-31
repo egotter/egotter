@@ -5,14 +5,19 @@ APP_ROOT="/home/ec2-user/egotter"
 
 start() {
         cd $APP_ROOT
-        sudo -u ec2-user -H bash -l -c "bundle exec sidekiq" &
+        sudo -u ec2-user -H bash -l -c "bundle exec sidekiq -d"
 }
 
 stop() {
     cd $APP_ROOT
     echo "Stopping sidekiq .."
     sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl quiet ./tmp/pids/sidekiq.pid"
-    sleep 3
+
+    until ps aux | grep 'sidekiq 4' | grep '0 of '; do
+      echo 'waiting'
+      sleep 2
+    done
+
     sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl stop ./tmp/pids/sidekiq.pid"
     RETVAL=$?
     return $RETVAL
@@ -31,6 +36,10 @@ case "$1" in
         stop)
                 stop
                 ;;
+        restart)
+                stop
+                start
+                ;;
         status)
                 status
 
@@ -43,7 +52,7 @@ case "$1" in
                  fi
                 ;;
         *)
-                echo "Usage: sidekiq {start|stop|status}" >&2
+                echo "Usage: sidekiq {start|stop|restart|status}" >&2
                 exit 1
                 ;;
 esac
