@@ -1,6 +1,6 @@
 class BackgroundUpdateWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: 1, backtrace: 3
+  sidekiq_options queue: :egotter, retry: false, backtrace: false
 
   # This worker is called with various uids,
   # so you need to do strict validation in this worker.
