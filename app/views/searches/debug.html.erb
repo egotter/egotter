@@ -1,14 +1,67 @@
-<table border="0">
+<table border="1">
   <caption>Total Records</caption>
-  <% [User, TwitterUser, Friend, Follower, Status, BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
+  <tr>
+    <th>name</th>
+    <th>total</th>
+    <th>(last 1hour)</th>
+  </tr>
+  <% [User, TwitterUser, Friend, Follower, Status].each do |model| %>
     <tr>
-      <td><%= model.model_name.human %></td>
-      <td><%= model.all.size %>(<%= model.where(created_at: 1.hour.ago..Time.now).size %>)</td>
+      <td><%= model.model_name %></td>
+      <td><%= model.all.size %></td>
+      <td><%= model.where(created_at: @last_1hour).size %></td>
     </tr>
   <% end %>
 </table>
+<br>
 
-<table border="0">
+<table border="1">
+  <caption>Worker</caption>
+  <tr>
+    <th>name</th>
+    <th>total</th>
+    <th>(last 1hour)</th>
+    <th>success</th>
+    <th>(last 1hour)</th>
+    <th>failure</th>
+    <th>(last 1hour)</th>
+  </tr>
+  <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
+    <tr>
+      <td><%= model.model_name %></td>
+      <td><%= model.all.size %></td>
+      <td><%= model.where(created_at: @last_1hour).size %></td>
+      <td><%= model.where(status: true).size %></td>
+      <td><%= model.where(status: true, created_at: @last_1hour).size %></td>
+      <td><%= model.where(status: false).size %></td>
+      <td><%= model.where(status: false, created_at: @last_1hour).size %></td>
+    </tr>
+  <% end %>
+</table>
+<br>
+
+<table border="1">
+  <caption>Worker Reasons</caption>
+  <tr>
+    <th>name</th>
+    <th>id</th>
+    <th>reason</th>
+  </tr>
+  <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
+    <%
+      model.where(created_at: @last_1hour, status: false).each do |log|
+    %>
+      <tr>
+        <td><%= model.model_name %></td>
+        <td><%= id %></td>
+        <td><%= log.reason %></td>
+      </tr>
+    <% end %>
+  <% end %>
+</table>
+<br>
+
+<table border="1">
   <caption>Queueing</caption>
   <% @debug_info.each do |k, v| %>
     <tr>

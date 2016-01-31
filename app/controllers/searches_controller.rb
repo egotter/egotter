@@ -261,6 +261,7 @@ class SearchesController < ApplicationController
   def debug
     debug_key = 'update_job_dispatcher:debug'
     @debug_info = JSON.parse(redis.get(debug_key) || '{}')
+    @last_1hour = 1.hour.ago..Time.now
     render layout: false
   end
 
