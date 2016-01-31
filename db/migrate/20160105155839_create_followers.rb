@@ -11,5 +11,6 @@ class CreateFollowers < ActiveRecord::Migration
     add_index :followers, :uid
     add_index :followers, :from_id
     add_index :followers, :screen_name
+    add_index :followers, :created_at
   end
 end

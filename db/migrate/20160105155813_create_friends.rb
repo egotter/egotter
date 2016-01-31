@@ -11,5 +11,6 @@ class CreateFriends < ActiveRecord::Migration
     add_index :friends, :uid
     add_index :friends, :from_id
     add_index :friends, :screen_name
+    add_index :friends, :created_at
   end
 end

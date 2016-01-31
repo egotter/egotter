@@ -14,6 +14,7 @@
 #
 # Indexes
 #
+#  index_background_search_logs_on_created_at          (created_at)
 #  index_background_search_logs_on_uid                 (uid)
 #  index_background_search_logs_on_user_id             (user_id)
 #  index_background_search_logs_on_user_id_and_status  (user_id,status)

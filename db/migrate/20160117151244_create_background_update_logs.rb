@@ -9,5 +9,6 @@ class CreateBackgroundUpdateLogs < ActiveRecord::Migration
       t.timestamps null: false
     end
     add_index :background_update_logs, :uid
+    add_index :background_update_logs, :created_at
   end
 end

@@ -12,7 +12,8 @@
 #
 # Indexes
 #
-#  index_background_update_logs_on_uid  (uid)
+#  index_background_update_logs_on_created_at  (created_at)
+#  index_background_update_logs_on_uid         (uid)
 #
 
 class BackgroundUpdateLog < ActiveRecord::Base

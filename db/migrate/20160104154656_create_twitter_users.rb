@@ -11,5 +11,6 @@ class CreateTwitterUsers < ActiveRecord::Migration
     end
     add_index :twitter_users, :uid
     add_index :twitter_users, :screen_name
+    add_index :twitter_users, :created_at
   end
 end

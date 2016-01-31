@@ -13,5 +13,6 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
     add_index :background_search_logs, :user_id
     add_index :background_search_logs, [:user_id, :status]
     add_index :background_search_logs, :uid
+    add_index :background_search_logs, :created_at
   end
 end

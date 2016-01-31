@@ -13,6 +13,7 @@
 #
 # Indexes
 #
+#  index_twitter_users_on_created_at   (created_at)
 #  index_twitter_users_on_screen_name  (screen_name)
 #  index_twitter_users_on_uid          (uid)
 #

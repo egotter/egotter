@@ -11,5 +11,6 @@ class CreateStatuses < ActiveRecord::Migration
     add_index :statuses, :uid
     add_index :statuses, :from_id
     add_index :statuses, :screen_name
+    add_index :statuses, :created_at
   end
 end

@@ -12,6 +12,7 @@
 #
 # Indexes
 #
+#  index_statuses_on_created_at   (created_at)
 #  index_statuses_on_from_id      (from_id)
 #  index_statuses_on_screen_name  (screen_name)
 #  index_statuses_on_uid          (uid)

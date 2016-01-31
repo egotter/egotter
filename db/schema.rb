@@ -24,6 +24,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
     t.datetime "updated_at",                               null: false
   end
 
+  add_index "background_search_logs", ["created_at"], name: "index_background_search_logs_on_created_at", using: :btree
   add_index "background_search_logs", ["uid"], name: "index_background_search_logs_on_uid", using: :btree
   add_index "background_search_logs", ["user_id", "status"], name: "index_background_search_logs_on_user_id_and_status", using: :btree
   add_index "background_search_logs", ["user_id"], name: "index_background_search_logs_on_user_id", using: :btree
@@ -37,6 +38,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
     t.datetime "updated_at",                             null: false
   end
 
+  add_index "background_update_logs", ["created_at"], name: "index_background_update_logs_on_created_at", using: :btree
   add_index "background_update_logs", ["uid"], name: "index_background_update_logs_on_uid", using: :btree
 
   create_table "followers", force: :cascade do |t|
@@ -48,6 +50,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
     t.datetime "updated_at",                null: false
   end
 
+  add_index "followers", ["created_at"], name: "index_followers_on_created_at", using: :btree
   add_index "followers", ["from_id"], name: "index_followers_on_from_id", using: :btree
   add_index "followers", ["screen_name"], name: "index_followers_on_screen_name", using: :btree
   add_index "followers", ["uid"], name: "index_followers_on_uid", using: :btree
@@ -61,6 +64,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
     t.datetime "updated_at",                null: false
   end
 
+  add_index "friends", ["created_at"], name: "index_friends_on_created_at", using: :btree
   add_index "friends", ["from_id"], name: "index_friends_on_from_id", using: :btree
   add_index "friends", ["screen_name"], name: "index_friends_on_screen_name", using: :btree
   add_index "friends", ["uid"], name: "index_friends_on_uid", using: :btree
@@ -91,6 +95,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
     t.datetime "updated_at",                null: false
   end
 
+  add_index "statuses", ["created_at"], name: "index_statuses_on_created_at", using: :btree
   add_index "statuses", ["from_id"], name: "index_statuses_on_from_id", using: :btree
   add_index "statuses", ["screen_name"], name: "index_statuses_on_screen_name", using: :btree
   add_index "statuses", ["uid"], name: "index_statuses_on_uid", using: :btree
@@ -105,6 +110,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
     t.datetime "updated_at",                             null: false
   end
 
+  add_index "twitter_users", ["created_at"], name: "index_twitter_users_on_created_at", using: :btree
   add_index "twitter_users", ["screen_name"], name: "index_twitter_users_on_screen_name", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
@@ -128,6 +134,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
     t.datetime "updated_at",                                        null: false
   end
 
+  add_index "users", ["created_at"], name: "index_users_on_created_at", using: :btree
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["screen_name"], name: "index_users_on_screen_name", using: :btree
