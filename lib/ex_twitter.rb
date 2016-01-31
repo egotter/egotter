@@ -431,8 +431,10 @@ class ExTwitter < Twitter::REST::Client
   alias :old_search :search
   def search(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
-    fetch_cache_or_call_api(:search, args[0]) {
-      options = {count: 100, result_type: :recent, call_count: 1}.merge(args.extract_options!)
+    options = args.extract_options!
+    options[:reduce] = false
+    fetch_cache_or_call_api(:search, args[0], options) {
+      options = {count: 100, result_type: :recent, call_count: 1}.merge(options)
       collect_with_max_id(:old_search, *args, options) { |response| response.attrs[:statuses] }
     }
   end

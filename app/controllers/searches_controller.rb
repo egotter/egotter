@@ -49,6 +49,7 @@ class SearchesController < ApplicationController
         tu.replied && tu.replied
       rescue => e
         logger.warn "show replied #{e.class} #{e.message}"
+        logger.warn e.backtrace.join("\n")
         []
       end
     _favoriting =
@@ -56,6 +57,7 @@ class SearchesController < ApplicationController
         tu.favoriting && tu.favoriting
       rescue => e
         logger.warn "show favoriting #{e.class} #{e.message}"
+        logger.warn e.backtrace.join("\n")
         []
       end
     _close_friends =
@@ -63,6 +65,7 @@ class SearchesController < ApplicationController
         tu.close_friends && tu.close_friends
       rescue => e
         logger.warn "show close_friends #{e.class} #{e.message}"
+        logger.warn e.backtrace.join("\n")
         []
       end
 
