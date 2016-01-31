@@ -4,6 +4,7 @@
 #
 #  id                     :integer          not null, primary key
 #  uid                    :string(191)      not null
+#  screen_name            :string(191)      not null
 #  secret                 :string(191)      not null
 #  token                  :string(191)      not null
 #  notification           :boolean          default(TRUE), not null
@@ -24,6 +25,7 @@
 #
 #  index_users_on_email                 (email) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_screen_name           (screen_name)
 #  index_users_on_uid                   (uid) UNIQUE
 #
 
@@ -39,6 +41,7 @@ class User < ActiveRecord::Base
     unless user
       user = User.create!(
         uid: auth.uid,
+        screen_name: auth.info.nickname,
         secret: auth.credentials.secret,
         token: auth.credentials.token,
         email: "#{auth.provider}-#{auth.uid}@example.com",
@@ -49,7 +52,7 @@ class User < ActiveRecord::Base
 
   def api_client
     config = Bot.config
-    config.update(access_token: token, access_token_secret: secret)
+    config.update(access_token: token, access_token_secret: secret, uid: uid, screen_name: screen_name)
     ExTwitter.new(config)
   end
 

@@ -10,10 +10,10 @@
     <button style="margin-top: 10px;" class="btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
   <% end %>
 
-  <% if user_signed_in? && (tu = TwitterUser.find_by(uid: current_user.uid)).present? %>
+  <% if user_signed_in? %>
     <h2 style="text-align: center; margin-top: 30px;"><small><%= t('dictionary.search_by_login_user') %></small></h2>
-    <%= link_to t('dictionary.search_by', user: "@#{tu.screen_name}"),
-                searches_path(screen_name: tu.screen_name),
+    <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
+                searches_path(screen_name: current_user.screen_name),
                 class: 'btn btn-info btn-block', style: 'margin-top: 0px;', method: :post %>
   <% end %>
 </div>

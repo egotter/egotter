@@ -382,9 +382,7 @@ class SearchesController < ApplicationController
   end
 
   def client
-    config = Bot.config
-    config.update(access_token: current_user.token, access_token_secret: current_user.secret) if user_signed_in?
-    ExTwitter.new(config)
+    @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
   rescue => e
     logger.warn e.message
     return redirect_to '/', alert: 'error 000'

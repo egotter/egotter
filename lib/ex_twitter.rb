@@ -12,12 +12,12 @@ class ExTwitter < Twitter::REST::Client
 
   def initialize(options = {})
     @cache = ActiveSupport::Cache::FileStore.new(File.join('tmp', 'api_cache', Time.now.strftime('%Y%m%d%H')))
+    @uid = options[:uid]
+    @screen_name = options[:screen_name]
     super
   end
 
-  def cache
-    @cache
-  end
+  attr_reader :cache, :uid, :screen_name
 
   def logger
     @logger ||= Logger.new('log/ex_twitter.log')

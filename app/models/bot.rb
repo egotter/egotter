@@ -21,16 +21,18 @@ class Bot
 
   def self.config(options = {})
     init
-    bot = options[:screen_name] ? @@bot.find { |item| item.screen_name == options[:screen_name] } : sample
+    bot = options[:screen_name] ? @@bot.find { |bot| bot.screen_name == options[:screen_name] } : sample
     {
       consumer_key: ENV['TWITTER_CONSUMER_KEY'],
       consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
       access_token: bot.token,
-      access_token_secret: bot.secret
+      access_token_secret: bot.secret,
+      uid: bot.uid,
+      screen_name: bot.screen_name
     }
   end
 
-  def self.client(options = {})
+  def self.api_client(options = {})
     init
     ExTwitter.new(config(options))
   end
