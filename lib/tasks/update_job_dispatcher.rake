@@ -20,7 +20,7 @@ namespace :update_job_dispatcher do
     begin
       uids = client.follower_ids('ego_tter').map { |id| id.to_i }
     rescue Twitter::Error::TooManyRequests => e
-      puts "#{bot.screen_name} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
+      puts "#{client.screen_name} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
       end_t = Time.zone.now
       puts "[#{Time.now}] enqueue finish (#{end_t - start_t}s)"
       next
@@ -93,14 +93,6 @@ namespace :update_job_dispatcher do
   end
 
   def client
-    config = Bot.config
-    config.update(access_token: bot.token, access_token_secret: bot.secret)
-    c = ExTwitter.new(config)
-    c.verify_credentials
-    c
-  end
-
-  def bot
-    @bot ||= Bot.sample
+    @client ||= Bot.api_client
   end
 end

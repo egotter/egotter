@@ -37,9 +37,14 @@ class User < ActiveRecord::Base
          :omniauthable
 
   def self.find_or_create_for_oauth_by!(auth)
-    user = User.find_by(uid: auth.uid)
-    unless user
-      user = User.create!(
+    if User.exists?(uid: auth.uid)
+      user = User.find_by(uid: auth.uid)
+      user.update(screen_name: auth.info.nickname,
+                  secret: auth.credentials.secret,
+                  token: auth.credentials.token)
+      user
+    else
+      User.create!(
         uid: auth.uid,
         screen_name: auth.info.nickname,
         secret: auth.credentials.secret,
@@ -47,7 +52,6 @@ class User < ActiveRecord::Base
         email: "#{auth.provider}-#{auth.uid}@example.com",
         password: Devise.friendly_token[4, 30])
     end
-    user
   end
 
   def api_client

@@ -1,6 +1,6 @@
 <div class="container">
   <h2 style="text-align: center; margin-top: 10px;"><small><%= t('dictionary.search_by_login_user') %></small></h2>
-  <%= link_to t('dictionary.search_by', user: "@#{@raw_user.screen_name}"),
+  <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
               searches_path(screen_name: current_user.screen_name),
               class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;', method: :post %>
 

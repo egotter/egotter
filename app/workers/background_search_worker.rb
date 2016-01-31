@@ -70,6 +70,6 @@ class BackgroundSearchWorker
   end
 
   def client
-    @client = (User.exists?(id: @user_id) ? User.find(@user_id).api_client : Bot.api_client)
+    @client ||= (User.exists?(id: @user_id) ? User.find(@user_id).api_client : Bot.api_client)
   end
 end

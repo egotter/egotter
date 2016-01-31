@@ -48,14 +48,14 @@ class BackgroundUpdateWorker
 
   rescue Twitter::Error::TooManyRequests => e
     friends_count = "(#{_tu.friends_count},#{_tu.followers_count})" if _tu.present?
-    logger.warn "#{user_name(_tu)}#{friends_count} #{bot_name(bot)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
+    logger.warn "#{user_name(_tu)}#{friends_count} #{bot_name(client)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
     redis.zrem('update_job_dispatcher:recently_added', uid.to_s)
     create_log(uid, false, BackgroundUpdateLog::TooManyRequests)
   rescue Twitter::Error::Unauthorized => e
-    logger.warn "#{user_name(_tu)} #{bot_name(bot)} #{e.class} #{e.message}"
+    logger.warn "#{user_name(_tu)} #{bot_name(client)} #{e.class} #{e.message}"
     create_log(uid, false, BackgroundUpdateLog::Unauthorized)
   rescue => e
-    logger.warn "#{user_name(_tu)} #{bot_name(bot)} #{e.class} #{e.message}"
+    logger.warn "#{user_name(_tu)} #{bot_name(client)} #{e.class} #{e.message}"
     create_log(uid, false, BackgroundUpdateLog::SomethingIsWrong)
     raise e
   end
@@ -69,7 +69,7 @@ class BackgroundUpdateWorker
   end
 
   def create_log(uid, status, reason)
-    BackgroundUpdateLog.create(uid: uid, bot_uid: bot.uid, status: status, reason: reason)
+    BackgroundUpdateLog.create(uid: uid, bot_uid: client.uid, status: status, reason: reason)
   rescue => e
     logger.warn "create_log #{e.message}"
   end
@@ -79,18 +79,6 @@ class BackgroundUpdateWorker
   end
 
   def client
-    config = Bot.config
-    if User.exists?(uid: @uid.to_i)
-      u = User.find_by(uid: @uid.to_i)
-      config.update(access_token: u.token, access_token_secret: u.secret)
-    end
-    c = ExTwitter.new(config)
-    c.verify_credentials
-    c
+    @client ||= (User.exists?(uid: @uid) ? User.find_by(uid: @uid).api_client : Bot.api_client)
   end
-
-  def bot
-    @bot ||= Bot.sample
-  end
-
 end
