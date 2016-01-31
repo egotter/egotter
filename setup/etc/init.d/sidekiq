@@ -1,16 +1,29 @@
 # https://cdyer.co.uk/blog/init-script-for-sidekiq-with-rbenv/
 # /etc/init.d/sidekiq
 
+. /etc/init.d/functions
+
+if echo ' \c' | grep 'c' > /dev/null 2>&1; then
+  en='-n'
+  ec=''
+else
+  en=''
+  ec='\c'
+fi
+
+NAME=sidekiq
 APP_ROOT="/home/ec2-user/egotter"
 
 start() {
         cd $APP_ROOT
         sudo -u ec2-user -H bash -l -c "bundle exec sidekiq -d"
+        echo ${en} "Starting $NAME: ${ec}"
+        success
+        echo
 }
 
 stop() {
     cd $APP_ROOT
-    echo "Stopping sidekiq .."
     sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl quiet ./tmp/pids/sidekiq.pid"
 
     until ps aux | grep 'sidekiq 4' | grep '0 of '; do
@@ -20,6 +33,10 @@ stop() {
 
     sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl stop ./tmp/pids/sidekiq.pid"
     RETVAL=$?
+
+    echo ${en} "Stopping $NAME: ${ec}"
+    success
+    echo
     return $RETVAL
 }
 
