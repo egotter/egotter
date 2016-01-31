@@ -56,12 +56,14 @@ class ExTwitter < Twitter::REST::Client
   def collect_with_max_id(method_name, *args)
     options = args.extract_options!
     last_response = call_old_method(method_name, *args, options)
+    last_response = yield(last_response) if block_given?
     return_data = last_response
     call_count = 1
 
     while last_response.any? && call_count < 3
-      options[:max_id] = last_response.last.id
+      options[:max_id] = last_response.last[:id]
       last_response = call_old_method(method_name, *args, options)
+      last_response = yield(last_response) if block_given?
       return_data += last_response
       call_count += 1
     end
@@ -91,6 +93,8 @@ class ExTwitter < Twitter::REST::Client
     delim = ':'
     identifier =
       case
+        when method_name == :search
+          "str#{delim}#{user.to_s}"
         when user.kind_of?(Integer)
           "id#{delim}#{user.to_s}"
         when user.kind_of?(Array) && user.first.kind_of?(Integer)
@@ -116,11 +120,20 @@ class ExTwitter < Twitter::REST::Client
     options[:reduce] = true unless options.has_key?(:reduce)
     start_t = Time.now
     result =
-      case
-        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
+      case caller_name
+        when :user_timeline # Twitter::Tweet
           JSON.pretty_generate(obj.map { |o| o.attrs })
 
-        when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
+        when :search # Hash
+          data =
+            if options[:reduce]
+              obj.map { |o| o.to_hash.slice(*Status::STATUS_SAVE_KEYS) }
+            else
+              obj.map { |o| o.to_hash }
+            end
+          JSON.pretty_generate(data)
+
+        when :friends, :followers # Hash
           data =
             if options[:reduce]
               obj.map { |o| o.to_hash.slice(*TwitterUser::PROFILE_SAVE_KEYS) }
@@ -129,13 +142,13 @@ class ExTwitter < Twitter::REST::Client
             end
           JSON.pretty_generate(data)
 
-        when obj.kind_of?(Array) && obj.first.kind_of?(Integer) # friend_ids, follower_ids
+        when :friend_ids, :follower_ids # Integer
           JSON.pretty_generate(obj)
 
-        when obj.kind_of?(Twitter::User) # user
+        when :user # Twitter::User
           JSON.pretty_generate(obj.to_hash.slice(*TwitterUser::PROFILE_SAVE_KEYS))
 
-        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::User) # users, friends_advanced, followers_advanced
+        when :users, :friends_advanced, :followers_advanced # Twitter::User
           data =
             if options[:reduce]
               obj.map { |o| o.to_hash.slice(*TwitterUser::PROFILE_SAVE_KEYS) }
@@ -144,11 +157,11 @@ class ExTwitter < Twitter::REST::Client
             end
           JSON.pretty_generate(data)
 
-        when obj === true || obj === false # user?
+        when :user? # true or false
           obj
 
-        when obj.kind_of?(Array) && obj.empty?
-          JSON.pretty_generate(obj)
+        # when obj.kind_of?(Array) && obj.empty?
+        #   JSON.pretty_generate(obj)
 
         else
           raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} obj=#{obj.inspect}"
@@ -164,22 +177,16 @@ class ExTwitter < Twitter::REST::Client
     obj = json_str.kind_of?(String) ? JSON.parse(json_str) : json_str
     result =
       case
-        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::Tweet) # statuses
-          obj.map { |o| Hashie::Mash.new(o.attrs) }
-
-        when obj.kind_of?(Array) && obj.first.kind_of?(Hash) # friends, followers
+        when obj.kind_of?(Array) && obj.first.kind_of?(Hash)
           obj.map { |o| Hashie::Mash.new(o) }
 
-        when obj.kind_of?(Array) && obj.first.kind_of?(Integer) # friend_ids, follower_ids
+        when obj.kind_of?(Array) && obj.first.kind_of?(Integer)
           obj
 
-        when obj.kind_of?(Hash) # user
+        when obj.kind_of?(Hash)
           Hashie::Mash.new(obj)
 
-        when obj.kind_of?(Array) && obj.first.kind_of?(Twitter::User) # users
-          obj.map { |o| Hashie::Mash.new(o.attrs) }
-
-        when obj === true || obj === false # user?
+        when obj === true || obj === false
           obj
 
         when obj.kind_of?(Array) && obj.empty?
@@ -394,7 +401,7 @@ class ExTwitter < Twitter::REST::Client
     }
   end
 
-  def select_replied_screen_names(tweets)
+  def select_screen_names_replied(tweets)
     tweets.map do |t|
       $1 if t.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
     end.compact.uniq
@@ -404,24 +411,33 @@ class ExTwitter < Twitter::REST::Client
   # in_reply_to_user_id and in_reply_to_status_id is not used because of distinguishing mentions from replies
   def replying(user)
     tweets = user_timeline(user)
-    screen_names = select_replied_screen_names(tweets)
+    screen_names = select_screen_names_replied(tweets)
     users(screen_names)
+  end
+
+  alias :old_search :search
+  def search(*args)
+    raise 'this method needs at least one param to use cache' if args.empty?
+    fetch_cache_or_call_api(:search, args[0]) {
+      options = {count: 100}.merge(args.extract_options!)
+      collect_with_max_id(:old_search, *args, options) { |response| response.attrs[:statuses] }
+    }
+  end
+
+  def select_uids_replying_to(tweets)
+    tweets.map do |t|
+      tt = Hashie::Mash.new(t)
+      tt.user.id.to_i if tt.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
+    end.compact.uniq
   end
 
   # users which specified user is replied
   # when user is login you had better to call mentions_timeline
   def replied(user)
     user = self.user(user).screen_name unless user.kind_of?(String)
-
-    search_result = search('@' + user, count: 100).attrs # TODO must use cache
-    return [] if search_result.blank? || search_result[:statuses].blank?
-
-    uids = search_result[:statuses].map do |s|
-      s = Hashie::Mash.new(s)
-      s.user.id.to_i if s.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
-    end.compact.uniq
-
-    users(uids) || []
+    tweets = search('@' + user)
+    uids = select_uids_replying_to(tweets)
+    users(uids)
   end
 
   def select_inactive_users(users, options = {})

@@ -262,7 +262,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def replying
-    screen_names = ExTwitter.new.select_replied_screen_names(statuses)
+    screen_names = ExTwitter.new.select_screen_names_replied(statuses)
     self.client.users(screen_names).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
   end
 
@@ -279,7 +279,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def clusters_belong_to
-    text = self.client.user_timeline(self.uid.to_i).map{|s| s.text }.join(' ')
+    text = statuses.map{|s| s.text }.join(' ')
     ExTwitter.new.clusters_belong_to(text)
   end
 
