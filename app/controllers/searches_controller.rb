@@ -12,6 +12,8 @@ class SearchesController < ApplicationController
 
   before_action :set_searched_tw_user, only: SEARCH_MENUS
 
+  before_action :basic_auth, only: %i(debug)
+
   def welcome
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
   end
@@ -254,6 +256,12 @@ class SearchesController < ApplicationController
     end
   end
 
+  def debug
+    debug_key = 'update_job_dispatcher:debug'
+    @debug_info = JSON.parse(redis.get(debug_key) || '{}')
+    render layout: false
+  end
+
   private
   def set_searched_tw_user
     tu = TwitterUser.latest(@twitter_user.uid.to_i)
@@ -378,5 +386,11 @@ class SearchesController < ApplicationController
   rescue => e
     logger.warn e.message
     return redirect_to '/', alert: 'error 000'
+  end
+
+  def basic_auth
+    authenticate_or_request_with_http_basic do |user, pass|
+      user == ENV['DEBUG_USERNAME'] && pass == ENV['DEBUG_PASSWORD']
+    end if Rails.env.production?
   end
 end

@@ -7,7 +7,8 @@ namespace :update_job_dispatcher do
     # TODO use queue priority
 
     key = 'update_job_dispatcher:recently_added'
-    zrem_count = redis.zremrangebyscore(key, 0, 2.days.ago.to_i)
+    debug_key = 'update_job_dispatcher:debug'
+    zrem_count = redis.zremrangebyscore(key, 0, 1.day.ago.to_i)
     enqueue_count = 0
     already_added_count = 0
     recently_updated_count = 0
@@ -66,9 +67,18 @@ namespace :update_job_dispatcher do
     end
 
 
-    puts %W(zcard=#{redis.zcard(key)} zrem=#{zrem_count} enqueue=#{enqueue_count}
-      already_added=#{already_added_count} recently_updated=#{recently_updated_count}
-      unauthorized=#{unauthorized_count} suspended=#{suspended_count} too_many_friends=#{too_many_friends_count}).join(' ')
+    debug_info = {
+      zcard: redis.zcard(key),
+      zrem: zrem_count,
+      enqueue: enqueue_count,
+      already_added: already_added_count,
+      recently_updated: recently_updated_count,
+      unauthorized: unauthorized_count,
+      suspended: suspended_count,
+      too_many_friends: too_many_friends_count
+    }
+    redis.set(debug_key, debug_info.to_json)
+    puts debug_info.map{|k, v| "#{k}=#{v}" }.join(' ')
 
     end_t = Time.zone.now
     puts "[#{Time.now}] enqueue finish (#{end_t - start_t}s)"

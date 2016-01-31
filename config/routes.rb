@@ -35,6 +35,8 @@ Rails.application.routes.draw do
   end if Rails.env.production?
   mount Sidekiq::Web, at: '/sidekiq'
 
+  get 'debug', to: 'searches#debug'
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
