@@ -54,7 +54,7 @@
   </tr>
   <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
     <%
-      model.where(created_at: @last_1hour, status: false).each do |log|
+      model.where(created_at: @last_1hour, status: false).limit(100).each do |log|
     %>
       <tr>
         <td><%= model.model_name %></td>

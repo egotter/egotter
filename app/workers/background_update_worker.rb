@@ -4,8 +4,9 @@ class BackgroundUpdateWorker
 
   # This worker is called with various uids,
   # so you need to do strict validation in this worker.
-  def perform(uid)
+  def perform(uid, options = {})
     @uid = uid
+    options = options.with_indifferent_access
     _tu = TwitterUser.build(client, uid.to_i, all: false)
 
     logger.debug "#{user_name(_tu)} start"
