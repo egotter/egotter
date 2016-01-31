@@ -123,8 +123,7 @@ class TwitterUser < ActiveRecord::Base
   def self.build(client, user, option = {})
     option[:all] = true unless option.has_key?(:all)
 
-    # call 2 times to use cache
-    _raw_me = client.user(user) && client.user(user)
+    _raw_me = client.user(user) && client.user(user, cache: :force)
 
     tu = TwitterUser.new do |tu|
       tu.uid = _raw_me.id.to_i
@@ -136,9 +135,14 @@ class TwitterUser < ActiveRecord::Base
     tu.egotter_context = option.has_key?(:egotter_context) ? option[:egotter_context] : nil
 
     if option[:all]
-      _friends, _followers, _statuses =
-        client.friends_followers_and_statuses_advanced(_raw_me.id.to_i) &&
-          client.friends_followers_and_statuses_advanced(_raw_me.id.to_i)
+      client.fetch_parallelly([
+                                {method: :friends_advanced, args: [tu.uid.to_i]},
+                                {method: :followers_advanced, args: [tu.uid.to_i]},
+                                {method: :user_timeline, args: [tu.uid.to_i]},
+                                {method: :search, args: [tu.screen_name.to_s]}])
+      _friends = client.friends_advanced(tu.uid.to_i, cache: :force)
+      _followers = client.followers_advanced(tu.uid.to_i, cache: :force)
+      _statuses = client.user_timeline(tu.uid.to_i, cache: :force)
 
       tu.friends = _friends.map do |f|
         Friend.new({

@@ -200,6 +200,7 @@ class ExTwitter < Twitter::REST::Client
     result
   end
 
+  # options {cache: :force}
   def fetch_cache_or_call_api(method_name, user, options = {})
     start_t = Time.now
     key = namespaced_key(method_name, user)
@@ -211,6 +212,8 @@ class ExTwitter < Twitter::REST::Client
       logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache read) (#{end_t - start_t}s)"
       return data
     end
+
+    raise "#{__method__}: must use cache caller=#{method_name} key=#{key}" if options[:cache] == :force
 
     data = yield
 
@@ -233,7 +236,7 @@ class ExTwitter < Twitter::REST::Client
   def user?(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
     options = args.extract_options!
-    fetch_cache_or_call_api(:user?, args[0]) {
+    fetch_cache_or_call_api(:user?, args[0], options) {
       call_old_method(:old_user?, args[0], options)
     }
   end
@@ -242,7 +245,7 @@ class ExTwitter < Twitter::REST::Client
   def user(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
     options = args.extract_options!
-    fetch_cache_or_call_api(:user, args[0]) {
+    fetch_cache_or_call_api(:user, args[0], options) {
       call_old_method(:old_user, args[0], options)
     }
   end
@@ -251,8 +254,9 @@ class ExTwitter < Twitter::REST::Client
   alias :old_friend_ids :friend_ids
   def friend_ids(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
-    fetch_cache_or_call_api(:friend_ids, args[0]) {
-      options = {count: 5000, cursor: -1}.merge(args.extract_options!)
+    options = args.extract_options!
+    fetch_cache_or_call_api(:friend_ids, args[0], options) {
+      options = {count: 5000, cursor: -1}.merge(options)
       collect_with_cursor(:old_friend_ids, *args, options)
     }
   end
@@ -260,8 +264,9 @@ class ExTwitter < Twitter::REST::Client
   alias :old_follower_ids :follower_ids
   def follower_ids(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
-    fetch_cache_or_call_api(:follower_ids, args[0]) {
-      options = {count: 5000, cursor: -1}.merge(args.extract_options!)
+    options = args.extract_options!
+    fetch_cache_or_call_api(:follower_ids, args[0], options) {
+      options = {count: 5000, cursor: -1}.merge(options)
       collect_with_cursor(:old_follower_ids, *args, options)
     }
   end
@@ -270,71 +275,63 @@ class ExTwitter < Twitter::REST::Client
   alias :old_friends :friends
   def friends(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
-    fetch_cache_or_call_api(:friends, args[0], reduce: false) {
-      options = {count: 200, include_user_entities: true, cursor: -1}.merge(args.extract_options!)
+    options = args.extract_options!
+    options[:reduce] = false unless options.has_key?(:reduce)
+    fetch_cache_or_call_api(:friends, args[0], options) {
+      options = {count: 200, include_user_entities: true, cursor: -1}.merge(options)
       collect_with_cursor(:old_friends, *args, options)
     }
   end
   # memoize :friends
 
   def friends_advanced(*args)
-    users(friend_ids(*args).map { |id| id.to_i })
+    options = args.extract_options!
+    _friend_ids = friend_ids(*(args + [options]))
+    users(_friend_ids.map { |id| id.to_i }, options)
   end
 
   # specify reduce: false to use tweet for inactive_*
   alias :old_followers :followers
   def followers(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
-    fetch_cache_or_call_api(:followers, args[0], reduce: false) {
-      options = {count: 200, include_user_entities: true, cursor: -1}.merge(args.extract_options!)
+    options = args.extract_options!
+    options[:reduce] = false unless options.has_key?(:reduce)
+    fetch_cache_or_call_api(:followers, args[0], options) {
+      options = {count: 200, include_user_entities: true, cursor: -1}.merge(options)
       collect_with_cursor(:old_followers, *args, options)
     }
   end
   # memoize :followers
 
   def followers_advanced(*args)
-    users(follower_ids(*args).map { |id| id.to_i })
+    options = args.extract_options!
+    _follower_ids = follower_ids(*(args + [options]))
+    users(_follower_ids.map { |id| id.to_i }, options)
+  end
+
+  def fetch_parallelly(signatures) # [{method: :friends, args: ['ts_3156', ...], {...}]
+    result = Array.new(signatures.size)
+
+    Parallel.each_with_index(signatures, in_threads: result.size) do |signature, i|
+      result[i] = send(signature[:method], *signature[:args])
+    end
+
+    result
   end
 
   def friends_and_followers(*args)
-    result = [nil, nil]
-    Parallel.each_with_index([args, args], in_threads: 2) do |_args, i|
-      if i == 0
-        result[0] = friends(*_args)
-      else
-        result[1] = followers(*_args)
-      end
-    end
-
-    result
+    fetch_parallelly(
+      [
+        {method: 'friends_advanced', args: args},
+        {method: 'followers_advanced', args: args}])
   end
 
-  def friends_and_followers_advanced(*args)
-    result = [nil, nil]
-    Parallel.each_with_index([args, args], in_threads: 2) do |_args, i|
-      if i == 0
-        result[0] = friends_advanced(*_args)
-      else
-        result[1] = followers_advanced(*_args)
-      end
-    end
-
-    result
-  end
-
-  def friends_followers_and_statuses_advanced(*args)
-    result = [nil, nil, nil]
-    Parallel.each_with_index([args, args, args], in_threads: 3) do |_args, i|
-      if i == 0
-        result[0] = friends_advanced(*_args)
-      elsif i == 1
-        result[1] = followers_advanced(*_args)
-      else
-        result[2] = user_timeline(*_args)
-      end
-    end
-
-    result
+  def friends_followers_and_statuses(*args)
+    fetch_parallelly(
+      [
+        {method: 'friends_advanced', args: args},
+        {method: 'followers_advanced', args: args},
+        {method: 'user_timeline', args: args}])
   end
 
   def only_following(me)

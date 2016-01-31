@@ -41,7 +41,6 @@ class SearchesController < ApplicationController
     tu.client = client
     tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
-    _clusters_belong_to = (tu.clusters_belong_to && tu.clusters_belong_to rescue [])
     _replied = (tu.replied && tu.replied rescue [])
 
     @menu_items = [
@@ -92,6 +91,7 @@ class SearchesController < ApplicationController
       },
     ]
 
+    _clusters_belong_to = tu.clusters_belong_to
     @menu_clusters_belong_to = {
       name: t('search_menu.clusters_belong_to', user: sn),
       target: _clusters_belong_to,
