@@ -11,17 +11,20 @@ class BackgroundUpdateWorker
     logger.debug "#{user_name(_tu)} start"
 
     if _tu.too_many_friends?
-      create_log(uid, false, BackgroundUpdateLog::TooManyFriends)
+      create_log(uid, false, BackgroundUpdateLog::TooManyFriends, _tu.errors.full_messages)
+      logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
       return
     end
 
     if _tu.unauthorized?
-      create_log(uid, false, BackgroundUpdateLog::Unauthorized)
+      create_log(uid, false, BackgroundUpdateLog::Unauthorized, _tu.errors.full_messages)
+      logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
       return
     end
 
     if _tu.suspended_account?
-      create_log(uid, false, BackgroundUpdateLog::Suspended)
+      create_log(uid, false, BackgroundUpdateLog::Suspended, _tu.errors.full_messages)
+      logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
       return
     end
 
@@ -30,7 +33,7 @@ class BackgroundUpdateWorker
     if latest_tu.present? && (latest_tu.recently_created? || latest_tu.recently_updated?)
       latest_tu.update_and_touch
       logger.debug "#{user_name(_tu)} skip(recently created or recently updated)"
-      create_log(uid, true, '')
+      create_log(uid, true)
       return
     end
 
@@ -40,7 +43,7 @@ class BackgroundUpdateWorker
     else
       logger.debug "#{user_name(_tu)} do nothing(#{new_tu.errors.full_messages})"
     end
-    create_log(uid, true, '')
+    create_log(uid, true)
 
     if (user = User.find_by(uid: uid)).present?
       NotificationWorker.perform_async(user.id, text: 'update')
@@ -68,8 +71,8 @@ class BackgroundUpdateWorker
     "#{b.uid},#{b.screen_name}"
   end
 
-  def create_log(uid, status, reason)
-    BackgroundUpdateLog.create(uid: uid, bot_uid: client.uid, status: status, reason: reason)
+  def create_log(uid, status, reason = '', message = '')
+    BackgroundUpdateLog.create(uid: uid, bot_uid: client.uid, status: status, reason: reason, message: message)
   rescue => e
     logger.warn "create_log #{e.message}"
   end

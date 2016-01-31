@@ -37,12 +37,20 @@ module Concerns::TwitterUser::Validation
     end
 
     def unauthorized?
-      return true if user_info.blank? # call fetch_user before colling this method
+      if user_info.blank?
+        # call fetch_user before colling this method
+        errors[:base] << 'user_info is blank'
+        return true
+      end
+
       return false unless protected
 
       # login_user is protected and search himself
       if egotter_context == 'search'
-        return true if anonymous_search?
+        if anonymous_search?
+          errors[:base] << 'search protected user without login'
+          return true
+        end
         return false if ego_surfing?
 
         # TODO if this instance has followers, use follower_uids.include?(login_user.uid.to_i)
@@ -55,7 +63,7 @@ module Concerns::TwitterUser::Validation
         # background job
         return false if User.exists?(uid: uid.to_i)
 
-        errors[:base] << 'unauthorized'
+        errors[:base] << 'unauthorized worker'
         true
       end
     end

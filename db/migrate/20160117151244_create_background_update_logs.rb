@@ -5,6 +5,7 @@ class CreateBackgroundUpdateLogs < ActiveRecord::Migration
       t.string :bot_uid, null: false, default: -1
       t.boolean :status, null: false, default: false
       t.string :reason,  null: false, default: ''
+      t.text :message,   null: false
 
       t.timestamps null: false
     end

@@ -25,6 +25,8 @@
     <th>(last 1hour)</th>
     <th>failure</th>
     <th>(last 1hour)</th>
+    <th>success rate</th>
+    <th>(last 1hour)</th>
   </tr>
   <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
     <tr>
@@ -35,6 +37,8 @@
       <td><%= model.where(status: true, created_at: @last_1hour).size %></td>
       <td><%= model.where(status: false).size %></td>
       <td><%= model.where(status: false, created_at: @last_1hour).size %></td>
+      <td><%= model.where(status: true).size.to_f / model.all.size rescue 0.0 %></td>
+      <td><%= model.where(status: true, created_at: @last_1hour).size.to_f / model.where(created_at: @last_1hour).size rescue 0.0 %></td>
     </tr>
   <% end %>
 </table>
@@ -46,6 +50,7 @@
     <th>name</th>
     <th>id</th>
     <th>reason</th>
+    <th>message</th>
   </tr>
   <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
     <%
@@ -55,6 +60,7 @@
         <td><%= model.model_name %></td>
         <td><%= log.id %></td>
         <td><%= log.reason %></td>
+        <td><%= log.message %></td>
       </tr>
     <% end %>
   <% end %>
