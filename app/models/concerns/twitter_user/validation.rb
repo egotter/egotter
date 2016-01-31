@@ -3,6 +3,7 @@ require 'active_support/concern'
 module Concerns::TwitterUser::Validation
   extend ActiveSupport::Concern
 
+  MANY_FRIENDS = 1000
   TOO_MANY_FRIENDS = 5000
 
   SCREEN_NAME_REGEXP = /\A[a-zA-Z0-9_]{1,20}\z/
@@ -16,6 +17,7 @@ module Concerns::TwitterUser::Validation
       obj.validate :unauthorized?
       obj.validate :suspended_account?
       obj.validate :inconsistent_friends?
+      obj.validate :inconsistent_followers?
       obj.validate :zero_friends?
       obj.validate :too_many_friends?
       obj.validate :recently_created_record_exists?
@@ -68,8 +70,17 @@ module Concerns::TwitterUser::Validation
     end
 
     def inconsistent_friends?
-      if friends_count != friends.size || followers_count != followers.size
-        errors[:base] << 'friends or followers is inconsistent'
+      if friends_count.to_i != friends.size
+        errors[:base] << "friends_count(#{friends_count}) != friends.size(#{friends.size})"
+        return true
+      end
+
+      false
+    end
+
+    def inconsistent_followers?
+      if followers_count.to_i != followers.size
+        errors[:base] << "followers_count(#{followers_count}) != followers.size(#{followers.size})"
         return true
       end
 
@@ -78,7 +89,7 @@ module Concerns::TwitterUser::Validation
 
     def zero_friends?
       if friends_count + followers_count <= 0
-        errors[:base] << 'sum of friends and followers is zero'
+        errors[:base] << 'friends + followers == 0'
         return true
       end
 
@@ -86,8 +97,15 @@ module Concerns::TwitterUser::Validation
     end
 
     def too_many_friends?
-      if friends_count + followers_count > TOO_MANY_FRIENDS
-        errors[:base] << 'too many friends and followers'
+      friends_limit =
+        if egotter_context == 'search'
+          login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS
+        else
+          User.exists?(uid: uid.to_i) ? TOO_MANY_FRIENDS : MANY_FRIENDS
+        end
+
+      if friends_count + followers_count > friends_limit
+        errors[:base] << "too many friends(#{friends_count}) and followers(#{followers_count})"
         return true
       end
 
@@ -114,13 +132,23 @@ module Concerns::TwitterUser::Validation
       return false if tu.blank?
       raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
 
-      if tu.friends_count != self.friends_count || tu.followers_count != self.followers_count
-        logger.debug "#{screen_name} friends_count or followers_count is different"
+      if self.friends_count != tu.friends_count
+        logger.debug "#{screen_name} friends_count is different(#{self.friends_count}, #{tu.friends_count})"
         return false
       end
 
-      if tu.friend_uids != self.friend_uids || tu.follower_uids != self.follower_uids
-        logger.debug "#{screen_name} friend_uids or follower_uids is different"
+      if self.followers_count != tu.followers_count
+        logger.debug "#{screen_name} followers_count is different(#{self.followers_count}, #{tu.followers_count})"
+        return false
+      end
+
+      if self.friend_uids != tu.friend_uids
+        logger.debug "#{screen_name} friend_uids is different(#{self.friend_uids}, #{tu.friend_uids})"
+        return false
+      end
+
+      if self.follower_uids != tu.follower_uids
+        logger.debug "#{screen_name} follower_uids is different(#{self.follower_uids}, #{tu.follower_uids})"
         return false
       end
 

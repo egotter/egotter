@@ -50,6 +50,11 @@ class BackgroundSearchLog < ActiveRecord::Base
     order(created_at: :desc).find_by(uid: uid).reason
   end
 
+  def self.fail_message(uid)
+    raise 'confirm fail? returns true' unless fail?(uid)
+    order(created_at: :desc).find_by(uid: uid).message
+  end
+
   def self.success_logs(user_id, limit)
     where(user_id: user_id, status: true).order(created_at: :desc).limit(limit)
   end

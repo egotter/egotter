@@ -22,6 +22,10 @@ class BackgroundSearchWorker
       if new_tu.save_with_bulk_insert
         create_log(log_attrs, true)
         logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} create #{screen_name}"
+
+        if (user = User.find_by(uid: uid)).present?
+          NotificationWorker.perform_async(user.id, text: 'search')
+        end rescue nil
       else
         # Egotter needs at least one TwitterUser record to show search result,
         # so this branch should not be executed if TwitterUser is not existed.
@@ -29,14 +33,12 @@ class BackgroundSearchWorker
           tu.search_and_touch
           create_log(log_attrs, true)
         else
-          create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong, "save_with_bulk_insert failed and old records does'nt exist")
+          create_log(log_attrs, false,
+                     BackgroundSearchLog::SomethingIsWrong,
+                     "save_with_bulk_insert failed(#{new_tu.errors.full_messages}) and old records does'nt exist")
         end
         logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} not create(#{new_tu.errors.full_messages}) #{screen_name}"
       end
-    end
-
-    if (user = User.find_by(uid: uid)).present?
-      NotificationWorker.perform_async(user.id, text: 'search')
     end
 
     logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} finish"

@@ -15,12 +15,17 @@
               class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;', method: :post %>
 </div>
 
+<div class="container error_msg" style="display: none; margin-top: 15px;">
+</div>
+
 <script>
   $(function () {
+    var admin = <%= user_signed_in? && current_user.admin? ? 'true' : 'false' %>;
     var is_login = <%= user_signed_in? ? 'true' : 'false' %>;
     var waiting_msg = $('.waiting_msg');
     var retry_btn = $('.retry_btn');
     var login_btn = $('.login_btn');
+    var error_msg = $('.error_msg');
     var interval = 2000;
     var max_interval = 5000;
     var retry_count = 0;
@@ -28,6 +33,7 @@
     var too_many_requests = false;
     var unauthorized = false;
     var something_is_wrong = false;
+    var response = null;
 
     function tic() {
       $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
@@ -44,6 +50,7 @@
                 unauthorized = true;
               } else if (res.reason == '<%= BackgroundSearchLog::SomethingIsWrong %>') {
                 something_is_wrong = true;
+                response = res;
               } else {
                 interval += 2000;
                 if (interval > max_interval) {
@@ -75,6 +82,10 @@
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.something_is_wrong") %>');
           retry_btn.show();
+          if (admin) {
+            error_msg.show();
+            error_msg.text(response.message);
+          }
         } else {
           waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
           login_btn.show();

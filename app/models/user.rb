@@ -46,4 +46,14 @@ class User < ActiveRecord::Base
     end
     user
   end
+
+  ADMIN_UID = 58135830
+
+  def admin?
+    uid.to_i == ADMIN_UID
+  end
+
+  def self.admin?(uid)
+    uid.to_i == ADMIN_UID
+  end
 end

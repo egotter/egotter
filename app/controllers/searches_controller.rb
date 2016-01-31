@@ -241,7 +241,9 @@ class SearchesController < ApplicationController
         when BackgroundSearchLog.success?(uid)
           render json: {status: true}
         when BackgroundSearchLog.fail?(uid)
-          render json: {status: false, reason: BackgroundSearchLog.fail_reason(uid)}
+          render json: {status: false,
+                        reason: BackgroundSearchLog.fail_reason(uid),
+                        message: BackgroundSearchLog.fail_message(uid)}
         else
           raise BackgroundSearchLog::SomethingIsWrong
       end
