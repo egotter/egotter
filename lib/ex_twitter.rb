@@ -315,6 +315,21 @@ class ExTwitter < Twitter::REST::Client
     result
   end
 
+  def friends_followers_and_statuses_advanced(*args)
+    result = [nil, nil, nil]
+    Parallel.each_with_index([args, args, args], in_threads: 3) do |_args, i|
+      if i == 0
+        result[0] = friends_advanced(*_args)
+      elsif i == 1
+        result[1] = followers_advanced(*_args)
+      else
+        result[2] = user_timeline(*_args)
+      end
+    end
+
+    result
+  end
+
   def only_following(me)
     me.friends.to_a - me.followers.to_a
   end
@@ -379,14 +394,18 @@ class ExTwitter < Twitter::REST::Client
     }
   end
 
+  def select_replied_screen_names(tweets)
+    tweets.map do |t|
+      $1 if t.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
+    end.compact.uniq
+  end
+
   # users which specified user is replying
   # in_reply_to_user_id and in_reply_to_status_id is not used because of distinguishing mentions from replies
   def replying(user)
-    screen_names = user_timeline(user).map do |s|
-      $1 if s.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
-    end.compact.uniq
-
-    users(screen_names) || []
+    tweets = user_timeline(user)
+    screen_names = select_replied_screen_names(tweets)
+    users(screen_names)
   end
 
   # users which specified user is replied

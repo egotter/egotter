@@ -45,6 +45,7 @@ class BackgroundSearchWorker
   rescue => e
     logger.warn "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} #{e.class} #{e.message}"
     create_log(log_attrs, false, BackgroundSearchLog::SomethingIsWrong, e.message)
+    raise e
   end
 
   def user_name(uid, screen_name)

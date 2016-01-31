@@ -25,7 +25,7 @@ class SearchesController < ApplicationController
       redirect_to menu_path, notice: t('dictionary.settings_saved')
     else
       searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-      @user_items = searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.map { |tu| {target: tu} }
+      @user_items = searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact.map { |tu| {target: tu} }
       render
     end
   end
@@ -42,7 +42,6 @@ class SearchesController < ApplicationController
     tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
     _clusters_belong_to = (tu.clusters_belong_to && tu.clusters_belong_to rescue [])
-    _replying = (tu.replying && tu.replying rescue [])
     _replied = (tu.replied && tu.replied rescue [])
 
     @menu_items = [
@@ -76,7 +75,7 @@ class SearchesController < ApplicationController
         path_method: method(:followers_in_common_path).to_proc
       }, {
         name: t('search_menu.replying', user: sn),
-        target: _replying.map { |u| u.uid = u.id; u },
+        target: tu.replying,
         path_method: method(:replying_path).to_proc
       }, {
         name: t('search_menu.replied', user: sn),
@@ -151,8 +150,7 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/replying
   def replying
     @searched_tw_user.client = client
-    users = (@searched_tw_user.replying && @searched_tw_user.replying rescue [])
-    @user_items = users.map { |u| u.uid = u.id; {target: u} }
+    @user_items = @searched_tw_user.replying.map { |u| {target: u} }
   end
 
   # GET /searches/:screen_name/replied
@@ -217,7 +215,6 @@ class SearchesController < ApplicationController
 
     create_search_log('create', searched_uid, searched_sn, search_sn)
 
-    FetchStatusesWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil))
     BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), {
       user_id: user_signed_in? ? current_user.id : -1,
       uid: searched_uid}
@@ -349,6 +346,7 @@ class SearchesController < ApplicationController
   end
 
   def result_cache_exists?
+    return false
     redis.exists(result_cache_key)
   end
 

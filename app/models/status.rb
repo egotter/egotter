@@ -38,7 +38,6 @@ class Status < ActiveRecord::Base
     is_quote_status
     retweet_count
     favorite_count
-    entities
     favorited
     retweeted
     possibly_sensitive

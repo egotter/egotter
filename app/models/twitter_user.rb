@@ -136,16 +136,16 @@ class TwitterUser < ActiveRecord::Base
     tu.egotter_context = option.has_key?(:egotter_context) ? option[:egotter_context] : nil
 
     if option[:all]
-      _friends, _followers =
-        client.friends_and_followers_advanced(_raw_me.id.to_i) &&
-          client.friends_and_followers_advanced(_raw_me.id.to_i)
+      _friends, _followers, _statuses =
+        client.friends_followers_and_statuses_advanced(_raw_me.id.to_i) &&
+          client.friends_followers_and_statuses_advanced(_raw_me.id.to_i)
 
       tu.friends = _friends.map do |f|
         Friend.new({
                      from_id: nil,
                      uid: f.id,
                      screen_name: f.screen_name,
-                     user_info: f.slice(*PROFILE_SAVE_KEYS).to_json}) # It might be better to call to_hash
+                     user_info: f.slice(*PROFILE_SAVE_KEYS).to_json})
       end
 
       tu.followers = _followers.map do |f|
@@ -153,7 +153,15 @@ class TwitterUser < ActiveRecord::Base
                        from_id: nil,
                        uid: f.id,
                        screen_name: f.screen_name,
-                       user_info: f.slice(*PROFILE_SAVE_KEYS).to_json}) # It might be better to call to_hash
+                       user_info: f.slice(*PROFILE_SAVE_KEYS).to_json})
+      end
+
+      tu.statuses = _statuses.map do |s|
+        Status.new({
+                       from_id: nil,
+                       uid: tu.uid,
+                       screen_name: tu.screen_name,
+                       status_info: s.slice(*Status::STATUS_SAVE_KEYS).to_json})
       end
     end
 
@@ -166,8 +174,8 @@ class TwitterUser < ActiveRecord::Base
       return false
     end
 
-    _friends, _followers = self.friends.to_a.dup, self.followers.to_a.dup
-    self.friends = self.followers = []
+    _friends, _followers, _statuses = self.friends.to_a.dup, self.followers.to_a.dup, self.statuses.to_a.dup
+    self.friends = self.followers = self.statuses = []
     self.save(validate: false)
 
     begin
@@ -178,10 +186,13 @@ class TwitterUser < ActiveRecord::Base
 
         _followers.map {|f| f.from_id = self.id }
         _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
+
+        _statuses.map {|s| s.from_id = self.id }
+        _statuses.each_slice(100).each { |s| Status.import(s, validate: false) }
       end
       Rails.logger.level = log_level
 
-      self.reload # for friends and followers
+      self.reload # for friends, followers and statuses
     rescue => e
       self.destroy
       false
@@ -251,7 +262,8 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def replying
-    self.client.replying(self.uid.to_i)
+    screen_names = ExTwitter.new.select_replied_screen_names(statuses)
+    self.client.users(screen_names).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
   end
 
   def replied
