@@ -5,8 +5,9 @@ class NotificationWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
     tu = TwitterUser.find_by(uid: user.uid.to_i)
-    client(user).create_direct_message(tu.uid.to_i, "#{tu.screen_name} #{options[:text]}")
-    logger.debug "send dm to #{tu.uid},#{tu.screen_name}"
+    text = "#{tu.screen_name} #{options[:text]}"
+    client(user).create_direct_message(tu.uid.to_i, text)
+    logger.debug "send dm to #{tu.uid},#{tu.screen_name} #{text}"
   end
 
   def client(user = nil)
