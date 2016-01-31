@@ -292,6 +292,10 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.clusters_belong_to(text)
   end
 
+  def close_friends
+    client.close_friends(uid, screen_name).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
+  end
+
   def search_and_touch
     update(search_count: search_count + 1)
   end

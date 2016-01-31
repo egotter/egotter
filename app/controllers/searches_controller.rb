@@ -1,7 +1,8 @@
 class SearchesController < ApplicationController
 
   SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends
-    friends_in_common followers_in_common replying replied favoriting inactive_friends inactive_followers clusters_belong_to update_histories)
+    friends_in_common followers_in_common replying replied favoriting inactive_friends inactive_followers
+    clusters_belong_to close_friends update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :set_twitter_user,     only: NEED_VALIDATION
@@ -45,9 +46,14 @@ class SearchesController < ApplicationController
     sn = '@' + tu.screen_name
     _replied = (tu.replied && tu.replied rescue [])
     _favoriting = (tu.favoriting && tu.favoriting rescue [])
+    _close_friends = (tu.close_friends && tu.close_friends rescue [])
 
     @menu_items = [
       {
+        name: t('search_menu.close_friends', user: sn),
+        target: _close_friends,
+        path_method: method(:close_friends_path).to_proc
+      },{
         name: t('search_menu.removing', user: sn),
         target: tu.removing,
         path_method: method(:removing_path).to_proc
@@ -191,6 +197,13 @@ class SearchesController < ApplicationController
     @searched_tw_user.client = client
     clusters = (@searched_tw_user.clusters_belong_to && @searched_tw_user.clusters_belong_to rescue [])
     @clusters_belong_to = clusters.map { |c| {target: c} }
+  end
+
+  # GET /searches/:screen_name/close_friends
+  def close_friends
+    @searched_tw_user.client = client
+    users = (@searched_tw_user.close_friends && @searched_tw_user.close_friends rescue [])
+    @user_items = users.map { |u| {target: u} }
   end
 
   # GET /searches/:screen_name/update_histories
@@ -369,7 +382,6 @@ class SearchesController < ApplicationController
   end
 
   def result_cache_exists?
-    return false
     redis.exists(result_cache_key)
   end
 

@@ -449,7 +449,7 @@ class ExTwitter < Twitter::REST::Client
   def replied(user)
     user = self.user(user).screen_name unless user.kind_of?(String)
     if user == screen_name
-      mentions_timeline.map{|m| m.user }
+      mentions_timeline(user).map{|m| m.user }
     else
       tweets = search('@' + user)
       uids = select_uids_replying_to(tweets)
@@ -523,10 +523,16 @@ class ExTwitter < Twitter::REST::Client
 
   def favoriting(user)
     fav = favorites(user).map { |f| f.user }
-    fav_rank_uids = fav.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
-    fav_rank_uids.map { |uid| fav.find { |f| f.id.to_i == uid.to_i } }
+    uids = fav.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
+    uids.map { |uid| fav.find { |f| f.id.to_i == uid.to_i } }
   end
 
   def favorited_by(user)
+  end
+
+  def close_friends(uid, screen_name)
+    _users = replying(uid.to_i) + replied(screen_name) + favoriting(uid.to_i)
+    uids = _users.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
+    uids.map { |uid| _users.find { |u| u.id.to_i == uid.to_i } }
   end
 end
