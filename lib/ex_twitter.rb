@@ -122,7 +122,7 @@ class ExTwitter < Twitter::REST::Client
     start_t = Time.now
     result =
       case caller_name
-        when :user_timeline # Twitter::Tweet
+        when :user_timeline, :favorites # Twitter::Tweet
           JSON.pretty_generate(obj.map { |o| o.attrs })
 
         when :search # Hash
@@ -397,7 +397,7 @@ class ExTwitter < Twitter::REST::Client
   def user_timeline(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
     fetch_cache_or_call_api(:user_timeline, args[0]) {
-      options = {count: 200, include_rts: true}.merge(args.extract_options!)
+      options = {count: 200, include_rts: true, call_count: 3}.merge(args.extract_options!)
       collect_with_max_id(:old_user_timeline, *args, options)
     }
   end
@@ -493,6 +493,25 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def clusters_assigned_to
+
+  end
+
+  alias :old_favorites :favorites
+  def favorites(*args)
+    raise 'this method needs at least one param to use cache' if args.empty?
+    fetch_cache_or_call_api(:favorites, args[0]) {
+      options = {count: 100, call_count: 1}.merge(args.extract_options!)
+      collect_with_max_id(:old_favorites, *args, options)
+    }
+  end
+
+  def favoriting(user)
+    fav = favorites(user).map { |f| f.user }
+    fav_rank_uids = fav.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
+    fav_rank_uids.map { |uid| fav.find { |f| f.id.to_i == uid.to_i } }
+  end
+
+  def favorited_by
 
   end
 end
