@@ -61,7 +61,7 @@ class ExTwitter < Twitter::REST::Client
     call_count = 1
 
     while last_response.any? && call_count < 3
-      options[:max_id] = last_response.last[:id]
+      options[:max_id] = last_response.last.kind_of?(Hash) ? last_response.last[:id] : last_response.last.id
       last_response = call_old_method(method_name, *args, options)
       last_response = yield(last_response) if block_given?
       return_data += last_response
