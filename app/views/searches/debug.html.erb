@@ -1,35 +1,15 @@
 <table border="0">
-  <tr>
-    <td>User</td>
-    <td><%= User.all.size %></td>
-  </tr>
-  <tr>
-    <td>TwitterUser</td>
-    <td><%= TwitterUser.all.size %></td>
-  </tr>
-  <tr>
-    <td>Friend</td>
-    <td><%= Friend.all.size %></td>
-  </tr>
-  <tr>
-    <td>Follower</td>
-    <td><%= Follower.all.size %></td>
-  </tr>
-  <tr>
-    <td>Status</td>
-    <td><%= Status.all.size %></td>
-  </tr>
-  <tr>
-    <td>BackgroundSearchLog</td>
-    <td><%= BackgroundSearchLog.all.size %></td>
-  </tr>
-  <tr>
-    <td>BackgroundUpdateLog</td>
-    <td><%= BackgroundUpdateLog.all.size %></td>
-  </tr>
+  <caption>Total Records</caption>
+  <% [User, TwitterUser, Friend, Follower, Status, BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
+    <tr>
+      <td><%= model.model_name.human %></td>
+      <td><%= model.all.size %>(<%= model.where(created_at: 1.hour.ago..Time.now).size %>)</td>
+    </tr>
+  <% end %>
 </table>
 
-<table>
+<table border="0">
+  <caption>Queueing</caption>
   <% @debug_info.each do |k, v| %>
     <tr>
       <td><%= k %></td>

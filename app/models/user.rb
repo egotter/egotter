@@ -47,6 +47,12 @@ class User < ActiveRecord::Base
     user
   end
 
+  def api_client
+    config = Bot.config
+    config.update(access_token: token, access_token_secret: secret)
+    ExTwitter.new(config)
+  end
+
   ADMIN_UID = 58135830
 
   def admin?
