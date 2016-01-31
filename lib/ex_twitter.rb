@@ -160,6 +160,9 @@ class ExTwitter < Twitter::REST::Client
         when :user? # true or false
           obj
 
+        when :friendship? # true or false
+          obj
+
         # when obj.kind_of?(Array) && obj.empty?
         #   JSON.pretty_generate(obj)
 
