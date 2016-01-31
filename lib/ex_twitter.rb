@@ -511,7 +511,6 @@ class ExTwitter < Twitter::REST::Client
     fav_rank_uids.map { |uid| fav.find { |f| f.id.to_i == uid.to_i } }
   end
 
-  def favorited_by
-
+  def favorited_by(user)
   end
 end

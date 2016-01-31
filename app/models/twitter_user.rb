@@ -272,7 +272,11 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def replied
-    self.client.replied(self.screen_name)
+    self.client.replied(self.screen_name).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
+  end
+
+  def favoriting
+    self.client.favoriting(self.uid.to_i).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
   end
 
   def inactive_friends

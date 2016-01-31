@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
 
   SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends
-    friends_in_common followers_in_common replying replied inactive_friends inactive_followers clusters_belong_to update_histories)
+    friends_in_common followers_in_common replying replied favoriting inactive_friends inactive_followers clusters_belong_to update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
   before_action :set_twitter_user,     only: NEED_VALIDATION
@@ -44,6 +44,7 @@ class SearchesController < ApplicationController
     tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
     _replied = (tu.replied && tu.replied rescue [])
+    _favoriting = (tu.favoriting && tu.favoriting rescue [])
 
     @menu_items = [
       {
@@ -80,8 +81,12 @@ class SearchesController < ApplicationController
         path_method: method(:replying_path).to_proc
       }, {
         name: t('search_menu.replied', user: sn),
-        target: _replied.map { |u| u.uid = u.id; u },
+        target: _replied,
         path_method: method(:replied_path).to_proc
+      }, {
+        name: t('search_menu.favoriting', user: sn),
+        target: _favoriting,
+        path_method: method(:favoriting_path).to_proc
       }, {
         name: t('search_menu.inactive_friends', user: sn),
         target: tu.inactive_friends,
@@ -159,7 +164,14 @@ class SearchesController < ApplicationController
   def replied
     @searched_tw_user.client = client
     users = (@searched_tw_user.replied && @searched_tw_user.replied rescue [])
-    @user_items = users.map { |u| u.uid = u.id; {target: u} }
+    @user_items = users.map { |u| {target: u} }
+  end
+
+  # GET /searches/:screen_name/favoriting
+  def favoriting
+    @searched_tw_user.client = client
+    users = (@searched_tw_user.favoriting && @searched_tw_user.favoriting rescue [])
+    @user_items = users.map { |u| {target: u} }
   end
 
   # GET /searches/:screen_name/inactive_friends
@@ -357,6 +369,7 @@ class SearchesController < ApplicationController
   end
 
   def result_cache_exists?
+    return false
     redis.exists(result_cache_key)
   end
 
