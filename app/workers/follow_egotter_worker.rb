@@ -6,11 +6,7 @@ class FollowEgotterWorker
     _client = client(uid.to_i)
     user = _client.user(uid.to_i)
     _client.follow!(187385226) # follow @ego_tter
-    logger.debug "#{user_name(user)} follows @ego_tter"
-  end
-
-  def user_name(u)
-    "#{u.id},#{u.screen_name}"
+    logger.debug "#{user.id},#{user.screen_name} follows @ego_tter"
   end
 
   def client(uid)

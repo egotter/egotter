@@ -34,6 +34,10 @@ class BackgroundSearchWorker
       end
     end
 
+    if (user = User.find_by(uid: uid)).present?
+      NotificationWorker.perform_async(user.id, text: 'search')
+    end
+
     logger.debug "#{user_name(uid, screen_name)} #{bot_name(bot(login_user_id))} finish"
 
   rescue Twitter::Error::TooManyRequests => e

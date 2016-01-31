@@ -42,6 +42,10 @@ class BackgroundUpdateWorker
     end
     create_log(uid, true, '')
 
+    if (user = User.find_by(uid: uid)).present?
+      NotificationWorker.perform_async(user.id, text: 'update')
+    end
+
   rescue Twitter::Error::TooManyRequests => e
     friends_count = "(#{_tu.friends_count},#{_tu.followers_count})" if _tu.present?
     logger.warn "#{user_name(_tu)}#{friends_count} #{bot_name(bot)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
@@ -50,6 +54,10 @@ class BackgroundUpdateWorker
   rescue Twitter::Error::Unauthorized => e
     logger.warn "#{user_name(_tu)} #{bot_name(bot)} #{e.class} #{e.message}"
     create_log(uid, false, BackgroundUpdateLog::Unauthorized)
+  rescue => e
+    logger.warn "#{user_name(_tu)} #{bot_name(bot)} #{e.class} #{e.message}"
+    create_log(uid, false, BackgroundUpdateLog::SomethingIsWrong)
+    raise e
   end
 
   def user_name(tu)

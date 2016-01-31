@@ -3,7 +3,6 @@
 # Table name: users
 #
 #  id                     :integer          not null, primary key
-#  provider               :string(191)      not null
 #  uid                    :string(191)      not null
 #  secret                 :string(191)      not null
 #  token                  :string(191)      not null
@@ -24,8 +23,8 @@
 # Indexes
 #
 #  index_users_on_email                 (email) UNIQUE
-#  index_users_on_provider_and_uid      (provider,uid) UNIQUE
 #  index_users_on_reset_password_token  (reset_password_token) UNIQUE
+#  index_users_on_uid                   (uid) UNIQUE
 #
 
 class User < ActiveRecord::Base
@@ -36,11 +35,10 @@ class User < ActiveRecord::Base
          :omniauthable
 
   def self.find_or_create_for_oauth_by!(auth)
-    user = User.find_by(uid: auth.uid, provider: auth.provider)
+    user = User.find_by(uid: auth.uid)
     unless user
       user = User.create!(
         uid: auth.uid,
-        provider: auth.provider,
         secret: auth.credentials.secret,
         token: auth.credentials.token,
         email: "#{auth.provider}-#{auth.uid}@example.com",

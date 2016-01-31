@@ -109,7 +109,6 @@ ActiveRecord::Schema.define(version: 20160130231444) do
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "provider",               limit: 191,                null: false
     t.string   "uid",                    limit: 191,                null: false
     t.string   "secret",                 limit: 191,                null: false
     t.string   "token",                  limit: 191,                null: false
@@ -129,7 +128,7 @@ ActiveRecord::Schema.define(version: 20160130231444) do
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["provider", "uid"], name: "index_users_on_provider_and_uid", unique: true, using: :btree
   add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
+  add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
 
 end
