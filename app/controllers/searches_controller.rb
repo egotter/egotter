@@ -36,7 +36,7 @@ class SearchesController < ApplicationController
   def show
     tu = @searched_tw_user
 
-    if result_cache_exists?
+    if !nocache && result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
       return render text: replace_csrf_meta_tags(result_cache)
     end
@@ -44,9 +44,27 @@ class SearchesController < ApplicationController
     tu.client = client
     tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
-    _replied = (tu.replied && tu.replied rescue [])
-    _favoriting = (tu.favoriting && tu.favoriting rescue [])
-    _close_friends = (tu.close_friends && tu.close_friends rescue [])
+    _replied =
+      begin
+        tu.replied && tu.replied
+      rescue => e
+        logger.warn "show replied #{e.class} #{e.message}"
+        []
+      end
+    _favoriting =
+      begin
+        tu.favoriting && tu.favoriting
+      rescue => e
+        logger.warn "show favoriting #{e.class} #{e.message}"
+        []
+      end
+    _close_friends =
+      begin
+        tu.close_friends && tu.close_friends
+      rescue => e
+        logger.warn "show close_friends #{e.class} #{e.message}"
+        []
+      end
 
     @menu_items = [
       {
@@ -305,6 +323,10 @@ class SearchesController < ApplicationController
 
   def search_id
     params[:id].to_i
+  end
+
+  def nocache
+    params[:nocache].present?
   end
 
   def set_twitter_user
