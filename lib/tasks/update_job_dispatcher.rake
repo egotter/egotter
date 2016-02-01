@@ -8,7 +8,9 @@ namespace :update_job_dispatcher do
 
     key = 'update_job_dispatcher:recently_added'
     debug_key = 'update_job_dispatcher:debug'
-    zrem_count = redis.zremrangebyscore(key, 0, 1.day.ago.to_i)
+    zremrangebyscore_count = redis.zremrangebyscore(key, 0, 1.day.ago.to_i)
+    zremrangebyrank_count = 0
+    max_enqueue_count = 10
     enqueue_count = 0
     already_added_count = 0
     recently_updated_count = 0
@@ -63,13 +65,18 @@ namespace :update_job_dispatcher do
       redis.zadd(key, now_i, uid.to_s)
       enqueue_count += 1
 
-      break if enqueue_count >= 10
+      break if enqueue_count >= max_enqueue_count
+    end
+
+    if enqueue_count < max_enqueue_count
+      zremrangebyrank_count = redis.zremrangebyrank(key, 0, max_enqueue_count * 3)
     end
 
 
     debug_info = {
       zcard: redis.zcard(key),
-      zrem: zrem_count,
+      zremrangebyscore: zremrangebyscore_count,
+      zremrangebyrank: zremrangebyrank_count,
       enqueue: enqueue_count,
       already_added: already_added_count,
       recently_updated: recently_updated_count,
