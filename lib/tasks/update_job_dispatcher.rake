@@ -2,7 +2,6 @@ namespace :update_job_dispatcher do
   desc 'Dispatch TwitterUserUpdateJob'
   task run: :environment do
     start_t = Time.zone.now
-    puts "[#{start_t}] enqueue start"
 
     # TODO use queue priority
 
@@ -22,9 +21,8 @@ namespace :update_job_dispatcher do
     begin
       uids = client.follower_ids('ego_tter').map { |id| id.to_i }
     rescue Twitter::Error::TooManyRequests => e
-      puts "#{client.screen_name} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
       end_t = Time.zone.now
-      puts "[#{Time.now}] enqueue finish (#{end_t - start_t}s)"
+      puts "#{client.screen_name} #{e.message} retry after #{e.rate_limit.reset_in} seconds (#{end_t - start_t}s)"
       next
     end
 
@@ -85,10 +83,9 @@ namespace :update_job_dispatcher do
       too_many_friends: too_many_friends_count
     }
     redis.set(debug_key, debug_info.to_json)
-    puts debug_info.map{|k, v| "#{k}=#{v}" }.join(' ')
 
     end_t = Time.zone.now
-    puts "[#{Time.now}] enqueue finish (#{end_t - start_t}s)"
+    puts "#{debug_info.map{|k, v| "#{k}=#{v}" }.join(' ')} (#{end_t - start_t}s)"
   end
 
   def now_i
