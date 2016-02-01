@@ -15,8 +15,8 @@
       <td><%= model.model_name %></td>
       <td><%= model.all.size %></td>
       <td><%= model.where(created_at: @last_1hour).size %></td>
-      <td><%= model.pluck(:uid).uniq.size %></td>
-      <td><%= model.where(created_at: @last_1hour).pluck(:uid).uniq.size %></td>
+      <td><%= model.count('DISTINCT uid') %></td>
+      <td><%= model.where(created_at: @last_1hour).count('DISTINCT uid') %></td>
     </tr>
   <% end %>
 </table>
