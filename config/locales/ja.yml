@@ -23,6 +23,7 @@ ja:
     waiting: "%{user} のデータを検索中"
     continue_reading: "続きはこちら → "
     view_more: "続きを見る"
+    view_more_with_num: '続きを見る <span class="badge">%{num}</span>'
     tweet_result: "結果をつぶやく"
     created_at_and_updated_at: "更新日時"
     you: "あなた"

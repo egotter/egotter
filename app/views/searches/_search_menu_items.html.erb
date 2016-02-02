@@ -45,7 +45,7 @@
       </div>
       <div class="row">
         <div class="col-xs-12">
-          <%= link_to(t('dictionary.view_more'),
+          <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe,
                         menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
                         class: 'btn btn-info btn-block',
                         style: 'margin-top: 15px;') %>

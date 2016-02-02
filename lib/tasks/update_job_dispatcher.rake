@@ -72,6 +72,7 @@ namespace :update_job_dispatcher do
 
 
     debug_info = {
+      followers: uids.size,
       zcard: redis.zcard(key),
       zremrangebyscore: zremrangebyscore_count,
       zremrangebyrank: zremrangebyrank_count,
