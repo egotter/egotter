@@ -12,6 +12,10 @@
   <%= javascript_include_tag 'application', 'data-turbolinks-track' => true %>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
 
+  <link rel="stylesheet" type="text/css" href="/slick/slick.css">
+  <link rel="stylesheet" type="text/css" href="/slick/slick-theme.css">
+  <script type="text/javascript" src="/slick/slick.min.js"></script>
+
   <title><%= t('dictionary.app_name') %> <%= t('dictionary.lead') %></title>
   <%= action_name.in?(%w(new show)) ? 'csrf_meta_tags' : csrf_meta_tags %>
 </head>
