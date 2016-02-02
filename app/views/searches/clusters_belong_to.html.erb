@@ -1,6 +1,7 @@
 <%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
 
 <div class="container" style="padding: 15px 0px 0px 0px;">
+  <h2 style="text-align: center; margin-top: 10px;"><small><%= t('search_menu.clusters_belong_to', user: @searched_tw_user.screen_name) %></small></h2>
   <%= render(partial: 'searches/clusters_belong_to',
              locals: {searched_tw_user: @searched_tw_user, clusters_belong_to: @clusters_belong_to}) %>
 </div>

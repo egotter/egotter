@@ -1,5 +1,6 @@
 <%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
 
 <div class="container" style="padding: 15px 0px 0px 0px;">
+  <h2 style="text-align: center; margin-top: 10px;"><small><%= t('search_menu.update_histories') %></small></h2>
   <%= render(partial: 'searches/update_histories', locals: {searched_tw_user: @searched_tw_user, update_histories: @update_histories}) %>
 </div>

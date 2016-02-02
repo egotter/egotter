@@ -1,5 +1,6 @@
 <%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
 
-<div class="container" style="padding: 15px 0px 0px 0px;">
+<div class="container" style="padding: 0px;">
+  <h2 style="text-align: center; margin-top: 5px;"><small><%= @name %></small></h2>
   <%= render(partial: 'searches/user_items', locals: {searched_tw_user: @searched_tw_user, user_items: @user_items}) %>
 </div>
