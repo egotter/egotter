@@ -1,7 +1,7 @@
 <%# profile box %>
 <div class="container profile-overview-container">
   <div class="profile-overview">
-    <div id="profile-overview-carousel">
+    <div class="profile-overview-carousel">
       <div>
         <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", target: '_blank' do %>
           <img class="profile-icon" src="<%= searched_tw_user.profile_image_url_https.to_s %>">
@@ -26,6 +26,17 @@
 
   </div><!-- /.profile-overview -->
 </div>
+
+<script>
+  $(function () {
+    $('.profile-overview-carousel').slick({
+      accessibility: false,
+      arrows: false,
+      dots: true,
+      infinite: false
+    });
+  });
+</script>
 
 <style type="text/css">
   .profile-overview-container {
@@ -68,16 +79,6 @@
   }
 </style>
 
-<script>
-  $(function () {
-    $('#profile-overview-carousel').slick({
-      accessibility: false,
-      arrows: false,
-      dots: true
-    });
-  });
-</script>
-
 <%# ツイート数、フォロー数、フォロワー数 %>
 <div class="container" style="padding: 0px 15px 0px 15px;">
   <div class="row" style="padding: 0px 5px 0px 5px; border-bottom: 1px solid #e6e6e6;">
@@ -85,19 +86,19 @@
       <div style="padding-top: 5px; padding-bottom: 5px;" class="col-xs-4">
         <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", class: 'text-muted', target: '_blank' do %>
           <span style="font-weight: bold;"><%= searched_tw_user.statuses_count %></span><br>
-          <span class="text-muted">ツイート</span>
+          <span class="text-muted"><%= t('dictionary.tweet') %></span>
         <% end %>
       </div>
       <div style="padding-top: 5px; padding-bottom: 5px; border-left: 1px solid #e6e6e6; border-right: 1px solid #e6e6e6;" class="col-xs-4">
         <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", class: 'text-muted', target: '_blank' do %>
           <span style="font-weight: bold;"><%= searched_tw_user.friends_count %></span><br>
-          <span class="text-muted">フォロー</span>
+          <span class="text-muted"><%= t('dictionary.friends') %></span>
         <% end %>
       </div>
       <div style="padding-top: 5px; padding-bottom: 5px;" class="col-xs-4">
         <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", class: 'text-muted', target: '_blank' do %>
           <span style="font-weight: bold;"><%= searched_tw_user.followers_count %></span><br>
-          <span class="text-muted">フォロワー</span>
+          <span class="text-muted"><%= t('dictionary.follower') %></span>
         <% end %>
       </div>
     </div>

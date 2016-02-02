@@ -1,25 +1,159 @@
 <%# user list %>
-<% user_items.each do |user_item| %>
-  <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
-      <div class="media-left" style="padding-left: 15px;">
-        <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", style="border: 1px solid #eeeeee;" alt="<%= user_item[:target].screen_name %>">
+<% user_items.each.with_index do |user_item, i| %>
+  <div class="user-item-carousel user-item-carousel-<%= i %>">
+    <%# name box %>
+    <div class="media">
+      <div class="media-left">
+        <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", alt="<%= user_item[:target].screen_name %>">
       </div>
-      <div class="media-body" style="padding-right: 15px;">
-        <h4 style="font-weight: bold; font-size: 14px;" class="media-heading"><%= user_item[:target].name %>
+
+      <div class="media-body">
+        <h4 class="media-heading"><%= user_item[:target].name %>
           <% if user_item[:target].protected %>
-            &nbsp;<span style="color: #999999; font-size: 13px; font-weight: normal;" class="glyphicon glyphicon-lock"></span>
+            &nbsp;<span class="glyphicon glyphicon-lock"></span>
           <% end %>
         </h4>
-        <span style="font-size: 13px; color: #999999;">
-          <%= link_to "https://twitter.com/#{user_item[:target].screen_name}", style: 'color: #333333; text-decoration: none;', target: '_blank' do %>
+        <span class="screen_name">
+          <%= link_to "https://twitter.com/#{user_item[:target].screen_name}", target: '_blank' do %>
             <%= "@#{user_item[:target].screen_name}" %>
           <% end %>
         </span>
       </div>
+
       <div class="media-right">
-        <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), style: 'color: #333333; text-decoration: none;', method: :post do %>
-          <button style="margin-top: 6px; margin-right: 15px;" type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+        <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), method: :post do %>
+          <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
         <% end %>
       </div>
+    </div>
+
+    <% if i < 10 %>
+      <%# description box %>
+      <div class="media description-box" style="display: none;">
+        <div class="media-left">
+          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", alt="<%= user_item[:target].screen_name %>">
+        </div>
+
+        <div class="media-body">
+            <span class="screen_name"><%= truncate(user_item[:target].description) %></span>
+        </div>
+
+        <div class="media-right">
+          <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), method: :post do %>
+            <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+          <% end %>
+        </div>
+      </div>
+
+      <%# count box %>
+      <div class="media count-box" style="display: none;">
+        <div class="media-left">
+          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", alt="<%= user_item[:target].screen_name %>">
+        </div>
+
+        <div class="media-body">
+          <div class="statuses_count"><%= user_item[:target].statuses_count %>&nbsp;<%= t('dictionary.tweet') %></div>
+          <div class="friends_count"><%= user_item[:target].friends_count %>&nbsp;<%= t('dictionary.friends') %></div>
+          <div class="followers_count"><%= user_item[:target].followers_count %>&nbsp;<%= t('dictionary.follower') %></div>
+        </div>
+
+        <div class="media-right">
+          <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), method: :post do %>
+            <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
   </div>
 <% end %>
+
+<script>
+  $(function () {
+    var user_item_count = <%= [user_items.size, 10].min %>;
+    var option = {
+      accessibility: false,
+      arrows: false,
+      dots: false,
+      infinite: false
+    };
+    for (var i = 0; i < user_item_count; i++) {
+      $('.user-item-carousel-' + i).slick(option);
+    }
+    $('.media.description-box').show();
+    $('.media.count-box').show();
+  });
+</script>
+
+<style type="text/css">
+  .user-item-carousel {
+    margin-bottom: 0px;
+  }
+
+  .media:first-child {
+    margin-top: 15px;
+  }
+
+  .media {
+    margin-top: 15px;
+    border-bottom: 1px solid #e6e6e6;
+    padding-bottom: 15px;
+  }
+
+  .media-left {
+    padding-left: 15px;
+  }
+
+  .media-object {
+    border: 1px solid #eeeeee;
+  }
+
+  .media-body {
+    padding-right: 15px;
+  }
+
+  .media-heading {
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  .glyphicon.glyphicon-lock {
+    color: #999999;
+    font-size: 13px;
+    font-weight: normal;
+  }
+
+  .media-body .screen_name {
+    font-size: 13px;
+    color: #999999;
+  }
+
+  .media-body .screen_name a {
+    color: #333333;
+    text-decoration: none;
+  }
+
+  .media-body .statuses_count {
+    font-size: 13px;
+    color: #999999;
+  }
+
+  .media-body .friends_count {
+    font-size: 13px;
+    color: #999999;
+  }
+
+  .media-body .followers_count {
+    font-size: 13px;
+    color: #999999;
+  }
+
+  .media-right a {
+    color: #333333;
+    text-decoration: none;
+  }
+
+  .media-right button {
+    margin-top: 6px;
+    margin-right: 15px;
+  }
+</style>

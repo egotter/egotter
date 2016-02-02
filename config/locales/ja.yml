@@ -2,6 +2,9 @@
 ja:
   dictionary:
     app_name: "えごったー"
+    tweet: "ツイート"
+    friends: "フォロー"
+    follower: "フォロワー"
     lead: "りむられたユーザーをこっそり検索"
     sign_in_with_twitter: "Twitterでログイン"
     sign_in: "ログイン"
