@@ -339,6 +339,12 @@ class SearchesController < ApplicationController
     @twitter_user.fetch_user?
     @twitter_user.fetch_user
     @twitter_user.egotter_context = 'search'
+  rescue Twitter::Error::TooManyRequests => e
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+  rescue Twitter::Error::NotFound => e
+    redirect_to '/', alert: t('before_sign_in.not_found')
+  rescue => e
+    redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
   end
 
   def invalid_screen_name
