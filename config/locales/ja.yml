@@ -26,6 +26,7 @@ ja:
     waiting: "%{user} のデータを検索中"
     continue_reading: "続きはこちら → "
     view_more: "続きを見る"
+    view_more_needs_login: "ログインすると続きを見れます"
     view_more_with_num: '続きを見る <span class="badge">%{num}</span>'
     tweet_result: "結果をつぶやく"
     created_at_and_updated_at: "更新日時"
@@ -33,6 +34,7 @@ ja:
     cluster: "クラスタ"
     delim: "、"
   before_sign_in:
+    need_login: "この結果を見るには %{sign_in_link} が必要です。"
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     not_found: "検索された Twitter ID が見付かりません。アカウントが削除されたのかもしれません。"
@@ -51,6 +53,8 @@ ja:
     unauthorized: "認証に失敗しました。時間をおいてから検索してみてください。"
     something_is_wrong: "エラーが起きました。時間をおいてから検索してみてください。"
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
+  view_more_btn:
+    same_user: "違うユーザーを検索すると結果が見れます"
 
   search_menu:
     friends: "%{user} のフォロー"

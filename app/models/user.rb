@@ -61,6 +61,14 @@ class User < ActiveRecord::Base
     ExTwitter.new(config)
   end
 
+  def twitter_user
+    TwitterUser.latest(uid.to_i)
+  end
+
+  def twitter_user?
+    twitter_user.present?
+  end
+
   ADMIN_UID = 58135830
 
   def admin?

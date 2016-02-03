@@ -95,14 +95,6 @@ class SearchesController < ApplicationController
         target: tu.mutual_friends,
         path_method: method(:mutual_friends_path).to_proc
       }, {
-        name: t('search_menu.friends_in_common', user: sn, login: t('dictionary.you')),
-        target: tu.friends_in_common(nil),
-        path_method: method(:friends_in_common_path).to_proc
-      }, {
-        name: t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
-        target: tu.followers_in_common(nil),
-        path_method: method(:followers_in_common_path).to_proc
-      }, {
         name: t('search_menu.replying', user: sn),
         target: tu.replying,
         path_method: method(:replying_path).to_proc
@@ -124,6 +116,45 @@ class SearchesController < ApplicationController
         path_method: method(:inactive_followers_path).to_proc
       },
     ]
+
+    @menu_common_friends_and_followers =
+      if user_signed_in? && current_user.uid.to_i == tu.uid.to_i
+        [
+          {
+            name: t('search_menu.friends_in_common', user: sn, login: sn),
+            target: [],
+            path_method: method(:friends_in_common_path).to_proc
+          }, {
+            name: t('search_menu.followers_in_common', user: sn, login: sn),
+            target: [],
+            path_method: method(:followers_in_common_path).to_proc
+          },
+        ]
+      elsif user_signed_in? && current_user.uid.to_i != tu.uid.to_i
+        [
+          {
+            name: t('search_menu.friends_in_common', user: sn, login: "@#{current_user.screen_name}"),
+            target: tu.friends_in_common(current_user.twitter_user),
+            path_method: method(:friends_in_common_path).to_proc
+          }, {
+            name: t('search_menu.followers_in_common', user: sn, login: "@#{current_user.screen_name}"),
+            target: tu.followers_in_common(current_user.twitter_user),
+            path_method: method(:followers_in_common_path).to_proc
+          },
+        ]
+      elsif !user_signed_in?
+        [
+          {
+            name: t('search_menu.friends_in_common', user: sn, login: t('dictionary.you')),
+            target: [],
+            path_method: method(:friends_in_common_path).to_proc
+          }, {
+            name: t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
+            target: [],
+            path_method: method(:followers_in_common_path).to_proc
+          },
+        ]
+      end
 
     _clusters_belong_to = tu.clusters_belong_to
     @menu_clusters_belong_to = {
@@ -197,15 +228,19 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/friends_in_common
   def friends_in_common
-    @user_items = @searched_tw_user.friends_in_common(nil).map{|f| {target: f} }
-    @name = t('search_menu.friends_in_common', user: "@#{@searched_tw_user.screen_name}")
+    return redirect_to '/', alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
+    @user_items =
+      @searched_tw_user.friends_in_common(current_user.twitter_user).map{|f| {target: f} }
+    @name = t('search_menu.friends_in_common', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/followers_in_common
   def followers_in_common
-    @user_items = @searched_tw_user.followers_in_common(nil).map{|f| {target: f} }
-    @name = t('search_menu.followers_in_common', user: "@#{@searched_tw_user.screen_name}")
+    return redirect_to '/', alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
+    @user_items =
+      @searched_tw_user.followers_in_common(current_user.twitter_user).map{|f| {target: f} }
+    @name = t('search_menu.followers_in_common', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
 
@@ -453,6 +488,7 @@ class SearchesController < ApplicationController
   end
 
   def result_cache_exists?
+    return false
     redis.exists(result_cache_key)
   end
 
