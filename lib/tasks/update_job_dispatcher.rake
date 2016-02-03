@@ -5,13 +5,15 @@ namespace :update_job_dispatcher do
 
     # TODO use queue priority
 
-    key = 'update_job_dispatcher:recently_added'
-    debug_key = 'update_job_dispatcher:debug'
+    key = Redis.job_dispatcher_key
+    debug_key = Redis.debug_key
+    recently_failed_key = Redis.background_update_worker_recently_failed_key
     zremrangebyscore_count = redis.zremrangebyscore(key, 0, 1.day.ago.to_i)
     zremrangebyrank_count = 0
     max_enqueue_count = 10
     enqueue_count = 0
     already_added_count = 0
+    already_failed_count = 0
     recently_updated_count = 0
     unauthorized_count = 0
     suspended_count = 0
@@ -29,6 +31,11 @@ namespace :update_job_dispatcher do
     uids.shuffle.each do |uid|
       if redis.zrank(key, uid.to_s).present?
         already_added_count += 1
+        next
+      end
+
+      if redis.zrank(recently_failed_key, uid.to_s).present?
+        already_failed_count += 1
         next
       end
 
@@ -78,6 +85,7 @@ namespace :update_job_dispatcher do
       zremrangebyrank: zremrangebyrank_count,
       enqueue: enqueue_count,
       already_added: already_added_count,
+      already_failed: already_failed_count,
       recently_updated: recently_updated_count,
       unauthorized: unauthorized_count,
       suspended: suspended_count,

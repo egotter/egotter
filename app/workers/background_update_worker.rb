@@ -13,12 +13,14 @@ class BackgroundUpdateWorker
 
     if _tu.too_many_friends?
       create_log(uid, false, BackgroundUpdateLog::TooManyFriends, _tu.errors.full_messages)
+      redis.zadd(failed_key, now_i, uid.to_s)
       logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
       return
     end
 
     if _tu.unauthorized?
       create_log(uid, false, BackgroundUpdateLog::Unauthorized, _tu.errors.full_messages)
+      redis.zadd(failed_key, now_i, uid.to_s)
       logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
       return
     end
@@ -80,6 +82,14 @@ class BackgroundUpdateWorker
 
   def redis
     @redis ||= Redis.new(driver: :hiredis)
+  end
+
+  def failed_key
+    @key ||= Redis.background_update_worker_recently_failed_key
+  end
+
+  def now_i
+    Time.zone.now.to_i
   end
 
   def client

@@ -13,6 +13,22 @@ Redis.class_eval do
     end
   end
 
+  def self.result_cache_key_prefix
+
+  end
+
+  def self.job_dispatcher_key
+    'update_job_dispatcher:recently_added'
+  end
+
+  def self.debug_key
+    'update_job_dispatcher:debug'
+  end
+
+  def self.background_update_worker_recently_failed_key
+    'background_update_worker:recently_failed'
+  end
+
   def clear_result_cache
     _keys = keys('searches:*')
     del(keys('searches:*')) if _keys.any?
