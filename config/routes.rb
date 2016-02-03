@@ -40,6 +40,7 @@ Rails.application.routes.draw do
   mount Sidekiq::Web, at: '/sidekiq'
 
   get 'debug', to: 'searches#debug', as: :debug
+  post 'clear_result_cache', to: 'searches#clear_result_cache', as: :clear_result_cache
 
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".

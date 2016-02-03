@@ -1,6 +1,6 @@
 /* _user_items.html.erb start */
 .user-item-carousel {
-  margin-bottom: 0px;
+  margin-bottom: 0px !important;
 }
 
 .media:first-child {

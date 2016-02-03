@@ -5,6 +5,7 @@ class SearchesController < ApplicationController
     clusters_belong_to close_friends update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
 
+  before_action :need_login,           only: %i(friends_in_common followers_in_common debug clear_result_cache)
   before_action :set_twitter_user,     only: NEED_VALIDATION
   before_action :invalid_screen_name,  only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :suspended_account,    only: NEED_VALIDATION, unless: :result_cache_exists?
@@ -13,7 +14,7 @@ class SearchesController < ApplicationController
 
   before_action :set_searched_tw_user, only: SEARCH_MENUS
 
-  before_action :basic_auth, only: %i(debug)
+  before_action :basic_auth, only: %i(debug clear_result_cache)
 
   def welcome
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
@@ -228,7 +229,6 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/friends_in_common
   def friends_in_common
-    return redirect_to '/', alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
     @user_items =
       @searched_tw_user.friends_in_common(current_user.twitter_user).map{|f| {target: f} }
     @name = t('search_menu.friends_in_common', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
@@ -237,7 +237,6 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/followers_in_common
   def followers_in_common
-    return redirect_to '/', alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
     @user_items =
       @searched_tw_user.followers_in_common(current_user.twitter_user).map{|f| {target: f} }
     @name = t('search_menu.followers_in_common', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
@@ -380,10 +379,18 @@ class SearchesController < ApplicationController
   end
 
   def debug
+    redirect_to '/' unless current_user.admin?
     debug_key = 'update_job_dispatcher:debug'
     @debug_info = JSON.parse(redis.get(debug_key) || '{}')
     @last_1hour = 1.hour.ago..Time.now
     render layout: false
+  end
+
+  def clear_result_cache
+    redirect_to '/' unless request.post?
+    redirect_to '/' unless current_user.admin?
+    redis.clear_result_cache
+    redirect_to '/'
   end
 
   private
@@ -405,6 +412,10 @@ class SearchesController < ApplicationController
 
   def nocache
     params[:nocache].present?
+  end
+
+  def need_login
+    redirect_to '/', alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
   end
 
   def set_twitter_user

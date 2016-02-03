@@ -14,6 +14,7 @@ Redis.class_eval do
   end
 
   def clear_result_cache
-    del(keys('searches:*'))
+    _keys = keys('searches:*')
+    del(keys('searches:*')) if _keys.any?
   end
 end

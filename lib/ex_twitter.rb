@@ -451,7 +451,7 @@ class ExTwitter < Twitter::REST::Client
   def replied(user)
     user = self.user(user).screen_name unless user.kind_of?(String)
     if user == screen_name
-      mentions_timeline(user).map{|m| m.user }
+      mentions_timeline(user).uniq { |m| m.user.id }.map { |m| m.user }
     else
       tweets = search('@' + user)
       uids = select_uids_replying_to(tweets)
