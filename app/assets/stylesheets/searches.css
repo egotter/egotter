@@ -1,0 +1,114 @@
+/* _user_items.html.erb start */
+.user-item-carousel {
+  margin-bottom: 0px;
+}
+
+.media:first-child {
+  margin-top: 15px;
+}
+
+.media {
+  margin-top: 15px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 15px;
+}
+
+.media-left {
+  padding-left: 15px;
+}
+
+.media-object {
+  border: 1px solid #eeeeee;
+}
+
+.media-body {
+  padding-right: 15px;
+}
+
+.media-heading {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.media-heading .glyphicon.glyphicon-lock {
+  color: #999999;
+  font-size: 13px;
+  font-weight: normal;
+}
+
+.media-body .screen_name {
+  font-size: 13px;
+  color: #999999;
+}
+
+.media-body .screen_name a {
+  color: #333333;
+  text-decoration: none;
+}
+
+.media-body .statuses_count {
+  font-size: 13px;
+  color: #999999;
+}
+
+.media-body .friends_count {
+  font-size: 13px;
+  color: #999999;
+}
+
+.media-body .followers_count {
+  font-size: 13px;
+  color: #999999;
+}
+
+.media-right a {
+  color: #333333;
+  text-decoration: none;
+}
+
+.media-right button {
+  margin-top: 6px;
+  margin-right: 15px;
+}
+/* _user_items.html.erb end */
+
+/* _profile_overview.html.erb start */
+.profile-overview-container {
+  padding: 0px;
+}
+
+.profile-overview {
+  padding-bottom: 20px;
+  text-align: center;
+  position: relative;
+  background-size: cover;
+  /* specify background-image in _profile_overview.html.erb */
+}
+
+.profile-icon {
+  margin-top: 20px;
+  margin-right: auto;
+  margin-left: auto;
+  border: 4px solid #ffffff;
+}
+
+.profile-names {
+  margin-top: 20px;
+  font-weight: normal;
+  line-height: 120%;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.profile-screen_name-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.profile-description {
+  color: #ffffff;
+  margin-top: 70px;
+  margin-right: auto;
+  margin-left: auto;
+}
+/* _profile_overview.html.erb end */

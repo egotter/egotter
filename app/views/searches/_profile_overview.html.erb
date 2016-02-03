@@ -21,7 +21,7 @@
         </div>
       </div>
 
-      <div class="profile-description"><%= searched_tw_user.description %></div>
+      <div class="profile-description" style="display: false;"><%= searched_tw_user.description %></div>
     </div>
 
   </div><!-- /.profile-overview -->
@@ -35,47 +35,13 @@
       dots: true,
       infinite: false
     });
+    $('.profile-description').show();
   });
 </script>
 
 <style type="text/css">
-  .profile-overview-container {
-    padding: 0px;
-  }
-
   .profile-overview {
-    padding-bottom: 20px;
-    text-align: center;
-    position: relative;
     background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= searched_tw_user.profile_banner_url.to_s + '/web' %>');
-    background-size: cover;
-  }
-
-  .profile-icon {
-    margin-top: 20px;
-    margin-right: auto;
-    margin-left: auto;
-    border: 4px solid #ffffff;
-  }
-
-  .profile-names {
-    margin-top: 20px;
-    font-weight: normal;
-    line-height: 120%;
-    font-size: 18px;
-    color: #ffffff;
-  }
-
-  .profile-screen_name-link {
-    color: #ffffff;
-    text-decoration: none;
-  }
-
-  .profile-description {
-    color: #ffffff;
-    margin-top: 70px;
-    margin-right: auto;
-    margin-left: auto;
   }
 </style>
 

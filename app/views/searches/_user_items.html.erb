@@ -74,7 +74,7 @@
       accessibility: false,
       arrows: false,
       dots: false,
-      infinite: false
+      infinite: true
     };
     for (var i = 0; i < user_item_count; i++) {
       $('.user-item-carousel-' + i).slick(option);
@@ -83,77 +83,3 @@
     $('.media.count-box').show();
   });
 </script>
-
-<style type="text/css">
-  .user-item-carousel {
-    margin-bottom: 0px;
-  }
-
-  .media:first-child {
-    margin-top: 15px;
-  }
-
-  .media {
-    margin-top: 15px;
-    border-bottom: 1px solid #e6e6e6;
-    padding-bottom: 15px;
-  }
-
-  .media-left {
-    padding-left: 15px;
-  }
-
-  .media-object {
-    border: 1px solid #eeeeee;
-  }
-
-  .media-body {
-    padding-right: 15px;
-  }
-
-  .media-heading {
-    font-weight: bold;
-    font-size: 14px;
-  }
-
-  .media-heading .glyphicon.glyphicon-lock {
-    color: #999999;
-    font-size: 13px;
-    font-weight: normal;
-  }
-
-  .media-body .screen_name {
-    font-size: 13px;
-    color: #999999;
-  }
-
-  .media-body .screen_name a {
-    color: #333333;
-    text-decoration: none;
-  }
-
-  .media-body .statuses_count {
-    font-size: 13px;
-    color: #999999;
-  }
-
-  .media-body .friends_count {
-    font-size: 13px;
-    color: #999999;
-  }
-
-  .media-body .followers_count {
-    font-size: 13px;
-    color: #999999;
-  }
-
-  .media-right a {
-    color: #333333;
-    text-decoration: none;
-  }
-
-  .media-right button {
-    margin-top: 6px;
-    margin-right: 15px;
-  }
-</style>
