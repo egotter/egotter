@@ -12,4 +12,8 @@ Redis.class_eval do
       get(key)
     end
   end
+
+  def clear_result_cache
+    del(keys('searches:*'))
+  end
 end
