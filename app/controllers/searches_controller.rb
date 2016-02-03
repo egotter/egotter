@@ -4,17 +4,21 @@ class SearchesController < ApplicationController
     friends_in_common followers_in_common replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
+  NEED_LOGIN = %i(friends_in_common followers_in_common debug clear_result_cache)
+  DEBUG_PAGES = %i(debug clear_result_cache)
 
-  before_action :need_login,           only: %i(friends_in_common followers_in_common debug clear_result_cache)
+  before_action :before_action_start,  only: NEED_VALIDATION
+  before_action :need_login,           only: NEED_LOGIN
   before_action :set_twitter_user,     only: NEED_VALIDATION
   before_action :invalid_screen_name,  only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :suspended_account,    only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :unauthorized_account, only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :too_many_friends,     only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :before_action_finish, only: NEED_VALIDATION
 
   before_action :set_searched_tw_user, only: SEARCH_MENUS
 
-  before_action :basic_auth, only: %i(debug clear_result_cache)
+  before_action :basic_auth, only: DEBUG_PAGES
 
   def welcome
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
@@ -35,11 +39,12 @@ class SearchesController < ApplicationController
   end
 
   def show
+    start_time = Time.zone.now
     tu = @searched_tw_user
 
     if !nocache && result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
-      return render text: replace_csrf_meta_tags(result_cache)
+      return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time)
     end
 
     tu.client = client
@@ -172,7 +177,7 @@ class SearchesController < ApplicationController
       path_method: method(:update_histories_path).to_proc
     }
 
-    render text: replace_csrf_meta_tags(set_result_cache)
+    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time)
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -315,7 +320,7 @@ class SearchesController < ApplicationController
       else
         render_to_string
       end
-    render text: replace_csrf_meta_tags(html)
+    render text: replace_csrf_meta_tags(html, 0.0)
   end
 
   # # GET /searches/1/edit
@@ -412,6 +417,16 @@ class SearchesController < ApplicationController
 
   def nocache
     params[:nocache].present?
+  end
+
+  def before_action_start
+    @before_action_start = Time.zone.now
+  end
+
+  def before_action_finish
+    end_time = Time.zone.now
+    @before_action_elapsed_time = end_time - @before_action_start
+    logger.debug "DEBUG: before_action total time #{action_name} #{@before_action_elapsed_time}s"
   end
 
   def need_login
@@ -512,8 +527,9 @@ class SearchesController < ApplicationController
     html
   end
 
-  def replace_csrf_meta_tags(html)
-    html.sub(/csrf_meta_tags/, "#{view_context.csrf_meta_tags}<!-- replaced -->")
+  def replace_csrf_meta_tags(html, time)
+    html.sub(/csrf_meta_tags/, "#{view_context.csrf_meta_tags}<!-- replaced -->").
+      sub(/search_elapsed_time/, view_context.number_with_precision(time, precision: 1))
   end
 
   def user_or_anonymous
