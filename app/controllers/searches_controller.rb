@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show removing removed only_following only_followed mutual_friends
+  SEARCH_MENUS = %i(show friends followers removing removed only_following only_followed mutual_friends
     friends_in_common followers_in_common replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
@@ -144,6 +144,20 @@ class SearchesController < ApplicationController
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+  end
+
+  # GET /searches/:screen_name/friends
+  def friends
+    @user_items = @searched_tw_user.friends.map{|f| {target: f} }
+    @name = t('search_menu.friends', user: "@#{@searched_tw_user.screen_name}")
+    render :common_result
+  end
+
+  # GET /searches/:screen_name/followers
+  def followers
+    @user_items = @searched_tw_user.followers.map{|f| {target: f} }
+    @name = t('search_menu.followers', user: "@#{@searched_tw_user.screen_name}")
+    render :common_result
   end
 
   # GET /searches/:screen_name/removing
