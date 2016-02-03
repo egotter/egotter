@@ -81,6 +81,7 @@ namespace :update_job_dispatcher do
     debug_info = {
       followers: uids.size,
       zcard: redis.zcard(key),
+      zcard2: redis.zcard(recently_failed_key),
       zremrangebyscore: zremrangebyscore_count,
       zremrangebyrank: zremrangebyrank_count,
       enqueue: enqueue_count,
