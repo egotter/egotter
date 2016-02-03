@@ -1,0 +1,76 @@
+<%# status list %>
+<% status_items.each.with_index do |status_item, i| %>
+  <div class="status-item-carousel status-item-carousel-<%= i %>">
+    <%# name box %>
+    <div class="media">
+      <div class="media-left">
+        <img class="media-object" src="<%= searched_tw_user.profile_image_url_https.to_s %>" alt="<%= searched_tw_user.screen_name %>">
+      </div>
+
+      <div class="media-body">
+        <h4 class="media-heading">
+          <%= "#{searched_tw_user.name}&nbsp;@#{searched_tw_user.screen_name}".html_safe %>
+        </h4>
+        <span class="text">
+          <%= status_item[:target].text %>
+        </span>
+      </div>
+
+    </div>
+
+    <% if i < 0 %>
+      <%# description box %>
+      <div class="media description-box" style="display: none;">
+        <div class="media-left">
+          <img class="media-object" src="<%= status_item[:target].profile_image_url_https.to_s %>" , alt="<%= status_item[:target].screen_name %>">
+        </div>
+
+        <div class="media-body">
+            <span class="screen_name"><%= truncate(status_item[:target].description) %></span>
+        </div>
+
+        <div class="media-right">
+          <%= link_to searches_path(screen_name: status_item[:target].screen_name, id: status_item[:target].uid), method: :post do %>
+            <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+          <% end %>
+        </div>
+      </div>
+
+      <%# count box %>
+      <div class="media count-box" style="display: none;">
+        <div class="media-left">
+          <img class="media-object" src="<%= status_item[:target].profile_image_url_https.to_s %>" , alt="<%= status_item[:target].screen_name %>">
+        </div>
+
+        <div class="media-body">
+          <div class="statuses_count"><%= status_item[:target].statuses_count %>&nbsp;<%= t('dictionary.tweet') %></div>
+          <div class="friends_count"><%= status_item[:target].friends_count %>&nbsp;<%= t('dictionary.friends') %></div>
+          <div class="followers_count"><%= status_item[:target].followers_count %>&nbsp;<%= t('dictionary.follower') %></div>
+        </div>
+
+        <div class="media-right">
+          <%= link_to searches_path(screen_name: status_item[:target].screen_name, id: status_item[:target].uid), method: :post do %>
+            <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
+<script>
+  $(function () {
+    var status_item_count = <%= [status_items.size, 10].min %>;
+    var option = {
+      accessibility: false,
+      arrows: false,
+      dots: false,
+      infinite: true
+    };
+    for (var i = 0; i < status_item_count; i++) {
+      $('.status-item-carousel-' + i).slick(option);
+    }
+    $('.media.description-box').show();
+    $('.media.count-box').show();
+  });
+</script>

@@ -7,6 +7,7 @@ Rails.application.routes.draw do
   post 'menu', to: 'searches#menu'
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   post 'searches/:screen_name/waiting', to: 'searches#waiting'
+  get 'searches/:screen_name/statuses', to: 'searches#statuses', as: :statuses
   get 'searches/:screen_name/friends', to: 'searches#friends', as: :friends
   get 'searches/:screen_name/followers', to: 'searches#followers', as: :followers
   get 'searches/:screen_name/removing', to: 'searches#removing', as: :removing

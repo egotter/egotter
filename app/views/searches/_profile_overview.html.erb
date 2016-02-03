@@ -50,21 +50,22 @@
   <div class="row" style="padding: 0px 5px 0px 5px; border-bottom: 1px solid #e6e6e6;">
     <div>
       <div style="padding-top: 5px; padding-bottom: 5px;" class="col-xs-4">
-        <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", class: 'text-muted', target: '_blank' do %>
+        <%= link_to statuses_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                    style: 'text-decoration: none; color: #777777;', class: 'text-muted' do %>
           <span style="font-weight: bold;"><%= searched_tw_user.statuses_count %></span><br>
           <span class="text-muted"><%= t('dictionary.tweet') %></span>
         <% end %>
       </div>
       <div style="padding-top: 5px; padding-bottom: 5px; border-left: 1px solid #e6e6e6; border-right: 1px solid #e6e6e6;" class="col-xs-4">
         <%= link_to friends_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    class: 'text-muted' do %>
+                    style: 'text-decoration: none; color: #777777;', class: 'text-muted' do %>
           <span style="font-weight: bold;"><%= searched_tw_user.friends_count %></span><br>
           <span class="text-muted"><%= t('dictionary.friends') %></span>
         <% end %>
       </div>
       <div style="padding-top: 5px; padding-bottom: 5px;" class="col-xs-4">
-        <%= link_to friends_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    class: 'text-muted' do %>
+        <%= link_to followers_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                    style: 'text-decoration: none; color: #777777;', class: 'text-muted' do %>
           <span style="font-weight: bold;"><%= searched_tw_user.followers_count %></span><br>
           <span class="text-muted"><%= t('dictionary.follower') %></span>
         <% end %>

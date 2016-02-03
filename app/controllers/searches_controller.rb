@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show friends followers removing removed only_following only_followed mutual_friends
+  SEARCH_MENUS = %i(show statuses friends followers removing removed only_following only_followed mutual_friends
     friends_in_common followers_in_common replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
@@ -127,11 +127,11 @@ class SearchesController < ApplicationController
       if user_signed_in? && current_user.uid.to_i == tu.uid.to_i
         [
           {
-            name: t('search_menu.friends_in_common', user: sn, login: sn),
+            name: t('search_menu.friends_in_common', user: sn, login: t('dictionary.you')),
             target: [],
             path_method: method(:friends_in_common_path).to_proc
           }, {
-            name: t('search_menu.followers_in_common', user: sn, login: sn),
+            name: t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
             target: [],
             path_method: method(:followers_in_common_path).to_proc
           },
@@ -181,6 +181,12 @@ class SearchesController < ApplicationController
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+  end
+
+  # GET /searches/:screen_name/statuses
+  def statuses
+    @status_items = @searched_tw_user.statuses.map{|f| {target: f} }
+    @name = t('search_menu.statuses', user: "@#{@searched_tw_user.screen_name}")
   end
 
   # GET /searches/:screen_name/friends

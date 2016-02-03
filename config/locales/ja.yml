@@ -57,6 +57,7 @@ ja:
     same_user: "違うユーザーを検索すると結果が見れます"
 
   search_menu:
+    statuses: "%{user} のツイート"
     friends: "%{user} のフォロー"
     followers: "%{user} のフォロワー"
     removing: "%{user} がフォローを外した"
