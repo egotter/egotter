@@ -1,4 +1,4 @@
-<div><a href="/" target="_parent">egotter</a></div>
+<div><a href="/">egotter</a></div>
 <br>
 
 <table border="1">
@@ -62,27 +62,27 @@
 </table>
 <br>
 
-<table border="1">
-  <caption>Worker Reasons</caption>
-  <tr>
-    <th>name</th>
-    <th>id</th>
-    <th>reason</th>
-    <th>message</th>
-  </tr>
-  <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
-    <%
-      model.where(status: false).order(created_at: :desc).limit(100).each do |log|
-    %>
+<% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
+  <table border="1">
+    <caption>Worker Reasons(<%= model.model_name %>)</caption>
+    <tr>
+      <th>name</th>
+      <th>id</th>
+      <th>reason</th>
+      <th>message</th>
+      <th>created_at</th>
+    </tr>
+    <% model.where(status: false).order(created_at: :desc).limit(50).each do |log| %>
       <tr>
         <td><%= model.model_name %></td>
         <td><%= log.id %></td>
         <td><%= log.reason %></td>
         <td><%= log.message %></td>
+        <td><%= l(log.created_at + 9.hours, format: :short) %></td>
       </tr>
     <% end %>
-  <% end %>
-</table>
-<br>
+  </table>
+  <br>
+<% end %>
 
-<div><a href="/" target="_parent">egotter</a></div>
+<div><a href="/">egotter</a></div>

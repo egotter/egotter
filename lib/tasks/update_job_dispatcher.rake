@@ -8,8 +8,7 @@ namespace :update_job_dispatcher do
     key = Redis.job_dispatcher_key
     debug_key = Redis.debug_key
     recently_failed_key = Redis.background_update_worker_recently_failed_key
-    zremrangebyscore_count = redis.zremrangebyscore(key, 0, 1.day.ago.to_i)
-    zremrangebyrank_count = 0
+    zrem_count = 0
     max_enqueue_count = 10
     enqueue_count = 0
     already_added_count = 0
@@ -74,16 +73,15 @@ namespace :update_job_dispatcher do
     end
 
     if enqueue_count < max_enqueue_count
-      zremrangebyrank_count = redis.zremrangebyrank(key, 0, max_enqueue_count * 3)
+      zrem_count = redis.zremrangebyrank(key, 0, max_enqueue_count * 3)
     end
 
 
     debug_info = {
       followers: uids.size,
-      zcard: redis.zcard(key),
-      zcard2: redis.zcard(recently_failed_key),
-      zremrangebyscore: zremrangebyscore_count,
-      zremrangebyrank: zremrangebyrank_count,
+      'zcard(all)' => redis.zcard(key),
+      'zcard(failed)' => redis.zcard(recently_failed_key),
+      zrem: zrem_count,
       enqueue: enqueue_count,
       already_added: already_added_count,
       already_failed: already_failed_count,
