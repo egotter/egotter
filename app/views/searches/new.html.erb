@@ -1,6 +1,7 @@
 <div class="container">
   <%= form_tag searches_path, method: :post do %>
-    <h2 style="text-align: center;"><small><%= t('dictionary.lead') %></small></h2>
+    <h2 style="margin-top: 15px; text-align: center;"><small><%= t('dictionary.app_name') %></small></h2>
+    <div style="margin-bottom: 15px;"><%= t('dictionary.lead2') %></div>
     <label for="screen_name" class="sr-only">Twitter ID</label>
     <div class="input-group">
       <div class="input-group-addon">@</div>
@@ -19,7 +20,13 @@
 
   <hr>
 
+  <h2 style="text-align: center; margin-top: 15px;"><small><%= t('dictionary.share_me') %></small></h2>
   <div style="text-align: center;" id="share"></div>
+
+  <div style="text-align: center; margin-top: 15px;">
+    <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
+    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+  </div>
 
   <hr>
 
