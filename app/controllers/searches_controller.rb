@@ -320,6 +320,7 @@ class SearchesController < ApplicationController
   def usage_stats
     @searched_tw_user.client = client
     @series_data, @drilldown_series = @searched_tw_user.usage_stats
+    @name = t('search_menu.usage_stats', user: "@#{@searched_tw_user.screen_name}")
   end
 
   # GET /searches/:screen_name/update_histories
