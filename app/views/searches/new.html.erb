@@ -11,7 +11,7 @@
   <% end %>
 
   <% if user_signed_in? %>
-    <h2 style="text-align: center; margin-top: 30px;"><small><%= t('dictionary.search_by_login_user') %></small></h2>
+    <h2 style="text-align: center; margin-top: 20px;"><small><%= t('dictionary.search_by_login_user') %></small></h2>
     <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
                 searches_path(screen_name: current_user.screen_name),
                 class: 'btn btn-info btn-block', style: 'margin-top: 0px;', method: :post %>
@@ -19,5 +19,20 @@
 
   <hr>
 
+  <div style="text-align: center;" id="share"></div>
+
+  <hr>
+
   <%= render(partial: 'searches/adsense') %>
+  <div style="margin-bottom: 15px;"></div>
 </div>
+
+<script>
+  $("#share").jsSocials({
+    shares: ["twitter", "facebook", "googleplus"],
+    url: "http://www.egotter.com",
+    text: "text to share",
+    showLabel: true,
+    showCount: true
+  });
+</script>
