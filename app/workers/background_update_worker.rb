@@ -62,7 +62,7 @@ class BackgroundUpdateWorker
     create_log(uid, false, BackgroundUpdateLog::Unauthorized)
   rescue => e
     logger.warn "#{user_name(_tu)} #{bot_name(client)} #{e.class} #{e.message}"
-    create_log(uid, false, BackgroundUpdateLog::SomethingIsWrong)
+    create_log(uid, false, BackgroundUpdateLog::SomethingIsWrong, e.message)
     raise e
   end
 
