@@ -1,0 +1,56 @@
+<%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
+
+<div class="container" style="padding: 0px;">
+  <h2 style="text-align: center; margin-top: 5px;">
+    <small><%= @name %></small>
+  </h2>
+  <div id="graph" style="height: 200px; margin: 0 auto"></div>
+</div>
+
+<script>
+  var series_data = <%= raw JSON.pretty_generate(@series_data) %>;
+  var drilldown_series = <%= raw JSON.pretty_generate(@drilldown_series) %>;
+
+  $(function () {
+    $('#graph').highcharts({
+      credits: false,
+      chart: {
+        type: 'column'
+      },
+      title: {
+        text: null
+      },
+      xAxis: {
+        type: 'category'
+      },
+      yAxis: {
+        title: {
+          text: null
+        }
+
+      },
+      legend: {
+        enabled: false
+      },
+      plotOptions: {
+        series: {
+          borderWidth: 0,
+          dataLabels: {
+            enabled: true,
+            format: '{point.y}'
+          }
+        }
+      },
+      tooltip: false,
+
+      series: [{
+        name: null,
+        colorByPoint: true,
+        data: series_data
+      }],
+      drilldown: {
+        series: drilldown_series
+      }
+    });
+  });
+</script>

@@ -74,6 +74,7 @@ ja:
     inactive_followers: "%{user} のフォロワーのうち最近ツイートしていない"
     clusters_belong_to: "%{user} が入っているクラスタ"
     close_friends: "%{user} と仲良し"
+    usage_stats: "%{user} のツイッター利用状況"
     update_histories: "更新履歴"
     search_histories: "検索履歴"
     debug: "デバッグ"

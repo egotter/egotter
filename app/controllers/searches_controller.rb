@@ -2,7 +2,7 @@ class SearchesController < ApplicationController
 
   SEARCH_MENUS = %i(show statuses friends followers removing removed only_following only_followed mutual_friends
     friends_in_common followers_in_common replying replied favoriting inactive_friends inactive_followers
-    clusters_belong_to close_friends update_histories)
+    clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
   NEED_LOGIN = %i(friends_in_common followers_in_common debug clear_result_cache)
   DEBUG_PAGES = %i(debug clear_result_cache)
@@ -80,7 +80,11 @@ class SearchesController < ApplicationController
         name: t('search_menu.close_friends', user: sn),
         target: _close_friends,
         path_method: method(:close_friends_path).to_proc
-      },{
+      }, {
+        name: t('search_menu.usage_stats', user: sn),
+        target: [],
+        path_method: method(:usage_stats_path).to_proc
+      }, {
         name: t('search_menu.removing', user: sn),
         target: tu.removing,
         path_method: method(:removing_path).to_proc
@@ -310,6 +314,12 @@ class SearchesController < ApplicationController
     @user_items = users.map { |u| {target: u} }
     @name = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
+  end
+
+  # GET /searches/:screen_name/usage_stats
+  def usage_stats
+    @searched_tw_user.client = client
+    @series_data, @drilldown_series = @searched_tw_user.usage_stats
   end
 
   # GET /searches/:screen_name/update_histories

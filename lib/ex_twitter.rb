@@ -514,6 +514,35 @@ class ExTwitter < Twitter::REST::Client
 
   end
 
+  def usage_stats_series_data(tweets)
+    times = tweets.map { |t| Time.parse(t.created_at) }
+    wday_count = times.each_with_object((0..6).map { |n| [n, 0] }.to_h) do |time, memo|
+      memo[time.wday] += 1
+    end
+    wday_count.map { |k, v| [I18n.t('date.abbr_day_names')[k], v] }.map do |key, value|
+      {name: key, y: value, drilldown: key}
+    end
+  end
+
+  def usage_stats_drilldown_series(tweets)
+    times = tweets.map { |t| Time.parse(t.created_at) }
+    hour_count =
+      (0..6).each_with_object((0..6).map { |n| [n, nil] }.to_h) do |wday, wday_memo|
+        wday_memo[wday] =
+          times.select { |t| t.wday == wday }.map { |t| t.hour }.each_with_object((0..23).map { |n| [n, 0] }.to_h) do |hour, hour_memo|
+            hour_memo[hour] += 1
+          end
+      end
+    hour_count.map { |k, v| [I18n.t('date.abbr_day_names')[k], v] }.map do |key, value|
+      {name: key, id: key, data: value.to_a.map{|a| [a[0].to_s, a[1]] }}
+    end
+  end
+
+  def usage_stats(user)
+    tweets = user_timeline(user)
+    [usage_stats_series_data(tweets), usage_stats_drilldown_series(tweets)]
+  end
+
   alias :old_favorites :favorites
   def favorites(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
