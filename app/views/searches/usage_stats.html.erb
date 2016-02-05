@@ -57,10 +57,12 @@
   };
 
   var wday_options = $.extend(true, {}, column_options);
+  wday_options.title.text = '曜日ごとのツイート数';
   wday_options.series[0].data = wday_series_data;
   wday_options.drilldown.series = wday_drilldown_series;
 
   var hour_options = $.extend(true, {}, column_options);
+  hour_options.title.text = '時間帯ごとのツイート数';
   hour_options.series[0].data = hour_series_data;
   hour_options.drilldown.series = hour_drilldown_series;
 

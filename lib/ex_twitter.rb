@@ -515,7 +515,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def usage_stats_wday_series_data(tweets)
-    times = tweets.map { |t| Time.parse(t.created_at) }
+    times = tweets.map { |t| t.created_at }
     wday_count = times.each_with_object((0..6).map { |n| [n, 0] }.to_h) do |time, memo|
       memo[time.wday] += 1
     end
@@ -525,7 +525,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def usage_stats_wday_drilldown_series(tweets)
-    times = tweets.map { |t| Time.parse(t.created_at) }
+    times = tweets.map { |t| t.created_at }
     hour_count =
       (0..6).each_with_object((0..6).map { |n| [n, nil] }.to_h) do |wday, wday_memo|
         wday_memo[wday] =
@@ -539,7 +539,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def usage_stats_hour_series_data(tweets)
-    times = tweets.map { |t| Time.parse(t.created_at) }
+    times = tweets.map { |t| t.created_at }
     hour_count = times.each_with_object((0..23).map { |n| [n, 0] }.to_h) do |time, memo|
       memo[time.hour] += 1
     end
@@ -549,7 +549,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def usage_stats_hour_drilldown_series(tweets)
-    times = tweets.map { |t| Time.parse(t.created_at) }
+    times = tweets.map { |t| t.created_at }
     wday_count =
       (0..23).each_with_object((0..23).map { |n| [n, nil] }.to_h) do |hour, hour_memo|
         hour_memo[hour] =
@@ -563,7 +563,11 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def usage_stats(user)
-    tweets = user_timeline(user)
+    seven_days_ago = 7.days.ago
+    tweets =
+      user_timeline(user).
+        map { |t| t.created_at = ActiveSupport::TimeZone['UTC'].parse(t.created_at.to_s); t }.
+        select { |t| t.created_at > seven_days_ago }
     [
       usage_stats_wday_series_data(tweets),
       usage_stats_wday_drilldown_series(tweets),
