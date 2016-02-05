@@ -180,4 +180,40 @@
   margin-right: auto;
   margin-left: auto;
 }
+
+.profile-counts-container {
+  padding: 0px 15px 0px 15px;
+}
+
+.profile-counts-container a {
+  text-decoration: none;
+  color: #777777;
+}
+
+.profile-counts-container > .row {
+  padding: 0px 5px 0px 5px;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.profile-counts-container .tweet-count-box {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.profile-counts-container .stats-count {
+  font-weight: bold;
+}
+
+.profile-counts-container .friends-count-box {
+  padding-top: 5px;
+  padding-bottom: 5px;
+  border-left: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e6e6;
+}
+
+.profile-counts-container .friends-count-box {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
 /* _profile_overview.html.erb end */

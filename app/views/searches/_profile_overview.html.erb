@@ -46,27 +46,27 @@
 </style>
 
 <%# ツイート数、フォロー数、フォロワー数 %>
-<div class="container" style="padding: 0px 15px 0px 15px;">
-  <div class="row" style="padding: 0px 5px 0px 5px; border-bottom: 1px solid #e6e6e6;">
+<div class="container profile-counts-container">
+  <div class="row">
     <div>
-      <div style="padding-top: 5px; padding-bottom: 5px;" class="col-xs-4">
+      <div class="tweet-count-box col-xs-4">
         <%= link_to statuses_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    style: 'text-decoration: none; color: #777777;', class: 'text-muted' do %>
-          <span style="font-weight: bold;"><%= searched_tw_user.statuses_count %></span><br>
+                    class: 'text-muted' do %>
+          <span class="stats-count"><%= searched_tw_user.statuses_count %></span><br>
           <span class="text-muted"><%= t('dictionary.tweet') %></span>
         <% end %>
       </div>
-      <div style="padding-top: 5px; padding-bottom: 5px; border-left: 1px solid #e6e6e6; border-right: 1px solid #e6e6e6;" class="col-xs-4">
+      <div class="friends-count-box col-xs-4">
         <%= link_to friends_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    style: 'text-decoration: none; color: #777777;', class: 'text-muted' do %>
-          <span style="font-weight: bold;"><%= searched_tw_user.friends_count %></span><br>
+                    class: 'text-muted' do %>
+          <span class="stats-count"><%= searched_tw_user.friends_count %></span><br>
           <span class="text-muted"><%= t('dictionary.friends') %></span>
         <% end %>
       </div>
-      <div style="padding-top: 5px; padding-bottom: 5px;" class="col-xs-4">
+      <div class="followers-count-box col-xs-4">
         <%= link_to followers_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    style: 'text-decoration: none; color: #777777;', class: 'text-muted' do %>
-          <span style="font-weight: bold;"><%= searched_tw_user.followers_count %></span><br>
+                    class: 'text-muted' do %>
+          <span class="stats-count"><%= searched_tw_user.followers_count %></span><br>
           <span class="text-muted"><%= t('dictionary.follower') %></span>
         <% end %>
       </div>
