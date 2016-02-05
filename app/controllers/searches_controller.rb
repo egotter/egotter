@@ -331,6 +331,7 @@ class SearchesController < ApplicationController
   # GET /
   def new
     key = "searches:new:#{user_or_anonymous}"
+    return render
     html =
       if flash.empty?
         redis.fetch(key, 60 * 180) { render_to_string }
@@ -545,8 +546,8 @@ class SearchesController < ApplicationController
   end
 
   def replace_csrf_meta_tags(html, time)
-    html.sub(/csrf_meta_tags/, "#{view_context.csrf_meta_tags}<!-- replaced -->").
-      sub(/search_elapsed_time/, view_context.number_with_precision(time, precision: 1))
+    html.sub('<!-- csrf_meta_tags -->', "#{view_context.csrf_meta_tags}<!-- replaced -->").
+      sub('<!-- search_elapsed_time -->', view_context.number_with_precision(time, precision: 1))
   end
 
   def user_or_anonymous

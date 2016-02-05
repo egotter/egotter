@@ -1,7 +1,8 @@
 <div class="container">
   <%= form_tag searches_path, method: :post do %>
-    <h2 style="margin-top: 15px; text-align: center;"><small><%= t('dictionary.app_name') %></small></h2>
-    <div style="margin-bottom: 15px;"><%= t('dictionary.lead2') %></div>
+    <div style="margin-top: 15px; margin-bottom: 10px;"><%= t('dictionary.lead') %></div>
+
+    <h2 style="margin-top: 0px; text-align: center;"><small><%= t('dictionary.search_friends') %></small></h2>
     <label for="screen_name" class="sr-only">Twitter ID</label>
     <div class="input-group">
       <div class="input-group-addon">@</div>
@@ -12,7 +13,7 @@
   <% end %>
 
   <% if user_signed_in? %>
-    <h2 style="text-align: center; margin-top: 20px;"><small><%= t('dictionary.search_by_login_user') %></small></h2>
+    <h2 style="text-align: center; margin-top: 20px;"><small><%= t('dictionary.search_login_user') %></small></h2>
     <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
                 searches_path(screen_name: current_user.screen_name),
                 class: 'btn btn-info btn-block', style: 'margin-top: 0px;', method: :post %>
@@ -20,10 +21,11 @@
 
   <hr>
 
-  <h2 style="text-align: center; margin-top: 15px;"><small><%= t('dictionary.share_me') %></small></h2>
+  <h2 style="text-align: center; margin-top: 0px;"><small><%= t('dictionary.share_me') %></small></h2>
   <div style="text-align: center;" id="share"></div>
 
-  <div style="text-align: center; margin-top: 15px;">
+  <h2 style="text-align: center; margin-top: 15px;"><small><%= t('dictionary.official_account') %></small></h2>
+  <div style="text-align: center;">
     <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
     <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
   </div>
@@ -38,7 +40,7 @@
   $("#share").jsSocials({
     shares: ["twitter", "facebook", "googleplus"],
     url: "http://www.egotter.com",
-    text: "text to share",
+    text: "『えごったー』知ってる？ 面白いよ。",
     showLabel: true,
     showCount: true
   });
