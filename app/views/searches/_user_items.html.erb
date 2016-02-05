@@ -31,36 +31,24 @@
       <%# description box %>
       <div class="media description-box" style="display: none;">
         <div class="media-left">
-          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", alt="<%= user_item[:target].screen_name %>">
+          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>" alt="<%= user_item[:target].screen_name %>">
         </div>
 
         <div class="media-body">
-            <span class="screen_name"><%= truncate(user_item[:target].description) %></span>
-        </div>
-
-        <div class="media-right">
-          <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), method: :post do %>
-            <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
-          <% end %>
+            <span class="screen_name"><%= truncate(user_item[:target].description, length: 40) %></span>
         </div>
       </div>
 
       <%# count box %>
       <div class="media count-box" style="display: none;">
         <div class="media-left">
-          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>", alt="<%= user_item[:target].screen_name %>">
+          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>" alt="<%= user_item[:target].screen_name %>">
         </div>
 
         <div class="media-body">
           <div class="statuses_count"><%= user_item[:target].statuses_count %>&nbsp;<%= t('dictionary.tweet') %></div>
           <div class="friends_count"><%= user_item[:target].friends_count %>&nbsp;<%= t('dictionary.friends') %></div>
           <div class="followers_count"><%= user_item[:target].followers_count %>&nbsp;<%= t('dictionary.follower') %></div>
-        </div>
-
-        <div class="media-right">
-          <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), method: :post do %>
-            <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
-          <% end %>
         </div>
       </div>
     <% end %>

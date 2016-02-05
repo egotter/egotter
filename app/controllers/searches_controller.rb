@@ -331,7 +331,6 @@ class SearchesController < ApplicationController
   # GET /
   def new
     key = "searches:new:#{user_or_anonymous}"
-    return render
     html =
       if flash.empty?
         redis.fetch(key, 60 * 180) { render_to_string }
