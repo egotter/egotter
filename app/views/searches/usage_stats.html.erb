@@ -4,53 +4,161 @@
   <h2 style="text-align: center; margin-top: 5px;">
     <small><%= @name %></small>
   </h2>
-  <div id="graph" style="height: 200px; margin: 0 auto"></div>
+  <div id="wday_graph" style="height: 200px; margin: 0 auto"></div>
+  <div id="hour_graph" style="height: 200px; margin: 0 auto"></div>
+  <div id="kind_graph" style="height: 200px; margin: 0 auto"></div>
 </div>
 
 <script>
-  var series_data = <%= raw JSON.pretty_generate(@series_data) %>;
-  var drilldown_series = <%= raw JSON.pretty_generate(@drilldown_series) %>;
+  var wday_series_data = <%= raw JSON.pretty_generate(@wday_series_data) %>;
+  var wday_drilldown_series = <%= raw JSON.pretty_generate(@wday_drilldown_series) %>;
+  var hour_series_data = <%= raw JSON.pretty_generate(@hour_series_data) %>;
+  var hour_drilldown_series = <%= raw JSON.pretty_generate(@hour_drilldown_series) %>;
 
-  $(function () {
-    $('#graph').highcharts({
-      credits: false,
-      chart: {
-        type: 'column'
-      },
+  var column_options = {
+    credits: false,
+    chart: {
+      type: 'column'
+    },
+    title: {
+      text: null
+    },
+    xAxis: {
+      type: 'category'
+    },
+    yAxis: {
       title: {
         text: null
-      },
-      xAxis: {
-        type: 'category'
-      },
-      yAxis: {
-        title: {
-          text: null
-        }
-
-      },
-      legend: {
-        enabled: false
-      },
-      plotOptions: {
-        series: {
-          borderWidth: 0,
-          dataLabels: {
-            enabled: true,
-            format: '{point.y}'
-          }
-        }
-      },
-      tooltip: false,
-
-      series: [{
-        name: null,
-        colorByPoint: true,
-        data: series_data
-      }],
-      drilldown: {
-        series: drilldown_series
       }
-    });
+
+    },
+    legend: {
+      enabled: false
+    },
+    plotOptions: {
+      series: {
+        borderWidth: 0,
+        dataLabels: {
+          enabled: true,
+          format: '{point.y}'
+        }
+      }
+    },
+    tooltip: false,
+
+    series: [{
+      name: null,
+      colorByPoint: true,
+      data: null
+    }],
+    drilldown: {
+      series: null
+    }
+  };
+
+  var wday_options = $.extend(true, {}, column_options);
+  wday_options.series[0].data = wday_series_data;
+  wday_options.drilldown.series = wday_drilldown_series;
+
+  var hour_options = $.extend(true, {}, column_options);
+  hour_options.series[0].data = hour_series_data;
+  hour_options.drilldown.series = hour_drilldown_series;
+
+  var circle_options = {
+    chart: {
+      type: 'pie'
+    },
+    title: {
+      text: null
+    },
+    subtitle: false,
+    plotOptions: {
+      series: {
+        dataLabels: {
+          enabled: true,
+          format: '{point.name}: {point.y:.1f}%'
+        }
+      }
+    },
+
+    tooltip: false,
+    series: [{
+      name: 'Brands',
+      colorByPoint: true,
+      data: [{
+        name: 'メンション',
+        y: 56.33,
+        drilldown: 'Microsoft Internet Explorer'
+      }, {
+        name: 'URL付き',
+        y: 24.03,
+        drilldown: 'Chrome'
+      }, {
+        name: 'ハッシュタグ',
+        y: 10.38,
+        drilldown: 'Firefox'
+      }, {
+        name: 'テキストのみ',
+        y: 4.77,
+        drilldown: 'Safari'
+      }]
+    }],
+    drilldown: {
+      series: [{
+        name: 'Microsoft Internet Explorer',
+        id: 'Microsoft Internet Explorer',
+        data: [
+          ['v11.0', 24.13],
+          ['v8.0', 17.2],
+          ['v9.0', 8.11],
+          ['v10.0', 5.33],
+          ['v6.0', 1.06],
+          ['v7.0', 0.5]
+        ]
+      }, {
+        name: 'Chrome',
+        id: 'Chrome',
+        data: [
+          ['v40.0', 5],
+          ['v41.0', 4.32]
+        ]
+      }, {
+        name: 'Firefox',
+        id: 'Firefox',
+        data: [
+          ['v35', 2.76],
+          ['v36', 2.32]
+        ]
+      }, {
+        name: 'Safari',
+        id: 'Safari',
+        data: [
+          ['v8.0', 2.56],
+          ['v7.1', 0.77],
+          ['v5.1', 0.42],
+          ['v5.0', 0.3],
+          ['v6.1', 0.29],
+          ['v7.0', 0.26],
+          ['v6.2', 0.17]
+        ]
+      }, {
+        name: 'Opera',
+        id: 'Opera',
+        data: [
+          ['v12.x', 0.34],
+          ['v28', 0.24],
+          ['v27', 0.17],
+          ['v29', 0.16]
+        ]
+      }]
+    }
+  };
+
+  var kind_options = $.extend(true, {}, circle_options);
+
+  $(function () {
+    $('#wday_graph').highcharts(wday_options);
+    $('#hour_graph').highcharts(hour_options);
+    $('#kind_graph').highcharts(kind_options);
   });
 </script>
