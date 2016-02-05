@@ -195,65 +195,74 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/friends
   def friends
-    @user_items = @searched_tw_user.friends.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.friends.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/followers
   def followers
-    @user_items = @searched_tw_user.followers.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.followers.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.followers', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/removing
   def removing
-    @user_items = @searched_tw_user.removing.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.removing.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.removing', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/removed
   def removed
-    @user_items = @searched_tw_user.removed.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.removed.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.removed', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/only_following
   def only_following
-    @user_items = @searched_tw_user.only_following.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.only_following.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.only_following', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/only_followed
   def only_followed
-    @user_items = @searched_tw_user.only_followed.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.only_followed.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.only_followed', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/mutual_friends
   def mutual_friends
-    @user_items = @searched_tw_user.mutual_friends.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.mutual_friends.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.mutual_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/friends_in_common
   def friends_in_common
+    friendships = @searched_tw_user.friend_uids
     @user_items =
-      @searched_tw_user.friends_in_common(current_user.twitter_user).map{|f| {target: f} }
+      @searched_tw_user.friends_in_common(current_user.twitter_user).map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.friends_in_common', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/followers_in_common
   def followers_in_common
+    friendships = @searched_tw_user.friend_uids
     @user_items =
-      @searched_tw_user.followers_in_common(current_user.twitter_user).map{|f| {target: f} }
+      @searched_tw_user.followers_in_common(current_user.twitter_user).map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.followers_in_common', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
@@ -261,7 +270,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/replying
   def replying
     @searched_tw_user.client = client
-    @user_items = @searched_tw_user.replying.map { |u| {target: u} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.replying.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i)} }
     @name = t('search_menu.replying', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -269,8 +279,9 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/replied
   def replied
     @searched_tw_user.client = client
+    friendships = @searched_tw_user.friend_uids
     users = (@searched_tw_user.replied && @searched_tw_user.replied rescue [])
-    @user_items = users.map { |u| {target: u} }
+    @user_items = users.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i)} }
     @name = t('search_menu.replied', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -278,8 +289,9 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/favoriting
   def favoriting
     @searched_tw_user.client = client
+    friendships = @searched_tw_user.friend_uids
     users = (@searched_tw_user.favoriting && @searched_tw_user.favoriting rescue [])
-    @user_items = users.map { |u| {target: u} }
+    @user_items = users.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i)} }
     @name = t('search_menu.favoriting', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -287,7 +299,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/inactive_friends
   def inactive_friends
     @searched_tw_user.login_user = user_signed_in? ? current_user : nil
-    @user_items = @searched_tw_user.inactive_friends.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.inactive_friends.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.inactive_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -295,7 +308,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/inactive_followers
   def inactive_followers
     @searched_tw_user.login_user = user_signed_in? ? current_user : nil
-    @user_items = @searched_tw_user.inactive_followers.map{|f| {target: f} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = @searched_tw_user.inactive_followers.map{|f| {target: f, friendship: friendships.include?(f.uid.to_i)} }
     @name = t('search_menu.inactive_followers', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -311,7 +325,8 @@ class SearchesController < ApplicationController
   def close_friends
     @searched_tw_user.client = client
     users = (@searched_tw_user.close_friends && @searched_tw_user.close_friends rescue [])
-    @user_items = users.map { |u| {target: u} }
+    friendships = @searched_tw_user.friend_uids
+    @user_items = users.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i)} }
     @name = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end

@@ -64,6 +64,11 @@
 .user-item-carousel .media-right a {
   color: #333333;
   text-decoration: none;
+  display: table-cell;
+}
+
+.user-item-carousel .media-right span {
+  display: table-cell;
 }
 
 .user-item-carousel .media-right button {

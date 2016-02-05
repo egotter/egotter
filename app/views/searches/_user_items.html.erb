@@ -21,8 +21,24 @@
       </div>
 
       <div class="media-right">
+        <% if user_signed_in? && user_item.has_key?(:friendship) %>
+          <span>
+            <% if user_item[:friendship] %>
+              <button type="button" class="btn btn-success">
+                <span class="glyphicon glyphicon-ok"></span>
+              </button>
+            <% else %>
+              <button type="button" class="btn btn-default">
+                <span class="text-muted glyphicon glyphicon-plus"></span>
+              </button>
+            <% end %>
+          </span>
+        <% end %>
+
         <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), method: :post do %>
-          <button type="button" class="btn btn-info"><%= t('dictionary.do_search') %></button>
+          <button type="button" class="btn btn-info">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
         <% end %>
       </div>
     </div>
