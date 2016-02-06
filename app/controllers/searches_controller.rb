@@ -50,35 +50,11 @@ class SearchesController < ApplicationController
     tu.client = client
     tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
-    _replied =
-      begin
-        tu.replied && tu.replied
-      rescue => e
-        logger.warn "show replied #{e.class} #{e.message}"
-        logger.warn e.backtrace.join("\n")
-        []
-      end
-    _favoriting =
-      begin
-        tu.favoriting && tu.favoriting
-      rescue => e
-        logger.warn "show favoriting #{e.class} #{e.message}"
-        logger.warn e.backtrace.join("\n")
-        []
-      end
-    _close_friends =
-      begin
-        tu.close_friends && tu.close_friends
-      rescue => e
-        logger.warn "show close_friends #{e.class} #{e.message}"
-        logger.warn e.backtrace.join("\n")
-        []
-      end
 
     @menu_items = [
       {
         name: t('search_menu.close_friends', user: sn),
-        target: _close_friends,
+        target: tu.close_friends,
         path_method: method(:close_friends_path).to_proc
       }, {
         name: t('search_menu.usage_stats', user: sn),
@@ -110,11 +86,11 @@ class SearchesController < ApplicationController
         path_method: method(:replying_path).to_proc
       }, {
         name: t('search_menu.replied', user: sn),
-        target: _replied,
+        target: tu.replied,
         path_method: method(:replied_path).to_proc
       }, {
         name: t('search_menu.favoriting', user: sn),
-        target: _favoriting,
+        target: tu.favoriting,
         path_method: method(:favoriting_path).to_proc
       }, {
         name: t('search_menu.inactive_friends', user: sn),

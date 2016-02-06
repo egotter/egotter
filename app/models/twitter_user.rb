@@ -272,15 +272,32 @@ class TwitterUser < ActiveRecord::Base
 
   def replying
     screen_names = ExTwitter.new.select_screen_names_replied(statuses)
-    self.client.users(screen_names).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
+    _users = client.users(screen_names) && client.users(screen_names)
+    _users.map { |u| u.uid = u.id; u }
   end
 
   def replied
-    self.client.replied(self.screen_name).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
+    _replied =
+      begin
+        client.replied(self.screen_name) && client.replied(self.screen_name)
+      rescue => e
+        logger.warn "replied is failed #{e.class} #{e.message}"
+        logger.warn e.backtrace.join("\n")
+        []
+      end
+    _replied.map { |u| u.uid = u.id; u }
   end
 
   def favoriting
-    self.client.favoriting(self.uid.to_i).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
+    _favoriting =
+      begin
+        client.favoriting(self.uid.to_i) && client.favoriting(self.uid.to_i)
+      rescue => e
+        logger.warn "favoriting is failed #{e.class} #{e.message}"
+        logger.warn e.backtrace.join("\n")
+        []
+      end
+    _favoriting.map { |u| u.uid = u.id; u }
   end
 
   def inactive_friends
@@ -297,7 +314,15 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def close_friends
-    client.close_friends(uid, screen_name).map { |u| uu = Hashie::Mash.new(u.to_hash); uu.uid = uu.id; uu }
+    _close_friends =
+      begin
+        client.close_friends(uid, screen_name) && client.close_friends(uid, screen_name)
+      rescue => e
+        logger.warn "show close_friends #{e.class} #{e.message}"
+        logger.warn e.backtrace.join("\n")
+        []
+      end
+    _close_friends.map { |u| u.uid = u.id; u }
   end
 
   def usage_stats(options = {})
