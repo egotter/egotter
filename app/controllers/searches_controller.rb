@@ -1,10 +1,10 @@
 class SearchesController < ApplicationController
 
   SEARCH_MENUS = %i(show statuses friends followers removing removed only_following only_followed mutual_friends
-    common_friends followers_in_common replying replied favoriting inactive_friends inactive_followers
+    common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
-  NEED_LOGIN = %i(common_friends followers_in_common debug clear_result_cache)
+  NEED_LOGIN = %i(common_friends common_followers debug clear_result_cache)
   DEBUG_PAGES = %i(debug clear_result_cache)
 
   before_action :before_action_start,  only: NEED_VALIDATION
@@ -135,9 +135,9 @@ class SearchesController < ApplicationController
             target: [],
             path_method: method(:common_friends_path).to_proc
           }, {
-            name: t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
+            name: t('search_menu.common_followers', user: sn, login: t('dictionary.you')),
             target: [],
-            path_method: method(:followers_in_common_path).to_proc
+            path_method: method(:common_followers_path).to_proc
           },
         ]
       elsif user_signed_in? && current_user.uid.to_i != tu.uid.to_i
@@ -147,9 +147,9 @@ class SearchesController < ApplicationController
             target: tu.common_friends(current_user.twitter_user),
             path_method: method(:common_friends_path).to_proc
           }, {
-            name: t('search_menu.followers_in_common', user: sn, login: "@#{current_user.screen_name}"),
-            target: tu.followers_in_common(current_user.twitter_user),
-            path_method: method(:followers_in_common_path).to_proc
+            name: t('search_menu.common_followers', user: sn, login: "@#{current_user.screen_name}"),
+            target: tu.common_followers(current_user.twitter_user),
+            path_method: method(:common_followers_path).to_proc
           },
         ]
       elsif !user_signed_in?
@@ -159,9 +159,9 @@ class SearchesController < ApplicationController
             target: [],
             path_method: method(:common_friends_path).to_proc
           }, {
-            name: t('search_menu.followers_in_common', user: sn, login: t('dictionary.you')),
+            name: t('search_menu.common_followers', user: sn, login: t('dictionary.you')),
             target: [],
-            path_method: method(:followers_in_common_path).to_proc
+            path_method: method(:common_followers_path).to_proc
           },
         ]
       end
@@ -249,10 +249,10 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/followers_in_common
-  def followers_in_common
-    @user_items = build_user_items(@searched_tw_user.followers_in_common(current_user.twitter_user))
-    @name = t('search_menu.followers_in_common', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
+  # GET /searches/:screen_name/common_followers
+  def common_followers
+    @user_items = build_user_items(@searched_tw_user.common_followers(current_user.twitter_user))
+    @name = t('search_menu.common_followers', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
 

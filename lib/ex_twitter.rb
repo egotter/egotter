@@ -356,7 +356,7 @@ class ExTwitter < Twitter::REST::Client
     me.friends.to_a & you.friends.to_a
   end
 
-  def followers_in_common(me, you)
+  def common_followers(me, you)
     me.followers.to_a & you.followers.to_a
   end
 

@@ -72,7 +72,7 @@ ja:
     only_following: "%{user} が片思い"
     only_followed: "%{user} が片思われ"
     common_friends: "%{user} と %{login} の共通フォロー"
-    followers_in_common: "%{user} と %{login} の共通フォロワー"
+    common_followers: "%{user} と %{login} の共通フォロワー"
     replying: "%{user} がリプライした"
     replied: "%{user} がリプライされた"
     favoriting: "%{user} がよくふぁぼる"
