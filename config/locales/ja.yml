@@ -28,6 +28,8 @@ ja:
     search_by_egotter: "えごったーで検索"
     retry_search_by: "%{user} で再度検索"
     waiting: "%{user} のデータを検索中"
+    show_immediately: "過去の結果をすぐに表示"
+    show_immediately_msg: "過去の結果を表示します"
     continue_reading: "続きはこちら → "
     view_more: "続きを見る"
     view_more_needs_login: "ログインすると続きを見れます"

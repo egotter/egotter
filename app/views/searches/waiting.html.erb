@@ -4,6 +4,14 @@
   <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
 
+<% if TwitterUser.exists?(uid: @searched_tw_user.uid) %>
+  <div class="container show_immediately_btn" style="margin-top: 15px;">
+    <%= link_to t('dictionary.show_immediately'),
+                search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
+                class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;' %>
+  </div>
+<% end %>
+
 <div class="container login_btn" style="display: none; margin-top: 15px;">
   <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter),
               class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;' %>
@@ -25,15 +33,22 @@
     var waiting_msg = $('.waiting_msg');
     var retry_btn = $('.retry_btn');
     var login_btn = $('.login_btn');
+    var show_immediately_btn = $('.show_immediately_btn');
     var error_msg = $('.error_msg');
     var interval = 2000;
     var max_interval = 5000;
     var retry_count = 0;
     var max_retry_count = 10;
+    var stop_waiting = false;
     var too_many_requests = false;
     var unauthorized = false;
     var something_is_wrong = false;
     var response = null;
+
+    show_immediately_btn.click(function () {
+      stop_waiting = true;
+      waiting_msg.html('<%= t("dictionary.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
+    });
 
     function tic() {
       $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
@@ -41,8 +56,10 @@
             console.log(res, interval);
 
             if (res.status) {
-              interval *= 1000;
-              window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
+              if (!stop_waiting) {
+                interval *= 1000;
+                window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
+              }
             } else {
               if (res.reason == '<%= BackgroundSearchLog::TooManyRequests %>') {
                 too_many_requests = true;
@@ -63,6 +80,7 @@
       retry_count++;
 
       if (too_many_requests) {
+        show_immediately_btn.hide();
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.too_many_requests") %>');
           retry_btn.show();
@@ -71,6 +89,7 @@
           login_btn.show();
         }
       } else if (unauthorized) {
+        show_immediately_btn.hide();
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.unauthorized") %>');
           retry_btn.show();
@@ -79,6 +98,7 @@
           login_btn.show();
         }
       } else if (something_is_wrong) {
+        show_immediately_btn.hide();
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.something_is_wrong") %>');
           retry_btn.show();
@@ -87,13 +107,17 @@
             error_msg.text(response.message);
           }
         } else {
+          show_immediately_btn.hide();
           waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
           login_btn.show();
         }
       } else {
         if (retry_count < max_retry_count) {
-          setTimeout(tic, interval);
+          if (!stop_waiting) {
+            setTimeout(tic, interval);
+          }
         } else {
+          show_immediately_btn.hide();
           if (is_login) {
             waiting_msg.html('<%= t("after_sign_in.please_retry", user: @searched_tw_user.name) %>');
             retry_btn.show();
