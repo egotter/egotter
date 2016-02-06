@@ -334,6 +334,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/usage_stats
   def usage_stats
     @searched_tw_user.client = client
+    @wday_series_data_7days, @wday_drilldown_series_7days, @hour_series_data_7days, @hour_drilldown_series_7days =
+      @searched_tw_user.usage_stats(days: 7)
     @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series =
       @searched_tw_user.usage_stats
     @name = t('search_menu.usage_stats', user: "@#{@searched_tw_user.screen_name}")

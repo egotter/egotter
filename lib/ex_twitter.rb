@@ -562,12 +562,16 @@ class ExTwitter < Twitter::REST::Client
     end
   end
 
-  def usage_stats(user)
-    seven_days_ago = 7.days.ago
-    tweets =
-      user_timeline(user).
-        map { |t| t.created_at = ActiveSupport::TimeZone['UTC'].parse(t.created_at.to_s); t }.
-        select { |t| t.created_at > seven_days_ago }
+  def usage_stats(user, options = {})
+    n_days_ago = options.has_key?(:days) ? options[:days].days.ago : 365.days.ago
+    tweets = options.has_key?(:tweets) ? options[:tweets] : nil
+    if tweets.nil?
+      tweets =
+        user_timeline(user).
+          map { |t| t.kind_of?(Hashie::Mash) ? t : Hashie::Mash.new(t.attrs) }.
+          map { |t| t.created_at = ActiveSupport::TimeZone['UTC'].parse(t.created_at.to_s); t }.
+          select { |t| t.created_at > n_days_ago }
+    end
     [
       usage_stats_wday_series_data(tweets),
       usage_stats_wday_drilldown_series(tweets),

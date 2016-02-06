@@ -5,7 +5,15 @@
     <small><%= @name %></small>
   </h2>
   <div id="wday_graph" style="height: 200px; margin: 0 auto"></div>
+  <div id="wday_graph_7days" style="height: 200px; margin: 0 auto"></div>
+
+  <hr style="border-color: #999999">
+
   <div id="hour_graph" style="height: 200px; margin: 0 auto"></div>
+  <div id="hour_graph_7days" style="height: 200px; margin: 0 auto"></div>
+
+  <hr style="border-color: #999999">
+
   <div id="kind_graph" style="height: 200px; margin: 0 auto"></div>
 </div>
 
@@ -14,6 +22,11 @@
   var wday_drilldown_series = <%= raw JSON.pretty_generate(@wday_drilldown_series) %>;
   var hour_series_data = <%= raw JSON.pretty_generate(@hour_series_data) %>;
   var hour_drilldown_series = <%= raw JSON.pretty_generate(@hour_drilldown_series) %>;
+
+  var wday_series_data_7days = <%= raw JSON.pretty_generate(@wday_series_data_7days) %>;
+  var wday_drilldown_series_7days = <%= raw JSON.pretty_generate(@wday_drilldown_series_7days) %>;
+  var hour_series_data_7days = <%= raw JSON.pretty_generate(@hour_series_data_7days) %>;
+  var hour_drilldown_series_7days = <%= raw JSON.pretty_generate(@hour_drilldown_series_7days) %>;
 
   var column_options = {
     credits: false,
@@ -57,14 +70,24 @@
   };
 
   var wday_options = $.extend(true, {}, column_options);
-  wday_options.title.text = '曜日ごとのツイート数';
+  wday_options.title.text = '曜日ごとのツイート数(直近600ツイート)';
   wday_options.series[0].data = wday_series_data;
   wday_options.drilldown.series = wday_drilldown_series;
 
+  var wday_7days_options = $.extend(true, {}, column_options);
+  wday_7days_options.title.text = '曜日ごとのツイート数(直近1週間)';
+  wday_7days_options.series[0].data = wday_series_data_7days;
+  wday_7days_options.drilldown.series = wday_drilldown_series_7days;
+
   var hour_options = $.extend(true, {}, column_options);
-  hour_options.title.text = '時間帯ごとのツイート数';
+  hour_options.title.text = '時間帯ごとのツイート数(直近1週間)';
   hour_options.series[0].data = hour_series_data;
   hour_options.drilldown.series = hour_drilldown_series;
+
+  var hour_7days_options = $.extend(true, {}, column_options);
+  hour_7days_options.title.text = '時間帯ごとのツイート数(直近1週間)';
+  hour_7days_options.series[0].data = hour_series_data_7days;
+  hour_7days_options.drilldown.series = hour_drilldown_series_7days;
 
   var circle_options = {
     chart: {
@@ -160,7 +183,11 @@
 
   $(function () {
     $('#wday_graph').highcharts(wday_options);
+    $('#wday_graph_7days').highcharts(wday_7days_options);
+
     $('#hour_graph').highcharts(hour_options);
+    $('#hour_graph_7days').highcharts(hour_7days_options);
+
     $('#kind_graph').highcharts(kind_options);
   });
 </script>
