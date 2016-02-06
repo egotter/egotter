@@ -71,7 +71,7 @@ ja:
     mutual_friends: "%{user} が両思い"
     only_following: "%{user} が片思い"
     only_followed: "%{user} が片思われ"
-    friends_in_common: "%{user} と %{login} の共通フォロー"
+    common_friends: "%{user} と %{login} の共通フォロー"
     followers_in_common: "%{user} と %{login} の共通フォロワー"
     replying: "%{user} がリプライした"
     replied: "%{user} がリプライされた"

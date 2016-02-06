@@ -250,9 +250,9 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.mutual_friends(self)
   end
 
-  def friends_in_common(other)
+  def common_friends(other)
     return [] if other.blank?
-    ExTwitter.new.friends_in_common(self, other)
+    ExTwitter.new.common_friends(self, other)
   end
 
   def followers_in_common(other)

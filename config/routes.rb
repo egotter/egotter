@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/only_following', to: 'searches#only_following', as: :only_following
   get 'searches/:screen_name/only_followed', to: 'searches#only_followed', as: :only_followed
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
-  get 'searches/:screen_name/friends_in_common', to: 'searches#friends_in_common', as: :friends_in_common
+  get 'searches/:screen_name/common_friends', to: 'searches#common_friends', as: :common_friends
   get 'searches/:screen_name/followers_in_common', to: 'searches#followers_in_common', as: :followers_in_common
   get 'searches/:screen_name/replying', to: 'searches#replying', as: :replying
   get 'searches/:screen_name/replied', to: 'searches#replied', as: :replied
