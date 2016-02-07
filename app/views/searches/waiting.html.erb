@@ -48,6 +48,7 @@
     show_immediately_btn.on('click', function () {
       stop_waiting = true;
       waiting_msg.html('<%= t("dictionary.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
+      show_immediately_btn.hide();
     });
 
     function tic() {
