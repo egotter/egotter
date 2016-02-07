@@ -33,13 +33,13 @@
       exporting: false,
       chart: {
         type: 'pie',
-        margin: [0, -60, -10, 0],
+        margin: [0, -60, 0, 0],
         spacing: [0, 0, 0, 0]
       },
       legend: {
         align: 'left',
         layout: 'vertical',
-        verticalAlign: 'bottom',
+        verticalAlign: 'middle',
         x: 0,
         y: 0,
         backgroundColor: 'rgba(255, 255, 255, 0.0)'
@@ -84,12 +84,12 @@
                   style: '') %>
 
       <% if menu_item.has_key?(:graph) %>
-        <div class="test" style="height: 70px; width: 150px; margin-right: 10px;"></div>
+        <div id="<%= menu_item.object_id %>" style="height: 70px; width: 150px;"></div>
         <script>
           $(function () {
             var graph_option = $.extend(true, {}, window.graph_base_option);
             graph_option.series[0].data = <%= raw menu_item[:graph].to_json %>;
-            $('.test').highcharts(graph_option);
+            $('#<%= menu_item.object_id %>').highcharts(graph_option);
           });
         </script>
       <% end %>

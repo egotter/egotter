@@ -72,6 +72,7 @@ class SearchesController < ApplicationController
       }, {
         name: t('search_menu.one_sided_following', user: sn),
         target: tu.one_sided_following,
+        graph: tu.one_sided_following_graph,
         path_method: method(:one_sided_following_path).to_proc
       }, {
         name: t('search_menu.one_sided_followers', user: sn),
@@ -516,6 +517,7 @@ class SearchesController < ApplicationController
   end
 
   def result_cache_exists?
+    return false
     redis.exists(result_cache_key)
   end
 

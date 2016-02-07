@@ -66,6 +66,8 @@ ja:
     close_friends: "仲良し"
     friends: "友人"
     acquaintance: "知人"
+    following: "フォロー"
+    one_sided_following: "片思い"
 
   search_menu:
     statuses: "%{user} のツイート"

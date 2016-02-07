@@ -338,6 +338,15 @@ class TwitterUser < ActiveRecord::Base
     ]
   end
 
+  def one_sided_following_graph
+    friends_size = friends.size
+    one_sided_size = one_sided_following.size
+    [
+      {name: I18n.t('legend.one_sided_following'), y: (one_sided_size.to_f / friends_size * 100), sliced: true, selected: true},
+      {name: I18n.t('legend.following'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
+    ]
+  end
+
   def percentile_index(ary, percentile = 0.0)
     ((ary.length * percentile).ceil) - 1
   end
