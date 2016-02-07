@@ -63,6 +63,7 @@ ja:
   view_more_btn:
     same_user: "違うユーザーを検索すると結果が見れます"
   legend:
+    replying: "リプライ"
     close_friends: "仲良し"
     friends: "友人"
     acquaintance: "知人"

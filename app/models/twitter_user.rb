@@ -325,6 +325,15 @@ class TwitterUser < ActiveRecord::Base
     _close_friends.map { |u| u.uid = u.id; u }
   end
 
+  def replying_graph
+    statuses_size = statuses.size
+    replying_size = replying.size
+    [
+      {name: I18n.t('legend.replying'), y: (replying_size.to_f / statuses_size * 100)},
+      {name: I18n.t('legend.others'), y: ((statuses_size - replying_size).to_f / statuses_size * 100)}
+    ]
+  end
+
   def close_friends_graph
     items = close_friends(min: 0, max: 100)
     items_size = items.size

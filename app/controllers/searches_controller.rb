@@ -78,6 +78,7 @@ class SearchesController < ApplicationController
       }, {
         name: t('search_menu.replying', user: sn),
         target: tu.replying,
+        graph: tu.replying_graph,
         path_method: method(:replying_path).to_proc
       }, {
         name: t('search_menu.replied', user: sn),
@@ -524,6 +525,7 @@ class SearchesController < ApplicationController
 
   def result_cache_exists?
     redis.exists(result_cache_key)
+    false
   end
 
   def result_cache
