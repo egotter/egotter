@@ -344,7 +344,7 @@ class ExTwitter < Twitter::REST::Client
     me.friends.to_a - me.followers.to_a
   end
 
-  def only_followed(me)
+  def one_sided_followers(me)
     me.followers.to_a - me.friends.to_a
   end
 

@@ -242,8 +242,8 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.one_sided_following(self)
   end
 
-  def only_followed
-    ExTwitter.new.only_followed(self)
+  def one_sided_followers
+    ExTwitter.new.one_sided_followers(self)
   end
 
   def mutual_friends
