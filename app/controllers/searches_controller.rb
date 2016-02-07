@@ -53,15 +53,6 @@ class SearchesController < ApplicationController
 
     @menu_items = [
       {
-        name: t('search_menu.close_friends', user: sn),
-        target: tu.close_friends,
-        graph: tu.close_friends_graph,
-        path_method: method(:close_friends_path).to_proc
-      }, {
-        name: t('search_menu.usage_stats', user: sn),
-        target: [],
-        path_method: method(:usage_stats_path).to_proc
-      }, {
         name: t('search_menu.removing', user: sn),
         target: tu.removing,
         path_method: method(:removing_path).to_proc
@@ -145,6 +136,19 @@ class SearchesController < ApplicationController
           },
         ]
       end
+
+    @menu_close_friends = {
+      name: t('search_menu.close_friends', user: sn),
+      target: tu.close_friends,
+      graph: tu.close_friends_graph,
+      path_method: method(:close_friends_path).to_proc
+    }
+
+    @menu_usage_stats = {
+      name: t('search_menu.usage_stats', user: sn),
+      graph: tu.usage_stats_graph,
+      path_method: method(:usage_stats_path).to_proc
+    }
 
     _clusters_belong_to = tu.clusters_belong_to
     @menu_clusters_belong_to = {

@@ -343,7 +343,7 @@ class TwitterUser < ActiveRecord::Base
     one_sided_size = one_sided_following.size
     [
       {name: I18n.t('legend.one_sided_following'), y: (one_sided_size.to_f / friends_size * 100)},
-      {name: I18n.t('legend.mutual_friends'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
+      {name: I18n.t('legend.others'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
     ]
   end
 
@@ -352,7 +352,7 @@ class TwitterUser < ActiveRecord::Base
     one_sided_size = one_sided_followers.size
     [
       {name: I18n.t('legend.one_sided_followers'), y: (one_sided_size.to_f / followers_size * 100)},
-      {name: I18n.t('legend.mutual_friends'), y: ((followers_size - one_sided_size).to_f / followers_size * 100)}
+      {name: I18n.t('legend.others'), y: ((followers_size - one_sided_size).to_f / followers_size * 100)}
     ]
   end
 
@@ -363,6 +363,10 @@ class TwitterUser < ActiveRecord::Base
       {name: I18n.t('legend.mutual_friends'), y: (mutual_friends_size.to_f / friendship_size * 100)},
       {name: I18n.t('legend.others'), y: ((friendship_size - mutual_friends_size).to_f / friendship_size * 100)}
     ]
+  end
+
+  def usage_stats_graph
+    client.usage_stats(uid.to_i)
   end
 
   def percentile_index(ary, percentile = 0.0)

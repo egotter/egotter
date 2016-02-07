@@ -220,5 +220,55 @@
   padding-top: 5px;
   padding-bottom: 5px;
 }
-
 /* _profile_overview.html.erb end */
+
+/* _search_menu_items.html.erb start */
+.menu-items.media {
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 15px;
+}
+
+.menu-items .media-body {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.menu-items .media-heading {
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.menu-items .media-body a {
+  display: table-cell;
+}
+
+.menu-items .media-body a img {
+  border-right: 3px solid #ffffff;
+}
+
+.menu-items .media-right {
+  padding: 0px;
+}
+
+.menu-items .close-friends-chart {
+  margin-right: 15px;
+  height: 70px;
+  width: 120px;
+  border: 1px solid #e6e6e6;
+}
+
+.menu-items .usage-stats-chart {
+  height: 100px;
+}
+
+.menu-items .common-chart {
+  margin-right: 15px;
+  height: 70px;
+  width: 120px;
+  border: 1px solid #e6e6e6;
+}
+
+.menu-items .container a {
+  margin-top: 15px;
+}
+/* _search_menu_items.html.erb end */

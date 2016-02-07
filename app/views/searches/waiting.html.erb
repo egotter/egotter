@@ -45,7 +45,7 @@
     var something_is_wrong = false;
     var response = null;
 
-    show_immediately_btn.click(function () {
+    show_immediately_btn.on('click', function () {
       stop_waiting = true;
       waiting_msg.html('<%= t("dictionary.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
     });
@@ -58,6 +58,7 @@
             if (res.status) {
               if (!stop_waiting) {
                 interval *= 1000;
+                show_immediately_btn.hide();
                 waiting_msg.html('<%= t("dictionary.waiting_is_finished_msg") %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
                 window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
               }

@@ -18,76 +18,27 @@
 </div>
 
 <script>
-  var wday_series_data = <%= raw JSON.pretty_generate(@wday_series_data) %>;
-  var wday_drilldown_series = <%= raw JSON.pretty_generate(@wday_drilldown_series) %>;
-  var hour_series_data = <%= raw JSON.pretty_generate(@hour_series_data) %>;
-  var hour_drilldown_series = <%= raw JSON.pretty_generate(@hour_drilldown_series) %>;
+  var graph_options = window.usage_stats_column_chart_options;
 
-  var wday_series_data_7days = <%= raw JSON.pretty_generate(@wday_series_data_7days) %>;
-  var wday_drilldown_series_7days = <%= raw JSON.pretty_generate(@wday_drilldown_series_7days) %>;
-  var hour_series_data_7days = <%= raw JSON.pretty_generate(@hour_series_data_7days) %>;
-  var hour_drilldown_series_7days = <%= raw JSON.pretty_generate(@hour_drilldown_series_7days) %>;
-
-  var column_options = {
-    credits: false,
-    chart: {
-      type: 'column'
-    },
-    title: {
-      text: null
-    },
-    xAxis: {
-      type: 'category'
-    },
-    yAxis: {
-      title: {
-        text: null
-      }
-
-    },
-    legend: {
-      enabled: false
-    },
-    plotOptions: {
-      series: {
-        borderWidth: 0,
-        dataLabels: {
-          enabled: true,
-          format: '{point.y}'
-        }
-      }
-    },
-    tooltip: false,
-
-    series: [{
-      name: null,
-      colorByPoint: true,
-      data: null
-    }],
-    drilldown: {
-      series: null
-    }
-  };
-
-  var wday_options = $.extend(true, {}, column_options);
+  var wday_options = $.extend(true, {}, graph_options);
   wday_options.title.text = '曜日ごとのツイート数(直近600ツイート)';
-  wday_options.series[0].data = wday_series_data;
-  wday_options.drilldown.series = wday_drilldown_series;
+  wday_options.series[0].data = <%= raw @wday_series_data.to_json %>;
+  wday_options.drilldown.series = <%= raw @wday_drilldown_series.to_json %>;
 
-  var wday_7days_options = $.extend(true, {}, column_options);
+  var wday_7days_options = $.extend(true, {}, graph_options);
   wday_7days_options.title.text = '曜日ごとのツイート数(直近1週間)';
-  wday_7days_options.series[0].data = wday_series_data_7days;
-  wday_7days_options.drilldown.series = wday_drilldown_series_7days;
+  wday_7days_options.series[0].data = <%= raw @wday_series_data_7days.to_json %>;
+  wday_7days_options.drilldown.series = <%= raw @wday_drilldown_series_7days.to_json %>;
 
-  var hour_options = $.extend(true, {}, column_options);
+  var hour_options = $.extend(true, {}, graph_options);
   hour_options.title.text = '時間帯ごとのツイート数(直近1週間)';
-  hour_options.series[0].data = hour_series_data;
-  hour_options.drilldown.series = hour_drilldown_series;
+  hour_options.series[0].data = <%= raw @hour_series_data.to_json %>;
+  hour_options.drilldown.series = <%= raw @hour_drilldown_series.to_json %>;
 
-  var hour_7days_options = $.extend(true, {}, column_options);
+  var hour_7days_options = $.extend(true, {}, graph_options);
   hour_7days_options.title.text = '時間帯ごとのツイート数(直近1週間)';
-  hour_7days_options.series[0].data = hour_series_data_7days;
-  hour_7days_options.drilldown.series = hour_drilldown_series_7days;
+  hour_7days_options.series[0].data = <%= raw @hour_series_data_7days.to_json %>;
+  hour_7days_options.drilldown.series = <%= raw @hour_drilldown_series_7days.to_json %>;
 
   var circle_options = {
     chart: {
