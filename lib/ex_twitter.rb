@@ -396,10 +396,22 @@ class ExTwitter < Twitter::REST::Client
     processed_users.sort_by{|p| p[:i] }.map{|p| p[:users] }.flatten.compact
   end
 
+  def called_by_authenticated_user?(user)
+    authenticated_user = self.old_user
+    if user.kind_of?(String)
+      authenticated_user.screen_name == user
+    elsif user.kind_of?(Integer)
+      authenticated_user.id.to_i == user
+    else
+      raise user.inspect
+    end
+  end
+
   # can't get tweets if you are not authenticated by specified user
   alias :old_home_timeline :home_timeline
   def home_timeline(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
+    raise 'this method must be called by authenticated user' unless called_by_authenticated_user?(args[0])
     fetch_cache_or_call_api(:home_timeline, args[0]) {
       options = {count: 200, include_rts: true, call_count: 3}.merge(args.extract_options!)
       collect_with_max_id(:old_home_timeline, options)
@@ -420,6 +432,7 @@ class ExTwitter < Twitter::REST::Client
   alias :old_mentions_timeline :mentions_timeline
   def mentions_timeline(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
+    raise 'this method must be called by authenticated user' unless called_by_authenticated_user?(args[0])
     fetch_cache_or_call_api(:mentions_timeline, args[0]) {
       options = {count: 200, include_rts: true, call_count: 1}.merge(args.extract_options!)
       collect_with_max_id(:old_mentions_timeline, options)

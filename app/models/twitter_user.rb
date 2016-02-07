@@ -125,15 +125,16 @@ class TwitterUser < ActiveRecord::Base
     self
   end
 
-  def self.build(client, user, option = {})
+  def self.build(client, _user, option = {})
     option[:all] = true unless option.has_key?(:all)
 
-    _raw_me = client.user(user) && client.user(user, cache: :force)
+    user = client.user(_user) && client.user(_user, cache: :force)
+    uid_i = user.id.to_i
 
     tu = TwitterUser.new do |tu|
-      tu.uid = _raw_me.id.to_i
-      tu.screen_name = _raw_me.screen_name
-      tu.user_info = _raw_me.slice(*PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
+      tu.uid = uid_i
+      tu.screen_name = user.screen_name
+      tu.user_info = user.slice(*PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
     end
     tu.client = client
     tu.login_user = option.has_key?(:login_user) ? option[:login_user] : nil
@@ -141,13 +142,22 @@ class TwitterUser < ActiveRecord::Base
 
     if option[:all]
       client.fetch_parallelly([
-                                {method: :friends_advanced, args: [tu.uid.to_i]},
-                                {method: :followers_advanced, args: [tu.uid.to_i]},
-                                {method: :user_timeline, args: [tu.uid.to_i]},
+                                {method: :friends_advanced, args: [uid_i]},
+                                {method: :followers_advanced, args: [uid_i]},
+                                {method: :user_timeline, args: [uid_i]},
                                 {method: :search, args: [tu.screen_name.to_s]}])
-      _friends = client.friends_advanced(tu.uid.to_i, cache: :force)
-      _followers = client.followers_advanced(tu.uid.to_i, cache: :force)
-      _statuses = client.user_timeline(tu.uid.to_i, cache: :force)
+
+      if tu.login_user.present? && tu.egotter_context == 'search' &&
+        tu.login_user.uid.to_i == uid_i && tu.client.uid.to_i == uid_i
+        client.fetch_parallelly([
+                                  {method: :home_timeline, args: [uid_i]},
+                                  {method: :mentions_timeline, args: [uid_i]}])
+      end
+
+      # TODO Maybe this method call is time loss as it parses json.
+      _friends = client.friends_advanced(uid_i, cache: :force)
+      _followers = client.followers_advanced(uid_i, cache: :force)
+      _statuses = client.user_timeline(uid_i, cache: :force)
 
       tu.friends = _friends.map do |f|
         Friend.new({
