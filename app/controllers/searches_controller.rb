@@ -83,6 +83,7 @@ class SearchesController < ApplicationController
       }, {
         name: t('search_menu.replied', user: sn),
         target: tu.replied,
+        graph: tu.replied_graph,
         path_method: method(:replied_path).to_proc
       }, {
         name: t('search_menu.favoriting', user: sn),

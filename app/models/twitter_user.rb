@@ -352,6 +352,16 @@ class TwitterUser < ActiveRecord::Base
     ]
   end
 
+  def replied_graph
+    statuses = client.home_timeline(uid.to_i) && client.home_timeline(uid.to_i)
+    statuses_size = statuses.size
+    replied_size = client.select_uids_replying_to(statuses).size
+    [
+      {name: I18n.t('legend.replying'), y: (replied_size.to_f / statuses_size * 100)},
+      {name: I18n.t('legend.others'), y: ((statuses_size - replied_size).to_f / statuses_size * 100)}
+    ]
+  end
+
   def close_friends_graph
     items = close_friends(min: 0, max: 100)
     items_size = items.size

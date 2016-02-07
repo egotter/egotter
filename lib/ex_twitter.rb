@@ -98,6 +98,8 @@ class ExTwitter < Twitter::REST::Client
           "str#{delim}#{user.to_s}"
         when method_name == :mentions_timeline
           "myself#{delim}#{user.to_s}"
+        when method_name == :home_timeline
+          "myself#{delim}#{user.to_s}"
         when user.kind_of?(Integer)
           "id#{delim}#{user.to_s}"
         when user.kind_of?(Array) && user.first.kind_of?(Integer)
@@ -124,7 +126,7 @@ class ExTwitter < Twitter::REST::Client
     start_t = Time.now
     result =
       case caller_name
-        when :user_timeline, :mentions_timeline, :favorites # Twitter::Tweet
+        when :user_timeline, :home_timeline, :mentions_timeline, :favorites # Twitter::Tweet
           JSON.pretty_generate(obj.map { |o| o.attrs })
 
         when :search # Hash
@@ -392,6 +394,16 @@ class ExTwitter < Twitter::REST::Client
     end
 
     processed_users.sort_by{|p| p[:i] }.map{|p| p[:users] }.flatten.compact
+  end
+
+  # can't get tweets if you are not authenticated by specified user
+  alias :old_home_timeline :home_timeline
+  def home_timeline(*args)
+    raise 'this method needs at least one param to use cache' if args.empty?
+    fetch_cache_or_call_api(:home_timeline, args[0]) {
+      options = {count: 200, include_rts: true, call_count: 3}.merge(args.extract_options!)
+      collect_with_max_id(:old_home_timeline, options)
+    }
   end
 
   # can't get tweets if you are not authenticated by specified user
