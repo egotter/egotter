@@ -327,29 +327,16 @@ class SearchesController < ApplicationController
     render text: replace_csrf_meta_tags(html, 0.0, redis.ttl(key))
   end
 
-  # # GET /searches/1/edit
-  # def edit
-  # end
-
   # POST /searches
-  # POST /searches.json
   def create
-    begin
-      searched_raw_tw_user = client.user(search_sn) && client.user(search_sn) # call 2 times to use cache
-      searched_uid, searched_sn = searched_raw_tw_user.id.to_i, searched_raw_tw_user.screen_name.to_s
-    rescue Twitter::Error::TooManyRequests => e
-      return redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
-    rescue => e
-      logger.warn e.message
-      return redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
-    end
+    searched_uid, searched_sn = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
 
     create_search_log('create', searched_uid, searched_sn, search_sn)
 
-    BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), {
+    bsw_options = {
       user_id: user_signed_in? ? current_user.id : -1,
       uid: searched_uid}
-    )
+    BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), bsw_options)
 
     if result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
@@ -359,11 +346,11 @@ class SearchesController < ApplicationController
     redirect_to waiting_path(screen_name: searched_sn, id: searched_uid)
   end
 
+  # GET /searches/:screen_name/waiting
   # POST /searches/:screen_name/waiting
   def waiting
     if request.post?
-      raw_user = client.user(params[:id].to_i)
-      uid = raw_user.id.to_i
+      uid = @twitter_user.uid.to_i
       case
         when BackgroundSearchLog.processing?(uid)
           render json: {status: false, reason: 'processing'}
@@ -377,13 +364,7 @@ class SearchesController < ApplicationController
           raise BackgroundSearchLog::SomethingIsWrong
       end
     else
-      @searched_tw_user = TwitterUser.build(client, @twitter_user.uid.to_i, all: false)
-    end
-  rescue Twitter::Error::TooManyRequests => e
-    if request.post?
-      render json: {status: false, reason: BackgroundSearchLog::TooManyRequests}
-    else
-      redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+      @searched_tw_user = @twitter_user
     end
   end
 
@@ -449,6 +430,7 @@ class SearchesController < ApplicationController
   rescue Twitter::Error::NotFound => e
     redirect_to '/', alert: t('before_sign_in.not_found')
   rescue => e
+    logger.warn "#{e.class} #{e.message}"
     redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
   end
 
@@ -477,11 +459,15 @@ class SearchesController < ApplicationController
 
   def too_many_friends
     if @twitter_user.too_many_friends?
-      alert_msg = t('before_sign_in.too_many_friends',
-                    user: twitter_link(@twitter_user.screen_name),
-                    friends: @twitter_user.friends_count,
-                    followers: @twitter_user.followers_count,
-                    sign_in_link: sign_in_link)
+      alert_msg =
+        if user_signed_in?
+          t('before_sign_in.too_many_friends', user: twitter_link(@twitter_user.screen_name),
+            friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
+        else
+          t('before_sign_in.many_friends', user: twitter_link(@twitter_user.screen_name),
+            friends: @twitter_user.friends_count, followers: @twitter_user.followers_count,
+            sign_in_link: sign_in_link)
+        end
       redirect_to '/', alert: alert_msg
     end
   rescue Twitter::Error::TooManyRequests => e
