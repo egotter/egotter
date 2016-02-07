@@ -44,7 +44,7 @@ class SearchesController < ApplicationController
 
     if !nocache && result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
-      return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time)
+      return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key))
     end
 
     tu.client = client
@@ -170,7 +170,7 @@ class SearchesController < ApplicationController
       path_method: method(:update_histories_path).to_proc
     }
 
-    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time)
+    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key))
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -320,11 +320,11 @@ class SearchesController < ApplicationController
     key = "searches:new:#{user_or_anonymous}"
     html =
       if flash.empty?
-        redis.fetch(key, 60 * 180) { render_to_string }
+        redis.fetch(key, 3.hours) { render_to_string }
       else
         render_to_string
       end
-    render text: replace_csrf_meta_tags(html, 0.0)
+    render text: replace_csrf_meta_tags(html, 0.0, redis.ttl(key))
   end
 
   # # GET /searches/1/edit
@@ -541,9 +541,10 @@ class SearchesController < ApplicationController
     html
   end
 
-  def replace_csrf_meta_tags(html, time)
-    html.sub('<!-- csrf_meta_tags -->', "#{view_context.csrf_meta_tags}<!-- replaced -->").
-      sub('<!-- search_elapsed_time -->', view_context.number_with_precision(time, precision: 1))
+  def replace_csrf_meta_tags(html, time = 0.0, ttl = 0)
+    html.sub('<!-- csrf_meta_tags -->', view_context.csrf_meta_tags).
+      sub('<!-- search_elapsed_time -->', view_context.number_with_precision(time, precision: 1)).
+      sub('<!-- cache_ttl -->', (ttl / 60.seconds).to_s)
   end
 
   def user_or_anonymous

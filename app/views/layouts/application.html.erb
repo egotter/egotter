@@ -152,6 +152,7 @@
       <a style="text-decoration: none;" href="https://twitter.com/ego_tter" target="_blank"><%= t('dictionary.official_account') %></a>&nbsp;&nbsp;
       <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
       <% if action_name.in?(%w(show)) %><span><!-- search_elapsed_time --></span><% end %>
+      <% if action_name.in?(%w(new show)) %><span><!-- cache_ttl --></span><% end %>
     </p>
   </div>
 </footer>
