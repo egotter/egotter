@@ -523,7 +523,6 @@ class SearchesController < ApplicationController
   end
 
   def result_cache_exists?
-    return false
     redis.exists(result_cache_key)
   end
 
