@@ -63,10 +63,10 @@ ja:
   view_more_btn:
     same_user: "違うユーザーを検索すると結果が見れます"
   legend:
-    inactive_friends: "いない"
-    not_inactive_friends: "いる"
-    inactive_followers: "いない"
-    not_inactive_followers: "いる"
+    inactive_friends: "対象者"
+    not_inactive_friends: "それ以外"
+    inactive_followers: "対象者"
+    not_inactive_followers: "それ以外"
     replying: "リプライ"
     close_friends: "仲良し"
     friends: "友人"

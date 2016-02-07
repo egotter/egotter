@@ -1,6 +1,6 @@
 window.common_pie_chart_options = {
   credits: false,
-  colors: ['#2aa198', '#b58900', '#cb4b16', '#dc322f', '#d33682', '#6c71c4', '#268bd2', '#859900'],
+  colors: ['rgba(181, 137, 0, 1.0)', 'rgba(203, 75, 22, 0.2)', 'rgba(220, 50, 47, 0.2)'],
   exporting: false,
   chart: {
     type: 'pie',

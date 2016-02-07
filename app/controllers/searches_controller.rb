@@ -117,11 +117,11 @@ class SearchesController < ApplicationController
       elsif user_signed_in? && current_user.uid.to_i != tu.uid.to_i
         [
           {
-            name: t('search_menu.common_friends', user: sn, login: "@#{current_user.screen_name}"),
+            name: t('search_menu.common_friends', user: sn, login: t('dictionary.you')),
             target: tu.common_friends(current_user.twitter_user),
             path_method: method(:common_friends_path).to_proc
           }, {
-            name: t('search_menu.common_followers', user: sn, login: "@#{current_user.screen_name}"),
+            name: t('search_menu.common_followers', user: sn, login: t('dictionary.you')),
             target: tu.common_followers(current_user.twitter_user),
             path_method: method(:common_followers_path).to_proc
           },

@@ -8,7 +8,7 @@
     <% close_friends[:target].slice(0..2).each do |user| %>
       <%= link_to searches_path(screen_name: user.screen_name, id: user.uid),
                   method: :post do %>
-        <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>">
+        <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
       <% end %>
     <% end %>
   </div>
@@ -97,7 +97,7 @@
       <% menu_item[:target].slice(0..2).each do |user| %>
         <%= link_to searches_path(screen_name: user.screen_name, id: user.uid),
                     method: :post do %>
-          <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>">
+          <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
         <% end %>
       <% end %>
     </div>
@@ -147,7 +147,7 @@
           <div class="col-xs-12">
             <% menu_item[:target].slice(0..2).each do |user| %>
               <%= link_to searches_path(screen_name: user.screen_name, id: user.uid), method: :post do %>
-                <img src="<%= user.profile_image_url_https.to_s %>" style="border: 1px solid #eeeeee;" alt="<%= user.screen_name %>">
+                <img src="<%= user.profile_image_url_https.to_s %>" style="border: 1px solid #eeeeee;" alt="<%= user.screen_name %>" width="48" height="48">
               <% end %>
             <% end %>
 

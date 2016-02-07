@@ -164,6 +164,9 @@
   margin-right: auto;
   margin-left: auto;
   border: 4px solid #ffffff;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
 }
 
 .profile-overview-container .profile-names {

@@ -4,7 +4,7 @@
     <div class="profile-overview-carousel">
       <div>
         <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", target: '_blank' do %>
-          <img class="profile-icon" src="<%= searched_tw_user.profile_image_url_https.to_s %>">
+          <img class="profile-icon" src="<%= searched_tw_user.profile_image_url_https.to_s %>" width="48" height="48">
         <% end %>
         <div class="profile-names">
           <div class="full-name">
