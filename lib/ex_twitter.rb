@@ -598,9 +598,13 @@ class ExTwitter < Twitter::REST::Client
   def favorited_by(user)
   end
 
-  def close_friends(uid, screen_name)
+  def close_friends(uid, screen_name, options = {})
+    options[:min] = 0 unless options.has_key?(:min)
+    options[:max] = 1 unless options.has_key?(:max)
     _users = replying(uid.to_i) + replied(screen_name) + favoriting(uid.to_i)
-    uids = _users.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
+    uids = _users.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.
+      select { |_k, v| options[:min] <= v && v <= options[:max] }.
+      sort_by { |_, v| -v }.to_h.keys
     uids.map { |uid| _users.find { |u| u.id.to_i == uid.to_i } }
   end
 end

@@ -55,6 +55,7 @@ class SearchesController < ApplicationController
       {
         name: t('search_menu.close_friends', user: sn),
         target: tu.close_friends,
+        graph: tu.close_friends_graph,
         path_method: method(:close_friends_path).to_proc
       }, {
         name: t('search_menu.usage_stats', user: sn),
@@ -478,7 +479,7 @@ class SearchesController < ApplicationController
   def build_user_items(items)
     friendships =
       if user_signed_in? && current_user.twitter_user?
-        TwitterUser.latest(current_user.uid.to_i).friends
+        TwitterUser.latest(current_user.uid.to_i).friend_uids
       else
         []
       end

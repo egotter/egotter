@@ -313,16 +313,33 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.clusters_belong_to(text)
   end
 
-  def close_friends
+  def close_friends(options = {})
     _close_friends =
       begin
-        client.close_friends(uid, screen_name) && client.close_friends(uid, screen_name)
+        client.close_friends(uid, screen_name, options) && client.close_friends(uid, screen_name, options)
       rescue => e
         logger.warn "show close_friends #{e.class} #{e.message}"
         logger.warn e.backtrace.join("\n")
         []
       end
     _close_friends.map { |u| u.uid = u.id; u }
+  end
+
+  def close_friends_graph
+    items = close_friends(min: 0, max: 100)
+    items_size = items.size
+    good = (percentile_index(items, 0.10) + 1)
+    not_so_bad = (percentile_index(items, 0.50) + 1) - good
+    so_so = items.size - (good + not_so_bad)
+    [
+      {name: I18n.t('legend.close_friends'), y: (good.to_f / items_size * 100), sliced: true, selected: true},
+      {name: I18n.t('legend.friends'), y: (not_so_bad.to_f / items_size * 100)},
+      {name: I18n.t('legend.acquaintance'), y: (so_so.to_f / items_size * 100)}
+    ]
+  end
+
+  def percentile_index(ary, percentile = 0.0)
+    ((ary.length * percentile).ceil) - 1
   end
 
   def usage_stats(options = {})

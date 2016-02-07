@@ -62,6 +62,10 @@ ja:
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
   view_more_btn:
     same_user: "違うユーザーを検索すると結果が見れます"
+  legend:
+    close_friends: "仲良し"
+    friends: "友人"
+    acquaintance: "知人"
 
   search_menu:
     statuses: "%{user} のツイート"
