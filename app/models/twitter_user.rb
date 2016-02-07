@@ -344,21 +344,20 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def replying_graph
-    statuses_size = statuses.size
+    friends_size = friends.size
     replying_size = replying.size
     [
-      {name: I18n.t('legend.replying'), y: (replying_size.to_f / statuses_size * 100)},
-      {name: I18n.t('legend.others'), y: ((statuses_size - replying_size).to_f / statuses_size * 100)}
+      {name: I18n.t('legend.replying'), y: (replying_size.to_f / friends_size * 100)},
+      {name: I18n.t('legend.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
     ]
   end
 
   def replied_graph
-    statuses = client.home_timeline(uid.to_i) && client.home_timeline(uid.to_i)
-    statuses_size = statuses.size
-    replied_size = client.select_uids_replying_to(statuses).size
+    followers_size = followers.size
+    replied_size = replied.size
     [
-      {name: I18n.t('legend.replying'), y: (replied_size.to_f / statuses_size * 100)},
-      {name: I18n.t('legend.others'), y: ((statuses_size - replied_size).to_f / statuses_size * 100)}
+      {name: I18n.t('legend.replying'), y: (replied_size.to_f / followers_size * 100)},
+      {name: I18n.t('legend.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
     ]
   end
 
