@@ -31,7 +31,7 @@
   wday_7days_options.drilldown.series = <%= raw @wday_drilldown_series_7days.to_json %>;
 
   var hour_options = $.extend(true, {}, graph_options);
-  hour_options.title.text = '時間帯ごとのツイート数(直近1週間)';
+  hour_options.title.text = '時間帯ごとのツイート数(直近600ツイート)';
   hour_options.series[0].data = <%= raw @hour_series_data.to_json %>;
   hour_options.drilldown.series = <%= raw @hour_drilldown_series.to_json %>;
 

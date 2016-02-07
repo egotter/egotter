@@ -594,7 +594,9 @@ class ExTwitter < Twitter::REST::Client
       tweets =
         user_timeline(user).
           map { |t| t.kind_of?(Hashie::Mash) ? t : Hashie::Mash.new(t.attrs) }.
-          map { |t| t.created_at = ActiveSupport::TimeZone['UTC'].parse(t.created_at.to_s); t }.
+
+          # TODO Use user specific time zone
+          map { |t| t.created_at = ActiveSupport::TimeZone['Tokyo'].parse(t.created_at.to_s); t }.
           select { |t| t.created_at > n_days_ago }
     end
     [
