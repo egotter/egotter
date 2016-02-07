@@ -63,6 +63,10 @@ ja:
   view_more_btn:
     same_user: "違うユーザーを検索すると結果が見れます"
   legend:
+    inactive_friends: "いない"
+    not_inactive_friends: "いる"
+    inactive_followers: "いない"
+    not_inactive_followers: "いる"
     replying: "リプライ"
     close_friends: "仲良し"
     friends: "友人"
@@ -88,8 +92,8 @@ ja:
     replying: "%{user} がリプライした"
     replied: "%{user} がリプライされた"
     favoriting: "%{user} がよくふぁぼる"
-    inactive_friends: "%{user} のフォローのうち最近ツイートしていない"
-    inactive_followers: "%{user} のフォロワーのうち最近ツイートしていない"
+    inactive_friends: "%{user} のフォローのうち最近ツイッターにいない"
+    inactive_followers: "%{user} のフォロワーのうち最近ツイッターにいない"
     clusters_belong_to: "%{user} が入っているクラスタ"
     close_friends: "%{user} と仲良し"
     usage_stats: "%{user} のツイッター利用状況"

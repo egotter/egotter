@@ -91,10 +91,12 @@ class SearchesController < ApplicationController
       }, {
         name: t('search_menu.inactive_friends', user: sn),
         target: tu.inactive_friends,
+        graph: tu.inactive_friends_graph,
         path_method: method(:inactive_friends_path).to_proc
       }, {
         name: t('search_menu.inactive_followers', user: sn),
         target: tu.inactive_followers,
+        graph: tu.inactive_followers_graph,
         path_method: method(:inactive_followers_path).to_proc
       },
     ]

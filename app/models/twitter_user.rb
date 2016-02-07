@@ -325,6 +325,24 @@ class TwitterUser < ActiveRecord::Base
     _close_friends.map { |u| u.uid = u.id; u }
   end
 
+  def inactive_friends_graph
+    inactive_friends_size = inactive_friends.size
+    friends_size = friends.size
+    [
+      {name: I18n.t('legend.inactive_friends'), y: (inactive_friends_size.to_f / friends_size * 100)},
+      {name: I18n.t('legend.not_inactive_friends'), y: ((friends_size - inactive_friends_size).to_f / friends_size * 100)}
+    ]
+  end
+
+  def inactive_followers_graph
+    inactive_followers_size = inactive_followers.size
+    followers_size = followers.size
+    [
+      {name: I18n.t('legend.inactive_followers'), y: (inactive_followers_size.to_f / followers_size * 100)},
+      {name: I18n.t('legend.not_inactive_followers'), y: ((followers_size - inactive_followers_size).to_f / followers_size * 100)}
+    ]
+  end
+
   def replying_graph
     statuses_size = statuses.size
     replying_size = replying.size
