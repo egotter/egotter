@@ -85,7 +85,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def friendship_uids
-    friend_uids + follower_uids
+    (friend_uids + follower_uids).uniq
   end
 
   def diff(tu)
@@ -342,8 +342,26 @@ class TwitterUser < ActiveRecord::Base
     friends_size = friends.size
     one_sided_size = one_sided_following.size
     [
-      {name: I18n.t('legend.one_sided_following'), y: (one_sided_size.to_f / friends_size * 100), sliced: true, selected: true},
-      {name: I18n.t('legend.following'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
+      {name: I18n.t('legend.one_sided_following'), y: (one_sided_size.to_f / friends_size * 100)},
+      {name: I18n.t('legend.mutual_friends'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
+    ]
+  end
+
+  def one_sided_followers_graph
+    followers_size = followers.size
+    one_sided_size = one_sided_followers.size
+    [
+      {name: I18n.t('legend.one_sided_followers'), y: (one_sided_size.to_f / followers_size * 100)},
+      {name: I18n.t('legend.mutual_friends'), y: ((followers_size - one_sided_size).to_f / followers_size * 100)}
+    ]
+  end
+
+  def mutual_friends_graph
+    friendship_size = friendship_uids.size
+    mutual_friends_size = mutual_friends.size
+    [
+      {name: I18n.t('legend.mutual_friends'), y: (mutual_friends_size.to_f / friendship_size * 100)},
+      {name: I18n.t('legend.others'), y: ((friendship_size - mutual_friends_size).to_f / friendship_size * 100)}
     ]
   end
 

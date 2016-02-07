@@ -77,10 +77,12 @@ class SearchesController < ApplicationController
       }, {
         name: t('search_menu.one_sided_followers', user: sn),
         target: tu.one_sided_followers,
+        graph: tu.one_sided_followers_graph,
         path_method: method(:one_sided_followers_path).to_proc
       }, {
         name: t('search_menu.mutual_friends', user: sn),
         target: tu.mutual_friends,
+        graph: tu.mutual_friends_graph,
         path_method: method(:mutual_friends_path).to_proc
       }, {
         name: t('search_menu.replying', user: sn),
