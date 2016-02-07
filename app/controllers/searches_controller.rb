@@ -88,6 +88,7 @@ class SearchesController < ApplicationController
       }, {
         name: t('search_menu.favoriting', user: sn),
         target: tu.favoriting,
+        graph: tu.favoriting_graph,
         path_method: method(:favoriting_path).to_proc
       }, {
         name: t('search_menu.inactive_friends', user: sn),

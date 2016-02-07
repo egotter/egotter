@@ -362,6 +362,15 @@ class TwitterUser < ActiveRecord::Base
     ]
   end
 
+  def favoriting_graph
+    friends_size = friends.size
+    favoriting_size = favoriting.size
+    [
+      {name: I18n.t('legend.favoriting'), y: (favoriting_size.to_f / friends_size * 100)},
+      {name: I18n.t('legend.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}
+    ]
+  end
+
   def close_friends_graph
     items = close_friends(min: 0, max: 100)
     items_size = items.size
