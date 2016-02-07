@@ -238,8 +238,8 @@ class TwitterUser < ActiveRecord::Base
     TwitterUser.latest(uid.to_i)
   end
 
-  def only_following
-    ExTwitter.new.only_following(self)
+  def one_sided_following
+    ExTwitter.new.one_sided_following(self)
   end
 
   def only_followed

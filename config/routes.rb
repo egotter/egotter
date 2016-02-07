@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/followers', to: 'searches#followers', as: :followers
   get 'searches/:screen_name/removing', to: 'searches#removing', as: :removing
   get 'searches/:screen_name/removed', to: 'searches#removed', as: :removed
-  get 'searches/:screen_name/only_following', to: 'searches#only_following', as: :only_following
+  get 'searches/:screen_name/one_sided_following', to: 'searches#one_sided_following', as: :one_sided_following
   get 'searches/:screen_name/only_followed', to: 'searches#only_followed', as: :only_followed
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
   get 'searches/:screen_name/common_friends', to: 'searches#common_friends', as: :common_friends

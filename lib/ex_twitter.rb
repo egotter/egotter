@@ -340,7 +340,7 @@ class ExTwitter < Twitter::REST::Client
         {method: 'user_timeline', args: args}])
   end
 
-  def only_following(me)
+  def one_sided_following(me)
     me.friends.to_a - me.followers.to_a
   end
 

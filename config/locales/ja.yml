@@ -74,7 +74,7 @@ ja:
     removing: "%{user} がフォローを外した"
     removed: "%{user} がフォローを外された"
     mutual_friends: "%{user} が両思い"
-    only_following: "%{user} が片思い"
+    one_sided_following: "%{user} が片思い"
     only_followed: "%{user} が片思われ"
     common_friends: "%{user} と %{login} の共通フォロー"
     common_followers: "%{user} と %{login} の共通フォロワー"

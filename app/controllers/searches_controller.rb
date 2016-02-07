@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
 
-  SEARCH_MENUS = %i(show statuses friends followers removing removed only_following only_followed mutual_friends
+  SEARCH_MENUS = %i(show statuses friends followers removing removed one_sided_following only_followed mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
@@ -70,9 +70,9 @@ class SearchesController < ApplicationController
         target: tu.removed,
         path_method: method(:removed_path).to_proc
       }, {
-        name: t('search_menu.only_following', user: sn),
-        target: tu.only_following,
-        path_method: method(:only_following_path).to_proc
+        name: t('search_menu.one_sided_following', user: sn),
+        target: tu.one_sided_following,
+        path_method: method(:one_sided_following_path).to_proc
       }, {
         name: t('search_menu.only_followed', user: sn),
         target: tu.only_followed,
@@ -198,10 +198,10 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/only_following
-  def only_following
-    @user_items = build_user_items(@searched_tw_user.only_following)
-    @name = t('search_menu.only_following', user: "@#{@searched_tw_user.screen_name}")
+  # GET /searches/:screen_name/one_sided_following
+  def one_sided_following
+    @user_items = build_user_items(@searched_tw_user.one_sided_following)
+    @name = t('search_menu.one_sided_following', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
