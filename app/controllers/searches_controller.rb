@@ -121,10 +121,12 @@ class SearchesController < ApplicationController
           {
             name: t('search_menu.common_friends', user: sn, login: t('dictionary.you')),
             target: tu.common_friends(current_user.twitter_user),
+            graph: tu.common_friends_graph(current_user.twitter_user),
             path_method: method(:common_friends_path).to_proc
           }, {
             name: t('search_menu.common_followers', user: sn, login: t('dictionary.you')),
             target: tu.common_followers(current_user.twitter_user),
+            graph: tu.common_followers_graph(current_user.twitter_user),
             path_method: method(:common_followers_path).to_proc
           },
         ]

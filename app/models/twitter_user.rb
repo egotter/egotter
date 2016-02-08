@@ -414,10 +414,30 @@ class TwitterUser < ActiveRecord::Base
 
   def mutual_friends_graph
     friendship_size = friendship_uids.size
+    mutual_friends_rate = mutual_friends.size.to_f / friendship_size * 100
+    sliced = mutual_friends_rate < 25
     [
-      {name: I18n.t('legend.mutual_friends'), y: (mutual_friends.size.to_f / friendship_size * 100), sliced: true, selected: true},
+      {name: I18n.t('legend.mutual_friends'), y: mutual_friends_rate, sliced: sliced, selected: sliced},
       {name: I18n.t('legend.one_sided_following'), y: (one_sided_following.size.to_f / friendship_size * 100)},
       {name: I18n.t('legend.one_sided_followers'), y: (one_sided_followers.size.to_f / friendship_size * 100)}
+    ]
+  end
+
+  def common_friends_graph(other)
+    friends_size = friends.size
+    common_friends_size = common_friends(other).size
+    [
+      {name: I18n.t('legend.common_friends'), y: (common_friends_size.to_f / friends_size * 100)},
+      {name: I18n.t('legend.others'), y: ((friends_size - common_friends_size).to_f / friends_size * 100)}
+    ]
+  end
+
+  def common_followers_graph(other)
+    followers_size = followers.size
+    common_followers_size = common_followers(other).size
+    [
+      {name: I18n.t('legend.common_followers'), y: (common_followers_size.to_f / followers_size * 100)},
+      {name: I18n.t('legend.others'), y: ((followers_size - common_followers_size).to_f / followers_size * 100)}
     ]
   end
 

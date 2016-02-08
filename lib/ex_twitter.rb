@@ -14,10 +14,11 @@ class ExTwitter < Twitter::REST::Client
     @cache = ActiveSupport::Cache::FileStore.new(File.join('tmp', 'api_cache', Time.now.strftime('%Y%m%d%H')))
     @uid = options[:uid]
     @screen_name = options[:screen_name]
+    @authenticated_user = Hashie::Mash.new({uid: options[:uid].to_i, screen_name: options[:screen_name]})
     super
   end
 
-  attr_reader :cache
+  attr_reader :cache, :authenticated_user
 
   # for backward compatibility
   def uid
@@ -419,6 +420,9 @@ class ExTwitter < Twitter::REST::Client
     end
 
     processed_users.sort_by{|p| p[:i] }.map{|p| p[:users] }.flatten.compact
+  rescue => e
+    logger.warn "#{__method__} #{args.inspect} #{e.class} #{e.message}"
+    raise e
   end
 
   def called_by_authenticated_user?(user)
@@ -462,6 +466,9 @@ class ExTwitter < Twitter::REST::Client
       options = {count: 200, include_rts: true, call_count: 1}.merge(args.extract_options!)
       collect_with_max_id(:old_mentions_timeline, options)
     }
+  rescue => e
+    logger.warn "#{__method__} #{args.inspect} #{e.class} #{e.message}"
+    raise e
   end
 
   def select_screen_names_replied(tweets)
@@ -490,6 +497,9 @@ class ExTwitter < Twitter::REST::Client
       options = {count: 100, result_type: :recent, call_count: 1}.merge(options)
       collect_with_max_id(:old_search, *args, options) { |response| response.attrs[:statuses] }
     }
+  rescue => e
+    logger.warn "#{__method__} #{args.inspect} #{e.class} #{e.message}"
+    raise e
   end
 
   def select_uids_replying_to(tweets)

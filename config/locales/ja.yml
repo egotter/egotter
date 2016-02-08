@@ -62,7 +62,7 @@ ja:
     something_is_wrong: "エラーが起きました。時間をおいてから検索してみてください。"
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
   view_more_btn:
-    same_user: "違うユーザーを検索すると結果が見れます"
+    same_user: "自分以外のユーザーを検索してください"
   legend:
     inactive_friends: "対象者"
     not_inactive_friends: "それ以外"
@@ -78,6 +78,8 @@ ja:
     followers: "フォロワー"
     one_sided_followers: "片思われ"
     mutual_friends: "両思い"
+    common_friends: "共通"
+    common_followers: "共通"
     favoriting: "ふぁぼる"
     others: "それ以外"
 
