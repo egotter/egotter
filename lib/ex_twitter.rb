@@ -32,6 +32,11 @@ class ExTwitter < Twitter::REST::Client
     @uid.to_i
   end
 
+  # for backward compatibility
+  def screen_name
+    @screen_name
+  end
+
   def __screen_name
     @screen_name
   end
