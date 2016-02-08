@@ -19,6 +19,11 @@ class ExTwitter < Twitter::REST::Client
 
   attr_reader :cache
 
+  # for backward compatibility
+  def uid
+    @uid
+  end
+
   def __uid
     @uid
   end
