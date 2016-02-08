@@ -256,6 +256,9 @@ class ExTwitter < Twitter::REST::Client
     fetch_cache_or_call_api(:user, args[0], options) {
       call_old_method(:old_user, args[0], options)
     }
+  rescue => e
+    logger.warn "#{__method__} #{args.inspect} #{e.class} #{e.message}"
+    raise e
   end
   # memoize :user
 
@@ -451,6 +454,9 @@ class ExTwitter < Twitter::REST::Client
     tweets = user_timeline(user)
     screen_names = select_screen_names_replied(tweets)
     users(screen_names)
+  rescue => e
+    logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
+    raise e
   end
 
   alias :old_search :search
@@ -473,15 +479,18 @@ class ExTwitter < Twitter::REST::Client
 
   # users which specified user is replied
   # when user is login you had better to call mentions_timeline
-  def replied(user)
-    user = self.user(user).screen_name unless user.kind_of?(String)
-    if user == screen_name
-      mentions_timeline(user).uniq { |m| m.user.id }.map { |m| m.user }
+  def replied(_user)
+    user = self.user(_user)
+    if user.id.to_i == self.uid.to_i
+      mentions_timeline(self.uid.to_i).uniq { |m| m.user.id }.map { |m| m.user }
     else
-      tweets = search('@' + user)
+      tweets = search('@' + user.screen_name)
       uids = select_uids_replying_to(tweets)
       users(uids)
     end
+  rescue => e
+    logger.warn "#{__method__} #{_user.inspect} #{e.class} #{e.message}"
+    raise e
   end
 
   def select_inactive_users(users, options = {})
@@ -620,15 +629,19 @@ class ExTwitter < Twitter::REST::Client
     fav = favorites(user).map { |f| f.user }
     uids = fav.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
     uids.map { |uid| fav.find { |f| f.id.to_i == uid.to_i } }
+  rescue => e
+    logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
+    raise e
   end
 
   def favorited_by(user)
   end
 
-  def close_friends(uid, screen_name, options = {})
+  def close_friends(_uid, options = {})
     options[:min] = 0 unless options.has_key?(:min)
     options[:max] = 1 unless options.has_key?(:max)
-    _users = replying(uid.to_i) + replied(screen_name) + favoriting(uid.to_i)
+    uid_i = _uid.to_i
+    _users = replying(uid_i) + replied(uid_i) + favoriting(uid_i)
     uids = _users.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.
       select { |_k, v| options[:min] <= v && v <= options[:max] }.
       sort_by { |_, v| -v }.to_h.keys

@@ -66,6 +66,10 @@ class TwitterUser < ActiveRecord::Base
 
   include Concerns::TwitterUser::Validation
 
+  def uid_i
+    uid.to_i
+  end
+
   # sorting to use eql? method
   def friend_uids
     if new_record?
@@ -89,7 +93,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def diff(tu)
-    raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
+    raise "uid is different(#{self.uid},#{tu.uid})" if uid_i != tu.uid_i
     diffs = []
     diffs << "friends_count(#{self.friends_count},#{tu.friends_count})" if self.friends_count != tu.friends_count
     diffs << "followers_count(#{self.followers_count},#{tu.followers_count})" if self.followers_count != tu.followers_count
@@ -100,7 +104,7 @@ class TwitterUser < ActiveRecord::Base
 
   def fetch_user?
     raise 'must set client' if client.nil?
-    if self.uid.present? && self.uid.to_i != 0
+    if self.uid.present? && uid_i != 0
       client.user?(uid.to_i)
     elsif self.screen_name.present?
       client.user?(self.screen_name.to_s)
@@ -112,7 +116,7 @@ class TwitterUser < ActiveRecord::Base
   def fetch_user
     raise 'must set client' if client.nil?
     user =
-      if self.uid.present? && self.uid.to_i != 0
+      if self.uid.present? && uid_i != 0
         client.user(uid.to_i) && client.user(uid.to_i) # call 2 times to use cache
       elsif self.screen_name.present?
         client.user(self.screen_name.to_s) && client.user(self.screen_name.to_s)
@@ -289,10 +293,9 @@ class TwitterUser < ActiveRecord::Base
   def replied
     _replied =
       begin
-        client.replied(self.screen_name) && client.replied(self.screen_name)
+        client.replied(uid_i) && client.replied(uid_i)
       rescue => e
-        logger.warn "replied is failed #{e.class} #{e.message}"
-        logger.warn e.backtrace.join("\n")
+        logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
         []
       end
     _replied.map { |u| u.uid = u.id; u }
@@ -301,10 +304,9 @@ class TwitterUser < ActiveRecord::Base
   def favoriting
     _favoriting =
       begin
-        client.favoriting(self.uid.to_i) && client.favoriting(self.uid.to_i)
+        client.favoriting(uid_i) && client.favoriting(uid_i)
       rescue => e
-        logger.warn "favoriting is failed #{e.class} #{e.message}"
-        logger.warn e.backtrace.join("\n")
+        logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
         []
       end
     _favoriting.map { |u| u.uid = u.id; u }
@@ -326,10 +328,9 @@ class TwitterUser < ActiveRecord::Base
   def close_friends(options = {})
     _close_friends =
       begin
-        client.close_friends(uid, screen_name, options) && client.close_friends(uid, screen_name, options)
+        client.close_friends(uid_i, options) && client.close_friends(uid_i, options)
       rescue => e
-        logger.warn "show close_friends #{e.class} #{e.message}"
-        logger.warn e.backtrace.join("\n")
+        logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
         []
       end
     _close_friends.map { |u| u.uid = u.id; u }
@@ -413,10 +414,10 @@ class TwitterUser < ActiveRecord::Base
 
   def mutual_friends_graph
     friendship_size = friendship_uids.size
-    mutual_friends_size = mutual_friends.size
     [
-      {name: I18n.t('legend.mutual_friends'), y: (mutual_friends_size.to_f / friendship_size * 100)},
-      {name: I18n.t('legend.others'), y: ((friendship_size - mutual_friends_size).to_f / friendship_size * 100)}
+      {name: I18n.t('legend.mutual_friends'), y: (mutual_friends.size.to_f / friendship_size * 100), sliced: true, selected: true},
+      {name: I18n.t('legend.one_sided_following'), y: (one_sided_following.size.to_f / friendship_size * 100)},
+      {name: I18n.t('legend.one_sided_followers'), y: (one_sided_followers.size.to_f / friendship_size * 100)}
     ]
   end
 
@@ -441,10 +442,10 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def eql?(other)
-    self.uid.to_i == other.uid.to_i
+    uid_i == other.uid_i
   end
 
   def hash
-    self.uid.to_i.hash
+    uid_i.hash
   end
 end
