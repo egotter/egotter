@@ -66,7 +66,7 @@ class TwitterUser < ActiveRecord::Base
 
   include Concerns::TwitterUser::Validation
 
-  def uid_i
+  def __uid_i
     uid.to_i
   end
 
@@ -93,7 +93,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def diff(tu)
-    raise "uid is different(#{self.uid},#{tu.uid})" if uid_i != tu.uid_i
+    raise "uid is different(#{self.uid},#{tu.uid})" if __uid_i != tu.__uid_i
     diffs = []
     diffs << "friends_count(#{self.friends_count},#{tu.friends_count})" if self.friends_count != tu.friends_count
     diffs << "followers_count(#{self.followers_count},#{tu.followers_count})" if self.followers_count != tu.followers_count
@@ -104,8 +104,8 @@ class TwitterUser < ActiveRecord::Base
 
   def fetch_user?
     raise 'must set client' if client.nil?
-    if self.uid.present? && uid_i != 0
-      client.user?(uid.to_i)
+    if self.uid.present? && __uid_i != 0
+      client.user?(__uid_i)
     elsif self.screen_name.present?
       client.user?(self.screen_name.to_s)
     else
@@ -116,8 +116,8 @@ class TwitterUser < ActiveRecord::Base
   def fetch_user
     raise 'must set client' if client.nil?
     user =
-      if self.uid.present? && uid_i != 0
-        client.user(uid.to_i) && client.user(uid.to_i) # call 2 times to use cache
+      if self.uid.present? && __uid_i != 0
+        client.user(__uid_i) && client.user(__uid_i) # call 2 times to use cache
       elsif self.screen_name.present?
         client.user(self.screen_name.to_s) && client.user(self.screen_name.to_s)
       else
@@ -245,11 +245,11 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def oldest_me
-    TwitterUser.oldest(uid.to_i)
+    TwitterUser.oldest(__uid_i)
   end
 
   def latest_me
-    TwitterUser.latest(uid.to_i)
+    TwitterUser.latest(__uid_i)
   end
 
   def one_sided_following
@@ -293,7 +293,7 @@ class TwitterUser < ActiveRecord::Base
   def replied
     _replied =
       begin
-        client.replied(uid_i) && client.replied(uid_i)
+        client.replied(__uid_i) && client.replied(__uid_i)
       rescue => e
         logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
         []
@@ -304,7 +304,7 @@ class TwitterUser < ActiveRecord::Base
   def favoriting
     _favoriting =
       begin
-        client.favoriting(uid_i) && client.favoriting(uid_i)
+        client.favoriting(__uid_i) && client.favoriting(__uid_i)
       rescue => e
         logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
         []
@@ -328,7 +328,7 @@ class TwitterUser < ActiveRecord::Base
   def close_friends(options = {})
     _close_friends =
       begin
-        client.close_friends(uid_i, options) && client.close_friends(uid_i, options)
+        client.close_friends(__uid_i, options) && client.close_friends(__uid_i, options)
       rescue => e
         logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
         []
@@ -422,7 +422,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def usage_stats_graph
-    client.usage_stats(uid.to_i)
+    client.usage_stats(__uid_i)
   end
 
   def percentile_index(ary, percentile = 0.0)
@@ -430,7 +430,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def usage_stats(options = {})
-    client.usage_stats(uid.to_i, options)
+    client.usage_stats(__uid_i, options)
   end
 
   def search_and_touch
@@ -442,10 +442,10 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def eql?(other)
-    uid_i == other.uid_i
+    __uid_i == other.__uid_i
   end
 
   def hash
-    uid_i.hash
+    __uid_i.hash
   end
 end

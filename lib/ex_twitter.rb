@@ -17,7 +17,19 @@ class ExTwitter < Twitter::REST::Client
     super
   end
 
-  attr_reader :cache, :uid, :screen_name
+  attr_reader :cache
+
+  def __uid
+    @uid
+  end
+
+  def __uid_i
+    @uid.to_i
+  end
+
+  def __screen_name
+    @screen_name
+  end
 
   def logger
     @logger ||= Logger.new('log/ex_twitter.log')
@@ -481,8 +493,8 @@ class ExTwitter < Twitter::REST::Client
   # when user is login you had better to call mentions_timeline
   def replied(_user)
     user = self.user(_user)
-    if user.id.to_i == self.uid.to_i
-      mentions_timeline(self.uid.to_i).uniq { |m| m.user.id }.map { |m| m.user }
+    if user.id.to_i == __uid_i
+      mentions_timeline(__uid_i).uniq { |m| m.user.id }.map { |m| m.user }
     else
       tweets = search('@' + user.screen_name)
       uids = select_uids_replying_to(tweets)
