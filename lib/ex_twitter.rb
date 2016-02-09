@@ -20,6 +20,8 @@ class ExTwitter < Twitter::REST::Client
 
   attr_reader :cache, :authenticated_user
 
+  INDENT = 4
+
   # for backward compatibility
   def uid
     @uid
@@ -52,7 +54,7 @@ class ExTwitter < Twitter::REST::Client
       start_t = Time.now
       result = send(method_name, *args, options)
       end_t = Time.now
-      logger.debug "#{method_name} #{args.inspect} #{options.inspect} (#{end_t - start_t}s)"
+      logger.debug "#{method_name} #{args.inspect} #{options.inspect} (#{end_t - start_t}s)".indent(INDENT)
       result
     rescue Twitter::Error::TooManyRequests => e
       logger.warn "#{__method__}: call=#{method_name} #{args.inspect} #{e.class} Retry after #{e.rate_limit.reset_in} seconds."
@@ -191,14 +193,11 @@ class ExTwitter < Twitter::REST::Client
         when :friendship? # true or false
           obj
 
-        # when obj.kind_of?(Array) && obj.empty?
-        #   JSON.pretty_generate(obj)
-
         else
           raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} obj=#{obj.inspect}"
       end
     end_t = Time.now
-    logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)"
+    logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)".indent(INDENT)
     result
   end
 
@@ -208,6 +207,9 @@ class ExTwitter < Twitter::REST::Client
     obj = json_str.kind_of?(String) ? JSON.parse(json_str) : json_str
     result =
       case
+        when obj.nil?
+          obj
+
         when obj.kind_of?(Array) && obj.first.kind_of?(Hash)
           obj.map { |o| Hashie::Mash.new(o) }
 
@@ -227,32 +229,38 @@ class ExTwitter < Twitter::REST::Client
           raise "#{__method__}: caller=#{caller_name} key=#{options[:key]} obj=#{obj.inspect}"
       end
     end_t = Time.now
-    logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)"
+    logger.debug "#{__method__}: caller=#{caller_name} key=#{options[:key]} (#{end_t - start_t}s)".indent(INDENT)
     result
   end
 
-  # options {cache: :force}
   def fetch_cache_or_call_api(method_name, user, options = {})
     start_t = Time.now
     key = namespaced_key(method_name, user)
     options.update(key: key)
 
-    if cache.exist?(key)
-      data = decode_json(cache.read(key), method_name, options)
-      end_t = Time.now
-      logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache read) (#{end_t - start_t}s)"
-      return data
-    end
+    logger.debug "#{__method__}: caller=#{method_name} key=#{key}"
 
-    raise "#{__method__}: must use cache caller=#{method_name} key=#{key}" if options[:cache] == :force
+    hit = '?'
+    data =
+      if block_given?
+        hit = 'fetch(hit)'
+        cache.fetch(key) do
+          hit = 'fetch(not hit)'
+          encode_json(yield, method_name, options)
+        end
+      else
+        if cache.exist?(key)
+          hit = 'read(hit)'
+          cache.read(key)
+        else
+          hit = 'read(not hit)'
+          nil
+        end
+      end
 
-    data = yield
-
-    cache.write(key, encode_json(data, method_name, options))
-    end_t = Time.now
-    logger.debug "#{__method__}: caller=#{method_name} key=#{key} (cache wrote) (#{end_t - start_t}s)"
-
-    data
+    result = decode_json(data, method_name, options)
+    logger.debug "#{__method__}: caller=#{method_name} key=#{key} #{hit} (#{Time.now - start_t}s)"
+    result
   end
 
   alias :old_friendship? :friendship?

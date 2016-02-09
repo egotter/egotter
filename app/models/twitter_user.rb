@@ -132,7 +132,7 @@ class TwitterUser < ActiveRecord::Base
   def self.build(client, _user, option = {})
     option[:all] = true unless option.has_key?(:all)
 
-    user = client.user(_user) && client.user(_user, cache: :force)
+    user = client.user(_user)
     uid_i = user.id.to_i
 
     tu = TwitterUser.new do |tu|
@@ -159,9 +159,9 @@ class TwitterUser < ActiveRecord::Base
       end
 
       # TODO Maybe this method call is time loss as it parses json.
-      _friends = client.friends_advanced(uid_i, cache: :force)
-      _followers = client.followers_advanced(uid_i, cache: :force)
-      _statuses = client.user_timeline(uid_i, cache: :force)
+      _friends = client.friends_advanced(uid_i)
+      _followers = client.followers_advanced(uid_i)
+      _statuses = client.user_timeline(uid_i)
 
       tu.friends = _friends.map do |f|
         Friend.new({
