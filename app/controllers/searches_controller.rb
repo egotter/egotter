@@ -479,11 +479,12 @@ class SearchesController < ApplicationController
   def build_user_items(items)
     friendships =
       if user_signed_in? && current_user.twitter_user?
-        TwitterUser.latest(current_user.uid.to_i).friend_uids
+        current_user.twitter_user.friend_uids
       else
         []
       end
-    items.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i)} }
+    targets = items.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i)} }
+    Kaminari.paginate_array(targets).page(params[:page]).per(25)
   end
 
   def create_search_log(name, search_uid, search_sn, search_value)

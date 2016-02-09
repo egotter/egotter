@@ -104,6 +104,9 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     json (1.8.3)
+    kaminari (0.16.3)
+      actionpack (>= 3.0.0)
+      activesupport (>= 3.0.0)
     libv8 (3.16.14.13)
     loofah (2.0.3)
       nokogiri (>= 1.5.9)
@@ -265,6 +268,7 @@ DEPENDENCIES
   hiredis
   jbuilder (~> 2.0)
   jquery-rails
+  kaminari
   memoist
   mysql2
   newrelic_rpm
