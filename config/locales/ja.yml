@@ -12,6 +12,7 @@ ja:
     sign_in_with_twitter: "Twitterでログイン"
     sign_in: "ログイン"
     sign_out: "ログアウト"
+    realy_sign_out: "本当にログアウトしますか？"
     signed_in: "既にログイン済みです。"
     menu: "メニュー"
     notification_settings: "通知設定"
