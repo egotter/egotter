@@ -242,19 +242,24 @@ class ExTwitter < Twitter::REST::Client
 
     hit = '?'
     data =
-      if block_given?
-        hit = 'fetch(hit)'
-        cache.fetch(key) do
-          hit = 'fetch(not hit)'
-          encode_json(yield, method_name, options)
-        end
+      if options[:cache] == :read
+        hit = 'force read'
+        cache.read(key)
       else
-        if cache.exist?(key)
-          hit = 'read(hit)'
-          cache.read(key)
+        if block_given?
+          hit = 'fetch(hit)'
+          cache.fetch(key) do
+            hit = 'fetch(not hit)'
+            encode_json(yield, method_name, options)
+          end
         else
-          hit = 'read(not hit)'
-          nil
+          if cache.exist?(key)
+            hit = 'read(hit)'
+            cache.read(key)
+          else
+            hit = 'read(not hit)'
+            nil
+          end
         end
       end
 

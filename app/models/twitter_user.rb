@@ -102,12 +102,12 @@ class TwitterUser < ActiveRecord::Base
     diffs
   end
 
-  def fetch_user?
+  def fetch_user?(options = {})
     raise 'must set client' if client.nil?
     if self.uid.present? && __uid_i != 0
-      client.user?(__uid_i)
+      client.user?(__uid_i, options)
     elsif self.screen_name.present?
-      client.user?(self.screen_name.to_s)
+      client.user?(self.screen_name.to_s, options)
     else
       raise self.inspect
     end
