@@ -62,20 +62,24 @@ class User < ActiveRecord::Base
   end
 
   def twitter_user
-    TwitterUser.latest(uid.to_i)
+    TwitterUser.latest(uid_i)
   end
 
   def twitter_user?
     twitter_user.present?
   end
 
+  def uid_i
+    uid.to_i
+  end
+
   ADMIN_UID = 58135830
 
   def admin?
-    uid.to_i == ADMIN_UID
+    uid_i == ADMIN_UID
   end
 
   def self.admin?(uid)
-    uid.to_i == ADMIN_UID
+    uid_i == ADMIN_UID
   end
 end

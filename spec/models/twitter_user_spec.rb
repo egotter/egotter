@@ -87,28 +87,4 @@ RSpec.describe TwitterUser, type: :model do
       end
     end
   end
-
-  describe '#fetch_user?' do
-    before do
-      tu.client = client
-    end
-
-    it 'returns true' do
-      expect(tu.fetch_user?).to be_truthy
-    end
-  end
-
-  describe '#fetch_user' do
-    before do
-      tu.client = client
-      tu.uid = client.user.id
-      tu.fetch_user
-    end
-
-    it 'set uid, screen_name and user_info' do
-      expect(tu.uid).to eq(client.user.id.to_s)
-      expect(tu.screen_name).to eq(client.user.screen_name)
-      expect(tu.user_info).to be_truthy
-    end
-  end
 end

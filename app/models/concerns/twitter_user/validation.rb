@@ -55,7 +55,7 @@ module Concerns::TwitterUser::Validation
 
         # TODO if this instance has followers, use follower_uids.include?(login_user.uid.to_i)
         if client.present?
-          return false if client.friendship?(login_user.uid.to_i, uid.to_i) # login user follows searched user
+          return false if client.friendship?(login_user.uid_i, uid.to_i) # login user follows searched user
         end
 
         true

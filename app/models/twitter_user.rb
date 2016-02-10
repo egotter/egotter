@@ -102,33 +102,6 @@ class TwitterUser < ActiveRecord::Base
     diffs
   end
 
-  def fetch_user?(options = {})
-    raise 'must set client' if client.nil?
-    if self.uid.present? && __uid_i != 0
-      client.user?(__uid_i, options)
-    elsif self.screen_name.present?
-      client.user?(self.screen_name.to_s, options)
-    else
-      raise self.inspect
-    end
-  end
-
-  def fetch_user
-    raise 'must set client' if client.nil?
-    user =
-      if self.uid.present? && __uid_i != 0
-        client.user(__uid_i) && client.user(__uid_i) # call 2 times to use cache
-      elsif self.screen_name.present?
-        client.user(self.screen_name.to_s) && client.user(self.screen_name.to_s)
-      else
-        raise self.inspect
-      end
-    self.uid = user.id.to_i
-    self.screen_name = user.screen_name
-    self.user_info = user.slice(*PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
-    self
-  end
-
   def self.build(client, _user, option = {})
     option[:all] = true unless option.has_key?(:all)
 

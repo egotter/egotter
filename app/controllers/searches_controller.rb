@@ -9,8 +9,8 @@ class SearchesController < ApplicationController
 
   before_action :before_action_start,  only: NEED_VALIDATION
   before_action :need_login,           only: NEED_LOGIN
+  before_action :invalid_screen_name,  only: NEED_VALIDATION
   before_action :set_twitter_user,     only: NEED_VALIDATION
-  before_action :invalid_screen_name,  only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :suspended_account,    only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :unauthorized_account, only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :too_many_friends,     only: NEED_VALIDATION, unless: :result_cache_exists?
@@ -420,13 +420,21 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
   end
 
+  def invalid_screen_name
+    if TwitterUser.new(screen_name: search_sn).invalid_screen_name?
+      redirect_to '/', alert: t('before_sign_in.invalid_twitter_id')
+    end
+  end
+
   def set_twitter_user
-    @twitter_user = TwitterUser.new(uid: search_id, screen_name: search_sn)
-    @twitter_user.client = client
-    @twitter_user.login_user = current_user
-    @twitter_user.fetch_user?
-    @twitter_user.fetch_user
-    @twitter_user.egotter_context = 'search'
+    user = client.user(search_sn)
+    @twitter_user = TwitterUser.new(
+      uid: user.id,
+      screen_name: user.screen_name,
+      user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json,
+      client: client,
+      login_user: current_user,
+      egotter_context: 'search')
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   rescue Twitter::Error::NotFound => e
@@ -436,14 +444,8 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
   end
 
-  def invalid_screen_name
-    if @twitter_user.invalid_screen_name?
-      redirect_to '/', alert: t('before_sign_in.invalid_twitter_id')
-    end
-  end
-
   def suspended_account
-    unless @twitter_user.fetch_user?
+    if @twitter_user.suspended_account?
       redirect_to '/', alert: t('before_sign_in.suspended_user', user: twitter_link(search_sn))
     end
   rescue Twitter::Error::TooManyRequests => e
@@ -541,6 +543,7 @@ class SearchesController < ApplicationController
   end
 
   def uid_and_screen_name(uid, sn)
+    raise 'uid or sn is blank' if uid.blank? || sn.blank?
     "#{uid}-#{sn}"
   end
 
