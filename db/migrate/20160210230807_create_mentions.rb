@@ -1,6 +1,6 @@
-class CreateStatuses < ActiveRecord::Migration
+class CreateMentions < ActiveRecord::Migration
   def change
-    create_table :statuses do |t|
+    create_table :mentions do |t|
       t.string :uid,         null: false
       t.string :screen_name, null: false
       t.text :status_info,   null: false
@@ -8,9 +8,9 @@ class CreateStatuses < ActiveRecord::Migration
 
       t.timestamps null: false
     end
-    add_index :statuses, :uid
-    add_index :statuses, :from_id
-    add_index :statuses, :screen_name
-    add_index :statuses, :created_at
+    add_index :mentions, :uid
+    add_index :mentions, :from_id
+    add_index :mentions, :screen_name
+    add_index :mentions, :created_at
   end
 end

@@ -19,9 +19,11 @@
 #
 
 class TwitterUser < ActiveRecord::Base
-  has_many :friends,   foreign_key: :from_id, dependent: :destroy, validate: false
-  has_many :followers, foreign_key: :from_id, dependent: :destroy, validate: false
-  has_many :statuses,  foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :friends,        foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :followers,      foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :statuses,       foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :mentions,       foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :search_results, foreign_key: :from_id, dependent: :destroy, validate: false
 
   attr_accessor :client, :login_user, :egotter_context
 
@@ -118,46 +120,62 @@ class TwitterUser < ActiveRecord::Base
     tu.egotter_context = option.has_key?(:egotter_context) ? option[:egotter_context] : nil
 
     if option[:all]
+      search_query = "@#{tu.screen_name}"
+      if tu.ego_surfing?
+        _friends, _followers, _statuses, _search_results, _, _mentions =
+          client.fetch_parallelly([
+                                    {method: :friends_advanced, args: [uid_i]},
+                                    {method: :followers_advanced, args: [uid_i]},
+                                    {method: :user_timeline, args: [uid_i]}, # replying
+                                    {method: :search, args: [search_query]}, # replied
+                                    {method: :home_timeline, args: [uid_i]},
+                                    {method: :mentions_timeline, args: [uid_i]}]) # replied
+      else
+        _friends, _followers, _statuses, _search_results =
+          client.fetch_parallelly([
+                                    {method: :friends_advanced, args: [uid_i]},
+                                    {method: :followers_advanced, args: [uid_i]},
+                                    {method: :user_timeline, args: [uid_i]},
+                                    {method: :search, args: [search_query]}])
+        _mentions = []
+      end
+
+      _mentions = _mentions.uniq { |m| m.user.id }
+      _search_results = _search_results.uniq { |m| m.user.id }
+
       client.fetch_parallelly([
-                                {method: :friends_advanced, args: [uid_i]},
-                                {method: :followers_advanced, args: [uid_i]},
-                                {method: :user_timeline, args: [uid_i]},
-                                {method: :search, args: [tu.screen_name.to_s]}])
+                                {method: :replying, args: [uid_i]}
+                              ])
 
-      if tu.login_user.present? && tu.egotter_context == 'search' &&
-        tu.login_user.uid.to_i == uid_i && tu.client.uid.to_i == uid_i
-        client.fetch_parallelly([
-                                  {method: :home_timeline, args: [uid_i]},
-                                  {method: :mentions_timeline, args: [uid_i]}])
+      _friends.each do |f|
+        tu.friends.build(uid: f.id,
+                         screen_name: f.screen_name,
+                         user_info: f.slice(*PROFILE_SAVE_KEYS).to_json)
       end
 
-      # TODO Maybe this method call is time loss as it parses json.
-      _friends = client.friends_advanced(uid_i)
-      _followers = client.followers_advanced(uid_i)
-      _statuses = client.user_timeline(uid_i)
-
-      tu.friends = _friends.map do |f|
-        Friend.new({
-                     from_id: nil,
-                     uid: f.id,
-                     screen_name: f.screen_name,
-                     user_info: f.slice(*PROFILE_SAVE_KEYS).to_json})
+      _followers.each do |f|
+        tu.followers.build(uid: f.id,
+                         screen_name: f.screen_name,
+                         user_info: f.slice(*PROFILE_SAVE_KEYS).to_json)
       end
 
-      tu.followers = _followers.map do |f|
-        Follower.new({
-                       from_id: nil,
-                       uid: f.id,
-                       screen_name: f.screen_name,
-                       user_info: f.slice(*PROFILE_SAVE_KEYS).to_json})
+      _statuses.each do |s|
+        tu.statuses.build(uid: tu.uid,
+                          screen_name: tu.screen_name,
+                          status_info: s.slice(*Status::STATUS_SAVE_KEYS).to_json)
       end
 
-      tu.statuses = _statuses.map do |s|
-        Status.new({
-                       from_id: nil,
-                       uid: tu.uid,
-                       screen_name: tu.screen_name,
-                       status_info: s.slice(*Status::STATUS_SAVE_KEYS).to_json})
+      _mentions.each do |m|
+        tu.mentions.build(uid: m.user.id,
+                          screen_name: m.user.screen_name,
+                          status_info: m.slice(*Status::STATUS_SAVE_KEYS).to_json)
+      end
+
+      _search_results.each do |sr|
+        tu.search_results.build(uid: sr.user.id,
+                          screen_name: sr.user.screen_name,
+                          status_info: sr.slice(*Status::STATUS_SAVE_KEYS).to_json,
+                          query: search_query)
       end
     end
 
@@ -170,9 +188,10 @@ class TwitterUser < ActiveRecord::Base
       return false
     end
 
-    _friends, _followers, _statuses = self.friends.to_a.dup, self.followers.to_a.dup, self.statuses.to_a.dup
-    self.friends = self.followers = self.statuses = []
-    self.save(validate: false)
+    _friends, _followers, _statuses, _mentions, _search_results =
+      friends.to_a.dup, followers.to_a.dup, statuses.to_a.dup, mentions.to_a.dup, search_results.to_a.dup
+    self.friends = self.followers = self.statuses = self.mentions = self.search_results = []
+    save(validate: false)
 
     begin
       log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
@@ -185,6 +204,12 @@ class TwitterUser < ActiveRecord::Base
 
         _statuses.map {|s| s.from_id = self.id }
         _statuses.each_slice(100).each { |s| Status.import(s, validate: false) }
+
+        _mentions.map {|m| m.from_id = self.id }
+        _mentions.each_slice(100).each { |m| Mention.import(m, validate: false) }
+
+        _search_results.map {|sr| sr.from_id = self.id }
+        _search_results.each_slice(100).each { |sr| SearchResult.import(sr, validate: false) }
       end
       Rails.logger.level = log_level
 
@@ -257,27 +282,27 @@ class TwitterUser < ActiveRecord::Base
     ExTwitter.new.removed(oldest_me, latest_me)
   end
 
-  def replying
-    screen_names = ExTwitter.new.select_screen_names_replied(statuses)
-    _users = client.users(screen_names) && client.users(screen_names)
-    _users.map { |u| u.uid = u.id; u }
+  def replying(options = {})
+    begin
+      client.replying(__uid_i, options.merge(tweets: statuses)).map { |u| u.uid = u.id; u }
+    rescue => e
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
+      []
+    end
   end
 
   def replied
-    _replied =
-      begin
-        client.replied(__uid_i) && client.replied(__uid_i)
-      rescue => e
-        logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
-        []
-      end
-    _replied.map { |u| u.uid = u.id; u }
+    if ego_surfing? && mentions.any?
+      mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
+    else
+      ExTwitter.new.select_replied_from_search(search_results).map { |u| u.uid = u.id; u }
+    end
   end
 
-  def favoriting
+  def favoriting(options = {})
     _favoriting =
       begin
-        client.favoriting(__uid_i) && client.favoriting(__uid_i)
+        client.favoriting(__uid_i, options)
       rescue => e
         logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
         []

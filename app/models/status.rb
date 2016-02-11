@@ -35,6 +35,7 @@ class Status < ActiveRecord::Base
     geo
     coordinates
     place
+    user
     contributors
     is_quote_status
     retweet_count

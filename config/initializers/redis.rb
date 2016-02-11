@@ -1,5 +1,5 @@
 Redis.class_eval do
-  def fetch(key, ttl = 1800) # 1800 seconds = 30 minutes
+  def fetch(key, ttl = 43200) # = 12.hours
     if block_given?
       if exists(key)
         get(key)

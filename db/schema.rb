@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160130231444) do
+ActiveRecord::Schema.define(version: 20160210233256) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.integer  "user_id",    limit: 4,     default: -1,    null: false
@@ -70,6 +70,20 @@ ActiveRecord::Schema.define(version: 20160130231444) do
   add_index "friends", ["screen_name"], name: "index_friends_on_screen_name", using: :btree
   add_index "friends", ["uid"], name: "index_friends_on_uid", using: :btree
 
+  create_table "mentions", force: :cascade do |t|
+    t.string   "uid",         limit: 191,   null: false
+    t.string   "screen_name", limit: 191,   null: false
+    t.text     "status_info", limit: 65535, null: false
+    t.integer  "from_id",     limit: 4,     null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "mentions", ["created_at"], name: "index_mentions_on_created_at", using: :btree
+  add_index "mentions", ["from_id"], name: "index_mentions_on_from_id", using: :btree
+  add_index "mentions", ["screen_name"], name: "index_mentions_on_screen_name", using: :btree
+  add_index "mentions", ["uid"], name: "index_mentions_on_uid", using: :btree
+
   create_table "search_logs", force: :cascade do |t|
     t.boolean  "login",                     default: false, null: false
     t.integer  "login_user_id", limit: 4,   default: -1,    null: false
@@ -86,6 +100,21 @@ ActiveRecord::Schema.define(version: 20160130231444) do
   add_index "search_logs", ["search_menu"], name: "index_search_logs_on_search_menu", using: :btree
   add_index "search_logs", ["search_uid", "search_menu"], name: "index_search_logs_on_search_uid_and_search_menu", using: :btree
   add_index "search_logs", ["search_value"], name: "index_search_logs_on_search_value", using: :btree
+
+  create_table "search_results", force: :cascade do |t|
+    t.string   "uid",         limit: 191,   null: false
+    t.string   "screen_name", limit: 191,   null: false
+    t.text     "status_info", limit: 65535, null: false
+    t.integer  "from_id",     limit: 4,     null: false
+    t.string   "query",       limit: 191,   null: false
+    t.datetime "created_at",                null: false
+    t.datetime "updated_at",                null: false
+  end
+
+  add_index "search_results", ["created_at"], name: "index_search_results_on_created_at", using: :btree
+  add_index "search_results", ["from_id"], name: "index_search_results_on_from_id", using: :btree
+  add_index "search_results", ["screen_name"], name: "index_search_results_on_screen_name", using: :btree
+  add_index "search_results", ["uid"], name: "index_search_results_on_uid", using: :btree
 
   create_table "statuses", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false

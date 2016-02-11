@@ -47,7 +47,6 @@ class SearchesController < ApplicationController
       return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key))
     end
 
-    tu.client = client
     tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
 
@@ -77,17 +76,17 @@ class SearchesController < ApplicationController
         path_method: method(:one_sided_followers_path).to_proc
       }, {
         name: t('search_menu.replying', user: sn),
-        target: tu.replying,
+        target: tu.replying, # calling users
         graph: tu.replying_graph,
         path_method: method(:replying_path).to_proc
       }, {
         name: t('search_menu.replied', user: sn),
-        target: tu.replied,
+        target: tu.replied, # no calling
         graph: tu.replied_graph,
         path_method: method(:replied_path).to_proc
       }, {
         name: t('search_menu.favoriting', user: sn),
-        target: tu.favoriting,
+        target: tu.favoriting(cache: :read),
         graph: tu.favoriting_graph,
         path_method: method(:favoriting_path).to_proc
       }, {
@@ -249,15 +248,13 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/replying
   def replying
-    @searched_tw_user.client = client
-    @user_items = build_user_items(@searched_tw_user.replying)
+    @user_items = build_user_items(@searched_tw_user.replying) # call users
     @name = t('search_menu.replying', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/replied
   def replied
-    @searched_tw_user.client = client
     @user_items = build_user_items(@searched_tw_user.replied)
     @name = t('search_menu.replied', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
@@ -265,7 +262,6 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/favoriting
   def favoriting
-    @searched_tw_user.client = client
     @user_items = build_user_items(@searched_tw_user.favoriting)
     @name = t('search_menu.favoriting', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
@@ -289,14 +285,12 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/clusters_belong_to
   def clusters_belong_to
-    @searched_tw_user.client = client
     clusters = (@searched_tw_user.clusters_belong_to && @searched_tw_user.clusters_belong_to rescue [])
     @clusters_belong_to = clusters.map { |c| {target: c} }
   end
 
   # GET /searches/:screen_name/close_friends
   def close_friends
-    @searched_tw_user.client = client
     @user_items = build_user_items(@searched_tw_user.close_friends)
     @name = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
@@ -304,7 +298,6 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/usage_stats
   def usage_stats
-    @searched_tw_user.client = client
     @wday_series_data_7days, @wday_drilldown_series_7days, @hour_series_data_7days, @hour_drilldown_series_7days =
       @searched_tw_user.usage_stats(days: 7)
     @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series =
@@ -322,7 +315,7 @@ class SearchesController < ApplicationController
     key = "searches:new:#{user_or_anonymous}"
     html =
       if flash.empty?
-        redis.fetch(key, 3.hours) { render_to_string }
+        redis.fetch(key) { render_to_string }
       else
         render_to_string
       end
@@ -387,10 +380,11 @@ class SearchesController < ApplicationController
 
   private
   def set_searched_tw_user
-    tu = TwitterUser.latest(@twitter_user.uid.to_i)
+    tu = @twitter_user.latest_me
     if tu.blank?
       return redirect_to '/', alert: t('before_sign_in.blank_search_result')
     end
+    tu.client = client
     @searched_tw_user = tu
   end
 
@@ -528,7 +522,7 @@ class SearchesController < ApplicationController
 
   def set_result_cache
     html = render_to_string
-    redis.setex(result_cache_key, 60 * 180, html) # 180 minutes
+    redis.setex(result_cache_key, 43200, html) # 12.hours
     html
   end
 

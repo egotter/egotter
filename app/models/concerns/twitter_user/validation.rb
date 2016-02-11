@@ -33,7 +33,11 @@ module Concerns::TwitterUser::Validation
     end
 
     def ego_surfing?
-      !anonymous_search? && uid.to_i == login_user.uid.to_i
+      !anonymous_search? &&
+      client.present? &&
+        uid.to_i == login_user.uid.to_i &&
+        uid.to_i == client.uid.to_i &&
+        egotter_context == 'search'
     end
 
     def unauthorized?

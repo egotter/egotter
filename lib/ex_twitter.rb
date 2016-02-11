@@ -420,11 +420,12 @@ class ExTwitter < Twitter::REST::Client
   alias :old_users :users
   def users(*args)
     options = args.extract_options!
+    options[:reduce] = false
     users_per_workers = args.first.compact.each_slice(100).to_a
     processed_users = []
 
     Parallel.each_with_index(users_per_workers, in_threads: [users_per_workers.size, 10].min) do |users_per_worker, i|
-      _users = fetch_cache_or_call_api(:users, users_per_worker, reduce: false) {
+      _users = fetch_cache_or_call_api(:users, users_per_worker, options) {
         call_old_method(:old_users, users_per_worker, options)
       }
 
@@ -447,6 +448,9 @@ class ExTwitter < Twitter::REST::Client
     else
       raise user.inspect
     end
+  rescue => e
+    logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
+    raise e
   end
 
   # can't get tweets if you are not authenticated by specified user
@@ -454,8 +458,9 @@ class ExTwitter < Twitter::REST::Client
   def home_timeline(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
     raise 'this method must be called by authenticated user' unless called_by_authenticated_user?(args[0])
-    fetch_cache_or_call_api(:home_timeline, args[0]) {
-      options = {count: 200, include_rts: true, call_count: 3}.merge(args.extract_options!)
+    options = args.extract_options!
+    fetch_cache_or_call_api(:home_timeline, args[0], options) {
+      options = {count: 200, include_rts: true, call_count: 3}.merge(options)
       collect_with_max_id(:old_home_timeline, options)
     }
   end
@@ -464,8 +469,9 @@ class ExTwitter < Twitter::REST::Client
   alias :old_user_timeline :user_timeline
   def user_timeline(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
-    fetch_cache_or_call_api(:user_timeline, args[0]) {
-      options = {count: 200, include_rts: true, call_count: 3}.merge(args.extract_options!)
+    options = args.extract_options!
+    fetch_cache_or_call_api(:user_timeline, args[0], options) {
+      options = {count: 200, include_rts: true, call_count: 3}.merge(options)
       collect_with_max_id(:old_user_timeline, *args, options)
     }
   end
@@ -475,8 +481,9 @@ class ExTwitter < Twitter::REST::Client
   def mentions_timeline(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
     raise 'this method must be called by authenticated user' unless called_by_authenticated_user?(args[0])
-    fetch_cache_or_call_api(:mentions_timeline, args[0]) {
-      options = {count: 200, include_rts: true, call_count: 1}.merge(args.extract_options!)
+    options = args.extract_options!
+    fetch_cache_or_call_api(:mentions_timeline, args[0], options) {
+      options = {count: 200, include_rts: true, call_count: 1}.merge(options)
       collect_with_max_id(:old_mentions_timeline, options)
     }
   rescue => e
@@ -492,10 +499,10 @@ class ExTwitter < Twitter::REST::Client
 
   # users which specified user is replying
   # in_reply_to_user_id and in_reply_to_status_id is not used because of distinguishing mentions from replies
-  def replying(user)
-    tweets = user_timeline(user)
+  def replying(user, options = {})
+    tweets = options[:tweets].present? ? options[:tweets] : user_timeline(user, options)
     screen_names = select_screen_names_replied(tweets)
-    users(screen_names)
+    users(screen_names, options)
   rescue => e
     logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
     raise e
@@ -517,21 +524,23 @@ class ExTwitter < Twitter::REST::Client
 
   def select_uids_replying_to(tweets)
     tweets.map do |t|
-      tt = Hashie::Mash.new(t)
-      tt.user.id.to_i if tt.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
+      t.user.id.to_i if t.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
     end.compact.uniq
+  end
+
+  def select_replied_from_search(tweets)
+    uids = select_uids_replying_to(tweets)
+    uids.map { |u| tweets.find { |t| t.user.id.to_i == u.to_i } }.map { |t| t.user }
   end
 
   # users which specified user is replied
   # when user is login you had better to call mentions_timeline
-  def replied(_user)
-    user = self.user(_user)
+  def replied(_user, options = {})
+    user = self.user(_user, options)
     if user.id.to_i == __uid_i
-      mentions_timeline(__uid_i).uniq { |m| m.user.id }.map { |m| m.user }
+      mentions_timeline(__uid_i, options).uniq { |m| m.user.id }.map { |m| m.user }
     else
-      tweets = search('@' + user.screen_name)
-      uids = select_uids_replying_to(tweets)
-      users(uids)
+      select_replied_from_search(search('@' + user.screen_name, options))
     end
   rescue => e
     logger.warn "#{__method__} #{_user.inspect} #{e.class} #{e.message}"
@@ -664,15 +673,16 @@ class ExTwitter < Twitter::REST::Client
   alias :old_favorites :favorites
   def favorites(*args)
     raise 'this method needs at least one param to use cache' if args.empty?
-    fetch_cache_or_call_api(:favorites, args[0]) {
-      options = {count: 100, call_count: 1}.merge(args.extract_options!)
+    options = args.extract_options!
+    fetch_cache_or_call_api(:favorites, args[0], options) {
+      options = {count: 100, call_count: 1}.merge(options)
       collect_with_max_id(:old_favorites, *args, options)
     }
   end
 
-  def favoriting(user)
-    fav = favorites(user).map { |f| f.user }
-    uids = fav.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
+  def favoriting(user, options= {})
+    fav = favorites(user, options).map { |f| f.user }
+    uids = fav.each_with_object(Hash.new(0)) { |u, memo| memo[u.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
     uids.map { |uid| fav.find { |f| f.id.to_i == uid.to_i } }
   rescue => e
     logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
