@@ -157,11 +157,15 @@
 }
 
 .profile-overview-container .profile-overview {
-  padding-bottom: 20px;
+  padding-bottom: 50px; /* add 30px for .slick-slider */
   text-align: center;
   position: relative;
   background-size: cover;
   /* specify background-image in _profile_overview.html.erb */
+}
+
+.profile-overview-container .profile-overview .slick-slider {
+  margin-bottom: 0px;
 }
 
 .profile-overview-container .profile-icon {
