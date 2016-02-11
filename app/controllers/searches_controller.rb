@@ -33,7 +33,7 @@ class SearchesController < ApplicationController
       redirect_to menu_path, notice: t('dictionary.settings_saved')
     else
       searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-      @user_items = searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact.map { |tu| {target: tu} }
+      @user_items = build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact)
       render
     end
   end

@@ -101,8 +101,39 @@
 
 .user-items .icon-chart {
   border: 1px solid #e6e6e6;
+  margin-top: 15px;
   margin-left: 15px;
   margin-right: 15px;
+}
+
+.user-items .tweet-preview-box {
+  border: 1px solid #e6e6e6;
+  margin-top: 15px;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+
+.user-items .tweet-preview-box textarea {
+  margin: 0;
+  padding: 0;
+  resize: none;
+  outline: none;
+  border: none;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+}
+
+.user-items .tweet-box {
+  margin-top: 5px;
+  margin-left: 15px;
+  margin-right: 15px;
+  padding-left: 0px;
+  padding-right: 0px;
 }
 /* _user_items.html.erb end */
 

@@ -303,11 +303,12 @@ class TwitterUser < ActiveRecord::Base
     end
   end
 
-  def replied
+  def replied(options = {})
     if ego_surfing? && mentions.any?
-      mentions.map { |m| m.user }.uniq { |u| u.id.to_i }.map { |u| u.uid = u.id; u }
+      result = mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
+      (options.has_key?(:uniq) && options[:uniq]) ? result.uniq { |u| u.id.to_i } : result
     else
-      ExTwitter.new.select_replied_from_search(search_results).map { |u| u.uid = u.id; u }
+      ExTwitter.new.select_replied_from_search(search_results, options).map { |u| u.uid = u.id; u }
     end
   end
 
@@ -331,9 +332,9 @@ class TwitterUser < ActiveRecord::Base
   def close_friends(options = {})
     client.close_friends(__uid_i, options.merge(
       min: 1,
-      replying: replying(options),
-      replied: replied,
-      favoriting: favoriting(options))
+      replying: replying(options.merge(uniq: false)),
+      replied: replied(uniq: false),
+      favoriting: favoriting(options.merge(uniq: false)))
     ).map { |u| u.uid = u.id; u }
   end
 

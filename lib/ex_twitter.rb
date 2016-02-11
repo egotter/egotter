@@ -491,17 +491,18 @@ class ExTwitter < Twitter::REST::Client
     raise e
   end
 
-  def select_screen_names_replied(tweets)
-    tweets.map do |t|
+  def select_screen_names_replied(tweets, options = {})
+    result = tweets.map do |t|
       $1 if t.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
-    end.compact.uniq
+    end.compact
+    (options.has_key?(:uniq) && options[:uniq]) ? result.uniq : result
   end
 
   # users which specified user is replying
   # in_reply_to_user_id and in_reply_to_status_id is not used because of distinguishing mentions from replies
   def replying(user, options = {})
     tweets = options.has_key?(:tweets) ? options.delete(:tweets) : user_timeline(user, options)
-    screen_names = select_screen_names_replied(tweets)
+    screen_names = select_screen_names_replied(tweets, options)
     users(screen_names, options)
   rescue => e
     logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
@@ -522,14 +523,15 @@ class ExTwitter < Twitter::REST::Client
     raise e
   end
 
-  def select_uids_replying_to(tweets)
-    tweets.map do |t|
+  def select_uids_replying_to(tweets, options)
+    result = tweets.map do |t|
       t.user.id.to_i if t.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
-    end.compact.uniq
+    end.compact
+    (options.has_key?(:uniq) && options[:uniq]) ? result.uniq : result
   end
 
-  def select_replied_from_search(tweets)
-    uids = select_uids_replying_to(tweets)
+  def select_replied_from_search(tweets, options = {})
+    uids = select_uids_replying_to(tweets, options)
     uids.map { |u| tweets.find { |t| t.user.id.to_i == u.to_i } }.map { |t| t.user }
   end
 
@@ -683,14 +685,14 @@ class ExTwitter < Twitter::REST::Client
     calc_scores_from_users(tweets.map { |t| t.user }, options)
   end
 
-  def select_favoriting_from_favs(favs)
+  def select_favoriting_from_favs(favs, options = {})
     uids = calc_scores_from_tweets(favs).keys
     uids.map { |uid| favs.find { |f| f.user.id.to_i == uid.to_i } }.map { |f| f.user }
   end
 
   def favoriting(user, options= {})
     favs = options.has_key?(:favorites) ? options.delete(:favorites) : favorites(user, options)
-    select_favoriting_from_favs(favs)
+    select_favoriting_from_favs(favs, options)
   rescue => e
     logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
     raise e
