@@ -15,8 +15,8 @@ default: &default
   charset: utf8mb4
   collation: utf8mb4_unicode_ci
   pool: 5
-  username: root
-  password:
+  username: <%= ENV['EGOTTER_DATABASE_USERNAME'] %>
+  password: <%= ENV['EGOTTER_DATABASE_PASSWORD'] %>
   socket: /var/lib/mysql/mysql.sock
 
 development:
@@ -52,5 +52,3 @@ test:
 production:
   <<: *default
   database: egotter_production
-  username: <%= ENV['EGOTTER_DATABASE_USERNAME'] %>
-  password: <%= ENV['EGOTTER_DATABASE_PASSWORD'] %>
