@@ -61,6 +61,11 @@
   color: #999999;
 }
 
+.user-item-carousel .media-body .score {
+  font-size: 13px;
+  color: #999999;
+}
+
 .user-item-carousel .media-right a {
   color: #333333;
   text-decoration: none;

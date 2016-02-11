@@ -66,6 +66,19 @@
         <div class="followers_count"><%= user_item[:target].followers_count %>&nbsp;<%= t('dictionary.follower') %></div>
       </div>
     </div>
+
+    <%# score box %>
+    <% if user_item[:target].has_key?(:score) %><%# close_friends score %>
+      <div class="media score-box" style="display: none;">
+        <div class="media-left">
+          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>" alt="<%= user_item[:target].screen_name %>" width="48" height="48">
+        </div>
+
+        <div class="media-body">
+          <div class="score"><%= user_item[:target].score %>&nbsp;<%= t('dictionary.score') %></div>
+        </div>
+      </div>
+    <% end %>
   </div>
 <% end %>
 
@@ -83,5 +96,6 @@
     }
     $('.media.description-box').show();
     $('.media.count-box').show();
+    $('.media.score-box').show();
   });
 </script>

@@ -602,8 +602,7 @@ class ExTwitter < Twitter::REST::Client
 
   end
 
-  def usage_stats_wday_series_data(tweets)
-    times = tweets.map { |t| t.created_at }
+  def usage_stats_wday_series_data(times)
     wday_count = times.each_with_object((0..6).map { |n| [n, 0] }.to_h) do |time, memo|
       memo[time.wday] += 1
     end
@@ -612,8 +611,7 @@ class ExTwitter < Twitter::REST::Client
     end
   end
 
-  def usage_stats_wday_drilldown_series(tweets)
-    times = tweets.map { |t| t.created_at }
+  def usage_stats_wday_drilldown_series(times)
     hour_count =
       (0..6).each_with_object((0..6).map { |n| [n, nil] }.to_h) do |wday, wday_memo|
         wday_memo[wday] =
@@ -626,8 +624,7 @@ class ExTwitter < Twitter::REST::Client
     end
   end
 
-  def usage_stats_hour_series_data(tweets)
-    times = tweets.map { |t| t.created_at }
+  def usage_stats_hour_series_data(times)
     hour_count = times.each_with_object((0..23).map { |n| [n, 0] }.to_h) do |time, memo|
       memo[time.hour] += 1
     end
@@ -636,8 +633,7 @@ class ExTwitter < Twitter::REST::Client
     end
   end
 
-  def usage_stats_hour_drilldown_series(tweets)
-    times = tweets.map { |t| t.created_at }
+  def usage_stats_hour_drilldown_series(times)
     wday_count =
       (0..23).each_with_object((0..23).map { |n| [n, nil] }.to_h) do |hour, hour_memo|
         hour_memo[hour] =
@@ -652,21 +648,16 @@ class ExTwitter < Twitter::REST::Client
 
   def usage_stats(user, options = {})
     n_days_ago = options.has_key?(:days) ? options[:days].days.ago : 365.days.ago
-    tweets = options.has_key?(:tweets) ? options[:tweets] : nil
-    if tweets.nil?
-      tweets =
-        user_timeline(user).
-          map { |t| t.kind_of?(Hashie::Mash) ? t : Hashie::Mash.new(t.attrs) }.
-
-          # TODO Use user specific time zone
-          map { |t| t.created_at = ActiveSupport::TimeZone['Tokyo'].parse(t.created_at.to_s); t }.
-          select { |t| t.created_at > n_days_ago }
-    end
+    tweets = options.has_key?(:tweets) ? options[:tweets] : user_timeline(user)
+    times =
+      # TODO Use user specific time zone
+      tweets.map { |t| ActiveSupport::TimeZone['Tokyo'].parse(t.created_at.to_s) }.
+        select { |t| t > n_days_ago }
     [
-      usage_stats_wday_series_data(tweets),
-      usage_stats_wday_drilldown_series(tweets),
-      usage_stats_hour_series_data(tweets),
-      usage_stats_hour_drilldown_series(tweets)
+      usage_stats_wday_series_data(times),
+      usage_stats_wday_drilldown_series(times),
+      usage_stats_hour_series_data(times),
+      usage_stats_hour_drilldown_series(times)
     ]
   end
 
@@ -680,10 +671,14 @@ class ExTwitter < Twitter::REST::Client
     }
   end
 
+  def select_favoriting_from_favs(favs)
+    uids = favs.each_with_object(Hash.new(0)) { |f, memo| memo[f.user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
+    uids.map { |uid| favs.find { |f| f.user.id.to_i == uid.to_i } }.map { |f| f.user }
+  end
+
   def favoriting(user, options= {})
-    fav = favorites(user, options).map { |f| f.user }
-    uids = fav.each_with_object(Hash.new(0)) { |u, memo| memo[u.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
-    uids.map { |uid| fav.find { |f| f.id.to_i == uid.to_i } }
+    favs = options[:favorites].present? ? options[:favorites] : favorites(user, options)
+    select_favoriting_from_favs(favs)
   rescue => e
     logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
     raise e
@@ -694,12 +689,17 @@ class ExTwitter < Twitter::REST::Client
 
   def close_friends(_uid, options = {})
     options[:min] = 0 unless options.has_key?(:min)
-    options[:max] = 1 unless options.has_key?(:max)
+    options[:max] = 1000 unless options.has_key?(:max)
     uid_i = _uid.to_i
-    _users = replying(uid_i) + replied(uid_i) + favoriting(uid_i)
-    uids = _users.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.
+    _replying = options[:replying].present? ? options[:replying] : replying(uid_i, options)
+    _replied = options[:replied].present? ? options[:replied] : replied(uid_i, options)
+    _favoriting = options[:favoriting].present? ? options[:favoriting] : favoriting(uid_i, options)
+
+    _users = _replying + _replied + _favoriting
+    uids_scores = _users.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.
       select { |_k, v| options[:min] <= v && v <= options[:max] }.
-      sort_by { |_, v| -v }.to_h.keys
-    uids.map { |uid| _users.find { |u| u.id.to_i == uid.to_i } }
+      sort_by { |_, v| -v }.to_h
+    uids_scores.keys.map { |uid| _users.find { |u| u.id.to_i == uid.to_i } }.
+      map {|u| u[:score] = uids_scores[u.id]; u }
   end
 end

@@ -47,7 +47,6 @@ class SearchesController < ApplicationController
       return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key))
     end
 
-    tu.login_user = user_signed_in? ? current_user : nil
     sn = '@' + tu.screen_name
 
     @menu_items = [
@@ -86,7 +85,7 @@ class SearchesController < ApplicationController
         path_method: method(:replied_path).to_proc
       }, {
         name: t('search_menu.favoriting', user: sn),
-        target: tu.favoriting(cache: :read),
+        target: tu.favoriting, # no calling
         graph: tu.favoriting_graph,
         path_method: method(:favoriting_path).to_proc
       }, {
@@ -145,7 +144,7 @@ class SearchesController < ApplicationController
 
     @menu_close_friends = {
       name: t('search_menu.close_friends', user: sn),
-      target: tu.close_friends,
+      target: tu.close_friends(cache: :read), # no calling
       graph: tu.close_friends_graph,
       path_method: method(:close_friends_path).to_proc
     }
@@ -385,6 +384,8 @@ class SearchesController < ApplicationController
       return redirect_to '/', alert: t('before_sign_in.blank_search_result')
     end
     tu.client = client
+    tu.login_user = current_user
+    tu.egotter_context = 'search'
     @searched_tw_user = tu
   end
 

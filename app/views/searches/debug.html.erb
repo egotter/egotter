@@ -10,7 +10,7 @@
     <th>uniq</th>
     <th>(last 1hour)</th>
   </tr>
-  <% [User, TwitterUser, Friend, Follower, Status, Mention, SearchResult].each do |model| %>
+  <% [User, TwitterUser, Friend, Follower, Status, Mention, SearchResult, Favorite].each do |model| %>
     <tr>
       <td><%= model.model_name %></td>
       <td><%= model.all.size %></td>

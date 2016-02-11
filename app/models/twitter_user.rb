@@ -24,6 +24,7 @@ class TwitterUser < ActiveRecord::Base
   has_many :statuses,       foreign_key: :from_id, dependent: :destroy, validate: false
   has_many :mentions,       foreign_key: :from_id, dependent: :destroy, validate: false
   has_many :search_results, foreign_key: :from_id, dependent: :destroy, validate: false
+  has_many :favorites,      foreign_key: :from_id, dependent: :destroy, validate: false
 
   attr_accessor :client, :login_user, :egotter_context
 
@@ -122,26 +123,27 @@ class TwitterUser < ActiveRecord::Base
     if option[:all]
       search_query = "@#{tu.screen_name}"
       if tu.ego_surfing?
-        _friends, _followers, _statuses, _search_results, _, _mentions =
+        _friends, _followers, _statuses, _search_results, _, _mentions, _favorites =
           client.fetch_parallelly([
                                     {method: :friends_advanced, args: [uid_i]},
                                     {method: :followers_advanced, args: [uid_i]},
                                     {method: :user_timeline, args: [uid_i]}, # replying
                                     {method: :search, args: [search_query]}, # replied
                                     {method: :home_timeline, args: [uid_i]},
-                                    {method: :mentions_timeline, args: [uid_i]}]) # replied
+                                    {method: :mentions_timeline, args: [uid_i]}, # replied
+                                    {method: :favorites, args: [uid_i]}]) # favoriting
       else
-        _friends, _followers, _statuses, _search_results =
+        _friends, _followers, _statuses, _search_results, _favorites =
           client.fetch_parallelly([
                                     {method: :friends_advanced, args: [uid_i]},
                                     {method: :followers_advanced, args: [uid_i]},
                                     {method: :user_timeline, args: [uid_i]},
-                                    {method: :search, args: [search_query]}])
+                                    {method: :search, args: [search_query]},
+                                    {method: :favorites, args: [uid_i]}])
         _mentions = []
       end
 
-      _mentions = _mentions.uniq { |m| m.user.id }
-      _search_results = _search_results.uniq { |m| m.user.id }
+      # Not using uniq for mentions, search_results and favorites intentionally
 
       client.fetch_parallelly([
                                 {method: :replying, args: [uid_i]}
@@ -177,6 +179,12 @@ class TwitterUser < ActiveRecord::Base
                           status_info: sr.slice(*Status::STATUS_SAVE_KEYS).to_json,
                           query: search_query)
       end
+
+      _favorites.each do |f|
+        tu.favorites.build(uid: f.user.id,
+                          screen_name: f.user.screen_name,
+                          status_info: f.slice(*Status::STATUS_SAVE_KEYS).to_json)
+      end
     end
 
     tu
@@ -188,9 +196,10 @@ class TwitterUser < ActiveRecord::Base
       return false
     end
 
-    _friends, _followers, _statuses, _mentions, _search_results =
-      friends.to_a.dup, followers.to_a.dup, statuses.to_a.dup, mentions.to_a.dup, search_results.to_a.dup
-    self.friends = self.followers = self.statuses = self.mentions = self.search_results = []
+    _friends, _followers, _statuses, _mentions, _search_results, _favorites =
+      friends.to_a.dup, followers.to_a.dup,
+        statuses.to_a.dup, mentions.to_a.dup, search_results.to_a.dup, favorites.to_a.dup
+    self.friends = self.followers = self.statuses = self.mentions = self.search_results = self.favorites = []
     save(validate: false)
 
     begin
@@ -210,6 +219,9 @@ class TwitterUser < ActiveRecord::Base
 
         _search_results.map {|sr| sr.from_id = self.id }
         _search_results.each_slice(100).each { |sr| SearchResult.import(sr, validate: false) }
+
+        _favorites.map {|f| f.from_id = self.id }
+        _favorites.each_slice(100).each { |f| Favorite.import(f, validate: false) }
       end
       Rails.logger.level = log_level
 
@@ -293,21 +305,14 @@ class TwitterUser < ActiveRecord::Base
 
   def replied
     if ego_surfing? && mentions.any?
-      mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
+      mentions.map { |m| m.user }.uniq { |u| u.id.to_i }.map { |u| u.uid = u.id; u }
     else
       ExTwitter.new.select_replied_from_search(search_results).map { |u| u.uid = u.id; u }
     end
   end
 
   def favoriting(options = {})
-    _favoriting =
-      begin
-        client.favoriting(__uid_i, options)
-      rescue => e
-        logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
-        []
-      end
-    _favoriting.map { |u| u.uid = u.id; u }
+    client.favoriting(__uid_i, options.merge(favorites: favorites)).map { |u| u.uid = u.id; u }
   end
 
   def inactive_friends
@@ -324,14 +329,12 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def close_friends(options = {})
-    _close_friends =
-      begin
-        client.close_friends(__uid_i, options) && client.close_friends(__uid_i, options)
-      rescue => e
-        logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
-        []
-      end
-    _close_friends.map { |u| u.uid = u.id; u }
+    client.close_friends(__uid_i, options.merge(
+      min: 1,
+      replying: replying(options),
+      replied: replied,
+      favoriting: favoriting(options))
+    ).map { |u| u.uid = u.id; u }
   end
 
   def inactive_friends_graph
@@ -380,7 +383,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def close_friends_graph
-    items = close_friends(min: 0, max: 100)
+    items = close_friends(min: 0)
     items_size = items.size
     good = (percentile_index(items, 0.10) + 1)
     not_so_bad = (percentile_index(items, 0.50) + 1) - good
@@ -440,7 +443,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def usage_stats_graph
-    client.usage_stats(__uid_i)
+    client.usage_stats(__uid_i, tweets: statuses)
   end
 
   def percentile_index(ary, percentile = 0.0)
