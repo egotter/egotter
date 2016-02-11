@@ -4,6 +4,14 @@
   <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
 
+<div class="container progress_bar">
+  <div class="progress" style="margin-top: 15px; margin-bottom: 0px;">
+    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+      <span class="sr-only">0% Complete</span>
+    </div>
+  </div>
+</div>
+
 <% if TwitterUser.exists?(uid: @searched_tw_user.uid) %>
   <div class="container show_immediately_btn" style="margin-top: 15px;">
     <%= link_to t('dictionary.show_immediately'),
@@ -34,6 +42,7 @@
     var retry_btn = $('.retry_btn');
     var login_btn = $('.login_btn');
     var show_immediately_btn = $('.show_immediately_btn');
+    var progress_bar = $('.progress_bar');
     var error_msg = $('.error_msg');
     var interval = 2000;
     var max_interval = 5000;
@@ -44,6 +53,20 @@
     var unauthorized = false;
     var something_is_wrong = false;
     var response = null;
+
+    function progress(value) {
+      var random_int = function (min, max) {
+        return Math.random() * (max - min) + min;
+      };
+
+      var bar = progress_bar.find('.progress-bar');
+      value = value || parseInt(bar.attr('aria-valuenow')) + random_int(10, 20);
+      if (value > 90) {
+        value = 90;
+      }
+      bar.css('width', value + '%').attr('aria-valuenow', value);
+      bar.find('.sr-only').text(value + '% Complete');
+    }
 
     show_immediately_btn.on('click', function () {
       stop_waiting = true;
@@ -58,12 +81,14 @@
 
             if (res.status) {
               if (!stop_waiting) {
+                progress(95);
                 interval *= 1000;
                 show_immediately_btn.hide();
                 waiting_msg.html('<%= t("dictionary.waiting_is_finished_msg") %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
                 window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
               }
             } else {
+              progress();
               if (res.reason == '<%= BackgroundSearchLog::TooManyRequests %>') {
                 too_many_requests = true;
               } else if (res.reason == '<%= BackgroundSearchLog::Unauthorized %>') {
@@ -84,6 +109,7 @@
 
       if (too_many_requests) {
         show_immediately_btn.hide();
+        progress_bar.hide();
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.too_many_requests") %>');
           retry_btn.show();
@@ -93,6 +119,7 @@
         }
       } else if (unauthorized) {
         show_immediately_btn.hide();
+        progress_bar.hide();
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.unauthorized") %>');
           retry_btn.show();
@@ -102,6 +129,7 @@
         }
       } else if (something_is_wrong) {
         show_immediately_btn.hide();
+        progress_bar.hide();
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.something_is_wrong") %>');
           retry_btn.show();
@@ -110,7 +138,6 @@
             error_msg.text(response.message);
           }
         } else {
-          show_immediately_btn.hide();
           waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
           login_btn.show();
         }
@@ -121,6 +148,7 @@
           }
         } else {
           show_immediately_btn.hide();
+          progress_bar.hide();
           if (is_login) {
             waiting_msg.html('<%= t("after_sign_in.please_retry", user: @searched_tw_user.name) %>');
             retry_btn.show();
