@@ -27,7 +27,7 @@ stop() {
     sudo -u ec2-user -H bash -l -c "bundle exec sidekiqctl quiet ./tmp/pids/sidekiq.pid"
 
     until ps aux | grep 'sidekiq 4' | grep '0 of '; do
-      echo 'waiting'
+      echo `ps aux | grep 'sidekiq 4'`
       sleep 2
     done
 
