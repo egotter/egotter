@@ -138,20 +138,20 @@
 
 <footer class="footer">
   <div class="container">
-    <p class="text-muted" style="text-align: center; padding-top: 15px; line-height: 200%;">
-      <a style="text-decoration: none;" href="/">トップページ</a>&nbsp;&nbsp;
+    <p class="text-muted">
+      <a href="/">トップページ</a>&nbsp;&nbsp;
       <% if user_signed_in? %>
-        <%= link_to t('dictionary.sign_out'), destroy_user_session_path, data: {confirm: t('dictionary.realy_sign_out')}, style: 'text-decoration: none;' %>&nbsp;&nbsp;
+        <%= link_to t('dictionary.sign_out'), destroy_user_session_path, data: {confirm: t('dictionary.realy_sign_out')} %>&nbsp;&nbsp;
       <% else %>
-        <%= link_to t('dictionary.sign_in'), welcome_path, style: 'text-decoration: none;' %>&nbsp;&nbsp;
+        <%= link_to t('dictionary.sign_in'), welcome_path %>&nbsp;&nbsp;
       <% end %>
-      <a style="text-decoration: none;" href="/">ご意見</a>&nbsp;&nbsp;
+      <a href="/">ご意見</a>&nbsp;&nbsp;
       <% if user_signed_in? %>
-        <%= link_to t('dictionary.menu'), menu_path, style: 'text-decoration: none;' %>&nbsp;&nbsp;
+        <%= link_to t('dictionary.menu'), menu_path %>&nbsp;&nbsp;
       <% end %>
-      <a style="text-decoration: none;" href="https://twitter.com/ego_tter" target="_blank"><%= t('dictionary.official_account') %></a>&nbsp;&nbsp;
-      <a style="text-decoration: none;" href="/">お問い合わせ</a>&nbsp;&nbsp;
-      <a style="text-decoration: none;" href="https://github.com/ts-3156/egotter" target="_blank">Github</a>&nbsp;&nbsp;
+      <a href="https://twitter.com/ego_tter" target="_blank"><%= t('dictionary.official_account') %></a>&nbsp;&nbsp;
+      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <a href="https://github.com/ts-3156/egotter" target="_blank">Github</a>&nbsp;&nbsp;
       <% if action_name.in?(%w(show)) %><span><!-- search_elapsed_time --></span><% end %>
       <% if action_name.in?(%w(new show)) %><span><!-- cache_ttl --></span><% end %>
     </p>

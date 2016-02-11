@@ -284,3 +284,15 @@
   margin-top: 15px;
 }
 /* _search_menu_items.html.erb end */
+
+/* footer start */
+.footer p {
+  text-align: center;
+  padding-top: 15px;
+  line-height: 200%;
+}
+
+.footer a {
+  text-decoration: none;
+}
+/* footer end */
