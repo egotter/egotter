@@ -145,7 +145,7 @@ class SearchesController < ApplicationController
     @menu_close_friends = {
       name: t('search_menu.close_friends', user: sn),
       target: tu.close_friends(cache: :read), # no calling
-      graph: tu.close_friends_graph,
+      graph: tu.close_friends_graph(cache: :read),
       path_method: method(:close_friends_path).to_proc
     }
 
@@ -291,6 +291,7 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/close_friends
   def close_friends
     @user_items = build_user_items(@searched_tw_user.close_friends)
+    @graph = @searched_tw_user.close_friends_graph
     @name = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end

@@ -382,17 +382,22 @@ class TwitterUser < ActiveRecord::Base
     ]
   end
 
-  def close_friends_graph
-    items = close_friends(min: 0)
+  def close_friends_graph(options = {})
+    items = close_friends(options.merge(min: 0))
     items_size = items.size
-    good = (percentile_index(items, 0.10) + 1)
-    not_so_bad = (percentile_index(items, 0.50) + 1) - good
-    so_so = items.size - (good + not_so_bad)
+    good = percentile_index(items, 0.10) + 1
+    not_so_bad = percentile_index(items, 0.50) + 1
+    so_so = percentile_index(items, 1.0) + 1
     [
-      {name: I18n.t('legend.close_friends'), y: (good.to_f / items_size * 100), sliced: true, selected: true},
-      {name: I18n.t('legend.friends'), y: (not_so_bad.to_f / items_size * 100)},
-      {name: I18n.t('legend.acquaintance'), y: (so_so.to_f / items_size * 100)}
+      {name: I18n.t('legend.close_friends'), y: (good.to_f / items_size * 100), drilldown: 'good', sliced: true, selected: true},
+      {name: I18n.t('legend.friends'), y: ((not_so_bad - good).to_f / items_size * 100), drilldown: 'not_so_bad'},
+      {name: I18n.t('legend.acquaintance'), y: ((so_so - (good + not_so_bad)).to_f / items_size * 100), drilldown: 'so_so'}
     ]
+    # drilldown_series = [
+    #   {name: 'good', id: 'good', data: items.slice(0, good - 1).map { |i| [i.screen_name, i.score] }},
+    #   {name: 'not_so_bad', id: 'not_so_bad', data: items.slice(good, not_so_bad - 1).map { |i| [i.screen_name, i.score] }},
+    #   {name: 'so_so', id: 'so_so', data: items.slice(not_so_bad, so_so - 1).map { |i| [i.screen_name, i.score] }},
+    # ]
   end
 
   def one_sided_following_graph

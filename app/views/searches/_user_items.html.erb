@@ -1,10 +1,15 @@
 <%# user list %>
 <% user_items.each.with_index do |user_item, i| %>
+  <%
+    profile_image_url = user_item[:target].profile_image_url_https.to_s
+    screen_name = user_item[:target].screen_name
+  %>
   <div class="user-item-carousel user-item-carousel-<%= i %>">
     <%# name box %>
     <div class="media">
       <div class="media-left">
-        <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>" alt="<%= user_item[:target].screen_name %>" width="48" height="48">
+        <img class="media-object" src="<%= profile_image_url %>"
+             alt="<%= "@#{screen_name}" %>" width="48" height="48">
       </div>
 
       <div class="media-body">
@@ -14,8 +19,8 @@
           <% end %>
         </h4>
         <span class="screen_name">
-          <%= link_to "https://twitter.com/#{user_item[:target].screen_name}", target: '_blank' do %>
-            <%= "@#{user_item[:target].screen_name}" %>
+          <%= link_to "https://twitter.com/#{screen_name}", target: '_blank' do %>
+            <%= "@#{screen_name}" %>
           <% end %>
         </span>
       </div>
@@ -35,35 +40,37 @@
           </span>
         <% end %>
 
-        <%= link_to searches_path(screen_name: user_item[:target].screen_name, id: user_item[:target].uid), method: :post do %>
+        <%= link_to searches_path(screen_name: screen_name, id: user_item[:target].uid), method: :post do %>
           <button type="button" class="btn btn-info">
             <span class="glyphicon glyphicon-search"></span>
           </button>
         <% end %>
       </div>
-    </div>
+    </div><%# .media %>
 
     <%# description box %>
     <div class="media description-box" style="display: none;">
       <div class="media-left">
-        <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>" alt="<%= user_item[:target].screen_name %>" width="48" height="48">
+        <img class="media-object" src="<%= profile_image_url %>"
+             alt="<%= "@#{screen_name}" %>" width="48" height="48">
       </div>
 
       <div class="media-body">
-          <span class="screen_name"><%= truncate(user_item[:target].description, length: 40) %></span>
+          <span class="description"><%= truncate(user_item[:target].description, length: 20) %></span>
       </div>
     </div>
 
     <%# count box %>
     <div class="media count-box" style="display: none;">
       <div class="media-left">
-        <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>" alt="<%= user_item[:target].screen_name %>" width="48" height="48">
+        <img class="media-object" src="<%= profile_image_url %>"
+             alt="<%= "@#{screen_name}" %>" width="48" height="48">
       </div>
 
       <div class="media-body">
         <div class="statuses_count"><%= user_item[:target].statuses_count %>&nbsp;<%= t('dictionary.tweet') %></div>
-        <div class="friends_count"><%= user_item[:target].friends_count %>&nbsp;<%= t('dictionary.friends') %></div>
-        <div class="followers_count"><%= user_item[:target].followers_count %>&nbsp;<%= t('dictionary.follower') %></div>
+        <span class="friends_count"><%= user_item[:target].friends_count %>&nbsp;<%= t('dictionary.friends') %></span>
+        <span class="followers_count"><%= user_item[:target].followers_count %>&nbsp;<%= t('dictionary.follower') %></span>
       </div>
     </div>
 
@@ -71,7 +78,8 @@
     <% if user_item[:target].has_key?(:score) %><%# close_friends score %>
       <div class="media score-box" style="display: none;">
         <div class="media-left">
-          <img class="media-object" src="<%= user_item[:target].profile_image_url_https.to_s %>" alt="<%= user_item[:target].screen_name %>" width="48" height="48">
+          <img class="media-object" src="<%= profile_image_url %>"
+               alt="<%= "@#{screen_name}" %>" width="48" height="48">
         </div>
 
         <div class="media-body">
@@ -81,7 +89,56 @@
         </div>
       </div>
     <% end %>
-  </div>
+  </div><%# .user-item-carousel %>
+
+  <% if i == 0 && user_items.many? && graph.present? %>
+    <div class="user-items media">
+      <div class="media-body">
+        <div id="<%= graph.object_id %>" class="common-chart"></div>
+        <script>
+          $(function () {
+            var graph_option = $.extend(true, {}, window.common_pie_chart_options);
+            graph_option.series[0].data = <%= raw graph.to_json %>;
+            graph_option.chart.margin = 0;
+            $('#<%= graph.object_id %>').highcharts(graph_option);
+          });
+        </script>
+        <div class="icon-chart container" style="margin-top: 15px;">
+          <%
+            chart_items = user_items.slice(0, [10, user_items.size].min)
+            total_score = chart_items.inject(0){|memo, item| memo + item[:target].score }
+            color = %w(#ffc107 #9e9e9e #795548) + Array.new(10, '#eeeeee')
+          %>
+          <% chart_items.each.with_index do |item, ii| %>
+            <%
+              url = item[:target].profile_image_url_https.to_s
+              sn = "@#{item[:target].screen_name}"
+              rate = item[:target].score.to_f / total_score * 100
+            %>
+            <div class="row">
+              <div class="col-xs-3 text-center" style="padding-left: 0px; padding-right: 0px;">
+                <% if ii < 3 %>
+                  <img style="display: inline;" src="<%= "/flaticon/prize#{ii + 1}.png" %>" width="24" height="24">
+                <% else %>
+                  <span style="display: inline;"><%= ii + 1 %></span>
+                <% end %>
+                <img style="display: inline;" src="<%= url %>" width="24" height="24" alt="<%= sn %>">
+              </div>
+              <div class="col-xs-9" style="padding-left: 0px; padding-right: 0px;">
+                <div class="progress" style="margin-bottom: 0px;">
+                  <div class="progress-bar progress-bar" role="progressbar"
+                       aria-valuenow="<%= rate %>" aria-valuemin="0" aria-valuemax="100"
+                       style="width: <%= rate %>%; background-color: <%= color[ii] %>;">
+                    <span class="sr-only"><%= rate %>% Complete</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  <% end %>
 <% end %>
 
 <script>

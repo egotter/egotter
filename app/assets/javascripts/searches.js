@@ -27,10 +27,13 @@ window.common_pie_chart_options = {
     }
   },
   series: [{
-    name: '',
+    name: null,
     colorByPoint: true,
     data: null
-  }]
+  }],
+  drilldown: {
+    series: null
+  }
 };
 
 window.usage_stats_column_chart_options = {
