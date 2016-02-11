@@ -500,7 +500,7 @@ class ExTwitter < Twitter::REST::Client
   # users which specified user is replying
   # in_reply_to_user_id and in_reply_to_status_id is not used because of distinguishing mentions from replies
   def replying(user, options = {})
-    tweets = options[:tweets].present? ? options[:tweets] : user_timeline(user, options)
+    tweets = options.has_key?(:tweets) ? options.delete(:tweets) : user_timeline(user, options)
     screen_names = select_screen_names_replied(tweets)
     users(screen_names, options)
   rescue => e
@@ -648,7 +648,7 @@ class ExTwitter < Twitter::REST::Client
 
   def usage_stats(user, options = {})
     n_days_ago = options.has_key?(:days) ? options[:days].days.ago : 365.days.ago
-    tweets = options.has_key?(:tweets) ? options[:tweets] : user_timeline(user)
+    tweets = options.has_key?(:tweets) ? options.delete(:tweets) : user_timeline(user)
     times =
       # TODO Use user specific time zone
       tweets.map { |t| ActiveSupport::TimeZone['Tokyo'].parse(t.created_at.to_s) }.
@@ -671,13 +671,25 @@ class ExTwitter < Twitter::REST::Client
     }
   end
 
+  def calc_scores_from_users(users, options)
+    min = options.has_key?(:min) ? options[:min] : 0
+    max = options.has_key?(:max) ? options[:max] : 1000
+    users.each_with_object(Hash.new(0)) { |u, memo| memo[u.id] += 1 }.
+      select { |_k, v| min <= v && v <= max }.
+      sort_by { |_, v| -v }.to_h
+  end
+
+  def calc_scores_from_tweets(tweets, options = {})
+    calc_scores_from_users(tweets.map { |t| t.user }, options)
+  end
+
   def select_favoriting_from_favs(favs)
-    uids = favs.each_with_object(Hash.new(0)) { |f, memo| memo[f.user.id] += 1 }.sort_by { |_, v| -v }.to_h.keys
+    uids = calc_scores_from_tweets(favs).keys
     uids.map { |uid| favs.find { |f| f.user.id.to_i == uid.to_i } }.map { |f| f.user }
   end
 
   def favoriting(user, options= {})
-    favs = options[:favorites].present? ? options[:favorites] : favorites(user, options)
+    favs = options.has_key?(:favorites) ? options.delete(:favorites) : favorites(user, options)
     select_favoriting_from_favs(favs)
   rescue => e
     logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
@@ -688,18 +700,27 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def close_friends(_uid, options = {})
-    options[:min] = 0 unless options.has_key?(:min)
-    options[:max] = 1000 unless options.has_key?(:max)
+    min = options.has_key?(:min) ? options[:min] : 0
+    max = options.has_key?(:max) ? options[:max] : 1000
     uid_i = _uid.to_i
-    _replying = options[:replying].present? ? options[:replying] : replying(uid_i, options)
-    _replied = options[:replied].present? ? options[:replied] : replied(uid_i, options)
-    _favoriting = options[:favoriting].present? ? options[:favoriting] : favoriting(uid_i, options)
+    _replying = options.has_key?(:replying) ? options.delete(:replying) : replying(uid_i, options)
+    _replied = options.has_key?(:replied) ? options.delete(:replied) : replied(uid_i, options)
+    _favoriting = options.has_key?(:favoriting) ? options.delete(:favoriting) : favoriting(uid_i, options)
 
+    min_max = {min: min, max: max}
     _users = _replying + _replied + _favoriting
-    uids_scores = _users.each_with_object(Hash.new(0)) { |user, memo| memo[user.id] += 1 }.
-      select { |_k, v| options[:min] <= v && v <= options[:max] }.
-      sort_by { |_, v| -v }.to_h
-    uids_scores.keys.map { |uid| _users.find { |u| u.id.to_i == uid.to_i } }.
-      map {|u| u[:score] = uids_scores[u.id]; u }
+    scores = calc_scores_from_users(_users, min_max)
+    replying_scores = calc_scores_from_users(_replying, min_max)
+    replied_scores = calc_scores_from_users(_replied, min_max)
+    favoriting_scores = calc_scores_from_users(_favoriting, min_max)
+
+    scores.keys.map { |uid| _users.find { |u| u.id.to_i == uid.to_i } }.
+      map do |u|
+      u[:score] = scores[u.id]
+      u[:replying_score] = replying_scores[u.id]
+      u[:replied_score] = replied_scores[u.id]
+      u[:favoriting_score] = favoriting_scores[u.id]
+      u
+    end
   end
 end

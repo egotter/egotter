@@ -75,7 +75,9 @@
         </div>
 
         <div class="media-body">
-          <div class="score"><%= user_item[:target].score %>&nbsp;<%= t('dictionary.score') %></div>
+          <div class="score">
+            <%= t('dictionary.score') %>&nbsp;<%= "#{user_item[:target].score} (#{user_item[:target].replying_score}, #{user_item[:target].replied_score}, #{user_item[:target].favoriting_score})" %>
+          </div>
         </div>
       </div>
     <% end %>
