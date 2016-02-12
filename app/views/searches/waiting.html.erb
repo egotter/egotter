@@ -60,10 +60,18 @@
       };
 
       var bar = progress_bar.find('.progress-bar');
-      value = value || parseInt(bar.attr('aria-valuenow')) + random_int(10, 20);
-      if (value > 90) {
-        value = 90;
+      if (!value) {
+        value = parseInt(bar.attr('aria-valuenow'));
+        if (value > 50) {
+          value += random_int(5, 10);
+        } else {
+          value += random_int(10, 20);
+        }
+        if (value > 90) {
+          value = 90;
+        }
       }
+
       bar.css('width', value + '%').attr('aria-valuenow', value);
       bar.find('.sr-only').text(value + '% Complete');
     }
