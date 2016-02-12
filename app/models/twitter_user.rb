@@ -204,25 +204,37 @@ class TwitterUser < ActiveRecord::Base
 
     begin
       log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
+
       self.transaction do
         _friends.map {|f| f.from_id = self.id }
         _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
+      end
 
+      self.transaction do
         _followers.map {|f| f.from_id = self.id }
         _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
+      end
 
+      self.transaction do
         _statuses.map {|s| s.from_id = self.id }
         _statuses.each_slice(100).each { |s| Status.import(s, validate: false) }
+      end
 
+      self.transaction do
         _mentions.map {|m| m.from_id = self.id }
         _mentions.each_slice(100).each { |m| Mention.import(m, validate: false) }
+      end
 
+      self.transaction do
         _search_results.map {|sr| sr.from_id = self.id }
         _search_results.each_slice(100).each { |sr| SearchResult.import(sr, validate: false) }
+      end
 
+      self.transaction do
         _favorites.map {|f| f.from_id = self.id }
         _favorites.each_slice(100).each { |f| Favorite.import(f, validate: false) }
       end
+
       Rails.logger.level = log_level
 
       self.reload # for friends, followers and statuses
