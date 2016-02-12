@@ -44,6 +44,7 @@ ja:
     delim: "、"
   before_sign_in:
     need_login: "%{sign_in_link} が必要です。"
+    session_expired: "再度 %{sign_in_link} してください。"
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     not_found: "検索された Twitter ID が見付かりません。アカウントが削除されたのかもしれません。"

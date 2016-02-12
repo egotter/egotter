@@ -498,10 +498,6 @@ class SearchesController < ApplicationController
     logger.warn "create_search_log #{e.message}"
   end
 
-  def sign_in_link
-    view_context.link_to(t('dictionary.sign_in'), welcome_path)
-  end
-
   def twitter_link(screen_name)
     view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
   end
