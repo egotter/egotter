@@ -7,27 +7,28 @@ class BackgroundUpdateWorker
   def perform(uid, options = {})
     @uid = uid
     options = options.with_indifferent_access
-    _tu = TwitterUser.build(client, uid.to_i, all: false)
+    _tu = measure('build(first)') { TwitterUser.build(client, uid.to_i, all: false) }
+    @sn = _tu.screen_name
 
-    logger.debug "#{user_name(_tu)} start"
+    logger.debug "#{user_name} start"
 
     if _tu.too_many_friends?
       create_log(uid, false, BackgroundUpdateLog::TooManyFriends, _tu.errors.full_messages)
       redis.zadd(failed_key, now_i, uid.to_s)
-      logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
+      logger.debug "#{user_name} #{_tu.errors.full_messages}"
       return
     end
 
     if _tu.unauthorized?
       create_log(uid, false, BackgroundUpdateLog::Unauthorized, _tu.errors.full_messages)
       redis.zadd(failed_key, now_i, uid.to_s)
-      logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
+      logger.debug "#{user_name} #{_tu.errors.full_messages}"
       return
     end
 
     if _tu.suspended_account?
       create_log(uid, false, BackgroundUpdateLog::Suspended, _tu.errors.full_messages)
-      logger.debug "#{user_name(_tu)} #{_tu.errors.full_messages}"
+      logger.debug "#{user_name} #{_tu.errors.full_messages}"
       return
     end
 
@@ -35,16 +36,16 @@ class BackgroundUpdateWorker
 
     if latest_tu.present? && (latest_tu.recently_created? || latest_tu.recently_updated?)
       latest_tu.update_and_touch
-      logger.debug "#{user_name(_tu)} skip(recently created or recently updated)"
+      logger.debug "#{user_name} skip(recently created or recently updated)"
       create_log(uid, true)
       return
     end
 
-    new_tu = TwitterUser.build(client, _tu.uid.to_i)
-    if new_tu.save_with_bulk_insert
-      logger.debug "#{user_name(_tu)} create new TwitterUser"
+    new_tu = measure('build(second)') { TwitterUser.build(client, _tu.uid.to_i) }
+    if measure('save') { new_tu.save_with_bulk_insert }
+      logger.debug "#{user_name} create new TwitterUser"
     else
-      logger.debug "#{user_name(_tu)} do nothing(#{new_tu.errors.full_messages})"
+      logger.debug "#{user_name} do nothing(#{new_tu.errors.full_messages})"
     end
     create_log(uid, true)
 
@@ -54,20 +55,27 @@ class BackgroundUpdateWorker
 
   rescue Twitter::Error::TooManyRequests => e
     friends_count = "(#{_tu.friends_count},#{_tu.followers_count})" if _tu.present?
-    logger.warn "#{user_name(_tu)}#{friends_count} #{bot_name(client)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
+    logger.warn "#{user_name}#{friends_count} #{bot_name(client)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
     redis.zrem('update_job_dispatcher:recently_added', uid.to_s)
     create_log(uid, false, BackgroundUpdateLog::TooManyRequests)
   rescue Twitter::Error::Unauthorized => e
-    logger.warn "#{user_name(_tu)} #{bot_name(client)} #{e.class} #{e.message}"
+    logger.warn "#{user_name} #{bot_name(client)} #{e.class} #{e.message}"
     create_log(uid, false, BackgroundUpdateLog::Unauthorized)
   rescue => e
-    logger.warn "#{user_name(_tu)} #{bot_name(client)} #{e.class} #{e.message}"
+    logger.warn "#{user_name} #{bot_name(client)} #{e.class} #{e.message}"
     create_log(uid, false, BackgroundUpdateLog::SomethingIsWrong, e.message)
     raise e
   end
 
-  def user_name(tu)
-    "#{tu.uid},#{tu.screen_name}" rescue @uid.to_s
+  def measure(name)
+    start = Time.zone.now
+    result = yield
+    logger.warn "#{user_name} #{name} #{Time.zone.now - start}s"
+    result
+  end
+
+  def user_name
+    "#{@uid},#{@sn}"
   end
 
   def bot_name(b)
