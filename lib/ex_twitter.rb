@@ -495,7 +495,7 @@ class ExTwitter < Twitter::REST::Client
     result = tweets.map do |t|
       $1 if t.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
     end.compact
-    (options.has_key?(:uniq) && options[:uniq]) ? result.uniq : result
+    (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq
   end
 
   # users which specified user is replying
@@ -527,7 +527,7 @@ class ExTwitter < Twitter::REST::Client
     result = tweets.map do |t|
       t.user.id.to_i if t.text =~ /^(?:\.)?@(\w+)( |\W)/ # include statuses starts with .
     end.compact
-    (options.has_key?(:uniq) && options[:uniq]) ? result.uniq : result
+    (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq
   end
 
   def select_replied_from_search(tweets, options = {})
@@ -686,8 +686,10 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def select_favoriting_from_favs(favs, options = {})
-    uids = calc_scores_from_tweets(favs).keys
-    uids.map { |uid| favs.find { |f| f.user.id.to_i == uid.to_i } }.map { |f| f.user }
+    uids = calc_scores_from_tweets(favs)
+    result = uids.map { |uid, score| f = favs.
+      find { |f| f.user.id.to_i == uid.to_i }; Array.new(score, f) }.flatten.map { |f| f.user }
+    (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.id }
   end
 
   def favoriting(user, options= {})
