@@ -504,6 +504,8 @@ class ExTwitter < Twitter::REST::Client
     tweets = options.has_key?(:tweets) ? options.delete(:tweets) : user_timeline(user, options)
     screen_names = select_screen_names_replied(tweets, options)
     users(screen_names, options)
+  rescue Twitter::Error::NotFound => e
+    e.message == 'No user matches for specified terms.' ? [] : (raise e)
   rescue => e
     logger.warn "#{__method__} #{user.inspect} #{e.class} #{e.message}"
     raise e
