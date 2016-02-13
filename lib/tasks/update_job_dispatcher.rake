@@ -6,7 +6,6 @@ namespace :update_job_dispatcher do
     # TODO use queue priority
 
     added_key = Redis.job_dispatcher_added_key
-    recently_failed_key = Redis.background_update_worker_recently_failed_key
     too_many_friends_key = Redis.background_update_worker_too_many_friends_key
     unauthorized_key = Redis.background_update_worker_unauthorized_key
 
@@ -35,11 +34,6 @@ namespace :update_job_dispatcher do
     uids.shuffle.each do |uid|
       if redis.zrank(added_key, uid.to_s).present?
         already_added_count += 1
-        next
-      end
-
-      if redis.zrank(recently_failed_key, uid.to_s).present?
-        already_failed_count += 1
         next
       end
 
@@ -95,7 +89,6 @@ namespace :update_job_dispatcher do
     debug_info = {
       followers: uids.size,
       'zcard(added)' => redis.zcard(added_key),
-      'zcard(failed)' => redis.zcard(recently_failed_key),
       'zcard(too many friends)' => redis.zcard(too_many_friends_key),
       'zcard(unauthorized)' => redis.zcard(unauthorized_key),
       'zrem(added)' => zrem_count,

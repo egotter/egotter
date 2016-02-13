@@ -29,6 +29,7 @@ Redis.class_eval do
     'background_update_worker:unauthorized'
   end
 
+  # not using
   def self.background_update_worker_recently_failed_key
     'background_update_worker:recently_failed'
   end
