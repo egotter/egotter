@@ -38,6 +38,9 @@ class SearchesController < ApplicationController
     end
   end
 
+  def support
+  end
+
   def show
     start_time = Time.zone.now
     tu = @searched_tw_user

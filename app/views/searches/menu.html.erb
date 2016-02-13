@@ -1,14 +1,16 @@
-<div class="container">
-  <h2 style="text-align: center; margin-top: 10px;"><small><%= t('dictionary.search_login_user') %></small></h2>
-  <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
-              searches_path(screen_name: current_user.screen_name),
-              class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;', method: :post %>
+<div class="menu container">
+  <h2><small><%= t('dictionary.search_login_user') %></small></h2>
+  <div class="container">
+    <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
+                searches_path(screen_name: current_user.screen_name),
+                class: 'btn btn-lg btn-info btn-block', method: :post %>
+  </div>
 
   <hr>
 
-  <div>
+  <div class="container">
     <%= form_tag menu_path, method: :post do %>
-      <h2 style="text-align: center; margin-top: 5px;"><small><%= t('dictionary.notification_settings') %></small></h2>
+      <h2><small><%= t('dictionary.notification_settings') %></small></h2>
       <div class="checkbox">
         <label>
           <input type="checkbox" name="notification" style="margin-top: 12px;" <%= 'checked' if current_user.notification? %>>
@@ -21,20 +23,24 @@
 
   <hr>
 
-  <%= render(partial: 'searches/adsense') %>
+  <h2><small><%= t('search_menu.search_histories') %></small></h2>
+  <div class="container">
+    <%= render(partial: 'searches/adsense') %>
+  </div>
 
-  <hr>
-
-  <h2 style="text-align: center; margin-top: 5px;"><small><%= t('search_menu.search_histories') %></small></h2>
   <%= render(partial: 'searches/user_items', locals: {searched_tw_user: @raw_user, user_items: @user_items, graph: @graph}) %>
 
   <% if current_user.admin? %>
-    <h2 style="text-align: center; margin-top: 5px;"><small><%= t('search_menu.debug') %></small></h2>
-    <%= link_to t('search_menu.debug'), debug_path,
-                class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px; margin-bottom: 15px;' %>
+    <h2><small><%= t('search_menu.debug') %></small></h2>
+    <div class="container">
+      <%= link_to t('search_menu.debug'), debug_path,
+                  class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
+    </div>
 
-    <h2 style="text-align: center; margin-top: 5px;"><small><%= t('search_menu.clear_result_cache') %></small></h2>
-    <%= link_to t('search_menu.clear_result_cache'), clear_result_cache_path,
-                class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px; margin-bottom: 15px;', method: :post %>
+    <h2><small><%= t('search_menu.clear_result_cache') %></small></h2>
+    <div class="container">
+      <%= link_to t('search_menu.clear_result_cache'), clear_result_cache_path,
+                  class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;', method: :post %>
+    </div>
   <% end %>
 </div>

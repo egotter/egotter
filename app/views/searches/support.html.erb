@@ -1,0 +1,19 @@
+<div class="support container">
+  <h2><small><%= t('dictionary.support') %></small></h2>
+  <div class="container">
+    <div style="margin-bottom: 10px;"><%= t('dictionary.support_lead') %></div>
+  </div>
+
+  <hr>
+
+  <h2><small><%= t('dictionary.contact_by_reply') %></small></h2>
+  <div class="container">
+    <div><%= t('dictionary.feel_free_to_reply',
+               link: link_to(t('dictionary.official_account'), 'https://twitter.com/ego_tter', target: '_blank')).html_safe %></div>
+  </div>
+
+  <hr>
+
+  <h2><small><%= t('dictionary.faq') %></small></h2>
+  <%= render(partial: 'searches/faq_items') %>
+</div>

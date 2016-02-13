@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'welcome', to: 'searches#welcome', as: :welcome
   get 'menu', to: 'searches#menu', as: :menu
   post 'menu', to: 'searches#menu'
+  get 'support', to: 'searches#support', as: :support
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   post 'searches/:screen_name/waiting', to: 'searches#waiting'
   get 'searches/:screen_name/statuses', to: 'searches#statuses', as: :statuses

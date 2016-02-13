@@ -154,7 +154,7 @@
         <%= link_to t('dictionary.menu'), menu_path %>&nbsp;&nbsp;
       <% end %>
       <a href="https://twitter.com/ego_tter" target="_blank"><%= t('dictionary.official_account') %></a>&nbsp;&nbsp;
-      <a href="/">お問い合わせ</a>&nbsp;&nbsp;
+      <%= link_to t('dictionary.support'), support_path %>&nbsp;&nbsp;
       <a href="https://github.com/ts-3156/egotter" target="_blank">Github</a>&nbsp;&nbsp;
       <% if action_name.in?(%w(show)) %><span><!-- search_elapsed_time --></span><% end %>
       <% if action_name.in?(%w(new show)) %><span><!-- cache_ttl --></span><% end %>

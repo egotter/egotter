@@ -1,0 +1,13 @@
+<%# faq list %>
+<% Faq.list.each.with_index do |faq, i| %>
+  <div class="media">
+    <div class="media-body">
+      <h4 class="media-heading">
+        <%= "Q.#{i + 1} #{faq[:q]}" %>
+      </h4>
+      <div class="answer">
+        <%= faq[:a].html_safe %>
+      </div>
+    </div>
+  </div>
+<% end %>

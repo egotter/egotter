@@ -381,6 +381,51 @@
 }
 /* usage-stats end */
 
+/* menu.html.erb start */
+.menu {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.menu h2 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* menu.html.erb end */
+
+/* support.html.erb start */
+.support {
+  padding-left: 0px;
+  padding-right: 0px;
+}
+.support h2 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.support .media {
+  margin-top: 15px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 15px;
+}
+
+.support .media-body {
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.support .media-heading {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333333;
+}
+
+.support .media-body .answer {
+  font-size: 13px;
+  color: #333333;
+}
+/* support.html.erb end */
+
 /* footer start */
 .footer p {
   text-align: center;
