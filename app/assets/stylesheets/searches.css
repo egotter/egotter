@@ -211,9 +211,13 @@
 }
 
 .profile-overview-container .profile-overview {
-  padding-bottom: 50px; /* add 30px for .slick-slider */
   background-size: cover;
   /* specify background-image in _profile_overview.html.erb */
+}
+
+.profile-overview-container .profile-overview-overlay {
+  padding-bottom: 50px; /* add 30px for .slick-slider */
+  background-color: rgba(0, 0, 0, 0.2);
 }
 
 .profile-overview-container .profile-overview .slick-slider {
