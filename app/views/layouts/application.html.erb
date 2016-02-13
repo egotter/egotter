@@ -65,7 +65,7 @@
       </button>
 
       <% if action_name != 'new' %>
-        <button type="button" class="navbar-toggle" data-toggle="modal" data-target="#search_modal" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+        <button type="button" class="navbar-toggle" data-toggle="modal" data-target=".search-modal" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
           <span style="font-size: 20px" class="glyphicon glyphicon-search"></span><br>
           <span style="font-size: 9px;"><%= t('dictionary.search') %></span>
         </button>
@@ -96,7 +96,7 @@
         </li>
         <% if action_name != 'new' %>
           <li>
-            <div data-toggle="modal" data-target="#search_modal" style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
+            <div data-toggle="modal" data-target=".search-modal" style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
               <span style="font-size: 20px" class="glyphicon glyphicon-search"></span><br>
               <span style="font-size: 9px;"><%= t('dictionary.search') %></span>
             </div>
@@ -108,12 +108,12 @@
 </nav>
 
 <% if action_name != 'new' %>
-  <div class="modal fade" id="search_modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+  <div class="modal fade search-modal" tabindex="-1" role="dialog" aria-labelledby="search-modal-label">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="myModalLabel"><%= t('dictionary.search_by_egotter') %></h4>
+          <h4 class="modal-title" id="search-modal-label"><%= t('dictionary.search_by_egotter') %></h4>
         </div>
         <div class="modal-body">
           <%= form_tag searches_path, method: :post do %>

@@ -1,13 +1,13 @@
 <%# profile box %>
-<div class="container profile-overview-container">
+<div class="container profile-overview-container <%= user.screen_name %>">
   <div class="profile-overview">
     <div class="profile-overview-carousel">
       <div>
         <div class="row text-center">
           <div class="col-xs-12">
-            <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}",
+            <%= link_to "https://twitter.com/#{user.screen_name}",
                         class: 'profile-icon-link', target: '_blank' do %>
-              <img class="profile-icon" src="<%= searched_tw_user.profile_image_url_https.to_s %>" width="48" height="48">
+              <img class="profile-icon" src="<%= user.profile_image_url_https.to_s %>" width="48" height="48">
             <% end %>
           </div>
         </div>
@@ -16,13 +16,13 @@
             <div class="profile-names">
               <div class="full-name">
                 <div>
-                  <span class="text"><%= searched_tw_user.name %>&nbsp;</span>
-                  <% if searched_tw_user.protected %><span class="glyphicon glyphicon-lock"></span><% end %>
+                  <span class="text"><%= user.name %>&nbsp;</span>
+                  <% if user.protected %><span class="glyphicon glyphicon-lock"></span><% end %>
                 </div>
               </div>
               <div class="screen-name">
-                <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", style: '', class: 'profile-screen_name-link', target: '_blank' do %>
-                  @<%= searched_tw_user.screen_name %>
+                <%= link_to "https://twitter.com/#{user.screen_name}", style: '', class: 'profile-screen_name-link', target: '_blank' do %>
+                  @<%= user.screen_name %>
                 <% end %>
               </div>
             </div>
@@ -33,7 +33,7 @@
       <div>
         <div class="row text-center">
             <div class="col-xs-12">
-              <div class="profile-description" style="display: none;"><%= searched_tw_user.description %></div>
+              <div class="profile-description" style="display: none;"><%= user.description %></div>
             </div>
         </div>
       </div>
@@ -44,19 +44,20 @@
 
 <script>
   $(function () {
-    $('.profile-overview-carousel').slick({
+    var container = $('.profile-overview-container.<%= user.screen_name %>');
+    container.find('.profile-overview-carousel').slick({
       accessibility: false,
       arrows: false,
       dots: true,
       infinite: false
     });
-    $('.profile-description').show();
+    container.find('.profile-description').show();
   });
 </script>
 
 <style type="text/css">
-  .profile-overview {
-    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= searched_tw_user.profile_banner_url.to_s + '/web' %>');
+  .profile-overview-container.<%= user.screen_name %> .profile-overview {
+    background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= user.profile_banner_url.to_s + '/web' %>');
   }
 </style>
 
@@ -65,23 +66,23 @@
   <div class="row">
     <div>
       <div class="tweet-count-box col-xs-4">
-        <%= link_to statuses_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+        <%= link_to statuses_path(screen_name: user.screen_name, id: user.uid),
                     class: 'text-muted' do %>
-          <span class="stats-count"><%= searched_tw_user.statuses_count %></span><br>
+          <span class="stats-count"><%= user.statuses_count %></span><br>
           <span class="text-muted"><%= t('dictionary.tweet') %></span>
         <% end %>
       </div>
       <div class="friends-count-box col-xs-4">
-        <%= link_to friends_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+        <%= link_to friends_path(screen_name: user.screen_name, id: user.uid),
                     class: 'text-muted' do %>
-          <span class="stats-count"><%= searched_tw_user.friends_count %></span><br>
+          <span class="stats-count"><%= user.friends_count %></span><br>
           <span class="text-muted"><%= t('dictionary.friends') %></span>
         <% end %>
       </div>
       <div class="followers-count-box col-xs-4">
-        <%= link_to followers_path(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+        <%= link_to followers_path(screen_name: user.screen_name, id: user.uid),
                     class: 'text-muted' do %>
-          <span class="stats-count"><%= searched_tw_user.followers_count %></span><br>
+          <span class="stats-count"><%= user.followers_count %></span><br>
           <span class="text-muted"><%= t('dictionary.follower') %></span>
         <% end %>
       </div>

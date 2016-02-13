@@ -1,4 +1,4 @@
-<%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
+<%= render(partial: 'searches/profile_overview', locals: {user: @searched_tw_user}) %>
 
 <div class="container waiting_msg" style="margin-top: 15px;">
   <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
