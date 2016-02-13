@@ -6,7 +6,7 @@
 #  uid          :string(191)      not null
 #  screen_name  :string(191)      not null
 #  user_info    :text(65535)      not null
-#  search_count :integer          default(1), not null
+#  search_count :integer          default(0), not null
 #  update_count :integer          default(0), not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null

@@ -14,7 +14,7 @@
 
   <hr style="border-color: #999999">
 
-  <div id="kind_graph" style="height: 200px; margin: 0 auto"></div>
+  <div id="kind_bar" style="height: 200px; margin: 0 auto"></div>
 </div>
 
 <script>
@@ -40,97 +40,39 @@
   hour_7days_options.series[0].data = <%= raw @hour_series_data_7days.to_json %>;
   hour_7days_options.drilldown.series = <%= raw @hour_drilldown_series_7days.to_json %>;
 
-  var circle_options = {
-    chart: {
-      type: 'pie'
-    },
-    title: {
-      text: null
-    },
-    subtitle: false,
-    plotOptions: {
-      series: {
-        dataLabels: {
-          enabled: true,
-          format: '{point.name}: {point.y:.1f}%'
-        }
-      }
-    },
+  var tweets_stat = <%=
+  statuses_size = @searched_tw_user.statuses.size
+  {
+    mentions: @searched_tw_user.statuses.select{|s| s.mentions? }.size.to_f / statuses_size * 100,
+    media: @searched_tw_user.statuses.select{|s| s.media? }.size.to_f / statuses_size * 100,
+    urls: @searched_tw_user.statuses.select{|s| s.urls? }.size.to_f / statuses_size * 100,
+    hashtags: @searched_tw_user.statuses.select{|s| s.hashtags? }.size.to_f / statuses_size * 100,
+    location: @searched_tw_user.statuses.select{|s| s.location? }.size.to_f / statuses_size * 100
+  }.to_json.html_safe
+  %>;
 
-    tooltip: false,
-    series: [{
-      name: 'Brands',
-      colorByPoint: true,
-      data: [{
-        name: 'メンション',
-        y: 56.33,
-        drilldown: 'Microsoft Internet Explorer'
-      }, {
-        name: 'URL付き',
-        y: 24.03,
-        drilldown: 'Chrome'
-      }, {
-        name: 'ハッシュタグ',
-        y: 10.38,
-        drilldown: 'Firefox'
-      }, {
-        name: 'テキストのみ',
-        y: 4.77,
-        drilldown: 'Safari'
-      }]
-    }],
-    drilldown: {
-      series: [{
-        name: 'Microsoft Internet Explorer',
-        id: 'Microsoft Internet Explorer',
-        data: [
-          ['v11.0', 24.13],
-          ['v8.0', 17.2],
-          ['v9.0', 8.11],
-          ['v10.0', 5.33],
-          ['v6.0', 1.06],
-          ['v7.0', 0.5]
-        ]
-      }, {
-        name: 'Chrome',
-        id: 'Chrome',
-        data: [
-          ['v40.0', 5],
-          ['v41.0', 4.32]
-        ]
-      }, {
-        name: 'Firefox',
-        id: 'Firefox',
-        data: [
-          ['v35', 2.76],
-          ['v36', 2.32]
-        ]
-      }, {
-        name: 'Safari',
-        id: 'Safari',
-        data: [
-          ['v8.0', 2.56],
-          ['v7.1', 0.77],
-          ['v5.1', 0.42],
-          ['v5.0', 0.3],
-          ['v6.1', 0.29],
-          ['v7.0', 0.26],
-          ['v6.2', 0.17]
-        ]
-      }, {
-        name: 'Opera',
-        id: 'Opera',
-        data: [
-          ['v12.x', 0.34],
-          ['v28', 0.24],
-          ['v27', 0.17],
-          ['v29', 0.16]
-        ]
-      }]
-    }
-  };
+  var tweets_stat_options = window.usage_stats_tweets_stat_options;
 
-  var kind_options = $.extend(true, {}, circle_options);
+  tweets_stat_options.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
+  tweets_stat_options.series = [{
+    name: 'なし',
+    data: [
+      100.0 - tweets_stat.mentions,
+      100.0 - tweets_stat.media,
+      100.0 - tweets_stat.urls,
+      100.0 - tweets_stat.hashtags,
+      100.0 - tweets_stat.location
+    ]
+  }, {
+    name: 'あり',
+    data: [
+      tweets_stat.mentions,
+      tweets_stat.media,
+      tweets_stat.urls,
+      tweets_stat.hashtags,
+      tweets_stat.location
+    ]
+  }];
 
   $(function () {
     $('#wday_graph').highcharts(wday_options);
@@ -139,6 +81,6 @@
     $('#hour_graph').highcharts(hour_options);
     $('#hour_graph_7days').highcharts(hour_7days_options);
 
-    $('#kind_graph').highcharts(kind_options);
+    $('#kind_bar').highcharts(tweets_stat_options);
   });
 </script>

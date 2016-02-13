@@ -1,6 +1,6 @@
 window.common_pie_chart_options = {
   credits: false,
-  colors: ['rgba(42, 161, 152, 1.0', 'rgba(181, 137, 0, 0.4)', 'rgba(203, 75, 22, 0.4)', 'rgba(220, 50, 47, 0.4)'],
+  colors: ['rgba(42, 161, 152, 1.0)', 'rgba(181, 137, 0, 0.4)', 'rgba(203, 75, 22, 0.4)', 'rgba(220, 50, 47, 0.4)'],
   exporting: false,
   chart: {
     type: 'pie',
@@ -38,6 +38,7 @@ window.common_pie_chart_options = {
 
 window.usage_stats_column_chart_options = {
   credits: false,
+  colors: ['rgba(181, 137, 0, 1.0)', 'rgba(203, 75, 22, 1.0)', 'rgba(220, 50, 47, 1.0)', 'rgba(211, 54, 130, 1.0)', 'rgba(108, 113, 196, 1.0)', 'rgba(38, 139, 210, 1.0)', 'rgba(42, 161, 152, 1.0)', 'rgba(133, 153, 0, 1.0)'],
   chart: {
     type: 'column'
   },
@@ -75,4 +76,34 @@ window.usage_stats_column_chart_options = {
   drilldown: {
     series: null
   }
+};
+
+window.usage_stats_tweets_stat_options = {
+  credits: false,
+  colors: ['rgba(181, 137, 0, 0.4)', 'rgba(42, 161, 152, 1.0'],
+  chart: {
+    type: 'bar'
+  },
+  title: {
+    text: null
+  },
+  xAxis: {
+    categories: ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報']
+  },
+  yAxis: {
+    min: 0,
+    max: 100,
+    title: {
+      text: null
+    }
+  },
+  legend: {
+    reversed: true
+  },
+  plotOptions: {
+    series: {
+      stacking: 'normal'
+    }
+  },
+  series: null
 };

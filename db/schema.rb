@@ -148,7 +148,7 @@ ActiveRecord::Schema.define(version: 20160211064229) do
     t.string   "uid",          limit: 191,               null: false
     t.string   "screen_name",  limit: 191,               null: false
     t.text     "user_info",    limit: 65535,             null: false
-    t.integer  "search_count", limit: 4,     default: 1, null: false
+    t.integer  "search_count", limit: 4,     default: 0, null: false
     t.integer  "update_count", limit: 4,     default: 0, null: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false

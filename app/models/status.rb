@@ -21,20 +21,16 @@
 class Status < ActiveRecord::Base
   belongs_to :twitter_user
 
+  # https://dev.twitter.com/overview/api/tweets
   STATUS_SAVE_KEYS = %i(
     created_at
     id
     text
     source
     truncated
-    in_reply_to_status_id
-    in_reply_to_status_id_str
-    in_reply_to_user_id
-    in_reply_to_user_id_str
-    in_reply_to_screen_name
-    geo
     coordinates
     place
+    entities
     user
     contributors
     is_quote_status
@@ -60,5 +56,25 @@ class Status < ActiveRecord::Base
     obj.validates :uid, presence: true, numericality: :only_integer
     obj.validates :screen_name, format: {with: /\A[a-zA-Z0-9_]{1,20}\z/}
     obj.validates :user_info, presence: true
+  end
+
+  def mentions?
+    status_info_mash.entities_.user_mentions_.any?
+  end
+
+  def media?
+    status_info_mash.entities_.media_.any?
+  end
+
+  def urls?
+    status_info_mash.entities_.urls_.any?
+  end
+
+  def hashtags?
+    status_info_mash.entities_.hashtags_.any?
+  end
+
+  def location?
+    !coordinates.nil?
   end
 end
