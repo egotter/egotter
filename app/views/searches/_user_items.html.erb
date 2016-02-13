@@ -4,6 +4,9 @@
     profile_image_url = user_item[:target].profile_image_url_https.to_s
     screen_name = user_item[:target].screen_name
   %>
+
+  <%= render(partial: 'searches/profile_overview_modal', locals: {user: user_item[:target]}) %>
+
   <div class="user-item-carousel user-item-carousel-<%= i %>">
     <%# name box %>
     <div class="media">
@@ -42,11 +45,10 @@
         <% end %>
 
         <span>
-          <%= link_to searches_path(screen_name: screen_name, id: user_item[:target].uid), method: :post do %>
-            <button type="button" class="btn btn-info">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-          <% end %>
+          <button type="button" class="btn btn-info"
+                  data-toggle="modal" data-target=".profile-overview-modal.<%= user_item[:target].screen_name %>">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
         </span>
       </div>
     </div><%# .media %>

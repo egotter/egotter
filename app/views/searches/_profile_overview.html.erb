@@ -44,7 +44,7 @@
 </div>
 
 <script>
-  $(function () {
+  function enable_carousel_<%= user.screen_name %>(){
     var container = $('.profile-overview-container.<%= user.screen_name %>');
     container.find('.profile-overview-carousel').slick({
       accessibility: false,
@@ -53,6 +53,17 @@
       infinite: false
     });
     container.find('.profile-description').show();
+  }
+  $(function () {
+    <% if enable_carousel %>
+    enable_carousel_<%= user.screen_name %>();
+    <% else %>
+      $('<%= selector %>').on('show.bs.modal', function (e) {
+        setTimeout(function () {
+          enable_carousel_<%= user.screen_name %>();
+        }, 500);
+      });
+    <% end %>
   });
 </script>
 

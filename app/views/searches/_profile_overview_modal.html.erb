@@ -1,0 +1,21 @@
+<div class="modal fade profile-overview-modal <%= user.screen_name %>" tabindex="-1" role="dialog" aria-labelledby="profile-overview-modal-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="profile-overview-modal-label"><%= t('dictionary.search_by_egotter') %></h4>
+      </div>
+      <div class="modal-body" style="padding: 0;">
+        <%= render(partial: 'searches/profile_overview',
+                   locals: {user: user,
+                            enable_carousel: false, selector: ".profile-overview-modal.#{user.screen_name}"}) %>
+
+        <div style="margin: 15px;">
+          <%= link_to t('dictionary.search_by', user: "@#{user.screen_name}"),
+                      searches_path(screen_name: user.screen_name),
+                      class: 'btn btn-info btn-block', method: :post %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
