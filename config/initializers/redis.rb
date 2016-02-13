@@ -17,6 +17,10 @@ Redis.class_eval do
     'update_job_dispatcher:recently_added'
   end
 
+  def self.job_dispatcher_enqueue_num_key
+    'update_job_dispatcher:enqueue_num'
+  end
+
   def self.debug_info_key
     'update_job_dispatcher:debug'
   end

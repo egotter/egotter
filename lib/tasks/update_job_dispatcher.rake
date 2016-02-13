@@ -16,12 +16,23 @@ namespace :update_job_dispatcher do
     recently_updated_count = 0
 
     zrem_count = 0
-    max_enqueue_count = 10
+    min_enqueue_num = 10
+    max_enqueue_num = 30
+    current_enqueue_num = redis.get(Redis.job_dispatcher_enqueue_num_key) || min_enqueue_num
     enqueue_count = 0
     unauthorized_count = 0
     suspended_count = 0
     too_many_friends_count = 0
     enqueue_uids = []
+
+    last_logs = BackgroundUpdateLog.order(created_at: :desc).limit(current_enqueue_num)
+    if last_logs.select { |l| !l.status && l.reason == BackgroundUpdateLog::TOO_MANY_REQUESTS }.any?
+      current_enqueue_num = min_enqueue_num
+    else
+      current_enqueue_num += 2
+      current_enqueue_num = max_enqueue_num if current_enqueue_num > max_enqueue_num
+    end
+    redis.set(Redis.job_dispatcher_enqueue_num_key, current_enqueue_num)
 
     begin
       uids = client.follower_ids('ego_tter').map { |id| id.to_i }
@@ -78,11 +89,11 @@ namespace :update_job_dispatcher do
       redis.zadd(added_key, now_i, uid.to_s)
       enqueue_count += 1
 
-      break if enqueue_count >= max_enqueue_count
+      break if enqueue_count >= current_enqueue_num
     end
 
-    if enqueue_count < max_enqueue_count
-      zrem_count = redis.zremrangebyrank(added_key, 0, max_enqueue_count * 3 - 1)
+    if enqueue_count < current_enqueue_num
+      zrem_count = redis.zremrangebyrank(added_key, 0, current_enqueue_num - 1)
     end
 
 
