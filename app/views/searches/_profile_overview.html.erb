@@ -3,25 +3,40 @@
   <div class="profile-overview">
     <div class="profile-overview-carousel">
       <div>
-        <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", target: '_blank' do %>
-          <img class="profile-icon" src="<%= searched_tw_user.profile_image_url_https.to_s %>" width="48" height="48">
-        <% end %>
-        <div class="profile-names">
-          <div class="full-name">
-            <div>
-              <span class="text"><%= searched_tw_user.name %>&nbsp;</span>
-              <% if searched_tw_user.protected %><span class="glyphicon glyphicon-lock"></span><% end %>
-            </div>
-          </div>
-          <div class="screen-name">
-            <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", style: '', class: 'profile-screen_name-link', target: '_blank' do %>
-              @<%= searched_tw_user.screen_name %>
+        <div class="row text-center">
+          <div class="col-xs-12">
+            <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}",
+                        class: 'profile-icon-link', target: '_blank' do %>
+              <img class="profile-icon" src="<%= searched_tw_user.profile_image_url_https.to_s %>" width="48" height="48">
             <% end %>
+          </div>
+        </div>
+        <div class="row text-center">
+          <div class="col-xs-12">
+            <div class="profile-names">
+              <div class="full-name">
+                <div>
+                  <span class="text"><%= searched_tw_user.name %>&nbsp;</span>
+                  <% if searched_tw_user.protected %><span class="glyphicon glyphicon-lock"></span><% end %>
+                </div>
+              </div>
+              <div class="screen-name">
+                <%= link_to "https://twitter.com/#{searched_tw_user.screen_name}", style: '', class: 'profile-screen_name-link', target: '_blank' do %>
+                  @<%= searched_tw_user.screen_name %>
+                <% end %>
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
-      <div class="profile-description" style="display: none;"><%= searched_tw_user.description %></div>
+      <div>
+        <div class="row text-center">
+            <div class="col-xs-12">
+              <div class="profile-description" style="display: none;"><%= searched_tw_user.description %></div>
+            </div>
+        </div>
+      </div>
     </div>
 
   </div><!-- /.profile-overview -->
