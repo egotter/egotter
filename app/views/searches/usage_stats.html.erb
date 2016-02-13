@@ -88,15 +88,7 @@
 
     $('#kind_bar').highcharts(tweets_stat_options);
 
-    <%=
-      hashtags =
-        @searched_tw_user.statuses.select{|s| s.hashtags? }.
-          map{|s| s.hashtags }.flatten.
-          each_with_object(Hash.new(0)){|h, memo| memo[h] += 1 }.
-          map.with_index{|(h, c), i| {text: h, size: c, group: i % 20} }.
-          to_json.html_safe
-    %>
-    var hashtags = <%= hashtags %>;
+    var hashtags = <%= @hashtags %>;
     draw_word_cloud('#hashtags_cloud', hashtags, screen.width, 200);
   });
 </script>

@@ -302,6 +302,13 @@ class SearchesController < ApplicationController
       @searched_tw_user.usage_stats(days: 7)
     @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series =
       @searched_tw_user.usage_stats
+
+    @hashtags = @searched_tw_user.statuses.select { |s| s.hashtags? }.
+      map { |s| s.hashtags }.flatten.
+      each_with_object(Hash.new(0)) { |h, memo| memo[h] += 1 }.
+      map.with_index { |(h, c), i| {text: h, size: c, group: i % 20} }.
+      to_json.html_safe
+
     @name = t('search_menu.usage_stats', user: "@#{@searched_tw_user.screen_name}")
   end
 

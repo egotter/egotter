@@ -348,8 +348,9 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def close_friends(options = {})
+    min = options.has_key?(:min) ? options.delete(:min) : 1
     client.close_friends(__uid_i, options.merge(
-      min: 1,
+      min: min,
       replying: replying(options.merge(uniq: false)),
       replied: replied(uniq: false),
       favoriting: favoriting(options.merge(uniq: false)))
