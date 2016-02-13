@@ -8,6 +8,7 @@ namespace :update_job_dispatcher do
     added_key = Redis.job_dispatcher_added_key
     too_many_friends_key = Redis.background_update_worker_too_many_friends_key
     unauthorized_key = Redis.background_update_worker_unauthorized_key
+    enqueue_num_key = Redis.job_dispatcher_enqueue_num_key
 
     already_added_count = 0
     already_failed_count = 0
@@ -18,7 +19,7 @@ namespace :update_job_dispatcher do
     zrem_count = 0
     min_enqueue_num = 10
     max_enqueue_num = 30
-    current_enqueue_num = redis.get(Redis.job_dispatcher_enqueue_num_key) || min_enqueue_num
+    current_enqueue_num = (redis.fetch(enqueue_num_key) { min_enqueue_num }).to_i
     enqueue_count = 0
     unauthorized_count = 0
     suspended_count = 0
@@ -32,7 +33,7 @@ namespace :update_job_dispatcher do
       current_enqueue_num += 2
       current_enqueue_num = max_enqueue_num if current_enqueue_num > max_enqueue_num
     end
-    redis.set(Redis.job_dispatcher_enqueue_num_key, current_enqueue_num)
+    redis.set(enqueue_num_key, current_enqueue_num)
 
     begin
       uids = client.follower_ids('ego_tter').map { |id| id.to_i }

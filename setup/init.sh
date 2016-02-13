@@ -23,6 +23,7 @@ sudo service redis start
 
 # cp /etc/monit.conf /etc/monit.conf.bak
 # cp ./setup/etc/monit.conf /etc/monit.conf
+# chown root:root /etc/monit.conf
 # cp ./setup/etc/monit.d/sidekiq /etc/monit.d/sidekiq
 sudo service monit start
 sudo chkconfig monit on
