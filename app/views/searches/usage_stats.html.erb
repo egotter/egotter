@@ -1,20 +1,25 @@
 <%= render(partial: 'searches/profile_overview', locals: {searched_tw_user: @searched_tw_user}) %>
 
-<div class="container" style="padding: 0px;">
-  <h2 style="text-align: center; margin-top: 5px;">
+<div class="container usage-stats">
+  <h2>
     <small><%= @name %></small>
   </h2>
-  <div id="wday_graph" style="height: 200px; margin: 0 auto"></div>
-  <div id="wday_graph_7days" style="height: 200px; margin: 0 auto"></div>
+  <div id="wday_graph" class="chart"></div>
+  <div id="wday_graph_7days" class="chart"></div>
 
-  <hr style="border-color: #999999">
+  <hr>
 
-  <div id="hour_graph" style="height: 200px; margin: 0 auto"></div>
-  <div id="hour_graph_7days" style="height: 200px; margin: 0 auto"></div>
+  <div id="hour_graph" class="chart"></div>
+  <div id="hour_graph_7days" class="chart"></div>
 
-  <hr style="border-color: #999999">
+  <hr>
 
-  <div id="kind_bar" style="height: 200px; margin: 0 auto"></div>
+  <div id="kind_bar" class="chart"></div>
+
+  <hr>
+
+  <h2><small>ハッシュタグクラウド</small></h2>
+  <div id="hashtags_cloud" class="chart"></div>
 </div>
 
 <script>
@@ -52,7 +57,7 @@
   %>;
 
   var tweets_stat_options = window.usage_stats_tweets_stat_options;
-
+  tweets_stat_options.title.text = 'ツイートの内容';
   tweets_stat_options.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
   tweets_stat_options.series = [{
     name: 'なし',
@@ -82,5 +87,16 @@
     $('#hour_graph_7days').highcharts(hour_7days_options);
 
     $('#kind_bar').highcharts(tweets_stat_options);
+
+    <%=
+      hashtags =
+        @searched_tw_user.statuses.select{|s| s.hashtags? }.
+          map{|s| s.hashtags }.flatten.
+          each_with_object(Hash.new(0)){|h, memo| memo[h] += 1 }.
+          map.with_index{|(h, c), i| {text: h, size: c, group: i % 20} }.
+          to_json.html_safe
+    %>
+    var hashtags = <%= hashtags %>;
+    draw_word_cloud('#hashtags_cloud', hashtags, screen.width, 200);
   });
 </script>

@@ -74,6 +74,10 @@ class Status < ActiveRecord::Base
     status_info_mash.entities_.hashtags_.any?
   end
 
+  def hashtags
+    status_info_mash.entities!.hashtags!.map { |h| h.text }
+  end
+
   def location?
     !coordinates.nil?
   end

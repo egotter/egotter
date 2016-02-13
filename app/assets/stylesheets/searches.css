@@ -361,6 +361,26 @@
 
 /* common_result.html.erb end */
 
+/* usage-stats start */
+.usage-stats {
+  padding: 0;
+}
+
+.usage-stats h2 {
+  text-align: center;
+  margin-top: 5px;
+}
+
+.usage-stats .chart {
+  height: 200px;
+  margin: 0 auto;
+}
+
+.usage-stats hr {
+  border-color: #999999;
+}
+/* usage-stats end */
+
 /* footer start */
 .footer p {
   text-align: center;

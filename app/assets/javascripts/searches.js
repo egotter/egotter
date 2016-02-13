@@ -43,6 +43,7 @@ window.usage_stats_column_chart_options = {
     type: 'column'
   },
   title: {
+    style: {color: '#777777'},
     text: null
   },
   xAxis: {
