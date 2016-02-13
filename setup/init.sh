@@ -10,6 +10,8 @@ bundle install --path .bundle
 
 sudo rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 sudo yum --enablerepo=remi,epel install -y redis
+# cp /etc/redis.conf /etc/redis.conf.bak
+# cp ./setup/etc/redis.conf /etc/redis.conf
 sudo chkconfig redis on
 sudo service redis start
 
