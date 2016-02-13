@@ -3,6 +3,10 @@ module ApplicationHelper
     request.original_url
   end
 
+  def error_text
+    t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample, url: 'http://egotter.com')
+  end
+
   def close_friends_text(users, tu, url)
     users = ".#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     if search_oneself?(tu.uid)
@@ -25,11 +29,11 @@ module ApplicationHelper
         kaomoji: Kaomoji.sample,
         url: url)
     else
-      t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample)
+      error_text
     end
   rescue => e
     logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
-    t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample)
+    error_text
   end
 
   def mutual_friends_text(tu, url)
@@ -43,6 +47,6 @@ module ApplicationHelper
       url: url)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
-    t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample)
+    error_text
   end
 end

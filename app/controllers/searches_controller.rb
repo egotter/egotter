@@ -213,6 +213,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/one_sided_following
   def one_sided_following
     @user_items = build_user_items(@searched_tw_user.one_sided_following)
+    @graph = @searched_tw_user.mutual_friends_graph
+    @tweet_text = view_context.mutual_friends_text(@searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.one_sided_following', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -220,6 +222,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/one_sided_followers
   def one_sided_followers
     @user_items = build_user_items(@searched_tw_user.one_sided_followers)
+    @graph = @searched_tw_user.mutual_friends_graph
+    @tweet_text = view_context.mutual_friends_text(@searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.one_sided_followers', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -294,7 +298,7 @@ class SearchesController < ApplicationController
   def close_friends
     @user_items = build_user_items(@searched_tw_user.close_friends)
     @graph = @searched_tw_user.close_friends_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3), @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
