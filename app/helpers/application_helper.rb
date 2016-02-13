@@ -60,4 +60,32 @@ module ApplicationHelper
     logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
     error_text
   end
+
+  def common_friends_text(users, tu, url, others_num = 0)
+    users = "#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
+    users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
+    t('tweet_text.common_friends',
+      users: users,
+      user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
+      login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
+      kaomoji: Kaomoji.sample,
+      url: url)
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    error_text
+  end
+
+  def common_followers_text(users, tu, url, others_num = 0)
+    users = "#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
+    users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
+    t('tweet_text.common_friends',
+      users: users,
+      user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
+      login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
+      kaomoji: Kaomoji.sample,
+      url: url)
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    error_text
+  end
 end

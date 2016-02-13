@@ -240,6 +240,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/common_friends
   def common_friends
     @user_items = build_user_items(@searched_tw_user.common_friends(current_user.twitter_user))
+    @graph = @searched_tw_user.common_friends_graph(current_user.twitter_user)
+    @tweet_text = view_context.common_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url), @user_items.size - 3)
     @name = t('search_menu.common_friends', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
@@ -247,6 +249,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/common_followers
   def common_followers
     @user_items = build_user_items(@searched_tw_user.common_followers(current_user.twitter_user))
+    @graph = @searched_tw_user.common_followers_graph(current_user.twitter_user)
+    @tweet_text = view_context.common_followers_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url), @user_items.size - 3)
     @name = t('search_menu.common_followers', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
