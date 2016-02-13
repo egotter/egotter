@@ -254,6 +254,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/replying
   def replying
     @user_items = build_user_items(@searched_tw_user.replying) # call users
+    @graph = @searched_tw_user.replying_graph
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.replying', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -261,6 +263,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/replied
   def replied
     @user_items = build_user_items(@searched_tw_user.replied)
+    @graph = @searched_tw_user.replied_graph
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.replied', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -268,22 +272,26 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/favoriting
   def favoriting
     @user_items = build_user_items(@searched_tw_user.favoriting)
+    @graph = @searched_tw_user.favoriting_graph
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.favoriting', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/inactive_friends
   def inactive_friends
-    @searched_tw_user.login_user = user_signed_in? ? current_user : nil
     @user_items = build_user_items(@searched_tw_user.inactive_friends)
+    @graph = @searched_tw_user.inactive_friends_graph
+    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.inactive_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
   # GET /searches/:screen_name/inactive_followers
   def inactive_followers
-    @searched_tw_user.login_user = user_signed_in? ? current_user : nil
     @user_items = build_user_items(@searched_tw_user.inactive_followers)
+    @graph = @searched_tw_user.inactive_followers_graph
+    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.inactive_followers', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end

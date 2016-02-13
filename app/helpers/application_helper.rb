@@ -36,6 +36,17 @@ module ApplicationHelper
     error_text
   end
 
+  def inactive_friends_text(users, tu, url)
+    users = ".#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
+    t('tweet_text.inactive_friends',
+      users: users,
+      kaomoji: Kaomoji.sample,
+      url: url)
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    error_text
+  end
+
   def mutual_friends_text(tu, url)
     rates = tu.mutual_friends_rate
     t('tweet_text.mutual_friends',
