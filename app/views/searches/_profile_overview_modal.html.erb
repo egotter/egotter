@@ -1,4 +1,4 @@
-<div class="modal fade profile-overview-modal <%= user.screen_name %>" tabindex="-1" role="dialog" aria-labelledby="profile-overview-modal-label">
+<div class="modal fade profile-overview-modal <%= unique_id %>" tabindex="-1" role="dialog" aria-labelledby="profile-overview-modal-label">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
@@ -7,8 +7,7 @@
       </div>
       <div class="modal-body" style="padding: 0;">
         <%= render(partial: 'searches/profile_overview',
-                   locals: {user: user,
-                            enable_carousel: false, selector: ".profile-overview-modal.#{user.screen_name}"}) %>
+                   locals: {user: user, enable_carousel: false, unique_id: unique_id}) %>
 
         <div style="margin: 15px;">
           <%= link_to t('dictionary.search_by', user: "@#{user.screen_name}"),
