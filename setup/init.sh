@@ -16,11 +16,11 @@ sudo service redis start
 # sudo chkconfig mysqld on
 # sudo service mysqld start
 
-# set httpd port 2812 and
-#     use address localhost
-#     allow localhost
 # monit monitor all
 # cp ./setup/etc/init.d/sidekiq /etc/init.d/sidekiq
+
+# cp /etc/monit.conf /etc/monit.conf.bak
+# cp ./setup/etc/monit.conf /etc/monit.conf
 # cp ./setup/etc/monit.d/sidekiq /etc/monit.d/sidekiq
 sudo service monit start
 sudo chkconfig monit on
