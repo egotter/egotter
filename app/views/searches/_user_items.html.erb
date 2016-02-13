@@ -28,7 +28,8 @@
       <div class="media-right">
         <% if user_signed_in? && user_item.has_key?(:friendship) %>
           <span>
-            <% if user_item[:friendship] %>
+            <% if user_item[:me] %>
+            <% elsif user_item[:friendship] %>
               <button type="button" class="btn btn-success">
                 <span class="glyphicon glyphicon-ok"></span>
               </button>

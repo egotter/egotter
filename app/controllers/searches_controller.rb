@@ -506,7 +506,8 @@ class SearchesController < ApplicationController
       else
         []
       end
-    targets = items.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i)} }
+    me = user_signed_in? ? current_user.uid.to_i : nil
+    targets = items.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i), me: (u.uid.to_i == me)} }
     Kaminari.paginate_array(targets).page(params[:page]).per(25)
   end
 

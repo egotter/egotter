@@ -86,10 +86,11 @@ window.usage_stats_tweets_stat_options = {
     type: 'bar'
   },
   title: {
+    style: {color: '#777777'},
     text: null
   },
   xAxis: {
-    categories: ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報']
+    categories: null
   },
   yAxis: {
     min: 0,
