@@ -95,6 +95,9 @@ GEM
       domain_name (~> 0.5)
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
+    httparty (0.13.7)
+      json (~> 1.8)
+      multi_xml (>= 0.5.2)
     i18n (0.7.0)
     jbuilder (2.4.0)
       activesupport (>= 3.0.0, < 5.1)
@@ -120,6 +123,7 @@ GEM
     mini_portile2 (2.0.0)
     minitest (5.8.3)
     multi_json (1.11.2)
+    multi_xml (0.5.5)
     multipart-post (2.0.0)
     mysql2 (0.4.2)
     naught (1.1.0)
@@ -266,6 +270,7 @@ DEPENDENCIES
   hirb
   hirb-unicode
   hiredis
+  httparty
   jbuilder (~> 2.0)
   jquery-rails
   kaminari

@@ -106,16 +106,16 @@
 
         <div class="icon-chart container">
           <%
-            chart_items = user_items.slice(0, [5, user_items.size].min)
-            total_score = chart_items.inject(0){|memo, item| memo + item[:target].score }
-            weight = 100.to_f / (chart_items[0][:target].score.to_f / total_score * 100)
+            chart_items = user_items.slice(0, [5, user_items.size].min).map{|item| item[:target] }
+            total_score = chart_items.inject(0){|memo, item| memo + item.score }
+            weight = 100.to_f / (chart_items[0].score.to_f / total_score * 100)
             color = %w(#ffc107 #9e9e9e #795548) + Array.new(10, '#eeeeee')
           %>
           <% chart_items.each.with_index do |item, ii| %>
             <%
-              url = item[:target].profile_image_url_https.to_s
-              sn = "@#{item[:target].screen_name}"
-              score = item[:target].score.to_f / total_score * 100 * weight
+              url = item.profile_image_url_https.to_s
+              sn = "@#{item.screen_name}"
+              score = item.score.to_f / total_score * 100 * weight
             %>
             <div class="row">
               <div class="col-xs-3 text-center" style="padding-left: 0px; padding-right: 0px;">
@@ -140,11 +140,12 @@
         </div>
 
         <div class="tweet-preview-box container">
-          <textarea rows="4" readonly><%= Array.new(28, 'あいうえお').join('') %></textarea>
+          <% tweet_text = close_friends_text(chart_items.slice(0, [3, chart_items.size].min), searched_tw_user, UrlShortener.shorten(original_url)) %>
+          <textarea rows="4" readonly><%= tweet_text %></textarea>
         </div>
         <div class="tweet-box container">
           <div class="text-right">
-            <% params = {text: 'あいうえお', url: 'http://example.com', via: 'ego_tter'}.to_param %>
+            <% params = {text: tweet_text, via: 'ego_tter'}.to_param %>
             <%= link_to t('dictionary.tweet_result'),
                         "https://twitter.com/intent/tweet?#{params}".html_safe,
                         class: 'btn btn-info', target: '_blank' %>

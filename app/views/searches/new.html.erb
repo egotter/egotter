@@ -39,8 +39,8 @@
 <script>
   $("#share").jsSocials({
     shares: ["twitter", "facebook", "googleplus"],
-    url: "http://www.egotter.com",
-    text: "『えごったー』知ってる？ 面白いよ。",
+    url: "http://egotter.com",
+    text: "<%= t('tweet_text.top', kaomoji: Kaomoji.sample) %>",
     showLabel: true,
     showCount: true
   });

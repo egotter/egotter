@@ -42,6 +42,7 @@ ja:
     you: "あなた"
     cluster: "クラスタ"
     delim: "、"
+    honorific: "さん"
   before_sign_in:
     need_login: "%{sign_in_link} が必要です。"
     session_expired: "再度 %{sign_in_link} してください。"
@@ -85,6 +86,12 @@ ja:
     common_followers: "共通"
     favoriting: "ふぁぼる"
     others: "それ以外"
+  tweet_text:
+    top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji}"
+    close_friends_by_oneself: "%{users}、いつも%{screen_name}と仲良くしてくれてありがとう！%{kaomoji} %{url}"
+    close_friends_by_others: "%{users}、%{screen_name}だけでなく%{me}とも仲良くしてください。%{kaomoji} %{url}"
+    close_friends_without_sign_in: "%{users}、いつも%{screen_name}と仲良しなんですね！%{kaomoji} %{url}"
+    something_is_wrong: "何かに失敗しました…！%{kaomoji}"
   search_menu:
     statuses: "%{user} のツイート"
     friends: "%{user} のフォロー"

@@ -102,7 +102,7 @@ class SearchesController < ApplicationController
     ]
 
     @menu_common_friends_and_followers =
-      if user_signed_in? && current_user.uid.to_i == tu.uid.to_i
+      if search_oneself?(tu.uid)
         [
           {
             name: t('search_menu.common_friends', user: sn, login: t('dictionary.you')),
@@ -114,7 +114,7 @@ class SearchesController < ApplicationController
             path_method: method(:common_followers_path).to_proc
           },
         ]
-      elsif user_signed_in? && current_user.uid.to_i != tu.uid.to_i
+      elsif search_others?(tu.uid)
         [
           {
             name: t('search_menu.common_friends', user: sn, login: t('dictionary.you')),
