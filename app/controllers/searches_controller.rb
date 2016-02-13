@@ -227,6 +227,8 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/mutual_friends
   def mutual_friends
     @user_items = build_user_items(@searched_tw_user.mutual_friends)
+    @graph = @searched_tw_user.mutual_friends_graph
+    @tweet_text = view_context.mutual_friends_text(@searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.mutual_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -292,6 +294,7 @@ class SearchesController < ApplicationController
   def close_friends
     @user_items = build_user_items(@searched_tw_user.close_friends)
     @graph = @searched_tw_user.close_friends_graph
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3), @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end

@@ -31,4 +31,18 @@ module ApplicationHelper
     logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
     t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample)
   end
+
+  def mutual_friends_text(tu, url)
+    rates = tu.mutual_friends_rate
+    t('tweet_text.mutual_friends',
+      screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
+      mutual_friends_rate: rates[0].round,
+      one_sided_following_rate: rates[1].round,
+      one_sided_followers_rate: rates[2].round,
+      kaomoji: Kaomoji.sample,
+      url: url)
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample)
+  end
 end

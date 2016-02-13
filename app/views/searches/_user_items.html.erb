@@ -104,48 +104,49 @@
           });
         </script>
 
-        <div class="icon-chart container">
-          <%
-            chart_items = user_items.slice(0, [5, user_items.size].min).map{|item| item[:target] }
-            total_score = chart_items.inject(0){|memo, item| memo + item.score }
-            weight = 100.to_f / (chart_items[0].score.to_f / total_score * 100)
-            color = %w(#ffc107 #9e9e9e #795548) + Array.new(10, '#eeeeee')
-          %>
-          <% chart_items.each.with_index do |item, ii| %>
+        <% if user_item[:target].has_key?(:score) %><%# close_friends score %>
+          <div class="icon-chart container">
             <%
-              url = item.profile_image_url_https.to_s
-              sn = "@#{item.screen_name}"
-              score = item.score.to_f / total_score * 100 * weight
+              chart_items = user_items.slice(0, [5, user_items.size].min).map{|item| item[:target] }
+              total_score = chart_items.inject(0){|memo, item| memo + item.score }
+              weight = 100.to_f / (chart_items[0].score.to_f / total_score * 100)
+              color = %w(#ffc107 #9e9e9e #795548) + Array.new(10, '#eeeeee')
             %>
-            <div class="row">
-              <div class="col-xs-3 text-center" style="padding-left: 0px; padding-right: 0px;">
-                <% if ii < 3 %>
-                  <img style="display: inline;" src="<%= "/flaticon/prize#{ii + 1}.png" %>" width="24" height="24">
-                <% else %>
-                  <span style="display: inline;"><%= ii + 1 %></span>
-                <% end %>
-                <img style="display: inline;" src="<%= url %>" width="24" height="24" alt="<%= sn %>">
-              </div>
-              <div class="col-xs-9" style="padding-left: 0px; padding-right: 0px;">
-                <div class="progress" style="margin-top: 2px; margin-bottom: 0px;">
-                  <div class="progress-bar progress-bar" role="progressbar"
-                       aria-valuenow="<%= score %>" aria-valuemin="0" aria-valuemax="100"
-                       style="width: <%= score %>%; background-color: <%= color[ii] %>;">
-                    <span class="sr-only"><%= score %>% Complete</span>
+            <% chart_items.each.with_index do |item, ii| %>
+              <%
+                url = item.profile_image_url_https.to_s
+                sn = "@#{item.screen_name}"
+                score = item.score.to_f / total_score * 100 * weight
+              %>
+              <div class="row">
+                <div class="col-xs-3 text-center" style="padding-left: 0px; padding-right: 0px;">
+                  <% if ii < 3 %>
+                    <img style="display: inline;" src="<%= "/flaticon/prize#{ii + 1}.png" %>" width="24" height="24">
+                  <% else %>
+                    <span style="display: inline;"><%= ii + 1 %></span>
+                  <% end %>
+                  <img style="display: inline;" src="<%= url %>" width="24" height="24" alt="<%= sn %>">
+                </div>
+                <div class="col-xs-9" style="padding-left: 0px; padding-right: 0px;">
+                  <div class="progress" style="margin-top: 2px; margin-bottom: 0px;">
+                    <div class="progress-bar progress-bar" role="progressbar"
+                         aria-valuenow="<%= score %>" aria-valuemin="0" aria-valuemax="100"
+                         style="width: <%= score %>%; background-color: <%= color[ii] %>;">
+                      <span class="sr-only"><%= score %>% Complete</span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          <% end %>
-        </div>
+            <% end %>
+          </div>
+        <% end %>
 
         <div class="tweet-preview-box container">
-          <% tweet_text = close_friends_text(chart_items.slice(0, [3, chart_items.size].min), searched_tw_user, UrlShortener.shorten(original_url)) %>
-          <textarea rows="4" readonly><%= tweet_text %></textarea>
+          <textarea rows="4" readonly><%= @tweet_text %></textarea>
         </div>
         <div class="tweet-box container">
           <div class="text-right">
-            <% params = {text: tweet_text, via: 'ego_tter'}.to_param %>
+            <% params = {text: @tweet_text, via: 'ego_tter'}.to_param %>
             <%= link_to t('dictionary.tweet_result'),
                         "https://twitter.com/intent/tweet?#{params}".html_safe,
                         class: 'btn btn-info', target: '_blank' %>
