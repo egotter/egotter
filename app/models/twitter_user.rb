@@ -105,89 +105,95 @@ class TwitterUser < ActiveRecord::Base
     diffs
   end
 
-  def self.build(client, _user, option = {})
-    option[:all] = true unless option.has_key?(:all)
-
-    user = client.user(_user)
-    uid_i = user.id.to_i
-
-    tu = TwitterUser.new do |tu|
-      tu.uid = uid_i
+  def self.build_by_user(user, attrs = {})
+    build_relation = attrs.has_key?(:build_relation) ? attrs.delete(:build_relation) : true
+    tu = new(attrs) do |tu|
+      tu.uid = user.id
       tu.screen_name = user.screen_name
       tu.user_info = user.slice(*PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
     end
-    tu.client = client
-    tu.login_user = option.has_key?(:login_user) ? option[:login_user] : nil
-    tu.egotter_context = option.has_key?(:egotter_context) ? option[:egotter_context] : nil
+    tu.build_relations if build_relation
+    tu
+  end
 
-    if option[:all]
-      search_query = "@#{tu.screen_name}"
-      if tu.ego_surfing?
-        _friends, _followers, _statuses, _search_results, _, _mentions, _favorites =
-          client.fetch_parallelly([
-                                    {method: :friends_advanced, args: [uid_i]},
-                                    {method: :followers_advanced, args: [uid_i]},
-                                    {method: :user_timeline, args: [uid_i]}, # replying
-                                    {method: :search, args: [search_query]}, # replied
-                                    {method: :home_timeline, args: [uid_i]},
-                                    {method: :mentions_timeline, args: [uid_i]}, # replied
-                                    {method: :favorites, args: [uid_i]}]) # favoriting
-      else
-        _friends, _followers, _statuses, _search_results, _favorites =
-          client.fetch_parallelly([
-                                    {method: :friends_advanced, args: [uid_i]},
-                                    {method: :followers_advanced, args: [uid_i]},
-                                    {method: :user_timeline, args: [uid_i]},
-                                    {method: :search, args: [search_query]},
-                                    {method: :favorites, args: [uid_i]}])
-        _mentions = []
-      end
+  def self.build_by_client(client, user, attrs = {})
+    build_by_user(client.user(user), attrs)
+  end
 
-      # Not using uniq for mentions, search_results and favorites intentionally
+  def build_relations
+    uid_i = uid.to_i
+    search_query = "@#{screen_name}"
 
-      client.fetch_parallelly([
-                                {method: :replying, args: [uid_i]}
-                              ])
-
-      _friends.each do |f|
-        tu.friends.build(uid: f.id,
-                         screen_name: f.screen_name,
-                         user_info: f.slice(*PROFILE_SAVE_KEYS).to_json)
-      end
-
-      _followers.each do |f|
-        tu.followers.build(uid: f.id,
-                         screen_name: f.screen_name,
-                         user_info: f.slice(*PROFILE_SAVE_KEYS).to_json)
-      end
-
-      _statuses.each do |s|
-        tu.statuses.build(uid: tu.uid,
-                          screen_name: tu.screen_name,
-                          status_info: s.slice(*Status::STATUS_SAVE_KEYS).to_json)
-      end
-
-      _mentions.each do |m|
-        tu.mentions.build(uid: m.user.id,
-                          screen_name: m.user.screen_name,
-                          status_info: m.slice(*Status::STATUS_SAVE_KEYS).to_json)
-      end
-
-      _search_results.each do |sr|
-        tu.search_results.build(uid: sr.user.id,
-                          screen_name: sr.user.screen_name,
-                          status_info: sr.slice(*Status::STATUS_SAVE_KEYS).to_json,
-                          query: search_query)
-      end
-
-      _favorites.each do |f|
-        tu.favorites.build(uid: f.user.id,
-                          screen_name: f.user.screen_name,
-                          status_info: f.slice(*Status::STATUS_SAVE_KEYS).to_json)
-      end
+    if ego_surfing?
+      _friends, _followers, _statuses, _search_results, _, _mentions, _favorites =
+        client.fetch_parallelly([
+                                  {method: :friends_advanced, args: [uid_i]},
+                                  {method: :followers_advanced, args: [uid_i]},
+                                  {method: :user_timeline, args: [uid_i]}, # replying
+                                  {method: :search, args: [search_query]}, # replied
+                                  {method: :home_timeline, args: [uid_i]},
+                                  {method: :mentions_timeline, args: [uid_i]}, # replied
+                                  {method: :favorites, args: [uid_i]}]) # favoriting
+    else
+      _friends, _followers, _statuses, _search_results, _favorites =
+        client.fetch_parallelly([
+                                  {method: :friends_advanced, args: [uid_i]},
+                                  {method: :followers_advanced, args: [uid_i]},
+                                  {method: :user_timeline, args: [uid_i]},
+                                  {method: :search, args: [search_query]},
+                                  {method: :favorites, args: [uid_i]}])
+      _mentions = []
     end
 
-    tu
+    # Not using uniq for mentions, search_results and favorites intentionally
+
+    client.fetch_parallelly([
+                              {method: :replying, args: [uid_i]}
+                            ])
+
+    _friends.each do |f|
+      friends.build(uid: f.id,
+                       screen_name: f.screen_name,
+                       user_info: f.slice(*PROFILE_SAVE_KEYS).to_json)
+    end
+
+    _followers.each do |f|
+      followers.build(uid: f.id,
+                         screen_name: f.screen_name,
+                         user_info: f.slice(*PROFILE_SAVE_KEYS).to_json)
+    end
+
+    _statuses.each do |s|
+      statuses.build(uid: uid,
+                        screen_name: screen_name,
+                        status_info: s.slice(*Status::STATUS_SAVE_KEYS).to_json)
+    end
+
+    _mentions.each do |m|
+      mentions.build(uid: m.user.id,
+                        screen_name: m.user.screen_name,
+                        status_info: m.slice(*Status::STATUS_SAVE_KEYS).to_json)
+    end
+
+    _search_results.each do |sr|
+      search_results.build(uid: sr.user.id,
+                              screen_name: sr.user.screen_name,
+                              status_info: sr.slice(*Status::STATUS_SAVE_KEYS).to_json,
+                              query: search_query)
+    end
+
+    _favorites.each do |f|
+      favorites.build(uid: f.user.id,
+                         screen_name: f.user.screen_name,
+                         status_info: f.slice(*Status::STATUS_SAVE_KEYS).to_json)
+    end
+
+    true
+  end
+
+  def self.build(client, user, option = {})
+    build_relation = option.has_key?(:all) ? option.delete(:all) : true
+    build_by_client(client, user, option.merge(build_relation: build_relation))
   end
 
   def save_with_bulk_insert(validate = true)

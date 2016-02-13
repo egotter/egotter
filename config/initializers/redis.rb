@@ -13,16 +13,20 @@ Redis.class_eval do
     end
   end
 
-  def self.result_cache_key_prefix
-
-  end
-
-  def self.job_dispatcher_key
+  def self.job_dispatcher_added_key
     'update_job_dispatcher:recently_added'
   end
 
-  def self.debug_key
+  def self.debug_info_key
     'update_job_dispatcher:debug'
+  end
+
+  def self.background_update_worker_too_many_friends_key
+    'background_update_worker:too_many_friends'
+  end
+
+  def self.background_update_worker_unauthorized_key
+    'background_update_worker:unauthorized'
   end
 
   def self.background_update_worker_recently_failed_key
@@ -31,6 +35,6 @@ Redis.class_eval do
 
   def clear_result_cache
     _keys = keys('searches:*')
-    del(keys('searches:*')) if _keys.any?
+    del(_keys) if _keys.any?
   end
 end

@@ -19,11 +19,12 @@
 
 class BackgroundUpdateLog < ActiveRecord::Base
 
-  TooManyRequests = 'too many requests'
-  Unauthorized = 'unauthorized'
-  TooManyFriends = 'too many friends'
-  Suspended = 'suspended'
-  SomethingIsWrong = 'something is wrong'
+  TOO_MANY_REQUESTS = 'too many requests'
+  UNAUTHORIZED = 'unauthorized'
+  TOO_MANY_FRIENDS = 'too many friends'
+  SUSPENDED = 'suspended'
+  RECENTLY_CREATED = 'recently created(or updated)'
+  SOMETHING_IS_WRONG = 'something is wrong'
 
   def self.processing?(uid)
     log = order(created_at: :desc).find_by(uid: uid)

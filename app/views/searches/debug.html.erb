@@ -10,6 +10,7 @@
     <th>uniq</th>
     <th>(last 1hour)</th>
   </tr>
+  <% start = Time.zone.now %>
   <% [User, TwitterUser, Friend, Follower, Status, Mention, SearchResult, Favorite].each do |model| %>
     <tr>
       <td><%= model.model_name %></td>
@@ -20,10 +21,12 @@
     </tr>
   <% end %>
 </table>
+<div><%= Time.zone.now - start %>s</div>
 <br>
 
 <table border="1">
   <caption>Queueing</caption>
+  <% start = Time.zone.now %>
   <% @debug_info.each do |k, v| %>
     <tr>
       <td><%= k %></td>
@@ -31,6 +34,7 @@
     </tr>
   <% end %>
 </table>
+<div><%= Time.zone.now - start %>s</div>
 <br>
 
 <table border="1">
@@ -46,6 +50,7 @@
     <th>success rate</th>
     <th>(last 1hour)</th>
   </tr>
+  <% start = Time.zone.now %>
   <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
     <tr>
       <td><%= model.model_name %></td>
@@ -60,8 +65,10 @@
     </tr>
   <% end %>
 </table>
+<div><%= Time.zone.now - start %>s</div>
 <br>
 
+<% start = Time.zone.now %>
 <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
   <table border="1">
     <caption>Worker Reasons(<%= model.model_name %>)</caption>
@@ -82,6 +89,7 @@
       </tr>
     <% end %>
   </table>
+  <div><%= Time.zone.now - start %>s</div>
   <br>
 <% end %>
 
