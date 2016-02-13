@@ -117,7 +117,12 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def self.build_by_client(client, user, attrs = {})
-    build_by_user(client.user(user), attrs)
+    build_by_user(client.user(user), attrs.merge(client: client))
+  end
+
+  def self.build(client, user, option = {})
+    build_relation = option.has_key?(:all) ? option.delete(:all) : true
+    build_by_client(client, user, option.merge(build_relation: build_relation))
   end
 
   def build_relations
@@ -189,11 +194,6 @@ class TwitterUser < ActiveRecord::Base
     end
 
     true
-  end
-
-  def self.build(client, user, option = {})
-    build_relation = option.has_key?(:all) ? option.delete(:all) : true
-    build_by_client(client, user, option.merge(build_relation: build_relation))
   end
 
   def save_with_bulk_insert(validate = true)
