@@ -181,7 +181,7 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/statuses
   def statuses
-    @status_items = @searched_tw_user.statuses.map{|f| {target: f} }
+    @status_items = build_tweet_items(@searched_tw_user.statuses)
     @name = t('search_menu.statuses', user: "@#{@searched_tw_user.screen_name}")
   end
 
@@ -503,6 +503,10 @@ class SearchesController < ApplicationController
     me = user_signed_in? ? current_user.uid.to_i : nil
     targets = items.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i), me: (u.uid.to_i == me)} }
     Kaminari.paginate_array(targets).page(params[:page]).per(25)
+  end
+
+  def build_tweet_items(items)
+    Kaminari.paginate_array(items.map { |t| {target: t} }).page(params[:page]).per(100)
   end
 
   def create_search_log(name, search_uid, search_sn, search_value)

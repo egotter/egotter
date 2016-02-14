@@ -1,7 +1,18 @@
 <%= render(partial: 'searches/profile_overview',
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-<div class="container" style="padding: 0px;">
-  <h2 style="text-align: center; margin-top: 5px;"><small><%= @name %></small></h2>
+<div class="container name-and-tweet-items">
+  <h2><small><%= @name %></small></h2>
+
+  <div class="page-entries-info-top">
+    <%= render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user,
+                                                               user_items: @status_items}) %>
+  </div>
+
   <%= render(partial: 'searches/status_items', locals: {searched_tw_user: @searched_tw_user, status_items: @status_items}) %>
+
+  <div class="page-entries-info-bottom">
+    <%= render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user,
+                                                               user_items: @status_items}) %>
+  </div>
 </div>

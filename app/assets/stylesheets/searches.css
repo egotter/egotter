@@ -360,9 +360,30 @@
 }
 /* _search_menu_items.html.erb end */
 
+
+/* statuses.html.erb start */
+.name-and-tweet-items {
+  padding: 0;
+}
+
+.name-and-tweet-items h2 {
+  text-align: center;
+  margin-top: 5px;
+}
+
+.name-and-tweet-items .page-entries-info-top {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.name-and-tweet-items .page-entries-info-bottom {
+  margin: 15px;
+}
+/* statuses.html.erb end */
+
 /* common_result.html.erb start */
 .name-and-user-items {
-  padding: 0px;
+  padding: 0;
 }
 
 .name-and-user-items h2 {
