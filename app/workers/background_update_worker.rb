@@ -41,7 +41,7 @@ class BackgroundUpdateWorker
       return
     end
 
-    new_tu = measure('build(second)') { TwitterUser.build(client, _tu.uid.to_i, build_relation: true, with_friends: true) }
+    new_tu = measure('build(second)') { TwitterUser.build(client, _tu.uid.to_i, build_relation: true, without_friends: false) }
     if measure('save') { new_tu.save_with_bulk_insert }
       logger.debug "#{user_name} create new TwitterUser"
     else
