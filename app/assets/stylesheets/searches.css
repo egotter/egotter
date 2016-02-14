@@ -384,8 +384,7 @@
 
 /* menu.html.erb start */
 .menu {
-  padding-left: 0px;
-  padding-right: 0px;
+  padding: 0;
 }
 .menu h2 {
   text-align: center;
