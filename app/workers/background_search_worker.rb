@@ -4,23 +4,21 @@ class BackgroundSearchWorker
 
   # This worker is called after strict validation for uid in searches_controller,
   # so you don't need to do that in this worker.
-  def perform(uid, screen_name, login_user_id, log_attrs = {})
+  def perform(uid, screen_name, login_user_id, without_friends, log_attrs = {})
     @user_id = login_user_id
-    @uid = uid.to_i
-    @sn = screen_name
+    @uid = uid = uid.to_i
+    @sn = screen_name = screen_name.to_s
     logger.debug "#{user_name} #{bot_name(client)} start"
 
     log_attrs = log_attrs.with_indifferent_access
-    uid = uid.to_i
-    screen_name = screen_name.to_s
 
     if (tu = TwitterUser.latest(uid)).present? && tu.recently_created?
       tu.search_and_touch
       create_log(log_attrs, true)
       logger.debug "#{user_name} #{bot_name(client)} show #{screen_name}"
     else
-      new_tu = measure('build') { TwitterUser.build(client, uid.to_i,
-                                             {login_user: User.find_by(id: login_user_id), egotter_context: 'search'}) }
+      build_options = {login_user: User.find_by(id: login_user_id), egotter_context: 'search', without_friends: without_friends}
+      new_tu = measure('build') { TwitterUser.build(client, uid, build_options) }
       if measure('save') { new_tu.save_with_bulk_insert }
         new_tu.search_and_touch
         create_log(log_attrs, true)

@@ -358,6 +358,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def fetch_parallelly(signatures) # [{method: :friends, args: ['ts_3156', ...], {...}]
+    logger.debug "#{__method__} #{signatures.inspect}"
     result = Array.new(signatures.size)
 
     Parallel.each_with_index(signatures, in_threads: result.size) do |signature, i|

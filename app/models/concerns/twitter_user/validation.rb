@@ -82,6 +82,8 @@ module Concerns::TwitterUser::Validation
     end
 
     def inconsistent_friends?
+      return false if without_friends
+
       if friends_count.to_i != friends.size
         errors[:base] << "friends_count(#{friends_count}) != friends.size(#{friends.size})"
         return true
@@ -91,6 +93,8 @@ module Concerns::TwitterUser::Validation
     end
 
     def inconsistent_followers?
+      return false if without_friends
+
       if followers_count.to_i != followers.size
         errors[:base] << "followers_count(#{followers_count}) != followers.size(#{followers.size})"
         return true
@@ -109,6 +113,8 @@ module Concerns::TwitterUser::Validation
     end
 
     def too_many_friends?
+      return false if without_friends
+
       friends_limit =
         if egotter_context == 'search'
           login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS

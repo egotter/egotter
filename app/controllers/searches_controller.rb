@@ -360,7 +360,8 @@ class SearchesController < ApplicationController
     bsw_options = {
       user_id: user_signed_in? ? current_user.id : -1,
       uid: searched_uid}
-    BackgroundSearchWorker.perform_async(searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), bsw_options)
+    BackgroundSearchWorker.perform_async(searched_uid, searched_sn,
+                                         (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?, bsw_options)
 
     if result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
@@ -478,19 +479,18 @@ class SearchesController < ApplicationController
 
   def too_many_friends
     if @twitter_user.too_many_friends?
-      alert_msg =
-        if user_signed_in?
-          t('before_sign_in.too_many_friends', user: twitter_link(@twitter_user.screen_name),
-            friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
-        else
-          t('before_sign_in.many_friends', user: twitter_link(@twitter_user.screen_name),
-            friends: @twitter_user.friends_count, followers: @twitter_user.followers_count,
-            sign_in_link: sign_in_link)
-        end
-      redirect_to '/', alert: alert_msg
+      @too_many_friends_flag = true
+      # alert_msg =
+      #   if user_signed_in?
+      #     t('before_sign_in.too_many_friends', user: twitter_link(@twitter_user.screen_name),
+      #       friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
+      #   else
+      #     t('before_sign_in.many_friends', user: twitter_link(@twitter_user.screen_name),
+      #       friends: @twitter_user.friends_count, followers: @twitter_user.followers_count,
+      #       sign_in_link: sign_in_link)
+      #   end
+      # redirect_to '/', alert: alert_msg
     end
-  rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   end
 
   def build_user_items(items)

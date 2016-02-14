@@ -26,7 +26,7 @@ class TwitterUser < ActiveRecord::Base
   has_many :search_results, foreign_key: :from_id, dependent: :destroy, validate: false
   has_many :favorites,      foreign_key: :from_id, dependent: :destroy, validate: false
 
-  attr_accessor :client, :login_user, :egotter_context
+  attr_accessor :client, :login_user, :egotter_context, :without_friends
 
   PROFILE_SAVE_KEYS = %i(
     id
@@ -130,23 +130,37 @@ class TwitterUser < ActiveRecord::Base
     search_query = "@#{screen_name}"
 
     if ego_surfing?
-      _friends, _followers, _statuses, _search_results, _, _mentions, _favorites =
-        client.fetch_parallelly([
-                                  {method: :friends_advanced, args: [uid_i]},
-                                  {method: :followers_advanced, args: [uid_i]},
-                                  {method: :user_timeline, args: [uid_i]}, # replying
-                                  {method: :search, args: [search_query]}, # replied
-                                  {method: :home_timeline, args: [uid_i]},
-                                  {method: :mentions_timeline, args: [uid_i]}, # replied
-                                  {method: :favorites, args: [uid_i]}]) # favoriting
+      candidates = [
+        {method: :friends_advanced, args: [uid_i]},
+        {method: :followers_advanced, args: [uid_i]},
+        {method: :user_timeline, args: [uid_i]}, # for replying
+        {method: :search, args: [search_query]}, # for replied
+        {method: :home_timeline, args: [uid_i]},
+        {method: :mentions_timeline, args: [uid_i]}, # for replied
+        {method: :favorites, args: [uid_i]} # for favoriting
+      ]
+      if without_friends
+        candidates = candidates.slice(2, candidates.size - 2)
+        _statuses, _search_results, _, _mentions, _favorites = client.fetch_parallelly(candidates)
+        _friends = _followers = []
+      else
+        _friends, _followers, _statuses, _search_results, _, _mentions, _favorites = client.fetch_parallelly(candidates)
+      end
     else
-      _friends, _followers, _statuses, _search_results, _favorites =
-        client.fetch_parallelly([
-                                  {method: :friends_advanced, args: [uid_i]},
-                                  {method: :followers_advanced, args: [uid_i]},
-                                  {method: :user_timeline, args: [uid_i]},
-                                  {method: :search, args: [search_query]},
-                                  {method: :favorites, args: [uid_i]}])
+      candidates = [
+        {method: :friends_advanced, args: [uid_i]},
+        {method: :followers_advanced, args: [uid_i]},
+        {method: :user_timeline, args: [uid_i]},
+        {method: :search, args: [search_query]},
+        {method: :favorites, args: [uid_i]}
+      ]
+      if without_friends
+        candidates = candidates.slice(2, candidates.size - 2)
+        _statuses, _search_results, _favorites = client.fetch_parallelly(candidates)
+        _friends = _followers = []
+      else
+        _friends, _followers, _statuses, _search_results, _favorites = client.fetch_parallelly(candidates)
+      end
       _mentions = []
     end
 
@@ -211,14 +225,18 @@ class TwitterUser < ActiveRecord::Base
     begin
       log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
 
-      self.transaction do
-        _friends.map {|f| f.from_id = self.id }
-        _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
+      unless without_friends
+        self.transaction do
+          _friends.map {|f| f.from_id = self.id }
+          _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
+        end
       end
 
-      self.transaction do
-        _followers.map {|f| f.from_id = self.id }
-        _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
+      unless without_friends
+        self.transaction do
+          _followers.map {|f| f.from_id = self.id }
+          _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
+        end
       end
 
       self.transaction do
@@ -440,6 +458,7 @@ class TwitterUser < ActiveRecord::Base
 
   def mutual_friends_rate
     friendship_size = friendship_uids.size
+    return [0.0, 0.0, 0.0] if friendship_size == 0
     [
       mutual_friends.size.to_f / friendship_size * 100,
       one_sided_following.size.to_f / friendship_size * 100,

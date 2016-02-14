@@ -57,7 +57,7 @@ module ApplicationHelper
       kaomoji: Kaomoji.sample,
       url: url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{tu.inspect} #{url}"
     error_text
   end
 
@@ -85,7 +85,7 @@ module ApplicationHelper
       kaomoji: Kaomoji.sample,
       url: url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url} #{others_num}"
     error_text
   end
 end
