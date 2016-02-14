@@ -126,11 +126,12 @@
             <button class="submit-btn btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
           <% end %>
 
-          <hr>
+          <% if @search_histories.present? && @search_histories.any? %>
+            <hr>
 
-          <h2><small><%= t('search_menu.search_histories') %></small></h2>
-          <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories, in_modal: true}) %>
-
+            <h2><small><%= t('search_menu.search_histories') %></small></h2>
+            <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories, in_modal: true}) %>
+          <% end %>
         </div>
       </div>
     </div>

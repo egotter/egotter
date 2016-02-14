@@ -567,8 +567,13 @@ class SearchesController < ApplicationController
   end
 
   def build_search_histories
-    searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-    @search_histories = build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact)
+    @search_histories =
+      if user_signed_in?
+        searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
+        build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact)
+      else
+        []
+      end
   end
 
   def basic_auth

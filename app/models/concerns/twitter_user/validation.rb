@@ -3,8 +3,8 @@ require 'active_support/concern'
 module Concerns::TwitterUser::Validation
   extend ActiveSupport::Concern
 
-  MANY_FRIENDS = 1000
-  TOO_MANY_FRIENDS = 5000
+  MANY_FRIENDS = Rails.configuration.x.constants['many_friends_threshold']
+  TOO_MANY_FRIENDS = Rails.configuration.x.constants['too_many_friends_threshold']
 
   SCREEN_NAME_REGEXP = /\A[a-zA-Z0-9_]{1,20}\z/
 
