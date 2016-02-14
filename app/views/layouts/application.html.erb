@@ -64,12 +64,10 @@
         <% end %>
       </button>
 
-      <% if action_name != 'new' %>
-        <button type="button" class="search-modal-btn navbar-toggle" data-toggle="modal" data-target=".search-modal">
-          <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
-          <span class="search-modal-text"><%= t('dictionary.search') %></span>
-        </button>
-      <% end %>
+      <button type="button" class="search-modal-btn navbar-toggle" data-toggle="modal" data-target=".search-modal">
+        <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
+        <span class="search-modal-text"><%= t('dictionary.search') %></span>
+      </button>
 
       <a class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
     </div>
@@ -94,49 +92,45 @@
             <% end %>
           </div>
         </li>
-        <% if action_name != 'new' %>
-          <li>
-            <div class="search-modal-btn" data-toggle="modal" data-target=".search-modal">
-              <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
-              <span class="search-modal-text"><%= t('dictionary.search') %></span>
-            </div>
-          </li>
-        <% end %>
+        <li>
+          <div class="search-modal-btn" data-toggle="modal" data-target=".search-modal">
+            <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
+            <span class="search-modal-text"><%= t('dictionary.search') %></span>
+          </div>
+        </li>
       </ul>
     </div>
   </div><!-- /.container-fluid -->
 </nav>
 
-<% if action_name != 'new' %>
-  <div class="modal fade search-modal" tabindex="-1" role="dialog" aria-labelledby="search-modal-label">
-    <div class="modal-dialog" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-          <h4 class="modal-title" id="search-modal-label"><%= t('dictionary.search_by_egotter') %></h4>
-        </div>
-        <div class="modal-body">
-          <%= form_tag searches_path, method: :post do %>
-            <label for="screen_name" class="sr-only">Twitter ID</label>
-            <div class="input-group">
-              <div class="input-group-addon">@</div>
-              <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
-                     pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required>
-            </div>
-            <button class="submit-btn btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
-          <% end %>
+<div class="modal fade search-modal" tabindex="-1" role="dialog" aria-labelledby="search-modal-label">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="search-modal-label"><%= t('dictionary.search_by_egotter') %></h4>
+      </div>
+      <div class="modal-body">
+        <%= form_tag searches_path, method: :post do %>
+          <label for="screen_name" class="sr-only">Twitter ID</label>
+          <div class="input-group">
+            <div class="input-group-addon">@</div>
+            <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
+                   pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required>
+          </div>
+          <button class="submit-btn btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
+        <% end %>
 
-          <% if @search_histories.present? && @search_histories.any? %>
-            <hr>
+        <% if @search_histories.present? && @search_histories.any? %>
+          <hr>
 
-            <h2><small><%= t('search_menu.search_histories') %></small></h2>
-            <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories, in_modal: true}) %>
-          <% end %>
-        </div>
+          <h2><small><%= t('search_menu.search_histories') %></small></h2>
+          <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories, in_modal: true}) %>
+        <% end %>
       </div>
     </div>
   </div>
-<% end %>
+</div>
 
 <% if notice %>
   <p class="alert alert-info"><%= raw notice %></p>

@@ -14,7 +14,7 @@ class SearchesController < ApplicationController
   before_action :suspended_account,      only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :unauthorized_account,   only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :too_many_friends,       only: NEED_VALIDATION, unless: :result_cache_exists?
-  before_action :build_search_histories, except: (%i(new create) + DEBUG_PAGES)
+  before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
   before_action :before_action_finish,   only: NEED_VALIDATION
 
   before_action :set_searched_tw_user, only: SEARCH_MENUS
