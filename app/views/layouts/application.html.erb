@@ -45,60 +45,60 @@
 </head>
 <body>
 
-<nav class="navbar navbar-default" style="margin-bottom: 0px; background-color: #ffffff;">
+<nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
       <% unless user_signed_in? %>
-        <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-          <%= link_to welcome_path, style: 'text-decoration: none; color: #000000;' do %>
-            <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
-            <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
+        <button type="button" class="welcome-btn navbar-toggle">
+          <%= link_to welcome_path do %>
+            <span class="welcome-icon glyphicon glyphicon-log-in"></span><br>
+            <span class="welcome-text"><%= t('dictionary.sign_in') %></span>
           <% end %>
         </button>
       <% end %>
 
-      <button type="button" class="navbar-toggle" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-        <%= link_to menu_path, style: 'text-decoration: none; color: #000000;' do %>
-          <span style="font-size: 20px" class="glyphicon glyphicon-menu-hamburger"></span><br>
-          <span style="font-size: 9px;"><%= t('dictionary.menu') %></span>
+      <button type="button" class="menu-btn navbar-toggle">
+        <%= link_to menu_path do %>
+          <span class="menu-icon glyphicon glyphicon-menu-hamburger"></span><br>
+          <span class="menu-text"><%= t('dictionary.menu') %></span>
         <% end %>
       </button>
 
       <% if action_name != 'new' %>
-        <button type="button" class="navbar-toggle" data-toggle="modal" data-target=".search-modal" style="padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-          <span style="font-size: 20px" class="glyphicon glyphicon-search"></span><br>
-          <span style="font-size: 9px;"><%= t('dictionary.search') %></span>
+        <button type="button" class="search-modal-btn navbar-toggle" data-toggle="modal" data-target=".search-modal">
+          <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
+          <span class="search-modal-text"><%= t('dictionary.search') %></span>
         </button>
       <% end %>
 
-      <a style="font-size: 30px; display: block; padding-left: 10px;" class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
+      <a class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
     </div>
 
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
         <% unless user_signed_in? %>
           <li>
-            <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-              <%= link_to welcome_path, style: 'text-decoration: none; color: #000000;' do %>
-                <span style="font-size: 20px" class="glyphicon glyphicon-log-in"></span><br>
-                <span style="font-size: 9px;"><%= t('dictionary.sign_in') %></span>
+            <div class="welcome-btn">
+              <%= link_to welcome_path do %>
+                <span class="welcome-icon glyphicon glyphicon-log-in"></span><br>
+                <span class="welcome-text"><%= t('dictionary.sign_in') %></span>
               <% end %>
             </div>
           </li>
         <% end %>
         <li>
-          <div style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-            <%= link_to menu_path, style: 'text-decoration: none; color: #000000;' do %>
-              <span style="font-size: 20px" class="glyphicon glyphicon-menu-hamburger"></span><br>
-              <span style="font-size: 9px;"><%= t('dictionary.menu') %></span>
+          <div class="menu-btn">
+            <%= link_to menu_path do %>
+              <span class="menu-icon glyphicon glyphicon-menu-hamburger"></span><br>
+              <span class="menu-text"><%= t('dictionary.menu') %></span>
             <% end %>
           </div>
         </li>
         <% if action_name != 'new' %>
           <li>
-            <div data-toggle="modal" data-target=".search-modal" style="text-align: center; padding: 3px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; border: none;">
-              <span style="font-size: 20px" class="glyphicon glyphicon-search"></span><br>
-              <span style="font-size: 9px;"><%= t('dictionary.search') %></span>
+            <div class="search-modal-btn" data-toggle="modal" data-target=".search-modal">
+              <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
+              <span class="search-modal-text"><%= t('dictionary.search') %></span>
             </div>
           </li>
         <% end %>
@@ -123,8 +123,14 @@
               <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
                      pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required>
             </div>
-            <button style="margin-top: 10px;" class="btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
+            <button class="submit-btn btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
           <% end %>
+
+          <hr>
+
+          <h2><small><%= t('search_menu.search_histories') %></small></h2>
+          <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories, in_modal: true}) %>
+
         </div>
       </div>
     </div>
@@ -132,10 +138,10 @@
 <% end %>
 
 <% if notice %>
-  <p class="alert alert-info" style="margin: 0px;"><%= raw notice %></p>
+  <p class="alert alert-info"><%= raw notice %></p>
 <% end %>
 <% if alert %>
-  <p class="alert alert-warning" style="margin: 0px;"><%= raw alert %></p>
+  <p class="alert alert-warning"><%= raw alert %></p>
 <% end %>
 
 <%= yield %>

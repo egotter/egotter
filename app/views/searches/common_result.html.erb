@@ -9,10 +9,8 @@
                                                                user_items: @user_items}) %>
   </div>
 
-  <%= render(partial: 'searches/user_items', locals: {searched_tw_user: @searched_tw_user,
-                                                      user_items: @user_items,
-                                                      graph: @graph,
-                                                      tweet_text: @tweet_text}) %>
+  <%= render(partial: 'searches/user_items',
+             locals: {user_items: @user_items, graph: @graph, tweet_text: @tweet_text, in_modal: false}) %>
 
   <div class="page-entries-info-bottom">
     <%= render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user,

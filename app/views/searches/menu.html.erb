@@ -28,7 +28,8 @@
     <%= render(partial: 'searches/adsense') %>
   </div>
 
-  <%= render(partial: 'searches/user_items', locals: {searched_tw_user: @raw_user, user_items: @user_items, graph: @graph}) %>
+  <%# Calling dup to change object_id %>
+  <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories.dup, in_modal: false}) %>
 
   <% if current_user.admin? %>
     <h2><small><%= t('search_menu.debug') %></small></h2>

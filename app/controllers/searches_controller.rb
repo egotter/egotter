@@ -1,22 +1,24 @@
 class SearchesController < ApplicationController
 
+  DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(show statuses friends followers removing removed one_sided_following one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
-  NEED_LOGIN = %i(common_friends common_followers debug clear_result_cache)
-  DEBUG_PAGES = %i(debug clear_result_cache)
+  NEED_LOGIN = %i(common_friends common_followers) + DEBUG_PAGES
 
-  before_action :before_action_start,  only: NEED_VALIDATION
-  before_action :need_login,           only: NEED_LOGIN
-  before_action :invalid_screen_name,  only: NEED_VALIDATION
-  before_action :build_twitter_user,   only: NEED_VALIDATION
-  before_action :suspended_account,    only: NEED_VALIDATION, unless: :result_cache_exists?
-  before_action :unauthorized_account, only: NEED_VALIDATION, unless: :result_cache_exists?
-  before_action :too_many_friends,     only: NEED_VALIDATION, unless: :result_cache_exists?
-  before_action :before_action_finish, only: NEED_VALIDATION
+  before_action :before_action_start,    only: NEED_VALIDATION
+  before_action :need_login,             only: NEED_LOGIN
+  before_action :invalid_screen_name,    only: NEED_VALIDATION
+  before_action :build_twitter_user,     only: NEED_VALIDATION
+  before_action :suspended_account,      only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :unauthorized_account,   only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :too_many_friends,       only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :build_search_histories, except: (%i(new create) + DEBUG_PAGES)
+  before_action :before_action_finish,   only: NEED_VALIDATION
 
   before_action :set_searched_tw_user, only: SEARCH_MENUS
+
 
   before_action :basic_auth, only: DEBUG_PAGES
 
@@ -32,8 +34,6 @@ class SearchesController < ApplicationController
       current_user.update(notification: params[:notification] == 'on')
       redirect_to menu_path, notice: t('dictionary.settings_saved')
     else
-      searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-      @user_items = build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact)
       render
     end
   end
@@ -564,6 +564,11 @@ class SearchesController < ApplicationController
   rescue => e
     logger.warn e.message
     return redirect_to '/', alert: 'error 000'
+  end
+
+  def build_search_histories
+    searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
+    @search_histories = build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact)
   end
 
   def basic_auth

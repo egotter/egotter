@@ -1,13 +1,16 @@
 <%# user list %>
+<div id="<%= user_items.object_id %>">
 <% user_items.each.with_index do |user_item, i| %>
   <%
     profile_image_url = user_item[:target].profile_image_url_https.to_s
     screen_name = user_item[:target].screen_name
-    unique_id = "#{screen_name}_#{user_item[:target].object_id}"
+    unique_id = "#{screen_name}_#{user_item[:target].object_id}_#{user_items.object_id}"
   %>
 
-  <%= render(partial: 'searches/profile_overview_modal',
-             locals: {user: user_item[:target], unique_id: unique_id}) %>
+  <% unless in_modal %>
+    <%= render(partial: 'searches/profile_overview_modal',
+               locals: {user: user_item[:target], unique_id: unique_id}) %>
+  <% end %>
 
   <div class="user-item-carousel user-item-carousel-<%= i %>">
     <%# name box %>
@@ -47,10 +50,18 @@
         <% end %>
 
         <span>
-          <button type="button" class="btn btn-info"
-                  data-toggle="modal" data-target=".profile-overview-modal.<%= unique_id %>">
-            <span class="glyphicon glyphicon-search"></span>
-          </button>
+          <% if in_modal %>
+            <%= link_to searches_path(screen_name: screen_name, id: user_item[:target].uid), method: :post do %>
+              <button type="button" class="btn btn-info">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+            <% end %>
+          <% else %>
+            <button type="button" class="btn btn-info"
+                    data-toggle="modal" data-target=".profile-overview-modal.<%= unique_id %>">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+          <% end %>
         </span>
       </div>
     </div><%# .media %>
@@ -170,9 +181,11 @@
     </div>
   <% end %>
 <% end %>
+</div>
 
 <script>
-  $(function () {
+  function enable_carousel_<%= user_items.object_id %>(){
+    var container = $('#<%= user_items.object_id %>');
     var user_item_count = <%= user_items.size %>;
     var option = {
       accessibility: false,
@@ -181,10 +194,22 @@
       infinite: true
     };
     for (var i = 0; i < user_item_count; i++) {
-      $('.user-item-carousel-' + i).slick(option);
+      container.find('.user-item-carousel-' + i).slick(option);
     }
-    $('.media.description-box').show();
-    $('.media.count-box').show();
-    $('.media.score-box').show();
+    container.find('.media.description-box').show();
+    container.find('.media.count-box').show();
+    container.find('.media.score-box').show();
+    console.log('enabled', container);
+  }
+  $(function () {
+    <% unless in_modal %>
+      enable_carousel_<%= user_items.object_id %>();
+    <% else %>
+      $('.search-modal').on('show.bs.modal', function (e) {
+        setTimeout(function () {
+          enable_carousel_<%= user_items.object_id %>();
+        }, 500);
+      });
+    <% end %>
   });
 </script>

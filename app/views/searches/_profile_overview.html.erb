@@ -56,7 +56,7 @@
   }
   $(function () {
     <% if enable_carousel %>
-    enable_carousel_<%= unique_id %>();
+      enable_carousel_<%= unique_id %>();
     <% else %>
       $('.profile-overview-modal.<%= unique_id %>').on('show.bs.modal', function (e) {
         setTimeout(function () {
