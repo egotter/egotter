@@ -17,33 +17,33 @@ namespace :update_job_dispatcher do
     recently_updated_count = 0
 
     zrem_count = 0
-    min_enqueue_num = 10
-    max_enqueue_num = 30
-    current_enqueue_num = (redis.fetch(enqueue_num_key) { min_enqueue_num }).to_i
-    enqueue_count = 0
+    min_enqueue_limit = 10
+    max_enqueue_limit = 30
+    cur_enqueue_limit = (redis.fetch(enqueue_num_key) { min_enqueue_limit }).to_i
+    enqueued_count = 0
     unauthorized_count = 0
     suspended_count = 0
     too_many_friends_count = 0
     enqueue_uids = []
+    processed_count = -1
 
-    last_logs = BackgroundUpdateLog.order(created_at: :desc).limit(current_enqueue_num)
+    last_logs = BackgroundUpdateLog.order(created_at: :desc).limit(cur_enqueue_limit)
     if last_logs.select { |l| !l.status && l.reason == BackgroundUpdateLog::TOO_MANY_REQUESTS }.any?
-      current_enqueue_num = min_enqueue_num
+      cur_enqueue_limit = min_enqueue_limit
     else
-      current_enqueue_num += 2
-      current_enqueue_num = max_enqueue_num if current_enqueue_num > max_enqueue_num
+      cur_enqueue_limit += 2
+      cur_enqueue_limit = max_enqueue_limit if cur_enqueue_limit > max_enqueue_limit
     end
-    redis.set(enqueue_num_key, current_enqueue_num)
+    redis.set(enqueue_num_key, cur_enqueue_limit)
 
     begin
       uids = client.follower_ids('ego_tter').map { |id| id.to_i }
     rescue Twitter::Error::TooManyRequests => e
-      end_t = Time.zone.now
-      puts "#{client.screen_name} #{e.message} retry after #{e.rate_limit.reset_in} seconds (#{end_t - start_t}s)"
+      puts "#{client.screen_name} #{e.message} retry after #{e.rate_limit.reset_in} seconds (#{Time.zone.now - start_t}s)"
       next
     end
 
-    uids.shuffle.each do |uid|
+    uids.shuffle.each.with_index do |uid, index|
       if redis.zrank(added_key, uid.to_s).present?
         already_added_count += 1
         next
@@ -88,13 +88,20 @@ namespace :update_job_dispatcher do
       BackgroundUpdateWorker.perform_async(uid.to_i)
       enqueue_uids << uid.to_i
       redis.zadd(added_key, now_i, uid.to_s)
-      enqueue_count += 1
+      enqueued_count += 1
 
-      break if enqueue_count >= current_enqueue_num
+      if enqueued_count >= cur_enqueue_limit
+        processed_count = index + 1
+        break
+      end
     end
 
-    if enqueue_count < current_enqueue_num
-      zrem_count = redis.zremrangebyrank(added_key, 0, current_enqueue_num - 1)
+    if processed_count == -1
+      processed_count = uids.size
+    end
+
+    if enqueued_count < cur_enqueue_limit
+      zrem_count = redis.zremrangebyrank(added_key, 0, cur_enqueue_limit - 1)
     end
 
 
@@ -104,10 +111,11 @@ namespace :update_job_dispatcher do
       'zcard(too many friends)' => redis.zcard(too_many_friends_key),
       'zcard(unauthorized)' => redis.zcard(unauthorized_key),
       'zrem(added)' => zrem_count,
-      min_enqueue_num: min_enqueue_num,
-      max_enqueue_num: max_enqueue_num,
-      enqueue_num: current_enqueue_num,
-      enqueued_count: enqueue_count,
+      min_enqueue_limit: min_enqueue_limit,
+      max_enqueue_limit: max_enqueue_limit,
+      cur_enqueue_limit: cur_enqueue_limit,
+      enqueued_count: enqueued_count,
+      processed_count: processed_count,
       already_added: already_added_count,
       already_failed: already_failed_count,
       already_too_many_friends: already_tmf_count,
@@ -119,8 +127,7 @@ namespace :update_job_dispatcher do
     }
     redis.set(Redis.debug_info_key, debug_info.to_json)
 
-    end_t = Time.zone.now
-    puts "#{debug_info.map{|k, v| "#{k}=#{v}" }.join(' ')} (#{end_t - start_t}s)"
+    puts "#{debug_info.map{|k, v| "#{k}=#{v}" }.join(' ')} (#{Time.zone.now - start_t}s)"
   end
 
   def now_i
