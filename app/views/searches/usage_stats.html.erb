@@ -5,6 +5,12 @@
   <h2>
     <small><%= @name %></small>
   </h2>
+  <div id="twitter_addiction" class="chart"></div>
+
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
+
+  <hr>
+
   <div id="wday_graph" class="chart"></div>
   <div id="wday_graph_7days" class="chart"></div>
 
@@ -25,6 +31,10 @@
 
 <script>
   var graph_options = window.usage_stats_column_chart_options;
+
+  var twitter_addiction_options = $.extend(true, {}, graph_options);
+  twitter_addiction_options.title.text = '曜日ごとのツイッター利用時間';
+  twitter_addiction_options.series[0].data = <%= raw @twitter_addiction_series.to_json %>;
 
   var wday_options = $.extend(true, {}, graph_options);
   wday_options.title.text = '曜日ごとのツイート数(直近600ツイート)';
@@ -47,13 +57,14 @@
   hour_7days_options.drilldown.series = <%= raw @hour_drilldown_series_7days.to_json %>;
 
   var tweets_stat = <%=
-  statuses_size = @searched_tw_user.statuses.size
+  statuses = @searched_tw_user.statuses
+  statuses_size = statuses.size
   {
-    mentions: @searched_tw_user.statuses.select{|s| s.mentions? }.size.to_f / statuses_size * 100,
-    media: @searched_tw_user.statuses.select{|s| s.media? }.size.to_f / statuses_size * 100,
-    urls: @searched_tw_user.statuses.select{|s| s.urls? }.size.to_f / statuses_size * 100,
-    hashtags: @searched_tw_user.statuses.select{|s| s.hashtags? }.size.to_f / statuses_size * 100,
-    location: @searched_tw_user.statuses.select{|s| s.location? }.size.to_f / statuses_size * 100
+    mentions: statuses.select{|s| s.mentions? }.size.to_f / statuses_size * 100,
+    media: statuses.select{|s| s.media? }.size.to_f / statuses_size * 100,
+    urls: statuses.select{|s| s.urls? }.size.to_f / statuses_size * 100,
+    hashtags: statuses.select{|s| s.hashtags? }.size.to_f / statuses_size * 100,
+    location: statuses.select{|s| s.location? }.size.to_f / statuses_size * 100
   }.to_json.html_safe
   %>;
 
@@ -81,6 +92,8 @@
   }];
 
   $(function () {
+    $('#twitter_addiction').highcharts(twitter_addiction_options);
+
     $('#wday_graph').highcharts(wday_options);
     $('#wday_graph_7days').highcharts(wday_7days_options);
 

@@ -652,6 +652,20 @@ class ExTwitter < Twitter::REST::Client
     end
   end
 
+  def twitter_addiction_series(times)
+    five_mins = 5.minutes
+    wday_expended_seconds =
+      (0..6).each_with_object((0..6).map { |n| [n, nil] }.to_h) do |wday, wday_memo|
+        target_times = times.select { |t| t.wday == wday }
+        wday_memo[wday] = target_times.empty? ? nil : target_times.each_cons(2).map {|a, b| (a - b) < five_mins ? a - b : five_mins }.sum
+      end
+    days = times.map{|t| t.to_date.to_s(:long) }.uniq.size
+    weeks = (days > 7) ? days / 7.0 : 1.0
+    wday_expended_seconds.map { |k, v| [I18n.t('date.abbr_day_names')[k], (v.nil? ? nil : v / weeks / 60)] }.map do |key, value|
+      {name: key, y: value}
+    end
+  end
+
   def usage_stats(user, options = {})
     n_days_ago = options.has_key?(:days) ? options[:days].days.ago : 365.days.ago
     tweets = options.has_key?(:tweets) ? options.delete(:tweets) : user_timeline(user)
@@ -663,9 +677,11 @@ class ExTwitter < Twitter::REST::Client
       usage_stats_wday_series_data(times),
       usage_stats_wday_drilldown_series(times),
       usage_stats_hour_series_data(times),
-      usage_stats_hour_drilldown_series(times)
+      usage_stats_hour_drilldown_series(times),
+      twitter_addiction_series(times)
     ]
   end
+
 
   alias :old_favorites :favorites
   def favorites(*args)

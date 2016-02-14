@@ -95,11 +95,12 @@ ja:
     top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji}"
     close_friends_by_oneself: "%{users}、いつも%{screen_name}と仲良くしてくれてありがとう！%{kaomoji} %{url}"
     close_friends_by_others: "%{users}、%{screen_name}だけでなく%{me}とも仲良くしてください。%{kaomoji} %{url}"
-    close_friends_without_sign_in: "%{users}、いつも%{screen_name}と仲良しなんですね！%{kaomoji} %{url}"
+    close_friends_without_sign_in: "%{users}、%{screen_name}と仲良しなんですね！%{kaomoji} %{url}"
     mutual_friends: "%{screen_name}の両思い率は %{mutual_friends_rate}%、片思い率は %{one_sided_following_rate}%、片思われ率は %{one_sided_followers_rate}%です！%{kaomoji} %{url}"
     inactive_friends: "%{users}、最近どうしちゃったんですか…？%{kaomoji} %{url}"
     common_friends: ".%{user}と%{login}の共通のフォローは、%{users}です。%{kaomoji} %{url}"
     common_followers: ".%{user}と%{login}の共通のフォロワーは、%{users}です。%{kaomoji} %{url}"
+    usage_stats: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{kaomoji} %{url}"
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   search_menu:

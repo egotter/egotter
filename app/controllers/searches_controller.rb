@@ -320,10 +320,12 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/usage_stats
   def usage_stats
-    @wday_series_data_7days, @wday_drilldown_series_7days, @hour_series_data_7days, @hour_drilldown_series_7days =
+    @wday_series_data_7days, @wday_drilldown_series_7days, @hour_series_data_7days, @hour_drilldown_series_7days, _ =
       @searched_tw_user.usage_stats(days: 7)
-    @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series =
+    @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series, @twitter_addiction_series =
       @searched_tw_user.usage_stats
+
+    @tweet_text = view_context.usage_stats_text(@twitter_addiction_series, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
 
     @hashtags = @searched_tw_user.statuses.select { |s| s.hashtags? }.
       map { |s| s.hashtags }.flatten.
@@ -478,19 +480,9 @@ class SearchesController < ApplicationController
   end
 
   def too_many_friends
-    if @twitter_user.too_many_friends?
-      @too_many_friends_flag = true
-      # alert_msg =
-      #   if user_signed_in?
-      #     t('before_sign_in.too_many_friends', user: twitter_link(@twitter_user.screen_name),
-      #       friends: @twitter_user.friends_count, followers: @twitter_user.followers_count)
-      #   else
-      #     t('before_sign_in.many_friends', user: twitter_link(@twitter_user.screen_name),
-      #       friends: @twitter_user.friends_count, followers: @twitter_user.followers_count,
-      #       sign_in_link: sign_in_link)
-      #   end
-      # redirect_to '/', alert: alert_msg
-    end
+    # do nothing
+    # if @twitter_user.too_many_friends?
+    # end
   end
 
   def build_user_items(items)

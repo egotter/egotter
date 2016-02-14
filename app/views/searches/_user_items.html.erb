@@ -162,24 +162,7 @@
           </div>
         <% end %>
 
-        <div class="tweet-preview-box container">
-          <textarea rows="4" readonly><%= @tweet_text %></textarea>
-        </div>
-        <div class="tweet-box container">
-          <div class="text-right">
-            <% params = {text: @tweet_text, via: 'ego_tter'}.to_param %>
-            <%= link_to t('dictionary.tweet_result'),
-                        "https://twitter.com/intent/tweet?#{params}".html_safe,
-                        class: 'btn btn-info', target: '_blank' %>
-          </div>
-        </div>
-        <script>
-          $(function () {
-            $('.tweet-box textarea').on('click', function(){
-              $(this).select();
-            });
-          });
-        </script>
+        <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
       </div>
     </div>
   <% end %>
