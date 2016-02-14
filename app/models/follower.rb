@@ -21,7 +21,7 @@
 class Follower < ActiveRecord::Base
   belongs_to :twitter_user
 
-  attr_accessor :client, :login_user, :egotter_context
+  attr_accessor :client, :login_user, :egotter_context, :without_friends
 
   delegate *TwitterUser::PROFILE_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
 
