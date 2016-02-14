@@ -122,7 +122,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def self.build(client, user, option = {})
-    build_by_client(client, user, option.merge(build_relation: build_relation))
+    build_by_client(client, user, option)
   end
 
   def build_relations
