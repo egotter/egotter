@@ -1,5 +1,6 @@
 Redis.class_eval do
-  def fetch(key, ttl = 43200) # = 12.hours
+  DEFAULT_EGOTTER_CACHE_TTL = Rails.configuration.x.constants['result_cache_ttl']
+  def fetch(key, ttl = DEFAULT_EGOTTER_CACHE_TTL)
     if block_given?
       if exists(key)
         get(key)

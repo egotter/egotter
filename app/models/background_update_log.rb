@@ -51,7 +51,9 @@ class BackgroundUpdateLog < ActiveRecord::Base
     order(created_at: :desc).find_by(uid: uid).reason
   end
 
-  def recently_created?(minutes = 5)
-    Time.zone.now.to_i - created_at.to_i < 60 * minutes
+  DEFAULT_SECONDS = Rails.configuration.x.constants['background_update_log_recently_created_threshold']
+
+  def recently_created?(seconds = DEFAULT_SECONDS)
+    Time.zone.now.to_i - created_at.to_i < seconds
   end
 end

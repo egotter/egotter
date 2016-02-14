@@ -11,7 +11,8 @@ class ExTwitter < Twitter::REST::Client
   extend Memoist
 
   def initialize(options = {})
-    @cache = ActiveSupport::Cache::FileStore.new(File.join('tmp', 'api_cache', Time.now.strftime('%Y%m%d%H')))
+    api_cache_prefix = options.has_key?(:api_cache_prefix) ? options.delete(:api_cache_prefix) : '%Y%m%d%H'
+    @cache = ActiveSupport::Cache::FileStore.new(File.join('tmp', 'api_cache', Time.now.strftime(api_cache_prefix)))
     @uid = options[:uid]
     @screen_name = options[:screen_name]
     @authenticated_user = Hashie::Mash.new({uid: options[:uid].to_i, screen_name: options[:screen_name]})

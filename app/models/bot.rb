@@ -34,6 +34,6 @@ class Bot
 
   def self.api_client(options = {})
     init
-    ExTwitter.new(config(options))
+    ExTwitter.new(config(options).merge(api_cache_prefix: Rails.configuration.x.constants['twitter_api_cache_prefix']))
   end
 end

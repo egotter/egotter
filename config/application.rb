@@ -24,5 +24,7 @@ module Egotter
     config.active_record.raise_in_transactional_callbacks = true
 
     config.eager_load_paths += %W(#{config.root}/lib)
+
+    config.x.constants = Rails.application.config_for(:constants)
   end
 end

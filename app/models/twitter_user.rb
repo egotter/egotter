@@ -262,14 +262,14 @@ class TwitterUser < ActiveRecord::Base
       order(created_at: :desc).find_by(uid: user.to_i) : order(created_at: :desc).find_by(screen_name: user.to_s)
   end
 
-  DEFAULT_MINUTES = 30
+  DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created_threshold']
 
-  def recently_created?(minutes = DEFAULT_MINUTES)
-    Time.zone.now.to_i - created_at.to_i < 60 * minutes
+  def recently_created?(seconds = DEFAULT_SECONDS)
+    Time.zone.now.to_i - created_at.to_i < seconds
   end
 
-  def recently_updated?(minutes = DEFAULT_MINUTES)
-    Time.zone.now.to_i - updated_at.to_i < 60 * minutes
+  def recently_updated?(seconds = DEFAULT_SECONDS)
+    Time.zone.now.to_i - updated_at.to_i < seconds
   end
 
   def oldest_me

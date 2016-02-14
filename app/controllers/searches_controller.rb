@@ -540,14 +540,14 @@ class SearchesController < ApplicationController
 
   def set_result_cache
     html = render_to_string
-    redis.setex(result_cache_key, 43200, html) # 12.hours
+    redis.setex(result_cache_key, Rails.configuration.x.constants['result_cache_ttl'], html)
     html
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0)
     html.sub('<!-- csrf_meta_tags -->', view_context.csrf_meta_tags).
       sub('<!-- search_elapsed_time -->', view_context.number_with_precision(time, precision: 1)).
-      sub('<!-- cache_ttl -->', (ttl / 60.seconds).to_s)
+      sub('<!-- cache_ttl -->', view_context.number_with_precision(ttl.to_f / 3600.seconds, precision: 1))
   end
 
   def user_or_anonymous
