@@ -1,15 +1,19 @@
 <%# show page %>
 
+<%
+  # avoid duplicate rendering
+  modal_rendered_uids = []
+%>
+
 <%# close_friends %>
 <div class="menu-items media" style="margin-top: 0px;">
   <div class="media-body">
     <h4 class="media-heading"><%= close_friends[:name] %></h4>
 
     <% close_friends[:target].slice(0..2).each do |user| %>
-      <%= link_to searches_path(screen_name: user.screen_name, id: user.uid),
-                  method: :post do %>
+      <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
         <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
-      <% end %>
+      </span>
     <% end %>
   </div>
   <div class="media-right media-bottom">
@@ -31,6 +35,12 @@
                 class: 'btn btn-info btn-block') %>
   </div>
 </div>
+<% close_friends[:target].slice(0..2).each do |user| %>
+  <% next if modal_rendered_uids.include?(user.uid) %>
+  <%= render(partial: 'searches/profile_overview_modal',
+             locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}"}) %>
+  <% modal_rendered_uids << user.uid %>
+<% end %>
 
 <%# usage_stats %>
 <div class="menu-items media">
@@ -85,9 +95,6 @@
   </div>
 </div>
 
-<style type="text/css">
-</style>
-
 <%# menu_items %>
 <% menu_items.each do |menu_item| %>
   <div class="menu-items media">
@@ -95,10 +102,9 @@
       <h4 class="media-heading"><%= menu_item[:name] %></h4>
 
       <% menu_item[:target].slice(0..2).each do |user| %>
-        <%= link_to searches_path(screen_name: user.screen_name, id: user.uid),
-                    method: :post do %>
+        <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
           <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
-        <% end %>
+        </span>
       <% end %>
     </div>
     <div class="media-right media-bottom">
@@ -125,6 +131,12 @@
                   class: 'btn btn-info btn-block') %>
     </div>
   </div>
+  <% menu_item[:target].slice(0..2).each do |user| %>
+    <% next if modal_rendered_uids.include?(user.uid) %>
+    <%= render(partial: 'searches/profile_overview_modal',
+               locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}"}) %>
+    <% modal_rendered_uids << user.uid %>
+  <% end %>
 <% end %>
 
 <%# common friends and common followers %>
@@ -134,10 +146,9 @@
       <h4 class="media-heading"><%= menu_item[:name] %></h4>
 
       <% menu_item[:target].slice(0..2).each do |user| %>
-        <%= link_to searches_path(screen_name: user.screen_name, id: user.uid),
-                    method: :post do %>
+        <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
           <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
-        <% end %>
+        </span>
       <% end %>
     </div>
 
@@ -171,6 +182,12 @@
       <% end %>
     </div>
   </div>
+  <% menu_item[:target].slice(0..2).each do |user| %>
+    <% next if modal_rendered_uids.include?(user.uid) %>
+    <%= render(partial: 'searches/profile_overview_modal',
+               locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}"}) %>
+    <% modal_rendered_uids << user.uid %>
+  <% end %>
 <% end %>
 
 <%# update_histories %>
