@@ -305,8 +305,11 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/clusters_belong_to
   def clusters_belong_to
-    clusters = (@searched_tw_user.clusters_belong_to && @searched_tw_user.clusters_belong_to rescue [])
-    @clusters_belong_to = clusters.map { |c| {target: c} }
+    clusters = @searched_tw_user.clusters_belong_to
+    @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('dictionary.cluster')}"} }
+    @graph = clusters.to_a.slice(0, 10).map { |word, count| {name: word, y: count} }
+    @tweet_text = view_context.clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @name = t('search_menu.clusters_belong_to', user: @searched_tw_user.screen_name)
   end
 
   # GET /searches/:screen_name/close_friends

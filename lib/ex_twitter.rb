@@ -598,10 +598,7 @@ class ExTwitter < Twitter::REST::Client
       each { |w| cluster_word_counter[w] += 1 }
 
     # 複数個以上見付かった単語のみを残し、出現頻度順にソート
-    cluster_words = cluster_word_counter.select { |_, v| v > 3 }.sort_by { |_, v| -v }.to_h.keys
-
-    # 出現回数上位の単語のみを返す
-    cluster_words.slice(0, [cluster_words.size, 5].min)
+    cluster_word_counter.select { |_, v| v > 3 }.sort_by { |_, v| -v }.to_h
   end
 
   def clusters_assigned_to

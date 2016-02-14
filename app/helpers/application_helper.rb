@@ -7,6 +7,17 @@ module ApplicationHelper
     t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample, url: 'http://egotter.com')
   end
 
+  def clusters_belong_to_text(clusters, tu, url)
+    t('tweet_text.clusters_belong_to',
+      user: "@#{tu.screen_name}",
+      clusters: "#{clusters.join(t('dictionary.delim'))}",
+      kaomoji: Kaomoji.sample,
+      url: url)
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{clusters.inspect} #{tu.inspect} #{url}"
+    error_text
+  end
+
   def usage_stats_text(addiction_stat, tu, url)
     total_real_expended_minutes = addiction_stat.map { |obj| obj[:y] }.sum { |y| y.nil? ? 0 : y }
     avg_real_expended_minutes = total_real_expended_minutes / addiction_stat.map { |obj| obj[:y] }.count { |y| !y.nil? }

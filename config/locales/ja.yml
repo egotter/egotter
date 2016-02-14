@@ -46,6 +46,8 @@ ja:
     created_at_and_updated_at: "更新日時"
     you: "あなた"
     cluster: "クラスタ"
+    clusters_index: "クラスタ指数"
+    hashtag_cloud: "ハッシュタグクラウド"
     delim: "、"
     honorific: "さん"
   before_sign_in:
@@ -100,6 +102,7 @@ ja:
     inactive_friends: "%{users}、最近どうしちゃったんですか…？%{kaomoji} %{url}"
     common_friends: ".%{user}と%{login}の共通のフォローは、%{users}です。%{kaomoji} %{url}"
     common_followers: ".%{user}と%{login}の共通のフォロワーは、%{users}です。%{kaomoji} %{url}"
+    clusters_belong_to: ".%{user}の入っているクラスタは、%{clusters}です。%{kaomoji} %{url}"
     usage_stats: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{kaomoji} %{url}"
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"

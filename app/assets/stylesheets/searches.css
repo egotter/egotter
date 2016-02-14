@@ -130,7 +130,9 @@
   margin-right: 15px;
 }
 
-.user-items .tweet-preview-box, .usage-stats .tweet-preview-box {
+.user-items .tweet-preview-box,
+.usage-stats .tweet-preview-box,
+.clusters-belong-to .tweet-preview-box {
   border: 1px solid #e6e6e6;
   margin-top: 15px;
   margin-left: 15px;
@@ -139,7 +141,9 @@
   padding-right: 0px;
 }
 
-.user-items .tweet-preview-box textarea, .usage-stats .tweet-preview-box textarea {
+.user-items .tweet-preview-box textarea,
+.usage-stats .tweet-preview-box textarea,
+.clusters-belong-to .tweet-preview-box textarea {
   margin: 0;
   padding: 0;
   resize: none;
@@ -152,7 +156,10 @@
   -webkit-box-sizing: border-box;
 }
 
-.user-items .tweet-box, .usage-stats .tweet-box {
+.user-items .tweet-box,
+.usage-stats .tweet-box,
+.clusters-belong-to .tweet-box
+{
   margin-top: 5px;
   margin-left: 15px;
   margin-right: 15px;
@@ -435,6 +442,26 @@
   border-color: #999999;
 }
 /* usage-stats end */
+
+/* clusters-belong-to start */
+.clusters-belong-to {
+  padding: 0;
+}
+
+.clusters-belong-to h2 {
+  text-align: center;
+  margin-top: 5px;
+}
+
+.clusters-belong-to .chart {
+  height: 200px;
+  margin: 0 auto;
+}
+
+.clusters-belong-to hr {
+  border-color: #999999;
+}
+/* clusters-belong-to end */
 
 /* menu.html.erb start */
 .menu {
