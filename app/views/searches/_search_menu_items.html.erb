@@ -55,7 +55,6 @@
           graph_option.series[0].data = <%= raw usage_stats[:graph][0].to_json %>;
           graph_option.drilldown.series = <%= raw usage_stats[:graph][1].to_json %>;
           graph_option.yAxis.visible = false;
-          graph_option.plotOptions.series.dataLabels.enabled = false;
           $('#<%= usage_stats.object_id %>').highcharts(graph_option);
         });
       </script>
@@ -72,26 +71,25 @@
 <%# clusters_belong_to %>
 <div class="menu-items media">
   <div class="media-body">
-    <h4 class="media-heading"><%= menu_clusters_belong_to[:name] %></h4>
-  </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12">
-        <%= menu_clusters_belong_to[:text] %>
+    <h4 class="media-heading"><%= clusters_belong_to[:name] %></h4>
 
-        <%= link_to(t('dictionary.tweet_result'),
-                    "https://twitter.com/intent/tweet?text=#{URI.escape(menu_clusters_belong_to[:tweet_text])}",
-                    target: '_blank',
-                    class: 'btn btn-default pull-right',
-                    style: 'margin-top: 5px;') %>
-      </div>
-      <div class="col-xs-12">
-        <%= link_to(t('dictionary.view_more'),
-                    menu_clusters_belong_to[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    class: 'btn btn-info btn-block',
-                    style: 'margin-top: 15px;') %>
-      </div>
-    </div>
+    <% if clusters_belong_to.has_key?(:graph) %>
+      <div id="<%= clusters_belong_to.object_id %>" class="clusters-belong-to-chart"></div>
+      <script>
+        $(function () {
+          var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
+          graph_option.series[0].data = <%= raw clusters_belong_to[:graph].to_json %>;
+          graph_option.yAxis.visible = false;
+          $('#<%= clusters_belong_to.object_id %>').highcharts(graph_option);
+        });
+      </script>
+    <% end %>
+  </div>
+
+  <div class="container">
+    <%= link_to(t('dictionary.view_more'),
+                clusters_belong_to[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                class: 'btn btn-info btn-block') %>
   </div>
 </div>
 

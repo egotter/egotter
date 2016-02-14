@@ -498,6 +498,10 @@ class TwitterUser < ActiveRecord::Base
     client.usage_stats(__uid_i, tweets: statuses)
   end
 
+  def clusters_belong_to_graph
+    clusters_belong_to.to_a.slice(0, 10).map { |word, count| {name: word, y: count} }
+  end
+
   def percentile_index(ary, percentile = 0.0)
     ((ary.length * percentile).ceil) - 1
   end

@@ -162,6 +162,7 @@ class SearchesController < ApplicationController
     @menu_clusters_belong_to = {
       name: t('search_menu.clusters_belong_to', user: sn),
       target: _clusters_belong_to,
+      graph: tu.clusters_belong_to_graph,
       screen_name: tu.screen_name,
       text: "#{_clusters_belong_to.map{|c| "#{c}#{t('dictionary.cluster')}" }.join(t('dictionary.delim'))}",
       tweet_text: "#{t('search_menu.clusters_belong_to', user: sn)}\n#{_clusters_belong_to.map{|c| "##{c}#{t('dictionary.cluster')}" }.join(' ')}\n#{t('dictionary.continue_reading')}http://example.com",
@@ -307,7 +308,7 @@ class SearchesController < ApplicationController
   def clusters_belong_to
     clusters = @searched_tw_user.clusters_belong_to
     @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('dictionary.cluster')}"} }
-    @graph = clusters.to_a.slice(0, 10).map { |word, count| {name: word, y: count} }
+    @graph = @searched_tw_user.clusters_belong_to_graph
     @tweet_text = view_context.clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.clusters_belong_to', user: @searched_tw_user.screen_name)
   end

@@ -369,6 +369,10 @@
   height: 100px;
 }
 
+.menu-items .clusters-belong-to-chart {
+  height: 100px;
+}
+
 .menu-items .common-chart {
   margin-right: 15px;
   height: 70px;
