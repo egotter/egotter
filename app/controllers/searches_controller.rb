@@ -450,7 +450,7 @@ class SearchesController < ApplicationController
   def build_twitter_user
     user = client.user(search_sn)
     @twitter_user =
-      TwitterUser.build_by_user(user, client: client, login_user: current_user, egotter_context: 'search', build_relation: false)
+      TwitterUser.build_by_user(user, client: client, login_user: current_user, egotter_context: 'search')
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   rescue Twitter::Error::NotFound => e

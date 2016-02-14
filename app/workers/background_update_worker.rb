@@ -7,7 +7,7 @@ class BackgroundUpdateWorker
   def perform(uid, options = {})
     @uid = uid
     options = options.with_indifferent_access
-    _tu = measure('build(first)') { TwitterUser.build(client, uid.to_i, all: false) }
+    _tu = measure('build(first)') { TwitterUser.build(client, uid.to_i) }
     @sn = _tu.screen_name
 
     logger.debug "#{user_name} start"
@@ -41,7 +41,7 @@ class BackgroundUpdateWorker
       return
     end
 
-    new_tu = measure('build(second)') { TwitterUser.build(client, _tu.uid.to_i) }
+    new_tu = measure('build(second)') { TwitterUser.build(client, _tu.uid.to_i, build_relation: true, with_friends: true) }
     if measure('save') { new_tu.save_with_bulk_insert }
       logger.debug "#{user_name} create new TwitterUser"
     else

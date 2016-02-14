@@ -17,7 +17,7 @@ class BackgroundSearchWorker
       create_log(log_attrs, true)
       logger.debug "#{user_name} #{bot_name(client)} show #{screen_name}"
     else
-      build_options = {login_user: User.find_by(id: login_user_id), egotter_context: 'search', without_friends: without_friends}
+      build_options = {login_user: User.find_by(id: login_user_id), egotter_context: 'search', build_relation: true, without_friends: without_friends}
       new_tu = measure('build') { TwitterUser.build(client, uid, build_options) }
       if measure('save') { new_tu.save_with_bulk_insert }
         new_tu.search_and_touch

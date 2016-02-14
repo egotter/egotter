@@ -107,7 +107,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def self.build_by_user(user, attrs = {})
-    build_relation = attrs.has_key?(:build_relation) ? attrs.delete(:build_relation) : true
+    build_relation = attrs.has_key?(:build_relation) ? attrs.delete(:build_relation) : false
     tu = new(attrs) do |tu|
       tu.uid = user.id
       tu.screen_name = user.screen_name
@@ -122,7 +122,6 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def self.build(client, user, option = {})
-    build_relation = option.has_key?(:all) ? option.delete(:all) : true
     build_by_client(client, user, option.merge(build_relation: build_relation))
   end
 
