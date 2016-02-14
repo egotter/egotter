@@ -10,7 +10,7 @@ class SearchesController < ApplicationController
   before_action :before_action_start,  only: NEED_VALIDATION
   before_action :need_login,           only: NEED_LOGIN
   before_action :invalid_screen_name,  only: NEED_VALIDATION
-  before_action :set_twitter_user,     only: NEED_VALIDATION
+  before_action :build_twitter_user,   only: NEED_VALIDATION
   before_action :suspended_account,    only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :unauthorized_account, only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :too_many_friends,     only: NEED_VALIDATION, unless: :result_cache_exists?
@@ -409,12 +409,8 @@ class SearchesController < ApplicationController
   private
   def set_searched_tw_user
     tu = @twitter_user.latest_me
-    if tu.blank?
-      return redirect_to '/', alert: t('before_sign_in.blank_search_result')
-    end
-    tu.client = client
-    tu.login_user = current_user
-    tu.egotter_context = 'search'
+    return create if tu.blank?
+    tu.assign_attributes(client: client, login_user: current_user, egotter_context: 'search')
     @searched_tw_user = tu
   end
 
@@ -450,15 +446,10 @@ class SearchesController < ApplicationController
     end
   end
 
-  def set_twitter_user
+  def build_twitter_user
     user = client.user(search_sn)
-    @twitter_user = TwitterUser.new(
-      uid: user.id,
-      screen_name: user.screen_name,
-      user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json,
-      client: client,
-      login_user: current_user,
-      egotter_context: 'search')
+    @twitter_user =
+      TwitterUser.build_by_user(user, client: client, login_user: current_user, egotter_context: 'search', build_relation: false)
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   rescue Twitter::Error::NotFound => e
