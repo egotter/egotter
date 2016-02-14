@@ -365,12 +365,19 @@
   border: 1px solid #e6e6e6;
 }
 
-.menu-items .usage-stats-chart {
-  height: 100px;
+.menu-items.usage-stats-chart .media-heading h4,
+.menu-items.clusters-belong-to-chart .media-heading h4 {
+  margin-bottom: 5px;
 }
 
-.menu-items .clusters-belong-to-chart {
-  height: 100px;
+.menu-items.usage-stats-chart .usage-stats-chart-container,
+.menu-items.clusters-belong-to-chart .clusters-belong-to-chart-container {
+  height: 120px;
+}
+
+.menu-items.usage-stats-chart a.btn,
+.menu-items.clusters-belong-to-chart a.btn {
+  margin-top: 0;
 }
 
 .menu-items .common-chart {

@@ -43,18 +43,22 @@
 <% end %>
 
 <%# usage_stats %>
-<div class="menu-items media">
+<div class="menu-items media usage-stats-chart">
   <div class="media-body">
     <h4 class="media-heading"><%= usage_stats[:name] %></h4>
 
     <% if usage_stats.has_key?(:graph) %>
-      <div id="<%= usage_stats.object_id %>" class="usage-stats-chart"></div>
+      <div id="<%= usage_stats.object_id %>" class="usage-stats-chart-container"></div>
       <script>
         $(function () {
           var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
           graph_option.series[0].data = <%= raw usage_stats[:graph][0].to_json %>;
           graph_option.drilldown.series = <%= raw usage_stats[:graph][1].to_json %>;
           graph_option.yAxis.visible = false;
+          graph_option.chart.marginTop = 0;
+          graph_option.chart.spacingTop = 0;
+          graph_option.yAxis.endOnTick = false;
+          graph_option.yAxis.startOnTick = false;
           $('#<%= usage_stats.object_id %>').highcharts(graph_option);
         });
       </script>
@@ -69,17 +73,21 @@
 </div>
 
 <%# clusters_belong_to %>
-<div class="menu-items media">
+<div class="menu-items media clusters-belong-to-chart">
   <div class="media-body">
     <h4 class="media-heading"><%= clusters_belong_to[:name] %></h4>
 
     <% if clusters_belong_to.has_key?(:graph) %>
-      <div id="<%= clusters_belong_to.object_id %>" class="clusters-belong-to-chart"></div>
+      <div id="<%= clusters_belong_to.object_id %>" class="clusters-belong-to-chart-container"></div>
       <script>
         $(function () {
           var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
           graph_option.series[0].data = <%= raw clusters_belong_to[:graph].to_json %>;
           graph_option.yAxis.visible = false;
+          graph_option.chart.marginTop = 0;
+          graph_option.chart.spacingTop = 0;
+          graph_option.yAxis.endOnTick = false;
+          graph_option.yAxis.startOnTick = false;
           $('#<%= clusters_belong_to.object_id %>').highcharts(graph_option);
         });
       </script>
