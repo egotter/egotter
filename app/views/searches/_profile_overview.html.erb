@@ -19,6 +19,7 @@
                   <div>
                     <span class="text"><%= user.name %>&nbsp;</span>
                     <% if user.protected %><span class="glyphicon glyphicon-lock"></span><% end %>
+                    <% if user.verified %><span class="glyphicon glyphicon-ok"></span><% end %>
                   </div>
                 </div>
                 <div class="screen-name">

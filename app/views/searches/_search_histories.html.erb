@@ -25,6 +25,9 @@
           <% if user_item[:target].protected %>
             &nbsp;<span class="glyphicon glyphicon-lock"></span>
           <% end %>
+          <% if user_item[:target].verified %>
+            &nbsp;<span class="glyphicon glyphicon-ok"></span>
+          <% end %>
         </h4>
         <span class="screen_name">
           <%= link_to "https://twitter.com/#{screen_name}", target: '_blank' do %>

@@ -50,6 +50,7 @@ class TwitterUser < ActiveRecord::Base
     profile_image_url_https
     profile_banner_url
     suspended
+    verified
   )
 
   delegate *PROFILE_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
