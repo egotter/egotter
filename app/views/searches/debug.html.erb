@@ -93,4 +93,44 @@
   <br>
 <% end %>
 
+<% start = Time.zone.now %>
+<%
+  sql = <<-'EOS'.strip_heredoc
+    SELECT
+      table_name,
+      engine,
+      table_rows                                        AS tbl_rows,
+      avg_row_length                                    AS rlen,
+      floor((data_length + index_length) / 1024 / 1024) AS allMB,
+      floor((data_length) / 1024 / 1024)                AS dMB,
+      floor((index_length) / 1024 / 1024)               AS iMB
+    FROM information_schema.tables
+    WHERE table_schema = database()
+    ORDER BY (data_length + index_length) DESC;
+  EOS
+ result = ActiveRecord::Base.connection.select_all(sql)
+%>
+
+<table border="1">
+  <caption>Database Table Size</caption>
+  <tr>
+    <th>table_name</th>
+    <th>engine</th>
+    <th>tbl_rows</th>
+    <th>avg_rlen(B)</th>
+    <th>total(MB)</th>
+    <th>data(MB)</th>
+    <th>index(MB)</th>
+  </tr>
+  <% result.rows.each do |columns| %>
+    <tr>
+      <% columns.each do |col| %>
+        <td><%= col %></td>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+<div><%= Time.zone.now - start %>s</div>
+<br>
+
 <div><a href="/">egotter</a></div>
