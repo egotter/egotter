@@ -1,3 +1,9 @@
+/* change color of carousel dots start */
+.slick-dots li button:before {
+  color: white !important;
+}
+/* change color of carousel dots end */
+
 /* _user_items.html.erb start */
 .user-item-carousel {
   margin-bottom: 0px !important;
