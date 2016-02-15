@@ -55,10 +55,6 @@
           graph_option.series[0].data = <%= raw usage_stats[:graph][0].to_json %>;
           graph_option.drilldown.series = <%= raw usage_stats[:graph][1].to_json %>;
           graph_option.yAxis.visible = false;
-          graph_option.chart.marginTop = 0;
-          graph_option.chart.spacingTop = 0;
-          graph_option.yAxis.endOnTick = false;
-          graph_option.yAxis.startOnTick = false;
           $('#<%= usage_stats.object_id %>').highcharts(graph_option);
         });
       </script>
@@ -84,10 +80,6 @@
           var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
           graph_option.series[0].data = <%= raw clusters_belong_to[:graph].to_json %>;
           graph_option.yAxis.visible = false;
-          graph_option.chart.marginTop = 0;
-          graph_option.chart.spacingTop = 0;
-          graph_option.yAxis.endOnTick = false;
-          graph_option.yAxis.startOnTick = false;
           $('#<%= clusters_belong_to.object_id %>').highcharts(graph_option);
         });
       </script>

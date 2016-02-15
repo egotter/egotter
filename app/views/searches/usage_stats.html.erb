@@ -5,27 +5,36 @@
   <h2>
     <small><%= @name %></small>
   </h2>
+
+  <h3><small>曜日ごとのツイッター利用時間</small></h3>
   <div id="twitter_addiction" class="chart"></div>
 
   <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
 
   <hr>
 
+  <h3><small>曜日ごとのツイート数(直近600ツイート)</small></h3>
   <div id="wday_graph" class="chart"></div>
+
+  <h3><small>曜日ごとのツイート数(直近1週間)</small></h3>
   <div id="wday_graph_7days" class="chart"></div>
 
   <hr>
 
+  <h3><small>時間帯ごとのツイート数(直近600ツイート)</small></h3>
   <div id="hour_graph" class="chart"></div>
+
+  <h3><small>時間帯ごとのツイート数(直近1週間)</small></h3>
   <div id="hour_graph_7days" class="chart"></div>
 
   <hr>
 
+  <h3><small>ツイートの内容</small></h3>
   <div id="kind_bar" class="chart"></div>
 
   <hr>
 
-  <h2><small><%= t('dictionary.hashtag_cloud') %></small></h2>
+  <h3><small><%= t('dictionary.hashtag_cloud') %></small></h3>
   <div id="hashtags_cloud" class="chart"></div>
 </div>
 
@@ -33,26 +42,21 @@
   var graph_options = window.usage_stats_column_chart_options;
 
   var twitter_addiction_options = $.extend(true, {}, graph_options);
-  twitter_addiction_options.title.text = '曜日ごとのツイッター利用時間';
   twitter_addiction_options.series[0].data = <%= raw @twitter_addiction_series.to_json %>;
 
   var wday_options = $.extend(true, {}, graph_options);
-  wday_options.title.text = '曜日ごとのツイート数(直近600ツイート)';
   wday_options.series[0].data = <%= raw @wday_series_data.to_json %>;
   wday_options.drilldown.series = <%= raw @wday_drilldown_series.to_json %>;
 
   var wday_7days_options = $.extend(true, {}, graph_options);
-  wday_7days_options.title.text = '曜日ごとのツイート数(直近1週間)';
   wday_7days_options.series[0].data = <%= raw @wday_series_data_7days.to_json %>;
   wday_7days_options.drilldown.series = <%= raw @wday_drilldown_series_7days.to_json %>;
 
   var hour_options = $.extend(true, {}, graph_options);
-  hour_options.title.text = '時間帯ごとのツイート数(直近600ツイート)';
   hour_options.series[0].data = <%= raw @hour_series_data.to_json %>;
   hour_options.drilldown.series = <%= raw @hour_drilldown_series.to_json %>;
 
   var hour_7days_options = $.extend(true, {}, graph_options);
-  hour_7days_options.title.text = '時間帯ごとのツイート数(直近1週間)';
   hour_7days_options.series[0].data = <%= raw @hour_series_data_7days.to_json %>;
   hour_7days_options.drilldown.series = <%= raw @hour_drilldown_series_7days.to_json %>;
 
@@ -69,7 +73,6 @@
   %>;
 
   var tweets_stat_options = window.usage_stats_tweets_stat_options;
-  tweets_stat_options.title.text = 'ツイートの内容';
   tweets_stat_options.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
   tweets_stat_options.series = [{
     name: 'なし',
