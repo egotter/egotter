@@ -1,13 +1,4 @@
 <div class="menu container">
-  <h2><small><%= t('dictionary.search_login_user') %></small></h2>
-  <div class="container">
-    <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
-                searches_path(screen_name: current_user.screen_name),
-                class: 'btn btn-lg btn-info btn-block', method: :post %>
-  </div>
-
-  <hr>
-
   <div class="container">
     <%= form_tag menu_path, method: :post do %>
       <h2><small><%= t('dictionary.notification_settings') %></small></h2>

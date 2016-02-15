@@ -535,6 +535,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def select_replied_from_search(tweets, options = {})
+    return [] if tweets.empty?
     uids = select_uids_replying_to(tweets, options)
     uids.map { |u| tweets.find { |t| t.user.id.to_i == u.to_i } }.map { |t| t.user }
   end
@@ -664,7 +665,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def usage_stats(user, options = {})
-    n_days_ago = options.has_key?(:days) ? options[:days].days.ago : 365.days.ago
+    n_days_ago = options.has_key?(:days) ? options[:days].days.ago : 100.years.ago
     tweets = options.has_key?(:tweets) ? options.delete(:tweets) : user_timeline(user)
     times =
       # TODO Use user specific time zone
@@ -703,6 +704,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def select_favoriting_from_favs(favs, options = {})
+    return [] if favs.empty?
     uids = calc_scores_from_tweets(favs)
     result = uids.map { |uid, score| f = favs.
       find { |f| f.user.id.to_i == uid.to_i }; Array.new(score, f) }.flatten.map { |f| f.user }
@@ -730,6 +732,8 @@ class ExTwitter < Twitter::REST::Client
 
     min_max = {min: min, max: max}
     _users = _replying + _replied + _favoriting
+    return [] if _users.empty?
+
     scores = calc_scores_from_users(_users, min_max)
     replying_scores = calc_scores_from_users(_replying, min_max)
     replied_scores = calc_scores_from_users(_replied, min_max)

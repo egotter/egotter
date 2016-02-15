@@ -242,11 +242,6 @@
   padding: 0;
 }
 
-.profile-overview-container .profile-overview {
-  background-size: cover;
-  /* specify background-image in _profile_overview.html.erb */
-}
-
 .profile-overview-container .profile-overview-overlay {
   padding-bottom: 50px; /* add 30px for .slick-slider */
   background-color: rgba(0, 0, 0, 0.2);
@@ -291,7 +286,7 @@
 
 .profile-overview-container .profile-description {
   color: #ffffff;
-  margin-top: 30px;
+  margin: 5px 5px auto 5px;
 }
 
 .profile-counts-container {

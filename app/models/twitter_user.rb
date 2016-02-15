@@ -49,6 +49,7 @@ class TwitterUser < ActiveRecord::Base
     status
     profile_image_url_https
     profile_banner_url
+    profile_link_color
     suspended
     verified
   )
