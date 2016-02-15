@@ -16,9 +16,11 @@ class ExTwitter < Twitter::REST::Client
     @uid = options[:uid]
     @screen_name = options[:screen_name]
     @authenticated_user = Hashie::Mash.new({uid: options[:uid].to_i, screen_name: options[:screen_name]})
+    @call_count = 0
     super
   end
 
+  attr_accessor :call_count
   attr_reader :cache, :authenticated_user
 
   INDENT = 4
@@ -53,7 +55,7 @@ class ExTwitter < Twitter::REST::Client
     options = args.extract_options!
     begin
       start_t = Time.now
-      result = send(method_name, *args, options)
+      result = send(method_name, *args, options); self.call_count += 1
       end_t = Time.now
       logger.debug "#{method_name} #{args.inspect} #{options.inspect} (#{end_t - start_t}s)".indent(INDENT)
       result
@@ -442,7 +444,7 @@ class ExTwitter < Twitter::REST::Client
   end
 
   def called_by_authenticated_user?(user)
-    authenticated_user = self.old_user
+    authenticated_user = self.old_user; self.call_count += 1
     if user.kind_of?(String)
       authenticated_user.screen_name == user
     elsif user.kind_of?(Integer)

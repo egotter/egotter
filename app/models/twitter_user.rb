@@ -519,6 +519,10 @@ class TwitterUser < ActiveRecord::Base
     update(update_count: update_count + 1)
   end
 
+  def search_log
+    BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid)
+  end
+
   def eql?(other)
     __uid_i == other.__uid_i
   end

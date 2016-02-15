@@ -73,18 +73,20 @@
   <table border="1">
     <caption>Worker Reasons(<%= model.model_name %>)</caption>
     <tr>
-      <th>name</th>
       <th>id</th>
+      <th>screen_name</th>
       <th>reason</th>
       <th>message</th>
+      <th>call_count</th>
       <th>created_at</th>
     </tr>
     <% model.where(status: false).order(created_at: :desc).limit(50).each do |log| %>
       <tr>
-        <td><%= model.model_name %></td>
         <td><%= log.id %></td>
+        <td><%= log.screen_name %></td>
         <td><%= log.reason %></td>
         <td><%= log.message %></td>
+        <td><%= log.call_count %></td>
         <td><%= l(log.created_at + 9.hours, format: :short) %></td>
       </tr>
     <% end %>

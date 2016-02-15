@@ -83,7 +83,7 @@ class BackgroundUpdateWorker
   end
 
   def create_log(uid, status, reason = '', message = '')
-    BackgroundUpdateLog.create(uid: uid, bot_uid: client.uid, status: status, reason: reason, message: message)
+    BackgroundUpdateLog.create(uid: uid, screen_name: @sn, bot_uid: client.uid, status: status, reason: reason, message: message, call_count: client.call_count)
   rescue => e
     logger.warn "create_log #{e.message}"
   end

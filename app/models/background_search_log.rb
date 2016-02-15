@@ -2,19 +2,22 @@
 #
 # Table name: background_search_logs
 #
-#  id         :integer          not null, primary key
-#  user_id    :integer          default(-1), not null
-#  uid        :string(191)      default("-1"), not null
-#  bot_uid    :string(191)      default("-1"), not null
-#  status     :boolean          default(FALSE), not null
-#  reason     :string(191)      default(""), not null
-#  message    :text(65535)      not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id          :integer          not null, primary key
+#  user_id     :integer          default(-1), not null
+#  uid         :string(191)      default("-1"), not null
+#  screen_name :string(191)      default(""), not null
+#  bot_uid     :string(191)      default("-1"), not null
+#  status      :boolean          default(FALSE), not null
+#  reason      :string(191)      default(""), not null
+#  message     :text(65535)      not null
+#  call_count  :integer          default(-1), not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
 #
 # Indexes
 #
 #  index_background_search_logs_on_created_at          (created_at)
+#  index_background_search_logs_on_screen_name         (screen_name)
 #  index_background_search_logs_on_uid                 (uid)
 #  index_background_search_logs_on_user_id             (user_id)
 #  index_background_search_logs_on_user_id_and_status  (user_id,status)

@@ -47,7 +47,7 @@ class SearchesController < ApplicationController
 
     if !nocache && result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
-      return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key))
+      return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key), tu.search_log.call_count)
     end
 
     sn = '@' + tu.screen_name
@@ -174,7 +174,7 @@ class SearchesController < ApplicationController
       path_method: method(:update_histories_path).to_proc
     }
 
-    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key))
+    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key), tu.search_log.call_count)
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -365,7 +365,8 @@ class SearchesController < ApplicationController
 
     bsw_options = {
       user_id: user_signed_in? ? current_user.id : -1,
-      uid: searched_uid}
+      uid: searched_uid,
+      screen_name: searched_sn}
     BackgroundSearchWorker.perform_async(searched_uid, searched_sn,
                                          (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?, bsw_options)
 
@@ -544,10 +545,11 @@ class SearchesController < ApplicationController
     html
   end
 
-  def replace_csrf_meta_tags(html, time = 0.0, ttl = 0)
+  def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, call_count = 0)
     html.sub('<!-- csrf_meta_tags -->', view_context.csrf_meta_tags).
       sub('<!-- search_elapsed_time -->', view_context.number_with_precision(time, precision: 1)).
-      sub('<!-- cache_ttl -->', view_context.number_with_precision(ttl.to_f / 3600.seconds, precision: 1))
+      sub('<!-- cache_ttl -->', view_context.number_with_precision(ttl.to_f / 3600.seconds, precision: 1)).
+      sub('<!-- call_count -->', call_count.to_s)
   end
 
   def user_or_anonymous

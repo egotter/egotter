@@ -72,7 +72,7 @@ class BackgroundSearchWorker
   end
 
   def create_log(attrs, status, reason = '', message = '')
-    BackgroundSearchLog.create(attrs.update(bot_uid: @client.uid, status: status, reason: reason, message: message))
+    BackgroundSearchLog.create(attrs.update(bot_uid: @client.uid, status: status, reason: reason, message: message, call_count: client.call_count))
   rescue => e
     logger.warn "create_log #{e.message} #{attrs.inspect}"
   end
