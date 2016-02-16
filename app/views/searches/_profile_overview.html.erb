@@ -59,7 +59,7 @@
     <% if enable_carousel %>
       enable_carousel_<%= unique_id %>();
     <% else %>
-      $('.profile-overview-modal.<%= unique_id %>').on('show.bs.modal', function (e) {
+      $('.profile-overview-modal.<%= unique_id %>').one('show.bs.modal', function (e) {
         setTimeout(function () {
           enable_carousel_<%= unique_id %>();
         }, 500);

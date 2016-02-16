@@ -190,7 +190,7 @@
     <% unless in_modal %>
       enable_carousel_<%= user_items.object_id %>();
     <% else %>
-      $('.search-modal').on('show.bs.modal', function (e) {
+      $('.search-modal').one('show.bs.modal', function (e) {
         setTimeout(function () {
           enable_carousel_<%= user_items.object_id %>();
         }, 500);
