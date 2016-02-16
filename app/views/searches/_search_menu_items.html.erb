@@ -36,10 +36,10 @@
   </div>
 </div>
 <% close_friends[:target].slice(0..2).each do |user| %>
-  <% next if modal_rendered_uids.include?(user.uid) %>
+  <% next if modal_rendered_uids.include?(user.uid.to_i) %>
   <%= render(partial: 'searches/profile_overview_modal',
              locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}"}) %>
-  <% modal_rendered_uids << user.uid %>
+  <% modal_rendered_uids << user.uid.to_i %>
 <% end %>
 
 <%# usage_stats %>
@@ -130,10 +130,10 @@
     </div>
   </div>
   <% menu_item[:target].slice(0..2).each do |user| %>
-    <% next if modal_rendered_uids.include?(user.uid) %>
+    <% next if modal_rendered_uids.include?(user.uid.to_i) %>
     <%= render(partial: 'searches/profile_overview_modal',
                locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}"}) %>
-    <% modal_rendered_uids << user.uid %>
+    <% modal_rendered_uids << user.uid.to_i %>
   <% end %>
 <% end %>
 
@@ -181,10 +181,10 @@
     </div>
   </div>
   <% menu_item[:target].slice(0..2).each do |user| %>
-    <% next if modal_rendered_uids.include?(user.uid) %>
+    <% next if modal_rendered_uids.include?(user.uid.to_i) %>
     <%= render(partial: 'searches/profile_overview_modal',
                locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}"}) %>
-    <% modal_rendered_uids << user.uid %>
+    <% modal_rendered_uids << user.uid.to_i %>
   <% end %>
 <% end %>
 
