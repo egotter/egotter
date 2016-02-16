@@ -28,47 +28,7 @@ class TwitterUser < ActiveRecord::Base
 
   attr_accessor :client, :login_user, :egotter_context, :without_friends
 
-  PROFILE_SAVE_KEYS = %i(
-    id
-    name
-    screen_name
-    location
-    description
-    url
-    protected
-    followers_count
-    friends_count
-    listed_count
-    favourites_count
-    utc_offset
-    time_zone
-    geo_enabled
-    verified
-    statuses_count
-    lang
-    status
-    profile_image_url_https
-    profile_banner_url
-    profile_link_color
-    suspended
-    verified
-  )
-
-  delegate *PROFILE_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
-
-  def user_info_mash
-    return @user_info_mash if @user_info_mash.present?
-    if user_info.present?
-      @user_info_mash = Hashie::Mash.new(JSON.parse(user_info))
-    else
-      Hashie::Mash.new(JSON.parse('{"friends_count": -1, "followers_count": -1}'))
-    end
-  end
-
-  def has_key?(key)
-    user_info_mash.has_key?(key)
-  end
-
+  include Concerns::TwitterUser::UserInfoAccessor
   include Concerns::TwitterUser::Validation
 
   def __uid_i

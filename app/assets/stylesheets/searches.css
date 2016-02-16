@@ -284,7 +284,10 @@
   text-decoration: none;
 }
 
-.profile-overview-container .profile-description {
+.profile-overview-container .profile-description,
+.profile-overview-container .profile-location,
+.profile-overview-container .profile-link,
+.profile-overview-container .profile-calendar {
   color: #ffffff;
   margin: 5px 5px auto 5px;
 }

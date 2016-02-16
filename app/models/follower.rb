@@ -23,16 +23,7 @@ class Follower < ActiveRecord::Base
 
   attr_accessor :client, :login_user, :egotter_context, :without_friends
 
-  delegate *TwitterUser::PROFILE_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :user_info_mash
-
-  def user_info_mash
-    @user_info_mash ||= Hashie::Mash.new(JSON.parse(user_info))
-  end
-
-  def has_key?(key)
-    user_info_mash.has_key?(key)
-  end
-
+  include Concerns::TwitterUser::UserInfoAccessor
   include Concerns::TwitterUser::Validation
 
   def eql?(other)
