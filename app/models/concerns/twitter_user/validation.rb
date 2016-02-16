@@ -84,8 +84,8 @@ module Concerns::TwitterUser::Validation
     def inconsistent_friends?
       return false if without_friends
 
-      if friends_count.to_i != friends.size
-        errors[:base] << "friends_count(#{friends_count}) != friends.size(#{friends.size})"
+      if (friends_count.to_i - friends.size).abs > 2
+        errors[:base] << "friends_count(#{friends_count}) - friends.size(#{friends.size}) > 2"
         return true
       end
 
@@ -95,8 +95,8 @@ module Concerns::TwitterUser::Validation
     def inconsistent_followers?
       return false if without_friends
 
-      if followers_count.to_i != followers.size
-        errors[:base] << "followers_count(#{followers_count}) != followers.size(#{followers.size})"
+      if (followers_count.to_i - followers.size).abs > 2
+        errors[:base] << "followers_count(#{followers_count}) - followers.size(#{followers.size}) > 2"
         return true
       end
 
