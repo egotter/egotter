@@ -417,7 +417,10 @@ class SearchesController < ApplicationController
   private
   def set_searched_tw_user
     tu = @twitter_user.latest_me
-    return create if tu.blank?
+    if tu.blank?
+      del_result_cache
+      return create
+    end
     tu.assign_attributes(client: client, login_user: current_user, egotter_context: 'search')
     @searched_tw_user = tu
   end
@@ -543,6 +546,10 @@ class SearchesController < ApplicationController
     html = render_to_string
     redis.setex(result_cache_key, Rails.configuration.x.constants['result_cache_ttl'], html)
     html
+  end
+
+  def del_result_cache
+    redis.del(result_cache_key)
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, call_count = 0)
