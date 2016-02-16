@@ -67,11 +67,13 @@ ja:
     invalid_uid: "無効な uid です。"
     blank_search_result: "検索結果がありません。"
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
+    retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
   after_sign_in:
     too_many_requests: "検索数の上限に達しました。時間をおいてから検索してみてください。"
     unauthorized: "認証に失敗しました。時間をおいてから検索してみてください。"
     something_is_wrong: "エラーが起きました。時間をおいてから検索してみてください。"
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
+    retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。"
   view_more_btn:
     same_user: "自分以外のユーザーを検索してください"
   legend:
