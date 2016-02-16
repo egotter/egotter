@@ -17,19 +17,23 @@
   <div class="container show_immediately_btn" style="margin-top: 15px;">
     <%= link_to t('dictionary.show_immediately'),
                 search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
-                class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;' %>
+                class: 'btn btn-lg btn-info btn-block' %>
   </div>
 <% end %>
 
 <div class="container login_btn" style="display: none; margin-top: 15px;">
   <%= link_to t('dictionary.sign_in_with_twitter'), user_omniauth_authorize_path(:twitter),
-              class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;' %>
+              class: 'btn btn-lg btn-info btn-block' %>
 </div>
 
 <div class="container retry_btn" style="display: none; margin-top: 15px;">
-  <%= link_to t('dictionary.retry_search_by', user: "@#{@searched_tw_user.screen_name}"),
-              searches_path(screen_name: @searched_tw_user.screen_name),
-              class: 'btn btn-lg btn-info btn-block', style: 'margin-top: 10px;', method: :post %>
+  <%= link_to t('dictionary.retry_search_by', user: "@#{@searched_tw_user.screen_name}"), searches_path(screen_name: @searched_tw_user.screen_name),
+              class: 'btn btn-lg btn-info btn-block', method: :post %>
+</div>
+
+<div class="container support_btn" style="display: none; margin-top: 15px;">
+  <%= link_to t('dictionary.link_to_support'), support_path,
+              class: 'btn btn-lg btn-info btn-block' %>
 </div>
 
 <div class="container error_msg" style="display: none; margin-top: 15px;">
@@ -44,6 +48,7 @@
     var login_btn = $('.login_btn');
     var show_immediately_btn = $('.show_immediately_btn');
     var progress_bar = $('.progress_bar');
+    var support_btn = $('.support_btn');
     var error_msg = $('.error_msg');
     var interval = 2000;
     var max_interval = 5000;
@@ -117,9 +122,11 @@
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.too_many_requests") %>');
           retry_btn.show();
+          support_btn.show();
         } else {
           waiting_msg.html('<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
           login_btn.show();
+          support_btn.show();
         }
       } else if (unauthorized) {
         show_immediately_btn.hide();
@@ -127,9 +134,11 @@
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.unauthorized") %>');
           retry_btn.show();
+          support_btn.show();
         } else {
           waiting_msg.html('<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
           login_btn.show();
+          support_btn.show();
         }
       } else if (something_is_wrong) {
         show_immediately_btn.hide();
@@ -137,6 +146,7 @@
         if (is_login) {
           waiting_msg.html('<%= t("after_sign_in.something_is_wrong") %>');
           retry_btn.show();
+          support_btn.show();
           if (admin) {
             error_msg.show();
             error_msg.text(response.message);
@@ -144,6 +154,7 @@
         } else {
           waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
           login_btn.show();
+          support_btn.show();
         }
       } else {
         if (retry_count < max_retry_count) {
@@ -156,9 +167,11 @@
           if (is_login) {
             waiting_msg.html('<%= t("after_sign_in.retry_timeout", user: @searched_tw_user.name) %>');
             retry_btn.show();
+            support_btn.show();
           } else {
             waiting_msg.html('<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
             login_btn.show();
+            support_btn.show();
           }
 
         }
