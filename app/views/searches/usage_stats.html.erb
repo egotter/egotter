@@ -34,13 +34,13 @@
 
   <hr>
 
-  <h3><small><%= t('dictionary.hashtag_cloud') %></small></h3>
-  <div id="hashtags_cloud" class="chart"></div>
+  <h3><small>ハッシュタグ指数</small></h3>
+  <div id="hashtags_fd" class="chart"></div>
 
   <hr>
 
-  <h3><small>ハッシュタグ指数</small></h3>
-  <div id="hashtags_fd" class="chart"></div>
+  <h3><small><%= t('dictionary.hashtags_cloud') %></small></h3>
+  <div id="hashtags_cloud" class="chart" style="height: 220px;"></div>
 </div>
 
 <script>
@@ -116,6 +116,6 @@
     $('#hashtags_fd').highcharts(hashtags_fd_options);
 
     var hashtags = <%= raw @hashtags_cloud.to_json %>;
-    draw_word_cloud('#hashtags_cloud', hashtags, screen.width, 200);
+    draw_word_cloud('#hashtags_cloud', hashtags, screen.width, 220);
   });
 </script>

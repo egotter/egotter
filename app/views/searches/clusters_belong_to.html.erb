@@ -3,9 +3,16 @@
 
 <div class="container clusters-belong-to">
   <h2><small><%= @name %></small></h2>
+
+  <h3><small><%= t('dictionary.clusters_index') %></small></h3>
   <div id="clusters_belong_to_graph" class="chart"></div>
 
   <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
+
+  <hr>
+
+  <h3><small><%= t('dictionary.clusters_cloud') %></small></h3>
+  <div id="clusters_belong_to_cloud" class="chart" style="height: 220px;"></div>
 
   <hr>
 
@@ -21,10 +28,12 @@
 
 <script>
   var graph_options = $.extend(true, {}, window.usage_stats_column_chart_options);
-  graph_options.title.text = '<%= t('dictionary.clusters_index') %>';
   graph_options.series[0].data = <%= raw @graph.to_json %>;
 
   $(function () {
     $('#clusters_belong_to_graph').highcharts(graph_options);
+
+    var clusters_belong_to_cloud = <%= raw @clusters_belong_to_cloud.to_json %>;
+    draw_word_cloud('#clusters_belong_to_cloud', clusters_belong_to_cloud, screen.width, 220);
   });
 </script>

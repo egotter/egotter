@@ -48,7 +48,8 @@ ja:
     you: "あなた"
     cluster: "クラスタ"
     clusters_index: "クラスタ指数"
-    hashtag_cloud: "ハッシュタグクラウド"
+    hashtags_cloud: "ハッシュタグクラウド"
+    clusters_cloud: "クラスタクラウド"
     delim: "、"
     honorific: "さん"
   before_sign_in:

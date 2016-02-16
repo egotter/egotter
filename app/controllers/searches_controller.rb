@@ -309,6 +309,7 @@ class SearchesController < ApplicationController
     clusters = @searched_tw_user.clusters_belong_to
     @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('dictionary.cluster')}"} }
     @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
+    @clusters_belong_to_cloud = @searched_tw_user.clusters_belong_to_cloud
     @tweet_text = view_context.clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.clusters_belong_to', user: @searched_tw_user.screen_name)
   end
