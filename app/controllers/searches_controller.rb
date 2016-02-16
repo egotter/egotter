@@ -162,7 +162,7 @@ class SearchesController < ApplicationController
     @menu_clusters_belong_to = {
       name: t('search_menu.clusters_belong_to', user: sn),
       target: _clusters_belong_to,
-      graph: tu.clusters_belong_to_graph,
+      graph: tu.clusters_belong_to_frequency_distribution,
       screen_name: tu.screen_name,
       text: "#{_clusters_belong_to.map{|c| "#{c}#{t('dictionary.cluster')}" }.join(t('dictionary.delim'))}",
       tweet_text: "#{t('search_menu.clusters_belong_to', user: sn)}\n#{_clusters_belong_to.map{|c| "##{c}#{t('dictionary.cluster')}" }.join(' ')}\n#{t('dictionary.continue_reading')}http://example.com",
@@ -308,7 +308,7 @@ class SearchesController < ApplicationController
   def clusters_belong_to
     clusters = @searched_tw_user.clusters_belong_to
     @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('dictionary.cluster')}"} }
-    @graph = @searched_tw_user.clusters_belong_to_graph
+    @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
     @tweet_text = view_context.clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
     @name = t('search_menu.clusters_belong_to', user: @searched_tw_user.screen_name)
   end
@@ -330,13 +330,8 @@ class SearchesController < ApplicationController
       @searched_tw_user.usage_stats
 
     @tweet_text = view_context.usage_stats_text(@twitter_addiction_series, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
-
-    @hashtags = @searched_tw_user.statuses.select { |s| s.hashtags? }.
-      map { |s| s.hashtags }.flatten.
-      each_with_object(Hash.new(0)) { |h, memo| memo[h] += 1 }.
-      map.with_index { |(h, c), i| {text: h, size: c, group: i % 20} }.
-      to_json.html_safe
-
+    @hashtags_cloud = @searched_tw_user.hashtags_cloud
+    @hashtags_fd = @searched_tw_user.hashtags_frequency_distribution
     @name = t('search_menu.usage_stats', user: "@#{@searched_tw_user.screen_name}")
   end
 

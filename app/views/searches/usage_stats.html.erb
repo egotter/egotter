@@ -36,6 +36,11 @@
 
   <h3><small><%= t('dictionary.hashtag_cloud') %></small></h3>
   <div id="hashtags_cloud" class="chart"></div>
+
+  <hr>
+
+  <h3><small>ハッシュタグ指数</small></h3>
+  <div id="hashtags_fd" class="chart"></div>
 </div>
 
 <script>
@@ -94,6 +99,9 @@
     ]
   }];
 
+  var hashtags_fd_options = $.extend(true, {}, graph_options);
+  hashtags_fd_options.series[0].data = <%= raw @hashtags_fd.to_json %>;
+
   $(function () {
     $('#twitter_addiction').highcharts(twitter_addiction_options);
 
@@ -105,7 +113,9 @@
 
     $('#kind_bar').highcharts(tweets_stat_options);
 
-    var hashtags = <%= @hashtags %>;
+    $('#hashtags_fd').highcharts(hashtags_fd_options);
+
+    var hashtags = <%= raw @hashtags_cloud.to_json %>;
     draw_word_cloud('#hashtags_cloud', hashtags, screen.width, 200);
   });
 </script>

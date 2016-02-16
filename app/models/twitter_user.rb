@@ -459,12 +459,29 @@ class TwitterUser < ActiveRecord::Base
     client.usage_stats(__uid_i, tweets: statuses)
   end
 
-  def clusters_belong_to_graph
-    clusters_belong_to.to_a.slice(0, 10).map { |word, count| {name: word, y: count} }
+  def frequency_distribution(words)
+    words.map { |word, count| {name: word, y: count} }
+  end
+
+  def clusters_belong_to_frequency_distribution
+    frequency_distribution(clusters_belong_to.to_a.slice(0, 10))
   end
 
   def percentile_index(ary, percentile = 0.0)
     ((ary.length * percentile).ceil) - 1
+  end
+
+  def hashtags
+    statuses.select { |s| s.hashtags? }.map { |s| s.hashtags }.flatten.
+      each_with_object(Hash.new(0)) { |h, memo| memo[h] += 1 }.sort_by { |_, v| -v }.to_h
+  end
+
+  def hashtags_cloud
+    hashtags.map.with_index { |(h, c), i| {text: h, size: c, group: i % 20} }
+  end
+
+  def hashtags_frequency_distribution
+    frequency_distribution(hashtags.to_a.slice(0, 10))
   end
 
   def usage_stats(options = {})
