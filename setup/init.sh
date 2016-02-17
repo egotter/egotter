@@ -28,6 +28,12 @@ sudo service redis start
 sudo service monit start
 sudo chkconfig monit on
 
+# cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
+# cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf
+sudo service nginx
+sudo chkconfig nginx on
+
+
 bundle exec rake db:create db:migrate
 bundle exec rails s --binding=0.0.0.0
 
