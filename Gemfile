@@ -48,6 +48,7 @@ gem 'newrelic_rpm'
 gem 'mysql2'
 gem 'kaminari'
 gem 'httparty'
+gem 'unicorn'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

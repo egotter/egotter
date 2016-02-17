@@ -1,6 +1,6 @@
 sudo yum update -y
 sudo yum groupinstall -y "Development Tools"
-sudo yum install -y git tmux dstat monit tree dstat mysql-server mysql-devel ruby22-devel
+sudo yum install -y git tmux dstat monit tree dstat mysql-server mysql-devel ruby22-devel nginx
 sudo update-alternatives --set ruby /usr/bin/ruby2.2
 
 gem install --no-ri --no-rdoc bundler
