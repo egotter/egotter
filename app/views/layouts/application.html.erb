@@ -161,6 +161,11 @@
       <% if action_name.in?(%w(new show)) %><span><!-- cache_ttl --></span><% end %>
       <span><!-- call_count --></span>
     </p>
+
+    <p class="text-muted">
+      <%= link_to t('dictionary.terms_of_service'), terms_of_service_path %>&nbsp;&nbsp;
+      <%= link_to t('dictionary.privacy_policy'), privacy_policy_path %>
+    </p>
   </div>
 </footer>
 

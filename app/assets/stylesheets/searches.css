@@ -526,6 +526,21 @@
 }
 /* support.html.erb end */
 
+/* terms_of_service.html.erb start */
+.terms-of-service ul,
+.privacy-policy ul{
+  list-style: none;
+  margin: 15px 0 15px 0;
+  padding: 0;
+}
+
+.terms-of-service li,
+.privacy-policy li{
+  margin: 0;
+  padding: 0;
+}
+/* terms_of_service.html.erb end */
+
 /* header start */
 .navbar {
   margin-bottom: 0;

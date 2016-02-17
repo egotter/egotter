@@ -22,6 +22,12 @@ class SearchesController < ApplicationController
 
   before_action :basic_auth, only: DEBUG_PAGES
 
+  def privacy_policy
+  end
+
+  def terms_of_service
+  end
+
   def welcome
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
   end

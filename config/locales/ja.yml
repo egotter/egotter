@@ -50,6 +50,8 @@ ja:
     clusters_index: "クラスタ指数"
     hashtags_cloud: "ハッシュタグクラウド"
     clusters_cloud: "クラスタクラウド"
+    terms_of_service: "利用規約"
+    privacy_policy: "プライバシーポリシー"
     delim: "、"
     honorific: "さん"
   before_sign_in:
