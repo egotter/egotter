@@ -365,12 +365,15 @@ class SearchesController < ApplicationController
 
     create_search_log('create', searched_uid, searched_sn, search_sn)
 
-    bsw_options = {
-      user_id: user_signed_in? ? current_user.id : -1,
-      uid: searched_uid,
-      screen_name: searched_sn}
-    BackgroundSearchWorker.perform_async(searched_uid, searched_sn,
-                                         (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?, bsw_options)
+    unless searched_uid_exists?(searched_uid)
+      bsw_options = {
+        user_id: user_signed_in? ? current_user.id : -1,
+        uid: searched_uid,
+        screen_name: searched_sn}
+      BackgroundSearchWorker.perform_async(searched_uid, searched_sn,
+                                           (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?, bsw_options)
+      add_searched_uid(searched_uid)
+    end
 
     if result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
@@ -552,6 +555,25 @@ class SearchesController < ApplicationController
 
   def del_result_cache
     redis.del(result_cache_key)
+  end
+
+  def searched_uids_key
+    Redis.background_search_worker_searched_uids_key
+  end
+
+  def searched_uid_exists?(uid)
+    rem_searched_uid
+    redis.zrank(searched_uids_key, uid.to_s).present?
+  end
+
+  def add_searched_uid(uid)
+    rem_searched_uid
+    redis.zadd(searched_uids_key, Time.zone.now.to_i, uid.to_s)
+  end
+
+  def rem_searched_uid
+    seconds = Rails.configuration.x.constants['background_search_worker_recently_searched_threshold']
+    redis.zremrangebyscore(searched_uids_key, 0, Time.zone.now.to_i - seconds)
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, call_count = 0)

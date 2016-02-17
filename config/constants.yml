@@ -3,6 +3,7 @@ development:
   twitter_user_recently_created_threshold: 1800
   background_search_log_recently_created_threshold: 300
   background_update_log_recently_created_threshold: 300
+  background_search_worker_recently_searched_threshold: 300
   result_cache_ttl: 43200
   many_friends_threshold: 1000
   too_many_friends_threshold: 5000
@@ -11,6 +12,7 @@ production:
   twitter_user_recently_created_threshold: 1800
   background_search_log_recently_created_threshold: 300
   background_update_log_recently_created_threshold: 300
+  background_search_worker_recently_searched_threshold: 300
   result_cache_ttl: 43200
   many_friends_threshold: 1000
   too_many_friends_threshold: 5000

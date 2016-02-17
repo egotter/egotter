@@ -39,6 +39,10 @@ Redis.class_eval do
     'background_update_worker:recently_failed'
   end
 
+  def self.background_search_worker_searched_uids_key
+    'background_search_worker:searched_uids'
+  end
+
   def clear_result_cache
     _keys = keys('searches:*')
     del(_keys) if _keys.any?
