@@ -7,6 +7,7 @@ class SearchesController < ApplicationController
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
   NEED_LOGIN = %i(common_friends common_followers) + DEBUG_PAGES
 
+  before_action :under_maintenance,      except: %i(maintenance)
   before_action :before_action_start,    only: NEED_VALIDATION
   before_action :need_login,             only: NEED_LOGIN
   before_action :invalid_screen_name,    only: NEED_VALIDATION
@@ -21,6 +22,9 @@ class SearchesController < ApplicationController
 
 
   before_action :basic_auth, only: DEBUG_PAGES
+
+  def maintenance
+  end
 
   def privacy_policy
   end
@@ -607,6 +611,10 @@ class SearchesController < ApplicationController
       else
         []
       end
+  end
+
+  def under_maintenance
+    redirect_to maintenance_path if ENV['MAINTENANCE'].present?
   end
 
   def basic_auth

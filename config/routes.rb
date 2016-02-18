@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root "searches#new"
 
   resources :searches
+  get 'maintenance', to: 'searches#maintenance', as: :maintenance
   get 'privacy_policy', to: 'searches#privacy_policy', as: :privacy_policy
   get 'terms_of_service', to: 'searches#terms_of_service', as: :terms_of_service
   get 'welcome', to: 'searches#welcome', as: :welcome

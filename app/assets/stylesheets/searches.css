@@ -541,6 +541,17 @@
 }
 /* terms_of_service.html.erb end */
 
+/* maintenance.html.erb start */
+.maintenance h2 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.maintenance div {
+  text-align: center;
+}
+/* maintenance.html.erb end */
+
 /* header start */
 .navbar {
   margin-bottom: 0;

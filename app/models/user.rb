@@ -42,7 +42,8 @@ class User < ActiveRecord::Base
       user = User.find_by(uid: auth.uid)
       user.update(screen_name: auth.info.nickname,
                   secret: auth.credentials.secret,
-                  token: auth.credentials.token)
+                  token: auth.credentials.token,
+                  email: (auth.info.email || user.email))
       user
     else
       User.create!(
@@ -50,7 +51,7 @@ class User < ActiveRecord::Base
         screen_name: auth.info.nickname,
         secret: auth.credentials.secret,
         token: auth.credentials.token,
-        email: "#{auth.provider}-#{auth.uid}@example.com",
+        email: (auth.info.email || "#{auth.provider}-#{auth.uid}@example.com"),
         password: Devise.friendly_token[4, 30])
     end
   end

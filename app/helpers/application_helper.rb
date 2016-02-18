@@ -1,4 +1,8 @@
 module ApplicationHelper
+  def under_maintenance?
+    ENV['MAINTENANCE'].present? || action_name == 'maintenance'
+  end
+
   def original_url
     request.original_url
   end

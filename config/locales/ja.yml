@@ -52,6 +52,8 @@ ja:
     clusters_cloud: "クラスタクラウド"
     terms_of_service: "利用規約"
     privacy_policy: "プライバシーポリシー"
+    maintenance: "メンテナンス"
+    under_maintenance: "メンテナンス中です。"
     delim: "、"
     honorific: "さん"
   before_sign_in:
