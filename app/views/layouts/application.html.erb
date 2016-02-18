@@ -48,7 +48,7 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <% unless under_maintenance? %>
+      <% unless show_maintenance_page? %>
       <% unless user_signed_in? %>
         <button type="button" class="welcome-btn navbar-toggle">
           <%= link_to welcome_path do %>
@@ -71,10 +71,10 @@
       </button>
       <% end %>
 
-      <a class="navbar-brand" href="/"><%= t('dictionary.app_name') %><%= t('dictionary.maintenance_short') if under_maintenance? && admin_signed_in? %></a>
+      <a class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
     </div>
 
-    <% unless under_maintenance? %>
+    <% unless show_maintenance_page? %>
     <div class="collapse navbar-collapse">
       <ul class="nav navbar-nav navbar-right">
         <% unless user_signed_in? %>
@@ -107,7 +107,7 @@
   </div><!-- /.container-fluid -->
 </nav>
 
-<% unless under_maintenance? %>
+<% unless show_maintenance_page? %>
 <div class="modal fade search-modal" tabindex="-1" role="dialog" aria-labelledby="search-modal-label">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -147,7 +147,7 @@
 
 <%= yield %>
 
-<% unless under_maintenance? %>
+<% unless show_maintenance_page? %>
 <footer class="footer">
   <div class="container">
     <p class="text-muted">
@@ -169,6 +169,7 @@
 
       <% if action_name.in?(%w(show)) %><span><!-- search_elapsed_time --></span><% end %>
       <% if action_name.in?(%w(new show)) %><span><!-- cache_ttl --></span><% end %>
+      <% if under_maintenance? %><span><%= t('dictionary.maintenance') %></span><% end %>
       <span><!-- call_count --></span>
     </p>
   </div>

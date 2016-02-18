@@ -3,6 +3,10 @@ module ApplicationHelper
     ENV['MAINTENANCE'].present? || action_name == 'maintenance'
   end
 
+  def show_maintenance_page?
+    (under_maintenance? && !admin_signed_in?) || action_name == 'maintenance'
+  end
+
   def original_url
     request.original_url
   end
