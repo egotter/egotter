@@ -41,7 +41,7 @@
 
 <script>
   $(function () {
-    var admin = <%= user_signed_in? && current_user.admin? ? 'true' : 'false' %>;
+    var admin = <%= admin_signed_in? ? 'true' : 'false' %>;
     var is_login = <%= user_signed_in? ? 'true' : 'false' %>;
     var waiting_msg = $('.waiting_msg');
     var retry_btn = $('.retry_btn');

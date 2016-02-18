@@ -71,7 +71,7 @@
       </button>
       <% end %>
 
-      <a class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
+      <a class="navbar-brand" href="/"><%= t('dictionary.app_name') %><%= t('dictionary.maintenance_short') if under_maintenance? && admin_signed_in? %></a>
     </div>
 
     <% unless under_maintenance? %>

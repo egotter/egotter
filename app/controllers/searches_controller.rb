@@ -614,7 +614,7 @@ class SearchesController < ApplicationController
   end
 
   def under_maintenance
-    redirect_to maintenance_path if ENV['MAINTENANCE'].present?
+    redirect_to maintenance_path if ENV['MAINTENANCE'].present? && !admin_signed_in?
   end
 
   def basic_auth
