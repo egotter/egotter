@@ -579,8 +579,8 @@ class ExTwitter < Twitter::REST::Client
   def clusters_belong_to(text)
     return [] if text.blank?
 
-    exclude_words = JSON.parse(File.read('cluster_bad_words.json'))
-    special_words = JSON.parse(File.read('cluster_good_words.json'))
+    exclude_words = JSON.parse(File.read(Rails.configuration.x.constants['cluster_bad_words_path']))
+    special_words = JSON.parse(File.read(Rails.configuration.x.constants['cluster_good_words_path']))
 
     # クラスタ用の単語の出現回数を記録
     cluster_word_counter =

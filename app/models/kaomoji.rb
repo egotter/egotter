@@ -1,6 +1,6 @@
 class Kaomoji
   def self.init
-    @@kaomoji ||= JSON.parse(File.read('kaomoji.json'))
+    @@kaomoji ||= JSON.parse(File.read(Rails.configuration.x.constants['kaomoji_path']))
     raise 'create kaomoji' if @@kaomoji.empty?
   end
 

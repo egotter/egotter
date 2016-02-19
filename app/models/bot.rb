@@ -1,6 +1,6 @@
 class Bot
   def self.init
-    @@bot ||= JSON.parse(File.read('bot.json')).map { |b| Hashie::Mash.new(b) }
+    @@bot ||= JSON.parse(File.read(Rails.configuration.x.constants['bot_path'])).map { |b| Hashie::Mash.new(b) }
     raise 'create bot' if @@bot.empty?
   end
 
