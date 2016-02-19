@@ -12,6 +12,7 @@ sudo service redis start
 
 # sidekiq
 sudo cp ./setup/etc/init.d/sidekiq /etc/init.d/sidekiq
+sudo service sidekiq start
 
 # monit
 sudo cp /etc/monit.conf /etc/monit.conf.bak
@@ -24,5 +25,5 @@ sudo chkconfig monit on
 # nginx
 sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf
-sudo service nginx
+sudo service nginx start
 sudo chkconfig nginx on

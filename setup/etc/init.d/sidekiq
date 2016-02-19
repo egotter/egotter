@@ -16,7 +16,7 @@ APP_ROOT="/home/ec2-user/egotter"
 
 start() {
         cd $APP_ROOT
-        sudo -u ec2-user -H bash -l -c "bundle exec sidekiq -d"
+        sudo -u ec2-user -H bash -l -c "bundle exec sidekiq -e production -d"
         echo ${en} "Starting $NAME: ${ec}"
         success
         echo
