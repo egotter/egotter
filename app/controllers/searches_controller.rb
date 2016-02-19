@@ -39,9 +39,8 @@ class SearchesController < ApplicationController
   # not using befor_action
   def menu
     return redirect_to welcome_path unless user_signed_in?
-    @raw_user = client.user(current_user.uid.to_i) && client.user(current_user.uid.to_i)
-    if request.post?
-      current_user.update(notification: params[:notification] == 'on')
+    if request.patch?
+      current_user.notification.update(params.require(:notification).permit(:email, :dm, :news, :search))
       redirect_to menu_path, notice: t('dictionary.settings_saved')
     else
       render
@@ -370,12 +369,8 @@ class SearchesController < ApplicationController
     create_search_log('create', searched_uid, searched_sn, search_sn)
 
     unless searched_uid_exists?(searched_uid)
-      bsw_options = {
-        user_id: user_signed_in? ? current_user.id : -1,
-        uid: searched_uid,
-        screen_name: searched_sn}
-      BackgroundSearchWorker.perform_async(searched_uid, searched_sn,
-                                           (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?, bsw_options)
+      BackgroundSearchWorker.perform_async(
+        searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?)
       add_searched_uid(searched_uid)
     end
 

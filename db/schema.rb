@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160211064229) do
+ActiveRecord::Schema.define(version: 20160219123910) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,     default: -1,    null: false
@@ -104,6 +104,22 @@ ActiveRecord::Schema.define(version: 20160211064229) do
   add_index "mentions", ["screen_name"], name: "index_mentions_on_screen_name", using: :btree
   add_index "mentions", ["uid"], name: "index_mentions_on_uid", using: :btree
 
+  create_table "notifications", force: :cascade do |t|
+    t.boolean  "email",                    default: true, null: false
+    t.boolean  "dm",                       default: true, null: false
+    t.boolean  "news",                     default: true, null: false
+    t.boolean  "search",                   default: true, null: false
+    t.datetime "last_email_at"
+    t.datetime "last_dm_at"
+    t.datetime "last_news_at"
+    t.datetime "last_search_at"
+    t.integer  "from_id",        limit: 4
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+  end
+
+  add_index "notifications", ["from_id"], name: "index_notifications_on_from_id", using: :btree
+
   create_table "search_logs", force: :cascade do |t|
     t.boolean  "login",                     default: false, null: false
     t.integer  "login_user_id", limit: 4,   default: -1,    null: false
@@ -165,28 +181,16 @@ ActiveRecord::Schema.define(version: 20160211064229) do
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "uid",                    limit: 191,                null: false
-    t.string   "screen_name",            limit: 191,                null: false
-    t.string   "secret",                 limit: 191,                null: false
-    t.string   "token",                  limit: 191,                null: false
-    t.boolean  "notification",                       default: true, null: false
-    t.string   "email",                  limit: 191,                null: false
-    t.string   "encrypted_password",     limit: 191,                null: false
-    t.string   "reset_password_token",   limit: 191
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer  "sign_in_count",          limit: 4,   default: 0,    null: false
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 191
-    t.string   "last_sign_in_ip",        limit: 191
-    t.datetime "created_at",                                        null: false
-    t.datetime "updated_at",                                        null: false
+    t.string   "uid",         limit: 191,              null: false
+    t.string   "screen_name", limit: 191,              null: false
+    t.string   "secret",      limit: 191,              null: false
+    t.string   "token",       limit: 191,              null: false
+    t.string   "email",       limit: 191, default: "", null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   add_index "users", ["created_at"], name: "index_users_on_created_at", using: :btree
-  add_index "users", ["email"], name: "index_users_on_email", unique: true, using: :btree
-  add_index "users", ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true, using: :btree
   add_index "users", ["screen_name"], name: "index_users_on_screen_name", using: :btree
   add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
 

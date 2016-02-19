@@ -1,16 +1,42 @@
+<% user = current_user %>
 <div class="menu container">
-  <div class="container">
-    <%= form_tag menu_path, method: :post do %>
-      <h2><small><%= t('dictionary.notification_settings') %></small></h2>
-      <div class="checkbox">
-        <label>
-          <input type="checkbox" name="notification" style="margin-top: 12px;" <%= 'checked' if current_user.notification? %>>
-          <div><%= t('dictionary.notification_description') %></div>
-        </label>
-      </div>
-      <button style="margin-top: 10px;" class="btn btn-default btn-block" type="submit"><%= t('dictionary.save_settings') %></button>
-    <% end %>
-  </div>
+  <h2><small><%= t('dictionary.notification') %></small></h2>
+  <%= form_for user.notification, url: menu_path do |f| %>
+    <!--<div class="checkbox">-->
+      <!--<label>-->
+        <!--<%= f.check_box :email %>-->
+        <!--<div><%= t('dictionary.notification_email') %></div>-->
+      <!--</label>-->
+    <!--</div>-->
+    <!--<hr>-->
+
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :dm %>
+        <div><%= t('dictionary.notification_dm') %></div>
+      </label>
+    </div>
+    <hr>
+
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :news %>
+        <div><%= t('dictionary.notification_news') %></div>
+      </label>
+    </div>
+    <hr>
+
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :search %>
+        <div><%= t('dictionary.notification_news') %></div>
+      </label>
+    </div>
+
+    <div style="margin: 15px 15px auto 15px;">
+      <%= f.submit t('dictionary.save_settings'), class: 'btn btn-default btn-block' %>
+    </div>
+  <% end %>
 
   <hr>
 
@@ -22,7 +48,7 @@
   <%# Calling dup to change object_id %>
   <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories.dup, in_modal: false}) %>
 
-  <% if current_user.admin? %>
+  <% if user.admin? %>
     <h2><small><%= t('search_menu.debug') %></small></h2>
     <div class="container">
       <%= link_to t('search_menu.debug'), debug_path,

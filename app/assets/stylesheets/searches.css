@@ -486,11 +486,21 @@
 .menu {
   padding: 0;
 }
+
 .menu h2 {
   text-align: center;
   margin-top: 10px;
 }
 
+.menu .checkbox {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.menu .edit_notification hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 /* menu.html.erb end */
 
 /* support.html.erb start */

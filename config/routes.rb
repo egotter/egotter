@@ -7,7 +7,7 @@ Rails.application.routes.draw do
   get 'terms_of_service', to: 'searches#terms_of_service', as: :terms_of_service
   get 'welcome', to: 'searches#welcome', as: :welcome
   get 'menu', to: 'searches#menu', as: :menu
-  post 'menu', to: 'searches#menu'
+  patch 'menu', to: 'searches#menu'
   get 'support', to: 'searches#support', as: :support
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   post 'searches/:screen_name/waiting', to: 'searches#waiting'

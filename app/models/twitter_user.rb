@@ -19,12 +19,14 @@
 #
 
 class TwitterUser < ActiveRecord::Base
-  has_many :friends,        foreign_key: :from_id, dependent: :destroy, validate: false
-  has_many :followers,      foreign_key: :from_id, dependent: :destroy, validate: false
-  has_many :statuses,       foreign_key: :from_id, dependent: :destroy, validate: false
-  has_many :mentions,       foreign_key: :from_id, dependent: :destroy, validate: false
-  has_many :search_results, foreign_key: :from_id, dependent: :destroy, validate: false
-  has_many :favorites,      foreign_key: :from_id, dependent: :destroy, validate: false
+  with_options foreign_key: :from_id, dependent: :destroy, validate: false do |obj|
+    obj.has_many :friends
+    obj.has_many :followers
+    obj.has_many :statuses
+    obj.has_many :mentions
+    obj.has_many :search_results
+    obj.has_many :favorites
+  end
 
   attr_accessor :client, :login_user, :egotter_context, :without_friends
 
