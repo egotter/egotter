@@ -30,6 +30,14 @@ class TwitterUser < ActiveRecord::Base
 
   attr_accessor :client, :login_user, :egotter_context, :without_friends
 
+  def without_friends?
+    if without_friends.nil?
+      friends.size == 0 && followers.size == 0
+    else
+      !!without_friends
+    end
+  end
+
   include Concerns::TwitterUser::UserInfoAccessor
   include Concerns::TwitterUser::Validation
 
@@ -175,7 +183,7 @@ class TwitterUser < ActiveRecord::Base
 
   def save_with_bulk_insert(validate = true)
     if validate && invalid?
-      logger.debug "[#{Time.zone.now}] #{self.class}#save_raw_twitter_data #{errors.full_messages}"
+      logger.debug "[#{Time.zone.now}] #{self.class}##{__method__} #{errors.full_messages}"
       return false
     end
 
@@ -519,7 +527,8 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def search_log
-    BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid)
+    log = BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid)
+    Hashie::Mash.new(log.nil? ? {} : log.attributes)
   end
 
   def eql?(other)

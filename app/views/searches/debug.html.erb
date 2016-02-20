@@ -1,3 +1,8 @@
+<html>
+<head>
+  <title>debug</title>
+</head>
+<body>
 <div><a href="/">egotter</a></div>
 <br>
 
@@ -101,19 +106,19 @@
 <% start = Time.zone.now %>
 <%
   sql = <<-'EOS'.strip_heredoc
-    SELECT
-      table_name,
-      engine,
-      table_rows                                        AS tbl_rows,
-      avg_row_length                                    AS rlen,
-      floor((data_length + index_length) / 1024 / 1024) AS allMB,
-      floor((data_length) / 1024 / 1024)                AS dMB,
-      floor((index_length) / 1024 / 1024)               AS iMB
-    FROM information_schema.tables
-    WHERE table_schema = database()
-    ORDER BY (data_length + index_length) DESC;
+  SELECT
+          table_name,
+          engine,
+          table_rows                                        AS tbl_rows,
+          avg_row_length                                    AS rlen,
+          floor((data_length + index_length) / 1024 / 1024) AS allMB,
+          floor((data_length) / 1024 / 1024)                AS dMB,
+          floor((index_length) / 1024 / 1024)               AS iMB
+        FROM information_schema.tables
+        WHERE table_schema = database()
+        ORDER BY (data_length + index_length) DESC;
   EOS
- result = ActiveRecord::Base.connection.select_all(sql)
+  result = ActiveRecord::Base.connection.select_all(sql)
 %>
 
 <table border="1">
@@ -139,3 +144,6 @@
 <br>
 
 <div><a href="/">egotter</a></div>
+
+</body>
+</html>

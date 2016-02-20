@@ -158,31 +158,36 @@ module Concerns::TwitterUser::Validation
       same_record?(latest_me)
     end
 
-    def same_record?(tu)
-      return false if tu.blank?
-      raise "uid is different(#{self.uid},#{tu.uid})" if self.uid.to_i != tu.uid.to_i
+    def same_record?(latest_tu)
+      return false if latest_tu.blank?
+      raise "uid is different(#{self.uid},#{latest_tu.uid})" if self.uid.to_i != latest_tu.uid.to_i
 
-      if self.friends_count != tu.friends_count
-        logger.debug "#{screen_name} friends_count is different(#{self.friends_count}, #{tu.friends_count})"
+      if self.friends_count != latest_tu.friends_count
+        logger.debug "#{screen_name} friends_count is different(#{self.friends_count}, #{latest_tu.friends_count})"
         return false
       end
 
-      if self.followers_count != tu.followers_count
-        logger.debug "#{screen_name} followers_count is different(#{self.followers_count}, #{tu.followers_count})"
+      if self.followers_count != latest_tu.followers_count
+        logger.debug "#{screen_name} followers_count is different(#{self.followers_count}, #{latest_tu.followers_count})"
         return false
       end
 
-      if self.friend_uids != tu.friend_uids
-        logger.debug "#{screen_name} friend_uids is different(#{self.friend_uids}, #{tu.friend_uids})"
+      if self.friend_uids != latest_tu.friend_uids
+        logger.debug "#{screen_name} friend_uids is different(#{self.friend_uids}, #{latest_tu.friend_uids})"
         return false
       end
 
-      if self.follower_uids != tu.follower_uids
-        logger.debug "#{screen_name} follower_uids is different(#{self.follower_uids}, #{tu.follower_uids})"
+      if self.follower_uids != latest_tu.follower_uids
+        logger.debug "#{screen_name} follower_uids is different(#{self.follower_uids}, #{latest_tu.follower_uids})"
         return false
       end
 
-      errors[:base] << "id:#{tu.id} is the same record"
+      if self.without_friends? != latest_tu.without_friends?
+        logger.debug "#{screen_name} without_friends? is different(#{self.without_friends?}, #{latest_tu.without_friends?})"
+        return false
+      end
+
+      errors[:base] << "id:#{latest_tu.id} is the same record"
       true
     end
   end

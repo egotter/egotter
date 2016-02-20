@@ -61,6 +61,8 @@ group :development, :test do
   gem 'factory_girl_rails'
   gem 'hirb'
   gem 'hirb-unicode'
+  gem 'awesome_print'
+  gem 'quiet_assets'
 end
 
 group :development do

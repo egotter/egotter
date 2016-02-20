@@ -7,11 +7,11 @@
 #  dm             :boolean          default(TRUE), not null
 #  news           :boolean          default(TRUE), not null
 #  search         :boolean          default(TRUE), not null
-#  last_email_at  :datetime
-#  last_dm_at     :datetime
-#  last_news_at   :datetime
-#  last_search_at :datetime
-#  from_id        :integer
+#  last_email_at  :datetime         not null
+#  last_dm_at     :datetime         not null
+#  last_news_at   :datetime         not null
+#  last_search_at :datetime         not null
+#  from_id        :integer          not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #

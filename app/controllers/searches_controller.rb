@@ -398,15 +398,16 @@ class SearchesController < ApplicationController
   def waiting
     if request.post?
       uid = @twitter_user.uid.to_i
+      user_id = user_signed_in? ? current_user.id : -1
       case
-        when BackgroundSearchLog.processing?(uid)
+        when BackgroundSearchLog.processing?(uid, user_id)
           render json: {status: false, reason: 'processing'}
-        when BackgroundSearchLog.success?(uid)
+        when BackgroundSearchLog.success?(uid, user_id)
           render json: {status: true}
-        when BackgroundSearchLog.fail?(uid)
+        when BackgroundSearchLog.fail?(uid, user_id)
           render json: {status: false,
-                        reason: BackgroundSearchLog.fail_reason(uid),
-                        message: BackgroundSearchLog.fail_message(uid)}
+                        reason: BackgroundSearchLog.fail_reason(uid, user_id),
+                        message: BackgroundSearchLog.fail_message(uid, user_id)}
         else
           raise BackgroundSearchLog::SomethingIsWrong
       end
@@ -570,12 +571,12 @@ class SearchesController < ApplicationController
 
   def searched_uid_exists?(uid)
     rem_searched_uid
-    redis.zrank(searched_uids_key, uid.to_s).present?
+    redis.zrank(searched_uids_key, "#{user_signed_in? ? current_user.id : -1}:#{uid}").present?
   end
 
   def add_searched_uid(uid)
     rem_searched_uid
-    redis.zadd(searched_uids_key, Time.zone.now.to_i, uid.to_s)
+    redis.zadd(searched_uids_key, Time.zone.now.to_i, "#{user_signed_in? ? current_user.id : -1}:#{uid}")
   end
 
   def rem_searched_uid
