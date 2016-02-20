@@ -181,8 +181,9 @@
     function tic() {
       $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
           .done(function (res) {
-            console.log(res, interval);
+            console.log(res, interval, retry_count);
             redirect_or_set_error_reason(res);
+            $('.waiting-debug-info').text('(' + res.status + ', ' + res.reason + '), ' + interval + ', ' + retry_count);
           });
       retry_count++;
       retry_or_stop();

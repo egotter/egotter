@@ -54,7 +54,7 @@ class SearchesController < ApplicationController
     start_time = Time.zone.now
     tu = @searched_tw_user
 
-    if !nocache && result_cache_exists?
+    if result_cache_exists?
       logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
       return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key), tu.search_log.call_count)
     end
@@ -183,7 +183,7 @@ class SearchesController < ApplicationController
       path_method: method(:update_histories_path).to_proc
     }
 
-    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key), tu.search_log.call_count)
+    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key), tu.search_log.call_count, tu.client.call_count)
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -368,7 +368,9 @@ class SearchesController < ApplicationController
 
     create_search_log('create', searched_uid, searched_sn, search_sn)
 
-    unless searched_uid_exists?(searched_uid)
+    if searched_uid_exists?(searched_uid)
+      logger.debug "searched_uid found #{searched_uid}:#{searched_sn}"
+    else
       BackgroundSearchWorker.perform_async(
         searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?)
       add_searched_uid(searched_uid)
@@ -435,10 +437,6 @@ class SearchesController < ApplicationController
 
   def search_id
     params[:id].to_i
-  end
-
-  def nocache
-    params[:nocache].present?
   end
 
   def before_action_start
@@ -575,11 +573,12 @@ class SearchesController < ApplicationController
     redis.zremrangebyscore(searched_uids_key, 0, Time.zone.now.to_i - seconds)
   end
 
-  def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, call_count = 0)
+  def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)
     html.sub('<!-- csrf_meta_tags -->', view_context.csrf_meta_tags).
       sub('<!-- search_elapsed_time -->', view_context.number_with_precision(time, precision: 1)).
       sub('<!-- cache_ttl -->', view_context.number_with_precision(ttl.to_f / 3600.seconds, precision: 1)).
-      sub('<!-- call_count -->', call_count.to_s)
+      sub('<!-- log_call_count -->', log_call_count.to_s).
+      sub('<!-- action_call_count -->', action_call_count.to_s)
   end
 
   def user_or_anonymous

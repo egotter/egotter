@@ -166,12 +166,17 @@
       <a href="https://github.com/ts-3156/egotter" target="_blank">Github</a>&nbsp;&nbsp;
       <%= link_to t('dictionary.terms_of_service'), terms_of_service_path %>&nbsp;&nbsp;
       <%= link_to t('dictionary.privacy_policy'), privacy_policy_path %>
-
-      <% if action_name.in?(%w(show)) %><span><!-- search_elapsed_time --></span><% end %>
-      <% if action_name.in?(%w(new show)) %><span><!-- cache_ttl --></span><% end %>
-      <% if under_maintenance? %><span><%= t('dictionary.maintenance') %></span><% end %>
-      <span><!-- call_count --></span>
     </p>
+    <% if admin_signed_in? %>
+      <p class="text-muted">
+        <% if action_name.in?(%w(show)) %><span>time=<!-- search_elapsed_time --></span>&nbsp;&nbsp;<% end %>
+        <% if action_name.in?(%w(new show)) %>ttl=<span><!-- cache_ttl --></span>&nbsp;&nbsp;<% end %>
+        <% if under_maintenance? %><span><%= t('dictionary.maintenance') %></span>&nbsp;&nbsp;<% end %>
+        <% if action_name.in?(%w(show)) %><span>log_call=<!-- log_call_count --></span>&nbsp;&nbsp;<% end %>
+        <% if action_name.in?(%w(show)) %><span>action_call=<!-- action_call_count --></span><% end %>
+        <% if action_name.in?(%w(waiting)) %><span class="waiting-debug-info"></span><% end %>
+      </p>
+    <% end %>
   </div>
 </footer>
 <% end %>
