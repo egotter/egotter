@@ -548,7 +548,6 @@ class SearchesController < ApplicationController
 
   def result_cache_exists?
     redis.exists(result_cache_key)
-    false # TODO remove!!!!!!!!!!
   end
 
   def result_cache
@@ -566,22 +565,26 @@ class SearchesController < ApplicationController
   end
 
   def searched_uids_key
-    Redis.background_search_worker_searched_uids_key
+    Redis.foreground_search_searched_uids_key
   end
 
   def searched_uid_exists?(uid)
-    rem_searched_uid
+    rem_expired_searched_uid
     redis.zrank(searched_uids_key, "#{user_signed_in? ? current_user.id : -1}:#{uid}").present?
   end
 
   def add_searched_uid(uid)
-    rem_searched_uid
+    rem_expired_searched_uid
     redis.zadd(searched_uids_key, Time.zone.now.to_i, "#{user_signed_in? ? current_user.id : -1}:#{uid}")
   end
 
-  def rem_searched_uid
+  def rem_expired_searched_uid
     seconds = Rails.configuration.x.constants['background_search_worker_recently_searched_threshold']
     redis.zremrangebyscore(searched_uids_key, 0, Time.zone.now.to_i - seconds)
+  end
+
+  def rem_searched_uid(uid)
+    redis.rem_searched_uid(uid)
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)

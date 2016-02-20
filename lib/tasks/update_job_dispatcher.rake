@@ -126,7 +126,7 @@ namespace :update_job_dispatcher do
       'unauthorized(friend)' => unauthorized_count,
       'suspended(friend)' => suspended_count,
       'too_many_friends(friend)' => too_many_friends_count,
-      searched_uids: redis.zcard(Redis.background_search_worker_searched_uids_key)
+      searched_uids: redis.zcard(Redis.foreground_search_searched_uids_key)
     }
     redis.set(Redis.debug_info_key, debug_info.to_json)
 

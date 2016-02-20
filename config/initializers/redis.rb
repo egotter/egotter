@@ -34,13 +34,20 @@ Redis.class_eval do
     'background_update_worker:unauthorized'
   end
 
-  # not using
-  def self.background_update_worker_recently_failed_key
-    'background_update_worker:recently_failed'
+  def self.foreground_search_searched_uids_key
+    'background_search_worker:searched_uids'
   end
 
-  def self.background_search_worker_searched_uids_key
-    'background_search_worker:searched_uids'
+  def rem_unauthorized_uid(uid)
+    zrem(self.background_update_worker_unauthorized_key, uid.to_s)
+  end
+
+  def rem_too_many_friends_uid(uid)
+    zrem(self.background_update_worker_too_many_friends_key, uid.to_s)
+  end
+
+  def rem_searched_uid(uid)
+    zrem(self.foreground_search_searched_uids_key, uid.to_s)
   end
 
   def clear_result_cache
