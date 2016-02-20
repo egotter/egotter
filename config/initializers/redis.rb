@@ -39,15 +39,15 @@ Redis.class_eval do
   end
 
   def rem_unauthorized_uid(uid)
-    zrem(self.background_update_worker_unauthorized_key, uid.to_s)
+    zrem(self.class.background_update_worker_unauthorized_key, uid.to_s)
   end
 
   def rem_too_many_friends_uid(uid)
-    zrem(self.background_update_worker_too_many_friends_key, uid.to_s)
+    zrem(self.class.background_update_worker_too_many_friends_key, uid.to_s)
   end
 
   def rem_searched_uid(uid)
-    zrem(self.foreground_search_searched_uids_key, uid.to_s)
+    zrem(self.class.foreground_search_searched_uids_key, uid.to_s)
   end
 
   def clear_result_cache
