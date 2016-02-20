@@ -27,6 +27,9 @@ class User < ActiveRecord::Base
 
   devise :rememberable, :omniauthable
 
+  def remember_created_at=(_)
+  end
+
   has_one :notification, foreign_key: :from_id, dependent: :destroy, validate: false
   accepts_nested_attributes_for :notification
 

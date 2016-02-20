@@ -32,6 +32,11 @@ class SearchesController < ApplicationController
   def terms_of_service
   end
 
+  def sitemap
+    @logs = BackgroundSearchLog.where(status: true, user_id: -1).order(created_at: :desc).limit(10)
+    render layout: false
+  end
+
   def welcome
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
   end

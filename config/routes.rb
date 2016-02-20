@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   get 'maintenance', to: 'searches#maintenance', as: :maintenance
   get 'privacy_policy', to: 'searches#privacy_policy', as: :privacy_policy
   get 'terms_of_service', to: 'searches#terms_of_service', as: :terms_of_service
+  get 'sitemap', to: 'searches#sitemap', as: :sitemap
   get 'welcome', to: 'searches#welcome', as: :welcome
   get 'menu', to: 'searches#menu', as: :menu
   patch 'menu', to: 'searches#menu'
@@ -32,16 +33,16 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/update_histories', to: 'searches#update_histories', as: :update_histories
 
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
-    omniauth_callbacks: "users/omniauth_callbacks"
+    omniauth_callbacks: 'users/omniauth_callbacks'
   }
   as :user do
-    get "/sign_out" => "devise/sessions#destroy", :as => :destroy_user_session
-    get "/" => "devise/sessions#new", :as => :new_user_session
+    get '/sign_out' => 'devise/sessions#destroy', :as => :destroy_user_session
+    get '/' => 'devise/sessions#new', :as => :new_user_session
   end
 
-  require "sidekiq/web"
+  require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-    username == ENV["SIDEKIQ_USERNAME"] && password == ENV["SIDEKIQ_PASSWORD"]
+    username == ENV['SIDEKIQ_USERNAME'] && password == ENV['SIDEKIQ_PASSWORD']
   end if Rails.env.production?
   mount Sidekiq::Web, at: '/sidekiq'
 
