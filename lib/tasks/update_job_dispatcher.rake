@@ -106,6 +106,7 @@ namespace :update_job_dispatcher do
 
 
     debug_info = {
+      current: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :short),
       followers: uids.size,
       'zcard(added)' => redis.zcard(added_key),
       'zcard(too many friends)' => redis.zcard(too_many_friends_key),

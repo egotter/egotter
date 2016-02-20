@@ -7,7 +7,7 @@ class SearchesController < ApplicationController
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
   NEED_LOGIN = %i(common_friends common_followers) + DEBUG_PAGES
 
-  before_action :under_maintenance,      except: %i(maintenance)
+  before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
   before_action :before_action_start,    only: NEED_VALIDATION
   before_action :need_login,             only: NEED_LOGIN
   before_action :invalid_screen_name,    only: NEED_VALIDATION
@@ -416,8 +416,8 @@ class SearchesController < ApplicationController
   end
 
   def debug
-    redirect_to '/' unless current_user.admin?
-    @debug_info = JSON.parse(redis.get(Redis.debug_info_key) || '{}')
+    # redirect_to '/' unless current_user.admin?
+    @debug_info = Hashie::Mash.new(JSON.parse(redis.get(Redis.debug_info_key) || '{}'))
     @last_1hour = 1.hour.ago..Time.now
     render layout: false
   end
@@ -624,6 +624,6 @@ class SearchesController < ApplicationController
   def basic_auth
     authenticate_or_request_with_http_basic do |user, pass|
       user == ENV['DEBUG_USERNAME'] && pass == ENV['DEBUG_PASSWORD']
-    end if Rails.env.production?
+    end
   end
 end
