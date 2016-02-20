@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
         secret: auth.credentials.secret,
         token: auth.credentials.token,
         email: (auth.info.email || ''))
-      user.create_notification
+      user.create_notification(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
       user
     end
   end
