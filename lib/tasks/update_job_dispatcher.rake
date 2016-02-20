@@ -59,7 +59,8 @@ namespace :update_job_dispatcher do
         next
       end
 
-      if TwitterUser.exists?(uid: uid.to_i) && TwitterUser.latest(uid.to_i).recently_updated?
+      user_id = User.exists?(uid: uid) ? User.find_by(uid: uid).id : -1
+      if (tu = TwitterUser.latest(uid, user_id)).present? && tu.recently_updated?
         recently_updated_count += 1
         next
       end
@@ -67,19 +68,19 @@ namespace :update_job_dispatcher do
       if (friend = Friend.find_by(uid: uid.to_i)).present? ||
         (follower = Follower.find_by(uid: uid.to_i)).present?
 
-        _tu = friend.present? ? friend : follower
+        tu = friend.present? ? friend : follower
 
-        if _tu.unauthorized?
+        if tu.unauthorized?
           unauthorized_count += 1
           next
         end
 
-        if _tu.suspended_account?
+        if tu.suspended_account?
           suspended_count += 1
           next
         end
 
-        if _tu.too_many_friends?
+        if tu.too_many_friends?
           too_many_friends_count += 1
           next
         end

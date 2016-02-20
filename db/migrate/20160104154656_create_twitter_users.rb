@@ -6,11 +6,14 @@ class CreateTwitterUsers < ActiveRecord::Migration
       t.text :user_info,       null: false
       t.integer :search_count, null: false, default: 0
       t.integer :update_count, null: false, default: 0
+      t.integer :user_id,      null: false
 
       t.timestamps null: false
     end
     add_index :twitter_users, :uid
     add_index :twitter_users, :screen_name
+    add_index :twitter_users, [:uid, :user_id]
+    add_index :twitter_users, [:screen_name, :user_id]
     add_index :twitter_users, :created_at
   end
 end

@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
   end
 
   def twitter_user
-    TwitterUser.latest(uid_i)
+    TwitterUser.latest(uid_i, id)
   end
 
   def twitter_user?

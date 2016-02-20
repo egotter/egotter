@@ -381,7 +381,7 @@ class SearchesController < ApplicationController
       logger.debug "searched_uid found #{searched_uid}:#{searched_sn}"
     else
       BackgroundSearchWorker.perform_async(
-        searched_uid, searched_sn, (user_signed_in? ? current_user.id : nil), @twitter_user.too_many_friends?)
+        searched_uid, searched_sn, (user_signed_in? ? current_user.id : -1), @twitter_user.too_many_friends?)
       add_searched_uid(searched_uid)
     end
 
@@ -437,7 +437,7 @@ class SearchesController < ApplicationController
       del_result_cache
       return create
     end
-    tu.assign_attributes(client: client, login_user: current_user, egotter_context: 'search')
+    tu.assign_attributes(client: client, egotter_context: 'search')
     @searched_tw_user = tu
   end
 
@@ -472,7 +472,7 @@ class SearchesController < ApplicationController
   def build_twitter_user
     user = client.user(search_sn)
     @twitter_user =
-      TwitterUser.build_by_user(user, client: client, login_user: current_user, egotter_context: 'search')
+      TwitterUser.build_by_user(user, client: client, user_id: (user_signed_in? ? current_user.id : -1), egotter_context: 'search')
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   rescue Twitter::Error::NotFound => e
@@ -612,7 +612,7 @@ class SearchesController < ApplicationController
     @search_histories =
       if user_signed_in?
         searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-        build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i) }.compact)
+        build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i, current_user.id) }.compact)
       else
         []
       end

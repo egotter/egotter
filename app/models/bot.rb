@@ -19,6 +19,11 @@ class Bot
     @@bot.empty?
   end
 
+  def self.exists?(uid)
+    init
+    @@bot.any? { |b| b.uid.to_i == uid.to_i }
+  end
+
   def self.config(options = {})
     init
     bot = options[:screen_name] ? @@bot.find { |bot| bot.screen_name == options[:screen_name] } : sample

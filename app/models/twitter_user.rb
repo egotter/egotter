@@ -8,14 +8,17 @@
 #  user_info    :text(65535)      not null
 #  search_count :integer          default(0), not null
 #  update_count :integer          default(0), not null
+#  user_id      :integer          not null
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
 #
 # Indexes
 #
-#  index_twitter_users_on_created_at   (created_at)
-#  index_twitter_users_on_screen_name  (screen_name)
-#  index_twitter_users_on_uid          (uid)
+#  index_twitter_users_on_created_at               (created_at)
+#  index_twitter_users_on_screen_name              (screen_name)
+#  index_twitter_users_on_screen_name_and_user_id  (screen_name,user_id)
+#  index_twitter_users_on_uid                      (uid)
+#  index_twitter_users_on_uid_and_user_id          (uid,user_id)
 #
 
 class TwitterUser < ActiveRecord::Base
@@ -28,7 +31,11 @@ class TwitterUser < ActiveRecord::Base
     obj.has_many :favorites
   end
 
-  attr_accessor :client, :login_user, :egotter_context, :without_friends
+  attr_accessor :client, :egotter_context, :without_friends
+
+  def login_user
+    User.find_by(id: user_id)
+  end
 
   def without_friends?
     if without_friends.nil?
@@ -241,14 +248,14 @@ class TwitterUser < ActiveRecord::Base
     end
   end
 
-  def self.oldest(user)
+  def self.oldest(user, user_id)
     user.kind_of?(Integer) ?
-      order(created_at: :asc).find_by(uid: user.to_i) : order(created_at: :asc).find_by(screen_name: user.to_s)
+      order(created_at: :asc).find_by(uid: user.to_i, user_id: user_id) : order(created_at: :asc).find_by(screen_name: user.to_s, user_id: user_id)
   end
 
-  def self.latest(user)
+  def self.latest(user, user_id)
     user.kind_of?(Integer) ?
-      order(created_at: :desc).find_by(uid: user.to_i) : order(created_at: :desc).find_by(screen_name: user.to_s)
+      order(created_at: :desc).find_by(uid: user.to_i, user_id: user_id) : order(created_at: :desc).find_by(screen_name: user.to_s, user_id: user_id)
   end
 
   DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created_threshold']
@@ -262,11 +269,11 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def oldest_me
-    TwitterUser.oldest(__uid_i)
+    TwitterUser.oldest(__uid_i, user_id)
   end
 
   def latest_me
-    TwitterUser.latest(__uid_i)
+    TwitterUser.latest(__uid_i, user_id)
   end
 
   def one_sided_following

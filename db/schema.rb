@@ -172,12 +172,15 @@ ActiveRecord::Schema.define(version: 20160219123910) do
     t.text     "user_info",    limit: 65535,             null: false
     t.integer  "search_count", limit: 4,     default: 0, null: false
     t.integer  "update_count", limit: 4,     default: 0, null: false
+    t.integer  "user_id",      limit: 4,                 null: false
     t.datetime "created_at",                             null: false
     t.datetime "updated_at",                             null: false
   end
 
   add_index "twitter_users", ["created_at"], name: "index_twitter_users_on_created_at", using: :btree
+  add_index "twitter_users", ["screen_name", "user_id"], name: "index_twitter_users_on_screen_name_and_user_id", using: :btree
   add_index "twitter_users", ["screen_name"], name: "index_twitter_users_on_screen_name", using: :btree
+  add_index "twitter_users", ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
   create_table "users", force: :cascade do |t|
