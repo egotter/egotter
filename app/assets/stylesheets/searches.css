@@ -577,8 +577,21 @@
 
 .navbar .navbar-brand {
   font-size: 30px;
-  display: block;
-  padding-left: 10px;
+  display: table;
+  padding: 1px 0 0 1px;
+}
+
+.navbar .navbar-brand img {
+  display: table-cell;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+
+.navbar .navbar-brand span {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 24px;
 }
 
 .navbar a {

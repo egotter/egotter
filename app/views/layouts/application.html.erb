@@ -5,7 +5,12 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
-  <%= display_meta_tags description: t('dictionary.lead'), site: t('dictionary.title'), reverse: true %>
+  <%= display_meta_tags description: t('dictionary.lead'), site: t('dictionary.title'), reverse: true,
+                        og: {title: :title, type: (action_name == 'new' ? 'website' : 'article'), url: request.original_url,
+                             image: 'http://egotter.com/top_thumbnail.png', site_name: :site, description: :description, locale: 'ja_JP'} %>
+
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:site" content="@ego_tter">
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <%= stylesheet_link_tag 'application', media: 'all' %>
@@ -70,7 +75,10 @@
       </button>
       <% end %>
 
-      <a class="navbar-brand" href="/"><%= t('dictionary.app_name') %></a>
+      <a class="navbar-brand" href="/">
+        <img alt="<%= t('dictionary.app_name') %>" width="48" height="48" src="/logo_294_294.png">
+        <span><%= t('dictionary.app_name') %></span>
+      </a>
     </div>
 
     <% unless show_maintenance_page? %>
