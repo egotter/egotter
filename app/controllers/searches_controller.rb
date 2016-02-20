@@ -5,7 +5,7 @@ class SearchesController < ApplicationController
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
-  NEED_LOGIN = %i(common_friends common_followers) + DEBUG_PAGES
+  NEED_LOGIN = %i(common_friends common_followers)
 
   before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
   before_action :before_action_start,    only: NEED_VALIDATION
