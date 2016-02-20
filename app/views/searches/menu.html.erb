@@ -2,13 +2,13 @@
 <div class="menu container">
   <h2><small><%= t('dictionary.notification') %></small></h2>
   <%= form_for user.notification, url: menu_path do |f| %>
-    <!--<div class="checkbox">-->
-      <!--<label>-->
-        <!--<%= f.check_box :email %>-->
-        <!--<div><%= t('dictionary.notification_email') %></div>-->
-      <!--</label>-->
-    <!--</div>-->
-    <!--<hr>-->
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :email %>
+        <div><%= t('dictionary.notification_email') %></div>
+      </label>
+    </div>
+    <hr>
 
     <div class="checkbox">
       <label>
@@ -29,7 +29,7 @@
     <div class="checkbox">
       <label>
         <%= f.check_box :search %>
-        <div><%= t('dictionary.notification_news') %></div>
+        <div><%= t('dictionary.notification_search') %></div>
       </label>
     </div>
 

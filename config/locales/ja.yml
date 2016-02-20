@@ -49,6 +49,8 @@ ja:
     tweet_result: "結果をつぶやく"
     created_at_and_updated_at: "更新日時"
     you: "あなた"
+    your_account_is_searched: "あなたのアカウントが誰かに検索されました。%{kaomoji} %{url} 通知設定の変更はこちら → %{menu_url}"
+    your_account_is_updated: "データの更新が完了しました。%{kaomoji} %{url} 通知設定の変更はこちら → %{menu_url}"
     cluster: "クラスタ"
     clusters_index: "クラスタ指数"
     hashtags_cloud: "ハッシュタグクラウド"

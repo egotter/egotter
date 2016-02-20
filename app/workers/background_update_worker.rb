@@ -50,7 +50,7 @@ class BackgroundUpdateWorker
     create_log(uid, true)
 
     if (user = User.find_by(uid: uid)).present?
-      NotificationWorker.perform_async(user.id, text: 'update')
+      NotificationWorker.perform_async(user.id, type: NotificationWorker::BACKGROUND_UPDATE)
     end rescue nil
 
   rescue Twitter::Error::TooManyRequests => e

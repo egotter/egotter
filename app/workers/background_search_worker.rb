@@ -24,8 +24,8 @@ class BackgroundSearchWorker
         create_log(extra, true)
         logger.debug "#{user_name} #{bot_name(client)} create #{screen_name}"
 
-        if (user = User.find_by(uid: uid)).present?
-          NotificationWorker.perform_async(user.id, text: 'search')
+        if (user = User.find_by(uid: uid)).present? && @user_id != user.id
+          NotificationWorker.perform_async(user.id, type: NotificationWorker::BACKGROUND_SEARCH)
         end rescue nil
       else
         # Egotter needs at least one TwitterUser record to show search result,

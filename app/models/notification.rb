@@ -22,4 +22,20 @@
 
 class Notification < ActiveRecord::Base
   belongs_to :user
+
+  def can_send_email?
+    email? && last_email_at.present? && last_email_at < 1.day.ago
+  end
+
+  def can_send_dm?
+    dm? && last_dm_at.present? && last_dm_at < 1.day.ago
+  end
+
+  def can_send_news?
+    news? && last_news_at.present? && last_news_at < 1.day.ago
+  end
+
+  def can_send_search?
+    search? && last_search_at.present? && last_search_at < 10.minutes.ago
+  end
 end
