@@ -12,14 +12,14 @@ module ApplicationHelper
   end
 
   def error_text
-    t('tweet_text.something_is_wrong', kaomoji: Kaomoji.sample, url: 'http://egotter.com')
+    t('tweet_text.something_is_wrong', kaomoji: Kaomoji.happy, url: 'http://egotter.com')
   end
 
   def clusters_belong_to_text(clusters, tu, url)
     t('tweet_text.clusters_belong_to',
       user: "@#{tu.screen_name}",
       clusters: "#{clusters.join(t('dictionary.delim'))}",
-      kaomoji: Kaomoji.sample,
+      kaomoji: Kaomoji.happy,
       url: url)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{clusters.inspect} #{tu.inspect} #{url}"
@@ -45,7 +45,7 @@ module ApplicationHelper
       user: "@#{tu.screen_name}",
       total: "#{total_estimated}",
       avg: "#{avg_real}",
-      kaomoji: Kaomoji.sample,
+      kaomoji: Kaomoji.happy,
       url: url)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{addiction_stat.inspect} #{tu.inspect} #{url}"
@@ -58,20 +58,20 @@ module ApplicationHelper
       t('tweet_text.close_friends_by_oneself',
         users: users,
         screen_name: "@#{tu.screen_name}",
-        kaomoji: Kaomoji.sample,
+        kaomoji: Kaomoji.happy,
         url: url)
     elsif search_others?(tu.uid)
       t('tweet_text.close_friends_by_others',
         users: users,
         screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
-        kaomoji: Kaomoji.sample,
+        kaomoji: Kaomoji.happy,
         me: "@#{current_user.screen_name}",
         url: url)
     elsif !user_signed_in?
       t('tweet_text.close_friends_without_sign_in',
         users: users,
         screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
-        kaomoji: Kaomoji.sample,
+        kaomoji: Kaomoji.happy,
         url: url)
     else
       error_text
@@ -85,7 +85,7 @@ module ApplicationHelper
     users = ".#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     t('tweet_text.inactive_friends',
       users: users,
-      kaomoji: Kaomoji.sample,
+      kaomoji: Kaomoji.happy,
       url: url)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
@@ -99,7 +99,7 @@ module ApplicationHelper
       mutual_friends_rate: rates[0].round,
       one_sided_following_rate: rates[1].round,
       one_sided_followers_rate: rates[2].round,
-      kaomoji: Kaomoji.sample,
+      kaomoji: Kaomoji.happy,
       url: url)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{tu.inspect} #{url}"
@@ -113,7 +113,7 @@ module ApplicationHelper
       users: users,
       user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
       login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
-      kaomoji: Kaomoji.sample,
+      kaomoji: Kaomoji.happy,
       url: url)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
@@ -127,7 +127,7 @@ module ApplicationHelper
       users: users,
       user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
       login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
-      kaomoji: Kaomoji.sample,
+      kaomoji: Kaomoji.happy,
       url: url)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url} #{others_num}"
