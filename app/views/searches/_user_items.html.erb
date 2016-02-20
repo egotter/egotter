@@ -7,10 +7,8 @@
     unique_id = "#{screen_name}_#{user_item[:target].object_id}_#{user_items.object_id}"
   %>
 
-  <% unless in_modal %>
-    <%= render(partial: 'searches/profile_overview_modal',
-               locals: {user: user_item[:target], unique_id: unique_id}) %>
-  <% end %>
+  <%= render(partial: 'searches/profile_overview_modal',
+             locals: {user: user_item[:target], unique_id: unique_id}) %>
 
   <div class="user-item-carousel user-item-carousel-<%= i %>">
     <%# name box %>
@@ -53,18 +51,10 @@
         <% end %>
 
         <span>
-          <% if in_modal %>
-            <%= link_to searches_path(screen_name: screen_name, id: user_item[:target].uid), method: :post do %>
-              <button type="button" class="btn btn-info">
-                <span class="glyphicon glyphicon-search"></span>
-              </button>
-            <% end %>
-          <% else %>
-            <button type="button" class="btn btn-info"
-                    data-toggle="modal" data-target=".profile-overview-modal.<%= unique_id %>">
-              <span class="glyphicon glyphicon-search"></span>
-            </button>
-          <% end %>
+          <button type="button" class="btn btn-info"
+                  data-toggle="modal" data-target=".profile-overview-modal.<%= unique_id %>">
+            <span class="glyphicon glyphicon-search"></span>
+          </button>
         </span>
       </div>
     </div><%# .media %>
@@ -187,14 +177,6 @@
     container.find('.media.score-box').show();
   }
   $(function () {
-    <% unless in_modal %>
-      enable_carousel_<%= user_items.object_id %>();
-    <% else %>
-      $('.search-modal').one('show.bs.modal', function (e) {
-        setTimeout(function () {
-          enable_carousel_<%= user_items.object_id %>();
-        }, 500);
-      });
-    <% end %>
+    enable_carousel_<%= user_items.object_id %>();
   });
 </script>

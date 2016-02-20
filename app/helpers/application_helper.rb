@@ -11,22 +11,26 @@ module ApplicationHelper
     request.original_url
   end
 
+  def short_url
+    UrlShortener.shorten(original_url)
+  end
+
   def error_text
     t('tweet_text.something_is_wrong', kaomoji: Kaomoji.happy, url: 'http://egotter.com')
   end
 
-  def clusters_belong_to_text(clusters, tu, url)
+  def clusters_belong_to_text(clusters, tu)
     t('tweet_text.clusters_belong_to',
       user: "@#{tu.screen_name}",
       clusters: "#{clusters.join(t('dictionary.delim'))}",
       kaomoji: Kaomoji.happy,
-      url: url)
+      url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{clusters.inspect} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{clusters.inspect} #{tu.inspect}"
     error_text
   end
 
-  def usage_stats_text(addiction_stat, tu, url)
+  def usage_stats_text(addiction_stat, tu)
     total_real_expended_minutes = addiction_stat.map { |obj| obj[:y] }.sum { |y| y.nil? ? 0 : y }
     avg_real_expended_minutes = total_real_expended_minutes / addiction_stat.map { |obj| obj[:y] }.count { |y| !y.nil? }
     total_estimated_expended_minutes = avg_real_expended_minutes * 7
@@ -46,53 +50,53 @@ module ApplicationHelper
       total: "#{total_estimated}",
       avg: "#{avg_real}",
       kaomoji: Kaomoji.happy,
-      url: url)
+      url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{addiction_stat.inspect} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{addiction_stat.inspect} #{tu.inspect}"
     error_text
   end
 
-  def close_friends_text(users, tu, url)
+  def close_friends_text(users, tu)
     users = ".#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     if search_oneself?(tu.uid)
       t('tweet_text.close_friends_by_oneself',
         users: users,
         screen_name: "@#{tu.screen_name}",
         kaomoji: Kaomoji.happy,
-        url: url)
+        url: short_url)
     elsif search_others?(tu.uid)
       t('tweet_text.close_friends_by_others',
         users: users,
         screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
         kaomoji: Kaomoji.happy,
         me: "@#{current_user.screen_name}",
-        url: url)
+        url: short_url)
     elsif !user_signed_in?
       t('tweet_text.close_friends_without_sign_in',
         users: users,
         screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
         kaomoji: Kaomoji.happy,
-        url: url)
+        url: short_url)
     else
       error_text
     end
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text
   end
 
-  def inactive_friends_text(users, tu, url)
+  def inactive_friends_text(users, tu)
     users = ".#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     t('tweet_text.inactive_friends',
       users: users,
       kaomoji: Kaomoji.happy,
-      url: url)
+      url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text
   end
 
-  def mutual_friends_text(tu, url)
+  def mutual_friends_text(tu)
     rates = tu.mutual_friends_rate
     t('tweet_text.mutual_friends',
       screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
@@ -100,13 +104,13 @@ module ApplicationHelper
       one_sided_following_rate: rates[1].round,
       one_sided_followers_rate: rates[2].round,
       kaomoji: Kaomoji.happy,
-      url: url)
+      url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{tu.inspect}"
     error_text
   end
 
-  def common_friends_text(users, tu, url, others_num = 0)
+  def common_friends_text(users, tu, others_num = 0)
     users = "#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
@@ -114,13 +118,13 @@ module ApplicationHelper
       user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
       login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
       kaomoji: Kaomoji.happy,
-      url: url)
+      url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url}"
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text
   end
 
-  def common_followers_text(users, tu, url, others_num = 0)
+  def common_followers_text(users, tu, others_num = 0)
     users = "#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
@@ -128,9 +132,19 @@ module ApplicationHelper
       user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
       login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
       kaomoji: Kaomoji.happy,
-      url: url)
+      url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{url} #{others_num}"
+    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect} #{others_num}"
+    error_text
+  end
+
+  def empty_result_text(title)
+    t('tweet_text.empty_result',
+      title: title,
+      kaomoji: Kaomoji.shirome,
+      url: short_url)
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{title.inspect}"
     error_text
   end
 end

@@ -340,7 +340,7 @@ class TwitterUser < ActiveRecord::Base
 
   def inactive_friends_graph
     inactive_friends_size = inactive_friends.size
-    friends_size = friends.size
+    friends_size = friends_count
     [
       {name: I18n.t('legend.inactive_friends'), y: (inactive_friends_size.to_f / friends_size * 100)},
       {name: I18n.t('legend.not_inactive_friends'), y: ((friends_size - inactive_friends_size).to_f / friends_size * 100)}
@@ -349,15 +349,31 @@ class TwitterUser < ActiveRecord::Base
 
   def inactive_followers_graph
     inactive_followers_size = inactive_followers.size
-    followers_size = followers.size
+    followers_size = followers_count
     [
       {name: I18n.t('legend.inactive_followers'), y: (inactive_followers_size.to_f / followers_size * 100)},
       {name: I18n.t('legend.not_inactive_followers'), y: ((followers_size - inactive_followers_size).to_f / followers_size * 100)}
     ]
   end
 
+  def removing_graph
+    large_rate = [removing.size * 10, 100].min
+    [
+      {name: I18n.t('legend.large'), y: large_rate},
+      {name: I18n.t('legend.small'), y: 100 - large_rate}
+    ]
+  end
+
+  def removed_graph
+    large_rate = [removed.size * 10, 100].min
+    [
+      {name: I18n.t('legend.large'), y: large_rate},
+      {name: I18n.t('legend.small'), y: 100 - large_rate}
+    ]
+  end
+
   def replying_graph
-    friends_size = friends.size
+    friends_size = friends_count
     replying_size = replying.size
     [
       {name: I18n.t('legend.replying'), y: (replying_size.to_f / friends_size * 100)},
@@ -366,7 +382,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def replied_graph
-    followers_size = followers.size
+    followers_size = followers_count
     replied_size = replied.size
     [
       {name: I18n.t('legend.replying'), y: (replied_size.to_f / followers_size * 100)},
@@ -375,7 +391,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def favoriting_graph
-    friends_size = friends.size
+    friends_size = friends_count
     favoriting_size = favoriting.size
     [
       {name: I18n.t('legend.favoriting'), y: (favoriting_size.to_f / friends_size * 100)},
@@ -420,7 +436,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def mutual_friends_rate
-    friendship_size = friendship_uids.size
+    friendship_size = friends_count + followers_count
     return [0.0, 0.0, 0.0] if friendship_size == 0
     [
       mutual_friends.size.to_f / friendship_size * 100,

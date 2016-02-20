@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
     redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: sign_in_link)
   end
 
-  helper_method :admin_signed_in?, :search_oneself?, :search_others?
+  helper_method :admin_signed_in?, :sign_in_link, :search_oneself?, :search_others?
 
   private
   def admin_signed_in?

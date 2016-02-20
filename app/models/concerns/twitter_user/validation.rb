@@ -112,6 +112,18 @@ module Concerns::TwitterUser::Validation
       false
     end
 
+    # not using in valid?
+    def many_friends?
+      return false if without_friends
+
+      if friends_count + followers_count > MANY_FRIENDS
+        errors[:base] << "many friends(#{friends_count}) and followers(#{followers_count})"
+        return true
+      end
+
+      false
+    end
+
     def too_many_friends?
       return false if without_friends
 

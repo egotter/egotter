@@ -18,4 +18,9 @@ class Kaomoji
     init
     @@kaomoji.select { |k| k.unhappy }.map { |k| k.text }.sample
   end
+
+  def self.shirome
+    init
+    @@kaomoji.select { |k| k.shirome }.map { |k| k.text }.sample
+  end
 end

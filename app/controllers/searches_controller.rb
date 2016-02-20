@@ -70,10 +70,12 @@ class SearchesController < ApplicationController
       {
         name: t('search_menu.removing', user: sn),
         target: tu.removing,
+        graph: tu.removing_graph,
         path_method: method(:removing_path).to_proc
       }, {
         name: t('search_menu.removed', user: sn),
         target: tu.removed,
+        graph: tu.removed_graph,
         path_method: method(:removed_path).to_proc
       }, {
         name: t('search_menu.mutual_friends', user: sn),
@@ -234,7 +236,7 @@ class SearchesController < ApplicationController
   def one_sided_following
     @user_items = build_user_items(@searched_tw_user.one_sided_following)
     @graph = @searched_tw_user.mutual_friends_graph
-    @tweet_text = view_context.mutual_friends_text(@searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.mutual_friends_text(@searched_tw_user)
     @title = t('search_menu.one_sided_following', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -243,7 +245,7 @@ class SearchesController < ApplicationController
   def one_sided_followers
     @user_items = build_user_items(@searched_tw_user.one_sided_followers)
     @graph = @searched_tw_user.mutual_friends_graph
-    @tweet_text = view_context.mutual_friends_text(@searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.mutual_friends_text(@searched_tw_user)
     @title = t('search_menu.one_sided_followers', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -252,7 +254,7 @@ class SearchesController < ApplicationController
   def mutual_friends
     @user_items = build_user_items(@searched_tw_user.mutual_friends)
     @graph = @searched_tw_user.mutual_friends_graph
-    @tweet_text = view_context.mutual_friends_text(@searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.mutual_friends_text(@searched_tw_user)
     @title = t('search_menu.mutual_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -261,7 +263,7 @@ class SearchesController < ApplicationController
   def common_friends
     @user_items = build_user_items(@searched_tw_user.common_friends(current_user.twitter_user))
     @graph = @searched_tw_user.common_friends_graph(current_user.twitter_user)
-    @tweet_text = view_context.common_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url), @user_items.size - 3)
+    @tweet_text = view_context.common_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, @user_items.size - 3)
     @title = t('search_menu.common_friends', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
@@ -270,7 +272,7 @@ class SearchesController < ApplicationController
   def common_followers
     @user_items = build_user_items(@searched_tw_user.common_followers(current_user.twitter_user))
     @graph = @searched_tw_user.common_followers_graph(current_user.twitter_user)
-    @tweet_text = view_context.common_followers_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url), @user_items.size - 3)
+    @tweet_text = view_context.common_followers_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, @user_items.size - 3)
     @title = t('search_menu.common_followers', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
@@ -279,7 +281,7 @@ class SearchesController < ApplicationController
   def replying
     @user_items = build_user_items(@searched_tw_user.replying) # call users
     @graph = @searched_tw_user.replying_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.replying', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -288,7 +290,7 @@ class SearchesController < ApplicationController
   def replied
     @user_items = build_user_items(@searched_tw_user.replied)
     @graph = @searched_tw_user.replied_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.replied', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -297,7 +299,7 @@ class SearchesController < ApplicationController
   def favoriting
     @user_items = build_user_items(@searched_tw_user.favoriting)
     @graph = @searched_tw_user.favoriting_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.favoriting', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -306,7 +308,7 @@ class SearchesController < ApplicationController
   def inactive_friends
     @user_items = build_user_items(@searched_tw_user.inactive_friends)
     @graph = @searched_tw_user.inactive_friends_graph
-    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.inactive_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -315,7 +317,7 @@ class SearchesController < ApplicationController
   def inactive_followers
     @user_items = build_user_items(@searched_tw_user.inactive_followers)
     @graph = @searched_tw_user.inactive_followers_graph
-    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.inactive_followers', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -326,7 +328,7 @@ class SearchesController < ApplicationController
     @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('dictionary.cluster')}"} }
     @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
     @clusters_belong_to_cloud = @searched_tw_user.clusters_belong_to_cloud
-    @tweet_text = view_context.clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user)
     @title = t('search_menu.clusters_belong_to', user: @searched_tw_user.screen_name)
   end
 
@@ -334,7 +336,7 @@ class SearchesController < ApplicationController
   def close_friends
     @user_items = build_user_items(@searched_tw_user.close_friends)
     @graph = @searched_tw_user.close_friends_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -346,7 +348,7 @@ class SearchesController < ApplicationController
     @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series, @twitter_addiction_series =
       @searched_tw_user.usage_stats
 
-    @tweet_text = view_context.usage_stats_text(@twitter_addiction_series, @searched_tw_user, UrlShortener.shorten(view_context.original_url))
+    @tweet_text = view_context.usage_stats_text(@twitter_addiction_series, @searched_tw_user)
     @hashtags_cloud = @searched_tw_user.hashtags_cloud
     @hashtags_fd = @searched_tw_user.hashtags_frequency_distribution
     @title = t('search_menu.usage_stats', user: "@#{@searched_tw_user.screen_name}")
@@ -545,7 +547,7 @@ class SearchesController < ApplicationController
 
   def result_cache_exists?
     redis.exists(result_cache_key)
-    false
+    false # TODO remove!!!!!!!!!!
   end
 
   def result_cache
