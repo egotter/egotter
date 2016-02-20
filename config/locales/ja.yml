@@ -120,6 +120,7 @@ ja:
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   search_menu:
+    search_result: "%{user} の検索結果"
     statuses: "%{user} のツイート"
     friends: "%{user} のフォロー"
     followers: "%{user} のフォロワー"

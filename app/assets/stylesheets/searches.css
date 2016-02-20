@@ -562,6 +562,13 @@
 }
 /* maintenance.html.erb end */
 
+/* show.html.erb start */
+.search-result h2 {
+  text-align: center;
+  margin-top: 10px;
+}
+/* show.html.erb end */
+
 /* header start */
 .navbar {
   margin-bottom: 0;

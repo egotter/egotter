@@ -1,9 +1,12 @@
+<% title @title %>
+<% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
+
 <%= render(partial: 'searches/profile_overview',
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
 <div class="container usage-stats">
   <h2>
-    <small><%= @name %></small>
+    <small><%= @title %></small>
   </h2>
 
   <h3><small>曜日ごとのツイッター利用時間</small></h3>
