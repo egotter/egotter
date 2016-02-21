@@ -3,7 +3,7 @@
   dateformat _%Y%m%d
   daily
   missingok
-  rotate 3
+  rotate 30
   compress
   delaycompress
   notifempty
@@ -15,7 +15,7 @@
   dateformat _%Y%m%d
   daily
   missingok
-  rotate 3
+  rotate 30
   compress
   delaycompress
   notifempty
@@ -27,7 +27,7 @@
   dateformat _%Y%m%d
   daily
   missingok
-  rotate 3
+  rotate 30
   compress
   delaycompress
   notifempty
@@ -39,7 +39,7 @@
   dateformat _%Y%m%d
   daily
   missingok
-  rotate 3
+  rotate 30
   compress
   delaycompress
   notifempty
