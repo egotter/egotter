@@ -7,6 +7,11 @@
 <div class="container common-result">
   <h2><small><%= @title %></small></h2>
 
+  <div class="container">
+    <%= render(partial: 'searches/adsense') %>
+  </div>
+  <div style="margin-bottom: 15px;"></div>
+
   <% if @user_items.any? %>
     <div class="page-entries-info-top">
       <%= render(partial: 'searches/page_entries_info',
