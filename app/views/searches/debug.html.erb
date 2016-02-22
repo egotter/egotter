@@ -59,7 +59,7 @@
     <th>(last 1hour)</th>
   </tr>
   <% start = Time.zone.now %>
-  <% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
+  <% [BackgroundSearchLog, BackgroundUpdateLog, BackgroundNotificationLog].each do |model| %>
     <tr>
       <td><%= model.model_name %></td>
       <td><%= model.all.size %></td>
@@ -77,7 +77,7 @@
 <br>
 
 <% start = Time.zone.now %>
-<% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
+<% [BackgroundSearchLog, BackgroundUpdateLog, BackgroundNotificationLog].each do |model| %>
   <table border="1">
     <caption>Worker Reasons(<%= model.model_name %>)</caption>
     <tr>
@@ -94,7 +94,7 @@
         <td><%= log.screen_name %></td>
         <td><%= log.reason %></td>
         <td><%= log.message %></td>
-        <td><%= log.call_count %></td>
+        <td><%= log.call_count rescue -1 %></td>
         <td><%= l(log.created_at.in_time_zone('Tokyo'), format: :short) %></td>
       </tr>
     <% end %>
