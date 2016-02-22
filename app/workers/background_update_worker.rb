@@ -50,7 +50,7 @@ class BackgroundUpdateWorker
     create_log(uid, true)
 
     if (user = User.find_by(uid: uid)).present?
-      NotificationWorker.perform_async(user.id, type: NotificationWorker::BACKGROUND_UPDATE)
+      BackgroundNotificationWorker.perform_async(user.id, BackgroundNotificationWorker::UPDATE)
     end rescue nil
 
   rescue Twitter::Error::TooManyRequests => e
@@ -85,7 +85,7 @@ class BackgroundUpdateWorker
   def create_log(uid, status, reason = '', message = '')
     BackgroundUpdateLog.create(uid: uid, screen_name: @sn, bot_uid: client.uid, status: status, reason: reason, message: message, call_count: client.call_count)
   rescue => e
-    logger.warn "create_log #{e.message}"
+    logger.warn "#{self.class}##{__method__} #{e.message}"
   end
 
   def redis

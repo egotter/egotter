@@ -11,7 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160219123910) do
+ActiveRecord::Schema.define(version: 20160221142229) do
+
+  create_table "background_notification_logs", force: :cascade do |t|
+    t.integer  "user_id",      limit: 4,     default: -1,    null: false
+    t.string   "uid",          limit: 191,   default: "-1",  null: false
+    t.string   "screen_name",  limit: 191,   default: "",    null: false
+    t.boolean  "status",                     default: false, null: false
+    t.string   "reason",       limit: 191,   default: "",    null: false
+    t.text     "message",      limit: 65535,                 null: false
+    t.string   "type",         limit: 191,   default: "",    null: false
+    t.string   "delivered_by", limit: 191,   default: "",    null: false
+    t.text     "text",         limit: 65535,                 null: false
+    t.datetime "created_at",                                 null: false
+    t.datetime "updated_at",                                 null: false
+  end
+
+  add_index "background_notification_logs", ["created_at"], name: "index_background_notification_logs_on_created_at", using: :btree
+  add_index "background_notification_logs", ["screen_name"], name: "index_background_notification_logs_on_screen_name", using: :btree
+  add_index "background_notification_logs", ["uid"], name: "index_background_notification_logs_on_uid", using: :btree
+  add_index "background_notification_logs", ["user_id", "status"], name: "index_background_notification_logs_on_user_id_and_status", using: :btree
+  add_index "background_notification_logs", ["user_id"], name: "index_background_notification_logs_on_user_id", using: :btree
 
   create_table "background_search_logs", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,     default: -1,    null: false
