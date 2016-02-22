@@ -19,13 +19,13 @@
     <th>(last 1hour)</th>
   </tr>
   <% start = Time.zone.now %>
-  <% [User, TwitterUser, Friend, Follower, Status, Mention, SearchResult, Favorite].each do |model| %>
+  <% [User, Notification, TwitterUser, Friend, Follower, Status, Mention, SearchResult, Favorite].each do |model| %>
     <tr>
       <td><%= model.model_name %></td>
       <td><%= model.all.size %></td>
       <td><%= model.where(created_at: @last_1hour).size %></td>
-      <td><%= model.count('DISTINCT uid') %></td>
-      <td><%= model.where(created_at: @last_1hour).count('DISTINCT uid') %></td>
+      <td><%= model.count('DISTINCT uid') rescue -1 %></td>
+      <td><%= model.where(created_at: @last_1hour).count('DISTINCT uid') rescue -1 %></td>
     </tr>
   <% end %>
 </table>
@@ -41,6 +41,43 @@
       <td><%= v %></td>
     </tr>
   <% end %>
+</table>
+<div><%= Time.zone.now - start %>s</div>
+<br>
+
+<table border="1">
+  <caption>Sidekiq</caption>
+  <% start = Time.zone.now %>
+  <% queue = Sidekiq::Queue.new('egotter') %>
+  <% stats = Sidekiq::Stats.new %>
+  <tr>
+    <td>queue size</td>
+    <td><%= queue.size %></td>
+  </tr>
+  <tr>
+    <td>latency</td>
+    <td><%= queue.latency %></td>
+  </tr>
+  <tr>
+    <td>process</td>
+    <td><%= Sidekiq::ProcessSet.new.size %></td>
+  </tr>
+  <tr>
+    <td>active workers</td>
+    <td><%= Sidekiq::Workers.new.size %></td>
+  </tr>
+  <tr>
+    <td>processed</td>
+    <td><%= stats.processed %></td>
+  </tr>
+  <tr>
+    <td>failed</td>
+    <td><%= stats.failed %></td>
+  </tr>
+  <tr>
+    <td>enqueued</td>
+    <td><%= stats.enqueued %></td>
+  </tr>
 </table>
 <div><%= Time.zone.now - start %>s</div>
 <br>
@@ -77,24 +114,57 @@
 <br>
 
 <% start = Time.zone.now %>
-<% [BackgroundSearchLog, BackgroundUpdateLog, BackgroundNotificationLog].each do |model| %>
+<% [BackgroundSearchLog, BackgroundUpdateLog].each do |model| %>
   <table border="1">
-    <caption>Worker Reasons(<%= model.model_name %>)</caption>
+    <caption><%= model.model_name %> Failed Reasons</caption>
     <tr>
       <th>id</th>
+      <th>user_id</th>
       <th>screen_name</th>
       <th>reason</th>
       <th>message</th>
       <th>call_count</th>
       <th>created_at</th>
     </tr>
-    <% model.where(status: false).order(created_at: :desc).limit(50).each do |log| %>
+    <% model.where(status: false).order(created_at: :desc).limit(30).each do |log| %>
       <tr>
         <td><%= log.id %></td>
+        <td><%= log.user_id rescue -1 %></td>
         <td><%= log.screen_name %></td>
         <td><%= log.reason %></td>
         <td><%= log.message %></td>
-        <td><%= log.call_count rescue -1 %></td>
+        <td><%= log.call_count %></td>
+        <td><%= l(log.created_at.in_time_zone('Tokyo'), format: :short) %></td>
+      </tr>
+    <% end %>
+  </table>
+  <div><%= Time.zone.now - start %>s</div>
+  <br>
+<% end %>
+
+<% start = Time.zone.now %>
+<% [BackgroundNotificationLog].each do |model| %>
+  <table border="1">
+    <caption><%= model.model_name %> Failed Reasons</caption>
+    <tr>
+      <th>id</th>
+      <th>user_id</th>
+      <th>screen_name</th>
+      <th>reason</th>
+      <th>message</th>
+      <th>kind</th>
+      <th>delivered_by</th>
+      <th>created_at</th>
+    </tr>
+    <% model.where(status: false).order(created_at: :desc).limit(30).each do |log| %>
+      <tr>
+        <td><%= log.id %></td>
+        <td><%= log.user_id rescue -1 %></td>
+        <td><%= log.screen_name %></td>
+        <td><%= log.reason %></td>
+        <td><%= log.message %></td>
+        <td><%= log.kind %></td>
+        <td><%= log.delivered_by %></td>
         <td><%= l(log.created_at.in_time_zone('Tokyo'), format: :short) %></td>
       </tr>
     <% end %>
