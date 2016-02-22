@@ -141,21 +141,21 @@ ActiveRecord::Schema.define(version: 20160221142229) do
   add_index "notifications", ["from_id"], name: "index_notifications_on_from_id", using: :btree
 
   create_table "search_logs", force: :cascade do |t|
-    t.boolean  "login",                     default: false, null: false
-    t.integer  "login_user_id", limit: 4,   default: -1,    null: false
-    t.string   "search_uid",    limit: 191, default: "",    null: false
-    t.string   "search_sn",     limit: 191, default: "",    null: false
-    t.string   "search_value",  limit: 191, default: "",    null: false
-    t.string   "search_menu",   limit: 191, default: "",    null: false
-    t.boolean  "same_user",                 default: false, null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
+    t.string   "session_id",  limit: 191, default: "",    null: false
+    t.integer  "user_id",     limit: 4,   default: -1,    null: false
+    t.string   "uid",         limit: 191, default: "",    null: false
+    t.string   "screen_name", limit: 191, default: "",    null: false
+    t.string   "action",      limit: 191, default: "",    null: false
+    t.boolean  "ego_surfing",             default: false, null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
   end
 
-  add_index "search_logs", ["login_user_id"], name: "index_search_logs_on_login_user_id", using: :btree
-  add_index "search_logs", ["search_menu"], name: "index_search_logs_on_search_menu", using: :btree
-  add_index "search_logs", ["search_uid", "search_menu"], name: "index_search_logs_on_search_uid_and_search_menu", using: :btree
-  add_index "search_logs", ["search_value"], name: "index_search_logs_on_search_value", using: :btree
+  add_index "search_logs", ["action"], name: "index_search_logs_on_action", using: :btree
+  add_index "search_logs", ["screen_name"], name: "index_search_logs_on_screen_name", using: :btree
+  add_index "search_logs", ["uid", "action"], name: "index_search_logs_on_uid_and_action", using: :btree
+  add_index "search_logs", ["uid"], name: "index_search_logs_on_uid", using: :btree
+  add_index "search_logs", ["user_id"], name: "index_search_logs_on_user_id", using: :btree
 
   create_table "search_results", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false

@@ -18,7 +18,8 @@ class SearchesController < ApplicationController
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
   before_action :before_action_finish,   only: NEED_VALIDATION
 
-  before_action :set_searched_tw_user, only: SEARCH_MENUS
+  before_action :set_searched_tw_user,   only: SEARCH_MENUS
+  before_action :create_log,             only: SEARCH_MENUS
 
 
   before_action :basic_auth, only: DEBUG_PAGES
@@ -375,8 +376,6 @@ class SearchesController < ApplicationController
   def create
     searched_uid, searched_sn = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
 
-    create_search_log('create', searched_uid, searched_sn, search_sn)
-
     if searched_uid_exists?(searched_uid)
       logger.debug "searched_uid found #{searched_uid}:#{searched_sn}"
     else
@@ -454,9 +453,7 @@ class SearchesController < ApplicationController
   end
 
   def before_action_finish
-    end_time = Time.zone.now
-    @before_action_elapsed_time = end_time - @before_action_start
-    logger.debug "DEBUG: before_action total time #{action_name} #{@before_action_elapsed_time}s"
+    logger.debug "DEBUG: before_action total time #{action_name} #{Time.zone.now - @before_action_start}s"
   end
 
   def need_login
@@ -521,17 +518,16 @@ class SearchesController < ApplicationController
     Kaminari.paginate_array(items.map { |t| {target: t} }).page(params[:page]).per(100)
   end
 
-  def create_search_log(name, search_uid, search_sn, search_value)
+  def create_log
     SearchLog.create(
-      login: user_signed_in?,
-      login_user_id: user_signed_in? ? current_user.id : -1,
-      search_uid: search_uid,
-      search_sn: search_sn,
-      search_value: search_value,
-      search_menu: name,
-      same_user: (user_signed_in? && current_user.uid.to_i == search_uid.to_i))
+      session_id: session.id,
+      user_id: user_signed_in? ? current_user.id : -1,
+      uid: @searched_tw_user.uid,
+      screen_name: @searched_tw_user.screen_name,
+      action: action_name,
+      ego_surfing: (user_signed_in? && current_user.uid.to_i == @searched_tw_user.uid.to_i))
   rescue => e
-    logger.warn "create_search_log #{e.message}"
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
   end
 
   def twitter_link(screen_name)
