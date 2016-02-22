@@ -7,7 +7,7 @@ class CreateBackgroundNotificationLogs < ActiveRecord::Migration
       t.boolean :status,      null: false, default: false
       t.string :reason,       null: false, default: ''
       t.text :message,        null: false
-      t.string :type,         null: false, default: ''
+      t.string :kind,         null: false, default: ''
       t.string :delivered_by, null: false, default: ''
       t.text :text,           null: false
 

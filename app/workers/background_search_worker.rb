@@ -26,7 +26,7 @@ class BackgroundSearchWorker
 
         if (user = User.find_by(uid: uid)).present? && @user_id != user.id
           BackgroundNotificationWorker.perform_async(user.id, BackgroundNotificationWorker::SEARCH)
-        end rescue nil
+        end
       else
         # Egotter needs at least one TwitterUser record to show search result,
         # so this branch should not be executed if TwitterUser is not existed.

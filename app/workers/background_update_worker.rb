@@ -51,7 +51,7 @@ class BackgroundUpdateWorker
 
     if (user = User.find_by(uid: uid)).present?
       BackgroundNotificationWorker.perform_async(user.id, BackgroundNotificationWorker::UPDATE)
-    end rescue nil
+    end
 
   rescue Twitter::Error::TooManyRequests => e
     friends_count = first_tu.present? ? "(#{first_tu.friends_count},#{first_tu.followers_count})" : ''

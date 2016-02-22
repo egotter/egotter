@@ -9,7 +9,7 @@
 #  status       :boolean          default(FALSE), not null
 #  reason       :string(191)      default(""), not null
 #  message      :text(65535)      not null
-#  type         :string(191)      default(""), not null
+#  kind         :string(191)      default(""), not null
 #  delivered_by :string(191)      default(""), not null
 #  text         :text(65535)      not null
 #  created_at   :datetime         not null

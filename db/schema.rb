@@ -20,7 +20,7 @@ ActiveRecord::Schema.define(version: 20160221142229) do
     t.boolean  "status",                     default: false, null: false
     t.string   "reason",       limit: 191,   default: "",    null: false
     t.text     "message",      limit: 65535,                 null: false
-    t.string   "type",         limit: 191,   default: "",    null: false
+    t.string   "kind",         limit: 191,   default: "",    null: false
     t.string   "delivered_by", limit: 191,   default: "",    null: false
     t.text     "text",         limit: 65535,                 null: false
     t.datetime "created_at",                                 null: false
