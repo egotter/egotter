@@ -29,10 +29,18 @@ class Notification < ActiveRecord::Base
     email? && last_email_at.present? && last_email_at < SEND_EMAIL_INTERVAL.ago
   end
 
+  def email_reset_at
+    last_email_at + SEND_EMAIL_INTERVAL
+  end
+
   SEND_DM_INTERVAL = 1.day
 
   def can_send_dm?
     dm? && last_dm_at.present? && last_dm_at < SEND_DM_INTERVAL.ago
+  end
+
+  def dm_reset_at
+    last_dm_at + SEND_DM_INTERVAL
   end
 
   SEND_NEWS_INTERVAL = 1.day
@@ -41,9 +49,17 @@ class Notification < ActiveRecord::Base
     news? && last_news_at.present? && last_news_at < SEND_NEWS_INTERVAL.ago
   end
 
+  def news_reset_at
+    last_news_at + SEND_NEWS_INTERVAL
+  end
+
   SEND_SEARCH_INTERVAL = 10.minutes
 
   def can_send_search?
     search? && last_search_at.present? && last_search_at < SEND_SEARCH_INTERVAL.ago
+  end
+
+  def search_reset_at
+    last_search_at + SEND_SEARCH_INTERVAL
   end
 end
