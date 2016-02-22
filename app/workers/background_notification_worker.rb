@@ -18,7 +18,9 @@ class BackgroundNotificationWorker
         create_log(kind, true, 'dm', text)
         logger.debug "send dm to #{user.uid},#{user.screen_name} #{kind} #{text}"
       else
-        create_log(kind, false, 'dm', '', 'close interval')
+        reset_at = user.notification.search_reset_at.in_time_zone('Tokyo')
+        logger.debug "can't send dm to #{user.uid},#{user.screen_name} #{kind} reset at #{reset_at}"
+        create_log(kind, false, 'dm', '', 'close interval', "reset at #{reset_at}")
       end
     elsif kind == UPDATE
       if user.notification.can_send_dm?
@@ -28,7 +30,9 @@ class BackgroundNotificationWorker
         create_log(kind, true, 'dm', text)
         logger.debug "send dm to #{user.uid},#{user.screen_name} #{kind} #{text}"
       else
-        create_log(kind, false, 'dm', '', 'close interval')
+        reset_at = user.notification.dm_reset_at.in_time_zone('Tokyo')
+        logger.debug "can't send dm to #{user.uid},#{user.screen_name} #{kind} reset at #{reset_at}"
+        create_log(kind, false, 'dm', '', 'close interval', "reset at #{reset_at}")
       end
     else
       create_log(kind, false, '', '', 'invalid kind')
