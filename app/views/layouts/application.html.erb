@@ -5,6 +5,8 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <%= favicon_link_tag('/favicon.ico') %>
+
   <%= display_meta_tags description: t('dictionary.lead'), site: t('dictionary.title'), reverse: true,
                         og: {title: :title, type: (action_name == 'new' ? 'website' : 'article'), url: request.original_url,
                              image: 'http://egotter.com/top_thumbnail_600_600.png', site_name: :site, description: :description, locale: 'ja_JP'} %>
