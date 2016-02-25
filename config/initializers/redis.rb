@@ -54,4 +54,8 @@ Redis.class_eval do
     _keys = keys('searches:*')
     del(_keys) if _keys.any?
   end
+
+  def clear_searched_uid
+    del(self.class.foreground_search_searched_uids_key)
+  end
 end

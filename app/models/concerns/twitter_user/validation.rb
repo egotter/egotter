@@ -40,6 +40,10 @@ module Concerns::TwitterUser::Validation
         egotter_context == 'search'
     end
 
+    def protected_account?
+      self.protected
+    end
+
     def unauthorized?
       if user_info.blank?
         # call fetch_user before colling this method
@@ -47,7 +51,7 @@ module Concerns::TwitterUser::Validation
         return true
       end
 
-      return false unless protected
+      return false unless protected_account?
 
       # login_user is protected and search himself
       if egotter_context == 'search'

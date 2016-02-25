@@ -18,7 +18,7 @@ class SearchesController < ApplicationController
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
   before_action :before_action_finish,   only: NEED_VALIDATION
 
-  before_action :set_searched_tw_user,   only: SEARCH_MENUS
+  before_action :set_twitter_user,       only: SEARCH_MENUS
   before_action :create_log,             only: SEARCH_MENUS
 
 
@@ -362,7 +362,7 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
-    key = "searches:new:#{user_or_anonymous}"
+    key = "searches:new:#{current_user_id}"
     html =
       if flash.empty?
         redis.fetch(key) { render_to_string }
@@ -380,7 +380,7 @@ class SearchesController < ApplicationController
       logger.debug "searched_uid found #{searched_uid}:#{searched_sn}"
     else
       BackgroundSearchWorker.perform_async(
-        searched_uid, searched_sn, (user_signed_in? ? current_user.id : -1), @twitter_user.too_many_friends?)
+        searched_uid, searched_sn, current_user_id, @twitter_user.too_many_friends?)
       add_searched_uid(searched_uid)
     end
 
@@ -397,7 +397,7 @@ class SearchesController < ApplicationController
   def waiting
     if request.post?
       uid = @twitter_user.uid.to_i
-      user_id = user_signed_in? ? current_user.id : -1
+      user_id = current_user_id
       case
         when BackgroundSearchLog.processing?(uid, user_id)
           render json: {status: false, reason: 'processing'}
@@ -430,9 +430,11 @@ class SearchesController < ApplicationController
   end
 
   private
-  def set_searched_tw_user
+  def set_twitter_user
     tu = @twitter_user.latest_me
     if tu.blank?
+      # admin_signed_in? returns true and TwitterUser is deleted
+      logger.warn '@twitter_user.latest_me is blank'
       del_result_cache
       return create
     end
@@ -469,7 +471,7 @@ class SearchesController < ApplicationController
   def build_twitter_user
     user = client.user(search_sn)
     @twitter_user =
-      TwitterUser.build_by_user(user, client: client, user_id: (user_signed_in? ? current_user.id : -1), egotter_context: 'search')
+      TwitterUser.build_by_user(user, client: client, user_id: current_user_id, egotter_context: 'search')
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   rescue Twitter::Error::NotFound => e
@@ -521,7 +523,7 @@ class SearchesController < ApplicationController
   def create_log
     SearchLog.create(
       session_id: session.id,
-      user_id: user_signed_in? ? current_user.id : -1,
+      user_id: current_user_id,
       uid: @searched_tw_user.uid,
       screen_name: @searched_tw_user.screen_name,
       action: action_name,
@@ -539,7 +541,7 @@ class SearchesController < ApplicationController
   end
 
   def result_cache_key
-    "searches:show:#{user_or_anonymous}:#{uid_and_screen_name(@twitter_user.uid, @twitter_user.screen_name)}"
+    "searches:show:#{current_user_id}:#{@twitter_user.uid}-#{@twitter_user.screen_name}"
   end
 
   def result_cache_exists?
@@ -550,9 +552,11 @@ class SearchesController < ApplicationController
     redis.get(result_cache_key)
   end
 
+  RESULT_CACHE_TTL = Rails.configuration.x.constants['result_cache_ttl']
+
   def set_result_cache
     html = render_to_string
-    redis.setex(result_cache_key, Rails.configuration.x.constants['result_cache_ttl'], html)
+    redis.setex(result_cache_key, RESULT_CACHE_TTL, html)
     html
   end
 
@@ -566,12 +570,12 @@ class SearchesController < ApplicationController
 
   def searched_uid_exists?(uid)
     rem_expired_searched_uid
-    redis.zrank(searched_uids_key, "#{user_signed_in? ? current_user.id : -1}:#{uid}").present?
+    redis.zrank(searched_uids_key, "#{current_user_id}:#{uid}").present?
   end
 
   def add_searched_uid(uid)
     rem_expired_searched_uid
-    redis.zadd(searched_uids_key, Time.zone.now.to_i, "#{user_signed_in? ? current_user.id : -1}:#{uid}")
+    redis.zadd(searched_uids_key, Time.zone.now.to_i, "#{current_user_id}:#{uid}")
   end
 
   def rem_expired_searched_uid
@@ -591,15 +595,6 @@ class SearchesController < ApplicationController
       sub('<!-- action_call_count -->', action_call_count.to_s)
   end
 
-  def user_or_anonymous
-    user_signed_in? ? current_user.id.to_s : 'anonymous'
-  end
-
-  def uid_and_screen_name(uid, sn)
-    raise 'uid or sn is blank' if uid.blank? || sn.blank?
-    "#{uid}-#{sn}"
-  end
-
   def client
     @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
   rescue => e
@@ -615,6 +610,10 @@ class SearchesController < ApplicationController
       else
         []
       end
+  end
+
+  def current_user_id
+    user_signed_in? ? current_user.id : -1
   end
 
   def under_maintenance
