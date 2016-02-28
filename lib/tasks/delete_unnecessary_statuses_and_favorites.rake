@@ -12,20 +12,26 @@ namespace :delete_unnecessary_statuses_and_favorites do
 
     start = Time.zone.now
     deleted_statuses = 0
+    cur_deleted_statuses = 0
     deleted_favorites = 0
+    cur_deleted_favorites = 0
     selected_uids.each.with_index do |(uid, _count), i|
       twitter_users = TwitterUser.where(uid: uid).order(created_at: :desc).drop(1)
       twitter_users.each do |tu|
-        deleted_statuses += tu.statuses.delete_all.size
-        deleted_favorites += tu.favorites.delete_all.size
+        cur_deleted_statuses += tu.statuses.delete_all.size
+        cur_deleted_favorites += tu.favorites.delete_all.size
       end
 
       if i != 0 && i % 100 == 0
-        puts "deleted #{deleted_statuses} #{deleted_favorites} (#{Time.zone.now - start}s)"
+        puts "deleted #{cur_deleted_statuses} #{cur_deleted_favorites} (#{Time.zone.now - start}s)"
+        deleted_statuses += cur_deleted_statuses
+        deleted_favorites += cur_deleted_favorites
         start = Time.zone.now
-        deleted_statuses = 0
-        deleted_favorites = 0
+        cur_deleted_statuses = 0
+        cur_deleted_favorites = 0
       end
+
+      puts "deleted(all) #{deleted_statuses} #{deleted_favorites} (#{Time.zone.now - start}s)"
     end
   end
 end
