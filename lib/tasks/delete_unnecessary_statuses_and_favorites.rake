@@ -18,8 +18,8 @@ namespace :delete_unnecessary_statuses_and_favorites do
     selected_uids.each.with_index do |(uid, _count), i|
       twitter_users = TwitterUser.where(uid: uid).order(created_at: :desc).drop(1)
       twitter_users.each do |tu|
-        cur_deleted_statuses += tu.statuses.delete_all.size
-        cur_deleted_favorites += tu.favorites.delete_all.size
+        cur_deleted_statuses += tu.statuses.delete_all.size if tu.statuses.any?
+        cur_deleted_favorites += tu.favorites.delete_all.size if tu.favorites.any?
       end
 
       if i != 0 && i % 100 == 0
