@@ -30,8 +30,8 @@ namespace :delete_unnecessary_statuses_and_favorites do
         cur_deleted_statuses = 0
         cur_deleted_favorites = 0
       end
-
-      puts "deleted(all) #{deleted_statuses} #{deleted_favorites} (#{Time.zone.now - start}s)"
     end
+
+    puts "deleted(all) #{deleted_statuses} #{deleted_favorites} (#{Time.zone.now - start}s)"
   end
 end
