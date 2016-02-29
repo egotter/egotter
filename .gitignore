@@ -20,6 +20,7 @@
 /.idea
 /.pryrc
 /dump.rdb
+/dump.sql
 /redis.conf
 /data/bot.json
 /data/cluster_bad_words.json

@@ -82,18 +82,39 @@
 <div><%= Time.zone.now - start %>s</div>
 <br>
 
-<table>
+<table border="1">
   <caption>Search Num</caption>
   <% start = Time.zone.now %>
-  <% logs = BackgroundSearchLog.where(created_at: @last_1day).group_by { |x| x.created_at.hour }.map { |k, v| [k, v.count] } %>
-  <tr>
-    <% logs.each do |hour, _count| %>
+  <%
+    # default = (0..23).map { |n| [n, 0]}.to_h
+    hour = Time.zone.now.in_time_zone('Tokyo').hour
+    default = ((hour..23).to_a + (0..hour).to_a).uniq.map { |n| [n, 0]}.to_h
+    logs_all = BackgroundSearchLog.where(created_at: @last_1day).
+        group_by { |x| x.created_at.in_time_zone('Tokyo').hour }.map { |k, v| [k, v.count] }.to_h.reverse_merge(default)
+    logs_with_login = BackgroundSearchLog.where(created_at: @last_1day).where.not(user_id: -1).
+        group_by { |x| x.created_at.in_time_zone('Tokyo').hour }.map { |k, v| [k, v.count] }.to_h.reverse_merge(default)
+    logs_without_login = BackgroundSearchLog.where(created_at: @last_1day).where(user_id: -1).
+        group_by { |x| x.created_at.in_time_zone('Tokyo').hour }.map { |k, v| [k, v.count] }.to_h.reverse_merge(default)
+  %>
+  <tr style="text-align: right;">
+    <th></th>
+    <% default.keys.each do |hour| %>
       <th><%= hour %></th>
     <% end %>
   </tr>
-  <tr>
-    <% logs.each do |_hour, count| %>
-      <th><%= count %></th>
+  <% names = ['all', 'with login', 'without login'] %>
+  <% [logs_all, logs_with_login, logs_without_login].each.with_index do |logs, i| %>
+    <tr style="text-align: right;">
+      <td><%= names[i] %></td>
+      <% logs.each do |_hour, count| %>
+        <td><%= count %></td>
+      <% end %>
+    </tr>
+  <% end %>
+  <tr style="text-align: right;">
+    <td>login rate</td>
+    <% logs_all.each do |(hour, count)| %>
+      <td><%= number_with_precision(logs_with_login[hour].to_f / count * 100, precision: 1) %></td>
     <% end %>
   </tr>
 </table>
