@@ -44,7 +44,7 @@ namespace :zadd_well_known_errors do
   end
 
   def redis
-    @redis ||= Redis.new(driver: :hiredis)
+    @redis ||= Redis.client
   end
 
   def client

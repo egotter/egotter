@@ -89,7 +89,7 @@ class BackgroundUpdateWorker
   end
 
   def redis
-    @redis ||= Redis.new(driver: :hiredis)
+    @redis ||= Redis.client
   end
 
   def too_many_friends_key

@@ -138,7 +138,7 @@ namespace :update_job_dispatcher do
   end
 
   def redis
-    @redis ||= Redis.new(driver: :hiredis)
+    @redis ||= Redis.client
   end
 
   def client

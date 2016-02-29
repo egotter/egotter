@@ -546,7 +546,7 @@ class SearchesController < ApplicationController
   end
 
   def redis
-    @redis ||= Redis.new(driver: :hiredis)
+    @redis ||= Redis.client
   end
 
   def result_cache_key
