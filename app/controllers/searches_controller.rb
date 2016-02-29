@@ -477,8 +477,16 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
   rescue Twitter::Error::NotFound => e
     redirect_to '/', alert: t('before_sign_in.not_found')
+  rescue Twitter::Error::Unauthorized => e
+    alert_msg =
+      if user_signed_in?
+        t("after_sign_in.unauthorized", sign_out_link: sign_out_link)
+      else
+        t("before_sign_in.unauthorized", sign_in_link: sign_in_link)
+      end
+    redirect_to '/', alert: alert_msg.html_safe
   rescue => e
-    logger.warn "#{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
     redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
   end
 

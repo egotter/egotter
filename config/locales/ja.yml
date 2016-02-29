@@ -83,7 +83,7 @@ ja:
     empty_and_other_reason: "結果は0件です。%{sign_in_link} すると正しく結果が表示されるかもしれません。<br>%{kaomoji}"
   after_sign_in:
     too_many_requests: "検索数の上限に達しました。時間をおいてから検索してみてください。"
-    unauthorized: "認証に失敗しました。時間をおいてから検索してみてください。"
+    unauthorized: "認証に失敗しました。一度 %{sign_out_link} し、再度ログインしてから検索してみてください。"
     something_is_wrong: "エラーが起きました。時間をおいてから検索してみてください。"
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
     retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。"

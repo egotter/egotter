@@ -124,7 +124,7 @@
           retry_btn.show();
           support_btn.show();
         } else {
-          waiting_msg.html('<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+          waiting_msg.html('<%= t("before_sign_in.too_many_requests", sign_in_link: sign_in_link).html_safe %>');
           login_btn.show();
           support_btn.show();
         }
@@ -132,11 +132,11 @@
         show_immediately_btn.hide();
         progress_bar.hide();
         if (is_login) {
-          waiting_msg.html('<%= t("after_sign_in.unauthorized") %>');
+          waiting_msg.html('<%= t("after_sign_in.unauthorized", sign_out_link: sign_out_link).html_safe %>');
           retry_btn.show();
           support_btn.show();
         } else {
-          waiting_msg.html('<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+          waiting_msg.html('<%= t("before_sign_in.unauthorized", sign_in_link: sign_in_link).html_safe %>');
           login_btn.show();
           support_btn.show();
         }
@@ -152,7 +152,7 @@
             error_msg.text(response.message);
           }
         } else {
-          waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+          waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: sign_in_link).html_safe %>');
           login_btn.show();
           support_btn.show();
         }
@@ -169,7 +169,7 @@
             retry_btn.show();
             support_btn.show();
           } else {
-            waiting_msg.html('<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
+            waiting_msg.html('<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: sign_in_link).html_safe %>');
             login_btn.show();
             support_btn.show();
           }
