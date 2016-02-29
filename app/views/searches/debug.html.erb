@@ -82,6 +82,24 @@
 <div><%= Time.zone.now - start %>s</div>
 <br>
 
+<table>
+  <caption>Search Num</caption>
+  <% start = Time.zone.now %>
+  <% logs = BackgroundSearchLog.where(created_at: @last_1day).group_by { |x| x.created_at.hour }.map { |k, v| [k, v.count] } %>
+  <tr>
+    <% logs.each do |hour, _count| %>
+      <th><%= hour %></th>
+    <% end %>
+  </tr>
+  <tr>
+    <% logs.each do |_hour, count| %>
+      <th><%= count %></th>
+    <% end %>
+  </tr>
+</table>
+<div><%= Time.zone.now - start %>s</div>
+<br>
+
 <table border="1">
   <caption>Worker</caption>
   <tr>
