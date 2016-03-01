@@ -7,6 +7,11 @@ class ApplicationController < ActionController::Base
     redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: sign_in_link)
   end
 
+  # https://github.com/plataformatec/devise/issues/1390
+  def new_session_path(scope)
+    new_user_session_path(scope)
+  end
+
   helper_method :admin_signed_in?, :sign_in_link, :sign_out_link, :search_oneself?, :search_others?
 
   private
