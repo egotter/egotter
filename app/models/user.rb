@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
       user.create_notification(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
     end
 
-    redis = Redis.new
+    redis = Redis.client
     redis.rem_searched_uid(user.uid)
     redis.rem_unauthorized_uid(user.uid)
     redis.rem_too_many_friends_uid(user.uid)

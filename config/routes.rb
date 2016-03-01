@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  root "searches#new"
+  root 'searches#new'
 
   resources :searches
   get 'maintenance', to: 'searches#maintenance', as: :maintenance
