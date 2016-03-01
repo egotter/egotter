@@ -4,6 +4,58 @@
 }
 /* change color of carousel dots end */
 
+/* new.html.erb start */
+.top-page .lead-sentence {
+  margin-top: 15px;
+  margin-bottom: 10px;
+}
+
+.top-page .search-interested-person {
+  margin-top: 0;
+  margin-bottom: 5px;
+  text-align: center;
+}
+
+.top-page .submit-btn1 {
+  margin-top: 10px;
+}
+
+.top-page .search-myself {
+  text-align: center;
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.top-page .submit-btn2 {
+  margin-top: 0;
+}
+
+.top-page .share-me {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.top-page #share {
+  text-align: center;
+}
+
+.top-page .official-account {
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 0;
+}
+
+.top-page .follow-official-account {
+  text-align: center;
+}
+
+.top-page hr {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+/* new.html.erb end */
+
 /* _user_items.html.erb start */
 .user-item-carousel {
   margin-bottom: 0px !important;
@@ -130,6 +182,7 @@
   margin-right: 15px;
 }
 
+.top-page .tweet-preview-box,
 .common-result .tweet-preview-box,
 .usage-stats .tweet-preview-box,
 .clusters-belong-to .tweet-preview-box {
@@ -141,6 +194,7 @@
   padding-right: 0px;
 }
 
+.top-page .tweet-preview-box textarea,
 .common-result .tweet-preview-box textarea,
 .usage-stats .tweet-preview-box textarea,
 .clusters-belong-to .tweet-preview-box textarea {
@@ -156,6 +210,7 @@
   -webkit-box-sizing: border-box;
 }
 
+.top-page .tweet-box,
 .common-result .tweet-box,
 .usage-stats .tweet-box,
 .clusters-belong-to .tweet-box

@@ -362,6 +362,8 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
+    @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)
+    return render
     key = "searches:new:#{current_user_id}"
     html =
       if flash.empty?

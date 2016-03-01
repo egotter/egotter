@@ -47,6 +47,7 @@ ja:
     view_more_needs_login: "ログインすると続きを見れます"
     view_more_with_num: '続きを見る <span class="badge">%{num}</span>'
     tweet_result: "結果をつぶやく"
+    tweet_top_page: "つぶやく"
     created_at_and_updated_at: "更新日時"
     you: "あなた"
     your_account_is_searched: "あなたのアカウントが誰かに検索されました。%{kaomoji} %{url} 通知設定の変更はこちら → %{menu_url}"
