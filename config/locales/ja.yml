@@ -5,6 +5,7 @@ ja:
     title: "えごったー ツイッター総合分析サイト"
     official_account: "公式アカウント"
     share_me: "えごったーをシェアする"
+    about_me: "えごったーで分かること"
     tweet: "ツイート"
     friends: "フォロー"
     follower: "フォロワー"
@@ -128,6 +129,7 @@ ja:
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   search_menu:
+    all: "仲良し、フォローを外した、フォローを外された、最近ツイッターにいない、片思い、片思われ、両思い、ツイッター利用状況、入っているクラスタ"
     search_result: "%{user} の検索結果"
     statuses: "%{user} のツイート"
     friends: "%{user} のフォロー"

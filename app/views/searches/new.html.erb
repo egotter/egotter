@@ -32,6 +32,11 @@
 
   <hr>
 
+  <h2 class="about-me"><small><%= t('dictionary.about_me') %></small></h2>
+  <div><%= t('search_menu.all') %></div>
+
+  <hr>
+
   <h2 class="share-me"><small><%= t('dictionary.share_me') %></small></h2>
   <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{@tweet_text} http://egotter.com"}) %>
   <div style="margin-bottom: 15px;"></div>

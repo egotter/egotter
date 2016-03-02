@@ -34,6 +34,12 @@
   text-align: center;
 }
 
+.top-page .about-me {
+  text-align: center;
+  margin-top: 0;
+  margin-bottom: 5px;
+}
+
 .top-page .share-me {
   text-align: center;
   margin-top: 0;
