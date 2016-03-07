@@ -413,14 +413,8 @@ class ExTwitter < Twitter::REST::Client
     pre_me.friends.to_a - cur_me.friends.to_a
   end
 
-  def detailed_removing(pre_me, cur_me)
-  end
-
   def removed(pre_me, cur_me)
     pre_me.followers.to_a - cur_me.followers.to_a
-  end
-
-  def detailed_removed(pre_me, cur_me)
   end
 
   # use compact, not use sort and uniq

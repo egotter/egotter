@@ -299,13 +299,17 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def removing
-    return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
-    ExTwitter.new.removing(oldest_me, latest_me)
+    return [] if TwitterUser.where(uid: uid, user_id: user_id).limit(2).pluck(:id).size < 2
+    TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
+      ExTwitter.new.removing(old_one, new_one)
+    end.flatten
   end
 
   def removed
-    return [] if TwitterUser.where(screen_name: screen_name).limit(2).size < 2
-    ExTwitter.new.removed(oldest_me, latest_me)
+    return [] if TwitterUser.where(uid: uid, user_id: user_id).limit(2).pluck(:id).size < 2
+    TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
+      ExTwitter.new.removed(old_one, new_one)
+    end.flatten
   end
 
   def replying(options = {})
