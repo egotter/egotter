@@ -27,7 +27,7 @@ ja:
     notification_email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
     notification_dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
     notification_news: "新機能のお知らせが届きます。配信は不定期です。"
-    notification_search: "あなたのアカウントが検索されことDMでお知らせ。配信はなる早です。"
+    notification_search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
     settings: "設定"
     save_settings: "設定する"
     settings_saved: "設定を保存しました。"
