@@ -2,11 +2,17 @@ class FollowEgotterWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: false, backtrace: false
 
+  EGOTTER_UID = 187385226
+
   def perform(uid)
     @uid = uid
     user = client.user(uid.to_i)
-    client.follow!(187385226) # follow @ego_tter
-    logger.debug "#{user.id},#{user.screen_name} follows @ego_tter"
+    if client.friendship?(@uid.to_i, EGOTTER_UID)
+      logger.debug "#{user.id},#{user.screen_name} has already followed @ego_tter"
+    else
+      client.follow!(EGOTTER_UID)
+      logger.debug "#{user.id},#{user.screen_name} follows @ego_tter"
+    end
   end
 
   def client
