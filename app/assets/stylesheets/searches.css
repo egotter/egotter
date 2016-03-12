@@ -5,6 +5,12 @@
 /* change color of carousel dots end */
 
 /* new.html.erb start */
+.top-page .total-search-count {
+  margin-top: 15px;
+  margin-bottom: 10px;
+  text-align: center;
+}
+
 .top-page .lead-sentence {
   margin-top: 15px;
   margin-bottom: 10px;

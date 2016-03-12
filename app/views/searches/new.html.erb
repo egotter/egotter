@@ -1,4 +1,6 @@
 <div class="top-page container">
+  <div class="total-search-count"><%= t('dictionary.total_search_count', count: 371372) %></div><!-- from 2011 -->
+
   <%= form_tag searches_path, method: :post do %>
     <div class="lead-sentence"><%= t('dictionary.lead') %></div>
 
