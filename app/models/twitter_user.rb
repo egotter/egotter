@@ -47,6 +47,7 @@ class TwitterUser < ActiveRecord::Base
 
   include Concerns::TwitterUser::UserInfoAccessor
   include Concerns::TwitterUser::Validation
+  include Concerns::TwitterUser::Equalizer
 
   def __uid_i
     uid.to_i
@@ -540,13 +541,5 @@ class TwitterUser < ActiveRecord::Base
   def search_log
     log = BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid)
     Hashie::Mash.new(log.nil? ? {} : log.attributes)
-  end
-
-  def eql?(other)
-    __uid_i == other.__uid_i
-  end
-
-  def hash
-    __uid_i.hash
   end
 end

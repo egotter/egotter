@@ -67,6 +67,8 @@ module Concerns::TwitterUser::Validation
         end
 
         true
+      elsif egotter_context == 'test'
+        false
       else
         # background job
         return false if User.exists?(uid: uid.to_i)
@@ -163,7 +165,11 @@ module Concerns::TwitterUser::Validation
     end
 
     def same_record?(latest_tu)
-      return false if latest_tu.blank?
+      if latest_tu.blank?
+        logger.debug "#{screen_name} latest_tu is blank"
+        return false
+      end
+
       raise "uid is different(#{self.uid},#{latest_tu.uid})" if self.uid.to_i != latest_tu.uid.to_i
 
       if self.friends_count != latest_tu.friends_count

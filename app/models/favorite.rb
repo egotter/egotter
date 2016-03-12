@@ -34,12 +34,5 @@ class Favorite < ActiveRecord::Base
   end
 
   include Concerns::TwitterUser::Validation
-
-  def eql?(other)
-    self.uid.to_i == other.uid.to_i
-  end
-
-  def hash
-    self.uid.to_i.hash
-  end
+  include Concerns::TwitterUser::Equalizer
 end
