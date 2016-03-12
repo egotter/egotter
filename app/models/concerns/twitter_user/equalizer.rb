@@ -5,10 +5,6 @@ module Concerns::TwitterUser::Equalizer
 
   included do
     def eql?(other)
-      unless Rails.env.test?
-        raise "#{self.class} is incomparable with #{other.class}" if self.class != other.class
-      end
-
       self.uid.to_i == other.uid.to_i
     end
 
