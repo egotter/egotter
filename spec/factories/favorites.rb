@@ -1,8 +1,7 @@
 FactoryGirl.define do
   factory :favorite do
-    uid "MyString"
-screen_name "MyString"
-status_info "MyText"
+    uid 123
+    screen_name 'favorite_sn'
+    status_info { {id: 12345, text: 'favorite text'}.to_json }
   end
-
 end

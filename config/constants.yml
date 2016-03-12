@@ -18,3 +18,4 @@ production:
   <<: *default
 test:
   <<: *default
+  twitter_user_recently_created_threshold: 0

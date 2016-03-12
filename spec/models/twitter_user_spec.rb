@@ -35,49 +35,55 @@ RSpec.describe TwitterUser, type: :model do
   describe '#same_record_exists?' do
     before do
       raise 'save_with_bulk_insert failed' unless tu.save_with_bulk_insert
-      friends = tu.friends.map { |f| build(:friend, uid: f.uid, screen_name: f.screen_name) }
-      followers = tu.followers.map { |f| build(:follower, uid: f.uid, screen_name: f.screen_name) }
-      @new_tu = build(:twitter_user, uid: tu.uid, screen_name: tu.screen_name, friends: friends, followers: followers)
+      @same_tu = build(:twitter_user, uid: tu.uid, screen_name: tu.screen_name)
+      @same_tu.friends = tu.friends.map { |f| build(:friend, uid: f.uid, screen_name: f.screen_name) }
+      @same_tu.followers = tu.followers.map { |f| build(:follower, uid: f.uid, screen_name: f.screen_name) }
+      ajust_friends_and_followers_count(@same_tu)
     end
 
     context 'same record is persisted' do
       it 'returns true' do
-        expect(@new_tu.same_record_exists?).to be_truthy
+        expect(@same_tu.same_record_exists?).to be_truthy
       end
     end
 
-    context 'same record is not persisted' do
+    context 'no records are persisted' do
       before do
         tu.destroy
       end
 
       it 'returns true' do
-        expect(@new_tu.same_record_exists?).to be_falsey
+        expect(@same_tu.same_record_exists?).to be_falsey
       end
     end
 
     context 'friends_count is different' do
       before do
-        json = Hashie::Mash.new(JSON.parse(@new_tu.user_info))
-        json.friends_count += 1
-        @new_tu.user_info = json.to_json
+        @same_tu.friends = @same_tu.friends.to_a.slice(0, 1)
+        ajust_friends_and_followers_count(@same_tu)
       end
 
       it 'returns false' do
-        expect(@new_tu.same_record_exists?).to be_falsey
+        expect(@same_tu.same_record_exists?).to be_falsey
       end
     end
 
     context 'followers_count is different' do
       before do
-        json = Hashie::Mash.new(JSON.parse(@new_tu.user_info))
-        json.followers_count += 1
-        @new_tu.user_info = json.to_json
+        @same_tu.followers = @same_tu.followers.to_a.slice(0, 1)
+        ajust_friends_and_followers_count(@same_tu)
       end
 
       it 'returns false' do
-        expect(@new_tu.same_record_exists?).to be_falsey
+        expect(@same_tu.same_record_exists?).to be_falsey
       end
     end
   end
+end
+
+def ajust_friends_and_followers_count(tu)
+  json = Hashie::Mash.new(JSON.parse(tu.user_info))
+  json.friends_count = tu.friends.size
+  json.followers_count = tu.followers.size
+  tu.user_info = json.to_json
 end
