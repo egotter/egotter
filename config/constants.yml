@@ -19,3 +19,4 @@ production:
 test:
   <<: *default
   twitter_user_recently_created_threshold: 0
+  bot_path: 'data/bot.test.json'

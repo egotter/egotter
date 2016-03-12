@@ -1,0 +1,10 @@
+[
+  {
+    "provider": "twitter",
+    "uid": "123",
+    "screen_name": "test_bot",
+    "secret": "secret",
+    "token": "token"
+  }
+]
+
