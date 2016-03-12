@@ -18,7 +18,7 @@ default: &default
   host: <%= ENV['EGOTTER_DATABASE_HOST'] %>
   username: <%= ENV['EGOTTER_DATABASE_USERNAME'] %>
   password: <%= ENV['EGOTTER_DATABASE_PASSWORD'] %>
-  socket: /var/lib/mysql/mysql.sock
+  socket: <%= ENV['EGOTTER_DATABASE_SOCKET'] %>
 
 development:
   <<: *default
