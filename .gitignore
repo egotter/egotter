@@ -22,6 +22,7 @@
 /dump.rdb
 /dump.sql
 /redis.conf
+/*.json
 /data/bot.json
 /data/cluster_bad_words.json
 /data/cluster_good_words.json

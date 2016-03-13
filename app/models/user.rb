@@ -58,10 +58,12 @@ class User < ActiveRecord::Base
     user
   end
 
+  def config
+    ApiClient.config(access_token: token, access_token_secret: secret, uid: uid, screen_name: screen_name)
+  end
+
   def api_client
-    config = Bot.config
-    config.update(access_token: token, access_token_secret: secret, uid: uid, screen_name: screen_name)
-    ExTwitter.new(config.merge(api_cache_prefix: Rails.configuration.x.constants['twitter_api_cache_prefix']))
+    ApiClient.instance(config)
   end
 
   def twitter_user

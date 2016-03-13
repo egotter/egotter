@@ -24,4 +24,30 @@ RSpec.describe Bot, type: :model do
       expect(Bot.empty?).to be_falsey
     end
   end
+
+  describe '.config' do
+    let(:option) { {screen_name: nil} }
+    let(:config_keys) { %i(access_token access_token_secret uid screen_name) }
+
+    context 'without option' do
+      let(:config) { Bot.config }
+
+      it 'returns Hash' do
+        expect(config).to be_a_kind_of(Hash)
+        config_keys.each do |key|
+          expect(config.has_key?(key)).to be_truthy
+        end
+      end
+    end
+
+    context 'with option' do
+      let(:config) { Bot.config(option) }
+
+      it "doesn't override config" do
+        config_keys.each do |key|
+          expect(option[key]).to_not eq(config[key])
+        end
+      end
+    end
+  end
 end

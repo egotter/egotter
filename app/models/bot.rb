@@ -27,18 +27,15 @@ class Bot
   def self.config(options = {})
     init
     bot = options[:screen_name] ? @@bot.find { |bot| bot.screen_name == options[:screen_name] } : sample
-    {
-      consumer_key: ENV['TWITTER_CONSUMER_KEY'],
-      consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
+    ApiClient.config(
       access_token: bot.token,
       access_token_secret: bot.secret,
       uid: bot.uid,
-      screen_name: bot.screen_name
-    }
+      screen_name: bot.screen_name)
   end
 
   def self.api_client(options = {})
     init
-    ExTwitter.new(config(options).merge(api_cache_prefix: Rails.configuration.x.constants['twitter_api_cache_prefix']))
+    ApiClient.instance(config(options))
   end
 end
