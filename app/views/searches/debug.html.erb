@@ -83,6 +83,29 @@
 <br>
 
 <table border="1">
+  <caption>Daily New User</caption>
+  <% start = Time.zone.now %>
+  <%
+    day = Time.zone.now.in_time_zone('Tokyo').to_date
+    default = (7.times.map {|n| day - n.day }).map{|n| [n.to_s, 0] }.to_h
+    new_users = User.where(created_at: @last_1week).
+        group_by { |x| x.created_at.in_time_zone('Tokyo').to_date.to_s }.map { |k, v| [k, v.count] }.to_h.reverse_merge(default)
+  %>
+  <tr style="text-align: right;">
+    <% default.keys.each do |hour| %>
+      <th><%= hour %></th>
+    <% end %>
+  </tr>
+  <tr style="text-align: right;">
+    <% new_users.each do |_hour, count| %>
+      <td><%= count %></td>
+    <% end %>
+  </tr>
+</table>
+<div><%= Time.zone.now - start %>s</div>
+<br>
+
+<table border="1">
   <caption>Daily Search Num</caption>
   <% start = Time.zone.now %>
   <%
