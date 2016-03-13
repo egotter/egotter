@@ -1,3 +1,5 @@
+<%= render(partial: 'searches/conversion_tracking') %>
+
 <div class="top-page container">
   <div class="total-search-count"><%= t('dictionary.total_search_count', count: 371372) %></div><!-- from 2011 -->
 
@@ -11,7 +13,7 @@
       <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
              pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required autofocus>
     </div>
-    <button class="submit-btn1 btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
+    <button class="submit-btn1 btn btn-primary btn-block" onclick="goog_report_conversion('http://example.com/your-link')" type="submit"><%= t('dictionary.search') %></button>
   <% end %>
 
   <% if user_signed_in? %>
