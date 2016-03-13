@@ -37,7 +37,7 @@ namespace :update_job_dispatcher do
     redis.set(enqueue_num_key, cur_enqueue_limit)
 
     begin
-      uids = client.follower_ids('ego_tter').map { |id| id.to_i }
+      uids = client.old_follower_ids('ego_tter').attrs[:ids].map { |id| id.to_i } # not using cache
     rescue Twitter::Error::TooManyRequests => e
       puts "#{client.screen_name} #{e.message} retry after #{e.rate_limit.reset_in} seconds (#{Time.zone.now - start_t}s)"
       next
