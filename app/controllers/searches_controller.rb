@@ -417,10 +417,10 @@ class SearchesController < ApplicationController
   end
 
   def debug
-    # redirect_to '/' unless current_user.admin?
     @debug_info = Hashie::Mash.new(JSON.parse(redis.get(Redis.debug_info_key) || '{}'))
     @last_1hour = 1.hour.ago..Time.now
     @last_1day = 1.day.ago..Time.now
+    @last_1week = 1.week.ago..Time.now
     render layout: false
   end
 
