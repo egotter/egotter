@@ -18,7 +18,7 @@ namespace :update_job_dispatcher do
 
     zrem_count = 0
     min_enqueue_limit = 10
-    max_enqueue_limit = 30
+    max_enqueue_limit = 20
     cur_enqueue_limit = (redis.fetch(enqueue_num_key) { min_enqueue_limit }).to_i
     enqueued_count = 0
     unauthorized_count = 0
