@@ -64,6 +64,8 @@ ja:
     under_maintenance: "メンテナンス中です。"
     delim: "、"
     honorific: "さん"
+  messages:
+    delay_occurs: "現在、アクセスが殺到しているため、結果の表示が少し遅くなっています。"
   before_sign_in:
     need_login: "%{sign_in_link} が必要です。"
     session_expired: "一定時間操作がなかったため、ログアウトしました。再度、%{sign_in_link} してください。"

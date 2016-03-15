@@ -49,8 +49,8 @@
 <table border="1">
   <caption>Sidekiq</caption>
   <% start = Time.zone.now %>
-  <% queue = Sidekiq::Queue.new('egotter') %>
-  <% stats = Sidekiq::Stats.new %>
+  <% queue = SidekiqHandler.queue %>
+  <% stats = SidekiqHandler.stats %>
   <tr>
     <td>queue size</td>
     <td><%= queue.size %></td>
@@ -61,11 +61,11 @@
   </tr>
   <tr>
     <td>process</td>
-    <td><%= Sidekiq::ProcessSet.new.size %></td>
+    <td><%= SidekiqHandler.process_set.size %></td>
   </tr>
   <tr>
     <td>active workers</td>
-    <td><%= Sidekiq::Workers.new.size %></td>
+    <td><%= SidekiqHandler.workers.size %></td>
   </tr>
   <tr>
     <td>processed</td>
