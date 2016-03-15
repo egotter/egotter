@@ -27,6 +27,7 @@ sudo cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf
 sudo service nginx start
 sudo chkconfig nginx on
+sudo chown -R ec2-user:ec2-user /var/log/nginx
 
 # logrotate
 sudo cp ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
