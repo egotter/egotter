@@ -51,6 +51,7 @@ module Concerns::TwitterUser::UserInfoAccessor
 
     def url
       urls = user_info_mash.entities!.url!.urls
+      return nil if urls.nil?
       urls.any? ? (urls[0].expanded_url || urls[0].url) : nil
     rescue => e
       logger.warn "#{e.class} #{e.message} #{user_info_mash.entities}"
