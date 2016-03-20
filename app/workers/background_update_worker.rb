@@ -105,7 +105,7 @@ class BackgroundUpdateWorker
   end
 
   def user_id
-    User.exists?(uid: @uid) ? User.find_by(uid: @uid).id : -1
+    @user_id ||= (User.exists?(uid: @uid) ? User.find_by(uid: @uid).id : -1)
   end
 
   def client
