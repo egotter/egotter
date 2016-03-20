@@ -78,7 +78,7 @@
   </tr>
   <tr>
     <td>delay occurs rate</td>
-    <td><%= Redis.client.delay_occurs_rate %></td>
+    <td><%= number_with_precision(Redis.client.delay_occurs_rate, precision: 2) %></td>
   </tr>
   <tr>
     <td>latency</td>
@@ -162,7 +162,7 @@
   <tr style="text-align: right;">
     <td>login rate</td>
     <% logs_all.each do |(hour, count)| %>
-      <td><%= number_with_precision(logs_with_login[hour].to_f / count * 100, precision: 1) %></td>
+      <td><%= number_with_precision(logs_with_login[hour].to_f / count, precision: 2) %></td>
     <% end %>
   </tr>
 </table>
@@ -201,7 +201,7 @@
   <tr style="text-align: right;">
     <td>login rate</td>
     <% logs_all.each do |(hour, count)| %>
-      <td><%= number_with_precision(logs_with_login[hour].to_f / count * 100, precision: 1) %></td>
+      <td><%= number_with_precision(logs_with_login[hour].to_f / count, precision: 2) %></td>
     <% end %>
   </tr>
 </table>
@@ -231,8 +231,8 @@
       <td><%= model.where(status: true, created_at: @last_1hour).size %></td>
       <td><%= model.where(status: false).size %></td>
       <td><%= model.where(status: false, created_at: @last_1hour).size %></td>
-      <td><%= model.where(status: true).size.to_f / model.all.size rescue 0.0 %></td>
-      <td><%= model.where(status: true, created_at: @last_1hour).size.to_f / model.where(created_at: @last_1hour).size rescue 0.0 %></td>
+      <td><%= rate = (model.where(status: true).size.to_f / model.all.size rescue 0.0); number_with_precision(rate, precision: 2) %></td>
+      <td><%= rate = (model.where(status: true, created_at: @last_1hour).size.to_f / model.where(created_at: @last_1hour).size rescue 0.0); number_with_precision(rate, precision: 2) %></td>
     </tr>
   <% end %>
 </table>
