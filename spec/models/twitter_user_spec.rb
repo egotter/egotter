@@ -79,6 +79,26 @@ RSpec.describe TwitterUser, type: :model do
       end
     end
   end
+
+  describe '#search_and_touch' do
+    before do
+      raise 'save_with_bulk_insert failed' unless tu.save_with_bulk_insert
+    end
+
+    it 'increments search_count' do
+      expect { tu.search_and_touch }.to change { tu.search_count }.by(1)
+    end
+  end
+
+  describe '#update_and_touch' do
+    before do
+      raise 'save_with_bulk_insert failed' unless tu.save_with_bulk_insert
+    end
+
+    it 'increments update_count' do
+      expect { tu.update_and_touch }.to change { tu.update_count }.by(1)
+    end
+  end
 end
 
 def ajust_friends_and_followers_count(tu)
