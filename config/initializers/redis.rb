@@ -52,9 +52,11 @@ Redis.class_eval do
   end
 
   def delay_occurs_rate
-    delay_count = get(self.class.search_controller_delay_occurs_count)
-    not_delay_count = get(self.class.search_controller_delay_does_not_occur_count)
-    delay_count.to_f / (delay_count + not_delay_count) rescue 0.0
+    delay_count = get(self.class.search_controller_delay_occurs_count).to_f
+    not_delay_count = get(self.class.search_controller_delay_does_not_occur_count).to_f
+    delay_count / (delay_count + not_delay_count)
+  rescue
+    0.0
   end
 
   def incr_delay_occurs_count
