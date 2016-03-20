@@ -78,7 +78,8 @@
   </tr>
   <tr>
     <td>delay occurs rate</td>
-    <td><%= number_with_precision(Redis.client.delay_occurs_rate, precision: 2) %></td>
+    <% redis = Redis.client %>
+    <td><%= redis.delay_occurs_count %>(<%= number_with_precision(redis.delay_occurs_rate, precision: 2) %>)</td>
   </tr>
   <tr>
     <td>latency</td>
