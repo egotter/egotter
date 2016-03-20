@@ -47,6 +47,23 @@
 <br>
 
 <table border="1">
+  <caption>Bot</caption>
+  <% start = Time.zone.now %>
+  <tr>
+    <td>size</td>
+    <td><%= Bot.size %></td>
+  </tr>
+  <% Bot.verify_all_credentials.each do |cre| %>
+    <tr>
+      <td><%= cre[:screen_name] %></td>
+      <td><%= !cre[:credential].nil? %></td>
+    </tr>
+  <% end %>
+</table>
+<div><%= Time.zone.now - start %>s</div>
+<br>
+
+<table border="1">
   <caption>Sidekiq</caption>
   <% start = Time.zone.now %>
   <% queue = SidekiqHandler.queue %>

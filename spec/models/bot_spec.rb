@@ -25,9 +25,29 @@ RSpec.describe Bot, type: :model do
     end
   end
 
+  describe '.select_bot' do
+    let(:screen_name) { 'test_bot' }
+    let(:bot) { Bot.select_bot(screen_name) }
+
+    it 'returns Hash with specified screen_name' do
+      expect(bot).to be_a_kind_of(Hash)
+      expect(bot[:screen_name]).to eq(screen_name)
+    end
+  end
+
   describe '.config' do
     let(:option) { {screen_name: nil} }
     let(:config_keys) { %i(access_token access_token_secret uid screen_name) }
+
+    context 'specify screen_name' do
+      let(:screen_name) { 'test_bot' }
+      let(:config) { Bot.config(screen_name: screen_name) }
+
+      it 'returns Hash with specified screen_name' do
+        expect(config).to be_a_kind_of(Hash)
+        expect(config[:screen_name]).to eq(screen_name)
+      end
+    end
 
     context 'without option' do
       let(:config) { Bot.config }
@@ -48,6 +68,14 @@ RSpec.describe Bot, type: :model do
           expect(option[key]).to_not eq(config[key])
         end
       end
+    end
+  end
+
+  describe '.screen_names' do
+    let(:screen_names) { ['test_bot'] }
+
+    it 'returns correct screen_names' do
+      expect(Bot.screen_names).to match_array(screen_names)
     end
   end
 end
