@@ -1,6 +1,6 @@
 Redis.class_eval do
   def self.client
-    self.new(host: ENV['REDIS_HOST'], driver: :hiredis)
+    new(host: ENV['REDIS_HOST'], driver: :hiredis)
   end
 
   DEFAULT_EGOTTER_CACHE_TTL = Rails.configuration.x.constants['result_cache_ttl']
@@ -41,6 +41,33 @@ Redis.class_eval do
 
   def self.foreground_search_searched_uids_key
     'background_search_worker:searched_uids'
+  end
+
+  def self.search_controller_delay_occurs_count
+    'search_controller:delay_occurs_count'
+  end
+
+  def self.search_controller_delay_does_not_occur_count
+    'search_controller:delay_does_not_occur_count'
+  end
+
+  def delay_occurs_rate
+    delay_count = get(self.class.search_controller_delay_occurs_count)
+    not_delay_count = get(self.class.search_controller_delay_does_not_occur_count)
+    delay_count.to_f / (delay_count + not_delay_count) rescue 0.0
+  end
+
+  def incr_delay_occurs_count
+    incr(self.class.search_controller_delay_occurs_count)
+  end
+
+  def incr_delay_does_not_occur_count
+    incr(self.class.search_controller_delay_does_not_occur_count)
+  end
+
+  def del_delay_occurs_count
+    del(self.class.search_controller_delay_occurs_count)
+    del(self.class.search_controller_delay_does_not_occur_count)
   end
 
   def rem_unauthorized_uid(uid)

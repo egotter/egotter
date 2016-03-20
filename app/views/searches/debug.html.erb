@@ -77,6 +77,10 @@
     <td><%= SidekiqHandler.delay_occurs? %></td>
   </tr>
   <tr>
+    <td>delay occurs rate</td>
+    <td><%= Redis.client.delay_occurs_rate %></td>
+  </tr>
+  <tr>
     <td>latency</td>
     <td><%= queue.latency %></td>
   </tr>

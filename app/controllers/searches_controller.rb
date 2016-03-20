@@ -365,7 +365,7 @@ class SearchesController < ApplicationController
     @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)
     key = "searches:new:#{current_user_id}"
     html =
-      if flash.empty? && !SidekiqHandler.delay_occurs?
+      if flash.empty? && !delay_occurs?
         redis.fetch(key) { render_to_string }
       else
         render_to_string
@@ -620,6 +620,12 @@ class SearchesController < ApplicationController
       else
         []
       end
+  end
+
+  def delay_occurs?
+    result = SidekiqHandler.delay_occurs?
+    result ? redis.incr_delay_occurs_count : redis.incr_delay_does_not_occur_count
+    result
   end
 
   def current_user_id
