@@ -9,6 +9,10 @@ bundle exec rails server
 
 ```
 
+## Setup
+
+Read `setup/*.sh`
+
 ## License
 
 Egotter is released under the [MIT License](http://www.opensource.org/licenses/MIT).
