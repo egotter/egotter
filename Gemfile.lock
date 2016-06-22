@@ -71,6 +71,11 @@ GEM
       railties (>= 4.0, < 5.1)
     equalizer (0.0.10)
     erubis (2.7.0)
+    ex_twitter (0.1.1)
+      activesupport
+      hashie
+      parallel
+      twitter
     execjs (2.6.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -277,6 +282,7 @@ DEPENDENCIES
   byebug
   devise
   dotenv-rails
+  ex_twitter
   factory_girl_rails
   hashie
   hirb
@@ -306,3 +312,6 @@ DEPENDENCIES
   unicorn
   web-console (~> 2.0)
   whenever
+
+BUNDLED WITH
+   1.11.2
