@@ -11,8 +11,8 @@ class ApiClient
   end
 
   def self.instance(options = {})
-    return ExTwitter.new if options.blank?
+    return ExTwitter::Client.new if options.blank?
     _config = config(options).merge(api_cache_prefix: Rails.configuration.x.constants['twitter_api_cache_prefix'])
-    ExTwitter.new(_config)
+    ExTwitter::Client.new(_config)
   end
 end
