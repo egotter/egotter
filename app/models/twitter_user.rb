@@ -110,8 +110,8 @@ class TwitterUser < ActiveRecord::Base
 
     if ego_surfing?
       candidates = [
-        {method: :friends_advanced, args: [uid_i]},
-        {method: :followers_advanced, args: [uid_i]},
+        {method: :friends_parallelly, args: [uid_i]},
+        {method: :followers_parallelly, args: [uid_i]},
         {method: :user_timeline, args: [uid_i]}, # for replying
         {method: :search, args: [search_query]}, # for replied
         {method: :home_timeline, args: [uid_i]},
@@ -120,32 +120,32 @@ class TwitterUser < ActiveRecord::Base
       ]
       if without_friends
         candidates = candidates.slice(2, candidates.size - 2)
-        _statuses, _search_results, _, _mentions, _favorites = client.fetch_parallelly(candidates)
+        _statuses, _search_results, _, _mentions, _favorites = client._fetch_parallelly(candidates)
         _friends = _followers = []
       else
-        _friends, _followers, _statuses, _search_results, _, _mentions, _favorites = client.fetch_parallelly(candidates)
+        _friends, _followers, _statuses, _search_results, _, _mentions, _favorites = client._fetch_parallelly(candidates)
       end
     else
       candidates = [
-        {method: :friends_advanced, args: [uid_i]},
-        {method: :followers_advanced, args: [uid_i]},
+        {method: :friends_parallelly, args: [uid_i]},
+        {method: :followers_parallelly, args: [uid_i]},
         {method: :user_timeline, args: [uid_i]},
         {method: :search, args: [search_query]},
         {method: :favorites, args: [uid_i]}
       ]
       if without_friends
         candidates = candidates.slice(2, candidates.size - 2)
-        _statuses, _search_results, _favorites = client.fetch_parallelly(candidates)
+        _statuses, _search_results, _favorites = client._fetch_parallelly(candidates)
         _friends = _followers = []
       else
-        _friends, _followers, _statuses, _search_results, _favorites = client.fetch_parallelly(candidates)
+        _friends, _followers, _statuses, _search_results, _favorites = client._fetch_parallelly(candidates)
       end
       _mentions = []
     end
 
     # Not using uniq for mentions, search_results and favorites intentionally
 
-    client.fetch_parallelly([
+    client._fetch_parallelly([
                               {method: :replying, args: [uid_i]}
                             ])
 
@@ -278,38 +278,38 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def one_sided_following
-    ExTwitter.new.one_sided_following(self)
+    ExTwitter::Client.new.one_sided_following(self)
   end
 
   def one_sided_followers
-    ExTwitter.new.one_sided_followers(self)
+    ExTwitter::Client.new.one_sided_followers(self)
   end
 
   def mutual_friends
-    ExTwitter.new.mutual_friends(self)
+    ExTwitter::Client.new.mutual_friends(self)
   end
 
   def common_friends(other)
     return [] if other.blank?
-    ExTwitter.new.common_friends(self, other)
+    ExTwitter::Client.new.common_friends(self, other)
   end
 
   def common_followers(other)
     return [] if other.blank?
-    ExTwitter.new.common_followers(self, other)
+    ExTwitter::Client.new.common_followers(self, other)
   end
 
   def removing
     return [] if TwitterUser.where(uid: uid, user_id: user_id).limit(2).pluck(:id).size < 2
     TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      ExTwitter.new.removing(old_one, new_one)
+      ExTwitter::Client.new.removing(old_one, new_one)
     end.flatten
   end
 
   def removed
     return [] if TwitterUser.where(uid: uid, user_id: user_id).limit(2).pluck(:id).size < 2
     TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      ExTwitter.new.removed(old_one, new_one)
+      ExTwitter::Client.new.removed(old_one, new_one)
     end.flatten
   end
 
@@ -327,7 +327,7 @@ class TwitterUser < ActiveRecord::Base
       result = mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
       (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.id.to_i }
     else
-      ExTwitter.new.select_replied_from_search(search_results, options).map { |u| u.uid = u.id; u }
+      ExTwitter::Client.new.select_replied_from_search(search_results, options).map { |u| u.uid = u.id; u }
     end
   end
 
@@ -336,16 +336,16 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def inactive_friends
-    ExTwitter.new.select_inactive_users(friends, authorized: ego_surfing?)
+    ExTwitter::Client.new._extract_inactive_users(friends, authorized: ego_surfing?)
   end
 
   def inactive_followers
-    ExTwitter.new.select_inactive_users(followers, authorized: ego_surfing?)
+    ExTwitter::Client.new._extract_inactive_users(followers, authorized: ego_surfing?)
   end
 
   def clusters_belong_to
     text = statuses.map{|s| s.text }.join(' ')
-    ExTwitter.new.clusters_belong_to(text)
+    ExTwitter::Client.new.clusters_belong_to(text)
   end
 
   def close_friends(options = {})
