@@ -8,7 +8,6 @@ class SearchesController < ApplicationController
   NEED_LOGIN = %i(common_friends common_followers)
 
   before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
-  before_action :before_action_start,    only: NEED_VALIDATION
   before_action :need_login,             only: NEED_LOGIN
   before_action :invalid_screen_name,    only: NEED_VALIDATION
   before_action :build_twitter_user,     only: NEED_VALIDATION
@@ -16,7 +15,6 @@ class SearchesController < ApplicationController
   before_action :unauthorized_account,   only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :too_many_friends,       only: NEED_VALIDATION, unless: :result_cache_exists?
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
-  before_action :before_action_finish,   only: NEED_VALIDATION
 
   before_action :set_twitter_user,       only: SEARCH_MENUS
   before_action :create_log,             only: SEARCH_MENUS
@@ -450,14 +448,6 @@ class SearchesController < ApplicationController
 
   def search_id
     params[:id].to_i
-  end
-
-  def before_action_start
-    @before_action_start = Time.zone.now
-  end
-
-  def before_action_finish
-    logger.debug "DEBUG: before_action total time #{action_name} #{Time.zone.now - @before_action_start}s"
   end
 
   def need_login
