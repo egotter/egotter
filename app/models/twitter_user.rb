@@ -327,7 +327,9 @@ class TwitterUser < ActiveRecord::Base
       result = mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
       (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.id.to_i }
     else
-      ExTwitter::Client.new.select_replied_from_search(search_results, options).map { |u| u.uid = u.id; u }
+      _client = ExTwitter::Client.new
+      uids = _client._extract_uids(search_results, options)
+      _client._extract_users(search_results, uids, options).map { |u| u.uid = u.id; u }
     end
   end
 
