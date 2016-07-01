@@ -3,6 +3,12 @@ require 'active_support/concern'
 module Concerns::TwitterUser::Utils
   extend ActiveSupport::Concern
 
+  class_methods do
+    def has_more_than_two_records?(uid, user_id)
+      where(uid: uid, user_id: user_id).limit(2).pluck(:id).size >= 2
+    end
+  end
+
   included do
     def self.oldest(user, user_id)
       user.kind_of?(Integer) ?

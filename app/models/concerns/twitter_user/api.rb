@@ -4,87 +4,104 @@ module Concerns::TwitterUser::Api
   extend ActiveSupport::Concern
 
   included do
+    def dummy_client
+      @dummy_client ||= ExTwitter::Client.new
+    end
+
     def one_sided_following
-      ExTwitter::Client.new.one_sided_following(self)
+      dummy_client.one_sided_following(self)
     end
 
     def one_sided_followers
-      ExTwitter::Client.new.one_sided_followers(self)
+      dummy_client.one_sided_followers(self)
     end
 
     def mutual_friends
-      ExTwitter::Client.new.mutual_friends(self)
+      dummy_client.mutual_friends(self)
     end
 
     def common_friends(other)
       return [] if other.blank?
-      ExTwitter::Client.new.common_friends(self, other)
+      dummy_client.common_friends(self, other)
     end
 
     def common_followers(other)
       return [] if other.blank?
-      ExTwitter::Client.new.common_followers(self, other)
+      dummy_client.common_followers(self, other)
     end
 
     def removing
-      return [] if TwitterUser.where(uid: uid, user_id: user_id).limit(2).pluck(:id).size < 2
+      return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
       TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-        ExTwitter::Client.new.removing(old_one, new_one)
+        dummy_client.removing(old_one, new_one)
       end.flatten
     end
 
     def removed
-      return [] if TwitterUser.where(uid: uid, user_id: user_id).limit(2).pluck(:id).size < 2
+      return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
       TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-        ExTwitter::Client.new.removed(old_one, new_one)
+        dummy_client.removed(old_one, new_one)
       end.flatten
     end
 
     def replying(options = {})
-      begin
-        client.replying(__uid_i, options.merge(tweets: statuses)).map { |u| u.uid = u.id; u }
-      rescue => e
-        logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
-        []
-      end
+      if statuses.any?
+        client.replying(statuses.to_a, options)
+      else
+        client.replying(uid.to_i, options)
+      end.map { |u| u.uid = u.id; u }
     end
 
     def replied(options = {})
-      if ego_surfing? && mentions.any?
-        result = mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
-        (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.id.to_i }
-      else
-        _client = ExTwitter::Client.new
-        uids = _client._extract_uids(search_results, options)
-        _client._extract_users(search_results, uids, options).map { |u| u.uid = u.id; u }
-      end
+      result =
+        if ego_surfing?
+          if mentions.any?
+            mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
+          else
+            client.replied(uid.to_i, options)
+          end
+        elsif search_results.any?
+          uids = dummy_client._extract_uids(search_results.to_a)
+          dummy_client._extract_users(search_results.to_a, uids)
+        else
+          client.replied(uid.to_i, options)
+        end.map { |u| u.uid = u.id; u }
+
+      (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.uid.to_i }
     end
 
     def favoriting(options = {})
-      client.favoriting(__uid_i, options.merge(favorites: favorites)).map { |u| u.uid = u.id; u }
+      if favorites.any?
+        client.favoriting(favorites.to_a, options)
+      else
+        client.favoriting(uid.to_i, options)
+      end.map { |u| u.uid = u.id; u }
     end
 
     def inactive_friends
-      ExTwitter::Client.new._extract_inactive_users(friends, authorized: ego_surfing?)
+      dummy_client._extract_inactive_users(friends, authorized: ego_surfing?)
     end
 
     def inactive_followers
-      ExTwitter::Client.new._extract_inactive_users(followers, authorized: ego_surfing?)
+      dummy_client._extract_inactive_users(followers, authorized: ego_surfing?)
     end
 
     def clusters_belong_to
       text = statuses.map{|s| s.text }.join(' ')
-      ExTwitter::Client.new.clusters_belong_to(text)
+      dummy_client.clusters_belong_to(text)
     end
 
     def close_friends(options = {})
       min = options.has_key?(:min) ? options.delete(:min) : 1
-      client.close_friends(__uid_i, options.merge(
-        min: min,
-        replying: replying(options.merge(uniq: false)),
-        replied: replied(uniq: false),
-        favoriting: favoriting(options.merge(uniq: false)))
-      ).map { |u| u.uid = u.id; u }
+      options.merge!(uniq: false, min: min)
+      user = Hashie::Mash.new({
+                                replying: replying(options),
+                                replied: replied(options),
+                                favoriting: favoriting(options)
+
+                              })
+
+      client.close_friends(user, options).map { |u| u.uid = u.id; u }
     end
 
     def inactive_friends_graph
