@@ -8,8 +8,8 @@ module Concerns::TwitterUser::Api
       @dummy_client ||= TwitterWithAutoPagination::Client.new
     end
 
-    def one_sided_following
-      dummy_client.one_sided_following(self)
+    def one_sided_friends
+      dummy_client.one_sided_friends(self)
     end
 
     def one_sided_followers
@@ -183,11 +183,11 @@ module Concerns::TwitterUser::Api
       # ]
     end
 
-    def one_sided_following_graph
+    def one_sided_friends_graph
       friends_size = friends.size
-      one_sided_size = one_sided_following.size
+      one_sided_size = one_sided_friends.size
       [
-        {name: I18n.t('legend.one_sided_following'), y: (one_sided_size.to_f / friends_size * 100)},
+        {name: I18n.t('legend.one_sided_friends'), y: (one_sided_size.to_f / friends_size * 100)},
         {name: I18n.t('legend.others'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
       ]
     end
@@ -206,7 +206,7 @@ module Concerns::TwitterUser::Api
       return [0.0, 0.0, 0.0] if friendship_size == 0
       [
         mutual_friends.size.to_f / friendship_size * 100,
-        one_sided_following.size.to_f / friendship_size * 100,
+        one_sided_friends.size.to_f / friendship_size * 100,
         one_sided_followers.size.to_f / friendship_size * 100
       ]
     end
@@ -216,7 +216,7 @@ module Concerns::TwitterUser::Api
       sliced = rates[0] < 25
       [
         {name: I18n.t('legend.mutual_friends'), y: rates[0], sliced: sliced, selected: sliced},
-        {name: I18n.t('legend.one_sided_following'), y: rates[1]},
+        {name: I18n.t('legend.one_sided_friends'), y: rates[1]},
         {name: I18n.t('legend.one_sided_followers'), y: rates[2]}
       ]
     end

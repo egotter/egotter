@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/followers', to: 'searches#followers', as: :followers
   get 'searches/:screen_name/removing', to: 'searches#removing', as: :removing
   get 'searches/:screen_name/removed', to: 'searches#removed', as: :removed
-  get 'searches/:screen_name/one_sided_following', to: 'searches#one_sided_following', as: :one_sided_following
+  get 'searches/:screen_name/one_sided_friends', to: 'searches#one_sided_friends', as: :one_sided_friends
   get 'searches/:screen_name/one_sided_followers', to: 'searches#one_sided_followers', as: :one_sided_followers
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
   get 'searches/:screen_name/common_friends', to: 'searches#common_friends', as: :common_friends

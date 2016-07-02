@@ -101,7 +101,7 @@ module ApplicationHelper
     t('tweet_text.mutual_friends',
       screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
       mutual_friends_rate: rates[0].round,
-      one_sided_following_rate: rates[1].round,
+      one_sided_friends_rate: rates[1].round,
       one_sided_followers_rate: rates[2].round,
       kaomoji: Kaomoji.happy,
       url: short_url)

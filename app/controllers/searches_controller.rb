@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
 
   DEBUG_PAGES = %i(debug clear_result_cache)
-  SEARCH_MENUS = %i(show statuses friends followers removing removed one_sided_following one_sided_followers mutual_friends
+  SEARCH_MENUS = %i(show statuses friends followers removing removed one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
@@ -82,10 +82,10 @@ class SearchesController < ApplicationController
         graph: tu.mutual_friends_graph,
         path_method: method(:mutual_friends_path).to_proc
       }, {
-        name: t('search_menu.one_sided_following', user: sn),
-        target: tu.one_sided_following,
-        graph: tu.one_sided_following_graph,
-        path_method: method(:one_sided_following_path).to_proc
+        name: t('search_menu.one_sided_friends', user: sn),
+        target: tu.one_sided_friends,
+        graph: tu.one_sided_friends_graph,
+        path_method: method(:one_sided_friends_path).to_proc
       }, {
         name: t('search_menu.one_sided_followers', user: sn),
         target: tu.one_sided_followers,
@@ -231,12 +231,12 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/one_sided_following
-  def one_sided_following
-    @user_items = build_user_items(@searched_tw_user.one_sided_following)
+  # GET /searches/:screen_name/one_sided_friends
+  def one_sided_friends
+    @user_items = build_user_items(@searched_tw_user.one_sided_friends)
     @graph = @searched_tw_user.mutual_friends_graph
     @tweet_text = view_context.mutual_friends_text(@searched_tw_user)
-    @title = t('search_menu.one_sided_following', user: "@#{@searched_tw_user.screen_name}")
+    @title = t('search_menu.one_sided_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
