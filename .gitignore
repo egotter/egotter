@@ -28,3 +28,4 @@
 /data/cluster_good_words.json
 /.env
 /public/assets
+/.rbenv-gemsets

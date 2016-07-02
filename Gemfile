@@ -50,6 +50,7 @@ gem 'kaminari'
 gem 'httparty'
 gem 'unicorn'
 gem 'meta-tags'
+gem 'ex_twitter'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
