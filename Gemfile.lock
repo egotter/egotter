@@ -71,11 +71,6 @@ GEM
       railties (>= 4.0, < 5.1)
     equalizer (0.0.10)
     erubis (2.7.0)
-    ex_twitter (0.3.2)
-      activesupport
-      hashie
-      parallel
-      twitter
     execjs (2.6.0)
     factory_girl (4.5.0)
       activesupport (>= 3.0.0)
@@ -253,6 +248,11 @@ GEM
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
+    twitter_with_auto_pagination (0.4.0)
+      activesupport
+      hashie
+      parallel
+      twitter
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
     uglifier (2.7.2)
@@ -286,7 +286,6 @@ DEPENDENCIES
   byebug
   devise
   dotenv-rails
-  ex_twitter
   factory_girl_rails
   hashie
   hirb
@@ -312,6 +311,7 @@ DEPENDENCIES
   sinatra
   therubyracer
   twitter
+  twitter_with_auto_pagination
   uglifier (>= 1.3.0)
   unicorn
   web-console (~> 2.0)

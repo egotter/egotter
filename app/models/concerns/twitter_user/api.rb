@@ -5,7 +5,7 @@ module Concerns::TwitterUser::Api
 
   included do
     def dummy_client
-      @dummy_client ||= ExTwitter::Client.new
+      @dummy_client ||= TwitterWithAutoPagination::Client.new
     end
 
     def one_sided_following
