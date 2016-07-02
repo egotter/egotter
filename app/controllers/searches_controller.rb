@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
 
   DEBUG_PAGES = %i(debug clear_result_cache)
-  SEARCH_MENUS = %i(show statuses friends followers removing removed_by one_sided_friends one_sided_followers mutual_friends
+  SEARCH_MENUS = %i(show statuses friends followers removed removed_by one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
@@ -67,10 +67,10 @@ class SearchesController < ApplicationController
 
     @menu_items = [
       {
-        name: t('search_menu.removing', user: sn),
-        target: tu.removing,
-        graph: tu.removing_graph,
-        path_method: method(:removing_path).to_proc
+        name: t('search_menu.removed', user: sn),
+        target: tu.removed,
+        graph: tu.removed_graph,
+        path_method: method(:removed_path).to_proc
       }, {
         name: t('search_menu.removed_by', user: sn),
         target: tu.removed_by,
@@ -217,10 +217,10 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/removing
-  def removing
-    @user_items = build_user_items(@searched_tw_user.removing)
-    @title = t('search_menu.removing', user: "@#{@searched_tw_user.screen_name}")
+  # GET /searches/:screen_name/removed
+  def removed
+    @user_items = build_user_items(@searched_tw_user.removed)
+    @title = t('search_menu.removed', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 

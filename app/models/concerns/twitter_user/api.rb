@@ -30,10 +30,10 @@ module Concerns::TwitterUser::Api
       dummy_client.common_followers(self, other)
     end
 
-    def removing
+    def removed
       return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
       TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-        dummy_client.removing(old_one, new_one)
+        dummy_client.removed(old_one, new_one)
       end.flatten
     end
 
@@ -122,8 +122,8 @@ module Concerns::TwitterUser::Api
       ]
     end
 
-    def removing_graph
-      large_rate = [removing.size * 10, 100].min
+    def removed_graph
+      large_rate = [removed.size * 10, 100].min
       [
         {name: I18n.t('legend.large'), y: large_rate},
         {name: I18n.t('legend.small'), y: 100 - large_rate}
