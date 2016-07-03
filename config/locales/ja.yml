@@ -138,7 +138,7 @@ ja:
     friends: "%{user} のフォロー"
     followers: "%{user} のフォロワー"
     users_which_you_removed: "%{user} がフォローを外した"
-    removed_by: "%{user} がフォローを外された"
+    users_who_removed_you: "%{user} がフォローを外された"
     mutual_friends: "%{user} が両思い"
     one_sided_friends: "%{user} が片思い"
     one_sided_followers: "%{user} が片思われ"

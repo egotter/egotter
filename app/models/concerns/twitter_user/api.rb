@@ -37,10 +37,10 @@ module Concerns::TwitterUser::Api
       end.flatten
     end
 
-    def removed_by
+    def users_who_removed_you
       return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
       TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-        dummy_client.removed_by(old_one, new_one)
+        dummy_client.users_who_removed_you(old_one, new_one)
       end.flatten
     end
 
@@ -130,8 +130,8 @@ module Concerns::TwitterUser::Api
       ]
     end
 
-    def removed_by_graph
-      large_rate = [removed_by.size * 10, 100].min
+    def users_who_removed_you_graph
+      large_rate = [users_who_removed_you.size * 10, 100].min
       [
         {name: I18n.t('legend.large'), y: large_rate},
         {name: I18n.t('legend.small'), y: 100 - large_rate}

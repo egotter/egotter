@@ -1,7 +1,7 @@
 class SearchesController < ApplicationController
 
   DEBUG_PAGES = %i(debug clear_result_cache)
-  SEARCH_MENUS = %i(show statuses friends followers users_which_you_removed removed_by one_sided_friends one_sided_followers mutual_friends
+  SEARCH_MENUS = %i(show statuses friends followers users_which_you_removed users_who_removed_you one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers users_which_you_replied_to users_who_replied_to_you users_which_you_faved inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
@@ -72,10 +72,10 @@ class SearchesController < ApplicationController
         graph: tu.users_which_you_removed_graph,
         path_method: method(:users_which_you_removed_path).to_proc
       }, {
-        name: t('search_menu.removed_by', user: sn),
-        target: tu.removed_by,
-        graph: tu.removed_by_graph,
-        path_method: method(:removed_by_path).to_proc
+        name: t('search_menu.users_who_removed_you', user: sn),
+        target: tu.users_who_removed_you,
+        graph: tu.users_who_removed_you_graph,
+        path_method: method(:users_who_removed_you_path).to_proc
       }, {
         name: t('search_menu.mutual_friends', user: sn),
         target: tu.mutual_friends,
@@ -224,10 +224,10 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/removed_by
-  def removed_by
-    @user_items = build_user_items(@searched_tw_user.removed_by)
-    @title = t('search_menu.removed_by', user: "@#{@searched_tw_user.screen_name}")
+  # GET /searches/:screen_name/users_who_removed_you
+  def users_who_removed_you
+    @user_items = build_user_items(@searched_tw_user.users_who_removed_you)
+    @title = t('search_menu.users_who_removed_you', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
