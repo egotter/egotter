@@ -34,6 +34,18 @@
   copytruncate
 }
 
+/home/ec2-user/egotter/log/twitter_with_auto_pagination.log {
+  dateext
+  dateformat _%Y%m%d
+  daily
+  missingok
+  rotate 30
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}
+
 /home/ec2-user/egotter/log/sidekiq.log {
   dateext
   dateformat _%Y%m%d
