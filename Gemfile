@@ -49,6 +49,7 @@ gem 'mysql2'
 gem 'kaminari'
 gem 'httparty'
 gem 'unicorn'
+gem 'unicorn-worker-killer'
 gem 'meta-tags'
 gem 'twitter_with_auto_pagination'
 
