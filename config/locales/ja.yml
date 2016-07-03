@@ -137,7 +137,7 @@ ja:
     statuses: "%{user} のツイート"
     friends: "%{user} のフォロー"
     followers: "%{user} のフォロワー"
-    removed: "%{user} がフォローを外した"
+    users_which_you_removed: "%{user} がフォローを外した"
     removed_by: "%{user} がフォローを外された"
     mutual_friends: "%{user} が両思い"
     one_sided_friends: "%{user} が片思い"
