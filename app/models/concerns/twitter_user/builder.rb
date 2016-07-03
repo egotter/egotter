@@ -35,9 +35,9 @@ module Concerns::TwitterUser::Builder
           {method: :friends_parallelly, args: [uid_i]},
           {method: :followers_parallelly, args: [uid_i]},
           {method: :user_timeline, args: [uid_i]}, # for users_which_you_replied_to
-          {method: :search, args: [search_query]}, # for replied
+          {method: :search, args: [search_query]}, # for users_who_replied_to_you
           {method: :home_timeline, args: [uid_i]},
-          {method: :mentions_timeline, args: [uid_i]}, # for replied
+          {method: :mentions_timeline, args: [uid_i]}, # for users_who_replied_to_you
           {method: :favorites, args: [uid_i]} # for users_which_you_faved
         ]
         if without_friends

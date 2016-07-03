@@ -52,19 +52,19 @@ module Concerns::TwitterUser::Api
       end.map { |u| u.uid = u.id; u }
     end
 
-    def replied(options = {})
+    def users_who_replied_to_you(options = {})
       result =
         if ego_surfing?
           if mentions.any?
             mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
           else
-            client.replied(uid.to_i, options)
+            client.users_who_replied_to_you(uid.to_i, options)
           end
         elsif search_results.any?
           uids = dummy_client._extract_uids(search_results.to_a)
           dummy_client._extract_users(search_results.to_a, uids)
         else
-          client.replied(uid.to_i, options)
+          client.users_who_replied_to_you(uid.to_i, options)
         end.map { |u| u.uid = u.id; u }
 
       (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.uid.to_i }
@@ -96,7 +96,7 @@ module Concerns::TwitterUser::Api
       options.merge!(uniq: false, min: min)
       user = Hashie::Mash.new({
                                 users_which_you_replied_to: users_which_you_replied_to(options),
-                                replied: replied(options),
+                                users_who_replied_to_you: users_who_replied_to_you(options),
                                 users_which_you_faved: users_which_you_faved(options)
 
                               })
@@ -147,12 +147,12 @@ module Concerns::TwitterUser::Api
       ]
     end
 
-    def replied_graph
+    def users_who_replied_to_you_graph
       followers_size = followers_count
-      replied_size = replied.size
+      users_who_replied_to_you_size = users_who_replied_to_you.size
       [
-        {name: I18n.t('legend.users_which_you_replied_to'), y: (replied_size.to_f / followers_size * 100)},
-        {name: I18n.t('legend.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
+        {name: I18n.t('legend.users_who_replied_to_you'), y: (users_who_replied_to_you_size.to_f / followers_size * 100)},
+        {name: I18n.t('legend.others'), y: ((followers_size - users_who_replied_to_you_size).to_f / followers_size * 100)}
       ]
     end
 

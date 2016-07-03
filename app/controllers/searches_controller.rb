@@ -2,7 +2,7 @@ class SearchesController < ApplicationController
 
   DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(show statuses friends followers removed removed_by one_sided_friends one_sided_followers mutual_friends
-    common_friends common_followers users_which_you_replied_to replied users_which_you_faved inactive_friends inactive_followers
+    common_friends common_followers users_which_you_replied_to users_who_replied_to_you users_which_you_faved inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
   NEED_LOGIN = %i(common_friends common_followers)
@@ -97,10 +97,10 @@ class SearchesController < ApplicationController
         graph: tu.users_which_you_replied_to_graph,
         path_method: method(:users_which_you_replied_to_path).to_proc
       }, {
-        name: t('search_menu.replied', user: sn),
-        target: tu.replied, # no calling
-        graph: tu.replied_graph,
-        path_method: method(:replied_path).to_proc
+        name: t('search_menu.users_who_replied_to_you', user: sn),
+        target: tu.users_who_replied_to_you, # no calling
+        graph: tu.users_who_replied_to_you_graph,
+        path_method: method(:users_who_replied_to_you_path).to_proc
       }, {
         name: t('search_menu.users_which_you_faved', user: sn),
         target: tu.users_which_you_faved, # no calling
@@ -285,12 +285,12 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/replied
-  def replied
-    @user_items = build_user_items(@searched_tw_user.replied)
-    @graph = @searched_tw_user.replied_graph
+  # GET /searches/:screen_name/users_who_replied_to_you
+  def users_who_replied_to_you
+    @user_items = build_user_items(@searched_tw_user.users_who_replied_to_you)
+    @graph = @searched_tw_user.users_who_replied_to_you_graph
     @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
-    @title = t('search_menu.replied', user: "@#{@searched_tw_user.screen_name}")
+    @title = t('search_menu.users_who_replied_to_you', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
