@@ -34,7 +34,7 @@ module Concerns::TwitterUser::Builder
         candidates = [
           {method: :friends_parallelly, args: [uid_i]},
           {method: :followers_parallelly, args: [uid_i]},
-          {method: :user_timeline, args: [uid_i]}, # for replying
+          {method: :user_timeline, args: [uid_i]}, # for users_which_you_replied_to
           {method: :search, args: [search_query]}, # for replied
           {method: :home_timeline, args: [uid_i]},
           {method: :mentions_timeline, args: [uid_i]}, # for replied
@@ -68,7 +68,7 @@ module Concerns::TwitterUser::Builder
       # Not using uniq for mentions, search_results and favorites intentionally
 
       client._fetch_parallelly([
-                                 {method: :replying, args: [uid_i]}
+                                 {method: :users_which_you_replied_to, args: [uid_i]}
                                ])
 
       _friends.each do |f|

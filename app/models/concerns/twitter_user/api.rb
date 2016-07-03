@@ -44,11 +44,11 @@ module Concerns::TwitterUser::Api
       end.flatten
     end
 
-    def replying(options = {})
+    def users_which_you_replied_to(options = {})
       if statuses.any?
-        client.replying(statuses.to_a, options)
+        client.users_which_you_replied_to(statuses.to_a, options)
       else
-        client.replying(uid.to_i, options)
+        client.users_which_you_replied_to(uid.to_i, options)
       end.map { |u| u.uid = u.id; u }
     end
 
@@ -95,7 +95,7 @@ module Concerns::TwitterUser::Api
       min = options.has_key?(:min) ? options.delete(:min) : 1
       options.merge!(uniq: false, min: min)
       user = Hashie::Mash.new({
-                                replying: replying(options),
+                                users_which_you_replied_to: users_which_you_replied_to(options),
                                 replied: replied(options),
                                 users_which_you_faved: users_which_you_faved(options)
 
@@ -138,12 +138,12 @@ module Concerns::TwitterUser::Api
       ]
     end
 
-    def replying_graph
+    def users_which_you_replied_to_graph
       friends_size = friends_count
-      replying_size = replying.size
+      users_which_you_replied_to_size = users_which_you_replied_to.size
       [
-        {name: I18n.t('legend.replying'), y: (replying_size.to_f / friends_size * 100)},
-        {name: I18n.t('legend.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
+        {name: I18n.t('legend.users_which_you_replied_to'), y: (users_which_you_replied_to_size.to_f / friends_size * 100)},
+        {name: I18n.t('legend.others'), y: ((friends_size - users_which_you_replied_to_size).to_f / friends_size * 100)}
       ]
     end
 
@@ -151,7 +151,7 @@ module Concerns::TwitterUser::Api
       followers_size = followers_count
       replied_size = replied.size
       [
-        {name: I18n.t('legend.replying'), y: (replied_size.to_f / followers_size * 100)},
+        {name: I18n.t('legend.users_which_you_replied_to'), y: (replied_size.to_f / followers_size * 100)},
         {name: I18n.t('legend.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
       ]
     end
