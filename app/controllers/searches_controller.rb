@@ -2,7 +2,7 @@ class SearchesController < ApplicationController
 
   DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(show statuses friends followers removed removed_by one_sided_friends one_sided_followers mutual_friends
-    common_friends common_followers replying replied favoriting inactive_friends inactive_followers
+    common_friends common_followers replying replied users_which_you_faved inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
   NEED_LOGIN = %i(common_friends common_followers)
@@ -102,10 +102,10 @@ class SearchesController < ApplicationController
         graph: tu.replied_graph,
         path_method: method(:replied_path).to_proc
       }, {
-        name: t('search_menu.favoriting', user: sn),
-        target: tu.favoriting, # no calling
-        graph: tu.favoriting_graph,
-        path_method: method(:favoriting_path).to_proc
+        name: t('search_menu.users_which_you_faved', user: sn),
+        target: tu.users_which_you_faved, # no calling
+        graph: tu.users_which_you_faved_graph,
+        path_method: method(:users_which_you_faved_path).to_proc
       }, {
         name: t('search_menu.inactive_friends', user: sn),
         target: tu.inactive_friends,
@@ -294,12 +294,12 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/favoriting
-  def favoriting
-    @user_items = build_user_items(@searched_tw_user.favoriting)
-    @graph = @searched_tw_user.favoriting_graph
+  # GET /searches/:screen_name/users_which_you_faved
+  def users_which_you_faved
+    @user_items = build_user_items(@searched_tw_user.users_which_you_faved)
+    @graph = @searched_tw_user.users_which_you_faved_graph
     @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
-    @title = t('search_menu.favoriting', user: "@#{@searched_tw_user.screen_name}")
+    @title = t('search_menu.users_which_you_faved', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 

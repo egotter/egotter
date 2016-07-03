@@ -24,7 +24,7 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/common_followers', to: 'searches#common_followers', as: :common_followers
   get 'searches/:screen_name/replying', to: 'searches#replying', as: :replying
   get 'searches/:screen_name/replied', to: 'searches#replied', as: :replied
-  get 'searches/:screen_name/favoriting', to: 'searches#favoriting', as: :favoriting
+  get 'searches/:screen_name/users_which_you_faved', to: 'searches#users_which_you_faved', as: :users_which_you_faved
   get 'searches/:screen_name/inactive_friends', to: 'searches#inactive_friends', as: :inactive_friends
   get 'searches/:screen_name/inactive_followers', to: 'searches#inactive_followers', as: :inactive_followers
   get 'searches/:screen_name/clusters_belong_to', to: 'searches#clusters_belong_to', as: :clusters_belong_to

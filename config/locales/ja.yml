@@ -115,7 +115,7 @@ ja:
     mutual_friends: "両思い"
     common_friends: "共通"
     common_followers: "共通"
-    favoriting: "ふぁぼる"
+    users_which_you_faved: "ふぁぼる"
     others: "それ以外"
   tweet_text:
     top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji}"
@@ -146,7 +146,7 @@ ja:
     common_followers: "%{user} と %{login} の共通フォロワー"
     replying: "%{user} がリプライした"
     replied: "%{user} がリプライされた"
-    favoriting: "%{user} がよくふぁぼる"
+    users_which_you_faved: "%{user} がよくふぁぼる"
     inactive_friends: "%{user} のフォローのうち最近ツイッターにいない"
     inactive_followers: "%{user} のフォロワーのうち最近ツイッターにいない"
     clusters_belong_to: "%{user} が入っているクラスタ"

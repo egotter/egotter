@@ -70,11 +70,11 @@ module Concerns::TwitterUser::Api
       (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.uid.to_i }
     end
 
-    def favoriting(options = {})
+    def users_which_you_faved(options = {})
       if favorites.any?
-        client.favoriting(favorites.to_a, options)
+        client.users_which_you_faved(favorites.to_a, options)
       else
-        client.favoriting(uid.to_i, options)
+        client.users_which_you_faved(uid.to_i, options)
       end.map { |u| u.uid = u.id; u }
     end
 
@@ -97,7 +97,7 @@ module Concerns::TwitterUser::Api
       user = Hashie::Mash.new({
                                 replying: replying(options),
                                 replied: replied(options),
-                                favoriting: favoriting(options)
+                                users_which_you_faved: users_which_you_faved(options)
 
                               })
 
@@ -156,12 +156,12 @@ module Concerns::TwitterUser::Api
       ]
     end
 
-    def favoriting_graph
+    def users_which_you_faved_graph
       friends_size = friends_count
-      favoriting_size = favoriting.size
+      users_which_you_faved_size = users_which_you_faved.size
       [
-        {name: I18n.t('legend.favoriting'), y: (favoriting_size.to_f / friends_size * 100)},
-        {name: I18n.t('legend.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}
+        {name: I18n.t('legend.users_which_you_faved'), y: (users_which_you_faved_size.to_f / friends_size * 100)},
+        {name: I18n.t('legend.others'), y: ((friends_size - users_which_you_faved_size).to_f / friends_size * 100)}
       ]
     end
 

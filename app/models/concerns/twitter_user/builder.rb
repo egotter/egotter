@@ -38,7 +38,7 @@ module Concerns::TwitterUser::Builder
           {method: :search, args: [search_query]}, # for replied
           {method: :home_timeline, args: [uid_i]},
           {method: :mentions_timeline, args: [uid_i]}, # for replied
-          {method: :favorites, args: [uid_i]} # for favoriting
+          {method: :favorites, args: [uid_i]} # for users_which_you_faved
         ]
         if without_friends
           candidates = candidates.slice(2, candidates.size - 2)
