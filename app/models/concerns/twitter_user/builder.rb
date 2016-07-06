@@ -32,8 +32,8 @@ module Concerns::TwitterUser::Builder
 
       if ego_surfing?
         candidates = [
-          {method: :friends_parallelly, args: [uid_i]},
-          {method: :followers_parallelly, args: [uid_i]},
+          {method: :friends, args: [uid_i]},
+          {method: :followers, args: [uid_i]},
           {method: :user_timeline, args: [uid_i]}, # for users_which_you_replied_to
           {method: :search, args: [search_query]}, # for users_who_replied_to_you
           {method: :home_timeline, args: [uid_i]},
@@ -49,8 +49,8 @@ module Concerns::TwitterUser::Builder
         end
       else
         candidates = [
-          {method: :friends_parallelly, args: [uid_i]},
-          {method: :followers_parallelly, args: [uid_i]},
+          {method: :friends, args: [uid_i]},
+          {method: :followers, args: [uid_i]},
           {method: :user_timeline, args: [uid_i]},
           {method: :search, args: [search_query]},
           {method: :favorites, args: [uid_i]}

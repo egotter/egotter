@@ -5,7 +5,7 @@ module Concerns::TwitterUser::Api
 
   included do
     def dummy_client
-      @dummy_client ||= TwitterWithAutoPagination::Client.new
+      @dummy_client ||= ApiClient.dummy_instance
     end
 
     def one_sided_friends
@@ -79,11 +79,11 @@ module Concerns::TwitterUser::Api
     end
 
     def inactive_friends
-      dummy_client._extract_inactive_users(friends, authorized: ego_surfing?)
+      dummy_client._extract_inactive_users(friends)
     end
 
     def inactive_followers
-      dummy_client._extract_inactive_users(followers, authorized: ego_surfing?)
+      dummy_client._extract_inactive_users(followers)
     end
 
     def clusters_belong_to
