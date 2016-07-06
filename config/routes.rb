@@ -15,16 +15,16 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/statuses', to: 'searches#statuses', as: :statuses
   get 'searches/:screen_name/friends', to: 'searches#friends', as: :friends
   get 'searches/:screen_name/followers', to: 'searches#followers', as: :followers
-  get 'searches/:screen_name/users_which_you_removed', to: 'searches#users_which_you_removed', as: :users_which_you_removed
-  get 'searches/:screen_name/users_who_removed_you', to: 'searches#users_who_removed_you', as: :users_who_removed_you
+  get 'searches/:screen_name/removing', to: 'searches#removing', as: :removing
+  get 'searches/:screen_name/removed', to: 'searches#removed', as: :removed
   get 'searches/:screen_name/one_sided_friends', to: 'searches#one_sided_friends', as: :one_sided_friends
   get 'searches/:screen_name/one_sided_followers', to: 'searches#one_sided_followers', as: :one_sided_followers
   get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
   get 'searches/:screen_name/common_friends', to: 'searches#common_friends', as: :common_friends
   get 'searches/:screen_name/common_followers', to: 'searches#common_followers', as: :common_followers
-  get 'searches/:screen_name/users_which_you_replied_to', to: 'searches#users_which_you_replied_to', as: :users_which_you_replied_to
-  get 'searches/:screen_name/users_who_replied_to_you', to: 'searches#users_who_replied_to_you', as: :users_who_replied_to_you
-  get 'searches/:screen_name/users_which_you_faved', to: 'searches#users_which_you_faved', as: :users_which_you_faved
+  get 'searches/:screen_name/replying', to: 'searches#replying', as: :replying
+  get 'searches/:screen_name/replied', to: 'searches#replied', as: :replied
+  get 'searches/:screen_name/favoriting', to: 'searches#favoriting', as: :favoriting
   get 'searches/:screen_name/inactive_friends', to: 'searches#inactive_friends', as: :inactive_friends
   get 'searches/:screen_name/inactive_followers', to: 'searches#inactive_followers', as: :inactive_followers
   get 'searches/:screen_name/clusters_belong_to', to: 'searches#clusters_belong_to', as: :clusters_belong_to

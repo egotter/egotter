@@ -30,51 +30,51 @@ module Concerns::TwitterUser::Api
       dummy_client.common_followers(self, other)
     end
 
-    def users_which_you_removed
+    def removing
       return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
       TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-        dummy_client.users_which_you_removed(old_one, new_one)
+        dummy_client.removing(old_one, new_one)
       end.flatten
     end
 
-    def users_who_removed_you
+    def removed
       return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
       TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-        dummy_client.users_who_removed_you(old_one, new_one)
+        dummy_client.removed(old_one, new_one)
       end.flatten
     end
 
-    def users_which_you_replied_to(options = {})
+    def replying(options = {})
       if statuses.any?
-        client.users_which_you_replied_to(statuses.to_a, options)
+        client.replying(statuses.to_a, options)
       else
-        client.users_which_you_replied_to(uid.to_i, options)
+        client.replying(uid.to_i, options)
       end.map { |u| u.uid = u.id; u }
     end
 
-    def users_who_replied_to_you(options = {})
+    def replied(options = {})
       result =
         if ego_surfing?
           if mentions.any?
             mentions.map { |m| m.user }.map { |u| u.uid = u.id; u }
           else
-            client.users_who_replied_to_you(uid.to_i, options)
+            client.replied(uid.to_i, options)
           end
         elsif search_results.any?
           uids = dummy_client._extract_uids(search_results.to_a)
           dummy_client._extract_users(search_results.to_a, uids)
         else
-          client.users_who_replied_to_you(uid.to_i, options)
+          client.replied(uid.to_i, options)
         end.map { |u| u.uid = u.id; u }
 
       (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.uid.to_i }
     end
 
-    def users_which_you_faved(options = {})
+    def favoriting(options = {})
       if favorites.any?
-        client.users_which_you_faved(favorites.to_a, options)
+        client.favoriting(favorites.to_a, options)
       else
-        client.users_which_you_faved(uid.to_i, options)
+        client.favoriting(uid.to_i, options)
       end.map { |u| u.uid = u.id; u }
     end
 
@@ -95,9 +95,9 @@ module Concerns::TwitterUser::Api
       min = options.has_key?(:min) ? options.delete(:min) : 1
       options.merge!(uniq: false, min: min)
       user = Hashie::Mash.new({
-                                users_which_you_replied_to: users_which_you_replied_to(options),
-                                users_who_replied_to_you: users_who_replied_to_you(options),
-                                users_which_you_faved: users_which_you_faved(options)
+                                replying: replying(options),
+                                replied: replied(options),
+                                favoriting: favoriting(options)
 
                               })
 
@@ -122,46 +122,46 @@ module Concerns::TwitterUser::Api
       ]
     end
 
-    def users_which_you_removed_graph
-      large_rate = [users_which_you_removed.size * 10, 100].min
+    def removing_graph
+      large_rate = [removing.size * 10, 100].min
       [
         {name: I18n.t('legend.large'), y: large_rate},
         {name: I18n.t('legend.small'), y: 100 - large_rate}
       ]
     end
 
-    def users_who_removed_you_graph
-      large_rate = [users_who_removed_you.size * 10, 100].min
+    def removed_graph
+      large_rate = [removed.size * 10, 100].min
       [
         {name: I18n.t('legend.large'), y: large_rate},
         {name: I18n.t('legend.small'), y: 100 - large_rate}
       ]
     end
 
-    def users_which_you_replied_to_graph
+    def replying_graph
       friends_size = friends_count
-      users_which_you_replied_to_size = users_which_you_replied_to.size
+      replying_size = replying.size
       [
-        {name: I18n.t('legend.users_which_you_replied_to'), y: (users_which_you_replied_to_size.to_f / friends_size * 100)},
-        {name: I18n.t('legend.others'), y: ((friends_size - users_which_you_replied_to_size).to_f / friends_size * 100)}
+        {name: I18n.t('legend.replying'), y: (replying_size.to_f / friends_size * 100)},
+        {name: I18n.t('legend.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
       ]
     end
 
-    def users_who_replied_to_you_graph
+    def replied_graph
       followers_size = followers_count
-      users_who_replied_to_you_size = users_who_replied_to_you.size
+      replied_size = replied.size
       [
-        {name: I18n.t('legend.users_who_replied_to_you'), y: (users_who_replied_to_you_size.to_f / followers_size * 100)},
-        {name: I18n.t('legend.others'), y: ((followers_size - users_who_replied_to_you_size).to_f / followers_size * 100)}
+        {name: I18n.t('legend.replied'), y: (replied_size.to_f / followers_size * 100)},
+        {name: I18n.t('legend.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
       ]
     end
 
-    def users_which_you_faved_graph
+    def favoriting_graph
       friends_size = friends_count
-      users_which_you_faved_size = users_which_you_faved.size
+      favoriting_size = favoriting.size
       [
-        {name: I18n.t('legend.users_which_you_faved'), y: (users_which_you_faved_size.to_f / friends_size * 100)},
-        {name: I18n.t('legend.others'), y: ((friends_size - users_which_you_faved_size).to_f / friends_size * 100)}
+        {name: I18n.t('legend.favoriting'), y: (favoriting_size.to_f / friends_size * 100)},
+        {name: I18n.t('legend.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}
       ]
     end
 

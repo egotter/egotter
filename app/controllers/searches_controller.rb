@@ -1,8 +1,8 @@
 class SearchesController < ApplicationController
 
   DEBUG_PAGES = %i(debug clear_result_cache)
-  SEARCH_MENUS = %i(show statuses friends followers users_which_you_removed users_who_removed_you one_sided_friends one_sided_followers mutual_friends
-    common_friends common_followers users_which_you_replied_to users_who_replied_to_you users_which_you_faved inactive_friends inactive_followers
+  SEARCH_MENUS = %i(show statuses friends followers removing removed one_sided_friends one_sided_followers mutual_friends
+    common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
   NEED_LOGIN = %i(common_friends common_followers)
@@ -67,15 +67,15 @@ class SearchesController < ApplicationController
 
     @menu_items = [
       {
-        name: t('search_menu.users_which_you_removed', user: sn),
-        target: tu.users_which_you_removed,
-        graph: tu.users_which_you_removed_graph,
-        path_method: method(:users_which_you_removed_path).to_proc
+        name: t('search_menu.removing', user: sn),
+        target: tu.removing,
+        graph: tu.removing_graph,
+        path_method: method(:removing_path).to_proc
       }, {
-        name: t('search_menu.users_who_removed_you', user: sn),
-        target: tu.users_who_removed_you,
-        graph: tu.users_who_removed_you_graph,
-        path_method: method(:users_who_removed_you_path).to_proc
+        name: t('search_menu.removed', user: sn),
+        target: tu.removed,
+        graph: tu.removed_graph,
+        path_method: method(:removed_path).to_proc
       }, {
         name: t('search_menu.mutual_friends', user: sn),
         target: tu.mutual_friends,
@@ -92,20 +92,20 @@ class SearchesController < ApplicationController
         graph: tu.one_sided_followers_graph,
         path_method: method(:one_sided_followers_path).to_proc
       }, {
-        name: t('search_menu.users_which_you_replied_to', user: sn),
-        target: tu.users_which_you_replied_to, # calling users
-        graph: tu.users_which_you_replied_to_graph,
-        path_method: method(:users_which_you_replied_to_path).to_proc
+        name: t('search_menu.replying', user: sn),
+        target: tu.replying, # calling users
+        graph: tu.replying_graph,
+        path_method: method(:replying_path).to_proc
       }, {
-        name: t('search_menu.users_who_replied_to_you', user: sn),
-        target: tu.users_who_replied_to_you, # no calling
-        graph: tu.users_who_replied_to_you_graph,
-        path_method: method(:users_who_replied_to_you_path).to_proc
+        name: t('search_menu.replied', user: sn),
+        target: tu.replied, # no calling
+        graph: tu.replied_graph,
+        path_method: method(:replied_path).to_proc
       }, {
-        name: t('search_menu.users_which_you_faved', user: sn),
-        target: tu.users_which_you_faved, # no calling
-        graph: tu.users_which_you_faved_graph,
-        path_method: method(:users_which_you_faved_path).to_proc
+        name: t('search_menu.favoriting', user: sn),
+        target: tu.favoriting, # no calling
+        graph: tu.favoriting_graph,
+        path_method: method(:favoriting_path).to_proc
       }, {
         name: t('search_menu.inactive_friends', user: sn),
         target: tu.inactive_friends,
@@ -217,17 +217,17 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/users_which_you_removed
-  def users_which_you_removed
-    @user_items = build_user_items(@searched_tw_user.users_which_you_removed)
-    @title = t('search_menu.users_which_you_removed', user: "@#{@searched_tw_user.screen_name}")
+  # GET /searches/:screen_name/removing
+  def removing
+    @user_items = build_user_items(@searched_tw_user.removing)
+    @title = t('search_menu.removing', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
-  # GET /searches/:screen_name/users_who_removed_you
-  def users_who_removed_you
-    @user_items = build_user_items(@searched_tw_user.users_who_removed_you)
-    @title = t('search_menu.users_who_removed_you', user: "@#{@searched_tw_user.screen_name}")
+  # GET /searches/:screen_name/removed
+  def removed
+    @user_items = build_user_items(@searched_tw_user.removed)
+    @title = t('search_menu.removed', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
@@ -276,30 +276,30 @@ class SearchesController < ApplicationController
     render :common_result
   end
 
-  # GET /searches/:screen_name/users_which_you_replied_to
-  def users_which_you_replied_to
-    @user_items = build_user_items(@searched_tw_user.users_which_you_replied_to) # call users
-    @graph = @searched_tw_user.users_which_you_replied_to_graph
+  # GET /searches/:screen_name/replying
+  def replying
+    @user_items = build_user_items(@searched_tw_user.replying) # call users
+    @graph = @searched_tw_user.replying_graph
     @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
-    @title = t('search_menu.users_which_you_replied_to', user: "@#{@searched_tw_user.screen_name}")
+    @title = t('search_menu.replying', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
-  # GET /searches/:screen_name/users_who_replied_to_you
-  def users_who_replied_to_you
-    @user_items = build_user_items(@searched_tw_user.users_who_replied_to_you)
-    @graph = @searched_tw_user.users_who_replied_to_you_graph
+  # GET /searches/:screen_name/replied
+  def replied
+    @user_items = build_user_items(@searched_tw_user.replied)
+    @graph = @searched_tw_user.replied_graph
     @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
-    @title = t('search_menu.users_who_replied_to_you', user: "@#{@searched_tw_user.screen_name}")
+    @title = t('search_menu.replied', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
-  # GET /searches/:screen_name/users_which_you_faved
-  def users_which_you_faved
-    @user_items = build_user_items(@searched_tw_user.users_which_you_faved)
-    @graph = @searched_tw_user.users_which_you_faved_graph
+  # GET /searches/:screen_name/favoriting
+  def favoriting
+    @user_items = build_user_items(@searched_tw_user.favoriting)
+    @graph = @searched_tw_user.favoriting_graph
     @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
-    @title = t('search_menu.users_which_you_faved', user: "@#{@searched_tw_user.screen_name}")
+    @title = t('search_menu.favoriting', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
 
