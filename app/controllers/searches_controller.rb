@@ -12,9 +12,9 @@ class SearchesController < ApplicationController
   before_action :need_login,             only: NEED_LOGIN
   before_action :invalid_screen_name,    only: NEED_VALIDATION
   before_action :build_twitter_user,     only: NEED_VALIDATION
-  before_action :suspended_account,      only: NEED_VALIDATION, unless: :result_cache_exists?
-  before_action :unauthorized_account,   only: NEED_VALIDATION, unless: :result_cache_exists?
-  before_action :too_many_friends,       only: NEED_VALIDATION, unless: :result_cache_exists?
+  before_action :suspended_account,      only: NEED_VALIDATION, unless: 'PageCache.new(redis).exists?(@twitter_user.uid, current_user_id)'
+  before_action :unauthorized_account,   only: NEED_VALIDATION, unless: 'PageCache.new(redis).exists?(@twitter_user.uid, current_user_id)'
+  before_action :too_many_friends,       only: NEED_VALIDATION, unless: 'PageCache.new(redis).exists?(@twitter_user.uid, current_user_id)'
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
 
   before_action :set_twitter_user,       only: SEARCH_MENUS
@@ -58,10 +58,11 @@ class SearchesController < ApplicationController
   def show
     start_time = Time.zone.now
     tu = @searched_tw_user
+    page_cache = PageCache.new(redis)
 
-    if result_cache_exists?
-      logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
-      return render text: replace_csrf_meta_tags(result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key), tu.search_log.call_count)
+    if page_cache.exists?(@twitter_user.uid, current_user_id)
+      logger.debug "cache found action=#{action_name} key=#{page_cache.key(@twitter_user.uid, current_user_id)}"
+      return render text: replace_csrf_meta_tags(page_cache.read(@twitter_user.uid, current_user_id), Time.zone.now - start_time, page_cache.ttl(@twitter_user.uid, current_user_id), tu.search_log.call_count)
     end
 
     sn = '@' + tu.screen_name
@@ -192,7 +193,9 @@ class SearchesController < ApplicationController
 
     @title = t('search_menu.search_result', user: "@#{@searched_tw_user.screen_name}")
 
-    render text: replace_csrf_meta_tags(set_result_cache, Time.zone.now - start_time, redis.ttl(result_cache_key), tu.search_log.call_count, tu.client.call_count)
+    html = render_to_string
+    page_cache.write(@twitter_user.uid, current_user_id, html)
+    render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(@twitter_user.uid, current_user_id), tu.search_log.call_count, tu.client.call_count)
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
@@ -385,8 +388,9 @@ class SearchesController < ApplicationController
       searched_uid_list.add(searched_uid, current_user_id)
     end
 
-    if result_cache_exists?
-      logger.debug "cache found action=#{action_name} key=#{result_cache_key}"
+    page_cache = PageCache.new(redis)
+    if page_cache.exists?(@twitter_user.uid, current_user_id)
+      logger.debug "cache found action=#{action_name} key=#{page_cache.key(@twitter_user.uid, current_user_id)}"
       return redirect_to search_path(screen_name: searched_sn, id: searched_uid)
     end
 
@@ -427,7 +431,7 @@ class SearchesController < ApplicationController
   def clear_result_cache
     redirect_to '/' unless request.post?
     redirect_to '/' unless current_user.admin?
-    redis.clear_result_cache
+    PageCache.new(redis).clear
     redirect_to '/'
   end
 
@@ -437,7 +441,7 @@ class SearchesController < ApplicationController
     if tu.blank?
       # admin_signed_in? returns true and TwitterUser is deleted
       logger.warn '@twitter_user.latest_me is blank'
-      del_result_cache
+      PageCache.new(redis).delete(@twitter_user.uid, current_user_id)
       return create
     end
     tu.assign_attributes(client: client, egotter_context: 'search')
@@ -507,30 +511,6 @@ class SearchesController < ApplicationController
 
   def redis
     @redis ||= Redis.client
-  end
-
-  def result_cache_key
-    "searches:show:#{current_user_id}:#{@twitter_user.uid}-#{@twitter_user.screen_name}"
-  end
-
-  def result_cache_exists?
-    redis.exists(result_cache_key)
-  end
-
-  def result_cache
-    redis.get(result_cache_key)
-  end
-
-  RESULT_CACHE_TTL = Rails.configuration.x.constants['result_cache_ttl']
-
-  def set_result_cache
-    html = render_to_string
-    redis.setex(result_cache_key, RESULT_CACHE_TTL, html)
-    html
-  end
-
-  def del_result_cache
-    redis.del(result_cache_key)
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)

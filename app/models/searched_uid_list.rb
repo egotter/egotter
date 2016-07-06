@@ -1,7 +1,7 @@
 # Sorted Set
 class SearchedUidList
   KEY = Redis.foreground_search_searched_uids_key
-  EXPIRES_IN = Rails.configuration.x.constants['background_search_worker_recently_searched_threshold']
+  TTL = Rails.configuration.x.constants['background_search_worker_recently_searched_threshold']
 
   attr_reader :redis
 
@@ -14,7 +14,7 @@ class SearchedUidList
   end
 
   def cleanup
-    redis.zremrangebyscore(KEY, 0, Time.zone.now.to_i - EXPIRES_IN)
+    redis.zremrangebyscore(KEY, 0, Time.zone.now.to_i - TTL)
   end
 
   def exists?(uid, user_id)
