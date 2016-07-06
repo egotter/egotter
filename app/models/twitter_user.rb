@@ -152,6 +152,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def search_log
+    # TODO need to use user_id?
     log = BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid)
     Hashie::Mash.new(log.nil? ? {} : log.attributes)
   end
