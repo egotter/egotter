@@ -12,8 +12,7 @@ class ApiClient
 
   def self.instance(options = {})
     return Twitter::REST::Client.new if options.blank?
-    _config = config(options).merge(api_cache_prefix: Rails.configuration.x.constants['twitter_api_cache_prefix'])
-    Twitter::REST::Client.new(_config)
+    Twitter::REST::Client.new(config(options))
   end
 
   def self.dummy_instance

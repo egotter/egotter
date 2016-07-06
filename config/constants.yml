@@ -1,5 +1,4 @@
 default: &default
-  twitter_api_cache_prefix: '%Y%m%d%H'
   twitter_user_recently_created_threshold: 1800
   background_search_log_recently_created_threshold: 300
   background_update_log_recently_created_threshold: 300
@@ -14,6 +13,7 @@ default: &default
   kaomoji_path: 'data/kaomoji.json'
 development:
   <<: *default
+  result_cache_ttl: 120
 production:
   <<: *default
 test:
