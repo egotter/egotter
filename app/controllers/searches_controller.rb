@@ -375,13 +375,14 @@ class SearchesController < ApplicationController
   # POST /searches
   def create
     searched_uid, searched_sn = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
+    searched_uid_list = SearchedUidList.new(redis)
 
-    if searched_uid_exists?(searched_uid)
+    if searched_uid_list.exists?(searched_uid, current_user_id)
       logger.debug "not creating a search job because searched_uid is found #{searched_uid}:#{searched_sn}."
     else
       BackgroundSearchWorker.perform_async(
         searched_uid, searched_sn, current_user_id, @twitter_user.too_many_friends?)
-      add_searched_uid(searched_uid)
+      searched_uid_list.add(searched_uid, current_user_id)
     end
 
     if result_cache_exists?
@@ -530,29 +531,6 @@ class SearchesController < ApplicationController
 
   def del_result_cache
     redis.del(result_cache_key)
-  end
-
-  def searched_uids_key
-    Redis.foreground_search_searched_uids_key
-  end
-
-  def searched_uid_exists?(uid)
-    rem_expired_searched_uid
-    redis.zrank(searched_uids_key, "#{current_user_id}:#{uid}").present?
-  end
-
-  def add_searched_uid(uid)
-    rem_expired_searched_uid
-    redis.zadd(searched_uids_key, Time.zone.now.to_i, "#{current_user_id}:#{uid}")
-  end
-
-  def rem_expired_searched_uid
-    seconds = Rails.configuration.x.constants['background_search_worker_recently_searched_threshold']
-    redis.zremrangebyscore(searched_uids_key, 0, Time.zone.now.to_i - seconds)
-  end
-
-  def rem_searched_uid(uid)
-    redis.rem_searched_uid(uid)
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)

@@ -84,16 +84,8 @@ Redis.class_eval do
     zrem(self.class.background_update_worker_too_many_friends_key, uid.to_s)
   end
 
-  def rem_searched_uid(uid)
-    zrem(self.class.foreground_search_searched_uids_key, uid.to_s)
-  end
-
   def clear_result_cache
     _keys = keys('searches:*')
     del(_keys) if _keys.any?
-  end
-
-  def clear_searched_uid
-    del(self.class.foreground_search_searched_uids_key)
   end
 end
