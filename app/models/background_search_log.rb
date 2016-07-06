@@ -25,38 +25,46 @@
 
 class BackgroundSearchLog < ActiveRecord::Base
 
-  TooManyRequests = 'too many requests'
-  Unauthorized = 'unauthorized'
-  SomethingIsWrong = 'something is wrong'
+  class Unauthorized < StandardError
+    MESSAGE = 'unauthorized'
+  end
+
+  class TooManyRequests < StandardError
+    MESSAGE = 'too many requests'
+  end
+
+  class SomethingError < StandardError
+    MESSAGE = 'something is wrong'
+  end
+
+  def self.latest(uid, user_id)
+    order(created_at: :desc).find_by(uid: uid, user_id: user_id)
+  end
 
   def self.processing?(uid, user_id)
-    log = order(created_at: :desc).find_by(uid: uid, user_id: user_id)
+    log = latest(uid, user_id)
     log.blank? || !log.recently_created?
   end
 
   def self.finish?(uid, user_id)
-    log = order(created_at: :desc).find_by(uid: uid, user_id: user_id)
+    log = latest(uid, user_id)
     log.present? && log.recently_created?
   end
 
-  def self.success?(uid, user_id)
-    log = order(created_at: :desc).find_by(uid: uid, user_id: user_id)
-    finish?(uid, user_id) && log.status == true
+  def self.successfully_finished?(uid, user_id)
+    finish?(uid, user_id) && latest(uid, user_id).status == true
   end
 
-  def self.fail?(uid, user_id)
-    log = order(created_at: :desc).find_by(uid: uid, user_id: user_id)
-    finish?(uid, user_id) && log.status == false
+  def self.failed?(uid, user_id)
+    finish?(uid, user_id) && latest(uid, user_id).status == false
   end
 
-  def self.fail_reason(uid, user_id)
-    raise 'confirm fail? returns true' unless fail?(uid, user_id)
-    order(created_at: :desc).find_by(uid: uid, user_id: user_id).reason
+  def self.fail_reason!(uid, user_id)
+    failed?(uid, user_id) ? latest(uid, user_id).reason : raise
   end
 
-  def self.fail_message(uid, user_id)
-    raise 'confirm fail? returns true' unless fail?(uid, user_id)
-    order(created_at: :desc).find_by(uid: uid, user_id: user_id).message
+  def self.fail_message!(uid, user_id)
+    failed?(uid, user_id) ? latest(uid, user_id).message : raise
   end
 
   def self.success_logs(user_id, limit)

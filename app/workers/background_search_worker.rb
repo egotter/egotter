@@ -34,7 +34,7 @@ class BackgroundSearchWorker
           tu.search_and_touch
           create_log(true)
         else
-          create_log(false, BackgroundSearchLog::SomethingIsWrong,
+          create_log(false, BackgroundSearchLog::SomethingError::MESSAGE,
                      "save_with_bulk_insert failed(#{new_tu.errors.full_messages}) and old records does'nt exist")
         end
         logger.debug "#{user_name} #{bot_name(client)} not create(#{new_tu.errors.full_messages}) #{screen_name}"
@@ -45,13 +45,13 @@ class BackgroundSearchWorker
 
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{user_name} #{bot_name(client)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
-    create_log(false, BackgroundSearchLog::TooManyRequests)
+    create_log(false, BackgroundSearchLog::TooManyRequests::MESSAGE)
   rescue Twitter::Error::Unauthorized => e
     logger.warn "#{user_name} #{bot_name(client)} #{e.class} #{e.message}"
-    create_log(false, BackgroundSearchLog::Unauthorized)
+    create_log(false, BackgroundSearchLog::Unauthorized::MESSAGE)
   rescue => e
     logger.warn "#{user_name} #{bot_name(client)} #{e.class} #{e.message}"
-    create_log(false, BackgroundSearchLog::SomethingIsWrong, e.message)
+    create_log(false, BackgroundSearchLog::SomethingError::MESSAGE, e.message)
     raise e
   end
 

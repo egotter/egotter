@@ -380,9 +380,7 @@ class SearchesController < ApplicationController
     searched_uid, searched_sn = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
     searched_uid_list = SearchedUidList.new(redis)
 
-    if searched_uid_list.exists?(searched_uid, current_user_id)
-      logger.debug "not creating a search job because searched_uid is found #{searched_uid}:#{searched_sn}."
-    else
+    unless searched_uid_list.exists?(searched_uid, current_user_id)
       BackgroundSearchWorker.perform_async(
         searched_uid, searched_sn, current_user_id, @twitter_user.too_many_friends?)
       searched_uid_list.add(searched_uid, current_user_id)
@@ -390,7 +388,6 @@ class SearchesController < ApplicationController
 
     page_cache = PageCache.new(redis)
     if page_cache.exists?(@twitter_user.uid, current_user_id)
-      logger.debug "cache found action=#{action_name} key=#{page_cache.key(@twitter_user.uid, current_user_id)}"
       return redirect_to search_path(screen_name: searched_sn, id: searched_uid)
     end
 
@@ -406,14 +403,14 @@ class SearchesController < ApplicationController
       case
         when BackgroundSearchLog.processing?(uid, user_id)
           render json: {status: false, reason: 'processing'}
-        when BackgroundSearchLog.success?(uid, user_id)
+        when BackgroundSearchLog.successfully_finished?(uid, user_id)
           render json: {status: true}
-        when BackgroundSearchLog.fail?(uid, user_id)
+        when BackgroundSearchLog.failed?(uid, user_id)
           render json: {status: false,
-                        reason: BackgroundSearchLog.fail_reason(uid, user_id),
-                        message: BackgroundSearchLog.fail_message(uid, user_id)}
+                        reason: BackgroundSearchLog.fail_reason!(uid, user_id),
+                        message: BackgroundSearchLog.fail_message!(uid, user_id)}
         else
-          raise BackgroundSearchLog::SomethingIsWrong
+          raise BackgroundSearchLog::SomethingError
       end
     else
       @searched_tw_user = @twitter_user

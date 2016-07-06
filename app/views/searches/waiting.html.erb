@@ -99,11 +99,11 @@
         }
       } else {
         progress();
-        if (res.reason == '<%= BackgroundSearchLog::TooManyRequests %>') {
+        if (res.reason == '<%= BackgroundSearchLog::TooManyRequests::MESSAGE %>') {
           too_many_requests = true;
-        } else if (res.reason == '<%= BackgroundSearchLog::Unauthorized %>') {
+        } else if (res.reason == '<%= BackgroundSearchLog::Unauthorized::MESSAGE %>') {
           unauthorized = true;
-        } else if (res.reason == '<%= BackgroundSearchLog::SomethingIsWrong %>') {
+        } else if (res.reason == '<%= BackgroundSearchLog::SomethingError::MESSAGE %>') {
           something_is_wrong = true;
           response = res;
         } else {
