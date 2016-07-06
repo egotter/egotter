@@ -1,4 +1,5 @@
 class SearchesController < ApplicationController
+  include Validation
 
   DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(show statuses friends followers removing removed one_sided_friends one_sided_followers mutual_friends
@@ -40,7 +41,7 @@ class SearchesController < ApplicationController
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
   end
 
-  # not using befor_action
+  # not using before_action
   def menu
     return redirect_to welcome_path unless user_signed_in?
     if request.patch?
@@ -450,16 +451,6 @@ class SearchesController < ApplicationController
     params[:id].to_i
   end
 
-  def need_login
-    redirect_to '/', alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
-  end
-
-  def invalid_screen_name
-    if TwitterUser.new(screen_name: search_sn).invalid_screen_name?
-      redirect_to '/', alert: t('before_sign_in.invalid_twitter_id')
-    end
-  end
-
   def build_twitter_user
     user = client.user(search_sn)
     @twitter_user =
@@ -479,29 +470,6 @@ class SearchesController < ApplicationController
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
     redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
-  end
-
-  def suspended_account
-    if @twitter_user.suspended_account?
-      redirect_to '/', alert: t('before_sign_in.suspended_user', user: twitter_link(search_sn))
-    end
-  rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
-  end
-
-  def unauthorized_account
-    alert_msg = t('before_sign_in.protected_user',
-                  user: twitter_link(@twitter_user.screen_name),
-                  sign_in_link: sign_in_link)
-    return redirect_to '/', alert: alert_msg if @twitter_user.unauthorized?
-  rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
-  end
-
-  def too_many_friends
-    # do nothing
-    # if @twitter_user.too_many_friends?
-    # end
   end
 
   def build_user_items(items)

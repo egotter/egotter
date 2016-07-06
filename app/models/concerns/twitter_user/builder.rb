@@ -7,7 +7,7 @@ module Concerns::TwitterUser::Builder
     def build_by_user(user, attrs = {})
       build_relation = attrs.has_key?(:build_relation) ? attrs.delete(:build_relation) : false
       tu = new(attrs) do |tu|
-        tu.uid = user.id
+        tu.uid = user.id.to_i
         tu.screen_name = user.screen_name
         tu.user_info = user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
       end
@@ -68,7 +68,7 @@ module Concerns::TwitterUser::Builder
       # Not using uniq for mentions, search_results and favorites intentionally
 
       client._fetch_parallelly([
-                                 {method: :users_which_you_replied_to, args: [uid_i]}
+                                 {method: :replying, args: [uid_i]} # TODO create cache?
                                ])
 
       _friends.each do |f|
