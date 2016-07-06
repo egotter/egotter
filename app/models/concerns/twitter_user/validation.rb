@@ -28,12 +28,12 @@ module Concerns::TwitterUser::Validation
       !(screen_name =~ SCREEN_NAME_REGEXP)
     end
 
-    def anonymous_search?
+    def search_without_login?
       login_user.nil?
     end
 
     def ego_surfing?
-      !anonymous_search? &&
+      !search_without_login? &&
       client.present? &&
         uid.to_i == login_user.uid.to_i &&
         uid.to_i == client.uid.to_i &&
@@ -55,27 +55,33 @@ module Concerns::TwitterUser::Validation
 
       # login_user is protected and search himself
       if egotter_context == 'search'
-        if anonymous_search?
-          errors[:base] << 'search protected user without login'
-          return true
-        end
-        return false if ego_surfing?
-
-        # TODO if this instance has followers, use follower_uids.include?(login_user.uid.to_i)
-        if client.present?
-          return false if client.friendship?(login_user.uid_i, uid.to_i) # login user follows searched user
-        end
-
-        true
+        unauthorized_search?
       elsif egotter_context == 'test'
         false
       else
-        # background job
-        return false if User.exists?(uid: uid.to_i)
-
-        errors[:base] << 'unauthorized worker'
-        true
+        unauthorized_job?
       end
+    end
+
+    def unauthorized_search?
+      if search_without_login?
+        errors[:base] << 'search protected user without login'
+        return true
+      end
+      return false if ego_surfing?
+
+      # TODO if this instance has followers, use follower_uids.include?(login_user.uid.to_i)
+      if client.present?
+        return false if client.friendship?(login_user.uid_i, uid.to_i) # login user follows searched user
+      end
+
+      true
+    end
+
+    def unauthorized_job?
+      return false if User.exists?(uid: uid.to_i)
+      errors[:base] << 'unauthorized worker'
+      true
     end
 
     def suspended_account?

@@ -377,7 +377,7 @@ class SearchesController < ApplicationController
     searched_uid, searched_sn = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
 
     if searched_uid_exists?(searched_uid)
-      logger.debug "searched_uid found #{searched_uid}:#{searched_sn}"
+      logger.debug "not creating a search job because searched_uid is found #{searched_uid}:#{searched_sn}."
     else
       BackgroundSearchWorker.perform_async(
         searched_uid, searched_sn, current_user_id, @twitter_user.too_many_friends?)
