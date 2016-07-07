@@ -51,7 +51,7 @@ class User < ActiveRecord::Base
     end
 
     redis = Redis.client
-    SearchedUidList.new(redis).delete(uid)
+    SearchedUidList.new(redis).delete(user.uid)
     redis.rem_unauthorized_uid(user.uid)
     redis.rem_too_many_friends_uid(user.uid)
 
