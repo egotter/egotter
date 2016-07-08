@@ -1,52 +1,12 @@
-/home/ec2-user/egotter/log/development.log {
-  dateext
-  dateformat _%Y%m%d
-  daily
-  missingok
-  rotate 30
-  compress
-  delaycompress
-  notifempty
-  copytruncate
-}
-
-/home/ec2-user/egotter/log/production.log {
-  dateext
-  dateformat _%Y%m%d
-  daily
-  missingok
-  rotate 30
-  compress
-  delaycompress
-  notifempty
-  copytruncate
-}
-
-/home/ec2-user/egotter/log/ex_twitter.log {
-  dateext
-  dateformat _%Y%m%d
-  daily
-  missingok
-  rotate 30
-  compress
-  delaycompress
-  notifempty
-  copytruncate
-}
-
-/home/ec2-user/egotter/log/twitter_with_auto_pagination.log {
-  dateext
-  dateformat _%Y%m%d
-  daily
-  missingok
-  rotate 30
-  compress
-  delaycompress
-  notifempty
-  copytruncate
-}
-
-/home/ec2-user/egotter/log/sidekiq.log {
+/home/ec2-user/egotter/log/development.log
+/home/ec2-user/egotter/log/production.log
+/home/ec2-user/egotter/log/ex_twitter.log
+/home/ec2-user/egotter/log/twitter_with_auto_pagination.log
+/home/ec2-user/egotter/log/sidekiq.log
+/home/ec2-user/egotter/log/crontab.log
+/home/ec2-user/egotter/log/newrelic_agent.log
+/home/ec2-user/egotter/log/unicorn.log
+{
   dateext
   dateformat _%Y%m%d
   daily
