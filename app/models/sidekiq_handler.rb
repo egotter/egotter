@@ -1,4 +1,4 @@
-class SidekiqHandler < ActiveRecord::Base
+class SidekiqHandler
   def self.queue
     Sidekiq::Queue.new('egotter')
   end

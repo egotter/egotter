@@ -52,6 +52,7 @@ gem 'unicorn'
 gem 'unicorn-worker-killer'
 gem 'meta-tags'
 gem 'twitter_with_auto_pagination'
+gem 'rack-user_agent'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

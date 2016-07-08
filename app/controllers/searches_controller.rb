@@ -19,7 +19,7 @@ class SearchesController < ApplicationController
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
 
   before_action :set_twitter_user,       only: SEARCH_MENUS
-  before_action :create_log,             only: SEARCH_MENUS
+  before_action :create_log,             only: (%i(new create waiting menu welcome) + SEARCH_MENUS)
 
 
   before_action :basic_auth, only: DEBUG_PAGES
@@ -159,7 +159,7 @@ class SearchesController < ApplicationController
   def common_friends
     @user_items = build_user_items(@searched_tw_user.common_friends(current_user.twitter_user))
     @graph = @searched_tw_user.common_friends_graph(current_user.twitter_user)
-    @tweet_text = view_context.common_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, @user_items.size - 3)
+    @tweet_text = view_context.common_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
     @title = t('search_menu.common_friends', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
@@ -168,7 +168,7 @@ class SearchesController < ApplicationController
   def common_followers
     @user_items = build_user_items(@searched_tw_user.common_followers(current_user.twitter_user))
     @graph = @searched_tw_user.common_followers_graph(current_user.twitter_user)
-    @tweet_text = view_context.common_followers_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user, @user_items.size - 3)
+    @tweet_text = view_context.common_followers_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
     @title = t('search_menu.common_followers', user: "@#{@searched_tw_user.screen_name}", login: "@#{current_user.screen_name}")
     render :common_result
   end
@@ -177,7 +177,7 @@ class SearchesController < ApplicationController
   def replying
     @user_items = build_user_items(@searched_tw_user.replying) # call users
     @graph = @searched_tw_user.replying_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.replying', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -186,7 +186,7 @@ class SearchesController < ApplicationController
   def replied
     @user_items = build_user_items(@searched_tw_user.replied)
     @graph = @searched_tw_user.replied_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.replied', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -195,7 +195,7 @@ class SearchesController < ApplicationController
   def favoriting
     @user_items = build_user_items(@searched_tw_user.favoriting)
     @graph = @searched_tw_user.favoriting_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.favoriting', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -204,7 +204,7 @@ class SearchesController < ApplicationController
   def inactive_friends
     @user_items = build_user_items(@searched_tw_user.inactive_friends)
     @graph = @searched_tw_user.inactive_friends_graph
-    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
+    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.inactive_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -213,7 +213,7 @@ class SearchesController < ApplicationController
   def inactive_followers
     @user_items = build_user_items(@searched_tw_user.inactive_followers)
     @graph = @searched_tw_user.inactive_followers_graph
-    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
+    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.inactive_followers', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -232,7 +232,7 @@ class SearchesController < ApplicationController
   def close_friends
     @user_items = build_user_items(@searched_tw_user.close_friends)
     @graph = @searched_tw_user.close_friends_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map{|i| i[:target] }, @searched_tw_user)
+    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.close_friends', user: "@#{@searched_tw_user.screen_name}")
     render :common_result
   end
@@ -383,16 +383,29 @@ class SearchesController < ApplicationController
     Kaminari.paginate_array(items.map { |t| {target: t} }).page(params[:page]).per(100)
   end
 
+  def fingerprint
+    if session[:fingerprint].nil? || session[:fingerprint] == -1
+      session[:fingerprint] = (session.id.nil? ? -1 : session.id)
+    else
+      session[:fingerprint]
+    end
+  end
+
   def create_log
-    SearchLog.create(
-      session_id: session.id,
-      user_id: current_user_id,
-      uid: @searched_tw_user.uid,
-      screen_name: @searched_tw_user.screen_name,
-      action: action_name,
-      ego_surfing: (user_signed_in? && current_user.uid.to_i == @searched_tw_user.uid.to_i))
+    SearchLog.create!(
+      session_id:  fingerprint,
+      user_id:     current_user_id,
+      uid:         @searched_tw_user.nil? ? -1 : @searched_tw_user.uid,
+      screen_name: @searched_tw_user.nil? ? -1 : @searched_tw_user.screen_name,
+      action:      action_name,
+      ego_surfing: (user_signed_in? && @searched_tw_user.present? && current_user.uid.to_i == @searched_tw_user.uid.to_i),
+      method:      request.method,
+      device_type: request.device_type,
+      user_agent: request.user_agent,
+      referer:    request.referer.nil? ? '' : request.referer
+    )
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
   end
 
   def twitter_link(screen_name)

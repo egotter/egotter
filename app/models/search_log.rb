@@ -9,8 +9,11 @@
 #  screen_name :string(191)      default(""), not null
 #  action      :string(191)      default(""), not null
 #  ego_surfing :boolean          default(FALSE), not null
+#  method      :string(191)      default(""), not null
+#  device_type :string(191)      default(""), not null
+#  user_agent  :string(191)      default(""), not null
+#  referer     :string(191)      default(""), not null
 #  created_at  :datetime         not null
-#  updated_at  :datetime         not null
 #
 # Indexes
 #
