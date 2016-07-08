@@ -12,7 +12,7 @@ class ApplicationController < ActionController::Base
     new_user_session_path(scope)
   end
 
-  helper_method :admin_signed_in?, :sign_in_link, :sign_out_link, :search_oneself?, :search_others?
+  helper_method :admin_signed_in?, :sign_in_link, :sign_out_link, :search_oneself?, :search_others?, :user_omniauth_authorize_path
 
   private
   def admin_signed_in?
@@ -33,5 +33,10 @@ class ApplicationController < ActionController::Base
 
   def search_others?(uid)
     user_signed_in? && current_user.uid.to_i != uid.to_i
+  end
+
+  # https://github.com/plataformatec/devise/issues/3983
+  def user_omniauth_authorize_path(*args)
+    '/users/auth/twitter'
   end
 end
