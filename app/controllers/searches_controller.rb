@@ -395,10 +395,10 @@ class SearchesController < ApplicationController
     SearchLog.create!(
       session_id:  fingerprint,
       user_id:     current_user_id,
-      uid:         @searched_tw_user.nil? ? -1 : @searched_tw_user.uid,
-      screen_name: @searched_tw_user.nil? ? -1 : @searched_tw_user.screen_name,
+      uid:         @twitter_user.nil? ? -1 : @twitter_user.uid,
+      screen_name: @twitter_user.nil? ? -1 : @twitter_user.screen_name,
       action:      action_name,
-      ego_surfing: (user_signed_in? && @searched_tw_user.present? && current_user.uid.to_i == @searched_tw_user.uid.to_i),
+      ego_surfing: (user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i),
       method:      request.method,
       device_type: request.device_type,
       user_agent: request.user_agent,
