@@ -33,7 +33,7 @@ stop() {
 }
 
 status() {
-  ps -ef | grep 'unicorn' | grep -v grep
+  ps -ef | grep 'unicorn_rails' | grep -v grep
   return $?
 }
 
