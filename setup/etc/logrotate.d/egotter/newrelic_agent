@@ -1,0 +1,11 @@
+/home/ec2-user/egotter/log/newrelic_agent.log {
+  dateext
+  dateformat _%Y%m%d
+  daily
+  missingok
+  rotate 30
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+}

@@ -30,4 +30,5 @@ sudo chkconfig nginx on
 sudo chown -R ec2-user:ec2-user /var/log/nginx
 
 # logrotate
-sudo cp ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
+sudo cp -r ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
+sudo sed -i '/include \/etc\/logrotate.d/a include \/etc\/logrotate.d\/egotter' /etc/logrotate.conf
