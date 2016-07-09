@@ -18,6 +18,7 @@
 
 /ddagent-install.log
 /.idea
+/.irbrc
 /.pryrc
 /dump.rdb
 /dump.sql
