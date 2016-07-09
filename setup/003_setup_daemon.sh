@@ -14,6 +14,10 @@ sudo service redis start
 sudo cp ./setup/etc/init.d/sidekiq /etc/init.d/sidekiq
 sudo service sidekiq start
 
+# unicorn
+sudo cp ./setup/etc/init.d/unicorn /etc/init.d/unicorn
+sudo service unicorn start
+
 # monit
 sudo cp /etc/monit.conf /etc/monit.conf.bak
 sudo cp ./setup/etc/monit.conf /etc/monit.conf
