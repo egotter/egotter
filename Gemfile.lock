@@ -236,6 +236,7 @@ GEM
       actionpack (>= 4.0)
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
+    stackprof (0.2.9)
     therubyracer (0.12.2)
       libv8 (~> 3.16.14.0)
       ref
@@ -317,6 +318,7 @@ DEPENDENCIES
   sdoc (~> 0.4.0)
   sidekiq
   sinatra
+  stackprof
   therubyracer
   twitter
   twitter_with_auto_pagination
