@@ -20,7 +20,7 @@ class SearchesController < ApplicationController
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
 
   before_action :set_twitter_user,       only: SEARCH_MENUS
-  before_action :create_log,             only: (%i(new create waiting menu welcome) + SEARCH_MENUS)
+  before_action :create_log,             only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
 
 
   before_action :basic_auth, only: DEBUG_PAGES
@@ -55,6 +55,14 @@ class SearchesController < ApplicationController
   end
 
   def support
+  end
+
+  def sign_in
+    redirect_to '/users/auth/twitter'
+  end
+
+  def sign_out
+    redirect_to destroy_user_session_path
   end
 
   def show
@@ -92,7 +100,7 @@ class SearchesController < ApplicationController
     render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(@twitter_user.uid, current_user_id), tu.search_log.call_count, tu.client.call_count)
 
   rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
   end
 
   # GET /searches/:screen_name/statuses
@@ -352,7 +360,7 @@ class SearchesController < ApplicationController
     @twitter_user =
       TwitterUser.build_by_user(user, client: client, user_id: current_user_id, egotter_context: 'search')
   rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
   rescue Twitter::Error::NotFound => e
     redirect_to '/', alert: t('before_sign_in.not_found')
   rescue Twitter::Error::Unauthorized => e
@@ -360,12 +368,12 @@ class SearchesController < ApplicationController
       if user_signed_in?
         t("after_sign_in.unauthorized", sign_out_link: sign_out_link)
       else
-        t("before_sign_in.unauthorized", sign_in_link: sign_in_link)
+        t("before_sign_in.unauthorized", sign_in_link: welcome_link)
       end
     redirect_to '/', alert: alert_msg.html_safe
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
-    redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
+    redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: welcome_link)
   end
 
   def build_user_items(items)

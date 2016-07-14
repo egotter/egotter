@@ -1,5 +1,5 @@
 class PageCache
-  TTL = Rails.configuration.x.constants['result_cache_ttl']
+  TTL = Rails.configuration.x.constants['page_cache_ttl']
 
   attr_reader :redis
 

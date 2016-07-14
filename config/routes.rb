@@ -32,11 +32,14 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/usage_stats', to: 'searches#usage_stats', as: :usage_stats
   get 'searches/:screen_name/update_histories', to: 'searches#update_histories', as: :update_histories
 
+  get '/sign_in', to: 'searches#sign_in', as: :sign_in
+  get '/sign_out', to: 'searches#sign_out', as: :sign_out
+
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
     omniauth_callbacks: 'users/omniauth_callbacks'
   }
   as :user do
-    get '/sign_out' => 'devise/sessions#destroy', :as => :destroy_user_session
+    get '/_sign_out' => 'devise/sessions#destroy', :as => :destroy_user_session
     get '/' => 'devise/sessions#new', :as => :new_user_session
   end
 

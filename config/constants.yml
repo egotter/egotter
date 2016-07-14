@@ -3,7 +3,7 @@ default: &default
   background_search_log_recently_created_threshold: 300
   background_update_log_recently_created_threshold: 300
   background_search_worker_recently_searched_threshold: 300
-  result_cache_ttl: 86400
+  page_cache_ttl: 86400
   many_friends_threshold: 1000
   too_many_friends_threshold: 5000
   bot_path: 'data/bot.json'
@@ -13,7 +13,7 @@ default: &default
   kaomoji_path: 'data/kaomoji.json'
 development:
   <<: *default
-  result_cache_ttl: 120
+  page_cache_ttl: 120
 production:
   <<: *default
 test:

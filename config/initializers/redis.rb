@@ -3,7 +3,7 @@ Redis.class_eval do
     new(host: ENV['REDIS_HOST'], driver: :hiredis)
   end
 
-  DEFAULT_EGOTTER_CACHE_TTL = Rails.configuration.x.constants['result_cache_ttl']
+  DEFAULT_EGOTTER_CACHE_TTL = Rails.configuration.x.constants['page_cache_ttl']
 
   def fetch(key, ttl = DEFAULT_EGOTTER_CACHE_TTL)
     if block_given?
