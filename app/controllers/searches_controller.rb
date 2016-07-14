@@ -401,8 +401,10 @@ class SearchesController < ApplicationController
       ego_surfing: (user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i),
       method:      request.method,
       device_type: request.device_type,
-      user_agent: request.user_agent,
-      referer:    request.referer.nil? ? '' : request.referer
+      os:          request.os,
+      browser:     request.browser,
+      user_agent:  request.user_agent,
+      referer:     request.referer.nil? ? '' : truncate(request.referer, length: 180)
     )
   rescue => e
     logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"

@@ -149,12 +149,15 @@ ActiveRecord::Schema.define(version: 20160221142229) do
     t.boolean  "ego_surfing",             default: false, null: false
     t.string   "method",      limit: 191, default: "",    null: false
     t.string   "device_type", limit: 191, default: "",    null: false
+    t.string   "os",          limit: 191, default: "",    null: false
+    t.string   "browser",     limit: 191, default: "",    null: false
     t.string   "user_agent",  limit: 191, default: "",    null: false
     t.string   "referer",     limit: 191, default: "",    null: false
     t.datetime "created_at",                              null: false
   end
 
   add_index "search_logs", ["action"], name: "index_search_logs_on_action", using: :btree
+  add_index "search_logs", ["created_at"], name: "index_search_logs_on_created_at", using: :btree
   add_index "search_logs", ["screen_name"], name: "index_search_logs_on_screen_name", using: :btree
   add_index "search_logs", ["uid", "action"], name: "index_search_logs_on_uid_and_action", using: :btree
   add_index "search_logs", ["uid"], name: "index_search_logs_on_uid", using: :btree

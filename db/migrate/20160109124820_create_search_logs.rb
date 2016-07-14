@@ -9,6 +9,8 @@ class CreateSearchLogs < ActiveRecord::Migration
       t.boolean :ego_surfing, null: false, default: false
       t.string  :method,      null: false, default: ''
       t.string  :device_type, null: false, default: ''
+      t.string  :os,          null: false, default: ''
+      t.string  :browser,     null: false, default: ''
       t.string  :user_agent,  null: false, default: ''
       t.string  :referer,     null: false, default: ''
 
@@ -18,6 +20,7 @@ class CreateSearchLogs < ActiveRecord::Migration
     add_index :search_logs, :uid
     add_index :search_logs, :screen_name
     add_index :search_logs, :action
+    add_index :search_logs, :created_at
     add_index :search_logs, [:uid, :action]
   end
 end
