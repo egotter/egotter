@@ -55,6 +55,7 @@ gem 'twitter_with_auto_pagination'
 gem 'rack-user_agent'
 gem 'stackprof'
 gem 'mixpanel-ruby'
+gem 'dogstatsd-ruby'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
