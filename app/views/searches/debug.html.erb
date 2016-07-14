@@ -64,52 +64,6 @@
 <br>
 
 <table border="1">
-  <caption>Sidekiq</caption>
-  <% start = Time.zone.now %>
-  <% queue = SidekiqHandler.queue %>
-  <% stats = SidekiqHandler.stats %>
-  <tr>
-    <td>queue size</td>
-    <td><%= queue.size %></td>
-  </tr>
-  <tr>
-    <td>delay occurs</td>
-    <td><%= SidekiqHandler.delay_occurs? %></td>
-  </tr>
-  <tr>
-    <td>delay occurs rate</td>
-    <% redis = Redis.client %>
-    <td><%= redis.delay_occurs_count %>(<%= number_with_precision(redis.delay_occurs_rate, precision: 2) %>)</td>
-  </tr>
-  <tr>
-    <td>latency</td>
-    <td><%= queue.latency %></td>
-  </tr>
-  <tr>
-    <td>process</td>
-    <td><%= SidekiqHandler.process_set.size %></td>
-  </tr>
-  <tr>
-    <td>active workers</td>
-    <td><%= SidekiqHandler.workers.size %></td>
-  </tr>
-  <tr>
-    <td>processed</td>
-    <td><%= stats.processed %></td>
-  </tr>
-  <tr>
-    <td>failed</td>
-    <td><%= stats.failed %></td>
-  </tr>
-  <tr>
-    <td>enqueued</td>
-    <td><%= stats.enqueued %></td>
-  </tr>
-</table>
-<div><%= Time.zone.now - start %>s</div>
-<br>
-
-<table border="1">
   <caption>Daily New User</caption>
   <% start = Time.zone.now %>
   <%
