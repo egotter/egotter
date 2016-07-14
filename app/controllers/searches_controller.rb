@@ -1,6 +1,7 @@
 class SearchesController < ApplicationController
   include Validation
   include MenuItemBuilder
+  include Logging
 
   DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(show statuses friends followers removing removed one_sided_friends one_sided_followers mutual_friends
@@ -381,33 +382,6 @@ class SearchesController < ApplicationController
 
   def build_tweet_items(items)
     Kaminari.paginate_array(items.map { |t| {target: t} }).page(params[:page]).per(100)
-  end
-
-  def fingerprint
-    if session[:fingerprint].nil? || session[:fingerprint] == -1
-      session[:fingerprint] = (session.id.nil? ? -1 : session.id)
-    else
-      session[:fingerprint]
-    end
-  end
-
-  def create_log
-    SearchLog.create!(
-      session_id:  fingerprint,
-      user_id:     current_user_id,
-      uid:         @twitter_user.nil? ? -1 : @twitter_user.uid,
-      screen_name: @twitter_user.nil? ? -1 : @twitter_user.screen_name,
-      action:      action_name,
-      ego_surfing: (user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i),
-      method:      request.method,
-      device_type: request.device_type,
-      os:          request.os,
-      browser:     request.browser,
-      user_agent:  request.user_agent,
-      referer:     request.referer.nil? ? '' : truncate(request.referer, length: 180)
-    )
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
   end
 
   def twitter_link(screen_name)
