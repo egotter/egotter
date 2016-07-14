@@ -8,6 +8,8 @@ class DogstatsdWorker
     statsd = Statsd.new('localhost', 8125)
     table_stats(statsd)
     sidekiq_stats(statsd)
+
+    DogstatsdWorker.perform_in(5.minutes)
   end
 
   def table_stats(statsd)
