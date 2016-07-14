@@ -8,7 +8,7 @@ module Logging
   end
 
   def create_log
-    SearchLog.create!(
+    attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
       uid:         @twitter_user.nil? ? -1 : @twitter_user.uid,
@@ -20,8 +20,10 @@ module Logging
       os:          request.os,
       browser:     request.browser,
       user_agent:  request.user_agent,
-      referer:     referer
-    )
+      referer:     referer,
+      created_at: Time.zone.now
+    }
+    CreateSearchLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
   end
