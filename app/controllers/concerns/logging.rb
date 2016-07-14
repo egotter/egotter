@@ -7,6 +7,27 @@ module Logging
 
   end
 
+  def create_log
+    SearchLog.create!(
+      session_id:  fingerprint,
+      user_id:     current_user_id,
+      uid:         @twitter_user.nil? ? -1 : @twitter_user.uid,
+      screen_name: @twitter_user.nil? ? -1 : @twitter_user.screen_name,
+      action:      action_name,
+      ego_surfing: ego_surfing?,
+      method:      request.method,
+      device_type: request.device_type,
+      os:          request.os,
+      browser:     request.browser,
+      user_agent:  request.user_agent,
+      referer:     referer
+    )
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
+  end
+
+  private
+
   def fingerprint
     if session[:fingerprint].nil? || session[:fingerprint].to_s == '-1'
       session[:fingerprint] = (session.id.nil? ? '-1' : session.id)
@@ -20,22 +41,11 @@ module Logging
     session[:fingerprint]
   end
 
-  def create_log
-    SearchLog.create!(
-      session_id:  fingerprint,
-      user_id:     current_user_id,
-      uid:         @twitter_user.nil? ? -1 : @twitter_user.uid,
-      screen_name: @twitter_user.nil? ? -1 : @twitter_user.screen_name,
-      action:      action_name,
-      ego_surfing: (user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i),
-      method:      request.method,
-      device_type: request.device_type,
-      os:          request.os,
-      browser:     request.browser,
-      user_agent:  request.user_agent,
-      referer:     request.referer.nil? ? '' : view_context.truncate(request.referer, length: 180)
-    )
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
+  def ego_surfing?
+    user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i
+  end
+
+  def referer
+    request.referer.nil? ? '' : view_context.truncate(request.referer, length: 180, escape: false)
   end
 end
