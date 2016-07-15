@@ -18,7 +18,6 @@ module Concerns::TwitterUser::Validation
       obj.validate :suspended_account?
       obj.validate :inconsistent_friends?
       obj.validate :inconsistent_followers?
-      obj.validate :zero_friends?
       obj.validate :too_many_friends?
       obj.validate :recently_created_record_exists?
       obj.validate :same_record_exists?
