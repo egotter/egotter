@@ -16,9 +16,6 @@ module Concerns::TwitterUser::Validation
 
       obj.validate :unauthorized?
       obj.validate :suspended_account?
-      obj.validate :inconsistent_friends?
-      obj.validate :inconsistent_followers?
-      obj.validate :too_many_friends?
       obj.validate :recently_created_record_exists?
       obj.validate :same_record_exists?
     end
@@ -80,6 +77,7 @@ module Concerns::TwitterUser::Validation
       false
     end
 
+    # not using in valid?
     def inconsistent_friends?
       return false if zero_friends?
 
@@ -91,6 +89,7 @@ module Concerns::TwitterUser::Validation
       false
     end
 
+    # not using in valid?
     def inconsistent_followers?
       return false if zero_followers?
 
@@ -115,13 +114,14 @@ module Concerns::TwitterUser::Validation
     # not using in valid?
     def many_friends?
       if friends_count + followers_count > MANY_FRIENDS
-        errors[:base] << "many friends(#{friends_count}) and followers(#{followers_count})"
+        errors[:base] << "many friends #{friends_count} and followers #{followers_count}"
         return true
       end
 
       false
     end
 
+    # not using in valid?
     def too_many_friends?
       friends_limit =
         if egotter_context == 'search'
@@ -131,7 +131,7 @@ module Concerns::TwitterUser::Validation
         end
 
       if friends_count + followers_count > friends_limit
-        errors[:base] << "too many friends(#{friends_count}) and followers(#{followers_count})"
+        errors[:base] << "too many friends #{friends_count} and followers #{followers_count}"
         return true
       end
 
