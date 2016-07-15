@@ -27,7 +27,9 @@ module Validation
     alert_msg = t('before_sign_in.protected_user',
                   user: twitter_link(@twitter_user.screen_name),
                   sign_in_link: welcome_link)
-    return redirect_to '/', alert: alert_msg if @twitter_user.unauthorized?
+    if @twitter_user.unauthorized? && !(user_signed_in? && current_user.has_permission_to_look?(client, @twitter_user.uid))
+      redirect_to '/', alert: alert_msg
+    end
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
   end

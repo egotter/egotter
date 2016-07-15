@@ -31,18 +31,10 @@ class TwitterUser < ActiveRecord::Base
     obj.has_many :favorites
   end
 
-  attr_accessor :client, :egotter_context, :without_friends
+  attr_accessor :client, :egotter_context
 
   def login_user
     User.find_by(id: user_id)
-  end
-
-  def without_friends?
-    if without_friends.nil?
-      friends.size == 0 && followers.size == 0
-    else
-      !!without_friends
-    end
   end
 
   include Concerns::TwitterUser::UserInfoAccessor
@@ -99,18 +91,14 @@ class TwitterUser < ActiveRecord::Base
     begin
       log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
 
-      unless without_friends
-        self.transaction do
-          _friends.map {|f| f.from_id = self.id }
-          _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
-        end
+      self.transaction do
+        _friends.map {|f| f.from_id = self.id }
+        _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
       end
 
-      unless without_friends
-        self.transaction do
-          _followers.map {|f| f.from_id = self.id }
-          _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
-        end
+      self.transaction do
+        _followers.map {|f| f.from_id = self.id }
+        _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
       end
 
       self.transaction do

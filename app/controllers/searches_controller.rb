@@ -286,8 +286,7 @@ class SearchesController < ApplicationController
       values = {
         uid: uid,
         screen_name: screen_name,
-        user_id: current_user_id,
-        without_friends: @twitter_user.too_many_friends?
+        user_id: current_user_id
       }
       BackgroundSearchWorker.perform_async(values)
       searched_uid_list.add(uid, current_user_id)
@@ -364,7 +363,7 @@ class SearchesController < ApplicationController
   def build_twitter_user
     user = client.user(search_sn)
     @twitter_user =
-      TwitterUser.build_by_user(user, client: client, user_id: current_user_id, egotter_context: 'search')
+      TwitterUser.build_without_relations(client, user.id, current_user_id, 'search')
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
   rescue Twitter::Error::NotFound => e

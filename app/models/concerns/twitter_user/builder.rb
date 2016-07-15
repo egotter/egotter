@@ -4,29 +4,32 @@ module Concerns::TwitterUser::Builder
   extend ActiveSupport::Concern
 
   class_methods do
-    def build_by_user(user, attrs = {})
-      build_relation = attrs.has_key?(:build_relation) ? attrs.delete(:build_relation) : false
-      tu = new(attrs) do |tu|
-        tu.uid = user.id.to_i
-        tu.screen_name = user.screen_name
-        tu.user_info = user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json # TODO check the type of keys and values
-      end
-      tu.build_relations if build_relation
+    def _basic_build(user, user_id, egotter_context)
+      tu = TwitterUser.new(
+        uid: user.id,
+        screen_name: user.screen_name,
+        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, # TODO check the type of keys and values
+        user_id: user_id
+      )
+      tu.egotter_context = egotter_context unless egotter_context.nil?
       tu
     end
 
-    def build_by_client(client, user, attrs = {})
-      build_by_user(client.user(user), attrs.merge(client: client))
+    def build_with_relations(client, uid, user_id, egotter_context = nil)
+      tu = _basic_build(client.user(uid.to_i), user_id, egotter_context)
+      tu._build_relations(client)
+      tu
     end
 
-    def build(client, user, option = {})
-      build_by_client(client, user, option)
+    def build_without_relations(client, uid, user_id, egotter_context = nil)
+      _basic_build(client.user(uid.to_i), user_id, egotter_context)
     end
-
   end
 
   included do
-    def build_relations
+  end
+
+    def _build_relations(client)
       uid_i = uid.to_i
       search_query = "@#{screen_name}"
 
@@ -40,7 +43,7 @@ module Concerns::TwitterUser::Builder
           {method: :mentions_timeline, args: [uid_i]}, # for users_who_replied_to_you
           {method: :favorites, args: [uid_i]} # for users_which_you_faved
         ]
-        if without_friends
+        if too_many_friends?
           candidates = candidates.slice(2, candidates.size - 2)
           _statuses, _search_results, _, _mentions, _favorites = client._fetch_parallelly(candidates)
           _friends = _followers = []
@@ -55,7 +58,7 @@ module Concerns::TwitterUser::Builder
           {method: :search, args: [search_query]},
           {method: :favorites, args: [uid_i]}
         ]
-        if without_friends
+        if too_many_friends?
           candidates = candidates.slice(2, candidates.size - 2)
           _statuses, _search_results, _favorites = client._fetch_parallelly(candidates)
           _friends = _followers = []
@@ -110,5 +113,4 @@ module Concerns::TwitterUser::Builder
 
       true
     end
-  end
 end

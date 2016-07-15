@@ -74,6 +74,10 @@ class User < ActiveRecord::Base
     twitter_user.present?
   end
 
+  def has_permission_to_look?(client, uid)
+    client.friendship?(self.uid.to_i, uid.to_i) ? true : false
+  end
+
   def uid_i
     uid.to_i
   end

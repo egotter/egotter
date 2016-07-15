@@ -8,7 +8,6 @@ class BackgroundSearchWorker
     user_id = values['user_id'].to_i
     uid = values['uid'].to_i
     screen_name = values['screen_name']
-    without_friends = values['without_friends']
     client = (User.exists?(user_id) ? User.find(user_id).api_client : Bot.api_client)
     log_attrs = {
       user_id: user_id,
@@ -26,13 +25,7 @@ class BackgroundSearchWorker
       return
     end
 
-    build_options = {
-      user_id: user_id,
-      egotter_context: 'search',
-      build_relation: true,
-      without_friends: without_friends
-    }
-    new_tu = TwitterUser.build(client, uid, build_options)
+    new_tu = TwitterUser.build_with_relations(client, uid, user_id, 'search')
     if new_tu.save_with_bulk_insert
       new_tu.search_and_touch
       create_success_log(
