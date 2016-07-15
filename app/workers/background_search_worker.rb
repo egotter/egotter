@@ -4,80 +4,108 @@ class BackgroundSearchWorker
 
   # This worker is called after strict validation for uid in searches_controller,
   # so you don't need to do that in this worker.
-  def perform(uid, screen_name, login_user_id, without_friends, extra = {})
-    @user_id = login_user_id
-    @uid = uid = uid.to_i
-    @sn = screen_name = screen_name.to_s
-    logger.debug "#{user_name} #{bot_name(client)} start"
+  def perform(values)
+    user_id = values['user_id'].to_i
+    uid = values['uid'].to_i
+    screen_name = values['screen_name']
+    without_friends = values['without_friends']
+    client = (User.exists?(user_id) ? User.find(user_id).api_client : Bot.api_client)
+    log_attrs = {
+      user_id: user_id,
+      uid: uid,
+      screen_name: screen_name,
+      bot_uid: client.uid
+    }
 
-    extra = extra.with_indifferent_access
-
-    if (tu = TwitterUser.latest(uid, @user_id)).present? && tu.recently_created?
-      tu.search_and_touch
-      create_log(true)
-      logger.debug "#{user_name} #{bot_name(client)} show #{screen_name}"
-    else
-      build_options = {user_id: login_user_id, egotter_context: 'search', build_relation: true, without_friends: without_friends}
-      new_tu = measure('build') { TwitterUser.build(client, uid, build_options) }
-      if measure('save') { new_tu.save_with_bulk_insert }
-        new_tu.search_and_touch
-        create_log(true)
-        logger.debug "#{user_name} #{bot_name(client)} create #{screen_name}"
-
-        if (user = User.find_by(uid: uid)).present? && @user_id != user.id
-          BackgroundNotificationWorker.perform_async(user.id, BackgroundNotificationWorker::SEARCH)
-        end
-      else
-        # Egotter needs at least one TwitterUser record to show search result,
-        # so this branch should not be executed if TwitterUser is not existed.
-        if tu.present?
-          tu.search_and_touch
-          create_log(true)
-        else
-          create_log(false, BackgroundSearchLog::SomethingError::MESSAGE,
-                     "save_with_bulk_insert failed(#{new_tu.errors.full_messages}) and old records does'nt exist")
-        end
-        logger.debug "#{user_name} #{bot_name(client)} not create(#{new_tu.errors.full_messages}) #{screen_name}"
-      end
+    if (existing_tu = TwitterUser.latest(uid, user_id)).present? && existing_tu.recently_created?
+      existing_tu.search_and_touch
+      create_success_log(
+        "This worker doesn't create TwitterUser because recently created record exists.",
+        {call_count: client.call_count}.merge(log_attrs)
+      )
+      return
     end
 
-    logger.debug "#{user_name} #{bot_name(client)} finish"
+    build_options = {
+      user_id: user_id,
+      egotter_context: 'search',
+      build_relation: true,
+      without_friends: without_friends
+    }
+    new_tu = TwitterUser.build(client, uid, build_options)
+    if new_tu.save_with_bulk_insert
+      new_tu.search_and_touch
+      create_success_log(
+        'This worker creates a new record of TwitterUser.',
+        {call_count: client.call_count}.merge(log_attrs)
+      )
 
+      if (user = User.find_by(uid: uid)).present? && user_id != user.id
+        BackgroundNotificationWorker.perform_async(user.id, BackgroundNotificationWorker::SEARCH)
+      end
+      return
+    end
+
+    # Egotter needs at least one TwitterUser record to show search result,
+    # so this branch should not be executed if TwitterUser is not existed.
+    if existing_tu.present?
+      existing_tu.search_and_touch
+      create_success_log(
+        "This worker doesn't save new TwitterUser because existing one is the same as new one.",
+        {call_count: client.call_count}.merge(log_attrs)
+      )
+      return
+    end
+
+    create_failed_log(
+      BackgroundSearchLog::SomethingError::MESSAGE,
+      "This worker doesn't save new TwitterUser because of #{new_tu.errors.full_messages.join(', ')}.",
+      {call_count: client.call_count}.merge(log_attrs)
+    )
   rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{user_name} #{bot_name(client)} #{e.message} retry after #{e.rate_limit.reset_in} seconds"
-    create_log(false, BackgroundSearchLog::TooManyRequests::MESSAGE)
+    create_failed_log(
+      BackgroundSearchLog::TooManyRequests::MESSAGE, '',
+      {call_count: client.call_count}.merge(log_attrs)
+    )
   rescue Twitter::Error::Unauthorized => e
-    logger.warn "#{user_name} #{bot_name(client)} #{e.class} #{e.message}"
-    create_log(false, BackgroundSearchLog::Unauthorized::MESSAGE)
+    create_failed_log(
+      BackgroundSearchLog::Unauthorized::MESSAGE, '',
+      {call_count: client.call_count}.merge(log_attrs)
+    )
   rescue => e
-    logger.warn "#{user_name} #{bot_name(client)} #{e.class} #{e.message}"
-    create_log(false, BackgroundSearchLog::SomethingError::MESSAGE, e.message)
-    raise e
+    create_failed_log(
+      BackgroundSearchLog::SomethingError::MESSAGE, "#{e.class} #{e.message}",
+      {call_count: client.call_count}.merge(log_attrs)
+    )
   end
 
-  def measure(name)
-    start = Time.zone.now
-    result = yield
-    logger.warn "#{user_name} #{name} #{Time.zone.now - start}s"
-    result
-  end
-
-  def user_name
-    "#{@uid},#{@sn}"
-  end
-
-  def bot_name(u)
-    "#{u.uid},#{u.screen_name}"
-  end
-
-  def create_log(status, reason = '', message = '')
-    BackgroundSearchLog.create(user_id: (@user_id.nil? ? -1 : @user_id), uid: @uid, screen_name: @sn, bot_uid: @client.uid,
-                               status: status, reason: reason, message: message, call_count: client.call_count)
+  def create_success_log(message, attrs)
+    BackgroundSearchLog.create!(
+      user_id:     attrs[:user_id],
+      uid:         attrs[:uid],
+      screen_name: attrs[:screen_name],
+      bot_uid:     attrs[:bot_uid],
+      status:      true,
+      reason:      '',
+      message:     message,
+      call_count:  attrs[:call_count]
+    )
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.message} #{status} #{reason} #{message}"
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{attrs.inspect}"
   end
 
-  def client
-    @client ||= (User.exists?(@user_id) ? User.find(@user_id).api_client : Bot.api_client)
+  def create_failed_log(reason, message, attrs)
+    BackgroundSearchLog.create!(
+      user_id:     attrs[:user_id],
+      uid:         attrs[:uid],
+      screen_name: attrs[:screen_name],
+      bot_uid:     attrs[:bot_uid],
+      status:      false,
+      reason:      reason,
+      message:     message,
+      call_count:  attrs[:call_count]
+    )
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{reason} #{message} #{attrs.inspect}"
   end
 end

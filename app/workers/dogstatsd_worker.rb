@@ -9,7 +9,7 @@ class DogstatsdWorker
     table_stats(statsd)
     sidekiq_stats(statsd)
 
-    DogstatsdWorker.perform_in(5.minutes)
+    DogstatsdWorker.perform_in(5.minutes) if Rails.env.production?
   end
 
   def table_stats(statsd)

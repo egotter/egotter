@@ -1,7 +1,7 @@
 # Sorted Set
 class SearchedUidList
   KEY = Redis.foreground_search_searched_uids_key
-  TTL = Rails.configuration.x.constants['background_search_worker_recently_searched_threshold']
+  TTL = Rails.configuration.x.constants['background_search_worker_recently_searched']
 
   attr_reader :redis
 

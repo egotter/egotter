@@ -71,7 +71,7 @@ class BackgroundSearchLog < ActiveRecord::Base
     where(user_id: user_id, status: true).order(created_at: :desc).limit(limit)
   end
 
-  DEFAULT_SECONDS = Rails.configuration.x.constants['background_search_log_recently_created_threshold']
+  DEFAULT_SECONDS = Rails.configuration.x.constants['background_search_log_recently_created']
 
   def recently_created?(seconds = DEFAULT_SECONDS)
     Time.zone.now.to_i - created_at.to_i < seconds

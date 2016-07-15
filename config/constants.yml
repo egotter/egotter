@@ -1,8 +1,8 @@
 default: &default
-  twitter_user_recently_created_threshold: 1800
-  background_search_log_recently_created_threshold: 300
-  background_update_log_recently_created_threshold: 300
-  background_search_worker_recently_searched_threshold: 300
+  twitter_user_recently_created: 1800
+  background_search_log_recently_created: 300
+  background_update_log_recently_created: 300
+  background_search_worker_recently_searched: 300
   page_cache_ttl: 86400
   many_friends_threshold: 1000
   too_many_friends_threshold: 5000
@@ -13,10 +13,14 @@ default: &default
   kaomoji_path: 'data/kaomoji.json'
 development:
   <<: *default
+  twitter_user_recently_created: 120
+  background_search_log_recently_created: 120
+  background_update_log_recently_created: 120
+  background_search_worker_recently_searched: 1
   page_cache_ttl: 120
 production:
   <<: *default
 test:
   <<: *default
-  twitter_user_recently_created_threshold: 0
+  twitter_user_recently_created: 0
   bot_path: 'data/bot.test.json'

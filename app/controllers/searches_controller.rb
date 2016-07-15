@@ -279,21 +279,27 @@ class SearchesController < ApplicationController
 
   # POST /searches
   def create
-    searched_uid, searched_sn = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
-    searched_uid_list = SearchedUidList.new(redis)
+    uid, screen_name = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
 
-    unless searched_uid_list.exists?(searched_uid, current_user_id)
-      BackgroundSearchWorker.perform_async(
-        searched_uid, searched_sn, current_user_id, @twitter_user.too_many_friends?)
-      searched_uid_list.add(searched_uid, current_user_id)
+    searched_uid_list = SearchedUidList.new(redis)
+    unless searched_uid_list.exists?(uid, current_user_id)
+      values = {
+        uid: uid,
+        screen_name: screen_name,
+        user_id: current_user_id,
+        without_friends: @twitter_user.too_many_friends?
+      }
+      BackgroundSearchWorker.perform_async(values)
+      searched_uid_list.add(uid, current_user_id)
     end
+
 
     page_cache = PageCache.new(redis)
     if page_cache.exists?(@twitter_user.uid, current_user_id)
-      return redirect_to search_path(screen_name: searched_sn, id: searched_uid)
+      redirect_to search_path(screen_name: screen_name, id: uid)
+    else
+      redirect_to waiting_path(screen_name: screen_name, id: uid)
     end
-
-    redirect_to waiting_path(screen_name: searched_sn, id: searched_uid)
   end
 
   # GET /searches/:screen_name/waiting
