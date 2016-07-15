@@ -52,13 +52,6 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Utils
   include Concerns::TwitterUser::Api
 
-  def __uid_i
-    ActiveSupport::Deprecation.warn(<<-MESSAGE.strip_heredoc)
-      `TwitterUser#__uid_i` is deprecated.
-    MESSAGE
-    uid.to_i
-  end
-
   # sorting to use eql? method
   def friend_uids
     if new_record?
@@ -82,7 +75,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def diff(tu)
-    raise "uid is different(#{self.uid},#{tu.uid})" if __uid_i != tu.__uid_i
+    raise "uid is different(#{self.uid},#{tu.uid})" if uid.to_i != tu.uid_i
     diffs = []
     diffs << "friends_count(#{self.friends_count},#{tu.friends_count})" if self.friends_count != tu.friends_count
     diffs << "followers_count(#{self.followers_count},#{tu.followers_count})" if self.followers_count != tu.followers_count

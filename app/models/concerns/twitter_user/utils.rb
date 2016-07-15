@@ -31,11 +31,11 @@ module Concerns::TwitterUser::Utils
     end
 
     def oldest_me
-      TwitterUser.oldest(__uid_i, user_id)
+      TwitterUser.oldest(uid.i, user_id)
     end
 
     def latest_me
-      TwitterUser.latest(__uid_i, user_id)
+      TwitterUser.latest(uid.to_i, user_id)
     end
 
     def search_and_touch
