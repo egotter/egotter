@@ -240,7 +240,7 @@ module Concerns::TwitterUser::Api
     end
 
     def usage_stats_graph
-      client.usage_stats(__uid_i, tweets: statuses)
+      client.usage_stats(uid.to_i, tweets: statuses)
     end
 
     def frequency_distribution(words)
@@ -273,7 +273,7 @@ module Concerns::TwitterUser::Api
     end
 
     def usage_stats(options = {})
-      client.usage_stats(__uid_i, options)
+      client.usage_stats(uid.to_i, options)
     end
   end
 end

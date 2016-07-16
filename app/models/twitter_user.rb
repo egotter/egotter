@@ -31,18 +31,10 @@ class TwitterUser < ActiveRecord::Base
     obj.has_many :favorites
   end
 
-  attr_accessor :client, :egotter_context, :without_friends
+  attr_accessor :client, :egotter_context
 
   def login_user
     User.find_by(id: user_id)
-  end
-
-  def without_friends?
-    if without_friends.nil?
-      friends.size == 0 && followers.size == 0
-    else
-      !!without_friends
-    end
   end
 
   include Concerns::TwitterUser::UserInfoAccessor
@@ -51,13 +43,6 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Builder
   include Concerns::TwitterUser::Utils
   include Concerns::TwitterUser::Api
-
-  def __uid_i
-    ActiveSupport::Deprecation.warn(<<-MESSAGE.strip_heredoc)
-      `TwitterUser#__uid_i` is deprecated.
-    MESSAGE
-    uid.to_i
-  end
 
   # sorting to use eql? method
   def friend_uids
@@ -82,7 +67,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def diff(tu)
-    raise "uid is different(#{self.uid},#{tu.uid})" if __uid_i != tu.__uid_i
+    raise "uid is different(#{self.uid},#{tu.uid})" if uid.to_i != tu.uid_i
     diffs = []
     diffs << "friends_count(#{self.friends_count},#{tu.friends_count})" if self.friends_count != tu.friends_count
     diffs << "followers_count(#{self.followers_count},#{tu.followers_count})" if self.followers_count != tu.followers_count
@@ -106,18 +91,14 @@ class TwitterUser < ActiveRecord::Base
     begin
       log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
 
-      unless without_friends
-        self.transaction do
-          _friends.map {|f| f.from_id = self.id }
-          _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
-        end
+      self.transaction do
+        _friends.map {|f| f.from_id = self.id }
+        _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
       end
 
-      unless without_friends
-        self.transaction do
-          _followers.map {|f| f.from_id = self.id }
-          _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
-        end
+      self.transaction do
+        _followers.map {|f| f.from_id = self.id }
+        _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
       end
 
       self.transaction do

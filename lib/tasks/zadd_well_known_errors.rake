@@ -24,7 +24,8 @@ namespace :zadd_well_known_errors do
     target_uids.each_slice(100).each do |uids|
       users = client.users(uids)
       users.each do |user|
-        tu = TwitterUser.build_by_user(user)
+        # TODO Maybe this code causes too many requests error.
+        tu = TwitterUser.build_without_relations(client, user.id, -1)
 
         if tu.too_many_friends?
           redis.zadd(too_many_friends_key, now_i, tu.uid.to_s)

@@ -16,10 +16,6 @@ module Concerns::TwitterUser::Validation
 
       obj.validate :unauthorized?
       obj.validate :suspended_account?
-      obj.validate :inconsistent_friends?
-      obj.validate :inconsistent_followers?
-      obj.validate :zero_friends?
-      obj.validate :too_many_friends?
       obj.validate :recently_created_record_exists?
       obj.validate :same_record_exists?
     end
@@ -28,16 +24,12 @@ module Concerns::TwitterUser::Validation
       !(screen_name =~ SCREEN_NAME_REGEXP)
     end
 
-    def search_without_login?
-      login_user.nil?
+    def search_with_login?
+      !login_user.nil?
     end
 
     def ego_surfing?
-      !search_without_login? &&
-      client.present? &&
-        uid.to_i == login_user.uid.to_i &&
-        uid.to_i == client.uid.to_i &&
-        egotter_context == 'search'
+      search_with_login? && uid.to_i == login_user.uid.to_i && egotter_context == 'search'
     end
 
     def protected_account?
@@ -45,40 +37,32 @@ module Concerns::TwitterUser::Validation
     end
 
     def unauthorized?
-      if user_info.blank?
-        # call fetch_user before colling this method
-        errors[:base] << 'user_info is blank'
-        return true
-      end
+      raise 'user_info is blank' if user_info.blank?
 
-      return false unless protected_account?
-
-      # login_user is protected and search himself
       if egotter_context == 'search'
-        unauthorized_search?
+        _unauthorized_search?
       elsif egotter_context == 'test'
         false
       else
-        unauthorized_job?
+        _unauthorized_job?
       end
     end
 
-    def unauthorized_search?
-      if search_without_login?
+    def _unauthorized_search?
+      return false unless protected_account?
+
+      unless search_with_login?
         errors[:base] << 'search protected user without login'
         return true
       end
-      return false if ego_surfing?
 
-      # TODO if this instance has followers, use follower_uids.include?(login_user.uid.to_i)
-      if client.present?
-        return false if client.friendship?(login_user.uid_i, uid.to_i) # login user follows searched user
-      end
+      return false if ego_surfing?
 
       true
     end
 
-    def unauthorized_job?
+    def _unauthorized_job?
+      return false unless protected_account?
       return false if User.exists?(uid: uid.to_i)
       errors[:base] << 'unauthorized worker'
       true
@@ -93,31 +77,12 @@ module Concerns::TwitterUser::Validation
       false
     end
 
+    # not using in valid?
     def inconsistent_friends?
-      return false if without_friends
+      return false if zero_friends?
 
-      if (friends_count.to_i - friends.size).abs > 2
-        errors[:base] << "friends_count(#{friends_count}) - friends.size(#{friends.size}) > 2"
-        return true
-      end
-
-      false
-    end
-
-    def inconsistent_followers?
-      return false if without_friends
-
-      if (followers_count.to_i - followers.size).abs > 2
-        errors[:base] << "followers_count(#{followers_count}) - followers.size(#{followers.size}) > 2"
-        return true
-      end
-
-      false
-    end
-
-    def zero_friends?
-      if friends_count + followers_count <= 0
-        errors[:base] << 'friends + followers == 0'
+      if friends_count.to_i != friends.size && (friends_count.to_i - friends.size).abs > friends_count.to_i * 0.1
+        errors[:base] << "friends_count #{friends_count} doesn't agree with friends.size #{friends.size}."
         return true
       end
 
@@ -125,20 +90,39 @@ module Concerns::TwitterUser::Validation
     end
 
     # not using in valid?
-    def many_friends?
-      return false if without_friends
+    def inconsistent_followers?
+      return false if zero_followers?
 
-      if friends_count + followers_count > MANY_FRIENDS
-        errors[:base] << "many friends(#{friends_count}) and followers(#{followers_count})"
+      if followers_count.to_i != followers.size && (followers_count.to_i - followers.size).abs > followers_count.to_i * 0.1
+        errors[:base] << "followers_count #{followers_count} doesn't agree with followers.size #{followers.size}."
         return true
       end
 
       false
     end
 
-    def too_many_friends?
-      return false if without_friends
+    # not using in valid?
+    def zero_friends?
+      friends_count.to_i == 0 && friends.size == 0 ? true : false
+    end
 
+    # not using in valid?
+    def zero_followers?
+      followers_count.to_i == 0 && followers.size == 0 ? true : false
+    end
+
+    # not using in valid?
+    def many_friends?
+      if friends_count + followers_count > MANY_FRIENDS
+        errors[:base] << "many friends #{friends_count} and followers #{followers_count}"
+        return true
+      end
+
+      false
+    end
+
+    # not using in valid?
+    def too_many_friends?
       friends_limit =
         if egotter_context == 'search'
           login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS
@@ -147,7 +131,7 @@ module Concerns::TwitterUser::Validation
         end
 
       if friends_count + followers_count > friends_limit
-        errors[:base] << "too many friends(#{friends_count}) and followers(#{followers_count})"
+        errors[:base] << "too many friends #{friends_count} and followers #{followers_count}"
         return true
       end
 
@@ -195,11 +179,6 @@ module Concerns::TwitterUser::Validation
 
       if self.follower_uids != latest_tu.follower_uids
         logger.debug "#{screen_name} follower_uids is different(#{self.follower_uids}, #{latest_tu.follower_uids})"
-        return false
-      end
-
-      if self.without_friends? != latest_tu.without_friends?
-        logger.debug "#{screen_name} without_friends? is different(#{self.without_friends?}, #{latest_tu.without_friends?})"
         return false
       end
 

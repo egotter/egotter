@@ -20,7 +20,7 @@ module Concerns::TwitterUser::Utils
         order(created_at: :desc).find_by(uid: user.to_i, user_id: user_id) : order(created_at: :desc).find_by(screen_name: user.to_s, user_id: user_id)
     end
 
-    DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created_threshold']
+    DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created']
 
     def recently_created?(seconds = DEFAULT_SECONDS)
       Time.zone.now.to_i - created_at.to_i < seconds
@@ -31,11 +31,11 @@ module Concerns::TwitterUser::Utils
     end
 
     def oldest_me
-      TwitterUser.oldest(__uid_i, user_id)
+      TwitterUser.oldest(uid.i, user_id)
     end
 
     def latest_me
-      TwitterUser.latest(__uid_i, user_id)
+      TwitterUser.latest(uid.to_i, user_id)
     end
 
     def search_and_touch
