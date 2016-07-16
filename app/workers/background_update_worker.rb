@@ -14,14 +14,14 @@ class BackgroundUpdateWorker
 
     if first_tu.too_many_friends?
       create_log(uid, false, BackgroundUpdateLog::TOO_MANY_FRIENDS, first_tu.errors.full_messages)
-      redis.zadd(too_many_friends_key, now_i, uid.to_s)
+      redis.zadd(TooManyFriendsUidList.key, now_i, uid.to_s)
       logger.debug "#{user_name} #{first_tu.errors.full_messages}"
       return
     end
 
     if first_tu.unauthorized?
       create_log(uid, false, BackgroundUpdateLog::UNAUTHORIZED, first_tu.errors.full_messages)
-      redis.zadd(unauthorized_key, now_i, uid.to_s)
+      redis.zadd(UnauthorizedUidList.key, now_i, uid.to_s)
       logger.debug "#{user_name} #{first_tu.errors.full_messages}"
       return
     end
@@ -92,14 +92,6 @@ class BackgroundUpdateWorker
 
   def redis
     @redis ||= Redis.client
-  end
-
-  def too_many_friends_key
-    @too_many_friends_key ||= Redis.background_update_worker_too_many_friends_key
-  end
-
-  def unauthorized_key
-    @unauthorized_key ||= Redis.background_update_worker_unauthorized_key
   end
 
   def now_i

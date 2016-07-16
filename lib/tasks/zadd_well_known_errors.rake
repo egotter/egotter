@@ -3,9 +3,6 @@ namespace :zadd_well_known_errors do
   task run: :environment do
     start_t = Time.zone.now
 
-    too_many_friends_key = Redis.background_update_worker_too_many_friends_key
-    unauthorized_key = Redis.background_update_worker_unauthorized_key
-
     target_user = ENV['user'].nil? ? 'ego_tter' : ENV['user']
     begin
       follower_uids = client.follower_ids(target_user).map { |id| id.to_i }
@@ -16,8 +13,8 @@ namespace :zadd_well_known_errors do
     end
 
     target_uids = follower_uids.select do |uid|
-      redis.zrank(too_many_friends_key, uid.to_s).blank? &&
-        redis.zrank(unauthorized_key, uid.to_s).blank?
+      redis.zrank(TooManyFriendsUidList.key, uid.to_s).blank? &&
+        redis.zrank(UnauthorizedUidList.key, uid.to_s).blank?
     end
 
     zadd_count = 0
@@ -28,10 +25,10 @@ namespace :zadd_well_known_errors do
         tu = TwitterUser.build_without_relations(client, user.id, -1)
 
         if tu.too_many_friends?
-          redis.zadd(too_many_friends_key, now_i, tu.uid.to_s)
+          redis.zadd(TooManyFriendsUidList.key, now_i, tu.uid.to_s)
           zadd_count += 1
         elsif tu.unauthorized?
-          redis.zadd(unauthorized_key, now_i, tu.uid.to_s)
+          redis.zadd(UnauthorizedUidList.key, now_i, tu.uid.to_s)
           zadd_count += 1
         end
       end

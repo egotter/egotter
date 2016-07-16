@@ -19,12 +19,6 @@
 #
 
 class User < ActiveRecord::Base
-  # Include default devise modules. Others available are:
-  # :confirmable, :lockable, :timeoutable and :omniauthable
-  # devise :database_authenticatable, :registerable,
-  #        :recoverable, :rememberable, :trackable, :validatable,
-  #        :omniauthable
-
   devise :rememberable, :omniauthable
 
   def remember_created_at=(_)
@@ -33,27 +27,28 @@ class User < ActiveRecord::Base
   has_one :notification, foreign_key: :from_id, dependent: :destroy, validate: false
   accepts_nested_attributes_for :notification
 
+  require 'statsd'
+
   def self.find_or_create_for_oauth_by!(auth)
+    attrs = {
+      screen_name: auth.info.nickname,
+      secret: auth.credentials.secret,
+      token: auth.credentials.token
+    }
     if User.exists?(uid: auth.uid)
       user = User.find_by(uid: auth.uid)
-      user.update(screen_name: auth.info.nickname,
-                  secret: auth.credentials.secret,
-                  token: auth.credentials.token,
-                  email: (auth.info.email.present? ? auth.info.email : user.email))
-    else
-      user = User.create!(
-        uid: auth.uid,
-        screen_name: auth.info.nickname,
-        secret: auth.credentials.secret,
-        token: auth.credentials.token,
-        email: (auth.info.email || ''))
-      user.create_notification(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
-    end
+      user.update(attrs.update(email: (auth.info.email.present? ? auth.info.email : user.email)))
 
-    redis = Redis.client
-    SearchedUidList.new(redis).delete(user.uid)
-    redis.rem_unauthorized_uid(user.uid)
-    redis.rem_too_many_friends_uid(user.uid)
+      Statsd.new('localhost', 8125).increment('egotter.user.update')
+    else
+      user = nil
+      self.transaction do
+        user = User.create!(attrs.update(uid: auth.uid, email: (auth.info.email || '')))
+        user.create_notification!(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
+      end
+
+      Statsd.new('localhost', 8125).increment('egotter.user.create')
+    end
 
     user
   end

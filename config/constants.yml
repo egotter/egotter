@@ -16,7 +16,7 @@ development:
   twitter_user_recently_created: 120
   background_search_log_recently_created: 120
   background_update_log_recently_created: 120
-  background_search_worker_recently_searched: 1
+  background_search_worker_recently_searched: 120
   page_cache_ttl: 120
 production:
   <<: *default

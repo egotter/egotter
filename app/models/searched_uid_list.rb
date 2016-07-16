@@ -1,37 +1,10 @@
 # Sorted Set
-class SearchedUidList
-  KEY = Redis.foreground_search_searched_uids_key
-  TTL = Rails.configuration.x.constants['background_search_worker_recently_searched']
-
-  attr_reader :redis
-
-  def initialize(redis)
-    @redis = redis
+class SearchedUidList < UidList
+  def self.key
+    @@key ||= 'background_search_worker:searched_uids'
   end
 
-  def clear
-    redis.del(KEY)
-  end
-
-  def cleanup
-    redis.zremrangebyscore(KEY, 0, Time.zone.now.to_i - TTL)
-  end
-
-  def exists?(uid, user_id)
-    cleanup
-    redis.zrank(KEY, "#{user_id}:#{uid}").present?
-  end
-
-  def add(uid, user_id)
-    cleanup
-    redis.zadd(KEY, Time.zone.now.to_i, "#{user_id}:#{uid}")
-  end
-
-  def delete(uid)
-    redis.zrem(KEY, uid.to_s)
-  end
-
-  def to_a
-    redis.zrangebyscore(KEY, 0, Time.zone.now.to_i)
+  def self.ttl
+    @@ttl ||= Rails.configuration.x.constants['background_search_worker_recently_searched']
   end
 end
