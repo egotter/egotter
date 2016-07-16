@@ -19,7 +19,7 @@ module Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
-      user_agent:  request.user_agent,
+      user_agent:  user_agent,
       referer:     referer,
       created_at: Time.zone.now
     }
@@ -45,6 +45,10 @@ module Logging
 
   def ego_surfing?
     user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i
+  end
+
+  def user_agent
+    request.user_agent.nil? ? '' : view_context.truncate(request.user_agent, length: 180, escape: false)
   end
 
   def referer

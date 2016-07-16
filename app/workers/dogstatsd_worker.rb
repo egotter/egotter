@@ -8,6 +8,7 @@ class DogstatsdWorker
     statsd = Statsd.new('localhost', 8125)
     table_stats(statsd)
     sidekiq_stats(statsd)
+    redis_sats(statsd)
 
     DogstatsdWorker.perform_in(5.minutes) if Rails.env.production?
   end
@@ -18,7 +19,6 @@ class DogstatsdWorker
     end
   rescue => e
     logger.warn "#{e}: #{e.message}"
-    logger.warn attrs.inspect
   end
 
   def sidekiq_stats(statsd)
@@ -36,6 +36,14 @@ class DogstatsdWorker
     statsd.gauge('egotter.sidekiq.stats.queues', stats.queues['egotter'])
   rescue => e
     logger.warn "#{e}: #{e.message}"
-    logger.warn attrs.inspect
+  end
+
+  def redis_sats(statsd)
+    redis = Redis.client
+    statsd.gauge('egotter.list.searched', SearchedUidList.new(redis).size)
+    statsd.gauge('egotter.list.unauthorized', UnauthorizedUidList.new(redis).size)
+    statsd.gauge('egotter.list.too_many_friends', TooManyFriendsUidList.new(redis).size)
+  rescue => e
+    logger.warn "#{e}: #{e.message}"
   end
 end
