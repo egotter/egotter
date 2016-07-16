@@ -67,7 +67,7 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def diff(tu)
-    raise "uid is different(#{self.uid},#{tu.uid})" if uid.to_i != tu.uid_i
+    raise "uid is different(#{self.uid},#{tu.uid})" if uid.to_i != tu.uid.to_i
     diffs = []
     diffs << "friends_count(#{self.friends_count},#{tu.friends_count})" if self.friends_count != tu.friends_count
     diffs << "followers_count(#{self.followers_count},#{tu.followers_count})" if self.followers_count != tu.followers_count
