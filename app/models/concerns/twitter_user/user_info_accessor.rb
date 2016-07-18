@@ -37,12 +37,7 @@ module Concerns::TwitterUser::UserInfoAccessor
     delegate *PROFILE_SAVE_KEYS.reject { |k| k.in?(PROFILE_REJECT_KEYS) }, to: :user_info_mash
 
     def user_info_mash
-      return @user_info_mash if @user_info_mash.present?
-      if user_info.present?
-        @user_info_mash = Hashie::Mash.new(JSON.parse(user_info))
-      else
-        Hashie::Mash.new(JSON.parse('{"friends_count": -1, "followers_count": -1}'))
-      end
+      @user_info_mash ||= Hashie::Mash.new(JSON.parse(user_info))
     end
 
     def has_key?(key)
@@ -58,9 +53,11 @@ module Concerns::TwitterUser::UserInfoAccessor
       nil
     end
 
+    JAPANESE_TIME_ZONE_NAMES = %w(JST GMT+9)
+
     def twittered_at
       if time_zone.present? && user_info_mash.created_at.present?
-        _time_zone = (time_zone.in?(%w(JST GMT+9)) ? 'Tokyo' : time_zone)
+        _time_zone = (time_zone.in?(JAPANESE_TIME_ZONE_NAMES) ? 'Tokyo' : time_zone)
         ActiveSupport::TimeZone[_time_zone].parse(user_info_mash.created_at)
       elsif user_info_mash.created_at.present?
         Time.zone.parse(user_info_mash.created_at)
