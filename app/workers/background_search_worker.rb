@@ -77,6 +77,7 @@ class BackgroundSearchWorker
 
   def create_success_log(message, attrs)
     BackgroundSearchLog.create!(
+      session_id:  attrs[:session_id],
       user_id:     attrs[:user_id],
       uid:         attrs[:uid],
       screen_name: attrs[:screen_name],
@@ -93,6 +94,7 @@ class BackgroundSearchWorker
 
   def create_failed_log(reason, message, attrs)
     BackgroundSearchLog.create!(
+      session_id:  attrs[:session_id],
       user_id:     attrs[:user_id],
       uid:         attrs[:uid],
       screen_name: attrs[:screen_name],
