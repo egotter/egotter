@@ -45,7 +45,7 @@ class KpisController < ApplicationController
     EOS
     result = SearchLog.find_by_sql([sql, {date: (Time.zone.now - 14.days).to_date.to_s}])
 
-    %i(total guest login).map do |legend|
+    %i(guest login).map do |legend|
       {
         name: legend,
         data: result.map{|r| [ActiveSupport::TimeZone['UTC'].parse(r.date.to_s).to_i * 1000, r.send(legend)] }
