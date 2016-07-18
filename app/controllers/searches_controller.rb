@@ -325,14 +325,6 @@ class SearchesController < ApplicationController
     end
   end
 
-  def debug
-    @debug_info = Hashie::Mash.new(JSON.parse(redis.get(Redis.debug_info_key) || '{}'))
-    @last_1hour = 1.hour.ago..Time.now
-    @last_1day = 1.day.ago..Time.now
-    @last_1week = (1.week.ago + 1.day)..Time.now
-    render layout: false
-  end
-
   def clear_result_cache
     redirect_to '/' unless request.post?
     redirect_to '/' unless current_user.admin?
@@ -377,8 +369,10 @@ class SearchesController < ApplicationController
         t("before_sign_in.unauthorized", sign_in_link: welcome_link)
       end
     redirect_to '/', alert: alert_msg.html_safe
+  rescue Twitter::Error::Forbidden => e
+    redirect_to '/', alert: t('before_sign_in.forbidden')
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{search_sn}"
     redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: welcome_link)
   end
 
@@ -400,10 +394,6 @@ class SearchesController < ApplicationController
 
   def twitter_link(screen_name)
     view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
-  end
-
-  def redis
-    @redis ||= Redis.client
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)
@@ -443,11 +433,5 @@ class SearchesController < ApplicationController
 
   def under_maintenance
     redirect_to maintenance_path if ENV['MAINTENANCE'].present? && !admin_signed_in?
-  end
-
-  def basic_auth
-    authenticate_or_request_with_http_basic do |user, pass|
-      user == ENV['DEBUG_USERNAME'] && pass == ENV['DEBUG_PASSWORD']
-    end
   end
 end

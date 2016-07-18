@@ -72,6 +72,7 @@ ja:
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     not_found: "検索された Twitter ID が見付かりません。アカウントが削除されたのかもしれません。"
+    forbidden: "検索された Twitter ID は凍結されています。凍結が解除されてから検索してみてください。"
     unauthorized: "認証に失敗しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     something_is_wrong: "エラーが起きました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     invalid_twitter_id: "無効な Twitter ID が入力されました。"
