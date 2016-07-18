@@ -60,7 +60,7 @@ module Concerns::TwitterUser::UserInfoAccessor
 
     def twittered_at
       if time_zone.present? && user_info_mash.created_at.present?
-        _time_zone = (time_zone == 'JST' ? 'Tokyo' : time_zone)
+        _time_zone = (time_zone.in?(%w(JST GMT+9)) ? 'Tokyo' : time_zone)
         ActiveSupport::TimeZone[_time_zone].parse(user_info_mash.created_at)
       elsif user_info_mash.created_at.present?
         Time.zone.parse(user_info_mash.created_at)
