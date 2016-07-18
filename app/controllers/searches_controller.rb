@@ -284,6 +284,7 @@ class SearchesController < ApplicationController
     searched_uid_list = SearchedUidList.new(redis)
     unless searched_uid_list.exists?(uid, current_user_id)
       values = {
+        session_id: fingerprint,
         uid: uid,
         screen_name: screen_name,
         user_id: current_user_id

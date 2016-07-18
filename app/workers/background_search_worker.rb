@@ -12,6 +12,7 @@ class BackgroundSearchWorker
     screen_name = values['screen_name']
     client = (User.exists?(user_id) ? User.find(user_id).api_client : Bot.api_client)
     log_attrs = {
+      session_id: values['session_id'],
       user_id: user_id,
       uid: uid,
       screen_name: screen_name,
