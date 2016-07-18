@@ -369,8 +369,10 @@ class SearchesController < ApplicationController
         t("before_sign_in.unauthorized", sign_in_link: welcome_link)
       end
     redirect_to '/', alert: alert_msg.html_safe
+  rescue Twitter::Error::Forbidden => e
+    redirect_to '/', alert: t('before_sign_in.forbidden')
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{search_sn}"
     redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: welcome_link)
   end
 
