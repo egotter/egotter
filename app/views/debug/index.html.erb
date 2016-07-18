@@ -1,12 +1,62 @@
 <html>
 <head>
   <title>debug</title>
+  <%= javascript_include_tag 'application' %>
+  <script src="/highcharts/highcharts.js"></script>
+
+  <script>
+    function draw_dau(){
+      $('#container').highcharts({
+        credits: {
+          enabled: false
+        },
+        title: {
+          text: 'title'
+        },
+        xAxis: {
+          type: 'datetime',
+          dateTimeLabelFormats: {
+            millisecond: '%H:%M:%S.%L',
+            second: '%H:%M:%S',
+            minute: '%H:%M',
+            hour: '%H:%M',
+            day: '%e. %b',
+            week: '%e. %b',
+            month: '%b \'%y',
+            year: '%Y'
+          }
+        },
+        yAxis: {
+          title: {
+            text: 'yAxis'
+          }
+        },
+        tooltip: {
+          valueSuffix: ''
+        },
+        legend: {
+          layout: 'vertical',
+          align: 'right',
+          verticalAlign: 'middle',
+          borderWidth: 0
+        },
+        series: [<%= raw @dau.to_json %>]
+      });
+    }
+
+    $(function () {
+      draw_dau();
+    });
+  </script>
 </head>
 <body>
 <div><a href="/">egotter</a></div>
 <br>
 
 <div>updated_at: <%= @debug_info[:current] %></div>
+<br>
+
+<div id="container" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <br>
 
 <table border="1">

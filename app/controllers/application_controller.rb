@@ -12,6 +12,16 @@ class ApplicationController < ActionController::Base
     new_user_session_path(scope)
   end
 
+  def redis
+    @redis ||= Redis.client
+  end
+
+  def basic_auth
+    authenticate_or_request_with_http_basic do |user, pass|
+      user == ENV['DEBUG_USERNAME'] && pass == ENV['DEBUG_PASSWORD']
+    end
+  end
+
   helper_method :admin_signed_in?, :welcome_link, :sign_in_link, :sign_out_link, :search_oneself?, :search_others?
 
   private
