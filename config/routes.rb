@@ -49,6 +49,7 @@ Rails.application.routes.draw do
   end if Rails.env.production?
   mount Sidekiq::Web, at: '/sidekiq'
 
+  get 'kpis', to: 'kpis#index', as: :kpis
   get 'debug', to: 'debug#index', as: :debug
   post 'clear_result_cache', to: 'searches#clear_result_cache', as: :clear_result_cache
 
