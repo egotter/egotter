@@ -16,7 +16,9 @@ class DebugController < ApplicationController
     sql = <<-'EOS'.strip_heredoc
       SELECT
         date(created_at) date,
-        count(DISTINCT session_id) count
+        count(DISTINCT session_id) total,
+        count(DISTINCT if(user_id = -1, session_id, NULL)) guest,
+        count(DISTINCT if(user_id != -1, session_id, NULL)) login
       FROM search_logs
       WHERE device_type != 'crawler' AND created_at >= :date
       GROUP BY date(created_at)
@@ -24,9 +26,11 @@ class DebugController < ApplicationController
     EOS
     result = SearchLog.find_by_sql([sql, {date: (Time.zone.now - 14.days).to_date.to_s}])
 
-    {
-      name: 'dau',
-      data: result.map{|r| [ActiveSupport::TimeZone['UTC'].parse(r.date.to_s).to_i * 1000, r.count] }
-    }
+    %i(total guest login).map do |legend|
+      {
+        name: legend,
+        data: result.map{|r| [ActiveSupport::TimeZone['UTC'].parse(r.date.to_s).to_i * 1000, r.send(legend)] }
+      }
+    end
   end
 end
