@@ -19,8 +19,8 @@ class SearchesController < ApplicationController
   before_action :too_many_friends,       only: NEED_VALIDATION, unless: 'PageCache.new(redis).exists?(@twitter_user.uid, current_user_id)'
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
 
-  before_action :set_twitter_user,       only: SEARCH_MENUS
-  before_action :create_log,             only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
+  before_action :set_searched_twitter_user, only: SEARCH_MENUS
+  before_action :create_search_log,         only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
 
 
   before_action :basic_auth, only: DEBUG_PAGES
@@ -341,13 +341,13 @@ class SearchesController < ApplicationController
   end
 
   private
-  def set_twitter_user
+
+  def set_searched_twitter_user
     tu = @twitter_user.latest_me
     if tu.blank?
-      # admin_signed_in? returns true and TwitterUser is deleted
-      logger.warn '@twitter_user.latest_me is blank'
-      PageCache.new(redis).delete(@twitter_user.uid, current_user_id)
-      return create
+      # access to auto generated uri
+      PageCache.new(redis).delete(@twitter_user.uid, current_user_id) # debug code
+      return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
     tu.assign_attributes(client: client, egotter_context: 'search')
     @searched_tw_user = tu

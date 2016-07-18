@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 20160221142229) do
   add_index "background_notification_logs", ["user_id"], name: "index_background_notification_logs_on_user_id", using: :btree
 
   create_table "background_search_logs", force: :cascade do |t|
+    t.string   "session_id",  limit: 191,   default: "",    null: false
     t.integer  "user_id",     limit: 4,     default: -1,    null: false
     t.string   "uid",         limit: 191,   default: "-1",  null: false
     t.string   "screen_name", limit: 191,   default: "",    null: false

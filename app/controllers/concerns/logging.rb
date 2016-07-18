@@ -7,7 +7,7 @@ module Logging
 
   end
 
-  def create_log
+  def create_search_log
     attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
