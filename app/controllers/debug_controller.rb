@@ -22,7 +22,7 @@ class DebugController < ApplicationController
       GROUP BY date(created_at)
       ORDER BY date(created_at);
     EOS
-    result = SearchLog.find_by_sql([sql, {date: Time.zone.now.to_date.to_s}])
+    result = SearchLog.find_by_sql([sql, {date: (Time.zone.now - 14.days).to_date.to_s}])
 
     {
       name: 'dau',
