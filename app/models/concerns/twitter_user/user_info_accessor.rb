@@ -60,14 +60,16 @@ module Concerns::TwitterUser::UserInfoAccessor
 
     def twittered_at
       if time_zone.present? && user_info_mash.created_at.present?
-        ActiveSupport::TimeZone[time_zone].parse(user_info_mash.created_at)
+        _time_zone = (time_zone == 'JST' ? 'Tokyo' : time_zone)
+        ActiveSupport::TimeZone[_time_zone].parse(user_info_mash.created_at)
       elsif user_info_mash.created_at.present?
         Time.zone.parse(user_info_mash.created_at)
       else
         user_info_mash.created_at
       end
     rescue => e
-      logger.warn "#{e.class} #{e.message} #{time_zone} #{user_info_mash.created_at}"
+      logger.warn "#{e}: #{e.message} #{time_zone}, #{user_info_mash.created_at}"
+      logger.warn e.backtrace.join("\n")
       user_info_mash.created_at
     end
 
