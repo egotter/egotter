@@ -3,6 +3,7 @@
 # Table name: background_search_logs
 #
 #  id          :integer          not null, primary key
+#  session_id  :string(191)      default(""), not null
 #  user_id     :integer          default(-1), not null
 #  uid         :string(191)      default("-1"), not null
 #  screen_name :string(191)      default(""), not null

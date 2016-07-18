@@ -12,6 +12,7 @@ class BackgroundSearchWorker
     screen_name = values['screen_name']
     client = (User.exists?(user_id) ? User.find(user_id).api_client : Bot.api_client)
     log_attrs = {
+      session_id: values['session_id'],
       user_id: user_id,
       uid: uid,
       screen_name: screen_name,
@@ -76,6 +77,7 @@ class BackgroundSearchWorker
 
   def create_success_log(message, attrs)
     BackgroundSearchLog.create!(
+      session_id:  attrs[:session_id],
       user_id:     attrs[:user_id],
       uid:         attrs[:uid],
       screen_name: attrs[:screen_name],
@@ -92,6 +94,7 @@ class BackgroundSearchWorker
 
   def create_failed_log(reason, message, attrs)
     BackgroundSearchLog.create!(
+      session_id:  attrs[:session_id],
       user_id:     attrs[:user_id],
       uid:         attrs[:uid],
       screen_name: attrs[:screen_name],
