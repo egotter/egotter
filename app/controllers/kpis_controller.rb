@@ -57,7 +57,7 @@ class KpisController < ApplicationController
     sql = <<-'EOS'.strip_heredoc
       SELECT
         date(created_at) date,
-        count(*) count
+        count(*) total
       FROM users
       WHERE created_at >= :date
       GROUP BY date(created_at)
