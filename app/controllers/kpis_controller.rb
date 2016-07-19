@@ -7,6 +7,7 @@ class KpisController < ApplicationController
     @search_num = search_num
     @search_num_verification = search_num_verification
     @new_user = new_user
+    @sign_in = sign_in
   end
 
   private
@@ -46,7 +47,7 @@ class KpisController < ApplicationController
     EOS
     result = SearchLog.find_by_sql([sql, {date: (Time.zone.now - 14.days).to_date.to_s}])
 
-    result.map { |r| r.action.to_s }.uniq.map do |legend|
+    result.map { |r| r.action.to_s }.uniq.sort.map do |legend|
       {
         name: legend,
         data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
@@ -111,6 +112,28 @@ class KpisController < ApplicationController
     result = SearchLog.find_by_sql([sql, {date: (Time.zone.now - 14.days).to_date.to_s}])
 
     %i(total).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def sign_in
+    sql = <<-'EOS'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        count(*) total,
+        count(if(context = 'create', 1, NULL)) 'NewUser',
+        count(if(context = 'update', 1, NULL)) 'ExistingUser'
+      FROM sign_in_logs
+      WHERE created_at >= :date
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
+    EOS
+    result = SearchLog.find_by_sql([sql, {date: (Time.zone.now - 14.days).to_date.to_s}])
+
+    %i(NewUser ExistingUser).map do |legend|
       {
         name: legend,
         data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }

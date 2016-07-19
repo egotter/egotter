@@ -21,6 +21,11 @@
 <div class="container new_user" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <br>
 
+<hr>
+
+<div class="container sign_in" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<br>
+
 <script>
   var dateTimeLabelFormats = {
     millisecond: '%H:%M:%S.%L',
@@ -116,11 +121,19 @@
     $('.container.new_user').highcharts(conf);
   }
 
+  function draw_sign_in(){
+    var conf = $.extend(true, {}, config);
+    conf.title.text = 'Sign in';
+    conf.series = <%= raw @sign_in.to_json %>;
+    $('.container.sign_in').highcharts(conf);
+  }
+
   $(function () {
     draw_dau();
     draw_dau_by_action();
     draw_search_num();
     draw_search_num_verification();
     draw_new_user();
+    draw_sign_in();
   });
 </script>
