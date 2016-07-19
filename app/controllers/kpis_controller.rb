@@ -3,6 +3,7 @@ class KpisController < ApplicationController
 
   def index
     @dau = dau
+    @dau_by_action = dau_by_action
     @search_num = search_num
     @search_num_verification = search_num_verification
     @new_user = new_user
@@ -27,7 +28,28 @@ class KpisController < ApplicationController
     %i(total guest login).map do |legend|
       {
         name: legend,
-        data: result.map{|r| [ActiveSupport::TimeZone['UTC'].parse(r.date.to_s).to_i * 1000, r.send(legend)] }
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def dau_by_action
+    sql = <<-'EOS'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        action,
+        count(*)         total
+      FROM search_logs
+      WHERE device_type != 'crawler' AND action != 'waiting' AND created_at >= :date
+      GROUP BY date(created_at), action
+      ORDER BY date(created_at), action;
+    EOS
+    result = SearchLog.find_by_sql([sql, {date: (Time.zone.now - 14.days).to_date.to_s}])
+
+    result.map { |r| r.action.to_s }.uniq.map do |legend|
+      {
+        name: legend,
+        data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
       }
     end
   end
@@ -49,7 +71,7 @@ class KpisController < ApplicationController
     %i(guest login).map do |legend|
       {
         name: legend,
-        data: result.map{|r| [ActiveSupport::TimeZone['UTC'].parse(r.date.to_s).to_i * 1000, r.send(legend)] }
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
       }
     end
   end
@@ -71,7 +93,7 @@ class KpisController < ApplicationController
     %i(guest login).map do |legend|
       {
         name: legend,
-        data: result.map{|r| [ActiveSupport::TimeZone['UTC'].parse(r.date.to_s).to_i * 1000, r.send(legend)] }
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
       }
     end
   end
@@ -91,8 +113,12 @@ class KpisController < ApplicationController
     %i(total).map do |legend|
       {
         name: legend,
-        data: result.map{|r| [ActiveSupport::TimeZone['UTC'].parse(r.date.to_s).to_i * 1000, r.send(legend)] }
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
       }
     end
+  end
+
+  def to_msec_unixtime(date)
+    ActiveSupport::TimeZone['UTC'].parse(date.to_s).to_i * 1000
   end
 end

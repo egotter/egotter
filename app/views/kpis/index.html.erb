@@ -3,6 +3,11 @@
 
 <hr>
 
+<div class="container dau_by_action" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<br>
+
+<hr>
+
 <div class="container search_num" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <br>
 
@@ -83,6 +88,13 @@
     $('.container.dau').highcharts(conf);
   }
 
+  function draw_dau_by_action(){
+    var conf = $.extend(true, {}, config);
+    conf.title.text = 'DAU by action';
+    conf.series = <%= raw @dau_by_action.to_json %>;
+    $('.container.dau_by_action').highcharts(conf);
+  }
+
   function draw_search_num(){
     var conf = $.extend(true, {}, config_stacked);
     conf.title.text = 'Search num';
@@ -106,6 +118,7 @@
 
   $(function () {
     draw_dau();
+    draw_dau_by_action();
     draw_search_num();
     draw_search_num_verification();
     draw_new_user();
