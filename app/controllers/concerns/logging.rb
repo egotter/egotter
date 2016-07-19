@@ -21,9 +21,26 @@ module Logging
       browser:     request.browser,
       user_agent:  user_agent,
       referer:     referer,
-      created_at: Time.zone.now
+      created_at:  Time.zone.now
     }
     CreateSearchLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
+  end
+
+  def create_sign_in_log(user_id, context)
+    attrs = {
+      session_id:  fingerprint,
+      user_id:     user_id,
+      context:     context,
+      device_type: request.device_type,
+      os:          request.os,
+      browser:     request.browser,
+      user_agent:  user_agent,
+      referer:     referer,
+      created_at:  Time.zone.now
+    }
+    CreateSignInLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
   end

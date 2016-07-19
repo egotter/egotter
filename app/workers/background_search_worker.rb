@@ -1,5 +1,3 @@
-require 'statsd'
-
 class BackgroundSearchWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: false, backtrace: false
@@ -87,7 +85,6 @@ class BackgroundSearchWorker
       message:     message,
       call_count:  attrs[:call_count]
     )
-    Statsd.new('localhost', 8125).increment('egotter.search.success')
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{message} #{attrs.inspect}"
   end
@@ -104,7 +101,6 @@ class BackgroundSearchWorker
       message:     message,
       call_count:  attrs[:call_count]
     )
-    Statsd.new('localhost', 8125).increment('egotter.search.failed')
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{reason} #{message} #{attrs.inspect}"
   end

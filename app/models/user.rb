@@ -27,9 +27,7 @@ class User < ActiveRecord::Base
   has_one :notification, foreign_key: :from_id, dependent: :destroy, validate: false
   accepts_nested_attributes_for :notification
 
-  require 'statsd'
-
-  def self.find_or_create_for_oauth_by!(auth)
+  def self.update_or_create_for_oauth_by!(auth)
     attrs = {
       screen_name: auth.info.nickname,
       secret: auth.credentials.secret,
@@ -37,17 +35,16 @@ class User < ActiveRecord::Base
     }
     if User.exists?(uid: auth.uid)
       user = User.find_by(uid: auth.uid)
-      user.update(attrs.update(email: (auth.info.email.present? ? auth.info.email : user.email)))
-
-      Statsd.new('localhost', 8125).increment('egotter.user.update')
+      self.transaction do
+        user.update(attrs.update(email: (auth.info.email.present? ? auth.info.email : user.email)))
+        user.touch
+      end
     else
       user = nil
       self.transaction do
         user = User.create!(attrs.update(uid: auth.uid, email: (auth.info.email || '')))
         user.create_notification!(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
       end
-
-      Statsd.new('localhost', 8125).increment('egotter.user.create')
     end
 
     user

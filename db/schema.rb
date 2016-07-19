@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160221142229) do
+ActiveRecord::Schema.define(version: 20160719114327) do
 
   create_table "background_notification_logs", force: :cascade do |t|
     t.integer  "user_id",      limit: 4,     default: -1,    null: false
@@ -178,6 +178,21 @@ ActiveRecord::Schema.define(version: 20160221142229) do
   add_index "search_results", ["from_id"], name: "index_search_results_on_from_id", using: :btree
   add_index "search_results", ["screen_name"], name: "index_search_results_on_screen_name", using: :btree
   add_index "search_results", ["uid"], name: "index_search_results_on_uid", using: :btree
+
+  create_table "sign_in_logs", force: :cascade do |t|
+    t.string   "session_id",  limit: 191, default: "", null: false
+    t.integer  "user_id",     limit: 4,   default: -1, null: false
+    t.string   "context",     limit: 191, default: "", null: false
+    t.string   "device_type", limit: 191, default: "", null: false
+    t.string   "os",          limit: 191, default: "", null: false
+    t.string   "browser",     limit: 191, default: "", null: false
+    t.string   "user_agent",  limit: 191, default: "", null: false
+    t.string   "referer",     limit: 191, default: "", null: false
+    t.datetime "created_at",                           null: false
+  end
+
+  add_index "sign_in_logs", ["created_at"], name: "index_sign_in_logs_on_created_at", using: :btree
+  add_index "sign_in_logs", ["user_id"], name: "index_sign_in_logs_on_user_id", using: :btree
 
   create_table "statuses", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
