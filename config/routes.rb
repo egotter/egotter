@@ -50,6 +50,7 @@ Rails.application.routes.draw do
   mount Sidekiq::Web, at: '/sidekiq'
 
   get 'kpis', to: 'kpis#index', as: :kpis
+  get 'kpis/rr', to: 'kpis#rr', as: :rr
   get 'debug', to: 'debug#index', as: :debug
   post 'clear_result_cache', to: 'searches#clear_result_cache', as: :clear_result_cache
 

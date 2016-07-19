@@ -1,0 +1,62 @@
+<div class="container rr" style="min-width: 310px; height: 600px; margin: 0 auto"></div>
+<br>
+
+<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+<script>
+  var config = {
+    credits: {
+      enabled: false
+    },
+    chart: {
+      type: 'heatmap',
+      marginTop: 60,
+      marginBottom: 120,
+      plotBorderWidth: 1
+    },
+    title: {
+      text: 'title'
+    },
+    xAxis: {
+      categories: null
+    },
+    yAxis: {
+      title: null,
+      categories: null
+    },
+    colorAxis: {
+      min: 0,
+      minColor: '#FFFFFF',
+      maxColor: Highcharts.getOptions().colors[0]
+    },
+    legend: {
+      align: 'right',
+      layout: 'vertical',
+      margin: 0,
+      verticalAlign: 'top',
+      y: 38,
+      symbolHeight: 420
+    },
+    series: [{
+      name: 'total',
+      borderWidth: 1,
+      data: null,
+      dataLabels: {
+        enabled: true,
+        color: '#000000'
+      }
+    }]
+  };
+
+  function draw_rr() {
+    var conf = $.extend(true, {}, config);
+    conf.title.text = 'RR';
+    conf.xAxis.categories = <%= raw @xAxis_categories.to_json %>
+    conf.yAxis.categories = <%= raw @yAxis_categories.to_json %>
+    conf.series[0].data = <%= raw @rr.to_json %>;
+    $('.container.rr').highcharts(conf);
+  }
+
+  $(function () {
+    draw_rr();
+  });
+</script>
