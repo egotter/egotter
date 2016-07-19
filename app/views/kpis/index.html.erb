@@ -8,6 +8,11 @@
 
 <hr>
 
+<div class="container search_num_verification" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<br>
+
+<hr>
+
 <div class="container new_user" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <br>
 
@@ -85,6 +90,13 @@
     $('.container.search_num').highcharts(conf);
   }
 
+  function draw_search_num_verification(){
+    var conf = $.extend(true, {}, config_stacked);
+    conf.title.text = 'Search num(verification)';
+    conf.series = <%= raw @search_num_verification.to_json %>;
+    $('.container.search_num_verification').highcharts(conf);
+  }
+
   function draw_new_user(){
     var conf = $.extend(true, {}, config);
     conf.title.text = 'New user';
@@ -95,6 +107,7 @@
   $(function () {
     draw_dau();
     draw_search_num();
+    draw_search_num_verification();
     draw_new_user();
   });
 </script>
