@@ -15,10 +15,10 @@ class KpisController < ApplicationController
     xAxis_categories = (1..9)
     cells = []
     yAxis_categories.each.with_index do |day, y|
-      session_ids = SearchLog.where(created_at: day.all_day).pluck(:session_id).uniq
+      session_ids = SearchLog.where(created_at: day.all_day).where.not(device_type: 'crawler').pluck(:session_id).uniq
       cells << [0, y, session_ids.size]
       xAxis_categories.each do |x|
-        cells << [x, y, SearchLog.where(created_at: (day + x.days).all_day).where(session_id: session_ids).uniq.size]
+        cells << [x, y, SearchLog.where(created_at: (day + x.days).all_day).where.not(device_type: 'crawler').where(session_id: session_ids).uniq.size]
       end
     end
 
