@@ -88,42 +88,42 @@
 
   function draw_dau(){
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'DAU';
+    conf.title.text = 'DAU (search_logs)';
     conf.series = <%= raw @dau.to_json %>;
     $('.container.dau').highcharts(conf);
   }
 
   function draw_dau_by_action(){
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'DAU by action';
+    conf.title.text = 'DAU by action (search_logs)';
     conf.series = <%= raw @dau_by_action.to_json %>;
     $('.container.dau_by_action').highcharts(conf);
   }
 
   function draw_search_num(){
     var conf = $.extend(true, {}, config_stacked);
-    conf.title.text = 'Search num';
+    conf.title.text = 'Search num (search_logs)';
     conf.series = <%= raw @search_num.to_json %>;
     $('.container.search_num').highcharts(conf);
   }
 
   function draw_search_num_verification(){
     var conf = $.extend(true, {}, config_stacked);
-    conf.title.text = 'Search num(verification)';
+    conf.title.text = 'Search num verification (background_search_logs)';
     conf.series = <%= raw @search_num_verification.to_json %>;
     $('.container.search_num_verification').highcharts(conf);
   }
 
   function draw_new_user(){
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'New user';
+    conf.title.text = 'New user (users)';
     conf.series = <%= raw @new_user.to_json %>;
     $('.container.new_user').highcharts(conf);
   }
 
   function draw_sign_in(){
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'Sign in';
+    conf.title.text = 'Sign in (sign_in_logs)';
     conf.series = <%= raw @sign_in.to_json %>;
     $('.container.sign_in').highcharts(conf);
   }
