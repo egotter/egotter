@@ -15,10 +15,10 @@ class KpisController < ApplicationController
     xAxis_categories = (1..9)
     cells = []
     yAxis_categories.each.with_index do |day, y|
-      session_ids = SearchLog.where(created_at: day.all_day).where.not(device_type: 'crawler').pluck(:session_id).uniq
+      session_ids = SearchLog.except_crawler.where(created_at: day.all_day).pluck(:session_id).uniq
       cells << [0, y, session_ids.size]
       xAxis_categories.each do |x|
-        cells << [x, y, SearchLog.where(created_at: (day + x.days).all_day).where.not(device_type: 'crawler').where(session_id: session_ids).uniq.size]
+        cells << [x, y, SearchLog.except_crawler.where(created_at: (day + x.days).all_day).where(session_id: session_ids).uniq.size]
       end
     end
 
@@ -40,7 +40,9 @@ class KpisController < ApplicationController
         count(DISTINCT if(user_id = -1, session_id, NULL)) guest,
         count(DISTINCT if(user_id != -1, session_id, NULL)) login
       FROM search_logs
-      WHERE created_at BETWEEN :start AND :end AND device_type != 'crawler'
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
       GROUP BY date(created_at)
       ORDER BY date(created_at);
     EOS
@@ -62,7 +64,10 @@ class KpisController < ApplicationController
         action,
         count(*)         total
       FROM search_logs
-      WHERE created_at BETWEEN :start AND :end AND device_type != 'crawler' AND action != 'waiting'
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+        AND action != 'waiting'
       GROUP BY date(created_at), action
       ORDER BY date(created_at), action;
     EOS
@@ -85,7 +90,10 @@ class KpisController < ApplicationController
         count(if(user_id = -1, 1, NULL))                    guest,
         count(if(user_id != -1, 1, NULL))                   login
       FROM search_logs
-      WHERE created_at BETWEEN :start AND :end AND device_type != 'crawler' AND action = 'create'
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+        AND action = 'create'
       GROUP BY date(created_at)
       ORDER BY date(created_at);
     EOS
