@@ -4,6 +4,7 @@ class KpisController < ApplicationController
   def index
     @dau = dau
     @dau_by_action = dau_by_action
+    @dau_by_device_type = dau_by_device_type
     @search_num = search_num
     @search_num_verification = search_num_verification
     @new_user = new_user
@@ -77,6 +78,30 @@ class KpisController < ApplicationController
       {
         name: legend,
         data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
+      }
+    end
+  end
+
+  def dau_by_device_type
+    sql = <<-'EOS'.strip_heredoc
+      -- dau_by_device_type
+      SELECT
+        date(created_at) date,
+        device_type,
+        count(*)         total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at), device_type
+      ORDER BY date(created_at), device_type;
+    EOS
+    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+
+    result.map { |r| r.device_type.to_s }.uniq.sort.map do |legend|
+      {
+        name: legend,
+        data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
       }
     end
   end
