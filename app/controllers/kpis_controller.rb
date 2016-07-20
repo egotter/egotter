@@ -78,7 +78,8 @@ class KpisController < ApplicationController
     result.map { |r| r.action.to_s }.uniq.sort.map do |legend|
       {
         name: legend,
-        data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
+        data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+        visible: !legend.in?(%w(new create show))
       }
     end
   end
