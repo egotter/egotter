@@ -23,7 +23,7 @@ class KpisController < ApplicationController
     end
 
     @rr = cells
-    @yAxis_categories = yAxis_categories.map{|d| d.to_date.to_s }
+    @yAxis_categories = yAxis_categories.map{|d| d.to_date.strftime('%m/%d') }
     @xAxis_categories = xAxis_categories.to_a << 10
   end
 
