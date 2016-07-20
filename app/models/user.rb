@@ -39,12 +39,16 @@ class User < ActiveRecord::Base
         user.update(attrs.update(email: (auth.info.email.present? ? auth.info.email : user.email)))
         user.touch
       end
+
+      yield(user, :update) if block_given?
     else
       user = nil
       self.transaction do
         user = User.create!(attrs.update(uid: auth.uid, email: (auth.info.email || '')))
         user.create_notification!(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
       end
+
+      yield(user, :create) if block_given?
     end
 
     user

@@ -3,16 +3,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def twitter
     begin
-      user = User.update_or_create_for_oauth_by!(user_params)
+      user = User.update_or_create_for_oauth_by!(user_params) do |user, context|
+        create_sign_in_log(user.id, context)
+      end
     rescue =>  e
       return redirect_to '/', alert: t('before_sign_in.login_failed', sign_in_link: welcome_link)
     end
 
-    if user.updated_at - user.created_at < 5.seconds
-      create_sign_in_log(user.id, :create)
-    else
-      create_sign_in_log(user.id, :update)
-    end
     FollowEgotterWorker.perform_async(user.id)
     delete_uid(user)
 
