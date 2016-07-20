@@ -13,6 +13,11 @@
 
 <hr>
 
+<div class="container dau_by_referer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<br>
+
+<hr>
+
 <div class="container search_num" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
 <br>
 
@@ -112,6 +117,13 @@
     $('.container.dau_by_device_type').highcharts(conf);
   }
 
+  function draw_dau_by_referer(){
+    var conf = $.extend(true, {}, config);
+    conf.title.text = 'DAU by referer (search_logs)';
+    conf.series = <%= raw @dau_by_referer.to_json %>;
+    $('.container.dau_by_referer').highcharts(conf);
+  }
+
   function draw_search_num(){
     var conf = $.extend(true, {}, config_stacked);
     conf.title.text = 'Search num (search_logs)';
@@ -144,6 +156,7 @@
     draw_dau();
     draw_dau_by_action();
     draw_dau_by_device_type();
+    draw_dau_by_referer();
     draw_search_num();
     draw_search_num_verification();
     draw_new_user();

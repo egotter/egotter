@@ -5,6 +5,7 @@ class KpisController < ApplicationController
     @dau = dau
     @dau_by_action = dau_by_action
     @dau_by_device_type = dau_by_device_type
+    @dau_by_referer = dau_by_referer
     @search_num = search_num
     @search_num_verification = search_num_verification
     @new_user = new_user
@@ -102,6 +103,40 @@ class KpisController < ApplicationController
       {
         name: legend,
         data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
+      }
+    end
+  end
+
+  def dau_by_referer
+    sql = <<-'EOS'.strip_heredoc
+      -- dau_by_referer
+      SELECT
+        date(created_at) date,
+        case
+          when referer regexp '^http://(www\.)?egotter\.com' then 'egotter'
+          when referer regexp '^http://(www\.)?google\.com' then 'google.com'
+          when referer regexp '^http://(www\.)?google\.co\.jp' then 'google.co.jp'
+          when referer regexp '^http://(www\.)?google\.co\.in' then 'google.co.in'
+          when referer regexp '^http://search\.yahoo\.co\.jp' then 'search.yahoo.co.jp'
+          when referer regexp '^http://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
+          when referer regexp '^http://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
+          else 'others'
+        end channel,
+        count(*)         total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at), channel
+      ORDER BY date(created_at), channel;
+    EOS
+    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+
+    result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+      {
+        name: legend,
+        data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+        visible: !legend.in?(%w(egotter others))
       }
     end
   end
