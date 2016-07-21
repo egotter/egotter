@@ -8,7 +8,7 @@ module Concerns::TwitterUser::Builder
       tu = TwitterUser.new(
         uid: user.id,
         screen_name: user.screen_name,
-        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS),
+        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json,
         user_id: user_id
       )
       tu.egotter_context = egotter_context unless egotter_context.nil?
@@ -77,38 +77,38 @@ module Concerns::TwitterUser::Builder
     _friends.each do |f|
       friends.build(uid: f.id,
                     screen_name: f.screen_name,
-                    user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS))
+                    user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
     end
 
     _followers.each do |f|
       followers.build(uid: f.id,
                       screen_name: f.screen_name,
-                      user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS))
+                      user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
     end
 
     _statuses.each do |s|
       statuses.build(uid: uid,
                      screen_name: screen_name,
-                     status_info: s.slice(*Status::STATUS_SAVE_KEYS))
+                     status_info: s.slice(*Status::STATUS_SAVE_KEYS).to_json)
     end
 
     _mentions.each do |m|
       mentions.build(uid: m.user.id,
                      screen_name: m.user.screen_name,
-                     status_info: m.slice(*Status::STATUS_SAVE_KEYS))
+                     status_info: m.slice(*Status::STATUS_SAVE_KEYS).to_json)
     end
 
     _search_results.each do |sr|
       search_results.build(uid: sr.user.id,
                            screen_name: sr.user.screen_name,
-                           status_info: sr.slice(*Status::STATUS_SAVE_KEYS),
+                           status_info: sr.slice(*Status::STATUS_SAVE_KEYS).to_json,
                            query: search_query)
     end
 
     _favorites.each do |f|
       favorites.build(uid: f.user.id,
                       screen_name: f.user.screen_name,
-                      status_info: f.slice(*Status::STATUS_SAVE_KEYS))
+                      status_info: f.slice(*Status::STATUS_SAVE_KEYS).to_json)
     end
 
     true

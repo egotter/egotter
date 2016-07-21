@@ -24,16 +24,17 @@ module Concerns::Status::Store
     lang
   )
 
-  STATUS_REJECT_KEYS = %i(id screen_name user entities created_at)
+  STATUS_REJECT_KEYS = %i(id screen_name created_at)
+
+  METHOD_NAME_KEYS = STATUS_SAVE_KEYS.reject { |k| k.in?(STATUS_REJECT_KEYS) }
 
   included do
-    store :status_info, accessors: STATUS_SAVE_KEYS.reject { |k| k.in?(STATUS_REJECT_KEYS) }, coder: JSON
+    delegate *METHOD_NAME_KEYS, to: :_status_info
+    # store :status_info, accessors: METHOD_NAME_KEYS, coder: JSON
   end
 
-  %i(user entities).each do |method_name|
-    define_method method_name do
-      Hashie::Mash.new(status_info[method_name])
-    end
+  def _status_info
+    @_status_info ||= Hashie::Mash.new(JSON.load(status_info))
   end
 
   def mentions?

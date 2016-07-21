@@ -31,25 +31,25 @@ module Concerns::TwitterUser::Store
       created_at
     )
 
-  PROFILE_REJECT_KEYS = %i(id screen_name url status entities created_at)
+  PROFILE_REJECT_KEYS = %i(id screen_name url created_at)
+
+  METHOD_NAME_KEYS = PROFILE_SAVE_KEYS.reject { |k| k.in?(PROFILE_REJECT_KEYS) }
 
   JAPANESE_TIME_ZONE_NAMES = %w(JST GMT+9)
 
   included do
-    store :user_info, accessors: PROFILE_SAVE_KEYS.reject { |k| k.in?(PROFILE_REJECT_KEYS) }, coder: JSON
+    delegate *METHOD_NAME_KEYS, to: :_user_info
+    # store :user_info, accessors: METHOD_NAME_KEYS, coder: JSON
   end
 
-  %i(status entities).each do |method_name|
-    define_method method_name do
-      Hashie::Mash.new(user_info[method_name])
-    end
+  def _user_info
+    @_user_info ||= Hashie::Mash.new(JSON.load(user_info))
   end
 
   def url
-    _entities = Hashie::Mash.new(entities)
-    return nil if _entities.nil? || _entities.url.nil? || _entities.url.urls.nil?
+    return nil if entities.nil? || entities.url.nil? || entities.url.urls.nil?
 
-    urls = _entities.url.urls
+    urls = entities.url.urls
     urls.any? ? (urls[0].expanded_url || urls[0].url) : nil
   rescue => e
     logger.warn "#{e}: #{e.message} #{entities}"
@@ -57,18 +57,17 @@ module Concerns::TwitterUser::Store
   end
 
   def twittered_at
-    _created_at = user_info[:created_at]
-    if time_zone.present? && _created_at.present?
+    account_created_at = _user_info[:created_at]
+    if time_zone.present? && account_created_at.present?
       _time_zone = (time_zone.in?(JAPANESE_TIME_ZONE_NAMES) ? 'Tokyo' : time_zone)
-      ActiveSupport::TimeZone[_time_zone].parse(_created_at)
-    elsif _created_at.present?
-      Time.zone.parse(_created_at)
+      ActiveSupport::TimeZone[_time_zone].parse(account_created_at)
+    elsif account_created_at.present?
+      Time.zone.parse(account_created_at)
     else
-      _created_at
+      account_created_at
     end
   rescue => e
-    logger.warn "#{e}: #{e.message} #{time_zone}, #{_created_at}"
-    logger.warn e.backtrace.join("\n")
-    _created_at
+    logger.warn "#{e}: #{e.message} #{time_zone}, #{account_created_at}"
+    account_created_at
   end
 end
