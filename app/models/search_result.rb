@@ -24,16 +24,7 @@ class SearchResult < ActiveRecord::Base
 
   attr_accessor :egotter_context
 
-  delegate *Status::STATUS_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :status_info_mash
-
-  def status_info_mash
-    @status_info_mash ||= Hashie::Mash.new(JSON.parse(status_info))
-  end
-
-  def has_key?(key)
-    status_info_mash.has_key?(key)
-  end
-
+  include Concerns::Status::Store
   include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Equalizer
 end

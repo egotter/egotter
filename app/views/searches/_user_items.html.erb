@@ -35,7 +35,7 @@
       </div>
 
       <div class="media-right">
-        <% if user_signed_in? && user_item.has_key?(:friendship) %>
+        <% if user_signed_in? && user_item.respond_to?(:friendship) %>
           <span>
             <% if user_item[:me] %>
             <% elsif user_item[:friendship] %>
@@ -86,7 +86,7 @@
     </div>
 
     <%# score box %>
-    <% if user_item[:target].has_key?(:score) %><%# close_friends score %>
+    <% if user_item[:target].respond_to?(:score) %><%# close_friends score %>
       <div class="media score-box" style="display: none;">
         <div class="media-left">
           <img class="media-object" src="<%= profile_image_url %>"
@@ -115,7 +115,7 @@
           });
         </script>
 
-        <% if user_item[:target].has_key?(:score) %><%# close_friends score %>
+        <% if user_item[:target].respond_to?(:score) %><%# close_friends score %>
           <div class="icon-chart container">
             <%
               chart_items = user_items.slice(0, [5, user_items.size].min).map{|item| item[:target] }

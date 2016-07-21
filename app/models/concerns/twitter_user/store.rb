@@ -31,12 +31,16 @@ module Concerns::TwitterUser::Store
       created_at
     )
 
-  PROFILE_REJECT_KEYS = %i(id screen_name url created_at)
+  PROFILE_REJECT_KEYS = %i(id screen_name url entities created_at)
 
   JAPANESE_TIME_ZONE_NAMES = %w(JST GMT+9)
 
   included do
     store :user_info, accessors: PROFILE_SAVE_KEYS.reject { |k| k.in?(PROFILE_REJECT_KEYS) }, coder: JSON
+  end
+
+  def entities
+    Hashie::Mash.new(user_info[:entities])
   end
 
   def url

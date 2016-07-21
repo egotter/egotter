@@ -21,64 +21,11 @@
 class Status < ActiveRecord::Base
   belongs_to :twitter_user
 
-  # https://dev.twitter.com/overview/api/tweets
-  STATUS_SAVE_KEYS = %i(
-    created_at
-    id
-    text
-    source
-    truncated
-    coordinates
-    place
-    entities
-    user
-    contributors
-    is_quote_status
-    retweet_count
-    favorite_count
-    favorited
-    retweeted
-    possibly_sensitive
-    lang
-  )
-
-  delegate *STATUS_SAVE_KEYS.reject { |k| k.in?(%i(id screen_name)) }, to: :status_info_mash
-
-  def status_info_mash
-    @status_info_mash ||= Hashie::Mash.new(JSON.parse(status_info))
-  end
-
-  def has_key?(key)
-    status_info_mash.has_key?(key)
-  end
+  include Concerns::Status::Store
 
   with_options on: :create do |obj|
     obj.validates :uid, presence: true, numericality: :only_integer
     obj.validates :screen_name, format: {with: /\A[a-zA-Z0-9_]{1,20}\z/}
     obj.validates :user_info, presence: true
-  end
-
-  def mentions?
-    status_info_mash.entities_.user_mentions_.any?
-  end
-
-  def media?
-    status_info_mash.entities_.media_.any?
-  end
-
-  def urls?
-    status_info_mash.entities_.urls_.any?
-  end
-
-  def hashtags?
-    status_info_mash.entities_.hashtags_.any?
-  end
-
-  def hashtags
-    status_info_mash.entities!.hashtags!.map { |h| h.text }
-  end
-
-  def location?
-    !coordinates.nil?
   end
 end

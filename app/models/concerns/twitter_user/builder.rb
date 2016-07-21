@@ -89,26 +89,26 @@ module Concerns::TwitterUser::Builder
     _statuses.each do |s|
       statuses.build(uid: uid,
                      screen_name: screen_name,
-                     status_info: s.slice(*Status::STATUS_SAVE_KEYS).to_json)
+                     status_info: s.slice(*Status::STATUS_SAVE_KEYS))
     end
 
     _mentions.each do |m|
       mentions.build(uid: m.user.id,
                      screen_name: m.user.screen_name,
-                     status_info: m.slice(*Status::STATUS_SAVE_KEYS).to_json)
+                     status_info: m.slice(*Status::STATUS_SAVE_KEYS))
     end
 
     _search_results.each do |sr|
       search_results.build(uid: sr.user.id,
                            screen_name: sr.user.screen_name,
-                           status_info: sr.slice(*Status::STATUS_SAVE_KEYS).to_json,
+                           status_info: sr.slice(*Status::STATUS_SAVE_KEYS),
                            query: search_query)
     end
 
     _favorites.each do |f|
       favorites.build(uid: f.user.id,
                       screen_name: f.user.screen_name,
-                      status_info: f.slice(*Status::STATUS_SAVE_KEYS).to_json)
+                      status_info: f.slice(*Status::STATUS_SAVE_KEYS))
     end
 
     true
