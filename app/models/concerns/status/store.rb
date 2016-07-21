@@ -30,12 +30,10 @@ module Concerns::Status::Store
     store :status_info, accessors: STATUS_SAVE_KEYS.reject { |k| k.in?(STATUS_REJECT_KEYS) }, coder: JSON
   end
 
-  def entities
-    Hashie::Mash.new(status_info[:entities])
-  end
-
-  def user
-    Hashie::Mash.new(status_info[:user])
+  %i(user entities).each do |method_name|
+    define_method method_name do
+      Hashie::Mash.new(status_info[method_name])
+    end
   end
 
   def mentions?
