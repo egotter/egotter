@@ -8,7 +8,7 @@ module Concerns::TwitterUser::Builder
       tu = TwitterUser.new(
         uid: user.id,
         screen_name: user.screen_name,
-        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, # TODO check the type of keys and values
+        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS),
         user_id: user_id
       )
       tu.egotter_context = egotter_context unless egotter_context.nil?
@@ -77,13 +77,13 @@ module Concerns::TwitterUser::Builder
     _friends.each do |f|
       friends.build(uid: f.id,
                     screen_name: f.screen_name,
-                    user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
+                    user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS))
     end
 
     _followers.each do |f|
       followers.build(uid: f.id,
                       screen_name: f.screen_name,
-                      user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
+                      user_info: f.slice(*TwitterUser::PROFILE_SAVE_KEYS))
     end
 
     _statuses.each do |s|

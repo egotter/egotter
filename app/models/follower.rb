@@ -23,7 +23,7 @@ class Follower < ActiveRecord::Base
 
   attr_accessor :egotter_context
 
-  include Concerns::TwitterUser::UserInfoAccessor
+  include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Equalizer
 end

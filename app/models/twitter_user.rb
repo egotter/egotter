@@ -37,7 +37,7 @@ class TwitterUser < ActiveRecord::Base
     User.find_by(id: user_id)
   end
 
-  include Concerns::TwitterUser::UserInfoAccessor
+  include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Equalizer
   include Concerns::TwitterUser::Builder
