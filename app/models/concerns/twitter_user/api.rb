@@ -46,6 +46,10 @@ module Concerns::TwitterUser::Api
     end.flatten.reverse
   end
 
+  def blocking_or_blocked
+    (removing & removed).uniq
+  end
+
   def replying(options = {})
     if statuses.any?
       client.replying(statuses.to_a, options)
@@ -134,6 +138,14 @@ module Concerns::TwitterUser::Api
 
   def removed_graph
     large_rate = [removed.size * 10, 100].min
+    [
+      {name: I18n.t('legend.large'), y: large_rate},
+      {name: I18n.t('legend.small'), y: 100 - large_rate}
+    ]
+  end
+
+  def blocking_or_blocked_graph
+    large_rate = [blocking_or_blocked.size * 10, 100].min
     [
       {name: I18n.t('legend.large'), y: large_rate},
       {name: I18n.t('legend.small'), y: 100 - large_rate}

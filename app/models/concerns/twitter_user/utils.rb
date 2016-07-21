@@ -24,6 +24,10 @@ module Concerns::TwitterUser::Utils
   included do
   end
 
+  def mention_name
+    "@#{screen_name}"
+  end
+
   def recently_created?(seconds = DEFAULT_SECONDS)
     Time.zone.now.to_i - created_at.to_i < seconds
   end

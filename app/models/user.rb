@@ -63,7 +63,7 @@ class User < ActiveRecord::Base
   end
 
   def twitter_user
-    TwitterUser.latest(uid_i, id)
+    TwitterUser.latest(uid.to_i, id)
   end
 
   def twitter_user?
@@ -78,14 +78,18 @@ class User < ActiveRecord::Base
     uid.to_i
   end
 
+  def mention_name
+    "@#{screen_name}"
+  end
+
   ADMIN_UID = 58135830
 
   def admin?
-    uid_i == ADMIN_UID
+    uid.to_i == ADMIN_UID
   end
 
   def self.admin?(uid)
-    uid_i == ADMIN_UID
+    uid.to_i == ADMIN_UID
   end
 
   def email_enabled?

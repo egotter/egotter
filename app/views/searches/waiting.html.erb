@@ -27,7 +27,7 @@
 </div>
 
 <div class="container retry_btn" style="display: none; margin-top: 15px;">
-  <%= link_to t('dictionary.retry_search_by', user: "@#{@searched_tw_user.screen_name}"), searches_path(screen_name: @searched_tw_user.screen_name),
+  <%= link_to t('dictionary.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name),
               class: 'btn btn-lg btn-info btn-block', method: :post %>
 </div>
 

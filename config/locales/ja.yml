@@ -142,6 +142,7 @@ ja:
     followers: "%{user} のフォロワー"
     removing: "%{user} がフォローを外した"
     removed: "%{user} がフォローを外された"
+    blocking_or_blocked: "%{user} がブロックされたかも"
     mutual_friends: "%{user} が両思い"
     one_sided_friends: "%{user} が片思い"
     one_sided_followers: "%{user} が片思われ"

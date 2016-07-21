@@ -18,7 +18,7 @@
 
   <% if user_signed_in? %>
     <h2 class="search-myself"><small><%= t('dictionary.search_login_user') %></small></h2>
-    <%= link_to t('dictionary.search_by', user: "@#{current_user.screen_name}"),
+    <%= link_to t('dictionary.search_by', user: current_user.mention_name),
                 searches_path(screen_name: current_user.screen_name),
                 class: 'submit-btn2 btn btn-info btn-block', method: :post %>
   <% end %>
