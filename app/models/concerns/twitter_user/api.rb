@@ -34,14 +34,14 @@ module Concerns::TwitterUser::Api
 
   def removing
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
+    TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :desc).each_cons(2).map do |old_one, new_one|
       dummy_client.removing(old_one, new_one)
     end.flatten
   end
 
   def removed
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
+    TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :desc).each_cons(2).map do |old_one, new_one|
       dummy_client.removed(old_one, new_one)
     end.flatten
   end
