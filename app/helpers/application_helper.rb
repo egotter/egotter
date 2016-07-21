@@ -21,7 +21,7 @@ module ApplicationHelper
 
   def clusters_belong_to_text(clusters, tu)
     t('tweet_text.clusters_belong_to',
-      user: "@#{tu.screen_name}",
+      user: tu.mention_name,
       clusters: "#{clusters.join(t('dictionary.delim'))}",
       kaomoji: Kaomoji.happy,
       url: short_url)
@@ -46,7 +46,7 @@ module ApplicationHelper
       end
 
     t('tweet_text.usage_stats',
-      user: "@#{tu.screen_name}",
+      user: tu.mention_name,
       total: "#{total_estimated}",
       avg: "#{avg_real}",
       kaomoji: Kaomoji.happy,
@@ -61,20 +61,20 @@ module ApplicationHelper
     if search_oneself?(tu.uid)
       t('tweet_text.close_friends_by_oneself',
         users: users,
-        screen_name: "@#{tu.screen_name}",
+        screen_name: tu.mention_name,
         kaomoji: Kaomoji.happy,
         url: short_url)
     elsif search_others?(tu.uid)
       t('tweet_text.close_friends_by_others',
         users: users,
-        screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
+        screen_name: "#{tu.mention_name}#{t('dictionary.honorific')}",
         kaomoji: Kaomoji.happy,
-        me: "@#{current_user.screen_name}",
+        me: current_user.mention_name,
         url: short_url)
     elsif !user_signed_in?
       t('tweet_text.close_friends_without_sign_in',
         users: users,
-        screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
+        screen_name: "#{tu.mention_name}#{t('dictionary.honorific')}",
         kaomoji: Kaomoji.happy,
         url: short_url)
     else
@@ -99,7 +99,7 @@ module ApplicationHelper
   def mutual_friends_text(tu)
     rates = tu.mutual_friends_rate
     t('tweet_text.mutual_friends',
-      screen_name: "@#{tu.screen_name}#{t('dictionary.honorific')}",
+      screen_name: "#{tu.mention_name}#{t('dictionary.honorific')}",
       mutual_friends_rate: rates[0].round,
       one_sided_friends_rate: rates[1].round,
       one_sided_followers_rate: rates[2].round,
@@ -115,8 +115,8 @@ module ApplicationHelper
     users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
       users: users,
-      user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
-      login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
+      user: "#{tu.mention_name}#{t('dictionary.honorific')}",
+      login: "#{current_user.mention_name}#{t('dictionary.honorific')}",
       kaomoji: Kaomoji.happy,
       url: short_url)
   rescue => e
@@ -129,8 +129,8 @@ module ApplicationHelper
     users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
       users: users,
-      user: "@#{tu.screen_name}#{t('dictionary.honorific')}",
-      login: "@#{current_user.screen_name}#{t('dictionary.honorific')}",
+      user: "#{tu.mention_name}#{t('dictionary.honorific')}",
+      login: "#{current_user.mention_name}#{t('dictionary.honorific')}",
       kaomoji: Kaomoji.happy,
       url: short_url)
   rescue => e

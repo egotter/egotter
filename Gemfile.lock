@@ -252,7 +252,7 @@ GEM
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
-    twitter_with_auto_pagination (0.7.1)
+    twitter_with_auto_pagination (0.8.0)
       activesupport
       hashie
       parallel

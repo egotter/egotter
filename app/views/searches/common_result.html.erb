@@ -29,13 +29,13 @@
     <div class="empty">
       <% if user_signed_in? %>
         <% if @searched_tw_user.too_many_friends? %>
-          <div><%= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: "@#{@searched_tw_user.screen_name}", kaomoji: Kaomoji.unhappy) %></div>
+          <div><%= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy) %></div>
         <% else %>
           <div><%= raw t('after_sign_in.empty_and_other_reason', kaomoji: Kaomoji.happy) %></div>
         <% end %>
       <% else %>
         <% if @searched_tw_user.many_friends? %>
-          <div><%= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: "@#{@searched_tw_user.screen_name}", sign_in_link: welcome_link, kaomoji: Kaomoji.happy) %></div>
+          <div><%= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: welcome_link, kaomoji: Kaomoji.happy) %></div>
         <% else %>
           <div><%= raw t('before_sign_in.empty_and_other_reason', sign_in_link: welcome_link, kaomoji: Kaomoji.unhappy) %></div>
         <% end %>
