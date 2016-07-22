@@ -8,9 +8,9 @@ module Logging
   end
 
   def create_search_log
-    uid = params[:id].match(/\A\d+\z/)[0].to_i
+    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
     user_id = current_user_id
-    if TwitterUser.exists?(uid, user_id)
+    if TwitterUser.exists?(uid: uid, user_id: user_id)
       screen_name = TwitterUser.latest(uid, user_id).screen_name
     else
       uid = screen_name = -1
