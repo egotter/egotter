@@ -122,16 +122,17 @@ module MenuItemBuilder
         },
       ]
     elsif search_others?(tu.uid)
+      current_user_tu = current_user.twitter_user
       [
         {
           name: friends_name,
-          target: tu.common_friends(current_user.twitter_user),
-          graph: tu.common_friends_graph(current_user.twitter_user),
+          target: tu.common_friends(current_user_tu),
+          graph: tu.common_friends_graph(current_user_tu),
           path_method: method(:common_friends_path).to_proc
         }, {
           name: followers_name,
-          target: tu.common_followers(current_user.twitter_user),
-          graph: tu.common_followers_graph(current_user.twitter_user),
+          target: tu.common_followers(current_user_tu),
+          graph: tu.common_followers_graph(current_user_tu),
           path_method: method(:common_followers_path).to_proc
         },
       ]

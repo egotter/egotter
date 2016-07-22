@@ -6,43 +6,53 @@ module Concerns::TwitterUser::Api
   included do
   end
 
+  def _friends
+    @_friends ||= friends.to_a
+  end
+
+  def _followers
+    @_followers ||= followers.to_a
+  end
+
   def dummy_client
     @dummy_client ||= ApiClient.dummy_instance
   end
 
   def one_sided_friends
-    @_one_sided_friends ||= friends.to_a - followers.to_a
+    @_one_sided_friends ||= _friends - _followers
   end
 
   def one_sided_followers
-    @_one_sided_followers ||= followers.to_a - friends.to_a
+    @_one_sided_followers ||= _followers - _friends
   end
 
   def mutual_friends
-    @_mutual_friends ||= friends.to_a & followers.to_a
+    @_mutual_friends ||= _friends & _followers
   end
 
   def common_friends(other)
     return [] if other.blank?
-    dummy_client.common_friends(self, other)
+    @_common_friends ||= _friends & other._friends
   end
 
   def common_followers(other)
     return [] if other.blank?
-    dummy_client.common_followers(self, other)
+    @_common_followers ||= _followers & other._followers
   end
 
+  # `includes` is not used because friends have hundreds of records.
   def removing
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
     @_removing ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      dummy_client.removing(old_one, new_one)
+      old_one._friends - new_one._friends
     end.flatten.reverse
   end
 
+  # `includes` is not used because followers have hundreds of records.
   def removed
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
     @_removed ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      dummy_client.removed(old_one, new_one)
+      old_one._followers - new_one._followers
     end.flatten.reverse
   end
 

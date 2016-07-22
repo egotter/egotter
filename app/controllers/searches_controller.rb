@@ -417,7 +417,12 @@ class SearchesController < ApplicationController
     @search_histories =
       if user_signed_in?
         searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-        build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i, current_user.id) }.compact)
+        records = searched_uids.each_with_object({}) do |uid, memo|
+          unless memo.has_key?("#{uid}-#{current_user.id}")
+            memo["#{uid}-#{current_user.id}"] = TwitterUser.latest(uid.to_i, current_user.id)
+          end
+        end
+        build_user_items(searched_uids.map { |uid| records["#{uid}-#{current_user.id}"] }.compact)
       else
         []
       end
