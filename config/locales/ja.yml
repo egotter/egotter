@@ -88,7 +88,7 @@ ja:
     retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
     empty_and_anonymous_and_many_friends: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>%{sign_in_link} すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}"
     empty_and_other_reason: "結果は0件です。%{sign_in_link} すると正しく結果が表示されるかもしれません。<br>%{kaomoji}"
-    that_page_doesnt_exist: "無効なURLです。"
+    that_page_doesnt_exist: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
   after_sign_in:
     too_many_requests: "検索数の上限に達しました。時間をおいてから検索してみてください。"
     unauthorized: "認証に失敗しました。一度 %{sign_out_link} し、再度ログインしてから検索してみてください。"
@@ -165,11 +165,17 @@ ja:
       twitter_user: "ツイッターユーザー"
     attributes:
       twitter_user:
+        uid: uid
+        screen_name: screen name
+        user_info: "プロフィール情報"
         search_count: "検索回数"
         update_count: "自動更新回数"
         created_at: "作成日時"
         updated_at: "更新日時"
     errors:
+      models:
+        twitter_user:
+          attributes:
       messages:
         record_invalid: "バリデーションに失敗しました: %{errors}"
         restrict_dependent_destroy:

@@ -77,8 +77,8 @@ class TwitterUser < ActiveRecord::Base
   end
 
   def save_with_bulk_insert(validate = true)
-    if validate && invalid?
-      logger.debug "[#{Time.zone.now}] #{self.class}##{__method__} #{errors.full_messages}"
+    if validate && !(valid? && recently_created_record_exists? && same_record_exists?)
+      logger.warn "#{self.class}##{__method__} #{errors.full_messages}"
       return false
     end
 

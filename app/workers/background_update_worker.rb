@@ -7,7 +7,9 @@ class BackgroundUpdateWorker
   def perform(uid, options = {})
     @uid = uid
     options = options.with_indifferent_access
-    first_tu = measure('build(first)') { TwitterUser.build_without_relations(client, uid, user_id) }
+
+    # TODO fix
+    # first_tu = measure('build(first)') { TwitterUser.build_without_relations(client, uid, user_id) }
     @sn = first_tu.screen_name
 
     logger.debug "#{user_name} start"
@@ -19,7 +21,7 @@ class BackgroundUpdateWorker
       return
     end
 
-    if first_tu.unauthorized?
+    if first_tu.unauthorized_job?
       create_log(uid, false, BackgroundUpdateLog::UNAUTHORIZED, first_tu.errors.full_messages)
       redis.zadd(UnauthorizedUidList.key, now_i, uid.to_s)
       logger.debug "#{user_name} #{first_tu.errors.full_messages}"

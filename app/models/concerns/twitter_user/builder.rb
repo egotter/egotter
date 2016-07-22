@@ -21,8 +21,8 @@ module Concerns::TwitterUser::Builder
       tu
     end
 
-    def build_without_relations(client, uid, user_id, egotter_context = nil)
-      _basic_build(client.user(uid.to_i), user_id, egotter_context)
+    def build_without_relations(t_user, user_id, egotter_context = nil)
+      _basic_build(t_user, user_id, egotter_context)
     end
   end
 

@@ -12,17 +12,17 @@ module Concerns::TwitterUser::Validation
     with_options on: :create do |obj|
       obj.validates :uid, presence: true, numericality: :only_integer
       obj.validates :screen_name, format: {with: SCREEN_NAME_REGEXP}
-      obj.validates :user_info, presence: true
-
-      obj.validate :unauthorized?
-      obj.validate :suspended_account?
-      obj.validate :recently_created_record_exists?
-      obj.validate :same_record_exists?
+      obj.validates :user_info, presence: true, format: {with: /\A\{.*\}\z/}
     end
   end
 
-  def invalid_screen_name?
-    !(screen_name =~ SCREEN_NAME_REGEXP)
+  def valid_screen_name?
+    if screen_name.present? && screen_name =~ SCREEN_NAME_REGEXP
+      true
+    else
+      errors[:screen_name] << I18n.t('before_sign_in.invalid_twitter_id')
+      false
+    end
   end
 
   def search_with_login?
@@ -37,45 +37,36 @@ module Concerns::TwitterUser::Validation
     self.protected
   end
 
-  def unauthorized?
-    raise 'user_info is blank' if user_info.blank?
-
-    if egotter_context == 'search'
-      _unauthorized_search?
-    elsif egotter_context == 'test'
-      false
-    else
-      _unauthorized_job?
-    end
-  end
-
-  def _unauthorized_search?
+  def unauthorized_search?(twitter_link, sign_in_link)
     return false unless protected_account?
 
-    unless search_with_login?
-      errors[:base] << 'search protected user without login'
+    if !search_with_login? && !ego_surfing? && !has_permission_to_search?
+      errors[:base] << I18n.t('before_sign_in.protected_user', user: twitter_link, sign_in_link: sign_in_link)
       return true
     end
 
-    return false if ego_surfing?
-
-    true
+    false
   end
 
-  def _unauthorized_job?
+  def unauthorized_job?
     return false unless protected_account?
     return false if User.exists?(uid: uid.to_i)
     errors[:base] << 'unauthorized worker'
     true
   end
 
-  def suspended_account?
-    if suspended
-      errors[:base] << 'suspended'
-      return true
-    end
+  def has_permission_to_search?
+    return false unless search_with_login?
+    login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i) ? true : false
+  end
 
-    false
+  def suspended_account?(twitter_link)
+    if suspended
+      errors[:base] << I18n.t('before_sign_in.suspended_user', user: twitter_link)
+      true
+    else
+      false
+    end
   end
 
   # not using in valid?

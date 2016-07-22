@@ -71,7 +71,7 @@ module MenuItemBuilder
   def replied_menu(tu)
     {
       name: t('search_menu.replied', user: tu.mention_name),
-      target: tu.replied, # no calling
+      target: tu.replied,
       graph: tu.replied_graph,
       path_method: method(:replied_path).to_proc
     }
@@ -80,7 +80,7 @@ module MenuItemBuilder
   def favoriting_menu(tu)
     {
       name: t('search_menu.favoriting', user: tu.mention_name),
-      target: tu.favoriting, # no calling
+      target: tu.favoriting,
       graph: tu.favoriting_graph,
       path_method: method(:favoriting_path).to_proc
     }

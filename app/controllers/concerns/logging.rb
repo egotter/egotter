@@ -8,13 +8,22 @@ module Logging
   end
 
   def create_search_log
+    uid = params[:id].match(/\A\d+\z/)[0].to_i
+    uid = -1 if uid == 0
+    screen_name =
+      if uid != -1 && ValidUidList.new(redis).exists?(uid, current_user_id)
+        fetch_twitter_user_from_cache(uid, current_user_id).screen_name
+      else
+        -1
+      end
+
     attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
-      uid:         @twitter_user.nil? ? -1 : @twitter_user.uid,
-      screen_name: @twitter_user.nil? ? -1 : @twitter_user.screen_name,
+      uid:         uid,
+      screen_name: screen_name,
       action:      action_name,
-      ego_surfing: ego_surfing?,
+      ego_surfing: ego_surfing?(uid),
       method:      request.method,
       device_type: request.device_type,
       os:          request.os,
@@ -60,8 +69,8 @@ module Logging
     session[:fingerprint]
   end
 
-  def ego_surfing?
-    user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i
+  def ego_surfing?(uid)
+    user_signed_in? && current_user.uid.to_i == uid.to_i
   end
 
   def user_agent
