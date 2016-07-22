@@ -31,3 +31,4 @@
 /.env
 /public/assets
 /.rbenv-gemsets
+.DS_Store
