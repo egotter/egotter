@@ -9,13 +9,12 @@ module Logging
 
   def create_search_log
     uid = params[:id].match(/\A\d+\z/)[0].to_i
-    uid = -1 if uid == 0
-    screen_name =
-      if uid != -1 && ValidUidList.new(redis).exists?(uid, current_user_id)
-        fetch_twitter_user_from_cache(uid, current_user_id).screen_name
-      else
-        -1
-      end
+    user_id = current_user_id
+    if TwitterUser.exists?(uid, user_id)
+      screen_name = TwitterUser.latest(uid, user_id).screen_name
+    else
+      uid = screen_name = -1
+    end
 
     attrs = {
       session_id:  fingerprint,

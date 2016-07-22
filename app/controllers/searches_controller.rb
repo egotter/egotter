@@ -12,11 +12,9 @@ class SearchesController < ApplicationController
   before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
   before_action :need_login,             only: NEED_LOGIN
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
-
-  before_action :set_searched_twitter_user, only: SEARCH_MENUS + %i(show)
-  before_action only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS) do
-    create_search_log
-  end
+  before_action :valid_search_value?,    only: %i(create)
+  before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
+  before_action :create_search_log,      only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
 
 
   before_action :basic_auth, only: DEBUG_PAGES
@@ -64,10 +62,11 @@ class SearchesController < ApplicationController
   def show
     start_time = Time.zone.now
     tu = @searched_tw_user
+    user_id = current_user_id
 
     page_cache = PageCache.new(redis)
-    if page_cache.exists?(tu.uid, current_user_id)
-      return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, current_user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, current_user_id), tu.search_log.call_count)
+    if page_cache.exists?(tu.uid, user_id)
+      return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count)
     end
 
     @menu_items = [
@@ -94,8 +93,8 @@ class SearchesController < ApplicationController
 
     @searched_tw_user = tu
     html = render_to_string
-    page_cache.write(tu.uid, current_user_id, html)
-    render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(tu.uid, current_user_id), tu.search_log.call_count, tu.client.call_count)
+    page_cache.write(tu.uid, user_id, html)
+    render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count, tu.client.call_count)
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
@@ -284,8 +283,6 @@ class SearchesController < ApplicationController
 
   # POST /searches
   def create
-    return unless can_search?
-
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
     user_id = current_user_id
 
@@ -313,13 +310,13 @@ class SearchesController < ApplicationController
   # POST /searches/:screen_name/waiting
   def waiting
     uid = params[:id].match(/\A\d+\z/)[0].to_i
+    user_id = current_user_id
 
     if request.post?
-      unless ValidUidList.new(redis).exists?(uid, current_user_id)
+      unless ValidUidList.new(redis).exists?(uid, user_id)
         return render text: t('before_sign_in.that_page_doesnt_exist')
       end
 
-      user_id = current_user_id
       case
         when BackgroundSearchLog.processing?(uid, user_id)
           render json: {status: false, reason: 'processing'}
@@ -333,11 +330,11 @@ class SearchesController < ApplicationController
           raise BackgroundSearchLog::SomethingError
       end
     else
-      unless ValidUidList.new(redis).exists?(uid, current_user_id)
+      unless ValidUidList.new(redis).exists?(uid, user_id)
         return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
       end
 
-      @searched_tw_user = fetch_twitter_user_from_cache(uid, current_user_id)
+      @searched_tw_user = fetch_twitter_user_from_cache(uid, user_id)
     end
   end
 
@@ -361,21 +358,21 @@ class SearchesController < ApplicationController
     )
   end
 
-  def set_searched_twitter_user
+  def set_twitter_user
     uid = params[:id].match(/\A\d+\z/)[0].to_i
-    unless ValidUidList.new(redis).exists?(uid, current_user_id)
+    if uid == 0
+      logger.warn "#{self.class}##{__method__}: The uid is invalid #{params[:id]} #{current_user_id}."
       return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
 
-    tu = fetch_twitter_user_from_cache(uid, current_user_id)
-
-    latest_tu = tu.latest_me
-    if latest_tu.blank?
-      PageCache.new(redis).delete(tu.uid, current_user_id)
-      return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
+    if TwitterUser.exists?(uid: uid, user_id: current_user_id)
+      tu = TwitterUser.latest(uid, current_user_id)
+      tu.assign_attributes(client: client, egotter_context: 'search')
+      @searched_tw_user = tu
+    else
+      logger.warn "#{self.class}##{__method__}: The TwitterUser doesn't exist #{uid} #{current_user_id}."
+      redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
-    latest_tu.assign_attributes(client: client, egotter_context: 'search')
-    @searched_tw_user = latest_tu
   end
 
   def build_user_items(items)
