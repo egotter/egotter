@@ -15,4 +15,22 @@ module SearchesHelper
       redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
   end
+
+  def fetch_twitter_user_from_cache(uid, user_id)
+    attrs = ValidTwitterUserSet.new(redis).get(uid, user_id)
+    TwitterUser.new(
+      uid: attrs['uid'],
+      screen_name: attrs['screen_name'],
+      user_id: attrs['user_id'],
+      user_info: attrs['user_info'],
+      egotter_context: 'search'
+    )
+  end
+
+  def reject_crawler
+    if request.device_type == 'crawler'
+      logger.warn "#{self.class}##{__method__}: The crawler is rejected."
+      render text: t('before_sign_in.that_page_doesnt_exist')
+    end
+  end
 end

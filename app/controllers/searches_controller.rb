@@ -11,13 +11,13 @@ class SearchesController < ApplicationController
     clusters_belong_to close_friends usage_stats update_histories)
   NEED_LOGIN = %i(common_friends common_followers)
 
+  before_action :reject_crawler,         only: %i(create)
   before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
   before_action :need_login,             only: NEED_LOGIN
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
   before_action :valid_search_value?,    only: %i(create)
   before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
   before_action :create_search_log,      only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
-
 
   before_action :basic_auth, only: DEBUG_PAGES
 
@@ -371,17 +371,6 @@ class SearchesController < ApplicationController
       BackgroundSearchWorker.perform_async(values)
       searched_uid_list.add(uid, user_id)
     end
-  end
-
-  def fetch_twitter_user_from_cache(uid, user_id)
-    attrs = ValidTwitterUserSet.new(redis).get(uid, user_id)
-    TwitterUser.new(
-      uid: attrs['uid'],
-      screen_name: attrs['screen_name'],
-      user_id: attrs['user_id'],
-      user_info: attrs['user_info'],
-      egotter_context: 'search'
-    )
   end
 
   def build_user_items(items)
