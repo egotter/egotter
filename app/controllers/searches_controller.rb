@@ -267,11 +267,6 @@ class SearchesController < ApplicationController
     @title = t('search_menu.usage_stats', user: @searched_tw_user.mention_name)
   end
 
-  # GET /searches/:screen_name/update_histories
-  def update_histories
-    @update_histories = TwitterUser.where(uid: @searched_tw_user.uid).order(created_at: :desc)
-  end
-
   # GET /
   def new
     @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)

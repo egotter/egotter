@@ -19,6 +19,9 @@ Rails.application.routes.draw do
     get "searches/:screen_name/#{name}", to: "searches##{name}", as: name
   end
 
+  get 'searches/:screen_name/:id/update_histories' => redirect('/update_histories/%{id}')
+  get 'update_histories/:id', to: 'update_histories#show', as: :update_history
+
   delete 'caches', to: 'caches#destroy', as: :caches_delete
 
   get '/sign_in', to: 'searches#sign_in', as: :sign_in
