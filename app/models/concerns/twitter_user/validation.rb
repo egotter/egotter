@@ -29,6 +29,10 @@ module Concerns::TwitterUser::Validation
     !login_user.nil?
   end
 
+  def search_without_login?
+    !search_with_login?
+  end
+
   def ego_surfing?
     search_with_login? && uid.to_i == login_user.uid.to_i && egotter_context == 'search'
   end
@@ -37,15 +41,20 @@ module Concerns::TwitterUser::Validation
     self.protected
   end
 
-  def unauthorized_search?(twitter_link, sign_in_link)
-    return false unless protected_account?
+  def public_account?
+    !protected_account?
+  end
 
-    if !search_with_login? && !ego_surfing? && !has_permission_to_search?
-      errors[:base] << I18n.t('before_sign_in.protected_user', user: twitter_link, sign_in_link: sign_in_link)
-      return true
+  def unauthorized_search?(twitter_link, sign_in_link)
+    return false if public_account?
+    return true if search_without_login?
+
+    if ego_surfing? || has_permission_to_search?
+      return false
     end
 
-    false
+    errors[:base] << I18n.t('before_sign_in.protected_user', user: twitter_link, sign_in_link: sign_in_link)
+    true
   end
 
   def unauthorized_job?

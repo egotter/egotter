@@ -1,6 +1,8 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
+<div class="alert-box"></div>
+
 <%= render(partial: 'searches/profile_overview',
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
@@ -24,3 +26,43 @@
                       usage_stats: @menu_usage_stats,
                       clusters_belong_to: @menu_clusters_belong_to}) %>
 </div>
+
+<script>
+  $(function () {
+    var check_update = <%= @searched_tw_user.created_at < 1.hour.ago %>;
+    var created_at = <%= @searched_tw_user.created_at.to_i %>;
+    var interval = 2000;
+    var max_interval = 5000;
+    var retry_count = 0;
+    var max_retry_count = 10;
+
+    function tic() {
+      if (!check_update) {
+        return
+      }
+
+      $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
+          .done(function (res) {
+            console.log(res, interval, retry_count);
+
+            if (res.status) {
+              if (created_at < res.created_at) {
+                <% link = link_to(t('dictionary.this_link'), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %>
+                $('<p/>', {class: 'alert alert-info'}).html('<%= raw t("dictionary.updating_is_finished_msg", link: link) %>').appendTo('.alert-box');
+              } else {
+                console.log('do nothing');
+              }
+            } else if (retry_count >= max_retry_count) {
+              console.log('stop waiting');
+            } else {
+              retry_count++;
+              interval += 2000;
+              if (interval > max_interval) interval = max_interval;
+              setTimeout(tic, interval);
+            }
+          });
+    }
+
+    tic();
+  });
+</script>

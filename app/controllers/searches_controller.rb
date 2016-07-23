@@ -64,6 +64,8 @@ class SearchesController < ApplicationController
     tu = @searched_tw_user
     user_id = current_user_id
 
+    add_background_search_worker_if_needed(tu.uid, tu.screen_name, tu.user_info)
+
     page_cache = PageCache.new(redis)
     if page_cache.exists?(tu.uid, user_id)
       return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count)
@@ -273,7 +275,7 @@ class SearchesController < ApplicationController
     @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)
     key = "searches:new:#{current_user_id}"
     html =
-      if flash.empty? && !delay_occurs?
+      if flash.empty?
         redis.fetch(key) { render_to_string }
       else
         render_to_string
@@ -286,20 +288,9 @@ class SearchesController < ApplicationController
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
     user_id = current_user_id
 
-    searched_uid_list = SearchedUidList.new(redis)
-    unless searched_uid_list.exists?(uid, user_id)
-      values = {
-        session_id: fingerprint,
-        uid: uid,
-        screen_name: screen_name,
-        user_id: user_id
-      }
-      BackgroundSearchWorker.perform_async(values)
-      searched_uid_list.add(uid, user_id)
-    end
+    add_background_search_worker_if_needed(uid, screen_name, @tu.user_info)
 
-
-    if PageCache.new(redis).exists?(uid, user_id)
+    if TwitterUser.exists?(uid: uid, user_id: user_id)
       redirect_to search_path(screen_name: screen_name, id: uid)
     else
       redirect_to waiting_path(screen_name: screen_name, id: uid)
@@ -309,19 +300,23 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/waiting
   # POST /searches/:screen_name/waiting
   def waiting
-    uid = params[:id].match(/\A\d+\z/)[0].to_i
+    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
+    if uid.in?([-1, 0])
+      return render json: {status: false, reason: t('before_sign_in.that_page_doesnt_exist')}
+    end
+
     user_id = current_user_id
 
     if request.post?
       unless ValidUidList.new(redis).exists?(uid, user_id)
-        return render text: t('before_sign_in.that_page_doesnt_exist')
+        return render json: {status: false, reason: t('before_sign_in.that_page_doesnt_exist')}
       end
 
       case
         when BackgroundSearchLog.processing?(uid, user_id)
           render json: {status: false, reason: 'processing'}
         when BackgroundSearchLog.successfully_finished?(uid, user_id)
-          render json: {status: true}
+          render json: {status: true, created_at: TwitterUser.latest(uid, user_id).created_at.to_i}
         when BackgroundSearchLog.failed?(uid, user_id)
           render json: {status: false,
                         reason: BackgroundSearchLog.fail_reason!(uid, user_id),
@@ -347,6 +342,34 @@ class SearchesController < ApplicationController
 
   private
 
+  def add_background_search_worker_if_needed(uid, screen_name, user_info)
+    user_id = current_user_id
+
+    ValidUidList.new(redis).add(uid, user_id)
+    ValidTwitterUserSet.new(redis).set(
+      uid,
+      user_id,
+      {
+        uid: uid,
+        screen_name: screen_name,
+        user_id: user_id,
+        user_info: user_info
+      }
+    )
+
+    searched_uid_list = SearchedUidList.new(redis)
+    unless searched_uid_list.exists?(uid, user_id)
+      values = {
+        session_id: fingerprint,
+        uid: uid,
+        screen_name: screen_name,
+        user_id: user_id
+      }
+      BackgroundSearchWorker.perform_async(values)
+      searched_uid_list.add(uid, user_id)
+    end
+  end
+
   def fetch_twitter_user_from_cache(uid, user_id)
     attrs = ValidTwitterUserSet.new(redis).get(uid, user_id)
     TwitterUser.new(
@@ -354,13 +377,13 @@ class SearchesController < ApplicationController
       screen_name: attrs['screen_name'],
       user_id: attrs['user_id'],
       user_info: attrs['user_info'],
-      egotter_context: attrs['egotter_context']
+      egotter_context: 'search'
     )
   end
 
   def set_twitter_user
-    uid = params[:id].match(/\A\d+\z/)[0].to_i
-    if uid == 0
+    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
+    if uid.in?([-1, 0])
       logger.warn "#{self.class}##{__method__}: The uid is invalid #{params[:id]} #{current_user_id}."
       return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
@@ -423,12 +446,6 @@ class SearchesController < ApplicationController
       else
         []
       end
-  end
-
-  def delay_occurs?
-    result = SidekiqHandler.delay_occurs?
-    result ? redis.incr_delay_occurs_count : redis.incr_delay_does_not_occur_count
-    result
   end
 
   def current_user_id

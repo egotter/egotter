@@ -13,32 +13,21 @@ module Validation
     tu = TwitterUser.new(screen_name: params[:screen_name])
 
     unless tu.valid_screen_name?
-      return redirect_to '/', alert: tu.errors[:screen_name]
+      return redirect_to '/', alert: tu.errors[:screen_name].join(t('dictionary.delim'))
     end
 
     tu = TwitterUser.build_without_relations(client.user(tu.screen_name), current_user_id, 'search')
 
     if tu.suspended_account?(twitter_link(tu.screen_name))
-      return redirect_to '/', alert: tu.errors[:base]
+      return redirect_to '/', alert: tu.errors[:base].join(t('dictionary.delim'))
     end
 
     if tu.unauthorized_search?(twitter_link(tu.screen_name), welcome_link)
-      return redirect_to '/', alert: tu.errors[:base]
+      return redirect_to '/', alert: tu.errors[:base].join(t('dictionary.delim'))
     end
 
-    ValidUidList.new(redis).add(tu.uid, current_user_id)
-    ValidTwitterUserSet.new(redis).set(
-      tu.uid,
-      current_user_id,
-      {
-        uid: tu.uid,
-        screen_name: tu.screen_name,
-        user_id: current_user_id,
-        user_info: tu.user_info,
-        egotter_context: tu.egotter_context
-      }
-    )
     @tu = tu
+    true
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
   rescue Twitter::Error::NotFound => e

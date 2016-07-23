@@ -4,6 +4,6 @@ class ValidTwitterUserSet < TwitterUserSet
   end
 
   def self.ttl
-    @@ttl ||= 1.hour.to_i
+    @@ttl ||= 10.minutes.to_i
   end
 end
