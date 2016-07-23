@@ -338,6 +338,10 @@ class SearchesController < ApplicationController
     redirect_to '/'
   end
 
+  def update_histories
+    redirect_to update_history_path(id: params[:id])
+  end
+
   private
 
   def add_background_search_worker_if_needed(uid, screen_name, user_info)
