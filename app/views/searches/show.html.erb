@@ -1,7 +1,9 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<div class="alert-box"></div>
+<p class="alert alert-info" style="display: none;">
+  <%= t("dictionary.updating_is_finished_msg", link: link_to(t('dictionary.this_link'), '#')).html_safe %>
+</p>
 
 <%= render(partial: 'searches/profile_overview',
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
@@ -31,12 +33,32 @@
   $(function () {
     var check_update = <%= @searched_tw_user.created_at < 1.hour.ago %>;
     var created_at = <%= @searched_tw_user.created_at.to_i %>;
-    <% link = link_to(t('dictionary.this_link'), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid, hash: 'HASH')) %>
-    var update_msg = '<%= raw t("dictionary.updating_is_finished_msg", link: link) %>';
     var interval = 2000;
     var max_interval = 5000;
     var retry_count = 0;
     var max_retry_count = 10;
+    var hash = null;
+    var refresh_box = $('.alert.alert-info');
+    var refresh_btn = refresh_box.find('a');
+
+    refresh_btn.on('click', function (e) {
+      refresh();
+      e.preventDefault();
+      e.stopPropagation();
+      return false
+    });
+
+    function refresh() {
+      var url = "<%= raw url_for(caches_delete_path(id: @searched_tw_user.uid, hash: 'HASH')) %>";
+      $.ajax({url: url.replace(/HASH/, hash), type: 'DELETE'})
+          .done(function (res) {
+            console.log(res);
+
+            if (res.status) {
+              window.location.reload();
+            }
+          });
+    }
 
     function tic() {
       if (!check_update) {
@@ -49,9 +71,10 @@
 
             if (res.status) {
               if (created_at < res.created_at) {
-                $('<p/>', {class: 'alert alert-info'}).html(update_msg.replace(/HASH/, res.hash)).appendTo('.alert-box');
+                hash = res.hash;
+                refresh_box.show();
               } else {
-                console.log('do nothing');
+                console.log('the result is latest.')
               }
             } else if (retry_count >= max_retry_count) {
               console.log('stop waiting');

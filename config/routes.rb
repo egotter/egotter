@@ -12,26 +12,14 @@ Rails.application.routes.draw do
   get 'support', to: 'searches#support', as: :support
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   post 'searches/:screen_name/waiting', to: 'searches#waiting'
-  get 'searches/:screen_name/statuses', to: 'searches#statuses', as: :statuses
-  get 'searches/:screen_name/friends', to: 'searches#friends', as: :friends
-  get 'searches/:screen_name/followers', to: 'searches#followers', as: :followers
-  get 'searches/:screen_name/removing', to: 'searches#removing', as: :removing
-  get 'searches/:screen_name/removed', to: 'searches#removed', as: :removed
-  get 'searches/:screen_name/blocking_or_blocked', to: 'searches#blocking_or_blocked', as: :blocking_or_blocked
-  get 'searches/:screen_name/one_sided_friends', to: 'searches#one_sided_friends', as: :one_sided_friends
-  get 'searches/:screen_name/one_sided_followers', to: 'searches#one_sided_followers', as: :one_sided_followers
-  get 'searches/:screen_name/mutual_friends', to: 'searches#mutual_friends', as: :mutual_friends
-  get 'searches/:screen_name/common_friends', to: 'searches#common_friends', as: :common_friends
-  get 'searches/:screen_name/common_followers', to: 'searches#common_followers', as: :common_followers
-  get 'searches/:screen_name/replying', to: 'searches#replying', as: :replying
-  get 'searches/:screen_name/replied', to: 'searches#replied', as: :replied
-  get 'searches/:screen_name/favoriting', to: 'searches#favoriting', as: :favoriting
-  get 'searches/:screen_name/inactive_friends', to: 'searches#inactive_friends', as: :inactive_friends
-  get 'searches/:screen_name/inactive_followers', to: 'searches#inactive_followers', as: :inactive_followers
-  get 'searches/:screen_name/clusters_belong_to', to: 'searches#clusters_belong_to', as: :clusters_belong_to
-  get 'searches/:screen_name/close_friends', to: 'searches#close_friends', as: :close_friends
-  get 'searches/:screen_name/usage_stats', to: 'searches#usage_stats', as: :usage_stats
-  get 'searches/:screen_name/update_histories', to: 'searches#update_histories', as: :update_histories
+
+  %i(statuses friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers
+    mutual_friends common_friends common_followers replying replied favoriting inactive_friends
+    inactive_followers clusters_belong_to close_friends usage_stats update_histories).each do |name|
+    get "searches/:screen_name/#{name}", to: "searches##{name}", as: name
+  end
+
+  delete 'caches', to: 'caches#destroy', as: :caches_delete
 
   get '/sign_in', to: 'searches#sign_in', as: :sign_in
   get '/sign_out', to: 'searches#sign_out', as: :sign_out

@@ -2,6 +2,8 @@ class SearchesController < ApplicationController
   include Validation
   include MenuItemBuilder
   include Logging
+  include SearchesHelper
+  include CachesHelper
 
   DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(statuses friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
@@ -67,9 +69,6 @@ class SearchesController < ApplicationController
     add_background_search_worker_if_needed(tu.uid, tu.screen_name, tu.user_info)
 
     page_cache = PageCache.new(redis)
-    if params.has_key?(:hash) && params[:hash].match(/\A[0-9a-zA-Z]{20}\z/)[0] == update_hash(tu.created_at.to_i)
-      page_cache.delete(tu.uid, user_id)
-    end
     if page_cache.exists?(tu.uid, user_id)
       return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count)
     end
@@ -385,23 +384,6 @@ class SearchesController < ApplicationController
     )
   end
 
-  def set_twitter_user
-    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
-    if uid.in?([-1, 0])
-      logger.warn "#{self.class}##{__method__}: The uid is invalid #{params[:id]} #{current_user_id} #{action_name} #{request.device_type}."
-      return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
-    end
-
-    if TwitterUser.exists?(uid: uid, user_id: current_user_id)
-      tu = TwitterUser.latest(uid, current_user_id)
-      tu.assign_attributes(client: client, egotter_context: 'search')
-      @searched_tw_user = tu
-    else
-      logger.warn "#{self.class}##{__method__}: The TwitterUser doesn't exist #{uid} #{current_user_id} #{action_name} #{request.device_type}."
-      redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
-    end
-  end
-
   def build_user_items(items)
     friendships =
       if user_signed_in? && current_user.twitter_user?
@@ -430,13 +412,6 @@ class SearchesController < ApplicationController
       sub('<!-- action_call_count -->', action_call_count.to_s)
   end
 
-  def client
-    @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
-  rescue => e
-    logger.warn "#{e}: #{e.message}"
-    return redirect_to '/', alert: 'error 000'
-  end
-
   def build_search_histories
     @search_histories =
       if user_signed_in?
@@ -450,16 +425,6 @@ class SearchesController < ApplicationController
       else
         []
       end
-  end
-
-  require 'digest/md5'
-
-  def update_hash(value)
-    Digest::MD5.hexdigest("#{value}-#{ENV['SEED']}").slice(0, 20)
-  end
-
-  def current_user_id
-    user_signed_in? ? current_user.id : -1
   end
 
   def under_maintenance
