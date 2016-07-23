@@ -158,7 +158,7 @@ ja:
     clusters_belong_to: "%{user} が入っているクラスタ"
     close_friends: "%{user} と仲良し"
     usage_stats: "%{user} のツイッター利用状況"
-    update_histories: "更新履歴"
+    update_histories: "%{user} の更新履歴"
     search_histories: "検索履歴"
     debug: "デバッグ"
     clear_result_cache: "キャッシュを削除する"
@@ -168,8 +168,12 @@ ja:
     attributes:
       twitter_user:
         uid: uid
-        screen_name: screen name
+        screen_name: Twitter ID
         user_info: "プロフィール情報"
+        friends_count: "フォロー数"
+        followers_count: "フォロワー数"
+        friends: "フォロー数"
+        followers: "フォロワー数"
         search_count: "検索回数"
         update_count: "自動更新回数"
         created_at: "作成日時"

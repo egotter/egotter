@@ -1,7 +1,41 @@
+<% title @title %>
+<% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
+
 <%= render(partial: 'searches/profile_overview',
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-<div class="container" style="padding: 15px 0px 0px 0px;">
-  <h2 style="text-align: center; margin-top: 10px;"><small><%= t('search_menu.update_histories') %></small></h2>
-  <%= render(partial: 'searches/update_histories', locals: {searched_tw_user: @searched_tw_user, update_histories: @update_histories}) %>
+<div class="container search-result">
+  <h2>
+    <small><%= @title %></small>
+  </h2>
+</div>
+
+<div class="container">
+  <%= render(partial: 'searches/adsense') %>
+</div>
+
+<div class="container update-histories">
+  <div class="summary">
+    <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(@update_histories.last.created_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(@update_histories.first.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= @update_histories.map { |tu| tu.search_count }.sum %></div>
+    <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= @update_histories.map { |tu| tu.update_count }.sum %></div>
+  </div>
+
+  <% if @update_histories.size > 1 %>
+    <% @update_histories.each_cons(2).each do |newer, older| %>
+      <div class="media">
+        <div class="media-body">
+          <h4 class="media-heading">
+            <%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(newer.created_at.in_time_zone('Tokyo'), format: :short) %>
+          </h4>
+          <div class="summary">
+            <% older.diff(newer, only: %i(friends followers)).each do |name, (before, after)| %>
+              <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before %>&nbsp;->&nbsp;<%= after %></div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
 </div>
