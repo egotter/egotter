@@ -7,32 +7,40 @@ class PageCache
     @redis = redis
   end
 
-  def key(uid, user_id)
-    "searches:show:#{user_id}:#{uid}"
+  def key_prefix
+    'searches'
+  end
+
+  def key_suffix
+    'show'
+  end
+
+  def normalize_key(uid, user_id)
+    "#{key_prefix}:#{user_id}:#{uid}:#{key_suffix}"
   end
 
   def exists?(uid, user_id)
-    redis.exists(key(uid, user_id))
+    redis.exists(normalize_key(uid, user_id))
   end
 
   def read(uid, user_id)
-    redis.get(key(uid, user_id))
+    redis.get(normalize_key(uid, user_id))
   end
 
   def write(uid, user_id, html)
-    redis.setex(key(uid, user_id), TTL, html)
+    redis.setex(normalize_key(uid, user_id), TTL, html)
   end
 
   def delete(uid, user_id)
-    redis.del(key(uid, user_id))
+    redis.del(normalize_key(uid, user_id))
   end
 
   def clear
-    keys = redis.keys('searches:*')
+    keys = redis.keys("#{key_prefix}:*")
     redis.del(keys) if keys.any?
   end
 
   def ttl(uid, user_id)
-    redis.ttl(key(uid, user_id))
+    redis.ttl(normalize_key(uid, user_id))
   end
 end

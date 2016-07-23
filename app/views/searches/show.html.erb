@@ -31,6 +31,8 @@
   $(function () {
     var check_update = <%= @searched_tw_user.created_at < 1.hour.ago %>;
     var created_at = <%= @searched_tw_user.created_at.to_i %>;
+    <% link = link_to(t('dictionary.this_link'), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid, hash: 'HASH')) %>
+    var update_msg = '<%= raw t("dictionary.updating_is_finished_msg", link: link) %>';
     var interval = 2000;
     var max_interval = 5000;
     var retry_count = 0;
@@ -47,8 +49,7 @@
 
             if (res.status) {
               if (created_at < res.created_at) {
-                <% link = link_to(t('dictionary.this_link'), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %>
-                $('<p/>', {class: 'alert alert-info'}).html('<%= raw t("dictionary.updating_is_finished_msg", link: link) %>').appendTo('.alert-box');
+                $('<p/>', {class: 'alert alert-info'}).html(update_msg.replace(/HASH/, res.hash)).appendTo('.alert-box');
               } else {
                 console.log('do nothing');
               }

@@ -67,6 +67,9 @@ class SearchesController < ApplicationController
     add_background_search_worker_if_needed(tu.uid, tu.screen_name, tu.user_info)
 
     page_cache = PageCache.new(redis)
+    if params.has_key?(:hash) && params[:hash].match(/\A[0-9a-zA-Z]{20}\z/)[0] == update_hash(tu.created_at.to_i)
+      page_cache.delete(tu.uid, user_id)
+    end
     if page_cache.exists?(tu.uid, user_id)
       return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count)
     end
@@ -316,7 +319,8 @@ class SearchesController < ApplicationController
         when BackgroundSearchLog.processing?(uid, user_id)
           render json: {status: false, reason: 'processing'}
         when BackgroundSearchLog.successfully_finished?(uid, user_id)
-          render json: {status: true, created_at: TwitterUser.latest(uid, user_id).created_at.to_i}
+          created_at = TwitterUser.latest(uid, user_id).created_at.to_i
+          render json: {status: true, created_at: created_at, hash: update_hash(created_at)}
         when BackgroundSearchLog.failed?(uid, user_id)
           render json: {status: false,
                         reason: BackgroundSearchLog.fail_reason!(uid, user_id),
@@ -446,6 +450,12 @@ class SearchesController < ApplicationController
       else
         []
       end
+  end
+
+  require 'digest/md5'
+
+  def update_hash(value)
+    Digest::MD5.hexdigest("#{value}-#{ENV['SEED']}").slice(0, 20)
   end
 
   def current_user_id
