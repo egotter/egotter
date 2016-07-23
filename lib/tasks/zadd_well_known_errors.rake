@@ -27,7 +27,7 @@ namespace :zadd_well_known_errors do
         if tu.too_many_friends?
           redis.zadd(TooManyFriendsUidList.key, now_i, tu.uid.to_s)
           zadd_count += 1
-        elsif tu.unauthorized?
+        elsif tu.unauthorized_job?
           redis.zadd(UnauthorizedUidList.key, now_i, tu.uid.to_s)
           zadd_count += 1
         end

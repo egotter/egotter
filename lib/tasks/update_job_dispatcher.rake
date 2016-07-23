@@ -71,7 +71,7 @@ namespace :update_job_dispatcher do
 
         tu = friend.present? ? friend : follower
 
-        if tu.unauthorized?
+        if tu.unauthorized_job?
           unauthorized_count += 1
           next
         end

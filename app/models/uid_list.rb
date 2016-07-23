@@ -40,8 +40,8 @@ class UidList
     redis.zadd(key, Time.zone.now.to_i, "#{user_id}:#{uid}")
   end
 
-  def delete(uid)
-    redis.zrem(key, uid.to_s)
+  def delete(uid, user_id)
+    redis.zrem(key, "#{user_id}:#{uid}")
   end
 
   def to_a

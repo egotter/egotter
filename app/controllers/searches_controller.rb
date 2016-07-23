@@ -2,25 +2,21 @@ class SearchesController < ApplicationController
   include Validation
   include MenuItemBuilder
   include Logging
+  include SearchesHelper
+  include CachesHelper
 
   DEBUG_PAGES = %i(debug clear_result_cache)
-  SEARCH_MENUS = %i(show statuses friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
+  SEARCH_MENUS = %i(statuses friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats update_histories)
-  NEED_VALIDATION = SEARCH_MENUS + %i(create waiting)
   NEED_LOGIN = %i(common_friends common_followers)
 
   before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
   before_action :need_login,             only: NEED_LOGIN
-  before_action :invalid_screen_name,    only: NEED_VALIDATION
-  before_action :build_twitter_user,     only: NEED_VALIDATION
-  before_action :suspended_account,      only: NEED_VALIDATION, unless: 'PageCache.new(redis).exists?(@twitter_user.uid, current_user_id)'
-  before_action :unauthorized_account,   only: NEED_VALIDATION, unless: 'PageCache.new(redis).exists?(@twitter_user.uid, current_user_id)'
-  before_action :too_many_friends,       only: NEED_VALIDATION, unless: 'PageCache.new(redis).exists?(@twitter_user.uid, current_user_id)'
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
-
-  before_action :set_searched_twitter_user, only: SEARCH_MENUS
-  before_action :create_search_log,         only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
+  before_action :valid_search_value?,    only: %i(create)
+  before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
+  before_action :create_search_log,      only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
 
 
   before_action :basic_auth, only: DEBUG_PAGES
@@ -68,10 +64,13 @@ class SearchesController < ApplicationController
   def show
     start_time = Time.zone.now
     tu = @searched_tw_user
-    page_cache = PageCache.new(redis)
+    user_id = current_user_id
 
-    if page_cache.exists?(@twitter_user.uid, current_user_id)
-      return render text: replace_csrf_meta_tags(page_cache.read(@twitter_user.uid, current_user_id), Time.zone.now - start_time, page_cache.ttl(@twitter_user.uid, current_user_id), tu.search_log.call_count)
+    add_background_search_worker_if_needed(tu.uid, tu.screen_name, tu.user_info)
+
+    page_cache = PageCache.new(redis)
+    if page_cache.exists?(tu.uid, user_id)
+      return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count)
     end
 
     @menu_items = [
@@ -94,11 +93,12 @@ class SearchesController < ApplicationController
     @menu_clusters_belong_to = clusters_belong_to_menu(tu)
     @menu_update_histories = update_histories_menu(tu)
 
-    @title = t('search_menu.search_result', user: @searched_tw_user.mention_name)
+    @title = t('search_menu.search_result', user: tu.mention_name)
 
+    @searched_tw_user = tu
     html = render_to_string
-    page_cache.write(@twitter_user.uid, current_user_id, html)
-    render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(@twitter_user.uid, current_user_id), tu.search_log.call_count, tu.client.call_count)
+    page_cache.write(tu.uid, user_id, html)
+    render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count, tu.client.call_count)
 
   rescue Twitter::Error::TooManyRequests => e
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
@@ -277,7 +277,7 @@ class SearchesController < ApplicationController
     @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)
     key = "searches:new:#{current_user_id}"
     html =
-      if flash.empty? && !delay_occurs?
+      if flash.empty?
         redis.fetch(key) { render_to_string }
       else
         render_to_string
@@ -287,23 +287,12 @@ class SearchesController < ApplicationController
 
   # POST /searches
   def create
-    uid, screen_name = @twitter_user.uid.to_i, @twitter_user.screen_name.to_s
+    uid, screen_name = @tu.uid.to_i, @tu.screen_name
+    user_id = current_user_id
 
-    searched_uid_list = SearchedUidList.new(redis)
-    unless searched_uid_list.exists?(uid, current_user_id)
-      values = {
-        session_id: fingerprint,
-        uid: uid,
-        screen_name: screen_name,
-        user_id: current_user_id
-      }
-      BackgroundSearchWorker.perform_async(values)
-      searched_uid_list.add(uid, current_user_id)
-    end
+    add_background_search_worker_if_needed(uid, screen_name, @tu.user_info)
 
-
-    page_cache = PageCache.new(redis)
-    if page_cache.exists?(@twitter_user.uid, current_user_id)
+    if TwitterUser.exists?(uid: uid, user_id: user_id)
       redirect_to search_path(screen_name: screen_name, id: uid)
     else
       redirect_to waiting_path(screen_name: screen_name, id: uid)
@@ -313,14 +302,24 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/waiting
   # POST /searches/:screen_name/waiting
   def waiting
+    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
+    if uid.in?([-1, 0])
+      return render json: {status: false, reason: t('before_sign_in.that_page_doesnt_exist')}
+    end
+
+    user_id = current_user_id
+
     if request.post?
-      uid = @twitter_user.uid.to_i
-      user_id = current_user_id
+      unless ValidUidList.new(redis).exists?(uid, user_id)
+        return render json: {status: false, reason: t('before_sign_in.that_page_doesnt_exist')}
+      end
+
       case
         when BackgroundSearchLog.processing?(uid, user_id)
           render json: {status: false, reason: 'processing'}
         when BackgroundSearchLog.successfully_finished?(uid, user_id)
-          render json: {status: true}
+          created_at = TwitterUser.latest(uid, user_id).created_at.to_i
+          render json: {status: true, created_at: created_at, hash: update_hash(created_at)}
         when BackgroundSearchLog.failed?(uid, user_id)
           render json: {status: false,
                         reason: BackgroundSearchLog.fail_reason!(uid, user_id),
@@ -329,59 +328,60 @@ class SearchesController < ApplicationController
           raise BackgroundSearchLog::SomethingError
       end
     else
-      @searched_tw_user = @twitter_user
+      unless ValidUidList.new(redis).exists?(uid, user_id)
+        return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
+      end
+
+      @searched_tw_user = fetch_twitter_user_from_cache(uid, user_id)
     end
   end
 
   def clear_result_cache
-    redirect_to '/' unless request.post?
-    redirect_to '/' unless current_user.admin?
+    return redirect_to '/' unless request.post?
+    return redirect_to '/' unless current_user.admin?
     PageCache.new(redis).clear
     redirect_to '/'
   end
 
   private
 
-  def set_searched_twitter_user
-    tu = @twitter_user.latest_me
-    if tu.blank?
-      # access to auto generated uri
-      PageCache.new(redis).delete(@twitter_user.uid, current_user_id) # debug code
-      return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
+  def add_background_search_worker_if_needed(uid, screen_name, user_info)
+    user_id = current_user_id
+
+    ValidUidList.new(redis).add(uid, user_id)
+    ValidTwitterUserSet.new(redis).set(
+      uid,
+      user_id,
+      {
+        uid: uid,
+        screen_name: screen_name,
+        user_id: user_id,
+        user_info: user_info
+      }
+    )
+
+    searched_uid_list = SearchedUidList.new(redis)
+    unless searched_uid_list.exists?(uid, user_id)
+      values = {
+        session_id: fingerprint,
+        uid: uid,
+        screen_name: screen_name,
+        user_id: user_id
+      }
+      BackgroundSearchWorker.perform_async(values)
+      searched_uid_list.add(uid, user_id)
     end
-    tu.assign_attributes(client: client, egotter_context: 'search')
-    @searched_tw_user = tu
   end
 
-  def search_sn
-    params[:screen_name]
-  end
-
-  def search_id
-    params[:id].to_i
-  end
-
-  def build_twitter_user
-    user = client.user(search_sn)
-    @twitter_user =
-      TwitterUser.build_without_relations(client, user.id, current_user_id, 'search')
-  rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
-  rescue Twitter::Error::NotFound => e
-    redirect_to '/', alert: t('before_sign_in.not_found')
-  rescue Twitter::Error::Unauthorized => e
-    alert_msg =
-      if user_signed_in?
-        t("after_sign_in.unauthorized", sign_out_link: sign_out_link)
-      else
-        t("before_sign_in.unauthorized", sign_in_link: welcome_link)
-      end
-    redirect_to '/', alert: alert_msg.html_safe
-  rescue Twitter::Error::Forbidden => e
-    redirect_to '/', alert: t('before_sign_in.forbidden')
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{search_sn}"
-    redirect_to '/', alert: t('before_sign_in.something_is_wrong', sign_in_link: welcome_link)
+  def fetch_twitter_user_from_cache(uid, user_id)
+    attrs = ValidTwitterUserSet.new(redis).get(uid, user_id)
+    TwitterUser.new(
+      uid: attrs['uid'],
+      screen_name: attrs['screen_name'],
+      user_id: attrs['user_id'],
+      user_info: attrs['user_info'],
+      egotter_context: 'search'
+    )
   end
 
   def build_user_items(items)
@@ -412,31 +412,19 @@ class SearchesController < ApplicationController
       sub('<!-- action_call_count -->', action_call_count.to_s)
   end
 
-  def client
-    @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
-  rescue => e
-    logger.warn e.message
-    return redirect_to '/', alert: 'error 000'
-  end
-
   def build_search_histories
     @search_histories =
       if user_signed_in?
         searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-        build_user_items(searched_uids.map { |uid| TwitterUser.latest(uid.to_i, current_user.id) }.compact)
+        records = searched_uids.each_with_object({}) do |uid, memo|
+          unless memo.has_key?("#{uid}-#{current_user.id}")
+            memo["#{uid}-#{current_user.id}"] = TwitterUser.latest(uid.to_i, current_user.id)
+          end
+        end
+        build_user_items(searched_uids.map { |uid| records["#{uid}-#{current_user.id}"] }.compact)
       else
         []
       end
-  end
-
-  def delay_occurs?
-    result = SidekiqHandler.delay_occurs?
-    result ? redis.incr_delay_occurs_count : redis.incr_delay_does_not_occur_count
-    result
-  end
-
-  def current_user_id
-    user_signed_in? ? current_user.id : -1
   end
 
   def under_maintenance

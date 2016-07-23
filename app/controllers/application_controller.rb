@@ -16,13 +16,17 @@ class ApplicationController < ActionController::Base
     @redis ||= Redis.client
   end
 
+  def client
+    @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
+  end
+
   def basic_auth
     authenticate_or_request_with_http_basic do |user, pass|
       user == ENV['DEBUG_USERNAME'] && pass == ENV['DEBUG_PASSWORD']
     end
   end
 
-  helper_method :admin_signed_in?, :welcome_link, :sign_in_link, :sign_out_link, :search_oneself?, :search_others?
+  helper_method :admin_signed_in?, :welcome_link, :sign_in_link, :sign_out_link, :search_oneself?, :search_others?, :current_user_id
 
   private
   def admin_signed_in?
@@ -50,5 +54,9 @@ class ApplicationController < ActionController::Base
 
   def search_others?(uid)
     user_signed_in? && current_user.uid.to_i != uid.to_i
+  end
+
+  def current_user_id
+    user_signed_in? ? current_user.id : -1
   end
 end

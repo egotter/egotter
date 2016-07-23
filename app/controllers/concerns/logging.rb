@@ -1,4 +1,4 @@
-require "digest/md5"
+require 'digest/md5'
 
 module Logging
   extend ActiveSupport::Concern
@@ -8,13 +8,21 @@ module Logging
   end
 
   def create_search_log
+    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
+    user_id = current_user_id
+    if TwitterUser.exists?(uid: uid, user_id: user_id)
+      screen_name = TwitterUser.latest(uid, user_id).screen_name
+    else
+      uid = screen_name = -1
+    end
+
     attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
-      uid:         @twitter_user.nil? ? -1 : @twitter_user.uid,
-      screen_name: @twitter_user.nil? ? -1 : @twitter_user.screen_name,
+      uid:         uid,
+      screen_name: screen_name,
       action:      action_name,
-      ego_surfing: ego_surfing?,
+      ego_surfing: ego_surfing?(uid),
       method:      request.method,
       device_type: request.device_type,
       os:          request.os,
@@ -60,8 +68,8 @@ module Logging
     session[:fingerprint]
   end
 
-  def ego_surfing?
-    user_signed_in? && @twitter_user.present? && current_user.uid.to_i == @twitter_user.uid.to_i
+  def ego_surfing?(uid)
+    user_signed_in? && current_user.uid.to_i == uid.to_i
   end
 
   def user_agent
