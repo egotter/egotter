@@ -19,10 +19,6 @@ module ApplicationHelper
     user_signed_in? && current_user.admin?
   end
 
-  def welcome_link
-    view_context.link_to(t('dictionary.sign_in'), welcome_path)
-  end
-
   def twitter_link(screen_name)
     view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
   end
@@ -31,7 +27,7 @@ module ApplicationHelper
     ActiveSupport::Deprecation.warn(<<-MESSAGE.strip_heredoc)
           `#{__method__}` is deprecated.
     MESSAGE
-    welcome_link
+    view_context.link_to(t('dictionary.sign_in'), welcome_path)
   end
 
   def sign_out_link

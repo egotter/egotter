@@ -6,7 +6,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   rescue_from ActionController::InvalidAuthenticityToken do
-    redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: welcome_link)
+    redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
   end
 
   # https://github.com/plataformatec/devise/issues/1390
