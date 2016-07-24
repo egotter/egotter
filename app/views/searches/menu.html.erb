@@ -38,15 +38,27 @@
     </div>
   <% end %>
 
-  <hr>
 
-  <h2><small><%= t('search_menu.search_histories') %></small></h2>
-  <div class="container">
-    <%= render(partial: 'searches/adsense') %>
+  <div class="menu-search-histories">
+    <hr style="display: none;">
+    <h2 style="display: none;"><small><%= t('search_menu.search_histories') %></small></h2>
+    <div class="container">
+      <%= render(partial: 'searches/adsense') %>
+    </div>
   </div>
-
-  <%# Calling dup to change object_id %>
-  <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories.dup, in_modal: false}) %>
+  <script>
+    $(function () {
+      $.get('<%= search_histories_path %>', {in_modal: false})
+          .done(function (res) {
+            if (res.status == 200) {
+              var container = $('.menu-search-histories');
+              container.find('hr').show();
+              container.find('h2').show();
+              container.append(res.html);
+            }
+          });
+    });
+  </script>
 
   <% if user.admin? %>
     <h2><small><%= t('search_menu.debug') %></small></h2>

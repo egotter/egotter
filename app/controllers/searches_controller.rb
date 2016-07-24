@@ -3,6 +3,7 @@ class SearchesController < ApplicationController
   include MenuItemBuilder
   include Logging
   include SearchesHelper
+  include SearchHistoriesHelper
   include CachesHelper
 
   DEBUG_PAGES = %i(debug clear_result_cache)
@@ -293,28 +294,29 @@ class SearchesController < ApplicationController
   def waiting
     uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
     if uid.in?([-1, 0])
-      return render json: {status: false, reason: t('before_sign_in.that_page_doesnt_exist')}
+      return render json: {status: 400, reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
     end
 
     user_id = current_user_id
 
     if request.post?
       unless ValidUidList.new(redis).exists?(uid, user_id)
-        return render json: {status: false, reason: t('before_sign_in.that_page_doesnt_exist')}
+        return render json: {status: 400, reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
       end
 
       case
         when BackgroundSearchLog.processing?(uid, user_id)
-          render json: {status: false, reason: 'processing'}
+          render json: {status: 202, reason: 'processing'}, status: 202
         when BackgroundSearchLog.successfully_finished?(uid, user_id)
           created_at = TwitterUser.latest(uid, user_id).created_at.to_i
-          render json: {status: true, created_at: created_at, hash: update_hash(created_at)}
+          render json: {status: 200, created_at: created_at, hash: update_hash(created_at)}, status: 200
         when BackgroundSearchLog.failed?(uid, user_id)
-          render json: {status: false,
+          render json: {status: 400,
                         reason: BackgroundSearchLog.fail_reason!(uid, user_id),
-                        message: BackgroundSearchLog.fail_message!(uid, user_id)}
+                        message: BackgroundSearchLog.fail_message!(uid, user_id)},
+                 status: 400
         else
-          raise BackgroundSearchLog::SomethingError
+          render json: {status: 400, reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 400
       end
     else
       unless ValidUidList.new(redis).exists?(uid, user_id)

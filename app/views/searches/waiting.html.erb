@@ -185,7 +185,7 @@
           .done(function (res) {
             console.log(res, interval, retry_count);
 
-            if (res.status && !stop_waiting) {
+            if (res.status == 200 && !stop_waiting) {
               stop_waiting = true;
               progress(95);
               show_immediately_btn.hide();

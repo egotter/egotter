@@ -135,12 +135,23 @@
           <button class="submit-btn btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
         <% end %>
 
-        <% if @search_histories.present? && @search_histories.any? %>
-          <hr>
-
-          <h2><small><%= t('search_menu.search_histories') %></small></h2>
-          <%= render(partial: 'searches/search_histories', locals: {search_histories: @search_histories, in_modal: true}) %>
-        <% end %>
+        <div class="modal-search-histories">
+          <hr style="display: none;">
+          <h2 style="display: none;"><small><%= t('search_menu.search_histories') %></small></h2>
+        </div>
+        <script>
+          $(function () {
+            $.get('<%= search_histories_path %>', {in_modal: true})
+                .done(function (res) {
+                  if (res.status == 200) {
+                    var container = $('.modal-search-histories');
+                    container.find('hr').show();
+                    container.find('h2').show();
+                    container.append(res.html);
+                  }
+                });
+          });
+        </script>
       </div>
     </div>
   </div>

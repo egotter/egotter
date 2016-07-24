@@ -18,6 +18,7 @@ Rails.application.routes.draw do
     get "searches/:screen_name/#{name}", to: "searches##{name}", as: name
   end
 
+  get 'search_histories', to: 'search_histories#index', as: :search_histories
   get 'statuses/:id', to: 'statuses#show', as: :status
   get 'update_histories/:id', to: 'update_histories#show', as: :update_history
 
