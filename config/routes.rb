@@ -6,7 +6,6 @@ Rails.application.routes.draw do
   get 'privacy_policy', to: 'searches#privacy_policy', as: :privacy_policy
   get 'terms_of_service', to: 'searches#terms_of_service', as: :terms_of_service
   get 'sitemap', to: 'searches#sitemap', as: :sitemap
-  get 'welcome', to: 'searches#welcome', as: :welcome
   get 'menu', to: 'searches#menu', as: :menu
   patch 'menu', to: 'searches#menu'
   get 'support', to: 'searches#support', as: :support
@@ -23,8 +22,9 @@ Rails.application.routes.draw do
 
   delete 'caches', to: 'caches#destroy', as: :caches_delete
 
-  get '/sign_in', to: 'searches#sign_in', as: :sign_in
-  get '/sign_out', to: 'searches#sign_out', as: :sign_out
+  get '/sign_in', to: 'login#sign_in', as: :sign_in
+  get '/sign_out', to: 'login#sign_out', as: :sign_out
+  get '/welcome', to: 'login#welcome', as: :welcome
 
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
     omniauth_callbacks: 'users/omniauth_callbacks'

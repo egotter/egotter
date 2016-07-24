@@ -43,16 +43,16 @@ module Concerns::TwitterUser::Api
   # `includes` is not used because friends have hundreds of records.
   def removing
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    @_removing ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      old_one.cached_friends - new_one.cached_friends
+    @_removing ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |older, newer|
+      older.cached_friends - newer.cached_friends
     end.flatten.reverse
   end
 
   # `includes` is not used because followers have hundreds of records.
   def removed
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    @_removed ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      old_one.cached_followers - new_one.cached_followers
+    @_removed ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |older, newer|
+      older.cached_followers - newer.cached_followers
     end.flatten.reverse
   end
 

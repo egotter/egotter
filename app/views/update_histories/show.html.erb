@@ -23,15 +23,27 @@
   </div>
 
   <% if @update_histories.size > 1 %>
-    <% @update_histories.each_cons(2).each do |newer, older| %>
+    <% @update_histories.each_cons(2).with_index do |(newer, older), i| %>
       <div class="media">
         <div class="media-body">
           <h4 class="media-heading">
-            <%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(newer.created_at.in_time_zone('Tokyo'), format: :short) %>
+            <%= TwitterUser.human_attribute_name(:updated_at) %><br>
+            <% between_from = l(older.created_at.in_time_zone('Tokyo'), format: :short) %>
+            <% between_to = l((i == 0 ? newer.updated_at : newer.created_at).in_time_zone('Tokyo'), format: :short) %>
+            <%= between_from %>&nbsp;<%= t('dictionary.between_from') %>&nbsp;<%= between_to %>&nbsp;<%= t('dictionary.between_to') %>
           </h4>
           <div class="summary">
-            <% older.diff(newer, only: %i(friends followers)).each do |name, (before, after)| %>
+            <% older.diff(newer, only: %i(friends_count followers_count)).each do |name, (before, after)| %>
               <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before %>&nbsp;->&nbsp;<%= after %></div>
+            <% end %>
+            <% older.diff(newer, only: %i(friend_uids follower_uids)).each do |name, (before, after)| %>
+              <% if before.size != after.size %>
+                <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before.size %>&nbsp;->&nbsp;<%= after.size %></div>
+              <% else  %>
+                <% if (before - after).any? %>
+                  <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;-<%= (before - after).size %>,&nbsp;+<%= (after - before).size %></div>
+                <% end %>
+              <% end %>
             <% end %>
           </div>
         </div>

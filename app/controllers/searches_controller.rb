@@ -17,7 +17,14 @@ class SearchesController < ApplicationController
   before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
   before_action :valid_search_value?,    only: %i(create)
   before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
-  before_action :create_search_log,      only: (%i(new create waiting menu welcome sign_in sign_out) + SEARCH_MENUS)
+  before_action only: (%i(new create waiting menu) + SEARCH_MENUS) do
+    if session[:sign_in_from].present?
+      create_search_log(referer: session[:sign_in_from])
+      session.delete(:sign_in_from)
+    else
+      create_search_log
+    end
+  end
 
   before_action :basic_auth, only: DEBUG_PAGES
 
@@ -35,10 +42,6 @@ class SearchesController < ApplicationController
     render layout: false
   end
 
-  def welcome
-    redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
-  end
-
   # not using before_action
   def menu
     return redirect_to welcome_path unless user_signed_in?
@@ -51,14 +54,6 @@ class SearchesController < ApplicationController
   end
 
   def support
-  end
-
-  def sign_in
-    redirect_to '/users/auth/twitter'
-  end
-
-  def sign_out
-    redirect_to destroy_user_session_path
   end
 
   def show
