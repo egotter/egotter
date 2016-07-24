@@ -6,12 +6,12 @@ module Concerns::TwitterUser::Api
   included do
   end
 
-  def _friends
-    @_friends ||= friends.to_a
+  def cached_friends
+    @_cached_friends ||= friends.to_a
   end
 
-  def _followers
-    @_followers ||= followers.to_a
+  def cached_followers
+    @_cached_followers ||= followers.to_a
   end
 
   def dummy_client
@@ -19,32 +19,32 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_friends
-    @_one_sided_friends ||= _friends - _followers
+    @_one_sided_friends ||= cached_friends - cached_followers
   end
 
   def one_sided_followers
-    @_one_sided_followers ||= _followers - _friends
+    @_one_sided_followers ||= cached_followers - cached_friends
   end
 
   def mutual_friends
-    @_mutual_friends ||= _friends & _followers
+    @_mutual_friends ||= cached_friends & cached_followers
   end
 
   def common_friends(other)
     return [] if other.blank?
-    @_common_friends ||= _friends & other._friends
+    @_common_friends ||= cached_friends & other.cached_friends
   end
 
   def common_followers(other)
     return [] if other.blank?
-    @_common_followers ||= _followers & other._followers
+    @_common_followers ||= cached_followers & other.cached_followers
   end
 
   # `includes` is not used because friends have hundreds of records.
   def removing
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
     @_removing ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      old_one._friends - new_one._friends
+      old_one.cached_friends - new_one.cached_friends
     end.flatten.reverse
   end
 
@@ -52,7 +52,7 @@ module Concerns::TwitterUser::Api
   def removed
     return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
     @_removed ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |old_one, new_one|
-      old_one._followers - new_one._followers
+      old_one.cached_followers - new_one.cached_followers
     end.flatten.reverse
   end
 
@@ -208,7 +208,7 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_friends_graph
-    friends_size = friends.size
+    friends_size = cached_friends.size
     one_sided_size = one_sided_friends.size
     [
       {name: I18n.t('legend.one_sided_friends'), y: (one_sided_size.to_f / friends_size * 100)},
@@ -217,7 +217,7 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_followers_graph
-    followers_size = followers.size
+    followers_size = cached_followers.size
     one_sided_size = one_sided_followers.size
     [
       {name: I18n.t('legend.one_sided_followers'), y: (one_sided_size.to_f / followers_size * 100)},
@@ -246,7 +246,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_friends_graph(other)
-    friends_size = friends.size
+    friends_size = cached_friends.size
     common_friends_size = common_friends(other).size
     [
       {name: I18n.t('legend.common_friends'), y: (common_friends_size.to_f / friends_size * 100)},
@@ -255,7 +255,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_followers_graph(other)
-    followers_size = followers.size
+    followers_size = cached_followers.size
     common_followers_size = common_followers(other).size
     [
       {name: I18n.t('legend.common_followers'), y: (common_followers_size.to_f / followers_size * 100)},

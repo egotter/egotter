@@ -185,6 +185,7 @@ module MenuItemBuilder
   def update_histories_menu(tu)
     {
       name: t('search_menu.update_histories', user: tu.mention_name),
+      target: UpdateHistories.new(tu.uid),
       path_method: method(:update_history_path).to_proc
     }
   end

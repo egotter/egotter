@@ -20,7 +20,7 @@ module Concerns::TwitterUser::Validation
     if screen_name.present? && screen_name =~ SCREEN_NAME_REGEXP
       true
     else
-      errors[:screen_name] << I18n.t('before_sign_in.invalid_twitter_id')
+      errors.add(:screen_name, :invalid)
       false
     end
   end
@@ -154,35 +154,21 @@ module Concerns::TwitterUser::Validation
     same_record?(latest_me)
   end
 
-  def same_record?(latest_tu)
-    if latest_tu.blank?
-      logger.debug "#{screen_name} latest_tu is blank"
-      return false
-    end
+  def same_record?(other)
+    return false if other.blank?
 
-    raise "uid is different(#{self.uid},#{latest_tu.uid})" if self.uid.to_i != latest_tu.uid.to_i
+    older = self
+    newer = other
 
-    if self.friends_count != latest_tu.friends_count
-      logger.debug "#{screen_name} friends_count is different(#{self.friends_count}, #{latest_tu.friends_count})"
-      return false
-    end
+    values = {
+      friends_count: [older.friends_count, newer.friends_count],
+      followers_count: [older.followers_count, newer.followers_count],
+      friend_uids: [older.friend_uids.sort, newer.friend_uids.sort],
+      follower_uids: [older.follower_uids.sort, newer.follower_uids.sort]
+    }
+    return false if values.any? { |_, v| v[0] != v[1] }
 
-    if self.followers_count != latest_tu.followers_count
-      logger.debug "#{screen_name} followers_count is different(#{self.followers_count}, #{latest_tu.followers_count})"
-      return false
-    end
-
-    if self.friend_uids != latest_tu.friend_uids
-      logger.debug "#{screen_name} friend_uids is different(#{self.friend_uids}, #{latest_tu.friend_uids})"
-      return false
-    end
-
-    if self.follower_uids != latest_tu.follower_uids
-      logger.debug "#{screen_name} follower_uids is different(#{self.follower_uids}, #{latest_tu.follower_uids})"
-      return false
-    end
-
-    errors[:base] << "id:#{latest_tu.id} is the same record"
+    errors[:base] << "id:#{newer.id} is the same record"
     true
   end
 end

@@ -44,36 +44,27 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Utils
   include Concerns::TwitterUser::Api
 
-  # sorting to use eql? method
   def friend_uids
-    if new_record?
-      friends.map { |f| f.uid.to_i }.sort
-    else
-      friends.pluck(:uid).map { |uid| uid.to_i }.sort
-    end
+    new_record? ? friends.map { |f| f.uid.to_i } : friends.pluck(:uid).map { |uid| uid.to_i }
   end
 
-  # sorting to use eql? method
   def follower_uids
-    if new_record?
-      followers.map { |f| f.uid.to_i }.sort
-    else
-      followers.pluck(:uid).map { |uid| uid.to_i }.sort
-    end
+    new_record? ? followers.map { |f| f.uid.to_i } : followers.pluck(:uid).map { |uid| uid.to_i }
   end
 
-  def friendship_uids
-    (friend_uids + follower_uids).uniq
-  end
+  def diff(other, options = {})
+    older = self
+    newer = other
 
-  def diff(tu)
-    raise "uid is different(#{self.uid},#{tu.uid})" if uid.to_i != tu.uid.to_i
-    diffs = []
-    diffs << "friends_count(#{self.friends_count},#{tu.friends_count})" if self.friends_count != tu.friends_count
-    diffs << "followers_count(#{self.followers_count},#{tu.followers_count})" if self.followers_count != tu.followers_count
-    diffs << "friends(#{self.friend_uids.size},#{tu.friend_uids.size})" if self.friend_uids != tu.friend_uids
-    diffs << "followers(#{self.follower_uids.size},#{tu.follower_uids.size})" if self.follower_uids != tu.follower_uids
-    diffs
+    keys = %i(friends_count followers_count friends followers)
+    keys.select! { |k| k.in?(options[:only]) } if options.has_key?(:only)
+
+    {
+      friends_count: [older.friends_count, newer.friends_count],
+      followers_count: [older.followers_count, newer.followers_count],
+      friends: [older.friend_uids.size, newer.friend_uids.size],
+      followers: [older.follower_uids.size, newer.follower_uids.size]
+    }.slice(*keys).reject { |_, v| v[0] == v[1] }
   end
 
   def save_with_bulk_insert(validate = true)
@@ -92,32 +83,32 @@ class TwitterUser < ActiveRecord::Base
       log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
 
       self.transaction do
-        _friends.map {|f| f.from_id = self.id }
+        _friends.map { |f| f.from_id = self.id }
         _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
       end
 
       self.transaction do
-        _followers.map {|f| f.from_id = self.id }
+        _followers.map { |f| f.from_id = self.id }
         _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
       end
 
       self.transaction do
-        _statuses.map {|s| s.from_id = self.id }
+        _statuses.map { |s| s.from_id = self.id }
         _statuses.each_slice(100).each { |s| Status.import(s, validate: false) }
       end
 
       self.transaction do
-        _mentions.map {|m| m.from_id = self.id }
+        _mentions.map { |m| m.from_id = self.id }
         _mentions.each_slice(100).each { |m| Mention.import(m, validate: false) }
       end
 
       self.transaction do
-        _search_results.map {|sr| sr.from_id = self.id }
+        _search_results.map { |sr| sr.from_id = self.id }
         _search_results.each_slice(100).each { |sr| SearchResult.import(sr, validate: false) }
       end
 
       self.transaction do
-        _favorites.map {|f| f.from_id = self.id }
+        _favorites.map { |f| f.from_id = self.id }
         _favorites.each_slice(100).each { |f| Favorite.import(f, validate: false) }
       end
 
