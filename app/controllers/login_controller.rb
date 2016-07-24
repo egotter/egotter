@@ -1,4 +1,5 @@
 class LoginController < ApplicationController
+  include SearchesHelper
   include Logging
 
   before_action :create_search_log, only: %i(welcome sign_in sign_out)
@@ -6,11 +7,12 @@ class LoginController < ApplicationController
   # GET /welcome
   def welcome
     redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
-    session[:sign_in_from] = request.referer if request.referer.present?
   end
 
   # GET /sign_in
   def sign_in
+    session[:sign_in_from] = request.url
+    session[:sign_in_tracking] = 1
     redirect_to '/users/auth/twitter'
   end
 

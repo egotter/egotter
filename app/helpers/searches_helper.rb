@@ -18,6 +18,8 @@ module SearchesHelper
 
   def fetch_twitter_user_from_cache(uid, user_id)
     attrs = ValidTwitterUserSet.new(redis).get(uid, user_id)
+    return nil if attrs.nil?
+
     TwitterUser.new(
       uid: attrs['uid'],
       screen_name: attrs['screen_name'],

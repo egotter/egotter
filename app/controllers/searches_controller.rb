@@ -21,6 +21,8 @@ class SearchesController < ApplicationController
     if session[:sign_in_from].present?
       create_search_log(referer: session[:sign_in_from])
       session.delete(:sign_in_from)
+    elsif session[:sign_in_tracking].nil? && action_name == 'new'
+      create_search_log(referer: request.protocol + request.host_with_port + sign_out_path)
     else
       create_search_log
     end

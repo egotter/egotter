@@ -10,15 +10,20 @@ module Logging
   def create_search_log(options = {})
     user_id = current_user_id
 
-    if instance_variable_defined?(:@tu)
+    if instance_variable_defined?(:@tu) # create
       uid = @tu.uid
       screen_name = @tu.screen_name
     else
       uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
-      if TwitterUser.exists?(uid: uid, user_id: user_id)
-        screen_name = TwitterUser.latest(uid, user_id).screen_name
+      if tu = fetch_twitter_user_from_cache(uid, user_id) # waiting
+        uid = tu.uid
+        screen_name = tu.screen_name
       else
-        uid = screen_name = -1
+        if TwitterUser.exists?(uid: uid, user_id: user_id)
+          screen_name = TwitterUser.latest(uid, user_id).screen_name
+        else
+          uid = screen_name = -1
+        end
       end
     end
 
