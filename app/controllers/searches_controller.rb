@@ -17,7 +17,7 @@ class SearchesController < ApplicationController
   before_action :valid_search_value?,    only: %i(create)
   before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
 
-  before_action only: (%i(new create waiting menu) + SEARCH_MENUS) do
+  before_action only: (%i(new create waiting show menu) + SEARCH_MENUS) do
     if session[:sign_in_from].present?
       create_search_log(referer: session[:sign_in_from])
       session.delete(:sign_in_from)
@@ -309,12 +309,12 @@ class SearchesController < ApplicationController
           created_at = TwitterUser.latest(uid, user_id).created_at.to_i
           render json: {status: 200, created_at: created_at, hash: update_hash(created_at)}, status: 200
         when BackgroundSearchLog.failed?(uid, user_id)
-          render json: {status: 400,
+          render json: {status: 500,
                         reason: BackgroundSearchLog.fail_reason!(uid, user_id),
                         message: BackgroundSearchLog.fail_message!(uid, user_id)},
-                 status: 400
+                 status: 500
         else
-          render json: {status: 400, reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 400
+          render json: {status: 500, reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500
       end
     else
       unless ValidUidList.new(redis).exists?(uid, user_id)
@@ -323,6 +323,10 @@ class SearchesController < ApplicationController
 
       @searched_tw_user = fetch_twitter_user_from_cache(uid, user_id)
     end
+
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+    render json: {status: 500, reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500
   end
 
   def clear_result_cache

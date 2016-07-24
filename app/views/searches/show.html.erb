@@ -57,6 +57,9 @@
             if (res.status == 200) {
               window.location.reload();
             }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
           });
     }
 
@@ -84,6 +87,9 @@
               if (interval > max_interval) interval = max_interval;
               setTimeout(tic, interval);
             }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
           });
     }
 

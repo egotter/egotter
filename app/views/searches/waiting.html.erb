@@ -108,7 +108,9 @@
           support_btn.show();
           if (admin) {
             error_msg.show();
-            error_msg.text(this.res.message);
+            if (this.res) {
+              error_msg.text(this.res.message);
+            }
           }
         } else {
           waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: welcome_link).html_safe %>');
@@ -198,7 +200,6 @@
             if (error) {
               stop_waiting = true;
               error.show_msg();
-              $('.waiting-debug-info').text('(' + res.status + ', ' + res.reason + '), ' + interval + ', ' + retry_count);
               return
             }
 
@@ -209,6 +210,11 @@
               if (interval > max_interval) interval = max_interval;
               setTimeout(tic, interval);
             }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
+            stop_waiting = true;
+            new SomethingIsWrong().show_msg();
           });
     }
 
