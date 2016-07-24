@@ -8,7 +8,7 @@ class SearchesController < ApplicationController
   DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(statuses friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
-    clusters_belong_to close_friends usage_stats update_histories)
+    clusters_belong_to close_friends usage_stats)
   NEED_LOGIN = %i(common_friends common_followers)
 
   before_action :reject_crawler,         only: %i(create)

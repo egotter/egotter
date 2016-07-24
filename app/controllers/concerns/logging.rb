@@ -7,7 +7,7 @@ module Logging
 
   end
 
-  def create_search_log
+  def create_search_log(options = {})
     uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
     user_id = current_user_id
     if TwitterUser.exists?(uid: uid, user_id: user_id)
@@ -31,6 +31,7 @@ module Logging
       referer:     referer,
       created_at:  Time.zone.now
     }
+    attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
