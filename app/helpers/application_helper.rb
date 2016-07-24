@@ -23,17 +23,6 @@ module ApplicationHelper
     view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
   end
 
-  def sign_in_link
-    ActiveSupport::Deprecation.warn(<<-MESSAGE.strip_heredoc)
-          `#{__method__}` is deprecated.
-    MESSAGE
-    view_context.link_to(t('dictionary.sign_in'), welcome_path)
-  end
-
-  def sign_out_link
-    view_context.link_to(t('dictionary.sign_out'), sign_out_path)
-  end
-
   def search_oneself?(uid)
     user_signed_in? && current_user.uid.to_i == uid.to_i
   end

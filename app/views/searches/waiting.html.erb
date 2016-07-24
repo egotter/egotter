@@ -83,7 +83,7 @@
         show_immediately_btn.hide();
         progress_bar.hide();
         if (is_login) {
-          waiting_msg.html('<%= t("after_sign_in.unauthorized", sign_out_link: sign_out_link).html_safe %>');
+          waiting_msg.html('<%= t("after_sign_in.unauthorized", sign_out_link: link_to(t('dictionary.sign_out'), sign_out_path)).html_safe %>');
           retry_btn.show();
           support_btn.show();
         } else {

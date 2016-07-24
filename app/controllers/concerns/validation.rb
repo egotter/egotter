@@ -35,7 +35,7 @@ module Validation
   rescue Twitter::Error::Unauthorized => e
     alert_msg =
       if user_signed_in?
-        t("after_sign_in.unauthorized", sign_out_link: sign_out_link)
+        t("after_sign_in.unauthorized", sign_out_link: view_context.link_to(t('dictionary.sign_out'), sign_out_path))
       else
         t("before_sign_in.unauthorized", sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
       end
