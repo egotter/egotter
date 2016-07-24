@@ -196,16 +196,16 @@
   <div class="container">
     <div class="row">
       <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(searched_tw_user.created_at.in_time_zone('Tokyo'), format: :short) %>
+        <%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(menu_update_histories[:target].created_at.in_time_zone('Tokyo'), format: :short) %>
       </div>
       <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(searched_tw_user.updated_at.in_time_zone('Tokyo'), format: :short) %>
+        <%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(menu_update_histories[:target].updated_at.in_time_zone('Tokyo'), format: :short) %>
       </div>
       <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= searched_tw_user.search_count %>
+        <%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= menu_update_histories[:target].search_count %>
       </div>
       <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= searched_tw_user.update_count %>
+        <%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= menu_update_histories[:target].update_count %>
       </div>
       <div class="col-xs-12">
         <%= link_to(t('dictionary.view_more'),
