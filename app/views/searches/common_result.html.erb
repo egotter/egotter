@@ -35,9 +35,9 @@
         <% end %>
       <% else %>
         <% if @searched_tw_user.many_friends? %>
-          <div><%= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: welcome_link, kaomoji: Kaomoji.happy) %></div>
+          <div><%= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.happy) %></div>
         <% else %>
-          <div><%= raw t('before_sign_in.empty_and_other_reason', sign_in_link: welcome_link, kaomoji: Kaomoji.unhappy) %></div>
+          <div><%= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.unhappy) %></div>
         <% end %>
       <% end %>
       <%= render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(".#{@title}")}) %>

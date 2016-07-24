@@ -43,6 +43,7 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Builder
   include Concerns::TwitterUser::Utils
   include Concerns::TwitterUser::Api
+  include Concerns::TwitterUser::Dirty
 
   def friend_uids
     new_record? ? friends.map { |f| f.uid.to_i } : friends.pluck(:uid).map { |uid| uid.to_i }
@@ -52,23 +53,8 @@ class TwitterUser < ActiveRecord::Base
     new_record? ? followers.map { |f| f.uid.to_i } : followers.pluck(:uid).map { |uid| uid.to_i }
   end
 
-  def diff(other, options = {})
-    older = self
-    newer = other
-
-    keys = %i(friends_count followers_count friends followers)
-    keys.select! { |k| k.in?(options[:only]) } if options.has_key?(:only)
-
-    {
-      friends_count: [older.friends_count, newer.friends_count],
-      followers_count: [older.followers_count, newer.followers_count],
-      friends: [older.friend_uids.size, newer.friend_uids.size],
-      followers: [older.follower_uids.size, newer.follower_uids.size]
-    }.slice(*keys).reject { |_, v| v[0] == v[1] }
-  end
-
   def save_with_bulk_insert(validate = true)
-    if validate && !(valid? && !recently_created_record_exists? && !same_record_exists?)
+    if validate && (invalid? || recently_created_record_exists? || same_record_exists?)
       logger.warn "#{self.class}##{__method__} #{errors.full_messages}"
       return false
     end

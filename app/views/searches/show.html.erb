@@ -54,9 +54,12 @@
           .done(function (res) {
             console.log(res);
 
-            if (res.status) {
+            if (res.status == 200) {
               window.location.reload();
             }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
           });
     }
 
@@ -69,7 +72,7 @@
           .done(function (res) {
             console.log(res, interval, retry_count);
 
-            if (res.status) {
+            if (res.status == 200) {
               if (created_at < res.created_at) {
                 hash = res.hash;
                 refresh_box.show();
@@ -84,6 +87,9 @@
               if (interval > max_interval) interval = max_interval;
               setTimeout(tic, interval);
             }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
           });
     }
 

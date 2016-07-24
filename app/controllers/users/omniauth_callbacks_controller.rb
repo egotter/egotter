@@ -7,7 +7,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         create_sign_in_log(user.id, context)
       end
     rescue =>  e
-      return redirect_to '/', alert: t('before_sign_in.login_failed', sign_in_link: welcome_link)
+      logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+      return redirect_to '/', alert: t('before_sign_in.login_failed', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
     end
 
     FollowEgotterWorker.perform_async(user.id)

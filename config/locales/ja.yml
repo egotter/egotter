@@ -66,6 +66,8 @@ ja:
     under_maintenance: "メンテナンス中です。"
     delim: "、"
     honorific: "さん"
+    between_from: "から"
+    between_to: "まで"
   messages:
     delay_occurs: "現在、アクセスが殺到しているため、結果の表示が少し遅くなっています。"
   before_sign_in:
@@ -172,8 +174,10 @@ ja:
         user_info: "プロフィール情報"
         friends_count: "フォロー数"
         followers_count: "フォロワー数"
-        friends: "フォロー数"
-        followers: "フォロワー数"
+        friends: "フォロー"
+        followers: "フォロワー"
+        friend_uids: "フォローID"
+        follower_uids: "フォロワーID"
         search_count: "検索回数"
         update_count: "自動更新回数"
         created_at: "作成日時"
