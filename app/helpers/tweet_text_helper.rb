@@ -26,7 +26,7 @@ module TweetTextHelper
     avg_real, total_estimated =
       [avg_real_expended_minutes, total_estimated_expended_minutes].map do |miutes|
         if miutes > 120
-          count = number_with_precision(miutes / 120, precision: 1)
+          count = view_context.number_with_precision(miutes / 120, precision: 1)
           t('datetime.distance_in_words.about_x_hours.other', count: count)
         else
           t('datetime.distance_in_words.x_minutes.other', count: miutes.round)
