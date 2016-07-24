@@ -13,7 +13,6 @@ class LoginController < ApplicationController
   # GET /sign_in
   def sign_in
     session[:sign_in_from] = request.url
-    session[:sign_in_tracking] = 1
     redirect_to '/users/auth/twitter'
   end
 

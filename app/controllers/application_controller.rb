@@ -1,4 +1,6 @@
 class ApplicationController < ActionController::Base
+  include ApplicationHelper
+
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
@@ -12,51 +14,18 @@ class ApplicationController < ActionController::Base
     new_user_session_path(scope)
   end
 
-  def redis
-    @redis ||= Redis.client
-  end
-
-  def client
-    @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
-  end
-
   def basic_auth
     authenticate_or_request_with_http_basic do |user, pass|
       user == ENV['DEBUG_USERNAME'] && pass == ENV['DEBUG_PASSWORD']
     end
   end
 
-  helper_method :admin_signed_in?, :welcome_link, :sign_in_link, :sign_out_link, :search_oneself?, :search_others?, :current_user_id
-
-  private
-  def admin_signed_in?
-    user_signed_in? && current_user.admin?
+  def after_sign_in_path_for(resource)
+    root_path
   end
 
-  def welcome_link
-    view_context.link_to(t('dictionary.sign_in'), welcome_path)
-  end
-
-  def sign_in_link
-    ActiveSupport::Deprecation.warn(<<-MESSAGE.strip_heredoc)
-          `#{__method__}` is deprecated.
-    MESSAGE
-    welcome_link
-  end
-
-  def sign_out_link
-    view_context.link_to(t('dictionary.sign_out'), sign_out_path)
-  end
-
-  def search_oneself?(uid)
-    user_signed_in? && current_user.uid.to_i == uid.to_i
-  end
-
-  def search_others?(uid)
-    user_signed_in? && current_user.uid.to_i != uid.to_i
-  end
-
-  def current_user_id
-    user_signed_in? ? current_user.id : -1
+  def after_sign_out_path_for(resource)
+    session[:sign_out_from] = request.referer if request.referer.present?
+    root_path
   end
 end

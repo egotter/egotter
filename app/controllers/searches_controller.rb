@@ -2,6 +2,7 @@ class SearchesController < ApplicationController
   include Validation
   include MenuItemBuilder
   include Logging
+  include TweetTextHelper
   include SearchesHelper
   include CachesHelper
 
@@ -21,8 +22,9 @@ class SearchesController < ApplicationController
     if session[:sign_in_from].present?
       create_search_log(referer: session[:sign_in_from])
       session.delete(:sign_in_from)
-    elsif session[:sign_in_tracking].nil? && action_name == 'new'
-      create_search_log(referer: request.protocol + request.host_with_port + sign_out_path)
+    elsif session[:sign_out_from].present?
+      create_search_log(referer: session[:sign_out_from])
+      session.delete(:sign_out_from)
     else
       create_search_log
     end
@@ -144,7 +146,7 @@ class SearchesController < ApplicationController
   def one_sided_friends
     @user_items = build_user_items(@searched_tw_user.one_sided_friends)
     @graph = @searched_tw_user.mutual_friends_graph
-    @tweet_text = view_context.mutual_friends_text(@searched_tw_user)
+    @tweet_text = mutual_friends_text(@searched_tw_user)
     @title = t('search_menu.one_sided_friends', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -153,7 +155,7 @@ class SearchesController < ApplicationController
   def one_sided_followers
     @user_items = build_user_items(@searched_tw_user.one_sided_followers)
     @graph = @searched_tw_user.mutual_friends_graph
-    @tweet_text = view_context.mutual_friends_text(@searched_tw_user)
+    @tweet_text = mutual_friends_text(@searched_tw_user)
     @title = t('search_menu.one_sided_followers', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -162,7 +164,7 @@ class SearchesController < ApplicationController
   def mutual_friends
     @user_items = build_user_items(@searched_tw_user.mutual_friends)
     @graph = @searched_tw_user.mutual_friends_graph
-    @tweet_text = view_context.mutual_friends_text(@searched_tw_user)
+    @tweet_text = mutual_friends_text(@searched_tw_user)
     @title = t('search_menu.mutual_friends', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -171,7 +173,7 @@ class SearchesController < ApplicationController
   def common_friends
     @user_items = build_user_items(@searched_tw_user.common_friends(current_user.twitter_user))
     @graph = @searched_tw_user.common_friends_graph(current_user.twitter_user)
-    @tweet_text = view_context.common_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
+    @tweet_text = common_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
     @title = t('search_menu.common_friends', user: @searched_tw_user.mention_name, login: current_user.mention_name)
     render :common_result
   end
@@ -180,7 +182,7 @@ class SearchesController < ApplicationController
   def common_followers
     @user_items = build_user_items(@searched_tw_user.common_followers(current_user.twitter_user))
     @graph = @searched_tw_user.common_followers_graph(current_user.twitter_user)
-    @tweet_text = view_context.common_followers_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
+    @tweet_text = common_followers_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
     @title = t('search_menu.common_followers', user: @searched_tw_user.mention_name, login: current_user.mention_name)
     render :common_result
   end
@@ -189,7 +191,7 @@ class SearchesController < ApplicationController
   def replying
     @user_items = build_user_items(@searched_tw_user.replying) # call users
     @graph = @searched_tw_user.replying_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+    @tweet_text = close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.replying', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -198,7 +200,7 @@ class SearchesController < ApplicationController
   def replied
     @user_items = build_user_items(@searched_tw_user.replied)
     @graph = @searched_tw_user.replied_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+    @tweet_text = close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.replied', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -207,7 +209,7 @@ class SearchesController < ApplicationController
   def favoriting
     @user_items = build_user_items(@searched_tw_user.favoriting)
     @graph = @searched_tw_user.favoriting_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+    @tweet_text = close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.favoriting', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -216,7 +218,7 @@ class SearchesController < ApplicationController
   def inactive_friends
     @user_items = build_user_items(@searched_tw_user.inactive_friends)
     @graph = @searched_tw_user.inactive_friends_graph
-    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+    @tweet_text = inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.inactive_friends', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -225,7 +227,7 @@ class SearchesController < ApplicationController
   def inactive_followers
     @user_items = build_user_items(@searched_tw_user.inactive_followers)
     @graph = @searched_tw_user.inactive_followers_graph
-    @tweet_text = view_context.inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+    @tweet_text = inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.inactive_followers', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -236,7 +238,7 @@ class SearchesController < ApplicationController
     @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('dictionary.cluster')}"} }
     @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
     @clusters_belong_to_cloud = @searched_tw_user.clusters_belong_to_cloud
-    @tweet_text = view_context.clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user)
+    @tweet_text = clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user)
     @title = t('search_menu.clusters_belong_to', user: @searched_tw_user.screen_name)
   end
 
@@ -244,7 +246,7 @@ class SearchesController < ApplicationController
   def close_friends
     @user_items = build_user_items(@searched_tw_user.close_friends)
     @graph = @searched_tw_user.close_friends_graph
-    @tweet_text = view_context.close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+    @tweet_text = close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
     @title = t('search_menu.close_friends', user: @searched_tw_user.mention_name)
     render :common_result
   end
@@ -256,7 +258,7 @@ class SearchesController < ApplicationController
     @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series, @twitter_addiction_series =
       @searched_tw_user.usage_stats
 
-    @tweet_text = view_context.usage_stats_text(@twitter_addiction_series, @searched_tw_user)
+    @tweet_text = usage_stats_text(@twitter_addiction_series, @searched_tw_user)
     @hashtags_cloud = @searched_tw_user.hashtags_cloud
     @hashtags_fd = @searched_tw_user.hashtags_frequency_distribution
     @title = t('search_menu.usage_stats', user: @searched_tw_user.mention_name)
@@ -370,10 +372,6 @@ class SearchesController < ApplicationController
       BackgroundSearchWorker.perform_async(values)
       searched_uid_list.add(uid, user_id)
     end
-  end
-
-  def twitter_link(screen_name)
-    view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
   end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)
