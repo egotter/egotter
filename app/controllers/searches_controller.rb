@@ -3,7 +3,6 @@ class SearchesController < ApplicationController
   include MenuItemBuilder
   include Logging
   include SearchesHelper
-  include SearchHistoriesHelper
   include CachesHelper
 
   DEBUG_PAGES = %i(debug clear_result_cache)
@@ -17,7 +16,6 @@ class SearchesController < ApplicationController
   before_action :need_login,             only: NEED_LOGIN
   before_action :valid_search_value?,    only: %i(create)
   before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
-  before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
 
   before_action only: (%i(new create waiting menu) + SEARCH_MENUS) do
     if session[:sign_in_from].present?
