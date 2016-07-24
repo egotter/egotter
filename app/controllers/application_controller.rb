@@ -25,7 +25,7 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_out_path_for(resource)
-    session[:sign_out_from] = request.referer if request.referer.present?
+    session[:sign_out_from] = request.protocol + request.host_with_port + sign_out_path
     root_path
   end
 end
