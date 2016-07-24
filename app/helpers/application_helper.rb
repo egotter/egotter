@@ -19,10 +19,6 @@ module ApplicationHelper
     user_signed_in? && current_user.admin?
   end
 
-  def twitter_link(screen_name)
-    view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
-  end
-
   def search_oneself?(uid)
     user_signed_in? && current_user.uid.to_i == uid.to_i
   end

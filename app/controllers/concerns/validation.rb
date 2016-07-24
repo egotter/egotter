@@ -17,12 +17,13 @@ module Validation
     end
 
     tu = TwitterUser.build_without_relations(client.user(tu.screen_name), current_user_id, 'search')
+    twitter_link = view_context.link_to(tu.mention_name, "https://twitter.com/#{tu.screen_name}", target: '_blank')
 
-    if tu.suspended_account?(twitter_link(tu.screen_name))
+    if tu.suspended_account?(twitter_link)
       return redirect_to '/', alert: tu.errors[:base].join(t('dictionary.delim'))
     end
 
-    if tu.unauthorized_search?(twitter_link(tu.screen_name), view_context.link_to(t('dictionary.sign_in'), welcome_path))
+    if tu.unauthorized_search?(twitter_link, view_context.link_to(t('dictionary.sign_in'), welcome_path))
       return redirect_to '/', alert: tu.errors[:base].join(t('dictionary.delim'))
     end
 
