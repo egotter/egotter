@@ -6,7 +6,7 @@ class SearchesController < ApplicationController
   include CachesHelper
 
   DEBUG_PAGES = %i(debug clear_result_cache)
-  SEARCH_MENUS = %i(statuses friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
+  SEARCH_MENUS = %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats)
   NEED_LOGIN = %i(common_friends common_followers)
@@ -14,9 +14,10 @@ class SearchesController < ApplicationController
   before_action :reject_crawler,         only: %i(create)
   before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
   before_action :need_login,             only: NEED_LOGIN
-  before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
   before_action :valid_search_value?,    only: %i(create)
   before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
+  before_action :build_search_histories, except: (%i(create) + DEBUG_PAGES)
+
   before_action only: (%i(new create waiting menu) + SEARCH_MENUS) do
     if session[:sign_in_from].present?
       create_search_log(referer: session[:sign_in_from])
@@ -99,10 +100,8 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: welcome_link)
   end
 
-  # GET /searches/:screen_name/statuses
   def statuses
-    @status_items = build_tweet_items(@searched_tw_user.statuses)
-    @title = t('search_menu.statuses', user: @searched_tw_user.mention_name)
+    redirect_to status_path(id: params[:id])
   end
 
   # GET /searches/:screen_name/friends
@@ -367,22 +366,6 @@ class SearchesController < ApplicationController
     end
   end
 
-  def build_user_items(items)
-    friendships =
-      if user_signed_in? && current_user.twitter_user?
-        current_user.twitter_user.friend_uids
-      else
-        []
-      end
-    me = user_signed_in? ? current_user.uid.to_i : nil
-    targets = items.map { |u| {target: u, friendship: friendships.include?(u.uid.to_i), me: (u.uid.to_i == me)} }
-    Kaminari.paginate_array(targets).page(params[:page]).per(25)
-  end
-
-  def build_tweet_items(items)
-    Kaminari.paginate_array(items.map { |t| {target: t} }).page(params[:page]).per(100)
-  end
-
   def twitter_link(screen_name)
     view_context.link_to("@#{screen_name}", "https://twitter.com/#{screen_name}", target: '_blank')
   end
@@ -393,21 +376,6 @@ class SearchesController < ApplicationController
       sub('<!-- cache_ttl -->', view_context.number_with_precision(ttl.to_f / 3600.seconds, precision: 1)).
       sub('<!-- log_call_count -->', log_call_count.to_s).
       sub('<!-- action_call_count -->', action_call_count.to_s)
-  end
-
-  def build_search_histories
-    @search_histories =
-      if user_signed_in?
-        searched_uids = BackgroundSearchLog.success_logs(current_user.id, 20).pluck(:uid).unix_uniq.slice(0, 10)
-        records = searched_uids.each_with_object({}) do |uid, memo|
-          unless memo.has_key?("#{uid}-#{current_user.id}")
-            memo["#{uid}-#{current_user.id}"] = TwitterUser.latest(uid.to_i, current_user.id)
-          end
-        end
-        build_user_items(searched_uids.map { |uid| records["#{uid}-#{current_user.id}"] }.compact)
-      else
-        []
-      end
   end
 
   def under_maintenance

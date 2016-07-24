@@ -2,7 +2,7 @@ module SearchesHelper
   def set_twitter_user
     uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
     if uid.in?([-1, 0])
-      logger.warn "#{self.class}##{__method__}: The uid is invalid #{params[:id]} #{current_user_id} #{action_name} #{request.device_type}."
+      logger.info "#{self.class}##{__method__}: The uid is invalid #{params[:id]} #{current_user_id} #{action_name} #{request.device_type}."
       return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
 
@@ -11,7 +11,7 @@ module SearchesHelper
       tu.assign_attributes(client: client, egotter_context: 'search')
       @searched_tw_user = tu
     else
-      logger.warn "#{self.class}##{__method__}: The TwitterUser doesn't exist #{uid} #{current_user_id} #{action_name} #{request.device_type}."
+      logger.info "#{self.class}##{__method__}: The TwitterUser doesn't exist #{uid} #{current_user_id} #{action_name} #{request.device_type}."
       redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
   end
@@ -32,5 +32,34 @@ module SearchesHelper
       logger.warn "#{self.class}##{__method__}: The crawler is rejected."
       render text: t('before_sign_in.that_page_doesnt_exist')
     end
+  end
+
+  def build_user_items(items)
+    current_user_friends =
+      if user_signed_in? && current_user.twitter_user?
+        current_user.twitter_user.friend_uids
+      else
+        []
+      end
+    me = current_user_id
+    targets = items.map { |u| {target: u, friendship: current_user_friends.include?(u.uid.to_i), me: (u.uid.to_i == me)} }
+    Kaminari.paginate_array(targets).page(params[:page]).per(25)
+  end
+
+  def build_search_histories
+    @search_histories =
+      if user_signed_in?
+        user_id = current_user_id
+        searched_uids = BackgroundSearchLog.success_logs(user_id, 20).pluck(:uid).unix_uniq.slice(0, 10)
+        key = lambda { |uid| "#{uid}-#{user_id}" }
+        records = searched_uids.each_with_object({}) do |uid, memo|
+          unless memo.has_key?(key(uid))
+            memo[key(uid)] = TwitterUser.latest(uid.to_i, user_id)
+          end
+        end
+        build_user_items(searched_uids.map { |uid| records[key(uid)] }.compact)
+      else
+        []
+      end
   end
 end
