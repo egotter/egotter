@@ -267,7 +267,7 @@ class SearchesController < ApplicationController
   # GET /
   def new
     @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)
-    key = "searches:new:#{current_user_id}"
+    key = "searches:#{current_user_id}:new"
     html =
       if flash.empty?
         redis.fetch(key) { render_to_string }
