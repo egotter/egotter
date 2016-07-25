@@ -6,7 +6,7 @@
   <%= form_tag searches_path, method: :post do %>
     <div class="lead-sentence"><%= t('dictionary.lead') %></div>
 
-    <h2 class="search-interested-person"><small><%= t('dictionary.search_friends') %></small></h2>
+    <h2 class="search-interested-person"><%= t('dictionary.search_friends') %></h2>
     <label for="screen_name" class="sr-only">Twitter ID</label>
     <div class="input-group">
       <div class="input-group-addon">@</div>
@@ -16,16 +16,14 @@
     <button class="submit-btn1 btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
   <% end %>
 
+  <%= render(partial: 'searches/adsense') %>
+
   <% if user_signed_in? %>
-    <h2 class="search-myself"><small><%= t('dictionary.search_login_user') %></small></h2>
+    <h2 class="search-myself"><%= t('dictionary.search_login_user') %></h2>
     <%= link_to t('dictionary.search_by', user: current_user.mention_name),
                 searches_path(screen_name: current_user.screen_name),
                 class: 'submit-btn2 btn btn-info btn-block', method: :post %>
   <% end %>
-
-  <hr>
-
-  <%= render(partial: 'searches/adsense') %>
 
   <hr>
 

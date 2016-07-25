@@ -17,6 +17,7 @@
 }
 
 .top-page .search-interested-person {
+  font-size: 16px;
   margin-top: 0;
   margin-bottom: 5px;
   text-align: center;
@@ -27,6 +28,7 @@
 }
 
 .top-page .search-myself {
+  font-size: 16px;
   text-align: center;
   margin-top: 20px;
   margin-bottom: 5px;
