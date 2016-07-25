@@ -1,5 +1,5 @@
 worker_processes Integer(ENV['WEB_CONCURRENCY'] || Etc.nprocessors)
-timeout 60
+timeout 30
 preload_app true
 
 listen '/tmp/unicorn.sock'
