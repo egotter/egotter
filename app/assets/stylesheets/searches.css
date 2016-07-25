@@ -7,31 +7,24 @@
 /* new.html.erb start */
 .top-page .total-search-count {
   margin-top: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   text-align: center;
 }
 
 .top-page .lead-sentence {
-  margin-top: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
 }
 
 .top-page .search-interested-person {
   font-size: 16px;
   margin-top: 0;
-  margin-bottom: 5px;
   text-align: center;
-}
-
-.top-page .submit-btn1 {
-  margin-top: 10px;
 }
 
 .top-page .search-myself {
   font-size: 16px;
   text-align: center;
-  margin-top: 20px;
-  margin-bottom: 5px;
+  margin-top: 0;
 }
 
 .top-page .submit-btn2 {
@@ -208,8 +201,8 @@
   margin-top: 15px;
   margin-left: 15px;
   margin-right: 15px;
-  padding-left: 0px;
-  padding-right: 0px;
+  padding-left: 0;
+  padding-right: 0;
 }
 
 .top-page .tweet-preview-box textarea,
@@ -747,3 +740,9 @@ p.alert-info, p.alert-warning {
   text-decoration: none;
 }
 /* footer end */
+
+.adsense-container {
+  text-align: center;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}

@@ -1,4 +1,11 @@
-<div>
+<script>
+  $(function () {
+    if ($('.adsense-container').width() == 290) { // iPhone 5
+      $('.adsense-container').css('margin-left', '-5px');
+    }
+  })
+</script>
+<div class="adsense-container">
   <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
   <ins class="adsbygoogle"
        style="display:inline-block;width:300px;height:250px"

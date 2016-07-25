@@ -1,65 +1,67 @@
 <%= render(partial: 'searches/conversion_tracking') %>
 
 <div class="top-page container">
-  <div class="total-search-count"><%= t('dictionary.total_search_count', count: 371372) %></div><!-- from 2011 -->
+  <div class="row">
+    <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+      <div class="total-search-count"><%= t('dictionary.total_search_count', count: 371372) %></div><!-- from 2011 -->
 
-  <%= form_tag searches_path, method: :post do %>
-    <div class="lead-sentence"><%= t('dictionary.lead') %></div>
+      <%= form_tag searches_path, method: :post do %>
+        <div class="lead-sentence"><%= raw t('dictionary.lead') %></div>
 
-    <h2 class="search-interested-person"><%= t('dictionary.search_friends') %></h2>
-    <label for="screen_name" class="sr-only">Twitter ID</label>
-    <div class="input-group">
-      <div class="input-group-addon">@</div>
-      <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
-             pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required autofocus>
+        <h2 class="search-interested-person"><%= t('dictionary.search_friends') %></h2>
+            <label for="screen_name" class="sr-only">Twitter ID</label>
+            <div class="input-group">
+              <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
+                     pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required autofocus>
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit"><%= t('dictionary.search') %></button>
+              </span>
+            </div>
+      <% end %>
+
+      <%= render(partial: 'searches/adsense') %>
+
+      <% if user_signed_in? %>
+        <h2 class="search-myself"><%= t('dictionary.search_login_user') %></h2>
+        <%= link_to t('dictionary.search_by', user: current_user.mention_name),
+                    searches_path(screen_name: current_user.screen_name),
+                    class: 'submit-btn2 btn btn-info btn-block', method: :post %>
+      <% end %>
+
+      <div class="egotter-timeline">
+        <a class="twitter-timeline" href="https://twitter.com/ego_tter/timelines/704672452064874496" data-widget-id="704674252671229952">egotter</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+      </div>
+
+      <h2 class="about-me"><small><%= t('dictionary.about_me') %></small></h2>
+      <div><%= t('search_menu.all') %></div>
+
+      <h2 class="share-me"><small><%= t('dictionary.share_me') %></small></h2>
+      <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{@tweet_text} http://egotter.com"}) %>
+
+      <div style="margin-bottom: 15px;"></div>
+
+      <div id="share"></div>
+      <script>
+        $("#share").jsSocials({
+          shares: ["twitter", "facebook", "googleplus"],
+          url: "http://egotter.com",
+          text: "<%= raw @tweet_text %>",
+          showLabel: true,
+          showCount: true
+        });
+      </script>
+
+      <h2 class="official-account"><small><%= t('dictionary.official_account') %></small></h2>
+      <div class="follow-official-account">
+        <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
+        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+      </div>
+
     </div>
-    <button class="submit-btn1 btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
-  <% end %>
-
-  <%= render(partial: 'searches/adsense') %>
-
-  <% if user_signed_in? %>
-    <h2 class="search-myself"><%= t('dictionary.search_login_user') %></h2>
-    <%= link_to t('dictionary.search_by', user: current_user.mention_name),
-                searches_path(screen_name: current_user.screen_name),
-                class: 'submit-btn2 btn btn-info btn-block', method: :post %>
-  <% end %>
-
-  <hr>
-
-  <div class="egotter-timeline">
-    <a class="twitter-timeline" href="https://twitter.com/ego_tter/timelines/704672452064874496" data-widget-id="704674252671229952">egotter</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-  </div>
-
-  <hr>
-
-  <h2 class="about-me"><small><%= t('dictionary.about_me') %></small></h2>
-  <div><%= t('search_menu.all') %></div>
-
-  <hr>
-
-  <h2 class="share-me"><small><%= t('dictionary.share_me') %></small></h2>
-  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{@tweet_text} http://egotter.com"}) %>
-  <div style="margin-bottom: 15px;"></div>
-
-  <div id="share"></div>
-
-  <h2 class="official-account"><small><%= t('dictionary.official_account') %></small></h2>
-  <div class="follow-official-account">
-    <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
-    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
   </div>
 
   <div style="margin-bottom: 15px;"></div>
 </div>
-
-<script>
-  $("#share").jsSocials({
-    shares: ["twitter", "facebook", "googleplus"],
-    url: "http://egotter.com",
-    text: "<%= raw @tweet_text %>",
-    showLabel: true,
-    showCount: true
-  });
-</script>

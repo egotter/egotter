@@ -1,32 +1,38 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<p class="alert alert-info" style="display: none;">
-  <%= t("dictionary.updating_is_finished_msg", link: link_to(t('dictionary.this_link'), '#')).html_safe %>
-</p>
+<div class="row">
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
 
-<%= render(partial: 'searches/profile_overview',
-           locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
+    <p class="alert alert-info" style="display: none;">
+      <%= t("dictionary.updating_is_finished_msg", link: link_to(t('dictionary.this_link'), '#')).html_safe %>
+    </p>
 
-<div class="container search-result">
-  <h2>
-    <small><%= @title %></small>
-  </h2>
-</div>
+    <%= render(partial: 'searches/profile_overview',
+               locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-<div class="container">
-  <%= render(partial: 'searches/adsense') %>
-</div>
+    <div class="search-result">
+      <h2>
+        <small><%= @title %></small>
+      </h2>
+    </div>
 
-<div class="container" style="padding: 15px 0px 0px 0px;">
-  <%= render(partial: 'searches/search_menu_items',
-             locals: {searched_tw_user: @searched_tw_user,
-                      menu_items: @menu_items,
-                      menu_update_histories: @menu_update_histories,
-                      menu_common_friends_and_followers: @menu_common_friends_and_followers,
-                      close_friends: @menu_close_friends,
-                      usage_stats: @menu_usage_stats,
-                      clusters_belong_to: @menu_clusters_belong_to}) %>
+    <%= render(partial: 'searches/adsense') %>
+
+    <div style="padding: 15px 0px 0px 0px;">
+      <%= render(partial: 'searches/search_menu_items',
+                 locals: {searched_tw_user: @searched_tw_user,
+                          menu_items: @menu_items,
+                          menu_update_histories: @menu_update_histories,
+                          menu_common_friends_and_followers: @menu_common_friends_and_followers,
+                          close_friends: @menu_close_friends,
+                          usage_stats: @menu_usage_stats,
+                          clusters_belong_to: @menu_clusters_belong_to}) %>
+    </div>
+
+  </div>
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
 </div>
 
 <script>

@@ -1,49 +1,56 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<%= render(partial: 'searches/profile_overview',
-           locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
+<div class="row">
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
 
-<div class="container usage-stats">
-  <h2>
-    <small><%= @title %></small>
-  </h2>
+    <%= render(partial: 'searches/profile_overview',
+               locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-  <h3><small>曜日ごとのツイッター利用時間</small></h3>
-  <div id="twitter_addiction" class="chart"></div>
+    <div class="usage-stats">
+      <h2>
+        <small><%= @title %></small>
+      </h2>
 
-  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
+      <h3><small>曜日ごとのツイッター利用時間</small></h3>
+      <div id="twitter_addiction" class="chart"></div>
 
-  <hr>
+      <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
 
-  <h3><small>曜日ごとのツイート数(直近600ツイート)</small></h3>
-  <div id="wday_graph" class="chart"></div>
+      <hr>
 
-  <h3><small>曜日ごとのツイート数(直近1週間)</small></h3>
-  <div id="wday_graph_7days" class="chart"></div>
+      <h3><small>曜日ごとのツイート数(直近600ツイート)</small></h3>
+      <div id="wday_graph" class="chart"></div>
 
-  <hr>
+      <h3><small>曜日ごとのツイート数(直近1週間)</small></h3>
+      <div id="wday_graph_7days" class="chart"></div>
 
-  <h3><small>時間帯ごとのツイート数(直近600ツイート)</small></h3>
-  <div id="hour_graph" class="chart"></div>
+      <hr>
 
-  <h3><small>時間帯ごとのツイート数(直近1週間)</small></h3>
-  <div id="hour_graph_7days" class="chart"></div>
+      <h3><small>時間帯ごとのツイート数(直近600ツイート)</small></h3>
+      <div id="hour_graph" class="chart"></div>
 
-  <hr>
+      <h3><small>時間帯ごとのツイート数(直近1週間)</small></h3>
+      <div id="hour_graph_7days" class="chart"></div>
 
-  <h3><small>ツイートの内容</small></h3>
-  <div id="kind_bar" class="chart"></div>
+      <hr>
 
-  <hr>
+      <h3><small>ツイートの内容</small></h3>
+      <div id="kind_bar" class="chart"></div>
 
-  <h3><small>ハッシュタグ指数</small></h3>
-  <div id="hashtags_fd" class="chart"></div>
+      <hr>
 
-  <hr>
+      <h3><small>ハッシュタグ指数</small></h3>
+      <div id="hashtags_fd" class="chart"></div>
 
-  <h3><small><%= t('dictionary.hashtags_cloud') %></small></h3>
-  <div id="hashtags_cloud" class="chart" style="height: 220px;"></div>
+      <hr>
+
+      <h3><small><%= t('dictionary.hashtags_cloud') %></small></h3>
+      <div id="hashtags_cloud" class="chart" style="height: 220px;"></div>
+    </div>
+  </div>
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
 </div>
 
 <script>

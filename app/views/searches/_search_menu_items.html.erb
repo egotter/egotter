@@ -29,7 +29,7 @@
     <% end %>
   </div>
 
-  <div class="container">
+  <div>
     <%= link_to(t('dictionary.view_more_with_num', num: close_friends[:target].size).html_safe,
                 close_friends[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
                 class: 'btn btn-info btn-block') %>
@@ -61,7 +61,7 @@
     <% end %>
   </div>
 
-  <div class="container">
+  <div>
     <%= link_to(t('dictionary.view_more'),
                 usage_stats[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
                 class: 'btn btn-info btn-block') %>
@@ -86,7 +86,7 @@
     <% end %>
   </div>
 
-  <div class="container">
+  <div>
     <%= link_to(t('dictionary.view_more'),
                 clusters_belong_to[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
                 class: 'btn btn-info btn-block') %>
@@ -106,11 +106,6 @@
       <% end %>
     </div>
     <div class="media-right media-bottom">
-      <%# link_to(t('dictionary.tweet_result'),
-                  menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                  class: 'btn btn-default',
-                  style: '') %>
-
       <% if menu_item.has_key?(:graph) %>
         <div id="<%= menu_item.object_id %>" class="common-chart"></div>
         <script>
@@ -123,7 +118,7 @@
       <% end %>
     </div>
 
-    <div class="container">
+    <div>
       <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe,
                   menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
                   class: 'btn btn-info btn-block') %>
@@ -163,22 +158,21 @@
       <% end %>
     </div>
 
-    <div class="container">
-      <% if search_oneself?(searched_tw_user.uid) %>
-        <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
-          <%= t('view_more_btn.same_user') %>
-        </button>
-      <% elsif search_others?(searched_tw_user.uid) %>
+    <% if search_oneself?(searched_tw_user.uid) %>
+      <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
+        <%= t('view_more_btn.same_user') %>
+      </button>
+    <% elsif search_others?(searched_tw_user.uid) %>
+      <div>
         <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe,
                     menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    class: 'btn btn-info btn-block',
-                    style: 'margin-top: 15px;') %>
-      <% elsif !user_signed_in? %>
-        <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
-          <%= t('dictionary.view_more_needs_login') %>
-        </button>
-      <% end %>
-    </div>
+                    class: 'btn btn-info btn-block') %>
+      </div>
+    <% elsif !user_signed_in? %>
+      <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
+        <%= t('dictionary.view_more_needs_login') %>
+      </button>
+    <% end %>
   </div>
   <% menu_item[:target].slice(0..2).each do |user| %>
     <% next if modal_rendered_uids.include?(user.uid.to_i) %>
@@ -192,26 +186,15 @@
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="media-heading"><%= menu_update_histories[:name] %></h4>
+    <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(menu_update_histories[:target].created_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(menu_update_histories[:target].updated_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= menu_update_histories[:target].search_count %></div>
+    <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= menu_update_histories[:target].update_count %></div>
   </div>
-  <div class="container">
-    <div class="row">
-      <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(menu_update_histories[:target].created_at.in_time_zone('Tokyo'), format: :short) %>
-      </div>
-      <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(menu_update_histories[:target].updated_at.in_time_zone('Tokyo'), format: :short) %>
-      </div>
-      <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= menu_update_histories[:target].search_count %>
-      </div>
-      <div class="col-xs-12">
-        <%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= menu_update_histories[:target].update_count %>
-      </div>
-      <div class="col-xs-12">
-        <%= link_to(t('dictionary.view_more'),
-                    menu_update_histories[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
-                    class: 'btn btn-info btn-block') %>
-      </div>
-    </div>
+
+  <div>
+    <%= link_to(t('dictionary.view_more'),
+                menu_update_histories[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                class: 'btn btn-info btn-block') %>
   </div>
 </div>

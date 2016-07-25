@@ -1,46 +1,50 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<%= render(partial: 'searches/profile_overview',
-           locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
+<div class="row">
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
 
-<div class="container common-result">
-  <h2><small><%= @title %></small></h2>
+    <%= render(partial: 'searches/profile_overview',
+               locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-  <div class="container">
-    <%= render(partial: 'searches/adsense') %>
-  </div>
-  <div style="margin-bottom: 15px;"></div>
+    <div class="common-result">
+      <h2><small><%= @title %></small></h2>
 
-  <% if @user_items.any? %>
-    <div class="page-entries-info-top">
-      <%= render(partial: 'searches/page_entries_info',
-                 locals: {searched_tw_user: @searched_tw_user, user_items: @user_items}) %>
-    </div>
+      <%= render(partial: 'searches/adsense') %>
 
-    <%= render(partial: 'searches/user_items',
-               locals: {user_items: @user_items, graph: @graph, tweet_text: @tweet_text}) %>
+      <% if @user_items.any? %>
+        <div class="page-entries-info-top">
+          <%= render(partial: 'searches/page_entries_info',
+                     locals: {searched_tw_user: @searched_tw_user, user_items: @user_items}) %>
+        </div>
 
-    <div class="page-entries-info-bottom">
-      <%= render(partial: 'searches/page_entries_info',
-                 locals: {searched_tw_user: @searched_tw_user, user_items: @user_items}) %>
-    </div>
-  <% else %>
-    <div class="empty">
-      <% if user_signed_in? %>
-        <% if @searched_tw_user.too_many_friends? %>
-          <div><%= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy) %></div>
-        <% else %>
-          <div><%= raw t('after_sign_in.empty_and_other_reason', kaomoji: Kaomoji.happy) %></div>
-        <% end %>
+        <%= render(partial: 'searches/user_items',
+                   locals: {user_items: @user_items, graph: @graph, tweet_text: @tweet_text}) %>
+
+        <div class="page-entries-info-bottom">
+          <%= render(partial: 'searches/page_entries_info',
+                     locals: {searched_tw_user: @searched_tw_user, user_items: @user_items}) %>
+        </div>
       <% else %>
-        <% if @searched_tw_user.many_friends? %>
-          <div><%= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.happy) %></div>
-        <% else %>
-          <div><%= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.unhappy) %></div>
-        <% end %>
+        <div class="empty">
+          <% if user_signed_in? %>
+            <% if @searched_tw_user.too_many_friends? %>
+              <div><%= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy) %></div>
+            <% else %>
+              <div><%= raw t('after_sign_in.empty_and_other_reason', kaomoji: Kaomoji.happy) %></div>
+            <% end %>
+          <% else %>
+            <% if @searched_tw_user.many_friends? %>
+              <div><%= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.happy) %></div>
+            <% else %>
+              <div><%= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.unhappy) %></div>
+            <% end %>
+          <% end %>
+          <%= render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(".#{@title}")}) %>
+        </div>
       <% end %>
-      <%= render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(".#{@title}")}) %>
     </div>
-  <% end %>
+  </div>
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
 </div>

@@ -1,53 +1,58 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<%= render(partial: 'searches/profile_overview',
-           locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
+<div class="row">
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
 
-<div class="container search-result">
-  <h2>
-    <small><%= @title %></small>
-  </h2>
-</div>
+    <%= render(partial: 'searches/profile_overview',
+               locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-<div class="container">
-  <%= render(partial: 'searches/adsense') %>
-</div>
+    <div class="search-result">
+      <h2>
+        <small><%= @title %></small>
+      </h2>
+    </div>
 
-<div class="container update-histories">
-  <div class="summary">
-    <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
-    <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(@update_histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
-    <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= @update_histories.search_count %></div>
-    <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= @update_histories.update_count %></div>
-  </div>
+    <%= render(partial: 'searches/adsense') %>
 
-  <% if @update_histories.size > 1 %>
-    <% @update_histories.each_cons(2).with_index do |(newer, older), i| %>
-      <div class="media">
-        <div class="media-body">
-          <h4 class="media-heading">
-            <%= TwitterUser.human_attribute_name(:updated_at) %><br>
-            <% between_from = l(older.created_at.in_time_zone('Tokyo'), format: :short) %>
-            <% between_to = l((i == 0 ? newer.updated_at : newer.created_at).in_time_zone('Tokyo'), format: :short) %>
-            <%= between_from %>&nbsp;<%= t('dictionary.between_from') %>&nbsp;<%= between_to %>&nbsp;<%= t('dictionary.between_to') %>
-          </h4>
-          <div class="summary">
-            <% older.diff(newer, only: %i(friends_count followers_count)).each do |name, (before, after)| %>
-              <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before %>&nbsp;->&nbsp;<%= after %></div>
-            <% end %>
-            <% older.diff(newer, only: %i(friend_uids follower_uids)).each do |name, (before, after)| %>
-              <% if before.size != after.size %>
-                <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before.size %>&nbsp;->&nbsp;<%= after.size %></div>
-              <% else  %>
-                <% if (before - after).any? %>
-                  <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;-<%= (before - after).size %>,&nbsp;+<%= (after - before).size %></div>
-                <% end %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
+    <div class="update-histories">
+      <div class="summary">
+        <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
+        <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(@update_histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
+        <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= @update_histories.search_count %></div>
+        <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= @update_histories.update_count %></div>
       </div>
-    <% end %>
-  <% end %>
+
+      <% if @update_histories.size > 1 %>
+        <% @update_histories.each_cons(2).with_index do |(newer, older), i| %>
+          <div class="media">
+            <div class="media-body">
+              <h4 class="media-heading">
+                <%= TwitterUser.human_attribute_name(:updated_at) %><br>
+                <% between_from = l(older.created_at.in_time_zone('Tokyo'), format: :short) %>
+                <% between_to = l((i == 0 ? newer.updated_at : newer.created_at).in_time_zone('Tokyo'), format: :short) %>
+                <%= between_from %>&nbsp;<%= t('dictionary.between_from') %>&nbsp;<%= between_to %>&nbsp;<%= t('dictionary.between_to') %>
+              </h4>
+              <div class="summary">
+                <% older.diff(newer, only: %i(friends_count followers_count)).each do |name, (before, after)| %>
+                  <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before %>&nbsp;->&nbsp;<%= after %></div>
+                <% end %>
+                <% older.diff(newer, only: %i(friend_uids follower_uids)).each do |name, (before, after)| %>
+                  <% if before.size != after.size %>
+                    <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before.size %>&nbsp;->&nbsp;<%= after.size %></div>
+                  <% else  %>
+                    <% if (before - after).any? %>
+                      <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;-<%= (before - after).size %>,&nbsp;+<%= (after - before).size %></div>
+                    <% end %>
+                  <% end %>
+                <% end %>
+              </div>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
 </div>
