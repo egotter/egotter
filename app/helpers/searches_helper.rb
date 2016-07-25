@@ -30,8 +30,8 @@ module SearchesHelper
   end
 
   def reject_crawler
-    if request.device_type == 'crawler'
-      logger.info "#{self.class}##{__method__}: The crawler is rejected."
+    if request.device_type == :crawler
+      logger.warn "#{self.class}##{__method__}: The crawler is rejected from #{action_name}."
       render text: t('before_sign_in.that_page_doesnt_exist')
     end
   end

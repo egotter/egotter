@@ -68,7 +68,7 @@ module Logging
   private
 
   def fingerprint
-    if request.device_type == 'crawler'
+    if request.device_type == :crawler
       return -1
     end
 
