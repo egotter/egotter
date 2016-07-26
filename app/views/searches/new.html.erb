@@ -69,8 +69,6 @@
   <h2 class="share-me"><%= t('dictionary.share_me') %></h2>
   <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{@tweet_text} http://egotter.com"}) %>
 
-  <div style="margin-bottom: 15px;"></div>
-
   <div id="share"></div>
   <script>
     $("#share").jsSocials({
@@ -82,11 +80,31 @@
     });
   </script>
 
-  <div style="margin-bottom: 15px;">
-    <h2 class="official-account"><small><%= t('dictionary.official_account') %></small></h2>
+  <div class="official-account">
+    <h2><%= t('dictionary.official_account') %></h2>
     <div class="follow-official-account">
       <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
       <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
     </div>
   </div>
+
+  <div class="information">
+    <h2 style="display: none;"><%= t('dictionary.information') %></h2>
+  </div>
+  <script>
+    $(function () {
+      $.get('<%= information_path %>')
+          .done(function (res) {
+            if (res.status == 200) {
+              var container = $('.information');
+              container.find('h2').show();
+              container.append(res.html);
+            }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
+          });
+    });
+  </script>
+
 </div>

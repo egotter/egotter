@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   end
 
   resource :search_histories, only: :show
+  resource :information, only: :show
   resources :statuses, only: :show
   resources :update_histories, only: :show
 
