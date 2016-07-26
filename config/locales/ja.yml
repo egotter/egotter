@@ -5,7 +5,8 @@ ja:
     title: "えごったー ツイッター総合分析サイト"
     official_account: "公式アカウント"
     share_me: "えごったーをシェアする"
-    about_me: "えごったーで分かること"
+    egotter_features: "えごったーで分かること"
+    keyword_timeline: "みんなのつぶやき"
     tweet: "ツイート"
     friends: "フォロー"
     follower: "フォロワー"
@@ -68,8 +69,6 @@ ja:
     honorific: "さん"
     between_from: "から"
     between_to: "まで"
-  messages:
-    delay_occurs: "現在、アクセスが殺到しているため、結果の表示が少し遅くなっています。"
   before_sign_in:
     need_login: "%{sign_in_link} が必要です。"
     login_failed: "%{sign_in_link} に失敗しました。大変お手数ですが、時間をおいてから再度 %{sign_in_link} してみてください。"
@@ -138,6 +137,20 @@ ja:
     empty_result: "%{title}は0件でした。%{kaomoji} %{url}"
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
+  search_menu_short:
+    close: "仲良し"
+    removed: "フォローを外された"
+    inactive: "最近ツイッターにいない"
+    one_sided: "片思い・片思われ"
+    blocked: "ブロックされた"
+    protected: "鍵付きアカウント"
+  search_menu_description:
+    close: "仲良しなユーザーを一覧で表示。"
+    removed: "フォローを外されたユーザーをこっそりチェック！"
+    inactive: "最近ツイッターにいないのは誰だ？？"
+    one_sided: "相互フォローしてくれないユーザーを探そう。"
+    blocked: "ブロックされたユーザーを見付けられるかも？"
+    protected: "鍵付きアカウントもログインすれば検索できます。"
   search_menu:
     all: "仲良し、フォローを外した、フォローを外された、最近ツイッターにいない、片思い、片思われ、両思い、ツイッター利用状況、入っているクラスタ"
     search_result: "%{user} の検索結果"

@@ -1,6 +1,8 @@
 Rails.application.routes.draw do
   root 'searches#new'
 
+  get '/keyword_timeline', to: 'searches#keyword_timeline', as: :keyword_timeline
+
   resources :searches, only: [:new, :create, :show]
   get 'maintenance', to: 'searches#maintenance', as: :maintenance
   get 'privacy_policy', to: 'searches#privacy_policy', as: :privacy_policy

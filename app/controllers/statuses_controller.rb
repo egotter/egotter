@@ -16,6 +16,6 @@ class StatusesController < ApplicationController
   private
 
   def apply_kaminari(statuses)
-    Kaminari.paginate_array(statuses.map { |t| {target: t} }).page(params[:page]).per(100)
+    Kaminari.paginate_array(statuses).page(params[:page]).per(100)
   end
 end

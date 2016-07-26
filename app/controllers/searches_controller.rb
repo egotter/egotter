@@ -60,6 +60,17 @@ class SearchesController < ApplicationController
   def support
   end
 
+  def keyword_timeline
+    key = 'keyword_timeline'
+    json = redis.fetch(key) { Bot.api_client.search(t('dictionary.app_name')).slice(0, 5).map { |t| t.to_hash }.to_json }
+    tweets = JSON.load(json).slice(0, 5).map { |t| Hashie::Mash.new(t) }
+    html = render_to_string(partial: 'searches/status_items', locals: {status_items: tweets})
+    render json: {status: 200, html: html}, status: 200
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+    render json: {status: 500}, status: 500
+  end
+
   def show
     start_time = Time.zone.now
     tu = @searched_tw_user

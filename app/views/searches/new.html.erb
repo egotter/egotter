@@ -1,53 +1,94 @@
 <%= render(partial: 'searches/conversion_tracking') %>
 
 <div class="top-page">
-      <div class="total-search-count"><%= t('dictionary.total_search_count', count: 371372) %></div><!-- from 2011 -->
+  <div class="total-search-count"><%= t('dictionary.total_search_count', count: 371372) %></div><!-- from 2011 -->
 
-      <%= form_tag searches_path, method: :post do %>
-        <div class="lead-sentence"><%= raw t('dictionary.lead') %></div>
+  <%= form_tag searches_path, method: :post do %>
+    <div class="lead-sentence"><%= raw t('dictionary.lead') %></div>
 
-        <h2 class="search-interested-person"><%= t('dictionary.search_friends') %></h2>
-        <%= render partial: 'searches/search_box_group' %>
-      <% end %>
+    <h2 class="search-interested-person"><%= t('dictionary.search_friends') %></h2>
+    <%= render partial: 'searches/search_box_group' %>
+  <% end %>
 
-      <%= render(partial: 'searches/adsense') %>
+  <%= render(partial: 'searches/adsense') %>
 
-      <% if user_signed_in? %>
-        <h2 class="search-myself"><%= t('dictionary.search_login_user') %></h2>
-        <%= link_to t('dictionary.search_by', user: current_user.mention_name),
-                    searches_path(screen_name: current_user.screen_name),
-                    class: 'submit-btn2 btn btn-info btn-block', method: :post %>
-      <% end %>
+  <% if user_signed_in? %>
+    <h2 class="search-myself"><%= t('dictionary.search_login_user') %></h2>
+    <%= link_to t('dictionary.search_by', user: current_user.mention_name),
+                searches_path(screen_name: current_user.screen_name),
+                class: 'submit-btn2 btn btn-info btn-block', method: :post %>
+  <% end %>
 
-      <div class="egotter-timeline">
-        <a class="twitter-timeline" href="https://twitter.com/ego_tter/timelines/704672452064874496" data-widget-id="704674252671229952">egotter</a>
-        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+"://platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+  <div class="egotter-features">
+    <h2><%= t('dictionary.egotter_features') %></h2>
+    <div class="row">
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h3><%= t('search_menu_short.close') %></h3>
+        <div class="feature-description"><%= t('search_menu_description.close') %></div>
       </div>
-
-      <h2 class="about-me"><small><%= t('dictionary.about_me') %></small></h2>
-      <div><%= t('search_menu.all') %></div>
-
-      <h2 class="share-me"><small><%= t('dictionary.share_me') %></small></h2>
-      <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{@tweet_text} http://egotter.com"}) %>
-
-      <div style="margin-bottom: 15px;"></div>
-
-      <div id="share"></div>
-      <script>
-        $("#share").jsSocials({
-          shares: ["twitter", "facebook", "googleplus"],
-          url: "http://egotter.com",
-          text: "<%= raw @tweet_text %>",
-          showLabel: true,
-          showCount: true
-        });
-      </script>
-
-      <h2 class="official-account"><small><%= t('dictionary.official_account') %></small></h2>
-      <div class="follow-official-account">
-        <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
-        <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h3><%= t('search_menu_short.removed') %></h3>
+        <div class="feature-description"><%= t('search_menu_description.removed') %></div>
       </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h3><%= t('search_menu_short.inactive') %></h3>
+        <div class="feature-description"><%= t('search_menu_description.inactive') %></div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h3><%= t('search_menu_short.one_sided') %></h3>
+        <div class="feature-description"><%= t('search_menu_description.one_sided') %></div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h3><%= t('search_menu_short.blocked') %></h3>
+        <div class="feature-description"><%= t('search_menu_description.blocked') %></div>
+      </div>
+      <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
+        <h3><%= t('search_menu_short.protected') %></h3>
+        <div class="feature-description last-child"><%= t('search_menu_description.protected') %></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="keyword-timeline">
+    <h2 style="display: none;"><%= t('dictionary.keyword_timeline') %></h2>
+  </div>
+  <script>
+    $(function () {
+      $.get('<%= keyword_timeline_path %>')
+          .done(function (res) {
+            if (res.status == 200) {
+              var container = $('.keyword-timeline');
+              container.find('h2').show();
+              container.append(res.html);
+            }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
+          });
+    });
+  </script>
+
+  <h2 class="share-me"><%= t('dictionary.share_me') %></h2>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{@tweet_text} http://egotter.com"}) %>
 
   <div style="margin-bottom: 15px;"></div>
+
+  <div id="share"></div>
+  <script>
+    $("#share").jsSocials({
+      shares: ["twitter", "facebook", "googleplus"],
+      url: "http://egotter.com",
+      text: "<%= raw @tweet_text %>",
+      showLabel: true,
+      showCount: true
+    });
+  </script>
+
+  <div style="margin-bottom: 15px;">
+    <h2 class="official-account"><small><%= t('dictionary.official_account') %></small></h2>
+    <div class="follow-official-account">
+      <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+  </div>
 </div>

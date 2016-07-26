@@ -2,14 +2,13 @@
 <div id="<%= status_items.object_id %>">
 <% status_items.each.with_index do |status_item, i| %>
   <%
-    user = searched_tw_user
-    profile_image_url_https = searched_tw_user.profile_image_url_https.to_s
+    user = status_item.user
   %>
   <div class="status-item-carousel status-item-carousel-<%= i %>">
     <%# name box %>
     <div class="media">
       <div class="media-left">
-        <img class="media-object" src="<%= profile_image_url_https %>" alt="<%= user.screen_name %>">
+        <img class="media-object" src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>">
       </div>
 
       <div class="media-body">
@@ -17,7 +16,7 @@
           <%= "#{user.name}&nbsp;@#{user.screen_name}".html_safe %>
         </h4>
         <span class="text">
-          <%= status_item[:target].text %>
+          <%= status_item.text %>
         </span>
       </div>
     </div>

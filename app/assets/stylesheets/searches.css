@@ -31,18 +31,36 @@
   margin-top: 0;
 }
 
+.top-page .keyword-timeline h2 {
+  font-size: 16px;
+  margin-top: 15px;
+  text-align: center;
+}
+
 .top-page .egotter-timeline {
   text-align: center;
 }
 
-.top-page .about-me {
+.top-page .egotter-features h2, .top-page .egotter-features h3 {
+  font-size: 16px;
   text-align: center;
-  margin-top: 0;
+  margin-top: 15px;
+}
+
+.top-page .egotter-features .feature-description {
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.top-page .egotter-features .feature-description .last-child {
+  margin-bottom: 0;
 }
 
 .top-page .share-me {
+  font-size: 16px;
+  margin-top: 15px;
   text-align: center;
-  margin-top: 0;
 }
 
 .top-page #share {
