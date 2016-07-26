@@ -2,7 +2,7 @@ class SearchHistoriesController < ApplicationController
   include SearchesHelper
   include SearchHistoriesHelper
 
-  def index
+  def show
     in_modal = params.has_key?(:in_modal) && params[:in_modal] == 'true' ? true : false
     html = render_to_string(partial: 'searches/search_histories', locals: {search_histories: build_search_histories, in_modal: in_modal})
     render json: {status: 200, html: html}, status: 200
