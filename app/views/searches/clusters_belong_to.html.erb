@@ -1,39 +1,32 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<div class="row">
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
-  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
-
-  <%= render(partial: 'searches/profile_overview',
+<%= render(partial: 'searches/profile_overview',
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-    <div class="clusters-belong-to">
-      <h2><small><%= @title %></small></h2>
+<div class="clusters-belong-to">
+  <h2><small><%= @title %></small></h2>
 
-      <h3><small><%= t('dictionary.clusters_index') %></small></h3>
-      <div id="clusters_belong_to_graph" class="chart"></div>
+  <h3><small><%= t('dictionary.clusters_index') %></small></h3>
+  <div id="clusters_belong_to_graph" class="chart"></div>
 
-      <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
 
-      <hr>
+  <hr>
 
-      <h3><small><%= t('dictionary.clusters_cloud') %></small></h3>
-      <div id="clusters_belong_to_cloud" class="chart" style="height: 220px;"></div>
+  <h3><small><%= t('dictionary.clusters_cloud') %></small></h3>
+  <div id="clusters_belong_to_cloud" class="chart" style="height: 220px;"></div>
 
-      <hr>
+  <hr>
 
-      <% @cluster_words.each do |cluster| %>
-        <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
-          <div class="media-body" style="padding-right: 15px;">
-            <h4 style="font-weight: bold; font-size: 14px;" class="media-heading"></h4>
-            <span style="font-size: 13px; color: #999999;"><%= cluster[:target] %></span>
-          </div>
-        </div>
-      <% end %>
+  <% @cluster_words.each do |cluster| %>
+    <div class="media" style="border-bottom: 1px solid #e6e6e6; padding-bottom: 15px;">
+      <div class="media-body" style="padding-right: 15px;">
+        <h4 style="font-weight: bold; font-size: 14px;" class="media-heading"></h4>
+        <span style="font-size: 13px; color: #999999;"><%= cluster[:target] %></span>
+      </div>
     </div>
-  </div>
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+  <% end %>
 </div>
 
 <script>

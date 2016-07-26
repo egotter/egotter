@@ -1,7 +1,8 @@
 <script>
   $(function () {
-    if ($('.adsense-container').width() == 290) { // iPhone 5
-      $('.adsense-container').css('margin-left', '-5px');
+    var width = $('.adsense-container').width();
+    if (width < 300) { // iPhone 5
+      $('.adsense-container').css('margin-left', '-' + (300 - width) / 2 + 'px');
     }
   })
 </script>

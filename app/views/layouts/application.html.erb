@@ -54,69 +54,84 @@
 </head>
 <body>
 
+<style type="text/css">
+  @media (min-width: 768px) {
+    .navbar > .container .navbar-brand {
+      margin-left: 0;
+    }
+  }
+</style>
 <nav class="navbar navbar-default">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <% unless show_maintenance_page? %>
-      <% unless user_signed_in? %>
-        <button type="button" class="welcome-btn navbar-toggle">
-          <%= link_to welcome_path do %>
-            <span class="welcome-icon glyphicon glyphicon-log-in"></span><br>
-            <span class="welcome-text"><%= t('dictionary.sign_in') %></span>
-          <% end %>
-        </button>
-      <% end %>
+  <div class="container">
+    <div class="row">
+      <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
+      <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
 
-      <button type="button" class="menu-btn navbar-toggle">
-        <%= link_to menu_path do %>
-          <span class="menu-icon glyphicon glyphicon-menu-hamburger"></span><br>
-          <span class="menu-text"><%= t('dictionary.menu') %></span>
-        <% end %>
-      </button>
+        <div class="navbar-header">
+          <% unless show_maintenance_page? %>
+            <button type="button" class="search-modal-btn navbar-toggle" data-toggle="modal" data-target=".search-modal">
+              <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
+              <span class="search-modal-text"><%= t('dictionary.search') %></span>
+            </button>
 
-      <button type="button" class="search-modal-btn navbar-toggle" data-toggle="modal" data-target=".search-modal">
-        <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
-        <span class="search-modal-text"><%= t('dictionary.search') %></span>
-      </button>
-      <% end %>
-
-      <a class="navbar-brand" href="/">
-        <img alt="<%= t('dictionary.app_name') %>" width="48" height="48" src="/logo_294_294.png">
-        <span><%= t('dictionary.app_name') %></span>
-      </a>
-    </div>
-
-    <% unless show_maintenance_page? %>
-    <div class="collapse navbar-collapse">
-      <ul class="nav navbar-nav navbar-right">
-        <% unless user_signed_in? %>
-          <li>
-            <div class="welcome-btn">
-              <%= link_to welcome_path do %>
-                <span class="welcome-icon glyphicon glyphicon-log-in"></span><br>
-                <span class="welcome-text"><%= t('dictionary.sign_in') %></span>
+            <button type="button" class="menu-btn navbar-toggle">
+              <%= link_to menu_path do %>
+                <span class="menu-icon glyphicon glyphicon-menu-hamburger"></span><br>
+                <span class="menu-text"><%= t('dictionary.menu') %></span>
               <% end %>
-            </div>
-          </li>
-        <% end %>
-        <li>
-          <div class="menu-btn">
-            <%= link_to menu_path do %>
-              <span class="menu-icon glyphicon glyphicon-menu-hamburger"></span><br>
-              <span class="menu-text"><%= t('dictionary.menu') %></span>
+            </button>
+
+            <% unless user_signed_in? %>
+              <button type="button" class="welcome-btn navbar-toggle">
+                <%= link_to welcome_path do %>
+                  <span class="welcome-icon glyphicon glyphicon-log-in"></span><br>
+                  <span class="welcome-text"><%= t('dictionary.sign_in') %></span>
+                <% end %>
+              </button>
             <% end %>
+          <% end %>
+
+          <a class="navbar-brand" href="/">
+            <img alt="<%= t('dictionary.app_name') %>" width="48" height="48" src="/logo_294_294.png">
+            <span><%= t('dictionary.app_name') %></span>
+          </a>
+        </div>
+
+        <% unless show_maintenance_page? %>
+          <div class="collapse navbar-collapse">
+            <ul class="nav navbar-nav navbar-right">
+              <% unless user_signed_in? %>
+                <li>
+                  <div class="welcome-btn">
+                    <%= link_to welcome_path do %>
+                      <span class="welcome-icon glyphicon glyphicon-log-in"></span><br>
+                      <span class="welcome-text"><%= t('dictionary.sign_in') %></span>
+                    <% end %>
+                  </div>
+                </li>
+              <% end %>
+              <li>
+                <div class="menu-btn">
+                  <%= link_to menu_path do %>
+                    <span class="menu-icon glyphicon glyphicon-menu-hamburger"></span><br>
+                    <span class="menu-text"><%= t('dictionary.menu') %></span>
+                  <% end %>
+                </div>
+              </li>
+              <li>
+                <div class="search-modal-btn" data-toggle="modal" data-target=".search-modal">
+                  <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
+                  <span class="search-modal-text"><%= t('dictionary.search') %></span>
+                </div>
+              </li>
+            </ul>
           </div>
-        </li>
-        <li>
-          <div class="search-modal-btn" data-toggle="modal" data-target=".search-modal">
-            <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
-            <span class="search-modal-text"><%= t('dictionary.search') %></span>
-          </div>
-        </li>
-      </ul>
+        <% end %>
+
+      </div>
+      <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
     </div>
-    <% end %>
-  </div><!-- /.container-fluid -->
+  </div><!-- /.container -->
 </nav>
 
 <% unless show_maintenance_page? %>
@@ -129,13 +144,7 @@
       </div>
       <div class="modal-body">
         <%= form_tag searches_path, method: :post do %>
-          <label for="screen_name" class="sr-only">Twitter ID</label>
-          <div class="input-group">
-            <div class="input-group-addon">@</div>
-            <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
-                   pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required>
-          </div>
-          <button class="submit-btn btn btn-primary btn-block" type="submit"><%= t('dictionary.search') %></button>
+          <%= render partial: 'searches/search_box_group' %>
         <% end %>
 
         <div class="modal-search-histories">
@@ -164,10 +173,6 @@
 </div>
 <% end %>
 
-<% if SidekiqHandler.delay_occurs? %>
-  <p class="alert alert-info"><%= t('messages.delay_occurs') %></p>
-<% end %>
-
 <% if notice %>
   <p class="alert alert-info"><%= raw notice %></p>
 <% end %>
@@ -175,7 +180,15 @@
   <p class="alert alert-warning"><%= raw alert %></p>
 <% end %>
 
-<%= yield %>
+<div class="container">
+  <div class="row">
+    <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+      <%= yield %>
+    </div>
+    <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
+  </div>
+</div>
 
 <% unless show_maintenance_page? %>
 <footer class="footer">

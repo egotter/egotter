@@ -1,0 +1,9 @@
+<label for="screen_name" class="sr-only">Twitter ID</label>
+<div class="input-group">
+  <div class="input-group-addon">@</div>
+  <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
+         pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required autofocus>
+              <span class="input-group-btn">
+                <button class="btn btn-primary" type="submit"><%= t('dictionary.search') %></button>
+              </span>
+</div>

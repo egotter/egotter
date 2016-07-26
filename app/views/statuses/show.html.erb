@@ -1,28 +1,21 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<div class="row">
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
-  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
-
     <%= render(partial: 'searches/profile_overview',
              locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-    <div class="name-and-tweet-items">
-      <h2><small><%= @title %></small></h2>
+<div class="name-and-tweet-items">
+  <h2><small><%= @title %></small></h2>
 
-      <div class="page-entries-info-top">
-        <%= render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user,
-                                                                   user_items: @status_items}) %>
-      </div>
-
-      <%= render(partial: 'searches/status_items', locals: {searched_tw_user: @searched_tw_user, status_items: @status_items}) %>
-
-      <div class="page-entries-info-bottom">
-        <%= render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user,
-                                                                   user_items: @status_items}) %>
-      </div>
-    </div>
+  <div class="page-entries-info-top">
+    <%= render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user,
+                                                               user_items: @status_items}) %>
   </div>
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+
+  <%= render(partial: 'searches/status_items', locals: {searched_tw_user: @searched_tw_user, status_items: @status_items}) %>
+
+  <div class="page-entries-info-bottom">
+    <%= render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user,
+                                                               user_items: @status_items}) %>
+  </div>
 </div>

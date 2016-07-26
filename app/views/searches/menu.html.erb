@@ -1,87 +1,79 @@
 <% user = current_user %>
 
-<div class="row">
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
-  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+<div class="menu">
+  <h2><small><%= t('dictionary.notification') %></small></h2>
+  <%= form_for user.notification, url: menu_path do |f| %>
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :email %>
+        <div><%= t('dictionary.notification_email') %></div>
+      </label>
+    </div>
+    <hr>
 
-    <div class="menu">
-      <h2><small><%= t('dictionary.notification') %></small></h2>
-      <%= form_for user.notification, url: menu_path do |f| %>
-        <div class="checkbox">
-          <label>
-            <%= f.check_box :email %>
-            <div><%= t('dictionary.notification_email') %></div>
-          </label>
-        </div>
-        <hr>
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :dm %>
+        <div><%= t('dictionary.notification_dm') %></div>
+      </label>
+    </div>
+    <hr>
 
-        <div class="checkbox">
-          <label>
-            <%= f.check_box :dm %>
-            <div><%= t('dictionary.notification_dm') %></div>
-          </label>
-        </div>
-        <hr>
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :news %>
+        <div><%= t('dictionary.notification_news') %></div>
+      </label>
+    </div>
+    <hr>
 
-        <div class="checkbox">
-          <label>
-            <%= f.check_box :news %>
-            <div><%= t('dictionary.notification_news') %></div>
-          </label>
-        </div>
-        <hr>
-
-        <div class="checkbox">
-          <label>
-            <%= f.check_box :search %>
-            <div><%= t('dictionary.notification_search') %></div>
-          </label>
-        </div>
-
-        <div style="margin: 15px 15px auto 15px;">
-          <%= f.submit t('dictionary.save_settings'), class: 'btn btn-default btn-block' %>
-        </div>
-      <% end %>
-
-
-      <div class="menu-search-histories">
-        <hr style="display: none;">
-        <h2 style="display: none;"><small><%= t('search_menu.search_histories') %></small></h2>
-
-        <%= render(partial: 'searches/adsense') %>
-      </div>
-      <script>
-        $(function () {
-          $.get('<%= search_histories_path %>', {in_modal: false})
-              .done(function (res) {
-                if (res.status == 200) {
-                  var container = $('.menu-search-histories');
-                  container.find('hr').show();
-                  container.find('h2').show();
-                  container.append(res.html);
-                }
-              })
-              .fail(function (xhr) {
-                console.log(xhr.responseText);
-              });
-        });
-      </script>
-
-      <% if user.admin? %>
-        <h2><small><%= t('search_menu.debug') %></small></h2>
-        <div>
-          <%= link_to t('search_menu.debug'), debug_path,
-                      class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
-        </div>
-
-        <h2><small><%= t('search_menu.clear_result_cache') %></small></h2>
-        <div>
-          <%= link_to t('search_menu.clear_result_cache'), clear_result_cache_path,
-                      class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;', method: :post %>
-        </div>
-      <% end %>
+    <div class="checkbox">
+      <label>
+        <%= f.check_box :search %>
+        <div><%= t('dictionary.notification_search') %></div>
+      </label>
     </div>
 
+    <div style="margin: 15px 15px auto 15px;">
+      <%= f.submit t('dictionary.save_settings'), class: 'btn btn-default btn-block' %>
+    </div>
+  <% end %>
+
+
+  <div class="menu-search-histories">
+    <hr style="display: none;">
+    <h2 style="display: none;"><small><%= t('search_menu.search_histories') %></small></h2>
+
+    <%= render(partial: 'searches/adsense') %>
   </div>
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+  <script>
+    $(function () {
+      $.get('<%= search_histories_path %>', {in_modal: false})
+          .done(function (res) {
+            if (res.status == 200) {
+              var container = $('.menu-search-histories');
+              container.find('hr').show();
+              container.find('h2').show();
+              container.append(res.html);
+            }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
+          });
+    });
+  </script>
+
+  <% if user.admin? %>
+    <h2><small><%= t('search_menu.debug') %></small></h2>
+    <div>
+      <%= link_to t('search_menu.debug'), debug_path,
+                  class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
+    </div>
+
+    <h2><small><%= t('search_menu.clear_result_cache') %></small></h2>
+    <div>
+      <%= link_to t('search_menu.clear_result_cache'), clear_result_cache_path,
+                  class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;', method: :post %>
+    </div>
+  <% end %>
 </div>

@@ -1,49 +1,42 @@
-<div class="row">
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
-  <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+<%= render(partial: 'searches/profile_overview',
+       locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-    <%= render(partial: 'searches/profile_overview',
-           locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
+<div class="waiting_msg" style="margin-top: 15px;">
+  <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+</div>
 
-    <div class="waiting_msg" style="margin-top: 15px;">
-      <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
-    </div>
-
-    <div class="progress_bar">
-      <div class="progress" style="margin-top: 15px; margin-bottom: 0px;">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-          <span class="sr-only">0% Complete</span>
-        </div>
-      </div>
-    </div>
-
-    <% if TwitterUser.exists?(uid: @searched_tw_user.uid) %>
-      <div class="show_immediately_btn" style="margin-top: 15px;">
-        <%= link_to t('dictionary.show_immediately'),
-                    search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
-                    class: 'btn btn-lg btn-info btn-block' %>
-      </div>
-    <% end %>
-
-    <div class="login_btn" style="display: none; margin-top: 15px;">
-      <%= link_to t('dictionary.sign_in_with_twitter'), sign_in_path,
-                  class: 'btn btn-lg btn-info btn-block' %>
-    </div>
-
-    <div class="retry_btn" style="display: none; margin-top: 15px;">
-      <%= link_to t('dictionary.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name),
-                  class: 'btn btn-lg btn-info btn-block', method: :post %>
-    </div>
-
-    <div class="support_btn" style="display: none; margin-top: 15px;">
-      <%= link_to t('dictionary.link_to_support'), support_path,
-                  class: 'btn btn-lg btn-info btn-block' %>
-    </div>
-
-    <div class="error_msg" style="display: none; margin-top: 15px;">
+<div class="progress_bar">
+  <div class="progress" style="margin-top: 15px; margin-bottom: 0px;">
+    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+      <span class="sr-only">0% Complete</span>
     </div>
   </div>
-  <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
+</div>
+
+<% if TwitterUser.exists?(uid: @searched_tw_user.uid) %>
+  <div class="show_immediately_btn" style="margin-top: 15px;">
+    <%= link_to t('dictionary.show_immediately'),
+                search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
+                class: 'btn btn-lg btn-info btn-block' %>
+  </div>
+<% end %>
+
+<div class="login_btn" style="display: none; margin-top: 15px;">
+  <%= link_to t('dictionary.sign_in_with_twitter'), sign_in_path,
+              class: 'btn btn-lg btn-info btn-block' %>
+</div>
+
+<div class="retry_btn" style="display: none; margin-top: 15px;">
+  <%= link_to t('dictionary.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name),
+              class: 'btn btn-lg btn-info btn-block', method: :post %>
+</div>
+
+<div class="support_btn" style="display: none; margin-top: 15px;">
+  <%= link_to t('dictionary.link_to_support'), support_path,
+              class: 'btn btn-lg btn-info btn-block' %>
+</div>
+
+<div class="error_msg" style="display: none; margin-top: 15px;">
 </div>
 
 <script>

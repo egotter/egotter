@@ -1,23 +1,13 @@
 <%= render(partial: 'searches/conversion_tracking') %>
 
-<div class="top-page container">
-  <div class="row">
-    <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
-    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-6">
+<div class="top-page">
       <div class="total-search-count"><%= t('dictionary.total_search_count', count: 371372) %></div><!-- from 2011 -->
 
       <%= form_tag searches_path, method: :post do %>
         <div class="lead-sentence"><%= raw t('dictionary.lead') %></div>
 
         <h2 class="search-interested-person"><%= t('dictionary.search_friends') %></h2>
-            <label for="screen_name" class="sr-only">Twitter ID</label>
-            <div class="input-group">
-              <input type="search" id="screen_name" name="screen_name" class="form-control" placeholder="Twitter ID"
-                     pattern="^[0-9A-Za-z_]{1,20}$" title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>" required autofocus>
-              <span class="input-group-btn">
-                <button class="btn btn-primary" type="submit"><%= t('dictionary.search') %></button>
-              </span>
-            </div>
+        <%= render partial: 'searches/search_box_group' %>
       <% end %>
 
       <%= render(partial: 'searches/adsense') %>
@@ -58,10 +48,6 @@
         <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
         <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
       </div>
-
-    </div>
-    <div class="hidden-xs col-sm-1 col-md-2 col-lg-3"></div>
-  </div>
 
   <div style="margin-bottom: 15px;"></div>
 </div>

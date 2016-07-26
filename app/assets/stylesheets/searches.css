@@ -38,13 +38,11 @@
 .top-page .about-me {
   text-align: center;
   margin-top: 0;
-  margin-bottom: 5px;
 }
 
 .top-page .share-me {
   text-align: center;
   margin-top: 0;
-  margin-bottom: 0;
 }
 
 .top-page #share {
@@ -198,11 +196,6 @@
 .usage-stats .tweet-preview-box,
 .clusters-belong-to .tweet-preview-box {
   border: 1px solid #e6e6e6;
-  margin-top: 15px;
-  margin-left: 15px;
-  margin-right: 15px;
-  padding-left: 0;
-  padding-right: 0;
 }
 
 .top-page .tweet-preview-box textarea,
@@ -210,7 +203,7 @@
 .usage-stats .tweet-preview-box textarea,
 .clusters-belong-to .tweet-preview-box textarea {
   margin: 0;
-  padding: 0;
+  padding: 5px;
   resize: none;
   outline: none;
   border: none;
@@ -227,16 +220,12 @@
 .clusters-belong-to .tweet-box
 {
   margin-top: 5px;
-  margin-left: 15px;
-  margin-right: 15px;
-  padding-left: 0px;
-  padding-right: 0px;
 }
 /* _user_items.html.erb end */
 
 /* _status_items.html.erb start */
 .status-item-carousel {
-  margin-bottom: 0px !important;
+  margin-bottom: 0 !important;
 }
 
 .status-item-carousel .media:first-child {
