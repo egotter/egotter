@@ -6,14 +6,12 @@
   <%= form_tag searches_path, method: :post do %>
     <div class="lead-sentence"><%= raw t('dictionary.lead') %></div>
 
-    <h2 class="search-interested-person"><%= t('dictionary.search_friends') %></h2>
     <%= render partial: 'searches/search_box_group' %>
   <% end %>
 
   <%= render(partial: 'searches/adsense') %>
 
   <% if user_signed_in? %>
-    <h2 class="search-myself"><%= t('dictionary.search_login_user') %></h2>
     <%= link_to t('dictionary.search_by', user: current_user.mention_name),
                 searches_path(screen_name: current_user.screen_name),
                 class: 'submit-btn2 btn btn-info btn-block', method: :post %>
