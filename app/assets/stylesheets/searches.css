@@ -68,11 +68,6 @@
   margin-bottom: 0px !important;
 }
 
-.user-item-carousel.in-modal {
-  margin-left: -15px;
-  margin-right: -15px;
-}
-
 .user-item-carousel .media:first-child {
   margin-top: 15px;
 }

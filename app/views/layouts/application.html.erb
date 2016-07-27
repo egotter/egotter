@@ -156,7 +156,6 @@
         <% end %>
 
         <div class="modal-search-histories">
-          <hr style="display: none;">
           <h2 style="display: none;"><small><%= t('search_menu.search_histories') %></small></h2>
         </div>
         <script>
@@ -165,7 +164,6 @@
                 .done(function (res) {
                   if (res.status == 200) {
                     var container = $('.modal-search-histories');
-                    container.find('hr').show();
                     container.find('h2').show();
                     container.append(res.html);
                   }

@@ -4,10 +4,10 @@ class SearchHistoriesController < ApplicationController
 
   def show
     in_modal = params.has_key?(:in_modal) && params[:in_modal] == 'true' ? true : false
-    html = render_to_string(partial: 'searches/search_histories', locals: {search_histories: build_search_histories, in_modal: in_modal})
+    html = render_to_string(partial: 'search_histories/items', locals: {search_histories: build_search_histories, in_modal: in_modal})
     render json: {status: 200, html: html}, status: 200
   rescue => e
-    logger.warn "#{e}: #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
     render json: {status: 500}, status: 500
   end
 end

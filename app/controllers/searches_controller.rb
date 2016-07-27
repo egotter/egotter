@@ -265,7 +265,7 @@ class SearchesController < ApplicationController
     @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)
     key = "searches:#{current_user_id}:new"
     html =
-      if flash.empty?
+      if ENV['PAGE_CACHE'] == '1' && flash.empty?
         redis.fetch(key) { render_to_string }
       else
         render_to_string
