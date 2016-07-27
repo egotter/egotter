@@ -14,10 +14,14 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   post 'searches/:screen_name/waiting', to: 'searches#waiting'
 
-  %i(statuses friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers
+  %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers
     mutual_friends common_friends common_followers replying replied favoriting inactive_friends
-    inactive_followers clusters_belong_to close_friends usage_stats update_histories).each do |name|
+    inactive_followers clusters_belong_to close_friends usage_stats).each do |name|
     get "searches/:screen_name/#{name}", to: "searches##{name}", as: name
+  end
+
+  %i(statuses update_histories).each do |name|
+    get "searches/:screen_name/#{name}" => redirect("/#{name}/%{id}")
   end
 
   resource :search_histories, only: :show

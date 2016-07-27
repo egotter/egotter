@@ -114,10 +114,6 @@ class SearchesController < ApplicationController
     redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
   end
 
-  def statuses
-    redirect_to status_path(id: params[:id])
-  end
-
   # GET /searches/:screen_name/friends
   def friends
     @user_items = build_user_items(@searched_tw_user.friends)
@@ -349,10 +345,6 @@ class SearchesController < ApplicationController
     return redirect_to '/' unless current_user.admin?
     PageCache.new(redis).clear
     redirect_to '/'
-  end
-
-  def update_histories
-    redirect_to update_history_path(id: params[:id])
   end
 
   private

@@ -80,7 +80,7 @@
 <div class="profile-counts-container">
   <div class="row">
     <div class="tweet-count-box col-xs-4">
-      <%= link_to statuses_path(screen_name: user.screen_name, id: user.uid),
+      <%= link_to status_path(id: user.uid),
                   class: 'text-muted' do %>
         <span class="stats-count"><%= user.statuses_count %></span><br>
         <span class="text-muted"><%= t('dictionary.tweet') %></span>

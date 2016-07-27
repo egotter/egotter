@@ -20,7 +20,7 @@ class PageCache
   end
 
   def exists?(uid, user_id)
-    redis.exists(normalize_key(uid, user_id))
+    ENV['PAGE_CACHE'] == '1' && redis.exists(normalize_key(uid, user_id))
   end
 
   def read(uid, user_id)
