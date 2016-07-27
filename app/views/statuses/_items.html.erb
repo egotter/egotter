@@ -1,10 +1,9 @@
-<%# status list %>
 <div id="<%= status_items.object_id %>">
 <% status_items.each.with_index do |status_item, i| %>
   <%
     user = status_item.user
   %>
-  <div class="status-item-carousel status-item-carousel-<%= i %>">
+  <div class="status-item">
     <%# name box %>
     <div class="media">
       <div class="media-left">

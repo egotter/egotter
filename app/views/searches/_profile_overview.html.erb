@@ -1,15 +1,14 @@
-<%# profile box %>
 <div class="profile-overview-container <%= unique_id %>">
   <div class="profile-overview">
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
         <div class="text-center">
-          <%= link_to "https://twitter.com/#{user.screen_name}",
-                      class: 'profile-icon-link', target: '_blank' do %>
-            <img class="profile-icon" src="<%= user.profile_image_url_https.to_s %>" width="48" height="48">
-          <% end %>
-        </div>
-        <div class="text-center">
+          <div class="profile-icon-box">
+            <%= link_to "https://twitter.com/#{user.screen_name}",
+                        class: 'profile-icon-link', target: '_blank' do %>
+              <img class="profile-icon" src="<%= user.profile_image_url_https.to_s %>" width="48" height="48">
+            <% end %>
+          </div>
           <div class="profile-names">
             <div class="full-name">
               <div>
@@ -19,9 +18,7 @@
               </div>
             </div>
             <div class="screen-name">
-              <%= link_to "https://twitter.com/#{user.screen_name}", style: '', class: 'profile-screen_name-link', target: '_blank' do %>
-                @<%= user.screen_name %>
-              <% end %>
+              <%= link_to "@#{user.screen_name}", "https://twitter.com/#{user.screen_name}", class: 'profile-screen_name-link', target: '_blank' %>
             </div>
           </div>
         </div>

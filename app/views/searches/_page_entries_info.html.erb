@@ -1,19 +1,17 @@
-<% if user_items.any? %>
-  <div class="row">
-    <div class="col-xs-3">
-      <div>
-        <%= link_to_previous_page user_items, t('views.pagination.previous').html_safe, params: {id: searched_tw_user.uid} %>
-      </div>
-    </div>
-    <div class="col-xs-6 text-center">
-      <div>
-        <%= page_entries_info user_items %>
-      </div>
-    </div>
-    <div class="col-xs-3 text-right">
-      <div>
-        <%= link_to_next_page user_items, t('views.pagination.next').html_safe, params: {id: searched_tw_user.uid} %>
-      </div>
+<div class="row">
+  <div class="col-xs-3">
+    <div>
+      <%= link_to_previous_page user_items, t('views.pagination.previous').html_safe, params: {id: searched_tw_user.uid} %>
     </div>
   </div>
-<% end %>
+  <div class="col-xs-6 text-center">
+    <div>
+      <%= page_entries_info user_items %>
+    </div>
+  </div>
+  <div class="col-xs-3 text-right">
+    <div>
+      <%= link_to_next_page user_items, t('views.pagination.next').html_safe, params: {id: searched_tw_user.uid} %>
+    </div>
+  </div>
+</div>

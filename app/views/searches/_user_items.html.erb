@@ -1,4 +1,3 @@
-<%# user list %>
 <div id="<%= user_items.object_id %>">
 <% user_items.each.with_index do |user_item, i| %>
   <%
@@ -35,15 +34,15 @@
       </div>
 
       <div class="media-right">
-        <% if user_signed_in? && user_item.respond_to?(:friendship) %>
+        <% if user_signed_in? && user_item[:friendship] %>
           <span>
             <% if user_item[:me] %>
             <% elsif user_item[:friendship] %>
-              <button type="button" class="btn btn-success">
+              <button type="button" class="btn btn-success with-margin-right">
                 <span class="glyphicon glyphicon-ok"></span>
               </button>
             <% else %>
-              <button type="button" class="btn btn-default">
+              <button type="button" class="btn btn-default with-margin-right">
                 <span class="text-muted glyphicon glyphicon-plus"></span>
               </button>
             <% end %>
