@@ -11,7 +11,7 @@ module Concerns::TwitterUser::Persistence
 
   def save(*)
     if invalid? || recently_created_record_exists? || same_record_exists?
-      logger.warn "#{self.class}##{__method__} #{errors.full_messages}"
+      logger.info "#{self.class}##{__method__} #{errors.full_messages}"
       return false
     end
 

@@ -170,7 +170,7 @@ module Concerns::TwitterUser::Validation
 
     return false if diff.any? { |_, v| v[0] != v[1] }
 
-    errors[:base] << "Same record(#{newer.id}) exists."
+    newer.errors[:base] << "Same record(#{newer.id}) exists."
     true
   end
 end

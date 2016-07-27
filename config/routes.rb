@@ -10,7 +10,6 @@ Rails.application.routes.draw do
   patch 'menu', to: 'searches#menu'
   get 'support', to: 'searches#support', as: :support
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
-  post 'searches/:screen_name/waiting', to: 'searches#waiting'
 
   %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers
     mutual_friends common_friends common_followers replying replied favoriting inactive_friends
@@ -28,6 +27,7 @@ Rails.application.routes.draw do
   get '/statuses/keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
   resources :statuses, only: :show
   resources :update_histories, only: :show
+  resources :background_search_logs, only: :show
 
   delete 'caches', to: 'caches#destroy', as: :caches_delete
 

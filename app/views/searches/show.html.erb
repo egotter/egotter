@@ -66,7 +66,7 @@
         return
       }
 
-      $.post("<%= url_for waiting_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>")
+      $.get("<%= url_for background_search_log_path(id: @searched_tw_user.uid) %>")
           .done(function (res) {
             console.log(res, interval, retry_count);
 
