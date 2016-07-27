@@ -44,7 +44,7 @@ class BackgroundUpdateWorker
     end
 
     new_tu = measure('build(second)') { TwitterUser.build_with_relations(client, first_tu.uid, user_id) }
-    if measure('save') { new_tu.save_with_bulk_insert }
+    if measure('save') { new_tu.save }
       new_tu.update_and_touch
       logger.debug "#{user_name} create new TwitterUser"
     else

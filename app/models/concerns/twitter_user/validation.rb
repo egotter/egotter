@@ -143,7 +143,7 @@ module Concerns::TwitterUser::Validation
     return false if me.blank?
 
     if me.recently_created? || me.recently_updated?
-      errors[:base] << 'recently created record exists'
+      errors[:base] << 'A recently created record exists.'
       return true
     end
 
@@ -170,7 +170,7 @@ module Concerns::TwitterUser::Validation
 
     return false if diff.any? { |_, v| v[0] != v[1] }
 
-    errors[:base] << "id:#{newer.id} is the same record"
+    errors[:base] << "Same record(#{newer.id}) exists."
     true
   end
 end

@@ -20,17 +20,17 @@ class BackgroundSearchWorker
     if (existing_tu = TwitterUser.latest(uid, user_id)).present? && existing_tu.recently_created?
       existing_tu.search_and_touch
       create_success_log(
-        "This worker doesn't create TwitterUser because recently created record exists.",
+        'cannot create a new TwitterUser because a recently created record exists.',
         {call_count: client.call_count}.merge(log_attrs)
       )
       return
     end
 
     new_tu = TwitterUser.build_with_relations(client, uid, user_id, 'search')
-    if new_tu.save_with_bulk_insert
+    if new_tu.save
       new_tu.search_and_touch
       create_success_log(
-        'This worker creates a new record of TwitterUser.',
+        'creates a new TwitterUser.',
         {call_count: client.call_count}.merge(log_attrs)
       )
 
@@ -45,7 +45,7 @@ class BackgroundSearchWorker
     if existing_tu.present?
       existing_tu.search_and_touch
       create_success_log(
-        "This worker doesn't save new TwitterUser because existing one is the same as new one.",
+        'cannot save a new TwitterUser because existing one is the same as new one.',
         {call_count: client.call_count}.merge(log_attrs)
       )
       return
@@ -53,7 +53,7 @@ class BackgroundSearchWorker
 
     create_failed_log(
       BackgroundSearchLog::SomethingError::MESSAGE,
-      "This worker doesn't save new TwitterUser because of #{new_tu.errors.full_messages.join(', ')}.",
+      "cannot save a new TwitterUser because of #{new_tu.errors.full_messages.join(', ')}.",
       {call_count: client.call_count}.merge(log_attrs)
     )
   rescue Twitter::Error::TooManyRequests => e
