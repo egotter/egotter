@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   %i(statuses update_histories).each do |name|
     get "searches/:screen_name/#{name}" => redirect('/')
   end
-  get 'keyword_timeline' => redirect('/statuses/keyword_timeline')
+  get 'keyword_timeline' => redirect('/statuses/keyword_timeline'), as: :_k
 
   resource :search_histories, only: :show
   resource :information, only: :show
