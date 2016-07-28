@@ -47,4 +47,32 @@ module SearchesHelper
     targets = items.map { |u| {target: u, friendship: current_user_friends.include?(u.uid.to_i), me: (u.uid.to_i == me)} }
     Kaminari.paginate_array(targets).page(params[:page]).per(25)
   end
+
+  def add_background_search_worker_if_needed(uid, screen_name, user_info)
+    user_id = current_user_id
+
+    ValidUidList.new(redis).add(uid, user_id)
+    ValidTwitterUserSet.new(redis).set(
+      uid,
+      user_id,
+      {
+        uid: uid,
+        screen_name: screen_name,
+        user_id: user_id,
+        user_info: user_info
+      }
+    )
+
+    searched_uid_list = SearchedUidList.new(redis)
+    unless searched_uid_list.exists?(uid, user_id)
+      values = {
+        session_id: fingerprint,
+        uid: uid,
+        screen_name: screen_name,
+        user_id: user_id
+      }
+      BackgroundSearchWorker.perform_async(values)
+      searched_uid_list.add(uid, user_id)
+    end
+  end
 end

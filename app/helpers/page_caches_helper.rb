@@ -26,8 +26,6 @@ module PageCachesHelper
     @menu_clusters_belong_to = clusters_belong_to_menu(tu)
     @menu_update_histories = update_histories_menu(tu)
 
-    @title = t('search_menu.search_result', user: tu.mention_name)
-
     @searched_tw_user = tu
   end
 end
