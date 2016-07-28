@@ -11,7 +11,7 @@ class PageCachesController < ApplicationController
     user_id = current_user_id
 
     create_instance_variables_for_result_page(tu)
-    html = render_to_string(template: 'searches/show')
+    html = render_to_string(template: 'search_results/show')
     PageCache.new(redis).write(tu.uid, user_id, html)
     logger.warn "#{self.class}##{__method__}: A page cache is created. #{tu.uid} #{user_id}" # TODO remove debug code
     render json: {status: 200}, status: 200
