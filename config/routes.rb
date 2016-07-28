@@ -2,6 +2,7 @@ Rails.application.routes.draw do
   root 'searches#new'
 
   resources :searches, only: [:new, :create, :show]
+  resources :search_results, only: [:show]
   get 'maintenance', to: 'searches#maintenance', as: :maintenance
   get 'privacy_policy', to: 'searches#privacy_policy', as: :privacy_policy
   get 'terms_of_service', to: 'searches#terms_of_service', as: :terms_of_service
@@ -23,8 +24,7 @@ Rails.application.routes.draw do
 
   resource :search_histories, only: :show
   resource :information, only: :show
-  resources :statuses, only: :show do
-  end
+  resources :statuses, only: :show
   get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
   resources :update_histories, only: :show
   resources :background_search_logs, only: :show

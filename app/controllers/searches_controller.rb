@@ -61,26 +61,7 @@ class SearchesController < ApplicationController
   end
 
   def show
-    start_time = Time.zone.now
-    tu = @searched_tw_user
-    user_id = current_user_id
-
-    add_background_search_worker_if_needed(tu.uid, tu.screen_name, tu.user_info)
-
-    page_cache = PageCache.new(redis)
-    if page_cache.exists?(tu.uid, user_id)
-      return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count)
-    end
-
-    create_instance_variables_for_result_page(tu)
-    html = render_to_string
-    page_cache.write(tu.uid, user_id, html)
-    logger.warn "#{self.class}##{__method__}: A page cache is created. #{tu.uid} #{user_id}" # TODO remove debug code
-
-    render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count, tu.client.call_count)
-
-  rescue Twitter::Error::TooManyRequests => e
-    redirect_to '/', alert: t('before_sign_in.too_many_requests', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+    @title = t('search_menu.search_result', user: @searched_tw_user.mention_name)
   end
 
   # GET /searches/:screen_name/friends
@@ -294,34 +275,6 @@ class SearchesController < ApplicationController
   end
 
   private
-
-  def add_background_search_worker_if_needed(uid, screen_name, user_info)
-    user_id = current_user_id
-
-    ValidUidList.new(redis).add(uid, user_id)
-    ValidTwitterUserSet.new(redis).set(
-      uid,
-      user_id,
-      {
-        uid: uid,
-        screen_name: screen_name,
-        user_id: user_id,
-        user_info: user_info
-      }
-    )
-
-    searched_uid_list = SearchedUidList.new(redis)
-    unless searched_uid_list.exists?(uid, user_id)
-      values = {
-        session_id: fingerprint,
-        uid: uid,
-        screen_name: screen_name,
-        user_id: user_id
-      }
-      BackgroundSearchWorker.perform_async(values)
-      searched_uid_list.add(uid, user_id)
-    end
-  end
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)
     html.sub('<!-- csrf_meta_tags -->', view_context.csrf_meta_tags).
