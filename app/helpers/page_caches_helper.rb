@@ -26,6 +26,6 @@ module PageCachesHelper
     @menu_clusters_belong_to = clusters_belong_to_menu(tu)
     @menu_update_histories = update_histories_menu(tu)
 
-    @searched_tw_user = tu
+    nil
   end
 end

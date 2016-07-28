@@ -8,7 +8,7 @@ class PageCache
   end
 
   def key_prefix
-    'searches'
+    'searches-v2'
   end
 
   def key_suffix
