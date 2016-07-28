@@ -4,6 +4,7 @@ class SearchesController < ApplicationController
   include Logging
   include TweetTextHelper
   include SearchesHelper
+  include PageCachesHelper
 
   DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
@@ -71,31 +72,11 @@ class SearchesController < ApplicationController
       return render text: replace_csrf_meta_tags(page_cache.read(tu.uid, user_id), Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count)
     end
 
-    @menu_items = [
-      removing_menu(tu),
-      removed_menu(tu),
-      blocking_or_blocked_menu(tu),
-      mutual_friends_menu(tu),
-      one_sided_friends_menu(tu),
-      one_sided_followers_menu(tu),
-      replying_menu(tu),
-      replied_menu(tu),
-      favoriting_menu(tu),
-      inactive_friends_menu(tu),
-      inactive_followers_menu(tu)
-    ]
-
-    @menu_common_friends_and_followers = common_friend_and_followers_menu(tu)
-    @menu_close_friends = close_friends_menu(tu)
-    @menu_usage_stats = usage_stats_menu(tu)
-    @menu_clusters_belong_to = clusters_belong_to_menu(tu)
-    @menu_update_histories = update_histories_menu(tu)
-
-    @title = t('search_menu.search_result', user: tu.mention_name)
-
-    @searched_tw_user = tu
+    create_instance_variables_for_result_page(tu)
     html = render_to_string
     page_cache.write(tu.uid, user_id, html)
+    logger.warn "#{self.class}##{__method__}: A page cache is created. #{tu.uid} #{user_id}" # TODO remove debug code
+
     render text: replace_csrf_meta_tags(html, Time.zone.now - start_time, page_cache.ttl(tu.uid, user_id), tu.search_log.call_count, tu.client.call_count)
 
   rescue Twitter::Error::TooManyRequests => e

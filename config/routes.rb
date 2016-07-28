@@ -20,16 +20,15 @@ Rails.application.routes.draw do
   %i(statuses update_histories).each do |name|
     get "searches/:screen_name/#{name}" => redirect('/')
   end
-  get 'keyword_timeline' => redirect('/statuses/keyword_timeline'), as: :_k
 
   resource :search_histories, only: :show
   resource :information, only: :show
-  get '/statuses/keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
-  resources :statuses, only: :show
+  resources :statuses, only: :show do
+    get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
+  end
   resources :update_histories, only: :show
   resources :background_search_logs, only: :show
-
-  delete 'caches', to: 'caches#destroy', as: :caches_delete
+  resources :page_caches, only: [:create, :destroy]
 
   get '/sign_in', to: 'login#sign_in', as: :sign_in
   get '/sign_out', to: 'login#sign_out', as: :sign_out

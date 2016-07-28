@@ -34,7 +34,7 @@ class KpisController < ApplicationController
   NOW = Time.zone.now
 
   def dau
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- dau
       SELECT
         date(created_at) date,
@@ -47,7 +47,7 @@ class KpisController < ApplicationController
         AND device_type NOT IN ('crawler', 'UNKNOWN')
       GROUP BY date(created_at)
       ORDER BY date(created_at);
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     %i(total guest login).map do |legend|
@@ -59,7 +59,7 @@ class KpisController < ApplicationController
   end
 
   def dau_by_action
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- dau_by_action
       SELECT
         date(created_at) date,
@@ -72,7 +72,7 @@ class KpisController < ApplicationController
         AND action != 'waiting'
       GROUP BY date(created_at), action
       ORDER BY date(created_at), action;
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     result.map { |r| r.action.to_s }.uniq.sort.map do |legend|
@@ -85,7 +85,7 @@ class KpisController < ApplicationController
   end
 
   def dau_by_device_type
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- dau_by_device_type
       SELECT
         date(created_at) date,
@@ -97,7 +97,7 @@ class KpisController < ApplicationController
         AND device_type NOT IN ('crawler', 'UNKNOWN')
       GROUP BY date(created_at), device_type
       ORDER BY date(created_at), device_type;
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     result.map { |r| r.device_type.to_s }.uniq.sort.map do |legend|
@@ -109,7 +109,7 @@ class KpisController < ApplicationController
   end
 
   def dau_by_referer
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- dau_by_referer
       SELECT
         date(created_at) date,
@@ -130,7 +130,7 @@ class KpisController < ApplicationController
         AND device_type NOT IN ('crawler', 'UNKNOWN')
       GROUP BY date(created_at), channel
       ORDER BY date(created_at), channel;
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
@@ -143,7 +143,7 @@ class KpisController < ApplicationController
   end
 
   def search_num
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- search_num
       SELECT
         date(created_at)                                    date,
@@ -157,7 +157,7 @@ class KpisController < ApplicationController
         AND action = 'create'
       GROUP BY date(created_at)
       ORDER BY date(created_at);
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     %i(guest login).map do |legend|
@@ -169,7 +169,7 @@ class KpisController < ApplicationController
   end
 
   def search_num_verification
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- search_num_verification
       SELECT
         date(created_at)                  date,
@@ -180,7 +180,7 @@ class KpisController < ApplicationController
       WHERE created_at BETWEEN :start AND :end
       GROUP BY date(created_at)
       ORDER BY date(created_at);
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     %i(guest login).map do |legend|
@@ -192,7 +192,7 @@ class KpisController < ApplicationController
   end
 
   def new_user
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- new_user
       SELECT
         date(created_at) date,
@@ -201,7 +201,7 @@ class KpisController < ApplicationController
       WHERE created_at BETWEEN :start AND :end
       GROUP BY date(created_at)
       ORDER BY date(created_at);
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     %i(total).map do |legend|
@@ -213,7 +213,7 @@ class KpisController < ApplicationController
   end
 
   def sign_in
-    sql = <<-'EOS'.strip_heredoc
+    sql = <<-'SQL'.strip_heredoc
       -- sign_in
       SELECT
         date(created_at) date,
@@ -224,7 +224,7 @@ class KpisController < ApplicationController
       WHERE created_at BETWEEN :start AND :end
       GROUP BY date(created_at)
       ORDER BY date(created_at);
-    EOS
+    SQL
     result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
 
     %i(NewUser ReturningUser).map do |legend|

@@ -1,5 +1,5 @@
 class BackgroundSearchLogsController < ApplicationController
-  include CachesHelper
+  include PageCachesHelper
 
   # GET /background_search_logs/:id
   def show
@@ -18,7 +18,7 @@ class BackgroundSearchLogsController < ApplicationController
         render json: {status: 202, reason: 'processing'}, status: 202
       when BackgroundSearchLog.successfully_finished?(uid, user_id)
         created_at = TwitterUser.latest(uid, user_id).created_at.to_i
-        render json: {status: 200, created_at: created_at, hash: update_hash(created_at)}, status: 200
+        render json: {status: 200, created_at: created_at, hash: delete_cache_token(created_at)}, status: 200
       when BackgroundSearchLog.failed?(uid, user_id)
         render json: {status: 500,
                       reason: BackgroundSearchLog.fail_reason!(uid, user_id),
