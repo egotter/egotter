@@ -33,7 +33,7 @@
     function refresh() {
       delete_cache(delete_cache_url, hash).done(function () {
         create_cache(create_cache_url).done(function () {
-          window.location.reload(true);
+          window.location.reload();
         })
       })
     }
