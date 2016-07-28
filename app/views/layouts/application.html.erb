@@ -27,7 +27,7 @@
   <link rel="stylesheet" type="text/css" href="/slick/slick-theme.css">
   <script type="text/javascript" src="/slick/slick.min.js"></script>
 
-  <%= action_name.in?(%w(new show)) ? '<!-- csrf_meta_tags -->'.html_safe : csrf_meta_tags %>
+  <%= action_name.in?(%w(new)) ? '<!-- csrf_meta_tags -->'.html_safe : csrf_meta_tags %>
 
   <script src="/highcharts/highcharts.js"></script>
   <script src="/highcharts/modules/drilldown.js"></script>

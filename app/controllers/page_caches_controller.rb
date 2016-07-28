@@ -15,6 +15,10 @@ class PageCachesController < ApplicationController
     PageCache.new(redis).write(tu.uid, user_id, html)
     logger.warn "#{self.class}##{__method__}: A page cache is created. #{tu.uid} #{user_id}" # TODO remove debug code
     render json: {status: 200}, status: 200
+
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    render json: {status: 500}, status: 500
   end
 
   # DELETE /page_caches/:id
@@ -30,5 +34,9 @@ class PageCachesController < ApplicationController
     else
       render json: {status: 400, reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
     end
+
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    render json: {status: 500}, status: 500
   end
 end
