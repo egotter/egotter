@@ -5,8 +5,15 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
-  rescue_from ActionController::InvalidAuthenticityToken do
-    redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+  rescue_from ActionController::InvalidAuthenticityToken do |e|
+    if e
+      logger.warn "#{self.class}##{action_name}: #{e.class} #{request.xhr?} #{request.device_type} #{current_user_id}"
+    end rescue nil
+    if request.xhr?
+      render json: {status: 500}, status: 500
+    else
+      redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+    end
   end
 
   # https://github.com/plataformatec/devise/issues/1390
