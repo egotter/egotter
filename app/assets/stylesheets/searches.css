@@ -528,7 +528,8 @@ p.alert-info, p.alert-warning {
 }
 /* footer end */
 
-.adsense-container {
+.adsense-container,
+.adsense-container-bottom {
   text-align: center;
   margin-top: 15px;
   margin-bottom: 15px;

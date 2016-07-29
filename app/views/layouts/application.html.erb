@@ -194,6 +194,9 @@
   <div class="row">
     <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
     <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+
+      <%= render(partial: 'searches/adsense') %>
+
       <div class="pre-footer">
         <h2 class="share-me"><%= t('dictionary.share_me') %></h2>
         <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"}) %>
