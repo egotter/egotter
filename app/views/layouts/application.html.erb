@@ -58,7 +58,7 @@
       <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
 
         <div class="navbar-header">
-          <% unless show_maintenance_page? %>
+          <% unless show_maintenance_page? || action_name == 'welcome' %>
             <button type="button" class="search-modal-btn navbar-toggle" data-toggle="modal" data-target=".search-modal">
               <span class="search-modal-icon glyphicon glyphicon-search"></span><br>
               <span class="search-modal-text"><%= t('dictionary.search') %></span>
@@ -87,7 +87,7 @@
           </a>
         </div>
 
-        <% unless show_maintenance_page? %>
+        <% unless show_maintenance_page? || action_name == 'welcome' %>
           <div class="collapse navbar-collapse">
             <ul class="nav navbar-nav navbar-right">
               <% unless user_signed_in? %>
@@ -190,47 +190,64 @@
 <link rel="stylesheet" type="text/css" href="/jssocials/jssocials-theme-flat.css" />
 <script src="/jssocials/jssocials.min.js"></script>
 
-<div class="pre-footer container">
-  <h2 class="share-me"><%= t('dictionary.share_me') %></h2>
-  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"}) %>
+<div class="container">
+  <div class="row">
+    <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
+    <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
+      <div class="pre-footer">
+        <h2 class="share-me"><%= t('dictionary.share_me') %></h2>
+        <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"}) %>
 
-  <div id="share"></div>
-  <script>
-    $("#share").jsSocials({
-      shares: ["twitter", "facebook", "googleplus"],
-      url: "http://egotter.com",
-      text: "<%= raw egotter_share_text %>",
-      showLabel: true,
-      showCount: true
-    });
-  </script>
-
-  <div class="official-account">
-    <h2><%= t('dictionary.official_account') %></h2>
-    <div class="follow-official-account">
-      <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
-      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-    </div>
-  </div>
-
-  <div class="information">
-    <h2 style="display: none;"><%= t('dictionary.information') %></h2>
-  </div>
-  <script>
-    $(function () {
-      $.get('<%= information_path %>')
-          .done(function (res) {
-            if (res.status == 200) {
-              var container = $('.information');
-              container.find('h2').show();
-              container.append(res.html);
-            }
-          })
-          .fail(function (xhr) {
-            console.log(xhr.responseText);
+        <div id="share"></div>
+        <script>
+          $("#share").jsSocials({
+            shares: ["twitter", "facebook", "googleplus"],
+            url: "http://egotter.com",
+            text: "<%= raw egotter_share_text %>",
+            showLabel: true,
+            showCount: true
           });
-    });
-  </script>
+        </script>
+
+        <div class="official-account">
+          <h2><%= t('dictionary.official_account') %></h2>
+          <div class="follow-official-account">
+            <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow
+              @ego_tter</a>
+            <script>!function (d, s, id) {
+              var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+              if (!d.getElementById(id)) {
+                js = d.createElement(s);
+                js.id = id;
+                js.src = p + '://platform.twitter.com/widgets.js';
+                fjs.parentNode.insertBefore(js, fjs);
+              }
+            }(document, 'script', 'twitter-wjs');</script>
+          </div>
+        </div>
+
+        <div class="information">
+          <h2 style="display: none;"><%= t('dictionary.information') %></h2>
+        </div>
+        <script>
+          $(function () {
+            $.get('<%= information_path %>')
+                .done(function (res) {
+                  if (res.status == 200) {
+                    var container = $('.information');
+                    container.find('h2').show();
+                    container.append(res.html);
+                  }
+                })
+                .fail(function (xhr) {
+                  console.log(xhr.responseText);
+                });
+          });
+        </script>
+      </div>
+    </div>
+    <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
+  </div>
 </div>
 
 <% unless show_maintenance_page? %>
