@@ -7,7 +7,7 @@ class SearchHistoriesController < ApplicationController
     html = render_to_string(partial: 'search_histories/items', locals: {search_histories: build_search_histories, in_modal: in_modal})
     render json: {status: 200, html: html}, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     render json: {status: 500}, status: 500
   end
 end

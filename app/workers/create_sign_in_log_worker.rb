@@ -5,6 +5,6 @@ class CreateSignInLogWorker
   def perform(attrs)
     SignInLog.create!(attrs)
   rescue => e
-    logger.warn "#{e}: #{e.message} #{attrs.inspect}"
+    logger.warn "#{e.class}: #{e.message} #{attrs.inspect}"
   end
 end

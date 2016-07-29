@@ -20,6 +20,6 @@ class FollowEgotterWorker
       Statsd.new('localhost', 8125).increment('egotter.follow.create')
     end
   rescue => e
-    logger.warn "#{e}: #{e.message}"
+    logger.warn "#{e.class}: #{e.message}"
   end
 end

@@ -18,7 +18,7 @@ class DogstatsdWorker
       statsd.gauge("egotter.#{model.table_name}.count", model.all.size)
     end
   rescue => e
-    logger.warn "#{e}: #{e.message}"
+    logger.warn "#{e.class}: #{e.message}"
   end
 
   def sidekiq_stats(statsd)
@@ -35,7 +35,7 @@ class DogstatsdWorker
     end
     statsd.gauge('egotter.sidekiq.stats.queues', stats.queues['egotter'])
   rescue => e
-    logger.warn "#{e}: #{e.message}"
+    logger.warn "#{e.class}: #{e.message}"
   end
 
   def redis_sats(statsd)
@@ -44,6 +44,6 @@ class DogstatsdWorker
     statsd.gauge('egotter.list.unauthorized', UnauthorizedUidList.new(redis).size)
     statsd.gauge('egotter.list.too_many_friends', TooManyFriendsUidList.new(redis).size)
   rescue => e
-    logger.warn "#{e}: #{e.message}"
+    logger.warn "#{e.class}: #{e.message}"
   end
 end

@@ -263,7 +263,7 @@ class SearchesController < ApplicationController
     @searched_tw_user = fetch_twitter_user_from_cache(uid, user_id)
 
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     return redirect_to '/', alert: BackgroundSearchLog::SomethingError::MESSAGE
   end
 

@@ -40,7 +40,7 @@ module TweetTextHelper
       kaomoji: Kaomoji.happy,
       url: short_url)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e} #{e.message} #{addiction_stat.inspect} #{tu.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{addiction_stat.inspect} #{tu.inspect}"
     error_text
   end
 

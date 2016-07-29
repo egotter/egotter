@@ -7,7 +7,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         create_sign_in_log(user.id, context)
       end
     rescue =>  e
-      logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
       return redirect_to '/', alert: t('before_sign_in.login_failed', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
     end
 
@@ -26,7 +26,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     UnauthorizedUidList.new(redis).delete(user.uid, user.id)
     TooManyFriendsUidList.new(redis).delete(user.uid, user.id)
   rescue => e
-    logger.warn "#{e}: #{e.message} #{user.inspect}"
+    logger.warn "#{e.class}: #{e.message} #{user.inspect}"
   end
 
   def user_params

@@ -29,7 +29,7 @@ class BackgroundSearchLogsController < ApplicationController
     end
 
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     render json: {status: 500, reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500
   end
 end

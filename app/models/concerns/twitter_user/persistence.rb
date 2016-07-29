@@ -58,7 +58,7 @@ module Concerns::TwitterUser::Persistence
 
       self.reload
     rescue => e
-      logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
       self.destroy
       false
     else

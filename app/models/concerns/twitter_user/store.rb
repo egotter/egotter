@@ -52,7 +52,7 @@ module Concerns::TwitterUser::Store
     urls = entities.url.urls
     urls.any? ? (urls[0].expanded_url || urls[0].url) : nil
   rescue => e
-    logger.warn "#{e}: #{e.message} #{entities}"
+    logger.warn "#{e.class}: #{e.message} #{entities}"
     nil
   end
 
@@ -67,7 +67,7 @@ module Concerns::TwitterUser::Store
       account_created_at
     end
   rescue => e
-    logger.warn "#{e}: #{e.message} #{time_zone}, #{account_created_at}"
+    logger.warn "#{e.class}: #{e.message} #{time_zone}, #{account_created_at}"
     account_created_at
   end
 end

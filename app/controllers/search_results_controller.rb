@@ -15,12 +15,12 @@ class SearchResultsController < ApplicationController
     page_cache = PageCache.new(redis)
     if page_cache.exists?(tu.uid, user_id)
       html = page_cache.read(tu.uid, user_id)
-      logger.warn "#{self.class}##{__method__}: A page cache is loaded. #{tu.uid} #{user_id}" # TODO remove debug code
+      logger.info "#{self.class}##{__method__}: A page cache is loaded. #{tu.uid} #{user_id}" # TODO remove debug code
     else
       create_instance_variables_for_result_page(tu)
       html = render_to_string(layout: false)
       page_cache.write(tu.uid, user_id, html)
-      logger.warn "#{self.class}##{__method__}: A page cache is created. #{tu.uid} #{user_id}" # TODO remove debug code
+      logger.info "#{self.class}##{__method__}: A page cache is created. #{tu.uid} #{user_id}" # TODO remove debug code
     end
 
     render json: {status: 200, html: html}, status: 200

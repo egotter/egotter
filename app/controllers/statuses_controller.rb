@@ -20,7 +20,7 @@ class StatusesController < ApplicationController
     html = render_to_string(partial: 'statuses/items', locals: {status_items: tweets})
     render json: {status: 200, html: html}, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     render json: {status: 500}, status: 500
   end
 
