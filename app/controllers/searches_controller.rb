@@ -11,7 +11,7 @@ class SearchesController < ApplicationController
     clusters_belong_to close_friends usage_stats)
   NEED_LOGIN = %i(common_friends common_followers)
 
-  before_action :under_maintenance,
+  before_action :under_maintenance
   before_action :reject_crawler,      only: %i(create)
   before_action :need_login,          only: NEED_LOGIN
   before_action :valid_search_value?, only: %i(create)
