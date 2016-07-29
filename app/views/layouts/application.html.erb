@@ -190,12 +190,13 @@
 <link rel="stylesheet" type="text/css" href="/jssocials/jssocials-theme-flat.css" />
 <script src="/jssocials/jssocials.min.js"></script>
 
+<% if %w(search_results searches statuses update_histories).include?(controller_name) %>
 <div class="container">
   <div class="row">
     <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
     <div class="col-xs-12 col-sm-10 col-md-8 col-lg-8">
 
-      <%= render(partial: 'searches/adsense') %>
+      <%= render(partial: 'searches/adsense_bottom') %>
 
       <div class="pre-footer">
         <h2 class="share-me"><%= t('dictionary.share_me') %></h2>
@@ -252,6 +253,7 @@
     <div class="hidden-xs col-sm-1 col-md-2 col-lg-2"></div>
   </div>
 </div>
+<% end %>
 
 <% unless show_maintenance_page? %>
 <footer class="footer">

@@ -1,15 +1,13 @@
 Rails.application.routes.draw do
   root 'searches#new'
 
+  %i(maintenance privacy_policy terms_of_service sitemap menu support).each do |name|
+    get name, to: "misc##{name}", as: name
+  end
+  patch 'menu', to: 'misc#menu'
+
   resources :searches, only: [:new, :create, :show]
   resources :search_results, only: [:show]
-  get 'maintenance', to: 'searches#maintenance', as: :maintenance
-  get 'privacy_policy', to: 'searches#privacy_policy', as: :privacy_policy
-  get 'terms_of_service', to: 'searches#terms_of_service', as: :terms_of_service
-  get 'sitemap', to: 'searches#sitemap', as: :sitemap
-  get 'menu', to: 'searches#menu', as: :menu
-  patch 'menu', to: 'searches#menu'
-  get 'support', to: 'searches#support', as: :support
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
 
   %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers

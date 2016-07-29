@@ -13,12 +13,12 @@ class SearchesController < ApplicationController
   NEED_LOGIN = %i(common_friends common_followers)
 
   before_action :reject_crawler,         only: %i(create)
-  before_action :under_maintenance,      except: (%i(maintenance) + DEBUG_PAGES)
+  before_action :under_maintenance,      except: DEBUG_PAGES
   before_action :need_login,             only: NEED_LOGIN
   before_action :valid_search_value?,    only: %i(create)
   before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
 
-  before_action only: (%i(new create waiting show menu) + SEARCH_MENUS) do
+  before_action only: (%i(new create waiting show) + SEARCH_MENUS) do
     if session[:sign_in_from].present?
       create_search_log(referer: session[:sign_in_from])
       session.delete(:sign_in_from)
@@ -31,34 +31,6 @@ class SearchesController < ApplicationController
   end
 
   before_action :basic_auth, only: DEBUG_PAGES
-
-  def maintenance
-  end
-
-  def privacy_policy
-  end
-
-  def terms_of_service
-  end
-
-  def sitemap
-    @logs = BackgroundSearchLog.where(status: true, user_id: -1).order(created_at: :desc).limit(10)
-    render layout: false
-  end
-
-  # not using before_action
-  def menu
-    return redirect_to welcome_path unless user_signed_in?
-    if request.patch?
-      current_user.notification.update(params.require(:notification).permit(:email, :dm, :news, :search))
-      redirect_to menu_path, notice: t('dictionary.settings_saved')
-    else
-      render
-    end
-  end
-
-  def support
-  end
 
   def show
     @title = t('search_menu.search_result', user: @searched_tw_user.mention_name)
