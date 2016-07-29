@@ -32,9 +32,9 @@ namespace :update_job_dispatcher do
       cur_enqueue_limit += 2
       cur_enqueue_limit = max_enqueue_limit if cur_enqueue_limit > max_enqueue_limit
     end
-    if SidekiqHandler.delay_occurs?
-      cur_enqueue_limit = min_enqueue_limit
-    end
+    # if SidekiqHandler.delay_occurs?
+    #   cur_enqueue_limit = min_enqueue_limit
+    # end
     redis.set(enqueue_num_key, cur_enqueue_limit)
 
     begin

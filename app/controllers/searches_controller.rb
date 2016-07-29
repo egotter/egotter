@@ -277,9 +277,10 @@ class SearchesController < ApplicationController
   private
 
   def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)
-    html.sub('<!-- csrf_meta_tags -->', view_context.csrf_meta_tags).
-      sub('<!-- search_elapsed_time -->', view_context.number_with_precision(time, precision: 1)).
-      sub('<!-- cache_ttl -->', view_context.number_with_precision(ttl.to_f / 3600.seconds, precision: 1)).
+    vc = view_context
+    html.sub('<!-- csrf_meta_tags -->', vc.csrf_meta_tags).
+      sub('<!-- search_elapsed_time -->', vc.number_with_precision(time, precision: 1)).
+      sub('<!-- cache_ttl -->', vc.number_with_precision(ttl.to_f / 3600.seconds, precision: 1)).
       sub('<!-- log_call_count -->', log_call_count.to_s).
       sub('<!-- action_call_count -->', action_call_count.to_s)
   end
