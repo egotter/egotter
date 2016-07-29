@@ -39,4 +39,11 @@ class PageCachesController < ApplicationController
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     render json: {status: 500}, status: 500
   end
+
+  def clear
+    return redirect_to '/' unless request.post?
+    return redirect_to '/' unless current_user.admin?
+    PageCache.new(redis).clear
+    redirect_to '/'
+  end
 end

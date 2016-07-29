@@ -6,17 +6,16 @@ class SearchesController < ApplicationController
   include SearchesHelper
   include PageCachesHelper
 
-  DEBUG_PAGES = %i(debug clear_result_cache)
   SEARCH_MENUS = %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats)
   NEED_LOGIN = %i(common_friends common_followers)
 
-  before_action :reject_crawler,         only: %i(create)
-  before_action :under_maintenance,      except: DEBUG_PAGES
-  before_action :need_login,             only: NEED_LOGIN
-  before_action :valid_search_value?,    only: %i(create)
-  before_action :set_twitter_user,       only: SEARCH_MENUS + %i(show)
+  before_action :under_maintenance,
+  before_action :reject_crawler,      only: %i(create)
+  before_action :need_login,          only: NEED_LOGIN
+  before_action :valid_search_value?, only: %i(create)
+  before_action :set_twitter_user,    only: SEARCH_MENUS + %i(show)
 
   before_action only: (%i(new create waiting show) + SEARCH_MENUS) do
     if session[:sign_in_from].present?
@@ -29,8 +28,6 @@ class SearchesController < ApplicationController
       create_search_log
     end
   end
-
-  before_action :basic_auth, only: DEBUG_PAGES
 
   def show
     @title = t('search_menu.search_result', user: @searched_tw_user.mention_name)
@@ -236,13 +233,6 @@ class SearchesController < ApplicationController
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     return redirect_to '/', alert: BackgroundSearchLog::SomethingError::MESSAGE
-  end
-
-  def clear_result_cache
-    return redirect_to '/' unless request.post?
-    return redirect_to '/' unless current_user.admin?
-    PageCache.new(redis).clear
-    redirect_to '/'
   end
 
   private
