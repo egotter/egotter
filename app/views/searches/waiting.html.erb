@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<% if TwitterUser.exists?(uid: @searched_tw_user.uid) %>
+<% if TwitterUser.exists?(uid: @searched_tw_user.uid, user_id: current_user_id) %>
   <div class="show_immediately_btn" style="margin-top: 15px;">
     <%= link_to t('dictionary.show_immediately'),
                 search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
