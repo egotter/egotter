@@ -48,7 +48,7 @@ module Concerns::TwitterUser::Validation
   def unauthorized_search?(twitter_link, sign_in_link)
     return false if public_account?
 
-    if ego_surfing? || has_permission_to_search?
+    if ego_surfing? || readable_by_login_user?
       return false
     end
 
@@ -63,7 +63,7 @@ module Concerns::TwitterUser::Validation
     true
   end
 
-  def has_permission_to_search?
+  def readable_by_login_user?
     return false if search_without_login?
     login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i) ? true : false
   end
