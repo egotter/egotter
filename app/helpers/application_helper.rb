@@ -30,4 +30,8 @@ module ApplicationHelper
   def current_user_id
     user_signed_in? ? current_user.id : -1
   end
+
+  def egotter_share_text
+    @egotter_share_text ||= t('tweet_text.top', kaomoji: Kaomoji.happy)
+  end
 end

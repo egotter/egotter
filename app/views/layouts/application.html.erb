@@ -19,27 +19,11 @@
 
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
   <%= stylesheet_link_tag 'application', media: 'all' %>
-
   <%= javascript_include_tag 'application' %>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
-  <link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
-  <script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+  <link rel="stylesheet" type="text/css" href="/font-awesome/font-awesome.min.css" />
 
   <%= action_name.in?(%w(new)) ? '<!-- csrf_meta_tags -->'.html_safe : csrf_meta_tags %>
-
-  <script type="text/javascript" src="//code.highcharts.com/4.2.2/highcharts.js"></script>
-  <script type="text/javascript" src="//code.highcharts.com/4.2.2/modules/drilldown.js"></script>
-
-  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js"></script>
-  <script src="/d3/d3.layout.cloud.js"></script>
-  <script src="/d3/word_cloud.js"></script>
-
-  <link rel="stylesheet" type="text/css" href="/font-awesome/font-awesome.min.css" />
-  <link rel="stylesheet" type="text/css" href="/jssocials/jssocials.css" />
-  <link rel="stylesheet" type="text/css" href="/jssocials/jssocials-theme-flat.css" />
-  <script src="/jssocials/jssocials.min.js"></script>
 
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -48,8 +32,6 @@
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 
     ga('create', 'UA-13072051-3', 'auto');
-    ga('send', 'pageview');
-
   </script>
 
   <script async src="//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -100,7 +82,7 @@
           <% end %>
 
           <a class="navbar-brand" href="/">
-            <img alt="<%= t('dictionary.app_name') %>" width="48" height="48" src="/logo_294_294.png">
+            <img alt="<%= t('dictionary.app_name') %>" width="48" height="48" src="/logo_96_96.png">
             <span><%= t('dictionary.app_name') %></span>
           </a>
         </div>
@@ -196,6 +178,61 @@
   </div>
 </div>
 
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css"/>
+<link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css"/>
+<script type="text/javascript" src="//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.min.js"></script>
+<script type="text/javascript" src="//code.highcharts.com/4.2.2/highcharts.js"></script>
+<script type="text/javascript" src="//code.highcharts.com/4.2.2/modules/drilldown.js"></script>
+<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.15/d3.min.js"></script>
+<script type="text/javascript" src="/d3/d3.layout.cloud.js"></script>
+<script type="text/javascript" src="/d3/word_cloud.js"></script>
+<link rel="stylesheet" type="text/css" href="/jssocials/jssocials.css" />
+<link rel="stylesheet" type="text/css" href="/jssocials/jssocials-theme-flat.css" />
+<script src="/jssocials/jssocials.min.js"></script>
+
+<div class="pre-footer container">
+  <h2 class="share-me"><%= t('dictionary.share_me') %></h2>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"}) %>
+
+  <div id="share"></div>
+  <script>
+    $("#share").jsSocials({
+      shares: ["twitter", "facebook", "googleplus"],
+      url: "http://egotter.com",
+      text: "<%= raw egotter_share_text %>",
+      showLabel: true,
+      showCount: true
+    });
+  </script>
+
+  <div class="official-account">
+    <h2><%= t('dictionary.official_account') %></h2>
+    <div class="follow-official-account">
+      <a href="https://twitter.com/ego_tter" class="twitter-follow-button" data-show-count="false" data-size="large">Follow @ego_tter</a>
+      <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+    </div>
+  </div>
+
+  <div class="information">
+    <h2 style="display: none;"><%= t('dictionary.information') %></h2>
+  </div>
+  <script>
+    $(function () {
+      $.get('<%= information_path %>')
+          .done(function (res) {
+            if (res.status == 200) {
+              var container = $('.information');
+              container.find('h2').show();
+              container.append(res.html);
+            }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
+          });
+    });
+  </script>
+</div>
+
 <% unless show_maintenance_page? %>
 <footer class="footer">
   <div class="container">
@@ -229,6 +266,5 @@
   </div>
 </footer>
 <% end %>
-
 </body>
 </html>

@@ -223,7 +223,6 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
-    @tweet_text = t('tweet_text.top', kaomoji: Kaomoji.happy)
     key = "searches:#{current_user_id}:new"
     html =
       if ENV['PAGE_CACHE'] == '1' && flash.empty?
