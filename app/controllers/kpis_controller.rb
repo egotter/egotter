@@ -289,7 +289,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_twitter_users_num
-    result = SearchLog.find_by_sql([twitter_users_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = TwitterUser.find_by_sql([twitter_users_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
     %i(guest login).map do |legend|
       {
         name: legend,
@@ -314,7 +314,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_friends_num
-    result = SearchLog.find_by_sql([friends_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = Friend.find_by_sql([friends_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
     %i(total).map do |legend|
       {
         name: legend,
@@ -327,8 +327,7 @@ class KpisController < ApplicationController
     <<-'SQL'.strip_heredoc
       SELECT
         date(created_at) date,
-        count(*) total,
-        count(DISTINCT from_id) unique_from_id
+        count(*) total
       FROM friends
       WHERE
         created_at BETWEEN :start AND :end
@@ -338,7 +337,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_followers_num
-    result = SearchLog.find_by_sql([followers_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = Follower.find_by_sql([followers_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
     %i(total).map do |legend|
       {
         name: legend,
@@ -351,8 +350,7 @@ class KpisController < ApplicationController
     <<-'SQL'.strip_heredoc
       SELECT
         date(created_at) date,
-        count(*) total,
-        count(DISTINCT from_id) unique_from_id
+        count(*) total
       FROM followers
       WHERE
         created_at BETWEEN :start AND :end
