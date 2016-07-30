@@ -5,21 +5,29 @@ class KpisController < ApplicationController
   end
 
   def dau
-    result = {
-      dau: fetch_dau,
-      dau_by_action: fetch_dau_by_action,
-      dau_by_device_type: fetch_dau_by_device_type,
-      dau_by_referer: fetch_dau_by_referer
-    }
-    render json: result, status: 200
+    if request.xhr?
+      result = {dau: fetch_dau}
+      if request.referer.end_with?(action_name)
+        result.update(
+          dau_by_action: fetch_dau_by_action,
+          dau_by_device_type: fetch_dau_by_device_type,
+          dau_by_referer: fetch_dau_by_referer
+        )
+      end
+      return render json: result, status: 200
+    end
   end
 
   def search_num
-    result = {
-      search_num: fetch_search_num,
-      search_num_verification: fetch_search_num_verification
-    }
-    render json: result, status: 200
+    if request.xhr?
+      result = {search_num: fetch_search_num}
+      if request.referer.end_with?(action_name)
+        result.update(
+          search_num_verification: fetch_search_num_verification
+        )
+      end
+      return render json: result, status: 200
+    end
   end
 
   def new_user
@@ -34,6 +42,16 @@ class KpisController < ApplicationController
       sign_in: fetch_sign_in
     }
     render json: result, status: 200
+  end
+
+  def table
+    if request.xhr?
+      result = {twitter_users: fetch_twitter_users_num}
+      if request.referer.end_with?(action_name)
+        # result.update()
+      end
+      return render json: result, status: 200
+    end
   end
 
   def rr
@@ -58,7 +76,17 @@ class KpisController < ApplicationController
   NOW = Time.zone.now
 
   def fetch_dau
-    sql = <<-'SQL'.strip_heredoc
+    result = SearchLog.find_by_sql([dau_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    %i(total guest login).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def dau_sql
+    <<-'SQL'.strip_heredoc
       -- dau
       SELECT
         date(created_at) date,
@@ -72,18 +100,21 @@ class KpisController < ApplicationController
       GROUP BY date(created_at)
       ORDER BY date(created_at);
     SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+  end
 
-    %i(total guest login).map do |legend|
+  def fetch_dau_by_action
+    result = SearchLog.find_by_sql([dau_by_action_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result.map { |r| r.action.to_s }.uniq.sort.map do |legend|
       {
         name: legend,
-        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+        data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+        visible: !legend.in?(%w(new create show))
       }
     end
   end
 
-  def fetch_dau_by_action
-    sql = <<-'SQL'.strip_heredoc
+  def dau_by_action_sql
+    <<-'SQL'.strip_heredoc
       -- dau_by_action
       SELECT
         date(created_at) date,
@@ -97,19 +128,20 @@ class KpisController < ApplicationController
       GROUP BY date(created_at), action
       ORDER BY date(created_at), action;
     SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+  end
 
-    result.map { |r| r.action.to_s }.uniq.sort.map do |legend|
+  def fetch_dau_by_device_type
+    result = SearchLog.find_by_sql([dau_by_device_type_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result.map { |r| r.device_type.to_s }.uniq.sort.map do |legend|
       {
         name: legend,
-        data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
-        visible: !legend.in?(%w(new create show))
+        data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
       }
     end
   end
 
-  def fetch_dau_by_device_type
-    sql = <<-'SQL'.strip_heredoc
+  def dau_by_device_type_sql
+    <<-'SQL'.strip_heredoc
       -- dau_by_device_type
       SELECT
         date(created_at) date,
@@ -122,18 +154,21 @@ class KpisController < ApplicationController
       GROUP BY date(created_at), device_type
       ORDER BY date(created_at), device_type;
     SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+  end
 
-    result.map { |r| r.device_type.to_s }.uniq.sort.map do |legend|
+  def fetch_dau_by_referer
+    result = SearchLog.find_by_sql([dau_by_referer_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
       {
         name: legend,
-        data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
+        data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+        visible: !legend.in?(%w(egotter others))
       }
     end
   end
 
-  def fetch_dau_by_referer
-    sql = <<-'SQL'.strip_heredoc
+  def dau_by_referer_sql
+    <<-'SQL'.strip_heredoc
       -- dau_by_referer
       SELECT
         date(created_at) date,
@@ -155,15 +190,6 @@ class KpisController < ApplicationController
       GROUP BY date(created_at), channel
       ORDER BY date(created_at), channel;
     SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
-
-    result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
-      {
-        name: legend,
-        data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
-        visible: !legend.in?(%w(egotter others))
-      }
-    end
   end
 
   def fetch_search_num
@@ -257,6 +283,32 @@ class KpisController < ApplicationController
         data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
       }
     end
+  end
+
+  def fetch_twitter_users_num
+    result = SearchLog.find_by_sql([twitter_users_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    %i(guest login).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def twitter_users_num_sql
+    <<-'SQL'.strip_heredoc
+      -- dau
+      SELECT
+        date(created_at) date,
+        count(*) total,
+        count(if(user_id = -1, -1, NULL)) guest,
+        count(if(user_id != -1, user_id, NULL)) login
+      FROM twitter_users
+      WHERE
+        created_at BETWEEN :start AND :end
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
+    SQL
   end
 
   def to_msec_unixtime(date)

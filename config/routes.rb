@@ -48,7 +48,7 @@ Rails.application.routes.draw do
   mount Sidekiq::Web, at: '/sidekiq'
 
   get 'kpis', to: 'kpis#index', as: :kpis
-  %i(dau search_num new_user sign_in rr).each do |name|
+  %i(dau search_num new_user sign_in table rr).each do |name|
     get "kpis/#{name}", to: "kpis##{name}", as: "kpis_#{name}"
   end
   get 'debug', to: 'debug#index', as: :debug

@@ -1,0 +1,24 @@
+<div class="search_num"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="search_num_verification"><%= image_tag '/ajax-loader.gif' %></div>
+
+<script>
+  function fetch_search_num(url){
+    $.get(url).done(function(res){
+      draw_search_num(res.search_num, 'Search num (search_logs)', '.search_num');
+      draw_search_num(res.search_num_verification, 'Search num verification (background_search_logs)', '.search_num_verification');
+    }).fail(function (xhr) {
+      console.log(xhr.responseText)
+    });
+  }
+
+  function draw_search_num(series, title, selector){
+    var conf = $.extend(true, {}, window.kpis.config_stacked);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
+  }
+
+  $(function () {
+    fetch_search_num("<%= kpis_search_num_path %>");
+  });
+</script>

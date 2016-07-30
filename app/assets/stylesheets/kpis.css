@@ -1,0 +1,9 @@
+.dau, .dau_by_action, .dau_by_device_type, .dau_by_referer,
+.search_num, .search_num_verification,
+.new_user,
+.sign_in,
+.twitter_users {
+  min-width: 310px;
+  height: 400px;
+  margin: 0 auto
+}

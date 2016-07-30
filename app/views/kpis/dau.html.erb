@@ -1,0 +1,28 @@
+<div class="dau"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="dau_by_action"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="dau_by_device_type"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="dau_by_referer"><%= image_tag '/ajax-loader.gif' %></div>
+
+<script>
+  function fetch_dau(url){
+    $.get(url).done(function(res){
+      draw_dau(res.dau, 'DAU (search_logs)', '.dau');
+      draw_dau(res.dau_by_action, 'DAU by action (search_logs)', '.dau_by_action');
+      draw_dau(res.dau_by_device_type, 'DAU by device_type (search_logs)', '.dau_by_device_type');
+      draw_dau(res.dau_by_referer, 'DAU by referer (search_logs)', '.dau_by_referer');
+    }).fail(function (xhr) {
+      console.log(xhr.responseText)
+    });
+  }
+
+  function draw_dau(series, title, selector){
+    var conf = $.extend(true, {}, window.kpis.config);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
+  }
+
+  $(function () {
+    fetch_dau("<%= kpis_dau_path %>");
+  });
+</script>

@@ -1,0 +1,22 @@
+<div class="twitter_users"><%= image_tag '/ajax-loader.gif' %></div>
+
+<script>
+  function fetch_table(url){
+    $.get(url).done(function(res){
+      draw_table(res.twitter_users, 'twitter_users', '.twitter_users');
+    }).fail(function (xhr) {
+      console.log(xhr.responseText)
+    });
+  }
+
+  function draw_table(series, title, selector){
+    var conf = $.extend(true, {}, window.kpis.config_stacked);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
+  }
+
+  $(function () {
+    fetch_table("<%= kpis_table_path %>");
+  });
+</script>
