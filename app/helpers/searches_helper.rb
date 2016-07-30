@@ -48,7 +48,7 @@ module SearchesHelper
     Kaminari.paginate_array(targets).page(params[:page]).per(25)
   end
 
-  def add_background_search_worker_if_needed(uid, screen_name, user_info, request)
+  def add_background_search_worker_if_needed(uid, screen_name, user_info)
     user_id = current_user_id
 
     ValidUidList.new(redis).add(uid, user_id)
@@ -73,8 +73,8 @@ module SearchesHelper
         device_type: request.device_type,
         os: request.os,
         browser: request.browser,
-        user_agent: request.user_agent,
-        referer: request.referer
+        user_agent: truncated_user_agent,
+        referer: truncated_referer
       }
       BackgroundSearchWorker.perform_async(values)
       searched_uid_list.add(uid, user_id)

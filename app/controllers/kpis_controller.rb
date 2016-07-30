@@ -197,23 +197,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_search_num
-    sql = <<-'SQL'.strip_heredoc
-      -- search_num
-      SELECT
-        date(created_at)                                    date,
-        count(*)                                            total,
-        count(if(user_id = -1, 1, NULL))                    guest,
-        count(if(user_id != -1, 1, NULL))                   login
-      FROM search_logs
-      WHERE
-        created_at BETWEEN :start AND :end
-        AND device_type NOT IN ('crawler', 'UNKNOWN')
-        AND action = 'create'
-      GROUP BY date(created_at)
-      ORDER BY date(created_at);
-    SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
-
+    result = SearchLog.find_by_sql([search_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
     %i(guest login).map do |legend|
       {
         name: legend,
@@ -222,9 +206,35 @@ class KpisController < ApplicationController
     end
   end
 
+  def search_num_sql
+    <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at)                  date,
+        count(*)                          total,
+        count(if(user_id = -1, 1, NULL))  guest,
+        count(if(user_id != -1, 1, NULL)) login
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+        AND action = 'create'
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
+    SQL
+  end
+
   def fetch_search_num_verification
-    sql = <<-'SQL'.strip_heredoc
-      -- search_num_verification
+    result = SearchLog.find_by_sql([search_num_verification_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    %i(guest login).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def search_num_verification_sql
+    <<-'SQL'.strip_heredoc
       SELECT
         date(created_at)                  date,
         count(*)                          total,
@@ -235,14 +245,6 @@ class KpisController < ApplicationController
       GROUP BY date(created_at)
       ORDER BY date(created_at);
     SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
-
-    %i(guest login).map do |legend|
-      {
-        name: legend,
-        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
-      }
-    end
   end
 
   def fetch_new_user

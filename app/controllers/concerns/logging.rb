@@ -38,8 +38,8 @@ module Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
-      user_agent:  user_agent,
-      referer:     referer,
+      user_agent:  truncated_user_agent,
+      referer:     truncated_referer,
       created_at:  Time.zone.now
     }
     attrs.update(options) if options.any?
@@ -56,8 +56,8 @@ module Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
-      user_agent:  user_agent,
-      referer:     referer,
+      user_agent:  truncated_user_agent,
+      referer:     truncated_referer,
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
@@ -88,11 +88,11 @@ module Logging
     user_signed_in? && current_user.uid.to_i == uid.to_i
   end
 
-  def user_agent
+  def truncated_user_agent
     request.user_agent.nil? ? '' : view_context.truncate(request.user_agent, length: 180, escape: false)
   end
 
-  def referer
+  def truncated_referer
     request.referer.nil? ? '' : view_context.truncate(request.referer, length: 180, escape: false)
   end
 end
