@@ -1,0 +1,18 @@
+- title @title
+- set_meta_tags description: "#{@title}"
+
+.name-and-tweet-items
+  %h2
+    %small= @title
+  %div{id: @items.object_id}
+    - @items.each.with_index do |item, i|
+      - user = item.user
+      .notification-item
+        .media
+          .media-left
+            %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
+          .media-body
+            %h4.media-heading
+              = "#{user.name} @#{user.screen_name} - #{time_ago_in_words(user.created_at)}".html_safe
+            %span.text
+              = item.message

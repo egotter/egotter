@@ -61,7 +61,7 @@
                     %span.menu-text= t('dictionary.menu')
                 - if user_signed_in?
                   %button.bell-btn.navbar-toggle{type: 'button'}
-                    = link_to menu_path do
+                    = link_to notifications_path do
                       %span.bell-icon.glyphicon.glyphicon-bell
                       %br/
                       %span.bell-text= t('dictionary.bell')
@@ -80,7 +80,7 @@
                   - if user_signed_in?
                     %li
                       .bell-btn
-                        = link_to menu_path do
+                        = link_to notifications_path do
                           %span.bell-icon.glyphicon.glyphicon-bell
                           %br/
                           %span.bell-text= t('dictionary.bell')
