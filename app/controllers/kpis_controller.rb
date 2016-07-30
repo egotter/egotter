@@ -49,6 +49,7 @@ class KpisController < ApplicationController
       result = {twitter_users: fetch_twitter_users_num}
       if request.referer.end_with?(action_name)
         result.update(
+          twitter_users_uid: fetch_twitter_users_uid_num,
           friends: fetch_friends_num,
           followers: fetch_followers_num
         )
@@ -305,6 +306,30 @@ class KpisController < ApplicationController
         count(*) total,
         count(if(user_id = -1, -1, NULL)) guest,
         count(if(user_id != -1, user_id, NULL)) login
+      FROM twitter_users
+      WHERE
+        created_at BETWEEN :start AND :end
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
+    SQL
+  end
+
+  def fetch_twitter_users_uid_num
+    result = TwitterUser.find_by_sql([twitter_users_uid_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    %i(total unique_uid).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def twitter_users_uid_num_sql
+    <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        count(*) total,
+        count(DISTINCT uid) unique_uid
       FROM twitter_users
       WHERE
         created_at BETWEEN :start AND :end

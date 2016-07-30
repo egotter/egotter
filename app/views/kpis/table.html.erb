@@ -1,4 +1,5 @@
 <div class="table twitter_users"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="table twitter_users_uid"><%= image_tag '/ajax-loader.gif' %></div>
 <div class="table friends"><%= image_tag '/ajax-loader.gif' %></div>
 <div class="table followers"><%= image_tag '/ajax-loader.gif' %></div>
 
@@ -6,6 +7,9 @@
   function fetch_table(url){
     $.get(url).done(function(res){
       $.each(['twitter_users', 'friends', 'followers'], function(i, elem){
+        draw_table_stacked(res[elem], elem, '.' + elem);
+      });
+      $.each(['twitter_users_uid'], function(i, elem){
         draw_table(res[elem], elem, '.' + elem);
       });
     }).fail(function (xhr) {
@@ -14,6 +18,13 @@
   }
 
   function draw_table(series, title, selector){
+    var conf = $.extend(true, {}, window.kpis.config);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
+  }
+
+  function draw_table_stacked(series, title, selector){
     var conf = $.extend(true, {}, window.kpis.config_stacked);
     conf.title.text = title;
     conf.series = series;
