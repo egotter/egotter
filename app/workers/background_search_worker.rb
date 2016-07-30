@@ -14,7 +14,12 @@ class BackgroundSearchWorker
       user_id: user_id,
       uid: uid,
       screen_name: screen_name,
-      bot_uid: client.uid
+      bot_uid: client.uid,
+      device_type: request.device_type,
+      os: request.os,
+      browser: request.browser,
+      user_agent: request.user_agent,
+      referer: request.referer
     }
 
     if (existing_tu = TwitterUser.latest(uid, user_id)).present? && existing_tu.recently_created?

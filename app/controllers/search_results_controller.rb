@@ -10,7 +10,7 @@ class SearchResultsController < ApplicationController
     tu = @searched_tw_user
     user_id = current_user_id
 
-    add_background_search_worker_if_needed(tu.uid, tu.screen_name, tu.user_info)
+    add_background_search_worker_if_needed(tu.uid, tu.screen_name, tu.user_info, request)
 
     page_cache = PageCache.new(redis)
     if page_cache.exists?(tu.uid, user_id)
