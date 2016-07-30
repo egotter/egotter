@@ -1,9 +1,13 @@
-<div class="twitter_users"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="table twitter_users"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="table friends"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="table followers"><%= image_tag '/ajax-loader.gif' %></div>
 
 <script>
   function fetch_table(url){
     $.get(url).done(function(res){
-      draw_table(res.twitter_users, 'twitter_users', '.twitter_users');
+      $.each(['twitter_users', 'friends', 'followers'], function(i, elem){
+        draw_table(res[elem], elem, '.' + elem);
+      });
     }).fail(function (xhr) {
       console.log(xhr.responseText)
     });

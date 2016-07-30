@@ -48,7 +48,10 @@ class KpisController < ApplicationController
     if request.xhr?
       result = {twitter_users: fetch_twitter_users_num}
       if request.referer.end_with?(action_name)
-        # result.update()
+        result.update(
+          friends: fetch_friends_num,
+          followers: fetch_followers_num
+        )
       end
       return render json: result, status: 200
     end
@@ -297,13 +300,60 @@ class KpisController < ApplicationController
 
   def twitter_users_num_sql
     <<-'SQL'.strip_heredoc
-      -- dau
       SELECT
         date(created_at) date,
         count(*) total,
         count(if(user_id = -1, -1, NULL)) guest,
         count(if(user_id != -1, user_id, NULL)) login
       FROM twitter_users
+      WHERE
+        created_at BETWEEN :start AND :end
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
+    SQL
+  end
+
+  def fetch_friends_num
+    result = SearchLog.find_by_sql([friends_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    %i(total).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def friends_num_sql
+    <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        count(*) total,
+        count(DISTINCT from_id) unique_from_id
+      FROM friends
+      WHERE
+        created_at BETWEEN :start AND :end
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
+    SQL
+  end
+
+  def fetch_followers_num
+    result = SearchLog.find_by_sql([followers_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    %i(total).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def followers_num_sql
+    <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        count(*) total,
+        count(DISTINCT from_id) unique_from_id
+      FROM followers
       WHERE
         created_at BETWEEN :start AND :end
       GROUP BY date(created_at)
