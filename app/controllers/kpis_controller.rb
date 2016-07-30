@@ -1,15 +1,39 @@
 class KpisController < ApplicationController
-  before_action :basic_auth, only: %i(index rr)
+  before_action :basic_auth
 
   def index
-    @dau = dau
-    @dau_by_action = dau_by_action
-    @dau_by_device_type = dau_by_device_type
-    @dau_by_referer = dau_by_referer
-    @search_num = search_num
-    @search_num_verification = search_num_verification
-    @new_user = new_user
-    @sign_in = sign_in
+  end
+
+  def dau
+    result = {
+      dau: fetch_dau,
+      dau_by_action: fetch_dau_by_action,
+      dau_by_device_type: fetch_dau_by_device_type,
+      dau_by_referer: fetch_dau_by_referer
+    }
+    render json: result, status: 200
+  end
+
+  def search_num
+    result = {
+      search_num: fetch_search_num,
+      search_num_verification: fetch_search_num_verification
+    }
+    render json: result, status: 200
+  end
+
+  def new_user
+    result = {
+      new_user: fetch_new_user
+    }
+    render json: result, status: 200
+  end
+
+  def sign_in
+    result = {
+      sign_in: fetch_sign_in
+    }
+    render json: result, status: 200
   end
 
   def rr
@@ -33,7 +57,7 @@ class KpisController < ApplicationController
 
   NOW = Time.zone.now
 
-  def dau
+  def fetch_dau
     sql = <<-'SQL'.strip_heredoc
       -- dau
       SELECT
@@ -58,7 +82,7 @@ class KpisController < ApplicationController
     end
   end
 
-  def dau_by_action
+  def fetch_dau_by_action
     sql = <<-'SQL'.strip_heredoc
       -- dau_by_action
       SELECT
@@ -84,7 +108,7 @@ class KpisController < ApplicationController
     end
   end
 
-  def dau_by_device_type
+  def fetch_dau_by_device_type
     sql = <<-'SQL'.strip_heredoc
       -- dau_by_device_type
       SELECT
@@ -108,7 +132,7 @@ class KpisController < ApplicationController
     end
   end
 
-  def dau_by_referer
+  def fetch_dau_by_referer
     sql = <<-'SQL'.strip_heredoc
       -- dau_by_referer
       SELECT
@@ -142,7 +166,7 @@ class KpisController < ApplicationController
     end
   end
 
-  def search_num
+  def fetch_search_num
     sql = <<-'SQL'.strip_heredoc
       -- search_num
       SELECT
@@ -168,7 +192,7 @@ class KpisController < ApplicationController
     end
   end
 
-  def search_num_verification
+  def fetch_search_num_verification
     sql = <<-'SQL'.strip_heredoc
       -- search_num_verification
       SELECT
@@ -191,7 +215,7 @@ class KpisController < ApplicationController
     end
   end
 
-  def new_user
+  def fetch_new_user
     sql = <<-'SQL'.strip_heredoc
       -- new_user
       SELECT
@@ -212,7 +236,7 @@ class KpisController < ApplicationController
     end
   end
 
-  def sign_in
+  def fetch_sign_in
     sql = <<-'SQL'.strip_heredoc
       -- sign_in
       SELECT

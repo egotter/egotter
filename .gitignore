@@ -21,8 +21,8 @@
 /.irbrc
 /.pryrc
 /dump.rdb
-/dump.sql
 /*.dump
+/*.sql
 /redis.conf
 /*.json
 /data/bot.json

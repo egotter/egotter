@@ -1,5 +1,5 @@
 class DebugController < ApplicationController
-  before_action :basic_auth, only: %i(index)
+  before_action :basic_auth
 
   def index
     @debug_info = Hashie::Mash.new(JSON.parse(redis.get(Redis.debug_info_key) || '{}'))

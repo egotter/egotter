@@ -1,39 +1,50 @@
-<div class="dau" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<style type="text/css">
+  .dau, .dau_by_action, .dau_by_device_type, .dau_by_referer,
+  .search_num, .search_num_verification,
+  .new_user,
+  .sign_in {
+    min-width: 310px;
+    height: 400px;
+    margin: 0 auto
+  }
+</style>
+
+<div class="dau"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <hr>
 
-<div class="dau_by_action" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="dau_by_action"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <hr>
 
-<div class="dau_by_device_type" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="dau_by_device_type"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <hr>
 
-<div class="dau_by_referer" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="dau_by_referer"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <hr>
 
-<div class="search_num" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="search_num"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <hr>
 
-<div class="search_num_verification" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="search_num_verification"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <hr>
 
-<div class="new_user" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="new_user"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <hr>
 
-<div class="sign_in" style="min-width: 310px; height: 400px; margin: 0 auto"></div>
+<div class="sign_in"><%= image_tag '/ajax-loader.gif' %></div>
 <br>
 
 <script>
@@ -96,70 +107,75 @@
     series: null
   };
 
-  function draw_dau(){
-    var conf = $.extend(true, {}, config);
-    conf.title.text = 'DAU (search_logs)';
-    conf.series = <%= raw @dau.to_json %>;
-    $('.dau').highcharts(conf);
+
+  function fetch_dau(url){
+    $.get(url).done(function(res){
+      draw_dau(res.dau, 'DAU (search_logs)', '.dau');
+      draw_dau(res.dau_by_action, 'DAU by action (search_logs)', '.dau_by_action');
+      draw_dau(res.dau_by_device_type, 'DAU by device_type (search_logs)', '.dau_by_device_type');
+      draw_dau(res.dau_by_referer, 'DAU by referer (search_logs)', '.dau_by_referer');
+    }).fail(function (xhr) {
+      console.log(xhr.responseText)
+    });
   }
 
-  function draw_dau_by_action(){
+  function draw_dau(series, title, selector){
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'DAU by action (search_logs)';
-    conf.series = <%= raw @dau_by_action.to_json %>;
-    $('.dau_by_action').highcharts(conf);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
   }
 
-  function draw_dau_by_device_type(){
-    var conf = $.extend(true, {}, config);
-    conf.title.text = 'DAU by device_type (search_logs)';
-    conf.series = <%= raw @dau_by_device_type.to_json %>;
-    $('.dau_by_device_type').highcharts(conf);
+  function fetch_search_num(url){
+    $.get(url).done(function(res){
+      draw_search_num(res.search_num, 'Search num (search_logs)', '.search_num');
+      draw_search_num(res.search_num_verification, 'Search num verification (background_search_logs)', '.search_num_verification');
+    }).fail(function (xhr) {
+      console.log(xhr.responseText)
+    });
   }
 
-  function draw_dau_by_referer(){
-    var conf = $.extend(true, {}, config);
-    conf.title.text = 'DAU by referer (search_logs)';
-    conf.series = <%= raw @dau_by_referer.to_json %>;
-    $('.dau_by_referer').highcharts(conf);
-  }
-
-  function draw_search_num(){
+  function draw_search_num(series, title, selector){
     var conf = $.extend(true, {}, config_stacked);
-    conf.title.text = 'Search num (search_logs)';
-    conf.series = <%= raw @search_num.to_json %>;
-    $('.search_num').highcharts(conf);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
   }
 
-  function draw_search_num_verification(){
-    var conf = $.extend(true, {}, config_stacked);
-    conf.title.text = 'Search num verification (background_search_logs)';
-    conf.series = <%= raw @search_num_verification.to_json %>;
-    $('.search_num_verification').highcharts(conf);
+  function fetch_new_user(url){
+    $.get(url).done(function(res){
+      draw_new_user(res.new_user, 'New user (users)', '.new_user');
+    }).fail(function (xhr) {
+      console.log(xhr.responseText)
+    });
   }
 
-  function draw_new_user(){
+  function draw_new_user(series, title, selector){
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'New user (users)';
-    conf.series = <%= raw @new_user.to_json %>;
-    $('.new_user').highcharts(conf);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
   }
 
-  function draw_sign_in(){
+  function fetch_sign_in(url){
+    $.get(url).done(function(res){
+      draw_sign_in(res.sign_in, 'Sign in (sign_in_logs)', '.sign_in');
+    }).fail(function (xhr) {
+      console.log(xhr.responseText)
+    });
+  }
+
+  function draw_sign_in(series, title, selector){
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'Sign in (sign_in_logs)';
-    conf.series = <%= raw @sign_in.to_json %>;
-    $('.sign_in').highcharts(conf);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
   }
 
   $(function () {
-    draw_dau();
-    draw_dau_by_action();
-    draw_dau_by_device_type();
-    draw_dau_by_referer();
-    draw_search_num();
-    draw_search_num_verification();
-    draw_new_user();
-    draw_sign_in();
+    fetch_dau("<%= kpis_dau_path %>");
+    fetch_search_num("<%= kpis_search_num_path %>");
+    fetch_new_user("<%= kpis_new_user_path %>");
+    fetch_sign_in("<%= kpis_sign_in_path %>");
   });
 </script>
