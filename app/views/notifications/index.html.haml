@@ -6,13 +6,12 @@
     %small= @title
   %div{id: @items.object_id}
     - @items.each.with_index do |item, i|
-      - user = item.user
       .notification-item
         .media
-          .media-left
-            %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
+          -#.media-left
+          -#  %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
           .media-body
             %h4.media-heading
-              = "#{user.name} @#{user.screen_name} - #{time_ago_in_words(user.created_at)}".html_safe
+              = "@#{item.screen_name}".html_safe
             %span.text
-              = item.message
+              = auto_link(item.message) { t('dictionary.link') }

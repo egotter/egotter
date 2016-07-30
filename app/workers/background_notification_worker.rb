@@ -12,7 +12,7 @@ class BackgroundNotificationWorker
 
     if kind == SEARCH
       if user.notification.can_send_search?
-        text = I18n.t('dictionary.your_account_is_searched', kaomoji: Kaomoji.unhappy, url: "http://egotter.com/searches/#{user.uid}?screen_name=#{user.screen_name}", menu_url: 'http://egotter.com/menu')
+        text = I18n.t('dictionary.you_are_searched', kaomoji: Kaomoji.unhappy, url: "http://egotter.com/searches/#{user.uid}?screen_name=#{user.screen_name}", menu_url: 'http://egotter.com/menu')
         client.create_direct_message(user.uid.to_i, text)
         user.notification.update(last_search_at: Time.zone.now)
         create_log(kind, true, 'dm', text)
@@ -24,7 +24,7 @@ class BackgroundNotificationWorker
       end
     elsif kind == UPDATE
       if user.notification.can_send_dm?
-        text = I18n.t('dictionary.your_account_is_updated', kaomoji: Kaomoji.happy, url: "http://egotter.com/searches/#{user.uid}?screen_name=#{user.screen_name}", menu_url: 'http://egotter.com/menu') # TODO change to a removed notification message
+        text = I18n.t('dictionary.you_are_updated', kaomoji: Kaomoji.happy, url: "http://egotter.com/searches/#{user.uid}?screen_name=#{user.screen_name}", menu_url: 'http://egotter.com/menu') # TODO change to a removed notification message
         client.create_direct_message(user.uid.to_i, text)
         user.notification.update(last_dm_at: Time.zone.now)
         create_log(kind, true, 'dm', text)

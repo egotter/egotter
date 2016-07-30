@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160719114327) do
+ActiveRecord::Schema.define(version: 20160730134808) do
 
   create_table "background_notification_logs", force: :cascade do |t|
     t.integer  "user_id",      limit: 4,     default: -1,    null: false
@@ -128,6 +128,21 @@ ActiveRecord::Schema.define(version: 20160719114327) do
   add_index "mentions", ["from_id"], name: "index_mentions_on_from_id", using: :btree
   add_index "mentions", ["screen_name"], name: "index_mentions_on_screen_name", using: :btree
   add_index "mentions", ["uid"], name: "index_mentions_on_uid", using: :btree
+
+  create_table "notification_messages", force: :cascade do |t|
+    t.integer  "user_id",     limit: 4,                     null: false
+    t.string   "uid",         limit: 191,                   null: false
+    t.string   "screen_name", limit: 191,                   null: false
+    t.boolean  "read",                      default: false, null: false
+    t.text     "message",     limit: 65535,                 null: false
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+  end
+
+  add_index "notification_messages", ["created_at"], name: "index_notification_messages_on_created_at", using: :btree
+  add_index "notification_messages", ["screen_name"], name: "index_notification_messages_on_screen_name", using: :btree
+  add_index "notification_messages", ["uid"], name: "index_notification_messages_on_uid", using: :btree
+  add_index "notification_messages", ["user_id"], name: "index_notification_messages_on_user_id", using: :btree
 
   create_table "notifications", force: :cascade do |t|
     t.boolean  "email",                    default: true, null: false

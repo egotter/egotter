@@ -10,6 +10,6 @@ class NotificationsController < ApplicationController
     redirect_to '/' unless user_signed_in?
 
     @title = t('dictionary.bell')
-    @items = TwitterUser.all.limit(3).map.with_index { |tu, i| Hashie::Mash.new({user: tu, message: i.to_s * 3}) }
+    @items = NotificationMessage.where(user_id: current_user.id).order(created_at: :desc).limit(20)
   end
 end

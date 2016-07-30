@@ -462,7 +462,6 @@
 }
 
 .navbar .navbar-brand {
-  font-size: 30px;
   display: table;
   padding: 1px 0 0 1px;
 }
@@ -477,7 +476,7 @@
 .navbar .navbar-brand span {
   display: table-cell;
   vertical-align: middle;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .navbar a {

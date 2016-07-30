@@ -74,7 +74,8 @@ module SearchesHelper
         os: request.os,
         browser: request.browser,
         user_agent: truncated_user_agent,
-        referer: truncated_referer
+        referer: truncated_referer,
+        url: search_url(screen_name: screen_name, id: uid)
       }
       BackgroundSearchWorker.perform_async(values)
       searched_uid_list.add(uid, user_id)
