@@ -43,8 +43,12 @@ ActiveRecord::Schema.define(version: 20160719114327) do
     t.string   "reason",      limit: 191,   default: "",    null: false
     t.text     "message",     limit: 65535,                 null: false
     t.integer  "call_count",  limit: 4,     default: -1,    null: false
+    t.string   "device_type", limit: 191,   default: "",    null: false
+    t.string   "os",          limit: 191,   default: "",    null: false
+    t.string   "browser",     limit: 191,   default: "",    null: false
+    t.string   "user_agent",  limit: 191,   default: "",    null: false
+    t.string   "referer",     limit: 191,   default: "",    null: false
     t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
   end
 
   add_index "background_search_logs", ["created_at"], name: "index_background_search_logs_on_created_at", using: :btree

@@ -12,8 +12,12 @@
 #  reason      :string(191)      default(""), not null
 #  message     :text(65535)      not null
 #  call_count  :integer          default(-1), not null
+#  device_type :string(191)      default(""), not null
+#  os          :string(191)      default(""), not null
+#  browser     :string(191)      default(""), not null
+#  user_agent  :string(191)      default(""), not null
+#  referer     :string(191)      default(""), not null
 #  created_at  :datetime         not null
-#  updated_at  :datetime         not null
 #
 # Indexes
 #
