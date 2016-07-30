@@ -485,7 +485,10 @@
   color: #000000;
 }
 
-.navbar .welcome-btn, .navbar .menu-btn, .navbar .search-modal-btn {
+.navbar .welcome-btn,
+.navbar .bell-btn,
+.navbar .menu-btn,
+.navbar .search-modal-btn {
   text-align: center;
   padding: 3px;
   margin-top: 0;
@@ -494,11 +497,17 @@
   border: none;
 }
 
-.navbar .welcome-icon, .navbar .menu-icon, .navbar .search-modal-icon {
+.navbar .welcome-icon,
+.navbar .bell-icon,
+.navbar .menu-icon,
+.navbar .search-modal-icon {
   font-size: 20px
 }
 
-.navbar .welcome-text, .navbar .menu-text, .navbar .search-modal-text {
+.navbar .welcome-text,
+.navbar .bell-text,
+.navbar .menu-text,
+.navbar .search-modal-text {
   font-size: 9px;
 }
 

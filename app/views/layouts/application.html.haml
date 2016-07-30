@@ -59,7 +59,13 @@
                     %span.menu-icon.glyphicon.glyphicon-menu-hamburger
                     %br/
                     %span.menu-text= t('dictionary.menu')
-                - unless user_signed_in?
+                - if user_signed_in?
+                  %button.bell-btn.navbar-toggle{type: 'button'}
+                    = link_to menu_path do
+                      %span.bell-icon.glyphicon.glyphicon-bell
+                      %br/
+                      %span.bell-text= t('dictionary.bell')
+                - else
                   %button.welcome-btn.navbar-toggle{type: 'button'}
                     = link_to welcome_path do
                       %span.welcome-icon.glyphicon.glyphicon-log-in
@@ -71,13 +77,19 @@
             - unless show_maintenance_page? || action_name == 'welcome'
               .collapse.navbar-collapse
                 %ul.nav.navbar-nav.navbar-right
-                  - unless user_signed_in?
+                  - if user_signed_in?
                     %li
-                      .welcome-btn
-                        = link_to welcome_path do
-                          %span.welcome-icon.glyphicon.glyphicon-log-in
+                      .bell-btn
+                        = link_to menu_path do
+                          %span.bell-icon.glyphicon.glyphicon-bell
                           %br/
-                          %span.welcome-text= t('dictionary.sign_in')
+                          %span.bell-text= t('dictionary.bell')
+                  - else
+                    .welcome-btn
+                      = link_to welcome_path do
+                        %span.welcome-icon.glyphicon.glyphicon-log-in
+                        %br/
+                        %span.welcome-text= t('dictionary.sign_in')
                   %li
                     .menu-btn
                       = link_to menu_path do

@@ -27,6 +27,7 @@ ja:
     contact_by_reply: "リプライでお問い合わせ"
     feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
     faq: "よくあるご質問"
+    bell: "通知"
     notification: "通知設定"
     notification_email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
     notification_dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
