@@ -25,7 +25,7 @@ Rails.application.routes.draw do
   resources :statuses, only: :show
   get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
   resources :update_histories, only: :show
-  resources :background_search_logs, only: :show
+  resources :background_search_logs, only: %i(index show)
   resources :page_caches, only: [:create, :destroy]
   post 'clear_result_cache', to: 'page_caches#clear', as: :clear_result_cache
 
