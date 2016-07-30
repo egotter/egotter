@@ -14,7 +14,12 @@ class BackgroundSearchWorker
       user_id: user_id,
       uid: uid,
       screen_name: screen_name,
-      bot_uid: client.uid
+      bot_uid: client.uid,
+      device_type: values['device_type'],
+      os: values['os'],
+      browser: values['browser'],
+      user_agent: values['user_agent'],
+      referer: values['referer'],
     }
 
     if (existing_tu = TwitterUser.latest(uid, user_id)).present? && existing_tu.recently_created?
@@ -83,7 +88,12 @@ class BackgroundSearchWorker
       status:      true,
       reason:      '',
       message:     message,
-      call_count:  attrs[:call_count]
+      call_count:  attrs[:call_count],
+      device_type: attrs[:device_type],
+      os:          attrs[:os],
+      browser:     attrs[:browser],
+      user_agent:  attrs[:user_agent],
+      referer:     attrs[:referer]
     )
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{message} #{attrs.inspect}"
@@ -99,7 +109,12 @@ class BackgroundSearchWorker
       status:      false,
       reason:      reason,
       message:     message,
-      call_count:  attrs[:call_count]
+      call_count:  attrs[:call_count],
+      device_type: attrs[:device_type],
+      os:          attrs[:os],
+      browser:     attrs[:browser],
+      user_agent:  attrs[:user_agent],
+      referer:     attrs[:referer]
     )
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{reason} #{message} #{attrs.inspect}"

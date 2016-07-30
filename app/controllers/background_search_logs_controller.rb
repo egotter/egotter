@@ -1,6 +1,18 @@
 class BackgroundSearchLogsController < ApplicationController
   include PageCachesHelper
 
+  before_action :basic_auth, only: :index
+
+  def index
+    status =
+      if params.has_key?(:status)
+        params[:status] == '1' ? 1 : 0
+      else
+        [0, 1]
+      end
+    @logs = BackgroundSearchLog.where(status: status).order(created_at: :desc).limit(50)
+  end
+
   # GET /background_search_logs/:id
   def show
     uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1

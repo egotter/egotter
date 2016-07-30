@@ -1,0 +1,39 @@
+<div>
+  <%= link_to('all', background_search_logs_path) %>&nbsp;|&nbsp;
+  <%= link_to('success', background_search_logs_path(status: 1)) %>&nbsp;|&nbsp;
+  <%= link_to('failed', background_search_logs_path(status: 0)) %>
+</div>
+
+<table border="1">
+  <tr>
+    <th>id</th>
+    <th>session_id</th>
+    <th>user_id</th>
+    <th>screen_name</th>
+    <th>reason</th>
+    <th>message</th>
+    <th>call_count</th>
+    <th>device_type</th>
+    <th>os</th>
+    <th>browser</th>
+    <th>referer</th>
+    <th>created_at</th>
+  </tr>
+
+  <% @logs.each do |log| %>
+    <tr>
+      <td><%= log.id %></td>
+      <td><%= log.session_id.present? ? log.session_id.slice(0, 20) : '' %></td>
+      <td><%= log.user_id %></td>
+      <td><%= log.screen_name %></td>
+      <td><%= log.reason %></td>
+      <td><%= log.message %></td>
+      <td><%= log.call_count %></td>
+      <td><%= log.device_type %></td>
+      <td><%= log.os %></td>
+      <td><%= log.browser %></td>
+      <td><%= log.referer.present? ? log.referer.slice(0, 20) : '' %></td>
+      <td><%= l(log.created_at, format: :short) %></td>
+    </tr>
+  <% end %>
+</table>
