@@ -23,7 +23,7 @@
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
   <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" />
 
-  <%= action_name.in?(%w(new)) ? '<!-- csrf_meta_tags -->'.html_safe : csrf_meta_tags %>
+  <%= csrf_meta_tags %>
 
   <script>
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -275,16 +275,6 @@
       <%= link_to t('dictionary.terms_of_service'), terms_of_service_path %>&nbsp;&nbsp;
       <%= link_to t('dictionary.privacy_policy'), privacy_policy_path %>
     </p>
-    <% if admin_signed_in? %>
-      <p class="text-muted">
-        <% if action_name.in?(%w(show)) %><span>time=<!-- search_elapsed_time --></span>&nbsp;&nbsp;<% end %>
-        <% if action_name.in?(%w(new show)) %>ttl=<span><!-- cache_ttl --></span>&nbsp;&nbsp;<% end %>
-        <% if under_maintenance? %><span><%= t('dictionary.maintenance') %></span>&nbsp;&nbsp;<% end %>
-        <% if action_name.in?(%w(show)) %><span>log_call=<!-- log_call_count --></span>&nbsp;&nbsp;<% end %>
-        <% if action_name.in?(%w(show)) %><span>action_call=<!-- action_call_count --></span><% end %>
-        <% if action_name.in?(%w(waiting)) %><span class="waiting-debug-info"></span><% end %>
-      </p>
-    <% end %>
   </div>
 </footer>
 <% end %>

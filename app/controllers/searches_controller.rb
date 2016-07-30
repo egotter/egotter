@@ -192,14 +192,6 @@ class SearchesController < ApplicationController
 
   # GET /
   def new
-    key = "searches:#{current_user_id}:new"
-    html =
-      if ENV['PAGE_CACHE'] == '1' && flash.empty?
-        redis.fetch(key) { render_to_string }
-      else
-        render_to_string
-      end
-    render text: replace_csrf_meta_tags(html, 0.0, redis.ttl(key))
   end
 
   # POST /searches
@@ -236,15 +228,6 @@ class SearchesController < ApplicationController
   end
 
   private
-
-  def replace_csrf_meta_tags(html, time = 0.0, ttl = 0, log_call_count = -1, action_call_count = -1)
-    vc = view_context
-    html.sub('<!-- csrf_meta_tags -->', vc.csrf_meta_tags).
-      sub('<!-- search_elapsed_time -->', vc.number_with_precision(time, precision: 1)).
-      sub('<!-- cache_ttl -->', vc.number_with_precision(ttl.to_f / 3600.seconds, precision: 1)).
-      sub('<!-- log_call_count -->', log_call_count.to_s).
-      sub('<!-- action_call_count -->', action_call_count.to_s)
-  end
 
   def under_maintenance
     redirect_to maintenance_path if ENV['MAINTENANCE'].present? && !admin_signed_in?

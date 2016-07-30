@@ -7,7 +7,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do |e|
     if e
-      logger.warn "#{self.class}##{action_name}: #{e.class} #{request.xhr?} #{request.device_type} #{current_user_id}"
+      logger.warn "#{self.class}##{action_name}: #{e.class} #{request.xhr? ? 'true' : 'false'} #{request.device_type} #{current_user_id} #{params.inspect}"
     end rescue nil
     if request.xhr?
       render json: {status: 500}, status: 500
