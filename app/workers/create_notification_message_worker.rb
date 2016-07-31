@@ -9,9 +9,9 @@ class CreateNotificationMessageWorker
     if user.notification.can_send_search?
       user.api_client.create_direct_message(user.uid.to_i, message.message)
       user.notification.update(last_search_at: Time.zone.now)
-      logger.warn "true #{attrs.inspect}"
+      logger.warn "send: #{attrs.inspect}"
     else
-      logger.warn "false #{attrs.inspect}"
+      logger.warn "cannot send: #{attrs.inspect}"
     end
 
   rescue => e
