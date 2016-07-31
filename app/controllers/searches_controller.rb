@@ -226,6 +226,11 @@ class SearchesController < ApplicationController
     return redirect_to '/', alert: BackgroundSearchLog::SomethingError::MESSAGE
   end
 
+  def debug
+    logger.warn "#{self.class}##{__method__}: #{request.device_type} #{request.url} #{params.inspect}"
+    redirect_to '/'
+  end
+
   private
 
   def under_maintenance

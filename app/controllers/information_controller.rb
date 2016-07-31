@@ -1,6 +1,7 @@
 class InformationController < ApplicationController
   def index
     lists = [
+      '2016/07/31 通知ページを作成しました',
       '2016/07/28 検索を高速化しました',
       '2016/07/27 トップページのレイアウトを修正しました',
       '2016/07/26 トップページのレイアウトを修正しました',

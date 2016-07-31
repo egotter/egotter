@@ -136,7 +136,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_dau_by_new_action
-    result = SearchLog.find_by_sql([dau_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([dau_by_new_action_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
     %i(total guest login).map do |legend|
       {
         name: legend,
