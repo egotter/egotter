@@ -1,12 +1,12 @@
 <% user = current_user %>
 
 <div class="menu">
-  <h2><small><%= t('dictionary.notification') %></small></h2>
+  <h2><small><%= t('notifications.setting') %></small></h2>
   <%= form_for user.notification, url: menu_path do |f| %>
     <div class="checkbox">
       <label>
         <%= f.check_box :email %>
-        <div><%= t('dictionary.notification_email') %></div>
+        <div><%= t('notifications.desc.email') %></div>
       </label>
     </div>
     <hr>
@@ -14,7 +14,7 @@
     <div class="checkbox">
       <label>
         <%= f.check_box :dm %>
-        <div><%= t('dictionary.notification_dm') %></div>
+        <div><%= t('notifications.desc.dm') %></div>
       </label>
     </div>
     <hr>
@@ -22,7 +22,7 @@
     <div class="checkbox">
       <label>
         <%= f.check_box :news %>
-        <div><%= t('dictionary.notification_news') %></div>
+        <div><%= t('notifications.desc.news') %></div>
       </label>
     </div>
     <hr>
@@ -30,7 +30,7 @@
     <div class="checkbox">
       <label>
         <%= f.check_box :search %>
-        <div><%= t('dictionary.notification_search') %></div>
+        <div><%= t('notifications.desc.search') %></div>
       </label>
     </div>
 

@@ -2,7 +2,7 @@
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
 <p class="alert alert-info" style="display: none;">
-  <%= t("dictionary.updating_is_finished_msg", link: link_to(t('dictionary.this_link'), '#')).html_safe %>
+  <%= t("searches.waiting.updating_is_finished_msg", link: link_to(t('dictionary.this_link'), '#')).html_safe %>
 </p>
 
 <%= render(partial: 'searches/profile_overview',
@@ -13,7 +13,7 @@
 
   <%= render(partial: 'searches/adsense') %>
   <div class="loading-image text-center">
-    <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+    <%= t('searches.waiting.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
   </div>
 </div>
 

@@ -9,7 +9,7 @@ class NotificationsController < ApplicationController
   def index
     redirect_to '/' unless user_signed_in?
 
-    @title = t('dictionary.bell')
+    @title = t('notifications.name')
     @items = NotificationMessage.where(user_id: current_user.id).order(created_at: :desc).limit(10)
   end
 end
