@@ -1,5 +1,63 @@
 ---
 ja:
+  searches:
+    common:
+      large: "多い"
+      small: "少ない"
+      others: "それ以外"
+    new:
+      search: "検索"
+      search_by: "%{user} で検索"
+      search_friends: "気になるあの人を検索"
+      search_login_user: "ログインユーザーで検索"
+      search_by_twitter: "ツイッターで検索"
+      search_by_egotter: "えごったーで検索"
+    waiting:
+      retry_search_by: "%{user} で再度検索"
+      searching: "%{user} のデータを検索中"
+      show_immediately: "過去の結果をすぐに表示"
+      show_immediately_msg: "過去の結果を表示します"
+      waiting_is_finished_msg: "検索が完了しました。ページを移動します"
+      updating_is_finished_msg: "新しいデータが見付かりました。%{link} からページを更新してください。"
+    replying:
+      targets: "リプライ"
+    replied:
+      targets: "リプライ"
+    close_friends:
+      targets: "仲良し"
+      friends: "友人"
+      acquaintance: "知人"
+    inactive_friends:
+      targets: "対象者"
+    inactive_followers:
+      targets: "対象者"
+    mutual_friends:
+      targets: "両思い"
+    one_sided_friends:
+      targets: "片思い"
+    followers:
+      targets: "フォロワー"
+    one_sided_followers:
+      targets: "片思われ"
+    common_friends:
+      targets: "共通"
+    common_followers:
+      targets: "共通"
+    favoriting:
+      targets: "ふぁぼる"
+  notifications:
+    name: "通知"
+    to: "%{user} への通知"
+    setting: "通知設定"
+    desc:
+      email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
+      dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
+      news: "新機能のお知らせが届きます。配信は不定期です。"
+      search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
+  misc:
+    menu:
+      name: "メニュー"
+
   dictionary:
     app_name: "えごったー"
     title: "えごったー ツイッター総合分析サイト"
@@ -21,33 +79,16 @@ ja:
     sign_out: "ログアウト"
     realy_sign_out: "本当にログアウトしますか？"
     signed_in: "既にログイン済みです。"
+    link: "リンク"
     this_link: "このリンク"
-    menu: "メニュー"
     support: "お問い合わせ"
     contact_by_reply: "リプライでお問い合わせ"
     feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
     faq: "よくあるご質問"
-    notification: "通知設定"
-    notification_email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
-    notification_dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
-    notification_news: "新機能のお知らせが届きます。配信は不定期です。"
-    notification_search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
     settings: "設定"
     save_settings: "設定する"
     settings_saved: "設定を保存しました。"
     do_search: "検索する"
-    search: "検索"
-    search_by: "%{user} で検索"
-    search_friends: "気になるあの人を検索"
-    search_login_user: "ログインユーザーで検索"
-    search_by_twitter: "ツイッターで検索"
-    search_by_egotter: "えごったーで検索"
-    retry_search_by: "%{user} で再度検索"
-    waiting: "%{user} のデータを検索中"
-    show_immediately: "過去の結果をすぐに表示"
-    show_immediately_msg: "過去の結果を表示します"
-    waiting_is_finished_msg: "検索が完了しました。ページを移動します"
-    updating_is_finished_msg: "新しいデータが見付かりました。%{link} からページを更新してください。"
     continue_reading: "続きはこちら → "
     view_more: "続きを見る"
     view_more_needs_login: "ログインすると続きを見れます"
@@ -56,8 +97,9 @@ ja:
     tweet_top_page: "つぶやく"
     created_at_and_updated_at: "更新日時"
     you: "あなた"
-    your_account_is_searched: "あなたのアカウントが誰かに検索されました。%{kaomoji} %{url} 通知設定の変更はこちら → %{menu_url}"
-    your_account_is_updated: "データの更新が完了しました。%{kaomoji} %{url} 通知設定の変更はこちら → %{menu_url}"
+    you_are_searched: "誰かがあなたのアカウントを検索しました。%{kaomoji} %{url}"
+    you_are_searched_by_himself: "検索が完了しました。検索したのは自分です。%{kaomoji} %{url}"
+    you_are_updated: "データの更新が完了しました。%{kaomoji} %{url} DM通知設定の変更はこちら → %{menu_url}"
     cluster: "クラスタ"
     clusters_index: "クラスタ指数"
     hashtags_cloud: "ハッシュタグクラウド"
@@ -85,9 +127,6 @@ ja:
     protected_user: "%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、%{sign_in_link} すれば検索することができます。"
     many_friends: "%{user} のフォロー(%{friends})・フォロワー(%{followers})が多すぎて検索できません。%{sign_in_link} すれば検索することができます。"
     too_many_friends: "%{user} のフォロー(%{friends})・フォロワー(%{followers})が多すぎて検索できません。"
-    blank_id: "uid が空です。"
-    invalid_uid: "無効な uid です。"
-    blank_search_result: "検索結果がありません。"
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
     retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
     empty_and_anonymous_and_many_friends: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>%{sign_in_link} すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}"
@@ -103,27 +142,6 @@ ja:
     empty_and_other_reason: "結果は0件です。データはこれからたまっていきます。<br>%{kaomoji}"
   view_more_btn:
     same_user: "自分以外のユーザーを検索してください"
-  legend:
-    inactive_friends: "対象者"
-    not_inactive_friends: "それ以外"
-    inactive_followers: "対象者"
-    not_inactive_followers: "それ以外"
-    large: "多い"
-    small: "少ない"
-    replying: "リプライ"
-    replied: "リプライ"
-    close_friends: "仲良し"
-    friends: "友人"
-    acquaintance: "知人"
-    following: "フォロー"
-    one_sided_friends: "片思い"
-    followers: "フォロワー"
-    one_sided_followers: "片思われ"
-    mutual_friends: "両思い"
-    common_friends: "共通"
-    common_followers: "共通"
-    favoriting: "ふぁぼる"
-    others: "それ以外"
   tweet_text:
     top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji}"
     close_friends_by_oneself: "%{users}、いつも%{screen_name}と仲良くしてくれてありがとう！%{kaomoji} %{url}"

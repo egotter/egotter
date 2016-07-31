@@ -1,0 +1,17 @@
+- title @title
+- set_meta_tags description: "#{@title}"
+
+.notification-items
+  %h2
+    %small= @title
+  %div{id: @items.object_id}
+    - @items.each.with_index do |item, i|
+      .notification-item
+        .media
+          -#.media-left
+          -#  %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
+          .media-body
+            %h4.media-heading
+              = "@#{item.screen_name} - #{time_ago_in_words(item.created_at)}".html_safe
+            %span.text
+              = auto_link(item.message) { t('dictionary.link') }

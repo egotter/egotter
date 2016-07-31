@@ -56,6 +56,7 @@ gem 'rack-user_agent'
 gem 'stackprof'
 gem 'dogstatsd-ruby'
 gem 'haml-rails'
+gem 'rails_autolink'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

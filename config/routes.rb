@@ -20,8 +20,9 @@ Rails.application.routes.draw do
     get "searches/:screen_name/#{name}" => redirect('/')
   end
 
-  resource :search_histories, only: :show
-  resource :information, only: :show
+  resources :search_histories, only: :index
+  resources :information, only: :index
+  resources :notifications, only: :index
   resources :statuses, only: :show
   get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
   resources :update_histories, only: :show

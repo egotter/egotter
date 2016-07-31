@@ -124,8 +124,8 @@ module Concerns::TwitterUser::Api
     inactive_friends_size = inactive_friends.size
     friends_size = friends_count
     [
-      {name: I18n.t('legend.inactive_friends'), y: (inactive_friends_size.to_f / friends_size * 100)},
-      {name: I18n.t('legend.not_inactive_friends'), y: ((friends_size - inactive_friends_size).to_f / friends_size * 100)}
+      {name: I18n.t('searches.inactive_friends.targets'), y: (inactive_friends_size.to_f / friends_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((friends_size - inactive_friends_size).to_f / friends_size * 100)}
     ]
   end
 
@@ -133,32 +133,32 @@ module Concerns::TwitterUser::Api
     inactive_followers_size = inactive_followers.size
     followers_size = followers_count
     [
-      {name: I18n.t('legend.inactive_followers'), y: (inactive_followers_size.to_f / followers_size * 100)},
-      {name: I18n.t('legend.not_inactive_followers'), y: ((followers_size - inactive_followers_size).to_f / followers_size * 100)}
+      {name: I18n.t('searches.inactive_followers.targets'), y: (inactive_followers_size.to_f / followers_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((followers_size - inactive_followers_size).to_f / followers_size * 100)}
     ]
   end
 
   def removing_graph
     large_rate = [removing.size * 10, 100].min
     [
-      {name: I18n.t('legend.large'), y: large_rate},
-      {name: I18n.t('legend.small'), y: 100 - large_rate}
+      {name: I18n.t('searches.common.large'), y: large_rate},
+      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
     ]
   end
 
   def removed_graph
     large_rate = [removed.size * 10, 100].min
     [
-      {name: I18n.t('legend.large'), y: large_rate},
-      {name: I18n.t('legend.small'), y: 100 - large_rate}
+      {name: I18n.t('searches.common.large'), y: large_rate},
+      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
     ]
   end
 
   def blocking_or_blocked_graph
     large_rate = [blocking_or_blocked.size * 10, 100].min
     [
-      {name: I18n.t('legend.large'), y: large_rate},
-      {name: I18n.t('legend.small'), y: 100 - large_rate}
+      {name: I18n.t('searches.common.large'), y: large_rate},
+      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
     ]
   end
 
@@ -166,8 +166,8 @@ module Concerns::TwitterUser::Api
     friends_size = friends_count
     replying_size = replying.size
     [
-      {name: I18n.t('legend.replying'), y: (replying_size.to_f / friends_size * 100)},
-      {name: I18n.t('legend.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
+      {name: I18n.t('searches.replying.targets'), y: (replying_size.to_f / friends_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
     ]
   end
 
@@ -175,8 +175,8 @@ module Concerns::TwitterUser::Api
     followers_size = followers_count
     replied_size = replied.size
     [
-      {name: I18n.t('legend.replied'), y: (replied_size.to_f / followers_size * 100)},
-      {name: I18n.t('legend.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
+      {name: I18n.t('searches.replied.targets'), y: (replied_size.to_f / followers_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
     ]
   end
 
@@ -184,8 +184,8 @@ module Concerns::TwitterUser::Api
     friends_size = friends_count
     favoriting_size = favoriting.size
     [
-      {name: I18n.t('legend.favoriting'), y: (favoriting_size.to_f / friends_size * 100)},
-      {name: I18n.t('legend.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}
+      {name: I18n.t('searches.favoriting.targets'), y: (favoriting_size.to_f / friends_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}
     ]
   end
 
@@ -196,9 +196,9 @@ module Concerns::TwitterUser::Api
     not_so_bad = percentile_index(items, 0.50) + 1
     so_so = percentile_index(items, 1.0) + 1
     [
-      {name: I18n.t('legend.close_friends'), y: (good.to_f / items_size * 100), drilldown: 'good', sliced: true, selected: true},
-      {name: I18n.t('legend.friends'), y: ((not_so_bad - good).to_f / items_size * 100), drilldown: 'not_so_bad'},
-      {name: I18n.t('legend.acquaintance'), y: ((so_so - (good + not_so_bad)).to_f / items_size * 100), drilldown: 'so_so'}
+      {name: I18n.t('searches.close_friends.targets'), y: (good.to_f / items_size * 100), drilldown: 'good', sliced: true, selected: true},
+      {name: I18n.t('searches.close_friends.friends'), y: ((not_so_bad - good).to_f / items_size * 100), drilldown: 'not_so_bad'},
+      {name: I18n.t('searches.close_friends.acquaintance'), y: ((so_so - (good + not_so_bad)).to_f / items_size * 100), drilldown: 'so_so'}
     ]
     # drilldown_series = [
     #   {name: 'good', id: 'good', data: items.slice(0, good - 1).map { |i| [i.screen_name, i.score] }},
@@ -211,8 +211,8 @@ module Concerns::TwitterUser::Api
     friends_size = cached_friends.size
     one_sided_size = one_sided_friends.size
     [
-      {name: I18n.t('legend.one_sided_friends'), y: (one_sided_size.to_f / friends_size * 100)},
-      {name: I18n.t('legend.others'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
+      {name: I18n.t('searches.one_sided_friends.targets'), y: (one_sided_size.to_f / friends_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
     ]
   end
 
@@ -220,8 +220,8 @@ module Concerns::TwitterUser::Api
     followers_size = cached_followers.size
     one_sided_size = one_sided_followers.size
     [
-      {name: I18n.t('legend.one_sided_followers'), y: (one_sided_size.to_f / followers_size * 100)},
-      {name: I18n.t('legend.others'), y: ((followers_size - one_sided_size).to_f / followers_size * 100)}
+      {name: I18n.t('searches.one_sided_followers.targets'), y: (one_sided_size.to_f / followers_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((followers_size - one_sided_size).to_f / followers_size * 100)}
     ]
   end
 
@@ -239,9 +239,9 @@ module Concerns::TwitterUser::Api
     rates = mutual_friends_rate
     sliced = rates[0] < 25
     [
-      {name: I18n.t('legend.mutual_friends'), y: rates[0], sliced: sliced, selected: sliced},
-      {name: I18n.t('legend.one_sided_friends'), y: rates[1]},
-      {name: I18n.t('legend.one_sided_followers'), y: rates[2]}
+      {name: I18n.t('searches.mutual_friends.targets'), y: rates[0], sliced: sliced, selected: sliced},
+      {name: I18n.t('searches.one_sided_friends.targets'), y: rates[1]},
+      {name: I18n.t('searches.one_sided_followers.targets'), y: rates[2]}
     ]
   end
 
@@ -249,8 +249,8 @@ module Concerns::TwitterUser::Api
     friends_size = cached_friends.size
     common_friends_size = common_friends(other).size
     [
-      {name: I18n.t('legend.common_friends'), y: (common_friends_size.to_f / friends_size * 100)},
-      {name: I18n.t('legend.others'), y: ((friends_size - common_friends_size).to_f / friends_size * 100)}
+      {name: I18n.t('searches.common_friends.targets'), y: (common_friends_size.to_f / friends_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((friends_size - common_friends_size).to_f / friends_size * 100)}
     ]
   end
 
@@ -258,8 +258,8 @@ module Concerns::TwitterUser::Api
     followers_size = cached_followers.size
     common_followers_size = common_followers(other).size
     [
-      {name: I18n.t('legend.common_followers'), y: (common_followers_size.to_f / followers_size * 100)},
-      {name: I18n.t('legend.others'), y: ((followers_size - common_followers_size).to_f / followers_size * 100)}
+      {name: I18n.t('searches.common_followers.targets'), y: (common_followers_size.to_f / followers_size * 100)},
+      {name: I18n.t('searches.common.others'), y: ((followers_size - common_followers_size).to_f / followers_size * 100)}
     ]
   end
 

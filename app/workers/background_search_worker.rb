@@ -2,12 +2,11 @@ class BackgroundSearchWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: false, backtrace: false
 
-  # This worker is called after strict validation for uid in searches_controller,
-  # so you don't need to do that in this worker.
   def perform(values)
     user_id = values['user_id'].to_i
     uid = values['uid'].to_i
     screen_name = values['screen_name']
+    url = values['url']
     client = (User.exists?(user_id) ? User.find(user_id).api_client : Bot.api_client)
     log_attrs = {
       session_id: values['session_id'],
@@ -28,6 +27,7 @@ class BackgroundSearchWorker
         'cannot create a new TwitterUser because a recently created record exists.',
         {call_count: client.call_count}.merge(log_attrs)
       )
+      setup_notification_message_worker(user_id, uid, screen_name, url)
       return
     end
 
@@ -38,21 +38,17 @@ class BackgroundSearchWorker
         'creates a new TwitterUser.',
         {call_count: client.call_count}.merge(log_attrs)
       )
-
-      if (user = User.find_by(uid: uid)).present? && user_id != user.id
-        BackgroundNotificationWorker.perform_async(user.id, BackgroundNotificationWorker::SEARCH)
-      end
+      setup_notification_message_worker(user_id, uid, screen_name, url)
       return
     end
 
-    # Egotter needs at least one TwitterUser record to show search result,
-    # so this branch should not be executed if TwitterUser is not existed.
     if existing_tu.present?
       existing_tu.search_and_touch
       create_success_log(
         'cannot save a new TwitterUser because existing one is the same as new one.',
         {call_count: client.call_count}.merge(log_attrs)
       )
+      setup_notification_message_worker(user_id, uid, screen_name, url)
       return
     end
 
@@ -72,9 +68,42 @@ class BackgroundSearchWorker
       {call_count: client.call_count}.merge(log_attrs)
     )
   rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     create_failed_log(
       BackgroundSearchLog::SomethingError::MESSAGE, "#{e.class} #{e.message}",
       {call_count: client.call_count}.merge(log_attrs)
+    )
+  end
+
+  def setup_notification_message_worker(user_id, uid, screen_name, url)
+    searched_user = User.find_by(uid: uid)
+    return if searched_user.blank?
+
+    if user_id == searched_user.id
+      someone_searched_himself_or_herself(user_id, uid, screen_name, url)
+    elsif user_id != searched_user.id
+      someone_searched_existing_user(searched_user.id, uid, screen_name, url)
+    end
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{url}"
+  end
+
+  # TODO Send a dm when removing or removed is updated.
+  def someone_searched_himself_or_herself(user_id, uid, screen_name, url)
+    # CreateNotificationMessageWorker.perform_async(
+    #   user_id: user_id,
+    #   uid: uid,
+    #   screen_name: screen_name,
+    #   message: I18n.t('dictionary.you_are_searched_by_himself', kaomoji: Kaomoji.happy, url: url)
+    # )
+  end
+
+  def someone_searched_existing_user(user_id, uid, screen_name, url)
+    CreateNotificationMessageWorker.perform_async(
+      user_id: user_id,
+      uid: uid,
+      screen_name: screen_name,
+      message: I18n.t('dictionary.you_are_searched', kaomoji: Kaomoji.unhappy, url: url)
     )
   end
 

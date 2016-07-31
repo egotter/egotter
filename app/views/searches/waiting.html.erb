@@ -2,7 +2,7 @@
        locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
 <div class="waiting_msg" style="margin-top: 15px;">
-  <%= t('dictionary.waiting', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+  <%= t('searches.waiting.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
 
 <div class="progress_bar">
@@ -15,7 +15,7 @@
 
 <% if TwitterUser.exists?(uid: @searched_tw_user.uid, user_id: current_user_id) %>
   <div class="show_immediately_btn" style="margin-top: 15px;">
-    <%= link_to t('dictionary.show_immediately'),
+    <%= link_to t('searches.waiting.show_immediately'),
                 search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
                 class: 'btn btn-lg btn-info btn-block' %>
   </div>
@@ -27,7 +27,7 @@
 </div>
 
 <div class="retry_btn" style="display: none; margin-top: 15px;">
-  <%= link_to t('dictionary.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name),
+  <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name),
               class: 'btn btn-lg btn-info btn-block', method: :post %>
 </div>
 
@@ -163,7 +163,7 @@
 
     show_immediately_btn.on('click', function () {
       stop_waiting = true;
-      waiting_msg.html('<%= t("dictionary.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
+      waiting_msg.html('<%= t("searches.waiting.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
       show_immediately_btn.hide();
     });
 
@@ -191,7 +191,7 @@
               stop_waiting = true;
               progress(95);
               show_immediately_btn.hide();
-              waiting_msg.html('<%= t("dictionary.waiting_is_finished_msg") %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
+              waiting_msg.html('<%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
               window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
               return
             }

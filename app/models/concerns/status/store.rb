@@ -60,4 +60,8 @@ module Concerns::Status::Store
   def location?
     !coordinates.nil?
   end
+
+  def tweeted_at
+    _status_info.created_at
+  end
 end

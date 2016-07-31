@@ -53,13 +53,19 @@
                 %button.search-modal-btn.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
                   %span.search-modal-icon.glyphicon.glyphicon-search
                   %br/
-                  %span.search-modal-text= t('dictionary.search')
+                  %span.search-modal-text= t('searches.new.search')
                 %button.menu-btn.navbar-toggle{type: 'button'}
                   = link_to menu_path do
                     %span.menu-icon.glyphicon.glyphicon-menu-hamburger
                     %br/
-                    %span.menu-text= t('dictionary.menu')
-                - unless user_signed_in?
+                    %span.menu-text= t('misc.menu.name')
+                - if user_signed_in?
+                  %button.bell-btn.navbar-toggle{type: 'button'}
+                    = link_to notifications_path do
+                      %span.bell-icon.glyphicon.glyphicon-bell
+                      %br/
+                      %span.bell-text= t('notifications.name')
+                - else
                   %button.welcome-btn.navbar-toggle{type: 'button'}
                     = link_to welcome_path do
                       %span.welcome-icon.glyphicon.glyphicon-log-in
@@ -71,7 +77,14 @@
             - unless show_maintenance_page? || action_name == 'welcome'
               .collapse.navbar-collapse
                 %ul.nav.navbar-nav.navbar-right
-                  - unless user_signed_in?
+                  - if user_signed_in?
+                    %li
+                      .bell-btn
+                        = link_to notifications_path do
+                          %span.bell-icon.glyphicon.glyphicon-bell
+                          %br/
+                          %span.bell-text= t('notifications.name')
+                  - else
                     %li
                       .welcome-btn
                         = link_to welcome_path do
@@ -83,12 +96,12 @@
                       = link_to menu_path do
                         %span.menu-icon.glyphicon.glyphicon-menu-hamburger
                         %br/
-                        %span.menu-text= t('dictionary.menu')
+                        %span.menu-text= t('misc.menu.name')
                   %li
                     .search-modal-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
                       %span.search-modal-icon.glyphicon.glyphicon-search
                       %br/
-                      %span.search-modal-text= t('dictionary.search')
+                      %span.search-modal-text= t('searches.new.search')
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
     - unless show_maintenance_page?
@@ -98,7 +111,7 @@
             .modal-header
               %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
                 %span{'aria-hidden' => 'true'} ×
-              %h4#search-modal-label.modal-title= t('dictionary.search_by_egotter')
+              %h4#search-modal-label.modal-title= t('searches.new.search_by_egotter')
             .modal-body
               = form_tag searches_path, method: :post do
                 = render partial: 'searches/search_box_group'
@@ -181,7 +194,7 @@
                 %h2{:style => "display: none;"}= t('dictionary.information')
               :javascript
                 $(function () {
-                  $.get('#{information_path}')
+                  $.get('#{information_index_path}')
                       .done(function (res) {
                         if (res.status == 200) {
                           var container = $('.information');
@@ -209,7 +222,7 @@
             = succeed "\u{a0}\u{a0}" do
               %a{href: '/'} ご意見
             - if user_signed_in?
-              = link_to t('dictionary.menu'), menu_path
+              = link_to t('misc.menu.name'), menu_path
                 
             = succeed "\u{a0}\u{a0}" do
               %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('dictionary.official_account')
