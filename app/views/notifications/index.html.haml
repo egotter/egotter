@@ -12,6 +12,6 @@
           -#  %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
           .media-body
             %h4.media-heading
-              = "@#{item.screen_name}".html_safe
+              = "@#{item.screen_name} - #{time_ago_in_words(item.created_at)}".html_safe
             %span.text
               = auto_link(item.message) { t('dictionary.link') }

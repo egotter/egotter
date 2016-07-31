@@ -193,7 +193,7 @@
                 %h2{:style => "display: none;"}= t('dictionary.information')
               :javascript
                 $(function () {
-                  $.get('#{information_path}')
+                  $.get('#{information_index_path}')
                       .done(function (res) {
                         if (res.status == 200) {
                           var container = $('.information');

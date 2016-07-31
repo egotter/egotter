@@ -47,6 +47,7 @@ ja:
       targets: "ふぁぼる"
   notifications:
     name: "通知"
+    to: "%{user} への通知"
     setting: "通知設定"
     desc:
       email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"

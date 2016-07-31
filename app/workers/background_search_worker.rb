@@ -77,22 +77,25 @@ class BackgroundSearchWorker
 
   def setup_notification_message_worker(user_id, uid, screen_name, url)
     searched_user = User.find_by(uid: uid)
-    if searched_user.present? && user_id == searched_user.id
+    return if searched_user.blank?
+
+    if user_id == searched_user.id
       someone_searched_himself_or_herself(user_id, uid, screen_name, url)
-    elsif searched_user.present? && user_id != searched_user.id
+    elsif user_id != searched_user.id
       someone_searched_existing_user(searched_user.id, uid, screen_name, url)
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{url}"
   end
 
+  # TODO Send a dm when removing or removed is updated.
   def someone_searched_himself_or_herself(user_id, uid, screen_name, url)
-    CreateNotificationMessageWorker.perform_async(
-      user_id: user_id,
-      uid: uid,
-      screen_name: screen_name,
-      message: I18n.t('dictionary.you_are_searched_by_himself', kaomoji: Kaomoji.happy, url: url)
-    )
+    # CreateNotificationMessageWorker.perform_async(
+    #   user_id: user_id,
+    #   uid: uid,
+    #   screen_name: screen_name,
+    #   message: I18n.t('dictionary.you_are_searched_by_himself', kaomoji: Kaomoji.happy, url: url)
+    # )
   end
 
   def someone_searched_existing_user(user_id, uid, screen_name, url)

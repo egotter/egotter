@@ -9,12 +9,11 @@ class SearchesController < ApplicationController
   SEARCH_MENUS = %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers mutual_friends
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats)
-  NEED_LOGIN = %i(common_friends common_followers)
 
   before_action :under_maintenance
   before_action :reject_crawler,      only: %i(create)
-  before_action :need_login,          only: NEED_LOGIN
   before_action :valid_search_value?, only: %i(create)
+  before_action :need_login,          only: %i(common_friends common_followers)
   before_action :set_twitter_user,    only: SEARCH_MENUS + %i(show)
 
   before_action only: (%i(new create waiting show) + SEARCH_MENUS) do
