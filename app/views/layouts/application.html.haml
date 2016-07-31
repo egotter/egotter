@@ -156,6 +156,8 @@
     %link{href: '/jssocials/jssocials.css', rel: 'stylesheet', type: 'text/css'}/
     %link{href: '/jssocials/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}/
     %script{src: '/jssocials/jssocials.min.js'}
+    - if controller_name == 'kpis'
+      %script{src: '//code.highcharts.com/4.2.2/modules/heatmap.js'}
 
     - if %w(search_results searches statuses update_histories).include?(controller_name)
       .container

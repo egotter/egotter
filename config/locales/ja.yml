@@ -57,6 +57,12 @@ ja:
   misc:
     menu:
       name: "メニュー"
+  kpis:
+    index: "KPI"
+  debug:
+    index: "デバッグ"
+  caches:
+    clear: "キャッシュを削除する"
 
   dictionary:
     app_name: "えごったー"
@@ -194,11 +200,10 @@ ja:
     usage_stats: "%{user} のツイッター利用状況"
     update_histories: "%{user} の更新履歴"
     search_histories: "検索履歴"
-    debug: "デバッグ"
-    clear_result_cache: "キャッシュを削除する"
   activerecord:
     models:
       twitter_user: "ツイッターユーザー"
+      background_search_log: "検索ワーカーログ"
     attributes:
       twitter_user:
         uid: uid

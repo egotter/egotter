@@ -1,49 +1,47 @@
 <div class="rr" style="min-width: 310px; height: 600px; margin: 0 auto"></div>
-<br>
 
-<script src="https://code.highcharts.com/modules/heatmap.js"></script>
 <script>
-  var config = {
-    credits: {
-      enabled: false
-    },
-    chart: {
-      type: 'heatmap',
-      plotBorderWidth: 1
-    },
-    title: {
-      text: 'title'
-    },
-    xAxis: {
-      categories: null
-    },
-    yAxis: {
-      title: null,
-      categories: null
-    },
-    colorAxis: {
-      min: 0,
-      minColor: '#FFFFFF',
-      maxColor: Highcharts.getOptions().colors[0]
-    },
-    series: [{
-      name: 'total',
-      borderWidth: 1,
-      data: null,
-      dataLabels: {
-        enabled: true,
-        color: '#000000'
-      }
-    }]
-  };
-
   function draw_rr() {
+    var config = {
+      credits: {
+        enabled: false
+      },
+      chart: {
+        type: 'heatmap',
+        plotBorderWidth: 1
+      },
+      title: {
+        text: 'title'
+      },
+      xAxis: {
+        categories: null
+      },
+      yAxis: {
+        title: null,
+        categories: null
+      },
+      colorAxis: {
+        min: 0,
+        minColor: '#FFFFFF',
+        maxColor: "#7cb5ec" // Highcharts.getOptions().colors[0]
+      },
+      series: [{
+        name: 'total',
+        borderWidth: 1,
+        data: null,
+        dataLabels: {
+          enabled: true,
+          color: '#000000'
+        }
+      }]
+    };
+
     var conf = $.extend(true, {}, config);
     conf.title.text = 'RR';
-    conf.xAxis.categories = <%= raw @xAxis_categories.to_json %>
-    conf.yAxis.categories = <%= raw @yAxis_categories.to_json %>
+    conf.xAxis.categories = <%= raw @xAxis_categories.to_json %>;
+    conf.yAxis.categories = <%= raw @yAxis_categories.to_json %>;
     conf.series[0].data = <%= raw @rr.to_json %>;
-    $('.container.rr').highcharts(conf);
+    $('.rr').highcharts(conf);
   }
 
   $(function () {

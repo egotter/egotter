@@ -64,16 +64,24 @@
   </script>
 
   <% if user.admin? %>
-    <h2><small><%= t('search_menu.debug') %></small></h2>
+    <h2><small><%= t('debug.index') %></small></h2>
     <div>
-      <%= link_to t('search_menu.debug'), debug_path,
-                  class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
+      <%= link_to t('debug.index'), debug_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
     </div>
 
-    <h2><small><%= t('search_menu.clear_result_cache') %></small></h2>
+    <h2><small><%= t('kpis.index') %></small></h2>
     <div>
-      <%= link_to t('search_menu.clear_result_cache'), clear_result_cache_path,
-                  class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;', method: :post %>
+      <%= link_to t('kpis.index'), kpis_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
+    </div>
+
+    <h2><small><%= BackgroundSearchLog.model_name.human %></small></h2>
+    <div>
+      <%= link_to BackgroundSearchLog.model_name.human, background_search_logs_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
+    </div>
+
+    <h2><small><%= t('caches.clear') %></small></h2>
+    <div>
+      <%= link_to t('caches.clear'), clear_result_cache_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;', method: :post %>
     </div>
   <% end %>
 </div>

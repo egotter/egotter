@@ -10,6 +10,7 @@ class KpisController < ApplicationController
       if request.referer.end_with?(action_name)
         result.update(
           dau_by_action: fetch_dau_by_action,
+          dau_by_new_action: fetch_dau_by_new_action,
           dau_by_device_type: fetch_dau_by_device_type,
           dau_by_referer: fetch_dau_by_referer
         )
@@ -131,6 +132,33 @@ class KpisController < ApplicationController
         AND action != 'waiting'
       GROUP BY date(created_at), action
       ORDER BY date(created_at), action;
+    SQL
+  end
+
+  def fetch_dau_by_new_action
+    result = SearchLog.find_by_sql([dau_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    %i(total guest login).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def dau_by_new_action_sql
+    <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        count(DISTINCT session_id) total,
+        count(DISTINCT if(user_id = -1, session_id, NULL)) guest,
+        count(DISTINCT if(user_id != -1, session_id, NULL)) login
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+        AND action = 'new'
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
     SQL
   end
 
