@@ -85,11 +85,12 @@
                           %br/
                           %span.bell-text= t('notifications.name')
                   - else
-                    .welcome-btn
-                      = link_to welcome_path do
-                        %span.welcome-icon.glyphicon.glyphicon-log-in
-                        %br/
-                        %span.welcome-text= t('dictionary.sign_in')
+                    %li
+                      .welcome-btn
+                        = link_to welcome_path do
+                          %span.welcome-icon.glyphicon.glyphicon-log-in
+                          %br/
+                          %span.welcome-text= t('dictionary.sign_in')
                   %li
                     .menu-btn
                       = link_to menu_path do
