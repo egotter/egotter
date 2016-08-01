@@ -19,7 +19,11 @@ Rails.application.routes.draw do
   %i(statuses update_histories).each do |name|
     get "searches/:screen_name/#{name}", to: 'searches#debug'
   end
-  get 'searches', to: 'searches#debug'
+  %i(searches twitegosearch/list).each do |name|
+    get name, to: 'searches#debug'
+  end
+  get 'search', to: 'searches#debug'
+  post 'searches/:screen_name/waiting', to: 'searches#debug'
 
   resources :search_histories, only: :index
   resources :information, only: :index

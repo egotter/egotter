@@ -227,7 +227,9 @@ class SearchesController < ApplicationController
   end
 
   def debug
-    logger.warn "#{self.class}##{__method__}: #{request.device_type} #{request.url} #{params.inspect}"
+    unless request.device_type == :crawler
+      logger.warn "#{self.class}##{__method__}: #{request.device_type} #{request.method} #{request.url}"
+    end
     redirect_to '/'
   end
 
