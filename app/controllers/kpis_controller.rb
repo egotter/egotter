@@ -61,11 +61,10 @@ class KpisController < ApplicationController
 
   def rr
     yAxis_categories = 7.times.map { |i| (NOW - i.days) }
-    xAxis_categories = (1..9)
+    xAxis_categories = (0..9)
     cells = []
     yAxis_categories.each.with_index do |day, y|
       session_ids = SearchLog.except_crawler.where(created_at: day.all_day).pluck(:session_id).uniq
-      cells << [0, y, session_ids.size]
       xAxis_categories.each do |x|
         cells << [x, y, SearchLog.except_crawler.where(created_at: (day + x.days).all_day).where(session_id: session_ids).uniq.size]
       end
@@ -73,7 +72,7 @@ class KpisController < ApplicationController
 
     @rr = cells
     @yAxis_categories = yAxis_categories.map{|d| d.to_date.strftime('%m/%d') }
-    @xAxis_categories = xAxis_categories.to_a << 10
+    @xAxis_categories = xAxis_categories.to_a
   end
 
   private
