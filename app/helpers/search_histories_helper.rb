@@ -9,7 +9,8 @@ module SearchHistoriesHelper
           memo[key.call(uid)] = TwitterUser.latest(uid.to_i, user_id)
         end
       end
-      build_user_items(searched_uids.map { |uid| records[key.call(uid)] }.compact)
+
+      TwitterUsersDecorator.new(searched_uids.map { |uid| records[key.call(uid)] }.compact).items
     else
       []
     end

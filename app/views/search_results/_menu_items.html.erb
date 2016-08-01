@@ -1,5 +1,3 @@
-<%# show page %>
-
 <%
   # avoid duplicate rendering
   modal_rendered_uids = []
@@ -8,7 +6,7 @@
 <%# close_friends %>
 <div class="menu-items media" style="margin-top: 0px;">
   <div class="media-body">
-    <h4 class="media-heading"><%= close_friends[:name] %></h4>
+    <h4 class="h5 media-heading"><%= close_friends[:name] %></h4>
 
     <% close_friends[:target].slice(0..2).each do |user| %>
       <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
@@ -45,7 +43,7 @@
 <%# usage_stats %>
 <div class="menu-items media usage-stats-chart">
   <div class="media-body">
-    <h4 class="media-heading"><%= usage_stats[:name] %></h4>
+    <h4 class="h5 media-heading"><%= usage_stats[:name] %></h4>
 
     <% if usage_stats.has_key?(:graph) %>
       <div id="<%= usage_stats.object_id %>" class="usage-stats-chart-container"></div>
@@ -71,7 +69,7 @@
 <%# clusters_belong_to %>
 <div class="menu-items media clusters-belong-to-chart">
   <div class="media-body">
-    <h4 class="media-heading"><%= clusters_belong_to[:name] %></h4>
+    <h4 class="h5 media-heading"><%= clusters_belong_to[:name] %></h4>
 
     <% if clusters_belong_to.has_key?(:graph) %>
       <div id="<%= clusters_belong_to.object_id %>" class="clusters-belong-to-chart-container"></div>
@@ -97,7 +95,7 @@
 <% menu_items.each do |menu_item| %>
   <div class="menu-items media">
     <div class="media-body">
-      <h4 class="media-heading"><%= menu_item[:name] %></h4>
+      <h4 class="h5 media-heading"><%= menu_item[:name] %></h4>
 
       <% menu_item[:target].slice(0..2).each do |user| %>
         <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
@@ -136,7 +134,7 @@
 <% menu_common_friends_and_followers.each do |menu_item| %>
   <div class="menu-items media">
     <div class="media-body">
-      <h4 class="media-heading"><%= menu_item[:name] %></h4>
+      <h4 class="h5 media-heading"><%= menu_item[:name] %></h4>
 
       <% menu_item[:target].slice(0..2).each do |user| %>
         <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
@@ -183,9 +181,9 @@
 <% end %>
 
 <%# update_histories %>
-<div class="menu-items media">
+<div class="menu-items menu-items-last media">
   <div class="media-body">
-    <h4 class="media-heading"><%= menu_update_histories[:name] %></h4>
+    <h4 class="h5 media-heading"><%= menu_update_histories[:name] %></h4>
     <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(menu_update_histories[:target].created_at.in_time_zone('Tokyo'), format: :short) %></div>
     <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(menu_update_histories[:target].updated_at.in_time_zone('Tokyo'), format: :short) %></div>
     <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= menu_update_histories[:target].search_count %></div>

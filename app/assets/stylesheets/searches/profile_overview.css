@@ -1,0 +1,82 @@
+.profile-overview-container .profile-overview-overlay {
+  padding-bottom: 50px; /* add 30px for .slick-slider */
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.profile-overview-container .profile-overview .slick-slider {
+  margin-bottom: 0;
+}
+
+.profile-overview-container .profile-icon-link {
+  display: inline-block;
+}
+
+.profile-overview-container .profile-icon {
+  margin-top: 15px;
+  border: 4px solid #ffffff;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+
+.profile-overview-container .profile-names {
+  margin-top: 15px;
+  font-weight: normal;
+  line-height: 120%;
+  font-size: 18px;
+  color: #ffffff;
+}
+
+.profile-overview-container .profile-names .glyphicon.glyphicon-lock {
+  color: #ffffff;
+}
+
+.profile-overview-container .profile-names .glyphicon.glyphicon-ok {
+  color: #5cb85c;
+}
+
+.profile-overview-container .profile-screen_name-link {
+  color: #ffffff;
+  text-decoration: none;
+}
+
+.profile-overview-container .profile-description,
+.profile-overview-container .profile-location,
+.profile-overview-container .profile-link,
+.profile-overview-container .profile-calendar {
+  color: #ffffff;
+  margin: 5px 5px auto 5px;
+}
+
+.profile-counts-container {
+  padding: 0 15px 0 15px;
+}
+
+.profile-counts-container a {
+  text-decoration: none;
+  color: #777777;
+}
+
+.profile-counts-container > .row {
+  padding: 0 5px 0 5px;
+  border-left: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e6e6;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.profile-counts-container .stats-count {
+  font-weight: bold;
+}
+
+.profile-counts-container .tweet-count-box,
+.profile-counts-container .friends-count-box,
+.profile-counts-container .followers-count-box {
+  font-size: 12px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+.profile-counts-container .friends-count-box {
+  border-left: 1px solid #e6e6e6;
+  border-right: 1px solid #e6e6e6;
+}

@@ -5,16 +5,20 @@
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
 <div class="clusters-belong-to">
-  <h2><small><%= @title %></small></h2>
+  <h2 class="h5"><%= @title %></h2>
 
-  <h3><small><%= t('dictionary.clusters_index') %></small></h3>
+  <div class="return-to-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %></div>
+
+  <%= render(partial: 'searches/adsense') %>
+
+  <h3 class="h5"><%= t('dictionary.clusters_index') %></h3>
   <div id="clusters_belong_to_graph" class="chart"></div>
 
   <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
 
   <hr>
 
-  <h3><small><%= t('dictionary.clusters_cloud') %></small></h3>
+  <h3 class="h5"><%= t('dictionary.clusters_cloud') %></h3>
   <div id="clusters_belong_to_cloud" class="chart" style="height: 220px;"></div>
 
   <hr>
@@ -27,6 +31,10 @@
       </div>
     </div>
   <% end %>
+
+  <%= render(partial: 'searches/adsense_bottom') %>
+
+  <div class="return-to-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %></div>
 </div>
 
 <script>

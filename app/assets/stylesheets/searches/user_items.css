@@ -1,0 +1,80 @@
+.user-item-carousel {
+  margin-bottom: 0px !important;
+}
+
+.user-item-carousel .media {
+  margin-top: 15px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 15px;
+}
+
+.user-item-carousel.user-item-carousel-0 .media {
+  margin-top: 0;
+  padding-top: 15px;
+  border-top: 1px solid #e6e6e6;
+}
+
+.user-item-carousel .media-object {
+  border: 1px solid #eeeeee;
+}
+
+.user-item-carousel .media-body {
+  padding-right: 15px;
+}
+
+.user-item-carousel .media-heading {
+  font-weight: bold;
+  font-size: 14px;
+  word-break: break-all;
+}
+
+.user-item-carousel .media-heading .glyphicon.glyphicon-lock {
+  color: #999999;
+  font-size: 13px;
+  font-weight: normal;
+}
+
+.user-item-carousel .media-heading .glyphicon.glyphicon-ok {
+  color: #5cb85c;
+  font-size: 13px;
+  font-weight: normal;
+}
+
+.user-item-carousel .media-body .screen_name,
+.user-item-carousel .media-body .description,
+.user-item-carousel .media-body .statuses_count,
+.user-item-carousel .media-body .friends_count,
+.user-item-carousel .media-body .followers_count,
+.user-item-carousel .media-body .score {
+  font-size: 13px;
+  color: #999999;
+}
+
+.user-item-carousel .media-body .screen_name a,
+.user-item-carousel .media-right a {
+  color: #333333;
+  text-decoration: none;
+}
+
+.user-item-carousel .media-right span {
+  display: table-cell;
+}
+
+.user-item-carousel .media-right .with-margin-right {
+  margin-right: 15px;
+}
+
+.user-items.media {
+  margin-top: 15px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 15px;
+}
+
+.user-items .common-chart {
+  height: 100px;
+  border: 1px solid #e6e6e6;
+}
+
+.user-items .icon-chart {
+  border: 1px solid #e6e6e6;
+}

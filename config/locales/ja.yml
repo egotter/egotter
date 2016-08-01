@@ -5,6 +5,7 @@ ja:
       large: "多い"
       small: "少ない"
       others: "それ以外"
+      return: "%{user} の分析結果一覧へ戻る"
     new:
       search: "検索"
       search_by: "%{user} で検索"
@@ -19,32 +20,67 @@ ja:
       show_immediately_msg: "過去の結果を表示します"
       waiting_is_finished_msg: "検索が完了しました。ページを移動します"
       updating_is_finished_msg: "新しいデータが見付かりました。%{link} からページを更新してください。"
+    show:
+      title: "%{user} の検索結果"
+    friends:
+      title: "%{user} のフォロー"
+    followers:
+      title: "%{user} のフォロワー"
+      targets: "フォロワー"
+    removing:
+      title: "%{user} がフォローを外した"
+    removed:
+      title: "%{user} がフォローを外された"
+    blocking_or_blocked:
+      title: "%{user} がブロックされたかも"
     replying:
+      title: "%{user} がリプライした"
       targets: "リプライ"
     replied:
+      title: "%{user} がリプライされた"
       targets: "リプライ"
     close_friends:
+      title: "%{user} と仲良し"
       targets: "仲良し"
       friends: "友人"
       acquaintance: "知人"
+    usage_stats:
+      title: "%{user} のツイッター利用状況"
     inactive_friends:
+      title: "%{user} のフォローのうち最近ツイッターにいない"
       targets: "対象者"
     inactive_followers:
+      title: "%{user} のフォロワーのうち最近ツイッターにいない"
       targets: "対象者"
+    clusters_belong_to:
+      title: "%{user} が入っているクラスタ"
     mutual_friends:
+      title: "%{user} が両思い"
       targets: "両思い"
     one_sided_friends:
+      title: "%{user} が片思い"
       targets: "片思い"
-    followers:
-      targets: "フォロワー"
     one_sided_followers:
+      title: "%{user} が片思われ"
       targets: "片思われ"
     common_friends:
+      title: "%{user} と %{login} の共通フォロー"
       targets: "共通"
     common_followers:
+      title: "%{user} と %{login} の共通フォロワー"
       targets: "共通"
     favoriting:
+      title: "%{user} がよくふぁぼる"
       targets: "ふぁぼる"
+  update_histories:
+    show:
+      title: "%{user} の更新履歴"
+  statuses:
+    show:
+      title: "%{user} のツイート"
+  search_histories:
+    index:
+      title: "検索履歴"
   notifications:
     name: "通知"
     to: "%{user} への通知"
@@ -176,30 +212,6 @@ ja:
     one_sided: "相互フォローしてくれないユーザーを探そう。"
     blocked: "ブロックされたユーザーを見付けられるかも？"
     protected: "鍵付きアカウントもログインすれば検索できます。"
-  search_menu:
-    all: "仲良し、フォローを外した、フォローを外された、最近ツイッターにいない、片思い、片思われ、両思い、ツイッター利用状況、入っているクラスタ"
-    search_result: "%{user} の検索結果"
-    statuses: "%{user} のツイート"
-    friends: "%{user} のフォロー"
-    followers: "%{user} のフォロワー"
-    removing: "%{user} がフォローを外した"
-    removed: "%{user} がフォローを外された"
-    blocking_or_blocked: "%{user} がブロックされたかも"
-    mutual_friends: "%{user} が両思い"
-    one_sided_friends: "%{user} が片思い"
-    one_sided_followers: "%{user} が片思われ"
-    common_friends: "%{user} と %{login} の共通フォロー"
-    common_followers: "%{user} と %{login} の共通フォロワー"
-    replying: "%{user} がリプライした"
-    replied: "%{user} がリプライされた"
-    favoriting: "%{user} がよくふぁぼる"
-    inactive_friends: "%{user} のフォローのうち最近ツイッターにいない"
-    inactive_followers: "%{user} のフォロワーのうち最近ツイッターにいない"
-    clusters_belong_to: "%{user} が入っているクラスタ"
-    close_friends: "%{user} と仲良し"
-    usage_stats: "%{user} のツイッター利用状況"
-    update_histories: "%{user} の更新履歴"
-    search_histories: "検索履歴"
   activerecord:
     models:
       twitter_user: "ツイッターユーザー"

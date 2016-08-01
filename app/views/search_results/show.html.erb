@@ -1,13 +1,13 @@
-<div style="padding: 15px 0 0 0;">
-  <%= render(partial: 'searches/search_menu_items',
-             locals: {searched_tw_user: @searched_tw_user,
-                      menu_items: @menu_items,
-                      menu_update_histories: @menu_update_histories,
-                      menu_common_friends_and_followers: @menu_common_friends_and_followers,
-                      close_friends: @menu_close_friends,
-                      usage_stats: @menu_usage_stats,
-                      clusters_belong_to: @menu_clusters_belong_to}) %>
-</div>
+<%= render(partial: 'search_results/menu_items',
+           locals: {searched_tw_user: @searched_tw_user,
+                    menu_items: @menu_items,
+                    menu_update_histories: @menu_update_histories,
+                    menu_common_friends_and_followers: @menu_common_friends_and_followers,
+                    close_friends: @menu_close_friends,
+                    usage_stats: @menu_usage_stats,
+                    clusters_belong_to: @menu_clusters_belong_to}) %>
+
+<%= render(partial: 'searches/adsense_bottom') %>
 
 <script>
   $(function () {

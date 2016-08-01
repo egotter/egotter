@@ -7,7 +7,7 @@ module MenuItemBuilder
 
   def removing_menu(tu)
     {
-      name: t('search_menu.removing', user: tu.mention_name),
+      name: t('searches.removing.title', user: tu.mention_name),
       target: tu.removing,
       graph: tu.removing_graph,
       path_method: method(:removing_path).to_proc
@@ -16,7 +16,7 @@ module MenuItemBuilder
 
   def removed_menu(tu)
     {
-      name: t('search_menu.removed', user: tu.mention_name),
+      name: t('searches.removed.title', user: tu.mention_name),
       target: tu.removed,
       graph: tu.removed_graph,
       path_method: method(:removed_path).to_proc
@@ -25,7 +25,7 @@ module MenuItemBuilder
 
   def blocking_or_blocked_menu(tu)
     {
-      name: t('search_menu.blocking_or_blocked', user: tu.mention_name),
+      name: t('searches.blocking_or_blocked.title', user: tu.mention_name),
       target: tu.blocking_or_blocked,
       graph: tu.blocking_or_blocked_graph,
       path_method: method(:blocking_or_blocked_path).to_proc
@@ -34,7 +34,7 @@ module MenuItemBuilder
 
   def mutual_friends_menu(tu)
     {
-      name: t('search_menu.mutual_friends', user: tu.mention_name),
+      name: t('searches.mutual_friends.title', user: tu.mention_name),
       target: tu.mutual_friends,
       graph: tu.mutual_friends_graph,
       path_method: method(:mutual_friends_path).to_proc
@@ -43,7 +43,7 @@ module MenuItemBuilder
 
   def one_sided_friends_menu(tu)
     {
-      name: t('search_menu.one_sided_friends', user: tu.mention_name),
+      name: t('searches.one_sided_friends.title', user: tu.mention_name),
       target: tu.one_sided_friends,
       graph: tu.one_sided_friends_graph,
       path_method: method(:one_sided_friends_path).to_proc
@@ -52,7 +52,7 @@ module MenuItemBuilder
 
   def one_sided_followers_menu(tu)
     {
-      name: t('search_menu.one_sided_followers', user: tu.mention_name),
+      name: t('searches.one_sided_followers.title', user: tu.mention_name),
       target: tu.one_sided_followers,
       graph: tu.one_sided_followers_graph,
       path_method: method(:one_sided_followers_path).to_proc
@@ -61,7 +61,7 @@ module MenuItemBuilder
 
   def replying_menu(tu)
     {
-      name: t('search_menu.replying', user: tu.mention_name),
+      name: t('searches.replying.title', user: tu.mention_name),
       target: tu.replying,
       graph: tu.replying_graph,
       path_method: method(:replying_path).to_proc
@@ -70,7 +70,7 @@ module MenuItemBuilder
 
   def replied_menu(tu)
     {
-      name: t('search_menu.replied', user: tu.mention_name),
+      name: t('searches.replied.title', user: tu.mention_name),
       target: tu.replied,
       graph: tu.replied_graph,
       path_method: method(:replied_path).to_proc
@@ -79,7 +79,7 @@ module MenuItemBuilder
 
   def favoriting_menu(tu)
     {
-      name: t('search_menu.favoriting', user: tu.mention_name),
+      name: t('searches.favoriting.title', user: tu.mention_name),
       target: tu.favoriting,
       graph: tu.favoriting_graph,
       path_method: method(:favoriting_path).to_proc
@@ -88,7 +88,7 @@ module MenuItemBuilder
 
   def inactive_friends_menu(tu)
     {
-      name: t('search_menu.inactive_friends', user: tu.mention_name),
+      name: t('searches.inactive_friends.title', user: tu.mention_name),
       target: tu.inactive_friends,
       graph: tu.inactive_friends_graph,
       path_method: method(:inactive_friends_path).to_proc
@@ -97,7 +97,7 @@ module MenuItemBuilder
 
   def inactive_followers_menu(tu)
     {
-      name: t('search_menu.inactive_followers', user: tu.mention_name),
+      name: t('searches.inactive_followers.title', user: tu.mention_name),
       target: tu.inactive_followers,
       graph: tu.inactive_followers_graph,
       path_method: method(:inactive_followers_path).to_proc
@@ -106,8 +106,8 @@ module MenuItemBuilder
 
   def common_friend_and_followers_menu(tu)
     sn = tu.mention_name
-    friends_name = t('search_menu.common_friends', user: sn, login: t('dictionary.you'))
-    followers_name = t('search_menu.common_followers', user: sn, login: t('dictionary.you'))
+    friends_name = t('searches.common_friends.title', user: sn, login: t('dictionary.you'))
+    followers_name = t('searches.common_followers.title', user: sn, login: t('dictionary.you'))
 
     if search_oneself?(tu.uid)
       [
@@ -153,7 +153,7 @@ module MenuItemBuilder
 
   def close_friends_menu(tu)
     {
-      name: t('search_menu.close_friends', user: tu.mention_name),
+      name: t('searches.close_friends.title', user: tu.mention_name),
       target: tu.close_friends(cache: :read),
       graph: tu.close_friends_graph(cache: :read),
       path_method: method(:close_friends_path).to_proc
@@ -162,7 +162,7 @@ module MenuItemBuilder
 
   def usage_stats_menu(tu)
     {
-      name: t('search_menu.usage_stats', user: tu.mention_name),
+      name: t('searches.usage_stats.title', user: tu.mention_name),
       graph: tu.usage_stats_graph,
       path_method: method(:usage_stats_path).to_proc
     }
@@ -170,21 +170,22 @@ module MenuItemBuilder
 
   def clusters_belong_to_menu(tu)
     sn = tu.mention_name
+    title = t('searches.clusters_belong_to.title', user: sn)
     clusters_belong_to = tu.clusters_belong_to
     {
-      name: t('search_menu.clusters_belong_to', user: sn),
+      name: title,
       target: clusters_belong_to,
       graph: tu.clusters_belong_to_frequency_distribution,
       screen_name: tu.screen_name,
       text: "#{clusters_belong_to.map{|c| "#{c}#{t('dictionary.cluster')}" }.join(t('dictionary.delim'))}",
-      tweet_text: "#{t('search_menu.clusters_belong_to', user: sn)}\n#{clusters_belong_to.map{|c| "##{c}#{t('dictionary.cluster')}" }.join(' ')}\n#{t('dictionary.continue_reading')}http://example.com",
+      tweet_text: "#{title}\n#{clusters_belong_to.map{|c| "##{c}#{t('dictionary.cluster')}" }.join(' ')}\n#{t('dictionary.continue_reading')}http://example.com",
       path_method: method(:clusters_belong_to_path).to_proc
     }
   end
 
   def update_histories_menu(tu)
     {
-      name: t('search_menu.update_histories', user: tu.mention_name),
+      name: t('update_histories.show.title', user: tu.mention_name),
       target: UpdateHistories.new(tu.uid, current_user_id),
       path_method: method(:update_history_path).to_proc
     }

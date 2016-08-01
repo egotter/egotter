@@ -5,45 +5,51 @@
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
 <div class="usage-stats">
-  <h2>
-    <small><%= @title %></small>
-  </h2>
+  <h2 class="h5"><%= @title %></h2>
 
-  <h3><small>曜日ごとのツイッター利用時間</small></h3>
+  <div class="return-to-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %></div>
+
+  <%= render(partial: 'searches/adsense') %>
+
+  <h3 class="h5">曜日ごとのツイッター利用時間</h3>
   <div id="twitter_addiction" class="chart"></div>
 
   <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
 
   <hr>
 
-  <h3><small>曜日ごとのツイート数(直近600ツイート)</small></h3>
+  <h3 class="h5">曜日ごとのツイート数(直近600ツイート)</h3>
   <div id="wday_graph" class="chart"></div>
 
-  <h3><small>曜日ごとのツイート数(直近1週間)</small></h3>
+  <h3 class="h5">曜日ごとのツイート数(直近1週間)</h3>
   <div id="wday_graph_7days" class="chart"></div>
 
   <hr>
 
-  <h3><small>時間帯ごとのツイート数(直近600ツイート)</small></h3>
+  <h3 class="h5">時間帯ごとのツイート数(直近600ツイート)</h3>
   <div id="hour_graph" class="chart"></div>
 
-  <h3><small>時間帯ごとのツイート数(直近1週間)</small></h3>
+  <h3 class="h5">時間帯ごとのツイート数(直近1週間)</h3>
   <div id="hour_graph_7days" class="chart"></div>
 
   <hr>
 
-  <h3><small>ツイートの内容</small></h3>
+  <h3 class="h5">ツイートの内容</h3>
   <div id="kind_bar" class="chart"></div>
 
   <hr>
 
-  <h3><small>ハッシュタグ指数</small></h3>
+  <h3 class="h5">ハッシュタグ指数</h3>
   <div id="hashtags_fd" class="chart"></div>
 
   <hr>
 
-  <h3><small><%= t('dictionary.hashtags_cloud') %></small></h3>
+  <h3 class="h5"><%= t('dictionary.hashtags_cloud') %></h3>
   <div id="hashtags_cloud" class="chart" style="height: 220px;"></div>
+
+  <%= render(partial: 'searches/adsense_bottom') %>
+
+  <div class="return-to-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %></div>
 </div>
 
 <script>

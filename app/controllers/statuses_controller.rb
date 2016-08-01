@@ -9,8 +9,8 @@ class StatusesController < ApplicationController
 
   # GET /statuses/:id
   def show
-    @status_items = apply_kaminari(@searched_tw_user.statuses)
-    @title = t('search_menu.statuses', user: @searched_tw_user.mention_name)
+    @status_items = Kaminari.paginate_array(@searched_tw_user.statuses).page(params[:page]).per(100)
+    @title = t('.title', user: @searched_tw_user.mention_name)
   end
 
   def keyword_timeline
@@ -24,11 +24,5 @@ class StatusesController < ApplicationController
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     render json: {status: 500}, status: 500
-  end
-
-  private
-
-  def apply_kaminari(statuses)
-    Kaminari.paginate_array(statuses).page(params[:page]).per(100)
   end
 end

@@ -36,18 +36,6 @@ module SearchesHelper
     end
   end
 
-  def build_user_items(items)
-    current_user_friends =
-      if user_signed_in? && current_user.twitter_user?
-        current_user.twitter_user.friend_uids
-      else
-        []
-      end
-    me = current_user_id
-    targets = items.map { |u| {target: u, friendship: current_user_friends.include?(u.uid.to_i), me: (u.uid.to_i == me)} }
-    Kaminari.paginate_array(targets).page(params[:page]).per(25)
-  end
-
   def add_background_search_worker_if_needed(uid, screen_name, user_info)
     user_id = current_user_id
 

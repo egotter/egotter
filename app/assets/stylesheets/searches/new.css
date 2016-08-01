@@ -1,0 +1,56 @@
+.top-page .total-search-count {
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.top-page .lead-sentence {
+  margin-bottom: 15px;
+}
+
+.top-page .submit-btn2 {
+  margin-top: 0;
+}
+
+.top-page h2, .top-page h3 {
+  font-size: 16px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.top-page .egotter-timeline {
+  text-align: center;
+}
+
+.top-page .egotter-features .feature-description {
+  font-size: 14px;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.top-page .egotter-features .feature-description .last-child {
+  margin-bottom: 0;
+}
+
+.top-page #share { /*TODO remove later */
+  text-align: center;
+  margin-top: 15px;
+}
+
+.top-page .follow-official-account { /*TODO remove later */
+  text-align: center;
+}
+
+.top-page .information { /*TODO remove later */
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.top-page .information:not(h2) { /*TODO remove later */
+  font-size: 12px;
+}
+
+.top-page hr {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}

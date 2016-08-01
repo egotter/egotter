@@ -1,0 +1,33 @@
+.pre-footer h2 {
+  font-size: 16px;
+  margin-top: 15px;
+  text-align: center;
+}
+
+.pre-footer #share {
+  text-align: center;
+  margin-top: 15px;
+}
+
+.pre-footer .follow-official-account {
+  text-align: center;
+}
+
+.pre-footer .information {
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+.pre-footer .information:not(h2) {
+  font-size: 12px;
+}
+
+.footer p {
+  text-align: center;
+  padding-top: 15px;
+  line-height: 200%;
+}
+
+.footer a {
+  text-decoration: none;
+}

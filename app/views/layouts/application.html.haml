@@ -117,7 +117,7 @@
                 = render partial: 'searches/search_box_group'
               .modal-search-histories
                 %h2{style: 'display: none;'}
-                  %small= t('search_menu.search_histories')
+                  %small= t('search_histories.index.title')
               :javascript
                 $(function () {
                   $.get('#{search_histories_path}', {in_modal: true})
@@ -164,7 +164,6 @@
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8
-            = render(partial: 'searches/adsense_bottom')
             .pre-footer
               %h2.share-me= t('dictionary.share_me')
               = render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"})

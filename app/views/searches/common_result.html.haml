@@ -1,0 +1,40 @@
+- title @title
+- set_meta_tags description: "#{@title} - #{@searched_tw_user.description}"
+
+= render(partial: 'searches/profile_overview',
+  locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"})
+
+.common-result
+  %h2.h4= @title
+
+  .return-to-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
+
+  = render(partial: 'searches/adsense')
+
+  - if @user_items.any?
+    .page-entries-info-top
+      = render(partial: 'searches/page_entries_info',
+        locals: {searched_tw_user: @searched_tw_user, user_items: @user_items})
+
+    = render(partial: 'searches/user_items',
+      locals: {user_items: @user_items, graph: @graph, tweet_text: @tweet_text})
+
+    .page-entries-info-bottom
+      = render(partial: 'searches/page_entries_info',
+        locals: {searched_tw_user: @searched_tw_user, user_items: @user_items})
+  - else
+    - if user_signed_in?
+      - if @searched_tw_user.too_many_friends?
+        %div= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy)
+      - else
+        %div= raw t('after_sign_in.empty_and_other_reason', kaomoji: Kaomoji.happy)
+    - else
+      - if @searched_tw_user.many_friends?
+        %div= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.happy)
+      - else
+        %div= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.unhappy)
+    = render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(".#{@title}")})
+
+  = render(partial: 'searches/adsense_bottom')
+
+  .return-to-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))

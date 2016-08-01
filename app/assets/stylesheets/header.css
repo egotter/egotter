@@ -1,0 +1,65 @@
+.navbar {
+  margin-bottom: 0;
+  background-color: #ffffff;
+}
+
+.navbar .navbar-brand {
+  display: table;
+  padding: 1px 0 0 1px;
+}
+
+.navbar .navbar-brand img {
+  display: table-cell;
+  border-radius: 2px;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+}
+
+.navbar .navbar-brand span {
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 20px;
+}
+
+.navbar a {
+  text-decoration: none;
+  color: #000000;
+}
+
+.navbar .welcome-btn,
+.navbar .bell-btn,
+.navbar .menu-btn,
+.navbar .search-modal-btn {
+  text-align: center;
+  padding: 3px;
+  margin-top: 0;
+  margin-right: 0;
+  margin-bottom: 0;
+  border: none;
+}
+
+.navbar .welcome-icon,
+.navbar .bell-icon,
+.navbar .menu-icon,
+.navbar .search-modal-icon {
+  font-size: 20px
+}
+
+.navbar .welcome-text,
+.navbar .bell-text,
+.navbar .menu-text,
+.navbar .search-modal-text {
+  font-size: 9px;
+}
+
+.search-modal .submit-btn {
+  margin-top: 10px;
+}
+
+.search-modal h2 {
+  text-align: center;
+}
+
+p.alert-info, p.alert-warning {
+  margin: 0;
+}

@@ -1,0 +1,58 @@
+.menu h2 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.menu .checkbox {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.menu .edit_notification hr {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.support h2 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.support .media {
+  margin-top: 15px;
+  border-bottom: 1px solid #e6e6e6;
+  padding-bottom: 15px;
+}
+
+.support .media-heading {
+  font-weight: bold;
+  font-size: 14px;
+  color: #333333;
+}
+
+.support .media-body .answer {
+  font-size: 13px;
+  color: #333333;
+}
+
+.terms-of-service ul,
+.privacy-policy ul{
+  list-style: none;
+  margin: 15px 0 15px 0;
+  padding: 0;
+}
+
+.terms-of-service li,
+.privacy-policy li{
+  margin: 0;
+  padding: 0;
+}
+
+.maintenance h2 {
+  text-align: center;
+  margin-top: 10px;
+}
+
+.maintenance div {
+  text-align: center;
+}
