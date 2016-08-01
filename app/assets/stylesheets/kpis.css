@@ -2,7 +2,7 @@
 .search_num, .search_num_verification,
 .new_user,
 .sign_in,
-.table {
+.table-records {
   min-width: 310px;
   height: 400px;
   margin: 0 auto

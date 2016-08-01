@@ -1,0 +1,5 @@
+%table.table.table-bordered.table-condensed.table-responsive
+  - @lists.each do |list|
+    %tr
+      %td= list[0]
+      %td= list[1].html_safe

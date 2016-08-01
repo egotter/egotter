@@ -165,7 +165,7 @@
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8
             .pre-footer
-              %h2.share-me= t('dictionary.share_me')
+              %h2.h4.share-me= t('dictionary.share_me')
               = render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"})
               #share
               :javascript
@@ -177,7 +177,7 @@
                   showCount: true
                 });
               .official-account
-                %h2= t('dictionary.official_account')
+                %h2.h4= t('dictionary.official_account')
                 .follow-official-account
                   %a.twitter-follow-button{'data-show-count' => 'false', 'data-size' => 'large', href: 'https://twitter.com/ego_tter'}
                     Follow @ego_tter
@@ -192,7 +192,7 @@
                       }
                     }(document, 'script', 'twitter-wjs');
               .information
-                %h2{:style => "display: none;"}= t('dictionary.information')
+                %h2.h4{style: "display: none;"}= t('dictionary.information')
               :javascript
                 $(function () {
                   $.get('#{information_index_path}')

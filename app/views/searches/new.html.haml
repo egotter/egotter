@@ -1,0 +1,56 @@
+= render(partial: 'searches/conversion_tracking')
+
+.top-page
+  .total-search-count= t('.total_search_count', count: 371372)
+  / from 2011
+
+  = form_tag searches_path, method: :post do
+    .lead-sentence= raw t('dictionary.lead')
+    = render partial: 'searches/search_box_group'
+
+  = render(partial: 'searches/adsense')
+
+  - if user_signed_in?
+    = link_to t('.search_by', user: current_user.mention_name),  |
+      searches_path(screen_name: current_user.screen_name),      |
+      class: 'submit-btn2 btn btn-info btn-block', method: :post
+
+  .egotter-features
+    %h2.h4= t('.egotter_features')
+    .row
+      .col-xs-12.col-sm-6.col-md-6.col-lg-6
+        %h3.h5= t('.short_name.close')
+        .feature-description= t('.short_description.close')
+      .col-xs-12.col-sm-6.col-md-6.col-lg-6
+        %h3.h5= t('.short_name.removed')
+        .feature-description= t('.short_description.removed')
+      .col-xs-12.col-sm-6.col-md-6.col-lg-6
+        %h3.h5= t('.short_name.inactive')
+        .feature-description= t('.short_description.inactive')
+      .col-xs-12.col-sm-6.col-md-6.col-lg-6
+        %h3.h5= t('.short_name.one_sided')
+        .feature-description= t('.short_description.one_sided')
+      .col-xs-12.col-sm-6.col-md-6.col-lg-6
+        %h3.h5= t('.short_name.blocked')
+        .feature-description= t('.short_description.blocked')
+      .col-xs-12.col-sm-6.col-md-6.col-lg-6
+        %h3.h5= t('.short_name.protected')
+        .feature-description.last-child= t('.short_description.protected')
+
+  .keyword-timeline
+    %h2.h4{:style => "display: none;"}= t('.keyword_timeline')
+
+  :javascript
+    $(function () {
+      $.get('#{keyword_timeline_path}')
+          .done(function (res) {
+            if (res.status == 200) {
+              var container = $('.keyword-timeline');
+              container.find('h2').show();
+              container.append(res.html);
+            }
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
+          });
+    });

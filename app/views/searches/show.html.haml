@@ -1,0 +1,32 @@
+- title @title
+- set_meta_tags description: "#{@title} - #{@searched_tw_user.description}"
+
+%p.alert.alert-info{style: 'display: none;'}
+  = t('searches.waiting.updating_is_finished_msg', link: link_to(t('dictionary.this_link'), '#')).html_safe
+
+= render(partial: 'searches/profile_overview',
+  locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"})
+
+.search-result
+  %h2.h4= @title
+
+  = render(partial: 'searches/adsense')
+
+  .loading-image.text-center
+    = t('searches.waiting.searching', user: @searched_tw_user.name)
+    = image_tag '/ajax-loader.gif'
+
+:javascript
+  $(function () {
+    $.get("#{url_for search_result_path(id: @searched_tw_user.uid)}")
+        .done(function (res) {
+          $('.search-result').append(res.html);
+        })
+        .fail(function (xhr) {
+          console.log(xhr.responseText);
+          $('.search-result').append('<div>something error</div>');
+        })
+        .always(function () {
+          $('.loading-image').remove();
+        });
+  });

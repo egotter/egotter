@@ -3,6 +3,8 @@ class PageCachesController < ApplicationController
   include MenuItemBuilder
   include PageCachesHelper
 
+  layout false
+
   before_action :set_twitter_user, only: %i(create destroy)
 
   # POST /page_caches
