@@ -66,7 +66,7 @@ class KpisController < ApplicationController
     yAxis_categories.each.with_index do |day, y|
       session_ids = SearchLog.except_crawler.where(created_at: day.all_day).pluck(:session_id).uniq
       xAxis_categories.each do |x|
-        cells << [x, y, SearchLog.except_crawler.where(created_at: (day + x.days).all_day).where(session_id: session_ids).uniq.size]
+        cells << [x, y, SearchLog.except_crawler.where(created_at: (day + x.days).all_day).where(session_id: session_ids).pluck(:session_id).uniq.size]
       end
     end
 
