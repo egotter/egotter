@@ -1,17 +1,19 @@
 <div class="kpis search_num"><%= image_tag '/ajax-loader.gif' %></div>
 <div class="kpis search_num_verification"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="kpis search_rate"><%= image_tag '/ajax-loader.gif' %></div>
 
 <script>
   function fetch_search_num(url){
     $.get(url).done(function(res){
-      draw_search_num(res.search_num, 'Search num (search_logs)', '.search_num');
-      draw_search_num(res.search_num_verification, 'Search num verification (background_search_logs)', '.search_num_verification');
+      draw_search_num_stacked(res.search_num, 'Search num (search_logs)', '.search_num');
+      draw_search_num_stacked(res.search_num_verification, 'Search num verification (background_search_logs)', '.search_num_verification');
+      draw_search_num_stacked(res.search_rate, 'Search rate (background_search_logs)', '.search_rate');
     }).fail(function (xhr) {
       console.log(xhr.responseText)
     });
   }
 
-  function draw_search_num(series, title, selector){
+  function draw_search_num_stacked(series, title, selector){
     var conf = $.extend(true, {}, window.kpis.config_stacked);
     conf.title.text = title;
     conf.series = series;

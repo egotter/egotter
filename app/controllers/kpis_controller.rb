@@ -24,7 +24,8 @@ class KpisController < ApplicationController
       result = {search_num: fetch_search_num}
       if request.referer.end_with?(action_name)
         result.update(
-          search_num_verification: fetch_search_num_verification
+          search_num_verification: fetch_search_num_verification,
+          search_rate: fetch_search_rate
         )
       end
       return render json: result, status: 200
@@ -164,7 +165,7 @@ class KpisController < ApplicationController
 
   def fetch_dau_by_device_type
     result = SearchLog.find_by_sql([dau_by_device_type_sql, PAST_2_WEEKS])
-    result.map { |r| r.device_type.to_s }.uniq.sort.map do |legend|
+    result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
       {
         name: legend,
         data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
@@ -272,6 +273,44 @@ class KpisController < ApplicationController
       WHERE created_at BETWEEN :start AND :end
       GROUP BY date(created_at)
       ORDER BY date(created_at);
+    SQL
+  end
+
+  def fetch_search_rate
+    result = SearchLog.find_by_sql([search_rate_sql, PAST_2_WEEKS])
+    %i(top_rate result_rate direct_rate).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend).to_f] }
+      }
+    end
+  end
+
+  def search_rate_sql
+    <<-'SQL'.strip_heredoc
+      -- searh_rate
+      SELECT
+        a.date,
+        a.total,
+        a.top,
+        a.result,
+        a.direct,
+        if(a.total = 0, 0, a.top / a.total) top_rate,
+        if(a.total = 0, 0, a.result / a.total) result_rate,
+        if(a.total = 0, 0, a.direct / a.total) direct_rate
+      FROM (
+        SELECT
+          date(created_at) date,
+          count(DISTINCT session_id) total,
+          count(DISTINCT if(referer regexp '^http://(www\.)?egotter\.com/?$', session_id, NULL)) top,
+          count(DISTINCT if(referer regexp '^http://(www\.)?egotter\.com/searches', session_id, NULL)) result,
+          count(DISTINCT if(referer = '', session_id, NULL)) direct
+        FROM background_search_logs
+        WHERE
+          created_at BETWEEN :start AND :end
+          AND device_type NOT IN ('crawler', 'UNKNOWN')
+        GROUP BY date(created_at)
+      ) a;
     SQL
   end
 
