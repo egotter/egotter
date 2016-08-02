@@ -1,4 +1,4 @@
-<div class="rr" style="min-width: 310px; height: 600px; margin: 0 auto"></div>
+<div class="kpis rr" style="min-width: 310px; height: 600px; margin: 0 auto"></div>
 
 <script>
   function draw_rr() {
@@ -41,7 +41,7 @@
     conf.xAxis.categories = <%= raw @xAxis_categories.to_json %>;
     conf.yAxis.categories = <%= raw @yAxis_categories.to_json %>;
     conf.series[0].data = <%= raw @rr.to_json %>;
-    $('.rr').highcharts(conf);
+    $('.kpis.rr').highcharts(conf);
   }
 
   $(function () {

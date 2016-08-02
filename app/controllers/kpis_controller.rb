@@ -9,7 +9,7 @@ class KpisController < ApplicationController
       result = {dau: fetch_dau}
       if request.referer.end_with?(action_name)
         result.update(
-          dau_by_action: fetch_dau_by_action,
+          pv_by_action: fetch_pv_by_action,
           dau_by_new_action: fetch_dau_by_new_action,
           dau_by_device_type: fetch_dau_by_device_type,
           dau_by_referer: fetch_dau_by_referer
@@ -78,9 +78,10 @@ class KpisController < ApplicationController
   private
 
   NOW = Time.zone.now
+  PAST_2_WEEKS = {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}
 
   def fetch_dau
-    result = SearchLog.find_by_sql([dau_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([dau_sql, PAST_2_WEEKS])
     %i(total guest login).map do |legend|
       {
         name: legend,
@@ -106,9 +107,9 @@ class KpisController < ApplicationController
     SQL
   end
 
-  def fetch_dau_by_action
-    result = SearchLog.find_by_sql([dau_by_action_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
-    result.map { |r| r.action.to_s }.uniq.sort.map do |legend|
+  def fetch_pv_by_action
+    result = SearchLog.find_by_sql([pv_by_action_sql, PAST_2_WEEKS])
+    result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
       {
         name: legend,
         data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
@@ -117,9 +118,9 @@ class KpisController < ApplicationController
     end
   end
 
-  def dau_by_action_sql
+  def pv_by_action_sql
     <<-'SQL'.strip_heredoc
-      -- dau_by_action
+      -- pv_by_action
       SELECT
         date(created_at) date,
         action,
@@ -135,7 +136,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_dau_by_new_action
-    result = SearchLog.find_by_sql([dau_by_new_action_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([dau_by_new_action_sql, PAST_2_WEEKS])
     %i(total guest login).map do |legend|
       {
         name: legend,
@@ -162,7 +163,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_dau_by_device_type
-    result = SearchLog.find_by_sql([dau_by_device_type_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([dau_by_device_type_sql, PAST_2_WEEKS])
     result.map { |r| r.device_type.to_s }.uniq.sort.map do |legend|
       {
         name: legend,
@@ -188,7 +189,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_dau_by_referer
-    result = SearchLog.find_by_sql([dau_by_referer_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([dau_by_referer_sql, PAST_2_WEEKS])
     result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
       {
         name: legend,
@@ -224,7 +225,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_search_num
-    result = SearchLog.find_by_sql([search_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([search_num_sql, PAST_2_WEEKS])
     %i(guest login).map do |legend|
       {
         name: legend,
@@ -251,7 +252,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_search_num_verification
-    result = SearchLog.find_by_sql([search_num_verification_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([search_num_verification_sql, PAST_2_WEEKS])
     %i(guest login).map do |legend|
       {
         name: legend,
@@ -285,7 +286,7 @@ class KpisController < ApplicationController
       GROUP BY date(created_at)
       ORDER BY date(created_at);
     SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([sql, PAST_2_WEEKS])
 
     %i(total).map do |legend|
       {
@@ -308,7 +309,7 @@ class KpisController < ApplicationController
       GROUP BY date(created_at)
       ORDER BY date(created_at);
     SQL
-    result = SearchLog.find_by_sql([sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = SearchLog.find_by_sql([sql, PAST_2_WEEKS])
 
     %i(NewUser ReturningUser).map do |legend|
       {
@@ -319,7 +320,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_twitter_users_num
-    result = TwitterUser.find_by_sql([twitter_users_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = TwitterUser.find_by_sql([twitter_users_num_sql, PAST_2_WEEKS])
     %i(guest login).map do |legend|
       {
         name: legend,
@@ -344,7 +345,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_twitter_users_uid_num
-    result = TwitterUser.find_by_sql([twitter_users_uid_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = TwitterUser.find_by_sql([twitter_users_uid_num_sql, PAST_2_WEEKS])
     %i(total unique_uid).map do |legend|
       {
         name: legend,
@@ -368,7 +369,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_friends_num
-    result = Friend.find_by_sql([friends_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = Friend.find_by_sql([friends_num_sql, PAST_2_WEEKS])
     %i(total).map do |legend|
       {
         name: legend,
@@ -391,7 +392,7 @@ class KpisController < ApplicationController
   end
 
   def fetch_followers_num
-    result = Follower.find_by_sql([followers_num_sql, {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}])
+    result = Follower.find_by_sql([followers_num_sql, PAST_2_WEEKS])
     %i(total).map do |legend|
       {
         name: legend,
