@@ -1,17 +1,31 @@
-<div class="kpis dau"><%= image_tag '/ajax-loader.gif' %></div>
-<div class="kpis pv_by_action"><%= image_tag '/ajax-loader.gif' %></div>
-<div class="kpis dau_by_new_action"><%= image_tag '/ajax-loader.gif' %></div>
-<div class="kpis dau_by_device_type"><%= image_tag '/ajax-loader.gif' %></div>
-<div class="kpis dau_by_referer"><%= image_tag '/ajax-loader.gif' %></div>
+<div><%= link_to('KPIs', kpis_path) %></div>
+
+<div class="row">
+  <div class="kpis dau                 col-xs-12"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis dau_per_action      col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis pv_per_action       col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis dau_by_new_action   col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis pv_by_new_action    col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis dau_per_device_type col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis pv_per_device_type  col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis dau_per_referer     col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis pv_per_referer      col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+</div>
+
+<div><%= link_to('KPIs', kpis_path) %></div>
 
 <script>
   function fetch_dau(url){
     $.get(url).done(function(res){
       draw_dau(res.dau, 'DAU (search_logs)', '.dau');
-      draw_dau_stacked(res.pv_by_action, 'PV by action (search_logs)', '.pv_by_action');
+      draw_dau_stacked(res.dau_per_action, 'DAU per action (search_logs)', '.dau_per_action');
+      draw_dau_stacked(res.pv_per_action, 'PV per action (search_logs)', '.pv_per_action');
       draw_dau(res.dau_by_new_action, 'DAU by new action (search_logs)', '.dau_by_new_action');
-      draw_dau(res.dau_by_device_type, 'DAU by device_type (search_logs)', '.dau_by_device_type');
-      draw_dau(res.dau_by_referer, 'DAU by referer (search_logs)', '.dau_by_referer');
+      draw_dau(res.pv_by_new_action, 'PV by new action (search_logs)', '.pv_by_new_action');
+      draw_dau(res.dau_per_device_type, 'DAU per device_type (search_logs)', '.dau_per_device_type');
+      draw_dau(res.pv_per_device_type, 'PV per device_type (search_logs)', '.pv_per_device_type');
+      draw_dau(res.dau_per_referer, 'DAU per referer (search_logs)', '.dau_per_referer');
+      draw_dau(res.pv_per_referer, 'PV per referer (search_logs)', '.pv_per_referer');
     }).fail(function (xhr) {
       console.log(xhr.responseText)
     });

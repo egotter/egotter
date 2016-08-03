@@ -1,16 +1,33 @@
-<div class="kpis search_num"><%= image_tag '/ajax-loader.gif' %></div>
-<div class="kpis search_num_verification"><%= image_tag '/ajax-loader.gif' %></div>
-<div class="kpis search_rate"><%= image_tag '/ajax-loader.gif' %></div>
+<div><%= link_to('KPIs', kpis_path) %></div>
+
+<div class="row">
+  <div class="kpis search_num              col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis search_num_verification col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis search_num_per_action   col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis search_rate_per_action  col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis search_num_by_google    col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+</div>
+
+<div><%= link_to('KPIs', kpis_path) %></div>
 
 <script>
   function fetch_search_num(url){
     $.get(url).done(function(res){
       draw_search_num_stacked(res.search_num, 'Search num (search_logs)', '.search_num');
       draw_search_num_stacked(res.search_num_verification, 'Search num verification (background_search_logs)', '.search_num_verification');
-      draw_search_num_stacked(res.search_rate, 'Search rate (background_search_logs)', '.search_rate');
+      draw_search_num_stacked(res.search_num_per_action, 'Search num per action (background_search_logs)', '.search_num_per_action');
+      draw_search_num_stacked(res.search_rate_per_action, 'Search rate per action (background_search_logs)', '.search_rate_per_action');
+      draw_search_num_stacked(res.search_num_by_google, 'Search num by google (search_logs, background_search_logs)', '.search_num_by_google');
     }).fail(function (xhr) {
       console.log(xhr.responseText)
     });
+  }
+
+  function draw_search_num(series, title, selector){
+    var conf = $.extend(true, {}, window.kpis.config);
+    conf.title.text = title;
+    conf.series = series;
+    $(selector).empty().highcharts(conf);
   }
 
   function draw_search_num_stacked(series, title, selector){

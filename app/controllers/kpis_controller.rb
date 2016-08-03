@@ -9,10 +9,14 @@ class KpisController < ApplicationController
       result = {dau: fetch_dau}
       if request.referer.end_with?(action_name)
         result.update(
-          pv_by_action: fetch_pv_by_action,
+          dau_per_action: fetch_dau_per_action,
+          pv_per_action: fetch_pv_per_action,
           dau_by_new_action: fetch_dau_by_new_action,
-          dau_by_device_type: fetch_dau_by_device_type,
-          dau_by_referer: fetch_dau_by_referer
+          pv_by_new_action: fetch_pv_by_new_action,
+          dau_per_device_type: fetch_dau_per_device_type,
+          pv_per_device_type: fetch_pv_per_device_type,
+          dau_per_referer: fetch_dau_per_referer,
+          pv_per_referer: fetch_pv_per_referer,
         )
       end
       return render json: result, status: 200
@@ -25,7 +29,9 @@ class KpisController < ApplicationController
       if request.referer.end_with?(action_name)
         result.update(
           search_num_verification: fetch_search_num_verification,
-          search_rate: fetch_search_rate
+          search_num_per_action: fetch_search_num_per_action,
+          search_rate_per_action: fetch_search_rate_per_action,
+          search_num_by_google: fetch_search_num_by_google
         )
       end
       return render json: result, status: 200
@@ -108,8 +114,8 @@ class KpisController < ApplicationController
     SQL
   end
 
-  def fetch_pv_by_action
-    result = SearchLog.find_by_sql([pv_by_action_sql, PAST_2_WEEKS])
+  def fetch_dau_per_action
+    result = SearchLog.find_by_sql([dau_per_action_sql, PAST_2_WEEKS])
     result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
       {
         name: legend,
@@ -119,13 +125,40 @@ class KpisController < ApplicationController
     end
   end
 
-  def pv_by_action_sql
+  def dau_per_action_sql
     <<-'SQL'.strip_heredoc
-      -- pv_by_action
+      -- dau_per_action
       SELECT
         date(created_at) date,
         action,
-        count(*)         total
+        count(DISTINCT session_id) total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at), action
+      ORDER BY date(created_at), action;
+    SQL
+  end
+
+  def fetch_pv_per_action
+    result = SearchLog.find_by_sql([pv_per_action_sql, PAST_2_WEEKS])
+    result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
+      {
+        name: legend,
+        data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+        visible: !legend.in?(%w(new create show))
+      }
+    end
+  end
+
+  def pv_per_action_sql
+    <<-'SQL'.strip_heredoc
+      -- pv_per_action
+      SELECT
+        date(created_at) date,
+        action,
+        count(*) total
       FROM search_logs
       WHERE
         created_at BETWEEN :start AND :end
@@ -163,8 +196,33 @@ class KpisController < ApplicationController
     SQL
   end
 
-  def fetch_dau_by_device_type
-    result = SearchLog.find_by_sql([dau_by_device_type_sql, PAST_2_WEEKS])
+  def fetch_pv_by_new_action
+    result = SearchLog.find_by_sql([pv_by_new_action_sql, PAST_2_WEEKS])
+    %i(total).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
+      }
+    end
+  end
+
+  def pv_by_new_action_sql
+    <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        count(*) total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+        AND action = 'new'
+      GROUP BY date(created_at)
+      ORDER BY date(created_at);
+    SQL
+  end
+
+  def fetch_dau_per_device_type
+    result = SearchLog.find_by_sql([dau_per_device_type_sql, PAST_2_WEEKS])
     result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
       {
         name: legend,
@@ -173,13 +231,13 @@ class KpisController < ApplicationController
     end
   end
 
-  def dau_by_device_type_sql
+  def dau_per_device_type_sql
     <<-'SQL'.strip_heredoc
-      -- dau_by_device_type
+      -- dau_per_device_type
       SELECT
         date(created_at) date,
         device_type,
-        count(*)         total
+        count(DISTINCT session_id) total
       FROM search_logs
       WHERE
         created_at BETWEEN :start AND :end
@@ -189,20 +247,46 @@ class KpisController < ApplicationController
     SQL
   end
 
-  def fetch_dau_by_referer
-    result = SearchLog.find_by_sql([dau_by_referer_sql, PAST_2_WEEKS])
-    result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+  def fetch_pv_per_device_type
+    result = SearchLog.find_by_sql([pv_per_device_type_sql, PAST_2_WEEKS])
+    result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
       {
         name: legend,
-        data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
-        visible: !legend.in?(%w(egotter others))
+        data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
       }
     end
   end
 
-  def dau_by_referer_sql
+  def pv_per_device_type_sql
     <<-'SQL'.strip_heredoc
-      -- dau_by_referer
+      -- pv_per_device_type
+      SELECT
+        date(created_at) date,
+        device_type,
+        count(*) total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at), device_type
+      ORDER BY date(created_at), device_type;
+    SQL
+  end
+
+  def fetch_dau_per_referer
+    result = SearchLog.find_by_sql([dau_per_referer_sql, PAST_2_WEEKS])
+    result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+      {
+        name: legend,
+        data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+        visible: !legend.in?(%w(others))
+      }
+    end
+  end
+
+  def dau_per_referer_sql
+    <<-'SQL'.strip_heredoc
+      -- dau_per_referer
       SELECT
         date(created_at) date,
         case
@@ -215,7 +299,43 @@ class KpisController < ApplicationController
           when referer regexp '^http://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
           else 'others'
         end channel,
-        count(*)         total
+        count(DISTINCT session_id) total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at), channel
+      ORDER BY date(created_at), channel;
+    SQL
+  end
+
+  def fetch_pv_per_referer
+    result = SearchLog.find_by_sql([pv_per_referer_sql, PAST_2_WEEKS])
+    result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+      {
+        name: legend,
+        data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+        visible: !legend.in?(%w(others))
+      }
+    end
+  end
+
+  def pv_per_referer_sql
+    <<-'SQL'.strip_heredoc
+      -- pv_per_referer
+      SELECT
+        date(created_at) date,
+        case
+          when referer regexp '^http://(www\.)?egotter\.com' then 'egotter'
+          when referer regexp '^http://(www\.)?google\.com' then 'google.com'
+          when referer regexp '^http://(www\.)?google\.co\.jp' then 'google.co.jp'
+          when referer regexp '^http://(www\.)?google\.co\.in' then 'google.co.in'
+          when referer regexp '^http://search\.yahoo\.co\.jp' then 'search.yahoo.co.jp'
+          when referer regexp '^http://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
+          when referer regexp '^http://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
+          else 'others'
+        end channel,
+        count(*) total
       FROM search_logs
       WHERE
         created_at BETWEEN :start AND :end
@@ -276,9 +396,9 @@ class KpisController < ApplicationController
     SQL
   end
 
-  def fetch_search_rate
-    result = SearchLog.find_by_sql([search_rate_sql, PAST_2_WEEKS])
-    %i(top_rate result_rate direct_rate).map do |legend|
+  def fetch_search_num_per_action
+    result = SearchLog.find_by_sql([search_num_per_action_sql, PAST_2_WEEKS])
+    %i(top result direct).map do |legend|
       {
         name: legend,
         data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend).to_f] }
@@ -286,18 +406,41 @@ class KpisController < ApplicationController
     end
   end
 
-  def search_rate_sql
+  def search_num_per_action_sql
     <<-'SQL'.strip_heredoc
-      -- searh_rate
+      -- searh_num_per_action
+      SELECT
+        date(created_at) date,
+        count(DISTINCT session_id) total,
+        count(DISTINCT if(referer regexp '^http://(www\.)?egotter\.com/?$', session_id, NULL)) top,
+        count(DISTINCT if(referer regexp '^http://(www\.)?egotter\.com/searches', session_id, NULL)) result,
+        count(DISTINCT if(referer = '', session_id, NULL)) direct
+      FROM background_search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at)
+    SQL
+  end
+
+  def fetch_search_rate_per_action
+    result = SearchLog.find_by_sql([search_rate_per_action_sql, PAST_2_WEEKS])
+    %i(top result direct).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend).to_f] }
+      }
+    end
+  end
+
+  def search_rate_per_action_sql
+    <<-'SQL'.strip_heredoc
+      -- searh_rate_per_action
       SELECT
         a.date,
-        a.total,
-        a.top,
-        a.result,
-        a.direct,
-        if(a.total = 0, 0, a.top / a.total) top_rate,
-        if(a.total = 0, 0, a.result / a.total) result_rate,
-        if(a.total = 0, 0, a.direct / a.total) direct_rate
+        if(a.total = 0, 0, a.top / a.total) top,
+        if(a.total = 0, 0, a.result / a.total) result,
+        if(a.total = 0, 0, a.direct / a.total) direct
       FROM (
         SELECT
           date(created_at) date,
@@ -311,6 +454,43 @@ class KpisController < ApplicationController
           AND device_type NOT IN ('crawler', 'UNKNOWN')
         GROUP BY date(created_at)
       ) a;
+    SQL
+  end
+
+  def fetch_search_num_by_google
+    result = SearchLog.find_by_sql([search_num_by_google_sql, PAST_2_WEEKS])
+    %i(not_search search).map do |legend|
+      {
+        name: legend,
+        data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend).to_f] }
+      }
+    end
+  end
+
+  def search_num_by_google_sql
+    <<-'SQL'.strip_heredoc
+      -- search_num_by_google
+      SELECT
+        a.date,
+        count(if(b.session_id IS NULL, 1, NULL)) not_search,
+        count(if(b.session_id IS NOT NULL, 1, NULL)) search
+      FROM (
+        SELECT date(created_at) date, session_id
+        FROM search_logs
+        WHERE
+          created_at BETWEEN :start AND :end
+          AND device_type NOT IN ('crawler', 'UNKNOWN')
+          AND action = 'new'
+          AND referer regexp '^https?://(www\.)?google(\.com|\.co\.jp)'
+      ) a LEFT OUTER JOIN (
+        SELECT date(created_at) date, session_id
+        FROM background_search_logs
+        WHERE
+          created_at BETWEEN :start AND :end
+          AND device_type NOT IN ('crawler', 'UNKNOWN')
+          AND referer regexp '^http://(www\.)?egotter\.com/?$'
+      ) b ON (a.date = b.date AND a.session_id = b.session_id)
+      GROUP BY a.date
     SQL
   end
 
