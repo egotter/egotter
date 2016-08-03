@@ -71,6 +71,7 @@ group :development, :test do
   gem 'hirb-unicode'
   gem 'awesome_print'
   gem 'quiet_assets'
+  gem 'puma'
 end
 
 group :development do
