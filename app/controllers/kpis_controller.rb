@@ -6,19 +6,12 @@ class KpisController < ApplicationController
 
   def dau
     if request.xhr?
-      result = {dau: fetch_dau}
-      if request.referer.end_with?(action_name)
-        result.update(
-          dau_per_action: fetch_dau_per_action,
-          pv_per_action: fetch_pv_per_action,
-          dau_by_new_action: fetch_dau_by_new_action,
-          pv_by_new_action: fetch_pv_by_new_action,
-          dau_per_device_type: fetch_dau_per_device_type,
-          pv_per_device_type: fetch_pv_per_device_type,
-          dau_per_referer: fetch_dau_per_referer,
-          pv_per_referer: fetch_pv_per_referer,
-        )
-      end
+      result =
+        if params[:type].nil?
+          {dau: fetch_dau}
+        else
+          {params[:type] => send("fetch_#{params[:type]}")}
+        end
       return render json: result, status: 200
     end
   end

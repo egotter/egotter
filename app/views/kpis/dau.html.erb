@@ -16,18 +16,33 @@
 
 <script>
   function fetch_dau(url){
-    $.get(url).done(function(res){
-      draw_dau(res.dau, 'DAU (search_logs)', '.dau');
-      draw_dau_stacked(res.dau_per_action, 'DAU per action (search_logs)', '.dau_per_action');
-      draw_dau_stacked(res.pv_per_action, 'PV per action (search_logs)', '.pv_per_action');
-      draw_dau(res.dau_by_new_action, 'DAU by new action (search_logs)', '.dau_by_new_action');
-      draw_dau(res.pv_by_new_action, 'PV by new action (search_logs)', '.pv_by_new_action');
-      draw_dau(res.dau_per_device_type, 'DAU per device_type (search_logs)', '.dau_per_device_type');
-      draw_dau(res.pv_per_device_type, 'PV per device_type (search_logs)', '.pv_per_device_type');
-      draw_dau(res.dau_per_referer, 'DAU per referer (search_logs)', '.dau_per_referer');
-      draw_dau(res.pv_per_referer, 'PV per referer (search_logs)', '.pv_per_referer');
-    }).fail(function (xhr) {
-      console.log(xhr.responseText)
+    var types = [
+      'dau',
+      'dau_by_new_action',
+      'pv_by_new_action',
+      'dau_per_device_type',
+      'pv_per_device_type',
+      'dau_per_referer',
+      'pv_per_referer'
+    ];
+    $.each(types, function (i, elem) {
+      $.get(url, {type: elem}).done(function(res){
+        draw_dau(res[elem], elem, '.' + elem);
+      }).fail(function (xhr) {
+        console.log(xhr.responseText)
+      });
+    });
+
+    types = [
+      'dau_per_action',
+      'pv_per_action'
+    ];
+    $.each(types, function (i, elem) {
+      $.get(url, {type: elem}).done(function(res){
+        draw_dau_stacked(res[elem], elem, '.' + elem);
+      }).fail(function (xhr) {
+        console.log(xhr.responseText)
+      });
     });
   }
 
