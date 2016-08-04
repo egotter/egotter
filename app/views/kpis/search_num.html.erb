@@ -12,14 +12,19 @@
 
 <script>
   function fetch_search_num(url){
-    $.get(url).done(function(res){
-      draw_search_num_stacked(res.search_num, 'Search num (search_logs)', '.search_num');
-      draw_search_num_stacked(res.search_num_verification, 'Search num verification (background_search_logs)', '.search_num_verification');
-      draw_search_num_stacked(res.search_num_per_action, 'Search num per action (background_search_logs)', '.search_num_per_action');
-      draw_search_num_stacked(res.search_rate_per_action, 'Search rate per action (background_search_logs)', '.search_rate_per_action');
-      draw_search_num_stacked(res.search_num_by_google, 'Search num by google (search_logs, background_search_logs)', '.search_num_by_google');
-    }).fail(function (xhr) {
-      console.log(xhr.responseText)
+    var types = [
+      'search_num',
+      'search_num_verification',
+      'search_num_per_action',
+      'search_rate_per_action',
+      'search_num_by_google'
+    ];
+    $.each(types, function (i, elem) {
+      $.get(url, {type: elem}).done(function(res){
+        draw_search_num_stacked(res[elem], elem, '.' + elem);
+      }).fail(function (xhr) {
+        console.log(xhr.responseText)
+      });
     });
   }
 

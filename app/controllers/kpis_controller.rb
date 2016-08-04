@@ -18,15 +18,12 @@ class KpisController < ApplicationController
 
   def search_num
     if request.xhr?
-      result = {search_num: fetch_search_num}
-      if request.referer.end_with?(action_name)
-        result.update(
-          search_num_verification: fetch_search_num_verification,
-          search_num_per_action: fetch_search_num_per_action,
-          search_rate_per_action: fetch_search_rate_per_action,
-          search_num_by_google: fetch_search_num_by_google
-        )
-      end
+      result =
+        if params[:type].nil?
+          {search_num: fetch_search_num}
+        else
+          {params[:type] => send("fetch_#{params[:type]}")}
+        end
       return render json: result, status: 200
     end
   end
