@@ -57,19 +57,36 @@ class KpisController < ApplicationController
   end
 
   def rr
+    return render unless request.xhr?
+
+    id_type = params[:id_type] && %w(user_id uid).include?(params[:id_type]) ? params[:id_type] : :session_id
     yAxis_categories = 7.times.map { |i| (NOW - i.days) }
-    xAxis_categories = (0..9)
-    cells = []
+    xAxis_categories = (0..9).to_a
+    cells = {}
     yAxis_categories.each.with_index do |day, y|
-      session_ids = SearchLog.except_crawler.where(created_at: day.all_day).pluck(:session_id).uniq
+      ids = SearchLog.except_crawler.where(created_at: day.all_day).pluck(id_type).uniq
       xAxis_categories.each do |x|
-        cells << [x, y, SearchLog.except_crawler.where(created_at: (day + x.days).all_day).where(session_id: session_ids).pluck(:session_id).uniq.size]
+        cells[[x, y]] = SearchLog.except_crawler.where(created_at: (day + x.days).all_day).where(id_type => ids).pluck(id_type).uniq.size
       end
     end
 
-    @rr = cells
-    @yAxis_categories = yAxis_categories.map{|d| d.to_date.strftime('%m/%d') }
-    @xAxis_categories = xAxis_categories.to_a
+    format = params[:format] == 'percentage' ? 'percentage' : 'number'
+    if format == 'percentage'
+      tmp = {}
+      yAxis_categories.size.times.to_a.product(xAxis_categories).each do |y, x|
+        value = cells[[0, y]].to_i == 0 ? 0.0 : 100.0 * cells[[x, y]] / cells[[0, y]]
+        tmp[[x, y]] = value.round(1)
+      end
+      cells = tmp
+    end
+
+    result = {
+      title: "RR(#{id_type}, #{format})",
+      xAxis_categories: xAxis_categories.dup,
+      yAxis_categories: yAxis_categories.map { |d| d.to_date.strftime('%m/%d') },
+      cells: yAxis_categories.size.times.to_a.product(xAxis_categories).map { |y, x| [x, y, cells[[x, y]]] }
+    }
+    render json: result, status: 200
   end
 
   private

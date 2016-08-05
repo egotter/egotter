@@ -1,50 +1,93 @@
-<div class="kpis rr" style="min-width: 310px; height: 600px; margin: 0 auto"></div>
+<div class="btn-group" data-toggle="buttons">
+  <label class="btn btn-default active">
+    <input type="radio" name="id_type" value="session_id" checked> session_id
+  </label>
+  <label class="btn btn-default">
+    <input type="radio" name="id_type" value="user_id"> user_id
+  </label>
+  <label class="btn btn-default">
+    <input type="radio" name="id_type" value="uid"> uid
+  </label>
+</div>
+
+<div class="loading"><%= image_tag '/ajax-loader.gif' %></div>
+<div class="kpis rr number" style="height: 600px;"></div>
+<div class="kpis rr percentage" style="height: 600px;"></div>
 
 <script>
-  function draw_rr() {
-    var config = {
-      credits: {
-        enabled: false
-      },
-      chart: {
-        type: 'heatmap',
-        plotBorderWidth: 1
-      },
-      title: {
-        text: 'title'
-      },
-      xAxis: {
-        categories: null
-      },
-      yAxis: {
-        title: null,
-        categories: null
-      },
-      colorAxis: {
-        min: 0,
-        minColor: '#FFFFFF',
-        maxColor: "#7cb5ec" // Highcharts.getOptions().colors[0]
-      },
-      series: [{
-        name: 'total',
-        borderWidth: 1,
-        data: null,
-        dataLabels: {
-          enabled: true,
-          color: '#000000'
-        }
-      }]
-    };
+  var config = {
+    credits: {
+      enabled: false
+    },
+    chart: {
+      type: 'heatmap',
+      plotBorderWidth: 1
+    },
+    title: {
+      text: 'title'
+    },
+    xAxis: {
+      categories: null
+    },
+    yAxis: {
+      title: null,
+      categories: null
+    },
+    colorAxis: {
+      min: 0,
+      minColor: '#FFFFFF',
+      maxColor: "#7cb5ec" // Highcharts.getOptions().colors[0]
+    },
+    series: [{
+      name: 'total',
+      borderWidth: 1,
+      data: null,
+      dataLabels: {
+        enabled: true,
+        color: '#000000'
+      }
+    }]
+  };
 
+  var loading = $('.loading');
+  var chart = {
+    number: $('.kpis.rr.number'),
+    percentage: $('.kpis.rr.percentage')
+  };
+
+  function draw_rr(xAxis_categories, yAxis_categories, cells, title, format) {
     var conf = $.extend(true, {}, config);
-    conf.title.text = 'RR';
-    conf.xAxis.categories = <%= raw @xAxis_categories.to_json %>;
-    conf.yAxis.categories = <%= raw @yAxis_categories.to_json %>;
-    conf.series[0].data = <%= raw @rr.to_json %>;
-    $('.kpis.rr').highcharts(conf);
+    conf.title.text = title;
+    conf.xAxis.categories = xAxis_categories;
+    conf.yAxis.categories = yAxis_categories;
+    conf.series[0].data = cells;
+    loading.hide();
+    chart[format].empty().highcharts(conf);
   }
 
+  function fetch_rr(format) {
+    var url = '<%= kpis_rr_path %>';
+    var params = {
+      id_type: $('input[name=id_type]:checked').val(),
+      format: format
+    };
+    $.get(url, params).done(function (res) {
+      draw_rr(res.xAxis_categories, res.yAxis_categories, res.cells, res.title, format)
+    }).fail(function (xhr) {
+      console.log(xhr.responseText);
+    });
+  }
+
+  $('input[name=id_type]:radio').on('change', function () {
+    loading.show();
+    $.each(['number', 'percentage'], function (i, format) {
+      chart[format].empty();
+      fetch_rr(format);
+    });
+  });
+
   $(function () {
-    draw_rr();
+    fetch_rr('number');
+    fetch_rr('percentage');
   });
 </script>
