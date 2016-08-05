@@ -1,15 +1,23 @@
-<div>
-  <%= link_to('all', background_search_logs_path) %>&nbsp;|&nbsp;
-  <%= link_to('success', background_search_logs_path(status: 1)) %>&nbsp;|&nbsp;
-  <%= link_to('failed', background_search_logs_path(status: 0)) %>
+<div class="btn-group" data-toggle="buttons">
+  <label class="btn btn-default <%= @status == '' ? 'active' : '' %>">
+    <input type="radio" name="status" value=""> all
+  </label>
+  <label class="btn btn-default <%= @status == 'true' ? 'active' : '' %>">
+    <input type="radio" name="status" value="true"> success
+  </label>
+  <label class="btn btn-default <%= @status == 'false' ? 'active' : '' %>">
+    <input type="radio" name="status" value="false"> failed
+  </label>
 </div>
 
+<div style="overflow-x: scroll;">
 <table class="table table-bordered table-condensed table-responsive">
   <tr>
     <th>id</th>
     <th>session_id</th>
     <th>user_id</th>
     <th>screen_name</th>
+    <th>status</th>
     <th>reason</th>
     <th>message</th>
     <th>call_count</th>
@@ -26,6 +34,7 @@
       <td><%= log.session_id.present? ? log.session_id.slice(0, 20) : '' %></td>
       <td><%= log.user_id %></td>
       <td><%= log.screen_name %></td>
+      <td><%= log.status %></td>
       <td><%= log.reason %></td>
       <td><%= log.message %></td>
       <td><%= log.call_count %></td>
@@ -37,3 +46,21 @@
     </tr>
   <% end %>
 </table>
+</div>
+
+<script>
+  $('input[name=status]:radio').on('change', function () {
+    var url = '<%= background_search_logs_path %>';
+    var status = $('input[name=status]:checked').val();
+    var params = '';
+    if (status) {
+      params = '?' + $.param({status: status});
+    }
+    window.location.href = url + params;
+  });
+
+  $(function () {
+    $('input[name=status]').val(['<%= @status %>']);
+    $('input[name=status]:checked').parent('label').trigger('click');
+  });
+</script>

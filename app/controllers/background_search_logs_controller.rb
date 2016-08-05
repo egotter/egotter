@@ -5,12 +5,13 @@ class BackgroundSearchLogsController < ApplicationController
 
   def index
     status =
-      if params.has_key?(:status)
-        params[:status] == '1' ? 1 : 0
+      if params.has_key?(:status) && params[:status] != ''
+        params[:status] == 'true'
       else
-        [0, 1]
+        [true, false]
       end
     @logs = BackgroundSearchLog.where(status: status).order(created_at: :desc).limit(50)
+    @status = status == [true, false] ? '' : status.to_s
   end
 
   # GET /background_search_logs/:id
