@@ -8,7 +8,7 @@ class TwitterUsersDecorator < Draper::CollectionDecorator
   end
 
   def friendships
-    @_friendships =
+    @_friendships ||=
       if h.user_signed_in? && h.current_user.twitter_user?
         h.current_user.twitter_user.friend_uids
       else
