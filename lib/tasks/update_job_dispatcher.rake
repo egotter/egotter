@@ -50,12 +50,12 @@ namespace :update_job_dispatcher do
         next
       end
 
-      if redis.zrank(TooManyFriendsUidList.key, uid.to_s).present?
+      if redis.zrank(Util::TooManyFriendsUidList.key, uid.to_s).present?
         already_tmf_count += 1
         next
       end
 
-      if redis.zrank(UnauthorizedUidList.key, uid.to_s).present?
+      if redis.zrank(Util::UnauthorizedUidList.key, uid.to_s).present?
         already_unauthorized_count += 1
         next
       end
@@ -111,8 +111,8 @@ namespace :update_job_dispatcher do
       current: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :short),
       followers: uids.size,
       'zcard(added)' => redis.zcard(added_key),
-      'zcard(too many friends)' => redis.zcard(TooManyFriendsUidList.key),
-      'zcard(unauthorized)' => redis.zcard(UnauthorizedUidList.key),
+      'zcard(too many friends)' => redis.zcard(Util::TooManyFriendsUidList.key),
+      'zcard(unauthorized)' => redis.zcard(Util::UnauthorizedUidList.key),
       'zrem(added)' => zrem_count,
       min_enqueue_limit: min_enqueue_limit,
       max_enqueue_limit: max_enqueue_limit,
@@ -127,7 +127,7 @@ namespace :update_job_dispatcher do
       'unauthorized(friend)' => unauthorized_count,
       'suspended(friend)' => suspended_count,
       'too_many_friends(friend)' => too_many_friends_count,
-      searched_uids: redis.zcard(SearchedUidList.key)
+      searched_uids: redis.zcard(Util::SearchedUidList.key)
     }
     redis.set(Redis.debug_info_key, debug_info.to_json)
 

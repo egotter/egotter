@@ -129,7 +129,7 @@ class SearchesController < ApplicationController
     end
 
     user_id = current_user_id
-    unless ValidUidList.new(redis).exists?(uid, user_id)
+    unless Util::SearchedUidList.new(redis).exists?(uid, user_id)
       return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
 

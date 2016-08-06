@@ -22,7 +22,7 @@ class BackgroundSearchLogsController < ApplicationController
     end
 
     user_id = current_user_id
-    unless ValidUidList.new(redis).exists?(uid, user_id)
+    unless Util::SearchedUidList.new(redis).exists?(uid, user_id)
       return render json: {status: 400, reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
     end
 

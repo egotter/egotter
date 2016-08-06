@@ -39,7 +39,6 @@ module SearchesHelper
   def add_background_search_worker_if_needed(uid, screen_name, user_info)
     user_id = current_user_id
 
-    ValidUidList.new(redis).add(uid, user_id)
     ValidTwitterUserSet.new(redis).set(
       uid,
       user_id,
@@ -51,7 +50,7 @@ module SearchesHelper
       }
     )
 
-    searched_uid_list = SearchedUidList.new(redis)
+    searched_uid_list = Util::SearchedUidList.new(redis)
     unless searched_uid_list.exists?(uid, user_id)
       values = {
         session_id: fingerprint,

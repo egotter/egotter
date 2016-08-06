@@ -13,8 +13,8 @@ namespace :zadd_well_known_errors do
     end
 
     target_uids = follower_uids.select do |uid|
-      redis.zrank(TooManyFriendsUidList.key, uid.to_s).blank? &&
-        redis.zrank(UnauthorizedUidList.key, uid.to_s).blank?
+      redis.zrank(Util::TooManyFriendsUidList.key, uid.to_s).blank? &&
+        redis.zrank(Util::UnauthorizedUidList.key, uid.to_s).blank?
     end
 
     zadd_count = 0
@@ -25,10 +25,10 @@ namespace :zadd_well_known_errors do
         tu = TwitterUser.build_without_relations(client, user.id, -1)
 
         if tu.too_many_friends?
-          redis.zadd(TooManyFriendsUidList.key, now_i, tu.uid.to_s)
+          redis.zadd(Util::TooManyFriendsUidList.key, now_i, tu.uid.to_s)
           zadd_count += 1
         elsif tu.unauthorized_job?
-          redis.zadd(UnauthorizedUidList.key, now_i, tu.uid.to_s)
+          redis.zadd(Util::UnauthorizedUidList.key, now_i, tu.uid.to_s)
           zadd_count += 1
         end
       end
