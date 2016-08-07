@@ -7,11 +7,11 @@ FactoryGirl.define do
     egotter_context 'test'
 
     after(:build) do |tu|
-      tu.friends = [build(:friend), build(:friend)]
-      tu.followers = [build(:follower), build(:follower)]
-      tu.statuses = [build(:status), build(:status)]
-      tu.mentions = [build(:mention), build(:mention)]
-      tu.favorites = [build(:favorite), build(:favorite)]
+      tu.friends = 2.times.map { build(:friend) }
+      tu.followers = 2.times.map { build(:follower) }
+      tu.statuses = 2.times.map { build(:status) }
+      tu.mentions = 2.times.map { build(:mention) }
+      tu.favorites = 2.times.map { build(:favorite) }
 
       json = Hashie::Mash.new(JSON.parse(tu.user_info))
       json.friends_count = tu.friends.size

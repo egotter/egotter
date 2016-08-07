@@ -19,11 +19,13 @@ RSpec.describe User, type: :model do
   end
 
   describe '.api_client' do
-    it 'returns ExTwitter' do
+    it 'returns Twitter::REST::Client' do
       client = user.api_client
-      expect(client).to be_a_kind_of(ExTwitter)
-      expect(client.uid).to eq(user.uid)
+      expect(client).to be_a_kind_of(Twitter::REST::Client)
+      expect(client.uid.to_s).to eq(user.uid)
       expect(client.screen_name).to eq(user.screen_name)
+      expect(client.access_token).to eq(user.token)
+      expect(client.access_token_secret).to eq(user.secret)
     end
   end
 end

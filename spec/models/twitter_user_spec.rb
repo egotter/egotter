@@ -8,33 +8,52 @@ RSpec.describe TwitterUser, type: :model do
     def client.user?(*args)
       true
     end
+
     def client.user(*args)
       Hashie::Mash.new({id: 1, screen_name: 'sn'})
     end
+
     client
   }
 
-  describe '#invalid_screen_name?' do
-    context 'screen_name has special chars' do
+  describe '#valid_uid?' do
+    context 'not a number' do
+      it 'returns false' do
+        tu.uid = '110a'
+        expect(tu.valid_uid?).to be_falsy
+      end
+    end
+
+    context 'a number' do
       it 'returns true' do
+        tu.uid = 100
+        expect(tu.valid_uid?).to be_truthy
+      end
+    end
+  end
+
+  describe '#valid_screen_name?' do
+    context 'screen_name has special chars' do
+      it 'returns false' do
         (%w(! " # $ % & ' - = ^ ~ ¥ \\ | @ ; + : * [ ] { } < > / ?) + %w[( )]).each do |c|
           tu.screen_name = c * 10
-          expect(tu.invalid_screen_name?).to be_truthy
+          expect(tu.valid_screen_name?).to be_falsy
         end
       end
     end
 
     context 'screen_name has normal chars' do
-      it 'returns false' do
+      it 'returns true' do
         tu.screen_name = 'ego_tter'
-        expect(tu.invalid_screen_name?).to be_falsy
+        expect(tu.valid_screen_name?).to be_truthy
       end
     end
   end
 
   describe '#same_record_exists?' do
     before do
-      raise 'save_with_bulk_insert failed' unless tu.save_with_bulk_insert
+      raise 'save failed' unless tu.save
+
       @same_tu = build(:twitter_user, uid: tu.uid, screen_name: tu.screen_name)
       @same_tu.friends = tu.friends.map { |f| build(:friend, uid: f.uid, screen_name: f.screen_name) }
       @same_tu.followers = tu.followers.map { |f| build(:follower, uid: f.uid, screen_name: f.screen_name) }
@@ -81,9 +100,7 @@ RSpec.describe TwitterUser, type: :model do
   end
 
   describe '#search_and_touch' do
-    before do
-      raise 'save_with_bulk_insert failed' unless tu.save_with_bulk_insert
-    end
+    before { raise 'save failed' unless tu.save }
 
     it 'increments search_count' do
       expect { tu.search_and_touch }.to change { tu.search_count }.by(1)
@@ -91,9 +108,7 @@ RSpec.describe TwitterUser, type: :model do
   end
 
   describe '#update_and_touch' do
-    before do
-      raise 'save_with_bulk_insert failed' unless tu.save_with_bulk_insert
-    end
+    before { raise 'save failed' unless tu.save }
 
     it 'increments update_count' do
       expect { tu.update_and_touch }.to change { tu.update_count }.by(1)

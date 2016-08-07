@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Bot, type: :model do
   describe '.init' do
-    it 'returns true' do
+    it 'returns nil' do
       expect(Bot.init).to be_nil
     end
   end
@@ -15,7 +15,7 @@ RSpec.describe Bot, type: :model do
 
   describe '.size' do
     it 'returns true' do
-      expect(Bot.size).to be_truthy
+      expect(Bot.size).to be_a_kind_of(Integer)
     end
   end
 
@@ -36,7 +36,6 @@ RSpec.describe Bot, type: :model do
   end
 
   describe '.config' do
-    let(:option) { {screen_name: nil} }
     let(:config_keys) { %i(access_token access_token_secret uid screen_name) }
 
     context 'specify screen_name' do
@@ -60,12 +59,13 @@ RSpec.describe Bot, type: :model do
       end
     end
 
-    context 'with option' do
-      let(:config) { Bot.config(option) }
+    context 'with invalid option' do
+      let(:invalid_option) { {screen_name: nil} }
+      let(:config) { Bot.config(invalid_option) }
 
       it "doesn't override config" do
         config_keys.each do |key|
-          expect(option[key]).to_not eq(config[key])
+          expect(invalid_option[key]).to_not eq(config[key])
         end
       end
     end

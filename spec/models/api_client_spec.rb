@@ -2,7 +2,16 @@ require 'rails_helper'
 
 RSpec.describe ApiClient, type: :model do
   describe '.config' do
-    let(:option) { {access_token: 'at', access_token_secret: 'ats', uid: 'uid', screen_name: 'sn'} }
+    let(:option) do
+      {
+        consumer_key: 'ck',
+        consumer_secret: 'cs',
+        access_token: 'at',
+        access_token_secret: 'ats',
+        uid: 100,
+        screen_name: 'sn'
+      }
+    end
 
     context 'without option' do
       let(:config) { ApiClient.config }
@@ -27,8 +36,14 @@ RSpec.describe ApiClient, type: :model do
   end
 
   describe '.instance' do
-    it 'returns ExTwitter' do
-      expect(ApiClient.instance).to be_a_kind_of(ExTwitter)
+    it 'returns Twitter::REST::Client' do
+      expect(ApiClient.instance).to be_a_kind_of(Twitter::REST::Client)
+    end
+  end
+
+  describe '.dummy_instance' do
+    it 'returns Twitter::REST::Client' do
+      expect(ApiClient.instance).to be_a_kind_of(Twitter::REST::Client)
     end
   end
 end
