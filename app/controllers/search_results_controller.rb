@@ -4,14 +4,16 @@ class SearchResultsController < ApplicationController
   include SearchesHelper
   include PageCachesHelper
 
+  layout false
+
   before_action :set_twitter_user, only: %i(show)
 
   def show
     tu = @searched_tw_user
     user_id = current_user_id
 
-    save_twitter_user_to_cache(uid, user_id, screen_name: screen_name, user_info: tu.user_info)
-    add_background_search_worker_if_needed(tu.uid, user_id, screen_name: tu.screen_name)
+    save_twitter_user_to_cache(tu.uid, user_id, screen_name: tu.screen_name, user_info: tu.user_info)
+    @job_id = add_background_search_worker_if_needed(tu.uid, user_id, screen_name: tu.screen_name)
 
     page_cache = PageCache.new(redis)
     if page_cache.exists?(tu.uid, user_id)

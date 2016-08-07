@@ -48,7 +48,6 @@ module SearchesHelper
 
   def add_background_search_worker_if_needed(uid, user_id, screen_name:)
     searched_uid_list = Util::SearchedUidList.new(redis)
-
     unless searched_uid_list.exists?(uid, user_id)
       values = {
         session_id: fingerprint,
@@ -62,8 +61,8 @@ module SearchesHelper
         referer: truncated_referer,
         url: search_url(screen_name: screen_name, id: uid)
       }
-      CreateTwitterUserWorker.perform_async(values)
       searched_uid_list.add(uid, user_id)
+      CreateTwitterUserWorker.perform_async(values)
     end
   end
 end

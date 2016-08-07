@@ -10,8 +10,10 @@
 <%= render(partial: 'searches/adsense_bottom') %>
 
 <script>
+<% if @job_id %>
+  console.log('It needs to check for updates. <%= @job_id %>');
+
   $(function () {
-    var check_update = <%= @searched_tw_user.created_at < 1.hour.ago %>;
     var created_at = <%= @searched_tw_user.created_at.to_i %>;
     var interval = 2000;
     var max_interval = 5000;
@@ -39,10 +41,6 @@
     }
 
     function tic() {
-      if (!check_update) {
-        return
-      }
-
       var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
       $.get(url)
           .done(function (res) {
@@ -71,4 +69,7 @@
 
     tic();
   });
+<% else %>
+  console.log('It does not need to check for updates.');
+<% end %>
 </script>
