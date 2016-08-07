@@ -16,11 +16,11 @@ class BackgroundSearchLogsController < ApplicationController
 
   # GET /background_search_logs/:id
   def show
-    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
-    if uid.in?([-1, 0])
+    unless TwitterUser.new(uid: params[:id]).valid_uid?
       return render json: {status: 400, reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
     end
 
+    uid = params[:id].to_i
     user_id = current_user_id
     unless Util::SearchedUidList.new(redis).exists?(uid, user_id)
       return render json: {status: 400, reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
@@ -40,7 +40,6 @@ class BackgroundSearchLogsController < ApplicationController
       else
         render json: {status: 500, reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500
     end
-
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     render json: {status: 500, reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500

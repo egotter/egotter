@@ -10,8 +10,10 @@
 <%= render(partial: 'searches/adsense_bottom') %>
 
 <script>
+<% if @job_id %>
+  console.log('It needs to check for updates. <%= @job_id %>');
+
   $(function () {
-    var check_update = <%= @searched_tw_user.created_at < 1.hour.ago %>;
     var created_at = <%= @searched_tw_user.created_at.to_i %>;
     var interval = 2000;
     var max_interval = 5000;
@@ -20,8 +22,8 @@
     var hash = null;
     var refresh_box = $('.alert.alert-info');
     var refresh_btn = refresh_box.find('a');
-    var delete_cache_url = "<%= raw url_for(page_cache_path(id: @searched_tw_user.uid, hash: 'HASH')) %>";
-    var create_cache_url = "<%= raw url_for(page_caches_path(id: @searched_tw_user.uid)) %>";
+    var delete_cache_url = "<%= raw page_cache_path(id: @searched_tw_user.uid, hash: 'HASH') %>";
+    var create_cache_url = "<%= raw page_caches_path(id: @searched_tw_user.uid) %>";
 
     refresh_btn.on('click', function (e) {
       refresh();
@@ -39,11 +41,8 @@
     }
 
     function tic() {
-      if (!check_update) {
-        return
-      }
-
-      $.get("<%= url_for background_search_log_path(id: @searched_tw_user.uid) %>")
+      var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
+      $.get(url)
           .done(function (res) {
             console.log(res, interval, retry_count);
 
@@ -70,4 +69,7 @@
 
     tic();
   });
+<% else %>
+  console.log('It does not need to check for updates.');
+<% end %>
 </script>

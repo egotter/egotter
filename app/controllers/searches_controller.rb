@@ -10,7 +10,6 @@ class SearchesController < ApplicationController
     common_friends common_followers replying replied favoriting inactive_friends inactive_followers
     clusters_belong_to close_friends usage_stats)
 
-  before_action :under_maintenance
   before_action :reject_crawler,      only: %i(create)
   before_action :valid_search_value?, only: %i(create)
   before_action :need_login,          only: %i(common_friends common_followers)
@@ -112,7 +111,8 @@ class SearchesController < ApplicationController
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
     user_id = current_user_id
 
-    add_background_search_worker_if_needed(uid, screen_name, @tu.user_info)
+    save_twitter_user_to_cache(uid, user_id, screen_name: screen_name, user_info: @tu.user_info)
+    add_background_search_worker_if_needed(uid, user_id, screen_name: screen_name)
 
     if TwitterUser.exists?(uid: uid, user_id: user_id)
       redirect_to search_path(screen_name: screen_name, id: uid)
@@ -123,21 +123,20 @@ class SearchesController < ApplicationController
 
   # GET /searches/:screen_name/waiting
   def waiting
-    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
-    if uid.in?([-1, 0])
+    unless TwitterUser.new(uid: params[:id]).valid_uid?
       return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
 
+    uid = params[:id].to_i
     user_id = current_user_id
     unless Util::SearchedUidList.new(redis).exists?(uid, user_id)
       return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
 
     @searched_tw_user = fetch_twitter_user_from_cache(uid, user_id)
-
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    return redirect_to '/', alert: BackgroundSearchLog::SomethingError::MESSAGE
+    redirect_to '/', alert: BackgroundSearchLog::SomethingError::MESSAGE
   end
 
   def debug
@@ -145,11 +144,5 @@ class SearchesController < ApplicationController
       logger.warn "#{self.class}##{__method__}: #{current_user_id} #{request.device_type} #{request.method} #{request.url}"
     end
     redirect_to '/'
-  end
-
-  private
-
-  def under_maintenance
-    redirect_to maintenance_path if ENV['MAINTENANCE'].present? && !admin_signed_in?
   end
 end

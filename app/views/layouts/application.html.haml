@@ -50,7 +50,7 @@
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8
             .navbar-header
-              - unless show_maintenance_page? || action_name == 'welcome'
+              - unless under_maintenance? || action_name == 'welcome'
                 %button.search-modal-btn.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
                   %span.search-modal-icon.glyphicon.glyphicon-search
                   %br/
@@ -59,13 +59,13 @@
                   = link_to menu_path do
                     %span.menu-icon.glyphicon.glyphicon-menu-hamburger
                     %br/
-                    %span.menu-text= t('misc.menu.name')
+                    %span.menu-text= t('misc.menu.title')
                 - if user_signed_in?
                   %button.bell-btn.navbar-toggle{type: 'button'}
                     = link_to notifications_path do
                       %span.bell-icon.glyphicon.glyphicon-bell
                       %br/
-                      %span.bell-text= t('notifications.name')
+                      %span.bell-text= t('notifications.title')
                 - else
                   %button.welcome-btn.navbar-toggle{type: 'button'}
                     = link_to welcome_path do
@@ -75,7 +75,7 @@
               %a.navbar-brand{href: '/'}
                 %img{alt: "#{t('dictionary.app_name')}", height: '48', src: '/logo_96_96.png', width: '48'}/
                 %span= t('dictionary.app_name')
-            - unless show_maintenance_page? || action_name == 'welcome'
+            - unless under_maintenance? || action_name == 'welcome'
               .collapse.navbar-collapse
                 %ul.nav.navbar-nav.navbar-right
                   - if user_signed_in?
@@ -84,7 +84,7 @@
                         = link_to notifications_path do
                           %span.bell-icon.glyphicon.glyphicon-bell
                           %br/
-                          %span.bell-text= t('notifications.name')
+                          %span.bell-text= t('notifications.title')
                   - else
                     %li
                       .welcome-btn
@@ -97,7 +97,7 @@
                       = link_to menu_path do
                         %span.menu-icon.glyphicon.glyphicon-menu-hamburger
                         %br/
-                        %span.menu-text= t('misc.menu.name')
+                        %span.menu-text= t('misc.menu.title')
                   %li
                     .search-modal-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
                       %span.search-modal-icon.glyphicon.glyphicon-search
@@ -105,7 +105,7 @@
                       %span.search-modal-text= t('searches.new.search')
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
-    - unless show_maintenance_page?
+    - unless under_maintenance?
       .modal.fade.search-modal{'aria-labelledby' => 'search-modal-label', role: 'dialog', tabindex: '-1'}
         .modal-dialog{role: 'document'}
           .modal-content
@@ -210,7 +210,7 @@
                 });
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
-    - unless show_maintenance_page?
+    - unless under_maintenance?
       %footer.footer
         .container
           %p.text-muted
@@ -224,7 +224,7 @@
             = succeed "\u{a0}\u{a0}" do
               %a{href: '/'} ご意見
             - if user_signed_in?
-              = link_to t('misc.menu.name'), menu_path
+              = link_to t('misc.menu.title'), menu_path
                 
             = succeed "\u{a0}\u{a0}" do
               %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('dictionary.official_account')
@@ -232,6 +232,6 @@
               
             = succeed "\u{a0}\u{a0}" do
               %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'} Github
-            = link_to t('dictionary.terms_of_service'), terms_of_service_path
+            = link_to t('misc.terms_of_service.title'), terms_of_service_path
               
-            = link_to t('dictionary.privacy_policy'), privacy_policy_path
+            = link_to t('misc.privacy_policy.title'), privacy_policy_path

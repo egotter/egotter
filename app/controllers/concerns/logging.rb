@@ -14,7 +14,7 @@ module Logging
       uid = @tu.uid
       screen_name = @tu.screen_name
     else
-      uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
+      uid = TwitterUser.new(uid: params[:id]).valid_uid? ? params[:id].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid, user_id) # waiting
         uid = tu.uid
         screen_name = tu.screen_name
@@ -45,7 +45,7 @@ module Logging
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
   end
 
   def create_sign_in_log(user_id, context)
@@ -62,7 +62,7 @@ module Logging
     }
     CreateSignInLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{action_name} #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
   end
 
   private
@@ -73,7 +73,7 @@ module Logging
     end
 
     if session[:fingerprint].nil? || session[:fingerprint].to_s == '-1'
-      session[:fingerprint] = (session.id.nil? ? '-1' : session.id)
+      session[:fingerprint] = session.id.nil? ? '-1' : session.id
     end
 
     if session[:fingerprint] == '-1'

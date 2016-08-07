@@ -1,17 +1,19 @@
 module SearchesHelper
   def set_twitter_user
-    uid = params.has_key?(:id) ? params[:id].match(/\A\d+\z/)[0].to_i : -1
-    if uid.in?([-1, 0])
-      logger.info "#{self.class}##{__method__}: The uid is invalid #{params[:id]} #{current_user_id} #{action_name} #{request.device_type}."
+    unless TwitterUser.new(uid: params[:id]).valid_uid?
+      logger.info "#{self.class}##{__method__}: The uid is invalid. #{params[:id]} #{current_user_id} #{action_name} #{request.device_type}."
       return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
 
-    if TwitterUser.exists?(uid: uid, user_id: current_user_id)
-      tu = TwitterUser.latest(uid, current_user_id)
+    uid = params[:id].to_i
+    user_id = current_user_id
+
+    if TwitterUser.exists?(uid: uid, user_id: user_id)
+      tu = TwitterUser.latest(uid, user_id)
       tu.assign_attributes(client: client, egotter_context: 'search')
       @searched_tw_user = tu
     else
-      logger.info "#{self.class}##{__method__}: The TwitterUser doesn't exist #{uid} #{current_user_id} #{action_name} #{request.device_type}."
+      logger.info "#{self.class}##{__method__}: The TwitterUser doesn't exist. #{uid} #{user_id} #{action_name} #{request.device_type}."
       redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
     end
   end
@@ -29,6 +31,14 @@ module SearchesHelper
     )
   end
 
+  def save_twitter_user_to_cache(uid, user_id, screen_name:, user_info:)
+    ValidTwitterUserSet.new(redis).set(
+      uid,
+      user_id,
+      {uid: uid, user_id: user_id, screen_name: screen_name, user_info: user_info}
+    )
+  end
+
   def reject_crawler
     if request.device_type == :crawler
       logger.warn "#{self.class}##{__method__}: The crawler is rejected from #{action_name}."
@@ -36,20 +46,7 @@ module SearchesHelper
     end
   end
 
-  def add_background_search_worker_if_needed(uid, screen_name, user_info)
-    user_id = current_user_id
-
-    ValidTwitterUserSet.new(redis).set(
-      uid,
-      user_id,
-      {
-        uid: uid,
-        screen_name: screen_name,
-        user_id: user_id,
-        user_info: user_info
-      }
-    )
-
+  def add_background_search_worker_if_needed(uid, user_id, screen_name:)
     searched_uid_list = Util::SearchedUidList.new(redis)
     unless searched_uid_list.exists?(uid, user_id)
       values = {
@@ -64,8 +61,8 @@ module SearchesHelper
         referer: truncated_referer,
         url: search_url(screen_name: screen_name, id: uid)
       }
-      BackgroundSearchWorker.perform_async(values)
       searched_uid_list.add(uid, user_id)
+      CreateTwitterUserWorker.perform_async(values)
     end
   end
 end
