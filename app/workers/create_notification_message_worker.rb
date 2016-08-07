@@ -9,9 +9,9 @@ class CreateNotificationMessageWorker
     if user.notification.can_send_search?
       user.api_client.create_direct_message(user.uid.to_i, message.message)
       user.notification.update(last_search_at: Time.zone.now)
-      logger.warn "send: #{attrs.inspect}"
+      logger.warn "send: #{attrs.inspect}" # TODO remove debug code
     else
-      logger.warn "cannot send: #{attrs.inspect}"
+      logger.warn "cannot send: #{attrs.inspect}" # TODO remove debug code
     end
 
   rescue => e

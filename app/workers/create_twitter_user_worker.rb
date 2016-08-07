@@ -1,4 +1,4 @@
-class BackgroundSearchWorker
+class CreateTwitterUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: false, backtrace: false
 
