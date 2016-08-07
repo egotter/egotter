@@ -30,7 +30,6 @@ ja:
         one_sided: "相互フォローしてくれないユーザーを探そう。"
         blocked: "ブロックされたユーザーを見付けられるかも？"
         protected: "鍵付きアカウントもログインすれば検索できます。"
-
     waiting:
       retry_search_by: "%{user} で再度検索"
       searching: "%{user} のデータを検索中"
@@ -100,7 +99,7 @@ ja:
     index:
       title: "検索履歴"
   notifications:
-    name: "通知"
+    title: "通知"
     to: "%{user} への通知"
     setting: "通知設定"
     desc:
@@ -110,7 +109,14 @@ ja:
       search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
   misc:
     menu:
-      name: "メニュー"
+      title: "メニュー"
+    terms_of_service:
+      title: "利用規約"
+    privacy_policy:
+      title: "プライバシーポリシー"
+    maintenance:
+      title: "メンテナンス"
+      under_maintenance: "メンテナンス中です。"
   kpis:
     index: "KPI"
   debug:
@@ -161,10 +167,6 @@ ja:
     clusters_index: "クラスタ指数"
     hashtags_cloud: "ハッシュタグクラウド"
     clusters_cloud: "クラスタクラウド"
-    terms_of_service: "利用規約"
-    privacy_policy: "プライバシーポリシー"
-    maintenance: "メンテナンス"
-    under_maintenance: "メンテナンス中です。"
     delim: "、"
     honorific: "さん"
     between_from: "から"

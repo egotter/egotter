@@ -27,7 +27,7 @@
 </div>
 
 <div class="retry_btn" style="display: none; margin-top: 15px;">
-  <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name),
+  <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
               class: 'btn btn-lg btn-info btn-block', method: :post %>
 </div>
 
@@ -163,7 +163,7 @@
 
     show_immediately_btn.on('click', function () {
       stop_waiting = true;
-      waiting_msg.html('<%= t("searches.waiting.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
+      waiting_msg.html('<%= t("searches.waiting.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>');
       show_immediately_btn.hide();
     });
 
@@ -183,7 +183,8 @@
     }
 
     function tic() {
-      $.get("<%= url_for background_search_log_path(id: @searched_tw_user.uid) %>")
+      var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
+      $.get(url)
           .done(function (res) {
             console.log(res, interval, retry_count);
 
@@ -191,7 +192,7 @@
               stop_waiting = true;
               progress(95);
               show_immediately_btn.hide();
-              waiting_msg.html('<%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag "/ajax-loader.gif" %>');
+              waiting_msg.html('<%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>');
               window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
               return
             }

@@ -1,10 +1,6 @@
 module ApplicationHelper
   def under_maintenance?
-    ENV['MAINTENANCE'].present? || action_name == 'maintenance'
-  end
-
-  def show_maintenance_page?
-    (under_maintenance? && !admin_signed_in?) || action_name == 'maintenance'
+    ENV['MAINTENANCE'] == '1'
   end
 
   def redis

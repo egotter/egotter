@@ -18,7 +18,8 @@
 
 :javascript
   $(function () {
-    $.get("#{url_for search_result_path(id: @searched_tw_user.uid)}")
+    var url = "#{search_result_path(id: @searched_tw_user.uid)}";
+    $.get(url)
         .done(function (res) {
           $('.search-result').append(res.html);
         })

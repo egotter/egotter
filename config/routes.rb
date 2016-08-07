@@ -1,6 +1,10 @@
 Rails.application.routes.draw do
   root 'searches#new'
 
+  if ENV['MAINTENANCE'] == '1'
+    match '*path' => 'misc#maintenance', via: :all
+  end
+
   %i(maintenance privacy_policy terms_of_service sitemap menu support).each do |name|
     get name, to: "misc##{name}", as: name
   end

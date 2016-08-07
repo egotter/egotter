@@ -20,8 +20,8 @@
     var hash = null;
     var refresh_box = $('.alert.alert-info');
     var refresh_btn = refresh_box.find('a');
-    var delete_cache_url = "<%= raw url_for(page_cache_path(id: @searched_tw_user.uid, hash: 'HASH')) %>";
-    var create_cache_url = "<%= raw url_for(page_caches_path(id: @searched_tw_user.uid)) %>";
+    var delete_cache_url = "<%= raw page_cache_path(id: @searched_tw_user.uid, hash: 'HASH') %>";
+    var create_cache_url = "<%= raw page_caches_path(id: @searched_tw_user.uid) %>";
 
     refresh_btn.on('click', function (e) {
       refresh();
@@ -43,7 +43,8 @@
         return
       }
 
-      $.get("<%= url_for background_search_log_path(id: @searched_tw_user.uid) %>")
+      var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
+      $.get(url)
           .done(function (res) {
             console.log(res, interval, retry_count);
 

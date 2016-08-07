@@ -7,6 +7,7 @@ module Concerns::TwitterUser::Validation
   TOO_MANY_FRIENDS = Rails.configuration.x.constants['too_many_friends_threshold']
 
   SCREEN_NAME_REGEXP = /\A[a-zA-Z0-9_]{1,20}\z/
+  UID_REGEXP = /\A\d+\z/
 
   included do
     with_options on: :create do |obj|
@@ -16,8 +17,17 @@ module Concerns::TwitterUser::Validation
     end
   end
 
+  def valid_uid?
+    if uid.present? && uid.match(UID_REGEXP)
+      true
+    else
+      errors.add(:uid, :invalid)
+      false
+    end
+  end
+
   def valid_screen_name?
-    if screen_name.present? && screen_name =~ SCREEN_NAME_REGEXP
+    if screen_name.present? && screen_name.match(SCREEN_NAME_REGEXP)
       true
     else
       errors.add(:screen_name, :invalid)
