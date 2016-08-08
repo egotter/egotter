@@ -75,6 +75,8 @@
       draw_rr(res.xAxis_categories, res.yAxis_categories, res.cells, res.title, format)
     }).fail(function (xhr) {
       console.log(xhr.responseText);
+      loading.hide();
+      chart[format].text('error');
     });
   }
 

@@ -66,7 +66,10 @@ class KpisController < ApplicationController
     yAxis_categories.each.with_index do |day, y|
       ids = SearchLog.except_crawler.where(created_at: day.all_day).pluck(id_type).uniq
       xAxis_categories.each do |x|
-        cells[[x, y]] = SearchLog.except_crawler.where(created_at: (day + x.days).all_day).where(id_type => ids).pluck(id_type).uniq.size
+        cells[[x, y]] = SearchLog.except_crawler
+                          .where(created_at: (day + x.days).all_day)
+                          .where(id_type => ids)
+                          .count("DISTINCT #{id_type}")
       end
     end
 
