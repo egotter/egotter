@@ -29,7 +29,7 @@
 
   <div>
     <%= link_to(t('dictionary.view_more_with_num', num: close_friends[:target].size).html_safe,
-                close_friends[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                close_friends[:path],
                 class: 'btn btn-info btn-block') %>
   </div>
 </div>
@@ -61,7 +61,7 @@
 
   <div>
     <%= link_to(t('dictionary.view_more'),
-                usage_stats[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                usage_stats[:path],
                 class: 'btn btn-info btn-block') %>
   </div>
 </div>
@@ -86,7 +86,7 @@
 
   <div>
     <%= link_to(t('dictionary.view_more'),
-                clusters_belong_to[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                clusters_belong_to[:path],
                 class: 'btn btn-info btn-block') %>
   </div>
 </div>
@@ -118,7 +118,7 @@
 
     <div>
       <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe,
-                  menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                  menu_item[:path],
                   class: 'btn btn-info btn-block') %>
     </div>
   </div>
@@ -163,7 +163,7 @@
     <% elsif search_others?(searched_tw_user.uid) %>
       <div>
         <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe,
-                    menu_item[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                    menu_item[:path],
                     class: 'btn btn-info btn-block') %>
       </div>
     <% elsif !user_signed_in? %>
@@ -192,7 +192,7 @@
 
   <div>
     <%= link_to(t('dictionary.view_more'),
-                menu_update_histories[:path_method].call(screen_name: searched_tw_user.screen_name, id: searched_tw_user.uid),
+                menu_update_histories[:path],
                 class: 'btn btn-info btn-block') %>
   </div>
 </div>

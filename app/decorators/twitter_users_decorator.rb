@@ -7,6 +7,8 @@ class TwitterUsersDecorator < Draper::CollectionDecorator
     Kaminari.paginate_array(targets).page(h.params[:page]).per(25)
   end
 
+  private
+
   def friendships
     @_friendships ||=
       if h.user_signed_in? && h.current_user.twitter_user?

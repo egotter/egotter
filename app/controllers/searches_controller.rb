@@ -82,7 +82,7 @@ class SearchesController < ApplicationController
   # GET /searches/:screen_name/clusters_belong_to
   def clusters_belong_to
     clusters = @searched_tw_user.clusters_belong_to
-    @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('dictionary.cluster')}"} }
+    @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('.cluster')}"} }
     @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
     @clusters_belong_to_cloud = @searched_tw_user.clusters_belong_to_cloud
     @tweet_text = clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user)

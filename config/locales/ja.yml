@@ -71,6 +71,7 @@ ja:
       targets: "対象者"
     clusters_belong_to:
       title: "%{user} が入っているクラスタ"
+      cluster: "クラスタ"
     mutual_friends:
       title: "%{user} が両思い"
       targets: "両思い"
@@ -163,7 +164,6 @@ ja:
     you_are_searched: "誰かがあなたのアカウントを検索しました。%{kaomoji} %{url}"
     you_are_searched_by_himself: "検索が完了しました。検索したのは自分です。%{kaomoji} %{url}"
     you_are_updated: "データの更新が完了しました。%{kaomoji} %{url} DM通知設定の変更はこちら → %{menu_url}"
-    cluster: "クラスタ"
     clusters_index: "クラスタ指数"
     hashtags_cloud: "ハッシュタグクラウド"
     clusters_cloud: "クラスタクラウド"
