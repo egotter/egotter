@@ -1,5 +1,4 @@
 class SearchResultsController < ApplicationController
-  include MenuItemBuilder
   include Logging
   include SearchesHelper
   include PageCachesHelper

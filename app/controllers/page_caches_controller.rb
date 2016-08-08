@@ -1,6 +1,5 @@
 class PageCachesController < ApplicationController
   include SearchesHelper
-  include MenuItemBuilder
   include PageCachesHelper
 
   layout false

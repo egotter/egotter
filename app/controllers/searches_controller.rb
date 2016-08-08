@@ -1,6 +1,5 @@
 class SearchesController < ApplicationController
   include Validation
-  include MenuItemBuilder
   include Logging
   include TweetTextHelper
   include SearchesHelper
@@ -29,6 +28,12 @@ class SearchesController < ApplicationController
 
   def show
     @title = t('.title', user: @searched_tw_user.mention_name)
+
+    user_id = current_user_id
+    page_cache = PageCache.new(redis)
+    if page_cache.exists?(@searched_tw_user.uid, user_id)
+      @page_cache = page_cache.read(@searched_tw_user.uid, user_id)
+    end
   end
 
   %i(friends followers removing removed blocking_or_blocked).each do |name|
