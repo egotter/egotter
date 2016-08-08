@@ -26,7 +26,7 @@ class SearchResultsController < ApplicationController
 
     render json: {status: 200, html: html}, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{user_id} #{request.device_type} #{e.class} #{e.message}"
     render json: {status: 500}, status: 500
   end
 end
