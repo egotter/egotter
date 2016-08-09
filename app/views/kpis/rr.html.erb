@@ -54,6 +54,11 @@
     number: $('.kpis.rr.number'),
     percentage: $('.kpis.rr.percentage')
   };
+  var result = {
+    number: {},
+    percentage: {}
+  };
+  var url = '<%= kpis_rr_path %>';
 
   function draw_rr(xAxis_categories, yAxis_categories, cells, title, format) {
     var conf = $.extend(true, {}, config);
@@ -66,17 +71,36 @@
   }
 
   function fetch_rr(format) {
-    var url = '<%= kpis_rr_path %>';
-    var params = {
-      id_type: $('input[name=id_type]:checked').val(),
-      format: format
-    };
-    $.get(url, params).done(function (res) {
-      draw_rr(res.xAxis_categories, res.yAxis_categories, res.cells, res.title, format)
-    }).fail(function (xhr) {
-      console.log(xhr.responseText);
-      loading.hide();
-      chart[format].text('error');
+    result = {number: {}, percentage: {}};
+    var date_indices = [[0, 2], [3, 5], [6, 7], [8, 9]];
+    var date_index_max = 9;
+
+    $.each(date_indices, function (i, range) {
+      var params = {
+        id_type: $('input[name=id_type]:checked').val(),
+        date_start_index: range[0],
+        date_end_index: range[1],
+        date_index_max: date_index_max,
+        format: format
+      };
+
+      $.get(url, params).done(function (res) {
+        result[format][i] = res;
+
+        if (Object.keys(result[format]).length == date_indices.length) {
+          console.log(result[format]);
+
+          var cells = [];
+          for (var key in result[format]) {
+            cells = cells.concat(result[format][key].cells);
+          }
+          draw_rr(res.xAxis_categories, res.yAxis_categories, cells, res.title, format)
+        }
+      }).fail(function (xhr) {
+        console.log(xhr.responseText);
+        loading.hide();
+        chart[format].text('error');
+      });
     });
   }
 

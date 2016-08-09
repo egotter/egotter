@@ -59,30 +59,33 @@ class KpisController < ApplicationController
   def rr
     return render unless request.xhr?
 
-    id_type = params[:id_type] && %w(user_id uid).include?(params[:id_type]) ? params[:id_type] : :session_id
-    width = 10
-    yAxis_categories = width.times.map { |i| (NOW - i.days) }
-    xAxis_categories = width.times.to_a
+    id_type = %w(user_id uid).include?(params[:id_type]) ? params[:id_type] : :session_id
+    date_index_max = [params[:date_index_max].to_i, 9].min
+    date_start_index = [params[:date_start_index].to_i, 0].max
+    date_end_index = [params[:date_end_index].to_i, date_index_max].min
+    y_index_range = date_start_index..date_end_index
+    yAxis_categories = (date_index_max + 1).times.map { |i| (NOW - i.days) }
+    xAxis_categories = (date_index_max + 1).times.to_a
     cells = {}
+
     yAxis_categories.each.with_index do |day, y|
+      next unless y_index_range.include?(y)
+
       ids = SearchLog.except_crawler.where(created_at: day.all_day).select(id_type).uniq.pluck(id_type)
       xAxis_categories.each do |x|
         if ids.empty?
           cells[[x, y]] = 0
           next
         end
-        cells[[x, y]] = SearchLog.except_crawler
-                          .where(created_at: (day + x.days).all_day)
-                          .where(id_type => ids)
-                          .count("DISTINCT #{id_type}")
+        cells[[x, y]] = SearchLog.except_crawler.where(created_at: (day + x.days).all_day, id_type => ids).count("DISTINCT #{id_type}")
       end
     end
 
     format = params[:format] == 'percentage' ? 'percentage' : 'number'
     if format == 'percentage'
       tmp = {}
-      yAxis_categories.size.times.to_a.product(xAxis_categories).each do |y, x|
-        value = cells[[0, y]].to_i == 0 ? 0.0 : 100.0 * cells[[x, y]] / cells[[0, y]]
+      cells.each do |(x, y), cell|
+        value = cells[[0, y]].to_i == 0 ? 0.0 : 100.0 * cell / cells[[0, y]]
         tmp[[x, y]] = value.round(1)
       end
       cells = tmp
@@ -90,9 +93,14 @@ class KpisController < ApplicationController
 
     result = {
       title: "RR(#{id_type}, #{format})",
+      format: format,
+      id_type: id_type,
+      date_index_max: date_index_max,
+      date_start_index: date_start_index,
+      date_end_index: date_end_index,
       xAxis_categories: xAxis_categories.dup,
       yAxis_categories: yAxis_categories.map { |d| d.to_date.strftime('%m/%d') },
-      cells: yAxis_categories.size.times.to_a.product(xAxis_categories).map { |y, x| [x, y, cells[[x, y]]] }
+      cells: cells.map { |(x, y), cell| [x, y, cell] }
     }
     render json: result, status: 200
   end
