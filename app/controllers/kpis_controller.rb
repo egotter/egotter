@@ -5,27 +5,27 @@ class KpisController < ApplicationController
   end
 
   def dau
-    if request.xhr?
-      result =
-        if params[:type].nil?
-          {dau: fetch_dau}
-        else
-          {params[:type] => send("fetch_#{params[:type]}")}
-        end
-      return render json: result, status: 200
-    end
+    return render unless request.xhr?
+
+    result =
+      if params[:type].nil?
+        {dau: fetch_dau}
+      else
+        {params[:type] => send("fetch_#{params[:type]}")}
+      end
+    render json: result, status: 200
   end
 
   def search_num
-    if request.xhr?
-      result =
-        if params[:type].nil?
-          {search_num: fetch_search_num}
-        else
-          {params[:type] => send("fetch_#{params[:type]}")}
-        end
-      return render json: result, status: 200
-    end
+    return render unless request.xhr?
+
+    result =
+      if params[:type].nil?
+        {search_num: fetch_search_num}
+      else
+        {params[:type] => send("fetch_#{params[:type]}")}
+      end
+    render json: result, status: 200
   end
 
   def new_user
@@ -43,29 +43,34 @@ class KpisController < ApplicationController
   end
 
   def table
-    if request.xhr?
-      result = {twitter_users: fetch_twitter_users_num}
-      if request.referer.end_with?(action_name)
-        result.update(
-          twitter_users_uid: fetch_twitter_users_uid_num,
-          friends: fetch_friends_num,
-          followers: fetch_followers_num
-        )
-      end
-      return render json: result, status: 200
+    return render unless request.xhr?
+
+    result = {twitter_users: fetch_twitter_users_num}
+    if request.referer.end_with?(action_name)
+      result.update(
+        twitter_users_uid: fetch_twitter_users_uid_num,
+        friends: fetch_friends_num,
+        followers: fetch_followers_num
+      )
     end
+    render json: result, status: 200
   end
 
   def rr
     return render unless request.xhr?
 
     id_type = params[:id_type] && %w(user_id uid).include?(params[:id_type]) ? params[:id_type] : :session_id
-    yAxis_categories = 7.times.map { |i| (NOW - i.days) }
-    xAxis_categories = (0..9).to_a
+    width = 10
+    yAxis_categories = width.times.map { |i| (NOW - i.days) }
+    xAxis_categories = width.times.to_a
     cells = {}
     yAxis_categories.each.with_index do |day, y|
-      ids = SearchLog.except_crawler.where(created_at: day.all_day).pluck(id_type).uniq
+      ids = SearchLog.except_crawler.where(created_at: day.all_day).select(id_type).uniq.pluck(id_type)
       xAxis_categories.each do |x|
+        if ids.empty?
+          cells[[x, y]] = 0
+          next
+        end
         cells[[x, y]] = SearchLog.except_crawler
                           .where(created_at: (day + x.days).all_day)
                           .where(id_type => ids)
