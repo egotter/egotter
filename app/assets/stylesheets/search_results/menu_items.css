@@ -23,12 +23,7 @@
   border: 1px solid #e6e6e6;
 }
 
-.menu-items.usage-stats-chart .media-heading h4,
-.menu-items.clusters-belong-to-chart .media-heading h4 {
-  margin-bottom: 5px;
-}
-
-.menu-items.usage-stats-chart .usage-stats-chart-container,
-.menu-items.clusters-belong-to-chart .clusters-belong-to-chart-container {
+.menu-items .usage-stats-chart-container,
+.menu-items .clusters-belong-to-chart-container {
   height: 120px;
 }

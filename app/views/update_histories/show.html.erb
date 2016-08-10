@@ -4,15 +4,13 @@
 <%= render(partial: 'searches/profile_overview',
            locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-<div class="search-result">
-  <h2 class="h4"><%= @title %></h2>
-</div>
-
-<div class="return-to-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %></div>
-
-<%= render(partial: 'searches/adsense') %>
-
 <div class="update-histories">
+  <h2 class="h4"><%= @title %></h2>
+
+  <div class="return-to-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %></div>
+
+  <%= render(partial: 'searches/adsense') %>
+
   <div class="summary">
     <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
     <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(@update_histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>

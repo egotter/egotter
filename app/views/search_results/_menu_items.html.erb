@@ -3,34 +3,39 @@
   modal_rendered_uids = []
 %>
 
+<script>
+  $(function () {
+    window.lazycall_functions = {};
+  });
+</script>
+
 <%# close_friends %>
-<div class="menu-items media" style="margin-top: 0px;">
+<div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= close_friends[:name] %></h4>
 
     <% close_friends[:target].slice(0..2).each do |user| %>
       <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
-        <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
+        <img class="lazy" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
       </span>
     <% end %>
   </div>
-  <div class="media-right media-bottom">
+  <div class="media-right">
     <% if close_friends.has_key?(:graph) %>
       <div id="<%= close_friends.object_id %>" class="close-friends-chart"></div>
       <script>
         $(function () {
           var graph_option = $.extend(true, {}, window.common_pie_chart_options);
           graph_option.series[0].data = <%= raw close_friends[:graph].to_json %>;
-          $('#<%= close_friends.object_id %>').highcharts(graph_option);
+          window.lazycall_functions['#<%= close_friends.object_id %>'] = function () {
+            $('#<%= close_friends.object_id %>').highcharts(graph_option)
+          };
         });
       </script>
     <% end %>
   </div>
-
   <div>
-    <%= link_to(t('dictionary.view_more_with_num', num: close_friends[:target].size).html_safe,
-                close_friends[:path],
-                class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more_with_num', num: close_friends[:target].size).html_safe, close_friends[:path], class: 'btn btn-info btn-block') %>
   </div>
 </div>
 <% close_friends[:target].slice(0..2).each do |user| %>
@@ -41,7 +46,7 @@
 <% end %>
 
 <%# usage_stats %>
-<div class="menu-items media usage-stats-chart">
+<div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= usage_stats[:name] %></h4>
 
@@ -53,21 +58,20 @@
           graph_option.series[0].data = <%= raw usage_stats[:graph][0].to_json %>;
           graph_option.drilldown.series = <%= raw usage_stats[:graph][1].to_json %>;
           graph_option.yAxis.visible = false;
-          $('#<%= usage_stats.object_id %>').highcharts(graph_option);
+          window.lazycall_functions['#<%= usage_stats.object_id %>'] = function () {
+            $('#<%= usage_stats.object_id %>').highcharts(graph_option);
+          };
         });
       </script>
     <% end %>
   </div>
-
   <div>
-    <%= link_to(t('dictionary.view_more'),
-                usage_stats[:path],
-                class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more'), usage_stats[:path], class: 'btn btn-info btn-block') %>
   </div>
 </div>
 
 <%# clusters_belong_to %>
-<div class="menu-items media clusters-belong-to-chart">
+<div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= clusters_belong_to[:name] %></h4>
 
@@ -78,16 +82,15 @@
           var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
           graph_option.series[0].data = <%= raw clusters_belong_to[:graph].to_json %>;
           graph_option.yAxis.visible = false;
-          $('#<%= clusters_belong_to.object_id %>').highcharts(graph_option);
+          window.lazycall_functions['#<%= clusters_belong_to.object_id %>'] = function () {
+            $('#<%= clusters_belong_to.object_id %>').highcharts(graph_option);
+          };
         });
       </script>
     <% end %>
   </div>
-
   <div>
-    <%= link_to(t('dictionary.view_more'),
-                clusters_belong_to[:path],
-                class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more'), clusters_belong_to[:path], class: 'btn btn-info btn-block') %>
   </div>
 </div>
 
@@ -99,27 +102,26 @@
 
       <% menu_item[:target].slice(0..2).each do |user| %>
         <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
-          <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
+          <img class="lazy" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
         </span>
       <% end %>
     </div>
-    <div class="media-right media-bottom">
+    <div class="media-right">
       <% if menu_item.has_key?(:graph) %>
         <div id="<%= menu_item.object_id %>" class="common-chart"></div>
         <script>
           $(function () {
             var graph_option = $.extend(true, {}, window.common_pie_chart_options);
             graph_option.series[0].data = <%= raw menu_item[:graph].to_json %>;
-            $('#<%= menu_item.object_id %>').highcharts(graph_option);
+            window.lazycall_functions['#<%= menu_item.object_id %>'] = function () {
+              $('#<%= menu_item.object_id %>').highcharts(graph_option);
+            };
           });
         </script>
       <% end %>
     </div>
-
     <div>
-      <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe,
-                  menu_item[:path],
-                  class: 'btn btn-info btn-block') %>
+      <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe, menu_item[:path], class: 'btn btn-info btn-block') %>
     </div>
   </div>
   <% menu_item[:target].slice(0..2).each do |user| %>
@@ -138,19 +140,21 @@
 
       <% menu_item[:target].slice(0..2).each do |user| %>
         <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
-          <img src="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
+          <img class="lazy" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
         </span>
       <% end %>
     </div>
 
-    <div class="media-right media-bottom">
+    <div class="media-right">
       <% if menu_item.has_key?(:graph) %>
         <div id="<%= menu_item.object_id %>" class="common-chart"></div>
         <script>
           $(function () {
             var graph_option = $.extend(true, {}, window.common_pie_chart_options);
             graph_option.series[0].data = <%= raw menu_item[:graph].to_json %>;
-            $('#<%= menu_item.object_id %>').highcharts(graph_option);
+            window.lazycall_functions['#<%= menu_item.object_id %>'] = function () {
+              $('#<%= menu_item.object_id %>').highcharts(graph_option);
+            };
           });
         </script>
       <% end %>
@@ -162,9 +166,7 @@
       </button>
     <% elsif search_others?(searched_tw_user.uid) %>
       <div>
-        <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe,
-                    menu_item[:path],
-                    class: 'btn btn-info btn-block') %>
+        <%= link_to(t('dictionary.view_more_with_num', num: menu_item[:target].size).html_safe, menu_item[:path], class: 'btn btn-info btn-block') %>
       </div>
     <% elsif !user_signed_in? %>
       <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
@@ -189,10 +191,27 @@
     <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= menu_update_histories[:target].search_count %></div>
     <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= menu_update_histories[:target].update_count %></div>
   </div>
-
   <div>
-    <%= link_to(t('dictionary.view_more'),
-                menu_update_histories[:path],
-                class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more'), menu_update_histories[:path], class: 'btn btn-info btn-block') %>
   </div>
 </div>
+
+<script>
+  $(function () {
+    $("img.lazy").lazyload();
+
+    $.each(Object.keys(window.lazycall_functions), function (i, selector) {
+      var loaded = false;
+      $(selector)
+          .lazyload()
+          .on('appear', function () {
+            if (loaded) {
+              return
+            }
+            loaded = true;
+
+            window.lazycall_functions[selector]();
+          });
+    });
+  });
+</script>
