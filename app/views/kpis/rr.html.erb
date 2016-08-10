@@ -82,7 +82,7 @@
       };
     });
 
-    var fail = function (xhr) {
+    var failed = function (xhr) {
       console.log(xhr.responseText);
       loading.hide();
       chart[format].text('error');
@@ -92,19 +92,19 @@
         .then(function (res) {
           results[0] = res;
           return $.get(url, params[1])
-        }, fail)
+        }, failed)
         .then(function (res) {
           results[1] = res;
           return $.get(url, params[2])
-        }, fail)
+        }, failed)
         .then(function (res) {
           results[2] = res;
           return $.get(url, params[3])
-        }, fail)
+        }, failed)
         .then(function (res) {
           results[3] = res;
           return $.get(url, params[4])
-        }, fail)
+        }, failed)
         .done(function (res) {
           results[4] = res;
           console.log(results);
@@ -115,7 +115,7 @@
           }
           draw_rr(res.xAxis_categories, res.yAxis_categories, cells, res.title, format)
         })
-        .fail(fail);
+        .fail(failed);
   }
 
   $('input[name=id_type]:radio').on('change', function () {

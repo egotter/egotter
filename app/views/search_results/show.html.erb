@@ -22,8 +22,6 @@
     var hash = null;
     var refresh_box = $('.alert.alert-info');
     var refresh_btn = refresh_box.find('a');
-    var delete_cache_url = "<%= raw page_cache_path(id: @searched_tw_user.uid, hash: 'HASH') %>";
-    var create_cache_url = "<%= raw page_caches_path(id: @searched_tw_user.uid) %>";
 
     refresh_btn.on('click', function (e) {
       refresh();
@@ -32,12 +30,25 @@
       return false
     });
 
+    function delete_cache(hash) {
+      var url = "<%= raw page_cache_path(id: @searched_tw_user.uid, hash: 'HASH') %>";
+      return $.ajax({url: url.replace(/HASH/, hash), type: 'DELETE'})
+    }
+
+    function create_cache() {
+      var url = "<%= raw page_caches_path(id: @searched_tw_user.uid) %>";
+      return $.post(url)
+    }
+
+    function failed(xhr) {
+      console.log(xhr.responseText);
+    }
+
     function refresh() {
-      delete_cache(delete_cache_url, hash).done(function () {
-        create_cache(create_cache_url).done(function () {
-          window.location.reload();
-        })
-      })
+      delete_cache(hash)
+          .then(create_cache, failed)
+          .done(window.location.reload)
+          .fail(failed);
     }
 
     function tic() {
@@ -62,9 +73,7 @@
               setTimeout(tic, interval);
             }
           })
-          .fail(function (xhr) {
-            console.log(xhr.responseText);
-          });
+          .fail(failed);
     }
 
     tic();
