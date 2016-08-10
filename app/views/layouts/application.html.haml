@@ -124,11 +124,9 @@
                 $(function () {
                   $.get('#{search_histories_path}', {in_modal: true})
                       .done(function (res) {
-                        if (res.status == 200) {
-                          var container = $('.modal-search-histories');
-                          container.find('h2').show();
-                          container.append(res.html);
-                        }
+                        var container = $('.modal-search-histories');
+                        container.find('h2').show();
+                        container.append(res.html);
                       })
                       .fail(function (xhr) {
                         console.log(xhr.responseText);
@@ -199,11 +197,9 @@
                 $(function () {
                   $.get('#{information_index_path}')
                       .done(function (res) {
-                        if (res.status == 200) {
-                          var container = $('.information');
-                          container.find('h2').show();
-                          container.append(res.html);
-                        }
+                        var container = $('.information');
+                        container.find('h2').show();
+                        container.append(res.html);
                       })
                       .fail(function (xhr) {
                         console.log(xhr.responseText);

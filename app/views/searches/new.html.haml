@@ -44,11 +44,9 @@
     $(function () {
       $.get('#{keyword_timeline_path}')
           .done(function (res) {
-            if (res.status == 200) {
-              var container = $('.keyword-timeline');
-              container.find('h2').show();
-              container.append(res.html);
-            }
+            var container = $('.keyword-timeline');
+            container.find('h2').show();
+            container.append(res.html);
           })
           .fail(function (xhr) {
             console.log(xhr.responseText);

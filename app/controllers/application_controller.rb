@@ -10,7 +10,7 @@ class ApplicationController < ActionController::Base
       logger.warn "#{self.class}##{action_name}: #{e.class} #{request.xhr? ? 'true' : 'false'} #{request.device_type} #{current_user_id} #{params.inspect}"
     end rescue nil
     if request.xhr?
-      render json: {status: 500}, status: 500
+      render nothing: true, status: 500
     else
       redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
     end

@@ -20,9 +20,9 @@ class StatusesController < ApplicationController
     end
     tweets = JSON.load(json).slice(0, 5).map { |t| Hashie::Mash.new(t) }.map { |t| t.tweeted_at = t.created_at; t }
     html = render_to_string(partial: 'statuses/items', locals: {items: tweets})
-    render json: {status: 200, html: html}, status: 200
+    render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    render json: {status: 500}, status: 500
+    render nothing: true, status: 500
   end
 end

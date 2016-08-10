@@ -13,6 +13,6 @@ class InformationController < ApplicationController
       %w(2016/07/25 ページの読み込みを高速化しました),
       %w(2016/07/24 スマートフォン向けのアイコンを設置しました),
     ].freeze
-    render json: {status: 200, html: render_to_string}, status: 200
+    render json: {html: render_to_string}, status: 200
   end
 end

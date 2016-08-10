@@ -27,6 +27,8 @@
         $.get(url)
             .done(function (res) {
               $('.search-result').append(res.html);
+              var path = window.location.pathname + window.location.search + '#loaded';
+              window.history.replaceState(null, null, path)
             })
             .fail(function (xhr) {
               console.log(xhr.responseText);

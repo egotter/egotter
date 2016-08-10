@@ -54,10 +54,10 @@
     function tic() {
       var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
       $.get(url)
-          .done(function (res) {
-            console.log(res, interval, retry_count);
+          .done(function (res, text_status, xhr) {
+            console.log(res, text_status, xhr.status, interval, retry_count);
 
-            if (res.status == 200) {
+            if (xhr.status == 200) {
               if (created_at < res.created_at) {
                 hash = res.hash;
                 refresh_box.show();
