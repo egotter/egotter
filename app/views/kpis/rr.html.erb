@@ -54,80 +54,77 @@
     number: $('.kpis.rr.number'),
     percentage: $('.kpis.rr.percentage')
   };
-  var url = '<%= kpis_rr_path %>';
 
-  function draw_rr(xAxis_categories, yAxis_categories, cells, title, format) {
+  function draw(xAxis_categories, yAxis_categories, cells, title, chart) {
     var conf = $.extend(true, {}, config);
     conf.title.text = title;
     conf.xAxis.categories = xAxis_categories;
     conf.yAxis.categories = yAxis_categories;
     conf.series[0].data = cells;
     loading.hide();
-    chart[format].empty().highcharts(conf);
+    chart.empty().highcharts(conf);
   }
 
-  function fetch_rr(format) {
+  function fetch(format) {
     var results = {};
     var date_indices = [[0, 1], [2, 3], [4, 5], [6, 7], [8, 9]];
     var date_index_max = 9;
-
-    var params = [];
-    $.each(date_indices, function (i, range) {
-      params[i] = {
+    var url = '<%= kpis_rr_path %>';
+    var params = $.map(date_indices, function (range, i) {
+      return {
         id_type: $('input[name=id_type]:checked').val(),
         date_start_index: range[0],
         date_end_index: range[1],
         date_index_max: date_index_max,
+        sequence_number: i,
         format: format
-      };
+      }
     });
 
-    var failed = function (xhr) {
+    function failed(xhr) {
       console.log(xhr.responseText);
       loading.hide();
-      chart[format].text('error');
-    };
+      chart[format].empty().text('error');
+    }
+
+    function done(res) {
+      results[res.sequence_number] = res;
+      draw(res.xAxis_categories, res.yAxis_categories, all_cells(), res.title, chart[format]);
+      return $.get(url, params[res.sequence_number + 1])
+    }
+
+    function all_cells() {
+      var cells = [];
+      for (var key in results) {
+        cells = cells.concat(results[key].cells);
+      }
+      return cells
+    }
 
     $.get(url, params[0])
-        .then(function (res) {
-          results[0] = res;
-          return $.get(url, params[1])
-        }, failed)
-        .then(function (res) {
-          results[1] = res;
-          return $.get(url, params[2])
-        }, failed)
-        .then(function (res) {
-          results[2] = res;
-          return $.get(url, params[3])
-        }, failed)
-        .then(function (res) {
-          results[3] = res;
-          return $.get(url, params[4])
-        }, failed)
+        .then(done, failed)
+        .then(done, failed)
+        .then(done, failed)
+        .then(done, failed)
         .done(function (res) {
-          results[4] = res;
+          results[res.sequence_number] = res;
           console.log(results);
-
-          var cells = [];
-          for (var key in results) {
-            cells = cells.concat(results[key].cells);
-          }
-          draw_rr(res.xAxis_categories, res.yAxis_categories, cells, res.title, format)
+          draw(res.xAxis_categories, res.yAxis_categories, all_cells(), res.title, chart[format]);
         })
         .fail(failed);
   }
 
-  $('input[name=id_type]:radio').on('change', function () {
+  function reload() {
     loading.show();
     $.each(['number', 'percentage'], function (i, format) {
       chart[format].empty();
-      fetch_rr(format);
+      fetch(format);
     });
-  });
+  }
+
+  $('input[name=id_type]:radio').on('change', reload);
 
   $(function () {
-    fetch_rr('number');
-    fetch_rr('percentage');
+    reload();
   });
 </script>

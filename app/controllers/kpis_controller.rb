@@ -95,6 +95,7 @@ class KpisController < ApplicationController
       title: "RR(#{id_type}, #{format})",
       format: format,
       id_type: id_type,
+      sequence_number: params[:sequence_number].to_i,
       date_index_max: date_index_max,
       date_start_index: date_start_index,
       date_end_index: date_end_index,
