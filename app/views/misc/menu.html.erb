@@ -2,46 +2,38 @@
 
 <div class="menu">
   <h2><small><%= t('notifications.setting') %></small></h2>
-  <%= form_for user.notification, url: menu_path do |f| %>
+  <% %i(email dm news search).each do |name| %>
     <div class="checkbox">
       <label>
-        <%= f.check_box :email %>
-        <div><%= t('notifications.desc.email') %></div>
+        <input type="checkbox" value="1" <%= user.notification_setting.send("#{name}?") ? 'checked="checked"'.html_safe : '' %> name="<%= name %>">
+        <div><%= t("notifications.desc.#{name}") %>
+          <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
+        </div>
       </label>
     </div>
     <hr>
-
-    <div class="checkbox">
-      <label>
-        <%= f.check_box :dm %>
-        <div><%= t('notifications.desc.dm') %></div>
-      </label>
-    </div>
-    <hr>
-
-    <div class="checkbox">
-      <label>
-        <%= f.check_box :news %>
-        <div><%= t('notifications.desc.news') %></div>
-      </label>
-    </div>
-    <hr>
-
-    <div class="checkbox">
-      <label>
-        <%= f.check_box :search %>
-        <div><%= t('notifications.desc.search') %></div>
-      </label>
-    </div>
-
-    <div style="margin: 15px 15px auto 15px;">
-      <%= f.submit t('dictionary.save_settings'), class: 'btn btn-default btn-block' %>
-    </div>
   <% end %>
+  <script>
+    $.each(['email', 'dm', 'news', 'search'], function (i, name) {
+      var selector = 'input[name=' + name + ']';
+      $(selector + ':checkbox').on('change', function () {
+        var val = $(selector + ':checked').val() ? true : false;
+        var params = {};
+        params[name] = val;
+        $.ajax({url: '<%= notification_path %>', method: 'PATCH', data: params})
+            .done(function (res) {
+              console.log(res);
+              $('.blink.' + name).fadeIn(2000).fadeOut(2000);
+            })
+            .fail(function (xhr) {
+              console.log(xhr.responseText);
+            });
+      });
+    });
+  </script>
 
 
   <div class="menu-search-histories">
-    <hr style="display: none;">
     <h2 style="display: none;"><small><%= t('search_histories.index.title') %></small></h2>
 
     <%= render(partial: 'searches/adsense') %>
@@ -51,7 +43,6 @@
       $.get('<%= search_histories_path %>', {in_modal: false})
           .done(function (res) {
             var container = $('.menu-search-histories');
-            container.find('hr').show();
             container.find('h2').show();
             container.append(res.html);
           })

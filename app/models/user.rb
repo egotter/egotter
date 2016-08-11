@@ -24,8 +24,8 @@ class User < ActiveRecord::Base
   def remember_created_at=(_)
   end
 
-  has_one :notification, foreign_key: :from_id, dependent: :destroy, validate: false
-  accepts_nested_attributes_for :notification
+  has_one :notification_setting, foreign_key: :from_id, dependent: :destroy, validate: false
+  accepts_nested_attributes_for :notification_setting
 
   def self.update_or_create_for_oauth_by!(auth)
     attrs = {
@@ -45,7 +45,7 @@ class User < ActiveRecord::Base
       user = nil
       self.transaction do
         user = User.create!(attrs.update(uid: auth.uid, email: (auth.info.email || '')))
-        user.create_notification!(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
+        user.create_notification_setting!(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
       end
 
       yield(user, :create) if block_given?
@@ -89,18 +89,18 @@ class User < ActiveRecord::Base
   end
 
   def email_enabled?
-    notification.email?
+    notification_setting.email?
   end
 
   def dm_enabled?
-    notification.dm?
+    notification_setting.dm?
   end
 
   def news_enabled?
-    notification.news
+    notification_setting.news
   end
 
   def search_enabled?
-    notification.search?
+    notification_setting.search?
   end
 end

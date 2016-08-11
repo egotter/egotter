@@ -20,7 +20,7 @@
   </tr>
   <% start = Time.zone.now %>
   <%# [User, Notification, TwitterUser, Friend, Follower, Status, Mention, SearchResult, Favorite].each do |model| %>
-  <% [User, Notification, TwitterUser].each do |model| %>
+  <% [User, NotificationSetting, TwitterUser].each do |model| %>
     <tr>
       <td><%= model.model_name %></td>
       <td><%= model.all.size %></td>

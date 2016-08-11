@@ -1,6 +1,6 @@
-class CreateNotifications < ActiveRecord::Migration
+class CreateNotificationSettings < ActiveRecord::Migration
   def change
-    create_table :notifications do |t|
+    create_table :notification_settings do |t|
       t.boolean :email,           null: false, default: true
       t.boolean :dm,              null: false, default: true
       t.boolean :news,            null: false, default: true
@@ -13,6 +13,6 @@ class CreateNotifications < ActiveRecord::Migration
 
       t.timestamps null: false
     end
-    add_index :notifications, :from_id
+    add_index :notification_settings, :from_id
   end
 end

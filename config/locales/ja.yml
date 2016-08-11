@@ -101,7 +101,8 @@ ja:
       title: "検索履歴"
   notifications:
     title: "通知"
-    to: "%{user} への通知"
+    index:
+      title: "%{user} への通知"
     setting: "通知設定"
     desc:
       email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
@@ -111,6 +112,7 @@ ja:
   misc:
     menu:
       title: "メニュー"
+      updated: "更新しました"
     terms_of_service:
       title: "利用規約"
     privacy_policy:
@@ -149,10 +151,6 @@ ja:
     contact_by_reply: "リプライでお問い合わせ"
     feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
     faq: "よくあるご質問"
-    settings: "設定"
-    save_settings: "設定する"
-    settings_saved: "設定を保存しました。"
-    do_search: "検索する"
     continue_reading: "続きはこちら → "
     view_more: "続きを見る"
     view_more_needs_login: "ログインすると続きを見れます"

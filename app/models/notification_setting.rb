@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: notifications
+# Table name: notification_settings
 #
 #  id             :integer          not null, primary key
 #  email          :boolean          default(TRUE), not null
@@ -20,7 +20,7 @@
 #  index_notifications_on_from_id  (from_id)
 #
 
-class Notification < ActiveRecord::Base
+class NotificationSetting < ActiveRecord::Base
   belongs_to :user
 
   SEND_EMAIL_INTERVAL = 1.day

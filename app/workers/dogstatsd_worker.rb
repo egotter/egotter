@@ -14,7 +14,7 @@ class DogstatsdWorker
   end
 
   def table_stats(statsd)
-    [User, Notification, TwitterUser].each do |model|
+    [User, NotificationSetting, TwitterUser].each do |model|
       statsd.gauge("egotter.#{model.table_name}.count", model.all.size)
     end
   rescue => e

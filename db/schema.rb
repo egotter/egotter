@@ -144,7 +144,7 @@ ActiveRecord::Schema.define(version: 20160730134808) do
   add_index "notification_messages", ["uid"], name: "index_notification_messages_on_uid", using: :btree
   add_index "notification_messages", ["user_id"], name: "index_notification_messages_on_user_id", using: :btree
 
-  create_table "notifications", force: :cascade do |t|
+  create_table "notification_settings", force: :cascade do |t|
     t.boolean  "email",                    default: true, null: false
     t.boolean  "dm",                       default: true, null: false
     t.boolean  "news",                     default: true, null: false
@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 20160730134808) do
     t.datetime "updated_at",                              null: false
   end
 
-  add_index "notifications", ["from_id"], name: "index_notifications_on_from_id", using: :btree
+  add_index "notification_settings", ["from_id"], name: "index_notifications_on_from_id", using: :btree
 
   create_table "search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "",    null: false

@@ -8,7 +8,6 @@ Rails.application.routes.draw do
   %i(maintenance privacy_policy terms_of_service sitemap menu support).each do |name|
     get name, to: "misc##{name}", as: name
   end
-  patch 'menu', to: 'misc#menu'
 
   resources :searches, only: %i(new create show)
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
@@ -32,6 +31,7 @@ Rails.application.routes.draw do
   resources :search_histories, only: :index
   resources :information, only: :index
   resources :notifications, only: :index
+  patch 'notification', to: 'notifications#update'
   resources :statuses, only: :show
   get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
   resources :update_histories, only: :show
