@@ -1,45 +1,18 @@
 class KpisController < ApplicationController
   before_action :basic_auth
+  before_action :set_date
 
   def index
   end
 
-  def dau
-    return render unless request.xhr?
+  %i(dau search_num new_user sign_in).each do |name|
+    define_method(name) do
+      return render unless request.xhr?
 
-    result =
-      if params[:type].nil?
-        {dau: fetch_dau}
-      else
-        {params[:type] => send("fetch_#{params[:type]}")}
-      end
-    render json: result, status: 200
-  end
-
-  def search_num
-    return render unless request.xhr?
-
-    result =
-      if params[:type].nil?
-        {search_num: fetch_search_num}
-      else
-        {params[:type] => send("fetch_#{params[:type]}")}
-      end
-    render json: result, status: 200
-  end
-
-  def new_user
-    result = {
-      new_user: fetch_new_user
-    }
-    render json: result, status: 200
-  end
-
-  def sign_in
-    result = {
-      sign_in: fetch_sign_in
-    }
-    render json: result, status: 200
+      type = params[:type] ? params[:type] : __method__
+      result = {name: type, type => send("fetch_#{type}")}
+      render json: result, status: 200
+    end
   end
 
   def table
@@ -110,6 +83,11 @@ class KpisController < ApplicationController
 
   NOW = Time.zone.now
   PAST_2_WEEKS = {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}
+
+  def set_date
+    @date_start = PAST_2_WEEKS[:start]
+    @date_end = PAST_2_WEEKS[:end]
+  end
 
   def fetch_dau
     result = SearchLog.find_by_sql([dau_sql, PAST_2_WEEKS])

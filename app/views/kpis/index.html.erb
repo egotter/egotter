@@ -1,3 +1,5 @@
+<%= render partial: 'clock', locals: {date_start: @date_start, date_end: @date_end} %>
+
 <div class="kpis dau"><%= image_tag '/ajax-loader.gif' %></div>
 <div><%= link_to('DAU', kpis_dau_path) %></div>
 
@@ -17,73 +19,37 @@
 <div><%= link_to('Table', kpis_table_path) %></div>
 
 <script>
-  var config = window.kpis.config;
-  var config_stacked = window.kpis.config_stacked;
-
-  function fetch_dau(url){
-    $.get(url).done(function(res){
-      draw_dau(res.dau, 'DAU (search_logs)', '.dau');
-    }).fail(function (xhr) {
-      console.log(xhr.responseText)
-    });
+  function failed(xhr) {
+    console.log(xhr.responseText)
   }
 
-  function draw_dau(series, title, selector){
+  function setup(res, config) {
     var conf = $.extend(true, {}, config);
-    conf.title.text = title;
-    conf.series = series;
-    $(selector).empty().highcharts(conf);
+    conf.title.text = res.name;
+    conf.series = res[res.name];
+    $('.' + res.name).empty().highcharts(conf);
   }
 
-  function fetch_search_num(url){
-    $.get(url).done(function(res){
-      draw_search_num(res.search_num, 'Search num (search_logs)', '.search_num');
-    }).fail(function (xhr) {
-      console.log(xhr.responseText)
-    });
+  function draw(res) {
+    setup(res, window.kpis.config);
   }
 
-  function draw_search_num(series, title, selector){
-    var conf = $.extend(true, {}, config_stacked);
-    conf.title.text = title;
-    conf.series = series;
-    $(selector).empty().highcharts(conf);
+  function draw_stacked(res) {
+    setup(res, window.kpis.config_stacked);
   }
 
-  function fetch_new_user(url){
-    $.get(url).done(function(res){
-      draw_new_user(res.new_user, 'New user (users)', '.new_user');
-    }).fail(function (xhr) {
-      console.log(xhr.responseText)
-    });
+  function fetch(url) {
+    $.get(url).done(draw).fail(failed);
   }
 
-  function draw_new_user(series, title, selector){
-    var conf = $.extend(true, {}, config);
-    conf.title.text = title;
-    conf.series = series;
-    $(selector).empty().highcharts(conf);
-  }
-
-  function fetch_sign_in(url){
-    $.get(url).done(function(res){
-      draw_sign_in(res.sign_in, 'Sign in (sign_in_logs)', '.sign_in');
-    }).fail(function (xhr) {
-      console.log(xhr.responseText)
-    });
-  }
-
-  function draw_sign_in(series, title, selector){
-    var conf = $.extend(true, {}, config);
-    conf.title.text = title;
-    conf.series = series;
-    $(selector).empty().highcharts(conf);
+  function fetch_stacked(url) {
+    $.get(url).done(draw_stacked).fail(failed);
   }
 
   $(function () {
-    fetch_dau("<%= kpis_dau_path %>");
-    fetch_search_num("<%= kpis_search_num_path %>");
-    fetch_new_user("<%= kpis_new_user_path %>");
-    fetch_sign_in("<%= kpis_sign_in_path %>");
+    fetch("<%= kpis_dau_path %>");
+    fetch_stacked("<%= kpis_search_num_path %>");
+    fetch("<%= kpis_new_user_path %>");
+    fetch("<%= kpis_sign_in_path %>");
   });
 </script>
