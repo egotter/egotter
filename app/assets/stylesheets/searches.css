@@ -2,21 +2,14 @@
 .slick-dots li button:before {
   color: white !important;
 }
+
 /* change color of carousel dots end */
 
-.top-page .tweet-preview-box, /*TODO remove later */
-.pre-footer .tweet-preview-box,
-.common-result .tweet-preview-box,
-.usage-stats .tweet-preview-box,
-.clusters-belong-to .tweet-preview-box {
+.tweet-preview-box {
   border: 1px solid #e6e6e6;
 }
 
-.top-page .tweet-preview-box textarea, /*TODO remove later */
-.pre-footer .tweet-preview-box textarea,
-.common-result .tweet-preview-box textarea,
-.usage-stats .tweet-preview-box textarea,
-.clusters-belong-to .tweet-preview-box textarea {
+.tweet-preview-box textarea {
   margin: 0;
   padding: 5px;
   resize: none;
@@ -29,12 +22,7 @@
   -webkit-box-sizing: border-box;
 }
 
-.top-page .tweet-box, /*TODO remove later */
-.pre-footer .tweet-box,
-.common-result .tweet-box,
-.usage-stats .tweet-box,
-.clusters-belong-to .tweet-box
-{
+.tweet-box {
   margin-top: 5px;
 }
 
@@ -50,6 +38,7 @@
   margin-top: 15px;
   text-align: center;
 }
+
 h2, h3 {
   text-align: center;
   font-weight: normal;

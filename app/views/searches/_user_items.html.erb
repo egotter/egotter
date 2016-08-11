@@ -4,6 +4,7 @@
     profile_image_url = user_item[:target].profile_image_url_https.to_s
     screen_name = user_item[:target].screen_name
     unique_id = "#{screen_name}_#{user_item[:target].object_id}_#{user_items.object_id}"
+    png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
   %>
 
   <%= render(partial: 'searches/profile_overview_modal',
@@ -13,7 +14,7 @@
     <%# name box %>
     <div class="media name-box">
       <div class="media-left">
-        <img class="media-object" src="<%= profile_image_url %>"
+        <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
              alt="<%= "@#{screen_name}" %>" width="48" height="48">
       </div>
 
@@ -61,7 +62,7 @@
     <%# description box %>
     <div class="media description-box" style="display: none;">
       <div class="media-left">
-        <img class="media-object" src="<%= profile_image_url %>"
+        <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
              alt="<%= "@#{screen_name}" %>" width="48" height="48">
       </div>
 
@@ -73,7 +74,7 @@
     <%# count box %>
     <div class="media count-box" style="display: none;">
       <div class="media-left">
-        <img class="media-object" src="<%= profile_image_url %>"
+        <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
              alt="<%= "@#{screen_name}" %>" width="48" height="48">
       </div>
 
@@ -88,7 +89,7 @@
     <% if user_item[:target].respond_to?(:score) %><%# close_friends score %>
       <div class="media score-box" style="display: none;">
         <div class="media-left">
-          <img class="media-object" src="<%= profile_image_url %>"
+          <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
                alt="<%= "@#{screen_name}" %>" width="48" height="48">
         </div>
 
@@ -102,7 +103,7 @@
   </div><%# .user-item-carousel %>
 
   <% if i == 0 && user_items.first_page? && user_items.many? && graph.present? %>
-    <div class="user-items media">
+    <div class="user-items-chart media">
       <div class="media-body">
         <div id="<%= graph.object_id %>" class="common-chart"></div>
         <script>
@@ -115,7 +116,7 @@
         </script>
 
         <% if user_item[:target].respond_to?(:score) %><%# close_friends score %>
-          <div class="icon-chart container">
+          <div class="icon-chart">
             <%
               chart_items = user_items.slice(0, [5, user_items.size].min).map{|item| item[:target] }
               total_score = chart_items.inject(0){|memo, item| memo + item.score }
@@ -129,7 +130,7 @@
                 score = item.score.to_f / total_score * 100 * weight
               %>
               <div class="row">
-                <div class="col-xs-3 text-center" style="padding-left: 0px; padding-right: 0px;">
+                <div class="col-xs-3 text-center" style="padding-left: 0; padding-right: 0;">
                   <% if ii < 3 %>
                     <img style="display: inline;" src="<%= "/flaticon/prize#{ii + 1}.png" %>" width="24" height="24">
                   <% else %>
@@ -137,8 +138,8 @@
                   <% end %>
                   <img style="display: inline;" src="<%= url %>" width="24" height="24" alt="<%= sn %>">
                 </div>
-                <div class="col-xs-9" style="padding-left: 0px; padding-right: 0px;">
-                  <div class="progress" style="margin-top: 2px; margin-bottom: 0px;">
+                <div class="col-xs-9" style="padding-left: 0; padding-right: 0;">
+                  <div class="progress" style="margin-top: 2px; margin-bottom: 0;">
                     <div class="progress-bar progress-bar" role="progressbar"
                          aria-valuenow="<%= score %>" aria-valuemin="0" aria-valuemax="100"
                          style="width: <%= score %>%; background-color: <%= color[ii] %>;">
@@ -169,13 +170,29 @@
       infinite: true
     };
     for (var i = 0; i < user_item_count; i++) {
-      container.find('.user-item-carousel-' + i).slick(option);
+      (function(){
+        var loaded = false;
+        container.find('.user-item-carousel-' + i)
+            .lazyload()
+            .on('appear', function () {
+              if (loaded) {
+                return
+              }
+              loaded = true;
+
+              $(this).slick(option);
+              $(this)
+                  .find('img.lazy').trigger('appear').end()
+                  .find('.media.description-box').show().end()
+                  .find('.media.count-box').show().end()
+                  .find('.media.score-box').show();
+            });
+      })();
     }
-    container.find('.media.description-box').show();
-    container.find('.media.count-box').show();
-    container.find('.media.score-box').show();
   }
+
   $(function () {
     enable_carousel_<%= user_items.object_id %>();
+    $("img.lazy").lazyload();
   });
 </script>

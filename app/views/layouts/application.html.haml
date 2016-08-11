@@ -169,12 +169,14 @@
               = render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"})
               #share
               :javascript
-                $("#share").jsSocials({
-                  shares: ["twitter", "facebook", "googleplus"],
-                  url: "http://egotter.com",
-                  text: "#{raw egotter_share_text}",
-                  showLabel: true,
-                  showCount: true
+                $(function () {
+                  $("#share").jsSocials({
+                    shares: ["twitter", "facebook", "googleplus"],
+                    url: "http://egotter.com",
+                    text: "#{raw egotter_share_text}",
+                    showLabel: true,
+                    showCount: true
+                  });
                 });
               .official-account
                 %h2.h4= t('dictionary.official_account')
@@ -182,17 +184,19 @@
                   %a.twitter-follow-button{'data-show-count' => 'false', 'data-size' => 'large', href: 'https://twitter.com/ego_tter'}
                     Follow @ego_tter
                   :javascript
-                    !function (d, s, id) {
-                      var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                      if (!d.getElementById(id)) {
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = p + '://platform.twitter.com/widgets.js';
-                        fjs.parentNode.insertBefore(js, fjs);
-                      }
-                    }(document, 'script', 'twitter-wjs');
+                    $(function () {
+                      !function (d, s, id) {
+                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                        if (!d.getElementById(id)) {
+                          js = d.createElement(s);
+                          js.id = id;
+                          js.src = p + '://platform.twitter.com/widgets.js';
+                          fjs.parentNode.insertBefore(js, fjs);
+                        }
+                      }(document, 'script', 'twitter-wjs');
+                    });
               .information
-                %h2.h4{style: "display: none;"}= t('dictionary.information')
+                %h2.h4{style: 'display: none;'}= t('dictionary.information')
               :javascript
                 $(function () {
                   $.get('#{information_index_path}')

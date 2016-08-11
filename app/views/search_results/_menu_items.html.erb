@@ -1,6 +1,7 @@
 <%
   # avoid duplicate rendering
   modal_rendered_uids = []
+  png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
 %>
 
 <script>
@@ -16,7 +17,7 @@
 
     <% close_friends[:target].slice(0..2).each do |user| %>
       <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
-        <img class="lazy" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
+        <img class="lazy" src="<%= png %>" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
       </span>
     <% end %>
   </div>
@@ -102,7 +103,7 @@
 
       <% menu_item[:target].slice(0..2).each do |user| %>
         <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
-          <img class="lazy" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
+          <img class="lazy" src="<%= png %>" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
         </span>
       <% end %>
     </div>
@@ -140,7 +141,7 @@
 
       <% menu_item[:target].slice(0..2).each do |user| %>
         <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
-          <img class="lazy" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
+          <img class="lazy" src="<%= png %>" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
         </span>
       <% end %>
     </div>
