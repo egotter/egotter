@@ -28,6 +28,14 @@ module Concerns::TwitterUser::Utils
     "@#{screen_name}"
   end
 
+  def friend_uids
+    new_record? ? friends.map { |f| f.uid.to_i } : friends.pluck(:uid).map { |uid| uid.to_i }
+  end
+
+  def follower_uids
+    new_record? ? followers.map { |f| f.uid.to_i } : followers.pluck(:uid).map { |uid| uid.to_i }
+  end
+
   def recently_created?(seconds = DEFAULT_SECONDS)
     Time.zone.now.to_i - created_at.to_i < seconds
   end
@@ -36,7 +44,7 @@ module Concerns::TwitterUser::Utils
     Time.zone.now.to_i - updated_at.to_i < seconds
   end
 
-  def latest_me
+  def latest
     TwitterUser.latest(uid.to_i, user_id)
   end
 

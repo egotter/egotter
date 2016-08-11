@@ -21,9 +21,6 @@
 class Friend < ActiveRecord::Base
   belongs_to :twitter_user
 
-  attr_accessor :egotter_context
-
   include Concerns::TwitterUser::Store
-  include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Equalizer
 end

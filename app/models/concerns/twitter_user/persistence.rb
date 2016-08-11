@@ -9,60 +9,57 @@ module Concerns::TwitterUser::Persistence
   included do
   end
 
-  def save(*)
-    if invalid? || recently_created_record_exists? || same_record_exists?
-      logger.info "#{self.class}##{__method__} #{errors.full_messages}"
+
+
+  def save(*args)
+    if persisted?
+      return super(*args)
+    end
+
+    if invalid?
+      logger.info "#{self.class}##{__method__}: #{errors.full_messages}"
       return false
     end
 
-    _friends, _followers, _statuses, _mentions, _search_results, _favorites =
-      friends.to_a.dup, followers.to_a.dup,
-        statuses.to_a.dup, mentions.to_a.dup, search_results.to_a.dup, favorites.to_a.dup
-    self.friends = self.followers = self.statuses = self.mentions = self.search_results = self.favorites = []
-    super(validate: false)
+    relations = %i(friends followers statuses mentions search_results favorites).map do |name|
+      [name, send(name).to_a.dup]
+    end.to_h
+
+    relations.keys.each do |name|
+      send("#{name}=", [])
+    end
+
+    return false unless super(validate: false)
 
     begin
-      log_level = Rails.logger.level; Rails.logger.level = Logger::WARN
-
-      self.transaction do
-        _friends.map { |f| f.from_id = self.id }
-        _friends.each_slice(100).each { |f| Friend.import(f, validate: false) }
-      end
-
-      self.transaction do
-        _followers.map { |f| f.from_id = self.id }
-        _followers.each_slice(100).each { |f| Follower.import(f, validate: false) }
-      end
-
-      self.transaction do
-        _statuses.map { |s| s.from_id = self.id }
-        _statuses.each_slice(100).each { |s| Status.import(s, validate: false) }
-      end
-
-      self.transaction do
-        _mentions.map { |m| m.from_id = self.id }
-        _mentions.each_slice(100).each { |m| Mention.import(m, validate: false) }
-      end
-
-      self.transaction do
-        _search_results.map { |sr| sr.from_id = self.id }
-        _search_results.each_slice(100).each { |sr| SearchResult.import(sr, validate: false) }
-      end
-
-      self.transaction do
-        _favorites.map { |f| f.from_id = self.id }
-        _favorites.each_slice(100).each { |f| Favorite.import(f, validate: false) }
-      end
-
-      Rails.logger.level = log_level
-
-      self.reload
+      relations.each { |name, values| import_relations!(name, values) }
+      reload
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-      self.destroy
+      destroy
       false
     else
       true
+    end
+  end
+
+  private
+
+  def import_relations!(name, values)
+    klass = name.to_s.classify.constantize
+    benchmark_and_silence(name) do
+      values.each { |v| v.from_id = id }
+      ActiveRecord::Base.transaction do
+        values.each_slice(100).each { |v| klass.import(v, validate: false) }
+      end
+    end
+  end
+
+  def benchmark_and_silence(message)
+    ActiveRecord::Base.benchmark("#{self.class}#save #{message}") do
+      logger.silence do
+        yield
+      end
     end
   end
 end

@@ -46,14 +46,6 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
 
-  def friend_uids
-    new_record? ? friends.map { |f| f.uid.to_i } : friends.pluck(:uid).map { |uid| uid.to_i }
-  end
-
-  def follower_uids
-    new_record? ? followers.map { |f| f.uid.to_i } : followers.pluck(:uid).map { |uid| uid.to_i }
-  end
-
   def search_log
     # TODO need to use user_id?
     log = BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid)

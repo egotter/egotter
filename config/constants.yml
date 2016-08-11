@@ -1,9 +1,9 @@
 default: &default
-  twitter_user_recently_created: 1800
-  background_search_log_recently_created: 300
-  background_update_log_recently_created: 300
-  recently_searched: 300
-  page_cache_ttl: 86400
+  twitter_user_recently_created: <%= 30.minutes %>
+  background_search_log_recently_created: <%= 5.minutes %>
+  background_update_log_recently_created: <%= 5.minutes %>
+  recently_searched: <%= 5.minutes %>
+  page_cache_ttl: <%= 3.days %>
   many_friends_threshold: 1000
   too_many_friends_threshold: 5000
   bot_path: 'data/bot.json'
@@ -13,14 +13,14 @@ default: &default
   kaomoji_path: 'data/kaomoji.json'
 development:
   <<: *default
-  twitter_user_recently_created: 60
-  background_search_log_recently_created: 60
-  background_update_log_recently_created: 60
-  recently_searched: 60
-  page_cache_ttl: 60
+  twitter_user_recently_created: <%= 1.minute %>
+  background_search_log_recently_created: <%= 1.minute %>
+  background_update_log_recently_created: <%= 1.minute %>
+  recently_searched: <%= 1.minute %>
+  page_cache_ttl: <%= 1.minute %>
 production:
   <<: *default
 test:
   <<: *default
-  twitter_user_recently_created: 0
+  twitter_user_recently_created: <%= 1.minute %>
   bot_path: 'data/bot.test.json'

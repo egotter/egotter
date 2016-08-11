@@ -22,10 +22,4 @@ class Status < ActiveRecord::Base
   belongs_to :twitter_user
 
   include Concerns::Status::Store
-
-  with_options on: :create do |obj|
-    obj.validates :uid, presence: true, numericality: :only_integer
-    obj.validates :screen_name, format: {with: /\A[a-zA-Z0-9_]{1,20}\z/}
-    obj.validates :status_info, presence: true
-  end
 end

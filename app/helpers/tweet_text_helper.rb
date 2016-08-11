@@ -1,6 +1,6 @@
 module TweetTextHelper
   def short_url
-    UrlShortener.shorten(request.original_url)
+    Util::UrlShortener.shorten(request.original_url)
   end
 
   def error_text

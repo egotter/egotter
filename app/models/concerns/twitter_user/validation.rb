@@ -6,19 +6,15 @@ module Concerns::TwitterUser::Validation
   MANY_FRIENDS = Rails.configuration.x.constants['many_friends_threshold']
   TOO_MANY_FRIENDS = Rails.configuration.x.constants['too_many_friends_threshold']
 
-  SCREEN_NAME_REGEXP = /\A[a-zA-Z0-9_]{1,20}\z/
-  UID_REGEXP = /\A\d+\z/
-
   included do
-    with_options on: :create do |obj|
-      obj.validates :uid, presence: true, numericality: :only_integer
-      obj.validates :screen_name, format: {with: SCREEN_NAME_REGEXP}
-      obj.validates :user_info, presence: true, format: {with: /\A\{.*\}\z/}
-    end
+    validates_with Validations::UidValidator
+    validates_with Validations::ScreenNameValidator
+    validates_with Validations::UserInfoValidator
+    validates_with Validations::DuplicateRecordValidator, on: :create
   end
 
   def valid_uid?
-    if uid.present? && uid.match(UID_REGEXP)
+    if uid.present? && uid.match(Validations::UidValidator::UID_REGEXP)
       true
     else
       errors.add(:uid, :invalid)
@@ -27,7 +23,7 @@ module Concerns::TwitterUser::Validation
   end
 
   def valid_screen_name?
-    if screen_name.present? && screen_name.match(SCREEN_NAME_REGEXP)
+    if screen_name.present? && screen_name.match(Validations::ScreenNameValidator::SCREEN_NAME_REGEXP)
       true
     else
       errors.add(:screen_name, :invalid)
@@ -146,41 +142,5 @@ module Concerns::TwitterUser::Validation
     end
 
     false
-  end
-
-  def recently_created_record_exists?
-    me = latest_me
-    return false if me.blank?
-
-    if me.recently_created? || me.recently_updated?
-      errors[:base] << 'A recently created record exists.'
-      return true
-    end
-
-    false
-  end
-
-  def same_record_exists?
-    me = latest_me
-    return false if me.blank?
-    me.same_record?(self)
-  end
-
-  def same_record?(other)
-    return false if other.blank?
-
-    older, newer = self, other
-    diff = older.diff(newer)
-
-    # debug code
-    # logger.warn older.id
-    # logger.warn newer.id
-    # logger.warn diff.select { |_, v| v[0] != v[1] }.keys.inspect
-    # logger.warn diff.select { |_, v| v[0] != v[1] }.values.inspect
-
-    return false if diff.any? { |_, v| v[0] != v[1] }
-
-    newer.errors[:base] << "Same record(#{newer.id}) exists."
-    true
   end
 end
