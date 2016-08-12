@@ -1,20 +1,20 @@
 <%= render partial: 'clock', locals: {date_start: @date_start, date_end: @date_end} %>
 
-<div><%= link_to('KPIs', kpi_admin.root_path) %></div>
+<div><%= link_to('KPIs', root_path) %></div>
 
 <div class="row">
-  <div class="kpis dau                 col-xs-12"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis dau_per_action      col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis pv_per_action       col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis dau_by_new_action   col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis pv_by_new_action    col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis dau_per_device_type col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis pv_per_device_type  col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis dau_per_referer     col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
-  <div class="kpis pv_per_referer      col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
+  <div class="kpis dau                 col-xs-12"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_per_action      col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis pv_per_action       col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_by_new_action   col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis pv_by_new_action    col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_per_device_type col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis pv_per_device_type  col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_per_referer     col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis pv_per_referer      col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
 </div>
 
-<div><%= link_to('KPIs', kpi_admin.root_path) %></div>
+<div><%= link_to('KPIs', root_path) %></div>
 
 <script>
   function fetch_dau(url){
@@ -63,6 +63,6 @@
   }
 
   $(function () {
-    fetch_dau("<%= kpi_admin.dau_path %>");
+    fetch_dau("<%= dau_path %>");
   });
 </script>
