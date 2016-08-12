@@ -1,4 +1,3 @@
 Rails.application.routes.draw do
-
-  mount KpiAdmin::Engine => "/kpi_admin"
+  mount KpiAdmin::Engine => "/kpis"
 end
