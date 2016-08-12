@@ -57,9 +57,7 @@ Rails.application.routes.draw do
   end if Rails.env.production?
   mount Sidekiq::Web, at: '/sidekiq'
 
-  resources :kpis, only: :index
-  %i(dau search_num new_user sign_in table rr).each do |name|
-    get "kpis/#{name}", to: "kpis##{name}", as: "kpis_#{name}"
-  end
+  mount KpiAdmin::Engine, at: '/kpis', as: :kpis
+
   get 'debug', to: 'debug#index', as: :debug
 end

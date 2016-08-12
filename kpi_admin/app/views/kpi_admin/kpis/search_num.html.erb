@@ -1,6 +1,6 @@
 <%= render partial: 'clock', locals: {date_start: @date_start, date_end: @date_end} %>
 
-<div><%= link_to('KPIs', kpis_path) %></div>
+<div><%= link_to('KPIs', kpi_admin.root_path) %></div>
 
 <div class="row">
   <div class="kpis search_num              col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
@@ -10,7 +10,7 @@
   <div class="kpis search_num_by_google    col-xs-12 col-sm-6"><%= image_tag '/ajax-loader.gif' %></div>
 </div>
 
-<div><%= link_to('KPIs', kpis_path) %></div>
+<div><%= link_to('KPIs', kpi_admin.root_path) %></div>
 
 <script>
   function fetch_search_num(url){
@@ -45,6 +45,6 @@
   }
 
   $(function () {
-    fetch_search_num("<%= kpis_search_num_path %>");
+    fetch_search_num("<%= kpi_admin.search_num_path %>");
   });
 </script>

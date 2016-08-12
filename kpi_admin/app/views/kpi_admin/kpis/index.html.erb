@@ -1,2 +1,55 @@
-<h1>Kpis#index</h1>
-<p>Find me in app/views/kpi_admin/kpis/index.html.erb</p>
+<%= render partial: 'clock', locals: {date_start: @date_start, date_end: @date_end} %>
+
+<div class="kpis dau"><%= image_tag '/ajax-loader.gif' %></div>
+<div><%= link_to('DAU', kpi_admin.dau_path) %></div>
+
+<div class="kpis search_num"><%= image_tag '/ajax-loader.gif' %></div>
+<div><%= link_to('Search num', kpi_admin.search_num_path) %></div>
+
+<div class="kpis new_user"><%= image_tag '/ajax-loader.gif' %></div>
+<div><%= link_to('New user', kpi_admin.new_user_path) %></div>
+
+<div class="kpis sign_in"><%= image_tag '/ajax-loader.gif' %></div>
+<div><%= link_to('Sign in', kpi_admin.sign_in_path) %></div>
+
+<br>
+<div><%= link_to('RR', kpi_admin.rr_path) %></div>
+
+<br>
+<div><%= link_to('Table', kpi_admin.table_path) %></div>
+
+<script>
+  function failed(xhr) {
+    console.log(xhr.responseText)
+  }
+
+  function setup(res, config) {
+    var conf = $.extend(true, {}, config);
+    conf.title.text = res.name;
+    conf.series = res[res.name];
+    $('.' + res.name).empty().highcharts(conf);
+  }
+
+  function draw(res) {
+    setup(res, window.kpis.config);
+  }
+
+  function draw_stacked(res) {
+    setup(res, window.kpis.config_stacked);
+  }
+
+  function fetch(url) {
+    $.get(url).done(draw).fail(failed);
+  }
+
+  function fetch_stacked(url) {
+    $.get(url).done(draw_stacked).fail(failed);
+  }
+
+  $(function () {
+    fetch("<%= kpi_admin.dau_path %>");
+    fetch_stacked("<%= kpi_admin.search_num_path %>");
+    fetch("<%= kpi_admin.new_user_path %>");
+    fetch("<%= kpi_admin.sign_in_path %>");
+  });
+</script>

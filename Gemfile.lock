@@ -2,6 +2,8 @@ PATH
   remote: kpi_admin
   specs:
     kpi_admin (0.0.1)
+      haml-rails
+      jquery-rails
       rails (~> 4.2.5)
 
 GEM
