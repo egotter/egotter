@@ -9,9 +9,9 @@ Gem::Specification.new do |s|
   s.version     = KpiAdmin::VERSION
   s.authors     = ["Shinohara Teruki"]
   s.email       = ["ts_3156@yahoo.co.jp"]
-  s.homepage    = "TODO"
-  s.summary     = "TODO: Summary of KpiAdmin."
-  s.description = "TODO: Description of KpiAdmin."
+  s.homepage    = "http://example.com"
+  s.summary     = "Summary of KpiAdmin."
+  s.description = "Description of KpiAdmin."
   s.license     = "MIT"
 
   s.files = Dir["{app,config,db,lib}/**/*", "MIT-LICENSE", "Rakefile", "README.rdoc"]
@@ -19,5 +19,5 @@ Gem::Specification.new do |s|
 
   s.add_dependency "rails", "~> 4.2.5"
 
-  s.add_development_dependency "sqlite3"
+  s.add_development_dependency "mysql2"
 end

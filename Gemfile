@@ -58,6 +58,7 @@ gem 'dogstatsd-ruby'
 gem 'haml-rails'
 gem 'rails_autolink'
 gem 'draper'
+gem 'kpi_admin', path: 'kpi_admin'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
