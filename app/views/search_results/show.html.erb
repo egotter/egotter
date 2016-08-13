@@ -1,4 +1,4 @@
-<%= render(partial: 'search_results/menu_items',
+<%= render(partial: 'menu_items',
            locals: {searched_tw_user: @searched_tw_user,
                     menu_items: @menu_items,
                     menu_update_histories: @menu_update_histories,
@@ -15,10 +15,6 @@
 
   $(function () {
     var created_at = <%= @searched_tw_user.created_at.to_i %>;
-    var interval = 2000;
-    var max_interval = 5000;
-    var retry_count = 0;
-    var max_retry_count = 5;
     var hash = null;
     var refresh_box = $('.alert.alert-info');
     var refresh_btn = refresh_box.find('a');
@@ -40,10 +36,6 @@
       return $.post(url)
     }
 
-    function failed(xhr) {
-      console.log(xhr.responseText);
-    }
-
     function refresh() {
       delete_cache(hash)
           .then(create_cache, failed)
@@ -51,29 +43,63 @@
           .fail(failed);
     }
 
+    function interval_counter() {
+      var cur = 2000;
+      var max = 5000;
+
+      return {
+        cur: function () {
+          return cur
+        },
+        next: function () {
+          cur += 2000;
+          if (cur > max) cur = max;
+          return cur
+        }
+      }
+    }
+    var interval = interval_counter();
+
+    function retry_counter() {
+      var count = 0;
+      var max = 5;
+
+      return {
+        cur: function () {
+          return count
+        },
+        next: function () {
+          count++;
+          return count < max
+        }
+      }
+    }
+    var retry = retry_counter();
+
+    function failed(xhr) {
+      console.log(xhr.responseText);
+    }
+
+    function done(res, text_status, xhr) {
+      console.log(res, text_status, xhr.status, interval.cur(), retry.cur());
+
+      if (xhr.status == 200) {
+        if (created_at < res.created_at) {
+          hash = res.hash;
+          refresh_box.show();
+        } else {
+          console.log('the result is latest.')
+        }
+      } else if (!retry.next()) {
+        console.log('stop waiting');
+      } else {
+        setTimeout(tic, interval.next());
+      }
+    }
+
     function tic() {
       var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
-      $.get(url)
-          .done(function (res, text_status, xhr) {
-            console.log(res, text_status, xhr.status, interval, retry_count);
-
-            if (xhr.status == 200) {
-              if (created_at < res.created_at) {
-                hash = res.hash;
-                refresh_box.show();
-              } else {
-                console.log('the result is latest.')
-              }
-            } else if (retry_count >= max_retry_count) {
-              console.log('stop waiting');
-            } else {
-              retry_count++;
-              interval += 2000;
-              if (interval > max_interval) interval = max_interval;
-              setTimeout(tic, interval);
-            }
-          })
-          .fail(failed);
+      $.get(url).done(done).fail(failed);
     }
 
     tic();

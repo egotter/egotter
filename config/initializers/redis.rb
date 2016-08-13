@@ -1,11 +1,12 @@
 Redis.class_eval do
+  HOST = ENV['REDIS_HOST']
+  TTL = Rails.configuration.x.constants['page_cache_ttl']
+
   def self.client
-    new(host: ENV['REDIS_HOST'], driver: :hiredis)
+    new(host: HOST, driver: :hiredis)
   end
 
-  DEFAULT_EGOTTER_CACHE_TTL = Rails.configuration.x.constants['page_cache_ttl']
-
-  def fetch(key, ttl = DEFAULT_EGOTTER_CACHE_TTL)
+  def fetch(key, ttl = TTL)
     if block_given?
       if exists(key)
         get(key)
@@ -19,48 +20,7 @@ Redis.class_eval do
     end
   end
 
-  def self.job_dispatcher_added_key
-    'update_job_dispatcher:recently_added'
-  end
-
-  def self.job_dispatcher_enqueue_num_key
-    'update_job_dispatcher:enqueue_num'
-  end
-
   def self.debug_info_key
     'update_job_dispatcher:debug'
-  end
-
-  def self.search_controller_delay_occurs_count
-    'search_controller:delay_occurs_count'
-  end
-
-  def self.search_controller_delay_does_not_occur_count
-    'search_controller:delay_does_not_occur_count'
-  end
-
-  def delay_occurs_count
-    get(self.class.search_controller_delay_occurs_count).to_i
-  end
-
-  def delay_occurs_rate
-    delay_count = delay_occurs_count.to_f
-    not_delay_count = get(self.class.search_controller_delay_does_not_occur_count).to_f
-    delay_count / (delay_count + not_delay_count)
-  rescue
-    0.0
-  end
-
-  def incr_delay_occurs_count
-    incr(self.class.search_controller_delay_occurs_count)
-  end
-
-  def incr_delay_does_not_occur_count
-    incr(self.class.search_controller_delay_does_not_occur_count)
-  end
-
-  def del_delay_occurs_count
-    del(self.class.search_controller_delay_occurs_count)
-    del(self.class.search_controller_delay_does_not_occur_count)
   end
 end

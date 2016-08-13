@@ -171,8 +171,8 @@ class TwitterUserDecorator < Draper::Decorator
       target: clusters_belong_to,
       graph: object.clusters_belong_to_frequency_distribution,
       screen_name: object.screen_name,
-      text: "#{clusters_belong_to.map{|c| "#{c}#{I18n.t('searches.clusters_belong_to.cluster')}" }.join(I18n.t('dictionary.delim'))}",
-      tweet_text: "#{title}\n#{clusters_belong_to.map{|c| "##{c}#{I18n.t('searches.clusters_belong_to.cluster')}" }.join(' ')}\n#{I18n.t('dictionary.continue_reading')}http://example.com",
+      text: "#{clusters_belong_to.map{|c| "#{c}#{I18n.t('searches.common.cluster')}" }.join(I18n.t('dictionary.delim'))}",
+      tweet_text: "#{title}\n#{clusters_belong_to.map{|c| "##{c}#{I18n.t('searches.common.cluster')}" }.join(' ')}\n#{I18n.t('dictionary.continue_reading')}http://example.com",
       path: h.clusters_belong_to_path(screen_name: object.screen_name, id: object.uid)
     }
   end

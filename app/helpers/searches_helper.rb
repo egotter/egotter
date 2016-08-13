@@ -2,7 +2,11 @@ module SearchesHelper
   def set_twitter_user
     unless TwitterUser.new(uid: params[:id]).valid_uid?
       logger.info "#{self.class}##{__method__}: The uid is invalid. #{params[:id]} #{current_user_id} #{action_name} #{request.device_type}."
-      return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
+      if request.xhr?
+        return render nothing: true, status: 400
+      else
+        return redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
+      end
     end
 
     uid = params[:id].to_i
@@ -14,7 +18,11 @@ module SearchesHelper
       @searched_tw_user = tu
     else
       logger.info "#{self.class}##{__method__}: The TwitterUser doesn't exist. #{uid} #{user_id} #{action_name} #{request.device_type}."
-      redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
+      if request.xhr?
+        return render nothing: true, status: 400
+      else
+        redirect_to '/', alert: t('before_sign_in.that_page_doesnt_exist')
+      end
     end
   end
 

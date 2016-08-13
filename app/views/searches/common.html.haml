@@ -1,0 +1,36 @@
+- title @title
+- set_meta_tags description: "#{@title} - #{@searched_tw_user.description}"
+
+= render(partial: 'searches/profile_overview',
+  locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"})
+
+.common-result
+  %h2.h4= @title
+
+  .return-to-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
+
+  = render(partial: 'searches/adsense')
+
+  .loading-image.text-center
+    = t('searches.waiting.searching', user: @searched_tw_user.name)
+    = image_tag '/ajax-loader.gif'
+
+  .error-msg.text-center
+
+  :javascript
+    $(function () {
+      var url = "/search_results/#{@searched_tw_user.uid}/#{@menu}";
+      $.get(url)
+          .done(function (res) {
+            $('.common-result').append(res.html);
+            var path = window.location.pathname + window.location.search + '#loaded';
+            window.history.replaceState(null, null, path)
+          })
+          .fail(function (xhr) {
+            console.log(xhr.responseText);
+            $('.error-msg').append('#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}');
+          })
+          .always(function () {
+            $('.loading-image').remove();
+          });
+    });

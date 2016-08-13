@@ -17,7 +17,7 @@ class BackgroundSearchLogsController < ApplicationController
   # GET /background_search_logs/:id
   def show
     unless TwitterUser.new(uid: params[:id]).valid_uid?
-      return render json: {reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
+      return render nothing: true, status: 400
     end
 
     uid = params[:id].to_i

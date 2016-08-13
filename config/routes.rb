@@ -13,10 +13,9 @@ Rails.application.routes.draw do
   get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
   resources :search_results, only: :show
 
-  %i(friends followers removing removed blocking_or_blocked one_sided_friends one_sided_followers
-    mutual_friends common_friends common_followers replying replied favoriting inactive_friends
-    inactive_followers clusters_belong_to close_friends usage_stats).each do |name|
-    get "searches/:screen_name/#{name}", to: "searches##{name}", as: name
+  Search::MENU.each do |menu|
+    get "searches/:screen_name/#{menu}", to: "searches##{menu}", as: menu
+    get "search_results/:id/#{menu}", to: "search_results##{menu}"
   end
 
   %i(statuses update_histories).each do |name|

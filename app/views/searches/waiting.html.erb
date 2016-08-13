@@ -13,14 +13,6 @@
   </div>
 </div>
 
-<% if TwitterUser.exists?(uid: @searched_tw_user.uid, user_id: current_user_id) %>
-  <div class="show_immediately_btn" style="margin-top: 15px;">
-    <%= link_to t('searches.waiting.show_immediately'),
-                search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid),
-                class: 'btn btn-lg btn-info btn-block' %>
-  </div>
-<% end %>
-
 <div class="login_btn" style="display: none; margin-top: 15px;">
   <%= link_to t('dictionary.sign_in_with_twitter'), sign_in_path,
               class: 'btn btn-lg btn-info btn-block' %>
@@ -36,108 +28,85 @@
               class: 'btn btn-lg btn-info btn-block' %>
 </div>
 
-<div class="error-msg" style="display: none; margin-top: 15px;">
-</div>
-
 <script>
   $(function () {
-    var admin = <%= admin_signed_in? ? 'true' : 'false' %>;
     var is_login = <%= user_signed_in? ? 'true' : 'false' %>;
     var waiting_msg = $('.waiting_msg');
     var retry_btn = $('.retry_btn');
     var login_btn = $('.login_btn');
-    var show_immediately_btn = $('.show_immediately_btn');
     var progress_bar = $('.progress_bar');
     var support_btn = $('.support_btn');
-    var error_msg = $('.error-msg');
-    var interval = 2000;
-    var max_interval = 5000;
-    var retry_count = 0;
-    var max_retry_count = 10;
-    var stop_waiting = false;
 
-    function TooManyRequests() {
-    }
-
-    TooManyRequests.prototype = {
-      show_msg: function () {
-        show_immediately_btn.hide();
-        progress_bar.hide();
-        if (is_login) {
-          waiting_msg.html('<%= t("after_sign_in.too_many_requests") %>');
-          retry_btn.show();
-          support_btn.show();
-        } else {
-          waiting_msg.html('<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
-          login_btn.show();
-          support_btn.show();
-        }
-      }
-    };
-
-    function Unauthorized() {
-    }
-
-    Unauthorized.prototype = {
-      show_msg: function () {
-        show_immediately_btn.hide();
-        progress_bar.hide();
-        if (is_login) {
-          waiting_msg.html('<%= t("after_sign_in.unauthorized", sign_out_link: link_to(t('dictionary.sign_out'), sign_out_path)).html_safe %>');
-          retry_btn.show();
-          support_btn.show();
-        } else {
-          waiting_msg.html('<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
-          login_btn.show();
-          support_btn.show();
-        }
-      }
-    };
-
-    function SomethingIsWrong() {
-      this.res = null;
-    }
-
-    SomethingIsWrong.prototype = {
-      show_msg: function () {
-        show_immediately_btn.hide();
-        progress_bar.hide();
-        if (is_login) {
-          waiting_msg.html('<%= t("after_sign_in.something_is_wrong") %>');
-          retry_btn.show();
-          support_btn.show();
-          if (admin) {
-            error_msg.show();
-            if (this.res) {
-              error_msg.text(this.res.message);
-            }
+    var Exception = {
+      create(msg1, msg2){
+        var me = Object.create(Exception.prototype);
+        me.msg1 = msg1;
+        me.msg2 = msg2;
+        return me;
+      },
+      prototype: {
+        show_msg(){
+          progress_bar.hide();
+          if (is_login) {
+            waiting_msg.html(this.msg1);
+            retry_btn.show();
+            support_btn.show();
+          } else {
+            waiting_msg.html(this.msg2);
+            login_btn.show();
+            support_btn.show();
           }
-        } else {
-          waiting_msg.html('<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
-          login_btn.show();
-          support_btn.show();
         }
       }
     };
 
-    function Timeout() {
-    }
-
-    Timeout.prototype = {
-      show_msg: function () {
-        show_immediately_btn.hide();
-        progress_bar.hide();
-        if (is_login) {
-          waiting_msg.html('<%= t("after_sign_in.retry_timeout", user: @searched_tw_user.name) %>');
-          retry_btn.show();
-          support_btn.show();
-        } else {
-          waiting_msg.html('<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>');
-          login_btn.show();
-          support_btn.show();
-        }
-      }
+    var TooManyRequests = {
+      create(){
+        var me = Object.create(TooManyRequests.prototype);
+        var msg1 = '<%= t("after_sign_in.too_many_requests") %>';
+        var msg2 = '<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
+        Object.assign(me, Exception.create(msg1, msg2));
+        return me;
+      },
+      prototype: {}
     };
+    Object.setPrototypeOf(TooManyRequests.prototype, Exception.prototype);
+
+    var Unauthorized = {
+      create(){
+        var me = Object.create(Unauthorized.prototype);
+        var msg1 = '<%= t("after_sign_in.unauthorized", sign_out_link: link_to(t('dictionary.sign_out'), sign_out_path)).html_safe %>';
+        var msg2 = '<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
+        Object.assign(me, Exception.create(msg1, msg2));
+        return me;
+      },
+      prototype: {}
+    };
+    Object.setPrototypeOf(Unauthorized.prototype, Exception.prototype);
+
+    var SomethingIsWrong = {
+      create(){
+        var me = Object.create(SomethingIsWrong.prototype);
+        var msg1 = '<%= t("after_sign_in.something_is_wrong") %>';
+        var msg2 = '<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
+        Object.assign(me, Exception.create(msg1, msg2));
+        return me;
+      },
+      prototype: {}
+    };
+    Object.setPrototypeOf(SomethingIsWrong.prototype, Exception.prototype);
+
+    var Timeout = {
+      create(){
+        var me = Object.create(Timeout.prototype);
+        var msg1 = '<%= t("after_sign_in.retry_timeout", user: @searched_tw_user.name) %>';
+        var msg2 = '<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
+        Object.assign(me, Exception.create(msg1, msg2));
+        return me;
+      },
+      prototype: {}
+    };
+    Object.setPrototypeOf(Timeout.prototype, Exception.prototype);
 
     function progress(value) {
       var random_int = function (min, max) {
@@ -161,62 +130,77 @@
       bar.find('.sr-only').text(value + '% Complete');
     }
 
-    show_immediately_btn.on('click', function () {
-      stop_waiting = true;
-      waiting_msg.html('<%= t("searches.waiting.show_immediately_msg", user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>');
-      show_immediately_btn.hide();
-    });
+    function interval_counter() {
+      var cur = 2000;
+      var max = 5000;
 
-    function find_error(res) {
-      var error = null;
-      if (res.reason == '<%= BackgroundSearchLog::TooManyRequests::MESSAGE %>') {
-        error = new TooManyRequests();
-      } else if (res.reason == '<%= BackgroundSearchLog::Unauthorized::MESSAGE %>') {
-        error = new Unauthorized();
-      } else if (res.reason == '<%= BackgroundSearchLog::SomethingError::MESSAGE %>') {
-        error = new SomethingIsWrong();
-        error.res = res;
-      } else if (retry_count >= max_retry_count) {
-        error = new Timeout();
+      return {
+        cur: function () {
+          return cur
+        },
+        next: function () {
+          cur += 2000;
+          if (cur > max) cur = max;
+          return cur
+        }
       }
-      return error
+    }
+    var interval = interval_counter();
+
+    function retry_counter() {
+      var count = 0;
+      var max = 10;
+
+      return {
+        cur: function () {
+          return count
+        },
+        next: function () {
+          count++;
+          return count < max
+        }
+      }
+    }
+    var retry = retry_counter();
+
+    function failed(xhr) {
+      console.log(xhr.responseText);
+      var errors = {
+        "<%= BackgroundSearchLog::TooManyRequests::MESSAGE %>": TooManyRequests.create(),
+        "<%= BackgroundSearchLog::Unauthorized::MESSAGE %>": Unauthorized.create(),
+        "<%= BackgroundSearchLog::SomethingError::MESSAGE %>": SomethingIsWrong.create()
+      };
+
+      var res = $.parseJSON(xhr.responseText || null);
+      if (res && errors[res.reason]) {
+        errors[res.reason].show_msg();
+      } else {
+        SomethingIsWrong.create().show_msg();
+      }
+    }
+
+    function done(res, text_status, xhr) {
+      console.log(res, text_status, xhr.status, interval.cur(), retry.cur());
+
+      if (xhr.status == 200) {
+        progress(95);
+        waiting_msg.html('<%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>');
+        window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
+        return
+      }
+
+      if (!retry.next()) {
+        Timeout.create().show_msg();
+        return
+      }
+
+      progress();
+      setTimeout(tic, interval.next());
     }
 
     function tic() {
       var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
-      $.get(url)
-          .done(function (res, text_status, xhr) {
-            console.log(res, text_status, xhr.status, interval, retry_count);
-
-            if (xhr.status == 200 && !stop_waiting) {
-              stop_waiting = true;
-              progress(95);
-              show_immediately_btn.hide();
-              waiting_msg.html('<%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>');
-              window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
-              return
-            }
-
-            var error = find_error(res);
-            if (error) {
-              stop_waiting = true;
-              error.show_msg();
-              return
-            }
-
-            if (!stop_waiting) {
-              progress();
-              retry_count++;
-              interval += 2000;
-              if (interval > max_interval) interval = max_interval;
-              setTimeout(tic, interval);
-            }
-          })
-          .fail(function (xhr) {
-            console.log(xhr.responseText);
-            stop_waiting = true;
-            new SomethingIsWrong().show_msg();
-          });
+      $.get(url).done(done).fail(failed);
     }
 
     tic();

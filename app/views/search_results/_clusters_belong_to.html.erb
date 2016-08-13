@@ -1,16 +1,4 @@
-<% title @title %>
-<% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
-
-<%= render(partial: 'searches/profile_overview',
-           locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
-
 <div class="clusters-belong-to">
-  <h2 class="h5"><%= @title %></h2>
-
-  <div class="return-to-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid)) %></div>
-
-  <%= render(partial: 'searches/adsense') %>
-
   <h3 class="h5"><%= t('dictionary.clusters_index') %></h3>
   <div id="clusters_belong_to_graph" class="chart"></div>
 

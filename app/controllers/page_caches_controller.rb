@@ -12,11 +12,11 @@ class PageCachesController < ApplicationController
     user_id = current_user_id
 
     create_instance_variables_for_result_page(tu)
-    html = render_to_string(template: 'search_results/show', layout: false)
+    html = render_to_string(template: 'search_results/show')
     PageCache.new(redis).write(tu.uid, user_id, html)
     render nothing: true, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     render nothing: true, status: 500
   end
 
@@ -33,7 +33,7 @@ class PageCachesController < ApplicationController
       render json: {reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     render nothing: true, status: 500
   end
 

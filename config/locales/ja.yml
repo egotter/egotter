@@ -5,6 +5,7 @@ ja:
       large: "多い"
       small: "少ない"
       others: "それ以外"
+      cluster: "クラスタ"
       return: "%{user} の分析結果一覧へ戻る"
     new:
       total_search_count: "検索回数 約 %{count} 回！(2011年から)"
@@ -71,7 +72,6 @@ ja:
       targets: "対象者"
     clusters_belong_to:
       title: "%{user} が入っているクラスタ"
-      cluster: "クラスタ"
     mutual_friends:
       title: "%{user} が両思い"
       targets: "両思い"

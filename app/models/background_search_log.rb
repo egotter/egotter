@@ -30,16 +30,16 @@
 
 class BackgroundSearchLog < ActiveRecord::Base
 
-  class Unauthorized < StandardError
-    MESSAGE = 'unauthorized'
+  class Unauthorized
+    MESSAGE = self.name.demodulize
   end
 
-  class TooManyRequests < StandardError
-    MESSAGE = 'too many requests'
+  class TooManyRequests
+    MESSAGE = self.name.demodulize
   end
 
-  class SomethingError < StandardError
-    MESSAGE = 'something is wrong'
+  class SomethingError
+    MESSAGE = self.name.demodulize
   end
 
   def self.latest(uid, user_id)
