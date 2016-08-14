@@ -26,11 +26,11 @@ class PageCachesController < ApplicationController
     user_id = current_user_id
 
     page_cache = PageCache.new(redis)
-    if params.has_key?(:hash) && params[:hash].match(/\A[0-9a-zA-Z]{20}\z/)[0] == delete_cache_token(tu.created_at.to_i)
+    if verity_delete_cache_token(params[:hash], tu.created_at.to_i)
       page_cache.delete(tu.uid, user_id)
       render nothing: true, status: 200
     else
-      render json: {reason: t('before_sign_in.that_page_doesnt_exist')}, status: 400
+      render nothing: true, status: 400
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"

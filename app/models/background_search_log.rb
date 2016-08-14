@@ -42,38 +42,20 @@ class BackgroundSearchLog < ActiveRecord::Base
     MESSAGE = self.name.demodulize
   end
 
-  def self.latest(uid, user_id)
-    order(created_at: :desc).find_by(uid: uid, user_id: user_id)
-  end
-
-  def self.processing?(uid, user_id)
-    log = latest(uid, user_id)
-    log.blank? || !log.recently_created?
-  end
-
-  def self.finish?(uid, user_id)
-    log = latest(uid, user_id)
-    log.present? && log.recently_created?
-  end
-
-  def self.successfully_finished?(uid, user_id)
-    finish?(uid, user_id) && latest(uid, user_id).status == true
-  end
-
-  def self.failed?(uid, user_id)
-    finish?(uid, user_id) && latest(uid, user_id).status == false
-  end
-
-  def self.fail_reason!(uid, user_id)
-    failed?(uid, user_id) ? latest(uid, user_id).reason : raise
-  end
-
-  def self.fail_message!(uid, user_id)
-    failed?(uid, user_id) ? latest(uid, user_id).message : raise
-  end
-
   def self.success_logs(user_id, limit)
     where(user_id: user_id, status: true).order(created_at: :desc).limit(limit)
+  end
+
+  def processing?
+    !recently_created?
+  end
+
+  def finished?
+    recently_created? && status
+  end
+
+  def failed?
+    recently_created? && !status
   end
 
   DEFAULT_SECONDS = Rails.configuration.x.constants['background_search_log_recently_created']

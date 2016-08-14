@@ -46,6 +46,10 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
 
+  if Rails.env.development?
+    include Concerns::TwitterUser::Debug
+  end
+
   def search_log
     # TODO need to use user_id?
     log = BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid)

@@ -26,17 +26,16 @@ class BackgroundSearchLogsController < ApplicationController
       return render nothing: true, status: 400
     end
 
+    log = BackgroundSearchLog.order(created_at: :desc).find_by(uid: uid, user_id: user_id)
+
     case
-      when BackgroundSearchLog.processing?(uid, user_id)
+      when log.nil? || log.processing?
         render nothing: true, status: 202
-      when BackgroundSearchLog.successfully_finished?(uid, user_id)
+      when log.finished?
         created_at = TwitterUser.latest(uid, user_id).created_at.to_i
-        render json: {created_at: created_at, hash: delete_cache_token(created_at)}, status: 200
-      when BackgroundSearchLog.failed?(uid, user_id)
-        render json: {
-          reason: BackgroundSearchLog.fail_reason!(uid, user_id),
-          message: BackgroundSearchLog.fail_message!(uid, user_id)
-        }, status: 500
+        render json: {message: log.message, created_at: created_at, hash: delete_cache_token(created_at)}, status: 200
+      when log.failed?
+        render json: {reason: log.reason, message: log.message}, status: 500
       else
         render json: {reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500
     end

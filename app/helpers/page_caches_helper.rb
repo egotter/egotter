@@ -5,6 +5,10 @@ module PageCachesHelper
     Digest::MD5.hexdigest("#{value}-#{ENV['SEED']}").slice(0, 20)
   end
 
+  def verity_delete_cache_token(hash, value)
+    hash && (match = hash.match(/\A[0-9a-zA-Z]{20}\z/)) && match[0] == delete_cache_token(value)
+  end
+
   def create_instance_variables_for_result_page(tu)
     tu = tu.decorate
 

@@ -83,16 +83,21 @@ module KpiAdmin
 
     private
 
-    NOW = Time.zone.now
-    PAST_2_WEEKS = {start: (NOW - 14.days).beginning_of_day, end: NOW.end_of_day}
+    def now
+      @_now ||= Time.zone.now
+    end
+
+    def past_2_weeks
+      @_past_2_weeks ||= {start: (now - 14.days).beginning_of_day, end: now.end_of_day}
+    end
 
     def set_date
-      @date_start = PAST_2_WEEKS[:start]
-      @date_end = PAST_2_WEEKS[:end]
+      @date_start = past_2_weeks[:start]
+      @date_end = past_2_weeks[:end]
     end
 
     def fetch_dau
-      result = SearchLog.find_by_sql([dau_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([dau_sql, past_2_weeks])
       %i(total guest login).map do |legend|
         {
           name: legend,
@@ -119,7 +124,7 @@ module KpiAdmin
     end
 
     def fetch_dau_per_action
-      result = SearchLog.find_by_sql([dau_per_action_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([dau_per_action_sql, past_2_weeks])
       result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
         {
           name: legend,
@@ -146,7 +151,7 @@ module KpiAdmin
     end
 
     def fetch_pv_per_action
-      result = SearchLog.find_by_sql([pv_per_action_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([pv_per_action_sql, past_2_weeks])
       result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
         {
           name: legend,
@@ -174,7 +179,7 @@ module KpiAdmin
     end
 
     def fetch_dau_by_new_action
-      result = SearchLog.find_by_sql([dau_by_new_action_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([dau_by_new_action_sql, past_2_weeks])
       %i(total guest login).map do |legend|
         {
           name: legend,
@@ -201,7 +206,7 @@ module KpiAdmin
     end
 
     def fetch_pv_by_new_action
-      result = SearchLog.find_by_sql([pv_by_new_action_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([pv_by_new_action_sql, past_2_weeks])
       %i(total).map do |legend|
         {
           name: legend,
@@ -226,7 +231,7 @@ module KpiAdmin
     end
 
     def fetch_dau_per_device_type
-      result = SearchLog.find_by_sql([dau_per_device_type_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([dau_per_device_type_sql, past_2_weeks])
       result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
         {
           name: legend,
@@ -252,7 +257,7 @@ module KpiAdmin
     end
 
     def fetch_pv_per_device_type
-      result = SearchLog.find_by_sql([pv_per_device_type_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([pv_per_device_type_sql, past_2_weeks])
       result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
         {
           name: legend,
@@ -278,7 +283,7 @@ module KpiAdmin
     end
 
     def fetch_dau_per_referer
-      result = SearchLog.find_by_sql([dau_per_referer_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([dau_per_referer_sql, past_2_weeks])
       result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
         {
           name: legend,
@@ -314,7 +319,7 @@ module KpiAdmin
     end
 
     def fetch_pv_per_referer
-      result = SearchLog.find_by_sql([pv_per_referer_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([pv_per_referer_sql, past_2_weeks])
       result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
         {
           name: legend,
@@ -350,7 +355,7 @@ module KpiAdmin
     end
 
     def fetch_search_num
-      result = SearchLog.find_by_sql([search_num_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([search_num_sql, past_2_weeks])
       %i(guest login).map do |legend|
         {
           name: legend,
@@ -377,7 +382,7 @@ module KpiAdmin
     end
 
     def fetch_search_num_verification
-      result = SearchLog.find_by_sql([search_num_verification_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([search_num_verification_sql, past_2_weeks])
       %i(guest login).map do |legend|
         {
           name: legend,
@@ -401,7 +406,7 @@ module KpiAdmin
     end
 
     def fetch_search_num_per_action
-      result = SearchLog.find_by_sql([search_num_per_action_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([search_num_per_action_sql, past_2_weeks])
       %i(top result direct).map do |legend|
         {
           name: legend,
@@ -428,7 +433,7 @@ module KpiAdmin
     end
 
     def fetch_search_rate_per_action
-      result = SearchLog.find_by_sql([search_rate_per_action_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([search_rate_per_action_sql, past_2_weeks])
       %i(top result direct).map do |legend|
         {
           name: legend,
@@ -462,7 +467,7 @@ module KpiAdmin
     end
 
     def fetch_search_num_by_google
-      result = SearchLog.find_by_sql([search_num_by_google_sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([search_num_by_google_sql, past_2_weeks])
       %i(not_search search).map do |legend|
         {
           name: legend,
@@ -509,7 +514,7 @@ module KpiAdmin
       GROUP BY date(created_at)
       ORDER BY date(created_at);
       SQL
-      result = SearchLog.find_by_sql([sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([sql, past_2_weeks])
 
       %i(total).map do |legend|
         {
@@ -532,7 +537,7 @@ module KpiAdmin
       GROUP BY date(created_at)
       ORDER BY date(created_at);
       SQL
-      result = SearchLog.find_by_sql([sql, PAST_2_WEEKS])
+      result = SearchLog.find_by_sql([sql, past_2_weeks])
 
       %i(NewUser ReturningUser).map do |legend|
         {
@@ -543,7 +548,7 @@ module KpiAdmin
     end
 
     def fetch_twitter_users_num
-      result = TwitterUser.find_by_sql([twitter_users_num_sql, PAST_2_WEEKS])
+      result = TwitterUser.find_by_sql([twitter_users_num_sql, past_2_weeks])
       %i(guest login).map do |legend|
         {
           name: legend,
@@ -568,7 +573,7 @@ module KpiAdmin
     end
 
     def fetch_twitter_users_uid_num
-      result = TwitterUser.find_by_sql([twitter_users_uid_num_sql, PAST_2_WEEKS])
+      result = TwitterUser.find_by_sql([twitter_users_uid_num_sql, past_2_weeks])
       %i(total unique_uid).map do |legend|
         {
           name: legend,
@@ -592,7 +597,7 @@ module KpiAdmin
     end
 
     def fetch_friends_num
-      result = Friend.find_by_sql([friends_num_sql, PAST_2_WEEKS])
+      result = Friend.find_by_sql([friends_num_sql, past_2_weeks])
       %i(total).map do |legend|
         {
           name: legend,
@@ -615,7 +620,7 @@ module KpiAdmin
     end
 
     def fetch_followers_num
-      result = Follower.find_by_sql([followers_num_sql, PAST_2_WEEKS])
+      result = Follower.find_by_sql([followers_num_sql, past_2_weeks])
       %i(total).map do |legend|
         {
           name: legend,

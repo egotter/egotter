@@ -1,4 +1,4 @@
-<%= render(partial: 'menu_items',
+<%= render(partial: 'search_results/menu_items',
            locals: {searched_tw_user: @searched_tw_user,
                     menu_items: @menu_items,
                     menu_update_histories: @menu_update_histories,
@@ -11,10 +11,7 @@
 
 <script>
 <% if @job_id %>
-  console.log('It needs to check for updates. <%= @job_id %>');
-
   $(function () {
-    var created_at = <%= @searched_tw_user.created_at.to_i %>;
     var hash = null;
     var refresh_box = $('.alert.alert-info');
     var refresh_btn = refresh_box.find('a');
@@ -26,7 +23,7 @@
       return false
     });
 
-    function delete_cache(hash) {
+    function delete_cache() {
       var url = "<%= raw page_cache_path(id: @searched_tw_user.uid, hash: 'HASH') %>";
       return $.ajax({url: url.replace(/HASH/, hash), type: 'DELETE'})
     }
@@ -37,9 +34,11 @@
     }
 
     function refresh() {
-      delete_cache(hash)
+      delete_cache()
           .then(create_cache, failed)
-          .done(window.location.reload)
+          .done(function () {
+            window.location.reload();
+          })
           .fail(failed);
     }
 
@@ -84,11 +83,9 @@
       console.log(res, text_status, xhr.status, interval.cur(), retry.cur());
 
       if (xhr.status == 200) {
-        if (created_at < res.created_at) {
+        if (<%= @searched_tw_user.created_at.to_i %> < res.created_at) {
           hash = res.hash;
           refresh_box.show();
-        } else {
-          console.log('the result is latest.')
         }
       } else if (!retry.next()) {
         console.log('stop waiting');
@@ -104,7 +101,5 @@
 
     tic();
   });
-<% else %>
-  console.log('It does not need to check for updates.');
 <% end %>
 </script>
