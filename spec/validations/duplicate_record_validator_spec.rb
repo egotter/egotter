@@ -1,70 +1,59 @@
 require 'rails_helper'
 
 RSpec.describe Validations::DuplicateRecordValidator do
-  subject(:tu) { build(:twitter_user) }
+  let(:tu) { build(:twitter_user) }
+  let(:validator) { Validations::DuplicateRecordValidator.new }
 
   describe '#same_record_exists?' do
-    before { allow_any_instance_of(Validations::DuplicateRecordValidator).to receive(:recently_created_record_exists?).and_return(false) }
-
-    context 'with a same record' do
-      before { create_same_record!(tu) }
-      it { is_expected.to be_invalid }
-    end
-
-    context 'without same records' do
-      before { create_same_record!(build(:twitter_user)) }
-      it { is_expected.to be_valid }
-    end
-
-    context 'friends_count is different' do
-      before do
-        record = create_same_record!(tu)
-        record.friends.first.destroy
-        ajust_user_info(record)
+    context 'TwitterUser#latest returns nil' do
+      before { allow(tu).to receive(:latest).and_return(nil) }
+      it 'returns false' do
+        expect(validator.send(:same_record_exists?, tu)).to be_falsey
       end
-      it { is_expected.to be_valid }
     end
 
-    context 'followers_count is different' do
+    context '#same_record? returns true' do
       before do
-        record = create_same_record!(tu)
-        record.followers.first.destroy
-        ajust_user_info(record)
+        allow(tu).to receive(:latest).and_return(tu)
+        allow(validator).to receive(:same_record?).and_return(true)
       end
-      it { is_expected.to be_valid }
+      it 'returns true' do
+        expect(validator.send(:same_record_exists?, tu)).to be_truthy
+      end
+    end
+
+    context '#same_record? returns false' do
+      before do
+        allow(tu).to receive(:latest).and_return(tu)
+        allow(validator).to receive(:same_record?).and_return(false)
+      end
+      it 'returns false' do
+        expect(validator.send(:same_record_exists?, tu)).to be_falsey
+      end
+    end
+  end
+
+  describe '#same_record?' do
+    context 'with same record' do
+      it 'returns true' do
+        expect(validator.send(:same_record?, tu, tu)).to be_truthy
+      end
     end
   end
 
   describe '#recently_created_record_exists?' do
-    before { allow_any_instance_of(Validations::DuplicateRecordValidator).to receive(:same_record_exists?).and_return(false) }
-
-    context 'with a recently created record' do
-      before { create_same_record!(tu) }
-      it { is_expected.to be_invalid }
+    context 'TwitterUser#latest returns nil' do
+      before { allow(tu).to receive(:latest).and_return(nil) }
+      it 'returns false' do
+        expect(validator.send(:recently_created_record_exists?, tu)).to be_falsey
+      end
     end
 
-    context 'without recently created records' do
-      before do
-        record = create_same_record!(tu)
-        record.update!(created_at: 1.days.ago, updated_at: 1.days.ago)
+    context 'TwitterUser#recently_created? returns true' do
+      before { allow(tu).to receive(:latest).and_return(Hashie::Mash.new({recently_created?: true})) }
+      it 'returns true' do
+        expect(validator.send(:recently_created_record_exists?, tu)).to be_truthy
       end
-      it { is_expected.to be_valid }
     end
   end
-end
-
-def create_same_record!(tu)
-  same_tu = build(:twitter_user, uid: tu.uid, screen_name: tu.screen_name)
-  same_tu.friends = tu.friends.map { |f| build(:friend, uid: f.uid, screen_name: f.screen_name) }
-  same_tu.followers = tu.followers.map { |f| build(:follower, uid: f.uid, screen_name: f.screen_name) }
-  ajust_user_info(same_tu)
-  same_tu.save!
-  same_tu
-end
-
-def ajust_user_info(tu)
-  json = Hashie::Mash.new(JSON.parse(tu.user_info))
-  json.friends_count = tu.friends.size
-  json.followers_count = tu.followers.size
-  tu.user_info = json.to_json
 end

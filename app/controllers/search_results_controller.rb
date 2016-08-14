@@ -13,7 +13,7 @@ class SearchResultsController < ApplicationController
     user_id = current_user_id
 
     save_twitter_user_to_cache(tu.uid, user_id, screen_name: tu.screen_name, user_info: tu.user_info)
-    @job_id = add_background_search_worker_if_needed(tu.uid, user_id, screen_name: tu.screen_name)
+    add_background_search_worker_if_needed(tu.uid, user_id, screen_name: tu.screen_name)
 
     page_cache = PageCache.new(redis)
     html = page_cache.fetch(tu.uid, user_id) do

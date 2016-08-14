@@ -28,16 +28,7 @@ module Validations
 
     def same_record?(older, newer)
       return false if older.nil?
-
-      diff = older.diff(newer)
-
-      # debug code
-      # logger.warn older.id
-      # logger.warn newer.id
-      # logger.warn diff.select { |_, v| v[0] != v[1] }.keys.inspect
-      # logger.warn diff.select { |_, v| v[0] != v[1] }.values.inspect
-
-      return false if diff.any? { |_, v| v[0] != v[1] }
+      return false if older.diff(newer).any?
 
       newer.errors[:base] << "Same record(#{newer.id}) exists."
       true
