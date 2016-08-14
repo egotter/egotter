@@ -158,7 +158,7 @@ ActiveRecord::Schema.define(version: 20160730134808) do
     t.datetime "updated_at",                              null: false
   end
 
-  add_index "notification_settings", ["from_id"], name: "index_notifications_on_from_id", using: :btree
+  add_index "notification_settings", ["from_id"], name: "index_notification_settings_on_from_id", using: :btree
 
   create_table "search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "",    null: false
