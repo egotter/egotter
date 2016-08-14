@@ -16,7 +16,7 @@ module Validation
       return redirect_to_root tu.errors[:screen_name].join(t('dictionary.delim'))
     end
 
-    tu = TwitterUser.build_without_relations(client.user(tu.screen_name), current_user_id, 'search')
+    tu = TwitterUser.build_without_relations(client.user(tu.screen_name), current_user_id, context: 'search')
     twitter_link = view_context.link_to(tu.mention_name, "https://twitter.com/#{tu.screen_name}", target: '_blank')
 
     if tu.suspended_account?(twitter_link)
