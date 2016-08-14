@@ -15,7 +15,7 @@ Rails.application.routes.draw do
 
   Search::MENU.each do |menu|
     get "searches/:screen_name/#{menu}", to: "searches##{menu}", as: menu
-    get "search_results/:id/#{menu}", to: "search_results##{menu}"
+    get "search_results/:id/#{menu}", to: "search_results##{menu}", as: "#{menu}_results"
   end
 
   %i(statuses update_histories).each do |name|

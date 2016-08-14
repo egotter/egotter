@@ -19,7 +19,7 @@
 
   :javascript
     $(function () {
-      var url = "/search_results/#{@searched_tw_user.uid}/#{@menu}";
+      var url = "#{send("#{@menu}_results_path", id: @searched_tw_user.uid, page: params[:page])}";
       $.get(url)
           .done(function (res) {
             $('.common-result').append(res.html);

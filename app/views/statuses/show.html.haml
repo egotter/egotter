@@ -11,11 +11,13 @@
   %h2.h4= @title
 
   .page-entries-info-top
-    = render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user, user_items: @status_items})
+    = render(partial: 'searches/page_entries_info',
+      locals: {controller: controller_name, action: action_name, user: @searched_tw_user, items: @status_items})
 
   = render(partial: 'statuses/items', locals: {items: @status_items})
 
   .page-entries-info-bottom
-    = render(partial: 'searches/page_entries_info', locals: {searched_tw_user: @searched_tw_user, user_items: @status_items})
+    = render(partial: 'searches/page_entries_info',
+      locals: {controller: controller_name, action: action_name, user: @searched_tw_user, items: @status_items})
 
   .return-to-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
