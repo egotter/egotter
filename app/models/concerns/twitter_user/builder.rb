@@ -16,8 +16,8 @@ module Concerns::TwitterUser::Builder
       tu
     end
 
-    def build_with_relations(uid, user_id, client:, context: nil)
-      tu = build_by_user(client.user(uid.to_i), user_id, context)
+    def build_with_relations(user, user_id, client:, context: nil)
+      tu = build_by_user(user, user_id, context)
       tu.build_relations(client)
       tu
     end
