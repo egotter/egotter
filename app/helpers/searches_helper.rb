@@ -27,7 +27,7 @@ module SearchesHelper
   end
 
   def fetch_twitter_user_from_cache(uid, user_id)
-    attrs = ValidTwitterUserSet.new(redis).get(uid, user_id)
+    attrs = Util::ValidTwitterUserSet.new(redis).get(uid, user_id)
     return nil if attrs.nil?
 
     TwitterUser.new(
@@ -40,7 +40,7 @@ module SearchesHelper
   end
 
   def save_twitter_user_to_cache(uid, user_id, screen_name:, user_info:)
-    ValidTwitterUserSet.new(redis).set(
+    Util::ValidTwitterUserSet.new(redis).set(
       uid,
       user_id,
       {uid: uid, user_id: user_id, screen_name: screen_name, user_info: user_info}
