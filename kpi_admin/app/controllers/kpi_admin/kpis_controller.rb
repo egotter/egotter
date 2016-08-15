@@ -39,7 +39,7 @@ module KpiAdmin
       date_start_index = [params[:date_start_index].to_i, 0].max
       date_end_index = [params[:date_end_index].to_i, date_index_max].min
       y_index_range = date_start_index..date_end_index
-      yAxis_categories = (date_index_max + 1).times.map { |i| (NOW - i.days) }
+      yAxis_categories = (date_index_max + 1).times.map { |i| (now - i.days) }
       xAxis_categories = (date_index_max + 1).times.to_a
       cells = {}
 
