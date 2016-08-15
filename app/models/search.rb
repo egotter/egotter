@@ -4,6 +4,8 @@ class Search
     followers
     removing
     removed
+    new_friends
+    new_followers
     blocking_or_blocked
     one_sided_friends
     one_sided_followers

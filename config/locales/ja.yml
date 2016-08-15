@@ -8,6 +8,8 @@ ja:
       cluster: "クラスタ"
       return: "%{user} の分析結果一覧へ戻る"
     new:
+      title: "えごったー ツイッター総合分析サイト"
+      lead: "ツイッターで仲良しの友達、リムーブした・された人を簡単に検索できるサイトです。<br>自分を検索してみたり、気になるあの人を検索してみたり、楽しくご活用ください。"
       total_search_count: "検索回数 約 %{count} 回！(2011年から)"
       search: "検索"
       search_by: "%{user} で検索"
@@ -49,6 +51,10 @@ ja:
       title: "%{user} がフォローを外した"
     removed:
       title: "%{user} がフォローを外された"
+    new_friends:
+      title: "%{user} の新しいフォロー"
+    new_followers:
+      title: "%{user} の新しいフォロワー"
     blocking_or_blocked:
       title: "%{user} がブロックされたかも"
     replying:
@@ -129,7 +135,6 @@ ja:
 
   dictionary:
     app_name: "えごったー"
-    title: "えごったー ツイッター総合分析サイト"
     official_account: "公式アカウント"
     share_me: "えごったーをシェアする"
     information: "お知らせ"
@@ -137,7 +142,6 @@ ja:
     friends: "フォロー"
     follower: "フォロワー"
     score: "スコア"
-    lead: "ツイッターで仲良しの友達、リムーブした・された人を簡単に検索できるサイトです。<br>自分を検索してみたり、気になるあの人を検索してみたり、楽しくご活用ください。"
     link_to_support: "お問い合わせページ"
     support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
     sign_in_with_twitter: "Twitterでログイン"

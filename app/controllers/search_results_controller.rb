@@ -27,46 +27,46 @@ class SearchResultsController < ApplicationController
     render nothing: true, status: 500
   end
 
-  %i(friends followers removing removed blocking_or_blocked).each do |name|
-    define_method(name) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(name)).items
-      render json: {html: render_to_string(partial: 'common')}, status: 200
+  %i(friends followers removing removed new_friends new_followers blocking_or_blocked).each do |menu|
+    define_method(menu) do
+      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
+      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
     end
   end
 
-  %i(one_sided_friends one_sided_followers mutual_friends).each do |name|
-    define_method(name) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(name)).items
+  %i(one_sided_friends one_sided_followers mutual_friends).each do |menu|
+    define_method(menu) do
+      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
       @graph = @searched_tw_user.mutual_friends_graph
       @tweet_text = mutual_friends_text(@searched_tw_user)
-      render json: {html: render_to_string(partial: 'common')}, status: 200
+      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
     end
   end
 
-  %i(common_friends common_followers).each do |name|
-    define_method(name) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(name, current_user.twitter_user)).items
-      @graph = @searched_tw_user.send("#{name}_graph", current_user.twitter_user)
-      @tweet_text = send("#{name}_text", @user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
-      render json: {html: render_to_string(partial: 'common')}, status: 200
+  %i(common_friends common_followers).each do |menu|
+    define_method(menu) do
+      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu, current_user.twitter_user)).items
+      @graph = @searched_tw_user.send("#{menu}_graph", current_user.twitter_user)
+      @tweet_text = send("#{menu}_text", @user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
+      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
     end
   end
 
-  %i(replying replied favoriting close_friends).each do |name|
-    define_method(name) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(name)).items
-      @graph = @searched_tw_user.send("#{name}_graph")
+  %i(replying replied favoriting close_friends).each do |menu|
+    define_method(menu) do
+      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
+      @graph = @searched_tw_user.send("#{menu}_graph")
       @tweet_text = close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
-      render json: {html: render_to_string(partial: 'common')}, status: 200
+      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
     end
   end
 
-  %i(inactive_friends inactive_followers).each do |name|
-    define_method(name) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(name)).items
-      @graph = @searched_tw_user.send("#{name}_graph")
+  %i(inactive_friends inactive_followers).each do |menu|
+    define_method(menu) do
+      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
+      @graph = @searched_tw_user.send("#{menu}_graph")
       @tweet_text = inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
-      render json: {html: render_to_string(partial: 'common')}, status: 200
+      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
     end
   end
 

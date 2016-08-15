@@ -56,6 +56,20 @@ module Concerns::TwitterUser::Api
     end.flatten.reverse
   end
 
+  def new_friends
+    return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
+    @_new_friends ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+      newer.cached_friends - older.cached_friends
+    end.flatten.reverse
+  end
+
+  def new_followers
+    return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
+    @_new_followers ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+      newer.cached_followers - older.cached_followers
+    end.flatten.reverse
+  end
+
   def blocking_or_blocked
     @_blocking_or_blocked ||= (removing & removed).uniq
   end
@@ -154,6 +168,22 @@ module Concerns::TwitterUser::Api
     ]
   end
 
+  def new_friends_graph
+    large_rate = [new_friends.size * 10, 100].min
+    [
+      {name: I18n.t('searches.common.large'), y: large_rate},
+      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
+    ]
+  end
+
+  def new_followers_graph
+    large_rate = [new_followers.size * 10, 100].min
+    [
+      {name: I18n.t('searches.common.large'), y: large_rate},
+      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
+    ]
+  end
+
   def blocking_or_blocked_graph
     large_rate = [blocking_or_blocked.size * 10, 100].min
     [
@@ -164,7 +194,7 @@ module Concerns::TwitterUser::Api
 
   def replying_graph
     friends_size = friends_count
-    replying_size = replying.size
+    replying_size = [replying.size, friends_size].min
     [
       {name: I18n.t('searches.replying.targets'), y: (replying_size.to_f / friends_size * 100)},
       {name: I18n.t('searches.common.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
@@ -173,7 +203,7 @@ module Concerns::TwitterUser::Api
 
   def replied_graph
     followers_size = followers_count
-    replied_size = replied.size
+    replied_size = [replied.size, followers_size].min
     [
       {name: I18n.t('searches.replied.targets'), y: (replied_size.to_f / followers_size * 100)},
       {name: I18n.t('searches.common.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
@@ -182,7 +212,7 @@ module Concerns::TwitterUser::Api
 
   def favoriting_graph
     friends_size = friends_count
-    favoriting_size = favoriting.size
+    favoriting_size = [favoriting.size, friends_size].min
     [
       {name: I18n.t('searches.favoriting.targets'), y: (favoriting_size.to_f / friends_size * 100)},
       {name: I18n.t('searches.common.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}

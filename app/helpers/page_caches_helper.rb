@@ -15,6 +15,8 @@ module PageCachesHelper
     @menu_items = [
       tu.removing_menu,
       tu.removed_menu,
+      tu.new_friends_menu,
+      tu.new_followers_menu,
       tu.blocking_or_blocked_menu,
       tu.mutual_friends_menu,
       tu.one_sided_friends_menu,

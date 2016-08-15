@@ -20,7 +20,7 @@
       %div= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.happy)
     - else
       %div= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.unhappy)
-  = render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(".#{@title}")})
+  = render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(t("searches.#{menu}.title", user: @searched_tw_user.mention_name))})
 
 = render(partial: 'searches/adsense_bottom')
 

@@ -1,101 +1,14 @@
 class TwitterUserDecorator < Draper::Decorator
-  def removing_menu
-    {
-      name: I18n.t('searches.removing.title', user: object.mention_name),
-      target: object.removing,
-      graph: object.removing_graph,
-      path: h.removing_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def removed_menu
-    {
-      name: I18n.t('searches.removed.title', user: object.mention_name),
-      target: object.removed,
-      graph: object.removed_graph,
-      path: h.removed_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def blocking_or_blocked_menu
-    {
-      name: I18n.t('searches.blocking_or_blocked.title', user: object.mention_name),
-      target: object.blocking_or_blocked,
-      graph: object.blocking_or_blocked_graph,
-      path: h.blocking_or_blocked_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def mutual_friends_menu
-    {
-      name: I18n.t('searches.mutual_friends.title', user: object.mention_name),
-      target: object.mutual_friends,
-      graph: object.mutual_friends_graph,
-      path: h.mutual_friends_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def one_sided_friends_menu
-    {
-      name: I18n.t('searches.one_sided_friends.title', user: object.mention_name),
-      target: object.one_sided_friends,
-      graph: object.one_sided_friends_graph,
-      path: h.one_sided_friends_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def one_sided_followers_menu
-    {
-      name: I18n.t('searches.one_sided_followers.title', user: object.mention_name),
-      target: object.one_sided_followers,
-      graph: object.one_sided_followers_graph,
-      path: h.one_sided_followers_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def replying_menu
-    {
-      name: I18n.t('searches.replying.title', user: object.mention_name),
-      target: object.replying,
-      graph: object.replying_graph,
-      path: h.replying_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def replied_menu
-    {
-      name: I18n.t('searches.replied.title', user: object.mention_name),
-      target: object.replied,
-      graph: object.replied_graph,
-      path: h.replied_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def favoriting_menu
-    {
-      name: I18n.t('searches.favoriting.title', user: object.mention_name),
-      target: object.favoriting,
-      graph: object.favoriting_graph,
-      path: h.favoriting_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def inactive_friends_menu
-    {
-      name: I18n.t('searches.inactive_friends.title', user: object.mention_name),
-      target: object.inactive_friends,
-      graph: object.inactive_friends_graph,
-      path: h.inactive_friends_path(screen_name: object.screen_name, id: object.uid)
-    }
-  end
-
-  def inactive_followers_menu
-    {
-      name: I18n.t('searches.inactive_followers.title', user: object.mention_name),
-      target: object.inactive_followers,
-      graph: object.inactive_followers_graph,
-      path: h.inactive_followers_path(screen_name: object.screen_name, id: object.uid)
-    }
+  %i(removing removed new_friends new_followers blocking_or_blocked mutual_friends
+     one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |menu|
+    define_method("#{menu}_menu") do
+      {
+        name: I18n.t("searches.#{menu}.title", user: object.mention_name),
+        target: object.send(menu),
+        graph: object.send("#{menu}_graph"),
+        path: h.send("#{menu}_path", screen_name: object.screen_name, id: object.uid)
+      }
+    end
   end
 
   def common_friend_and_followers_menu
