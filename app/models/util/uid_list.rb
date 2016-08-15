@@ -1,4 +1,3 @@
-# Sorted Set
 module Util
   class UidList
     attr_reader :redis

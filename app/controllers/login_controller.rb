@@ -3,6 +3,7 @@ class LoginController < ApplicationController
   include Logging
 
   before_action :reject_crawler, only: %i(sign_in sign_out)
+  before_action :push_referer, only: %i(welcome sign_in sign_out)
   before_action :create_search_log, only: %i(welcome sign_in sign_out)
 
   # GET /welcome

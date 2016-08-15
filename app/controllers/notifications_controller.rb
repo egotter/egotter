@@ -3,6 +3,7 @@ class NotificationsController < ApplicationController
   include SearchesHelper
 
   before_action only: %i(index) do
+    push_referer
     create_search_log(action: :notifications)
   end
 

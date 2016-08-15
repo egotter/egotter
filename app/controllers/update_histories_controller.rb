@@ -4,6 +4,7 @@ class UpdateHistoriesController < ApplicationController
 
   before_action :set_twitter_user, only: %i(show)
   before_action only: %i(show) do
+    push_referer
     create_search_log(action: :update_histories)
   end
 

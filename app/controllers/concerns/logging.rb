@@ -65,6 +65,12 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
   end
 
+  def push_referer
+    Util::RefererList.new(Redis.client).push(fingerprint, request.referer.nil? ? '' : request.referer)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
+  end
+
   private
 
   def fingerprint

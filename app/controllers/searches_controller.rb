@@ -10,6 +10,8 @@ class SearchesController < ApplicationController
   before_action :set_twitter_user,    only: Search::MENU + %i(show)
 
   before_action only: (%i(new create waiting show) + Search::MENU) do
+    push_referer
+
     if session[:sign_in_from].present?
       create_search_log(referer: session[:sign_in_from])
       session.delete(:sign_in_from)
