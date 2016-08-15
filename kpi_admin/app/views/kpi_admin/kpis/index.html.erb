@@ -2,15 +2,16 @@
 
 <div class="kpis dau"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
 <div><%= link_to('DAU', dau_path) %></div>
+<div><%= link_to('MAU', mau_path) %></div>
 
-<div class="kpis search_num"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('Search num', search_num_path) %></div>
+<div class="kpis daily_search_num"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+<div><%= link_to('Search num', daily_search_num_path) %></div>
 
-<div class="kpis new_user"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('New user', new_user_path) %></div>
+<div class="kpis daily_new_user"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+<div><%= link_to('New user', daily_new_user_path) %></div>
 
-<div class="kpis sign_in"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('Sign in', sign_in_path) %></div>
+<div class="kpis daily_sign_in"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+<div><%= link_to('Sign in', daily_sign_in_path) %></div>
 
 <br>
 <div><%= link_to('RR', rr_path) %></div>
@@ -25,9 +26,9 @@
 
   function setup(res, config) {
     var conf = $.extend(true, {}, config);
-    conf.title.text = res.name;
-    conf.series = res[res.name];
-    $('.' + res.name).empty().highcharts(conf);
+    conf.title.text = res.type;
+    conf.series = res[res.type];
+    $('.' + res.type).empty().highcharts(conf);
   }
 
   function draw(res) {
@@ -48,8 +49,8 @@
 
   $(function () {
     fetch("<%= dau_path %>");
-    fetch_stacked("<%= search_num_path %>");
-    fetch("<%= new_user_path %>");
-    fetch("<%= sign_in_path %>");
+    fetch_stacked("<%= daily_search_num_path %>");
+    fetch("<%= daily_new_user_path %>");
+    fetch("<%= daily_sign_in_path %>");
   });
 </script>

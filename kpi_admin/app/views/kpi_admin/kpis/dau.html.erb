@@ -3,66 +3,66 @@
 <div><%= link_to('KPIs', root_path) %></div>
 
 <div class="row">
-  <div class="kpis dau                 col-xs-12"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_per_action      col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis pv_per_action       col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_by_new_action   col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis pv_by_new_action    col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_per_device_type col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis pv_per_device_type  col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_per_referer     col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis pv_per_referer      col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau                       col-xs-12"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_per_action            col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis daily_pv_per_action       col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_by_new_action         col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis daily_pv_by_new_action    col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_per_device_type       col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis daily_pv_per_device_type  col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis dau_per_referer           col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="kpis daily_pv_per_referer      col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
 </div>
 
 <div><%= link_to('KPIs', root_path) %></div>
 
 <script>
-  function fetch_dau(url){
+  function failed(xhr) {
+    console.log(xhr.responseText);
+  }
+
+  function fetch(url) {
     var types = [
       'dau',
       'dau_by_new_action',
-      'pv_by_new_action',
+      'daily_pv_by_new_action',
       'dau_per_device_type',
-      'pv_per_device_type',
+      'daily_pv_per_device_type',
       'dau_per_referer',
-      'pv_per_referer'
+      'daily_pv_per_referer'
     ];
     $.each(types, function (i, elem) {
-      $.get(url, {type: elem}).done(function(res){
-        draw_dau(res[elem], elem, '.' + elem);
-      }).fail(function (xhr) {
-        console.log(xhr.responseText)
-      });
+      $.get(url, {type: elem}).done(draw).fail(failed);
     });
+  }
 
-    types = [
+  function fetch_stacked(url) {
+    var types = [
       'dau_per_action',
-      'pv_per_action'
+      'daily_pv_per_action'
     ];
     $.each(types, function (i, elem) {
-      $.get(url, {type: elem}).done(function(res){
-        draw_dau_stacked(res[elem], elem, '.' + elem);
-      }).fail(function (xhr) {
-        console.log(xhr.responseText)
-      });
+      $.get(url, {type: elem}).done(draw_stacked).fail(failed);
     });
   }
 
-  function draw_dau(series, title, selector){
-    var conf = $.extend(true, {}, window.kpis.config);
-    conf.title.text = title;
-    conf.series = series;
-    $(selector).empty().highcharts(conf);
+  function setup(res, config) {
+    var conf = $.extend(true, {}, config);
+    conf.title.text = res.type;
+    conf.series = res[res.type];
+    $('.' + res.type).empty().highcharts(conf);
   }
 
-  function draw_dau_stacked(series, title, selector){
-    var conf = $.extend(true, {}, window.kpis.config_stacked);
-    conf.title.text = title;
-    conf.series = series;
-    $(selector).empty().highcharts(conf);
+  function draw(res) {
+    setup(res, window.kpis.config);
+  }
+
+  function draw_stacked(res) {
+    setup(res, window.kpis.config_stacked);
   }
 
   $(function () {
-    fetch_dau("<%= dau_path %>");
+    fetch("<%= dau_path %>");
+    fetch_stacked("<%= dau_path %>");
   });
 </script>
