@@ -110,7 +110,7 @@ module KpiAdmin
 
       def fetch_daily_pv_by_new_action
         result = SearchLog.find_by_sql([daily_pv_by_new_action_sql, {start: date_start, end: date_end}])
-        %i(total).map do |legend|
+        %i(total guest login).map do |legend|
           {
             name: legend,
             data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
@@ -122,6 +122,8 @@ module KpiAdmin
         <<-'SQL'.strip_heredoc
       SELECT
         date(created_at) date,
+        count(if(user_id = -1, 1, NULL)) guest,
+        count(if(user_id != -1, 1, NULL)) login,
         count(*) total
       FROM search_logs
       WHERE
@@ -185,10 +187,10 @@ module KpiAdmin
 
       def fetch_dau_per_referer
         result = SearchLog.find_by_sql([dau_per_referer_sql, {start: date_start, end: date_end}])
-        result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+        result.map { |r| r._referer.to_s }.uniq.sort.map do |legend|
           {
             name: legend,
-            data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+            data: result.select { |r| r._referer == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
             visible: !legend.in?(%w(others))
           }
         end
@@ -207,23 +209,23 @@ module KpiAdmin
           when referer regexp '^http://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
           when referer regexp '^http://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
           else 'others'
-        end channel,
+        end _referer,
         count(DISTINCT session_id) total
       FROM search_logs
       WHERE
         created_at BETWEEN :start AND :end
         AND device_type NOT IN ('crawler', 'UNKNOWN')
-      GROUP BY date(created_at), channel
-      ORDER BY date(created_at), channel;
+      GROUP BY date(created_at), _referer
+      ORDER BY date(created_at), _referer;
         SQL
       end
 
       def fetch_daily_pv_per_referer
         result = SearchLog.find_by_sql([daily_pv_per_referer_sql, {start: date_start, end: date_end}])
-        result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+        result.map { |r| r._referer.to_s }.uniq.sort.map do |legend|
           {
             name: legend,
-            data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+            data: result.select { |r| r._referer == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
             visible: !legend.in?(%w(others))
           }
         end
@@ -242,7 +244,57 @@ module KpiAdmin
           when referer regexp '^http://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
           when referer regexp '^http://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
           else 'others'
-        end channel,
+        end _referer,
+        count(*) total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at), _referer
+      ORDER BY date(created_at), _referer;
+        SQL
+      end
+
+      def fetch_dau_per_channel
+        result = SearchLog.find_by_sql([dau_per_channel_sql, {start: date_start, end: date_end}])
+        result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+          {
+            name: legend,
+            data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+          }
+        end
+      end
+
+      def dau_per_channel_sql
+        <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        channel,
+        count(DISTINCT session_id) total
+      FROM search_logs
+      WHERE
+        created_at BETWEEN :start AND :end
+        AND device_type NOT IN ('crawler', 'UNKNOWN')
+      GROUP BY date(created_at), channel
+      ORDER BY date(created_at), channel;
+        SQL
+      end
+
+      def fetch_daily_pv_per_channel
+        result = SearchLog.find_by_sql([daily_pv_per_channel_sql, {start: date_start, end: date_end}])
+        result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+          {
+            name: legend,
+            data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+          }
+        end
+      end
+
+      def daily_pv_per_channel_sql
+        <<-'SQL'.strip_heredoc
+      SELECT
+        date(created_at) date,
+        channel,
         count(*) total
       FROM search_logs
       WHERE
