@@ -67,6 +67,7 @@ module SearchesHelper
         browser: request.browser,
         user_agent: truncated_user_agent,
         referer: truncated_referer,
+        channel: find_channel,
         url: search_url(screen_name: screen_name, id: uid)
       }
       searched_uid_list.add(uid, user_id)

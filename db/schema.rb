@@ -48,6 +48,7 @@ ActiveRecord::Schema.define(version: 20160730134808) do
     t.string   "browser",     limit: 191,   default: "",    null: false
     t.string   "user_agent",  limit: 191,   default: "",    null: false
     t.string   "referer",     limit: 191,   default: "",    null: false
+    t.string   "channel",     limit: 191,   default: "",    null: false
     t.datetime "created_at",                                null: false
   end
 
@@ -173,6 +174,7 @@ ActiveRecord::Schema.define(version: 20160730134808) do
     t.string   "browser",     limit: 191, default: "",    null: false
     t.string   "user_agent",  limit: 191, default: "",    null: false
     t.string   "referer",     limit: 191, default: "",    null: false
+    t.string   "channel",     limit: 191, default: "",    null: false
     t.datetime "created_at",                              null: false
   end
 

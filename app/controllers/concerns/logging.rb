@@ -8,24 +8,7 @@ module Logging
   end
 
   def create_search_log(options = {})
-    user_id = current_user_id
-
-    if instance_variable_defined?(:@tu) # create
-      uid = @tu.uid
-      screen_name = @tu.screen_name
-    else
-      uid = TwitterUser.new(uid: params[:id]).valid_uid? ? params[:id].to_i : -1
-      if tu = fetch_twitter_user_from_cache(uid, user_id) # waiting
-        uid = tu.uid
-        screen_name = tu.screen_name
-      else
-        if TwitterUser.exists?(uid: uid, user_id: user_id)
-          screen_name = TwitterUser.latest(uid, user_id).screen_name
-        else
-          uid = screen_name = -1
-        end
-      end
-    end
+    uid, screen_name = find_uid_and_screen_name
 
     attrs = {
       session_id:  fingerprint,
@@ -40,6 +23,7 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
+      channel:     find_channel,
       created_at:  Time.zone.now
     }
     attrs.update(options) if options.any?
@@ -72,6 +56,39 @@ module Logging
   end
 
   private
+
+  def find_uid_and_screen_name
+    user_id = current_user_id
+
+    if instance_variable_defined?(:@tu) # create
+      uid = @tu.uid
+      screen_name = @tu.screen_name
+    else
+      uid = TwitterUser.new(uid: params[:id]).valid_uid? ? params[:id].to_i : -1
+      if tu = fetch_twitter_user_from_cache(uid, user_id) # waiting
+        uid = tu.uid
+        screen_name = tu.screen_name
+      else
+        if TwitterUser.exists?(uid: uid, user_id: user_id)
+          screen_name = TwitterUser.latest(uid, user_id).screen_name
+        else
+          uid = screen_name = -1
+        end
+      end
+    end
+
+    [uid, screen_name]
+  end
+
+  def find_channel
+    channel_url = Util::RefererList.new(Redis.client).to_a(fingerprint).find do |referer|
+      !referer.nil? && referer != '' && !URI.parse(referer).host.include?('egotter')
+    end
+    channel_url.blank? ? '' : URI.parse(channel_url).host
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    ''
+  end
 
   def fingerprint
     if request.device_type == :crawler

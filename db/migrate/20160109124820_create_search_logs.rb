@@ -15,6 +15,7 @@ class CreateSearchLogs < ActiveRecord::Migration
       t.string  :browser,     null: false, default: ''
       t.string  :user_agent,  null: false, default: ''
       t.string  :referer,     null: false, default: ''
+      t.string  :channel,     null: false, default: ''
 
       t.datetime :created_at, null: false
     end
