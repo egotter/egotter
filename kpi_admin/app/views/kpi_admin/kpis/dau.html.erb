@@ -1,17 +1,46 @@
-<%= render partial: 'clock', locals: {date_start: @date_start, date_end: @date_end} %>
+<%= render partial: 'clock', locals: {now: now, date_start: date_start, date_end: date_end} %>
+<%= render partial: 'time_zone' %>
+<%= render partial: 'duration' %>
 
 <div><%= link_to('KPIs', root_path) %></div>
 
 <div class="row">
-  <div class="kpis dau                       col-xs-12"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_per_action            col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis daily_pv_per_action       col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_by_new_action         col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis daily_pv_by_new_action    col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_per_device_type       col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis daily_pv_per_device_type  col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis dau_per_referer           col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-  <div class="kpis daily_pv_per_referer      col-xs-12 col-sm-6"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+  <div class="col-xs-12">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif') %>
+    <div class="kpis dau"></div>
+  </div>
+  <div class="hidden col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis dau_per_action"></div>
+  </div>
+  <div class="hidden col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis daily_pv_per_action"></div>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis dau_by_new_action"></div>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis daily_pv_by_new_action"></div>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis dau_per_device_type"></div>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis daily_pv_per_device_type"></div>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis dau_per_referer"></div>
+  </div>
+  <div class="col-xs-12 col-sm-6">
+    <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
+    <div class="kpis daily_pv_per_referer"></div>
+  </div>
 </div>
 
 <div><%= link_to('KPIs', root_path) %></div>
@@ -19,6 +48,14 @@
 <script>
   function failed(xhr) {
     console.log(xhr.responseText);
+  }
+
+  function params(type) {
+    return {
+      type: type,
+      time_zone: $('input[name=time_zone]:checked').val(),
+      duration: $('input[name=duration]:checked').val()
+    }
   }
 
   function fetch(url) {
@@ -32,17 +69,17 @@
       'daily_pv_per_referer'
     ];
     $.each(types, function (i, elem) {
-      $.get(url, {type: elem}).done(draw).fail(failed);
+      $.get(url, params(elem)).done(draw).fail(failed);
     });
   }
 
   function fetch_stacked(url) {
     var types = [
-      'dau_per_action',
-      'daily_pv_per_action'
+//      'dau_per_action',
+//      'daily_pv_per_action'
     ];
     $.each(types, function (i, elem) {
-      $.get(url, {type: elem}).done(draw_stacked).fail(failed);
+      $.get(url, params(elem)).done(draw_stacked).fail(failed);
     });
   }
 
@@ -50,19 +87,35 @@
     var conf = $.extend(true, {}, config);
     conf.title.text = res.type;
     conf.series = res[res.type];
+    $('.' + res.type).prev().hide();
     $('.' + res.type).empty().highcharts(conf);
   }
 
   function draw(res) {
     setup(res, window.kpis.config);
+    $('.date_start').text(res.date_start);
+    $('.date_end').text(res.date_end);
+    $('.now').text(res.now);
   }
 
   function draw_stacked(res) {
     setup(res, window.kpis.config_stacked);
+    $('.date_start').text(res.date_start);
+    $('.date_end').text(res.date_end);
+    $('.now').text(res.now);
   }
 
-  $(function () {
+  function reload() {
+    $('.loading').show();
+    $('.kpis').empty();
     fetch("<%= dau_path %>");
     fetch_stacked("<%= dau_path %>");
+  }
+
+  $('input[name=time_zone]:radio').on('change', reload);
+  $('input[name=duration]:radio').on('change', reload);
+
+  $(function () {
+    reload();
   });
 </script>

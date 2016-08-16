@@ -2,7 +2,7 @@ module KpiAdmin
   module Kpis
     module DailyHelper
       def fetch_dau
-        result = SearchLog.find_by_sql([dau_sql, past_30_days])
+        result = SearchLog.find_by_sql([dau_sql, {start: date_start, end: date_end}])
         %i(total guest login).map do |legend|
           {
             name: legend,
@@ -28,7 +28,7 @@ module KpiAdmin
       end
 
       def fetch_dau_per_action
-        result = SearchLog.find_by_sql([dau_per_action_sql, past_30_days])
+        result = SearchLog.find_by_sql([dau_per_action_sql, {start: date_start, end: date_end}])
         result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
           {
             name: legend,
@@ -54,7 +54,7 @@ module KpiAdmin
       end
 
       def fetch_daily_pv_per_action
-        result = SearchLog.find_by_sql([daily_pv_per_action_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_pv_per_action_sql, {start: date_start, end: date_end}])
         result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
           {
             name: legend,
@@ -82,7 +82,7 @@ module KpiAdmin
       end
 
       def fetch_dau_by_new_action
-        result = SearchLog.find_by_sql([dau_by_new_action_sql, past_30_days])
+        result = SearchLog.find_by_sql([dau_by_new_action_sql, {start: date_start, end: date_end}])
         %i(total guest login).map do |legend|
           {
             name: legend,
@@ -109,7 +109,7 @@ module KpiAdmin
       end
 
       def fetch_daily_pv_by_new_action
-        result = SearchLog.find_by_sql([daily_pv_by_new_action_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_pv_by_new_action_sql, {start: date_start, end: date_end}])
         %i(total).map do |legend|
           {
             name: legend,
@@ -134,7 +134,7 @@ module KpiAdmin
       end
 
       def fetch_dau_per_device_type
-        result = SearchLog.find_by_sql([dau_per_device_type_sql, past_30_days])
+        result = SearchLog.find_by_sql([dau_per_device_type_sql, {start: date_start, end: date_end}])
         result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
           {
             name: legend,
@@ -159,7 +159,7 @@ module KpiAdmin
       end
 
       def fetch_daily_pv_per_device_type
-        result = SearchLog.find_by_sql([daily_pv_per_device_type_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_pv_per_device_type_sql, {start: date_start, end: date_end}])
         result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
           {
             name: legend,
@@ -184,7 +184,7 @@ module KpiAdmin
       end
 
       def fetch_dau_per_referer
-        result = SearchLog.find_by_sql([dau_per_referer_sql, past_30_days])
+        result = SearchLog.find_by_sql([dau_per_referer_sql, {start: date_start, end: date_end}])
         result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
           {
             name: legend,
@@ -219,7 +219,7 @@ module KpiAdmin
       end
 
       def fetch_daily_pv_per_referer
-        result = SearchLog.find_by_sql([daily_pv_per_referer_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_pv_per_referer_sql, {start: date_start, end: date_end}])
         result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
           {
             name: legend,
@@ -254,7 +254,7 @@ module KpiAdmin
       end
 
       def fetch_daily_search_num
-        result = SearchLog.find_by_sql([daily_search_num_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_search_num_sql, {start: date_start, end: date_end}])
         %i(guest login).map do |legend|
           {
             name: legend,
@@ -281,7 +281,7 @@ module KpiAdmin
       end
 
       def fetch_daily_search_num_verification
-        result = SearchLog.find_by_sql([daily_search_num_verification_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_search_num_verification_sql, {start: date_start, end: date_end}])
         %i(guest login).map do |legend|
           {
             name: legend,
@@ -305,7 +305,7 @@ module KpiAdmin
       end
 
       def fetch_daily_search_num_per_action
-        result = SearchLog.find_by_sql([daily_search_num_per_action_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_search_num_per_action_sql, {start: date_start, end: date_end}])
         %i(top result direct).map do |legend|
           {
             name: legend,
@@ -331,7 +331,7 @@ module KpiAdmin
       end
 
       def fetch_daily_search_rate_per_action
-        result = SearchLog.find_by_sql([daily_search_rate_per_action_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_search_rate_per_action_sql, {start: date_start, end: date_end}])
         %i(top result direct).map do |legend|
           {
             name: legend,
@@ -364,7 +364,7 @@ module KpiAdmin
       end
 
       def fetch_daily_search_num_by_google
-        result = SearchLog.find_by_sql([daily_search_num_by_google_sql, past_30_days])
+        result = SearchLog.find_by_sql([daily_search_num_by_google_sql, {start: date_start, end: date_end}])
         %i(not_search search).map do |legend|
           {
             name: legend,

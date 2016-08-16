@@ -2,7 +2,7 @@ module KpiAdmin
   module Kpis
     module MonthlyHelper
       def fetch_mau
-        result = SearchLog.find_by_sql([mau_sql, past_90_days])
+        result = SearchLog.find_by_sql([mau_sql, {start: date_start, end: date_end}])
         %i(total guest login).map do |legend|
           {
             name: legend,

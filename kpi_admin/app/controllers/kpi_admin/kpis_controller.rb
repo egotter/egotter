@@ -2,10 +2,9 @@ require_dependency "kpi_admin/application_controller"
 
 module KpiAdmin
   class KpisController < ApplicationController
+    include Kpis::DurationHelper
     include Kpis::DailyHelper
     include Kpis::MonthlyHelper
-
-    before_action :set_date
 
     def index
     end
@@ -16,7 +15,7 @@ module KpiAdmin
         return render unless request.xhr?
 
         type = params[:type] ? params[:type] : __method__
-        result = {type: type, type => send("fetch_#{type}")}
+        result = {type: type, type => send("fetch_#{type}"), now: now.to_s, date_start: date_start.to_s, date_end: date_end.to_s}
         render json: result, status: 200
       end
     end
@@ -87,23 +86,6 @@ module KpiAdmin
 
     private
 
-    def now
-      @_now ||= Time.zone.now
-    end
-
-    def past_30_days
-      @_past_30_days ||= {start: (now - 30.days).beginning_of_day, end: now.end_of_day}
-    end
-
-    def past_90_days
-      @_past_90_days ||= {start: (now - 90.days).beginning_of_day, end: now.end_of_day}
-    end
-
-    def set_date
-      @date_start = past_30_days[:start]
-      @date_end = past_30_days[:end]
-    end
-
     def fetch_daily_new_user
       sql = <<-'SQL'.strip_heredoc
       SELECT
@@ -114,7 +96,7 @@ module KpiAdmin
       GROUP BY date(created_at)
       ORDER BY date(created_at);
       SQL
-      result = SearchLog.find_by_sql([sql, past_30_days])
+      result = SearchLog.find_by_sql([sql, {start: date_start, end: date_end}])
 
       %i(total).map do |legend|
         {
@@ -136,7 +118,7 @@ module KpiAdmin
       GROUP BY date(created_at)
       ORDER BY date(created_at);
       SQL
-      result = SearchLog.find_by_sql([sql, past_30_days])
+      result = SearchLog.find_by_sql([sql, {start: date_start, end: date_end}])
 
       %i(NewUser ReturningUser).map do |legend|
         {
@@ -147,7 +129,7 @@ module KpiAdmin
     end
 
     def fetch_twitter_users_num
-      result = TwitterUser.find_by_sql([twitter_users_num_sql, past_30_days])
+      result = TwitterUser.find_by_sql([twitter_users_num_sql, {start: date_start, end: date_end}])
       %i(guest login).map do |legend|
         {
           name: legend,
@@ -172,7 +154,7 @@ module KpiAdmin
     end
 
     def fetch_twitter_users_uid_num
-      result = TwitterUser.find_by_sql([twitter_users_uid_num_sql, past_30_days])
+      result = TwitterUser.find_by_sql([twitter_users_uid_num_sql, {start: date_start, end: date_end}])
       %i(total unique_uid).map do |legend|
         {
           name: legend,
@@ -196,7 +178,7 @@ module KpiAdmin
     end
 
     def fetch_friends_num
-      result = Friend.find_by_sql([friends_num_sql, past_30_days])
+      result = Friend.find_by_sql([friends_num_sql, {start: date_start, end: date_end}])
       %i(total).map do |legend|
         {
           name: legend,
@@ -219,7 +201,7 @@ module KpiAdmin
     end
 
     def fetch_followers_num
-      result = Follower.find_by_sql([followers_num_sql, past_30_days])
+      result = Follower.find_by_sql([followers_num_sql, {start: date_start, end: date_end}])
       %i(total).map do |legend|
         {
           name: legend,

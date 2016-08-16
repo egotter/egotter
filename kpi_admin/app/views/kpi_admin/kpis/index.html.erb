@@ -1,4 +1,4 @@
-<%= render partial: 'clock', locals: {date_start: @date_start, date_end: @date_end} %>
+<%= render partial: 'clock', locals: {now: now, date_start: date_start, date_end: date_end} %>
 
 <div class="kpis dau"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
 <div><%= link_to('DAU', dau_path) %></div>
