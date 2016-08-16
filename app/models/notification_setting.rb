@@ -17,7 +17,7 @@
 #
 # Indexes
 #
-#  index_notifications_on_from_id  (from_id)
+#  index_notification_settings_on_from_id  (from_id)
 #
 
 class NotificationSetting < ActiveRecord::Base

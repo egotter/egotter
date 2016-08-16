@@ -19,6 +19,7 @@ class CreateTwitterUserWorker
       browser: values['browser'],
       user_agent: values['user_agent'],
       referer: values['referer'],
+      channel: values['channel'],
     }
 
     if (existing_tu = TwitterUser.latest(uid, user_id)).present? && existing_tu.recently_created?
@@ -122,7 +123,8 @@ class CreateTwitterUserWorker
       os:          attrs[:os],
       browser:     attrs[:browser],
       user_agent:  attrs[:user_agent],
-      referer:     attrs[:referer]
+      referer:     attrs[:referer],
+      channel:     attrs[:channel],
     )
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{message} #{attrs.inspect}"
@@ -143,7 +145,8 @@ class CreateTwitterUserWorker
       os:          attrs[:os],
       browser:     attrs[:browser],
       user_agent:  attrs[:user_agent],
-      referer:     attrs[:referer]
+      referer:     attrs[:referer],
+      channel:     attrs[:channel],
     )
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{reason} #{message} #{attrs.inspect}"
