@@ -62,6 +62,7 @@ module SearchesHelper
         uid: uid,
         screen_name: screen_name,
         user_id: user_id,
+        auto: %w(show).include?(action_name),
         device_type: request.device_type,
         os: request.os,
         browser: request.browser,

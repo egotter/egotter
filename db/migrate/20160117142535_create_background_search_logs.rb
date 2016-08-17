@@ -7,6 +7,7 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
       t.string  :screen_name, null: false, default: ''
 
       t.string  :bot_uid,     null: false, default: -1
+      t.boolean :auto,        null: false, default: false
       t.boolean :status,      null: false, default: false
       t.string  :reason,      null: false, default: ''
       t.text    :message,     null: false

@@ -39,6 +39,7 @@ ActiveRecord::Schema.define(version: 20160730134808) do
     t.string   "uid",         limit: 191,   default: "-1",  null: false
     t.string   "screen_name", limit: 191,   default: "",    null: false
     t.string   "bot_uid",     limit: 191,   default: "-1",  null: false
+    t.boolean  "auto",                      default: false, null: false
     t.boolean  "status",                    default: false, null: false
     t.string   "reason",      limit: 191,   default: "",    null: false
     t.text     "message",     limit: 65535,                 null: false
