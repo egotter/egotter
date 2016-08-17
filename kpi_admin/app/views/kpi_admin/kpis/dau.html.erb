@@ -71,7 +71,43 @@
     }
   }
 
-  function fetch(url) {
+  function fetch(url, type) {
+    return $.get(url, params(type)).done(done).fail(failed)
+  }
+
+  function fetch_stacked(url, type) {
+    return $.get(url, params(type)).done(done_stacked).fail(failed)
+  }
+
+  function draw(res, config) {
+    var conf = $.extend(true, {}, config);
+    conf.title.text = res.type;
+    conf.series = res[res.type];
+    $('.' + res.type).prev().hide();
+    $('.' + res.type).empty().highcharts(conf);
+  }
+
+  function update_clock(res) {
+    $('.date_start').text(res.date_start);
+    $('.date_end').text(res.date_end);
+    $('.now').text(res.now);
+  }
+
+  function done(res) {
+    draw(res, window.kpis.config);
+    update_clock(res);
+  }
+
+  function done_stacked(res) {
+    draw(res, window.kpis.config_stacked);
+    update_clock(res);
+  }
+
+  function reload() {
+    $('.loading').show();
+    $('.kpis').empty();
+
+    var url = "<%= dau_path %>";
     var types = [
       'dau',
       'dau_by_new_action',
@@ -83,48 +119,22 @@
       'dau_per_channel',
       'daily_pv_per_channel'
     ];
-    $.each(types, function (i, elem) {
-      $.get(url, params(elem)).done(draw).fail(failed);
-    });
-  }
+    fetch(url, types[0])
+        .done(function(){fetch(url, types[1])})
+        .done(function(){fetch(url, types[2])})
+        .done(function(){fetch(url, types[3])})
+        .done(function(){fetch(url, types[4])})
+        .done(function(){fetch(url, types[5])})
+        .done(function(){fetch(url, types[6])})
+        .done(function(){fetch(url, types[7])})
+        .done(function(){fetch(url, types[8])});
 
-  function fetch_stacked(url) {
-    var types = [
+//    types = [
 //      'dau_per_action',
 //      'daily_pv_per_action'
-    ];
-    $.each(types, function (i, elem) {
-      $.get(url, params(elem)).done(draw_stacked).fail(failed);
-    });
-  }
-
-  function setup(res, config) {
-    var conf = $.extend(true, {}, config);
-    conf.title.text = res.type;
-    conf.series = res[res.type];
-    $('.' + res.type).prev().hide();
-    $('.' + res.type).empty().highcharts(conf);
-  }
-
-  function draw(res) {
-    setup(res, window.kpis.config);
-    $('.date_start').text(res.date_start);
-    $('.date_end').text(res.date_end);
-    $('.now').text(res.now);
-  }
-
-  function draw_stacked(res) {
-    setup(res, window.kpis.config_stacked);
-    $('.date_start').text(res.date_start);
-    $('.date_end').text(res.date_end);
-    $('.now').text(res.now);
-  }
-
-  function reload() {
-    $('.loading').show();
-    $('.kpis').empty();
-    fetch("<%= dau_path %>");
-    fetch_stacked("<%= dau_path %>");
+//    ];
+//    fetch_stacked(url, types[0])
+//        .done(function(){fetch_stacked(url, types[1])});
   }
 
   $('input[name=time_zone]:radio').on('change', reload);

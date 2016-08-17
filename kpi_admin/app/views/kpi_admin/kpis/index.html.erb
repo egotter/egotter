@@ -21,36 +21,36 @@
 
 <script>
   function failed(xhr) {
-    console.log(xhr.responseText)
+    console.log(xhr.responseText);
   }
 
-  function setup(res, config) {
+  function draw(res, config) {
     var conf = $.extend(true, {}, config);
     conf.title.text = res.type;
     conf.series = res[res.type];
     $('.' + res.type).empty().highcharts(conf);
   }
 
-  function draw(res) {
-    setup(res, window.kpis.config);
+  function done(res) {
+    draw(res, window.kpis.config);
   }
 
-  function draw_stacked(res) {
-    setup(res, window.kpis.config_stacked);
+  function done_stacked(res) {
+    draw(res, window.kpis.config_stacked);
   }
 
   function fetch(url) {
-    $.get(url).done(draw).fail(failed);
+    return $.get(url).done(done).fail(failed)
   }
 
   function fetch_stacked(url) {
-    $.get(url).done(draw_stacked).fail(failed);
+    return $.get(url).done(done_stacked).fail(failed)
   }
 
   $(function () {
-    fetch("<%= dau_path %>");
-    fetch_stacked("<%= daily_search_num_path %>");
-    fetch("<%= daily_new_user_path %>");
-    fetch("<%= daily_sign_in_path %>");
+    fetch("<%= dau_path %>")
+        .then(function(){fetch_stacked("<%= daily_search_num_path %>")})
+        .then(function(){fetch("<%= daily_new_user_path %>")})
+        .then(function(){fetch("<%= daily_sign_in_path %>")});
   });
 </script>
