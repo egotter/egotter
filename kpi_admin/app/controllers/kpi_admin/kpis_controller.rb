@@ -222,9 +222,5 @@ module KpiAdmin
       ORDER BY date(created_at);
       SQL
     end
-
-    def to_msec_unixtime(date)
-      ActiveSupport::TimeZone['UTC'].parse(date.to_s).to_i * 1000
-    end
   end
 end

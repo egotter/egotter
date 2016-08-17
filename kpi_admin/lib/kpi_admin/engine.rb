@@ -1,3 +1,6 @@
+require 'active_support'
+require 'active_support/core_ext'
+
 module KpiAdmin
   class Engine < ::Rails::Engine
     isolate_namespace KpiAdmin

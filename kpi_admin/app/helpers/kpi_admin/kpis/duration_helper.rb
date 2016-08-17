@@ -1,6 +1,17 @@
 module KpiAdmin
   module Kpis
     module DurationHelper
+      def to_msec_unixtime(date)
+        date.in_time_zone(city).to_i * 1000
+      end
+
+      def city
+        case time_zone
+          when 'utc' then 'UTC'
+          when 'jst' then 'Tokyo'
+        end
+      end
+
       def time_zone
         %w(utc jst).include?(params[:time_zone]) ? params[:time_zone] : 'utc'
       end
@@ -14,21 +25,31 @@ module KpiAdmin
       end
 
       def date_start
-        send(duration, :start)
+        send(duration, 0)
       end
 
       def date_end
-        send(duration, :end)
+        send(duration, -1)
+      end
+
+      def date_array
+        send(duration)
       end
 
       private
 
-      def past_30_days(start_or_end)
-        {start: (now - 30.days).beginning_of_day, end: now.end_of_day}[start_or_end]
+      def past_30_days(index = nil)
+        past_n_days(30, index)
       end
 
-      def past_90_days(start_or_end)
-        {start: (now - 90.days).beginning_of_day, end: now.end_of_day}[start_or_end]
+      def past_90_days(index = nil)
+        past_n_days(90, index)
+      end
+
+      def past_n_days(num, index)
+        start = (now - num.days).beginning_of_day
+        result = num.times.to_a.map { |i| start + i.days }
+        index ? result[index] : result
       end
     end
   end
