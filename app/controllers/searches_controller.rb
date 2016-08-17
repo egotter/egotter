@@ -71,7 +71,13 @@ class SearchesController < ApplicationController
   Search::MENU.each do |menu|
     define_method(menu) do
       @menu = menu
-      @title = t('.title', user: @searched_tw_user.mention_name)
+      @title =
+        if %i(common_friends common_followers).include?(menu)
+          t('.title', user: @searched_tw_user.mention_name, login: I18n.t('dictionary.you'))
+        else
+          t('.title', user: @searched_tw_user.mention_name)
+        end
+
       render :common
     end
   end
