@@ -63,7 +63,7 @@ module KpiAdmin
       def past_n_days(num, now = nil)
         now = now() if now.nil?
         start = (now - num.days).beginning_of_day
-        num.times.to_a.map { |i| start + i.days }
+        (num + 1).times.to_a.map { |i| start + i.days }
       end
     end
   end

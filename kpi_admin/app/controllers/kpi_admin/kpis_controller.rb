@@ -17,8 +17,8 @@ module KpiAdmin
           type: type,
           type => send("fetch_#{type}"),
           now: now.to_s,
-          date_start: date_start.to_s,
-          date_end: date_end.to_s
+          date_start: date_start.beginning_of_day.to_s,
+          date_end: date_end.end_of_day.to_s
         }
         render json: result, status: 200
       end
