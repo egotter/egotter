@@ -4,18 +4,22 @@ module KpiAdmin
   class KpisController < ApplicationController
     include Kpis::DurationHelper
     include Kpis::DailyHelper
-    include Kpis::MonthlyHelper
 
     def index
     end
 
-    %i(dau daily_search_num daily_new_user daily_sign_in
-       mau).each do |name|
+    %i(one).each do |name|
       define_method(name) do
         return render unless request.xhr?
 
-        type = params[:type] ? params[:type] : __method__
-        result = {type: type, type => send("fetch_#{type}"), now: now.to_s, date_start: date_start.to_s, date_end: date_end.to_s}
+        type = Kpis::DailyHelper.public_instance_methods.include?("fetch_#{params[:type]}".to_sym) ? params[:type] : 'uu'
+        result = {
+          type: type,
+          type => send("fetch_#{type}"),
+          now: now.to_s,
+          date_start: date_start.to_s,
+          date_end: date_end.to_s
+        }
         render json: result, status: 200
       end
     end
@@ -85,48 +89,6 @@ module KpiAdmin
     end
 
     private
-
-    def fetch_daily_new_user
-      sql = <<-'SQL'.strip_heredoc
-      SELECT
-        date(created_at) date,
-        count(*) total
-      FROM users
-      WHERE created_at BETWEEN :start AND :end
-      GROUP BY date(created_at)
-      ORDER BY date(created_at);
-      SQL
-      result = SearchLog.find_by_sql([sql, {start: date_start, end: date_end}])
-
-      %i(total).map do |legend|
-        {
-          name: legend,
-          data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
-        }
-      end
-    end
-
-    def fetch_daily_sign_in
-      sql = <<-'SQL'.strip_heredoc
-      SELECT
-        date(created_at) date,
-        count(*) total,
-        count(if(context = 'create', 1, NULL)) 'NewUser',
-        count(if(context = 'update', 1, NULL)) 'ReturningUser'
-      FROM sign_in_logs
-      WHERE created_at BETWEEN :start AND :end
-      GROUP BY date(created_at)
-      ORDER BY date(created_at);
-      SQL
-      result = SearchLog.find_by_sql([sql, {start: date_start, end: date_end}])
-
-      %i(NewUser ReturningUser).map do |legend|
-        {
-          name: legend,
-          data: result.map { |r| [to_msec_unixtime(r.date), r.send(legend)] }
-        }
-      end
-    end
 
     def fetch_twitter_users_num
       result = TwitterUser.find_by_sql([twitter_users_num_sql, {start: date_start, end: date_end}])

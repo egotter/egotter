@@ -106,12 +106,11 @@
         .then(done, failed)
         .then(done, failed)
         .then(done, failed)
-        .done(function (res) {
+        .then(function (res) {
           results[res.sequence_number] = res;
           console.log(results);
           draw(res.xAxis_categories, res.yAxis_categories, all_cells(), res.title, chart[format]);
-        })
-        .fail(failed);
+        }, failed);
   }
 
   function reload() {

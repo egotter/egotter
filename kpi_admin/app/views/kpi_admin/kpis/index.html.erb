@@ -1,17 +1,16 @@
 <%= render partial: 'clock', locals: {now: now, date_start: date_start, date_end: date_end} %>
 
-<div class="kpis dau"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('DAU', dau_path) %></div>
-<div><%= link_to('MAU', mau_path) %></div>
+<div class="kpis uu"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+<div><%= link_to('DAU', one_path) %></div>
 
-<div class="kpis daily_search_num"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('Search num', daily_search_num_path) %></div>
+<div class="kpis search_num"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+<div><%= link_to('Search num', one_path) %></div>
 
-<div class="kpis daily_new_user"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('New user', daily_new_user_path) %></div>
+<div class="kpis new_user"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+<div><%= link_to('New user', one_path) %></div>
 
-<div class="kpis daily_sign_in"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('Sign in', daily_sign_in_path) %></div>
+<div class="kpis sign_in"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
+<div><%= link_to('Sign in', one_path) %></div>
 
 <br>
 <div><%= link_to('RR', rr_path) %></div>
@@ -25,6 +24,7 @@
   }
 
   function draw(res, config) {
+    console.log(res);
     var conf = $.extend(true, {}, config);
     conf.title.text = res.type;
     conf.series = res[res.type];
@@ -39,18 +39,18 @@
     draw(res, window.kpis.config_stacked);
   }
 
-  function fetch(url) {
-    return $.get(url).done(done).fail(failed)
+  function fetch(url, type) {
+    return $.get(url, {type: type}).done(done).fail(failed)
   }
 
-  function fetch_stacked(url) {
-    return $.get(url).done(done_stacked).fail(failed)
+  function fetch_stacked(url, type) {
+    return $.get(url, {type: type}).done(done_stacked).fail(failed)
   }
 
   $(function () {
-    fetch("<%= dau_path %>")
-        .then(function(){fetch_stacked("<%= daily_search_num_path %>")})
-        .then(function(){fetch("<%= daily_new_user_path %>")})
-        .then(function(){fetch("<%= daily_sign_in_path %>")});
+    fetch("<%= one_path %>", 'uu')
+        .then(function(){fetch_stacked("<%= one_path %>", 'search_num')})
+        .then(function(){fetch("<%= one_path %>", 'new_user')})
+        .then(function(){fetch("<%= one_path %>", 'sign_in')});
   });
 </script>
