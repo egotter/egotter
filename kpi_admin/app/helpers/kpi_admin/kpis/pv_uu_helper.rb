@@ -1,10 +1,6 @@
 module KpiAdmin
   module Kpis
     module PvUuHelper
-      def exec_sql(klass, sql)
-        date_array.map { |days| klass.find_by_sql([sql, {start: days.first.beginning_of_day, end: days.last.end_of_day}]) }.flatten
-      end
-
       def fetch_uu
         result = exec_sql(SearchLog, uu_sql)
         %i(total guest login).map do |legend|
@@ -18,7 +14,7 @@ module KpiAdmin
       def uu_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         count(DISTINCT session_id) total,
         count(DISTINCT if(user_id = -1, session_id, NULL)) guest,
         count(DISTINCT if(user_id != -1, session_id, NULL)) login
@@ -43,7 +39,7 @@ module KpiAdmin
       def uu_per_action_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         action,
         count(DISTINCT session_id) total
       FROM search_logs
@@ -70,7 +66,7 @@ module KpiAdmin
         <<-'SQL'.strip_heredoc
       -- pv_per_action
       SELECT
-        :start date,
+        :label date,
         action,
         count(*) total
       FROM search_logs
@@ -96,7 +92,7 @@ module KpiAdmin
       def uu_by_new_action_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         count(DISTINCT session_id) total,
         count(DISTINCT if(user_id = -1, session_id, NULL)) guest,
         count(DISTINCT if(user_id != -1, session_id, NULL)) login
@@ -121,7 +117,7 @@ module KpiAdmin
       def pv_by_new_action_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         count(if(user_id = -1, 1, NULL)) guest,
         count(if(user_id != -1, 1, NULL)) login,
         count(*) total
@@ -146,7 +142,7 @@ module KpiAdmin
       def uu_per_device_type_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         device_type,
         count(DISTINCT session_id) total
       FROM search_logs
@@ -171,7 +167,7 @@ module KpiAdmin
       def pv_per_device_type_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         device_type,
         count(*) total
       FROM search_logs
@@ -197,7 +193,7 @@ module KpiAdmin
       def uu_per_referer_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         case
           when referer regexp '^http://(www\.)?egotter\.com' then 'egotter'
           when referer regexp '^http://(www\.)?google\.com' then 'google.com'
@@ -232,7 +228,7 @@ module KpiAdmin
       def pv_per_referer_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         case
           when referer regexp '^http://(www\.)?egotter\.com' then 'egotter'
           when referer regexp '^http://(www\.)?google\.com' then 'google.com'
@@ -266,7 +262,7 @@ module KpiAdmin
       def uu_per_channel_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         channel,
         count(DISTINCT session_id) total
       FROM search_logs
@@ -291,7 +287,7 @@ module KpiAdmin
       def pv_per_channel_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         channel,
         count(*) total
       FROM search_logs
@@ -316,7 +312,7 @@ module KpiAdmin
       def new_user_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         count(*) total
       FROM users
       WHERE created_at BETWEEN :start AND :end;
@@ -336,7 +332,7 @@ module KpiAdmin
       def sign_in_sql
         <<-'SQL'.strip_heredoc
       SELECT
-        :start date,
+        :label date,
         count(*) total,
         count(if(context = 'create', 1, NULL)) 'NewUser',
         count(if(context = 'update', 1, NULL)) 'ReturningUser'

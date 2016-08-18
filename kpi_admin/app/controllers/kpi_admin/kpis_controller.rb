@@ -2,6 +2,7 @@ require_dependency "kpi_admin/application_controller"
 
 module KpiAdmin
   class KpisController < ApplicationController
+    include KpisHelper
     include Kpis::DurationHelper
     include Kpis::PvUuHelper
     include Kpis::SearchNumHelper
