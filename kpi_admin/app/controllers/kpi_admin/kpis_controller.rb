@@ -3,22 +3,31 @@ require_dependency "kpi_admin/application_controller"
 module KpiAdmin
   class KpisController < ApplicationController
     include Kpis::DurationHelper
-    include Kpis::DailyHelper
+    include Kpis::PvUuHelper
+    include Kpis::SearchNumHelper
+
+    METHOD_TYPES = Kpis::PvUuHelper.public_instance_methods + Kpis::SearchNumHelper.public_instance_methods
 
     def index
     end
 
-    %i(one).each do |name|
+    %i(one two).each do |name|
       define_method(name) do
         return render unless request.xhr?
 
-        type = Kpis::DailyHelper.public_instance_methods.include?("fetch_#{params[:type]}".to_sym) ? params[:type] : 'uu'
+        type = METHOD_TYPES.include?("fetch_#{params[:type]}".to_sym) ? params[:type] : 'uu'
         result = {
           type: type,
           type => send("fetch_#{type}"),
-          now: now.to_s,
-          date_start: date_start.beginning_of_day.to_s,
-          date_end: date_end.end_of_day.to_s
+          now: now,
+          date_start: date_start.beginning_of_day,
+          date_end: date_end.end_of_day,
+          city: city,
+          time_zone: time_zone,
+          frequency: frequency,
+          duration: duration,
+          date_array: date_array,
+          sql: show_sql(type, date_array.last),
         }
         render json: result, status: 200
       end

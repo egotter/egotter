@@ -5,8 +5,8 @@ window.kpis.dateTimeLabelFormats = {
   second: '%H:%M:%S',
   minute: '%H:%M',
   hour: '%H:%M',
-  day: '%e. %b',
-  week: '%e. %b',
+  day: '%m/%d',
+  week: '%m/%d',
   month: '%b \'%y',
   year: '%Y'
 };
