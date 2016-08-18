@@ -28,7 +28,11 @@ module KpiAdmin
           frequency: frequency,
           duration: duration,
           date_array: date_array,
+          sequence_number: sequence_number,
+          next_sequence_number: next_sequence_number,
+          max_sequence_number: max_sequence_number,
           sql: show_sql(type, date_array.last),
+          url: request.path,
         }
         render json: result, status: 200
       end

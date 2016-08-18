@@ -13,7 +13,12 @@ module KpiAdmin
     end
 
     def exec_sql(klass, sql)
-      date_array.map { |days| klass.find_by_sql([sql, placeholder_values(days)]) }.flatten
+      if sequence_number
+        days = date_array[sequence_number]
+        klass.find_by_sql([sql, placeholder_values(days)])
+      else
+        date_array.map { |days| klass.find_by_sql([sql, placeholder_values(days)]) }.flatten
+      end
     end
   end
 end

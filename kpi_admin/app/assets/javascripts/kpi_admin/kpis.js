@@ -15,6 +15,9 @@ window.kpis.config = {
   credits: {
     enabled: false
   },
+  chart: {
+    type: 'line'
+  },
   title: {
     text: 'title'
   },

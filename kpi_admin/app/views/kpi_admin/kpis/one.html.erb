@@ -64,30 +64,56 @@
     console.log(xhr.responseText);
   }
 
-  function params(type) {
+  function params(type, sequence_number) {
     return {
       type: type,
       time_zone: $('input[name=time_zone]:checked').val(),
       frequency: $('input[name=frequency]:checked').val(),
-      duration: $('input[name=duration]:checked').val()
+      duration: $('input[name=duration]:checked').val(),
+      sequence_number: sequence_number
     }
   }
 
   function fetch(url, type) {
-    return $.get(url, params(type)).done(done).fail(failed)
+    return fetch_one_day(url, type, 0)
   }
 
-  function fetch_stacked(url, type) {
-    return $.get(url, params(type)).done(done_stacked).fail(failed)
+  function fetch_one_day(url, type, sequence_number, defer) {
+    var defer = defer || $.Deferred();
+    $.get(url, params(type, sequence_number))
+        .then(function (res) {
+          done(res);
+          if (res.next_sequence_number) {
+            fetch_one_day(url, type, res.next_sequence_number, defer);
+          } else {
+            defer.resolve();
+          }
+        }, failed);
+    return defer.promise()
   }
+
+  function fetch_stacked(url, type, sequence_number) {
+    return $.get(url, params(type, sequence_number)).done(done_stacked).fail(failed)
+  }
+
+  var charts = {};
 
   function draw(res, config) {
     console.log(res);
-    var conf = $.extend(true, {}, config);
-    conf.title.text = res.type;
-    conf.series = res[res.type];
-    $('.' + res.type).prev().hide();
-    $('.' + res.type).empty().highcharts(conf);
+    if (charts[res.type]) {
+      var chart = charts[res.type];
+      $.each(res[res.type], function (i, serie) {
+        chart.series[i].addPoint([serie.data[0][0], serie.data[0][1]], true);
+      });
+    } else {
+      var conf = $.extend(true, {}, config);
+      conf.title.text = res.type;
+      conf.series = res[res.type];
+      conf.chart.renderTo = $('.' + res.type)[0];
+      $('.' + res.type).prev().hide();
+      $('.' + res.type).empty();
+      charts[res.type] = new Highcharts.Chart(conf);
+    }
   }
 
   function update_clock(res) {

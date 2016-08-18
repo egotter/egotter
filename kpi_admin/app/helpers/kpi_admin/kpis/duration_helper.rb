@@ -44,6 +44,19 @@ module KpiAdmin
         apply_frequency(send(duration))
       end
 
+      def sequence_number
+        params[:sequence_number] ? params[:sequence_number].to_i : nil
+      end
+
+      def next_sequence_number
+        return nil if sequence_number.nil?
+        sequence_number < max_sequence_number ? sequence_number + 1 : nil
+      end
+
+      def max_sequence_number
+        duration.match(/^past_(\d+)_days/)[1].to_i - 1
+      end
+
       private
 
       def apply_frequency(days)
