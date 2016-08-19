@@ -29,7 +29,7 @@ module KpiAdmin
       end
 
       def duration
-        %w(past_14_days past_30_days past_90_days).include?(params[:duration]) ? params[:duration] : 'past_30_days'
+        %w(past_14_days past_30_days past_90_days).include?(params[:duration]) ? params[:duration] : 'past_14_days'
       end
 
       def date_start

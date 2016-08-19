@@ -1,4 +1,7 @@
 <%= render partial: 'clock', locals: {now: now, date_start: date_start, date_end: date_end} %>
+<%= render partial: 'time_zone' %>
+<%= render partial: 'frequency' %>
+<%= render partial: 'duration' %>
 
 <div class="kpis uu"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
 <div><%= link_to('DAU', one_path) %></div>
@@ -23,8 +26,16 @@
     console.log(xhr.responseText);
   }
 
+  function params(type) {
+    return {
+      type: type,
+      time_zone: $('input[name=time_zone]:checked').val(),
+      frequency: $('input[name=frequency]:checked').val(),
+      duration: $('input[name=duration]:checked').val()
+    }
+  }
+
   function draw(res, config) {
-    console.log(res);
     var conf = $.extend(true, {}, config);
     conf.title.text = res.type;
     conf.series = res[res.type];
@@ -40,17 +51,28 @@
   }
 
   function fetch(url, type) {
-    return $.get(url, {type: type}).done(done).fail(failed)
+    return $.get(url, params(type)).done(done).fail(failed)
   }
 
   function fetch_stacked(url, type) {
-    return $.get(url, {type: type}).done(done_stacked).fail(failed)
+    return $.get(url, params(type)).done(done_stacked).fail(failed)
   }
 
+  function reload() {
+    $('.kpis').empty();
+
+    var url = "<%= one_path %>";
+    fetch(url, 'uu')
+        .then(function(){return fetch_stacked(url, 'search_num')})
+        .then(function(){return fetch(url, 'new_user')})
+        .then(function(){return fetch(url, 'sign_in')});
+  }
+
+  $('input[name=time_zone]:radio').on('change', reload);
+  $('input[name=frequency]:radio').on('change', reload);
+  $('input[name=duration]:radio').on('change', reload);
+
   $(function () {
-    fetch("<%= one_path %>", 'uu')
-        .then(function(){fetch_stacked("<%= one_path %>", 'search_num')})
-        .then(function(){fetch("<%= one_path %>", 'new_user')})
-        .then(function(){fetch("<%= one_path %>", 'sign_in')});
+    reload();
   });
 </script>

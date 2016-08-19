@@ -62,7 +62,7 @@
 
   function fetch(url, type, stacked) {
     var defer = fetch_one_day(url, type, 0);
-    var days_count = $('input[name=duration]:checked').data('num');
+    var days_count = $('input[name=duration]:checked').data('num') + 1;
     for (var i = 1; i < days_count; i++) {
       defer = defer.then(function (res) {
         stacked ? done_stacked(res) : done(res);

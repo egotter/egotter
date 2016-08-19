@@ -11,11 +11,11 @@
     <div class="kpis uu"></div>
   </div>
 
-  <div class="hidden col-xs-12 col-sm-6">
+  <div class="col-xs-12 col-sm-6">
     <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
     <div class="kpis uu_per_action"></div>
   </div>
-  <div class="hidden col-xs-12 col-sm-6">
+  <div class="col-xs-12 col-sm-6">
     <%= image_tag asset_path('kpi_admin/ajax-loader.gif'), class: 'loading' %>
     <div class="kpis pv_per_action"></div>
   </div>
@@ -76,7 +76,7 @@
 
   function fetch(url, type, stacked) {
     var defer = fetch_one_day(url, type, 0);
-    var days_count = $('input[name=duration]:checked').data('num');
+    var days_count = $('input[name=duration]:checked').data('num') + 1;
     for (var i = 1; i < days_count; i++) {
       defer = defer.then(function (res) {
         stacked ? done_stacked(res) : done(res);
@@ -152,6 +152,11 @@
       'uu_per_channel',
       'pv_per_channel'
     ];
+    var types_stacked = [
+      'uu_per_action'
+//      'pv_per_action'
+    ];
+
     fetch(url, types[0])
         .then(function(){return fetch(url, types[1])})
         .then(function(){return fetch(url, types[2])})
@@ -160,14 +165,10 @@
         .then(function(){return fetch(url, types[5])})
         .then(function(){return fetch(url, types[6])})
         .then(function(){return fetch(url, types[7])})
-        .then(function(){return fetch(url, types[8])});
-
-//    types = [
-//      'uu_per_action',
-//      'pv_per_action'
-//    ];
-//    fetch(url, types[0])
-//        .done(function(){return fetch(url, types[1], true)});
+        .then(function(){return fetch(url, types[8])})
+        .then(function(){return fetch(url, types[8])})
+        .then(function(){return fetch(url, types_stacked[0], true)});
+//        .then(function(){return fetch(url, types_stacked[1], true)});
   }
 
   $('input[name=time_zone]:radio').on('change', reload);

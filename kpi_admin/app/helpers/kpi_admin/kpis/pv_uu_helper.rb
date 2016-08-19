@@ -27,11 +27,11 @@ module KpiAdmin
 
       def fetch_uu_per_action
         result = exec_sql(SearchLog, uu_per_action_sql)
-        result.map { |r| r.action.to_s }.sort.uniq.map do |legend|
+        result.map(&:action).sort.uniq.map do |legend|
           {
             name: legend,
             data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
-            visible: !legend.in?(%w(new create show))
+            visible: legend.in?(%w(removing removed))
           }
         end
       end
@@ -185,7 +185,7 @@ module KpiAdmin
           {
             name: legend,
             data: result.select { |r| r._referer == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
-            visible: !legend.in?(%w(others))
+            visible: !legend.in?(%w(others egotter))
           }
         end
       end
@@ -195,13 +195,13 @@ module KpiAdmin
       SELECT
         :label date,
         case
-          when referer regexp '^http://(www\.)?egotter\.com' then 'egotter'
-          when referer regexp '^http://(www\.)?google\.com' then 'google.com'
-          when referer regexp '^http://(www\.)?google\.co\.jp' then 'google.co.jp'
-          when referer regexp '^http://(www\.)?google\.co\.in' then 'google.co.in'
-          when referer regexp '^http://search\.yahoo\.co\.jp' then 'search.yahoo.co.jp'
-          when referer regexp '^http://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
-          when referer regexp '^http://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
+          when referer regexp '^https?://(www\.)?egotter\.com' then 'egotter'
+          when referer regexp '^https?://(www\.)?google\.com' then 'google.com'
+          when referer regexp '^https?://(www\.)?google\.co\.jp' then 'google.co.jp'
+          when referer regexp '^https?://(www\.)?google\.co\.in' then 'google.co.in'
+          when referer regexp '^https?://search\.yahoo\.co\.jp' then 'search.yahoo.co.jp'
+          when referer regexp '^https?://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
+          when referer regexp '^https?://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
           else 'others'
         end _referer,
         count(DISTINCT session_id) total
@@ -220,7 +220,7 @@ module KpiAdmin
           {
             name: legend,
             data: result.select { |r| r._referer == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
-            visible: !legend.in?(%w(others))
+            visible: !legend.in?(%w(others egotter))
           }
         end
       end
@@ -230,13 +230,13 @@ module KpiAdmin
       SELECT
         :label date,
         case
-          when referer regexp '^http://(www\.)?egotter\.com' then 'egotter'
-          when referer regexp '^http://(www\.)?google\.com' then 'google.com'
-          when referer regexp '^http://(www\.)?google\.co\.jp' then 'google.co.jp'
-          when referer regexp '^http://(www\.)?google\.co\.in' then 'google.co.in'
-          when referer regexp '^http://search\.yahoo\.co\.jp' then 'search.yahoo.co.jp'
-          when referer regexp '^http://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
-          when referer regexp '^http://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
+          when referer regexp '^https?://(www\.)?egotter\.com' then 'egotter'
+          when referer regexp '^https?://(www\.)?google\.com' then 'google.com'
+          when referer regexp '^https?://(www\.)?google\.co\.jp' then 'google.co.jp'
+          when referer regexp '^https?://(www\.)?google\.co\.in' then 'google.co.in'
+          when referer regexp '^https?://search\.yahoo\.co\.jp' then 'search.yahoo.co.jp'
+          when referer regexp '^https?://matome\.naver\.jp/(m/)?odai/2136610523178627801$' then 'matome.naver.jp'
+          when referer regexp '^https?://((m|detail)\.)chiebukuro\.yahoo\.co\.jp' then 'chiebukuro.yahoo.co.jp'
           else 'others'
         end _referer,
         count(*) total
