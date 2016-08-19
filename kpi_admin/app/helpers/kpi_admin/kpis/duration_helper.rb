@@ -2,7 +2,7 @@ module KpiAdmin
   module Kpis
     module DurationHelper
       def to_msec_unixtime(str)
-        (str.in_time_zone('UTC').to_i + utc_offset) * 1000
+        (str.in_time_zone('UTC').to_i + utc_offset).in_milliseconds
       end
 
       def utc_offset

@@ -110,6 +110,7 @@ module KpiAdmin
           {
             name: legend,
             data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
+            visible: !legend.in?(%w(blank))
           }
         end
       end
@@ -118,7 +119,7 @@ module KpiAdmin
         <<-'SQL'.strip_heredoc
       SELECT
         :label date,
-        channel,
+        if(channel = '', 'blank', channel) channel,
         count(*) total
       FROM background_search_logs
       WHERE
