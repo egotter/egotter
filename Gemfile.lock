@@ -1,5 +1,5 @@
 PATH
-  remote: kpi_admin
+  remote: ../kpi_admin
   specs:
     kpi_admin (0.0.1)
       activesupport
