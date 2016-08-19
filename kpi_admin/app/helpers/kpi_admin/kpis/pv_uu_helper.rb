@@ -57,14 +57,13 @@ module KpiAdmin
           {
             name: legend,
             data: result.select { |r| r.action == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
-            visible: !legend.in?(%w(new create show))
+            visible: legend.in?(%w(removing removed))
           }
         end
       end
 
       def pv_per_action_sql
         <<-'SQL'.strip_heredoc
-      -- pv_per_action
       SELECT
         :label date,
         action,
@@ -131,7 +130,7 @@ module KpiAdmin
 
       def fetch_uu_per_device_type
         result = exec_sql(SearchLog, uu_per_device_type_sql)
-        result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
+        result.map(&:device_type).sort.uniq.map do |legend|
           {
             name: legend,
             data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
@@ -156,7 +155,7 @@ module KpiAdmin
 
       def fetch_pv_per_device_type
         result = exec_sql(SearchLog, pv_per_device_type_sql)
-        result.map { |r| r.device_type.to_s }.sort.uniq.map do |legend|
+        result.map(&:device_type).sort.uniq.map do |legend|
           {
             name: legend,
             data: result.select { |r| r.device_type == legend }.map { |r| [to_msec_unixtime(r.date), r.total] }
@@ -181,7 +180,7 @@ module KpiAdmin
 
       def fetch_uu_per_referer
         result = exec_sql(SearchLog, uu_per_referer_sql)
-        result.map { |r| r._referer.to_s }.uniq.sort.map do |legend|
+        result.map(&:_referer).uniq.sort.map do |legend|
           {
             name: legend,
             data: result.select { |r| r._referer == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
@@ -216,7 +215,7 @@ module KpiAdmin
 
       def fetch_pv_per_referer
         result = exec_sql(SearchLog, pv_per_referer_sql)
-        result.map { |r| r._referer.to_s }.uniq.sort.map do |legend|
+        result.map(&:_referer).uniq.sort.map do |legend|
           {
             name: legend,
             data: result.select { |r| r._referer == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
@@ -251,7 +250,7 @@ module KpiAdmin
 
       def fetch_uu_per_channel
         result = exec_sql(SearchLog, uu_per_channel_sql)
-        result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+        result.map(&:channel).uniq.sort.map do |legend|
           {
             name: legend,
             data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
@@ -277,7 +276,7 @@ module KpiAdmin
 
       def fetch_pv_per_channel
         result = exec_sql(SearchLog, pv_per_channel_sql)
-        result.map { |r| r.channel.to_s }.uniq.sort.map do |legend|
+        result.map(&:channel).uniq.sort.map do |legend|
           {
             name: legend,
             data: result.select { |r| r.channel == legend }.map { |r| [to_msec_unixtime(r.date), r.total] },
@@ -335,7 +334,6 @@ module KpiAdmin
         <<-'SQL'.strip_heredoc
       SELECT
         :label date,
-        count(*) total,
         count(if(context = 'create', 1, NULL)) 'NewUser',
         count(if(context = 'update', 1, NULL)) 'ReturningUser'
       FROM sign_in_logs

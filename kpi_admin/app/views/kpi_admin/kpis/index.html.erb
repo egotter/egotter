@@ -4,22 +4,22 @@
 <%= render partial: 'duration' %>
 
 <div class="kpis uu"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('DAU', one_path) %></div>
+<div><%= link_to('DAU', one_path, class: 'btn btn-default') %></div>
 
 <div class="kpis search_num"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('Search num', two_path) %></div>
+<div><%= link_to('Search num', two_path, class: 'btn btn-default') %></div>
 
 <div class="kpis new_user"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('New user', one_path) %></div>
+<div><%= link_to('New user', one_path, class: 'btn btn-default') %></div>
 
 <div class="kpis sign_in"><%= image_tag asset_path('kpi_admin/ajax-loader.gif') %></div>
-<div><%= link_to('Sign in', one_path) %></div>
+<div><%= link_to('Sign in', one_path, class: 'btn btn-default') %></div>
 
 <br>
-<div><%= link_to('RR', rr_path) %></div>
+<div><%= link_to('RR', rr_path, class: 'btn btn-default') %></div>
 
 <br>
-<div><%= link_to('Table', table_path) %></div>
+<div><%= link_to('Table', table_path, class: 'btn btn-default') %></div>
 
 <script>
   function failed(xhr) {
