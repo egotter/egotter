@@ -42,6 +42,7 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
+      channel:     find_channel,
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
