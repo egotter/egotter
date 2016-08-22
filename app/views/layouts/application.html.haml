@@ -27,7 +27,7 @@
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
       })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
-      ga('create', 'UA-13072051-3', #{user_signed_in? ? "{ 'userId': '#{current_user.id}' }" : "'auto'"});
+      ga('create', 'UA-13072051-3', 'auto'#{user_signed_in? ? ", { 'userId': '#{current_user.id}' }" : ''});
       ga('send', 'pageview');
 
     %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
