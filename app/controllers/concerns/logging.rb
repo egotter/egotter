@@ -50,6 +50,24 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
   end
 
+  def create_modal_open_log(name)
+    attrs = {
+      session_id:  fingerprint,
+      user_id:     current_user_id,
+      name:        name,
+      device_type: request.device_type,
+      os:          request.os,
+      browser:     request.browser,
+      user_agent:  truncated_user_agent,
+      referer:     truncated_referer,
+      channel:     find_channel,
+      created_at:  Time.zone.now
+    }
+    CreateModalOpenLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
+  end
+
   def push_referer
     Util::RefererList.new(Redis.client).push(fingerprint, request.referer.nil? ? '' : request.referer)
   rescue => e

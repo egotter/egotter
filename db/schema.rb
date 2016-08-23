@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160730134808) do
+ActiveRecord::Schema.define(version: 20160823124535) do
 
   create_table "background_notification_logs", force: :cascade do |t|
     t.integer  "user_id",      limit: 4,     default: -1,    null: false
@@ -131,6 +131,21 @@ ActiveRecord::Schema.define(version: 20160730134808) do
   add_index "mentions", ["from_id"], name: "index_mentions_on_from_id", using: :btree
   add_index "mentions", ["screen_name"], name: "index_mentions_on_screen_name", using: :btree
   add_index "mentions", ["uid"], name: "index_mentions_on_uid", using: :btree
+
+  create_table "modal_open_logs", force: :cascade do |t|
+    t.string   "session_id",  limit: 191, default: "",   null: false
+    t.integer  "user_id",     limit: 4,   default: -1,   null: false
+    t.string   "name",        limit: 191, default: "-1", null: false
+    t.string   "device_type", limit: 191, default: "",   null: false
+    t.string   "os",          limit: 191, default: "",   null: false
+    t.string   "browser",     limit: 191, default: "",   null: false
+    t.string   "user_agent",  limit: 191, default: "",   null: false
+    t.string   "referer",     limit: 191, default: "",   null: false
+    t.string   "channel",     limit: 191, default: "",   null: false
+    t.datetime "created_at",                             null: false
+  end
+
+  add_index "modal_open_logs", ["created_at"], name: "index_modal_open_logs_on_created_at", using: :btree
 
   create_table "notification_messages", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false

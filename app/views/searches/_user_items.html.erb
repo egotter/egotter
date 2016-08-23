@@ -55,6 +55,13 @@
                   data-toggle="modal" data-target=".profile-overview-modal.<%= unique_id %>">
             <span class="glyphicon glyphicon-search"></span>
           </button>
+          <script>
+            $(function () {
+              $('.profile-overview-modal.<%= unique_id %>').on('shown.bs.modal', function() {
+                $.post('<%= modal_open_logs_path %>', {name: 'profile'});
+              });
+            });
+          </script>
         </span>
       </div>
     </div><%# .media %>

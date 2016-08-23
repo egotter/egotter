@@ -44,6 +44,13 @@
   <%= render(partial: 'searches/profile_overview_modal',
              locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}", via: :profile_modal}) %>
   <% modal_rendered_uids << user.uid.to_i %>
+  <script>
+    $(function () {
+      $('.profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>').on('shown.bs.modal', function() {
+        $.post('<%= modal_open_logs_path %>', {name: 'profile'});
+      });
+    });
+  </script>
 <% end %>
 
 <%# usage_stats %>
@@ -130,6 +137,13 @@
     <%= render(partial: 'searches/profile_overview_modal',
                locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}", via: :profile_modal}) %>
     <% modal_rendered_uids << user.uid.to_i %>
+    <script>
+      $(function () {
+        $('.profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>').on('shown.bs.modal', function() {
+          $.post('<%= modal_open_logs_path %>', {name: 'profile'});
+        });
+      });
+    </script>
   <% end %>
 <% end %>
 
@@ -180,6 +194,13 @@
     <%= render(partial: 'searches/profile_overview_modal',
                locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}", via: :profile_modal}) %>
     <% modal_rendered_uids << user.uid.to_i %>
+    <script>
+      $(function () {
+        $('.profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>').on('shown.bs.modal', function() {
+          $.post('<%= modal_open_logs_path %>', {name: 'profile'});
+        });
+      });
+    </script>
   <% end %>
 <% end %>
 

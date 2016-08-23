@@ -35,6 +35,7 @@ Rails.application.routes.draw do
   get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
   resources :update_histories, only: :show
   resources :background_search_logs, only: %i(index show)
+  resources :modal_open_logs, only: %i(create)
   resources :page_caches, only: %i(create destroy)
   post 'clear_result_cache', to: 'page_caches#clear', as: :clear_result_cache
 
