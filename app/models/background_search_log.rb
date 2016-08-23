@@ -13,6 +13,7 @@
 #  reason      :string(191)      default(""), not null
 #  message     :text(65535)      not null
 #  call_count  :integer          default(-1), not null
+#  via         :string(191)      default(""), not null
 #  device_type :string(191)      default(""), not null
 #  os          :string(191)      default(""), not null
 #  browser     :string(191)      default(""), not null

@@ -116,7 +116,7 @@
               %h4#search-modal-label.modal-title= t('searches.new.search_by_egotter')
             .modal-body
               = form_tag searches_path, method: :post do
-                = render partial: 'searches/search_box_group'
+                = render partial: 'common/search_box_group', locals: {via: :search_history_input}
               .modal-search-histories
                 %h2{style: 'display: none;'}
                   %small= t('search_histories.index.title')

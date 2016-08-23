@@ -8,7 +8,7 @@
 
   <% unless in_modal %>
     <%= render(partial: 'searches/profile_overview_modal',
-               locals: {user: user_item[:target], unique_id: unique_id}) %>
+               locals: {user: user_item[:target], unique_id: unique_id, via: :profile_modal}) %>
   <% end %>
 
   <div class="user-item-carousel user-item-carousel-<%= i %> <%= 'in-modal' if in_modal %>">
@@ -53,7 +53,7 @@
 
         <span>
           <% if in_modal %>
-            <%= link_to searches_path(screen_name: screen_name, id: user_item[:target].uid), method: :post do %>
+            <%= link_to searches_path(screen_name: screen_name, id: user_item[:target].uid, via: :search_history_profile), method: :post do %>
               <button type="button" class="btn btn-info">
                 <span class="glyphicon glyphicon-search"></span>
               </button>

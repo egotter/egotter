@@ -12,6 +12,7 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
       t.string  :reason,      null: false, default: ''
       t.text    :message,     null: false
       t.integer :call_count,  null: false, default: -1
+      t.string  :via,         null: false, default: ''
 
       t.string  :device_type, null: false, default: ''
       t.string  :os,          null: false, default: ''

@@ -3,6 +3,7 @@
 <label for="screen_name" class="sr-only">Twitter ID</label>
 <div class="input-group">
   <div class="input-group-addon">@</div>
+  <input type="hidden" name="via" value="<%= via %>">
   <input type="search" id="screen-name-<%= id_suffix %>"
          name="screen_name"
          class="form-control"

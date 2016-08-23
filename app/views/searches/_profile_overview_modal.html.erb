@@ -11,7 +11,7 @@
 
         <div style="margin: 15px;">
           <%= link_to t('searches.new.search_by', user: "@#{user.screen_name}"),
-                      searches_path(screen_name: user.screen_name),
+                      searches_path(screen_name: user.screen_name, via: via),
                       class: 'btn btn-info btn-block', method: :post %>
         </div>
       </div>

@@ -6,12 +6,12 @@
 
   = form_tag searches_path, method: :post do
     .lead-sentence= raw t('.lead')
-    = render partial: 'searches/search_box_group'
+    = render partial: 'common/search_box_group', locals: {via: :top_input}
 
   = render(partial: 'searches/adsense')
 
   - if user_signed_in?
-    = link_to t('.search_by', user: current_user.mention_name), searches_path(screen_name: current_user.screen_name), class: 'submit-btn2 btn btn-info btn-block', method: :post
+    = link_to t('.search_by', user: current_user.mention_name), searches_path(screen_name: current_user.screen_name, via: :top_button), class: 'submit-btn2 btn btn-info btn-block', method: :post
 
   .egotter-features
     %h2.h4= t('.egotter_features')

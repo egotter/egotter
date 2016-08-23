@@ -44,6 +44,7 @@ ActiveRecord::Schema.define(version: 20160730134808) do
     t.string   "reason",      limit: 191,   default: "",    null: false
     t.text     "message",     limit: 65535,                 null: false
     t.integer  "call_count",  limit: 4,     default: -1,    null: false
+    t.string   "via",         limit: 191,   default: "",    null: false
     t.string   "device_type", limit: 191,   default: "",    null: false
     t.string   "os",          limit: 191,   default: "",    null: false
     t.string   "browser",     limit: 191,   default: "",    null: false
