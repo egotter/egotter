@@ -1,39 +1,57 @@
 = render(partial: 'searches/conversion_tracking')
 
 .top-page
-  .total-search-count= t('.total_search_count', count: 371372)
-  / from 2011
+  %h3.h4.lead-001.text-center= t('.lead_001')
+  .lead-002.text-center= t('.lead_002').html_safe
 
-  = form_tag searches_path, method: :post do
-    .lead-sentence= raw t('.lead')
-    = render partial: 'common/search_box_group', locals: {via: :top_input}
+  = render partial: 'common/search_box_group', locals: {via: :top_input}
 
   = render(partial: 'searches/adsense')
 
   - if user_signed_in?
     = link_to t('.search_by', user: current_user.mention_name), searches_path(screen_name: current_user.screen_name, via: :top_button), class: 'submit-btn2 btn btn-info btn-block', method: :post
 
+  .text-center.screenshot
+    %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_iphone_560px.png', width: '200px'}/
+
+  %h3.h4.lead-003.text-center= t('.lead_003').html_safe
+  %br
+
   .egotter-features
+    .row
+      .col-xs-12.col-sm-4
+        %h3.h4= t('.feature_001')
+        .feature-description= t('.feature_desc_001').html_safe
+      .col-xs-12.col-sm-4
+        %h3.h4= t('.feature_002')
+        .feature-description= t('.feature_desc_002').html_safe
+      .col-xs-12.col-sm-4
+        %h3.h4= t('.feature_003')
+        .feature-description= t('.feature_desc_003').html_safe
+
+    %h3.h4.lead-004= t('.lead_004')
+    .text-center.description= t('searches.common.description')
+
+    = render partial: 'common/search_box_group', locals: {via: :top_input2}
+
+    %hr
+
     %h2.h4= t('.egotter_features')
     .row
-      .col-xs-12.col-sm-6.col-md-6.col-lg-6
-        %h3.h5= t('.short_name.close')
-        .feature-description= t('.short_description.close')
-      .col-xs-12.col-sm-6.col-md-6.col-lg-6
-        %h3.h5= t('.short_name.removed')
-        .feature-description= t('.short_description.removed')
-      .col-xs-12.col-sm-6.col-md-6.col-lg-6
-        %h3.h5= t('.short_name.inactive')
-        .feature-description= t('.short_description.inactive')
-      .col-xs-12.col-sm-6.col-md-6.col-lg-6
-        %h3.h5= t('.short_name.one_sided')
-        .feature-description= t('.short_description.one_sided')
-      .col-xs-12.col-sm-6.col-md-6.col-lg-6
-        %h3.h5= t('.short_name.blocked')
-        .feature-description= t('.short_description.blocked')
-      .col-xs-12.col-sm-6.col-md-6.col-lg-6
-        %h3.h5= t('.short_name.protected')
-        .feature-description.last-child= t('.short_description.protected')
+      .col-xs-12.col-sm-6
+        %h3.h4= t('.feature_004')
+        .feature-description= t('.feature_desc_004').html_safe
+      .col-xs-12.col-sm-6
+        %h3.h4= t('.feature_005')
+        .feature-description= t('.feature_desc_005').html_safe
+      .col-xs-12.col-sm-6
+        %h3.h4= t('.feature_006')
+        .feature-description= t('.feature_desc_006').html_safe
+      .col-xs-12.col-sm-6
+        %h3.h4= t('.feature_007')
+        .feature-description= t('.feature_desc_007').html_safe
+
+  %hr
 
   .keyword-timeline
     %h2.h4{style: 'display: none;'}= t('.keyword_timeline')

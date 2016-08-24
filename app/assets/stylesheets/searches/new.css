@@ -1,3 +1,16 @@
+.top-page .lead-001,
+.top-page .lead-002,
+.top-page .lead-003,
+.top-page .lead-004,
+.top-page .description {
+  margin-bottom: 15px;
+}
+
+.top-page .screenshot {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
 .top-page .total-search-count {
   margin-top: 15px;
   margin-bottom: 15px;
@@ -19,7 +32,6 @@
 .top-page .egotter-features .feature-description {
   text-align: center;
   margin-top: 15px;
-  border-bottom: 1px solid #e6e6e6;
   padding-bottom: 15px;
 }
 
