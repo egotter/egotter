@@ -11,8 +11,13 @@
   - if user_signed_in?
     = link_to t('.search_by', user: current_user.mention_name), searches_path(screen_name: current_user.screen_name, via: :top_button), class: 'submit-btn2 btn btn-info btn-block', method: :post
 
-  .text-center.screenshot
-    %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_iphone_560px.png', width: '200px'}/
+  .row
+    .col-xs-12.col-sm-6
+      .text-center.screenshot
+        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_iphone_332x560.png', height: '160px'}/
+    .col-xs-12.col-sm-6
+      .text-center.screenshot
+        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_laptop_961x560.png', height: '160px'}/
 
   %h3.h4.lead-003.text-center= t('.lead_003').html_safe
   %br
