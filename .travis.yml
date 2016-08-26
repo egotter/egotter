@@ -1,6 +1,7 @@
 language: ruby
 rvm:
   - 2.3.1
+install: bundle install --without development production --deployment
 script:
   - bundle exec rake db:create db:schema:load
   - bundle exec rspec
