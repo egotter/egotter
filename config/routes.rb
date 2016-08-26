@@ -57,10 +57,12 @@ Rails.application.routes.draw do
   end if Rails.env.production?
   mount Sidekiq::Web, at: '/sidekiq'
 
-  KpiAdmin::Engine.use Rack::Auth::Basic do |username, password|
-    username == ENV['SIDEKIQ_USERNAME'] && password == ENV['SIDEKIQ_PASSWORD']
-  end if Rails.env.production?
-  mount KpiAdmin::Engine, at: '/kpis', as: :kpis
+  if defined?(KpiAdmin::Engine)
+    KpiAdmin::Engine.use Rack::Auth::Basic do |username, password|
+      username == ENV['SIDEKIQ_USERNAME'] && password == ENV['SIDEKIQ_PASSWORD']
+    end if Rails.env.production?
+    mount KpiAdmin::Engine, at: '/kpis', as: :kpis
+  end
 
   get 'debug', to: 'debug#index', as: :debug
 end
