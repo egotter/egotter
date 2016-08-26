@@ -25,7 +25,7 @@ ja:
         subject: 'アカウントの凍結解除について'
     omniauth_callbacks:
       failure: "%{kind} アカウントによる認証に失敗しました。理由：（%{reason}）"
-      success: "%{kind} アカウントによる認証に成功しました。"
+      success: "%{kind} アカウントでログインしました。"
     passwords:
       no_token: "このページにはアクセスできません。パスワード再設定メールのリンクからアクセスされた場合には、URL をご確認ください。"
       send_instructions: 'パスワードの再設定について数分以内にメールでご連絡いたします。'
