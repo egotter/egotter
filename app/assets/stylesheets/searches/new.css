@@ -8,6 +8,9 @@
 
 .top-page .screenshot {
   margin-top: 15px;
+}
+
+.top-page .screenshot .col-xs-12 {
   margin-bottom: 15px;
 }
 

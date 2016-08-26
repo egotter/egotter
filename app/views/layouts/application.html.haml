@@ -38,18 +38,11 @@
       });
 
   %body
-    :css
-      @media (min-width: 768px) {
-        .navbar > .container .navbar-brand {
-          margin-left: 0;
-        }
-      }
-
     %nav.navbar.navbar-default
       .container
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8
+          .col-xs-12.col-sm-10.col-md-8.col-lg-8.header-container
             .navbar-header.navbar-small
               - unless under_maintenance? || action_name == 'welcome'
                 %button.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
@@ -120,15 +113,20 @@
                       });
                 });
 
-    - if notice
-      %p.alert.alert-info= raw notice
-    - if alert
-      %p.alert.alert-warning= raw alert
+    .container
+      .row
+        .hidden-xs.col-sm-1.col-md-2.col-lg-2
+        .col-xs-12.col-sm-10.col-md-8.col-lg-8.notice-container
+          - if notice
+            %p.alert.alert-info= raw notice
+          - if alert
+            %p.alert.alert-warning= raw alert
+        .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
     .container
       .row
         .hidden-xs.col-sm-1.col-md-2.col-lg-2
-        .col-xs-12.col-sm-10.col-md-8.col-lg-8
+        .col-xs-12.col-sm-10.col-md-8.col-lg-8.yield-container
           = yield
         .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
@@ -144,56 +142,75 @@
     %link{href: '/jssocials/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}/
     %script{src: '/jssocials/jssocials.min.js'}
 
+    - if controller_name == 'searches' && action_name == 'new'
+      .container
+        .row
+          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .col-xs-12.col-sm-10.col-md-8.col-lg-8.keyword-timeline-container
+            %h2.h4{style: 'display: none;'}= t('searches.new.keyword_timeline')
+            :javascript
+              $(function () {
+                $.get('#{keyword_timeline_path}')
+                    .done(function (res) {
+                      var container = $('.keyword-timeline-container');
+                      container.find('h2').show();
+                      container.append(res.html);
+                    })
+                    .fail(function (xhr) {
+                      console.log(xhr.responseText);
+                    });
+              });
+          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+
     - if %w(search_results searches statuses update_histories).include?(controller_name)
       .container
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8
-            .pre-footer
-              %h2.h4.share-me= t('dictionary.share_me')
-              = render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"})
-              #share
-              :javascript
-                $(function () {
-                  $("#share").jsSocials({
-                    shares: ["twitter", "facebook", "googleplus"],
-                    url: "http://egotter.com",
-                    text: "#{raw egotter_share_text}",
-                    showLabel: true,
-                    showCount: true
+          .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
+            %h2.h4.share-me= t('dictionary.share_me')
+            = render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"})
+            #share
+            :javascript
+              $(function () {
+                $("#share").jsSocials({
+                  shares: ["twitter", "facebook", "googleplus"],
+                  url: "http://egotter.com",
+                  text: "#{raw egotter_share_text}",
+                  showLabel: true,
+                  showCount: true
+                });
+              });
+            .official-account
+              %h2.h4= t('dictionary.official_account')
+              .follow-official-account
+                %a.twitter-follow-button{'data-show-count' => 'false', 'data-size' => 'large', href: 'https://twitter.com/ego_tter'}
+                  Follow @ego_tter
+                :javascript
+                  $(function () {
+                    !function (d, s, id) {
+                      var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
+                      if (!d.getElementById(id)) {
+                        js = d.createElement(s);
+                        js.id = id;
+                        js.src = p + '://platform.twitter.com/widgets.js';
+                        fjs.parentNode.insertBefore(js, fjs);
+                      }
+                    }(document, 'script', 'twitter-wjs');
                   });
-                });
-              .official-account
-                %h2.h4= t('dictionary.official_account')
-                .follow-official-account
-                  %a.twitter-follow-button{'data-show-count' => 'false', 'data-size' => 'large', href: 'https://twitter.com/ego_tter'}
-                    Follow @ego_tter
-                  :javascript
-                    $(function () {
-                      !function (d, s, id) {
-                        var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                        if (!d.getElementById(id)) {
-                          js = d.createElement(s);
-                          js.id = id;
-                          js.src = p + '://platform.twitter.com/widgets.js';
-                          fjs.parentNode.insertBefore(js, fjs);
-                        }
-                      }(document, 'script', 'twitter-wjs');
+            .information
+              %h2.h4{style: 'display: none;'}= t('dictionary.information')
+            :javascript
+              $(function () {
+                $.get('#{information_index_path}')
+                    .done(function (res) {
+                      var container = $('.information');
+                      container.find('h2').show();
+                      container.append(res.html);
+                    })
+                    .fail(function (xhr) {
+                      console.log(xhr.responseText);
                     });
-              .information
-                %h2.h4{style: 'display: none;'}= t('dictionary.information')
-              :javascript
-                $(function () {
-                  $.get('#{information_index_path}')
-                      .done(function (res) {
-                        var container = $('.information');
-                        container.find('h2').show();
-                        container.append(res.html);
-                      })
-                      .fail(function (xhr) {
-                        console.log(xhr.responseText);
-                      });
-                });
+              });
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
     - unless under_maintenance?

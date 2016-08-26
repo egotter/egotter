@@ -1,3 +1,29 @@
+body,
+.navbar {
+  background-color: #f5f5f5;
+}
+
+.navbar-default {
+  border: none;
+}
+
+.header-container {
+  border-bottom: solid #e7e7e7 1px;
+}
+
+.header-container,
+.notice-container,
+.yield-container,
+.keyword-timeline-container,
+.pre-footer {
+  background-color: #ffffff;
+}
+
+.keyword-timeline-container,
+.pre-footer {
+  margin-top: 15px;
+}
+
 /* change color of carousel dots start */
 .slick-dots li button:before {
   color: white !important;

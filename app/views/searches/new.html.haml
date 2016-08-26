@@ -20,7 +20,6 @@
         %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_laptop_961x560.png', height: '160px'}/
 
   %h3.h4.lead-003.text-center= t('.lead_003').html_safe
-  %br
 
   .egotter-features
     .row
@@ -39,8 +38,6 @@
 
     = render partial: 'common/search_box_group', locals: {via: :top_input2}
 
-    %hr
-
     %h2.h4= t('.egotter_features')
     .row
       .col-xs-12.col-sm-6
@@ -55,21 +52,3 @@
       .col-xs-12.col-sm-6
         %h3.h4= t('.feature_007')
         .feature-description= t('.feature_desc_007').html_safe
-
-  %hr
-
-  .keyword-timeline
-    %h2.h4{style: 'display: none;'}= t('.keyword_timeline')
-
-  :javascript
-    $(function () {
-      $.get('#{keyword_timeline_path}')
-          .done(function (res) {
-            var container = $('.keyword-timeline');
-            container.find('h2').show();
-            container.append(res.html);
-          })
-          .fail(function (xhr) {
-            console.log(xhr.responseText);
-          });
-    });
