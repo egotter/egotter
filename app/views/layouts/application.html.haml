@@ -50,60 +50,45 @@
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8
-            .navbar-header
+            .navbar-header.navbar-small
               - unless under_maintenance? || action_name == 'welcome'
-                %button.search-modal-btn.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
-                  %span.search-modal-icon.glyphicon.glyphicon-search
-                  %br/
-                  %span.search-modal-text= t('searches.new.search')
-                %button.menu-btn.navbar-toggle{type: 'button'}
-                  = link_to menu_path do
-                    %span.menu-icon.glyphicon.glyphicon-menu-hamburger
-                    %br/
-                    %span.menu-text= t('misc.menu.title')
+                %button.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
+                  %span.glyphicon.glyphicon-search
                 - if user_signed_in?
-                  %button.bell-btn.navbar-toggle{type: 'button'}
+                  %button.btn-with-margin.navbar-toggle{type: 'button'}
+                    = link_to menu_path do
+                      %span.glyphicon.glyphicon-menu-hamburger
+                  %button.btn-with-margin.navbar-toggle{type: 'button'}
                     = link_to notifications_path do
-                      %span.bell-icon.glyphicon.glyphicon-bell
-                      %br/
-                      %span.bell-text= t('notifications.title')
+                      %span.glyphicon.glyphicon-bell
                 - else
-                  %button.welcome-btn.navbar-toggle{type: 'button'}
-                    = link_to welcome_path do
-                      %span.welcome-icon.glyphicon.glyphicon-log-in
-                      %br/
-                      %span.welcome-text= t('dictionary.sign_in')
+                  %button.btn.btn-with-margin.navbar-toggle{type: 'button'}
+                    = link_to t('dictionary.sign_in'), welcome_path
               %a.navbar-brand{href: '/'}
                 %img{alt: "#{t('dictionary.app_name')}", height: '48', src: '/logo_96_96.png', width: '48'}/
                 %span= t('dictionary.app_name')
             - unless under_maintenance? || action_name == 'welcome'
-              .collapse.navbar-collapse
+              .collapse.navbar-collapse.navbar-large
                 %ul.nav.navbar-nav.navbar-right
                   - if user_signed_in?
                     %li
-                      .bell-btn
+                      %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
                         = link_to notifications_path do
-                          %span.bell-icon.glyphicon.glyphicon-bell
-                          %br/
-                          %span.bell-text= t('notifications.title')
+                          %span.glyphicon.glyphicon-bell
+                          = t('notifications.title')
+                    %li
+                      %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
+                        = link_to menu_path do
+                          %span.glyphicon.glyphicon-menu-hamburger
+                          = t('misc.menu.title')
                   - else
                     %li
-                      .welcome-btn
-                        = link_to welcome_path do
-                          %span.welcome-icon.glyphicon.glyphicon-log-in
-                          %br/
-                          %span.welcome-text= t('dictionary.sign_in')
+                      %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
+                        = link_to t('dictionary.sign_in'), welcome_path
                   %li
-                    .menu-btn
-                      = link_to menu_path do
-                        %span.menu-icon.glyphicon.glyphicon-menu-hamburger
-                        %br/
-                        %span.menu-text= t('misc.menu.title')
-                  %li
-                    .search-modal-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
-                      %span.search-modal-icon.glyphicon.glyphicon-search
-                      %br/
-                      %span.search-modal-text= t('searches.new.search')
+                    %button.btn.btn-default.navbar-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
+                      %span.glyphicon.glyphicon-search
+                      = t('searches.new.search')
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
     - unless under_maintenance?
