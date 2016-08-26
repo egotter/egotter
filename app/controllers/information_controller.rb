@@ -3,6 +3,7 @@ class InformationController < ApplicationController
 
   def index
     @lists = [
+      %w(2016/08/27 デザインを変更しました),
       %w(2016/08/25 デザインを変更しました),
       %w(2016/08/15 新しい項目を追加しました),
       %w(2016/08/14 表示の高速化を行いました),
