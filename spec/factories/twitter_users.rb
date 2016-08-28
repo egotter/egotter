@@ -3,6 +3,7 @@ FactoryGirl.define do
     sequence(:uid) { |n| n }
     screen_name 'sn'
     user_info { {id: uid, screen_name: screen_name, protected: true}.to_json }
+    user_info_gzip { ActiveSupport::Gzip.compress({id: uid, screen_name: screen_name, protected: true}.to_json) }
     user_id -1
     egotter_context 'test'
 
@@ -17,6 +18,7 @@ FactoryGirl.define do
       json.friends_count = tu.friends.size
       json.followers_count = tu.followers.size
       tu.user_info = json.to_json
+      tu.user_info_gzip = ActiveSupport::Gzip.compress(json.to_json)
     end
   end
 end
