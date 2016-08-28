@@ -3,7 +3,7 @@ FactoryGirl.define do
     sequence(:uid) { |n| n }
     screen_name 'sn'
     user_info { {id: uid, screen_name: screen_name, protected: true}.to_json }
-    user_info_gzip { ActiveSupport::Gzip.compress({id: uid, screen_name: screen_name, protected: true}.to_json) }
+    user_info_gzip { ActiveSupport::Gzip.compress(user_info) }
     user_id -1
     egotter_context 'test'
 
