@@ -43,7 +43,12 @@ module Concerns::TwitterUser::Store
   end
 
   def _user_info
-    @_user_info ||= Hashie::Mash.new(JSON.load(user_info))
+    @_user_info ||=
+      if respond_to?(:user_info_gzip) && user_info_gzip.present?
+        Hashie::Mash.new(JSON.load(ActiveSupport::Gzip.decompress(user_info_gzip)))
+      else
+        Hashie::Mash.new(JSON.load(user_info))
+      end
   end
 
   def url

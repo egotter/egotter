@@ -12,6 +12,9 @@ module Concerns::TwitterUser::Builder
         user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json,
         user_id: user_id
       )
+      if tu.respond_to?(:user_info_gzip)
+        tu.user_info_gzip = ActiveSupport::Gzip.compress(tu.user_info)
+      end
       tu.egotter_context = context if context
       tu
     end
