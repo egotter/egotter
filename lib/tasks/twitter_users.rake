@@ -12,4 +12,12 @@ namespace :twitter_users do
       tu.save!
     end
   end
+
+  desc 'remove user_info'
+  task remove_user_info: :environment do
+    TwitterUser.find_each(batch_size: 100) do |tu|
+      tu.user_info = ''
+      tu.save!
+    end
+  end
 end
