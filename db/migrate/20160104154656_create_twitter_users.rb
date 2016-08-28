@@ -4,6 +4,7 @@ class CreateTwitterUsers < ActiveRecord::Migration
       t.string :uid,           null: false
       t.string :screen_name,   null: false
       t.text :user_info,       null: false
+      t.blob :user_info_gzip,  null: false
       t.integer :search_count, null: false, default: 0
       t.integer :update_count, null: false, default: 0
       t.integer :user_id,      null: false
