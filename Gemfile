@@ -71,9 +71,9 @@ group :development, :test do
   gem 'whenever', :require => false
   gem 'rspec-rails'
   gem 'factory_girl_rails'
-  gem 'hirb'
-  gem 'hirb-unicode'
-  gem 'awesome_print'
+  # gem 'hirb'
+  # gem 'hirb-unicode'
+  # gem 'awesome_print'
   gem 'quiet_assets'
   gem 'puma'
 end
