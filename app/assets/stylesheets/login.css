@@ -1,0 +1,21 @@
+.welcome .btn-info {
+  margin-top: 15px;
+}
+
+.welcome .feature-description {
+  text-align: center;
+  margin-top: 15px;
+  padding-bottom: 15px;
+}
+
+.welcome .screenshot {
+  margin-top: 15px;
+}
+
+.welcome .screenshot .col-xs-12 {
+  margin-bottom: 15px;
+}
+
+.welcome .follow-egotter {
+  margin-top: 15px;
+}

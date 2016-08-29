@@ -1,0 +1,31 @@
+.welcome
+  = link_to t('.sign_in_with_twitter'), sign_in_path(via: :button_top), class: 'btn btn-lg btn-info btn-block'
+
+  %h3.h4= t('.lead').html_safe
+
+  .row.screenshot
+    .col-xs-12.col-sm-6
+      .text-center
+        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_iphone_332x560.png', height: '160px'}/
+    .col-xs-12.col-sm-6
+      .text-center
+        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_laptop_961x560.png', height: '160px'}/
+
+  .row
+    .col-xs-12.col-sm-6
+      %h3.h4= t('.feature_001')
+      .feature-description= t('.feature_desc_001').html_safe
+    .col-xs-12.col-sm-6
+      %h3.h4= t('.feature_002')
+      .feature-description= t('.feature_desc_002').html_safe
+    .col-xs-12.col-sm-6
+      %h3.h4= t('.feature_003')
+      .feature-description= t('.feature_desc_003').html_safe
+    .col-xs-12.col-sm-6
+      %h3.h4= t('.feature_004')
+      .feature-description= t('.feature_desc_004').html_safe
+
+  = link_to t('.sign_in_with_twitter'), sign_in_path(via: :button_bottom), class: 'btn btn-lg btn-info btn-block'
+
+  .small.follow-egotter= t('.follow_egotter', link: link_to('@ego_tter', 'https://twitter.com/ego_tter', target: '_blank')).html_safe
+  .small= t('.unfollow_egotter')

@@ -32,11 +32,12 @@ module Logging
     logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
   end
 
-  def create_sign_in_log(user_id, context)
+  def create_sign_in_log(user_id, context, via)
     attrs = {
       session_id:  fingerprint,
       user_id:     user_id,
       context:     context,
+      via:         via,
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
