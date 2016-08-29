@@ -1,0 +1,18 @@
+.waiting .waiting_msg {
+  margin-top: 15px;
+}
+
+.waiting .progress_bar .progress {
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.waiting .login_btn,
+.waiting .retry_btn,
+.waiting .support_btn {
+  margin-top: 15px;
+}
+
+.waiting .support_btn {
+  margin-bottom: 15px;
+}

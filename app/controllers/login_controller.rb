@@ -14,6 +14,7 @@ class LoginController < ApplicationController
   # GET /sign_in
   def sign_in
     session[:sign_in_from] = request.url
+    session[:sign_in_via] = params[:via] ? params[:via] : ''
     redirect_to '/users/auth/twitter'
   end
 

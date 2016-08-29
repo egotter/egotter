@@ -4,7 +4,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def twitter
     begin
       user = User.update_or_create_for_oauth_by!(user_params) do |user, context|
-        create_sign_in_log(user.id, context)
+        via = session[:sign_in_via].present? ? session.delete(:sign_in_via) : ''
+        create_sign_in_log(user.id, context, via)
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"

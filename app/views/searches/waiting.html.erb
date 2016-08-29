@@ -1,31 +1,31 @@
 <%= render(partial: 'searches/profile_overview',
        locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
 
-<div class="waiting_msg" style="margin-top: 15px;">
-  <%= t('searches.waiting.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
-</div>
+<div class="waiting">
+  <div class="waiting_msg">
+    <%= t('searches.waiting.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+  </div>
 
-<div class="progress_bar">
-  <div class="progress" style="margin-top: 15px; margin-bottom: 0px;">
-    <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-      <span class="sr-only">0% Complete</span>
+  <div class="progress_bar">
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+        <span class="sr-only">0% Complete</span>
+      </div>
     </div>
   </div>
-</div>
 
-<div class="login_btn" style="display: none; margin-top: 15px;">
-  <%= link_to t('dictionary.sign_in_with_twitter'), sign_in_path,
-              class: 'btn btn-lg btn-info btn-block' %>
-</div>
+  <div class="login_btn" style="display: none;">
+    <%= link_to t('login.welcome.sign_in_with_twitter'), welcome_path, class: 'btn btn-lg btn-info btn-block' %>
+  </div>
 
-<div class="retry_btn" style="display: none; margin-top: 15px;">
-  <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid, via: :retry),
-              class: 'btn btn-lg btn-info btn-block', method: :post %>
-</div>
+  <div class="retry_btn" style="display: none;">
+    <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid, via: :retry),
+                class: 'btn btn-lg btn-info btn-block', method: :post %>
+  </div>
 
-<div class="support_btn" style="display: none; margin-top: 15px;">
-  <%= link_to t('dictionary.link_to_support'), support_path,
-              class: 'btn btn-lg btn-info btn-block' %>
+  <div class="support_btn" style="display: none;">
+    <%= link_to t('dictionary.link_to_support'), support_path, class: 'btn btn-lg btn-info btn-block' %>
+  </div>
 </div>
 
 <script>

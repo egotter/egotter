@@ -13,11 +13,9 @@ class SearchesController < ApplicationController
     push_referer
 
     if session[:sign_in_from].present?
-      create_search_log(referer: session[:sign_in_from])
-      session.delete(:sign_in_from)
+      create_search_log(referer: session.delete(:sign_in_from))
     elsif session[:sign_out_from].present?
-      create_search_log(referer: session[:sign_out_from])
-      session.delete(:sign_out_from)
+      create_search_log(referer: session.delete(:sign_out_from))
     else
       create_search_log
     end
