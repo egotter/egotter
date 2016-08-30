@@ -1,0 +1,7 @@
+{
+  "name": "egotter",
+  "short_name": "egotter",
+  "start_url": "/",
+  "display": "standalone",
+  "gcm_sender_id": "661436415121"
+}

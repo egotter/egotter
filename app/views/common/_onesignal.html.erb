@@ -1,0 +1,27 @@
+<% if Rails.env.development? %>
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(["init", {
+      appId: "<%= ENV['ONESIGNAL_APP_ID'] %>",
+      autoRegister: false,
+      subdomainName: 'egotter-dev',
+      notifyButton: {
+        enable: true
+      }
+    }]);
+  </script>
+<% else %>
+  <link rel="manifest" href="/manifest.json">
+  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
+  <script>
+    var OneSignal = window.OneSignal || [];
+    OneSignal.push(["init", {
+      appId: "<%= ENV['ONESIGNAL_APP_ID'] %>",
+      autoRegister: false,
+      notifyButton: {
+        enable: true
+      }
+    }]);
+  </script>
+<% end %>

@@ -37,6 +37,9 @@
         enable_page_level_ads: true
       });
 
+    - if admin_signed_in?
+      = render(partial: 'common/onesignal')
+
   %body
     %nav.navbar.navbar-default
       .container
