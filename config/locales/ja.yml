@@ -235,6 +235,39 @@ ja:
     empty_result: "%{title}は0件でした。%{kaomoji} %{url}"
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
+  onesignal:
+    welcomeNotification:
+      title: 'えごったー'
+      message: 'リム通知の登録ありがとうございます(^ ^)/'
+    promptOptions:
+      siteName: 'えごったー リム通知登録'
+      actionMessage: "登録するとリム通知が届くようになります。すぐに結果が見れて便利です！"
+      exampleNotificationTitle: 'リム通知のサンプル'
+      exampleNotificationMessage: '◯◯さん、◯◯さんからリムられました。'
+      exampleNotificationCaption: '通知の停止はいつでもできます。'
+      acceptButtonText: "ひとまず登録する"
+      cancelButtonText: "今はやめておく"
+    tip:
+      state:
+        unsubscribed: 'リム通知を登録する'
+        subscribed: "リム通知 登録中"
+        blocked: "リム通知 停止中"
+    message:
+      prenotify: 'リム通知の登録はいかがですか？'
+      action:
+        subscribed: "リム通知の登録ありがとうございます(^ ^)/"
+        resubscribed: "リム通知を登録しました"
+        unsubscribed: "リム通知を停止しました"
+    dialog:
+      main:
+        title: 'リム通知登録'
+        button:
+          subscribe: '登録する'
+          unsubscribe: '停止する'
+      blocked:
+        title: 'リム通知再登録'
+        message: "通知を再登録するために、画像の手順にしたがって操作してください："
+
   activerecord:
     models:
       twitter_user: "ツイッターユーザー"

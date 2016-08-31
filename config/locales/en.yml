@@ -20,4 +20,35 @@
 # available at http://guides.rubyonrails.org/i18n.html.
 
 en:
-  hello: "Hello world"
+  onesignal:
+    welcomeNotification:
+      title: 'Title'
+      message: 'Message'
+    promptOptions:
+      siteName: 'OneSignal Documentation'
+      actionMessage: "We'd like to show you notifications for the latest news and updates."
+      exampleNotificationTitle: 'Example notification'
+      exampleNotificationMessage: 'This is an example notification'
+      exampleNotificationCaption: 'You can unsubscribe anytime'
+      acceptButtonText: "ALLOW"
+      cancelButtonText: "NO THANKS"
+    tip:
+      state:
+        unsubscribed: 'Subscribe to notifications'
+        subscribed: "You're subscribed to notifications"
+        blocked: "You've blocked notifications"
+    message:
+      prenotify: 'Click to subscribe to notifications'
+      action:
+        subscribed: "Thanks for subscribing!"
+        resubscribed: "You're subscribed to notifications"
+        unsubscribed: "You won't receive notifications again"
+    dialog:
+      main:
+        title: 'Manage Site Notifications'
+        button:
+          subscribe: 'SUBSCRIBE'
+          unsubscribe: 'UNSUBSCRIBE'
+      blocked:
+        title: 'Unblock Notifications'
+        message: "Follow these instructions to allow notifications:"
