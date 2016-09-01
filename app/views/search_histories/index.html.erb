@@ -1,0 +1,135 @@
+<div id="<%= search_histories.object_id %>">
+<% search_histories.each.with_index do |user_item, i| %>
+  <%
+    profile_image_url = user_item[:target].profile_image_url_https.to_s
+    screen_name = user_item[:target].screen_name
+    unique_id = "#{screen_name}_#{user_item[:target].object_id}_#{search_histories.object_id}"
+  %>
+
+  <% unless in_modal %>
+    <%= render(partial: 'searches/profile_overview_modal',
+               locals: {user: user_item[:target], unique_id: unique_id, via: :profile_modal}) %>
+  <% end %>
+
+  <div class="user-item-carousel user-item-carousel-<%= i %> <%= 'in-modal' if in_modal %>">
+    <%# name box %>
+    <div class="media">
+      <div class="media-left">
+        <img class="media-object" src="<%= profile_image_url %>"
+             alt="<%= "@#{screen_name}" %>" width="48" height="48">
+      </div>
+
+      <div class="media-body">
+        <h4 class="media-heading"><%= user_item[:target].name %>
+          <% if user_item[:target].protected %>
+            &nbsp;<span class="glyphicon glyphicon-lock"></span>
+          <% end %>
+          <% if user_item[:target].verified %>
+            &nbsp;<span class="glyphicon glyphicon-ok"></span>
+          <% end %>
+        </h4>
+        <span class="screen_name">
+          <%= link_to "https://twitter.com/#{screen_name}", target: '_blank' do %>
+            <%= "@#{screen_name}" %>
+          <% end %>
+        </span>
+      </div>
+
+      <div class="media-right">
+        <% if user_signed_in? && user_item.has_key?(:friendship) %>
+          <span>
+            <% if user_item[:me] %>
+            <% elsif user_item[:friendship] %>
+              <button type="button" class="btn btn-success with-margin-right">
+                <span class="glyphicon glyphicon-ok"></span>
+              </button>
+            <% else %>
+              <button type="button" class="btn btn-default with-margin-right">
+                <span class="text-muted glyphicon glyphicon-plus"></span>
+              </button>
+            <% end %>
+          </span>
+        <% end %>
+
+        <span>
+          <% if in_modal %>
+            <%= link_to searches_path(screen_name: screen_name, id: user_item[:target].uid, via: :search_history_profile), method: :post do %>
+              <button type="button" class="btn btn-info">
+                <span class="glyphicon glyphicon-search"></span>
+              </button>
+            <% end %>
+          <% else %>
+            <button type="button" class="btn btn-info"
+                    data-toggle="modal" data-target=".profile-overview-modal.<%= unique_id %>">
+              <span class="glyphicon glyphicon-search"></span>
+            </button>
+            <script>
+              $(function () {
+                $('.profile-overview-modal.<%= unique_id %>').on('shown.bs.modal', function() {
+                  $.post('<%= modal_open_logs_path %>', {name: 'profile'});
+                });
+              });
+            </script>
+          <% end %>
+        </span>
+      </div>
+    </div><%# .media %>
+
+    <%# description box %>
+    <div class="media description-box" style="display: none;">
+      <div class="media-left">
+        <img class="media-object" src="<%= profile_image_url %>"
+             alt="<%= "@#{screen_name}" %>" width="48" height="48">
+      </div>
+
+      <div class="media-body">
+          <span class="description"><%= truncate(user_item[:target].description, length: 20) %></span>
+      </div>
+    </div>
+
+    <%# count box %>
+    <div class="media count-box" style="display: none;">
+      <div class="media-left">
+        <img class="media-object" src="<%= profile_image_url %>"
+             alt="<%= "@#{screen_name}" %>" width="48" height="48">
+      </div>
+
+      <div class="media-body">
+        <div class="statuses_count"><%= user_item[:target].statuses_count %>&nbsp;<%= t('dictionary.tweet') %></div>
+        <span class="friends_count"><%= user_item[:target].friends_count %>&nbsp;<%= t('dictionary.friends') %></span>
+        <span class="followers_count"><%= user_item[:target].followers_count %>&nbsp;<%= t('dictionary.follower') %></span>
+      </div>
+    </div>
+  </div><%# .user-item-carousel %>
+<% end %>
+</div>
+
+<script>
+  function enable_carousel_<%= search_histories.object_id %>(){
+    var container = $('#<%= search_histories.object_id %>');
+    var user_item_count = <%= search_histories.size %>;
+    var option = {
+      accessibility: false,
+      arrows: false,
+      dots: false,
+      infinite: true
+    };
+    for (var i = 0; i < user_item_count; i++) {
+      container.find('.user-item-carousel-' + i).slick(option);
+    }
+    container.find('.media.description-box').show();
+    container.find('.media.count-box').show();
+    container.find('.media.score-box').show();
+  }
+  $(function () {
+    <% unless in_modal %>
+      enable_carousel_<%= search_histories.object_id %>();
+    <% else %>
+      $('.search-modal').one('show.bs.modal', function (e) {
+        setTimeout(function () {
+          enable_carousel_<%= search_histories.object_id %>();
+        }, 500);
+      });
+    <% end %>
+  });
+</script>

@@ -97,24 +97,13 @@
               %h4#search-modal-label.modal-title= t('searches.new.search_by_egotter')
             .modal-body
               = render partial: 'common/search_box_group', locals: {via: :search_history_input}
-              .modal-search-histories
-                %h2{style: 'display: none;'}
-                  %small= t('search_histories.index.title')
-              :javascript
-                $(function () {
-                  $('.search-modal').on('shown.bs.modal', function() {
-                    $.post('#{modal_open_logs_path}', {name: 'search_history'});
-                  });
-                  $.get('#{search_histories_path}', {in_modal: true})
-                      .done(function (res) {
-                        var container = $('.modal-search-histories');
-                        container.find('h2').show();
-                        container.append(res.html);
-                      })
-                      .fail(function (xhr) {
-                        console.log(xhr.responseText);
-                      });
-                });
+              = render partial: 'search_histories/items', locals: {in_modal: true}
+      :javascript
+        $(function () {
+          $('.search-modal').on('shown.bs.modal', function() {
+            $.post('#{modal_open_logs_path}', {name: 'search_history'});
+          });
+        });
 
     .container
       .row

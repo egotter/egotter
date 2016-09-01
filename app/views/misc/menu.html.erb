@@ -3,18 +3,19 @@
 <div class="menu">
   <h2><small><%= t('notifications.setting') %></small></h2>
   <% %i(email dm news search).each do |name| %>
-    <div class="checkbox">
-      <label>
-        <input type="checkbox" value="1" <%= user.notification_setting.send("#{name}?") ? 'checked="checked"'.html_safe : '' %> name="<%= name %>">
-        <div><%= t("notifications.desc.#{name}") %>
-          <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
-        </div>
-      </label>
+    <div class="table-box">
+      <div class="table-cell-left">
+        <input id="<%= name %>-input" class="tgl tgl-ios" type="checkbox" value="1" <%= user.notification_setting.send("#{name}?") ? 'checked="checked"'.html_safe : '' %> name="<%= name %>">
+        <label class='tgl-btn' for="<%= name %>-input"></label>
+      </div>
+      <div class="table-cell-right"><%= t("notifications.desc.#{name}") %>
+        <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
+      </div>
     </div>
     <hr>
   <% end %>
   <script>
-    $.each(['email', 'dm', 'news', 'search'], function (i, name) {
+    function attach_event_handler(name) {
       var selector = 'input[name=' + name + ']';
       $(selector + ':checkbox').on('change', function () {
         var val = $(selector + ':checked').val() ? true : false;
@@ -29,28 +30,19 @@
               console.log(xhr.responseText);
             });
       });
-    });
-  </script>
+    }
 
-
-  <div class="menu-search-histories">
-    <h2 style="display: none;"><small><%= t('search_histories.index.title') %></small></h2>
-
-    <%= render(partial: 'searches/adsense') %>
-  </div>
-  <script>
     $(function () {
-      $.get('<%= search_histories_path %>', {in_modal: false})
-          .done(function (res) {
-            var container = $('.menu-search-histories');
-            container.find('h2').show();
-            container.append(res.html);
-          })
-          .fail(function (xhr) {
-            console.log(xhr.responseText);
-          });
+      attach_event_handler('email');
+      attach_event_handler('dm');
+      attach_event_handler('news');
+      attach_event_handler('search');
     });
   </script>
+
+  <%= render(partial: 'searches/adsense') %>
+
+  <%= render(partial: 'search_histories/items', locals: {in_modal: false}) %>
 
   <% if user.admin? %>
     <h2><small><%= t('debug.index') %></small></h2>
