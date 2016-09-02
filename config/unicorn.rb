@@ -3,7 +3,7 @@ timeout 30
 preload_app true
 
 listen '/tmp/unicorn.sock'
-pid Rails.root.join('tmp', 'pids', 'unicorn.pid')
+pid File.expand_path('tmp/pids/unicorn.pid', ENV['RAILS_ROOT'])
 
 before_fork do |server, worker|
   Signal.trap 'TERM' do
