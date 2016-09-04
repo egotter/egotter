@@ -1,8 +1,9 @@
 Rails.application.routes.draw do
-  root 'searches#new'
-
   if ENV['MAINTENANCE'] == '1'
+    root 'misc#maintenance'
     match '*path' => 'misc#maintenance', via: :all
+  else
+    root 'searches#new'
   end
 
   %i(maintenance privacy_policy terms_of_service sitemap menu support).each do |name|

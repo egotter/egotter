@@ -6,6 +6,7 @@ class MiscController < ApplicationController
   before_action :create_search_log, only: %i(menu)
 
   def maintenance
+    render status: 503
   end
 
   def privacy_policy
