@@ -26,12 +26,20 @@ namespace :friends do
 
   desc 'import'
   task import: :environment do
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
     Friend.find_in_batches(batch_size: 1000) do |friends_array|
       friends = friends_array.map do |f|
         [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id]
       end
       TmpFriend.import(%i(id uid screen_name user_info_gzip from_id), friends, validate: false)
       puts "#{Time.zone.now}: #{friends.first[0]} - #{friends.last[0]}"
+
+      break if sigint
     end
   end
 end
