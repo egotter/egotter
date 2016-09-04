@@ -5,7 +5,6 @@
 #  id             :integer          not null, primary key
 #  uid            :string(191)      not null
 #  screen_name    :string(191)      not null
-#  user_info      :text(65535)      not null
 #  user_info_gzip :binary(65535)    not null
 #  search_count   :integer          default(0), not null
 #  update_count   :integer          default(0), not null

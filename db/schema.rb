@@ -250,7 +250,6 @@ ActiveRecord::Schema.define(version: 20160823124535) do
   create_table "twitter_users", force: :cascade do |t|
     t.string   "uid",            limit: 191,               null: false
     t.string   "screen_name",    limit: 191,               null: false
-    t.text     "user_info",      limit: 65535,             null: false
     t.binary   "user_info_gzip", limit: 65535,             null: false
     t.integer  "search_count",   limit: 4,     default: 0, null: false
     t.integer  "update_count",   limit: 4,     default: 0, null: false
