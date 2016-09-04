@@ -23,4 +23,15 @@ namespace :friends do
       Friend.import(%i(id uid screen_name user_info user_info_gzip from_id), friends, on_duplicate_key_update: %i(user_info), validate: false)
     end
   end
+
+  desc 'import'
+  task import: :environment do
+    Friend.find_in_batches(batch_size: 1000) do |friends_array|
+      friends = friends_array.map do |f|
+        [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id]
+      end
+      TmpFriend.import(%i(id uid screen_name user_info_gzip from_id), friends, validate: false)
+      puts "#{Time.zone.now}: #{friends.first[0]} - #{friends.last[0]}"
+    end
+  end
 end
