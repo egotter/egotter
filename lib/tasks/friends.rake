@@ -32,7 +32,7 @@ namespace :friends do
       sigint = true
     end
 
-    Friend.find_in_batches(batch_size: 1000) do |friends_array|
+    Friend.find_in_batches(batch_size: 5000) do |friends_array|
       friends = friends_array.map do |f|
         [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id, f.created_at]
       end
