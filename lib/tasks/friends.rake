@@ -44,4 +44,27 @@ namespace :friends do
       end
     end
   end
+
+  desc 'verify'
+  task verify: :environment do
+    num = ENV['NUM'].to_i
+    max = Friend.all.maximum(:id)
+    random = Random.new
+    ids = num.times.map{ random.rand(1..max) }.uniq
+
+    sql = <<-"SQL".strip_heredoc
+      SELECT count(*) cnt
+      FROM (
+        SELECT id, uid, screen_name
+        FROM friends
+        WHERE id IN (:ids)
+      ) a JOIN (
+        SELECT id, uid, screen_name
+        FROM tmp_friends
+        WHERE id IN (:ids)
+      ) b ON (a.id = b.id)
+    SQL
+    match = Friend.find_by_sql([sql, ids: ids]).first.cnt
+    puts "num: #{num}, uniq_id: #{ids.size}, match: #{match}, id_min: #{ids.min}, id_max: #{ids.max}, record_max: #{max}"
+  end
 end
