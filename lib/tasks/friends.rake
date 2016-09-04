@@ -32,14 +32,16 @@ namespace :friends do
       sigint = true
     end
 
-    Friend.find_in_batches(batch_size: 5000) do |friends_array|
-      friends = friends_array.map do |f|
-        [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id, f.created_at]
-      end
-      TmpFriend.import(%i(id uid screen_name user_info_gzip from_id created_at), friends, validate: false)
-      puts "#{Time.zone.now}: #{friends.first[0]} - #{friends.last[0]}"
+    Rails.logger.silence do
+      Friend.find_in_batches(batch_size: 5000) do |friends_array|
+        friends = friends_array.map do |f|
+          [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id, f.created_at]
+        end
+        TmpFriend.import(%i(id uid screen_name user_info_gzip from_id created_at), friends, validate: false)
+        puts "#{Time.zone.now}: #{friends.first[0]} - #{friends.last[0]}"
 
-      break if sigint
+        break if sigint
+      end
     end
   end
 end
