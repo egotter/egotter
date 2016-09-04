@@ -24,6 +24,16 @@ namespace :friends do
     end
   end
 
+  desc 'reset'
+  task reset: :environment do
+    ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS tmp_friends')
+    ActiveRecord::Base.connection.execute('CREATE TABLE tmp_friends like friends')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends ADD user_info_gzip BLOB NOT NULL AFTER user_info')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends DROP user_info')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends DROP updated_at')
+    # ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends CHANGE id id INT(11) NOT NULL')
+  end
+
   desc 'import'
   task import: :environment do
     sigint = false
@@ -32,8 +42,10 @@ namespace :friends do
       sigint = true
     end
 
+    start = ENV['START'].present? ? ENV['START'] : 1
+
     Rails.logger.silence do
-      Friend.find_in_batches(batch_size: 5000) do |friends_array|
+      Friend.find_in_batches(start: start, batch_size: 5000) do |friends_array|
         friends = friends_array.map do |f|
           [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id, f.created_at]
         end
@@ -55,16 +67,24 @@ namespace :friends do
     sql = <<-"SQL".strip_heredoc
       SELECT count(*) cnt
       FROM (
-        SELECT id, uid, screen_name
-        FROM friends
-        WHERE id IN (:ids)
+        SELECT id, uid, screen_name FROM friends WHERE id IN (:ids)
       ) a JOIN (
-        SELECT id, uid, screen_name
-        FROM tmp_friends
-        WHERE id IN (:ids)
+        SELECT id, uid, screen_name FROM tmp_friends WHERE id IN (:ids)
       ) b ON (a.id = b.id)
     SQL
     match = Friend.find_by_sql([sql, ids: ids]).first.cnt
-    puts "num: #{num}, uniq_id: #{ids.size}, match: #{match}, id_min: #{ids.min}, id_max: #{ids.max}, record_max: #{max}"
+
+    sql = <<-"SQL".strip_heredoc
+      SELECT auto_increment at
+      FROM information_schema.tables
+      WHERE table_schema = "egotter_#{Rails.env}" AND table_name = :table
+    SQL
+
+    puts 'Summary:'
+    puts "  num: #{num}, uniq_id: #{ids.size}, match: #{match}, id_min: #{ids.min}, id_max: #{ids.max}"
+    puts 'Friend:'
+    puts "  id_max: #{max}, auto_increment: #{Friend.find_by_sql([sql, table: :friends]).first.at}"
+    puts 'TmpFriend:'
+    puts "  id_max: #{TmpFriend.all.maximum(:id)}, auto_increment: #{Friend.find_by_sql([sql, table: :tmp_friends]).first.at}"
   end
 end
