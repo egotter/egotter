@@ -3,7 +3,6 @@ class CreateTwitterUsers < ActiveRecord::Migration
     create_table :twitter_users do |t|
       t.string :uid,             null: false
       t.string :screen_name,     null: false
-      t.text :user_info,         null: false
       t.binary :user_info_gzip,  null: false
       t.integer :search_count,   null: false, default: 0
       t.integer :update_count,   null: false, default: 0

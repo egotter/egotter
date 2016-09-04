@@ -8,9 +8,8 @@ def create_same_record!(tu)
 end
 
 def adjust_user_info(tu)
-  json = Hashie::Mash.new(JSON.parse(tu.user_info))
+  json = Hashie::Mash.new(JSON.parse(ActiveSupport::Gzip.decompress(tu.user_info_gzip)))
   json.friends_count = tu.friends.size
   json.followers_count = tu.followers.size
-  tu.user_info = json.to_json
   tu.user_info_gzip = ActiveSupport::Gzip.compress(json.to_json)
 end
