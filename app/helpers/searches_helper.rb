@@ -34,16 +34,16 @@ module SearchesHelper
       uid: attrs['uid'],
       screen_name: attrs['screen_name'],
       user_id: attrs['user_id'],
-      user_info: attrs['user_info'],
+      user_info_gzip: Base64.decode64(attrs['user_info_gzip']),
       egotter_context: 'search'
     )
   end
 
-  def save_twitter_user_to_cache(uid, user_id, screen_name:, user_info:)
+  def save_twitter_user_to_cache(uid, user_id, screen_name:, user_info_gzip:)
     Util::ValidTwitterUserSet.new(redis).set(
       uid,
       user_id,
-      {uid: uid, user_id: user_id, screen_name: screen_name, user_info: user_info}
+      {uid: uid, user_id: user_id, screen_name: screen_name, user_info_gzip: Base64.encode64(user_info_gzip)}
     )
   end
 

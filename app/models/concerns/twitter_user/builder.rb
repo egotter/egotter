@@ -9,12 +9,16 @@ module Concerns::TwitterUser::Builder
       tu = TwitterUser.new(
         uid: user.id,
         screen_name: user.screen_name,
-        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json,
         user_id: user_id
       )
-      if tu.respond_to?(:user_info_gzip)
-        tu.user_info_gzip = ActiveSupport::Gzip.compress(tu.user_info)
+
+      if tu.respond_to?(:user_info)
+        tu.user_info = user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json
       end
+      if tu.respond_to?(:user_info_gzip)
+        tu.user_info_gzip = ActiveSupport::Gzip.compress(user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
+      end
+
       tu.egotter_context = context if context
       tu
     end
