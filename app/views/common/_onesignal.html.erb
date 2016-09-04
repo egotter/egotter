@@ -48,7 +48,7 @@
 
 </script>
 
-<% if Rails.env.development? %>
+<% if Rails.env.development? && user_signed_in? %>
   <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
   <script>
     var OneSignal = window.OneSignal || [];
@@ -60,8 +60,9 @@
       welcomeNotification: welcomeNotification,
       promptOptions: promptOptions
     }]);
+    OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);
   </script>
-<% else %>
+<% elsif Rails.env.production? && user_signed_in? %>
   <link rel="manifest" href="/manifest.json">
   <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
   <script>
@@ -73,5 +74,6 @@
       welcomeNotification: welcomeNotification,
       promptOptions: promptOptions
     }]);
+    OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);
   </script>
 <% end %>

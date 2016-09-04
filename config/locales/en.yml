@@ -21,9 +21,12 @@
 
 en:
   onesignal:
+    defaultNotification:
+      title: 'egotter'
+      message: 'New Update is Coming!'
     welcomeNotification:
-      title: 'Title'
-      message: 'Message'
+      title: 'egotter'
+      message: 'Thanks for subscribing! (^ ^)/'
     promptOptions:
       siteName: 'OneSignal Documentation'
       actionMessage: "We'd like to show you notifications for the latest news and updates."

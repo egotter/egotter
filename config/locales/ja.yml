@@ -236,6 +236,9 @@ ja:
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   onesignal:
+    defaultNotification:
+      title: 'えごったー'
+      message: 'データが更新されました！'
     welcomeNotification:
       title: 'えごったー'
       message: 'リム通知の登録ありがとうございます(^ ^)/'

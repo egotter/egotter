@@ -45,4 +45,6 @@ Rails.application.configure do
   else
     config.log_formatter = ::Logger::Formatter.new
   end
+
+  Rails.application.routes.default_url_options[:host] = 'localhost:3000'
 end
