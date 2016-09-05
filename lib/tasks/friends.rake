@@ -43,18 +43,29 @@ namespace :friends do
     end
 
     start = ENV['START'].present? ? ENV['START'] : 1
+    start_time = Time.zone.now
+    failed = false
 
     Rails.logger.silence do
       Friend.find_in_batches(start: start, batch_size: 5000) do |friends_array|
         friends = friends_array.map do |f|
           [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id, f.created_at]
         end
-        TmpFriend.import(%i(id uid screen_name user_info_gzip from_id created_at), friends, validate: false)
-        puts "#{Time.zone.now}: #{friends.first[0]} - #{friends.last[0]}"
 
-        break if sigint
+        begin
+          TmpFriend.import(%i(id uid screen_name user_info_gzip from_id created_at), friends, validate: false)
+          puts "#{Time.zone.now}: #{friends.first[0]} - #{friends.last[0]}"
+        rescue => e
+          puts "#{e.class} #{e.message.slice(0, 100)}"
+          failed = true
+        end
+
+        break if sigint || failed
       end
     end
+
+    puts (sigint || failed ? 'suspended:' : 'finished:')
+    puts "  start: #{start}, #{(Time.zone.now - start_time)} seconds"
   end
 
   desc 'verify'
@@ -67,12 +78,20 @@ namespace :friends do
     sql = <<-"SQL".strip_heredoc
       SELECT count(*) cnt
       FROM (
-        SELECT id, uid, screen_name FROM friends WHERE id IN (:ids)
+        SELECT id, uid, screen_name, from_id, created_at FROM friends WHERE id IN (:ids)
       ) a JOIN (
-        SELECT id, uid, screen_name FROM tmp_friends WHERE id IN (:ids)
+        SELECT id, uid, screen_name, from_id, created_at FROM tmp_friends WHERE id IN (:ids)
       ) b ON (a.id = b.id)
+      WHERE a.uid = b.uid AND a.screen_name = b.screen_name AND a.from_id = b.from_id AND a.created_at = b.created_at
     SQL
-    match = Friend.find_by_sql([sql, ids: ids]).first.cnt
+
+    match =
+      begin
+        Friend.find_by_sql([sql, ids: ids]).first.cnt
+      rescue => e
+        puts "#{e.class} #{e.message.slice(0, 100)}"
+        -1
+      end
 
     sql = <<-"SQL".strip_heredoc
       SELECT auto_increment at
