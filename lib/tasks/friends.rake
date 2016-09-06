@@ -70,8 +70,8 @@ namespace :friends do
 
   desc 'verify'
   task verify: :environment do
-    num = ENV['NUM'].to_i
-    max = Friend.all.maximum(:id)
+    num = ENV['NUM'].nil? ? 0 : ENV['NUM'].to_i
+    max = ENV['MAX'].nil? ? Friend.all.maximum(:id) : ENV['MAX'].to_i
     random = Random.new
     ids = num.times.map{ random.rand(1..max) }.uniq
 
@@ -100,10 +100,10 @@ namespace :friends do
     SQL
 
     puts 'Summary:'
-    puts "  num: #{num}, uniq_id: #{ids.size}, match: #{match}, id_min: #{ids.min}, id_max: #{ids.max}"
+    puts "  num: #{num}, max: #{max}, uniq_id: #{ids.size}, match: #{match}, id_min: #{ids.min}, id_max: #{ids.max}"
     puts 'Friend:'
-    puts "  id_max: #{max}, auto_increment: #{Friend.find_by_sql([sql, table: :friends]).first.at}"
+    puts "  id_max: #{max}, auto_increment: #{Friend.find_by_sql([sql, table: :friends]).first.at}, match: #{Friend.where(id: ids).count}"
     puts 'TmpFriend:'
-    puts "  id_max: #{TmpFriend.all.maximum(:id)}, auto_increment: #{Friend.find_by_sql([sql, table: :tmp_friends]).first.at}"
+    puts "  id_max: #{TmpFriend.all.maximum(:id)}, auto_increment: #{Friend.find_by_sql([sql, table: :tmp_friends]).first.at}, match: #{TmpFriend.where(id: ids).count}"
   end
 end
