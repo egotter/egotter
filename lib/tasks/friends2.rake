@@ -1,43 +1,16 @@
-namespace :friends do
-  desc 'add user_info_gzip'
-  task add_user_info_gzip: :environment do
-    ActiveRecord::Base.connection.execute('ALTER TABLE friends ADD user_info_gzip BLOB NOT NULL AFTER user_info')
-  end
-
-  desc 'compress user_info'
-  task compress_user_info: :environment do
-    Friend.find_in_batches(batch_size: 1000) do |friends_array|
-      friends = friends_array.map do |f|
-        [f.id, '', '', '', ActiveSupport::Gzip.compress(f.user_info), 0]
-      end
-      Friend.import(%i(id uid screen_name user_info user_info_gzip from_id), friends, on_duplicate_key_update: %i(user_info_gzip), validate: false)
-    end
-  end
-
-  desc 'remove user_info'
-  task remove_user_info: :environment do
-    Friend.find_in_batches(batch_size: 1000) do |friends_array|
-      friends = friends_array.map do |f|
-        [f.id, '', '', '', '', 0]
-      end
-      Friend.import(%i(id uid screen_name user_info user_info_gzip from_id), friends, on_duplicate_key_update: %i(user_info), validate: false)
-    end
-  end
-
+namespace :friends2 do
   desc 'reset'
   task reset: :environment do
-    ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS tmp_friends')
-    ActiveRecord::Base.connection.execute('CREATE TABLE tmp_friends like friends')
-    ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends ADD user_info_gzip BLOB NOT NULL AFTER user_info')
-    ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends DROP user_info')
-    ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends DROP updated_at')
-    # ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends CHANGE id id INT(11) NOT NULL')
+    ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS tmp2_friends')
+    ActiveRecord::Base.connection.execute('CREATE TABLE tmp2_friends like friends')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends DROP updated_at')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends ROW_FORMAT = COMPRESSED')
   end
 
   desc 'rename'
   task rename: :environment do
     ActiveRecord::Base.connection.execute('ALTER TABLE friends RENAME old_friends')
-    ActiveRecord::Base.connection.execute('ALTER TABLE tmp_friends RENAME friends')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends RENAME friends')
   end
 
   desc 'import'
@@ -55,11 +28,11 @@ namespace :friends do
     Rails.logger.silence do
       Friend.find_in_batches(start: start, batch_size: 5000) do |friends_array|
         friends = friends_array.map do |f|
-          [f.id, f.uid, f.screen_name, ActiveSupport::Gzip.compress(f.user_info), f.from_id, f.created_at]
+          [f.id, f.uid, f.screen_name, f.user_info, f.from_id, f.created_at]
         end
 
         begin
-          TmpFriend.import(%i(id uid screen_name user_info_gzip from_id created_at), friends, validate: false)
+          Tmp2Friend.import(%i(id uid screen_name user_info from_id created_at), friends, validate: false)
           puts "#{Time.zone.now}: #{friends.first[0]} - #{friends.last[0]}"
         rescue => e
           puts "#{e.class} #{e.message.slice(0, 100)}"
