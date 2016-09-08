@@ -5,12 +5,29 @@ namespace :friends2 do
     ActiveRecord::Base.connection.execute('CREATE TABLE tmp2_friends like friends')
     ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends DROP updated_at')
     ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends ROW_FORMAT = COMPRESSED')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends KEY_BLOCK_SIZE = 8')
   end
 
   desc 'rename'
   task rename: :environment do
     ActiveRecord::Base.connection.execute('ALTER TABLE friends RENAME old_friends')
     ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends RENAME friends')
+  end
+
+  desc 'drop_index'
+  task drop_index: :environment do
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends DROP INDEX index_friends_on_uid')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends DROP INDEX index_friends_on_from_id')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends DROP INDEX index_friends_on_screen_name')
+    ActiveRecord::Base.connection.execute('ALTER TABLE tmp2_friends DROP INDEX index_friends_on_created_at')
+  end
+
+  desc 'add_index'
+  task add_index: :environment do
+    ActiveRecord::Base.connection.execute('CREATE  INDEX `index_friends_on_uid`  ON `tmp2_friends` (`uid`)')
+    ActiveRecord::Base.connection.execute('CREATE  INDEX `index_friends_on_from_id`  ON `tmp2_friends` (`from_id`)')
+    ActiveRecord::Base.connection.execute('CREATE  INDEX `index_friends_on_screen_name`  ON `tmp2_friends` (`screen_name`)')
+    ActiveRecord::Base.connection.execute('CREATE  INDEX `index_friends_on_created_at`  ON `tmp2_friends` (`created_at`)')
   end
 
   desc 'import'
@@ -108,10 +125,10 @@ namespace :friends2 do
       puts ''
       puts 'Summary:'
       puts "  num: #{num}, min: #{min}, max: #{max}, rnd: #{rnd}, slice: #{slice_size}, uniq_id: #{ids.size}, match: #{match_count} user_info_match(#{slice_size}): #{user_info_match_count}, id_min: #{ids.min}, id_max: #{ids.max}"
-      puts 'Friend:'
+      puts "#{Friend.table_name}:"
       puts "  id_max: #{Friend.all.maximum(:id)}, auto_increment: #{Friend.find_by_sql([sql, table: :friends]).first.at}, match: #{Friend.where(id: ids).count}"
-      puts 'TmpFriend:'
-      puts "  id_max: #{TmpFriend.all.maximum(:id)}, auto_increment: #{Friend.find_by_sql([sql, table: :tmp_friends]).first.at}, match: #{TmpFriend.where(id: ids).count}"
+      puts "#{Tmp2Friend.table_name}:"
+      puts "  id_max: #{Tmp2Friend.all.maximum(:id)}, auto_increment: #{Tmp2Friend.find_by_sql([sql, table: :tmp_friends]).first.at}, match: #{Tmp2Friend.where(id: ids).count}"
       if not_match_ids.any?
         puts 'not match:'
         puts "  size: #{not_match_ids.size}, ids: #{not_match_ids.slice(0, 100).join(', ')}"
@@ -120,4 +137,7 @@ namespace :friends2 do
       File.write("#{Rails.root}/ids.txt", ids.sort.join("\n"))
     end
   end
+end
+
+class Tmp2Friend < ActiveRecord::Base
 end
