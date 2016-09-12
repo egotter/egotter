@@ -176,16 +176,12 @@ namespace :friends do
           (min..max).to_a.slice(0, num)
         end
 
-      sql = <<-"SQL".strip_heredoc
-        SELECT * FROM :table WHERE from_id = :from_id
-      SQL
-
       start = Time.zone.now
-      from_ids.each {|id| Friend.where(from_id: id) }
+      from_ids.each {|id| Friend.where(from_id: id).to_a }
       time1 = Time.zone.now - start
 
       start = Time.zone.now
-      from_ids.each {|id| klass.where(from_id: id) }
+      from_ids.each {|id| klass.where(from_id: id).to_a }
       time2 = Time.zone.now - start
 
       puts ''
