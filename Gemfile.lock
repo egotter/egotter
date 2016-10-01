@@ -68,7 +68,7 @@ GEM
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
     dogstatsd-ruby (1.6.0)
-    domain_name (0.5.20160615)
+    domain_name (0.5.20160826)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.1.1)
     dotenv-rails (2.1.1)
@@ -100,7 +100,7 @@ GEM
       haml (>= 4.0.6, < 5.0)
       html2haml (>= 1.0.1)
       railties (>= 4.0.1)
-    hashie (3.4.4)
+    hashie (3.4.6)
     hiredis (0.6.1)
     html2haml (2.0.0)
       erubis (~> 2.7.0)
@@ -112,7 +112,7 @@ GEM
       http-cookie (~> 1.0)
       http-form_data (~> 1.0.1)
       http_parser.rb (~> 0.6.0)
-    http-cookie (1.0.2)
+    http-cookie (1.0.3)
       domain_name (~> 0.5)
     http-form_data (1.0.1)
     http_parser.rb (0.6.0)
@@ -147,7 +147,7 @@ GEM
       mime-types-data (~> 3.2015)
     mime-types-data (3.2016.0521)
     mini_portile2 (2.1.0)
-    minitest (5.9.0)
+    minitest (5.9.1)
     multi_json (1.12.1)
     multi_xml (0.5.5)
     multipart-post (2.0.0)
@@ -281,7 +281,7 @@ GEM
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
-    twitter_with_auto_pagination (0.8.1)
+    twitter_with_auto_pagination (0.8.2)
       activesupport
       hashie
       parallel
@@ -352,4 +352,4 @@ DEPENDENCIES
   whenever
 
 BUNDLED WITH
-   1.12.5
+   1.13.1
