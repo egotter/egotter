@@ -302,7 +302,7 @@ module Concerns::TwitterUser::Api
   end
 
   def clusters_belong_to_cloud
-    clusters_belong_to.map.with_index { |(h, c), i| {text: h, size: c, group: i % 20} }
+    clusters_belong_to.map.with_index { |(word, count), i| {text: word, size: count, group: i % 20} }
   end
 
   def clusters_belong_to_frequency_distribution
