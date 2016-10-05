@@ -3,6 +3,7 @@ class InformationController < ApplicationController
 
   def index
     @lists = [
+      %w(2016/10/06 ハッシュタグクラウドを調整しました),
       %w(2016/09/01 メニューページを見やすくしました),
       %w(2016/08/27 デザインを変更しました),
       %w(2016/08/25 デザインを変更しました),
