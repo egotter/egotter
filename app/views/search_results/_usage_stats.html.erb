@@ -113,6 +113,6 @@
     $('#hashtags_fd').highcharts(hashtags_fd_options);
 
     var hashtags = <%= raw @hashtags_cloud.to_json %>;
-    draw_word_cloud('#hashtags_cloud', hashtags, screen.width, 220);
+    draw_word_cloud('#hashtags_cloud', hashtags, $('#hashtags_cloud').width(), 220);
   });
 </script>

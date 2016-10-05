@@ -118,7 +118,7 @@ module Concerns::TwitterUser::Api
 
   def clusters_belong_to
     text = statuses.map{|s| s.text }.join(' ')
-    dummy_client.clusters_belong_to(text)
+    dummy_client.clusters_belong_to(text, limit: 100)
   end
 
   def close_friends(options = {})
@@ -302,7 +302,7 @@ module Concerns::TwitterUser::Api
   end
 
   def clusters_belong_to_cloud
-    clusters_belong_to.map.with_index { |(word, count), i| {text: word, size: count, group: i % 20} }
+    clusters_belong_to.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
   end
 
   def clusters_belong_to_frequency_distribution
@@ -319,7 +319,7 @@ module Concerns::TwitterUser::Api
   end
 
   def hashtags_cloud
-    hashtags.map.with_index { |(h, c), i| {text: h, size: c, group: i % 20} }
+    hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
   end
 
   def hashtags_frequency_distribution

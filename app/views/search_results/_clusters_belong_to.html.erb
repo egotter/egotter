@@ -33,6 +33,6 @@
     $('#clusters_belong_to_graph').highcharts(graph_options);
 
     var clusters_belong_to_cloud = <%= raw @clusters_belong_to_cloud.to_json %>;
-    draw_word_cloud('#clusters_belong_to_cloud', clusters_belong_to_cloud, screen.width, 220);
+    draw_word_cloud('#clusters_belong_to_cloud', clusters_belong_to_cloud, $('#clusters_belong_to_cloud').width(), 220);
   });
 </script>

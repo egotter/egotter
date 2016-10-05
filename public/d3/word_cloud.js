@@ -1,49 +1,41 @@
-function draw_word_cloud(selector, words, width, height) {
-  var max_size = d3.max(words, function (n) {
-    return n.size
+function draw_word_cloud(selector, nodes, width, height) {
+  var color = ['rgba(181, 137, 0, 1.0)', 'rgba(220, 50, 47, 1.0)', 'rgba(108, 113, 196, 1.0)'];
+
+  var max_size  = d3.max(nodes, function(n){ return n.size} );
+  var sizeScale = d3.scale.linear().domain([0, max_size]).range([15, 30]);
+
+  var words = nodes.map(function(n) {
+    return {
+      name: n.text,
+      text: n.text,
+      size: sizeScale(n.size),
+      group: n.group
+    }
   });
-  var size_scale = d3.scale.linear().domain([0, max_size]).range([10, 80]);
-  var fill = d3.scale.category20();
 
-  var layout = d3.layout.cloud()
-      .size([width, height])
-      .words(words.map(function (d) {
-        return {text: d.text, size: size_scale(d.size), group: d.group};
-      }))
+  d3.layout.cloud().size([width, height])
+      .words(words)
       .padding(5)
-      .rotate(function () {
-        return 0;
+      .rotate(function() { return 0 })
+      .font('Impact')
+      .fontSize(function(d) { return d.size })
+      .on("end", function(nodes) {
+        d3.select(selector).append("svg")
+            .attr("width", width)
+            .attr("height", height)
+            .append("g")
+            .attr("transform", "translate(" + width / 2 + ", " + height / 2 + ")")
+            .selectAll("text")
+            .data(nodes)
+            .enter().append("text")
+            .style("font-size", function(d) { return d.size + "px" })
+            .attr("text-anchor", "middle")
+            .style("font-family", "Impact")
+            .style("fill", function(d, i) { return color[d.group] })
+            .attr("transform", function(d) {
+              return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")"
+            })
+            .text(function(d) { return d.name });
       })
-      .font("Impact")
-      .fontSize(function (d) {
-        return d.size;
-      })
-      .on("end", draw);
-
-  layout.start();
-
-  function draw(words) {
-    d3.select(selector).append("svg")
-        .attr("width", layout.size()[0])
-        .attr("height", layout.size()[1])
-        .append("g")
-        .attr("transform", "translate(" + layout.size()[0] / 2 + "," + layout.size()[1] / 2 + ")")
-        .selectAll("text")
-        .data(words)
-        .enter().append("text")
-        .style("font-size", function (d) {
-          return d.size + "px";
-        })
-        .style("font-family", "Impact")
-        .style("fill", function (d, i) {
-          return fill(d.group - 1);
-        })
-        .attr("text-anchor", "middle")
-        .attr("transform", function (d) {
-          return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
-        })
-        .text(function (d) {
-          return d.text;
-        });
-  }
+      .start();
 }
