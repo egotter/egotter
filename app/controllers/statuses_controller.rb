@@ -1,8 +1,12 @@
 class StatusesController < ApplicationController
+  include Validation
   include Logging
   include SearchesHelper
 
-  before_action :set_twitter_user, only: %i(show)
+  before_action(only: %i(show)) { valid_uid?(params[:id].to_i) }
+  before_action(only: %i(show)) { existing_uid?(params[:id].to_i) }
+  before_action(only: %i(show)) { @searched_tw_user = TwitterUser.latest(params[:id].to_i) }
+  before_action(only: %i(show)) { authorized_search?(@searched_tw_user) }
   before_action only: %i(show) do
     push_referer
     create_search_log(action: :statuses)
@@ -15,8 +19,7 @@ class StatusesController < ApplicationController
   end
 
   def keyword_timeline
-    key = 'keyword_timeline'
-    json = redis.fetch(key) do
+    json = redis.fetch('keyword_timeline', ttl: 1.day) do
       Bot.api_client.search(t('dictionary.app_name')).slice(0, 5).map { |t| t.to_hash }.to_json
     end
     tweets = JSON.load(json).slice(0, 5).map { |t| Hashie::Mash.new(t) }.map { |t| t.tweeted_at = t.created_at; t }

@@ -16,7 +16,7 @@ class MiscController < ApplicationController
   end
 
   def sitemap
-    @logs = BackgroundSearchLog.where(status: true, user_id: -1).order(created_at: :desc).limit(10)
+    @logs = BackgroundSearchLog.where(status: true).order(created_at: :desc).limit(10)
     render layout: false
   end
 

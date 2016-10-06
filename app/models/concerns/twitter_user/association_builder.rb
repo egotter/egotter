@@ -10,8 +10,8 @@ module Concerns::TwitterUser::AssociationBuilder
   included do
   end
 
-  def build_relations(client)
-    relations = fetch_relations(client)
+  def build_relations(client, login_user, context)
+    relations = fetch_relations(client, login_user, context)
     build_user_relations(:friends, relations[:friends])
     build_user_relations(:followers, relations[:followers])
     build_status_relations(:statuses, relations[:statuses])
@@ -27,13 +27,13 @@ module Concerns::TwitterUser::AssociationBuilder
   private
 
   # Not using uniq for mentions, search_results and favorites intentionally
-  def fetch_relations(client)
+  def fetch_relations(client, login_user, context)
     @_fetch_signatures = @_reject_relation_names = nil
 
-    fetch_results = client._fetch_parallelly(fetch_signatures)
+    fetch_results = client._fetch_parallelly(fetch_signatures(login_user, context))
     client.replying(uid.to_i) # only create a cache
 
-    fetch_signatures.each_with_object({}).with_index do |(item, memo), i|
+    fetch_signatures(login_user, context).each_with_object({}).with_index do |(item, memo), i|
       name = item[:method]
       memo[conv_method_name_to_relation_name(name)] = fetch_results[i]
     end
@@ -60,22 +60,21 @@ module Concerns::TwitterUser::AssociationBuilder
     ]
   end
 
-  def fetch_signatures
+  def fetch_signatures(login_user, context)
     @_fetch_signatures ||=
-      all_signatures.dup.delete_if { |item| reject_relation_names.include?(item[:method]) }
+      begin
+        candidate_names = reject_relation_names(login_user, context)
+        all_signatures.dup.delete_if { |item| candidate_names.include?(item[:method]) }
+      end
   end
 
-  def reject_relation_names
+  def reject_relation_names(login_user, context)
     @_reject_relation_names ||=
-      case
-        when ego_surfing? && too_many_friends?
-          %i(friends followers)
-        when ego_surfing? && !too_many_friends?
-          []
-        when !ego_surfing? && too_many_friends?
-          %i(friends followers home_timeline mentions_timeline)
-        when !ego_surfing? && !too_many_friends?
-          %i(home_timeline mentions_timeline)
+      case [!!(login_user && login_user.uid.to_i == uid.to_i), too_many_friends?(login_user: login_user, context: context)]
+        when [true, true]   then %i(friends followers)
+        when [true, false]  then []
+        when [false, true]  then %i(friends followers home_timeline mentions_timeline)
+        when [false, false] then %i(home_timeline mentions_timeline)
       end
   end
 

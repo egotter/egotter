@@ -8,11 +8,10 @@ module Validations
     private
 
     def recently_created_record_exists?(record)
-      latest = record.latest
-
+      latest = TwitterUser.latest(record.uid.to_i)
       return false if latest.nil?
 
-      if latest.recently_created? || latest.recently_updated?
+      if latest.fresh?
         record.errors[:base] << 'A recently created record exists.'
         return true
       end
@@ -21,7 +20,7 @@ module Validations
     end
 
     def same_record_exists?(record)
-      latest = record.latest
+      latest = TwitterUser.latest(record.uid.to_i)
       return false if latest.nil?
       same_record?(latest, record)
     end

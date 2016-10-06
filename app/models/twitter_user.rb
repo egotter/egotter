@@ -31,11 +31,7 @@ class TwitterUser < ActiveRecord::Base
     obj.has_many :favorites
   end
 
-  attr_accessor :client, :egotter_context
-
-  def login_user
-    User.find_by(id: user_id)
-  end
+  attr_accessor :client
 
   include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation

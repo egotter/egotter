@@ -8,7 +8,7 @@ class LoginController < ApplicationController
 
   # GET /welcome
   def welcome
-    redirect_to '/', notice: t('dictionary.signed_in') if user_signed_in?
+    redirect_to root_path, notice: t('dictionary.signed_in') if user_signed_in?
   end
 
   # GET /sign_in

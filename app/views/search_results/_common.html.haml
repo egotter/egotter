@@ -11,7 +11,7 @@
       locals: {controller: :searches, action: action_name, user: @searched_tw_user, items: @user_items})
 - else
   - if user_signed_in?
-    - if @searched_tw_user.too_many_friends?
+    - if @searched_tw_user.too_many_friends?(login_user: User.find_by(id: current_user_id), context: :search)
       %div= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy)
     - else
       %div= raw t('after_sign_in.empty_and_other_reason', kaomoji: Kaomoji.happy)
@@ -20,7 +20,7 @@
       %div= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.happy)
     - else
       %div= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.unhappy)
-  = render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(t("searches.#{menu}.title", user: @searched_tw_user.mention_name))})
+  = render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(title_for(@searched_tw_user, menu: menu))})
 
 = render(partial: 'searches/adsense_bottom')
 

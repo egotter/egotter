@@ -14,6 +14,14 @@ module Concerns::TwitterUser::Api
     @_cached_followers ||= followers.to_a
   end
 
+  def cached_many?
+    if instance_variable_defined?(:@_cached_many)
+      @_cached_many
+    else
+      @_cached_many = TwitterUser.where(uid: uid).many?
+    end
+  end
+
   def dummy_client
     @dummy_client ||= ApiClient.dummy_instance
   end
@@ -42,78 +50,82 @@ module Concerns::TwitterUser::Api
 
   # `includes` is not used because friends have hundreds of records.
   def removing
-    return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    @_removing ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |older, newer|
+    return [] unless cached_many?
+    @_removing ||= TwitterUser.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+      next if newer.cached_friends.empty?
       older.cached_friends - newer.cached_friends
-    end.flatten.reverse
+    end.compact.flatten.reverse
   end
 
   # `includes` is not used because followers have hundreds of records.
   def removed
-    return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    @_removed ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :asc).each_cons(2).map do |older, newer|
+    return [] unless cached_many?
+    @_removed ||= TwitterUser.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+      next if newer.cached_followers.empty?
       older.cached_followers - newer.cached_followers
-    end.flatten.reverse
+    end.compact.flatten.reverse
   end
 
   def new_friends
-    return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    @_new_friends ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+    return [] unless cached_many?
+    @_new_friends ||= TwitterUser.where(uid: uid).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+      next if older.cached_friends.empty?
       newer.cached_friends - older.cached_friends
-    end.flatten.reverse
+    end.compact.flatten.reverse
   end
 
   def new_followers
-    return [] unless TwitterUser.has_more_than_two_records?(uid, user_id)
-    @_new_followers ||= TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+    return [] unless cached_many?
+    @_new_followers ||= TwitterUser.where(uid: uid).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+      next if older.cached_followers.empty?
       newer.cached_followers - older.cached_followers
-    end.flatten.reverse
+    end.compact.flatten.reverse
   end
 
   def blocking_or_blocked
     @_blocking_or_blocked ||= (removing & removed).uniq
   end
 
-  def replying(options = {})
+  def replying(uniq: true)
     if statuses.any?
-      client.replying(statuses.to_a, options)
+      client.replying(statuses.to_a, uniq: uniq)
     else
-      client.replying(uid.to_i, options)
+      client.replying(uid.to_i, uniq: uniq)
     end.map { |u| u.uid = u.id; u }
   end
 
-  def replied(options = {})
+  def replied(uniq: true, login_user: nil)
     result =
-      if ego_surfing?
+      if login_user && login_user.uid.to_i == uid.to_i
         if mentions.any?
           mentions.map { |m| m.user }
         else
-          client.replied(uid.to_i, options)
+          client.replied(uid.to_i, uniq: uniq)
         end
       elsif search_results.any?
         uids = dummy_client._extract_uids(search_results.to_a)
         dummy_client._extract_users(search_results.to_a, uids)
       else
-        client.replied(uid.to_i, options)
+        client.replied(uid.to_i, uniq: uniq)
       end.map { |u| u.uid = u.id; u }
 
-    (options.has_key?(:uniq) && !options[:uniq]) ? result : result.uniq { |u| u.uid.to_i }
+    uniq ? result.uniq { |u| u.uid.to_i } : result
   end
 
-  def favoriting(options = {})
+  def favoriting(uniq: true, min: 0)
     if favorites.any?
-      client.favoriting(favorites.to_a, options)
+      client.favoriting(favorites.to_a, uniq: uniq, min: min)
     else
-      client.favoriting(uid.to_i, options)
+      client.favoriting(uid.to_i, uniq: uniq, min: min)
     end.map { |u| u.uid = u.id; u }
   end
 
   def inactive_friends
-    @_inactive_friends ||= dummy_client._extract_inactive_users(friends)
+    @_inactive_friends ||= dummy_client._extract_inactive_users(cached_friends)
   end
 
   def inactive_followers
-    @_inactive_followers ||= dummy_client._extract_inactive_users(followers)
+    @_inactive_followers ||= dummy_client._extract_inactive_users(cached_followers)
   end
 
   def clusters_belong_to
@@ -121,17 +133,13 @@ module Concerns::TwitterUser::Api
     dummy_client.clusters_belong_to(text, limit: 100)
   end
 
-  def close_friends(options = {})
-    min = options.has_key?(:min) ? options.delete(:min) : 1
-    options.merge!(uniq: false, min: min)
-    user = Hashie::Mash.new({
-                              replying: replying(options),
-                              replied: replied(options),
-                              favoriting: favoriting(options)
-
-                            })
-
-    client.close_friends(user, options).map { |u| u.uid = u.id; u }
+  def close_friends(uniq: false, min: 1, login_user: nil)
+    user = {
+      replying: replying(uniq: uniq),
+      replied: replied(uniq: uniq, login_user: login_user),
+      favoriting: favoriting(uniq: uniq, min: min)
+    }
+    client.close_friends(Hashie::Mash.new(user), uniq: uniq, min: min).map { |u| u.uid = u.id; u }
   end
 
   def inactive_friends_graph
@@ -201,9 +209,9 @@ module Concerns::TwitterUser::Api
     ]
   end
 
-  def replied_graph
+  def replied_graph(login_user: nil)
     followers_size = followers_count
-    replied_size = [replied.size, followers_size].min
+    replied_size = [replied(login_user: login_user).size, followers_size].min
     [
       {name: I18n.t('searches.replied.targets'), y: (replied_size.to_f / followers_size * 100)},
       {name: I18n.t('searches.common.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
@@ -219,8 +227,8 @@ module Concerns::TwitterUser::Api
     ]
   end
 
-  def close_friends_graph(options = {})
-    items = close_friends(options.merge(min: 0))
+  def close_friends_graph(login_user: nil)
+    items = close_friends(min: 0, login_user: login_user)
     items_size = items.size
     good = percentile_index(items, 0.10) + 1
     not_so_bad = percentile_index(items, 0.50) + 1

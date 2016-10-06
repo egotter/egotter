@@ -31,35 +31,12 @@ module Concerns::TwitterUser::Validation
     end
   end
 
-  def search_with_login?
-    !login_user.nil?
-  end
-
-  def search_without_login?
-    !search_with_login?
-  end
-
-  def ego_surfing?
-    search_with_login? && uid.to_i == login_user.uid.to_i && egotter_context == 'search'
-  end
-
   def protected_account?
-    self.protected
+    !!self.protected
   end
 
   def public_account?
     !protected_account?
-  end
-
-  def unauthorized_search?(twitter_link, sign_in_link)
-    return false if public_account?
-
-    if ego_surfing? || readable_by_login_user?
-      return false
-    end
-
-    errors[:base] << I18n.t('before_sign_in.protected_user', user: twitter_link, sign_in_link: sign_in_link)
-    true
   end
 
   def unauthorized_job?
@@ -69,18 +46,18 @@ module Concerns::TwitterUser::Validation
     true
   end
 
-  def readable_by_login_user?
-    return false if search_without_login?
-    login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i) ? true : false
+  def readable_by?(login_user)
+    case
+      when public_account? then true
+      when login_user.nil? then false
+      when login_user.uid.to_i == uid.to_i then true
+      when login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i) then true
+      else false
+    end
   end
 
-  def suspended_account?(twitter_link)
-    if suspended
-      errors[:base] << I18n.t('before_sign_in.suspended_user', user: twitter_link)
-      true
-    else
-      false
-    end
+  def suspended_account?
+    !!self.suspended
   end
 
   # not using in valid?
@@ -128,9 +105,9 @@ module Concerns::TwitterUser::Validation
   end
 
   # not using in valid?
-  def too_many_friends?
+  def too_many_friends?(login_user:, context:)
     friends_limit =
-      if egotter_context == 'search'
+      if context == :search
         login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS
       else
         User.exists?(uid: uid.to_i) ? TOO_MANY_FRIENDS : MANY_FRIENDS

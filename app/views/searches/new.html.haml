@@ -4,7 +4,7 @@
   %h3.h4.lead-001.text-center= t('.lead_001')
   .lead-002.text-center= t('.lead_002').html_safe
 
-  = render partial: 'common/search_box_group', locals: {via: :top_input}
+  = render partial: 'common/search_box_group', locals: {via: :top_input, screen_names: screen_names_for_search}
 
   = render(partial: 'searches/adsense')
 
@@ -36,7 +36,7 @@
     %h3.h4.lead-004= t('.lead_004')
     .text-center.description= t('searches.common.description')
 
-    = render partial: 'common/search_box_group', locals: {via: :top_input2}
+    = render partial: 'common/search_box_group', locals: {via: :top_input2, screen_names: screen_names_for_search}
 
     %h2.h4= t('.egotter_features')
     .row

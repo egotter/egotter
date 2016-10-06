@@ -82,7 +82,8 @@
       console.log(res, text_status, xhr.status, interval.cur(), retry.cur());
 
       if (xhr.status == 200) {
-        if (<%= @searched_tw_user.created_at.to_i %> < res.created_at) {
+        var created_at = <%= @searched_tw_user.created_at.to_i %>;
+        if (created_at < res.created_at) {
           hash = res.hash;
           refresh_box.show();
         }

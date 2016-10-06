@@ -1,4 +1,5 @@
 class SearchResultsController < ApplicationController
+  include Validation
   include Logging
   include SearchesHelper
   include PageCachesHelper
@@ -6,24 +7,26 @@ class SearchResultsController < ApplicationController
 
   layout false
 
-  before_action :set_twitter_user, only: %i(show) + Search::MENU
+  before_action(only: %i(show) + Search::MENU) { valid_uid?(params[:id].to_i) }
+  before_action(only: %i(show) + Search::MENU) { existing_uid?(params[:id].to_i) }
+  before_action(only: %i(show) + Search::MENU) { set_twitter_user(params[:id].to_i) }
+  before_action(only: %i(show) + Search::MENU) { authorized_search?(@searched_tw_user) }
 
   def show
     tu = @searched_tw_user
     user_id = current_user_id
 
-    save_twitter_user_to_cache(tu.uid, user_id, screen_name: tu.screen_name, user_info_gzip: tu.user_info_gzip)
-    add_background_search_worker_if_needed(tu.uid, user_id, screen_name: tu.screen_name)
+    add_background_search_worker_if_needed(tu.uid, user_id: user_id, screen_name: tu.screen_name)
 
-    page_cache = PageCache.new(redis)
-    html = page_cache.fetch(tu.uid, user_id) do
-      create_instance_variables_for_result_page(tu)
+    html = PageCache.new(redis).fetch(tu.uid) do
+      create_instance_variables_for_result_page(tu, login_user: User.find_by(id: user_id))
       render_to_string
     end
 
     render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{user_id} #{request.device_type} #{e.class} #{e.message}"
+    logger.warn e.backtrace.slice(0, 10).join("\n")
     render nothing: true, status: 500
   end
 
@@ -55,7 +58,13 @@ class SearchResultsController < ApplicationController
   %i(replying replied favoriting close_friends).each do |menu|
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
-      @graph = @searched_tw_user.send("#{menu}_graph")
+      @graph =
+        if menu == :replied
+          @searched_tw_user.send("#{menu}_graph", login_user: User.find_by(id: current_user_id))
+        else
+          @searched_tw_user.send("#{menu}_graph")
+        end
+
       @tweet_text = close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
       render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
     end
