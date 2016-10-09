@@ -1,8 +1,25 @@
 module SearchesHelper
-  def set_twitter_user(uid)
+  def build_twitter_user(screen_name)
+    TwitterUser.build_by_user(client.user(screen_name))
+  rescue Twitter::Error::TooManyRequests => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name}"
+    redirect_to root_path, alert: t('before_sign_in.too_many_requests', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+  rescue Twitter::Error::NotFound => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name}"
+    redirect_to root_path, alert: t('before_sign_in.not_found')
+  rescue Twitter::Error::Forbidden => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name}"
+    redirect_to root_path, alert: t('before_sign_in.forbidden')
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
+    logger.warn e.backtrace.slice(0, 10).join("\n")
+    redirect_to root_path, alert: t('before_sign_in.something_is_wrong', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+  end
+
+  def fetch_twitter_user_with_client(uid)
     tu = TwitterUser.latest(uid)
     tu.assign_attributes(client: client)
-    @searched_tw_user = tu
+    tu
   end
 
   def title_for(tu, menu: nil)

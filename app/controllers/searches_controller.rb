@@ -7,10 +7,8 @@ class SearchesController < ApplicationController
   before_action :need_login,     only: %i(common_friends common_followers)
   before_action :reject_crawler, only: %i(create)
   before_action(only: Search::MENU + %i(create show)) { valid_screen_name?(params[:screen_name]) }
-  before_action only: Search::MENU + %i(create show) do
-    tu = TwitterUser.build_without_relations(client.user(params[:screen_name]))
-    @tu = tu if authorized_search?(tu)
-  end
+  before_action(only: Search::MENU + %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show)) { authorized_search?(@tu) }
   before_action(only: Search::MENU + %i(show)) { existing_uid?(@tu.uid.to_i) }
   before_action only: Search::MENU + %i(show) do
     @searched_tw_user = TwitterUser.latest(@tu.uid.to_i)

@@ -9,7 +9,7 @@ class SearchResultsController < ApplicationController
 
   before_action(only: %i(show) + Search::MENU) { valid_uid?(params[:id].to_i) }
   before_action(only: %i(show) + Search::MENU) { existing_uid?(params[:id].to_i) }
-  before_action(only: %i(show) + Search::MENU) { set_twitter_user(params[:id].to_i) }
+  before_action(only: %i(show) + Search::MENU) { @searched_tw_user = fetch_twitter_user_with_client(params[:id].to_i) }
   before_action(only: %i(show) + Search::MENU) { authorized_search?(@searched_tw_user) }
 
   def show

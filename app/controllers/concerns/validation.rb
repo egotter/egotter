@@ -59,12 +59,15 @@ module Validation
     redirect_to root_path, alert: I18n.t('before_sign_in.protected_user', user: user_link(tu), sign_in_link: sign_in_link)
     false
   rescue Twitter::Error::TooManyRequests => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     redirect_to root_path, alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
     false
   rescue Twitter::Error::NotFound => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     redirect_to root_path, alert: t('before_sign_in.not_found')
     false
   rescue Twitter::Error::Unauthorized => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     alert_msg =
       if user_signed_in?
         t("after_sign_in.unauthorized", sign_out_link: view_context.link_to(t('dictionary.sign_out'), sign_out_path))
@@ -74,10 +77,11 @@ module Validation
     redirect_to root_path, alert: alert_msg.html_safe
     false
   rescue Twitter::Error::Forbidden => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     redirect_to root_path, alert: t('before_sign_in.forbidden')
     false
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{params.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     logger.warn e.backtrace.slice(0, 10).join("\n")
     redirect_to root_path, alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
     false

@@ -25,10 +25,6 @@ module Concerns::TwitterUser::Builder
       tu.build_relations(client, login_user, context)
       tu
     end
-
-    def build_without_relations(user)
-      build_by_user(user)
-    end
   end
 
   included do
