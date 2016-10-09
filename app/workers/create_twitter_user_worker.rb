@@ -35,7 +35,7 @@ class CreateTwitterUserWorker
       return
     end
 
-    new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: User.find_by(id: user_id), context: 'search')
+    new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: User.find_by(id: user_id), context: :search)
     new_tu.user_id = -100
     if new_tu.save
       new_tu.search_and_touch
