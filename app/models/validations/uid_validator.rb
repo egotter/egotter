@@ -1,6 +1,6 @@
 module Validations
   class UidValidator < ActiveModel::Validator
-    UID_REGEXP = /\A[1-9][0-9]+\z/
+    UID_REGEXP = /\A[1-9][0-9]*\z/
 
     def validate(record)
       if record.uid.nil? || !record.uid.match(UID_REGEXP)

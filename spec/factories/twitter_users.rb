@@ -4,7 +4,6 @@ FactoryGirl.define do
     screen_name 'sn'
     user_info_gzip { ActiveSupport::Gzip.compress({id: uid, screen_name: screen_name, protected: true}.to_json) }
     user_id -1
-    egotter_context 'test'
 
     after(:build) do |tu|
       tu.friends = 2.times.map { build(:friend) }
