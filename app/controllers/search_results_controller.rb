@@ -26,7 +26,7 @@ class SearchResultsController < ApplicationController
     render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{request.device_type}"
-    logger.warn e.backtrace.slice(0, 10).join("\n")
+    logger.info e.backtrace.slice(0, 10).join("\n")
     render nothing: true, status: 500
   end
 

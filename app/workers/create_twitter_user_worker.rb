@@ -74,7 +74,7 @@ class CreateTwitterUserWorker
     )
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    logger.warn e.backtrace.slice(0, 10).join("\n")
+    logger.info e.backtrace.slice(0, 10).join("\n")
     create_failed_log(
       BackgroundSearchLog::SomethingError::MESSAGE, "#{e.class} #{e.message}",
       {call_count: client.call_count}.merge(log_attrs)

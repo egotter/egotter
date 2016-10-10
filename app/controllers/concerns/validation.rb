@@ -82,7 +82,7 @@ module Validation
     false
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
-    logger.warn e.backtrace.slice(0, 10).join("\n")
+    logger.info e.backtrace.slice(0, 10).join("\n")
     redirect_to root_path, alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
     false
   end
