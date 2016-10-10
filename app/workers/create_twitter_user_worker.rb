@@ -24,7 +24,8 @@ class CreateTwitterUserWorker
       channel: values['channel'],
     }
 
-    if (existing_tu = TwitterUser.latest(uid, user_id)).present? && existing_tu.recently_created?
+    existing_tu = TwitterUser.latest(uid)
+    if existing_tu.present? && existing_tu.fresh?
       existing_tu.search_and_touch
       create_success_log(
         'cannot create a new TwitterUser because a recently created record exists.',
@@ -34,7 +35,8 @@ class CreateTwitterUserWorker
       return
     end
 
-    new_tu = TwitterUser.build_with_relations(client.user(uid), user_id, client: client, context: 'search')
+    new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: User.find_by(id: user_id), context: :search)
+    new_tu.user_id = -100
     if new_tu.save
       new_tu.search_and_touch
       create_success_log(
@@ -72,6 +74,7 @@ class CreateTwitterUserWorker
     )
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    logger.info e.backtrace.slice(0, 10).join("\n")
     create_failed_log(
       BackgroundSearchLog::SomethingError::MESSAGE, "#{e.class} #{e.message}",
       {call_count: client.call_count}.merge(log_attrs)

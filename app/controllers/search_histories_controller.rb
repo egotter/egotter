@@ -6,7 +6,10 @@ class SearchHistoriesController < ApplicationController
 
   def index
     in_modal = params.has_key?(:in_modal) && params[:in_modal] == 'true' ? true : false
-    html = render_to_string(locals: {search_histories: build_search_histories, in_modal: in_modal})
+    html = redis.fetch("search_histories:#{current_user_id}:#{in_modal}", ttl: 5.minutes) do
+      render_to_string(locals: {search_histories: build_search_histories(current_user_id), in_modal: in_modal})
+    end
+
     render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"

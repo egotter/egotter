@@ -19,14 +19,12 @@
 </div>
 <% end %>
 
-<% if user_signed_in? && current_user.twitter_user %>
-  <script>
-    $(function () {
-      var friends = <%= raw current_user.twitter_user.friends.pluck(:screen_name).to_json %>;
-      $("#<%= input_tag_id %>").autocomplete({
-        source: friends,
-        minLength: 2
-      });
+<script>
+  $(function () {
+    var friends = <%= raw screen_names.to_json %>;
+    $("#<%= input_tag_id %>").autocomplete({
+      source: friends,
+      minLength: 2
     });
-  </script>
-<% end %>
+  });
+</script>

@@ -1,19 +1,20 @@
 class PageCachesController < ApplicationController
+  include Validation
   include SearchesHelper
   include PageCachesHelper
 
   layout false
 
-  before_action :set_twitter_user, only: %i(create destroy)
+  before_action(only: %i(create destroy)) { valid_uid?(params[:id].to_i) }
+  before_action(only: %i(create destroy)) { existing_uid?(params[:id].to_i) }
+  before_action(only: %i(create destroy)) { @searched_tw_user = fetch_twitter_user_with_client(params[:id].to_i) }
 
   # POST /page_caches
   def create
     tu = @searched_tw_user
-    user_id = current_user_id
 
-    create_instance_variables_for_result_page(tu)
-    html = render_to_string(template: 'search_results/show')
-    PageCache.new(redis).write(tu.uid, user_id, html)
+    create_instance_variables_for_result_page(tu, login_user: User.find_by(id: current_user_id))
+    PageCache.new(redis).write(tu.uid, render_to_string(template: 'search_results/show'))
     render nothing: true, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
@@ -23,11 +24,9 @@ class PageCachesController < ApplicationController
   # DELETE /page_caches/:id
   def destroy
     tu = @searched_tw_user
-    user_id = current_user_id
 
-    page_cache = PageCache.new(redis)
-    if verity_delete_cache_token(params[:hash], tu.created_at.to_i)
-      page_cache.delete(tu.uid, user_id)
+    if verity_page_cache_token(params[:hash], tu.created_at.to_i)
+      PageCache.new(redis).delete(tu.uid)
       render nothing: true, status: 200
     else
       render nothing: true, status: 400
@@ -38,9 +37,9 @@ class PageCachesController < ApplicationController
   end
 
   def clear
-    return redirect_to '/' unless request.post?
-    return redirect_to '/' unless current_user.admin?
+    return redirect_to root_path unless request.post?
+    return redirect_to root_path unless current_user.admin?
     PageCache.new(redis).clear
-    redirect_to '/'
+    redirect_to root_path
   end
 end

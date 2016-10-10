@@ -9,14 +9,15 @@ module Logging
 
   def create_search_log(options = {})
     uid, screen_name = find_uid_and_screen_name
+    user_id = current_user_id
 
     attrs = {
       session_id:  fingerprint,
-      user_id:     current_user_id,
+      user_id:     user_id,
       uid:         uid,
       screen_name: screen_name,
       action:      action_name,
-      ego_surfing: ego_surfing?(uid),
+      ego_surfing: user_id != -1 && user_id.to_i == uid.to_i,
       method:      request.method,
       device_type: request.device_type,
       os:          request.os,
@@ -30,6 +31,7 @@ module Logging
     CreateSearchLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
+    logger.info e.backtrace.slice(0, 10).join("\n")
   end
 
   def create_sign_in_log(user_id, context, via)
@@ -49,6 +51,7 @@ module Logging
     CreateSignInLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
+    logger.info e.backtrace.slice(0, 10).join("\n")
   end
 
   def create_modal_open_log(name)
@@ -67,30 +70,30 @@ module Logging
     CreateModalOpenLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
+    logger.info e.backtrace.slice(0, 10).join("\n")
   end
 
   def push_referer
     Util::RefererList.new(Redis.client).push(fingerprint, request.referer.nil? ? '' : request.referer)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
+    logger.info e.backtrace.slice(0, 10).join("\n")
   end
 
   private
 
   def find_uid_and_screen_name
-    user_id = current_user_id
-
-    if instance_variable_defined?(:@tu) # create
+    if instance_variable_defined?(:@tu) && !@tu.nil? # create
       uid = @tu.uid
       screen_name = @tu.screen_name
     else
       uid = TwitterUser.new(uid: params[:id]).valid_uid? ? params[:id].to_i : -1
-      if tu = fetch_twitter_user_from_cache(uid, user_id) # waiting
+      if tu = fetch_twitter_user_from_cache(uid) # waiting
         uid = tu.uid
         screen_name = tu.screen_name
       else
-        if TwitterUser.exists?(uid: uid, user_id: user_id)
-          screen_name = TwitterUser.latest(uid, user_id).screen_name
+        if uid != -1 && TwitterUser.exists?(uid: uid)
+          screen_name = TwitterUser.latest(uid).screen_name
         else
           uid = screen_name = -1
         end
@@ -125,10 +128,6 @@ module Logging
     end
 
     session[:fingerprint]
-  end
-
-  def ego_surfing?(uid)
-    user_signed_in? && current_user.uid.to_i == uid.to_i
   end
 
   def truncated_user_agent

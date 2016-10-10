@@ -45,7 +45,7 @@ class BackgroundSearchLog < ActiveRecord::Base
     MESSAGE = self.name.demodulize
   end
 
-  def self.success_logs(user_id, limit)
+  def self.success_logs(user_id, limit: 20)
     where(user_id: user_id, status: true).order(created_at: :desc).limit(limit)
   end
 

@@ -2,13 +2,8 @@ class UpdateHistories
 
   attr_reader :records
 
-  def initialize(uid, user_id = nil)
-    @records =
-      if user_id.nil?
-        TwitterUser.where(uid: uid).order(created_at: :desc).to_a
-      else
-        TwitterUser.where(uid: uid, user_id: user_id).order(created_at: :desc).to_a
-      end
+  def initialize(uid)
+    @records = TwitterUser.where(uid: uid).order(created_at: :desc).to_a
   end
 
   def search_count

@@ -63,15 +63,15 @@ class User < ActiveRecord::Base
   end
 
   def twitter_user
-    TwitterUser.latest(uid.to_i, id)
+    if instance_variable_defined?(:@twitter_user)
+      @twitter_user
+    else
+      @twitter_user = TwitterUser.latest(uid.to_i)
+    end
   end
 
   def twitter_user?
     twitter_user.present?
-  end
-
-  def uid_i
-    uid.to_i
   end
 
   def mention_name
@@ -81,7 +81,7 @@ class User < ActiveRecord::Base
   ADMIN_UID = 58135830
 
   def admin?
-    uid.to_i == ADMIN_UID
+    self.class.admin?(uid)
   end
 
   def self.admin?(uid)

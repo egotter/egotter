@@ -36,7 +36,6 @@
         google_ad_client: "ca-pub-3146843071247817",
         enable_page_level_ads: true
       });
-
     - if admin_signed_in?
       = render(partial: 'common/onesignal')
 
@@ -96,7 +95,7 @@
                 %span{'aria-hidden' => 'true'} ×
               %h4#search-modal-label.modal-title= t('searches.new.search_by_egotter')
             .modal-body
-              = render partial: 'common/search_box_group', locals: {via: :search_history_input}
+              = render partial: 'common/search_box_group', locals: {via: :search_history_input, screen_names: screen_names_for_search}
               = render partial: 'search_histories/items', locals: {in_modal: true}
       :javascript
         $(function () {

@@ -22,8 +22,8 @@ module Util
       self.class.ttl
     end
 
-    def normalize_key(uid, user_id)
-      "#{key}:#{user_id}:#{uid}"
+    def normalize_key(uid)
+      "#{key}:#{uid}"
     end
 
     def clear
@@ -35,20 +35,20 @@ module Util
       raise NotImplementedError
     end
 
-    def exists?(uid, user_id)
-      redis.exists(normalize_key(uid, user_id))
+    def exists?(uid)
+      redis.exists(normalize_key(uid))
     end
 
-    def get(uid, user_id)
-      JSON.load(redis.get(normalize_key(uid, user_id)))
+    def get(uid)
+      JSON.load(redis.get(normalize_key(uid)))
     end
 
-    def set(uid, user_id, obj)
-      redis.setex(normalize_key(uid, user_id), ttl, JSON.dump(obj))
+    def set(uid, obj)
+      redis.setex(normalize_key(uid), ttl, JSON.dump(obj))
     end
 
-    def delete(uid, user_id)
-      redis.del(normalize_key(uid, user_id))
+    def delete(uid)
+      redis.del(normalize_key(uid))
     end
   end
 end

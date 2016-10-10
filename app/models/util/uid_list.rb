@@ -30,18 +30,18 @@ module Util
       redis.zremrangebyscore(key, 0, Time.zone.now.to_i - ttl)
     end
 
-    def exists?(uid, user_id)
+    def exists?(uid)
       cleanup
-      redis.zrank(key, "#{user_id}:#{uid}").present?
+      redis.zrank(key, uid.to_s).present?
     end
 
-    def add(uid, user_id)
+    def add(uid)
       cleanup
-      redis.zadd(key, Time.zone.now.to_i, "#{user_id}:#{uid}")
+      redis.zadd(key, Time.zone.now.to_i, uid.to_s)
     end
 
-    def delete(uid, user_id)
-      redis.zrem(key, "#{user_id}:#{uid}")
+    def delete(uid)
+      redis.zrem(key, uid.to_s)
     end
 
     def to_a

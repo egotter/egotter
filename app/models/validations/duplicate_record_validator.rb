@@ -1,19 +1,18 @@
 module Validations
   class DuplicateRecordValidator < ActiveModel::Validator
     def validate(record)
-      recently_created_record_exists?(record)
+      fresh_record_exists?(record)
       same_record_exists?(record)
     end
 
     private
 
-    def recently_created_record_exists?(record)
-      latest = record.latest
-
+    def fresh_record_exists?(record)
+      latest = TwitterUser.latest(record.uid.to_i)
       return false if latest.nil?
 
-      if latest.recently_created? || latest.recently_updated?
-        record.errors[:base] << 'A recently created record exists.'
+      if latest.fresh?
+        record.errors[:base] << 'A fresh record exists.'
         return true
       end
 
@@ -21,7 +20,7 @@ module Validations
     end
 
     def same_record_exists?(record)
-      latest = record.latest
+      latest = TwitterUser.latest(record.uid.to_i)
       return false if latest.nil?
       same_record?(latest, record)
     end

@@ -19,7 +19,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
     it 'calls build_user_relations' do
       expect(tu).to receive(:build_user_relations).with(:friends, friends)
       expect(tu).to receive(:build_user_relations).with(:followers, nil)
-      tu.build_relations(nil)
+      tu.build_relations(nil, nil, :search)
     end
 
     it 'calls build_status_relations' do
@@ -27,7 +27,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
       expect(tu).to receive(:build_status_relations).with(:mentions, nil)
       expect(tu).to receive(:build_status_relations).with(:search_results, nil)
       expect(tu).to receive(:build_status_relations).with(:favorites, nil)
-      tu.build_relations(nil)
+      tu.build_relations(nil, nil, :search)
     end
   end
 
@@ -36,7 +36,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
       before { allow(tu).to receive(:too_many_friends?).and_return(true) }
 
       it 'includes :friends and :followers' do
-        candidates = tu.send(:reject_relation_names)
+        candidates = tu.send(:reject_relation_names, nil, :search)
         expect(candidates).to be_include(:friends)
         expect(candidates).to be_include(:followers)
       end

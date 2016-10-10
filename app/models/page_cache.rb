@@ -15,40 +15,40 @@ class PageCache
     'show'
   end
 
-  def normalize_key(uid, user_id)
-    "#{key_prefix}:#{user_id}:#{uid}:#{key_suffix}"
+  def normalize_key(uid)
+    "#{key_prefix}:#{uid}:#{key_suffix}"
   end
 
-  def exists?(uid, user_id)
-    ENV['PAGE_CACHE'] == '1' && redis.exists(normalize_key(uid, user_id))
+  def exists?(uid)
+    ENV['PAGE_CACHE'] == '1' && redis.exists(normalize_key(uid))
   end
 
-  def read(uid, user_id)
-    result = redis.get(normalize_key(uid, user_id))
-    touch(uid, user_id) if result
+  def read(uid)
+    result = redis.get(normalize_key(uid))
+    touch(uid) if result
     result
   end
 
-  def write(uid, user_id, html)
-    redis.setex(normalize_key(uid, user_id), TTL, html)
+  def write(uid, html)
+    redis.setex(normalize_key(uid), TTL, html)
   end
 
-  def fetch(uid, user_id)
+  def fetch(uid)
     if block_given?
-      if exists?(uid, user_id)
-        read(uid, user_id)
+      if exists?(uid)
+        read(uid)
       else
         block_result = yield
-        write(uid, user_id, block_result)
+        write(uid, block_result)
         block_result
       end
     else
-      read(uid, user_id)
+      read(uid)
     end
   end
 
-  def delete(uid, user_id)
-    redis.del(normalize_key(uid, user_id))
+  def delete(uid)
+    redis.del(normalize_key(uid))
   end
 
   def clear
@@ -56,11 +56,11 @@ class PageCache
     redis.del(keys) if keys.any?
   end
 
-  def ttl(uid, user_id)
-    redis.ttl(normalize_key(uid, user_id))
+  def ttl(uid)
+    redis.ttl(normalize_key(uid))
   end
 
-  def touch(uid, user_id)
-    redis.expire(normalize_key(uid, user_id), TTL)
+  def touch(uid)
+    redis.expire(normalize_key(uid), TTL)
   end
 end

@@ -211,6 +211,7 @@ ja:
     empty_and_anonymous_and_many_friends: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>%{sign_in_link} すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}"
     empty_and_other_reason: "結果は0件です。%{sign_in_link} すると正しく結果が表示されるかもしれません。<br>%{kaomoji}"
     that_page_doesnt_exist: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
+    reject_crawler: "The crawler is rejected."
   after_sign_in:
     too_many_requests: "検索数の上限に達しました。時間をおいてから検索してみてください。"
     unauthorized: "認証に失敗しました。一度 %{sign_out_link} し、再度ログインしてから検索してみてください。"

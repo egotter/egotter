@@ -8,7 +8,7 @@ class NotificationsController < ApplicationController
   end
 
   def index
-    return redirect_to '/' unless user_signed_in?
+    return redirect_to root_path unless user_signed_in?
 
     @title = t('.title', user: current_user.mention_name)
     @items = NotificationMessage.where(user_id: current_user.id).order(created_at: :desc).limit(10)

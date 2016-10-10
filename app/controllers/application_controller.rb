@@ -7,12 +7,12 @@ class ApplicationController < ActionController::Base
 
   rescue_from ActionController::InvalidAuthenticityToken do |e|
     if e
-      logger.warn "#{self.class}##{action_name}: #{e.class} #{request.xhr? ? 'true' : 'false'} #{request.device_type} #{current_user_id} #{params.inspect}"
+      logger.warn "#{request.xhr? ? 'true' : 'false'} #{request.device_type} #{current_user_id} #{params.inspect}"
     end rescue nil
     if request.xhr?
       render nothing: true, status: 500
     else
-      redirect_to '/', alert: t('before_sign_in.session_expired', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+      redirect_to root_path, alert: t('before_sign_in.session_expired', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
     end
   end
 

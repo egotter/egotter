@@ -6,7 +6,7 @@ Redis.class_eval do
     new(host: HOST, driver: :hiredis)
   end
 
-  def fetch(key, ttl = TTL)
+  def fetch(key, ttl: TTL)
     if block_given?
       if exists(key)
         get(key)

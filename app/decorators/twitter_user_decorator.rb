@@ -11,6 +11,15 @@ class TwitterUserDecorator < Draper::Decorator
     end
   end
 
+  def replied_menu(login_user:)
+    {
+      name: I18n.t("searches.replied.title", user: object.mention_name),
+      target: object.replied(login_user: login_user),
+      graph: object.replied_graph(login_user: login_user),
+      path: h.replied_path(screen_name: object.screen_name, id: object.uid)
+    }
+  end
+
   def common_friend_and_followers_menu
     sn = object.mention_name
     friends_name = I18n.t('searches.common_friends.title', user: sn, login: I18n.t('dictionary.you'))
@@ -58,11 +67,11 @@ class TwitterUserDecorator < Draper::Decorator
     end
   end
 
-  def close_friends_menu
+  def close_friends_menu(login_user:)
     {
       name: I18n.t('searches.close_friends.title', user: object.mention_name),
-      target: object.close_friends(cache: :read),
-      graph: object.close_friends_graph(cache: :read),
+      target: object.close_friends(login_user: login_user),
+      graph: object.close_friends_graph(login_user: login_user),
       path: h.close_friends_path(screen_name: object.screen_name, id: object.uid)
     }
   end
@@ -93,7 +102,7 @@ class TwitterUserDecorator < Draper::Decorator
   def update_histories_menu
     {
       name: I18n.t('update_histories.show.title', user: object.mention_name),
-      target: UpdateHistories.new(object.uid, h.current_user_id),
+      target: UpdateHistories.new(object.uid),
       path: h.update_history_path(screen_name: object.screen_name, id: object.uid)
     }
   end
