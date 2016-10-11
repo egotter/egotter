@@ -282,10 +282,9 @@ GEM
       memoizable (~> 0.4.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
-    twitter_with_auto_pagination (0.8.4)
+    twitter_with_auto_pagination (0.8.6)
       activesupport
       hashie
-      mecab
       parallel
       twitter
     tzinfo (1.2.2)
@@ -327,6 +326,7 @@ DEPENDENCIES
   jquery-rails
   kaminari
   kpi_admin!
+  mecab
   memoist
   meta-tags
   mysql2

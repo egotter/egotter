@@ -36,17 +36,7 @@ RSpec.describe Bot, type: :model do
   end
 
   describe '.config' do
-    let(:config_keys) { %i(access_token access_token_secret uid screen_name) }
-
-    context 'specify screen_name' do
-      let(:screen_name) { 'test_bot' }
-      let(:config) { Bot.config(screen_name: screen_name) }
-
-      it 'returns Hash with specified screen_name' do
-        expect(config).to be_a_kind_of(Hash)
-        expect(config[:screen_name]).to eq(screen_name)
-      end
-    end
+    let(:config_keys) { %i(access_token access_token_secret) }
 
     context 'without option' do
       let(:config) { Bot.config }
