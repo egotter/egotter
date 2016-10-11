@@ -8,8 +8,6 @@ RSpec.describe ApiClient, type: :model do
         consumer_secret: 'cs',
         access_token: 'at',
         access_token_secret: 'ats',
-        uid: 100,
-        screen_name: 'sn'
       }
     end
 
