@@ -3,26 +3,27 @@ class CreateTwitterUserWorker
   sidekiq_options queue: :egotter, retry: false, backtrace: false
 
   def perform(values)
-    user_id = values['user_id'].to_i
-    uid = values['uid'].to_i
-    screen_name = values['screen_name']
-    url = values['url']
-    client = User.exists?(user_id) ? User.find(user_id).api_client : Bot.api_client
+    user_id      = values['user_id'].to_i
+    uid          = values['uid'].to_i
+    screen_name  = values['screen_name']
+    url          = values['url']
     log_attrs = {
-      session_id: values['session_id'],
-      user_id: user_id,
-      uid: uid,
+      session_id:  values['session_id'],
+      user_id:     user_id,
+      uid:         uid,
       screen_name: screen_name,
-      bot_uid: client.uid,
-      auto: values['auto'],
-      via: values['via'],
+      bot_uid:     -100,
+      auto:        values['auto'],
+      via:         values['via'],
       device_type: values['device_type'],
-      os: values['os'],
-      browser: values['browser'],
-      user_agent: values['user_agent'],
-      referer: values['referer'],
-      channel: values['channel'],
+      os:          values['os'],
+      browser:     values['browser'],
+      user_agent:  values['user_agent'],
+      referer:     values['referer'],
+      channel:     values['channel'],
     }
+    client = User.exists?(user_id) ? User.find(user_id).api_client : Bot.api_client
+    log_attrs.update(bot_uid: client.verify_credentials.id)
 
     existing_tu = TwitterUser.latest(uid)
     if existing_tu.present? && existing_tu.fresh?
@@ -36,7 +37,7 @@ class CreateTwitterUserWorker
     end
 
     new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: User.find_by(id: user_id), context: :search)
-    new_tu.user_id = -100
+    new_tu.user_id = user_id
     if new_tu.save
       new_tu.search_and_touch
       create_success_log(

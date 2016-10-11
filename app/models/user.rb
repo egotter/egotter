@@ -55,7 +55,7 @@ class User < ActiveRecord::Base
   end
 
   def config
-    ApiClient.config(access_token: token, access_token_secret: secret, uid: uid, screen_name: screen_name)
+    ApiClient.config(access_token: token, access_token_secret: secret)
   end
 
   def api_client

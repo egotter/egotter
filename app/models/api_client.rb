@@ -5,8 +5,6 @@ class ApiClient
       consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
       access_token: nil,
       access_token_secret: nil,
-      uid: nil,
-      screen_name: nil
     }.merge(options)
   end
 

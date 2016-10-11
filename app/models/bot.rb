@@ -37,14 +37,13 @@ class Bot
     raise if bot.nil?
     ApiClient.config(
       access_token: bot.token,
-      access_token_secret: bot.secret,
-      uid: bot.uid,
-      screen_name: bot.screen_name)
+      access_token_secret: bot.secret
+    )
   end
 
-  def self.api_client(options = {})
+  def self.api_client
     init
-    ApiClient.instance(config(options))
+    ApiClient.instance(config)
   end
 
   def self.screen_names
@@ -54,7 +53,6 @@ class Bot
 
   def self.verify_all_credentials
     init
-    api_clients = screen_names.map { |sn| api_client(screen_name: sn) }
 
     processed = Queue.new
     Parallel.each_with_index(screen_names, in_threads: 10) do |screen_name, i|

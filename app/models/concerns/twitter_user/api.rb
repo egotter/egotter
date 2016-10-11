@@ -129,8 +129,7 @@ module Concerns::TwitterUser::Api
   end
 
   def clusters_belong_to
-    text = statuses.map{|s| s.text }.join(' ')
-    dummy_client.clusters_belong_to(text, limit: 100)
+    dummy_client.tweet_clusters(statuses, limit: 100)
   end
 
   def close_friends(uniq: false, min: 1, login_user: nil)
@@ -322,8 +321,7 @@ module Concerns::TwitterUser::Api
   end
 
   def hashtags
-    statuses.select { |s| s.hashtags? }.map { |s| s.hashtags }.flatten.
-      each_with_object(Hash.new(0)) { |h, memo| memo[h] += 1 }.sort_by { |_, v| -v }.to_h
+    dummy_client.hashtag_clusters(statuses, limit: 100)
   end
 
   def hashtags_cloud
