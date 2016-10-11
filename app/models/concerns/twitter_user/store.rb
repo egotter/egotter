@@ -72,7 +72,7 @@ module Concerns::TwitterUser::Store
       account_created_at
     end
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{time_zone}, #{account_created_at}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{account_created_at}]"
     account_created_at
   end
 end

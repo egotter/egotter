@@ -7,6 +7,7 @@ class SearchResultsController < ApplicationController
 
   layout false
 
+  before_action :need_login, only: %i(common_friends common_followers)
   before_action(only: %i(show) + Search::MENU) { valid_uid?(params[:id].to_i) }
   before_action(only: %i(show) + Search::MENU) { existing_uid?(params[:id].to_i) }
   before_action(only: %i(show) + Search::MENU) { @searched_tw_user = fetch_twitter_user_with_client(params[:id].to_i) }

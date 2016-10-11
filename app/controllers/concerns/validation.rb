@@ -59,41 +59,58 @@ module Validation
     redirect_to root_path, alert: I18n.t('before_sign_in.protected_user', user: user_link(tu), sign_in_link: sign_in_link)
     false
   rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
-    redirect_to root_path, alert: t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
+    redirect_to root_path, alert: alert_message(e)
     false
   rescue Twitter::Error::NotFound => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
-    redirect_to root_path, alert: t('before_sign_in.not_found')
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
+    redirect_to root_path, alert: alert_message(e)
     false
   rescue Twitter::Error::Unauthorized => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
-    alert_msg =
-      if user_signed_in?
-        t("after_sign_in.unauthorized", sign_out_link: view_context.link_to(t('dictionary.sign_out'), sign_out_path))
-      else
-        t("before_sign_in.unauthorized", sign_in_link: sign_in_link)
-      end
-    redirect_to root_path, alert: alert_msg.html_safe
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
+    redirect_to root_path, alert: alert_message(e)
     false
   rescue Twitter::Error::Forbidden => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
-    redirect_to root_path, alert: t('before_sign_in.forbidden')
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
+    redirect_to root_path, alert: alert_message(e)
     false
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
     logger.info e.backtrace.slice(0, 10).join("\n")
-    redirect_to root_path, alert: t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
+    redirect_to root_path, alert: alert_message(e)
     false
+  end
+
+  def alert_message(ex)
+    case
+      when ex.kind_of?(Twitter::Error::TooManyRequests)
+        t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+      when ex.kind_of?(Twitter::Error::NotFound)
+        t('before_sign_in.not_found')
+      when ex.kind_of?(Twitter::Error::Unauthorized)
+        if user_signed_in?
+          t("after_sign_in.unauthorized", sign_out_link: sign_out_link)
+        else
+          t("before_sign_in.unauthorized", sign_in_link: sign_in_link)
+        end
+      when ex.kind_of?(Twitter::Error::Forbidden)
+        t('before_sign_in.forbidden')
+      else
+        t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
+    end
   end
 
   private
 
-  def user_link(tu)
-    view_context.link_to(tu.mention_name, "https://twitter.com/#{tu.screen_name}", target: '_blank')
-  end
-
   def sign_in_link
     view_context.link_to(t('dictionary.sign_in'), welcome_path)
+  end
+
+  def sign_out_link
+    view_context.link_to(t('dictionary.sign_out'), sign_out_path)
+  end
+
+  def user_link(tu)
+    view_context.link_to(tu.mention_name, "https://twitter.com/#{tu.screen_name}", target: '_blank')
   end
 end

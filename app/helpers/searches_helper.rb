@@ -3,17 +3,20 @@ module SearchesHelper
     TwitterUser.build_by_user(client.user(screen_name))
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name}"
-    redirect_to root_path, alert: t('before_sign_in.too_many_requests', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+    redirect_to root_path, alert: alert_message(e)
   rescue Twitter::Error::NotFound => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
-    redirect_to root_path, alert: t('before_sign_in.not_found')
+    redirect_to root_path, alert: alert_message(e)
+  rescue Twitter::Error::Unauthorized => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
+    redirect_to root_path, alert: alert_message(e)
   rescue Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
-    redirect_to root_path, alert: t('before_sign_in.forbidden')
+    redirect_to root_path, alert: alert_message(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
     logger.info e.backtrace.slice(0, 10).join("\n")
-    redirect_to root_path, alert: t('before_sign_in.something_is_wrong', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+    redirect_to root_path, alert: alert_message(e)
   end
 
   def fetch_twitter_user_with_client(uid)
