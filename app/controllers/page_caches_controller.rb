@@ -14,7 +14,7 @@ class PageCachesController < ApplicationController
     tu = @searched_tw_user
 
     create_instance_variables_for_result_page(tu, login_user: User.find_by(id: current_user_id))
-    PageCache.new(redis).write(tu.uid, render_to_string(template: 'search_results/show'))
+    ::Cache::PageCache.new.write(tu.uid, render_to_string(template: 'search_results/show'))
     render nothing: true, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
@@ -26,7 +26,7 @@ class PageCachesController < ApplicationController
     tu = @searched_tw_user
 
     if verity_page_cache_token(params[:hash], tu.created_at.to_i)
-      PageCache.new(redis).delete(tu.uid)
+      ::Cache::PageCache.new.delete(tu.uid)
       render nothing: true, status: 200
     else
       render nothing: true, status: 400
@@ -39,7 +39,7 @@ class PageCachesController < ApplicationController
   def clear
     return redirect_to root_path unless request.post?
     return redirect_to root_path unless current_user.admin?
-    PageCache.new(redis).clear
+    ::Cache::PageCache.new.clear
     redirect_to root_path
   end
 end

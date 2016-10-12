@@ -19,7 +19,7 @@ class SearchResultsController < ApplicationController
 
     add_background_search_worker_if_needed(tu.uid, user_id: user_id, screen_name: tu.screen_name)
 
-    html = PageCache.new(redis).fetch(tu.uid) do
+    html = ::Cache::PageCache.new.fetch(tu.uid) do
       create_instance_variables_for_result_page(tu, login_user: User.find_by(id: user_id))
       render_to_string
     end
