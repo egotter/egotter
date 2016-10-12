@@ -6,22 +6,6 @@ module Concerns::TwitterUser::Api
   included do
   end
 
-  def cached_friends
-    @_cached_friends ||= friends.to_a
-  end
-
-  def cached_followers
-    @_cached_followers ||= followers.to_a
-  end
-
-  def cached_many?
-    if instance_variable_defined?(:@_cached_many)
-      @_cached_many
-    else
-      @_cached_many = TwitterUser.where(uid: uid).many?
-    end
-  end
-
   def dummy_client
     @dummy_client ||= ApiClient.dummy_instance
   end
@@ -51,7 +35,7 @@ module Concerns::TwitterUser::Api
   # `includes` is not used because friends have hundreds of records.
   def removing
     return [] unless cached_many?
-    @_removing ||= TwitterUser.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+    @_removing ||= TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friendless? }.each_cons(2).map do |older, newer|
       next if newer.cached_friends.empty?
       older.cached_friends - newer.cached_friends
     end.compact.flatten.reverse
@@ -60,7 +44,7 @@ module Concerns::TwitterUser::Api
   # `includes` is not used because followers have hundreds of records.
   def removed
     return [] unless cached_many?
-    @_removed ||= TwitterUser.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+    @_removed ||= TwitterUser.where(uid: uid).order(created_at: :asc).reject { |tu| tu.friendless? }.each_cons(2).map do |older, newer|
       next if newer.cached_followers.empty?
       older.cached_followers - newer.cached_followers
     end.compact.flatten.reverse
@@ -68,7 +52,7 @@ module Concerns::TwitterUser::Api
 
   def new_friends
     return [] unless cached_many?
-    @_new_friends ||= TwitterUser.where(uid: uid).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+    @_new_friends ||= TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.slice(0, 2).each_cons(2).map do |newer, older|
       next if older.cached_friends.empty?
       newer.cached_friends - older.cached_friends
     end.compact.flatten.reverse
@@ -76,7 +60,7 @@ module Concerns::TwitterUser::Api
 
   def new_followers
     return [] unless cached_many?
-    @_new_followers ||= TwitterUser.where(uid: uid).order(created_at: :desc).limit(2).each_cons(2).map do |newer, older|
+    @_new_followers ||= TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.slice(0, 2).each_cons(2).map do |newer, older|
       next if older.cached_followers.empty?
       newer.cached_followers - older.cached_followers
     end.compact.flatten.reverse

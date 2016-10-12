@@ -59,9 +59,12 @@ module SearchesHelper
   end
 
   def add_background_search_worker_if_needed(uid, user_id:, screen_name:)
+    return if request.device_type == :crawler
+
     searched_uid_list = Util::SearchedUidList.new(redis)
-    unless searched_uid_list.exists?(uid)
-      values = {
+    return if searched_uid_list.exists?(uid)
+
+    values = {
         session_id:  fingerprint,
         uid:         uid,
         screen_name: screen_name,
@@ -75,9 +78,8 @@ module SearchesHelper
         referer:     truncated_referer,
         channel:     find_channel,
         url:         search_url(screen_name: screen_name, id: uid)
-      }
-      searched_uid_list.add(uid)
-      CreateTwitterUserWorker.perform_async(values)
-    end
+    }
+    searched_uid_list.add(uid)
+    CreateTwitterUserWorker.perform_async(values)
   end
 end

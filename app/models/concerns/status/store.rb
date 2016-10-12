@@ -38,19 +38,19 @@ module Concerns::Status::Store
   end
 
   def mentions?
-    entities.present? && entities.user_mentions.present? && entities.user_mentions.any?
+    entities&.user_mentions&.any?
   end
 
   def media?
-    entities.present? && entities.media.present? && entities.media.any?
+    entities&.media&.any?
   end
 
   def urls?
-    entities.present? && entities.urls.present? && entities.urls.any?
+    entities&.urls&.any?
   end
 
   def hashtags?
-    entities.present? && entities.hashtags.present? && entities.hashtags.any?
+    entities&.hashtags&.any?
   end
 
   def hashtags

@@ -18,6 +18,26 @@ module Concerns::TwitterUser::Utils
     "@#{screen_name}"
   end
 
+  def cached_friends
+    @_cached_friends ||= friends.to_a
+  end
+
+  def cached_followers
+    @_cached_followers ||= followers.to_a
+  end
+
+  def cached_many?
+    if instance_variable_defined?(:@_cached_many)
+      @_cached_many
+    else
+      @_cached_many = TwitterUser.where(uid: uid).many?
+    end
+  end
+
+  def friendless?
+    cached_friends.empty? && cached_followers.empty?
+  end
+
   def friend_uids
     new_record? ? friends.map { |f| f.uid.to_i } : friends.pluck(:uid).map { |uid| uid.to_i }
   end
