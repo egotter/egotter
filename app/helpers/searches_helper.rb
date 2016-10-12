@@ -6,12 +6,14 @@ module SearchesHelper
     redirect_to root_path, alert: alert_message(e)
   rescue Twitter::Error::NotFound => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
+    logger.info "#{request.user_agent}"
     redirect_to root_path, alert: alert_message(e)
   rescue Twitter::Error::Unauthorized => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
     redirect_to root_path, alert: alert_message(e)
   rescue Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
+    logger.info "#{request.user_agent}"
     redirect_to root_path, alert: alert_message(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
