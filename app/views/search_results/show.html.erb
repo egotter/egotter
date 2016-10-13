@@ -1,16 +1,72 @@
-<%= render(partial: 'search_results/menu_items',
-           locals: {searched_tw_user: @searched_tw_user,
-                    menu_items: @menu_items,
-                    menu_update_histories: @menu_update_histories,
-                    menu_common_friends_and_followers: @menu_common_friends_and_followers,
-                    close_friends: @menu_close_friends,
-                    usage_stats: @menu_usage_stats,
-                    clusters_belong_to: @menu_clusters_belong_to}) %>
-
-<%= render(partial: 'searches/adsense_bottom') %>
+<%
+  # avoid duplicate rendering
+  modal_rendered_uids = []
+  png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
+%>
 
 <script>
   $(function () {
+    window.lazycall_functions = {};
+  });
+</script>
+
+<%= render partial: 'search_results/menu/close_friends', locals: {menu: @menu_close_friends, modal_rendered_uids: modal_rendered_uids, png: png} %>
+<%= render partial: 'search_results/menu/usage_stats', locals: {menu: @menu_usage_stats} %>
+<%= render partial: 'search_results/menu/clusters_belong_to', locals: {menu: @menu_clusters_belong_to} %>
+
+<% @menu_items.each do |menu| %>
+  <%= render partial: 'search_results/menu/common', locals: {menu: menu, modal_rendered_uids: modal_rendered_uids, png: png} %>
+<% end %>
+
+<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_friends, modal_rendered_uids: modal_rendered_uids, png: png, searched_tw_user: @searched_tw_user} %>
+<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_followers, modal_rendered_uids: modal_rendered_uids, png: png, searched_tw_user: @searched_tw_user} %>
+<%= render partial: 'search_results/menu/update_histories', locals: {menu: @menu_update_histories} %>
+
+<script>
+  $(function () {
+    $("img.lazy").lazyload();
+
+    $.each(Object.keys(window.lazycall_functions), function (i, selector) {
+      var loaded = false;
+      $(selector)
+          .lazyload()
+          .on('appear', function () {
+            if (loaded) {
+              return
+            }
+            loaded = true;
+
+            window.lazycall_functions[selector]();
+          });
+    });
+  });
+</script>
+
+<%= render(partial: 'searches/adsense_bottom') %>
+
+<h2 class="h4"><%= t('.about_this_page', this_page: t('searches.show.heading', user: @searched_tw_user.mention_name)) %></h2>
+<div class="this-page-is"><%= t('.this_page_is', user: @searched_tw_user.mention_name) %></div>
+
+<h2 class="h4"><%= t('.other_services') %></h2>
+<div class="row other-services">
+  <div class="text-center col-xs-12 col-sm-4">
+    <%= t('search_results.show.twitter_link', screen_name: @searched_tw_user.screen_name).html_safe %>
+    <div class="tooltip-container"><abbr title="Twitter" rel="tooltip">i</abbr></div>
+  </div>
+  <div class="text-center col-xs-12 col-sm-4">
+    <%= t('search_results.show.twilog_link', screen_name: @searched_tw_user.screen_name).html_safe %>
+    <div class="tooltip-container"><abbr title="Twilog" rel="tooltip">i</abbr></div>
+  </div>
+  <div class="text-center col-xs-12 col-sm-4">
+    <%= t('search_results.show.favstar_link', screen_name: @searched_tw_user.screen_name).html_safe %>
+    <div class="tooltip-container"><abbr title="Favstar" rel="tooltip">i</abbr></div>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    tooltip();
+
     var hash = null;
     var refresh_box = $('.alert.alert-info');
     var refresh_btn = refresh_box.find('a');

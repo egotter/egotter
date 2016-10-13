@@ -1,0 +1,22 @@
+<div class="menu-items media">
+  <div class="media-body">
+    <h4 class="h5 media-heading"><%= menu[:name] %><div class="tooltip-container"><abbr title="<%= menu[:description] %>" rel="tooltip">i</abbr></div></h4>
+
+    <% if menu.has_key?(:graph) %>
+      <div id="<%= menu.object_id %>" class="clusters-belong-to-chart-container"></div>
+      <script>
+        $(function () {
+          var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
+          graph_option.series[0].data = <%= raw menu[:graph].to_json %>;
+          graph_option.yAxis.visible = false;
+          window.lazycall_functions['#<%= menu.object_id %>'] = function () {
+            $('#<%= menu.object_id %>').highcharts(graph_option);
+          };
+        });
+      </script>
+    <% end %>
+  </div>
+  <div>
+    <%= link_to(t('dictionary.view_more'), menu[:path], class: 'btn btn-info btn-block') %>
+  </div>
+</div>

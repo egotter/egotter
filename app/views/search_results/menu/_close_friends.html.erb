@@ -1,0 +1,41 @@
+<div class="menu-items media">
+  <div class="media-body">
+    <h4 class="h5 media-heading"><%= menu[:name] %><div class="tooltip-container"><abbr title="<%= menu[:description] %>" rel="tooltip">i</abbr></div></h4>
+
+    <% menu[:target].slice(0..2).each do |user| %>
+      <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
+        <img class="lazy" src="<%= png %>" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
+      </span>
+    <% end %>
+  </div>
+  <div class="media-right">
+    <% if menu.has_key?(:graph) %>
+      <div id="<%= menu.object_id %>" class="close-friends-chart"></div>
+      <script>
+        $(function () {
+          var graph_option = $.extend(true, {}, window.common_pie_chart_options);
+          graph_option.series[0].data = <%= raw menu[:graph].to_json %>;
+          window.lazycall_functions['#<%= menu.object_id %>'] = function () {
+            $('#<%= menu.object_id %>').highcharts(graph_option)
+          };
+        });
+      </script>
+    <% end %>
+  </div>
+  <div>
+    <%= link_to(t('dictionary.view_more_with_num', num: menu[:target].size).html_safe, menu[:path], class: 'btn btn-info btn-block') %>
+  </div>
+</div>
+<% menu[:target].slice(0..2).each do |user| %>
+  <% next if modal_rendered_uids.include?(user.uid.to_i) %>
+  <%= render(partial: 'searches/profile_overview_modal',
+             locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}", via: :profile_modal}) %>
+  <% modal_rendered_uids << user.uid.to_i %>
+  <script>
+    $(function () {
+      $('.profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>').on('shown.bs.modal', function() {
+        $.post('<%= modal_open_logs_path %>', {name: 'profile'});
+      });
+    });
+  </script>
+<% end %>

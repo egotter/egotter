@@ -1,0 +1,100 @@
+/* https://osvaldas.info/elegant-css-and-jquery-tooltip-responsive-mobile-friendly */
+.tooltip-container {
+  width: 30px;
+  height: 30px;
+  background-color: rgba(0, 0, 0, .05);
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  padding: 5px;
+  display: inline-block;
+}
+
+.tooltip-container:hover {
+  background-color: rgba(0, 0, 0, .1);
+}
+
+.tooltip-container abbr {
+  height: 100%;
+  font-weight: bold;
+  line-height: 1.4;
+  text-align: center;
+  text-shadow: 0 1px rgba(0, 0, 0, .25);
+  color: #fff;
+  background: #84e100;
+  background: -webkit-gradient(linear, left top, left bottom, from(#84e100), to(#6fbc00));
+  background: -webkit-linear-gradient(top, #84e100, #6fbc00);
+  background: -moz-linear-gradient(top, #84e100, #6fbc00);
+  background: -ms-radial-gradient(top, #84e100, #6fbc00);
+  background: -o-linear-gradient(top, #84e100, #6fbc00);
+  background: linear-gradient(top, #84e100, #6fbc00);
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  border-radius: 50%;
+  border: none;
+  cursor: help;
+  display: block;
+}
+
+.tooltip-container {
+  text-decoration: none;
+}
+
+#tooltip {
+  font-family: Ubuntu, sans-serif;
+  font-size: 0.875em;
+  text-align: center;
+  text-shadow: 0 1px rgba(0, 0, 0, .5);
+  line-height: 1.5;
+  color: #fff;
+  background: #333;
+  background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, .6)), to(rgba(0, 0, 0, .8)));
+  background: -webkit-linear-gradient(top, rgba(0, 0, 0, .6), rgba(0, 0, 0, .8));
+  background: -moz-linear-gradient(top, rgba(0, 0, 0, .6), rgba(0, 0, 0, .8));
+  background: -ms-radial-gradient(top, rgba(0, 0, 0, .6), rgba(0, 0, 0, .8));
+  background: -o-linear-gradient(top, rgba(0, 0, 0, .6), rgba(0, 0, 0, .8));
+  background: linear-gradient(top, rgba(0, 0, 0, .6), rgba(0, 0, 0, .8));
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  border-top: 1px solid #fff;
+  -webkit-box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
+  -moz-box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
+  box-shadow: 0 3px 5px rgba(0, 0, 0, .3);
+  position: absolute;
+  z-index: 100;
+  padding: 15px;
+}
+
+#tooltip:after {
+  width: 0;
+  height: 0;
+  border-left: 10px solid transparent;
+  border-right: 10px solid transparent;
+  border-top: 10px solid #333;
+  border-top-color: rgba(0, 0, 0, .7);
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -10px;
+  margin-left: -10px;
+}
+
+#tooltip.top:after {
+  border-top-color: transparent;
+  border-bottom: 10px solid #333;
+  border-bottom-color: rgba(0, 0, 0, .6);
+  top: -20px;
+  bottom: auto;
+}
+
+#tooltip.left:after {
+  left: 10px;
+  margin: 0;
+}
+
+#tooltip.right:after {
+  right: 10px;
+  left: auto;
+  margin: 0;
+}

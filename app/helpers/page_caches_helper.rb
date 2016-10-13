@@ -28,7 +28,7 @@ module PageCachesHelper
       tu.inactive_followers_menu
     ]
 
-    @menu_common_friends_and_followers = tu.common_friend_and_followers_menu
+    @menu_common_friends, @menu_common_followers = tu.common_friend_and_followers_menu
     @menu_close_friends = tu.close_friends_menu(login_user: login_user)
     @menu_usage_stats = tu.usage_stats_menu
     @menu_clusters_belong_to = tu.clusters_belong_to_menu

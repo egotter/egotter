@@ -1,3 +1,12 @@
+.search-result .this-page-is,
+.search-result .other-services {
+  margin-bottom: 15px;
+}
+
+.search-result .loading-image {
+  margin-bottom: 15px;
+}
+
 .menu-items.media {
   border-bottom: 1px solid #e6e6e6;
   padding-bottom: 15px;
