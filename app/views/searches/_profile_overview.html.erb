@@ -2,7 +2,7 @@
   <div class="profile-overview">
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
-        <div class="text-center">
+        <div class="text-center"><!-- first slide -->
           <div class="profile-icon-box">
             <%= link_to "https://twitter.com/#{user.screen_name}",
                         class: 'profile-icon-link', target: '_blank' do %>
@@ -23,10 +23,10 @@
           </div>
         </div>
 
-        <div class="text-center">
-          <% if user.description.present? %><div class="profile-description" style="display: none;"><%= user.description %></div><% end %>
+        <div class="text-center"><!-- second slide -->
+          <% if user.description.present? %><div class="profile-description" style="display: none;"><%= auto_link(user.description, html: {target: '_blank'}) %></div><% end %>
           <% if user.location.present? %><div class="profile-location" style="display: none;"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;<%= user.location %></div><% end %>
-          <% if user.url.present? %><div class="profile-link" style="display: none;"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= user.url %></div><% end %>
+          <% if user.url.present? %><div class="profile-link" style="display: none;"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= auto_link(user.url, html: {target: '_blank'}) %></div><% end %>
           <% if user.twittered_at.present? && !user.twittered_at.kind_of?(String) %><div class="profile-calendar" style="display: none;"><span class="glyphicon glyphicon-calendar"></span>&nbsp;<%= l(user.twittered_at) %></div><% end %>
         </div>
       </div>
@@ -73,26 +73,22 @@
   }
 </style>
 
-<%# ツイート数、フォロー数、フォロワー数 %>
 <div class="profile-counts-container">
   <div class="row">
-    <div class="tweet-count-box col-xs-4">
-      <%= link_to status_path(id: user.uid),
-                  class: 'text-muted' do %>
+    <div class="tweet-count-box col-xs-4"><!-- tweets count -->
+      <%= link_to status_path(id: user.uid), class: 'text-muted' do %>
         <span class="stats-count"><%= user.statuses_count %></span><br>
         <span class="text-muted"><%= t('dictionary.tweet') %></span>
       <% end %>
     </div>
-    <div class="friends-count-box col-xs-4">
-      <%= link_to friends_path(screen_name: user.screen_name, id: user.uid),
-                  class: 'text-muted' do %>
+    <div class="friends-count-box col-xs-4"><!-- friends count -->
+      <%= link_to friends_path(screen_name: user.screen_name, id: user.uid), class: 'text-muted' do %>
         <span class="stats-count"><%= user.friends_count %></span><br>
         <span class="text-muted"><%= t('dictionary.friends') %></span>
       <% end %>
     </div>
-    <div class="followers-count-box col-xs-4">
-      <%= link_to followers_path(screen_name: user.screen_name, id: user.uid),
-                  class: 'text-muted' do %>
+    <div class="followers-count-box col-xs-4"><!-- followers count -->
+      <%= link_to followers_path(screen_name: user.screen_name, id: user.uid), class: 'text-muted' do %>
         <span class="stats-count"><%= user.followers_count %></span><br>
         <span class="text-muted"><%= t('dictionary.follower') %></span>
       <% end %>

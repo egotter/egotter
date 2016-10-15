@@ -48,6 +48,11 @@
   margin: 5px 5px auto 5px;
 }
 
+.profile-overview-container .profile-description a,
+.profile-overview-container .profile-link a {
+  color: #ffffff;
+}
+
 .profile-counts-container {
   padding: 0 15px 0 15px;
 }
