@@ -1,0 +1,16 @@
+<%=
+  # set default values
+  display_meta_tags(
+      description: t('searches.common.description'),
+      site: t('searches.common.title'),
+      reverse: true,
+      og: {
+          title: :title, type: (action_name == 'new' ? 'website' : 'article'),
+          url: request.original_url,
+          image: 'http://egotter.com/egotter_kuma_840_450.png',
+          site_name: t('searches.common.title'),
+          description: :description,
+          locale: 'ja_JP'
+      }
+  )
+%>

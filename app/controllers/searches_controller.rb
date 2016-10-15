@@ -28,8 +28,6 @@ class SearchesController < ApplicationController
   end
 
   def show
-    @title = t('.title', user: @searched_tw_user.mention_name)
-
     page_cache = ::Cache::PageCache.new
     if page_cache.exists?(@searched_tw_user.uid)
       @page_cache = page_cache.read(@searched_tw_user.uid)

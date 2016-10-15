@@ -97,7 +97,7 @@ module Validation
         t('before_sign_in.forbidden')
       else
         t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
-    end
+    end.html_safe
   end
 
   private

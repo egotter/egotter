@@ -57,6 +57,10 @@ module Cache
       store.del(keys) if keys.any?
     end
 
+    def cleanup
+      raise NotImplementedError
+    end
+
     def ttl(uid)
       store.ttl(normalize_key(uid))
     end

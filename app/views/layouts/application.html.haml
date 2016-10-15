@@ -9,7 +9,7 @@
     %link{href: '/apple-touch-icon.png', rel: 'apple-touch-icon'}/
     %link{href: '/apple-touch-icon-120x120.png', rel: 'apple-touch-icon', sizes: '120x120'}/
     %link{href: '/apple-touch-icon-152x152.png', rel: 'apple-touch-icon', sizes: '152x152'}/
-    = display_meta_tags(description: t('searches.common.description'), site: t('searches.common.title'), reverse: true, og: {title: :title, type: (action_name == 'new' ? 'website' : 'article'), url: request.original_url, image: 'http://egotter.com/egotter_kuma_840_450.png', site_name: :site, description: :description, locale: 'ja_JP'})
+    = render partial: 'common/meta_tags'
     %meta{content: 'summary_large_image', name: 'twitter:card'}/
     %meta{content: '@ego_tter', name: 'twitter:site'}/
     %link{href: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css', rel: 'stylesheet'}/

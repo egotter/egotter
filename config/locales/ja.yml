@@ -40,12 +40,15 @@ ja:
     waiting:
       retry_search_by: "%{user} で再度検索"
       searching: "%{user} のデータを検索中"
+      analyzing: "%{user} のデータを分析中"
       show_immediately: "過去の結果をすぐに表示"
       show_immediately_msg: "過去の結果を表示します"
       waiting_is_finished_msg: "検索が完了しました。ページを移動します"
       updating_is_finished_msg: "新しいデータが見付かりました。%{link} からページを更新してください。"
     show:
-      title: "%{user} の検索結果"
+      title: "%{user}の分析 - リムーブ・片思い・仲良しをえごったーで表示"
+      heading: "%{user}の分析結果"
+      description: "えごったーなら全部無料！ %{user}のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果です。リム通知は、えごったーにログイン後、自動で届きます。"
     friends:
       title: "%{user} のフォロー"
     followers:
@@ -53,56 +56,83 @@ ja:
       targets: "フォロワー"
     removing:
       title: "%{user} がフォローを外した"
+      description: "%{user}がフォローを外したユーザーを表示します。"
     removed:
       title: "%{user} がフォローを外された"
+      description: "%{user}がフォローを外されたユーザーを表示します。"
     new_friends:
       title: "%{user} の新しいフォロー"
+      description: "%{user}が新しくフォローしたユーザーを表示します。"
     new_followers:
       title: "%{user} の新しいフォロワー"
+      description: "%{user}が新しくフォローされたユーザーを表示します。"
     blocking_or_blocked:
       title: "%{user} がブロックされたかも"
+      description: "%{user}がブロックされたかもしれないユーザーを表示します。フォローとフォロワーから同時に外れたらブロックとみなすため、少し不正確です。"
     replying:
       title: "%{user} がリプライした"
+      description: "%{user}がリプライしたユーザーを表示します。"
       targets: "リプライ"
     replied:
       title: "%{user} がリプライされた"
+      description: "%{user}がリプライされたユーザーを表示します。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
       targets: "リプライ"
     close_friends:
       title: "%{user} と仲良し"
+      description: "%{user}と仲良しなユーザーを表示します。仲良しの判定には、リプライした・リプライされた・ふぁぼを使っています。"
       targets: "仲良し"
       friends: "友人"
       acquaintance: "知人"
     usage_stats:
       title: "%{user} のツイッター利用状況"
+      description: "%{user}のツイッター利用状況を表示します。"
     inactive_friends:
       title: "%{user} のフォローのうち最近ツイッターにいない"
+      description: "%{user}がフォローしているユーザーのうち、最近ツイートしていないユーザーを表示します。"
       targets: "対象者"
     inactive_followers:
       title: "%{user} のフォロワーのうち最近ツイッターにいない"
+      description: "%{user}がフォローされているユーザーのうち、最近ツイートしていないユーザーを表示します。"
       targets: "対象者"
     clusters_belong_to:
       title: "%{user} が入っているクラスタ"
+      description: "%{user}が入っているクラスタを表示します。"
     mutual_friends:
       title: "%{user} が両思い"
+      description: "%{user}が相互フォローしているユーザーを表示します。"
       targets: "両思い"
     one_sided_friends:
       title: "%{user} が片思い"
+      description: "%{user}がフォローしているユーザーのうち、%{user}にフォロー返しをしていないユーザーを表示します。"
       targets: "片思い"
     one_sided_followers:
       title: "%{user} が片思われ"
+      description: "%{user}がフォローされているユーザーのうち、%{user}がフォロー返しをしていないユーザーを表示します。"
       targets: "片思われ"
     common_friends:
       title: "%{user} と %{login} の共通フォロー"
+      description: "%{user}と%{login}が共通してフォローしているユーザーを表示します。"
       targets: "共通"
     common_followers:
       title: "%{user} と %{login} の共通フォロワー"
+      description: "%{user}と%{login}が共通してフォローされているユーザーを表示します。"
       targets: "共通"
     favoriting:
       title: "%{user} がよくふぁぼる"
+      description: "%{user}がよくツイートをお気に入り登録するユーザーを表示します。"
       targets: "ふぁぼる"
+  search_results:
+    show:
+      about_this_page: "%{this_page}について"
+      this_page_is: "このページでは、%{user}のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
+      other_services: "他のサービス"
+      twitter_link: '<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}をツイッターで見る</a>'
+      twilog_link: '<a href="http://twilog.org/%{screen_name}" target="_blank">@%{screen_name}をTwilogで見る</a>'
+      favstar_link: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank">@%{screen_name}をFavstarで見る</a>'
   update_histories:
     show:
       title: "%{user} の更新履歴"
+      description: "%{user}のえごったー更新履歴を表示します。"
   statuses:
     show:
       title: "%{user} のツイート"
