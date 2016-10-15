@@ -6,7 +6,7 @@
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
   </url>
-  <% @logs.each do |log| %>
+  <% @records.each do |log| %>
     <url>
       <loc><%= search_url(screen_name: log.screen_name, id: log.uid) %></loc>
       <lastmod><%= l(log.created_at.in_time_zone('Tokyo'), format: :date_hyphen) %></lastmod>
