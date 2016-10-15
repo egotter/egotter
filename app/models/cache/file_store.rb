@@ -48,7 +48,7 @@ module Cache
     end
 
     def cleanup
-      delete_matched(/^searches-file-store:/)
+      store.delete_matched(/^searches-file-store:/)
     end
 
     def ttl(uid)

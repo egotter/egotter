@@ -16,7 +16,7 @@ class MiscController < ApplicationController
   end
 
   def sitemap
-    @logs = BackgroundSearchLog.where(status: true).order(created_at: :desc).limit(10)
+    @records = TwitterUser.order(created_at: :desc).limit(1000).to_a.uniq
     render layout: false
   end
 

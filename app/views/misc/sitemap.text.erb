@@ -1,0 +1,3 @@
+<% @records.map { |r| search_url(screen_name: r.screen_name, id: r.uid) }.each do |url| %>
+  <%= url %>
+<% end %>
