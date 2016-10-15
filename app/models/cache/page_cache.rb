@@ -4,7 +4,7 @@ module Cache
   class PageCache
     extend Forwardable
 
-    def_delegators :@store, *%i(exists? read write fetch delete clear ttl touch)
+    def_delegators :@store, *%i(exists? read write fetch delete clear cleanup ttl touch)
 
     def initialize(store = :file_store)
       @store =

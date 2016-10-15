@@ -8,7 +8,7 @@ module Cache
     end
 
     def key_prefix
-      'searches-file-store'
+      'v2-searches-file-store'
     end
 
     def key_suffix
@@ -45,6 +45,10 @@ module Cache
 
     def clear
       raise NotImplementedError
+    end
+
+    def cleanup
+      delete_matched(/^searches-file-store:/)
     end
 
     def ttl(uid)
