@@ -110,13 +110,9 @@ ActiveRecord::Schema.define(version: 20160823124535) do
     t.text     "user_info",   limit: 65535, null: false
     t.integer  "from_id",     limit: 4,     null: false
     t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
   end
 
-  add_index "friends", ["created_at"], name: "index_friends_on_created_at", using: :btree
   add_index "friends", ["from_id"], name: "index_friends_on_from_id", using: :btree
-  add_index "friends", ["screen_name"], name: "index_friends_on_screen_name", using: :btree
-  add_index "friends", ["uid"], name: "index_friends_on_uid", using: :btree
 
   create_table "mentions", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false

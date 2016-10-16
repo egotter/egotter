@@ -1,3 +1,8 @@
-<% @records.map { |r| search_url(screen_name: r.screen_name, id: r.uid) }.each do |url| %>
-  <%= url %>
+<%= root_url %>
+<% @records.each do |record| %>
+<%= search_url(screen_name: record.screen_name, id: record.uid) %>
+<%= status_url(id: record.uid) %>
+<% Search::MENU.each do |menu| %>
+<%= send("#{menu}_url", screen_name: record.screen_name, id: record.uid) %>
+<% end %>
 <% end %>

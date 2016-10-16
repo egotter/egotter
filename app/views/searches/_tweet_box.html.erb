@@ -1,5 +1,5 @@
 <div class="tweet-preview-box">
-  <textarea rows="4" readonly><%= tweet_text %></textarea>
+  <textarea rows="<%= [tweet_text.scan(/\R/).size + 1, 4].max %>" readonly><%= tweet_text %></textarea>
 </div>
 <div class="tweet-box text-right">
   <% params = {text: tweet_text, via: 'ego_tter'}.to_param %>

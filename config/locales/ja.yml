@@ -126,7 +126,7 @@ ja:
       about_this_page: "%{this_page}について"
       this_page_is: "このページでは、%{user}のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
       other_services: "他のサービス"
-      twitter_link: '<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}をツイッターで見る</a>'
+      twitter_link: '<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}をTwitterで見る</a>'
       twilog_link: '<a href="http://twilog.org/%{screen_name}" target="_blank">@%{screen_name}をTwilogで見る</a>'
       favstar_link: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank">@%{screen_name}をFavstarで見る</a>'
   update_histories:
@@ -253,16 +253,14 @@ ja:
   view_more_btn:
     same_user: "自分以外のユーザーを検索してください"
   tweet_text:
-    top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji}"
-    close_friends_by_oneself: "%{users}、いつも%{screen_name}と仲良くしてくれてありがとう！%{kaomoji} %{url}"
-    close_friends_by_others: "%{users}、%{screen_name}だけでなく%{me}とも仲良くしてください。%{kaomoji} %{url}"
-    close_friends_without_sign_in: "%{users}、%{screen_name}と仲良しなんですね！%{kaomoji} %{url}"
+    top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji} #egotter"
+    close_friends: ".%{user}と仲良しな人たちはこちら ↓\n%{users}\n#egotter %{url}"
     mutual_friends: "%{screen_name}の両思い率は %{mutual_friends_rate}%、片思い率は %{one_sided_friends_rate}%、片思われ率は %{one_sided_followers_rate}%です！%{kaomoji} %{url}"
-    inactive_friends: "%{users}、最近どうしちゃったんですか…？%{kaomoji} %{url}"
+    inactive_friends: "%{users}、最近どうしちゃったんですか…？%{kaomoji} #egotter %{url}"
     common_friends: ".%{user}と%{login}の共通のフォローは、%{users}です。%{kaomoji} %{url}"
     common_followers: ".%{user}と%{login}の共通のフォロワーは、%{users}です。%{kaomoji} %{url}"
-    clusters_belong_to: ".%{user}の入っているクラスタは、%{clusters}です。%{kaomoji} %{url}"
-    usage_stats: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{kaomoji} %{url}"
+    clusters_belong_to: ".%{user}の入っているクラスタは、%{clusters}です。%{kaomoji} #egotter %{url}"
+    usage_stats: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{kaomoji} #egotter %{url}"
     empty_result: "%{title}は0件でした。%{kaomoji} %{url}"
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"

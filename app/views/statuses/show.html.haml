@@ -5,7 +5,7 @@
   locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"})
 
 .name-and-tweet-items
-  .return-to-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
+  .return-to-results-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
   %hr
 
   %h2.h4= @title
@@ -20,4 +20,4 @@
     = render(partial: 'searches/page_entries_info',
       locals: {controller: controller_name, action: action_name, user: @searched_tw_user, items: @status_items})
 
-  .return-to-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
+  .return-to-results-bottom= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))

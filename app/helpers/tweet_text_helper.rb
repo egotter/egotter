@@ -45,31 +45,9 @@ module TweetTextHelper
   end
 
   def close_friends_text(users, tu)
-    users = ".#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
-    if search_oneself?(tu.uid)
-      t('tweet_text.close_friends_by_oneself',
-        users: users,
-        screen_name: tu.mention_name,
-        kaomoji: Kaomoji.happy,
-        url: short_url)
-    elsif search_others?(tu.uid)
-      t('tweet_text.close_friends_by_others',
-        users: users,
-        screen_name: "#{tu.mention_name}#{t('dictionary.honorific')}",
-        kaomoji: Kaomoji.happy,
-        me: current_user.mention_name,
-        url: short_url)
-    elsif !user_signed_in?
-      t('tweet_text.close_friends_without_sign_in',
-        users: users,
-        screen_name: "#{tu.mention_name}#{t('dictionary.honorific')}",
-        kaomoji: Kaomoji.happy,
-        url: short_url)
-    else
-      error_text
-    end
+    t('tweet_text.close_friends', user: tu.mention_name, users: users.slice(0, 5).map { |u| "@#{u.screen_name}" }.join("\n"), url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text
   end
 

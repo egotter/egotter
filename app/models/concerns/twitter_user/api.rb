@@ -116,13 +116,13 @@ module Concerns::TwitterUser::Api
     dummy_client.tweet_clusters(statuses, limit: 100)
   end
 
-  def close_friends(uniq: false, min: 1, login_user: nil)
+  def close_friends(uniq: false, min: 1, limit: 10, login_user: nil)
     user = {
       replying: replying(uniq: uniq),
       replied: replied(uniq: uniq, login_user: login_user),
       favoriting: favoriting(uniq: uniq, min: min)
     }
-    client.close_friends(Hashie::Mash.new(user), uniq: uniq, min: min).map { |u| u.uid = u.id; u }
+    client.close_friends(Hashie::Mash.new(user), uniq: uniq, min: min, limit: limit).map { |u| u.uid = u.id; u }
   end
 
   def inactive_friends_graph
