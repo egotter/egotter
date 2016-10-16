@@ -285,7 +285,7 @@ module Concerns::TwitterUser::Api
   end
 
   def usage_stats_graph
-    client.usage_stats(uid.to_i, tweets: statuses)
+    client.usage_stats(uid.to_i, tweets: statuses, day_names: I18n.t('date.abbr_day_names'))
   end
 
   def frequency_distribution(words)
@@ -316,7 +316,9 @@ module Concerns::TwitterUser::Api
     frequency_distribution(hashtags.to_a.slice(0, 10))
   end
 
-  def usage_stats(options = {})
-    client.usage_stats(uid.to_i, options)
+  def usage_stats(day_count: 365)
+    past = day_count.days.ago
+    tweet_times = statuses.map { |s| s.tweeted_at }.select { |t| t > past }
+    client.usage_stats(tweet_times, day_names: I18n.t('date.abbr_day_names'))
   end
 end
