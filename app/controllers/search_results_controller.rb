@@ -66,7 +66,7 @@ class SearchResultsController < ApplicationController
           @searched_tw_user.send("#{menu}_graph")
         end
 
-      @tweet_text = close_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+      @tweet_text = close_friends_text(@user_items.map { |i| i[:target] }, @searched_tw_user)
       render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
     end
   end

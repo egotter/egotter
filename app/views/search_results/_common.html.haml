@@ -1,4 +1,8 @@
 - if @user_items.any?
+  - if @user_items.first_page? && @user_items.many? && @graph.present?
+    = render(partial: 'searches/graph_item',
+      locals: {user_items: @user_items, graph: @graph, tweet_text: @tweet_text})
+
   .page-entries-info-top
     = render(partial: 'searches/page_entries_info',
       locals: {controller: :searches, action: action_name, user: @searched_tw_user, items: @user_items})
@@ -24,4 +28,4 @@
 
 = render(partial: 'searches/adsense_bottom')
 
-.return-to-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
+.return-to-results-bottom= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))

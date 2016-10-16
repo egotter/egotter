@@ -60,9 +60,14 @@ body,
 }
 
 /* global */
-.return-to-top {
+.return-to-results-top,
+.return-to-results-bottom {
   margin-top: 15px;
   text-align: center;
+}
+
+.return-to-results-bottom {
+  margin-bottom: 15px;
 }
 
 h2, h3 {
