@@ -126,7 +126,7 @@ ja:
       about_this_page: "%{this_page}について"
       this_page_is: "このページでは、%{user}のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
       other_services: "他のサービス"
-      twitter_link: '<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}をツイッターで見る</a>'
+      twitter_link: '<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}をTwitterで見る</a>'
       twilog_link: '<a href="http://twilog.org/%{screen_name}" target="_blank">@%{screen_name}をTwilogで見る</a>'
       favstar_link: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank">@%{screen_name}をFavstarで見る</a>'
   update_histories:
