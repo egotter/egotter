@@ -3,7 +3,8 @@
   margin-bottom: 15px;
 }
 
-.search-result .loading-image {
+.search-result .loading-image,
+.common-result .loading-image {
   margin-bottom: 15px;
 }
 
