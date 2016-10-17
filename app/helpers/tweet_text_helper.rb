@@ -23,7 +23,9 @@ module TweetTextHelper
   #   ...
   #   {:name=>"Sat", :y=>12.115753424657534}
   # ]
-  def usage_stats_text(stats, tu)
+  def usage_time_text(stats, tu)
+    return error_text if stats.nil?
+
     total_minutes = stats.map { |obj| obj[:y] }.sum { |y| y.nil? ? 0 : y }
     minutes_per_day = total_minutes / stats.map { |obj| obj[:y] }.count { |y| !y.nil? }
     minutes_per_week = minutes_per_day * 7
@@ -33,11 +35,11 @@ module TweetTextHelper
     tweets_per_hour = hour_count.values.sum.to_f / tweets_days / 24
     level =
       case tweets_per_hour
-        when 0..2 then t('searches.usage_stats.level.first')
-        when 2..3 then t('searches.usage_stats.level.second')
-        when 3..5 then t('searches.usage_stats.level.third')
-        when 5..10 then t('searches.usage_stats.level.fourth')
-        when 10..100 then t('searches.usage_stats.level.fifth')
+        when 0..2 then t('searches.usage_stats.usage_level.first')
+        when 2..3 then t('searches.usage_stats.usage_level.second')
+        when 3..5 then t('searches.usage_stats.usage_level.third')
+        when 5..10 then t('searches.usage_stats.usage_level.fourth')
+        when 10..100 then t('searches.usage_stats.usage_level.fifth')
       end
 
     avg, total =
@@ -49,14 +51,51 @@ module TweetTextHelper
         end
       end
 
-    t('searches.usage_stats.tweet', user: tu.mention_name, total: total, avg: avg, level: level, url: short_url)
+    t('searches.usage_stats.usage_time', user: tu.mention_name, total: total, avg: avg, level: level, url: usage_stats_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{stats.inspect} #{tu.inspect}"
     error_text
   end
 
+  # wday_stats = [
+  #   {:name=>"Sun", :y=>111, :drilldown=>"Sun"},
+  #   ...
+  #   {:name=>"Sat", :y=>90,  :drilldown=>"Sat"}
+  # ]
+  # hour_stats = [
+  #   {:name=>"0", :y=>66, :drilldown=>"0"},
+  #   ...
+  #   {:name=>"23", :y=>87, :drilldown=>"23"}
+  # ]
+  def usage_per_xxx_text(wday_stats, hour_stats, tu)
+    wday_max_y = wday_stats.map { |obj| obj[:y] }.max
+    wday = wday_stats.find { |obj| obj[:y] == wday_max_y }[:name]
+    hour_max_y = hour_stats.map { |obj| obj[:y] }.max
+    hour = hour_stats.find { |obj| obj[:y] == hour_max_y }[:name]
+    t('searches.usage_stats.usage_per_xxx', user: tu.mention_name, wday: wday, hour: hour, url: usage_stats_url(screen_name: tu.screen_name))
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{wday_stats.inspect} #{hour_stats.inspect} #{tu.inspect}"
+    logger.warn e.backtrace.join("\n")
+    error_text
+  end
+
+  def usage_kind_text(kind, tu)
+    t('searches.usage_stats.usage_kind', user: tu.mention_name, mention: kind[:mentions].round, image: kind[:media].round, link: kind[:urls].round, hashtag: kind[:hashtags].round, location: kind[:location].round, url: usage_stats_url(screen_name: tu.screen_name))
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{kind.inspect} #{tu.inspect}"
+    error_text
+  end
+
+  def usage_hashtags_text(hashtags, tu)
+    hashtags = hashtags.to_a.map { |obj| obj[:name] }.slice(0, 5).join(' ')
+    t('searches.usage_stats.usage_hashtags', user: tu.mention_name, hashtags: hashtags, url: usage_stats_url(screen_name: tu.screen_name))
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{hashtags.inspect} #{tu.inspect}"
+    error_text
+  end
+
   def close_friends_text(users, tu)
-    t('tweet_text.close_friends', user: tu.mention_name, users: users.slice(0, 5).map { |u| "@#{u.screen_name}" }.join("\n"), url: short_url)
+    t('tweet_text.close_friends', user: tu.mention_name, users: users.slice(0, 5).map { |u| "@#{u.screen_name}" }.join("\n"), url: close_friends_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text

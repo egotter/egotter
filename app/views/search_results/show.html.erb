@@ -1,6 +1,7 @@
 <%
   # avoid duplicate rendering
   modal_rendered_uids = []
+  icon_limit = request.device_type == :pc ? 8 : 3
   png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
 %>
 
@@ -10,16 +11,16 @@
   });
 </script>
 
-<%= render partial: 'search_results/menu/close_friends', locals: {menu: @menu_close_friends, modal_rendered_uids: modal_rendered_uids, png: png} %>
+<%= render partial: 'search_results/menu/close_friends', locals: {menu: @menu_close_friends, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png} %>
 <%= render partial: 'search_results/menu/usage_stats', locals: {menu: @menu_usage_stats} %>
 <%= render partial: 'search_results/menu/clusters_belong_to', locals: {menu: @menu_clusters_belong_to} %>
 
 <% @menu_items.each do |menu| %>
-  <%= render partial: 'search_results/menu/common', locals: {menu: menu, modal_rendered_uids: modal_rendered_uids, png: png} %>
+  <%= render partial: 'search_results/menu/common', locals: {menu: menu, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png} %>
 <% end %>
 
-<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_friends, modal_rendered_uids: modal_rendered_uids, png: png, searched_tw_user: @searched_tw_user} %>
-<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_followers, modal_rendered_uids: modal_rendered_uids, png: png, searched_tw_user: @searched_tw_user} %>
+<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_friends, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png, searched_tw_user: @searched_tw_user} %>
+<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_followers, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png, searched_tw_user: @searched_tw_user} %>
 <%= render partial: 'search_results/menu/update_histories', locals: {menu: @menu_update_histories} %>
 
 <script>

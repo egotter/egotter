@@ -7,7 +7,7 @@ class TwitterUserDecorator < Draper::Decorator
         description: I18n.t("searches.#{menu}.description", user: object.mention_name),
         target: object.send(menu),
         graph: object.send("#{menu}_graph"),
-        path: h.send("#{menu}_path", screen_name: object.screen_name, id: object.uid)
+        path: h.send("#{menu}_path", screen_name: object.screen_name)
       }
     end
   end
@@ -18,7 +18,7 @@ class TwitterUserDecorator < Draper::Decorator
       description: I18n.t('searches.replied.description', user: object.mention_name),
       target: object.replied(login_user: login_user),
       graph: object.replied_graph(login_user: login_user),
-      path: h.replied_path(screen_name: object.screen_name, id: object.uid)
+      path: h.replied_path(screen_name: object.screen_name)
     }
   end
 
@@ -35,12 +35,12 @@ class TwitterUserDecorator < Draper::Decorator
           name: friends_name,
           description: friends_description,
           target: [],
-          path: h.common_friends_path(screen_name: object.screen_name, id: object.uid)
+          path: h.common_friends_path(screen_name: object.screen_name)
         }, {
           name: followers_name,
           description: followers_description,
           target: [],
-          path: h.common_followers_path(screen_name: object.screen_name, id: object.uid)
+          path: h.common_followers_path(screen_name: object.screen_name)
         },
       ]
     elsif h.search_others?(object.uid)
@@ -51,13 +51,13 @@ class TwitterUserDecorator < Draper::Decorator
           description: friends_description,
           target: object.common_friends(current_user_tu),
           graph: object.common_friends_graph(current_user_tu),
-          path: h.common_friends_path(screen_name: object.screen_name, id: object.uid)
+          path: h.common_friends_path(screen_name: object.screen_name)
         }, {
           name: followers_name,
           description: followers_description,
           target: object.common_followers(current_user_tu),
           graph: object.common_followers_graph(current_user_tu),
-          path: h.common_followers_path(screen_name: object.screen_name, id: object.uid)
+          path: h.common_followers_path(screen_name: object.screen_name)
         },
       ]
     elsif !h.user_signed_in?
@@ -66,12 +66,12 @@ class TwitterUserDecorator < Draper::Decorator
           name: friends_name,
           description: friends_description,
           target: [],
-          path: h.common_friends_path(screen_name: object.screen_name, id: object.uid)
+          path: h.common_friends_path(screen_name: object.screen_name)
         }, {
           name: followers_name,
           description: followers_description,
           target: [],
-          path: h.common_followers_path(screen_name: object.screen_name, id: object.uid)
+          path: h.common_followers_path(screen_name: object.screen_name)
         },
       ]
     end
@@ -83,7 +83,7 @@ class TwitterUserDecorator < Draper::Decorator
       description: I18n.t('searches.close_friends.description', user: object.mention_name),
       target: object.close_friends(login_user: login_user),
       graph: object.close_friends_graph(login_user: login_user),
-      path: h.close_friends_path(screen_name: object.screen_name, id: object.uid)
+      path: h.close_friends_path(screen_name: object.screen_name)
     }
   end
 
@@ -92,7 +92,7 @@ class TwitterUserDecorator < Draper::Decorator
       name: I18n.t('searches.usage_stats.title', user: object.mention_name),
       description: I18n.t('searches.usage_stats.description', user: object.mention_name),
       graph: object.usage_stats_graph,
-      path: h.usage_stats_path(screen_name: object.screen_name, id: object.uid)
+      path: h.usage_stats_path(screen_name: object.screen_name)
     }
   end
 
@@ -108,7 +108,7 @@ class TwitterUserDecorator < Draper::Decorator
       screen_name: object.screen_name,
       text: "#{clusters_belong_to.map{|c| "#{c}#{I18n.t('searches.common.cluster')}" }.join(I18n.t('dictionary.delim'))}",
       tweet_text: "#{title}\n#{clusters_belong_to.map{|c| "##{c}#{I18n.t('searches.common.cluster')}" }.join(' ')}\n#{I18n.t('dictionary.continue_reading')}http://example.com",
-      path: h.clusters_belong_to_path(screen_name: object.screen_name, id: object.uid)
+      path: h.clusters_belong_to_path(screen_name: object.screen_name)
     }
   end
 
@@ -117,7 +117,7 @@ class TwitterUserDecorator < Draper::Decorator
       name: I18n.t('update_histories.show.title', user: object.mention_name),
       description: I18n.t('update_histories.show.description', user: object.mention_name),
       target: UpdateHistories.new(object.uid),
-      path: h.update_history_path(screen_name: object.screen_name, id: object.uid)
+      path: h.update_history_path(screen_name: object.screen_name)
     }
   end
 end

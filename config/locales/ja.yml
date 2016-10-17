@@ -86,13 +86,16 @@ ja:
     usage_stats:
       title: "%{user} のツイッター利用状況"
       description: "%{user}のツイッター利用状況を表示します。"
-      tweet: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。\nツイッターレベル → %{level}\n#egotter %{url}"
-        level:
-          first: "一般人。ツイッターにまだ慣れてないみたいです。"
-          second: "一般人。ほどほどにツイッターを使っているようです。"
-          third: "ぎりぎり一般人…？ ちょっと病みつきになってきたようです。"
-          fourth: "軽い廃人…。つぶやいた回数だけ社会復帰が遠のいています…。"
-          fifth: "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
+      usage_time: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
+      usage_level:
+        first: "一般人です。ツイッターにまだあまり慣れていないみたいです。"
+        second: "一般人です。ほどほどにツイッターを使っているようです。"
+        third: "ぎりぎり一般人…？ ちょっと病みつきになってきたようです。"
+        fourth: "軽い廃人かも…。つぶやいた回数だけ社会復帰が遠のいています…。"
+        fifth: "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
+      usage_per_xxx: ".%{user}がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
+      usage_kind: ".%{user}のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
+      usage_hashtags: ".%{user}のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:
       title: "%{user} のフォローのうち最近ツイッターにいない"
       description: "%{user}がフォローしているユーザーのうち、最近ツイートしていないユーザーを表示します。"
@@ -222,7 +225,6 @@ ja:
     you_are_searched_by_himself: "検索が完了しました。検索したのは自分です。%{kaomoji} %{url}"
     you_are_updated: "データの更新が完了しました。%{kaomoji} %{url} DM通知設定の変更はこちら → %{menu_url}"
     clusters_index: "クラスタ指数"
-    hashtags_cloud: "ハッシュタグクラウド"
     clusters_cloud: "クラスタクラウド"
     delim: "、"
     honorific: "さん"
