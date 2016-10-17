@@ -3,6 +3,6 @@
 <%= search_url(screen_name: record.screen_name, id: record.uid) %>
 <%= status_url(id: record.uid) %>
 <% Search::MENU.each do |menu| %>
-<%= send("#{menu}_url", screen_name: record.screen_name, id: record.uid) %>
+<%= send("#{menu}_url", screen_name: record.screen_name) %>
 <% end %>
 <% end %>

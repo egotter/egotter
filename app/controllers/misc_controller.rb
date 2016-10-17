@@ -16,7 +16,7 @@ class MiscController < ApplicationController
   end
 
   def sitemap
-    @records = TwitterUser.order(created_at: :desc).limit(5000).to_a.uniq
+    @records = TwitterUser.order(created_at: :desc).limit(2000).to_a.uniq
     render layout: false
   end
 
