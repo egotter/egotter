@@ -117,7 +117,7 @@ class TwitterUserDecorator < Draper::Decorator
       name: I18n.t('update_histories.show.title', user: object.mention_name),
       description: I18n.t('update_histories.show.description', user: object.mention_name),
       target: UpdateHistories.new(object.uid),
-      path: h.update_history_path(screen_name: object.screen_name)
+      path: h.update_history_path(id: object.uid)
     }
   end
 end
