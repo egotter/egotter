@@ -43,11 +43,11 @@ module TweetTextHelper
       end
 
     avg, total =
-      [minutes_per_day, minutes_per_week].map do |miutes|
-        if miutes > 120
+      [minutes_per_day, minutes_per_week].map do |minutes|
+        if minutes > 120
           t('datetime.distance_in_words.about_x_hours.other', count: (minutes / 120).round(1))
         else
-          t('datetime.distance_in_words.x_minutes.other', count: miutes.round)
+          t('datetime.distance_in_words.x_minutes.other', count: minutes.round)
         end
       end
 
