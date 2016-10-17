@@ -116,7 +116,7 @@ module Concerns::TwitterUser::Api
     dummy_client.tweet_clusters(statuses, limit: 100)
   end
 
-  def close_friends(uniq: false, min: 1, limit: 10, login_user: nil)
+  def close_friends(uniq: false, min: 1, limit: 50, login_user: nil)
     user = {
       replying: replying(uniq: uniq),
       replied: replied(uniq: uniq, login_user: login_user),
@@ -285,7 +285,7 @@ module Concerns::TwitterUser::Api
   end
 
   def usage_stats_graph
-    client.usage_stats(uid.to_i, tweets: statuses)
+    client.usage_stats(extract_time_from_tweets(statuses), day_names: I18n.t('date.abbr_day_names'))
   end
 
   def frequency_distribution(words)
@@ -305,18 +305,20 @@ module Concerns::TwitterUser::Api
   end
 
   def hashtags
-    dummy_client.hashtag_clusters(statuses, limit: 100)
+    statuses.select { |s| s.hashtags? }.map { |s| s.hashtags }.flatten.
+      map { |h| "##{h}" }.each_with_object(Hash.new(0)) { |hashtag, memo| memo[hashtag] += 1 }.
+      sort_by { |h, c| [-c, -h.size] }.to_h
   end
 
-  def hashtags_cloud
-    hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
+  def usage_stats(day_count: 365)
+    return [nil, nil, nil, nil, nil] if statuses.empty?
+    client.usage_stats(extract_time_from_tweets(statuses, day_count: day_count), day_names: I18n.t('date.abbr_day_names'))
   end
 
-  def hashtags_frequency_distribution
-    frequency_distribution(hashtags.to_a.slice(0, 10))
-  end
+  private
 
-  def usage_stats(options = {})
-    client.usage_stats(uid.to_i, options)
+  def extract_time_from_tweets(tweets, day_count: 365)
+    past = day_count.days.ago
+    tweets.map { |s| s.tweeted_at }.select { |t| t > past }
   end
 end

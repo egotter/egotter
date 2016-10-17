@@ -1,7 +1,7 @@
 - if @user_items.any?
   - if @user_items.first_page? && @user_items.many? && @graph.present?
     = render(partial: 'searches/graph_item',
-      locals: {user_items: @user_items, graph: @graph, tweet_text: @tweet_text})
+      locals: {searched_tw_user: @searched_tw_user, menu: menu, user_items: @user_items, graph: @graph, tweet_text: @tweet_text})
 
   .page-entries-info-top
     = render(partial: 'searches/page_entries_info',

@@ -1,39 +1,29 @@
 <div class="usage-stats">
   <h3 class="h5">曜日ごとのツイッター利用時間</h3>
-  <div id="twitter_addiction" class="chart"></div>
+  <div id="usage_time" class="chart"></div>
 
-  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: usage_time_text(@usage_time, @searched_tw_user)}) %>
 
-  <hr>
+  <h3 class="h5">曜日ごとのツイート数</h3>
+  <div id="wday" class="chart"></div>
 
-  <h3 class="h5">曜日ごとのツイート数(直近600ツイート)</h3>
-  <div id="wday_graph" class="chart"></div>
+  <h3 class="h5">時間帯ごとのツイート数</h3>
+  <div id="hour" class="chart"></div>
 
-  <h3 class="h5">曜日ごとのツイート数(直近1週間)</h3>
-  <div id="wday_graph_7days" class="chart"></div>
-
-  <hr>
-
-  <h3 class="h5">時間帯ごとのツイート数(直近600ツイート)</h3>
-  <div id="hour_graph" class="chart"></div>
-
-  <h3 class="h5">時間帯ごとのツイート数(直近1週間)</h3>
-  <div id="hour_graph_7days" class="chart"></div>
-
-  <hr>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: usage_per_xxx_text(@wday, @hour, @searched_tw_user)}) %>
 
   <h3 class="h5">ツイートの内容</h3>
-  <div id="kind_bar" class="chart"></div>
+  <div id="kind" class="chart"></div>
 
-  <hr>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: usage_kind_text(@kind, @searched_tw_user)}) %>
 
-  <h3 class="h5">ハッシュタグ指数</h3>
-  <div id="hashtags_fd" class="chart"></div>
+  <h3 class="h5">よく使うハッシュタグ</h3>
+  <div id="hashtags" class="chart"></div>
 
-  <hr>
+  <h3 class="h5">ハッシュタグクラウド (クリックできます)</h3>
+  <div id="cloud" class="chart" style="height: 220px;"></div>
 
-  <h3 class="h5"><%= t('dictionary.hashtags_cloud') %></h3>
-  <div id="hashtags_cloud" class="chart" style="height: 220px;"></div>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: usage_hashtags_text(@hashtags, @searched_tw_user)}) %>
 
   <%= render(partial: 'searches/adsense_bottom') %>
 
@@ -43,40 +33,10 @@
 <script>
   var graph_options = window.usage_stats_column_chart_options;
 
-  var twitter_addiction_options = $.extend(true, {}, graph_options);
-  twitter_addiction_options.series[0].data = <%= raw @twitter_addiction_series.to_json %>;
-
-  var wday_options = $.extend(true, {}, graph_options);
-  wday_options.series[0].data = <%= raw @wday_series_data.to_json %>;
-  wday_options.drilldown.series = <%= raw @wday_drilldown_series.to_json %>;
-
-  var wday_7days_options = $.extend(true, {}, graph_options);
-  wday_7days_options.series[0].data = <%= raw @wday_series_data_7days.to_json %>;
-  wday_7days_options.drilldown.series = <%= raw @wday_drilldown_series_7days.to_json %>;
-
-  var hour_options = $.extend(true, {}, graph_options);
-  hour_options.series[0].data = <%= raw @hour_series_data.to_json %>;
-  hour_options.drilldown.series = <%= raw @hour_drilldown_series.to_json %>;
-
-  var hour_7days_options = $.extend(true, {}, graph_options);
-  hour_7days_options.series[0].data = <%= raw @hour_series_data_7days.to_json %>;
-  hour_7days_options.drilldown.series = <%= raw @hour_drilldown_series_7days.to_json %>;
-
-  var tweets_stat = <%=
-  statuses = @searched_tw_user.statuses
-  statuses_size = statuses.size
-  {
-    mentions: statuses.select{|s| s.mentions? }.size.to_f / statuses_size * 100,
-    media: statuses.select{|s| s.media? }.size.to_f / statuses_size * 100,
-    urls: statuses.select{|s| s.urls? }.size.to_f / statuses_size * 100,
-    hashtags: statuses.select{|s| s.hashtags? }.size.to_f / statuses_size * 100,
-    location: statuses.select{|s| s.location? }.size.to_f / statuses_size * 100
-  }.to_json.html_safe
-  %>;
-
-  var tweets_stat_options = window.usage_stats_tweets_stat_options;
-  tweets_stat_options.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
-  tweets_stat_options.series = [{
+  var tweets_stat = <%= @kind.to_json.html_safe %>;
+  var kind = window.usage_stats_tweets_stat_options;
+  kind.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
+  kind.series = [{
     name: 'なし',
     data: [
       100.0 - tweets_stat.mentions,
@@ -96,23 +56,34 @@
     ]
   }];
 
-  var hashtags_fd_options = $.extend(true, {}, graph_options);
-  hashtags_fd_options.series[0].data = <%= raw @hashtags_fd.to_json %>;
-
   $(function () {
-    $('#twitter_addiction').highcharts(twitter_addiction_options);
+    <% if @usage_time.present? %>
+      var usage_time = $.extend(true, {}, graph_options);
+      usage_time.series[0].data = <%= raw @usage_time.to_json %>;
+      $('#usage_time').highcharts(usage_time);
+    <% end %>
 
-    $('#wday_graph').highcharts(wday_options);
-    $('#wday_graph_7days').highcharts(wday_7days_options);
+    <% if @wday.present? && @wday_drilldown.present? %>
+      var wday = $.extend(true, {}, graph_options);
+      wday.series[0].data = <%= raw @wday.to_json %>;
+      wday.drilldown.series = <%= raw @wday_drilldown.to_json %>;
+      $('#wday').highcharts(wday);
+    <% end %>
 
-    $('#hour_graph').highcharts(hour_options);
-    $('#hour_graph_7days').highcharts(hour_7days_options);
+    <% if  @hour.present? && @hour_drilldown.present? %>
+      var hour = $.extend(true, {}, graph_options);
+      hour.series[0].data = <%= raw @hour.to_json %>;
+      hour.drilldown.series = <%= raw @hour_drilldown.to_json %>;
+      $('#hour').highcharts(hour);
+    <% end %>
 
-    $('#kind_bar').highcharts(tweets_stat_options);
+    $('#kind').highcharts(kind);
 
-    $('#hashtags_fd').highcharts(hashtags_fd_options);
+    var hashtags = $.extend(true, {}, graph_options);
+    hashtags.series[0].data = <%= raw @hashtags.to_json %>;
+    $('#hashtags').highcharts(hashtags);
 
-    var hashtags = <%= raw @hashtags_cloud.to_json %>;
-    draw_word_cloud('#hashtags_cloud', hashtags, $('#hashtags_cloud').width(), 220);
+    var cloud = <%= raw @cloud.to_json %>;
+    draw_word_cloud('#cloud', cloud, $('#cloud').width(), 220);
   });
 </script>

@@ -62,6 +62,7 @@ module Concerns::Status::Store
   end
 
   def tweeted_at
-    _status_info.created_at
+    # TODO Use user specific time zone
+    ActiveSupport::TimeZone['Tokyo'].parse(_status_info.created_at)
   end
 end

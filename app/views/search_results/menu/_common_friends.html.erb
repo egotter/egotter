@@ -2,7 +2,7 @@
   <div class="media-body">
     <h4 class="h5 media-heading"><%= menu[:name] %><div class="tooltip-container"><abbr title="<%= menu[:description] %>" rel="tooltip">i</abbr></div></h4>
 
-    <% menu[:target].slice(0..2).each do |user| %>
+    <% menu[:target].slice(0..icon_limit).each do |user| %>
         <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
           <img class="lazy" src="<%= png %>" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
         </span>
@@ -38,7 +38,7 @@
     </button>
   <% end %>
 </div>
-<% menu[:target].slice(0..2).each do |user| %>
+<% menu[:target].slice(0..icon_limit).each do |user| %>
   <% next if modal_rendered_uids.include?(user.uid.to_i) %>
   <%= render(partial: 'searches/profile_overview_modal',
              locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}", via: :profile_modal}) %>

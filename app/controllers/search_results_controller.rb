@@ -92,14 +92,22 @@ class SearchResultsController < ApplicationController
 
   # GET /searches/:screen_name/usage_stats
   def usage_stats
-    @wday_series_data_7days, @wday_drilldown_series_7days, @hour_series_data_7days, @hour_drilldown_series_7days, _ =
-      @searched_tw_user.usage_stats(days: 7)
-    @wday_series_data, @wday_drilldown_series, @hour_series_data, @hour_drilldown_series, @twitter_addiction_series =
-      @searched_tw_user.usage_stats
+    @wday, @wday_drilldown, @hour, @hour_drilldown, @usage_time = @searched_tw_user.usage_stats
 
-    @tweet_text = usage_stats_text(@twitter_addiction_series, @searched_tw_user)
-    @hashtags_cloud = @searched_tw_user.hashtags_cloud
-    @hashtags_fd = @searched_tw_user.hashtags_frequency_distribution
+    statuses = @searched_tw_user.statuses
+    statuses_size = statuses.size
+    @kind = {
+      mentions: statuses.select { |s| s.mentions? }.size.to_f / statuses_size * 100,
+      media: statuses.select { |s| s.media? }.size.to_f / statuses_size * 100,
+      urls: statuses.select { |s| s.urls? }.size.to_f / statuses_size * 100,
+      hashtags: statuses.select { |s| s.hashtags? }.size.to_f / statuses_size * 100,
+      location: statuses.select { |s| s.location? }.size.to_f / statuses_size * 100
+    }
+
+    hashtags = @searched_tw_user.hashtags
+    @cloud = hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
+    @hashtags = hashtags.to_a.slice(0, 10).map { |word, count| {name: word, y: count} }
+
     render json: {html: render_to_string(partial: 'usage_stats')}, status: 200
   end
 end
