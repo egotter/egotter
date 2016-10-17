@@ -116,7 +116,7 @@ module Concerns::TwitterUser::Api
     dummy_client.tweet_clusters(statuses, limit: 100)
   end
 
-  def close_friends(uniq: false, min: 1, limit: 10, login_user: nil)
+  def close_friends(uniq: false, min: 1, limit: 50, login_user: nil)
     user = {
       replying: replying(uniq: uniq),
       replied: replied(uniq: uniq, login_user: login_user),

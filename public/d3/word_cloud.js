@@ -3,7 +3,7 @@ function draw_word_cloud(selector, nodes, width, height) {
   var font_family = ["Arial", "ヒラギノ角ゴ Pro W3", "Hiragino Kaku Gothic Pro", "Osaka", "メイリオ", "Meiryo", "ＭＳ Ｐゴシック", "MS PGothic", "sans-serif"];
 
   var max_size  = d3.max(nodes, function(n){ return n.size} );
-  var sizeScale = d3.scale.linear().domain([0, max_size]).range([15, 30]);
+  var sizeScale = d3.scaleLinear().domain([0, max_size]).range([15, 30]);
 
   var words = nodes.map(function(n) {
     return {
