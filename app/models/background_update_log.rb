@@ -11,7 +11,6 @@
 #  message     :text(65535)      not null
 #  call_count  :integer          default(-1), not null
 #  created_at  :datetime         not null
-#  updated_at  :datetime         not null
 #
 # Indexes
 #

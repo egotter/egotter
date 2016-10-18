@@ -216,6 +216,7 @@ ActiveRecord::Schema.define(version: 20160823124535) do
     t.string   "session_id",  limit: 191, default: "", null: false
     t.integer  "user_id",     limit: 4,   default: -1, null: false
     t.string   "context",     limit: 191, default: "", null: false
+    t.string   "via",         limit: 191, default: "", null: false
     t.string   "device_type", limit: 191, default: "", null: false
     t.string   "os",          limit: 191, default: "", null: false
     t.string   "browser",     limit: 191, default: "", null: false

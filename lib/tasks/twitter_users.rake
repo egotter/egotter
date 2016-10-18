@@ -21,8 +21,15 @@ namespace :twitter_users do
     end
   end
 
-  desc 'add_update_job'
+  desc 'add an update job'
   task add_update_job: :environment do
     UpdateTwitterUserWorker.perform_async(ENV['USER_ID'].to_i)
+  end
+
+  desc 'add update jobs'
+  task add_update_jobs: :environment do
+    ENV['USER_IDS'].split(',').map(&:to_i).each do |user_id|
+      UpdateTwitterUserWorker.new.perform(user_id)
+    end
   end
 end
