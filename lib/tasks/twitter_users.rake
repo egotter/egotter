@@ -20,4 +20,9 @@ namespace :twitter_users do
       tu.save!
     end
   end
+
+  desc 'add_update_job'
+  task add_update_job: :environment do
+    UpdateTwitterUserWorker.perform_async(ENV['USER_ID'].to_i)
+  end
 end

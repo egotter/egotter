@@ -69,7 +69,6 @@ ActiveRecord::Schema.define(version: 20160823124535) do
     t.text     "message",     limit: 65535,                 null: false
     t.integer  "call_count",  limit: 4,     default: -1,    null: false
     t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
   end
 
   add_index "background_update_logs", ["created_at"], name: "index_background_update_logs_on_created_at", using: :btree

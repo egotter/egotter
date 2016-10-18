@@ -49,16 +49,4 @@ module Concerns::TwitterUser::Utils
   def fresh?(seconds = DEFAULT_SECONDS)
     Time.zone.now - updated_at < seconds
   end
-
-  def search_and_touch
-    update!(search_count: search_count + 1)
-  rescue => e
-    logger.error "#{self.class}##{__method__}: #{e.class} #{e.message}"
-  end
-
-  def update_and_touch
-    update!(update_count: update_count + 1)
-  rescue => e
-    logger.error "#{self.class}##{__method__}: #{e.class} #{e.message}"
-  end
 end

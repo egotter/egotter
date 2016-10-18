@@ -9,15 +9,14 @@ module Logging
 
   def create_search_log(options = {})
     uid, screen_name = find_uid_and_screen_name
-    user_id = current_user_id
 
     attrs = {
       session_id:  fingerprint,
-      user_id:     user_id,
+      user_id:     current_user_id,
       uid:         uid,
       screen_name: screen_name,
       action:      action_name,
-      ego_surfing: user_id != -1 && user_id.to_i == uid.to_i,
+      ego_surfing: user_signed_in? && current_user.uid.to_i == uid.to_i,
       method:      request.method,
       device_type: request.device_type,
       os:          request.os,

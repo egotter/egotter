@@ -5,13 +5,12 @@ class CreateTwitterUserWorker
   def perform(values)
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
-    screen_name  = values['screen_name']
     url          = values['url']
     log_attrs = {
       session_id:  values['session_id'],
       user_id:     user_id,
       uid:         uid,
-      screen_name: screen_name,
+      screen_name: values['screen_name'],
       bot_uid:     -100,
       auto:        values['auto'],
       via:         values['via'],
@@ -27,94 +26,78 @@ class CreateTwitterUserWorker
 
     existing_tu = TwitterUser.latest(uid)
     if existing_tu.present? && existing_tu.fresh?
-      existing_tu.search_and_touch
-      create_success_log(
-        'cannot create a new TwitterUser because a recently created record exists.',
-        {call_count: client.call_count}.merge(log_attrs)
-      )
-      setup_notification_message_worker(user_id, uid, screen_name, url)
+      existing_tu.increment(:search_count).save
+      create_log(true, log_attrs, call_count: client.call_count, message: 'Recently created record exists.')
+      send_notification_message(user_id, existing_tu, url)
       return
     end
 
     new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: User.find_by(id: user_id), context: :search)
     new_tu.user_id = user_id
     if new_tu.save
-      new_tu.search_and_touch
-      create_success_log(
-        'creates a new TwitterUser.',
-        {call_count: client.call_count}.merge(log_attrs)
-      )
-      setup_notification_message_worker(user_id, uid, screen_name, url)
+      new_tu.increment(:search_count).save
+      create_log(true, log_attrs, call_count: client.call_count, message: 'creates a new TwitterUser.')
+      send_notification_message(user_id, new_tu, url)
       return
     end
 
     if existing_tu.present?
-      existing_tu.search_and_touch
-      create_success_log(
-        'cannot save a new TwitterUser because existing one is the same as new one.',
-        {call_count: client.call_count}.merge(log_attrs)
-      )
-      setup_notification_message_worker(user_id, uid, screen_name, url)
+      existing_tu.increment(:search_count).save
+      create_log(true, log_attrs, call_count: client.call_count, message: 'Existing one is the same as new one.')
+      send_notification_message(user_id, existing_tu, url)
       return
     end
 
-    create_failed_log(
-      BackgroundSearchLog::SomethingError::MESSAGE,
-      "cannot save a new TwitterUser because of #{new_tu.errors.full_messages.join(', ')}.",
-      {call_count: client.call_count}.merge(log_attrs)
+    create_log(
+      false,
+      log_attrs,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      message: "#{new_tu.errors.full_messages.join(', ')}."
     )
   rescue Twitter::Error::TooManyRequests => e
-    create_failed_log(
-      BackgroundSearchLog::TooManyRequests::MESSAGE, '',
-      {call_count: client.call_count}.merge(log_attrs)
+    create_log(
+      false,
+      log_attrs,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::TooManyRequests::MESSAGE
     )
   rescue Twitter::Error::Unauthorized => e
-    create_failed_log(
-      BackgroundSearchLog::Unauthorized::MESSAGE, '',
-      {call_count: client.call_count}.merge(log_attrs)
+    create_log(
+      false,
+      log_attrs,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     logger.info e.backtrace.slice(0, 10).join("\n")
-    create_failed_log(
-      BackgroundSearchLog::SomethingError::MESSAGE, "#{e.class} #{e.message}",
-      {call_count: client.call_count}.merge(log_attrs)
+    create_log(
+      false,
+      log_attrs,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      message: "#{e.class} #{e.message}"
     )
   end
 
-  def setup_notification_message_worker(user_id, uid, screen_name, url)
-    searched_user = User.find_by(uid: uid)
-    return if searched_user.blank?
+  def send_notification_message(login_user_id, tu, url)
+    searched_user = User.find_by(uid: tu.uid)
+    return if searched_user.nil?
 
-    if user_id == searched_user.id
-      someone_searched_himself_or_herself(user_id, uid, screen_name, url)
-    elsif user_id != searched_user.id
-      someone_searched_existing_user(searched_user.id, uid, screen_name, url)
+    unless login_user_id == searched_user.id
+      CreateNotificationMessageWorker.perform_async(
+        user_id: login_user_id,
+        uid: tu.uid,
+        screen_name: tu.screen_name,
+        message: I18n.t('dictionary.you_are_searched', kaomoji: Kaomoji.unhappy, url: url)
+      )
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{url}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user_id} #{tu.inspect} #{url}"
   end
 
-  # TODO Send a dm when removing or removed is updated.
-  def someone_searched_himself_or_herself(user_id, uid, screen_name, url)
-    # CreateNotificationMessageWorker.perform_async(
-    #   user_id: user_id,
-    #   uid: uid,
-    #   screen_name: screen_name,
-    #   message: I18n.t('dictionary.you_are_searched_by_himself', kaomoji: Kaomoji.happy, url: url)
-    # )
-  end
-
-  def someone_searched_existing_user(user_id, uid, screen_name, url)
-    CreateNotificationMessageWorker.perform_async(
-      user_id: user_id,
-      uid: uid,
-      screen_name: screen_name,
-      message: I18n.t('dictionary.you_are_searched', kaomoji: Kaomoji.unhappy, url: url)
-    )
-  end
-
-  def create_success_log(message, attrs)
+  def create_log(status, attrs, call_count: -1, reason: '', message: '')
     BackgroundSearchLog.create!(
       session_id:  attrs[:session_id],
       user_id:     attrs[:user_id],
@@ -122,34 +105,10 @@ class CreateTwitterUserWorker
       screen_name: attrs[:screen_name],
       bot_uid:     attrs[:bot_uid],
       auto:        attrs[:auto],
-      status:      true,
-      reason:      '',
-      message:     message,
-      call_count:  attrs[:call_count],
-      via:         attrs[:via],
-      device_type: attrs[:device_type],
-      os:          attrs[:os],
-      browser:     attrs[:browser],
-      user_agent:  attrs[:user_agent],
-      referer:     attrs[:referer],
-      channel:     attrs[:channel],
-    )
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{message} #{attrs.inspect}"
-  end
-
-  def create_failed_log(reason, message, attrs)
-    BackgroundSearchLog.create!(
-      session_id:  attrs[:session_id],
-      user_id:     attrs[:user_id],
-      uid:         attrs[:uid],
-      screen_name: attrs[:screen_name],
-      bot_uid:     attrs[:bot_uid],
-      auto:        attrs[:auto],
-      status:      false,
+      status:      status,
       reason:      reason,
       message:     message,
-      call_count:  attrs[:call_count],
+      call_count:  call_count,
       via:         attrs[:via],
       device_type: attrs[:device_type],
       os:          attrs[:os],
@@ -159,6 +118,6 @@ class CreateTwitterUserWorker
       channel:     attrs[:channel],
     )
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{reason} #{message} #{attrs.inspect}"
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{status} #{attrs.inspect} #{reason} #{message}"
   end
 end
