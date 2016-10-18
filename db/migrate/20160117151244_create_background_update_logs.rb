@@ -9,7 +9,7 @@ class CreateBackgroundUpdateLogs < ActiveRecord::Migration
       t.text :message,       null: false
       t.integer :call_count, null: false, default: -1
 
-      t.timestamps null: false
+      t.datetime :created_at, null: false
     end
     add_index :background_update_logs, :uid
     add_index :background_update_logs, :screen_name
