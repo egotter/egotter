@@ -93,16 +93,7 @@ class SearchResultsController < ApplicationController
   # GET /searches/:screen_name/usage_stats
   def usage_stats
     @wday, @wday_drilldown, @hour, @hour_drilldown, @usage_time = @searched_tw_user.usage_stats
-
-    statuses = @searched_tw_user.statuses
-    statuses_size = statuses.size
-    @kind = {
-      mentions: statuses.select { |s| s.mentions? }.size.to_f / statuses_size * 100,
-      media: statuses.select { |s| s.media? }.size.to_f / statuses_size * 100,
-      urls: statuses.select { |s| s.urls? }.size.to_f / statuses_size * 100,
-      hashtags: statuses.select { |s| s.hashtags? }.size.to_f / statuses_size * 100,
-      location: statuses.select { |s| s.location? }.size.to_f / statuses_size * 100
-    }
+    @kind = @searched_tw_user.statuses_breakdown
 
     hashtags = @searched_tw_user.hashtags
     @cloud = hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }

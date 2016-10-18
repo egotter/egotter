@@ -315,6 +315,28 @@ module Concerns::TwitterUser::Api
     client.usage_stats(extract_time_from_tweets(statuses, day_count: day_count), day_names: I18n.t('date.abbr_day_names'))
   end
 
+  def statuses_breakdown
+    tweets = statuses
+    if tweets.empty?
+      {
+        mentions: 0.0,
+        media: 0.0,
+        urls: 0.0,
+        hashtags: 0.0,
+        location: 0.0
+      }
+    else
+      tweets_size = tweets.size
+      {
+        mentions: tweets.select { |s| s.mentions? }.size.to_f / tweets_size * 100,
+        media: tweets.select { |s| s.media? }.size.to_f / tweets_size * 100,
+        urls: tweets.select { |s| s.urls? }.size.to_f / tweets_size * 100,
+        hashtags: tweets.select { |s| s.hashtags? }.size.to_f / tweets_size * 100,
+        location: tweets.select { |s| s.location? }.size.to_f / tweets_size * 100
+      }
+    end
+  end
+
   private
 
   def extract_time_from_tweets(tweets, day_count: 365)

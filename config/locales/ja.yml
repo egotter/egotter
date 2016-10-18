@@ -93,7 +93,7 @@ ja:
         third: "ぎりぎり一般人…？ ちょっと病みつきになってきたようです。"
         fourth: "軽い廃人かも…。つぶやいた回数だけ社会復帰が遠のいています…。"
         fifth: "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
-      usage_per_xxx: ".%{user}がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
+      usage_active_time: ".%{user}がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       usage_kind: ".%{user}のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user}のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:

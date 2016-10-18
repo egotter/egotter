@@ -10,7 +10,7 @@
   <h3 class="h5">時間帯ごとのツイート数</h3>
   <div id="hour" class="chart"></div>
 
-  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: usage_per_xxx_text(@wday, @hour, @searched_tw_user)}) %>
+  <%= render(partial: 'searches/tweet_box', locals: {tweet_text: usage_active_time_text(@wday, @hour, @searched_tw_user)}) %>
 
   <h3 class="h5">ツイートの内容</h3>
   <div id="kind" class="chart"></div>

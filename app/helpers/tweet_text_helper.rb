@@ -67,12 +67,14 @@ module TweetTextHelper
   #   ...
   #   {:name=>"23", :y=>87, :drilldown=>"23"}
   # ]
-  def usage_per_xxx_text(wday_stats, hour_stats, tu)
+  def usage_active_time_text(wday_stats, hour_stats, tu)
+    return error_text if wday_stats.nil? || hour_stats.nil?
+
     wday_max_y = wday_stats.map { |obj| obj[:y] }.max
     wday = wday_stats.find { |obj| obj[:y] == wday_max_y }[:name]
     hour_max_y = hour_stats.map { |obj| obj[:y] }.max
     hour = hour_stats.find { |obj| obj[:y] == hour_max_y }[:name]
-    t('searches.usage_stats.usage_per_xxx', user: tu.mention_name, wday: wday, hour: hour, url: usage_stats_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_active_time', user: tu.mention_name, wday: wday, hour: hour, url: usage_stats_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{wday_stats.inspect} #{hour_stats.inspect} #{tu.inspect}"
     logger.warn e.backtrace.join("\n")
