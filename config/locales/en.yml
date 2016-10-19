@@ -24,6 +24,12 @@ en:
     defaultNotification:
       title: 'egotter'
       message: 'New Update is Coming!'
+    searchNotification:
+      title: '%{user} is searched - egotter'
+      message: 'show results %{url}'
+    updateNotification:
+      title: '%{user} is updated - egotter'
+      message: 'show results %{url}'
     welcomeNotification:
       title: 'egotter'
       message: 'Thanks for subscribing! (^ ^)/'

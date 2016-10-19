@@ -8,11 +8,17 @@ class CreateNotificationMessageWorker
 
     if user.notification_setting.can_send_search?
       user.api_client.create_direct_message(user.uid.to_i, notification.message)
-      user.notification_setting.touch(:last_dm_at)
+      user.notification_setting.touch(:last_search_at)
       notification.save!
     end
 
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{attrs.inspect}"
+  end
+
+  def send_dm
+  end
+
+  def send_onesignal
   end
 end

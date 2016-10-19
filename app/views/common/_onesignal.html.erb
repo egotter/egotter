@@ -1,22 +1,22 @@
 <script>
   var notifyButton = {
     enable: true,
-    size: 'medium', /* One of 'small', 'medium', or 'large' */
+    size: ['small', 'medium', 'large'][1],
     prenotify: true,
     showCredit: false,
     text: {
-      'tip.state.unsubscribed': "<%= t('onesignal.tip.state.unsubscribed') %>",
-      'tip.state.subscribed': "<%= t('onesignal.tip.state.subscribed') %>",
-      'tip.state.blocked': "<%= t('onesignal.tip.state.blocked') %>",
-      'message.prenotify': "<%= t('onesignal.message.prenotify') %>",
-      'message.action.subscribed': "<%= t('onesignal.message.action.subscribed') %>",
-      'message.action.resubscribed': "<%= t('onesignal.message.action.resubscribed') %>",
-      'message.action.unsubscribed': "<%= t('onesignal.message.action.unsubscribed') %>",
-      'dialog.main.title': "<%= t('onesignal.dialog.main.title') %>",
-      'dialog.main.button.subscribe': "<%= t('onesignal.dialog.main.button.subscribe') %>",
+      'tip.state.unsubscribed':         "<%= t('onesignal.tip.state.unsubscribed') %>",
+      'tip.state.subscribed':           "<%= t('onesignal.tip.state.subscribed') %>",
+      'tip.state.blocked':              "<%= t('onesignal.tip.state.blocked') %>",
+      'message.prenotify':              "<%= t('onesignal.message.prenotify') %>",
+      'message.action.subscribed':      "<%= t('onesignal.message.action.subscribed') %>",
+      'message.action.resubscribed':    "<%= t('onesignal.message.action.resubscribed') %>",
+      'message.action.unsubscribed':    "<%= t('onesignal.message.action.unsubscribed') %>",
+      'dialog.main.title':              "<%= t('onesignal.dialog.main.title') %>",
+      'dialog.main.button.subscribe':   "<%= t('onesignal.dialog.main.button.subscribe') %>",
       'dialog.main.button.unsubscribe': "<%= t('onesignal.dialog.main.button.unsubscribe') %>",
-      'dialog.blocked.title': "<%= t('onesignal.dialog.blocked.title') %>",
-      'dialog.blocked.message': "<%= t('onesignal.dialog.blocked.message') %>"
+      'dialog.blocked.title':           "<%= t('onesignal.dialog.blocked.title') %>",
+      'dialog.blocked.message':         "<%= t('onesignal.dialog.blocked.message') %>"
     },
     displayPredicate: function () {
       return OneSignal.isPushNotificationsEnabled().then(function (isPushEnabled) {
@@ -30,20 +30,13 @@
     "message": "<%= t('onesignal.welcomeNotification.message') %>"
   };
   var promptOptions = {
-    /* Change bold title, limited to 30 characters */
-    siteName: "<%= t('onesignal.promptOptions.siteName') %>",
-    /* Subtitle, limited to 90 characters */
-    actionMessage: "<%= t('onesignal.promptOptions.actionMessage') %>",
-    /* Example notification title */
-    exampleNotificationTitle: "<%= t('onesignal.promptOptions.exampleNotificationTitle') %>",
-    /* Example notification message */
+    siteName:                   "<%= t('onesignal.promptOptions.siteName').truncate(30) %>",
+    actionMessage:              "<%= t('onesignal.promptOptions.actionMessage').truncate(90) %>",
+    exampleNotificationTitle:   "<%= t('onesignal.promptOptions.exampleNotificationTitle') %>",
     exampleNotificationMessage: "<%= t('onesignal.promptOptions.exampleNotificationMessage') %>",
-    /* Text below example notification, limited to 50 characters */
-    exampleNotificationCaption: "<%= t('onesignal.promptOptions.exampleNotificationCaption') %>",
-    /* Accept button text, limited to 15 characters */
-    acceptButtonText: "<%= t('onesignal.promptOptions.acceptButtonText') %>",
-    /* Cancel button text, limited to 15 characters */
-    cancelButtonText: "<%= t('onesignal.promptOptions.cancelButtonText') %>"
+    exampleNotificationCaption: "<%= t('onesignal.promptOptions.exampleNotificationCaption').truncate(50) %>",
+    acceptButtonText:           "<%= t('onesignal.promptOptions.acceptButtonText').truncate(15) %>",
+    cancelButtonText:           "<%= t('onesignal.promptOptions.cancelButtonText').truncate(15) %>"
   };
 
 </script>
@@ -53,12 +46,12 @@
   <script>
     var OneSignal = window.OneSignal || [];
     OneSignal.push(["init", {
-      appId: "<%= ENV['ONESIGNAL_APP_ID'] %>",
-      autoRegister: false,
-      subdomainName: 'egotter-dev',
-      notifyButton: notifyButton,
+      appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
+      autoRegister:        false,
+      subdomainName:       'egotter-dev',
+      notifyButton:        notifyButton,
       welcomeNotification: welcomeNotification,
-      promptOptions: promptOptions
+      promptOptions:       promptOptions
     }]);
     OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);
   </script>
@@ -68,11 +61,11 @@
   <script>
     var OneSignal = window.OneSignal || [];
     OneSignal.push(["init", {
-      appId: "<%= ENV['ONESIGNAL_APP_ID'] %>",
-      autoRegister: false,
-      notifyButton: notifyButton,
+      appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
+      autoRegister:        false,
+      notifyButton:        notifyButton,
       welcomeNotification: welcomeNotification,
-      promptOptions: promptOptions
+      promptOptions:       promptOptions
     }]);
     OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);
   </script>

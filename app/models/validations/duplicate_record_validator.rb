@@ -12,7 +12,7 @@ module Validations
       return false if latest.nil?
 
       if latest.fresh?
-        record.errors[:base] << "[#{latest.id}] is recently created."
+        record.errors[:base] << "[#{latest.id}] is recently updated."
         return true
       end
 
