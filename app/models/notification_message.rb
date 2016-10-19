@@ -8,6 +8,7 @@
 #  screen_name :string(191)      not null
 #  read        :boolean          default(FALSE), not null
 #  message     :text(65535)      not null
+#  medium      :string(191)      default(""), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #

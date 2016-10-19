@@ -61,6 +61,7 @@ ActiveRecord::Schema.define(version: 20160823124535) do
   add_index "background_search_logs", ["user_id"], name: "index_background_search_logs_on_user_id", using: :btree
 
   create_table "background_update_logs", force: :cascade do |t|
+    t.integer  "user_id",     limit: 4,     default: -1,    null: false
     t.string   "uid",         limit: 191,   default: "-1",  null: false
     t.string   "screen_name", limit: 191,   default: "",    null: false
     t.string   "bot_uid",     limit: 191,   default: "-1",  null: false
@@ -148,6 +149,7 @@ ActiveRecord::Schema.define(version: 20160823124535) do
     t.string   "screen_name", limit: 191,                   null: false
     t.boolean  "read",                      default: false, null: false
     t.text     "message",     limit: 65535,                 null: false
+    t.string   "medium",      limit: 191,   default: "",    null: false
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
   end
@@ -187,6 +189,7 @@ ActiveRecord::Schema.define(version: 20160823124535) do
     t.string   "user_agent",  limit: 191, default: "",    null: false
     t.string   "referer",     limit: 191, default: "",    null: false
     t.string   "channel",     limit: 191, default: "",    null: false
+    t.string   "medium",      limit: 191, default: "",    null: false
     t.datetime "created_at",                              null: false
   end
 

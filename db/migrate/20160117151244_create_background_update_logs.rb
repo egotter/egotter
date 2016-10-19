@@ -1,6 +1,7 @@
 class CreateBackgroundUpdateLogs < ActiveRecord::Migration
   def change
     create_table :background_update_logs do |t|
+      t.integer :user_id,    null: false, default: -1
       t.string :uid,         null: false, default: -1
       t.string :screen_name, null: false, default: ''
       t.string :bot_uid,     null: false, default: -1

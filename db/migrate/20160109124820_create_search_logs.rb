@@ -17,6 +17,8 @@ class CreateSearchLogs < ActiveRecord::Migration
       t.string  :referer,     null: false, default: ''
       t.string  :channel,     null: false, default: ''
 
+      t.string  :medium,      null: false, default: ''
+
       t.datetime :created_at, null: false
     end
     add_index :search_logs, :user_id
