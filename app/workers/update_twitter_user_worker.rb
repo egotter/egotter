@@ -6,6 +6,7 @@ class UpdateTwitterUserWorker
     user = User.find(user_id)
     uid = user.uid.to_i
     log_attrs = {
+      user_id:     user.id,
       uid:         uid,
       screen_name: user.screen_name,
       bot_uid:     user.uid,
@@ -84,7 +85,8 @@ class UpdateTwitterUserWorker
       user_id:     login_user.id,
       uid:         tu.uid,
       screen_name: tu.screen_name,
-      message:     message
+      message:     message,
+      medium:      'dm'
     )
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.inspect} #{tu.inspect} #{changed}"
@@ -92,6 +94,7 @@ class UpdateTwitterUserWorker
 
   def create_log(status, attrs, call_count: -1, reason: '', message: '')
     BackgroundUpdateLog.create!(
+      user_id:     attrs[:user_id],
       uid:         attrs[:uid],
       screen_name: attrs[:screen_name],
       bot_uid:     attrs[:bot_uid],

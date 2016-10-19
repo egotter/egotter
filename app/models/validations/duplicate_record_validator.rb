@@ -12,7 +12,7 @@ module Validations
       return false if latest.nil?
 
       if latest.fresh?
-        record.errors[:base] << 'A fresh record exists.'
+        record.errors[:base] << "[#{latest.id}] is recently created."
         return true
       end
 
@@ -29,7 +29,7 @@ module Validations
       return false if older.nil?
       return false if older.diff(newer).any?
 
-      newer.errors[:base] << "Same record(#{newer.id}) exists."
+      newer.errors[:base] << "[#{older.id}] is not changed."
       true
     end
   end

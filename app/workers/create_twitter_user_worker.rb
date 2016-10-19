@@ -90,7 +90,8 @@ class CreateTwitterUserWorker
         user_id: login_user_id,
         uid: tu.uid,
         screen_name: tu.screen_name,
-        message: I18n.t('dictionary.you_are_searched', kaomoji: Kaomoji.unhappy, url: url)
+        message: I18n.t('dictionary.you_are_searched', kaomoji: Kaomoji.unhappy, url: url),
+        medium: 'dm'
       )
     end
   rescue => e
