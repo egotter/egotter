@@ -24,6 +24,7 @@ module Logging
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
       channel:     find_channel,
+      medium:      params[:medium],
       created_at:  Time.zone.now
     }
     attrs.update(options) if options.any?

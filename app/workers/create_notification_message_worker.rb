@@ -15,4 +15,10 @@ class CreateNotificationMessageWorker
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{attrs.inspect}"
   end
+
+  def send_dm
+  end
+
+  def send_onesignal
+  end
 end

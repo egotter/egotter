@@ -1,6 +1,7 @@
 class CreateNotificationSettings < ActiveRecord::Migration
   def change
     create_table :notification_settings do |t|
+      t.boolean :auto,            null: false, default: true
       t.boolean :email,           null: false, default: true
       t.boolean :dm,              null: false, default: true
       t.boolean :news,            null: false, default: true

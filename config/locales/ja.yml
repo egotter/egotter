@@ -276,6 +276,12 @@ ja:
     defaultNotification:
       title: 'えごったー'
       message: 'データが更新されました！'
+    searchNotification:
+      title: '誰かが %{user} を検索しました - えごったー'
+      message: '結果を見る %{url}'
+    updateNotification:
+      title: '%{user} のデータが更新されました - えごったー'
+      message: '結果を見る %{url}'
     welcomeNotification:
       title: 'えごったー'
       message: 'リム通知の登録ありがとうございます(^ ^)/'
