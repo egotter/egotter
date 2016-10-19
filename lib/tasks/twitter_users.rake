@@ -1,24 +1,28 @@
 namespace :twitter_users do
-  desc 'add user_info_gzip'
-  task add_user_info_gzip: :environment do
-    ActiveRecord::Base.connection.execute('ALTER TABLE twitter_users ADD user_info_gzip BLOB NOT NULL AFTER user_info')
+  desc 'add user_info'
+  task add_user_info: :environment do
+    ActiveRecord::Base.connection.execute('ALTER TABLE twitter_users ADD user_info TEXT NOT NULL AFTER user_info_gzip')
   end
 
-  desc 'compress user_info'
-  task compress_user_info: :environment do
-    TwitterUser.find_each(batch_size: 100) do |tu|
-      gzip = ActiveSupport::Gzip.compress(tu.user_info)
-      tu.user_info_gzip = gzip
-      tu.save!
+  desc 'copy to user_info'
+  task copy_to_user_info: :environment do
+    TwitterUser.find_each(batch_size: 1000) do |tu|
+      tu.update!(user_info: ActiveSupport::Gzip.decompress(tu.user_info_gzip))
     end
   end
 
-  desc 'remove user_info'
-  task remove_user_info: :environment do
-    TwitterUser.find_each(batch_size: 100) do |tu|
-      tu.user_info = ''
-      tu.save!
+  desc 'verify user_info'
+  task verify_user_info: :environment do
+    TwitterUser.find_each(batch_size: 1000) do |tu|
+      unless tu.user_info == ActiveSupport::Gzip.decompress(tu.user_info_gzip)
+        puts "id: #{tu.id} doesn't match."
+      end
     end
+  end
+
+  desc 'drop user_info_gzip'
+  task drop_user_info_gzip: :environment do
+    ActiveRecord::Base.connection.execute("ALTER TABLE twitter_users DROP user_info_gzip")
   end
 
   desc 'add an update job'
@@ -28,8 +32,21 @@ namespace :twitter_users do
 
   desc 'add update jobs'
   task add_update_jobs: :environment do
-    ENV['USER_IDS'].split(',').map(&:to_i).each do |user_id|
+    user_ids = ENV['USER_IDS']
+    next if user_ids.blank?
+
+    user_ids =
+      if user_ids.include?('..')
+        Range.new(*user_ids.split('..').map(&:to_i))
+      else
+        user_ids.split(',').map(&:to_i)
+      end
+
+    end
+    user_ids.each do |user_id|
+      start = Time.zone.now
       UpdateTwitterUserWorker.new.perform(user_id)
+      puts "#{Time.zone.now}: #{user_id}, #{(Time.zone.now - start).round(1)} seconds"
     end
   end
 end

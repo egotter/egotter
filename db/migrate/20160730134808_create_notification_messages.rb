@@ -6,6 +6,7 @@ class CreateNotificationMessages < ActiveRecord::Migration
       t.string  :screen_name, null: false
       t.boolean :read,        null: false, default: false
       t.text    :message,     null: false
+      t.string  :medium,      null: false, default: ''
 
       t.timestamps null: false
     end

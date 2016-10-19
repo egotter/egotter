@@ -2,7 +2,7 @@
 
 <div class="menu">
   <h2><small><%= t('notifications.setting') %></small></h2>
-  <% %i(email dm news search).each do |name| %>
+  <% %i(auto email dm news search).each do |name| %>
     <div class="table-box">
       <div class="table-cell-left">
         <input id="<%= name %>-input" class="tgl tgl-ios" type="checkbox" value="1" <%= user.notification_setting.send("#{name}?") ? 'checked="checked"'.html_safe : '' %> name="<%= name %>">
