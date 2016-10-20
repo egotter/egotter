@@ -12,3 +12,9 @@
 1. Change DB host, username and password from production to staging in .env
 1. Comment out crontab
 1. Restart Unicorn and Sidekiq
+
+## Import tzinfo
+
+```
+mysql_tzinfo_to_sql /usr/share/zoneinfo | mysql -u root mysql
+```

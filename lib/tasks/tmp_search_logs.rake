@@ -58,6 +58,7 @@ def import_tmp_search_logs_sql
         when b.channel regexp '(mobile\.)?twitter\.com|t\.co' then 'TWITTER'
         else b.channel
         end unified_channel,
+        a.medium,
         a.created_at
       FROM search_logs a JOIN (
         SELECT
