@@ -61,7 +61,7 @@ gem 'rails_autolink'
 gem 'draper'
 
 group :development, :production do
-  gem 'kpi_admin', path: '../kpi_admin'
+  gem 'blazer'
 end
 
 group :development, :test do
