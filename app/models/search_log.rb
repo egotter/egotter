@@ -38,4 +38,26 @@ class SearchLog < ActiveRecord::Base
   def recently_created?(minutes = 5)
     Time.zone.now.to_i - created_at.to_i < 60 * minutes
   end
+
+  def unify_referer
+    self.unified_referer = unify_host(URI.parse(referer).host)
+  end
+
+  def unify_channel
+    self.unified_channel = unify_host(channel)
+  end
+
+  private
+
+  def unify_host(host)
+    case
+      when host.blank? then 'NULL'
+      when host.include?('egotter') then 'EGOTTER'
+      when host.include?('google') then 'GOOGLE'
+      when host.include?('yahoo') then 'YAHOO'
+      when host.include?('naver') then 'NAVER'
+      when host.match(/(mobile\.)?twitter\.com|t\.co/) then 'TWITTER'
+      else host
+    end
+  end
 end

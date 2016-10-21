@@ -3,6 +3,7 @@ PATH
   specs:
     kpi_admin (0.0.1)
       activesupport
+      groupdate
       haml-rails
       jquery-rails
       rails (~> 4.2.5)
@@ -92,6 +93,8 @@ GEM
     get_process_mem (0.2.1)
     globalid (0.3.6)
       activesupport (>= 4.1.0)
+    groupdate (3.0.2)
+      activesupport (>= 3)
     haml (4.0.7)
       tilt
     haml-rails (0.9.0)
