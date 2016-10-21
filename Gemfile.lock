@@ -1,12 +1,3 @@
-PATH
-  remote: ../kpi_admin
-  specs:
-    kpi_admin (0.0.1)
-      activesupport
-      haml-rails
-      jquery-rails
-      rails (~> 4.2.5)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -53,9 +44,14 @@ GEM
       rake (>= 10.4, < 12.0)
     arel (6.0.3)
     bcrypt (3.1.11)
+    blazer (1.7.0)
+      chartkick
+      rails
+      safely_block (>= 0.1.1)
     buftok (0.2.0)
     builder (3.2.2)
     byebug (9.0.5)
+    chartkick (2.1.1)
     chronic (0.10.2)
     coderay (1.1.1)
     concurrent-ruby (1.0.2)
@@ -80,6 +76,7 @@ GEM
       activesupport (>= 3.0)
       request_store (~> 1.0)
     equalizer (0.0.10)
+    errbase (0.0.3)
     erubis (2.7.0)
     execjs (2.7.0)
     factory_girl (4.7.0)
@@ -242,6 +239,8 @@ GEM
     rspec-support (3.5.0)
     ruby_parser (3.8.2)
       sexp_processor (~> 4.1)
+    safely_block (0.1.1)
+      errbase
     sdoc (0.4.1)
       json (~> 1.7, >= 1.7.7)
       rdoc (~> 4.0)
@@ -312,6 +311,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   annotate
+  blazer
   byebug
   devise
   dogstatsd-ruby
@@ -325,7 +325,6 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   kaminari
-  kpi_admin!
   mecab
   memoist
   meta-tags
