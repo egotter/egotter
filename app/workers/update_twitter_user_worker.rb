@@ -5,19 +5,19 @@ class UpdateTwitterUserWorker
   def perform(user_id)
     user = User.find(user_id)
     uid = user.uid.to_i
-    log_attrs = {
+    log = BackgroundUpdateLog.new(
       user_id:     user.id,
       uid:         uid,
       screen_name: user.screen_name,
-      bot_uid:     user.uid,
-    }
+      bot_uid:     user.uid
+    )
     client = user.api_client
 
     existing_tu = TwitterUser.latest(uid)
     if existing_tu.present? && existing_tu.fresh?
       existing_tu.increment(:update_count).save
-      create_log(true, log_attrs, call_count: client.call_count, message: 'Recently created record exists.')
-      send_notification_message(user, existing_tu, changed: false)
+      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
+      notify(user, existing_tu, changed: false)
       return
     end
 
@@ -25,85 +25,54 @@ class UpdateTwitterUserWorker
     new_tu.user_id = user.id
     if new_tu.save
       new_tu.increment(:update_count).save
-      create_log(true, log_attrs, call_count: client.call_count, message: 'creates a new TwitterUser.')
-      send_notification_message(user, new_tu, changed: true)
+      log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
+      notify(user, new_tu, changed: true)
       return
     end
 
     if existing_tu.present?
       existing_tu.increment(:update_count).save
-      create_log(true, log_attrs, call_count: client.call_count, message: 'Existing one is the same as new one.')
-      send_notification_message(user, existing_tu, changed: false)
+      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed.")
+      notify(user, existing_tu, changed: false)
       return
     end
 
-    create_log(
-      false,
-      log_attrs,
+    log.update(
+      status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
   rescue Twitter::Error::TooManyRequests => e
-    create_log(
-      false,
-      log_attrs,
+    log.update(
+      status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE
     )
   rescue Twitter::Error::Unauthorized => e
-    create_log(
-      false,
-      log_attrs,
+    log.update(
+      status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     logger.info e.backtrace.slice(0, 10).join("\n")
-    create_log(
-      false,
-      log_attrs,
+    log.update(
+      status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message}"
     )
   end
 
-  def send_notification_message(login_user, tu, changed:)
-    url = Rails.application.routes.url_helpers.search_url(screen_name: tu.screen_name, id: tu.uid)
-    message =
-      if changed
-        "データの更新が完了しました。フォロー・フォロワーに変更があります。 #egotter #{url}"
-      else
-        "データの更新が完了しました。フォロー・フォロワーに変更はありません。 #egotter #{url}"
-      end
-
+  def notify(login_user, tu, changed:)
     ::Cache::PageCache.new.delete(tu.uid)
 
-    CreateNotificationMessageWorker.perform_async(
-      user_id:     login_user.id,
-      uid:         tu.uid,
-      screen_name: tu.screen_name,
-      message:     message,
-      medium:      'dm'
-    )
+    %w(dm onesignal).each do |medium|
+      CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'update', medium: medium)
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.inspect} #{tu.inspect} #{changed}"
-  end
-
-  def create_log(status, attrs, call_count: -1, reason: '', message: '')
-    BackgroundUpdateLog.create!(
-      user_id:     attrs[:user_id],
-      uid:         attrs[:uid],
-      screen_name: attrs[:screen_name],
-      bot_uid:     attrs[:bot_uid],
-      status:      status,
-      reason:      reason,
-      message:     message,
-      call_count:  call_count,
-    )
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{status} #{attrs.inspect} #{reason} #{message}"
   end
 end

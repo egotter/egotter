@@ -53,7 +53,7 @@ class NotificationSetting < ActiveRecord::Base
     last_news_at + SEND_NEWS_INTERVAL
   end
 
-  SEND_SEARCH_INTERVAL = 10.minutes
+  SEND_SEARCH_INTERVAL = Rails.env.production? ? 60.minutes : 1.minutes
 
   def can_send_search?
     search? && last_search_at.present? && last_search_at < SEND_SEARCH_INTERVAL.ago

@@ -221,9 +221,6 @@ ja:
     tweet_top_page: "つぶやく"
     created_at_and_updated_at: "更新日時"
     you: "あなた"
-    you_are_searched: "誰かがあなたのアカウントを検索しました。%{kaomoji} %{url}"
-    you_are_searched_by_himself: "検索が完了しました。検索したのは自分です。%{kaomoji} %{url}"
-    you_are_updated: "データの更新が完了しました。%{kaomoji} %{url} DM通知設定の変更はこちら → %{menu_url}"
     clusters_index: "クラスタ指数"
     clusters_cloud: "クラスタクラウド"
     delim: "、"
@@ -272,10 +269,23 @@ ja:
     empty_result: "%{title}は0件でした。%{kaomoji} %{url}"
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
+  dm:
+    searchNotification:
+      title: 'えごったーで %{user} が検索されました。'
+      message: '結果を見る %{url} #egotter'
+    updateNotification:
+      title: 'えごったーで %{user} のデータが自動更新されました。'
+      message: '結果を見る %{url} #egotter'
   onesignal:
     defaultNotification:
       title: 'えごったー'
       message: 'データが更新されました！'
+    searchNotification:
+      title: '%{user} が検索されました。'
+      message: '結果を見る %{url}'
+    updateNotification:
+      title: '%{user} が自動更新されました。'
+      message: '結果を見る %{url}'
     welcomeNotification:
       title: 'えごったー'
       message: 'リム通知の登録ありがとうございます(^ ^)/'
