@@ -33,7 +33,7 @@ class CreateTwitterUserWorker
     end
 
     new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: user, context: :search)
-    new_tu.user_id = user.id
+    new_tu.user_id = user.nil? ? -1 : user.id
     if new_tu.save
       new_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
