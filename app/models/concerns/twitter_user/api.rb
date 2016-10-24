@@ -35,7 +35,7 @@ module Concerns::TwitterUser::Api
   def latest_removing
     return [] unless cached_many?
     newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject{|tu| tu.friendless? }.take(2)
-    return [] if newer.cached_friends.empty?
+    return [] if newer.nil? || older.nil? || newer.cached_friends.empty?
     (older.cached_friends - newer.cached_friends)
   end
 
@@ -43,7 +43,7 @@ module Concerns::TwitterUser::Api
   def removing
     return [] unless cached_many?
     @_removing ||= TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friendless? }.each_cons(2).map do |older, newer|
-      next if newer.cached_friends.empty?
+      next if newer.nil? || older.nil? || newer.cached_friends.empty?
       older.cached_friends - newer.cached_friends
     end.compact.flatten.reverse
   end
@@ -51,7 +51,7 @@ module Concerns::TwitterUser::Api
   def latest_removed
     return [] unless cached_many?
     newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
-    return [] if newer.cached_followers.empty?
+    return [] if newer.nil? || older.nil? || newer.cached_followers.empty?
     (older.cached_followers - newer.cached_followers)
   end
 
@@ -59,7 +59,7 @@ module Concerns::TwitterUser::Api
   def removed
     return [] unless cached_many?
     @_removed ||= TwitterUser.where(uid: uid).order(created_at: :asc).reject { |tu| tu.friendless? }.each_cons(2).map do |older, newer|
-      next if newer.cached_followers.empty?
+      next if newer.nil? || older.nil? || newer.cached_followers.empty?
       older.cached_followers - newer.cached_followers
     end.compact.flatten.reverse
   end
@@ -67,14 +67,14 @@ module Concerns::TwitterUser::Api
   def new_friends
     return [] unless cached_many?
     newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
-    return [] if older.cached_friends.empty?
+    return [] if newer.nil? || older.nil? || older.cached_friends.empty?
     (newer.cached_friends - older.cached_friends)
   end
 
   def new_followers
     return [] unless cached_many?
     newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
-    return [] if older.cached_followers.empty?
+    return [] if newer.nil? || older.nil? || older.cached_followers.empty?
     (newer.cached_followers - older.cached_followers)
   end
 
