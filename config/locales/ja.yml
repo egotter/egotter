@@ -275,6 +275,7 @@ ja:
     new_followers: "新しいフォロワー： %{users}"
     new_removing: "新しいリムーブ： %{users}"
     new_removed: "新しいリムられ： %{users}"
+    omission: " ... 合計%{num}人"
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter'

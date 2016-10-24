@@ -35,10 +35,10 @@ class CreateNotificationMessageWorker
           removing, removed = tu.latest_removing, tu.latest_removed
           [
             I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
-            I18n.t("#{medium}.new_friends", users: friends.map { |f| f.mention_name }.join(' ')),
-            I18n.t("#{medium}.new_followers", users: followers.map { |f| f.mention_name }.join(' ')),
-            I18n.t("#{medium}.new_removing", users: removing.map { |f| f.mention_name }.join(' ')),
-            I18n.t("#{medium}.new_removed", users: removed.map { |f| f.mention_name }.join(' ')),
+            I18n.t("#{medium}.new_friends", users: to_text(friends)),
+            I18n.t("#{medium}.new_followers", users: to_text(followers)),
+            I18n.t("#{medium}.new_removing", users: to_text(removing)),
+            I18n.t("#{medium}.new_removed", users: to_text(removed)),
             I18n.t("#{medium}.#{type}Notification.message", url: url)
           ]
         else
@@ -76,5 +76,11 @@ class CreateNotificationMessageWorker
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
+  end
+
+  private
+
+  def to_text(users)
+    users.map { |u| u.mention_name }.join(' ').truncate(50, omission: I18n.t('dm.omission', sum: users.size), separator: ' ')
   end
 end
