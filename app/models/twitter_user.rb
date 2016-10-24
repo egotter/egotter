@@ -31,11 +31,10 @@ class TwitterUser < ActiveRecord::Base
     obj.has_many :favorites
   end
 
-  attr_accessor :client
-
   include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Equalizer
+  include Concerns::TwitterUser::Inflections
   include Concerns::TwitterUser::Builder
   include Concerns::TwitterUser::Utils
   include Concerns::TwitterUser::Api

@@ -270,6 +270,11 @@ ja:
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   dm:
+    no_diffs: "フォロー・フォロワーに変化はありません。"
+    new_friends: "新しいフォロー： %{users}"
+    new_followers: "新しいフォロワー： %{users}"
+    new_removing: "新しいリムーブ： %{users}"
+    new_removed: "新しいリムられ： %{users}"
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter'

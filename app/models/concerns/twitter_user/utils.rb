@@ -14,8 +14,8 @@ module Concerns::TwitterUser::Utils
   included do
   end
 
-  def mention_name
-    "@#{screen_name}"
+  def client
+    @_client ||= (User.exist?(uid: uid) ? User.find_by(uid: uid).api_client : Bot.api_client)
   end
 
   def cached_friends
@@ -46,7 +46,7 @@ module Concerns::TwitterUser::Utils
     new_record? ? followers.map { |f| f.uid.to_i } : followers.pluck(:uid).map { |uid| uid.to_i }
   end
 
-  def fresh?(seconds = DEFAULT_SECONDS)
-    Time.zone.now - updated_at < seconds
+  def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
+    Time.zone.now - send(attr) < seconds
   end
 end

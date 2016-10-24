@@ -62,4 +62,12 @@ class NotificationSetting < ActiveRecord::Base
   def search_reset_at
     last_search_at + SEND_SEARCH_INTERVAL
   end
+
+  def can_send?(type)
+    case type
+      when :search then can_send_search?
+      when :update then can_send_dm?
+      else raise "#{self.class}##{__method__}: #{type} is not permitted."
+    end
+  end
 end

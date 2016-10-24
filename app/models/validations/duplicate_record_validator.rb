@@ -1,35 +1,11 @@
 module Validations
   class DuplicateRecordValidator < ActiveModel::Validator
-    def validate(record)
-      fresh_record_exists?(record)
-      same_record_exists?(record)
-    end
-
-    private
-
-    def fresh_record_exists?(record)
-      latest = TwitterUser.latest(record.uid.to_i)
+    def validate(new_record)
+      latest = TwitterUser.latest(new_record.uid.to_i)
       return false if latest.nil?
+      return false if latest.diff(new_record).any?
 
-      if latest.fresh?
-        record.errors[:base] << "[#{latest.id}] is recently updated."
-        return true
-      end
-
-      false
-    end
-
-    def same_record_exists?(record)
-      latest = TwitterUser.latest(record.uid.to_i)
-      return false if latest.nil?
-      same_record?(latest, record)
-    end
-
-    def same_record?(older, newer)
-      return false if older.nil?
-      return false if older.diff(newer).any?
-
-      newer.errors[:base] << "[#{older.id}] is not changed."
+      new_record.errors[:base] << "[#{latest.id}] is not changed."
       true
     end
   end

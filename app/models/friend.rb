@@ -19,4 +19,5 @@ class Friend < ActiveRecord::Base
 
   include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Equalizer
+  include Concerns::TwitterUser::Inflections
 end

@@ -32,6 +32,13 @@ module Concerns::TwitterUser::Api
     @_common_followers ||= cached_followers & other.cached_followers
   end
 
+  def latest_removing
+    return [] unless cached_many?
+    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject{|tu| tu.friendless? }.take(2)
+    return [] if newer.cached_friends.empty?
+    (older.cached_friends - newer.cached_friends)
+  end
+
   # `includes` is not used because friends have hundreds of records.
   def removing
     return [] unless cached_many?
@@ -39,6 +46,13 @@ module Concerns::TwitterUser::Api
       next if newer.cached_friends.empty?
       older.cached_friends - newer.cached_friends
     end.compact.flatten.reverse
+  end
+
+  def latest_removed
+    return [] unless cached_many?
+    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
+    return [] if newer.cached_followers.empty?
+    (older.cached_followers - newer.cached_followers)
   end
 
   # `includes` is not used because followers have hundreds of records.
@@ -52,18 +66,16 @@ module Concerns::TwitterUser::Api
 
   def new_friends
     return [] unless cached_many?
-    @_new_friends ||= TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.slice(0, 2).each_cons(2).map do |newer, older|
-      next if older.cached_friends.empty?
-      newer.cached_friends - older.cached_friends
-    end.compact.flatten.reverse
+    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
+    return [] if older.cached_friends.empty?
+    (newer.cached_friends - older.cached_friends)
   end
 
   def new_followers
     return [] unless cached_many?
-    @_new_followers ||= TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.slice(0, 2).each_cons(2).map do |newer, older|
-      next if older.cached_followers.empty?
-      newer.cached_followers - older.cached_followers
-    end.compact.flatten.reverse
+    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
+    return [] if older.cached_followers.empty?
+    (newer.cached_followers - older.cached_followers)
   end
 
   def blocking_or_blocked

@@ -7,7 +7,7 @@ class PageCachesController < ApplicationController
 
   before_action(only: %i(create destroy)) { valid_uid?(params[:id].to_i) }
   before_action(only: %i(create destroy)) { existing_uid?(params[:id].to_i) }
-  before_action(only: %i(create destroy)) { @searched_tw_user = fetch_twitter_user_with_client(params[:id].to_i) }
+  before_action(only: %i(create destroy)) { @searched_tw_user = TwitterUser.latest(params[:id].to_i) }
 
   # POST /page_caches
   def create

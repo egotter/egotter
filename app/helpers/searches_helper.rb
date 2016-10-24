@@ -21,12 +21,6 @@ module SearchesHelper
     redirect_to root_path, alert: alert_message(e)
   end
 
-  def fetch_twitter_user_with_client(uid)
-    tu = TwitterUser.latest(uid)
-    tu.assign_attributes(client: client)
-    tu
-  end
-
   def title_for(tu, menu: nil)
     if %i(common_friends common_followers).include?(menu)
       t("searches.#{menu}.title", user: tu.mention_name, login: I18n.t('dictionary.you'))

@@ -21,11 +21,15 @@
 class User < ActiveRecord::Base
   devise :rememberable, :omniauthable
 
+  include Concerns::TwitterUser::Inflections
+
   def remember_created_at=(_)
   end
 
   has_one :notification_setting, foreign_key: :from_id, dependent: :destroy, validate: false
   accepts_nested_attributes_for :notification_setting
+
+  delegate :can_send?, to: :notification_setting
 
   def self.update_or_create_for_oauth_by!(auth)
     attrs = {
@@ -70,37 +74,9 @@ class User < ActiveRecord::Base
     end
   end
 
-  def twitter_user?
-    twitter_user.present?
-  end
-
-  def mention_name
-    "@#{screen_name}"
-  end
-
   ADMIN_UID = 58135830
 
   def admin?
-    self.class.admin?(uid)
-  end
-
-  def self.admin?(uid)
     uid.to_i == ADMIN_UID
-  end
-
-  def email_enabled?
-    notification_setting.email?
-  end
-
-  def dm_enabled?
-    notification_setting.dm?
-  end
-
-  def news_enabled?
-    notification_setting.news
-  end
-
-  def search_enabled?
-    notification_setting.search?
   end
 end

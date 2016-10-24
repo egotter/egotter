@@ -5,44 +5,72 @@ class CreateNotificationMessageWorker
   def perform(user_id, uid, screen_name, options)
     user_id = user_id.to_i
     uid = uid.to_i
-    type = options['type']
+    type = options['type'].to_sym
     mention_name = "@#{screen_name}"
     medium = options['medium']
 
     url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, id: uid, medium: medium)
+    user = User.find(user_id)
 
-    if %w(search update).include?(type) && medium == 'dm'
-      message = I18n.t("dm.#{type}Notification.title", user: mention_name, url: url) +
-        I18n.t("dm.#{type}Notification.message", url: url)
+    if type == :search && user.can_send?(type) && medium == 'dm'
+      message = [
+        I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
+        I18n.t("#{medium}.#{type}Notification.message", url: url)
+      ].join("\n")
+
       notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium)
-      user = User.find(user_id)
-
-      if user.notification_setting.can_send_search?
-        user.api_client.create_direct_message(user.uid.to_i, notification.message)
-        user.notification_setting.touch(:last_search_at)
-        notification.save!
-      end
+      user.api_client.create_direct_message(user.uid.to_i, notification.message)
+      notification.save!
+      user.notification_setting.touch(:last_search_at)
 
       return
     end
 
-    if %w(search update).include?(type) && medium == 'onesignal'
+    if type == :update && user.can_send?(type) && medium == 'dm'
+      tu = TwitterUser.latest(uid)
+
+      message =
+        if tu.fresh?(:created_at)
+          friends, followers = tu.new_friends, tu.new_followers
+          removing, removed = tu.latest_removing, tu.latest_removed
+          [
+            I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
+            I18n.t("#{medium}.new_friends", users: friends.map { |f| f.mention_name }.join(' ')),
+            I18n.t("#{medium}.new_followers", users: followers.map { |f| f.mention_name }.join(' ')),
+            I18n.t("#{medium}.new_removing", users: removing.map { |f| f.mention_name }.join(' ')),
+            I18n.t("#{medium}.new_removed", users: removed.map { |f| f.mention_name }.join(' ')),
+            I18n.t("#{medium}.#{type}Notification.message", url: url)
+          ]
+        else
+          [
+            I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
+            I18n.t("#{medium}.no_diffs"),
+            I18n.t("#{medium}.#{type}Notification.message", url: url)
+          ]
+        end.join("\n")
+
+      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium)
+      user.api_client.create_direct_message(user.uid.to_i, notification.message)
+      notification.save!
+      user.notification_setting.touch(:last_search_at)
+
+      return
+    end
+
+    if %i(search update).include?(type) && user.can_send?(type) && medium == 'onesignal'
       headings = %i(en ja).map do |locale|
-        [locale, I18n.t("onesignal.#{type}Notification.title", user: mention_name, locale: locale)]
+        [locale, I18n.t("#{medium}.#{type}Notification.title", user: mention_name, locale: locale)]
       end.to_h
       contents = %i(en ja).map do |locale|
-        [locale, I18n.t("onesignal.#{type}Notification.message", url: url, locale: locale)]
+        [locale, I18n.t("#{medium}.#{type}Notification.message", url: url, locale: locale)]
       end.to_h
 
       message = contents[:ja]
       notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium)
-      user = User.find(user_id)
 
-      if user.notification_setting.can_send_search?
-        Onesignal.new(user.id, headings: headings, contents: contents, url: url).send
-        user.notification_setting.touch(:last_search_at)
-        notification.save!
-      end
+      Onesignal.new(user.id, headings: headings, contents: contents, url: url).send
+      notification.save!
+      user.notification_setting.touch(:last_search_at)
 
       return
     end
