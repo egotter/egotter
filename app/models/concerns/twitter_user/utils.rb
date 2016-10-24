@@ -15,7 +15,7 @@ module Concerns::TwitterUser::Utils
   end
 
   def client
-    @_client ||= (User.exist?(uid: uid) ? User.find_by(uid: uid).api_client : Bot.api_client)
+    @_client ||= (User.exists?(uid: uid) ? User.find_by(uid: uid).api_client : Bot.api_client)
   end
 
   def cached_friends
