@@ -81,6 +81,6 @@ class CreateNotificationMessageWorker
   private
 
   def to_text(users)
-    users.map { |u| u.mention_name }.join(' ').truncate(50, omission: I18n.t('dm.omission', sum: users.size), separator: ' ')
+    users.map { |u| u.mention_name }.join(' ').truncate(50, omission: I18n.t('dm.omission', num: users.size), separator: ' ')
   end
 end
