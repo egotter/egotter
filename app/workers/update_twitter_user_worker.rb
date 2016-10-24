@@ -52,13 +52,15 @@ class UpdateTwitterUserWorker
     log.update(
       status: false,
       call_count: client.call_count,
-      reason: BackgroundSearchLog::TooManyRequests::MESSAGE
+      reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
+      message: ''
     )
   rescue Twitter::Error::Unauthorized => e
     log.update(
       status: false,
       call_count: client.call_count,
-      reason: BackgroundSearchLog::Unauthorized::MESSAGE
+      reason: BackgroundSearchLog::Unauthorized::MESSAGE,
+      message: ''
     )
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
