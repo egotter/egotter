@@ -36,7 +36,7 @@
         google_ad_client: "ca-pub-3146843071247817",
         enable_page_level_ads: true
       });
-    - if admin_signed_in?
+    - if user_signed_in?
       = render(partial: 'common/onesignal')
 
   %body

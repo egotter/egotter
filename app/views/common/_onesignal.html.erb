@@ -19,9 +19,8 @@
       'dialog.blocked.message':         "<%= t('onesignal.dialog.blocked.message') %>"
     },
     displayPredicate: function () {
-      return OneSignal.isPushNotificationsEnabled().then(function (isPushEnabled) {
-//        return !isPushEnabled
-        return true
+      return OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
+        return <%= admin_signed_in? ? 'true' : '!isEnabled' %>
       })
     }
   };
