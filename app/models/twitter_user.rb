@@ -31,6 +31,19 @@ class TwitterUser < ActiveRecord::Base
     obj.has_many :favorites
   end
 
+  # has_and_belongs_to_many :primary_list_clusters, validate: false, join_table: 'primary_list_cluster_ids_uids', foreign_key: 'uid', association_foreign_key: 'uid'
+  # has_and_belongs_to_many :secondary_list_clusters, validate: false, join_table: 'secondary_list_cluster_ids_uids', foreign_key: 'uid', association_foreign_key: 'uid'
+
+  def primary_list_clusters
+    list_cluster_ids = ActiveRecord::Base.connection.select_rows("SELECT list_cluster_ids FROM primary_list_cluster_ids_uids WHERE uid = #{uid}").map(&:first)
+    ListCluster.where(id: list_cluster_ids)
+  end
+
+  def secondary_list_clusters
+    list_cluster_ids = ActiveRecord::Base.connection.select_rows("SELECT list_cluster_ids FROM secondary_list_cluster_ids_uids WHERE uid = #{uid}").map(&:first)
+    ListCluster.where(id: list_cluster_ids)
+  end
+
   include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Equalizer
