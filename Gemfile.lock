@@ -1,3 +1,12 @@
+PATH
+  remote: ../kpi_admin
+  specs:
+    kpi_admin (0.0.1)
+      activesupport
+      haml-rails
+      jquery-rails
+      rails (~> 4.2.5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -325,6 +334,7 @@ DEPENDENCIES
   jbuilder (~> 2.0)
   jquery-rails
   kaminari
+  kpi_admin!
   mecab
   memoist
   meta-tags
