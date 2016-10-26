@@ -102,7 +102,6 @@ namespace :followers do
 
       if Follower.find_by_sql([sql, table: :followers]).first.at != klass.find_by_sql([sql, table: table]).first.at
         puts "#{Time.zone.now}: auto_increment id is invalid."
-        exit
       end
 
       Follower.find_in_batches(start: start, batch_size: 5000) do |followers_array|
@@ -126,7 +125,6 @@ namespace :followers do
 
         puts "#{Time.zone.now}: #{followers.first.id} - #{followers.last.id} OK"
       end
-
     end
 
     puts "verify #{(sigint || failed ? 'suspended:' : 'finished:')}"
