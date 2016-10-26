@@ -27,7 +27,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     Util::UnauthorizedUidList.new(redis).delete(user.uid)
     Util::TooManyFriendsUidList.new(redis).delete(user.uid)
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{user.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user.inspect}"
   end
 
   def user_params

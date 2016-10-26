@@ -4,6 +4,8 @@ def create_same_record!(tu)
   same_tu.followers = tu.followers.map { |f| build(:follower, uid: f.uid, screen_name: f.screen_name) }
   adjust_user_info(same_tu)
   same_tu.save!
+  same_tu.friends.each { |f| f.from_id = same_tu.id; f.save! }
+  same_tu.followers.each { |f| f.from_id = same_tu.id; f.save! }
   same_tu
 end
 

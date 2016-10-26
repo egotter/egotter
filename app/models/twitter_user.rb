@@ -22,7 +22,7 @@
 #
 
 class TwitterUser < ActiveRecord::Base
-  with_options foreign_key: :from_id, dependent: :destroy, validate: false do |obj|
+  with_options foreign_key: :from_id, dependent: :destroy, validate: false, autosave: false do |obj|
     obj.has_many :friends
     obj.has_many :followers
     obj.has_many :statuses

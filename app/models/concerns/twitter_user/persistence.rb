@@ -9,8 +9,6 @@ module Concerns::TwitterUser::Persistence
   included do
   end
 
-
-
   def save(*args)
     if persisted?
       return super(*args)
@@ -21,42 +19,40 @@ module Concerns::TwitterUser::Persistence
       return false
     end
 
-    relations = %i(friends followers statuses mentions search_results favorites).map do |name|
-      [name, send(name).to_a.dup]
+    # Fetch before calling save, or `SELECT * FROM relation_name WHERE from_id = xxx` is executed.
+    relations = %i(friends followers statuses mentions search_results favorites).map do |attr|
+      [attr, send(attr).to_a.dup]
     end.to_h
 
-    relations.keys.each do |name|
-      send("#{name}=", [])
+    relations.keys.each do |attr|
+      send("#{attr}=", [])
     end
 
     return false unless super(validate: false)
 
-    begin
-      relations.each { |name, values| import_relations!(name, values) }
-      reload
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-      destroy
-      false
-    else
-      true
-    end
+    relations.each { |attr, values| import_relations!(attr, values) }
+    reload
+    true
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    destroy
+    false
   end
 
   private
 
-  def import_relations!(name, values)
-    klass = name.to_s.classify.constantize
-    benchmark_and_silence(name) do
+  def import_relations!(attr, values)
+    klass = attr.to_s.classify.constantize
+    benchmark_and_silence(attr) do
       values.each { |v| v.from_id = id }
       ActiveRecord::Base.transaction do
-        values.each_slice(100).each { |v| klass.import(v, validate: false) }
+        values.each_slice(1000).each { |ary| klass.import(ary, validate: false) }
       end
     end
   end
 
-  def benchmark_and_silence(message)
-    ActiveRecord::Base.benchmark("#{self.class}#save #{message}") do
+  def benchmark_and_silence(attr)
+    ActiveRecord::Base.benchmark("#{self.class}#save #{attr}") do
       logger.silence do
         yield
       end
