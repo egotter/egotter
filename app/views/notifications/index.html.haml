@@ -14,4 +14,4 @@
             %h4.media-heading
               = "@#{item.screen_name} - #{time_ago_in_words(item.created_at)}".html_safe
             %span.text
-              = auto_link(item.message) { t('dictionary.link') }
+              = auto_link(item.message) { t('dictionary.link') }.gsub(/\R/, '<br>').html_safe
