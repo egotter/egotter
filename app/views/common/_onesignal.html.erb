@@ -20,7 +20,11 @@
     },
     displayPredicate: function () {
       return OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
-        return <%= admin_signed_in? ? 'true' : '!isEnabled' %>
+        <% if controller_name == 'misc' && action_name == 'menu' %>
+          return true
+        <% else %>
+          return !isEnabled
+        <% end %>
       })
     }
   };
