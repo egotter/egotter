@@ -40,8 +40,4 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Api
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
-
-  if Rails.env.development?
-    include Concerns::TwitterUser::Debug
-  end
 end
