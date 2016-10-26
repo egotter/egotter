@@ -2,21 +2,8 @@ class BackgroundSearchLogsController < ApplicationController
   include Validation
   include PageCachesHelper
 
-  before_action :basic_auth, only: :index
   before_action(only: %i(show)) { valid_uid?(params[:id].to_i) }
 
-  def index
-    status =
-      if params.has_key?(:status) && params[:status] != ''
-        params[:status] == 'true'
-      else
-        [true, false]
-      end
-    @logs = BackgroundSearchLog.where(status: status).order(created_at: :desc).limit(50)
-    @status = status == [true, false] ? '' : status.to_s
-  end
-
-  # GET /background_search_logs/:id
   def show
     uid = params[:id].to_i
     unless Util::SearchedUidList.new(redis).exists?(uid)

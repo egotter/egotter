@@ -35,10 +35,9 @@ Rails.application.routes.draw do
   resources :statuses, only: :show
   get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
   resources :update_histories, only: :show
-  resources :background_search_logs, only: %i(index show)
+  resources :background_search_logs, only: %i(show)
   resources :modal_open_logs, only: %i(create)
   resources :page_caches, only: %i(create destroy)
-  post 'clear_result_cache', to: 'page_caches#clear', as: :clear_result_cache
 
   get '/sign_in', to: 'login#sign_in', as: :sign_in
   get '/sign_out', to: 'login#sign_out', as: :sign_out

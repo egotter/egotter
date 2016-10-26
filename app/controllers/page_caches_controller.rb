@@ -35,11 +35,4 @@ class PageCachesController < ApplicationController
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
     render nothing: true, status: 500
   end
-
-  def clear
-    return redirect_to root_path unless request.post?
-    return redirect_to root_path unless current_user.admin?
-    ::Cache::PageCache.new.clear
-    redirect_to root_path
-  end
 end

@@ -59,10 +59,5 @@
     <div>
       <%= link_to BackgroundSearchLog.model_name.human, background_search_logs_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
     </div>
-
-    <h2><small><%= t('caches.clear') %></small></h2>
-    <div>
-      <%= link_to t('caches.clear'), clear_result_cache_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;', method: :post %>
-    </div>
   <% end %>
 </div>

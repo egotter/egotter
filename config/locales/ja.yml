@@ -188,8 +188,6 @@ ja:
     index: "KPI"
   debug:
     index: "デバッグ"
-  caches:
-    clear: "キャッシュを削除する"
 
   dictionary:
     app_name: "えごったー"
