@@ -43,21 +43,4 @@
   <%= render(partial: 'searches/adsense') %>
 
   <%= render(partial: 'search_histories/items', locals: {in_modal: false}) %>
-
-  <% if user.admin? %>
-    <h2><small><%= t('debug.index') %></small></h2>
-    <div>
-      <%= link_to t('debug.index'), debug_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
-    </div>
-
-    <h2><small><%= t('kpis.index') %></small></h2>
-    <div>
-      <%= link_to t('kpis.index'), kpis_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
-    </div>
-
-    <h2><small><%= BackgroundSearchLog.model_name.human %></small></h2>
-    <div>
-      <%= link_to BackgroundSearchLog.model_name.human, background_search_logs_path, class: 'btn btn-lg btn-info btn-block', style: 'margin-bottom: 15px;' %>
-    </div>
-  <% end %>
 </div>

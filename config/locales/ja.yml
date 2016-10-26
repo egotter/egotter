@@ -184,10 +184,6 @@ ja:
     maintenance:
       title: "メンテナンス"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
-  kpis:
-    index: "KPI"
-  debug:
-    index: "デバッグ"
 
   dictionary:
     app_name: "えごったー"

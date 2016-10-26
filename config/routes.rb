@@ -67,6 +67,4 @@ Rails.application.routes.draw do
     end if Rails.env.production?
     mount KpiAdmin::Engine, at: '/kpis', as: :kpis
   end
-
-  get 'debug', to: 'debug#index', as: :debug
 end
