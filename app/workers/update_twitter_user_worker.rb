@@ -13,6 +13,10 @@ class UpdateTwitterUserWorker
     )
     client = user.api_client
 
+    if Util::UnauthorizedUidList.new(Redis.client).exists?(log.uid)
+      return
+    end
+
     existing_tu = TwitterUser.latest(uid)
     if existing_tu.present? && existing_tu.fresh?
       existing_tu.increment(:update_count).save
@@ -56,6 +60,7 @@ class UpdateTwitterUserWorker
       message: ''
     )
   rescue Twitter::Error::Unauthorized => e
+    Util::UnauthorizedUidList.new(Redis.client).add(log.uid)
     log.update(
       status: false,
       call_count: client.call_count,
