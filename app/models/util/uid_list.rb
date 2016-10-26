@@ -53,4 +53,34 @@ module Util
       to_a.size
     end
   end
+
+  class SearchedUidList < UidList
+    def self.key
+      @@key ||= 'background_search_worker:searched_uids'
+    end
+
+    def self.ttl
+      @@ttl ||= Rails.configuration.x.constants['recently_searched']
+    end
+  end
+
+  class UnauthorizedUidList < UidList
+    def self.key
+      @@key ||= 'background_update_worker:unauthorized'
+    end
+
+    def self.ttl
+      @@ttl ||= 10.years.to_i
+    end
+  end
+
+  class TooManyFriendsUidList < UidList
+    def self.key
+      @@key ||= 'background_update_worker:too_many_friends'
+    end
+
+    def self.ttl
+      @@ttl ||= 10.years.to_i
+    end
+  end
 end
