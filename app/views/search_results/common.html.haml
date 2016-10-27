@@ -1,19 +1,19 @@
 - if @user_items.any?
   - if @user_items.first_page? && @user_items.many? && @graph.present?
     = render(partial: 'searches/graph_item',
-      locals: {searched_tw_user: @searched_tw_user, menu: menu, user_items: @user_items, graph: @graph, tweet_text: @tweet_text})
+      locals: {tu: @searched_tw_user, menu: menu, user_items: @user_items, graph: @graph, tweet_text: @tweet_text})
 
   .page-entries-info-top
     = render(partial: 'searches/page_entries_info',
       locals: {controller: :searches, action: action_name, user: @searched_tw_user, items: @user_items})
 
   - modal_rendered_uids = []
-  %div{id: @user_items.object_id}
-    = render(partial: 'searches/user_item', collection: @user_items, cached: true, locals: {uids: modal_rendered_uids})
+  %div{id: menu}
+    = render(partial: 'search_results/user_item', collection: @user_items, cached: true, locals: {uids: modal_rendered_uids})
 
   :javascript
     function enable_carousel(){
-      var container = $('##{@user_items.object_id}');
+      var container = $('##{menu}');
       var option = {
         accessibility: false,
         arrows: false,

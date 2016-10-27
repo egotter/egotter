@@ -28,7 +28,7 @@ class SearchResultsController < ApplicationController
   %i(friends followers removing removed new_friends new_followers blocking_or_blocked).each do |menu|
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
-      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
+      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
 
@@ -37,7 +37,7 @@ class SearchResultsController < ApplicationController
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
       @graph = @searched_tw_user.mutual_friends_graph
       @tweet_text = mutual_friends_text(@searched_tw_user)
-      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
+      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
 
@@ -46,7 +46,7 @@ class SearchResultsController < ApplicationController
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu, current_user.twitter_user)).items
       @graph = @searched_tw_user.send("#{menu}_graph", current_user.twitter_user)
       @tweet_text = send("#{menu}_text", @user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
-      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
+      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
 
@@ -61,7 +61,7 @@ class SearchResultsController < ApplicationController
         end
 
       @tweet_text = close_friends_text(@user_items.map { |i| i[:target] }, @searched_tw_user)
-      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
+      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
 
@@ -70,7 +70,7 @@ class SearchResultsController < ApplicationController
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
       @graph = @searched_tw_user.send("#{menu}_graph")
       @tweet_text = inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
-      render json: {html: render_to_string(partial: 'common', locals: {menu: menu})}, status: 200
+      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
 
@@ -81,7 +81,7 @@ class SearchResultsController < ApplicationController
     @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
     @clusters_belong_to_cloud = @searched_tw_user.clusters_belong_to_cloud
     @tweet_text = clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user)
-    render json: {html: render_to_string(partial: 'clusters_belong_to')}, status: 200
+    render json: {html: render_to_string}, status: 200
   end
 
   # GET /searches/:screen_name/usage_stats
@@ -93,6 +93,6 @@ class SearchResultsController < ApplicationController
     @cloud = hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
     @hashtags = hashtags.to_a.slice(0, 10).map { |word, count| {name: word, y: count} }
 
-    render json: {html: render_to_string(partial: 'usage_stats')}, status: 200
+    render json: {html: render_to_string}, status: 200
   end
 end

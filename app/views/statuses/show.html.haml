@@ -2,7 +2,7 @@
 - set_meta_tags description: "#{@title} - #{@searched_tw_user.description}"
 
 = render(partial: 'searches/profile_overview',
-  locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"})
+  locals: {user: @searched_tw_user, delay: false, unique_id: @searched_tw_user.uid})
 
 .name-and-tweet-items
   .return-to-results-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))

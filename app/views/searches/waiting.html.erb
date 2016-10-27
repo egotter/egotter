@@ -1,5 +1,5 @@
 <%= render(partial: 'searches/profile_overview',
-       locals: {user: @searched_tw_user, enable_carousel: true, unique_id: "#{@searched_tw_user.screen_name}_#{@searched_tw_user.object_id}"}) %>
+       locals: {user: @searched_tw_user, delay: false, unique_id: @searched_tw_user.uid}) %>
 
 <div class="waiting">
   <div class="waiting_msg">

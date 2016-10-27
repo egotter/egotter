@@ -35,7 +35,7 @@
 </div>
 
 <script>
-  function enable_carousel_<%= unique_id %>(){
+  function enable_carousel_profile_overview_<%= 'delay_' if delay %><%= unique_id %>(){
     var container = $('.profile-overview-container.<%= unique_id %>');
     container.find('.profile-overview-carousel').slick({
       accessibility: false,
@@ -50,14 +50,14 @@
     container.find('.profile-calendar').show();
   }
   $(function () {
-    <% if enable_carousel %>
-      enable_carousel_<%= unique_id %>();
-    <% else %>
+    <% if delay %>
       $('.profile-overview-modal.<%= unique_id %>').one('show.bs.modal', function (e) {
         setTimeout(function () {
-          enable_carousel_<%= unique_id %>();
+          enable_carousel_profile_overview_delay_<%= unique_id %>();
         }, 500);
       });
+    <% else %>
+      enable_carousel_profile_overview_<%= unique_id %>();
     <% end %>
   });
 </script>

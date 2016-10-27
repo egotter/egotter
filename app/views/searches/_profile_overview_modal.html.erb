@@ -7,7 +7,7 @@
       </div>
       <div class="modal-body" style="padding: 0;">
         <%= render(partial: 'searches/profile_overview',
-                   locals: {user: user, enable_carousel: false, unique_id: unique_id}) %>
+                   locals: {user: user, delay: true, unique_id: unique_id}) %>
 
         <div style="margin: 15px;">
           <%= link_to t('searches.new.search_by', user: "@#{user.screen_name}"),

@@ -3,9 +3,9 @@
     <% if menu == :close_friends %>
       <div id="friend_map" style="height: 240px; margin: 0 auto;"></div>
       <%
-        users = (user_items.map{|item| item[:target] } << searched_tw_user)
+        users = (user_items.map{|item| item[:target] } << tu)
         nodes = users.map { |user| {id: user.screen_name, url: user.profile_image_url_https.to_s} }
-        links = users.map { |user| {source: searched_tw_user.screen_name, target: user.screen_name, value: 1, group: 0} }
+        links = users.map { |user| {source: tu.screen_name, target: user.screen_name, value: 1, group: 0} }
       %>
       <script>
         $(function () {
@@ -26,6 +26,6 @@
       </script>
     <% end %>
 
-    <%= render(partial: 'searches/tweet_box', locals: {tweet_text: @tweet_text}) %>
+    <%= render(partial: 'searches/tweet_box', locals: {tweet_text: tweet_text}) %>
   </div>
 </div>
