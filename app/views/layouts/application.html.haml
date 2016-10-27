@@ -96,7 +96,7 @@
               %h4#search-modal-label.modal-title= t('searches.new.search_by_egotter')
             .modal-body
               = render partial: 'common/search_box_group', locals: {via: :search_history_input, screen_names: screen_names_for_search}
-              = render partial: 'search_histories/items', locals: {in_modal: true}
+              = render partial: 'search_histories/load', locals: {in_modal: true}
       :javascript
         $(function () {
           $('.search-modal').on('shown.bs.modal', function() {
