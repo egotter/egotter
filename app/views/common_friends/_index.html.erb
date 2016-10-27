@@ -1,12 +1,7 @@
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= menu[:name] %><div class="tooltip-container"><abbr title="<%= menu[:description] %>" rel="tooltip">i</abbr></div></h4>
-
-    <% menu[:target].slice(0..icon_limit).each do |user| %>
-        <span data-toggle="modal" data-target=".profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>">
-          <img class="lazy" src="<%= png %>" data-original="<%= user.profile_image_url_https.to_s %>" alt="<%= user.screen_name %>" width="48" height="48">
-        </span>
-    <% end %>
+    <%= render(partial: 'common_friends/user', collection: menu[:target].slice(0..icon_limit), cached: true, locals: {uids: uids, png: png}) %>
   </div>
 
   <div class="media-right">
@@ -24,11 +19,11 @@
     <% end %>
   </div>
 
-  <% if search_oneself?(searched_tw_user.uid) %>
+  <% if search_oneself?(tu.uid) %>
     <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
       <%= t('view_more_btn.same_user') %>
     </button>
-  <% elsif search_others?(searched_tw_user.uid) %>
+  <% elsif search_others?(tu.uid) %>
     <div>
       <%= link_to(t('dictionary.view_more_with_num', num: menu[:target].size).html_safe, menu[:path], class: 'btn btn-info btn-block') %>
     </div>
@@ -38,16 +33,3 @@
     </button>
   <% end %>
 </div>
-<% menu[:target].slice(0..icon_limit).each do |user| %>
-  <% next if modal_rendered_uids.include?(user.uid.to_i) %>
-  <%= render(partial: 'searches/profile_overview_modal',
-             locals: {user: user, unique_id: "#{user.screen_name}_#{user.uid}", via: :profile_modal}) %>
-  <% modal_rendered_uids << user.uid.to_i %>
-  <script>
-    $(function () {
-      $('.profile-overview-modal.<%= "#{user.screen_name}_#{user.uid}" %>').on('shown.bs.modal', function() {
-        $.post('<%= modal_open_logs_path %>', {name: 'profile'});
-      });
-    });
-  </script>
-<% end %>

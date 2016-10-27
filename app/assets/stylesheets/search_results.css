@@ -18,10 +18,6 @@
   padding-bottom: 0;
 }
 
-.menu-items .media-body a {
-  display: table-cell;
-}
-
 .menu-items .media-body a img {
   border-right: 3px solid #ffffff;
 }

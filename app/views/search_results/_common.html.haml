@@ -7,8 +7,44 @@
     = render(partial: 'searches/page_entries_info',
       locals: {controller: :searches, action: action_name, user: @searched_tw_user, items: @user_items})
 
-  = render(partial: 'searches/user_items',
-    locals: {user_items: @user_items, graph: @graph, tweet_text: @tweet_text})
+  - modal_rendered_uids = []
+  %div{id: @user_items.object_id}
+    = render(partial: 'searches/user_item', collection: @user_items, cached: true, locals: {uids: modal_rendered_uids})
+
+  :javascript
+    function enable_carousel(){
+      var container = $('##{@user_items.object_id}');
+      var option = {
+        accessibility: false,
+        arrows: false,
+        dots: false,
+        infinite: true
+      };
+
+      container.find('.user-item-carousel').each(function(){
+        var loaded = false;
+        $(this)
+          .lazyload()
+          .on('appear', function () {
+            if (loaded) {
+              return
+            }
+            loaded = true;
+
+            $(this).slick(option);
+            $(this)
+              .find('img.lazy').trigger('appear').end()
+              .find('.media.description-box').show().end()
+              .find('.media.count-box').show().end()
+              .find('.media.score-box').show();
+          });
+      });
+    }
+
+    $(function () {
+      enable_carousel();
+      $("img.lazy").lazyload();
+    });
 
   .page-entries-info-bottom
     = render(partial: 'searches/page_entries_info',
