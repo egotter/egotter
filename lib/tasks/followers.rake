@@ -91,6 +91,7 @@ namespace :followers do
     start = ENV['START'].present? ? ENV['START'] : 1
     start_time = Time.zone.now
     failed = false
+    attrs = %i(id uid screen_name user_info from_id created_at)
     puts "\nverify started:"
 
     Rails.logger.silence do
@@ -110,18 +111,15 @@ namespace :followers do
 
         if followers.size != klass_records.size
           puts "#{Time.zone.now}: #{followers.first.id} - #{followers.last.id} Record size is invalid."
-          break
+          failed = true
         end
 
-        failed = followers.zip(klass_records).any? do |follower, tmp_follower|
-          %i(id uid screen_name user_info from_id created_at).any? {|attr| follower.send(attr) != tmp_follower.send(attr) }
-        end
-        if failed
+        if followers.zip(klass_records).any? { |f, tf| attrs.any? { |attr| f.send(attr) != tf.send(attr) } }
           puts "#{Time.zone.now}: #{followers.first.id} - #{followers.last.id} Record content is invalid."
-          break
+          failed = true
         end
 
-        break if sigint
+        break if sigint || failed
 
         puts "#{Time.zone.now}: #{followers.first.id} - #{followers.last.id} OK"
       end
