@@ -1,5 +1,5 @@
 <%
-  # avoid duplicate rendering
+  tu = @searched_tw_user
   modal_rendered_uids = []
   icon_limit = request.device_type == :pc ? 8 : 3
   png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
@@ -11,17 +11,45 @@
   });
 </script>
 
-<%= render partial: 'search_results/menu/close_friends', locals: {menu: @menu_close_friends, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png} %>
-<%= render partial: 'search_results/menu/usage_stats', locals: {menu: @menu_usage_stats} %>
-<%= render partial: 'search_results/menu/clusters_belong_to', locals: {menu: @menu_clusters_belong_to} %>
-
-<% @menu_items.each do |menu| %>
-  <%= render partial: 'search_results/menu/common', locals: {menu: menu, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png} %>
+<% cache "#{tu.cache_key}/close_friends" do %>
+  <%= render partial: 'close_friends/index', locals: {users: tu.close_friends(login_user: @login_user), graph: tu.close_friends_graph(login_user: @login_user), uids: modal_rendered_uids, icon_limit: icon_limit, png: png, tu: tu} %>
 <% end %>
 
-<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_friends, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png, searched_tw_user: @searched_tw_user} %>
-<%= render partial: 'search_results/menu/common_friends', locals: {menu: @menu_common_followers, modal_rendered_uids: modal_rendered_uids, icon_limit: icon_limit, png: png, searched_tw_user: @searched_tw_user} %>
-<%= render partial: 'search_results/menu/update_histories', locals: {menu: @menu_update_histories} %>
+<% cache "#{tu.cache_key}/usage_stats" do %>
+  <%= render partial: 'usage_stats/index', locals: {graph: tu.usage_stats_graph, tu: tu} %>
+<% end %>
+
+<% cache "#{tu.cache_key}/tweet_clusters" do %>
+  <%= render partial: 'tweet_clusters/index', locals: {graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
+<% end %>
+
+<%
+  %i(removing removed new_friends new_followers blocking_or_blocked mutual_friends
+     one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
+    cache "#{tu.cache_key}/various_users/#{name}" do
+      values = {
+        name: t("searches.#{name}.title", user: tu.mention_name),
+        description: t("searches.#{name}.description", user: tu.mention_name),
+        target: tu.send(name),
+        graph: tu.send("#{name}_graph"),
+        path: send("#{name}_path", screen_name: tu.screen_name)
+      }
+%>
+  <%= render partial: 'various_users/index', locals: {menu: values, uids: modal_rendered_uids, icon_limit: icon_limit, png: png, tu: tu} %>
+<%
+    end
+  end
+%>
+
+<%# cache "#{tu.cache_key}/common_friends" do %>
+  <%# locals = {uids: modal_rendered_uids, icon_limit: icon_limit, png: png, tu: tu} %>
+  <%#= render partial: 'common_friends/index', locals: locals.merge(menu: @menu_common_friends) %>
+  <%#= render partial: 'common_friends/index', locals: locals.merge(menu: @menu_common_followers) %>
+<%# end %>
+
+<% cache "#{tu.cache_key}/update_histories" do %>
+  <%= render partial: 'update_histories/index', locals: {histories: UpdateHistories.new(tu.uid), tu: tu} %>
+<% end %>
 
 <script>
   $(function () {
@@ -45,21 +73,21 @@
 
 <%= render(partial: 'searches/adsense_bottom') %>
 
-<h2 class="h4"><%= t('.about_this_page', this_page: t('searches.show.heading', user: @searched_tw_user.mention_name)) %></h2>
-<div class="this-page-is"><%= t('.this_page_is', user: @searched_tw_user.mention_name) %></div>
+<h2 class="h4"><%= t('.about_this_page', this_page: t('searches.show.heading', user: tu.mention_name)) %></h2>
+<div class="this-page-is"><%= t('.this_page_is', user: tu.mention_name) %></div>
 
 <h2 class="h4"><%= t('.other_services') %></h2>
 <div class="row other-services">
   <div class="text-center col-xs-12 col-sm-4">
-    <%= t('search_results.show.twitter_link', screen_name: @searched_tw_user.screen_name).html_safe %>
+    <%= t('search_results.show.twitter_link', screen_name: tu.screen_name).html_safe %>
     <div class="tooltip-container"><abbr title="Twitter" rel="tooltip">i</abbr></div>
   </div>
   <div class="text-center col-xs-12 col-sm-4">
-    <%= t('search_results.show.twilog_link', screen_name: @searched_tw_user.screen_name).html_safe %>
+    <%= t('search_results.show.twilog_link', screen_name: tu.screen_name).html_safe %>
     <div class="tooltip-container"><abbr title="Twilog" rel="tooltip">i</abbr></div>
   </div>
   <div class="text-center col-xs-12 col-sm-4">
-    <%= t('search_results.show.favstar_link', screen_name: @searched_tw_user.screen_name).html_safe %>
+    <%= t('search_results.show.favstar_link', screen_name: tu.screen_name).html_safe %>
     <div class="tooltip-container"><abbr title="Favstar" rel="tooltip">i</abbr></div>
   </div>
 </div>
@@ -80,12 +108,12 @@
     });
 
     function delete_cache() {
-      var url = "<%= raw page_cache_path(id: @searched_tw_user.uid, hash: 'HASH') %>";
+      var url = "<%= raw page_cache_path(id: tu.uid, hash: 'HASH') %>";
       return $.ajax({url: url.replace(/HASH/, hash), type: 'DELETE'})
     }
 
     function create_cache() {
-      var url = "<%= raw page_caches_path(id: @searched_tw_user.uid) %>";
+      var url = "<%= raw page_caches_path(id: tu.uid) %>";
       return $.post(url)
     }
 
@@ -139,7 +167,7 @@
       console.log(res, text_status, xhr.status, interval.cur(), retry.cur());
 
       if (xhr.status == 200) {
-        var created_at = <%= @searched_tw_user.created_at.to_i %>;
+        var created_at = <%= tu.created_at.to_i %>;
         if (created_at < res.created_at) {
           hash = res.hash;
           refresh_box.show();
@@ -152,7 +180,7 @@
     }
 
     function tic() {
-      var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
+      var url = "<%= background_search_log_path(id: tu.uid) %>";
       $.get(url).done(done).fail(failed);
     }
 

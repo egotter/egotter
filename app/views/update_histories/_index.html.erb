@@ -1,0 +1,15 @@
+<div class="menu-items menu-items-last media">
+  <div class="media-body">
+    <h4 class="h5 media-heading">
+      <%= t('update_histories.show.title', user: tu.mention_name) %>
+      <div class="tooltip-container"><abbr title="<%= t('update_histories.show.description', user: tu.mention_name) %>" rel="tooltip">i</abbr></div>
+    </h4>
+    <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= histories.search_count %></div>
+    <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= histories.update_count %></div>
+  </div>
+  <div>
+    <%= link_to(t('dictionary.view_more'), update_history_path(id: tu.uid), class: 'btn btn-info btn-block') %>
+  </div>
+</div>

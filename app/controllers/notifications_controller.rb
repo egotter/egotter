@@ -11,7 +11,7 @@ class NotificationsController < ApplicationController
     return redirect_to root_path unless user_signed_in?
 
     @title = t('.title', user: current_user.mention_name)
-    @items = NotificationMessage.where(user_id: current_user.id, medium: 'dm').order(created_at: :desc).limit(10)
+    @notifications = NotificationMessage.where(user_id: current_user.id, medium: 'dm').order(created_at: :desc).limit(10)
   end
 
   def update

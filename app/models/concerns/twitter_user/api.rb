@@ -90,6 +90,7 @@ module Concerns::TwitterUser::Api
     end.map { |u| u.uid = u.id; u }
   end
 
+  # TODO do not use login_user
   def replied(uniq: true, login_user: nil)
     result =
       if login_user && login_user.uid.to_i == uid.to_i
@@ -204,6 +205,7 @@ module Concerns::TwitterUser::Api
     ]
   end
 
+  # TODO do not use login_user
   def replied_graph(login_user: nil)
     followers_size = followers_count
     replied_size = [replied(login_user: login_user).size, followers_size].min

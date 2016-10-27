@@ -13,7 +13,6 @@ class PageCachesController < ApplicationController
   def create
     tu = @searched_tw_user
 
-    create_instance_variables_for_result_page(tu, login_user: User.find_by(id: current_user_id))
     ::Cache::PageCache.new.write(tu.uid, render_to_string(template: 'search_results/show'))
     render nothing: true, status: 200
   rescue => e
