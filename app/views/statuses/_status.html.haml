@@ -1,0 +1,10 @@
+- user = status.user
+.status-item
+  .media
+    .media-left
+      %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
+    .media-body
+      %h4.media-heading
+        = "#{user.name} @#{user.screen_name} - #{time_ago_in_words(status.tweeted_at)}".html_safe
+      %span.text
+        = status.text
