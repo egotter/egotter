@@ -3,12 +3,14 @@ module Cache
 
     attr_reader :store
 
+    CACHE_ENABLED = ENV['PAGE_CACHE'] == '1'
+
     def initialize
       @store = ActiveSupport::Cache.lookup_store(:file_store, File.expand_path('tmp/page_cache', ENV['RAILS_ROOT']))
     end
 
     def key_prefix
-      'v3-searches-file-store'
+      'v4-searches-file-store'
     end
 
     def key_suffix
@@ -20,7 +22,7 @@ module Cache
     end
 
     def exists?(uid)
-      ENV['PAGE_CACHE'] == '1' && store.exist?(normalize_key(uid))
+      CACHE_ENABLED && store.exist?(normalize_key(uid))
     end
 
     def read(uid)
@@ -32,10 +34,11 @@ module Cache
     end
 
     def fetch(uid, &block)
-      if block_given?
-        store.fetch(normalize_key(uid), &block)
+      if CACHE_ENABLED
+        key = normalize_key(uid)
+        block_given? ? store.fetch(key, &block) : store.fetch(key)
       else
-        store.fetch(normalize_key(uid))
+        yield
       end
     end
 
@@ -48,7 +51,7 @@ module Cache
     end
 
     def cleanup
-      store.delete_matched(/^v2-searches-file-store:/)
+      store.delete_matched(/^(v[2-3]-)?searches-file-store:/)
     end
 
     def ttl(uid)

@@ -14,7 +14,7 @@ class StatusesController < ApplicationController
 
   # GET /statuses/:id
   def show
-    @statuses = Kaminari.paginate_array(@searched_tw_user.statuses).page(params[:page]).per(100)
+    @statuses = Kaminari.paginate_array(@searched_tw_user.statuses.to_a).page(params[:page]).per(100)
     @title = t('.title', user: @searched_tw_user.mention_name)
   end
 

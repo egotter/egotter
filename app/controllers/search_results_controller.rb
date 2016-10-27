@@ -15,18 +15,12 @@ class SearchResultsController < ApplicationController
 
   def show
     tu = @searched_tw_user
-    user_id = current_user_id
-
-    add_background_search_worker_if_needed(tu.uid, user_id: user_id, screen_name: tu.screen_name)
-
-    html = ::Cache::PageCache.new.fetch(tu.uid) do
-      create_instance_variables_for_result_page(tu, login_user: User.find_by(id: user_id))
-      render_to_string
-    end
-
+    add_background_search_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+    @login_user = User.find_by(id: current_user_id)
+    html = ::Cache::PageCache.new.fetch(tu.uid) { render_to_string }
     render json: {html: html}, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{request.device_type}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{request.device_type}"
     logger.info e.backtrace.slice(0, 10).join("\n")
     render nothing: true, status: 500
   end

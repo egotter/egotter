@@ -1,6 +1,7 @@
 module Cache
   class RedisStore
     TTL = Rails.configuration.x.constants['page_cache_ttl']
+    CACHE_ENABLED = ENV['PAGE_CACHE'] == '1'
 
     attr_reader :store
 
@@ -21,7 +22,7 @@ module Cache
     end
 
     def exists?(uid)
-      ENV['PAGE_CACHE'] == '1' && store.exists(normalize_key(uid))
+      CACHE_ENABLED && store.exists(normalize_key(uid))
     end
 
     def read(uid)

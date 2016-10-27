@@ -32,4 +32,11 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Api
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
+
+  def cache_key
+    case
+      when new_record? then super
+      else "#{self.class.model_name.cache_key}/#{id}"
+    end
+  end
 end

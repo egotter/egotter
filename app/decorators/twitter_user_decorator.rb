@@ -1,27 +1,4 @@
 class TwitterUserDecorator < Draper::Decorator
-  %i(removing removed new_friends new_followers blocking_or_blocked mutual_friends
-     one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |menu|
-    define_method("#{menu}_menu") do
-      {
-        name: I18n.t("searches.#{menu}.title", user: object.mention_name),
-        description: I18n.t("searches.#{menu}.description", user: object.mention_name),
-        target: object.send(menu),
-        graph: object.send("#{menu}_graph"),
-        path: h.send("#{menu}_path", screen_name: object.screen_name)
-      }
-    end
-  end
-
-  def replied_menu(login_user:)
-    {
-      name: I18n.t("searches.replied.title", user: object.mention_name),
-      description: I18n.t('searches.replied.description', user: object.mention_name),
-      target: object.replied(login_user: login_user),
-      graph: object.replied_graph(login_user: login_user),
-      path: h.replied_path(screen_name: object.screen_name)
-    }
-  end
-
   def common_friend_and_followers_menu
     sn = object.mention_name
     friends_name = I18n.t('searches.common_friends.title', user: sn, login: I18n.t('dictionary.you'))
@@ -75,49 +52,5 @@ class TwitterUserDecorator < Draper::Decorator
         },
       ]
     end
-  end
-
-  def close_friends_menu(login_user:)
-    {
-      name: I18n.t('searches.close_friends.title', user: object.mention_name),
-      description: I18n.t('searches.close_friends.description', user: object.mention_name),
-      target: object.close_friends(login_user: login_user),
-      graph: object.close_friends_graph(login_user: login_user),
-      path: h.close_friends_path(screen_name: object.screen_name)
-    }
-  end
-
-  def usage_stats_menu
-    {
-      name: I18n.t('searches.usage_stats.title', user: object.mention_name),
-      description: I18n.t('searches.usage_stats.description', user: object.mention_name),
-      graph: object.usage_stats_graph,
-      path: h.usage_stats_path(screen_name: object.screen_name)
-    }
-  end
-
-  def clusters_belong_to_menu
-    sn = object.mention_name
-    title = I18n.t('searches.clusters_belong_to.title', user: sn)
-    clusters_belong_to = object.clusters_belong_to
-    {
-      name: title,
-      description: I18n.t('searches.clusters_belong_to.description', user: object.mention_name),
-      target: clusters_belong_to,
-      graph: object.clusters_belong_to_frequency_distribution,
-      screen_name: object.screen_name,
-      text: "#{clusters_belong_to.map{|c| "#{c}#{I18n.t('searches.common.cluster')}" }.join(I18n.t('dictionary.delim'))}",
-      tweet_text: "#{title}\n#{clusters_belong_to.map{|c| "##{c}#{I18n.t('searches.common.cluster')}" }.join(' ')}\n#{I18n.t('dictionary.continue_reading')}http://example.com",
-      path: h.clusters_belong_to_path(screen_name: object.screen_name)
-    }
-  end
-
-  def update_histories_menu
-    {
-      name: I18n.t('update_histories.show.title', user: object.mention_name),
-      description: I18n.t('update_histories.show.description', user: object.mention_name),
-      target: UpdateHistories.new(object.uid),
-      path: h.update_history_path(id: object.uid)
-    }
   end
 end
