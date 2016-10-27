@@ -22,15 +22,7 @@
 #
 
 class TwitterUser < ActiveRecord::Base
-  with_options foreign_key: :from_id, dependent: :destroy, validate: false, autosave: false do |obj|
-    obj.has_many :friends
-    obj.has_many :followers
-    obj.has_many :statuses
-    obj.has_many :mentions
-    obj.has_many :search_results
-    obj.has_many :favorites
-  end
-
+  include Concerns::TwitterUser::Associations
   include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Equalizer
