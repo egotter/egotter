@@ -5,7 +5,15 @@ module Concerns::TwitterUser::Utils
 
   class_methods do
     def latest(uid)
-      order(created_at: :desc).find_by(uid: uid.to_i)
+      order(created_at: :desc).find_by(uid: uid)
+    end
+
+    def many?(uid)
+      where(uid: uid).size >= 2
+    end
+
+    def with_friends(uid, order:)
+      includes(:friends, :followers).where(uid: uid).order(created_at: order).reject { |tu| tu.friendless? }
     end
   end
 
@@ -18,24 +26,8 @@ module Concerns::TwitterUser::Utils
     @_client ||= (User.exists?(uid: uid) ? User.find_by(uid: uid).api_client : Bot.api_client)
   end
 
-  def cached_friends
-    @_cached_friends ||= friends.to_a
-  end
-
-  def cached_followers
-    @_cached_followers ||= followers.to_a
-  end
-
-  def cached_many?
-    if instance_variable_defined?(:@_cached_many)
-      @_cached_many
-    else
-      @_cached_many = TwitterUser.where(uid: uid).many?
-    end
-  end
-
   def friendless?
-    cached_friends.empty? && cached_followers.empty?
+    friends.empty? && followers.empty?
   end
 
   def friend_uids

@@ -11,71 +11,71 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_friends
-    @_one_sided_friends ||= cached_friends - cached_followers
+    @_one_sided_friends ||= friends - followers
   end
 
   def one_sided_followers
-    @_one_sided_followers ||= cached_followers - cached_friends
+    @_one_sided_followers ||= followers - friends
   end
 
   def mutual_friends
-    @_mutual_friends ||= cached_friends & cached_followers
+    @_mutual_friends ||= friends & followers
   end
 
   def common_friends(other)
     return [] if other.blank?
-    @_common_friends ||= cached_friends & other.cached_friends
+    @_common_friends ||= friends & other.friends
   end
 
   def common_followers(other)
     return [] if other.blank?
-    @_common_followers ||= cached_followers & other.cached_followers
+    @_common_followers ||= followers & other.followers
   end
 
   def latest_removing
-    return [] unless cached_many?
-    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject{|tu| tu.friendless? }.take(2)
-    return [] if newer.nil? || older.nil? || newer.cached_friends.empty?
-    (older.cached_friends - newer.cached_friends)
+    return [] unless self.class.many?(uid)
+    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    return [] if newer.nil? || older.nil? || newer.friends.empty?
+    older.friends - newer.friends
   end
 
   # `includes` is not used because friends have hundreds of records.
   def removing
-    return [] unless cached_many?
-    @_removing ||= TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friendless? }.each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.cached_friends.empty?
-      older.cached_friends - newer.cached_friends
+    return [] unless self.class.many?(uid)
+    @_removing ||= TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
+      next if newer.nil? || older.nil? || newer.friends.empty?
+      older.friends - newer.friends
     end.compact.flatten.reverse
   end
 
   def latest_removed
-    return [] unless cached_many?
-    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
-    return [] if newer.nil? || older.nil? || newer.cached_followers.empty?
-    (older.cached_followers - newer.cached_followers)
+    return [] unless self.class.many?(uid)
+    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    return [] if newer.nil? || older.nil? || newer.followers.empty?
+    older.followers - newer.followers
   end
 
   # `includes` is not used because followers have hundreds of records.
   def removed
-    return [] unless cached_many?
-    @_removed ||= TwitterUser.where(uid: uid).order(created_at: :asc).reject { |tu| tu.friendless? }.each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.cached_followers.empty?
-      older.cached_followers - newer.cached_followers
+    return [] unless self.class.many?(uid)
+    @_removed ||= TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
+      next if newer.nil? || older.nil? || newer.followers.empty?
+      older.followers - newer.followers
     end.compact.flatten.reverse
   end
 
   def new_friends
-    return [] unless cached_many?
-    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
-    return [] if newer.nil? || older.nil? || older.cached_friends.empty?
-    (newer.cached_friends - older.cached_friends)
+    return [] unless self.class.many?(uid)
+    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    return [] if newer.nil? || older.nil? || older.friends.empty?
+    (newer.friends - older.friends)
   end
 
   def new_followers
-    return [] unless cached_many?
-    newer, older = TwitterUser.where(uid: uid).order(created_at: :desc).reject { |tu| tu.friendless? }.take(2)
-    return [] if newer.nil? || older.nil? || older.cached_followers.empty?
-    (newer.cached_followers - older.cached_followers)
+    return [] unless self.class.many?(uid)
+    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    return [] if newer.nil? || older.nil? || older.followers.empty?
+    (newer.followers - older.followers)
   end
 
   def blocking_or_blocked
@@ -118,11 +118,11 @@ module Concerns::TwitterUser::Api
   end
 
   def inactive_friends
-    @_inactive_friends ||= dummy_client._extract_inactive_users(cached_friends)
+    @_inactive_friends ||= dummy_client._extract_inactive_users(friends)
   end
 
   def inactive_followers
-    @_inactive_followers ||= dummy_client._extract_inactive_users(cached_followers)
+    @_inactive_followers ||= dummy_client._extract_inactive_users(followers)
   end
 
   def clusters_belong_to
@@ -243,7 +243,7 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_friends_graph
-    friends_size = cached_friends.size
+    friends_size = friends.size
     one_sided_size = one_sided_friends.size
     [
       {name: I18n.t('searches.one_sided_friends.targets'), y: (one_sided_size.to_f / friends_size * 100)},
@@ -252,7 +252,7 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_followers_graph
-    followers_size = cached_followers.size
+    followers_size = followers.size
     one_sided_size = one_sided_followers.size
     [
       {name: I18n.t('searches.one_sided_followers.targets'), y: (one_sided_size.to_f / followers_size * 100)},
@@ -281,7 +281,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_friends_graph(other)
-    friends_size = cached_friends.size
+    friends_size = friends.size
     common_friends_size = common_friends(other).size
     [
       {name: I18n.t('searches.common_friends.targets'), y: (common_friends_size.to_f / friends_size * 100)},
@@ -290,7 +290,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_followers_graph(other)
-    followers_size = cached_followers.size
+    followers_size = followers.size
     common_followers_size = common_followers(other).size
     [
       {name: I18n.t('searches.common_followers.targets'), y: (common_followers_size.to_f / followers_size * 100)},
