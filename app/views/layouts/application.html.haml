@@ -37,9 +37,10 @@
         enable_page_level_ads: true
       });
 
-    %link{href: '/manifest.json', rel: 'manifest'}/
-    %script{async: '', src: 'https://cdn.onesignal.com/sdks/OneSignalSDK.js'}
     - if user_signed_in?
+      - if Rails.env.production?
+        %link{href: '/manifest.json', rel: 'manifest'}
+      %script{src: 'https://cdn.onesignal.com/sdks/OneSignalSDK.js'}
       = render(partial: 'common/onesignal')
 
   %body
