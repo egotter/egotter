@@ -1,12 +1,16 @@
 <%= render(partial: 'searches/profile_overview',
-       locals: {user: @searched_tw_user, delay: false, unique_id: @searched_tw_user.uid}) %>
+           locals: {user: @searched_tw_user, delay: false, unique_id: @searched_tw_user.uid}) %>
 
 <div class="waiting">
-  <div class="waiting_msg">
+  <div class="waiting-msg">
     <%= t('searches.waiting.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
   </div>
 
-  <div class="progress_bar">
+  <div class="finished-msg" style="display: none;">
+    <%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+  </div>
+
+  <div class="bar">
     <div class="progress">
       <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
         <span class="sr-only">0% Complete</span>
@@ -14,192 +18,175 @@
     </div>
   </div>
 
-  <div class="login_btn" style="display: none;">
-    <%= link_to t('login.welcome.sign_in_with_twitter'), welcome_path, class: 'btn btn-lg btn-info btn-block' %>
+  <div class="rescue-box" style="display: none;">
+    <div class="error-msg"></div>
+
+    <% if user_signed_in? %>
+      <div class="retry-btn">
+        <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name),
+                    searches_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid, via: :retry),
+                    class: 'btn btn-lg btn-info btn-block', method: :post %>
+      </div>
+    <% else %>
+      <div class="login-btn">
+        <%= link_to t('login.welcome.sign_in_with_twitter'), welcome_path, class: 'btn btn-lg btn-info btn-block' %>
+      </div>
+    <% end %>
+
+    <div class="support-btn">
+      <%= link_to t('dictionary.link_to_support'), support_path, class: 'btn btn-lg btn-info btn-block' %>
+    </div>
   </div>
 
-  <div class="retry_btn" style="display: none;">
-    <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name), searches_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid, via: :retry),
-                class: 'btn btn-lg btn-info btn-block', method: :post %>
-  </div>
-
-  <div class="support_btn" style="display: none;">
-    <%= link_to t('dictionary.link_to_support'), support_path, class: 'btn btn-lg btn-info btn-block' %>
-  </div>
+  <div style="margin-top: 15px;"></div>
 </div>
 
 <script>
   $(function () {
-    var is_login = <%= user_signed_in? ? 'true' : 'false' %>;
-    var waiting_msg = $('.waiting_msg');
-    var retry_btn = $('.retry_btn');
-    var login_btn = $('.login_btn');
-    var progress_bar = $('.progress_bar');
-    var support_btn = $('.support_btn');
+    'use strict';
 
-    var Exception = {
-      create(msg1, msg2){
-        var me = Object.create(Exception.prototype);
-        me.msg1 = msg1;
-        me.msg2 = msg2;
-        return me;
-      },
-      prototype: {
-        show_msg(){
-          progress_bar.hide();
-          if (is_login) {
-            waiting_msg.html(this.msg1);
-            retry_btn.show();
-            support_btn.show();
-          } else {
-            waiting_msg.html(this.msg2);
-            login_btn.show();
-            support_btn.show();
-          }
-        }
+    class ProgressBar {
+      constructor() {
+        this.$progressBar = $('.bar');
+        this.$bar = this.$progressBar.find('.progress-bar');
       }
-    };
 
-    var TooManyRequests = {
-      create(){
-        var me = Object.create(TooManyRequests.prototype);
-        var msg1 = '<%= t("after_sign_in.too_many_requests") %>';
-        var msg2 = '<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
-        Object.assign(me, Exception.create(msg1, msg2));
-        return me;
-      },
-      prototype: {}
-    };
-    Object.setPrototypeOf(TooManyRequests.prototype, Exception.prototype);
+      set(value) {
+        this.$bar.css('width', value + '%').attr('aria-valuenow', value);
+        this.$bar.find('.sr-only').text(value + '% Complete');
+      }
 
-    var Unauthorized = {
-      create(){
-        var me = Object.create(Unauthorized.prototype);
-        var msg1 = '<%= t("after_sign_in.unauthorized", sign_out_link: link_to(t('dictionary.sign_out'), sign_out_path)).html_safe %>';
-        var msg2 = '<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
-        Object.assign(me, Exception.create(msg1, msg2));
-        return me;
-      },
-      prototype: {}
-    };
-    Object.setPrototypeOf(Unauthorized.prototype, Exception.prototype);
+      advance() {
+        let value = parseInt(this.$bar.attr('aria-valuenow'));
+        value += (value > 50 ? this.random(5, 10) : this.random(10, 20));
+        if (value > 90) value = 90;
+        this.set(value);
+      }
 
-    var SomethingIsWrong = {
-      create(){
-        var me = Object.create(SomethingIsWrong.prototype);
-        var msg1 = '<%= t("after_sign_in.something_is_wrong") %>';
-        var msg2 = '<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
-        Object.assign(me, Exception.create(msg1, msg2));
-        return me;
-      },
-      prototype: {}
-    };
-    Object.setPrototypeOf(SomethingIsWrong.prototype, Exception.prototype);
+      hide() {
+        this.$progressBar.hide();
+      }
 
-    var Timeout = {
-      create(){
-        var me = Object.create(Timeout.prototype);
-        var msg1 = '<%= t("after_sign_in.retry_timeout", user: @searched_tw_user.name) %>';
-        var msg2 = '<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>';
-        Object.assign(me, Exception.create(msg1, msg2));
-        return me;
-      },
-      prototype: {}
-    };
-    Object.setPrototypeOf(Timeout.prototype, Exception.prototype);
-
-    function progress(value) {
-      var random_int = function (min, max) {
+      random(min, max) {
         return Math.random() * (max - min) + min;
-      };
-
-      var bar = progress_bar.find('.progress-bar');
-      if (!value) {
-        value = parseInt(bar.attr('aria-valuenow'));
-        if (value > 50) {
-          value += random_int(5, 10);
-        } else {
-          value += random_int(10, 20);
-        }
-        if (value > 90) {
-          value = 90;
-        }
-      }
-
-      bar.css('width', value + '%').attr('aria-valuenow', value);
-      bar.find('.sr-only').text(value + '% Complete');
-    }
-
-    function interval_counter() {
-      var cur = 2000;
-      var max = 5000;
-
-      return {
-        cur: function () {
-          return cur
-        },
-        next: function () {
-          cur += 2000;
-          if (cur > max) cur = max;
-          return cur
-        }
       }
     }
-    var interval = interval_counter();
 
-    function retry_counter() {
-      var count = 0;
-      var max = 10;
+    class Exception {
+      constructor(msg1, msg2) {
+        this.msg1 = msg1;
+        this.msg2 = msg2;
+        this.isLogin = <%= user_signed_in? ? 'true' : 'false' %>;
+      }
 
-      return {
-        cur: function () {
-          return count
-        },
-        next: function () {
-          count++;
-          return count < max
-        }
+      showMessage() {
+        $('.error-msg').html(this.isLogin ? this.msg1 : this.msg2);
+        $('.rescue-box').show();
       }
     }
-    var retry = retry_counter();
+
+    const tooManyRequests = new Exception(
+        '<%= t("after_sign_in.too_many_requests") %>',
+        '<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
+    );
+
+    const unauthorized = new Exception(
+        '<%= t("after_sign_in.unauthorized", sign_out_link: link_to(t('dictionary.sign_out'), sign_out_path)).html_safe %>',
+        '<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
+    );
+
+    const somethingIsWrong = new Exception(
+        '<%= t("after_sign_in.something_is_wrong") %>',
+        '<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
+    );
+
+    const timeout = new Exception(
+        '<%= t("after_sign_in.retry_timeout", user: @searched_tw_user.name) %>',
+        '<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
+    );
+
+    const errors = {
+      <%= BackgroundSearchLog::TooManyRequests::MESSAGE %>: tooManyRequests,
+      <%= BackgroundSearchLog::Unauthorized::MESSAGE %>: unauthorized,
+      <%= BackgroundSearchLog::SomethingError::MESSAGE %>: somethingIsWrong
+    };
+
+    class Interval {
+      constructor() {
+        this.value = 2000;
+        this.max = 5000;
+      }
+
+      current() {
+        return this.value;
+      }
+
+      next() {
+        this.value += 2000;
+        if (this.value > this.max) this.value = this.max;
+        return this.value
+      }
+    }
+
+    class Retry {
+      constructor() {
+        this.count = 0;
+        this.max = 10;
+      }
+
+      current() {
+        return this.count;
+      }
+
+      next() {
+        this.count += 1;
+        return this.count < this.max;
+      }
+    }
+
+    const $waitingMessage = $('.waiting-msg');
+    const progressBar = new ProgressBar();
+    const interval = new Interval();
+    const retry = new Retry();
 
     function failed(xhr) {
       console.log(xhr.responseText);
-      var errors = {
-        "<%= BackgroundSearchLog::TooManyRequests::MESSAGE %>": TooManyRequests.create(),
-        "<%= BackgroundSearchLog::Unauthorized::MESSAGE %>": Unauthorized.create(),
-        "<%= BackgroundSearchLog::SomethingError::MESSAGE %>": SomethingIsWrong.create()
-      };
 
-      var res = $.parseJSON(xhr.responseText || null);
+      const res = $.parseJSON(xhr.responseText || null);
+      progressBar.hide();
+      $waitingMessage.hide();
+
       if (res && errors[res.reason]) {
-        errors[res.reason].show_msg();
+        errors[res.reason].showMessage();
       } else {
-        SomethingIsWrong.create().show_msg();
+        somethingIsWrong.showMessage();
       }
     }
 
     function done(res, text_status, xhr) {
-      console.log(res, text_status, xhr.status, interval.cur(), retry.cur());
+      console.log(res, text_status, xhr.status, interval.current(), retry.current());
 
-      if (xhr.status == 200) {
-        progress(95);
-        waiting_msg.html('<%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>');
+      if (xhr.status === 200) {
+        progressBar.set(95);
+        $waitingMessage.hide();
+        $('.finished-msg').show();
         window.location.replace("<%= search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid) %>");
         return
       }
 
       if (!retry.next()) {
-        Timeout.create().show_msg();
+        progressBar.hide();
+        $waitingMessage.hide();
+        timeout.showMessage();
         return
       }
 
-      progress();
+      progressBar.advance();
       setTimeout(tic, interval.next());
     }
 
     function tic() {
-      var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
+      const url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
       $.get(url).done(done).fail(failed);
     }
 

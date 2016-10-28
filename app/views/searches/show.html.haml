@@ -14,7 +14,8 @@
   - if @page_cache
     = @page_cache.html_safe
     :javascript
-      var path = window.location.pathname + window.location.search + '#cached';
+      'use strict';
+      const path = window.location.pathname + window.location.search + '#cached';
       window.history.replaceState(null, null, path)
   - else
     .loading-image.text-center
@@ -24,23 +25,21 @@
     .error-msg.text-center
 
     :javascript
+      'use strict';
       $(function () {
-        var url = "#{search_result_path(id: @searched_tw_user.uid)}";
+        const url = "#{search_result_path(id: @searched_tw_user.uid)}";
+        const retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
+        const somethingIsWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
+
         $.get(url)
-            .done(function (res) {
+            .done((res) => {
               $('.search-result').append(res.html);
-              var path = window.location.pathname + window.location.search + '#loaded';
+              const path = window.location.pathname + window.location.search + '#loaded';
               window.history.replaceState(null, null, path)
             })
-            .fail(function (xhr) {
-              if(xhr.status == 502) {
-                $('.error-msg').append('#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}');
-              } else {
-                $('.error-msg').append('#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}');
-                console.log(xhr.responseText);
-              }
+            .fail((xhr) => {
+              console.log(xhr.responseText);
+              $('.error-msg').append(xhr.status === 502 ? retryTimeout : somethingIsWrong);
             })
-            .always(function () {
-              $('.loading-image').remove();
-            });
+            .always(() => $('.loading-image').remove());
       });

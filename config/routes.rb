@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   end
 
   resources :searches, only: %i(new create show)
-  get 'searches/:screen_name/waiting', to: 'searches#waiting', as: :waiting
+  get 'searches/:id/waiting', to: 'searches#waiting', as: :waiting
   resources :search_results, only: :show
 
   Search::MENU.each do |menu|
@@ -26,7 +26,6 @@ Rails.application.routes.draw do
     get name, to: 'searches#debug'
   end
   get 'search', to: 'searches#debug'
-  post 'searches/:screen_name/waiting', to: 'searches#debug'
 
   resources :search_histories, only: :index
   resources :information, only: :index

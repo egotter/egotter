@@ -1,18 +1,10 @@
-.waiting .waiting_msg {
+.waiting .waiting-msg,
+.waiting .finished-msg,
+.waiting .error-msg,
+.waiting .bar .progress,
+.waiting .retry-btn,
+.waiting .login-btn,
+.waiting .support-btn {
+  text-align: center;
   margin-top: 15px;
-}
-
-.waiting .progress_bar .progress {
-  margin-top: 15px;
-  margin-bottom: 15px;
-}
-
-.waiting .login_btn,
-.waiting .retry_btn,
-.waiting .support_btn {
-  margin-top: 15px;
-}
-
-.waiting .support_btn {
-  margin-bottom: 15px;
 }

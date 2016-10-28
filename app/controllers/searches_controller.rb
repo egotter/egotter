@@ -45,11 +45,10 @@ class SearchesController < ApplicationController
     if TwitterUser.exists?(uid: uid)
       redirect_to search_path(screen_name: screen_name, id: uid)
     else
-      redirect_to waiting_path(screen_name: screen_name, id: uid)
+      redirect_to waiting_path(id: uid)
     end
   end
 
-  # GET /searches/:screen_name/waiting
   def waiting
     uid = params[:id].to_i
     unless Util::SearchedUidList.new(redis).exists?(uid)
