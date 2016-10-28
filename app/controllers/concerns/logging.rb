@@ -1,4 +1,5 @@
 require 'digest/md5'
+require 'active_support/concern'
 
 module Logging
   extend ActiveSupport::Concern
@@ -29,9 +30,13 @@ module Logging
     }
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
+
+    if params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && attrs[:medium] == 'dm'
+      UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
+    end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
+    logger.info e.backtrace.take(10).join("\n")
   end
 
   def create_sign_in_log(user_id, context, via)
@@ -50,8 +55,8 @@ module Logging
     }
     CreateSignInLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
+    logger.info e.backtrace.take(10).join("\n")
   end
 
   def create_modal_open_log(name)
@@ -69,15 +74,15 @@ module Logging
     }
     CreateModalOpenLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
+    logger.info e.backtrace.take(10).join("\n")
   end
 
   def push_referer
     Util::RefererList.new(Redis.client).push(fingerprint, request.referer.nil? ? '' : request.referer)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{action_name} #{e.class} #{e.message}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
+    logger.info e.backtrace.take(10).join("\n")
   end
 
   private

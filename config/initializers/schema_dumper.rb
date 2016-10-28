@@ -1,1 +1,1 @@
-ActiveRecord::SchemaDumper.ignore_tables = %w(tmp_search_logs tmp_background_search_logs tmp_friends tmp_followers)
+ActiveRecord::SchemaDumper.ignore_tables = %w(old_users tmp_friends tmp_followers)

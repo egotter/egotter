@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 class CreateNotificationMessageWorker
   include Sidekiq::Worker
   sidekiq_options queue: :egotter, retry: false, backtrace: false
@@ -8,8 +10,9 @@ class CreateNotificationMessageWorker
     type = options['type'].to_sym
     mention_name = "@#{screen_name}"
     medium = options['medium']
+    token = Digest::MD5.hexdigest(Time.zone.now.to_i.to_s).slice(0, 5)
 
-    url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, id: uid, medium: medium)
+    url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, id: uid, medium: medium, token: token)
     user = User.find(user_id)
 
     if type == :search && user.can_send?(type) && medium == 'dm'
@@ -18,7 +21,7 @@ class CreateNotificationMessageWorker
         I18n.t("#{medium}.#{type}Notification.message", url: url)
       ].join("\n")
 
-      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium)
+      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium, token: token)
       user.api_client.create_direct_message(user.uid.to_i, notification.message)
       notification.save!
       user.notification_setting.touch(:last_search_at)
@@ -49,7 +52,7 @@ class CreateNotificationMessageWorker
           ]
         end.join("\n")
 
-      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium)
+      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium, token: token)
       user.api_client.create_direct_message(user.uid.to_i, notification.message)
       notification.save!
       user.notification_setting.touch(:last_search_at)
@@ -66,7 +69,7 @@ class CreateNotificationMessageWorker
       end.to_h
 
       message = contents[:ja]
-      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium)
+      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium, token: token)
 
       Onesignal.new(user.id, headings: headings, contents: contents, url: url).send
       notification.save!

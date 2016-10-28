@@ -7,8 +7,10 @@
 #  uid         :string(191)      not null
 #  screen_name :string(191)      not null
 #  read        :boolean          default(FALSE), not null
+#  read_at     :datetime
 #  message     :text(65535)      not null
 #  medium      :string(191)      default(""), not null
+#  token       :string(191)      default(""), not null
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
@@ -16,6 +18,7 @@
 #
 #  index_notification_messages_on_created_at   (created_at)
 #  index_notification_messages_on_screen_name  (screen_name)
+#  index_notification_messages_on_token        (token)
 #  index_notification_messages_on_uid          (uid)
 #  index_notification_messages_on_user_id      (user_id)
 #

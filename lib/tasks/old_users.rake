@@ -10,6 +10,7 @@ namespace :old_users do
 
   desc 'load'
   task load: :environment do
+    class OldUser < ActiveRecord::Base; end
     File.read('mongo2.json').split("\n").map do |line|
       json = JSON.parse(line)
       OldUser.create!(uid: json['uid'], screen_name: '-1', secret: json['secret'], token: json['token'], email: '-1')
@@ -18,6 +19,7 @@ namespace :old_users do
 
   desc 'verify'
   task verify: :environment do
+    class OldUser < ActiveRecord::Base; end
     processed = Queue.new
     clients = OldUser.all.map { |user| ApiClient.instance(access_token: user.token, access_token_secret: user.secret, logger: Naught.build.new) }
     Parallel.each_with_index(clients, in_threads: 10) do |client, i|
