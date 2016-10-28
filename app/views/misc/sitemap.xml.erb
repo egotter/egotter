@@ -8,7 +8,7 @@
   </url>
   <% @records.each do |log| %>
     <url>
-      <loc><%= search_url(screen_name: log.screen_name, id: log.uid) %></loc>
+      <loc><%= search_url(screen_name: log.screen_name) %></loc>
       <lastmod><%= l(log.created_at.in_time_zone('Tokyo'), format: :date_hyphen) %></lastmod>
       <changefreq>hourly</changefreq>
       <priority>0.8</priority>

@@ -12,7 +12,7 @@ class CreateNotificationMessageWorker
     medium = options['medium']
     token = Digest::MD5.hexdigest(Time.zone.now.to_i.to_s).slice(0, 5)
 
-    url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, id: uid, medium: medium, token: token)
+    url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, medium: medium, token: token)
     user = User.find(user_id)
 
     if type == :search && user.can_send?(type) && medium == 'dm'
