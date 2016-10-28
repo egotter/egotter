@@ -30,7 +30,8 @@ data_sources:
       # user_id: "/admin/users/{value}"
 
     smart_columns:
-      # user_id: "SELECT id, name FROM users WHERE id IN {value}"
+      user_id: "SELECT id, screen_name FROM users WHERE id IN {value}"
+      uid: "SELECT uid, screen_name FROM users WHERE uid IN {value}"
 
 # create audits
 audit: true
