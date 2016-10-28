@@ -64,4 +64,4 @@
 
 = render(partial: 'searches/adsense_bottom')
 
-.return-to-results-bottom= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid))
+.return-to-results-bottom= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name))

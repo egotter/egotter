@@ -43,7 +43,7 @@ class SearchesController < ApplicationController
     add_background_search_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
 
     if TwitterUser.exists?(uid: uid)
-      redirect_to search_path(screen_name: screen_name, id: uid)
+      redirect_to search_path(screen_name: screen_name)
     else
       redirect_to waiting_path(id: uid)
     end

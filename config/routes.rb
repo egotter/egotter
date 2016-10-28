@@ -10,7 +10,8 @@ Rails.application.routes.draw do
     get name, to: "misc##{name}", as: name
   end
 
-  resources :searches, only: %i(new create show)
+  resources :searches, only: %i(new create)
+  get 'searches/:screen_name', to: 'searches#show', as: :search
   get 'searches/:id/waiting', to: 'searches#waiting', as: :waiting
   resources :search_results, only: :show
 
