@@ -11,5 +11,5 @@
   <hr>
 
   <h2><small><%= t('dictionary.faq') %></small></h2>
-  <%= render(partial: 'misc/faq_items') %>
+  <%= render(partial: 'misc/faq', collection: Faq.list, cached: true) %>
 </div>
