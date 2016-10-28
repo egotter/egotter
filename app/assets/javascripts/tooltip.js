@@ -21,8 +21,9 @@ function tooltip() {
       else
         tooltip.css('max-width', 340);
 
-      let pos_left = target.offset().left + ( target.outerWidth() / 2 ) - ( tooltip.outerWidth() / 2 );
-      let pos_top = target.offset().top - tooltip.outerHeight() - 20;
+      // TODO raise `ExecJS::ProgramError: Unexpected token: name` when using let
+      var pos_left = target.offset().left + ( target.outerWidth() / 2 ) - ( tooltip.outerWidth() / 2 );
+      var pos_top = target.offset().top - tooltip.outerHeight() - 20;
 
       if (pos_left < 0) {
         pos_left = target.offset().left + target.outerWidth() / 2 - 20;
