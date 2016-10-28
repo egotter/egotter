@@ -21,7 +21,7 @@
     },
     displayPredicate: function () {
       return OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
-        return <% controller_name == 'misc' && action_name == 'menu' ? 'true' : '!isEnabled' %>;
+        return <%= controller_name == 'misc' && action_name == 'menu' ? 'true' : '!isEnabled' %>;
       })
     }
   };
