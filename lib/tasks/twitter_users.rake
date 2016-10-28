@@ -58,10 +58,10 @@ namespace :twitter_users do
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('friendless? -> friends.to_a.empty? && followers.to_a.empty?') do
-          TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friendless? }.each_cons(2).map do |older, newer|
-            unless newer.nil? || older.nil? || newer.cached_friends.empty?
-              older.cached_friends - newer.cached_friends
+        ActiveRecord::Base.benchmark('friends.to_a.empty? && followers.to_a.empty? -> SELECT *') do
+          TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.to_a.empty? && tu.followers.to_a.empty? }.each_cons(2).map do |older, newer|
+            unless newer.nil? || older.nil? || newer.friends.empty?
+              older.friends - newer.friends
             end
           end.compact.flatten.reverse
         end
@@ -72,8 +72,8 @@ namespace :twitter_users do
 
         ActiveRecord::Base.benchmark('friends.size == 0 && followers.size == 0 -> SELECT count(*)') do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.size == 0 && tu.followers.size == 0 }.each_cons(2).map do |older, newer|
-            unless newer.nil? || older.nil? || newer.cached_friends.empty?
-              older.cached_friends - newer.cached_friends
+            unless newer.nil? || older.nil? || newer.friends.empty?
+              older.friends - newer.friends
             end
           end.compact.flatten.reverse
         end
@@ -84,8 +84,20 @@ namespace :twitter_users do
 
         ActiveRecord::Base.benchmark('friends.empty? && followers.empty? -> SELECT 1') do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.empty? && tu.followers.empty? }.each_cons(2).map do |older, newer|
-            unless newer.nil? || older.nil? || newer.cached_friends.empty?
-              older.cached_friends - newer.cached_friends
+            unless newer.nil? || older.nil? || newer.friends.empty?
+              older.friends - newer.friends
+            end
+          end.compact.flatten.reverse
+        end
+      end
+
+      count.times do
+        ActiveRecord::Base.connection.query_cache.clear
+
+        ActiveRecord::Base.benchmark('includes(:friends, :followers) before friends.empty? && followers.empty?') do
+          TwitterUser.includes(:friends, :followers).where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.empty? && tu.followers.empty? }.each_cons(2).map do |older, newer|
+            unless newer.nil? || older.nil? || newer.friends.empty?
+              older.friends - newer.friends
             end
           end.compact.flatten.reverse
         end
