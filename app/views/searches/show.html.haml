@@ -9,7 +9,7 @@
 .search-result
   %h2.h4= t('.heading', user: @searched_tw_user.mention_name)
 
-  = render(partial: 'searches/adsense')
+  = render(partial: 'common/adsense')
 
   - if @page_cache
     = @page_cache.html_safe

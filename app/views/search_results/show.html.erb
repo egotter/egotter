@@ -6,6 +6,7 @@
 %>
 
 <script>
+  'use strict';
   $(function () {
     window.lazycall_functions = {};
   });
@@ -52,17 +53,16 @@
 <% end %>
 
 <script>
+  'use strict';
   $(function () {
     $("img.lazy").lazyload();
 
     $.each(Object.keys(window.lazycall_functions), function (i, selector) {
-      var loaded = false;
+      let loaded = false;
       $(selector)
           .lazyload()
           .on('appear', function () {
-            if (loaded) {
-              return
-            }
+            if (loaded) return;
             loaded = true;
 
             window.lazycall_functions[selector]();
@@ -71,7 +71,7 @@
   });
 </script>
 
-<%= render(partial: 'searches/adsense_bottom') %>
+<%= render(partial: 'common/adsense_bottom') %>
 
 <h2 class="h4"><%= t('.about_this_page', this_page: t('searches.show.heading', user: tu.mention_name)) %></h2>
 <div class="this-page-is"><%= t('.this_page_is', user: tu.mention_name) %></div>
@@ -93,94 +93,105 @@
 </div>
 
 <script>
+  'use strict';
   $(function () {
     tooltip();
 
-    var hash = null;
-    var refresh_box = $('.alert.alert-info');
-    var refresh_btn = refresh_box.find('a');
+    class Cache {
+      setHash(hash) {
+        this.hash = hash;
+      }
 
-    refresh_btn.on('click', function (e) {
-      refresh();
+      delete() {
+        var url = "<%= raw page_cache_path(id: tu.uid, hash: 'HASH') %>";
+        return $.ajax({url: url.replace(/HASH/, this.hash), type: 'DELETE'});
+      }
+
+      create() {
+        var url = "<%= raw page_caches_path(id: tu.uid) %>";
+        return $.post(url);
+      }
+    }
+
+    class Interval {
+      constructor() {
+        this.value = 2000;
+        this.max = 5000;
+      }
+
+      current() {
+        return this.value;
+      }
+
+      next() {
+        this.value += 2000;
+        if (this.value > this.max) this.value = this.max;
+        return this.value
+      }
+    }
+
+    class Retry {
+      constructor() {
+        this.count = 0;
+        this.max = 5;
+      }
+
+      current() {
+        return this.count;
+      }
+
+      next() {
+        this.count += 1;
+        return this.count < this.max;
+      }
+    }
+
+    const interval = new Interval();
+    const retry = new Retry();
+    const created_at = <%= tu.created_at.to_i %>;
+    const cache = new Cache();
+    const refreshBox = $('.alert.alert-info');
+
+    refreshBox.find('a').on('click', (e) => {
       e.preventDefault();
       e.stopPropagation();
-      return false
-    });
 
-    function delete_cache() {
-      var url = "<%= raw page_cache_path(id: tu.uid, hash: 'HASH') %>";
-      return $.ajax({url: url.replace(/HASH/, hash), type: 'DELETE'})
-    }
-
-    function create_cache() {
-      var url = "<%= raw page_caches_path(id: tu.uid) %>";
-      return $.post(url)
-    }
-
-    function refresh() {
-      delete_cache()
-          .then(create_cache, failed)
-          .done(function () {
-            window.location.reload();
-          })
+      cache.delete()
+          .then(cache.create(), failed)
+          .done(() => window.location.reload())
           .fail(failed);
-    }
 
-    function interval_counter() {
-      var cur = 2000;
-      var max = 5000;
-
-      return {
-        cur: function () {
-          return cur
-        },
-        next: function () {
-          cur += 2000;
-          if (cur > max) cur = max;
-          return cur
-        }
-      }
-    }
-    var interval = interval_counter();
-
-    function retry_counter() {
-      var count = 0;
-      var max = 5;
-
-      return {
-        cur: function () {
-          return count
-        },
-        next: function () {
-          count++;
-          return count < max
-        }
-      }
-    }
-    var retry = retry_counter();
+      return false;
+    });
 
     function failed(xhr) {
       console.log(xhr.responseText);
     }
 
     function done(res, text_status, xhr) {
-      console.log(res, text_status, xhr.status, interval.cur(), retry.cur());
+      console.log(res, text_status, xhr.status, interval.current(), retry.current());
 
-      if (xhr.status == 200) {
-        var created_at = <%= tu.created_at.to_i %>;
+      if (xhr.status === 200) {
+        console.log(created_at, res.created_at);
         if (created_at < res.created_at) {
-          hash = res.hash;
-          refresh_box.show();
+          cache.setHash(res.hash);
+          refreshBox.show();
+        } else {
+          console.log('do nothing.');
         }
-      } else if (!retry.next()) {
-        console.log('stop waiting');
+
+        return
+      }
+
+      if (!retry.next()) {
+        console.log('stop waiting.');
       } else {
         setTimeout(tic, interval.next());
       }
     }
 
     function tic() {
-      var url = "<%= background_search_log_path(id: tu.uid) %>";
+      const url = "<%= background_search_log_path(id: tu.uid) %>";
       $.get(url).done(done).fail(failed);
     }
 

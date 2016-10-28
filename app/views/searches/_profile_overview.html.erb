@@ -82,13 +82,13 @@
       <% end %>
     </div>
     <div class="friends-count-box col-xs-4"><!-- friends count -->
-      <%= link_to friends_path(screen_name: user.screen_name, id: user.uid), class: 'text-muted' do %>
+      <%= link_to friends_path(screen_name: user.screen_name), class: 'text-muted' do %>
         <span class="stats-count"><%= user.friends_count %></span><br>
         <span class="text-muted"><%= t('dictionary.friends') %></span>
       <% end %>
     </div>
     <div class="followers-count-box col-xs-4"><!-- followers count -->
-      <%= link_to followers_path(screen_name: user.screen_name, id: user.uid), class: 'text-muted' do %>
+      <%= link_to followers_path(screen_name: user.screen_name), class: 'text-muted' do %>
         <span class="stats-count"><%= user.followers_count %></span><br>
         <span class="text-muted"><%= t('dictionary.follower') %></span>
       <% end %>

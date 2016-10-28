@@ -1,5 +1,6 @@
 <script>
-  var notifyButton = {
+  'use strict';
+  const notifyButton = {
     enable: true,
     size: ['small', 'medium', 'large'][1],
     prenotify: true,
@@ -20,19 +21,15 @@
     },
     displayPredicate: function () {
       return OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
-        <% if controller_name == 'misc' && action_name == 'menu' %>
-          return true
-        <% else %>
-          return !isEnabled
-        <% end %>
+        return <% controller_name == 'misc' && action_name == 'menu' ? 'true' : '!isEnabled' %>;
       })
     }
   };
-  var welcomeNotification = {
+  const welcomeNotification = {
     "title": "<%= t('onesignal.welcomeNotification.title') %>",
     "message": "<%= t('onesignal.welcomeNotification.message') %>"
   };
-  var promptOptions = {
+  const promptOptions = {
     siteName:                   "<%= t('onesignal.promptOptions.siteName').truncate(30) %>",
     actionMessage:              "<%= t('onesignal.promptOptions.actionMessage').truncate(90) %>",
     exampleNotificationTitle:   "<%= t('onesignal.promptOptions.exampleNotificationTitle') %>",
@@ -42,34 +39,25 @@
     cancelButtonText:           "<%= t('onesignal.promptOptions.cancelButtonText').truncate(15) %>"
   };
 
-</script>
-
-<% if Rails.env.development? && user_signed_in? %>
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-  <script>
-    var OneSignal = window.OneSignal || [];
-    OneSignal.push(["init", {
+  const OneSignal = window.OneSignal || [];
+  <% if Rails.env.development? %>
+    const values = {
       appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
       autoRegister:        false,
       subdomainName:       'egotter-dev',
       notifyButton:        notifyButton,
       welcomeNotification: welcomeNotification,
       promptOptions:       promptOptions
-    }]);
-    OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);
-  </script>
-<% elsif Rails.env.production? && user_signed_in? %>
-  <link rel="manifest" href="/manifest.json">
-  <script src="https://cdn.onesignal.com/sdks/OneSignalSDK.js" async></script>
-  <script>
-    var OneSignal = window.OneSignal || [];
-    OneSignal.push(["init", {
+    };
+  <% elsif Rails.env.production? %>
+    const values = {
       appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
       autoRegister:        false,
       notifyButton:        notifyButton,
       welcomeNotification: welcomeNotification,
       promptOptions:       promptOptions
-    }]);
-    OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);
-  </script>
-<% end %>
+    };
+  <% end %>
+  OneSignal.push(["init", values]);
+  OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);
+</script>

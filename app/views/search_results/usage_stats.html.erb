@@ -25,7 +25,7 @@
 
   <%= render(partial: 'searches/tweet_box', locals: {tweet_text: usage_hashtags_text(@hashtags, @searched_tw_user)}) %>
 
-  <%= render(partial: 'searches/adsense_bottom') %>
+  <%= render(partial: 'common/adsense_bottom') %>
 
   <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name)) %></div>
 </div>

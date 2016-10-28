@@ -9,7 +9,7 @@
 
   .return-to-results-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name))
 
-  = render(partial: 'searches/adsense')
+  = render(partial: 'common/adsense')
 
   .loading-image.text-center
     = t('searches.waiting.analyzing', user: @searched_tw_user.name)
