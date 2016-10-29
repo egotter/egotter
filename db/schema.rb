@@ -142,13 +142,9 @@ ActiveRecord::Schema.define(version: 20161021113742) do
     t.text     "user_info",   limit: 65535, null: false
     t.integer  "from_id",     limit: 4,     null: false
     t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
   end
 
-  add_index "followers", ["created_at"], name: "index_followers_on_created_at", using: :btree
   add_index "followers", ["from_id"], name: "index_followers_on_from_id", using: :btree
-  add_index "followers", ["screen_name"], name: "index_followers_on_screen_name", using: :btree
-  add_index "followers", ["uid"], name: "index_followers_on_uid", using: :btree
 
   create_table "friends", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false

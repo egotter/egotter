@@ -8,14 +8,10 @@
 #  user_info   :text(65535)      not null
 #  from_id     :integer          not null
 #  created_at  :datetime         not null
-#  updated_at  :datetime         not null
 #
 # Indexes
 #
-#  index_followers_on_created_at   (created_at)
-#  index_followers_on_from_id      (from_id)
-#  index_followers_on_screen_name  (screen_name)
-#  index_followers_on_uid          (uid)
+#  index_followers_on_from_id  (from_id)
 #
 
 class Follower < ActiveRecord::Base
