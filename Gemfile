@@ -55,7 +55,6 @@ gem 'mecab', require: false
 gem 'twitter_with_auto_pagination'
 gem 'rack-user_agent'
 gem 'stackprof'
-gem 'dogstatsd-ruby'
 gem 'haml-rails'
 gem 'rails_autolink'
 gem 'draper'
