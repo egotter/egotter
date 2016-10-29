@@ -25,7 +25,6 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Associations
   include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation
-  include Concerns::TwitterUser::Equalizer
   include Concerns::TwitterUser::Inflections
   include Concerns::TwitterUser::Builder
   include Concerns::TwitterUser::Utils

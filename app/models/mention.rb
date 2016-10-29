@@ -22,5 +22,4 @@ class Mention < ActiveRecord::Base
   belongs_to :twitter_user
 
   include Concerns::Status::Store
-  include Concerns::TwitterUser::Equalizer
 end

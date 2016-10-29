@@ -58,10 +58,11 @@ namespace :twitter_users do
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('friends.to_a.empty? && followers.to_a.empty? -> SELECT *') do
+        ActiveRecord::Base.benchmark('Pattern 000') do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.to_a.empty? && tu.followers.to_a.empty? }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
-              older.friends - newer.friends
+              uids = older.friend_uids - newer.friend_uids
+              older.friends.select { |f| uids.include?(f.uid.to_i) }
             end
           end.compact.flatten.reverse
         end
@@ -70,10 +71,11 @@ namespace :twitter_users do
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('friends.size == 0 && followers.size == 0 -> SELECT count(*)') do
+        ActiveRecord::Base.benchmark('Pattern 001') do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.size == 0 && tu.followers.size == 0 }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
-              older.friends - newer.friends
+              uids = older.friend_uids - newer.friend_uids
+              older.friends.select { |f| uids.include?(f.uid.to_i) }
             end
           end.compact.flatten.reverse
         end
@@ -82,10 +84,11 @@ namespace :twitter_users do
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('friends.empty? && followers.empty? -> SELECT 1') do
+        ActiveRecord::Base.benchmark('Pattern 002') do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.empty? && tu.followers.empty? }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
-              older.friends - newer.friends
+              uids = older.friend_uids - newer.friend_uids
+              older.friends.select { |f| uids.include?(f.uid.to_i) }
             end
           end.compact.flatten.reverse
         end
@@ -94,10 +97,29 @@ namespace :twitter_users do
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('includes(:friends, :followers) before friends.empty? && followers.empty?') do
-          TwitterUser.includes(:friends, :followers).where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.empty? && tu.followers.empty? }.each_cons(2).map do |older, newer|
+        ActiveRecord::Base.benchmark('Pattern 003') do
+          TwitterUser.includes(:friends).where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.empty? && tu.followers.empty? }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
-              older.friends - newer.friends
+              uids = older.friend_uids - newer.friend_uids
+              older.friends.select { |f| uids.include?(f.uid.to_i) }
+            end
+          end.compact.flatten.reverse
+        end
+      end
+
+      count.times do
+        ActiveRecord::Base.connection.query_cache.clear
+
+        ActiveRecord::Base.benchmark('Pattern 004') do
+          ids = TwitterUser.where(uid: uid).pluck(:id)
+          friend_from_ids = Friend.where(from_id: ids).group(:from_id).count.keys.sort
+          follower_from_ids = Follower.where(from_id: ids).group(:from_id).count.keys.sort
+          ids = ids.select { |id| friend_from_ids.include?(id) && follower_from_ids.include?(id) }
+
+          TwitterUser.includes(:friends).where(id: ids).order(created_at: :asc).each_cons(2).map do |older, newer|
+            unless newer.nil? || older.nil? || newer.friends.empty?
+              uids = older.friend_uids - newer.friend_uids
+              older.friends.select { |f| uids.include?(f.uid.to_i) }
             end
           end.compact.flatten.reverse
         end
