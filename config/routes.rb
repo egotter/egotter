@@ -20,13 +20,6 @@ Rails.application.routes.draw do
     get "search_results/:id/#{menu}", to: "search_results##{menu}", as: "#{menu}_results"
   end
 
-  %i(statuses update_histories).each do |name|
-    get "searches/:screen_name/#{name}", to: 'searches#debug'
-  end
-  %i(twitegosearch twitegosearch/list twitegosearch/profile search searches page_cache page_caches).each do |name|
-    get name, to: 'searches#debug'
-  end
-
   resources :search_histories, only: :index
   resources :information, only: :index
   resources :notifications, only: :index
@@ -48,6 +41,13 @@ Rails.application.routes.draw do
   as :user do
     get '/_sign_out' => 'devise/sessions#destroy', :as => :destroy_user_session
     get '/' => 'devise/sessions#new', :as => :new_user_session
+  end
+
+  %i(statuses update_histories).each do |name|
+    get "searches/:screen_name/#{name}", to: 'searches#debug'
+  end
+  %i(twitegosearch twitegosearch/list twitegosearch/profile search searches page_cache page_caches).each do |name|
+    get name, to: 'searches#debug'
   end
 
   require 'sidekiq/web'
