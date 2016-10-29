@@ -32,7 +32,7 @@ module Logging
     CreateSearchLogWorker.perform_async(attrs)
 
     if params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && %w(dm onesignal).include?(attrs[:medium])
-      UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
+      UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at], medium: attrs[:medium])
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
