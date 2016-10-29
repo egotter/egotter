@@ -18,6 +18,5 @@ class Friend < ActiveRecord::Base
   belongs_to :twitter_user
 
   include Concerns::TwitterUser::Store
-  include Concerns::TwitterUser::Equalizer
   include Concerns::TwitterUser::Inflections
 end

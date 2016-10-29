@@ -7,44 +7,49 @@ module Concerns::TwitterUser::Api
   end
 
   def dummy_client
-    @dummy_client ||= ApiClient.dummy_instance
+    ApiClient.dummy_instance
   end
 
   def one_sided_friends
-    @_one_sided_friends ||= friends - followers
+    uids = friend_uids - follower_uids
+    friends.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def one_sided_followers
-    @_one_sided_followers ||= followers - friends
+    uids = follower_uids - friend_uids
+    followers.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def mutual_friends
-    @_mutual_friends ||= friends & followers
+    uids = friend_uids & follower_uids
+    friends.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def common_friends(other)
-    return [] if other.blank?
-    @_common_friends ||= friends & other.friends
+    uids = friend_uids & other.friend_uids
+    friends.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def common_followers(other)
-    return [] if other.blank?
-    @_common_followers ||= followers & other.followers
+    uids = follower_uids & other.follower_uids
+    followers.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def latest_removing
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.friends.empty?
-    older.friends - newer.friends
+    uids = older.friend_uids - newer.friend_uids
+    older.friends.select { |f| uids.include?(f.uid.to_i) }
   end
 
   # `includes` is not used because friends have hundreds of records.
   def removing
     return [] unless self.class.many?(uid)
-    @_removing ||= TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
+    TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends.empty?
-      older.friends - newer.friends
+      uids = older.friend_uids - newer.friend_uids
+      older.friends.select { |f| uids.include?(f.uid.to_i) }
     end.compact.flatten.reverse
   end
 
@@ -52,15 +57,17 @@ module Concerns::TwitterUser::Api
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.followers.empty?
-    older.followers - newer.followers
+    uids = older.follower_uids - newer.follower_uids
+    older.followers.select { |f| uids.include?(f.uid.to_i) }
   end
 
   # `includes` is not used because followers have hundreds of records.
   def removed
     return [] unless self.class.many?(uid)
-    @_removed ||= TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
+    TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers.empty?
-      older.followers - newer.followers
+      uids = older.follower_uids - newer.follower_uids
+      older.followers.select { |f| uids.include?(f.uid.to_i) }
     end.compact.flatten.reverse
   end
 
@@ -68,18 +75,21 @@ module Concerns::TwitterUser::Api
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.friends.empty?
-    (newer.friends - older.friends)
+    uids = newer.friend_uids - older.friend_uids
+    newer.friends.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def new_followers
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.followers.empty?
-    (newer.followers - older.followers)
+    uids = newer.follower_uids - older.follower_uids
+    newer.followers.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def blocking_or_blocked
-    @_blocking_or_blocked ||= (removing & removed).uniq
+    uids = (removing.map { |f| f.uid.to_i } & removed.map { |f| f.uid.to_i }).uniq
+    removing.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def replying(uniq: true)
@@ -118,11 +128,11 @@ module Concerns::TwitterUser::Api
   end
 
   def inactive_friends
-    @_inactive_friends ||= dummy_client._extract_inactive_users(friends)
+    dummy_client._extract_inactive_users(friends)
   end
 
   def inactive_followers
-    @_inactive_followers ||= dummy_client._extract_inactive_users(followers)
+    dummy_client._extract_inactive_users(followers)
   end
 
   def clusters_belong_to
