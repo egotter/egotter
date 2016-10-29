@@ -23,10 +23,9 @@ Rails.application.routes.draw do
   %i(statuses update_histories).each do |name|
     get "searches/:screen_name/#{name}", to: 'searches#debug'
   end
-  %i(twitegosearch twitegosearch/list twitegosearch/profile).each do |name|
+  %i(twitegosearch twitegosearch/list twitegosearch/profile search searches page_cache page_caches).each do |name|
     get name, to: 'searches#debug'
   end
-  get 'search', to: 'searches#debug'
 
   resources :search_histories, only: :index
   resources :information, only: :index
