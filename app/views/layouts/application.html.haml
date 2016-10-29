@@ -22,6 +22,9 @@
     %link{href: '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css', rel: 'stylesheet', type: 'text/css'}/
     = csrf_meta_tags
 
+    - if controller_name == 'searches' && action_name == 'show'
+      %link{href: search_url(screen_name: @searched_tw_user.screen_name), rel: 'canonical'}/
+
     :javascript
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
