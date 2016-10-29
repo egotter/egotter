@@ -36,10 +36,10 @@ namespace :twitter_users do
     next if user_ids.blank?
 
     user_ids =
-      if user_ids.include?('..')
-        Range.new(*user_ids.split('..').map(&:to_i))
-      else
-        user_ids.split(',').map(&:to_i)
+      case
+        when user_ids.include?('..') then Range.new(*user_ids.split('..').map(&:to_i))
+        when user_ids.include?(',') then user_ids.split(',').map(&:to_i)
+        else [user_ids.to_i]
       end
 
     user_ids.each do |user_id|
