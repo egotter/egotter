@@ -31,7 +31,7 @@ module Logging
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
 
-    if params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && attrs[:medium] == 'dm'
+    if params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && %w(dm onesignal).include?(attrs[:medium])
       UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
     end
   rescue => e
