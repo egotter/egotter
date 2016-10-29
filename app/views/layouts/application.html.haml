@@ -52,64 +52,10 @@
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8.header-container
-            .navbar-header.navbar-small
-              - unless under_maintenance? || action_name == 'welcome'
-                %button.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
-                  %span.glyphicon.glyphicon-search
-                - if user_signed_in?
-                  %button.btn-with-margin.navbar-toggle{type: 'button'}
-                    = link_to menu_path do
-                      %span.glyphicon.glyphicon-menu-hamburger
-                  %button.btn-with-margin.navbar-toggle{type: 'button'}
-                    = link_to notifications_path do
-                      %span.glyphicon.glyphicon-bell
-                - else
-                  %button.btn.btn-with-margin.navbar-toggle{type: 'button'}
-                    = link_to t('dictionary.sign_in'), welcome_path
-              %a.navbar-brand{href: '/'}
-                %img{alt: "#{t('dictionary.app_name')}", height: '48', src: '/logo_96_96.png', width: '48'}/
-                %span= t('dictionary.app_name')
-            - unless under_maintenance? || action_name == 'welcome'
-              .collapse.navbar-collapse.navbar-large
-                %ul.nav.navbar-nav.navbar-right
-                  - if user_signed_in?
-                    %li
-                      %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-                        = link_to notifications_path do
-                          %span.glyphicon.glyphicon-bell
-                          = t('notifications.title')
-                    %li
-                      %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-                        = link_to menu_path do
-                          %span.glyphicon.glyphicon-menu-hamburger
-                          = t('misc.menu.title')
-                  - else
-                    %li
-                      %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-                        = link_to t('dictionary.sign_in'), welcome_path
-                  %li
-                    %button.btn.btn-default.navbar-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
-                      %span.glyphicon.glyphicon-search
-                      = t('searches.new.search')
+            = render partial: 'layouts/header'
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
-    - unless under_maintenance?
-      .modal.fade.search-modal{'aria-labelledby' => 'search-modal-label', role: 'dialog', tabindex: '-1'}
-        .modal-dialog{role: 'document'}
-          .modal-content
-            .modal-header
-              %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
-                %span{'aria-hidden' => 'true'} ×
-              %h4#search-modal-label.modal-title= t('searches.new.search_by_egotter')
-            .modal-body
-              = render partial: 'common/search_box_group', locals: {via: :search_history_input, screen_names: screen_names_for_search}
-              = render partial: 'search_histories/load', locals: {in_modal: true}
-      :javascript
-        $(function () {
-          $('.search-modal').on('shown.bs.modal', function() {
-            $.post('#{modal_open_logs_path}', {name: 'search_history'});
-          });
-        });
+    = render partial: 'layouts/search_histories'
 
     .container
       .row
@@ -144,19 +90,7 @@
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8.keyword-timeline-container
-            %h2.h4{style: 'display: none;'}= t('searches.new.keyword_timeline')
-            :javascript
-              $(function () {
-                $.get('#{keyword_timeline_path}')
-                    .done(function (res) {
-                      var container = $('.keyword-timeline-container');
-                      container.find('h2').show();
-                      container.append(res.html);
-                    })
-                    .fail(function (xhr) {
-                      console.log(xhr.responseText);
-                    });
-              });
+            = render partial: 'layouts/tweets'
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
     - if %w(search_results searches statuses update_histories).include?(controller_name)
@@ -164,74 +98,14 @@
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
-            %h2.h4.share-me= t('dictionary.share_me')
-            = render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"})
-            #share
-            :javascript
-              $(function () {
-                $("#share").jsSocials({
-                  shares: ["twitter", "facebook", "googleplus"],
-                  url: "https://egotter.com",
-                  text: "#{raw egotter_share_text}",
-                  showLabel: true,
-                  showCount: true
-                });
-              });
-            .official-account
-              %h2.h4= t('dictionary.official_account')
-              .follow-official-account
-                %a.twitter-follow-button{'data-show-count' => 'false', 'data-size' => 'large', href: 'https://twitter.com/ego_tter'}
-                  Follow @ego_tter
-                :javascript
-                  $(function () {
-                    !function (d, s, id) {
-                      var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? 'http' : 'https';
-                      if (!d.getElementById(id)) {
-                        js = d.createElement(s);
-                        js.id = id;
-                        js.src = p + '://platform.twitter.com/widgets.js';
-                        fjs.parentNode.insertBefore(js, fjs);
-                      }
-                    }(document, 'script', 'twitter-wjs');
-                  });
-            .information
-              %h2.h4{style: 'display: none;'}= t('dictionary.information')
-            :javascript
-              $(function () {
-                $.get('#{information_index_path}')
-                    .done(function (res) {
-                      var container = $('.information');
-                      container.find('h2').show();
-                      container.append(res.html);
-                    })
-                    .fail(function (xhr) {
-                      console.log(xhr.responseText);
-                    });
-              });
+            = render partial: 'layouts/share'
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
-    - unless under_maintenance?
-      %footer.footer
-        .container
-          %p.text-muted
-            %a{href: '/'}> トップページ
-              
-            - if user_signed_in?
-              = link_to t('dictionary.sign_out'), sign_out_path, data: {confirm: t('dictionary.realy_sign_out')}
-            - else
-              = link_to t('dictionary.sign_in'), welcome_path
-                
-            = succeed "\u{a0}\u{a0}" do
-              %a{href: '/'} ご意見
-            - if user_signed_in?
-              = link_to t('misc.menu.title'), menu_path
-                
-            = succeed "\u{a0}\u{a0}" do
-              %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('dictionary.official_account')
-            = link_to t('dictionary.support'), support_path
-              
-            = succeed "\u{a0}\u{a0}" do
-              %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'} Github
-            = link_to t('misc.terms_of_service.title'), terms_of_service_path
-              
-            = link_to t('misc.privacy_policy.title'), privacy_policy_path
+      .container
+        .row
+          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
+            = render partial: 'layouts/information'
+          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+
+    = render partial: 'layouts/footer'

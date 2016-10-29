@@ -112,14 +112,16 @@ namespace :followers do
         if followers.size != klass_records.size
           puts "#{Time.zone.now}: #{followers.first.id} - #{followers.last.id} Record size is invalid."
           failed = true
+          break
         end
 
         if followers.zip(klass_records).any? { |f, tf| attrs.any? { |attr| f.send(attr) != tf.send(attr) } }
           puts "#{Time.zone.now}: #{followers.first.id} - #{followers.last.id} Record content is invalid."
           failed = true
+          break
         end
 
-        break if sigint || failed
+        break if sigint
 
         puts "#{Time.zone.now}: #{followers.first.id} - #{followers.last.id} OK"
       end

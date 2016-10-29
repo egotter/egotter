@@ -1,0 +1,14 @@
+.information
+  %h2.h4{style: 'display: none;'}= t('dictionary.information')
+:javascript
+  $(function () {
+    $.get('#{information_index_path}')
+        .done(function (res) {
+          var container = $('.information');
+          container.find('h2').show();
+          container.append(res.html);
+        })
+        .fail(function (xhr) {
+          console.log(xhr.responseText);
+        });
+  });

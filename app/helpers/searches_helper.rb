@@ -5,7 +5,7 @@ module SearchesHelper
     rescue Twitter::Error::NotFound => e
       if screen_name.match(Validations::UidValidator::REGEXP)
         user = client.user(screen_name.to_i)
-        logger.warn "#{self.class}##{__method__}: #{screen_name} is treated as uid."
+        logger.warn "#{screen_name} is treated as uid."
       else
         raise e
       end

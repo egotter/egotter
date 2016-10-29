@@ -1,0 +1,6 @@
+.navbar-header.navbar-small
+  = render partial: 'layouts/header/small_buttons'
+  %a.navbar-brand{href: '/'}
+    %img{alt: "#{t('dictionary.app_name')}", height: '48', src: '/logo_96_96.png', width: '48'}/
+    %span= t('dictionary.app_name')
+= render partial: 'layouts/header/large_buttons'

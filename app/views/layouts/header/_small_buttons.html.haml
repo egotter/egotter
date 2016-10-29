@@ -1,0 +1,13 @@
+- unless under_maintenance? || action_name == 'welcome'
+  %button.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
+    %span.glyphicon.glyphicon-search
+  - if user_signed_in?
+    %button.btn-with-margin.navbar-toggle{type: 'button'}
+      = link_to menu_path do
+        %span.glyphicon.glyphicon-menu-hamburger
+    %button.btn-with-margin.navbar-toggle{type: 'button'}
+      = link_to notifications_path do
+        %span.glyphicon.glyphicon-bell
+  - else
+    %button.btn.btn-with-margin.navbar-toggle{type: 'button'}
+      = link_to t('dictionary.sign_in'), welcome_path
