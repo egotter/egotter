@@ -1,6 +1,16 @@
 module SearchesHelper
   def build_twitter_user(screen_name)
-    TwitterUser.build_by_user(client.user(screen_name))
+    begin
+      user = client.user(screen_name)
+    rescue Twitter::Error::NotFound => e
+      if screen_name.match(Validations::UidValidator::REGEXP)
+        user = client.user(screen_name.to_i)
+        logger.warn "#{self.class}##{__method__}: #{screen_name} is treated as uid."
+      else
+        raise e
+      end
+    end
+    TwitterUser.build_by_user(user)
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name}"
     redirect_to root_path, alert: alert_message(e)
