@@ -58,25 +58,13 @@ module Validation
 
     redirect_to root_path, alert: I18n.t('before_sign_in.protected_user', user: user_link(tu), sign_in_link: sign_in_link)
     false
-  rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
-    redirect_to root_path, alert: alert_message(e)
-    false
-  rescue Twitter::Error::NotFound => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
-    redirect_to root_path, alert: alert_message(e)
-    false
-  rescue Twitter::Error::Unauthorized => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
-    redirect_to root_path, alert: alert_message(e)
-    false
-  rescue Twitter::Error::Forbidden => e
+  rescue Twitter::Error::TooManyRequests, Twitter::Error::NotFound, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
     redirect_to root_path, alert: alert_message(e)
     false
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
+    logger.info e.backtrace.take(10).join("\n")
     redirect_to root_path, alert: alert_message(e)
     false
   end
