@@ -13,7 +13,7 @@ module Concerns::TwitterUser::Utils
     end
 
     def with_friends(uid, order:)
-      includes(:friends, :followers).where(uid: uid).order(created_at: order).reject { |tu| tu.friendless? }
+      where(uid: uid).order(created_at: order).reject { |tu| tu.friendless? }
     end
   end
 

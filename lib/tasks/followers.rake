@@ -140,8 +140,8 @@ namespace :followers do
 
     Rails.logger.silence do
       num = ENV['NUM'].nil? ? 1000 : ENV['NUM'].to_i
-      max = ENV['MAX'].nil? ? klass.maximum(:id) : ENV['MAX'].to_i
-      min = ENV['MIN'].nil? ? klass.minimum(:id) : ENV['MIN'].to_i
+      max = ENV['MAX'].nil? ? TwitterUser.maximum(:id) : ENV['MAX'].to_i
+      min = ENV['MIN'].nil? ? TwitterUser.minimum(:id) : ENV['MIN'].to_i
       from_ids = (min..max).to_a.sample(num)
 
       start = Time.zone.now
