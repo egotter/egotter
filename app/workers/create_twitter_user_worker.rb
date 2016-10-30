@@ -29,7 +29,7 @@ class CreateTwitterUserWorker
     if existing_tu.present? && existing_tu.fresh?
       existing_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
-      notify(user, existing_tu) unless user.nil?
+      notify(user, existing_tu)
       return
     end
 
@@ -38,14 +38,14 @@ class CreateTwitterUserWorker
     if new_tu.save
       new_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
-      notify(user, new_tu) unless user.nil?
+      notify(user, new_tu)
       return
     end
 
     if existing_tu.present?
       existing_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed.")
-      notify(user, existing_tu) unless user.nil?
+      notify(user, existing_tu)
       return
     end
 
@@ -84,9 +84,9 @@ class CreateTwitterUserWorker
     searched_user = User.find_by(uid: tu.uid)
     return if searched_user.nil?
 
-    if login_user.id != searched_user.id
+    if login_user.nil? || login_user.id != searched_user.id
       %w(dm onesignal).each do |medium|
-        CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'search', medium: medium)
+        CreateNotificationMessageWorker.perform_async(searched_user.id, tu.uid.to_i, tu.screen_name, type: 'search', medium: medium)
       end
     end
   rescue => e
