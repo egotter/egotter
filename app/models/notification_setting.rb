@@ -33,7 +33,7 @@ class NotificationSetting < ActiveRecord::Base
     last_email_at + SEND_EMAIL_INTERVAL
   end
 
-  SEND_DM_INTERVAL = 1.day
+  SEND_DM_INTERVAL = Rails.env.production? ? 12.hours : 1.minutes
 
   def can_send_dm?
     dm? && last_dm_at.present? && last_dm_at < SEND_DM_INTERVAL.ago
