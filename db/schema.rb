@@ -292,14 +292,14 @@ ActiveRecord::Schema.define(version: 20161021113742) do
   add_index "statuses", ["uid"], name: "index_statuses_on_uid", using: :btree
 
   create_table "twitter_users", force: :cascade do |t|
-    t.string   "uid",            limit: 191,               null: false
-    t.string   "screen_name",    limit: 191,               null: false
-    t.binary   "user_info_gzip", limit: 65535,             null: false
-    t.integer  "search_count",   limit: 4,     default: 0, null: false
-    t.integer  "update_count",   limit: 4,     default: 0, null: false
-    t.integer  "user_id",        limit: 4,                 null: false
-    t.datetime "created_at",                               null: false
-    t.datetime "updated_at",                               null: false
+    t.string   "uid",          limit: 191,               null: false
+    t.string   "screen_name",  limit: 191,               null: false
+    t.text     "user_info",    limit: 65535,             null: false
+    t.integer  "search_count", limit: 4,     default: 0, null: false
+    t.integer  "update_count", limit: 4,     default: 0, null: false
+    t.integer  "user_id",      limit: 4,                 null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
   add_index "twitter_users", ["created_at"], name: "index_twitter_users_on_created_at", using: :btree
