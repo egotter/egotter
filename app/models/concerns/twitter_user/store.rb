@@ -44,10 +44,10 @@ module Concerns::TwitterUser::Store
 
   def _user_info
     @_user_info ||=
-      if respond_to?(:user_info_gzip) && user_info_gzip.present?
-        Hashie::Mash.new(JSON.load(ActiveSupport::Gzip.decompress(user_info_gzip)))
-      else
+      if respond_to?(:user_info) && user_info.present?
         Hashie::Mash.new(JSON.load(user_info))
+      else
+        Hashie::Mash.new(JSON.load(ActiveSupport::Gzip.decompress(user_info_gzip)))
       end
   end
 
