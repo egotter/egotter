@@ -18,6 +18,7 @@ class CreateTwitterUserWorker
       browser:     values['browser'],
       user_agent:  values['user_agent'],
       referer:     values['referer'],
+      referral:    '',
       channel:     values['channel']
     )
     user = User.find_by(id: user_id)

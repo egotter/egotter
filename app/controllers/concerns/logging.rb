@@ -24,6 +24,7 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
+      referral:    '',
       channel:     find_channel,
       medium:      params[:medium] ? params[:medium] : '',
       created_at:  Time.zone.now
@@ -50,6 +51,7 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
+      referral:    '',
       channel:     find_channel,
       created_at:  Time.zone.now
     }
@@ -69,6 +71,7 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
+      referral:    '',
       channel:     find_channel,
       created_at:  Time.zone.now
     }
