@@ -25,6 +25,15 @@ class UpdateTwitterUserWorker
       return
     end
 
+    # If friends is increased by NUM and friends is decremented by same NUM, the blow code makes a wrong decision.
+    # t_user = client.user(uid)
+    # if existing_tu.present? && existing_tu.friends_count == t_user.friends_count && existing_tu.followers_count == t_user.followers_count
+    #   existing_tu.increment(:update_count).save
+    #   log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is probably not changed.")
+    #   notify(user, existing_tu)
+    #   return
+    # end
+
     new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: user, context: :update)
     new_tu.user_id = user.id
     if new_tu.friendless?

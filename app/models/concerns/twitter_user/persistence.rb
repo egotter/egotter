@@ -1,5 +1,4 @@
 require 'active_support/concern'
-
 module Concerns::TwitterUser::Persistence
   extend ActiveSupport::Concern
 
@@ -20,13 +19,8 @@ module Concerns::TwitterUser::Persistence
     end
 
     # Fetch before calling save, or `SELECT * FROM relation_name WHERE from_id = xxx` is executed.
-    relations = %i(friends followers statuses mentions search_results favorites).map do |attr|
-      [attr, send(attr).to_a.dup]
-    end.to_h
-
-    relations.keys.each do |attr|
-      send("#{attr}=", [])
-    end
+    relations = %i(friends followers statuses mentions search_results favorites).map { |attr| [attr, send(attr).to_a.dup] }.to_h
+    relations.keys.each { |attr| send("#{attr}=", []) }
 
     return false unless super(validate: false)
 
