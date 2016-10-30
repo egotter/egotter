@@ -34,6 +34,7 @@ namespace :twitter_users do
 
   desc 'add update jobs'
   task add_update_jobs: :environment do
+    deadline = ENV['DEADLINE'] ? Time.zone.parse(ENV['DEADLINE']) : nil
     user_ids = ENV['USER_IDS']
     next if user_ids.blank?
 
@@ -48,6 +49,8 @@ namespace :twitter_users do
       start = Time.zone.now
       UpdateTwitterUserWorker.new.perform(user_id)
       puts "#{Time.zone.now}: #{user_id}, #{(Time.zone.now - start).round(1)} seconds"
+
+      break if deadline && Time.zone.now > deadline
     end
   end
 
