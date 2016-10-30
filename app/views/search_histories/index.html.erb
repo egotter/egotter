@@ -1,31 +1,12 @@
 <div id="search-histories<%= '-in-modal' if @in_modal %>">
-  <% modal_rendered_uids = [] %>
-  <%= render(partial: 'search_histories/search_history', collection: @search_histories, cached: true, locals: {uids: modal_rendered_uids, in_modal: @in_modal}) %>
+  <% rendered_uids = [] %>
+  <%= render(partial: 'search_histories/search_history', collection: @search_histories, cached: true, locals: {uids: rendered_uids, in_modal: @in_modal}) %>
 </div>
 
 <script>
-  function enable_carousel_search_histories<%= '_in_modal' if @in_modal %>(){
-    var option = {
-      accessibility: false,
-      arrows: false,
-      dots: false,
-      infinite: true
-    };
-    var container = $('#search-histories<%= '-in-modal' if @in_modal %>');
-    container.find('.user-item-carousel.search-histories<%= '.in-modal' if @in_modal %>').slick(option);
-    container.find('.media.description-box').show();
-    container.find('.media.count-box').show();
-    container.find('.media.score-box').show();
-  }
   $(function () {
-    <% if @in_modal %>
-      $('.search-modal').one('show.bs.modal', function (e) {
-        setTimeout(function () {
-          enable_carousel_search_histories_in_modal();
-        }, 500);
-      });
-    <% else %>
-      enable_carousel_search_histories();
+    <% unless @in_modal %>
+      enableSlickOnSearchHistory('#search-histories');
     <% end %>
   });
 </script>

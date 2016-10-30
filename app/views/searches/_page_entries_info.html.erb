@@ -1,8 +1,7 @@
 <div class="row">
   <div class="col-xs-3">
     <div>
-      <%= link_to_previous_page items, t('views.pagination.previous').html_safe,
-                                params: {controller: controller, action: action, id: user.uid, screen_name: user.screen_name} %>
+      <%= link_to_previous_page items, t('views.pagination.previous').html_safe, params: params %>
     </div>
   </div>
   <div class="col-xs-6 text-center">
@@ -12,8 +11,7 @@
   </div>
   <div class="col-xs-3 text-right">
     <div>
-      <%= link_to_next_page items, t('views.pagination.next').html_safe,
-                            params: {controller: controller, action: action, id: user.uid, screen_name: user.screen_name} %>
+      <%= link_to_next_page items, t('views.pagination.next').html_safe, params: params %>
     </div>
   </div>
 </div>

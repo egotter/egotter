@@ -1,5 +1,5 @@
 <div class="profile-overview-container <%= unique_id %>">
-  <div class="profile-overview">
+  <div class="profile-overview" data-banner-url="<%= user.profile_banner_url.to_s %>" data-bg-color="<%= user.profile_link_color.to_s %>">
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
@@ -35,42 +35,14 @@
 </div>
 
 <script>
-  function enable_carousel_profile_overview_<%= 'delay_' if delay %><%= unique_id %>(){
-    var container = $('.profile-overview-container.<%= unique_id %>');
-    container.find('.profile-overview-carousel').slick({
-      accessibility: false,
-      arrows: false,
-      dots: true,
-      infinite: false
-    });
-
-    container.find('.profile-description').show();
-    container.find('.profile-location').show();
-    container.find('.profile-link').show();
-    container.find('.profile-calendar').show();
-  }
   $(function () {
-    <% if delay %>
-      $('.profile-overview-modal.<%= unique_id %>').one('show.bs.modal', function (e) {
-        setTimeout(function () {
-          enable_carousel_profile_overview_delay_<%= unique_id %>();
-        }, 500);
-      });
-    <% else %>
-      enable_carousel_profile_overview_<%= unique_id %>();
-    <% end %>
-  });
-</script>
-
-<script>
-  $(function () {
-    var elem = $('.profile-overview-container.<%= unique_id %> .profile-overview');
-    <% if user.profile_banner_url.present? %>
-      elem.css('backgroundSize', 'cover');
-      elem.css('backgroundImage', "linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= user.profile_banner_url.to_s + '/web' %>')");
-    <% elsif user.profile_link_color.present? %>
-      elem.css('backgroundColor', '<%= "##{user.profile_link_color}" %>');
-    <% end %>
+    var $elem = $('.profile-overview-container.<%= unique_id %> .profile-overview');
+    if ($elem.data('bannerUrl')) {
+      $elem.css('backgroundSize', 'cover');
+      $elem.css('backgroundImage', "linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('" + $elem.data('bannerUrl') + "/web')");
+    } else if ($elem.data('bgColor')) {
+      $elem.css('backgroundColor', '#' + $elem.data('bgColor'));
+    }
   });
 </script>
 

@@ -1,8 +1,14 @@
 <% title @title %>
 <% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
 
-<%= render(partial: 'searches/profile_overview',
-           locals: {user: @searched_tw_user, delay: false, unique_id: @searched_tw_user.uid}) %>
+<%= render(partial: 'profiles/overview',
+           locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid}) %>
+
+<script>
+  $(function () {
+    enableSlickOnPageTop('<%= @searched_tw_user.uid %>');
+  });
+</script>
 
 <div class="update-histories">
   <h2 class="h4"><%= @title %></h2>
