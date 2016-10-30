@@ -54,11 +54,21 @@ namespace :twitter_users do
     task removing: :environment do
       uid = ENV['ID'].to_i
       count = ENV['COUNT'] ? ENV['COUNT'].to_i : 3
+      pattern = 0
 
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('Pattern 000') do
+        ActiveRecord::Base.benchmark("Pattern #{pattern}") do
+          TwitterUser.latest(uid).removing
+        end
+      end
+
+      pattern += 1
+      count.times do
+        ActiveRecord::Base.connection.query_cache.clear
+
+        ActiveRecord::Base.benchmark("Pattern #{pattern}") do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.to_a.empty? && tu.followers.to_a.empty? }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
               uids = older.friend_uids - newer.friend_uids
@@ -68,10 +78,11 @@ namespace :twitter_users do
         end
       end
 
+      pattern += 1
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('Pattern 001') do
+        ActiveRecord::Base.benchmark("Pattern #{pattern}") do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.size == 0 && tu.followers.size == 0 }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
               uids = older.friend_uids - newer.friend_uids
@@ -81,10 +92,11 @@ namespace :twitter_users do
         end
       end
 
+      pattern += 1
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('Pattern 002') do
+        ActiveRecord::Base.benchmark("Pattern #{pattern}") do
           TwitterUser.where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.empty? && tu.followers.empty? }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
               uids = older.friend_uids - newer.friend_uids
@@ -94,10 +106,11 @@ namespace :twitter_users do
         end
       end
 
+      pattern += 1
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('Pattern 003') do
+        ActiveRecord::Base.benchmark("Pattern #{pattern}") do
           TwitterUser.includes(:friends).where(uid: uid).order(created_at: :asc).reject{|tu| tu.friends.empty? && tu.followers.empty? }.each_cons(2).map do |older, newer|
             unless newer.nil? || older.nil? || newer.friends.empty?
               uids = older.friend_uids - newer.friend_uids
@@ -107,10 +120,11 @@ namespace :twitter_users do
         end
       end
 
+      pattern += 1
       count.times do
         ActiveRecord::Base.connection.query_cache.clear
 
-        ActiveRecord::Base.benchmark('Pattern 004') do
+        ActiveRecord::Base.benchmark("Pattern #{pattern}") do
           ids = TwitterUser.where(uid: uid).pluck(:id)
           friend_from_ids = Friend.where(from_id: ids).group(:from_id).count.keys.sort
           follower_from_ids = Follower.where(from_id: ids).group(:from_id).count.keys.sort
