@@ -8,7 +8,9 @@
 #  screen_name :string(191)      not null
 #  read        :boolean          default(FALSE), not null
 #  read_at     :datetime
+#  message_id  :string(191)      default(""), not null
 #  message     :text(65535)      not null
+#  context     :string(191)      default(""), not null
 #  medium      :string(191)      default(""), not null
 #  token       :string(191)      default(""), not null
 #  created_at  :datetime         not null
@@ -26,7 +28,9 @@
 class NotificationMessage < ActiveRecord::Base
   with_options on: :create do |obj|
     obj.validates :uid, presence: true, numericality: :only_integer
-    obj.validates :screen_name, format: {with: /\A[a-zA-Z0-9_]{1,20}\z/}
+    obj.validates :screen_name, format: {with: Validations::ScreenNameValidator::REGEXP}
     obj.validates :message, presence: true
+    obj.validates :context, inclusion: { in: %w(search update) }
+    obj.validates :medium, inclusion: { in: %w(dm onesignal) }
   end
 end

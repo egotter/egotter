@@ -15,6 +15,7 @@
 #  browser     :string(191)      default(""), not null
 #  user_agent  :string(191)      default(""), not null
 #  referer     :string(191)      default(""), not null
+#  referral    :string(191)      default(""), not null
 #  channel     :string(191)      default(""), not null
 #  medium      :string(191)      default(""), not null
 #  created_at  :datetime         not null

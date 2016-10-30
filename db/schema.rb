@@ -193,7 +193,9 @@ ActiveRecord::Schema.define(version: 20161021113742) do
     t.string   "screen_name", limit: 191,                   null: false
     t.boolean  "read",                      default: false, null: false
     t.datetime "read_at"
+    t.string   "message_id",  limit: 191,   default: "",    null: false
     t.text     "message",     limit: 65535,                 null: false
+    t.string   "context",     limit: 191,   default: "",    null: false
     t.string   "medium",      limit: 191,   default: "",    null: false
     t.string   "token",       limit: 191,   default: "",    null: false
     t.datetime "created_at",                                null: false
@@ -201,6 +203,7 @@ ActiveRecord::Schema.define(version: 20161021113742) do
   end
 
   add_index "notification_messages", ["created_at"], name: "index_notification_messages_on_created_at", using: :btree
+  add_index "notification_messages", ["message_id"], name: "index_notification_messages_on_message_id", using: :btree
   add_index "notification_messages", ["screen_name"], name: "index_notification_messages_on_screen_name", using: :btree
   add_index "notification_messages", ["token"], name: "index_notification_messages_on_token", using: :btree
   add_index "notification_messages", ["uid"], name: "index_notification_messages_on_uid", using: :btree

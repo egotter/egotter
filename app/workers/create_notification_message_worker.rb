@@ -14,6 +14,7 @@ class CreateNotificationMessageWorker
 
     url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, medium: medium, token: token)
     user = User.find(user_id)
+    notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)
 
     if type == :search && user.can_send?(type) && medium == 'dm'
       message = [
@@ -21,9 +22,8 @@ class CreateNotificationMessageWorker
         I18n.t("#{medium}.#{type}Notification.message", url: url)
       ].join("\n")
 
-      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium, token: token)
-      user.api_client.create_direct_message(user.uid.to_i, notification.message)
-      notification.save!
+      dm = user.api_client.create_direct_message(user.uid.to_i, message)
+      notification.update!(message_id: dm.id, message: message)
       user.notification_setting.touch(:last_search_at)
 
       return
@@ -52,9 +52,8 @@ class CreateNotificationMessageWorker
           ]
         end.join("\n")
 
-      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium, token: token)
-      user.api_client.create_direct_message(user.uid.to_i, notification.message)
-      notification.save!
+      dm = user.api_client.create_direct_message(user.uid.to_i, message)
+      notification.update!(message_id: dm.id, message: message)
       user.notification_setting.touch(:last_dm_at)
 
       return
@@ -68,11 +67,8 @@ class CreateNotificationMessageWorker
         [locale, I18n.t("#{medium}.#{type}Notification.message", url: url, locale: locale)]
       end.to_h
 
-      message = contents[:ja]
-      notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium, token: token)
-
       Onesignal.new(user.id, headings: headings, contents: contents, url: url).send
-      notification.save!
+      notification.update!(message_id: '', message: contents[:ja])
 
       return
     end
