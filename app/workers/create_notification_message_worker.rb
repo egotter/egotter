@@ -55,7 +55,7 @@ class CreateNotificationMessageWorker
       notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, message: message, medium: medium, token: token)
       user.api_client.create_direct_message(user.uid.to_i, notification.message)
       notification.save!
-      user.notification_setting.touch(:last_search_at)
+      user.notification_setting.touch(:last_dm_at)
 
       return
     end
@@ -73,7 +73,6 @@ class CreateNotificationMessageWorker
 
       Onesignal.new(user.id, headings: headings, contents: contents, url: url).send
       notification.save!
-      user.notification_setting.touch(:last_search_at)
 
       return
     end
