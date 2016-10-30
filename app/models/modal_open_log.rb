@@ -5,7 +5,7 @@
 #  id          :integer          not null, primary key
 #  session_id  :string(191)      default(""), not null
 #  user_id     :integer          default(-1), not null
-#  name        :string(191)      default("-1"), not null
+#  via         :string(191)      default(""), not null
 #  device_type :string(191)      default(""), not null
 #  os          :string(191)      default(""), not null
 #  browser     :string(191)      default(""), not null
@@ -20,4 +20,5 @@
 #
 
 class ModalOpenLog < ActiveRecord::Base
+  validates :via, inclusion: { in: %w(search_history profile) }
 end

@@ -33,6 +33,8 @@
 
 class BackgroundSearchLog < ActiveRecord::Base
 
+  validates :via, inclusion: { in: %w(top_input top_input2 top_button profile_modal search_history_profile search_history_input retry) }, allow_blank: true
+
   class Unauthorized
     MESSAGE = self.name.demodulize
   end
