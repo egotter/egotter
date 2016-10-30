@@ -12,6 +12,6 @@
   :javascript
     $(function () {
       $('.search-modal').on('shown.bs.modal', function() {
-        $.post('#{modal_open_logs_path}', {name: 'search_history'});
+        $.post('#{modal_open_logs_path}', {via: 'search_history'});
       });
     });

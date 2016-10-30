@@ -59,11 +59,11 @@ module Logging
     logger.info e.backtrace.take(10).join("\n")
   end
 
-  def create_modal_open_log(name)
+  def create_modal_open_log(via)
     attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
-      name:        name,
+      via:         via,
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,

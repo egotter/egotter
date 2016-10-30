@@ -11,7 +11,7 @@
   <script>
     $(function () {
       $('.profile-overview-modal.<%= unique_id %>').on('shown.bs.modal', function() {
-        $.post('<%= modal_open_logs_path %>', {name: 'profile'});
+        $.post('<%= modal_open_logs_path %>', {via: 'profile'});
       });
     });
   </script>

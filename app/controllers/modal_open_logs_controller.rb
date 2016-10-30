@@ -4,7 +4,7 @@ class ModalOpenLogsController < ApplicationController
   layout false
 
   def create
-    create_modal_open_log(params[:name] ? params[:name] : '')
+    create_modal_open_log(params[:via])
     render nothing: true, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
