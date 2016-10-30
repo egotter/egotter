@@ -6,8 +6,18 @@
         <h4 class="modal-title" id="profile-overview-modal-label"><%= t('searches.new.search_by_egotter') %></h4>
       </div>
       <div class="modal-body" style="padding: 0;">
-        <%= render(partial: 'searches/profile_overview',
-                   locals: {user: user, delay: true, unique_id: unique_id}) %>
+        <%= render(partial: 'profiles/overview', locals: {user: user, unique_id: unique_id}) %>
+
+        <script>
+          $(function () {
+            var selector = '.profile-overview-modal.<%= unique_id %>';
+            $(selector).one('show.bs.modal', function (e) {
+              setTimeout(function () { enableSlickOnModal('<%= unique_id %>') }, 500);
+            });
+
+            setModalOpenLogger(selector, 'profile', '<%= modal_open_logs_path %>');
+          });
+        </script>
 
         <div style="margin: 15px;">
           <%= link_to t('searches.new.search_by', user: "@#{user.screen_name}"),

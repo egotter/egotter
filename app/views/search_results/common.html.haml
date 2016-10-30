@@ -5,50 +5,25 @@
 
   .page-entries-info-top
     = render(partial: 'searches/page_entries_info',
-      locals: {controller: :searches, action: action_name, user: @searched_tw_user, items: @user_items})
+      locals: {params: {controller: :searches, action: action_name, screen_name: @searched_tw_user.screen_name}, items: @user_items})
 
-  - modal_rendered_uids = []
+  - rendered_uids = []
   %div{id: menu}
-    = render(partial: 'search_results/user_item', collection: @user_items, cached: true, locals: {uids: modal_rendered_uids})
+    = render(partial: 'search_results/user_item', collection: @user_items, cached: true, locals: {uids: rendered_uids})
+
+  - rendered_uids.uniq.each do |uid|
+    - user = @user_items.find { |item| item[:target].uid.to_i == uid.to_i }[:target]
+    = render(partial: 'profiles/modal', locals: {user: user, unique_id: user.uid, via: :profile_modal})
 
   :javascript
-    function enable_carousel(){
-      var container = $('##{menu}');
-      var option = {
-        accessibility: false,
-        arrows: false,
-        dots: false,
-        infinite: true
-      };
-
-      container.find('.user-item-carousel').each(function(){
-        var loaded = false;
-        $(this)
-          .lazyload()
-          .on('appear', function () {
-            if (loaded) {
-              return
-            }
-            loaded = true;
-
-            $(this).slick(option);
-            $(this)
-              .find('img.lazy').trigger('appear').end()
-              .find('.media.description-box').show().end()
-              .find('.media.count-box').show().end()
-              .find('.media.score-box').show();
-          });
-      });
-    }
-
     $(function () {
-      enable_carousel();
+      enableSlickOnUserList('##{menu}');
       $("img.lazy").lazyload();
     });
 
   .page-entries-info-bottom
     = render(partial: 'searches/page_entries_info',
-      locals: {controller: :searches, action: action_name, user: @searched_tw_user, items: @user_items})
+      locals: {params: {controller: :searches, action: action_name, screen_name: @searched_tw_user.screen_name}, items: @user_items})
 - else
   - if user_signed_in?
     - if @searched_tw_user.too_many_friends?(login_user: current_user, context: :search)

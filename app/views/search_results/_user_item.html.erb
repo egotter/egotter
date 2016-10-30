@@ -2,27 +2,14 @@
   user = user_item[:target]
   profile_image_url = user.profile_image_url_https.to_s
   mention_name = "@#{user.screen_name}"
-  png = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
+  uids << user.uid.to_i
 %>
-
-<% unless uids.include?(user.uid.to_i) %>
-  <%= render(partial: 'searches/profile_overview_modal',
-             locals: {user: user, unique_id: user.uid, via: :profile_modal}) %>
-  <script>
-    $(function () {
-      $('.profile-overview-modal.<%= user.uid %>').on('shown.bs.modal', function() {
-        $.post('<%= modal_open_logs_path %>', {via: 'profile'});
-      });
-    });
-  </script>
-  <% uids << user.uid.to_i %>
-<% end %>
 
 <div class="user-item-carousel">
   <%# name box %>
   <div class="media name-box">
     <div class="media-left">
-      <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
+      <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png_image %>"
            alt="<%= mention_name %>" width="48" height="48">
     </div>
 
@@ -64,7 +51,7 @@
   <%# description box %>
   <div class="media description-box" style="display: none;">
     <div class="media-left">
-      <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
+      <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png_image %>"
            alt="<%= mention_name %>" width="48" height="48">
     </div>
 
@@ -76,7 +63,7 @@
   <%# count box %>
   <div class="media count-box" style="display: none;">
     <div class="media-left">
-      <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
+      <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png_image %>"
            alt="<%= mention_name %>" width="48" height="48">
     </div>
 
@@ -91,7 +78,7 @@
   <% if user.respond_to?(:score) %><%# close_friends score %>
     <div class="media score-box" style="display: none;">
       <div class="media-left">
-        <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png %>"
+        <img class="lazy media-object" data-original="<%= profile_image_url %>" src="<%= png_image %>"
              alt="<%= mention_name %>" width="48" height="48">
       </div>
 

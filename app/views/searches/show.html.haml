@@ -3,8 +3,13 @@
 %p.alert.alert-info{style: 'display: none;'}
   = t('searches.waiting.updating_is_finished_msg', link: link_to(t('dictionary.this_link'), '#')).html_safe
 
-= render(partial: 'searches/profile_overview',
-  locals: {user: @searched_tw_user, delay: false, unique_id: @searched_tw_user.uid})
+= render(partial: 'profiles/overview',
+  locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid})
+
+:javascript
+  $(function () {
+    enableSlickOnPageTop('#{@searched_tw_user.uid}');
+  });
 
 .search-result
   %h2.h4= t('.heading', user: @searched_tw_user.mention_name)
