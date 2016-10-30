@@ -80,7 +80,8 @@ module SearchesHelper
         browser:     request.browser,
         user_agent:  truncated_user_agent,
         referer:     truncated_referer,
-        channel:     find_channel,
+        referral:    find_referral,
+        channel:     find_referral,
     }
     searched_uid_list.add(uid)
     CreateTwitterUserWorker.perform_async(values)

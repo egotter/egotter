@@ -24,8 +24,8 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
-      referral:    '',
-      channel:     find_channel,
+      referral:    find_referral,
+      channel:     find_referral,
       medium:      params[:medium] ? params[:medium] : '',
       created_at:  Time.zone.now
     }
@@ -51,8 +51,8 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
-      referral:    '',
-      channel:     find_channel,
+      referral:    find_referral,
+      channel:     find_referral,
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
@@ -71,8 +71,8 @@ module Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
-      referral:    '',
-      channel:     find_channel,
+      referral:    find_referral,
+      channel:     find_referral,
       created_at:  Time.zone.now
     }
     CreateModalOpenLogWorker.perform_async(attrs)
@@ -114,7 +114,7 @@ module Logging
     [uid, screen_name]
   end
 
-  def find_channel
+  def find_referral
     channel_url = Util::RefererList.new(Redis.client).to_a(fingerprint).find do |referer|
       !referer.nil? && referer != '' && !URI.parse(referer).host.include?('egotter')
     end
