@@ -6,8 +6,10 @@ namespace :twitter_users do
 
   desc 'copy to user_info'
   task copy_to_user_info: :environment do
-    TwitterUser.find_each(batch_size: 1000) do |tu|
-      tu.update!(user_info: ActiveSupport::Gzip.decompress(tu.user_info_gzip))
+    Rails.logger.silence do
+      TwitterUser.find_each(batch_size: 1000) do |tu|
+        tu.update!(user_info: ActiveSupport::Gzip.decompress(tu.user_info_gzip))
+      end
     end
   end
 
