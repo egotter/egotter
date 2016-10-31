@@ -6,18 +6,11 @@ module Concerns::TwitterUser::Builder
 
   class_methods do
     def build_by_user(user)
-      tu = TwitterUser.new(
+      TwitterUser.new(
         uid: user.id,
         screen_name: user.screen_name,
+        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json
       )
-
-      if tu.respond_to?(:user_info)
-        tu.user_info = user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json
-      end
-      if tu.respond_to?(:user_info_gzip)
-        tu.user_info_gzip = ActiveSupport::Gzip.compress(user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
-      end
-      tu
     end
 
     def build_with_relations(user, client:, login_user:, context: nil)
