@@ -5,7 +5,6 @@
 %>
 
 <script>
-  'use strict';
   $(function () {
     window.lazycall_functions = {};
   });
@@ -52,12 +51,11 @@
 <% end %>
 
 <script>
-  'use strict';
   $(function () {
     $("img.lazy").lazyload();
 
     $.each(Object.keys(window.lazycall_functions), function (i, selector) {
-      let loaded = false;
+      var loaded = false;
       $(selector)
           .lazyload()
           .on('appear', function () {
@@ -92,7 +90,6 @@
 </div>
 
 <script>
-  'use strict';
   $(function () {
     tooltip();
 
@@ -145,20 +142,20 @@
       }
     }
 
-    const interval = new Interval();
-    const retry = new Retry();
-    const created_at = <%= tu.created_at.to_i %>;
-    const cache = new Cache();
-    const refreshBox = $('.alert.alert-info');
-    const scope = {action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
+    var interval = new Interval();
+    var retry = new Retry();
+    var created_at = <%= tu.created_at.to_i %>;
+    var cache = new Cache();
+    var refreshBox = $('.alert.alert-info');
+    var scope = {action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
 
-    refreshBox.find('a').on('click', (e) => {
+    refreshBox.find('a').on('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
 
       cache.delete()
           .then(cache.create(), failed)
-          .done(() => window.location.reload())
+          .done(function () { window.location.reload() })
           .fail(failed);
 
       return false;
@@ -192,7 +189,7 @@
     }
 
     function tic() {
-      const url = "<%= background_search_log_path(id: tu.uid) %>";
+      var url = "<%= background_search_log_path(id: tu.uid) %>";
       $.get(url).done(done).fail(failed);
     }
 

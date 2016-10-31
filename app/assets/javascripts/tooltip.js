@@ -1,11 +1,9 @@
 // https://osvaldas.info/elegant-css-and-jquery-tooltip-responsive-mobile-friendly
 function tooltip() {
-  'use strict';
-
   $('[rel~=tooltip]').bind('mouseenter', function () {
-    const target = $(this);
-    const tip = target.attr('title');
-    const tooltip = $('<div id="tooltip"></div>');
+    var target = $(this);
+    var tip = target.attr('title');
+    var tooltip = $('<div id="tooltip"></div>');
 
     if (!tip || tip == '')
       return false;
@@ -15,7 +13,7 @@ function tooltip() {
         .html(tip)
         .appendTo('body');
 
-    const init_tooltip = function () {
+    var init_tooltip = function () {
       if ($(window).width() < tooltip.outerWidth() * 1.5)
         tooltip.css('max-width', $(window).width() / 2);
       else
@@ -54,7 +52,7 @@ function tooltip() {
     init_tooltip();
     $(window).resize(init_tooltip);
 
-    const remove_tooltip = function () {
+    var remove_tooltip = function () {
       tooltip.animate({top: '-=10', opacity: 0}, 50, function () {
         $(this).remove();
       });

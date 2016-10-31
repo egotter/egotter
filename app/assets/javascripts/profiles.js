@@ -1,11 +1,9 @@
-'use strict';
-
 function enableSlickOnModal(uniqueId) {
   enableSlickOnPageTop(uniqueId);
 }
 
 function enableSlickOnPageTop(uniqueId) {
-  const container = $('.profile-overview-container.' + uniqueId);
+  var container = $('.profile-overview-container.' + uniqueId);
   container.find('.profile-overview-carousel').slick({
     accessibility: false,
     arrows: false,
@@ -20,7 +18,7 @@ function enableSlickOnPageTop(uniqueId) {
 }
 
 function enableSlickOnUserList(selector) {
-  const option = {
+  var option = {
     accessibility: false,
     arrows: false,
     dots: false,
@@ -46,14 +44,14 @@ function enableSlickOnUserList(selector) {
 }
 
 function enableSlickOnSearchHistory(selector){
-  const option = {
+  var option = {
     accessibility: false,
     arrows: false,
     dots: false,
     infinite: true
   };
 
-  const container = $(selector);
+  var container = $(selector);
   container.find('.user-item-carousel.search-histories').slick(option);
   container.find('.media.description-box').show();
   container.find('.media.count-box').show();

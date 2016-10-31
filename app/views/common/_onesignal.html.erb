@@ -1,6 +1,5 @@
 <script>
-  'use strict';
-  const notifyButton = {
+  var notifyButton = {
     enable: true,
     size: ['small', 'medium', 'large'][1],
     prenotify: true,
@@ -25,11 +24,11 @@
       })
     }
   };
-  const welcomeNotification = {
+  var welcomeNotification = {
     "title": "<%= t('onesignal.welcomeNotification.title') %>",
     "message": "<%= t('onesignal.welcomeNotification.message') %>"
   };
-  const promptOptions = {
+  var promptOptions = {
     siteName:                   "<%= t('onesignal.promptOptions.siteName').truncate(30) %>",
     actionMessage:              "<%= t('onesignal.promptOptions.actionMessage').truncate(90) %>",
     exampleNotificationTitle:   "<%= t('onesignal.promptOptions.exampleNotificationTitle') %>",
@@ -39,9 +38,9 @@
     cancelButtonText:           "<%= t('onesignal.promptOptions.cancelButtonText').truncate(15) %>"
   };
 
-  const OneSignal = window.OneSignal || [];
+  var OneSignal = window.OneSignal || [];
   <% if Rails.env.development? %>
-    const values = {
+    var values = {
       appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
       autoRegister:        false,
       subdomainName:       'egotter-dev',
@@ -50,7 +49,7 @@
       promptOptions:       promptOptions
     };
   <% elsif Rails.env.production? %>
-    const values = {
+    var values = {
       appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
       autoRegister:        false,
       notifyButton:        notifyButton,

@@ -23,19 +23,18 @@
   .error-msg.text-center{style: 'display: none; margin-bottom: 15px;'}
 
   :javascript
-    'use strict';
     $(function () {
-      const url = "#{send("#{@menu}_results_path", id: @searched_tw_user.uid, page: params[:page])}";
-      const retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
-      const somethingIsWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
+      var url = "#{send("#{@menu}_results_path", id: @searched_tw_user.uid, page: params[:page])}";
+      var retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
+      var somethingIsWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
 
       $.get(url)
-          .done((res) => {
+          .done(function (res) {
             $('.common-result').append(res.html);
             var path = window.location.pathname + window.location.search + '#loaded';
             window.history.replaceState(null, null, path)
           })
-          .fail((xhr) => {
+          .fail(function (xhr) {
             if (xhr.status === 502) {
               Rollbar
                 .scope({action: "#{action_name}", uid: #{@searched_tw_user.uid}})
@@ -46,5 +45,5 @@
             }
             console.log(xhr.responseText);
           })
-          .always(() => $('.loading-image').remove());
+          .always(function () { $('.loading-image').remove() });
     });

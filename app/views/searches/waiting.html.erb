@@ -48,7 +48,6 @@
 </div>
 
 <script>
-  'use strict';
   $(function () {
     class ProgressBar {
       constructor() {
@@ -90,27 +89,27 @@
       }
     }
 
-    const tooManyRequests = new Exception(
+    var tooManyRequests = new Exception(
         '<%= t("after_sign_in.too_many_requests") %>',
         '<%= t("before_sign_in.too_many_requests", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
     );
 
-    const unauthorized = new Exception(
+    var unauthorized = new Exception(
         '<%= t("after_sign_in.unauthorized", sign_out_link: link_to(t('dictionary.sign_out'), sign_out_path)).html_safe %>',
         '<%= t("before_sign_in.unauthorized", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
     );
 
-    const somethingIsWrong = new Exception(
+    var somethingIsWrong = new Exception(
         '<%= t("after_sign_in.something_is_wrong") %>',
         '<%= t("before_sign_in.something_is_wrong", sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
     );
 
-    const timeout = new Exception(
+    var timeout = new Exception(
         '<%= t("after_sign_in.retry_timeout", user: @searched_tw_user.name) %>',
         '<%= t("before_sign_in.retry_timeout", user: @searched_tw_user.screen_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe %>'
     );
 
-    const errors = {
+    var errors = {
       <%= BackgroundSearchLog::TooManyRequests::MESSAGE %>: tooManyRequests,
       <%= BackgroundSearchLog::Unauthorized::MESSAGE %>: unauthorized,
       <%= BackgroundSearchLog::SomethingError::MESSAGE %>: somethingIsWrong
@@ -149,11 +148,11 @@
       }
     }
 
-    const $waitingMessage = $('.waiting-msg');
-    const progressBar = new ProgressBar();
-    const interval = new Interval();
-    const retry = new Retry();
-    const scope = {action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
+    var $waitingMessage = $('.waiting-msg');
+    var progressBar = new ProgressBar();
+    var interval = new Interval();
+    var retry = new Retry();
+    var scope = {action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
 
     function failed(xhr) {
       if (xhr.status === 502) {
@@ -162,7 +161,7 @@
       }
       console.log(xhr.responseText);
 
-      const res = $.parseJSON(xhr.responseText || null);
+      var res = $.parseJSON(xhr.responseText || null);
       progressBar.hide();
       $waitingMessage.hide();
 
@@ -197,7 +196,7 @@
     }
 
     function tic() {
-      const url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
+      var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
       $.get(url).done(done).fail(failed);
     }
 

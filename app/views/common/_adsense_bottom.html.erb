@@ -1,7 +1,6 @@
 <script>
-  'use strict';
   $(function () {
-    const width = $('.adsense-container-bottom').width();
+    var width = $('.adsense-container-bottom').width();
     if (width < 300) { // iPhone 5
       $('.adsense-container-bottom').css('margin-left', '-' + (300 - width) / 2 + 'px');
     }
