@@ -54,6 +54,42 @@ namespace :twitter_users do
     end
   end
 
+  desc 'fix counts'
+  task fix_counts: :environment do
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    start_time = Time.zone.now
+    failed = false
+    puts "\nfix counts started:"
+
+    Rails.logger.silence do
+      TwitterUser.find_in_batches(start: start, batch_size: 5000) do |array|
+        twitter_users = array.map do |tu|
+          [tu.id, 0, '', '', tu.friends.size, tu.followers.size, 0, start_time, start_time]
+        end
+
+        begin
+          TwitterUser.import(%i(id uid screen_name user_info friends_size followers_size user_id created_at updated_at), twitter_users,
+                       validate: false, timestamps: false, on_duplicate_key_update: %i(friends_size followers_size))
+          puts "#{Time.zone.now}: #{twitter_users.first[0]} - #{twitter_users.last[0]}"
+        rescue => e
+          puts "#{e.class} #{e.message.slice(0, 100)}"
+          failed = true
+        end
+
+        break if sigint || failed
+      end
+    end
+
+    puts "fix counts #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "  start: #{start}, total: #{(Time.zone.now - start_time).round(1)} seconds"
+  end
+
   namespace :benchmark do
     desc 'removing'
     task removing: :environment do

@@ -13,7 +13,7 @@ module Concerns::TwitterUser::Utils
     end
 
     def with_friends(uid, order:)
-      where(uid: uid).order(created_at: order).reject { |tu| tu.friendless? }
+      where(uid: uid).where.not(friends_size: 0, followers_size: 0).order(created_at: order)
     end
   end
 
@@ -27,7 +27,7 @@ module Concerns::TwitterUser::Utils
   end
 
   def friendless?
-    friends.empty? && followers.empty?
+    friends_size == 0 && followers_size == 0
   end
 
   def friend_uids
