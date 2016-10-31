@@ -34,7 +34,12 @@ namespace :twitter_users do
 
   desc 'add update jobs'
   task add_update_jobs: :environment do
-    deadline = ENV['DEADLINE'] ? Time.zone.parse(ENV['DEADLINE']) : nil
+    deadline =
+      case
+        when ENV['DEADLINE'].nil? then nil
+        when ENV['DEADLINE'].match(/\d+\.(minutes?|hours?)/) then Time.zone.now + eval(ENV['DEADLINE'])
+        else Time.zone.parse(ENV['DEADLINE'])
+      end
     user_ids = ENV['USER_IDS']
     next if user_ids.blank?
 
@@ -44,6 +49,8 @@ namespace :twitter_users do
         when user_ids.include?(',') then user_ids.split(',').map(&:to_i)
         else [user_ids.to_i]
       end
+
+    puts "\nfinish at #{deadline}" if deadline
 
     user_ids.each do |user_id|
       start = Time.zone.now
