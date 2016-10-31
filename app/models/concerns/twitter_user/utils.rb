@@ -31,11 +31,19 @@ module Concerns::TwitterUser::Utils
   end
 
   def friend_uids
-    new_record? ? friends.map { |f| f.uid.to_i } : friends.pluck(:uid).map { |uid| uid.to_i }
+    if new_record?
+      friends.map { |f| f.uid.to_i }
+    else
+      @_friend_uids ||= friends.pluck(:uid).map { |uid| uid.to_i }
+    end
   end
 
   def follower_uids
-    new_record? ? followers.map { |f| f.uid.to_i } : followers.pluck(:uid).map { |uid| uid.to_i }
+    if new_record?
+      followers.map { |f| f.uid.to_i }
+    else
+      @_follower_uids ||= followers.pluck(:uid).map { |uid| uid.to_i }
+    end
   end
 
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
