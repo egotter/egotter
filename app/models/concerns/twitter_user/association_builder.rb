@@ -20,6 +20,8 @@ module Concerns::TwitterUser::AssociationBuilder
     build_status_relations(:favorites, relations[:favorites])
 
     search_results.each { |sr| sr.query = mention_name }
+    self.friends_size = friends.size
+    self.followers_size = followers.size
 
     true
   end
