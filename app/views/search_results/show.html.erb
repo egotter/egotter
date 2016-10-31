@@ -150,6 +150,7 @@
     const created_at = <%= tu.created_at.to_i %>;
     const cache = new Cache();
     const refreshBox = $('.alert.alert-info');
+    const scope = {action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
 
     refreshBox.find('a').on('click', (e) => {
       e.preventDefault();
@@ -184,6 +185,7 @@
 
       if (!retry.next()) {
         console.log('stop waiting.');
+        Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
       } else {
         setTimeout(tic, interval.next());
       }

@@ -36,7 +36,14 @@
             window.history.replaceState(null, null, path)
           })
           .fail((xhr) => {
-            $('.error-msg').append(xhr.status === 502 ? retryTimeout : somethingIsWrong).show();
+            if (xhr.status === 502) {
+              Rollbar
+                .scope({action: "#{action_name}", uid: #{@searched_tw_user.uid}})
+                .warning("Timeout while attempting fetching.");
+              $('.error-msg').append(retryTimeout).show();
+            } else {
+              $('.error-msg').append(somethingIsWrong).show();
+            }
             console.log(xhr.responseText);
           })
           .always(() => $('.loading-image').remove());

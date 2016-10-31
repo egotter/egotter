@@ -153,8 +153,13 @@
     const progressBar = new ProgressBar();
     const interval = new Interval();
     const retry = new Retry();
+    const scope = {action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
 
     function failed(xhr) {
+      if (xhr.status === 502) {
+        Rollbar.scope(scope).warning("Timeout while attempting fetching.");
+        return;
+      }
       console.log(xhr.responseText);
 
       const res = $.parseJSON(xhr.responseText || null);
@@ -183,6 +188,7 @@
         progressBar.hide();
         $waitingMessage.hide();
         timeout.showMessage();
+        Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
         return
       }
 

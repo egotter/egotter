@@ -65,6 +65,7 @@ module Validation
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
     logger.info e.backtrace.take(10).join("\n")
+    Rollbar.error(e)
     redirect_to root_path, alert: alert_message(e)
     false
   end

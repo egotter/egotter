@@ -167,6 +167,7 @@ GEM
       mini_portile2 (~> 2.1.0)
       pkg-config (~> 1.1.7)
     oauth (0.5.1)
+    oj (2.17.5)
     omniauth (1.3.1)
       hashie (>= 1.2, < 4)
       rack (>= 1.0, < 3)
@@ -231,6 +232,8 @@ GEM
     request_store (1.3.1)
     responders (2.2.0)
       railties (>= 4.2.0, < 5.1)
+    rollbar (2.13.3)
+      multi_json
     rspec-core (3.5.1)
       rspec-support (~> 3.5.0)
     rspec-expectations (3.5.0)
@@ -342,6 +345,7 @@ DEPENDENCIES
   meta-tags
   mysql2
   newrelic_rpm
+  oj
   omniauth-twitter
   parallel
   pry-rails
@@ -351,6 +355,7 @@ DEPENDENCIES
   rails (= 4.2.5)
   rails_autolink
   redis
+  rollbar
   rspec-rails
   sdoc (~> 0.4.0)
   sidekiq

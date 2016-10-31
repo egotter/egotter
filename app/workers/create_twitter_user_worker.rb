@@ -24,6 +24,7 @@ class CreateTwitterUserWorker
     user = User.find_by(id: user_id)
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
+    Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''}) unless user.nil?
 
     existing_tu = TwitterUser.latest(uid)
     if existing_tu.present? && existing_tu.fresh?
@@ -55,6 +56,7 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
+    Rollbar.warn(e)
   rescue Twitter::Error::TooManyRequests => e
     log.update(
       status: false,
@@ -62,6 +64,7 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
       message: ''
     )
+    Rollbar.warn(e)
   rescue Twitter::Error::Unauthorized => e
     log.update(
       status: false,
@@ -69,6 +72,7 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::Unauthorized::MESSAGE,
       message: ''
     )
+    Rollbar.warn(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     logger.info e.backtrace.slice(0, 10).join("\n")
@@ -78,6 +82,7 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message}"
     )
+    Rollbar.warn(e)
   end
 
   def notify(login_user, tu)
@@ -91,5 +96,6 @@ class CreateTwitterUserWorker
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.id} #{tu.inspect}"
+    Rollbar.warn(e)
   end
 end

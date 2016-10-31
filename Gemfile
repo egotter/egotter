@@ -58,6 +58,8 @@ gem 'stackprof'
 gem 'haml-rails'
 gem 'rails_autolink'
 gem 'draper'
+gem 'rollbar'
+gem 'oj'
 gem 'js-routes'
 
 group :development, :production do

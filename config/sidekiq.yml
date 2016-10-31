@@ -3,3 +3,4 @@
 :logfile: ./log/sidekiq.log
 :queues:
   - egotter
+  - rollbar

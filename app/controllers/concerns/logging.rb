@@ -38,6 +38,7 @@ module Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
+    Rollbar.warn(e)
   end
 
   def create_sign_in_log(user_id, context, via)
@@ -59,6 +60,7 @@ module Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
+    Rollbar.warn(e)
   end
 
   def create_modal_open_log(via)
@@ -79,6 +81,7 @@ module Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
+    Rollbar.warn(e)
   end
 
   def push_referer
@@ -86,6 +89,7 @@ module Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
+    Rollbar.warn(e)
   end
 
   private
@@ -121,6 +125,7 @@ module Logging
     channel_url.blank? ? '' : URI.parse(channel_url).host
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    Rollbar.warn(e)
     ''
   end
 

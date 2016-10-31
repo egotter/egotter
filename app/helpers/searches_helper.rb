@@ -19,6 +19,7 @@ module SearchesHelper
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
     logger.info e.backtrace.take(10).join("\n")
+    Rollbar.error(e)
     redirect_to root_path, alert: alert_message(e)
   end
 

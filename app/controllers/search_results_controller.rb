@@ -22,6 +22,7 @@ class SearchResultsController < ApplicationController
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{request.device_type}"
     logger.info e.backtrace.slice(0, 10).join("\n")
+    Rollbar.error(e)
     render nothing: true, status: 500
   end
 

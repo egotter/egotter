@@ -12,6 +12,7 @@ class UpdateTwitterUserWorker
       bot_uid:     user.uid
     )
     client = user.api_client
+    Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''})
 
     if Util::UnauthorizedUidList.new(Redis.client).exists?(log.uid)
       return
@@ -61,6 +62,7 @@ class UpdateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
+    Rollbar.warn(e)
   rescue Twitter::Error::TooManyRequests => e
     log.update(
       status: false,
@@ -68,6 +70,7 @@ class UpdateTwitterUserWorker
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
       message: ''
     )
+    Rollbar.warn(e)
   rescue Twitter::Error::Unauthorized => e
     Util::UnauthorizedUidList.new(Redis.client).add(log.uid)
     log.update(
@@ -76,6 +79,7 @@ class UpdateTwitterUserWorker
       reason: BackgroundSearchLog::Unauthorized::MESSAGE,
       message: ''
     )
+    Rollbar.warn(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     logger.info e.backtrace.slice(0, 10).join("\n")
@@ -85,6 +89,7 @@ class UpdateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message}"
     )
+    Rollbar.warn(e)
   end
 
   def notify(login_user, tu, created: false)
@@ -95,5 +100,6 @@ class UpdateTwitterUserWorker
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.inspect} #{tu.inspect}"
+    Rollbar.warn(e)
   end
 end
