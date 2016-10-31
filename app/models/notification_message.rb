@@ -19,6 +19,7 @@
 # Indexes
 #
 #  index_notification_messages_on_created_at   (created_at)
+#  index_notification_messages_on_message_id   (message_id)
 #  index_notification_messages_on_screen_name  (screen_name)
 #  index_notification_messages_on_token        (token)
 #  index_notification_messages_on_uid          (uid)

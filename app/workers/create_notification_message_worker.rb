@@ -10,26 +10,46 @@ class CreateNotificationMessageWorker
     type = options['type'].to_sym
     mention_name = "@#{screen_name}"
     medium = options['medium']
-    token = Digest::MD5.hexdigest(Time.zone.now.to_i.to_s).slice(0, 5)
+    token = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")[0...5]
 
     url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, medium: medium, token: token)
     user = User.find(user_id)
     notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)
+    log = CreateNotificationMessageLog.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium)
 
-    if type == :search && user.can_send?(type) && medium == 'dm'
+    unless %i(search update).include?(type)
+      log.update(status: false, message: "[#{type}] is not permitted.")
+      return
+    end
+
+    unless %w(dm onesignal).include?(medium)
+      log.update(status: false, message: "[#{medium}] is not permitted.")
+      return
+    end
+
+    unless user.can_send?(type)
+      log.update(status: false, message: "[#{type}] is not enabled.")
+      return
+    end
+
+    if type == :search && medium == 'dm'
       message = [
         I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
         I18n.t("#{medium}.#{type}Notification.message", url: url)
       ].join("\n")
 
       dm = user.api_client.create_direct_message(user.uid.to_i, message)
-      notification.update!(message_id: dm.id, message: message)
-      user.notification_setting.touch(:last_search_at)
+      if notification.update(message_id: dm.id, message: message)
+        user.notification_setting.touch(:last_search_at)
+        log.update(status: true, message: "[#{notification.id}] is created.")
+      else
+        log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")
+      end
 
       return
     end
 
-    if type == :update && user.can_send?(type) && medium == 'dm'
+    if type == :update && medium == 'dm'
       tu = TwitterUser.latest(uid)
 
       message =
@@ -53,13 +73,17 @@ class CreateNotificationMessageWorker
         end.join("\n")
 
       dm = user.api_client.create_direct_message(user.uid.to_i, message)
-      notification.update!(message_id: dm.id, message: message)
-      user.notification_setting.touch(:last_dm_at)
+      if notification.update(message_id: dm.id, message: message)
+        user.notification_setting.touch(:last_dm_at)
+        log.update(status: true, message: "[#{notification.id}] is created.")
+      else
+        log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")
+      end
 
       return
     end
 
-    if %i(search update).include?(type) && user.can_send?(type) && medium == 'onesignal'
+    if medium == 'onesignal'
       headings = %i(en ja).map do |locale|
         [locale, I18n.t("#{medium}.#{type}Notification.title", user: mention_name, locale: locale)]
       end.to_h
@@ -68,12 +92,17 @@ class CreateNotificationMessageWorker
       end.to_h
 
       Onesignal.new(user.id, headings: headings, contents: contents, url: url).send
-      notification.update!(message_id: '', message: contents[:ja])
+      if notification.update(message_id: '', message: contents[:ja])
+        log.update(status: true, message: "[#{notification.id}] is created.")
+      else
+        log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")
+      end
 
       return
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
+    log.update(status: false, message: "#{e.class} #{e.message}")
   end
 
   private
