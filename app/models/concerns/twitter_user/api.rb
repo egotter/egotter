@@ -12,27 +12,27 @@ module Concerns::TwitterUser::Api
 
   def one_sided_friends
     uids = friend_uids - follower_uids
-    friends.select { |f| uids.include?(f.uid.to_i) }
+    friends.where(uid: uids)
   end
 
   def one_sided_followers
     uids = follower_uids - friend_uids
-    followers.select { |f| uids.include?(f.uid.to_i) }
+    followers.where(uid: uids)
   end
 
   def mutual_friends
     uids = friend_uids & follower_uids
-    friends.select { |f| uids.include?(f.uid.to_i) }
+    friends.where(uid: uids)
   end
 
   def common_friends(other)
     uids = friend_uids & other.friend_uids
-    friends.select { |f| uids.include?(f.uid.to_i) }
+    friends.where(uid: uids)
   end
 
   def common_followers(other)
     uids = follower_uids & other.follower_uids
-    followers.select { |f| uids.include?(f.uid.to_i) }
+    followers.where(uid: uids)
   end
 
   def latest_removing
@@ -40,7 +40,7 @@ module Concerns::TwitterUser::Api
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.friends_size == 0
     uids = older.friend_uids - newer.friend_uids
-    older.friends.select { |f| uids.include?(f.uid.to_i) }
+    older.friends.where(uid: uids)
   end
 
   # `includes` is not used because friends have hundreds of records.
@@ -49,7 +49,7 @@ module Concerns::TwitterUser::Api
     TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
       uids = older.friend_uids - newer.friend_uids
-      older.friends.select { |f| uids.include?(f.uid.to_i) }
+      older.friends.where(uid: uids)
     end.compact.flatten.reverse
   end
 
@@ -58,7 +58,7 @@ module Concerns::TwitterUser::Api
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.followers_size == 0
     uids = older.follower_uids - newer.follower_uids
-    older.followers.select { |f| uids.include?(f.uid.to_i) }
+    older.followers.where(uid: uids)
   end
 
   # `includes` is not used because followers have hundreds of records.
@@ -67,7 +67,7 @@ module Concerns::TwitterUser::Api
     TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
       uids = older.follower_uids - newer.follower_uids
-      older.followers.select { |f| uids.include?(f.uid.to_i) }
+      older.followers.where(uid: uids)
     end.compact.flatten.reverse
   end
 
@@ -76,7 +76,7 @@ module Concerns::TwitterUser::Api
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.friends_size == 0
     uids = newer.friend_uids - older.friend_uids
-    newer.friends.select { |f| uids.include?(f.uid.to_i) }
+    newer.friends.where(uid: uids)
   end
 
   def new_followers
@@ -84,7 +84,7 @@ module Concerns::TwitterUser::Api
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.followers_size == 0
     uids = newer.follower_uids - older.follower_uids
-    newer.followers.select { |f| uids.include?(f.uid.to_i) }
+    newer.followers.where(uid: uids)
   end
 
   def blocking_or_blocked
