@@ -58,6 +58,7 @@ gem 'stackprof'
 gem 'haml-rails'
 gem 'rails_autolink'
 gem 'draper'
+gem 'js-routes'
 
 group :development, :production do
   gem 'kpi_admin', path: '../kpi_admin'
