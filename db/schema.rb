@@ -93,16 +93,6 @@ ActiveRecord::Schema.define(version: 20161021113742) do
     t.datetime "updated_at"
   end
 
-  create_table "blazer_queries", force: :cascade do |t|
-    t.integer  "creator_id",  limit: 4
-    t.string   "name",        limit: 191
-    t.text     "description", limit: 65535
-    t.text     "statement",   limit: 65535
-    t.string   "data_source", limit: 191
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "create_notification_message_logs", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false
     t.string   "uid",         limit: 191,                   null: false
