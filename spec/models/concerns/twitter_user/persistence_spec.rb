@@ -3,52 +3,58 @@ require 'rails_helper'
 RSpec.describe Concerns::TwitterUser::Persistence do
   subject(:tu) { build(:twitter_user) }
 
-  describe '#save' do
-    it 'returns true' do
-      expect(tu.save).to be_truthy
+  describe '#put_relations_back' do
+    it 'calls #import_relations!' do
+      tu.instance_variable_set(:@shaded, {friends: []})
+      expect(TwitterUser).to receive(:import_relations!)
+      tu.send(:put_relations_back)
     end
 
-    context 'it is already persisted' do
-      before { tu.save! }
-      it 'does not call #import_relations!' do
-        tu.uid = tu.uid.to_i * 2
-        expect(tu).not_to receive(:import_relations!)
+    context '#import_relations! raises an exception' do
+      before do
+        allow(TwitterUser).to receive(:import_relations!).and_raise('import failed')
+      end
+      it 'calls #destroy' do
+        tu.instance_variable_set(:@shaded, {friends: []})
+        expect(tu).to receive(:destroy)
+        tu.send(:put_relations_back)
+      end
+    end
+  end
+
+  describe '#save' do
+    context 'it is new record' do
+      it 'calls #push_relations_aside and #put_relations_back' do
+        expect(tu).to receive(:push_relations_aside)
+        expect(tu).to receive(:put_relations_back)
         expect(tu.save).to be_truthy
       end
     end
 
-    context '#import_relations! raises an exception' do
-      before { allow(tu).to receive(:import_relations!).and_raise('import failed') }
-      it 'saves nothing' do
-        expect(tu.save).to be_falsey
-        expect(tu.destroyed?).to be_truthy
-        expect(tu.friends).to be_empty
-        expect(tu.followers).to be_empty
-      end
-    end
-
-    context '#invalid? returns true' do
-      before { allow(tu).to receive(:invalid?).and_return(true) }
-      it 'saves nothing' do
-        expect(tu.save).to be_falsey
-        expect(tu.persisted?).to be_falsey
+    context 'it is already persisted' do
+      before { tu.save! }
+      it 'does not call #push_relations_aside and #put_relations_back' do
+        tu.uid = tu.uid.to_i * 2
+        expect(tu).not_to receive(:push_relations_aside)
+        expect(tu).not_to receive(:put_relations_back)
+        expect(tu.save).to be_truthy
       end
     end
   end
 
   describe '#import_relations!' do
-    let(:follower) { build(:follower) }
+    let(:followers) { [build(:follower)] }
     before { tu.save! }
 
     it 'does not call Follower#valid?' do
-      expect_any_instance_of(Follower).not_to receive(:valid?)
-      expect { tu.send(:import_relations!, :followers, [follower]) }.to change { Follower.all.size }.by(1)
+      followers.each { |f| expect(f).not_to receive(:valid?) }
+      expect { TwitterUser.import_relations!(tu.id, :followers, followers) }.to change { Follower.all.size }.by(1)
     end
 
     context 'with invalid followers' do
-      before { follower.uid = -100 }
+      before { followers.each { |f| f.uid = -100 } }
       it 'saves followers' do
-        expect { tu.send(:import_relations!, :followers, [follower]) }.to change { Follower.all.size }.by(1)
+        expect { TwitterUser.import_relations!(tu.id, :followers, followers) }.to change { Follower.all.size }.by(1)
       end
     end
 
@@ -56,7 +62,7 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       before { allow(Follower).to receive(:import).and_raise('import failed') }
 
       it 'raises an exception' do
-        expect { tu.send(:import_relations!, :followers, [follower]) }.to raise_error(RuntimeError, 'import failed')
+        expect { TwitterUser.import_relations!(tu.id, :followers, followers) }.to raise_error(RuntimeError, 'import failed')
       end
     end
   end
