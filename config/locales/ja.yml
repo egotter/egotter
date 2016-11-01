@@ -7,6 +7,7 @@ ja:
       large: "多い"
       small: "少ない"
       others: "それ以外"
+      or: " または "
       cluster: "クラスタ"
       return: "%{user} の分析結果一覧へ戻る"
     new:
@@ -149,6 +150,13 @@ ja:
   search_histories:
     index:
       title: "検索履歴"
+  relationships:
+    conversations:
+      title: "%{user1} と %{user2} の会話"
+    common_friends:
+      title: "%{user1} と %{user2} の共通フォロー"
+    common_followers:
+      title: "%{user1} から %{user2} へのリプライが見えている人一覧"
   notifications:
     title: "通知"
     index:
