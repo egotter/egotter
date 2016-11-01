@@ -12,6 +12,10 @@ class CreateNotificationMessageWorker
     medium = options['medium']
     token = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")[0...5]
 
+    if Util::UnauthorizedUidList.new(Redis.client).exists?(uid)
+      return
+    end
+
     url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, medium: medium, token: token)
     user = User.find(user_id)
     notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)
@@ -100,6 +104,9 @@ class CreateNotificationMessageWorker
 
       return
     end
+  rescue Twitter::Error::Unauthorized => e
+    Util::UnauthorizedUidList.new(Redis.client).add(uid)
+    log.update(status: false, message: "#{e.class} #{e.message}")
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
     log.update(status: false, message: "#{e.class} #{e.message}")
