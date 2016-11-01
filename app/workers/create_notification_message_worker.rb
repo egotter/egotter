@@ -45,6 +45,9 @@ class CreateNotificationMessageWorker
       dm = user.api_client.create_direct_message(user.uid.to_i, message)
       if notification.update(message_id: dm.id, message: message)
         user.notification_setting.touch(:last_search_at)
+        if user.notification_setting.respond_to?(:search_sent_at)
+          user.notification_setting.touch(:dm_sent_at, :search_sent_at)
+        end
         log.update(status: true, message: "[#{notification.id}] is created.")
       else
         log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")
@@ -79,6 +82,9 @@ class CreateNotificationMessageWorker
       dm = user.api_client.create_direct_message(user.uid.to_i, message)
       if notification.update(message_id: dm.id, message: message)
         user.notification_setting.touch(:last_dm_at)
+        if user.notification_setting.respond_to?(:dm_sent_at)
+          user.notification_setting.touch(:dm_sent_at, :update_sent_at)
+        end
         log.update(status: true, message: "[#{notification.id}] is created.")
       else
         log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")

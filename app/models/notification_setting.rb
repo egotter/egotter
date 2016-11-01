@@ -26,47 +26,57 @@ class NotificationSetting < ActiveRecord::Base
   SEND_EMAIL_INTERVAL = 1.day
 
   def can_send_email?
-    email? && last_email_at.present? && last_email_at < SEND_EMAIL_INTERVAL.ago
-  end
-
-  def email_reset_at
-    last_email_at + SEND_EMAIL_INTERVAL
+    if respond_to?(:email_sent_at)
+      email? && email_sent_at.present? && email_sent_at < SEND_EMAIL_INTERVAL.ago
+    else
+      email? && last_email_at.present? && last_email_at < SEND_EMAIL_INTERVAL.ago
+    end
   end
 
   SEND_DM_INTERVAL = Rails.env.production? ? 12.hours : 1.minutes
 
   def can_send_dm?
-    dm? && last_dm_at.present? && last_dm_at < SEND_DM_INTERVAL.ago
-  end
-
-  def dm_reset_at
-    last_dm_at + SEND_DM_INTERVAL
+    if respond_to?(:dm_sent_at)
+      dm? && dm_sent_at.present? && dm_sent_at < SEND_DM_INTERVAL.ago
+    else
+      dm? && last_dm_at.present? && last_dm_at < SEND_DM_INTERVAL.ago
+    end
   end
 
   SEND_NEWS_INTERVAL = 1.day
 
   def can_send_news?
-    news? && last_news_at.present? && last_news_at < SEND_NEWS_INTERVAL.ago
-  end
-
-  def news_reset_at
-    last_news_at + SEND_NEWS_INTERVAL
+    if respond_to?(:news_sent_at)
+      news? && news_sent_at.present? && news_sent_at < SEND_NEWS_INTERVAL.ago
+    else
+      news? && last_news_at.present? && last_news_at < SEND_NEWS_INTERVAL.ago
+    end
   end
 
   SEND_SEARCH_INTERVAL = Rails.env.production? ? 60.minutes : 1.minutes
 
   def can_send_search?
-    search? && last_search_at.present? && last_search_at < SEND_SEARCH_INTERVAL.ago
+    if respond_to?(:search_sent_at)
+      search? && search_sent_at.present? && search_sent_at < SEND_SEARCH_INTERVAL.ago
+    else
+      search? && last_search_at.present? && last_search_at < SEND_SEARCH_INTERVAL.ago
+    end
   end
 
-  def search_reset_at
-    last_search_at + SEND_SEARCH_INTERVAL
+  SEND_UPDATE_INTERVAL = Rails.env.production? ? 60.minutes : 1.minutes
+
+  def can_send_update?
+    if respond_to?(:update_sent_at)
+      update? && update_sent_at.present? && update_sent_at < SEND_UPDATE_INTERVAL.ago
+    else
+      can_send_dm?
+    end
   end
 
   def can_send?(type)
     case type
       when :search then can_send_search?
-      when :update then can_send_dm?
+      when :update then (respond_to?(:can_send_update?) ? can_send_update? : can_send_dm?)
       else raise "#{self.class}##{__method__}: #{type} is not permitted."
     end
   end

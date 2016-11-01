@@ -163,10 +163,11 @@ ja:
       title: "%{user} への通知"
     setting: "通知設定"
     desc:
-      email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
-      dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
+      email: "メールで通知する。"
+      dm: "DMで通知する。"
       news: "新機能のお知らせが届きます。配信は不定期です。"
-      search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
+      search: "他の人にえごったーで検索された時に通知します。配信はなる早です。"
+      update: "リムーブされたことを通知します。配信はなる早です。"
   login:
     welcome:
       lead: "ログインでえごったーが<br>もっと便利に！"
@@ -185,6 +186,10 @@ ja:
     menu:
       title: "メニュー"
       updated: "更新しました"
+      notification:
+        medium: "通知方法"
+        content: "通知内容"
+        interval: "通知間隔"
     terms_of_service:
       title: "利用規約"
     privacy_policy:

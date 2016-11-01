@@ -2,18 +2,10 @@
 
 <div class="menu">
   <h2><small><%= t('notifications.setting') %></small></h2>
-  <% %i(email dm news search).each do |name| %>
-    <div class="table-box">
-      <div class="table-cell-left">
-        <input id="<%= name %>-input" class="tgl tgl-ios" type="checkbox" value="1" <%= user.notification_setting.send("#{name}?") ? 'checked="checked"'.html_safe : '' %> name="<%= name %>">
-        <label class='tgl-btn' for="<%= name %>-input"></label>
-      </div>
-      <div class="table-cell-right"><%= t("notifications.desc.#{name}") %>
-        <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
-      </div>
-    </div>
-    <hr>
-  <% end %>
+  <h4><small><%= t('.notification.medium') %></small></h4>
+  <%= render partial: 'misc/notification', collection: %i(email dm), cached: true, as: :name, locals: {setting: user.notification_setting} %>
+  <h4><small><%= t('.notification.content') %></small></h4>
+  <%= render partial: 'misc/notification', collection: %i(news search update), cached: true, as: :name, locals: {setting: user.notification_setting} %>
   <script>
     function attach_event_handler(name) {
       var selector = 'input[name=' + name + ']';
@@ -37,6 +29,7 @@
       attach_event_handler('dm');
       attach_event_handler('news');
       attach_event_handler('search');
+      attach_event_handler('update');
     });
   </script>
 
