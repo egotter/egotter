@@ -3,53 +3,50 @@ module Concerns::TwitterUser::Persistence
   extend ActiveSupport::Concern
 
   class_methods do
+    def import_relations!(id, attr, values)
+      klass = attr.to_s.classify.constantize
+      benchmark_and_silence(attr) do
+        values.each { |v| v.from_id = id }
+        ActiveRecord::Base.transaction do
+          values.each_slice(1000).each { |ary| klass.import(ary, validate: false) }
+        end
+      end
+    end
+
+    def benchmark_and_silence(attr)
+      ActiveRecord::Base.benchmark("#{self.class}#save #{attr}") do
+        logger.silence do
+          yield
+        end
+      end
+    end
   end
 
   included do
-  end
+    before_create :push_relations_aside
 
-  def save(*args)
-    if persisted?
-      return super(*args)
+    if Rails.env.test?
+      after_create :put_relations_back
+    else
+      after_commit :put_relations_back, on: :create
     end
-
-    if invalid?
-      logger.info "#{self.class}##{__method__}: #{errors.full_messages}"
-      return false
-    end
-
-    # Fetch before calling save, or `SELECT * FROM relation_name WHERE from_id = xxx` is executed.
-    relations = %i(friends followers statuses mentions search_results favorites).map { |attr| [attr, send(attr).to_a.dup] }.to_h
-    relations.keys.each { |attr| send("#{attr}=", []) }
-
-    return false unless super(validate: false)
-
-    relations.each { |attr, values| import_relations!(attr, values) }
-    reload
-    true
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    destroy
-    false
   end
 
   private
 
-  def import_relations!(attr, values)
-    klass = attr.to_s.classify.constantize
-    benchmark_and_silence(attr) do
-      values.each { |v| v.from_id = id }
-      ActiveRecord::Base.transaction do
-        values.each_slice(1000).each { |ary| klass.import(ary, validate: false) }
-      end
-    end
+  def push_relations_aside
+    # Fetch before calling save, or `SELECT * FROM relation_name WHERE from_id = xxx` is executed even if `auto_save: false` is specified.
+    @shaded = %i(friends followers statuses mentions search_results favorites).map { |attr| [attr, send(attr).to_a.dup] }.to_h
+    @shaded.keys.each { |attr| send("#{attr}=", []) }
   end
 
-  def benchmark_and_silence(attr)
-    ActiveRecord::Base.benchmark("#{self.class}#save #{attr}") do
-      logger.silence do
-        yield
-      end
-    end
+  def put_relations_back
+    # Relations are created `after commit` intentionally.
+    @shaded.each { |attr, values| self.class.import_relations!(self.id, attr, values) }
+    remove_instance_variable(:@shaded)
+    reload
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
+    destroy
   end
 end
