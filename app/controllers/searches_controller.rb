@@ -40,7 +40,7 @@ class SearchesController < ApplicationController
   def create
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
     save_twitter_user_to_cache(uid, screen_name: screen_name, user_info: @tu.user_info)
-    add_background_search_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
+    add_create_twitter_user_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
 
     if TwitterUser.exists?(uid: uid)
       redirect_to search_path(screen_name: screen_name)

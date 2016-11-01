@@ -15,7 +15,7 @@ class SearchResultsController < ApplicationController
 
   def show
     tu = @searched_tw_user
-    add_background_search_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+    add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
     @login_user = User.find_by(id: current_user_id)
     html = ::Cache::PageCache.new.fetch(tu.uid) { render_to_string }
     render json: {html: html}, status: 200
