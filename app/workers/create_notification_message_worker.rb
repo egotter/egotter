@@ -11,6 +11,8 @@ class CreateNotificationMessageWorker
     mention_name = "@#{screen_name}"
     medium = options['medium']
     token = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")[0...5]
+    notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)
+    log = CreateNotificationMessageLog.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium)
 
     if Util::UnauthorizedUidList.new(Redis.client).exists?(uid)
       return
@@ -18,8 +20,6 @@ class CreateNotificationMessageWorker
 
     url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, medium: medium, token: token)
     user = User.find(user_id)
-    notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)
-    log = CreateNotificationMessageLog.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium)
 
     unless %i(search update).include?(type)
       log.update(status: false, message: "[#{type}] is not permitted.")
