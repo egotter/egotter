@@ -35,17 +35,10 @@ module SearchesHelper
     attrs = Util::ValidTwitterUserSet.new(redis).get(uid)
     return nil if attrs.nil?
 
-    user_info =
-      if attrs.has_key?('user_info')
-        attrs['user_info']
-      else
-        Base64.decode64(attrs['user_info_gzip'])
-      end
-
     TwitterUser.new(
       uid: attrs['uid'],
       screen_name: attrs['screen_name'],
-      user_info: user_info,
+      user_info: attrs['user_info'],
     )
   end
 

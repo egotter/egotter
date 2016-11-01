@@ -82,17 +82,11 @@ module Concerns::TwitterUser::AssociationBuilder
 
   def build_user_relations(name, objects)
     (objects || []).each do |user|
-      obj = send(name).build(
+      send(name).build(
         uid: user.id,
         screen_name: user.screen_name,
+        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json
       )
-
-      if obj.respond_to?(:user_info)
-        obj.user_info = user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json
-      end
-      if obj.respond_to?(:user_info_gzip)
-        obj.user_info_gzip = ActiveSupport::Gzip.compress(user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
-      end
     end
   end
 
