@@ -1,8 +1,8 @@
 <%= root_url %>
 <% @records.each do |record| %>
 <%= search_url(screen_name: record.screen_name) %>
-<%= status_url(id: record.uid) %>
+<%= status_url(uid: record.uid) %>
 <% Search::MENU.each do |menu| %>
-<%= send("#{menu}_url", screen_name: record.screen_name) %>
+<%= send("#{menu}_search_url", screen_name: record.screen_name) %>
 <% end %>
 <% end %>

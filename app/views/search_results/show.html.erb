@@ -31,7 +31,7 @@
         description: t("searches.#{name}.description", user: tu.mention_name),
         target: tu.send(name),
         graph: tu.send("#{name}_graph"),
-        path: send("#{name}_path", screen_name: tu.screen_name)
+        path: send("#{name}_search_path", screen_name: tu.screen_name)
       }
 %>
   <%= render partial: 'various_users/index', locals: {menu: values, uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
@@ -99,12 +99,12 @@
       }
 
       delete() {
-        var url = "<%= raw page_cache_path(id: tu.uid, hash: 'HASH') %>";
+        var url = "<%= raw page_cache_path(uid: tu.uid, hash: 'HASH') %>";
         return $.ajax({url: url.replace(/HASH/, this.hash), type: 'DELETE'});
       }
 
       create() {
-        var url = "<%= raw page_caches_path(id: tu.uid) %>";
+        var url = "<%= raw page_caches_path(uid: tu.uid) %>";
         return $.post(url);
       }
     }
@@ -189,7 +189,7 @@
     }
 
     function tic() {
-      var url = "<%= background_search_log_path(id: tu.uid) %>";
+      var url = "<%= background_search_log_path(uid: tu.uid) %>";
       $.get(url).done(done).fail(failed);
     }
 

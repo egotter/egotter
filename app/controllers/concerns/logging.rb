@@ -102,7 +102,7 @@ module Logging
       uid = @searched_tw_user.uid
       screen_name = @searched_tw_user.screen_name
     else
-      uid = TwitterUser.new(uid: params[:id]).valid_uid? ? params[:id].to_i : -1
+      uid = TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid) # waiting
         uid = tu.uid
         screen_name = tu.screen_name

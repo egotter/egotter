@@ -51,7 +51,7 @@ module TweetTextHelper
         end
       end
 
-    t('searches.usage_stats.usage_time', user: tu.mention_name, total: total, avg: avg, level: level, url: usage_stats_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_time', user: tu.mention_name, total: total, avg: avg, level: level, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{stats.inspect} #{tu.inspect}"
     error_text
@@ -74,7 +74,7 @@ module TweetTextHelper
     wday = wday_stats.find { |obj| obj[:y] == wday_max_y }[:name]
     hour_max_y = hour_stats.map { |obj| obj[:y] }.max
     hour = hour_stats.find { |obj| obj[:y] == hour_max_y }[:name]
-    t('searches.usage_stats.usage_active_time', user: tu.mention_name, wday: wday, hour: hour, url: usage_stats_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_active_time', user: tu.mention_name, wday: wday, hour: hour, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{wday_stats.inspect} #{hour_stats.inspect} #{tu.inspect}"
     logger.warn e.backtrace.join("\n")
@@ -82,7 +82,7 @@ module TweetTextHelper
   end
 
   def usage_kind_text(kind, tu)
-    t('searches.usage_stats.usage_kind', user: tu.mention_name, mention: kind[:mentions].round, image: kind[:media].round, link: kind[:urls].round, hashtag: kind[:hashtags].round, location: kind[:location].round, url: usage_stats_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_kind', user: tu.mention_name, mention: kind[:mentions].round, image: kind[:media].round, link: kind[:urls].round, hashtag: kind[:hashtags].round, location: kind[:location].round, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{kind.inspect} #{tu.inspect}"
     error_text
@@ -90,14 +90,14 @@ module TweetTextHelper
 
   def usage_hashtags_text(hashtags, tu)
     hashtags = hashtags.to_a.map { |obj| obj[:name] }.slice(0, 5).join(' ')
-    t('searches.usage_stats.usage_hashtags', user: tu.mention_name, hashtags: hashtags, url: usage_stats_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_hashtags', user: tu.mention_name, hashtags: hashtags, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{hashtags.inspect} #{tu.inspect}"
     error_text
   end
 
   def close_friends_text(users, tu)
-    t('tweet_text.close_friends', user: tu.mention_name, users: users.slice(0, 5).map { |u| "@#{u.screen_name}" }.join("\n"), url: close_friends_url(screen_name: tu.screen_name))
+    t('tweet_text.close_friends', user: tu.mention_name, users: users.slice(0, 5).map { |u| "@#{u.screen_name}" }.join("\n"), url: close_friends_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text

@@ -10,6 +10,6 @@
     <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= histories.update_count %></div>
   </div>
   <div>
-    <%= link_to(t('dictionary.view_more'), update_history_path(id: tu.uid), class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more'), update_history_path(uid: tu.uid), class: 'btn btn-info btn-block') %>
   </div>
 </div>
