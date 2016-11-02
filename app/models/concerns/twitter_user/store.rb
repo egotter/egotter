@@ -46,6 +46,7 @@ module Concerns::TwitterUser::Store
     @_user_info ||= Hashie::Mash.new(JSON.load(user_info))
   end
 
+  # a url written on profile page as home page url
   def url
     return nil if entities.nil? || entities.url.nil? || entities.url.urls.nil?
 
@@ -56,18 +57,18 @@ module Concerns::TwitterUser::Store
     nil
   end
 
-  def twittered_at
-    account_created_at = _user_info[:created_at]
-    if time_zone.present? && account_created_at.present?
+  def account_created_at
+    _created_at = _user_info[:created_at]
+    if time_zone.present? && _created_at.present?
       _time_zone = (time_zone.in?(JAPANESE_TIME_ZONE_NAMES) ? 'Tokyo' : time_zone)
-      ActiveSupport::TimeZone[_time_zone].parse(account_created_at)
-    elsif account_created_at.present?
-      Time.zone.parse(account_created_at)
+      ActiveSupport::TimeZone[_time_zone].parse(_created_at)
+    elsif _created_at.present?
+      Time.zone.parse(_created_at)
     else
-      account_created_at
+      _created_at
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{account_created_at}]"
-    account_created_at
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{_created_at}]"
+    _created_at
   end
 end

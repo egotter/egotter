@@ -40,13 +40,6 @@ module Concerns::TwitterUser::Validation
     !protected_account?
   end
 
-  def unauthorized_job?
-    return false unless protected_account?
-    return false if User.exists?(uid: uid.to_i)
-    errors[:base] << 'unauthorized worker'
-    true
-  end
-
   def readable_by?(login_user)
     case
       when public_account? then true

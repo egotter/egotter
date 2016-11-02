@@ -37,7 +37,7 @@ class TwitterUser < ActiveRecord::Base
   def cache_key
     case
       when new_record? then super
-      else "#{self.class.model_name.cache_key}/#{id}"
+      else "#{self.class.model_name.cache_key}/#{id}" # do not use timestamps
     end
   end
 end

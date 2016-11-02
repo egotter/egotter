@@ -27,7 +27,7 @@
           <% if user.description.present? %><div class="profile-description" style="display: none;"><%= auto_link(user.description, html: {target: '_blank'}) %></div><% end %>
           <% if user.location.present? %><div class="profile-location" style="display: none;"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;<%= user.location %></div><% end %>
           <% if user.url.present? %><div class="profile-link" style="display: none;"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= auto_link(user.url, html: {target: '_blank'}) %></div><% end %>
-          <% if user.twittered_at.present? && !user.twittered_at.kind_of?(String) %><div class="profile-calendar" style="display: none;"><span class="glyphicon glyphicon-calendar"></span>&nbsp;<%= l(user.twittered_at) %></div><% end %>
+          <% if user.account_created_at.present? && !user.account_created_at.kind_of?(String) %><div class="profile-calendar" style="display: none;"><span class="glyphicon glyphicon-calendar"></span>&nbsp;<%= l(user.account_created_at) %></div><% end %>
         </div>
       </div>
     </div>
