@@ -1,11 +1,12 @@
 class DeviseCreateUsers < ActiveRecord::Migration
   def change
     create_table(:users) do |t|
-      t.string :uid,         null: false
-      t.string :screen_name, null: false
-      t.string :secret,      null: false
-      t.string :token,       null: false
-      t.string :email,       null: false, default: ''
+      t.string  :uid,         null: false
+      t.string  :screen_name, null: false
+      t.boolean :authorized,  null: false, default: true
+      t.string  :secret,      null: false
+      t.string  :token,       null: false
+      t.string  :email,       null: false, default: ''
 
       ## Database authenticatable
       # t.string :email,              null: false

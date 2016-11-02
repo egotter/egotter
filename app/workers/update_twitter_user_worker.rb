@@ -14,7 +14,7 @@ class UpdateTwitterUserWorker
     client = user.api_client
     Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''})
 
-    if Util::UnauthorizedUidList.new(Redis.client).exists?(log.uid)
+    unless user.authorized?
       return
     end
 
@@ -72,7 +72,7 @@ class UpdateTwitterUserWorker
     )
     Rollbar.warn(e)
   rescue Twitter::Error::Unauthorized => e
-    Util::UnauthorizedUidList.new(Redis.client).add(log.uid)
+    user.update(authorized: false)
     log.update(
       status: false,
       call_count: client.call_count,

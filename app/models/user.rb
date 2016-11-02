@@ -5,6 +5,7 @@
 #  id          :integer          not null, primary key
 #  uid         :string(191)      not null
 #  screen_name :string(191)      not null
+#  authorized  :boolean          default(TRUE), not null
 #  secret      :string(191)      not null
 #  token       :string(191)      not null
 #  email       :string(191)      default(""), not null
