@@ -94,11 +94,13 @@ class CreateNotificationMessageWorker
         [locale, I18n.t("#{medium}.#{type}Notification.message", url: url, locale: locale)]
       end.to_h
 
-      Onesignal.new(user.id, headings: headings, contents: contents, url: url).send
-      if notification.update(message_id: '', message: contents[:ja])
-        log.update(status: true, message: "[#{notification.id}] is created.")
-      else
-        log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")
+      result = Onesignal.new(user.id, headings: headings, contents: contents, url: url).send.body
+      if JSON.load(result)['recipients'] > 0
+        if notification.update(message_id: '', message: contents[:ja])
+          log.update(status: true, message: "[#{notification.id}] is created.")
+        else
+          log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")
+        end
       end
 
       return
