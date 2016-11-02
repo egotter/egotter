@@ -1,22 +1,21 @@
-- unless under_maintenance? || action_name == 'welcome'
-  .collapse.navbar-collapse.navbar-large
-    %ul.nav.navbar-nav.navbar-right
-      - if user_signed_in?
-        %li
-          %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-            = link_to notifications_path do
-              %span.glyphicon.glyphicon-bell
-              = t('notifications.title')
-        %li
-          %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-            = link_to menu_path do
-              %span.glyphicon.glyphicon-menu-hamburger
-              = t('misc.menu.title')
-      - else
-        %li
-          %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-            = link_to t('dictionary.sign_in'), welcome_path
+.collapse.navbar-collapse.navbar-large
+  %ul.nav.navbar-nav.navbar-right
+    - if user_signed_in?
       %li
-        %button.btn.btn-default.navbar-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
-          %span.glyphicon.glyphicon-search
-          = t('searches.new.search')
+        %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
+          = link_to notifications_path do
+            %span.glyphicon.glyphicon-bell
+            = t('notifications.title')
+      %li
+        %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
+          = link_to menu_path do
+            %span.glyphicon.glyphicon-menu-hamburger
+            = t('misc.menu.title')
+    - else
+      %li
+        %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
+          = link_to t('dictionary.sign_in'), welcome_path
+    %li
+      %button.btn.btn-default.navbar-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
+        %span.glyphicon.glyphicon-search
+        = t('searches.new.search')

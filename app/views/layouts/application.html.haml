@@ -58,7 +58,7 @@
             = render partial: 'layouts/header'
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
-    = render partial: 'layouts/search_histories'
+    = render partial: 'layouts/search_histories' unless under_maintenance?
 
     .container
       .row
@@ -111,4 +111,4 @@
             = render partial: 'layouts/information'
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
-    = render partial: 'layouts/footer'
+    = render partial: 'layouts/footer' unless under_maintenance?
