@@ -17,6 +17,7 @@ class CreateNotificationMessageWorker
     url = Rails.application.routes.url_helpers.search_url(screen_name: screen_name, medium: medium, token: token)
 
     unless user.authorized?
+      log.update(status: false, message: "[#{user.screen_name}] is not authorized.")
       return
     end
 

@@ -15,6 +15,12 @@ class UpdateTwitterUserWorker
     Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''})
 
     unless user.authorized?
+      log.update(status: false, message: "[#{user.screen_name}] is not authorized.")
+      return
+    end
+
+    unless user.can_send?(:update)
+      log.update(status: false, message: '[update] is not enabled.')
       return
     end
 
