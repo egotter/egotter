@@ -30,7 +30,7 @@
     <% if user_signed_in? %>
       <div class="retry-btn">
         <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name),
-                    searches_path(screen_name: @searched_tw_user.screen_name, id: @searched_tw_user.uid, via: :retry),
+                    searches_path(screen_name: @searched_tw_user.screen_name, via: :retry),
                     class: 'btn btn-lg btn-info btn-block', method: :post %>
       </div>
     <% else %>
@@ -196,7 +196,7 @@
     }
 
     function tic() {
-      var url = "<%= background_search_log_path(id: @searched_tw_user.uid) %>";
+      var url = "<%= background_search_log_path(uid: @searched_tw_user.uid) %>";
       $.get(url).done(done).fail(failed);
     }
 

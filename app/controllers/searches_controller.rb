@@ -14,7 +14,7 @@ class SearchesController < ApplicationController
     @searched_tw_user = TwitterUser.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)
   end
-  before_action(only: %i(waiting)) { valid_uid?(params[:id].to_i) }
+  before_action(only: %i(waiting)) { valid_uid?(params[:uid].to_i) }
   before_action only: (%i(new create waiting show) + Search::MENU) do
     push_referer
 
@@ -45,12 +45,12 @@ class SearchesController < ApplicationController
     if TwitterUser.exists?(uid: uid)
       redirect_to search_path(screen_name: screen_name)
     else
-      redirect_to waiting_path(id: uid)
+      redirect_to waiting_search_path(uid: uid)
     end
   end
 
   def waiting
-    uid = params[:id].to_i
+    uid = params[:uid].to_i
     unless Util::SearchedUidList.new(redis).exists?(uid)
       return redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
     end

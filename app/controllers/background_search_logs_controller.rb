@@ -2,10 +2,10 @@ class BackgroundSearchLogsController < ApplicationController
   include Validation
   include PageCachesHelper
 
-  before_action(only: %i(show)) { valid_uid?(params[:id].to_i) }
+  before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
 
   def show
-    uid = params[:id].to_i
+    uid = params[:uid].to_i
     unless Util::SearchedUidList.new(redis).exists?(uid)
       return render nothing: true, status: 400
     end

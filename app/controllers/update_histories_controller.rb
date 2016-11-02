@@ -3,9 +3,9 @@ class UpdateHistoriesController < ApplicationController
   include Logging
   include SearchesHelper
 
-  before_action(only: %i(show)) { valid_uid?(params[:id].to_i) }
-  before_action(only: %i(show)) { existing_uid?(params[:id].to_i) }
-  before_action(only: %i(show)) { @searched_tw_user = TwitterUser.latest(params[:id].to_i) }
+  before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
+  before_action(only: %i(show)) { existing_uid?(params[:uid].to_i) }
+  before_action(only: %i(show)) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
   before_action(only: %i(show)) { authorized_search?(@searched_tw_user) }
   before_action only: %i(show) do
     push_referer

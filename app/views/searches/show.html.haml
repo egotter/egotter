@@ -30,7 +30,7 @@
 
     :javascript
       $(function () {
-        var url = "#{search_result_path(id: @searched_tw_user.uid)}";
+        var url = "#{search_result_path(uid: @searched_tw_user.uid)}";
         var retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
         var somethingIsWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
 

@@ -10,26 +10,26 @@ Rails.application.routes.draw do
     get name, to: "misc##{name}", as: name
   end
 
-  resources :searches, only: %i(new create)
-  get 'searches/:screen_name', to: 'searches#show', as: :search
-  get 'searches/:id/waiting', to: 'searches#waiting', as: :waiting
-  resources :search_results, only: :show
+  resources :searches, only: %i(create), param: :screen_name do
+    Search::MENU.each { |menu| get menu, on: :member }
+  end
+  resources :searches, only: %i(show), param: :screen_name
+  get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
 
-  Search::MENU.each do |menu|
-    get "searches/:screen_name/#{menu}", to: "searches##{menu}", as: menu
-    get "search_results/:id/#{menu}", to: "search_results##{menu}", as: "#{menu}_results"
+  resources :search_results, only: :show, param: :uid do
+    Search::MENU.each { |menu| get menu, on: :member }
   end
 
-  resources :search_histories, only: :index
-  resources :information, only: :index
-  resources :notifications, only: :index
-  patch 'notification', to: 'notifications#update'
-  resources :statuses, only: :show
+  resources :search_histories, :information, :notifications, only: :index
+  resource :notification, only: :update
+
+  resources :statuses, only: :show, param: :uid
   get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
-  resources :update_histories, only: :show
-  resources :background_search_logs, only: %i(show)
-  resources :modal_open_logs, only: %i(create)
-  resources :page_caches, only: %i(create destroy)
+
+  resources :update_histories, only: :show, param: :uid
+  resources :background_search_logs, only: :show, param: :uid
+  resources :modal_open_logs, only: :create
+  resources :page_caches, only: %i(create destroy), param: :uid
 
   get '/sign_in', to: 'login#sign_in', as: :sign_in
   get '/sign_out', to: 'login#sign_out', as: :sign_out

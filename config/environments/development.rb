@@ -39,12 +39,12 @@ Rails.application.configure do
   # Raises error for missing translations
   # config.action_view.raise_on_missing_translations = true
 
-  if Sidekiq.server?
-    config.logger = ActiveSupport::Logger.new('log/sidekiq.log')
-    config.logger.formatter = ::Logger::Formatter.new
-  else
-    config.log_formatter = ::Logger::Formatter.new
-  end
+  # if Sidekiq.server?
+  #   config.logger = ActiveSupport::Logger.new('log/sidekiq.log')
+  #   config.logger.formatter = ::Logger::Formatter.new
+  # else
+  #   config.log_formatter = ::Logger::Formatter.new
+  # end
 
   Rails.application.routes.default_url_options[:host] = 'localhost:3000'
 

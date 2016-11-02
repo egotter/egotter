@@ -46,7 +46,7 @@
 
       <span>
       <% if in_modal %>
-        <%= link_to searches_path(screen_name: user.screen_name, id: user.uid, via: :search_history_profile), method: :post do %>
+        <%= link_to searches_path(screen_name: user.screen_name, via: :search_history_profile), method: :post do %>
           <button type="button" class="btn btn-info">
             <span class="glyphicon glyphicon-search"></span>
           </button>

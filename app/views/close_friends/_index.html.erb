@@ -19,6 +19,6 @@
     </script>
   </div>
   <div>
-    <%= link_to(t('dictionary.view_more_with_num', num: users.size).html_safe, close_friends_path(screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more_with_num', num: users.size).html_safe, close_friends_search_path(screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
   </div>
 </div>
