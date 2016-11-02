@@ -24,7 +24,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def delete_uid(user)
     redis = Redis.client
     Util::SearchedUidList.new(redis).delete(user.uid)
-    Util::UnauthorizedUidList.new(redis).delete(user.uid)
+    user.update(authorized: true)
     Util::TooManyFriendsUidList.new(redis).delete(user.uid)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user.inspect}"

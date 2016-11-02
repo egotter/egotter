@@ -306,13 +306,14 @@ ActiveRecord::Schema.define(version: 20161021113742) do
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "uid",         limit: 191,              null: false
-    t.string   "screen_name", limit: 191,              null: false
-    t.string   "secret",      limit: 191,              null: false
-    t.string   "token",       limit: 191,              null: false
-    t.string   "email",       limit: 191, default: "", null: false
-    t.datetime "created_at",                           null: false
-    t.datetime "updated_at",                           null: false
+    t.string   "uid",         limit: 191,                null: false
+    t.string   "screen_name", limit: 191,                null: false
+    t.boolean  "authorized",              default: true, null: false
+    t.string   "secret",      limit: 191,                null: false
+    t.string   "token",       limit: 191,                null: false
+    t.string   "email",       limit: 191, default: "",   null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
   add_index "users", ["created_at"], name: "index_users_on_created_at", using: :btree
