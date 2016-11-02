@@ -59,7 +59,7 @@ class CreateNotificationMessageWorker
       message =
         if tu.fresh?(:created_at)
           friends, followers = tu.new_friends, tu.new_followers
-          removing, removed = tu.latest_removing, tu.latest_removed
+          removing, removed = tu.new_removing, tu.new_removed
           [
             I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
             I18n.t("#{medium}.new_friends", users: to_text(friends)),

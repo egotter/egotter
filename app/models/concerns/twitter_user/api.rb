@@ -35,7 +35,7 @@ module Concerns::TwitterUser::Api
     uids.empty? ? [] : followers.where(uid: uids)
   end
 
-  def latest_removing
+  def new_removing
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.friends_size == 0
@@ -43,7 +43,6 @@ module Concerns::TwitterUser::Api
     uids.empty? ? [] : older.friends.where(uid: uids)
   end
 
-  # `includes` is not used because friends have hundreds of records.
   def removing
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
@@ -53,7 +52,7 @@ module Concerns::TwitterUser::Api
     end.compact.flatten.reverse
   end
 
-  def latest_removed
+  def new_removed
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.followers_size == 0
@@ -61,7 +60,6 @@ module Concerns::TwitterUser::Api
     uids.empty? ? [] : older.followers.where(uid: uids)
   end
 
-  # `includes` is not used because followers have hundreds of records.
   def removed
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
