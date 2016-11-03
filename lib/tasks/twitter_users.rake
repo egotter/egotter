@@ -58,7 +58,8 @@ namespace :twitter_users do
       start = Time.zone.now
       UpdateTwitterUserWorker.new.perform(user_id)
       avg = i % 10 == 0 ? ", avg: #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds" : ''
-      puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}"
+      elapsed = i % 10 == 0 ? ", elapsed: #{'%.1f' % (Time.zone.now - start_time)} seconds" : ''
+      puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}#{elapsed}"
 
       break if deadline && Time.zone.now > deadline
     end
