@@ -5,7 +5,9 @@ module SearchesHelper
     rescue Twitter::Error::NotFound => e
       if screen_name.match(Validations::UidValidator::REGEXP)
         user = client.user(screen_name.to_i)
-        logger.warn "#{screen_name} is treated as uid. #{request.device_type} #{request.browser}"
+        if request.user_agent && request.user_agent.exclude?('Twitterbot')
+          logger.warn "#{screen_name} is treated as uid. #{request.device_type} #{request.browser}"
+        end
       else
         raise e
       end
