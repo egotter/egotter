@@ -50,12 +50,15 @@ namespace :twitter_users do
         else [user_ids.to_i]
       end
 
-    puts "\nfinish at #{deadline}" if deadline
+    start_time = Time.zone.now
+    puts "\nstart at #{start_time}"
+    puts "finish at #{deadline}" if deadline
 
-    user_ids.each do |user_id|
+    user_ids.each.with_index do |user_id, i|
       start = Time.zone.now
       UpdateTwitterUserWorker.new.perform(user_id)
-      puts "#{Time.zone.now}: #{user_id}, #{(Time.zone.now - start).round(1)} seconds"
+      avg = i % 10 == 0 ? ", avg: #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds" : ''
+      puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}"
 
       break if deadline && Time.zone.now > deadline
     end
