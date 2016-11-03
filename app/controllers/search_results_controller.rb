@@ -1,7 +1,6 @@
 class SearchResultsController < ApplicationController
   include Validation
   include Logging
-  include SearchesHelper
   include PageCachesHelper
   include TweetTextHelper
 
@@ -14,10 +13,8 @@ class SearchResultsController < ApplicationController
   before_action(only: %i(show) + Search::MENU) { authorized_search?(@searched_tw_user) }
 
   def show
-    tu = @searched_tw_user
-    add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
     @login_user = User.find_by(id: current_user_id)
-    html = ::Cache::PageCache.new.fetch(tu.uid) { render_to_string }
+    html = ::Cache::PageCache.new.fetch(@searched_tw_user.uid) { render_to_string }
     render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{request.device_type}"

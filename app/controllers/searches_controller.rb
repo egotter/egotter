@@ -28,9 +28,11 @@ class SearchesController < ApplicationController
   end
 
   def show
+    tu = @searched_tw_user
+    add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
     page_cache = ::Cache::PageCache.new
-    if page_cache.exists?(@searched_tw_user.uid)
-      @page_cache = page_cache.read(@searched_tw_user.uid)
+    if page_cache.exists?(tu.uid)
+      @page_cache = page_cache.read(tu.uid)
     end
   end
 
