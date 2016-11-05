@@ -59,7 +59,7 @@ namespace :twitter_users do
       UpdateTwitterUserWorker.new.perform(user_id)
       avg = i % 10 == 0 ? ", #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds/user" : ''
       elapsed = i % 10 == 0 ? ", #{'%.1f' % (Time.zone.now - start_time)} seconds elapsed" : ''
-      remaining = i % 10 == 0 ? ", #{'%.1f' % (deadline - Time.zone.now)} seconds remaining" : ''
+      remaining = (deadline && i % 10 == 0) ? ", #{'%.1f' % (deadline - Time.zone.now)} seconds remaining" : ''
       puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}#{elapsed}#{remaining}"
 
       break if deadline && Time.zone.now > deadline
