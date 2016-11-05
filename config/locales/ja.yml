@@ -555,3 +555,6 @@ ja:
       short: "%y/%m/%d %H:%M"
       date_hyphen: "%Y-%m-%d"
     pm: 午後
+  date:
+    formats:
+      date_hyphen: "%Y-%m-%d"
