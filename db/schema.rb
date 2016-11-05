@@ -11,7 +11,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161021113742) do
+ActiveRecord::Schema.define(version: 20161105055835) do
+
+  create_table "access_stats", force: :cascade do |t|
+    t.datetime "date",                             null: false
+    t.integer  "0_days",     limit: 4, default: 0, null: false
+    t.integer  "1_days",     limit: 4, default: 0, null: false
+    t.integer  "3_days",     limit: 4, default: 0, null: false
+    t.integer  "7_days",     limit: 4, default: 0, null: false
+    t.integer  "14_days",    limit: 4, default: 0, null: false
+    t.integer  "30_days",    limit: 4, default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "access_stats", ["date"], name: "index_access_stats_on_date", unique: true, using: :btree
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
