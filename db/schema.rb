@@ -71,42 +71,6 @@ ActiveRecord::Schema.define(version: 20161105055835) do
   add_index "background_update_logs", ["screen_name"], name: "index_background_update_logs_on_screen_name", using: :btree
   add_index "background_update_logs", ["uid"], name: "index_background_update_logs_on_uid", using: :btree
 
-  create_table "blazer_audits", force: :cascade do |t|
-    t.integer  "user_id",     limit: 4
-    t.integer  "query_id",    limit: 4
-    t.text     "statement",   limit: 65535
-    t.string   "data_source", limit: 191
-    t.datetime "created_at"
-  end
-
-  create_table "blazer_checks", force: :cascade do |t|
-    t.integer  "creator_id",  limit: 4
-    t.integer  "query_id",    limit: 4
-    t.string   "state",       limit: 191
-    t.string   "schedule",    limit: 191
-    t.text     "emails",      limit: 65535
-    t.string   "check_type",  limit: 191
-    t.text     "message",     limit: 65535
-    t.datetime "last_run_at"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "blazer_dashboard_queries", force: :cascade do |t|
-    t.integer  "dashboard_id", limit: 4
-    t.integer  "query_id",     limit: 4
-    t.integer  "position",     limit: 4
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "blazer_dashboards", force: :cascade do |t|
-    t.integer  "creator_id", limit: 4
-    t.text     "name",       limit: 65535
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "create_notification_message_logs", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false
     t.string   "uid",         limit: 191,                   null: false

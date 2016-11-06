@@ -68,19 +68,19 @@ module SearchesHelper
     return if searched_uid_list.exists?(uid)
 
     values = {
-        session_id:  fingerprint,
-        uid:         uid,
-        screen_name: screen_name,
-        user_id:     user_id,
-        auto:        %w(show).include?(action_name),
-        via:         params[:via] ? params[:via] : '',
-        device_type: request.device_type,
-        os:          request.os,
-        browser:     request.browser,
-        user_agent:  truncated_user_agent,
-        referer:     truncated_referer,
-        referral:    find_referral,
-        channel:     find_referral,
+      session_id:  fingerprint,
+      uid:         uid,
+      screen_name: screen_name,
+      user_id:     user_id,
+      auto:        %w(show).include?(action_name),
+      via:         params[:via] ? params[:via] : '',
+      device_type: request.device_type,
+      os:          request.os,
+      browser:     request.browser,
+      user_agent:  truncated_user_agent,
+      referer:     truncated_referer,
+      referral:    find_referral,
+      channel:     find_referral,
     }
     searched_uid_list.add(uid)
     CreateTwitterUserWorker.perform_async(values)
