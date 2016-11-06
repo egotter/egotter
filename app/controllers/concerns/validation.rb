@@ -36,6 +36,19 @@ module Validation
     end
   end
 
+  def searched_uid?(uid)
+    if Util::SearchedUidList.new(redis).exists?(uid)
+      true
+    else
+      if request.xhr?
+        render nothing: true, status: 400
+      else
+        redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+      end
+      false
+    end
+  end
+
   def valid_screen_name?(screen_name)
     tu = TwitterUser.new(screen_name: screen_name)
     if tu.valid_screen_name?

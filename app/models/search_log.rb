@@ -36,10 +36,6 @@ class SearchLog < ActiveRecord::Base
     where.not(device_type: %w(crawler UNKNOWN))
   end
 
-  def recently_created?(minutes = 5)
-    Time.zone.now.to_i - created_at.to_i < 60 * minutes
-  end
-
   def unify_referer
     self.unified_referer = unify_host(URI.parse(referer).host)
   end

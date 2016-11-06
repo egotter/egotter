@@ -15,6 +15,8 @@ class SearchesController < ApplicationController
     remove_instance_variable(:@tu)
   end
   before_action(only: %i(waiting)) { valid_uid?(params[:uid].to_i) }
+  before_action(only: %i(waiting)) { searched_uid?(params[:uid].to_i) }
+
   before_action only: (%i(new create waiting show) + Search::MENU) do
     push_referer
 
@@ -53,10 +55,6 @@ class SearchesController < ApplicationController
 
   def waiting
     uid = params[:uid].to_i
-    unless Util::SearchedUidList.new(redis).exists?(uid)
-      return redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
-    end
-
     tu = fetch_twitter_user_from_cache(uid)
     if tu.nil?
       return redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')

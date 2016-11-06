@@ -75,7 +75,7 @@ class CreateTwitterUserWorker
     Rollbar.warn(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
+    logger.info e.backtrace.take(10).join("\n")
     log.update(
       status: false,
       call_count: client.call_count,
