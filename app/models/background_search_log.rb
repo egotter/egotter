@@ -33,6 +33,7 @@
 #
 
 class BackgroundSearchLog < ActiveRecord::Base
+  include Concerns::Log::Status
 
   validates :via, inclusion: { in: %w(top_input top_input2 top_button profile_modal search_history_profile search_history_input retry) }, allow_blank: true
 
@@ -50,23 +51,5 @@ class BackgroundSearchLog < ActiveRecord::Base
 
   def self.success_logs(user_id, limit: 20)
     where(user_id: user_id, status: true).order(created_at: :desc).limit(limit)
-  end
-
-  def processing?
-    !recently_created?
-  end
-
-  def finished?
-    recently_created? && status
-  end
-
-  def failed?
-    recently_created? && !status
-  end
-
-  DEFAULT_SECONDS = Rails.configuration.x.constants['background_search_log_recently_created']
-
-  def recently_created?(seconds = DEFAULT_SECONDS)
-    Time.zone.now.to_i - created_at.to_i < seconds
   end
 end
