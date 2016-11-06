@@ -18,7 +18,7 @@ class SearchResultsController < ApplicationController
     render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{request.device_type}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
+    logger.info e.backtrace.take(10).join("\n")
     Rollbar.error(e)
     render nothing: true, status: 500
   end
@@ -43,7 +43,7 @@ class SearchResultsController < ApplicationController
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu, current_user.twitter_user)).items
       @graph = @searched_tw_user.send("#{menu}_graph", current_user.twitter_user)
-      @tweet_text = send("#{menu}_text", @user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
+      @tweet_text = send("#{menu}_text", @user_items.take(3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
       render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
@@ -67,7 +67,7 @@ class SearchResultsController < ApplicationController
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
       @graph = @searched_tw_user.send("#{menu}_graph")
-      @tweet_text = inactive_friends_text(@user_items.slice(0, 3).map { |i| i[:target] }, @searched_tw_user)
+      @tweet_text = inactive_friends_text(@user_items.take(3).map { |i| i[:target] }, @searched_tw_user)
       render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
@@ -75,10 +75,10 @@ class SearchResultsController < ApplicationController
   # GET /searches/:screen_name/clusters_belong_to
   def clusters_belong_to
     clusters = @searched_tw_user.clusters_belong_to
-    @cluster_words = clusters.keys.slice(0, 10).map { |c| {target: "#{c}#{t('searches.common.cluster')}"} }
+    @cluster_words = clusters.keys.take(10).map { |c| {target: "#{c}#{t('searches.common.cluster')}"} }
     @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
     @clusters_belong_to_cloud = @searched_tw_user.clusters_belong_to_cloud
-    @tweet_text = clusters_belong_to_text(@cluster_words.slice(0, 3).map { |c| c[:target] }, @searched_tw_user)
+    @tweet_text = clusters_belong_to_text(@cluster_words.take(3).map { |c| c[:target] }, @searched_tw_user)
     render json: {html: render_to_string}, status: 200
   end
 
@@ -89,7 +89,7 @@ class SearchResultsController < ApplicationController
 
     hashtags = @searched_tw_user.hashtags
     @cloud = hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
-    @hashtags = hashtags.to_a.slice(0, 10).map { |word, count| {name: word, y: count} }
+    @hashtags = hashtags.to_a.take(10).map { |word, count| {name: word, y: count} }
 
     render json: {html: render_to_string}, status: 200
   end

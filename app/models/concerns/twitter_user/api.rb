@@ -91,16 +91,22 @@ module Concerns::TwitterUser::Api
   end
 
   def replying(uniq: true)
-    if statuses.any?
-      client.replying(statuses.to_a, uniq: uniq)
-    else
-      client.replying(uid.to_i, uniq: uniq)
-    end.map { |u| u.uid = u.id; u }
+    users =
+      if statuses.any?
+        client.replying(statuses.to_a, uniq: uniq)
+      else
+        client.replying(uid.to_i, uniq: uniq)
+      end
+
+    users.each do |user|
+      user.uid = user.id
+      user.mention_name = "@#{user.screen_name}"
+    end
   end
 
   # TODO do not use login_user
   def replied(uniq: true, login_user: nil)
-    result =
+    users =
       if login_user && login_user.uid.to_i == uid.to_i
         if mentions.any?
           mentions.map { |m| m.user }
@@ -112,17 +118,28 @@ module Concerns::TwitterUser::Api
         dummy_client._extract_users(search_results.to_a, uids)
       else
         client.replied(uid.to_i, uniq: uniq)
-      end.map { |u| u.uid = u.id; u }
+      end
 
-    uniq ? result.uniq { |u| u.uid.to_i } : result
+    users.each do |user|
+      user.uid = user.id
+      user.mention_name = "@#{user.screen_name}"
+    end
+
+    uniq ? users.uniq { |u| u.uid.to_i } : users
   end
 
   def favoriting(uniq: true, min: 0)
-    if favorites.any?
-      client.favoriting(favorites.to_a, uniq: uniq, min: min)
-    else
-      client.favoriting(uid.to_i, uniq: uniq, min: min)
-    end.map { |u| u.uid = u.id; u }
+    users =
+      if favorites.any?
+        client.favoriting(favorites.to_a, uniq: uniq, min: min)
+      else
+        client.favoriting(uid.to_i, uniq: uniq, min: min)
+      end
+
+    users.each do |user|
+      user.uid = user.id
+      user.mention_name = "@#{user.screen_name}"
+    end
   end
 
   def inactive_friends
@@ -138,12 +155,16 @@ module Concerns::TwitterUser::Api
   end
 
   def close_friends(uniq: false, min: 1, limit: 50, login_user: nil)
-    user = {
+    material = {
       replying: replying(uniq: uniq),
       replied: replied(uniq: uniq, login_user: login_user),
       favoriting: favoriting(uniq: uniq, min: min)
     }
-    client.close_friends(Hashie::Mash.new(user), uniq: uniq, min: min, limit: limit).map { |u| u.uid = u.id; u }
+    users = client.close_friends(Hashie::Mash.new(material), uniq: uniq, min: min, limit: limit)
+    users.each do |user|
+      user.uid = user.id
+      user.mention_name = "@#{user.screen_name}"
+    end
   end
 
   def inactive_friends_graph
