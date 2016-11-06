@@ -6,13 +6,16 @@ module SearchesHelper
       if screen_name.match(Validations::UidValidator::REGEXP)
         user = client.user(screen_name.to_i)
         if request.user_agent && request.user_agent.exclude?('Twitterbot')
-          logger.warn "#{screen_name} is treated as uid. #{request.device_type} #{request.browser}"
+          logger.warn "#{screen_name} is treated as uid. #{current_user_id} #{request.device_type} #{request.browser}"
         end
       else
         raise e
       end
     end
     TwitterUser.build_by_user(user)
+  rescue Twitter::Error::NotFound => e
+    logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser}"
+    redirect_to root_path, alert: alert_message(e)
   rescue Twitter::Error::TooManyRequests, Twitter::Error::NotFound, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
     logger.info "#{request.user_agent}"
