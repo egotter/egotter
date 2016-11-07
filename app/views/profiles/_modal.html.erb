@@ -10,12 +10,8 @@
 
         <script>
           $(function () {
-            var selector = '.profile-overview-modal.<%= unique_id %>';
-            $(selector).one('show.bs.modal', function (e) {
-              setTimeout(function () { enableSlickOnModal('<%= unique_id %>') }, 500);
-            });
-
-            setModalOpenLogger(selector, 'profile', '<%= modal_open_logs_path %>');
+            enableSlickOnModalWithDelay('<%= unique_id %>');
+            setModalOpenLogger('.profile-overview-modal.<%= unique_id %>', 'profile', '<%= modal_open_logs_path %>');
           });
         </script>
 

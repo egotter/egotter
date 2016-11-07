@@ -11,15 +11,15 @@
 </script>
 
 <% cache "#{tu.cache_key}/close_friends" do %>
-  <%= render partial: 'close_friends/index', locals: {users: tu.close_friends(login_user: @login_user), graph: tu.close_friends_graph(login_user: @login_user), uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
+  <%= render partial: 'close_friends/summary', locals: {users: tu.close_friends(login_user: @login_user), graph: tu.close_friends_graph(login_user: @login_user), uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
 <% end %>
 
 <% cache "#{tu.cache_key}/usage_stats" do %>
-  <%= render partial: 'usage_stats/index', locals: {graph: tu.usage_stats_graph, tu: tu} %>
+  <%= render partial: 'usage_stats/summary', locals: {graph: tu.usage_stats_graph, tu: tu} %>
 <% end %>
 
 <% cache "#{tu.cache_key}/tweet_clusters" do %>
-  <%= render partial: 'tweet_clusters/index', locals: {graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
+  <%= render partial: 'tweet_clusters/summary', locals: {graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
 <% end %>
 
 <%
@@ -34,7 +34,7 @@
         path: send("#{name}_search_path", screen_name: tu.screen_name)
       }
 %>
-  <%= render partial: 'various_users/index', locals: {menu: values, uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
+  <%= render partial: 'various_users/summary', locals: {menu: values, uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
 <%
     end
   end
@@ -42,12 +42,12 @@
 
 <%# cache "#{tu.cache_key}/common_friends" do %>
   <%# locals = {uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
-  <%#= render partial: 'common_friends/index', locals: locals.merge(menu: @menu_common_friends) %>
-  <%#= render partial: 'common_friends/index', locals: locals.merge(menu: @menu_common_followers) %>
+  <%#= render partial: 'common_friends/summary', locals: locals.merge(menu: @menu_common_friends) %>
+  <%#= render partial: 'common_friends/summary', locals: locals.merge(menu: @menu_common_followers) %>
 <%# end %>
 
 <% cache "#{tu.cache_key}/update_histories" do %>
-  <%= render partial: 'update_histories/index', locals: {histories: UpdateHistories.new(tu.uid), tu: tu} %>
+  <%= render partial: 'update_histories/summary', locals: {histories: UpdateHistories.new(tu.uid), tu: tu} %>
 <% end %>
 
 <script>

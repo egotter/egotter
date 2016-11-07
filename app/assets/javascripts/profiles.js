@@ -1,5 +1,7 @@
-function enableSlickOnModal(uniqueId) {
-  enableSlickOnPageTop(uniqueId);
+function enableSlickOnModalWithDelay(uniqueId) {
+  $('.profile-overview-modal.' + uniqueId).one('show.bs.modal', function (e) {
+    setTimeout(function () { enableSlickOnPageTop(uniqueId) }, 500);
+  });
 }
 
 function enableSlickOnPageTop(uniqueId) {

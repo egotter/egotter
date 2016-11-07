@@ -1,8 +1,9 @@
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= menu[:name] %><div class="tooltip-container"><abbr title="<%= menu[:description] %>" rel="tooltip">i</abbr></div></h4>
-    <%= render(partial: 'various_users/user', collection: menu[:target].slice(0..icon_limit), cached: true, locals: {uids: uids}) %>
+    <%= render(partial: 'various_users/user', collection: menu[:target].slice(0..icon_limit), cached: true, locals: {uids: uids, searched_tw_user: tu}) %>
   </div>
+
   <div class="media-right">
     <% if menu.has_key?(:graph) %>
       <div id="<%= menu.object_id %>" class="common-chart"></div>
@@ -17,7 +18,18 @@
       </script>
     <% end %>
   </div>
-  <div>
-    <%= link_to(t('dictionary.view_more_with_num', num: menu[:target].size).html_safe, menu[:path], class: 'btn btn-info btn-block') %>
-  </div>
+
+  <% if search_oneself?(tu.uid) %>
+    <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
+      <%= t('view_more_btn.same_user') %>
+    </button>
+  <% elsif search_others?(tu.uid) %>
+    <div>
+      <%= link_to(t('dictionary.view_more_with_num', num: menu[:target].size).html_safe, menu[:path], class: 'btn btn-info btn-block') %>
+    </div>
+  <% elsif !user_signed_in? %>
+    <button class="btn btn-default btn-block" disabled="disabled" style="margin-top: 15px;">
+      <%= t('dictionary.view_more_needs_login') %>
+    </button>
+  <% end %>
 </div>

@@ -4,7 +4,7 @@
       <%= t('searches.close_friends.title', user: tu.mention_name) %>
       <div class="tooltip-container"><abbr title="<%= t('searches.close_friends.description', user: tu.mention_name) %>" rel="tooltip">i</abbr></div>
     </h4>
-    <%= render(partial: 'various_users/user', collection: users.take(icon_limit), cached: true, locals: {uids: uids}) %>
+    <%= render(partial: 'various_users/user', collection: users.take(icon_limit), cached: true, locals: {uids: uids, searched_tw_user: tu}) %>
   </div>
   <div class="media-right">
     <div id="<%= graph.object_id %>" class="close-friends-chart"></div>

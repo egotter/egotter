@@ -13,7 +13,7 @@
 
   - rendered_uids.uniq.each do |uid|
     - user = @user_items.find { |item| item[:target].uid.to_i == uid.to_i }[:target]
-    = render(partial: 'profiles/modal', locals: {user: user, unique_id: user.uid, via: :profile_modal})
+    = render(partial: 'profiles/modal', locals: {user: user, unique_id: user.uid, searched_tw_user: @searched_tw_user, via: :profile_modal})
 
   :javascript
     $(function () {
