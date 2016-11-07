@@ -40,9 +40,9 @@ namespace :twitter_users do
         when ENV['DEADLINE'].match(/\d+\.(minutes?|hours?)/) then Time.zone.now + eval(ENV['DEADLINE'])
         else Time.zone.parse(ENV['DEADLINE'])
       end
+
     user_ids = ENV['USER_IDS']
     next if user_ids.blank?
-
     user_ids =
       case
         when user_ids.include?('..') then Range.new(*user_ids.split('..').map(&:to_i))
@@ -50,20 +50,32 @@ namespace :twitter_users do
         else [user_ids.to_i]
       end
 
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
     start_time = Time.zone.now
-    puts "\nstart at #{start_time}"
-    puts "finish at #{deadline}" if deadline
+    puts "\nstarted:"
+    puts "  start: #{start_time}, deadline: #{deadline}\n\n"
+
+    processed = 0
 
     user_ids.each.with_index do |user_id, i|
       start = Time.zone.now
       UpdateTwitterUserWorker.new.perform(user_id)
+      processed += 1
       avg = i % 10 == 0 ? ", #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds/user" : ''
       elapsed = i % 10 == 0 ? ", #{'%.1f' % (Time.zone.now - start_time)} seconds elapsed" : ''
       remaining = (deadline && i % 10 == 0) ? ", #{'%.1f' % (deadline - Time.zone.now)} seconds remaining" : ''
       puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}#{elapsed}#{remaining}"
 
-      break if deadline && Time.zone.now > deadline
+      break if (deadline && Time.zone.now > deadline) || sigint
     end
+
+    puts "\n#{(sigint ? 'suspended:' : 'finished:')}"
+    puts "  start: #{start_time}, finish: #{Time.zone.now}, processed: #{processed}"
   end
 
   desc 'fix counts'
