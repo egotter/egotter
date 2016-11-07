@@ -11,21 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161105083914) do
-
-  create_table "access_stats", force: :cascade do |t|
-    t.datetime "date",                             null: false
-    t.integer  "0_days",     limit: 4, default: 0, null: false
-    t.integer  "1_days",     limit: 4, default: 0, null: false
-    t.integer  "3_days",     limit: 4, default: 0, null: false
-    t.integer  "7_days",     limit: 4, default: 0, null: false
-    t.integer  "14_days",    limit: 4, default: 0, null: false
-    t.integer  "30_days",    limit: 4, default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
-  end
-
-  add_index "access_stats", ["date"], name: "index_access_stats_on_date", unique: true, using: :btree
+ActiveRecord::Schema.define(version: 20161107055121) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -239,6 +225,7 @@ ActiveRecord::Schema.define(version: 20161105083914) do
   add_index "search_logs", ["action"], name: "index_search_logs_on_action", using: :btree
   add_index "search_logs", ["created_at"], name: "index_search_logs_on_created_at", using: :btree
   add_index "search_logs", ["screen_name"], name: "index_search_logs_on_screen_name", using: :btree
+  add_index "search_logs", ["session_id"], name: "index_search_logs_on_session_id", using: :btree
   add_index "search_logs", ["uid", "action"], name: "index_search_logs_on_uid_and_action", using: :btree
   add_index "search_logs", ["uid"], name: "index_search_logs_on_uid", using: :btree
   add_index "search_logs", ["user_id"], name: "index_search_logs_on_user_id", using: :btree
@@ -309,6 +296,24 @@ ActiveRecord::Schema.define(version: 20161105083914) do
   add_index "twitter_users", ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
+  create_table "user_retention_stats", force: :cascade do |t|
+    t.datetime "date",                             null: false
+    t.integer  "total",      limit: 4, default: 0, null: false
+    t.integer  "1_days",     limit: 4, default: 0, null: false
+    t.integer  "2_days",     limit: 4, default: 0, null: false
+    t.integer  "3_days",     limit: 4, default: 0, null: false
+    t.integer  "4_days",     limit: 4, default: 0, null: false
+    t.integer  "5_days",     limit: 4, default: 0, null: false
+    t.integer  "6_days",     limit: 4, default: 0, null: false
+    t.integer  "7_days",     limit: 4, default: 0, null: false
+    t.integer  "14_days",    limit: 4, default: 0, null: false
+    t.integer  "30_days",    limit: 4, default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "user_retention_stats", ["date"], name: "index_user_retention_stats_on_date", unique: true, using: :btree
+
   create_table "users", force: :cascade do |t|
     t.string   "uid",         limit: 191,                null: false
     t.string   "screen_name", limit: 191,                null: false
@@ -323,5 +328,38 @@ ActiveRecord::Schema.define(version: 20161105083914) do
   add_index "users", ["created_at"], name: "index_users_on_created_at", using: :btree
   add_index "users", ["screen_name"], name: "index_users_on_screen_name", using: :btree
   add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
+
+  create_table "visitor_retention_stats", force: :cascade do |t|
+    t.datetime "date",                             null: false
+    t.integer  "total",      limit: 4, default: 0, null: false
+    t.integer  "1_days",     limit: 4, default: 0, null: false
+    t.integer  "2_days",     limit: 4, default: 0, null: false
+    t.integer  "3_days",     limit: 4, default: 0, null: false
+    t.integer  "4_days",     limit: 4, default: 0, null: false
+    t.integer  "5_days",     limit: 4, default: 0, null: false
+    t.integer  "6_days",     limit: 4, default: 0, null: false
+    t.integer  "7_days",     limit: 4, default: 0, null: false
+    t.integer  "14_days",    limit: 4, default: 0, null: false
+    t.integer  "30_days",    limit: 4, default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "visitor_retention_stats", ["date"], name: "index_visitor_retention_stats_on_date", unique: true, using: :btree
+
+  create_table "visitors", force: :cascade do |t|
+    t.string   "session_id",  limit: 191,                null: false
+    t.integer  "user_id",     limit: 4,   default: -1,   null: false
+    t.string   "uid",         limit: 191, default: "-1", null: false
+    t.string   "screen_name", limit: 191, default: "",   null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+  end
+
+  add_index "visitors", ["created_at"], name: "index_visitors_on_created_at", using: :btree
+  add_index "visitors", ["screen_name"], name: "index_visitors_on_screen_name", using: :btree
+  add_index "visitors", ["session_id"], name: "index_visitors_on_session_id", unique: true, using: :btree
+  add_index "visitors", ["uid"], name: "index_visitors_on_uid", using: :btree
+  add_index "visitors", ["user_id"], name: "index_visitors_on_user_id", using: :btree
 
 end
