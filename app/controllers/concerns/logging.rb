@@ -101,6 +101,9 @@ module Logging
     elsif instance_variable_defined?(:@searched_tw_user) && !@searched_tw_user.nil?
       uid = @searched_tw_user.uid
       screen_name = @searched_tw_user.screen_name
+    elsif instance_variable_defined?(:@searched_tw_users) && !@searched_tw_users[0].nil?
+      uid = @searched_tw_users[0].uid
+      screen_name = @searched_tw_users[0].screen_name
     else
       uid = TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid) # waiting

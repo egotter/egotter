@@ -1,0 +1,58 @@
+<%= render(partial: 'profiles/overview',
+           locals: {user: @searched_tw_users[0], unique_id: @searched_tw_users[0].uid}) %>
+
+<script>
+  $(function () {
+    enableSlickOnPageTop('<%= @searched_tw_users[0].uid %>');
+  });
+</script>
+
+<div class="waiting">
+  <div class="waiting-msg">
+    <%= t('searches.waiting.searching', user: @searched_tw_users.map(&:name).join(' ')) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+  </div>
+
+  <div class="finished-msg" style="display: none;">
+    <%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+  </div>
+
+  <div class="bar">
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+        <span class="sr-only">0% Complete</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="rescue-box" style="display: none;">
+    <div class="error-msg"></div>
+
+    <% if user_signed_in? %>
+      <div class="retry-btn">
+        <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_users.map(&:mention_name).join(' ')),
+                    relationships_path(src_screen_name: @searched_tw_users[0].screen_name, dst_screen_name: @searched_tw_users[1].screen_name, to: params[:to], via: :retry),
+                    class: 'btn btn-lg btn-info btn-block', method: :post %>
+      </div>
+    <% else %>
+      <div class="login-btn">
+        <%= link_to t('login.welcome.sign_in_with_twitter'), welcome_path, class: 'btn btn-lg btn-info btn-block' %>
+      </div>
+    <% end %>
+
+    <div class="support-btn">
+      <%= link_to t('dictionary.link_to_support'), support_path, class: 'btn btn-lg btn-info btn-block' %>
+    </div>
+  </div>
+
+  <div style="margin-top: 15px;"></div>
+</div>
+
+<%= render partial: 'common/errors' %>
+<script>
+  $(function () {
+    var checkLogPath = "<%= check_log_relationship_path(src_uid: @searched_tw_users[0].uid, dst_uid: @searched_tw_users[1].uid) %>";
+    var resultPath = "<%= @result_path %>";
+    var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", src_uid: <%= @searched_tw_users[0].uid %>, dst_uid: <%= @searched_tw_users[1].uid %>};
+    waiting(checkLogPath, resultPath, scope);
+  });
+</script>

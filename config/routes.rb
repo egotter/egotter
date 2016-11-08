@@ -31,6 +31,13 @@ Rails.application.routes.draw do
   resources :modal_open_logs, only: :create
   resources :page_caches, only: %i(create destroy), param: :uid
 
+  resources :relationships, only: %i(create)
+  get 'relationships/:src_uid/:dst_uid/waiting', to: 'relationships#waiting', as: :waiting_relationship
+  get 'relationships/:src_uid/:dst_uid/check_log', to: 'relationships#check_log', as: :check_log_relationship
+  %w(conversations common_friends common_followers).each do |type|
+    get "#{type}/:src_screen_name/:dst_screen_name", to: "relationships##{type}", as: type.singularize
+  end
+
   get '/sign_in', to: 'login#sign_in', as: :sign_in
   get '/sign_out', to: 'login#sign_out', as: :sign_out
   get '/welcome', to: 'login#welcome', as: :welcome
