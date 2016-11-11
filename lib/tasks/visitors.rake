@@ -1,8 +1,8 @@
 namespace :visitors do
   desc 'update'
   task update: :environment do
-    start_day = Time.zone.parse(ENV['START'])
-    end_day = Time.zone.parse(ENV['END'])
+    start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 40.days)
+    end_day = ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now
 
     (start_day.to_date..end_day.to_date).each do |day|
       search_logs = SearchLog.except_crawler.where(created_at: day.to_time.all_day).where.not(session_id: -1)

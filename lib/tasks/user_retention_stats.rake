@@ -1,8 +1,8 @@
 namespace :user_retention_stats do
   desc 'update'
   task update: :environment do
-    start_day = Time.zone.parse(ENV['START'])
-    end_day = Time.zone.parse(ENV['END'])
+    start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 40.days)
+    end_day = ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now
     stats = []
     diffs = [1, 2, 3, 4, 5, 6, 7, 14, 30]
 
