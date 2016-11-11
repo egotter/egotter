@@ -25,6 +25,7 @@
 #  index_search_logs_on_action          (action)
 #  index_search_logs_on_created_at      (created_at)
 #  index_search_logs_on_screen_name     (screen_name)
+#  index_search_logs_on_session_id      (session_id)
 #  index_search_logs_on_uid             (uid)
 #  index_search_logs_on_uid_and_action  (uid,action)
 #  index_search_logs_on_user_id         (user_id)
