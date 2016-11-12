@@ -1,23 +1,25 @@
+<% users = users_for(tu, menu: name) %>
+<% graph = graph_for(tu, menu: name, users: users) %>
 <div class="menu-items media">
   <div class="media-body">
-    <h4 class="h5 media-heading"><%= menu[:name] %><div class="tooltip-container"><abbr title="<%= menu[:description] %>" rel="tooltip">i</abbr></div></h4>
-    <%= render(partial: 'various_users/user', collection: menu[:target].slice(0..icon_limit), cached: true, locals: {uids: uids, searched_tw_user: tu}) %>
+    <h4 class="h5 media-heading"><%= title_for(tu, menu: name) %><div class="tooltip-container"><abbr title="<%= description_for(tu, menu: name) %>" rel="tooltip">i</abbr></div></h4>
+    <%= render(partial: 'various_users/user', collection: users.slice(0..icon_limit), cached: true, locals: {rendered_users: rendered_users}) %>
   </div>
   <div class="media-right">
-    <% if menu.has_key?(:graph) %>
-      <div id="<%= menu.object_id %>" class="common-chart"></div>
+    <% if graph %>
+      <div id="<%= graph.object_id %>" class="common-chart"></div>
       <script>
         $(function () {
           var graph_option = $.extend(true, {}, window.common_pie_chart_options);
-          graph_option.series[0].data = <%= raw menu[:graph].to_json %>;
-          window.lazycall_functions['#<%= menu.object_id %>'] = function () {
-            $('#<%= menu.object_id %>').highcharts(graph_option);
+          graph_option.series[0].data = <%= raw graph.to_json %>;
+          window.lazycall_functions['#<%= graph.object_id %>'] = function () {
+            $('#<%= graph.object_id %>').highcharts(graph_option);
           };
         });
       </script>
     <% end %>
   </div>
   <div>
-    <%= link_to(t('dictionary.view_more_with_num', num: menu[:target].size).html_safe, menu[:path], class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more_with_num', num: users.size).html_safe, send("#{name}_search_path", screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
   </div>
 </div>

@@ -1,8 +1,8 @@
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading">
-      <%= t('searches.clusters_belong_to.title', user: tu.screen_name) %>
-      <div class="tooltip-container"><abbr title="<%= t('searches.clusters_belong_to.description', user: tu.mention_name) %>" rel="tooltip">i</abbr></div>
+      <%= title_for(tu, menu: name) %>
+      <div class="tooltip-container"><abbr title="<%= description_for(tu, menu: name) %>" rel="tooltip">i</abbr></div>
     </h4>
 
     <div id="<%= graph.object_id %>" class="clusters-belong-to-chart-container"></div>
@@ -18,6 +18,6 @@
     </script>
   </div>
   <div>
-    <%= link_to(t('dictionary.view_more'), clusters_belong_to_search_path(screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more'), send("#{name}_search_path", screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
   </div>
 </div>

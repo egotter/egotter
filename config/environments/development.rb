@@ -49,5 +49,5 @@ Rails.application.configure do
 
   Rails.application.routes.default_url_options[:host] = 'localhost:3000'
 
-  config.action_controller.perform_caching = true
+  config.action_controller.perform_caching = ENV['PERFORM_CACHING'] == '1'
 end

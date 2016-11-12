@@ -50,15 +50,10 @@ class SearchResultsController < ApplicationController
 
   %i(replying replied favoriting close_friends).each do |menu|
     define_method(menu) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
-      @graph =
-        if menu == :replied
-          @searched_tw_user.send("#{menu}_graph", login_user: User.find_by(id: current_user_id))
-        else
-          @searched_tw_user.send("#{menu}_graph")
-        end
-
-      @tweet_text = close_friends_text(@user_items.map { |i| i[:target] }, @searched_tw_user)
+      users = @searched_tw_user.send(menu)
+      @graph = @searched_tw_user.send("#{menu}_graph", users)
+      @tweet_text = close_friends_text(users, @searched_tw_user)
+      @user_items = TwitterUsersDecorator.new(users).items
       render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end

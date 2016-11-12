@@ -28,11 +28,31 @@ module SearchesHelper
     redirect_to root_path, alert: alert_message(e)
   end
 
-  def title_for(tu, menu: nil)
+  def title_for(tu, menu:)
     if %i(common_friends common_followers).include?(menu)
       t("searches.#{menu}.title", user: tu.mention_name, login: I18n.t('dictionary.you'))
     else
       t("searches.#{menu}.title", user: tu.mention_name)
+    end
+  end
+
+  def description_for(tu, menu:)
+    t("searches.#{menu}.description", user: tu.mention_name)
+  end
+
+  def users_for(tu, menu:)
+    if %i(close_friends).include?(menu)
+      tu.send(menu, login_user: current_user)
+    else
+      tu.send(menu)
+    end
+  end
+
+  def graph_for(tu, menu:, users: nil)
+    if %i(replying replied favoriting close_friends).include?(menu)
+      tu.send("#{menu}_graph", users)
+    else
+      tu.send("#{menu}_graph")
     end
   end
 
