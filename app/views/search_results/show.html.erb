@@ -93,62 +93,7 @@
   $(function () {
     tooltip();
 
-    class Cache {
-      setHash(hash) {
-        this.hash = hash;
-      }
-
-      delete() {
-        var url = "<%= raw page_cache_path(uid: tu.uid, hash: 'HASH') %>";
-        return $.ajax({url: url.replace(/HASH/, this.hash), type: 'DELETE'});
-      }
-
-      create() {
-        var url = "<%= raw page_caches_path(uid: tu.uid) %>";
-        return $.post(url);
-      }
-    }
-
-    class Interval {
-      constructor() {
-        this.value = 2000;
-        this.max = 5000;
-      }
-
-      current() {
-        return this.value;
-      }
-
-      next() {
-        this.value += 2000;
-        if (this.value > this.max) this.value = this.max;
-        return this.value
-      }
-    }
-
-    class Retry {
-      constructor() {
-        this.count = 0;
-        this.max = 5;
-      }
-
-      current() {
-        return this.count;
-      }
-
-      next() {
-        this.count += 1;
-        return this.count < this.max;
-      }
-    }
-
-    var interval = new Interval();
-    var retry = new Retry();
-    var created_at = <%= tu.created_at.to_i %>;
-    var cache = new Cache();
     var refreshBox = $('.alert.alert-info');
-    var scope = {action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
-
     refreshBox.find('a').on('click', function (e) {
       e.preventDefault();
       e.stopPropagation();
@@ -161,38 +106,11 @@
       return false;
     });
 
-    function failed(xhr) {
-      console.log(xhr.responseText);
-    }
-
-    function done(res, text_status, xhr) {
-      console.log(res, text_status, xhr.status, interval.current(), retry.current());
-
-      if (xhr.status === 200) {
-        console.log(created_at, res.created_at);
-        if (created_at < res.created_at) {
-          cache.setHash(res.hash);
-          refreshBox.show();
-        } else {
-          console.log('do nothing.');
-        }
-
-        return
-      }
-
-      if (!retry.next()) {
-        console.log('stop waiting.');
-        Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
-      } else {
-        setTimeout(tic, interval.next());
-      }
-    }
-
-    function tic() {
-      var url = "<%= background_search_log_path(uid: tu.uid) %>";
-      $.get(url).done(done).fail(failed);
-    }
-
-    tic();
+    var createdAt = <%= tu.created_at.to_i %>;
+    var scope = {action: "<%= action_name %>", uid: <%= tu.uid %>};
+    var checkLogPath = "<%= background_search_log_path(uid: tu.uid) %>";
+    var pageCachePath = "<%= raw page_cache_path(uid: tu.uid, hash: 'HASH') %>";
+    var pageCachesPath = "<%= raw page_caches_path(uid: tu.uid) %>";
+    waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope);
   });
 </script>
