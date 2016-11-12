@@ -1,6 +1,6 @@
 <%
   tu = @searched_tw_user
-  modal_rendered_uids = []
+  rendered_users = []
   icon_limit = request.device_type == :pc ? 8 : 3
 %>
 
@@ -11,40 +11,34 @@
 </script>
 
 <% cache "#{tu.cache_key}/close_friends" do %>
-  <%= render partial: 'close_friends/summary', locals: {users: tu.close_friends(login_user: @login_user), graph: tu.close_friends_graph(login_user: @login_user), uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
+  <%= render partial: 'various_users/summary', locals: {name: :close_friends, rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
 <% end %>
 
 <% cache "#{tu.cache_key}/usage_stats" do %>
-  <%= render partial: 'usage_stats/summary', locals: {graph: tu.usage_stats_graph, tu: tu} %>
+  <%= render partial: 'various_stats/summary', locals: {name: :usage_stats, graph: tu.usage_stats_graph[0], tu: tu} %>
 <% end %>
 
 <% cache "#{tu.cache_key}/tweet_clusters" do %>
-  <%= render partial: 'tweet_clusters/summary', locals: {graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
+  <%= render partial: 'various_stats/summary', locals: {name: :clusters_belong_to, graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
 <% end %>
 
-<%
-  %i(removing removed new_friends new_followers blocking_or_blocked mutual_friends
-     one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
-    cache "#{tu.cache_key}/various_users/#{name}" do
-      values = {
-        name: t("searches.#{name}.title", user: tu.mention_name),
-        description: t("searches.#{name}.description", user: tu.mention_name),
-        target: tu.send(name),
-        graph: tu.send("#{name}_graph"),
-        path: send("#{name}_search_path", screen_name: tu.screen_name)
-      }
-%>
-  <%= render partial: 'various_users/summary', locals: {menu: values, uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
-<%
-    end
-  end
-%>
+<% cache "#{tu.cache_key}/various_users/first_half" do %>
+  <%= render partial: 'various_users/summary', collection: %i(removing removed new_friends new_followers blocking_or_blocked), as: :name, locals: {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
+<% end %>
+
+<% cache "#{tu.cache_key}/various_users/second_half" do %>
+  <%= render partial: 'various_users/summary', collection: %i(mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers), as: :name, locals: {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
+<% end %>
 
 <%# cache "#{tu.cache_key}/common_friends" do %>
   <%# locals = {uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
   <%#= render partial: 'common_friends/summary', locals: locals.merge(menu: @menu_common_friends) %>
   <%#= render partial: 'common_friends/summary', locals: locals.merge(menu: @menu_common_followers) %>
 <%# end %>
+
+<% cache "#{tu.cache_key}/various_users/rendered_users" do %>
+  <%= render(partial: 'profiles/modal', collection: rendered_users.uniq { |user| user.uid.to_i }, as: :user, cached: true, locals: {unique_id: nil, searched_tw_user: tu, via: :profile_modal}) %>
+<% end %>
 
 <% cache "#{tu.cache_key}/update_histories" do %>
   <%= render partial: 'update_histories/summary', locals: {histories: UpdateHistories.new(tu.uid), tu: tu} %>

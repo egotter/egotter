@@ -25,9 +25,8 @@
     #common_followers
       = render(partial: 'search_results/user_item', collection: @user_items, cached: true, locals: {uids: rendered_uids})
 
-    - rendered_uids.uniq.each do |uid|
-      - user = @user_items.find { |item| item[:target].uid.to_i == uid.to_i }[:target]
-      = render(partial: 'profiles/modal', locals: {user: user, unique_id: user.uid, searched_tw_user: @searched_tw_users[0], via: :profile_modal})
+    - users = rendered_uids.uniq.map { |uid| @user_items.find { |item| item[:target].uid.to_i == uid.to_i }[:target] }
+    = render(partial: 'profiles/modal', collection: users, as: :user, cached: true, locals: {unique_id: nil, searched_tw_user: @searched_tw_users[0], via: :profile_modal})
 
     :javascript
       $(function () {

@@ -225,44 +225,42 @@ module Concerns::TwitterUser::Api
     ]
   end
 
-  def replying_graph
+  def replying_graph(users)
     friends_size = friends_count
-    replying_size = [replying.size, friends_size].min
+    replying_size = [users.size, friends_size].min
     [
       {name: I18n.t('searches.replying.targets'), y: (replying_size.to_f / friends_size * 100)},
       {name: I18n.t('searches.common.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
     ]
   end
 
-  # TODO do not use login_user
-  def replied_graph(login_user: nil)
+  def replied_graph(users)
     followers_size = followers_count
-    replied_size = [replied(login_user: login_user).size, followers_size].min
+    replied_size = [users.size, followers_size].min
     [
       {name: I18n.t('searches.replied.targets'), y: (replied_size.to_f / followers_size * 100)},
       {name: I18n.t('searches.common.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
     ]
   end
 
-  def favoriting_graph
+  def favoriting_graph(users)
     friends_size = friends_count
-    favoriting_size = [favoriting.size, friends_size].min
+    favoriting_size = [users.size, friends_size].min
     [
       {name: I18n.t('searches.favoriting.targets'), y: (favoriting_size.to_f / friends_size * 100)},
       {name: I18n.t('searches.common.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}
     ]
   end
 
-  def close_friends_graph(login_user: nil)
-    items = close_friends(min: 0, login_user: login_user)
-    items_size = items.size
-    good = percentile_index(items, 0.10) + 1
-    not_so_bad = percentile_index(items, 0.50) + 1
-    so_so = percentile_index(items, 1.0) + 1
+  def close_friends_graph(users)
+    users_size = users.size
+    good = percentile_index(users, 0.10) + 1
+    not_so_bad = percentile_index(users, 0.50) + 1
+    so_so = percentile_index(users, 1.0) + 1
     [
-      {name: I18n.t('searches.close_friends.targets'), y: (good.to_f / items_size * 100), drilldown: 'good', sliced: true, selected: true},
-      {name: I18n.t('searches.close_friends.friends'), y: ((not_so_bad - good).to_f / items_size * 100), drilldown: 'not_so_bad'},
-      {name: I18n.t('searches.close_friends.acquaintance'), y: ((so_so - (good + not_so_bad)).to_f / items_size * 100), drilldown: 'so_so'}
+      {name: I18n.t('searches.close_friends.targets'), y: (good.to_f / users_size * 100), drilldown: 'good', sliced: true, selected: true},
+      {name: I18n.t('searches.close_friends.friends'), y: ((not_so_bad - good).to_f / users_size * 100), drilldown: 'not_so_bad'},
+      {name: I18n.t('searches.close_friends.acquaintance'), y: ((so_so - (good + not_so_bad)).to_f / users_size * 100), drilldown: 'so_so'}
     ]
     # drilldown_series = [
     #   {name: 'good', id: 'good', data: items.slice(0, good - 1).map { |i| [i.screen_name, i.score] }},
