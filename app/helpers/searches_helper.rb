@@ -6,7 +6,7 @@ module SearchesHelper
       if screen_name.match(Validations::UidValidator::REGEXP)
         user = client.user(screen_name.to_i)
         if request.user_agent && request.user_agent.exclude?('Twitterbot')
-          logger.warn "#{screen_name} is treated as uid. #{current_user_id} #{request.device_type} #{request.browser}"
+          logger.warn "#{screen_name} is treated as uid. #{current_user_id} #{request.device_type} #{request.browser} #{request.referer}"
         end
       else
         raise e
