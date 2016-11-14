@@ -314,6 +314,45 @@ ActiveRecord::Schema.define(version: 20161117082659) do
   add_index "twitter_users", ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
+  create_table "user_engagement_stats", force: :cascade do |t|
+    t.datetime "date",                             null: false
+    t.integer  "total",      limit: 4, default: 0, null: false
+    t.integer  "1_days",     limit: 4, default: 0, null: false
+    t.integer  "2_days",     limit: 4, default: 0, null: false
+    t.integer  "3_days",     limit: 4, default: 0, null: false
+    t.integer  "4_days",     limit: 4, default: 0, null: false
+    t.integer  "5_days",     limit: 4, default: 0, null: false
+    t.integer  "6_days",     limit: 4, default: 0, null: false
+    t.integer  "7_days",     limit: 4, default: 0, null: false
+    t.integer  "8_days",     limit: 4, default: 0, null: false
+    t.integer  "9_days",     limit: 4, default: 0, null: false
+    t.integer  "10_days",    limit: 4, default: 0, null: false
+    t.integer  "11_days",    limit: 4, default: 0, null: false
+    t.integer  "12_days",    limit: 4, default: 0, null: false
+    t.integer  "13_days",    limit: 4, default: 0, null: false
+    t.integer  "14_days",    limit: 4, default: 0, null: false
+    t.integer  "15_days",    limit: 4, default: 0, null: false
+    t.integer  "16_days",    limit: 4, default: 0, null: false
+    t.integer  "17_days",    limit: 4, default: 0, null: false
+    t.integer  "18_days",    limit: 4, default: 0, null: false
+    t.integer  "19_days",    limit: 4, default: 0, null: false
+    t.integer  "20_days",    limit: 4, default: 0, null: false
+    t.integer  "21_days",    limit: 4, default: 0, null: false
+    t.integer  "22_days",    limit: 4, default: 0, null: false
+    t.integer  "23_days",    limit: 4, default: 0, null: false
+    t.integer  "24_days",    limit: 4, default: 0, null: false
+    t.integer  "25_days",    limit: 4, default: 0, null: false
+    t.integer  "26_days",    limit: 4, default: 0, null: false
+    t.integer  "27_days",    limit: 4, default: 0, null: false
+    t.integer  "28_days",    limit: 4, default: 0, null: false
+    t.integer  "29_days",    limit: 4, default: 0, null: false
+    t.integer  "30_days",    limit: 4, default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "user_engagement_stats", ["date"], name: "index_user_engagement_stats_on_date", unique: true, using: :btree
+
   create_table "user_retention_stats", force: :cascade do |t|
     t.datetime "date",                             null: false
     t.integer  "total",      limit: 4, default: 0, null: false
@@ -346,6 +385,45 @@ ActiveRecord::Schema.define(version: 20161117082659) do
   add_index "users", ["created_at"], name: "index_users_on_created_at", using: :btree
   add_index "users", ["screen_name"], name: "index_users_on_screen_name", using: :btree
   add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
+
+  create_table "visitor_engagement_stats", force: :cascade do |t|
+    t.datetime "date",                             null: false
+    t.integer  "total",      limit: 4, default: 0, null: false
+    t.integer  "1_days",     limit: 4, default: 0, null: false
+    t.integer  "2_days",     limit: 4, default: 0, null: false
+    t.integer  "3_days",     limit: 4, default: 0, null: false
+    t.integer  "4_days",     limit: 4, default: 0, null: false
+    t.integer  "5_days",     limit: 4, default: 0, null: false
+    t.integer  "6_days",     limit: 4, default: 0, null: false
+    t.integer  "7_days",     limit: 4, default: 0, null: false
+    t.integer  "8_days",     limit: 4, default: 0, null: false
+    t.integer  "9_days",     limit: 4, default: 0, null: false
+    t.integer  "10_days",    limit: 4, default: 0, null: false
+    t.integer  "11_days",    limit: 4, default: 0, null: false
+    t.integer  "12_days",    limit: 4, default: 0, null: false
+    t.integer  "13_days",    limit: 4, default: 0, null: false
+    t.integer  "14_days",    limit: 4, default: 0, null: false
+    t.integer  "15_days",    limit: 4, default: 0, null: false
+    t.integer  "16_days",    limit: 4, default: 0, null: false
+    t.integer  "17_days",    limit: 4, default: 0, null: false
+    t.integer  "18_days",    limit: 4, default: 0, null: false
+    t.integer  "19_days",    limit: 4, default: 0, null: false
+    t.integer  "20_days",    limit: 4, default: 0, null: false
+    t.integer  "21_days",    limit: 4, default: 0, null: false
+    t.integer  "22_days",    limit: 4, default: 0, null: false
+    t.integer  "23_days",    limit: 4, default: 0, null: false
+    t.integer  "24_days",    limit: 4, default: 0, null: false
+    t.integer  "25_days",    limit: 4, default: 0, null: false
+    t.integer  "26_days",    limit: 4, default: 0, null: false
+    t.integer  "27_days",    limit: 4, default: 0, null: false
+    t.integer  "28_days",    limit: 4, default: 0, null: false
+    t.integer  "29_days",    limit: 4, default: 0, null: false
+    t.integer  "30_days",    limit: 4, default: 0, null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+  end
+
+  add_index "visitor_engagement_stats", ["date"], name: "index_visitor_engagement_stats_on_date", unique: true, using: :btree
 
   create_table "visitor_retention_stats", force: :cascade do |t|
     t.datetime "date",                             null: false

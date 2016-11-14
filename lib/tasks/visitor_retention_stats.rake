@@ -12,12 +12,14 @@ namespace :visitor_retention_stats do
       stat = VisitorRetentionStat.find_or_initialize_by(date: day)
       stat.total = session_ids.size
       diffs.each do |diff|
-        stat["#{diff}_days"] = SearchLog.except_crawler.where(session_id: session_ids, created_at: (day + diff.day).to_time.all_day).count('distinct session_id')
+        stat["#{diff}_days"] = SearchLog
+          .except_crawler
+          .where(session_id: session_ids, created_at: (day + diff.day).to_time.all_day)
+          .count('distinct session_id')
       end
+      stats << stat if stat.changed?
 
       puts "#{day}: #{([stat.total] + diffs.map { |n| stat["#{n}_days"] }).join(', ')}"
-
-      stats << stat if stat.changed?
     end
 
     if stats.any?
