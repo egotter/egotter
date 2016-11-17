@@ -2,6 +2,8 @@ module RelationshipsHelper
   def add_create_relationship_worker_if_needed(uids, user_id:, screen_names:)
     return if request.device_type == :crawler
 
+    referral = find_referral(pushed_referers)
+
     values = {
       session_id:   fingerprint,
       uids:         uids,
@@ -13,8 +15,8 @@ module RelationshipsHelper
       browser:      request.browser,
       user_agent:   truncated_user_agent,
       referer:      truncated_referer,
-      referral:     find_referral,
-      channel:      find_referral,
+      referral:     referral,
+      channel:      find_channel(referral),
     }
     CreateRelationshipWorker.perform_async(values)
   end
