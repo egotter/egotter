@@ -1,5 +1,5 @@
 class NotificationsController < ApplicationController
-  include Logging
+  include Concerns::Logging
   include SearchesHelper
 
   before_action only: %i(index) do

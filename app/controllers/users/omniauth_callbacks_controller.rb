@@ -1,5 +1,5 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  include Logging
+  include Concerns::Logging
 
   def twitter
     begin

@@ -1,6 +1,6 @@
 class MiscController < ApplicationController
   include SearchesHelper
-  include Logging
+  include Concerns::Logging
 
   before_action :push_referer, only: %i(menu)
   before_action :create_search_log, only: %i(menu)

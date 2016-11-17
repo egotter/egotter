@@ -1,6 +1,6 @@
 class SearchesController < ApplicationController
   include Validation
-  include Logging
+  include Concerns::Logging
   include SearchesHelper
   include PageCachesHelper
 

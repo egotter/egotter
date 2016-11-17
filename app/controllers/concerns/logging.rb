@@ -1,7 +1,7 @@
 require 'digest/md5'
 require 'active_support/concern'
 
-module Logging
+module Concerns::Logging
   extend ActiveSupport::Concern
 
   included do

@@ -1,5 +1,5 @@
 class ModalOpenLogsController < ApplicationController
-  include Logging
+  include Concerns::Logging
 
   layout false
 
