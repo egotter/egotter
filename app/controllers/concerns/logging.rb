@@ -91,6 +91,29 @@ module Concerns::Logging
     Rollbar.warn(e)
   end
 
+  def create_page_cache_log(context)
+    referral = find_referral(pushed_referers)
+
+    attrs = {
+      session_id:  fingerprint,
+      user_id:     current_user_id,
+      context:     context,
+      device_type: request.device_type,
+      os:          request.os,
+      browser:     request.browser,
+      user_agent:  truncated_user_agent,
+      referer:     truncated_referer,
+      referral:    referral,
+      channel:     find_channel(referral),
+      created_at:  Time.zone.now
+    }
+    CreatePageCacheLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
+    logger.info e.backtrace.take(10).join("\n")
+    Rollbar.warn(e)
+  end
+
   def push_referer
     referer = truncated_referer
     if referer.present? && !referer.start_with?('https://egotter.com')
