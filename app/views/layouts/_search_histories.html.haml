@@ -7,7 +7,20 @@
         %h4#search-modal-label.modal-title= t('searches.new.search_by_egotter')
       .modal-body
         = render partial: 'common/search_box_group', locals: {via: :search_history_input, screen_names: screen_names_for_search}
-        = render partial: 'search_histories/load', locals: {in_modal: true}
+
+        - if user_signed_in?
+          .search-histories-header
+            %h2
+              %small= t('search_histories.index.title')
+          :javascript
+            $(function () {
+              var selector = '.search-histories-header';
+              var loadPath = '#{search_histories_path}';
+              loadSearchHistories(selector, loadPath, true);
+            });
+        - else
+          = render template: 'login/welcome', locals: {via_prefix: 'search_history_'}
+
 :javascript
   $(function () {
     var selector = '.search-modal';

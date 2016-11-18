@@ -1,5 +1,6 @@
+- via_prefix ||= ''
 .welcome
-  = link_to t('.sign_in_with_twitter'), sign_in_path(via: :button_top), class: 'btn btn-lg btn-info btn-block'
+  = link_to t('.sign_in_with_twitter'), sign_in_path(via: "#{via_prefix}button_top"), class: 'btn btn-lg btn-info btn-block'
 
   %h3.h4= t('.lead').html_safe
 
@@ -25,7 +26,7 @@
       %h3.h4= t('.feature_004')
       .feature-description= t('.feature_desc_004').html_safe
 
-  = link_to t('.sign_in_with_twitter'), sign_in_path(via: :button_bottom), class: 'btn btn-lg btn-info btn-block'
+  = link_to t('.sign_in_with_twitter'), sign_in_path(via: "#{via_prefix}button_bottom"), class: 'btn btn-lg btn-info btn-block'
 
   .small.follow-egotter= t('.follow_egotter', link: link_to('@ego_tter', 'https://twitter.com/ego_tter', target: '_blank')).html_safe
   .small= t('.unfollow_egotter')

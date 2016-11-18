@@ -23,5 +23,5 @@
 #
 
 class SignInLog < ActiveRecord::Base
-  validates :via, inclusion: { in: %w(button_top button_bottom) }, allow_blank: true
+  validates :via, inclusion: { in: %w(button_top button_bottom search_history_button_top search_history_button_bottom) }, allow_blank: true
 end

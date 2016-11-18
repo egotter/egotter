@@ -42,5 +42,14 @@
 
   <%= render(partial: 'common/adsense') %>
 
-  <%= render(partial: 'search_histories/load', locals: {in_modal: false}) %>
+  <div class="search-histories-menu">
+    <h2><small><%= t('search_histories.index.title') %></small></h2>
+  </div>
+  <script>
+    $(function () {
+      var selector = '.search-histories-menu';
+      var loadPath = '<%= search_histories_path %>';
+      loadSearchHistories(selector, loadPath, false);
+    });
+  </script>
 </div>
