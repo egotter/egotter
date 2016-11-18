@@ -87,6 +87,8 @@ module SearchesHelper
     searched_uid_list = Util::SearchedUidList.new(redis)
     return if searched_uid_list.exists?(uid)
 
+    referral = find_referral(pushed_referers)
+
     values = {
       session_id:  fingerprint,
       uid:         uid,
@@ -99,8 +101,8 @@ module SearchesHelper
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
-      referral:    find_referral,
-      channel:     find_referral,
+      referral:    referral,
+      channel:     find_channel(referral),
     }
     searched_uid_list.add(uid)
     CreateTwitterUserWorker.perform_async(values)

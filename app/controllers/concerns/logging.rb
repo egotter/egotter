@@ -10,6 +10,7 @@ module Concerns::Logging
 
   def create_search_log(options = {})
     uid, screen_name = find_uid_and_screen_name
+    referral = find_referral(pushed_referers)
 
     attrs = {
       session_id:  fingerprint,
@@ -24,8 +25,8 @@ module Concerns::Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
-      referral:    find_referral,
-      channel:     find_referral,
+      referral:    referral,
+      channel:     find_channel(referral),
       landing:     landing_page?,
       medium:      params[:medium] ? params[:medium] : '',
       created_at:  Time.zone.now
@@ -33,7 +34,7 @@ module Concerns::Logging
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
 
-    if params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && %w(dm onesignal).include?(attrs[:medium])
+    if via_dm? || via_onesignal?
       UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at], medium: attrs[:medium])
     end
   rescue => e
@@ -43,6 +44,8 @@ module Concerns::Logging
   end
 
   def create_sign_in_log(user_id, context, via)
+    referral = find_referral(pushed_referers)
+
     attrs = {
       session_id:  fingerprint,
       user_id:     user_id,
@@ -53,8 +56,8 @@ module Concerns::Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
-      referral:    find_referral,
-      channel:     find_referral,
+      referral:    referral,
+      channel:     find_channel(referral),
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
@@ -65,6 +68,8 @@ module Concerns::Logging
   end
 
   def create_modal_open_log(via)
+    referral = find_referral(pushed_referers)
+
     attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
@@ -74,8 +79,8 @@ module Concerns::Logging
       browser:     request.browser,
       user_agent:  truncated_user_agent,
       referer:     truncated_referer,
-      referral:    find_referral,
-      channel:     find_referral,
+      referral:    referral,
+      channel:     find_channel(referral),
       created_at:  Time.zone.now
     }
     CreateModalOpenLogWorker.perform_async(attrs)
@@ -86,11 +91,18 @@ module Concerns::Logging
   end
 
   def push_referer
-    Util::RefererList.new(Redis.client).push(fingerprint, request.referer.nil? ? '' : request.referer)
+    referer = truncated_referer
+    if referer.present? && !referer.start_with?('https://egotter.com')
+      Util::RefererList.new(Redis.client).push(fingerprint, referer)
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.warn(e)
+  end
+
+  def pushed_referers
+    Util::RefererList.new(Redis.client).to_a(fingerprint)
   end
 
   private
@@ -122,11 +134,43 @@ module Concerns::Logging
     [uid, screen_name]
   end
 
-  def find_referral
-    channel_url = Util::RefererList.new(Redis.client).to_a(fingerprint).find do |referer|
-      !referer.nil? && referer != '' && !URI.parse(referer).host.include?('egotter')
+  def via_dm?
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:medium] == 'dm'
+  end
+
+  def via_onesignal?
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:medium] == 'onesignal'
+  end
+
+  def find_referral(referers)
+    url = referers.find do |referer|
+      referer.present? && referer.match(URI.regexp) && !URI.parse(referer).host.include?('egotter')
     end
-    channel_url.blank? ? '' : URI.parse(channel_url).host
+    url.blank? ? '' : URI.parse(url).host
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    Rollbar.warn(e)
+    ''
+  end
+
+  def find_channel(referral)
+    twitter = ->r{ %w(t.co twitter.com api.twitter.com mobile.twitter.com tweetdeck.twitter.com).include? r }
+    naver = ->r{ %w(matome.naver.jp).include? r }
+    google = ->r{ r.start_with? 'www.google' }
+    yahoo = ->r{ %w(search.yahoo.co.jp).include? r }
+    chiebukuro = ->r{ %w(m.chiebukuro.yahoo.co.jp detail.chiebukuro.yahoo.co.jp).include? r }
+    livedoor = ->r{ %w(news.livedoor.com).include? r }
+
+    case referral
+      when nil, ''     then ''
+      when twitter     then 'twitter'
+      when naver       then 'naver'
+      when google      then 'google'
+      when yahoo       then 'yahoo'
+      when chiebukuro  then 'chiebukuro'
+      when livedoor    then 'livedoor'
+      else 'others'
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     Rollbar.warn(e)
