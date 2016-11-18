@@ -17,6 +17,7 @@
 #  referer     :string(191)      default(""), not null
 #  referral    :string(191)      default(""), not null
 #  channel     :string(191)      default(""), not null
+#  landing     :boolean          default(FALSE), not null
 #  medium      :string(191)      default(""), not null
 #  created_at  :datetime         not null
 #

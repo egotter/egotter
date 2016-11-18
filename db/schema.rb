@@ -218,6 +218,7 @@ ActiveRecord::Schema.define(version: 20161107055121) do
     t.string   "referer",     limit: 191, default: "",    null: false
     t.string   "referral",    limit: 191, default: "",    null: false
     t.string   "channel",     limit: 191, default: "",    null: false
+    t.boolean  "landing",                 default: false, null: false
     t.string   "medium",      limit: 191, default: "",    null: false
     t.datetime "created_at",                              null: false
   end

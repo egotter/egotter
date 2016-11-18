@@ -26,6 +26,7 @@ module Concerns::Logging
       referer:     truncated_referer,
       referral:    find_referral,
       channel:     find_referral,
+      landing:     landing_page?,
       medium:      params[:medium] ? params[:medium] : '',
       created_at:  Time.zone.now
     }
@@ -105,13 +106,13 @@ module Concerns::Logging
       uid = @searched_tw_users[0].uid
       screen_name = @searched_tw_users[0].screen_name
     else
-      uid = TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
+      uid = ::TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid) # waiting
         uid = tu.uid
         screen_name = tu.screen_name
       else
-        if uid != -1 && TwitterUser.exists?(uid: uid)
-          screen_name = TwitterUser.latest(uid).screen_name
+        if uid != -1 && ::TwitterUser.exists?(uid: uid)
+          screen_name = ::TwitterUser.latest(uid).screen_name
         else
           uid = screen_name = -1
         end
@@ -130,6 +131,11 @@ module Concerns::Logging
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     Rollbar.warn(e)
     ''
+  end
+
+  def landing_page?
+    request.device_type != :crawler && fingerprint.to_s != '-1' && !truncated_referer.start_with?('https://egotter.com') &&
+      !SearchLog.exists?(session_id: fingerprint, created_at: 30.minutes.ago..Time.zone.now)
   end
 
   def fingerprint
