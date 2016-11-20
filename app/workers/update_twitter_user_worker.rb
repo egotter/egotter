@@ -86,9 +86,21 @@ class UpdateTwitterUserWorker
       message: ''
     )
     Rollbar.warn(e)
+  rescue ActiveRecord::StatementInvalid, Mysql2::Error, Twitter::Error::RequestTimeout, Twitter::Error::Forbidden, Twitter::Error::ServiceUnavailable, Twitter::Error => e
+    # ActiveRecord::StatementInvalid Mysql2::Error: Lost connection to MySQL server during query: {SQL}
+    # ActiveRecord::StatementInvalid: Mysql2::Error: MySQL server has gone away: {SQL}
+    # Mysql2::Error: MySQL server has gone away
+    # Twitter::Error::RequestTimeout Net::ReadTimeout
+    # Twitter::Error Net::OpenTimeout
+    # Twitter::Error Connection reset by peer - SSL_connect
+    # Twitter::Error::Forbidden To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.
+    # Twitter::Error::Forbidden Your account is suspended and is not permitted to access this feature.
+    # Twitter::Error::ServiceUnavailable
+    # Twitter::Error::ServiceUnavailable Over capacity
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    raise e
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    logger.info e.backtrace.slice(0, 10).join("\n")
     log.update(
       status: false,
       call_count: client.call_count,

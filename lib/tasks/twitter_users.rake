@@ -61,20 +61,40 @@ namespace :twitter_users do
     puts "  start: #{start_time}, deadline: #{deadline}\n\n"
 
     processed = 0
+    fatal = false
+    errors = []
 
     user_ids.each.with_index do |user_id, i|
       start = Time.zone.now
-      UpdateTwitterUserWorker.new.perform(user_id)
+      failed = false
+      begin
+        UpdateTwitterUserWorker.new.perform(user_id)
+      rescue => e
+        failed = true
+        errors << {time: Time.zone.now, error: e, user_id: user_id}
+        fatal = errors.select { |error| error[:time] > 60.seconds.ago }.size >= 10
+      end
       processed += 1
-      avg = i % 10 == 0 ? ", #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds/user" : ''
-      elapsed = i % 10 == 0 ? ", #{'%.1f' % (Time.zone.now - start_time)} seconds elapsed" : ''
-      remaining = (deadline && i % 10 == 0) ? ", #{'%.1f' % (deadline - Time.zone.now)} seconds remaining" : ''
-      puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}#{elapsed}#{remaining}"
 
-      break if (deadline && Time.zone.now > deadline) || sigint
+      if i % 10 == 0
+        avg = ", #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds/user"
+        elapsed = ", #{'%.1f' % (Time.zone.now - start_time)} seconds elapsed"
+        remaining = deadline ? ", #{'%.1f' % (deadline - Time.zone.now)} seconds remaining" : ''
+      else
+        avg = elapsed = remaining = ''
+      end
+      status = failed ? ', failed' : ''
+      puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}#{elapsed}#{remaining}#{status}"
+
+      break if (deadline && Time.zone.now > deadline) || sigint || fatal
     end
 
-    puts "\n#{(sigint ? 'suspended:' : 'finished:')}"
+    if errors.any?
+      puts "\nerrors:"
+      errors.each { |error| puts "  #{error[:time]}: #{error[:user_id]}, #{error[:error].class} #{error[:error].message}" }
+    end
+
+    puts "\n#{(sigint || fatal ? 'suspended:' : 'finished:')}"
     puts "  start: #{start_time}, finish: #{Time.zone.now}, processed: #{processed}"
   end
 
