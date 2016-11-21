@@ -87,19 +87,6 @@
   $(function () {
     tooltip();
 
-    var refreshBox = $('.alert.alert-info');
-    refreshBox.find('a').on('click', function (e) {
-      e.preventDefault();
-      e.stopPropagation();
-
-      cache.delete()
-          .then(cache.create(), failed)
-          .done(function () { window.location.reload() })
-          .fail(failed);
-
-      return false;
-    });
-
     var createdAt = <%= tu.created_at.to_i %>;
     var scope = {action: "<%= action_name %>", uid: <%= tu.uid %>};
     var checkLogPath = "<%= background_search_log_path(uid: tu.uid) %>";
