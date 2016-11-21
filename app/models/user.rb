@@ -32,33 +32,29 @@ class User < ActiveRecord::Base
 
   delegate :can_send?, to: :notification_setting
 
-  validates :uid, format: {with: Validations::UidValidator::REGEXP}
-  validates :screen_name, format: {with: Validations::ScreenNameValidator::REGEXP}
-  validates :secret, presence: true
-  validates :token, presence: true
-  validates :email, presence: true, allow_blank: true
-
   def self.update_or_create_for_oauth_by!(auth)
     attrs = {
       screen_name: auth.info.nickname,
       secret: auth.credentials.secret,
       token: auth.credentials.token
     }
-
-    user = User.find_or_initialize_by(uid: auth.uid)
-    if user.persisted?
-      attrs.update(email: auth.info.email) if auth.info.email.present?
-      user.update!(attrs)
-    else
-      attrs.update(email: auth.info.email || '')
-      user.assign_attributes(attrs)
+    if User.exists?(uid: auth.uid)
+      user = User.find_by(uid: auth.uid)
       self.transaction do
-        user.save!
+        user.update(attrs.update(email: (auth.info.email.present? ? auth.info.email : user.email)))
+        user.touch
+      end
+
+      yield(user, :update) if block_given?
+    else
+      user = nil
+      self.transaction do
+        user = User.create!(attrs.update(uid: auth.uid, email: (auth.info.email || '')))
         user.create_notification_setting!(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
       end
-    end
 
-    yield(user, :update) if block_given?
+      yield(user, :create) if block_given?
+    end
 
     user
   end
