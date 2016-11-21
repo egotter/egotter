@@ -15,17 +15,11 @@ class NotificationsController < ApplicationController
   end
 
   def update
-    key, value =
-      case
-        when params[:email]  then [:email, params[:email]]
-        when params[:dm]     then [:dm, params[:dm]]
-        when params[:news]   then [:news, params[:news]]
-        when params[:search] then [:search, params[:search]]
-        when params[:update] then [:update, params[:update]]
-      end
-    value = value == 'true' ? true : false
+    attrs = %i(email dm news search updated)
+    key = attrs.find { |attr| params[attr] }
+    value = params[key] == 'true' ? true : false
     current_user.notification_setting.update!(key => value)
-    render json: current_user.notification_setting.attributes.slice('email', 'dm', 'news', 'search', 'update'), status: 200
+    render json: current_user.notification_setting.attributes.slice(*attrs), status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
     render nothing: true, status: 500

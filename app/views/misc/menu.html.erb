@@ -5,7 +5,7 @@
   <h4><small><%= t('.notification.medium') %></small></h4>
   <%= render partial: 'misc/notification', collection: %i(email dm), cached: true, as: :name, locals: {setting: user.notification_setting} %>
   <h4><small><%= t('.notification.content') %></small></h4>
-  <%= render partial: 'misc/notification', collection: %i(news search update), cached: true, as: :name, locals: {setting: user.notification_setting} %>
+  <%= render partial: 'misc/notification', collection: %i(news search updated), cached: true, as: :name, locals: {setting: user.notification_setting} %>
   <script>
     function attach_event_handler(name) {
       var selector = 'input[name=' + name + ']';
@@ -29,7 +29,7 @@
       attach_event_handler('dm');
       attach_event_handler('news');
       attach_event_handler('search');
-      attach_event_handler('update');
+      attach_event_handler('updated');
     });
   </script>
 

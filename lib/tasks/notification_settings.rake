@@ -5,13 +5,14 @@ namespace :notification_settings do
     ActiveRecord::Base.connection.execute("INSERT INTO old_notification_settings SELECT * FROM notification_settings")
   end
 
-  desc 'copy'
-  task copy: :environment do
+  desc 'migrate'
+  task migrate: :environment do
     settings = NotificationSetting.all
     settings.each do |s|
-      s.update = s.dm
+      s.updated = s.dm
       s.search_sent_at = s.last_search_at
       s.update_sent_at = s.last_dm_at
+      # last_email_at is not used
     end
     NotificationSetting.import settings, validate: false, timestamps: false
   end

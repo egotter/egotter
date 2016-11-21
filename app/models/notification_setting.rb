@@ -67,7 +67,7 @@ class NotificationSetting < ActiveRecord::Base
 
   def can_send_update?
     if respond_to?(:update_sent_at)
-      update? && update_sent_at.present? && update_sent_at < SEND_UPDATE_INTERVAL.ago
+      updated? && update_sent_at.present? && update_sent_at < SEND_UPDATE_INTERVAL.ago
     else
       can_send_dm?
     end
@@ -76,7 +76,7 @@ class NotificationSetting < ActiveRecord::Base
   def can_send?(type)
     case type
       when :search then can_send_search?
-      when :update then (respond_to?(:can_send_update?) ? can_send_update? : can_send_dm?)
+      when :update then can_send_update?
       else raise "#{self.class}##{__method__}: #{type} is not permitted."
     end
   end
