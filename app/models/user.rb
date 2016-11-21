@@ -50,7 +50,7 @@ class User < ActiveRecord::Base
       user = nil
       self.transaction do
         user = User.create!(attrs.update(uid: auth.uid, email: (auth.info.email || '')))
-        user.create_notification_setting!(last_email_at: 1.day.ago, last_dm_at: 1.day.ago, last_news_at: 1.day.ago, last_search_at: 1.day.ago)
+        user.create_notification_setting!
       end
 
       yield(user, :create) if block_given?

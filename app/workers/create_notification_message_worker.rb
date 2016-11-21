@@ -21,7 +21,7 @@ class CreateNotificationMessageWorker
       return
     end
 
-    unless %i(search update).include?(type)
+    unless %i(search update prompt_report).include?(type)
       log.update(status: false, message: "[#{type}] is not permitted.")
       return
     end
@@ -36,15 +36,15 @@ class CreateNotificationMessageWorker
       return
     end
 
-    if type == :search && medium == 'dm'
+    if %i(search prompt_report).include?(type) && medium == 'dm'
       message = [
-        I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
-        I18n.t("#{medium}.#{type}Notification.message", url: url)
+        I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name, url: url),
+        I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.message", url: url)
       ].join("\n")
 
       dm = user.api_client.create_direct_message(user.uid.to_i, message)
       if notification.update(message_id: dm.id, message: message)
-        user.notification_setting.touch(:last_search_at)
+        user.notification_setting.touch("#{type}_sent_at")
         log.update(status: true, message: "[#{notification.id}] is created.")
       else
         log.update(status: false, message: "#{notification.errors.full_messages.join(', ')}.")
