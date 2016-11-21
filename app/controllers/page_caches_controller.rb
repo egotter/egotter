@@ -1,5 +1,6 @@
 class PageCachesController < ApplicationController
   include Validation
+  include Concerns::Logging
   include SearchesHelper
   include PageCachesHelper
 
@@ -8,6 +9,8 @@ class PageCachesController < ApplicationController
   before_action(only: %i(create destroy)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(create destroy)) { existing_uid?(params[:uid].to_i) }
   before_action(only: %i(create destroy)) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
+
+  before_action(only: %i(create destroy)) { create_page_cache_log(action_name) }
 
   # POST /page_caches
   def create
