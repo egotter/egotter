@@ -27,7 +27,8 @@ module Concerns::Logging
       referer:     truncated_referer,
       referral:    referral,
       channel:     find_channel(referral),
-      landing:     landing_page?,
+      first_time:  false,
+      landing:     false,
       medium:      params[:medium] ? params[:medium] : '',
       created_at:  Time.zone.now
     }
@@ -175,11 +176,6 @@ module Concerns::Logging
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     Rollbar.warn(e)
     ''
-  end
-
-  def landing_page?
-    request.device_type != :crawler && fingerprint.to_s != '-1' && !truncated_referer.start_with?('https://egotter.com') &&
-      !SearchLog.exists?(session_id: fingerprint, created_at: 30.minutes.ago..Time.zone.now)
   end
 
   def fingerprint
