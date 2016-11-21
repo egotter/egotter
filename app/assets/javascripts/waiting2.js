@@ -79,6 +79,19 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope)
     return Retry;
   }();
 
+  var refreshBox = $('.alert.alert-info');
+  refreshBox.find('a').on('click', function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+
+    cache.delete()
+        .then(cache.create(), failed)
+        .done(function () { window.location.reload() })
+        .fail(failed);
+
+    return false;
+  });
+
   var interval = new Interval();
   var retry = new Retry();
   var cache = new Cache();
@@ -95,6 +108,7 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope)
       if (createdAt < res.created_at) {
         cache.setHash(res.hash);
         refreshBox.show();
+        refreshBox.sticky({topSpacing: 0});
       } else {
         console.log('do nothing.');
       }
