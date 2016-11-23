@@ -51,7 +51,7 @@ class UpdateTwitterUserWorker
     if new_tu.save
       new_tu.increment(:update_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
-      notify(user, new_tu, created: true)
+      notify(user, new_tu)
       return
     end
 
@@ -110,9 +110,7 @@ class UpdateTwitterUserWorker
     Rollbar.warn(e)
   end
 
-  def notify(login_user, tu, created: false)
-    ::Cache::PageCache.new.delete(tu.uid) if created
-
+  def notify(login_user, tu)
     %w(dm onesignal).each do |medium|
       CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'update', medium: medium)
     end

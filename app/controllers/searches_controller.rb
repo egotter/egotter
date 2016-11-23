@@ -33,11 +33,13 @@ class SearchesController < ApplicationController
     tu = @searched_tw_user
     page_cache = ::Cache::PageCache.new
     if via_notification?
+      # When a guest or user accesses this action via a notification which includes search, update and prompt_report,
+      # no worker is started. Because the record is updated in the process of creating a notification.
       page_cache.delete(tu.uid)
     else
       # Under the following circumstances, a worker is started.
-      # 1. When a guest or user accessed this action directly
-      # 2. When a guest or user accessed `create` action and searched TwitterUser exists
+      # 1. When a guest or user accesses this action directly
+      # 2. When a guest or user accesses `create` action and searched TwitterUser exists
       @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
       @page_cache = page_cache.read(tu.uid) if page_cache.exists?(tu.uid)
     end
