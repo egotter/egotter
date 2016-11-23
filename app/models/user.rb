@@ -32,31 +32,40 @@ class User < ActiveRecord::Base
 
   delegate :can_send?, to: :notification_setting
 
+  validates :uid, presence: true, uniqueness: true
+  validates_with Validations::UidValidator
+  validates :screen_name, presence: true
+  validates_with Validations::ScreenNameValidator
+  validates :secret, presence: true
+  validates :token, presence: true
+  validates_each :email do |record, attr, value|
+    record.errors.add(attr, :invalid) if value.nil? || (value != '' && !value.match(/\A[^@]+@[^@]+\z/))
+  end
+
   def self.update_or_create_for_oauth_by!(auth)
-    attrs = {
+    user = User.find_or_initialize_by(uid: auth.uid)
+    user.assign_attributes(
       screen_name: auth.info.nickname,
       secret: auth.credentials.secret,
       token: auth.credentials.token
-    }
-    if User.exists?(uid: auth.uid)
-      user = User.find_by(uid: auth.uid)
-      self.transaction do
-        user.update(attrs.update(email: (auth.info.email.present? ? auth.info.email : user.email)))
-        user.touch
-      end
+    )
+    user.email = auth.info.email if auth.info.email.present?
 
-      yield(user, :update) if block_given?
-    else
-      user = nil
+    if user.new_record?
       self.transaction do
-        user = User.create!(attrs.update(uid: auth.uid, email: (auth.info.email || '')))
+        user.save!
         user.create_notification_setting!
       end
-
       yield(user, :create) if block_given?
+    else
+      user.save! if user.changed?
+      yield(user, :update) if block_given?
     end
 
     user
+  rescue => e
+    logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{auth.inspect}"
+    raise e
   end
 
   def config
