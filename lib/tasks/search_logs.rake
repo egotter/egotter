@@ -1,16 +1,28 @@
 namespace :search_logs do
-  desc 'convert'
-  task convert: :environment do
-    start = (ENV['START'] || 1).to_i
+  desc 'update first_time'
+  task update_first_time: :environment do
+    changed = []
+    processed = 0
+    imported = 0
+    Visitor.order(created_at: :asc).pluck(:session_id).each_slice(10000) do |session_ids|
+      search_logs = SearchLog
+        .where(session_id: session_ids)
+        .order(created_at: :asc)
+        .each_with_object(Hash.new { |h, k| h[k] = [] }) { |log, memo| memo[log.session_id] << log }
 
-    SearchLog.find_in_batches(start: start, batch_size: 1000) do |logs_array|
-      logs = logs_array.map do |log|
-        log.unify_referer
-        log.unify_channel
-        [log.id, log.unified_referer, log.unified_channel]
+      search_logs.each do |_, logs|
+        logs.shift.tap { |log| changed << [log.id, true, log.created_at] unless log.first_time? }
+        logs.select { |log| log.first_time? }.each { |log| changed << [log.id, false, log.created_at] }
       end
 
-      SearchLog.import(%i(id unified_referer unified_channel), logs, validate: false, on_duplicate_key_update: %i(unified_referer unified_channel))
+      if changed.any?
+        imported += changed.size
+        SearchLog.import(%i(id first_time created_at), changed, validate: false, timestamps: false, on_duplicate_key_update: %i(first_time))
+        changed = []
+      end
+
+      processed += session_ids.size
+      puts "#{Time.zone.now}: #{processed}, #{imported}"
     end
   end
 end
