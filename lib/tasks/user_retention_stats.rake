@@ -12,10 +12,7 @@ namespace :user_retention_stats do
       stat = UserRetentionStat.find_or_initialize_by(date: day)
       stat.total = user_ids.size
       diffs.each do |diff|
-        stat["#{diff}_days"] = SearchLog
-          .except_crawler
-          .where(user_id: user_ids, created_at: (day + diff.day).to_time.all_day)
-          .count('distinct user_id')
+        stat["#{diff}_days"] = SearchLog.user_ids(user_id: user_ids, created_at: (day + diff.day).to_time.all_day).size
       end
       stats << stat if stat.changed?
 

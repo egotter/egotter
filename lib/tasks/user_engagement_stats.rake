@@ -7,25 +7,15 @@ namespace :user_engagement_stats do
     diffs = (1..30).to_a
 
     (start_day.to_date..end_day.to_date).each do |day|
-      user_ids = SearchLog
-        .except_crawler
-        .where(created_at: day.to_time.all_day)
-        .where.not(session_id: -1)
-        .where.not(user_id: -1)
-        .uniq
-        .pluck(:user_id)
+      user_ids = SearchLog.user_ids(created_at: day.to_time.all_day)
 
       stat = UserEngagementStat.find_or_initialize_by(date: day)
       stat.total = user_ids.size
       counts = Hash.new(0)
       diffs.each do |diff|
-        ids = SearchLog
-          .except_crawler
-          .where(user_id: user_ids, created_at: (day - diff.day).to_time.all_day)
-          .uniq
-          .pluck(:user_id)
-
-        ids.each { |id| counts[id] += 1 }
+        SearchLog
+          .user_ids(user_id: user_ids, created_at: (day - diff.day).to_time.all_day)
+          .each { |id| counts[id] += 1 }
       end
 
       diffs.each do |diff|

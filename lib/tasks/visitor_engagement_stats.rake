@@ -7,24 +7,15 @@ namespace :visitor_engagement_stats do
     diffs = (1..30).to_a
 
     (start_day.to_date..end_day.to_date).each do |day|
-      session_ids = SearchLog
-        .except_crawler
-        .where(created_at: day.to_time.all_day)
-        .where.not(session_id: -1)
-        .uniq
-        .pluck(:session_id)
+      session_ids = SearchLog.session_ids(created_at: day.to_time.all_day)
 
       stat = VisitorEngagementStat.find_or_initialize_by(date: day)
       stat.total = session_ids.size
       counts = Hash.new(0)
       diffs.each do |diff|
-        ids = SearchLog
-          .except_crawler
-          .where(session_id: session_ids, created_at: (day - diff.day).to_time.all_day)
-          .uniq
-          .pluck(:session_id)
-
-        ids.each { |id| counts[id] += 1 }
+        SearchLog
+          .session_ids(session_id: session_ids, created_at: (day - diff.day).to_time.all_day)
+          .each { |id| counts[id] += 1 }
       end
 
       diffs.each do |diff|

@@ -36,28 +36,21 @@
 class SearchLog < ActiveRecord::Base
 
   def self.except_crawler
-    where.not(device_type: %w(crawler UNKNOWN))
+    where.not(device_type: %w(crawler UNKNOWN), session_id: -1)
   end
 
-  def unify_referer
-    self.unified_referer = unify_host(URI.parse(referer).host)
+  def self.user_ids(*args)
+    except_crawler
+      .where(*args)
+      .where.not(user_id: -1)
+      .uniq
+      .pluck(:user_id)
   end
 
-  def unify_channel
-    self.unified_channel = unify_host(channel)
-  end
-
-  private
-
-  def unify_host(host)
-    case
-      when host.blank? then 'NULL'
-      when host.include?('egotter') then 'EGOTTER'
-      when host.include?('google') then 'GOOGLE'
-      when host.include?('yahoo') then 'YAHOO'
-      when host.include?('naver') then 'NAVER'
-      when host.match(/(mobile\.)?twitter\.com|t\.co/) then 'TWITTER'
-      else host
-    end
+  def self.session_ids(*args)
+    except_crawler
+      .where(*args)
+      .uniq
+      .pluck(:session_id)
   end
 end
