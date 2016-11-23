@@ -8,7 +8,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         create_sign_in_log(user.id, context, via)
       end
     rescue =>  e
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
       return redirect_to root_path, alert: t('before_sign_in.login_failed', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
     end
 
