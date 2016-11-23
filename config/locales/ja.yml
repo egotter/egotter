@@ -280,13 +280,13 @@ ja:
     omission: " ... 合計%{num}人"
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
-      message: '結果を見る %{url} #egotter'
+      message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'
     updateNotification:
       title: 'えごったーで %{user} のデータが自動更新されました。'
-      message: '結果を見る %{url} #egotter'
+      message: '結果を見る %{url} #egotter ※この自動更新通知は、最大で1日に1回ほど届きます。'
     promptReportNotification:
       title: 'えごったーの %{user} リムられ速報です。フォロワー数に変化がありました。'
-      message: '結果を見る %{url} #egotter'
+      message: '結果を見る %{url} #egotter ※このリムられ速報は、フォロワー数に変化があった時のみ、最大で1時間に1回ほど届きます。'
   onesignal:
     defaultNotification:
       title: 'えごったー'
