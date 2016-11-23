@@ -35,7 +35,7 @@ module Concerns::Logging
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
 
-    if via_dm? || via_onesignal?
+    if via_notification?
       UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at], medium: attrs[:medium])
     end
   rescue => e
@@ -164,6 +164,10 @@ module Concerns::Logging
 
   def via_onesignal?
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:medium] == 'onesignal'
+  end
+
+  def via_notification?
+    via_dm? || via_onesignal?
   end
 
   def find_referral(referers)

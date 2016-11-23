@@ -31,10 +31,15 @@ class SearchesController < ApplicationController
 
   def show
     tu = @searched_tw_user
-    add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
     page_cache = ::Cache::PageCache.new
-    if page_cache.exists?(tu.uid)
-      @page_cache = page_cache.read(tu.uid)
+    if via_notification?
+      page_cache.delete(tu.uid)
+    else
+      # Under the following circumstances, a worker is started.
+      # 1. When a guest or user accessed this action directly
+      # 2. When a guest or user accessed `create` action and searched TwitterUser exists
+      @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+      @page_cache = page_cache.read(tu.uid) if page_cache.exists?(tu.uid)
     end
   end
 
@@ -43,12 +48,11 @@ class SearchesController < ApplicationController
 
   def create
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
-    save_twitter_user_to_cache(uid, screen_name: screen_name, user_info: @tu.user_info)
-    add_create_twitter_user_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
-
     if TwitterUser.exists?(uid: uid)
       redirect_to search_path(screen_name: screen_name)
     else
+      save_twitter_user_to_cache(uid, screen_name: screen_name, user_info: @tu.user_info)
+      add_create_twitter_user_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
       redirect_to waiting_search_path(uid: uid)
     end
   end

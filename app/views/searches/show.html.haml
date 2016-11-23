@@ -16,6 +16,9 @@
 
   = render(partial: 'common/adsense')
 
+  :javascript
+    window.workerStarted = #{!!@worker_started};
+
   - if @page_cache
     = @page_cache.html_safe
     :javascript

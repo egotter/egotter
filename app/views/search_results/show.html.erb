@@ -87,11 +87,13 @@
   $(function () {
     tooltip();
 
-    var createdAt = <%= tu.created_at.to_i %>;
-    var scope = {action: "<%= action_name %>", uid: <%= tu.uid %>};
-    var checkLogPath = "<%= background_search_log_path(uid: tu.uid) %>";
-    var pageCachePath = "<%= raw page_cache_path(uid: tu.uid, hash: 'HASH') %>";
-    var pageCachesPath = "<%= raw page_caches_path(uid: tu.uid) %>";
-    waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope);
+    if (window.workerStarted) {
+      var createdAt = <%= tu.created_at.to_i %>;
+      var scope = {action: "<%= action_name %>", uid: <%= tu.uid %>};
+      var checkLogPath = "<%= background_search_log_path(uid: tu.uid) %>";
+      var pageCachePath = "<%= raw page_cache_path(uid: tu.uid, hash: 'HASH') %>";
+      var pageCachesPath = "<%= raw page_caches_path(uid: tu.uid) %>";
+      waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope);
+    }
   });
 </script>
