@@ -1,11 +1,13 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
+  include Concerns::Rescue
+  prepend Concerns::Perform
   sidekiq_options queue: :egotter, retry: false, backtrace: false
 
   def perform(values)
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
-    log = BackgroundSearchLog.new(
+    self.log = BackgroundSearchLog.new(
       session_id:  values['session_id'],
       user_id:     user_id,
       uid:         uid,
@@ -55,32 +57,6 @@ class CreateTwitterUserWorker
       call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
-    )
-    Rollbar.warn(e)
-  rescue Twitter::Error::TooManyRequests => e
-    log.update(
-      status: false,
-      call_count: client.call_count,
-      reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
-      message: ''
-    )
-    Rollbar.warn(e)
-  rescue Twitter::Error::Unauthorized => e
-    log.update(
-      status: false,
-      call_count: client.call_count,
-      reason: BackgroundSearchLog::Unauthorized::MESSAGE,
-      message: ''
-    )
-    Rollbar.warn(e)
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    logger.info e.backtrace.take(10).join("\n")
-    log.update(
-      status: false,
-      call_count: client.call_count,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{e.class} #{e.message}"
     )
     Rollbar.warn(e)
   end
