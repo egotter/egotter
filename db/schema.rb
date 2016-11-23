@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161117082659) do
+ActiveRecord::Schema.define(version: 20161122144612) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -74,6 +74,22 @@ ActiveRecord::Schema.define(version: 20161117082659) do
   add_index "create_notification_message_logs", ["uid"], name: "index_create_notification_message_logs_on_uid", using: :btree
   add_index "create_notification_message_logs", ["user_id", "status"], name: "index_create_notification_message_logs_on_user_id_and_status", using: :btree
   add_index "create_notification_message_logs", ["user_id"], name: "index_create_notification_message_logs_on_user_id", using: :btree
+
+  create_table "create_prompt_report_logs", force: :cascade do |t|
+    t.integer  "user_id",     limit: 4,     default: -1,    null: false
+    t.string   "uid",         limit: 191,   default: "-1",  null: false
+    t.string   "screen_name", limit: 191,   default: "",    null: false
+    t.string   "bot_uid",     limit: 191,   default: "-1",  null: false
+    t.boolean  "status",                    default: false, null: false
+    t.string   "reason",      limit: 191,   default: "",    null: false
+    t.text     "message",     limit: 65535,                 null: false
+    t.integer  "call_count",  limit: 4,     default: -1,    null: false
+    t.datetime "created_at",                                null: false
+  end
+
+  add_index "create_prompt_report_logs", ["created_at"], name: "index_create_prompt_report_logs_on_created_at", using: :btree
+  add_index "create_prompt_report_logs", ["screen_name"], name: "index_create_prompt_report_logs_on_screen_name", using: :btree
+  add_index "create_prompt_report_logs", ["uid"], name: "index_create_prompt_report_logs_on_uid", using: :btree
 
   create_table "create_relationship_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -188,17 +204,19 @@ ActiveRecord::Schema.define(version: 20161117082659) do
   add_index "notification_messages", ["user_id"], name: "index_notification_messages_on_user_id", using: :btree
 
   create_table "notification_settings", force: :cascade do |t|
-    t.boolean  "email",                    default: true, null: false
-    t.boolean  "dm",                       default: true, null: false
-    t.boolean  "news",                     default: true, null: false
-    t.boolean  "search",                   default: true, null: false
-    t.datetime "last_email_at",                           null: false
-    t.datetime "last_dm_at",                              null: false
-    t.datetime "last_news_at",                            null: false
-    t.datetime "last_search_at",                          null: false
-    t.integer  "from_id",        limit: 4,                null: false
-    t.datetime "created_at",                              null: false
-    t.datetime "updated_at",                              null: false
+    t.boolean  "email",                           default: true, null: false
+    t.boolean  "dm",                              default: true, null: false
+    t.boolean  "news",                            default: true, null: false
+    t.boolean  "search",                          default: true, null: false
+    t.boolean  "prompt_report",                   default: true, null: false
+    t.datetime "last_email_at"
+    t.datetime "last_dm_at"
+    t.datetime "last_news_at"
+    t.datetime "search_sent_at"
+    t.datetime "prompt_report_sent_at"
+    t.integer  "from_id",               limit: 4,                null: false
+    t.datetime "created_at",                                     null: false
+    t.datetime "updated_at",                                     null: false
   end
 
   add_index "notification_settings", ["from_id"], name: "index_notification_settings_on_from_id", using: :btree

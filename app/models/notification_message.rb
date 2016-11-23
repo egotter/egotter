@@ -31,7 +31,7 @@ class NotificationMessage < ActiveRecord::Base
     obj.validates :uid, presence: true, numericality: :only_integer
     obj.validates :screen_name, format: {with: Validations::ScreenNameValidator::REGEXP}
     obj.validates :message, presence: true
-    obj.validates :context, inclusion: { in: %w(search update) }
+    obj.validates :context, inclusion: { in: %w(search update prompt_report) }
     obj.validates :medium, inclusion: { in: %w(dm onesignal) }
   end
 end

@@ -27,13 +27,17 @@ namespace :twitter_users do
     ActiveRecord::Base.connection.execute("ALTER TABLE twitter_users DROP user_info_gzip")
   end
 
-  desc 'add an update job'
-  task add_update_job: :environment do
-    UpdateTwitterUserWorker.perform_async(ENV['USER_ID'].to_i)
+  desc 'send prompt reports'
+  task send_prompt_reports: :environment do
+    process_update_jobs(CreatePromptReportWorker)
   end
 
-  desc 'add update jobs'
-  task add_update_jobs: :environment do
+  desc 'send update notifications'
+  task send_update_notifications: :environment do
+    process_update_jobs(UpdateTwitterUserWorker)
+  end
+
+  def process_update_jobs(worker_klass)
     deadline =
       case
         when ENV['DEADLINE'].nil? then nil
@@ -42,7 +46,8 @@ namespace :twitter_users do
       end
 
     user_ids = ENV['USER_IDS']
-    next if user_ids.blank?
+    return if user_ids.blank?
+
     user_ids =
       case
         when user_ids.include?('..') then Range.new(*user_ids.split('..').map(&:to_i))
@@ -68,7 +73,7 @@ namespace :twitter_users do
       start = Time.zone.now
       failed = false
       begin
-        UpdateTwitterUserWorker.new.perform(user_id)
+        worker_klass.new.perform(user_id)
       rescue => e
         failed = true
         errors << {time: Time.zone.now, error: e, user_id: user_id}
