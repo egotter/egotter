@@ -285,7 +285,7 @@ ja:
       title: 'えごったーで %{user} のデータが自動更新されました。'
       message: '結果を見る %{url} #egotter'
     promptReportNotification:
-      title: 'えごったーの %{user} リムられ速報です。'
+      title: 'えごったーの %{user} リムられ速報です。フォロワー数に変化がありました。'
       message: '結果を見る %{url} #egotter'
   onesignal:
     defaultNotification:
