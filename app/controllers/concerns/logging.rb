@@ -175,6 +175,13 @@ module Concerns::Logging
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'prompt_report'
   end
 
+  def via_waiting?(uid)
+    %i(crawler UNKNOWN).exclude?(request.device_type) && request.referer.present? && URI.parse(request.referer).path == waiting_search_path(uid: uid)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    false
+  end
+
   def find_referral(referers)
     url = referers.find do |referer|
       referer.present? && referer.match(URI.regexp) && !URI.parse(referer).host.include?('egotter')

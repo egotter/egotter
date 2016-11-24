@@ -29,7 +29,7 @@ namespace :twitter_users do
 
   desc 'send prompt reports'
   task send_prompt_reports: :environment do
-    process_update_jobs(CreatePromptReportWorker)
+    ::Task::PromptReportsTask.invoke(ENV['USER_IDS'], deadline: ENV['DEADLINE'])
   end
 
   desc 'send update notifications'

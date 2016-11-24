@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   resources :background_search_logs, only: :show, param: :uid
   resources :modal_open_logs, only: :create
   resources :page_caches, only: %i(create destroy), param: :uid
+  resources :tasks, only: %i(new create show), param: :jid
 
   resources :relationships, only: %i(create)
   get 'relationships/:src_uid/:dst_uid/waiting', to: 'relationships#waiting', as: :waiting_relationship

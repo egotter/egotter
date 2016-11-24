@@ -45,7 +45,9 @@ class SearchesController < ApplicationController
       # Under the following circumstances, a worker is started.
       # 1. When a guest or user accesses this action directly
       # 2. When a guest or user accesses `create` action and searched TwitterUser exists
-      @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+      unless via_waiting?
+        @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+      end
       @page_cache = page_cache.read(tu.uid) if page_cache.exists?(tu.uid)
     end
   end
