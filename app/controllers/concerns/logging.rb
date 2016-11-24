@@ -170,6 +170,10 @@ module Concerns::Logging
     via_dm? || via_onesignal?
   end
 
+  def via_prompt_report?
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'prompt_report'
+  end
+
   def find_referral(referers)
     url = referers.find do |referer|
       referer.present? && referer.match(URI.regexp) && !URI.parse(referer).host.include?('egotter')

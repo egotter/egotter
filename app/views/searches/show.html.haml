@@ -18,6 +18,7 @@
 
   :javascript
     window.workerStarted = #{!!@worker_started};
+    console.log('workerStarted', window.workerStarted);
 
   - if @page_cache
     = @page_cache.html_safe
