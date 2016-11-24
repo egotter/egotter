@@ -2,13 +2,15 @@
 #
 # Table name: visitors
 #
-#  id          :integer          not null, primary key
-#  session_id  :string(191)      not null
-#  user_id     :integer          default(-1), not null
-#  uid         :string(191)      default("-1"), not null
-#  screen_name :string(191)      default(""), not null
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id              :integer          not null, primary key
+#  session_id      :string(191)      not null
+#  user_id         :integer          default(-1), not null
+#  uid             :string(191)      default("-1"), not null
+#  screen_name     :string(191)      default(""), not null
+#  first_access_at :datetime
+#  last_access_at  :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 # Indexes
 #
