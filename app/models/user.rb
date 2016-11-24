@@ -27,7 +27,11 @@ class User < ActiveRecord::Base
   def remember_created_at=(_)
   end
 
-  has_one :notification_setting, foreign_key: :from_id, dependent: :destroy, validate: false
+  with_options dependent: :destroy, validate: false, autosave: false do |obj|
+    obj.has_many :notification_messages
+    obj.has_one :notification_setting
+  end
+
   accepts_nested_attributes_for :notification_setting
 
   delegate :can_send?, to: :notification_setting
