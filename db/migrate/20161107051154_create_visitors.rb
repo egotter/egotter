@@ -1,10 +1,12 @@
 class CreateVisitors < ActiveRecord::Migration
   def change
     create_table :visitors do |t|
-      t.string  :session_id,  null: false
-      t.integer :user_id,     null: false, default: -1, index: true
-      t.string  :uid,         null: false, default: -1, index: true
-      t.string  :screen_name, null: false, default: '', index: true
+      t.string   :session_id,      null: false
+      t.integer  :user_id,         null: false, default: -1, index: true
+      t.string   :uid,             null: false, default: -1, index: true
+      t.string   :screen_name,     null: false, default: '', index: true
+      t.datetime :first_access_at, null: true
+      t.datetime :last_access_at,  null: true
 
       t.timestamps null: false
     end
