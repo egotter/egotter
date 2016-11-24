@@ -12,10 +12,10 @@ class CreateNotificationSettings < ActiveRecord::Migration
       t.datetime :last_news_at,          null: true
       t.datetime :search_sent_at,        null: true
       t.datetime :prompt_report_sent_at, null: true
-      t.integer :from_id,                null: false
+      t.integer  :user_id,               null: false
 
       t.timestamps null: false
     end
-    add_index :notification_settings, :from_id
+    add_index :notification_settings, :user_id, unique: true
   end
 end

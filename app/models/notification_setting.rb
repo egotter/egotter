@@ -13,13 +13,13 @@
 #  last_news_at          :datetime
 #  search_sent_at        :datetime
 #  prompt_report_sent_at :datetime
-#  from_id               :integer          not null
+#  user_id               :integer          not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
 # Indexes
 #
-#  index_notification_settings_on_from_id  (from_id)
+#  index_notification_settings_on_user_id  (user_id) UNIQUE
 #
 
 class NotificationSetting < ActiveRecord::Base

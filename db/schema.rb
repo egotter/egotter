@@ -214,12 +214,12 @@ ActiveRecord::Schema.define(version: 20161122144612) do
     t.datetime "last_news_at"
     t.datetime "search_sent_at"
     t.datetime "prompt_report_sent_at"
-    t.integer  "from_id",               limit: 4,                null: false
+    t.integer  "user_id",               limit: 4,                null: false
     t.datetime "created_at",                                     null: false
     t.datetime "updated_at",                                     null: false
   end
 
-  add_index "notification_settings", ["from_id"], name: "index_notification_settings_on_from_id", using: :btree
+  add_index "notification_settings", ["user_id"], name: "index_notification_settings_on_user_id", unique: true, using: :btree
 
   create_table "page_cache_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "", null: false
