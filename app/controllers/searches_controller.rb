@@ -39,7 +39,7 @@ class SearchesController < ApplicationController
       else
         # When a guest or user accesses this action via a notification which includes search and update,
         # no worker is started. Because the record is updated in the process of creating a notification.
-        page_cache.delete(tu.uid)
+        # page_cache.delete(tu.uid)
       end
     else
       # Under the following circumstances, a worker is started.

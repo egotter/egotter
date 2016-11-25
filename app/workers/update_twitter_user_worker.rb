@@ -20,7 +20,12 @@ class UpdateTwitterUserWorker
     end
 
     unless user.can_send?(:update)
-      log.update(status: false, message: '[update] is not enabled.')
+      log.update(status: false, message: "[#{user.screen_name}] don't allow update notification.")
+      return
+    end
+
+    if user.last_access_at && user.last_access_at < 30.days.ago
+      log.update(status: false, message: "[#{user.screen_name}] has been MIA.")
       return
     end
 
@@ -31,15 +36,6 @@ class UpdateTwitterUserWorker
       notify(user, existing_tu)
       return
     end
-
-    # If friends is increased by NUM and friends is decremented by same NUM, the blow code makes a wrong decision.
-    # t_user = client.user(uid)
-    # if existing_tu.present? && existing_tu.friends_count == t_user.friends_count && existing_tu.followers_count == t_user.followers_count
-    #   existing_tu.increment(:update_count).save
-    #   log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is probably not changed.")
-    #   notify(user, existing_tu)
-    #   return
-    # end
 
     new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: user, context: :update)
     new_tu.user_id = user.id
@@ -111,6 +107,8 @@ class UpdateTwitterUserWorker
   end
 
   def notify(login_user, tu)
+    CreatePageCacheWorker.perform_async(tu.uid)
+
     %w(dm onesignal).each do |medium|
       CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'update', medium: medium)
     end

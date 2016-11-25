@@ -25,6 +25,11 @@ class CreatePromptReportWorker
       return
     end
 
+    if user.last_access_at && user.last_access_at < 30.days.ago
+      log.update(status: false, message: "[#{user.screen_name}] has been MIA.")
+      return
+    end
+
     existing_tu = TwitterUser.latest(user.uid.to_i)
     if existing_tu.blank?
       log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] has no twitter_users.")
@@ -51,6 +56,8 @@ class CreatePromptReportWorker
   end
 
   def notify(login_user, tu)
+    CreatePageCacheWorker.perform_async(tu.uid)
+
     %w(dm).each do |medium| # TODO implement onesignal
       CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'prompt_report', medium: medium)
     end

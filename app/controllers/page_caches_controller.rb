@@ -6,6 +6,8 @@ class PageCachesController < ApplicationController
 
   layout false
 
+  skip_before_action :verify_authenticity_token, if: -> { action_name == 'create' && params[:token] == ENV['PAGE_CACHE_TOKEN'] }
+
   before_action(only: %i(create destroy)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(create destroy)) { existing_uid?(params[:uid].to_i) }
   before_action(only: %i(create destroy)) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
@@ -27,7 +29,7 @@ class PageCachesController < ApplicationController
   def destroy
     tu = @searched_tw_user
 
-    if verity_page_cache_token(params[:hash], tu.created_at.to_i)
+    if verify_page_cache_token(params[:hash], tu.created_at.to_i)
       ::Cache::PageCache.new.delete(tu.uid)
       render nothing: true, status: 200
     else
