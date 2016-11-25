@@ -390,18 +390,20 @@ ActiveRecord::Schema.define(version: 20161122144612) do
   add_index "user_retention_stats", ["date"], name: "index_user_retention_stats_on_date", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "uid",             limit: 191,                null: false
-    t.string   "screen_name",     limit: 191,                null: false
-    t.boolean  "authorized",                  default: true, null: false
-    t.string   "secret",          limit: 191,                null: false
-    t.string   "token",           limit: 191,                null: false
-    t.string   "email",           limit: 191, default: "",   null: false
+    t.string   "uid",              limit: 191,                null: false
+    t.string   "screen_name",      limit: 191,                null: false
+    t.boolean  "authorized",                   default: true, null: false
+    t.string   "secret",           limit: 191,                null: false
+    t.string   "token",            limit: 191,                null: false
+    t.string   "email",            limit: 191, default: "",   null: false
     t.datetime "first_access_at"
     t.datetime "last_access_at"
     t.datetime "first_search_at"
     t.datetime "last_search_at"
-    t.datetime "created_at",                                 null: false
-    t.datetime "updated_at",                                 null: false
+    t.datetime "first_sign_in_at"
+    t.datetime "last_sign_in_at"
+    t.datetime "created_at",                                  null: false
+    t.datetime "updated_at",                                  null: false
   end
 
   add_index "users", ["created_at"], name: "index_users_on_created_at", using: :btree
@@ -477,6 +479,7 @@ ActiveRecord::Schema.define(version: 20161122144612) do
   end
 
   add_index "visitors", ["created_at"], name: "index_visitors_on_created_at", using: :btree
+  add_index "visitors", ["first_access_at"], name: "index_visitors_on_first_access_at", using: :btree
   add_index "visitors", ["screen_name"], name: "index_visitors_on_screen_name", using: :btree
   add_index "visitors", ["session_id"], name: "index_visitors_on_session_id", unique: true, using: :btree
   add_index "visitors", ["uid"], name: "index_visitors_on_uid", using: :btree

@@ -2,19 +2,21 @@
 #
 # Table name: users
 #
-#  id              :integer          not null, primary key
-#  uid             :string(191)      not null
-#  screen_name     :string(191)      not null
-#  authorized      :boolean          default(TRUE), not null
-#  secret          :string(191)      not null
-#  token           :string(191)      not null
-#  email           :string(191)      default(""), not null
-#  first_access_at :datetime
-#  last_access_at  :datetime
-#  first_search_at :datetime
-#  last_search_at  :datetime
-#  created_at      :datetime         not null
-#  updated_at      :datetime         not null
+#  id               :integer          not null, primary key
+#  uid              :string(191)      not null
+#  screen_name      :string(191)      not null
+#  authorized       :boolean          default(TRUE), not null
+#  secret           :string(191)      not null
+#  token            :string(191)      not null
+#  email            :string(191)      default(""), not null
+#  first_access_at  :datetime
+#  last_access_at   :datetime
+#  first_search_at  :datetime
+#  last_search_at   :datetime
+#  first_sign_in_at :datetime
+#  last_sign_in_at  :datetime
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
 # Indexes
 #

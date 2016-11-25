@@ -6,6 +6,7 @@ namespace :search_logs do
     imported = 0
     Visitor.order(first_access_at: :asc).pluck(:session_id).each_slice(10000) do |session_ids|
       search_logs = SearchLog
+        .except_crawler
         .where(session_id: session_ids)
         .order(created_at: :asc)
         .each_with_object(Hash.new { |h, k| h[k] = [] }) { |log, memo| memo[log.session_id] << log }
