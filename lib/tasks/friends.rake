@@ -1,4 +1,14 @@
 namespace :friends do
+  desc 'count unique uids'
+  task count_unique_uids: :environment do
+    uids = []
+    Friend.select(:id, :uid).find_in_batches(batch_size: 100_000) do |friends|
+      uids.push(*friends.map(&:uid))
+      uids.uniq!
+    end
+    puts "unique uid: #{uids.size}"
+  end
+
   desc 'reset'
   task reset: :environment do
     table = ENV['TABLE']
