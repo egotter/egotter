@@ -5,6 +5,7 @@ namespace :friends do
     Friend.select(:id, :uid).find_in_batches(batch_size: 100_000) do |friends|
       uids.push(*friends.map(&:uid))
       uids.uniq!
+      puts "#{Time.zone.now}: #{uids.size}, #{friends.first.id} - #{friends.last.id}"
     end
     puts "unique uid: #{uids.size}"
   end
