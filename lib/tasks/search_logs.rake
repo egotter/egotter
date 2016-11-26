@@ -4,7 +4,7 @@ namespace :search_logs do
     changed = []
     processed = 0
     imported = 0
-    Visitor.order(created_at: :asc).pluck(:session_id).each_slice(10000) do |session_ids|
+    Visitor.order(first_access_at: :asc).pluck(:session_id).each_slice(10000) do |session_ids|
       search_logs = SearchLog
         .where(session_id: session_ids)
         .order(created_at: :asc)
