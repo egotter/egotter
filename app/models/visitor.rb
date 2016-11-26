@@ -14,11 +14,12 @@
 #
 # Indexes
 #
-#  index_visitors_on_created_at   (created_at)
-#  index_visitors_on_screen_name  (screen_name)
-#  index_visitors_on_session_id   (session_id) UNIQUE
-#  index_visitors_on_uid          (uid)
-#  index_visitors_on_user_id      (user_id)
+#  index_visitors_on_created_at       (created_at)
+#  index_visitors_on_first_access_at  (first_access_at)
+#  index_visitors_on_screen_name      (screen_name)
+#  index_visitors_on_session_id       (session_id) UNIQUE
+#  index_visitors_on_uid              (uid)
+#  index_visitors_on_user_id          (user_id)
 #
 
 class Visitor < ActiveRecord::Base

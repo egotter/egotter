@@ -35,22 +35,28 @@
 
 class SearchLog < ActiveRecord::Base
 
-  def self.except_crawler
-    where.not(device_type: %w(crawler UNKNOWN), session_id: -1)
-  end
+  class << self
+    def except_crawler
+      where.not(device_type: %w(crawler UNKNOWN), session_id: -1)
+    end
 
-  def self.user_ids(*args)
-    except_crawler
-      .where(*args)
-      .where.not(user_id: -1)
-      .uniq
-      .pluck(:user_id)
-  end
+    def with_login
+      where.not(user_id: -1)
+    end
 
-  def self.session_ids(*args)
-    except_crawler
-      .where(*args)
-      .uniq
-      .pluck(:session_id)
+    def user_ids(*args)
+      except_crawler
+        .with_login
+        .where(*args)
+        .uniq
+        .pluck(:user_id)
+    end
+
+    def session_ids(*args)
+      except_crawler
+        .where(*args)
+        .uniq
+        .pluck(:session_id)
+    end
   end
 end

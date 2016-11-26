@@ -11,6 +11,8 @@ class DeviseCreateUsers < ActiveRecord::Migration
       t.datetime :last_access_at,  null: true
       t.datetime :first_search_at, null: true
       t.datetime :last_search_at,  null: true
+      t.datetime :first_sign_in_at, null: true
+      t.datetime :last_sign_in_at,  null: true
 
       t.timestamps null: false
     end
