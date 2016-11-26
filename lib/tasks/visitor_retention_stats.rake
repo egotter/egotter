@@ -4,23 +4,31 @@ namespace :visitor_retention_stats do
     start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 40.days)
     end_day = ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now
     stats = []
-    diffs = [1, 2, 3, 4, 5, 6, 7, 14, 30]
+    diffs = (1..30).to_a
+    columns = %i(total) + diffs.map { |n| "#{n}_days" } + diffs.map { |n| "after_#{n}_days" }
 
     (start_day.to_date..end_day.to_date).each do |day|
-      session_ids = Visitor.where(created_at: day.to_time.all_day).pluck(:session_id)
+      session_ids = Visitor.where(first_access_at: day.to_time.all_day).pluck(:session_id)
 
       stat = VisitorRetentionStat.find_or_initialize_by(date: day)
       stat.total = session_ids.size
+      counts = session_ids.each_with_object(Hash.new(0)) { |id, memo| memo[id] += 1 }
       diffs.each do |diff|
-        stat["#{diff}_days"] = SearchLog.session_ids(session_id: session_ids, created_at: (day + diff.day).to_time.all_day).size
+        ids = SearchLog.session_ids(session_id: session_ids, created_at: (day + diff.day).to_time.all_day)
+        ids.each { |id| counts[id] += 1 }
+        stat["after_#{diff}_days"] = ids.size
+      end
+
+      diffs.each do |diff|
+        stat["#{diff}_days"] = counts.select { |_, v| v == diff }.size
       end
       stats << stat if stat.changed?
 
-      puts "#{day}: #{([stat.total] + diffs.map { |n| stat["#{n}_days"] }).join(', ')}"
+      puts "#{day}: #{columns.map { |c| stat[c] }.join(', ')}"
     end
 
     if stats.any?
-      VisitorRetentionStat.import(stats, on_duplicate_key_update: (%i(total) + diffs.map { |n| "#{n}_days" }), validate: false)
+      VisitorRetentionStat.import(stats, on_duplicate_key_update: columns, validate: false)
     end
   end
 end

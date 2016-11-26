@@ -333,58 +333,139 @@ ActiveRecord::Schema.define(version: 20161122144612) do
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
   create_table "user_engagement_stats", force: :cascade do |t|
-    t.datetime "date",                             null: false
-    t.integer  "total",      limit: 4, default: 0, null: false
-    t.integer  "1_days",     limit: 4, default: 0, null: false
-    t.integer  "2_days",     limit: 4, default: 0, null: false
-    t.integer  "3_days",     limit: 4, default: 0, null: false
-    t.integer  "4_days",     limit: 4, default: 0, null: false
-    t.integer  "5_days",     limit: 4, default: 0, null: false
-    t.integer  "6_days",     limit: 4, default: 0, null: false
-    t.integer  "7_days",     limit: 4, default: 0, null: false
-    t.integer  "8_days",     limit: 4, default: 0, null: false
-    t.integer  "9_days",     limit: 4, default: 0, null: false
-    t.integer  "10_days",    limit: 4, default: 0, null: false
-    t.integer  "11_days",    limit: 4, default: 0, null: false
-    t.integer  "12_days",    limit: 4, default: 0, null: false
-    t.integer  "13_days",    limit: 4, default: 0, null: false
-    t.integer  "14_days",    limit: 4, default: 0, null: false
-    t.integer  "15_days",    limit: 4, default: 0, null: false
-    t.integer  "16_days",    limit: 4, default: 0, null: false
-    t.integer  "17_days",    limit: 4, default: 0, null: false
-    t.integer  "18_days",    limit: 4, default: 0, null: false
-    t.integer  "19_days",    limit: 4, default: 0, null: false
-    t.integer  "20_days",    limit: 4, default: 0, null: false
-    t.integer  "21_days",    limit: 4, default: 0, null: false
-    t.integer  "22_days",    limit: 4, default: 0, null: false
-    t.integer  "23_days",    limit: 4, default: 0, null: false
-    t.integer  "24_days",    limit: 4, default: 0, null: false
-    t.integer  "25_days",    limit: 4, default: 0, null: false
-    t.integer  "26_days",    limit: 4, default: 0, null: false
-    t.integer  "27_days",    limit: 4, default: 0, null: false
-    t.integer  "28_days",    limit: 4, default: 0, null: false
-    t.integer  "29_days",    limit: 4, default: 0, null: false
-    t.integer  "30_days",    limit: 4, default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "date",                                 null: false
+    t.integer  "total",          limit: 4, default: 0, null: false
+    t.integer  "1_days",         limit: 4, default: 0, null: false
+    t.integer  "2_days",         limit: 4, default: 0, null: false
+    t.integer  "3_days",         limit: 4, default: 0, null: false
+    t.integer  "4_days",         limit: 4, default: 0, null: false
+    t.integer  "5_days",         limit: 4, default: 0, null: false
+    t.integer  "6_days",         limit: 4, default: 0, null: false
+    t.integer  "7_days",         limit: 4, default: 0, null: false
+    t.integer  "8_days",         limit: 4, default: 0, null: false
+    t.integer  "9_days",         limit: 4, default: 0, null: false
+    t.integer  "10_days",        limit: 4, default: 0, null: false
+    t.integer  "11_days",        limit: 4, default: 0, null: false
+    t.integer  "12_days",        limit: 4, default: 0, null: false
+    t.integer  "13_days",        limit: 4, default: 0, null: false
+    t.integer  "14_days",        limit: 4, default: 0, null: false
+    t.integer  "15_days",        limit: 4, default: 0, null: false
+    t.integer  "16_days",        limit: 4, default: 0, null: false
+    t.integer  "17_days",        limit: 4, default: 0, null: false
+    t.integer  "18_days",        limit: 4, default: 0, null: false
+    t.integer  "19_days",        limit: 4, default: 0, null: false
+    t.integer  "20_days",        limit: 4, default: 0, null: false
+    t.integer  "21_days",        limit: 4, default: 0, null: false
+    t.integer  "22_days",        limit: 4, default: 0, null: false
+    t.integer  "23_days",        limit: 4, default: 0, null: false
+    t.integer  "24_days",        limit: 4, default: 0, null: false
+    t.integer  "25_days",        limit: 4, default: 0, null: false
+    t.integer  "26_days",        limit: 4, default: 0, null: false
+    t.integer  "27_days",        limit: 4, default: 0, null: false
+    t.integer  "28_days",        limit: 4, default: 0, null: false
+    t.integer  "29_days",        limit: 4, default: 0, null: false
+    t.integer  "30_days",        limit: 4, default: 0, null: false
+    t.integer  "before_1_days",  limit: 4, default: 0, null: false
+    t.integer  "before_2_days",  limit: 4, default: 0, null: false
+    t.integer  "before_3_days",  limit: 4, default: 0, null: false
+    t.integer  "before_4_days",  limit: 4, default: 0, null: false
+    t.integer  "before_5_days",  limit: 4, default: 0, null: false
+    t.integer  "before_6_days",  limit: 4, default: 0, null: false
+    t.integer  "before_7_days",  limit: 4, default: 0, null: false
+    t.integer  "before_8_days",  limit: 4, default: 0, null: false
+    t.integer  "before_9_days",  limit: 4, default: 0, null: false
+    t.integer  "before_10_days", limit: 4, default: 0, null: false
+    t.integer  "before_11_days", limit: 4, default: 0, null: false
+    t.integer  "before_12_days", limit: 4, default: 0, null: false
+    t.integer  "before_13_days", limit: 4, default: 0, null: false
+    t.integer  "before_14_days", limit: 4, default: 0, null: false
+    t.integer  "before_15_days", limit: 4, default: 0, null: false
+    t.integer  "before_16_days", limit: 4, default: 0, null: false
+    t.integer  "before_17_days", limit: 4, default: 0, null: false
+    t.integer  "before_18_days", limit: 4, default: 0, null: false
+    t.integer  "before_19_days", limit: 4, default: 0, null: false
+    t.integer  "before_20_days", limit: 4, default: 0, null: false
+    t.integer  "before_21_days", limit: 4, default: 0, null: false
+    t.integer  "before_22_days", limit: 4, default: 0, null: false
+    t.integer  "before_23_days", limit: 4, default: 0, null: false
+    t.integer  "before_24_days", limit: 4, default: 0, null: false
+    t.integer  "before_25_days", limit: 4, default: 0, null: false
+    t.integer  "before_26_days", limit: 4, default: 0, null: false
+    t.integer  "before_27_days", limit: 4, default: 0, null: false
+    t.integer  "before_28_days", limit: 4, default: 0, null: false
+    t.integer  "before_29_days", limit: 4, default: 0, null: false
+    t.integer  "before_30_days", limit: 4, default: 0, null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   add_index "user_engagement_stats", ["date"], name: "index_user_engagement_stats_on_date", unique: true, using: :btree
 
   create_table "user_retention_stats", force: :cascade do |t|
-    t.datetime "date",                             null: false
-    t.integer  "total",      limit: 4, default: 0, null: false
-    t.integer  "1_days",     limit: 4, default: 0, null: false
-    t.integer  "2_days",     limit: 4, default: 0, null: false
-    t.integer  "3_days",     limit: 4, default: 0, null: false
-    t.integer  "4_days",     limit: 4, default: 0, null: false
-    t.integer  "5_days",     limit: 4, default: 0, null: false
-    t.integer  "6_days",     limit: 4, default: 0, null: false
-    t.integer  "7_days",     limit: 4, default: 0, null: false
-    t.integer  "14_days",    limit: 4, default: 0, null: false
-    t.integer  "30_days",    limit: 4, default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "date",                                null: false
+    t.integer  "total",         limit: 4, default: 0, null: false
+    t.integer  "1_days",        limit: 4, default: 0, null: false
+    t.integer  "2_days",        limit: 4, default: 0, null: false
+    t.integer  "3_days",        limit: 4, default: 0, null: false
+    t.integer  "4_days",        limit: 4, default: 0, null: false
+    t.integer  "5_days",        limit: 4, default: 0, null: false
+    t.integer  "6_days",        limit: 4, default: 0, null: false
+    t.integer  "7_days",        limit: 4, default: 0, null: false
+    t.integer  "8_days",        limit: 4, default: 0, null: false
+    t.integer  "9_days",        limit: 4, default: 0, null: false
+    t.integer  "10_days",       limit: 4, default: 0, null: false
+    t.integer  "11_days",       limit: 4, default: 0, null: false
+    t.integer  "12_days",       limit: 4, default: 0, null: false
+    t.integer  "13_days",       limit: 4, default: 0, null: false
+    t.integer  "14_days",       limit: 4, default: 0, null: false
+    t.integer  "15_days",       limit: 4, default: 0, null: false
+    t.integer  "16_days",       limit: 4, default: 0, null: false
+    t.integer  "17_days",       limit: 4, default: 0, null: false
+    t.integer  "18_days",       limit: 4, default: 0, null: false
+    t.integer  "19_days",       limit: 4, default: 0, null: false
+    t.integer  "20_days",       limit: 4, default: 0, null: false
+    t.integer  "21_days",       limit: 4, default: 0, null: false
+    t.integer  "22_days",       limit: 4, default: 0, null: false
+    t.integer  "23_days",       limit: 4, default: 0, null: false
+    t.integer  "24_days",       limit: 4, default: 0, null: false
+    t.integer  "25_days",       limit: 4, default: 0, null: false
+    t.integer  "26_days",       limit: 4, default: 0, null: false
+    t.integer  "27_days",       limit: 4, default: 0, null: false
+    t.integer  "28_days",       limit: 4, default: 0, null: false
+    t.integer  "29_days",       limit: 4, default: 0, null: false
+    t.integer  "30_days",       limit: 4, default: 0, null: false
+    t.integer  "after_1_days",  limit: 4, default: 0, null: false
+    t.integer  "after_2_days",  limit: 4, default: 0, null: false
+    t.integer  "after_3_days",  limit: 4, default: 0, null: false
+    t.integer  "after_4_days",  limit: 4, default: 0, null: false
+    t.integer  "after_5_days",  limit: 4, default: 0, null: false
+    t.integer  "after_6_days",  limit: 4, default: 0, null: false
+    t.integer  "after_7_days",  limit: 4, default: 0, null: false
+    t.integer  "after_8_days",  limit: 4, default: 0, null: false
+    t.integer  "after_9_days",  limit: 4, default: 0, null: false
+    t.integer  "after_10_days", limit: 4, default: 0, null: false
+    t.integer  "after_11_days", limit: 4, default: 0, null: false
+    t.integer  "after_12_days", limit: 4, default: 0, null: false
+    t.integer  "after_13_days", limit: 4, default: 0, null: false
+    t.integer  "after_14_days", limit: 4, default: 0, null: false
+    t.integer  "after_15_days", limit: 4, default: 0, null: false
+    t.integer  "after_16_days", limit: 4, default: 0, null: false
+    t.integer  "after_17_days", limit: 4, default: 0, null: false
+    t.integer  "after_18_days", limit: 4, default: 0, null: false
+    t.integer  "after_19_days", limit: 4, default: 0, null: false
+    t.integer  "after_20_days", limit: 4, default: 0, null: false
+    t.integer  "after_21_days", limit: 4, default: 0, null: false
+    t.integer  "after_22_days", limit: 4, default: 0, null: false
+    t.integer  "after_23_days", limit: 4, default: 0, null: false
+    t.integer  "after_24_days", limit: 4, default: 0, null: false
+    t.integer  "after_25_days", limit: 4, default: 0, null: false
+    t.integer  "after_26_days", limit: 4, default: 0, null: false
+    t.integer  "after_27_days", limit: 4, default: 0, null: false
+    t.integer  "after_28_days", limit: 4, default: 0, null: false
+    t.integer  "after_29_days", limit: 4, default: 0, null: false
+    t.integer  "after_30_days", limit: 4, default: 0, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   add_index "user_retention_stats", ["date"], name: "index_user_retention_stats_on_date", unique: true, using: :btree
@@ -411,58 +492,139 @@ ActiveRecord::Schema.define(version: 20161122144612) do
   add_index "users", ["uid"], name: "index_users_on_uid", unique: true, using: :btree
 
   create_table "visitor_engagement_stats", force: :cascade do |t|
-    t.datetime "date",                             null: false
-    t.integer  "total",      limit: 4, default: 0, null: false
-    t.integer  "1_days",     limit: 4, default: 0, null: false
-    t.integer  "2_days",     limit: 4, default: 0, null: false
-    t.integer  "3_days",     limit: 4, default: 0, null: false
-    t.integer  "4_days",     limit: 4, default: 0, null: false
-    t.integer  "5_days",     limit: 4, default: 0, null: false
-    t.integer  "6_days",     limit: 4, default: 0, null: false
-    t.integer  "7_days",     limit: 4, default: 0, null: false
-    t.integer  "8_days",     limit: 4, default: 0, null: false
-    t.integer  "9_days",     limit: 4, default: 0, null: false
-    t.integer  "10_days",    limit: 4, default: 0, null: false
-    t.integer  "11_days",    limit: 4, default: 0, null: false
-    t.integer  "12_days",    limit: 4, default: 0, null: false
-    t.integer  "13_days",    limit: 4, default: 0, null: false
-    t.integer  "14_days",    limit: 4, default: 0, null: false
-    t.integer  "15_days",    limit: 4, default: 0, null: false
-    t.integer  "16_days",    limit: 4, default: 0, null: false
-    t.integer  "17_days",    limit: 4, default: 0, null: false
-    t.integer  "18_days",    limit: 4, default: 0, null: false
-    t.integer  "19_days",    limit: 4, default: 0, null: false
-    t.integer  "20_days",    limit: 4, default: 0, null: false
-    t.integer  "21_days",    limit: 4, default: 0, null: false
-    t.integer  "22_days",    limit: 4, default: 0, null: false
-    t.integer  "23_days",    limit: 4, default: 0, null: false
-    t.integer  "24_days",    limit: 4, default: 0, null: false
-    t.integer  "25_days",    limit: 4, default: 0, null: false
-    t.integer  "26_days",    limit: 4, default: 0, null: false
-    t.integer  "27_days",    limit: 4, default: 0, null: false
-    t.integer  "28_days",    limit: 4, default: 0, null: false
-    t.integer  "29_days",    limit: 4, default: 0, null: false
-    t.integer  "30_days",    limit: 4, default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "date",                                 null: false
+    t.integer  "total",          limit: 4, default: 0, null: false
+    t.integer  "1_days",         limit: 4, default: 0, null: false
+    t.integer  "2_days",         limit: 4, default: 0, null: false
+    t.integer  "3_days",         limit: 4, default: 0, null: false
+    t.integer  "4_days",         limit: 4, default: 0, null: false
+    t.integer  "5_days",         limit: 4, default: 0, null: false
+    t.integer  "6_days",         limit: 4, default: 0, null: false
+    t.integer  "7_days",         limit: 4, default: 0, null: false
+    t.integer  "8_days",         limit: 4, default: 0, null: false
+    t.integer  "9_days",         limit: 4, default: 0, null: false
+    t.integer  "10_days",        limit: 4, default: 0, null: false
+    t.integer  "11_days",        limit: 4, default: 0, null: false
+    t.integer  "12_days",        limit: 4, default: 0, null: false
+    t.integer  "13_days",        limit: 4, default: 0, null: false
+    t.integer  "14_days",        limit: 4, default: 0, null: false
+    t.integer  "15_days",        limit: 4, default: 0, null: false
+    t.integer  "16_days",        limit: 4, default: 0, null: false
+    t.integer  "17_days",        limit: 4, default: 0, null: false
+    t.integer  "18_days",        limit: 4, default: 0, null: false
+    t.integer  "19_days",        limit: 4, default: 0, null: false
+    t.integer  "20_days",        limit: 4, default: 0, null: false
+    t.integer  "21_days",        limit: 4, default: 0, null: false
+    t.integer  "22_days",        limit: 4, default: 0, null: false
+    t.integer  "23_days",        limit: 4, default: 0, null: false
+    t.integer  "24_days",        limit: 4, default: 0, null: false
+    t.integer  "25_days",        limit: 4, default: 0, null: false
+    t.integer  "26_days",        limit: 4, default: 0, null: false
+    t.integer  "27_days",        limit: 4, default: 0, null: false
+    t.integer  "28_days",        limit: 4, default: 0, null: false
+    t.integer  "29_days",        limit: 4, default: 0, null: false
+    t.integer  "30_days",        limit: 4, default: 0, null: false
+    t.integer  "before_1_days",  limit: 4, default: 0, null: false
+    t.integer  "before_2_days",  limit: 4, default: 0, null: false
+    t.integer  "before_3_days",  limit: 4, default: 0, null: false
+    t.integer  "before_4_days",  limit: 4, default: 0, null: false
+    t.integer  "before_5_days",  limit: 4, default: 0, null: false
+    t.integer  "before_6_days",  limit: 4, default: 0, null: false
+    t.integer  "before_7_days",  limit: 4, default: 0, null: false
+    t.integer  "before_8_days",  limit: 4, default: 0, null: false
+    t.integer  "before_9_days",  limit: 4, default: 0, null: false
+    t.integer  "before_10_days", limit: 4, default: 0, null: false
+    t.integer  "before_11_days", limit: 4, default: 0, null: false
+    t.integer  "before_12_days", limit: 4, default: 0, null: false
+    t.integer  "before_13_days", limit: 4, default: 0, null: false
+    t.integer  "before_14_days", limit: 4, default: 0, null: false
+    t.integer  "before_15_days", limit: 4, default: 0, null: false
+    t.integer  "before_16_days", limit: 4, default: 0, null: false
+    t.integer  "before_17_days", limit: 4, default: 0, null: false
+    t.integer  "before_18_days", limit: 4, default: 0, null: false
+    t.integer  "before_19_days", limit: 4, default: 0, null: false
+    t.integer  "before_20_days", limit: 4, default: 0, null: false
+    t.integer  "before_21_days", limit: 4, default: 0, null: false
+    t.integer  "before_22_days", limit: 4, default: 0, null: false
+    t.integer  "before_23_days", limit: 4, default: 0, null: false
+    t.integer  "before_24_days", limit: 4, default: 0, null: false
+    t.integer  "before_25_days", limit: 4, default: 0, null: false
+    t.integer  "before_26_days", limit: 4, default: 0, null: false
+    t.integer  "before_27_days", limit: 4, default: 0, null: false
+    t.integer  "before_28_days", limit: 4, default: 0, null: false
+    t.integer  "before_29_days", limit: 4, default: 0, null: false
+    t.integer  "before_30_days", limit: 4, default: 0, null: false
+    t.datetime "created_at",                           null: false
+    t.datetime "updated_at",                           null: false
   end
 
   add_index "visitor_engagement_stats", ["date"], name: "index_visitor_engagement_stats_on_date", unique: true, using: :btree
 
   create_table "visitor_retention_stats", force: :cascade do |t|
-    t.datetime "date",                             null: false
-    t.integer  "total",      limit: 4, default: 0, null: false
-    t.integer  "1_days",     limit: 4, default: 0, null: false
-    t.integer  "2_days",     limit: 4, default: 0, null: false
-    t.integer  "3_days",     limit: 4, default: 0, null: false
-    t.integer  "4_days",     limit: 4, default: 0, null: false
-    t.integer  "5_days",     limit: 4, default: 0, null: false
-    t.integer  "6_days",     limit: 4, default: 0, null: false
-    t.integer  "7_days",     limit: 4, default: 0, null: false
-    t.integer  "14_days",    limit: 4, default: 0, null: false
-    t.integer  "30_days",    limit: 4, default: 0, null: false
-    t.datetime "created_at",                       null: false
-    t.datetime "updated_at",                       null: false
+    t.datetime "date",                                null: false
+    t.integer  "total",         limit: 4, default: 0, null: false
+    t.integer  "1_days",        limit: 4, default: 0, null: false
+    t.integer  "2_days",        limit: 4, default: 0, null: false
+    t.integer  "3_days",        limit: 4, default: 0, null: false
+    t.integer  "4_days",        limit: 4, default: 0, null: false
+    t.integer  "5_days",        limit: 4, default: 0, null: false
+    t.integer  "6_days",        limit: 4, default: 0, null: false
+    t.integer  "7_days",        limit: 4, default: 0, null: false
+    t.integer  "8_days",        limit: 4, default: 0, null: false
+    t.integer  "9_days",        limit: 4, default: 0, null: false
+    t.integer  "10_days",       limit: 4, default: 0, null: false
+    t.integer  "11_days",       limit: 4, default: 0, null: false
+    t.integer  "12_days",       limit: 4, default: 0, null: false
+    t.integer  "13_days",       limit: 4, default: 0, null: false
+    t.integer  "14_days",       limit: 4, default: 0, null: false
+    t.integer  "15_days",       limit: 4, default: 0, null: false
+    t.integer  "16_days",       limit: 4, default: 0, null: false
+    t.integer  "17_days",       limit: 4, default: 0, null: false
+    t.integer  "18_days",       limit: 4, default: 0, null: false
+    t.integer  "19_days",       limit: 4, default: 0, null: false
+    t.integer  "20_days",       limit: 4, default: 0, null: false
+    t.integer  "21_days",       limit: 4, default: 0, null: false
+    t.integer  "22_days",       limit: 4, default: 0, null: false
+    t.integer  "23_days",       limit: 4, default: 0, null: false
+    t.integer  "24_days",       limit: 4, default: 0, null: false
+    t.integer  "25_days",       limit: 4, default: 0, null: false
+    t.integer  "26_days",       limit: 4, default: 0, null: false
+    t.integer  "27_days",       limit: 4, default: 0, null: false
+    t.integer  "28_days",       limit: 4, default: 0, null: false
+    t.integer  "29_days",       limit: 4, default: 0, null: false
+    t.integer  "30_days",       limit: 4, default: 0, null: false
+    t.integer  "after_1_days",  limit: 4, default: 0, null: false
+    t.integer  "after_2_days",  limit: 4, default: 0, null: false
+    t.integer  "after_3_days",  limit: 4, default: 0, null: false
+    t.integer  "after_4_days",  limit: 4, default: 0, null: false
+    t.integer  "after_5_days",  limit: 4, default: 0, null: false
+    t.integer  "after_6_days",  limit: 4, default: 0, null: false
+    t.integer  "after_7_days",  limit: 4, default: 0, null: false
+    t.integer  "after_8_days",  limit: 4, default: 0, null: false
+    t.integer  "after_9_days",  limit: 4, default: 0, null: false
+    t.integer  "after_10_days", limit: 4, default: 0, null: false
+    t.integer  "after_11_days", limit: 4, default: 0, null: false
+    t.integer  "after_12_days", limit: 4, default: 0, null: false
+    t.integer  "after_13_days", limit: 4, default: 0, null: false
+    t.integer  "after_14_days", limit: 4, default: 0, null: false
+    t.integer  "after_15_days", limit: 4, default: 0, null: false
+    t.integer  "after_16_days", limit: 4, default: 0, null: false
+    t.integer  "after_17_days", limit: 4, default: 0, null: false
+    t.integer  "after_18_days", limit: 4, default: 0, null: false
+    t.integer  "after_19_days", limit: 4, default: 0, null: false
+    t.integer  "after_20_days", limit: 4, default: 0, null: false
+    t.integer  "after_21_days", limit: 4, default: 0, null: false
+    t.integer  "after_22_days", limit: 4, default: 0, null: false
+    t.integer  "after_23_days", limit: 4, default: 0, null: false
+    t.integer  "after_24_days", limit: 4, default: 0, null: false
+    t.integer  "after_25_days", limit: 4, default: 0, null: false
+    t.integer  "after_26_days", limit: 4, default: 0, null: false
+    t.integer  "after_27_days", limit: 4, default: 0, null: false
+    t.integer  "after_28_days", limit: 4, default: 0, null: false
+    t.integer  "after_29_days", limit: 4, default: 0, null: false
+    t.integer  "after_30_days", limit: 4, default: 0, null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   add_index "visitor_retention_stats", ["date"], name: "index_visitor_retention_stats_on_date", unique: true, using: :btree

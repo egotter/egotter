@@ -4,9 +4,8 @@ class CreateVisitorEngagementStats < ActiveRecord::Migration
       t.datetime :date,  null: false
       t.integer  :total, null: false, default: 0
 
-      (1..30).each do |n|
-        t.integer "#{n}_days", null: false, default: 0
-      end
+      (1..30).each { |n| t.integer "#{n}_days", null: false, default: 0 }
+      (1..30).each { |n| t.integer "before_#{n}_days", null: false, default: 0 }
 
       t.timestamps null: false
     end
