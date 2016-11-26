@@ -1,10 +1,10 @@
 PREFIX='cd /home/ec2-user/egotter && RAILS_ENV=production bundle exec rake'
 SUFFIX='--silent >>/home/ec2-user/egotter/log/cron.log 2>&1'
 
-0,15,30,45 * * * * /bin/bash -l -c '$PREFIX twitter:cleanup $SUFFIX'
-0 19 * * *         /bin/bash -l -c '$PREFIX visitors:update users_update_timestamps $SUFFIX'
-10 19 * * *        /bin/bash -l -c '$PREFIX user_retention_stats:update $SUFFIX'
-20 19 * * *        /bin/bash -l -c '$PREFIX visitor_retention_stats:update $SUFFIX'
-30 19 * * *        /bin/bash -l -c '$PREFIX user_engagement_stats:update $SUFFIX'
-40 19 * * *        /bin/bash -l -c '$PREFIX visitor_engagement_stats:update $SUFFIX'
+0,15,30,45 * * * * /bin/bash -l -c "$PREFIX twitter:cleanup $SUFFIX"
+0 19 * * *         /bin/bash -l -c "$PREFIX visitors:update users_update_timestamps $SUFFIX"
+10 19 * * *        /bin/bash -l -c "$PREFIX user_retention_stats:update $SUFFIX"
+20 19 * * *        /bin/bash -l -c "$PREFIX visitor_retention_stats:update $SUFFIX"
+30 19 * * *        /bin/bash -l -c "$PREFIX user_engagement_stats:update $SUFFIX"
+40 19 * * *        /bin/bash -l -c "$PREFIX visitor_engagement_stats:update $SUFFIX"
 0,15,30,45 * * * * /usr/bin/sudo /bin/bash -l -c 'monit monitor all >> /home/ec2-user/egotter/log/cron.log 2>&1'
