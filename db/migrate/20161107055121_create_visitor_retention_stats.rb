@@ -3,15 +3,9 @@ class CreateVisitorRetentionStats < ActiveRecord::Migration
     create_table :visitor_retention_stats do |t|
       t.datetime :date,      null: false
       t.integer  :total,     null: false, default: 0
-      t.integer  :'1_days',  null: false, default: 0
-      t.integer  :'2_days',  null: false, default: 0
-      t.integer  :'3_days',  null: false, default: 0
-      t.integer  :'4_days',  null: false, default: 0
-      t.integer  :'5_days',  null: false, default: 0
-      t.integer  :'6_days',  null: false, default: 0
-      t.integer  :'7_days',  null: false, default: 0
-      t.integer  :'14_days', null: false, default: 0
-      t.integer  :'30_days', null: false, default: 0
+
+      (1..30).each { |n| t.integer "#{n}_days", null: false, default: 0 }
+      (1..30).each { |n| t.integer "after_#{n}_days", null: false, default: 0 }
 
       t.timestamps null: false
     end
