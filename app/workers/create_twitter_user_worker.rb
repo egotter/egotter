@@ -1,8 +1,9 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
+    client = Hashie::Mash.new({call_count: -100}) # If an error happens, This client is used in rescue block.
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
     log = BackgroundSearchLog.new(

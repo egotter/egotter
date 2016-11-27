@@ -2,7 +2,7 @@ require 'digest/md5'
 
 class CreateNotificationMessageWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id, uid, screen_name, options)
     user_id = user_id.to_i

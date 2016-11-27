@@ -1,6 +1,6 @@
 class CreatePageCacheWorker
   include Sidekiq::Worker
-  sidekiq_options queue: :egotter, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(uid)
     uri = URI.parse(Rails.application.routes.url_helpers.page_caches_url)

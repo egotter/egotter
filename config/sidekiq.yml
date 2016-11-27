@@ -1,6 +1,18 @@
-:concurrency: 6
+:concurrency: 10
 :pidfile: ./tmp/pids/sidekiq.pid
 :logfile: ./log/sidekiq.log
 :queues:
   - egotter
+  - CreateModalOpenLogWorker
+  - CreateNotificationMessageWorker
+  - CreatePageCacheLogWorker
+  - CreatePageCacheWorker
+  - CreatePromptReportWorker
+  - CreateRelationshipWorker
+  - CreateSearchLogWorker
+  - CreateSignInLogWorker
+  - CreateTwitterUserWorker
+  - FollowEgotterWorker
+  - UpdateNotificationMessageWorker
+  - UpdateTwitterUserWorker
   - rollbar
