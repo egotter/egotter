@@ -23,33 +23,5 @@
 #
 
 class Visitor < ActiveRecord::Base
-  # Last session was within the last 7 days
-  def active?
-    last_session.created_at > 7.days.ago
-  end
-
-  # Last session was more than 7 days ago
-  def inactive?
-    !active?
-  end
-
-  # Last session was within the last 7 days
-  # Session count is greater than 4.0
-  def engaged?
-    active? && session_count > 4
-  end
-
-  def signed_in?
-    last_session.user_id != -1
-  end
-
-  private
-
-  def session_count
-    SearchLog.where(session_id: session_id).count
-  end
-
-  def last_session
-    SearchLog.order(created_at: :desc).find_by(session_id: session_id)
-  end
+  include Concerns::Visitor::Active
 end

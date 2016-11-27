@@ -29,6 +29,7 @@ class User < ActiveRecord::Base
   devise :rememberable, :omniauthable
 
   include Concerns::TwitterUser::Inflections
+  include Concerns::Visitor::Active
 
   def remember_created_at=(_)
   end

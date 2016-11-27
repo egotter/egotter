@@ -24,7 +24,7 @@ class UpdateTwitterUserWorker
       return
     end
 
-    if user.last_access_at && user.last_access_at < 30.days.ago
+    if user.last_access_at && user.last_access_at < 14.days.ago
       log.update(status: false, message: "[#{user.screen_name}] has been MIA.")
       return
     end
