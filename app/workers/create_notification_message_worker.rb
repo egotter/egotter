@@ -10,7 +10,7 @@ class CreateNotificationMessageWorker
     type = options['type'].to_sym
     mention_name = "@#{screen_name}"
     medium = options['medium']
-    changes = options['changes'].symbolize_keys!
+    changes = options['changes'].symbolize_keys! if options['changes']
 
     token = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")[0...5]
     notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)
