@@ -8,6 +8,10 @@ module Concerns::TwitterUser::Utils
       order(created_at: :desc).find_by(uid: uid)
     end
 
+    def till(time)
+      where('created_at < ?', time)
+    end
+
     def many?(uid)
       where(uid: uid).size >= 2
     end

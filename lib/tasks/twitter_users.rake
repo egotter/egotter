@@ -55,6 +55,9 @@ namespace :twitter_users do
         else [user_ids.to_i]
       end
 
+    authorized = User.where(id: user_ids, authorized: true).to_a
+    active = User.active(14).where(id: authorized.map(&:id)).to_a
+
     sigint = false
     Signal.trap 'INT' do
       puts 'intercept INT and stop ..'
@@ -63,13 +66,13 @@ namespace :twitter_users do
 
     start_time = Time.zone.now
     puts "\nstarted:"
-    puts "  start: #{start_time}, deadline: #{deadline}\n\n"
+    puts "  start: #{start_time}, user_ids: #{user_ids.size}, authorized: #{authorized.size}, active: #{active.size}, deadline: #{deadline}\n\n"
 
     processed = 0
     fatal = false
     errors = []
 
-    user_ids.each.with_index do |user_id, i|
+    active.map(&:id).each.with_index do |user_id, i|
       start = Time.zone.now
       failed = false
       begin

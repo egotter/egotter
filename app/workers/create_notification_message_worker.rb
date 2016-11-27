@@ -10,6 +10,8 @@ class CreateNotificationMessageWorker
     type = options['type'].to_sym
     mention_name = "@#{screen_name}"
     medium = options['medium']
+    changes = options['changes'].symbolize_keys!
+
     token = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")[0...5]
     notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)
     log = CreateNotificationMessageLog.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium)
@@ -37,10 +39,19 @@ class CreateNotificationMessageWorker
     end
 
     if %i(search prompt_report).include?(type) && medium == 'dm'
-      message = [
-        I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name, url: url),
-        I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.message", url: url)
-      ].join("\n")
+      message =
+        case type
+          when :search
+            [
+              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name, url: url),
+              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.message", url: url)
+            ]
+          when :prompt_report
+            [
+              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name, url: url, before: changes[:followers_count][0], after: changes[:followers_count][1]),
+              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.message", url: url)
+            ]
+        end.join("\n")
 
       dm = user.api_client.create_direct_message(user.uid.to_i, message)
       if notification.update(message_id: dm.id, message: message)
