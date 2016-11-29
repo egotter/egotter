@@ -46,10 +46,9 @@ namespace :twitter_users do
       end
 
     user_ids = ENV['USER_IDS']
-    return if user_ids.blank?
-
     user_ids =
       case
+        when user_ids.blank? then 1..User.maximum(:id)
         when user_ids.include?('..') then Range.new(*user_ids.split('..').map(&:to_i))
         when user_ids.include?(',') then user_ids.split(',').map(&:to_i)
         else [user_ids.to_i]
