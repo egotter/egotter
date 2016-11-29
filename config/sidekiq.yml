@@ -13,6 +13,7 @@
   - CreateSignInLogWorker
   - CreateTwitterUserWorker
   - FollowEgotterWorker
+  - InvokeTaskWorker
   - UpdateNotificationMessageWorker
   - UpdateTwitterUserWorker
   - rollbar

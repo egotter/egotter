@@ -29,81 +29,12 @@ namespace :twitter_users do
 
   desc 'send prompt reports'
   task send_prompt_reports: :environment do
-    process_update_jobs(CreatePromptReportWorker)
+    ::Tasks::PromptReportsTask.invoke(ENV['USER_IDS'], 'cli', deadline: ENV['DEADLINE'])
   end
 
   desc 'send update notifications'
   task send_update_notifications: :environment do
-    process_update_jobs(UpdateTwitterUserWorker)
-  end
-
-  def process_update_jobs(worker_klass)
-    deadline =
-      case
-        when ENV['DEADLINE'].nil? then nil
-        when ENV['DEADLINE'].match(/\d+\.(minutes?|hours?)/) then Time.zone.now + eval(ENV['DEADLINE'])
-        else Time.zone.parse(ENV['DEADLINE'])
-      end
-
-    user_ids = ENV['USER_IDS']
-    return if user_ids.blank?
-
-    user_ids =
-      case
-        when user_ids.include?('..') then Range.new(*user_ids.split('..').map(&:to_i))
-        when user_ids.include?(',') then user_ids.split(',').map(&:to_i)
-        else [user_ids.to_i]
-      end
-
-    authorized = User.where(id: user_ids, authorized: true).to_a
-    active = User.active(14).where(id: authorized.map(&:id)).to_a
-
-    sigint = false
-    Signal.trap 'INT' do
-      puts 'intercept INT and stop ..'
-      sigint = true
-    end
-
-    start_time = Time.zone.now
-    puts "\nstarted:"
-    puts "  start: #{start_time}, user_ids: #{user_ids.size}, authorized: #{authorized.size}, active: #{active.size}, deadline: #{deadline}\n\n"
-
-    processed = 0
-    fatal = false
-    errors = []
-
-    active.map(&:id).each.with_index do |user_id, i|
-      start = Time.zone.now
-      failed = false
-      begin
-        worker_klass.new.perform(user_id)
-      rescue => e
-        failed = true
-        errors << {time: Time.zone.now, error: e, user_id: user_id}
-        fatal = errors.select { |error| error[:time] > 60.seconds.ago }.size >= 10
-      end
-      processed += 1
-
-      if i % 10 == 0
-        avg = ", #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds/user"
-        elapsed = ", #{'%.1f' % (Time.zone.now - start_time)} seconds elapsed"
-        remaining = deadline ? ", #{'%.1f' % (deadline - Time.zone.now)} seconds remaining" : ''
-      else
-        avg = elapsed = remaining = ''
-      end
-      status = failed ? ', failed' : ''
-      puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}#{elapsed}#{remaining}#{status}"
-
-      break if (deadline && Time.zone.now > deadline) || sigint || fatal
-    end
-
-    if errors.any?
-      puts "\nerrors:"
-      errors.each { |error| puts "  #{error[:time]}: #{error[:user_id]}, #{error[:error].class} #{error[:error].message}" }
-    end
-
-    puts "\n#{(sigint || fatal ? 'suspended:' : 'finished:')}"
-    puts "  start: #{start_time}, finish: #{Time.zone.now}, processed: #{processed}"
+    ::Tasks::UpdateNotificationsTask.invoke(ENV['USER_IDS'], 'cli', deadline: ENV['DEADLINE'])
   end
 
   desc 'fix counts'
