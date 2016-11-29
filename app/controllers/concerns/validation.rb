@@ -9,6 +9,10 @@ module Validation
     redirect_to root_path, alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
   end
 
+  def need_admin
+    redirect_to root_path unless admin_signed_in?
+  end
+
   def valid_uid?(uid)
     tu = TwitterUser.new(uid: uid)
     if tu.valid_uid?

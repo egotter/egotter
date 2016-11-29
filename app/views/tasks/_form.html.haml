@@ -1,0 +1,8 @@
+= form_for @task do |f|
+  = f.label :name
+  = f.select :name, [%w(twitter_users:send_prompt_reports), %w(twitter_users:send_update_notifications)]
+
+  = f.label :user_ids
+  = f.text_field :user_ids
+
+  = f.submit 'Run'
