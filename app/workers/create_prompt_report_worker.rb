@@ -58,7 +58,7 @@ class CreatePromptReportWorker
   end
 
   def notify(login_user, tu, changes:)
-    CreatePageCacheWorker.perform_async(tu.uid)
+    CreatePageCacheWorker.new.perform(tu.uid)
 
     %w(dm).each do |medium| # TODO implement onesignal
       CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'prompt_report', medium: medium, changes: changes)
