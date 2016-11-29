@@ -53,3 +53,7 @@ test:
 production:
   <<: *default
   database: egotter_production
+
+twitter:
+  <<: *default
+  database: twitter
