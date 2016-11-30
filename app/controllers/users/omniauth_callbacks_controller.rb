@@ -4,14 +4,15 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   def twitter
     begin
       user = User.update_or_create_for_oauth_by!(user_params) do |user, context|
-        via = session[:sign_in_via].present? ? session.delete(:sign_in_via) : ''
-        create_sign_in_log(user.id, context, via)
+        via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
+        follow = 'true' == session.delete(:sign_in_follow)
+        create_sign_in_log(user.id, context, via, follow)
+        FollowEgotterWorker.perform_async(user.id) if follow
       end
     rescue =>  e
       return redirect_to root_path, alert: t('before_sign_in.login_failed', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
     end
 
-    FollowEgotterWorker.perform_async(user.id)
     delete_uid(user)
 
     sign_in_and_redirect user, event: :authentication

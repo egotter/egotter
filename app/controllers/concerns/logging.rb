@@ -44,13 +44,14 @@ module Concerns::Logging
     Rollbar.warn(e)
   end
 
-  def create_sign_in_log(user_id, context, via)
+  def create_sign_in_log(user_id, context, via, follow)
     referral = find_referral(pushed_referers)
 
     attrs = {
       session_id:  fingerprint,
       user_id:     user_id,
       context:     context,
+      follow:      follow,
       via:         via,
       device_type: request.device_type,
       os:          request.os,

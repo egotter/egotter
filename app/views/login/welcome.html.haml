@@ -1,32 +1,12 @@
 - via_prefix ||= ''
-.welcome
-  = link_to t('.sign_in_with_twitter'), sign_in_path(via: "#{via_prefix}button_top"), class: 'btn btn-lg btn-info btn-block'
+.welcome{class: "#{'on-modal' if via_prefix.start_with?('search_history')}"}
+  = form_tag sign_in_path, method: :get do
+    = hidden_field_tag :via, "#{via_prefix}button"
+    = submit_tag t('.sign_in_with_twitter'), name: nil, class: 'btn btn-lg btn-info btn-block'
 
-  %h3.h4= t('.lead').html_safe
+    = render partial: 'login/highlight'
 
-  .row.screenshot
-    .col-xs-12.col-sm-6
-      .text-center
-        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_iphone_332x560.png', height: '160px'}/
-    .col-xs-12.col-sm-6
-      .text-center
-        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_laptop_961x560.png', height: '160px'}/
-
-  .row
-    .col-xs-12.col-sm-6
-      %h3.h4= t('.feature_001')
-      .feature-description= t('.feature_desc_001').html_safe
-    .col-xs-12.col-sm-6
-      %h3.h4= t('.feature_002')
-      .feature-description= t('.feature_desc_002').html_safe
-    .col-xs-12.col-sm-6
-      %h3.h4= t('.feature_003')
-      .feature-description= t('.feature_desc_003').html_safe
-    .col-xs-12.col-sm-6
-      %h3.h4= t('.feature_004')
-      .feature-description= t('.feature_desc_004').html_safe
-
-  = link_to t('.sign_in_with_twitter'), sign_in_path(via: "#{via_prefix}button_bottom"), class: 'btn btn-lg btn-info btn-block'
-
-  .small.follow-egotter= t('.follow_egotter', link: link_to('@ego_tter', 'https://twitter.com/ego_tter', target: '_blank')).html_safe
-  .small= t('.unfollow_egotter')
+    = submit_tag t('.sign_in_with_twitter'), name: 'bottom', class: 'btn btn-lg btn-info btn-block'
+    %label.small.follow-egotter
+      = check_box_tag :follow, true, true, {}
+      = t('.follow_egotter', link: link_to('@ego_tter', 'https://twitter.com/ego_tter', target: '_blank')).html_safe

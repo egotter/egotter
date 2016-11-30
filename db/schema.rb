@@ -282,18 +282,19 @@ ActiveRecord::Schema.define(version: 20161122144612) do
   add_index "search_results", ["uid"], name: "index_search_results_on_uid", using: :btree
 
   create_table "sign_in_logs", force: :cascade do |t|
-    t.string   "session_id",  limit: 191, default: "", null: false
-    t.integer  "user_id",     limit: 4,   default: -1, null: false
-    t.string   "context",     limit: 191, default: "", null: false
-    t.string   "via",         limit: 191, default: "", null: false
-    t.string   "device_type", limit: 191, default: "", null: false
-    t.string   "os",          limit: 191, default: "", null: false
-    t.string   "browser",     limit: 191, default: "", null: false
-    t.string   "user_agent",  limit: 191, default: "", null: false
-    t.string   "referer",     limit: 191, default: "", null: false
-    t.string   "referral",    limit: 191, default: "", null: false
-    t.string   "channel",     limit: 191, default: "", null: false
-    t.datetime "created_at",                           null: false
+    t.string   "session_id",  limit: 191, default: "",    null: false
+    t.integer  "user_id",     limit: 4,   default: -1,    null: false
+    t.string   "context",     limit: 191, default: "",    null: false
+    t.boolean  "follow",                  default: false, null: false
+    t.string   "via",         limit: 191, default: "",    null: false
+    t.string   "device_type", limit: 191, default: "",    null: false
+    t.string   "os",          limit: 191, default: "",    null: false
+    t.string   "browser",     limit: 191, default: "",    null: false
+    t.string   "user_agent",  limit: 191, default: "",    null: false
+    t.string   "referer",     limit: 191, default: "",    null: false
+    t.string   "referral",    limit: 191, default: "",    null: false
+    t.string   "channel",     limit: 191, default: "",    null: false
+    t.datetime "created_at",                              null: false
   end
 
   add_index "sign_in_logs", ["created_at"], name: "index_sign_in_logs_on_created_at", using: :btree
