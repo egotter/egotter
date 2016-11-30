@@ -14,7 +14,7 @@
 
   .return-to-results-top= link_to(t('searches.common.return', user: @searched_tw_users[0].mention_name), search_path(screen_name: @searched_tw_users[0].screen_name))
 
-  = render(partial: 'common/adsense')
+  = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
   - if @user_items.any?
     .page-entries-info-top
@@ -50,6 +50,6 @@
         %div= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path), kaomoji: Kaomoji.unhappy)
     = render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(@title)})
 
-  = render(partial: 'common/adsense_bottom')
+  = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
 
   .return-to-results-bottom= link_to(t('searches.common.return', user: @searched_tw_users[0].mention_name), search_path(screen_name: @searched_tw_users[0].screen_name))

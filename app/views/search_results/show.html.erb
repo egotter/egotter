@@ -62,7 +62,7 @@
   });
 </script>
 
-<%= render(partial: 'common/adsense_bottom') %>
+<%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}) %>
 
 <h2 class="h4"><%= t('.about_this_page', this_page: t('searches.show.heading', user: tu.mention_name)) %></h2>
 <div class="this-page-is"><%= t('.this_page_is', user: tu.mention_name) %></div>

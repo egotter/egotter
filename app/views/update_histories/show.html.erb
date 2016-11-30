@@ -15,7 +15,7 @@
 
   <div class="return-to-results-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name)) %></div>
 
-  <%= render(partial: 'common/adsense') %>
+  <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
 
   <div class="summary">
     <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
@@ -53,7 +53,7 @@
     <% end %>
   <% end %>
 
-  <%= render(partial: 'common/adsense_bottom') %>
+  <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}) %>
 
   <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name)) %></div>
 </div>

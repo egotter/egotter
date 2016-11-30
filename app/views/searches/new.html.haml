@@ -6,7 +6,7 @@
 
   = render partial: 'common/search_box_group', locals: {via: :top_input, screen_names: screen_names_for_search}
 
-  = render(partial: 'common/adsense')
+  = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
   - if user_signed_in?
     = link_to t('.search_by', user: current_user.mention_name), searches_path(screen_name: current_user.screen_name, via: :top_button), class: 'submit-btn2 btn btn-info btn-block', method: :post
