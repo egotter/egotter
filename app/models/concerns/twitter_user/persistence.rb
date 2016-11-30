@@ -43,7 +43,7 @@ module Concerns::TwitterUser::Persistence
   end
 
   def put_relations_back
-    # Relations are created on `after_commit` in order to avoid long trunsaction.
+    # Relations are created on `after_commit` in order to avoid long transaction.
     @shaded.each { |attr, values| self.class.import_relations!(self.id, attr, values) }
     remove_instance_variable(:@shaded)
     reload
