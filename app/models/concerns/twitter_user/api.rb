@@ -37,7 +37,7 @@ module Concerns::TwitterUser::Api
 
   def new_removing
     return [] unless self.class.many?(uid)
-    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.friends_size == 0
     uids = older.friend_uids - newer.friend_uids
     uids.empty? ? [] : older.friends.where(uid: uids)
@@ -45,7 +45,7 @@ module Concerns::TwitterUser::Api
 
   def removing
     return [] unless self.class.many?(uid)
-    TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
+    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
       uids = older.friend_uids - newer.friend_uids
       uids.empty? ? [] : older.friends.where(uid: uids)
@@ -54,7 +54,7 @@ module Concerns::TwitterUser::Api
 
   def new_removed
     return [] unless self.class.many?(uid)
-    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.followers_size == 0
     uids = older.follower_uids - newer.follower_uids
     uids.empty? ? [] : older.followers.where(uid: uids)
@@ -62,7 +62,7 @@ module Concerns::TwitterUser::Api
 
   def removed
     return [] unless self.class.many?(uid)
-    TwitterUser.with_friends(uid, order: :asc).each_cons(2).map do |older, newer|
+    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
       uids = older.follower_uids - newer.follower_uids
       uids.empty? ? [] : older.followers.where(uid: uids)
@@ -71,7 +71,7 @@ module Concerns::TwitterUser::Api
 
   def new_friends
     return [] unless self.class.many?(uid)
-    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.friends_size == 0
     uids = newer.friend_uids - older.friend_uids
     uids.empty? ? [] : newer.friends.where(uid: uids)
@@ -79,7 +79,7 @@ module Concerns::TwitterUser::Api
 
   def new_followers
     return [] unless self.class.many?(uid)
-    newer, older = TwitterUser.with_friends(uid, order: :desc).take(2)
+    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.followers_size == 0
     uids = newer.follower_uids - older.follower_uids
     uids.empty? ? [] : newer.followers.where(uid: uids)

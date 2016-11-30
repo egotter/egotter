@@ -16,8 +16,8 @@ module Concerns::TwitterUser::Utils
       where(uid: uid).size >= 2
     end
 
-    def with_friends(uid, order:)
-      where(uid: uid).where.not(friends_size: 0, followers_size: 0).order(created_at: order)
+    def with_friends
+      where.not(friends_size: 0, followers_size: 0)
     end
   end
 
