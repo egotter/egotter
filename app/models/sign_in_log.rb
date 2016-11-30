@@ -6,6 +6,7 @@
 #  session_id  :string(191)      default(""), not null
 #  user_id     :integer          default(-1), not null
 #  context     :string(191)      default(""), not null
+#  follow      :boolean          default(FALSE), not null
 #  via         :string(191)      default(""), not null
 #  device_type :string(191)      default(""), not null
 #  os          :string(191)      default(""), not null

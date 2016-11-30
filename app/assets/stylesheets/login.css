@@ -1,3 +1,7 @@
+.welcome:not(.on-modal) {
+  padding-bottom: 15px;
+}
+
 .welcome .btn-info {
   margin-top: 15px;
 }
@@ -18,4 +22,6 @@
 
 .welcome .follow-egotter {
   margin-top: 15px;
+  margin-bottom: 0;
+  font-weight: normal;
 }

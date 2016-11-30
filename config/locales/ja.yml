@@ -179,8 +179,7 @@ ja:
       feature_004: "鍵アカも検索できます"
       feature_desc_004: "本人やフォローされてる人は<br>鍵アカも検索できます。"
       sign_in_with_twitter: "Twitter でログイン"
-      follow_egotter: "※ログインすると自動的に%{link}をフォローします。フォロー中は検索が早くなります！"
-      unfollow_egotter: "※不要な場合は後からフォローを外してください…(T_T)"
+      follow_egotter: "%{link} をフォローする。フォロー中は検索が早くなります！"
   misc:
     menu:
       title: "メニュー"
