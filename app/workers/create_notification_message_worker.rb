@@ -43,15 +43,23 @@ class CreateNotificationMessageWorker
         case type
           when :search
             [
-              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name, url: url),
+              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name),
               I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.message", url: url)
             ]
           when :prompt_report
             [
-              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name, url: url, before: changes[:followers_count][0], after: changes[:followers_count][1]),
+              I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.title", user: mention_name, before: changes[:followers_count][0], after: changes[:followers_count][1]),
               I18n.t("#{medium}.#{type.to_s.camelize(:lower)}Notification.message", url: url)
             ]
         end.join("\n")
+
+      if type == :prompt_report && user.notification_messages.any?
+        last = user.notification_messages.last
+        if last.message.split("\n")[0] == message.split("\n")[0]
+          log.update(status: false, message: "[#{last.id}] is duplicate.")
+          return
+        end
+      end rescue nil
 
       dm = user.api_client.create_direct_message(user.uid.to_i, message)
       if notification.update(message_id: dm.id, message: message)
@@ -72,7 +80,7 @@ class CreateNotificationMessageWorker
           friends, followers = tu.new_friends, tu.new_followers
           removing, removed = tu.new_removing, tu.new_removed
           [
-            I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
+            I18n.t("#{medium}.#{type}Notification.title", user: mention_name),
             I18n.t("#{medium}.new_friends", users: to_text(friends)),
             I18n.t("#{medium}.new_followers", users: to_text(followers)),
             I18n.t("#{medium}.new_removing", users: to_text(removing)),
@@ -81,7 +89,7 @@ class CreateNotificationMessageWorker
           ]
         else
           [
-            I18n.t("#{medium}.#{type}Notification.title", user: mention_name, url: url),
+            I18n.t("#{medium}.#{type}Notification.title", user: mention_name),
             I18n.t("#{medium}.no_diffs"),
             I18n.t("#{medium}.#{type}Notification.message", url: url)
           ]
