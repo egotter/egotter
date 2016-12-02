@@ -49,7 +49,7 @@ class CreatePromptReportWorker
 
     new_tu = TwitterUser.build_by_user(client.user(user.uid.to_i))
     diff = existing_tu.diff(new_tu, only: %i(followers_count))
-    if diff.any?
+    if diff.any? && diff[:followers_count][0] > diff[:followers_count][1]
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is maybe changed.")
       notify(user, existing_tu, changes: diff)
     else

@@ -53,8 +53,8 @@ class CreateNotificationMessageWorker
             ]
         end.join("\n")
 
-      if type == :prompt_report && user.notification_messages.any?
-        last = user.notification_messages.last
+      if type == :prompt_report && user.notification_messages.where(context: :prompt_report).any?
+        last = user.notification_messages.where(context: :prompt_report).last
         if last.message.split("\n")[0] == message.split("\n")[0]
           log.update(status: false, message: "[#{last.id}] is duplicate.")
           return
