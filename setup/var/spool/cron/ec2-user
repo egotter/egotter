@@ -1,7 +1,7 @@
 PREFIX='cd /home/ec2-user/egotter && RAILS_ENV=production bundle exec rake'
 SUFFIX='--silent >>/home/ec2-user/egotter/log/cron.log 2>&1'
 
-0 3,8,11,23 * * *  /bin/bash -l -c "$PREFIX twitter_users:send_prompt_reports $SUFFIX"
+0 1-15,23-24 * * *  /bin/bash -l -c "$PREFIX twitter_users:send_prompt_reports $SUFFIX"
 0,15,30,45 * * * * /bin/bash -l -c "$PREFIX twitter:cleanup $SUFFIX"
 0 19 * * *         /bin/bash -l -c "$PREFIX visitors:update users:update_timestamps $SUFFIX"
 10 19 * * *        /bin/bash -l -c "$PREFIX user_retention_stats:update visitor_retention_stats:update user_engagement_stats:update visitor_engagement_stats:update $SUFFIX"
