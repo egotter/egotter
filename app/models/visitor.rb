@@ -16,6 +16,7 @@
 #
 #  index_visitors_on_created_at       (created_at)
 #  index_visitors_on_first_access_at  (first_access_at)
+#  index_visitors_on_last_access_at   (last_access_at)
 #  index_visitors_on_screen_name      (screen_name)
 #  index_visitors_on_session_id       (session_id) UNIQUE
 #  index_visitors_on_uid              (uid)

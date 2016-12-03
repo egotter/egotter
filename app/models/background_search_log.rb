@@ -7,6 +7,7 @@
 #  user_id     :integer          default(-1), not null
 #  uid         :string(191)      default("-1"), not null
 #  screen_name :string(191)      default(""), not null
+#  action      :string(191)      default(""), not null
 #  bot_uid     :string(191)      default("-1"), not null
 #  auto        :boolean          default(FALSE), not null
 #  status      :boolean          default(FALSE), not null
@@ -21,6 +22,7 @@
 #  referer     :string(191)      default(""), not null
 #  referral    :string(191)      default(""), not null
 #  channel     :string(191)      default(""), not null
+#  medium      :string(191)      default(""), not null
 #  created_at  :datetime         not null
 #
 # Indexes

@@ -8,6 +8,7 @@
 #  uid         :string(191)      default(""), not null
 #  screen_name :string(191)      default(""), not null
 #  action      :string(191)      default(""), not null
+#  cache_hit   :boolean          default(FALSE), not null
 #  ego_surfing :boolean          default(FALSE), not null
 #  method      :string(191)      default(""), not null
 #  device_type :string(191)      default(""), not null

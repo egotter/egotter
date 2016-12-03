@@ -11,6 +11,7 @@ module Concerns::Logging
   def create_search_log(options = {})
     uid, screen_name = find_uid_and_screen_name
     referral = find_referral(pushed_referers)
+    cache_hit = action_name == 'show' && ::Cache::PageCache.new.exists?(uid)
 
     attrs = {
       session_id:  fingerprint,
@@ -18,6 +19,7 @@ module Concerns::Logging
       uid:         uid,
       screen_name: screen_name,
       action:      action_name,
+      cache_hit:   cache_hit,
       ego_surfing: user_signed_in? && current_user.uid.to_i == uid.to_i,
       method:      request.method,
       device_type: request.device_type,

@@ -11,6 +11,7 @@ class CreateTwitterUserWorker
       user_id:     user_id,
       uid:         uid,
       screen_name: values['screen_name'],
+      action:      values['action'],
       bot_uid:     -100,
       auto:        values['auto'],
       via:         values['via'],
@@ -20,7 +21,8 @@ class CreateTwitterUserWorker
       user_agent:  values['user_agent'],
       referer:     values['referer'],
       referral:    values['referral'],
-      channel:     values['channel']
+      channel:     values['channel'],
+      medium:      values['medium'],
     )
     user = User.find_by(id: user_id)
     client = user.nil? ? Bot.api_client : user.api_client
