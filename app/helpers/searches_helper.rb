@@ -93,6 +93,7 @@ module SearchesHelper
       session_id:  fingerprint,
       uid:         uid,
       screen_name: screen_name,
+      action:      action_name,
       user_id:     user_id,
       auto:        %w(show).include?(action_name),
       via:         params[:via] ? params[:via] : '',
@@ -103,6 +104,7 @@ module SearchesHelper
       referer:     truncated_referer,
       referral:    referral,
       channel:     find_channel(referral),
+      medium:      params[:medium] ? params[:medium] : '',
     }
     searched_uid_list.add(uid)
     CreateTwitterUserWorker.perform_async(values)

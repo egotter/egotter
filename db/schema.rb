@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(version: 20161129052705) do
     t.integer  "user_id",     limit: 4,     default: -1,    null: false
     t.string   "uid",         limit: 191,   default: "-1",  null: false
     t.string   "screen_name", limit: 191,   default: "",    null: false
+    t.string   "action",      limit: 191,   default: "",    null: false
     t.string   "bot_uid",     limit: 191,   default: "-1",  null: false
     t.boolean  "auto",                      default: false, null: false
     t.boolean  "status",                    default: false, null: false
@@ -32,6 +33,7 @@ ActiveRecord::Schema.define(version: 20161129052705) do
     t.string   "referer",     limit: 191,   default: "",    null: false
     t.string   "referral",    limit: 191,   default: "",    null: false
     t.string   "channel",     limit: 191,   default: "",    null: false
+    t.string   "medium",      limit: 191,   default: "",    null: false
     t.datetime "created_at",                                null: false
   end
 
@@ -243,6 +245,7 @@ ActiveRecord::Schema.define(version: 20161129052705) do
     t.string   "uid",         limit: 191, default: "",    null: false
     t.string   "screen_name", limit: 191, default: "",    null: false
     t.string   "action",      limit: 191, default: "",    null: false
+    t.boolean  "cache_hit",               default: false, null: false
     t.boolean  "ego_surfing",             default: false, null: false
     t.string   "method",      limit: 191, default: "",    null: false
     t.string   "device_type", limit: 191, default: "",    null: false
@@ -643,6 +646,7 @@ ActiveRecord::Schema.define(version: 20161129052705) do
 
   add_index "visitors", ["created_at"], name: "index_visitors_on_created_at", using: :btree
   add_index "visitors", ["first_access_at"], name: "index_visitors_on_first_access_at", using: :btree
+  add_index "visitors", ["last_access_at"], name: "index_visitors_on_last_access_at", using: :btree
   add_index "visitors", ["screen_name"], name: "index_visitors_on_screen_name", using: :btree
   add_index "visitors", ["session_id"], name: "index_visitors_on_session_id", unique: true, using: :btree
   add_index "visitors", ["uid"], name: "index_visitors_on_uid", using: :btree

@@ -14,5 +14,6 @@ class CreateVisitors < ActiveRecord::Migration
     add_index :visitors, :session_id, unique: true
     add_index :visitors, :created_at
     add_index :visitors, :first_access_at
+    add_index :visitors, :last_access_at
   end
 end

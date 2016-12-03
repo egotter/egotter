@@ -6,6 +6,7 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
       t.string  :uid,         null: false, default: -1
       t.string  :screen_name, null: false, default: ''
 
+      t.string  :action,      null: false, default: ''
       t.string  :bot_uid,     null: false, default: -1
       t.boolean :auto,        null: false, default: false
       t.boolean :status,      null: false, default: false
@@ -21,6 +22,7 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
       t.string  :referer,     null: false, default: ''
       t.string  :referral,    null: false, default: ''
       t.string  :channel,     null: false, default: ''
+      t.string  :medium,      null: false, default: ''
 
       t.datetime :created_at, null: false
     end
