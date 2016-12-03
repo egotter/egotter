@@ -7,6 +7,7 @@ class CreateVisitors < ActiveRecord::Migration
       t.string   :screen_name,     null: false, default: '', index: true
       t.datetime :first_access_at, null: true
       t.datetime :last_access_at,  null: true
+      t.string   :first_channel,   null: false, default: ''
 
       t.timestamps null: false
     end

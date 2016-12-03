@@ -3,6 +3,8 @@ class CreatePageCacheLogs < ActiveRecord::Migration
     create_table :page_cache_logs do |t|
       t.string  :session_id,  null: false, default: ''
       t.integer :user_id,     null: false, default: -1
+      t.string  :uid,         null: false, default: -1
+      t.string  :screen_name, null: false, default: ''
 
       t.string  :context,     null: false, default: ''
 

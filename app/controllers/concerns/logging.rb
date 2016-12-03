@@ -73,12 +73,14 @@ module Concerns::Logging
     Rollbar.warn(e)
   end
 
-  def create_modal_open_log(via)
+  def create_modal_open_log(uid, screen_name, via:)
     referral = find_referral(pushed_referers)
 
     attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
+      uid:         uid,
+      screen_name: screen_name,
       via:         via,
       device_type: request.device_type,
       os:          request.os,
@@ -96,12 +98,14 @@ module Concerns::Logging
     Rollbar.warn(e)
   end
 
-  def create_page_cache_log(context)
+  def create_page_cache_log(uid, screen_name, context:)
     referral = find_referral(pushed_referers)
 
     attrs = {
       session_id:  fingerprint,
       user_id:     current_user_id,
+      uid:         uid,
+      screen_name: screen_name,
       context:     context,
       device_type: request.device_type,
       os:          request.os,

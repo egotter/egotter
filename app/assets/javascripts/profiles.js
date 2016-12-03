@@ -60,8 +60,8 @@ function enableSlickOnSearchHistory(selector){
   container.find('.media.score-box').show();
 }
 
-function setModalOpenLogger(selector, via, url) {
+function setModalOpenLogger(selector, url) {
   $(selector).on('shown.bs.modal', function() {
-    $.post(url, {via: via});
+    $.post(url);
   });
 }

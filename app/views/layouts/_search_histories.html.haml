@@ -24,7 +24,7 @@
 :javascript
   $(function () {
     var selector = '.search-modal';
-    setModalOpenLogger(selector, 'search_history', '#{modal_open_logs_path}');
+    setModalOpenLogger(selector, '#{modal_open_logs_path(uid: -1, screen_name: "", via: "search_history")}');
 
     $(selector).one('show.bs.modal', function (e) {
       setTimeout(function () { enableSlickOnSearchHistory('#search-histories-in-modal') }, 500);

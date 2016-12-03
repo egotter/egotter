@@ -12,7 +12,7 @@
         <script>
           $(function () {
             enableSlickOnModalWithDelay('<%= unique_id %>');
-            setModalOpenLogger('.profile-overview-modal.<%= unique_id %>', 'profile', '<%= modal_open_logs_path %>');
+            setModalOpenLogger('.profile-overview-modal.<%= unique_id %>', '<%= modal_open_logs_path(uid: user.uid, screen_name: user.screen_name, via: "profile") %>');
           });
         </script>
 

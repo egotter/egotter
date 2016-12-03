@@ -8,6 +8,7 @@ module RelationshipsHelper
       session_id:   fingerprint,
       uids:         uids,
       screen_names: screen_names,
+      action:       action_name,
       user_id:      user_id,
       via:          params[:via] ? params[:via] : '',
       device_type:  request.device_type,

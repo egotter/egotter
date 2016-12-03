@@ -20,6 +20,7 @@ namespace :visitors do
         visitor = visitors[log.session_id]
         assign_timestamp(visitor, :first_access_at, log.created_at) { |_visitor, attr, value| _visitor[attr] > value }
         assign_timestamp(visitor, :last_access_at, log.created_at) { |_visitor, attr, value| _visitor[attr] < value }
+        visitor.assign_attributes(first_channel: log.channel) if visitor.first_channel.blank?
       end
 
       users = User.where(id: search_logs.with_login.uniq.pluck(:user_id)).index_by(&:id)

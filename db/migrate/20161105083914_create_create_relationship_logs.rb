@@ -6,6 +6,7 @@ class CreateCreateRelationshipLogs < ActiveRecord::Migration
       t.string  :uid,         null: false, default: -1
       t.string  :screen_name, null: false, default: ''
 
+      t.string  :action,      null: false, default: ''
       t.string  :bot_uid,     null: false, default: -1
       t.boolean :status,      null: false, default: false
       t.string  :reason,      null: false, default: ''

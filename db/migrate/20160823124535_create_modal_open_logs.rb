@@ -3,6 +3,8 @@ class CreateModalOpenLogs < ActiveRecord::Migration
     create_table :modal_open_logs do |t|
       t.string  :session_id,  null: false, default: ''
       t.integer :user_id,     null: false, default: -1
+      t.string  :uid,         null: false, default: -1
+      t.string  :screen_name, null: false, default: ''
 
       t.string  :via,         null: false, default: ''
 
