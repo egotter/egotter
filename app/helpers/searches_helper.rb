@@ -108,7 +108,7 @@ module SearchesHelper
     }
     searched_uid_list.add(uid)
     jid = CreateTwitterUserWorker.perform_async(values)
-    logger.warn "#{self.class}##{__method__}: #{jid}"
+    logger.info "#{self.class}##{__method__}: #{jid}"
     jid
   end
 end
