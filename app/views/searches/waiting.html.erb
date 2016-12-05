@@ -52,7 +52,8 @@
   $(function () {
     var checkLogPath = "<%= background_search_log_path(uid: @searched_tw_user.uid) %>";
     var resultPath = "<%= search_path(screen_name: @searched_tw_user.screen_name) %>";
+    var pollingLogsPath = "<%= raw polling_logs_path(uid: @searched_tw_user.uid, screen_name: @searched_tw_user.screen_name) %>";
     var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
-    waiting(checkLogPath, resultPath, scope);
+    searchesWaiting(checkLogPath, resultPath, pollingLogsPath, scope);
   });
 </script>

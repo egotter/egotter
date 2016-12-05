@@ -1,17 +1,15 @@
 <script>
   (function(global){
-    class Exception {
-      constructor(msg1, msg2) {
-        this.msg1 = msg1;
-        this.msg2 = msg2;
-        this.isLogin = <%= user_signed_in? ? 'true' : 'false' %>;
-      }
+    var Exception = function (msg1, msg2) {
+      this.msg1 = msg1;
+      this.msg2 = msg2;
+      this.isLogin = <%= user_signed_in? ? 'true' : 'false' %>;
+    };
 
-      showMessage() {
-        $('.error-msg').html(this.isLogin ? this.msg1 : this.msg2);
-        $('.rescue-box').show();
-      }
-    }
+    Exception.prototype.showMessage = function () {
+      $('.error-msg').html(this.isLogin ? this.msg1 : this.msg2);
+      $('.rescue-box').show();
+    };
 
     var tooManyRequests = new Exception(
       '<%= I18n.t("after_sign_in.too_many_requests") %>',
@@ -23,7 +21,7 @@
       '<%= I18n.t("before_sign_in.unauthorized", sign_in_link: link_to(I18n.t('dictionary.sign_in'), welcome_path)).html_safe %>'
     );
 
-    var somethingIsWrong = new Exception(
+    var somethingError = new Exception(
       '<%= I18n.t("after_sign_in.something_is_wrong") %>',
       '<%= I18n.t("before_sign_in.something_is_wrong", sign_in_link: link_to(I18n.t('dictionary.sign_in'), welcome_path)).html_safe %>'
     );
@@ -36,9 +34,9 @@
     global.egotter = global.egotter || {};
 
     global.egotter.errors = {
-      <%= BackgroundSearchLog::TooManyRequests::MESSAGE %>: tooManyRequests,
-      <%= BackgroundSearchLog::Unauthorized::MESSAGE %>: unauthorized,
-      <%= BackgroundSearchLog::SomethingError::MESSAGE %>: somethingIsWrong,
+      tooManyRequests: tooManyRequests, // <%= BackgroundSearchLog::TooManyRequests::MESSAGE %>
+      unauthorized: unauthorized,       // <%= BackgroundSearchLog::Unauthorized::MESSAGE %>
+      somethingError: somethingError,   // <%= BackgroundSearchLog::SomethingError::MESSAGE %>
       "Timeout": timeout
     };
   })(window);

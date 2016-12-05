@@ -3,6 +3,7 @@
 :logfile: ./log/sidekiq.log
 :queues:
   - egotter
+  - CreatePollingLogWorker
   - CreateModalOpenLogWorker
   - CreateNotificationMessageWorker
   - CreatePageCacheLogWorker

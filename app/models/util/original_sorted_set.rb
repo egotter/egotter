@@ -1,5 +1,5 @@
 module Util
-  class SortedSet
+  class OriginalSortedSet
     attr_reader :redis
 
     def initialize(redis)
