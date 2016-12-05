@@ -107,11 +107,14 @@ namespace :twitter_users do
 
   desc 'import unfriends and unfollowers'
   task import_unfriends_and_unfollowers: :environment do
-    TwitterUser.where(created_at: 7.days.ago..Time.zone.now).uniq.pluck(:uid).each_slice(100).each do |uids|
-      twitter_users = TwitterUser.includes(:friends, :followers, :unfriends, :unfollowers).where(uid: uids).order(created_at: :asc).index_by { |tu| tu.uid }
-      twitter_users.values.each do |tu|
-        tu.send(:import_unfriends) if tu.unfriends.empty?
-        tu.send(:import_unfollowers) if tu.unfollowers.empty?
+    Rails.logger.silence do
+      TwitterUser.where(created_at: 7.days.ago..Time.zone.now).uniq.pluck(:uid).each_slice(5).each do |uids|
+        ids = TwitterUser.where(uid: uids).order(created_at: :asc).pluck(:id, :uid).index_by { |tu| tu[1] }.values.map(&:first).sort
+        TwitterUser.includes(:unfriends, :unfollowers).where(id: ids).each do |tu|
+          tu.send(:import_unfriends) if tu.unfriends.empty?
+          tu.send(:import_unfollowers) if tu.unfollowers.empty?
+        end
+        puts "#{Time.zone.now}: processed: #{ids.join(', ')}"
       end
     end
   end
