@@ -5,6 +5,8 @@
 #  id          :integer          not null, primary key
 #  session_id  :string(191)      default(""), not null
 #  user_id     :integer          default(-1), not null
+#  uid         :string(191)      default("-1"), not null
+#  screen_name :string(191)      default(""), not null
 #  context     :string(191)      default(""), not null
 #  follow      :boolean          default(FALSE), not null
 #  via         :string(191)      default(""), not null
