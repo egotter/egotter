@@ -43,13 +43,18 @@ module Concerns::TwitterUser::Api
     uids.empty? ? [] : older.friends.where(uid: uids)
   end
 
-  def removing
+  def calc_removing
+    logger.warn "#{__method__} is called from #{id},#{screen_name}" # TODO remove
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
       uids = older.friend_uids - newer.friend_uids
       uids.empty? ? [] : older.friends.where(uid: uids)
     end.compact.flatten.reverse
+  end
+
+  def removing
+    unfriends.any? ? unfriends : calc_removing
   end
 
   def new_removed
@@ -60,13 +65,18 @@ module Concerns::TwitterUser::Api
     uids.empty? ? [] : older.followers.where(uid: uids)
   end
 
-  def removed
+  def calc_removed
+    logger.warn "#{__method__} is called from #{id},#{screen_name}" # TODO remove
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
       uids = older.follower_uids - newer.follower_uids
       uids.empty? ? [] : older.followers.where(uid: uids)
     end.compact.flatten.reverse
+  end
+
+  def removed
+    unfollowers.any? ? unfollowers : calc_removed
   end
 
   def new_friends
