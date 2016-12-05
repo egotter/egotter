@@ -287,6 +287,8 @@ ActiveRecord::Schema.define(version: 20161129052705) do
   create_table "sign_in_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "",    null: false
     t.integer  "user_id",     limit: 4,   default: -1,    null: false
+    t.string   "uid",         limit: 191, default: "-1",  null: false
+    t.string   "screen_name", limit: 191, default: "",    null: false
     t.string   "context",     limit: 191, default: "",    null: false
     t.boolean  "follow",                  default: false, null: false
     t.string   "via",         limit: 191, default: "",    null: false

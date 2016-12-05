@@ -3,6 +3,9 @@ class CreateSignInLogs < ActiveRecord::Migration
     create_table :sign_in_logs do |t|
       t.string  :session_id,  null: false, default: ''
       t.integer :user_id,     null: false, default: -1
+      t.string  :uid,         null: false, default: -1
+      t.string  :screen_name, null: false, default: ''
+
       t.string  :context,     null: false, default: ''
       t.boolean :follow,      null: false, default: false
       t.string  :via,         null: false, default: ''
