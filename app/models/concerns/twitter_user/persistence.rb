@@ -27,8 +27,12 @@ module Concerns::TwitterUser::Persistence
 
     # With transactional_fixtures = true, after_commit callbacks is not fired.
     if Rails.env.test?
+      after_create :import_unfollowers
+      after_create :import_unfriends
       after_create :put_relations_back
     else
+      after_commit :import_unfollowers, on: :create
+      after_commit :import_unfriends, on: :create
       after_commit :put_relations_back, on: :create
     end
   end
@@ -50,5 +54,25 @@ module Concerns::TwitterUser::Persistence
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
     destroy
+  end
+
+  def import_unfriends
+    self.class.benchmark_and_silence(:unfriends) do
+      users = calc_removing.map { |u| [u.uid, u.screen_name, u.user_info, id] }
+      Unfriend.import %i(uid screen_name user_info from_id), users, validate: false
+    end
+  rescue => e
+    puts "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
+    []
+  end
+
+  def import_unfollowers
+    self.class.benchmark_and_silence(:unfollowers) do
+      users = calc_removed.map { |u| [u.uid, u.screen_name, u.user_info, id] }
+      Unfollower.import %i(uid screen_name user_info from_id), users, validate: false
+    end
+  rescue => e
+    puts "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
+    []
   end
 end

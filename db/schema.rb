@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161129052705) do
+ActiveRecord::Schema.define(version: 20161205033411) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -337,6 +337,26 @@ ActiveRecord::Schema.define(version: 20161129052705) do
   add_index "twitter_users", ["screen_name"], name: "index_twitter_users_on_screen_name", using: :btree
   add_index "twitter_users", ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
+
+  create_table "unfollowers", force: :cascade do |t|
+    t.integer  "uid",         limit: 8,     null: false
+    t.string   "screen_name", limit: 191,   null: false
+    t.text     "user_info",   limit: 65535, null: false
+    t.integer  "from_id",     limit: 4,     null: false
+    t.datetime "created_at",                null: false
+  end
+
+  add_index "unfollowers", ["from_id"], name: "index_unfollowers_on_from_id", using: :btree
+
+  create_table "unfriends", force: :cascade do |t|
+    t.integer  "uid",         limit: 8,     null: false
+    t.string   "screen_name", limit: 191,   null: false
+    t.text     "user_info",   limit: 65535, null: false
+    t.integer  "from_id",     limit: 4,     null: false
+    t.datetime "created_at",                null: false
+  end
+
+  add_index "unfriends", ["from_id"], name: "index_unfriends_on_from_id", using: :btree
 
   create_table "user_engagement_stats", force: :cascade do |t|
     t.datetime "date",                                 null: false
