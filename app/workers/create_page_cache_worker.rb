@@ -10,6 +10,7 @@ class CreatePageCacheWorker
 
   private
 
+  # A user agent of Net::HTTP is `Ruby`.
   def create(uid)
     uri = URI.parse(Rails.application.routes.url_helpers.page_caches_url)
     http = Net::HTTP.new(uri.host, uri.port)
