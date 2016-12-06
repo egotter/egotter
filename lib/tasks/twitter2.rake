@@ -1,7 +1,7 @@
 namespace :twitter2 do
   namespace :db do
-    desc 'create_users2'
-    task create_users2: :environment do
+    desc 'create_users'
+    task create_users: :environment do
       ActiveRecord::Base.establish_connection(:twitter)
 
       ActiveRecord::Base.connection.execute <<-SQL
@@ -24,8 +24,8 @@ namespace :twitter2 do
       ActiveRecord::Base.establish_connection(Rails.env.to_sym)
     end
 
-    desc 'copy users2'
-    task copy_users2: :environment do
+    desc 'copy users'
+    task copy_users: :environment do
       klass = ENV['TABLE'].classify.constantize
 
       sigint = false
@@ -34,7 +34,8 @@ namespace :twitter2 do
         sigint = true
       end
 
-      start = ENV['START'] ? ENV['START'] : 1
+      start = ENV['START'] ? ENV['START'].to_i : 1
+      batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
       process_start = Time.zone.now
       failed = false
       import_columns = %i(uid screen_name friends_size followers_size user_info created_at updated_at)
@@ -42,7 +43,7 @@ namespace :twitter2 do
       puts "\ncopy started:"
 
       Rails.logger.silence do
-        klass.find_in_batches(start: start, batch_size: 5000) do |users_array|
+        klass.find_in_batches(start: start, batch_size: batch_size) do |users_array|
           users = users_array.map do |u|
             [u.uid, u.screen_name, -1, -1, u.user_info, u.created_at, u.created_at]
           end
@@ -54,7 +55,7 @@ namespace :twitter2 do
             puts "#{e.class} #{e.message.slice(0, 100)}"
             failed = true
           end
-          break if sigint || failed
+          break if sigint || failed || users_array[-1].id >= 10_000_000
         end
       end
 

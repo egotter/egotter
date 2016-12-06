@@ -22,25 +22,28 @@ namespace :twitter do
         sigint = true
       end
 
-      start = ENV['START'] ? ENV['START'] : 1
+      start = ENV['START'] ? ENV['START'].to_i : 1
+      batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
       process_start = Time.zone.now
       failed = false
+      import_columns = %i(uid screen_name friends_size followers_size user_info created_at updated_at)
+      update_columns = %i(screen_name user_info updated_at)
       puts "\ncopy started:"
 
       Rails.logger.silence do
-        klass.find_in_batches(start: start, batch_size: 5000) do |users_array|
+        klass.find_in_batches(start: start, batch_size: batch_size) do |users_array|
           users = users_array.map do |u|
-            [u.uid, u.screen_name, u.user_info]
+            [u.uid, u.screen_name, -1, -1, u.user_info, u.created_at, u.created_at]
           end
 
           begin
-            TwitterDB::User.import(%i(uid screen_name user_info), users, on_duplicate_key_update: %i(screen_name user_info), validate: false)
+            TwitterDB::User.import(import_columns, users, on_duplicate_key_update: update_columns, validate: false, timestamps: false)
             puts "#{Time.zone.now}: #{users_array[0].id} - #{users_array[-1].id}"
           rescue => e
             puts "#{e.class} #{e.message.slice(0, 100)}"
             failed = true
           end
-          break if sigint || failed
+          break if sigint || failed || users_array[-1].id >= 10_000_000
         end
       end
 
