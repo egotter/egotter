@@ -9,7 +9,7 @@ namespace :visitors do
 
   desc 'update'
   task update: :environment do
-    start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 40.days)
+    start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : 3.days.ago
     end_day = ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now
 
     (start_day.to_date..end_day.to_date).each do |day|

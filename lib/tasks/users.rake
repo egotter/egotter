@@ -9,7 +9,7 @@ namespace :users do
 
   desc 'update timestamps'
   task update_timestamps: :environment do
-    start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 40.days)
+    start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 30.days)
     end_day = ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now
 
     (start_day.to_date..end_day.to_date).each do |day|
