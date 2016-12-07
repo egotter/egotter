@@ -660,6 +660,7 @@ ActiveRecord::Schema.define(version: 20161205033411) do
     t.string   "screen_name",     limit: 191, default: "",   null: false
     t.datetime "first_access_at"
     t.datetime "last_access_at"
+    t.string   "first_channel",   limit: 191, default: "",   null: false
     t.datetime "created_at",                                 null: false
     t.datetime "updated_at",                                 null: false
   end

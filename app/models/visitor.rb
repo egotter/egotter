@@ -9,6 +9,7 @@
 #  screen_name     :string(191)      default(""), not null
 #  first_access_at :datetime
 #  last_access_at  :datetime
+#  first_channel   :string(191)      default(""), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
