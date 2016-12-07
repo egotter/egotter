@@ -338,25 +338,23 @@ ActiveRecord::Schema.define(version: 20161205033411) do
   add_index "twitter_users", ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
-  create_table "unfollowers", force: :cascade do |t|
-    t.integer  "uid",         limit: 8,     null: false
-    t.string   "screen_name", limit: 191,   null: false
-    t.text     "user_info",   limit: 65535, null: false
-    t.integer  "from_id",     limit: 4,     null: false
-    t.datetime "created_at",                null: false
+  create_table "unfollowerships", id: false, force: :cascade do |t|
+    t.integer "follower_id", limit: 4, null: false
+    t.integer "from_uid",    limit: 8, null: false
   end
 
-  add_index "unfollowers", ["from_id"], name: "index_unfollowers_on_from_id", using: :btree
+  add_index "unfollowerships", ["follower_id"], name: "index_unfollowerships_on_follower_id", using: :btree
+  add_index "unfollowerships", ["from_uid", "follower_id"], name: "index_unfollowerships_on_from_uid_and_follower_id", unique: true, using: :btree
+  add_index "unfollowerships", ["from_uid"], name: "index_unfollowerships_on_from_uid", using: :btree
 
-  create_table "unfriends", force: :cascade do |t|
-    t.integer  "uid",         limit: 8,     null: false
-    t.string   "screen_name", limit: 191,   null: false
-    t.text     "user_info",   limit: 65535, null: false
-    t.integer  "from_id",     limit: 4,     null: false
-    t.datetime "created_at",                null: false
+  create_table "unfriendships", id: false, force: :cascade do |t|
+    t.integer "friend_id", limit: 4, null: false
+    t.integer "from_uid",  limit: 8, null: false
   end
 
-  add_index "unfriends", ["from_id"], name: "index_unfriends_on_from_id", using: :btree
+  add_index "unfriendships", ["friend_id"], name: "index_unfriendships_on_friend_id", using: :btree
+  add_index "unfriendships", ["from_uid", "friend_id"], name: "index_unfriendships_on_from_uid_and_friend_id", unique: true, using: :btree
+  add_index "unfriendships", ["from_uid"], name: "index_unfriendships_on_from_uid", using: :btree
 
   create_table "user_engagement_stats", force: :cascade do |t|
     t.datetime "date",                                 null: false

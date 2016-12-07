@@ -107,16 +107,31 @@ namespace :twitter_users do
 
   desc 'import unfriends and unfollowers'
   task import_unfriends_and_unfollowers: :environment do
+    start_day = (ENV['START'] ? Time.zone.parse(ENV['START']) : 7.days.ago).beginning_of_day
+    end_day = (ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now).end_of_day
+    task_start = Time.zone.now
+
+    puts "\nstarted:"
+    puts "  start: #{task_start}\n\n"
+
     Rails.logger.silence do
-      TwitterUser.where(created_at: 7.days.ago..Time.zone.now).uniq.pluck(:uid).each_slice(5).each do |uids|
-        ids = TwitterUser.where(uid: uids).order(created_at: :asc).pluck(:id, :uid).index_by { |tu| tu[1] }.values.map(&:first).sort
-        TwitterUser.includes(:unfriends, :unfollowers).where(id: ids).each do |tu|
-          tu.send(:import_unfriends) if tu.unfriends.empty?
-          tu.send(:import_unfollowers) if tu.unfollowers.empty?
+      uids = TwitterUser.where(created_at: start_day..end_day).uniq.pluck(:uid)
+      total = uids.size
+
+      uids.each.with_index do |uid, i|
+        tu = TwitterUser.order(created_at: :desc).find_by(uid: uid)
+        tu.send(:import_unfriends) if tu.unfriends.empty?
+        tu.send(:import_unfollowers) if tu.unfollowers.empty?
+
+        if i % 10 == 0
+          avg = '%4.1f' % ((Time.zone.now - task_start) / (i + 1))
+          puts "#{Time.zone.now}: total: #{total}, processed: #{i + 1}, avg: #{avg}"
         end
-        puts "#{Time.zone.now}: processed: #{ids.join(', ')}"
       end
     end
+
+    puts "\nfinished:"
+    puts "  start: #{task_start}, finish: #{Time.zone.now}"
   end
 
   desc 'fix counts'
