@@ -7,8 +7,7 @@ class CreateSearchLogWorker
     log.assign_attributes(landing: landing_page?(log), first_time: first_time_session?(log))
     log.save!
 
-    reassign_channel(log)
-
+    reassign_channel(log) unless log.crawler?
     assign_timestamps(log) if log.with_login?
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{attrs.inspect}"
