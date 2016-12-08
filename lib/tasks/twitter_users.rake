@@ -109,6 +109,7 @@ namespace :twitter_users do
   task import_unfriends_and_unfollowers: :environment do
     start_day = (ENV['START'] ? Time.zone.parse(ENV['START']) : 7.days.ago).beginning_of_day
     end_day = (ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now).end_of_day
+    interval = ENV['INTERVAL'] ? ENV['INTERVAL'].to_f : nil
     task_start = Time.zone.now
 
     puts "\nstarted:"
@@ -122,10 +123,12 @@ namespace :twitter_users do
         tu = TwitterUser.order(created_at: :desc).find_by(uid: uid)
         tu.send(:import_unfriends) if tu.unfriends.empty?
         tu.send(:import_unfollowers) if tu.unfollowers.empty?
+        sleep interval
 
         if i % 10 == 0
           avg = '%4.1f' % ((Time.zone.now - task_start) / (i + 1))
-          puts "#{Time.zone.now}: total: #{total}, processed: #{i + 1}, avg: #{avg}"
+          sleeping = interval ? ", interval: #{interval}" : ''
+          puts "#{Time.zone.now}: total: #{total}, processed: #{i + 1}, avg: #{avg}#{sleeping}"
         end
       end
     end
