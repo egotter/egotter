@@ -60,4 +60,12 @@ class SearchLog < ActiveRecord::Base
         .pluck(:session_id)
     end
   end
+
+  def with_login?
+    user_id != -1
+  end
+
+  def crawler?
+    device_type == 'crawler' || session_id == '-1'
+  end
 end
