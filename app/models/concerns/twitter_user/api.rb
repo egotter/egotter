@@ -44,7 +44,6 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_removing
-    logger.warn "#{__method__} is called from #{id},#{screen_name}" # TODO remove
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
@@ -66,7 +65,6 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_removed
-    logger.warn "#{__method__} is called from #{id},#{screen_name}" # TODO remove
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
