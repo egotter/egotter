@@ -63,7 +63,6 @@ gem 'oj'
 gem 'js-routes'
 
 group :development, :production do
-  gem 'kpi_admin', path: '../kpi_admin'
   gem 'blazer'
 end
 
