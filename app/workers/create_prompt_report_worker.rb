@@ -55,6 +55,9 @@ class CreatePromptReportWorker
     else
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is maybe not changed.")
     end
+  rescue Twitter::Error::Unauthorized => e
+    user.update(authorized: false)
+    raise e
   end
 
   def notify(login_user, tu, changes:)
