@@ -84,8 +84,8 @@ module SearchesHelper
   def add_create_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
     return if request.device_type == :crawler
 
-    searched_uid_list = Util::SearchedUidList.new(redis)
-    return if searched_uid_list.exists?(uid)
+    searched_uids = Util::SearchedUids.new(redis)
+    return if searched_uids.exists?(uid)
 
     referral = find_referral(pushed_referers)
 
@@ -106,7 +106,7 @@ module SearchesHelper
       channel:     find_channel(referral),
       medium:      params[:medium] ? params[:medium] : '',
     }
-    searched_uid_list.add(uid)
+    searched_uids.add(uid)
     jid = CreateTwitterUserWorker.perform_async(values)
     logger.info "#{self.class}##{__method__}: #{jid}"
     jid

@@ -1,5 +1,7 @@
+require_relative 'sorted_set'
+
 module Util
-  class SearchedUidList < UidList
+  class SearchedUids < SortedSet
     def self.key
       @@key ||= 'background_search_worker:searched_uids'
     end

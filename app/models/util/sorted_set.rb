@@ -1,5 +1,5 @@
 module Util
-  class UidList
+  class SortedSet
     attr_reader :redis
 
     def initialize(redis)
@@ -30,18 +30,18 @@ module Util
       redis.zremrangebyscore(key, 0, Time.zone.now.to_i - ttl)
     end
 
-    def exists?(uid)
+    def exists?(val)
       cleanup
-      redis.zrank(key, uid.to_s).present?
+      redis.zrank(key, val.to_s).present?
     end
 
-    def add(uid)
+    def add(val)
       cleanup
-      redis.zadd(key, Time.zone.now.to_i, uid.to_s)
+      redis.zadd(key, Time.zone.now.to_i, val.to_s)
     end
 
-    def delete(uid)
-      redis.zrem(key, uid.to_s)
+    def delete(val)
+      redis.zrem(key, val.to_s)
     end
 
     def to_a
