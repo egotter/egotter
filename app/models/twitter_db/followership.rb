@@ -1,5 +1,6 @@
 module TwitterDB
   class Followership < TwitterDB::Base
-    self.table_name = 'followers_users'
+    belongs_to :user, primary_key: :uid
+    belongs_to :follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
   end
 end
