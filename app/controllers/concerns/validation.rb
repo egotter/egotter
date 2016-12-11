@@ -41,7 +41,7 @@ module Validation
   end
 
   def searched_uid?(uid)
-    if Util::SearchedUidList.new(redis).exists?(uid)
+    if Util::SearchedUids.new(redis).exists?(uid)
       true
     else
       if request.xhr?
