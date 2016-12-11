@@ -1,28 +1,40 @@
 module SearchesHelper
   def build_twitter_user(screen_name)
+    user = nil
+    nf_screen_names = Util::NotFoundScreenNames.new(redis)
+    nf_uids = Util::NotFoundUids.new(redis)
+
     begin
       user = client.user(screen_name)
     rescue Twitter::Error::NotFound => e
-      if screen_name.match(Validations::UidValidator::REGEXP)
+      nf_screen_names.add(screen_name)
+    end unless nf_screen_names.exists?(screen_name)
+
+    unless user
+      begin
         user = client.user(screen_name.to_i)
-        if request.user_agent && request.user_agent.exclude?('Twitterbot')
-          logger.info "#{screen_name} is treated as uid. #{current_user_id} #{request.device_type} #{request.browser} #{request.referer}"
-        end
-      else
-        raise e
-      end
+      rescue Twitter::Error::NotFound => e
+        nf_uids.add(screen_name)
+      end if screen_name.match(Validations::UidValidator::REGEXP) && !nf_uids.exists?(screen_name)
     end
-    TwitterUser.build_by_user(user)
+
+    if user
+      TwitterUser.build_by_user(user)
+    else
+      logger.info "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
+      redirect_to root_path, alert: not_found_message(screen_name)
+    end
+
   rescue Twitter::Error::NotFound => e
-    logger.info "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser}"
-    redirect_to root_path, alert: alert_message(e)
-  rescue Twitter::Error::TooManyRequests, Twitter::Error::NotFound, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
-    logger.info "#{request.user_agent}"
+    logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
+    logger.info e.backtrace.take(10).join("\n")
+    redirect_to root_path, alert: not_found_message(screen_name)
+  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
     redirect_to root_path, alert: alert_message(e)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.error(e)
     redirect_to root_path, alert: alert_message(e)
