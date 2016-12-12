@@ -27,19 +27,34 @@ namespace :twitter do
       batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
       process_start = Time.zone.now
       failed = false
-      import_columns = %i(uid screen_name friends_size followers_size user_info created_at updated_at)
-      update_columns = %i(screen_name user_info updated_at)
       puts "\ncopy started:"
 
       Rails.logger.silence do
         klass.find_in_batches(start: start, batch_size: batch_size) do |users_array|
-          users = users_array.map do |u|
-            [u.uid, u.screen_name, -1, -1, u.user_info, u.created_at, u.created_at]
+          uids = users_array.map(&:uid).uniq.map(&:to_i)
+          users = twitter_db_users_find_or_initialize_by(uids).index_by(&:uid)
+
+          users_array.each do |u|
+            user = users[u.uid.to_i]
+            if user.new_record?
+              user.assign_attributes(screen_name: u.screen_name, friends_size: -1, followers_size: -1, user_info: u.user_info, created_at: u.created_at, updated_at: u.created_at)
+            else
+              if user.updated_at < u.created_at
+                user.assign_attributes(screen_name: u.screen_name, user_info: u.user_info, updated_at: u.created_at)
+              end
+            end
           end
 
+          changed, not_changed = users.values.partition { |u| u.changed? }
+          new_record, persisted = changed.partition { |u| u.new_record? }
           begin
-            TwitterDB::User.import(import_columns, users, on_duplicate_key_update: update_columns, validate: false, timestamps: false)
-            puts "#{Time.zone.now}: #{users_array[0].id} - #{users_array[-1].id}"
+            if new_record.any?
+              TwitterDB::User.import(changed.select(&:new_record?), validate: false, timestamps: false)
+            end
+            if persisted.any?
+              TwitterDB::User.import(changed.select(&:persisted?), on_duplicate_key_update: %i(screen_name user_info updated_at), validate: false, timestamps: false)
+            end
+            puts "#{Time.zone.now} users: #{users.size}, changed: #{changed.size}(#{new_record.size}, #{persisted.size}), not_changed: #{not_changed.size}, #{users_array[0].id} - #{users_array[-1].id}"
           rescue => e
             puts "#{e.class} #{e.message.slice(0, 100)}"
             failed = true
@@ -54,6 +69,11 @@ namespace :twitter do
       sleeping = interval ? ", interval: #{interval}" : ''
       puts "copy #{(sigint || failed ? 'suspended:' : 'finished:')}"
       puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds#{sleeping}"
+    end
+
+    def twitter_db_users_find_or_initialize_by(uids)
+      users = TwitterDB::User.where(uid: uids)
+      users + (uids - users.map(&:uid)).map { |uid| TwitterDB::User.new(uid: uid) }
     end
 
     desc 'copy_relations'
