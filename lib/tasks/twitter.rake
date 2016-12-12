@@ -49,10 +49,10 @@ namespace :twitter do
           new_record, persisted = changed.partition { |u| u.new_record? }
           begin
             if new_record.any?
-              TwitterDB::User.import(changed.select(&:new_record?), validate: false, timestamps: false)
+              TwitterDB::User.import(new_record, validate: false, timestamps: false)
             end
             if persisted.any?
-              TwitterDB::User.import(changed.select(&:persisted?), on_duplicate_key_update: %i(screen_name user_info updated_at), validate: false, timestamps: false)
+              TwitterDB::User.import(persisted, on_duplicate_key_update: %i(screen_name user_info updated_at), validate: false, timestamps: false)
             end
             puts "#{Time.zone.now} users: #{users.size}, changed: #{changed.size}(#{new_record.size}, #{persisted.size}), not_changed: #{not_changed.size}, #{users_array[0].id} - #{users_array[-1].id}"
           rescue => e
