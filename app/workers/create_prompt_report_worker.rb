@@ -31,7 +31,7 @@ class CreatePromptReportWorker
       return
     end
 
-    existing_tu = (user.last_access_at ? TwitterUser.till(user.last_access_at) : TwitterUser).latest(user.uid.to_i)
+    existing_tu = (user.last_access_at ? TwitterUser.till(user.last_access_at) : TwitterUser).with_friends.latest(user.uid.to_i)
     if existing_tu.blank?
       log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] has no twitter_users.")
       return

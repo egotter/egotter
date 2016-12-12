@@ -5,7 +5,7 @@ class StatusesController < ApplicationController
 
   before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(show)) { existing_uid?(params[:uid].to_i) }
-  before_action(only: %i(show)) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
+  before_action(only: %i(show)) { @searched_tw_user = TwitterUser.with_friends.latest(params[:uid].to_i) }
   before_action(only: %i(show)) { authorized_search?(@searched_tw_user) }
   before_action only: %i(show) do
     push_referer

@@ -1,11 +1,11 @@
 module Validations
   class FreshRecordValidator < ActiveModel::Validator
     def validate(new_record)
-      latest = TwitterUser.latest(new_record.uid.to_i)
-      return if latest.nil?
+      record = TwitterUser.with_friends.latest(new_record.uid.to_i)
+      return if record.nil?
 
-      if latest.fresh?
-        new_record.errors[:base] << "[#{latest.id}] is recently updated."
+      if record.fresh?
+        new_record.errors[:base] << "[#{record.id}] is recently updated."
       end
     end
   end

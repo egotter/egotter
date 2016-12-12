@@ -9,7 +9,7 @@ class SearchResultsController < ApplicationController
   before_action :need_login, only: %i(common_friends common_followers)
   before_action(only: %i(show) + Search::MENU) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(show) + Search::MENU) { existing_uid?(params[:uid].to_i) }
-  before_action(only: %i(show) + Search::MENU) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
+  before_action(only: %i(show) + Search::MENU) { @searched_tw_user = TwitterUser.with_friends.latest(params[:uid].to_i) }
   before_action(only: %i(show) + Search::MENU) { authorized_search?(@searched_tw_user) }
 
   def show

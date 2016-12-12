@@ -10,7 +10,7 @@ class RelationshipsController < ApplicationController
   before_action(only: %i(create conversations common_friends common_followers)) { @tu.all? { |tu| authorized_search?(tu) } }
   before_action(only: %i(conversations common_friends common_followers)) { @tu.all? { |tu| existing_uid?(tu.uid.to_s) } }
   before_action only: %i(conversations common_friends common_followers) do
-    @searched_tw_users = @tu.map { |tu| TwitterUser.latest(tu.uid.to_i) }
+    @searched_tw_users = @tu.map { |tu| TwitterUser.with_friends.latest(tu.uid.to_i) }
     remove_instance_variable(:@tu)
   end
 

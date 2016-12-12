@@ -28,7 +28,7 @@ module Validation
   end
 
   def existing_uid?(uid)
-    if TwitterUser.exists?(uid: uid)
+    if TwitterUser.with_friends.exists?(uid: uid)
       true
     else
       if request.xhr?

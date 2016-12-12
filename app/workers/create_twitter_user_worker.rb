@@ -29,7 +29,7 @@ class CreateTwitterUserWorker
     log.bot_uid = client.verify_credentials.id
     Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''}) unless user.nil?
 
-    existing_tu = TwitterUser.latest(uid)
+    existing_tu = TwitterUser.with_friends.latest(uid)
     if existing_tu.present? && existing_tu.fresh?
       existing_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
@@ -39,6 +39,13 @@ class CreateTwitterUserWorker
 
     new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: user, context: :search)
     new_tu.user_id = user.nil? ? -1 : user.id
+    if existing_tu.present? && new_tu.friendless?
+      existing_tu.increment(:search_count).save
+      log.update(status: true, call_count: client.call_count, message: "new record of [#{existing_tu.id}] is friendless.")
+      notify(user, existing_tu)
+      return
+    end
+
     if new_tu.save
       new_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")

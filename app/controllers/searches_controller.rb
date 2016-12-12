@@ -11,7 +11,7 @@ class SearchesController < ApplicationController
   before_action(only: Search::MENU + %i(create show)) { authorized_search?(@tu) }
   before_action(only: Search::MENU + %i(show)) { existing_uid?(@tu.uid.to_i) }
   before_action only: Search::MENU + %i(show) do
-    @searched_tw_user = TwitterUser.latest(@tu.uid.to_i)
+    @searched_tw_user = TwitterUser.with_friends.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)
   end
   before_action(only: %i(waiting)) { valid_uid?(params[:uid].to_i) }

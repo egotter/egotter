@@ -30,7 +30,7 @@ class UpdateTwitterUserWorker
       return
     end
 
-    existing_tu = TwitterUser.latest(uid)
+    existing_tu = TwitterUser.with_friends.latest(uid)
     if existing_tu.present? && existing_tu.fresh?
       existing_tu.increment(:update_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")

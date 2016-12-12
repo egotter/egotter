@@ -91,7 +91,7 @@ class User < ActiveRecord::Base
     if instance_variable_defined?(:@twitter_user)
       @twitter_user
     else
-      @twitter_user = TwitterUser.latest(uid.to_i)
+      @twitter_user = TwitterUser.with_friends.latest(uid.to_i)
     end
   end
 

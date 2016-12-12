@@ -25,7 +25,7 @@ class CreateRelationshipWorker
     log.bot_uid = client.verify_credentials.id
     Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''}) unless user.nil?
 
-    existing_tu = uids.map { |uid| TwitterUser.latest(uid) }
+    existing_tu = uids.map { |uid| TwitterUser.with_friends.latest(uid) }
     if existing_tu.all? { |tu| tu.present? }
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.map(&:id).join(',')}] is persisted.")
       return
