@@ -15,6 +15,7 @@ namespace :twitter do
     desc 'copy users'
     task copy_users: :environment do
       klass = ENV['TABLE'].classify.constantize
+      interval = ENV['INTERVAL'] ? ENV['INTERVAL'].to_f : nil
 
       sigint = false
       Signal.trap 'INT' do
@@ -44,12 +45,15 @@ namespace :twitter do
             failed = true
           end
           break if sigint || failed
+
+          sleep interval if interval
         end
       end
 
       process_finish = Time.zone.now
+      sleeping = interval ? ", interval: #{interval}" : ''
       puts "copy #{(sigint || failed ? 'suspended:' : 'finished:')}"
-      puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
+      puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds#{sleeping}"
     end
 
     desc 'copy_relations'
