@@ -54,6 +54,14 @@ production:
   <<: *default
   database: egotter_production
 
-twitter:
+twitter_development:
+  <<: *default
+  database: twitter_development
+
+twitter_test:
+  <<: *default
+  database: twitter_test
+
+twitter_production:
   <<: *default
   database: twitter

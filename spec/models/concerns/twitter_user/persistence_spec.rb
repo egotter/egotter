@@ -23,24 +23,61 @@ RSpec.describe Concerns::TwitterUser::Persistence do
   end
 
   describe '#save' do
+    it 'saves all relations' do
+      expect(tu.save).to be_truthy
+      user = TwitterDB::User.find_by(uid: tu.uid)
+
+      [
+        tu.friends.map(&:uid).map(&:to_i),
+        tu.tmp_friends.map(&:uid),
+        user.friends.map(&:uid),
+        tu.friendships.map(&:friend_uid),
+        user.friendships.map(&:friend_uid),
+      ].combination(2) { |a, b| expect(a).to eq(b) }
+
+      [
+        tu.friends.size,
+        tu.friends_size,
+        user.friends_size
+      ].combination(2) { |a, b| expect(a).to eq(b) }
+
+      [
+        tu.followers.map(&:uid).map(&:to_i),
+        tu.tmp_followers.map(&:uid),
+        user.followers.map(&:uid),
+        tu.followerships.map(&:follower_uid),
+        user.followerships.map(&:follower_uid),
+      ].combination(2) { |a, b| expect(a).to eq(b) }
+
+      [
+        tu.followers.size,
+        tu.followers_size,
+        user.followers_size
+      ].combination(2) { |a, b| expect(a).to eq(b) }
+    end
+
     context 'it is new record' do
-      it 'calls #push_relations_aside, #put_relations_back, #import_unfriends and #import_unfollowers' do
+      it 'calls all callback methods' do
         expect(tu).to receive(:push_relations_aside)
         expect(tu).to receive(:put_relations_back)
         expect(tu).to receive(:import_unfriends)
         expect(tu).to receive(:import_unfollowers)
+        expect(tu).to receive(:import_twitter_db_users)
+        expect(tu).to receive(:import_relationships)
         expect(tu.save).to be_truthy
       end
     end
 
     context 'it is already persisted' do
       before { tu.save! }
-      it 'does not call #push_relations_aside, #put_relations_back, #import_unfriends and #import_unfollowers' do
+      it 'does not call any callback methods' do
         tu.uid = tu.uid.to_i * 2
         expect(tu).not_to receive(:push_relations_aside)
         expect(tu).not_to receive(:put_relations_back)
         expect(tu).not_to receive(:import_unfriends)
         expect(tu).not_to receive(:import_unfollowers)
+        expect(tu).not_to receive(:import_twitter_db_users)
+        expect(tu).not_to receive(:import_relationships)
         expect(tu.save).to be_truthy
       end
     end
@@ -48,7 +85,7 @@ RSpec.describe Concerns::TwitterUser::Persistence do
 
   describe '#import_relations!' do
     let(:followers) { [build(:follower)] }
-    before { tu.save! }
+    before { tu.save! } # to generate a primary key
 
     it 'does not call Follower#valid?' do
       followers.each { |f| expect(f).not_to receive(:valid?) }
@@ -124,6 +161,23 @@ RSpec.describe Concerns::TwitterUser::Persistence do
         expect([Unfollowership.all.size, tu.unfollowers.size]).to match_array([num, num])
         expect { tu.send(:import_unfollowers) }.to change { Unfollowership.all.size }.by(-(Unfollowership.all.size - users.size))
       end
+    end
+  end
+
+  describe '#import_twitter_db_users' do
+    it 'calls TwitterDB::User.import_from!' do
+      expect(TwitterDB::User).to receive(:import_from!).exactly(3).times
+      tu.send(:import_twitter_db_users)
+    end
+  end
+
+  describe '#import_relationships' do
+    it 'calls klass.import_from!' do
+      expect(TwitterDB::Friendship).to receive(:import_from!)
+      expect(Friendship).to receive(:import_from!)
+      expect(TwitterDB::Followership).to receive(:import_from!)
+      expect(Followership).to receive(:import_from!)
+      tu.send(:import_relationships)
     end
   end
 end

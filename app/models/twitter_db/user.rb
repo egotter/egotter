@@ -14,5 +14,49 @@ module TwitterDB
     alias_method :friend_uids=, :friend_ids=
     alias_method :follower_uids, :follower_ids
     alias_method :follower_uids=, :follower_ids=
+
+    def self.find_or_import_by(twitter_user)
+      import_from!([twitter_user]) unless exists?(uid: twitter_user.uid)
+      find_by(uid: twitter_user.uid)
+    end
+
+    def self.import_from!(users_array)
+      uids = users_array.map(&:uid).map(&:to_i)
+      users = where(uid: uids)
+      users += (uids - users.map(&:uid)).map { |uid| new(uid: uid) }
+      users = users.index_by(&:uid)
+
+      users_array.each do |u|
+        user = users[u.uid.to_i]
+        if user.new_record?
+          user.assign_attributes(
+            screen_name: u.screen_name,
+            friends_size: -1,
+            followers_size: -1,
+            user_info: u.user_info,
+            created_at: u.created_at,
+            updated_at: u.created_at
+          )
+        else
+          if user.updated_at < u.created_at
+            user.assign_attributes(
+              screen_name: u.screen_name,
+              user_info: u.user_info,
+              updated_at: u.created_at
+            )
+          end
+        end
+      end
+
+      changed, not_changed = users.values.partition { |u| u.changed? }
+      new_record, persisted = changed.partition { |u| u.new_record? }
+      if new_record.any?
+        import(new_record, validate: false, timestamps: false)
+      end
+      if persisted.any?
+        import(persisted, on_duplicate_key_update: %i(screen_name user_info updated_at), validate: false, timestamps: false)
+      end
+      puts "#{Time.zone.now} users(#{users_array.first.class}): #{users.size}, changed: #{changed.size}(#{new_record.size}, #{persisted.size}), not_changed: #{not_changed.size}, #{users_array[0].id} - #{users_array[-1].id}"
+    end
   end
 end

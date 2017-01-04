@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20161205033411) do
+ActiveRecord::Schema.define(version: 20170104061821) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -143,6 +143,16 @@ ActiveRecord::Schema.define(version: 20161205033411) do
 
   add_index "followers", ["from_id"], name: "index_followers_on_from_id", using: :btree
 
+  create_table "followerships", id: false, force: :cascade do |t|
+    t.integer "from_id",      limit: 4, null: false
+    t.integer "follower_uid", limit: 8, null: false
+    t.integer "sequence",     limit: 4, null: false
+  end
+
+  add_index "followerships", ["follower_uid"], name: "index_followerships_on_follower_uid", using: :btree
+  add_index "followerships", ["from_id", "follower_uid"], name: "index_followerships_on_from_id_and_follower_uid", unique: true, using: :btree
+  add_index "followerships", ["from_id"], name: "index_followerships_on_from_id", using: :btree
+
   create_table "friends", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
     t.string   "screen_name", limit: 191,   null: false
@@ -152,6 +162,16 @@ ActiveRecord::Schema.define(version: 20161205033411) do
   end
 
   add_index "friends", ["from_id"], name: "index_friends_on_from_id", using: :btree
+
+  create_table "friendships", id: false, force: :cascade do |t|
+    t.integer "from_id",    limit: 4, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "friendships", ["friend_uid"], name: "index_friendships_on_friend_uid", using: :btree
+  add_index "friendships", ["from_id", "friend_uid"], name: "index_friendships_on_from_id_and_friend_uid", unique: true, using: :btree
+  add_index "friendships", ["from_id"], name: "index_friendships_on_from_id", using: :btree
 
   create_table "mentions", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
