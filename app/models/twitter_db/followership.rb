@@ -4,8 +4,9 @@ module TwitterDB
     belongs_to :follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 
     def self.import_from!(twitter_user)
-      followerships = twitter_user.followers.pluck(:uid).map.with_index { |uid, i| [uid, twitter_user.uid, i] }
       user = TwitterDB::User.find_or_import_by(twitter_user)
+      followerships = twitter_user.followers.pluck(:uid).map.with_index { |uid, i| [uid, twitter_user.uid, i] }
+      return if followerships.empty?
 
       ActiveRecord::Base.transaction do
         delete_all(user_uid: twitter_user.uid)
