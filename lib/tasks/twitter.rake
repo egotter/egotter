@@ -81,9 +81,16 @@ namespace :twitter do
                 TwitterDB::Friendship.import_from!(twitter_user)
                 TwitterDB::Followership.import_from!(twitter_user)
               end
-            rescue => e
-              puts "#{user.uid} #{user.screen_name} #{e.class} #{e.message}"
+            rescue ActiveRecord::InvalidForeignKey => e
               failed = true
+              puts "#{twitter_user.uid} #{twitter_user.screen_name} #{e.class} #{e.message}"
+              friend_uids = twitter_user.friends.pluck(:uid).map(&:to_i)
+              puts "no friends: #{friend_uids - TwitterDB::User.where(uid: friend_uids).pluck(:uid)}"
+              follower_uids = twitter_user.followers.pluck(:uid).map(&:to_i)
+              puts "no followers: #{follower_uids - TwitterDB::User.where(uid: follower_uids).pluck(:uid)}"
+            rescue => e
+              failed = true
+              puts "#{twitter_user.uid} #{twitter_user.screen_name} #{e.class} #{e.message}"
             end
             break if sigint || failed
 
@@ -91,7 +98,7 @@ namespace :twitter do
           end
           break if sigint || failed
 
-          puts "#{Time.zone.now}: targets: #{targets.size}, uids: #{uids.size}, twitter_users: #{twitter_users.size}, users: #{users.size} processed: #{processed.size}"
+          puts "#{Time.zone.now}: targets: #{targets.size}, uids: #{uids.size}, twitter_users: #{twitter_users.size}, users: #{twitter_users.size} processed: #{processed.size}"
         end
       end
 
