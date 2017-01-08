@@ -15,9 +15,7 @@ module Concerns::TwitterUser::Persistence
 
     def benchmark_and_silence(attr)
       ActiveRecord::Base.benchmark("#{self.class}#import_relations! #{attr}") do
-        logger.silence do
-          yield
-        end
+        logger.silence { yield }
       end
     end
   end
@@ -27,17 +25,21 @@ module Concerns::TwitterUser::Persistence
 
     # With transactional_fixtures = true, after_commit callbacks is not fired.
     if Rails.env.test?
-      after_create :import_unfollowers
-      after_create :import_unfriends
-      after_create :put_relations_back
+      after_create :call_all_callbacks
     else
-      after_commit :import_unfollowers, on: :create
-      after_commit :import_unfriends, on: :create
-      after_commit :put_relations_back, on: :create
+      after_commit :call_all_callbacks, on: :create
     end
   end
 
   private
+
+  def call_all_callbacks
+    put_relations_back
+    import_unfriends
+    import_unfollowers
+    import_twitter_db_users
+    import_relationships
+  end
 
   def push_relations_aside
     # Fetch before calling save, or `SELECT * FROM relation_name WHERE from_id = xxx` is executed
@@ -75,6 +77,32 @@ module Concerns::TwitterUser::Persistence
       ActiveRecord::Base.transaction do
         Unfollowership.delete_all(from_uid: uid)
         Unfollowership.import %i(follower_id from_uid), relationships, validate: false, timestamps: false
+      end
+    end
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
+    false
+  end
+
+  def import_twitter_db_users
+    self.class.benchmark_and_silence(:twitter_db_users) do
+      TwitterDB::User.import_from!(friends)
+      TwitterDB::User.import_from!(followers)
+      TwitterDB::User.import_from!([self])
+    end
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
+    false
+  end
+
+  def import_relationships
+    self.class.benchmark_and_silence(:twitter_db_users) do
+      ActiveRecord::Base.transaction do
+        TwitterDB::Friendship.import_from!(self)
+        Friendship.import_from!(self)
+
+        TwitterDB::Followership.import_from!(self)
+        Followership.import_from!(self)
       end
     end
   rescue => e
