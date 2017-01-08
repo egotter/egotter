@@ -21,6 +21,8 @@ module TwitterDB
     end
 
     def self.import_from!(users_array)
+      return if users_array.empty?
+
       uids = users_array.map(&:uid).map(&:to_i)
       users = where(uid: uids)
       users += (uids - users.map(&:uid)).map { |uid| new(uid: uid) }
