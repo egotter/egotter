@@ -172,4 +172,43 @@ namespace :twitter_users do
     puts "fix counts #{(sigint || failed ? 'suspended:' : 'finished:')}"
     puts "  start: #{start}, total: #{(Time.zone.now - start_time).round(1)} seconds"
   end
+
+  desc 'copy_relations'
+  task copy_relations: :environment do
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
+    process_start = Time.zone.now
+    failed = false
+    puts "\ncopy started:"
+
+    Rails.logger.silence do
+      TwitterUser.with_friends.find_in_batches(start: start, batch_size: batch_size) do |twitter_users|
+        twitter_users.each do |twitter_user|
+          begin
+            ActiveRecord::Base.transaction do
+              Friendship.import_from!(twitter_user)
+              Followership.import_from!(twitter_user)
+            end
+          rescue => e
+            failed = true
+            puts "#{twitter_user.uid} #{twitter_user.screen_name} #{e.class} #{e.message}"
+          end
+          break if sigint || failed
+        end
+        break if sigint || failed
+
+        puts "#{Time.zone.now}: twitter_users: #{twitter_users.size}, #{twitter_users[0].id} - #{twitter_users[-1].id}"
+      end
+    end
+
+    process_finish = Time.zone.now
+    puts "copy #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
+  end
 end
