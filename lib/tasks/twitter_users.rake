@@ -107,34 +107,41 @@ namespace :twitter_users do
 
   desc 'import unfriends and unfollowers'
   task import_unfriends_and_unfollowers: :environment do
-    start_day = (ENV['START'] ? Time.zone.parse(ENV['START']) : 7.days.ago).beginning_of_day
-    end_day = (ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now).end_of_day
-    interval = ENV['INTERVAL'] ? ENV['INTERVAL'].to_f : nil
-    task_start = Time.zone.now
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
 
-    puts "\nstarted:"
-    puts "  start: #{task_start}\n\n"
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
+    process_start = Time.zone.now
+    puts "\nimport started:"
 
+    processed = []
     Rails.logger.silence do
-      uids = TwitterUser.where(created_at: start_day..end_day).uniq.pluck(:uid)
-      total = uids.size
+      TwitterUser.with_friends.find_in_batches(start: start, batch_size: batch_size) do |tu_array|
+        uids = tu_array.select { |tu| processed.exclude?(tu.uid.to_i) }.map(&:uid).uniq
 
-      uids.each.with_index do |uid, i|
-        tu = TwitterUser.order(created_at: :desc).find_by(uid: uid)
-        tu.send(:import_unfriends) if tu.unfriends.empty?
-        tu.send(:import_unfollowers) if tu.unfollowers.empty?
-        sleep interval
+        uids.each do |uid|
+          twitter_user = TwitterUser.order(created_at: :desc).find_by(uid: uid)
+          twitter_user.send(:import_unfriends)
+          twitter_user.send(:import_unfollowers)
 
-        if i % 10 == 0
-          avg = '%4.1f' % ((Time.zone.now - task_start) / (i + 1))
-          sleeping = interval ? ", interval: #{interval}" : ''
-          puts "#{Time.zone.now}: total: #{total}, processed: #{i + 1}, avg: #{avg}#{sleeping}"
+          processed << uid.to_i
+          break if sigint
         end
+
+        avg = '%3.1f' % ((Time.zone.now - process_start) / processed.size)
+        puts "#{Time.zone.now} processed: #{processed.size}, avg: #{avg}, #{tu_array[0].id} - #{tu_array[-1].id}"
+
+        break if sigint
       end
     end
 
-    puts "\nfinished:"
-    puts "  start: #{task_start}, finish: #{Time.zone.now}"
+    process_finish = Time.zone.now
+    puts "import #{(sigint ? 'suspended:' : 'finished:')}"
+    puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
   end
 
   desc 'fix counts'

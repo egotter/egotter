@@ -8,7 +8,7 @@ before_install:
 install: bundle install --without development production --deployment
 script:
   - bundle exec rake db:create db:schema:load
-  - bundle exec rake twitter:db:create db:migrate:down VERSION=20161129052705
+  - bundle exec rake twitter_db:create db:migrate:down VERSION=20161129052705
   - bundle exec rake db:migrate:up VERSION=20161129052705
   - bundle exec rspec
 services:
