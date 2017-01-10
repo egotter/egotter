@@ -14,7 +14,7 @@ module SearchesHelper
     end
     TwitterUser.build_by_user(user)
   rescue Twitter::Error::NotFound => e
-    logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser}"
+    logger.info "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser}"
     redirect_to root_path, alert: alert_message(e)
   rescue Twitter::Error::TooManyRequests, Twitter::Error::NotFound, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type}"
