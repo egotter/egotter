@@ -92,12 +92,79 @@ namespace :twitter_db do
         end
         break if sigint || failed
 
-        puts "#{Time.zone.now}: targets: #{targets.size}, uids: #{uids.size}, twitter_users: #{twitter_users.size}, users: #{twitter_users.size} processed: #{processed.size}"
+        puts "#{Time.zone.now}: targets: #{targets.size}, uids: #{uids.size}, twitter_users: #{twitter_users.size},  processed: #{processed.size}, #{targets[0].id} - #{targets[-1].id}"
       end
     end
 
     process_finish = Time.zone.now
     puts "copy #{(sigint || failed ? 'suspended:' : 'finished:')}"
     puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
+  end
+
+  desc 'verify_relations'
+  task verify_relations: :environment do
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
+    process_start = Time.zone.now
+    failed = false
+    puts "\nverify started:"
+
+    processed = []
+    invalid = []
+    Rails.logger.silence do
+      TwitterUser.with_friends.find_in_batches(start: start, batch_size: batch_size) do |targets|
+        uids = targets.select { |tu| processed.exclude?(tu.uid.to_i) }.map(&:uid).uniq
+        twitter_users = TwitterUser.where(uid: uids).order(created_at: :asc).index_by { |tu| tu.uid.to_i }.values
+        users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+
+        twitter_users.each do |twitter_user|
+          user = users[twitter_user.uid.to_i]
+
+          friends_valid = [
+            twitter_user.friends.size,
+            twitter_user.friends_size,
+            twitter_user.friendships.size,
+            Friendship.where(from_id: twitter_user.id).size,
+            user.friends.size,
+            user.friends_size,
+            user.friendships.size,
+            TwitterDB::Friendship.where(user_uid: user.uid).size
+          ].combination(2).all? { |a, b| a == b }
+
+          followers_valid = [
+              twitter_user.followers.size,
+              twitter_user.followers_size,
+              twitter_user.followerships.size,
+              Followership.where(from_id: twitter_user.id).size,
+              user.followers.size,
+              user.followers_size,
+              user.followerships.size,
+              TwitterDB::Followership.where(user_uid: user.uid).size
+          ].combination(2).all? { |a, b| a == b }
+
+          if !friends_valid || !followers_valid
+            invalid << twitter_user.uid.to_i
+            puts "invalid id=#{twitter_user.id} uid=#{twitter_user.uid} screen_name=#{twitter_user.screen_name}"
+          end
+
+          break if sigint || failed
+          processed << twitter_user.uid.to_i
+        end
+        break if sigint || failed
+
+        puts "#{Time.zone.now}: targets: #{targets.size}, uids: #{uids.size}, twitter_users: #{twitter_users.size},  processed: #{processed.size}, #{targets[0].id} - #{targets[-1].id}"
+      end
+    end
+
+    process_finish = Time.zone.now
+    puts "verify #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
+    puts "invalid #{invalid.inspect}" if invalid.any?
   end
 end
