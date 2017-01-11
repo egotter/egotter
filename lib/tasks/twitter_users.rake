@@ -211,4 +211,55 @@ namespace :twitter_users do
     puts "copy #{(sigint || failed ? 'suspended:' : 'finished:')}"
     puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
   end
+
+  desc 'verify_relations'
+  task verify_relations: :environment do
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
+    process_start = Time.zone.now
+    puts "\nverify started:"
+
+    processed = 0
+    invalid = []
+    Rails.logger.silence do
+      TwitterUser.with_friends.find_each(start: start, batch_size: batch_size).with_index do |twitter_user, i|
+        friends_size = [
+            twitter_user.friends.size,
+            twitter_user.friends_size,
+            twitter_user.friendships.size,
+            Friendship.where(from_id: twitter_user.id).size,
+        ]
+
+        followers_size = [
+            twitter_user.followers.size,
+            twitter_user.followers_size,
+            twitter_user.followerships.size,
+            Followership.where(from_id: twitter_user.id).size,
+        ]
+
+        if [friends_size, followers_size].any? { |array| !array.combination(2).all? { |a, b| a == b } }
+          invalid << twitter_user.id
+          puts "invalid id: #{user.id}, uid: #{user.uid}, screen_name: #{user.screen_name}, friends: #{friends_size.inspect}, followers: #{followers_size.inspect}"
+        end
+        processed += 1
+
+        if i % batch_size == 0
+          puts "#{Time.zone.now} processed: #{processed.size}"
+        end
+
+        break if sigint
+      end
+    end
+
+    process_finish = Time.zone.now
+    puts "verify #{(sigint ? 'suspended:' : 'finished:')}"
+    puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
+    puts "invalid #{invalid.inspect}" if invalid.any?
+  end
 end
