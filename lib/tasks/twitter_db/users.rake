@@ -110,37 +110,40 @@ namespace :twitter_db do
     end
 
     start = ENV['START'] ? ENV['START'].to_i : 1
-    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
+    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 100
     process_start = Time.zone.now
     puts "\nverify started:"
 
     processed = 0
     invalid = []
     Rails.logger.silence do
-      TwitterDB::User.where('friends_size >= 0 and followers_size >= 0').find_each(start: start, batch_size: batch_size).with_index do |user, i|
-        friends_size = [
-          user.friends.size,
-          user.friends_size,
-          user.friendships.size,
-          TwitterDB::Friendship.where(user_uid: user.uid).size
-        ]
+      TwitterDB::User.where('friends_size >= 0 and followers_size >= 0').find_in_batches(start: start, batch_size: batch_size) do |users_array|
+        TwitterDB::User.where(id: users_array.map(&:id)).each do |user|
+          friends_size = [
+            user.friends.size,
+            user.friends_size,
+            user.friendships.size,
+            TwitterDB::Friendship.where(user_uid: user.uid).size
+          ]
 
-        followers_size = [
-          user.followers.size,
-          user.followers_size,
-          user.followerships.size,
-          TwitterDB::Followership.where(user_uid: user.uid).size
-        ]
+          followers_size = [
+            user.followers.size,
+            user.followers_size,
+            user.followerships.size,
+            TwitterDB::Followership.where(user_uid: user.uid).size
+          ]
 
-        if [friends_size, followers_size].any? { |array| !array.combination(2).all? { |a, b| a == b } }
-          invalid << user.id
-          puts "invalid id: #{user.id}, uid: #{user.uid}, screen_name: #{user.screen_name}, friends: #{friends_size.inspect}, followers: #{followers_size.inspect}"
+          if [friends_size, followers_size].any? { |array| !array.combination(2).all? { |a, b| a == b } }
+            invalid << user.id
+            puts "invalid id: #{user.id}, uid: #{user.uid}, screen_name: #{user.screen_name}, friends: #{friends_size.inspect}, followers: #{followers_size.inspect}"
+          end
+
+          break if sigint
         end
-        processed += 1
+        processed += users_array.size
 
-        if i % batch_size == 0
-          puts "#{Time.zone.now} processed: #{processed.size}"
-        end
+        avg = '%4.1f' % (1000 * (Time.zone.now - process_start) / processed)
+        puts "#{Time.zone.now} processed: #{processed}, avg(1000): #{avg}, #{users_array[0].id} - #{users_array[-1].id}"
 
         break if sigint
       end

@@ -221,37 +221,40 @@ namespace :twitter_users do
     end
 
     start = ENV['START'] ? ENV['START'].to_i : 1
-    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
+    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 100
     process_start = Time.zone.now
     puts "\nverify started:"
 
     processed = 0
     invalid = []
     Rails.logger.silence do
-      TwitterUser.with_friends.find_each(start: start, batch_size: batch_size).with_index do |twitter_user, i|
-        friends_size = [
-            twitter_user.friends.size,
-            twitter_user.friends_size,
-            twitter_user.friendships.size,
-            Friendship.where(from_id: twitter_user.id).size,
-        ]
+      TwitterUser.with_friends.find_in_batches(start: start, batch_size: batch_size) do |twitter_users_array|
+        TwitterUser.where(id: twitter_users_array.map(&:id)).each do |twitter_user|
+          friends_size = [
+              twitter_user.friends.size,
+              twitter_user.friends_size,
+              twitter_user.friendships.size,
+              Friendship.where(from_id: twitter_user.id).size,
+          ]
 
-        followers_size = [
-            twitter_user.followers.size,
-            twitter_user.followers_size,
-            twitter_user.followerships.size,
-            Followership.where(from_id: twitter_user.id).size,
-        ]
+          followers_size = [
+              twitter_user.followers.size,
+              twitter_user.followers_size,
+              twitter_user.followerships.size,
+              Followership.where(from_id: twitter_user.id).size,
+          ]
 
-        if [friends_size, followers_size].any? { |array| !array.combination(2).all? { |a, b| a == b } }
-          invalid << twitter_user.id
-          puts "invalid id: #{user.id}, uid: #{user.uid}, screen_name: #{user.screen_name}, friends: #{friends_size.inspect}, followers: #{followers_size.inspect}"
+          if [friends_size, followers_size].any? { |array| !array.combination(2).all? { |a, b| a == b } }
+            invalid << twitter_user.id
+            puts "invalid id: #{user.id}, uid: #{user.uid}, screen_name: #{user.screen_name}, friends: #{friends_size.inspect}, followers: #{followers_size.inspect}"
+          end
+
+          break if sigint
         end
-        processed += 1
+        processed += twitter_users_array.size
 
-        if i % batch_size == 0
-          puts "#{Time.zone.now} processed: #{processed.size}"
-        end
+        avg = '%4.1f' % (1000 * (Time.zone.now - process_start) / processed)
+        puts "#{Time.zone.now} processed: #{processed}, avg(1000): #{avg}, #{twitter_users_array[0].id} - #{twitter_users_array[-1].id}"
 
         break if sigint
       end
