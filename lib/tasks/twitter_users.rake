@@ -246,7 +246,7 @@ namespace :twitter_users do
 
           if [friends_size, followers_size].any? { |array| !array.combination(2).all? { |a, b| a == b } }
             invalid << twitter_user.id
-            puts "invalid id: #{user.id}, uid: #{user.uid}, screen_name: #{user.screen_name}, friends: #{friends_size.inspect}, followers: #{followers_size.inspect}"
+            puts "invalid id: #{twitter_user.id}, uid: #{twitter_user.uid}, screen_name: #{twitter_user.screen_name}, friends: #{friends_size.inspect}, followers: #{followers_size.inspect}"
           end
 
           break if sigint
