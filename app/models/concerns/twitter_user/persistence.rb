@@ -60,11 +60,7 @@ module Concerns::TwitterUser::Persistence
 
   def import_unfriends
     self.class.benchmark_and_silence(:unfriends) do
-      relationships = calc_removing.map { |u| [u.id, uid.to_i] }
-      ActiveRecord::Base.transaction do
-        Unfriendship.delete_all(from_uid: uid)
-        Unfriendship.import %i(friend_id from_uid), relationships, validate: false, timestamps: false
-      end
+      Unfriendship.import_from!(self)
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
@@ -73,11 +69,7 @@ module Concerns::TwitterUser::Persistence
 
   def import_unfollowers
     self.class.benchmark_and_silence(:unfollowers) do
-      relationships = calc_removed.map { |u| [u.id, uid.to_i] }
-      ActiveRecord::Base.transaction do
-        Unfollowership.delete_all(from_uid: uid)
-        Unfollowership.import %i(follower_id from_uid), relationships, validate: false, timestamps: false
-      end
+      Unfollowership.import_from!(self)
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"

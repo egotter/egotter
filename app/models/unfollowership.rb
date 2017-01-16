@@ -2,8 +2,9 @@
 #
 # Table name: unfollowerships
 #
-#  follower_id :integer          not null
 #  from_uid    :integer          not null
+#  follower_id :integer          not null
+#  sequence    :integer          not null
 #
 # Indexes
 #
@@ -15,4 +16,13 @@
 class Unfollowership < ActiveRecord::Base
   belongs_to :twitter_user
   belongs_to :unfollower, foreign_key: :follower_id, class_name: 'Follower'
+
+  def self.import_from!(twitter_user)
+    unfollowerships = twitter_user.calc_removed.map.with_index { |u, i| [u.id, twitter_user.uid.to_i, i] }
+
+    ActiveRecord::Base.transaction do
+      delete_all(from_uid: twitter_user.uid)
+      import(%i(follower_id from_uid sequence), unfollowerships, validate: false, timestamps: false)
+    end
+  end
 end

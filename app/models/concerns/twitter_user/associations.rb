@@ -17,8 +17,8 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options primary_key: :uid, foreign_key: :from_uid, dependent: :destroy, validate: false, autosave: false do |obj|
-      obj.has_many :unfriendships
-      obj.has_many :unfollowerships
+      obj.has_many :unfriendships, -> { order(sequence: :asc) }
+      obj.has_many :unfollowerships, -> { order(sequence: :asc) }
     end
 
     with_options dependent: :destroy, validate: false, autosave: false do |obj|
