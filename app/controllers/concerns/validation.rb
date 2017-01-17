@@ -63,28 +63,46 @@ module Validation
     end
   end
 
+  def not_found_screen_name?(screen_name)
+    if [Util::NotFoundScreenNames, Util::NotFoundUids].all? { |klass| klass.new(redis).exists?(screen_name) }
+      redirect_to root_path, alert: not_found_message(screen_name)
+      true
+    else
+      false
+    end
+  end
+
   def authorized_search?(tu)
     if tu.suspended_account?
       redirect_to root_path, alert: I18n.t('before_sign_in.suspended_user', user: user_link(tu))
       return false
     end
 
-    if tu.readable_by?(User.find_by(id: current_user_id))
-      return true
-    end
+    return true if tu.public_account?
+    return true if tu.readable_by?(User.find_by(id: current_user_id))
 
     redirect_to root_path, alert: I18n.t('before_sign_in.protected_user', user: user_link(tu), sign_in_link: sign_in_link)
     false
-  rescue Twitter::Error::TooManyRequests, Twitter::Error::NotFound, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
+  rescue Twitter::Error::NotFound => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
+    logger.info e.backtrace.take(10).join("\n")
+    redirect_to root_path, alert: not_found_message(tu.screen_name)
+    false
+  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
+    logger.info e.backtrace.take(10).join("\n")
     redirect_to root_path, alert: alert_message(e)
     false
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.error(e)
     redirect_to root_path, alert: alert_message(e)
     false
+  end
+
+  def not_found_message(screen_name)
+    t('before_sign_in.not_found', user: screen_name)
   end
 
   def alert_message(ex)
@@ -92,7 +110,7 @@ module Validation
       when ex.kind_of?(Twitter::Error::TooManyRequests)
         t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
       when ex.kind_of?(Twitter::Error::NotFound)
-        t('before_sign_in.not_found')
+        raise 'call `not_found_message(screen_name)` for Twitter::Error::NotFound'
       when ex.kind_of?(Twitter::Error::Unauthorized)
         if user_signed_in?
           t("after_sign_in.unauthorized", sign_out_link: sign_out_link)

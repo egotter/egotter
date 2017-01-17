@@ -6,6 +6,7 @@ class RelationshipsController < ApplicationController
 
   before_action :reject_crawler, only: %i(create)
   before_action(only: %i(create conversations common_friends common_followers)) { screen_names.all? { |sn| valid_screen_name?(sn) } }
+  before_action(only: %i(create conversations common_friends common_followers)) { screen_names.any? { |sn| not_found_screen_name?(sn) } }
   before_action(only: %i(create conversations common_friends common_followers)) { @tu = screen_names.map { |sn| build_twitter_user(sn) } }
   before_action(only: %i(create conversations common_friends common_followers)) { @tu.all? { |tu| authorized_search?(tu) } }
   before_action(only: %i(conversations common_friends common_followers)) { @tu.all? { |tu| existing_uid?(tu.uid.to_s) } }
