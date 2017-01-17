@@ -52,7 +52,8 @@
   $(function () {
     var checkLogPath = "<%= check_log_relationship_path(src_uid: @searched_tw_users[0].uid, dst_uid: @searched_tw_users[1].uid) %>";
     var resultPath = "<%= @result_path %>";
+    var pollingLogsPath = "<%= raw polling_logs_path(uid: @searched_tw_users[0].uid, screen_name: @searched_tw_users[0].screen_name) %>";
     var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", src_uid: <%= @searched_tw_users[0].uid %>, dst_uid: <%= @searched_tw_users[1].uid %>};
-    waiting(checkLogPath, resultPath, scope);
+    relationshipsWaiting(checkLogPath, resultPath, pollingLogsPath, scope);
   });
 </script>

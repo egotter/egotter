@@ -1,105 +1,71 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function waiting(checkLogPath, resultPath, scope) {
+function waiting(checkLogPath, resultPath, pollingLogsPath, action, scope) {
   var ProgressBar = function () {
-    function ProgressBar() {
-      _classCallCheck(this, ProgressBar);
+    this.$progressBar = $('.bar');
+    this.$bar = this.$progressBar.find('.progress-bar');
+  };
 
-      this.$progressBar = $('.bar');
-      this.$bar = this.$progressBar.find('.progress-bar');
-    }
+  ProgressBar.prototype.set = function (value) {
+    this.$bar.css('width', value + '%').attr('aria-valuenow', value);
+    this.$bar.find('.sr-only').text(value + '% Complete');
+  };
 
-    _createClass(ProgressBar, [{
-      key: 'set',
-      value: function set(value) {
-        this.$bar.css('width', value + '%').attr('aria-valuenow', value);
-        this.$bar.find('.sr-only').text(value + '% Complete');
-      }
-    }, {
-      key: 'advance',
-      value: function advance() {
-        var value = parseInt(this.$bar.attr('aria-valuenow'));
-        value += value > 50 ? this.random(5, 10) : this.random(10, 20);
-        if (value > 90) value = 90;
-        this.set(value);
-      }
-    }, {
-      key: 'hide',
-      value: function hide() {
-        this.$progressBar.hide();
-      }
-    }, {
-      key: 'random',
-      value: function random(min, max) {
-        return Math.random() * (max - min) + min;
-      }
-    }]);
+  ProgressBar.prototype.advance = function () {
+    var value = parseInt(this.$bar.attr('aria-valuenow'));
+    value += value > 50 ? this.random(5, 10) : this.random(10, 20);
+    if (value > 90) value = 90;
+    this.set(value);
+  };
 
-    return ProgressBar;
-  }();
+  ProgressBar.prototype.hide = function () {
+    this.$progressBar.hide();
+  };
+
+  ProgressBar.prototype.random = function (min, max) {
+    return Math.random() * (max - min) + min;
+  };
 
   var Interval = function () {
-    function Interval() {
-      _classCallCheck(this, Interval);
+    this.value = 2000;
+    this.max = 5000;
+  };
 
-      this.value = 2000;
-      this.max = 5000;
-    }
+  Interval.prototype.current = function () {
+    return this.value;
+  };
 
-    _createClass(Interval, [{
-      key: 'current',
-      value: function current() {
-        return this.value;
-      }
-    }, {
-      key: 'next',
-      value: function next() {
-        this.value += 2000;
-        if (this.value > this.max) this.value = this.max;
-        return this.value;
-      }
-    }]);
-
-    return Interval;
-  }();
+  Interval.prototype.next = function () {
+    this.value += 2000;
+    if (this.value > this.max) this.value = this.max;
+    return this.value;
+  };
 
   var Retry = function () {
-    function Retry() {
-      _classCallCheck(this, Retry);
+    this.count = 0;
+    this.max = 10;
+  };
 
-      this.count = 0;
-      this.max = 10;
-    }
+  Retry.prototype.current = function () {
+    return this.count;
+  };
 
-    _createClass(Retry, [{
-      key: 'current',
-      value: function current() {
-        return this.count;
-      }
-    }, {
-      key: 'next',
-      value: function next() {
-        this.count += 1;
-        return this.count < this.max;
-      }
-    }]);
-
-    return Retry;
-  }();
+  Retry.prototype.next = function () {
+    this.count += 1;
+    return this.count < this.max;
+  };
 
   var $waitingMessage = $('.waiting-msg');
   var progressBar = new ProgressBar();
   var interval = new Interval();
   var retry = new Retry();
+  var pollingStart = performance.now();
 
   function failed(xhr) {
+    console.log('Server failed.');
+    $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
     if (xhr.status === 502) {
       Rollbar.scope(scope).warning("Timeout while attempting fetching.");
-      return;
     }
     console.log(xhr.responseText);
 
@@ -110,7 +76,7 @@ function waiting(checkLogPath, resultPath, scope) {
     if (res && egotter.errors[res.reason]) {
       egotter.errors[res.reason].showMessage();
     } else {
-      egotter.errors['SomethingIsWrong'].showMessage();
+      egotter.errors['somethingError'].showMessage();
     }
   }
 
@@ -118,6 +84,7 @@ function waiting(checkLogPath, resultPath, scope) {
     console.log(res, text_status, xhr.status, interval.current(), retry.current());
 
     if (xhr.status === 200) {
+      $.post(pollingLogsPath, {_action: action, status: true, time: performance.now() - pollingStart, retry_count: retry.current()});
       progressBar.set(95);
       $waitingMessage.hide();
       $('.finished-msg').show();
@@ -126,6 +93,8 @@ function waiting(checkLogPath, resultPath, scope) {
     }
 
     if (!retry.next()) {
+      console.log('Stop waiting.');
+      $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
       progressBar.hide();
       $waitingMessage.hide();
       egotter.errors['Timeout'].showMessage();
@@ -142,4 +111,12 @@ function waiting(checkLogPath, resultPath, scope) {
   }
 
   tic();
+}
+
+function relationshipsWaiting(checkLogPath, resultPath, pollingLogsPath, scope) {
+  waiting(checkLogPath, resultPath, pollingLogsPath, 'relationships/waiting', scope)
+}
+
+function searchesWaiting(checkLogPath, resultPath, pollingLogsPath, scope) {
+  waiting(checkLogPath, resultPath, pollingLogsPath, 'searches/waiting', scope)
 }

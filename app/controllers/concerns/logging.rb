@@ -96,6 +96,34 @@ module Concerns::Logging
     Rollbar.warn(e)
   end
 
+  def create_polling_log(uid, screen_name, action:, status:, time:, retry_count:)
+    referral = find_referral(pushed_referers)
+
+    attrs = {
+      session_id:  fingerprint,
+      user_id:     current_user_id,
+      uid:         uid,
+      screen_name: screen_name,
+      action:      action,
+      status:      status,
+      time:        time,
+      retry_count: retry_count,
+      device_type: request.device_type,
+      os:          request.os,
+      browser:     request.browser,
+      user_agent:  truncated_user_agent,
+      referer:     truncated_referer,
+      referral:    referral,
+      channel:     find_channel(referral),
+      created_at:  Time.zone.now
+    }
+    CreatePollingLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} #{action} #{status} #{time} #{retry_count}"
+    logger.info e.backtrace.take(10).join("\n")
+    Rollbar.warn(e)
+  end
+
   def create_page_cache_log(context)
     referral = find_referral(pushed_referers)
 

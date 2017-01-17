@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
   resources :modal_open_logs, only: :create
+  resources :polling_logs, only: :create
   resources :page_caches, only: %i(create destroy), param: :uid
 
   resources :relationships, only: %i(create)

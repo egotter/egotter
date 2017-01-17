@@ -2,6 +2,8 @@ class CreateTwitterTables < ActiveRecord::Migration
   ActiveRecord::Base.establish_connection("twitter_#{Rails.env}".to_sym)
 
   def up
+    drop_tables
+
     create_table :users, id: false, options: 'ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4' do |t|
       t.column  :id,            'BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT'
       t.integer :uid,            null: false, limit: 8
@@ -38,11 +40,16 @@ class CreateTwitterTables < ActiveRecord::Migration
   end
 
   def down
+    drop_tables
+  ensure
+    ActiveRecord::Base.establish_connection(Rails.env.to_sym)
+  end
+
+  private
+
+  def drop_tables
     ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS `friendships`'
     ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS `followerships`'
     ActiveRecord::Base.connection.execute 'DROP TABLE IF EXISTS `users`'
-
-  ensure
-    ActiveRecord::Base.establish_connection(Rails.env.to_sym)
   end
 end

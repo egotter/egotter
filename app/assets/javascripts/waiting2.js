@@ -1,83 +1,52 @@
 'use strict';
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope) {
+function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, action, createdAt, scope) {
   var Cache = function () {
-    function Cache() {
-      _classCallCheck(this, Cache);
-    }
+    this.hash = 'xxx';
+  };
 
-    _createClass(Cache, [{
-      key: 'setHash',
-      value: function setHash(hash) {
-        this.hash = hash;
-      }
-    }, {
-      key: 'delete',
-      value: function _delete() {
-        return $.ajax({ url: pageCachePath.replace(/HASH/, this.hash), type: 'DELETE' });
-      }
-    }, {
-      key: 'create',
-      value: function create() {
-        return $.post(pageCachesPath);
-      }
-    }]);
+  Cache.prototype.setHash = function (hash) {
+    this.hash = hash;
+  };
 
-    return Cache;
-  }();
+  Cache.prototype.delete = function () {
+    console.log(new Date() + ': delete started');
+    return $.ajax({url: pageCachePath.replace(/HASH/, this.hash), type: 'DELETE'});
+  };
+
+  Cache.prototype.create = function create() {
+    console.log(new Date() + ': create started');
+    return $.post(pageCachesPath);
+  };
 
   var Interval = function () {
-    function Interval() {
-      _classCallCheck(this, Interval);
+    this.value = 2000;
+    this.max = 5000;
+  };
 
-      this.value = 2000;
-      this.max = 5000;
-    }
+  Interval.prototype.current = function () {
+    return this.value;
+  };
 
-    _createClass(Interval, [{
-      key: 'current',
-      value: function current() {
-        return this.value;
-      }
-    }, {
-      key: 'next',
-      value: function next() {
-        this.value += 2000;
-        if (this.value > this.max) this.value = this.max;
-        return this.value;
-      }
-    }]);
-
-    return Interval;
-  }();
+  Interval.prototype.next = function () {
+    this.value += 2000;
+    if (this.value > this.max) this.value = this.max;
+    return this.value;
+  };
 
   var Retry = function () {
-    function Retry() {
-      _classCallCheck(this, Retry);
+    this.count = 0;
+    this.max = 10;
+  };
 
-      this.count = 0;
-      this.max = 5;
-    }
+  Retry.prototype.current = function () {
+    return this.count;
+  };
 
-    _createClass(Retry, [{
-      key: 'current',
-      value: function current() {
-        return this.count;
-      }
-    }, {
-      key: 'next',
-      value: function next() {
-        this.count += 1;
-        return this.count < this.max;
-      }
-    }]);
-
-    return Retry;
-  }();
+  Retry.prototype.next = function () {
+    this.count += 1;
+    return this.count < this.max;
+  };
 
   var refreshBox = $('.alert.alert-info');
   refreshBox.find('a').on('click', function (e) {
@@ -85,9 +54,12 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope)
     e.stopPropagation();
 
     cache.delete()
-        .then(cache.create(), failed)
-        .done(function () { window.location.reload() })
-        .fail(failed);
+      .then(cache.create)
+      .then(function () {
+        console.log(new Date() + ': reload started');
+        window.location.reload();
+      })
+      .fail(failed);
 
     return false;
   });
@@ -95,8 +67,11 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope)
   var interval = new Interval();
   var retry = new Retry();
   var cache = new Cache();
+  var pollingStart = performance.now();
 
   function failed(xhr) {
+    console.log('Server failed.');
+    $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
     console.log(xhr.responseText);
   }
 
@@ -105,19 +80,22 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope)
 
     if (xhr.status === 200) {
       console.log(createdAt, res.created_at);
+      $.post(pollingLogsPath, {_action: action, status: true, time: performance.now() - pollingStart, retry_count: retry.current()});
+
       if (createdAt < res.created_at) {
         cache.setHash(res.hash);
         refreshBox.show();
         refreshBox.sticky({topSpacing: 0});
       } else {
-        console.log('do nothing.');
+        console.log('Do nothing.');
       }
 
       return;
     }
 
     if (!retry.next()) {
-      console.log('stop waiting.');
+      console.log('Stop waiting.');
+      $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
       Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
     } else {
       setTimeout(tic, interval.next());
@@ -130,3 +108,8 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, createdAt, scope)
 
   tic();
 }
+
+function searchResultsWaiting(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, createdAt, scope) {
+  waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 'search_results/show', createdAt, scope)
+}
+
