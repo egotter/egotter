@@ -4,7 +4,7 @@
       - spaces = '&nbsp;'.html_safe
 
       = succeed spaces do
-        %a{href: root_path}= t('searches.common.top_page')
+        %a{href: root_path_for(controller: controller_name)}= t('searches.common.top_page')
 
       = succeed spaces do
         - if user_signed_in?
@@ -13,7 +13,7 @@
           = link_to t('dictionary.sign_in'), welcome_path
 
       = succeed spaces do
-        %a{href: root_path}= t('searches.common.feedback')
+        %a{href: root_path_for(controller: controller_name)}= t('searches.common.feedback')
 
       - if user_signed_in?
         = succeed spaces do

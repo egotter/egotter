@@ -3,6 +3,7 @@ class SearchResultsController < ApplicationController
   include Concerns::Logging
   include PageCachesHelper
   include TweetTextHelper
+  include SearchesHelper
 
   layout false
 
@@ -32,10 +33,8 @@ class SearchResultsController < ApplicationController
 
   %i(one_sided_friends one_sided_followers mutual_friends).each do |menu|
     define_method(menu) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
-      @graph = @searched_tw_user.mutual_friends_graph
-      @tweet_text = mutual_friends_text(@searched_tw_user)
-      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
+      logger.warn "#{self.class}##{menu}: #{current_user_id} #{request.device_type} #{params.inspect}" # TODO remove
+      render json: {html: 'error'}, status: 200
     end
   end
 

@@ -5,7 +5,7 @@ class SearchesController < ApplicationController
   include PageCachesHelper
 
   before_action :need_login,     only: %i(common_friends common_followers)
-  before_action :reject_crawler, only: %i(create)
+  before_action :reject_crawler, only: %i(create waiting)
   before_action(only: Search::MENU + %i(create show)) { valid_screen_name?(params[:screen_name]) }
   before_action(only: Search::MENU + %i(create show)) { not_found_screen_name?(params[:screen_name]) }
   before_action(only: Search::MENU + %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
@@ -56,12 +56,13 @@ class SearchesController < ApplicationController
 
   def create
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
+    redirect_path = sanitized_redirect_path(params[:redirect_path].presence || search_path(screen_name: screen_name))
     if TwitterUser.exists?(uid: uid)
-      redirect_to search_path(screen_name: screen_name)
+      redirect_to redirect_path
     else
       save_twitter_user_to_cache(uid, screen_name: screen_name, user_info: @tu.user_info)
       add_create_twitter_user_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
-      redirect_to waiting_search_path(uid: uid)
+      redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path)
     end
   end
 
@@ -71,14 +72,21 @@ class SearchesController < ApplicationController
     if tu.nil?
       return redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
     end
+    @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || search_path(screen_name: tu.screen_name))
     @searched_tw_user = tu
   end
 
-  Search::MENU.each do |menu|
+  Search::MENU.select { |menu| %i(one_sided_friends one_sided_followers mutual_friends).exclude?(menu) }.each do |menu|
     define_method(menu) do
       @menu = menu
       @title = title_for(@searched_tw_user, menu: menu)
       render :common
+    end
+  end
+
+  %i(one_sided_friends one_sided_followers mutual_friends).each do |menu|
+    define_method(menu) do
+      redirect_to one_sided_friend_path(screen_name: @searched_tw_user.screen_name, type: menu)
     end
   end
 

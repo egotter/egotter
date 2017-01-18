@@ -10,6 +10,10 @@ Rails.application.routes.draw do
     get name, to: "misc##{name}", as: name
   end
 
+  resources :one_sided_friends, only: %i(create show), param: :screen_name
+  get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
+  get 'one_sided_followers', to: 'one_sided_followers#new', as: :one_sided_followers_top
+
   resources :searches, only: %i(create), param: :screen_name do
     Search::MENU.each { |menu| get menu, on: :member }
   end

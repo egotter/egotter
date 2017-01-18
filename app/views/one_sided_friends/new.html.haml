@@ -1,0 +1,26 @@
+- title @title
+- set_meta_tags description: t('one_sided_friends.new.description')
+
+%h3.h4.one-sided-friends.lead.text-center= t('one_sided_friends.new.lead_001')
+.one-sided-friends.lead.text-center= t('one_sided_friends.new.lead_002').html_safe
+.one-sided-friends.lead.text-center= t('one_sided_friends.new.lead_003').html_safe
+
+= render partial: 'one_sided_friends/search_form', locals: {via: 'one_sided_friends/new/top_input'}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+- if user_signed_in?
+  = link_to t('searches.common.search_by', user: current_user.mention_name), one_sided_friends_path(screen_name: current_user.screen_name, via: 'one_sided_friends/new/top_button'), class: 'btn btn-info btn-block', method: :post
+- else
+  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: one_sided_friends_top_path), class: 'btn btn-info btn-block'
+
+.row.one-sided-friends.screenshot
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('searches.common.egotter')}", src: '/screenshot_iphone_332x560.png', height: '160px'}
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('searches.common.egotter')}", src: '/screenshot_laptop_961x560.png', height: '160px'}
+
+.one-sided-friends.separator
+
+.twitter.tweets
+  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter OR #OneSidedFriends'), cached: true, formats: %i(html))
+  .one-sided-friends.lead.in-top-page.text-center= t('one_sided_friends.new.lead_004').html_safe

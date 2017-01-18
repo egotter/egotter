@@ -34,7 +34,7 @@ module Validation
       if request.xhr?
         render nothing: true, status: 400
       else
-        redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
       end
       false
     end
@@ -58,14 +58,14 @@ module Validation
     if tu.valid_screen_name?
       true
     else
-      redirect_to root_path, alert: tu.errors[:screen_name].join(t('dictionary.delim'))
+      redirect_to root_path_for(controller: controller_name), alert: tu.errors[:screen_name].join(t('dictionary.delim'))
       false
     end
   end
 
   def not_found_screen_name?(screen_name)
     if [Util::NotFoundScreenNames, Util::NotFoundUids].all? { |klass| klass.new(redis).exists?(screen_name) }
-      redirect_to root_path, alert: not_found_message(screen_name)
+      redirect_to root_path_for(controller: controller_name), alert: not_found_message(screen_name)
       true
     else
       false
@@ -73,31 +73,33 @@ module Validation
   end
 
   def authorized_search?(tu)
+    redirect_path = root_path_for(controller: controller_name)
+
     if tu.suspended_account?
-      redirect_to root_path, alert: I18n.t('before_sign_in.suspended_user', user: view_context.user_link(tu.screen_name))
+      redirect_to redirect_path, alert: I18n.t('before_sign_in.suspended_user', user: view_context.user_link(tu.screen_name))
       return false
     end
 
     return true if tu.public_account?
     return true if tu.readable_by?(User.find_by(id: current_user_id))
 
-    redirect_to root_path, alert: I18n.t('before_sign_in.protected_user', user: view_context.user_link(tu.screen_name), sign_in_link: sign_in_link)
+    redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user', user: view_context.user_link(tu.screen_name), sign_in_link: sign_in_link)
     false
   rescue Twitter::Error::NotFound => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
     logger.info e.backtrace.take(10).join("\n")
-    redirect_to root_path, alert: not_found_message(tu.screen_name)
+    redirect_to redirect_path, alert: not_found_message(tu.screen_name)
     false
   rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
     logger.info e.backtrace.take(10).join("\n")
-    redirect_to root_path, alert: alert_message(e)
+    redirect_to redirect_path, alert: alert_message(e)
     false
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.error(e)
-    redirect_to root_path, alert: alert_message(e)
+    redirect_to redirect_path, alert: alert_message(e)
     false
   end
 

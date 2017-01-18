@@ -15,13 +15,17 @@ ja:
       search_by_twitter_id: "Twitter ID で検索"
       search_by_other_user: "他のユーザー で検索"
       search_by_egotter: "えごったーで検索"
+      search_xxx_by_egotter: "%{user} をえごったーで検索"
       search_by: "%{user} で検索"
       search: "検索"
+      empty: "結果は 0 です。"
       top_page: "トップページ"
       feedback: "ご意見"
       support: "お問い合わせ"
       github: "Github"
       information: "お知らせ"
+      redirect_to: "%{user} の結果を表示します"
+      popular: "人気の分析"
     new:
       lead_001: "スマホでかんたんフォロー確認"
       lead_002: "スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです"
@@ -115,14 +119,17 @@ ja:
       title: "%{user} が入っているクラスタ"
       description: "%{user}が入っているクラスタを表示します。"
     mutual_friends:
+      num: "両思い<br>%{num}"
       title: "%{user} が両思い"
       description: "%{user}が相互フォローしているユーザーを表示します。"
       targets: "両思い"
     one_sided_friends:
+      num: "片思い<br>%{num}"
       title: "%{user} が片思い"
       description: "%{user}がフォローしているユーザーのうち、%{user}にフォロー返しをしていないユーザーを表示します。"
       targets: "片思い"
     one_sided_followers:
+      num: "片思われ<br>%{num}"
       title: "%{user} が片思われ"
       description: "%{user}がフォローされているユーザーのうち、%{user}がフォロー返しをしていないユーザーを表示します。"
       targets: "片思われ"
@@ -197,6 +204,29 @@ ja:
     maintenance:
       title: "メンテナンス"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
+  one_sided_friends:
+    new:
+      title: '<span style="font-size: small; display: inline;">片思いチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: '片思いチェック by えごったー'
+      description: "保存ユーザー数1,000万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
+      short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
+      lead_001: "スマホでさくっと片思いチェック"
+      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_003: "片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。"
+      lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+    show:
+      title: "%{user} の片思い・片思われ・両思い"
+      description: &description
+        "%{user} は、片思い %{one_sided_friends}人、片思われ %{one_sided_followers}人、両思い %{mutual_friends}人です。"
+      lead_001: *description
+      lead_002: "片思いは、%{user} はフォローしているけどフォローされていないアカウント、<br>片思われは、%{user} はフォローしていないけどフォローされているアカウントのことです。"
+      lead_003: '%{user} の片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
+      tweet: *description
+  one_sided_followers:
+    new:
+      title: '<span style="font-size: small; display: inline;">片思われチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: '片思われチェック by えごったー'
 
   dictionary:
     official_account: "公式アカウント"
