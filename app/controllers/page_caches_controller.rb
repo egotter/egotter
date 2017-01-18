@@ -21,7 +21,7 @@ class PageCachesController < ApplicationController
     ::Cache::PageCache.new.write(tu.uid, render_to_string(template: 'search_results/show'))
     render nothing: true, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type}"
     render nothing: true, status: 500
   end
 
@@ -36,7 +36,7 @@ class PageCachesController < ApplicationController
       render nothing: true, status: 400
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{tu.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type}"
     render nothing: true, status: 500
   end
 end
