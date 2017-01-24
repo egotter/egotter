@@ -1,0 +1,42 @@
+.share-buttons {
+    margin-bottom: 15px;
+    text-align: center;
+}
+.share-buttons .inner a {
+    position: relative;
+    display: inline-block;
+    width: 25%;
+    height: 60px;
+    line-height: 25px;
+    font-size: 16px;
+    text-align: center;
+    text-decoration: none;
+    padding:5px;
+}
+.share-buttons .inner .share-text {
+    font-size: 15px;
+}
+.share-buttons .inner .facebook-button {
+    color:#305097;
+    border:1px solid #305097;
+    background: #fff;
+}
+.share-buttons .inner .facebook-button:hover {
+    color:#fff;
+    background: #305097;
+}
+.share-buttons .inner .facebook-button:active {
+    background: #213254;
+}
+.share-buttons .inner .twitter-button {
+    color:#55acee;
+    border:1px solid #55acee;
+    background: #fff;
+}
+.share-buttons .inner .twitter-button:hover {
+    color:#fff;
+    background: #55acee;
+}
+.share-buttons .inner .twitter-button:active {
+    background: #0285b7;
+}
