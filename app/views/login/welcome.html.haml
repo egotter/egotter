@@ -2,6 +2,7 @@
 .welcome{class: "#{'on-modal' if via_prefix.start_with?('search_history')}"}
   = form_tag sign_in_path, method: :get do
     = hidden_field_tag :via, "#{via_prefix}button"
+    = hidden_field_tag :redirect_path, @redirect_path if @redirect_path
     = submit_tag t('.sign_in_with_twitter'), name: nil, class: 'btn btn-lg btn-info btn-block'
 
     = render partial: 'login/highlight'

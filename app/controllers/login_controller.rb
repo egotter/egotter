@@ -9,6 +9,7 @@ class LoginController < ApplicationController
   # GET /welcome
   def welcome
     redirect_to root_path, notice: t('dictionary.signed_in') if user_signed_in?
+    @redirect_path = params[:redirect_path].presence || root_path
   end
 
   # GET /sign_in
@@ -17,6 +18,7 @@ class LoginController < ApplicationController
     vertical = params[:bottom] ? 'bottom' : 'top'
     session[:sign_in_via] = params[:via] ? "#{params[:via]}_#{vertical}" : ''
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
+    session[:redirect_path] = params[:redirect_path].presence || root_path
     redirect_to '/users/auth/twitter'
   end
 

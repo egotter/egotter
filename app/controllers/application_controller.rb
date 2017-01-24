@@ -27,8 +27,16 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def sanitized_redirect_path(path)
+    path.match(%r{^/one_sided_friends/}) ? path : root_path
+  end
+
   def after_sign_in_path_for(resource)
-    root_path
+    if session[:redirect_path]
+      sanitized_redirect_path(session.delete(:redirect_path))
+    else
+      root_path
+    end
   end
 
   def after_sign_out_path_for(resource)
