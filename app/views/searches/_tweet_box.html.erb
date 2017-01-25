@@ -2,9 +2,8 @@
   <textarea rows="<%= [tweet_text.scan(/\R/).size + 1, 4].max %>" readonly><%= tweet_text %></textarea>
 </div>
 <div class="tweet-box text-right">
-  <% params = {text: tweet_text, via: 'ego_tter'}.to_param %>
   <%= link_to (action_name == 'new' ? t('dictionary.tweet_top_page') : t('dictionary.tweet_result')),
-              "https://twitter.com/intent/tweet?#{params}".html_safe,
+              intent_url(tweet_text, via: 'ego_tter').html_safe,
               class: 'btn btn-info', target: '_blank' %>
 </div>
 <script>

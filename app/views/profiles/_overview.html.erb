@@ -4,21 +4,16 @@
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
           <div class="profile-icon-box">
-            <%= link_to "https://twitter.com/#{user.screen_name}",
-                        class: 'profile-icon-link', target: '_blank' do %>
+            <%= user_link(user.screen_name, class: 'profile-icon-link') do %>
               <img class="profile-icon" src="<%= user.profile_image_url_https.to_s %>" width="48" height="48">
             <% end %>
           </div>
           <div class="profile-names">
             <div class="full-name">
-              <div>
-                <span class="text"><%= user.name %>&nbsp;</span>
-                <% if user.protected %><span class="glyphicon glyphicon-lock"></span><% end %>
-                <% if user.verified %><span class="glyphicon glyphicon-ok"></span><% end %>
-              </div>
+              <%= user_name(user) %>
             </div>
             <div class="screen-name">
-              <%= link_to "@#{user.screen_name}", "https://twitter.com/#{user.screen_name}", class: 'profile-screen_name-link', target: '_blank' %>
+              <%= user_link(user.screen_name, class: 'profile-screen_name-link') %>
             </div>
           </div>
         </div>

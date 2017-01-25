@@ -4,6 +4,6 @@
     -#  %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
     .media-body
       %h4.media-heading
-        = "@#{notification.screen_name} - #{time_ago_in_words(notification.created_at)}".html_safe
+        = "#{mention_name(notification.screen_name)} - #{time_ago_in_words(notification.created_at)}".html_safe
       %span.text
         = auto_link(notification.message) { t('dictionary.link') }.gsub(/\R/, '<br>').html_safe
