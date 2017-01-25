@@ -13,6 +13,7 @@ ja:
       twitter_id: "Twitter ID"
       search_by_twitter_id: "Twitter ID で検索"
       search_by_other_user: "他のユーザー で検索"
+      search_by_egotter: "えごったーで検索"
       search_by: "%{user} で検索"
       search: "検索"
       top_page: "トップページ"
@@ -40,7 +41,6 @@ ja:
       feature_desc_007: "検索が早くなり、<br>更新通知が届くようになります。<br>%{link}"
       search_friends: "気になるあの人を検索"
       search_login_user: "ログインユーザーで検索"
-      search_by_egotter: "えごったーで検索"
       egotter_features: "えごったーの特徴"
       keyword_timeline: "みんなのつぶやき"
     waiting:
