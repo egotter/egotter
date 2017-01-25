@@ -1,24 +1,35 @@
 %footer.footer
   .container
     %p.text-muted
-      %a{href: '/'}> トップページ
-        
+      - spaces = '&nbsp;'.html_safe
+
+      = succeed spaces do
+        %a{href: root_path}= t('searches.common.top_page')
+
+      = succeed spaces do
+        - if user_signed_in?
+          = link_to t('dictionary.sign_out'), sign_out_path, data: {confirm: t('dictionary.realy_sign_out')}
+        - else
+          = link_to t('dictionary.sign_in'), welcome_path
+
+      = succeed spaces do
+        %a{href: root_path}= t('searches.common.feedback')
+
       - if user_signed_in?
-        = link_to t('dictionary.sign_out'), sign_out_path, data: {confirm: t('dictionary.realy_sign_out')}
-      - else
-        = link_to t('dictionary.sign_in'), welcome_path
-          
-      = succeed "\u{a0}\u{a0}" do
-        %a{href: '/'} ご意見
-      - if user_signed_in?
-        = link_to t('misc.menu.title'), menu_path
-          
-      = succeed "\u{a0}\u{a0}" do
-        %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('dictionary.official_account')
-      = link_to t('dictionary.support'), support_path
-        
-      = succeed "\u{a0}\u{a0}" do
-        %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'} Github
-      = link_to t('misc.terms_of_service.title'), terms_of_service_path
-        
-      = link_to t('misc.privacy_policy.title'), privacy_policy_path
+        = succeed spaces do
+          = link_to t('misc.menu.title'), menu_path
+
+      = succeed spaces do
+        %a{href: user_url('ego_tter'), target: '_blank'}= t('dictionary.official_account')
+
+      = succeed spaces do
+        = link_to t('searches.common.support'), support_path
+
+      = succeed spaces do
+        %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'}= t('searches.common.github')
+
+      = succeed spaces do
+        = link_to t('misc.terms_of_service.title'), terms_of_service_path
+
+      = succeed spaces do
+        = link_to t('misc.privacy_policy.title'), privacy_policy_path

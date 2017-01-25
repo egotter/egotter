@@ -15,6 +15,10 @@ ja:
       search_by_other_user: "他のユーザー で検索"
       search_by: "%{user} で検索"
       search: "検索"
+      top_page: "トップページ"
+      feedback: "ご意見"
+      support: "お問い合わせ"
+      github: "Github"
     new:
       lead_001: "スマホでかんたんフォロー確認"
       lead_002: "スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです"
