@@ -74,14 +74,14 @@ module Validation
 
   def authorized_search?(tu)
     if tu.suspended_account?
-      redirect_to root_path, alert: I18n.t('before_sign_in.suspended_user', user: user_link(tu))
+      redirect_to root_path, alert: I18n.t('before_sign_in.suspended_user', user: view_context.user_link(tu.screen_name))
       return false
     end
 
     return true if tu.public_account?
     return true if tu.readable_by?(User.find_by(id: current_user_id))
 
-    redirect_to root_path, alert: I18n.t('before_sign_in.protected_user', user: user_link(tu), sign_in_link: sign_in_link)
+    redirect_to root_path, alert: I18n.t('before_sign_in.protected_user', user: view_context.user_link(tu.screen_name), sign_in_link: sign_in_link)
     false
   rescue Twitter::Error::NotFound => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
@@ -132,9 +132,5 @@ module Validation
 
   def sign_out_link
     view_context.link_to(t('dictionary.sign_out'), sign_out_path)
-  end
-
-  def user_link(tu)
-    view_context.link_to(tu.mention_name, "https://twitter.com/#{tu.screen_name}", target: '_blank')
   end
 end

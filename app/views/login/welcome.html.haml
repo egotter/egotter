@@ -10,4 +10,4 @@
     = submit_tag t('.sign_in_with_twitter'), name: 'bottom', class: 'btn btn-lg btn-info btn-block'
     %label.small.follow-egotter
       = check_box_tag :follow, true, true, {}
-      = t('.follow_egotter', link: link_to('@ego_tter', 'https://twitter.com/ego_tter', target: '_blank')).html_safe
+      = t('.follow_egotter', link: user_link('ego_tter')).html_safe
