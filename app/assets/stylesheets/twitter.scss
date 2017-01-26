@@ -1,0 +1,53 @@
+.twitter {
+  &.users,
+  &.tweets {
+    .media {
+      border-bottom: 1px solid #e6e6e6;
+      padding-bottom: 15px;
+    }
+
+    .glyphicon.glyphicon-lock {
+      color: #999999;
+      font-weight: normal;
+    }
+
+    .glyphicon.glyphicon-ok {
+      color: #5cb85c;
+      font-weight: normal;
+    }
+
+    .media-heading {
+      font-size: small;
+    }
+
+    .screen-name {
+      font-size: small;
+    }
+
+    .description,
+    .tweet-text {
+      font-size: small;
+      margin-top: 5px;
+    }
+  }
+
+  &.users .media:first-child {
+    border-top: 1px solid #e6e6e6;
+    padding-top: 15px;
+  }
+
+  &.tweets .media:first-child {
+    border-top: none;
+  }
+
+  &.tweets {
+    margin-top: 15px;
+    background-color: #ffffff;
+
+    .created-at {
+      font-size: small;
+      color: #aaaaaa;
+      white-space: nowrap;
+    }
+  }
+}
