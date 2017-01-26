@@ -2,6 +2,7 @@
 ja:
   searches:
     common:
+      egotter: "えごったー"
       title: "えごったー スマホでかんたん ツイッターのフォロー確認"
       description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       large: "多い"
@@ -198,7 +199,6 @@ ja:
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
 
   dictionary:
-    app_name: "えごったー"
     official_account: "公式アカウント"
     share_me: "えごったーをシェアする"
     tweet: "ツイート"

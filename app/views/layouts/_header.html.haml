@@ -1,6 +1,6 @@
 .navbar-header.navbar-small
   = render partial: 'layouts/header/small_buttons' unless under_maintenance? || action_name == 'welcome'
   %a.navbar-brand{href: '/'}
-    %img{alt: "#{t('dictionary.app_name')}", height: '48', src: '/logo_96_96.png', width: '48'}/
-    %span= t('dictionary.app_name')
+    %img{alt: "#{t('searches.common.egotter')}", height: '48', src: '/logo_96_96.png', width: '48'}/
+    %span= t('searches.common.egotter')
 = render partial: 'layouts/header/large_buttons' unless under_maintenance? || action_name == 'welcome'

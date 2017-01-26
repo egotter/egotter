@@ -20,7 +20,7 @@ class StatusesController < ApplicationController
 
   # TODO remove later
   def keyword_timeline
-    html = render_to_string(partial: 'twitter/tweet', collection: tweets_for(t('dictionary.app_name')), cached: true)
+    html = render_to_string(partial: 'twitter/tweet', collection: tweets_for(t('searches.common.egotter')), cached: true)
     render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
