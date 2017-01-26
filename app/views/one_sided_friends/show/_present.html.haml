@@ -1,6 +1,6 @@
 .share-buttons
   .inner
-    - text = ".#{description} #egotter #one_sided_friends #{one_sided_friend_url(screen_name: twitter_user.screen_name)}"
+    - text = ".#{description} #egotter #OneSidedFriends #{one_sided_friend_url(screen_name: twitter_user.screen_name)}"
     - onclick = "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
     %a.twitter-button{href: intent_url(text), onclick: onclick}
       %i.fa.fa-twitter.fa-lg{'area-hidden': true}
