@@ -1,0 +1,15 @@
+- uids << user.uid.to_i
+- if user_counter == 3
+  = render partial: 'common/adsense', locals: {action: action_name, vertical: :slit}
+  %div{style: 'height: 0; border-top: 1px solid #e6e6e6; margin-bottom: 15px;'}
+
+.media
+  .media-left
+    %img.media-object{alt: mention_name(user.screen_name), height: '48', src: user.profile_image_url_https.to_s, width: '48'}
+  .media-body
+    %h4.media-heading= user_name(user).html_safe
+    %span.screen-name= user_link(user.screen_name).html_safe
+  .media-right
+    %button.btn.btn-info{'data-target' => ".profile-overview-modal.#{user.uid}", 'data-toggle' => 'modal', type: 'button'}
+      %span.glyphicon.glyphicon-search
+  .description= user.description

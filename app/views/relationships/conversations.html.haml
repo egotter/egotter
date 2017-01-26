@@ -19,7 +19,7 @@
     = render(partial: 'searches/page_entries_info',
       locals: {params: {controller: controller_name, action: action_name, src_screen_name: @searched_tw_users[0].screen_name, dst_screen_name: @searched_tw_users[1].screen_name}, items: @statuses})
 
-  = render(partial: 'statuses/status', collection: @statuses, cached: true)
+  = render(partial: 'twitter/tweet', collection: @statuses, cached: true)
 
   .page-entries-info-bottom
     = render(partial: 'searches/page_entries_info',

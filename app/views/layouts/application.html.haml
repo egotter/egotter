@@ -1,29 +1,28 @@
 !!!
 %html{lang: 'ja'}
   %head
-    %meta{content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-Type'}/
-    %meta{charset: 'utf-8'}/
-    %meta{content: 'IE=edge', 'http-equiv' => 'X-UA-Compatible'}/
-    %meta{content: 'width=device-width, initial-scale=1', name: 'viewport'}/
+    %meta{content: 'text/html; charset=UTF-8', 'http-equiv' => 'Content-Type'}
+    %meta{charset: 'utf-8'}
+    %meta{content: 'IE=edge', 'http-equiv' => 'X-UA-Compatible'}
+    %meta{content: 'width=device-width, initial-scale=1', name: 'viewport'}
     = favicon_link_tag('/favicon.ico')
-    %link{href: '/apple-touch-icon.png', rel: 'apple-touch-icon'}/
-    %link{href: '/apple-touch-icon-120x120.png', rel: 'apple-touch-icon', sizes: '120x120'}/
-    %link{href: '/apple-touch-icon-152x152.png', rel: 'apple-touch-icon', sizes: '152x152'}/
+    %link{href: '/apple-touch-icon.png', rel: 'apple-touch-icon'}
+    %link{href: '/apple-touch-icon-120x120.png', rel: 'apple-touch-icon', sizes: '120x120'}
+    %link{href: '/apple-touch-icon-152x152.png', rel: 'apple-touch-icon', sizes: '152x152'}
     = render partial: 'common/meta_tags'
-    %meta{content: 'summary_large_image', name: 'twitter:card'}/
-    %meta{content: '@ego_tter', name: 'twitter:site'}/
-    %link{href: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css', rel: 'stylesheet'}/
-    %link{href: '//code.jquery.com/ui/1.12.0/themes/cupertino/jquery-ui.min.css', rel: 'stylesheet'}/
+    %meta{content: 'summary_large_image', name: 'twitter:card'}
+    %meta{content: '@ego_tter', name: 'twitter:site'}
+    %link{href: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css', rel: 'stylesheet'}
+    %link{href: '//code.jquery.com/ui/1.12.0/themes/cupertino/jquery-ui.min.css', rel: 'stylesheet'}
     = stylesheet_link_tag 'application', media: 'all'
     = javascript_include_tag 'application'
     %script{src: '//code.jquery.com/ui/1.12.0/jquery-ui.js'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js'}
     %script{src: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'}
-    %link{href: '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css', rel: 'stylesheet', type: 'text/css'}/
+    %link{href: '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css', rel: 'stylesheet', type: 'text/css'}
     = csrf_meta_tags
 
-    - if controller_name == 'searches' && action_name == 'show'
-      %link{href: search_url(screen_name: @searched_tw_user.screen_name), rel: 'canonical'}/
+    = yield(:canonical_url) if content_for?(:canonical_url)
 
     :javascript
       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
@@ -89,14 +88,6 @@
     %link{href: 'https://cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}/
     %script{src: 'https://cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
 
-    - if controller_name == 'searches' && action_name == 'new'
-      .container
-        .row
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8.keyword-timeline-container
-            = render partial: 'layouts/tweets'
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
-
     - if %w(search_results searches statuses update_histories).include?(controller_name)
       .container
         .row
@@ -109,7 +100,9 @@
         .row
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
-            = render partial: 'layouts/information'
+            %h2.h4= t('searches.common.information')
+            %table.table.table-bordered.table-condensed.table-responsive
+              = render(partial: 'information/information', collection: information_list, cached: true)
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
     = render partial: 'layouts/footer' unless under_maintenance?

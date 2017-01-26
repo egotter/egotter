@@ -1,56 +1,58 @@
 = render(partial: 'searches/conversion_tracking')
 
-.top-page
-  %h3.h4.lead-001.text-center= t('.lead_001')
-  .lead-002.text-center= t('.lead_002').html_safe
+%h3.h4.searches.text-center= t('searches.new.lead_001')
+.searches.lead.text-center= t('searches.new.lead_002').html_safe
 
-  = render partial: 'common/search_box_group', locals: {via: :top_input, screen_names: screen_names_for_search}
+= render partial: 'common/search_box_group', locals: {via: :top_input, screen_names: screen_names_for_search}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
-  = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+- if user_signed_in?
+  = link_to t('searches.common.search_by', user: current_user.mention_name), searches_path(screen_name: current_user.screen_name, via: :top_button), class: 'searches submit-btn2 btn btn-info btn-block', method: :post
+- else
+  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path, class: 'btn btn-info btn-block'
 
-  - if user_signed_in?
-    = link_to t('searches.common.search_by', user: current_user.mention_name), searches_path(screen_name: current_user.screen_name, via: :top_button), class: 'submit-btn2 btn btn-info btn-block', method: :post
-  - else
-    = link_to t('login.welcome.sign_in_with_twitter'), welcome_path, class: 'btn btn-info btn-block'
+.row.searches.screenshot
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_iphone_332x560.png', height: '160px'}
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_laptop_961x560.png', height: '160px'}
 
-  .row.screenshot
-    .col-xs-12.col-sm-6
-      .text-center
-        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_iphone_332x560.png', height: '160px'}/
-    .col-xs-12.col-sm-6
-      .text-center
-        %img{alt: "#{t('dictionary.app_name')}", src: '/screenshot_laptop_961x560.png', height: '160px'}/
+%h3.h4.searches.text-center= t('searches.new.lead_003').html_safe
 
-  %h3.h4.lead-003.text-center= t('.lead_003').html_safe
+.row.searches
+  .col-xs-12.col-sm-4
+    %h3.h4= t('.feature_001')
+    .feature-description= t('.feature_desc_001').html_safe
+  .col-xs-12.col-sm-4
+    %h3.h4= t('.feature_002')
+    .feature-description= t('.feature_desc_002').html_safe
+  .col-xs-12.col-sm-4
+    %h3.h4= t('.feature_003')
+    .feature-description= t('.feature_desc_003').html_safe
 
-  .egotter-features
-    .row
-      .col-xs-12.col-sm-4
-        %h3.h4= t('.feature_001')
-        .feature-description= t('.feature_desc_001').html_safe
-      .col-xs-12.col-sm-4
-        %h3.h4= t('.feature_002')
-        .feature-description= t('.feature_desc_002').html_safe
-      .col-xs-12.col-sm-4
-        %h3.h4= t('.feature_003')
-        .feature-description= t('.feature_desc_003').html_safe
+.searches.separator
 
-    %h3.h4.lead-004= t('.lead_004')
-    .text-center.description= t('searches.common.description')
+%h3.h4.searches= t('searches.new.lead_004')
+.text-center.searches.description= t('searches.common.description')
 
-    = render partial: 'common/search_box_group', locals: {via: :top_input2, screen_names: screen_names_for_search}
+= render partial: 'common/search_box_group', locals: {via: :top_input2, screen_names: screen_names_for_search}
 
-    %h2.h4= t('.egotter_features')
-    .row
-      .col-xs-12.col-sm-6
-        %h3.h4= t('.feature_004')
-        .feature-description= t('.feature_desc_004').html_safe
-      .col-xs-12.col-sm-6
-        %h3.h4= t('.feature_005')
-        .feature-description= t('.feature_desc_005', link: link_to(t('dictionary.view_more_detail'), welcome_path)).html_safe
-      .col-xs-12.col-sm-6
-        %h3.h4= t('.feature_006')
-        .feature-description= t('.feature_desc_006').html_safe
-      .col-xs-12.col-sm-6
-        %h3.h4= t('.feature_007')
-        .feature-description= t('.feature_desc_007', link: link_to(t('dictionary.view_more_detail'), welcome_path)).html_safe
+%h2.h4= t('.egotter_features')
+.row.searches
+  .col-xs-12.col-sm-6
+    %h3.h4= t('.feature_004')
+    .feature-description= t('.feature_desc_004').html_safe
+  .col-xs-12.col-sm-6
+    %h3.h4= t('.feature_005')
+    .feature-description= t('.feature_desc_005', link: link_to(t('dictionary.view_more_detail'), welcome_path)).html_safe
+  .col-xs-12.col-sm-6
+    %h3.h4= t('.feature_006')
+    .feature-description= t('.feature_desc_006').html_safe
+  .col-xs-12.col-sm-6
+    %h3.h4= t('.feature_007')
+    .feature-description= t('.feature_desc_007', link: link_to(t('dictionary.view_more_detail'), welcome_path)).html_safe
+
+.searches.separator
+
+.twitter.tweets
+  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true, formats: %i(html))

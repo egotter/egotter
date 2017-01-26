@@ -20,6 +20,7 @@ ja:
       feedback: "ご意見"
       support: "お問い合わせ"
       github: "Github"
+      information: "お知らせ"
     new:
       lead_001: "スマホでかんたんフォロー確認"
       lead_002: "スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです"
@@ -42,7 +43,6 @@ ja:
       search_friends: "気になるあの人を検索"
       search_login_user: "ログインユーザーで検索"
       egotter_features: "えごったーの特徴"
-      keyword_timeline: "みんなのつぶやき"
     waiting:
       retry_search_by: "%{user} で再度検索"
       searching: "%{user} のデータを検索中"
@@ -201,7 +201,6 @@ ja:
     app_name: "えごったー"
     official_account: "公式アカウント"
     share_me: "えごったーをシェアする"
-    information: "お知らせ"
     tweet: "ツイート"
     friends: "フォロー"
     follower: "フォロワー"
