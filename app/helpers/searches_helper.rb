@@ -3,6 +3,7 @@ module SearchesHelper
     user = nil
     nf_screen_names = Util::NotFoundScreenNames.new(redis)
     nf_uids = Util::NotFoundUids.new(redis)
+    redirect_path = root_path_for(controller: controller_name)
 
     begin
       user = client.user(screen_name)
@@ -22,22 +23,38 @@ module SearchesHelper
       TwitterUser.build_by_user(user)
     else
       logger.info "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
-      redirect_to root_path, alert: not_found_message(screen_name)
+      redirect_to redirect_path, alert: not_found_message(screen_name)
     end
 
   rescue Twitter::Error::NotFound => e
     logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
-    redirect_to root_path, alert: not_found_message(screen_name)
+    redirect_to redirect_path, alert: not_found_message(screen_name)
   rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
-    redirect_to root_path, alert: alert_message(e)
+    redirect_to redirect_path, alert: alert_message(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.error(e)
-    redirect_to root_path, alert: alert_message(e)
+    redirect_to redirect_path, alert: alert_message(e)
+  end
+
+  def root_path_for(controller:)
+    if controller == 'one_sided_friends'
+      one_sided_friends_top_path
+    else
+      root_path
+    end
+  end
+
+  def app_name_for(controller:)
+    if %w(one_sided_friends one_sided_followers).include? controller
+      t('one_sided_friends.new.title')
+    else
+      t('searches.common.egotter')
+    end
   end
 
   def title_for(tu, menu:)

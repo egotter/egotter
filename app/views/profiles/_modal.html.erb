@@ -1,4 +1,12 @@
-<% unique_id ||= user.uid %>
+<%
+  unique_id ||= user.uid
+  result_path =
+      if controller == 'one_sided_friends'
+        one_sided_friends_path(screen_name: user.screen_name, via: via)
+      else
+        searches_path(screen_name: user.screen_name, via: via)
+      end
+%>
 <div class="modal fade profile-overview-modal <%= unique_id %>" tabindex="-1" role="dialog" aria-labelledby="profile-overview-modal-label">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -17,7 +25,7 @@
         </script>
 
         <div style="margin: 15px;">
-          <%= link_to t('searches.common.search_by', user: user.mention_name), searches_path(screen_name: user.screen_name, via: via), class: 'btn btn-info btn-block', method: :post %>
+          <%= link_to t('searches.common.search_by', user: user.mention_name), result_path, class: 'btn btn-info btn-block', method: :post %>
         </div>
         <% if admin_signed_in? && searched_tw_user %>
           <% if current_user.uid.to_i == searched_tw_user.uid.to_i %>

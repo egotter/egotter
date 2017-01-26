@@ -1,0 +1,28 @@
+- rendered_uids = []
+= render(partial: 'twitter/user', collection: users, cached: true, locals: {uids: rendered_uids}, formats: %i(html))
+
+- rendered_users = rendered_uids.uniq.map { |uid| users.find { |u| u.uid.to_i == uid.to_i } }
+- locals = {unique_id: nil, searched_tw_user: twitter_user, controller: controller_name, via: 'one_sided_friends/show/profile_modal'}
+= render(partial: 'profiles/modal', collection: rendered_users, as: :user, cached: true, locals: locals, formats: %i(html))
+
+- unless users.last_page?
+  .loading-image.one-sided-friends.see-more.text-center{data: {type: type, next_page: users.next_page}}= image_tag '/ajax-loader.gif'
+  :javascript
+    $(function () {
+      var url = "#{one_sided_friend_path(screen_name: twitter_user.screen_name, type: 'TYPE', page: 'NEXT_PAGE', format: :json)}";
+
+      $('.loading-image.see-more')
+        .lazyload()
+        .one('appear', function () {
+          var $tag = $(this);
+          if (!$tag.data('appeared')) {
+            $tag.data('appeared', true);
+
+            $.get(url.replace('TYPE', $tag.data('type')).replace('NEXT_PAGE', $tag.data('next-page')))
+              .done(function (res) {
+                $tag.parent().append(res.html);
+                $tag.remove();
+              });
+          }
+        });
+    });
