@@ -1,7 +1,11 @@
 function enableSlickOnModalWithDelay(uniqueId) {
-  $('.profile-overview-modal.' + uniqueId).one('show.bs.modal', function (e) {
-    setTimeout(function () { enableSlickOnPageTop(uniqueId) }, 500);
-  });
+  var $modal = $('.profile-overview-modal.' + uniqueId);
+  if (!$modal.data('slick-enabled')) {
+    $modal.data('slick-enabled', true);
+    $modal.one('show.bs.modal', function (e) {
+      setTimeout(function () { enableSlickOnPageTop(uniqueId) }, 500);
+    });
+  }
 }
 
 function enableSlickOnPageTop(uniqueId) {

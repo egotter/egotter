@@ -24,14 +24,14 @@ class SearchResultsController < ApplicationController
     render nothing: true, status: 500
   end
 
-  %i(friends followers removing removed new_friends new_followers blocking_or_blocked).each do |menu|
+  %i(friends followers new_friends new_followers).each do |menu|
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
       render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
 
-  %i(one_sided_friends one_sided_followers mutual_friends).each do |menu|
+  %i(one_sided_friends one_sided_followers mutual_friends removing removed blocking_or_blocked).each do |menu|
     define_method(menu) do
       logger.warn "#{self.class}##{menu}: #{current_user_id} #{request.device_type} #{params.inspect}" # TODO remove
       render json: {html: 'error'}, status: 200

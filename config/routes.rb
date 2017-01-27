@@ -14,6 +14,9 @@ Rails.application.routes.draw do
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
   get 'one_sided_followers', to: 'one_sided_followers#new', as: :one_sided_followers_top
 
+  resources :unfriends, only: %i(create show), param: :screen_name
+  get 'unfriends', to: 'unfriends#new', as: :unfriends_top
+
   resources :searches, only: %i(create), param: :screen_name do
     Search::MENU.each { |menu| get menu, on: :member }
   end

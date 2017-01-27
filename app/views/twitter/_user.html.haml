@@ -19,6 +19,7 @@
           %button.btn.btn-default.no-follow{type: 'button'}
             %span.text-muted.glyphicon.glyphicon-plus
 
-      %button.btn.btn-info{'data-target' => ".profile-overview-modal.#{user.uid}", 'data-toggle' => 'modal', type: 'button'}
-        %span.glyphicon.glyphicon-search
+      = link_to search_path_for(controller: controller_name, screen_name: user.screen_name), method: :post do
+        %button.btn.btn-info{type: 'button'}
+          %span.glyphicon.glyphicon-search
   .description= user.description
