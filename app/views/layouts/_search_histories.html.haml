@@ -25,8 +25,4 @@
   $(function () {
     var selector = '.search-modal';
     setModalOpenLogger(selector, 'search_history', '#{modal_open_logs_path}');
-
-    $(selector).one('show.bs.modal', function (e) {
-      setTimeout(function () { enableSlickOnSearchHistory('#search-histories-in-modal') }, 500);
-    });
   });

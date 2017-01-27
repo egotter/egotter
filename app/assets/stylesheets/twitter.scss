@@ -6,18 +6,27 @@
       padding-bottom: 15px;
     }
 
-    .glyphicon.glyphicon-lock {
-      color: #999999;
-      font-weight: normal;
-    }
+    .media-right .buttons {
+      display: flex;
 
-    .glyphicon.glyphicon-ok {
-      color: #5cb85c;
-      font-weight: normal;
+      .follow,
+      .no-follow {
+        margin-right: 10px;
+      }
     }
 
     .media-heading {
       font-size: small;
+
+      .glyphicon.glyphicon-lock {
+        color: #999999;
+        font-weight: normal;
+      }
+
+      .glyphicon.glyphicon-ok {
+        color: #5cb85c;
+        font-weight: normal;
+      }
     }
 
     .screen-name {
