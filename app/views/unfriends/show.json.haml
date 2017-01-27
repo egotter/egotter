@@ -1,10 +1,10 @@
 = render(partial: 'twitter/user', collection: users, cached: true, locals: {uids: []}, formats: %i(html))
 
 - unless users.last_page?
-  .loading-image.one-sided-friends.see-more.text-center{data: {type: type, next_page: users.next_page}}= image_tag '/ajax-loader.gif'
+  .loading-image.unfriends.see-more.text-center{data: {type: type, next_page: users.next_page}}= image_tag '/ajax-loader.gif'
   :javascript
     $(function () {
-      var url = "#{one_sided_friend_path(screen_name: twitter_user.screen_name, type: 'TYPE', page: 'NEXT_PAGE', format: :json)}";
+      var url = "#{unfriend_path(screen_name: twitter_user.screen_name, type: 'TYPE', page: 'NEXT_PAGE', format: :json)}";
 
       $('.loading-image.see-more')
         .lazyload()

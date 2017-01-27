@@ -42,18 +42,29 @@ module SearchesHelper
   end
 
   def root_path_for(controller:)
-    if controller == 'one_sided_friends'
-      one_sided_friends_top_path
-    else
-      root_path
+    case controller
+      when 'one_sided_friends' then one_sided_friends_top_path
+      when 'unfriends' then unfriends_top_path
+      else root_path
     end
   end
 
   def app_name_for(controller:)
-    if %w(one_sided_friends one_sided_followers).include? controller
-      t('one_sided_friends.new.title')
-    else
-      t('searches.common.egotter')
+    case controller
+      when %r{one_sided_friends|one_sided_followers}
+        t('one_sided_friends.new.title')
+      when %r{unfriends}
+        t('unfriends.new.title')
+      else
+        t('searches.common.egotter')
+    end
+  end
+
+  def search_path_for(controller:, screen_name:, via: '')
+    case controller
+      when 'one_sided_friends' then one_sided_friends_path(screen_name: screen_name, via: via)
+      when 'unfriends' then unfriends_path(screen_name: screen_name, via: via)
+      else searches_path(screen_name: screen_name, via: via)
     end
   end
 

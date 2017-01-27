@@ -76,7 +76,7 @@ class SearchesController < ApplicationController
     @searched_tw_user = tu
   end
 
-  Search::MENU.select { |menu| %i(one_sided_friends one_sided_followers mutual_friends).exclude?(menu) }.each do |menu|
+  Search::MENU.select { |menu| %i(one_sided_friends one_sided_followers mutual_friends removing removed blocking_or_blocked).exclude?(menu) }.each do |menu|
     define_method(menu) do
       @menu = menu
       @title = title_for(@searched_tw_user, menu: menu)
@@ -87,6 +87,12 @@ class SearchesController < ApplicationController
   %i(one_sided_friends one_sided_followers mutual_friends).each do |menu|
     define_method(menu) do
       redirect_to one_sided_friend_path(screen_name: @searched_tw_user.screen_name, type: menu)
+    end
+  end
+
+  %i(removing removed blocking_or_blocked).each do |menu|
+    define_method(menu) do
+      redirect_to unfriend_path(screen_name: @searched_tw_user.screen_name, type: menu)
     end
   end
 
