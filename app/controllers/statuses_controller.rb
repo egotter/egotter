@@ -1,7 +1,7 @@
 class StatusesController < ApplicationController
   include Validation
   include Concerns::Logging
-  include SearchesHelper
+  include StatusesHelper
 
   before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(show)) { existing_uid?(params[:uid].to_i) }
