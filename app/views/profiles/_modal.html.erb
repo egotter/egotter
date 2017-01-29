@@ -8,13 +8,6 @@
       <div class="modal-body" style="padding: 0;">
         <%= render(partial: 'profiles/overview', locals: {user: user, unique_id: user.uid}) %>
 
-        <script>
-          $(function () {
-            enableSlickOnModalWithDelay('<%= user.uid %>');
-            setModalOpenLogger('.profile-overview-modal.<%= user.uid %>', 'profile', '<%= modal_open_logs_path %>');
-          });
-        </script>
-
         <div style="margin: 15px;">
           <%= link_to t('searches.common.search_by', user: user.mention_name), search_path_for(controller: controller, screen_name: user.screen_name, via: via), class: 'btn btn-info btn-block', method: :post %>
         </div>

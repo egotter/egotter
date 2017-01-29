@@ -11,9 +11,6 @@
   %div.twitter.users{id: menu}
     = render(partial: 'twitter/user', collection: @user_items.map { |i| i[:target] }, cached: true, locals: {uids: rendered_uids})
 
-  - users = rendered_uids.uniq.map { |uid| @user_items.find { |item| item[:target].uid.to_i == uid.to_i }[:target] }
-  = render(partial: 'profiles/modal', collection: users, as: :user, cached: true, locals: {searched_tw_user: @searched_tw_user, via: :profile_modal})
-
   :javascript
     $(function () {
       $("img.lazy").lazyload();

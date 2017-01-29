@@ -1,16 +1,13 @@
-function enableSlickOnModalWithDelay(uniqueId) {
-  var $modal = $('.profile-overview-modal.' + uniqueId);
-  if (!$modal.data('slick-enabled')) {
-    $modal.data('slick-enabled', true);
-    $modal.one('show.bs.modal', function (e) {
-      setTimeout(function () { enableSlickOnPageTop(uniqueId) }, 500);
-    });
-  }
+function enableSlickOnModal() {
+  var $modal = $('.profile-overview-modal');
+  $modal.one('show.bs.modal', function (e) {
+    var $m = $(this);
+    setTimeout(function () { enableSlickNow($m.find('.profile-overview-carousel')) }, 500);
+  });
 }
 
-function enableSlickOnPageTop(uniqueId) {
-  var container = $('.profile-overview-container.' + uniqueId);
-  container.find('.profile-overview-carousel').slick({
+function enableSlickNow(container) {
+  container.slick({
     accessibility: false,
     arrows: false,
     dots: true,
@@ -23,8 +20,17 @@ function enableSlickOnPageTop(uniqueId) {
   container.find('.profile-calendar').show();
 }
 
-function setModalOpenLogger(selector, via, url) {
-  $(selector).on('shown.bs.modal', function() {
+function enableSlickOnPageTop() {
+  var elem = $('.profile-overview-carousel');
+  if (elem.is(':visible')) {
+    enableSlickNow(elem);
+  } else {
+    console.log('Visible ".profile-overview-carousel" is not found.');
+  }
+}
+
+function setModalOpenLogger(via, url) {
+  $('.profile-overview-modal').on('shown.bs.modal', function() {
     $.post(url, {via: via});
   });
 }

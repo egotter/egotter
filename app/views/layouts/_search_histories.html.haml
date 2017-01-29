@@ -20,9 +20,3 @@
             });
         - else
           = render template: 'login/welcome', locals: {via_prefix: 'search_history_'}
-
-:javascript
-  $(function () {
-    var selector = '.search-modal';
-    setModalOpenLogger(selector, 'search_history', '#{modal_open_logs_path}');
-  });
