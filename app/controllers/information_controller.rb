@@ -2,6 +2,7 @@ class InformationController < ApplicationController
   layout false
 
   LIST = [
+    %w(2017/01/30 表示の高速化を行いました),
     %w(2017/01/27 ユーザー一覧を見やすくしました),
     %w(2017/01/26 片思いチェックを作りました),
     %w(2017/01/18 表示の高速化を行いました),
@@ -11,7 +12,7 @@ class InformationController < ApplicationController
     %w(2016/11/29 リムられ速報が届くようになりました),
     %w(2016/11/21 表示の高速化を行いました),
     %w(2016/11/12 表示の高速化を行いました),
-    %w(2016/10/31 表示の高速化を行いました),
+    # %w(2016/10/31 表示の高速化を行いました),
     # %w(2016/10/30 表示の高速化を行いました),
     # %w(2016/10/28 表示の高速化を行いました),
     # %w(2016/10/26 プッシュ通知が届くようになりました),
@@ -39,6 +40,7 @@ class InformationController < ApplicationController
 
   # TODO remove later
   def index
+    logger.warn "#{self.class}##{__method__}: #{current_user_id} #{request.device_type} #{params.inspect}" # TODO remove
     render json: {html: render_to_string}, status: 200
   end
 end
