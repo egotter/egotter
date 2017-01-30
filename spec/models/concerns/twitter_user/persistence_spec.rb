@@ -127,7 +127,7 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       let(:num) { 3 }
       before do
         Unfriendship.delete_all
-        num.times.each { |n| create(:unfriendship, friend_id: create(:friend, from_id: tu.id).id, from_uid: tu.uid, sequence: n) }
+        num.times.each { |n| create(:unfriendship, friend_uid: create(:friend, from_id: tu.id).uid, from_uid: tu.uid, sequence: n) }
       end
       it 'deletes old unfriendships and saves new unfriendships' do
         expect([Unfriendship.all.size, tu.unfriends.size]).to match_array([num, num])
@@ -155,7 +155,7 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       let(:num) { 3 }
       before do
         Unfollowership.delete_all
-        num.times.each { |n| create(:unfollowership, follower_id: create(:follower, from_id: tu.id).id, from_uid: tu.uid, sequence: n) }
+        num.times.each { |n| create(:unfollowership, follower_uid: create(:follower, from_id: tu.id).uid, from_uid: tu.uid, sequence: n) }
       end
       it 'deletes old unfollowerships and saves new unfollowerships' do
         expect([Unfollowership.all.size, tu.unfollowers.size]).to match_array([num, num])
