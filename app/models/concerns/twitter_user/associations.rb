@@ -22,8 +22,20 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options dependent: :destroy, validate: false, autosave: false do |obj|
-      obj.has_many :unfriends,   through: :unfriendships
-      obj.has_many :unfollowers, through: :unfollowerships
+      obj.has_many :unfriends,   through: :unfriendships # TODO remove
+      obj.has_many :unfollowers, through: :unfollowerships # TODO remove
+    end
+
+    def tmp_unfriends
+      uids = unfriendships.pluck(:friend_uid)
+      users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+      uids.map { |_uid| users[_uid] }
+    end
+
+    def tmp_unfollowers
+      uids = unfollowerships.pluck(:follower_uid)
+      users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+      uids.map { |_uid| users[_uid] }
     end
 
     with_options primary_key: :id, foreign_key: :from_id, dependent: :destroy, validate: false, autosave: false do |obj|
