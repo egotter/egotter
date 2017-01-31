@@ -1,9 +1,11 @@
 - content_for :canonical_url do
   %link{href: unfriend_url(screen_name: @twitter_user.screen_name, type: @type), rel: 'canonical'}
 
-- description = t('unfriends.show.description', user: @twitter_user.mention_name, removing: @twitter_user.removing.size, removed: @twitter_user.removed.size, blocking_or_blocked: @twitter_user.blocking_or_blocked.size)
-- title t('unfriends.show.title', user: @twitter_user.mention_name)
-- set_meta_tags description: description
+- breadcrumb :unfriend, @twitter_user.screen_name
+
+- page_title = t('unfriends.show.title', user: @twitter_user.mention_name, removing: @twitter_user.removing.size, removed: @twitter_user.removed.size, blocking_or_blocked: @twitter_user.blocking_or_blocked.size)
+- title page_title
+- set_meta_tags description: t('unfriends.show.description', user: @twitter_user.mention_name, removing: @twitter_user.removing.size, removed: @twitter_user.removed.size, blocking_or_blocked: @twitter_user.blocking_or_blocked.size)
 
 = render(partial: 'profiles/overview',
   locals: {user: @twitter_user, unique_id: @twitter_user.uid})
@@ -13,7 +15,7 @@
     enableSlickOnPageTop();
   });
 
-%h2.h2.unfriends= description
+%h2.h2.unfriends= page_title
 
 .unfriends.lead.text-center= t('unfriends.show.lead_002', user: @twitter_user.mention_name).html_safe
 
@@ -23,4 +25,4 @@
 - if @twitter_user.too_many_friends?(login_user: current_user, context: :search)
   = render partial: 'unfriends/show/empty', locals: {twitter_user: @twitter_user}
 - else
-  = render partial: 'unfriends/show/present', locals: {twitter_user: @twitter_user, type: @type, description: description}
+  = render partial: 'unfriends/show/present', locals: {twitter_user: @twitter_user, type: @type}

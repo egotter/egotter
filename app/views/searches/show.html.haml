@@ -1,6 +1,8 @@
 - content_for :canonical_url do
   %link{href: search_url(screen_name: @searched_tw_user.screen_name), rel: 'canonical'}
 
+- breadcrumb :search, @searched_tw_user.screen_name
+
 - set_meta_tags title: t('.title', user: @searched_tw_user.mention_name), site: '', description: t('.description', user: @searched_tw_user.mention_name)
 
 %p.alert.alert-info{style: 'z-index: 10000; display: none;'}

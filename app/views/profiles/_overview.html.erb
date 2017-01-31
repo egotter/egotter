@@ -46,19 +46,19 @@
     <div class="tweet-count-box col-xs-4"><!-- tweets count -->
       <%= link_to status_path(uid: user.uid), class: 'text-muted' do %>
         <span class="stats-count"><%= user.statuses_count %></span><br>
-        <span class="text-muted"><%= t('dictionary.tweet') %></span>
+        <span class="text-muted"><%= t('searches.common.tweet') %></span>
       <% end %>
     </div>
     <div class="friends-count-box col-xs-4"><!-- friends count -->
       <%= link_to friends_search_path(screen_name: user.screen_name), class: 'text-muted' do %>
         <span class="stats-count"><%= user.friends_count %></span><br>
-        <span class="text-muted"><%= t('dictionary.friends') %></span>
+        <span class="text-muted"><%= t('searches.friends.name') %></span>
       <% end %>
     </div>
     <div class="followers-count-box col-xs-4"><!-- followers count -->
       <%= link_to followers_search_path(screen_name: user.screen_name), class: 'text-muted' do %>
         <span class="stats-count"><%= user.followers_count %></span><br>
-        <span class="text-muted"><%= t('dictionary.follower') %></span>
+        <span class="text-muted"><%= t('searches.followers.name') %></span>
       <% end %>
     </div>
   </div>

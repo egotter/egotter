@@ -3,14 +3,14 @@ ja:
   searches:
     common:
       egotter: "えごったー"
-      title: "えごったー スマホでかんたん ツイッターのフォロー確認"
-      description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
+      page_title: "えごったー スマホでかんたん ツイッターのフォロー確認"
+      page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       large: "多い"
       small: "少ない"
       others: "それ以外"
       or: " または "
       cluster: "クラスタ"
-      return: "%{user} の分析結果一覧へ戻る"
+      return: "%{user} の分析一覧へ戻る"
       twitter_id: "Twitter ID"
       search_by_twitter_id: "Twitter ID で検索"
       search_by_other_user: "他のユーザー で検索"
@@ -19,6 +19,7 @@ ja:
       search_by: "%{user} で検索"
       search: "検索"
       empty: "結果は 0 です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。"
+      top: "トップ"
       top_page: "トップページ"
       feedback: "ご意見"
       support: "お問い合わせ"
@@ -26,6 +27,8 @@ ja:
       information: "お知らせ"
       redirect_to: "%{user} の結果を表示します"
       popular: "人気の分析"
+      tweet: "ツイート"
+      related_pages: "関連ページ"
     new:
       lead_001: "スマホでかんたんフォロー確認"
       lead_002: "スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです"
@@ -57,47 +60,60 @@ ja:
       waiting_is_finished_msg: "検索が完了しました。ページを移動します"
       updating_is_finished_msg: "新しいデータが見付かりました。%{link} からページを更新してください。"
     show:
-      title: "%{user}の分析 - リムーブ・片思い・仲良しをえごったーで表示"
-      heading: "%{user}の分析結果"
-      description: "えごったーなら全部無料！ %{user}のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果です。リム通知は、えごったーにログイン後、自動で届きます。"
+      title: "%{user} の分析 - フォロー外され・片思い・仲良しをえごったーで分析"
+      simple_title: "%{user} の分析"
+      heading: "%{user} の分析 by えごったー"
+      description: "えごったーなら全部無料！ %{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果です。リム通知は、えごったーにログイン後、自動で届きます。"
     friends:
+      name: "フォロー"
       title: "%{user} のフォロー"
+      short_description: "フォローをリストアップして表示します。"
     followers:
+      name: "フォロワー"
       title: "%{user} のフォロワー"
-      targets: "フォロワー"
+      short_description: "フォロワーをリストアップして表示します。"
     removing:
       num: "リムり<br>%{num}"
       title: "%{user} がフォローを外した"
       description: "%{user}がフォローを外したユーザーを表示します。"
+      short_description: "フォローを外したユーザーを表示します。"
     removed:
       num: "リムられ<br>%{num}"
       title: "%{user} がフォローを外された"
       description: "%{user}がフォローを外されたユーザーを表示します。"
+      short_description: "フォローを外されたユーザーを表示します。"
     new_friends:
+      name: "新しいフォロー"
       title: "%{user} の新しいフォロー"
       description: "%{user}が新しくフォローしたユーザーを表示します。"
     new_followers:
+      name: "新しいフォロワー"
       title: "%{user} の新しいフォロワー"
       description: "%{user}が新しくフォローされたユーザーを表示します。"
     blocking_or_blocked:
       num: "ブロられ<br>%{num}"
       title: "%{user} がブロックされたかも"
       description: "%{user}がブロックされたかもしれないユーザーを表示します。フォローとフォロワーから同時に外れたらブロックとみなすため、少し不正確です。"
+      short_description: "ブロックされたかもしれないユーザーを表示します。"
     replying:
+      name: "リプライ"
       title: "%{user} がリプライした"
       description: "%{user}がリプライしたユーザーを表示します。"
       targets: "リプライ"
     replied:
+      name: "リプライされた"
       title: "%{user} がリプライされた"
       description: "%{user}がリプライされたユーザーを表示します。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
       targets: "リプライ"
     close_friends:
+      name: "仲良し"
       title: "%{user} と仲良し"
       description: "%{user}と仲良しなユーザーを表示します。仲良しの判定には、リプライした・リプライされた・ふぁぼを使っています。"
       targets: "仲良し"
       friends: "友人"
       acquaintance: "知人"
     usage_stats:
+      name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
       description: "%{user}のツイッター利用状況を表示します。"
       usage_time: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
@@ -111,40 +127,51 @@ ja:
       usage_kind: ".%{user}のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user}のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:
+      name: "最近いないフォロー"
       title: "%{user} のフォローのうち最近ツイッターにいない"
-      description: "%{user}がフォローしているユーザーのうち、最近ツイートしていないユーザーを表示します。"
+      description: "%{user}がフォローしているユーザーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
+      short_description: "フォローのうち、最近ツイートしていないユーザーをリストアップして表示します。"
       targets: "対象者"
     inactive_followers:
+      name: "最近いないフォロワー"
       title: "%{user} のフォロワーのうち最近ツイッターにいない"
       description: "%{user}がフォローされているユーザーのうち、最近ツイートしていないユーザーを表示します。"
+      short_description: "フォロワーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
       targets: "対象者"
     clusters_belong_to:
+      name: "クラスタ"
       title: "%{user} が入っているクラスタ"
       description: "%{user}が入っているクラスタを表示します。"
     mutual_friends:
       num: "両思い<br>%{num}"
       title: "%{user} が両思い"
       description: "%{user}が相互フォローしているユーザーを表示します。"
+      short_description: "相互フォローしているユーザーを表示します。"
       targets: "両思い"
     one_sided_friends:
       num: "片思い<br>%{num}"
       title: "%{user} が片思い"
       description: "%{user}がフォローしているユーザーのうち、%{user}にフォロー返しをしていないユーザーを表示します。"
+      short_description: "フォローしているユーザーのうち、フォロー返しをされていないユーザーを表示します。"
       targets: "片思い"
     one_sided_followers:
       num: "片思われ<br>%{num}"
       title: "%{user} が片思われ"
       description: "%{user}がフォローされているユーザーのうち、%{user}がフォロー返しをしていないユーザーを表示します。"
+      short_description: "フォローされているユーザーのうち、フォロー返しをしていないユーザーを表示します。"
       targets: "片思われ"
     common_friends:
+      name: "共通フォロー"
       title: "%{user} と %{login} の共通フォロー"
       description: "%{user}と%{login}が共通してフォローしているユーザーを表示します。"
       targets: "共通"
     common_followers:
+      name: "共通フォロワー"
       title: "%{user} と %{login} の共通フォロワー"
       description: "%{user}と%{login}が共通してフォローされているユーザーを表示します。"
       targets: "共通"
     favoriting:
+      name: "よくふぁぼる"
       title: "%{user} がよくふぁぼる"
       description: "%{user}がよくツイートをお気に入り登録するユーザーを表示します。"
       targets: "ふぁぼる"
@@ -158,7 +185,7 @@ ja:
       favstar_link: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank">@%{screen_name}をFavstarで見る</a>'
   update_histories:
     show:
-      title: "%{user} の更新履歴"
+      title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
       description: "%{user}のえごったー更新履歴を表示します。"
   statuses:
     show:
@@ -211,6 +238,7 @@ ja:
     new:
       title: '<span style="font-size: small; display: inline;">片思いチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '片思いチェック by えごったー'
+      simple_title: '片思いチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       lead_001: "スマホでさくっと片思いチェック"
@@ -218,14 +246,12 @@ ja:
       lead_003: "片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。"
       lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show:
-      title: "%{user} の片思い・片思われ・両思い"
-      description: &description
-        "%{user} は、片思い %{one_sided_friends}人、片思われ %{one_sided_followers}人、両思い %{mutual_friends}人です。"
-      lead_001: *description
+      title: "%{user} の分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
+      description: "%{user} は、片思い %{one_sided_friends}人、片思われ %{one_sided_followers}人、両思い %{mutual_friends}人です。自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       lead_002: "片思いは、%{user} はフォローしているけどフォローされていないアカウント、<br>片思われは、%{user} はフォローしていないけどフォローされているアカウントのことです。"
       lead_003: '%{user} の片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
-      tweet: *description
+      tweet: "%{user} の分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。"
   one_sided_followers:
     new:
       title: '<span style="font-size: small; display: inline;">片思われチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -234,6 +260,7 @@ ja:
     new:
       title: '<span style="font-size: small; display: inline;">リムられチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'リムられチェック by えごったー'
+      simple_title: 'リムられチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
       short_description: "フォローを外されたアカウントをさくっと見付けることができます。"
       lead_001: "スマホでさくっとリムられチェック"
@@ -241,21 +268,16 @@ ja:
       lead_003: "リムられチェックの決定版。<br>スマホから使える無料のリムられチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show:
-      title: "%{user} のリムり・リムられ"
-      description: &description
-        "%{user} は、リムり %{removing}人、リムられ %{removed}人、ブロックされたかも %{blocking_or_blocked}人です。"
-      lead_001: *description
+      title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされたかも %{blocking_or_blocked}人"
+      description: "%{user} は、リムり %{removing}人、リムられ %{removed}人、ブロックされたかも %{blocking_or_blocked}人です。フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
       lead_002: "リムりは、%{user} がフォローを外したアカウント、<br>リムられは、%{user} がフォローを外されたアカウントのことです。"
       lead_003: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リプライなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
-      tweet: *description
+      tweet: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされたかも %{blocking_or_blocked}人です。"
 
   dictionary:
     official_account: "公式アカウント"
     share_me: "えごったーをシェアする"
-    tweet: "ツイート"
-    friends: "フォロー"
-    follower: "フォロワー"
     score: "スコア"
     link_to_support: "お問い合わせページ"
     support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"

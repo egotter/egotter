@@ -73,6 +73,7 @@
       .row
         .hidden-xs.col-sm-1.col-md-2.col-lg-2
         .col-xs-12.col-sm-10.col-md-8.col-lg-8.yield-container
+          = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
           = yield
         .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
@@ -115,7 +116,7 @@
               %h2.h4.text-left
                 = link_to t('searches.common.egotter'), root_path
               %div{style: 'margin-bottom: 15px;'}
-                = t('searches.common.description')
+                = t('searches.common.page_description')
             - unless %w(one_sided_friends one_sided_followers).include? controller_name
               %h2.h4.text-left
                 = link_to t('one_sided_friends.new.plain_title').html_safe, one_sided_friends_top_path
