@@ -1,35 +1,51 @@
 %footer.footer
   .container
-    %p.text-muted
-      - spaces = '&nbsp;'.html_safe
+    - spaces = '&nbsp;'.html_safe
 
-      = succeed spaces do
-        %a{href: root_path_for(controller: controller_name)}= t('searches.common.top_page')
+    = succeed spaces do
+      %a{href: root_path_for(controller: controller_name)}= t('searches.common.top_page')
+      %br.visible-xs-block
 
-      = succeed spaces do
-        - if user_signed_in?
-          = link_to t('dictionary.sign_out'), sign_out_path, data: {confirm: t('dictionary.realy_sign_out')}
-        - else
-          = link_to t('dictionary.sign_in'), welcome_path
+    = succeed spaces do
+      %a{href: root_path_for(controller: 'one_sided_friends')}= t('one_sided_friends.new.simple_title')
+      %br.visible-xs-block
 
-      = succeed spaces do
-        %a{href: root_path_for(controller: controller_name)}= t('searches.common.feedback')
+    = succeed spaces do
+      %a{href: root_path_for(controller: 'unfriends')}= t('unfriends.new.simple_title')
+      %br
 
+    = succeed spaces do
       - if user_signed_in?
-        = succeed spaces do
-          = link_to t('misc.menu.title'), menu_path
+        = link_to t('dictionary.sign_out'), sign_out_path, data: {confirm: t('dictionary.realy_sign_out')}
+      - else
+        = link_to t('dictionary.sign_in'), welcome_path
+      %br.visible-xs-block
 
-      = succeed spaces do
-        %a{href: user_url('ego_tter'), target: '_blank'}= t('dictionary.official_account')
+    = succeed spaces do
+      %a{href: root_path_for(controller: controller_name)}= t('searches.common.feedback')
+      %br.visible-xs-block
 
+    - if user_signed_in?
       = succeed spaces do
-        = link_to t('searches.common.support'), support_path
+        = link_to t('misc.menu.title'), menu_path
+        %br.visible-xs-block
 
-      = succeed spaces do
-        %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'}= t('searches.common.github')
+    = succeed spaces do
+      %a{href: user_url('ego_tter'), target: '_blank'}= t('dictionary.official_account')
+      %br.visible-xs-block
 
-      = succeed spaces do
-        = link_to t('misc.terms_of_service.title'), terms_of_service_path
+    = succeed spaces do
+      = link_to t('searches.common.support'), support_path
+      %br.visible-xs-block
 
-      = succeed spaces do
-        = link_to t('misc.privacy_policy.title'), privacy_policy_path
+    = succeed spaces do
+      %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'}= t('searches.common.github')
+      %br.visible-xs-block
+
+    = succeed spaces do
+      = link_to t('misc.terms_of_service.title'), terms_of_service_path
+      %br.visible-xs-block
+
+    = succeed spaces do
+      = link_to t('misc.privacy_policy.title'), privacy_policy_path
+      %br.visible-xs-block
