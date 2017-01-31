@@ -18,13 +18,13 @@ SitemapGenerator::Sitemap.create do
 
         screen_name = twitter_user.screen_name
         add search_path(screen_name: screen_name), changefreq: 'daily'
-        add status_url(uid: uid), changefreq: 'daily'
-        add one_sided_friend_url(screen_name: screen_name, type: 'one_sided_friends'), changefreq: 'daily'
-        add one_sided_friend_url(screen_name: screen_name, type: 'one_sided_followers'), changefreq: 'daily'
-        add one_sided_friend_url(screen_name: screen_name, type: 'mutual_friends'), changefreq: 'daily'
-        add unfriend_url(screen_name: screen_name, type: 'removing'), changefreq: 'daily'
-        add unfriend_url(screen_name: screen_name, type: 'removed'), changefreq: 'daily'
-        add unfriend_url(screen_name: screen_name, type: 'blocking_or_blocked'), changefreq: 'daily'
+        add status_path(uid: uid), changefreq: 'daily'
+        add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_friends'), changefreq: 'daily'
+        add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_followers'), changefreq: 'daily'
+        add one_sided_friend_path(screen_name: screen_name, type: 'mutual_friends'), changefreq: 'daily'
+        add unfriend_path(screen_name: screen_name, type: 'removing'), changefreq: 'daily'
+        add unfriend_path(screen_name: screen_name, type: 'removed'), changefreq: 'daily'
+        add unfriend_path(screen_name: screen_name, type: 'blocking_or_blocked'), changefreq: 'daily'
 
         %i(
           friends
@@ -39,7 +39,7 @@ SitemapGenerator::Sitemap.create do
           clusters_belong_to
           close_friends
           usage_stats
-        ).each { |menu| add send("#{menu}_search_url", screen_name: screen_name), changefreq: 'daily' }
+        ).each { |menu| add send("#{menu}_search_path", screen_name: screen_name), changefreq: 'daily' }
 
         add support_path
         add terms_of_service_path
