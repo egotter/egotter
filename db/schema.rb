@@ -385,28 +385,20 @@ ActiveRecord::Schema.define(version: 20170104061821) do
 
   create_table "unfollowerships", id: false, force: :cascade do |t|
     t.integer "from_uid",     limit: 8, null: false
-    t.integer "follower_id",  limit: 4, null: false
     t.integer "follower_uid", limit: 8, null: false
     t.integer "sequence",     limit: 4, null: false
   end
 
-  add_index "unfollowerships", ["follower_id"], name: "index_unfollowerships_on_follower_id", using: :btree
   add_index "unfollowerships", ["follower_uid"], name: "index_unfollowerships_on_follower_uid", using: :btree
-  add_index "unfollowerships", ["from_uid", "follower_id"], name: "index_unfollowerships_on_from_uid_and_follower_id", unique: true, using: :btree
-  add_index "unfollowerships", ["from_uid", "follower_uid"], name: "index_unfollowerships_on_from_uid_and_follower_uid", unique: true, using: :btree
   add_index "unfollowerships", ["from_uid"], name: "index_unfollowerships_on_from_uid", using: :btree
 
   create_table "unfriendships", id: false, force: :cascade do |t|
     t.integer "from_uid",   limit: 8, null: false
-    t.integer "friend_id",  limit: 4, null: false
     t.integer "friend_uid", limit: 8, null: false
     t.integer "sequence",   limit: 4, null: false
   end
 
-  add_index "unfriendships", ["friend_id"], name: "index_unfriendships_on_friend_id", using: :btree
   add_index "unfriendships", ["friend_uid"], name: "index_unfriendships_on_friend_uid", using: :btree
-  add_index "unfriendships", ["from_uid", "friend_id"], name: "index_unfriendships_on_from_uid_and_friend_id", unique: true, using: :btree
-  add_index "unfriendships", ["from_uid", "friend_uid"], name: "index_unfriendships_on_from_uid_and_friend_uid", unique: true, using: :btree
   add_index "unfriendships", ["from_uid"], name: "index_unfriendships_on_from_uid", using: :btree
 
   create_table "user_engagement_stats", force: :cascade do |t|

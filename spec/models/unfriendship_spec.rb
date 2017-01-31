@@ -22,7 +22,7 @@ RSpec.describe Unfriendship, type: :model do
       expect { Unfriendship.import_from!(twitter_user) }.to change { Unfriendship.all.size }.by(removing_size)
 
       twitter_user.reload
-      expect(twitter_user.unfriends.map(&:id)).to eq(twitter_user.calc_removing.map(&:id))
+      expect(twitter_user.unfriends.map(&:uid)).to eq(twitter_user.calc_removing.map(&:uid).map(&:to_i))
     end
   end
 end

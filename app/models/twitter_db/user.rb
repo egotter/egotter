@@ -1,5 +1,7 @@
 module TwitterDB
   class User < TwitterDB::Base
+    include Concerns::TwitterUser::Store
+
     with_options primary_key: :uid, foreign_key: :user_uid, dependent: :destroy, validate: false, autosave: false do |obj|
       obj.has_many :friendships, -> { order(sequence: :asc) }
       obj.has_many :followerships, -> { order(sequence: :asc) }
