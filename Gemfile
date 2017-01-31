@@ -61,9 +61,11 @@ gem 'draper'
 gem 'rollbar'
 gem 'oj'
 gem 'js-routes'
+gem 'gretel'
 
 group :development, :production do
   gem 'blazer'
+  gem 'sitemap_generator'
 end
 
 group :development, :test do
