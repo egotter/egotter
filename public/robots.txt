@@ -3,3 +3,5 @@ Disallow: /
 
 User-agent: AhrefsBot
 Disallow: /
+
+Sitemap: https://egotter.com/sitemap.xml.gz

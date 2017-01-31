@@ -16,6 +16,7 @@
 !/log/.keep
 /tmp
 
+/public/sitemap*
 /ddagent-install.log
 /.idea
 /.irbrc

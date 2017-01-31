@@ -16,8 +16,7 @@ class MiscController < ApplicationController
   end
 
   def sitemap
-    @records = TwitterUser.order(created_at: :desc).limit(2000).to_a.uniq
-    render layout: false
+    redirect_to 'https://egotter.com/sitemap.xml.gz'
   end
 
   def menu
