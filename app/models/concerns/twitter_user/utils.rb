@@ -35,19 +35,11 @@ module Concerns::TwitterUser::Utils
   end
 
   def friend_uids
-    if new_record?
-      friends.map { |f| f.uid.to_i }
-    else
-      friends.pluck(:uid).map { |uid| uid.to_i }
-    end
+    new_record? ? friendships.map(&:friend_uid) : friendships.pluck(:friend_uid)
   end
 
   def follower_uids
-    if new_record?
-      followers.map { |f| f.uid.to_i }
-    else
-      followers.pluck(:uid).map { |uid| uid.to_i }
-    end
+    new_record? ? followerships.map(&:follower_uid) : followerships.pluck(:follower_uid)
   end
 
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)

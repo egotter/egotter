@@ -17,7 +17,7 @@ module Concerns::TwitterUser::Dirty
 
     keys.map do |key|
       values = [older.send(key), newer.send(key)]
-      values = values.map { |v| v.sort } if key.in?(%i(friend_uids follower_uids))
+      values = values.map(&:sort) if key.in?(%i(friend_uids follower_uids))
       [key, values]
     end.to_h.reject { |_, v| v[0] == v[1] }
   end

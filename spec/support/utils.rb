@@ -1,17 +1,16 @@
-def create_same_record!(tu)
-  same_tu = build(:twitter_user, uid: tu.uid, screen_name: tu.screen_name)
-  same_tu.friends = tu.friends.map { |f| build(:friend, uid: f.uid, screen_name: f.screen_name) }
-  same_tu.followers = tu.followers.map { |f| build(:follower, uid: f.uid, screen_name: f.screen_name) }
-  adjust_user_info(same_tu)
-  same_tu.save!
-  same_tu.friends.each { |f| f.from_id = same_tu.id; f.save! }
-  same_tu.followers.each { |f| f.from_id = same_tu.id; f.save! }
-  same_tu
+def copy_twitter_user(tu)
+  copy = create(:twitter_user, uid: tu.uid, screen_name: tu.screen_name)
+  copy.friendships.delete_all
+  copy.followerships.delete_all
+  tu.friendships.each.with_index { |f, i| copy.friendships.create(from_id: copy.id, friend_uid: f.friend_uid, sequence: i) }
+  tu.followerships.each.with_index { |f, i| copy.followerships.create(from_id: copy.id, follower_uid: f.follower_uid, sequence: i) }
+  adjust_user_info(copy)
+  copy.reload
 end
 
 def adjust_user_info(tu)
   json = Hashie::Mash.new(JSON.parse(tu.user_info))
-  json.friends_count = tu.friends.size
-  json.followers_count = tu.followers.size
+  json.friends_count = tu.friendships.size
+  json.followers_count = tu.followerships.size
   tu.user_info = json.to_json
 end
