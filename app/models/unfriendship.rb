@@ -2,6 +2,7 @@
 #
 # Table name: unfriendships
 #
+#  id         :integer          not null, primary key
 #  from_uid   :integer          not null
 #  friend_uid :integer          not null
 #  sequence   :integer          not null
