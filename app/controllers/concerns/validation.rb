@@ -1,5 +1,6 @@
 module Validation
   extend ActiveSupport::Concern
+  include TwitterHelper
 
   included do
 
@@ -87,10 +88,13 @@ module Validation
     false
   rescue Twitter::Error::NotFound => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
-    logger.info e.backtrace.take(10).join("\n")
     redirect_to redirect_path, alert: not_found_message(tu.screen_name)
     false
-  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
+  rescue Twitter::Error::Forbidden => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
+    redirect_to redirect_path, alert: forbidden_message(tu.screen_name)
+    false
+  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
     logger.info e.backtrace.take(10).join("\n")
     redirect_to redirect_path, alert: alert_message(e)
@@ -107,12 +111,16 @@ module Validation
     t('before_sign_in.not_found', user: screen_name)
   end
 
+  def forbidden_message(screen_name)
+    t('before_sign_in.forbidden', user: screen_name)
+  end
+
   def alert_message(ex)
     case
       when ex.kind_of?(Twitter::Error::TooManyRequests)
         t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
       when ex.kind_of?(Twitter::Error::NotFound)
-        raise 'call `not_found_message(screen_name)` for Twitter::Error::NotFound'
+        raise 'must call `not_found_message(screen_name)` for Twitter::Error::NotFound'
       when ex.kind_of?(Twitter::Error::Unauthorized)
         if user_signed_in?
           t("after_sign_in.unauthorized", sign_out_link: sign_out_link)
@@ -120,7 +128,7 @@ module Validation
           t("before_sign_in.unauthorized", sign_in_link: sign_in_link)
         end
       when ex.kind_of?(Twitter::Error::Forbidden)
-        t('before_sign_in.forbidden')
+        raise 'must call `forbidden_message(screen_name)` for Twitter::Error::Forbidden'
       else
         t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
     end.html_safe

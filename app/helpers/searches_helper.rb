@@ -30,7 +30,10 @@ module SearchesHelper
     logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
     redirect_to redirect_path, alert: not_found_message(screen_name)
-  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized, Twitter::Error::Forbidden => e
+  rescue Twitter::Error::Forbidden => e
+    logger.warn "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
+    redirect_to redirect_path, alert: forbidden_message(screen_name)
+  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
     redirect_to redirect_path, alert: alert_message(e)
