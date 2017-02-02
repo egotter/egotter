@@ -18,6 +18,7 @@ class CreateTwitterTables < ActiveRecord::Migration
     add_index :users, :created_at
 
     create_table :friendships, id: false do |t|
+      t.column  :id,        'BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT'
       t.integer :user_uid,   limit: 8, index: true, null: false
       t.integer :friend_uid, limit: 8, index: true, null: false
       t.integer :sequence,                          null: false
@@ -27,6 +28,7 @@ class CreateTwitterTables < ActiveRecord::Migration
     add_foreign_key :friendships, :users, column: :friend_uid, primary_key: :uid
 
     create_table :followerships, id: false do |t|
+      t.column  :id,          'BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT'
       t.integer :user_uid,     limit: 8, index: true, null: false
       t.integer :follower_uid, limit: 8, index: true, null: false
       t.integer :sequence,                            null: false

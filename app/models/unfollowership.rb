@@ -2,6 +2,7 @@
 #
 # Table name: unfollowerships
 #
+#  id           :integer          not null, primary key
 #  from_uid     :integer          not null
 #  follower_uid :integer          not null
 #  sequence     :integer          not null

@@ -143,7 +143,7 @@ ActiveRecord::Schema.define(version: 20170104061821) do
 
   add_index "followers", ["from_id"], name: "index_followers_on_from_id", using: :btree
 
-  create_table "followerships", id: false, force: :cascade do |t|
+  create_table "followerships", force: :cascade do |t|
     t.integer "from_id",      limit: 4, null: false
     t.integer "follower_uid", limit: 8, null: false
     t.integer "sequence",     limit: 4, null: false
@@ -163,7 +163,7 @@ ActiveRecord::Schema.define(version: 20170104061821) do
 
   add_index "friends", ["from_id"], name: "index_friends_on_from_id", using: :btree
 
-  create_table "friendships", id: false, force: :cascade do |t|
+  create_table "friendships", force: :cascade do |t|
     t.integer "from_id",    limit: 4, null: false
     t.integer "friend_uid", limit: 8, null: false
     t.integer "sequence",   limit: 4, null: false
@@ -383,7 +383,7 @@ ActiveRecord::Schema.define(version: 20170104061821) do
   add_index "twitter_users", ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
 
-  create_table "unfollowerships", id: false, force: :cascade do |t|
+  create_table "unfollowerships", force: :cascade do |t|
     t.integer "from_uid",     limit: 8, null: false
     t.integer "follower_uid", limit: 8, null: false
     t.integer "sequence",     limit: 4, null: false
@@ -392,7 +392,7 @@ ActiveRecord::Schema.define(version: 20170104061821) do
   add_index "unfollowerships", ["follower_uid"], name: "index_unfollowerships_on_follower_uid", using: :btree
   add_index "unfollowerships", ["from_uid"], name: "index_unfollowerships_on_from_uid", using: :btree
 
-  create_table "unfriendships", id: false, force: :cascade do |t|
+  create_table "unfriendships", force: :cascade do |t|
     t.integer "from_uid",   limit: 8, null: false
     t.integer "friend_uid", limit: 8, null: false
     t.integer "sequence",   limit: 4, null: false
