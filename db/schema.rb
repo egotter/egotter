@@ -264,6 +264,20 @@ ActiveRecord::Schema.define(version: 20170203120250) do
 
   add_index "notification_settings", ["user_id"], name: "index_notification_settings_on_user_id", unique: true, using: :btree
 
+  create_table "old_users", force: :cascade do |t|
+    t.integer  "uid",         limit: 8,                   null: false
+    t.string   "screen_name", limit: 191,                 null: false
+    t.boolean  "authorized",              default: false, null: false
+    t.string   "secret",      limit: 191,                 null: false
+    t.string   "token",       limit: 191,                 null: false
+    t.datetime "created_at",                              null: false
+    t.datetime "updated_at",                              null: false
+  end
+
+  add_index "old_users", ["created_at"], name: "index_old_users_on_created_at", using: :btree
+  add_index "old_users", ["screen_name"], name: "index_old_users_on_screen_name", using: :btree
+  add_index "old_users", ["uid"], name: "index_old_users_on_uid", unique: true, using: :btree
+
   create_table "page_cache_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "", null: false
     t.integer  "user_id",     limit: 4,   default: -1, null: false
