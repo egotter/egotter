@@ -1,22 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe TwitterDB::Followership, type: :model do
-  let(:twitter_user) { create(:twitter_user) }
-  before do
-    twitter_user
-    [TwitterDB::Friendship, TwitterDB::Followership, TwitterDB::User].each { |klass| klass.delete_all }
-    [Friendship, Followership].each { |klass| klass.delete_all }
-  end
-
   describe '.import_from!' do
-    before do
-      TwitterDB::User.import_from! ([twitter_user] + twitter_user.followers)
-    end
-    it 'creates followerships' do
-      expect { TwitterDB::Followership.import_from!(twitter_user) }.to change { TwitterDB::Followership.all.size }.by(twitter_user.followers.size)
+    let(:user_uid) { 1 }
+    let(:follower_uids) { [1, 2, 3] }
+    let(:follower_uids2) { [3, 4, 5] }
 
-      user = TwitterDB::User.find_by(uid: twitter_user.uid)
-      expect(user.followers.pluck(:uid)).to eq(twitter_user.followers.pluck(:uid).map(&:to_i))
+    before do
+      [user_uid, follower_uids, follower_uids2].flatten.uniq.each { |uid| create(:twitter_db_user, uid: uid) }
+    end
+
+    it 'creates records' do
+      expect { TwitterDB::Followership.import_from!(user_uid, follower_uids) }.to change { TwitterDB::Followership.all.size }.by(follower_uids.size)
+      expect(TwitterDB::Followership.pluck(:follower_uid)).to match_array(follower_uids)
+    end
+
+    it 'deletes records' do
+      TwitterDB::Followership.import_from!(user_uid, follower_uids)
+      expect { TwitterDB::Followership.import_from!(user_uid, follower_uids2) }.to change { TwitterDB::Followership.all.size }.by(follower_uids.size - follower_uids.size)
+      expect(TwitterDB::Followership.pluck(:follower_uid)).to match_array(follower_uids2)
     end
   end
 end

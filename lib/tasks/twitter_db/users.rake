@@ -72,8 +72,14 @@ namespace :twitter_db do
         twitter_users.each do |twitter_user|
           begin
             ActiveRecord::Base.transaction do
-              TwitterDB::Friendship.import_from!(twitter_user)
-              TwitterDB::Followership.import_from!(twitter_user)
+              user = TwitterDB::User.find_or_import_by(twitter_user)
+              friend_uids = twitter_user.friendships.pluck(:friend_uid)
+              follower_uids = twitter_user.followerships.pluck(:follower_uid)
+
+              TwitterDB::Friendship.import_from!(twitter_user.uid.to_i, friend_uids) if friend_uids.any?
+              TwitterDB::Followership.import_from!(twitter_user.uid.to_i, follower_uids) if follower_uids.any?
+
+              user.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
             end
           rescue ActiveRecord::InvalidForeignKey => e
             failed = true

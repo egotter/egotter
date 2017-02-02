@@ -15,12 +15,12 @@
 class Unfriendship < ActiveRecord::Base
   belongs_to :twitter_user
 
-  def self.import_from!(twitter_user)
-    unfriendships = twitter_user.calc_removing.map.with_index { |u, i| [u.uid.to_i, twitter_user.uid.to_i, i] }
+  def self.import_from!(from_uid, friend_uids)
+    unfriendships = friend_uids.map.with_index { |friend_uid, i| [from_uid.to_i, friend_uid.to_i, i] }
 
     ActiveRecord::Base.transaction do
-      delete_all(from_uid: twitter_user.uid)
-      import(%i(friend_uid from_uid sequence), unfriendships, validate: false, timestamps: false)
+      delete_all(from_uid: from_uid)
+      import(%i(from_uid friend_uid sequence), unfriendships, validate: false, timestamps: false)
     end
   end
 end

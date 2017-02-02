@@ -160,8 +160,12 @@ namespace :twitter_users do
         twitter_users.each do |twitter_user|
           begin
             ActiveRecord::Base.transaction do
-              Friendship.import_from!(twitter_user)
-              Followership.import_from!(twitter_user)
+              friend_uids = twitter_user.friends.map(&:uid)
+              follower_uids = twitter_user.followers.map(&:uid)
+              Friendship.import_from!(twitter_user.id, friend_uids)
+              Followership.import_from!(twitter_user.id, follower_uids)
+
+              twitter_user.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
             end
           rescue => e
             failed = true

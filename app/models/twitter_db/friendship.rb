@@ -3,17 +3,12 @@ module TwitterDB
     belongs_to :user, primary_key: :uid
     belongs_to :friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 
-    def self.import_from!(twitter_user)
-      user = TwitterDB::User.find_or_import_by(twitter_user)
-      friendships = twitter_user.friends.pluck(:uid).map.with_index { |uid, i| [uid, twitter_user.uid, i] }
-      return if friendships.empty?
+    def self.import_from!(user_uid, friend_uids)
+      friendships = friend_uids.map.with_index { |friend_uid, i| [user_uid, friend_uid, i] }
 
       ActiveRecord::Base.transaction do
-        delete_all(user_uid: twitter_user.uid)
-        import(%i(friend_uid user_uid sequence), friendships, validate: false, timestamps: false)
-
-        user.assign_attributes(friends_size: friendships.size)
-        user.save! if user.changed?
+        delete_all(user_uid: user_uid)
+        import(%i(user_uid friend_uid sequence), friendships, validate: false, timestamps: false)
       end
     end
   end

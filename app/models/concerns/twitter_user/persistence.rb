@@ -60,7 +60,7 @@ module Concerns::TwitterUser::Persistence
 
   def import_unfriends
     self.class.benchmark_and_silence(:unfriends) do
-      Unfriendship.import_from!(self)
+      Unfriendship.import_from!(self.uid, self.calc_removing.map(&:uid))
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
@@ -69,7 +69,7 @@ module Concerns::TwitterUser::Persistence
 
   def import_unfollowers
     self.class.benchmark_and_silence(:unfollowers) do
-      Unfollowership.import_from!(self)
+      Unfollowership.import_from!(self.uid, self.calc_removed.map(&:uid))
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
@@ -89,12 +89,17 @@ module Concerns::TwitterUser::Persistence
 
   def import_relationships
     self.class.benchmark_and_silence(:twitter_db_users) do
-      ActiveRecord::Base.transaction do
-        TwitterDB::Friendship.import_from!(self)
-        Friendship.import_from!(self)
+      user = TwitterDB::User.find_by(uid: self.uid)
 
-        TwitterDB::Followership.import_from!(self)
-        Followership.import_from!(self)
+      ActiveRecord::Base.transaction do
+        TwitterDB::Friendship.import_from!(self.uid, friend_uids)
+        TwitterDB::Followership.import_from!(self.uid, follower_uids)
+
+        Friendship.import_from!(self.id, friend_uids)
+        Followership.import_from!(self.id, follower_uids)
+
+        self.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
+        user.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
       end
     end
   rescue => e

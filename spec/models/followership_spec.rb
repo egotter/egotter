@@ -1,22 +1,20 @@
 require 'rails_helper'
 
 RSpec.describe Followership, type: :model do
-  let(:twitter_user) { create(:twitter_user) }
-  before do
-    twitter_user
-    [TwitterDB::Friendship, TwitterDB::Followership, TwitterDB::User].each { |klass| klass.delete_all }
-    [Friendship, Followership].each { |klass| klass.delete_all }
-  end
-
   describe '.import_from!' do
-    before do
-      TwitterDB::User.import_from! ([twitter_user] + twitter_user.followers)
-    end
-    it 'creates followerships' do
-      expect { Followership.import_from!(twitter_user) }.to change { Followership.all.size }.by(twitter_user.followers.size)
+    let(:from_id) { 1 }
+    let(:follower_uids) { [1, 2, 3] }
+    let(:follower_uids2) { [3, 4, 5] }
 
-      twitter_user.reload
-      expect(twitter_user.tmp_followers.map(&:uid)).to eq(twitter_user.followers.pluck(:uid).map(&:to_i))
+    it 'creates records' do
+      expect { Followership.import_from!(from_id, follower_uids) }.to change { Followership.all.size }.by(follower_uids.size)
+      expect(Followership.pluck(:follower_uid)).to match_array(follower_uids)
+    end
+
+    it 'deletes records' do
+      Followership.import_from!(from_id, follower_uids)
+      expect { Followership.import_from!(from_id, follower_uids2) }.to change { Followership.all.size }.by(follower_uids.size - follower_uids.size)
+      expect(Followership.pluck(:follower_uid)).to match_array(follower_uids2)
     end
   end
 end
