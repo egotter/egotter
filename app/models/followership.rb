@@ -15,17 +15,13 @@
 
 class Followership < ActiveRecord::Base
   belongs_to :twitter_user, primary_key: :id, foreign_key: :from_id
-  # belongs_to :tmp_follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 
-  def self.import_from!(twitter_user)
-    followerships = twitter_user.followers.pluck(:uid).map.with_index { |uid, i| [uid, twitter_user.id, i] }
+  def self.import_from!(from_id, follower_uids)
+    followerships = follower_uids.map.with_index { |follower_uid, i| [from_id, follower_uid.to_i, i] }
 
     ActiveRecord::Base.transaction do
-      delete_all(from_id: twitter_user.id)
-      import(%i(follower_uid from_id sequence), followerships, validate: false, timestamps: false)
-
-      twitter_user.assign_attributes(followers_size: followerships.size)
-      twitter_user.save! if twitter_user.changed?
+      delete_all(from_id: from_id)
+      import(%i(from_id follower_uid sequence), followerships, validate: false, timestamps: false)
     end
   end
 end

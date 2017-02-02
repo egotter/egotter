@@ -38,7 +38,7 @@ module Concerns::TwitterUser::Utils
     if new_record?
       friends.map { |f| f.uid.to_i }
     else
-      @_friend_uids ||= friends.pluck(:uid).map { |uid| uid.to_i }
+      friends.pluck(:uid).map { |uid| uid.to_i }
     end
   end
 
@@ -46,7 +46,7 @@ module Concerns::TwitterUser::Utils
     if new_record?
       followers.map { |f| f.uid.to_i }
     else
-      @_follower_uids ||= followers.pluck(:uid).map { |uid| uid.to_i }
+      followers.pluck(:uid).map { |uid| uid.to_i }
     end
   end
 
