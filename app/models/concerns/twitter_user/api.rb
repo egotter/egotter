@@ -99,13 +99,9 @@ module Concerns::TwitterUser::Api
   end
 
   def replying(uniq: true)
-    users =
-      if statuses.any?
-        client.replying(statuses.to_a, uniq: uniq)
-      else
-        client.replying(uid.to_i, uniq: uniq)
-      end
+    return [] if statuses.empty?
 
+    users = client.replying(statuses.to_a, uniq: uniq)
     users.each do |user|
       user.uid = user.id
       user.mention_name = "@#{user.screen_name}"
