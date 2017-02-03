@@ -1,12 +1,10 @@
 - user = tweet.user
 .media
   .media-left
-    %img.media-object{alt: mention_name(user.screen_name), height: '48', src: user.profile_image_url_https.to_s, width: '48'}
+    = link_to search_path(screen_name: user.screen_name) do
+      %img.media-object{alt: mention_name(user.screen_name), height: '48', src: user.profile_image_url_https.to_s, width: '48'}
   .media-body
     %h4.media-heading= user_name(user)
-    %span.screen-name= user_link(user.screen_name)
-  .media-right.created-at
-    - time_ago = time_ago_in_words(tweet.try(:tweeted_at) || tweet.created_at)
-    - tweet_id = tweet.try(:tweet_id) || tweet.id
-    = link_to time_ago, tweet_url(user.screen_name, tweet_id), target: '_blank'
-  .tweet-text= tweet.text
+    %span.screen-name= link_to(mention_name(user.screen_name), search_path(screen_name: user.screen_name))
+  .media-right.created-at= tweet_link(tweet)
+  .tweet-text= linkify(tweet.text)

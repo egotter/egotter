@@ -14,10 +14,10 @@ function enableSlickNow(container) {
     infinite: false
   });
 
-  container.find('.profile-description').show();
-  container.find('.profile-location').show();
-  container.find('.profile-link').show();
-  container.find('.profile-calendar').show();
+  container.find('.description').show();
+  container.find('.location').show();
+  container.find('.link').show();
+  container.find('.calendar').show();
 }
 
 function enableSlickOnPageTop() {

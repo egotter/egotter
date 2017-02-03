@@ -1,0 +1,12 @@
+<html>
+<body>
+<%= image_tag '/ajax-loader.gif' %>&nbsp;<%= t('searches.common.redirect_to', user: mention_name(@screen_name)) %>
+<%= form_tag searches_path, id: 'dummy-form', method: :post do %>
+  <input type="hidden" name="screen_name" value="<%= @screen_name %>">
+  <input type="hidden" name="redirect_path" value="<%= @redirect_path %>">
+<% end %>
+<script>
+   document.getElementById('dummy-form').submit();
+</script>
+</body>
+</html>

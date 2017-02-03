@@ -29,6 +29,7 @@ ja:
       popular: "人気の分析"
       tweet: "ツイート"
       related_pages: "関連ページ"
+      see_on_twitter: "ツイッターで見る"
     new:
       lead_001: "スマホでかんたんフォロー確認"
       lead_002: "スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです"
@@ -180,12 +181,13 @@ ja:
       about_this_page: "%{this_page}について"
       this_page_is: "このページでは、%{user}のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
       other_services: "他のサービス"
-      twitter_link: '<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}をTwitterで見る</a>'
-      twilog_link: '<a href="http://twilog.org/%{screen_name}" target="_blank">@%{screen_name}をTwilogで見る</a>'
-      favstar_link: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank">@%{screen_name}をFavstarで見る</a>'
+      twitter_link: '<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwitterで見る</a>'
+      twilog_link: '<a href="http://twilog.org/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwilogで見る</a>'
+      favstar_link: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をFavstarで見る</a>'
   update_histories:
     show:
       title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
+      short_title: "%{user} のえごったー更新履歴"
       description: "%{user}のえごったー更新履歴を表示します。"
   statuses:
     show:
@@ -313,7 +315,7 @@ ja:
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     not_found: '検索された <a href="https://twitter.com/%{user}" target="_blank">@%{user}</a> が見付かりません。アカウントが削除されたのかもしれません。'
-    forbidden: '検索された <a href="https://twitter.com/%{user}" target="_blank">@%{user}</a> は凍結されています。凍結が解除されてから検索してみてください。'
+    forbidden: '検索された <a href="https://twitter.com/%{user}" target="_blank">@%{user}</a> は凍結されています。'
     unauthorized: "認証に失敗しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     something_is_wrong: "エラーが起きました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     invalid_twitter_id: "無効な Twitter ID が入力されました。"

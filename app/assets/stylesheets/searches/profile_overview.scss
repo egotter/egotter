@@ -1,0 +1,90 @@
+.profile-overview-container {
+  .profile-overview-overlay {
+    padding-bottom: 50px; /* add 30px for .slick-slider */
+    background-color: rgba(0, 0, 0, 0.2);
+  }
+
+  .profile-overview .slick-slider {
+    margin-bottom: 0;
+  }
+
+  .icon-link {
+    display: inline-block;
+
+    img {
+      margin-top: 15px;
+      border: 4px solid #ffffff;
+      border-radius: 3px;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+    }
+  }
+
+  .glyphicon.glyphicon-lock {
+    color: #ffffff;
+  }
+
+  .glyphicon.glyphicon-ok {
+    color: #5cb85c;
+  }
+
+  .name,
+  .twitter-link {
+    margin-top: 10px;
+
+    a {
+      font-size: medium;
+      color: #ffffff;
+      text-decoration: none;
+    }
+
+  }
+
+  .description,
+  .location,
+  .link,
+  .calendar {
+    color: #ffffff;
+    margin: 5px 5px auto 5px;
+  }
+
+  .description a,
+  .link a {
+    color: #ffffff;
+  }
+}
+
+.profile-counts-container {
+  margin-left: 15px;
+  margin-right: 15px;
+
+  a {
+    text-decoration: none;
+    color: #777777;
+  }
+
+  .row {
+    padding: 0 5px 0 5px;
+    border-left: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
+  }
+
+  .count {
+    font-weight: bold;
+    display: block;
+  }
+
+  .tweets,
+  .friends,
+  .followers {
+    font-size: small;
+    padding-top: 5px;
+    padding-bottom: 5px;
+  }
+
+  .friends {
+    border-left: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
+  }
+}

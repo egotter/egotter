@@ -29,16 +29,21 @@ module Validation
   end
 
   def existing_uid?(uid)
-    if TwitterUser.exists?(uid: uid)
-      true
+    return true if TwitterUser.exists?(uid: uid)
+
+    if controller_name == 'searches' && action_name == 'show' && request.device_type != :crawler
+      @screen_name = @tu.screen_name
+      @redirect_path = search_path(screen_name: @screen_name)
+      render controller: :searches, action: :create, layout: false
     else
       if request.xhr?
         render nothing: true, status: 400
       else
         redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
       end
-      false
     end
+
+    false
   end
 
   def searched_uid?(uid)

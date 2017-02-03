@@ -5,10 +5,11 @@
 
 .media
   .media-left
-    %img.media-object{alt: mention_name(user.screen_name), height: '48', src: user.profile_image_url_https.to_s, width: '48'}
+    = link_to search_path(screen_name: user.screen_name) do
+      %img.media-object{alt: mention_name(user.screen_name), height: '48', src: user.profile_image_url_https.to_s, width: '48'}
   .media-body
     %h4.media-heading= user_name(user).html_safe
-    %span.screen-name= user_link(user.screen_name).html_safe
+    %span.screen-name= link_to(mention_name(user.screen_name), search_path(screen_name: user.screen_name))
   .media-right
     .buttons
       - if user_signed_in? && current_user.uid.to_i != user.uid.to_i && current_user.twitter_user
@@ -22,4 +23,4 @@
       = link_to search_path_for(controller: controller_name, screen_name: user.screen_name), method: :post do
         %button.btn.btn-info{type: 'button'}
           %span.glyphicon.glyphicon-search
-  .description= user.description
+  .description= linkify(user.description)

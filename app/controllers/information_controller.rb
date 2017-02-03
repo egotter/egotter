@@ -2,6 +2,7 @@ class InformationController < ApplicationController
   layout false
 
   LIST = [
+    %w(2017/02/03 表示の高速化を行いました),
     %w(2017/01/31 パンくずリストを作りました),
     %w(2017/01/30 表示の高速化を行いました),
     %w(2017/01/27 ユーザー一覧を見やすくしました),

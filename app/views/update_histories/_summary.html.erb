@@ -1,7 +1,7 @@
 <div class="menu-items menu-items-last media">
   <div class="media-body">
     <h4 class="h5 media-heading">
-      <%= t('update_histories.show.title', user: tu.mention_name) %>
+      <%= t('update_histories.show.short_title', user: tu.mention_name) %>
       <div class="tooltip-container"><abbr title="<%= t('update_histories.show.description', user: tu.mention_name) %>" rel="tooltip">i</abbr></div>
     </h4>
     <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
