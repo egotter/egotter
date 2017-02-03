@@ -3,9 +3,7 @@ module SearchesHelper
     redirect_path = root_path_for(controller: controller_name)
 
     if ForbiddenUser.exists?(screen_name: screen_name)
-      logger.info "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
       twitter_user = TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
-
       if twitter_user&.public_account?
         return twitter_user
       else
@@ -45,7 +43,14 @@ module SearchesHelper
   rescue Twitter::Error::Forbidden => e
     logger.warn "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
     CreateForbiddenUserWorker.perform_async(screen_name)
-    redirect_to redirect_path, alert: forbidden_message(screen_name)
+
+    # TODO duplicate code
+    twitter_user = TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
+    if twitter_user&.public_account?
+      twitter_user
+    else
+      redirect_to redirect_path, alert: forbidden_message(screen_name)
+    end
   rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
     logger.info e.backtrace.take(10).join("\n")
