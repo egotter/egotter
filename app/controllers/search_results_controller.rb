@@ -18,7 +18,7 @@ class SearchResultsController < ApplicationController
     html = ::Cache::PageCache.new.fetch(@searched_tw_user.uid) { render_to_string }
     render json: {html: html}, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}, user_id #{current_user_id}, uid #{@searched_tw_user.uid}, screen_name #{@searched_tw_user.screen_name}, token #{client.consumer_key}, device_type #{request.device_type}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}, user_id #{current_user_id}, uid #{@searched_tw_user.uid}, screen_name #{@searched_tw_user.screen_name}, token #{client.access_token}, device_type #{request.device_type}"
     logger.info e.backtrace.grep_v(/\.bundle/).join("\n")
     # Rollbar.error(e)
     render nothing: true, status: 500
