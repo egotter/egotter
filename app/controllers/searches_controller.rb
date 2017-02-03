@@ -49,6 +49,8 @@ class SearchesController < ApplicationController
       @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
       @page_cache = page_cache.read(tu.uid) if page_cache.exists?(tu.uid)
     end
+
+    flash.now[:alert] = forbidden_message(tu.screen_name) if tu.forbidden_account?
   end
 
   def new

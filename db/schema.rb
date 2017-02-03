@@ -165,6 +165,15 @@ ActiveRecord::Schema.define(version: 20170203120250) do
   add_index "followerships", ["from_id", "follower_uid"], name: "index_followerships_on_from_id_and_follower_uid", unique: true, using: :btree
   add_index "followerships", ["from_id"], name: "index_followerships_on_from_id", using: :btree
 
+  create_table "forbidden_users", force: :cascade do |t|
+    t.string   "screen_name", limit: 191, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "forbidden_users", ["created_at"], name: "index_forbidden_users_on_created_at", using: :btree
+  add_index "forbidden_users", ["screen_name"], name: "index_forbidden_users_on_screen_name", unique: true, using: :btree
+
   create_table "friends", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
     t.string   "screen_name", limit: 191,   null: false
