@@ -112,16 +112,10 @@ module Concerns::TwitterUser::Api
   def replied(uniq: true, login_user: nil)
     users =
       if login_user && login_user.uid.to_i == uid.to_i
-        if mentions.any?
-          mentions.map { |m| m.user }
-        else
-          client.replied(uid.to_i, uniq: uniq)
-        end
+        mentions.map { |m| m.user }
       elsif search_results.any?
         uids = dummy_client._extract_uids(search_results.to_a)
         dummy_client._extract_users(search_results.to_a, uids)
-      else
-        client.replied(uid.to_i, uniq: uniq)
       end
 
     users.each do |user|
@@ -133,12 +127,7 @@ module Concerns::TwitterUser::Api
   end
 
   def favoriting(uniq: true, min: 0)
-    users =
-      if favorites.any?
-        client.favoriting(favorites.to_a, uniq: uniq, min: min)
-      else
-        client.favoriting(uid.to_i, uniq: uniq, min: min)
-      end
+    users = client.favoriting(favorites.to_a, uniq: uniq, min: min)
 
     users.each do |user|
       user.uid = user.id
