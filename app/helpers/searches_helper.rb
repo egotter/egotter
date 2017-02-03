@@ -135,7 +135,7 @@ module SearchesHelper
 
   def reject_crawler
     if request.device_type == :crawler
-      logger.warn "#{self.class}##{__method__}: The crawler is rejected from #{action_name}."
+      logger.warn "#{self.class}##{__method__}: #{request.browser} is rejected from #{action_name}."
       render text: t('before_sign_in.reject_crawler')
     end
   end

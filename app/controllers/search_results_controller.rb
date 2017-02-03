@@ -33,7 +33,7 @@ class SearchResultsController < ApplicationController
 
   %i(one_sided_friends one_sided_followers mutual_friends removing removed blocking_or_blocked).each do |menu|
     define_method(menu) do
-      logger.warn "#{self.class}##{menu}: #{current_user_id} #{request.device_type} #{params.inspect}" # TODO remove
+      logger.warn "#{self.class}##{menu}: #{current_user_id} #{request.device_type} #{request.browser} #{params.inspect}" # TODO remove
       render json: {html: 'error'}, status: 200
     end
   end
