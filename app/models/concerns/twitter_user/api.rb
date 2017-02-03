@@ -116,6 +116,8 @@ module Concerns::TwitterUser::Api
       elsif search_results.any?
         uids = dummy_client._extract_uids(search_results.to_a)
         dummy_client._extract_users(search_results.to_a, uids)
+      else
+        []
       end
 
     users.each do |user|
