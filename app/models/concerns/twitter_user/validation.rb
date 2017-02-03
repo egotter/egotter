@@ -40,6 +40,10 @@ module Concerns::TwitterUser::Validation
     !protected_account?
   end
 
+  def forbidden_account?
+    ForbiddenUser.exists?(screen_name: screen_name)
+  end
+
   def readable_by?(login_user)
     case
       when login_user.nil? then false

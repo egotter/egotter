@@ -314,8 +314,8 @@ ja:
     session_expired: "一定時間操作がなかったため、ログアウトしました。再度、%{sign_in_link} してください。"
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
-    not_found: '検索された <a href="https://twitter.com/%{user}" target="_blank">@%{user}</a> が見付かりません。アカウントが削除されたのかもしれません。'
-    forbidden: '検索された <a href="https://twitter.com/%{user}" target="_blank">@%{user}</a> は凍結されています。'
+    not_found: '検索された <a href="https://twitter.com/%{user}" target="_blank" rel="nofollow">@%{user}</a> が見付かりません。アカウントが削除されたのかもしれません。'
+    forbidden: '検索された <a href="https://twitter.com/%{user}" target="_blank" rel="nofollow">@%{user}</a> は凍結されています。'
     unauthorized: "認証に失敗しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     something_is_wrong: "エラーが起きました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
     invalid_twitter_id: "無効な Twitter ID が入力されました。"

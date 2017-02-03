@@ -97,6 +97,7 @@ module Validation
     false
   rescue Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
+    CreateForbiddenUserWorker.perform_async(tu.screen_name)
     redirect_to redirect_path, alert: forbidden_message(tu.screen_name)
     false
   rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized => e
