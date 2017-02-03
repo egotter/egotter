@@ -1,58 +1,99 @@
 namespace :old_users do
-  desc 'create old_users'
-  task create: :environment do
-    ActiveRecord::Base.connection.execute('DROP TABLE IF EXISTS old_users')
-    ActiveRecord::Base.connection.execute('CREATE TABLE old_users like users')
-    ActiveRecord::Base.connection.execute('ALTER TABLE old_users DROP COLUMN authorized')
-    ActiveRecord::Base.connection.execute("ALTER TABLE old_users ADD COLUMN authorized tinyint(1) NOT NULL DEFAULT '0'")
-  end
-
-  desc 'load old_users'
+  desc 'load old_users from a file'
   task load: :environment do
-    class OldUser < ActiveRecord::Base; end
-    old_users =
-      File.read('mongo2.json').split("\n").map do |line|
-        json = JSON.parse(line)
-        OldUser.new(uid: json['uid'], screen_name: '-1', secret: json['secret'], token: json['token'], email: '-1')
-      end
+    old_users = []
+    File.read('mongo2.json').split("\n").each do |line|
+      user = JSON.parse(line)
+      old_users << OldUser.new(uid: user['uid'], screen_name: '-1', secret: user['secret'], token: user['token'])
+    end
     Rails.logger.silence do
-      old_users.each_slice(5000).each { |ary| OldUser.import(ary, validate: false) }
+      old_users.each_slice(5000).each { |users| OldUser.import(users, validate: false) }
     end
   end
 
   desc 'verify old_users'
   task verify: :environment do
-    class OldUser < ActiveRecord::Base; end
-    processed = Queue.new
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
 
-    OldUser.find_in_batches(batch_size: 5000) do |old_users_array|
-      clients = old_users_array.map { |user| ApiClient.instance(access_token: user.token, access_token_secret: user.secret, logger: Naught.build.new) }
-      Parallel.each_with_index(clients, in_threads: 10) do |client, i|
-        processed << {i: i, uid: (client.verify_credentials.id rescue nil)}
-        print '.' if i % 10 == 0
+    processed = 0
+    authorized = 0
+    process_start = Time.zone.now
+    ApiClient # avoid circular dependency
+    puts "\nverify started:"
+
+    OldUser.where(authorized: false).find_in_batches(batch_size: 1000) do |users|
+      Parallel.each(users, in_threads: 10) do |user|
+        client = ApiClient.instance(access_token: user.token, access_token_secret: user.secret, logger: Naught.build.new)
+        credential = (client.verify_credentials rescue nil)
+
+        if credential
+          user.assign_attributes(uid: credential.id, screen_name: credential.screen_name, authorized: true)
+          authorized += 1
+        end
+        processed += 1
       end
-    end
-    puts ''
 
-    processed = processed.size.times.map { processed.pop }.sort_by { |r| r[:i] }
-    authorized = processed.select { |r| r[:uid] }
-    authorized.map { |a| a[:uid] }.each_slice(5000).each do |uids_array|
-      OldUser.where(uid: uids_array).update_all(authorized: true)
+      OldUser.import(users, on_duplicate_key_update: %i(uid screen_name authorized), validate: false)
+
+      avg = '%3.1f' % ((Time.zone.now - process_start) / processed)
+      puts "#{Time.zone.now}: processed #{processed}, authorized #{authorized}, avg #{avg}, #{users[0].id} - #{users[-1].id}"
+
+      break if sigint
     end
-    puts "all: #{OldUser.all.size}, processed: #{processed.size}, authorized: #{authorized.size}"
+
+    process_finish = Time.zone.now
+    elapsed = (process_finish - process_start).round(1)
+    puts "verify #{(sigint ? 'suspended:' : 'finished:')}"
+    puts "  start: #{process_start}, finish: #{process_finish}, processed: #{processed}, authorized: #{authorized}, elapsed: #{elapsed} seconds"
   end
 
-  desc 'find active old_users'
-  task find_active: :environment do
-    class OldUser < ActiveRecord::Base; end
-    processed_count = 0
-    active_count = 0
-
-    OldUser.where(authorized: true).find_in_batches(batch_size: 5000) do |old_users_array|
-      processed_count += old_users_array.size
-      active_count += User.where(uid: old_users_array.map { |ou| ou.uid }).size
+  desc 'update twitter_users'
+  task update: :environment do
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
     end
 
-    puts "all: #{OldUser.all.size}, processed: #{processed_count}, active: #{active_count}"
+    failed = false
+    processed = 0
+    created = 0
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    process_start = Time.zone.now
+    puts "\nupdate started:"
+
+    OldUser.where(authorized: true).find_each(start: start, batch_size: 100) do |user|
+      client = user.api_client
+
+      begin
+        twitter_user = TwitterUser.build_with_relations(client.user(user.uid), client: client, login_user: user, context: :search)
+        twitter_user.user_id = -1
+
+        if twitter_user.save
+          twitter_user.increment(:search_count).save
+          created += 1
+        end
+      rescue => e
+        failed = true
+        puts "failed. #{e.class} #{e.message} #{user.inspect}"
+      end
+
+      processed += 1
+      if processed % 10 == 0
+        avg = '%3.1f' % ((Time.zone.now - process_start) / processed)
+        puts "#{Time.zone.now}: processed #{processed}, created #{created}, avg #{avg}, #{user.id}"
+      end
+
+      break if sigint || failed
+    end
+
+    process_finish = Time.zone.now
+    elapsed = (process_finish - process_start).round(1)
+    puts "update #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "  start: #{process_start}, finish: #{process_finish}, processed: #{processed}, created: #{created}, elapsed: #{elapsed} seconds"
   end
 end

@@ -61,7 +61,8 @@ module TwitterDB
       if persisted.any?
         import(persisted, on_duplicate_key_update: %i(screen_name user_info updated_at), validate: false, timestamps: false)
       end
-      puts "#{Time.zone.now} users(#{users_array.first.class}): #{users.size}, changed: #{changed.size}(#{new_record.size}, #{persisted.size}), not_changed: #{not_changed.size}, #{users_array[0].id} - #{users_array[-1].id}"
+      result = "#{Time.zone.now} users(#{users_array.first.class}): #{users.size}, changed: #{changed.size}(#{new_record.size}, #{persisted.size}), not_changed: #{not_changed.size}, #{users_array[0].id} - #{users_array[-1].id}"
+      Rails.env.test? ? puts(result) : logger.info(result)
     end
   end
 end
