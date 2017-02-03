@@ -32,16 +32,14 @@ module SearchesHelper
     if user
       TwitterUser.build_by_user(user)
     else
-      logger.info "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
       redirect_to redirect_path, alert: not_found_message(screen_name)
     end
 
   rescue Twitter::Error::NotFound => e
-    logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
-    logger.info e.backtrace.take(10).join("\n")
+    logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{e.message}"
     redirect_to redirect_path, alert: not_found_message(screen_name)
   rescue Twitter::Error::Forbidden => e
-    logger.warn "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{request.user_agent}"
+    logger.warn "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{e.message}"
     CreateForbiddenUserWorker.perform_async(screen_name)
 
     # TODO duplicate code

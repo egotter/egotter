@@ -25,6 +25,7 @@ module Concerns::Rescue
     # Twitter::Error Connection reset by peer - SSL_connect
     # Twitter::Error::Forbidden To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.
     # Twitter::Error::Forbidden Your account is suspended and is not permitted to access this feature.
+    # Twitter::Error::Forbidden User has been suspended.
     # Twitter::Error::ServiceUnavailable
     # Twitter::Error::ServiceUnavailable Over capacity
     %w(
