@@ -59,15 +59,16 @@
 
     = render partial: 'layouts/search_histories' unless under_maintenance?
 
-    .container
-      .row
-        .hidden-xs.col-sm-1.col-md-2.col-lg-2
-        .col-xs-12.col-sm-10.col-md-8.col-lg-8.notice-container
-          - if notice
-            %p.alert.alert-info= raw notice
-          - if alert
-            %p.alert.alert-warning= raw alert
-        .hidden-xs.col-sm-1.col-md-2.col-lg-2
+    - if notice || alert
+      .container
+        .row
+          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .col-xs-12.col-sm-10.col-md-8.col-lg-8.notice-container
+            - if notice
+              %p.alert.alert-info{style: 'margin-top: 15px;'}= raw notice
+            - if alert
+              %p.alert.alert-warning{style: 'margin-top: 15px;'}= raw alert
+          .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
     .container
       .row

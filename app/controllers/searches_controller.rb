@@ -36,7 +36,12 @@ class SearchesController < ApplicationController
     if via_notification?
       if via_prompt_report?
         # A worker is started because the record is not updated in the process of creating a prompt report.
-        @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+        if tu.forbidden_account?
+          flash.now[:alert] = forbidden_message(tu.screen_name)
+          @worker_started = false
+        else
+          @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+        end
       else
         # When a guest or user accesses this action via a notification which includes search and update,
         # no worker is started. Because the record is updated in the process of creating a notification.
@@ -46,11 +51,14 @@ class SearchesController < ApplicationController
       # Under the following circumstances, a worker is started.
       # 1. When a guest or user accesses this action directly
       # 2. When a guest or user accesses `create` action and searched TwitterUser exists
-      @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+      if tu.forbidden_account?
+        flash.now[:alert] = forbidden_message(tu.screen_name)
+        @worker_started = false
+      else
+        @worker_started = !!add_create_twitter_user_worker_if_needed(tu.uid, user_id: current_user_id, screen_name: tu.screen_name)
+      end
       @page_cache = page_cache.read(tu.uid) if page_cache.exists?(tu.uid)
     end
-
-    flash.now[:alert] = forbidden_message(tu.screen_name) if tu.forbidden_account?
   end
 
   def new
