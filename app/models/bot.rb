@@ -1,67 +1,47 @@
-class Bot
+# == Schema Information
+#
+# Table name: bots
+#
+#  id          :integer          not null, primary key
+#  uid         :integer          not null
+#  screen_name :string(191)      not null
+#  secret      :string(191)      not null
+#  token       :string(191)      not null
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  index_bots_on_screen_name  (screen_name)
+#  index_bots_on_uid          (uid) UNIQUE
+#
+
+class Bot < ActiveRecord::Base
   BOT_PATH = Rails.configuration.x.constants['bot_path']
 
-  def self.init
-    @@bot ||= JSON.parse(File.read(BOT_PATH)).map { |b| Hashie::Mash.new(b) }
-    raise 'create bot' if @@bot.empty?
+  def self.load
+    JSON.parse(File.read(BOT_PATH)).each do |bot|
+      create!(uid: bot['uid'], screen_name: bot['screen_name'], secret: bot['secret'], token: bot['token'])
+    end
   end
 
-  def self.sample
-    init
-    @@bot.sample
+  def self.config(screen_name = nil)
+    @@size ||= all.size
+    bot = screen_name ? find_by(screen_name: screen_name) : find(rand(1..@@size))
+    ApiClient.config(access_token: bot.token, access_token_secret: bot.secret)
   end
 
-  def self.size
-    init
-    @@bot.size
-  end
-
-  def self.empty?
-    init
-    @@bot.empty?
-  end
-
-  def self.exists?(uid)
-    init
-    @@bot.any? { |b| b.uid.to_i == uid.to_i }
-  end
-
-  def self.select_bot(screen_name)
-    init
-    @@bot.find { |bot| bot.screen_name == screen_name }
-  end
-
-  def self.config(options = {})
-    init
-    bot = options[:screen_name] ? select_bot(options[:screen_name]) : sample
-    raise if bot.nil?
-    ApiClient.config(
-      access_token: bot.token,
-      access_token_secret: bot.secret
-    )
-  end
-
-  def self.api_client
-    init
-    ApiClient.instance(config)
-  end
-
-  def self.screen_names
-    init
-    @@bot.map { |b| b.screen_name }
+  def self.api_client(screen_name = nil)
+    ApiClient.instance(config(screen_name))
   end
 
   def self.verify_all_credentials
-    init
-
     processed = Queue.new
-    Parallel.each_with_index(screen_names, in_threads: 10) do |screen_name, i|
-      thread_result =
-        (api_client(screen_name: screen_name).verify_credentials rescue nil)
-      result = {i: i, result: {screen_name: screen_name, credential: thread_result}}
-      processed << result
+    Parallel.each_with_index(pluck(:screen_name), in_threads: 10) do |screen_name, i|
+      user = (api_client(screen_name).verify_credentials rescue nil)
+      processed << {i: i, screen_name: screen_name, status: !!user}
     end
 
-    processed.size.times.map { processed.pop }.sort_by{|p| p[:i] }.map{|p| p[:result] }
+    processed.size.times.map { processed.pop }.sort_by{|p| p[:i] }.map{|p| {screen_name: p[:screen_name], status: p[:status]} }
   end
 end

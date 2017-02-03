@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170104061821) do
+ActiveRecord::Schema.define(version: 20170203120250) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -58,6 +58,18 @@ ActiveRecord::Schema.define(version: 20170104061821) do
   add_index "background_update_logs", ["created_at"], name: "index_background_update_logs_on_created_at", using: :btree
   add_index "background_update_logs", ["screen_name"], name: "index_background_update_logs_on_screen_name", using: :btree
   add_index "background_update_logs", ["uid"], name: "index_background_update_logs_on_uid", using: :btree
+
+  create_table "bots", force: :cascade do |t|
+    t.integer  "uid",         limit: 8,   null: false
+    t.string   "screen_name", limit: 191, null: false
+    t.string   "secret",      limit: 191, null: false
+    t.string   "token",       limit: 191, null: false
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "bots", ["screen_name"], name: "index_bots_on_screen_name", using: :btree
+  add_index "bots", ["uid"], name: "index_bots_on_uid", unique: true, using: :btree
 
   create_table "create_notification_message_logs", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false
