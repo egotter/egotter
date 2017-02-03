@@ -19,10 +19,15 @@ namespace :friendships do
         twitter_users.each do |twitter_user|
           begin
             ActiveRecord::Base.transaction do
-              friend_uids = twitter_user.friends.pluck(:uid)
-              follower_uids = twitter_user.followers.pluck(:uid)
-              Friendship.import_from!(twitter_user.id, friend_uids)
-              Followership.import_from!(twitter_user.id, follower_uids)
+              friend_uids = twitter_user.friends.pluck(:uid).map(&:to_i)
+              if twitter_user.friendships.pluck(:friend_uid) != friend_uids
+                Friendship.import_from!(twitter_user.id, friend_uids)
+              end
+
+              follower_uids = twitter_user.followers.pluck(:uid).map(&:to_i)
+              if twitter_user.followerships.pluck(:follower_uid) != follower_uids
+                Followership.import_from!(twitter_user.id, follower_uids)
+              end
 
               twitter_user.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
             end
