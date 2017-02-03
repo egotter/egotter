@@ -19,7 +19,7 @@ class SearchResultsController < ApplicationController
     render json: {html: html}, status: 200
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{@searched_tw_user.uid} #{@searched_tw_user.screen_name} #{client.access_token} #{request.device_type} #{request.browser}"
-    logger.info e.backtrace.grep_v(/\.bundle/).empty ? e.backtrace.join("\n") : e.backtrace.grep_v(/\.bundle/).join("\n")
+    logger.info e.backtrace.grep_v(/\.bundle/).empty? ? e.backtrace.join("\n") : e.backtrace.grep_v(/\.bundle/).join("\n")
     # Rollbar.error(e)
     render nothing: true, status: 500
   end
