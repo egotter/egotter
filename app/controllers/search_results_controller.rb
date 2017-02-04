@@ -18,7 +18,8 @@ class SearchResultsController < ApplicationController
     html = ::Cache::PageCache.new.fetch(@searched_tw_user.uid) { render_to_string }
     render json: {html: html}, status: 200
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{@searched_tw_user.uid} #{@searched_tw_user.screen_name} #{client.access_token} #{request.device_type} #{request.browser}"
+    bot = Bot.find_by(token: client.access_token)&.screen_name
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{@searched_tw_user.uid} #{@searched_tw_user.screen_name} #{bot} #{request.device_type} #{request.browser}"
     logger.info e.backtrace.grep_v(/\.bundle/).empty? ? e.backtrace.join("\n") : e.backtrace.grep_v(/\.bundle/).join("\n")
     render nothing: true, status: 500
   end
@@ -27,13 +28,6 @@ class SearchResultsController < ApplicationController
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
       render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
-    end
-  end
-
-  %i(one_sided_friends one_sided_followers mutual_friends removing removed blocking_or_blocked).each do |menu|
-    define_method(menu) do
-      logger.warn "#{self.class}##{menu}: #{current_user_id} #{request.device_type} #{request.browser} #{params.inspect}" # TODO remove
-      render json: {html: 'error'}, status: 200
     end
   end
 

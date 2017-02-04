@@ -1,5 +1,17 @@
-<% users = users_for(tu, menu: name) %>
-<% graph = graph_for(tu, menu: name, users: users) %>
+<%
+  begin
+    users = users_for(tu, menu: name)
+  rescue => e
+    users = []
+    logger.warn "#{controller_name}##{action_name}: #{e.class} #{e.message} users #{name} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type} #{request.browser}"
+  end
+  begin
+    graph = graph_for(tu, menu: name, users: users)
+  rescue => e
+    graph = nil
+    logger.warn "#{controller_name}##{action_name}: #{e.class} #{e.message} graph #{name} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type} #{request.browser}"
+  end
+%>
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= title_for(tu, menu: name) %><div class="tooltip-container"><abbr title="<%= description_for(tu, menu: name) %>" rel="tooltip">i</abbr></div></h4>
