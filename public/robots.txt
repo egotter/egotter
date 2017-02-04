@@ -5,7 +5,6 @@ User-agent: AhrefsBot
 Disallow: /
 
 User-agent: *
-Disallow: /waiting
 Disallow: /page_caches
 
 Sitemap: https://egotter.com/sitemap.xml.gz

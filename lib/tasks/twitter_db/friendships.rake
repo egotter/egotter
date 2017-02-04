@@ -15,7 +15,7 @@ namespace :twitter_db do
       puts "\nrefresh started:"
 
       Rails.logger.silence do
-        TwitterUser.with_friends.pluck(:uid).uniq.each_slice(batch_size) do |uids|
+        TwitterUser.pluck(:uid).uniq.each_slice(batch_size) do |uids|
           TwitterDB::User.where(uid: uids.map(&:to_i)).each do |user|
             twitter_user = TwitterUser.latest(user.uid)
 
@@ -62,15 +62,14 @@ namespace :twitter_db do
         sigint = true
       end
 
-      start = ENV['START'] ? ENV['START'].to_i : 1
-      batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 100
+      batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
       process_start = Time.zone.now
       puts "\nverify started:"
 
       processed = 0
       invalid = []
       Rails.logger.silence do
-        TwitterUser.with_friends.pluck(:uid).uniq.each_slice(batch_size) do |uids|
+        TwitterUser.pluck(:uid).uniq.each_slice(batch_size) do |uids|
           TwitterDB::User.where(uid: uids.map(&:to_i)).each do |user|
             twitter_user = TwitterUser.latest(user.uid)
 
@@ -107,8 +106,8 @@ namespace :twitter_db do
           end
           processed += uids.size
 
-          avg = '%4.1f' % (1000 * (Time.zone.now - process_start) / processed)
-          puts "#{Time.zone.now}: processed #{processed}, avg(1000) #{avg}"
+          avg = '%4.1f' % ((Time.zone.now - process_start) / processed)
+          puts "#{Time.zone.now}: processed #{processed}, avg #{avg}"
 
           break if sigint
         end

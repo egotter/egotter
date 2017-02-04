@@ -39,8 +39,11 @@ module SearchesHelper
     logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{e.message}"
     redirect_to redirect_path, alert: not_found_message(screen_name)
   rescue Twitter::Error::Forbidden => e
-    logger.warn "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{e.message}"
-    CreateForbiddenUserWorker.perform_async(screen_name)
+    if e.message == 'User has been suspended.'
+      CreateForbiddenUserWorker.perform_async(screen_name)
+    else
+      logger.warn "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{e.message}"
+    end
 
     # TODO duplicate code
     twitter_user = TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
@@ -135,7 +138,6 @@ module SearchesHelper
 
   def reject_crawler
     if request.device_type == :crawler
-      logger.warn "#{self.class}##{__method__}: #{request.browser} is rejected from #{action_name}."
       render text: t('before_sign_in.reject_crawler')
     end
   end

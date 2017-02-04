@@ -15,7 +15,7 @@ namespace :friendships do
     puts "\nrefresh started:"
 
     Rails.logger.silence do
-      TwitterUser.with_friends.find_in_batches(start: start, batch_size: batch_size) do |twitter_users|
+      TwitterUser.find_in_batches(start: start, batch_size: batch_size) do |twitter_users|
         twitter_users.each do |twitter_user|
           begin
             ActiveRecord::Base.transaction do
@@ -61,14 +61,14 @@ namespace :friendships do
     end
 
     start = ENV['START'] ? ENV['START'].to_i : 1
-    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 100
+    batch_size = ENV['BATCH_SIZE'] ? ENV['BATCH_SIZE'].to_i : 1000
     process_start = Time.zone.now
     puts "\nverify started:"
 
     processed = 0
     invalid = []
     Rails.logger.silence do
-      TwitterUser.with_friends.find_in_batches(start: start, batch_size: batch_size) do |twitter_users_array|
+      TwitterUser.find_in_batches(start: start, batch_size: batch_size) do |twitter_users_array|
         twitter_users_array.each do |twitter_user|
           friend_uids = [
             twitter_user.friends.pluck(:uid).map(&:to_i),
@@ -103,8 +103,8 @@ namespace :friendships do
         end
         processed += twitter_users_array.size
 
-        avg = '%4.1f' % (1000 * (Time.zone.now - process_start) / processed)
-        puts "#{Time.zone.now}: processed #{processed}, avg(1000) #{avg}, #{twitter_users_array[0].id} - #{twitter_users_array[-1].id}"
+        avg = '%4.1f' % ((Time.zone.now - process_start) / processed)
+        puts "#{Time.zone.now}: processed #{processed}, avg #{avg}, #{twitter_users_array[0].id} - #{twitter_users_array[-1].id}"
 
         break if sigint
       end
