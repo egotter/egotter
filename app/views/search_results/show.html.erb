@@ -10,33 +10,33 @@
   });
 </script>
 
-<% cache "#{tu.cache_key}/close_friends" do %>
+<% cache "#{tu.cache_key}/close_friends", expires_in: 1.day do %>
   <%= render partial: 'various_users/summary', locals: {name: :close_friends, rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
 <% end %>
 
-<% cache "#{tu.cache_key}/usage_stats" do %>
+<% cache "#{tu.cache_key}/usage_stats", expires_in: 1.day do %>
   <%= render partial: 'various_stats/summary', locals: {name: :usage_stats, graph: tu.usage_stats_graph[0], tu: tu} %>
 <% end %>
 
-<% cache "#{tu.cache_key}/tweet_clusters" do %>
+<% cache "#{tu.cache_key}/tweet_clusters", expires_in: 1.day do %>
   <%= render partial: 'various_stats/summary', locals: {name: :clusters_belong_to, graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
 <% end %>
 
-<% cache "#{tu.cache_key}/various_users/first_half" do %>
+<% cache "#{tu.cache_key}/various_users/first_half", expires_in: 1.day do %>
   <%= render partial: 'various_users/summary', collection: %i(removing removed new_friends new_followers blocking_or_blocked), as: :name, locals: {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
 <% end %>
 
-<% cache "#{tu.cache_key}/various_users/second_half" do %>
+<% cache "#{tu.cache_key}/various_users/second_half", expires_in: 1.day do %>
   <%= render partial: 'various_users/summary', collection: %i(mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers), as: :name, locals: {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
 <% end %>
 
-<%# cache "#{tu.cache_key}/common_friends" do %>
+<%# cache "#{tu.cache_key}/common_friends", expires_in: 1.day do %>
   <%# locals = {uids: modal_rendered_uids, icon_limit: icon_limit, tu: tu} %>
   <%#= render partial: 'common_friends/summary', locals: locals.merge(menu: @menu_common_friends) %>
   <%#= render partial: 'common_friends/summary', locals: locals.merge(menu: @menu_common_followers) %>
 <%# end %>
 
-<% cache "#{tu.cache_key}/various_users/rendered_users" do %>
+<% cache "#{tu.cache_key}/various_users/rendered_users", expires_in: 1.day do %>
   <%= render(partial: 'profiles/modal', collection: rendered_users.uniq { |user| user.uid.to_i }, as: :user, cached: true, locals: {searched_tw_user: tu, via: :profile_modal}) %>
 <% end %>
 
@@ -47,7 +47,7 @@
   });
 </script>
 
-<% cache "#{tu.cache_key}/update_histories" do %>
+<% cache "#{tu.cache_key}/update_histories", expires_in: 1.day do %>
   <%= render partial: 'update_histories/summary', locals: {histories: UpdateHistories.new(tu.uid), tu: tu} %>
 <% end %>
 
