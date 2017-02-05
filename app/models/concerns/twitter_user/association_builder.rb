@@ -62,7 +62,7 @@ module Concerns::TwitterUser::AssociationBuilder
     [
       {method: :friends,           args: [uid.to_i]},
       {method: :followers,         args: [uid.to_i]},
-      {method: :user_timeline,     args: [uid.to_i]},     # replying
+      {method: :user_timeline,     args: [uid.to_i, {include_rts: false}]},     # replying
       {method: :search,            args: [mention_name]}, # replied
       {method: :home_timeline,     args: [uid.to_i]},     # TODO cache?
       {method: :mentions_timeline, args: [uid.to_i]},     # replied
