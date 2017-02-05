@@ -32,7 +32,7 @@ namespace :twitter_db do
     Rails.logger.silence do
       klass.find_in_batches(start: start, batch_size: batch_size) do |users_array|
         begin
-          TwitterDB::User.import_from!(users_array)
+          TwitterDB::User.import_from_old!(users_array)
         rescue => e
           puts "#{e.class} #{e.message.slice(0, 100)}"
           failed = true

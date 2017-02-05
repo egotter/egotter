@@ -23,7 +23,19 @@ module TwitterDB
       find_by(uid: twitter_user.uid)
     end
 
+
     def self.import_from!(users_array)
+      users =
+        users_array.map do |user|
+          new(uid: user.uid.to_i, screen_name: user.screen_name, friends_size: -1, followers_size: -1, user_info: user.user_info)
+        end
+
+      users.each_slice(1000) do |targets|
+        import(targets, on_duplicate_key_update: %i(uid screen_name user_info), validate: false)
+      end
+    end
+
+    def self.import_from_old!(users_array)
       return if users_array.empty?
 
       uids = users_array.map(&:uid).map(&:to_i)

@@ -23,16 +23,23 @@ namespace :twitter_db do
               ActiveRecord::Base.transaction do
                 friend_uids = twitter_user.friendships.pluck(:friend_uid)
                 if user.friendships.pluck(:friend_uid) != friend_uids
+                  TwitterDB::User.import_from!(twitter_user.friends)
                   TwitterDB::Friendship.import_from!(user.uid, friend_uids)
                 end
 
                 follower_uids = twitter_user.followerships.pluck(:follower_uid)
                 if user.followerships.pluck(:follower_uid) != follower_uids
+                  TwitterDB::User.import_from!(twitter_user.followers)
                   TwitterDB::Followership.import_from!(user.uid, follower_uids)
                 end
 
                 user.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
               end
+            rescue ActiveRecord::InvalidForeignKey => e
+              failed = true
+              friends = [twitter_user.friendships.size, user.friendships.size, TwitterDB::User.where(uid: twitter_user.friendships.pluck(:friend_uid)).size]
+              followers = [twitter_user.followerships.size, user.followerships.size, TwitterDB::User.where(uid: twitter_user.followerships.pluck(:follower_uid)).size]
+              puts "#{user.id} #{user.uid} #{user.screen_name} #{e.class} friends #{friends.inspect} followers #{followers.inspect}"
             rescue => e
               failed = true
               puts "#{user.id} #{user.uid} #{user.screen_name} #{e.class} #{e.message}"
