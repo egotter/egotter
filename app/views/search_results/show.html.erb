@@ -53,8 +53,6 @@
 
 <script>
   $(function () {
-    $("img.lazy").lazyload();
-
     $.each(Object.keys(window.lazycall_functions), function (i, selector) {
       var loaded = false;
       $(selector)
