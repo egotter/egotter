@@ -14,7 +14,7 @@
 %>
 <div class="menu-items media">
   <div class="media-body">
-    <h4 class="h5 media-heading"><%= title_for(tu, menu: name) %><div class="tooltip-container"><abbr title="<%= description_for(tu, menu: name) %>" rel="tooltip">i</abbr></div></h4>
+    <h4 class="h5 media-heading"><%= title_for(name, tu.screen_name) %><div class="tooltip-container"><abbr title="<%= description_for(name, tu.screen_name) %>" rel="tooltip">i</abbr></div></h4>
     <%= render(partial: 'various_users/user', collection: users.slice(0..icon_limit), cached: true, locals: {rendered_users: rendered_users}) %>
   </div>
   <div class="media-right">

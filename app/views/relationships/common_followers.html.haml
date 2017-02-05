@@ -25,11 +25,6 @@
     #common_followers
       = render(partial: 'twitter/user', collection: @user_items.map { |i| i[:target] }, cached: true, locals: {uids: rendered_uids})
 
-    :javascript
-      $(function () {
-        $("img.lazy").lazyload();
-      });
-
     .page-entries-info-bottom
       = render(partial: 'searches/page_entries_info',
         locals: {params: {controller: controller_name, action: action_name, src_screen_name: @searched_tw_users[0].screen_name, dst_screen_name: @searched_tw_users[1].screen_name}, items: @user_items})

@@ -9,7 +9,7 @@ module TweetTextHelper
 
   def clusters_belong_to_text(clusters, tu)
     t('tweet_text.clusters_belong_to',
-      user: tu.mention_name,
+      user: mention_name(tu.screen_name),
       clusters: "#{clusters.join(t('dictionary.delim'))}",
       kaomoji: Kaomoji.happy,
       url: short_url)
@@ -51,7 +51,7 @@ module TweetTextHelper
         end
       end
 
-    t('searches.usage_stats.usage_time', user: tu.mention_name, total: total, avg: avg, level: level, url: usage_stats_search_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_time', user: mention_name(tu.screen_name), total: total, avg: avg, level: level, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{stats.inspect} #{tu.inspect}"
     error_text
@@ -74,7 +74,7 @@ module TweetTextHelper
     wday = wday_stats.find { |obj| obj[:y] == wday_max_y }[:name]
     hour_max_y = hour_stats.map { |obj| obj[:y] }.max
     hour = hour_stats.find { |obj| obj[:y] == hour_max_y }[:name]
-    t('searches.usage_stats.usage_active_time', user: tu.mention_name, wday: wday, hour: hour, url: usage_stats_search_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_active_time', user: mention_name(tu.screen_name), wday: wday, hour: hour, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{wday_stats.inspect} #{hour_stats.inspect} #{tu.inspect}"
     logger.warn e.backtrace.join("\n")
@@ -82,7 +82,7 @@ module TweetTextHelper
   end
 
   def usage_kind_text(kind, tu)
-    t('searches.usage_stats.usage_kind', user: tu.mention_name, mention: kind[:mentions].round, image: kind[:media].round, link: kind[:urls].round, hashtag: kind[:hashtags].round, location: kind[:location].round, url: usage_stats_search_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_kind', user: mention_name(tu.screen_name), mention: kind[:mentions].round, image: kind[:media].round, link: kind[:urls].round, hashtag: kind[:hashtags].round, location: kind[:location].round, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{kind.inspect} #{tu.inspect}"
     error_text
@@ -90,21 +90,21 @@ module TweetTextHelper
 
   def usage_hashtags_text(hashtags, tu)
     hashtags = hashtags.to_a.map { |obj| obj[:name] }.slice(0, 5).join(' ')
-    t('searches.usage_stats.usage_hashtags', user: tu.mention_name, hashtags: hashtags, url: usage_stats_search_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_hashtags', user: mention_name(tu.screen_name), hashtags: hashtags, url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{hashtags.inspect} #{tu.inspect}"
     error_text
   end
 
   def close_friends_text(users, tu)
-    t('tweet_text.close_friends', user: tu.mention_name, users: users.slice(0, 5).map { |u| u.mention_name }.join("\n"), url: close_friends_search_url(screen_name: tu.screen_name))
+    t('tweet_text.close_friends', user: mention_name(tu.screen_name), users: users.slice(0, 5).map { |u| mention_name(u.screen_name) }.join("\n"), url: close_friends_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text
   end
 
   def inactive_friends_text(users, tu)
-    users = ".#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
+    users = ".#{users.map { |u| "#{mention_name(u.screen_name)}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     t('tweet_text.inactive_friends',
       users: users,
       kaomoji: Kaomoji.happy,
@@ -117,7 +117,7 @@ module TweetTextHelper
   def mutual_friends_text(tu)
     rates = tu.mutual_friends_rate
     t('tweet_text.mutual_friends',
-      screen_name: "#{tu.mention_name}#{t('dictionary.honorific')}",
+      screen_name: "#{mention_name(tu.screen_name)}#{t('dictionary.honorific')}",
       mutual_friends_rate: rates[0].round,
       one_sided_friends_rate: rates[1].round,
       one_sided_followers_rate: rates[2].round,
@@ -129,11 +129,11 @@ module TweetTextHelper
   end
 
   def common_friends_text(users, tu, others_num = 0)
-    users = "#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
+    users = "#{users.map { |u| "#{mention_name(u.screen_name)}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
       users: users,
-      user: "#{tu.mention_name}#{t('dictionary.honorific')}",
+      user: "#{mention_name(tu.screen_name)}#{t('dictionary.honorific')}",
       login: "#{current_user.mention_name}#{t('dictionary.honorific')}",
       kaomoji: Kaomoji.happy,
       url: short_url)
@@ -143,11 +143,11 @@ module TweetTextHelper
   end
 
   def common_followers_text(users, tu, others_num = 0)
-    users = "#{users.map { |u| "@#{u.screen_name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
+    users = "#{users.map { |u| "#{mention_name(u.screen_name)}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
     users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
       users: users,
-      user: "#{tu.mention_name}#{t('dictionary.honorific')}",
+      user: "#{mention_name(tu.screen_name)}#{t('dictionary.honorific')}",
       login: "#{current_user.mention_name}#{t('dictionary.honorific')}",
       kaomoji: Kaomoji.happy,
       url: short_url)

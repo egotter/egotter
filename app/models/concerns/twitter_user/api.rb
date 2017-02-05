@@ -104,10 +104,22 @@ module Concerns::TwitterUser::Api
     # statuses.map { |status| status&.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
     screen_names = statuses.map { |status| $1 if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
     screen_names.uniq! if uniq
-    client.users(screen_names).each do |user|
-      user.uid = user.id
-      user.mention_name = "@#{user.screen_name}"
-    end
+    users =
+      TwitterDB::User.where(screen_name: screen_names).map do |user|
+        Hashie::Mash.new(
+          id: user.uid,
+          screen_name: user.screen_name,
+          statuses_count: user.statuses_count,
+          friends_count: user.friends_count,
+          followers_count: user.followers_count,
+          description: user.description,
+          profile_image_url_https: user.profile_image_url_https,
+          profile_banner_url: user.profile_banner_url,
+          profile_link_color: user.profile_link_color
+        )
+      end.index_by(&:screen_name)
+    users = screen_names.map { |screen_name| users[screen_name] }.compact
+    users.each { |user| user.uid = user.id }
   end
 
   # TODO do not use login_user
@@ -122,20 +134,12 @@ module Concerns::TwitterUser::Api
       end
 
     users.uniq!(&:id) if uniq
-
-    users.each do |user|
-      user.uid = user.id
-      user.mention_name = "@#{user.screen_name}"
-    end
+    users.each { |user| user.uid = user.id }
   end
 
   def favoriting(uniq: true, min: 0)
     users = client.favoriting(favorites.to_a, uniq: uniq, min: min)
-
-    users.each do |user|
-      user.uid = user.id
-      user.mention_name = "@#{user.screen_name}"
-    end
+    users.each { |user| user.uid = user.id }
   end
 
   def inactive_friends
@@ -157,10 +161,7 @@ module Concerns::TwitterUser::Api
       favoriting: favoriting(uniq: uniq, min: min)
     }
     users = client.close_friends(Hashie::Mash.new(material), uniq: uniq, min: min, limit: limit)
-    users.each do |user|
-      user.uid = user.id
-      user.mention_name = "@#{user.screen_name}"
-    end
+    users.each { |user| user.uid = user.id }
   end
 
   def inactive_friends_graph

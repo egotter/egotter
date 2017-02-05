@@ -9,7 +9,7 @@
         <%= render(partial: 'profiles/overview', locals: {user: user, unique_id: user.uid}) %>
 
         <div style="margin: 15px;">
-          <%= link_to t('searches.common.search_by', user: user.mention_name), search_path_for(controller: controller, screen_name: user.screen_name, via: via), class: 'btn btn-info btn-block', method: :post %>
+          <%= link_to t('searches.common.search_by', user: mention_name(user.screen_name)), search_path_for(controller: controller, screen_name: user.screen_name, via: via), class: 'btn btn-info btn-block', method: :post %>
         </div>
         <% if admin_signed_in? && searched_tw_user %>
           <% if current_user.uid.to_i == searched_tw_user.uid.to_i %>

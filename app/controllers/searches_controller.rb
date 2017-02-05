@@ -89,7 +89,7 @@ class SearchesController < ApplicationController
   Search::MENU.select { |menu| %i(one_sided_friends one_sided_followers mutual_friends removing removed blocking_or_blocked).exclude?(menu) }.each do |menu|
     define_method(menu) do
       @menu = menu
-      @title = title_for(@searched_tw_user, menu: menu)
+      @title = title_for(menu, @searched_tw_user.screen_name)
       render :common
     end
   end

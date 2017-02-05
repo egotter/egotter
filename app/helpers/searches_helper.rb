@@ -90,16 +90,16 @@ module SearchesHelper
     end
   end
 
-  def title_for(tu, menu:)
+  def title_for(menu, screen_name)
     if %i(common_friends common_followers).include?(menu)
-      t("searches.#{menu}.title", user: tu.mention_name, login: I18n.t('dictionary.you'))
+      t("searches.#{menu}.title", user: mention_name(screen_name), login: I18n.t('dictionary.you'))
     else
-      t("searches.#{menu}.title", user: tu.mention_name)
+      t("searches.#{menu}.title", user: mention_name(screen_name))
     end
   end
 
-  def description_for(tu, menu:)
-    t("searches.#{menu}.description", user: tu.mention_name)
+  def description_for(menu, screen_name)
+    t("searches.#{menu}.description", user: mention_name(screen_name))
   end
 
   def users_for(tu, menu:)
