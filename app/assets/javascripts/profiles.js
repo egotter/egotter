@@ -1,8 +1,6 @@
 function enableSlickOnModal() {
-  var $modal = $('.profile-overview-modal');
-  $modal.one('show.bs.modal', function (e) {
-    var $m = $(this);
-    setTimeout(function () { enableSlickNow($m.find('.profile-overview-carousel')) }, 500);
+  $('.profile-overview-modal').one('shown.bs.modal', function (e) {
+    enableSlickNow($(this).find('.profile-overview-carousel'));
   });
 }
 
@@ -21,7 +19,7 @@ function enableSlickNow(container) {
 }
 
 function enableSlickOnPageTop() {
-  var elem = $('.profile-overview-carousel');
+  var elem = $('.profile-overview-carousel:first');
   if (elem.is(':visible')) {
     enableSlickNow(elem);
   } else {
