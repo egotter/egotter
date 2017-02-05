@@ -101,8 +101,10 @@ module Concerns::TwitterUser::Api
   def replying(uniq: true)
     return [] if statuses.empty?
 
-    users = client.replying(statuses.to_a, uniq: uniq)
-    users.each do |user|
+    # statuses.map { |status| status&.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
+    screen_names = statuses.map { |status| $1 if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
+    screen_names.uniq! if uniq
+    client.users(screen_names).each do |user|
       user.uid = user.id
       user.mention_name = "@#{user.screen_name}"
     end
@@ -112,20 +114,19 @@ module Concerns::TwitterUser::Api
   def replied(uniq: true, login_user: nil)
     users =
       if login_user && login_user.uid.to_i == uid.to_i
-        mentions.map { |m| m.user }
+        mentions.map(&:user)
       elsif search_results.any?
-        uids = dummy_client._extract_uids(search_results.to_a)
-        dummy_client._extract_users(search_results.to_a, uids)
+        search_results.map { |status| status.user if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
       else
         []
       end
+
+    users.uniq!(&:id) if uniq
 
     users.each do |user|
       user.uid = user.id
       user.mention_name = "@#{user.screen_name}"
     end
-
-    uniq ? users.uniq { |u| u.uid.to_i } : users
   end
 
   def favoriting(uniq: true, min: 0)
