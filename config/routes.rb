@@ -27,7 +27,7 @@ Rails.application.routes.draw do
     Search::MENU.each { |menu| get menu, on: :member }
   end
 
-  resources :search_histories, :information, :notifications, only: :index
+  resources :search_histories, :notifications, only: :index
   resource :notification, only: :update
 
   resources :statuses, only: :show, param: :uid
