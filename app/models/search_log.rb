@@ -21,6 +21,7 @@
 #  first_time  :boolean          default(FALSE), not null
 #  landing     :boolean          default(FALSE), not null
 #  medium      :string(191)      default(""), not null
+#  ab_test     :string(191)      default(""), not null
 #  created_at  :datetime         not null
 #
 # Indexes

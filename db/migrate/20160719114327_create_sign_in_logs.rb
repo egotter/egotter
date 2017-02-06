@@ -16,6 +16,7 @@ class CreateSignInLogs < ActiveRecord::Migration
       t.string  :referer,     null: false, default: ''
       t.string  :referral,    null: false, default: ''
       t.string  :channel,     null: false, default: ''
+      t.string  :ab_test,     null: false, default: ''
 
       t.datetime :created_at, null: false
     end

@@ -11,7 +11,7 @@
 - if user_signed_in?
   = link_to t('searches.common.search_by', user: current_user.mention_name), search_path_for(controller: controller_name, screen_name: current_user.screen_name, via: 'one_sided_friends/new/top_button'), class: 'btn btn-info btn-block', method: :post
 - else
-  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: one_sided_friends_top_path), class: 'btn btn-info btn-block'
+  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: one_sided_friends_top_path, via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
 
 .row.one-sided-friends.screenshot
   .col-xs-12.col-sm-6.text-center

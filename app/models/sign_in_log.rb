@@ -17,6 +17,7 @@
 #  referer     :string(191)      default(""), not null
 #  referral    :string(191)      default(""), not null
 #  channel     :string(191)      default(""), not null
+#  ab_test     :string(191)      default(""), not null
 #  created_at  :datetime         not null
 #
 # Indexes
@@ -26,5 +27,5 @@
 #
 
 class SignInLog < ActiveRecord::Base
-  validates :via, inclusion: { in: %w(button_top button_bottom search_history_button_top search_history_button_bottom) }, allow_blank: true
+  validates :via, length: {maximum: 50}
 end

@@ -338,6 +338,7 @@ ActiveRecord::Schema.define(version: 20170203120250) do
     t.boolean  "first_time",              default: false, null: false
     t.boolean  "landing",                 default: false, null: false
     t.string   "medium",      limit: 191, default: "",    null: false
+    t.string   "ab_test",     limit: 191, default: "",    null: false
     t.datetime "created_at",                              null: false
   end
 
@@ -379,6 +380,7 @@ ActiveRecord::Schema.define(version: 20170203120250) do
     t.string   "referer",     limit: 191, default: "",    null: false
     t.string   "referral",    limit: 191, default: "",    null: false
     t.string   "channel",     limit: 191, default: "",    null: false
+    t.string   "ab_test",     limit: 191, default: "",    null: false
     t.datetime "created_at",                              null: false
   end
 

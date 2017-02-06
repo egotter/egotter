@@ -22,6 +22,7 @@ class CreateSearchLogs < ActiveRecord::Migration
       t.boolean :first_time,  null: false, default: false
       t.boolean :landing,     null: false, default: false
       t.string  :medium,      null: false, default: ''
+      t.string  :ab_test,     null: false, default: ''
 
       t.datetime :created_at, null: false
     end
