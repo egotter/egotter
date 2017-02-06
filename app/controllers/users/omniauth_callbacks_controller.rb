@@ -5,8 +5,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     begin
       user = User.update_or_create_for_oauth_by!(user_params) do |user, context|
         via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
+        referer = session[:sign_in_referer] ? session.delete(:sign_in_referer) : ''
+        ab_test = session[:sign_in_ab_test] ? session.delete(:sign_in_ab_test) : ''
         follow = 'true' == session.delete(:sign_in_follow)
-        create_sign_in_log(user, context: context, via: via, follow: follow)
+        create_sign_in_log(user, context: context, via: via, follow: follow, referer: referer, ab_test: ab_test)
         FollowEgotterWorker.perform_async(user.id) if follow
       end
     rescue =>  e

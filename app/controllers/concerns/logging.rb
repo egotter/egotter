@@ -33,6 +33,7 @@ module Concerns::Logging
       first_time:  false,
       landing:     false,
       medium:      params[:medium] ? params[:medium] : '',
+      ab_test:     options['ab_test'] ? options['ab_test'] : '',
       created_at:  Time.zone.now
     }
     attrs.update(options) if options.any?
@@ -47,7 +48,7 @@ module Concerns::Logging
     Rollbar.warn(e)
   end
 
-  def create_sign_in_log(user, context:, via:, follow:)
+  def create_sign_in_log(user, context:, via:, follow:, referer:, ab_test: '')
     referral = find_referral(pushed_referers)
 
     attrs = {
@@ -62,9 +63,10 @@ module Concerns::Logging
       os:          request.os,
       browser:     request.browser,
       user_agent:  truncated_user_agent,
-      referer:     truncated_referer,
+      referer:     truncate_referer(referer),
       referral:    referral,
       channel:     find_channel(referral),
+      ab_test:     ab_test,
       created_at:  Time.zone.now
     }
     CreateSignInLogWorker.perform_async(attrs)
@@ -266,5 +268,9 @@ module Concerns::Logging
 
   def truncated_referer
     request.referer.nil? ? '' : view_context.truncate(request.referer, length: 180, escape: false)
+  end
+
+  def truncate_referer(referer)
+    referer.nil? ? '' : view_context.truncate(referer, length: 180, escape: false)
   end
 end
