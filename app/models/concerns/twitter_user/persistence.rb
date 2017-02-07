@@ -78,9 +78,9 @@ module Concerns::TwitterUser::Persistence
 
   def import_twitter_db_users
     self.class.benchmark_and_silence(:twitter_db_users) do
-      TwitterDB::User.import_from!(friends)
-      TwitterDB::User.import_from!(followers)
-      TwitterDB::User.import_from!([self])
+      # TwitterDB::User.import_from!(friends)
+      # TwitterDB::User.import_from!(followers)
+      # TwitterDB::User.import_from!([self])
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
@@ -89,17 +89,17 @@ module Concerns::TwitterUser::Persistence
 
   def import_relationships
     self.class.benchmark_and_silence(:twitter_db_users) do
-      user = TwitterDB::User.find_by(uid: self.uid)
+      # user = TwitterDB::User.find_by(uid: self.uid)
 
       ActiveRecord::Base.transaction do
-        TwitterDB::Friendship.import_from!(self.uid, friend_uids)
-        TwitterDB::Followership.import_from!(self.uid, follower_uids)
+        # TwitterDB::Friendship.import_from!(self.uid, friend_uids)
+        # TwitterDB::Followership.import_from!(self.uid, follower_uids)
 
         Friendship.import_from!(self.id, friend_uids)
         Followership.import_from!(self.id, follower_uids)
 
         self.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
-        user.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
+        # user.update_columns(friends_size: friend_uids.size, followers_size: follower_uids.size)
       end
     end
   rescue => e
