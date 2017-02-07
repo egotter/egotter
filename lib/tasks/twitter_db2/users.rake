@@ -18,7 +18,7 @@ namespace :twitter_db2 do
       Rails.logger.silence do
         TwitterDB::User.find_in_batches(start: start, batch_size: batch_size) do |users|
           begin
-            TwitterDB2::User.import(users, on_duplicate_key_update: %i(id), vaildate: false, timestamps: false)
+            TwitterDB2::User.import(users, on_duplicate_key_update: %i(uid screen_name user_info friends_size followers_size), vaildate: false, timestamps: false)
           rescue => e
             puts "#{e.class} #{e.message.slice(0, 300)}"
             failed = true
