@@ -50,19 +50,24 @@ namespace :twitter_db2 do
       process_start = Time.zone.now
       failed = false
       processed = 0
+      invalid = []
       puts "\nverify started:"
 
       Rails.logger.silence do
         TwitterDB::User.find_in_batches(start: start, batch_size: batch_size) do |users|
-          users2 = TwitterDB2::User.where(uid: users.map(&:uid))
+          users2 = TwitterDB2::User.where(uid: users.map(&:uid)).to_a
           users.each do |user1|
-            user2 = users2.find { |user| user.uid == user1.uid }
-            unless user2
+            user2_index = users2.index { |user| user.uid == user1.uid }
+            unless user2_index
               puts "invalid: #{user1.uid} doesn't exist"
+              invalid << user1.uid
               next
             end
+
+            user2 = users2.delete_at(user2_index)
             if %i(uid screen_name friends_size followers_size user_info).any? { |attr| user1[attr] != user2[attr] }
               puts "invalid: #{user1.uid} #{%i(uid screen_name friends_size followers_size user_info).select { |attr| user1[attr] != user2[attr] }.join(', ')}"
+              invalid << user1.uid
               next
             end
           end
@@ -76,6 +81,7 @@ namespace :twitter_db2 do
       end
 
       process_finish = Time.zone.now
+      puts "invalid: #{invalid.inspect}" if invalid.any?
       puts "verify #{(sigint || failed ? 'suspended:' : 'finished:')}"
       puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
     end
