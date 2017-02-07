@@ -16,7 +16,7 @@ if (Rails.env.development? || Rails.env.test?) && defined?(Annotate)
       'show_foreign_keys'       => 'true',
       'show_indexes'            => 'true',
       'simple_indexes'          => 'false',
-      'model_dir'               => ['app/models', 'app/models/twitter_db2'],
+      'model_dir'               => ['app/models'],
       'root_dir'                => '',
       'include_version'         => 'false',
       'require'                 => '',

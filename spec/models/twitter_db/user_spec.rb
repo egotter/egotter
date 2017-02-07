@@ -30,20 +30,6 @@ RSpec.describe TwitterDB::User, type: :model do
     end
   end
 
-  describe '.find_or_import_by' do
-    let(:twitter_user) { create(:twitter_user) }
-    before do
-      twitter_user
-      [TwitterDB::Friendship, TwitterDB::Followership, TwitterDB::User].each { |klass| klass.delete_all }
-      [Friendship, Followership].each { |klass| klass.delete_all }
-    end
-    it 'creates passed record' do
-      user = nil
-      expect { user = TwitterDB::User.find_or_import_by(twitter_user) }.to change { TwitterDB::User.all.size }.by(1)
-      expect(user.uid).to eq(twitter_user.uid.to_i)
-    end
-  end
-
   describe '.import_from!' do
     let(:twitter_users) { 3.times.map { create(:twitter_user) } }
     before do

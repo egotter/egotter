@@ -1,6 +1,8 @@
 module TwitterDB
-  class Friendship < TwitterDB::Base
-    belongs_to :user, primary_key: :uid
+  class Friendship < ActiveRecord::Base
+    self.table_name = 'twitter_db_friendships'
+
+    belongs_to :user, primary_key: :uid, class_name: 'TwitterDB::User'
     belongs_to :friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 
     def self.import_from!(user_uid, friend_uids)

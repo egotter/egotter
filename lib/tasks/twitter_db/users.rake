@@ -1,17 +1,4 @@
 namespace :twitter_db do
-  desc 'create'
-  task create: :environment do
-    ActiveRecord::Base.connection.execute <<-SQL
-      CREATE DATABASE /*!32312 IF NOT EXISTS*/ `twitter_development` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */
-    SQL
-    ActiveRecord::Base.connection.execute <<-SQL
-      CREATE DATABASE /*!32312 IF NOT EXISTS*/ `twitter_test` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */
-    SQL
-    ActiveRecord::Base.connection.execute <<-SQL
-      CREATE DATABASE /*!32312 IF NOT EXISTS*/ `twitter` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci */
-    SQL
-  end
-
   desc 'copy users'
   task copy_users: :environment do
     klass = ENV['TABLE'].classify.constantize
