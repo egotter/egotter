@@ -12,13 +12,20 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         FollowEgotterWorker.perform_async(user.id) if follow
       end
     rescue =>  e
-      return redirect_to root_path, alert: t('before_sign_in.login_failed', sign_in_link: view_context.link_to(t('dictionary.sign_in'), welcome_path))
+      sign_in_link = view_context.link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
+      return redirect_to root_path, alert: t('before_sign_in.login_failed', sign_in_link: sign_in_link)
     end
 
     delete_uid(user)
 
     sign_in_and_redirect user, event: :authentication
     set_flash_message(:notice, :success, kind: 'Twitter') if is_navigational_format?
+  end
+
+  def failure
+    %i(sign_in_from sign_out_from sign_in_via sign_in_referer sign_in_ab_test sign_in_follow redirect_path).each { |key| session.delete(key) }
+    set_flash_message :alert, :failure, kind: 'Twitter', reason: request.env['omniauth.error.type'].to_s.humanize
+    redirect_to after_omniauth_failure_path_for(resource_name)
   end
 
   private

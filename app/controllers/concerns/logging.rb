@@ -33,7 +33,7 @@ module Concerns::Logging
       first_time:  false,
       landing:     false,
       medium:      params[:medium] ? params[:medium] : '',
-      ab_test:     options['ab_test'] ? options['ab_test'] : '',
+      ab_test:     params[:ab_test] ? params[:ab_test] : '',
       created_at:  Time.zone.now
     }
     attrs.update(options) if options.any?

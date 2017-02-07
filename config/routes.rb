@@ -46,9 +46,9 @@ Rails.application.routes.draw do
     get "#{type}/:src_screen_name/:dst_screen_name", to: "relationships##{type}", as: type.singularize
   end
 
-  get '/sign_in', to: 'login#sign_in', as: :sign_in
-  get '/sign_out', to: 'login#sign_out', as: :sign_out
-  get '/welcome', to: 'login#welcome', as: :welcome
+  %i(sign_in sign_out welcome).each do |name|
+    get name, to: "login##{name}", as: name
+  end
 
   devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
     omniauth_callbacks: 'users/omniauth_callbacks'
