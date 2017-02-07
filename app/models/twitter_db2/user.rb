@@ -42,4 +42,15 @@ module TwitterDB2
       obj.has_many :followers, through: :followerships, class_name: 'TwitterDB2::User'
     end
   end
+
+  def self.import_from!(users_array)
+    users =
+      users_array.map do |user|
+        new(uid: user.uid.to_i, screen_name: user.screen_name, friends_size: -1, followers_size: -1, user_info: user.user_info)
+      end
+
+    users.each_slice(1000) do |targets|
+      import(targets, on_duplicate_key_update: %i(uid screen_name user_info), validate: false)
+    end
+  end
 end
