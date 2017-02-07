@@ -16,6 +16,7 @@
 
 class Followership < ActiveRecord::Base
   belongs_to :twitter_user, primary_key: :id, foreign_key: :from_id
+  belongs_to :follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 
   def self.import_from!(from_id, follower_uids)
     followerships = follower_uids.map.with_index { |follower_uid, i| [from_id, follower_uid.to_i, i] }

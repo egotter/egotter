@@ -28,7 +28,7 @@ module Concerns::TwitterUser::AssociationBuilder
     users << TwitterDB::User.new(uid: uid, screen_name: screen_name, user_info: user_info, friends_size: -1, followers_size: -1)
 
     ActiveRecord::Base.benchmark('import TwitterDB') { logger.silence { ActiveRecord::Base.transaction {
-      users.uniq { |u| u.uid }.each_slice(1000) do |array|
+      users.uniq(&:uid).each_slice(1000) do |array|
         TwitterDB::User.import(array, on_duplicate_key_update: %i(uid screen_name user_info), validate: false)
       end
 
@@ -38,8 +38,8 @@ module Concerns::TwitterUser::AssociationBuilder
       TwitterDB::User.find_by(uid: uid).tap { |user| user.update_columns(friends_size: user.friendships.size, followers_size: user.followerships.size) }
     }}}
 
-    relations[:friends].each { |friend| friendships.build(friend_uid: friend.id) } if relations[:friends]&.any?
-    relations[:followers].each { |follower| followerships.build(follower_uid: follower.id) } if relations[:followers]&.any?
+    relations[:friends].each.with_index { |friend, i| friendships.build(friend_uid: friend.id, sequence: i) } if relations[:friends]&.any?
+    relations[:followers].each.with_index { |follower, i| followerships.build(follower_uid: follower.id, sequence: i) } if relations[:followers]&.any?
 
     self.friends_size = friendships.size
     self.followers_size = followerships.size

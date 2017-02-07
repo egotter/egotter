@@ -16,6 +16,7 @@
 
 class Friendship < ActiveRecord::Base
   belongs_to :twitter_user, primary_key: :id, foreign_key: :from_id
+  belongs_to :friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 
   def self.import_from!(from_id, friend_uids)
     friendships = friend_uids.map.with_index { |friend_uid, i| [from_id, friend_uid.to_i, i] }
