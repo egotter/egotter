@@ -23,14 +23,17 @@ namespace :twitter_db2 do
             processed += users_array.size
 
             users_array.each do |user|
-              users = user.friends.map { |friend| TwitterDB2::User.new(uid: friend.uid.to_i, screen_name: friend.screen_name, user_info: friend.user_info, friends_size: -1, followers_size: -1, created_at: user.created_at, updated_at: user.created_at) }
-              users += user.followers.map { |follower| TwitterDB2::User.new(uid: follower.uid.to_i, screen_name: follower.screen_name, user_info: follower.user_info, friends_size: -1, followers_size: -1, created_at: user.created_at, updated_at: user.created_at) }
+              users = user.friends.map { |friend| TwitterDB2::User.new(uid: friend.uid.to_i, screen_name: friend.screen_name, user_info: friend.user_info, friends_size: -1, followers_size: -1, created_at: friend.created_at, updated_at: friend.created_at) }
+              users += user.followers.map { |follower| TwitterDB2::User.new(uid: follower.uid.to_i, screen_name: follower.screen_name, user_info: follower.user_info, friends_size: -1, followers_size: -1, created_at: follower.created_at, updated_at: follower.created_at) }
               users = users.uniq(&:uid)
               processed += users.size
 
               users.each_slice(1000) do |records|
                 TwitterDB2::User.import(records, on_duplicate_key_update: %i(id), vaildate: false, timestamps: false)
               end
+
+              TwitterDB2::Friendship.import_from!(user.uid.to_i, user.friends.map(&:uid))
+              TwitterDB2::Followership.import_from!(user.uid.to_i, user.followers.map(&:uid))
             end
 
           rescue => e
