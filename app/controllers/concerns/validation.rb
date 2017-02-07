@@ -142,7 +142,7 @@ module Validation
   private
 
   def sign_in_link
-    view_context.link_to(t('dictionary.sign_in'), welcome_path)
+    view_context.link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/validation_error"))
   end
 
   def sign_out_link

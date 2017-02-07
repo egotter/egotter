@@ -69,8 +69,8 @@
 :javascript
   $(function () {
     var url = "#{one_sided_friend_path(screen_name: twitter_user.screen_name, type: 'TYPE', format: :json)}";
-    var retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
-    var somethingWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path)).html_safe}';
+    var retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/client/retry_timeout"))).html_safe}';
+    var somethingWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/client/something_wrong"))).html_safe}';
     var empty = "#{t('searches.common.empty')}";
     var type = "#{type.gsub(/_/, '-')}";
     var scope = #{scope.to_json};

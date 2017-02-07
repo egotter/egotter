@@ -35,7 +35,7 @@
       </div>
     <% else %>
       <div class="login-btn">
-        <%= link_to t('login.welcome.sign_in_with_twitter'), welcome_path, class: 'btn btn-lg btn-info btn-block' %>
+        <%= link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/sign_in_button"), class: 'btn btn-lg btn-info btn-block' %>
       </div>
     <% end %>
 
