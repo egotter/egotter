@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170203120250) do
+ActiveRecord::Schema.define(version: 20170207004431) do
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -401,6 +401,40 @@ ActiveRecord::Schema.define(version: 20170203120250) do
   add_index "statuses", ["screen_name"], name: "index_statuses_on_screen_name", using: :btree
   add_index "statuses", ["uid"], name: "index_statuses_on_uid", using: :btree
 
+  create_table "twitter_db_followerships", force: :cascade do |t|
+    t.integer "user_uid",     limit: 8, null: false
+    t.integer "follower_uid", limit: 8, null: false
+    t.integer "sequence",     limit: 4, null: false
+  end
+
+  add_index "twitter_db_followerships", ["follower_uid"], name: "index_twitter_db_followerships_on_follower_uid", using: :btree
+  add_index "twitter_db_followerships", ["user_uid", "follower_uid"], name: "index_twitter_db_followerships_on_user_uid_and_follower_uid", unique: true, using: :btree
+  add_index "twitter_db_followerships", ["user_uid"], name: "index_twitter_db_followerships_on_user_uid", using: :btree
+
+  create_table "twitter_db_friendships", force: :cascade do |t|
+    t.integer "user_uid",   limit: 8, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "twitter_db_friendships", ["friend_uid"], name: "index_twitter_db_friendships_on_friend_uid", using: :btree
+  add_index "twitter_db_friendships", ["user_uid", "friend_uid"], name: "index_twitter_db_friendships_on_user_uid_and_friend_uid", unique: true, using: :btree
+  add_index "twitter_db_friendships", ["user_uid"], name: "index_twitter_db_friendships_on_user_uid", using: :btree
+
+  create_table "twitter_db_users", force: :cascade do |t|
+    t.integer  "uid",            limit: 8,                 null: false
+    t.string   "screen_name",    limit: 191,               null: false
+    t.integer  "friends_size",   limit: 4,     default: 0, null: false
+    t.integer  "followers_size", limit: 4,     default: 0, null: false
+    t.text     "user_info",      limit: 65535,             null: false
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+  end
+
+  add_index "twitter_db_users", ["created_at"], name: "index_twitter_db_users_on_created_at", using: :btree
+  add_index "twitter_db_users", ["screen_name"], name: "index_twitter_db_users_on_screen_name", using: :btree
+  add_index "twitter_db_users", ["uid"], name: "index_twitter_db_users_on_uid", unique: true, using: :btree
+
   create_table "twitter_users", force: :cascade do |t|
     t.string   "uid",            limit: 191,               null: false
     t.string   "screen_name",    limit: 191,               null: false
@@ -754,4 +788,8 @@ ActiveRecord::Schema.define(version: 20170203120250) do
   add_index "visitors", ["uid"], name: "index_visitors_on_uid", using: :btree
   add_index "visitors", ["user_id"], name: "index_visitors_on_user_id", using: :btree
 
+  add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "follower_uid", primary_key: "uid"
+  add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "user_uid", primary_key: "uid"
+  add_foreign_key "twitter_db_friendships", "twitter_db_users", column: "friend_uid", primary_key: "uid"
+  add_foreign_key "twitter_db_friendships", "twitter_db_users", column: "user_uid", primary_key: "uid"
 end

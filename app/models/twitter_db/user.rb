@@ -13,11 +13,6 @@ module TwitterDB
       obj.has_many :followers, through: :followerships
     end
 
-    alias_method :friend_uids, :friend_ids
-    alias_method :friend_uids=, :friend_ids=
-    alias_method :follower_uids, :follower_ids
-    alias_method :follower_uids=, :follower_ids=
-
     def self.find_or_import_by(twitter_user)
       import_from!([twitter_user]) unless exists?(uid: twitter_user.uid)
       find_by(uid: twitter_user.uid)
