@@ -17,13 +17,4 @@ class StatusesController < ApplicationController
     @statuses = Kaminari.paginate_array(@searched_tw_user.statuses.to_a).page(params[:page]).per(100)
     @title = t('.title', user: @searched_tw_user.mention_name)
   end
-
-  # TODO remove later
-  def keyword_timeline
-    html = render_to_string(partial: 'twitter/tweet', collection: tweets_for(t('searches.common.egotter')), cached: true)
-    render json: {html: html}, status: 200
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    render nothing: true, status: 500
-  end
 end

@@ -31,7 +31,6 @@ Rails.application.routes.draw do
   resource :notification, only: :update
 
   resources :statuses, only: :show, param: :uid
-  get 'keyword_timeline', to: 'statuses#keyword_timeline', as: :keyword_timeline
 
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
