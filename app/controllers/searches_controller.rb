@@ -107,9 +107,17 @@ class SearchesController < ApplicationController
   end
 
   def debug
-    unless request.device_type == :crawler
-      logger.warn "#{self.class}##{__method__}: #{current_user_id} #{request.device_type} #{request.method} #{request.url}"
+    if request.device_type == :crawler
+      redirect_to root_path
+    else
+      if params['screen_name'] && params['screen_name'].match(Validations::ScreenNameValidator::REGEXP)
+        @screen_name = params['screen_name']
+        @redirect_path = search_path(screen_name: @screen_name)
+        render controller: :searches, action: :create, layout: false
+      else
+        logger.warn "#{self.class}##{__method__}: #{current_user_id} #{request.device_type} #{request.method} #{request.url}"
+        redirect_to root_path
+      end
     end
-    redirect_to root_path
   end
 end
