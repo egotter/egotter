@@ -98,11 +98,15 @@ module Validation
   rescue Twitter::Error::Forbidden => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
     if e.message == 'User has been suspended.'
-      CreateForbiddenUserWorker.perform_async(screen_name)
+      CreateForbiddenUserWorker.perform_async(tu.screen_name)
     end
     redirect_to redirect_path, alert: forbidden_message(tu.screen_name)
     false
-  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized => e
+  rescue Twitter::Error::Unauthorized => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
+    redirect_to redirect_path, alert: unauthorized_message(tu.screen_name)
+    false
+  rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
     logger.info e.backtrace.take(10).join("\n")
     redirect_to redirect_path, alert: alert_message(e)
@@ -123,16 +127,14 @@ module Validation
     t('before_sign_in.forbidden', user: screen_name)
   end
 
+  def unauthorized_message(screen_name)
+    t("after_sign_in.unauthorized", sign_in_link: sign_in_link, sign_out_link: sign_out_link)
+  end
+
   def alert_message(ex)
     case
       when ex.kind_of?(Twitter::Error::TooManyRequests)
         t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
-      when ex.kind_of?(Twitter::Error::Unauthorized)
-        if user_signed_in?
-          t("after_sign_in.unauthorized", sign_out_link: sign_out_link)
-        else
-          t("before_sign_in.unauthorized", sign_in_link: sign_in_link)
-        end
       else
         logger.warn "#{__method__}: unexpected exception #{ex.class} #{ex.message}"
         t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)

@@ -52,12 +52,14 @@ module SearchesHelper
     else
       redirect_to redirect_path, alert: forbidden_message(screen_name)
     end
-  rescue Twitter::Error::TooManyRequests, Twitter::Error::Unauthorized => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
+  rescue Twitter::Error::Unauthorized => e
+    redirect_to redirect_path, alert: unauthorized_message(screen_name)
+  rescue Twitter::Error::TooManyRequests => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.browser}"
     logger.info e.backtrace.take(10).join("\n")
     redirect_to redirect_path, alert: alert_message(e)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.browser}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.error(e)
     redirect_to redirect_path, alert: alert_message(e)

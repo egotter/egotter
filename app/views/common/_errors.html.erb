@@ -17,7 +17,7 @@
     );
 
     var unauthorized = new Exception(
-      '<%= I18n.t("after_sign_in.unauthorized", sign_out_link: link_to(I18n.t('dictionary.sign_out'), sign_out_path)).html_safe %>',
+      '<%= I18n.t("after_sign_in.unauthorized", sign_in_link: link_to(I18n.t('dictionary.sign_in'), welcome_path(via: 'client/unauthorized')), sign_out_link: link_to(I18n.t('dictionary.sign_out'), sign_out_path)).html_safe %>',
       '<%= I18n.t("before_sign_in.unauthorized", sign_in_link: link_to(I18n.t('dictionary.sign_in'), welcome_path(via: 'client/unauthorized'))).html_safe %>'
     );
 
