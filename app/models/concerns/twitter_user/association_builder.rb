@@ -13,16 +13,36 @@ module Concerns::TwitterUser::AssociationBuilder
   def build_relations(client, login_user, context)
     relations = fetch_relations(client, login_user, context)
 
-    relations[:friends].each do |friend|
-      friends.build(uid: friend.id, screen_name: friend.screen_name, user_info: friend.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
-    end if relations[:friends]&.any?
+    users = []
 
-    relations[:followers].each do |follower|
-      followers.build(uid: follower.id, screen_name: follower.screen_name, user_info: follower.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
-    end if relations[:followers]&.any?
+    users =
+      relations[:friends].map do |user|
+        TwitterDB::User.new(uid: user.id, screen_name: user.screen_name, user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: -1, followers_size: -1)
+      end if relations[:friends]&.any?
 
-    self.friends_size = friends.size
-    self.followers_size = followers.size
+    users +=
+      relations[:followers].map do |user|
+        TwitterDB::User.new(uid: user.id, screen_name: user.screen_name, user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: -1, followers_size: -1)
+      end if relations[:followers]&.any?
+
+    users << TwitterDB::User.new(uid: uid, screen_name: screen_name, user_info: user_info, friends_size: -1, followers_size: -1)
+
+    ActiveRecord::Base.benchmark('import TwitterDB') { logger.silence { ActiveRecord::Base.transaction {
+      users.uniq(&:uid).each_slice(1000) do |array|
+        TwitterDB::User.import(array, on_duplicate_key_update: %i(uid screen_name user_info), validate: false)
+      end
+
+      TwitterDB::Friendship.import_from!(uid.to_i, relations[:friends].map(&:id)) if relations[:friends]&.any?
+      TwitterDB::Followership.import_from!(uid.to_i, relations[:followers].map(&:id)) if relations[:followers]&.any?
+
+      TwitterDB::User.find_by(uid: uid).tap { |user| user.update_columns(friends_size: user.friendships.size, followers_size: user.followerships.size) }
+    }}}
+
+    relations[:friends].each.with_index { |friend, i| friendships.build(friend_uid: friend.id, sequence: i) } if relations[:friends]&.any?
+    relations[:followers].each.with_index { |follower, i| followerships.build(follower_uid: follower.id, sequence: i) } if relations[:followers]&.any?
+
+    self.friends_size = friendships.size
+    self.followers_size = followerships.size
 
     relations[:user_timeline].each do |status|
       statuses.build(uid: status.user.id, screen_name: status.user.screen_name, status_info: status.slice(*Status::STATUS_SAVE_KEYS).to_json)

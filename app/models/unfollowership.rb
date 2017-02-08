@@ -14,7 +14,8 @@
 #
 
 class Unfollowership < ActiveRecord::Base
-  belongs_to :twitter_user
+  belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
+  belongs_to :unfollower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 
   def self.import_from!(from_uid, follower_uids)
     unfollowerships = follower_uids.map.with_index { |follower_uid, i| [from_uid.to_i, follower_uid.to_i, i] }

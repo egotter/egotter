@@ -14,7 +14,8 @@
 #
 
 class Unfriendship < ActiveRecord::Base
-  belongs_to :twitter_user
+  belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
+  belongs_to :unfriend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 
   def self.import_from!(from_uid, friend_uids)
     unfriendships = friend_uids.map.with_index { |friend_uid, i| [from_uid.to_i, friend_uid.to_i, i] }
