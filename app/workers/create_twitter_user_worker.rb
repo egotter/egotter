@@ -77,13 +77,14 @@ class CreateTwitterUserWorker
     )
     Rollbar.warn(e)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    message = e.message.truncate(1000)
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{message}"
     logger.info e.backtrace.take(10).join("\n")
     log.update(
       status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{e.class} #{e.message}"
+      message: "#{e.class} #{message}"
     )
     Rollbar.warn(e)
   end
