@@ -14,7 +14,7 @@ class UpdateHistoriesController < ApplicationController
 
   # GET /update_histories/:id
   def show
-    @title = t('update_histories.show.title', user: @searched_tw_user.mention_name)
+    @title = t('update_histories.show.short_title', user: @searched_tw_user.mention_name)
     @update_histories = UpdateHistories.new(@searched_tw_user.uid)
   end
 end

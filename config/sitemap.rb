@@ -5,7 +5,7 @@ SitemapGenerator::Sitemap.create do
 
   add one_sided_friends_top_path, options
   add unfriends_top_path, options
-  # add relationships_top_path, options
+  add relationships_top_path, options
 
   Rails.logger.silence do
     TwitterUser.pluck(:uid).uniq.each do |uid|

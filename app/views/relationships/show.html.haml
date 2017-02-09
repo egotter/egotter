@@ -1,0 +1,31 @@
+- content_for :canonical_url do
+  %link{href: relationship_url(src_screen_name: @twitter_users[0].screen_name, dst_screen_name: @twitter_users[1].screen_name, type: @type), rel: 'canonical'}
+
+- breadcrumb :relationship, @twitter_users[0].screen_name, @twitter_users[1].screen_name
+
+- page_title = t('relationships.show.title', user1: @twitter_users[0].mention_name, user2: @twitter_users[1].mention_name, conversations: @twitter_users[0].conversations(@twitter_users[1]).size, common_friends: @twitter_users[0].common_friends(@twitter_users[1]).size, common_followers: @twitter_users[0].common_followers(@twitter_users[1]).size)
+- title page_title
+- set_meta_tags description: t('relationship.show.description', user1: @twitter_users[0].mention_name, user2: @twitter_users[1].mention_name, conversations: @twitter_users[0].conversations(@twitter_users[1]).size, common_friends: @twitter_users[0].common_friends(@twitter_users[1]).size, common_followers: @twitter_users[0].common_followers(@twitter_users[1]).size)
+
+= render(partial: 'profiles/overview', locals: {user: @twitter_users[0], unique_id: @twitter_users[0].uid})
+
+.twitter.users{style: 'margin-top: 15px;'}
+  = render(partial: 'twitter/user', cached: true, locals: {uids: [], user: @twitter_users[1]}, formats: %i(html))
+
+:javascript
+  $(function () {
+    enableSlickOnPageTop();
+  });
+
+%h2.h2.one-sided-friends= page_title
+
+.one-sided-friends.lead.text-center= t('relationships.show.lead_002_html', user1: @twitter_users[0].mention_name, user2: @twitter_users[1].mention_name)
+.one-sided-friends.lead.text-center= t('relationships.show.lead_002_1_html', user1: @twitter_users[0].mention_name, user2: @twitter_users[1].mention_name)
+
+= render partial: 'relationships/search_form', locals: {via: 'relationships/show/top_input'}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+- if @twitter_users.any? { |twitter_user| twitter_user.too_many_friends?(login_user: current_user, context: :search) }
+  = render partial: 'relationships/show/empty', locals: {twitter_users: @twitter_users}
+- else
+  = render partial: 'relationships/show/present', locals: {twitter_users: @twitter_users, type: @type}

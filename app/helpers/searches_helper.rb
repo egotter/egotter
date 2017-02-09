@@ -69,18 +69,17 @@ module SearchesHelper
     case controller
       when 'one_sided_friends' then one_sided_friends_top_path
       when 'unfriends' then unfriends_top_path
+      when 'relationships' then relationships_top_path
       else root_path
     end
   end
 
   def app_name_for(controller:)
     case controller
-      when %r{one_sided_friends|one_sided_followers}
-        t('one_sided_friends.new.title')
-      when %r{unfriends}
-        t('unfriends.new.title')
-      else
-        t('searches.common.egotter')
+      when 'one_sided_friends' then t('one_sided_friends.new.title')
+      when 'unfriends' then t('unfriends.new.title')
+      when 'relationships' then t('relationships.new.title')
+      else t('searches.common.egotter')
     end
   end
 

@@ -7,7 +7,13 @@ module Validation
   end
 
   def need_login
-    redirect_to root_path, alert: t('before_sign_in.need_login', sign_in_link: sign_in_link) unless user_signed_in?
+    unless user_signed_in?
+      if controller_name == 'relationships'
+        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_for_relationships', sign_in_link: sign_in_link)
+      else
+        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login', sign_in_link: sign_in_link)
+      end
+    end
   end
 
   def need_admin

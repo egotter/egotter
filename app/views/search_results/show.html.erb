@@ -36,7 +36,7 @@
 <%# end %>
 
 <% cache "#{tu.cache_key}/various_users/rendered_users", expires_in: 1.day do %>
-  <%= render(partial: 'profiles/modal', collection: rendered_users.uniq { |user| user.uid.to_i }, as: :user, cached: true, locals: {searched_tw_user: tu, via: :profile_modal}) %>
+  <%= render(partial: 'profiles/modal', collection: rendered_users.uniq { |user| user.uid.to_i }, as: :user, cached: true, locals: {twitter_user: tu, via: :profile_modal}) %>
 <% end %>
 
 <script>

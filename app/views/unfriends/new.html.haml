@@ -5,7 +5,7 @@
 .unfriends.lead.text-center= t('unfriends.new.lead_002').html_safe
 .unfriends.lead.text-center= t('unfriends.new.lead_003').html_safe
 
-= render partial: 'unfriends/search_form', locals: {via: 'unfriends/new/top_input'}
+= render partial: 'unfriends/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 - if user_signed_in?

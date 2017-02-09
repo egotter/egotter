@@ -5,7 +5,7 @@
 .one-sided-friends.lead.text-center= t('one_sided_friends.new.lead_002').html_safe
 .one-sided-friends.lead.text-center= t('one_sided_friends.new.lead_003').html_safe
 
-= render partial: 'one_sided_friends/search_form', locals: {via: 'one_sided_friends/new/top_input'}
+= render partial: 'one_sided_friends/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 - if user_signed_in?

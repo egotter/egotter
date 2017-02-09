@@ -26,3 +26,8 @@ crumb :unfriend do |screen_name|
   link t('unfriends.new.simple_title'), unfriend_path(screen_name: screen_name)
   parent :search, screen_name
 end
+
+crumb :relationship do |src_screen_name, dst_screen_name|
+  link t('relationships.new.simple_title'), relationship_path(src_screen_name: src_screen_name, dst_screen_name: dst_screen_name)
+  parent :search, src_screen_name
+end

@@ -1,5 +1,8 @@
-<%= render(partial: 'profiles/overview',
-           locals: {user: @searched_tw_users[0], unique_id: @searched_tw_users[0].uid}) %>
+<%= render(partial: 'profiles/overview', locals: {user: @twitter_users[0], unique_id: @twitter_users[0].uid}) %>
+
+<div class="twitter users" style="margin-top: 15px;">
+  <%= render(partial: 'twitter/user', cached: true, locals: {uids: [], user: @twitter_users[1]}, formats: %i(html)) %>
+</div>
 
 <script>
   $(function () {
@@ -9,7 +12,7 @@
 
 <div class="waiting">
   <div class="waiting-msg">
-    <%= t('searches.waiting.searching', user: @searched_tw_users.map(&:name).join(' ')) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+    <%= t('searches.waiting.searching', user: @twitter_users.map(&:name).join(' ')) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
   </div>
 
   <div class="finished-msg" style="display: none;">
@@ -29,8 +32,8 @@
 
     <% if user_signed_in? %>
       <div class="retry-btn">
-        <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_users.map(&:mention_name).join(' ')),
-                    relationships_path(src_screen_name: @searched_tw_users[0].screen_name, dst_screen_name: @searched_tw_users[1].screen_name, to: params[:to], via: :retry),
+        <%= link_to t('searches.waiting.retry_search_by', user: @twitter_users.map(&:mention_name).join(' ')),
+                    relationships_path(src_screen_name: @twitter_users[0].screen_name, dst_screen_name: @twitter_users[1].screen_name, type: params[:type], via: :retry),
                     class: 'btn btn-lg btn-info btn-block', method: :post %>
       </div>
     <% else %>
@@ -50,10 +53,10 @@
 <%= render partial: 'common/errors' %>
 <script>
   $(function () {
-    var checkLogPath = "<%= check_log_relationship_path(src_uid: @searched_tw_users[0].uid, dst_uid: @searched_tw_users[1].uid) %>";
+    var checkLogPath = "<%= check_log_relationship_path(src_uid: @twitter_users[0].uid, dst_uid: @twitter_users[1].uid) %>";
     var resultPath = "<%= @result_path %>";
-    var pollingLogsPath = "<%= raw polling_logs_path(uid: @searched_tw_users[0].uid, screen_name: @searched_tw_users[0].screen_name) %>";
-    var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", src_uid: <%= @searched_tw_users[0].uid %>, dst_uid: <%= @searched_tw_users[1].uid %>};
+    var pollingLogsPath = "<%= raw polling_logs_path(uid: @twitter_users[0].uid, screen_name: @twitter_users[0].screen_name) %>";
+    var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", src_uid: <%= @twitter_users[0].uid %>, dst_uid: <%= @twitter_users[1].uid %>};
     relationshipsWaiting(checkLogPath, resultPath, pollingLogsPath, scope);
   });
 </script>

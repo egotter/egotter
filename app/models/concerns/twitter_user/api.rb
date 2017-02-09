@@ -56,8 +56,9 @@ module Concerns::TwitterUser::Api
   end
 
   def conversations(other)
-    # TODO implement
-    []
+    statuses1 = statuses.select { |status| !status.text.start_with?('RT') && status.text.include?(other.mention_name) }
+    statuses2 = other.statuses.select { |status| !status.text.start_with?('RT') && status.text.include?(mention_name) }
+    (statuses1 + statuses2).sort_by { |status| -status.tweeted_at.to_i }
   end
 
   def new_removing_uids(newer)

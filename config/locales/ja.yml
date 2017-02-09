@@ -12,9 +12,12 @@ ja:
       search_by_other_user: "他のユーザー で検索"
       search_by_egotter: "えごったーで検索"
       search_xxx_by_egotter: "%{user} をえごったーで検索"
+      search_a_and_b: "%{user1} と %{user2} を共通検索"
       search_by: "%{user} で検索"
+      search_first: "Twitter ID 1"
+      search_second: "Twitter ID 2"
       search: "検索"
-      empty_html: "結果は 0 です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。"
+      empty_html: "結果は 0 件です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。"
       top: "トップ"
       top_page: "トップページ"
       feedback: "ご意見"
@@ -269,8 +272,9 @@ ja:
       lead_004: '検索されたユーザーの会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show:
       title: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人"
-      description: "%{user1} と %{user2} は、会話 %{conversations}件、共通フォロー %{common_friends}人、共通フォロワー %{common_followers}人です。ツイッターでの共通フォロー、共通フォロワーが分かると、会話を覗き見されているユーザーが分かります。"
-      lead_002: "共通フォローは、%{user1} と%{user2} が共通してフォローしているアカウント、<br>共通フォロワーは、%{user1} と%{user2} はが共通してフォローされているアカウントのことです。"
+      description: "%{user1} と %{user2} は、会話 %{conversations}件、共通フォロー %{common_friends}人、共通フォロワー %{common_followers}人です。共通フォロワーには、ツイッターでのこの2人の会話が見えています。"
+      lead_002_html: "共通フォローは、%{user1} と %{user2} が共通してフォローしているアカウント、<br>共通フォロワーは、%{user1} と %{user2} が共通してフォローされているアカウントのことです。"
+      lead_002_1_html: "<strong>ちなみに、共通フォロワーには、%{user1} と %{user2} の会話がすべて見えています。</strong>"
       lead_003: '%{user1} と %{user2} の会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人です。"
@@ -327,6 +331,7 @@ ja:
     between_to: "まで"
   before_sign_in:
     need_login: "%{sign_in_link} が必要です。"
+    need_login_for_relationships: "共通検索を利用するには %{sign_in_link} が必要です。"
     login_failed: "%{sign_in_link} に失敗しました。大変お手数ですが、時間をおいてから再度 %{sign_in_link} してみてください。"
     session_expired: "一定時間操作がなかったため、ログアウトしました。再度、%{sign_in_link} してください。"
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
