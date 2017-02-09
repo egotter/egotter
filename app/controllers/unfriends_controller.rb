@@ -15,8 +15,10 @@ class UnfriendsController < ApplicationController
     remove_instance_variable(:@tu)
   end
   before_action only: %i(new create show) do
-    push_referer
-    create_search_log(action: "#{controller_name}/#{action_name}")
+    if request.format.html?
+      push_referer
+      create_search_log(action: "#{controller_name}/#{action_name}")
+    end
   end
 
   VALID_TYPES = %w(removing removed blocking_or_blocked)

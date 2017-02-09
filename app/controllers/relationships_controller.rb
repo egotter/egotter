@@ -20,8 +20,10 @@ class RelationshipsController < ApplicationController
   before_action(only: %i(waiting check_log)) { uids.all? { |uid| searched_uid?(uid.to_i) } }
 
   before_action only: %i(new create waiting show) do
-    push_referer
-    create_search_log(action: "#{controller_name}/#{action_name}")
+    if request.format.html?
+      push_referer
+      create_search_log(action: "#{controller_name}/#{action_name}")
+    end
   end
 
   VALID_TYPES = %w(conversations common_friends common_followers)

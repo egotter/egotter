@@ -169,14 +169,22 @@ module Concerns::Logging
 
   def find_uid_and_screen_name
     if instance_variable_defined?(:@tu) && !@tu.nil? # create
-      uid = @tu.uid
-      screen_name = @tu.screen_name
+      if @tu.is_a?(Array)
+        uid = @tu[0].uid
+        screen_name = @tu[0].screen_name
+      else
+        uid = @tu.uid
+        screen_name = @tu.screen_name
+      end
     elsif instance_variable_defined?(:@searched_tw_user) && !@searched_tw_user.nil?
       uid = @searched_tw_user.uid
       screen_name = @searched_tw_user.screen_name
-    elsif instance_variable_defined?(:@searched_tw_users) && !@searched_tw_users[0].nil?
-      uid = @searched_tw_users[0].uid
-      screen_name = @searched_tw_users[0].screen_name
+    elsif instance_variable_defined?(:@twitter_user) && !@twitter_user.nil?
+      uid = @twitter_user.uid
+      screen_name = @twitter_user.screen_name
+    elsif instance_variable_defined?(:@twitter_users) && !@twitter_users[0].nil?
+      uid = @twitter_users[0].uid
+      screen_name = @twitter_users[0].screen_name
     else
       uid = ::TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid) # waiting
