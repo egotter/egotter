@@ -12,7 +12,6 @@ Rails.application.routes.draw do
 
   resources :one_sided_friends, only: %i(create show), param: :screen_name
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
-  get 'one_sided_followers', to: 'one_sided_followers#new', as: :one_sided_followers_top
 
   resources :unfriends, only: %i(create show), param: :screen_name
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
@@ -41,9 +40,8 @@ Rails.application.routes.draw do
   resources :relationships, only: %i(create)
   get 'relationships/:src_uid/:dst_uid/waiting', to: 'relationships#waiting', as: :waiting_relationship
   get 'relationships/:src_uid/:dst_uid/check_log', to: 'relationships#check_log', as: :check_log_relationship
-  %w(conversations common_friends common_followers).each do |type|
-    get "#{type}/:src_screen_name/:dst_screen_name", to: "relationships##{type}", as: type.singularize
-  end
+  get 'relationships/:src_screen_name/:dst_screen_name', to: 'relationships#show', as: :relationship
+  get 'relationships', to: 'relationships#new', as: :relationships_top
 
   %i(sign_in sign_out welcome).each do |name|
     get name, to: "login##{name}", as: name

@@ -4,67 +4,67 @@ class RelationshipsController < ApplicationController
   include SearchesHelper
   include RelationshipsHelper
 
-  before_action :reject_crawler, only: %i(create)
-  before_action(only: %i(create conversations common_friends common_followers)) { screen_names.all? { |sn| valid_screen_name?(sn) } }
-  before_action(only: %i(create conversations common_friends common_followers)) { screen_names.any? { |sn| not_found_screen_name?(sn) } }
-  before_action(only: %i(create conversations common_friends common_followers)) { @tu = screen_names.map { |sn| build_twitter_user(sn) } }
-  before_action(only: %i(create conversations common_friends common_followers)) { @tu.all? { |tu| authorized_search?(tu) } }
-  before_action(only: %i(conversations common_friends common_followers)) { @tu.all? { |tu| existing_uid?(tu.uid.to_s) } }
-  before_action only: %i(conversations common_friends common_followers) do
-    @searched_tw_users = @tu.map { |tu| TwitterUser.latest(tu.uid.to_i) }
+  before_action :reject_crawler, only: %i(create waiting)
+  before_action(only: %i(create show)) { screen_names.all? { |sn| valid_screen_name?(sn) } }
+  before_action(only: %i(create show)) { need_login }
+  before_action(only: %i(create show)) { screen_names.any? { |sn| not_found_screen_name?(sn) } }
+  before_action(only: %i(create show)) { @tu = screen_names.map { |sn| build_twitter_user(sn) } }
+  before_action(only: %i(create show)) { @tu.all? { |tu| authorized_search?(tu) } }
+  before_action(only: %i(show)) { @tu.all? { |tu| existing_uid?(tu.uid.to_s) } }
+  before_action only: %i(show) do
+    @twitter_users = @tu.map { |tu| TwitterUser.latest(tu.uid.to_i) }
     remove_instance_variable(:@tu)
   end
 
-  before_action(only: %i(waiting)) { uids.all? { |uid| valid_uid?(uid.to_i) } }
-  before_action(only: %i(check_log)) { uids.all? { |uid| valid_uid?(uid.to_i) } }
-  # before_action(only: %i(check_log)) { uids.all? { |uid| searched_uid?(uid.to_i) } }
+  before_action(only: %i(waiting check_log)) { uids.all? { |uid| valid_uid?(uid.to_i) } }
+  before_action(only: %i(waiting check_log)) { uids.all? { |uid| searched_uid?(uid.to_i) } }
 
-  before_action only: %i(conversations common_friends common_followers) do
+  before_action only: %i(new create waiting show) do
     push_referer
-    create_search_log
+    create_search_log(action: "#{controller_name}/#{action_name}")
   end
 
-  def conversations
-    statuses =
-      @searched_tw_users[0].statuses.select { |s| s.text.starts_with?(@searched_tw_users[1].mention_name) } +
-      @searched_tw_users[1].statuses.select { |s| s.text.starts_with?(@searched_tw_users[0].mention_name) }
-    @statuses = Kaminari.paginate_array(statuses.sort_by { |s| -s.tweeted_at.to_i }.take(600)).page(params[:page]).per(100)
-    @title = t('.title', user1: @searched_tw_users[0].mention_name, user2: @searched_tw_users[1].mention_name)
+  VALID_TYPES = %w(conversations common_friends common_followers)
+
+  def new
+    @title = t('relationships.new.plain_title')
   end
 
-  def common_friends
-    # TODO implement
-    @title = t('.title', user1: @searched_tw_users[0].mention_name, user2: @searched_tw_users[1].mention_name)
-  end
+  def show
+    @type = VALID_TYPES.include?(params[:type]) ? params['type'] : VALID_TYPES[0]
 
-  def common_followers
-    @user_items = TwitterUsersDecorator.new(@searched_tw_users[0].common_followers(@searched_tw_users[1])).items
-    @title = t('.title', user1: @searched_tw_users[0].mention_name, user2: @searched_tw_users[1].mention_name)
+    respond_to do |format|
+      format.html { render }
+      format.json do
+        tweets_or_users = Kaminari.paginate_array(@twitter_users[0].send(@type, @twitter_users[1])).page(params[:page]).per(50)
+        if tweets_or_users.empty?
+          render json: {empty: true}, status: 200
+        else
+          render json: {html: render_to_string(locals: {type: @type, tweets_or_users: tweets_or_users, twitter_users: @twitter_users})}, status: 200
+        end
+      end
+    end
   end
 
   def create
-    need_worker = false
-    @tu.each do |tu|
-      save_twitter_user_to_cache(tu.uid.to_i, screen_name: tu.screen_name, user_info: tu.user_info)
-      need_worker = !TwitterUser.exists?(uid: tu.uid.to_i) unless need_worker
-    end
+    @tu.each { |tu| save_twitter_user_to_cache(tu.uid.to_i, screen_name: tu.screen_name, user_info: tu.user_info) }
 
-    if need_worker
+    if @tu.any? { |tu| !TwitterUser.exists?(uid: tu.uid.to_i) }
       add_create_relationship_worker_if_needed(@tu.map(&:uid), user_id: current_user_id, screen_names: @tu.map(&:screen_name))
-      redirect_to waiting_relationship_path(src_uid: @tu[0].uid, dst_uid: @tu[1].uid, to: params[:to])
+      redirect_to waiting_relationship_path(src_uid: @tu[0].uid, dst_uid: @tu[1].uid, type: params[:type])
     else
-      redirect_to result_page_path(@tu, to: params[:to])
+      redirect_to relationship_path(src_screen_name: @tu[0].screen_name, dst_screen_name: @tu[1].screen_name, type: params[:type])
     end
   end
 
   def waiting
-    tu = uids.map { |uid| fetch_twitter_user_from_cache(uid.to_i) }
-    if tu.any? { |t| t.nil? }
-      return redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+    twitter_users = uids.map { |uid| fetch_twitter_user_from_cache(uid.to_i) }
+    if twitter_users.any?(&:nil?)
+      return redirect_to relationships_top_path, alert: t('before_sign_in.that_page_doesnt_exist')
     end
 
-    @result_path = result_page_path(tu, to: params[:to])
-    @searched_tw_users = tu
+    @result_path = relationship_path(src_screen_name: twitter_users[0].screen_name, dst_screen_name: twitter_users[1].screen_name, type: params[:type])
+    @twitter_users = twitter_users
   end
 
   def check_log
@@ -93,15 +93,5 @@ class RelationshipsController < ApplicationController
 
   def screen_names
     [params[:src_screen_name], params[:dst_screen_name]]
-  end
-
-  def result_page_path(tw_users, to:)
-    values = {src_screen_name: tw_users[0].screen_name, dst_screen_name: tw_users[1].screen_name}
-    case to
-      when 'conversations'    then conversation_path(values)
-      when 'common_friends'   then common_friend_path(values)
-      when 'common_followers' then common_follower_path(values)
-      else raise "#{self.class}##{__method__}: #{to} is not permitted."
-    end
   end
 end

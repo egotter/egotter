@@ -1,7 +1,7 @@
 .share-buttons
   .inner
     - tweet_text = t('one_sided_friends.show.tweet', user: twitter_user.mention_name, one_sided_friends: twitter_user.one_sided_friends.size, one_sided_followers: twitter_user.one_sided_followers.size, mutual_friends: twitter_user.mutual_friends.size)
-    - text = ".#{tweet_text} #egotter #OneSidedFriends #{one_sided_friend_url(screen_name: twitter_user.screen_name)}"
+    - text = ".#{tweet_text} #egotter #OneSidedFriends #{one_sided_friend_url(screen_name: twitter_user.screen_name, type: type)}"
     - onclick = "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
     %a.twitter-button{href: intent_url(text), onclick: onclick}
       %i.fa.fa-twitter.fa-lg{'area-hidden': true}
@@ -32,7 +32,7 @@
   = render partial: 'one_sided_friends/search_form', locals: {via: 'one_sided_friends/show/bottom_input'}
   = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
   .one-sided-friends.lead= t('one_sided_friends.show.lead_004')
-  = link_to t('searches.common.search_xxx_by_egotter', user: twitter_user.mention_name), searches_path(screen_name: twitter_user.screen_name, via: 'one_sided_friends/show/bottom_button'), class: 'btn btn-info btn-block', style: 'margin-bottom: 15px;', method: :post
+  = link_to t('searches.common.search_xxx_by_egotter', user: twitter_user.mention_name), searches_path(screen_name: twitter_user.screen_name, via: "#{controller_name}/#{action_name}/bottom_button"), class: 'btn btn-info btn-block', style: 'margin-bottom: 15px;', method: :post
 
   .one-sided-friends.separator
   %h2.h4.text-center= t('searches.common.related_pages')
