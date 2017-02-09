@@ -136,28 +136,30 @@ module Concerns::TwitterUser::Api
     unfollowers.any? ? unfollowers : calc_removed
   end
 
-  def new_friend_uids(older)
-    friend_uids - older.friend_uids
+  def new_friend_uids
+    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
+    return [] if newer.nil? || older.nil? || older.friends_size == 0
+    newer.friend_uids - older.friend_uids
   end
 
   def new_friends
-    return [] unless self.class.many?(uid)
-    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
-    return [] if newer.nil? || older.nil? || older.friends_size == 0
-    uids = newer.new_friend_uids(older)
-    uids.empty? ? [] : newer.friends.where(uid: uids)
+    uids = new_friend_uids
+    return [] if uids.empty?
+    users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+    uids.map { |uid| users[uid] }.compact
   end
 
-  def new_follower_uids(older)
-    follower_uids - older.follower_uids
+  def new_follower_uids
+    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
+    return [] if newer.nil? || older.nil? || older.followers_size == 0
+    newer.follower_uids - older.follower_uids
   end
 
   def new_followers
-    return [] unless self.class.many?(uid)
-    newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
-    return [] if newer.nil? || older.nil? || older.followers_size == 0
-    uids = newer.new_follower_uids(older)
-    uids.empty? ? [] : newer.followers.where(uid: uids)
+    uids = new_follower_uids
+    return [] if uids.empty?
+    users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+    uids.map { |uid| users[uid] }.compact
   end
 
   def blocking_or_blocked_uids
