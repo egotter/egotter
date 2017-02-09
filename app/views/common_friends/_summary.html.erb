@@ -1,7 +1,7 @@
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= menu[:name] %><div class="tooltip-container"><abbr title="<%= menu[:description] %>" rel="tooltip">i</abbr></div></h4>
-    <%= render(partial: 'various_users/user', collection: menu[:target].slice(0..icon_limit), cached: true, locals: {uids: uids, searched_tw_user: tu}) %>
+    <%= render(partial: 'search_results/show/icon', collection: menu[:target].slice(0..icon_limit), cached: true, locals: {uids: uids, searched_tw_user: tu}) %>
   </div>
 
   <div class="media-right">

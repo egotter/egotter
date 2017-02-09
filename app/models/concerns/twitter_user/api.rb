@@ -10,92 +10,168 @@ module Concerns::TwitterUser::Api
     ApiClient.dummy_instance
   end
 
+  def one_sided_friend_uids
+    friend_uids - follower_uids
+  end
+
   def one_sided_friends
-    uids = friend_uids - follower_uids
+    uids = one_sided_friend_uids
     uids.empty? ? [] : friends.where(uid: uids)
+  end
+
+  def one_sided_follower_uids
+    follower_uids - friend_uids
   end
 
   def one_sided_followers
-    uids = follower_uids - friend_uids
+    uids = one_sided_follower_uids
     uids.empty? ? [] : followers.where(uid: uids)
+  end
+
+  def mutual_friend_uids
+    friend_uids & follower_uids
   end
 
   def mutual_friends
-    uids = friend_uids & follower_uids
+    uids = mutual_friend_uids
     uids.empty? ? [] : friends.where(uid: uids)
+  end
+
+  def common_friend_uids(other)
+    friend_uids & other.friend_uids
   end
 
   def common_friends(other)
-    uids = friend_uids & other.friend_uids
+    uids = common_friend_uids(other)
     uids.empty? ? [] : friends.where(uid: uids)
   end
 
+  def common_follower_uids(other)
+    follower_uids & other.follower_uids
+  end
+
   def common_followers(other)
-    uids = follower_uids & other.follower_uids
+    uids = common_follower_uids(other)
     uids.empty? ? [] : followers.where(uid: uids)
+  end
+
+  def conversations(other)
+    # TODO implement
+    []
+  end
+
+  def new_removing_uids(newer)
+    friend_uids - newer.friend_uids
   end
 
   def new_removing
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.friends_size == 0
-    uids = older.friend_uids - newer.friend_uids
+    uids = older.new_removing_uids(newer)
     uids.empty? ? [] : older.friends.where(uid: uids)
+  end
+
+  # TODO experimental
+  def calc_removing_uids
+    return [] unless self.class.many?(uid)
+    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+      next if newer.nil? || older.nil? || newer.friends_size == 0
+      older.new_removing_uids(newer)
+    end.compact.flatten.reverse
   end
 
   def calc_removing
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
-      uids = older.friend_uids - newer.friend_uids
+      uids = older.new_removing_uids(newer)
       uids.empty? ? [] : older.friends.where(uid: uids)
     end.compact.flatten.reverse
+  end
+
+  def removing_uids
+    unfriendships.any? ? unfriendships.pluck(:friend_uid) : calc_removing_uids
   end
 
   def removing
     unfriends.any? ? unfriends : calc_removing
   end
 
+  def new_removed_uids(newer)
+    follower_uids - newer.follower_uids
+  end
+
   def new_removed
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || newer.followers_size == 0
-    uids = older.follower_uids - newer.follower_uids
+    uids = older.new_removed_uids(newer)
     uids.empty? ? [] : older.followers.where(uid: uids)
+  end
+
+  # TODO experimental
+  def calc_removed_uids
+    return [] unless self.class.many?(uid)
+    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+      next if newer.nil? || older.nil? || newer.followers_size == 0
+      older.new_removed_uids(newer)
+    end.compact.flatten.reverse
   end
 
   def calc_removed
     return [] unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
-      uids = older.follower_uids - newer.follower_uids
+      uids = older.new_removed_uids(newer)
       uids.empty? ? [] : older.followers.where(uid: uids)
     end.compact.flatten.reverse
+  end
+
+  def removed_uids
+    unfollowerships.any? ? unfollowerships.pluck(:follower_uid) : calc_removed_uids
   end
 
   def removed
     unfollowers.any? ? unfollowers : calc_removed
   end
 
+  def new_friend_uids(older)
+    friend_uids - older.friend_uids
+  end
+
   def new_friends
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.friends_size == 0
-    uids = newer.friend_uids - older.friend_uids
+    uids = newer.new_friend_uids(older)
     uids.empty? ? [] : newer.friends.where(uid: uids)
+  end
+
+  def new_follower_uids(older)
+    follower_uids - older.follower_uids
   end
 
   def new_followers
     return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
     return [] if newer.nil? || older.nil? || older.followers_size == 0
-    uids = newer.follower_uids - older.follower_uids
+    uids = newer.new_follower_uids(older)
     uids.empty? ? [] : newer.followers.where(uid: uids)
   end
 
+  def blocking_or_blocked_uids
+    (removing.map(&:uid) & removed.map(&:uid)).uniq
+  end
+
   def blocking_or_blocked
-    uids = (removing.map { |f| f.uid.to_i } & removed.map { |f| f.uid.to_i }).uniq
+    uids = blocking_or_blocked_uids
     removing.select { |f| uids.include?(f.uid.to_i) }
+  end
+
+  def replying_uids(uniq: true)
+    uids = statuses.select { |status| !status.text.start_with? 'RT' }.map { |status| status&.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
+    uniq ? uids.uniq : uids
   end
 
   def replying(uniq: true)
@@ -122,6 +198,18 @@ module Concerns::TwitterUser::Api
     users.each { |user| user.uid = user.id }
   end
 
+  def replied_uids(uniq: true, login_user: nil)
+    uids =
+      if login_user && login_user.uid.to_i == uid.to_i
+        mentions.map { |mention| mention&.user&.id }
+      elsif search_results.any?
+        search_results.select { |status| !status.text.start_with?('RT') && status.text.include?(mention_name) }.map { |status| status&.user&.id }.compact
+      else
+        []
+      end
+    uniq ? uids.uniq : uids
+  end
+
   # TODO do not use login_user
   def replied(uniq: true, login_user: nil)
     users =
@@ -137,21 +225,51 @@ module Concerns::TwitterUser::Api
     users.each { |user| user.uid = user.id }
   end
 
+  def favoriting_uids(uniq: true, min: 0)
+    uids = favorites.map { |fav| fav&.user&.id }.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.map(&:first)
+    uniq ? uids.uniq : uids
+  end
+
   def favoriting(uniq: true, min: 0)
     users = client.favoriting(favorites.to_a, uniq: uniq, min: min)
     users.each { |user| user.uid = user.id }
   end
 
+  def inactive_friend_uids
+    inactive_friends.map(&:uid)
+  end
+
   def inactive_friends
-    dummy_client._extract_inactive_users(friends)
+    two_weeks_ago = 2.weeks.ago
+    friends.select do |friend|
+      begin
+        friend&.status&.created_at && Time.parse(friend&.status&.created_at) < two_weeks_ago
+      rescue => e
+        logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{friend&.status&.created_at}] #{friend.uid} #{friend.screen_name}"
+        false
+      end
+    end
+  end
+
+  def inactive_follower_uids
+    inactive_followers.map(&:uid)
   end
 
   def inactive_followers
-    dummy_client._extract_inactive_users(followers)
+    two_weeks_ago = 2.weeks.ago
+    followers.select do |follower|
+      begin
+        follower&.status&.created_at && Time.parse(follower.status.created_at) < two_weeks_ago
+      rescue => e
+        logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{follower&.status&.created_at}] #{follower.uid} #{follower.screen_name}"
+        false
+      end
+    end
   end
 
-  def clusters_belong_to
-    dummy_client.tweet_clusters(statuses, limit: 100)
+  def close_friend_uids(uniq: false, min: 1, limit: 50, login_user: nil)
+    uids = replying_uids(uniq: uniq) + replied_uids(uniq: uniq, login_user: login_user) + favoriting_uids(uniq: uniq, min: min)
+    uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(limit).map(&:first)
   end
 
   def close_friends(uniq: false, min: 1, limit: 50, login_user: nil)
@@ -164,162 +282,8 @@ module Concerns::TwitterUser::Api
     users.each { |user| user.uid = user.id }
   end
 
-  def inactive_friends_graph
-    inactive_friends_size = inactive_friends.size
-    friends_size = friends_count
-    [
-      {name: I18n.t('searches.inactive_friends.targets'), y: (inactive_friends_size.to_f / friends_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((friends_size - inactive_friends_size).to_f / friends_size * 100)}
-    ]
-  end
-
-  def inactive_followers_graph
-    inactive_followers_size = inactive_followers.size
-    followers_size = followers_count
-    [
-      {name: I18n.t('searches.inactive_followers.targets'), y: (inactive_followers_size.to_f / followers_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((followers_size - inactive_followers_size).to_f / followers_size * 100)}
-    ]
-  end
-
-  def removing_graph
-    large_rate = [removing.size * 10, 100].min
-    [
-      {name: I18n.t('searches.common.large'), y: large_rate},
-      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
-    ]
-  end
-
-  def removed_graph
-    large_rate = [removed.size * 10, 100].min
-    [
-      {name: I18n.t('searches.common.large'), y: large_rate},
-      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
-    ]
-  end
-
-  def new_friends_graph
-    large_rate = [new_friends.size * 10, 100].min
-    [
-      {name: I18n.t('searches.common.large'), y: large_rate},
-      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
-    ]
-  end
-
-  def new_followers_graph
-    large_rate = [new_followers.size * 10, 100].min
-    [
-      {name: I18n.t('searches.common.large'), y: large_rate},
-      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
-    ]
-  end
-
-  def blocking_or_blocked_graph
-    large_rate = [blocking_or_blocked.size * 10, 100].min
-    [
-      {name: I18n.t('searches.common.large'), y: large_rate},
-      {name: I18n.t('searches.common.small'), y: 100 - large_rate}
-    ]
-  end
-
-  def replying_graph(users)
-    friends_size = friends_count
-    replying_size = [users.size, friends_size].min
-    [
-      {name: I18n.t('searches.replying.targets'), y: (replying_size.to_f / friends_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((friends_size - replying_size).to_f / friends_size * 100)}
-    ]
-  end
-
-  def replied_graph(users)
-    followers_size = followers_count
-    replied_size = [users.size, followers_size].min
-    [
-      {name: I18n.t('searches.replied.targets'), y: (replied_size.to_f / followers_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((followers_size - replied_size).to_f / followers_size * 100)}
-    ]
-  end
-
-  def favoriting_graph(users)
-    friends_size = friends_count
-    favoriting_size = [users.size, friends_size].min
-    [
-      {name: I18n.t('searches.favoriting.targets'), y: (favoriting_size.to_f / friends_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((friends_size - favoriting_size).to_f / friends_size * 100)}
-    ]
-  end
-
-  def close_friends_graph(users)
-    users_size = users.size
-    good = percentile_index(users, 0.10) + 1
-    not_so_bad = percentile_index(users, 0.50) + 1
-    so_so = percentile_index(users, 1.0) + 1
-    [
-      {name: I18n.t('searches.close_friends.targets'), y: (good.to_f / users_size * 100), drilldown: 'good', sliced: true, selected: true},
-      {name: I18n.t('searches.close_friends.friends'), y: ((not_so_bad - good).to_f / users_size * 100), drilldown: 'not_so_bad'},
-      {name: I18n.t('searches.close_friends.acquaintance'), y: ((so_so - (good + not_so_bad)).to_f / users_size * 100), drilldown: 'so_so'}
-    ]
-    # drilldown_series = [
-    #   {name: 'good', id: 'good', data: items.slice(0, good - 1).map { |i| [i.screen_name, i.score] }},
-    #   {name: 'not_so_bad', id: 'not_so_bad', data: items.slice(good, not_so_bad - 1).map { |i| [i.screen_name, i.score] }},
-    #   {name: 'so_so', id: 'so_so', data: items.slice(not_so_bad, so_so - 1).map { |i| [i.screen_name, i.score] }},
-    # ]
-  end
-
-  def one_sided_friends_graph
-    friends_size = friends.size
-    one_sided_size = one_sided_friends.size
-    [
-      {name: I18n.t('searches.one_sided_friends.targets'), y: (one_sided_size.to_f / friends_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((friends_size - one_sided_size).to_f / friends_size * 100)}
-    ]
-  end
-
-  def one_sided_followers_graph
-    followers_size = followers.size
-    one_sided_size = one_sided_followers.size
-    [
-      {name: I18n.t('searches.one_sided_followers.targets'), y: (one_sided_size.to_f / followers_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((followers_size - one_sided_size).to_f / followers_size * 100)}
-    ]
-  end
-
-  def mutual_friends_rate
-    friendship_size = friends_count + followers_count
-    return [0.0, 0.0, 0.0] if friendship_size == 0
-    [
-      mutual_friends.size.to_f / friendship_size * 100,
-      one_sided_friends.size.to_f / friendship_size * 100,
-      one_sided_followers.size.to_f / friendship_size * 100
-    ]
-  end
-
-  def mutual_friends_graph
-    rates = mutual_friends_rate
-    sliced = rates[0] < 25
-    [
-      {name: I18n.t('searches.mutual_friends.targets'), y: rates[0], sliced: sliced, selected: sliced},
-      {name: I18n.t('searches.one_sided_friends.targets'), y: rates[1]},
-      {name: I18n.t('searches.one_sided_followers.targets'), y: rates[2]}
-    ]
-  end
-
-  def common_friends_graph(other)
-    friends_size = friends.size
-    common_friends_size = common_friends(other).size
-    [
-      {name: I18n.t('searches.common_friends.targets'), y: (common_friends_size.to_f / friends_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((friends_size - common_friends_size).to_f / friends_size * 100)}
-    ]
-  end
-
-  def common_followers_graph(other)
-    followers_size = followers.size
-    common_followers_size = common_followers(other).size
-    [
-      {name: I18n.t('searches.common_followers.targets'), y: (common_followers_size.to_f / followers_size * 100)},
-      {name: I18n.t('searches.common.others'), y: ((followers_size - common_followers_size).to_f / followers_size * 100)}
-    ]
+  def clusters_belong_to
+    dummy_client.tweet_clusters(statuses, limit: 100)
   end
 
   def usage_stats_graph

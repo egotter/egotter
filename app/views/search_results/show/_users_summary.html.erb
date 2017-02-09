@@ -1,21 +1,25 @@
 <%
   begin
-    users = users_for(tu, menu: name)
+    uids = uids_for(tu, menu: name)
+    users = TwitterDB::User.where(uid: uids.take(icon_limit)).index_by(&:uid)
+    users = uids.map { |uid| users[uid] }.compact
   rescue => e
+    uids = []
     users = []
-    logger.warn "#{controller_name}##{action_name}: #{e.class} #{e.message} users #{name} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type} #{request.browser}"
+    logger.warn "summary: #{e.class} #{e.message} users #{name} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type} #{request.browser}"
   end
+
   begin
-    graph = graph_for(tu, menu: name, users: users)
+    graph = chart_for(uids.size, uids.size * 2, name)
   rescue => e
     graph = nil
-    logger.warn "#{controller_name}##{action_name}: #{e.class} #{e.message} graph #{name} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type} #{request.browser}"
+    logger.warn "summary: #{e.class} #{e.message} graph #{name} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type} #{request.browser}"
   end
 %>
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= title_for(name, tu.screen_name) %><div class="tooltip-container"><abbr title="<%= description_for(name, tu.screen_name) %>" rel="tooltip">i</abbr></div></h4>
-    <%= render(partial: 'various_users/user', collection: users.slice(0..icon_limit), cached: true, locals: {rendered_users: rendered_users}) %>
+    <%= render(partial: 'search_results/show/icon', collection: users, cached: true, locals: {rendered_users: rendered_users}) %>
   </div>
   <div class="media-right">
     <% if graph %>
@@ -32,6 +36,6 @@
     <% end %>
   </div>
   <div>
-    <%= link_to(t('dictionary.view_more_with_num', num: users.size).html_safe, send("#{name}_search_path", screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more_with_num', num: uids.size).html_safe, send("#{name}_search_path", screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
   </div>
 </div>

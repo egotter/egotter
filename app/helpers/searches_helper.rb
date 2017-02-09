@@ -105,11 +105,28 @@ module SearchesHelper
   end
 
   def users_for(tu, menu:)
-    if %i(close_friends).include?(menu)
+    if %i(replied close_friends).include?(menu.to_sym)
       tu.send(menu, login_user: current_user)
     else
       tu.send(menu)
     end
+  end
+
+  def uids_for(tu, menu:)
+    uids_menu = "#{menu.singularize}_uids"
+    if %i(replied_uids close_friend_uids).include?(uids_menu.to_sym)
+      tu.send(uids_menu, login_user: current_user)
+    else
+      tu.send(uids_menu)
+    end
+  end
+
+  def chart_for(target, rest, label)
+    total = target + rest
+    [
+      {name: t("charts.#{label}"), y: (target.to_f / total * 100)},
+      {name: t('charts.others'), y: (rest.to_f / total * 100)}
+    ]
   end
 
   def graph_for(tu, menu:, users: nil)

@@ -1,13 +1,9 @@
----
 ja:
   searches:
     common:
       egotter: "えごったー"
       page_title: "えごったー スマホでかんたん ツイッターのフォロー確認"
       page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
-      large: "多い"
-      small: "少ない"
-      others: "それ以外"
       or: " または "
       cluster: "クラスタ"
       return: "%{user} の分析一覧へ戻る"
@@ -18,7 +14,7 @@ ja:
       search_xxx_by_egotter: "%{user} をえごったーで検索"
       search_by: "%{user} で検索"
       search: "検索"
-      empty: "結果は 0 です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。"
+      empty_html: "結果は 0 です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。"
       top: "トップ"
       top_page: "トップページ"
       feedback: "ご意見"
@@ -100,19 +96,14 @@ ja:
       name: "リプライ"
       title: "%{user} がリプライした"
       description: "%{user}がリプライしたユーザーを表示します。"
-      targets: "リプライ"
     replied:
       name: "リプライされた"
       title: "%{user} がリプライされた"
       description: "%{user}がリプライされたユーザーを表示します。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
-      targets: "リプライ"
     close_friends:
       name: "仲良し"
       title: "%{user} と仲良し"
       description: "%{user}と仲良しなユーザーを表示します。仲良しの判定には、リプライした・リプライされた・ふぁぼを使っています。"
-      targets: "仲良し"
-      friends: "友人"
-      acquaintance: "知人"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
@@ -132,13 +123,11 @@ ja:
       title: "%{user} のフォローのうち最近ツイッターにいない"
       description: "%{user}がフォローしているユーザーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
       short_description: "フォローのうち、最近ツイートしていないユーザーをリストアップして表示します。"
-      targets: "対象者"
     inactive_followers:
       name: "最近いないフォロワー"
       title: "%{user} のフォロワーのうち最近ツイッターにいない"
       description: "%{user}がフォローされているユーザーのうち、最近ツイートしていないユーザーを表示します。"
       short_description: "フォロワーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
-      targets: "対象者"
     clusters_belong_to:
       name: "クラスタ"
       title: "%{user} が入っているクラスタ"
@@ -148,34 +137,32 @@ ja:
       title: "%{user} が両思い"
       description: "%{user}が相互フォローしているユーザーを表示します。"
       short_description: "相互フォローしているユーザーを表示します。"
-      targets: "両思い"
     one_sided_friends:
       num: "片思い<br>%{num}"
       title: "%{user} が片思い"
       description: "%{user}がフォローしているユーザーのうち、%{user}にフォロー返しをしていないユーザーを表示します。"
       short_description: "フォローしているユーザーのうち、フォロー返しをされていないユーザーを表示します。"
-      targets: "片思い"
     one_sided_followers:
       num: "片思われ<br>%{num}"
       title: "%{user} が片思われ"
       description: "%{user}がフォローされているユーザーのうち、%{user}がフォロー返しをしていないユーザーを表示します。"
       short_description: "フォローされているユーザーのうち、フォロー返しをしていないユーザーを表示します。"
-      targets: "片思われ"
     common_friends:
+      num: "共通フォロー<br>%{num}"
       name: "共通フォロー"
       title: "%{user} と %{login} の共通フォロー"
       description: "%{user}と%{login}が共通してフォローしているユーザーを表示します。"
-      targets: "共通"
     common_followers:
+      num: "共通フォロワー<br>%{num}"
       name: "共通フォロワー"
       title: "%{user} と %{login} の共通フォロワー"
       description: "%{user}と%{login}が共通してフォローされているユーザーを表示します。"
-      targets: "共通"
+    conversations:
+      num: "会話<br>%{num}"
     favoriting:
       name: "よくふぁぼる"
       title: "%{user} がよくふぁぼる"
       description: "%{user}がよくツイートをお気に入り登録するユーザーを表示します。"
-      targets: "ふぁぼる"
   search_results:
     show:
       about_this_page: "%{this_page}について"
@@ -195,13 +182,6 @@ ja:
   search_histories:
     index:
       title: "検索履歴"
-  relationships:
-    conversations:
-      title: "%{user1} と %{user2} の会話"
-    common_friends:
-      title: "%{user1} と %{user2} の共通フォロー"
-    common_followers:
-      title: "%{user1} から %{user2} へのリプライが見えている人一覧"
   notifications:
     title: "通知"
     index:
@@ -276,6 +256,43 @@ ja:
       lead_003: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リプライなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされたかも %{blocking_or_blocked}人です。"
+  relationships:
+    new:
+      title: '<span style="font-size: small; display: inline;">会話検索</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: '会話分析 by えごったー'
+      simple_title: '会話分析'
+      description: "保存ユーザー数1,000万人突破！ 無料でスマホからツイッター分析！ 複数ユーザーの会話、共通フォロー、共通フォロワーをさくっと見付けることができます。"
+      short_description: "複数ユーザーの会話、共通フォロー、共通フォロワーをさくっと見付けることができます。"
+      lead_001: "スマホでさくっと会話分析"
+      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_003: "共通フォロー、共通フォロワー分析の決定版。<br>スマホから使える無料の会話分析アプリです。"
+      lead_004: '検索されたユーザーの会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+    show:
+      title: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人"
+      description: "%{user1} と %{user2} は、会話 %{conversations}件、共通フォロー %{common_friends}人、共通フォロワー %{common_followers}人です。ツイッターでの共通フォロー、共通フォロワーが分かると、会話を覗き見されているユーザーが分かります。"
+      lead_002: "共通フォローは、%{user1} と%{user2} が共通してフォローしているアカウント、<br>共通フォロワーは、%{user1} と%{user2} はが共通してフォローされているアカウントのことです。"
+      lead_003: '%{user1} と %{user2} の会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
+      tweet: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人です。"
+
+  charts:
+    replying: "リプ"
+    replied: "@ツイート"
+    favoriting: "ふぁぼ"
+    close_friends: "仲良し"
+    one_sided_friends: "片思い"
+    one_sided_followers: "片思われ"
+    mutual_friends: "両思い"
+    common_friends: "フォロー"
+    common_followers: "フォロワー"
+    inactive_friends: "いない"
+    inactive_followers: "いない"
+    removing: "リム"
+    removed: "リムられ"
+    new_friends: "フォロー"
+    new_followers: "フォロワー"
+    blocking_or_blocked: "ブロック"
+    others: "その他"
 
   dictionary:
     official_account: "公式アカウント"
@@ -326,6 +343,7 @@ ja:
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
     retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
     empty_and_anonymous_and_many_friends: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>%{sign_in_link} すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}"
+    empty_and_anonymous_and_many_friends_multiple: "%{user1} と %{user2} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>%{sign_in_link} すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}"
     empty_and_other_reason: "結果は0件です。%{sign_in_link} すると正しく結果が表示されるかもしれません。<br>%{kaomoji}"
     that_page_doesnt_exist: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
     reject_crawler: "The crawler is rejected."
@@ -336,6 +354,7 @@ ja:
     please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
     retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。"
     empty_and_sign_in_and_too_many_friends: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"
+    empty_and_sign_in_and_too_many_friends_multiple: "%{user1} と %{user2} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"
     empty_and_other_reason: "結果は0件です。データはこれからたまっていきます。<br>%{kaomoji}"
   view_more_btn:
     same_user: "自分以外のユーザーを検索してください"

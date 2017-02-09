@@ -31,6 +31,7 @@ class SearchResultsController < ApplicationController
     end
   end
 
+  # TODO outdated
   %i(common_friends common_followers).each do |menu|
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu, current_user.twitter_user)).items
@@ -43,8 +44,8 @@ class SearchResultsController < ApplicationController
   %i(replying replied favoriting close_friends).each do |menu|
     define_method(menu) do
       begin
-        users = @searched_tw_user.send(menu)
-        @graph = @searched_tw_user.send("#{menu}_graph", users)
+        users = users_for(@searched_tw_user, menu: menu)
+        @graph = chart_for(users.size, users.size * 2, menu)
         @tweet_text = close_friends_text(users, @searched_tw_user)
         @user_items = TwitterUsersDecorator.new(users).items
         render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
@@ -58,8 +59,9 @@ class SearchResultsController < ApplicationController
 
   %i(inactive_friends inactive_followers).each do |menu|
     define_method(menu) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
-      @graph = @searched_tw_user.send("#{menu}_graph")
+      users = users_for(@searched_tw_user, menu: menu)
+      @graph = chart_for(users.size, users.size * 2, menu)
+      @user_items = TwitterUsersDecorator.new(users).items
       @tweet_text = inactive_friends_text(@user_items.take(3).map { |i| i[:target] }, @searched_tw_user)
       render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end

@@ -2,6 +2,7 @@
   tu = @searched_tw_user
   rendered_users = []
   icon_limit = request.device_type == :pc ? 8 : 3
+  default_locals = {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu}
 %>
 
 <script>
@@ -11,23 +12,21 @@
 </script>
 
 <% cache "#{tu.cache_key}/close_friends", expires_in: 1.day do %>
-  <%= render partial: 'various_users/summary', locals: {name: :close_friends, rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
+  <%= render partial: 'search_results/show/users_summary', locals: {name: 'close_friends'}.merge(default_locals) %>
 <% end %>
 
 <% cache "#{tu.cache_key}/usage_stats", expires_in: 1.day do %>
-  <%= render partial: 'various_stats/summary', locals: {name: :usage_stats, graph: tu.usage_stats_graph[0], tu: tu} %>
+  <%= render partial: 'search_results/show/stats_summary', locals: {name: :usage_stats, graph: tu.usage_stats_graph[0], tu: tu} %>
 <% end %>
 
 <% cache "#{tu.cache_key}/tweet_clusters", expires_in: 1.day do %>
-  <%= render partial: 'various_stats/summary', locals: {name: :clusters_belong_to, graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
+  <%= render partial: 'search_results/show/stats_summary', locals: {name: :clusters_belong_to, graph: tu.clusters_belong_to_frequency_distribution, tu: tu} %>
 <% end %>
 
-<% cache "#{tu.cache_key}/various_users/first_half", expires_in: 1.day do %>
-  <%= render partial: 'various_users/summary', collection: %i(removing removed new_friends new_followers blocking_or_blocked), as: :name, locals: {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
-<% end %>
-
-<% cache "#{tu.cache_key}/various_users/second_half", expires_in: 1.day do %>
-  <%= render partial: 'various_users/summary', collection: %i(mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers), as: :name, locals: {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu} %>
+<% %w(removing removed new_friends new_followers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name| %>
+  <% cache "#{tu.cache_key}/#{name}", expires_in: 1.day do %>
+    <%= render partial: 'search_results/show/users_summary', locals: {name: name}.merge(default_locals) %>
+  <% end %>
 <% end %>
 
 <%# cache "#{tu.cache_key}/common_friends", expires_in: 1.day do %>
@@ -48,7 +47,7 @@
 </script>
 
 <% cache "#{tu.cache_key}/update_histories", expires_in: 1.day do %>
-  <%= render partial: 'update_histories/summary', locals: {histories: UpdateHistories.new(tu.uid), tu: tu} %>
+  <%= render partial: 'search_results/show/update_histories_summary', locals: {histories: UpdateHistories.new(tu.uid), tu: tu} %>
 <% end %>
 
 <script>
