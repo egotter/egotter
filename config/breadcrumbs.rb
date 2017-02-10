@@ -31,3 +31,8 @@ crumb :relationship do |src_screen_name, dst_screen_name|
   link t('relationships.new.simple_title'), relationship_path(src_screen_name: src_screen_name, dst_screen_name: dst_screen_name)
   parent :search, src_screen_name
 end
+
+crumb :inactive_friend do |screen_name|
+  link t('inactive_friends.new.simple_title'), inactive_friend_path(screen_name: screen_name)
+  parent :search, screen_name
+end

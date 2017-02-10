@@ -106,6 +106,12 @@ class SearchesController < ApplicationController
     end
   end
 
+  %i(inactive_friends inactive_followers inactive_mutual_friends).each do |menu|
+    define_method(menu) do
+      redirect_to inactive_friend_path(screen_name: @searched_tw_user.screen_name, type: menu)
+    end
+  end
+
   def debug
     if request.device_type == :crawler
       redirect_to root_path

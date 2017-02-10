@@ -122,15 +122,19 @@ ja:
       usage_kind: ".%{user}のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user}のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:
+      num: "最近いないフォロー<br>%{num}"
       name: "最近いないフォロー"
       title: "%{user} のフォローのうち最近ツイッターにいない"
       description: "%{user}がフォローしているユーザーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
       short_description: "フォローのうち、最近ツイートしていないユーザーをリストアップして表示します。"
     inactive_followers:
+      num: "最近いないフォロワー<br>%{num}"
       name: "最近いないフォロワー"
       title: "%{user} のフォロワーのうち最近ツイッターにいない"
       description: "%{user}がフォローされているユーザーのうち、最近ツイートしていないユーザーを表示します。"
       short_description: "フォロワーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
+    inactive_mutual_friends:
+      num: "最近いない両思い<br>%{num}"
     clusters_belong_to:
       name: "クラスタ"
       title: "%{user} が入っているクラスタ"
@@ -237,10 +241,6 @@ ja:
       lead_003: '%{user} の片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user} の分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。"
-  one_sided_followers:
-    new:
-      title: '<span style="font-size: small; display: inline;">片思われチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: '片思われチェック by えごったー'
   unfriends:
     new:
       title: '<span style="font-size: small; display: inline;">リムられチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -278,6 +278,24 @@ ja:
       lead_003: '%{user1} と %{user2} の会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人です。"
+  inactive_friends:
+    new:
+      title: '<span style="font-size: small; display: inline;">最近いない人検索</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: '最近いない人検索 by えごったー'
+      simple_title: '最近いない人検索'
+      description: "保存ユーザー数1,000万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
+      short_description: "スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
+      lead_001: "最近いない人、何してるんだろう。"
+      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_003: "最近いない人をらくらく検索。<br>スマホから使える無料の分析アプリです。"
+      lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+    show:
+      title: "%{user} の分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人"
+      description: "%{user} は、最近いないフォロー %{inactive_friends}人、最近いないフォロワー %{inactive_followers}人、最近いない両思い %{inactive_mutual_friends}人です。"
+      lead_002: "最近いないフォローは、%{user} はフォローしているけど最近ツイッターにいないアカウント、<br>最近いないフォロワーは、%{user} はフォローされているけど最近ツイッターにいないアカウントのことです。"
+      lead_003: '%{user} の最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
+      tweet: "%{user} の分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人です。"
 
   charts:
     replying: "リプ"

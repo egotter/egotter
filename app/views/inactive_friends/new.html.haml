@@ -1,0 +1,26 @@
+- title @title
+- set_meta_tags description: t('inactive_friends.new.description')
+
+%h3.h4.inactive-friends.text-center= t('inactive_friends.new.lead_001')
+.inactive-friends.lead.text-center= t('inactive_friends.new.lead_002').html_safe
+.inactive-friends.lead.text-center= t('inactive_friends.new.lead_003').html_safe
+
+= render partial: 'inactive_friends/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+- if user_signed_in?
+  = link_to t('searches.common.search_by', user: current_user.mention_name), search_path_for(controller: controller_name, screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"), class: 'btn btn-info btn-block', method: :post
+- else
+  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: inactive_friends_top_path, via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
+
+.row.inactive-friends.screenshot
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('searches.common.egotter')}", src: '/screenshot_iphone_332x560.png', height: '160px'}
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('searches.common.egotter')}", src: '/screenshot_laptop_961x560.png', height: '160px'}
+
+.inactive-friends.separator
+
+.twitter.tweets
+  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter OR #InactiveFriends'), cached: true, formats: %i(html))
+  .inactive-friends.lead.in-top-page.text-center= t('inactive_friends.new.lead_004').html_safe
