@@ -20,8 +20,16 @@ namespace :twitter_db do
           client = User.exists?(uid: user.uid) ? User.find_by(uid: user.uid).api_client : Bot.api_client
           begin
             t_user = client.user(user.uid)
-            user.update!(screen_name: t_user.screen_name, user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
-            next if user.protected_account?
+            if t_user.protected_account?
+              # puts "skip(protected) [#{user.id}, #{t_user.screen_name}, #{t_user.friends_count}, #{t_user.followers_count}]"
+              user.update!(screen_name: t_user.screen_name, user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
+              next
+            end
+            if (t_user.friends_count + t_user.followers_count) > 5000
+              # puts "skip(too many friends) [#{user.id}, #{t_user.screen_name}, #{t_user.friends_count}, #{t_user.followers_count}]"
+              user.update!(screen_name: t_user.screen_name, user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json)
+              next
+            end
 
             friends = client.friends(user.uid)
             followers = client.followers(user.uid)
@@ -38,29 +46,38 @@ namespace :twitter_db do
             ActiveRecord::Base.transaction do
               TwitterDB::Friendship.import_from!(user.uid, friends.map(&:id))
               TwitterDB::Followership.import_from!(user.uid, followers.map(&:id))
+              user.update!(screen_name: t_user.screen_name, user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: friends.size, followers_size: followers.size)
             end
 
-            user.update!(friends_size: user.friendships.size, followers_size: user.followerships.size)
+            processed += (1 + friends.size + followers.size)
 
+          rescue Twitter::Error::TooManyRequests => e
+            puts "#{e.message} limit #{e.rate_limit.limit} reset in #{e.rate_limit.reset_in} #{user.uid} #{user.screen_name}"
+            failed = true
+          rescue Twitter::Error::Unauthorized => e
+            if e.message == 'Not authorized.'
+              puts "#{e.class} #{e.message} #{user.uid} #{user.screen_name}"
+            else
+              failed = true
+            end
           rescue => e
             puts "#{e.class} #{e.message.slice(0, 300)} #{user.uid} #{user.screen_name}"
             puts e.backtrace.join("\n")
             failed = true
           end
 
-          processed += 1
-          if processed % batch_size == 0
+          if sigint || failed
+            break
+          else
             avg = '%3.1f' % ((Time.zone.now - process_start) / processed)
-            puts "#{Time.zone.now}: processed #{processed}, avg #{avg}, #{user.id}"
+            puts "#{Time.zone.now}: processed #{processed}, avg #{avg}, [#{user.id}, #{user.screen_name}, #{user.friends_count}, #{user.followers_count}]"
           end
-
-          break if sigint || failed
         end
       end
 
       process_finish = Time.zone.now
       puts "update #{(sigint || failed ? 'suspended:' : 'finished:')}"
-      puts "  start: #{process_start}, finish: #{process_finish}, elapsed: #{(process_finish - process_start).round(1)} seconds"
+      puts "  start: #{process_start}, finish: #{process_finish}, processed: #{processed}, elapsed: #{(process_finish - process_start).round(1)} seconds"
     end
   end
 end
