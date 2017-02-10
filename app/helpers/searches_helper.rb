@@ -70,6 +70,7 @@ module SearchesHelper
       when 'one_sided_friends' then one_sided_friends_top_path
       when 'unfriends' then unfriends_top_path
       when 'relationships' then relationships_top_path
+      when 'inactive_friends' then inactive_friends_top_path
       else root_path
     end
   end
@@ -79,6 +80,7 @@ module SearchesHelper
       when 'one_sided_friends' then t('one_sided_friends.new.title')
       when 'unfriends' then t('unfriends.new.title')
       when 'relationships' then t('relationships.new.title')
+      when 'inactive_friends' then t('inactive_friends.new.title')
       else t('searches.common.egotter')
     end
   end
@@ -87,6 +89,7 @@ module SearchesHelper
     case controller
       when 'one_sided_friends' then one_sided_friends_path(screen_name: screen_name, via: via)
       when 'unfriends' then unfriends_path(screen_name: screen_name, via: via)
+      when 'inactive_friends' then inactive_friends_path(screen_name: screen_name, via: via)
       else searches_path(screen_name: screen_name, via: via)
     end
   end

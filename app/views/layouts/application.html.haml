@@ -90,7 +90,7 @@
     %link{href: 'https://cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}/
     %script{src: 'https://cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
 
-    - if %w(search_results searches one_sided_friends one_sided_followers unfriends relationships statuses update_histories).include?(controller_name)
+    - if %w(search_results searches one_sided_friends unfriends inactive_friends relationships statuses update_histories).include?(controller_name)
       - unless user_signed_in?
         .container
           .row
@@ -113,7 +113,7 @@
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
           .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
             %h2.h4.text-center= t('searches.common.popular')
-            - if %w(one_sided_friends unfriends relationships).include? controller_name
+            - if %w(one_sided_friends inactive_friends unfriends relationships).include? controller_name
               %h2.h4.text-left
                 = link_to t('searches.common.egotter'), root_path
               %div{style: 'margin-bottom: 15px;'}
@@ -133,6 +133,11 @@
                 = link_to t('relationships.new.plain_title').html_safe, relationships_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('relationships.new.short_description')
+            - unless 'inactive_friends' == controller_name
+              %h2.h4.text-left
+                = link_to t('inactive_friends.new.plain_title').html_safe, inactive_friends_top_path
+              %div{style: 'margin-bottom: 15px;'}
+                = t('inactive_friends.new.short_description')
           .hidden-xs.col-sm-1.col-md-2.col-lg-2
 
       .container

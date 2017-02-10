@@ -270,6 +270,14 @@ module Concerns::TwitterUser::Api
     end
   end
 
+  def inactive_mutual_friend_uids
+    []
+  end
+
+  def inactive_mutual_friends
+    []
+  end
+
   def close_friend_uids(uniq: false, min: 1, limit: 50, login_user: nil)
     uids = replying_uids(uniq: uniq) + replied_uids(uniq: uniq, login_user: login_user) + favoriting_uids(uniq: uniq, min: min)
     uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(limit).map(&:first)
