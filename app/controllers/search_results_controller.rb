@@ -31,16 +31,6 @@ class SearchResultsController < ApplicationController
     end
   end
 
-  # TODO outdated
-  %i(common_friends common_followers).each do |menu|
-    define_method(menu) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu, current_user.twitter_user)).items
-      @graph = @searched_tw_user.send("#{menu}_graph", current_user.twitter_user)
-      @tweet_text = send("#{menu}_text", @user_items.take(3).map { |i| i[:target] }, @searched_tw_user, @user_items.size - 3)
-      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
-    end
-  end
-
   %i(replying replied favoriting close_friends).each do |menu|
     define_method(menu) do
       begin
@@ -54,16 +44,6 @@ class SearchResultsController < ApplicationController
         logger.info e.backtrace.grep_v(/\.bundle/).empty? ? e.backtrace.join("\n") : e.backtrace.grep_v(/\.bundle/).join("\n")
         render nothing: true, status: 500
       end
-    end
-  end
-
-  %i(inactive_friends inactive_followers).each do |menu|
-    define_method(menu) do
-      users = users_for(@searched_tw_user, menu: menu)
-      @graph = chart_for(users.size, users.size * 2, menu)
-      @user_items = TwitterUsersDecorator.new(users).items
-      @tweet_text = inactive_friends_text(@user_items.take(3).map { |i| i[:target] }, @searched_tw_user)
-      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
     end
   end
 

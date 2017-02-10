@@ -270,6 +270,22 @@ module Concerns::TwitterUser::Api
     end
   end
 
+  def inactive_mutual_friend_uids
+    inactive_mutual_friends.map(&:uid)
+  end
+
+  def inactive_mutual_friends
+    two_weeks_ago = 2.weeks.ago
+    mutual_friends.select do |friend|
+      begin
+        friend&.status&.created_at && Time.parse(friend&.status&.created_at) < two_weeks_ago
+      rescue => e
+        logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{friend&.status&.created_at}] #{friend.uid} #{friend.screen_name}"
+        false
+      end
+    end
+  end
+
   def close_friend_uids(uniq: false, min: 1, limit: 50, login_user: nil)
     uids = replying_uids(uniq: uniq) + replied_uids(uniq: uniq, login_user: login_user) + favoriting_uids(uniq: uniq, min: min)
     uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(limit).map(&:first)

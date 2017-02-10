@@ -1,0 +1,28 @@
+- content_for :canonical_url do
+  %link{href: inactive_friend_url(screen_name: @twitter_user.screen_name, type: @type), rel: 'canonical'}
+
+- breadcrumb :inactive_friend, @twitter_user.screen_name
+
+- page_title = t('inactive_friends.show.title', user: @twitter_user.mention_name, inactive_friends: @twitter_user.inactive_friends.size, inactive_followers: @twitter_user.inactive_followers.size, inactive_mutual_friends: @twitter_user.inactive_mutual_friends.size)
+- title page_title
+- set_meta_tags description: t('inactive_friends.show.description', user: @twitter_user.mention_name, inactive_friends: @twitter_user.inactive_friends.size, inactive_followers: @twitter_user.inactive_followers.size, inactive_mutual_friends: @twitter_user.inactive_mutual_friends.size)
+
+= render(partial: 'profiles/overview',
+  locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+:javascript
+  $(function () {
+    enableSlickOnPageTop();
+  });
+
+%h2.h2.inactive-friends= page_title
+
+.inactive-friends.lead.text-center= t('inactive_friends.show.lead_002', user: @twitter_user.mention_name).html_safe
+
+= render partial: 'inactive_friends/search_form', locals: {via: 'inactive_friends/show/top_input'}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+- if @twitter_user.too_many_friends?(login_user: current_user, context: :search)
+  = render partial: 'inactive_friends/show/empty', locals: {twitter_user: @twitter_user}
+- else
+  = render partial: 'inactive_friends/show/present', locals: {twitter_user: @twitter_user, type: @type}
