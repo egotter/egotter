@@ -24,6 +24,12 @@ SitemapGenerator::Sitemap.create do
       add unfriend_path(screen_name: screen_name, type: 'removed'), options
       add unfriend_path(screen_name: screen_name, type: 'blocking_or_blocked'), options
 
+      TwitterDB::User.where(uid: twitter_user.close_friend_uids.take(3)).each do |close_friend|
+        add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'conversations'), options
+        add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'common_friends'), options
+        add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'common_followers'), options
+      end
+
       %i(
         friends
         followers
