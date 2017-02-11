@@ -27,6 +27,11 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  def not_found
+    logger.warn "#{request.path} #{current_user_id} #{request.device_type} #{request.browser}"
+    redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+  end
+
   # https://github.com/plataformatec/devise/issues/1390
   def new_session_path(scope)
     new_user_session_path(scope)

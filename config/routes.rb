@@ -74,4 +74,6 @@ Rails.application.routes.draw do
   if defined?(Blazer::Engine)
     mount Blazer::Engine, at: '/blazer'
   end
+
+  get '*unmatched_route', to: 'application#not_found'
 end
