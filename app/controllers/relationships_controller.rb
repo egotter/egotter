@@ -22,7 +22,11 @@ class RelationshipsController < ApplicationController
   before_action only: %i(new create waiting show) do
     if request.format.html?
       push_referer
-      create_search_log(action: "#{controller_name}/#{action_name}")
+      if action_name == 'show'
+        create_search_log(action: "#{controller_name}/#{get_type}")
+      else
+        create_search_log(action: "#{controller_name}/#{action_name}")
+      end
     end
   end
 
@@ -33,7 +37,7 @@ class RelationshipsController < ApplicationController
   end
 
   def show
-    @type = VALID_TYPES.include?(params[:type]) ? params['type'] : VALID_TYPES[0]
+    @type = get_type
 
     respond_to do |format|
       format.html { render }
@@ -95,5 +99,9 @@ class RelationshipsController < ApplicationController
 
   def screen_names
     [params[:src_screen_name], params[:dst_screen_name]]
+  end
+
+  def get_type
+    VALID_TYPES.include?(params[:type]) ? params['type'] : VALID_TYPES[0]
   end
 end
