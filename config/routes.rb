@@ -58,13 +58,6 @@ Rails.application.routes.draw do
     get '/' => 'devise/sessions#new', :as => :new_user_session
   end
 
-  %i(statuses update_histories).each do |name|
-    get "searches/:screen_name/#{name}", to: 'searches#debug'
-  end
-  %i(twitegosearch twitegosearch/list twitegosearch/profile search searches caches page_cache page_caches).each do |name|
-    get name, to: 'searches#debug'
-  end
-
   require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     username == ENV['SIDEKIQ_USERNAME'] && password == ENV['SIDEKIQ_PASSWORD']
