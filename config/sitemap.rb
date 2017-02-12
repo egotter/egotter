@@ -47,7 +47,7 @@ SitemapGenerator::Sitemap.create do
         clusters_belong_to
         close_friends
         usage_stats
-      ).each { |menu| add send("#{menu}_search_path", screen_name: screen_name), options }
+      ).each { |menu| add search_path_for(menu, screen_name), options }
 
     end
 

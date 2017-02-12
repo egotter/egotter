@@ -36,6 +36,6 @@
     <% end %>
   </div>
   <div>
-    <%= link_to(t('dictionary.view_more_with_num', num: uids.size).html_safe, send("#{name}_search_path", screen_name: tu.screen_name), class: 'btn btn-info btn-block') %>
+    <%= link_to(t('dictionary.view_more_with_num', num: uids.size).html_safe, search_path_for(name, tu.screen_name), class: 'btn btn-info btn-block') %>
   </div>
 </div>

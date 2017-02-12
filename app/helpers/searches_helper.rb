@@ -85,7 +85,22 @@ module SearchesHelper
     end
   end
 
-  def search_path_for(controller:, screen_name:, via: '')
+  def search_path_for(menu, screen_name)
+    case menu.to_s
+      when *%w(friends followers new_friends new_followers replying replied favoriting clusters_belong_to close_friends usage_stats)
+        send("#{menu}_search_path", screen_name: screen_name)
+      when *%w(removing removed blocking_or_blocked)
+        unfriend_path(screen_name: screen_name, type: menu)
+      when *%w(one_sided_friends one_sided_followers mutual_friends)
+        one_sided_friend_path(screen_name: screen_name, type: menu)
+      when *%w(inactive_friends inactive_followers)
+        inactive_friend_path(screen_name: screen_name, type: menu)
+      else
+        raise "#{__method__}: invalid menu #{menu}"
+    end
+  end
+
+  def searches_path_for(controller:, screen_name:, via: '')
     case controller
       when 'one_sided_friends' then one_sided_friends_path(screen_name: screen_name, via: via)
       when 'unfriends' then unfriends_path(screen_name: screen_name, via: via)
