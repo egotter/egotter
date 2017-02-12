@@ -28,7 +28,7 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    logger.warn "#{request.path} #{current_user_id} #{request.device_type} #{request.browser}"
+    logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
     redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
   end
 
