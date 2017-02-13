@@ -3,7 +3,7 @@
     - spaces = '&nbsp;'.html_safe
 
     = succeed spaces do
-      %a{href: root_path_for(controller: controller_name)}= t('searches.common.top_page')
+      %a{href: root_path}= t('searches.common.top_page')
       %br.visible-xs-block
 
     = succeed spaces do

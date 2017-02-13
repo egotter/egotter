@@ -52,31 +52,31 @@
     %nav.navbar.navbar-default
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8.header-container
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
+          .col-xs-12.col-sm-10.col-md-10.col-lg-10.header-container
             = render partial: 'layouts/header'
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
     = render partial: 'layouts/search_histories' unless under_maintenance?
 
     - if notice || alert
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8.notice-container
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
+          .col-xs-12.col-sm-10.col-md-10.col-lg-10.notice-container
             - if notice
               %p.alert.alert-info{style: 'margin-top: 15px;'}= raw notice
             - if alert
               %p.alert.alert-warning{style: 'margin-top: 15px;'}= raw alert
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
     .container
       .row
-        .hidden-xs.col-sm-1.col-md-2.col-lg-2
-        .col-xs-12.col-sm-10.col-md-8.col-lg-8.yield-container
+        .hidden-xs.col-sm-1.col-md-1.col-lg-1
+        .col-xs-12.col-sm-10.col-md-10.col-lg-10.yield-container
           = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
           = yield
-        .hidden-xs.col-sm-1.col-md-2.col-lg-2
+        .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
     %link{href: '//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css', rel: 'stylesheet', type: 'text/css'}/
     %link{href: '//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css', rel: 'stylesheet', type: 'text/css'}/
@@ -94,24 +94,24 @@
       - unless user_signed_in?
         .container
           .row
-            .hidden-xs.col-sm-1.col-md-2.col-lg-2
-            .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer.text-center
+            .hidden-xs.col-sm-1.col-md-1.col-lg-1
+            .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer.text-center
               %h2.h4= t('searches.new.feature_007')
               = t('searches.new.feature_desc_007', link: link_to(t('dictionary.view_more_detail'), welcome_path(via: "#{controller_name}/#{action_name}/feature_desc_007_bottom"))).html_safe
               = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button_bottom"), class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;'
-            .hidden-xs.col-sm-1.col-md-2.col-lg-2
+            .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
+          .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer
             = render partial: 'layouts/share'
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
+          .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer
             %h2.h4.text-center= t('searches.common.popular')
             - if %w(one_sided_friends inactive_friends unfriends relationships).include? controller_name
               %h2.h4.text-left
@@ -143,15 +143,15 @@
                 = link_to t('friends.new.plain_title').html_safe, friends_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('friends.new.short_description')
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
-          .col-xs-12.col-sm-10.col-md-8.col-lg-8.pre-footer
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
+          .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer
             %h2.h4= t('searches.common.information')
             %table.table.table-bordered.table-condensed.table-responsive
               = render(partial: 'information/information', collection: information_list, cached: true)
-          .hidden-xs.col-sm-1.col-md-2.col-lg-2
+          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
     = render partial: 'layouts/footer' unless under_maintenance?
