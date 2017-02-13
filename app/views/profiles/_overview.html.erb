@@ -42,19 +42,19 @@
 <div class="profile-counts-container">
   <div class="row">
     <div class="tweets col-xs-4">
-      <%= link_to status_path(uid: user.uid), class: 'text-muted' do %>
+      <%= link_to friend_path(screen_name: user.screen_name, type: 'statuses'), class: 'text-muted' do %>
         <span class="count"><%= user.statuses_count %></span>
         <span class="text-muted"><%= t('searches.common.tweet') %></span>
       <% end %>
     </div>
     <div class="friends col-xs-4">
-      <%= link_to friends_search_path(screen_name: user.screen_name), class: 'text-muted' do %>
+      <%= link_to friend_path(screen_name: user.screen_name, type: 'friends'), class: 'text-muted' do %>
         <span class="count"><%= user.friends_count %></span>
         <span class="text-muted"><%= t('searches.friends.name') %></span>
       <% end %>
     </div>
     <div class="followers col-xs-4">
-      <%= link_to followers_search_path(screen_name: user.screen_name), class: 'text-muted' do %>
+      <%= link_to friend_path(screen_name: user.screen_name, type: 'followers'), class: 'text-muted' do %>
         <span class="count"><%= user.followers_count %></span>
         <span class="text-muted"><%= t('searches.followers.name') %></span>
       <% end %>

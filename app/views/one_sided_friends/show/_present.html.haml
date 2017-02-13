@@ -37,11 +37,11 @@
   .one-sided-friends.separator
   %h2.h4.text-center= t('searches.common.related_pages')
   %h2.h4.text-left
-    = link_to t('searches.friends.title', user: twitter_user.mention_name), friends_search_path(screen_name: twitter_user.screen_name)
+    = link_to t('searches.friends.title', user: twitter_user.mention_name), friend_path(screen_name: twitter_user.screen_name, type: 'friends')
   %div{style: 'margin-bottom: 15px;'}
     = t('searches.friends.short_description')
   %h2.h4.text-left
-    = link_to t('searches.followers.title', user: twitter_user.mention_name), followers_search_path(screen_name: twitter_user.screen_name)
+    = link_to t('searches.followers.title', user: twitter_user.mention_name), friend_path(screen_name: twitter_user.screen_name, type: 'followers')
   %div{style: 'margin-bottom: 15px;'}
     = t('searches.followers.short_description')
   %h2.h4.text-left

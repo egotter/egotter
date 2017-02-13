@@ -19,6 +19,9 @@ Rails.application.routes.draw do
   resources :inactive_friends, only: %i(create show), param: :screen_name
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top
 
+  resources :friends, only: %i(create show), param: :screen_name
+  get 'friends', to: 'friends#new', as: :friends_top
+
   resources :searches, only: %i(create), param: :screen_name do
     Search::MENU.each { |menu| get menu, on: :member }
   end

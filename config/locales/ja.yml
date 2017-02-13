@@ -65,13 +65,17 @@ ja:
       heading: "%{user} の分析 by えごったー"
       description: "えごったーなら全部無料！ %{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果です。リム通知は、えごったーにログイン後、自動で届きます。"
     friends:
+      num: "フォロー<br>%{num}"
       name: "フォロー"
       title: "%{user} のフォロー"
       short_description: "フォローをリストアップして表示します。"
     followers:
+      num: "フォロワー<br>%{num}"
       name: "フォロワー"
       title: "%{user} のフォロワー"
       short_description: "フォロワーをリストアップして表示します。"
+    statuses:
+      num: "ツイート<br>%{num}"
     removing:
       num: "リムり<br>%{num}"
       title: "%{user} がフォローを外した"
@@ -296,6 +300,24 @@ ja:
       lead_003: '%{user} の最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user} の分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人です。"
+  friends:
+    new:
+      title: '<span style="font-size: small; display: inline;">フォローチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: 'フォローチェック by えごったー'
+      simple_title: 'フォローチェック'
+      description: "保存ユーザー数1,000万人突破！ 無料でスマホからフォローチェック！"
+      short_description: "フォローとフォロワーの一覧をさくっと見ることができます。"
+      lead_001: "スマホでさくっとフォローチェック"
+      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
+      lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+    show:
+      title: "%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 ツイート %{statuses}件"
+      description: "%{user} は、フォロー %{friends}人、フォロワー %{followers}人、ツイート %{statuses}件です。フォローとフォロワーの一覧をさくっと見ることができます。"
+      lead_002: "フォローは、%{user} がフォローしているアカウント、<br>フォロワーは、%{user} がフォローされているアカウントのことです。"
+      lead_003: '%{user} のフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
+      tweet: "%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 ツイート %{statuses}人です。"
 
   charts:
     replying: "リプ"
