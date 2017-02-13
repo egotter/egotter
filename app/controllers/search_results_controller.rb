@@ -24,7 +24,7 @@ class SearchResultsController < ApplicationController
     render nothing: true, status: 500
   end
 
-  %i(friends followers new_friends new_followers).each do |menu|
+  %i(new_friends new_followers).each do |menu|
     define_method(menu) do
       @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
       render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200

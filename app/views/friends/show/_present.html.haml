@@ -1,7 +1,7 @@
 .share-buttons
   .inner
-    - tweet_text = t('inactive_friends.show.tweet', user: twitter_user.mention_name, inactive_friends: twitter_user.inactive_friends.size, inactive_followers: twitter_user.inactive_followers.size, inactive_mutual_friends: twitter_user.inactive_mutual_friends.size)
-    - text = ".#{tweet_text} #egotter #InactiveFriends #{inactive_friend_url(screen_name: twitter_user.screen_name, type: type)}"
+    - tweet_text = t('friends.show.tweet', user: twitter_user.mention_name, friends: twitter_user.friends_count, followers: twitter_user.followers_count, statuses: twitter_user.statuses_count)
+    - text = ".#{tweet_text} #egotter #{friend_url(screen_name: twitter_user.screen_name, type: type)}"
     - onclick = "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
     %a.twitter-button{href: intent_url(text), onclick: onclick}
       %i.fa.fa-twitter.fa-lg{'area-hidden': true}
@@ -9,41 +9,33 @@
       %span.share-text Twitter
 
 %ul.nav.nav-tabs.nav-justified{role: 'tablist'}
-  %li.nav-item{class: ('active' if type == 'inactive_friends')}
-    %a.nav-link{href: '#inactive-friends', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.inactive_friends.num', num: twitter_user.inactive_friends.size).html_safe
-  %li.nav-item{class: ('active' if type == 'inactive_followers')}
-    %a.nav-link{href: '#inactive-followers', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.inactive_followers.num', num: twitter_user.inactive_followers.size).html_safe
-  %li.nav-item{class: ('active' if type == 'inactive_mutual_friends')}
-    %a.nav-link{href: '#inactive-mutual-friends', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.inactive_mutual_friends.num', num: twitter_user.inactive_mutual_friends.size).html_safe
+  %li.nav-item{class: ('active' if type == 'friends')}
+    %a.nav-link{href: '#friends', role: 'tab', 'data-toggle' => 'tab'}
+      = t('searches.friends.num', num: twitter_user.friends_count).html_safe
+  %li.nav-item{class: ('active' if type == 'followers')}
+    %a.nav-link{href: '#followers', role: 'tab', 'data-toggle' => 'tab'}
+      = t('searches.followers.num', num: twitter_user.followers_count).html_safe
+  %li.nav-item{class: ('active' if type == 'statuses')}
+    %a.nav-link{href: '#statuses', role: 'tab', 'data-toggle' => 'tab'}
+      = t('searches.statuses.num', num: twitter_user.statuses_count).html_safe
 
-.tab-content.inactive-friends.twitter.users
-  #inactive-friends.tab-pane{role: 'tabpanel', class: ('active' if type == 'inactive_friends')}
+.tab-content.friends
+  #friends.twitter.users.tab-pane{role: 'tabpanel', class: ('active' if type == 'friends')}
     .loading-image.text-center= image_tag '/ajax-loader.gif'
-  #inactive-followers.tab-pane{role: 'tabpanel', class: ('active' if type == 'inactive_followers')}
+  #followers.twitter.users.tab-pane{role: 'tabpanel', class: ('active' if type == 'followers')}
     .loading-image.text-center= image_tag '/ajax-loader.gif'
-  #inactive-mutual-friends.tab-pane{role: 'tabpanel', class: ('active' if type == 'inactive_mutual_friends')}
+  #statuses.twitter.tweets.tab-pane{role: 'tabpanel', class: ('active' if type == 'statuses')}
     .loading-image.text-center= image_tag '/ajax-loader.gif'
 
 .shown-later{style: 'display: none;'}
-  .inactive-friends.lead= t('inactive_friends.show.lead_003', user: twitter_user.mention_name).html_safe
-  = render partial: 'inactive_friends/search_form', locals: {via: 'inactive_friends/show/bottom_input'}
+  .friends.lead= t('friends.show.lead_003', user: twitter_user.mention_name).html_safe
+  = render partial: 'friends/search_form', locals: {via: 'friends/show/bottom_input'}
   = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
-  .inactive-friends.lead= t('inactive_friends.show.lead_004')
+  .friends.lead= t('friends.show.lead_004')
   = link_to t('searches.common.search_xxx_by_egotter', user: twitter_user.mention_name), searches_path(screen_name: twitter_user.screen_name, via: "#{controller_name}/#{action_name}/bottom_button"), class: 'btn btn-info btn-block', style: 'margin-bottom: 15px;', method: :post
 
-  .inactive-friends.separator
+  .friends.separator
   %h2.h4.text-center= t('searches.common.related_pages')
-  %h2.h4.text-left
-    = link_to t('searches.friends.title', user: twitter_user.mention_name), friend_path(screen_name: twitter_user.screen_name, type: 'friends')
-  %div{style: 'margin-bottom: 15px;'}
-    = t('searches.friends.short_description')
-  %h2.h4.text-left
-    = link_to t('searches.followers.title', user: twitter_user.mention_name), friend_path(screen_name: twitter_user.screen_name, type: 'followers')
-  %div{style: 'margin-bottom: 15px;'}
-    = t('searches.followers.short_description')
   %h2.h4.text-left
     = link_to t('searches.inactive_friends.title', user: twitter_user.mention_name), inactive_friends_search_path(screen_name: twitter_user.screen_name)
   %div{style: 'margin-bottom: 15px;'}
@@ -68,7 +60,7 @@
 - scope = {action: action_name, uid: twitter_user.uid}
 :javascript
   $(function () {
-    var url = "#{inactive_friend_path(screen_name: twitter_user.screen_name, type: 'TYPE', format: :json)}";
+    var url = "#{friend_path(screen_name: twitter_user.screen_name, type: 'TYPE', format: :json)}";
     var retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/client/retry_timeout"))).html_safe}';
     var somethingWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/client/something_wrong"))).html_safe}';
     var empty = "#{t('searches.common.empty_html')}";
@@ -121,9 +113,9 @@
     }
   };
 
-  $('a[href="#inactive-friends"]').on('click', tab_clicked);
-  $('a[href="#inactive-followers"]').on('click', tab_clicked);
-  $('a[href="#inactive-mutual-friends"]').on('click', tab_clicked);
+  $('a[href="#friends"]').on('click', tab_clicked);
+  $('a[href="#followers"]').on('click', tab_clicked);
+  $('a[href="#statuses"]').on('click', tab_clicked);
 
   $('a[href="#' + type + '"]').trigger('click');
   });

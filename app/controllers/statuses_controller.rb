@@ -14,7 +14,6 @@ class StatusesController < ApplicationController
 
   # GET /statuses/:uid
   def show
-    @statuses = Kaminari.paginate_array(@searched_tw_user.statuses.to_a).page(params[:page]).per(100)
-    @title = t('.title', user: @searched_tw_user.mention_name)
+    redirect_to friend_path(screen_name: @searched_tw_user.screen_name, type: 'statuses')
   end
 end

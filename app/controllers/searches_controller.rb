@@ -86,11 +86,17 @@ class SearchesController < ApplicationController
     @searched_tw_user = tu
   end
 
-  Search::MENU.select { |menu| %i(one_sided_friends one_sided_followers mutual_friends removing removed blocking_or_blocked).exclude?(menu) }.each do |menu|
+  Search::MENU.each do |menu|
     define_method(menu) do
       @menu = menu
       @title = title_for(menu, @searched_tw_user.screen_name)
       render :common
+    end
+  end
+
+  %i(friends followers statuses).each do |menu|
+    define_method(menu) do
+      redirect_to friend_path(screen_name: @searched_tw_user.screen_name, type: menu)
     end
   end
 

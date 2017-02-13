@@ -7,11 +7,6 @@ crumb :search do |screen_name|
   parent :root
 end
 
-crumb :status do |uid, screen_name|
-  link t('searches.common.tweet'), status_path(uid: uid)
-  parent :search, screen_name
-end
-
 crumb :common do |screen_name, menu|
   link t("searches.#{menu}.name"), search_path_for(menu, screen_name)
   parent :search, screen_name
@@ -34,5 +29,10 @@ end
 
 crumb :inactive_friend do |screen_name|
   link t('inactive_friends.new.simple_title'), inactive_friend_path(screen_name: screen_name)
+  parent :search, screen_name
+end
+
+crumb :friend do |screen_name|
+  link t('friends.new.simple_title'), friend_path(screen_name: screen_name)
   parent :search, screen_name
 end

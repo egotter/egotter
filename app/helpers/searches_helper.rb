@@ -71,6 +71,7 @@ module SearchesHelper
       when 'unfriends' then unfriends_top_path
       when 'relationships' then relationships_top_path
       when 'inactive_friends' then inactive_friends_top_path
+      when 'friends' then friends_top_path
       else root_path
     end
   end
@@ -81,13 +82,14 @@ module SearchesHelper
       when 'unfriends' then t('unfriends.new.title')
       when 'relationships' then t('relationships.new.title')
       when 'inactive_friends' then t('inactive_friends.new.title')
+      when 'friends' then t('friends.new.title')
       else t('searches.common.egotter')
     end
   end
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(friends followers new_friends new_followers replying replied favoriting clusters_belong_to close_friends usage_stats)
+      when *%w(new_friends new_followers replying replied favoriting clusters_belong_to close_friends usage_stats)
         send("#{menu}_search_path", screen_name: screen_name)
       when *%w(removing removed blocking_or_blocked)
         unfriend_path(screen_name: screen_name, type: menu)
@@ -95,6 +97,8 @@ module SearchesHelper
         one_sided_friend_path(screen_name: screen_name, type: menu)
       when *%w(inactive_friends inactive_followers)
         inactive_friend_path(screen_name: screen_name, type: menu)
+      when *%w(friends followers)
+        friend_path(screen_name: screen_name, type: menu)
       else
         raise "#{__method__}: invalid menu #{menu}"
     end
@@ -105,6 +109,7 @@ module SearchesHelper
       when 'one_sided_friends' then one_sided_friends_path(screen_name: screen_name, via: via)
       when 'unfriends' then unfriends_path(screen_name: screen_name, via: via)
       when 'inactive_friends' then inactive_friends_path(screen_name: screen_name, via: via)
+      when 'friends' then friends_path(screen_name: screen_name, via: via)
       else searches_path(screen_name: screen_name, via: via)
     end
   end
