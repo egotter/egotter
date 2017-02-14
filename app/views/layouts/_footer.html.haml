@@ -26,7 +26,7 @@
       - if user_signed_in?
         = link_to t('dictionary.sign_out'), sign_out_path, data: {confirm: t('dictionary.realy_sign_out')}
       - else
-        = link_to t('dictionary.sign_in'), sign_in_via_welcome_test_path('footer')
+        = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/footer")
       %br.visible-xs-block
 
     = succeed spaces do

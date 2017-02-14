@@ -9,4 +9,4 @@
       %span.glyphicon.glyphicon-bell
 - else
   %button.btn.btn-with-margin.navbar-toggle{type: 'button'}
-    = link_to t('dictionary.sign_in'), sign_in_via_welcome_test_path('header')
+    = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header")

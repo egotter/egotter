@@ -14,7 +14,7 @@
     - else
       %li
         %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-          = link_to t('dictionary.sign_in'), sign_in_via_welcome_test_path('header')
+          = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header")
     %li
       %button.btn.btn-default.navbar-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
         %span.glyphicon.glyphicon-search
