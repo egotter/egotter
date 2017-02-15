@@ -1,0 +1,26 @@
+- title @title
+- set_meta_tags description: t('conversations.new.description')
+
+%h3.h4.conversations.text-center= t('conversations.new.lead_001')
+.conversations.lead.text-center= t('conversations.new.lead_002').html_safe
+.conversations.lead.text-center= t('conversations.new.lead_003').html_safe
+
+= render partial: 'conversations/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+- if user_signed_in?
+  = link_to t('searches.common.search_by', user: current_user.mention_name), searches_path_for(controller: controller_name, screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"), class: 'btn btn-info btn-block', method: :post
+- else
+  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: conversations_top_path, via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
+
+.row.conversations.screenshot
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('searches.common.egotter')}", src: '/screenshot_iphone_332x560.png', height: '160px'}
+  .col-xs-12.col-sm-6.text-center
+    %img{alt: "#{t('searches.common.egotter')}", src: '/screenshot_laptop_961x560.png', height: '160px'}
+
+.conversations.separator
+
+.twitter.tweets
+  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true, formats: %i(html))
+  .conversations.lead.in-top-page.text-center= t('conversations.new.lead_004').html_safe

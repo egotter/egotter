@@ -22,6 +22,9 @@ Rails.application.routes.draw do
   resources :friends, only: %i(create show), param: :screen_name
   get 'friends', to: 'friends#new', as: :friends_top
 
+  resources :conversations, only: %i(create show), param: :screen_name
+  get 'conversations', to: 'conversations#new', as: :conversations_top
+
   resources :searches, only: %i(create), param: :screen_name do
     Search::MENU.each { |menu| get menu, on: :member }
   end
@@ -29,7 +32,7 @@ Rails.application.routes.draw do
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
 
   resources :search_results, only: :show, param: :uid do
-    %i(new_friends new_followers replying replied favoriting close_friends clusters_belong_to usage_stats).each { |menu| get menu, on: :member }
+    %i(new_friends new_followers favoriting close_friends clusters_belong_to usage_stats).each { |menu| get menu, on: :member }
   end
 
   resources :search_histories, :notifications, only: :index

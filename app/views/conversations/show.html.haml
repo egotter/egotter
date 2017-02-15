@@ -1,0 +1,27 @@
+- content_for :canonical_url do
+  %link{href: conversation_url(screen_name: @twitter_user.screen_name, type: @type), rel: 'canonical'}
+
+- breadcrumb :conversation, @twitter_user.screen_name
+
+- page_title = t('conversations.show.title', user: @twitter_user.mention_name, replying: @twitter_user.replying.size, replied: @twitter_user.replied.size, replying_and_replied: @twitter_user.replying_and_replied.size)
+- title page_title
+- set_meta_tags description: t('conversations.show.description', user: @twitter_user.mention_name, replying: @twitter_user.replying.size, replied: @twitter_user.replied.size, replying_and_replied: @twitter_user.replying_and_replied.size)
+
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+:javascript
+  $(function () {
+    enableSlickOnPageTop();
+  });
+
+%h2.h2.conversations= page_title
+
+.conversations.lead.text-center= t('conversations.show.lead_002', user: @twitter_user.mention_name).html_safe
+
+= render partial: 'conversations/search_form', locals: {via: 'conversations/show/top_input'}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+- if @twitter_user.too_many_friends?(login_user: current_user, context: :search)
+  = render partial: 'conversations/show/empty', locals: {twitter_user: @twitter_user}
+- else
+  = render partial: 'conversations/show/present', locals: {twitter_user: @twitter_user, type: @type}
