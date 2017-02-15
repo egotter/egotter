@@ -1,6 +1,6 @@
 .share-buttons
   .inner
-    - tweet_text = t('conversations.show.tweet', user: twitter_user.mention_name, replying: twitter_user.replying.size, replied: twitter_user.replied.size, replying_and_replied: twitter_user.replying_and_replied.size)
+    - tweet_text = t('conversations.show.tweet', user: twitter_user.mention_name, replying: twitter_user.replying.size, replied: twitter_user.replied(login_user: current_user).size, replying_and_replied: twitter_user.replying_and_replied(login_user: current_user).size)
     - text = ".#{tweet_text} #egotter #{conversation_url(screen_name: twitter_user.screen_name, type: type)}"
     - onclick = "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
     %a.twitter-button{href: intent_url(text), onclick: onclick}
@@ -14,10 +14,10 @@
       = t('searches.replying.num', num: twitter_user.replying.size).html_safe
   %li.nav-item{class: ('active' if type == 'replied')}
     %a.nav-link{href: '#replied', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.replied.num', num: twitter_user.replied.size).html_safe
+      = t('searches.replied.num', num: twitter_user.replied(login_user: current_user).size).html_safe
   %li.nav-item{class: ('active' if type == 'replying_and_replied')}
     %a.nav-link{href: '#replying-and-replied', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.replying_and_replied.num', num: twitter_user.replying_and_replied.size).html_safe
+      = t('searches.replying_and_replied.num', num: twitter_user.replying_and_replied(login_user: current_user).size).html_safe
 
 .tab-content.conversations.twitter.users
   #replying.tab-pane{role: 'tabpanel', class: ('active' if type == 'replying')}
