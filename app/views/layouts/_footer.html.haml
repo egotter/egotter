@@ -20,6 +20,10 @@
 
     = succeed spaces do
       %a{href: root_path_for(controller: 'inactive_friends')}= t('inactive_friends.new.simple_title')
+      %br.visible-xs-block
+
+    = succeed spaces do
+      %a{href: root_path_for(controller: 'conversations')}= t('conversations.new.simple_title')
       %br
 
     = succeed spaces do

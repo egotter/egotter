@@ -228,6 +228,16 @@ module Concerns::TwitterUser::Api
     users.each { |user| user.uid = user.id }
   end
 
+  def replying_and_replied_uids(uniq: true, login_user: nil)
+    replying_uids(uniq: uniq) & replied_uids(uniq: uniq, login_user: login_user)
+  end
+
+  def replying_and_replied(uniq: true, login_user: nil)
+    users = replying(uniq: uniq) + replied(uniq: uniq, login_user: login_user)
+    uids = users.each_with_object(Hash.new(0)) { |user, memo| memo[user.uid] += 1 }.select { |_, v| v >= 2 }.keys
+    uids.map { |uid| users.find { |user| user.uid == uid } }.compact
+  end
+
   def favoriting_uids(uniq: true, min: 0)
     uids = favorites.map { |fav| fav&.user&.id }.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.map(&:first)
     uniq ? uids.uniq : uids

@@ -1,0 +1,23 @@
+= render(partial: 'twitter/user', collection: users, cached: true, locals: {uids: []}, formats: %i(html))
+
+- unless users.last_page?
+  .loading-image.conversations.see-more.text-center{data: {type: type, next_page: users.next_page}}= image_tag '/ajax-loader.gif'
+  :javascript
+    $(function () {
+      var url = "#{conversation_path(screen_name: twitter_user.screen_name, type: 'TYPE', page: 'NEXT_PAGE', format: :json)}";
+
+      $('.loading-image.see-more')
+        .lazyload()
+        .one('appear', function () {
+          var $tag = $(this);
+          if (!$tag.data('appeared')) {
+            $tag.data('appeared', true);
+
+            $.get(url.replace('TYPE', $tag.data('type')).replace('NEXT_PAGE', $tag.data('next-page')))
+              .done(function (res) {
+                $tag.parent().append(res.html);
+                $tag.remove();
+              });
+          }
+        });
+    });

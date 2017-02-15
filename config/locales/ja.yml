@@ -100,13 +100,17 @@ ja:
       description: "%{user}がブロックされたかもしれないユーザーを表示します。フォローとフォロワーから同時に外れたらブロックとみなすため、少し不正確です。"
       short_description: "ブロックされたかもしれないユーザーを表示します。"
     replying:
+      num: "リプライした<br>%{num}"
       name: "リプライ"
       title: "%{user} がリプライした"
       description: "%{user}がリプライしたユーザーを表示します。"
     replied:
+      num: "リプライされた<br>%{num}"
       name: "リプライされた"
       title: "%{user} がリプライされた"
       description: "%{user}がリプライされたユーザーを表示します。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
+    replying_and_replied:
+      num: "両方された<br>%{num}"
     close_friends:
       name: "仲良し"
       title: "%{user} と仲良し"
@@ -318,6 +322,24 @@ ja:
       lead_003: '%{user} のフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 ツイート %{statuses}人です。"
+  conversations:
+    new:
+      title: '<span style="font-size: small; display: inline;">リプライ分析</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: 'リプライ分析 by えごったー'
+      simple_title: 'リプライ分析'
+      description: "保存ユーザー数1,000万人突破！ 無料でスマホからリプライ分析！ リプライしたアカウント、リプライされたアカウントをさくっと見付けることができます。"
+      short_description: "リプライしたアカウント、リプライされたアカウントをさくっと見付けることができます。"
+      lead_001: "スマホでさくっとリプライ分析"
+      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_003: "リプライ分析の決定版。<br>スマホから使える無料のリプライ分析アプリです。"
+      lead_004: '検索されたユーザーのリプライ分析は、えごったーが分析したデータを元に集計しています。<br>もし、リプライ分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+    show:
+      title: "%{user} の分析 - リプライした %{replying}人 リプライされた %{replied}人 両方された %{replying_and_replied}人"
+      description: "%{user} は、リプライした %{replying}人、リプライされた %{replied}人、両方された %{replying_and_replied}人です。この分析は、直近の600ツイートを集計した結果です。"
+      lead_002: "リプライしたは、%{user} がリプライしたアカウント、<br>リプライされたは、%{user} がリプライされたアカウントのことです。"
+      lead_003: '%{user} のリプライ分析は、えごったーが分析したデータを元に集計しています。<br>もし、リプライ分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
+      tweet: "%{user} の分析 - リプライした %{replying}人 リプライされた %{replied}人 両方された %{replying_and_replied}人です。"
 
   charts:
     replying: "リプ"

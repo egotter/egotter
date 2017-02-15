@@ -30,6 +30,9 @@ SitemapGenerator::Sitemap.create do
       add friend_path(screen_name: screen_name, type: 'friends'), options
       add friend_path(screen_name: screen_name, type: 'followers'), options
       add friend_path(screen_name: screen_name, type: 'statuses'), options
+      add conversation_path(screen_name: screen_name, type: 'replying'), options
+      add conversation_path(screen_name: screen_name, type: 'replied'), options
+      add conversation_path(screen_name: screen_name, type: 'replying_and_replied'), options
 
       TwitterDB::User.where(uid: twitter_user.close_friend_uids.take(3)).each do |close_friend|
         add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'conversations'), options
@@ -40,8 +43,6 @@ SitemapGenerator::Sitemap.create do
       %i(
         new_friends
         new_followers
-        replying
-        replied
         favoriting
         clusters_belong_to
         close_friends

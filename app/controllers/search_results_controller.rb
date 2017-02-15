@@ -31,7 +31,7 @@ class SearchResultsController < ApplicationController
     end
   end
 
-  %i(replying replied favoriting close_friends).each do |menu|
+  %i(favoriting close_friends).each do |menu|
     define_method(menu) do
       begin
         users = users_for(@searched_tw_user, menu: menu)

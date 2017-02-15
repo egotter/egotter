@@ -66,30 +66,24 @@ module SearchesHelper
   end
 
   def root_path_for(controller:)
-    case controller
-      when 'one_sided_friends' then one_sided_friends_top_path
-      when 'unfriends' then unfriends_top_path
-      when 'relationships' then relationships_top_path
-      when 'inactive_friends' then inactive_friends_top_path
-      when 'friends' then friends_top_path
-      else root_path
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations).include? controller
+      send("#{controller}_top_path")
+    else
+      root_path
     end
   end
 
   def app_name_for(controller:)
-    case controller
-      when 'one_sided_friends' then t('one_sided_friends.new.title')
-      when 'unfriends' then t('unfriends.new.title')
-      when 'relationships' then t('relationships.new.title')
-      when 'inactive_friends' then t('inactive_friends.new.title')
-      when 'friends' then t('friends.new.title')
-      else t('searches.common.egotter')
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations).include? controller
+      send(:t, "#{controller}.new.title")
+    else
+      t('searches.common.egotter')
     end
   end
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(new_friends new_followers replying replied favoriting clusters_belong_to close_friends usage_stats)
+      when *%w(new_friends new_followers favoriting clusters_belong_to close_friends usage_stats)
         send("#{menu}_search_path", screen_name: screen_name)
       when *%w(removing removed blocking_or_blocked)
         unfriend_path(screen_name: screen_name, type: menu)
@@ -99,18 +93,18 @@ module SearchesHelper
         inactive_friend_path(screen_name: screen_name, type: menu)
       when *%w(friends followers)
         friend_path(screen_name: screen_name, type: menu)
+      when *%w(replying replied)
+        conversation_path(screen_name: screen_name, type: menu)
       else
         raise "#{__method__}: invalid menu #{menu}"
     end
   end
 
   def searches_path_for(controller:, screen_name:, via: '')
-    case controller
-      when 'one_sided_friends' then one_sided_friends_path(screen_name: screen_name, via: via)
-      when 'unfriends' then unfriends_path(screen_name: screen_name, via: via)
-      when 'inactive_friends' then inactive_friends_path(screen_name: screen_name, via: via)
-      when 'friends' then friends_path(screen_name: screen_name, via: via)
-      else searches_path(screen_name: screen_name, via: via)
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations).include? controller
+      send("#{controller}_path", screen_name: screen_name, via: via)
+    else
+      searches_path(screen_name: screen_name, via: via)
     end
   end
 

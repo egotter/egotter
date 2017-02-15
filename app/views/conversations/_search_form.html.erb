@@ -1,0 +1,18 @@
+<%= form_tag conversations_path, method: :post do %>
+  <label for="screen_name" class="sr-only"><%= t('searches.common.twitter_id') %></label>
+  <div class="input-group">
+    <div class="input-group-addon">@</div>
+    <input type="hidden" name="via" value="<%= via %>">
+    <input type="search"
+           name="screen_name"
+           class="form-control"
+           placeholder="<%= action_name == 'new' ? t('searches.common.search_by_twitter_id') : t('searches.common.search_by_other_user') %>"
+           pattern="^[0-9A-Za-z_]{1,20}$"
+           inputmode="verbatim"
+           title="<%= t('before_sign_in.invalid_input', count1: 1, count2: 20) %>"
+           required autofocus>
+    <span class="input-group-btn">
+      <button class="btn btn-primary" type="submit"><%= t('searches.common.search') %></button>
+    </span>
+  </div>
+<% end %>

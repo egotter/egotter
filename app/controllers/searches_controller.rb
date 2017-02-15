@@ -112,9 +112,15 @@ class SearchesController < ApplicationController
     end
   end
 
-  %i(inactive_friends inactive_followers inactive_mutual_friends).each do |menu|
+  %i(inactive_friends inactive_followers).each do |menu|
     define_method(menu) do
       redirect_to inactive_friend_path(screen_name: @searched_tw_user.screen_name, type: menu)
+    end
+  end
+
+  %i(replying replied).each do |menu|
+    define_method(menu) do
+      redirect_to conversation_path(screen_name: @searched_tw_user.screen_name, type: menu)
     end
   end
 end
