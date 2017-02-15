@@ -29,7 +29,7 @@ Rails.application.routes.draw do
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
 
   resources :search_results, only: :show, param: :uid do
-    Search::MENU.each { |menu| get menu, on: :member }
+    %i(new_friends new_followers replying replied favoriting close_friends clusters_belong_to usage_stats).each { |menu| get menu, on: :member }
   end
 
   resources :search_histories, :notifications, only: :index
