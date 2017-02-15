@@ -28,8 +28,18 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
-    redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+    if request.device_type == :crawler
+      redirect_to root_path
+    else
+      if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
+        @screen_name = params['screen_name']
+        @redirect_path = search_path(screen_name: @screen_name)
+        render template: 'searches/create', layout: false
+      else
+        logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
+        redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+      end
+    end
   end
 
   # https://github.com/plataformatec/devise/issues/1390
