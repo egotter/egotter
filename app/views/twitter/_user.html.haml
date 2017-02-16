@@ -18,11 +18,14 @@
         - if current_user.twitter_user.friend_uids.include? user.uid.to_i
           %button.btn.btn-success.follow{type: 'button'}
             %span.glyphicon.glyphicon-ok
+            .visible-md-inline.visible-lg-inline= t('searches.common.following')
         - else
           %button.btn.btn-default.no-follow{type: 'button'}
-            %span.text-muted.glyphicon.glyphicon-plus
+            %i.text-muted.fa.fa-user-plus{'area-hidden': true}
+            .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
 
       = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: via), method: :post do
         %button.btn.btn-info{type: 'button'}
           %span.glyphicon.glyphicon-search
+          .visible-md-inline.visible-lg-inline= t('searches.common.do_search')
   .description= linkify(user.description)
