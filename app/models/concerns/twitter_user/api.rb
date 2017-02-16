@@ -66,24 +66,14 @@ module Concerns::TwitterUser::Api
   end
 
   def new_removing
-    return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
-    return [] if newer.nil? || older.nil? || newer.friends_size == 0
+    return friends.none if newer.nil? || older.nil? || newer.friends_size == 0
     uids = older.new_removing_uids(newer)
-    uids.empty? ? [] : older.friends.where(uid: uids)
-  end
-
-  # TODO experimental
-  def calc_removing_uids
-    return [] unless self.class.many?(uid)
-    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.friends_size == 0
-      older.new_removing_uids(newer)
-    end.compact.flatten.reverse
+    uids.empty? ? friends.none : older.friends.where(uid: uids)
   end
 
   def calc_removing
-    return [] unless self.class.many?(uid)
+    return friends.none unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
       uids = older.new_removing_uids(newer)
@@ -92,11 +82,11 @@ module Concerns::TwitterUser::Api
   end
 
   def removing_uids
-    unfriendships.any? ? unfriendships.pluck(:friend_uid) : calc_removing_uids
+    unfriendships.pluck(:friend_uid)
   end
 
   def removing
-    unfriends.any? ? unfriends : calc_removing
+    unfriends
   end
 
   def new_removed_uids(newer)
@@ -104,20 +94,10 @@ module Concerns::TwitterUser::Api
   end
 
   def new_removed
-    return [] unless self.class.many?(uid)
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
-    return [] if newer.nil? || older.nil? || newer.followers_size == 0
+    return followers.none if newer.nil? || older.nil? || newer.followers_size == 0
     uids = older.new_removed_uids(newer)
-    uids.empty? ? [] : older.followers.where(uid: uids)
-  end
-
-  # TODO experimental
-  def calc_removed_uids
-    return [] unless self.class.many?(uid)
-    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.followers_size == 0
-      older.new_removed_uids(newer)
-    end.compact.flatten.reverse
+    uids.empty? ? followers.none : older.followers.where(uid: uids)
   end
 
   def calc_removed
@@ -130,11 +110,20 @@ module Concerns::TwitterUser::Api
   end
 
   def removed_uids
-    unfollowerships.any? ? unfollowerships.pluck(:follower_uid) : calc_removed_uids
+    unfollowerships.pluck(:follower_uid)
   end
 
   def removed
-    unfollowers.any? ? unfollowers : calc_removed
+    unfollowers
+  end
+
+  def blocking_or_blocked_uids
+    removing_uids & removed_uids
+  end
+
+  def blocking_or_blocked
+    uids = blocking_or_blocked_uids
+    uids.empty? ? removing.none : removing.where(uid: uids)
   end
 
   def new_friend_uids
@@ -161,15 +150,6 @@ module Concerns::TwitterUser::Api
     return [] if uids.empty?
     users = TwitterDB::User.where(uid: uids).index_by(&:uid)
     uids.map { |uid| users[uid] }.compact
-  end
-
-  def blocking_or_blocked_uids
-    (removing.map(&:uid) & removed.map(&:uid)).uniq
-  end
-
-  def blocking_or_blocked
-    uids = blocking_or_blocked_uids
-    removing.select { |f| uids.include?(f.uid.to_i) }
   end
 
   def replying_uids(uniq: true)

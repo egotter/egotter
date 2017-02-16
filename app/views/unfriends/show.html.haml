@@ -3,12 +3,11 @@
 
 - breadcrumb :unfriend, @twitter_user.screen_name
 
-- page_title = t('unfriends.show.title', user: @twitter_user.mention_name, removing: @twitter_user.removing.size, removed: @twitter_user.removed.size, blocking_or_blocked: @twitter_user.blocking_or_blocked.size)
+- page_title = t('unfriends.show.title', user: @twitter_user.mention_name, removing: @twitter_user.removing_uids.size, removed: @twitter_user.removed_uids.size, blocking_or_blocked: @twitter_user.blocking_or_blocked_uids.size)
 - title page_title
-- set_meta_tags description: t('unfriends.show.description', user: @twitter_user.mention_name, removing: @twitter_user.removing.size, removed: @twitter_user.removed.size, blocking_or_blocked: @twitter_user.blocking_or_blocked.size)
+- set_meta_tags description: t('unfriends.show.description', user: @twitter_user.mention_name, removing: @twitter_user.removing_uids.size, removed: @twitter_user.removed_uids.size, blocking_or_blocked: @twitter_user.blocking_or_blocked_uids.size)
 
-= render(partial: 'profiles/overview',
-  locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
 :javascript
   $(function () {

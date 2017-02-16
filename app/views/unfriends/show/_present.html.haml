@@ -1,6 +1,6 @@
 .share-buttons
   .inner
-    - tweet_text = t('unfriends.show.tweet', user: @twitter_user.mention_name, removing: @twitter_user.removing.size, removed: @twitter_user.removed.size, blocking_or_blocked: @twitter_user.blocking_or_blocked.size)
+    - tweet_text = t('unfriends.show.tweet', user: @twitter_user.mention_name, removing: @twitter_user.removing_uids.size, removed: @twitter_user.removed_uids.size, blocking_or_blocked: @twitter_user.blocking_or_blocked_uids.size)
     - text = ".#{tweet_text} #egotter #unfriends #{unfriend_url(screen_name: twitter_user.screen_name, type: type)}"
     - onclick = "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
     %a.twitter-button{href: intent_url(text), onclick: onclick}
@@ -11,13 +11,13 @@
 %ul.nav.nav-tabs.nav-justified{role: 'tablist'}
   %li.nav-item{class: ('active' if type == 'removing')}
     %a.nav-link{href: '#removing', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.removing.num', num: twitter_user.removing.size).html_safe
+      = t('searches.removing.num', num: twitter_user.removing_uids.size).html_safe
   %li.nav-item{class: ('active' if type == 'removed')}
     %a.nav-link{href: '#removed', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.removed.num', num: twitter_user.removed.size).html_safe
+      = t('searches.removed.num', num: twitter_user.removed_uids.size).html_safe
   %li.nav-item{class: ('active' if type == 'blocking_or_blocked')}
     %a.nav-link{href: '#blocking-or-blocked', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.blocking_or_blocked.num', num: twitter_user.blocking_or_blocked.size).html_safe
+      = t('searches.blocking_or_blocked.num', num: twitter_user.blocking_or_blocked_uids.size).html_safe
 
 .tab-content.unfriends.twitter.users
   #removing.tab-pane{role: 'tabpanel', class: ('active' if type == 'removing')}
