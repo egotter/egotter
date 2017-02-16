@@ -1,5 +1,5 @@
 .modal.fade.search-modal{'aria-labelledby' => 'search-modal-label', role: 'dialog', tabindex: '-1'}
-  .modal-dialog{role: 'document'}
+  .modal-dialog.modal-lg{role: 'document'}
     .modal-content
       .modal-header
         %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
@@ -12,11 +12,7 @@
           .search-histories-header
             %h2
               %small= t('search_histories.index.title')
-          :javascript
-            $(function () {
-              var selector = '.search-histories-header';
-              var loadPath = '#{search_histories_path}';
-              loadSearchHistories(selector, loadPath, true);
-            });
+            .twitter.users
+              = render(partial: 'twitter/user', collection: search_histories_list, cached: true, locals: {via: 'search_histories'})
         - else
           = render template: 'login/welcome', locals: {via_prefix: 'search_history_'}

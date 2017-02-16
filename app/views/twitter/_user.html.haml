@@ -1,4 +1,6 @@
-- uids << user.uid.to_i
+- uids << user.uid.to_i if defined?(uids)
+- via = "#{controller_name}/#{action_name}" unless defined?(via)
+
 - if defined?(user_counter) && user_counter == 3
   = render partial: 'common/adsense', locals: {action: action_name, vertical: :slit}
   %div{style: 'height: 0; border-top: 1px solid #e6e6e6; margin-bottom: 15px;'}
@@ -20,7 +22,7 @@
           %button.btn.btn-default.no-follow{type: 'button'}
             %span.text-muted.glyphicon.glyphicon-plus
 
-      = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: "#{controller_name}/#{action_name}"), method: :post do
+      = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: via), method: :post do
         %button.btn.btn-info{type: 'button'}
           %span.glyphicon.glyphicon-search
   .description= linkify(user.description)

@@ -35,7 +35,7 @@ Rails.application.routes.draw do
     %i(new_friends new_followers favoriting close_friends clusters_belong_to usage_stats).each { |menu| get menu, on: :member }
   end
 
-  resources :search_histories, :notifications, only: :index
+  resources :notifications, only: :index
   resource :notification, only: :update
 
   resources :statuses, only: :show, param: :uid
