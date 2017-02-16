@@ -60,7 +60,6 @@ gem 'rails_autolink'
 gem 'draper'
 gem 'rollbar'
 gem 'oj'
-gem 'js-routes'
 gem 'gretel'
 
 group :development, :production do
