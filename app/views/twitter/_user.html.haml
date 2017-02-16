@@ -1,5 +1,5 @@
-- uids << user.uid.to_i if defined?(uids)
-- via = "#{controller_name}/#{action_name}" unless defined?(via)
+- uids << user.uid.to_i if defined?(uids) && uids.is_a?(Array)
+- via = "#{controller_name}/#{action_name}" if !defined?(via) || via.blank?
 
 - if defined?(user_counter) && user_counter == 3
   = render partial: 'common/adsense', locals: {action: action_name, vertical: :slit}
@@ -7,11 +7,11 @@
 
 .media
   .media-left
-    = link_to search_path(screen_name: user.screen_name) do
+    = link_to search_path(screen_name: user.screen_name, via: via) do
       %img.media-object{alt: mention_name(user.screen_name), height: '48', src: user.profile_image_url_https.to_s, width: '48'}
   .media-body
     %h4.media-heading= user_name(user).html_safe
-    %span.screen-name= link_to(mention_name(user.screen_name), search_path(screen_name: user.screen_name))
+    %span.screen-name= link_to(mention_name(user.screen_name), search_path(screen_name: user.screen_name, via: via))
   .media-right
     .buttons
       - if user_signed_in? && current_user.uid.to_i != user.uid.to_i && current_user.twitter_user

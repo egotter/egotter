@@ -1,5 +1,5 @@
 - template_name = tweets_or_users[0].is_a?(TwitterDB::User) ? 'twitter/user' : 'twitter/tweet'
-= render(partial: template_name, collection: tweets_or_users, cached: true, locals: {uids: []}, formats: %i(html))
+= render(partial: template_name, collection: tweets_or_users, cached: true, formats: %i(html))
 
 - unless tweets_or_users.last_page?
   .loading-image.relationships.see-more.text-center{data: {type: type, next_page: tweets_or_users.next_page}}= image_tag '/ajax-loader.gif'

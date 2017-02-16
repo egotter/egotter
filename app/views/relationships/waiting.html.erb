@@ -1,7 +1,7 @@
 <%= render(partial: 'profiles/overview', locals: {user: @twitter_users[0], unique_id: @twitter_users[0].uid}) %>
 
 <div class="twitter users" style="margin-top: 15px;">
-  <%= render(partial: 'twitter/user', cached: true, locals: {uids: [], user: @twitter_users[1]}, formats: %i(html)) %>
+  <%= render(partial: 'twitter/user', cached: true, locals: {user: @twitter_users[1]}, formats: %i(html)) %>
 </div>
 
 <script>
