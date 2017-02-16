@@ -4,7 +4,7 @@
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
           <%= link_to(search_path(screen_name: user.screen_name), class: 'icon-link') do %>
-            <img src="<%= user.profile_image_url_https.to_s %>" width="48" height="48">
+            <%= bigger_icon_img(user) %>
           <% end %>
           <div class="name">
             <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user_name(user)}".html_safe, search_path(screen_name: user.screen_name)) %>

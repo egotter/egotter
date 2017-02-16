@@ -8,8 +8,7 @@
 %p.alert.alert-info{style: 'z-index: 10000; margin-bottom: 15px; display: none;'}
   = t('searches.waiting.updating_is_finished_msg', link: link_to(t('dictionary.this_link'), '#')).html_safe
 
-= render(partial: 'profiles/overview',
-  locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid})
+= render(partial: 'profiles/overview', locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid})
 
 :javascript
   $(function () {

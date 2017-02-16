@@ -38,4 +38,20 @@ module TwitterHelper
     verified = '&nbsp;<span class="glyphicon glyphicon-ok"></span>'
     "#{user.name}#{protected if user.protected}#{verified if user.verified}".html_safe
   end
+
+  def normal_icon_url(user)
+    user.profile_image_url_https.to_s
+  end
+
+  def normal_icon_img(user, options = {})
+    image_tag normal_icon_url(user), {size: '48x48', alt: user.screen_name}.merge(options)
+  end
+
+  def bigger_icon_url(user)
+    user.profile_image_url_https.to_s.gsub(/_normal(\.jpg$)/, '_bigger\1')
+  end
+
+  def bigger_icon_img(user, options = {})
+    image_tag bigger_icon_url(user), {size: '73x73', alt: user.screen_name}.merge(options)
+  end
 end

@@ -1,5 +1,5 @@
 <span data-toggle="modal" data-target=".profile-overview-modal.<%= icon.uid %>">
-  <img src="<%= icon.profile_image_url_https.to_s %>" alt="<%= icon.screen_name %>" width="48" height="48">
+  <%= normal_icon_img(icon) %>
 </span>
 
 <% rendered_users << icon %>

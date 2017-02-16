@@ -4,7 +4,7 @@
       <div id="friend_map" style="height: 240px; margin: 0 auto;"></div>
       <%
         users = (user_items.map{|item| item[:target] } << tu)
-        nodes = users.map { |user| {id: user.screen_name, url: user.profile_image_url_https.to_s} }
+        nodes = users.map { |user| {id: user.screen_name, url: normal_icon_url(user)} }
         links = users.map { |user| {source: tu.screen_name, target: user.screen_name, value: 1, group: 0} }
       %>
       <script>
