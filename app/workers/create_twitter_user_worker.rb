@@ -59,7 +59,6 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
-    Rollbar.warn(e) # TODO NameError undefined local variable or method `e'
   rescue Twitter::Error::TooManyRequests => e
     log.update(
       status: false,

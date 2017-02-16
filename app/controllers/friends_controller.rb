@@ -38,7 +38,8 @@ class FriendsController < ApplicationController
     else
       @screen_name = @tu.screen_name
       @redirect_path = redirect_path
-      render layout: false
+      @via = params['via']
+      render template: 'searches/create', layout: false
     end
   end
 
@@ -48,7 +49,7 @@ class FriendsController < ApplicationController
     respond_to do |format|
       format.html { render }
       format.json do
-        tweets_or_users = Kaminari.paginate_array(@twitter_user.send(@type)).page(params[:page]).per(50)
+        tweets_or_users = @twitter_user.send(@type).page(params[:page]).per(50)
         if tweets_or_users.empty?
           render json: {empty: true}, status: 200
         else

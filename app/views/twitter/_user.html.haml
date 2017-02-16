@@ -20,7 +20,7 @@
           %button.btn.btn-default.no-follow{type: 'button'}
             %span.text-muted.glyphicon.glyphicon-plus
 
-      = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name), method: :post do
+      = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: "#{controller_name}/#{action_name}"), method: :post do
         %button.btn.btn-info{type: 'button'}
           %span.glyphicon.glyphicon-search
   .description= linkify(user.description)

@@ -38,7 +38,8 @@ class OneSidedFriendsController < ApplicationController
     else
       @screen_name = @tu.screen_name
       @redirect_path = redirect_path
-      render layout: false
+      @via = params['via']
+      render template: 'searches/create', layout: false
     end
   end
 

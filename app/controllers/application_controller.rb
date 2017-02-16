@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
       if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
         @screen_name = params['screen_name']
         @redirect_path = search_path(screen_name: @screen_name)
+        @via = params['via']
         render template: 'searches/create', layout: false
       else
         logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
