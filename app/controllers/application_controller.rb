@@ -29,7 +29,7 @@ class ApplicationController < ActionController::Base
 
   def not_found
     if request.device_type == :crawler
-      redirect_to root_path
+      request.xhr? ? render(nothing: true, status: 404) : redirect_to(root_path)
     else
       if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
         @screen_name = params['screen_name']
@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
         render template: 'searches/create', layout: false
       else
         logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
-        redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+        request.xhr? ? render(nothing: true, status: 404) : redirect_to(root_path, alert: t('before_sign_in.that_page_doesnt_exist'))
       end
     end
   end
