@@ -1,6 +1,6 @@
 .share-buttons
   .inner
-    - tweet_text = t('one_sided_friends.show.tweet', user: twitter_user.mention_name, one_sided_friends: twitter_user.one_sided_friends.size, one_sided_followers: twitter_user.one_sided_followers.size, mutual_friends: twitter_user.mutual_friends.size)
+    - tweet_text = t('one_sided_friends.show.tweet', user: twitter_user.mention_name, one_sided_friends: twitter_user.one_sided_friend_uids.size, one_sided_followers: twitter_user.one_sided_follower_uids.size, mutual_friends: twitter_user.mutual_friend_uids.size)
     - text = ".#{tweet_text} #egotter #OneSidedFriends #{one_sided_friend_url(screen_name: twitter_user.screen_name, type: type)}"
     - onclick = "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
     %a.twitter-button{href: intent_url(text), onclick: onclick}
@@ -11,13 +11,13 @@
 %ul.nav.nav-tabs.nav-justified{role: 'tablist'}
   %li.nav-item{class: ('active' if type == 'one_sided_friends')}
     %a.nav-link{href: '#one-sided-friends', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.one_sided_friends.num', num: twitter_user.one_sided_friends.size).html_safe
+      = t('searches.one_sided_friends.num', num: twitter_user.one_sided_friend_uids.size).html_safe
   %li.nav-item{class: ('active' if type == 'one_sided_followers')}
     %a.nav-link{href: '#one-sided-followers', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.one_sided_followers.num', num: twitter_user.one_sided_followers.size).html_safe
+      = t('searches.one_sided_followers.num', num: twitter_user.one_sided_follower_uids.size).html_safe
   %li.nav-item{class: ('active' if type == 'mutual_friends')}
     %a.nav-link{href: '#mutual-friends', role: 'tab', 'data-toggle' => 'tab'}
-      = t('searches.mutual_friends.num', num: twitter_user.mutual_friends.size).html_safe
+      = t('searches.mutual_friends.num', num: twitter_user.mutual_friend_uids.size).html_safe
 
 .tab-content.one-sided-friends.twitter.users
   #one-sided-friends.tab-pane{role: 'tabpanel', class: ('active' if type == 'one_sided_friends')}

@@ -48,7 +48,7 @@ class OneSidedFriendsController < ApplicationController
     respond_to do |format|
       format.html { render }
       format.json do
-        users = Kaminari.paginate_array(@twitter_user.send(@type)).page(params[:page]).per(50)
+        users = @twitter_user.send(@type).page(params[:page]).per(50)
         if users.empty?
           render json: {empty: true}, status: 200
         else

@@ -3,12 +3,11 @@
 
 - breadcrumb :one_sided_friend, @twitter_user.screen_name
 
-- page_title = t('one_sided_friends.show.title', user: @twitter_user.mention_name, one_sided_friends: @twitter_user.one_sided_friends.size, one_sided_followers: @twitter_user.one_sided_followers.size, mutual_friends: @twitter_user.mutual_friends.size)
+- page_title = t('one_sided_friends.show.title', user: @twitter_user.mention_name, one_sided_friends: @twitter_user.one_sided_friend_uids.size, one_sided_followers: @twitter_user.one_sided_follower_uids.size, mutual_friends: @twitter_user.mutual_friend_uids.size)
 - title page_title
-- set_meta_tags description: t('one_sided_friends.show.description', user: @twitter_user.mention_name, one_sided_friends: @twitter_user.one_sided_friends.size, one_sided_followers: @twitter_user.one_sided_followers.size, mutual_friends: @twitter_user.mutual_friends.size)
+- set_meta_tags description: t('one_sided_friends.show.description', user: @twitter_user.mention_name, one_sided_friends: @twitter_user.one_sided_friend_uids.size, one_sided_followers: @twitter_user.one_sided_follower_uids.size, mutual_friends: @twitter_user.mutual_friend_uids.size)
 
-= render(partial: 'profiles/overview',
-  locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
 :javascript
   $(function () {

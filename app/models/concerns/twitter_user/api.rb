@@ -16,7 +16,7 @@ module Concerns::TwitterUser::Api
 
   def one_sided_friends
     uids = one_sided_friend_uids
-    uids.empty? ? [] : friends.where(uid: uids)
+    uids.empty? ? friends.none : friends.where(uid: uids)
   end
 
   def one_sided_follower_uids
@@ -25,7 +25,7 @@ module Concerns::TwitterUser::Api
 
   def one_sided_followers
     uids = one_sided_follower_uids
-    uids.empty? ? [] : followers.where(uid: uids)
+    uids.empty? ? followers.none : followers.where(uid: uids)
   end
 
   def mutual_friend_uids
@@ -34,7 +34,7 @@ module Concerns::TwitterUser::Api
 
   def mutual_friends
     uids = mutual_friend_uids
-    uids.empty? ? [] : friends.where(uid: uids)
+    uids.empty? ? friends.none : friends.where(uid: uids)
   end
 
   def common_friend_uids(other)
