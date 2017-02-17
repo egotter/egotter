@@ -1,12 +1,18 @@
 module SearchHistoriesHelper
 
-  TTL = Rails.env.development? ? 1.second : 5.minutes
+  TTL = Rails.env.development? ? 1.minute : 5.minutes
 
   def search_histories_list
-    redis.fetch("search_histories:#{current_user_id}", ttl: TTL) do
-      uids = BackgroundSearchLog.success_logs(current_user_id).pluck(:uid).unix_uniq.take(10)
-      twitter_users = TwitterUser.where(uid: uids.uniq).index_by { |tu| tu.uid.to_i }
-      uids.map { |uid| twitter_users[uid.to_i] }.compact
+    user_id = current_user_id
+    key = "search_histories:#{user_id}"
+    if redis.exists(key)
+      JSON.parse(redis.get(key)).map { |user| Hashie::Mash.new(user) }
+    else
+      CreateSearchHistoriesWorker.perform_async(user_id, TTL)
+      []
     end
+  rescue => e
+    logger.warn "#{__method__}: #{e.class} #{e.message}"
+    []
   end
 end

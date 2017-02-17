@@ -4,6 +4,7 @@
 :queues:
   - egotter
   - CreateForbiddenUserWorker
+  - CreateFriendsAndFollowersWorker
   - CreatePollingLogWorker
   - CreateModalOpenLogWorker
   - CreateNotificationMessageWorker
@@ -11,8 +12,10 @@
   - CreatePageCacheWorker
   - CreatePromptReportWorker
   - CreateRelationshipWorker
+  - CreateSearchHistoriesWorker
   - CreateSearchLogWorker
   - CreateSignInLogWorker
+  - CreateTweetsWorker
   - CreateTwitterUserWorker
   - FollowEgotterWorker
   - UpdateNotificationMessageWorker

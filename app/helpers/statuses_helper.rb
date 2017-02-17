@@ -1,12 +1,17 @@
 module StatusesHelper
+
+  TTL = Rails.env.development? ? 1.minute : 1.day
+
   def tweets_for(keyword)
     key = "tweets_cache_for:#{keyword}"
-    json = redis.fetch(key, ttl: 1.day) do
-      client.search(keyword).take(5).to_json
+    if redis.exists(key)
+      JSON.parse(redis.get(key)).map { |tweet| Hashie::Mash.new(tweet) }
+    else
+      CreateTweetsWorker.perform_async(keyword, TTL)
+      []
     end
-    JSON.load(json).map { |s| Hashie::Mash.new(s) }
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{keyword}"
+    logger.warn "#{__method__}: #{e.class} #{e.message} #{keyword}"
     []
   end
 end
