@@ -203,8 +203,6 @@ module SearchesHelper
       medium:      params[:medium] ? params[:medium] : '',
     }
     searched_uids.add(uid)
-    jid = CreateTwitterUserWorker.perform_async(values)
-    logger.info "#{self.class}##{__method__}: #{jid}"
-    jid
+    CreateTwitterUserWorker.perform_async(values)
   end
 end
