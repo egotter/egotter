@@ -38,7 +38,17 @@ class UpdateTwitterUserWorker
       return
     end
 
-    new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: user, context: :update)
+    new_tu = TwitterUser.build_by_user(client.user(uid))
+    relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+    new_tu.build_friends_and_followers(relations)
+    if existing_tu.present? && !existing_tu.diff(new_tu).any?
+      existing_tu.increment(:update_count).save
+      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
+      notify(user, existing_tu)
+      return
+    end
+
+    new_tu.build_other_relations(relations)
     new_tu.user_id = user.id
     if new_tu.friendless?
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.screen_name}] has too many friends.")

@@ -102,15 +102,8 @@ module Concerns::TwitterUser::Validation
   end
 
   # not using in valid?
-  def too_many_friends?(login_user:, context:)
-    friends_limit =
-      if context == :search
-        login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS
-      else
-        User.exists?(uid: uid.to_i) ? TOO_MANY_FRIENDS : MANY_FRIENDS
-      end
-
-    if friends_count + followers_count > friends_limit
+  def too_many_friends?(login_user:)
+    if friends_count + followers_count > (login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS)
       errors[:base] << "too many friends #{friends_count} and followers #{followers_count}"
       return true
     end

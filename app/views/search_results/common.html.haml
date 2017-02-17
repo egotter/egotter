@@ -16,7 +16,7 @@
       locals: {params: {controller: :searches, action: action_name, screen_name: @searched_tw_user.screen_name}, items: @user_items})
 - else
   - if user_signed_in?
-    - if @searched_tw_user.too_many_friends?(login_user: current_user, context: :search)
+    - if @searched_tw_user.too_many_friends?(login_user: current_user)
       %div= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy)
     - else
       %div= raw t('after_sign_in.empty_and_other_reason', kaomoji: Kaomoji.happy)

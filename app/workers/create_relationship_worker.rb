@@ -40,7 +40,10 @@ class CreateRelationshipWorker
         next
       end
 
-      new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: user, context: :search)
+      new_tu = TwitterUser.build_by_user(client.user(uid))
+      relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+      new_tu.build_friends_and_followers(relations)
+      new_tu.build_other_relations(relations)
       new_tu.user_id = user.nil? ? -1 : user.id
       if new_tu.save
         created << new_tu.id

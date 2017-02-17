@@ -25,7 +25,7 @@
 = render partial: 'relationships/search_form', locals: {via: 'relationships/show/top_input'}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
-- if @twitter_users.any? { |twitter_user| twitter_user.too_many_friends?(login_user: current_user, context: :search) }
+- if @twitter_users.any? { |twitter_user| twitter_user.too_many_friends?(login_user: current_user) }
   = render partial: 'relationships/show/empty', locals: {twitter_users: @twitter_users}
 - else
   = render partial: 'relationships/show/present', locals: {twitter_users: @twitter_users, type: @type}

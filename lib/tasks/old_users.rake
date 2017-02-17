@@ -70,7 +70,10 @@ namespace :old_users do
       client = user.api_client
 
       begin
-        twitter_user = TwitterUser.build_with_relations(client.user(user.uid), client: client, login_user: user, context: :search)
+        twitter_user = TwitterUser.build_by_user(client.user(user.uid.to_i))
+        relations = TwitterUserFetcher.new(twitter_user, client: client, login_user: user).fetch
+        twitter_user.build_friends_and_followers(relations)
+        twitter_user.build_other_relations(relations)
         twitter_user.user_id = -1
 
         if twitter_user.save

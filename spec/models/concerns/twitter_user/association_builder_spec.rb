@@ -1,50 +1,24 @@
 require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::AssociationBuilder do
-  let(:twitter_user) { TwitterUser.new(uid: 1, screen_name: 'sn', user_info: {}.to_json) }
+  let(:status) { Hashie::Mash.new({text: 'status', user: {id: 1, screen_name: 'sn'}}) }
+  let(:relations) { {friend_ids: [1, 2, 3], follower_ids: [4, 5], user_timeline: [status]} }
+  let(:twitter_user) { TwitterUser.new }
 
-  describe '#build_relations' do
-    let(:client) { nil }
-    let(:login_user) { nil }
-
-    let(:friends) { 3.times.map { |n| Hashie::Mash.new({id: n, screen_name: "sn#{n}"}) } }
-    let(:followers) { 3.times.map { |n| Hashie::Mash.new({id: n * 2, screen_name: "sn#{n}"}) } }
-    let(:statuses) { 3.times.map { |n| Hashie::Mash.new(user: {id: n, screen_name: "sn#{n}"}) } }
-    let(:relations) do
-      {
-        friends: friends,
-        followers: followers,
-        user_timeline: statuses,
-        mentions_timeline: [],
-        search: [],
-        favorites: []
-      }
-    end
-
-    before do
-      allow(twitter_user).to receive(:fetch_relations).and_return(relations)
-    end
-
-    it 'builds friendships' do
-      twitter_user.build_relations(client, login_user, :search)
-      expect(twitter_user.friendships.map(&:friend_uid)).to eq(friends.map(&:id))
-    end
-
-    it 'builds followerships' do
-      twitter_user.build_relations(client, login_user, :search)
-      expect(twitter_user.followerships.map(&:follower_uid)).to eq(followers.map(&:id))
+  describe '#build_friends_and_followers' do
+    before { twitter_user.build_friends_and_followers(relations) }
+    it 'builds friends and followers' do
+      expect(twitter_user.friendships.map(&:friend_uid)).to match_array(relations[:friend_ids])
+      expect(twitter_user.followerships.map(&:follower_uid)).to match_array(relations[:follower_ids])
+      expect(twitter_user.friends_size).to eq(relations[:friend_ids].size)
+      expect(twitter_user.followers_size).to eq(relations[:follower_ids].size)
     end
   end
 
-  describe '#reject_relation_names' do
-    context '#too_many_friends? returns true' do
-      before { allow(twitter_user).to receive(:too_many_friends?).and_return(true) }
-
-      it 'includes :friends and :followers' do
-        candidates = twitter_user.send(:reject_relation_names, nil, :search)
-        expect(candidates).to be_include(:friends)
-        expect(candidates).to be_include(:followers)
-      end
+  describe '#build_other_relations' do
+    before { twitter_user.build_other_relations(relations) }
+    it 'builds other relations' do
+      expect(twitter_user.statuses.size).to eq(relations[:user_timeline].size)
     end
   end
 end

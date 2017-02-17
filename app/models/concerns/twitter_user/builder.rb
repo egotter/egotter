@@ -12,14 +12,5 @@ module Concerns::TwitterUser::Builder
         user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json
       )
     end
-
-    def build_with_relations(user, client:, login_user:, context: nil)
-      tu = build_by_user(user)
-      tu.build_relations(client, login_user, context)
-      tu
-    end
-  end
-
-  included do
   end
 end

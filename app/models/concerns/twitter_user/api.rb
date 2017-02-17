@@ -101,7 +101,7 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_removed
-    return [] unless self.class.many?(uid)
+    return followers.none unless self.class.many?(uid)
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
       uids = older.new_removed_uids(newer)
@@ -128,26 +128,30 @@ module Concerns::TwitterUser::Api
 
   def new_friend_uids
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
-    return [] if newer.nil? || older.nil? || older.friends_size == 0
-    newer.friend_uids - older.friend_uids
+    return [] if newer.nil?
+    return newer.friend_uids.take(8) if older.nil? || older.friends_size == 0
+    uids = newer.friend_uids - older.friend_uids
+    uids.empty? ? newer.friend_uids.take(8) : uids
   end
 
   def new_friends
     uids = new_friend_uids
-    return [] if uids.empty?
+    return friends.none if uids.empty?
     users = TwitterDB::User.where(uid: uids).index_by(&:uid)
     uids.map { |uid| users[uid] }.compact
   end
 
   def new_follower_uids
     newer, older = TwitterUser.with_friends.where(uid: uid).order(created_at: :desc).take(2)
-    return [] if newer.nil? || older.nil? || older.followers_size == 0
-    newer.follower_uids - older.follower_uids
+    return [] if newer.nil?
+    return newer.follower_uids.take(8) if older.nil? || older.followers_size == 0
+    uids = newer.follower_uids - older.follower_uids
+    uids.empty? ? newer.follower_uids.take(8) : uids
   end
 
   def new_followers
     uids = new_follower_uids
-    return [] if uids.empty?
+    return followers.none if uids.empty?
     users = TwitterDB::User.where(uid: uids).index_by(&:uid)
     uids.map { |uid| users[uid] }.compact
   end

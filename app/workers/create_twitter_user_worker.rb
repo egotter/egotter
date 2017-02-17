@@ -37,9 +37,25 @@ class CreateTwitterUserWorker
       return
     end
 
-    new_tu = TwitterUser.build_with_relations(client.user(uid), client: client, login_user: user, context: :search)
+    new_tu = TwitterUser.build_by_user(client.user(uid))
+    relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+
+    build_start = Time.zone.now
+    new_tu.build_friends_and_followers(relations)
+    Rails.logger.info "benchmark #{self.class} build_friends_and_followers finished #{Time.zone.now - build_start}"
+
+    if existing_tu.present? && !existing_tu.diff(new_tu).any?
+      existing_tu.increment(:search_count).save
+      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
+      notify(user, existing_tu)
+      return
+    end
+
+    new_tu.build_other_relations(relations)
+    Rails.logger.info "benchmark #{self.class} build_other_relations finished #{Time.zone.now - build_start}"
     new_tu.user_id = user.nil? ? -1 : user.id
     if new_tu.save
+      Rails.logger.info "benchmark #{self.class} save finished #{Time.zone.now - build_start}"
       new_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
       notify(user, new_tu)
