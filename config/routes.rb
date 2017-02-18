@@ -30,6 +30,7 @@ Rails.application.routes.draw do
   end
   resources :searches, only: %i(show), param: :screen_name
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
+  post 'searches/:screen_name/force_update', to: 'searches#force_update', as: :force_update
 
   resources :search_results, only: :show, param: :uid do
     %i(new_friends new_followers favoriting close_friends clusters_belong_to usage_stats).each { |menu| get menu, on: :member }

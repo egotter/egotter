@@ -35,7 +35,7 @@ ja:
     side_bar:
       update_now: "最新の情報に更新する"
       updated_at: "更新日時 %{time}"
-      recommendation: "あなたにおすすめ"
+      recommendation: "おすすめユーザー"
       reasons:
         removed: "リムられ"
         close_friends: "仲良し"

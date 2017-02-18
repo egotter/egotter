@@ -42,6 +42,7 @@ class CreateRelationshipWorker
 
       new_tu = TwitterUser.build_by_user(client.user(uid))
       relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+      ImportFriendsAndFollowersWorker.perform_async(user_id, uid) if %i(friend_ids follower_ids).all? { |key| relations.has_key?(key) }
       new_tu.build_friends_and_followers(relations)
       new_tu.build_other_relations(relations)
       new_tu.user_id = user.nil? ? -1 : user.id

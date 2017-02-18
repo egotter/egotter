@@ -13,12 +13,10 @@ class TwitterUserFetcher
   end
 
   def fetch
-    relations = fetch_relations # This process takes a few seconds.
-    if %i(friend_ids follower_ids).all? { |key| relations.has_key?(key) }
-      CreateFriendsAndFollowersWorker.perform_async(login_user ? login_user.id : -1, uid)
-    end
-    relations
+    fetch_relations # This process takes a few seconds.
   end
+
+  private
 
   # Not using uniq for mentions, search_results and favorites intentionally
   def fetch_relations

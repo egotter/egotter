@@ -21,7 +21,8 @@ module Concerns::TwitterUser::AssociationBuilder
   end
 
   def build_other_relations(relations)
-    # This process takes a few seconds.
+    # Each process takes a few seconds if the relation has thousands of objects.
+
     ActiveRecord::Base.benchmark('benchmark AssociationBuilder#build statuses') do
       relations[:user_timeline].each do |status|
         statuses.build(uid: status.user.id, screen_name: status.user.screen_name, status_info: status.slice(*Status::STATUS_SAVE_KEYS).to_json)
@@ -45,7 +46,6 @@ module Concerns::TwitterUser::AssociationBuilder
       search_results.each { |search_result| search_result.query = search_query }
     end
 
-    # This process takes a few seconds.
     ActiveRecord::Base.benchmark('benchmark AssociationBuilder#build favorites') do
       relations[:favorites].each do |favorite|
         favorites.build(uid: favorite.user.id, screen_name: favorite.user.screen_name, status_info: favorite.slice(*Status::STATUS_SAVE_KEYS).to_json)

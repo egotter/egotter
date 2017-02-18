@@ -79,7 +79,7 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
     console.log(res, text_status, xhr.status, interval.current(), retry.current());
 
     if (xhr.status === 200) {
-      console.log(createdAt, res.created_at);
+      console.log(new Date(createdAt * 1000), new Date(res.created_at * 1000));
       $.post(pollingLogsPath, {_action: action, status: true, time: performance.now() - pollingStart, retry_count: retry.current()});
 
       if (createdAt < res.created_at) {

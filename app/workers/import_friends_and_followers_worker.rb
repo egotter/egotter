@@ -1,4 +1,4 @@
-class CreateFriendsAndFollowersWorker
+class ImportFriendsAndFollowersWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: false, backtrace: false
 
@@ -44,6 +44,8 @@ class CreateFriendsAndFollowersWorker
 
       TwitterDB::User.find_by(uid: uid).tap { |me| me.update_columns(friends_size: me.friendships.size, followers_size: me.followerships.size) }
     }}}
+
+    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user.screen_name}"
 
   rescue => e
     logger.warn "#{self.class}: #{e.class} #{e.message} #{user_id} #{uid}"

@@ -40,8 +40,10 @@ class UpdateTwitterUserWorker
 
     new_tu = TwitterUser.build_by_user(client.user(uid))
     relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+    ImportFriendsAndFollowersWorker.perform_async(user_id, uid) if %i(friend_ids follower_ids).all? { |key| relations.has_key?(key) }
+
     new_tu.build_friends_and_followers(relations)
-    if existing_tu.present? && !existing_tu.diff(new_tu).any?
+    if existing_tu.present? && existing_tu.diff(new_tu).empty?
       existing_tu.increment(:update_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
       notify(user, existing_tu)

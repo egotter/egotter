@@ -27,46 +27,42 @@ class CreateTwitterUserWorker
     user = User.find_by(id: user_id)
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
-    Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''}) unless user.nil?
 
     existing_tu = TwitterUser.latest(uid)
-    if existing_tu.present? && existing_tu.fresh?
+    if existing_tu&.fresh?
       existing_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
       notify(user, existing_tu)
-      return
+      return after_perform(user_id, uid, existing_tu.screen_name)
     end
 
     new_tu = TwitterUser.build_by_user(client.user(uid))
     relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+    ImportFriendsAndFollowersWorker.perform_async(user_id, uid) if %i(friend_ids follower_ids).all? { |key| relations.has_key?(key) }
 
-    build_start = Time.zone.now
     new_tu.build_friends_and_followers(relations)
-    Rails.logger.info "benchmark #{self.class} build_friends_and_followers finished #{Time.zone.now - build_start}"
-
-    if existing_tu.present? && !existing_tu.diff(new_tu).any?
+    if existing_tu&.diff(new_tu)&.empty?
       existing_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
       notify(user, existing_tu)
-      return
+      return after_perform(user_id, uid, existing_tu.screen_name)
     end
 
     new_tu.build_other_relations(relations)
-    Rails.logger.info "benchmark #{self.class} build_other_relations finished #{Time.zone.now - build_start}"
-    new_tu.user_id = user.nil? ? -1 : user.id
+    new_tu.user_id = user_id
     if new_tu.save
-      Rails.logger.info "benchmark #{self.class} save finished #{Time.zone.now - build_start}"
+      ImportReplyingRepliedAndFavoritesWorker.perform_async(user_id, new_tu.id)
       new_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
       notify(user, new_tu)
-      return
+      return after_perform(user_id, uid, new_tu.screen_name)
     end
 
     if existing_tu.present?
       existing_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed.")
       notify(user, existing_tu)
-      return
+      return after_perform(user_id, uid, existing_tu.screen_name)
     end
 
     log.update(
@@ -82,7 +78,6 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
       message: ''
     )
-    Rollbar.warn(e)
   rescue Twitter::Error::Unauthorized => e
     log.update(
       status: false,
@@ -90,19 +85,19 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::Unauthorized::MESSAGE,
       message: ''
     )
-    Rollbar.warn(e)
   rescue => e
-    message = e.message.truncate(1000)
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{message}"
-    logger.info e.backtrace.take(10).join("\n")
+    message = e.message.truncate(200)
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{values.inspect}"
+    logger.info e.backtrace.join("\n")
     log.update(
       status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{message}"
     )
-    Rollbar.warn(e)
   end
+
+  private
 
   def notify(login_user, tu)
     searched_user = User.find_by(uid: tu.uid)
@@ -115,6 +110,9 @@ class CreateTwitterUserWorker
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.id} #{tu.inspect}"
-    Rollbar.warn(e)
+  end
+
+  def after_perform(user_id, uid, screen_name)
+    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{screen_name}"
   end
 end
