@@ -3,7 +3,7 @@
   &.tweets {
     .media {
       border-bottom: 1px solid #e6e6e6;
-      padding-bottom: 15px;
+      padding: 0 15px 15px 15px;
     }
 
     .media-right .buttons {
@@ -34,7 +34,8 @@
     }
 
     .description,
-    .tweet-text {
+    .tweet-text,
+    .reason {
       font-size: small;
       margin-top: 5px;
     }

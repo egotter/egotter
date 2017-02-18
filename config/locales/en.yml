@@ -32,6 +32,13 @@ en:
       tweet: "Tweets"
       related_pages: "Related Pages"
       see_on_twitter: "See on Twitter"
+    side_bar:
+      update_now: "Update"
+      updated_at: "updated at %{time}"
+      recommendation: "Recommendation"
+      reasons:
+        removed: "You are Removed"
+        close_friends: "Close Friend"
   onesignal:
     defaultNotification:
       title: 'egotter'

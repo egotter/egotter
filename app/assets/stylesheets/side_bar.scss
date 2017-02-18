@@ -1,0 +1,14 @@
+.side-bar {
+  background-color: #ffffff;
+  border-left: 1px solid #e7e7e7;
+
+  .row {
+    padding: 15px;
+    border-bottom: 1px solid #e7e7e7;
+  }
+
+  .row:last-child {
+    padding-bottom: 0;
+    border-bottom: none;
+  }
+}

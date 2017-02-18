@@ -52,31 +52,29 @@
     %nav.navbar.navbar-default
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
-          .col-xs-12.col-sm-10.col-md-10.col-lg-10.header-container
+          .col-xs-12.header-container
             = render partial: 'layouts/header'
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
     = render partial: 'layouts/search_histories' unless under_maintenance?
 
     - if notice || alert
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
-          .col-xs-12.col-sm-10.col-md-10.col-lg-10.notice-container
+          .col-xs-12.notice-container
             - if notice
               %p.alert.alert-info{style: 'margin-top: 15px;'}= raw notice
             - if alert
               %p.alert.alert-warning{style: 'margin-top: 15px;'}= raw alert
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
-    .container
+    .container.main-container
       .row
-        .hidden-xs.col-sm-1.col-md-1.col-lg-1
-        .col-xs-12.col-sm-10.col-md-10.col-lg-10.yield-container
+        .col-xs-12.yield-container{class: "#{'col-sm-12 col-md-9 col-lg-9' if show_side_bar?}"}
           = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
           = yield
-        .hidden-xs.col-sm-1.col-md-1.col-lg-1
+        - if show_side_bar?
+          .hidden-xs.hidden-sm.col-md-3.col-lg-3.side-bar.text-center
+            = render partial: 'layouts/side_bar', locals: {twitter_user: (@searched_tw_user || @twitter_user)}
+
 
     %link{href: '//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css', rel: 'stylesheet', type: 'text/css'}/
     %link{href: '//cdn.jsdelivr.net/jquery.slick/1.6.0/slick-theme.css', rel: 'stylesheet', type: 'text/css'}/
@@ -94,24 +92,19 @@
       - unless user_signed_in?
         .container
           .row
-            .hidden-xs.col-sm-1.col-md-1.col-lg-1
-            .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer.text-center
+            .col-xs-12.pre-footer.text-center
               %h2.h4= t('searches.new.feature_007')
               = t('searches.new.feature_desc_007', link: link_to(t('dictionary.view_more_detail'), welcome_path(via: "#{controller_name}/#{action_name}/feature_desc_007_bottom"))).html_safe
               = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button_bottom"), class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;'
-            .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
-          .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer
+          .col-xs-12.pre-footer
             = render partial: 'layouts/share'
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
-          .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer
+          .col-xs-12.pre-footer
             %h2.h4.text-center= t('searches.common.popular')
             - if %w(one_sided_friends unfriends inactive_friends friends conversations relationships).include? controller_name
               %h2.h4.text-left
@@ -148,15 +141,12 @@
                 = link_to t('conversations.new.plain_title').html_safe, conversations_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('conversations.new.short_description')
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
       .container
         .row
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
-          .col-xs-12.col-sm-10.col-md-10.col-lg-10.pre-footer
+          .col-xs-12.pre-footer
             %h2.h4= t('searches.common.information')
             %table.table.table-bordered.table-condensed.table-responsive
               = render(partial: 'information/information', collection: information_list, cached: true)
-          .hidden-xs.col-sm-1.col-md-1.col-lg-1
 
     = render partial: 'layouts/footer' unless under_maintenance?
