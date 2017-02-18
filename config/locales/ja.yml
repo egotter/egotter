@@ -32,6 +32,13 @@ ja:
       tweet: "ツイート"
       related_pages: "関連ページ"
       see_on_twitter: "ツイッターで見る"
+    side_bar:
+      update_now: "最新の情報に更新する"
+      updated_at: "更新日時 %{time}"
+      recommendation: "あなたにおすすめ"
+      reasons:
+        removed: "リムられ"
+        close_friends: "仲良し"
     new:
       lead_001: "スマホでかんたんフォロー確認"
       lead_002: "スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです"
@@ -382,8 +389,9 @@ ja:
     continue_reading: "続きはこちら → "
     view_more: "続きを見る"
     view_more_detail: "もっと詳しく"
-    view_more_needs_login: "ログインすると続きを見れます"
-    view_more_with_num: '続きを見る <span class="badge">%{num}</span>'
+    view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
+    under_calculation: "集計中です"
+    under_calculation_with_details: "フォロー・フォロワーの集計中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。"
     tweet_result: "結果をつぶやく"
     tweet_top_page: "つぶやく"
     created_at_and_updated_at: "更新日時"
