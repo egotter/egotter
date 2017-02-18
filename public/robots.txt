@@ -8,5 +8,7 @@ User-agent: *
 Disallow: /page_caches
 Disallow: /polling_logs
 Disallow: /modal_open_logs
+Disallow: /sign_in
+Disallow: /sign_out
 
 Sitemap: https://egotter.com/sitemap.xml.gz

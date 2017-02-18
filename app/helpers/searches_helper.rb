@@ -176,33 +176,4 @@ module SearchesHelper
       render text: t('before_sign_in.reject_crawler')
     end
   end
-
-  def add_create_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
-    return if request.device_type == :crawler
-
-    searched_uids = Util::SearchedUids.new(redis)
-    return if searched_uids.exists?(uid)
-
-    referral = find_referral(pushed_referers)
-
-    values = {
-      session_id:  fingerprint,
-      uid:         uid,
-      screen_name: screen_name,
-      action:      action_name,
-      user_id:     user_id,
-      auto:        %w(show).include?(action_name),
-      via:         params[:via] ? params[:via] : '',
-      device_type: request.device_type,
-      os:          request.os,
-      browser:     request.browser,
-      user_agent:  truncated_user_agent,
-      referer:     truncated_referer,
-      referral:    referral,
-      channel:     find_channel(referral),
-      medium:      params[:medium] ? params[:medium] : '',
-    }
-    searched_uids.add(uid)
-    CreateTwitterUserWorker.perform_async(values)
-  end
 end

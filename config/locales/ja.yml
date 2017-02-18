@@ -33,7 +33,10 @@ ja:
       related_pages: "関連ページ"
       see_on_twitter: "ツイッターで見る"
     sidebar:
+      update_request: "更新リクエスト"
+      update_request_needs_login: "更新リクエストにはログインが必要です。"
       update_now: "最新の情報に更新する"
+      login_and_update_xxx_now: "ログインして %{user} を最新の情報に更新する"
       updated_at: "更新日時 %{time}"
       recommendation: "おすすめユーザー"
       reasons:

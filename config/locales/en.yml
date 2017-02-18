@@ -33,7 +33,10 @@ en:
       related_pages: "Related Pages"
       see_on_twitter: "See on Twitter"
     sidebar:
-      update_now: "Update"
+      update_request: "Update Request"
+      update_request_needs_login: "Requesting to update needs Sign in."
+      update_now: "Update Request"
+      login_and_update_xxx_now: "Sign in and Update %{user}"
       updated_at: "updated at %{time}"
       recommendation: "Recommendation"
       reasons:

@@ -3,22 +3,23 @@ class SearchesController < ApplicationController
   include Concerns::Logging
   include SearchesHelper
   include PageCachesHelper
+  include WorkersHelper
 
-  before_action :need_login,     only: %i(common_friends common_followers)
+  before_action :need_login,     only: %i(force_update)
   before_action :reject_crawler, only: %i(create waiting)
-  before_action(only: Search::MENU + %i(create show)) { valid_screen_name?(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show)) { not_found_screen_name?(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show)) { authorized_search?(@tu) }
-  before_action(only: Search::MENU + %i(show)) { existing_uid?(@tu.uid.to_i) }
-  before_action only: Search::MENU + %i(show) do
+  before_action(only: Search::MENU + %i(create show force_update)) { valid_screen_name?(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show force_update)) { not_found_screen_name?(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show force_update)) { @tu = build_twitter_user(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show force_update)) { authorized_search?(@tu) }
+  before_action(only: Search::MENU + %i(show force_update)) { existing_uid?(@tu.uid.to_i) }
+  before_action only: Search::MENU + %i(show force_update) do
     @searched_tw_user = TwitterUser.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)
   end
   before_action(only: %i(waiting)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(waiting)) { searched_uid?(params[:uid].to_i) }
 
-  before_action only: (%i(new create waiting show) + Search::MENU) do
+  before_action only: (%i(new create waiting show force_update) + Search::MENU) do
     push_referer
 
     if session[:sign_in_from].present?
@@ -81,6 +82,11 @@ class SearchesController < ApplicationController
     end
     @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || search_path(screen_name: tu.screen_name))
     @searched_tw_user = tu
+  end
+
+  def force_update
+    add_force_update_twitter_user_worker_if_needed(@searched_tw_user.uid.to_i, user_id: current_user_id, screen_name: @searched_tw_user.screen_name)
+    head :ok
   end
 
   Search::MENU.each do |menu|

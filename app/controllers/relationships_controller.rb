@@ -2,7 +2,7 @@ class RelationshipsController < ApplicationController
   include Validation
   include Concerns::Logging
   include SearchesHelper
-  include RelationshipsHelper
+  include WorkersHelper
 
   before_action :reject_crawler, only: %i(create waiting)
   before_action(only: %i(create show)) { screen_names.all? { |sn| valid_screen_name?(sn) } }
