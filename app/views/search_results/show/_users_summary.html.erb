@@ -2,7 +2,7 @@
   begin
     uids = uids_for(tu, menu: name)
     users = TwitterDB::User.where(uid: uids.take(icon_limit)).index_by(&:uid)
-    users = uids.map { |uid| users[uid] }.compact
+    users = uids.take(icon_limit).map { |uid| users[uid] }.compact
   rescue => e
     uids = []
     users = []
@@ -19,10 +19,14 @@
 <div class="menu-items media">
   <div class="media-body">
     <h4 class="h5 media-heading"><%= title_for(name, tu.screen_name) %><div class="tooltip-container"><abbr title="<%= description_for(name, tu.screen_name) %>" rel="tooltip">i</abbr></div></h4>
-    <%= render(partial: 'search_results/show/icon', collection: users, cached: true, locals: {rendered_users: rendered_users}) %>
+    <% if users.any? %>
+      <%= render(partial: 'search_results/show/icon', collection: users, cached: true, locals: {rendered_users: rendered_users}) %>
+    <% else %>
+      <div class="text-muted"><%= t('dictionary.under_calculation_with_details') %></div>
+    <% end %>
   </div>
-  <div class="media-right">
-    <% if graph %>
+  <% if users.any? && graph %>
+    <div class="media-right">
       <div id="<%= graph.object_id %>" class="common-chart"></div>
       <script>
         $(function () {
@@ -33,9 +37,13 @@
           };
         });
       </script>
-    <% end %>
-  </div>
+    </div>
+  <% end %>
   <div>
-    <%= link_to(t('dictionary.view_more_with_num', num: uids.size).html_safe, search_path_for(name, tu.screen_name), class: 'btn btn-info btn-block') %>
+    <% if users.any? %>
+      <%= link_to(t('dictionary.view_more_with_num_html', num: uids.size), search_path_for(name, tu.screen_name), class: 'btn btn-info btn-block') %>
+    <% else %>
+      <%= link_to(t('dictionary.under_calculation'), '#', class: 'btn btn-info btn-block disabled') %>
+    <% end %>
   </div>
 </div>
