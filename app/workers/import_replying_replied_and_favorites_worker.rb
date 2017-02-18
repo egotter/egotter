@@ -20,7 +20,8 @@ class ImportReplyingRepliedAndFavoritesWorker
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{twitter_user.uid} #{twitter_user.screen_name}"
 
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{user_id} #{twitter_user_id}"
+    message = e.message.truncate(200)
+    logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{twitter_user_id}"
     logger.info e.backtrace.join "\n"
   end
 end

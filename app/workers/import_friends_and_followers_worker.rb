@@ -48,7 +48,8 @@ class ImportFriendsAndFollowersWorker
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user.screen_name}"
 
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{user_id} #{uid}"
+    message = e.message.truncate(200)
+    logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
   end
 end
