@@ -19,8 +19,8 @@
 .row
   %h4= t('searches.sidebar.recommendation')
   .twitter.users
-    - if twitter_user.unfriendships.any?
-      = render partial: 'twitter/sidebar/user', collection: twitter_user.unfriends.take(10), locals: {reason: t('searches.sidebar.reasons.removed')}
+    - if twitter_user.unfollowerships.any?
+      = render partial: 'twitter/sidebar/user', collection: twitter_user.unfollowers.take(10), locals: {reason: t('searches.sidebar.reasons.removed')}
     - else
       = render partial: 'twitter/sidebar/user', collection: twitter_user.close_friends.take(10), locals: {reason: t('searches.sidebar.reasons.close_friends')}
 
