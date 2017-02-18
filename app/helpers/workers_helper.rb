@@ -61,6 +61,8 @@ module WorkersHelper
   def add_create_relationship_worker_if_needed(uids, user_id:, screen_names:)
     return if request.device_type == :crawler
 
+    searched_uids = Util::SearchedUids.new(redis)
+    uids.each { |uid| searched_uids.add(uid) }
     referral = find_referral(pushed_referers)
 
     values = {
