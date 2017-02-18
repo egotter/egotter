@@ -4,7 +4,7 @@ module ApplicationHelper
   end
 
   def show_sidebar?
-    admin_signed_in? && %w(new waiting).exclude?(action_name) && request.device_type == :pc && (@searched_tw_user || @twitter_user)
+    %w(new waiting).exclude?(action_name) && request.device_type == :pc && (@searched_tw_user || @twitter_user)
   end
 
   def redis

@@ -11,7 +11,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170207004431) do
+ActiveRecord::Schema.define(version: 20170218015848) do
+
+  create_table "background_force_update_logs", force: :cascade do |t|
+    t.string   "session_id",  limit: 191,   default: "",    null: false
+    t.integer  "user_id",     limit: 4,     default: -1,    null: false
+    t.string   "uid",         limit: 191,   default: "-1",  null: false
+    t.string   "screen_name", limit: 191,   default: "",    null: false
+    t.string   "action",      limit: 191,   default: "",    null: false
+    t.string   "bot_uid",     limit: 191,   default: "-1",  null: false
+    t.boolean  "status",                    default: false, null: false
+    t.string   "reason",      limit: 191,   default: "",    null: false
+    t.text     "message",     limit: 65535,                 null: false
+    t.integer  "call_count",  limit: 4,     default: -1,    null: false
+    t.string   "via",         limit: 191,   default: "",    null: false
+    t.string   "device_type", limit: 191,   default: "",    null: false
+    t.string   "os",          limit: 191,   default: "",    null: false
+    t.string   "browser",     limit: 191,   default: "",    null: false
+    t.string   "user_agent",  limit: 191,   default: "",    null: false
+    t.string   "referer",     limit: 191,   default: "",    null: false
+    t.string   "referral",    limit: 191,   default: "",    null: false
+    t.string   "channel",     limit: 191,   default: "",    null: false
+    t.string   "medium",      limit: 191,   default: "",    null: false
+    t.datetime "created_at",                                null: false
+  end
+
+  add_index "background_force_update_logs", ["created_at"], name: "index_background_force_update_logs_on_created_at", using: :btree
+  add_index "background_force_update_logs", ["screen_name"], name: "index_background_force_update_logs_on_screen_name", using: :btree
+  add_index "background_force_update_logs", ["uid"], name: "index_background_force_update_logs_on_uid", using: :btree
+  add_index "background_force_update_logs", ["user_id"], name: "index_background_force_update_logs_on_user_id", using: :btree
 
   create_table "background_search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -193,6 +221,37 @@ ActiveRecord::Schema.define(version: 20170207004431) do
   add_index "friendships", ["friend_uid"], name: "index_friendships_on_friend_uid", using: :btree
   add_index "friendships", ["from_id", "friend_uid"], name: "index_friendships_on_from_id_and_friend_uid", unique: true, using: :btree
   add_index "friendships", ["from_id"], name: "index_friendships_on_from_id", using: :btree
+
+  create_table "latest_search_logs", force: :cascade do |t|
+    t.string   "session_id",  limit: 191, default: "",    null: false
+    t.integer  "user_id",     limit: 4,   default: -1,    null: false
+    t.string   "uid",         limit: 191, default: "",    null: false
+    t.string   "screen_name", limit: 191, default: "",    null: false
+    t.string   "action",      limit: 191, default: "",    null: false
+    t.boolean  "cache_hit",               default: false, null: false
+    t.boolean  "ego_surfing",             default: false, null: false
+    t.string   "method",      limit: 191, default: "",    null: false
+    t.string   "device_type", limit: 191, default: "",    null: false
+    t.string   "os",          limit: 191, default: "",    null: false
+    t.string   "browser",     limit: 191, default: "",    null: false
+    t.string   "user_agent",  limit: 191, default: "",    null: false
+    t.string   "referer",     limit: 191, default: "",    null: false
+    t.string   "referral",    limit: 191, default: "",    null: false
+    t.string   "channel",     limit: 191, default: "",    null: false
+    t.boolean  "first_time",              default: false, null: false
+    t.boolean  "landing",                 default: false, null: false
+    t.string   "medium",      limit: 191, default: "",    null: false
+    t.string   "ab_test",     limit: 191, default: "",    null: false
+    t.datetime "created_at",                              null: false
+  end
+
+  add_index "latest_search_logs", ["action"], name: "index_search_logs_on_action", using: :btree
+  add_index "latest_search_logs", ["created_at"], name: "index_search_logs_on_created_at", using: :btree
+  add_index "latest_search_logs", ["screen_name"], name: "index_search_logs_on_screen_name", using: :btree
+  add_index "latest_search_logs", ["session_id"], name: "index_search_logs_on_session_id", using: :btree
+  add_index "latest_search_logs", ["uid", "action"], name: "index_search_logs_on_uid_and_action", using: :btree
+  add_index "latest_search_logs", ["uid"], name: "index_search_logs_on_uid", using: :btree
+  add_index "latest_search_logs", ["user_id"], name: "index_search_logs_on_user_id", using: :btree
 
   create_table "mentions", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
