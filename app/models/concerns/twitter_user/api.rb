@@ -162,52 +162,31 @@ module Concerns::TwitterUser::Api
   end
 
   def replying(uniq: true)
-    return [] if statuses.empty?
+    # statuses.map { |status| status.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
+    # statuses.map { |status| $1 if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
 
-    # statuses.map { |status| status&.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
-    screen_names = statuses.map { |status| $1 if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
-    screen_names.uniq! if uniq
-    users =
-      TwitterDB::User.where(screen_name: screen_names).map do |user|
-        Hashie::Mash.new(
-          id: user.uid,
-          screen_name: user.screen_name,
-          statuses_count: user.statuses_count,
-          friends_count: user.friends_count,
-          followers_count: user.followers_count,
-          description: user.description,
-          profile_image_url_https: user.profile_image_url_https,
-          profile_banner_url: user.profile_banner_url,
-          profile_link_color: user.profile_link_color
-        )
-      end.index_by(&:screen_name)
-    users = screen_names.map { |screen_name| users[screen_name] }.compact
-    users.each { |user| user.uid = user.id }
+    uids = replying_uids(uniq: uniq)
+    users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+    uids.map { |uid| users[uid] }.compact
+  end
+
+  def reply_tweets(login_user: nil)
+    if login_user&.uid&.to_i == uid.to_i
+      mentions
+    elsif search_results.any?
+      search_results.select { |status| !status.text.start_with?('RT') && status.text.include?(mention_name) }
+    else
+      []
+    end
   end
 
   def replied_uids(uniq: true, login_user: nil)
-    uids =
-      if login_user && login_user.uid.to_i == uid.to_i
-        mentions.map { |mention| mention&.user&.id }
-      elsif search_results.any?
-        search_results.select { |status| !status.text.start_with?('RT') && status.text.include?(mention_name) }.map { |status| status&.user&.id }.compact
-      else
-        []
-      end
+    uids = reply_tweets(login_user: login_user).map { |tweet| tweet.user&.id }.compact
     uniq ? uids.uniq : uids
   end
 
-  # TODO do not use login_user
   def replied(uniq: true, login_user: nil)
-    users =
-      if login_user && login_user.uid.to_i == uid.to_i
-        mentions.map(&:user)
-      elsif search_results.any?
-        search_results.map { |status| status.user if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
-      else
-        []
-      end
-
+    users = reply_tweets(login_user: login_user).map(&:user).compact
     users.uniq!(&:id) if uniq
     users.each { |user| user.uid = user.id }
   end
@@ -217,9 +196,9 @@ module Concerns::TwitterUser::Api
   end
 
   def replying_and_replied(uniq: true, login_user: nil)
-    users = replying(uniq: uniq) + replied(uniq: uniq, login_user: login_user)
-    uids = users.each_with_object(Hash.new(0)) { |user, memo| memo[user.uid] += 1 }.select { |_, v| v >= 2 }.keys
-    uids.map { |uid| users.find { |user| user.uid == uid } }.compact
+    uids = replying_and_replied_uids(uniq: uniq, login_user: login_user)
+    users = (replying(uniq: uniq) + replied(uniq: uniq, login_user: login_user)).index_by(&:uid)
+    uids.map { |uid| users[uid] }.compact
   end
 
   def favoriting_uids(uniq: true, min: 0)
@@ -228,7 +207,22 @@ module Concerns::TwitterUser::Api
   end
 
   def favoriting(uniq: true, min: 0)
-    users = client.favoriting(favorites.to_a, uniq: uniq, min: min)
+    uids = favoriting_uids(uniq: uniq, min: min)
+    users = favorites.map(&:user).index_by(&:id)
+    users = uids.map { |uid| users[uid] }
+    users.uniq!(&:id) if uniq
+    users.each { |user| user.uid = user.id }
+  end
+
+  def close_friend_uids(uniq: false, min: 1, limit: 50, login_user: nil)
+    uids = replying_uids(uniq: uniq) + replied_uids(uniq: uniq, login_user: login_user) + favoriting_uids(uniq: uniq, min: min)
+    uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(limit).map(&:first)
+  end
+
+  def close_friends(uniq: false, min: 1, limit: 50, login_user: nil)
+    uids = close_friend_uids(uniq: uniq, min: min, limit: limit, login_user: login_user)
+    users = (replying(uniq: uniq) + replied(uniq: uniq, login_user: login_user) + favoriting(uniq: uniq, min: min)).uniq(&:uid).index_by(&:uid)
+    users = uids.map { |uid| users[uid] }.compact
     users.each { |user| user.uid = user.id }
   end
 
@@ -278,21 +272,6 @@ module Concerns::TwitterUser::Api
         false
       end
     end
-  end
-
-  def close_friend_uids(uniq: false, min: 1, limit: 50, login_user: nil)
-    uids = replying_uids(uniq: uniq) + replied_uids(uniq: uniq, login_user: login_user) + favoriting_uids(uniq: uniq, min: min)
-    uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(limit).map(&:first)
-  end
-
-  def close_friends(uniq: false, min: 1, limit: 50, login_user: nil)
-    material = {
-      replying: replying(uniq: uniq),
-      replied: replied(uniq: uniq, login_user: login_user),
-      favoriting: favoriting(uniq: uniq, min: min)
-    }
-    users = client.close_friends(Hashie::Mash.new(material), uniq: uniq, min: min, limit: limit)
-    users.each { |user| user.uid = user.id }
   end
 
   def clusters_belong_to
