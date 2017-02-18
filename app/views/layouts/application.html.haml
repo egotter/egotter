@@ -68,12 +68,12 @@
 
     .container.main-container
       .row
-        .col-xs-12.yield-container{class: "#{'col-sm-12 col-md-9 col-lg-9' if show_side_bar?}"}
+        .col-xs-12.yield-container{class: "#{'col-sm-12 col-md-9 col-lg-9' if show_sidebar?}"}
           = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
           = yield
-        - if show_side_bar?
-          .hidden-xs.hidden-sm.col-md-3.col-lg-3.side-bar.text-center
-            = render partial: 'layouts/side_bar', locals: {twitter_user: (@searched_tw_user || @twitter_user)}
+        - if show_sidebar?
+          .hidden-xs.hidden-sm.col-md-3.col-lg-3.sidebar.text-center
+            = render partial: 'layouts/sidebar', locals: {twitter_user: (@searched_tw_user || @twitter_user)}
 
 
     %link{href: '//cdn.jsdelivr.net/jquery.slick/1.6.0/slick.css', rel: 'stylesheet', type: 'text/css'}/

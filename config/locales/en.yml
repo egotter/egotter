@@ -32,7 +32,7 @@ en:
       tweet: "Tweets"
       related_pages: "Related Pages"
       see_on_twitter: "See on Twitter"
-    side_bar:
+    sidebar:
       update_now: "Update"
       updated_at: "updated at %{time}"
       recommendation: "Recommendation"

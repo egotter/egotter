@@ -3,7 +3,7 @@ module ApplicationHelper
     ENV['MAINTENANCE'] == '1'
   end
 
-  def show_side_bar?
+  def show_sidebar?
     admin_signed_in? && %w(new waiting).exclude?(action_name) && request.device_type == :pc && (@searched_tw_user || @twitter_user)
   end
 

@@ -32,7 +32,7 @@ ja:
       tweet: "ツイート"
       related_pages: "関連ページ"
       see_on_twitter: "ツイッターで見る"
-    side_bar:
+    sidebar:
       update_now: "最新の情報に更新する"
       updated_at: "更新日時 %{time}"
       recommendation: "おすすめユーザー"
