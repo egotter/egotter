@@ -47,6 +47,8 @@ class ImportFriendsAndFollowersWorker
 
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user.screen_name}"
 
+  rescue ActiveRecord::StatementInvalid => e
+    logger.warn "#{self.class}: #{e.class} #{user_id} #{uid}"
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
