@@ -33,7 +33,7 @@ class ImportFriendsAndFollowersWorker
     users << [uid, t_user.screen_name, user_info, -1, -1]
 
     ActiveRecord::Base.benchmark("benchmark #{self.class}#import TwitterDB::User") { Rails.logger.silence { ActiveRecord::Base.transaction {
-      users.uniq(&:first).each_slice(1000) do |array|
+      users.uniq(&:first).sort_by(&:first).each_slice(1000) do |array|
         TwitterDB::User.import(%i(uid screen_name user_info friends_size followers_size), array, on_duplicate_key_update: %i(uid screen_name user_info), validate: false)
       end
     }}}
@@ -48,7 +48,7 @@ class ImportFriendsAndFollowersWorker
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user.screen_name}"
 
   rescue => e
-    message = e.message.truncate(200)
+    message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
   end

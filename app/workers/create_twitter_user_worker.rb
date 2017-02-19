@@ -86,7 +86,7 @@ class CreateTwitterUserWorker
       message: ''
     )
   rescue => e
-    message = e.message.truncate(200)
+    message = e.message.truncate(150)
     logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
     log.update(
