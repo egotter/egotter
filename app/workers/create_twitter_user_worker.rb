@@ -38,7 +38,6 @@ class CreateTwitterUserWorker
 
     new_tu = TwitterUser.build_by_user(client.user(uid))
     relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
-    ImportFriendsAndFollowersWorker.perform_async(user_id, uid) if %i(friend_ids follower_ids).all? { |key| relations.has_key?(key) }
 
     new_tu.build_friends_and_followers(relations)
     if existing_tu&.diff(new_tu)&.empty?
@@ -51,7 +50,7 @@ class CreateTwitterUserWorker
     new_tu.build_other_relations(relations)
     new_tu.user_id = user_id
     if new_tu.save
-      ImportReplyingRepliedAndFavoritesWorker.perform_async(user_id, new_tu.id)
+      ImportReplyingRepliedAndFavoritesWorker.perform_async(user_id, new_tu.uid.to_i)
       new_tu.increment(:search_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
       notify(user, new_tu)
