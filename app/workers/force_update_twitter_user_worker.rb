@@ -102,7 +102,6 @@ class ForceUpdateTwitterUserWorker
   private
 
   def notify(login_user, tu, context)
-    logger.warn "force update finished #{login_user.id} #{tu.id} #{tu.screen_name} #{context}"
     # CreatePageCacheWorker.perform_async(tu.uid)
     #
     # %w(dm onesignal).each do |medium|
