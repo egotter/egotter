@@ -14,7 +14,6 @@ class CreatePromptReportWorker
       bot_uid:     user.uid.to_i
     )
     self.client = user.api_client
-    Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''})
 
     unless user.authorized?
       log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] is not authorized.")
@@ -47,7 +46,13 @@ class CreatePromptReportWorker
       return
     end
 
-    new_tu = TwitterUser.build_by_user(client.user(user.uid.to_i))
+    t_user = client.user(user.uid.to_i)
+    if t_user.suspended
+      log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] is suspended.")
+      return
+    end
+
+    new_tu = TwitterUser.build_by_user(t_user)
     diff = existing_tu.diff(new_tu, only: %i(followers_count))
     if diff.any? && diff[:followers_count][0] > diff[:followers_count][1]
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is maybe changed.")
@@ -68,6 +73,5 @@ class CreatePromptReportWorker
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.inspect} #{tu.inspect}"
-    Rollbar.warn(e)
   end
 end
