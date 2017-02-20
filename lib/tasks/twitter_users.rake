@@ -29,12 +29,12 @@ namespace :twitter_users do
 
   desc 'send prompt reports'
   task send_prompt_reports: :environment do
-    process_update_jobs(CreatePromptReportWorker)
+    Rails.logger.silence { process_update_jobs(CreatePromptReportWorker) }
   end
 
   desc 'send update notifications'
   task send_update_notifications: :environment do
-    process_update_jobs(UpdateTwitterUserWorker)
+    Rails.logger.silence { process_update_jobs(UpdateTwitterUserWorker) }
   end
 
   def process_update_jobs(worker_klass)
@@ -54,8 +54,8 @@ namespace :twitter_users do
         else [user_ids.to_i]
       end
 
-    authorized = User.where(id: user_ids, authorized: true).to_a
-    active = User.active(14).where(id: authorized.map(&:id)).to_a
+    authorized = User.where(id: user_ids, authorized: true).pluck(:id)
+    active = User.active(14).where(id: authorized).pluck(:id)
 
     sigint = false
     Signal.trap 'INT' do
@@ -71,8 +71,7 @@ namespace :twitter_users do
     fatal = false
     errors = []
 
-    active.map(&:id).each.with_index do |user_id, i|
-      start = Time.zone.now
+    active.each.with_index do |user_id, i|
       failed = false
       begin
         worker_klass.new.perform(user_id)
@@ -83,15 +82,12 @@ namespace :twitter_users do
       end
       processed += 1
 
-      if i % 10 == 0
-        avg = ", #{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds/user"
-        elapsed = ", #{'%.1f' % (Time.zone.now - start_time)} seconds elapsed"
+      if i % 100 == 0
+        avg = "#{'%4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds/user"
+        elapsed = "#{'%.1f' % (Time.zone.now - start_time)} seconds elapsed"
         remaining = deadline ? ", #{'%.1f' % (deadline - Time.zone.now)} seconds remaining" : ''
-      else
-        avg = elapsed = remaining = ''
+        puts "#{Time.zone.now}: #{user_id}, #{avg}, #{elapsed}#{remaining}"
       end
-      status = failed ? ', failed' : ''
-      puts "#{Time.zone.now}: #{user_id}, #{'%4.1f' % (Time.zone.now - start)} seconds#{avg}#{elapsed}#{remaining}#{status}"
 
       break if (deadline && Time.zone.now > deadline) || sigint || fatal
     end
