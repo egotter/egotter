@@ -7,14 +7,16 @@ module Concerns::Rescue
   included do
     attr_accessor :log, :client
 
-    rescue_from 'RuntimeError' do |exception|
-      logger.warn "#{self.class}: #{exception.class} #{exception.message}"
+    rescue_from 'RuntimeError' do |e|
+      message = e.message.truncate(150)
+      logger.warn "#{self.class}: #{e.class} #{message}"
       log.update(
         status: false,
         call_count: client.call_count,
         reason: BackgroundSearchLog::SomethingError::MESSAGE,
-        message: "#{exception.class} #{exception.message}"
+        message: "#{e.class} #{message}"
       )
+      raise e
     end
 
     # ActiveRecord::StatementInvalid Mysql2::Error: Lost connection to MySQL server during query: {SQL}
@@ -36,27 +38,38 @@ module Concerns::Rescue
       Twitter::Error::Forbidden
       Twitter::Error::ServiceUnavailable
     ).each do |name|
-      rescue_from name do |exception|
-        logger.warn "#{self.class}: #{exception.class} #{exception.message}"
-        raise exception
+      rescue_from name do |e|
+        message = e.message.truncate(150)
+        logger.warn "#{self.class}: #{e.class} #{message}"
+        log.update(
+          status: false,
+          call_count: client.call_count,
+          reason: BackgroundSearchLog::SomethingError::MESSAGE,
+          message: "#{e.class} #{message}"
+        )
+        raise e
       end
     end
 
-    rescue_from 'Twitter::Error::TooManyRequests' do |exception|
+    rescue_from 'Twitter::Error::TooManyRequests' do |e|
+      message = e.message.truncate(150)
+      logger.warn "#{self.class}: #{e.class} #{message}"
       log.update(
         status: false,
         call_count: client.call_count,
         reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
-        message: ''
+        message: message
       )
     end
 
-    rescue_from 'Twitter::Error::Unauthorized' do |exception|
+    rescue_from 'Twitter::Error::Unauthorized' do |e|
+      message = e.message.truncate(150)
+      logger.warn "#{self.class}: #{e.class} #{message}"
       log.update(
         status: false,
         call_count: client.call_count,
         reason: BackgroundSearchLog::Unauthorized::MESSAGE,
-        message: ''
+        message: message
       )
     end
   end
