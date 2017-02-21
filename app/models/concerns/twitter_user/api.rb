@@ -10,31 +10,28 @@ module Concerns::TwitterUser::Api
     ApiClient.dummy_instance
   end
 
-  def one_sided_friend_uids
+  def calc_one_sided_friend_uids
     friend_uids - follower_uids
   end
 
-  def one_sided_friends
-    uids = one_sided_friend_uids
-    uids.empty? ? friends.none : friends.where(uid: uids)
+  def one_sided_friend_uids
+    one_sided_friendships.pluck(:friend_uid)
   end
 
-  def one_sided_follower_uids
+  def calc_one_sided_follower_uids
     follower_uids - friend_uids
   end
 
-  def one_sided_followers
-    uids = one_sided_follower_uids
-    uids.empty? ? followers.none : followers.where(uid: uids)
+  def one_sided_follower_uids
+    one_sided_followerships.pluck(:follower_uid)
   end
 
-  def mutual_friend_uids
+  def calc_mutual_friend_uids
     friend_uids & follower_uids
   end
 
-  def mutual_friends
-    uids = mutual_friend_uids
-    uids.empty? ? friends.none : friends.where(uid: uids)
+  def mutual_friend_uids
+    mutual_friendships.pluck(:friend_uid)
   end
 
   def common_friend_uids(other)
@@ -72,12 +69,10 @@ module Concerns::TwitterUser::Api
     uids.empty? ? friends.none : older.friends.where(uid: uids)
   end
 
-  def calc_removing
-    return friends.none unless self.class.many?(uid)
+  def calc_removing_uids
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
-      uids = older.new_removing_uids(newer)
-      uids.empty? ? [] : older.friends.where(uid: uids)
+      older.new_removing_uids(newer)
     end.compact.flatten.reverse
   end
 
@@ -100,12 +95,10 @@ module Concerns::TwitterUser::Api
     uids.empty? ? followers.none : older.followers.where(uid: uids)
   end
 
-  def calc_removed
-    return followers.none unless self.class.many?(uid)
+  def calc_removed_uids
     TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
-      uids = older.new_removed_uids(newer)
-      uids.empty? ? [] : older.followers.where(uid: uids)
+      older.new_removed_uids(newer)
     end.compact.flatten.reverse
   end
 

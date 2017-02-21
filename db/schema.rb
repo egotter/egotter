@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170218015848) do
+ActiveRecord::Schema.define(version: 20170220075811) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -283,6 +283,15 @@ ActiveRecord::Schema.define(version: 20170218015848) do
 
   add_index "modal_open_logs", ["created_at"], name: "index_modal_open_logs_on_created_at", using: :btree
 
+  create_table "mutual_friendships", force: :cascade do |t|
+    t.integer "from_uid",   limit: 8, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "mutual_friendships", ["friend_uid"], name: "index_mutual_friendships_on_friend_uid", using: :btree
+  add_index "mutual_friendships", ["from_uid"], name: "index_mutual_friendships_on_from_uid", using: :btree
+
   create_table "notification_messages", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false
     t.string   "uid",         limit: 191,                   null: false
@@ -336,6 +345,24 @@ ActiveRecord::Schema.define(version: 20170218015848) do
   add_index "old_users", ["created_at"], name: "index_old_users_on_created_at", using: :btree
   add_index "old_users", ["screen_name"], name: "index_old_users_on_screen_name", using: :btree
   add_index "old_users", ["uid"], name: "index_old_users_on_uid", unique: true, using: :btree
+
+  create_table "one_sided_followerships", force: :cascade do |t|
+    t.integer "from_uid",     limit: 8, null: false
+    t.integer "follower_uid", limit: 8, null: false
+    t.integer "sequence",     limit: 4, null: false
+  end
+
+  add_index "one_sided_followerships", ["follower_uid"], name: "index_one_sided_followerships_on_follower_uid", using: :btree
+  add_index "one_sided_followerships", ["from_uid"], name: "index_one_sided_followerships_on_from_uid", using: :btree
+
+  create_table "one_sided_friendships", force: :cascade do |t|
+    t.integer "from_uid",   limit: 8, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "one_sided_friendships", ["friend_uid"], name: "index_one_sided_friendships_on_friend_uid", using: :btree
+  add_index "one_sided_friendships", ["from_uid"], name: "index_one_sided_friendships_on_from_uid", using: :btree
 
   create_table "page_cache_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "", null: false
