@@ -48,7 +48,7 @@ module Concerns::TwitterUser::Validation
     case
       when login_user.nil? then false
       when login_user.uid.to_i == uid.to_i then true
-      when login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i) then true
+      when login_user.friendship?(uid.to_i) then true
       else false
     end
   end
@@ -57,25 +57,35 @@ module Concerns::TwitterUser::Validation
     !!self.suspended
   end
 
-  # not using in valid?
   def many_friends?
     if friends_count + followers_count > MANY_FRIENDS
-      errors[:base] << "many friends #{friends_count} and followers #{followers_count}"
+      errors[:base] << "The total number of friends and followers must be less than #{MANY_FRIENDS}."
       return true
     end
 
     false
   end
 
-  # not using in valid?
   def too_many_friends?(login_user:)
     return false if login_user.present? && uid.to_i == User::EGOTTER_UID
 
-    if friends_count + followers_count > (login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS)
-      errors[:base] << "too many friends #{friends_count} and followers #{followers_count}"
+    if uid.to_i == login_user&.uid&.to_i
+      if friends_count + followers_count < 50000
+        return false
+      else
+        errors[:base] << 'The total number of friends and followers must be less than 50000.'
+        return true
+      end
+    end
+
+    limit_count = login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS
+    if friends_count + followers_count > limit_count
+      errors[:base] << "The total number of friends and followers must be less than #{limit_count}."
       return true
     end
 
     false
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid} #{login_user.inspect}"
   end
 end

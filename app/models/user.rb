@@ -101,4 +101,18 @@ class User < ActiveRecord::Base
   def admin?
     uid.to_i == ADMIN_UID
   end
+
+  def friendship?(to_uid)
+    api_client.friendship?(uid.to_i, to_uid.to_i)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid} #{to_uid}"
+    raise e
+  end
+
+  def follow(to_uid)
+    api_client.follow!(to_uid.to_i)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid} #{to_uid}"
+    raise e
+  end
 end
