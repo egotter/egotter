@@ -10,33 +10,31 @@ class PageCachesController < ApplicationController
 
   before_action(only: %i(create destroy)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(create destroy)) { existing_uid?(params[:uid].to_i) }
-  before_action(only: %i(create destroy)) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
+  before_action(only: %i(create destroy)) { @twitter_user = TwitterUser.latest(params[:uid].to_i) }
 
   before_action(only: %i(create destroy)) { create_page_cache_log(action_name) }
 
-  # POST /page_caches
   def create
-    tu = @searched_tw_user
-
+    tu = @twitter_user
     ::Cache::PageCache.new.write(tu.uid, render_to_string(template: 'search_results/show'))
-    render nothing: true, status: 200
+    head :ok
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type}"
-    render nothing: true, status: 500
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.browser}"
+    head :internal_server_error
   end
 
   # DELETE /page_caches/:id
   def destroy
-    tu = @searched_tw_user
+    tu = @twitter_user
 
     if verify_page_cache_token(params[:hash], tu.created_at.to_i)
       ::Cache::PageCache.new.delete(tu.uid)
-      render nothing: true, status: 200
+      head :ok
     else
-      render nothing: true, status: 400
+      head :bad_request
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.device_type}"
-    render nothing: true, status: 500
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.browser}"
+    head :internal_server_error
   end
 end
