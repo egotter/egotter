@@ -61,8 +61,9 @@ module Concerns::TwitterUser::Persistence
 
     reload
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.inspect}"
-    logger.warn e.backtrace.join("\n")
+    message = e.message.truncate(150)
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
     destroy
   end
 end
