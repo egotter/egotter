@@ -29,7 +29,7 @@
   <% end %>
 <% end %>
 
-<% cache "#{tu.cache_key}/various_users/rendered_users", expires_in: 1.day do %>
+<% cache "#{tu.cache_key}/modals", expires_in: 1.day do %>
   <%= render(partial: 'profiles/modal', collection: rendered_users.uniq { |user| user.uid.to_i }, as: :user, cached: true, locals: {twitter_user: tu, via: :profile_modal}) %>
 <% end %>
 
@@ -62,21 +62,21 @@
 
 <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}) %>
 
-<h2 class="h4"><%= t('.about_this_page', this_page: t('searches.show.heading', user: tu.mention_name)) %></h2>
-<div class="this-page-is"><%= t('.this_page_is', user: tu.mention_name) %></div>
+<h2 class="h4"><%= t('search_results.show.about_this_page', this_page: t('searches.show.heading', user: tu.mention_name)) %></h2>
+<div class="this-page-is"><%= t('search_results.show.this_page_is', user: tu.mention_name) %></div>
 
-<h2 class="h4"><%= t('.other_services') %></h2>
+<h2 class="h4"><%= t('search_results.show.other_services') %></h2>
 <div class="row other-services">
   <div class="text-center col-xs-12 col-sm-4">
-    <%= t('search_results.show.twitter_link', screen_name: tu.screen_name).html_safe %>
+    <%= t('search_results.show.twitter_link_html', screen_name: tu.screen_name) %>
     <div class="tooltip-container"><abbr title="Twitter" rel="tooltip">i</abbr></div>
   </div>
   <div class="text-center col-xs-12 col-sm-4">
-    <%= t('search_results.show.twilog_link', screen_name: tu.screen_name).html_safe %>
+    <%= t('search_results.show.twilog_link_html', screen_name: tu.screen_name) %>
     <div class="tooltip-container"><abbr title="Twilog" rel="tooltip">i</abbr></div>
   </div>
   <div class="text-center col-xs-12 col-sm-4">
-    <%= t('search_results.show.favstar_link', screen_name: tu.screen_name).html_safe %>
+    <%= t('search_results.show.favstar_link_html', screen_name: tu.screen_name) %>
     <div class="tooltip-container"><abbr title="Favstar" rel="tooltip">i</abbr></div>
   </div>
 </div>
@@ -87,7 +87,7 @@
 
     if (window.workerStarted) {
       var createdAt = <%= tu.created_at.to_i %>;
-      var scope = {action: "<%= action_name %>", uid: <%= tu.uid %>};
+      var scope = <%= raw({action: action_name, uid: tu.uid}.to_json) %>;
       var checkLogPath = "<%= background_search_log_path(uid: tu.uid) %>";
       var pageCachePath = "<%= raw page_cache_path(uid: tu.uid, hash: 'HASH') %>";
       var pageCachesPath = "<%= raw page_caches_path(uid: tu.uid) %>";
