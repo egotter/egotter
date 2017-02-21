@@ -18,31 +18,46 @@ module Concerns::TwitterUser::Persistence
   private
 
   def put_relations_back
-    ActiveRecord::Base.benchmark('benchmark import Friendship and Followership') { logger.silence { ActiveRecord::Base.transaction {
+    ActiveRecord::Base.benchmark('[benchmark] import Friendship and Followership') { logger.silence { ActiveRecord::Base.transaction {
       Friendship.import_from!(self.id, friendships.map(&:friend_uid))
       Followership.import_from!(self.id, followerships.map(&:follower_uid))
     }}}
 
-    ActiveRecord::Base.benchmark('benchmark import Status') { logger.silence { ActiveRecord::Base.transaction {
+    ActiveRecord::Base.benchmark('[benchmark] import Status') { logger.silence { ActiveRecord::Base.transaction {
       statuses.each { |r| r.from_id = id }.each_slice(1000) { |ary| Status.import(ary, validate: false) }
     }}}
 
-    ActiveRecord::Base.benchmark('benchmark import Mention') { logger.silence { ActiveRecord::Base.transaction {
+    ActiveRecord::Base.benchmark('[benchmark] import Mention') { logger.silence { ActiveRecord::Base.transaction {
       mentions.each { |r| r.from_id = id }.each_slice(1000) { |ary| Mention.import(ary, validate: false) }
     }}}
 
-    ActiveRecord::Base.benchmark('benchmark import SearchResult') { logger.silence { ActiveRecord::Base.transaction {
+    ActiveRecord::Base.benchmark('[benchmark] import SearchResult') { logger.silence { ActiveRecord::Base.transaction {
       search_results.each { |r| r.from_id = id }.each_slice(1000) { |ary| SearchResult.import(ary, validate: false) }
     }}}
 
-    ActiveRecord::Base.benchmark('benchmark import Favorite') { logger.silence { ActiveRecord::Base.transaction {
+    ActiveRecord::Base.benchmark('[benchmark] import Favorite') { logger.silence { ActiveRecord::Base.transaction {
       favorites.each { |r| r.from_id = id }.each_slice(1000) { |ary| Favorite.import(ary, validate: false) }
     }}}
 
-    ActiveRecord::Base.benchmark('benchmark import Unfriendship and Unfollowership') { logger.silence { ActiveRecord::Base.transaction {
-      Unfriendship.import_from!(uid, calc_removing.map(&:uid))
-      Unfollowership.import_from!(uid, calc_removed.map(&:uid))
-    }}}
+    ActiveRecord::Base.benchmark('[benchmark] import Unfriendship') { logger.silence {
+      Unfriendship.import_from!(uid, calc_removing_uids)
+    }}
+
+    ActiveRecord::Base.benchmark('[benchmark] import Unfollowership') { logger.silence {
+      Unfollowership.import_from!(uid, calc_removed_uids)
+    }}
+
+    ActiveRecord::Base.benchmark('[benchmark] import OneSidedFriendship') { logger.silence {
+      OneSidedFriendship.import_from!(uid, calc_one_sided_friend_uids)
+    }}
+
+    ActiveRecord::Base.benchmark('[benchmark] import OneSidedFollowership') { logger.silence {
+      OneSidedFollowership.import_from!(uid, calc_one_sided_follower_uids)
+    }}
+
+    ActiveRecord::Base.benchmark('[benchmark] import MutualFriendship') { logger.silence {
+      MutualFriendship.import_from!(uid, calc_mutual_friend_uids)
+    }}
 
     reload
   rescue => e

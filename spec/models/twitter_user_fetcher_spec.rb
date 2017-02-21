@@ -9,7 +9,7 @@ RSpec.describe TwitterUserFetcher do
       before { allow(twitter_user).to receive(:too_many_friends?).and_return(true) }
 
       it 'includes :friend_ids and :follower_ids' do
-        candidates = fetcher.reject_relation_names
+        candidates = fetcher.send(:reject_relation_names)
         expect(candidates).to be_include(:friend_ids)
         expect(candidates).to be_include(:follower_ids)
       end
