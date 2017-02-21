@@ -96,6 +96,7 @@ class User < ActiveRecord::Base
   end
 
   ADMIN_UID = 58135830
+  EGOTTER_UID = 187385226
 
   def admin?
     uid.to_i == ADMIN_UID

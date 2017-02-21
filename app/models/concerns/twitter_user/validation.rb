@@ -58,40 +58,6 @@ module Concerns::TwitterUser::Validation
   end
 
   # not using in valid?
-  def inconsistent_friends?
-    return false if zero_friends?
-
-    if friends_count.to_i != friends.size && (friends_count.to_i - friends.size).abs > friends_count.to_i * 0.1
-      errors[:base] << "friends_count #{friends_count} doesn't agree with friends.size #{friends.size}."
-      return true
-    end
-
-    false
-  end
-
-  # not using in valid?
-  def inconsistent_followers?
-    return false if zero_followers?
-
-    if followers_count.to_i != followers.size && (followers_count.to_i - followers.size).abs > followers_count.to_i * 0.1
-      errors[:base] << "followers_count #{followers_count} doesn't agree with followers.size #{followers.size}."
-      return true
-    end
-
-    false
-  end
-
-  # not using in valid?
-  def zero_friends?
-    friends_count.to_i == 0 && friends.size == 0 ? true : false
-  end
-
-  # not using in valid?
-  def zero_followers?
-    followers_count.to_i == 0 && followers.size == 0 ? true : false
-  end
-
-  # not using in valid?
   def many_friends?
     if friends_count + followers_count > MANY_FRIENDS
       errors[:base] << "many friends #{friends_count} and followers #{followers_count}"
@@ -103,6 +69,8 @@ module Concerns::TwitterUser::Validation
 
   # not using in valid?
   def too_many_friends?(login_user:)
+    return false if login_user.present? && uid.to_i == User::EGOTTER_UID
+
     if friends_count + followers_count > (login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS)
       errors[:base] << "too many friends #{friends_count} and followers #{followers_count}"
       return true
