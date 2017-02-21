@@ -19,11 +19,11 @@
         = t('searches.new.pc.search_for_now')
         %i.fa.fa-caret-down.fa-2x{'aria-hidden': true}
       %div{style: 'width: 60%; margin-top: 5px; margin-left: auto; margin-right: auto;'}
-        = render partial: 'common/search_box_group', locals: {via: :top_input, screen_names: screen_names_for_search}
+        = render partial: 'common/search_form', locals: {via: :top_input, screen_names: screen_names_for_search}
 - else
   %h3.h4.searches.text-center= t('searches.new.lead_001')
   .searches.lead.text-center= t('searches.new.lead_002').html_safe
-  = render partial: 'common/search_box_group', locals: {via: :top_input, screen_names: screen_names_for_search}
+  = render partial: 'common/search_form', locals: {via: :top_input, screen_names: screen_names_for_search}
   = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
   - if user_signed_in?
     = link_to t('searches.common.search_by', user: current_user.mention_name), searches_path_for(controller: controller_name, screen_name: current_user.screen_name, via: :top_button), class: 'searches submit-btn2 btn btn-info btn-block', method: :post
@@ -54,7 +54,7 @@
 %h3.h4.searches= t('searches.new.lead_004')
 .text-center.searches.description= t('searches.common.page_description')
 
-= render partial: 'common/search_box_group', locals: {via: :top_input2, screen_names: screen_names_for_search}
+= render partial: 'common/search_form', locals: {via: :top_input2, screen_names: screen_names_for_search}
 
 %h2.h4= t('.egotter_features')
 .row.searches

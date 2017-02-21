@@ -6,7 +6,7 @@
           %span{'aria-hidden' => 'true'} ×
         %h4#search-modal-label.modal-title= t('searches.common.search_by_egotter')
       .modal-body
-        = render partial: 'common/search_box_group', locals: {via: :search_history_input, screen_names: screen_names_for_search}
+        = render partial: 'common/search_form', locals: {via: :search_history_input, screen_names: screen_names_for_search}
 
         - if user_signed_in?
           .search-histories-header

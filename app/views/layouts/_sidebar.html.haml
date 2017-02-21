@@ -15,7 +15,7 @@
   .text-muted= t('searches.sidebar.updated_at', time: l(twitter_user.updated_at.in_time_zone('Tokyo'), format: :short))
 .row
   %h4= t('searches.common.search')
-  = render partial: 'common/search_box_group', locals: {via: :sidebar, screen_names: screen_names_for_search}
+  = render partial: 'common/search_form', locals: {via: :sidebar, screen_names: screen_names_for_search}
 .row
   %h4= t('searches.sidebar.recommendation')
   .twitter.users
