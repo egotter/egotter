@@ -64,6 +64,12 @@ ja:
       search_friends: "気になるあの人を検索"
       search_login_user: "ログインユーザーで検索"
       egotter_features: "えごったーの特徴"
+      pc:
+        lead_001: "ブロック、リムーブを逃さずチェック！"
+        lead_002_html: "えごったーは、スマホとPCから使える<br>安心で安全なツイッター分析アプリです"
+        check_001: "パスワード不要"
+        check_002: "ワンクリック登録"
+        search_for_now: "「とりあえず見てみたい」という方はこちら"
     waiting:
       retry_search_by: "%{user} で再度検索"
       searching: "%{user} のデータを検索中"
