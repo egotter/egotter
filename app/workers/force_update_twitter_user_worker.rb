@@ -44,6 +44,13 @@ class ForceUpdateTwitterUserWorker
     relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
 
     new_tu.build_friends_and_followers(relations)
+    if existing_tu.present? && new_tu.friendless?
+      existing_tu.increment(:update_count).save
+      log.update(status: true, call_count: client.call_count, message: 'new record is friendless.')
+      notify(user, existing_tu, :none)
+      return
+    end
+
     if existing_tu&.diff(new_tu)&.empty?
       existing_tu.increment(:update_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
