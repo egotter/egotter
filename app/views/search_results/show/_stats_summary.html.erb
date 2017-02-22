@@ -1,23 +1,25 @@
+<% result_path = search_path_for(name, tu.screen_name) %>
 <div class="menu-items media">
-  <div class="media-body">
-    <h4 class="h5 media-heading">
-      <%= title_for(name, tu.screen_name) %>
-      <div class="tooltip-container"><abbr title="<%= description_for(name, tu.screen_name) %>" rel="tooltip">i</abbr></div>
-    </h4>
+  <%= link_to result_path, style: 'color: inherit; text-decoration: none; display: block;' do %>
+    <h3 class="h4"><%= title_for(name, tu.screen_name) %></h3>
+    <div class="text-center description"><%= description_for(name, tu.screen_name).html_safe %></div>
 
-    <div id="<%= graph.object_id %>" class="clusters-belong-to-chart-container"></div>
-    <script>
-      $(function () {
-        var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
-        graph_option.series[0].data = <%= raw graph.to_json %>;
-        graph_option.yAxis.visible = false;
-        window.lazycall_functions['#<%= graph.object_id %>'] = function () {
-          $('#<%= graph.object_id %>').highcharts(graph_option);
-        };
-      });
-    </script>
-  </div>
-  <div>
-    <%= link_to(t('dictionary.view_more'), search_path_for(name, tu.screen_name), class: 'btn btn-info btn-block') %>
-  </div>
+    <div class="media-body">
+      <div id="<%= graph.object_id %>" style="height: 120px;"></div>
+      <script>
+        $(function () {
+          var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
+          graph_option.series[0].data = <%= raw graph.to_json %>;
+          graph_option.yAxis.visible = false;
+          window.lazycall_functions['#<%= graph.object_id %>'] = function () {
+            $('#<%= graph.object_id %>').highcharts(graph_option);
+          };
+        });
+      </script>
+    </div>
+
+    <div>
+      <%= link_to(t('dictionary.view_more'), result_path, class: 'btn btn-info btn-block') %>
+    </div>
+  <% end %>
 </div>

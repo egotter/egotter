@@ -66,7 +66,7 @@ module SearchesHelper
   end
 
   def root_path_for(controller:)
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations).include? controller
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
       send("#{controller}_top_path")
     else
       root_path
@@ -74,7 +74,7 @@ module SearchesHelper
   end
 
   def app_name_for(controller:)
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations).include? controller
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
       send(:t, "#{controller}.new.title")
     else
       t('searches.common.egotter')
@@ -95,6 +95,8 @@ module SearchesHelper
         friend_path(screen_name: screen_name, type: menu)
       when *%w(replying replied)
         conversation_path(screen_name: screen_name, type: menu)
+      when *%w(clusters)
+        cluster_path(screen_name: screen_name)
       else
         raise "#{__method__}: invalid menu #{menu}"
     end
@@ -102,7 +104,7 @@ module SearchesHelper
 
   def searches_path_for(controller:, screen_name: '', via: '')
     options = {screen_name: screen_name, via: via}.delete_if { |_, v| v.empty? }
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations).include? controller
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
       send("#{controller}_path", options)
     else
       searches_path(options)
@@ -110,11 +112,7 @@ module SearchesHelper
   end
 
   def title_for(menu, screen_name)
-    if %i(common_friends common_followers).include?(menu)
-      t("searches.#{menu}.title", user: mention_name(screen_name), login: I18n.t('dictionary.you'))
-    else
-      t("searches.#{menu}.title", user: mention_name(screen_name))
-    end
+    t("searches.#{menu}.title", user: mention_name(screen_name))
   end
 
   def description_for(menu, screen_name)
@@ -144,14 +142,6 @@ module SearchesHelper
       {name: t("charts.#{label}"), y: (target.to_f / total * 100)},
       {name: t('charts.others'), y: (rest.to_f / total * 100)}
     ]
-  end
-
-  def graph_for(tu, menu:, users: nil)
-    if %i(replying replied favoriting close_friends).include?(menu)
-      tu.send("#{menu}_graph", users)
-    else
-      tu.send("#{menu}_graph")
-    end
   end
 
   def fetch_twitter_user_from_cache(uid)

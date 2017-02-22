@@ -5,7 +5,6 @@ ja:
       page_title: "えごったー スマホでかんたん ツイッターのフォロー確認"
       page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       or: " または "
-      cluster: "クラスタ"
       return: "%{user} の分析一覧へ戻る"
       twitter_id: "Twitter ID"
       search_by_twitter_id: "Twitter ID で検索"
@@ -97,109 +96,109 @@ ja:
     removing:
       num: "リムり<br>%{num}"
       title: "%{user} がフォローを外した"
-      description: "%{user}がフォローを外したユーザーを表示します。"
+      description: "%{user} がフォローを外したユーザーを表示します。"
       short_description: "フォローを外したユーザーを表示します。"
     removed:
       num: "リムられ<br>%{num}"
       title: "%{user} がフォローを外された"
-      description: "%{user}がフォローを外されたユーザーを表示します。"
+      description: "%{user} がフォローを外されたユーザーを表示します。"
       short_description: "フォローを外されたユーザーを表示します。"
     new_friends:
       name: "新しいフォロー"
       title: "%{user} の新しいフォロー"
-      description: "%{user}が新しくフォローしたユーザーを表示します。"
+      description: "%{user} が新しくフォローしたユーザーを表示します。"
     new_followers:
       name: "新しいフォロワー"
       title: "%{user} の新しいフォロワー"
-      description: "%{user}が新しくフォローされたユーザーを表示します。"
+      description: "%{user} が新しくフォローされたユーザーを表示します。"
     blocking_or_blocked:
       num: "ブロられ<br>%{num}"
       title: "%{user} がブロックされたかも"
-      description: "%{user}がブロックされたかもしれないユーザーを表示します。フォローとフォロワーから同時に外れたらブロックとみなすため、少し不正確です。"
+      description: "%{user} がブロックされたかもしれないユーザーを表示します。<br>フォローとフォロワーから同時に外れたらブロックとみなすため、少し不正確です。"
       short_description: "ブロックされたかもしれないユーザーを表示します。"
     replying:
       num: "リプライした<br>%{num}"
       name: "リプライ"
       title: "%{user} がリプライした"
-      description: "%{user}がリプライしたユーザーを表示します。"
+      description: "%{user} がリプライしたユーザーを表示します。"
     replied:
       num: "リプライされた<br>%{num}"
       name: "リプライされた"
       title: "%{user} がリプライされた"
-      description: "%{user}がリプライされたユーザーを表示します。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
+      description: "%{user} がリプライされたユーザーを表示します。<br>本人がログインしていない場合は検索して見付けるため、少し不正確です。"
     replying_and_replied:
       num: "両方された<br>%{num}"
     close_friends:
       name: "仲良し"
-      title: "%{user} と仲良し"
-      description: "%{user}と仲良しなユーザーを表示します。仲良しの判定には、リプライした・リプライされた・ふぁぼを使っています。"
+      title: "%{user} の仲良しランキング"
+      description: "%{user} と仲良しなユーザーの一覧です。<br>仲良しの判定には、リプライした・リプライされた・ふぁぼを使っています。"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
-      description: "%{user}のツイッター利用状況を表示します。"
-      usage_time: ".%{user}は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
+      description: "%{user} の曜日や時間帯ごとのツイート数、リプライやハッシュタグの割合を表示します。"
+      usage_time: ".%{user} は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
       usage_level:
         first: "一般人です。ツイッターにまだあまり慣れていないみたいです。"
         second: "一般人です。ほどほどにツイッターを使っているようです。"
         third: "ぎりぎり一般人…？ ちょっと病みつきになってきたようです。"
         fourth: "軽い廃人かも…。つぶやいた回数だけ社会復帰が遠のいています…。"
         fifth: "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
-      usage_active_time: ".%{user}がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
-      usage_kind: ".%{user}のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
-      usage_hashtags: ".%{user}のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
+      usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
+      usage_kind: ".%{user} のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
+      usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:
       num: "最近いないフォロー<br>%{num}"
       name: "最近いないフォロー"
-      title: "%{user} のフォローのうち最近ツイッターにいない"
-      description: "%{user}がフォローしているユーザーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
+      title: "%{user} の最近いないフォロー"
+      description: "%{user} がフォローしているユーザーのうち、<br>最近ツイートしていないユーザーをリストアップして表示します。"
       short_description: "フォローのうち、最近ツイートしていないユーザーをリストアップして表示します。"
     inactive_followers:
       num: "最近いないフォロワー<br>%{num}"
       name: "最近いないフォロワー"
-      title: "%{user} のフォロワーのうち最近ツイッターにいない"
-      description: "%{user}がフォローされているユーザーのうち、最近ツイートしていないユーザーを表示します。"
+      title: "%{user} の最近いないフォロワー"
+      description: "%{user} がフォローされているユーザーのうち、<br>最近ツイートしていないユーザーを表示します。"
       short_description: "フォロワーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
     inactive_mutual_friends:
       num: "最近いない両思い<br>%{num}"
     clusters_belong_to:
       name: "クラスタ"
       title: "%{user} が入っているクラスタ"
-      description: "%{user}が入っているクラスタを表示します。"
+      description: "%{user} が入っているクラスタを表示します。"
     mutual_friends:
       num: "両思い<br>%{num}"
       title: "%{user} が両思い"
-      description: "%{user}が相互フォローしているユーザーを表示します。"
+      description: "%{user} が相互フォローしているユーザーを表示します。"
       short_description: "相互フォローしているユーザーを表示します。"
     one_sided_friends:
       num: "片思い<br>%{num}"
       title: "%{user} が片思い"
-      description: "%{user}がフォローしているユーザーのうち、%{user}にフォロー返しをしていないユーザーを表示します。"
+      description: "%{user} がフォローしているユーザーのうち、<br>%{user} にフォロー返しをしていないユーザーを表示します。"
       short_description: "フォローしているユーザーのうち、フォロー返しをされていないユーザーを表示します。"
     one_sided_followers:
       num: "片思われ<br>%{num}"
       title: "%{user} が片思われ"
-      description: "%{user}がフォローされているユーザーのうち、%{user}がフォロー返しをしていないユーザーを表示します。"
+      description: "%{user} がフォローされているユーザーのうち、<br>%{user} がフォロー返しをしていないユーザーを表示します。"
       short_description: "フォローされているユーザーのうち、フォロー返しをしていないユーザーを表示します。"
     common_friends:
       num: "共通フォロー<br>%{num}"
       name: "共通フォロー"
       title: "%{user} と %{login} の共通フォロー"
-      description: "%{user}と%{login}が共通してフォローしているユーザーを表示します。"
+      description: "%{user} と%{login}が共通してフォローしているユーザーを表示します。"
     common_followers:
       num: "共通フォロワー<br>%{num}"
       name: "共通フォロワー"
       title: "%{user} と %{login} の共通フォロワー"
-      description: "%{user}と%{login}が共通してフォローされているユーザーを表示します。"
+      description: "%{user} と%{login}が共通してフォローされているユーザーを表示します。"
     conversations:
       num: "会話<br>%{num}"
     favoriting:
       name: "よくふぁぼる"
       title: "%{user} がよくふぁぼる"
-      description: "%{user}がよくツイートをお気に入り登録するユーザーを表示します。"
+      description: "%{user} がよくツイートをお気に入り登録するユーザーを表示します。"
   search_results:
     show:
       about_this_page: "%{this_page}について"
-      this_page_is: "このページでは、%{user}のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
+      this_page_is_html: "このページでは、%{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。<br>リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
       other_services: "他のサービス"
       twitter_link_html: '<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwitterで見る</a>'
       twilog_link_html: '<a href="http://twilog.org/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwilogで見る</a>'
@@ -208,7 +207,7 @@ ja:
     show:
       title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
       short_title: "%{user} のえごったー更新履歴"
-      description: "%{user}のえごったー更新履歴を表示します。"
+      description: "%{user} のえごったー更新履歴を表示します。"
   statuses:
     show:
       title: "%{user} のツイート"
@@ -358,6 +357,27 @@ ja:
       lead_003: '%{user} のリプライ分析は、えごったーが分析したデータを元に集計しています。<br>もし、リプライ分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user} の分析 - リプライした %{replying}人 リプライされた %{replied}人 両方された %{replying_and_replied}人です。"
+  clusters:
+    new:
+      title: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: 'クラスタ判定 by えごったー'
+      simple_title: 'クラスタ判定'
+      description: "保存ユーザー数1,000万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
+      short_description: "検索されたユーザーが入っているクラスタをさくっと判定します。"
+      lead_001: "スマホでさくっとクラスタ判定"
+      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
+      lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+    show:
+      title: "%{user} のクラスタ判定 - %{clusters}"
+      description: "%{user} のクラスタは、%{clusters}です。検索されたユーザーが入っているクラスタをさくっと見付けることができます。"
+      lead_002_html: "クラスタとは、「あるユーザーが入っているグループのようなもの」のことです。<br>えごったーでは、よくツイートするジャンルやフォロー関係からクラスタを判定しています。"
+      lead_003: '%{user} のクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
+      tweet: ".%{user} のクラスタ ↓\n%{clusters}\n#egotter %{url}"
+      clusters_level: "クラスタレベル"
+      clusters_cloud: "クラスタクラウド"
+      cluster_name: "%{name}クラスタ"
 
   charts:
     replying: "リプ"
@@ -400,9 +420,6 @@ ja:
     under_calculation_with_details: "フォロー・フォロワーの集計中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。"
     tweet_result: "結果をつぶやく"
     do_tweet: "つぶやく"
-    you: "あなた"
-    clusters_index: "クラスタ指数"
-    clusters_cloud: "クラスタクラウド"
     delim: "、"
     honorific: "さん"
     between_from: "から"
@@ -434,12 +451,11 @@ ja:
     empty_and_other_reason_html: "結果は0件です。データはこれからたまっていきます。<br>%{kaomoji}"
   tweet_text:
     top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji} #egotter"
-    close_friends: ".%{user}の仲良しランキング ↓\n%{users}\n#egotter %{url}"
+    close_friends: ".%{user} の仲良しランキング ↓\n%{users}\n#egotter %{url}"
     mutual_friends: "%{screen_name}の両思い率は %{mutual_friends_rate}%、片思い率は %{one_sided_friends_rate}%、片思われ率は %{one_sided_followers_rate}%です！%{kaomoji} %{url}"
     inactive_friends: "%{users}、最近どうしちゃったんですか…？%{kaomoji} #egotter %{url}"
-    common_friends: ".%{user}と%{login}の共通のフォローは、%{users}です。%{kaomoji} %{url}"
-    common_followers: ".%{user}と%{login}の共通のフォロワーは、%{users}です。%{kaomoji} %{url}"
-    clusters_belong_to: ".%{user}の入っているクラスタは、%{clusters}です。%{kaomoji} #egotter %{url}"
+    common_friends: ".%{user} と %{login} の共通のフォローは、%{users} です。%{kaomoji} %{url}"
+    common_followers: ".%{user} と %{login} の共通のフォロワーは、%{users} です。%{kaomoji} %{url}"
     empty_result: "%{title}は0件でした。%{kaomoji} %{url}"
     others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"

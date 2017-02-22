@@ -41,3 +41,8 @@ crumb :conversation do |screen_name|
   link t('conversations.new.simple_title'), conversation_path(screen_name: screen_name)
   parent :search, screen_name
 end
+
+crumb :cluster do |screen_name|
+  link t('clusters.new.simple_title'), cluster_path(screen_name: screen_name)
+  parent :search, screen_name
+end

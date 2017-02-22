@@ -8,6 +8,8 @@ SitemapGenerator::Sitemap.create do
   add relationships_top_path, options
   add inactive_friends_top_path, options
   add friends_top_path, options
+  add conversations_top_path, options
+  add clusters_top_path, options
 
   Rails.logger.silence do
     TwitterUser.pluck(:uid).uniq.each do |uid|
@@ -33,6 +35,7 @@ SitemapGenerator::Sitemap.create do
       add conversation_path(screen_name: screen_name, type: 'replying'), options
       add conversation_path(screen_name: screen_name, type: 'replied'), options
       add conversation_path(screen_name: screen_name, type: 'replying_and_replied'), options
+      add cluster_path(screen_name: screen_name), options
 
       TwitterDB::User.where(uid: twitter_user.close_friend_uids.take(3)).each do |close_friend|
         add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'conversations'), options
@@ -44,7 +47,6 @@ SitemapGenerator::Sitemap.create do
         new_friends
         new_followers
         favoriting
-        clusters_belong_to
         close_friends
         usage_stats
       ).each { |menu| add(send("#{menu}_search_path", screen_name: screen_name), options) }

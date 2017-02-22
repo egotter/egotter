@@ -1,5 +1,5 @@
-<span data-toggle="modal" data-target=".profile-overview-modal.<%= icon.uid %>">
-  <%= normal_icon_img(icon) %>
+<span data-toggle="modal" data-target=".profile-overview-modal.<%= icon.uid %>" onclick="return false;">
+  <%= normal_icon_img(icon, class: 'img-rounded') %>
 </span>
 
 <% rendered_users << icon %>

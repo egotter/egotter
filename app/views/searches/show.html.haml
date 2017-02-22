@@ -16,7 +16,7 @@
   });
 
 .search-result
-  %h2.h4= t('.heading', user: @searched_tw_user.mention_name)
+  %h2.h3= t('.heading', user: @searched_tw_user.mention_name)
 
   = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 

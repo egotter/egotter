@@ -7,17 +7,6 @@ module TweetTextHelper
     t('tweet_text.something_is_wrong', kaomoji: Kaomoji.happy, url: 'http://egotter.com')
   end
 
-  def clusters_belong_to_text(clusters, tu)
-    t('tweet_text.clusters_belong_to',
-      user: mention_name(tu.screen_name),
-      clusters: "#{clusters.join(t('dictionary.delim'))}",
-      kaomoji: Kaomoji.happy,
-      url: short_url)
-  rescue => e
-    logger.warn "#{e.class} #{e.message} #{clusters.inspect} #{tu.inspect}"
-    error_text
-  end
-
   # stats = [
   #   {:name=>"Sun", :y=>14.778310502283107},
   #   ...

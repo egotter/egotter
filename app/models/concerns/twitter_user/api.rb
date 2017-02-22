@@ -6,10 +6,6 @@ module Concerns::TwitterUser::Api
   included do
   end
 
-  def dummy_client
-    ApiClient.dummy_instance
-  end
-
   def calc_one_sided_friend_uids
     friend_uids - follower_uids
   end
@@ -252,24 +248,12 @@ module Concerns::TwitterUser::Api
     inactive_mutual_friendships.pluck(:friend_uid)
   end
 
-  def clusters_belong_to
-    dummy_client.tweet_clusters(statuses, limit: 100)
+  def tweet_clusters
+    ApiClient.dummy_instance.tweet_clusters(statuses, limit: 100)
   end
 
   def usage_stats_graph
-    dummy_client.usage_stats(extract_time_from_tweets(statuses), day_names: I18n.t('date.abbr_day_names'))
-  end
-
-  def frequency_distribution(words)
-    words.map { |word, count| {name: word, y: count} }
-  end
-
-  def clusters_belong_to_cloud
-    clusters_belong_to.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
-  end
-
-  def clusters_belong_to_frequency_distribution
-    frequency_distribution(clusters_belong_to.to_a.slice(0, 10))
+    ApiClient.dummy_instance.usage_stats(extract_time_from_tweets(statuses), day_names: I18n.t('date.abbr_day_names'))
   end
 
   def percentile_index(ary, percentile = 0.0)
@@ -284,7 +268,7 @@ module Concerns::TwitterUser::Api
 
   def usage_stats(day_count: 365)
     return [nil, nil, nil, nil, nil] if statuses.empty?
-    dummy_client.usage_stats(extract_time_from_tweets(statuses, day_count: day_count), day_names: I18n.t('date.abbr_day_names'))
+    ApiClient.dummy_instance.usage_stats(extract_time_from_tweets(statuses, day_count: day_count), day_names: I18n.t('date.abbr_day_names'))
   end
 
   def statuses_breakdown
