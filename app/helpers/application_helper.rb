@@ -20,19 +20,31 @@ module ApplicationHelper
   end
 
   def search_oneself?(uid)
-    user_signed_in? && current_user.uid.to_i == uid.to_i
+    user_signed_in? && current_user_uid == uid.to_i
   end
 
   def search_others?(uid)
-    user_signed_in? && current_user.uid.to_i != uid.to_i
+    user_signed_in? && current_user_uid != uid.to_i
   end
 
   def current_user_id
     @current_user_id ||= user_signed_in? ? current_user.id : -1
   end
 
+  def current_user_uid
+    @current_user_uid ||= user_signed_in? ? current_user.uid.to_i : -1
+  end
+
   def egotter_share_text
     @egotter_share_text ||= t('tweet_text.top', kaomoji: Kaomoji.happy)
+  end
+
+  def current_user_friend_uids
+    if instance_variable_defined?(:@current_user_friend_uids)
+      @current_user_friend_uids
+    else
+      @current_user_friend_uids = (current_user&.twitter_user&.friend_uids || [])
+    end
   end
 
   def screen_names_for_search

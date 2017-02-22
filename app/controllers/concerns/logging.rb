@@ -21,7 +21,7 @@ module Concerns::Logging
       screen_name: screen_name,
       action:      action_name,
       cache_hit:   cache_hit,
-      ego_surfing: user_signed_in? && current_user.uid.to_i == uid.to_i,
+      ego_surfing: user_signed_in? && current_user_uid == uid.to_i,
       method:      request.method,
       via:         params[:via] ? params[:via] : '',
       device_type: request.device_type,
