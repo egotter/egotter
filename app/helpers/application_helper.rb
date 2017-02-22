@@ -47,18 +47,12 @@ module ApplicationHelper
     end
   end
 
-  def screen_names_for_search
-    @screen_names_for_search ||=
-      begin
-        json = redis.fetch("screen_names_for_search:#{current_user_id}", ttl: 1.day) do
-          if user_signed_in? && (tu = current_user.twitter_user)
-            tu.friends.pluck(:screen_name)
-          else
-            []
-          end.to_json
-        end
-        JSON.load(json)
-      end
+  def current_user_friend_screen_names
+    if instance_variable_defined?(:@current_user_friend_screen_names)
+      @current_user_friend_screen_names
+    else
+      @current_user_friend_screen_names = (current_user&.twitter_user&.friends&.pluck(:screen_name) || [])
+    end
   end
 
   def png_image

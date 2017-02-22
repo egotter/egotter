@@ -1,6 +1,7 @@
-<% input_tag_id = "screen-name-#{Random.rand(1000)}" %>
+<% form_tag_id = "search-form-#{Random.rand(1000)}" %>
+<% input_tag_id = "search-input-#{Random.rand(1000)}" %>
 
-<%= form_tag searches_path, method: :post do %>
+<%= form_tag searches_path, id: form_tag_id, method: :post do %>
 <label for="screen_name" class="sr-only"><%= t('searches.common.twitter_id') %></label>
 <div class="input-group">
   <div class="input-group-addon">@</div>
@@ -21,10 +22,11 @@
 
 <script>
   $(function () {
-    var friends = <%= raw screen_names.to_json %>;
+    var friends = <%= raw current_user_friend_screen_names.to_json %>;
     $("#<%= input_tag_id %>").autocomplete({
       source: friends,
-      minLength: 2
+      minLength: 2,
+      appendTo: "#<%= form_tag_id %>"
     });
   });
 </script>
