@@ -65,7 +65,7 @@ class ImportFriendsAndFollowersWorker
 
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user.screen_name}"
 
-    # ImportInactiveFriendsAndInactiveFollowersWorker.perform_async(user_id, uid) if friends&.any? || followers&.any?
+    ImportInactiveFriendsAndInactiveFollowersWorker.perform_async(user_id, uid) if friends&.any? || followers&.any?
 
   rescue => e
     message = e.message.truncate(150)

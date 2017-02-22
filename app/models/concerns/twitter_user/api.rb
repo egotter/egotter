@@ -219,52 +219,37 @@ module Concerns::TwitterUser::Api
     users.each { |user| user.uid = user.id }
   end
 
-  def inactive_friend_uids
-    inactive_friends.map(&:uid)
+  INACTIVE_LIMIT = 2.weeks.ago
+
+  def _inactive_user?(user)
+    user&.status&.created_at && Time.parse(user.status.created_at) < INACTIVE_LIMIT
+  rescue => e
+    logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{user&.status&.created_at}] #{user.uid} #{user.screen_name}"
+    false
   end
 
-  def inactive_friends
-    two_weeks_ago = 2.weeks.ago
-    friends.select do |friend|
-      begin
-        friend&.status&.created_at && Time.parse(friend&.status&.created_at) < two_weeks_ago
-      rescue => e
-        logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{friend&.status&.created_at}] #{friend.uid} #{friend.screen_name}"
-        false
-      end
-    end
+  def calc_inactive_friend_uids
+    friends.select { |friend| _inactive_user?(friend) }.map(&:uid)
+  end
+
+  def inactive_friend_uids
+    inactive_friendships.pluck(:friend_uid)
+  end
+
+  def calc_inactive_follower_uids
+    followers.select { |follower| _inactive_user?(follower) }.map(&:uid)
   end
 
   def inactive_follower_uids
-    inactive_followers.map(&:uid)
+    inactive_followerships.pluck(:follower_uid)
   end
 
-  def inactive_followers
-    two_weeks_ago = 2.weeks.ago
-    followers.select do |follower|
-      begin
-        follower&.status&.created_at && Time.parse(follower.status.created_at) < two_weeks_ago
-      rescue => e
-        logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{follower&.status&.created_at}] #{follower.uid} #{follower.screen_name}"
-        false
-      end
-    end
+  def calc_inactive_mutual_friend_uids
+    mutual_friends.select { |friend| _inactive_user?(friend) }.map(&:uid)
   end
 
   def inactive_mutual_friend_uids
-    inactive_mutual_friends.map(&:uid)
-  end
-
-  def inactive_mutual_friends
-    two_weeks_ago = 2.weeks.ago
-    mutual_friends.select do |friend|
-      begin
-        friend&.status&.created_at && Time.parse(friend&.status&.created_at) < two_weeks_ago
-      rescue => e
-        logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{friend&.status&.created_at}] #{friend.uid} #{friend.screen_name}"
-        false
-      end
-    end
+    inactive_mutual_friendships.pluck(:friend_uid)
   end
 
   def clusters_belong_to

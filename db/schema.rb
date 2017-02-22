@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170220075811) do
+ActiveRecord::Schema.define(version: 20170222055518) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -221,6 +221,33 @@ ActiveRecord::Schema.define(version: 20170220075811) do
   add_index "friendships", ["friend_uid"], name: "index_friendships_on_friend_uid", using: :btree
   add_index "friendships", ["from_id", "friend_uid"], name: "index_friendships_on_from_id_and_friend_uid", unique: true, using: :btree
   add_index "friendships", ["from_id"], name: "index_friendships_on_from_id", using: :btree
+
+  create_table "inactive_followerships", force: :cascade do |t|
+    t.integer "from_uid",     limit: 8, null: false
+    t.integer "follower_uid", limit: 8, null: false
+    t.integer "sequence",     limit: 4, null: false
+  end
+
+  add_index "inactive_followerships", ["follower_uid"], name: "index_inactive_followerships_on_follower_uid", using: :btree
+  add_index "inactive_followerships", ["from_uid"], name: "index_inactive_followerships_on_from_uid", using: :btree
+
+  create_table "inactive_friendships", force: :cascade do |t|
+    t.integer "from_uid",   limit: 8, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "inactive_friendships", ["friend_uid"], name: "index_inactive_friendships_on_friend_uid", using: :btree
+  add_index "inactive_friendships", ["from_uid"], name: "index_inactive_friendships_on_from_uid", using: :btree
+
+  create_table "inactive_mutual_friendships", force: :cascade do |t|
+    t.integer "from_uid",   limit: 8, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "inactive_mutual_friendships", ["friend_uid"], name: "index_inactive_mutual_friendships_on_friend_uid", using: :btree
+  add_index "inactive_mutual_friendships", ["from_uid"], name: "index_inactive_mutual_friendships_on_from_uid", using: :btree
 
   create_table "mentions", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
