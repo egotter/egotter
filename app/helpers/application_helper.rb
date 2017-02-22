@@ -19,14 +19,6 @@ module ApplicationHelper
     user_signed_in? && current_user.admin?
   end
 
-  def search_oneself?(uid)
-    user_signed_in? && current_user_uid == uid.to_i
-  end
-
-  def search_others?(uid)
-    user_signed_in? && current_user_uid != uid.to_i
-  end
-
   def current_user_id
     @current_user_id ||= user_signed_in? ? current_user.id : -1
   end
