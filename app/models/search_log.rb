@@ -11,6 +11,7 @@
 #  cache_hit   :boolean          default(FALSE), not null
 #  ego_surfing :boolean          default(FALSE), not null
 #  method      :string(191)      default(""), not null
+#  via         :string(191)      default(""), not null
 #  device_type :string(191)      default(""), not null
 #  os          :string(191)      default(""), not null
 #  browser     :string(191)      default(""), not null
@@ -20,6 +21,8 @@
 #  channel     :string(191)      default(""), not null
 #  first_time  :boolean          default(FALSE), not null
 #  landing     :boolean          default(FALSE), not null
+#  bouncing    :boolean          default(FALSE), not null
+#  exiting     :boolean          default(FALSE), not null
 #  medium      :string(191)      default(""), not null
 #  ab_test     :string(191)      default(""), not null
 #  created_at  :datetime         not null

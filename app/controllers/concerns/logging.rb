@@ -23,6 +23,7 @@ module Concerns::Logging
       cache_hit:   cache_hit,
       ego_surfing: user_signed_in? && current_user.uid.to_i == uid.to_i,
       method:      request.method,
+      via:         params[:via] ? params[:via] : '',
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
@@ -32,6 +33,8 @@ module Concerns::Logging
       channel:     find_channel(referral),
       first_time:  false,
       landing:     false,
+      bouncing:    false,
+      exiting:     false,
       medium:      params[:medium] ? params[:medium] : '',
       ab_test:     params[:ab_test] ? params[:ab_test] : '',
       created_at:  Time.zone.now

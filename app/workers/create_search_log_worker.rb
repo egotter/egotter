@@ -3,6 +3,10 @@ class CreateSearchLogWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(attrs)
+    attrs.delete('via') unless SearchLog.new.respond_to?(:via)
+    attrs.delete('bouncing') unless SearchLog.new.respond_to?(:bouincing)
+    attrs.delete('exiting') unless SearchLog.new.respond_to?(:exiting)
+
     log = SearchLog.new(attrs)
     log.assign_attributes(landing: landing_page?(log), first_time: first_time_session?(log))
     log.save!
@@ -10,7 +14,7 @@ class CreateSearchLogWorker
     reassign_channel(log) unless log.crawler?
     assign_timestamps(log) if log.with_login?
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{attrs.inspect}"
+    logger.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
   end
 
   private
@@ -43,8 +47,7 @@ class CreateSearchLogWorker
   end
 
   def first_time_session?(log)
-    !log.crawler? && log.session_id != '-1' &&
-      !SearchLog.exists?(session_id: log.session_id)
+    !log.crawler? && !SearchLog.exists?(session_id: log.session_id)
   end
 
   def reassign_channel(log)
@@ -75,6 +78,6 @@ class CreateSearchLogWorker
     log.save! if log.changed?
 
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{log.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{log.inspect}"
   end
 end

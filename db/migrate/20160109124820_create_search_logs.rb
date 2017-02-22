@@ -10,6 +10,7 @@ class CreateSearchLogs < ActiveRecord::Migration
       t.boolean :cache_hit,   null: false, default: false
       t.boolean :ego_surfing, null: false, default: false
       t.string  :method,      null: false, default: ''
+      t.string  :via,         null: false, default: ''
 
       t.string  :device_type, null: false, default: ''
       t.string  :os,          null: false, default: ''
@@ -21,6 +22,8 @@ class CreateSearchLogs < ActiveRecord::Migration
 
       t.boolean :first_time,  null: false, default: false
       t.boolean :landing,     null: false, default: false
+      t.boolean :bouncing,    null: false, default: false
+      t.boolean :exiting,     null: false, default: false
       t.string  :medium,      null: false, default: ''
       t.string  :ab_test,     null: false, default: ''
 
