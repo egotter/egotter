@@ -28,7 +28,8 @@ class ImportFriendsAndFollowersWorker
     end if followers&.any?
 
     users << to_array(t_user)
-    users.uniq!(&:first).sort_by!(&:first)
+    users.uniq!(&:first)
+    users.sort_by!(&:first)
 
     create_columns = %i(uid screen_name user_info friends_size followers_size)
     update_columns = %i(uid screen_name user_info)
