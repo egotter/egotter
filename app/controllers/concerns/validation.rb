@@ -9,9 +9,9 @@ module Validation
   def need_login
     unless user_signed_in?
       if controller_name == 'relationships'
-        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_for_relationships', sign_in_link: sign_in_link)
+        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_for_relationships_html', sign_in_path: _sign_in_path)
       else
-        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login', sign_in_link: sign_in_link)
+        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', sign_in_path: _sign_in_path)
       end
     end
   end
@@ -96,7 +96,7 @@ module Validation
     return true if tu.public_account?
     return true if tu.readable_by?(User.find_by(id: current_user_id))
 
-    redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user', user: view_context.user_link(tu.screen_name), sign_in_link: sign_in_link)
+    redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user_html', user: view_context.user_link(tu.screen_name), sign_in_path: _sign_in_path)
     false
   rescue Twitter::Error::NotFound => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
@@ -127,34 +127,30 @@ module Validation
   end
 
   def not_found_message(screen_name)
-    t('before_sign_in.not_found', user: screen_name)
+    t('before_sign_in.not_found', user: view_context.user_link(screen_name))
   end
 
   def forbidden_message(screen_name)
-    t('before_sign_in.forbidden', user: screen_name)
+    t('before_sign_in.forbidden', user: view_context.user_link(screen_name))
   end
 
   def unauthorized_message(screen_name)
-    t("after_sign_in.unauthorized", sign_in_link: sign_in_link, sign_out_link: sign_out_link)
+    t('after_sign_in.unauthorized_html', sign_in_path: _sign_in_path, sign_out_path: sign_out_path)
   end
 
   def alert_message(ex)
     case
       when ex.kind_of?(Twitter::Error::TooManyRequests)
-        t('before_sign_in.too_many_requests', sign_in_link: sign_in_link)
+        t('before_sign_in.too_many_requests_html', sign_in_path: _sign_in_path)
       else
         logger.warn "#{__method__}: unexpected exception #{ex.class} #{ex.message}"
-        t('before_sign_in.something_is_wrong', sign_in_link: sign_in_link)
+        t('before_sign_in.something_wrong_html', sign_in_path: _sign_in_path)
     end.html_safe
   end
 
   private
 
-  def sign_in_link
-    view_context.link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/validation_error"))
-  end
-
-  def sign_out_link
-    view_context.link_to(t('dictionary.sign_out'), sign_out_path)
+  def _sign_in_path
+    welcome_path(via: "#{controller_name}/#{action_name}/validation_error")
   end
 end

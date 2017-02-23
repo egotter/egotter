@@ -1,0 +1,12 @@
+.tweet-preview-box{class: text.object_id}
+  %textarea{readonly: 'readonly', rows: [text.scan(/\R/).size + 1, 4].max}= text
+.tweet-box.text-right
+  - label = action_name == 'new' ? t('dictionary.do_tweet') : t('dictionary.tweet_result')
+  = link_to label, intent_url(text), class: 'btn btn-info', onclick: "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
+
+:javascript
+  $(function () {
+    $('.tweet-preview-box.#{text.object_id} textarea').on('click', function () {
+      $(this).select();
+    });
+  });

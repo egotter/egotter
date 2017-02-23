@@ -1,0 +1,65 @@
+(function(global){
+  var Exception = function (msg1, msg2) {
+    this.msg1 = msg1;
+    this.msg2 = msg2;
+    this.isLogin = <%= user_signed_in? ? 'true' : 'false' %>;
+  };
+
+  Exception.prototype.showMessage = function () {
+    $('.error-msg').html(this.isLogin ? this.msg1 : this.msg2);
+    $('.rescue-box').show();
+  };
+
+  var retryTimeout = function (via) {
+    var message = '<%= t('before_sign_in.retry_timeout_html', sign_in_path: welcome_path(via: 'VIA')).html_safe %>';
+    return message.replace('VIA', via);
+  };
+
+  var somethingWrong = function (via) {
+    var message = '<%= t('before_sign_in.something_wrong_html', sign_in_path: welcome_path(via: 'VIA')).html_safe %>';
+    return message.replace('VIA', via);
+  };
+
+  var empty = function () {
+    return "<%= t('searches.common.empty_html') %>";
+  };
+
+  var tooManyRequests = new Exception(
+    '<%= I18n.t('after_sign_in.too_many_requests') %>',
+    '<%= I18n.t('before_sign_in.too_many_requests_html', sign_in_path: welcome_path(via: 'client/too_many_requests')) %>'
+  );
+
+  var unauthorized = new Exception(
+    '<%= I18n.t('after_sign_in.unauthorized_html', sign_in_path: welcome_path(via: 'client/unauthorized'), sign_out_path: sign_out_path) %>',
+    '<%= I18n.t("before_sign_in.unauthorized_html", sign_in_path: welcome_path(via: 'client/unauthorized')) %>'
+  );
+
+  var somethingError = new Exception(
+    '<%= I18n.t('after_sign_in.something_wrong') %>',
+    somethingWrong('client/something_wrong')
+  );
+
+  var timeout = new Exception(
+    '<%= I18n.t('after_sign_in.retry_timeout') %>',
+    retryTimeout('client/retry_timeout')
+  );
+
+  global.egotter = global.egotter || {};
+
+  global.egotter.errors = {
+    tooManyRequests: tooManyRequests, // <%= BackgroundSearchLog::TooManyRequests::MESSAGE %>
+    unauthorized: unauthorized,       // <%= BackgroundSearchLog::Unauthorized::MESSAGE %>
+    somethingError: somethingError,   // <%= BackgroundSearchLog::SomethingError::MESSAGE %>
+    "Timeout": timeout
+  };
+
+  global.egotter.messages = {
+    retryTimeout: retryTimeout,
+    somethingWrong: somethingWrong,
+    empty: empty
+  };
+
+  global.egotter.controller_name = '<%= controller_name %>';
+  global.egotter.action_name = '<%= action_name %>';
+
+})(window);

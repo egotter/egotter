@@ -252,7 +252,7 @@ ja:
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
   one_sided_friends:
     new:
-      title: '<span style="font-size: small; display: inline;">片思いチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '片思いチェック by えごったー'
       simple_title: '片思いチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
@@ -270,7 +270,7 @@ ja:
       tweet: "%{user} の分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。"
   unfriends:
     new:
-      title: '<span style="font-size: small; display: inline;">リムられチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title: '<span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'リムられチェック by えごったー'
       simple_title: 'リムられチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
@@ -288,7 +288,7 @@ ja:
       tweet: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされたかも %{blocking_or_blocked}人です。"
   relationships:
     new:
-      title: '<span style="font-size: small; display: inline;">会話検索</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title: '<span style="font-size: small; display: inline;">会話検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '会話分析 by えごったー'
       simple_title: '会話分析'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからツイッター分析！ 複数ユーザーの会話、共通フォロー、共通フォロワーをさくっと見付けることができます。"
@@ -307,7 +307,7 @@ ja:
       tweet: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人です。"
   inactive_friends:
     new:
-      title: '<span style="font-size: small; display: inline;">最近いない人検索</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '最近いない人検索 by えごったー'
       simple_title: '最近いない人検索'
       description: "保存ユーザー数1,000万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
@@ -325,7 +325,7 @@ ja:
       tweet: "%{user} の分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人です。"
   friends:
     new:
-      title: '<span style="font-size: small; display: inline;">フォローチェック</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'フォローチェック by えごったー'
       simple_title: 'フォローチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからフォローチェック！"
@@ -343,7 +343,7 @@ ja:
       tweet: "%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 ツイート %{statuses}人です。"
   conversations:
     new:
-      title: '<span style="font-size: small; display: inline;">リプライ分析</span><br>&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title: '<span style="font-size: small; display: inline;">リプライ分析</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'リプライ分析 by えごったー'
       simple_title: 'リプライ分析'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからリプライ分析！ リプライしたアカウント、リプライされたアカウントをさくっと見付けることができます。"
@@ -382,7 +382,6 @@ ja:
   dictionary:
     official_account: "公式アカウント"
     share_me: "えごったーをシェアする"
-    score: "スコア"
     link_to_support: "お問い合わせページ"
     support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
     sign_in: "ログイン"
@@ -395,15 +394,13 @@ ja:
     contact_by_reply: "リプライでお問い合わせ"
     feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
     faq: "よくあるご質問"
-    continue_reading: "続きはこちら → "
     view_more: "続きを見る"
     view_more_detail: "もっと詳しく"
     view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
     under_calculation: "集計中です"
     under_calculation_with_details: "フォロー・フォロワーの集計中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。"
     tweet_result: "結果をつぶやく"
-    tweet_top_page: "つぶやく"
-    created_at_and_updated_at: "更新日時"
+    do_tweet: "つぶやく"
     you: "あなた"
     clusters_index: "クラスタ指数"
     clusters_cloud: "クラスタクラウド"
@@ -412,39 +409,30 @@ ja:
     between_from: "から"
     between_to: "まで"
   before_sign_in:
-    need_login: "%{sign_in_link} が必要です。"
-    need_login_for_relationships: "共通検索を利用するには %{sign_in_link} が必要です。"
-    login_failed: "%{sign_in_link} に失敗しました。大変お手数ですが、時間をおいてから再度 %{sign_in_link} してみてください。"
-    session_expired: "一定時間操作がなかったため、ログアウトしました。再度、%{sign_in_link} してください。"
+    need_login_html: '<a href="%{sign_in_path}">ログイン</a> が必要です。'
+    need_login_for_relationships_html: '共通検索を利用するには <a href="%{sign_in_path}">ログイン</a> が必要です。'
+    login_failed_html: '<a href="%{sign_in_path}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{sign_in_path}">ログイン</a> してみてください。'
+    session_expired_html: '一定時間操作がなかったため、ログアウトしました。再度、<a href="%{sign_in_path}">ログイン</a> してください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
-    too_many_requests: "検索数の上限に達しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
-    not_found: '検索された <a href="https://twitter.com/%{user}" target="_blank" rel="nofollow">@%{user}</a> が見付かりません。アカウントが削除されたのかもしれません。'
-    forbidden: '検索された <a href="https://twitter.com/%{user}" target="_blank" rel="nofollow">@%{user}</a> は凍結されています。'
-    unauthorized: "認証に失敗しました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
-    something_is_wrong: "エラーが起きました。%{sign_in_link} して検索するか、時間をおいてから検索してみてください。"
-    invalid_twitter_id: "無効な Twitter ID が入力されました。"
+    too_many_requests_html: '検索数の上限に達しました。<a href="%{sign_in_path}">ログイン</a> して検索するか、時間をおいてから検索してみてください。'
+    not_found: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。'
+    forbidden: '検索された %{user} は凍結されています。'
+    unauthorized_html: '認証に失敗しました。<a href="%{sign_in_path}">ログイン</a> して検索するか、時間をおいてから検索してみてください。'
+    something_wrong_html: 'エラーが起きました。<a href="%{sign_in_path}">ログイン</a> して検索するか、時間をおいてから検索してみてください。'
     suspended_user: "%{user} は凍結されています。凍結が解除されてから検索してください。"
-    protected_user: "%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、%{sign_in_link} すれば検索することができます。"
-    many_friends: "%{user} のフォロー(%{friends})・フォロワー(%{followers})が多すぎて検索できません。%{sign_in_link} すれば検索することができます。"
-    too_many_friends: "%{user} のフォロー(%{friends})・フォロワー(%{followers})が多すぎて検索できません。"
-    please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
-    retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、%{sign_in_link} してから検索してみてください。"
-    empty_and_anonymous_and_many_friends: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>%{sign_in_link} すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}"
-    empty_and_anonymous_and_many_friends_multiple: "%{user1} と %{user2} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>%{sign_in_link} すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}"
-    empty_and_other_reason: "結果は0件です。%{sign_in_link} すると正しく結果が表示されるかもしれません。<br>%{kaomoji}"
+    protected_user_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{sign_in_path}">ログイン</a> すれば検索することができます。'
+    retry_timeout_html: '検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、<a href="%{sign_in_path}">ログイン</a> してから検索してみてください。'
+    empty_and_anonymous_and_many_friends_html: '%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br><a href="%{sign_in_path}">ログイン</a> すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}'
+    empty_and_other_reason_html: '結果は0件です。<a href="%{sign_in_path}">ログイン</a> すると正しく結果が表示されるかもしれません。<br>%{kaomoji}'
     that_page_doesnt_exist: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
     reject_crawler: "The crawler is rejected."
   after_sign_in:
     too_many_requests: "検索数の上限に達しました。時間をおいてから検索してみてください。"
-    unauthorized: "認証に失敗しました。一度 %{sign_out_link} し、再度 %{sign_in_link} してから検索してみてください。"
-    something_is_wrong: "エラーが起きました。時間をおいてから検索してみてください。"
-    please_retry: "%{user} の検索に失敗しました。時間をおいて再度検索してみてください。"
+    unauthorized_html: '認証に失敗しました。一度 <a href="%{sign_out_path}">ログアウト</a> し、再度 <a href="%{sign_in_path}">ログイン</a> してから検索してみてください。'
+    something_wrong: "エラーが起きました。時間をおいてから検索してみてください。"
     retry_timeout: "検索がタイムアウトしました。大半の場合は、再検索すれば正しく結果が表示されます。"
-    empty_and_sign_in_and_too_many_friends: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"
-    empty_and_sign_in_and_too_many_friends_multiple: "%{user1} と %{user2} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"
-    empty_and_other_reason: "結果は0件です。データはこれからたまっていきます。<br>%{kaomoji}"
-  view_more_btn:
-    same_user: "自分以外のユーザーを検索してください"
+    empty_and_sign_in_and_too_many_friends_html: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"
+    empty_and_other_reason_html: "結果は0件です。データはこれからたまっていきます。<br>%{kaomoji}"
   tweet_text:
     top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji} #egotter"
     close_friends: ".%{user}の仲良しランキング ↓\n%{users}\n#egotter %{url}"

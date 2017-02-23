@@ -18,10 +18,10 @@
 
 .one-sided-friends.lead.text-center= t('one_sided_friends.show.lead_002', user: @twitter_user.mention_name).html_safe
 
-= render partial: 'one_sided_friends/search_form', locals: {via: 'one_sided_friends/show/top_input'}
+= render partial: 'common/search_form', locals: {via: 'one_sided_friends/show/top_input'}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 - if @twitter_user.too_many_friends?(login_user: current_user)
-  = render partial: 'one_sided_friends/show/empty', locals: {twitter_user: @twitter_user}
+  = render partial: 'common/show/empty', locals: {twitter_user: @twitter_user, redirect_path: one_sided_friend_path(screen_name: @twitter_user.screen_name)}
 - else
   = render partial: 'one_sided_friends/show/present', locals: {twitter_user: @twitter_user, type: @type}

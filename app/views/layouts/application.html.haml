@@ -39,14 +39,19 @@
         enable_page_level_ads: true
       });
 
+    :javascript
+      #{render partial: 'common/errors', formats: %i(js)}
+
     - if user_signed_in?
       - if Rails.env.production?
         %link{href: '/manifest.json', rel: 'manifest'}
       %script{src: 'https://cdn.onesignal.com/sdks/OneSignalSDK.js'}
-      = render(partial: 'common/onesignal')
+      :javascript
+        #{render(partial: 'common/onesignal', formats: %i(js))}
 
     - if user_signed_in?
-      = render(partial: 'common/rollbar')
+      :javascript
+        #{render(partial: 'common/rollbar', formats: %i(js))}
 
   %body
     %nav.navbar.navbar-default

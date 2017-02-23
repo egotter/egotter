@@ -1,0 +1,60 @@
+var notifyButton = {
+  enable: true,
+  size: ['small', 'medium', 'large'][1],
+  prenotify: true,
+  showCredit: false,
+  text: {
+    'tip.state.unsubscribed':         "<%= t('onesignal.tip.state.unsubscribed') %>",
+    'tip.state.subscribed':           "<%= t('onesignal.tip.state.subscribed') %>",
+    'tip.state.blocked':              "<%= t('onesignal.tip.state.blocked') %>",
+    'message.prenotify':              "<%= t('onesignal.message.prenotify') %>",
+    'message.action.subscribed':      "<%= t('onesignal.message.action.subscribed') %>",
+    'message.action.resubscribed':    "<%= t('onesignal.message.action.resubscribed') %>",
+    'message.action.unsubscribed':    "<%= t('onesignal.message.action.unsubscribed') %>",
+    'dialog.main.title':              "<%= t('onesignal.dialog.main.title') %>",
+    'dialog.main.button.subscribe':   "<%= t('onesignal.dialog.main.button.subscribe') %>",
+    'dialog.main.button.unsubscribe': "<%= t('onesignal.dialog.main.button.unsubscribe') %>",
+    'dialog.blocked.title':           "<%= t('onesignal.dialog.blocked.title') %>",
+    'dialog.blocked.message':         "<%= t('onesignal.dialog.blocked.message') %>"
+  },
+  displayPredicate: function () {
+    return OneSignal.isPushNotificationsEnabled().then(function (isEnabled) {
+      return <%= controller_name == 'misc' && action_name == 'menu' ? 'true' : '!isEnabled' %>;
+    })
+  }
+};
+var welcomeNotification = {
+  "title": "<%= t('onesignal.welcomeNotification.title') %>",
+  "message": "<%= t('onesignal.welcomeNotification.message') %>"
+};
+var promptOptions = {
+  siteName:                   "<%= t('onesignal.promptOptions.siteName').truncate(30) %>",
+  actionMessage:              "<%= t('onesignal.promptOptions.actionMessage').truncate(90) %>",
+  exampleNotificationTitle:   "<%= t('onesignal.promptOptions.exampleNotificationTitle') %>",
+  exampleNotificationMessage: "<%= t('onesignal.promptOptions.exampleNotificationMessage') %>",
+  exampleNotificationCaption: "<%= t('onesignal.promptOptions.exampleNotificationCaption').truncate(50) %>",
+  acceptButtonText:           "<%= t('onesignal.promptOptions.acceptButtonText').truncate(15) %>",
+  cancelButtonText:           "<%= t('onesignal.promptOptions.cancelButtonText').truncate(15) %>"
+};
+
+var OneSignal = window.OneSignal || [];
+<% if Rails.env.development? %>
+  var values = {
+    appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
+    autoRegister:        false,
+    subdomainName:       'egotter-dev',
+    notifyButton:        notifyButton,
+    welcomeNotification: welcomeNotification,
+    promptOptions:       promptOptions
+  };
+<% elsif Rails.env.production? %>
+  var values = {
+    appId:               "<%= ENV['ONESIGNAL_APP_ID'] %>",
+    autoRegister:        false,
+    notifyButton:        notifyButton,
+    welcomeNotification: welcomeNotification,
+    promptOptions:       promptOptions
+  };
+<% end %>
+OneSignal.push(["init", values]);
+OneSignal.push(["sendTag", "user_id", <%= current_user.id %>]);

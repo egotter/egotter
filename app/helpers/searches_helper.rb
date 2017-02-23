@@ -100,11 +100,12 @@ module SearchesHelper
     end
   end
 
-  def searches_path_for(controller:, screen_name:, via: '')
+  def searches_path_for(controller:, screen_name: '', via: '')
+    options = {screen_name: screen_name, via: via}.delete_if { |_, v| v.empty? }
     if %w(one_sided_friends unfriends relationships inactive_friends friends conversations).include? controller
-      send("#{controller}_path", screen_name: screen_name, via: via)
+      send("#{controller}_path", options)
     else
-      searches_path(screen_name: screen_name, via: via)
+      searches_path(options)
     end
   end
 
