@@ -236,11 +236,6 @@ module Concerns::TwitterUser::Api
     inactive_friendships.pluck(:friend_uid)
   end
 
-  # TODO remove after finishing inactive_friendships:refresh
-  def calc_inactive_friends
-    friends.select { |friend| _inactive_user?(friend) }
-  end
-
   def calc_inactive_follower_uids
     followers.select { |follower| _inactive_user?(follower) }.map(&:uid)
   end
@@ -249,22 +244,12 @@ module Concerns::TwitterUser::Api
     inactive_followerships.pluck(:follower_uid)
   end
 
-  # TODO remove after finishing inactive_friendships:refresh
-  def calc_inactive_followers
-    followers.select { |follower| _inactive_user?(follower) }
-  end
-
   def calc_inactive_mutual_friend_uids
     mutual_friends.select { |friend| _inactive_user?(friend) }.map(&:uid)
   end
 
   def inactive_mutual_friend_uids
     inactive_mutual_friendships.pluck(:friend_uid)
-  end
-
-  # TODO remove after finishing inactive_friendships:refresh
-  def calc_inactive_mutual_friends
-    mutual_friends.select { |friend| _inactive_user?(friend) }
   end
 
   def clusters_belong_to
