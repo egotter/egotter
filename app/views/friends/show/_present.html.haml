@@ -2,11 +2,7 @@
   .inner
     - tweet_text = t('friends.show.tweet', user: twitter_user.mention_name, friends: twitter_user.friends_count, followers: twitter_user.followers_count, statuses: twitter_user.statuses_count)
     - text = ".#{tweet_text} #egotter #{friend_url(screen_name: twitter_user.screen_name, type: type)}"
-    - onclick = "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
-    %a.twitter-button{href: intent_url(text), onclick: onclick}
-      %i.fa.fa-twitter.fa-lg{'area-hidden': true}
-      %br
-      %span.share-text Twitter
+    = render partial: 'twitter/tweet_button', locals: {text: text}
 
 %ul.nav.nav-tabs.nav-justified{role: 'tablist'}
   %li.nav-item{class: ('active' if type == 'friends')}
@@ -29,93 +25,22 @@
 
 .shown-later{style: 'display: none;'}
   .friends.lead= t('friends.show.lead_003', user: twitter_user.mention_name).html_safe
-  = render partial: 'friends/search_form', locals: {via: 'friends/show/bottom_input'}
+  = render partial: 'common/search_form', locals: {via: 'friends/show/bottom_input'}
   = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
   .friends.lead= t('friends.show.lead_004')
   = link_to t('searches.common.search_xxx_by_egotter', user: twitter_user.mention_name), searches_path(screen_name: twitter_user.screen_name, via: "#{controller_name}/#{action_name}/bottom_button"), class: 'btn btn-info btn-block', style: 'margin-bottom: 15px;', method: :post
 
   .friends.separator
-  %h2.h4.text-center= t('searches.common.related_pages')
-  %h2.h4.text-left
-    = link_to t('searches.inactive_friends.title', user: twitter_user.mention_name), inactive_friends_search_path(screen_name: twitter_user.screen_name)
-  %div{style: 'margin-bottom: 15px;'}
-    = t('searches.inactive_friends.short_description')
-  %h2.h4.text-left
-    = link_to t('searches.inactive_followers.title', user: twitter_user.mention_name), inactive_followers_search_path(screen_name: twitter_user.screen_name)
-  %div{style: 'margin-bottom: 15px;'}
-    = t('searches.inactive_followers.short_description')
-  %h2.h4.text-left
-    = link_to t('searches.removing.title', user: twitter_user.mention_name), unfriend_path(screen_name: twitter_user.screen_name, type: 'removing')
-  %div{style: 'margin-bottom: 15px;'}
-    = t('searches.removing.short_description')
-  %h2.h4.text-left
-    = link_to t('searches.removed.title', user: twitter_user.mention_name), unfriend_path(screen_name: twitter_user.screen_name, type: 'removed')
-  %div{style: 'margin-bottom: 15px;'}
-    = t('searches.removed.short_description')
-  %h2.h4.text-left
-    = link_to t('searches.blocking_or_blocked.title', user: twitter_user.mention_name), unfriend_path(screen_name: twitter_user.screen_name, type: 'blocking_or_blocked')
-  %div{style: 'margin-bottom: 15px;'}
-    = t('searches.blocking_or_blocked.short_description')
+  = render partial: 'common/related_pages', locals: {twitter_user: twitter_user}
 
-- scope = {action: action_name, uid: twitter_user.uid}
 :javascript
   $(function () {
     var url = "#{friend_path(screen_name: twitter_user.screen_name, type: 'TYPE', format: :json)}";
-    var retryTimeout = '#{t('before_sign_in.retry_timeout', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/client/retry_timeout"))).html_safe}';
-    var somethingWrong = '#{t('before_sign_in.something_is_wrong', sign_in_link: link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/client/something_wrong"))).html_safe}';
-    var empty = "#{t('searches.common.empty_html')}";
     var type = "#{type.gsub(/_/, '-')}";
-    var scope = #{scope.to_json};
 
-  function fetchFirstUsers($tab, callback) {
-    var selector = $tab.attr('href');
+    $('a[href="#friends"]').on('click', {url: url}, tabClicked);
+    $('a[href="#followers"]').on('click', {url: url}, tabClicked);
+    $('a[href="#statuses"]').on('click', {url: url}, tabClicked);
 
-    $.get(url.replace('TYPE', selector.replace('#', '').replace(/-/g, '_')))
-      .done(function (res) {
-        if (res.empty) {
-          $tab.data('present', false);
-          $(selector).empty().append(empty);
-        } else {
-          $tab.data('present', true);
-          $(selector).empty().append(res.html);
-          callback();
-        }
-      })
-      .fail(function (xhr) {
-        if (xhr.status === 502) {
-          Rollbar.scope(scope).warning("Timeout while attempting fetching.");
-          $(selector).empty().append(retryTimeout);
-        } else {
-          $(selector).empty().append(somethingWrong);
-        }
-        console.log(xhr.responseText);
-      });
-  }
-
-  var tab_clicked = function (e) {
-    e.preventDefault();
-    var $tab = $(this);
-    var $box = $('.shown-later');
-    if($tab.data('loaded')){
-      if($tab.data('present')){
-        $box.show();
-      } else {
-        $box.hide();
-      }
-    } else {
-      $tab.data('loaded', true);
-      $box.hide();
-      fetchFirstUsers($tab, function () {
-        $box.show();
-        var path = window.location.pathname + window.location.search + '#loaded';
-        window.history.replaceState(null, null, path)
-      });
-    }
-  };
-
-  $('a[href="#friends"]').on('click', tab_clicked);
-  $('a[href="#followers"]').on('click', tab_clicked);
-  $('a[href="#statuses"]').on('click', tab_clicked);
-
-  $('a[href="#' + type + '"]').trigger('click');
+    $('a[href="#' + type + '"]').trigger('click');
   });

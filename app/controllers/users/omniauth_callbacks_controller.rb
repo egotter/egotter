@@ -12,8 +12,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         FollowEgotterWorker.perform_async(user.id) if follow
       end
     rescue =>  e
-      sign_in_link = view_context.link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
-      return redirect_to root_path, alert: t('before_sign_in.login_failed', sign_in_link: sign_in_link)
+      return redirect_to root_path, alert: t('before_sign_in.login_failed_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
     end
 
     delete_uid(user)

@@ -12,7 +12,7 @@ Rollbar.configure do |config|
     captureUncaught: true,
     captureUnhandledRejections: true,
     payload: {
-      # See also app/views/common/_rollbar.html.erb
+      # See also app/views/common/_rollbar.js.erb
       environment: Rails.env
     }
   }

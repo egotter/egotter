@@ -22,8 +22,7 @@ class ApplicationController < ActionController::Base
     if request.xhr?
       render nothing: true, status: 500
     else
-      sign_in_link = view_context.link_to(t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
-      redirect_to root_path, alert: t('before_sign_in.session_expired', sign_in_link: sign_in_link)
+      redirect_to root_path, alert: t('before_sign_in.session_expired_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
     end
   end
 

@@ -19,10 +19,10 @@
 
 .inactive-friends.lead.text-center= t('inactive_friends.show.lead_002', user: @twitter_user.mention_name).html_safe
 
-= render partial: 'inactive_friends/search_form', locals: {via: 'inactive_friends/show/top_input'}
+= render partial: 'common/search_form', locals: {via: 'inactive_friends/show/top_input'}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 - if @twitter_user.too_many_friends?(login_user: current_user)
-  = render partial: 'inactive_friends/show/empty', locals: {twitter_user: @twitter_user}
+  = render partial: 'common/show/empty', locals: {twitter_user: @twitter_user, redirect_path: inactive_friend_path(screen_name: @twitter_user.screen_name)}
 - else
   = render partial: 'inactive_friends/show/present', locals: {twitter_user: @twitter_user, type: @type}

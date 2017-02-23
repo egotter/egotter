@@ -17,15 +17,15 @@
 - else
   - if user_signed_in?
     - if @searched_tw_user.too_many_friends?(login_user: current_user)
-      %div= raw t('after_sign_in.empty_and_sign_in_and_too_many_friends', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy)
+      %div= t('after_sign_in.empty_and_sign_in_and_too_many_friends_html', user: @searched_tw_user.mention_name, kaomoji: Kaomoji.unhappy)
     - else
-      %div= raw t('after_sign_in.empty_and_other_reason', kaomoji: Kaomoji.happy)
+      %div= t('after_sign_in.empty_and_other_reason_html', kaomoji: Kaomoji.happy)
   - else
     - welcome_sign_in_path = welcome_path(via: "#{controller_name}/#{action_name}/empty_result")
     - if @searched_tw_user.many_friends?
-      %div= raw t('before_sign_in.empty_and_anonymous_and_many_friends', user: @searched_tw_user.mention_name, sign_in_link: link_to(t('dictionary.sign_in'), welcome_sign_in_path), kaomoji: Kaomoji.happy)
+      %div= t('before_sign_in.empty_and_anonymous_and_many_friends_html', user: @searched_tw_user.mention_name, sign_in_path: welcome_sign_in_path, kaomoji: Kaomoji.happy)
     - else
-      %div= raw t('before_sign_in.empty_and_other_reason', sign_in_link: link_to(t('dictionary.sign_in'), welcome_sign_in_path), kaomoji: Kaomoji.unhappy)
+      %div= t('before_sign_in.empty_and_other_reason_html', sign_in_path: welcome_sign_in_path, kaomoji: Kaomoji.unhappy)
   = render(partial: 'searches/tweet_box', locals: {tweet_text: empty_result_text(title_for(menu, @searched_tw_user.screen_name))})
 
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})

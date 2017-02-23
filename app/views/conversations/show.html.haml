@@ -18,7 +18,7 @@
 
 .conversations.lead.text-center= t('conversations.show.lead_002', user: @twitter_user.mention_name).html_safe
 
-= render partial: 'conversations/search_form', locals: {via: 'conversations/show/top_input'}
+= render partial: 'common/search_form', locals: {via: 'conversations/show/top_input'}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 = render partial: 'conversations/show/present', locals: {twitter_user: @twitter_user, type: @type}

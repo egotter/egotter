@@ -1,0 +1,47 @@
+- content_for :canonical_url do
+  %link{href: cluster_url(screen_name: @twitter_user.screen_name), rel: 'canonical'}
+
+- breadcrumb :cluster, @twitter_user.screen_name
+
+- page_title = t('clusters.show.title', user: @twitter_user.mention_name, clusters: @twitter_user.one_sided_friend_uids.size, one_sided_followers: @twitter_user.one_sided_follower_uids.size, mutual_friends: @twitter_user.mutual_friend_uids.size)
+- title page_title
+- set_meta_tags description: t('clusters.show.description', user: @twitter_user.mention_name, clusters: @twitter_user.one_sided_friend_uids.size, one_sided_followers: @twitter_user.one_sided_follower_uids.size, mutual_friends: @twitter_user.mutual_friend_uids.size)
+
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+:javascript
+  $(function () {
+    enableSlickOnPageTop();
+  });
+
+%h2.h2.clusters= page_title
+
+.clusters.lead.text-center= t('clusters.show.lead_002', user: @twitter_user.mention_name).html_safe
+
+= render partial: 'common/search_form', locals: {via: 'clusters/show/top_input'}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+.share-buttons
+  .inner
+    - text = t('tweet_text.clusters', user: mention_name(@twitter_user.screen_name), clusters: @cluster_names.take(3).join("\n"), kaomoji: Kaomoji.happy, url: cluster_url(screen_name: @twitter_user.screen_name))
+    = render partial: 'twitter/tweet_button', locals: {text: text}
+
+.clusters
+  %h3.h5= t('dictionary.clusters_index')
+  #clusters-graph.chart
+  = render partial: 'twitter/tweet_box', locals: {text: text}
+  %hr
+  %h3.h5= t('dictionary.clusters_cloud')
+  #clusters-word-cloud.chart{style: 'height: 220px;'}
+  %hr
+  = render partial: 'clusters/cluster', cached: true, collection: @cluster_names
+
+:javascript
+  $(function () {
+      var options = $.extend(true, {}, window.usage_stats_column_chart_options);
+      options.series[0].data = #{raw @graph.to_json};
+      $('#clusters-graph').highcharts(options);
+
+      var width = $('#clusters-word-cloud').width();
+      wordCloud('#clusters-word-cloud', #{raw @word_cloud.to_json}, width, 220);
+  });
