@@ -7,9 +7,9 @@ class UpdateNotificationMessageWorker
     if notification
       notification.update!(read: true, read_at: attrs['read_at'])
     else
-      logger.warn "#{self.class}: Record not found #{attrs.inspect}"
+      logger.info "Record not found #{attrs.inspect}"
     end
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
+    logger.warn "#{e.class} #{e.message} #{attrs.inspect}"
   end
 end
