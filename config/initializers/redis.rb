@@ -1,6 +1,6 @@
 Redis.class_eval do
   HOST = ENV['REDIS_HOST']
-  TTL = Rails.configuration.x.constants['page_cache_ttl']
+  TTL = 3.days
 
   def self.client
     new(host: HOST, driver: :hiredis)

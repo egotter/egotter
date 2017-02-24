@@ -28,6 +28,13 @@ class CreateTwitterUserWorker
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
 
+    creating_uids = Util::CreatingUids.new(Redis.client)
+    if creating_uids.exists?(uid)
+      log.update(status: false, call_count: client.call_count, message: "[#{uid}] is recently creating.")
+      return after_perform(user_id, uid, '')
+    end
+    creating_uids.add(uid)
+
     existing_tu = TwitterUser.latest(uid)
     if existing_tu&.fresh?
       existing_tu.increment(:search_count).save

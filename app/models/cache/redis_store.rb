@@ -1,6 +1,6 @@
 module Cache
   class RedisStore
-    TTL = Rails.configuration.x.constants['page_cache_ttl']
+    TTL = 3.days
     CACHE_ENABLED = ENV['PAGE_CACHE'] == '1'
 
     attr_reader :store

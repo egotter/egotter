@@ -17,10 +17,8 @@
 #
 
 class Bot < ActiveRecord::Base
-  BOT_PATH = Rails.configuration.x.constants['bot_path']
-
-  def self.load
-    JSON.parse(File.read(BOT_PATH)).each do |bot|
+  def self.load(path)
+    JSON.parse(File.read(path)).each do |bot|
       create!(uid: bot['uid'], screen_name: bot['screen_name'], secret: bot['secret'], token: bot['token'])
     end
   end

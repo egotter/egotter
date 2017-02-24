@@ -21,13 +21,7 @@ module Concerns::TwitterUser::Utils
     end
   end
 
-  DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created']
-
   included do
-  end
-
-  def client
-    @_client ||= (User.exists?(uid: uid) ? User.find_by(uid: uid).api_client : Bot.api_client)
   end
 
   def friendless?
@@ -41,6 +35,8 @@ module Concerns::TwitterUser::Utils
   def follower_uids
     new_record? ? followerships.map(&:follower_uid) : followerships.pluck(:follower_uid)
   end
+
+  DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created']
 
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
     Time.zone.now - send(attr) < seconds

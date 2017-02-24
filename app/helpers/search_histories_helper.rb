@@ -1,14 +1,12 @@
 module SearchHistoriesHelper
 
-  TTL = Rails.env.development? ? 1.minute : 5.minutes
-
   def search_histories_list
     user_id = current_user_id
-    key = "search_histories:#{user_id}"
-    if redis.exists(key)
-      JSON.parse(redis.get(key)).map { |user| Hashie::Mash.new(user) }
+    histories = Util::SearchHistories.new(redis)
+    if histories.exists?(user_id)
+      JSON.parse(histories.get(user_id)).map { |user| Hashie::Mash.new(user) }
     else
-      CreateSearchHistoriesWorker.perform_async(user_id, TTL)
+      CreateSearchHistoriesWorker.perform_async(user_id)
       []
     end
   rescue => e

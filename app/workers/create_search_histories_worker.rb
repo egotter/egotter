@@ -2,7 +2,7 @@ class CreateSearchHistoriesWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: false, backtrace: false
 
-  def perform(user_id, ttl)
+  def perform(user_id)
     uids = BackgroundSearchLog.success_logs(user_id).pluck(:uid).unix_uniq.take(10)
     twitter_users = TwitterUser.where(uid: uids.uniq).index_by { |tu| tu.uid.to_i }
     json =
@@ -14,8 +14,8 @@ class CreateSearchHistoriesWorker
           profile_image_url_https: twitter_user.profile_image_url_https.to_s
         }
       end.to_json
-    Redis.client.setex("search_histories:#{user_id}", ttl, json)
+    Util::SearchHistories.new(Redis.client).set(user_id, json)
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{user_id} #{ttl}"
+    logger.warn "#{self.class}: #{e.class} #{e.message} #{user_id}"
   end
 end

@@ -33,9 +33,9 @@ module WorkersHelper
   def add_force_update_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
     return if request.device_type == :crawler
 
-    key = "force_update_request:#{user_id}:#{uid}"
-    return if redis.exists(key)
-    redis.setex(key, FORCE_UPDATE_TTL, true)
+    update_requests = Util::ForceUpdateRequests.new(redis)
+    return if update_requests.exists?(user_id, uid)
+    update_requests.add(user_id, uid)
 
     referral = find_referral(pushed_referers)
 
