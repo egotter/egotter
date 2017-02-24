@@ -19,7 +19,7 @@
     %script{src: '//code.jquery.com/ui/1.12.0/jquery-ui.js'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js'}
     %script{src: '//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js'}
-    %link{href: '//maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css', rel: 'stylesheet', type: 'text/css'}
+    %link{href: '//maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css', rel: 'stylesheet', type: 'text/css'}
     = csrf_meta_tags
 
     = yield(:canonical_url) if content_for?(:canonical_url)
@@ -101,11 +101,6 @@
               %h2.h4= t('searches.new.feature_007')
               = t('searches.new.feature_desc_007', link: link_to(t('dictionary.view_more_detail'), welcome_path(via: "#{controller_name}/#{action_name}/feature_desc_007_bottom"))).html_safe
               = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button_bottom"), class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;'
-
-      .container
-        .row
-          .col-xs-12.pre-footer
-            = render partial: 'layouts/share'
 
       .container
         .row

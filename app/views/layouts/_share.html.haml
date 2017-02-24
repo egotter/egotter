@@ -1,20 +1,13 @@
-%h2.h4.share-me= t('dictionary.share_me')
-= render(partial: 'searches/tweet_box', locals: {tweet_text: "#{egotter_share_text} http://egotter.com"})
-#share
-:javascript
-  $(function () {
-    $("#share").jsSocials({
-      shares: ["twitter", "facebook", "googleplus"],
-      url: "https://egotter.com",
-      text: "#{raw egotter_share_text}",
-      showLabel: true,
-      showCount: true
-    });
-  });
+%h2.h4.share-me{style: 'margin-top: 15px; margin-bottom: 15px;'}= t('dictionary.share_me')
+= render(partial: 'twitter/tweet_box', locals: {text: "#{egotter_share_text} https://egotter.com"})
 
 .official-account
-  %h2.h4= t('dictionary.official_account')
-  .follow-official-account
+  %h3.h4{style: 'margin-top: 0; margin-bottom: 15px;'}= t('dictionary.official_account')
+
+  = user_link('ego_tter') do
+    = image_tag '/egotter_icon_400x400.jpg', size: '250x250', class: 'img-rounded', style: 'padding: 10px; border: 15px solid #f5f5f5'
+
+  .follow-official-account{style: 'margin-top: 15px;'}
     %a.twitter-follow-button{'data-show-count' => 'false', 'data-size' => 'large', href: user_url('ego_tter')}
       Follow @ego_tter
     :javascript
