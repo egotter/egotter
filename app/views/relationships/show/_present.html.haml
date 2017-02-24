@@ -30,9 +30,6 @@
   .relationships.lead= t('relationships.show.lead_004')
   = link_to t('searches.common.search_xxx_by_egotter', user: twitter_users[0].mention_name), searches_path(screen_name: twitter_users[0].screen_name, via: "#{controller_name}/#{action_name}/bottom_button"), class: 'btn btn-info btn-block', style: 'margin-bottom: 15px;', method: :post
 
-  .relationships.separator
-  = render partial: 'common/related_pages', locals: {twitter_user: twitter_users[0]}
-
 :javascript
   $(function () {
     var url = "#{relationship_path(src_screen_name: twitter_users[0].screen_name, dst_screen_name: twitter_users[1].screen_name, type: 'TYPE', format: :json)}";

@@ -257,7 +257,7 @@ module Concerns::TwitterUser::Api
   end
 
   def usage_stats_graph
-    client.usage_stats(extract_time_from_tweets(statuses), day_names: I18n.t('date.abbr_day_names'))
+    dummy_client.usage_stats(extract_time_from_tweets(statuses), day_names: I18n.t('date.abbr_day_names'))
   end
 
   def frequency_distribution(words)
@@ -284,7 +284,7 @@ module Concerns::TwitterUser::Api
 
   def usage_stats(day_count: 365)
     return [nil, nil, nil, nil, nil] if statuses.empty?
-    client.usage_stats(extract_time_from_tweets(statuses, day_count: day_count), day_names: I18n.t('date.abbr_day_names'))
+    dummy_client.usage_stats(extract_time_from_tweets(statuses, day_count: day_count), day_names: I18n.t('date.abbr_day_names'))
   end
 
   def statuses_breakdown

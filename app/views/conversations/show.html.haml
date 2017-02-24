@@ -22,3 +22,5 @@
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 = render partial: 'conversations/show/present', locals: {twitter_user: @twitter_user, type: @type}
+.conversations.separator
+= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}

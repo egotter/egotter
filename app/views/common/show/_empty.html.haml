@@ -1,6 +1,0 @@
-- if user_signed_in?
-  %div{style: 'margin-bottom: 15px;'}= t('after_sign_in.empty_and_sign_in_and_too_many_friends_html', user: twitter_user.mention_name, kaomoji: Kaomoji.unhappy)
-- else
-  - welcome_sign_in_path = welcome_path(redirect_path: redirect_path, via: "#{controller_name}/#{action_name}/empty_result")
-  %div{style: 'margin-bottom: 15px;'}= t('before_sign_in.empty_and_anonymous_and_many_friends_html', user: twitter_user.mention_name, sign_in_path: welcome_sign_in_path, kaomoji: Kaomoji.happy)
-  = link_to t('login.welcome.sign_in_with_twitter'), welcome_sign_in_path, class: 'btn btn-info btn-block', style: 'margin-bottom: 15px;'

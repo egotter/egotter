@@ -21,7 +21,6 @@
 = render partial: 'common/search_form', locals: {via: 'unfriends/show/top_input'}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
-- if @twitter_user.too_many_friends?(login_user: current_user)
-  = render partial: 'common/show/empty', locals: {twitter_user: @twitter_user, redirect_path: unfriend_path(screen_name: @twitter_user.screen_name)}
-- else
-  = render partial: 'unfriends/show/present', locals: {twitter_user: @twitter_user, type: @type}
+= render partial: 'unfriends/show/present', locals: {twitter_user: @twitter_user, type: @type}
+.unfriends.separator
+= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}
