@@ -22,15 +22,27 @@
     }
   }
 
-  & .feature-description {
-    text-align: center;
-    margin-top: 15px;
-    padding-bottom: 15px;
+  &.descriptions {
+    div {
+      font-size: large;
+      text-align: center;
+      margin-top: 15px;
+      margin-bottom: 15px;
+    }
+
+    i {
+      color: #EA2184;
+    }
   }
 
-  &.description {
-    margin-bottom: 15px;
-    line-height: 140%;
+  .text-notice {
+    color: #EA2184;
+  }
+
+  .box-center {
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   &.separator {
@@ -38,4 +50,10 @@
     height: 15px;
     margin: 0 -15px 0 -15px;
   }
+
+  &.vertical-align-bottom {
+    display: flex;
+    align-items: flex-end;
+  }
 }
+
