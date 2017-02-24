@@ -1,11 +1,12 @@
 function fetchFirstUsers(url, $tab, callback) {
   var selector = $tab.attr('href');
+  var path_name = egotter.controller_name + '/' + egotter.action_name;
 
   $.get(url.replace('TYPE', selector.replace('#', '').replace(/-/g, '_')))
     .done(function (res) {
       if (res.empty) {
         $tab.data('present', false);
-        $(selector).empty().append(egotter.messages.empty());
+        $(selector).empty().append(egotter.messages.empty(path_name + '/client/empty_result'));
       } else {
         $tab.data('present', true);
         $(selector).empty().append(res.html);
@@ -14,10 +15,10 @@ function fetchFirstUsers(url, $tab, callback) {
     })
     .fail(function (xhr) {
       if (xhr.status === 502) {
-        var message = egotter.messages.retryTimeout(egotter.controller_name + '/' + egotter.action_name + '/client/retry_timeout');
+        var message = egotter.messages.retryTimeout(path_name + '/client/retry_timeout');
         $(selector).empty().append(message);
       } else {
-        var message = egotter.messages.somethingWrong(egotter.controller_name + '/' + egotter.action_name + '/client/something_wrong');
+        var message = egotter.messages.somethingWrong(path_name + '/client/something_wrong');
         $(selector).empty().append(message);
       }
       console.log(xhr.responseText);

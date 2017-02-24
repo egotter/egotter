@@ -20,8 +20,9 @@
     return message.replace('VIA', via);
   };
 
-  var empty = function () {
-    return "<%= t('searches.common.empty_html') %>";
+  var empty = function (via) {
+    var message = '<%= t('searches.common.empty_html', sign_in_path: welcome_path(via: 'VIA')).html_safe %>';
+    return message.replace('VIA', via);
   };
 
   var tooManyRequests = new Exception(
