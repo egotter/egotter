@@ -4,7 +4,7 @@ class CreateSearchLogWorker
 
   def perform(attrs)
     log = SearchLog.new(attrs)
-    if log.user_agent.match /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot/
+    if log.user_agent.match /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider/
       log.assign_attributes(session_id: '-1', device_type: 'crawler')
     end
     log.assign_attributes(landing: landing_page?(log), first_time: first_time_session?(log))
