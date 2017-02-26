@@ -47,16 +47,6 @@ class SearchResultsController < ApplicationController
     end
   end
 
-  # GET /searches/:screen_name/clusters_belong_to
-  def clusters_belong_to
-    clusters = @searched_tw_user.clusters_belong_to
-    @cluster_words = clusters.keys.take(10).map { |c| {target: "#{c}#{t('searches.common.cluster')}"} }
-    @graph = @searched_tw_user.clusters_belong_to_frequency_distribution
-    @clusters_belong_to_cloud = @searched_tw_user.clusters_belong_to_cloud
-    @tweet_text = clusters_belong_to_text(@cluster_words.take(3).map { |c| c[:target] }, @searched_tw_user)
-    render json: {html: render_to_string}, status: 200
-  end
-
   # GET /searches/:screen_name/usage_stats
   def usage_stats
     @wday, @wday_drilldown, @hour, @hour_drilldown, @usage_time = @searched_tw_user.usage_stats

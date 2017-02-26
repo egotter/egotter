@@ -93,7 +93,7 @@
     %link{href: 'https://cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}/
     %script{src: 'https://cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
 
-    - if %w(search_results searches one_sided_friends unfriends inactive_friends friends conversations relationships statuses update_histories).include?(controller_name)
+    - if %w(search_results searches one_sided_friends unfriends inactive_friends friends conversations relationships statuses update_histories clusters).include?(controller_name)
       - unless user_signed_in?
         .container
           .row
@@ -113,34 +113,39 @@
                 = t('searches.common.page_description')
             - unless 'one_sided_friends' == controller_name
               %h2.h4.text-left
-                = link_to t('one_sided_friends.new.plain_title').html_safe, one_sided_friends_top_path
+                = link_to t('one_sided_friends.new.plain_title'), one_sided_friends_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('one_sided_friends.new.short_description')
             - unless 'unfriends' == controller_name
               %h2.h4.text-left
-                = link_to t('unfriends.new.plain_title').html_safe, unfriends_top_path
+                = link_to t('unfriends.new.plain_title'), unfriends_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('unfriends.new.short_description')
             - unless 'relationships' == controller_name
               %h2.h4.text-left
-                = link_to t('relationships.new.plain_title').html_safe, relationships_top_path
+                = link_to t('relationships.new.plain_title'), relationships_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('relationships.new.short_description')
             - unless 'inactive_friends' == controller_name
               %h2.h4.text-left
-                = link_to t('inactive_friends.new.plain_title').html_safe, inactive_friends_top_path
+                = link_to t('inactive_friends.new.plain_title'), inactive_friends_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('inactive_friends.new.short_description')
             - unless 'friends' == controller_name
               %h2.h4.text-left
-                = link_to t('friends.new.plain_title').html_safe, friends_top_path
+                = link_to t('friends.new.plain_title'), friends_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('friends.new.short_description')
             - unless 'conversations' == controller_name
               %h2.h4.text-left
-                = link_to t('conversations.new.plain_title').html_safe, conversations_top_path
+                = link_to t('conversations.new.plain_title'), conversations_top_path
               %div{style: 'margin-bottom: 15px;'}
                 = t('conversations.new.short_description')
+            - unless 'clusters' == controller_name
+              %h2.h4.text-left
+                = link_to t('clusters.new.plain_title'), clusters_top_path
+              %div{style: 'margin-bottom: 15px;'}
+                = t('clusters.new.short_description')
 
       .container
         .row

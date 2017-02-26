@@ -97,6 +97,12 @@ class SearchesController < ApplicationController
     end
   end
 
+  %i(clusters_belong_to).each do |menu|
+    define_method(menu) do
+      redirect_to cluster_path(screen_name: @searched_tw_user.screen_name)
+    end
+  end
+
   %i(friends followers statuses).each do |menu|
     define_method(menu) do
       redirect_to friend_path(screen_name: @searched_tw_user.screen_name, type: menu)

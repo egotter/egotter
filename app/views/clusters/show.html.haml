@@ -3,9 +3,9 @@
 
 - breadcrumb :cluster, @twitter_user.screen_name
 
-- page_title = t('clusters.show.title', user: @twitter_user.mention_name, clusters: @twitter_user.one_sided_friend_uids.size, one_sided_followers: @twitter_user.one_sided_follower_uids.size, mutual_friends: @twitter_user.mutual_friend_uids.size)
+- page_title = t('clusters.show.title', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))
 - title page_title
-- set_meta_tags description: t('clusters.show.description', user: @twitter_user.mention_name, clusters: @twitter_user.one_sided_friend_uids.size, one_sided_followers: @twitter_user.one_sided_follower_uids.size, mutual_friends: @twitter_user.mutual_friend_uids.size)
+- set_meta_tags description: t('clusters.show.description', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
@@ -14,27 +14,27 @@
     enableSlickOnPageTop();
   });
 
-%h2.h2.clusters= page_title
+%h2.h3.clusters= page_title
 
-.clusters.lead.text-center= t('clusters.show.lead_002', user: @twitter_user.mention_name).html_safe
+.clusters.lead.text-center= t('clusters.show.lead_002_html', user: @twitter_user.mention_name)
 
 = render partial: 'common/search_form', locals: {via: 'clusters/show/top_input'}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 .share-buttons
   .inner
-    - text = t('tweet_text.clusters', user: mention_name(@twitter_user.screen_name), clusters: @cluster_names.take(3).join("\n"), kaomoji: Kaomoji.happy, url: cluster_url(screen_name: @twitter_user.screen_name))
+    - text = t('clusters.show.tweet', user: mention_name(@twitter_user.screen_name), clusters: @cluster_names.take(3).join("\n"), url: cluster_url(screen_name: @twitter_user.screen_name))
     = render partial: 'twitter/tweet_button', locals: {text: text}
 
-.clusters
-  %h3.h5= t('dictionary.clusters_index')
-  #clusters-graph.chart
-  = render partial: 'twitter/tweet_box', locals: {text: text}
-  %hr
-  %h3.h5= t('dictionary.clusters_cloud')
-  #clusters-word-cloud.chart{style: 'height: 220px;'}
-  %hr
-  = render partial: 'clusters/cluster', cached: true, collection: @cluster_names
+
+%h2.h3.clusters= t('clusters.show.clusters_level')
+#clusters-graph.chart
+= render partial: 'twitter/tweet_box', locals: {text: text}
+%hr
+%h2.h3.clusters= t('clusters.show.clusters_cloud')
+#clusters-word-cloud.chart{style: 'height: 220px;'}
+%hr
+= render partial: 'clusters/cluster', cached: true, collection: @cluster_names
 
 :javascript
   $(function () {

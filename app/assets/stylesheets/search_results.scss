@@ -1,0 +1,51 @@
+.search-result {
+  .this-page-is,
+  .other-services {
+    margin-bottom: 15px;
+  }
+
+  .loading-image {
+    margin-bottom: 15px;
+  }
+}
+
+.common-result {
+  .loading-image {
+    margin-bottom: 15px;
+  }
+}
+
+.menu-items .media-body a img {
+  margin-right: 3px;
+}
+
+.menu-items .common-chart,
+.menu-items .close-friends-chart {
+  height: 70px;
+  width: 120px;
+  border: 1px solid #e6e6e6;
+}
+
+.menu-items.media {
+  border: 1px solid #e6e6e6;
+  padding: 15px;
+
+  & h3 {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  & .description {
+    margin-top: 0;
+    margin-bottom: 15px;
+  }
+
+  & .media-body {
+    padding-top: 22px;
+  }
+
+  & .btn-view-more {
+    margin-top: 15px;
+  }
+}
+

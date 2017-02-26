@@ -84,6 +84,6 @@
     $('#hashtags').highcharts(hashtags);
 
     var cloud = <%= raw @cloud.to_json %>;
-    draw_word_cloud('#cloud', cloud, $('#cloud').width(), 220);
+    wordCloud('#cloud', cloud, $('#cloud').width(), 220);
   });
 </script>
