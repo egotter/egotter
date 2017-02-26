@@ -35,6 +35,10 @@ class ApplicationController < ActionController::Base
         @redirect_path = search_path(screen_name: @screen_name)
         @via = params['via']
         render template: 'searches/create', layout: false
+      elsif request.fullpath.match %r{^/https:/egotter\.com(.+)}
+        redirect_url = "https://egotter.com#{$1}"
+        logger.warn "redirect to #{redirect_url} #{request.referer}"
+        redirect_to redirect_url, status: 301
       else
         logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
         request.xhr? ? render(nothing: true, status: 404) : redirect_to(root_path, alert: t('before_sign_in.that_page_doesnt_exist'))
