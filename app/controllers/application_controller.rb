@@ -34,7 +34,7 @@ class ApplicationController < ActionController::Base
       render template: 'searches/create', layout: false
     elsif request.fullpath.match %r{^/https:/egotter\.com(.+)}
       redirect_url = "https://egotter.com#{$1}"
-      logger.warn "redirect to #{redirect_url} #{current_user_id} #{request.device_type} #{request.browser} #{request.referer}"
+      logger.info "redirect to #{redirect_url} #{current_user_id} #{request.device_type} #{request.browser} #{request.referer}"
       redirect_to redirect_url, status: 301
     else
       logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
