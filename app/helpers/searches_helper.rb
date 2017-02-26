@@ -67,7 +67,7 @@ module SearchesHelper
   end
 
   def root_path_for(controller:)
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters usage_stats).include? controller
       send("#{controller}_top_path")
     else
       root_path
@@ -75,7 +75,7 @@ module SearchesHelper
   end
 
   def app_name_for(controller:)
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters usage_stats).include? controller
       send(:t, "#{controller}.new.title")
     else
       t('searches.common.egotter')
@@ -84,7 +84,7 @@ module SearchesHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(new_friends new_followers favoriting clusters_belong_to close_friends usage_stats)
+      when *%w(new_friends new_followers favoriting clusters_belong_to close_friends)
         send("#{menu}_search_path", screen_name: screen_name)
       when *%w(removing removed blocking_or_blocked)
         unfriend_path(screen_name: screen_name, type: menu)
@@ -98,6 +98,8 @@ module SearchesHelper
         conversation_path(screen_name: screen_name, type: menu)
       when *%w(clusters)
         cluster_path(screen_name: screen_name)
+      when *%w(usage_stats)
+        usage_stat_path(screen_name: screen_name)
       else
         raise "#{__method__}: invalid menu #{menu}"
     end
@@ -105,7 +107,7 @@ module SearchesHelper
 
   def searches_path_for(controller:, screen_name: '', via: '')
     options = {screen_name: screen_name, via: via}.delete_if { |_, v| v.empty? }
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
+    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters usage_stats).include? controller
       send("#{controller}_path", options)
     else
       searches_path(options)

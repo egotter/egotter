@@ -42,7 +42,10 @@ window.usage_stats_column_chart_options = {
   chart: {
     type: 'column',
     marginTop: 0,
-    spacingTop: 0
+    marginRight: 0,
+    spacingTop: 0,
+    spacingBottom: 0,
+    spacingLeft: 0
   },
   title: {
     style: {color: '#777777'},
@@ -54,6 +57,9 @@ window.usage_stats_column_chart_options = {
   yAxis: {
     title: {
       text: null
+    },
+    labels: {
+      formatter: null
     },
     endOnTick: false,
     startOnTick: false
@@ -86,7 +92,12 @@ window.usage_stats_tweets_stat_options = {
   credits: false,
   colors: ['rgba(181, 137, 0, 0.4)', 'rgba(42, 161, 152, 1.0'],
   chart: {
-    type: 'bar'
+    type: 'bar',
+    marginTop: 0,
+    marginRight: 0,
+    spacingTop: 0,
+    spacingBottom: 0,
+    spacingLeft: 0
   },
   title: {
     style: {color: '#777777'},

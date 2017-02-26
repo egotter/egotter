@@ -1,4 +1,4 @@
-class ClustersController < ApplicationController
+class UsageStatsController < ApplicationController
   include Validation
   include Concerns::Logging
   include SearchesHelper
@@ -23,11 +23,11 @@ class ClustersController < ApplicationController
   end
 
   def new
-    @title = t('clusters.new.plain_title')
+    @title = t('usage_stats.new.plain_title')
   end
 
   def create
-    redirect_path = cluster_path(screen_name: @tu.screen_name)
+    redirect_path = usage_stat_path(screen_name: @tu.screen_name)
     if TwitterUser.exists?(uid: @tu.uid)
       redirect_to redirect_path
     else
@@ -39,9 +39,6 @@ class ClustersController < ApplicationController
   end
 
   def show
-    clusters = UsageStat.update_with_statuses!(@twitter_user.uid, @twitter_user.statuses).tweet_clusters
-    @cluster_names = clusters.keys.take(10).map { |name| t('clusters.show.cluster_name', name: name) }
-    @graph = name_y_format(clusters)
-    @word_cloud = text_size_group_format(clusters)
+    @usage_stat = UsageStat.update_with_statuses!(@twitter_user.uid, @twitter_user.statuses)
   end
 end
