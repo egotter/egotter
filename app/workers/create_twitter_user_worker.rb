@@ -11,7 +11,7 @@ class CreateTwitterUserWorker
 
     queue = Sidekiq::Queue.new(self.class.to_s)
 
-    if queue.size > 5 && Time.zone.parse(values['queued_at']) < 5.minutes.ago
+    if queue.size > 3 && Time.zone.parse(values['queued_at']) < 5.minutes.ago
       CreateTwitterUserWorker.perform_in(rand(30..300).minutes, values)
       return
     end
@@ -41,7 +41,7 @@ class CreateTwitterUserWorker
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
 
-    if queue.size > 5 && log.auto
+    if queue.size > 3 && log.auto
       log.update(status: false, call_count: client.call_count, message: "[#{uid}] is skipped because busy.")
       return after_perform(user_id, uid, '')
     end
