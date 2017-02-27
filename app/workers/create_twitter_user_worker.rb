@@ -3,9 +3,9 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
-    unless values['queued_at']
-      values['queued_at'] = Time.zone.now
-      CreateTwitterUserWorker.perform_in(rand(30..120).minutes, values)
+    unless values['debug']
+      values['debug'] = Time.zone.now
+      CreateTwitterUserWorker.perform_in(rand(300..5000).minutes, values)
       return
     end
 
