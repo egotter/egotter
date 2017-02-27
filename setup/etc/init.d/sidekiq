@@ -28,7 +28,7 @@ stop() {
   cd $APP_ROOT
   sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
 
-  until cat "/proc/${PID}/cmdline" | grep 'egotter \[0 of '; do
+  until cat "/proc/${PID}/cmdline" | grep -a 'egotter \[0 of '; do
     echo $(cat "/proc/${PID}/cmdline")
     sleep 2
   done
