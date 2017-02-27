@@ -110,6 +110,9 @@ class CreateTwitterUserWorker
       message: ''
     )
   rescue Twitter::Error::Unauthorized => e
+    if user && e.message == 'Invalid or expired token.'
+      user.update(authorized: false)
+    end
     log.update(
       status: false,
       call_count: client.call_count,
