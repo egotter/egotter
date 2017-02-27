@@ -1,0 +1,8 @@
+# be sidekiq -e production -d -C config/sidekiq_follow.yml
+# be sidekiqctl quiet ./tmp/pids/sidekiq_follow.pid
+# be sidekiqctl stop ./tmp/pids/sidekiq_follow.pid
+:concurrency: 1
+:pidfile: ./tmp/pids/sidekiq_follow.pid
+:logfile: ./log/sidekiq_follow.log
+:queues:
+  - FollowEgotterWorker

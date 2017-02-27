@@ -37,7 +37,9 @@ class ApplicationController < ActionController::Base
       logger.info "redirect to #{redirect_url} #{current_user_id} #{request.device_type} #{request.browser} #{request.referer}"
       redirect_to redirect_url, status: 301
     else
-      logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
+      unless request.fullpath.match %r{^/search_results/}
+        logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
+      end
       request.xhr? ? head(:not_found) : redirect_to(root_path, alert: t('before_sign_in.that_page_doesnt_exist'))
     end
   end

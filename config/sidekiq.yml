@@ -16,7 +16,6 @@
   - CreateSignInLogWorker
   - CreateTweetsWorker
   - CreateTwitterUserWorker
-  - FollowEgotterWorker
   - ForceUpdateTwitterUserWorker
   - ImportFriendsAndFollowersWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker

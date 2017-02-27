@@ -3,6 +3,19 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
+    if !values['queued_at'] || !(Time.zone.parse(values['queued_at']) rescue nil)
+      values['queued_at'] = Time.zone.now
+      CreateTwitterUserWorker.perform_in(rand(30..300).minutes, values)
+      return
+    end
+
+    queue = Sidekiq::Queue.new(self.class.to_s)
+
+    if queue.size > 3 && Time.zone.parse(values['queued_at']) < 5.minutes.ago
+      CreateTwitterUserWorker.perform_in(rand(30..300).minutes, values)
+      return
+    end
+
     client = Hashie::Mash.new({call_count: -100}) # If an error happens, This client is used in rescue block.
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
@@ -27,6 +40,11 @@ class CreateTwitterUserWorker
     user = User.find_by(id: user_id)
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
+
+    if queue.size > 3 && log.auto
+      log.update(status: false, call_count: client.call_count, message: "[#{uid}] is skipped because busy.")
+      return after_perform(user_id, uid, '')
+    end
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
@@ -92,6 +110,9 @@ class CreateTwitterUserWorker
       message: ''
     )
   rescue Twitter::Error::Unauthorized => e
+    if user && e.message == 'Invalid or expired token.'
+      user.update(authorized: false)
+    end
     log.update(
       status: false,
       call_count: client.call_count,

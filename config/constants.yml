@@ -3,6 +3,7 @@ default: &default
   log_recently_created: <%= 5.minutes %>
   recently_searched: <%= 5.minutes %>
   recently_creating: <%= 5.minutes %>
+  recently_messaging: <%= 5.minutes %>
   many_friends_threshold: 1000
   too_many_friends_threshold: 5000
   cluster_bad_words_path: 'data/cluster_bad_words.json'
