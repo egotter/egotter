@@ -3,6 +3,12 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
+    unless values['queued_at']
+      values['queued_at'] = Time.zone.now
+      CreateTwitterUserWorker.perform_in(rand(30..120).minutes, values)
+      return
+    end
+
     client = Hashie::Mash.new({call_count: -100}) # If an error happens, This client is used in rescue block.
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
@@ -27,6 +33,11 @@ class CreateTwitterUserWorker
     user = User.find_by(id: user_id)
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
+
+    if Sidekiq::Queue.new(self.class.to_s).size > 3 && log.auto
+      log.update(status: false, call_count: client.call_count, message: "[#{uid}] is skipped because busy.")
+      return after_perform(user_id, uid, '')
+    end
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
