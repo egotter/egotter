@@ -3,9 +3,16 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
-    unless values['debug']
-      values['debug'] = Time.zone.now
-      CreateTwitterUserWorker.perform_in(rand(300..5000).minutes, values)
+    if !values['queued_at'] || !(Time.zone.parse(values['queued_at']) rescue nil)
+      values['queued_at'] = Time.zone.now
+      CreateTwitterUserWorker.perform_in(rand(30..300).minutes, values)
+      return
+    end
+
+    queue = Sidekiq::Queue.new(self.class.to_s)
+
+    if queue.size > 5 && Time.zone.parse(values['queued_at']) < 5.minutes.ago
+      CreateTwitterUserWorker.perform_in(rand(30..300).minutes, values)
       return
     end
 
@@ -34,7 +41,7 @@ class CreateTwitterUserWorker
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
 
-    if Sidekiq::Queue.new(self.class.to_s).size > 3 && log.auto
+    if queue.size > 5 && log.auto
       log.update(status: false, call_count: client.call_count, message: "[#{uid}] is skipped because busy.")
       return after_perform(user_id, uid, '')
     end
