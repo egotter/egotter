@@ -11,8 +11,10 @@ else
   ec='\c'
 fi
 
+APP_ROOT="/home/ec2-user/egotter/"
 NAME=sidekiq
-APP_ROOT="/home/ec2-user/egotter"
+PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
+PID=$(cat ${PID_FILE})
 
 start() {
   cd $APP_ROOT
@@ -24,14 +26,14 @@ start() {
 
 stop() {
   cd $APP_ROOT
-  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ./tmp/pids/sidekiq.pid"
+  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
 
-  until ps aux | grep 'sidekiq 4' | grep '\[0 of '; do
-    echo `ps aux | grep 'sidekiq 4' | grep -v grep`
+  until cat "/proc/${PID}/cmdline" | grep 'egotter \[0 of '; do
+    echo $(cat "/proc/${PID}/cmdline")
     sleep 2
   done
 
-  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl stop ./tmp/pids/sidekiq.pid"
+  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl stop ${PID_FILE}"
   RETVAL=$?
 
   echo ${en} "Stopping $NAME: ${ec}"
@@ -41,7 +43,7 @@ stop() {
 }
 
 status() {
-  ps -ef | grep 'sidekiq [0-9].[0-9].[0-9]' | grep -v grep
+  echo $(cat "/proc/${PID}/cmdline")
   return $?
 }
 
