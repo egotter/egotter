@@ -24,7 +24,7 @@ module WorkersHelper
       referral:    referral,
       channel:     find_channel(referral),
       medium:      params[:medium] ? params[:medium] : '',
-      debug:   Time.zone.now
+      debug:       Time.zone.now
     }
     CreateTwitterUserWorker.perform_async(values)
   end
