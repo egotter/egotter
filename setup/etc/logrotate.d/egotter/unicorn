@@ -8,4 +8,8 @@
   delaycompress
   notifempty
   copytruncate
+
+  lastaction
+    kill -USR1 /home/ec2-user/egotter/tmp/pids/unicorn.pid
+  endscript
 }
