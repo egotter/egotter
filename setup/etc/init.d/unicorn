@@ -1,6 +1,8 @@
 # /etc/init.d/unicorn
 
-. /etc/init.d/functions
+if [ -f /etc/init.d/functions ]; then
+  . /etc/init.d/functions
+fi
 
 if echo ' \c' | grep 'c' > /dev/null 2>&1; then
   en='-n'
@@ -10,56 +12,93 @@ else
   ec='\c'
 fi
 
+APP_ROOT="/home/ec2-user/egotter/"
+USER="ec2-user"
+RAILS_ENV="production"
 NAME=unicorn
-APP_ROOT="/home/ec2-user/egotter"
+PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
+OLD_PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid.oldbin"
+CONFIG_FILE="${APP_ROOT}config/${NAME}.rb"
+
+print_pid() {
+  cat ${PID_FILE}
+}
+
+print_old_pid() {
+  cat ${OLD_PID_FILE}
+}
+
+print_command() {
+  ps -o command= -p $(print_pid)
+}
 
 start() {
-  cd $APP_ROOT
-  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec rake unicorn:start RAILS_ENV=production"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec unicorn_rails -c ${CONFIG_FILE} -E ${RAILS_ENV} -D"
   echo ${en} "Starting $NAME: ${ec}"
   success
   echo
 }
 
 stop() {
-  cd $APP_ROOT
-  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec rake unicorn:stop RAILS_ENV=production"
-  RETVAL=$?
-
+  sudo kill -QUIT $(print_pid)
   echo ${en} "Stopping $NAME: ${ec}"
   success
   echo
-  return $RETVAL
 }
 
-status() {
-  ps -ef | grep 'unicorn_rails' | grep -v grep
-  return $?
+restart() {
+  sudo kill -USR2 $(print_pid)
+  while [ ! -f ${PID_FILE} -o ! -f ${OLD_PID_FILE} ]; do
+    sleep 2
+  done
+
+  until [ $(pgrep -P $(print_pid) | wc -l | awk '{print $1}') -gt 2 ]; do
+    sleep 2
+  done
+
+  sudo kill -WINCH $(print_old_pid)
+  while [ $(pgrep -P $(print_old_pid) | wc -l | awk '{print $1}') -gt 1 ]; do
+    sudo kill -TTOU $(print_old_pid)
+    sleep 2
+  done
+
+  sudo kill -QUIT $(print_old_pid)
+
+  echo ${en} "Restarting $NAME: ${ec}"
+  success
+  echo
 }
 
+rh_status() {
+  [ -f ${PID_FILE} ] && print_command
+  status -p ${PID_FILE} ${NAME}
+}
 
 case "$1" in
   start)
-          start
+          if [ -f ${PID_FILE} ]; then
+            echo "unicorn is already running on PID:$(print_pid)"
+          else
+            start
+          fi
           ;;
   stop)
-          stop
+          if [ -f ${PID_FILE} ]; then
+            stop
+          else
+            echo "unicorn is stopped .."
+          fi
           ;;
   restart)
-          stop
-          sleep 1
-          start
+          if [ -f ${PID_FILE} ]; then
+            restart
+          else
+            echo "unicorn is not running .."
+            start
+          fi
           ;;
   status)
-          status
-
-          if [ $? -eq 0 ]; then
-               echo "unicorn is running .."
-               RETVAL=0
-           else
-               echo "unicorn is stopped .."
-               RETVAL=1
-           fi
+          rh_status
           ;;
   *)
           echo "Usage: unicorn {start|stop|restart|status}" >&2

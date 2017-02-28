@@ -1,7 +1,9 @@
 # https://cdyer.co.uk/blog/init-script-for-sidekiq-with-rbenv/
 # /etc/init.d/sidekiq
 
-. /etc/init.d/functions
+if [ -f /etc/init.d/functions ]; then
+  . /etc/init.d/functions
+fi
 
 if echo ' \c' | grep 'c' > /dev/null 2>&1; then
   en='-n'
@@ -12,64 +14,95 @@ else
 fi
 
 APP_ROOT="/home/ec2-user/egotter/"
+USER="ec2-user"
+RAILS_ENV="production"
 NAME=sidekiq
 PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
-PID=$(cat ${PID_FILE})
+
+print_pid() {
+  cat ${PID_FILE}
+}
+
+print_command() {
+  ps -o command= -p $(print_pid)
+}
+
+is_stopped() {
+  print_command | egrep -a 'sidekiq [0-9]+\.[0-9]+\.[0-9]+ egotter \[0 of [0-9]+ busy\] stopping' > /dev/null 2>&1
+  return $?
+}
+
+is_running() {
+  print_command | egrep -a 'sidekiq [0-9]+\.[0-9]+\.[0-9]+ egotter \[[0-9]+ of [0-9]+ busy\]' > /dev/null 2>&1
+  return $?
+}
 
 start() {
-  cd $APP_ROOT
-  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e production -d"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e ${RAILS_ENV} -d"
+  while [ ! -f ${PID_FILE} ]; do
+    sleep 2
+  done
+
+  until checkpid $(print_pid); do
+    sleep 2
+  done
+
   echo ${en} "Starting $NAME: ${ec}"
   success
   echo
 }
 
 stop() {
-  cd $APP_ROOT
-  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
-
-  until cat "/proc/${PID}/cmdline" | grep -a 'egotter \[0 of '; do
-    echo $(cat "/proc/${PID}/cmdline")
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
+  until is_stopped; do
+    echo "waiting to be quiet: $(print_command)"
     sleep 2
   done
 
-  sudo -u ec2-user -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl stop ${PID_FILE}"
-  RETVAL=$?
+  local pid=$(print_pid)
+
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl stop ${PID_FILE}"
+  while checkpid ${pid}; do
+    echo "waiting to stop: $(print_command)"
+    sleep 2
+  done
 
   echo ${en} "Stopping $NAME: ${ec}"
   success
   echo
-  return $RETVAL
 }
 
-status() {
-  echo $(cat "/proc/${PID}/cmdline")
-  return $?
+rh_status() {
+  [ -f ${PID_FILE} ] && print_command
+  status -p ${PID_FILE} ${NAME}
 }
-
 
 case "$1" in
   start)
-          start
+          if [ -f ${PID_FILE} ]; then
+            echo "sidekiq is already running on PID:$(print_pid)"
+          else
+            start
+          fi
           ;;
   stop)
-          stop
+          if [ -f ${PID_FILE} ]; then
+            stop
+          else
+            echo "sidekiq is stopped .."
+          fi
           ;;
   restart)
-          stop
-          sleep 1
+          if [ -f ${PID_FILE} ]; then
+            stop
+          else
+            echo "sidekiq is stopped .."
+          fi
+
           start
           ;;
   status)
-          status
-
-          if [ $? -eq 0 ]; then
-               echo "sidekiq is running .."
-               RETVAL=0
-           else
-               echo "sidekiq is stopped .."
-               RETVAL=1
-           fi
+          rh_status
           ;;
   *)
           echo "Usage: sidekiq {start|stop|restart|status}" >&2
@@ -77,4 +110,3 @@ case "$1" in
           ;;
 esac
 exit 0
-
