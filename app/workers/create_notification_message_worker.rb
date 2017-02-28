@@ -5,6 +5,7 @@ class CreateNotificationMessageWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id, uid, screen_name, options)
+    user = nil
     user_id = user_id.to_i
     uid = uid.to_i
     type = options['type'].to_sym
@@ -132,8 +133,17 @@ class CreateNotificationMessageWorker
 
       return
     end
+  rescue Twitter::Error::Forbidden => e
+    unless e.message.start_with?('To protect our users from spam and other malicious activity,')
+      logger.warn "#{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
+    end
+    log.update(status: false, message: "#{e.class} #{e.message}")
   rescue Twitter::Error::Unauthorized => e
-    user.update(authorized: false)
+    if e.message == 'Invalid or expired token.'
+      user&.update(authorized: false)
+    else
+      logger.warn "#{e.class} #{e.message}"
+    end
     log.update(status: false, message: "#{e.class} #{e.message}")
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"

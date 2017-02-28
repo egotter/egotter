@@ -3,6 +3,10 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
+    client = Hashie::Mash.new({call_count: -100})
+    log = BackgroundSearchLog.new
+    user = nil
+
     if !values['queued_at'] || !(Time.zone.parse(values['queued_at']) rescue nil)
       values['queued_at'] = Time.zone.now
       CreateTwitterUserWorker.perform_in(rand(30..300).minutes, values)
@@ -16,7 +20,6 @@ class CreateTwitterUserWorker
       return
     end
 
-    client = Hashie::Mash.new({call_count: -100}) # If an error happens, This client is used in rescue block.
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
     log = BackgroundSearchLog.new(
@@ -101,6 +104,26 @@ class CreateTwitterUserWorker
       call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
+    )
+  rescue Twitter::Error::Forbidden => e
+    unless e.message == 'Your account is suspended and is not permitted to access this feature.' || e.message.start_with?('To protect our users from spam and other malicious activity,')
+      logger.warn "#{e.class} #{e.message} #{values.inspect}"
+    end
+    log.update(
+      status: false,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      message: "#{e.class} #{e.message.truncate(150)}"
+    )
+  rescue Twitter::Error::NotFound => e
+    unless e.message == 'User not found.'
+      logger.warn "#{e.class} #{e.message} #{values.inspect}"
+    end
+    log.update(
+      status: false,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::TooManyRequests => e
     log.update(

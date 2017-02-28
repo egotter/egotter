@@ -4,6 +4,7 @@ class ImportFriendsAndFollowersWorker
 
   def perform(user_id, uid)
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
+    retrying = false
 
     signatures = [
       {method: :user,      args: [uid]},
@@ -67,9 +68,13 @@ class ImportFriendsAndFollowersWorker
 
     ImportInactiveFriendsAndInactiveFollowersWorker.perform_async(user_id, uid) if friends&.any? || followers&.any?
 
+  rescue ActiveRecord::StatementInvalid => e
+    message = e.message.truncate(60)
+    logger.warn "#{e.class} #{message} #{user_id} #{uid} #{retrying}"
+    logger.info e.backtrace.join "\n"
   rescue => e
     message = e.message.truncate(150)
-    logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
+    logger.warn "#{e.class} #{message} #{user_id} #{uid} #{retrying}"
     logger.info e.backtrace.join "\n"
   end
 
