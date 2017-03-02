@@ -1,5 +1,5 @@
 check process sidekiq with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq.pid
-  every 1 cycle
-  start program = "echo 'start sidekiq'; /etc/init.d/sidekiq start" with timeout 60 seconds
-  stop program = "echo 'stop sidekiq'; /etc/init.d/sidekiq stop" with timeout 60 seconds
+  # every 2 cycle
+  start program = "/home/ec2-user/egotter/bin/start_sidekiq.sh" with timeout 60 seconds
+  stop program = "/home/ec2-user/egotter/bin/stop_sidekiq.sh" with timeout 60 seconds
   if 5 restarts within 5 cycles then unmonitor
