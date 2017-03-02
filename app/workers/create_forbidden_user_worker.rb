@@ -5,7 +5,7 @@ class CreateForbiddenUserWorker
   def perform(screen_name)
     ForbiddenUser.create!(screen_name: screen_name)
   rescue ActiveRecord::RecordNotUnique => e
-    logger.warn e.message.truncate(100)
+    logger.info e.message.truncate(100)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{screen_name}"
   end

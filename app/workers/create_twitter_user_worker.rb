@@ -106,7 +106,7 @@ class CreateTwitterUserWorker
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
   rescue Twitter::Error::Forbidden => e
-    unless e.message == 'Your account is suspended and is not permitted to access this feature.' || e.message.start_with?('To protect our users from spam and other malicious activity,')
+    if e.message != 'Your account is suspended and is not permitted to access this feature.' && e.message != 'User has been suspended.' && !e.message.start_with?('To protect our users from spam and other malicious activity,')
       logger.warn "#{e.class} #{e.message} #{values.inspect}"
     end
     log.update(

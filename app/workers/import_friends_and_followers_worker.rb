@@ -68,6 +68,12 @@ class ImportFriendsAndFollowersWorker
 
     ImportInactiveFriendsAndInactiveFollowersWorker.perform_async(user_id, uid) if friends&.any? || followers&.any?
 
+  rescue Twitter::Error::Unauthorized => e
+    case e.message
+      when 'Invalid or expired token.' then User.find_by(id: user_id)&.update(authorized: false)
+      when 'Could not authenticate you.' then logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+      else logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    end
   rescue ActiveRecord::StatementInvalid => e
     message = e.message.truncate(60)
     logger.warn "#{e.class} #{message} #{user_id} #{uid} #{retrying}"

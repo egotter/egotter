@@ -139,10 +139,10 @@ class CreateNotificationMessageWorker
     end
     log.update(status: false, message: "#{e.class} #{e.message}")
   rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      user&.update(authorized: false)
-    else
-      logger.warn "#{e.class} #{e.message}"
+    case e.message
+      when 'Invalid or expired token.' then user&.update(authorized: false)
+      when 'Could not authenticate you.' then logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+      else logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     end
     log.update(status: false, message: "#{e.class} #{e.message}")
   rescue => e
