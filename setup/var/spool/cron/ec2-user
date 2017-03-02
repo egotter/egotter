@@ -6,4 +6,4 @@ SUFFIX='--silent >>/home/ec2-user/egotter/log/cron.log 2>&1'
 20 * * * *         /bin/bash -l -c "$PREFIX latest_search_logs:update $SUFFIX"
 0 19 * * *         /bin/bash -l -c "$PREFIX visitors:update users:update_timestamps $SUFFIX"
 10 19 * * *        /bin/bash -l -c "$PREFIX user_retention_stats:update visitor_retention_stats:update user_engagement_stats:update visitor_engagement_stats:update $SUFFIX"
-0/5 * * * *        /usr/bin/sudo /bin/bash -l -c 'monit monitor all >> /home/ec2-user/egotter/log/monit.log 2>&1'
+*/5 * * * *        /usr/bin/sudo /bin/bash -l -c 'monit monitor all >> /home/ec2-user/egotter/log/monit.log 2>&1'
