@@ -109,6 +109,21 @@ case "$1" in
 
           start
           ;;
+  force-restart)
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+            kill -USR1 $(print_pid) && sleep 3
+          fi
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+            kill -TERM $(print_pid) && sleep 3
+          fi
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+            kill -9 $(print_pid) && sleep 1
+          fi
+
+          [ -f ${PID_FILE} ] && rm ${PID_FILE}
+
+          start
+          ;;
   status)
           rh_status
           ;;
