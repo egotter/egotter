@@ -80,23 +80,31 @@ rh_status() {
 case "$1" in
   start)
           if [ -f ${PID_FILE} ]; then
-            echo "sidekiq is already running on PID:$(print_pid)"
+            rh_status
+            if checkpid $(print_pid); then
+              :
+            else
+              rm ${PID_FILE}
+              start
+            fi
           else
             start
           fi
           ;;
   stop)
-          if [ -f ${PID_FILE} ]; then
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
             stop
           else
-            echo "sidekiq is stopped .."
+            rh_status
+            [ -f ${PID_FILE} ] && rm ${PID_FILE}
           fi
           ;;
   restart)
-          if [ -f ${PID_FILE} ]; then
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
             stop
           else
-            echo "sidekiq is stopped .."
+            rh_status
+            [ -f ${PID_FILE} ] && rm ${PID_FILE}
           fi
 
           start
