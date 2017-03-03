@@ -72,6 +72,25 @@ stop() {
   echo
 }
 
+force_stop() {
+  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+    kill -USR1 $(print_pid) && sleep 3
+  fi
+  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+    kill -TERM $(print_pid) && sleep 3
+  fi
+  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+    kill -9 $(print_pid) && sleep 1
+  fi
+
+  [ -f ${PID_FILE} ] && rm ${PID_FILE}
+
+
+  echo ${en} "Stopping $NAME: ${ec}"
+  success
+  echo
+}
+
 rh_status() {
   [ -f ${PID_FILE} ] && print_command
   status -p ${PID_FILE} ${NAME}
@@ -110,18 +129,7 @@ case "$1" in
           start
           ;;
   force-restart)
-          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-            kill -USR1 $(print_pid) && sleep 3
-          fi
-          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-            kill -TERM $(print_pid) && sleep 3
-          fi
-          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-            kill -9 $(print_pid) && sleep 1
-          fi
-
-          [ -f ${PID_FILE} ] && rm ${PID_FILE}
-
+          force_stop
           start
           ;;
   status)
