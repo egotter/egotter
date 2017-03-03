@@ -65,6 +65,8 @@ module Concerns::TwitterUser::Persistence
 
     reload
   rescue => e
+    # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;
+    # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000
     message = e.message.truncate(150)
     logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{self.inspect}"
     logger.info e.backtrace.join("\n")

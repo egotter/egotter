@@ -59,6 +59,7 @@ module SearchesHelper
     logger.info e.backtrace.take(10).join("\n")
     redirect_to redirect_path, alert: alert_message(e)
   rescue => e
+    # Twitter::Error execution expired
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.browser}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.error(e)

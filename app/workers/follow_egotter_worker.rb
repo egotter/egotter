@@ -10,11 +10,11 @@ class FollowEgotterWorker
     end
 
   rescue Twitter::Error::Unauthorized => e
-    message = "#{e.class}: #{e.message} #{user_id}"
-    if e.message == 'Invalid or expired token.'
-      message += user.update(authorized: false) ? ' set unauthorized.' : ' try to set unauthorized but failed.'
+    case e.message
+      when 'Invalid or expired token.' then logger.info "#{e.message} #{user_id} #{user.update(authorized: false)}"
+      when 'Could not authenticate you.' then logger.warn "#{e.message} #{user_id}"
+      else logger.warn "#{e.class} #{e.message} #{user_id}"
     end
-    logger.warn message
   rescue Twitter::Error::Forbidden => e
     logger.warn "#{e.class}: #{e.message} #{user_id}"
     if e.message.start_with? 'You are unable to follow more people at this time.'

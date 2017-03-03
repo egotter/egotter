@@ -143,6 +143,7 @@ class CreateTwitterUserWorker
       message: ''
     )
   rescue => e
+    # ActiveRecord::ConnectionTimeoutError could not obtain a database connection within 5.000 seconds
     message = e.message.truncate(150)
     logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
