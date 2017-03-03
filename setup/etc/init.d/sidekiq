@@ -39,6 +39,7 @@ is_running() {
 }
 
 start() {
+  cd $APP_ROOT
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e ${RAILS_ENV} -d -C ${CONFIG_FILE}"
   while [ ! -f ${PID_FILE} ]; do
     sleep 2
@@ -54,6 +55,7 @@ start() {
 }
 
 stop() {
+  cd $APP_ROOT
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
   until is_stopped; do
     echo "waiting to be quiet: $(print_command)"
