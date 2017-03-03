@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # https://cdyer.co.uk/blog/init-script-for-sidekiq-with-rbenv/
 # /etc/init.d/sidekiq
 
