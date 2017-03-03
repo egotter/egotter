@@ -1,0 +1,5 @@
+check process unicorn with pidfile /home/ec2-user/egotter/tmp/pids/unicorn.pid
+  # every 2 cycle
+  start program = "/etc/init.d/unicorn restart" with timeout 30 seconds
+  stop program = "/etc/init.d/unicorn stop" with timeout 30 seconds
+  if 5 restarts within 5 cycles then unmonitor

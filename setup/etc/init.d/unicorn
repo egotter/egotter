@@ -1,3 +1,5 @@
+#!/bin/sh
+
 # /etc/init.d/unicorn
 
 if [ -f /etc/init.d/functions ]; then
@@ -33,6 +35,7 @@ print_command() {
 }
 
 start() {
+  cd $APP_ROOT
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec unicorn_rails -c ${CONFIG_FILE} -E ${RAILS_ENV} -D"
   echo ${en} "Starting $NAME: ${ec}"
   success
@@ -77,23 +80,31 @@ rh_status() {
 case "$1" in
   start)
           if [ -f ${PID_FILE} ]; then
-            echo "unicorn is already running on PID:$(print_pid)"
+            rh_status
+            if checkpid $(print_pid); then
+              :
+            else
+              rm ${PID_FILE}
+              start
+            fi
           else
             start
           fi
           ;;
   stop)
-          if [ -f ${PID_FILE} ]; then
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
             stop
           else
-            echo "unicorn is stopped .."
+            rh_status
+            [ -f ${PID_FILE} ] && rm ${PID_FILE}
           fi
           ;;
   restart)
-          if [ -f ${PID_FILE} ]; then
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
             restart
           else
-            echo "unicorn is not running .."
+            rh_status
+            [ -f ${PID_FILE} ] && rm ${PID_FILE}
             start
           fi
           ;;

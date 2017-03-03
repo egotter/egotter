@@ -133,6 +133,9 @@ case "$1" in
 
           start
           ;;
+  force-stop)
+          force_stop
+          ;;
   force-restart)
           force_stop
           start
