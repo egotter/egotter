@@ -1,0 +1,10 @@
+:concurrency: 5
+:pidfile: ./tmp/pids/sidekiq_misc.pid
+:logfile: ./log/sidekiq_misc.log
+:queues:
+  - CreateNotificationMessageWorker
+  - CreatePageCacheWorker
+  - CreatePromptReportWorker
+  - CreateSearchHistoriesWorker
+  - CreateTweetsWorker
+  - UpdateNotificationMessageWorker

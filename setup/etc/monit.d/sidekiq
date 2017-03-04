@@ -18,3 +18,9 @@ check process sidekiq_logging with pidfile /home/ec2-user/egotter/tmp/pids/sidek
   start program = "/etc/init.d/sidekiq_logging force-restart" with timeout 30 seconds
   stop program = "/etc/init.d/sidekiq_logging force-stop" with timeout 30 seconds
   if 5 restarts within 5 cycles then unmonitor
+
+check process sidekiq_misc with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_misc.pid
+  # every 2 cycle
+  start program = "/etc/init.d/sidekiq_misc force-restart" with timeout 30 seconds
+  stop program = "/etc/init.d/sidekiq_misc force-stop" with timeout 30 seconds
+  if 5 restarts within 5 cycles then unmonitor
