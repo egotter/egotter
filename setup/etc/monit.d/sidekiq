@@ -6,3 +6,15 @@ check process sidekiq with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq.pid
 
 # check file sidekiq_log with path /home/ec2-user/egotter/log/sidekiq.log
 #  if timestamp > 5 minutes for 5 cycles then exec "/etc/init.d/sidekiq force-restart"
+
+check process sidekiq_import with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_import.pid
+  # every 2 cycle
+  start program = "/etc/init.d/sidekiq_import force-restart" with timeout 30 seconds
+  stop program = "/etc/init.d/sidekiq_import force-stop" with timeout 30 seconds
+  if 5 restarts within 5 cycles then unmonitor
+
+check process sidekiq_logging with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_logging.pid
+  # every 2 cycle
+  start program = "/etc/init.d/sidekiq_logging force-restart" with timeout 30 seconds
+  stop program = "/etc/init.d/sidekiq_logging force-stop" with timeout 30 seconds
+  if 5 restarts within 5 cycles then unmonitor

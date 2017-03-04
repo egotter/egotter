@@ -3,20 +3,13 @@
 :logfile: ./log/sidekiq.log
 :queues:
   - egotter
-  - CreateForbiddenUserWorker
-  - CreatePollingLogWorker
-  - CreateModalOpenLogWorker
   - CreateNotificationMessageWorker
-  - CreatePageCacheLogWorker
   - CreatePageCacheWorker
   - CreatePromptReportWorker
   - CreateRelationshipWorker
   - CreateSearchHistoriesWorker
-  - CreateSearchLogWorker
-  - CreateSignInLogWorker
   - CreateTweetsWorker
   - CreateTwitterUserWorker
   - ForceUpdateTwitterUserWorker
   - UpdateNotificationMessageWorker
   - UpdateTwitterUserWorker
-  - rollbar
