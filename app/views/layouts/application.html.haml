@@ -62,6 +62,12 @@
 
     = render partial: 'layouts/search_histories' unless under_maintenance?
 
+    .container
+      .row
+        .col-xs-12.notice-container
+          %p.alert.alert-danger{style: 'margin-top: 15px; margin-bottom: 0px;'}
+            [3/4(土) 16:17] えごったーのふりをするスパムが流行っているようです。えごったーは勝手にツイートしませんので、安心してえごったーをご利用ください。
+
     - if notice || alert
       .container
         .row
