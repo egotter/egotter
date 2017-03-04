@@ -1,8 +1,0 @@
-:concurrency: 20
-:pidfile: ./tmp/pids/sidekiq2.pid
-:logfile: ./log/sidekiq2.log
-:queues:
-  - ImportFriendsAndFollowersWorker
-  - ImportInactiveFriendsAndInactiveFollowersWorker
-  - ImportReplyingRepliedAndFavoritesWorker
-  - UpdateNotificationMessageWorker
