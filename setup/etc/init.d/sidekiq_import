@@ -19,6 +19,7 @@ APP_ROOT="/home/ec2-user/egotter/"
 USER="ec2-user"
 RAILS_ENV="production"
 NAME="sidekiq_import"
+TAG="egotter:${NAME}"
 PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
 CONFIG_FILE="${APP_ROOT}config/${NAME}.yml"
 
@@ -31,18 +32,18 @@ print_command() {
 }
 
 is_stopped() {
-  print_command | egrep -a 'sidekiq [0-9]+\.[0-9]+\.[0-9]+ egotter \[0 of [0-9]+ busy\] stopping' > /dev/null 2>&1
+  print_command | egrep -a "sidekiq [0-9]+\.[0-9]+\.[0-9]+ ${TAG} \[0 of [0-9]+ busy\] stopping" > /dev/null 2>&1
   return $?
 }
 
 is_running() {
-  print_command | egrep -a 'sidekiq [0-9]+\.[0-9]+\.[0-9]+ egotter \[[0-9]+ of [0-9]+ busy\]' > /dev/null 2>&1
+  print_command | egrep -a "sidekiq [0-9]+\.[0-9]+\.[0-9]+ ${TAG} \[[0-9]+ of [0-9]+ busy\]" > /dev/null 2>&1
   return $?
 }
 
 start() {
   cd $APP_ROOT
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e ${RAILS_ENV} -d -C ${CONFIG_FILE}"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e ${RAILS_ENV} -d -g ${TAG} -C ${CONFIG_FILE}"
   while [ ! -f ${PID_FILE} ]; do
     sleep 2
   done
