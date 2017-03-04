@@ -1,8 +1,8 @@
 # This file is used by Rack-based servers to start the application.
 
 require 'unicorn/worker_killer'
-use Unicorn::WorkerKiller::MaxRequests, 3072, 4096
-use Unicorn::WorkerKiller::Oom, (192*(1024**2)), (256*(1024**2))
+use Unicorn::WorkerKiller::MaxRequests, 3072, 5120
+use Unicorn::WorkerKiller::Oom, (256*(1024**2)), (512*(1024**2))
 
 if ENV['STACKPROF'] == '1'
   require 'stackprof'
