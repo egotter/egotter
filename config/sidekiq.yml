@@ -17,8 +17,6 @@
   - CreateTweetsWorker
   - CreateTwitterUserWorker
   - ForceUpdateTwitterUserWorker
-  - ImportFriendsAndFollowersWorker
-  - ImportInactiveFriendsAndInactiveFollowersWorker
   - UpdateNotificationMessageWorker
   - UpdateTwitterUserWorker
   - rollbar
