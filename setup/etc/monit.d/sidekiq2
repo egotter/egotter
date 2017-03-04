@@ -1,0 +1,5 @@
+check process sidekiq2 with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq2.pid
+  # every 2 cycle
+  start program = "/etc/init.d/sidekiq2 force-restart" with timeout 30 seconds
+  stop program = "/etc/init.d/sidekiq2 force-stop" with timeout 30 seconds
+  if 5 restarts within 5 cycles then unmonitor

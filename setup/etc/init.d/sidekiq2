@@ -18,7 +18,7 @@ fi
 APP_ROOT="/home/ec2-user/egotter/"
 USER="ec2-user"
 RAILS_ENV="production"
-NAME="sidekiq"
+NAME="sidekiq2"
 PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
 CONFIG_FILE="${APP_ROOT}config/${NAME}.yml"
 

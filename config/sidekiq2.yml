@@ -1,0 +1,6 @@
+:concurrency: 10
+:pidfile: ./tmp/pids/sidekiq2.pid
+:logfile: ./log/sidekiq2.log
+:queues:
+  - ImportReplyingRepliedAndFavoritesWorker
+  - UpdateNotificationMessageWorker
