@@ -58,13 +58,14 @@ start() {
 
 stop() {
   cd $APP_ROOT
+  local pid=$(print_pid)
+
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
   until is_stopped; do
     echo "waiting to be quiet: $(print_command)"
+    checkpid ${pid} || break
     sleep 2
   done
-
-  local pid=$(print_pid)
 
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl stop ${PID_FILE}"
   while checkpid ${pid}; do

@@ -19,7 +19,6 @@
   - ForceUpdateTwitterUserWorker
   - ImportFriendsAndFollowersWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker
-  - ImportReplyingRepliedAndFavoritesWorker
   - UpdateNotificationMessageWorker
   - UpdateTwitterUserWorker
   - rollbar
