@@ -84,7 +84,7 @@ force_stop() {
     kill -USR1 $(print_pid) && sleep 3
   fi
   if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-    kill -TERM $(print_pid) && sleep 3
+    kill -TERM $(print_pid) && sleep 11
   fi
   if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
     kill -9 $(print_pid) && sleep 1
