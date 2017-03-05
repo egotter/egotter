@@ -1,4 +1,5 @@
-class CreateTwitterUserWorker
+# a copy of CreateTwitterUserWorker
+class DelayedCreateTwitterUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: false, backtrace: false
 
@@ -6,11 +7,6 @@ class CreateTwitterUserWorker
     client = Hashie::Mash.new({call_count: -100})
     log = BackgroundSearchLog.new
     user = nil
-
-    if Time.zone.parse(values['queued_at']) < 5.minutes.ago || (Sidekiq::Queue.new(self.class.to_s).size > 3 && log.auto)
-      DelayedCreateTwitterUserWorker.perform_async(values)
-      return
-    end
 
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
