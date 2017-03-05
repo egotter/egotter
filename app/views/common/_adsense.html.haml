@@ -1,12 +1,13 @@
-.adsense-container.row
-  .col-sm-12{class: "#{'col-md-6' if request.device_type == :pc}"}
-    %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-    %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => left_ad_slot(user_signed_in?, action, vertical), style: 'display:inline-block;width:300px;height:250px'}
-    :javascript
-      (adsbygoogle = window.adsbygoogle || []).push({});
-  - if request.device_type == :pc
-    .hidden-xs.hidden-sm.col-md-6
+- unless ad_ng_twitter_user?(@twitter_user || @searched_tw_user)
+  .adsense-container.row
+    .col-sm-12{class: "#{'col-md-6' if request.device_type == :pc}"}
       %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-      %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => right_ad_slot(user_signed_in?), style: 'display:inline-block;width:300px;height:250px'}
+      %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => left_ad_slot(user_signed_in?, action, vertical), style: 'display:inline-block;width:300px;height:250px'}
       :javascript
         (adsbygoogle = window.adsbygoogle || []).push({});
+    - if request.device_type == :pc
+      .hidden-xs.hidden-sm.col-md-6
+        %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
+        %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => right_ad_slot(user_signed_in?), style: 'display:inline-block;width:300px;height:250px'}
+        :javascript
+          (adsbygoogle = window.adsbygoogle || []).push({});

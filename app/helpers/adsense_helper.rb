@@ -1,4 +1,10 @@
 module AdsenseHelper
+  NG_UIDS = [740700661939994624]
+
+  def ad_ng_twitter_user?(twitter_user)
+    NG_UIDS.include? twitter_user&.uid&.to_i
+  end
+
   def left_ad_slot(signed_in, action, vertical)
     slot =
       case [signed_in, action, vertical]
