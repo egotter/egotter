@@ -29,13 +29,11 @@ class ImportReplyingRepliedAndFavoritesWorker
       raise
     end
 
-    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
-
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
   ensure
-    ImportFriendsAndFollowersWorker.perform_async(user_id, uid) if twitter_user.friendships.any? || twitter_user.followerships.any?
+    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
   end
 end

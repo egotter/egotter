@@ -17,12 +17,12 @@ class ImportInactiveFriendsAndInactiveFollowersWorker
       InactiveMutualFriendship.import_from!(uid, twitter_user.calc_inactive_mutual_friend_uids)
     end
 
-    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
-
   rescue => e
     # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
+  ensure
+    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
   end
 end
