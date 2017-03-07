@@ -7,24 +7,26 @@ module Concerns::TwitterUser::Associations
   end
 
   included do
-    with_options foreign_key: :from_id, dependent: :destroy, validate: false, autosave: false do |obj|
+    default_options = {dependent: :destroy, validate: false, autosave: false}
+
+    with_options({foreign_key: :from_id}.update(default_options)) do |obj|
       obj.has_many :statuses
       obj.has_many :mentions
       obj.has_many :search_results
       obj.has_many :favorites
     end
 
-    with_options primary_key: :id, foreign_key: :from_id, dependent: :destroy, validate: false, autosave: false do |obj|
+    with_options({primary_key: :id, foreign_key: :from_id}.update(default_options)) do |obj|
       obj.has_many :friendships, -> { order(sequence: :asc) }
       obj.has_many :followerships, -> { order(sequence: :asc) }
     end
 
-    with_options dependent: :destroy, validate: false, autosave: false, class_name: 'TwitterDB::User' do |obj|
+    with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
       obj.has_many :friends,   through: :friendships
       obj.has_many :followers, through: :followerships
     end
 
-    with_options primary_key: :uid, foreign_key: :from_uid, dependent: :destroy, validate: false, autosave: false do |obj|
+    with_options({primary_key: :uid, foreign_key: :from_uid}.update(default_options)) do |obj|
       obj.has_many :unfriendships,   -> { order(sequence: :asc) }
       obj.has_many :unfollowerships, -> { order(sequence: :asc) }
 
@@ -37,7 +39,7 @@ module Concerns::TwitterUser::Associations
       obj.has_many :inactive_mutual_friendships, -> { order(sequence: :asc) }
     end
 
-    with_options dependent: :destroy, validate: false, autosave: false, class_name: 'TwitterDB::User' do |obj|
+    with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
       obj.has_many :unfriends,   through: :unfriendships
       obj.has_many :unfollowers, through: :unfollowerships
 

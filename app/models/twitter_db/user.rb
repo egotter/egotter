@@ -25,5 +25,14 @@ module TwitterDB
         import(targets, on_duplicate_key_update: %i(uid screen_name user_info), validate: false)
       end
     end
+
+    CREATE_COLUMNS = %i(uid screen_name user_info friends_size followers_size)
+    UPDATE_COLUMNS = %i(uid screen_name user_info)
+
+    def self.import_each_slice(users_array, n: 1000, create_columns: CREATE_COLUMNS, update_columns: UPDATE_COLUMNS)
+      users_array.each_slice(n) do |array|
+        import(create_columns, array, on_duplicate_key_update: update_columns, validate: false)
+      end
+    end
   end
 end

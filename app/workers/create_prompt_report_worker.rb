@@ -5,7 +5,7 @@ class CreatePromptReportWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id)
-    self.client = Hashie::Mash.new({call_count: -100}) # If an error happens, This client is used in rescue block.
+    self.client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.
     user = User.find(user_id)
     self.log = CreatePromptReportLog.new(
       user_id:     user.id,

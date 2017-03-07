@@ -10,7 +10,7 @@ module Cache
     end
 
     def key_prefix
-      'vs-searches-file-store'
+      'vt-searches-file-store'
     end
 
     def key_suffix
@@ -51,7 +51,7 @@ module Cache
     end
 
     def cleanup
-      store.delete_matched(/^(v[2-9a-r]-)?searches-file-store:/)
+      store.delete_matched(/^(v[2-9a-s]-)?searches-file-store:/)
     end
 
     def ttl(uid)

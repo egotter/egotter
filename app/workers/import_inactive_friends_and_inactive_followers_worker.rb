@@ -1,21 +1,21 @@
 class ImportInactiveFriendsAndInactiveFollowersWorker
   include Sidekiq::Worker
+  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id, uid)
+    client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
     twitter_user = TwitterUser.latest(uid)
 
-    ActiveRecord::Base.benchmark('[benchmark] import InactiveFriendship') do
-      InactiveFriendship.import_from!(uid, twitter_user.calc_inactive_friend_uids)
-    end
+    signatures = [{method: :friends, args: [uid]}, {method: :followers, args: [uid]}]
+    friends, followers = client._fetch_parallelly(signatures)
 
-    ActiveRecord::Base.benchmark('[benchmark] import InactiveFollowership') do
-      InactiveFollowership.import_from!(uid, twitter_user.calc_inactive_follower_uids)
-    end
+    mutual_friend_uids = friends.map(&:id) & followers.map(&:id)
+    mutual_friends = friends.select { |friend| mutual_friend_uids.include? friend.id }
 
-    ActiveRecord::Base.benchmark('[benchmark] import InactiveMutualFriendship') do
-      InactiveMutualFriendship.import_from!(uid, twitter_user.calc_inactive_mutual_friend_uids)
-    end
+    _benchmark('import InactiveFriendship') { InactiveFriendship.import_from!(uid, TwitterUser.select_inactive_users(friends).map(&:id)) }
+    _benchmark('import InactiveFollowership') { InactiveFollowership.import_from!(uid, TwitterUser.select_inactive_users(followers).map(&:id)) }
+    _benchmark('import InactiveMutualFriendship') { InactiveMutualFriendship.import_from!(uid, TwitterUser.select_inactive_users(mutual_friends).map(&:id)) }
 
   rescue => e
     # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;

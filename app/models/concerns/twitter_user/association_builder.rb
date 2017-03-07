@@ -10,46 +10,38 @@ module Concerns::TwitterUser::AssociationBuilder
   included do
   end
 
-  def build_friends_and_followers(relations)
-    ActiveRecord::Base.benchmark('benchmark AssociationBuilder#build friend_ids and follower_ids') do
-      relations[:friend_ids].each.with_index { |friend_id, i| friendships.build(friend_uid: friend_id, sequence: i) } if relations[:friend_ids]&.any?
-      relations[:follower_ids].each.with_index { |follower_id, i| followerships.build(follower_uid: follower_id, sequence: i) } if relations[:follower_ids]&.any?
-    end
+  def build_friends_and_followers(friend_ids, follower_ids)
+    prefix = 'AssociationBuilder#build'
+    self.friends_size = self.followers_size = 0
 
-    self.friends_size = friendships.size
-    self.followers_size = followerships.size
+    _benchmark("#{prefix} friend_ids") do
+      friend_ids.each.with_index { |friend_id, i| friendships.build(friend_uid: friend_id, sequence: i) }
+      self.friends_size = friend_ids.size
+    end if friend_ids&.any?
+
+    _benchmark("#{prefix} follower_ids") do
+      follower_ids.each.with_index { |follower_id, i| followerships.build(follower_uid: follower_id, sequence: i) }
+      self.followers_size = follower_ids.size
+    end if follower_ids&.any?
   end
 
+  # Each process takes a few seconds if the relation has thousands of objects.
   def build_other_relations(relations)
-    # Each process takes a few seconds if the relation has thousands of objects.
+    prefix = 'AssociationBuilder#build'
+    user_timeline, mentions_timeline, search, _favorites = %i(user_timeline mentions_timeline search favorites).map { |key| relations[key] }
 
-    ActiveRecord::Base.benchmark('benchmark AssociationBuilder#build statuses') do
-      relations[:user_timeline].each do |status|
-        statuses.build(uid: status.user.id, screen_name: status.user.screen_name, status_info: status.slice(*Status::STATUS_SAVE_KEYS).to_json)
-      end if relations[:user_timeline]&.any?
-    end
+    _benchmark("#{prefix} statuses") { user_timeline.each { |status| statuses.build(_status_to_hash(status)) } } if user_timeline&.any?
+    _benchmark("#{prefix} mentions_timeline") { mentions_timeline.each { |mention| mentions.build(_status_to_hash(mention)) } } if mentions_timeline&.any?
 
-    ActiveRecord::Base.benchmark('benchmark AssociationBuilder#build mentions_timeline') do
-      relations[:mentions_timeline].each do |mention|
-        mentions.build(uid: mention.user.id, screen_name: mention.user.screen_name, status_info: mention.slice(*Status::STATUS_SAVE_KEYS).to_json)
-      end if relations[:mentions_timeline]&.any?
-    end
+    _benchmark("#{prefix} search_results") do
+      search.each { |status| search_results.build(_status_to_hash(status)) }
+      search_results.each { |status| status.query = mention_name }
+    end if search&.any?
 
-    ActiveRecord::Base.benchmark('benchmark AssociationBuilder#build search_results') do
-      relations[:search].each do |search_result|
-        search_results.build(uid: search_result.user.id, screen_name: search_result.user.screen_name, status_info: search_result.slice(*Status::STATUS_SAVE_KEYS).to_json)
-      end if relations[:search]&.any?
-    end
+    _benchmark("#{prefix} favorites") { _favorites.each { |favorite| favorites.build(_status_to_hash(favorite)) } } if _favorites&.any?
+  end
 
-    ActiveRecord::Base.benchmark('benchmark AssociationBuilder set search_query') do
-      search_query = mention_name
-      search_results.each { |search_result| search_result.query = search_query }
-    end
-
-    ActiveRecord::Base.benchmark('benchmark AssociationBuilder#build favorites') do
-      relations[:favorites].each do |favorite|
-        favorites.build(uid: favorite.user.id, screen_name: favorite.user.screen_name, status_info: favorite.slice(*Status::STATUS_SAVE_KEYS).to_json)
-      end if relations[:favorites]&.any?
-    end
+  def _status_to_hash(status)
+    {uid: status.user.id, screen_name: status.user.screen_name, status_info: status.slice(*Status::STATUS_SAVE_KEYS).to_json}
   end
 end

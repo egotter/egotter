@@ -1,59 +1,26 @@
 class ImportFriendshipsAndFollowershipsWorker
   include Sidekiq::Worker
+  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id, uid)
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
     twitter_user = TwitterUser.latest(uid)
 
-    signatures = [
-      {method: :friends,   args: [uid]},
-      {method: :followers, args: [uid]}
-    ]
+    signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
+    friend_ids, follower_ids = client._fetch_parallelly(signatures)
 
-    friends = followers = []
-    ActiveRecord::Base.benchmark("[benchmark] #{self.class}#fetch friends and followers") do
-      friends, followers = client._fetch_parallelly(signatures)
-    end
+    _transaction('import Friendship and Followership') {
+      Friendship.import_from!(twitter_user.id, friend_ids) if friend_ids&.any?
+      Followership.import_from!(twitter_user.id, follower_ids) if follower_ids&.any?
+    }
 
-    ActiveRecord::Base.benchmark('[benchmark] import Friendship and Followership') { ActiveRecord::Base.transaction {
-      Friendship.import_from!(twitter_user.id, friends.map(&:id)) if friends&.any?
-      Followership.import_from!(twitter_user.id, followers.map(&:id)) if followers&.any?
-    }}
+    _benchmark('import Unfriendship') { Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid)) }
+    _benchmark('import Unfollowership') { Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid)) }
 
-    ActiveRecord::Base.benchmark('[benchmark] import Unfriendship') do
-      Unfriendship.import_from!(uid, calc_removing_uids)
-    end
-
-    ActiveRecord::Base.benchmark('[benchmark] import Unfollowership') do
-      Unfollowership.import_from!(uid, calc_removed_uids)
-    end
-
-    ActiveRecord::Base.benchmark('[benchmark] import OneSidedFriendship') do
-      OneSidedFriendship.import_from!(uid, calc_one_sided_friend_uids)
-    end
-
-    ActiveRecord::Base.benchmark('[benchmark] import OneSidedFollowership') do
-      OneSidedFollowership.import_from!(uid, calc_one_sided_follower_uids)
-    end
-
-    ActiveRecord::Base.benchmark('[benchmark] import MutualFriendship') do
-      MutualFriendship.import_from!(uid, calc_mutual_friend_uids)
-    end
-
-    ActiveRecord::Base.benchmark('[benchmark] import InactiveFriendship') do
-      InactiveFriendship.import_from!(uid, twitter_user.calc_inactive_friend_uids)
-    end
-
-    ActiveRecord::Base.benchmark('[benchmark] import InactiveFollowership') do
-      InactiveFollowership.import_from!(uid, twitter_user.calc_inactive_follower_uids)
-    end
-
-    ActiveRecord::Base.benchmark('[benchmark] import InactiveMutualFriendship') do
-      InactiveMutualFriendship.import_from!(uid, twitter_user.calc_inactive_mutual_friend_uids)
-    end
-
-    ImportFriendsAndFollowersWorker.perform_async(user_id, uid) if twitter_user.friendships.any? || twitter_user.followerships.any?
+    _benchmark('import OneSidedFriendship') { OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids) }
+    _benchmark('import OneSidedFollowership') { OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids) }
+    _benchmark('import MutualFriendship') { MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids) }
 
   rescue Twitter::Error::Unauthorized => e
     case e.message

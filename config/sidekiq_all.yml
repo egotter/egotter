@@ -23,5 +23,7 @@
   - ImportFriendshipsAndFollowershipsWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker
   - ImportReplyingRepliedAndFavoritesWorker
+  - ImportTwitterUserRelationsWorker
+  - ImportUserWorker
   - UpdateNotificationMessageWorker
   - UpdateTwitterUserWorker

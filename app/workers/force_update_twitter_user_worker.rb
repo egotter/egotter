@@ -3,7 +3,7 @@ class ForceUpdateTwitterUserWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
-    client = Hashie::Mash.new({call_count: -100}) # If an error happens, This client is used in rescue block.
+    client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
     log = BackgroundForceUpdateLog.new(
@@ -43,7 +43,7 @@ class ForceUpdateTwitterUserWorker
     new_tu = TwitterUser.build_by_user(client.user(uid))
     relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
 
-    new_tu.build_friends_and_followers(relations)
+    new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
     if existing_tu.present? && new_tu.friendless?
       existing_tu.increment(:update_count).save
       log.update(status: true, call_count: client.call_count, message: 'new record is friendless.')
@@ -61,7 +61,7 @@ class ForceUpdateTwitterUserWorker
     new_tu.build_other_relations(relations)
     new_tu.user_id = user.id
     if new_tu.save
-      ImportReplyingRepliedAndFavoritesWorker.perform_async(user.id, new_tu.uid.to_i)
+      ImportTwitterUserRelationsWorker.perform_async(user.id, new_tu.uid.to_i)
       new_tu.increment(:update_count).save
       log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
       notify(user, new_tu, :created)

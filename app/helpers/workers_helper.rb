@@ -29,8 +29,6 @@ module WorkersHelper
     CreateTwitterUserWorker.perform_async(values)
   end
 
-  FORCE_UPDATE_TTL = Rails.env.development? ? 1.minute : 1.hour
-
   def add_force_update_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
     return if request.device_type == :crawler
 

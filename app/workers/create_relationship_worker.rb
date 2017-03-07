@@ -23,7 +23,6 @@ class CreateRelationshipWorker
     user = User.find_by(id: user_id)
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
-    Rollbar.scope!(person: {id: user.id, username: user.screen_name, email: ''}) unless user.nil?
 
     existing_tu = uids.map { |uid| TwitterUser.latest(uid) }
     if existing_tu.all? { |tu| tu.present? }
@@ -42,11 +41,12 @@ class CreateRelationshipWorker
 
       new_tu = TwitterUser.build_by_user(client.user(uid))
       relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
-      ImportFriendsAndFollowersWorker.perform_async(user_id, uid) if %i(friend_ids follower_ids).all? { |key| relations.has_key?(key) }
-      new_tu.build_friends_and_followers(relations)
+      new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
       new_tu.build_other_relations(relations)
       new_tu.user_id = user.nil? ? -1 : user.id
       if new_tu.save
+        ImportTwitterUserRelationsWorker.new.perform(user_id, uid) # perhaps this worker(and internal jobs) will miss the deadline.
+        sleep 5
         created << new_tu.id
         next
       end
@@ -70,7 +70,6 @@ class CreateRelationshipWorker
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
       message: ''
     )
-    Rollbar.warn(e)
   rescue Twitter::Error::Unauthorized => e
     log.update(
       status: false,
@@ -78,7 +77,6 @@ class CreateRelationshipWorker
       reason: BackgroundSearchLog::Unauthorized::MESSAGE,
       message: ''
     )
-    Rollbar.warn(e)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     logger.info e.backtrace.take(10).join("\n")
@@ -88,6 +86,5 @@ class CreateRelationshipWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message}"
     )
-    Rollbar.warn(e)
   end
 end

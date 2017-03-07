@@ -7,6 +7,6 @@ module Concerns::TwitterUser::Inflections
   end
 
   def mention_name
-    "@#{screen_name}"
+    @mention_name ||= "@#{screen_name}"
   end
 end

@@ -6,6 +6,35 @@ module Concerns::TwitterUser::Api
   included do
   end
 
+  class_methods do
+    def calc_removing_uids(uid)
+      with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+        next if newer.nil? || older.nil? || newer.friends_size == 0
+        older.new_removing_uids(newer)
+      end.compact.flatten.reverse
+    end
+
+    def calc_removed_uids(uid)
+      TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
+        next if newer.nil? || older.nil? || newer.followers_size == 0
+        older.new_removed_uids(newer)
+      end.compact.flatten.reverse
+    end
+
+    def select_inactive_users(users)
+      users.select { |user| _inactive_user?(user) }
+    end
+
+    INACTIVE_LIMIT = 2.weeks.ago
+
+    def _inactive_user?(user)
+      user&.status&.created_at && Time.parse(user.status.created_at) < INACTIVE_LIMIT
+    rescue => e
+      logger.warn "#{__method__}: #{e.class} #{e.message} [#{user&.status&.created_at}] #{user.uid} #{user.screen_name}"
+      false
+    end
+  end
+
   def calc_one_sided_friend_uids
     friend_uids - follower_uids
   end
@@ -65,13 +94,6 @@ module Concerns::TwitterUser::Api
     uids.empty? ? friends.none : older.friends.where(uid: uids)
   end
 
-  def calc_removing_uids
-    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.friends_size == 0
-      older.new_removing_uids(newer)
-    end.compact.flatten.reverse
-  end
-
   def removing_uids
     unfriendships.pluck(:friend_uid)
   end
@@ -89,13 +111,6 @@ module Concerns::TwitterUser::Api
     return followers.none if newer.nil? || older.nil? || newer.followers_size == 0
     uids = older.new_removed_uids(newer)
     uids.empty? ? followers.none : older.followers.where(uid: uids)
-  end
-
-  def calc_removed_uids
-    TwitterUser.with_friends.where(uid: uid).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.followers_size == 0
-      older.new_removed_uids(newer)
-    end.compact.flatten.reverse
   end
 
   def removed_uids
@@ -215,17 +230,8 @@ module Concerns::TwitterUser::Api
     users.each { |user| user.uid = user.id }
   end
 
-  INACTIVE_LIMIT = 2.weeks.ago
-
-  def _inactive_user?(user)
-    user&.status&.created_at && Time.parse(user.status.created_at) < INACTIVE_LIMIT
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} [#{user&.status&.created_at}] #{user.uid} #{user.screen_name}"
-    false
-  end
-
   def calc_inactive_friend_uids
-    friends.select { |friend| _inactive_user?(friend) }.map(&:uid)
+    friends.select { |friend| self.class._inactive_user?(friend) }.map(&:uid)
   end
 
   def inactive_friend_uids
@@ -233,7 +239,7 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_inactive_follower_uids
-    followers.select { |follower| _inactive_user?(follower) }.map(&:uid)
+    followers.select { |follower| self.class._inactive_user?(follower) }.map(&:uid)
   end
 
   def inactive_follower_uids
@@ -241,7 +247,7 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_inactive_mutual_friend_uids
-    mutual_friends.select { |friend| _inactive_user?(friend) }.map(&:uid)
+    mutual_friends.select { |friend| self.class._inactive_user?(friend) }.map(&:uid)
   end
 
   def inactive_mutual_friend_uids

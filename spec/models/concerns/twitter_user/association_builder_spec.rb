@@ -1,12 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::AssociationBuilder do
-  let(:status) { Hashie::Mash.new({text: 'status', user: {id: 1, screen_name: 'sn'}}) }
+  let(:status) { Hashie::Mash.new(text: 'status', user: {id: 1, screen_name: 'sn'}) }
   let(:relations) { {friend_ids: [1, 2, 3], follower_ids: [4, 5], user_timeline: [status]} }
   let(:twitter_user) { TwitterUser.new }
 
   describe '#build_friends_and_followers' do
-    before { twitter_user.build_friends_and_followers(relations) }
+    before { twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
     it 'builds friends and followers' do
       expect(twitter_user.friendships.map(&:friend_uid)).to match_array(relations[:friend_ids])
       expect(twitter_user.followerships.map(&:follower_uid)).to match_array(relations[:follower_ids])

@@ -41,4 +41,12 @@ module Concerns::TwitterUser::Utils
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
     Time.zone.now - send(attr) < seconds
   end
+
+  def _benchmark(message, &block)
+    ActiveRecord::Base.benchmark("[benchmark] #{self.class} #{message}", &block)
+  end
+
+  def _transaction(message, &block)
+    _benchmark(message) { Rails.logger.silence { ActiveRecord::Base.transaction(&block) } }
+  end
 end

@@ -3,7 +3,7 @@ class UpdateTwitterUserWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id)
-    client = Hashie::Mash.new({call_count: -100}) # If an error happens, This client is used in rescue block.
+    client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.
     user = User.find(user_id)
     uid = user.uid.to_i
     log = BackgroundUpdateLog.new(

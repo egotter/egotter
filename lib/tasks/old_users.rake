@@ -69,6 +69,7 @@ namespace :old_users do
     OldUser.where(authorized: true).find_each(start: start, batch_size: 100) do |user|
       client = user.api_client
 
+      # TODO CreateTwitterUserWorker.perform_async(...)
       begin
         twitter_user = TwitterUser.build_by_user(client.user(user.uid.to_i))
         relations = TwitterUserFetcher.new(twitter_user, client: client, login_user: user).fetch

@@ -29,11 +29,11 @@ RSpec.describe User, type: :model do
 
   describe '.update_or_create_for_oauth_by!' do
     let(:auth) do
-      Hashie::Mash.new({
+      Hashie::Mash.new(
         uid: 1,
         info: {nickname: 'sn', email: 'info@egotter.com'},
         credentials: {secret: 's', token: 't'},
-      })
+      )
     end
 
     it 'saves new user' do
