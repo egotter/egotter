@@ -1,0 +1,27 @@
+:concurrency: 3
+:timeout: 10
+:pidfile: ./tmp/pids/sidekiq_all.pid
+:logfile: ./log/sidekiq_all.log
+:queues:
+  - CreateForbiddenUserWorker
+  - CreateModalOpenLogWorker
+  - CreateNotificationMessageWorker
+  - CreatePageCacheLogWorker
+  - CreatePageCacheWorker
+  - CreatePollingLogWorker
+  - CreatePromptReportWorker
+  - CreateRelationshipWorker
+  - CreateSearchHistoriesWorker
+  - CreateSearchLogWorker
+  - CreateSignInLogWorker
+  - CreateTweetsWorker
+  - CreateTwitterUserWorker
+  - DelayedCreateTwitterUserWorker
+  - FollowEgotterWorker
+  - ForceUpdateTwitterUserWorker
+  - ImportFriendsAndFollowersWorker
+  - ImportFriendshipsAndFollowershipsWorker
+  - ImportInactiveFriendsAndInactiveFollowersWorker
+  - ImportReplyingRepliedAndFavoritesWorker
+  - UpdateNotificationMessageWorker
+  - UpdateTwitterUserWorker
