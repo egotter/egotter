@@ -1,0 +1,45 @@
+#!/bin/sh
+
+# /etc/init.d/unicorn
+
+if [ -f /etc/init.d/functions ]; then
+  . /etc/init.d/functions
+fi
+
+if echo ' \c' | grep 'c' > /dev/null 2>&1; then
+  en='-n'
+  ec=''
+else
+  en=''
+  ec='\c'
+fi
+
+APP_ROOT="/home/ec2-user/egotter/"
+
+restart() {
+/etc/init.d/unicorn restart && \
+/etc/init.d/sidekiq_delayed_create restart && \
+/etc/init.d/sidekiq restart && \
+/etc/init.d/sidekiq_import restart && \
+/etc/init.d/sidekiq_logging restart && \
+/etc/init.d/sidekiq_misc restart
+}
+
+rh_status() {
+  ps x -o pid,command | grep unicorn | grep -v grep && ps -o pid=,command= -p $(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)
+}
+
+case "$1" in
+  restart)
+          restart
+          ;;
+  status)
+          rh_status
+          ;;
+  *)
+          echo "Usage: egotter {restart|status}" >&2
+          exit 1
+          ;;
+esac
+exit 0
+
