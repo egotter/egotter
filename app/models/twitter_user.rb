@@ -34,6 +34,8 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
 
+  include Concerns::TwitterUser::Debug if Rails.env.development?
+
   def cache_key
     case
       when new_record? then super
