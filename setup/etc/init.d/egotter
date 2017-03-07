@@ -15,6 +15,7 @@ else
 fi
 
 APP_ROOT="/home/ec2-user/egotter/"
+USER="ec2-user"
 
 restart() {
 /etc/init.d/unicorn restart && \
@@ -26,7 +27,9 @@ restart() {
 }
 
 rh_status() {
-  ps x -o pid,command | grep unicorn | grep -v grep && ps -o pid=,command= -p $(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)
+  cd $APP_ROOT
+  cmd='ps x -o pid,command | grep unicorn | grep -v grep && ps -o pid=,command= -p $(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)'
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && ${cmd}"
 }
 
 case "$1" in
