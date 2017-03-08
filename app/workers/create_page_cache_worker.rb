@@ -9,7 +9,7 @@ class CreatePageCacheWorker
       http = Net::HTTP.new(uri.host, uri.port)
       http.use_ssl = true if Rails.env.production?
       request = Net::HTTP::Post.new(uri.path, 'Content-Type' => 'application/json')
-      request.body = {uid: uid, token: ENV['PAGE_CACHE_TOKEN']}.to_json
+      request.body = {uid: uid, token: ENV['PAGE_CACHE_CREATE_TOKEN']}.to_json
       http.request(request).body
     end
   rescue => e

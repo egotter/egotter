@@ -2,7 +2,7 @@ require 'digest/md5'
 
 module PageCachesHelper
   def page_cache_token(value)
-    Digest::MD5.hexdigest("#{value}-#{ENV['SEED']}")
+    Digest::MD5.hexdigest("#{value}-#{ENV['PAGE_CACHE_TOKEN_SEED']}")
   end
 
   def verify_page_cache_token(hash, value)
