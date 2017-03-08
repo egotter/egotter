@@ -12,9 +12,9 @@ class ImportReplyingRepliedAndFavoritesWorker
     begin
       t_users = client.users(uids)
     rescue => e
-      logger.warn "#{e.class} #{e.message} #{uids.inspect}"
+      logger.warn "#{e.class} #{e.message} #{uids.size}"
     end
-    return if t_users&.empty?
+    return if t_users.nil? || t_users.empty?
 
     users = t_users.map { |user| [user.id, user.screen_name, user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
     users.sort_by!(&:first)
