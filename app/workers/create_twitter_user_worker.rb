@@ -163,11 +163,10 @@ class CreateTwitterUserWorker
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.id} #{tu.inspect}"
   end
 
-  BUSY_TIMEOUT = 2.minutes.ago
   BUSY_QUEUE_SIZE = 0
 
   def before_perform(values)
-    if values['queued_at'] < BUSY_TIMEOUT || (Sidekiq::Queue.new(self.class.to_s).size > BUSY_QUEUE_SIZE && values['auto'])
+    if values['queued_at'] < 2.minutes.ago || (Sidekiq::Queue.new(self.class.to_s).size > BUSY_QUEUE_SIZE && values['auto'])
       DelayedCreateTwitterUserWorker.perform_async(values)
       false
     else
