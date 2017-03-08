@@ -25,10 +25,8 @@ module Concerns::TwitterUser::Api
       users.select { |user| _inactive_user?(user) }
     end
 
-    INACTIVE_LIMIT = 2.weeks.ago
-
     def _inactive_user?(user)
-      user&.status&.created_at && Time.parse(user.status.created_at) < INACTIVE_LIMIT
+      user&.status&.created_at && Time.parse(user.status.created_at) < 2.weeks.ago
     rescue => e
       logger.warn "#{__method__}: #{e.class} #{e.message} [#{user&.status&.created_at}] #{user.uid} #{user.screen_name}"
       false
