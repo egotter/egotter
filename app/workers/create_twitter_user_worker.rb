@@ -6,7 +6,7 @@ class CreateTwitterUserWorker
     client = Hashie::Mash.new(call_count: -100)
     log = BackgroundSearchLog.new(message: '')
     user = user_id = uid = nil
-    queued_at = values['queued_at']
+    queued_at = values['queued_at'] = Time.zone.parse(values['queued_at'])
     started_at = Time.zone.now
 
     return unless before_perform(values)
@@ -31,8 +31,8 @@ class CreateTwitterUserWorker
       channel:     values['channel'],
       medium:      values['medium'],
     )
-    log.queued_at = values['queued_at'] if log.respond_to?(:queued_at) # TODO remove later
-    log.started_at = Time.zone.now if log.respond_to?(:started_at) # TODO remove later
+    log.queued_at = queued_at if log.respond_to?(:queued_at) # TODO remove later
+    log.started_at = started_at if log.respond_to?(:started_at) # TODO remove later
 
     user = User.find_by(id: user_id)
     client = user.nil? ? Bot.api_client : user.api_client
@@ -143,7 +143,7 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{message}"
     )
   ensure
-    message = "[worker] #{self.class} finished. #{user_id} #{uid} queued_at: #{queued_at}, started_at: #{started_at}, finished_at: #{Time.zone.now}"
+    message = "[worker] #{self.class} finished. #{user_id} #{uid} queued_at: #{I18n.l(queued_at, format: :short_hour)}, started_at: #{I18n.l(started_at, format: :short_hour)}, finished_at: #{I18n.l(Time.zone.now, format: :short_hour)}"
     Rails.logger.info message
     logger.info message
   end
@@ -167,7 +167,7 @@ class CreateTwitterUserWorker
   BUSY_QUEUE_SIZE = 0
 
   def before_perform(values)
-    if Time.zone.parse(values['queued_at']) < BUSY_TIMEOUT || (Sidekiq::Queue.new(self.class.to_s).size > BUSY_QUEUE_SIZE && values['auto'])
+    if values['queued_at'] < BUSY_TIMEOUT || (Sidekiq::Queue.new(self.class.to_s).size > BUSY_QUEUE_SIZE && values['auto'])
       DelayedCreateTwitterUserWorker.perform_async(values)
       false
     else
