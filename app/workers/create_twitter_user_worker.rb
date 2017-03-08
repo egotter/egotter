@@ -2,9 +2,6 @@ class CreateTwitterUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: false, backtrace: false
 
-  BUSY_TIMEOUT = 5.minutes.ago
-  BUSY_QUEUE_SIZE = 3
-
   def perform(values)
     client = Hashie::Mash.new(call_count: -100)
     log = BackgroundSearchLog.new(message: '')
@@ -161,6 +158,9 @@ class CreateTwitterUserWorker
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.id} #{tu.inspect}"
   end
+
+  BUSY_TIMEOUT = 2.minutes.ago
+  BUSY_QUEUE_SIZE = 0
 
   def before_perform(values)
     if Time.zone.parse(values['queued_at']) < BUSY_TIMEOUT || (Sidekiq::Queue.new(self.class.to_s).size > BUSY_QUEUE_SIZE && values['auto'])
