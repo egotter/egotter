@@ -6,6 +6,8 @@ class CreateTwitterUserWorker
     client = Hashie::Mash.new(call_count: -100)
     log = BackgroundSearchLog.new(message: '')
     user = user_id = uid = nil
+    queued_at = values['queued_at']
+    started_at = Time.zone.now
 
     return unless before_perform(values)
 
@@ -141,7 +143,9 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{message}"
     )
   ensure
-    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid}"
+    message = "[worker] #{self.class} finished. #{user_id} #{uid} queued_at: #{queued_at}, started_at: #{started_at}, finished_at: #{Time.zone.now}"
+    Rails.logger.info message
+    logger.info message
   end
 
   private
