@@ -28,8 +28,13 @@ restart() {
 
 rh_status() {
   cd $APP_ROOT
-  cmd='ps x -o pid,command | grep unicorn | grep -v grep && ps -o pid=,command= -p $(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)'
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && ${cmd}"
+  cmd1="ps x -o pid,command | grep unicorn | grep -v grep"
+  if ls ${APP_ROOT}/tmp/pids/sidekiq*.pid >/dev/null 2>&1; then
+    cmd2="ps -o pid=,command= -p $(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)"
+  else
+    cmd2=":"
+  fi
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && ${cmd1} && ${cmd2}"
 }
 
 case "$1" in

@@ -6,7 +6,7 @@ class PageCachesController < ApplicationController
 
   layout false
 
-  skip_before_action :verify_authenticity_token, if: -> { action_name == 'create' && params[:token] == ENV['PAGE_CACHE_TOKEN'] }
+  skip_before_action :verify_authenticity_token, if: -> { action_name == 'create' && params[:token] == ENV['PAGE_CACHE_CREATE_TOKEN'] }
 
   before_action(only: %i(create destroy)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(create destroy)) { existing_uid?(params[:uid].to_i) }
