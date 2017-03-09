@@ -48,7 +48,7 @@ rh_status() {
   cd $APP_ROOT
   cmd1="ps x -o pid,command | grep unicorn | grep -v grep"
   if ls ${APP_ROOT}/tmp/pids/sidekiq*.pid >/dev/null 2>&1; then
-    cmd2="ps -o pid=,command= -p $(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)"
+    cmd2='ps -o pid=,command= -p $(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)'
   else
     cmd2=":"
   fi
