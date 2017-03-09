@@ -17,13 +17,31 @@ fi
 APP_ROOT="/home/ec2-user/egotter/"
 USER="ec2-user"
 
+start() {
+  /etc/init.d/unicorn start && \
+  /etc/init.d/sidekiq_delayed_create start && \
+  /etc/init.d/sidekiq start && \
+  /etc/init.d/sidekiq_import start && \
+  /etc/init.d/sidekiq_logging start && \
+  /etc/init.d/sidekiq_misc start
+}
+
+stop() {
+  /etc/init.d/unicorn stop && \
+  /etc/init.d/sidekiq_delayed_create stop && \
+  /etc/init.d/sidekiq stop && \
+  /etc/init.d/sidekiq_import stop && \
+  /etc/init.d/sidekiq_logging stop && \
+  /etc/init.d/sidekiq_misc stop
+}
+
 restart() {
-/etc/init.d/unicorn restart && \
-/etc/init.d/sidekiq_delayed_create restart && \
-/etc/init.d/sidekiq restart && \
-/etc/init.d/sidekiq_import restart && \
-/etc/init.d/sidekiq_logging restart && \
-/etc/init.d/sidekiq_misc restart
+  /etc/init.d/unicorn restart && \
+  /etc/init.d/sidekiq_delayed_create restart && \
+  /etc/init.d/sidekiq restart && \
+  /etc/init.d/sidekiq_import restart && \
+  /etc/init.d/sidekiq_logging restart && \
+  /etc/init.d/sidekiq_misc restart
 }
 
 rh_status() {
@@ -38,6 +56,12 @@ rh_status() {
 }
 
 case "$1" in
+  start)
+          start
+          ;;
+  stop)
+          stop
+          ;;
   restart)
           restart
           ;;
