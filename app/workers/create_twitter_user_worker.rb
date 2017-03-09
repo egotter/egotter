@@ -3,48 +3,33 @@ class CreateTwitterUserWorker
   include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: false, backtrace: false
 
+  attr_reader :log
+
   def perform(values)
-    client = Hashie::Mash.new(call_count: -100)
-    log = BackgroundSearchLog.new(message: '')
-    user = user_id = uid = nil
-    queued_at = values['queued_at'] = Time.zone.parse(values['queued_at'])
-    started_at = Time.zone.now
+    client     = Hashie::Mash.new(call_count: -100)
+    user       = nil
+    queued_at  = values['queued_at']  = Time.zone.parse(values['queued_at'])
+    started_at = values['started_at'] = Time.zone.now
+    user_id    = values['user_id']    = values['user_id'].to_i
+    uid        = values['uid']        = values['uid'].to_i
 
     return unless before_perform(values)
 
-    user_id      = values['user_id'].to_i
-    uid          = values['uid'].to_i
-    log = BackgroundSearchLog.new(
-      session_id:  values['session_id'],
-      user_id:     user_id,
-      uid:         uid,
-      screen_name: values['screen_name'],
-      action:      values['action'],
-      bot_uid:     -100,
-      auto:        values['auto'],
-      via:         values['via'],
-      device_type: values['device_type'],
-      os:          values['os'],
-      browser:     values['browser'],
-      user_agent:  values['user_agent'],
-      referer:     values['referer'],
-      referral:    values['referral'],
-      channel:     values['channel'],
-      medium:      values['medium'],
-    )
-    log.queued_at = queued_at if log.respond_to?(:queued_at) # TODO remove later
-    log.started_at = started_at if log.respond_to?(:started_at) # TODO remove later
-
-    user = User.find_by(id: user_id)
-    client = user.nil? ? Bot.api_client : user.api_client
-    log.bot_uid = client.verify_credentials.id
+    initialize_log(values)
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
-      log.update(status: false, call_count: client.call_count, message: "[#{uid}] is recently creating.")
-      return
+      return log.update(status: false, call_count: 0, message: "[#{uid}] is recently creating.")
     end
     creating_uids.add(uid)
+
+    user = User.find_by(id: user_id)
+    if user.present? && !user.authorized?
+      return log.update(status: false, call_count: 0, reason: BackgroundSearchLog::Unauthorized::MESSAGE, message: '')
+    end
+
+    client = user.nil? ? Bot.api_client : user.api_client
+    log.bot_uid = client.verify_credentials.id
 
     existing_tu = TwitterUser.latest(uid)
     if existing_tu&.fresh?
@@ -165,6 +150,32 @@ class CreateTwitterUserWorker
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.id} #{tu.inspect}"
+  end
+
+  def initialize_log(values)
+    @log = BackgroundSearchLog.new(
+      session_id:  values['session_id'],
+      user_id:     values['user_id'],
+      uid:         values['uid'],
+      screen_name: values['screen_name'],
+      action:      values['action'],
+      bot_uid:     -100,
+      auto:        values['auto'],
+      status:      false,
+      reason:      '',
+      message:     '',
+      via:         values['via'],
+      device_type: values['device_type'],
+      os:          values['os'],
+      browser:     values['browser'],
+      user_agent:  values['user_agent'],
+      referer:     values['referer'],
+      referral:    values['referral'],
+      channel:     values['channel'],
+      medium:      values['medium'],
+    )
+    @log.queued_at = values['queued_at'] if log.respond_to?(:queued_at) # TODO remove later
+    @log.started_at = values['started_at'] if log.respond_to?(:started_at) # TODO remove later
   end
 
   BUSY_QUEUE_SIZE = 0
