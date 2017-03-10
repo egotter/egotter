@@ -12,17 +12,22 @@ check process sidekiq_import with pidfile /home/ec2-user/egotter/tmp/pids/sideki
   stop program = "/etc/init.d/sidekiq_import force-stop" with timeout 30 seconds
   if 5 restarts within 5 cycles then unmonitor
 
-check process sidekiq_logging with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_logging.pid
-  start program = "/etc/init.d/sidekiq_logging force-restart" with timeout 30 seconds
-  stop program = "/etc/init.d/sidekiq_logging force-stop" with timeout 30 seconds
+check process sidekiq_import_friends with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_import_friends.pid
+  start program = "/etc/init.d/sidekiq_import_friends force-restart" with timeout 30 seconds
+  stop program = "/etc/init.d/sidekiq_import_friends force-stop" with timeout 30 seconds
   if 5 restarts within 5 cycles then unmonitor
 
-check process sidekiq_misc with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_misc.pid
-  start program = "/etc/init.d/sidekiq_misc force-restart" with timeout 30 seconds
-  stop program = "/etc/init.d/sidekiq_misc force-stop" with timeout 30 seconds
-  if 5 restarts within 5 cycles then unmonitor
+#check process sidekiq_logging with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_logging.pid
+#  start program = "/etc/init.d/sidekiq_logging force-restart" with timeout 30 seconds
+#  stop program = "/etc/init.d/sidekiq_logging force-stop" with timeout 30 seconds
+#  if 5 restarts within 5 cycles then unmonitor
 
-check process sidekiq_delayed_create with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_delayed_create.pid
-  start program = "/etc/init.d/sidekiq_delayed_create force-restart" with timeout 30 seconds
-  stop program = "/etc/init.d/sidekiq_delayed_create force-stop" with timeout 30 seconds
-  if 5 restarts within 5 cycles then unmonitor
+#check process sidekiq_misc with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_misc.pid
+#  start program = "/etc/init.d/sidekiq_misc force-restart" with timeout 30 seconds
+#  stop program = "/etc/init.d/sidekiq_misc force-stop" with timeout 30 seconds
+#  if 5 restarts within 5 cycles then unmonitor
+
+#check process sidekiq_delayed_create with pidfile /home/ec2-user/egotter/tmp/pids/sidekiq_delayed_create.pid
+#  start program = "/etc/init.d/sidekiq_delayed_create force-restart" with timeout 30 seconds
+#  stop program = "/etc/init.d/sidekiq_delayed_create force-stop" with timeout 30 seconds
+#  if 5 restarts within 5 cycles then unmonitor

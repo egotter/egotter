@@ -115,6 +115,13 @@ Run monit:
 
     sudo service monit start
 
+Make swap:
+
+    dd if=/dev/zero of=/swapfile bs=1M count=1024
+    chmod 600 /swapfile
+    mkswap /swapfile
+    swapon /swapfile
+
 User settings:
 
     wget -q -O .bashrc https://gist.githubusercontent.com/ts-3156/5373957/raw/.bashrc
