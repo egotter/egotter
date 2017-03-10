@@ -13,8 +13,8 @@ class ImportFriendsAndFollowersWorker
     t_user, friends, followers = client._fetch_parallelly(signatures)
     users = []
 
-    _benchmark('build friends') { users.concat(friends.map { |f| to_array(f) }) } if friends&.any?
-    _benchmark('build followers') { users.concat(followers.map { |f| to_array(f) }) } if followers&.any?
+    _benchmark('build friends') { users.concat(friends.map { |f| to_array(f) }) }
+    _benchmark('build followers') { users.concat(followers.map { |f| to_array(f) }) }
 
     users << to_array(t_user)
     users.uniq!(&:first)
@@ -23,11 +23,14 @@ class ImportFriendsAndFollowersWorker
     chk1 = Time.zone.now
     _retry_with_transaction!('import TwitterDB::User') { TwitterDB::User.import_each_slice(users) }
 
+    friend_ids = friends.map(&:id)
+    follower_ids = followers.map(&:id)
+
     chk2 = Time.zone.now
     _retry_with_transaction!('import TwitterDB::Friendship and TwitterDB::Followership') do
-      TwitterDB::Friendship.import_from!(uid, friends.map(&:id)) if friends&.any?
-      TwitterDB::Followership.import_from!(uid, followers.map(&:id)) if followers&.any?
-      TwitterDB::User.find_by(uid: uid).tap { |me| me.update_columns(friends_size: me.friendships.size, followers_size: me.followerships.size) }
+      TwitterDB::Friendship.import_from!(uid, friend_ids)
+      TwitterDB::Followership.import_from!(uid, follower_ids)
+      TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_ids.size, followers_size: follower_ids.size)
     end
 
   rescue Twitter::Error::Unauthorized => e

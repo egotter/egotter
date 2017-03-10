@@ -14,10 +14,11 @@ class ImportFriendshipsAndFollowershipsWorker
     friend_ids, follower_ids = client._fetch_parallelly(signatures)
 
     chk1 = Time.zone.now
-    _transaction('import Friendship and Followership') {
-      Friendship.import_from!(twitter_user.id, friend_ids) if friend_ids&.any?
-      Followership.import_from!(twitter_user.id, follower_ids) if follower_ids&.any?
-    }
+    _transaction('import Friendship and Followership') do
+      Friendship.import_from!(twitter_user.id, friend_ids)
+      Followership.import_from!(twitter_user.id, follower_ids)
+      twitter_user.update!(followers_size: follower_ids.size, friends_size: friend_ids.size)
+    end
 
     chk2 = Time.zone.now
     _benchmark('import Unfriendship') { Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid)) }
