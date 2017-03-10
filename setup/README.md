@@ -1,10 +1,21 @@
+## Install egotter
+
+`sudo bash -c "$(curl -L https://raw.githubusercontent.com/ts-3156/egotter/master/setup/install_egotter.sh)"`
+
+## Run rails
+
+```
+bundle exec rake db:create db:migrate
+bundle exec rails s --binding=0.0.0.0
+```
+
 ## Run redis on mac
 
 `redis-server [project root]/redis.conf`
 
 ## Run sidekiq
 
-`bundle exec sidekiq`
+`bundle exec sidekiq -C config/sidekiq.yml`
 
 ## Maintenance mode
 

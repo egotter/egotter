@@ -1,17 +1,17 @@
-# Egotter
+# egotter
 
 [![Build Status](https://travis-ci.org/ts-3156/egotter.svg?branch=master)](https://travis-ci.org/ts-3156/egotter)
 
-Let's enjoy together! ✧*｡٩(ˊᗜˋ*)و✧*｡
+Let's enjoy egotter! ✧*｡٩(ˊᗜˋ*)و✧*｡
 
 ```
-bundle exec rails server
+/etc/init.d/egotter start
 
 ```
 
 ## Setup
 
-Read `setup/*.sh`
+Read `setup/install_egotter.sh`
 
 ## License
 

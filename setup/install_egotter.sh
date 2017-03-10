@@ -46,7 +46,6 @@ cd ${APP_ROOT}
 ${sudo_cmd} "git checkout master && git pull origin master"
 [ ! -f "/usr/bin/mecab" ] && sh ./setup/install_mecab.sh
 ${sudo_cmd} "bundle install --path .bundle"
-${sudo_cmd} "RAILS_ENV=production bundle exec rake assets:precompile"
 
 cd ${APP_ROOT}
 
@@ -103,6 +102,10 @@ printf "\033[32m
 Create .env:
 
     cp /path/to/.env ${APP_ROOT}/.env
+
+Precompile assets:
+
+    RAILS_ENV=production bundle exec rake assets:precompile
 
 Write crontab:
 
