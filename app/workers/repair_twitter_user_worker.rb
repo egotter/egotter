@@ -32,12 +32,14 @@ class RepairTwitterUserWorker
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       User.find_by(id: twitter_user.user_id)&.update(authorized: false)
-    elsif e.message == 'Not authorized.'
-      if twitter_user.one?
-        set_zero_friends(twitter_user)
-      else
-        raise
-      end
+    elsif e.message == 'Not authorized.' && twitter_user.one?
+      set_zero_friends(twitter_user)
+    else
+      raise
+    end
+  rescue Twitter::Error::NotFound => e
+    if e.message == 'Sorry, that page does not exist.' && twitter_user.one?
+      set_zero_friends(twitter_user)
     else
       raise
     end
