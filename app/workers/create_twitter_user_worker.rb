@@ -1,5 +1,6 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
+  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(values)
@@ -94,6 +95,9 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
+  rescue Twitter::Error => e
+    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    retry if e.message == 'Connection reset by peer - SSL_connect'
   rescue Twitter::Error::Forbidden => e
     if e.message != 'Your account is suspended and is not permitted to access this feature.' && e.message != 'User has been suspended.' && !e.message.start_with?('To protect our users from spam and other malicious activity,')
       logger.warn "#{e.class} #{e.message} #{values.inspect}"

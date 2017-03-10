@@ -18,6 +18,12 @@ class ImportTwitterUserRelationsWorker
       ImportFriendsAndFollowersWorker.perform_async(user_id, uid)
       ImportInactiveFriendsAndInactiveFollowersWorker.perform_async(user_id, uid)
     end
+  rescue Twitter::Error => e
+    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    retry if e.message == 'Connection reset by peer - SSL_connect'
+  rescue Twitter::Error::Unauthorized => e
+    User.find_by(id: user_id)&.update(authorized: false) if e.message == 'Invalid or expired token.'
+    logger.info "#{e.class} #{e.message} #{user_id} #{uid}"
   rescue => e
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
   end

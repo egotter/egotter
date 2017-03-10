@@ -19,7 +19,7 @@ class ImportUserWorker
     logger.warn "#{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
   ensure
-    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user.screen_name}"
+    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user&.screen_name}"
   end
 
   private

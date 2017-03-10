@@ -133,6 +133,9 @@ class CreateNotificationMessageWorker
 
       return
     end
+  rescue JSON::ParserError => e
+    logger.warn "#{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
+    logger.info e.backtrace.join "\n"
   rescue Twitter::Error::Forbidden => e
     unless e.message.start_with?('To protect our users from spam and other malicious activity,')
       logger.warn "#{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
@@ -146,7 +149,7 @@ class CreateNotificationMessageWorker
     end
     log.update(status: false, message: "#{e.class} #{e.message}")
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
+    logger.warn "#{e.class} #{e.message} #{user_id} #{uid} #{screen_name} #{options.inspect}"
     log.update(status: false, message: "#{e.class} #{e.message}")
   end
 

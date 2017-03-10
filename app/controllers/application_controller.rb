@@ -16,9 +16,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   rescue_from ActionController::InvalidAuthenticityToken do |e|
-    if e
-      logger.warn "#{request.xhr?} #{request.device_type} #{current_user_id} #{params.inspect}"
-    end rescue nil
+    logger.warn "#{request.xhr?} #{request.device_type} #{current_user_id} #{params.inspect}" rescue nil
     if request.xhr?
       render nothing: true, status: 500
     else

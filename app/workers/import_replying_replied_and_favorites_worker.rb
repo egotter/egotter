@@ -21,6 +21,9 @@ class ImportReplyingRepliedAndFavoritesWorker
 
     _retry_with_transaction!('import replying, replied and favoriting') { TwitterDB::User.import_each_slice(users) }
 
+  rescue Twitter::Error::Unauthorized => e
+    User.find_by(id: user_id)&.update(authorized: false) if e.message == 'Invalid or expired token.'
+    logger.info "#{e.class} #{e.message} #{user_id} #{uid}"
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
