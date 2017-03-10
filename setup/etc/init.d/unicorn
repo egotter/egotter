@@ -50,7 +50,7 @@ stop() {
 }
 
 restart() {
-  sudo kill -USR2 $(print_pid)
+  sudo kill -USR2 $(print_pid) # reexecute the running binary
   while [ ! -f ${PID_FILE} -o ! -f ${OLD_PID_FILE} ]; do
     sleep 2
   done
@@ -59,13 +59,13 @@ restart() {
     sleep 2
   done
 
-  sudo kill -WINCH $(print_old_pid)
+  sudo kill -WINCH $(print_old_pid) # gracefully stops workers but keep the master running
   while [ $(pgrep -P $(print_old_pid) | wc -l | awk '{print $1}') -gt 1 ]; do
-    sudo kill -TTOU $(print_old_pid)
+    sudo kill -TTOU $(print_old_pid) # decrement the number of worker processes by one
     sleep 2
   done
 
-  sudo kill -QUIT $(print_old_pid)
+  sudo kill -QUIT $(print_old_pid) # graceful shutdown, waits for workers to finish their current request before finishing
 
   echo ${en} "Restarting $NAME: ${ec}"
   success
