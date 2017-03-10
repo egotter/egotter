@@ -12,10 +12,6 @@ module Concerns::TwitterUser::Utils
       where('created_at < ?', time)
     end
 
-    def many?(uid)
-      where(uid: uid).size >= 2
-    end
-
     def with_friends
       where.not(friends_size: 0, followers_size: 0)
     end
@@ -34,6 +30,14 @@ module Concerns::TwitterUser::Utils
 
   def follower_uids
     new_record? ? followerships.map(&:follower_uid) : followerships.pluck(:follower_uid)
+  end
+
+  def latest?
+    id == TwitterUser.latest(uid).id
+  end
+
+  def one?
+    TwitterUser.where(uid: uid).one?
   end
 
   DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created']
