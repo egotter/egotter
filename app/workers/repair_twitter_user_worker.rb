@@ -22,11 +22,7 @@ class RepairTwitterUserWorker
 
         calc_friendships(twitter_user)
       else
-        _transaction('import Friendship and Followership') do
-          twitter_user.update!(friends_size: 0, followers_size: 0)
-          Friendship.import_from!(twitter_user.id, [])
-          Followership.import_from!(twitter_user.id, [])
-        end
+        set_zero_friends(twitter_user)
 
         _benchmark('import Unfriendship') { Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid)) }
         _benchmark('import Unfollowership') { Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid)) }
@@ -36,12 +32,26 @@ class RepairTwitterUserWorker
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       User.find_by(id: twitter_user.user_id)&.update(authorized: false)
+    elsif e.message == 'Not authorized.'
+      if twitter_user.one?
+        set_zero_friends(twitter_user)
+      else
+        raise
+      end
     else
       raise
     end
   end
 
   private
+
+  def set_zero_friends(twitter_user)
+    _transaction('import Friendship and Followership') do
+      twitter_user.update!(friends_size: 0, followers_size: 0)
+      Friendship.import_from!(twitter_user.id, [])
+      Followership.import_from!(twitter_user.id, [])
+    end
+  end
 
   def calc_friendships(twitter_user)
     uid = twitter_user.uid.to_i
