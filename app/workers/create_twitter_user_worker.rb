@@ -143,7 +143,7 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{message}"
     )
   ensure
-    message = "[worker] #{self.class} finished. #{user_id} #{uid} queued_at: #{I18n.l(queued_at, format: :short_hour)}, started_at: #{I18n.l(started_at, format: :short_hour)}, finished_at: #{I18n.l(Time.zone.now, format: :short_hour)}"
+    message = "[worker] #{self.class} finished. #{user_id} #{uid} queued_at: #{short_hour(queued_at)}, started_at: #{short_hour(started_at)}, finished_at: #{short_hour(Time.zone.now)}"
     Rails.logger.info message
     logger.info message
   end

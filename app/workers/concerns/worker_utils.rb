@@ -9,6 +9,10 @@ module Concerns::WorkerUtils
   included do
   end
 
+  def short_hour(time)
+    I18n.l(time, format: :short_hour)
+  end
+
   def _benchmark(message, &block)
     ActiveRecord::Base.benchmark("[benchmark] #{self.class} #{message}", &block)
   end

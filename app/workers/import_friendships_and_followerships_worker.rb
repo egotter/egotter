@@ -4,20 +4,26 @@ class ImportFriendshipsAndFollowershipsWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id, uid)
+    started_at = Time.zone.now
+    chk1 = chk2 = chk3 = nil
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
     twitter_user = TwitterUser.latest(uid)
+    @retry_count = 0
 
     signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
     friend_ids, follower_ids = client._fetch_parallelly(signatures)
 
+    chk1 = Time.zone.now
     _transaction('import Friendship and Followership') {
       Friendship.import_from!(twitter_user.id, friend_ids) if friend_ids&.any?
       Followership.import_from!(twitter_user.id, follower_ids) if follower_ids&.any?
     }
 
+    chk2 = Time.zone.now
     _benchmark('import Unfriendship') { Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid)) }
     _benchmark('import Unfollowership') { Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid)) }
 
+    chk3 = Time.zone.now
     _benchmark('import OneSidedFriendship') { OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids) }
     _benchmark('import OneSidedFollowership') { OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids) }
     _benchmark('import MutualFriendship') { MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids) }
@@ -29,8 +35,7 @@ class ImportFriendshipsAndFollowershipsWorker
       else logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     end
   rescue ActiveRecord::StatementInvalid => e
-    message = e.message.truncate(60)
-    logger.warn "#{e.class} #{message} #{user_id} #{uid}"
+    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} chk3: #{short_hour(chk3)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"
   rescue => e
     message = e.message.truncate(150)

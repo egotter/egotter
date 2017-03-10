@@ -4,6 +4,8 @@ class ImportFriendsAndFollowersWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id, uid)
+    started_at = Time.zone.now
+    chk1 = chk2 = nil
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
     @retry_count = 0
 
@@ -18,8 +20,10 @@ class ImportFriendsAndFollowersWorker
     users.uniq!(&:first)
     users.sort_by!(&:first)
 
+    chk1 = Time.zone.now
     _retry_with_transaction!('import TwitterDB::User') { TwitterDB::User.import_each_slice(users) }
 
+    chk2 = Time.zone.now
     _retry_with_transaction!('import TwitterDB::Friendship and TwitterDB::Followership') do
       TwitterDB::Friendship.import_from!(uid, friends.map(&:id)) if friends&.any?
       TwitterDB::Followership.import_from!(uid, followers.map(&:id)) if followers&.any?
@@ -33,15 +37,14 @@ class ImportFriendsAndFollowersWorker
       else logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     end
   rescue ActiveRecord::StatementInvalid => e
-    message = e.message.truncate(60)
-    logger.warn "#{e.class} #{message} #{user_id} #{uid} #{@retry_count}"
+    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{e.class} #{message} #{user_id} #{uid} #{@retry_count}"
     logger.info e.backtrace.join "\n"
   ensure
-    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user.screen_name}"
+    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{t_user&.screen_name}"
   end
 
   private
