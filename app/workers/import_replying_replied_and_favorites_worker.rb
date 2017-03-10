@@ -14,9 +14,9 @@ class ImportReplyingRepliedAndFavoritesWorker
     rescue => e
       logger.warn "#{e.class} #{e.message} #{uids.size}"
     end
-    return if t_users.nil? || t_users.empty?
+    return if t_users.blank?
 
-    users = t_users.map { |user| [user.id, user.screen_name, user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
+    users = t_users.map { |user| to_array(user) }
     users.sort_by!(&:first)
 
     _retry_with_transaction!('import replying, replied and favoriting') { TwitterDB::User.import_each_slice(users) }
@@ -29,6 +29,12 @@ class ImportReplyingRepliedAndFavoritesWorker
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
   ensure
-    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
+    Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user&.screen_name}"
+  end
+
+  private
+
+  def to_array(user)
+    [user.id, user.screen_name, user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1]
   end
 end
