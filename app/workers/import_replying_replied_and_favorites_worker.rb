@@ -4,9 +4,12 @@ class ImportReplyingRepliedAndFavoritesWorker
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id, uid)
+    started_at = Time.zone.now
+    chk1 = nil
     login_user = user_id == -1 ? nil : User.find(user_id)
     client = login_user.nil? ? Bot.api_client : login_user.api_client
     twitter_user = TwitterUser.latest(uid)
+    @retry_count = 0
 
     uids = (twitter_user.replying_uids + twitter_user.replied_uids(login_user: login_user) + twitter_user.favoriting_uids).uniq
     begin
@@ -19,11 +22,15 @@ class ImportReplyingRepliedAndFavoritesWorker
     users = t_users.map { |user| to_array(user) }
     users.sort_by!(&:first)
 
+    chk1 = Time.zone.now
     _retry_with_transaction!('import replying, replied and favoriting') { TwitterDB::User.import_each_slice(users) }
 
   rescue Twitter::Error::Unauthorized => e
     User.find_by(id: user_id)&.update(authorized: false) if e.message == 'Invalid or expired token.'
     logger.info "#{e.class} #{e.message} #{user_id} #{uid}"
+  rescue ActiveRecord::StatementInvalid => e
+    logger.warn "#{e.message.truncate(100)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
+    logger.info e.backtrace.join "\n"
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"

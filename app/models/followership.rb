@@ -22,7 +22,7 @@ class Followership < ActiveRecord::Base
     followerships = follower_uids.map.with_index { |follower_uid, i| [from_id, follower_uid.to_i, i] }
 
     ActiveRecord::Base.transaction do
-      delete_all(from_id: from_id)
+      delete_all(from_id: from_id) if where(from_id: from_id).any?
       import(%i(from_id follower_uid sequence), followerships, validate: false, timestamps: false)
     end
   end

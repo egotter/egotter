@@ -36,7 +36,7 @@ class ImportFriendshipsAndFollowershipsWorker
       else logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     end
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} chk3: #{short_hour(chk3)} finish: #{short_hour(Time.zone.now)}"
+    logger.warn "#{e.message.truncate(100)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} chk3: #{short_hour(chk3)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"
   rescue => e
     message = e.message.truncate(150)
