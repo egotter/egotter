@@ -90,18 +90,12 @@ cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
 sed -i '/include \/etc\/logrotate.d/a include \/etc\/logrotate.d\/egotter' /etc/logrotate.conf
 
 
-if [ ! -z ${DD_API_KEY+x} ]; then
-  echo "DD_API_KEY is set to ${DD_API_KEY}"
-  bash -c "$(curl -L https://raw.githubusercontent.com/DataDog/dd-agent/master/packaging/datadog-agent/source/install_agent.sh)"
-else
-  echo "DD_API_KEY is unset"
-fi
-
 printf "\033[32m
 
 Create .env:
 
     cp /path/to/.env ${APP_ROOT}/.env
+    sed -i -e 's/REDIS_HOST=.\+/REDIS_HOST="xxx.xxx.xxx.xxx"/' .env
 
 Precompile assets:
 
@@ -115,12 +109,18 @@ Run monit:
 
     sudo service monit start
 
+Install datadog:
+
+    # https://app.datadoghq.com/account/settings#agent/aws
+    sed -i -e 's/# hostname: .\+/hostname: xxx.egotter/' /etc/dd-agent/datadog.conf
+
 Make swap:
 
     dd if=/dev/zero of=/swapfile bs=1M count=1024
     chmod 600 /swapfile
     mkswap /swapfile
     swapon /swapfile
+    echo "/swapfile swap swap defaults 0 0" >>/etc/fstab
 
 User settings:
 
