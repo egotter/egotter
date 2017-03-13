@@ -17,9 +17,10 @@
   end
 
   result_path = users.any? ? search_path_for(name, tu.screen_name) : '#'
+  onclick = result_path == '#' ? 'return false;' : ''
 %>
 <div class="menu-items media">
-  <%= link_to result_path, style: 'color: inherit; text-decoration: none; display: block;' do %>
+  <%= link_to result_path, style: 'color: inherit; text-decoration: none; display: block;', onclick: onclick do %>
     <h3 class="h4"><%= title_for(name, tu.screen_name) %></h3>
     <div class="text-center description"><%= description_for(name, tu.screen_name).html_safe %></div>
 
@@ -27,7 +28,11 @@
       <% if users.any? %>
         <%= render(partial: 'search_results/show/icon', collection: users, cached: true, locals: {rendered_users: rendered_users}) %>
       <% else %>
-        <div class="text-muted"><%= t('dictionary.under_calculation_with_details') %></div>
+        <% if tu.relationships_cache_created? %>
+          <div class="text-muted"><%= t('dictionary.empty_result_with_details_html') %></div>
+        <% else %>
+          <div class="text-muted"><%= t('dictionary.under_calculation_with_details_html') %></div>
+        <% end %>
       <% end %>
     </div>
 
@@ -50,7 +55,11 @@
       <% if users.any? %>
         <%= link_to(t('dictionary.view_more_with_num_html', num: uids.size), result_path, class: 'btn btn-info btn-block btn-view-more') %>
       <% else %>
-        <%= link_to(t('dictionary.under_calculation'), result_path, class: 'btn btn-info btn-block disabled') %>
+        <% if tu.relationships_cache_created? %>
+          <%= link_to(t('dictionary.view_more_with_num_html', num: 0), result_path, class: 'btn btn-info btn-block disabled') %>
+        <% else %>
+          <%= link_to(t('dictionary.under_calculation'), result_path, class: 'btn btn-info btn-block disabled') %>
+        <% end %>
       <% end %>
     </div>
   <% end %>

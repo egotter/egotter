@@ -417,7 +417,8 @@ ja:
     view_more_detail: "もっと詳しく"
     view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
     under_calculation: "集計中です"
-    under_calculation_with_details: "フォロー・フォロワーの集計中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。"
+    under_calculation_with_details_html: 'フォロー・フォロワーの集計中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に集計されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
+    empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に集計されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
     tweet_result: "結果をつぶやく"
     do_tweet: "つぶやく"
     delim: "、"

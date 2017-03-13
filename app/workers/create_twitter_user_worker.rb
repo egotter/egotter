@@ -7,7 +7,7 @@ class CreateTwitterUserWorker
     client = Hashie::Mash.new(call_count: -100)
     log = BackgroundSearchLog.new(message: '')
     user = user_id = uid = nil
-    queued_at = values['queued_at'] = Time.zone.parse(values['queued_at'])
+    queued_at = values['queued_at'] = Time.zone.parse(values['queued_at']) if values['queued_at'].is_a?(String)
     started_at = Time.zone.now
 
     return unless before_perform(values)

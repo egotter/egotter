@@ -42,6 +42,10 @@ module Concerns::TwitterUser::Utils
     Time.zone.now - send(attr) < seconds
   end
 
+  def relationships_cache_created?
+    created_at < 3.hours.ago
+  end
+
   def _benchmark(message, &block)
     ActiveRecord::Base.benchmark("[benchmark] #{self.class} #{message}", &block)
   end
