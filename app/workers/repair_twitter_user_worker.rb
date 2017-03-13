@@ -44,7 +44,7 @@ class RepairTwitterUserWorker
       import_empty_friends(twitter_user)
     end
 
-    import_unfriendships(twitter_user)
+    import_unfriendships(twitter_user) unless twitter_user.one?
 
   rescue => e
     puts "#{e.class} #{e.message} #{twitter_user_id}"
