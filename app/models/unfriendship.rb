@@ -21,7 +21,7 @@ class Unfriendship < ActiveRecord::Base
     unfriendships = friend_uids.map.with_index { |friend_uid, i| [from_uid.to_i, friend_uid.to_i, i] }
 
     ActiveRecord::Base.transaction do
-      delete_all(from_uid: from_uid)
+      delete_all(from_uid: from_uid) if exists?(from_uid: from_uid)
       import(%i(from_uid friend_uid sequence), unfriendships, validate: false, timestamps: false)
     end
   end
