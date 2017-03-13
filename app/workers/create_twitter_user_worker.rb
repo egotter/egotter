@@ -130,12 +130,20 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
   rescue Twitter::Error => e
-    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     retry if e.message == 'Connection reset by peer - SSL_connect'
+    message = e.message.truncate(150)
+    logger.warn "#{e.class} #{message} #{values.inspect}"
+    logger.info e.backtrace.join("\n")
+    log.update(
+      status: false,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      message: "#{e.class} #{message}"
+    )
   rescue => e
     # ActiveRecord::ConnectionTimeoutError could not obtain a database connection within 5.000 seconds
     message = e.message.truncate(150)
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{values.inspect}"
+    logger.warn "#{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
     log.update(
       status: false,
