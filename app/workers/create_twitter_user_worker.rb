@@ -94,9 +94,6 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
-  rescue Twitter::Error => e
-    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
-    retry if e.message == 'Connection reset by peer - SSL_connect'
   rescue Twitter::Error::Forbidden => e
     if e.message != 'Your account is suspended and is not permitted to access this feature.' && e.message != 'User has been suspended.' && !e.message.start_with?('To protect our users from spam and other malicious activity,')
       logger.warn "#{e.class} #{e.message} #{values.inspect}"
@@ -132,6 +129,9 @@ class CreateTwitterUserWorker
       call_count: client.call_count,
       reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
+  rescue Twitter::Error => e
+    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    retry if e.message == 'Connection reset by peer - SSL_connect'
   rescue => e
     # ActiveRecord::ConnectionTimeoutError could not obtain a database connection within 5.000 seconds
     message = e.message.truncate(150)
