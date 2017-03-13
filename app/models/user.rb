@@ -95,6 +95,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def unauthorized?
+    !authorized?
+  end
+
   ADMIN_UID = 58135830
   EGOTTER_UID = 187385226
 

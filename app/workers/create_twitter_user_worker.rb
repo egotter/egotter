@@ -22,6 +22,7 @@ class CreateTwitterUserWorker
       action:      values['action'],
       bot_uid:     -100,
       auto:        values['auto'],
+      message:     '',
       via:         values['via'],
       device_type: values['device_type'],
       os:          values['os'],
@@ -36,22 +37,24 @@ class CreateTwitterUserWorker
     log.started_at = started_at if log.respond_to?(:started_at) # TODO remove later
 
     user = User.find_by(id: user_id)
+    if user&.unauthorized?
+      return log.update(status: false, call_count: 0, reason: BackgroundSearchLog::Unauthorized::MESSAGE)
+    end
+
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
-      log.update(status: false, call_count: client.call_count, message: "[#{uid}] is recently creating.")
-      return
+      return log.update(status: false, call_count: client.call_count, message: "[#{uid}] is recently creating.")
     end
     creating_uids.add(uid)
 
     existing_tu = TwitterUser.latest(uid)
     if existing_tu&.fresh?
       existing_tu.increment(:search_count).save
-      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
       notify(user, existing_tu)
-      return
+      return log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
     end
 
     new_tu = TwitterUser.build_by_user(client.user(uid))
@@ -60,16 +63,14 @@ class CreateTwitterUserWorker
     new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
     if existing_tu.present? && new_tu.friendless?
       existing_tu.increment(:search_count).save
-      log.update(status: true, call_count: client.call_count, message: 'new record is friendless.')
       notify(user, existing_tu)
-      return
+      return log.update(status: true, call_count: client.call_count, message: 'new record is friendless.')
     end
 
     if existing_tu&.diff(new_tu)&.empty?
       existing_tu.increment(:search_count).save
-      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
       notify(user, existing_tu)
-      return
+      return log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
     end
 
     new_tu.build_other_relations(relations)
@@ -77,16 +78,14 @@ class CreateTwitterUserWorker
     if new_tu.save
       ImportTwitterUserRelationsWorker.perform_async(user_id, uid)
       new_tu.increment(:search_count).save
-      log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
       notify(user, new_tu)
-      return
+      return log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
     end
 
     if existing_tu.present?
       existing_tu.increment(:search_count).save
-      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed.")
       notify(user, existing_tu)
-      return
+      return log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed.")
     end
 
     log.update(
@@ -122,18 +121,16 @@ class CreateTwitterUserWorker
     log.update(
       status: false,
       call_count: client.call_count,
-      reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
-      message: ''
+      reason: BackgroundSearchLog::TooManyRequests::MESSAGE
     )
   rescue Twitter::Error::Unauthorized => e
-    if user && e.message == 'Invalid or expired token.'
-      user.update(authorized: false)
+    if e.message == 'Invalid or expired token.'
+      user&.update(authorized: false)
     end
     log.update(
       status: false,
       call_count: client.call_count,
-      reason: BackgroundSearchLog::Unauthorized::MESSAGE,
-      message: ''
+      reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
   rescue => e
     # ActiveRecord::ConnectionTimeoutError could not obtain a database connection within 5.000 seconds

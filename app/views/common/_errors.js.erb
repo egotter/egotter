@@ -27,31 +27,31 @@
 
   var tooManyRequests = new Exception(
     '<%= I18n.t('after_sign_in.too_many_requests') %>',
-    '<%= I18n.t('before_sign_in.too_many_requests_html', sign_in_path: welcome_path(via: 'client/too_many_requests')) %>'
+    '<%= raw I18n.t('before_sign_in.too_many_requests_html', sign_in_path: welcome_path(via: 'client/too_many_requests')) %>'
   );
 
   var unauthorized = new Exception(
-    '<%= I18n.t('after_sign_in.unauthorized_html', sign_in_path: welcome_path(via: 'client/unauthorized'), sign_out_path: sign_out_path) %>',
-    '<%= I18n.t("before_sign_in.unauthorized_html", sign_in_path: welcome_path(via: 'client/unauthorized')) %>'
+    '<%= raw I18n.t('after_sign_in.unauthorized_html', sign_in_path: welcome_path(via: 'client/unauthorized'), sign_out_path: sign_out_path) %>',
+    '<%= raw I18n.t('before_sign_in.unauthorized_html', sign_in_path: welcome_path(via: 'client/unauthorized')) %>'
   );
 
   var somethingError = new Exception(
-    '<%= I18n.t('after_sign_in.something_wrong') %>',
+    '<%= raw I18n.t('after_sign_in.something_wrong_html') %>',
     somethingWrong('client/something_wrong')
   );
 
   var timeout = new Exception(
-    '<%= I18n.t('after_sign_in.retry_timeout_html') %>',
+    '<%= raw I18n.t('after_sign_in.retry_timeout_html') %>',
     retryTimeout('client/retry_timeout')
   );
 
   global.egotter = global.egotter || {};
 
   global.egotter.errors = {
-    tooManyRequests: tooManyRequests, // <%= BackgroundSearchLog::TooManyRequests::MESSAGE %>
-    unauthorized: unauthorized,       // <%= BackgroundSearchLog::Unauthorized::MESSAGE %>
-    somethingError: somethingError,   // <%= BackgroundSearchLog::SomethingError::MESSAGE %>
-    "Timeout": timeout
+    TooManyRequests: tooManyRequests, // <%= BackgroundSearchLog::TooManyRequests::MESSAGE %>
+    Unauthorized: unauthorized,       // <%= BackgroundSearchLog::Unauthorized::MESSAGE %>
+    SomethingError: somethingError,   // <%= BackgroundSearchLog::SomethingError::MESSAGE %>
+    Timeout: timeout
   };
 
   global.egotter.messages = {
