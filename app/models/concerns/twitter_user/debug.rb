@@ -9,6 +9,14 @@ module Concerns::TwitterUser::Debug
   included do
   end
 
+  def valid_friendships_counter_cache?
+    friendships.any? && friendships.size == friends_size
+  end
+
+  def valid_followerships_counter_cache?
+    followerships.any? && followerships.size == followers_size
+  end
+
   def debug_print
     Rails.logger.silence do
       user = TwitterDB::User.find_by(uid: uid)
