@@ -79,4 +79,5 @@ Rails.application.configure do
 
   Rails.application.routes.default_url_options[:protocol] = 'https'
   Rails.application.routes.default_url_options[:host] = 'egotter.com'
+  config.action_controller.log_warning_on_csrf_failure = false
 end
