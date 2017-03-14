@@ -13,6 +13,7 @@
   - CreateRelationshipWorker
   - CreateSearchHistoriesWorker
   - CreateSearchLogWorker
+  - CreateSignedInTwitterUserWorker
   - CreateSignInLogWorker
   - CreateTweetsWorker
   - CreateTwitterUserWorker

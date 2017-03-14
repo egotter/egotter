@@ -26,7 +26,12 @@ module WorkersHelper
       medium:      params[:medium] ? params[:medium] : '',
       queued_at:   Time.zone.now
     }
-    CreateTwitterUserWorker.perform_async(values)
+
+    if user_signed_in?
+      CreateSignedInTwitterUserWorker.perform_async(values)
+    else
+      CreateTwitterUserWorker.perform_async(values)
+    end
   end
 
   def add_force_update_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
