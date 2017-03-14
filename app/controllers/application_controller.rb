@@ -16,11 +16,18 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   rescue_from ActionController::InvalidAuthenticityToken do |e|
-    logger.warn "#{request.xhr?} #{request.device_type} #{current_user_id} #{params.inspect}" rescue nil
-    if request.xhr?
-      render nothing: true, status: 500
+    recover = recover_invalid_token?
+    logger.warn "CSRF token error (#{recover}) #{session[:fingerprint]&.truncate(15)} #{request.method} #{!!request.xhr?} #{request.device_type} #{current_user_id} #{request.fullpath} #{request.user_agent} #{params.inspect}"
+
+    if recover
+      _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search_path(screen_name: params[:screen_name])
+      redirect_to root_path, alert: t('before_sign_in.session_expired_and_recover_html', user: params[:screen_name], sign_in_path: _sign_in_path)
     else
-      redirect_to root_path, alert: t('before_sign_in.session_expired_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
+      if request.xhr?
+        head :internal_server_error
+      else
+        redirect_to root_path, alert: t('before_sign_in.session_expired_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
+      end
     end
   end
 
@@ -40,6 +47,13 @@ class ApplicationController < ActionController::Base
       end
       request.xhr? ? head(:not_found) : redirect_to(root_path, alert: t('before_sign_in.that_page_doesnt_exist'))
     end
+  end
+
+  def recover_invalid_token?
+    %i(pc smartphone).include?(request.device_type) && !request.xhr? &&
+      !!params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) &&
+      controller_name == 'searches' && action_name == 'create' && session[:fingerprint].present? &&
+      SearchLog.exists?(created_at: 3.hours.ago..Time.zone.now, session_id: session[:fingerprint])
   end
 
   # https://github.com/plataformatec/devise/issues/1390

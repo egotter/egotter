@@ -7,13 +7,15 @@ class CreateTwitterUserWorker
     client = Hashie::Mash.new(call_count: -100)
     log = BackgroundSearchLog.new(message: '')
     user = user_id = uid = nil
-    queued_at = values['queued_at'] = Time.zone.parse(values['queued_at']) if values['queued_at'].is_a?(String)
+    values['queued_at'] = Time.zone.parse(values['queued_at']) if values['queued_at'].is_a?(String)
+    queued_at = values['queued_at']
     started_at = Time.zone.now
 
     return unless before_perform(values)
 
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
+
     log = BackgroundSearchLog.new(
       session_id:  values['session_id'],
       user_id:     user_id,
@@ -115,6 +117,7 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::TooManyRequests => e
+    logger.warn "#{e.message} #{user_id} #{uid}"
     log.update(
       status: false,
       call_count: client.call_count,
@@ -123,6 +126,9 @@ class CreateTwitterUserWorker
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       user&.update(authorized: false)
+    end
+    if e.message != 'Invalid or expired token.' && e.message != "You have been blocked from viewing this user's profile." && e.message != 'Not authorized.'
+      logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     end
     log.update(
       status: false,
