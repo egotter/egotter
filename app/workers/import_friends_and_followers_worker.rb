@@ -21,13 +21,13 @@ class ImportFriendsAndFollowersWorker
     users.sort_by!(&:first)
 
     chk1 = Time.zone.now
-    _retry_with_transaction!('import TwitterDB::User') { TwitterDB::User.import_each_slice(users) }
+    _retry_with_transaction!('import TwitterDB::User', retry_limit: 3) { TwitterDB::User.import_each_slice(users) }
 
     friend_ids = friends.map(&:id)
     follower_ids = followers.map(&:id)
 
     chk2 = Time.zone.now
-    _retry_with_transaction!('import TwitterDB::Friendship and TwitterDB::Followership') do
+    _retry_with_transaction!('import TwitterDB::Friendship and TwitterDB::Followership', retry_limit: 3) do
       TwitterDB::Friendship.import_from!(uid, friend_ids)
       TwitterDB::Followership.import_from!(uid, follower_ids)
       TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_ids.size, followers_size: follower_ids.size)
@@ -40,7 +40,7 @@ class ImportFriendsAndFollowersWorker
       else logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     end
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "#{e.message.truncate(100)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} finish: #{short_hour(Time.zone.now)}"
+    logger.warn "#{e.message.truncate(60)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"
   rescue => e
     message = e.message.truncate(150)

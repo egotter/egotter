@@ -23,7 +23,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     users.sort_by!(&:first)
 
     chk1 = Time.zone.now
-    _retry_with_transaction!('import replying, replied and favoriting') { TwitterDB::User.import_each_slice(users) }
+    _retry_with_transaction!('import replying, replied and favoriting', retry_limit: 3) { TwitterDB::User.import_each_slice(users) }
 
   rescue Twitter::Error::Unauthorized => e
     User.find_by(id: user_id)&.update(authorized: false) if e.message == 'Invalid or expired token.'

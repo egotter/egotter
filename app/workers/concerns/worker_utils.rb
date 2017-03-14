@@ -36,6 +36,7 @@ module Concerns::WorkerUtils
           raise
         end
 
+        sleep(rand)
         retry_count += 1
         retry
       end
