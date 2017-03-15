@@ -432,6 +432,8 @@ ja:
     login_failed_html: '<a href="%{sign_in_path}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{sign_in_path}">ログイン</a> してみてください。'
     session_expired_html: '一定時間操作がなかったため、セッションの有効期限が切れました。 <a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してください。'
     session_expired_and_recover_html: '一定時間操作がなかったため、%{user} の検索に失敗しました。 <a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してから検索してください。'
+    cross_domain_post_html: '一時的なエラーが起きました。<a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してから検索してください。'
+    cross_domain_post_and_recover_html: '一時的なエラーにより、%{user} の検索に失敗しました。<a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してから検索してください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{sign_in_path}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     not_found: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。'

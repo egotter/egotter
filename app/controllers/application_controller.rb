@@ -16,17 +16,30 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   rescue_from ActionController::InvalidAuthenticityToken do |e|
-    recover = recover_invalid_token?
-    logger.warn "CSRF token error (#{recover}) #{session[:fingerprint]&.truncate(15)} #{request.method} #{!!request.xhr?} #{request.device_type} #{current_user_id} #{request.fullpath} #{request.user_agent} #{params.inspect}"
+    if request.referer.present? && !request.referer.match(%r{^https://egotter.com})
+      logger.warn "cross domain post #{request.device_type} #{current_user_id} #{request.fullpath} #{request.referer} #{params.inspect}"
 
-    if recover
-      _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search_path(screen_name: params[:screen_name])
-      redirect_to root_path, alert: t('before_sign_in.session_expired_and_recover_html', user: params[:screen_name], sign_in_path: _sign_in_path)
-    else
-      if request.xhr?
-        head :internal_server_error
+      params[:screen_name][0] = '' if params[:screen_name]&.start_with?('@')
+      if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP)
+        _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/cross_domain_post_and_recover", redirect_path: search_path(screen_name: params[:screen_name])
+        redirect_to root_path, alert: t('before_sign_in.cross_domain_post_and_recover_html', user: params[:screen_name], sign_in_path: _sign_in_path)
       else
-        redirect_to root_path, alert: t('before_sign_in.session_expired_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
+        _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/cross_domain_post"
+        redirect_to root_path, alert: t('before_sign_in.cross_domain_post_html', sign_in_path: _sign_in_path)
+      end
+    else
+      recover = recover_invalid_token?
+      logger.warn "CSRF token error (#{recover}) #{session[:fingerprint]&.truncate(15)} #{request.method} #{!!request.xhr?} #{request.device_type} #{current_user_id} #{request.fullpath} #{request.user_agent} #{params.inspect}"
+
+      if recover
+        _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search_path(screen_name: params[:screen_name])
+        redirect_to root_path, alert: t('before_sign_in.session_expired_and_recover_html', user: params[:screen_name], sign_in_path: _sign_in_path)
+      else
+        if request.xhr?
+          head :internal_server_error
+        else
+          redirect_to root_path, alert: t('before_sign_in.session_expired_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
+        end
       end
     end
   end
