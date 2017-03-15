@@ -76,7 +76,7 @@ function waiting(checkLogPath, resultPath, pollingLogsPath, action, scope) {
     if (res && egotter.errors[res.reason]) {
       egotter.errors[res.reason].showMessage();
     } else {
-      egotter.errors['somethingError'].showMessage();
+      egotter.errors['SomethingError'].showMessage();
     }
   }
 
@@ -98,7 +98,7 @@ function waiting(checkLogPath, resultPath, pollingLogsPath, action, scope) {
       progressBar.hide();
       $waitingMessage.hide();
       egotter.errors['Timeout'].showMessage();
-      Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
+      // Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
       return;
     }
 

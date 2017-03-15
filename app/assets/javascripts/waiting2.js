@@ -96,7 +96,7 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
     if (!retry.next()) {
       console.log('Stop waiting.');
       $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
-      Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
+      // Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
     } else {
       setTimeout(tic, interval.next());
     }
