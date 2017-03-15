@@ -32,7 +32,19 @@
 
     = succeed spaces do
       - if user_signed_in?
-        = link_to t('dictionary.sign_out'), sign_out_path, data: {confirm: t('dictionary.realy_sign_out')}
+        = link_to t('dictionary.sign_out'), '#', data: {toggle: 'modal', target: '.sign-out-modal'}
+        .modal.fade.sign-out-modal.text-center{"aria-labelledby" => 'sign-out-modal-label', role: 'dialog', tabindex: '-1'}
+          .modal-dialog{role: 'document'}
+            .modal-content
+              .modal-header
+                %button.close{"aria-label" => 'Close', "data-dismiss" => 'modal', type: 'button'}
+                  %span{"aria-hidden" => 'true'} ×
+                %h4#sign-out-modal-label.modal-title= t('dictionary.sign_out')
+              .modal-body{style: 'padding: 15px 0 0 0; line-height: 160%;'}
+                = t('dictionary.realy_sign_out_html')
+                %div{style: 'margin: 15px;'}
+                  = link_to t('dictionary.do_sign_out'), sign_out_path, class: 'btn btn-info btn-block'
+                = image_tag '/egotter_icon_400x400.jpg', class: "#{'img-responsive' if request.device_type == :smartphone}", style: 'margin-bottom: 15px;'
       - else
         = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/footer")
       %br.visible-xs-block

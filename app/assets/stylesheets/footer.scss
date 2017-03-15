@@ -11,9 +11,11 @@
 }
 
 .footer {
-  text-align: center;
-  padding-top: 15px;
-  line-height: 200%;
+  .container {
+    text-align: center;
+    padding-top: 15px;
+    line-height: 200%;
+  }
 
   a {
     text-decoration: none;
