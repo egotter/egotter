@@ -30,9 +30,11 @@ module Concerns::WorkerUtils
     begin
       _transaction(message, &block)
     rescue ActiveRecord::StatementInvalid => e
+      wait_seconds = Time.zone.now - start_time
       if e.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')
-        if retry_count >= retry_limit || (Time.zone.now - start_time > retry_timeout)
+        if retry_count >= retry_limit || wait_seconds > retry_timeout
           @retry_count = retry_count
+          @wait_seconds = wait_seconds.round(1)
           raise
         end
 

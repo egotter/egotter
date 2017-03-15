@@ -10,6 +10,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     client = login_user.nil? ? Bot.api_client : login_user.api_client
     twitter_user = TwitterUser.latest(uid)
     @retry_count = 0
+    @wait_seconds = 0.0
 
     uids = (twitter_user.replying_uids + twitter_user.replied_uids(login_user: login_user) + twitter_user.favoriting_uids).uniq
     begin
@@ -29,7 +30,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     User.find_by(id: user_id)&.update(authorized: false) if e.message == 'Invalid or expired token.'
     logger.info "#{e.class} #{e.message} #{user_id} #{uid}"
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "#{e.message.truncate(100)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
+    logger.warn "#{e.message.truncate(60)} #{user_id} #{uid} (retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"
   rescue => e
     message = e.message.truncate(150)
