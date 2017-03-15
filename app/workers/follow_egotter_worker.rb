@@ -1,5 +1,6 @@
 class FollowEgotterWorker
   include Sidekiq::Worker
+  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: false, backtrace: false
 
   def perform(user_id)
@@ -10,20 +11,23 @@ class FollowEgotterWorker
     end
 
   rescue Twitter::Error::Unauthorized => e
-    case e.message
-      when 'Invalid or expired token.' then logger.info "#{e.message} #{user_id} #{user.update(authorized: false)}"
-      when 'Could not authenticate you.' then logger.warn "#{e.message} #{user_id}"
-      else logger.warn "#{e.class} #{e.message} #{user_id}"
+    if e.message == 'Invalid or expired token.'
+      user.update(authorized: false)
     end
+
+    message = "#{e.class} #{e.message} #{user_id}"
+    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue Twitter::Error::Forbidden => e
-    logger.warn "#{e.class}: #{e.message} #{user_id}"
-    if e.message.start_with? 'You are unable to follow more people at this time.'
+    if e.message == "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."
       logger.warn "I will sleep. Bye! #{user_id}"
       sleep 1.hour
       logger.warn "Good morning. I will retry. #{user_id}"
       retry
     end
+
+    message = "#{e.class} #{e.message} #{user_id}"
+    FORBIDDEN_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{user_id}"
+    logger.warn "#{e.class} #{e.message} #{user_id}"
   end
 end

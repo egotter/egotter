@@ -34,11 +34,12 @@ class ImportFriendsAndFollowersWorker
     end
 
   rescue Twitter::Error::Unauthorized => e
-    case e.message
-      when 'Invalid or expired token.' then User.find_by(id: user_id)&.update(authorized: false)
-      when 'Could not authenticate you.' then logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
-      else logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    if e.message == 'Invalid or expired token.'
+      User.find_by(id: user_id)&.update(authorized: false)
     end
+
+    message = "#{e.class} #{e.message} #{user_id} #{uid}"
+    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue ActiveRecord::StatementInvalid => e
     logger.warn "#{e.message.truncate(60)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"

@@ -48,7 +48,7 @@ class CreateTwitterUserWorker
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
-      return log.update(status: false, call_count: client.call_count, message: "[#{uid}] is recently creating.")
+      return log.update(status: true, call_count: client.call_count, message: "[#{uid}] is recently creating.")
     end
     creating_uids.add(uid)
 
@@ -97,9 +97,9 @@ class CreateTwitterUserWorker
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
   rescue Twitter::Error::Forbidden => e
-    if e.message != 'Your account is suspended and is not permitted to access this feature.' && e.message != 'User has been suspended.' && !e.message.start_with?('To protect our users from spam and other malicious activity,')
-      logger.warn "#{e.class} #{e.message} #{values.inspect}"
-    end
+    message = "#{e.class} #{e.message} #{user_id} #{uid}"
+    FORBIDDEN_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+
     log.update(
       status: false,
       call_count: client.call_count,
@@ -107,9 +107,9 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::NotFound => e
-    unless e.message == 'User not found.'
-      logger.warn "#{e.class} #{e.message} #{values.inspect}"
-    end
+    message = "#{e.class} #{e.message} #{user_id} #{uid}"
+    NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+
     log.update(
       status: false,
       call_count: client.call_count,
@@ -118,6 +118,7 @@ class CreateTwitterUserWorker
     )
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{e.message} #{user_id} #{uid}"
+
     log.update(
       status: false,
       call_count: client.call_count,
@@ -127,19 +128,30 @@ class CreateTwitterUserWorker
     if e.message == 'Invalid or expired token.'
       user&.update(authorized: false)
     end
-    if e.message != 'Invalid or expired token.' && e.message != "You have been blocked from viewing this user's profile." && e.message != 'Not authorized.'
-      logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
-    end
+
+    message = "#{e.class} #{e.message} #{user_id} #{uid}"
+    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+
     log.update(
       status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::Unauthorized::MESSAGE
+    )
+  rescue Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
+    logger.warn "#{e.message} #{user_id} #{uid}"
+
+    log.update(
+      status: false,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      message: "#{e.class} #{e.message}"
     )
   rescue Twitter::Error => e
     retry if e.message == 'Connection reset by peer - SSL_connect'
     message = e.message.truncate(150)
     logger.warn "#{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
+
     log.update(
       status: false,
       call_count: client.call_count,
@@ -151,6 +163,7 @@ class CreateTwitterUserWorker
     message = e.message.truncate(150)
     logger.warn "#{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
+
     log.update(
       status: false,
       call_count: client.call_count,
