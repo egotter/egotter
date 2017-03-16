@@ -27,11 +27,18 @@ class ImportReplyingRepliedAndFavoritesWorker
     _retry_with_transaction!('import replying, replied and favoriting', retry_limit: 3) { TwitterDB::User.import_each_slice(users) }
 
   rescue Twitter::Error::Unauthorized => e
-    User.find_by(id: user_id)&.update(authorized: false) if e.message == 'Invalid or expired token.'
-    logger.info "#{e.class} #{e.message} #{user_id} #{uid}"
+    if e.message == 'Invalid or expired token.'
+      User.find_by(id: user_id)&.update(authorized: false)
+    end
+
+    message = "#{e.class} #{e.message} #{user_id} #{uid}"
+    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue ActiveRecord::StatementInvalid => e
     logger.warn "#{e.message.truncate(60)} #{user_id} #{uid} (retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"
+  rescue Twitter::Error::NotFound => e
+    message = "#{e.class} #{e.message} #{user_id} #{uid}"
+    NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"

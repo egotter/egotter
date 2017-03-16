@@ -117,7 +117,7 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{e.message} #{user_id} #{uid}"
+    logger.warn "#{e.message} Retry after #{e&.rate_limit&.reset_in} seconds #{user_id} #{uid}"
 
     log.update(
       status: false,
