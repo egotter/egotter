@@ -105,14 +105,18 @@ Write crontab:
 
     crontab ${APP_ROOT}/setup/var/spool/cron/ec2-user
 
-Run monit:
+Setup daemons:
 
-    sudo service monit start
+    service nginx stop; chkconfig nginx off
+    service redis stop; chkconfig redis off
+    service sendmail stop; chkconfig sendmail off
+    service monit stop; chkconfig monit off
 
 Install datadog:
 
     # https://app.datadoghq.com/account/settings#agent/aws
     sed -i -e 's/# hostname: .\+/hostname: xxx.egotter/' /etc/dd-agent/datadog.conf
+    /etc/init.d/datadog-agent restart; chkconfig datadog-agent on
 
 Make swap:
 
@@ -125,6 +129,6 @@ Make swap:
 User settings:
 
     wget -q -O .bashrc https://gist.githubusercontent.com/ts-3156/5373957/raw/.bashrc
-    source .bashrc
+    source .bashrc >/dev/null 2>&1
 
 \033[0m"
