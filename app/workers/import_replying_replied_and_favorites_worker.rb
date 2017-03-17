@@ -16,7 +16,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     begin
       t_users = client.users(uids)
     rescue => e
-      logger.warn "#{e.class} #{e.message} #{uids.size}"
+      logger.warn "#{e.class} #{e.message} #{user_id} #{uid} size: #{uids.size}"
     end
     return if t_users.blank?
 
