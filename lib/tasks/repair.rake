@@ -74,9 +74,29 @@ namespace :repair do
     puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
   end
 
-  desc 'fix'
-  task fix: :environment do
-    ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
-    ids.each { |id| RepairTwitterUserWorker.new.perform(id) }
+  # desc 'fix'
+  # task fix: :environment do
+  #   ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
+  #   ids.each { |id| RepairTwitterUserWorker.new.perform(id) }
+  # end
+
+  namespace :fix do
+    desc 'not_found'
+    task not_found: :environment do
+      ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
+      uids = TwitterUser.where(id: ids).pluck(:uid).uniq.map(&:to_i)
+
+      begin
+        t_users = Bot.api_client.users(uids)
+      rescue => e
+        puts "#{e.class} #{e.message} #{uids.size}"
+        t_users = []
+      end
+
+      users = t_users.map { |t_user| [t_user.id, t_user.screen_name, t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
+      TwitterDB::User.import_each_slice(users)
+
+      puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size}"
+    end
   end
 end
