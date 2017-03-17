@@ -21,7 +21,7 @@ class BackgroundSearchLogsController < ApplicationController
         render json: {reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{uid}"
     logger.info e.backtrace.take(10).join("\n")
     render json: {reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500
   end
