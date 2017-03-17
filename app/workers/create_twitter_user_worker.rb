@@ -48,7 +48,11 @@ class CreateTwitterUserWorker
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
-      return log.update(status: true, call_count: client.call_count, message: "[#{uid}] is recently creating.")
+      if TwitterUser.exists?(uid: uid)
+        return log.update(status: true, call_count: client.call_count, message: "[#{uid}] is recently creating.")
+      else
+        return log.update(status: false, call_count: client.call_count, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: "[#{uid}] is recently creating.")
+      end
     end
     creating_uids.add(uid)
 
