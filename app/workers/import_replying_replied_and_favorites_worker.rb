@@ -15,6 +15,13 @@ class ImportReplyingRepliedAndFavoritesWorker
     uids = (twitter_user.replying_uids + twitter_user.replied_uids(login_user: login_user) + twitter_user.favoriting_uids).uniq
     begin
       t_users = client.users(uids)
+    rescue Twitter::Error::Unauthorized => e
+      if e.message == 'Invalid or expired token.'
+        User.find_by(id: user_id)&.update(authorized: false)
+      end
+
+      message = "#{e.class} #{e.message} #{user_id} #{uid}"
+      UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
     rescue => e
       logger.warn "#{e.class} #{e.message} #{user_id} #{uid} size: #{uids.size}"
     end
@@ -34,7 +41,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "#{e.message.truncate(60)} #{user_id} #{uid} (retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
+    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} (retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.join "\n"
   rescue Twitter::Error::NotFound => e
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
