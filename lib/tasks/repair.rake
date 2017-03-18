@@ -80,21 +80,27 @@ namespace :repair do
       ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
       uids = TwitterUser.where(id: ids).pluck(:uid).uniq.map(&:to_i)
 
+      remaining = []
       begin
         t_users = Bot.api_client.users(uids)
         users = t_users.map { |t_user| [t_user.id, t_user.screen_name, t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
         TwitterDB::User.import_each_slice(users)
 
-        (uids - t_users.map(&:id)).each do |uid|
-          tu = TwitterUser.latest(uid)
-          TwitterDB::User.create!(uid: uid, screen_name: tu.screen_name, user_info: tu.user_info, friends_size: -1, followers_size: -1)
-        end
+        remaining = uids - t_users.map(&:id)
       rescue => e
         puts "#{e.class} #{e.message} #{uids.size}"
         t_users = users = []
+        if e.message == 'No user matches for specified terms.'
+          remaining = uids
+        end
       end
 
-      puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size}"
+      remaining.each do |uid|
+        tu = TwitterUser.latest(uid)
+        TwitterDB::User.create!(uid: uid, screen_name: tu.screen_name, user_info: tu.user_info, friends_size: -1, followers_size: -1)
+      end
+
+      puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size} remaining: #{remaining.size}"
     end
 
     desc 'not_consistent'
@@ -104,6 +110,7 @@ namespace :repair do
       ids.each do |twitter_user_id|
         twitter_user = TwitterUser.find(twitter_user_id)
         uid = twitter_user.uid.to_i
+        ex = nil
 
         if twitter_user.user_id == -1
           client = Bot.api_client
@@ -120,18 +127,69 @@ namespace :repair do
                 user.update(authorized: false)
                 client = Bot.api_client
               else
-                raise
+                ex = e
               end
+            rescue => e
+              ex = e
             end
           else
             client = Bot.api_client
           end
         end
 
-        t_user = client.user(uid)
+        if ex
+          puts "Suspended. 001 #{ex.class} #{ex.message} #{twitter_user_id}"
+          break
+        end
+
+        begin
+          t_user = client.user(uid)
+        rescue Twitter::Error::NotFound => e
+          if e.message == 'User not found.'
+            ActiveRecord::Base.transaction do
+              twitter_user.update!(friends_size: 0, followers_size: 0)
+              Friendship.import_from!(twitter_user.id, [])
+              Followership.import_from!(twitter_user.id, [])
+            end
+
+            ActiveRecord::Base.transaction do
+              Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+              Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+            end
+
+            TwitterUser.find(twitter_user_id).tap do |tu|
+              puts "Complete(not found) #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+            end
+
+            next
+          else
+            ex = e
+          end
+        rescue => e
+          ex = e
+        end
+
+        if ex
+          puts "Suspended. 002 #{ex.class} #{ex.message} #{twitter_user_id} #{uid}"
+          break
+        end
+
         if t_user.protected
-          tu = twitter_user
-          puts "Skip because protected. #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{uid}"
+          ActiveRecord::Base.transaction do
+            twitter_user.update!(friends_size: 0, followers_size: 0)
+            Friendship.import_from!(twitter_user.id, [])
+            Followership.import_from!(twitter_user.id, [])
+          end
+
+          ActiveRecord::Base.transaction do
+            Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+            Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+          end
+
+          TwitterUser.find(twitter_user_id).tap do |tu|
+            puts "Complete(protected) #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+          end
+
           next
         end
 
@@ -164,9 +222,9 @@ namespace :repair do
           Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
         end
 
-        tu = TwitterUser.find(twitter_user_id)
-
-        puts "#{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+        TwitterUser.find(twitter_user_id).tap do |tu|
+          puts "Complete #{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+        end
       end
     end
   end
