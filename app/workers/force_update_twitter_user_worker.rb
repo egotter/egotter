@@ -1,6 +1,6 @@
 class ForceUpdateTwitterUserWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(values)
     client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.

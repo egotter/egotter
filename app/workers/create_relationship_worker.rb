@@ -1,6 +1,6 @@
 class CreateRelationshipWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(values)
     user_id      = values['user_id'].to_i

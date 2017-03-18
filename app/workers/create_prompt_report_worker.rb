@@ -2,7 +2,7 @@ class CreatePromptReportWorker
   include Sidekiq::Worker
   include Concerns::Rescue
   prepend Concerns::Perform
-  sidekiq_options queue: self, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
     self.client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.

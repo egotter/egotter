@@ -1,7 +1,7 @@
 class FollowEgotterWorker
   include Sidekiq::Worker
   include Concerns::WorkerUtils
-  sidekiq_options queue: self, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
     user = User.find(user_id)

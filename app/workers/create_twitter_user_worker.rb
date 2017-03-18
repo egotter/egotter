@@ -1,7 +1,7 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
   include Concerns::WorkerUtils
-  sidekiq_options queue: self, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(values)
     client = Hashie::Mash.new(call_count: -100)

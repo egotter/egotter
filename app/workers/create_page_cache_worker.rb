@@ -1,6 +1,6 @@
 class CreatePageCacheWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   # A user agent of Net::HTTP is `Ruby`.
   def perform(uid)

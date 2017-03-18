@@ -1,6 +1,6 @@
 class CreateSearchHistoriesWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: false, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
     uids = BackgroundSearchLog.success_logs(user_id).pluck(:uid).unix_uniq.take(10)
