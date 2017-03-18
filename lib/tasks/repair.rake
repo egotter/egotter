@@ -74,12 +74,6 @@ namespace :repair do
     puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
   end
 
-  # desc 'fix'
-  # task fix: :environment do
-  #   ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
-  #   ids.each { |id| RepairTwitterUserWorker.new.perform(id) }
-  # end
-
   namespace :fix do
     desc 'not_found'
     task not_found: :environment do
@@ -88,15 +82,17 @@ namespace :repair do
 
       begin
         t_users = Bot.api_client.users(uids)
+        users = t_users.map { |t_user| [t_user.id, t_user.screen_name, t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
+        TwitterDB::User.import_each_slice(users)
+
+        (uids - t_users.map(&:id)).each do |uid|
+          tu = TwitterUser.latest(uid)
+          TwitterDB::User.create!(uid: uid, screen_name: tu.screen_name, user_info: tu.user_info, friends_size: -1, followers_size: -1)
+        end
       rescue => e
         puts "#{e.class} #{e.message} #{uids.size}"
-        t_users = []
+        t_users = users = []
       end
-
-      puts("\e[31m" + "not found #{(uids - t_users.map(&:id)).inspect}" + "\e[0m") if uids.size != t_users.size
-
-      users = t_users.map { |t_user| [t_user.id, t_user.screen_name, t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
-      TwitterDB::User.import_each_slice(users)
 
       puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size}"
     end
@@ -134,7 +130,8 @@ namespace :repair do
 
         t_user = client.user(uid)
         if t_user.protected
-          puts "Skip because #{t_user.screen_name} is protected. #{twitter_user_id} #{uid}"
+          tu = twitter_user
+          puts "Skip because protected. #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{uid}"
           next
         end
 
