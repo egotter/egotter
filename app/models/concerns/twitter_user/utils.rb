@@ -40,6 +40,10 @@ module Concerns::TwitterUser::Utils
     TwitterUser.where(uid: uid).one?
   end
 
+  def size
+    TwitterUser.where(uid: uid).size
+  end
+
   DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created']
 
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)

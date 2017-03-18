@@ -169,7 +169,7 @@ namespace :repair do
 
         tu = TwitterUser.find(twitter_user_id)
 
-        puts "#{latest} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+        puts "#{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
       end
     end
   end

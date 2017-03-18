@@ -21,7 +21,7 @@ module Concerns::TwitterUser::Debug
     Rails.logger.silence do
       user = TwitterDB::User.find_by(uid: uid)
 
-      puts "one? #{one?}, latest? #{latest?}"
+      puts "one? #{one?}, latest? #{latest?}, size #{size}"
 
       if %i(all friends).include? kind
         puts "friends #{[friends.size, friendships.size, friends_size, friends_count, user.friends.size, user.friendships.size, user.friends_size, user.friends_count].inspect}"
