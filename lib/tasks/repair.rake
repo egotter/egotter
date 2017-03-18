@@ -25,7 +25,7 @@ namespace :repair do
 
           user = TwitterDB::User.find_by(uid: tu.uid)
           unless user
-            puts "TwitterDB::user is not found #{tu.id}"
+            puts "TwitterDB::user is not found #{tu.id} #{tu.uid}"
             not_found << tu.id
             next
           end
@@ -53,7 +53,7 @@ namespace :repair do
           ]
 
           if friends.uniq.many? || followers.uniq.many?
-            puts "fiends or followers is valid #{tu.id} #{friends.inspect} #{followers.inspect}"
+            puts "fiends or followers is valid #{tu.id} #{tu.uid} #{friends.inspect} #{followers.inspect}"
             not_consistent << tu.id
           end
 
@@ -93,10 +93,84 @@ namespace :repair do
         t_users = []
       end
 
+      puts("\e[31m" + "not found #{(uids - t_users.map(&:id)).inspect}" + "\e[0m") if uids.size != t_users.size
+
       users = t_users.map { |t_user| [t_user.id, t_user.screen_name, t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
       TwitterDB::User.import_each_slice(users)
 
       puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size}"
+    end
+
+    desc 'not_consistent'
+    task not_consistent: :environment do
+      ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
+
+      ids.each do |twitter_user_id|
+        twitter_user = TwitterUser.find(twitter_user_id)
+        uid = twitter_user.uid.to_i
+
+        if twitter_user.user_id == -1
+          client = Bot.api_client
+        else
+          user = User.find_by(id: twitter_user.user_id, authorized: true)
+
+          if user
+            client = user.api_client
+
+            begin
+              client.verify_credentials
+            rescue Twitter::Error::Unauthorized => e
+              if e.message == 'Invalid or expired token.'
+                user.update(authorized: false)
+                client = Bot.api_client
+              else
+                raise
+              end
+            end
+          else
+            client = Bot.api_client
+          end
+        end
+
+        t_user = client.user(uid)
+        if t_user.protected
+          puts "Skip because #{t_user.screen_name} is protected. #{twitter_user_id} #{uid}"
+          next
+        end
+
+        latest = twitter_user.latest?
+        if latest
+          signatures = [{method: :friend_ids, args: [uid]}, {method: :follower_ids, args: [uid]}]
+          friend_uids, follower_uids = client._fetch_parallelly(signatures)
+
+          ActiveRecord::Base.transaction do
+            twitter_user.update!(user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: friend_uids.size, followers_size: follower_uids.size)
+            Friendship.import_from!(twitter_user.id, friend_uids)
+            Followership.import_from!(twitter_user.id, follower_uids)
+          end
+
+          twitter_user = TwitterUser.find(twitter_user_id)
+
+          OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
+          OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
+          MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
+        else
+          ActiveRecord::Base.transaction do
+            twitter_user.update!(friends_size: 0, followers_size: 0)
+            Friendship.import_from!(twitter_user.id, [])
+            Followership.import_from!(twitter_user.id, [])
+          end
+        end
+
+        ActiveRecord::Base.transaction do
+          Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+          Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+        end
+
+        tu = TwitterUser.find(twitter_user_id)
+
+        puts "#{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+      end
     end
   end
 end
