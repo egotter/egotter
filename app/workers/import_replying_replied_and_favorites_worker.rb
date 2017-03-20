@@ -9,6 +9,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     login_user = user_id == -1 ? nil : User.find(user_id)
     client = login_user.nil? ? Bot.api_client : login_user.api_client
     twitter_user = TwitterUser.latest(uid)
+    users = nil
     @retry_count = 0
     @wait_seconds = 0.0
 
@@ -41,8 +42,8 @@ class ImportReplyingRepliedAndFavoritesWorker
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} (retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
-    logger.info e.backtrace.join "\n"
+    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} (size #{users&.size}, retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
+    logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
   rescue Twitter::Error::NotFound => e
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)

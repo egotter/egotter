@@ -152,7 +152,7 @@ namespace :repair do
 
         if ex
           puts "Failed #{ex.class} #{ex.message} #{twitter_user_id} #{uid}"
-          puts ex.backtrace.grep_v(/\.bundle/)
+          puts ex.backtrace.grep_v(/\.bundle/).join "\n"
           break
         end
 

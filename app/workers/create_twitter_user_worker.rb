@@ -122,7 +122,7 @@ class CreateTwitterUserWorker
     )
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{e.message} Retry after #{e&.rate_limit&.reset_in} seconds #{user_id} #{uid}"
-    logger.info e.backtrace.grep_v(/\.bundle/)
+    logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
 
     DelayedCreateTwitterUserWorker.perform_async(values)
 

@@ -41,8 +41,8 @@ class ImportFriendsAndFollowersWorker
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "#{e.message.truncate(60)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} finish: #{short_hour(Time.zone.now)}"
-    logger.info e.backtrace.join "\n"
+    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} finish: #{short_hour(Time.zone.now)}"
+    logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{e.class} #{message} #{user_id} #{uid} #{@retry_count}"
