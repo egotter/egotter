@@ -122,6 +122,9 @@ class CreateTwitterUserWorker
     )
   rescue Twitter::Error::TooManyRequests => e
     logger.warn "#{e.message} Retry after #{e&.rate_limit&.reset_in} seconds #{user_id} #{uid}"
+    logger.info e.backtrace.grep_v(/\.bundle/)
+
+    DelayedCreateTwitterUserWorker.perform_async(values)
 
     log.update(
       status: false,
@@ -144,6 +147,8 @@ class CreateTwitterUserWorker
   rescue Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
     logger.warn "#{e.message} #{user_id} #{uid}"
 
+    DelayedCreateTwitterUserWorker.perform_async(values)
+
     log.update(
       status: false,
       call_count: client.call_count,
@@ -152,6 +157,7 @@ class CreateTwitterUserWorker
     )
   rescue Twitter::Error => e
     retry if e.message == 'Connection reset by peer - SSL_connect'
+
     message = e.message.truncate(150)
     logger.warn "#{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
