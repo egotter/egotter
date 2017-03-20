@@ -17,21 +17,26 @@ module Concerns::TwitterUser::Debug
     followerships.any? && followerships.size == followers_size
   end
 
-  def debug_print(kind = :all)
+  def debug_print(kind = nil)
     Rails.logger.silence do
       user = TwitterDB::User.find_by(uid: uid)
+      tab_char = "\t"
 
-      puts "one? #{one?}, latest? #{latest?}, size #{size}"
+      puts %w(protected? one? latest? size).join tab_char
+      puts [protected_account?, one?, latest?, size].join tab_char
+      puts
 
-      if %i(all friends).include? kind
-        puts "friends #{[friends.size, friendships.size, friends_size, friends_count, user.friends.size, user.friendships.size, user.friends_size, user.friends_count].inspect}"
-      end
+      puts %w(friends friendships friends_size friends_count).join tab_char
+      puts [friends.size, friendships.size, friends_size, friends_count].join tab_char
+      puts [user.friends.size, user.friendships.size, user.friends_size, user.friends_count].join tab_char
+      puts
 
-      if %i(all followers).include? kind
-        puts "followers #{[followers.size, followerships.size, followers_size, followers_count, user.followers.size, user.followerships.size, user.followers_size, user.followers_count].inspect}"
-      end
+      puts %w(followers followerships followers_size followers_count).join tab_char
+      puts [followers.size, followerships.size, followers_size, followers_count].join tab_char
+      puts [user.followers.size, user.followerships.size, user.followers_size, user.followers_count].join tab_char
 
       if kind == :all
+        puts
         puts 'statuses, mentions, search_results, favorites'
         puts [statuses.size, mentions.size, search_results.size, favorites.size].inspect
 

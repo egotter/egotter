@@ -14,7 +14,7 @@ namespace :repair do
     processed = 0
     start_time = Time.zone.now
     failed = false
-    puts "\nrepair started:"
+    puts "\ncheck started:"
 
     Rails.logger.silence do
       TwitterUser.find_in_batches(start: start, batch_size: 1000) do |twitter_users|
@@ -53,7 +53,7 @@ namespace :repair do
           ]
 
           if friends.uniq.many? || followers.uniq.many?
-            puts "fiends or followers is valid #{tu.id} #{tu.uid} #{friends.inspect} #{followers.inspect}"
+            puts "fiends or followers is not consistent #{tu.id} #{tu.uid} #{friends.inspect} #{followers.inspect}"
             not_consistent << tu.id
           end
 
@@ -110,71 +110,52 @@ namespace :repair do
       ids.each do |twitter_user_id|
         twitter_user = TwitterUser.find(twitter_user_id)
         uid = twitter_user.uid.to_i
+
+        clients = [
+          User.find_by(uid: uid, authorized: true)&.api_client,
+          User.find_by(id: twitter_user.user_id, authorized: true)&.api_client,
+          Bot.api_client
+        ]
+
         ex = nil
+        t_user = friend_uids = follower_uids = nil
+        not_found = unauthorized = success = false
 
-        if twitter_user.user_id == -1
-          client = Bot.api_client
-        else
-          user = User.find_by(id: twitter_user.user_id, authorized: true)
+        clients.each.with_index do |client, i|
+          next unless client
 
-          if user
-            client = user.api_client
-
-            begin
-              client.verify_credentials
-            rescue Twitter::Error::Unauthorized => e
-              if e.message == 'Invalid or expired token.'
-                user.update(authorized: false)
-                client = Bot.api_client
-              else
-                ex = e
-              end
-            rescue => e
+          begin
+            t_user = client.user(uid)
+            friend_uids = client.friend_ids(uid)
+            follower_uids = client.follower_ids(uid)
+            success = true
+          rescue Twitter::Error::Unauthorized => e
+            if e.message == 'Invalid or expired token.' && i != clients.size - 1
+              User.find_by(token: client.access_token, secret: client.access_token_secret).update(authorized: false)
+            elsif e.message == 'Not authorized.'
+              unauthorized = i == clients.size - 1
+            else
               ex = e
             end
-          else
-            client = Bot.api_client
-          end
-        end
-
-        if ex
-          puts "Suspended. 001 #{ex.class} #{ex.message} #{twitter_user_id}"
-          break
-        end
-
-        begin
-          t_user = client.user(uid)
-        rescue Twitter::Error::NotFound => e
-          if e.message == 'User not found.'
-            ActiveRecord::Base.transaction do
-              twitter_user.update!(friends_size: 0, followers_size: 0)
-              Friendship.import_from!(twitter_user.id, [])
-              Followership.import_from!(twitter_user.id, [])
+          rescue Twitter::Error::NotFound => e
+            if e.message == 'User not found.'
+              not_found = true
+            else
+              ex = e
             end
-
-            ActiveRecord::Base.transaction do
-              Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
-              Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
-            end
-
-            TwitterUser.find(twitter_user_id).tap do |tu|
-              puts "Complete(not found) #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
-            end
-
-            next
-          else
+          rescue => e
             ex = e
           end
-        rescue => e
-          ex = e
+
+          break if ex || not_found || success
         end
 
         if ex
-          puts "Suspended. 002 #{ex.class} #{ex.message} #{twitter_user_id} #{uid}"
+          puts "Failed #{ex.class} #{ex.message} #{twitter_user_id} #{uid}"
           break
         end
 
-        if t_user.protected
+        if not_found || unauthorized
           ActiveRecord::Base.transaction do
             twitter_user.update!(friends_size: 0, followers_size: 0)
             Friendship.import_from!(twitter_user.id, [])
@@ -187,44 +168,47 @@ namespace :repair do
           end
 
           TwitterUser.find(twitter_user_id).tap do |tu|
-            puts "Complete(protected) #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+            puts "Complete(#{not_found ? 'not found' : 'unauthorized'}) #{tu.protected_account?} #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
           end
 
           next
         end
 
-        latest = twitter_user.latest?
-        if latest
-          signatures = [{method: :friend_ids, args: [uid]}, {method: :follower_ids, args: [uid]}]
-          friend_uids, follower_uids = client._fetch_parallelly(signatures)
+        if success
+          latest = twitter_user.latest?
+          if latest
+            ActiveRecord::Base.transaction do
+              twitter_user.update!(user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: friend_uids.size, followers_size: follower_uids.size)
+              Friendship.import_from!(twitter_user.id, friend_uids)
+              Followership.import_from!(twitter_user.id, follower_uids)
+            end
 
-          ActiveRecord::Base.transaction do
-            twitter_user.update!(user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: friend_uids.size, followers_size: follower_uids.size)
-            Friendship.import_from!(twitter_user.id, friend_uids)
-            Followership.import_from!(twitter_user.id, follower_uids)
+            twitter_user = TwitterUser.find(twitter_user_id)
+
+            OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
+            OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
+            MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
+          else
+            ActiveRecord::Base.transaction do
+              twitter_user.update!(friends_size: 0, followers_size: 0)
+              Friendship.import_from!(twitter_user.id, [])
+              Followership.import_from!(twitter_user.id, [])
+            end
           end
 
-          twitter_user = TwitterUser.find(twitter_user_id)
-
-          OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
-          OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
-          MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
-        else
           ActiveRecord::Base.transaction do
-            twitter_user.update!(friends_size: 0, followers_size: 0)
-            Friendship.import_from!(twitter_user.id, [])
-            Followership.import_from!(twitter_user.id, [])
+            Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+            Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
           end
+
+          TwitterUser.find(twitter_user_id).tap do |tu|
+            puts "Complete #{tu.protected_account?} #{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+          end
+
+          next
         end
 
-        ActiveRecord::Base.transaction do
-          Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
-          Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
-        end
-
-        TwitterUser.find(twitter_user_id).tap do |tu|
-          puts "Complete #{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
-        end
+        raise "something wrong #{twitter_user_id} #{uid}"
       end
     end
   end
