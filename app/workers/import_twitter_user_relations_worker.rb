@@ -33,5 +33,6 @@ class ImportTwitterUserRelationsWorker
     retry if e.message == 'Connection reset by peer - SSL_connect'
   rescue => e
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
   end
 end

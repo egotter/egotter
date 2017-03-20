@@ -121,7 +121,7 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{e.message} Retry after #{e&.rate_limit&.reset_in} seconds #{user_id} #{uid}"
+    logger.warn "#{e.message}(retry) Retry after #{e&.rate_limit&.reset_in} seconds #{user_id} #{uid}"
     logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
 
     DelayedCreateTwitterUserWorker.perform_async(values)
@@ -145,7 +145,7 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
   rescue Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
-    logger.warn "#{e.message} #{user_id} #{uid}"
+    logger.warn "#{e.message}(retry) #{user_id} #{uid}"
 
     DelayedCreateTwitterUserWorker.perform_async(values)
 
