@@ -3,7 +3,9 @@ class CreateTwitterUserWorker
   include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(values)
+  BUSY_QUEUE_SIZE = 0
+
+  def perform(values = {})
     client = Hashie::Mash.new(call_count: -100)
     log = BackgroundSearchLog.new(message: '')
     user = user_id = uid = nil
@@ -11,29 +13,33 @@ class CreateTwitterUserWorker
     queued_at = values['queued_at']
     started_at = Time.zone.now
 
-    return unless before_perform(values)
+    if self.class == CreateTwitterUserWorker
+      if queued_at < 1.minutes.ago || (Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && values['auto'])
+        return DelayedCreateTwitterUserWorker.perform_async(values)
+      end
+    end
 
     user_id      = values['user_id'].to_i
     uid          = values['uid'].to_i
 
     log = BackgroundSearchLog.new(
-      session_id:  values['session_id'],
+      session_id:  values.fetch('session_id', ''),
       user_id:     user_id,
       uid:         uid,
-      screen_name: values['screen_name'],
-      action:      values['action'],
+      screen_name: values.fetch('screen_name', ''),
+      action:      values.fetch('action', ''),
       bot_uid:     -100,
-      auto:        values['auto'],
+      auto:        values.fetch('auto', false),
       message:     '',
-      via:         values['via'],
-      device_type: values['device_type'],
-      os:          values['os'],
-      browser:     values['browser'],
-      user_agent:  values['user_agent'],
-      referer:     values['referer'],
-      referral:    values['referral'],
-      channel:     values['channel'],
-      medium:      values['medium'],
+      via:         values.fetch('via', ''),
+      device_type: values.fetch('device_type', ''),
+      os:          values.fetch('os', ''),
+      browser:     values.fetch('browser', ''),
+      user_agent:  values.fetch('user_agent', ''),
+      referer:     values.fetch('referer', ''),
+      referral:    values.fetch('referral', ''),
+      channel:     values.fetch('channel', ''),
+      medium:      values.fetch('medium', ''),
     )
     log.queued_at = queued_at if log.respond_to?(:queued_at) # TODO remove later
     log.started_at = started_at if log.respond_to?(:started_at) # TODO remove later
@@ -121,16 +127,13 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{e.message}(retry) Retry after #{e&.rate_limit&.reset_in} seconds #{user_id} #{uid}"
-    logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
-
-    DelayedCreateTwitterUserWorker.perform_async(values)
-
     log.update(
       status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE
     )
+
+    handle_retryable_exception(values, e)
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       user&.update(authorized: false)
@@ -145,16 +148,14 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
   rescue Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
-    logger.warn "#{e.message}(retry) #{user_id} #{uid}"
-
-    DelayedCreateTwitterUserWorker.perform_async(values)
-
     log.update(
       status: false,
       call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message}"
     )
+
+    handle_retryable_exception(values, e)
   rescue Twitter::Error => e
     retry if e.message == 'Connection reset by peer - SSL_connect'
 
@@ -201,14 +202,14 @@ class CreateTwitterUserWorker
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.id} #{tu.inspect}"
   end
 
-  BUSY_QUEUE_SIZE = 0
+  def handle_retryable_exception(values, ex)
+    retry_jid = DelayedCreateTwitterUserWorker.perform_async(values)
 
-  def before_perform(values)
-    if values['queued_at'] < 2.minutes.ago || (Sidekiq::Queue.new(self.class.to_s).size > BUSY_QUEUE_SIZE && values['auto'])
-      DelayedCreateTwitterUserWorker.perform_async(values)
-      false
+    if ex.class == Twitter::Error::TooManyRequests
+      logger.warn "#{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{values['user_id']} #{values['uid']} #{retry_jid}"
+      logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
     else
-      true
+      logger.warn "#{ex.message} #{values['user_id']} #{values['uid']} #{retry_jid}"
     end
   end
 end

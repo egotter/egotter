@@ -7,4 +7,3 @@
   - ImportInactiveFriendsAndInactiveFollowersWorker
   - ImportReplyingRepliedAndFavoritesWorker
   - ImportTwitterUserRelationsWorker
-  - ImportUserWorker
