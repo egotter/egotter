@@ -20,20 +20,17 @@ module Concerns::TwitterUser::Debug
   def debug_print(kind = nil)
     Rails.logger.silence do
       user = TwitterDB::User.find_by(uid: uid)
-      tab_char = "\t"
+      delim = ' '
 
-      puts %w(protected? one? latest? size).join tab_char
-      puts [protected_account?, one?, latest?, size].join tab_char
+      puts "protected? #{protected_account?}, one? #{one?}, latest? #{latest?}, size #{size}"
       puts
 
-      puts %w(friends friendships friends_size friends_count).join tab_char
-      puts [friends.size, friendships.size, friends_size, friends_count].join tab_char
-      puts [user.friends.size, user.friendships.size, user.friends_size, user.friends_count].join tab_char
+      puts %w(friends friendships friends_size friends_count).join delim
+      puts [friends.size, friendships.size, friends_size, friends_count, user.friends.size, user.friendships.size, user.friends_size, user.friends_count].join delim
       puts
 
-      puts %w(followers followerships followers_size followers_count).join tab_char
-      puts [followers.size, followerships.size, followers_size, followers_count].join tab_char
-      puts [user.followers.size, user.followerships.size, user.followers_size, user.followers_count].join tab_char
+      puts %w(followers followerships followers_size followers_count).join delim
+      puts [followers.size, followerships.size, followers_size, followers_count, user.followers.size, user.followerships.size, user.followers_size, user.followers_count].join delim
 
       if kind == :all
         puts

@@ -100,4 +100,104 @@ namespace :twitter_users do
     puts "\n#{(sigint || fatal ? 'suspended:' : 'finished:')}"
     puts "  start: #{start_time}, finish: #{Time.zone.now}, processed: #{processed}"
   end
+
+  desc 'create'
+  task create: :environment do
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
+    uids = ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
+    failed = false
+    processed = skipped = saved = 0
+
+    uids.each do |uid|
+      if TwitterUser.exists?(uid: uid)
+        puts "skip because found #{uid}"
+        processed += 1
+        skipped += 1
+        next
+      end
+
+      user = User.find_by(uid: uid, authorized: true)
+      client = user ? user.api_client : Bot.api_client
+
+      t_user = new_tu = relations = nil
+      begin
+        t_user = client.user(uid)
+        new_tu = TwitterUser.build_by_user(t_user)
+        relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+      rescue Twitter::Error::Unauthorized => e
+        if e.message == 'Not authorized.'
+          puts "skip because not authorized #{uid} #{t_user&.protected}"
+          processed += 1
+          skipped += 1
+          next
+        elsif e.message == 'Invalid or expired token.'
+          puts "\e[31mretry because invalid token #{user ? user.id : -1}\e[0m"
+          user&.update(authorized: false)
+          user = t_user = new_tu = relations = nil
+          client = Bot.api_client
+          retry
+        else
+          raise
+        end
+      rescue Twitter::Error::NotFound => e
+        if e.message == 'User not found.'
+          puts "skip because not found #{uid} #{t_user&.protected}"
+          processed += 1
+          skipped += 1
+          next
+        else
+          raise
+        end
+      rescue Twitter::Error::TooManyRequests => e
+        puts "\e[31m#{e.message} reset in #{e.rate_limit.reset_in} #{uid}\e[0m"
+        t_user = new_tu = relations = nil
+        sleep(e.rate_limit.reset_in + 1)
+        puts 'Good morning! I will retry.'
+        retry
+      rescue Twitter::Error::Forbidden => e
+        if e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
+          user_id = user ? user.id : -1
+          puts "\e[31mthis account is temporarily locked #{user_id}\e[0m"
+          if user_id != -1
+            puts "retry #{uid} with bot"
+            user = t_user = new_tu = relations = nil
+            client = Bot.api_client
+            retry
+          else
+            failed = true
+          end
+        else
+          raise
+        end
+      end
+
+      break if failed
+
+      new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
+      new_tu.build_other_relations(relations)
+      new_tu.user_id = user ? user.id : -1
+
+      if new_tu.save
+        ImportTwitterUserRelationsWorker.perform_async(new_tu.user_id, uid)
+        puts "saved user_id #{new_tu.user_id}, uid #{uid}, tu_id #{new_tu.id}"
+        saved += 1
+        sleep 3
+      else
+        puts "failed #{uid} #{new_tu.errors.full_messages.join(', ')}}"
+        failed = true
+      end
+
+      processed += 1
+
+      break if sigint || failed
+    end
+
+    puts "create #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "  uids: #{uids.size}, processed: #{processed}, skipped: #{skipped}, saved: #{saved}"
+  end
 end

@@ -68,9 +68,9 @@ namespace :repair do
       end
     end
 
-    puts "not_found #{not_found.inspect}" if not_found.any?
-    puts "not_consistent #{not_consistent.inspect}" if not_consistent.any?
-    puts "repair #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "not_found #{not_found.inspect.remove(' ')}" if not_found.any?
+    puts "not_consistent #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
+    puts "check #{(sigint || failed ? 'suspended:' : 'finished:')}"
     puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
   end
 

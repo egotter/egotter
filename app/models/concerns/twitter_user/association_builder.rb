@@ -42,6 +42,6 @@ module Concerns::TwitterUser::AssociationBuilder
   end
 
   def _status_to_hash(status)
-    {uid: status.user.id, screen_name: status.user.screen_name, status_info: status.slice(*Status::STATUS_SAVE_KEYS).to_json}
+    {uid: status.user.id, screen_name: status.user.screen_name, status_info: status.slice(*::Status::STATUS_SAVE_KEYS).to_json}
   end
 end
