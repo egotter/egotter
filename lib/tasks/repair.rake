@@ -10,6 +10,7 @@ namespace :repair do
     start = ENV['START'] ? ENV['START'].to_i : 1
     last = ENV['LAST'] ? ENV['LAST'].to_i : TwitterUser.maximum(:id)
     not_found = []
+    friendless = []
     not_consistent = []
     processed = 0
     start_time = Time.zone.now
@@ -24,36 +25,32 @@ namespace :repair do
           break if tu.id > last
 
           user = TwitterDB::User.find_by(uid: tu.uid)
-          unless user
-            puts "TwitterDB::user is not found #{tu.id} #{tu.uid}"
-            not_found << tu.id
-            next
+          if user
+            if user.friends_size == -1 || user.followers_size == -1
+              puts "friendless #{tu.id} #{tu.uid}"
+              friendless << user.uid
+            end
+          else
+            puts "not found #{tu.id} #{tu.uid}"
+            not_found << tu.uid.to_i
           end
 
           friends = [
-            # tu.friends.size,
+            tu.friends.size,
             tu.friendships.size,
             tu.friends_size,
             # tu.friends_count,
-            # user.friends.size,
-            # user.friendships.size,
-            # user.friends_size,
-            # user.friends_count
           ]
 
           followers = [
-            # tu.followers.size,
+            tu.followers.size,
             tu.followerships.size,
             tu.followers_size,
             # tu.followers_count,
-            # user.followers.size,
-            # user.followerships.size,
-            # user.followers_size,
-            # user.followers_count
           ]
 
           if friends.uniq.many? || followers.uniq.many?
-            puts "fiends or followers is not consistent #{tu.id} #{tu.uid} #{friends.inspect} #{followers.inspect}"
+            puts "not consistent #{tu.id} #{tu.uid} #{friends.inspect} #{followers.inspect}"
             not_consistent << tu.id
           end
 
@@ -68,17 +65,17 @@ namespace :repair do
       end
     end
 
-    puts "not_found #{not_found.inspect.remove(' ')}" if not_found.any?
-    puts "not_consistent #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
+    puts "not_found(uid) #{not_found.inspect.remove(' ')}" if not_found.any?
+    puts "friendless(uid) #{friendless.inspect.remove(' ')}" if friendless.any?
+    puts "not_consistent(tu_id) #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
     puts "check #{(sigint || failed ? 'suspended:' : 'finished:')}"
-    puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
+    puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, friendless: #{friendless.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
   end
 
   namespace :fix do
     desc 'not_found'
     task not_found: :environment do
-      ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
-      uids = TwitterUser.where(id: ids).pluck(:uid).uniq.map(&:to_i)
+      uids = ENV['UIDS'].remove(/ /).split(',').map(&:to_i).uniq
 
       remaining = []
       begin
@@ -100,7 +97,7 @@ namespace :repair do
         TwitterDB::User.create!(uid: uid, screen_name: tu.screen_name, user_info: tu.user_info, friends_size: -1, followers_size: -1)
       end
 
-      puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size} remaining: #{remaining.size}"
+      puts "uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size} remaining: #{remaining.size}"
     end
 
     desc 'not_consistent'
