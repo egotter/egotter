@@ -5,9 +5,17 @@ class ImportTwitterUserRelationsWorker
 
   BUSY_QUEUE_SIZE = 0
 
-  def perform(user_id, uid)
+  def perform(user_id, uid, options = {})
     twitter_user = TwitterUser.latest(uid)
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
+    queued_at = options.fetch('queued_at', Time.zone.now)
+    queued_at = Time.zone.parse(queued_at) if queued_at.is_a?(String)
+
+    if self.class == ImportTwitterUserRelationsWorker
+      if queued_at < 1.minutes.ago
+        return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, options)
+      end
+    end
 
     ImportReplyingRepliedAndFavoritesWorker.new.perform(user_id, uid, 'async' => false)
 
@@ -23,7 +31,7 @@ class ImportTwitterUserRelationsWorker
       ImportInactiveFriendsAndInactiveFollowersWorker.perform_async(user_id, uid)
     end
 
-    # TODO remove page cache
+    # TODO ::Cache::PageCache.new.delete(uid)
 
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'

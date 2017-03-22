@@ -24,38 +24,36 @@ class CreateRelationshipWorker
     client = user.nil? ? Bot.api_client : user.api_client
     log.bot_uid = client.verify_credentials.id
 
-    existing_tu = uids.map { |uid| TwitterUser.latest(uid) }
-    if existing_tu.all? { |tu| tu.present? }
-      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.map(&:id).join(',')}] is persisted.")
-      return
-    end
-
     created = []
     persisted = []
     errors = []
-    uids.each.with_index do |uid, i|
-      if existing_tu[i].present?
-        persisted << existing_tu[i].id
+    uids.each do |uid|
+      latest = TwitterUser.latest(uid)
+      if latest
+        persisted << latest.id
         next
       end
 
-      new_tu = TwitterUser.build_by_user(client.user(uid))
-      relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
-      new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
-      new_tu.build_other_relations(relations)
-      new_tu.user_id = user.nil? ? -1 : user.id
+      builder = TwitterUser.builder(uid).client(client).login_user(user)
+      new_tu = builder.build
+      unless new_tu
+        errors << "[#{builder.error_message}]"
+        logger.warn "#{self.class}##{__method__}: #{builder.error_message}"
+        next
+      end
+
       if new_tu.save
-        ImportTwitterUserRelationsWorker.new.perform(user_id, uid) # perhaps this worker(and internal jobs) will miss the deadline.
-        sleep 5
+        sleep 5 # wait for background workers
         created << new_tu.id
         next
       end
 
-      errors << "[#{new_tu.errors.full_messages.join(', ')}]"
-      logger.warn "#{self.class}##{__method__}: #{new_tu.errors.full_messages.join(', ')}"
+      error_messages = new_tu.errors.full_messages.join(', ')
+      errors << "[#{error_messages}]"
+      logger.warn "#{self.class}##{__method__}: #{error_messages}"
     end
 
-    if (created + persisted).size == uids.size
+    if created.size + persisted.size == uids.size
       msg1 = created.any? ? "[#{created.join(',')}] is created" : ''
       msg2 = persisted.any? ? "[#{persisted.join(',')}] is persisted" : ''
       log.update(status: true, call_count: client.call_count, message: "#{[msg1, msg2].compact.join(', ')}.")

@@ -71,14 +71,9 @@ namespace :old_users do
 
       # TODO CreateTwitterUserWorker.perform_async(...)
       begin
-        twitter_user = TwitterUser.build_by_user(client.user(user.uid.to_i))
-        relations = TwitterUserFetcher.new(twitter_user, client: client, login_user: user).fetch
-        ImportFriendsAndFollowersWorker.perform_async(user.id, user.uid) if %i(friend_ids follower_ids).all? { |key| relations.has_key?(key) }
-        twitter_user.build_friends_and_followers(relations)
-        twitter_user.build_other_relations(relations)
-        twitter_user.user_id = -1
+        twitter_user = TwitterUser.builder(user.uid).client(client).login_user(user).build
 
-        if twitter_user.save
+        if twitter_user&.save
           twitter_user.increment(:search_count).save
           created += 1
         end

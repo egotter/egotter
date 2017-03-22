@@ -123,22 +123,20 @@ namespace :twitter_users do
 
       user = User.find_by(uid: uid, authorized: true)
       client = user ? user.api_client : Bot.api_client
+      new_tu = nil
 
-      t_user = new_tu = relations = nil
       begin
-        t_user = client.user(uid)
-        new_tu = TwitterUser.build_by_user(t_user)
-        relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
+        new_tu = TwitterUser.builder(uid).client(client).login_user(user).build(validate: false)
       rescue Twitter::Error::Unauthorized => e
         if e.message == 'Not authorized.'
-          puts "skip because not authorized #{uid} #{t_user&.protected}"
+          puts "skip because not authorized #{uid}"
           processed += 1
           skipped += 1
           next
         elsif e.message == 'Invalid or expired token.'
           puts "\e[31mretry because invalid token #{user ? user.id : -1}\e[0m"
           user&.update(authorized: false)
-          user = t_user = new_tu = relations = nil
+          user = new_tu = nil
           client = Bot.api_client
           retry
         else
@@ -146,7 +144,7 @@ namespace :twitter_users do
         end
       rescue Twitter::Error::NotFound => e
         if e.message == 'User not found.'
-          puts "skip because not found #{uid} #{t_user&.protected}"
+          puts "skip because not found #{uid}"
           processed += 1
           skipped += 1
           next
@@ -155,7 +153,7 @@ namespace :twitter_users do
         end
       rescue Twitter::Error::TooManyRequests => e
         puts "\e[31m#{e.message} reset in #{e.rate_limit.reset_in} #{uid}\e[0m"
-        t_user = new_tu = relations = nil
+        new_tu = nil
         sleep(e.rate_limit.reset_in + 1)
         puts 'Good morning! I will retry.'
         retry
@@ -165,25 +163,20 @@ namespace :twitter_users do
           puts "\e[31mthis account is temporarily locked #{user_id}\e[0m"
           if user_id != -1
             puts "retry #{uid} with bot"
-            user = t_user = new_tu = relations = nil
+            user = new_tu = nil
             client = Bot.api_client
             retry
           else
-            failed = true
+            raise
           end
         else
           raise
         end
       end
 
-      break if failed
-
-      new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
-      new_tu.build_other_relations(relations)
-      new_tu.user_id = user ? user.id : -1
+      break if sigint || failed
 
       if new_tu.save
-        ImportTwitterUserRelationsWorker.perform_async(new_tu.user_id, uid)
         puts "saved user_id #{new_tu.user_id}, uid #{uid}, tu_id #{new_tu.id}"
         saved += 1
         sleep 3

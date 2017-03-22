@@ -1,12 +1,12 @@
 class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 3, backtrace: false
+  sidekiq_options queue: self, retry: 3, backtrace: false, dead: true
 
   sidekiq_retry_in do |count|
     30.minutes + rand(10.minutes)
   end
 
-  def perform(user_id, uid)
+  def perform(user_id, uid, options = {})
     slept = false
     while (queue = Sidekiq::Queue.new('ImportTwitterUserRelationsWorker')).size > BUSY_QUEUE_SIZE
       logger.warn "I will sleep. Bye! size: #{queue.size}"
@@ -23,12 +23,16 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
 
   def handle_retryable_exception(user_id, uid, ex)
     if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "#{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{user_id} #{uid}"
+      sleep_time = ex&.rate_limit&.reset_in.to_i + 1
+      logger.warn "#{ex.message} Reset in #{sleep_time} seconds #{user_id} #{uid}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
+      logger.warn 'I will sleep. Bye!'
+      sleep sleep_time
+      logger.warn 'Good morning. I will retry.'
+      DelayedImportTwitterUserRelationsWorker.perform_in(30.minutes + rand(10.minutes), user_id, uid)
     else
       logger.warn "#{ex.message} #{user_id} #{uid}"
+      raise ex
     end
-
-    raise ex
   end
 end

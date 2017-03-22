@@ -27,13 +27,14 @@ module Concerns::TwitterUser::Persistence
     _transaction('import Favorite') { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
 
     reload
-  rescue ActiveRecord::RecordNotFound => e
-    # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{self.id} #{self.uid} #{self.screen_name}"
+
+    ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now)
+
   rescue => e
+    # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000
     # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;
     message = e.message.truncate(150)
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{self.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{id} #{uid} #{screen_name}"
     logger.info e.backtrace.join("\n")
     destroy
   end

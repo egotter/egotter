@@ -24,8 +24,8 @@ class Bot < ActiveRecord::Base
   end
 
   def self.config(screen_name = nil)
-    @@size ||= all.size
-    bot = screen_name ? find_by(screen_name: screen_name) : find(rand(1..@@size))
+    @@ids ||= pluck(:id)
+    bot = screen_name ? find_by(screen_name: screen_name) : find(@@ids.sample)
     ApiClient.config(access_token: bot.token, access_token_secret: bot.secret)
   end
 

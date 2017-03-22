@@ -26,7 +26,7 @@ ja:
     omniauth_callbacks:
       failure: "%{kind} アカウントによる認証に失敗しました。理由：（%{reason}）"
       success: "%{kind} アカウントでログインしました。"
-      success_html: '%{kind} アカウントでログインしました。リム通知は【%{status}】になっています。この設定は <a href="%{menu_path}">設定ページ</a> から変更できます'
+      success_html: '%{kind} アカウントでログインしました。リム通知は【%{status}】になっています。この設定は <a style="color: #EA2184;" href="%{menu_path}">設定ページ</a> から変更できます'
     passwords:
       no_token: "このページにはアクセスできません。パスワード再設定メールのリンクからアクセスされた場合には、URL をご確認ください。"
       send_instructions: 'パスワードの再設定について数分以内にメールでご連絡いたします。'

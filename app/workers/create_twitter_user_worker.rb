@@ -62,42 +62,30 @@ class CreateTwitterUserWorker
     end
     creating_uids.add(uid)
 
-    existing_tu = TwitterUser.latest(uid)
-    if existing_tu&.fresh?
-      existing_tu.increment(:search_count).save
-      notify(user, existing_tu)
-      return log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
+    builder = TwitterUser.builder(uid).client(client).login_user(user)
+    new_tu = builder.build
+    unless new_tu
+      latest = TwitterUser.latest(uid)
+      if latest
+        latest.increment(:search_count).save
+        notify(user, latest)
+        return log.update(status: true, call_count: client.call_count, message: builder.error_message)
+      else
+        return log.update(status: false, call_count: client.call_count, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: builder.error_message)
+      end
     end
 
-    new_tu = TwitterUser.build_by_user(client.user(uid))
-    relations = TwitterUserFetcher.new(new_tu, client: client, login_user: user).fetch
-
-    new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
-    if existing_tu.present? && new_tu.friendless?
-      existing_tu.increment(:search_count).save
-      notify(user, existing_tu)
-      return log.update(status: true, call_count: client.call_count, message: 'new record is friendless.')
-    end
-
-    if existing_tu&.diff(new_tu)&.empty?
-      existing_tu.increment(:search_count).save
-      notify(user, existing_tu)
-      return log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed. (early)")
-    end
-
-    new_tu.build_other_relations(relations)
-    new_tu.user_id = user_id
     if new_tu.save
-      ImportTwitterUserRelationsWorker.perform_async(user_id, uid)
       new_tu.increment(:search_count).save
       notify(user, new_tu)
       return log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
     end
 
-    if existing_tu.present?
-      existing_tu.increment(:search_count).save
-      notify(user, existing_tu)
-      return log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is not changed.")
+    latest = TwitterUser.latest(uid)
+    if latest
+      latest.increment(:search_count).save
+      notify(user, latest)
+      return log.update(status: true, call_count: client.call_count, message: 'not changed')
     end
 
     log.update(

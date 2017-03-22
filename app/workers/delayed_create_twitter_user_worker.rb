@@ -1,6 +1,6 @@
 class DelayedCreateTwitterUserWorker < CreateTwitterUserWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 3, backtrace: false
+  sidekiq_options queue: self, retry: 3, backtrace: false, dead: true
 
   sidekiq_retry_in do |count|
     30.minutes + rand(10.minutes)
@@ -23,12 +23,16 @@ class DelayedCreateTwitterUserWorker < CreateTwitterUserWorker
 
   def handle_retryable_exception(values, ex)
     if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "#{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{values['user_id']} #{values['uid']}"
+      sleep_time = ex&.rate_limit&.reset_in.to_i + 1
+      logger.warn "#{ex.message} Reset in #{sleep_time} seconds #{values['user_id']} #{values['uid']}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
+      logger.warn 'I will sleep. Bye!'
+      sleep sleep_time
+      logger.warn 'Good morning. I will retry.'
+      DelayedCreateTwitterUserWorker.perform_in(30.minutes + rand(10.minutes), values)
     else
       logger.warn "#{ex.message} #{values['user_id']} #{values['uid']}"
+      raise ex
     end
-
-    raise ex
   end
 end
