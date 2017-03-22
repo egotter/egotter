@@ -9,55 +9,70 @@ module Concerns::TwitterUser::Debug
   included do
   end
 
-  def valid_friendships_counter_cache?
-    friendships.any? && friendships.size == friends_size
-  end
-
-  def valid_followerships_counter_cache?
-    followerships.any? && followerships.size == followers_size
-  end
-
   def debug_print(kind = nil)
     Rails.logger.silence do
       user = TwitterDB::User.find_by(uid: uid)
       delim = ' '
 
-      puts "protected? #{protected_account?}, one? #{one?}, latest? #{latest?}, size #{size}"
+      puts %w(protected? one? latest? size).join delim
+      puts [protected_account?, one?, latest?, size].inspect
       puts
 
       puts %w(friends friendships friends_size friends_count).join delim
-      puts [friends.size, friendships.size, friends_size, friends_count, user.friends.size, user.friendships.size, user.friends_size, user.friends_count].join delim
+      puts [[friends.size, friendships.size, friends_size, friends_count].inspect, [user.friends.size, user.friendships.size, user.friends_size, user.friends_count].inspect].join delim
       puts
 
       puts %w(followers followerships followers_size followers_count).join delim
-      puts [followers.size, followerships.size, followers_size, followers_count, user.followers.size, user.followerships.size, user.followers_size, user.followers_count].join delim
+      puts [[followers.size, followerships.size, followers_size, followers_count].inspect, [user.followers.size, user.followerships.size, user.followers_size, user.followers_count].inspect].join delim
 
       if kind == :all
         puts
-        puts 'statuses, mentions, search_results, favorites'
+
+        puts %w(statuses mentions search_results favorites).join delim
         puts [statuses.size, mentions.size, search_results.size, favorites.size].inspect
+        puts
 
-        puts 'unfriends'
+        puts %w(unfriends unfriendships calc_removing_uids).join delim
         puts [unfriends.size, unfriendships.size, TwitterUser.calc_removing_uids(uid).size].inspect
+        puts
+
+        puts %w(unfollowers unfollowerships calc_removed_uids).join delim
         puts [unfollowers.size, unfollowerships.size, TwitterUser.calc_removed_uids(uid).size].inspect
+        puts
 
-        puts 'one_sided_friends'
+        puts %w(one_sided_friends one_sided_friendships calc_one_sided_friend_uids).join delim
         puts [one_sided_friends.size, one_sided_friendships.size, calc_one_sided_friend_uids.size].inspect
+        puts
+
+        puts %w(one_sided_followers one_sided_followerships calc_one_sided_follower_uids).join delim
         puts [one_sided_followers.size, one_sided_followerships.size, calc_one_sided_follower_uids.size].inspect
+        puts
+
+        puts %w(mutual_friends mutual_friendships calc_mutual_friend_uids).join delim
         puts [mutual_friends.size, mutual_friendships.size, calc_mutual_friend_uids.size].inspect
+        puts
 
-        puts 'inactive_friends'
+        puts %w(inactive_friends inactive_friendships calc_inactive_friend_uids).join delim
         puts [inactive_friends.size, inactive_friendships.size, calc_inactive_friend_uids.size].inspect
+        puts
+
+        puts %w(inactive_followers inactive_followerships calc_inactive_follower_uids).join delim
         puts [inactive_followers.size, inactive_followerships.size, calc_inactive_follower_uids.size].inspect
+        puts
+
+        puts %w(inactive_mutual_friends inactive_mutual_friendships calc_inactive_mutual_friend_uids).join delim
         puts [inactive_mutual_friends.size, inactive_mutual_friendships.size, calc_inactive_mutual_friend_uids.size].inspect
+        puts
 
-        puts 'replying'
+        puts %w(replying_uids replying).join delim
         puts [replying_uids.size, replying.size].inspect
+        puts
 
-        puts 'replied'
+        puts %w(replied_uids replied).join delim
         puts [replied_uids.size, replied.size].inspect
+        puts
 
-        puts 'favoriting'
+        puts %w(favoriting_uids favoriting).join delim
         puts [favoriting_uids.size, favoriting.size].inspect
       end
     end
