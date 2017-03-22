@@ -11,7 +11,7 @@ class DelayedCreateTwitterUserWorker < CreateTwitterUserWorker
     while (queue = Sidekiq::Queue.new('CreateTwitterUserWorker')).size > BUSY_QUEUE_SIZE
       logger.warn "I will sleep. Bye! size: #{queue.size}"
       slept = true
-      sleep 10.minutes
+      sleep 3.minutes
     end
 
     logger.warn 'Good morning. I will retry.' if slept
