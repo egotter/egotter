@@ -71,7 +71,10 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
 
   function failed(xhr) {
     console.log('Server failed.');
-    $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
+    var elapsedTime = performance.now() - pollingStart;
+    if (elapsedTime < 120) {
+      $.post(pollingLogsPath, {_action: action, status: false, time: elapsedTime, retry_count: retry.current()});
+    }
     console.log(xhr.responseText);
   }
 
@@ -80,7 +83,10 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
 
     if (xhr.status === 200) {
       console.log(new Date(createdAt * 1000), new Date(res.created_at * 1000));
-      $.post(pollingLogsPath, {_action: action, status: true, time: performance.now() - pollingStart, retry_count: retry.current()});
+      var elapsedTime = performance.now() - pollingStart;
+      if (elapsedTime < 120) {
+        $.post(pollingLogsPath, {_action: action, status: true, time: elapsedTime, retry_count: retry.current()});
+      }
 
       if (createdAt < res.created_at) {
         cache.setHash(res.hash);
@@ -95,7 +101,10 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
 
     if (!retry.next()) {
       console.log('Stop waiting.');
-      $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
+      var elapsedTime = performance.now() - pollingStart;
+      if (elapsedTime < 120) {
+        $.post(pollingLogsPath, {_action: action, status: false, time: elapsedTime, retry_count: retry.current()});
+      }
       // Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
     } else {
       setTimeout(tic, interval.next());
