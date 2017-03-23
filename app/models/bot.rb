@@ -46,12 +46,11 @@ class Bot < ActiveRecord::Base
     end
 
     processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }.map do |p|
-      resources = p[:rate_limit][:resources]
       {
         id: p[:id],
-        verify_credentials: resources[:account][:'/account/verify_credentials'][:remaining],
-        friend_ids: resources[:friends][:'/friends/ids'][:remaining],
-        follower_ids: resources[:followers][:'/followers/ids'][:remaining]
+        verify_credentials: p[:rate_limit].verify_credentials,
+        friend_ids: p[:rate_limit].friend_ids,
+        follower_ids: p[:rate_limit].follower_ids
       }
     end
   end
@@ -61,10 +60,41 @@ class Bot < ActiveRecord::Base
   end
 
   def rate_limit
-    api_client.send(:perform_get, '/1.1/application/rate_limit_status.json') rescue nil
+    RateLimit.new(api_client.send(:perform_get, '/1.1/application/rate_limit_status.json')) rescue nil
   end
 
   def api_client
     ApiClient.instance(access_token: token, access_token_secret: secret)
+  end
+
+  class RateLimit
+    def initialize(status)
+      @status = status
+    end
+
+    def resources
+      @status[:resources]
+    end
+
+    def verify_credentials
+      {
+        remaining: resources[:account][:'/account/verify_credentials'][:remaining],
+        reset_in: Time.zone.at(resources[:account][:'/account/verify_credentials'][:reset]) - Time.zone.now
+      }
+    end
+
+    def friend_ids
+      {
+        remaining: resources[:friends][:'/friends/ids'][:remaining],
+        reset_in: Time.zone.at(resources[:friends][:'/friends/ids'][:reset]) - Time.zone.now
+      }
+    end
+
+    def follower_ids
+      {
+        remaining: resources[:followers][:'/followers/ids'][:remaining],
+        reset_in: Time.zone.at(resources[:followers][:'/followers/ids'][:reset]) - Time.zone.now
+      }
+    end
   end
 end

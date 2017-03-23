@@ -9,6 +9,7 @@ namespace :repair do
 
     start = ENV['START'] ? ENV['START'].to_i : 1
     last = ENV['LAST'] ? ENV['LAST'].to_i : TwitterUser.maximum(:id)
+    verbose = ENV['VERBOSE'].present?
     not_found = []
     friendless = []
     not_consistent = []
@@ -26,9 +27,11 @@ namespace :repair do
 
           user = TwitterDB::User.find_by(uid: tu.uid)
           if user
-            if user.friends_size == -1 || user.followers_size == -1
-              puts "friendless #{tu.id} #{tu.uid}"
-              friendless << user.uid
+            if verbose
+              if user.friends_size == -1 || user.followers_size == -1
+                puts "friendless #{tu.id} #{tu.uid}"
+                friendless << user.uid
+              end
             end
           else
             puts "not found #{tu.id} #{tu.uid}"
@@ -36,18 +39,18 @@ namespace :repair do
           end
 
           friends = [
-            tu.friends.size,
+            verbose ? tu.friends.size : nil,
             tu.friendships.size,
             tu.friends_size,
             # tu.friends_count,
-          ]
+          ].compact
 
           followers = [
-            tu.followers.size,
+            verbose ? tu.followers.size : nil,
             tu.followerships.size,
             tu.followers_size,
             # tu.followers_count,
-          ]
+          ].compact
 
           if friends.uniq.many? || followers.uniq.many?
             puts "not consistent #{tu.id} #{tu.uid} #{friends.inspect} #{followers.inspect}"
@@ -65,9 +68,9 @@ namespace :repair do
       end
     end
 
-    puts "not_found(uid) #{not_found.inspect.remove(' ')}" if not_found.any?
-    puts "friendless(uid) #{friendless.inspect.remove(' ')}" if friendless.any?
-    puts "not_consistent(tu_id) #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
+    puts "TwitterDB::User not_found(uid) #{not_found.inspect.remove(' ')}" if not_found.any?
+    puts "TwitterDB::User friendless(uid) #{friendless.inspect.remove(' ')}" if friendless.any?
+    puts "TwitterUser not_consistent(tu_id) #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
     puts "check #{(sigint || failed ? 'suspended:' : 'finished:')}"
     puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, friendless: #{friendless.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
   end
@@ -140,6 +143,9 @@ namespace :repair do
             else
               ex = e
             end
+          rescue Twitter::Error::TooManyRequests => e
+            puts "reset in #{e.rate_limit.reset_in} seconds"
+            ex = e
           rescue => e
             ex = e
           end

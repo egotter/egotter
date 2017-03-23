@@ -153,9 +153,10 @@ namespace :twitter_users do
           raise
         end
       rescue Twitter::Error::TooManyRequests => e
-        puts "\e[31m#{e.message} reset in #{e.rate_limit.reset_in} #{uid}\e[0m"
+        reset_in = e.rate_limit.reset_in
+        puts "\e[31m#{e.message} reset in #{reset_in} #{uid}\e[0m"
         new_tu = nil
-        sleep(e.rate_limit.reset_in + 1)
+        sleep(reset_in + 1)
         puts 'Good morning! I will retry.'
         retry
       rescue Twitter::Error::Forbidden => e
