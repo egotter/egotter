@@ -21,8 +21,9 @@ class ApplicationController < ActionController::Base
 
       if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) && controller_name == 'searches' && action_name == 'create'
         logger.warn "cross domain post #{request.device_type} #{current_user_id} #{request.fullpath} #{request.referer} #{params['screen_name']}"
-        _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/cross_domain_post_and_recover", redirect_path: search_path(screen_name: params[:screen_name])
-        redirect_to root_path, alert: t('before_sign_in.cross_domain_post_and_recover_html', user: params[:screen_name], sign_in_path: _sign_in_path)
+        _search_path = search_path(screen_name: params[:screen_name])
+        _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/cross_domain_post_and_recover", redirect_path: _search_path
+        redirect_to root_path, alert: t('before_sign_in.cross_domain_post_and_recover_html', user: params[:screen_name], search_path: _search_path, sign_in_path: _sign_in_path)
       else
         logger.warn "cross domain post #{request.device_type} #{current_user_id} #{request.fullpath} #{request.referer} #{params.inspect}"
         _sign_in_path = sign_in_path via: "#{controller_name}/#{action_name}/cross_domain_post"

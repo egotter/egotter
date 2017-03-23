@@ -436,7 +436,7 @@ ja:
     session_expired_html: '一定時間操作がなかったため、セッションの有効期限が切れました。 <a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してください。'
     session_expired_and_recover_html: '一定時間操作がなかったため、%{user} の検索に失敗しました。 <a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してから検索してください。'
     cross_domain_post_html: '外部サイトからの検索は許可されていません。このページから再度検索してみてください。<a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してから検索してください。'
-    cross_domain_post_and_recover_html: '外部サイトからの検索だったため、%{user} の検索に失敗しました。<a href="%{sign_in_path}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{sign_in_path}">ログイン</a> してから検索してください。'
+    cross_domain_post_and_recover_html: '外部サイトからの検索は許可されていません。<a href="#{search_path}" class="btn btn-sm">%{user} を再度検索する</a> <a href="#{sign_in_path}" class="btn btn-sm">ログインして %{user} を再度検索する</a>'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{sign_in_path}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     not_found: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。'
