@@ -33,13 +33,15 @@ class Bot < ActiveRecord::Base
     ApiClient.instance(config(screen_name))
   end
 
-  def self.verify_all_credentials
+  def self.verify_credentials
     processed = Queue.new
     Parallel.each_with_index(pluck(:screen_name), in_threads: 10) do |screen_name, i|
       user = (api_client(screen_name).verify_credentials rescue nil)
       processed << {i: i, screen_name: screen_name, status: !!user}
     end
 
-    processed.size.times.map { processed.pop }.sort_by{|p| p[:i] }.map{|p| {screen_name: p[:screen_name], status: p[:status]} }
+    processed.size.times.map { processed.pop }.sort_by { |p| p[:i] }.map do |p|
+      puts "#{p[:screen_name]} #{p[:status]}"
+    end
   end
 end
