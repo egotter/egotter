@@ -65,6 +65,6 @@ class Bot < ActiveRecord::Base
   end
 
   def api_client
-    ApiClient.instance(ApiClient.config(access_token: token, access_token_secret: secret))
+    ApiClient.instance(access_token: token, access_token_secret: secret)
   end
 end

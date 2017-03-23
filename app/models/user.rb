@@ -79,12 +79,8 @@ class User < ActiveRecord::Base
     raise e
   end
 
-  def config
-    ApiClient.config(access_token: token, access_token_secret: secret)
-  end
-
   def api_client
-    ApiClient.instance(config)
+    ApiClient.instance(access_token: token, access_token_secret: secret)
   end
 
   def twitter_user
