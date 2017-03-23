@@ -34,10 +34,17 @@ namespace :twitter_users do
 
   desc 'send update notifications'
   task send_update_notifications: :environment do
-    Rails.logger.silence { process_update_jobs(UpdateTwitterUserWorker) }
+    raise NotImplementedError
+    # Rails.logger.silence { process_update_jobs(UpdateTwitterUserWorker) }
   end
 
   def process_update_jobs(worker_klass)
+    sigint = false
+    Signal.trap 'INT' do
+      puts 'intercept INT and stop ..'
+      sigint = true
+    end
+
     deadline =
       case
         when ENV['DEADLINE'].nil? then nil
@@ -57,15 +64,9 @@ namespace :twitter_users do
     authorized = User.where(id: user_ids, authorized: true).pluck(:id)
     active = User.active(14).where(id: authorized).pluck(:id)
 
-    sigint = false
-    Signal.trap 'INT' do
-      puts 'intercept INT and stop ..'
-      sigint = true
-    end
-
     start_time = Time.zone.now
     puts "\nstarted:"
-    puts "  start: #{start_time}, user_ids: #{user_ids.size}, authorized: #{authorized.size}, active: #{active.size}, deadline: #{deadline}\n\n"
+    puts %Q(  start: #{start_time}#{", deadline: #{deadline}" if deadline}, user_ids: #{user_ids.size}, authorized: #{authorized.size}, active: #{active.size}\n\n)
 
     processed = 0
     fatal = false
@@ -78,7 +79,7 @@ namespace :twitter_users do
       rescue => e
         failed = true
         errors << {time: Time.zone.now, error: e, user_id: user_id}
-        fatal = errors.select { |error| error[:time] > 60.seconds.ago }.size >= 10
+        fatal = errors.size >= processed / 10
       end
       processed += 1
 
