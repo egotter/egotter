@@ -75,12 +75,13 @@ ja:
       show_immediately: "過去の結果をすぐに表示"
       show_immediately_msg: "過去の結果を表示します"
       waiting_is_finished_msg: "検索が完了しました。ページを移動します"
-      updating_is_finished_msg: "新しいデータが見付かりました。%{link} からページを更新してください。"
     show:
       title: "%{user} の分析 - フォロー外され・片思い・仲良しをえごったーで分析"
       simple_title: "%{user} の分析"
       heading: "%{user} の分析 by えごったー"
       description: "えごったーなら全部無料！ %{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果です。リム通知は、えごったーにログイン後、自動で届きます。"
+      update_is_coming_html: '新しいデータが見付かりました。<a href="#" class="btn btn-default btn-sm">データを更新する</a>'
+      latest_result: 'データの更新が完了しました。表示されているデータは最新です。'
     friends:
       num: "フォロー<br>%{num}"
       name: "フォロー"

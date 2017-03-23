@@ -1,24 +1,6 @@
 'use strict';
 
-function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, action, createdAt, scope) {
-  var Cache = function () {
-    this.hash = 'xxx';
-  };
-
-  Cache.prototype.setHash = function (hash) {
-    this.hash = hash;
-  };
-
-  Cache.prototype.delete = function () {
-    console.log(new Date() + ': delete started');
-    return $.ajax({url: pageCachePath.replace(/HASH/, this.hash), type: 'DELETE'});
-  };
-
-  Cache.prototype.create = function create() {
-    console.log(new Date() + ': create started');
-    return $.post(pageCachesPath);
-  };
-
+function waiting2(twitterUser, action, scope) {
   var Interval = function () {
     this.value = 2000;
     this.max = 5000;
@@ -48,13 +30,15 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
     return this.count < this.max;
   };
 
-  var refreshBox = $('.alert.alert-info');
+  var refreshBox = $('.refresh-box');
+  var latestBox = $('.latest-box');
+
   refreshBox.find('a').on('click', function (e) {
     e.preventDefault();
     e.stopPropagation();
 
-    cache.delete()
-      .then(cache.create)
+    cache.delete(twitterUser.uid)
+      .then(cache.create(twitterUser.uid))
       .then(function () {
         console.log(new Date() + ': reload started');
         window.location.reload();
@@ -66,15 +50,20 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
 
   var interval = new Interval();
   var retry = new Retry();
-  var cache = new Cache();
+  var cache = new egotter.PageCache();
   var pollingStart = performance.now();
+
+  function createPollingLog(status) {
+    var elapsedTime = performance.now() - pollingStart;
+    if (elapsedTime < 120) {
+      var url = egotter.pollingLogsPath.replace(/UID/, twitterUser.uid).replace(/SCREEN_NAME/, twitterUser.screenName);
+      $.post(url, {_action: action, status: status, time: elapsedTime, retry_count: retry.current()});
+    }
+  }
 
   function failed(xhr) {
     console.log('Server failed.');
-    var elapsedTime = performance.now() - pollingStart;
-    if (elapsedTime < 120) {
-      $.post(pollingLogsPath, {_action: action, status: false, time: elapsedTime, retry_count: retry.current()});
-    }
+    createPollingLog(false);
     console.log(xhr.responseText);
   }
 
@@ -82,18 +71,15 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
     console.log(res, text_status, xhr.status, interval.current(), retry.current());
 
     if (xhr.status === 200) {
-      console.log(new Date(createdAt * 1000), new Date(res.created_at * 1000));
-      var elapsedTime = performance.now() - pollingStart;
-      if (elapsedTime < 120) {
-        $.post(pollingLogsPath, {_action: action, status: true, time: elapsedTime, retry_count: retry.current()});
-      }
+      console.log(new Date(twitterUser.createdAt * 1000), new Date(res.created_at * 1000));
+      createPollingLog(true);
 
-      if (createdAt < res.created_at) {
+      if (twitterUser.createdAt < res.created_at) {
         cache.setHash(res.hash);
         refreshBox.show();
         refreshBox.sticky({topSpacing: 0});
       } else {
-        console.log('Do nothing.');
+        latestBox.show();
       }
 
       return;
@@ -101,10 +87,7 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
 
     if (!retry.next()) {
       console.log('Stop waiting.');
-      var elapsedTime = performance.now() - pollingStart;
-      if (elapsedTime < 120) {
-        $.post(pollingLogsPath, {_action: action, status: false, time: elapsedTime, retry_count: retry.current()});
-      }
+      createPollingLog(false);
       // Rollbar.scope(scope).warning("Retries exhausted while attempting fetching.");
     } else {
       setTimeout(tic, interval.next());
@@ -112,13 +95,14 @@ function waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 
   }
 
   function tic() {
-    $.get(checkLogPath).done(done).fail(failed);
+    var url = egotter.backgroundSearchLogPath.replace(/UID/, twitterUser.uid);
+    $.get(url).done(done).fail(failed);
   }
 
   tic();
 }
 
-function searchResultsWaiting(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, createdAt, scope) {
-  waiting2(checkLogPath, pageCachePath, pageCachesPath, pollingLogsPath, 'search_results/show', createdAt, scope)
+function searchResultsWaiting(twitterUser, scope) {
+  waiting2(twitterUser, 'search_results/show', scope)
 }
 

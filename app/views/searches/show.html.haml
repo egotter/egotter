@@ -5,8 +5,11 @@
 
 - set_meta_tags title: t('.title', user: @searched_tw_user.mention_name), site: '', description: t('.description', user: @searched_tw_user.mention_name)
 
-%p.alert.alert-info{style: 'z-index: 10000; margin-bottom: 15px; display: none;'}
-  = t('searches.waiting.updating_is_finished_msg', link: link_to(t('dictionary.this_link'), '#', style: 'color: #EA2184;')).html_safe
+%p.refresh-box.alert.alert-info{style: 'z-index: 10000; margin-bottom: 15px; display: none;'}
+  = t('searches.show.update_is_coming_html')
+
+%p.latest-box.alert.alert-info{style: 'margin-bottom: 15px; display: none;'}
+  = t('searches.show.latest_result')
 
 = render(partial: 'profiles/overview', locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid})
 

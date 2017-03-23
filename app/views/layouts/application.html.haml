@@ -40,7 +40,7 @@
       });
 
     :javascript
-      #{render partial: 'common/errors', formats: %i(js)}
+      #{render partial: 'common/egotter', formats: %i(js)}
 
     - if user_signed_in?
       - if Rails.env.production?

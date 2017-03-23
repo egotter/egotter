@@ -16,7 +16,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       return redirect_to root_path, alert: t('before_sign_in.login_failed_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
     end
 
-    Util::SearchedUids.new(Redis.client).delete(user.uid)
+    ::Util::SearchedUids.new(Redis.client).delete(user.uid)
+    ::Cache::PageCache.new.delete(user.uid)
     user.update(authorized: true)
 
     sign_in_and_redirect user, event: :authentication
