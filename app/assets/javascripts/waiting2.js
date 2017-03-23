@@ -32,6 +32,7 @@ function waiting2(twitterUser, action, scope) {
 
   var refreshBox = $('.refresh-box');
   var latestBox = $('.latest-box');
+  var loginBox = $('.login-box');
 
   refreshBox.find('a').on('click', function (e) {
     e.preventDefault();
@@ -79,7 +80,12 @@ function waiting2(twitterUser, action, scope) {
         refreshBox.show();
         refreshBox.sticky({topSpacing: 0});
       } else {
-        latestBox.show();
+        if (res.message == 'already created and too many friends') {
+          // TODO check whether the user is signed in or not
+          loginBox.show();
+        } else {
+          latestBox.show();
+        }
       }
 
       return;

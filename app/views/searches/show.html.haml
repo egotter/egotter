@@ -6,10 +6,13 @@
 - set_meta_tags title: t('.title', user: @searched_tw_user.mention_name), site: '', description: t('.description', user: @searched_tw_user.mention_name)
 
 %p.refresh-box.alert.alert-info{style: 'z-index: 10000; margin-bottom: 15px; display: none;'}
-  = t('searches.show.update_is_coming_html')
+  = t('searches.show.update_is_coming_html', user: @searched_tw_user.screen_name)
 
 %p.latest-box.alert.alert-info{style: 'margin-bottom: 15px; display: none;'}
-  = t('searches.show.latest_result')
+  = t('searches.show.latest_result', time: l(@searched_tw_user.updated_at.in_time_zone('Tokyo'), format: :short))
+
+%p.login-box.alert.alert-info{style: 'margin-bottom: 15px; display: none;'}
+  = t('searches.show.request_login_html', user: @searched_tw_user.screen_name, sign_in_path: sign_in_path(redirect_path: search_path(screen_name: @searched_tw_user.screen_name))).html_safe
 
 = render(partial: 'profiles/overview', locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid})
 
