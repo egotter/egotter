@@ -1,19 +1,17 @@
 class CreatePromptReportWorker
   include Sidekiq::Worker
-  include Concerns::Rescue
-  prepend Concerns::Perform
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
-    self.client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.
+    client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.
     user = User.find(user_id)
-    self.log = CreatePromptReportLog.new(
+    log = CreatePromptReportLog.new(
       user_id:     user.id,
       uid:         user.uid.to_i,
       screen_name: user.screen_name,
       bot_uid:     user.uid.to_i
     )
-    self.client = user.api_client
+    client = user.api_client
 
     unless user.authorized?
       log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] is not authorized.")
@@ -65,6 +63,16 @@ class CreatePromptReportWorker
       user.update(authorized: false)
     end
     raise e
+  rescue => e
+    message = e.message.truncate(150)
+    logger.warn "#{e.class} #{message}"
+    log.update(
+      status: false,
+      call_count: client.call_count,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      message: "#{e.class} #{message}"
+    )
+
   end
 
   def notify(login_user, tu, changes:)
@@ -74,6 +82,6 @@ class CreatePromptReportWorker
       CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'prompt_report', medium: medium, changes: changes)
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.inspect} #{tu.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message} #{login_user.inspect} #{tu.inspect}"
   end
 end
