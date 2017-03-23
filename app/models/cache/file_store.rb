@@ -47,7 +47,7 @@ module Cache
     end
 
     def clear
-      raise NotImplementedError
+      store.clear
     end
 
     def cleanup
