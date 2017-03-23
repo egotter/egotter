@@ -1,6 +1,6 @@
 function fetchFirstUsers(url, $tab, callback) {
   var selector = $tab.attr('href');
-  var path_name = egotter.controller_name + '/' + egotter.action_name;
+  var path_name = egotter.controllerName + '/' + egotter.actionName;
 
   $.get(url.replace('TYPE', selector.replace('#', '').replace(/-/g, '_')))
     .done(function (res) {
