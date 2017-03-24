@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/etc/init.d/sidekiq_base sidekiq_delay $1
