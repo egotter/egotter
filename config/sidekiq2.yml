@@ -5,6 +5,7 @@
 :queues:
   - egotter
   - CreateRelationshipWorker
+  - CreateSignedInTwitterUserWorker
   - CreateTwitterUserWorker
   - ForceUpdateTwitterUserWorker
   - UpdateTwitterUserWorker
