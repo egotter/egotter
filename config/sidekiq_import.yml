@@ -3,6 +3,7 @@
 :pidfile: ./tmp/pids/sidekiq_import.pid
 :logfile: ./log/sidekiq_import.log
 :queues:
+  - ImportFriendsAndFollowersWorker
   - ImportFriendshipsAndFollowershipsWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker
   - ImportReplyingRepliedAndFavoritesWorker
