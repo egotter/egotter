@@ -1,0 +1,30 @@
+init_config:
+
+instances:
+  - name: nginx_master
+    search_string: ['nginx: master process']
+    exact_match: False
+
+  - name: nginx_worker
+    search_string: ['nginx: worker process']
+    exact_match: False
+
+  - name: nginx_cache_manager
+    search_string: ['nginx: cache manager process']
+    exact_match: False
+
+  - name: unicorn_master
+    search_string: ['unicorn_rails master']
+    exact_match: False
+
+  - name: unicorn_worker
+    search_string: ['unicorn_rails worker']
+    exact_match: False
+
+#  - name: sidekiq
+#    search_string: ['sidekiq']
+#    exact_match: False
+
+  - name: redis_server
+    search_string: ['redis-server']
+    exact_match: False
