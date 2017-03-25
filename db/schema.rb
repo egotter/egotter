@@ -62,6 +62,9 @@ ActiveRecord::Schema.define(version: 20170222055518) do
     t.string   "referral",    limit: 191,   default: "",    null: false
     t.string   "channel",     limit: 191,   default: "",    null: false
     t.string   "medium",      limit: 191,   default: "",    null: false
+    t.datetime "enqueued_at"
+    t.datetime "started_at"
+    t.datetime "finished_at"
     t.datetime "created_at",                                null: false
   end
 

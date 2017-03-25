@@ -6,15 +6,16 @@ class CreateTwitterUserWorker
   BUSY_QUEUE_SIZE = 0
 
   def perform(values = {})
-    client = Hashie::Mash.new(call_count: -100)
+    client = Hashie::Mash.new(call_count: 0)
     log = BackgroundSearchLog.new(message: '')
     user = user_id = uid = nil
-    values['queued_at'] = Time.zone.parse(values['queued_at']) if values['queued_at'].is_a?(String)
-    queued_at = values['queued_at']
+    values['enqueued_at'] = Time.zone.parse(values['enqueued_at']) if values['enqueued_at'].is_a?(String)
+    enqueued_at = values['enqueued_at']
     started_at = Time.zone.now
 
     if self.class == CreateTwitterUserWorker
-      if queued_at < 1.minutes.ago || (Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && values['auto'])
+      if enqueued_at < 1.minutes.ago || (Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && values['auto'])
+        log = nil
         return DelayedCreateTwitterUserWorker.perform_async(values)
       end
     end
@@ -41,12 +42,12 @@ class CreateTwitterUserWorker
       channel:     values.fetch('channel', ''),
       medium:      values.fetch('medium', ''),
     )
-    log.queued_at = queued_at if log.respond_to?(:queued_at) # TODO remove later
-    log.started_at = started_at if log.respond_to?(:started_at) # TODO remove later
+    log.enqueued_at = enqueued_at
+    log.started_at = started_at
 
     user = User.find_by(id: user_id)
     if user&.unauthorized?
-      return log.update(status: false, call_count: 0, reason: BackgroundSearchLog::Unauthorized::MESSAGE)
+      return log.assign_attributes(status: false, reason: BackgroundSearchLog::Unauthorized::MESSAGE)
     end
 
     client = user.nil? ? Bot.api_client : user.api_client
@@ -55,9 +56,9 @@ class CreateTwitterUserWorker
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
       if TwitterUser.exists?(uid: uid)
-        return log.update(status: true, call_count: client.call_count, message: "[#{uid}] is recently created.")
+        return log.assign_attributes(status: true, message: "[#{uid}] is recently created.")
       else
-        return log.update(status: false, call_count: client.call_count, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: "[#{uid}] is recently created.")
+        return log.assign_attributes(status: false, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: "[#{uid}] is recently created.")
       end
     end
     creating_uids.add(uid)
@@ -69,28 +70,27 @@ class CreateTwitterUserWorker
       if latest
         latest.increment(:search_count).save
         notify(user, latest)
-        return log.update(status: true, call_count: client.call_count, message: builder.error_message)
+        return log.assign_attributes(status: true, message: builder.error_message)
       else
-        return log.update(status: false, call_count: client.call_count, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: builder.error_message)
+        return log.assign_attributes(status: false, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: builder.error_message)
       end
     end
 
     if new_tu.save
       new_tu.increment(:search_count).save
       notify(user, new_tu)
-      return log.update(status: true, call_count: client.call_count, message: "[#{new_tu.id}] is created.")
+      return log.assign_attributes(status: true, message: "[#{new_tu.id}] is created.")
     end
 
     latest = TwitterUser.latest(uid)
     if latest
       latest.increment(:search_count).save
       notify(user, latest)
-      return log.update(status: true, call_count: client.call_count, message: 'not changed')
+      return log.assign_attributes(status: true, message: 'not changed')
     end
 
-    log.update(
+    log.assign_attributes(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
@@ -98,9 +98,8 @@ class CreateTwitterUserWorker
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     FORBIDDEN_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
 
-    log.update(
+    log.assign_attributes(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message.truncate(150)}"
     )
@@ -108,16 +107,14 @@ class CreateTwitterUserWorker
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
 
-    log.update(
+    log.assign_attributes(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::TooManyRequests => e
     log.update(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE
     )
 
@@ -130,15 +127,13 @@ class CreateTwitterUserWorker
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
 
-    log.update(
+    log.assign_attributes(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::Unauthorized::MESSAGE
     )
   rescue Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
-    log.update(
+    log.assign_attributes(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message}"
     )
@@ -151,9 +146,8 @@ class CreateTwitterUserWorker
     logger.warn "#{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
 
-    log.update(
+    log.assign_attributes(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{message}"
     )
@@ -163,14 +157,14 @@ class CreateTwitterUserWorker
     logger.warn "#{e.class} #{message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
 
-    log.update(
+    log.assign_attributes(
       status: false,
-      call_count: client.call_count,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{message}"
     )
   ensure
-    message = "[worker] #{self.class} finished. #{user_id} #{uid} queued_at: #{short_hour(queued_at)}, started_at: #{short_hour(started_at)}, finished_at: #{short_hour(Time.zone.now)}"
+    log.update(call_count: client.call_count, finished_at: Time.zone.now) if log
+    message = "[worker] #{self.class} finished. #{user_id} #{uid} enqueued_at: #{short_hour(enqueued_at)}, started_at: #{short_hour(started_at)}, finished_at: #{short_hour(Time.zone.now)}"
     Rails.logger.info message
     logger.info message
   end

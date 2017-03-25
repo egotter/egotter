@@ -24,7 +24,8 @@ module WorkersHelper
       referral:    referral,
       channel:     find_channel(referral),
       medium:      params[:medium] ? params[:medium] : '',
-      queued_at:   Time.zone.now
+      queued_at:   Time.zone.now,
+      enqueued_at: Time.zone.now
     }
 
     if user_signed_in?

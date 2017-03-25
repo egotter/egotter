@@ -23,6 +23,9 @@
 #  referral    :string(191)      default(""), not null
 #  channel     :string(191)      default(""), not null
 #  medium      :string(191)      default(""), not null
+#  enqueued_at :datetime
+#  started_at  :datetime
+#  finished_at :datetime
 #  created_at  :datetime         not null
 #
 # Indexes

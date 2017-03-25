@@ -24,8 +24,9 @@ class CreateBackgroundSearchLogs < ActiveRecord::Migration
       t.string  :channel,     null: false, default: ''
       t.string  :medium,      null: false, default: ''
 
-      t.datetime :queued_at,  null: true,  default: nil
-      t.datetime :started_at, null: true,  default: nil
+      t.datetime :enqueued_at, null: true,  default: nil
+      t.datetime :started_at,  null: true,  default: nil
+      t.datetime :finished_at, null: true,  default: nil
 
       t.datetime :created_at, null: false
     end
