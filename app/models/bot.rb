@@ -21,7 +21,11 @@ class Bot < ActiveRecord::Base
   IDS = pluck(:id)
 
   def self.api_client
-    find(IDS.sample).api_client
+    sample.api_client
+  end
+
+  def self.sample
+    find(IDS.sample)
   end
 
   def self.load(path)
@@ -79,21 +83,21 @@ class Bot < ActiveRecord::Base
     def verify_credentials
       {
         remaining: resources[:account][:'/account/verify_credentials'][:remaining],
-        reset_in: Time.zone.at(resources[:account][:'/account/verify_credentials'][:reset]) - Time.zone.now
+        reset_in: (Time.zone.at(resources[:account][:'/account/verify_credentials'][:reset]) - Time.zone.now).round
       }
     end
 
     def friend_ids
       {
         remaining: resources[:friends][:'/friends/ids'][:remaining],
-        reset_in: Time.zone.at(resources[:friends][:'/friends/ids'][:reset]) - Time.zone.now
+        reset_in: (Time.zone.at(resources[:friends][:'/friends/ids'][:reset]) - Time.zone.now).round
       }
     end
 
     def follower_ids
       {
         remaining: resources[:followers][:'/followers/ids'][:remaining],
-        reset_in: Time.zone.at(resources[:followers][:'/followers/ids'][:reset]) - Time.zone.now
+        reset_in: (Time.zone.at(resources[:followers][:'/followers/ids'][:reset]) - Time.zone.now).round
       }
     end
   end

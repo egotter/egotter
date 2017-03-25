@@ -21,8 +21,17 @@ class CreateRelationshipWorker
       channel:     values['channel']
     )
     user = User.find_by(id: user_id)
-    client = user.nil? ? Bot.api_client : user.api_client
-    log.bot_uid = client.verify_credentials.id
+
+    client =
+      if user
+        log.bot_uid = user.uid
+        user.api_client
+      else
+        bot = Bot.sample
+        log.bot_uid = bot.uid
+        bot.api_client
+      end
+
 
     created = []
     persisted = []

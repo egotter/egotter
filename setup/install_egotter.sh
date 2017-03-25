@@ -92,6 +92,10 @@ cp -f ./setup/etc/td-agent/* /etc/td-agent/
 chkconfig td-agent on
 service td-agent start
 
+echo "net.ipv4.tcp_max_syn_backlog = 512" >>/etc/sysctl.conf
+echo "net.core.somaxconn = 512" >>/etc/sysctl.conf
+sysctl -p
+
 # logrotate
 cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
 sed -i '/include \/etc\/logrotate.d/a include \/etc\/logrotate.d\/egotter' /etc/logrotate.conf

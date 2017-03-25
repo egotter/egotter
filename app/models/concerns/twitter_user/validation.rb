@@ -15,7 +15,7 @@ module Concerns::TwitterUser::Validation
   end
 
   def valid_uid?
-    if uid.present? && uid.match(Validations::UidValidator::REGEXP)
+    if uid&.to_s&.match(Validations::UidValidator::REGEXP)
       true
     else
       errors.add(:uid, :invalid)
@@ -24,7 +24,7 @@ module Concerns::TwitterUser::Validation
   end
 
   def valid_screen_name?
-    if screen_name.present? && screen_name.match(Validations::ScreenNameValidator::REGEXP)
+    if screen_name&.match(Validations::ScreenNameValidator::REGEXP)
       true
     else
       errors.add(:screen_name, :invalid)

@@ -30,4 +30,4 @@ instances:
     exact_match: False
 
   - name: td_agent
-    pid_file: /var/run/td-agent.pid
+    pid_file: /var/run/td-agent/td-agent.pid
