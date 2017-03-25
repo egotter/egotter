@@ -2,3 +2,7 @@ init_config:
 
 instances:
   - pid_file: /home/ec2-user/egotter/tmp/pids/sidekiq.pid
+  - pid_file: /home/ec2-user/egotter/tmp/pids/sidekiq2.pid
+  - pid_file: /home/ec2-user/egotter/tmp/pids/sidekiq3.pid
+  - pid_file: /home/ec2-user/egotter/tmp/pids/sidekiq_import.pid
+  - pid_file: /home/ec2-user/egotter/tmp/pids/sidekiq_delay.pid

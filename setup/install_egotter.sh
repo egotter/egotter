@@ -111,12 +111,15 @@ Setup daemons:
     service redis stop; chkconfig redis off
     service sendmail stop; chkconfig sendmail off
     service monit stop; chkconfig monit off
+    service sidekiq stop; chkconfig --add sidekiq; chkconfig sidekiq off
 
 Install datadog:
 
     # https://app.datadoghq.com/account/settings#agent/aws
     sed -i -e 's/# hostname: .\+/hostname: xxx.egotter/' /etc/dd-agent/datadog.conf
     /etc/init.d/datadog-agent restart; chkconfig datadog-agent on
+    cp setup/etc/dd-agent/checks.d/sidekiq.py /etc/dd-agent/checks.d/sidekiq.py
+    cp setup/etc/dd-agent/conf.d/sidekiq.yaml /etc/dd-agent/conf.d/sidekiq.yaml
 
 Make swap:
 

@@ -21,9 +21,9 @@ instances:
     search_string: ['unicorn_rails worker']
     exact_match: False
 
-#  - name: sidekiq
-#    search_string: ['sidekiq']
-#    exact_match: False
+  - name: sidekiq_4.2.9
+    search_string: ['sidekiq 4.2.9']
+    exact_match: False
 
   - name: redis_server
     search_string: ['redis-server']

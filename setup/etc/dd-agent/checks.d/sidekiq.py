@@ -11,9 +11,10 @@ class SidekiqCheck(AgentCheck):
     pid = open(pid_file, 'r').read().strip()
 
     name, busy_count, total_count = self.worker_count(pid)
-    self.gauge('sidekiq.threads.number', total_count, tags=[name])
-    self.gauge('sidekiq.threads.busy_count', busy_count, tags=[name])
-    self.gauge('sidekiq.threads.idle_count', total_count - busy_count, tags=[name])
+    tag = "sidekiq_name:%s" % name.replace(':', '_')
+    self.gauge('sidekiq.workers.number', total_count, tags=[tag])
+    self.gauge('sidekiq.workers.busy_count', busy_count, tags=[tag])
+    self.gauge('sidekiq.workers.idle_count', total_count - busy_count, tags=[tag])
 
     cmd="ps -o vsz= -o rss= -p %s" % pid
     vms, rss = self.exec_cmd(cmd).split()
