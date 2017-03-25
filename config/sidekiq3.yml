@@ -1,0 +1,11 @@
+:concurrency: 2
+:timeout: 10
+:pidfile: ./tmp/pids/sidekiq3.pid
+:logfile: ./log/sidekiq3.log
+:queues:
+  - egotter
+  - CreateRelationshipWorker
+  - CreateSignedInTwitterUserWorker
+  - CreateTwitterUserWorker
+  - ForceUpdateTwitterUserWorker
+  - UpdateTwitterUserWorker

@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# chkconfig: 345 85 15
+# description: sidekiq3
+
+/etc/init.d/sidekiq_base sidekiq3 $1
