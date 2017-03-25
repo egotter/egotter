@@ -1,3 +1,5 @@
+require 'datadog/statsd'
+
 class SendStatsWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false

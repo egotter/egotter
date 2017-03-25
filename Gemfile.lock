@@ -63,7 +63,7 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
-    dogstatsd-ruby (1.6.0)
+    dogstatsd-ruby (2.2.0)
     domain_name (0.5.20170223)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.1.1)
