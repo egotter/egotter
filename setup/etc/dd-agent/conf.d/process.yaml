@@ -28,3 +28,6 @@ instances:
   - name: redis_server
     search_string: ['redis-server']
     exact_match: False
+
+  - name: td_agent
+    pid_file: /var/run/td-agent.pid

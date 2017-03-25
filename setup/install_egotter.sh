@@ -37,6 +37,7 @@ ${sudo_cmd} "gem install bundler --no-ri --no-rdoc"
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
+curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh
 
 cd ${HOME}
 if [ ! -d "./egotter" ]; then
@@ -85,6 +86,12 @@ chkconfig nginx on
 service nginx start
 # chown -R ec2-user:ec2-user /var/log/nginx
 
+# td-agent
+[ ! -f "/etc/td-agent/td-agent.conf.bak" ] && cp /etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf.bak
+cp -f ./setup/etc/td-agent/* /etc/td-agent/
+chkconfig td-agent on
+service td-agent start
+
 # logrotate
 cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
 sed -i '/include \/etc\/logrotate.d/a include \/etc\/logrotate.d\/egotter' /etc/logrotate.conf
@@ -111,6 +118,7 @@ Setup daemons:
     service redis stop; chkconfig redis off
     service sendmail stop; chkconfig sendmail off
     service monit stop; chkconfig monit off
+    service td-agent stop; chkconfig td-agent off
     service sidekiq stop; chkconfig --add sidekiq; chkconfig sidekiq off
 
 Install datadog:

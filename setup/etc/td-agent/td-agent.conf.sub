@@ -1,0 +1,23 @@
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq.log
+  pos_file /tmp/sidekiq.log.pos
+  tag sidekiq.sidekiq
+  format none
+</source>
+
+<match **>
+  @type forward
+  send_timeout 60s
+  recover_wait 10s
+  heartbeat_interval 1s
+  phi_threshold 16
+  hard_timeout 60s
+
+  <server>
+    name egotter_web
+    host xxx.xxx.xxx.xxx
+    port 24224
+    weight 60
+  </server>
+</match>
