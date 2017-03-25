@@ -63,6 +63,7 @@ GEM
       responders
       warden (~> 1.2.3)
     diff-lcs (1.2.5)
+    dogstatsd-ruby (1.6.0)
     domain_name (0.5.20170223)
       unf (>= 0.0.5, < 1.0.0)
     dotenv (2.1.1)
@@ -325,6 +326,7 @@ DEPENDENCIES
   blazer
   byebug
   devise
+  dogstatsd-ruby
   dotenv-rails
   draper
   factory_girl_rails

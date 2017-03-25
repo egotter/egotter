@@ -61,6 +61,7 @@ gem 'draper'
 gem 'rollbar'
 gem 'oj'
 gem 'gretel'
+gem 'dogstatsd-ruby'
 
 group :development, :production do
   gem 'blazer'
