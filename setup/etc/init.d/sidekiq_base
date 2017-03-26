@@ -64,6 +64,9 @@ start() {
 quiet() {
   cd ${APP_ROOT}
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
+  if [ $? -ne 0 ]; then
+    return 1
+  fi
 
   local retries=10
   while [ ${retries} -gt 1 ]; do
