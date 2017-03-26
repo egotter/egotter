@@ -61,7 +61,8 @@ gem 'draper'
 gem 'rollbar'
 gem 'oj'
 gem 'gretel'
-gem 'dogstatsd-ruby'
+gem 'dogstatsd-ruby', require: false
+gem 'google-api-client', require: false
 
 group :development, :production do
   gem 'blazer'

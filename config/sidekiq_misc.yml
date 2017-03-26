@@ -8,5 +8,5 @@
   - CreatePromptReportWorker
   - CreateSearchHistoriesWorker
   - CreateTweetsWorker
-  - SendStatsWorker
+  - SendMetricsWorker
   - UpdateNotificationMessageWorker
