@@ -22,6 +22,7 @@ NAME="${1}"
 TAG="egotter:${NAME}"
 PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
 CONFIG_FILE="${APP_ROOT}config/${NAME}.yml"
+LOCK_FILE="/var/lock/subsys/${NAME}"
 
 print_pid() {
   cat ${PID_FILE}
@@ -31,71 +32,88 @@ print_command() {
   ps -o command= -p $(print_pid)
 }
 
-is_stopped() {
-  print_command | egrep -a "sidekiq [0-9]+\.[0-9]+\.[0-9]+ ${TAG} \[0 of [0-9]+ busy\] stopping" > /dev/null 2>&1
-  return $?
+is_quiet() {
+  if checkpid $(print_pid); then
+    print_command | egrep -a "sidekiq [0-9]+\.[0-9]+\.[0-9]+ ${TAG} \[0 of [0-9]+ busy\] stopping" > /dev/null 2>&1
+    return $?
+  else
+    return 0
+  fi
 }
 
 is_running() {
-  print_command | egrep -a "sidekiq [0-9]+\.[0-9]+\.[0-9]+ ${TAG} \[[0-9]+ of [0-9]+ busy\]" > /dev/null 2>&1
-  return $?
+  [ -f ${PID_FILE} ] && checkpid $(print_pid)
 }
 
 start() {
-  cd $APP_ROOT
+  cd ${APP_ROOT}
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e ${RAILS_ENV} -d -g ${TAG} -C ${CONFIG_FILE}"
-  while [ ! -f ${PID_FILE} ]; do
-    sleep 2
+  if [ $? -ne 0 ]; then
+    echo ${en} "Starting $NAME: ${ec}"; failure; echo
+    return 1
+  fi
+
+  while [ ! -f ${PID_FILE} ]; do sleep 2; done
+  until checkpid $(print_pid); do sleep 2; done
+
+  touch ${LOCK_FILE}
+  echo ${en} "Starting $NAME: ${ec}"; success; echo
+  return 0
+}
+
+quiet() {
+  cd ${APP_ROOT}
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
+
+  local retries=10
+  while [ ${retries} -gt 1 ]; do
+    if is_quiet; then
+      return 0
+    else
+      echo "waiting to be quiet: $(print_command)"
+      retries=$(($retries - 1))
+      sleep 2
+    fi
   done
 
-  until checkpid $(print_pid); do
-    sleep 2
-  done
-
-  echo ${en} "Starting $NAME: ${ec}"
-  success
-  echo
+  return 1
 }
 
 stop() {
-  cd $APP_ROOT
+  cd ${APP_ROOT}
+  quiet
+  if [ $? -ne 0 ]; then
+    echo ${en} "Stopping $NAME: ${ec}"; failure; echo
+    return 1
+  fi
+
   local pid=$(print_pid)
-
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
-  until is_stopped; do
-    echo "waiting to be quiet: $(print_command)"
-    checkpid ${pid} || break
-    sleep 2
-  done
-
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl stop ${PID_FILE}"
-  while checkpid ${pid}; do
-    echo "waiting to stop: $(print_command)"
-    sleep 2
+
+  local retries=10
+  while [ ${retries} -gt 1 ]; do
+    if checkpid ${pid}; then
+      echo "waiting to stop: $(print_command)"
+      retries=$(($retries - 1))
+      sleep 2
+    else
+      rm -f ${LOCK_FILE}
+      echo ${en} "Stopping $NAME: ${ec}"; success; echo
+      return 0
+    fi
   done
 
-  echo ${en} "Stopping $NAME: ${ec}"
-  success
-  echo
+  echo ${en} "Stopping $NAME: ${ec}"; failure; echo
+  return 1
 }
 
 force_stop() {
-  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-    kill -USR1 $(print_pid) && sleep 3
-  fi
-  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-    kill -TERM $(print_pid) && sleep 11
-  fi
-  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-    kill -9 $(print_pid) && sleep 1
-  fi
+  is_running && kill -USR1 $(print_pid) && sleep 3
+  is_running && kill -TERM $(print_pid) && sleep 11
+  is_running && kill -9 $(print_pid) && sleep 1
 
-  [ -f ${PID_FILE} ] && rm ${PID_FILE}
-
-
-  echo ${en} "Stopping $NAME: ${ec}"
-  success
-  echo
+  rm -f ${PID_FILE} ${LOCK_FILE}
+  echo ${en} "Stopping $NAME: ${ec}"; success; echo
 }
 
 rh_status() {
@@ -107,10 +125,9 @@ case "${2}" in
   start)
           if [ -f ${PID_FILE} ]; then
             rh_status
-            if checkpid $(print_pid); then
-              :
-            else
-              rm ${PID_FILE}
+            checkpid $(print_pid)
+            if [ $? -ne 0 ]; then
+              rm -f ${PID_FILE}
               start
             fi
           else
@@ -118,19 +135,19 @@ case "${2}" in
           fi
           ;;
   stop)
-          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+          if is_running; then
             stop
           else
             rh_status
-            [ -f ${PID_FILE} ] && rm ${PID_FILE}
+            [ -f ${PID_FILE} ] && rm -f ${PID_FILE}
           fi
           ;;
   restart)
-          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+          if is_running; then
             stop
           else
             rh_status
-            [ -f ${PID_FILE} ] && rm ${PID_FILE}
+            [ -f ${PID_FILE} ] && rm -f ${PID_FILE}
           fi
 
           start
