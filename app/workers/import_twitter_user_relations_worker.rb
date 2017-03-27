@@ -21,7 +21,7 @@ class ImportTwitterUserRelationsWorker
 
     if twitter_user.friendless?
       t_user = client.user(uid)
-      TwitterDB::User.import_each_slice [to_array(t_user)]
+      TwitterDB::User.import_each_slice [TwitterDB::User.to_import_format(t_user)]
     else
       signatures = [{method: :user, args: [uid]}, {method: :friends, args: [uid]}, {method: :followers, args: [uid]}]
       client._fetch_parallelly(signatures) # create caches
@@ -51,10 +51,6 @@ class ImportTwitterUserRelationsWorker
   end
 
   private
-
-  def to_array(user)
-    [user.id, user.screen_name, user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1]
-  end
 
   def handle_retryable_exception(user_id, uid, ex)
     retry_jid = DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid)
