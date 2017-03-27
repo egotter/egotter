@@ -79,6 +79,10 @@ class User < ActiveRecord::Base
     raise e
   end
 
+  def self.authorized
+    where(authorized: true)
+  end
+
   def api_client
     ApiClient.instance(access_token: token, access_token_secret: secret)
   end
