@@ -3,11 +3,12 @@ class ImportFriendshipsAndFollowershipsWorker
   include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(user_id, uid)
+  def perform(user_id, uid, options = {})
     started_at = Time.zone.now
     chk1 = chk2 = chk3 = nil
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
     twitter_user = TwitterUser.latest(uid)
+    async = options.fetch('async', true)
     @retry_count = 0
 
     signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]

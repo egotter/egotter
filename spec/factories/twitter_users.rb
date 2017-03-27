@@ -7,11 +7,11 @@ FactoryGirl.define do
 
     after(:build) do |tu|
       friends = 2.times.map { create(:twitter_db_user) }
-      friends.each { |f| tu.friendships.build(friend_uid: f.uid) }
+      friends.each.with_index { |f, i| tu.friendships.build(friend_uid: f.uid, sequence: i) }
       tu.friends_size = friends.size
 
       followers = 2.times.map { create(:twitter_db_user) }
-      followers.each { |f| tu.followerships.build(follower_uid: f.uid) }
+      followers.each.with_index { |f, i| tu.followerships.build(follower_uid: f.uid, sequence: i) }
       tu.followers_size = followers.size
 
       tu.statuses = 2.times.map { build(:status) }

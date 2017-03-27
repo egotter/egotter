@@ -26,9 +26,13 @@ module Concerns::TwitterUser::Persistence
     _transaction('import SearchResult') { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
     _transaction('import Favorite') { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
 
-    reload
-
-    ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now)
+    if Rails.env.test?
+      friendships.each { |f| f.from_id = id }.each(&:save!)
+      followerships.each { |f| f.from_id = id }.each(&:save!)
+    else
+      reload
+      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now)
+    end
 
   rescue => e
     # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000

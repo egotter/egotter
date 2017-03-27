@@ -14,6 +14,8 @@ module Concerns::TwitterUser::Debug
       user = TwitterDB::User.find_by(uid: uid)
       delim = ' '
 
+      puts [[created_at.to_s(:db), updated_at.to_s(:db)].inspect, [user.created_at.to_s(:db), user.updated_at.to_s(:db)].inspect].join delim
+
       puts %w(protected? one? latest? size).join delim
       puts [protected_account?, one?, latest?, size].inspect
       puts

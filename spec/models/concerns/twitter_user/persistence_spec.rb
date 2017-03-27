@@ -11,13 +11,13 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       follower_uids
     end
 
-    pending 'saves friendships' do
+    it 'saves friendships' do
       expect { twitter_user.save! }.to change { Friendship.all.size }.by(friend_uids.size)
       expect(twitter_user.friendships.pluck(:friend_uid)).to match_array(friend_uids)
       expect(twitter_user.friends_size).to eq(friend_uids.size)
     end
 
-    pending 'saves followerships' do
+    it 'saves followerships' do
       expect { twitter_user.save! }.to change { Followership.all.size }.by(follower_uids.size)
       expect(twitter_user.followerships.pluck(:follower_uid)).to match_array(follower_uids)
       expect(twitter_user.followers_size).to eq(follower_uids.size)

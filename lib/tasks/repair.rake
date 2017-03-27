@@ -144,52 +144,50 @@ namespace :repair do
         twitter_user = TwitterUser.find(twitter_user_id)
         uid = twitter_user.uid.to_i
 
-        clients = [
-          User.authorized.find_by(uid: uid)&.api_client,
-          User.authorized.find_by(id: twitter_user.user_id)&.api_client,
-          Bot.api_client
-        ]
-
         ex = nil
         t_user = friend_uids = follower_uids = nil
-        not_found = unauthorized = success = false
+        not_found = unauthorized = retri = false
+        client = ApiClient.better_client(uid, twitter_user.user_id)
 
-        clients.each.with_index do |client, i|
-          next unless client
-
-          begin
-            t_user = client.user(uid)
-            friend_uids = client.friend_ids(uid)
-            follower_uids = client.follower_ids(uid)
-            success = true
-          rescue Twitter::Error::Unauthorized => e
-            if e.message == 'Invalid or expired token.' && i != clients.size - 1
-              User.find_by(token: client.access_token, secret: client.access_token_secret).update(authorized: false)
-            elsif e.message == 'Not authorized.'
-              unauthorized = i == clients.size - 1
-            else
+        begin
+          t_user = client.user(uid)
+          friend_uids = client.friend_ids(uid)
+          follower_uids = client.follower_ids(uid)
+        rescue Twitter::Error::Unauthorized => e
+          if e.message == 'Invalid or expired token.'
+            user = User.find_by(token: client.access_token, secret: client.access_token_secret)
+            if retri
+              puts "invalid token(fatal) #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
               ex = e
-            end
-          rescue Twitter::Error::Forbidden => e
-            if e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
-              # TODO
             else
-              ex = e
+              puts "invalid token(retry) #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
+              client = Bot.api_client
+              retri = true
+              retry
             end
-          rescue Twitter::Error::NotFound => e
-            if e.message == 'User not found.'
-              not_found = true
-            else
-              ex = e
-            end
-          rescue Twitter::Error::TooManyRequests => e
-            puts "reset in #{e.rate_limit.reset_in} seconds"
-            ex = e
-          rescue => e
+          elsif e.message == 'Not authorized.'
+            unauthorized = true
+          else
             ex = e
           end
-
-          break if ex || not_found || success
+        rescue Twitter::Error::Forbidden => e
+          if e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
+            user = User.find_by(token: client.access_token, secret: client.access_token_secret)
+            puts "temporarily locked #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
+          else
+            ex = e
+          end
+        rescue Twitter::Error::NotFound => e
+          if e.message == 'User not found.'
+            not_found = true
+          else
+            ex = e
+          end
+        rescue Twitter::Error::TooManyRequests => e
+          puts "reset in #{e.rate_limit.reset_in} seconds"
+          ex = e
+        rescue => e
+          ex = e
         end
 
         if ex
@@ -217,41 +215,36 @@ namespace :repair do
           next
         end
 
-        if success
-          latest = twitter_user.latest?
-          if latest
-            ActiveRecord::Base.transaction do
-              twitter_user.update!(user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: friend_uids.size, followers_size: follower_uids.size)
-              Friendship.import_from!(twitter_user.id, friend_uids)
-              Followership.import_from!(twitter_user.id, follower_uids)
-            end
-
-            twitter_user = TwitterUser.find(twitter_user_id)
-
-            OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
-            OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
-            MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
-          else
-            ActiveRecord::Base.transaction do
-              twitter_user.update!(friends_size: 0, followers_size: 0)
-              Friendship.import_from!(twitter_user.id, [])
-              Followership.import_from!(twitter_user.id, [])
-            end
-          end
-
+        latest = twitter_user.latest?
+        if latest
           ActiveRecord::Base.transaction do
-            Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
-            Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+            twitter_user.update!(user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: friend_uids.size, followers_size: follower_uids.size)
+            Friendship.import_from!(twitter_user.id, friend_uids)
+            Followership.import_from!(twitter_user.id, follower_uids)
           end
 
-          TwitterUser.find(twitter_user_id).tap do |tu|
-            puts "Complete #{tu.protected_account?} #{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
-          end
+          twitter_user = TwitterUser.find(twitter_user_id)
 
-          next
+          OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
+          OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
+          MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
+        else
+          ActiveRecord::Base.transaction do
+            twitter_user.update!(friends_size: 0, followers_size: 0)
+            Friendship.import_from!(twitter_user.id, [])
+            Followership.import_from!(twitter_user.id, [])
+          end
         end
 
-        raise "something wrong #{twitter_user_id} #{uid}"
+        ActiveRecord::Base.transaction do
+          Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+          Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+        end
+
+        TwitterUser.find(twitter_user_id).tap do |tu|
+          puts "Complete #{tu.protected_account?} #{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+        end
+
       end
     end
   end

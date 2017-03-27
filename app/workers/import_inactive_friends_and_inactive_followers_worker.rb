@@ -3,9 +3,10 @@ class ImportInactiveFriendsAndInactiveFollowersWorker
   include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(user_id, uid)
+  def perform(user_id, uid, options = {})
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
     twitter_user = TwitterUser.latest(uid)
+    async = options.fetch('async', true)
 
     signatures = [{method: :friends, args: [uid]}, {method: :followers, args: [uid]}]
     friends, followers = client._fetch_parallelly(signatures)

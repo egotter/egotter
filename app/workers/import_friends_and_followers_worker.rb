@@ -3,9 +3,10 @@ class ImportFriendsAndFollowersWorker
   include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(user_id, uid)
+  def perform(user_id, uid, options = {})
     started_at = Time.zone.now
     client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
+    async = options.fetch('async', true)
 
     user = TwitterDB::User.builder(uid).client(client).build
     user.persist!
