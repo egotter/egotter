@@ -9,12 +9,12 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
   def perform(user_id, uid, options = {})
     slept = false
     while (queue = Sidekiq::Queue.new('ImportTwitterUserRelationsWorker')).size > BUSY_QUEUE_SIZE
-      logger.warn "I will sleep. Bye! size: #{queue.size}"
+      logger.info "I will sleep. Bye! size: #{queue.size}"
       slept = true
       sleep(queue.size < 10 ? queue.size * 3 : 3.minutes)
     end
 
-    logger.warn 'Good morning. I will retry.' if slept
+    logger.info 'Good morning. I will retry.' if slept
 
     super
   end
