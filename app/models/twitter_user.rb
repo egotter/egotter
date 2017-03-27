@@ -58,12 +58,9 @@ class TwitterUser < ActiveRecord::Base
     end
 
     def build(validate: true)
-      login_user = @login_user || build_login_user
-      client = @client || build_client
-
-      t_user = client.user(uid)
+      t_user = @client.user(uid)
       new_tu = TwitterUser.build_by_user(t_user)
-      relations = TwitterUserFetcher.new(new_tu, client: client, login_user: login_user).fetch
+      relations = TwitterUserFetcher.new(new_tu, client: @client, login_user: @login_user).fetch
       latest = nil
 
       if validate
@@ -90,7 +87,7 @@ class TwitterUser < ActiveRecord::Base
       end
 
       new_tu.build_other_relations(relations)
-      new_tu.user_id = login_user ? login_user.id : -1
+      new_tu.user_id = @login_user ? @login_user.id : -1
       new_tu
     end
 
@@ -102,21 +99,6 @@ class TwitterUser < ActiveRecord::Base
     def client(client)
       @client = client
       self
-    end
-
-    private
-
-    def build_login_user
-      @login_user || User.find_by(uid: uid)
-    end
-
-    def build_client
-      if @login_user
-        @login_user.authorized? ? @login_user.api_client : Bot.api_client
-      else
-        user = User.find_by(uid: uid, authorized: true)
-        user ? user.api_client : Bot.api_client
-      end
     end
   end
 end

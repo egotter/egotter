@@ -50,8 +50,15 @@ class CreateTwitterUserWorker
       return log.assign_attributes(status: false, reason: BackgroundSearchLog::Unauthorized::MESSAGE)
     end
 
-    client = user.nil? ? Bot.api_client : user.api_client
-    log.bot_uid = client.verify_credentials.id
+    client =
+      if user
+        log.bot_uid = user.uid
+        user.api_client
+      else
+        bot = Bot.sample
+        log.bot_uid = bot.uid
+        bot.api_client
+      end
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
