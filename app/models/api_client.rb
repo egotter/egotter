@@ -17,7 +17,7 @@ class ApiClient
     Twitter::REST::Client.new
   end
 
-  def self.better_client(uid, login_user_id: nil)
+  def self.better_client(uid, login_user_id = nil)
     user = User.authorized.find_by(uid: uid)
     return user.api_client if user
 
