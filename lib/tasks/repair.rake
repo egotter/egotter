@@ -156,11 +156,10 @@ namespace :repair do
         rescue Twitter::Error::Unauthorized => e
           if e.message == 'Invalid or expired token.'
             user = User.find_by(token: client.access_token, secret: client.access_token_secret)
+            puts "invalid token #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
             if retri
-              puts "invalid token(fatal) #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
               ex = e
             else
-              puts "invalid token(retry) #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
               client = Bot.api_client
               retri = true
               retry
@@ -174,6 +173,13 @@ namespace :repair do
           if e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
             user = User.find_by(token: client.access_token, secret: client.access_token_secret)
             puts "temporarily locked #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
+            if retri
+              ex = e
+            else
+              client = Bot.api_client
+              retri = true
+              retry
+            end
           else
             ex = e
           end
