@@ -30,7 +30,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     end
     return if t_users.blank?
 
-    users = t_users.map { |user| to_array(user) }
+    users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
     users.sort_by!(&:first)
 
     chk1 = Time.zone.now
@@ -61,11 +61,5 @@ class ImportReplyingRepliedAndFavoritesWorker
     raise unless async
   ensure
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user&.screen_name}"
-  end
-
-  private
-
-  def to_array(user)
-    [user.id, user.screen_name, user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1]
   end
 end

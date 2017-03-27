@@ -15,41 +15,38 @@ namespace :repair do
     not_consistent = []
     processed = 0
     start_time = Time.zone.now
-    failed = false
     puts "\ncheck started:"
 
     Rails.logger.silence do
-      TwitterUser.find_in_batches(start: start, batch_size: 1000) do |twitter_users|
-        break if twitter_users[0].id > last
+      TwitterUser.where('id <= ?', last).find_in_batches(start: start, batch_size: 1000) do |twitter_users|
 
         twitter_users.each do |tu|
-          break if tu.id > last
-
           user = TwitterDB::User.find_by(uid: tu.uid)
+
           if user
             if verbose
               if user.friends_size == -1 || user.followers_size == -1
                 puts "friendless #{tu.id} #{tu.uid}"
-                friendless << user.uid
+                friendless << tu.id
               end
             end
           else
             puts "not found #{tu.id} #{tu.uid}"
-            not_found << tu.uid.to_i
+            not_found << tu.id
           end
 
           friends = [
-            verbose ? tu.friends.size : nil,
             tu.friendships.size,
             tu.friends_size,
-            # tu.friends_count,
+            verbose ? tu.friends.size : nil,
+            verbose ? tu.friends_count : nil
           ].compact
 
           followers = [
-            verbose ? tu.followers.size : nil,
             tu.followerships.size,
             tu.followers_size,
-            # tu.followers_count,
+            verbose ? tu.followers.size : nil,
+            verbose ? tu.followers_count : nil
           ].compact
 
           if friends.uniq.many? || followers.uniq.many?
@@ -57,50 +54,86 @@ namespace :repair do
             not_consistent << tu.id
           end
 
-          break if sigint || failed
+          break if sigint
         end
 
         processed += twitter_users.size
         avg = '%3.1f' % ((Time.zone.now - start_time) / processed)
         puts "#{Time.zone.now}: processed #{processed}, avg #{avg}, #{twitter_users[0].id} - #{twitter_users[-1].id}"
 
-        break if sigint || failed
+        break if sigint
       end
     end
 
-    puts "TwitterDB::User not_found(uid) #{not_found.inspect.remove(' ')}" if not_found.any?
-    puts "TwitterDB::User friendless(uid) #{friendless.inspect.remove(' ')}" if friendless.any?
-    puts "TwitterUser not_consistent(tu_id) #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
-    puts "check #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "TwitterDB::User not_found #{not_found.inspect.remove(' ')}" if not_found.any?
+    puts "TwitterDB::User friendless #{friendless.inspect.remove(' ')}" if friendless.any?
+    puts "TwitterUser not_consistent #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
+    puts "check #{(sigint ? 'suspended:' : 'finished:')}"
     puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, friendless: #{friendless.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
   end
 
   namespace :fix do
     desc 'not_found'
     task not_found: :environment do
-      uids = ENV['UIDS'].remove(/ /).split(',').map(&:to_i).uniq
+      ids = ENV['IDS'].remove(/ /).split(',')
+      uids = TwitterUser.where(id: ids).pluck(:uid).map(&:to_i).uniq
 
-      remaining = []
       begin
         t_users = Bot.api_client.users(uids)
-        users = t_users.map { |t_user| [t_user.id, t_user.screen_name, t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1] }
-        TwitterDB::User.import_each_slice(users)
-
-        remaining = uids - t_users.map(&:id)
       rescue => e
-        puts "#{e.class} #{e.message} #{uids.size}"
-        t_users = users = []
+        puts "#{e.class} #{e.message} uids: #{uids.size}"
         if e.message == 'No user matches for specified terms.'
-          remaining = uids
+          t_users =  []
+        else
+          raise
         end
       end
 
+      import_users = t_users.map { |t_user| TwitterDB::User.to_import_format(t_user) }
+      remaining = uids - t_users.map(&:id)
+
       remaining.each do |uid|
-        tu = TwitterUser.latest(uid)
-        TwitterDB::User.create!(uid: uid, screen_name: tu.screen_name, user_info: tu.user_info, friends_size: -1, followers_size: -1)
+        TwitterUser.latest(uid).tap { |tu| import_users << [uid, tu.screen_name, tu.user_info, -1, -1] }
       end
 
-      puts "uids: #{uids.size}, t_users: #{t_users.size}, users: #{users.size} remaining: #{remaining.size}"
+      TwitterDB::User.import_each_slice(import_users)
+      import_users.each { |user| puts "imported #{user.id}" }
+      puts
+
+      puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, import_users: #{import_users.size} remaining: #{remaining.size}"
+    end
+
+    desc 'friendless'
+    task friendless: :environment do
+      ids = ENV['IDS'].remove(/ /).split(',')
+      uids = TwitterUser.where(id: ids).pluck(:uid).map(&:to_i).uniq
+      saved = []
+
+      uids.each do |uid|
+        user = TwitterDB::User.find_by(uid: uid)
+        unless user
+          puts "skipped because not found #{uid}"
+          next
+        end
+
+        tu = TwitterUser.latest(uid)
+        if tu.friends_count + tu.followers_count > TwitterUser::TOO_MANY_FRIENDS
+          puts "skipped because too many friends #{tu.uid}"
+          next
+        end
+
+        client = ApiClient.better_client(uid)
+        user = TwitterDB::User.builder(uid).client(client).build
+        user.persist!
+        user = TwitterDB::User.find_by(uid: uid)
+
+        puts "saved #{user.uid} #{[user.friendships.size, user.friends.size].inspect} #{[user.followerships.size, user.followers.size].inspect}"
+        saved << uid
+
+        sleep 3
+      end
+
+      puts "ids: #{ids.size}, uids: #{uids.size} saved: #{saved.size}"
     end
 
     desc 'not_consistent'
@@ -112,8 +145,8 @@ namespace :repair do
         uid = twitter_user.uid.to_i
 
         clients = [
-          User.find_by(uid: uid, authorized: true)&.api_client,
-          User.find_by(id: twitter_user.user_id, authorized: true)&.api_client,
+          User.authorized.find_by(uid: uid)&.api_client,
+          User.authorized.find_by(id: twitter_user.user_id)&.api_client,
           Bot.api_client
         ]
 
@@ -134,6 +167,12 @@ namespace :repair do
               User.find_by(token: client.access_token, secret: client.access_token_secret).update(authorized: false)
             elsif e.message == 'Not authorized.'
               unauthorized = i == clients.size - 1
+            else
+              ex = e
+            end
+          rescue Twitter::Error::Forbidden => e
+            if e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
+              # TODO
             else
               ex = e
             end
