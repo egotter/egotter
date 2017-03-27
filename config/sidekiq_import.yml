@@ -1,4 +1,4 @@
-:concurrency: 1
+:concurrency: 2
 :timeout: 10
 :pidfile: ./tmp/pids/sidekiq_import.pid
 :logfile: ./log/sidekiq_import.log
