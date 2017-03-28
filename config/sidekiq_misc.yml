@@ -10,3 +10,11 @@
   - CreateTweetsWorker
   - SendMetricsWorker
   - UpdateNotificationMessageWorker
+
+  - CreateForbiddenUserWorker
+  - CreatePollingLogWorker
+  - CreateModalOpenLogWorker
+  - CreatePageCacheLogWorker
+  - CreateSearchLogWorker
+  - CreateSignInLogWorker
+  - rollbar
