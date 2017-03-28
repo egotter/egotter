@@ -53,6 +53,11 @@ class ImportReplyingRepliedAndFavoritesWorker
     NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
 
     raise unless async
+  rescue Twitter::Error => e
+    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    retry if e.message == 'Connection reset by peer - SSL_connect'
+
+    raise unless async
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"

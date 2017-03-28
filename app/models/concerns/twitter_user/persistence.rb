@@ -31,7 +31,7 @@ module Concerns::TwitterUser::Persistence
       followerships.each { |f| f.from_id = id }.each(&:save!)
     else
       reload
-      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now)
+      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now, 'enqueued_at' => Time.zone.now)
     end
 
   rescue => e

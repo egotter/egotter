@@ -21,7 +21,7 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
 
   private
 
-  def handle_retryable_exception(user_id, uid, ex)
+  def handle_retryable_exception(user_id, uid, ex, options = {})
     if ex.class == Twitter::Error::TooManyRequests
       sleep_time = ex&.rate_limit&.reset_in.to_i + 1
       logger.warn "#{ex.message} Reset in #{sleep_time} seconds #{user_id} #{uid}"
@@ -29,7 +29,7 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
       logger.warn 'I will sleep. Bye!'
       sleep sleep_time
       logger.warn 'Good morning. I will retry.'
-      DelayedImportTwitterUserRelationsWorker.perform_in(30.minutes + rand(10.minutes), user_id, uid)
+      DelayedImportTwitterUserRelationsWorker.perform_in(30.minutes + rand(10.minutes), user_id, uid, options)
     else
       logger.warn "#{ex.message} #{user_id} #{uid}"
       raise ex
