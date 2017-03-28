@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170222055518) do
+ActiveRecord::Schema.define(version: 20170328135453) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -251,6 +251,29 @@ ActiveRecord::Schema.define(version: 20170222055518) do
 
   add_index "inactive_mutual_friendships", ["friend_uid"], name: "index_inactive_mutual_friendships_on_friend_uid", using: :btree
   add_index "inactive_mutual_friendships", ["from_uid"], name: "index_inactive_mutual_friendships_on_from_uid", using: :btree
+
+  create_table "jobs", force: :cascade do |t|
+    t.integer  "user_id",         limit: 4,   default: -1, null: false
+    t.integer  "uid",             limit: 8,   default: -1, null: false
+    t.string   "screen_name",     limit: 191, default: "", null: false
+    t.integer  "twitter_user_id", limit: 4,   default: -1, null: false
+    t.integer  "client_uid",      limit: 8,   default: -1, null: false
+    t.string   "jid",             limit: 191, default: "", null: false
+    t.string   "parent_jid",      limit: 191, default: "", null: false
+    t.string   "worker_class",    limit: 191, default: "", null: false
+    t.string   "error_class",     limit: 191, default: "", null: false
+    t.string   "error_message",   limit: 191, default: "", null: false
+    t.datetime "enqueued_at"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "created_at",                               null: false
+    t.datetime "updated_at",                               null: false
+  end
+
+  add_index "jobs", ["created_at"], name: "index_jobs_on_created_at", using: :btree
+  add_index "jobs", ["jid"], name: "index_jobs_on_jid", using: :btree
+  add_index "jobs", ["screen_name"], name: "index_jobs_on_screen_name", using: :btree
+  add_index "jobs", ["uid"], name: "index_jobs_on_uid", using: :btree
 
   create_table "mentions", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
