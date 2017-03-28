@@ -26,7 +26,7 @@ class ImportReplyingRepliedAndFavoritesWorker
       UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
     rescue => e
       logger.warn "#{e.class} #{e.message} #{user_id} #{uid} size: #{uids.size}"
-      raise unless async
+      raise Error, e unless async
     end
     return if t_users.blank?
 
@@ -44,27 +44,37 @@ class ImportReplyingRepliedAndFavoritesWorker
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
 
-    raise unless async
+    raise Error, e unless async
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "Deadlock found when trying to get lock #{user_id} #{uid} (size #{users&.size}, retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
+    logger.warn "Deadlock found #{user_id} #{uid} (size #{users&.size}, retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
     logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
+
+    raise Error, e unless async
   rescue Twitter::Error::NotFound => e
     message = "#{e.class} #{e.message} #{user_id} #{uid}"
     NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
 
-    raise unless async
+    raise Error, e unless async
   rescue Twitter::Error => e
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     retry if e.message == 'Connection reset by peer - SSL_connect'
 
-    raise unless async
+    raise Error, e unless async
   rescue => e
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
 
-    raise unless async
+    raise Error, e unless async
   ensure
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user&.screen_name}"
+  end
+
+  private
+
+  class Error < StandardError
+    def initialize(ex)
+      super("#{ex.class} #{ex.message.truncate(100)}")
+    end
   end
 end

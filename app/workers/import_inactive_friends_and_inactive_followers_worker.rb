@@ -23,7 +23,17 @@ class ImportInactiveFriendsAndInactiveFollowersWorker
     message = e.message.truncate(150)
     logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.join "\n"
+
+    raise Error, e unless async
   ensure
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
+  end
+
+  private
+
+  class Error < StandardError
+    def initialize(ex)
+      super("#{ex.class} #{ex.message.truncate(100)}")
+    end
   end
 end

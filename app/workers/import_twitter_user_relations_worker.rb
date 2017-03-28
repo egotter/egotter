@@ -6,20 +6,30 @@ class ImportTwitterUserRelationsWorker
   BUSY_QUEUE_SIZE = 0
 
   def perform(user_id, uid, options = {})
-    twitter_user = TwitterUser.latest(uid)
-    enqueued_at = options.fetch('enqueued_at', Time.zone.now)
-    enqueued_at = Time.zone.parse(enqueued_at) if enqueued_at.is_a?(String)
     job = Job.new(
       user_id: user_id,
       uid: uid,
-      screen_name: twitter_user.screen_name,
-      twitter_user_id: twitter_user.id,
       jid: jid,
       parent_jid: options.fetch('parent_jid', ''),
       worker_class: self.class.name,
-      enqueued_at: enqueued_at,
       started_at: Time.zone.now
     )
+    twitter_user = TwitterUser.latest(uid)
+    enqueued_at = options.fetch('enqueued_at', Time.zone.now)
+    enqueued_at = Time.zone.parse(enqueued_at) if enqueued_at.is_a?(String)
+
+    if self.class == ImportTwitterUserRelationsWorker
+      if enqueued_at < 1.minutes.ago
+        return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, options.merge(parent_jid: jid))
+      end
+    end
+
+    job.assign_attributes(
+      screen_name: twitter_user.screen_name,
+      twitter_user_id: twitter_user.id,
+      enqueued_at: enqueued_at
+    )
+    parent_jid = jid
 
     client =
       if user_id == -1
@@ -32,13 +42,9 @@ class ImportTwitterUserRelationsWorker
         user.api_client
       end
 
-    if self.class == ImportTwitterUserRelationsWorker
-      if enqueued_at < 1.minutes.ago
-        return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, options.merge(parent_jid: jid))
-      end
-    end
+    new_args = [user_id, uid, 'async' => false, 'parent_jid' => parent_jid]
 
-    ImportReplyingRepliedAndFavoritesWorker.new.perform(user_id, uid, 'async' => false)
+    ImportReplyingRepliedAndFavoritesWorker.new.perform(*new_args)
 
     if twitter_user.friendless?
       t_user = client.user(uid)
@@ -47,12 +53,12 @@ class ImportTwitterUserRelationsWorker
       signatures = [{method: :user, args: [uid]}, {method: :friends, args: [uid]}, {method: :followers, args: [uid]}]
       client._fetch_parallelly(signatures) # create caches
 
-      ImportFriendshipsAndFollowershipsWorker.perform_async(user_id, uid)
-      ImportFriendsAndFollowersWorker.perform_async(user_id, uid)
-      ImportInactiveFriendsAndInactiveFollowersWorker.perform_async(user_id, uid)
+      ImportFriendshipsAndFollowershipsWorker.new.perform(*new_args)
+      ImportFriendsAndFollowersWorker.new.perform(*new_args)
+      ImportInactiveFriendsAndInactiveFollowersWorker.new.perform(*new_args)
     end
 
-    # TODO ::Cache::PageCache.new.delete(uid)
+    ::Cache::PageCache.new.delete(uid)
 
     job.update(finished_at: Time.zone.now)
 
