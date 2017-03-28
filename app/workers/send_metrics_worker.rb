@@ -48,7 +48,7 @@ class SendMetricsWorker
     values.each do |name, size, latency|
       options = {
         namespace: 'egotter',
-        dimensions: {QueueName: name, InstanceId: instance_id}.map { |k, v| "#{k}=#{v}" }.join(','),
+        dimensions: {QueueName: name}.map { |k, v| "#{k}=#{v}" }.join(','),
         unit: 'Count',
         region: region,
       }
