@@ -97,7 +97,7 @@ namespace :repair do
       end
 
       TwitterDB::User.import_each_slice(import_users)
-      import_users.each { |user| puts "imported #{user.id}" }
+      import_users.each { |user| puts "imported #{user[0]}" }
       puts
 
       puts "ids: #{ids.size}, uids: #{uids.size}, t_users: #{t_users.size}, import_users: #{import_users.size} remaining: #{remaining.size}"
