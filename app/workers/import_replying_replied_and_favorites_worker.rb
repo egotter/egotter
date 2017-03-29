@@ -18,15 +18,11 @@ class ImportReplyingRepliedAndFavoritesWorker
     begin
       t_users = client.users(uids)
     rescue Twitter::Error::Unauthorized => e
-      if e.message == 'Invalid or expired token.'
-        User.find_by(id: user_id)&.update(authorized: false)
-      end
-
-      message = "#{e.class} #{e.message} #{user_id} #{uid}"
-      UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+      handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user.id)
+      raise WorkerError.new(self.class, jid) unless async
     rescue => e
       logger.warn "#{e.class} #{e.message} #{user_id} #{uid} size: #{uids.size}"
-      raise Error, e unless async
+      raise WorkerError.new(self.class, jid) unless async
     end
     return if t_users.blank?
 
@@ -37,44 +33,35 @@ class ImportReplyingRepliedAndFavoritesWorker
     _retry_with_transaction!('import replying, replied and favoriting', retry_limit: 5, retry_timeout: 20.seconds) { TwitterDB::User.import_each_slice(users) }
 
   rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      User.find_by(id: user_id)&.update(authorized: false)
-    end
-
-    message = "#{e.class} #{e.message} #{user_id} #{uid}"
-    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
-
-    raise Error, e unless async
+    handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user&.id)
+    raise WorkerError.new(self.class, jid) unless async
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "Deadlock found #{user_id} #{uid} (size #{users&.size}, retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
-    logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
-
-    raise Error, e unless async
+    if async
+      logger.warn "Deadlock found #{user_id} #{uid} (size #{users&.size}, retry #{@retry_count}, wait #{@wait_seconds}) start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} finish: #{short_hour(Time.zone.now)}"
+      logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
+    else
+      raise WorkerError.new(self.class, jid)
+    end
   rescue Twitter::Error::NotFound => e
-    message = "#{e.class} #{e.message} #{user_id} #{uid}"
-    NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
-
-    raise Error, e unless async
+    handle_not_found_exception(e, user_id: user_id, uid: uid)
+    raise WorkerError.new(self.class, jid) unless async
   rescue Twitter::Error => e
-    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     retry if e.message == 'Connection reset by peer - SSL_connect'
 
-    raise Error, e unless async
+    if async
+      logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    else
+      raise WorkerError.new(self.class, jid)
+    end
   rescue => e
-    message = e.message.truncate(150)
-    logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
-    logger.info e.backtrace.join "\n"
-
-    raise Error, e unless async
+    if async
+      message = e.message.truncate(150)
+      logger.warn "#{e.class} #{message} #{user_id} #{uid}"
+      logger.info e.backtrace.join "\n"
+    else
+      raise WorkerError.new(self.class, jid)
+    end
   ensure
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user&.screen_name}"
-  end
-
-  private
-
-  class Error < StandardError
-    def initialize(ex)
-      super("#{ex.class} #{ex.message.truncate(100)}")
-    end
   end
 end

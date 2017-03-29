@@ -31,34 +31,24 @@ class ImportFriendshipsAndFollowershipsWorker
     _benchmark('import MutualFriendship') { MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids) }
 
   rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      User.find_by(id: user_id)&.update(authorized: false)
-    end
-
-    message = "#{e.class} #{e.message} #{user_id} #{uid}"
-    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
-
-    raise Error, e unless async
+    handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user&.id)
+    raise WorkerError.new(self.class, jid) unless async
   rescue ActiveRecord::StatementInvalid => e
-    logger.warn "#{e.message.truncate(100)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} chk3: #{short_hour(chk3)} finish: #{short_hour(Time.zone.now)}"
-    logger.info e.backtrace.join "\n"
-
-    raise Error, e unless async
+    if async
+      logger.warn "#{e.message.truncate(100)} #{user_id} #{uid} #{@retry_count} start: #{short_hour(started_at)} chk1: #{short_hour(chk1)} chk2: #{short_hour(chk2)} chk3: #{short_hour(chk3)} finish: #{short_hour(Time.zone.now)}"
+      logger.info e.backtrace.join "\n"
+    else
+      raise WorkerError.new(self.class, jid)
+    end
   rescue => e
-    message = e.message.truncate(150)
-    logger.warn "#{e.class} #{message} #{user_id} #{uid}"
-    logger.info e.backtrace.join "\n"
-
-    raise Error, e unless async
+    if async
+      message = e.message.truncate(150)
+      logger.warn "#{e.class} #{message} #{user_id} #{uid}"
+      logger.info e.backtrace.join "\n"
+    else
+      raise WorkerError.new(self.class, jid)
+    end
   ensure
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
-  end
-
-  private
-
-  class Error < StandardError
-    def initialize(ex)
-      super("#{ex.class} #{ex.message.truncate(100)}")
-    end
   end
 end

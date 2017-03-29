@@ -10,7 +10,7 @@ class ImportTwitterUserRelationsWorker
       user_id: user_id,
       uid: uid,
       jid: jid,
-      parent_jid: options.fetch('parent_jid', ''),
+      parent_jid: options.fetch('parent_jid', '').to_s,
       worker_class: self.class.name,
       started_at: Time.zone.now
     )
@@ -20,7 +20,7 @@ class ImportTwitterUserRelationsWorker
 
     if self.class == ImportTwitterUserRelationsWorker
       if enqueued_at < 1.minutes.ago
-        return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, options.merge(parent_jid: jid))
+        return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, {'parent_jid' => jid}.merge(options))
       end
     end
 
@@ -29,7 +29,6 @@ class ImportTwitterUserRelationsWorker
       twitter_user_id: twitter_user.id,
       enqueued_at: enqueued_at
     )
-    parent_jid = jid
 
     client =
       if user_id == -1
@@ -42,7 +41,7 @@ class ImportTwitterUserRelationsWorker
         user.api_client
       end
 
-    new_args = [user_id, uid, 'async' => false, 'parent_jid' => parent_jid]
+    new_args = [user_id, uid, 'async' => false, 'parent_jid' => jid]
 
     ImportReplyingRepliedAndFavoritesWorker.new.perform(*new_args)
 
@@ -64,12 +63,7 @@ class ImportTwitterUserRelationsWorker
 
   rescue Twitter::Error::Unauthorized => e
     job.update(error_class: e.class, error_message: e.message, finished_at: Time.zone.now)
-    if e.message == 'Invalid or expired token.'
-      User.find_by(id: user_id)&.update(authorized: false)
-    end
-
-    message = "#{e.class} #{e.message} #{user_id} #{uid}"
-    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+    handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user.id)
   rescue Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
     job.update(error_class: e.class, error_message: e.message, finished_at: Time.zone.now)
     handle_retryable_exception(user_id, uid, e, options)
@@ -77,22 +71,30 @@ class ImportTwitterUserRelationsWorker
     job.update(error_class: e.class, error_message: e.message, finished_at: Time.zone.now)
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     retry if e.message == 'Connection reset by peer - SSL_connect'
+  rescue WorkerError => e
+    job.update(error_class: e.class, error_message: e.full_message, finished_at: Time.zone.now)
+    if e.retryable?
+      handle_retryable_exception(user_id, uid, e.cause, options)
+    else
+      logger.warn "not retryable #{e.class} #{e.full_message}"
+    end
   rescue => e
-    job.update(error_class: e.class, error_message: e.message, finished_at: Time.zone.now)
-    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
+    message = e.message.truncate(100)
+    job.update(error_class: e.class, error_message: message, finished_at: Time.zone.now)
+    logger.warn "#{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
   end
 
   private
 
   def handle_retryable_exception(user_id, uid, ex, options = {})
-    retry_jid = DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, options)
+    retry_jid = DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, {'parent_jid' => jid}.merge(options))
 
     if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "#{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{user_id} #{uid} #{retry_jid}"
+      logger.warn "#{ex.message} Reset in #{ex.rate_limit.reset_in} seconds #{user_id} #{uid} #{retry_jid}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
     else
-      logger.warn "#{ex.message} #{user_id} #{uid} #{retry_jid}"
+      logger.warn "#{ex.class} #{ex.message.truncate(100)} #{user_id} #{uid} #{retry_jid}"
     end
   end
 end

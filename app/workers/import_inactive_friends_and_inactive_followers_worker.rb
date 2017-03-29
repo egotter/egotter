@@ -20,20 +20,14 @@ class ImportInactiveFriendsAndInactiveFollowersWorker
 
   rescue => e
     # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;
-    message = e.message.truncate(150)
-    logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
-    logger.info e.backtrace.join "\n"
-
-    raise Error, e unless async
+    if async
+      message = e.message.truncate(150)
+      logger.warn "#{self.class}: #{e.class} #{message} #{user_id} #{uid}"
+      logger.info e.backtrace.join "\n"
+    else
+      raise WorkerError.new(self.class, jid)
+    end
   ensure
     Rails.logger.info "[worker] #{self.class} finished. #{user_id} #{uid} #{twitter_user.screen_name}"
-  end
-
-  private
-
-  class Error < StandardError
-    def initialize(ex)
-      super("#{ex.class} #{ex.message.truncate(100)}")
-    end
   end
 end

@@ -11,12 +11,7 @@ class FollowEgotterWorker
     end
 
   rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      user.update(authorized: false)
-    end
-
-    message = "#{e.class} #{e.message} #{user_id}"
-    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+    handle_unauthorized_exception(e, user_id: user_id)
   rescue Twitter::Error::Forbidden => e
     if e.message == "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."
       logger.warn "I will sleep. Bye! #{user_id}"

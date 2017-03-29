@@ -111,8 +111,7 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{e.message.truncate(150)}"
     )
   rescue Twitter::Error::NotFound => e
-    message = "#{e.class} #{e.message} #{user_id} #{uid}"
-    NOT_FOUND_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+    handle_not_found_exception(e, user_id: user_id, uid: uid)
 
     log.assign_attributes(
       status: false,
@@ -127,12 +126,7 @@ class CreateTwitterUserWorker
 
     handle_retryable_exception(values, e)
   rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      user&.update(authorized: false)
-    end
-
-    message = "#{e.class} #{e.message} #{user_id} #{uid}"
-    UNAUTHORIZED_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+    handle_unauthorized_exception(e, user_id: user_id, uid: uid)
 
     log.assign_attributes(
       status: false,
