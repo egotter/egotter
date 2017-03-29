@@ -26,6 +26,14 @@ module Concerns::TwitterUser::Persistence
     _transaction('import SearchResult') { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
     _transaction('import Favorite') { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
 
+    unless TwitterDB::User.exists?(uid: uid)
+      begin
+        TwitterDB::User.create!(uid: uid, screen_name: screen_name, user_info: user_info, friends_size: -1, followers_size: -1)
+      rescue => e
+        logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
+      end
+    end
+
     if Rails.env.test?
       friendships.each { |f| f.from_id = id }.each(&:save!)
       followerships.each { |f| f.from_id = id }.each(&:save!)
