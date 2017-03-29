@@ -17,12 +17,12 @@ class ImportReplyingRepliedAndFavoritesWorker
     uids = (twitter_user.replying_uids + twitter_user.replied_uids(login_user: login_user) + twitter_user.favoriting_uids).uniq
     begin
       t_users = client.users(uids)
-    rescue Twitter::Error::Unauthorized => e
-      handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user.id)
-      raise WorkerError.new(self.class, jid) unless async
-    rescue => e
-      logger.warn "#{e.class} #{e.message} #{user_id} #{uid} size: #{uids.size}"
-      raise WorkerError.new(self.class, jid) unless async
+    rescue Twitter::Error::NotFound => e
+      if e.message == 'No user matches for specified terms.'
+        t_users = []
+      else
+        raise
+      end
     end
     return if t_users.blank?
 
@@ -33,7 +33,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     _retry_with_transaction!('import replying, replied and favoriting', retry_limit: 5, retry_timeout: 20.seconds) { TwitterDB::User.import_each_slice(users) }
 
   rescue Twitter::Error::Unauthorized => e
-    handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user&.id)
+    handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user.id)
     raise WorkerError.new(self.class, jid) unless async
   rescue ActiveRecord::StatementInvalid => e
     if async

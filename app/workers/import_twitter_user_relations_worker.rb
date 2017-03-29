@@ -66,7 +66,7 @@ class ImportTwitterUserRelationsWorker
     handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user.id)
   rescue Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
     job.update(error_class: e.class, error_message: e.message, finished_at: Time.zone.now)
-    handle_retryable_exception(user_id, uid, e, options)
+    handle_retryable_exception(e, user_id, uid, twitter_user.id, options)
   rescue Twitter::Error => e
     job.update(error_class: e.class, error_message: e.message, finished_at: Time.zone.now)
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
@@ -74,7 +74,7 @@ class ImportTwitterUserRelationsWorker
   rescue WorkerError => e
     job.update(error_class: e.class, error_message: e.full_message, finished_at: Time.zone.now)
     if e.retryable?
-      handle_retryable_exception(user_id, uid, e.cause, options)
+      handle_retryable_exception(e.cause, user_id, uid, twitter_user.id, options)
     else
       logger.warn "not retryable #{e.class} #{e.full_message}"
     end
@@ -87,14 +87,14 @@ class ImportTwitterUserRelationsWorker
 
   private
 
-  def handle_retryable_exception(user_id, uid, ex, options = {})
+  def handle_retryable_exception(ex, user_id, uid, twitter_user_id, options = {})
     retry_jid = DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, {'parent_jid' => jid}.merge(options))
 
     if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "#{ex.message} Reset in #{ex.rate_limit.reset_in} seconds #{user_id} #{uid} #{retry_jid}"
+      logger.warn "#{ex.message} Reset in #{ex.rate_limit.reset_in} seconds #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
     else
-      logger.warn "#{ex.class} #{ex.message.truncate(100)} #{user_id} #{uid} #{retry_jid}"
+      logger.warn "recover #{ex.class} #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
     end
   end
 end
