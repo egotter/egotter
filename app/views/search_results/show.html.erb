@@ -86,10 +86,55 @@
   $(function () {
     tooltip();
 
+    var twitterUser = <%= raw({uid: tu.uid, screenName: tu.screen_name, createdAt: tu.created_at.to_i}.to_json) %>;
+
+    function formatDate (date) {
+      return '' + date.getFullYear() + '/' + date.getMonth() + 1 + '/' + date.getDate() + ' ' + date.getHours() + ':' + date.getMinutes() + ':' + date.getSeconds();
+    }
+
+    function deletePageCacheAndReload(e) {
+      e.preventDefault();
+      e.stopPropagation();
+
+      new egotter.PageCache().delete(twitterUser.uid)
+          .then(function () {
+            console.log('reload started', formatDate(new Date()));
+            window.location.reload();
+          })
+          .fail(function (xhr) {
+            console.log('delete failed');
+            console.log(xhr.responseText);
+          });
+
+      return false;
+    }
+
+    $('.reload-btn').on('click', deletePageCacheAndReload);
+
     if (window.workerStarted) {
-      var twitterUser = <%= raw({uid: tu.uid, screenName: tu.screen_name, createdAt: tu.created_at.to_i}.to_json) %>;
-      var scope = <%= raw({action: action_name, uid: tu.uid}.to_json) %>;
-      searchResultsWaiting(twitterUser, scope);
+      var refreshBox = $('.refresh-box');
+      var latestBox = $('.latest-box');
+      var loginBox = $('.login-box');
+
+      refreshBox.find('a').on('click', deletePageCacheAndReload);
+
+      function done (res) {
+        console.log('before', formatDate(new Date(twitterUser.createdAt * 1000)), ', after', formatDate(new Date(res.created_at * 1000)));
+
+        if (twitterUser.createdAt < res.created_at) {
+          refreshBox.show();
+          refreshBox.sticky({topSpacing: 0});
+        } else {
+          if (res.message == 'already created and too many friends') {
+            // TODO check whether the user is signed in or not
+            loginBox.show();
+          } else {
+            latestBox.show();
+          }
+        }
+      }
+
+      waiting2(twitterUser, done);
     }
   });
 </script>
