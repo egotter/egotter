@@ -2,7 +2,39 @@
   @type tail
   path /home/ec2-user/egotter/log/sidekiq.log
   pos_file /tmp/sidekiq.log.pos
-  tag sidekiq.sidekiq
+  tag autoscale.sidekiq
+  format none
+</source>
+
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq2.log
+  pos_file /tmp/sidekiq2.log.pos
+  tag autoscale.sidekiq2
+  format none
+</source>
+
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq3.log
+  pos_file /tmp/sidekiq3.log.pos
+  tag autoscale.sidekiq3
+  format none
+</source>
+
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq_import.log
+  pos_file /tmp/sidekiq_import.log.pos
+  tag autoscale.sidekiq_import
+  format none
+</source>
+
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq_delay.log
+  pos_file /tmp/sidekiq_delay.log.pos
+  tag autoscale.sidekiq_delay
   format none
 </source>
 
@@ -13,6 +45,7 @@
   heartbeat_interval 1s
   phi_threshold 16
   hard_timeout 60s
+  flush_interval 10s
 
   <server>
     name egotter_web
