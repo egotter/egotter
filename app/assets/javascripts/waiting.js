@@ -59,11 +59,18 @@ function waiting(checkLogPath, resultPath, pollingLogsPath, action, scope) {
   var progressBar = new ProgressBar();
   var interval = new Interval();
   var retry = new Retry();
-  var pollingStart = performance.now();
+  var pollingStart = Date.now();
+
+  function createPollingLog(status) {
+    var elapsedTime = (Date.now() - pollingStart) / 1000.0;
+    if (elapsedTime < 120.0) {
+      $.post(pollingLogsPath, {_action: action, status: status, time: elapsedTime, retry_count: retry.current()});
+    }
+  }
 
   function failed(xhr) {
     console.log('Server failed.');
-    $.post(pollingLogsPath, {_action: action, status: false, time: performance.now() - pollingStart, retry_count: retry.current()});
+    createPollingLog(false);
     if (xhr.status === 502) {
       Rollbar.scope(scope).warning("Timeout while attempting fetching.");
     }
@@ -84,10 +91,7 @@ function waiting(checkLogPath, resultPath, pollingLogsPath, action, scope) {
     console.log(res, text_status, xhr.status, interval.current(), retry.current());
 
     if (xhr.status === 200) {
-      var elapsedTime = performance.now() - pollingStart;
-      if (elapsedTime < 120) {
-        $.post(pollingLogsPath, {_action: action, status: true, time: elapsedTime, retry_count: retry.current()});
-      }
+      createPollingLog(true);
       progressBar.set(95);
       $waitingMessage.hide();
       $('.finished-msg').show();
@@ -97,10 +101,7 @@ function waiting(checkLogPath, resultPath, pollingLogsPath, action, scope) {
 
     if (!retry.next()) {
       console.log('Stop waiting.');
-      var elapsedTime = performance.now() - pollingStart;
-      if (elapsedTime < 120) {
-        $.post(pollingLogsPath, {_action: action, status: false, time: elapsedTime, retry_count: retry.current()});
-      }
+      createPollingLog(false);
 
       progressBar.hide();
       $waitingMessage.hide();

@@ -52,11 +52,11 @@ function waiting2(twitterUser, action, scope) {
   var interval = new Interval();
   var retry = new Retry();
   var cache = new egotter.PageCache();
-  var pollingStart = performance.now();
+  var pollingStart = Date.now();
 
   function createPollingLog(status) {
-    var elapsedTime = performance.now() - pollingStart;
-    if (elapsedTime < 120) {
+    var elapsedTime = (Date.now() - pollingStart) / 1000.0;
+    if (elapsedTime < 120.0) {
       var url = egotter.pollingLogsPath.replace(/UID/, twitterUser.uid).replace(/SCREEN_NAME/, twitterUser.screenName);
       $.post(url, {_action: action, status: status, time: elapsedTime, retry_count: retry.current()});
     }
