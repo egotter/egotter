@@ -42,26 +42,17 @@ class SendMetricsWorker
   end
 
   def cloudwatch(values, ga_active_users)
-    region = %x(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')
-    instance_id=%x(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+    # region = %x(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')
+    # instance_id=%x(curl -s http://169.254.169.254/latest/meta-data/instance-id)
+
+    client = CloudwatchClient.new
 
     values.each do |name, size, latency|
-      options = {
-        namespace: 'egotter',
-        dimensions: {QueueName: name}.map { |k, v| "#{k}=#{v}" }.join(','),
-        unit: 'Count',
-        region: region,
-      }
-
-      size_options = {'metric-name' => 'QueueSize', value: size}.merge(options).map { |n, v| "--#{n} #{v}" }.join ' '
-      latency_options = {'metric-name' => 'QueueLatency', value: latency}.merge(options).map { |n, v| "--#{n} #{v}" }.join ' '
-
-      %x(aws cloudwatch put-metric-data #{size_options})
-      %x(aws cloudwatch put-metric-data #{latency_options})
+      options = {namespace: 'egotter', dimensions: [{name: 'QueueName', value: name}]}
+      client.put_metric_data('QueueSize', size, options)
+      client.put_metric_data('QueueLatency', latency, options)
     end
 
-    options = {namespace: 'google/analytics', unit: 'Count', region: region, 'metric-name' => 'ActiveUsers', value: ga_active_users}
-      .map { |n, v| "--#{n} #{v}" }.join ' '
-    %x(aws cloudwatch put-metric-data #{options})
+    client.put_metric_data('ActiveUsers', ga_active_users, namespace: 'google/analytics')
   end
 end
