@@ -42,7 +42,7 @@ class UnicornCheck(AgentCheck):
     for pid in worker_pids:
       before_cpu[pid] = self.cpu_time(pid)
 
-    time.sleep(1)
+    time.sleep(0.1)
 
     after_cpu = {}
     for pid in worker_pids:
