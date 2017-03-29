@@ -192,7 +192,7 @@ class CreateTwitterUserWorker
       logger.warn "#{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{values['user_id']} #{values['uid']} #{retry_jid}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
     else
-      logger.warn "#{ex.message} #{values['user_id']} #{values['uid']} #{retry_jid}"
+      logger.warn "#{ex.class} #{ex.message.truncate(100)} #{values['user_id']} #{values['uid']} #{retry_jid}"
     end
   end
 end

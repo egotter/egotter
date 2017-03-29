@@ -31,7 +31,7 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
       logger.warn 'Good morning. I will retry.'
       DelayedImportTwitterUserRelationsWorker.perform_in(30.minutes + rand(10.minutes), user_id, uid, options)
     else
-      logger.warn "#{ex.message} #{user_id} #{uid}"
+      logger.warn "#{ex.class} #{ex.message.truncate(100)} #{user_id} #{uid}"
       raise ex
     end
   end

@@ -31,7 +31,7 @@ class DelayedCreateTwitterUserWorker < CreateTwitterUserWorker
       logger.warn 'Good morning. I will retry.'
       DelayedCreateTwitterUserWorker.perform_in(30.minutes + rand(10.minutes), values)
     else
-      logger.warn "#{ex.message} #{values['user_id']} #{values['uid']}"
+      logger.warn "#{ex.class} #{ex.message.truncate(100)} #{values['user_id']} #{values['uid']}"
       raise ex
     end
   end
