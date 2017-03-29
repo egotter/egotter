@@ -39,7 +39,6 @@ function waiting2(twitterUser, action, scope) {
     e.stopPropagation();
 
     cache.delete(twitterUser.uid)
-      .then(cache.create(twitterUser.uid))
       .then(function () {
         console.log(new Date() + ': reload started');
         window.location.reload();
