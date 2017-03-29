@@ -148,12 +148,12 @@ case "${2}" in
   restart)
           if is_running; then
             stop
+            [ $? -eq 0 ] && start
           else
             rh_status
             [ -f ${PID_FILE} ] && rm -f ${PID_FILE}
+            start
           fi
-
-          start
           ;;
   force-stop)
           force_stop
