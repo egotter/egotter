@@ -12,11 +12,11 @@ class Ec2Client
     values = {
       start_time: 30.days.ago.iso8601,
       end_time: Time.zone.now.iso8601,
-      instance_types: %w(t2.large),
-      product_descriptions: %w[Linux/UNIX (Amazon VPC)],
+      instance_types: %w(m4.large),
+      product_descriptions: ['Linux/UNIX (Amazon VPC)'],
       availability_zone: AVAILABILITY_ZONE,
-      max_results: 100
+      max_results: 1000
     }
-    @ec2.describe_spot_price_history(values).spot_price_history.map { |h| [h[:timestamp], h[:spot_price]] }
+    @ec2.describe_spot_price_history(values).spot_price_history
   end
 end
