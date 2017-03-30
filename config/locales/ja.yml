@@ -82,7 +82,7 @@ ja:
       description: "えごったーなら全部無料！ %{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果です。リム通知は、えごったーにログイン後、自動で届きます。"
       update_is_coming_html: '%{user} のフォロー・フォロワーに変化がありました。<a href="#" class="btn btn-default btn-sm">データを更新する</a>'
       latest_result: '表示されているデータは最新です。最終更新は %{time} です。'
-      request_login_html: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。<a href="%{sign_in_path}" class="btn btn-default btn-sm">ログインする</a>'
+      request_login_html: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。<a href="%{sign_in_path}" class="btn btn-default btn-sm">ログインする</a>'
     friends:
       num: "フォロー<br>%{num}"
       name: "フォロー"
@@ -420,8 +420,8 @@ ja:
     view_more_detail: "もっと詳しく"
     view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
     reload_this_page: "ページを更新する"
-    under_calculation_with_details_html: 'フォロー・フォロワーの集計中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に集計されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
-    empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に集計されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
+    under_calculation_with_details_html: 'フォロー・フォロワーの分析中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
+    empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
     tweet_result: "結果をつぶやく"
     do_tweet: "つぶやく"
     delim: "、"
