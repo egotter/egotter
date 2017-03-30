@@ -164,7 +164,7 @@ module SearchesHelper
   end
 
   def reject_crawler
-    if request.device_type == :crawler
+    if request.from_crawler?
       render text: t('before_sign_in.reject_crawler')
     end
   end

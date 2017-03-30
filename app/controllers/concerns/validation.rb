@@ -37,7 +37,7 @@ module Validation
   def existing_uid?(uid)
     return true if TwitterUser.exists?(uid: uid)
 
-    if controller_name == 'searches' && action_name == 'show' && request.device_type != :crawler && !request.xhr?
+    if controller_name == 'searches' && action_name == 'show' && !request.from_crawler? && !request.xhr?
       @screen_name = @tu.screen_name
       @redirect_path = search_path(screen_name: @screen_name)
       @via = params['via']

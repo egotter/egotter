@@ -1,6 +1,6 @@
 = render(partial: 'searches/conversion_tracking')
 
-- if request.device_type == :pc && !user_signed_in?
+- if request.from_pc? && !user_signed_in?
   .row.searches{style: 'margin-top: 15px;'}
     .col-md-6.col-md-push-6.text-center
       .visible-md-block.visible-lg-block{style: 'height: 15px; width: 100%;'}
@@ -88,7 +88,7 @@
     %i.fa.fa-handshake-o.fa-5x{'aria-hidden': true}
     %div= t('searches.new.feature_desc_010_html')
 
-.row.searches{class: "#{'vertical-align-bottom' if request.device_type == :pc}", style: 'margin-bottom: 15px;'}
+.row.searches{class: "#{'vertical-align-bottom' if request.from_pc?}", style: 'margin-bottom: 15px;'}
   .col-xs-12.col-sm-6.text-center{style: 'margin-top: 30px;'}
     .text-notice
       %i.fa.fa-check.fa-lg{'aria-hidden': true}

@@ -257,7 +257,7 @@ module Concerns::Logging
   end
 
   def fingerprint
-    if request.device_type == :crawler
+    if request.from_crawler?
       return -1
     end
 

@@ -44,7 +44,7 @@
                 = t('dictionary.realy_sign_out_html')
                 %div{style: 'margin: 15px;'}
                   = link_to t('dictionary.do_sign_out'), sign_out_path, class: 'btn btn-info btn-block'
-                = image_tag '/egotter_icon_400x400.jpg', class: "#{'img-responsive' if request.device_type == :smartphone}", style: 'margin-bottom: 15px;'
+                = image_tag '/egotter_icon_400x400.jpg', class: "#{'img-responsive' if request.from_smartphone?}", style: 'margin-bottom: 15px;'
       - else
         = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/footer")
       %br.visible-xs-block
