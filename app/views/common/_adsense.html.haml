@@ -2,7 +2,8 @@
   .adsense-container.row
     .col-sm-12{class: "#{'col-md-6' if request.from_pc?}"}
       %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-      %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => left_ad_slot(user_signed_in?, action, vertical), style: 'display:inline-block;width:300px;height:250px'}
+      - left_slot = request.from_pc? ? left_ad_slot(user_signed_in?, action, vertical) : left_ad_slot_responsive(vertical)
+      %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => left_slot, style: 'display:inline-block;width:300px;height:250px'}
       :javascript
         (adsbygoogle = window.adsbygoogle || []).push({});
     - if request.from_pc?
