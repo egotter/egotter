@@ -76,13 +76,17 @@ class ImportTwitterUserRelationsWorker
     if e.retryable?
       handle_retryable_exception(e.cause, user_id, uid, twitter_user.id, options)
     else
-      logger.warn "not retryable #{e.class} #{e.full_message}"
+      logger.warn "not retryable #{e.class} #{e.full_message} #{user_id} #{uid} #{twitter_user.id}"
     end
   rescue => e
     message = e.message.truncate(100)
     job.update(error_class: e.class, error_message: message, finished_at: Time.zone.now)
     logger.warn "#{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
+  ensure
+    if job.new_record? && !job.update(finished_at: Time.zone.now)
+      logger.warn "save failed #{job.errors.full_messages.inspect} #{job.inspect}"
+    end
   end
 
   private
