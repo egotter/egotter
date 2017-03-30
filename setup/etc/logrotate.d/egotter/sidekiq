@@ -1,4 +1,4 @@
-/home/ec2-user/egotter/log/sidekiq.log {
+/home/ec2-user/egotter/log/sidekiq*.log {
   dateext
   dateformat _%Y%m%d
   daily
@@ -8,8 +8,8 @@
   delaycompress
   notifempty
   copytruncate
-
+  sharedscripts
   lastaction
-    kill -USR2 /home/ec2-user/egotter/tmp/pids/sidekiq.pid
+    cat /home/ec2-user/egotter/tmp/pids/sidekiq*.pid | xargs kill -USR2
   endscript
 }

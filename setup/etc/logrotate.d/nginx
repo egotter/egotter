@@ -1,0 +1,13 @@
+/var/log/nginx/*log {
+    create 0644 nginx nginx
+    daily
+    rotate 30
+    missingok
+    notifempty
+    compress
+    sharedscripts
+    postrotate
+        # /etc/init.d/nginx reopen_logs
+        [ -f /var/run/nginx.pid ] && kill -USR1 `cat /var/run/nginx.pid`
+    endscript
+}
