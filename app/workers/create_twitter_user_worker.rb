@@ -189,10 +189,10 @@ class CreateTwitterUserWorker
     retry_jid = DelayedCreateTwitterUserWorker.perform_async(values)
 
     if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "#{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{values['user_id']} #{values['uid']} #{retry_jid}"
+      logger.warn "recover #{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{values['user_id']} #{values['uid']} #{retry_jid}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
     else
-      logger.warn "#{ex.class} #{ex.message.truncate(100)} #{values['user_id']} #{values['uid']} #{retry_jid}"
+      logger.warn "recover #{ex.class.name.demodulize} #{values['user_id']} #{values['uid']} #{retry_jid}"
     end
   end
 end

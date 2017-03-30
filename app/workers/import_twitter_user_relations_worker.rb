@@ -95,10 +95,10 @@ class ImportTwitterUserRelationsWorker
     retry_jid = DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, {'parent_jid' => jid}.merge(options))
 
     if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "#{ex.message} Reset in #{ex.rate_limit.reset_in} seconds #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
+      logger.warn "recover #{ex.message} Reset in #{ex.rate_limit.reset_in} seconds #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
     else
-      logger.warn "recover #{ex.class} #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
+      logger.warn "recover #{ex.class.name.demodulize} #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
     end
   end
 end
