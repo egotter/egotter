@@ -67,23 +67,18 @@
   global.egotter.pollingLogsPath = "<%= raw polling_logs_path(uid: 'UID', screen_name: 'SCREEN_NAME') %>";
 
   var PageCache = function () {
-    this.hash = 'xxx';
     this.pageCachePath = "<%= raw page_cache_path(uid: 'UID', hash: 'HASH') %>";
     this.pageCachesPath = "<%= raw page_caches_path(uid: 'UID') %>";
   };
 
-  PageCache.prototype.setHash = function (hash) {
-    this.hash = hash;
-  };
-
   PageCache.prototype.delete = function (uid) {
-    console.log(new Date() + ': delete started');
-    var url = this.pageCachePath.replace(/UID/, uid).replace(/HASH/, this.hash);
+    console.log('delete started', new Date());
+    var url = this.pageCachePath.replace(/UID/, uid);
     return $.ajax({url: url, type: 'DELETE'});
   };
 
   PageCache.prototype.create = function create(uid) {
-    console.log(new Date() + ': create started');
+    console.log('create started', new Date());
     var url = this.pageCachesPath.replace(/UID/, uid);
     return $.post(url);
   };

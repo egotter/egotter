@@ -25,16 +25,10 @@ class PageCachesController < ApplicationController
 
   # DELETE /page_caches/:id
   def destroy
-    tu = @twitter_user
-
-    if verify_page_cache_token(params[:hash], tu.created_at.to_i)
-      ::Cache::PageCache.new.delete(tu.uid)
-      head :ok
-    else
-      head :bad_request
-    end
+    ::Cache::PageCache.new.delete(@twitter_user.uid)
+    head :ok
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.uid} #{tu.screen_name} #{request.browser}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{@twitter_user.uid} #{@twitter_user.screen_name} #{request.browser}"
     head :internal_server_error
   end
 end

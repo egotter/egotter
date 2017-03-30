@@ -51,7 +51,7 @@ module Concerns::TwitterUser::Utils
   end
 
   def relationships_cache_created?
-    created_at < 3.hours.ago
+    created_at < 10.minutes.ago
   end
 
   def _benchmark(message, &block)

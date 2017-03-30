@@ -58,7 +58,7 @@
         <% if tu.relationships_cache_created? %>
           <%= link_to(t('dictionary.view_more_with_num_html', num: 0), result_path, class: 'btn btn-info btn-block disabled') %>
         <% else %>
-          <%= link_to(t('dictionary.under_calculation'), result_path, class: 'btn btn-info btn-block disabled') %>
+          <%= link_to(t('dictionary.reload_this_page'), result_path, class: 'btn btn-info btn-block reload-btn') %>
         <% end %>
       <% end %>
     </div>
