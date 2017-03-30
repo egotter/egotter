@@ -45,7 +45,7 @@
   heartbeat_interval 1s
   phi_threshold 16
   hard_timeout 60s
-  flush_interval 10s
+  flush_interval 2s
 
   <server>
     name egotter_web

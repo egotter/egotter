@@ -1,0 +1,33 @@
+<source>
+  @type forward
+  port 24224
+  bind 0.0.0.0
+</source>
+
+<match sidekiq4.**>
+  @type file
+  path /var/log/td-agent/sidekiq4
+  buffer_type file
+  buffer_path /var/log/td-agent/buffer/sidekiq4
+  symlink_path /var/log/td-agent/sidekiq4
+  delimiter SPACE
+  time_slice_format %Y%m%d
+  time_slice_wait 10m
+  time_format %Y%m%dT%H%M%S%z
+  compress gzip
+  utc
+</match>
+
+<match autoscale.**>
+  @type file
+  path /var/log/td-agent/autoscale
+  buffer_type file
+  buffer_path /var/log/td-agent/buffer/autoscale
+  symlink_path /var/log/td-agent/autoscale
+  delimiter SPACE
+  time_slice_format %Y%m%d
+  time_slice_wait 10m
+  time_format %Y%m%dT%H%M%S%z
+  compress gzip
+  utc
+</match>
