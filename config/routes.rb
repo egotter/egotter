@@ -68,6 +68,13 @@ Rails.application.routes.draw do
     get '/' => 'devise/sessions#new', :as => :new_user_session
   end
 
+  require 'sidekiq/api'
+  match 'delay_status' => proc {
+    q1 = Sidekiq::Queue.new(DelayedCreateTwitterUserWorker.name)
+    q2 = Sidekiq::Queue.new(DelayedImportTwitterUserRelationsWorker.name)
+    [200, {'Content-Type' => 'text/plain'}, ["#{q1.size} #{q2.size}"]]
+  }, via: :get
+
   require 'sidekiq/web'
   Sidekiq::Web.use Rack::Auth::Basic do |username, password|
     username == ENV['SIDEKIQ_USERNAME'] && password == ENV['SIDEKIQ_PASSWORD']
