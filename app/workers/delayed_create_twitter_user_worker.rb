@@ -3,7 +3,7 @@ class DelayedCreateTwitterUserWorker < CreateTwitterUserWorker
   sidekiq_options queue: self, retry: 3, backtrace: false, dead: true
 
   sidekiq_retry_in do |count|
-    30.minutes + rand(10.minutes)
+    egotter_retry_in
   end
 
   def perform(values = {})
@@ -29,10 +29,10 @@ class DelayedCreateTwitterUserWorker < CreateTwitterUserWorker
       logger.warn 'I will sleep. Bye!'
       sleep sleep_time
       logger.warn 'Good morning. I will retry.'
-      DelayedCreateTwitterUserWorker.perform_in(30.minutes + rand(10.minutes), values)
     else
       logger.warn "recover #{ex.class.name.demodulize} #{values['user_id']} #{values['uid']}"
-      raise ex
     end
+
+    DelayedCreateTwitterUserWorker.perform_in(egotter_retry_in, values)
   end
 end

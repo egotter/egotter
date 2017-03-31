@@ -3,7 +3,7 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
   sidekiq_options queue: self, retry: 3, backtrace: false, dead: true
 
   sidekiq_retry_in do |count|
-    30.minutes + rand(10.minutes)
+    egotter_retry_in
   end
 
   def perform(user_id, uid, options = {})
@@ -29,10 +29,10 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
       logger.warn 'I will sleep. Bye!'
       sleep sleep_time
       logger.warn 'Good morning. I will retry.'
-      DelayedImportTwitterUserRelationsWorker.perform_in(30.minutes + rand(10.minutes), user_id, uid, options)
     else
       logger.warn "recover #{ex.class.name.demodulize} #{user_id} #{uid} #{twitter_user_id}"
-      raise ex
     end
+
+    DelayedImportTwitterUserRelationsWorker.perform_in(egotter_retry_in, user_id, uid, options)
   end
 end
