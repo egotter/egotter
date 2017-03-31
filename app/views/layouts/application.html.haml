@@ -114,46 +114,13 @@
         .row
           .col-xs-12.pre-footer
             %h2.h4.text-center= t('searches.common.popular')
-            - if %w(one_sided_friends unfriends inactive_friends friends conversations relationships).include? controller_name
-              %h2.h4.text-left
-                = link_to t('searches.common.egotter'), root_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('searches.common.page_description')
-            - unless 'one_sided_friends' == controller_name
-              %h2.h4.text-left
-                = link_to t('one_sided_friends.new.plain_title'), one_sided_friends_top_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('one_sided_friends.new.short_description')
-            - unless 'unfriends' == controller_name
-              %h2.h4.text-left
-                = link_to t('unfriends.new.plain_title'), unfriends_top_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('unfriends.new.short_description')
-            - unless 'relationships' == controller_name
-              %h2.h4.text-left
-                = link_to t('relationships.new.plain_title'), relationships_top_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('relationships.new.short_description')
-            - unless 'inactive_friends' == controller_name
-              %h2.h4.text-left
-                = link_to t('inactive_friends.new.plain_title'), inactive_friends_top_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('inactive_friends.new.short_description')
-            - unless 'friends' == controller_name
-              %h2.h4.text-left
-                = link_to t('friends.new.plain_title'), friends_top_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('friends.new.short_description')
-            - unless 'conversations' == controller_name
-              %h2.h4.text-left
-                = link_to t('conversations.new.plain_title'), conversations_top_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('conversations.new.short_description')
-            - unless 'clusters' == controller_name
-              %h2.h4.text-left
-                = link_to t('clusters.new.plain_title'), clusters_top_path
-              %div{style: 'margin-bottom: 15px;'}
-                = t('clusters.new.short_description')
+            .row
+              - [[one_sided_friends_top_path, t('one_sided_friends.new.plain_title')], [unfriends_top_path, t('unfriends.new.plain_title')], [relationships_top_path, t('relationships.new.plain_title')], [inactive_friends_top_path, t('inactive_friends.new.plain_title')], [friends_top_path, t('friends.new.plain_title')], [conversations_top_path, t('conversations.new.plain_title')], [clusters_top_path, t('clusters.new.plain_title')], [root_path, t('searches.common.egotter')]].each do |path, label|
+                .col-xs-12.col-sm-4.col-md-3.col-lg-3{style: 'margin-bottom: 15px;'}
+                  %div{style: 'max-width: 400px; margin-left: auto; margin-right: auto; position: relative; border: 4px solid #999999;'}
+                    = link_to path, style: 'display: block;' do
+                      = image_tag '/egotter_icon_400x400.jpg', class: 'img-responsive'
+                      %div{style: 'font-size: x-large; color: white; padding: 4px 8px; background: rgb(0, 0, 0); background: rgba(0, 0, 0, 0.7); position: absolute; left: 0; bottom: 0; width: 100%;'}= label
 
       .container
         .row
