@@ -2,8 +2,9 @@ PREFIX='cd /home/ec2-user/egotter && RAILS_ENV=production bundle exec rake'
 SUFFIX='--silent >>/home/ec2-user/egotter/log/cron.log 2>&1'
 
 # 0 0-15,22-23 * * * /bin/bash -l -c "$PREFIX twitter_users:send_prompt_reports $SUFFIX"
-0,15,30,45 * * * * /bin/bash -l -c "$PREFIX twitter:cleanup $SUFFIX"
+0,15,30,45 * * * *   /bin/bash -l -c "$PREFIX twitter:cleanup $SUFFIX"
 # 20 * * * *         /bin/bash -l -c "$PREFIX latest_search_logs:update $SUFFIX"
 # 0 19 * * *         /bin/bash -l -c "$PREFIX visitors:update users:update_timestamps $SUFFIX"
 # 10 19 * * *        /bin/bash -l -c "$PREFIX user_retention_stats:update visitor_retention_stats:update user_engagement_stats:update visitor_engagement_stats:update $SUFFIX"
 # */5 * * * *        /usr/bin/sudo /bin/bash -l -c 'monit monitor all >> /home/ec2-user/egotter/log/monit.log 2>&1'
+# */2 * * * *        /usr/bin/sudo /home/ec2-user/egotter/bin/start_or_stop_sidekiq_delay.sh >>/home/ec2-user/egotter/log/start_or_stop.log 2>&1
