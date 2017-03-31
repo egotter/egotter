@@ -29,7 +29,7 @@ egotter_autoscale=$(fetch_ip egotter_autoscale)
 if [ $? -eq 0 ]; then
   stop
 else
-  d_status=$(curl -m 1 -s https://egotter.com/delay_status)
+  d_status=$(curl -m 1 -s -H 'User-Agent: egotterbot/1.0' https://egotter.com/delay_status)
   if [ $? -eq 0 ]; then
     set -- ${d_status}
     if [ $1 -ne 0 -o $2 -ne 0 ]; then
