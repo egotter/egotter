@@ -24,18 +24,12 @@ fetch_ip() {
 egotter_web=$(fetch_ip egotter_web)
 egotter_autoscale=$(fetch_ip egotter_autoscale)
 
-if [ -z "${egotter_autoscale}" ]; then
-  echo 'egotter_autoscale is not found'
-  exit 1
-fi
+[ -n "${egotter_autoscale}" ] && /bin/ping -w 1 -c 1 ${egotter_autoscale} >/dev/null 2>&1
 
-/bin/ping -w 1 -c 1 ${egotter_autoscale} >/dev/null 2>&1
-p_status=$?
-
-if [ ${p_status} -eq 0 ]; then
+if [ $? -eq 0 ]; then
   stop
 else
-  d_status=$(curl -m 1 -s https://${egotter_web}/delay_status)
+  d_status=$(curl -m 1 -s https://egotter.com/delay_status)
   if [ $? -eq 0 ]; then
     set -- ${d_status}
     if [ $1 -ne 0 -o $2 -ne 0 ]; then
