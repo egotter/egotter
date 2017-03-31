@@ -25,6 +25,10 @@
 <% end %>
 
 <% %w(removing removed new_friends new_followers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name| %>
+  <% if name == 'new_friends' && request.from_smartphone? %>
+    <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle}) %>
+  <% end %>
+
   <% cache "#{tu.cache_key}/#{name}", expires_in: fragment_cache_ttl do %>
     <%= render partial: 'search_results/show/users_summary', locals: {name: name}.merge(default_locals) %>
   <% end %>
