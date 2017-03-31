@@ -72,8 +72,6 @@ case "$1" in
           ;;
   *)
           echo "Usage: egotter {restart|status}" >&2
-          exit 1
+          exit 2
           ;;
 esac
-exit 0
-

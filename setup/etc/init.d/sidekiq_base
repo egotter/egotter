@@ -167,7 +167,6 @@ case "${2}" in
           ;;
   *)
           echo "Usage: sidekiq {start|stop|restart|status}" >&2
-          exit 1
+          exit 2
           ;;
 esac
-exit 0
