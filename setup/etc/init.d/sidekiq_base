@@ -47,6 +47,7 @@ is_running() {
 
 start() {
   cd ${APP_ROOT}
+  ulimit -n 65536 1>/dev/null 2>&1 || true
   sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e ${RAILS_ENV} -d -g ${TAG} -C ${CONFIG_FILE}"
   if [ $? -ne 0 ]; then
     echo ${en} "Starting $NAME: ${ec}"; failure; echo
