@@ -6,7 +6,6 @@ class ImportReplyingRepliedAndFavoritesWorker
   def perform(user_id, uid, options = {})
     started_at = Time.zone.now
     chk1 = nil
-    login_user = user_id == -1 ? nil : User.find(user_id)
     client = ApiClient.user_or_bot_client(user_id)
     twitter_user = TwitterUser.latest(uid)
     users = nil
@@ -14,7 +13,10 @@ class ImportReplyingRepliedAndFavoritesWorker
     @retry_count = 0
     @wait_seconds = 0.0
 
-    uids = (twitter_user.replying_uids + twitter_user.replied_uids(login_user: login_user) + twitter_user.favoriting_uids).uniq
+
+    uids = twitter_user.calc_close_friend_uids
+    _benchmark('import CloseFriendship') { CloseFriendship.import_from!(uid, uids) }
+
     begin
       t_users = client.users(uids)
     rescue Twitter::Error::NotFound => e

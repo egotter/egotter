@@ -216,16 +216,19 @@ module Concerns::TwitterUser::Api
     users.each { |user| user.uid = user.id }
   end
 
-  def close_friend_uids(uniq: false, min: 1, limit: 50, login_user: nil)
-    uids = replying_uids(uniq: uniq) + replied_uids(uniq: uniq, login_user: login_user) + favoriting_uids(uniq: uniq, min: min)
-    uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(limit).map(&:first)
+  def calc_close_friend_uids
+    login_user = mentions.any? ? Hashie::Mash.new(uid: uid) : nil
+    uids = replying_uids(uniq: false) + replied_uids(uniq: false, login_user: login_user) + favoriting_uids(uniq: false, min: 1)
+    uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(50).map(&:first)
   end
 
-  def close_friends(uniq: false, min: 1, limit: 50, login_user: nil)
-    uids = close_friend_uids(uniq: uniq, min: min, limit: limit, login_user: login_user)
-    users = (replying(uniq: uniq) + replied(uniq: uniq, login_user: login_user) + favoriting(uniq: uniq, min: min)).uniq(&:uid).index_by(&:uid)
-    users = uids.map { |uid| users[uid] }.compact
-    users.each { |user| user.uid = user.id }
+  def close_friend_uids
+    # TODO remove later
+    if close_friendships.any?
+      close_friendships.pluck(:friend_uid)
+    else
+      calc_close_friend_uids
+    end
   end
 
   def calc_inactive_friend_uids

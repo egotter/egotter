@@ -37,6 +37,8 @@ module Concerns::TwitterUser::Associations
       obj.has_many :inactive_friendships,        -> { order(sequence: :asc) }
       obj.has_many :inactive_followerships,      -> { order(sequence: :asc) }
       obj.has_many :inactive_mutual_friendships, -> { order(sequence: :asc) }
+
+      obj.has_many :close_friendships, -> { order(sequence: :asc) }
     end
 
     with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
@@ -50,6 +52,8 @@ module Concerns::TwitterUser::Associations
       obj.has_many :inactive_friends,        through: :inactive_friendships
       obj.has_many :inactive_followers,      through: :inactive_followerships
       obj.has_many :inactive_mutual_friends, through: :inactive_mutual_friendships
+
+      obj.has_many :close_friends, through: :close_friendships
     end
   end
 end
