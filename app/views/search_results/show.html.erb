@@ -3,7 +3,7 @@
   rendered_users = []
   icon_limit = request.from_pc? ? 8 : 3
   default_locals = {rendered_users: rendered_users, icon_limit: icon_limit, tu: tu}
-  fragment_cache_ttl = 1.day
+  fragment_cache_ttl = 10.minutes
 %>
 
 <script>
