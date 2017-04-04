@@ -7,7 +7,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     started_at = Time.zone.now
     chk1 = nil
     login_user = user_id == -1 ? nil : User.find(user_id)
-    client = login_user.nil? ? Bot.api_client : login_user.api_client
+    client = ApiClient.user_or_bot_client(user_id)
     twitter_user = TwitterUser.latest(uid)
     users = nil
     async = options.fetch('async', true)

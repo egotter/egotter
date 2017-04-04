@@ -6,7 +6,7 @@ class ImportFriendshipsAndFollowershipsWorker
   def perform(user_id, uid, options = {})
     started_at = Time.zone.now
     chk1 = chk2 = chk3 = nil
-    client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
+    client = ApiClient.user_or_bot_client(user_id)
     twitter_user = TwitterUser.latest(uid)
     async = options.fetch('async', true)
     @retry_count = 0
