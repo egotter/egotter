@@ -1,4 +1,6 @@
 language: ruby
+cache:
+  bundler: true
 sudo: required
 rvm:
   - 2.3.1
