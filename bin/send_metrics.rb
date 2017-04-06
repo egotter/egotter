@@ -4,6 +4,7 @@ require 'datadog/statsd'
 
 re_time = Regexp.new(1.minute.ago.strftime("%Y-%m-%dT%H:%M:\\d{2}\\+00:00"))
 re_line = %r{^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} .+? .+? (?<time>\[.+?\]) "(?<path>GET /search_results.+?)" \d{3} \d+ ".+?" ".+?" "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" "(?<ratio>.+?)" "(?<req>.+?)"(?: "(?<upstream>.+?)" "(?<rack>.+?)")?$}
+tags = %w(controller_name:search_results action_name:show)
 response_times = []
 
 File.open('/var/log/nginx/access.log') do |f|
@@ -16,8 +17,10 @@ end
 
 Datadog::Statsd.new('localhost', 8125).batch do |s|
   response_times.each do |req, upstream, rack|
-    s.histogram('egotter.nginx.request_time', req.to_f) if req != '-1'
-    s.histogram('egotter.nginx.upstream_response_time', upstream.to_f) if upstream != '-1'
-    s.histogram('egotter.nginx.sent_http_x_runtime', rack.to_f) if rack != '-1'
+    s.histogram('egotter.nginx.request_time',           req.to_f,      tags: tags) if req != '-1'
+    s.histogram('egotter.nginx.upstream_response_time', upstream.to_f, tags: tags) if upstream != '-1'
+    s.histogram('egotter.nginx.sent_http_x_runtime',    rack.to_f,     tags: tags) if rack != '-1'
   end
 end
+
+puts "#{Time.now.utc} #{$0} #{response_times.size} #{response_times.map(&:first).map(&:to_f).inspect}"
