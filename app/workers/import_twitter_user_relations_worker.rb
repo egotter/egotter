@@ -30,16 +30,7 @@ class ImportTwitterUserRelationsWorker
       enqueued_at: enqueued_at
     )
 
-    client =
-      if user_id == -1
-        bot = Bot.sample
-        job.client_uid = bot.uid
-        Bot.api_client
-      else
-        user = User.find(user_id)
-        job.client_uid = user.uid
-        user.api_client
-      end
+    client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.client_uid = client_uid }
 
     new_args = [user_id, uid, 'async' => false, 'parent_jid' => jid]
 

@@ -17,6 +17,7 @@ class ApiClient
     Twitter::REST::Client.new
   end
 
+  # user's client > follower's client > login user's client > bot client
   def self.better_client(uid, login_user_id = nil)
     user = User.authorized.find_by(uid: uid)
     return user.api_client if user
@@ -33,5 +34,16 @@ class ApiClient
     end
 
     Bot.api_client
+  end
+
+  def self.user_or_bot_client(user_id)
+    user_or_bot =
+      if user_id.nil? || user_id.to_i == -1
+        Bot.sample
+      else
+        User.find(user_id)
+      end
+    yield(user_or_bot.uid) if block_given?
+    user_or_bot.api_client
   end
 end

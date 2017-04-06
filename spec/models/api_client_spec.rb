@@ -1,16 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe ApiClient, type: :model do
-  describe '.config' do
-    let(:option) do
-      {
-        consumer_key: 'ck',
-        consumer_secret: 'cs',
-        access_token: 'at',
-        access_token_secret: 'ats',
-      }
-    end
+  let(:option) do
+    {
+      consumer_key: 'ck',
+      consumer_secret: 'cs',
+      access_token: 'at',
+      access_token_secret: 'ats',
+    }
+  end
 
+  describe '.config' do
     context 'without option' do
       let(:config) { ApiClient.config }
 
@@ -83,6 +83,39 @@ RSpec.describe ApiClient, type: :model do
         client = ApiClient.better_client(user.uid)
         expect(client.access_token).to eq(bot.token)
         expect(client.access_token_secret).to eq(bot.secret)
+      end
+    end
+  end
+
+  describe '.user_or_bot_client' do
+    let(:bot) { create(:bot) }
+    before do
+      bot
+      Bot::IDS = Bot.pluck(:id)
+    end
+
+    context 'user_id == -1' do
+      let(:user_id) { -1 }
+      it 'calls Bot.sample' do
+        expect(Bot).to receive(:sample).and_return(Bot.first)
+        ApiClient.user_or_bot_client(user_id)
+      end
+    end
+
+    context 'user_id == nil' do
+      let(:user_id) { nil }
+      it 'calls Bot.sample' do
+        expect(Bot).to receive(:sample).and_return(Bot.first)
+        ApiClient.user_or_bot_client(user_id)
+      end
+    end
+
+    context 'user_id != -1' do
+      let(:user) { create(:user) }
+      let(:user_id) { user.id }
+      it 'calls User.find' do
+        expect(User).to receive(:find).with(user_id).and_return(User.first)
+        ApiClient.user_or_bot_client(user_id)
       end
     end
   end

@@ -5,7 +5,7 @@ class ImportFriendsAndFollowersWorker
 
   def perform(user_id, uid, options = {})
     started_at = Time.zone.now
-    client = user_id == -1 ? Bot.api_client : User.find(user_id).api_client
+    client = ApiClient.user_or_bot_client(user_id)
     async = options.fetch('async', true)
 
     user = TwitterDB::User.builder(uid).client(client).build
