@@ -121,16 +121,28 @@ module SearchesHelper
   end
 
   def users_for(tu, menu:)
-    if %i(replied close_friends).include?(menu.to_sym)
+    if %i(replied).include?(menu.to_sym)
       tu.send(menu, login_user: current_user)
     else
-      tu.send(menu)
+      if menu.to_sym == :close_friends
+        # TODO remove later
+        result = tu.send(menu)
+        if result.any?
+          result
+        else
+          uids = tu.calc_close_friend_uids
+          users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+          uids.map { |uid| users[uid] }.compact
+        end
+      else
+        tu.send(menu)
+      end
     end
   end
 
   def uids_for(tu, menu:)
     uids_menu = "#{menu.singularize}_uids"
-    if %i(replied_uids close_friend_uids).include?(uids_menu.to_sym)
+    if %i(replied_uids).include?(uids_menu.to_sym)
       tu.send(uids_menu, login_user: current_user)
     else
       tu.send(uids_menu)

@@ -31,7 +31,6 @@ class ImportTwitterUserRelationsWorker
     )
 
     client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.client_uid = client_uid }
-
     new_args = [user_id, uid, 'async' => false, 'parent_jid' => jid]
 
     ImportReplyingRepliedAndFavoritesWorker.new.perform(*new_args)

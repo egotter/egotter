@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170328135453) do
+ActiveRecord::Schema.define(version: 20170403021311) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -101,6 +101,15 @@ ActiveRecord::Schema.define(version: 20170328135453) do
 
   add_index "bots", ["screen_name"], name: "index_bots_on_screen_name", using: :btree
   add_index "bots", ["uid"], name: "index_bots_on_uid", unique: true, using: :btree
+
+  create_table "close_friendships", force: :cascade do |t|
+    t.integer "from_uid",   limit: 8, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "close_friendships", ["friend_uid"], name: "index_close_friendships_on_friend_uid", using: :btree
+  add_index "close_friendships", ["from_uid"], name: "index_close_friendships_on_from_uid", using: :btree
 
   create_table "create_notification_message_logs", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false
