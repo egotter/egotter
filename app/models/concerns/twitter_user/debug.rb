@@ -74,8 +74,8 @@ module Concerns::TwitterUser::Debug
         puts [replied_uids.size, replied.size].inspect
         puts
 
-        puts %w(favoriting_uids favoriting).join delim
-        puts [favoriting_uids.size, favoriting.size].inspect
+        puts %w(favorite_friend_uids favorite_friends).join delim
+        puts [favorite_friend_uids.size, favorite_friends.size].inspect
       end
     end
   end

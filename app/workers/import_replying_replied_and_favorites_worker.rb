@@ -14,11 +14,14 @@ class ImportReplyingRepliedAndFavoritesWorker
     @wait_seconds = 0.0
 
 
-    uids = twitter_user.calc_close_friend_uids
-    _benchmark('import CloseFriendship') { CloseFriendship.import_from!(uid, uids) }
+    favorite_friend_uids = twitter_user.calc_favorite_friend_uids
+    _benchmark('import FavoriteFriendship') { FavoriteFriendship.import_from!(uid, favorite_friend_uids) }
+
+    close_friend_uids = twitter_user.calc_close_friend_uids
+    _benchmark('import CloseFriendship') { CloseFriendship.import_from!(uid, close_friend_uids) }
 
     begin
-      t_users = client.users(uids)
+      t_users = client.users (favorite_friend_uids + close_friend_uids).uniq
     rescue Twitter::Error::NotFound => e
       if e.message == 'No user matches for specified terms.'
         t_users = []
