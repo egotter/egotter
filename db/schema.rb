@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170403021311) do
+ActiveRecord::Schema.define(version: 20170407142224) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -170,6 +170,15 @@ ActiveRecord::Schema.define(version: 20170403021311) do
   add_index "create_relationship_logs", ["screen_name"], name: "index_create_relationship_logs_on_screen_name", using: :btree
   add_index "create_relationship_logs", ["uid"], name: "index_create_relationship_logs_on_uid", using: :btree
   add_index "create_relationship_logs", ["user_id"], name: "index_create_relationship_logs_on_user_id", using: :btree
+
+  create_table "favorite_friendships", force: :cascade do |t|
+    t.integer "from_uid",   limit: 8, null: false
+    t.integer "friend_uid", limit: 8, null: false
+    t.integer "sequence",   limit: 4, null: false
+  end
+
+  add_index "favorite_friendships", ["friend_uid"], name: "index_favorite_friendships_on_friend_uid", using: :btree
+  add_index "favorite_friendships", ["from_uid"], name: "index_favorite_friendships_on_from_uid", using: :btree
 
   create_table "favorites", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false

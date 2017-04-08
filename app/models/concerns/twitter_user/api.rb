@@ -203,12 +203,31 @@ module Concerns::TwitterUser::Api
     uids.map { |uid| users[uid] }.compact
   end
 
+  def calc_favorite_friend_uids(uniq: true)
+    uids = favorites.map { |fav| fav&.user&.id }.compact
+    if uniq
+      uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.map(&:first)
+    else
+      uids
+    end
+  end
+
+  def favorite_friend_uids
+    # TODO remove later
+    if favorite_friendships.any?
+      favorite_friendships.pluck(:friend_uid)
+    else
+      calc_favorite_friend_uids
+    end
+  end
+
   def favoriting_uids(uniq: true, min: 0)
-    uids = favorites.map { |fav| fav&.user&.id }.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.map(&:first)
-    uniq ? uids.uniq : uids
+    logger.warn "DUPLICATED #{__method__}"
+    favorite_friend_uids
   end
 
   def favoriting(uniq: true, min: 0)
+    logger.warn "DUPLICATED #{__method__}"
     uids = favoriting_uids(uniq: uniq, min: min)
     users = favorites.map(&:user).index_by(&:id)
     users = uids.map { |uid| users[uid] }
@@ -218,7 +237,7 @@ module Concerns::TwitterUser::Api
 
   def calc_close_friend_uids
     login_user = mentions.any? ? Hashie::Mash.new(uid: uid) : nil
-    uids = replying_uids(uniq: false) + replied_uids(uniq: false, login_user: login_user) + favoriting_uids(uniq: false, min: 1)
+    uids = replying_uids(uniq: false) + replied_uids(uniq: false, login_user: login_user) + calc_favorite_friend_uids(uniq: false)
     uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(50).map(&:first)
   end
 

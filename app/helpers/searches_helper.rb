@@ -134,6 +134,16 @@ module SearchesHelper
           users = TwitterDB::User.where(uid: uids).index_by(&:uid)
           uids.map { |uid| users[uid] }.compact
         end
+      elsif menu.to_sym == :favoriting
+        # TODO remove later
+        result = tu.favorite_friends
+        if result.any?
+          result
+        else
+          uids = tu.calc_favorite_friend_uids
+          users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+          uids.map { |uid| users[uid] }.compact
+        end
       else
         tu.send(menu)
       end
