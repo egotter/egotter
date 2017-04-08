@@ -13,7 +13,7 @@ module TweetTextHelper
   #   {:name=>"Sat", :y=>12.115753424657534}
   # ]
   def usage_time_text(stats, tu)
-    return error_text if stats.nil?
+    return error_text if stats.blank? || stats.all? { |s| s[:y].nil? }
 
     total_minutes = stats.map { |obj| obj[:y] }.sum { |y| y.nil? ? 0 : y }
     minutes_per_day = total_minutes / stats.map { |obj| obj[:y] }.count { |y| !y.nil? }
