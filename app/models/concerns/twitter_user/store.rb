@@ -35,7 +35,14 @@ module Concerns::TwitterUser::Store
 
   METHOD_NAME_KEYS = PROFILE_SAVE_KEYS.reject { |k| k.in?(PROFILE_REJECT_KEYS) }
 
-  JAPANESE_TIME_ZONE_NAMES = %w(JST GMT+9)
+  TIME_ZONE_MAPPING = {
+    'JST' => 'Asia/Tokyo',
+    'GMT+9' => 'Asia/Tokyo',
+    'Ulaan Bataar' => 'Asia/Ulaanbaatar',
+    'GMT-8' => 'America/Los_Angeles',
+    'Kiev' => 'Europe/Kiev',
+    'GMT-4' => 'America/Puerto_Rico'
+  }
 
   included do
     delegate *METHOD_NAME_KEYS, to: :_user_info
@@ -58,17 +65,16 @@ module Concerns::TwitterUser::Store
   end
 
   def account_created_at
-    _created_at = _user_info[:created_at]
-    if time_zone.present? && _created_at.present?
-      _time_zone = (time_zone.in?(JAPANESE_TIME_ZONE_NAMES) ? 'Tokyo' : time_zone)
-      ActiveSupport::TimeZone[_time_zone].parse(_created_at)
-    elsif _created_at.present?
-      Time.zone.parse(_created_at)
+    at = _user_info[:created_at].to_s
+    if time_zone.present? && at.present?
+      ActiveSupport::TimeZone[TIME_ZONE_MAPPING[time_zone.to_s] || time_zone.to_s].parse(at)
+    elsif at.present?
+      Time.zone.parse(at)
     else
-      _created_at
+      nil
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{_created_at}]"
-    _created_at
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{at}]"
+    nil
   end
 end
