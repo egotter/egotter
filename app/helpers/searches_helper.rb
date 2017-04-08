@@ -154,6 +154,8 @@ module SearchesHelper
     uids_menu = "#{menu.singularize}_uids"
     if %i(replied_uids).include?(uids_menu.to_sym)
       tu.send(uids_menu, login_user: current_user)
+    elsif uids_menu.to_sym == :favoriting_uids
+      tu.favorite_friend_uids
     else
       tu.send(uids_menu)
     end
