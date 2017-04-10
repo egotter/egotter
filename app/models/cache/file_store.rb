@@ -51,7 +51,8 @@ module Cache
     end
 
     def cleanup
-      store.delete_matched(/^(v[2-9a-z]|ver-00[0-2])-searches-file-store:/)
+      # store.delete_matched(/^(v[2-9a-z]|ver-00[0-2])-searches-file-store:/)
+      clear
     end
 
     def ttl(uid)
