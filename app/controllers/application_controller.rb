@@ -60,6 +60,13 @@ class ApplicationController < ActionController::Base
       return redirect_to redirect_url, status: 301
     end
 
+    if params['from']&.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/profile' && !request.xhr?
+      @screen_name = params['from']
+      @redirect_path = search_path(screen_name: @screen_name)
+      @via = params['via']
+      return render template: 'searches/create', layout: false
+    end
+
     unless request.fullpath.match %r{^/search_results/}
       logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
     end
