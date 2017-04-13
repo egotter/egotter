@@ -47,21 +47,28 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
-    if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
+    if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches' && !request.xhr?
       @screen_name = params['screen_name']
       @redirect_path = search_path(screen_name: @screen_name)
       @via = params['via']
-      render template: 'searches/create', layout: false
-    elsif request.fullpath.match %r{^/https:/egotter\.com(.+)}
+      return render template: 'searches/create', layout: false
+    end
+
+    if request.fullpath.match %r{^/https:/egotter\.com(.+)} && !request.xhr?
       redirect_url = "https://egotter.com#{$1}"
       logger.info "redirect to #{redirect_url} #{current_user_id} #{request.device_type} #{request.browser} #{request.referer}"
-      redirect_to redirect_url, status: 301
-    else
-      unless request.fullpath.match %r{^/search_results/}
-        logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
-      end
-      request.xhr? ? head(:not_found) : redirect_to(root_path, alert: t('before_sign_in.that_page_doesnt_exist'))
+      return redirect_to redirect_url, status: 301
     end
+
+    unless request.fullpath.match %r{^/search_results/}
+      logger.warn "#{request.method} #{request.fullpath} #{current_user_id} #{request.device_type} #{request.browser}"
+    end
+
+    if request.xhr?
+      return head(:not_found)
+    end
+
+    redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist'), status: 404
   end
 
   def recover_invalid_token?
