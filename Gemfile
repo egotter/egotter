@@ -67,7 +67,7 @@ gem 'aws-sdk', require: false
 
 group :development, :production do
   gem 'blazer'
-  gem 'sitemap_generator'
+  gem 'sitemap_generator' # Be required at runtime
 end
 
 group :development, :test do
