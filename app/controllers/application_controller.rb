@@ -54,7 +54,7 @@ class ApplicationController < ActionController::Base
       return render template: 'searches/create', layout: false
     end
 
-    if request.fullpath.match %r{^/https:/egotter\.com(.+)} && !request.xhr?
+    if request.fullpath.match(%r{^/https:/egotter\.com(.+)}) && !request.xhr?
       redirect_url = "https://egotter.com#{$1}"
       logger.info "redirect to #{redirect_url} #{current_user_id} #{request.device_type} #{request.browser} #{request.referer}"
       return redirect_to redirect_url, status: 301
