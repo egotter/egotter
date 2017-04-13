@@ -68,7 +68,8 @@ class ApplicationController < ActionController::Base
       return head(:not_found)
     end
 
-    redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist'), status: 404
+    flash.now[:alert] = t('before_sign_in.that_page_doesnt_exist')
+    render template: 'searches/new', status: 404
   end
 
   def recover_invalid_token?
