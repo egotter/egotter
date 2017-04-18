@@ -16,7 +16,7 @@ module Validation
     end
   end
 
-  def need_admin
+  def require_admin!
     redirect_to root_path unless admin_signed_in?
   end
 
