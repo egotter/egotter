@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170407142224) do
+ActiveRecord::Schema.define(version: 20170410153225) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -600,6 +600,20 @@ ActiveRecord::Schema.define(version: 20170407142224) do
 
   add_index "unfriendships", ["friend_uid"], name: "index_unfriendships_on_friend_uid", using: :btree
   add_index "unfriendships", ["from_uid"], name: "index_unfriendships_on_from_uid", using: :btree
+
+  create_table "usage_stats", force: :cascade do |t|
+    t.integer "uid",                 limit: 8,     null: false
+    t.text    "wday_json",           limit: 65535, null: false
+    t.text    "wday_drilldown_json", limit: 65535, null: false
+    t.text    "hour_json",           limit: 65535, null: false
+    t.text    "hour_drilldown_json", limit: 65535, null: false
+    t.text    "usage_time_json",     limit: 65535, null: false
+    t.text    "breakdown_json",      limit: 65535, null: false
+    t.text    "hashtags_json",       limit: 65535, null: false
+    t.text    "mentions_json",       limit: 65535, null: false
+  end
+
+  add_index "usage_stats", ["uid"], name: "index_usage_stats_on_uid", unique: true, using: :btree
 
   create_table "user_engagement_stats", force: :cascade do |t|
     t.datetime "date",                                 null: false
