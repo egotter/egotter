@@ -69,4 +69,18 @@ module Concerns::Status::Store
     # TODO Use user specific time zone
     ActiveSupport::TimeZone['Tokyo'].parse(_status_info.created_at)
   end
+
+  def retweet?
+    text.start_with? 'RT'
+  end
+
+  def mention_uids
+    # statuses.map { |status| status.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
+    # statuses.map { |status| $1 if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
+    entities&.user_mentions&.map { |obj| obj['id'] }&.compact
+  end
+
+  def mention_to?(mention_name)
+    !retweet? && text.include?(mention_name)
+  end
 end

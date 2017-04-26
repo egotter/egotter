@@ -76,8 +76,8 @@ module Concerns::TwitterUser::Api
   end
 
   def conversations(other)
-    statuses1 = statuses.select { |status| !status.text.start_with?('RT') && status.text.include?(other.mention_name) }
-    statuses2 = other.statuses.select { |status| !status.text.start_with?('RT') && status.text.include?(mention_name) }
+    statuses1 = statuses.select { |status| status.mention_to?(other.mention_name) }
+    statuses2 = other.statuses.select { |status| status.mention_to?(mention_name) }
     (statuses1 + statuses2).sort_by { |status| -status.tweeted_at.to_i }
   end
 
@@ -159,14 +159,11 @@ module Concerns::TwitterUser::Api
   end
 
   def replying_uids(uniq: true)
-    uids = statuses.select { |status| !status.text.start_with? 'RT' }.map { |status| status&.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
+    uids = statuses.reject(&:retweet?).map(&:mention_uids)&.flatten.compact
     uniq ? uids.uniq : uids
   end
 
   def replying(uniq: true)
-    # statuses.map { |status| status.entities&.user_mentions&.map { |obj| obj['id'] } }&.flatten.compact
-    # statuses.map { |status| $1 if status.text.match /^(?:\.)?@(\w+)( |\W)/ }.compact
-
     uids = replying_uids(uniq: uniq)
     users = TwitterDB::User.where(uid: uids).index_by(&:uid)
     uids.map { |uid| users[uid] }.compact
@@ -176,7 +173,7 @@ module Concerns::TwitterUser::Api
     if login_user&.uid&.to_i == uid.to_i
       mentions
     elsif search_results.any?
-      search_results.select { |status| !status.text.start_with?('RT') && status.text.include?(mention_name) }
+      search_results.select { |status| status.mention_to?(mention_name) }
     else
       []
     end
