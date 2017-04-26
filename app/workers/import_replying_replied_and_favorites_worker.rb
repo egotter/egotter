@@ -35,7 +35,7 @@ class ImportReplyingRepliedAndFavoritesWorker
     users.sort_by!(&:first)
 
     chk1 = Time.zone.now
-    _retry_with_transaction!('import replying, replied and favoriting', retry_limit: 5, retry_timeout: 20.seconds) { TwitterDB::User.import_each_slice(users) }
+    _retry_with_transaction!('import replying, replied and favoriting', retry_limit: 5, retry_timeout: 20.seconds) { TwitterDB::User.import_in_batches(users) }
 
   rescue Twitter::Error::Unauthorized => e
     handle_unauthorized_exception(e, user_id: user_id, uid: uid, twitter_user_id: twitter_user.id)

@@ -37,7 +37,7 @@ class ImportTwitterUserRelationsWorker
 
     if twitter_user.friendless?
       t_user = client.user(uid)
-      TwitterDB::User.import_each_slice [TwitterDB::User.to_import_format(t_user)]
+      TwitterDB::User.import_in_batches [TwitterDB::User.to_import_format(t_user)]
     else
       signatures = [{method: :user, args: [uid]}, {method: :friends, args: [uid]}, {method: :followers, args: [uid]}]
       client._fetch_parallelly(signatures) # create caches

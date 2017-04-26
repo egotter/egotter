@@ -27,7 +27,7 @@ namespace :close_friendships do
       if t_users.any?
         import_users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
         import_users.sort_by!(&:first)
-        TwitterDB::User.import_each_slice(import_users)
+        TwitterDB::User.import_in_batches(import_users)
       end
 
       puts "imported: total #{total_uids.size}, uniq #{uniq_uids.size}, candidate #{candidate_uids.size}, t_users #{t_users.size}, not found #{not_found_uids.inspect}"

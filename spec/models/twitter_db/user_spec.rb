@@ -26,23 +26,22 @@ RSpec.describe TwitterDB::User, type: :model do
     end
   end
 
-  describe '.import_each_slice' do
+  describe '.import_in_batches' do
     let(:t_users) { 3.times.map { Hashie::Mash.new(id: rand(1000), screen_name: 'sn') } }
-    let(:import_users) { t_users.map { |t_user| [t_user.id, t_user.screen_name, '{}', -1, -1] } }
+    let(:import_users) { t_users.map { |t_user| TwitterDB::User.to_import_format(t_user) } }
 
     context 'with new records' do
       it 'creates all records' do
-        expect { TwitterDB::User.import_each_slice(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size)
+        expect { TwitterDB::User.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size)
       end
     end
 
-    context 'with persisted records' do
+    context 'with new records and recently persisted records' do
       before do
-        t_user = t_users[0]
-        TwitterDB::User.create!(uid: t_user.id, screen_name: t_user.screen_name, user_info: '{}', friends_size: -1, followers_size: -1)
+        t_users[0].tap { |t_user| TwitterDB::User.create!(TwitterDB::User.to_save_format(t_user)) }
       end
-      it 'updates only changed records' do
-        expect { TwitterDB::User.import_each_slice(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size - 1)
+      it 'updates only new records' do
+        expect { TwitterDB::User.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size - 1)
       end
     end
   end

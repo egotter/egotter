@@ -32,7 +32,7 @@ module TwitterDB
 
       report.report 'save all' do
         ActiveRecord::Base.transaction do
-          TwitterDB::User.import_each_slice(users)
+          TwitterDB::User.import_in_batches(users)
         end
 
         ActiveRecord::Base.transaction do

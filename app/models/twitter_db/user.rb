@@ -17,11 +17,12 @@ module TwitterDB
 
     CREATE_COLUMNS = %i(uid screen_name user_info friends_size followers_size)
     UPDATE_COLUMNS = %i(uid screen_name user_info)
+    BATCH_SIZE = 1000
 
-    def self.import_each_slice(users_array, n: 1000, create_columns: CREATE_COLUMNS, update_columns: UPDATE_COLUMNS)
-      users_array.each_slice(n) do |array|
-        import(create_columns, array, on_duplicate_key_update: update_columns, validate: false)
-      end
+    # Note: This method uses index_twitter_db_users_on_uid.
+    def self.import_in_batches(users)
+      persisted_uids = where(uid: users.map(&:first), updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
+      import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: BATCH_SIZE, validate: false)
     end
 
     def self.to_import_format(t_user)
@@ -48,7 +49,7 @@ module TwitterDB
       follower_uids = remove_instance_variable(:@follower_uids)
 
       ActiveRecord::Base.transaction do
-        TwitterDB::User.import_each_slice(users)
+        TwitterDB::User.import_in_batches(users)
       end
 
       ActiveRecord::Base.transaction do

@@ -96,7 +96,7 @@ namespace :repair do
         TwitterUser.latest(uid).tap { |tu| import_users << [uid, tu.screen_name, tu.user_info, -1, -1] }
       end
 
-      TwitterDB::User.import_each_slice(import_users)
+      TwitterDB::User.import_in_batches(import_users)
       import_users.each { |user| puts "imported #{user[0]}" }
       puts
 
