@@ -611,6 +611,7 @@ ActiveRecord::Schema.define(version: 20170410153225) do
     t.text    "breakdown_json",      limit: 65535, null: false
     t.text    "hashtags_json",       limit: 65535, null: false
     t.text    "mentions_json",       limit: 65535, null: false
+    t.text    "tweet_clusters_json", limit: 65535, null: false
   end
 
   add_index "usage_stats", ["uid"], name: "index_usage_stats_on_uid", unique: true, using: :btree

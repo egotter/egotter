@@ -12,6 +12,7 @@
 #  breakdown_json      :text(65535)      not null
 #  hashtags_json       :text(65535)      not null
 #  mentions_json       :text(65535)      not null
+#  tweet_clusters_json :text(65535)      not null
 #
 # Indexes
 #
@@ -19,15 +20,15 @@
 #
 
 class UsageStat < ActiveRecord::Base
-  %i(wday wday_drilldown hour hour_drilldown usage_time breakdown hashtags mentions).each do |name|
+  %i(wday wday_drilldown hour hour_drilldown usage_time breakdown hashtags mentions tweet_clusters).each do |name|
     define_method(name) do
-      var_name = "@#{name}_cache"
-      if instance_variable_defined?(var_name)
-        instance_variable_get(var_name)
+      ivar_name = "@#{name}_cache"
+      if instance_variable_defined?(ivar_name)
+        instance_variable_get(ivar_name)
       else
         str = send("#{name}_json")
         if str.present?
-          instance_variable_set(var_name, JSON.parse(str, symbolize_names: true))
+          instance_variable_set(ivar_name, JSON.parse(str, symbolize_names: true))
         else
           nil
         end
@@ -35,8 +36,10 @@ class UsageStat < ActiveRecord::Base
     end
   end
 
-  def self.update_by!(uid, statuses)
+  def self.update_with_statuses!(uid, statuses)
     stat = find_or_initialize_by(uid: uid)
+    return stat if stat.persisted? && statuses.blank?
+
     wday, wday_drilldown, hour, hour_drilldown, usage_time = calc(statuses)
     stat.update!(
       wday_json:           wday.to_json,
@@ -46,13 +49,14 @@ class UsageStat < ActiveRecord::Base
       usage_time_json:     usage_time.to_json,
       breakdown_json:      extract_breakdown(statuses).to_json,
       hashtags_json:       extract_hashtags(statuses).to_json,
-      mentions_json:       extract_mentions(statuses).to_json
+      mentions_json:       extract_mentions(statuses).to_json,
+      tweet_clusters_json: ApiClient.dummy_instance.tweet_clusters(statuses, limit: 100).to_json
     )
     stat
   end
 
-  def self.create_by!(*args)
-    update_by!(*args)
+  def mention_uids
+    mentions.keys.map(&:to_s).map(&:to_i)
   end
 
   private
@@ -87,14 +91,14 @@ class UsageStat < ActiveRecord::Base
   end
 
   def self.extract_hashtags(statuses)
-    statuses.select(&:hashtags?).map(&:hashtags).flatten.
+    statuses.reject(&:retweet?).select(&:hashtags?).map(&:hashtags).flatten.
       map { |h| "##{h}" }.each_with_object(Hash.new(0)) { |hashtag, memo| memo[hashtag] += 1 }.
       sort_by { |h, c| [-c, -h.size] }.to_h
   end
 
   def self.extract_mentions(statuses)
-    statuses.select(&:mentions?).map(&:mention_uids).flatten.
-      each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.
+    statuses.reject(&:retweet?).select(&:mentions?).map(&:mention_uids).flatten.
+      each_with_object(Hash.new(0)) { |uid, memo| memo[uid.to_s.to_sym] += 1 }.
       sort_by { |u, c| -c }.to_h
   end
 end
