@@ -1,11 +1,13 @@
 class CreateTwitterUserWorker
   include Sidekiq::Worker
+  include Sidekiq::Benchmark::Worker
   include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   BUSY_QUEUE_SIZE = 0
 
   def perform(values = {})
+    benchmark
     client = Hashie::Mash.new(call_count: 0)
     log = BackgroundSearchLog.new(message: '')
     user = user_id = uid = nil
@@ -157,6 +159,7 @@ class CreateTwitterUserWorker
     )
   ensure
     log.update(call_count: client.call_count, finished_at: Time.zone.now) if log
+    benchmark.finish
     message = "[worker] #{self.class} finished. #{user_id} #{uid} enqueued_at: #{short_hour(enqueued_at)}, started_at: #{short_hour(started_at)}, finished_at: #{short_hour(Time.zone.now)}"
     Rails.logger.info message
     logger.info message

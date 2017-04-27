@@ -307,6 +307,9 @@ GEM
       connection_pool (~> 2.2, >= 2.2.0)
       rack-protection (>= 1.5.0)
       redis (~> 3.2, >= 3.2.1)
+    sidekiq-benchmark (0.5.2)
+      chartkick (>= 1.1.1)
+      sidekiq (~> 4)
     signet (0.7.3)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -411,6 +414,7 @@ DEPENDENCIES
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
   sidekiq
+  sidekiq-benchmark
   sinatra
   sitemap_generator
   stackprof
