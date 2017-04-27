@@ -10,6 +10,7 @@ class CreateUsageStats < ActiveRecord::Migration
       t.text    :breakdown_json,      null: false
       t.text    :hashtags_json,       null: false
       t.text    :mentions_json,       null: false
+      t.text    :tweet_clusters_json, null: false
     end
     add_index :usage_stats, :uid, unique: true
   end

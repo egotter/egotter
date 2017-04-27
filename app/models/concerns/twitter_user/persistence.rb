@@ -30,8 +30,14 @@ module Concerns::TwitterUser::Persistence
       begin
         TwitterDB::User.create!(uid: uid, screen_name: screen_name, user_info: user_info, friends_size: -1, followers_size: -1)
       rescue => e
-        logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
+        logger.warn "#{self.class}##{__method__}: TwitterDB::User.create! #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
       end
+    end
+
+    begin
+      UsageStat.update_with_statuses!(uid, statuses)
+    rescue => e
+      logger.warn "#{self.class}##{__method__}: UsageStat.update_with_statuses! #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
     end
 
     if Rails.env.test?
