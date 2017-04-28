@@ -62,14 +62,6 @@
 
     = render partial: 'layouts/search_histories' unless under_maintenance?
 
-    - if request.referer.blank?
-      .container
-        .row
-          .col-xs-12.notice-container
-            %p.alert.alert-danger{style: 'margin-top: 15px; margin-bottom: 0px;'}
-              3/7(火) えごったーのふりをするスパムが流行っており、既に数万人が被害に合っています。この記事を読んで、各自ご対策をお願いします…！
-              %a{href: 'http://www.itmedia.co.jp/news/articles/1703/07/news079.html', target: '_blank'} 「ブロックされすぎww」……Twitter連携スパム多数出回る　無害なアプリに“偽装 - Itmedia News”
-
     - if notice || alert
       .container
         .row
