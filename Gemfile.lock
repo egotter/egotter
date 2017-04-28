@@ -413,7 +413,7 @@ DEPENDENCIES
   rspec-rails
   sass-rails (~> 5.0)
   sdoc (~> 0.4.0)
-  sidekiq
+  sidekiq (< 5)
   sidekiq-benchmark
   sinatra
   sitemap_generator
