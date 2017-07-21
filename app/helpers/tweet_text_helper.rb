@@ -71,7 +71,13 @@ module TweetTextHelper
   end
 
   def usage_kind_text(kind, tu)
-    t('searches.usage_stats.usage_kind', user: mention_name(tu.screen_name), mention: kind[:mentions].round, image: kind[:media].round, link: kind[:urls].round, hashtag: kind[:hashtags].round, location: kind[:location].round, url: usage_stats_search_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_kind', user: mention_name(tu.screen_name),
+      mention:  (kind[:mentions] * 100).round,
+      image:    (kind[:media] * 100).round,
+      link:     (kind[:urls] * 100).round,
+      hashtag:  (kind[:hashtags] * 100).round,
+      location: (kind[:location] * 100).round,
+      url: usage_stats_search_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{kind.inspect} #{tu.inspect}"
     error_text

@@ -8,34 +8,36 @@ namespace :usage_stats do
     end
 
     processed = 0
+    skipped = 0
     task_start = Time.zone.now
     start = ENV['START'] ? ENV['START'].to_i : 1
+    force_update = !!ENV['UPDATE']
     uids = TwitterUser.where('id >= ?', start).pluck(:uid).uniq
 
-    uids.each do |uid|
-      next if UsageStat.exists?(uid: uid)
+    Rails.logger.silence do
+      uids.each do |uid|
+        if !force_update && UsageStat.exists?(uid: uid)
+          skipped += 1
+          next
+        end
 
-      statuses = TwitterUser.latest(uid).statuses
-      UsageStat.update_with_statuses!(uid, statuses)
+        statuses = TwitterUser.latest(uid).statuses
+        next if statuses.empty?
+        stat = UsageStat.builder(uid).statuses(statuses).build
+        unless stat.save
+          puts "Failed #{stat.errors.full_messages}"
+          break
+        end
 
-      processed += 1
-      if processed % 100 == 0
-        avg = '%3.1f' % ((Time.zone.now - task_start) / processed)
-        puts "#{Time.zone.now}: uids #{uids.size} processed #{processed}, avg #{avg}"
+        processed += 1
+        if processed % 100 == 0
+          avg = '%3.1f' % ((Time.zone.now - task_start) / processed)
+          puts "#{Time.zone.now}: uids #{uids.size} processed #{processed} skipped #{skipped}, avg #{avg}"
+        end
+        break if sigint
       end
-      break if sigint
     end
 
     puts "start: #{task_start}, finish: #{Time.zone.now}"
-  end
-
-  namespace :update do
-    desc 'tweet_clusters'
-    task tweet_clusters: :environment do
-      UsageStat.find_each do |stat|
-        statuses = TwitterUser.latest(stat.uid).statuses
-        stat.update!(tweet_clusters_json: ApiClient.dummy_instance.tweet_clusters(statuses, limit: 100).to_json)
-      end
-    end
   end
 end

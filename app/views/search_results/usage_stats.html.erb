@@ -33,28 +33,30 @@
 <script>
   var graph_options = window.usage_stats_column_chart_options;
 
-  var tweets_stat = <%= @kind.to_json.html_safe %>;
-  var kind = window.usage_stats_tweets_stat_options;
-  kind.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
-  kind.series = [{
-    name: 'なし',
-    data: [
-      100.0 - tweets_stat.mentions,
-      100.0 - tweets_stat.media,
-      100.0 - tweets_stat.urls,
-      100.0 - tweets_stat.hashtags,
-      100.0 - tweets_stat.location
-    ]
-  }, {
-    name: 'あり',
-    data: [
-      tweets_stat.mentions,
-      tweets_stat.media,
-      tweets_stat.urls,
-      tweets_stat.hashtags,
-      tweets_stat.location
-    ]
-  }];
+  <% if @kind.present? %>
+    var tweets_stat = <%= @kind.to_json.html_safe %>;
+    var kind = window.usage_stats_tweets_stat_options;
+    kind.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
+    kind.series = [{
+      name: 'なし',
+      data: [
+        100.0 - tweets_stat.mentions * 100,
+        100.0 - tweets_stat.media * 100,
+        100.0 - tweets_stat.urls * 100,
+        100.0 - tweets_stat.hashtags * 100,
+        100.0 - tweets_stat.location * 100
+      ]
+    }, {
+      name: 'あり',
+      data: [
+        tweets_stat.mentions * 100,
+        tweets_stat.media * 100,
+        tweets_stat.urls * 100,
+        tweets_stat.hashtags * 100,
+        tweets_stat.location * 100
+      ]
+    }];
+  <% end %>
 
   $(function () {
     <% if @usage_time.present? %>
@@ -77,13 +79,19 @@
       $('#hour').highcharts(hour);
     <% end %>
 
-    $('#kind').highcharts(kind);
+    <% if @kind.present? %>
+      $('#kind').highcharts(kind);
+    <% end %>
 
-    var hashtags = $.extend(true, {}, graph_options);
-    hashtags.series[0].data = <%= raw @hashtags.to_json %>;
-    $('#hashtags').highcharts(hashtags);
+    <% if @hashtags.present? %>
+      var hashtags = $.extend(true, {}, graph_options);
+      hashtags.series[0].data = <%= raw @hashtags.to_json %>;
+      $('#hashtags').highcharts(hashtags);
+    <% end %>
 
-    var cloud = <%= raw @cloud.to_json %>;
-    wordCloud('#cloud', cloud, $('#cloud').width(), 220);
+    <% if @cloud.present? %>
+      var cloud = <%= raw @cloud.to_json %>;
+      wordCloud('#cloud', cloud, $('#cloud').width(), 220);
+    <% end %>
   });
 </script>

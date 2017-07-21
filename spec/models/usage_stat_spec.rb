@@ -4,10 +4,12 @@ RSpec.describe UsageStat, type: :model do
   let(:uid) { rand(1000) }
   let(:statuses) { [build(:mention_status)] }
 
-  describe '#update_with_statuses!' do
-    it 'saves one record' do
-      expect { UsageStat.update_with_statuses!(uid, statuses) }.to change { UsageStat.all.size }.by(1)
-      expect(UsageStat.find_by(uid: uid).mentions).to match(UsageStat.send(:extract_mentions, statuses))
+  describe '.builder' do
+    it 'returns an instance of UsageStat::Builder' do
+      expect(UsageStat.builder(uid)).to be_an_instance_of(UsageStat::Builder)
     end
   end
+end
+
+RSpec.describe UsageStat::Builder, type: :model do
 end
