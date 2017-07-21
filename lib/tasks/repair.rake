@@ -140,13 +140,18 @@ namespace :repair do
     task not_consistent: :environment do
       ids = ENV['IDS'].remove(/ /).split(',').map(&:to_i)
 
+      color_puts = lambda {|str, code| puts "\e[#{code}m#{str}\e[0m" }
+      blue_puts = lambda {|str| color_puts.call(str, 34) }
+      yellow_puts = lambda {|str| color_puts.call(str, 33) }
+      red_puts = lambda {|str| color_puts.call(str, 31) }
+
       ids.each do |twitter_user_id|
         twitter_user = TwitterUser.find(twitter_user_id)
         uid = twitter_user.uid.to_i
 
         ex = nil
         t_user = friend_uids = follower_uids = nil
-        not_found = unauthorized = retri = false
+        not_found = unauthorized = suspended = retri = false
         client = ApiClient.better_client(uid, twitter_user.user_id)
 
         begin
@@ -156,14 +161,8 @@ namespace :repair do
         rescue Twitter::Error::Unauthorized => e
           if e.message == 'Invalid or expired token.'
             user = User.find_by(token: client.access_token, secret: client.access_token_secret)
-            puts "invalid token #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
-            if retri
-              ex = e
-            else
-              client = Bot.api_client
-              retri = true
-              retry
-            end
+            red_puts "The token which better client has is invalid. #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
+            ex = e
           elsif e.message == 'Not authorized.'
             unauthorized = true
           else
@@ -172,14 +171,10 @@ namespace :repair do
         rescue Twitter::Error::Forbidden => e
           if e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
             user = User.find_by(token: client.access_token, secret: client.access_token_secret)
-            puts "temporarily locked #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
-            if retri
-              ex = e
-            else
-              client = Bot.api_client
-              retri = true
-              retry
-            end
+            red_puts.call "The user who has better client is temporarily locked. #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
+            ex = e
+          elsif e.message == 'User has been suspended.'
+            suspended = true
           else
             ex = e
           end
@@ -190,19 +185,21 @@ namespace :repair do
             ex = e
           end
         rescue Twitter::Error::TooManyRequests => e
-          puts "reset in #{e.rate_limit.reset_in} seconds"
+          red_puts.call "reset in #{e.rate_limit.reset_in} seconds"
           ex = e
         rescue => e
           ex = e
         end
 
         if ex
-          puts "Failed #{ex.class} #{ex.message} #{twitter_user_id} #{uid}"
+          puts "Failed #{ex.class} #{ex.message} #{twitter_user_id} #{uid} #{twitter_user.screen_name}"
           puts ex.backtrace.grep_v(/\.bundle/).join "\n"
           break
         end
 
-        if not_found || unauthorized
+        latest = twitter_user.latest?
+
+        if not_found || unauthorized || suspended
           ActiveRecord::Base.transaction do
             twitter_user.update!(friends_size: 0, followers_size: 0)
             Friendship.import_from!(twitter_user.id, [])
@@ -215,13 +212,19 @@ namespace :repair do
           end
 
           TwitterUser.find(twitter_user_id).tap do |tu|
-            puts "Complete(#{not_found ? 'not found' : 'unauthorized'}) #{tu.protected_account?} #{tu.one?} #{tu.latest?} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+            reason =
+              case
+                when not_found then 'not found'
+                when unauthorized then 'unauthorized'
+                when suspended then 'suspended'
+                else raise
+              end
+              yellow_puts.call "Complete(#{reason}) protected:#{tu.protected_account?} one:#{tu.one?} latest:#{latest} size:#{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
           end
 
           next
         end
 
-        latest = twitter_user.latest?
         if latest
           ActiveRecord::Base.transaction do
             twitter_user.update!(user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: friend_uids.size, followers_size: follower_uids.size)
@@ -248,7 +251,7 @@ namespace :repair do
         end
 
         TwitterUser.find(twitter_user_id).tap do |tu|
-          puts "Complete #{tu.protected_account?} #{tu.one?} #{latest} #{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
+          blue_puts.call "Complete protected:#{tu.protected_account?} one:#{tu.one?} latest:#{latest} size:#{tu.size} #{tu.id} #{tu.uid} #{[tu.friendships.size, tu.friends_size, tu.followerships.size, tu.followers_size].inspect}"
         end
 
       end
