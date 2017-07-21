@@ -161,7 +161,7 @@ namespace :repair do
         rescue Twitter::Error::Unauthorized => e
           if e.message == 'Invalid or expired token.'
             user = User.find_by(token: client.access_token, secret: client.access_token_secret)
-            red_puts "The token which better client has is invalid. #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
+            red_puts.call "The token which better client has is invalid. #{user.id} #{user.uid} #{user.screen_name} #{user.authorized?} #{twitter_user_id} #{uid}"
             ex = e
           elsif e.message == 'Not authorized.'
             unauthorized = true
