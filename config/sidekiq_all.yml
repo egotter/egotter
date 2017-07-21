@@ -20,7 +20,6 @@
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
   - FollowEgotterWorker
-  - ForceUpdateTwitterUserWorker
   - ImportFriendsAndFollowersWorker
   - ImportFriendshipsAndFollowershipsWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker

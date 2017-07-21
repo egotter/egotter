@@ -35,34 +35,6 @@ module WorkersHelper
     end
   end
 
-  def add_force_update_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
-    return if request.from_crawler?
-
-    update_requests = Util::ForceUpdateRequests.new(redis)
-    return if update_requests.exists?(user_id, uid)
-    update_requests.add(user_id, uid)
-
-    referral = find_referral(pushed_referers)
-
-    values = {
-      session_id:  fingerprint,
-      uid:         uid,
-      screen_name: screen_name,
-      action:      action_name,
-      user_id:     user_id,
-      via:         params[:via] ? params[:via] : '',
-      device_type: request.device_type,
-      os:          request.os,
-      browser:     request.browser,
-      user_agent:  truncated_user_agent,
-      referer:     truncated_referer,
-      referral:    referral,
-      channel:     find_channel(referral),
-      medium:      params[:medium] ? params[:medium] : '',
-    }
-    ForceUpdateTwitterUserWorker.perform_async(values)
-  end
-
   def add_create_relationship_worker_if_needed(uids, user_id:, screen_names:)
     return if request.from_crawler?
 

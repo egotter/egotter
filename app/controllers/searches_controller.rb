@@ -85,7 +85,7 @@ class SearchesController < ApplicationController
   end
 
   def force_update
-    add_force_update_twitter_user_worker_if_needed(@searched_tw_user.uid.to_i, user_id: current_user_id, screen_name: @searched_tw_user.screen_name)
+    # TODO This action is currently ignored.
     head :ok
   end
 
