@@ -8,11 +8,11 @@
 %div{style: 'margin-bottom: 15px;'}
   = t('searches.followers.short_description')
 %h2.h4.text-left
-  = link_to t('searches.inactive_friends.title', user: twitter_user.mention_name), inactive_friends_search_path(screen_name: twitter_user.screen_name)
+  = link_to t('searches.inactive_friends.title', user: twitter_user.mention_name), inactive_friend_path(screen_name: twitter_user.screen_name)
 %div{style: 'margin-bottom: 15px;'}
   = t('searches.inactive_friends.short_description')
 %h2.h4.text-left
-  = link_to t('searches.inactive_followers.title', user: twitter_user.mention_name), inactive_followers_search_path(screen_name: twitter_user.screen_name)
+  = link_to t('searches.inactive_followers.title', user: twitter_user.mention_name), inactive_friend_path(screen_name: twitter_user.screen_name, type: 'inactive_followers')
 %div{style: 'margin-bottom: 15px;'}
   = t('searches.inactive_followers.short_description')
 %h2.h4.text-left

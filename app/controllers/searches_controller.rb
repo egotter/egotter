@@ -89,7 +89,7 @@ class SearchesController < ApplicationController
     head :ok
   end
 
-  Search::MENU.each do |menu|
+  %i(close_friends usage_stats new_friends new_followers favoriting).each do |menu|
     define_method(menu) do
       @menu = menu
       @title = title_for(menu, @searched_tw_user.screen_name)
@@ -100,36 +100,6 @@ class SearchesController < ApplicationController
   %i(clusters_belong_to).each do |menu|
     define_method(menu) do
       redirect_to cluster_path(screen_name: @searched_tw_user.screen_name), status: 301
-    end
-  end
-
-  %i(friends followers statuses).each do |menu|
-    define_method(menu) do
-      redirect_to friend_path(screen_name: @searched_tw_user.screen_name, type: menu), status: 301
-    end
-  end
-
-  %i(one_sided_friends one_sided_followers mutual_friends).each do |menu|
-    define_method(menu) do
-      redirect_to one_sided_friend_path(screen_name: @searched_tw_user.screen_name, type: menu), status: 301
-    end
-  end
-
-  %i(removing removed blocking_or_blocked).each do |menu|
-    define_method(menu) do
-      redirect_to unfriend_path(screen_name: @searched_tw_user.screen_name, type: menu), status: 301
-    end
-  end
-
-  %i(inactive_friends inactive_followers).each do |menu|
-    define_method(menu) do
-      redirect_to inactive_friend_path(screen_name: @searched_tw_user.screen_name, type: menu), status: 301
-    end
-  end
-
-  %i(replying replied).each do |menu|
-    define_method(menu) do
-      redirect_to conversation_path(screen_name: @searched_tw_user.screen_name, type: menu), status: 301
     end
   end
 end

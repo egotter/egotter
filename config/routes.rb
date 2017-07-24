@@ -29,7 +29,14 @@ Rails.application.routes.draw do
   get 'clusters', to: 'clusters#new', as: :clusters_top
 
   resources :searches, only: %i(create), param: :screen_name do
-    Search::MENU.each { |menu| get menu, on: :member }
+    %i(
+      close_friends
+      usage_stats
+      clusters_belong_to
+      new_friends
+      new_followers
+      favoriting
+    ).each { |menu| get menu, on: :member }
   end
   resources :searches, only: %i(show), param: :screen_name
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
