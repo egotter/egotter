@@ -84,7 +84,7 @@ module SearchesHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(new_friends new_followers favoriting clusters_belong_to close_friends usage_stats)
+      when *%w(new_friends new_followers favoriting close_friends usage_stats)
         send("#{menu}_search_path", screen_name: screen_name)
       when *%w(removing removed blocking_or_blocked)
         unfriend_path(screen_name: screen_name, type: menu)
@@ -96,7 +96,7 @@ module SearchesHelper
         friend_path(screen_name: screen_name, type: menu)
       when *%w(replying replied)
         conversation_path(screen_name: screen_name, type: menu)
-      when *%w(clusters)
+      when *%w(clusters clusters_belong_to)
         cluster_path(screen_name: screen_name)
       else
         raise "#{__method__}: invalid menu #{menu}"
