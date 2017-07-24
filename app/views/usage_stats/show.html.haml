@@ -1,0 +1,104 @@
+- content_for :canonical_url do
+  %link{href: usage_stat_url(screen_name: @twitter_user.screen_name), rel: 'canonical'}
+
+- breadcrumb :usage_stat, @twitter_user.screen_name
+
+- page_title = t('usage_stats.show.title', user: @twitter_user.mention_name)
+- title page_title
+- set_meta_tags description: t('usage_stats.show.description', user: @twitter_user.mention_name, wday: most_active_wday(@usage_stat.wday), hour: most_active_hour(@usage_stat.hour))
+
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+:javascript
+  $(function () {
+    enableSlickOnPageTop();
+  });
+
+%h2.h3.usage-stats= page_title
+
+.usage-stats.lead.text-center= t('usage_stats.show.lead_002_html', user: @twitter_user.mention_name)
+
+= render partial: 'common/search_form', locals: {via: 'usage_stats/show/top_input'}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+.share-buttons
+  .inner
+    - text = t('usage_stats.show.usage_time', user: mention_name(@twitter_user.screen_name), avg: time_ago_in_words(minutes_per_day(@usage_stat.usage_time).minutes.ago), total: time_ago_in_words(minutes_per_week(@usage_stat.usage_time).minutes.ago), level: t("usage_stats.show.tweets_level")[tweets_level(@twitter_user.statuses)], url: usage_stat_url(screen_name: @twitter_user.screen_name))
+    = render partial: 'twitter/tweet_button', locals: {text: text}
+
+.usage-stats
+  %h2.h3 曜日ごとのツイッター利用時間
+  #usage_time.chart
+  = render(partial: 'twitter/tweet_box', locals: {text: text})
+  %h2.h3 曜日ごとのツイート数 (クリックできます)
+  #wday.chart
+  %h2.h3 時間帯ごとのツイート数 (クリックできます)
+  #hour.chart
+  = render(partial: 'twitter/tweet_box', locals: {text: t('usage_stats.show.usage_active_time', user: mention_name(@twitter_user.screen_name), wday: most_active_wday(@usage_stat.wday), hour: most_active_hour(@usage_stat.hour), url: usage_stat_url(screen_name: @twitter_user.screen_name))})
+  %h2.h3 ツイートの内容
+  #kind.chart
+  = render partial: 'twitter/tweet_box', locals: {text: t('usage_stats.show.usage_kind', {user: mention_name(@twitter_user.screen_name), url: usage_stat_url(screen_name: @twitter_user.screen_name)}.merge(@usage_stat.breakdown.map { |k, v| [k, (v * 100).round(1)] }.to_h))}
+  %h2.h3 よく使うハッシュタグ
+  #hashtags.chart
+  %h2.h3 ハッシュタグクラウド (クリックできます)
+  #cloud.chart{style: 'height: 220px;'}
+  = render(partial: 'twitter/tweet_box', locals: {text: t('usage_stats.show.usage_hashtags', user: mention_name(@twitter_user.screen_name), hashtags: @usage_stat.hashtags.take(5).map(&:first).join(' '), url: usage_stat_url(screen_name: @twitter_user.screen_name))})
+  = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
+  .return-to-results-bottom= link_to(t('searches.common.return', user: @twitter_user.mention_name), search_path(screen_name: @twitter_user.screen_name))
+
+:javascript
+  var tweets_stat = #{raw @usage_stat.breakdown_json};
+  var kind = window.usage_stats_tweets_stat_options;
+  kind.xAxis.categories = ['メンション', '画像', 'リンク', 'ハッシュタグ', '位置情報'];
+  kind.series = [{
+    name: 'なし',
+    data: [
+      Math.round(100.0 - tweets_stat.mentions * 100),
+      Math.round(100.0 - tweets_stat.media * 100),
+      Math.round(100.0 - tweets_stat.urls * 100),
+      Math.round(100.0 - tweets_stat.hashtags * 100),
+      Math.round(100.0 - tweets_stat.location * 100)
+    ]
+  }, {
+    name: 'あり',
+    data: [
+      Math.round(tweets_stat.mentions * 100),
+      Math.round(tweets_stat.media * 100),
+      Math.round(tweets_stat.urls * 100),
+      Math.round(tweets_stat.hashtags * 100),
+      Math.round(tweets_stat.location * 100)
+    ]
+  }];
+
+  $(function () {
+    var graph_options = window.usage_stats_column_chart_options;
+
+      var usage_time = $.extend(true, {}, graph_options);
+      usage_time.series[0].data = #{raw @usage_stat.usage_time_json};
+      usage_time.yAxis.labels.formatter = function() { return this.value + ' 分'; };
+      $('#usage_time').highcharts(usage_time);
+
+      var wday = $.extend(true, {}, graph_options);
+      wday.series[0].data = #{raw @usage_stat.wday_json};
+      wday.drilldown.series = #{raw @usage_stat.wday_drilldown_json};
+      wday.yAxis.labels.formatter = function() { return this.value + ' 回'; };
+      $('#wday').highcharts(wday);
+
+      var hour = $.extend(true, {}, graph_options);
+      hour.series[0].data = #{raw @usage_stat.hour_json};
+      hour.drilldown.series = #{raw @usage_stat.hour_drilldown_json};
+      hour.yAxis.labels.formatter = function() { return this.value + ' 回'; };
+      $('#hour').highcharts(hour);
+
+    $('#kind').highcharts(kind);
+
+    var hashtags = #{raw @usage_stat.hashtags.to_a.to_json};
+
+    var tags = $.extend(true, {}, graph_options);
+    tags.series[0].data = #{raw name_y_format(@usage_stat.hashtags).to_json};
+    tags.yAxis.labels.formatter = function() { return this.value + ' 回'; };
+    $('#hashtags').highcharts(tags);
+
+    var cloud = #{raw text_size_group_format(@usage_stat.hashtags).to_json};
+    wordCloud('#cloud', cloud, $('#cloud').width(), 220);
+  });

@@ -17,11 +17,11 @@
 <% end %>
 
 <% cache "#{tu.cache_key}/usage_stats", expires_in: fragment_cache_ttl do %>
-  <%= render partial: 'search_results/show/stats_summary', locals: {name: :usage_stats, graph: tu.usage_stats_graph[0], tu: tu} %>
+  <%= render partial: 'search_results/show/stats_summary', locals: {name: :usage_stats, graph: @graph_wday, tu: tu} %>
 <% end %>
 
 <% cache "#{tu.cache_key}/tweet_clusters", expires_in: fragment_cache_ttl do %>
-  <%= render partial: 'search_results/show/stats_summary', locals: {name: :clusters_belong_to, graph: name_y_format(tu.tweet_clusters), tu: tu} %>
+  <%= render partial: 'search_results/show/stats_summary', locals: {name: :clusters_belong_to, graph: name_y_format(@tweet_clusters), tu: tu} %>
 <% end %>
 
 <% %w(removing removed new_friends new_followers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name| %>
@@ -126,6 +126,7 @@
         console.log('before', formatDate(new Date(twitterUser.createdAt * 1000)), ', after', formatDate(new Date(res.created_at * 1000)));
 
         if (twitterUser.createdAt < res.created_at) {
+          new egotter.PageCache().delete(twitterUser.uid);
           refreshBox.show();
           refreshBox.sticky({topSpacing: 0});
         } else {

@@ -46,3 +46,8 @@ crumb :cluster do |screen_name|
   link t('clusters.new.simple_title'), cluster_path(screen_name: screen_name)
   parent :search, screen_name
 end
+
+crumb :usage_stat do |screen_name|
+  link t('usage_stats.new.simple_title'), usage_stat_path(screen_name: screen_name)
+  parent :search, screen_name
+end

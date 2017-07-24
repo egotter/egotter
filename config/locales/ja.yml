@@ -138,16 +138,6 @@ ja:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
       description: "%{user} の曜日や時間帯ごとのツイート数、リプライやハッシュタグの割合を表示します。"
-      usage_time: ".%{user} は、1日%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
-      usage_level:
-        first: "一般人です。ツイッターにまだあまり慣れていないみたいです。"
-        second: "一般人です。ほどほどにツイッターを使っているようです。"
-        third: "ぎりぎり一般人…？ ちょっと病みつきになってきたようです。"
-        fourth: "軽い廃人かも…。つぶやいた回数だけ社会復帰が遠のいています…。"
-        fifth: "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
-      usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
-      usage_kind: ".%{user} のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
-      usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:
       num: "最近いないフォロー<br>%{num}"
       name: "最近いないフォロー"
@@ -380,6 +370,35 @@ ja:
       clusters_level: "クラスタレベル"
       clusters_cloud: "クラスタクラウド"
       cluster_name: "%{name}クラスタ"
+  usage_stats:
+    new:
+      title: '<span style="font-size: small; display: inline;">ツイート分析</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: 'ツイート分析 by えごったー'
+      simple_title: 'ツイート分析'
+      description: "保存ユーザー数1,000万人突破！ 無料でスマホからツイート分析！ 検索されたユーザーのツイート時間や曜日をさくっと分析します。"
+      short_description: "検索されたユーザーのツイート時間や曜日をさくっと判定します。"
+      lead_001: "スマホでさくっとツイート分析"
+      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_003_html: "ツイート分析ならえごったー。<br>スマホから使える無料のツイート分析アプリです。"
+      lead_004_html: '検索されたユーザーのツイート分析は、えごったーが分析したデータを元に集計しています。<br>もし、ツイート分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+    show:
+      title: "%{user} のツイート分析"
+      description: "%{user} は、%{wday}曜日、%{hour}時にツイッターにいるようです。検索されたユーザーがツイッターによくいる時間や曜日をさくっと分析します。"
+      lead_002_html: "ツイート分析では、よくツイートする時間、よくツイートする曜日などを分析して表示します。"
+      lead_003: '%{user} のツイート分析は、えごったーが分析したデータを元に集計しています。<br>もし、ツイート分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
+      tweet: ".%{user} のクラスタ ↓\n%{clusters}\n#egotter %{url}"
+      tweets_level:
+        -
+        - "一般人です。ツイッターにまだあまり慣れていないみたいです。"
+        - "一般人です。ほどほどにツイッターを使っているようです。"
+        - "ぎりぎり一般人…？ ちょっと病みつきになってきたようです。"
+        - "軽い廃人かも…。つぶやいた回数だけ社会復帰が遠のいています…。"
+        - "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
+      usage_time: ".%{user} は、1日に%{avg}、1週間で%{total}をツイッターに使っています。%{level} #egotter %{url}"
+      usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
+      usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
+      usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
 
   charts:
     replying: "リプ"

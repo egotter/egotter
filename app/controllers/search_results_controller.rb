@@ -14,7 +14,9 @@ class SearchResultsController < ApplicationController
   before_action(only: %i(show) + Search::MENU) { authorized_search?(@searched_tw_user) }
 
   def show
-    @login_user = User.find_by(id: current_user_id)
+    usage_stat = UsageStat.find_by(uid: @searched_tw_user.uid)
+    @graph_wday = usage_stat&.wday || {}
+    @tweet_clusters = usage_stat&.tweet_clusters || {}
     html = ::Cache::PageCache.new.fetch(@searched_tw_user.uid) { render_to_string }
     render json: {html: html}, status: 200
   rescue => e
@@ -45,17 +47,5 @@ class SearchResultsController < ApplicationController
         render nothing: true, status: 500
       end
     end
-  end
-
-  # GET /searches/:screen_name/usage_stats
-  def usage_stats
-    @wday, @wday_drilldown, @hour, @hour_drilldown, @usage_time = @searched_tw_user.usage_stats
-    @kind = @searched_tw_user.statuses_breakdown
-
-    hashtags = @searched_tw_user.hashtags
-    @cloud = hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
-    @hashtags = hashtags.to_a.take(10).map { |word, count| {name: word, y: count} }
-
-    render json: {html: render_to_string}, status: 200
   end
 end
