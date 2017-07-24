@@ -1,5 +1,5 @@
 module AdsenseHelper
-  NG_UIDS = [740700661939994624]
+  NG_UIDS = [740700661939994624, 2412435452]
 
   def ad_ng_twitter_user?(twitter_user)
     NG_UIDS.include? twitter_user&.uid&.to_i
