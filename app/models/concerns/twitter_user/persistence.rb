@@ -35,9 +35,9 @@ module Concerns::TwitterUser::Persistence
     end
 
     begin
-      UsageStat.update_with_statuses!(uid, statuses)
+      UsageStat.builder(uid).statuses(statuses).build.save!
     rescue => e
-      logger.warn "#{self.class}##{__method__}: UsageStat.update_with_statuses! #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
+      logger.warn "#{self.class}##{__method__}: UsageStat #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
     end
 
     if Rails.env.test?

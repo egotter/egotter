@@ -158,7 +158,10 @@ class CreateTwitterUserWorker
       message: "#{e.class} #{message}"
     )
   ensure
-    log.update(call_count: client.call_count, finished_at: Time.zone.now) if log
+    unless log&.update(call_count: client.call_count, finished_at: Time.zone.now)
+      Rails.logger.info "log.update is failed. #{log&.errors&.full_messages}"
+      logger.info "log.update is failed. #{log&.errors&.full_messages}"
+    end
     benchmark.finish
     message = "[worker] #{self.class} finished. #{user_id} #{uid} enqueued_at: #{short_hour(enqueued_at)}, started_at: #{short_hour(started_at)}, finished_at: #{short_hour(Time.zone.now)}"
     Rails.logger.info message

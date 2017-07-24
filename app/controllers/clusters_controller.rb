@@ -39,9 +39,14 @@ class ClustersController < ApplicationController
   end
 
   def show
-    clusters = @twitter_user.tweet_clusters
-    @cluster_names = clusters.keys.take(10).map { |name| t('clusters.show.cluster_name', name: name) }
-    @graph = name_y_format(clusters)
-    @word_cloud = text_size_group_format(clusters)
+    stat = UsageStat.find_by(uid: @twitter_user.uid)
+    if stat
+      clusters = stat.tweet_clusters
+      @cluster_names = clusters.keys.take(10).map { |name| t('clusters.show.cluster_name', name: name) }
+      @graph = name_y_format(clusters)
+      @word_cloud = text_size_group_format(clusters)
+    else
+      @cluster_names = @graph = @word_cloud = []
+    end
   end
 end
