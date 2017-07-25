@@ -13,7 +13,7 @@
 </script>
 
 <% cache "#{tu.cache_key}/close_friends", expires_in: fragment_cache_ttl do %>
-  <%= render partial: 'search_results/show/users_summary', locals: {name: 'close_friends'}.merge(default_locals) %>
+  <%= render partial: 'search_results/show/users_template', locals: {name: 'close_friends'}.merge(default_locals) %>
 <% end %>
 
 <% cache "#{tu.cache_key}/usage_stats", expires_in: fragment_cache_ttl do %>
@@ -29,9 +29,13 @@
     <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle}) %>
   <% end %>
 
-  <% cache "#{tu.cache_key}/#{name}", expires_in: fragment_cache_ttl do %>
-    <%= render partial: 'search_results/show/users_summary', locals: {name: name}.merge(default_locals) %>
-  <% end %>
+    <% cache "#{tu.cache_key}/#{name}", expires_in: fragment_cache_ttl do %>
+      <% if %w(removing removed new_friends new_followers).include? name %>
+        <%= render partial: 'search_results/show/users_template', locals: {name: name}.merge(default_locals) %>
+      <% else %>
+        <%= render partial: 'search_results/show/users_summary', locals: {name: name}.merge(default_locals) %>
+      <% end %>
+    <% end %>
 <% end %>
 
 <% cache "#{tu.cache_key}/modals", expires_in: fragment_cache_ttl do %>

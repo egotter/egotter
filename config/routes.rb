@@ -6,6 +6,14 @@ Rails.application.routes.draw do
     root 'searches#new'
   end
 
+  namespace :api, {format: 'json'} do
+    namespace :v1 do
+      %i(close_friends unfriends unfollowers new_friends new_followers).each do |menu|
+        get "#{menu}/summary", to: "#{menu}#summary"
+      end
+    end
+  end
+
   %i(maintenance privacy_policy terms_of_service sitemap menu support).each do |name|
     get name, to: "misc##{name}", as: name
   end

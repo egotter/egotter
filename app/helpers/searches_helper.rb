@@ -82,6 +82,17 @@ module SearchesHelper
     end
   end
 
+  def api_v1_summary_path_for(menu)
+    case menu.to_s
+      when 'close_friends' then api_v1_close_friends_summary_path
+      when 'removing'      then api_v1_unfriends_summary_path
+      when 'removed'       then api_v1_unfollowers_summary_path
+      when 'new_friends'   then api_v1_new_friends_summary_path
+      when 'new_followers' then api_v1_new_followers_summary_path
+      else raise "#{__method__}: invalid menu #{menu}"
+    end
+  end
+
   def search_path_for(menu, screen_name)
     case menu.to_s
       when *%w(new_friends new_followers favoriting close_friends usage_stats)

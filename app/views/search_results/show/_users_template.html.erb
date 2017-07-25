@@ -1,0 +1,82 @@
+<script>
+  $(function () {
+    var apiEndpoint = '<%= api_v1_summary_path_for(name) %>';
+    var uid = '<%= tu.uid %>';
+    var $summaryBox = $('.menu-items.<%= name %>');
+    var $progressMsgBox = $summaryBox.find('.progress-msg');
+    var progressMessages = {
+      empty: "<%= t('dictionary.empty_result_with_details_html') %>"
+    };
+    var $resultLinkButtons = {
+      analyzing: $summaryBox.find('.analyzing-btn'),
+      reload: $summaryBox.find('.reload-btn'),
+      more: $summaryBox.find('.btn-view-more')
+    };
+
+    $.getJSON(apiEndpoint, {uid: uid}, function(data) {
+      console.log(data);
+      $resultLinkButtons.analyzing.hide();
+      $summaryBox.find('.dummy-user').remove();
+
+      if (!data || !data.users || data.users.length <= 0) {
+        $summaryBox.find('.result-link').attr('href', '#').attr('onclick', 'return false;');
+        $progressMsgBox.html(progressMessages.empty);
+        $resultLinkButtons.reload.show();
+        return;
+      }
+
+      $progressMsgBox.remove();
+      var $userTemplate = $summaryBox.find('.user-template');
+      $.each(data.users, function () {
+        var user = this;
+        var $cloned = $userTemplate.clone();
+        $cloned
+          .attr('href', $cloned.attr('href').replace('SCREEN_NAME', user.screen_name))
+          .removeClass('user-template')
+          .find('img')
+            .attr({src: user.profile_image_url_https, alt: user.screen_name})
+          .end()
+          .css('display', 'inline-block')
+          .insertAfter($userTemplate);
+      });
+      $resultLinkButtons.more.find('span').text(data.count).end().show();
+
+      var graphOption = $.extend(true, {}, window.common_pie_chart_options);
+      graphOption.series[0].data = [
+        {name: '<%= t("charts.#{name}") %>', y: 100.0 / 3.0},
+        {name: '<%= t('charts.others') %>',  y: 200.0 / 3.0}
+      ];
+      $summaryBox.find('.media-right').show().end().find('.common-chart').highcharts(graphOption);
+    });
+  });
+</script>
+
+<div class="menu-items media <%= name %>">
+  <%= link_to search_path_for(name, tu.screen_name), class: 'result-link' do %>
+    <h3 class="h4"><%= title_for(name, tu.screen_name) %></h3>
+    <div class="text-center description"><%= description_for(name, tu.screen_name).html_safe %></div>
+
+    <div class="media-body">
+      <% user = {screen_name: 'sn1', profile_image_url_https: image_path('/gray_48x48.png')} %>
+      <%= link_to search_path(screen_name: 'SCREEN_NAME'), class: 'user-template', style: 'display: none;' do %>
+        <%= normal_icon_img({screen_name: 'SCREEN_NAME', profile_image_url_https: user[:profile_image_url_https]}, class: 'img-rounded') %>
+      <% end %>
+      <%= normal_icon_img(user, class: 'img-rounded dummy-user') %>
+      <%= normal_icon_img(user, class: 'img-rounded dummy-user') %>
+      <%= normal_icon_img(user, class: 'img-rounded dummy-user') %>
+      <div class="text-muted progress-msg"><%= t('dictionary.under_calculation_with_details_html') %></div>
+    </div>
+
+    <div class="media-right" style="display: none;">
+      <div class="common-chart"></div>
+    </div>
+
+    <div>
+      <%= link_to('#', class: 'btn btn-info btn-block disabled analyzing-btn') do %>
+        <%= t('searches.common.analyzing') %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+      <% end %>
+      <%= link_to(t('dictionary.reload_this_page'), search_path(screen_name: tu.screen_name, reload: '1', reload_menu: name), class: 'btn btn-info btn-block reload-btn', style: 'display: none') %>
+      <%= link_to(t('dictionary.view_more_with_num_html', num: 'NUM'), search_path_for(name, tu.screen_name), class: 'btn btn-info btn-block btn-view-more', style: 'display: none') %>
+    </div>
+  <% end %>
+</div>
