@@ -59,7 +59,7 @@
     <div class="media-body">
       <% user = Hashie::Mash.new({screen_name: 'SN', profile_image_url_https: image_path('/gray_48x48.png')}) %>
       <%= link_to search_path(screen_name: 'SCREEN_NAME'), class: 'user-template', style: 'display: none;' do %>
-        <%= normal_icon_img({screen_name: 'SCREEN_NAME', profile_image_url_https: user[:profile_image_url_https]}, class: 'img-rounded') %>
+        <%= normal_icon_img(Hashie::Mash.new({screen_name: 'SCREEN_NAME', profile_image_url_https: user[:profile_image_url_https]}), class: 'img-rounded') %>
       <% end %>
       <%= normal_icon_img(user, class: 'img-rounded dummy-user') %>
       <%= normal_icon_img(user, class: 'img-rounded dummy-user') %>
