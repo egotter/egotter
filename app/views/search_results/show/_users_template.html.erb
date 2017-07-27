@@ -57,7 +57,7 @@
     <div class="text-center description"><%= description_for(name, tu.screen_name).html_safe %></div>
 
     <div class="media-body">
-      <% user = {screen_name: 'sn1', profile_image_url_https: image_path('/gray_48x48.png')} %>
+      <% user = Hashie::Mash.new({screen_name: 'SN', profile_image_url_https: image_path('/gray_48x48.png')}) %>
       <%= link_to search_path(screen_name: 'SCREEN_NAME'), class: 'user-template', style: 'display: none;' do %>
         <%= normal_icon_img({screen_name: 'SCREEN_NAME', profile_image_url_https: user[:profile_image_url_https]}, class: 'img-rounded') %>
       <% end %>
