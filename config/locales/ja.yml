@@ -31,6 +31,7 @@ ja:
       tweet: "ツイート"
       related_pages: "関連ページ"
       see_on_twitter: "ツイッターで見る"
+      analyzing: "分析中"
     sidebar:
       update_request: "更新リクエスト"
       update_request_needs_login: "更新リクエストにはログインが必要です。"
