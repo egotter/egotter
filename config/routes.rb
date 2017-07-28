@@ -8,9 +8,7 @@ Rails.application.routes.draw do
 
   namespace :api, {format: 'json'} do
     namespace :v1 do
-      %i(close_friends unfriends unfollowers new_friends new_followers).each do |menu|
-        get "#{menu}/summary", to: "#{menu}#summary"
-      end
+      Search::API_V1_NAMES.each {|menu| get "#{menu}/summary", to: "#{menu}#summary"}
     end
   end
 
@@ -49,8 +47,9 @@ Rails.application.routes.draw do
   resources :searches, only: %i(show), param: :screen_name
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
   post 'searches/:screen_name/force_update', to: 'searches#force_update', as: :force_update
+  post 'searches/:screen_name/force_reload', to: 'searches#force_reload', as: :force_reload
 
-  resources :search_results, only: :show, param: :uid do
+  resources :search_results, only: [], param: :uid do
     %i(new_friends new_followers favoriting close_friends usage_stats).each { |menu| get menu, on: :member }
   end
 

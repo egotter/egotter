@@ -84,6 +84,16 @@ class SearchesController < ApplicationController
     @searched_tw_user = tu
   end
 
+  def force_reload
+    uid = params[:uid].to_i
+    if valid_uid?(uid) && existing_uid?(uid)
+      ::Cache::PageCache.new.delete(uid)
+      redirect_to search_path(screen_name: TwitterUser.latest(uid).screen_name)
+    end
+
+    head :bad_request
+  end
+
   def force_update
     # TODO This action is currently ignored.
     head :ok
