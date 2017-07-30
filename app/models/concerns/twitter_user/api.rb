@@ -159,7 +159,7 @@ module Concerns::TwitterUser::Api
   end
 
   def replying_uids(uniq: true)
-    uids = statuses.reject(&:retweet?).map(&:mention_uids)&.flatten.compact
+    uids = UsageStat.find_by(uid: uid)&.mentions&.keys&.map(&:to_s)&.map(&:to_i) || []
     uniq ? uids.uniq : uids
   end
 
@@ -210,12 +210,7 @@ module Concerns::TwitterUser::Api
   end
 
   def favorite_friend_uids
-    # TODO remove later
-    if favorite_friendships.any?
-      favorite_friendships.pluck(:friend_uid)
-    else
-      calc_favorite_friend_uids
-    end
+    favorite_friendships.pluck(:friend_uid)
   end
 
   def favoriting_uids(uniq: true, min: 0)

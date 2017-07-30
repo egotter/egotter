@@ -8,21 +8,10 @@ class SearchResultsController < ApplicationController
   layout false
 
   before_action :need_login, only: %i(common_friends common_followers)
-  before_action(only: %i(show) + Search::MENU) { valid_uid?(params[:uid].to_i) }
-  before_action(only: %i(show) + Search::MENU) { existing_uid?(params[:uid].to_i) }
-  before_action(only: %i(show) + Search::MENU) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
-  before_action(only: %i(show) + Search::MENU) { authorized_search?(@searched_tw_user) }
-
-  def show
-    @login_user = User.find_by(id: current_user_id)
-    html = ::Cache::PageCache.new.fetch(@searched_tw_user.uid) { render_to_string }
-    render json: {html: html}, status: 200
-  rescue => e
-    bot = Bot.find_by(token: client.access_token)&.screen_name
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{@searched_tw_user.uid} #{@searched_tw_user.screen_name} #{bot} #{request.device_type} #{request.browser}"
-    logger.info e.backtrace.grep_v(/\.bundle/).empty? ? e.backtrace.join("\n") : e.backtrace.grep_v(/\.bundle/).join("\n")
-    render nothing: true, status: 500
-  end
+  before_action(only: Search::MENU) { valid_uid?(params[:uid].to_i) }
+  before_action(only: Search::MENU) { existing_uid?(params[:uid].to_i) }
+  before_action(only: Search::MENU) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
+  before_action(only: Search::MENU) { authorized_search?(@searched_tw_user) }
 
   %i(new_friends new_followers).each do |menu|
     define_method(menu) do

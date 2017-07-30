@@ -1,9 +1,3 @@
-function enableSlickOnModal() {
-  $('.profile-overview-modal').one('shown.bs.modal', function (e) {
-    enableSlickNow($(this).find('.profile-overview-carousel'));
-  });
-}
-
 function enableSlickNow(container) {
   container.slick({
     accessibility: false,
@@ -25,10 +19,4 @@ function enableSlickOnPageTop() {
   } else {
     console.log('Visible ".profile-overview-carousel" is not found.');
   }
-}
-
-function setModalOpenLogger(via, url) {
-  $('.profile-overview-modal').on('shown.bs.modal', function() {
-    $.post(url, {via: via});
-  });
 }
