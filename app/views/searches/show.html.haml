@@ -6,7 +6,7 @@
 - set_meta_tags title: t('.title', user: @searched_tw_user.mention_name), site: '', description: t('.description', user: @searched_tw_user.mention_name)
 
 %p.refresh-box.alert.alert-info{style: 'z-index: 10000; margin-bottom: 15px; display: none;'}
-  = t('searches.show.update_is_coming_html', user: @searched_tw_user.screen_name, refresh_path: force_reload_path(uid: @searched_tw_user.uid))
+  = t('searches.show.update_is_coming_html', user: @searched_tw_user.screen_name, link_to: link_to(t('searches.show.update_result'), force_reload_path(uid: @searched_tw_user.uid), class: 'btn btn-default btn-sm', method: :post))
 
 %p.latest-box.alert.alert-info{style: 'margin-bottom: 15px; display: none;'}
   = t('searches.show.latest_result', time: l(@searched_tw_user.updated_at.in_time_zone('Tokyo'), format: :short))

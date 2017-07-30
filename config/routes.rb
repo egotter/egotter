@@ -47,7 +47,7 @@ Rails.application.routes.draw do
   resources :searches, only: %i(show), param: :screen_name
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
   post 'searches/:screen_name/force_update', to: 'searches#force_update', as: :force_update
-  post 'searches/:screen_name/force_reload', to: 'searches#force_reload', as: :force_reload
+  post 'searches/:uid/force_reload', to: 'searches#force_reload', as: :force_reload
 
   resources :search_results, only: [], param: :uid do
     %i(new_friends new_followers favoriting close_friends usage_stats).each { |menu| get menu, on: :member }
