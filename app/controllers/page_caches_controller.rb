@@ -16,20 +16,13 @@ class PageCachesController < ApplicationController
   before_action(only: %i(create destroy)) { create_page_cache_log(action_name) }
 
   def create
-    @searched_tw_user = @twitter_user # for search_results/show
-    ::Cache::PageCache.new.write(@twitter_user.uid, render_to_string(template: 'search_results/show'))
+    # Do nothing.
     head :ok
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{@twitter_user.uid} #{@twitter_user.screen_name} #{request.browser}"
-    head :internal_server_error
   end
 
   # DELETE /page_caches/:id
   def destroy
-    ::Cache::PageCache.new.delete(@twitter_user.uid)
+    # Do nothing.
     head :ok
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{@twitter_user.uid} #{@twitter_user.screen_name} #{request.browser}"
-    head :internal_server_error
   end
 end
