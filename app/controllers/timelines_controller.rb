@@ -24,6 +24,7 @@ class TimelinesController < ApplicationController
     if @twitter_user.forbidden_account?
       flash.now[:alert] = forbidden_message(@twitter_user.screen_name)
     end
+    add_create_twitter_user_worker_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
   end
 
   def check_for_updates
