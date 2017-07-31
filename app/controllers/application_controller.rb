@@ -98,7 +98,8 @@ class ApplicationController < ActionController::Base
   end
 
   def sanitized_redirect_path(path)
-    path.match(%r{^/(one_sided_friends|unfriends|inactive_friends|friends|conversations|clusters|searches)}) ? path : root_path
+    regexp = %r{^/(one_sided_friends|unfriends|inactive_friends|friends|conversations|clusters|searches|timelines)}
+    path.match(regexp) ? path : root_path
   end
 
   def after_sign_in_path_for(resource)
