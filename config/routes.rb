@@ -53,6 +53,9 @@ Rails.application.routes.draw do
     %i(new_friends new_followers favoriting close_friends usage_stats).each { |menu| get menu, on: :member }
   end
 
+  resources :timelines, only: %i(show), param: :screen_name
+  get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates
+
   resources :notifications, only: :index
   resource :notification, only: :update
 

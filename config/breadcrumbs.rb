@@ -7,6 +7,11 @@ crumb :search do |screen_name|
   parent :root
 end
 
+crumb :timeline do |screen_name|
+  link t('timelines.show.short_title', user: mention_name(screen_name)), timeline_path(screen_name: screen_name)
+  parent :root
+end
+
 crumb :common do |screen_name, menu|
   link t("searches.#{menu}.name"), search_path_for(menu, screen_name)
   parent :search, screen_name
