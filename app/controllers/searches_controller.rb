@@ -32,6 +32,9 @@ class SearchesController < ApplicationController
   end
 
   def show
+    redirect_to timeline_path(screen_name: @searched_tw_user.screen_name)
+    return
+
     tu = @searched_tw_user
     page_cache = ::Cache::PageCache.new
     if tu.forbidden_account?

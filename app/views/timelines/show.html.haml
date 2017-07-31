@@ -1,0 +1,81 @@
+- content_for :canonical_url do
+  %link{href: timeline_url(screen_name: @twitter_user.screen_name), rel: 'canonical'}
+
+- breadcrumb :timeline, @twitter_user.screen_name
+
+- title = t('timelines.show.title', user: @twitter_user.mention_name, removing: @twitter_user.unfriendships.size, removed: @twitter_user.unfollowerships.size)
+- description = t('timelines.show.description', user: @twitter_user.mention_name)
+- set_meta_tags title: title, site: '', description: description
+
+.refresh-box.alert.alert-info.alert-dismissable{style: 'margin-bottom: 15px; display: none; z-index: 10000;'}
+  %a.close(href="#" data-dismiss="alert" aria-label="close")
+    &times;
+  = t('timelines.show.update_is_coming', user: @twitter_user.screen_name)
+  = link_to(t('timelines.show.update_result'), timeline_path(screen_name: @twitter_user.screen_name), class: 'btn btn-default btn-sm')
+
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+%h2.h3= t('timelines.show.heading', user: @twitter_user.mention_name)
+
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+= render partial: 'timelines/placeholder', locals: {menu_name: 'close_friends'}
+= render partial: 'timelines/users_summary', locals: {twitter_user: @twitter_user, menu_name: 'close_friends'}
+
+= render partial: 'search_results/show/stats_summary', locals: {name: :usage_stats, graph: UsageStat.find_by(uid: @twitter_user.uid)&.wday, tu: @twitter_user}
+= render partial: 'search_results/show/stats_summary', locals: {name: :clusters_belong_to, graph: name_y_format(UsageStat.find_by(uid: @twitter_user.uid)&.tweet_clusters), tu: @twitter_user}
+
+- %w(removing removed new_friends new_followers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
+  - if name == 'new_friends' && request.from_smartphone?
+    = render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
+
+  = render partial: 'timelines/placeholder', locals: {menu_name: name}
+  = render partial: 'timelines/users_summary', locals: {twitter_user: @twitter_user, menu_name: name}
+
+= render partial: 'search_results/show/update_histories_summary', locals: {histories: UpdateHistories.new(@twitter_user.uid), tu: @twitter_user}
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
+
+%h2.h4= t('search_results.show.about_this_page', this_page: t('searches.show.heading', user: @twitter_user.mention_name))
+.this-page-is= t('search_results.show.this_page_is_html', user: @twitter_user.mention_name)
+%h2.h4= t('search_results.show.other_services')
+.row.other-services
+  .text-center.col-xs-12.col-sm-4
+    = t('search_results.show.twitter_link_html', screen_name: @twitter_user.screen_name)
+  .text-center.col-xs-12.col-sm-4
+    = t('search_results.show.twilog_link_html', screen_name: @twitter_user.screen_name)
+  .text-center.col-xs-12.col-sm-4
+  = t('search_results.show.favstar_link_html', screen_name: @twitter_user.screen_name)
+
+:javascript
+  $(function () {
+    enableSlickOnPageTop();
+  });
+
+  (function () {
+    var refreshBox = $('.refresh-box');
+    var checkForUpdatesPath = '#{check_for_updates_path(uid: @twitter_user.uid, created_at: @twitter_user.created_at.to_i)}';
+    var retryCount = 0;
+
+    function checkForUpdates () {
+      $.get(checkForUpdatesPath)
+        .done(function (res) {
+        console.log('checkForUpdates', res);
+
+          if (res.found) {
+            refreshBox.show();
+            refreshBox.sticky();
+          } else {
+            if (retryCount < 2) {
+              retryCount++;
+              setTimeout(checkForUpdates, 5000);
+            }
+          }
+        })
+        .fail(function (xhr) {
+          console.log('checkForUpdates failed.', xhr);
+        });
+    }
+
+    checkForUpdates();
+  })();
+

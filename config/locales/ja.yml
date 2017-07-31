@@ -136,6 +136,7 @@ ja:
       name: "仲良し"
       title: "%{user} の仲良しランキング"
       description: "%{user} と仲良しなユーザーの一覧です。<br>仲良しの判定には、リプライした・リプライされた・ふぁぼを使っています。"
+      thanks: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
@@ -199,6 +200,20 @@ ja:
       name: "よくふぁぼる"
       title: "%{user} がよくふぁぼる"
       description: "%{user} がよくツイートをお気に入り登録するユーザーを表示します。"
+  timelines:
+    show:
+      title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
+      short_title: "%{user} の分析"
+      heading: "%{user} の分析結果"
+      description: "えごったーなら全部無料！ %{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
+      update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
+      update_result: 'データを更新する'
+      sign_in: 'ログインする'
+      request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
+      reload_this_page: "ページを更新する"
+      view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
+      under_calculation_with_details_html: 'フォロー・フォロワーの分析中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
+      empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
   search_results:
     show:
       about_this_page: "%{this_page}について"
