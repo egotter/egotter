@@ -1,11 +1,6 @@
 .profile-overview-container {
   .profile-overview-overlay {
-    padding-bottom: 50px; /* add 30px for .slick-slider */
     background-color: rgba(0, 0, 0, 0.2);
-  }
-
-  .profile-overview .slick-slider {
-    margin-bottom: 0;
   }
 
   .icon-link {
@@ -37,20 +32,25 @@
       color: #ffffff;
       text-decoration: none;
     }
-
   }
 
-  .description,
+  .twitter-link,
+  .calendar {
+    padding-bottom: 10px;
+  }
+
   .location,
-  .link,
   .calendar {
     color: #ffffff;
     margin: 5px 5px auto 5px;
   }
 
-  .description a,
-  .link a {
-    color: #ffffff;
+  .description-container {
+    color: #777777;
+    padding: 10px;
+    border-left: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
+    border-bottom: 1px solid #e6e6e6;
   }
 }
 

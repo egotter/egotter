@@ -4,12 +4,6 @@
 <%= render(partial: 'profiles/overview',
            locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid}) %>
 
-<script>
-  $(function () {
-    enableSlickOnPageTop();
-  });
-</script>
-
 <div class="update-histories">
   <h2 class="h4"><%= @title %></h2>
 

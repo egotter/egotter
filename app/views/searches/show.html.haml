@@ -16,11 +16,6 @@
 
 = render(partial: 'profiles/overview', locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid})
 
-:javascript
-  $(function () {
-    enableSlickOnPageTop();
-  });
-
 .search-result
   %h2.h3= t('.heading', user: @searched_tw_user.mention_name)
 

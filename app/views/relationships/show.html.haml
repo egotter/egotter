@@ -12,11 +12,6 @@
 .twitter.users{style: 'margin-top: 15px;'}
   = render(partial: 'twitter/user', cached: true, locals: {user: @twitter_users[1]}, formats: %i(html))
 
-:javascript
-  $(function () {
-    enableSlickOnPageTop();
-  });
-
 %h2.h2.one-sided-friends= page_title
 
 .one-sided-friends.lead.text-center= t('relationships.show.lead_002_html', user1: @twitter_users[0].mention_name, user2: @twitter_users[1].mention_name)

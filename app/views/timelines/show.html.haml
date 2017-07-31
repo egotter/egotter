@@ -47,10 +47,6 @@
   = t('search_results.show.favstar_link_html', screen_name: @twitter_user.screen_name)
 
 :javascript
-  $(function () {
-    enableSlickOnPageTop();
-  });
-
   (function () {
     var refreshBox = $('.refresh-box');
     var checkForUpdatesPath = '#{check_for_updates_path(uid: @twitter_user.uid, created_at: @twitter_user.created_at.to_i)}';

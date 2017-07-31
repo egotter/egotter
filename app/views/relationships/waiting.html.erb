@@ -4,12 +4,6 @@
   <%= render(partial: 'twitter/user', cached: true, locals: {user: @twitter_users[1]}, formats: %i(html)) %>
 </div>
 
-<script>
-  $(function () {
-    enableSlickOnPageTop();
-  });
-</script>
-
 <div class="waiting">
   <div class="waiting-msg">
     <%= t('searches.waiting.searching', user: @twitter_users.map(&:name).join(' ')) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>

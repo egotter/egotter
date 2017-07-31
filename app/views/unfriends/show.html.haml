@@ -9,11 +9,6 @@
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
-:javascript
-  $(function () {
-    enableSlickOnPageTop();
-  });
-
 %h2.h2.unfriends= page_title
 
 .unfriends.lead.text-center= t('unfriends.show.lead_002', user: @twitter_user.mention_name).html_safe

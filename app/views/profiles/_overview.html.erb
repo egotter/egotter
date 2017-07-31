@@ -1,5 +1,5 @@
-<div class="profile-overview-container <%= unique_id %>">
-  <div class="profile-overview" data-banner-url="<%= user.profile_banner_url.to_s %>" style="background-color: <%= "##{user.profile_link_color.to_s}" %>;">
+<div class="profile-overview-container">
+  <div class="profile-overview uid-<%= unique_id %>">
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
@@ -14,28 +14,38 @@
               <%= t('searches.common.see_on_twitter') %>&nbsp;<i class="fa fa-external-link" aria-hidden="true"></i>
             <% end %>
           </div>
-        </div>
 
-        <div class="text-center"><!-- second slide -->
-          <% if user.description.present? %><div class="description" style="display: none;"><%= auto_link(user.description, html: {target: '_blank', rel: 'nofollow'}) %></div><% end %>
-          <% if user.location.present? %><div class="location" style="display: none;"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;<%= user.location %></div><% end %>
-          <% if user.url.present? %><div class="link" style="display: none;"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %></div><% end %>
-          <% if user.account_created_at.present? && !user.account_created_at.kind_of?(String) %><div class="calendar" style="display: none;"><span class="glyphicon glyphicon-calendar"></span>&nbsp;<%= l(user.account_created_at) %></div><% end %>
+          <% if request.from_pc? && user.location.present? %>
+            <div class="location"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;<%= user.location %></div>
+          <% end %>
+          <% if request.from_pc? && user.account_created_at.present? && !user.account_created_at.kind_of?(String) %>
+            <div class="calendar"><span class="glyphicon glyphicon-calendar"></span>&nbsp;<%= l(user.account_created_at) %></div>
+          <% end %>
         </div>
       </div>
     </div>
   </div><!-- /.profile-overview -->
+
+  <div class="description-container">
+    <% if user.description.present? %>
+      <div class="description text-center"><%= auto_link(user.description, html: {target: '_blank', rel: 'nofollow'}) %></div>
+    <% end %>
+    <% if user.url.present? %>
+      <div class="link text-center"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %></div>
+    <% end %>
+  </div>
 </div>
 
-<script>
-  $(function () {
-    var $elem = $('.profile-overview-container.<%= unique_id %> .profile-overview');
-    if ($elem.data('bannerUrl')) {
-      $elem.css('backgroundSize', 'cover');
-      $elem.css('backgroundImage', "linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('" + $elem.data('bannerUrl') + "/web')");
-    }
-  });
-</script>
+<style type="text/css">
+  .profile-overview.uid-<%= unique_id %> {
+    <% if user.profile_banner_url.present? %>
+      background-size: cover;
+      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= "#{user.profile_banner_url}/#{request.from_pc? ? 'web' : 'mobile'}_retina" %>');
+    <% else %>
+      background-color: #<%= user.profile_link_color %>;
+    <% end %>
+  }
+</style>
 
 <div class="profile-counts-container">
   <div class="row">
