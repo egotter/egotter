@@ -54,8 +54,8 @@ function draw_friend_map(selector, nodes, links, width, height) {
         .attr("y2", function(d) { return d.target.y; });
 
     node
-        .attr("x", function(d) { return d.x; })
-        .attr("y", function(d) { return d.y; });
+        .attr("x", function(d) { return d.x - 15; }) // centering
+        .attr("y", function(d) { return d.y - 15; });
   }
 
   function dragstarted(d) {
