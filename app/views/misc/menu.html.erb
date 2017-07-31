@@ -41,11 +41,4 @@
   </script>
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
-
-  <div class="search-histories-menu">
-    <h2><small><%= t('search_histories.index.title') %></small></h2>
-    <div class="twitter users">
-      <%= render(partial: 'twitter/user', collection: search_histories_list, cached: true, locals: {via: 'menu'}) %>
-    </div>
-  </div>
 </div>
