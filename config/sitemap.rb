@@ -21,7 +21,7 @@ do_create = Proc.new do
     options = {priority: 0.5, changefreq: 'weekly', lastmod: twitter_user.updated_at}
 
     screen_name = twitter_user.screen_name
-    add search_path(screen_name: screen_name), options
+    add timeline_path(screen_name: screen_name), options
     add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_friends'), options
     add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_followers'), options
     add one_sided_friend_path(screen_name: screen_name, type: 'mutual_friends'), options
