@@ -103,6 +103,15 @@ class SearchesController < ApplicationController
     define_method(menu) do
       @menu = menu
       @title = title_for(menu, @searched_tw_user.screen_name)
+      @description =
+        if menu == :close_friends
+          uids = @searched_tw_user.close_friend_uids.take(5)
+          users = TwitterDB::User.where(uid: uids).pluck(:uid, :screen_name).index_by(&:first)
+          screen_names = uids.map { |uid| mention_name(users[uid].second) }.compact
+          t('searches.close_friends.thanks', users: screen_names.join("#{t('dictionary.honorific')}#{t('dictionary.delim')}"))
+        else
+          "#{@title} - #{@searched_tw_user.description}"
+        end
       render :common
     end
   end

@@ -140,15 +140,9 @@ module SearchesHelper
       tu.send(menu, login_user: current_user)
     else
       if menu.to_sym == :close_friends
-        # TODO remove later
-        result = tu.send(menu)
-        if result.any?
-          result
-        else
-          uids = tu.calc_close_friend_uids
-          users = TwitterDB::User.where(uid: uids).index_by(&:uid)
-          uids.map { |uid| users[uid] }.compact
-        end
+        uids = tu.close_friend_uids
+        users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+        uids.map { |uid| users[uid] }.compact
       elsif menu.to_sym == :favoriting
         # TODO remove later
         result = tu.favorite_friends

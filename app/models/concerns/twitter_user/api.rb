@@ -234,12 +234,7 @@ module Concerns::TwitterUser::Api
   end
 
   def close_friend_uids
-    # TODO remove later
-    if close_friendships.any?
-      close_friendships.pluck(:friend_uid)
-    else
-      calc_close_friend_uids
-    end
+    close_friendships.pluck(:friend_uid)
   end
 
   def calc_inactive_friend_uids
