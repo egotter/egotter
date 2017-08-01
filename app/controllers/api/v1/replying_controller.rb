@@ -4,8 +4,9 @@ module Api
 
       private
 
-      def summary_uids
-        @twitter_user.replying_uids
+      def summary_uids(limit: 3)
+        uids = @twitter_user.replying_uids
+        [uids.take(limit), uids.size]
       end
     end
   end
