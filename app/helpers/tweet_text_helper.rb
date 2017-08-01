@@ -92,7 +92,9 @@ module TweetTextHelper
   end
 
   def close_friends_text(users, tu)
-    t('tweet_text.close_friends', user: mention_name(tu.screen_name), users: users.slice(0, 5).map { |u| mention_name(u.screen_name) }.join("\n"), url: close_friends_search_url(screen_name: tu.screen_name))
+    url = close_friend_url(screen_name: tu.screen_name)
+    mention_names = users.take(5).map { |u| mention_name(u.screen_name) }
+    t('tweet_text.close_friends', user: mention_name(tu.screen_name), users: mention_names.join("\n"), url: url)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
     error_text

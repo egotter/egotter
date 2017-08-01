@@ -9,12 +9,15 @@ Rails.application.routes.draw do
   namespace :api, {format: 'json'} do
     namespace :v1 do
       Search::API_V1_NAMES.each {|menu| get "#{menu}/summary", to: "#{menu}#summary"}
+      Search::API_V1_NAMES.each {|menu| get "#{menu}/list", to: "#{menu}#list"}
     end
   end
 
   %i(maintenance privacy_policy terms_of_service sitemap menu support).each do |name|
     get name, to: "misc##{name}", as: name
   end
+
+  resources :close_friends, only: %i(show), param: :screen_name
 
   resources :one_sided_friends, only: %i(create show), param: :screen_name
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top

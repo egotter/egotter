@@ -1,30 +1,14 @@
 <div class="user-items-chart media">
   <div class="media-body">
-    <% if menu == :close_friends %>
-      <div id="friend_map" style="height: 240px; margin: 0 auto;"></div>
-      <%
-        users = (user_items.map{|item| item[:target] } << tu)
-        nodes = users.map { |user| {id: user.screen_name, url: normal_icon_url(user)} }
-        links = users.map { |user| {source: tu.screen_name, target: user.screen_name, value: 1, group: 0} }
-      %>
-      <script>
-        $(function () {
-          var nodes = <%= nodes.to_json.html_safe %>;
-          var links = <%= links.to_json.html_safe %>;
-          draw_friend_map('#friend_map', nodes, links, $('#friend_map').width(), 240);
-        });
-      </script>
-    <% else %>
-      <div id="<%= graph.object_id %>" class="common-chart"></div>
-      <script>
-        $(function () {
-          var graph_option = $.extend(true, {}, window.common_pie_chart_options);
-          graph_option.series[0].data = <%= raw graph.to_json %>;
-          graph_option.chart.margin = 0;
-          $('#<%= graph.object_id %>').highcharts(graph_option);
-        });
-      </script>
-    <% end %>
+    <div id="<%= graph.object_id %>" class="common-chart"></div>
+    <script>
+      $(function () {
+        var graph_option = $.extend(true, {}, window.common_pie_chart_options);
+        graph_option.series[0].data = <%= raw graph.to_json %>;
+        graph_option.chart.margin = 0;
+        $('#<%= graph.object_id %>').highcharts(graph_option);
+      });
+    </script>
 
     <%= render(partial: 'twitter/tweet_box', locals: {text: tweet_text}) %>
   </div>

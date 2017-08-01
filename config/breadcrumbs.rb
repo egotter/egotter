@@ -17,6 +17,11 @@ crumb :common do |screen_name, menu|
   parent :search, screen_name
 end
 
+crumb :close_friend do |screen_name|
+  link t('close_friends.show.title'), close_friend_path(screen_name: screen_name)
+  parent :search, screen_name
+end
+
 crumb :one_sided_friend do |screen_name|
   link t('one_sided_friends.new.simple_title'), one_sided_friend_path(screen_name: screen_name)
   parent :search, screen_name

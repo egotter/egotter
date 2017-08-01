@@ -14,14 +14,43 @@ module Api
     before_action -> { authorized_search?(@twitter_user) }
 
     def summary
-      limit = 3
-      uids = summary_uids
-      users = TwitterDB::User.where(uid: uids.take(limit)).index_by(&:uid)
-      users = uids.take(limit).map { |uid| users[uid] }.compact.map do |u|
-        Hashie::Mash.new({uid: u.uid.to_s, screen_name: u.screen_name, profile_image_url_https: u.profile_image_url_https.to_s})
+      uids, size = summary_uids
+      users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+      users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}
+
+      render json: {name: controller_name, count: size, users: users}, status: 200
+    end
+
+    def list
+      uids, max_sequence = list_uids(params[:max_sequence] || 0)
+      users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+      users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_list_hash(user))}
+
+      if params[:html]
+        users = render_to_string partial: 'twitter/user', collection: users, cached: true, formats: %i(html)
       end
 
-      render json: {name: controller_name, count: uids.size, users: users}, status: 200
+      render json: {name: controller_name, max_sequence: max_sequence, users: users}, status: 200
+    end
+
+    private
+
+    def to_summary_hash(user)
+      {
+        uid: user.uid.to_s,
+        screen_name: user.screen_name,
+        profile_image_url_https: user.profile_image_url_https.to_s
+      }
+    end
+
+    def to_list_hash(user)
+      {
+        uid: user.uid.to_s,
+        screen_name: user.screen_name,
+        name: user.name,
+        profile_image_url_https: user.profile_image_url_https.to_s,
+        description: user.description
+      }
     end
   end
 end

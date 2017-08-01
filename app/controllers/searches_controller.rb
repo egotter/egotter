@@ -104,17 +104,13 @@ class SearchesController < ApplicationController
 
   %i(close_friends usage_stats new_friends new_followers favoriting).each do |menu|
     define_method(menu) do
+      if menu == :close_friends
+        return redirect_to close_friend_path(screen_name: @searched_tw_user.screen_name), status: 301
+      end
+
       @menu = menu
       @title = title_for(menu, @searched_tw_user.screen_name)
-      @description =
-        if menu == :close_friends
-          uids = @searched_tw_user.close_friend_uids.take(5)
-          users = TwitterDB::User.where(uid: uids).pluck(:uid, :screen_name).index_by(&:first)
-          screen_names = uids.map { |uid| mention_name(users[uid].second) }.compact
-          t('searches.close_friends.thanks', users: screen_names.join("#{t('dictionary.honorific')}#{t('dictionary.delim')}"))
-        else
-          "#{@title} - #{@searched_tw_user.description}"
-        end
+      @description = "#{@title} - #{@searched_tw_user.description}"
       render :common
     end
   end
