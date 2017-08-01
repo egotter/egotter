@@ -17,18 +17,23 @@
 .tweet-box-wrapper{style: 'margin-bottom: 15px;'}
   = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
 
-= render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
-.placeholders-wrapper
-  - 3.times do
-    = render partial: 'timelines/placeholder', locals: {menu_name: ''}
+= render partial: 'users', locals: {twitter_user: @twitter_user, api_path: @api_path}
 
-.users-wrapper{style: 'margin-bottom: 15px;'}
-  .twitter.users
+.gray-separator
 
-.see-more-btn-wrapper{class: 'text-center', style: 'margin-bottom: 15px;'}
-  = link_to t('.see_more'), '#', data: {max_sequence: 0}, style: 'display: none;', onclick: 'return false;', class: 'see-more-btn btn btn-default btn-lg'
+= render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
+.search_form-wrapper{style: 'margin-bottom: 15px;'}
+  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/friends_stat"}
+
+.gray-separator
+
+= render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
+.search_form-wrapper{style: 'margin-bottom: 15px;'}
+  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/tweets_stat"}
+
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
 
 .gray-separator
 
@@ -45,32 +50,3 @@
 .gray-separator
 
 = render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}
-
-:javascript
-  $(function () {
-    var uid = '#{@twitter_user.uid}';
-    var url = '#{@api_path}';
-    var $btn = $('.see-more-btn');
-    var $placeholders = $('.placeholders-wrapper');
-    var $usersContainer = $('.twitter.users');
-
-
-    $btn.on('click', function (e) {
-      var max_sequence = $(this).data('max-sequence');
-      $.getJSON(url, {uid: uid, html: 1, max_sequence: max_sequence}).done(function (res) {
-        console.log(res);
-
-        $btn.show();
-        if (res.max_sequence && res.max_sequence >= 0) {
-          $btn.data('max-sequence', res.max_sequence + 1);
-        } else {
-          $btn.remove();
-        }
-        $placeholders.remove();
-        $usersContainer.append(res.users);
-      });
-    });
-
-    $btn.trigger('click');
-  });
-

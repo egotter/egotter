@@ -40,5 +40,7 @@ class CloseFriendsController < ApplicationController
 
     screen_names = users.map(&:mention_name)
     @meta_description = t('close_friends.show.thanks', users: "#{screen_names.map { |sn| "#{sn}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}")
+
+    @stat = UsageStat.find_by(uid: @twitter_user.uid)
   end
 end

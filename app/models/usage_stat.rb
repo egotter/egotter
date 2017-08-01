@@ -36,6 +36,71 @@ class UsageStat < ActiveRecord::Base
     end
   end
 
+  def friends_stat
+    twitter_user = TwitterUser.latest(uid)
+    friend_uids = twitter_user.friendships.pluck(:friend_uid)
+    follower_uids = twitter_user.followerships.pluck(:follower_uid)
+    mutual_friend_uids = twitter_user.mutual_friendships.pluck(:friend_uid)
+
+    {
+      friends_count:             friend_uids.size,
+      followers_count:           follower_uids.size,
+      one_sided_friends_count:   twitter_user.one_sided_friendships.size,
+      one_sided_followers_count: twitter_user.one_sided_followerships.size,
+      mutual_friends_count:      mutual_friend_uids.size,
+      one_sided_friends_rate:    twitter_user.one_sided_friendships.size.to_f / friend_uids.size,
+      one_sided_followers_rate:  twitter_user.one_sided_followerships.size.to_f / follower_uids.size,
+      follow_back_rate:          mutual_friend_uids.size.to_f / follower_uids.size,
+      followed_back_rate:        mutual_friend_uids.size.to_f / friend_uids.size,
+      mutual_friends_rate:       mutual_friend_uids.size.to_f / (friend_uids | follower_uids).size
+    }
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
+    Hash.new(0)
+  end
+
+  def tweets_stat
+    twitter_user = TwitterUser.latest(uid)
+    tweets = twitter_user.statuses
+    tweet_days = tweets.map(&:tweeted_at).map { |time| "#{time.year}/#{time.month}/#{time.day}" }
+    tweets_interval =
+      if tweets.any?
+        (tweets.first.tweeted_at.to_i - tweets.last.tweeted_at.to_i).to_f / tweets.size / 60
+      else
+        0.0
+      end
+
+    {
+      statuses_count:         tweets.size,
+      statuses_per_day_count: tweets.size / tweet_days.uniq.size,
+      twitter_days:           (Date.today - twitter_user.account_created_at.to_date).to_i,
+      most_active_hour:       most_active_hour,
+      most_active_wday:       most_active_wday,
+      tweets_interval:        tweets_interval.round(1),
+      mentions_count:         tweets.reject(&:retweet?).select(&:mentions?).size,
+      media_count:            tweets.reject(&:retweet?).select(&:media?).size,
+      links_count:            tweets.reject(&:retweet?).select(&:urls?).size,
+      hashtags_count:         tweets.reject(&:retweet?).select(&:hashtags?).size,
+      locations_count:        tweets.reject(&:retweet?).select(&:location?).size,
+      hour:                   hour,
+      hour_drilldown:         hour_drilldown,
+      breakdown:              breakdown
+    }
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid}"
+    Hash.new(0)
+  end
+
+  def most_active_hour
+    max_value = hour.map { |obj| obj[:y] }.max
+    hour.find { |obj| obj[:y] == max_value }[:name]
+  end
+
+  def most_active_wday
+    max_value = wday.map { |obj| obj[:y] }.max
+    wday.find { |obj| obj[:y] == max_value }[:name]
+  end
+
   def mention_uids
     mentions.keys.map(&:to_s).map(&:to_i)
   end

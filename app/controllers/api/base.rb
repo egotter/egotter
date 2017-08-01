@@ -22,7 +22,8 @@ module Api
     end
 
     def list
-      uids, max_sequence = list_uids(params[:max_sequence] || 0)
+      limit = (0..10).include?(params[:limit].to_i) ? params[:limit].to_i : 10
+      uids, max_sequence = list_uids(params[:max_sequence] || 0, limit: limit)
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
       users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_list_hash(user))}
 
