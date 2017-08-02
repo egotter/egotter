@@ -222,6 +222,16 @@ ja:
       twitter_link_html: '<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwitterで見る</a>'
       twilog_link_html: '<a href="http://twilog.org/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwilogで見る</a>'
       favstar_link_html: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をFavstarで見る</a>'
+  usage_stats:
+    friends_stat:
+      tweet: ".%{user} のフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。 #egotter %{url}"
+      existence: "フォロー返しあり"
+      nonexistence: "なし"
+    tweets_stat:
+      tweet: ".%{user} のツイート分析 - もっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
+      existence: "あり"
+      nonexistence: "なし"
+      wday_suffix: "曜日"
   update_histories:
     show:
       title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
@@ -272,10 +282,9 @@ ja:
       title_with_name: "%{user} の仲良しランキング"
       title: "仲良しランキング"
       page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
-      let_me_know_html: '%{user} の仲良し分析は、えごったーが分析したデータを元に集計しています。<br>もし、仲良し分析の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      let_me_know_html: '%{user} の仲良し分析は、えごったーが分析したデータを元に集計しています。もし、仲良し分析の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       thanks: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
-      see_more: 'もっと見る'
   one_sided_friends:
     new:
       title: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -443,6 +452,7 @@ ja:
     feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
     faq: "よくあるご質問"
     view_more: "続きを見る"
+    see_more: "もっと見る"
     view_more_detail: "もっと詳しく"
     view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
     reload_this_page: "ページを更新する"
@@ -571,6 +581,31 @@ ja:
         update_count: "自動更新回数"
         created_at: "作成日時"
         updated_at: "更新日時"
+      usage_stat:
+        friends_stat: "フォロー分析"
+        tweets_stat: "ツイート分析"
+        friends_count: "フォロー"
+        followers_count: "フォロワー"
+        one_sided_friends_count: "片思い"
+        one_sided_followers_count: "片思われ"
+        mutual_friends_count: "相互フォロー"
+        one_sided_friends_rate: "片思い率"
+        one_sided_followers_rate: "片思われ率"
+        follow_back_rate: "フォロー返し率"
+        followed_back_rate: "フォロー返され率"
+        mutual_friends_rate: "相互フォロー率"
+        statuses_count: "ツイート"
+        statuses_per_day_count: "ツイート/日"
+        twitter_days: "登録日数"
+        most_active_hour: "活発な時間"
+        most_active_wday: "活発な曜日"
+        tweets_interval: "ツイート間隔"
+        mentions_count: "メンション"
+        media_count: "画像"
+        links_count: "リンク"
+        hashtags_count: "ハッシュタグ"
+        locations_count: "位置情報"
+
     errors:
       models:
         twitter_user:

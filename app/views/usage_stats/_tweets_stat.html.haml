@@ -1,0 +1,86 @@
+%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_stat)
+
+.tweets-stat-wrapper.text-center
+  .row
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:twitter_days]
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:twitter_days)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:statuses_count]
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:statuses_count)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:statuses_per_day_count].round(1)
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:statuses_per_day_count)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = "#{stat[:most_active_hour]}#{t('datetime.prompts.hour')}"
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:most_active_hour)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = "#{stat[:most_active_wday]}#{t('usage_stats.tweets_stat.wday_suffix')}"
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:most_active_wday)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = "#{stat[:tweets_interval]}#{t('datetime.prompts.minute')}"
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:tweets_interval)
+
+  .tweets-stat-chart{style: 'height: 200px;'}
+  .tweets-stat-bar-chart{style: 'height: 240px;'}
+
+.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+  - tweet_text = t('usage_stats.tweets_stat.tweet', user: twitter_user.mention_name, wday: stat[:most_active_wday], hour: stat[:most_active_hour], url: url)
+  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
+
+:javascript
+  (function () {
+    var hourStat = $.extend(true, {}, window.usage_stats_column_chart_options);
+    hourStat.series[0].data = #{stat[:hour].to_json.html_safe};
+    hourStat.drilldown.series = #{stat[:hour_drilldown].to_json.html_safe};
+
+    $(function () {
+      $('.tweets-stat-chart').highcharts(hourStat);
+    });
+
+    var breakdownStat = #{stat[:breakdown].to_json.html_safe};
+    var barChart = $.extend(true, {}, window.usage_stats_tweets_stat_options);
+    barChart.xAxis.categories = [
+      '#{UsageStat.human_attribute_name(:mentions_count)}',
+      '#{UsageStat.human_attribute_name(:media_count)}',
+      '#{UsageStat.human_attribute_name(:links_count)}',
+      '#{UsageStat.human_attribute_name(:hashtags_count)}',
+      '#{UsageStat.human_attribute_name(:locations_count)}'
+    ];
+    barChart.series = [{
+      name: '#{t("usage_stats.tweets_stat.nonexistence")}',
+      data: [
+        100.0 - breakdownStat.mentions * 100,
+        100.0 - breakdownStat.media * 100,
+        100.0 - breakdownStat.urls * 100,
+        100.0 - breakdownStat.hashtags * 100,
+        100.0 - breakdownStat.location * 100
+      ]
+    }, {
+      name: '#{t("usage_stats.tweets_stat.existence")}',
+      data: [
+        breakdownStat.mentions * 100,
+        breakdownStat.media * 100,
+        breakdownStat.urls * 100,
+        breakdownStat.hashtags * 100,
+        breakdownStat.location * 100
+      ]
+    }];
+
+    $(function () {
+      $('.tweets-stat-bar-chart').highcharts(barChart);
+    });
+  })();
+

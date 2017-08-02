@@ -1,0 +1,79 @@
+%h2.h2.page-title= UsageStat.human_attribute_name(:friends_stat)
+
+.friends-stat-wrapper.text-center
+  .row
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:friends_count]
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:friends_count)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:one_sided_friends_count]
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:one_sided_friends_count)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = number_to_percentage(stat[:one_sided_friends_rate] * 100, precision: 1)
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:one_sided_friends_rate)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:followers_count]
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:followers_count)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:one_sided_followers_count]
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:one_sided_followers_count)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = number_to_percentage(stat[:one_sided_followers_rate] * 100, precision: 1)
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:one_sided_followers_rate)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = stat[:mutual_friends_count]
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:mutual_friends_count)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = number_to_percentage(stat[:follow_back_rate] * 100, precision: 1)
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:follow_back_rate)
+    = button_tag class: 'btn btn-default btn-lg' do
+      = number_to_percentage(stat[:mutual_friends_rate] * 100, precision: 1)
+      %br
+      %span.name
+        = UsageStat.human_attribute_name(:mutual_friends_rate)
+
+  .friends-stat-bar-chart{style: 'height: 200px;'}
+
+.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+  - tweet_text = t('usage_stats.friends_stat.tweet', user: twitter_user.mention_name, one_sided_friends: stat[:one_sided_friends_count], one_sided_followers: stat[:one_sided_followers_count], mutual_friends: stat[:mutual_friends_count], url: url)
+  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
+
+:javascript
+  (function () {
+    var friendsStat = #{stat.to_json.html_safe};
+    var barChart = window.usage_stats_tweets_stat_options;
+    barChart.xAxis.categories = ['#{UsageStat.human_attribute_name(:friends_count)}', '#{UsageStat.human_attribute_name(:followers_count)}'];
+    barChart.series = [{
+      name: '#{t("usage_stats.friends_stat.nonexistence")}',
+      data: [
+        100.0 - 100.0 * friendsStat.follow_back_rate,
+        100.0 - 100.0 * friendsStat.followed_back_rate
+      ]
+    }, {
+      name: '#{t("usage_stats.friends_stat.existence")}',
+      data: [
+        100.0 * friendsStat.follow_back_rate,
+        100.0 * friendsStat.followed_back_rate
+      ]
+    }];
+
+    $(function () {
+      $('.friends-stat-bar-chart').highcharts(barChart);
+    });
+  })();

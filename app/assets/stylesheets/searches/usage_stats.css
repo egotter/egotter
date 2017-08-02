@@ -2,3 +2,13 @@
   height: 160px;
   margin: 0 auto;
 }
+
+.friends-stat-wrapper .row .name,
+.tweets-stat-wrapper .row .name {
+  font-size: x-small;
+}
+
+.friends-stat-wrapper button,
+.tweets-stat-wrapper button {
+  margin-bottom: 15px;
+}
