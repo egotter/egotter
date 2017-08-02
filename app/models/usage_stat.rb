@@ -72,7 +72,7 @@ class UsageStat < ActiveRecord::Base
 
     {
       statuses_count:         tweets.size,
-      statuses_per_day_count: tweets.size / tweet_days.uniq.size,
+      statuses_per_day_count: (tweets.size / tweet_days.uniq.size rescue 0.0),
       twitter_days:           (Date.today - twitter_user.account_created_at.to_date).to_i,
       most_active_hour:       most_active_hour,
       most_active_wday:       most_active_wday,
