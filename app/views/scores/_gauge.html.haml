@@ -1,0 +1,8 @@
+.scores-gauge{style: 'height: 180px; margin: 0 auto;'}
+
+:javascript
+  $(function () {
+    var gaugeChart = $.extend(true, {}, window.gaugeOptions);
+    gaugeChart.series[0].data = [#{(score * 10000).round}];
+    $('.scores-gauge').highcharts(gaugeChart);
+  });

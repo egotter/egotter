@@ -20,10 +20,13 @@ class SearchResultsController < ApplicationController
     end
   end
 
-  %i(favoriting close_friends).each do |menu|
+  %i(favoriting).each do |menu|
     define_method(menu) do
       begin
-        users = users_for(@searched_tw_user, menu: menu)
+        uids = @searched_tw_user.favorite_friendships.pluck(:friend_uid)
+        users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+        users = uids.map { |uid| users[uid] }.compact
+
         @graph = chart_for(users.size, users.size * 2, menu)
         @tweet_text = close_friends_text(users, @searched_tw_user)
         @user_items = TwitterUsersDecorator.new(users).items

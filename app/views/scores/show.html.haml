@@ -10,16 +10,17 @@
 
 %h2.h2.page-title= @page_title
 
-.page-description.text-center= t('.page_description', user: @twitter_user.mention_name)
+.page-description.text-center.score-wrapper= @page_description
 
-= render(partial: 'friend_map', locals: {twitter_user: @twitter_user})
+= render partial: 'gauge', locals: {score: @score}
 
 .tweet-box-wrapper{style: 'margin-bottom: 15px;'}
-  = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
+  = render(partial: 'twitter/tweet_box', locals: {text: strip_tags(@tweet_text)})
+
+- @screen_names.each do |screen_name|
+  = link_to t('searches.common.search_by', user: mention_name(screen_name)), searches_path(screen_name: screen_name, redirect_path: score_path(screen_name: screen_name)), class: 'btn btn-default btn-md', method: :post
 
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
-
-= render partial: 'users', locals: {twitter_user: @twitter_user, api_path: @api_path}
 
 .gray-separator
 
