@@ -148,41 +148,6 @@ module SearchesHelper
     end
   end
 
-  def users_for(tu, menu:)
-    if %i(replied).include?(menu.to_sym)
-      tu.send(menu, login_user: current_user)
-    else
-      if menu.to_sym == :close_friends
-        uids = tu.close_friend_uids
-        users = TwitterDB::User.where(uid: uids).index_by(&:uid)
-        uids.map { |uid| users[uid] }.compact
-      elsif menu.to_sym == :favoriting
-        # TODO remove later
-        result = tu.favorite_friends
-        if result.any?
-          result
-        else
-          uids = tu.calc_favorite_friend_uids
-          users = TwitterDB::User.where(uid: uids).index_by(&:uid)
-          uids.map { |uid| users[uid] }.compact
-        end
-      else
-        tu.send(menu)
-      end
-    end
-  end
-
-  def uids_for(tu, menu:)
-    uids_menu = "#{menu.singularize}_uids"
-    if %i(replied_uids).include?(uids_menu.to_sym)
-      tu.send(uids_menu, login_user: current_user)
-    elsif uids_menu.to_sym == :favoriting_uids
-      tu.favorite_friend_uids
-    else
-      tu.send(uids_menu)
-    end
-  end
-
   def chart_for(target, rest, label)
     total = target + rest
     [

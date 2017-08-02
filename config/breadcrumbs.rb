@@ -22,6 +22,11 @@ crumb :close_friend do |screen_name|
   parent :search, screen_name
 end
 
+crumb :score do |screen_name|
+  link t('scores.show.title'), score_path(screen_name: screen_name)
+  parent :search, screen_name
+end
+
 crumb :one_sided_friend do |screen_name|
   link t('one_sided_friends.new.simple_title'), one_sided_friend_path(screen_name: screen_name)
   parent :search, screen_name

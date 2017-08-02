@@ -98,13 +98,13 @@ ja:
     statuses:
       num: "ツイート<br>%{num}"
     removing:
-      name: "リムった"
+      name: "リムーブした"
       num: "リムり<br>%{num}"
       title: "%{user} がフォローを外した"
       description: "%{user} がフォローを外したユーザーを表示します。垢消しもたまにあります。"
       short_description: "フォローを外したユーザーを表示します。"
     removed:
-      name: "リムられた"
+      name: "リムーブされた"
       num: "リムられ<br>%{num}"
       title: "%{user} がフォローを外された"
       description: "%{user} がフォローを外されたユーザーを表示します。垢消しもたまにあります。"
@@ -279,12 +279,25 @@ ja:
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
   close_friends:
     show:
-      title_with_name: "%{user} の仲良しランキング"
+      page_title: "%{user} の仲良しランキング"
       title: "仲良しランキング"
       page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
-      let_me_know_html: '%{user} の仲良し分析は、えごったーが分析したデータを元に集計しています。もし、仲良し分析の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      meta_description: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
+      let_me_know_html: '%{user} の%{current}分析は、えごったーが分析したデータを元に集計しています。もし、%{current}分析の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
-      thanks: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
+      see_more: 'もっと見る'
+  scores:
+    show:
+      page_title: "%{user} のツイッター戦闘力"
+      title: "ツイッター戦闘力"
+      score_text_html: ".%{user} のツイッター戦闘力は <span class='score-value'>%{score}</span><span class='score-suffix'></span> です…！\n"
+      will_win: "\n↓ 勝てる人たち！\n%{users}\n"
+      will_loose: "\n↓ 負ける人たち…\n%{users}\n"
+      page_description: "%{user} のツイッター戦闘力分析です。Klout Scoreを利用して、フォロー・フォロワー・ツイートから総合的な影響力を算出します。"
+      meta_description: '%{user} のツイッター戦闘力は %{score} です…！'
+      let_me_know_html: '%{user} の%{current}分析は、えごったーが分析したデータを元に集計しています。もし、%{current}分析の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      see_more: 'もっと見る'
   one_sided_friends:
     new:
       title: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'

@@ -112,3 +112,63 @@ window.usage_stats_tweets_stat_options = {
   },
   series: null
 };
+
+window.gaugeOptions = {
+  credits: false,
+  chart: {
+    type: 'solidgauge',
+    marginTop: 0,
+    spacingTop: 0
+  },
+  title: null,
+  pane: {
+    center: ['50%', '85%'],
+    size: '140%',
+    startAngle: -90,
+    endAngle: 90,
+    background: {
+      backgroundColor: '#EEE',
+      innerRadius: '60%',
+      outerRadius: '100%',
+      shape: 'arc'
+    }
+  },
+  tooltip: {
+    enabled: false
+  },
+  yAxis: {
+    stops: [
+      [0.1, '#55BF3B'], // green
+      [0.5, '#DDDF0D'], // yellow
+      [0.9, '#DF5353'] // red
+    ],
+    lineWidth: 0,
+    minorTickInterval: null,
+    tickAmount: 2,
+    min: 0,
+    max: 1000000,
+    title: null,
+    labels: {
+      y: 16
+    }
+  },
+  series: [{
+    name: 'Score',
+    data: [80],
+    dataLabels: {
+      format: '<div style="text-align: center;"><span style="font-size: x-large; color: black;">{y}</span></div>'
+    },
+    tooltip: {
+      valueSuffix: null
+    }
+  }],
+  plotOptions: {
+    solidgauge: {
+      dataLabels: {
+        y: 5,
+        borderWidth: 0,
+        useHTML: true
+      }
+    }
+  }
+};

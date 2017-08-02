@@ -18,6 +18,7 @@ Rails.application.routes.draw do
   end
 
   resources :close_friends, only: %i(show), param: :screen_name
+  resources :scores, only: %i(show), param: :screen_name
 
   resources :one_sided_friends, only: %i(create show), param: :screen_name
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
