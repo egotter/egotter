@@ -93,4 +93,18 @@ class SearchesController < ApplicationController
       redirect_to cluster_path(screen_name: @searched_tw_user.screen_name), status: 301
     end
   end
+
+  %w(inactive_friends friends).each do |menu|
+    define_method(menu) do
+      redirect_to send("#{menu.singularize}_path", screen_name: @searched_tw_user.screen_name), status: 301
+    end
+  end
+
+  def inactive_followers
+    redirect_to inactive_friend_path(screen_name: @searched_tw_user.screen_name, type: 'inactive_followers'), status: 301
+  end
+
+  def followers
+    redirect_to friend_path(screen_name: @searched_tw_user.screen_name, type: 'followers'), status: 301
+  end
 end

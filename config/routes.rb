@@ -46,6 +46,10 @@ Rails.application.routes.draw do
       new_friends
       new_followers
       favoriting
+      inactive_friends
+      inactive_followers
+      friends
+      followers
     ).each { |menu| get menu, on: :member }
   end
   resources :searches, only: %i(show), param: :screen_name
