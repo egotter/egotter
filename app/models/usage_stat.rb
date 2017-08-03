@@ -93,12 +93,12 @@ class UsageStat < ActiveRecord::Base
 
   def most_active_hour
     max_value = hour.map { |obj| obj[:y] }.max
-    hour.find { |obj| obj[:y] == max_value }[:name]
+    hour.find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
   end
 
   def most_active_wday
     max_value = wday.map { |obj| obj[:y] }.max
-    wday.find { |obj| obj[:y] == max_value }[:name]
+    wday.find { |obj| obj[:y] == max_value }.try(:fetch, :name, nil)
   end
 
   def mention_uids
