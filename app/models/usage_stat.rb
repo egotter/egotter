@@ -48,8 +48,8 @@ class UsageStat < ActiveRecord::Base
       one_sided_friends_count:   twitter_user.one_sided_friendships.size,
       one_sided_followers_count: twitter_user.one_sided_followerships.size,
       mutual_friends_count:      mutual_friend_uids.size,
-      one_sided_friends_rate:    twitter_user.one_sided_friendships.size.to_f / friend_uids.size,
-      one_sided_followers_rate:  twitter_user.one_sided_followerships.size.to_f / follower_uids.size,
+      one_sided_friends_rate:    twitter_user.one_sided_friends_rate,
+      one_sided_followers_rate:  twitter_user.one_sided_followers_rate,
       follow_back_rate:          mutual_friend_uids.size.to_f / follower_uids.size,
       followed_back_rate:        mutual_friend_uids.size.to_f / friend_uids.size,
       mutual_friends_rate:       mutual_friend_uids.size.to_f / (friend_uids | follower_uids).size

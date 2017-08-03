@@ -41,12 +41,20 @@ module Concerns::TwitterUser::Api
     one_sided_friendships.pluck(:friend_uid)
   end
 
+  def one_sided_friends_rate
+    (one_sided_friendships.size.to_f / friendships.size) rescue 0.0
+  end
+
   def calc_one_sided_follower_uids
     follower_uids - friend_uids
   end
 
   def one_sided_follower_uids
     one_sided_followerships.pluck(:follower_uid)
+  end
+
+  def one_sided_followers_rate
+    (one_sided_followerships.size.to_f / followerships.size) rescue 0.0
   end
 
   def calc_mutual_friend_uids
