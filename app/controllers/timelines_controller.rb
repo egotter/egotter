@@ -15,7 +15,7 @@ class TimelinesController < ApplicationController
     remove_instance_variable(:@tu)
   end
 
-  before_action only: (%i(new create waiting show force_update) + Search::MENU) do
+  before_action only: %i(show) do
     push_referer
     create_search_log
   end

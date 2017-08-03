@@ -14,10 +14,8 @@ class ScoresController < ApplicationController
     remove_instance_variable(:@tu)
   end
   before_action do
-    if request.format.html?
-      push_referer
-      create_search_log(action: "#{controller_name}/#{action_name}")
-    end
+    push_referer
+    create_search_log
   end
 
   def show

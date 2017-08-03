@@ -15,6 +15,7 @@
   - CreatePollingLogWorker
   - CreateModalOpenLogWorker
   - CreatePageCacheLogWorker
+  - CreateCrawlerLogWorker
   - CreateSearchLogWorker
   - CreateSignInLogWorker
   - rollbar

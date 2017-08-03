@@ -6,10 +6,12 @@ class CreateSearchLogs < ActiveRecord::Migration
       t.string  :uid,         null: false, default: '', index: true
       t.string  :screen_name, null: false, default: '', index: true
 
+      t.string  :controller,  null: false, default: ''
       t.string  :action,      null: false, default: ''
       t.boolean :cache_hit,   null: false, default: false
       t.boolean :ego_surfing, null: false, default: false
       t.string  :method,      null: false, default: ''
+      t.string  :path,        null: false, default: ''
       t.string  :via,         null: false, default: ''
 
       t.string  :device_type, null: false, default: ''

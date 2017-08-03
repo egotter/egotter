@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper
+  include Concerns::Logging
 
   before_action :set_locale
 
@@ -47,6 +48,11 @@ class ApplicationController < ActionController::Base
   end
 
   def not_found
+    if request.from_crawler? || from_minor_crawler?(request.user_agent)
+      create_crawler_log
+      return head :not_found
+    end
+
     if params['screen_name']&.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches' && !request.xhr?
       @screen_name = params['screen_name']
       @redirect_path = search_path(screen_name: @screen_name)
@@ -113,5 +119,9 @@ class ApplicationController < ActionController::Base
   def after_sign_out_path_for(resource)
     session[:sign_out_from] = request.protocol + request.host_with_port + sign_out_path
     root_path
+  end
+
+  def from_minor_crawler?(user_agent)
+    user_agent.to_s.match /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider/
   end
 end

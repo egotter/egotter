@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170410153225) do
+ActiveRecord::Schema.define(version: 20170803010305) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -110,6 +110,23 @@ ActiveRecord::Schema.define(version: 20170410153225) do
 
   add_index "close_friendships", ["friend_uid"], name: "index_close_friendships_on_friend_uid", using: :btree
   add_index "close_friendships", ["from_uid"], name: "index_close_friendships_on_from_uid", using: :btree
+
+  create_table "crawler_logs", force: :cascade do |t|
+    t.string   "controller",  limit: 191, default: "", null: false
+    t.string   "action",      limit: 191, default: "", null: false
+    t.string   "device_type", limit: 191, default: "", null: false
+    t.string   "os",          limit: 191, default: "", null: false
+    t.string   "browser",     limit: 191, default: "", null: false
+    t.string   "ip",          limit: 191, default: "", null: false
+    t.string   "method",      limit: 191, default: "", null: false
+    t.string   "path",        limit: 191, default: "", null: false
+    t.integer  "status",      limit: 4,   default: -1, null: false
+    t.string   "user_agent",  limit: 191, default: "", null: false
+    t.string   "referer",     limit: 191, default: "", null: false
+    t.datetime "created_at",                           null: false
+  end
+
+  add_index "crawler_logs", ["created_at"], name: "index_crawler_logs_on_created_at", using: :btree
 
   create_table "create_notification_message_logs", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false

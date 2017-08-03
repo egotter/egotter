@@ -10,6 +10,10 @@ module Concerns::Logging
   end
 
   def create_search_log(options = {})
+    if request.from_crawler? || from_minor_crawler?(request.user_agent)
+      return create_crawler_log
+    end
+
     uid, screen_name = find_uid_and_screen_name
     referral = find_referral(pushed_referers)
     cache_hit = action_name == 'show' && ::Cache::PageCache.new.exists?(uid)
@@ -19,10 +23,12 @@ module Concerns::Logging
       user_id:     current_user_id,
       uid:         uid,
       screen_name: screen_name,
+      controller:  controller_name,
       action:      action_name,
       cache_hit:   cache_hit,
       ego_surfing: user_signed_in? && current_user_uid == uid.to_i,
       method:      request.method,
+      path:        request.original_fullpath.to_s.truncate(180),
       via:         params[:via] ? params[:via] : '',
       device_type: request.device_type,
       os:          request.os,
@@ -39,6 +45,11 @@ module Concerns::Logging
       ab_test:     params[:ab_test] ? params[:ab_test] : '',
       created_at:  Time.zone.now
     }
+
+    if from_minor_crawler?(request.user_agent)
+      attrs.update(session_id: '-1', device_type: 'crawler')
+    end
+
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
 
@@ -49,6 +60,23 @@ module Concerns::Logging
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
     Rollbar.warn(e)
+  end
+
+  def create_crawler_log
+    attrs = {
+      controller:  controller_name,
+      action:      action_name,
+      device_type: request.device_type,
+      os:          request.os,
+      browser:     request.browser,
+      ip:          request.ip,
+      method:      request.method,
+      path:        request.original_fullpath.to_s.truncate(180),
+      user_agent:  request.user_agent.to_s.truncate(180),
+    }
+    CreateCrawlerLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
   end
 
   def create_sign_in_log(user, context:, via:, follow:, referer:, ab_test: '')
