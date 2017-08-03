@@ -3,17 +3,21 @@ class StatusesController < ApplicationController
   include Concerns::Logging
   include StatusesHelper
 
-  before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
-  before_action(only: %i(show)) { existing_uid?(params[:uid].to_i) }
-  before_action(only: %i(show)) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
-  before_action(only: %i(show)) { authorized_search?(@searched_tw_user) }
-  before_action only: %i(show) do
+  before_action { valid_screen_name?(params[:screen_name]) }
+  before_action { not_found_screen_name?(params[:screen_name]) }
+  before_action { @tu = build_twitter_user(params[:screen_name]) }
+  before_action { authorized_search?(@tu) }
+  before_action { existing_uid?(@tu.uid.to_i) }
+  before_action  do
+    @twitter_user = TwitterUser.latest(@tu.uid.to_i)
+    remove_instance_variable(:@tu)
+  end
+  before_action do
     push_referer
-    create_search_log(action: :statuses)
+    create_search_log
   end
 
-  # GET /statuses/:uid
   def show
-    redirect_to friend_path(screen_name: @searched_tw_user.screen_name, type: 'statuses')
+    @statuses = @twitter_user.statuses.limit(20)
   end
 end

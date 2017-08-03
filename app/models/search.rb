@@ -23,11 +23,11 @@ class Search
   )
 
   API_V1_NAMES = %i(
+    friends
+    followers
     close_friends
     unfriends
     unfollowers
-    new_friends
-    new_followers
     blocking_or_blocked
     mutual_friends
     one_sided_friends

@@ -17,8 +17,9 @@ Rails.application.routes.draw do
     get name, to: "misc##{name}", as: name
   end
 
-  resources :close_friends, only: %i(show), param: :screen_name
-  resources :scores, only: %i(show), param: :screen_name
+  %i(friends followers statuses close_friends scores).each do |controller_name|
+    resources controller_name, only: %i(show), param: :screen_name
+  end
 
   resources :one_sided_friends, only: %i(create show), param: :screen_name
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
@@ -29,7 +30,6 @@ Rails.application.routes.draw do
   resources :inactive_friends, only: %i(create show), param: :screen_name
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top
 
-  resources :friends, only: %i(create show), param: :screen_name
   get 'friends', to: 'friends#new', as: :friends_top
 
   resources :conversations, only: %i(create show), param: :screen_name
@@ -58,7 +58,7 @@ Rails.application.routes.draw do
   post 'searches/:uid/force_reload', to: 'searches#force_reload', as: :force_reload
 
   resources :search_results, only: [], param: :uid do
-    %i(new_friends new_followers favoriting close_friends usage_stats).each { |menu| get menu, on: :member }
+    %i(favoriting usage_stats).each { |menu| get menu, on: :member }
   end
 
   resources :timelines, only: %i(show), param: :screen_name
@@ -66,8 +66,6 @@ Rails.application.routes.draw do
 
   resources :notifications, only: :index
   resource :notification, only: :update
-
-  resources :statuses, only: :show, param: :uid
 
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
