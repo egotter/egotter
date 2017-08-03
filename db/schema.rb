@@ -120,9 +120,7 @@ ActiveRecord::Schema.define(version: 20170803010305) do
     t.string   "ip",          limit: 191, default: "", null: false
     t.string   "method",      limit: 191, default: "", null: false
     t.string   "path",        limit: 191, default: "", null: false
-    t.integer  "status",      limit: 4,   default: -1, null: false
     t.string   "user_agent",  limit: 191, default: "", null: false
-    t.string   "referer",     limit: 191, default: "", null: false
     t.datetime "created_at",                           null: false
   end
 
