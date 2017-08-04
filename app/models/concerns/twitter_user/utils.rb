@@ -53,12 +53,4 @@ module Concerns::TwitterUser::Utils
   def relationships_cache_created?
     created_at < 10.minutes.ago
   end
-
-  def _benchmark(message, &block)
-    ActiveRecord::Base.benchmark("[benchmark] #{self.class} #{message}", &block)
-  end
-
-  def _transaction(message, &block)
-    _benchmark(message) { Rails.logger.silence { ActiveRecord::Base.transaction(&block) } }
-  end
 end

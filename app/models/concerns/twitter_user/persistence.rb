@@ -21,10 +21,10 @@ module Concerns::TwitterUser::Persistence
 
     options = {validate: false}
 
-    _transaction('import Status') { statuses.each_slice(1000) { |ary| Status.import(ary, options) } }
-    _transaction('import Mention') { mentions.each_slice(1000) { |ary| Mention.import(ary, options) } }
-    _transaction('import SearchResult') { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
-    _transaction('import Favorite') { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
+    silent_transaction { statuses.each_slice(1000) { |ary| Status.import(ary, options) } }
+    silent_transaction { mentions.each_slice(1000) { |ary| Mention.import(ary, options) } }
+    silent_transaction { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
+    silent_transaction { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
 
     unless TwitterDB::User.exists?(uid: uid)
       begin
@@ -55,5 +55,9 @@ module Concerns::TwitterUser::Persistence
     logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{id} #{uid} #{screen_name}"
     logger.info e.backtrace.join("\n")
     destroy
+  end
+
+  def silent_transaction(&block)
+    Rails.logger.silence { ActiveRecord::Base.transaction(&block) }
   end
 end
