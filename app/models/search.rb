@@ -22,7 +22,10 @@ class Search
     usage_stats
   )
 
+  # TODO remove new_friends and new_followers later
   API_V1_NAMES = %i(
+    new_friends
+    new_followers
     friends
     followers
     close_friends
