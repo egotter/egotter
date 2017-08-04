@@ -67,7 +67,7 @@ class TwitterUser < ActiveRecord::Base
         latest = TwitterUser.latest(uid)
         if latest&.fresh?
           @error_message = 'recently updated'
-          return false
+          return nil
         end
       end
 
@@ -77,12 +77,12 @@ class TwitterUser < ActiveRecord::Base
         latest = TwitterUser.latest(uid) unless latest
         if latest && new_tu.friendless?
           @error_message = 'already created and too many friends'
-          return false
+          return nil
         end
 
         if latest&.diff(new_tu)&.empty?
           @error_message = 'not changed (before building)'
-          return false
+          return nil
         end
       end
 
