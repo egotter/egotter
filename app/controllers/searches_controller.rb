@@ -75,12 +75,8 @@ class SearchesController < ApplicationController
     head :ok
   end
 
-  %i(close_friends usage_stats new_friends new_followers favoriting).each do |menu|
+  %i(usage_stats favoriting).each do |menu|
     define_method(menu) do
-      if menu == :close_friends
-        return redirect_to close_friend_path(screen_name: @searched_tw_user.screen_name), status: 301
-      end
-
       @menu = menu
       @title = title_for(menu, @searched_tw_user.screen_name)
       @description = "#{@title} - #{@searched_tw_user.description}"
@@ -88,9 +84,23 @@ class SearchesController < ApplicationController
     end
   end
 
-  %i(clusters_belong_to).each do |menu|
+  %w(new_friends new_followers).each do |menu|
     define_method(menu) do
-      redirect_to cluster_path(screen_name: @searched_tw_user.screen_name), status: 301
+      redirect_to send("#{menu.remove(/^new_/).singularize}_path", screen_name: @searched_tw_user.screen_name), status: 301
+    end
+  end
+
+  def close_friends
+    redirect_to close_friend_path(screen_name: @searched_tw_user.screen_name), status: 301
+  end
+
+  def clusters_belong_to
+    redirect_to cluster_path(screen_name: @searched_tw_user.screen_name), status: 301
+  end
+
+  %i(inactive_friends inactive_followers friends followers).each do |menu|
+    define_method(menu) do
+      redirect_to send("#{menu.singularize}_path", screen_name: @searched_tw_user.screen_name), status: 301
     end
   end
 

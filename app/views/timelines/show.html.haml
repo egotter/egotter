@@ -33,8 +33,8 @@
 
 = render partial: 'search_results/show/stats_summary', locals: {name: :clusters_belong_to, graph: name_y_format(UsageStat.find_by(uid: @twitter_user.uid)&.tweet_clusters), tu: @twitter_user}
 
-- %w(removing removed new_friends new_followers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
-  - if name == 'new_friends' && request.from_smartphone?
+- %w(removing removed blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
+  - if name == 'blocking_or_blocked' && request.from_smartphone?
     = render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
 
   = render partial: 'timelines/placeholder', locals: {menu_name: name}

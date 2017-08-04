@@ -17,14 +17,11 @@ crumb :common do |screen_name, menu|
   parent :search, screen_name
 end
 
-crumb :close_friend do |screen_name|
-  link t('close_friends.show.title'), close_friend_path(screen_name: screen_name)
-  parent :search, screen_name
-end
-
-crumb :score do |screen_name|
-  link t('scores.show.title'), score_path(screen_name: screen_name)
-  parent :search, screen_name
+%w(friends followers statuses close_friends scores).each do |name|
+  crumb name.singularize.to_sym do |screen_name|
+    link t("#{name}.show.crumb_title"), send("#{name.singularize}_path", screen_name: screen_name)
+    parent :search, screen_name
+  end
 end
 
 crumb :one_sided_friend do |screen_name|
@@ -44,11 +41,6 @@ end
 
 crumb :inactive_friend do |screen_name|
   link t('inactive_friends.new.simple_title'), inactive_friend_path(screen_name: screen_name)
-  parent :search, screen_name
-end
-
-crumb :friend do |screen_name|
-  link t('friends.new.simple_title'), friend_path(screen_name: screen_name)
   parent :search, screen_name
 end
 

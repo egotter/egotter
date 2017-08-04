@@ -238,9 +238,6 @@ ja:
       title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
       short_title: "%{user} のえごったー更新履歴"
       description: "%{user} のえごったー更新履歴を表示します。"
-  statuses:
-    show:
-      title: "%{user} のツイート"
   search_histories:
     index:
       title: "検索履歴"
@@ -280,6 +277,7 @@ ja:
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
   close_friends:
     show:
+      crumb_title: "仲良しランキング"
       page_title: "%{user} の仲良しランキング"
       title: "仲良しランキング"
       page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
@@ -289,6 +287,7 @@ ja:
       see_more: 'もっと見る'
   scores:
     show:
+      crumb_title: "ツイッター戦闘力"
       page_title: "%{user} のツイッター戦闘力"
       title: "ツイッター戦闘力"
       score_text_html: ".%{user} のツイッター戦闘力は <span class='score-value'>%{score}</span><span class='score-suffix'></span> です…！\n"
@@ -301,7 +300,7 @@ ja:
       see_more: 'もっと見る'
   one_sided_friends:
     new:
-      title: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '片思いチェック by えごったー'
       simple_title: '片思いチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
@@ -319,7 +318,7 @@ ja:
       tweet: "%{user} の分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。"
   unfriends:
     new:
-      title: '<span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '<span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'リムられチェック by えごったー'
       simple_title: 'リムられチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
@@ -337,7 +336,7 @@ ja:
       tweet: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされたかも %{blocking_or_blocked}人です。"
   relationships:
     new:
-      title: '<span style="font-size: small; display: inline;">会話検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '<span style="font-size: small; display: inline;">会話検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '会話分析 by えごったー'
       simple_title: '会話分析'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからツイッター分析！ 複数ユーザーの会話、共通フォロー、共通フォロワーをさくっと見付けることができます。"
@@ -356,7 +355,7 @@ ja:
       tweet: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人です。"
   inactive_friends:
     new:
-      title: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '最近いない人検索 by えごったー'
       simple_title: '最近いない人検索'
       description: "保存ユーザー数1,000万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
@@ -374,7 +373,7 @@ ja:
       tweet: "%{user} の分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人です。"
   friends:
     new:
-      title: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'フォローチェック by えごったー'
       simple_title: 'フォローチェック'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからフォローチェック！"
@@ -384,15 +383,37 @@ ja:
       lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show:
-      title: "%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 ツイート %{statuses}件"
-      description: "%{user} は、フォロー %{friends}人、フォロワー %{followers}人、ツイート %{statuses}件です。フォローとフォロワーの一覧をさくっと見ることができます。"
-      lead_002: "フォローは、%{user} がフォローしているアカウント、<br>フォロワーは、%{user} がフォローされているアカウントのことです。"
-      lead_003: '%{user} のフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
-      tweet: "%{user} の分析 - フォロー %{friends}人 フォロワー %{followers}人 ツイート %{statuses}人です。"
+      crumb_title: "フォロー"
+      page_title: "%{user} のフォロー 一覧"
+      meta_title: "%{user} の分析 - フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
+      title: "フォロー 一覧"
+      page_description: "%{user} がフォローしているユーザーの一覧です。"
+      meta_description: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
+      tweet_text: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
+      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      see_more: 'もっと見る'
+  followers:
+    show:
+      crumb_title: "フォロワー"
+      page_title: "%{user} のフォロワー 一覧"
+      meta_title: "%{user} の分析 - フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}%"
+      title: "フォロワー 一覧"
+      page_description: "%{user} がフォローされているユーザーの一覧です。"
+      meta_description: "%{user} がフォローされているユーザーの一覧 -  フォロー %{followers}人 片思い %{one_sided_followers}人 片思い率 %{one_sided_followers_rate}%"
+      tweet_text: "%{user} がフォローされているユーザーの一覧 -  フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}% #egotter %{url}"
+      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      see_more: 'もっと見る'
+  statuses:
+    show:
+      crumb_title: "ツイート"
+      title: "ツイート"
+      page_title: "%{user} のツイート"
+      meta_description: "%{user} のツイート"
   conversations:
     new:
-      title: '<span style="font-size: small; display: inline;">リプライ分析</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '<span style="font-size: small; display: inline;">リプライ分析</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'リプライ分析 by えごったー'
       simple_title: 'リプライ分析'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからリプライ分析！ リプライしたアカウント、リプライされたアカウントをさくっと見付けることができます。"
@@ -410,7 +431,7 @@ ja:
       tweet: "%{user} の分析 - リプライした %{replying}人 リプライされた %{replied}人 両方された %{replying_and_replied}人です。"
   clusters:
     new:
-      title: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'クラスタ判定 by えごったー'
       simple_title: 'クラスタ判定'
       description: "保存ユーザー数1,000万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
@@ -444,8 +465,6 @@ ja:
     inactive_followers: "いない"
     removing: "リム"
     removed: "リムられ"
-    new_friends: "フォロー"
-    new_followers: "フォロワー"
     blocking_or_blocked: "ブロック"
     others: "その他"
 

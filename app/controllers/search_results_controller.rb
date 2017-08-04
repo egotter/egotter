@@ -13,13 +13,6 @@ class SearchResultsController < ApplicationController
   before_action(only: Search::MENU) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
   before_action(only: Search::MENU) { authorized_search?(@searched_tw_user) }
 
-  %i(new_friends new_followers).each do |menu|
-    define_method(menu) do
-      @user_items = TwitterUsersDecorator.new(@searched_tw_user.send(menu)).items
-      render json: {html: render_to_string(template: 'search_results/common', locals: {menu: menu})}, status: 200
-    end
-  end
-
   %i(favoriting).each do |menu|
     define_method(menu) do
       begin
@@ -58,5 +51,9 @@ class SearchResultsController < ApplicationController
     end
 
     render json: {html: render_to_string}, status: 200
+  end
+
+  def close_friends
+    head :not_found
   end
 end

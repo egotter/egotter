@@ -2,7 +2,6 @@ class ScoresController < ApplicationController
   include Validation
   include Concerns::Logging
   include SearchesHelper
-  include TweetTextHelper
 
   before_action { valid_screen_name?(params[:screen_name]) }
   before_action { not_found_screen_name?(params[:screen_name]) }
@@ -19,9 +18,10 @@ class ScoresController < ApplicationController
   end
 
   def show
-    @breadcrumb_name = :score
-    @canonical_url = score_url(screen_name: @twitter_user.screen_name)
+    @breadcrumb_name = controller_name.singularize.to_sym
+    @canonical_url = send("#{controller_name.singularize}_url", screen_name: @twitter_user.screen_name)
     @page_title = t('.page_title', user: @twitter_user.mention_name)
+
 
     klout_client = KloutClient.new
     @score = klout_client.score(@twitter_user.uid)

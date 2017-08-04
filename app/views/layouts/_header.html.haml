@@ -2,5 +2,5 @@
   = render partial: 'layouts/header/small_buttons' unless under_maintenance? || action_name == 'welcome'
   %a.navbar-brand{href: root_path_for(controller: controller_name)}
     = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
-    %span= app_name_for(controller: controller_name).html_safe
+    %span= app_name_for(controller: controller_name)
 = render partial: 'layouts/header/large_buttons' unless under_maintenance? || action_name == 'welcome'

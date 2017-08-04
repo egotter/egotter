@@ -76,7 +76,7 @@ module SearchesHelper
 
   def app_name_for(controller:)
     if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
-      send(:t, "#{controller}.new.title")
+      send(:t, "#{controller}.new.title_html")
     else
       t('searches.common.egotter')
     end
@@ -99,9 +99,9 @@ module SearchesHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(close_friends)
-        close_friend_path(screen_name: screen_name)
-      when *%w(new_friends new_followers favoriting close_friends usage_stats)
+      when *%w(friends followers close_friends)
+        send("#{menu.to_s.singularize}_path", screen_name: screen_name)
+      when *%w(favoriting usage_stats)
         send("#{menu}_search_path", screen_name: screen_name)
       when *%w(removing removed blocking_or_blocked)
         unfriend_path(screen_name: screen_name, type: menu)
@@ -109,8 +109,6 @@ module SearchesHelper
         one_sided_friend_path(screen_name: screen_name, type: menu)
       when *%w(inactive_friends inactive_followers)
         inactive_friend_path(screen_name: screen_name, type: menu)
-      when *%w(friends followers)
-        friend_path(screen_name: screen_name, type: menu)
       when *%w(replying replied)
         conversation_path(screen_name: screen_name, type: menu)
       when *%w(clusters clusters_belong_to)
@@ -122,7 +120,7 @@ module SearchesHelper
 
   def searches_path_for(controller:, screen_name: '', via: '')
     options = {screen_name: screen_name, via: via}.delete_if { |_, v| v.empty? }
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
+    if %w(one_sided_friends unfriends relationships inactive_friends conversations clusters).include? controller
       send("#{controller}_path", options)
     else
       searches_path(options)
@@ -131,7 +129,7 @@ module SearchesHelper
 
   def title_for(menu, screen_name)
     case menu.to_sym
-      when :close_friends then t("close_friends.show.title")
+      when *%i(friends followers close_friends) then t("#{menu}.show.title")
       when :usage_stats then t("searches.usage_stats.name")
       when :clusters_belong_to then t("searches.clusters_belong_to.name")
       when :removing then t("searches.removing.name")
@@ -141,10 +139,9 @@ module SearchesHelper
   end
 
   def description_for(menu, screen_name)
-    if menu.to_sym == :close_friends
-      t("close_friends.show.page_description", user: mention_name(screen_name))
-    else
-      t("searches.#{menu}.description", user: mention_name(screen_name))
+    case menu.to_sym
+      when *%i(friends followers close_friends) then t("#{menu}.show.page_description")
+      else t("searches.#{menu}.description", user: mention_name(screen_name))
     end
   end
 
