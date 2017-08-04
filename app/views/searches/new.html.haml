@@ -33,6 +33,13 @@
     = link_to t('searches.common.search_by', user: current_user.mention_name), searches_path_for(controller: controller_name, screen_name: current_user.screen_name, via: :top_button), class: 'searches submit-btn2 btn btn-info btn-block', method: :post
   - else
     = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
+    .searches.text-center
+      .text-notice
+        %i.fa.fa-check.fa-lg{'aria-hidden': true}
+        = t('searches.new.pc.check_001')
+      .text-notice
+        %i.fa.fa-check.fa-lg{'aria-hidden': true}
+        = t('searches.new.pc.check_002')
 
 .row.searches.screenshot
   .col-xs-12.col-sm-6.text-center
@@ -90,14 +97,15 @@
 
 .row.searches{class: "#{'vertical-align-bottom' if request.from_pc?}", style: 'margin-bottom: 15px;'}
   .col-xs-12.col-sm-6.text-center{style: 'margin-top: 30px;'}
+    %div
+      = t('searches.new.pc.sign_in_now')
+    = link_to t('searches.new.pc.sign_up'), sign_in_path(via: "#{controller_name}/#{action_name}/button/pc_special2"), class: 'btn btn-info btn-block btn-lg box-center'
     .text-notice
       %i.fa.fa-check.fa-lg{'aria-hidden': true}
       = t('searches.new.pc.check_001')
     .text-notice
       %i.fa.fa-check.fa-lg{'aria-hidden': true}
       = t('searches.new.pc.check_002')
-    .text-notice
-      = link_to t('searches.new.pc.sign_up'), sign_in_path(via: "#{controller_name}/#{action_name}/button/pc_special2"), class: 'btn btn-info btn-block btn-lg box-center'
   .col-xs-12.col-sm-6.text-center{style: 'margin-top: 30px;'}
     %div
       = t('searches.new.pc.search_for_now')

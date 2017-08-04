@@ -68,6 +68,7 @@ ja:
         check_001: "パスワード不要"
         check_002: "ワンクリック登録"
         sign_up: "新規登録"
+        sign_in_now: "「リム通知を登録する」という方はこちら"
         search_for_now: "「とりあえず見るだけ」という方はこちら"
     waiting:
       retry_search_by: "%{user} で再度検索"
