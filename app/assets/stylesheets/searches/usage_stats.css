@@ -1,6 +1,11 @@
+.usage-time-chart,
+.wday-chart,
+.hour-chart,
+.hashtags-chart,
+.cloud-chart,
 .usage-stats .chart {
-  height: 160px;
-  margin: 0 auto;
+  height: 180px;
+  margin: 0 auto 15px auto;
 }
 
 .friends-stat-wrapper .row .name,
@@ -11,4 +16,5 @@
 .friends-stat-wrapper button,
 .tweets-stat-wrapper button {
   margin-bottom: 15px;
+  margin-right: 5px;
 }

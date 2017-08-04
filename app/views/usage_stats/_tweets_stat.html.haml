@@ -1,6 +1,6 @@
 %h2.h2.page-title= UsageStat.human_attribute_name(:tweets_stat)
 
-.tweets-stat-wrapper.text-center
+.tweets-stat-wrapper.text-center{style: 'margin-bottom: 30px;'}
   .row
     = button_tag class: 'btn btn-default btn-lg' do
       = stat[:twitter_days]
@@ -33,22 +33,34 @@
       %span.name
         = UsageStat.human_attribute_name(:tweets_interval)
 
-  .tweets-stat-chart{style: 'height: 200px;'}
-  .tweets-stat-bar-chart{style: 'height: 240px;'}
+%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_per_wday)
+.wday-chart{style: 'margin-bottom: 30px;'}
+
+%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_per_hour)
+.hour-chart{style: 'margin-bottom: 30px;'}
 
 .tweet-box-wrapper{style: 'margin-bottom: 15px;'}
-  - tweet_text = t('usage_stats.tweets_stat.tweet', user: twitter_user.mention_name, wday: stat[:most_active_wday], hour: stat[:most_active_hour], url: url)
+  - tweet_text = t('usage_stats.tweets_stat.most_active', user: twitter_user.mention_name, wday: stat[:most_active_wday], hour: stat[:most_active_hour], url: url)
+  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
+
+%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_breakdown)
+.breakdown-chart{style: 'height: 220px; margin-bottom: 30px;'}
+
+.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+  - tweet_text = t('usage_stats.tweets_stat.breakdown', {user: twitter_user.mention_name, url: url}.merge(stat[:breakdown].map { |k, v| [k, (v * 100).round(1)] }.to_h))
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
 
 :javascript
   (function () {
+    var wdayStat = $.extend(true, {}, window.usage_stats_column_chart_options);
+    wdayStat.series[0].data = #{stat[:wday].to_json.html_safe};
+    wdayStat.drilldown.series = #{stat[:wday_drilldown].to_json.html_safe};
+    $(function () { $('.wday-chart').highcharts(wdayStat);});
+
     var hourStat = $.extend(true, {}, window.usage_stats_column_chart_options);
     hourStat.series[0].data = #{stat[:hour].to_json.html_safe};
     hourStat.drilldown.series = #{stat[:hour_drilldown].to_json.html_safe};
-
-    $(function () {
-      $('.tweets-stat-chart').highcharts(hourStat);
-    });
+    $(function () { $('.hour-chart').highcharts(hourStat);});
 
     var breakdownStat = #{stat[:breakdown].to_json.html_safe};
     var barChart = $.extend(true, {}, window.usage_stats_tweets_stat_options);
@@ -80,7 +92,7 @@
     }];
 
     $(function () {
-      $('.tweets-stat-bar-chart').highcharts(barChart);
+      $('.breakdown-chart').highcharts(barChart);
     });
   })();
 

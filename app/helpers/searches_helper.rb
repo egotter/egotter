@@ -99,9 +99,9 @@ module SearchesHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(friends followers close_friends)
+      when *%w(friends followers close_friends usage_stats)
         send("#{menu.to_s.singularize}_path", screen_name: screen_name)
-      when *%w(favoriting usage_stats)
+      when *%w(favoriting)
         send("#{menu}_search_path", screen_name: screen_name)
       when *%w(removing removed blocking_or_blocked)
         unfriend_path(screen_name: screen_name, type: menu)
