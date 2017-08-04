@@ -84,7 +84,6 @@ service monit stop
 cp -f ./setup/etc/nginx/nginx.conf /etc/nginx
 chkconfig nginx on
 service nginx start
-# chown -R ec2-user:ec2-user /var/log/nginx
 
 # td-agent
 [ ! -f "/etc/td-agent/td-agent.conf.bak" ] && cp /etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf.bak
