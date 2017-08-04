@@ -5,7 +5,7 @@
 
     <div class="media-body">
       <%= link_to search_path(screen_name: 'SCREEN_NAME'), class: 'user-template', style: 'display: none;' do %>
-        <%= normal_icon_img(Hashie::Mash.new({screen_name: '#', profile_image_url_https: image_path('gray_48x48.png')}), class: 'img-rounded') %>
+        <%= normal_icon_img(Hashie::Mash.new({screen_name: '#', profile_image_url_https: image_path('/gray_48x48.png')}), class: 'img-rounded') %>
       <% end %>
       <div class="text-muted progress-msg" style="display: none;"></div>
     </div>

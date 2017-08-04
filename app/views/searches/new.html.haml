@@ -37,10 +37,10 @@
 .row.searches.screenshot
   .col-xs-12.col-sm-6.text-center
     = link_to search_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/screenshot_iphone") do
-      %img{alt: t('searches.common.egotter'), src: '/screenshot_iphone_332x560.png', height: '160px'}
+      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_iphone_332x560.png'), height: '160px'}
   .col-xs-12.col-sm-6.text-center
     = link_to search_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/screenshot_laptop") do
-      %img{alt: t('searches.common.egotter'), src: '/screenshot_laptop_961x560.png', height: '160px'}
+      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_961x560.png'), height: '160px'}
 
 .searches.separator
 
