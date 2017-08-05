@@ -8,8 +8,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         referer = session[:sign_in_referer] ? session.delete(:sign_in_referer) : ''
         ab_test = session[:sign_in_ab_test] ? session.delete(:sign_in_ab_test) : ''
         follow = 'true' == session.delete(:sign_in_follow)
-        create_sign_in_log(user, context: context, via: via, follow: follow, referer: referer, ab_test: ab_test)
+        tweet = 'true' == session.delete(:sign_in_tweet)
+
+        create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
         FollowEgotterWorker.perform_async(user.id) if follow
+        TweetEgotterWorker.perform_async(user.id, session.delete(:sign_in_tweet_text)) if tweet
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
@@ -26,7 +29,17 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def failure
-    %i(sign_in_from sign_out_from sign_in_via sign_in_referer sign_in_ab_test sign_in_follow redirect_path).each { |key| session.delete(key) }
+    %i(
+      sign_in_from
+      sign_out_from
+      sign_in_via
+      sign_in_referer
+      sign_in_ab_test
+      sign_in_follow
+      sign_in_tweet
+      sign_in_tweet_text
+      redirect_path
+    ).each { |key| session.delete(key) }
     set_flash_message :alert, :failure, kind: 'Twitter', reason: request.env['omniauth.error.type'].to_s.humanize
     redirect_to after_omniauth_failure_path_for(resource_name)
   end

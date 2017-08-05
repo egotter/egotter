@@ -27,5 +27,6 @@
   - ImportReplyingRepliedAndFavoritesWorker
   - ImportTwitterUserRelationsWorker
   - ImportUserWorker
+  - TweetEgotterWorker
   - UpdateNotificationMessageWorker
   - UpdateTwitterUserWorker

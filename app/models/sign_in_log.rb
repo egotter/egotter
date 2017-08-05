@@ -9,6 +9,7 @@
 #  screen_name :string(191)      default(""), not null
 #  context     :string(191)      default(""), not null
 #  follow      :boolean          default(FALSE), not null
+#  tweet       :boolean          default(FALSE), not null
 #  via         :string(191)      default(""), not null
 #  device_type :string(191)      default(""), not null
 #  os          :string(191)      default(""), not null

@@ -18,4 +18,5 @@
   - CreateCrawlerLogWorker
   - CreateSearchLogWorker
   - CreateSignInLogWorker
+  - TweetEgotterWorker
   - rollbar

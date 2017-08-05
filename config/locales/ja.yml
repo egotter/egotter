@@ -263,7 +263,9 @@ ja:
       feature_004: "鍵アカも検索できます"
       feature_desc_004_html: "本人やフォローされてる人は<br>鍵アカも検索できます。"
       sign_in_with_twitter: "Twitter でログイン"
-      follow_egotter: "%{link} をフォローする。フォロー中は検索が早くなります！"
+      follow_egotter_html: "%{link} をフォローする。フォロー中は検索が早くなります！"
+      tweet_egotter: "このテキストをツイートする"
+
   misc:
     menu:
       title: "メニュー"
@@ -528,7 +530,7 @@ ja:
     empty_and_sign_in_and_too_many_friends_html: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"
     empty_and_other_reason_html: "結果は0件です。データはこれからたまっていきます。<br>%{kaomoji}"
   tweet_text:
-    top: "『えごったー』知ってますか？ 面白いですよ。%{kaomoji} #egotter"
+    top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
     close_friends: ".%{user} の仲良しランキング ↓\n%{users}\n#egotter %{url}"
     mutual_friends: "%{screen_name}の両思い率は %{mutual_friends_rate}%、片思い率は %{one_sided_friends_rate}%、片思われ率は %{one_sided_followers_rate}%です！%{kaomoji} %{url}"
     inactive_friends: "%{users}、最近どうしちゃったんですか…？%{kaomoji} #egotter %{url}"

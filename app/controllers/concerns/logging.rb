@@ -79,7 +79,7 @@ module Concerns::Logging
     logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
   end
 
-  def create_sign_in_log(user, context:, via:, follow:, referer:, ab_test: '')
+  def create_sign_in_log(user, context:, via:, follow:, tweet:, referer:, ab_test: '')
     referral = find_referral(pushed_referers)
 
     attrs = {
@@ -89,6 +89,7 @@ module Concerns::Logging
       screen_name: user.screen_name,
       context:     context,
       follow:      follow,
+      tweet:       tweet,
       via:         via,
       device_type: request.device_type,
       os:          request.os,

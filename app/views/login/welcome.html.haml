@@ -7,7 +7,17 @@
 
     = render partial: 'login/highlight'
 
-    = submit_tag t('login.welcome.sign_in_with_twitter'), name: 'bottom', class: 'btn btn-lg btn-info btn-block'
     %label.small.follow-egotter
       = check_box_tag :follow, true, true, {}
-      = t('login.welcome.follow_egotter', link: user_link('ego_tter')).html_safe
+      = t('login.welcome.follow_egotter_html', link: user_link('ego_tter'))
+
+    %label.small.tweet-egotter
+      = check_box_tag :tweet, true, false, {}
+      = t('login.welcome.tweet_egotter')
+
+    - text = "#{egotter_share_text} https://egotter.com"
+    .tweet-preview-box
+      %textarea{readonly: 'readonly', rows: 5}= text
+    = hidden_field_tag :tweet_text, text
+
+    = submit_tag t('login.welcome.sign_in_with_twitter'), name: 'bottom', class: 'btn btn-lg btn-info btn-block'
