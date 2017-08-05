@@ -7,7 +7,7 @@ module ScoresHelper
       begin
         score.save!
       rescue => e
-        logger.warn "Score of #{uid} is invalid. #{e.class} #{e.message}"
+        logger.warn "Score of #{uid} is invalid. #{e.class} #{e.message.truncate(150)}"
       end
     end
 

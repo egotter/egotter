@@ -5,7 +5,7 @@
 #  id             :integer          not null, primary key
 #  uid            :integer          not null
 #  klout_id       :string(191)      not null
-#  klout_score    :float(24)        not null
+#  klout_score    :float(53)        not null
 #  influence_json :text(65535)      not null
 #
 # Indexes

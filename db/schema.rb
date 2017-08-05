@@ -463,7 +463,7 @@ ActiveRecord::Schema.define(version: 20170805105100) do
   create_table "scores", force: :cascade do |t|
     t.integer "uid",            limit: 8,     null: false
     t.string  "klout_id",       limit: 191,   null: false
-    t.float   "klout_score",    limit: 24,    null: false
+    t.float   "klout_score",    limit: 53,    null: false
     t.text    "influence_json", limit: 65535, null: false
   end
 
