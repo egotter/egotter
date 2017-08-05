@@ -140,7 +140,7 @@ module SearchesHelper
 
   def description_for(menu, screen_name)
     case menu.to_sym
-      when *%i(friends followers close_friends) then t("#{menu}.show.page_description")
+      when *%i(friends followers close_friends) then t("#{menu}.show.page_description", user: mention_name(screen_name))
       else t("searches.#{menu}.description", user: mention_name(screen_name))
     end
   end
