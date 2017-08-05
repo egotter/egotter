@@ -14,6 +14,30 @@
   format none
 </source>
 
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq_misc.log
+  pos_file /tmp/sidekiq_misc.log.pos
+  tag sidekiq4.sidekiq_misc
+  format none
+</source>
+
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq_follow.log
+  pos_file /tmp/sidekiq_follow.log.pos
+  tag sidekiq4.sidekiq_follow
+  format none
+</source>
+
+<source>
+  @type tail
+  path /home/ec2-user/egotter/log/sidekiq_delay.log
+  pos_file /tmp/sidekiq_delay.log.pos
+  tag sidekiq4.sidekiq_delay
+  format none
+</source>
+
 <match **>
   @type forward
   send_timeout 60s
