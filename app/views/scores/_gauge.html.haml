@@ -3,6 +3,6 @@
 :javascript
   $(function () {
     var gaugeChart = $.extend(true, {}, window.gaugeOptions);
-    gaugeChart.series[0].data = [#{(score * 10000).round}];
+    gaugeChart.series[0].data = [#{(score.to_f * 10000).round}];
     $('.scores-gauge').highcharts(gaugeChart);
   });

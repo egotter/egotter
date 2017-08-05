@@ -2,6 +2,7 @@ class ScoresController < ApplicationController
   include Validation
   include Concerns::Logging
   include SearchesHelper
+  include ScoresHelper
 
   before_action { valid_screen_name?(params[:screen_name]) }
   before_action { not_found_screen_name?(params[:screen_name]) }
@@ -23,11 +24,10 @@ class ScoresController < ApplicationController
     @page_title = t('.page_title', user: @twitter_user.mention_name)
 
 
-    klout_client = KloutClient.new
-    @score = klout_client.score(@twitter_user.uid)
-    influence = klout_client.influence(@twitter_user.uid)
-    will_win = extract_will_win(influence)
-    will_loose = extract_will_loose(influence)
+    score = find_or_create_score(@twitter_user.uid)
+    @score = score.klout_score.to_f
+    will_win = score.will_win
+    will_loose = score.will_loose
 
     @meta_description = t('.meta_description', user: @twitter_user.mention_name, score: (@score * 10000).round.to_s(:delimited))
     @page_description = t('.page_description', user: @twitter_user.mention_name)
@@ -40,15 +40,5 @@ class ScoresController < ApplicationController
     @screen_names = (will_win + will_loose).uniq
 
     @stat = UsageStat.find_by(uid: @twitter_user.uid)
-  end
-
-  private
-
-  def extract_will_win(influence)
-    (influence[:influencers] + influence[:influencees]).select { |user| user[:score] < @score }.sort_by { |user| -user[:score] }.take(2).map { |user| user[:screen_name] }
-  end
-
-  def extract_will_loose(influence)
-    (influence[:influencers] + influence[:influencees]).select { |user| user[:score] > @score }.sort_by { |user| -user[:score] }.take(2).map { |user| user[:screen_name] }
   end
 end
