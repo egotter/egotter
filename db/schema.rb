@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170803010305) do
+ActiveRecord::Schema.define(version: 20170805105100) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -460,15 +460,26 @@ ActiveRecord::Schema.define(version: 20170803010305) do
   add_index "polling_logs", ["uid"], name: "index_polling_logs_on_uid", using: :btree
   add_index "polling_logs", ["user_id"], name: "index_polling_logs_on_user_id", using: :btree
 
+  create_table "scores", force: :cascade do |t|
+    t.integer "uid",            limit: 8,     null: false
+    t.string  "klout_id",       limit: 191,   null: false
+    t.float   "klout_score",    limit: 24,    null: false
+    t.text    "influence_json", limit: 65535, null: false
+  end
+
+  add_index "scores", ["uid"], name: "index_scores_on_uid", unique: true, using: :btree
+
   create_table "search_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "",    null: false
     t.integer  "user_id",     limit: 4,   default: -1,    null: false
     t.string   "uid",         limit: 191, default: "",    null: false
     t.string   "screen_name", limit: 191, default: "",    null: false
+    t.string   "controller",  limit: 191, default: "",    null: false
     t.string   "action",      limit: 191, default: "",    null: false
     t.boolean  "cache_hit",               default: false, null: false
     t.boolean  "ego_surfing",             default: false, null: false
     t.string   "method",      limit: 191, default: "",    null: false
+    t.string   "path",        limit: 191, default: "",    null: false
     t.string   "via",         limit: 191, default: "",    null: false
     t.string   "device_type", limit: 191, default: "",    null: false
     t.string   "os",          limit: 191, default: "",    null: false
@@ -516,6 +527,7 @@ ActiveRecord::Schema.define(version: 20170803010305) do
     t.string   "screen_name", limit: 191, default: "",    null: false
     t.string   "context",     limit: 191, default: "",    null: false
     t.boolean  "follow",                  default: false, null: false
+    t.boolean  "tweet",                   default: false, null: false
     t.string   "via",         limit: 191, default: "",    null: false
     t.string   "device_type", limit: 191, default: "",    null: false
     t.string   "os",          limit: 191, default: "",    null: false

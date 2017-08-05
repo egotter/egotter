@@ -4,6 +4,7 @@ class TimelinesController < ApplicationController
   include SearchesHelper
   include PageCachesHelper
   include WorkersHelper
+  include ScoresHelper
 
   before_action(only: %i(show)) { valid_screen_name?(params[:screen_name]) }
   before_action(only: %i(show)) { not_found_screen_name?(params[:screen_name]) }
@@ -25,6 +26,9 @@ class TimelinesController < ApplicationController
       flash.now[:alert] = forbidden_message(@twitter_user.screen_name)
     end
     add_create_twitter_user_worker_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
+
+    @stat = UsageStat.find_by(uid: @twitter_user.uid)
+    @score = find_or_create_score(@twitter_user.uid).klout_score
   end
 
   def check_for_updates
