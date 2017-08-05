@@ -7,13 +7,15 @@
 
     = render partial: 'login/highlight'
 
-    %label.small.follow-egotter
-      = check_box_tag :follow, true, true, {}
-      = t('login.welcome.follow_egotter_html', link: user_link('ego_tter'))
+    %div
+      %label.small.follow-egotter
+        = check_box_tag :follow, true, true, {}
+        = t('login.welcome.follow_egotter_html', link: user_link('ego_tter'))
 
-    %label.small.tweet-egotter
-      = check_box_tag :tweet, true, false, {}
-      = t('login.welcome.tweet_egotter')
+    %div
+      %label.small.tweet-egotter
+        = check_box_tag :tweet, true, false, {}
+        = t('login.welcome.tweet_egotter')
 
     - text = "#{egotter_share_text} https://egotter.com"
     .tweet-preview-box
