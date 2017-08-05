@@ -26,12 +26,16 @@ module Concerns::TwitterUser::Persistence
     silent_transaction { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
     silent_transaction { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
 
-    unless TwitterDB::User.exists?(uid: uid)
-      begin
+
+    user = TwitterDB::User.find_by(uid: uid)
+    begin
+      if user
+        user.update!(screen_name: screen_name, user_info: user_info)
+      else
         TwitterDB::User.create!(uid: uid, screen_name: screen_name, user_info: user_info, friends_size: -1, followers_size: -1)
-      rescue => e
-        logger.warn "#{self.class}##{__method__}: TwitterDB::User.create! #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
       end
+    rescue => e
+      logger.warn "#{self.class}##{__method__}: TwitterDB::User(#{user ? 'update' : 'create'}) #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
     end
 
     ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now, 'enqueued_at' => Time.zone.now)
@@ -58,8 +62,7 @@ module Concerns::TwitterUser::Persistence
   rescue => e
     # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000
     # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;
-    message = e.message.truncate(150)
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{id} #{uid} #{screen_name}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(120)} #{id} #{uid} #{screen_name}"
     logger.info e.backtrace.join("\n")
     destroy
   end
