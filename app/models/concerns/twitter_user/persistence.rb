@@ -34,10 +34,18 @@ module Concerns::TwitterUser::Persistence
       end
     end
 
+    ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now, 'enqueued_at' => Time.zone.now)
+
     begin
       UsageStat.builder(uid).statuses(statuses).build.save!
     rescue => e
       logger.warn "#{self.class}##{__method__}: UsageStat #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
+    end
+
+    begin
+      Score.builder(uid).build.save!
+    rescue => e
+      logger.warn "#{self.class}##{__method__}: Score #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
     end
 
     if Rails.env.test?
@@ -45,7 +53,6 @@ module Concerns::TwitterUser::Persistence
       followerships.each { |f| f.from_id = id }.each(&:save!)
     else
       reload
-      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now, 'enqueued_at' => Time.zone.now)
     end
 
   rescue => e

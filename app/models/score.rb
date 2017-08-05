@@ -75,8 +75,12 @@ class Score < ActiveRecord::Base
 
     def fetch
       klout_id = fetch_klout_id(uid)
-      return [nil, nil, {influencers: [], influencees: []}] unless klout_id
-      [klout_id, fetch_score(klout_id), fetch_influence(klout_id)]
+
+      if klout_id
+        [klout_id, fetch_score(klout_id), fetch_influence(klout_id)]
+      else
+        [nil, nil, {influencers: [], influencees: []}]
+      end
     end
 
     private
