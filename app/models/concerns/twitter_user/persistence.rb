@@ -47,7 +47,9 @@ module Concerns::TwitterUser::Persistence
     end
 
     begin
-      Score.builder(uid).build.save!
+      unless Score.exists?(uid: uid)
+        Score.builder(uid).build.save!
+      end
     rescue => e
       logger.warn "#{self.class}##{__method__}: Score #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
     end
