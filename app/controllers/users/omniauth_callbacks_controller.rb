@@ -12,7 +12,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
         create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
         FollowEgotterWorker.perform_async(user.id) if follow
-        TweetEgotterWorker.perform_async(user.id, session.delete(:sign_in_tweet_text)) if tweet
+        TweetEgotterWorker.perform_async(user.id, egotter_share_text) if tweet
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
