@@ -18,6 +18,8 @@ require 'open-uri'
 class Score < ActiveRecord::Base
   API_KEY = ENV['KLOUT_API_KEY']
 
+  validates :klout_id, numericality: true
+
   def influence
     name = __method__.to_s
     ivar_name = "@#{name}_cache"
