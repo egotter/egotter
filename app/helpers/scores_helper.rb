@@ -3,13 +3,11 @@ module ScoresHelper
     score = Score.find_by(uid: uid)
 
     unless score
-      score = Score.builder(uid).build
-      if score.valid? # It currently validates only klout_id.
-        begin
-          score.save!
-        rescue => e
-          logger.warn "Score of #{uid} is invalid. #{e.class} #{e.message.truncate(100)}"
-        end
+      begin
+        score = Score.builder(uid).build
+        score.save! if score.valid? # It currently validates only klout_id.
+      rescue => e
+        logger.warn "Score of #{uid} is invalid. #{e.class} #{e.message.truncate(100)}"
       end
     end
 

@@ -48,7 +48,8 @@ module Concerns::TwitterUser::Persistence
 
     begin
       unless Score.exists?(uid: uid)
-        Score.builder(uid).build.save!
+        score = Score.builder(uid).build
+        score.save! if score.valid? # It currently validates only klout_id.
       end
     rescue => e
       logger.warn "#{self.class}##{__method__}: Score #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
