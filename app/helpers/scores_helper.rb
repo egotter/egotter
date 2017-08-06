@@ -4,7 +4,7 @@ module ScoresHelper
 
     unless score
       if request.from_crawler?
-        score = Score.new(uid: uid)
+        score = Score.new(uid: uid, influence_json: {influencers: [], influencees: []}.to_json)
       else
         begin
           score = Score.builder(uid).build
