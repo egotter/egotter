@@ -127,8 +127,12 @@ class ImportTwitterUserRelationsWorker
   def import_twitter_db_users(uids, client)
     return if uids.blank?
 
-    t_users = client.users uids.uniq
+    t_users = client.users(uids.uniq)
     if t_users.any?
+      if uids.size != t_users.size
+        logger.warn "#{self.class}##{__method__}: It is not consistent. uids #{uids.size} t_users #{t_users.size}"
+      end
+
       users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
       users.sort_by!(&:first)
 
