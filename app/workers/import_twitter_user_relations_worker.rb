@@ -125,7 +125,7 @@ class ImportTwitterUserRelationsWorker
     t_users = client.users(uids.uniq)
     if t_users.any?
       if uids.uniq.size != t_users.size
-        logger.warn "#{self.class}##{__method__}: It is not consistent. uids(uniq) #{uids.uniq.size} t_users #{t_users.size}"
+        logger.warn "#{self.class}##{__method__}: It is not consistent. uids(uniq) #{uids.uniq.size} t_users #{t_users.size} #{(uids.uniq - t_users.map(&:id)).inspect.truncate(200)}"
       end
 
       users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
