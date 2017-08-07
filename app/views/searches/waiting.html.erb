@@ -1,9 +1,9 @@
 <%= render(partial: 'profiles/overview',
-           locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid}) %>
+           locals: {user: @twitter_user, unique_id: @twitter_user.uid}) %>
 
 <div class="waiting">
   <div class="waiting-msg">
-    <%= t('searches.waiting.searching', user: @searched_tw_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+    <%= t('searches.waiting.searching', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
   </div>
 
   <div class="finished-msg" style="display: none;">
@@ -23,8 +23,8 @@
 
     <% if user_signed_in? %>
       <div class="retry-btn">
-        <%= link_to t('searches.waiting.retry_search_by', user: @searched_tw_user.mention_name),
-                    searches_path(screen_name: @searched_tw_user.screen_name, via: :retry),
+        <%= link_to t('searches.waiting.retry_search_by', user: @twitter_user.mention_name),
+                    searches_path(screen_name: @twitter_user.screen_name, via: :retry),
                     class: 'btn btn-lg btn-info btn-block', method: :post %>
       </div>
     <% else %>
@@ -45,10 +45,10 @@
 
 <script>
   $(function () {
-    var checkLogPath = "<%= background_search_log_path(uid: @searched_tw_user.uid) %>";
+    var checkLogPath = "<%= background_search_log_path(uid: @twitter_user.uid) %>";
     var resultPath = "<%= @redirect_path %>";
-    var pollingLogsPath = "<%= raw polling_logs_path(uid: @searched_tw_user.uid, screen_name: @searched_tw_user.screen_name) %>";
-    var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", uid: <%= @searched_tw_user.uid %>};
+    var pollingLogsPath = "<%= raw polling_logs_path(uid: @twitter_user.uid, screen_name: @twitter_user.screen_name) %>";
+    var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", uid: <%= @twitter_user.uid %>};
     searchesWaiting(checkLogPath, resultPath, pollingLogsPath, scope);
   });
 </script>

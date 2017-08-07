@@ -1,27 +1,27 @@
 - title @title
 - set_meta_tags description: @description
 
-- breadcrumb :common, @searched_tw_user.screen_name, @menu
+- breadcrumb :common, @twitter_user.screen_name, @menu
 
 = render(partial: 'profiles/overview',
-  locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid})
+  locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
 .common-result
   %h2.h4= @title
 
-  .return-to-results-top= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name))
+  .return-to-results-top= link_to(t('searches.common.return', user: @twitter_user.mention_name), search_path(screen_name: @twitter_user.screen_name))
 
   = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
   .loading-image.text-center
-    = t('searches.waiting.analyzing', user: @searched_tw_user.name)
+    = t('searches.waiting.analyzing', user: @twitter_user.name)
     = image_tag '/ajax-loader.gif'
 
   .error-msg.text-center{style: 'display: none; margin-bottom: 15px;'}
 
   :javascript
     $(function () {
-      var url = "#{send("#{@menu}_search_result_path", uid: @searched_tw_user.uid, page: params[:page])}";
+      var url = "#{send("#{@menu}_search_result_path", uid: @twitter_user.uid, page: params[:page])}";
       var retryTimeout = egotter.messages.retryTimeout("#{controller_name}/#{@menu}/retry_timeout");
       var somethingIsWrong = egotter.messages.somethingWrong("#{controller_name}/#{@menu}/something_wrong")
 
@@ -34,7 +34,7 @@
           .fail(function (xhr) {
             if (xhr.status === 502) {
               Rollbar
-                .scope({action: "#{action_name}", uid: #{@searched_tw_user.uid}})
+                .scope({action: "#{action_name}", uid: #{@twitter_user.uid}})
                 .warning("Timeout while attempting fetching.");
               $('.error-msg').append(retryTimeout).show();
             } else {

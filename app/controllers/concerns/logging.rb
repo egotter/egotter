@@ -45,10 +45,6 @@ module Concerns::Logging
       created_at:  Time.zone.now
     }
 
-    if from_minor_crawler?(request.user_agent)
-      attrs.update(session_id: '-1', device_type: 'crawler')
-    end
-
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
 
@@ -56,9 +52,7 @@ module Concerns::Logging
       UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at], medium: attrs[:medium], user_agent: attrs[:user_agent])
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
-    logger.info e.backtrace.take(10).join("\n")
-    Rollbar.warn(e)
+    logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
   end
 
   def create_crawler_log
@@ -104,7 +98,6 @@ module Concerns::Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
-    Rollbar.warn(e)
   end
 
   def create_modal_open_log(via)
