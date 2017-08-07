@@ -2,31 +2,33 @@
 #
 # Table name: background_search_logs
 #
-#  id          :integer          not null, primary key
-#  session_id  :string(191)      default(""), not null
-#  user_id     :integer          default(-1), not null
-#  uid         :string(191)      default("-1"), not null
-#  screen_name :string(191)      default(""), not null
-#  action      :string(191)      default(""), not null
-#  bot_uid     :string(191)      default("-1"), not null
-#  auto        :boolean          default(FALSE), not null
-#  status      :boolean          default(FALSE), not null
-#  reason      :string(191)      default(""), not null
-#  message     :text(65535)      not null
-#  call_count  :integer          default(-1), not null
-#  via         :string(191)      default(""), not null
-#  device_type :string(191)      default(""), not null
-#  os          :string(191)      default(""), not null
-#  browser     :string(191)      default(""), not null
-#  user_agent  :string(191)      default(""), not null
-#  referer     :string(191)      default(""), not null
-#  referral    :string(191)      default(""), not null
-#  channel     :string(191)      default(""), not null
-#  medium      :string(191)      default(""), not null
-#  enqueued_at :datetime
-#  started_at  :datetime
-#  finished_at :datetime
-#  created_at  :datetime         not null
+#  id            :integer          not null, primary key
+#  session_id    :string(191)      default(""), not null
+#  user_id       :integer          default(-1), not null
+#  uid           :string(191)      default("-1"), not null
+#  screen_name   :string(191)      default(""), not null
+#  action        :string(191)      default(""), not null
+#  bot_uid       :string(191)      default("-1"), not null
+#  auto          :boolean          default(FALSE), not null
+#  status        :boolean          default(FALSE), not null
+#  reason        :string(191)      default(""), not null
+#  message       :text(65535)      not null
+#  call_count    :integer          default(-1), not null
+#  via           :string(191)      default(""), not null
+#  device_type   :string(191)      default(""), not null
+#  os            :string(191)      default(""), not null
+#  browser       :string(191)      default(""), not null
+#  user_agent    :string(191)      default(""), not null
+#  referer       :string(191)      default(""), not null
+#  referral      :string(191)      default(""), not null
+#  channel       :string(191)      default(""), not null
+#  medium        :string(191)      default(""), not null
+#  error_class   :string(191)      default(""), not null
+#  error_message :string(191)      default(""), not null
+#  enqueued_at   :datetime
+#  started_at    :datetime
+#  finished_at   :datetime
+#  created_at    :datetime         not null
 #
 # Indexes
 #
