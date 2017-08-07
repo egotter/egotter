@@ -34,7 +34,7 @@ class ImportTwitterUserRelationsWorker
 
     uids = import_favorite_friend_uids(uid, twitter_user)
     uids += import_close_friend_uids(uid, twitter_user)
-    import_twitter_db_users(uids, client)
+    import_twitter_db_users(uids, client, uid: uid, kind: 'favorite')
 
     return if twitter_user.friendless?
 
@@ -53,7 +53,7 @@ class ImportTwitterUserRelationsWorker
     import_unfriendships(uid)
     import_one_sided_friendships(uid, twitter_user)
 
-    import_twitter_db_users(friend_uids + follower_uids, client)
+    import_twitter_db_users(friend_uids + follower_uids, client, uid: uid, kind: 'friendship')
     import_twitter_db_friendships(uid, friend_uids, follower_uids)
 
     import_inactive_friendships(uid, twitter_user)
@@ -115,19 +115,19 @@ class ImportTwitterUserRelationsWorker
     []
   end
 
-  def import_twitter_db_users(uids, client)
+  def import_twitter_db_users(uids, client, uid: nil, kind: nil)
     return if uids.blank?
 
     t_users = client.users(uids.uniq)
     if t_users.any?
       if uids.uniq.size != t_users.size
-        logger.warn "#{self.class}##{__method__}: It is not consistent. uids(uniq) #{uids.uniq.size} t_users #{t_users.size} #{(uids.uniq - t_users.map(&:id)).inspect.truncate(200)}"
+        logger.warn "#{self.class}##{__method__}: It is not consistent. #{uid} #{kind} uids #{uids.uniq.size} t_users #{t_users.size} #{(uids.uniq - t_users.map(&:id)).inspect.truncate(200)}"
       end
 
       users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
       users.sort_by!(&:first)
 
-      silent_transaction(retri: true, retry_message: 'import replying, replied and favoriting') { TwitterDB::User.import_in_batches(users) }
+      silent_transaction(retri: true, retry_message: "#{uid} #{kind}") { TwitterDB::User.import_in_batches(users) }
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"

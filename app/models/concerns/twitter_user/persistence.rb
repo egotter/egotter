@@ -26,42 +26,10 @@ module Concerns::TwitterUser::Persistence
     silent_transaction { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
     silent_transaction { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
 
-
-    user = TwitterDB::User.find_by(uid: uid)
-    begin
-      if user
-        user.update!(screen_name: screen_name, user_info: user_info)
-      else
-        TwitterDB::User.create!(uid: uid, screen_name: screen_name, user_info: user_info, friends_size: -1, followers_size: -1)
-      end
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: TwitterDB::User(#{user ? 'update' : 'create'}) #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
-    end
-
-    ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now, 'enqueued_at' => Time.zone.now)
-
-    begin
-      UsageStat.builder(uid).statuses(statuses).build.save!
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: UsageStat #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
-    end
-
-    begin
-      unless Score.exists?(uid: uid)
-        score = Score.builder(uid).build
-        score.save! if score.valid? # It currently validates only klout_id.
-      end
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: Score #{e.class} #{e.message} #{id} #{uid} #{screen_name}"
-    end
-
     if Rails.env.test?
       friendships.each { |f| f.from_id = id }.each(&:save!)
       followerships.each { |f| f.from_id = id }.each(&:save!)
-    else
-      reload
     end
-
   rescue => e
     # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000
     # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;

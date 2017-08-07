@@ -71,8 +71,8 @@ class CreateTwitterUserWorker
     creating_uids.add(uid)
 
     builder = TwitterUser.builder(uid).client(client).login_user(user)
-    new_tu = builder.build
-    unless new_tu
+    twitter_user = builder.build
+    unless twitter_user
       latest = TwitterUser.latest(uid)
       if latest
         latest.increment(:search_count).save
@@ -83,10 +83,17 @@ class CreateTwitterUserWorker
       end
     end
 
-    if new_tu.save
-      new_tu.increment(:search_count).save
-      notify(user, new_tu)
-      return log.assign_attributes(status: true, message: "[#{new_tu.id}] is created.")
+    if twitter_user.save
+      twitter_user = TwitterUser.find(twitter_user.id)
+      twitter_user.increment(:search_count).save
+
+      update_twitter_db_user(twitter_user)
+      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now, 'enqueued_at' => Time.zone.now)
+      update_usage_stat(twitter_user)
+      create_score(twitter_user)
+
+      notify(user, twitter_user)
+      return log.assign_attributes(status: true, message: "[#{twitter_user.id}] is created.")
     end
 
     latest = TwitterUser.latest(uid)
@@ -99,7 +106,7 @@ class CreateTwitterUserWorker
     log.assign_attributes(
       status: false,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{new_tu.errors.full_messages.join(', ')}."
+      message: "#{twitter_user.errors.full_messages.join(', ')}."
     )
   rescue Twitter::Error::Forbidden, Twitter::Error::NotFound, Twitter::Error::Unauthorized,
     Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
@@ -138,6 +145,32 @@ class CreateTwitterUserWorker
   end
 
   private
+
+  def update_twitter_db_user(twitter_user)
+    user = TwitterDB::User.find_by(uid: twitter_user.uid)
+    if user
+      user.update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
+    else
+      TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
+    end
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
+  end
+
+  def update_usage_stat(twitter_user)
+    UsageStat.builder(twitter_user.uid).statuses(twitter_user.statuses).build.save!
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
+  end
+
+  def create_score(twitter_user)
+    unless Score.exists?(uid: twitter_user.uid)
+      score = Score.builder(twitter_user.uid).build
+      score.save! if score.valid? # It currently validates only klout_id.
+    end
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
+  end
 
   def notify(login_user, tu)
     searched_user = User.find_by(uid: tu.uid)
