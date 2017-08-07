@@ -55,15 +55,10 @@ class ImportTwitterUserRelationsWorker
 
     begin
       import_twitter_db_users(friend_uids + follower_uids, client)
-
-      silent_transaction do
-        TwitterDB::Friendship.import_from!(uid, friend_uids)
-        TwitterDB::Followership.import_from!(uid, follower_uids)
-        TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
-      end
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
     end
+    import_twitter_db_friendships(uid, friend_uids, follower_uids)
 
     import_inactive_friendships(uid, twitter_user)
 
@@ -167,6 +162,22 @@ class ImportTwitterUserRelationsWorker
     OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
     OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
     MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+  end
+
+  def import_twitter_db_friendships(uid, friend_uids, follower_uids)
+    friends_size = TwitterDB::User.where(uid: friend_uids).size
+    followers_size = TwitterDB::User.where(uid: follower_uids).size
+    if friends_size != friend_uids.size || followers_size != follower_uids.size
+      logger.warn "#{self.class}##{__method__}: It is not consistent. #{uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
+    end
+
+    silent_transaction do
+      TwitterDB::Friendship.import_from!(uid, friend_uids)
+      TwitterDB::Followership.import_from!(uid, follower_uids)
+      TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
   end
