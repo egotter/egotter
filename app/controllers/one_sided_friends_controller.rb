@@ -17,11 +17,7 @@ class OneSidedFriendsController < ApplicationController
   before_action only: %i(new create show) do
     if request.format.html?
       push_referer
-      if action_name == 'show'
-        create_search_log(action: "#{controller_name}/#{get_type}")
-      else
-        create_search_log(action: "#{controller_name}/#{action_name}")
-      end
+      create_search_log
     end
   end
 
