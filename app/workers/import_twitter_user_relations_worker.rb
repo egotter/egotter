@@ -53,11 +53,7 @@ class ImportTwitterUserRelationsWorker
     import_unfriendships(uid)
     import_one_sided_friendships(uid, twitter_user)
 
-    begin
-      import_twitter_db_users(friend_uids + follower_uids, client)
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
-    end
+    import_twitter_db_users(friend_uids + follower_uids, client)
     import_twitter_db_friendships(uid, friend_uids, follower_uids)
 
     import_inactive_friendships(uid, twitter_user)
