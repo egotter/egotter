@@ -5,7 +5,7 @@
   <% %i(email dm news search).each do |name| %>
     <div class="table-box">
       <div class="table-cell-left">
-        <input id="<%= name %>-input" class="tgl tgl-ios" type="checkbox" value="1" <%= user.notification_setting.send("#{name}?") ? 'checked="checked"'.html_safe : '' %> name="<%= name %>">
+        <%= check_box_tag name, true, user.notification_setting.send("#{name}?"), {id: "#{name}-input", class: 'tgl tgl-ios'} %>
         <label class='tgl-btn' for="<%= name %>-input"></label>
       </div>
       <div class="table-cell-right"><%= t("notifications.desc.#{name}") %>
@@ -15,29 +15,31 @@
     <hr>
   <% end %>
   <script>
-    function attach_event_handler(name) {
-      var selector = 'input[name=' + name + ']';
-      $(selector + ':checkbox').on('change', function () {
-        var val = $(selector + ':checked').val() ? true : false;
-        var params = {};
-        params[name] = val;
-        $.ajax({url: '<%= notification_path %>', method: 'PATCH', data: params})
-            .done(function (res) {
-              console.log(res);
-              $('.blink.' + name).fadeIn(2000).fadeOut(2000);
-            })
-            .fail(function (xhr) {
-              console.log(xhr.responseText);
-            });
-      });
-    }
+    (function () {
+      function attach_event_handler(name) {
+        var selector = 'input[name=' + name + ']';
+        $(selector + ':checkbox').on('change', function () {
+          var val = $(selector + ':checked').val() ? true : false;
+          var params = {};
+          params[name] = val;
+          $.ajax({url: '<%= notification_path %>', method: 'PATCH', data: params})
+              .done(function (res) {
+                console.log(res);
+                $('.blink.' + name).fadeIn(2000).fadeOut(2000);
+              })
+              .fail(function (xhr) {
+                console.log(xhr.responseText);
+              });
+        });
+      }
 
-    $(function () {
-      attach_event_handler('email');
-      attach_event_handler('dm');
-      attach_event_handler('news');
-      attach_event_handler('search');
-    });
+      $(function () {
+        attach_event_handler('email');
+        attach_event_handler('dm');
+        attach_event_handler('news');
+        attach_event_handler('search');
+      });
+    })();
   </script>
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
