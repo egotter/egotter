@@ -42,30 +42,32 @@ ActiveRecord::Schema.define(version: 20170805105100) do
   add_index "background_force_update_logs", ["user_id"], name: "index_background_force_update_logs_on_user_id", using: :btree
 
   create_table "background_search_logs", force: :cascade do |t|
-    t.string   "session_id",  limit: 191,   default: "",    null: false
-    t.integer  "user_id",     limit: 4,     default: -1,    null: false
-    t.string   "uid",         limit: 191,   default: "-1",  null: false
-    t.string   "screen_name", limit: 191,   default: "",    null: false
-    t.string   "action",      limit: 191,   default: "",    null: false
-    t.string   "bot_uid",     limit: 191,   default: "-1",  null: false
-    t.boolean  "auto",                      default: false, null: false
-    t.boolean  "status",                    default: false, null: false
-    t.string   "reason",      limit: 191,   default: "",    null: false
-    t.text     "message",     limit: 65535,                 null: false
-    t.integer  "call_count",  limit: 4,     default: -1,    null: false
-    t.string   "via",         limit: 191,   default: "",    null: false
-    t.string   "device_type", limit: 191,   default: "",    null: false
-    t.string   "os",          limit: 191,   default: "",    null: false
-    t.string   "browser",     limit: 191,   default: "",    null: false
-    t.string   "user_agent",  limit: 191,   default: "",    null: false
-    t.string   "referer",     limit: 191,   default: "",    null: false
-    t.string   "referral",    limit: 191,   default: "",    null: false
-    t.string   "channel",     limit: 191,   default: "",    null: false
-    t.string   "medium",      limit: 191,   default: "",    null: false
+    t.string   "session_id",    limit: 191,   default: "",    null: false
+    t.integer  "user_id",       limit: 4,     default: -1,    null: false
+    t.string   "uid",           limit: 191,   default: "-1",  null: false
+    t.string   "screen_name",   limit: 191,   default: "",    null: false
+    t.string   "action",        limit: 191,   default: "",    null: false
+    t.string   "bot_uid",       limit: 191,   default: "-1",  null: false
+    t.boolean  "auto",                        default: false, null: false
+    t.boolean  "status",                      default: false, null: false
+    t.string   "reason",        limit: 191,   default: "",    null: false
+    t.text     "message",       limit: 65535,                 null: false
+    t.integer  "call_count",    limit: 4,     default: -1,    null: false
+    t.string   "via",           limit: 191,   default: "",    null: false
+    t.string   "device_type",   limit: 191,   default: "",    null: false
+    t.string   "os",            limit: 191,   default: "",    null: false
+    t.string   "browser",       limit: 191,   default: "",    null: false
+    t.string   "user_agent",    limit: 191,   default: "",    null: false
+    t.string   "referer",       limit: 191,   default: "",    null: false
+    t.string   "referral",      limit: 191,   default: "",    null: false
+    t.string   "channel",       limit: 191,   default: "",    null: false
+    t.string   "medium",        limit: 191,   default: "",    null: false
+    t.string   "error_class",   limit: 191,   default: "",    null: false
+    t.string   "error_message", limit: 191,   default: "",    null: false
     t.datetime "enqueued_at"
     t.datetime "started_at"
     t.datetime "finished_at"
-    t.datetime "created_at",                                null: false
+    t.datetime "created_at",                                  null: false
   end
 
   add_index "background_search_logs", ["created_at"], name: "index_background_search_logs_on_created_at", using: :btree

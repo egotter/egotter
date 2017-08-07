@@ -6,34 +6,17 @@ class CreateTwitterUserWorker
 
   BUSY_QUEUE_SIZE = 0
 
-  def perform(values = {})
-    benchmark
-    client = Hashie::Mash.new(call_count: 0)
-    log = BackgroundSearchLog.new(message: '')
-    user = user_id = uid = nil
-    values['enqueued_at'] = Time.zone.parse(values['enqueued_at']) if values['enqueued_at'].is_a?(String)
-    enqueued_at = values['enqueued_at']
-    started_at = Time.zone.now
-
-    if self.class == CreateTwitterUserWorker
-      if enqueued_at < 1.minutes.ago || (Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && values['auto'])
-        log = nil
-        return DelayedCreateTwitterUserWorker.perform_async(values)
-      end
-    end
-
-    user_id      = values['user_id'].to_i
-    uid          = values['uid'].to_i
-
-    log = BackgroundSearchLog.new(
+  def before_perform(values)
+    @log = BackgroundSearchLog.new(
       session_id:  values.fetch('session_id', ''),
-      user_id:     user_id,
-      uid:         uid,
+      user_id:     values['user_id'].to_i,
+      uid:         values['uid'].to_i,
       screen_name: values.fetch('screen_name', ''),
       action:      values.fetch('action', ''),
       bot_uid:     -100,
       auto:        values.fetch('auto', false),
       message:     '',
+      call_count:  -1,
       via:         values.fetch('via', ''),
       device_type: values.fetch('device_type', ''),
       os:          values.fetch('os', ''),
@@ -43,15 +26,38 @@ class CreateTwitterUserWorker
       referral:    values.fetch('referral', ''),
       channel:     values.fetch('channel', ''),
       medium:      values.fetch('medium', ''),
+      error_class: '',
+      error_message: '',
+      enqueued_at: values.fetch('enqueued_at', Time.zone.now),
+      started_at:  values.fetch('started_at', Time.zone.now),
     )
-    log.enqueued_at = enqueued_at
-    log.started_at = started_at
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{values.inspect}"
+    @log = BackgroundSearchLog.new(message: '')
+  end
 
-    user = User.find_by(id: user_id)
+  def perform(values = {})
+    log = user_id = uid = client = nil
+    benchmark
+
+    values['enqueued_at'] = Time.zone.parse(values['enqueued_at']) if values['enqueued_at'].is_a?(String)
+    before_perform(values)
+    log = @log
+
+    if self.class == CreateTwitterUserWorker
+      if log.enqueued_at < 1.minutes.ago || (Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && log.auto)
+        log = nil
+        return DelayedCreateTwitterUserWorker.perform_async(values)
+      end
+    end
+
+    user = User.find_by(id: log.user_id)
     if user&.unauthorized?
       return log.assign_attributes(status: false, reason: BackgroundSearchLog::Unauthorized::MESSAGE)
     end
 
+    user_id = log.user_id.to_i
+    uid = log.uid.to_i
     client = ApiClient.user_or_bot_client(user&.id) { |client_uid| log.bot_uid = client_uid }
 
     creating_uids = Util::CreatingUids.new(Redis.client)
@@ -95,77 +101,40 @@ class CreateTwitterUserWorker
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{new_tu.errors.full_messages.join(', ')}."
     )
-  rescue Twitter::Error::Forbidden => e
-    message = "#{e.class} #{e.message} #{user_id} #{uid}"
-    FORBIDDEN_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+  rescue Twitter::Error::Forbidden, Twitter::Error::NotFound, Twitter::Error::Unauthorized,
+    Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
+    case e.class.name.demodulize
+      when 'Forbidden'           then handle_forbidden_exception(e, user_id: user_id, uid: uid)
+      when 'NotFound'            then handle_not_found_exception(e, user_id: user_id, uid: uid)
+      when 'Unauthorized'        then handle_unauthorized_exception(e, user_id: user_id, uid: uid)
+      when 'TooManyRequests'     then handle_retryable_exception(values, e)
+      when 'InternalServerError' then handle_retryable_exception(values, e)
+      when 'ServiceUnavailable'  then handle_retryable_exception(values, e)
+      else logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{values.inspect}"
+    end
 
-    log.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{e.class} #{e.message.truncate(150)}"
-    )
-  rescue Twitter::Error::NotFound => e
-    handle_not_found_exception(e, user_id: user_id, uid: uid)
-
-    log.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{e.class} #{e.message.truncate(150)}"
-    )
-  rescue Twitter::Error::TooManyRequests => e
-    log.update(
-      status: false,
-      reason: BackgroundSearchLog::TooManyRequests::MESSAGE
-    )
-
-    handle_retryable_exception(values, e)
-  rescue Twitter::Error::Unauthorized => e
-    handle_unauthorized_exception(e, user_id: user_id, uid: uid)
-
-    log.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::Unauthorized::MESSAGE
-    )
-  rescue Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
-    log.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{e.class} #{e.message}"
-    )
-
-    handle_retryable_exception(values, e)
+    assign_something_error(e, log)
   rescue Twitter::Error => e
     retry if e.message == 'Connection reset by peer - SSL_connect'
 
-    message = e.message.truncate(150)
-    logger.warn "#{e.class} #{message} #{values.inspect}"
-    logger.info e.backtrace.join("\n")
-
-    log.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{e.class} #{message}"
-    )
+    handle_unknown_exception(e, values)
+    assign_something_error(e, log)
   rescue => e
     # ActiveRecord::ConnectionTimeoutError could not obtain a database connection within 5.000 seconds
-    message = e.message.truncate(150)
-    logger.warn "#{e.class} #{message} #{values.inspect}"
-    logger.info e.backtrace.join("\n")
-
-    log.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{e.class} #{message}"
-    )
+    handle_unknown_exception(e, values)
+    assign_something_error(e, log)
   ensure
-    unless log&.update(call_count: client.call_count, finished_at: Time.zone.now)
-      Rails.logger.info "log.update is failed. #{log&.errors&.full_messages}"
-      logger.info "log.update is failed. #{log&.errors&.full_messages}"
+    if log
+      begin
+        log.update!(call_count: (client ? client.call_count : -1), finished_at: Time.zone.now)
+      rescue => e
+        logger.warn "#{self.class}##{__method__}: Creating a log is failed. #{log.errors.full_messages} #{values.inspect}"
+      end
+    else
+      logger.warn "#{self.class}##{__method__}: A log is nil. #{values.inspect}"
     end
+
     benchmark.finish
-    message = "[worker] #{self.class} finished. #{user_id} #{uid} enqueued_at: #{short_hour(enqueued_at)}, started_at: #{short_hour(started_at)}, finished_at: #{short_hour(Time.zone.now)}"
-    Rails.logger.info message
-    logger.info message
   end
 
   private
@@ -192,5 +161,19 @@ class CreateTwitterUserWorker
     else
       logger.warn "recover #{ex.class.name.demodulize} #{values['user_id']} #{values['uid']} #{retry_jid}"
     end
+  end
+
+  def handle_unknown_exception(ex, values)
+    logger.warn "#{ex.class} #{ex.message.truncate(150)} #{values.inspect}"
+    logger.info ex.backtrace.join("\n")
+  end
+
+  def assign_something_error(ex, log)
+    log&.assign_attributes(
+      status: false,
+      reason: BackgroundSearchLog::SomethingError::MESSAGE,
+      error_class: ex.class,
+      error_message: ex.message.truncate(180)
+    )
   end
 end

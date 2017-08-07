@@ -79,6 +79,11 @@ module Concerns::WorkerUtils
     NOT_FOUND_MESSAGES.include?(ex.message) ? logger.info(message) : logger.warn(message)
   end
 
+  def handle_forbidden_exception(ex, user_id: -1, uid: -1, twitter_user_id: -1)
+    message = "#{ex.class} #{ex.message} #{user_id} #{uid} #{twitter_user_id}"
+    FORBIDDEN_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+  end
+
   def egotter_retry_in
     30.minutes + rand(10.minutes)
   end
