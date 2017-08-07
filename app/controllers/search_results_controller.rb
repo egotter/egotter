@@ -32,25 +32,8 @@ class SearchResultsController < ApplicationController
     end
   end
 
-  # GET /searches/:screen_name/usage_stats
   def usage_stats
-    stat = UsageStat.find_by(uid: @searched_tw_user.uid)
-    if stat
-      @wday           = stat.wday
-      @wday_drilldown = stat.wday_drilldown
-      @hour           = stat.hour
-      @hour_drilldown = stat.hour_drilldown
-      @usage_time     = stat.usage_time
-      @kind           = stat.breakdown
-
-      hashtags = stat.hashtags
-      @cloud = hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }
-      @hashtags = hashtags.to_a.take(10).map { |word, count| {name: word, y: count} }
-    else
-      @wday = @wday_drilldown = @hour = @hour_drilldown = @usage_time = @kind = @cloud = @hashtags = nil
-    end
-
-    render json: {html: render_to_string}, status: 200
+    head :not_found
   end
 
   def close_friends

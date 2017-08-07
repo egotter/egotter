@@ -84,7 +84,7 @@ class SearchesController < ApplicationController
   end
 
   def usage_stats
-    redirect_to usage_stat_path(screen_name: @searched_tw_user.screen_name), status: 301
+    redirect_to usage_stat_path(screen_name: @twitter_user.screen_name), status: 301
   end
 
   %w(new_friends new_followers).each do |menu|
