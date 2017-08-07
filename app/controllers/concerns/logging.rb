@@ -16,7 +16,6 @@ module Concerns::Logging
 
     uid, screen_name = find_uid_and_screen_name
     referral = find_referral(pushed_referers)
-    cache_hit = action_name == 'show' && ::Cache::PageCache.new.exists?(uid)
 
     attrs = {
       session_id:  fingerprint,
@@ -25,7 +24,7 @@ module Concerns::Logging
       screen_name: screen_name,
       controller:  controller_name,
       action:      action_name,
-      cache_hit:   cache_hit,
+      cache_hit:   false,
       ego_surfing: user_signed_in? && current_user_uid == uid.to_i,
       method:      request.method,
       path:        request.original_fullpath.to_s.truncate(180),

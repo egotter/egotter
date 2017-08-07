@@ -128,7 +128,7 @@ class CreateTwitterUserWorker
       begin
         log.update!(call_count: (client ? client.call_count : -1), finished_at: Time.zone.now)
       rescue => e
-        logger.warn "#{self.class}##{__method__}: Creating a log is failed. #{log.errors.full_messages} #{values.inspect}"
+        logger.warn "#{self.class}##{__method__}: Creating a log is failed. #{e.class} #{e.message} #{values.inspect}"
       end
     else
       logger.warn "#{self.class}##{__method__}: A log is nil. #{values.inspect}"
