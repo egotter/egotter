@@ -17,7 +17,7 @@ crumb :common do |screen_name, menu|
   parent :search, screen_name
 end
 
-%w(friends followers statuses close_friends scores).each do |name|
+%w(friends followers statuses close_friends scores usage_stats).each do |name|
   crumb name.singularize.to_sym do |screen_name|
     link t("#{name}.show.crumb_title"), send("#{name.singularize}_path", screen_name: screen_name)
     parent :search, screen_name

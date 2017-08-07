@@ -150,7 +150,7 @@ ja:
         fourth: "軽い廃人かも…。つぶやいた回数だけ社会復帰が遠のいています…。"
         fifth: "重度の廃人…！ ツイッターやめますか？ 人間やめますか？"
       usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
-      usage_kind: ".%{user} のツイートのうち、%{mention}%はメンション、%{image}%は画像付き、%{link}%はリンク付き、%{hashtag}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
+      usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:
       num: "最近いないフォロー<br>%{num}"
@@ -224,12 +224,24 @@ ja:
       twilog_link_html: '<a href="http://twilog.org/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwilogで見る</a>'
       favstar_link_html: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をFavstarで見る</a>'
   usage_stats:
+    show:
+      crumb_title: "ツイッター利用状況"
+      page_title: "%{user} のツイッター利用状況"
+      meta_title: "%{user} のツイッター利用状況"
+      title: "ツイッター利用状況"
+      page_description: "%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
+      meta_description: "%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
+      tweet_text: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
+      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      see_more: 'もっと見る'
     friends_stat:
       tweet: ".%{user} のフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。 #egotter %{url}"
       existence: "フォロー返しあり"
       nonexistence: "なし"
     tweets_stat:
-      tweet: ".%{user} のツイート分析 - もっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
+      breakdown: ".%{user} のツイートのうち、\n%{mentions}%はメンション、\n%{media}%は画像付き、\n%{urls}%はリンク付き、\n%{hashtags}%はハッシュタグ付き、\n%{location}%は位置情報付きです。\n#egotter %{url}"
+      most_active: ".%{user} のツイート分析 - もっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       existence: "あり"
       nonexistence: "なし"
       wday_suffix: "曜日"
@@ -619,6 +631,9 @@ ja:
       usage_stat:
         friends_stat: "フォロー分析"
         tweets_stat: "ツイート分析"
+        tweets_per_wday: "曜日ごとのツイート数"
+        tweets_per_hour: "時間帯ごとのツイート数"
+        tweets_breakdown: "ツイートの内訳"
         friends_count: "フォロー"
         followers_count: "フォロワー"
         one_sided_friends_count: "片思い"

@@ -40,54 +40,9 @@ module TweetTextHelper
         end
       end
 
-    t('searches.usage_stats.usage_time', user: mention_name(tu.screen_name), total: total, avg: avg, level: level, url: usage_stats_search_url(screen_name: tu.screen_name))
+    t('searches.usage_stats.usage_time', user: mention_name(tu.screen_name), total: total, avg: avg, level: level, url: usage_stat_url(screen_name: tu.screen_name))
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{stats.inspect} #{tu.inspect}"
-    error_text
-  end
-
-  # wday_stats = [
-  #   {:name=>"Sun", :y=>111, :drilldown=>"Sun"},
-  #   ...
-  #   {:name=>"Sat", :y=>90,  :drilldown=>"Sat"}
-  # ]
-  # hour_stats = [
-  #   {:name=>"0", :y=>66, :drilldown=>"0"},
-  #   ...
-  #   {:name=>"23", :y=>87, :drilldown=>"23"}
-  # ]
-  def usage_active_time_text(wday_stats, hour_stats, tu)
-    return error_text if wday_stats.nil? || hour_stats.nil?
-
-    wday_max_y = wday_stats.map { |obj| obj[:y] }.max
-    wday = wday_stats.find { |obj| obj[:y] == wday_max_y }[:name]
-    hour_max_y = hour_stats.map { |obj| obj[:y] }.max
-    hour = hour_stats.find { |obj| obj[:y] == hour_max_y }[:name]
-    t('searches.usage_stats.usage_active_time', user: mention_name(tu.screen_name), wday: wday, hour: hour, url: usage_stats_search_url(screen_name: tu.screen_name))
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{wday_stats.inspect} #{hour_stats.inspect} #{tu.inspect}"
-    logger.warn e.backtrace.join("\n")
-    error_text
-  end
-
-  def usage_kind_text(kind, tu)
-    t('searches.usage_stats.usage_kind', user: mention_name(tu.screen_name),
-      mention:  (kind[:mentions] * 100).round,
-      image:    (kind[:media] * 100).round,
-      link:     (kind[:urls] * 100).round,
-      hashtag:  (kind[:hashtags] * 100).round,
-      location: (kind[:location] * 100).round,
-      url: usage_stats_search_url(screen_name: tu.screen_name))
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{kind.inspect} #{tu.inspect}"
-    error_text
-  end
-
-  def usage_hashtags_text(hashtags, tu)
-    hashtags = hashtags.to_a.map { |obj| obj[:name] }.slice(0, 5).join(' ')
-    t('searches.usage_stats.usage_hashtags', user: mention_name(tu.screen_name), hashtags: hashtags, url: usage_stats_search_url(screen_name: tu.screen_name))
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{hashtags.inspect} #{tu.inspect}"
     error_text
   end
 

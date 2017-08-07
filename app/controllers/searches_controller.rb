@@ -74,13 +74,17 @@ class SearchesController < ApplicationController
     head :ok
   end
 
-  %i(usage_stats favoriting).each do |menu|
+  %i(favoriting).each do |menu|
     define_method(menu) do
       @menu = menu
       @title = title_for(menu, @twitter_user.screen_name)
       @description = "#{@title} - #{@twitter_user.description}"
       render :common
     end
+  end
+
+  def usage_stats
+    redirect_to usage_stat_path(screen_name: @searched_tw_user.screen_name), status: 301
   end
 
   %w(new_friends new_followers).each do |menu|

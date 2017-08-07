@@ -1,0 +1,81 @@
+- content_for :canonical_url do
+  %link{href: @canonical_url, rel: 'canonical'}
+
+- breadcrumb @breadcrumb_name, @twitter_user.screen_name
+
+- title @page_title
+- set_meta_tags description: @meta_description, title: @meta_title
+
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+%h2.h2.page-title= @page_title
+
+.page-description.text-center= t('.page_description', user: @twitter_user.mention_name)
+
+%h3.h5 曜日ごとのツイッター利用時間 (分)
+.usage-time-chart
+= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
+
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+
+%h3.h5 よく使うハッシュタグ
+.hashtags-chart
+
+%h3.h5 ハッシュタグクラウド (クリックできます)
+.cloud-chart{style: 'height: 220px;'}
+
+.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+  = render(partial: 'twitter/tweet_box', locals: {text: t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.keys.take(5).join(' '), url: usage_stat_url(screen_name: @twitter_user.screen_name))})
+
+:javascript
+  $(function () {
+    var usageTime = #{@stat.usage_time.to_json.html_safe};
+    var hashtags = #{@stat.hashtags.to_a.take(10).map { |word, count| {name: word, y: count} }.to_json.html_safe};
+    var cloud = #{@stat.hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }.to_json.html_safe};
+
+    if (usageTime) {
+      var chart = $.extend(true, {}, window.usage_stats_column_chart_options);
+      chart.series[0].data = usageTime;
+      $('.usage-time-chart').highcharts(chart);
+    }
+
+    if (hashtags) {
+      var chart = $.extend(true, {}, window.usage_stats_column_chart_options);
+      chart.series[0].data = hashtags;
+      $('.hashtags-chart').highcharts(chart);
+    }
+
+    if (cloud) {
+      wordCloud('.cloud-chart', cloud, $('cloud-chart').width(), 220);
+    }
+  });
+
+.gray-separator
+
+= render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
+.search_form-wrapper{style: 'margin-bottom: 15px;'}
+  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/tweets_stat"}
+
+.gray-separator
+
+= render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
+.search_form-wrapper{style: 'margin-bottom: 15px;'}
+  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/friends_stat"}
+
+= render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
+
+.gray-separator
+
+.let-me-know-wrapper{style: 'margin-bottom: 15px;'}
+  .let-me-know= t('.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))
+  = render partial: 'layouts/share'
+
+.gray-separator
+
+= render partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}
+.please-use-egotter= t('.plese_use_egotter', current: t('.title'))
+= link_to t('searches.common.search_xxx_by_egotter', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: "#{controller_name}/#{action_name}/bottom_button"), class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;', method: :post
+
+.gray-separator
+
+= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}
