@@ -60,7 +60,7 @@
           .attr({src: user.profile_image_url_https, alt: user.screen_name})
           .end()
           .css('display', 'inline-block')
-          .insertAfter($userTemplate);
+          .insertBefore($userTemplate);
       });
       $resultLinkButtons.more.find('span').text(data.count).end().show();
 
