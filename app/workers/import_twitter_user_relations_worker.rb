@@ -124,6 +124,8 @@ class ImportTwitterUserRelationsWorker
         logger.warn "#{self.class}##{__method__}: It is not consistent. #{uid} #{kind} uids #{uids.uniq.size} t_users #{t_users.size} #{(uids.uniq - t_users.map(&:id)).inspect.truncate(200)}"
       end
 
+      # TwitterDB::Users.import(t_users)
+
       users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
       users.sort_by!(&:first)
 
@@ -139,6 +141,7 @@ class ImportTwitterUserRelationsWorker
     end
 
     silent_transaction do
+      # Friendships.import(twitter_user.id, friend_uids, follower_uids)
       Friendship.import_from!(twitter_user.id, friend_uids)
       Followership.import_from!(twitter_user.id, follower_uids)
       twitter_user.update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
@@ -170,6 +173,7 @@ class ImportTwitterUserRelationsWorker
     end
 
     silent_transaction do
+      # TwitterDB::Friendships.import(uid, friend_uids, follower_uids)
       TwitterDB::Friendship.import_from!(uid, friend_uids)
       TwitterDB::Followership.import_from!(uid, follower_uids)
       TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
