@@ -11,10 +11,12 @@ namespace :twitter_users do
     persisted_uids = TwitterUser.pluck(:uid).map(&:to_i).uniq
     failed = false
     processed = skipped = 0
+    skipped_reasons = []
 
     specified_uids.each do |uid|
       if persisted_uids.include? uid
         skipped += 1
+        skipped_reasons << "Persisted #{uid}"
         next
       end
 
@@ -28,9 +30,13 @@ namespace :twitter_users do
         twitter_user.user_id = user ? user.id : -1
       rescue => e
         if e.message == 'Invalid or expired token.'
-          user.update(authorized: false)
+          user&.update(authorized: false)
+          skipped += 1
+          skipped_reasons << "Invalid token #{uid}"
+          next
         elsif ['Not authorized.', 'User not found.'].include? e.message
           skipped += 1
+          skipped_reasons << "Not authorized or Not found #{uid}"
           next
         end
 
@@ -41,6 +47,7 @@ namespace :twitter_users do
 
       if twitter_user.too_many_friends?(login_user: user)
         skipped += 1
+        skipped_reasons << "Too many friends #{uid}"
         next
       end
 
@@ -75,10 +82,16 @@ namespace :twitter_users do
 
       if t_users.size != (friend_uids + follower_uids).uniq.size
         suspended_uids = (friend_uids + follower_uids).uniq - t_users.map(&:id)
-        suspended_uids -= TwitterDB::User.where(uid: suspended_uids).pluck(:uid)
-        suspended_t_users =  suspended_uids.map { |id| Hashie::Mash.new(id: id, screen_name: 'suspended', description: '') }
-        TwitterDB::Users.import(suspended_t_users)
-        puts "#{uid} suspended #{suspended_uids.inspect}"
+        if suspended_uids.size <= 10
+          suspended_uids -= TwitterDB::User.where(uid: suspended_uids).pluck(:uid)
+          suspended_t_users =  suspended_uids.map { |id| Hashie::Mash.new(id: id, screen_name: 'suspended', description: '') }
+          TwitterDB::Users.import(suspended_t_users)
+          puts "#{uid} suspended #{suspended_uids.inspect}"
+        else
+          puts "Too many suspended uids #{suspended_uids.size} #{suspended_uids.inspect.truncate(100)}"
+          failed = true
+          break
+        end
       end
 
       begin
@@ -98,6 +111,11 @@ namespace :twitter_users do
       processed += 1
 
       break if sigint || failed
+    end
+
+    if skipped_reasons.any?
+      puts 'skipped reasons:'
+      puts skipped_reasons.take(500).join("\n")
     end
 
     puts "create #{(sigint || failed ? 'suspended:' : 'finished:')}"
