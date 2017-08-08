@@ -38,6 +38,10 @@ class PromptReport < ActiveRecord::Base
     "#{title}#{linebreak}#{linebreak}#{from_last_access}#{changes_text}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"
   end
 
+  def show_dm_text
+    user.api_client.direct_message(message_id).text
+  end
+
   def changes
     @changes ||= JSON.parse(changes_json, symbolize_names: true)
   end
@@ -49,7 +53,7 @@ class PromptReport < ActiveRecord::Base
   private
 
   def screen_name
-    @screen_name ||= User.find(user_id).screen_name
+    @screen_name ||= user.screen_name
   end
 
   def title

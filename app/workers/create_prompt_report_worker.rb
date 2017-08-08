@@ -1,79 +1,107 @@
 class CreatePromptReportWorker
   include Sidekiq::Worker
-  include Concerns::Rescue
-  prepend Concerns::Perform
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
-    self.client = Hashie::Mash.new(call_count: -100) # If an error happens, This client is used in rescue block.
+    client = Hashie::Mash.new(call_count: -100)
     user = User.find(user_id)
-    self.log = CreatePromptReportLog.new(
+
+    messaging_uids = Util::MessagingUids.new(Redis.client)
+    return if messaging_uids.exists?(user.uid)
+    messaging_uids.add(user.uid)
+
+    log = CreatePromptReportLog.new(
       user_id:     user.id,
       uid:         user.uid.to_i,
       screen_name: user.screen_name,
-      bot_uid:     user.uid.to_i
+      bot_uid:     user.uid.to_i,
+      status:      false
     )
-    self.client = user.api_client
+    client = user.api_client
 
-    unless user.authorized?
-      log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] is not authorized.")
+    unless user.authorized? && user.can_send_dm? && user.active?(14)
+      log.update!(call_count: client.call_count, message: "authorized: #{user.authorized?}, can_send_dm: #{user.can_send_dm?}, active: #{user.active?(14)}")
       return
     end
 
-    unless user.can_send?(:update)
-      log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] don't allow update notification.")
+    twitter_user = (user.last_access_at ? TwitterUser.till(user.last_access_at) : TwitterUser).latest(user.uid.to_i)
+    if twitter_user.nil?
+      # TODO Create TwitterUser
+      log.update!(call_count: client.call_count, message: 'No TwitterUser')
       return
     end
 
-    if user.last_access_at && user.last_access_at < 14.days.ago
-      log.update(status: false, message: "[#{user.screen_name}] has been MIA.")
-      return
-    end
+    # if twitter_user.fresh?
+    #   log.update(status: false, call_count: client.call_count, message: "[#{twitter_user.id}] is recently updated.")
+    #   return
+    # end
 
-    existing_tu = (user.last_access_at ? TwitterUser.till(user.last_access_at) : TwitterUser).latest(user.uid.to_i)
-    if existing_tu.blank?
-      log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] has no twitter_users.")
-      return
-    end
-
-    if existing_tu.fresh?
-      log.update(status: false, call_count: client.call_count, message: "[#{existing_tu.id}] is recently updated.")
-      return
-    end
-
-    if existing_tu.friendless?
-      log.update(status: false, call_count: client.call_count, message: "[#{existing_tu.id}] has too many friends.")
+    if twitter_user.friendless?
+      log.update!(call_count: client.call_count, message: 'Too many friends')
       return
     end
 
     t_user = client.user(user.uid.to_i)
     if t_user.suspended
-      log.update(status: false, call_count: client.call_count, message: "[#{user.screen_name}] is suspended.")
+      log.update!(call_count: client.call_count, message: 'Suspended')
       return
     end
 
     new_tu = TwitterUser.build_by_user(t_user)
-    diff = existing_tu.diff(new_tu, only: %i(followers_count))
-    if diff.any? && diff[:followers_count][0] > diff[:followers_count][1]
-      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is maybe changed.")
-      notify(user, existing_tu, changes: diff)
-    else
-      log.update(status: true, call_count: client.call_count, message: "[#{existing_tu.id}] is maybe not changed.")
+    changes = twitter_user.diff(new_tu, only: %i(followers_count))
+
+    if changes.empty?
+      log.update!(call_count: client.call_count, message: 'followers_count not changed')
+      return
     end
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
+
+    if changes[:followers_count][0] <= changes[:followers_count][1]
+      log.update!(call_count: client.call_count, message: 'followers_count increased')
+      return
+    end
+
+    old_report = PromptReport.latest(user.id)
+    if changes == old_report&.changes
+      log.update!(call_count: client.call_count, message: 'Message not changed')
+      return
+    end
+
+    new_report = PromptReport.new(user_id: user.id, changes_json: changes.to_json, token: PromptReport.generate_token)
+    message = new_report.build_message(html: false)
+    dm = nil
+
+    # TODO Implement email
+    # TODO Implement onesignal
+
+    begin
+      dm = client.create_direct_message(user.uid.to_i, message)
+    rescue => e
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
+      log.update!(call_count: client.call_count, message: 'Creating DM failed')
+      return
+    end
+
+    begin
+      ActiveRecord::Base.transaction do
+        new_report.update!(message_id: dm.id)
+        user.notification_setting.touch(:last_dm_at)
+      end
+    rescue => e
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
+      log.update!(call_count: client.call_count, message: 'Updating records failed')
+      return
+    end
+
+    log.update!(status: true, call_count: client.call_count, message: 'ok')
+  rescue => e
+    if e.class == Twitter::Error::Unauthorized && e.message == 'Invalid or expired token.'
       user.update(authorized: false)
     end
-    raise e
-  end
 
-  def notify(login_user, tu, changes:)
-    # CreatePageCacheWorker.new.perform(tu.uid)
-
-    %w(dm).each do |medium| # TODO implement onesignal
-      CreateNotificationMessageWorker.perform_async(login_user.id, tu.uid.to_i, tu.screen_name, type: 'prompt_report', medium: medium, changes: changes)
-    end
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.inspect} #{tu.inspect}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
+    log.update!(
+      call_count: client.call_count,
+      message: e.message.truncate(150)
+    )
   end
 end

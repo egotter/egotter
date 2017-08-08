@@ -11,6 +11,7 @@
   - CreatePageCacheWorker
   - CreatePollingLogWorker
   - CreatePromptReportWorker
+  - CreateSearchReportWorker
   - CreateRelationshipWorker
   - CreateSearchHistoriesWorker
   - CreateSearchLogWorker
@@ -29,4 +30,6 @@
   - ImportUserWorker
   - TweetEgotterWorker
   - UpdateNotificationMessageWorker
+  - UpdatePromptReportWorker
+  - UpdateSearchReportWorker
   - UpdateTwitterUserWorker

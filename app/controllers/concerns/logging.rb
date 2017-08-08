@@ -51,6 +51,13 @@ module Concerns::Logging
     if via_notification?
       UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at], medium: attrs[:medium], user_agent: attrs[:user_agent])
     end
+
+    if via_dm?
+      case
+        when via_prompt_report? then UpdatePromptReportWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
+        when via_search_report? then UpdateSearchReportWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
+      end
+    end
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
   end
@@ -239,10 +246,14 @@ module Concerns::Logging
   end
 
   def via_prompt_report?
-    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'prompt_report'
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'prompt'
   end
 
-  def find_referral(referers)
+    def via_search_report?
+      params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'search'
+    end
+
+    def find_referral(referers)
     url = referers.find do |referer|
       referer.present? && referer.match(URI.regexp) && !URI.parse(referer).host.include?('egotter')
     end
