@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170805105100) do
+ActiveRecord::Schema.define(version: 20170808052623) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -462,6 +462,20 @@ ActiveRecord::Schema.define(version: 20170805105100) do
   add_index "polling_logs", ["uid"], name: "index_polling_logs_on_uid", using: :btree
   add_index "polling_logs", ["user_id"], name: "index_polling_logs_on_user_id", using: :btree
 
+  create_table "prompt_reports", force: :cascade do |t|
+    t.integer  "user_id",      limit: 4,     null: false
+    t.datetime "read_at"
+    t.text     "changes_json", limit: 65535, null: false
+    t.string   "message_id",   limit: 191,   null: false
+    t.string   "token",        limit: 191,   null: false
+    t.datetime "created_at",                 null: false
+    t.datetime "updated_at",                 null: false
+  end
+
+  add_index "prompt_reports", ["created_at"], name: "index_prompt_reports_on_created_at", using: :btree
+  add_index "prompt_reports", ["token"], name: "index_prompt_reports_on_token", unique: true, using: :btree
+  add_index "prompt_reports", ["user_id"], name: "index_prompt_reports_on_user_id", using: :btree
+
   create_table "scores", force: :cascade do |t|
     t.integer "uid",            limit: 8,     null: false
     t.string  "klout_id",       limit: 191,   null: false
@@ -506,6 +520,19 @@ ActiveRecord::Schema.define(version: 20170805105100) do
   add_index "search_logs", ["uid", "action"], name: "index_search_logs_on_uid_and_action", using: :btree
   add_index "search_logs", ["uid"], name: "index_search_logs_on_uid", using: :btree
   add_index "search_logs", ["user_id"], name: "index_search_logs_on_user_id", using: :btree
+
+  create_table "search_reports", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4,   null: false
+    t.datetime "read_at"
+    t.string   "message_id", limit: 191, null: false
+    t.string   "token",      limit: 191, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "search_reports", ["created_at"], name: "index_search_reports_on_created_at", using: :btree
+  add_index "search_reports", ["token"], name: "index_search_reports_on_token", unique: true, using: :btree
+  add_index "search_reports", ["user_id"], name: "index_search_reports_on_user_id", using: :btree
 
   create_table "search_results", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
