@@ -26,7 +26,7 @@ class NotificationSetting < ActiveRecord::Base
   belongs_to :user
 
   EMAIL_INTERVAL         = Rails.env.production? ? 1.day      : 1.minutes
-  DM_INTERVAL            = Rails.env.production? ? 12.hours   : 1.minutes
+  DM_INTERVAL            = Rails.env.production? ? 60.minutes : 1.minutes
   NEWS_INTERVAL          = Rails.env.production? ? 1.day      : 1.minutes
   SEARCH_INTERVAL        = Rails.env.production? ? 60.minutes : 1.minutes
   PROMPT_REPORT_INTERVAL = Rails.env.production? ? 60.minutes : 1.minutes
