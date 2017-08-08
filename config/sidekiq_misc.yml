@@ -6,10 +6,13 @@
   - CreateNotificationMessageWorker
   - CreatePageCacheWorker
   - CreatePromptReportWorker
+  - CreateSearchReportWorker
   - CreateSearchHistoriesWorker
   - CreateTweetsWorker
   - SendMetricsWorker
   - UpdateNotificationMessageWorker
+  - UpdatePromptReportWorker
+  - UpdateSearchReportWorker
 
   - CreateForbiddenUserWorker
   - CreatePollingLogWorker

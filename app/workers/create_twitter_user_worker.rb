@@ -37,7 +37,7 @@ class CreateTwitterUserWorker
   end
 
   def perform(values = {})
-    log = user_id = uid = client = nil
+    log = user_id = uid = client = delay = nil
     benchmark
 
     values['enqueued_at'] = Time.zone.parse(values['enqueued_at']) if values['enqueued_at'].is_a?(String)
@@ -47,6 +47,7 @@ class CreateTwitterUserWorker
     if self.class == CreateTwitterUserWorker
       if log.enqueued_at < 1.minutes.ago || (Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && log.auto)
         log = nil
+        delay = true
         return DelayedCreateTwitterUserWorker.perform_async(values)
       end
     end
@@ -138,7 +139,8 @@ class CreateTwitterUserWorker
         logger.warn "#{self.class}##{__method__}: Creating a log is failed. #{e.class} #{e.message} #{values.inspect}"
       end
     else
-      logger.warn "#{self.class}##{__method__}: A log is nil. #{values.inspect}"
+      comment = delay ? 'A log is nil.' : 'A delay occurs.'
+      logger.warn "#{self.class}##{__method__}: #{comment} #{values.inspect}"
     end
 
     benchmark.finish
@@ -147,12 +149,10 @@ class CreateTwitterUserWorker
   private
 
   def update_twitter_db_user(twitter_user)
-    user = TwitterDB::User.find_by(uid: twitter_user.uid)
-    if user
-      user.update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
-    else
-      TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
-    end
+    user = TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
+    user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
+    user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
+    user.save!
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end

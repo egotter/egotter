@@ -16,6 +16,7 @@ development:
   log_recently_created: <%= 1.minute %>
   recently_searched: <%= 1.minute %>
   recently_creating: <%= 1.minute %>
+  recently_messaging: <%= 1.minute %>
 production:
   <<: *default
 test:

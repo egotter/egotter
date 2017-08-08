@@ -36,12 +36,14 @@ class User < ActiveRecord::Base
 
   with_options dependent: :destroy, validate: false, autosave: false do |obj|
     obj.has_many :notification_messages
+    obj.has_many :prompt_reports
+    obj.has_many :search_reports
     obj.has_one :notification_setting
   end
 
   accepts_nested_attributes_for :notification_setting
 
-  delegate :can_send?, to: :notification_setting
+  delegate :can_send?, :can_send_dm?, to: :notification_setting, allow_nil: true
 
   validates :uid, presence: true, uniqueness: true
   validates_with Validations::UidValidator
@@ -52,6 +54,9 @@ class User < ActiveRecord::Base
   validates_each :email do |record, attr, value|
     record.errors.add(attr, :invalid) if value.nil? || (value != '' && !value.match(/\A[^@]+@[^@]+\z/))
   end
+
+  scope :authorized, -> { where(authorized: true) }
+  scope :can_send_dm, -> { includes(:notification_setting).where('notification_settings.dm = ?', true).where('last_dm_at IS NULL OR last_dm_at < ?', NotificationSetting::DM_INTERVAL.ago).references(:notification_settings) }
 
   def self.update_or_create_for_oauth_by!(auth)
     user = User.find_or_initialize_by(uid: auth.uid)
@@ -77,10 +82,6 @@ class User < ActiveRecord::Base
   rescue => e
     logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{auth.inspect}"
     raise e
-  end
-
-  def self.authorized
-    where(authorized: true)
   end
 
   def api_client
