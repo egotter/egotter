@@ -172,17 +172,11 @@ class CreateTwitterUserWorker
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
 
-  def notify(login_user, tu)
-    searched_user = User.find_by(uid: tu.uid)
-    return if searched_user.nil?
-
-    if login_user.nil? || login_user.id != searched_user.id
-      %w(dm onesignal).each do |medium|
-        CreateNotificationMessageWorker.perform_async(searched_user.id, tu.uid.to_i, tu.screen_name, type: 'search', medium: medium)
-      end
+  def notify(login_user, twitter_user)
+    searched_user = User.authorized.find_by(uid: twitter_user.uid)
+    if searched_user && (!login_user || login_user.id != searched_user.id)
+      CreateSearchReportWorker.perform_async(searched_user.id)
     end
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{login_user.id} #{tu.inspect}"
   end
 
   def handle_retryable_exception(values, ex)

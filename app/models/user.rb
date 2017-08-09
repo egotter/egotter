@@ -43,7 +43,7 @@ class User < ActiveRecord::Base
 
   accepts_nested_attributes_for :notification_setting
 
-  delegate :can_send?, :can_send_dm?, to: :notification_setting, allow_nil: true
+  delegate :can_send?, :can_send_dm?, :can_send_search?, to: :notification_setting, allow_nil: true
 
   validates :uid, presence: true, uniqueness: true
   validates_with Validations::UidValidator

@@ -44,6 +44,12 @@ module Concerns::TwitterUser::Store
     'GMT-4' => 'America/Puerto_Rico'
   }
 
+  class_methods do
+    def collect_user_info(t_user)
+      t_user.slice(*PROFILE_SAVE_KEYS).to_json
+    end
+  end
+
   included do
     delegate *METHOD_NAME_KEYS, to: :_user_info
     # store :user_info, accessors: METHOD_NAME_KEYS, coder: JSON

@@ -9,7 +9,7 @@ module Concerns::TwitterUser::Builder
       TwitterUser.new(
         uid: user.id,
         screen_name: user.screen_name,
-        user_info: user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json
+        user_info: TwitterUser.collect_user_info(user)
       )
     end
   end

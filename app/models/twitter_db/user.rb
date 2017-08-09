@@ -33,6 +33,11 @@ module TwitterDB
       {uid: t_user.id, screen_name: t_user.screen_name, user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: -1, followers_size: -1}
     end
 
+    def self.with_friends
+      # friends_size != -1 AND followers_size != -1
+      where.not(friends_size: -1, followers_size: -1)
+    end
+
     def self.builder(uid)
       Builder.new(uid)
     end

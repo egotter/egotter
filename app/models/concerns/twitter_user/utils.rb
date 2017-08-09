@@ -13,6 +13,7 @@ module Concerns::TwitterUser::Utils
     end
 
     def with_friends
+      # friends_size != 0 AND followers_size != 0
       where.not(friends_size: 0, followers_size: 0)
     end
   end
