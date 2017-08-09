@@ -32,7 +32,7 @@ class SearchesController < ApplicationController
   end
 
   def show
-    redirect_to timeline_path(screen_name: @twitter_user.screen_name), status: :301
+    redirect_to timeline_path(screen_name: @twitter_user.screen_name), status: 301
   end
 
   def new
