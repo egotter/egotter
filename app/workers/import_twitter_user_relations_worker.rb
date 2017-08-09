@@ -34,7 +34,7 @@ class ImportTwitterUserRelationsWorker
 
     uids = import_favorite_friend_uids(uid, twitter_user)
     uids += import_close_friend_uids(uid, twitter_user)
-    import_twitter_db_users(uids, client, uid: uid, kind: 'favorite')
+    import_twitter_db_users(uids, client)
 
     return if twitter_user.friendless?
 
@@ -53,7 +53,7 @@ class ImportTwitterUserRelationsWorker
     import_unfriendships(uid)
     import_one_sided_friendships(uid, twitter_user)
 
-    import_twitter_db_users(friend_uids + follower_uids, client, uid: uid, kind: 'friendship')
+    import_twitter_db_users(friend_uids + follower_uids, client)
     import_twitter_db_friendships(uid, friend_uids, follower_uids)
 
     import_inactive_friendships(uid, twitter_user)
@@ -115,22 +115,9 @@ class ImportTwitterUserRelationsWorker
     []
   end
 
-  def import_twitter_db_users(uids, client, uid: nil, kind: nil)
+  def import_twitter_db_users(uids, client)
     return if uids.blank?
-
-    t_users = client.users(uids.uniq)
-    if t_users.any?
-      if uids.uniq.size != t_users.size
-        logger.warn "#{self.class}##{__method__}: It is not consistent. #{uid} #{kind} uids #{uids.uniq.size} t_users #{t_users.size} #{(uids.uniq - t_users.map(&:id)).inspect.truncate(200)}"
-      end
-
-      # TwitterDB::Users.import(t_users)
-
-      users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
-      users.sort_by!(&:first)
-
-      silent_transaction(retri: true, retry_message: "#{uid} #{kind}") { TwitterDB::User.import_in_batches(users) }
-    end
+    TwitterDB::Users.fetch_and_import(uids, client: client)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
   end
@@ -141,9 +128,7 @@ class ImportTwitterUserRelationsWorker
     end
 
     silent_transaction do
-      # Friendships.import(twitter_user.id, friend_uids, follower_uids)
-      Friendship.import_from!(twitter_user.id, friend_uids)
-      Followership.import_from!(twitter_user.id, follower_uids)
+      Friendships.import(twitter_user.id, friend_uids, follower_uids)
       twitter_user.update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
   rescue => e
@@ -173,9 +158,7 @@ class ImportTwitterUserRelationsWorker
     end
 
     silent_transaction do
-      # TwitterDB::Friendships.import(uid, friend_uids, follower_uids)
-      TwitterDB::Friendship.import_from!(uid, friend_uids)
-      TwitterDB::Followership.import_from!(uid, follower_uids)
+      TwitterDB::Friendships.import(uid, friend_uids, follower_uids)
       TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
   rescue => e
