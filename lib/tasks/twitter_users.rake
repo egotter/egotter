@@ -7,10 +7,14 @@ namespace :twitter_users do
       sigint = true
     end
 
+    # uids = TwitterUser.pluck(:uid).uniq.map(&:to_i)
+    # specified_uids = User.authorized.select(:uid).reject { |user| uids.include? user.uid.to_i }.map(&:uid).map(&:to_i)
+
     specified_uids = ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
     persisted_uids = TwitterUser.pluck(:uid).map(&:to_i).uniq
     failed = false
-    processed = skipped = 0
+    processed = []
+    skipped = 0
     skipped_reasons = []
 
     specified_uids.each do |uid|
@@ -20,9 +24,8 @@ namespace :twitter_users do
         next
       end
 
-      user = User.find_by(uid: uid, authorized: true)
+      user = User.authorized.find_by(uid: uid)
       client = user ? user.api_client : Bot.api_client
-      twitter_user = nil
 
       begin
         t_user = client.user(uid)
@@ -40,9 +43,24 @@ namespace :twitter_users do
           next
         end
 
+        # Twitter::Error execution expired
+        # Twitter::Error::InternalServerError Internal error
+
         puts "client.user: #{e.class} #{e.message} #{uid}"
         failed = true
         break
+      end
+
+      if t_user.protected && client.verify_credentials.id != t_user.id
+        friendship_uid = TwitterDB::Friendship.where(user_uid: User.authorized.pluck(:uid), friend_uid: uid).first&.user_uid
+        if friendship_uid
+          puts "Change client #{uid} from #{client.verify_credentials.id} to #{friendship_uid}"
+          client = User.find_by(uid: friendship_uid).api_client
+        else
+          skipped += 1
+          skipped_reasons << "Protected #{uid}"
+          next
+        end
       end
 
       if twitter_user.too_many_friends?(login_user: user)
@@ -72,33 +90,17 @@ namespace :twitter_users do
       end
 
       begin
-        t_users = client.users((friend_uids + follower_uids).uniq)
-        TwitterDB::Users.import(t_users)
+        TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
       rescue => e
-        puts "TwitterDB::Users.import: #{e.class} #{e.message.truncate(100)} #{uid}"
+        puts "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{uid}"
         failed = true
         break
-      end
-
-      if t_users.size != (friend_uids + follower_uids).uniq.size
-        suspended_uids = (friend_uids + follower_uids).uniq - t_users.map(&:id)
-        if suspended_uids.size <= 10
-          suspended_uids -= TwitterDB::User.where(uid: suspended_uids).pluck(:uid)
-          suspended_t_users =  suspended_uids.map { |id| Hashie::Mash.new(id: id, screen_name: 'suspended', description: '') }
-          TwitterDB::Users.import(suspended_t_users)
-          puts "#{uid} suspended #{suspended_uids.inspect}"
-        else
-          puts "Too many suspended uids #{suspended_uids.size} #{suspended_uids.inspect.truncate(100)}"
-          failed = true
-          break
-        end
       end
 
       begin
         ActiveRecord::Base.transaction do
           user = TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
-          user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
-          user.save!
+          user.update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
 
           TwitterDB::Friendships.import(twitter_user.uid, friend_uids, follower_uids)
         end
@@ -108,17 +110,26 @@ namespace :twitter_users do
         break
       end
 
-      processed += 1
+      processed << twitter_user
 
       break if sigint || failed
     end
 
-    if skipped_reasons.any?
-      puts 'skipped reasons:'
-      puts skipped_reasons.take(500).join("\n")
+    if processed.any?
+      users = TwitterDB::User.where(uid: processed.take(500).map(&:uid)).index_by(&:uid)
+      puts "\nprocessed:"
+      puts processed.take(500).map { |tu|
+        u = users[tu.uid.to_i]
+        "  #{tu.uid} [#{tu.friends_size}, #{tu.friends_count}, #{u&.friends_size}, #{u&.friends_count}] [#{tu.followers_size}, #{tu.followers_count}, #{u&.followers_size}, #{u&.followers_count}]"
+      }.join("\n")
     end
 
-    puts "create #{(sigint || failed ? 'suspended:' : 'finished:')}"
-    puts "  uids: #{specified_uids.size}, processed: #{processed}, skipped: #{skipped}"
+    if skipped_reasons.any?
+      puts "\nskipped reasons:"
+      puts skipped_reasons.take(500).map { |r| "  #{r}" }.join("\n")
+    end
+
+    puts "\ncreate #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "  uids: #{specified_uids.size}, processed: #{processed.size}, skipped: #{skipped}"
   end
 end
