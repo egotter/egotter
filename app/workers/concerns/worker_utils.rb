@@ -20,7 +20,8 @@ module Concerns::WorkerUtils
     'User has been suspended.',
     'Your account is suspended and is not permitted to access this feature.',
     "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>.",
-    'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
+    'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.',
+    "You can't follow yourself."
   ]
 
   NOT_FOUND_MESSAGES = [

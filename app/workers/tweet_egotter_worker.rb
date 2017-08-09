@@ -13,8 +13,7 @@ class TweetEgotterWorker
   rescue Twitter::Error::Unauthorized => e
     handle_unauthorized_exception(e, user_id: user_id)
   rescue Twitter::Error::Forbidden => e
-    message = "#{e.class} #{e.message} #{user_id}"
-    FORBIDDEN_MESSAGES.include?(e.message) ? logger.info(message) : logger.warn(message)
+    handle_forbidden_exception(e, user_id)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{user_id}"
   end

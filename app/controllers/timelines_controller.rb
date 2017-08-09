@@ -32,6 +32,7 @@ class TimelinesController < ApplicationController
     @score = find_or_create_score(@twitter_user.uid).klout_score
   end
 
+  # TODO Fix AbstractController::DoubleRenderError
   def check_for_updates
     uid = params[:uid].to_i
     if valid_uid?(uid) && existing_uid?(uid) && params[:created_at].match(/\A\d+\z/)

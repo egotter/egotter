@@ -139,7 +139,7 @@ class CreateTwitterUserWorker
         logger.warn "#{self.class}##{__method__}: Creating a log is failed. #{e.class} #{e.message} #{values.inspect}"
       end
     else
-      comment = delay ? 'A log is nil.' : 'A delay occurs.'
+      comment = delay ? 'A delay occurs.' : 'A log is nil.'
       logger.warn "#{self.class}##{__method__}: #{comment} #{values.inspect}"
     end
 
