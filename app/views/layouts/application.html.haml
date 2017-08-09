@@ -67,9 +67,13 @@
         .row
           .col-xs-12.notice-container
             - if notice
-              %p.alert.alert-info{style: 'margin-top: 15px;'}= raw notice
+              %p.alert.alert-info.alert-dismissable{style: 'margin-top: 15px;'}
+                %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+                = raw notice
             - if alert
-              %p.alert.alert-warning{style: 'margin-top: 15px;'}= raw alert
+              %p.alert.alert-warning.alert-dismissable{style: 'margin-top: 15px;'}
+                %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+                = raw alert
 
     .container.main-container
       .row

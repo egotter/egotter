@@ -1,3 +1,10 @@
+.refresh-box,
+.welcome-box {
+  margin-bottom: 15px;
+  display: none;
+  z-index: 10000; // for sticky
+}
+
 .placeholder-wrapper {
   margin-top: 15px;
 

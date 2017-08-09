@@ -9,7 +9,7 @@ class UpdateHistoriesController < ApplicationController
   before_action(only: %i(show)) { authorized_search?(@searched_tw_user) }
   before_action only: %i(show) do
     push_referer
-    create_search_log(action: :update_histories)
+    create_search_log
   end
 
   # GET /update_histories/:id

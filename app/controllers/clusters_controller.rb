@@ -18,7 +18,7 @@ class ClustersController < ApplicationController
   before_action only: %i(new create show) do
     if request.format.html?
       push_referer
-      create_search_log(action: "#{controller_name}/#{action_name}")
+      create_search_log
     end
   end
 
