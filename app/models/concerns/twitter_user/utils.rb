@@ -51,7 +51,7 @@ module Concerns::TwitterUser::Utils
     Time.zone.now - send(attr) < seconds
   end
 
-  def relationships_cache_created?
-    created_at < 10.minutes.ago
+  def self_searching?
+    uid.to_i == user&.uid&.to_i
   end
 end

@@ -7,6 +7,8 @@ module Concerns::TwitterUser::Associations
   end
 
   included do
+    belongs_to :user
+
     default_options = {dependent: :destroy, validate: false, autosave: false}
     order_by_sequence_asc = -> { order(sequence: :asc) }
 
