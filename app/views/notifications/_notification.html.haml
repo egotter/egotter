@@ -1,9 +1,10 @@
 .notification-item
   .media
-    -#.media-left
-    -#  %img.media-object{alt: user.screen_name, src: user.profile_image_url_https.to_s}/
+    - if twitter_user
+      .media-left
+        %img.media-object.img-rounded{alt: twitter_user.screen_name, src: normal_icon_url(twitter_user)}
     .media-body
       %h4.media-heading
-        = "#{mention_name(notification.screen_name)} - #{time_ago_in_words(notification.created_at)}".html_safe
+        = "#{mention_name(current_user.screen_name)} - #{time_ago_in_words(notification.created_at)}"
       %span.text
-        = auto_link(notification.message) { t('dictionary.link') }.gsub(/\R/, '<br>').html_safe
+        = notification.build_message(html: true).html_safe

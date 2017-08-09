@@ -1,14 +1,12 @@
-<% user = current_user %>
-
 <div class="menu">
-  <h2><small><%= t('notifications.setting') %></small></h2>
+  <h2><small><%= @title %></small></h2>
   <% %i(email dm news search).each do |name| %>
     <div class="table-box">
       <div class="table-cell-left">
-        <%= check_box_tag name, true, user.notification_setting.send("#{name}?"), {id: "#{name}-input", class: 'tgl tgl-ios'} %>
+        <%= check_box_tag name, true, current_user.notification_setting.send("#{name}?"), {id: "#{name}-input", class: 'tgl tgl-ios'} %>
         <label class='tgl-btn' for="<%= name %>-input"></label>
       </div>
-      <div class="table-cell-right"><%= t("notifications.desc.#{name}") %>
+      <div class="table-cell-right"><%= t(".desc.#{name}") %>
         <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
       </div>
     </div>
@@ -22,7 +20,7 @@
           var val = $(selector + ':checked').val() ? true : false;
           var params = {};
           params[name] = val;
-          $.ajax({url: '<%= notification_path %>', method: 'PATCH', data: params})
+          $.ajax({url: '<%= setting_path %>', method: 'PATCH', data: params})
               .done(function (res) {
                 console.log(res);
                 $('.blink.' + name).fadeIn(2000).fadeOut(2000);

@@ -8,7 +8,7 @@ class LoginController < ApplicationController
 
   # GET /welcome
   def welcome
-    return redirect_to root_path, notice: t('dictionary.signed_in') if user_signed_in?
+    return redirect_to root_path, notice: t('.signed_in') if user_signed_in?
 
     session[:sign_in_referer] = request.referer
     session[:sign_in_via] = params['via']
@@ -20,9 +20,13 @@ class LoginController < ApplicationController
     @redirect_path = params[:redirect_path].presence || root_path
   end
 
+  def goodbye
+    redirect_to root_path, notice: t('.signed_out') unless user_signed_in?
+  end
+
   # GET /sign_in
   def sign_in
-    return redirect_to root_path, notice: t('dictionary.signed_in') if user_signed_in?
+    return redirect_to root_path, notice: t('.signed_in') if user_signed_in?
 
     session[:sign_in_from] = request.url
     if !session[:sign_in_referer] && !session[:sign_in_via]

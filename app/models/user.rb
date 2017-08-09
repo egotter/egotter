@@ -96,6 +96,10 @@ class User < ActiveRecord::Base
     end
   end
 
+  def notifications
+    (prompt_reports.limit(10) + search_reports.limit(10)).sort_by { |r| -r.created_at.to_i }
+  end
+
   def unauthorized?
     !authorized?
   end

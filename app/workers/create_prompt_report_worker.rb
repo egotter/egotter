@@ -94,7 +94,7 @@ class CreatePromptReportWorker
 
     log.update!(status: true, call_count: client.call_count, message: 'ok')
   rescue => e
-    if e.class == Twitter::Error::Unauthorized && e.message == 'Invalid or expired token.'
+    if e.message == 'Invalid or expired token.'
       user.update(authorized: false)
     end
 

@@ -35,7 +35,12 @@ class PromptReport < ActiveRecord::Base
   def build_message(html: false)
     linebreak = html ? '<br>' : "\n"
     result = html ? link : url
-    "#{title}#{linebreak}#{linebreak}#{from_last_access}#{changes_text}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"
+
+    if html
+      "#{title}#{linebreak}#{from_last_access}#{changes_text}#{linebreak}#{result}"
+    else
+      "#{title}#{linebreak}#{linebreak}#{from_last_access}#{changes_text}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"
+    end
   end
 
   def show_dm_text

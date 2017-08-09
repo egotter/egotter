@@ -20,7 +20,7 @@ class MiscController < ApplicationController
   end
 
   def menu
-    redirect_to welcome_path(via: "#{controller_name}/#{action_name}/need_sign_in") unless user_signed_in?
+    redirect_to settings_path, status: 301
   end
 
   def support

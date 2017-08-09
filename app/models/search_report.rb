@@ -34,7 +34,16 @@ class SearchReport < ActiveRecord::Base
   def build_message(html: false)
     linebreak = html ? '<br>' : "\n"
     result = html ? link : url
-    "#{title}#{linebreak}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"
+
+    if html
+      "#{title}#{linebreak}#{result}"
+    else
+      "#{title}#{linebreak}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"
+    end
+  end
+
+  def show_dm_text
+    user.api_client.direct_message(message_id).text
   end
 
   def read?

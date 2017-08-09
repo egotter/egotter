@@ -65,7 +65,8 @@ Rails.application.routes.draw do
   get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates
 
   resources :notifications, only: :index
-  resource :notification, only: :update
+  resources :settings, only: :index
+  resource :setting, only: :update
 
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
@@ -79,7 +80,7 @@ Rails.application.routes.draw do
   get 'relationships/:src_screen_name/:dst_screen_name', to: 'relationships#show', as: :relationship
   get 'relationships', to: 'relationships#new', as: :relationships_top
 
-  %i(sign_in sign_out welcome).each do |name|
+  %i(sign_in sign_out welcome goodbye).each do |name|
     get name, to: "login##{name}", as: name
   end
 

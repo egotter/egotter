@@ -209,6 +209,7 @@ ja:
       description: "えごったーなら全部無料！ %{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
       update_result: 'データを更新する'
+      need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
       sign_in: 'ログインする'
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
       reload_this_page: "ページを更新する"
@@ -257,14 +258,18 @@ ja:
     title: "通知"
     index:
       title: "%{user} への通知"
-    setting: "通知設定"
-    desc:
-      email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
-      dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
-      news: "新機能のお知らせが届きます。配信は不定期です。"
-      search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
+  settings:
+    index:
+      title: "%{user} の通知設定"
+      updated: "更新しました"
+      desc:
+        email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
+        dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
+        news: "新機能のお知らせが届きます。配信は不定期です。"
+        search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
   login:
     welcome:
+      signed_in: "既にログイン済みです。"
       lead_html: "ログインでえごったーが<br>もっと便利に！"
       feature_001: "検索が早くなります"
       feature_desc_001_html: "ログインすると<br>検索が早くなります。"
@@ -277,6 +282,15 @@ ja:
       sign_in_with_twitter: "Twitter でログイン"
       follow_egotter_html: "%{link} をフォローする。フォロー中は検索が早くなります！"
       tweet_egotter: "このテキストをツイートする"
+    goodbye:
+      signed_out: "既にログアウト済みです。"
+      no_tweets: "えごったーは、ユーザーの許可なくツイートすることはありませんのでご安心ください(^ ^)"
+      advantage_html: "ログインしたままであれば、<br><br>・自動更新されます<br>・データの検索が早くなります"
+      disadvantage_html: "ログアウトすると、<br><br>・検索が遅くなります<br>・鍵垢の検索はできなくなります"
+      realy_sign_out: "それでも本当にログアウトしますか？"
+      return_to_top: "トップページに戻る"
+    sign_in:
+      signed_in: "既にログイン済みです。"
 
   misc:
     menu:
@@ -490,8 +504,6 @@ ja:
     sign_in: "ログイン"
     sign_out: "ログアウト"
     do_sign_out: "ログアウトする"
-    realy_sign_out_html: "えごったーは、<br>【ユーザーの許可なくツイートすることはありません】<br><br>ログアウトすると、<br><br>・検索が遅くなります<br>・鍵垢の検索はできなくなります<br><br>それでも本当にログアウトしますか？"
-    signed_in: "既にログイン済みです。"
     link: "リンク"
     this_link: "このリンク"
     support: "お問い合わせ"
