@@ -13,31 +13,13 @@
     <hr>
   <% end %>
   <script>
-    (function () {
-      function attach_event_handler(name) {
-        var selector = 'input[name=' + name + ']';
-        $(selector + ':checkbox').on('change', function () {
-          var val = $(selector + ':checked').val() ? true : false;
-          var params = {};
-          params[name] = val;
-          $.ajax({url: '<%= setting_path %>', method: 'PATCH', data: params})
-              .done(function (res) {
-                console.log(res);
-                $('.blink.' + name).fadeIn(2000).fadeOut(2000);
-              })
-              .fail(function (xhr) {
-                console.log(xhr.responseText);
-              });
-        });
-      }
-
-      $(function () {
-        attach_event_handler('email');
-        attach_event_handler('dm');
-        attach_event_handler('news');
-        attach_event_handler('search');
-      });
-    })();
+    $(function () {
+      var url = '<%= setting_path %>';
+      attach_event_handler('email', url);
+      attach_event_handler('dm', url);
+      attach_event_handler('news', url);
+      attach_event_handler('search', url);
+    });
   </script>
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
