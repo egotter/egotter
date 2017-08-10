@@ -7,15 +7,7 @@
 - description = t('timelines.show.description', user: @twitter_user.mention_name)
 - set_meta_tags title: title, site: '', description: description
 
-.refresh-box.alert.alert-info.alert-dismissable
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  = t('.update_is_coming', user: @twitter_user.screen_name)
-  = link_to(t('.update_result'), timeline_path(screen_name: @twitter_user.screen_name), class: 'btn btn-default btn-sm')
-
-.welcome-box.alert.alert-info.alert-dismissable
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  = t('.need_sign_in', user: @twitter_user.screen_name)
-  = link_to(t('.sign_in'), sign_in_path(redirect_path: timeline_path(screen_name: @twitter_user.screen_name)), class: 'btn btn-default btn-sm')
+= render partial: 'common/background_update_components', locals: {twitter_user: @twitter_user, jid: @jid}
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
@@ -57,39 +49,3 @@
     = t('search_results.show.twilog_link_html', screen_name: @twitter_user.screen_name)
   .text-center.col-xs-12.col-sm-4
   = t('search_results.show.favstar_link_html', screen_name: @twitter_user.screen_name)
-
-:javascript
-  (function () {
-    var checkForUpdatesPath = '#{check_for_updates_path(uid: @twitter_user.uid, created_at: @twitter_user.created_at.to_i)}';
-    var retryCount = 0;
-    var friendless = #{@twitter_user.friendless?};
-    var signedIn = #{user_signed_in?};
-
-    function checkForUpdates () {
-      $.get(checkForUpdatesPath)
-        .done(function (res) {
-        console.log('checkForUpdates', res);
-
-          if (res.found) {
-            $('.refresh-box').show().sticky();
-          } else {
-            if (retryCount < 2) {
-              retryCount++;
-              setTimeout(checkForUpdates, 8000);
-            }
-          }
-        })
-        .fail(function (xhr) {
-          console.log('checkForUpdates failed.', xhr);
-        });
-    }
-
-    $(function () {
-      if (friendless && !signedIn) {
-        $('.welcome-box').show().sticky();
-      } else {
-        setTimeout(checkForUpdates, 3000);
-      }
-    });
-  })();
-
