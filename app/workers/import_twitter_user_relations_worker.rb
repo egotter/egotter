@@ -117,7 +117,7 @@ class ImportTwitterUserRelationsWorker
 
   def import_twitter_db_users(uids, client)
     return if uids.blank?
-    TwitterDB::Users.fetch_and_import(uids, client: client)
+    silent_transaction { TwitterDB::Users.fetch_and_import(uids, client: client) }
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
   end
@@ -186,9 +186,8 @@ class ImportTwitterUserRelationsWorker
     begin
       Rails.logger.silence { ActiveRecord::Base.transaction(&block) }
     rescue ActiveRecord::StatementInvalid => e
-      wait_seconds = Time.zone.now - start_time
       if retri && e.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')
-        if retry_count >= retry_limit || wait_seconds > retry_timeout
+        if retry_count >= retry_limit || (Time.zone.now - start_time) > retry_timeout
           raise
         end
 

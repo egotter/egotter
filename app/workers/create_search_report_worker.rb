@@ -1,5 +1,6 @@
 class CreateSearchReportWorker
   include Sidekiq::Worker
+  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)

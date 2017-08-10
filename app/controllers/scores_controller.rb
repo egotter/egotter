@@ -23,7 +23,6 @@ class ScoresController < ApplicationController
     @canonical_url = send("#{controller_name.singularize}_url", screen_name: @twitter_user.screen_name)
     @page_title = t('.page_title', user: @twitter_user.mention_name)
 
-
     score = find_or_create_score(@twitter_user.uid)
     @score = score.klout_score.to_f
     will_win = score.will_win
