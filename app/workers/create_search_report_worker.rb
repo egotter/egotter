@@ -24,11 +24,9 @@ class CreateSearchReportWorker
       user.notification_setting.touch(:search_sent_at)
     end
 
+  rescue Twitter::Error::Unauthorized => e
+    handle_unauthorized_exception(e, user_id: user_id)
   rescue => e
-    if e.message == 'Invalid or expired token.'
-      user.update(authorized: false)
-    end
-
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
   end
 end
