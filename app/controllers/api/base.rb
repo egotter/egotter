@@ -26,11 +26,13 @@ module Api
       uids, max_sequence = list_uids(params[:max_sequence].to_i, limit: limit)
 
       # TODO Experimental
-      if %w(unfriends unfollowers blocking_or_blocked).include? controller_name
+      if uids.any? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
         begin
           suspended_uids = uids - client.users(uids).map(&:id)
         rescue => e
-          logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
+          if e.message != 'No user matches for specified terms.'
+            logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
+          end
           suspended_uids = []
         end
       else
