@@ -522,6 +522,7 @@ ja:
 
   dictionary:
     official_account: "公式アカウント"
+    suspended: "削除済み"
     share_me: "えごったーをシェアする"
     link_to_support: "お問い合わせページ"
     support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"

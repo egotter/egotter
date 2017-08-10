@@ -36,7 +36,7 @@ module TwitterHelper
   def user_name(user)
     protected = '&nbsp;<span class="glyphicon glyphicon-lock"></span>'
     verified = '&nbsp;<span class="glyphicon glyphicon-ok"></span>'
-    suspended = '&nbsp;<span style="color: #ff0000;">削除済み</span>'
+    suspended = '&nbsp;<span style="color: #ff0000;">' + t('dictionary.suspended') + '</span>'
     "#{user.name}#{protected if user.protected}#{verified if user.verified}#{suspended if user.suspended}".html_safe
   end
 

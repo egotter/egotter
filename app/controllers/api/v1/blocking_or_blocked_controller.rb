@@ -14,7 +14,7 @@ module Api
         if uids.blank?
           [[], -1]
         else
-          [uids, min_sequence + 1]
+          [uids, min_sequence + uids.size - 1]
         end
       end
     end
