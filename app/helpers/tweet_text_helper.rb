@@ -7,6 +7,14 @@ module TweetTextHelper
     t('tweet_text.something_is_wrong', kaomoji: Kaomoji.happy, url: 'http://egotter.com')
   end
 
+  def honorific_name(name)
+    "#{name}#{t('dictionary.honorific')}"
+  end
+
+  def honorific_names(names, delim: t('dictionary.delim'))
+    names.map { |name| honorific_name(name) }.join(delim)
+  end
+
   # stats = [
   #   {:name=>"Sun", :y=>14.778310502283107},
   #   ...
@@ -56,20 +64,20 @@ module TweetTextHelper
   end
 
   def inactive_friends_text(users, tu)
-    users = ".#{users.map { |u| "#{mention_name(u.screen_name)}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
+    names = '.' + honorific_names(users.map { |u| mention_name(u.screen_name) })
     t('tweet_text.inactive_friends',
-      users: users,
+      users: names,
       kaomoji: Kaomoji.happy,
       url: short_url)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{users.inspect} #{tu.inspect}"
+    logger.warn "#{e.class} #{e.message} #{names.inspect} #{tu.inspect}"
     error_text
   end
 
   def mutual_friends_text(tu)
     rates = tu.mutual_friends_rate
     t('tweet_text.mutual_friends',
-      screen_name: "#{mention_name(tu.screen_name)}#{t('dictionary.honorific')}",
+      screen_name: honorific_name(mention_name(tu.screen_name)),
       mutual_friends_rate: rates[0].round,
       one_sided_friends_rate: rates[1].round,
       one_sided_followers_rate: rates[2].round,
@@ -81,12 +89,12 @@ module TweetTextHelper
   end
 
   def common_friends_text(users, tu, others_num = 0)
-    users = "#{users.map { |u| "#{mention_name(u.screen_name)}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
-    users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
+    names = '.' + honorific_names(users.map { |u| mention_name(u.screen_name) })
+    names += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
-      users: users,
-      user: "#{mention_name(tu.screen_name)}#{t('dictionary.honorific')}",
-      login: "#{current_user.mention_name}#{t('dictionary.honorific')}",
+      users: names,
+      user: honorific_name(mention_name(tu.screen_name)),
+      login: honorific_name(current_user.mention_name),
       kaomoji: Kaomoji.happy,
       url: short_url)
   rescue => e
@@ -95,12 +103,12 @@ module TweetTextHelper
   end
 
   def common_followers_text(users, tu, others_num = 0)
-    users = "#{users.map { |u| "#{mention_name(u.screen_name)}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))}"
-    users += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
+    names = '.' + honorific_names(users.map { |u| mention_name(u.screen_name) })
+    names += "#{t('dictionary.delim')}#{t('tweet_text.others', num: others_num)}" if others_num > 0
     t('tweet_text.common_friends',
-      users: users,
-      user: "#{mention_name(tu.screen_name)}#{t('dictionary.honorific')}",
-      login: "#{current_user.mention_name}#{t('dictionary.honorific')}",
+      users: names,
+      user: honorific_name(mention_name(tu.screen_name)),
+      login: honorific_name(current_user.mention_name),
       kaomoji: Kaomoji.happy,
       url: short_url)
   rescue => e

@@ -30,8 +30,7 @@ class CloseFriendsController < ApplicationController
     users = uids.map { |uid| users[uid] }.compact
     @tweet_text = close_friends_text(users, @twitter_user)
 
-    names = users.map(&:mention_name).map { |name| "#{name}#{t('dictionary.honorific')}" }.join(t('dictionary.delim'))
-    @meta_description = t('.meta_description', users: names)
+    @meta_description = t('.meta_description', users: honorific_names(users.map(&:mention_name)))
 
     @stat = UsageStat.find_by(uid: @twitter_user.uid)
   end
