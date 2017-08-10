@@ -26,7 +26,7 @@ module Validation
       true
     else
       if request.xhr?
-        render nothing: true, status: 400
+        head :bad_request
       else
         redirect_to root_path, alert: tu.errors[:uid].join(t('dictionary.delim'))
       end
@@ -44,7 +44,7 @@ module Validation
       render template: 'searches/create', layout: false
     else
       if request.xhr?
-        render nothing: true, status: 400
+        head :bad_request
       else
         redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
       end
@@ -96,7 +96,11 @@ module Validation
     return true if tu.public_account?
     return true if tu.readable_by?(User.find_by(id: current_user_id))
 
-    redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user_html', user: view_context.user_link(tu.screen_name), sign_in_path: _sign_in_path)
+    if request.xhr?
+      head :bad_request
+    else
+      redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user_html', user: view_context.user_link(tu.screen_name), sign_in_path: _sign_in_path)
+    end
     false
   rescue Twitter::Error::NotFound => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"

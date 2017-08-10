@@ -3,15 +3,15 @@
 
 - breadcrumb :cluster, @twitter_user.screen_name
 
-- page_title = t('clusters.show.title', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))
+- page_title = t('.page_title', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))
 - title page_title
 - set_meta_tags description: t('clusters.show.description', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
-%h2.h3.clusters= page_title
+%h2.h2.page-title= page_title
 
-.clusters.lead.text-center= t('clusters.show.lead_002_html', user: @twitter_user.mention_name)
+.page-description.text-center= t('clusters.show.lead_002', user: @twitter_user.mention_name)
 
 = render partial: 'common/search_form', locals: {via: 'clusters/show/top_input'}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})

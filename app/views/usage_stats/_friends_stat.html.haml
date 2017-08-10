@@ -54,6 +54,9 @@
   - tweet_text = t('usage_stats.friends_stat.tweet', user: twitter_user.mention_name, one_sided_friends: stat[:one_sided_friends_count], one_sided_followers: stat[:one_sided_followers_count], mutual_friends: stat[:mutual_friends_count], url: url)
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
 
+.search_form-wrapper{style: 'margin-bottom: 15px;'}
+  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/friends_stat"}
+
 :javascript
   (function () {
     var friendsStat = #{stat.to_json.html_safe};

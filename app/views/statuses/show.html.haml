@@ -9,14 +9,14 @@
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
-%h2.h2.friends= page_title
+%h2.h2.page-title= page_title
 
-= render partial: 'common/search_form', locals: {via: 'friends/show/top_input'}
+= render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
-.tab-content.friends
-  #statuses.twitter.tweets
-    = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
+#statuses.twitter.tweets
+  = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
 
-.friends.separator
+.gray-separator
+
 = render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}

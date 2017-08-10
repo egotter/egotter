@@ -6,6 +6,11 @@ class TimelinesController < ApplicationController
   include WorkersHelper
   include ScoresHelper
 
+  before_action only: %i(check_for_updates) do
+    uid = params[:uid].to_i
+    valid_uid?(uid) && existing_uid?(uid)  && authorized_search?(TwitterUser.latest(uid))
+  end
+
   before_action(only: %i(show)) { valid_screen_name?(params[:screen_name]) }
   before_action(only: %i(show)) { not_found_screen_name?(params[:screen_name]) }
   before_action(only: %i(show)) { @tu = build_twitter_user(params[:screen_name]) }
@@ -32,14 +37,10 @@ class TimelinesController < ApplicationController
     @score = find_or_create_score(@twitter_user.uid).klout_score
   end
 
-  # TODO Fix AbstractController::DoubleRenderError
   def check_for_updates
-    uid = params[:uid].to_i
-    if valid_uid?(uid) && existing_uid?(uid) && params[:created_at].match(/\A\d+\z/)
-      @twitter_user = TwitterUser.latest(uid)
-      if authorized_search?(@twitter_user) && @twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
-        return render json: {found: true}, status: 200
-      end
+    @twitter_user = TwitterUser.latest(params[:uid])
+    if params[:created_at].match(/\A\d+\z/) && @twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
+      return render json: {found: true}, status: 200
     end
 
     render json: {found: false}, status: 200

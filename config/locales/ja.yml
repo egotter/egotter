@@ -226,15 +226,14 @@ ja:
       favstar_link_html: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をFavstarで見る</a>'
   usage_stats:
     show:
+      title: "ツイッター利用状況"
       crumb_title: "ツイッター利用状況"
       page_title: "%{user} のツイッター利用状況"
-      meta_title: "%{user} のツイッター利用状況"
-      title: "ツイッター利用状況"
+      meta_title: "%{user} のツイッター利用状況 分析"
+      summary_title: "ツイッター利用状況"
       page_description: "%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
       meta_description: "%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。"
       tweet_text: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
-      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       see_more: 'もっと見る'
     friends_stat:
       tweet: ".%{user} のフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人です。 #egotter %{url}"
@@ -291,7 +290,6 @@ ja:
       return_to_top: "トップページに戻る"
     sign_in:
       signed_in: "既にログイン済みです。"
-
   misc:
     menu:
       title: "メニュー"
@@ -305,13 +303,12 @@ ja:
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
   close_friends:
     show:
+      title: "仲良しランキング"
       crumb_title: "仲良しランキング"
       page_title: "%{user} の仲良しランキング"
-      title: "仲良しランキング"
+      summary_title: "仲良しランキング"
       page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
       meta_description: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
-      let_me_know_html: '%{user} の%{current}分析は、えごったーが分析したデータを元に集計しています。もし、%{current}分析の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       see_more: 'もっと見る'
   scores:
     show:
@@ -323,8 +320,6 @@ ja:
       will_loose: "\n↓ 負ける人たち…\n%{users}\n"
       page_description: "%{user} のツイッター戦闘力分析です。Klout Scoreを利用して、フォロー・フォロワー・ツイートから総合的な影響力を算出します。"
       meta_description: '%{user} のツイッター戦闘力は %{score} です…！'
-      let_me_know_html: '%{user} の%{current}分析は、えごったーが分析したデータを元に集計しています。もし、%{current}分析の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       see_more: 'もっと見る'
   one_sided_friends:
     new:
@@ -411,27 +406,23 @@ ja:
       lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show:
-      crumb_title: "フォロー"
-      page_title: "%{user} のフォロー 一覧"
-      meta_title: "%{user} の分析 - フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
-      title: "フォロー 一覧"
+      crumb_title: "フォローチェック"
+      page_title: "%{user} のフォロー"
+      meta_title: "%{user} のフォロー分析 - フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
+      title: "フォロー"
       page_description: "%{user} がフォローしているユーザーの一覧です。"
       meta_description: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
-      tweet_text: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
-      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      tweet_text: "%{user} のフォロー分析 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
       see_more: 'もっと見る'
   followers:
     show:
-      crumb_title: "フォロワー"
-      page_title: "%{user} のフォロワー 一覧"
-      meta_title: "%{user} の分析 - フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}%"
-      title: "フォロワー 一覧"
+      crumb_title: "フォロワーチェック"
+      page_title: "%{user} のフォロワー"
+      meta_title: "%{user} のフォロワー分析 - フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}%"
+      title: "フォロワー"
       page_description: "%{user} がフォローされているユーザーの一覧です。"
       meta_description: "%{user} がフォローされているユーザーの一覧 -  フォロー %{followers}人 片思い %{one_sided_followers}人 片思い率 %{one_sided_followers_rate}%"
-      tweet_text: "%{user} がフォローされているユーザーの一覧 -  フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}% #egotter %{url}"
-      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      tweet_text: "%{user} のフォロワー分析 -  フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}% #egotter %{url}"
       see_more: 'もっと見る'
   statuses:
     show:

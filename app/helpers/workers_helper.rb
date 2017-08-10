@@ -1,6 +1,6 @@
 module WorkersHelper
   def add_create_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
-    return if request.from_crawler?
+    return if request.from_crawler? || from_minor_crawler?(request.user_agent)
 
     searched_uids = Util::SearchedUids.new(redis)
     return if searched_uids.exists?(uid)
@@ -36,7 +36,7 @@ module WorkersHelper
   end
 
   def add_create_relationship_worker_if_needed(uids, user_id:, screen_names:)
-    return if request.from_crawler?
+    return if request.from_crawler? || from_minor_crawler?(request.user_agent)
 
     searched_uids = Util::SearchedUids.new(redis)
     uids.each { |uid| searched_uids.add(uid) }

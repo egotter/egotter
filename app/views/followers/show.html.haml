@@ -22,28 +22,18 @@
 .gray-separator
 
 = render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
-.search_form-wrapper{style: 'margin-bottom: 15px;'}
-  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/friends_stat"}
 
 .gray-separator
 
 = render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
-.search_form-wrapper{style: 'margin-bottom: 15px;'}
-  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/tweets_stat"}
-
-= render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
 
 .gray-separator
 
-.let-me-know-wrapper{style: 'margin-bottom: 15px;'}
-  .let-me-know= t('.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))
-  = render partial: 'layouts/share'
+= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
 
 .gray-separator
 
-= render partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}
-.please-use-egotter= t('.plese_use_egotter', current: t('.title'))
-= link_to t('searches.common.search_xxx_by_egotter', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: "#{controller_name}/#{action_name}/bottom_button"), class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;', method: :post
+= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t('.title'))}
 
 .gray-separator
 
