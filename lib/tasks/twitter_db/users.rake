@@ -48,7 +48,12 @@ namespace :twitter_db do
         end
 
         # TODO check protected
-        # TODO check too many friends
+
+        if TwitterUser.build_by_user(t_user).too_many_friends?(login_user: user)
+          skipped += 1
+          skipped_reasons << "Too many friends #{uid}"
+          next
+        end
 
         begin
           signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
@@ -69,10 +74,8 @@ namespace :twitter_db do
 
         begin
           ActiveRecord::Base.transaction do
-            user = TwitterDB::User.find_or_initialize_by(uid: uid)
-            user.update!(screen_name: t_user.screen_name, user_info: TwitterUser.collect_user_info(t_user), friends_size: friend_uids.size, followers_size: follower_uids.size)
-
-            TwitterDB::Friendships.import(user.uid, friend_uids, follower_uids)
+            TwitterDB::User.find_or_initialize_by(uid: uid).update!(screen_name: t_user.screen_name, user_info: TwitterUser.collect_user_info(t_user), friends_size: friend_uids.size, followers_size: follower_uids.size)
+            TwitterDB::Friendships.import(uid, friend_uids, follower_uids)
           end
         rescue => e
           puts "TwitterDB::Friendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
