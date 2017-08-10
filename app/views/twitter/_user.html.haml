@@ -5,7 +5,7 @@
   = render partial: 'common/adsense', locals: {action: action_name, vertical: :slit}
   %div{style: 'height: 0; border-top: 1px solid #e6e6e6; margin-bottom: 15px;'}
 
-.media.row
+.media.row{data: {suspended: user.suspended}}
   .media-left
     = link_to search_path(screen_name: user.screen_name, via: via) do
       = normal_icon_img(user, class: 'media-object')

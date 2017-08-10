@@ -1,0 +1,6 @@
+%h2.h2.page-title= t('searches.common.related_pages')
+
+.row.text-center
+  - labels.each.with_index do |label, i|
+    .col-xs-12
+      = link_to label, urls[i], class: "btn btn-default btn-lg#{' disabled' if i == disabled}", style: 'margin-bottom: 15px;', disabled: ('disabled' if i == disabled)

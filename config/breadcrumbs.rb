@@ -17,7 +17,7 @@ crumb :common do |screen_name, menu|
   parent :search, screen_name
 end
 
-%w(friends followers statuses close_friends scores usage_stats).each do |name|
+%w(friends followers statuses close_friends scores usage_stats unfriends unfollowers blocking_or_blocked).each do |name|
   crumb name.singularize.to_sym do |screen_name|
     link t("#{name}.show.crumb_title"), send("#{name.singularize}_path", screen_name: screen_name)
     parent :search, screen_name
@@ -26,11 +26,6 @@ end
 
 crumb :one_sided_friend do |screen_name|
   link t('one_sided_friends.new.simple_title'), one_sided_friend_path(screen_name: screen_name)
-  parent :search, screen_name
-end
-
-crumb :unfriend do |screen_name|
-  link t('unfriends.new.simple_title'), unfriend_path(screen_name: screen_name)
   parent :search, screen_name
 end
 

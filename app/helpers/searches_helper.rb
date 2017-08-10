@@ -103,8 +103,12 @@ module SearchesHelper
         send("#{menu.to_s.singularize}_path", screen_name: screen_name)
       when *%w(favoriting)
         send("#{menu}_search_path", screen_name: screen_name)
-      when *%w(removing removed blocking_or_blocked)
-        unfriend_path(screen_name: screen_name, type: menu)
+      when *%w(removing)
+        unfriend_path(screen_name: screen_name)
+      when *%w(removed)
+        unfollower_path(screen_name: screen_name)
+      when *%w(blocking_or_blocked)
+        blocking_or_blocked_path(screen_name: screen_name)
       when *%w(one_sided_friends one_sided_followers mutual_friends)
         one_sided_friend_path(screen_name: screen_name, type: menu)
       when *%w(inactive_friends inactive_followers)
@@ -120,7 +124,7 @@ module SearchesHelper
 
   def searches_path_for(controller:, screen_name: '', via: '')
     options = {screen_name: screen_name, via: via}.delete_if { |_, v| v.empty? }
-    if %w(one_sided_friends unfriends relationships inactive_friends conversations clusters).include? controller
+    if %w(one_sided_friends relationships inactive_friends conversations clusters).include? controller
       send("#{controller}_path", options)
     else
       searches_path(options)
@@ -129,8 +133,7 @@ module SearchesHelper
 
   def title_for(menu, screen_name)
     case menu.to_sym
-      when *%i(friends followers close_friends) then t("#{menu}.show.title")
-      when :usage_stats then t("searches.usage_stats.name")
+      when *%i(friends followers close_friends usage_stats) then t("#{menu}.show.summary_title")
       when :clusters_belong_to then t("searches.clusters_belong_to.name")
       when :removing then t("searches.removing.name")
       when :removed then t("searches.removed.name")
