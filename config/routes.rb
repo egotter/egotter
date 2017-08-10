@@ -17,7 +17,7 @@ Rails.application.routes.draw do
     get name, to: "misc##{name}", as: name
   end
 
-  %i(friends followers statuses close_friends scores usage_stats).each do |controller_name|
+  %i(friends followers statuses close_friends scores usage_stats unfriends unfollowers blocking_or_blocked).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
 

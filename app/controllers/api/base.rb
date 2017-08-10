@@ -23,15 +23,31 @@ module Api
 
     def list
       limit = (0..10).include?(params[:limit].to_i) ? params[:limit].to_i : 10
-      uids, max_sequence = list_uids(params[:max_sequence] || 0, limit: limit)
+      uids, max_sequence = list_uids(params[:max_sequence].to_i, limit: limit)
+
+      # TODO Experimental
+      if %w(unfriends unfollowers blocking_or_blocked).include? controller_name
+        begin
+          suspended_uids = uids - client.users(uids).map(&:id)
+        rescue => e
+          logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
+          suspended_uids = []
+        end
+      else
+        suspended_uids = []
+      end
+
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
-      users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_list_hash(user))}
+      users = uids.map { |uid| users[uid] }.compact.map do |user|
+        suspended = suspended_uids.include?(user.uid)
+        Hashie::Mash.new(to_list_hash(user, suspended: suspended))
+      end
 
       if params[:html]
         users = render_to_string partial: 'twitter/user', collection: users, cached: true, formats: %i(html)
       end
 
-      render json: {name: controller_name, max_sequence: max_sequence, users: users}, status: 200
+      render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: users}, status: 200
     end
 
     private
@@ -44,13 +60,14 @@ module Api
       }
     end
 
-    def to_list_hash(user)
+    def to_list_hash(user, suspended: false)
       {
         uid: user.uid.to_s,
         screen_name: user.screen_name,
         name: user.name,
         profile_image_url_https: user.profile_image_url_https.to_s,
-        description: user.description
+        description: user.description,
+        suspended: suspended
       }
     end
   end
