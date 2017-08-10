@@ -20,6 +20,10 @@ class UnfollowersController < ::Base
     names = '.' + honorific_names(mention_names)
     @tweet_text = t('.tweet_text', users: names, url: @canonical_url)
 
+    @disabled_label = 1
+
     @jid = add_create_twitter_user_worker_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
+
+    render template: 'unfriends/show'
   end
 end

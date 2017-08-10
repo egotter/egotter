@@ -12,7 +12,7 @@
 
 %h2.h2.page-title= @page_title
 
-.page-description.text-center= t('.page_description', user: @twitter_user.mention_name)
+.page-description.text-center= @page_description
 
 .tweet-box-wrapper{style: 'margin-bottom: 15px;'}
   = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
@@ -25,17 +25,17 @@
 
 .gray-separator
 
-- labels = [t('.see_unfriends_html', num: @twitter_user.unfriendships.size), t('.see_unfollowers_html', num: @twitter_user.unfollowerships.size), t('.see_blocking_or_blocked_html', num: @twitter_user.blocking_or_blocked_uids.size)]
+- labels = [t('unfriends.show.see_unfriends_html', num: @twitter_user.unfriendships.size), t('unfriends.show.see_unfollowers_html', num: @twitter_user.unfollowerships.size), t('unfriends.show.see_blocking_or_blocked_html', num: @twitter_user.blocking_or_blocked_uids.size)]
 - urls = [unfriend_path(screen_name: @twitter_user.screen_name, type: 'removing'), unfollower_path(screen_name: @twitter_user.screen_name), blocking_or_blocked_path(screen_name: @twitter_user.screen_name)]
-= render partial: 'common/related_buttons', locals: {labels: labels, urls: urls, disabled: 0}
+= render partial: 'common/related_buttons', locals: {labels: labels, urls: urls, disabled: @disabled_label}
 
 .gray-separator
 
-= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
+= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t("#{controller_name}.#{action_name}.title"))}
 
 .gray-separator
 
-= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t('.title'))}
+= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t("#{controller_name}.#{action_name}.title"))}
 
 .gray-separator
 
