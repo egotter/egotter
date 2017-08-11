@@ -31,5 +31,6 @@
   - TweetEgotterWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
+  - UpdateSearchLogWorker
   - UpdateSearchReportWorker
   - UpdateTwitterUserWorker

@@ -22,4 +22,5 @@
   - CreateSearchLogWorker
   - CreateSignInLogWorker
   - TweetEgotterWorker
+  - UpdateSearchLogWorker
   - rollbar

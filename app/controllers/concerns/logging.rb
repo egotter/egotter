@@ -48,6 +48,7 @@ module Concerns::Logging
     attrs.update(options) if options.any?
     CreateSearchLogWorker.perform_async(attrs)
 
+    # TODO Remove later
     if via_notification?
       UpdateNotificationMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at], medium: attrs[:medium], user_agent: attrs[:user_agent])
     end
@@ -289,7 +290,7 @@ module Concerns::Logging
   end
 
   def fingerprint
-    if request.from_crawler?
+    if request.from_crawler? || from_minor_crawler?(request.user_agent)
       return -1
     end
 
