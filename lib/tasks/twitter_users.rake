@@ -99,9 +99,7 @@ namespace :twitter_users do
 
       begin
         ActiveRecord::Base.transaction do
-          user = TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
-          user.update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
-
+          TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid).update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
           TwitterDB::Friendships.import(twitter_user.uid, friend_uids, follower_uids)
         end
       rescue => e
