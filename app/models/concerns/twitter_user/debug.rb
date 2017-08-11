@@ -9,19 +9,28 @@ module Concerns::TwitterUser::Debug
   included do
   end
 
-  def consistent?
+  def consistent?(verbose: false)
     user = TwitterDB::User.find_by(uid: uid)
-    consistent_friends = [
-      friends.size, friendships.size, friends_size, friends_count,
-      user.friends.size, user.friendships.size, user.friends_size, user.friends_count
-    ].uniq.one?
 
-    consistent_followers = [
-      followers.size, followerships.size, followers_size, followers_count,
-      user.followers.size, user.followerships.size, user.followers_size, user.followers_count
-    ].uniq.one?
+    friends_counts1 = [friends.size, friendships.size, friends_size, friends_count]
+    friends_counts2 = [user.friends.size, user.friendships.size, user.friends_size, user.friends_count]
 
-    consistent_friends && consistent_followers
+    followers_counts1 = [followers.size, followerships.size, followers_size, followers_count]
+    followers_counts2 = [user.followers.size, user.followerships.size, user.followers_size, user.followers_count]
+
+    if verbose
+      (friends_counts1 + friends_counts2).uniq.one? && (followers_counts1 + followers_counts2).uniq.one?
+    else
+      ((friends_counts1 + friends_counts2).uniq.one? && (followers_counts1 + followers_counts2).uniq.one?) ||
+        (friends_counts1.take(3) == [0, 0, 0] && friends_counts2.take(3) == [0, 0, -1] &&
+          followers_counts1.take(3) == [0, 0, 0] && followers_counts2.take(3) == [0, 0, -1]) ||
+        ((friends_counts1.take(3) + friends_counts2.take(3)).uniq.one? &&
+          (followers_counts1.take(3) + followers_counts2.take(3)).uniq.one?)
+    end
+  end
+
+  def need_repair?
+    [friendships.size, friends_size].uniq.many? && [followerships.size, followers_size].uniq.many?
   end
 
   def debug_print_friends
