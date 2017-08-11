@@ -89,7 +89,7 @@ class CreateTwitterUserWorker
       twitter_user.increment(:search_count).save
 
       update_twitter_db_user(twitter_user)
-      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, 'queued_at' => Time.zone.now, 'enqueued_at' => Time.zone.now)
+      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, twitter_user_id: twitter_user.id, 'enqueued_at' => Time.zone.now)
       update_usage_stat(twitter_user)
       create_score(twitter_user)
 
@@ -166,7 +166,9 @@ class CreateTwitterUserWorker
   def create_score(twitter_user)
     unless Score.exists?(uid: twitter_user.uid)
       score = Score.builder(twitter_user.uid).build
-      score.save! if score.valid? # It currently validates only klout_id.
+      if score.valid? && !Score.exists?(uid: twitter_user.uid) # It currently validates only klout_id.
+        score.save!
+      end
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
