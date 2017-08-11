@@ -9,6 +9,33 @@ module Concerns::TwitterUser::Debug
   included do
   end
 
+  def consistent?
+    user = TwitterDB::User.find_by(uid: uid)
+    consistent_friends = [
+      friends.size, friendships.size, friends_size, friends_count,
+      user.friends.size, user.friendships.size, user.friends_size, user.friends_count
+    ].uniq.one?
+
+    consistent_followers = [
+      followers.size, followerships.size, followers_size, followers_count,
+      user.followers.size, user.followerships.size, user.followers_size, user.followers_count
+    ].uniq.one?
+
+    consistent_friends && consistent_followers
+  end
+
+  def debug_print_friends
+    user = TwitterDB::User.find_by(uid: uid)
+    delim = ' '
+
+    puts([
+           [friends.size, friendships.size, friends_size, friends_count].inspect,
+           [user.friends.size, user.friendships.size, user.friends_size, user.friends_count].inspect,
+           [followers.size, followerships.size, followers_size, followers_count].inspect,
+           [user.followers.size, user.followerships.size, user.followers_size, user.followers_count].inspect
+         ].join delim)
+  end
+
   def debug_print(kind = nil)
     Rails.logger.silence do
       user = TwitterDB::User.find_by(uid: uid)
