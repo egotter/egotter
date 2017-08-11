@@ -1,3 +1,8 @@
+.update-box.alert.alert-info.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('common.show.updating', user: twitter_user.mention_name)
+  = image_tag '/ajax-loader.gif'
+
 .refresh-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.update_is_coming', user: twitter_user.mention_name)
@@ -16,21 +21,27 @@
     var signedIn = #{user_signed_in?};
     var jid = "#{jid}";
 
+    var $updateBox = $('.update-box');
+
     function checkForUpdates () {
       $.get(checkForUpdatesPath)
         .done(function (res) {
         console.log('checkForUpdates', res);
 
           if (res.found) {
+            $updateBox.hide();
             $('.refresh-box').show().sticky();
           } else {
             if (retryCount < 2) {
               retryCount++;
               setTimeout(checkForUpdates, 8000);
+            } else {
+              $updateBox.hide();
             }
           }
         })
         .fail(function (xhr) {
+          $updateBox.hide();
           console.log('checkForUpdates failed.', xhr);
         });
     }
@@ -41,6 +52,7 @@
       } else {
         if (jid) {
           console.log('Worker started', jid);
+          $updateBox.show().sticky();
           setTimeout(checkForUpdates, 3000);
         }
       }

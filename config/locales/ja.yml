@@ -496,8 +496,9 @@ ja:
       cluster_name: "%{name}クラスタ"
   common:
     show:
+      updating: '%{user} のデータを更新中'
       update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
-      update_result: 'データを更新する'
+      update_result: 'ページを更新する'
       need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
       sign_in: 'ログインする'
       let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
