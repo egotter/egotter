@@ -12,6 +12,7 @@ module Concerns::TwitterUser::Batch
   class Batch
     def self.fetch_and_create(uid)
       user = User.authorized.find_by(uid: uid)
+      user = OldUser.authorized.find_by(uid: uid) unless user
       client = user ? user.api_client : Bot.api_client
 
       begin
