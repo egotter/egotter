@@ -8,11 +8,15 @@ namespace :twitter_db do
         sigint = true
       end
 
-      # uids = TwitterDB::User.with_friends.pluck(:uid)
-      # specified_uids = User.authorized.select(:uid).reject { |user| uids.include? user.uid.to_i }.map(&:uid).map(&:to_i)
-
-      specified_uids = ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
       with_friends_uids = TwitterDB::User.with_friends.pluck(:uid)
+
+      specified_uids =
+        if ENV['UIDS']
+          ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
+        else
+          User.authorized.pluck(:uid).map(&:to_i).reject { |user| with_friends_uids.include? user.uid }.take(500)
+        end
+
       failed = false
       processed = []
       skipped = 0
@@ -34,11 +38,15 @@ namespace :twitter_db do
           if e.message == 'Invalid or expired token.'
             user&.update(authorized: false)
             skipped += 1
-            skipped_reasons << "Invalid token #{uid}"
+            skipped_reasons << "Invalid token(user) #{uid}"
             next
           elsif ['Not authorized.', 'User not found.'].include? e.message
             skipped += 1
             skipped_reasons << "Not authorized or Not found #{uid}"
+            next
+          elsif e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
+            skipped += 1
+            skipped_reasons << "Temporarily locked #{uid}"
             next
           end
 
@@ -47,11 +55,42 @@ namespace :twitter_db do
           break
         end
 
-        # TODO check protected
+        twitter_user = TwitterUser.build_by_user(t_user)
+        twitter_user.user_id = user ? user.id : -1
 
-        if TwitterUser.build_by_user(t_user).too_many_friends?(login_user: user)
+        if t_user.suspended
+          unless TwitterDB::User.exists?(uid: twitter_user.uid)
+            TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
+          end
+          puts "Create suspended #{uid}"
+          next
+        end
+
+        if t_user.protected && client.verify_credentials.id != t_user.id
+          friendship_uid = TwitterDB::Friendship.where(user_uid: User.authorized.pluck(:uid), friend_uid: uid).first&.user_uid
+          if friendship_uid
+            puts "Change a client to update #{uid} from #{client.verify_credentials.id} to #{friendship_uid}"
+            client = User.find_by(uid: friendship_uid).api_client
+          else
+            unless TwitterDB::User.exists?(uid: twitter_user.uid)
+              TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
+            end
+            puts "Create protected #{uid}"
+            next
+          end
+        end
+
+        if twitter_user.too_many_friends?(login_user: user)
           skipped += 1
           skipped_reasons << "Too many friends #{uid}"
+          next
+        end
+
+        if twitter_user.too_many_friends?(login_user: user)
+          unless TwitterDB::User.exists?(uid: twitter_user.uid)
+            TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
+          end
+          puts "Create too many friends #{uid}"
           next
         end
 
@@ -59,13 +98,26 @@ namespace :twitter_db do
           signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
           friend_uids, follower_uids = client._fetch_parallelly(signatures)
         rescue => e
+          if e.message == 'Invalid or expired token.'
+            user&.update(authorized: false)
+            skipped += 1
+            skipped_reasons << "Invalid token(friend_ids) #{uid}"
+            next
+          end
+
           puts "client.friend_ids: #{e.class} #{e.message} #{uid}"
           failed = true
           break
         end
 
+        if (t_user.friends_count - friend_uids.size).abs >= 5 || (t_user.followers_count - follower_uids.size).abs >= 5
+          puts "Inconsistent #{uid} [#{t_user.friends_count}, #{friend_uids.size}] [#{t_user.followers_count}, #{follower_uids.size}]"
+          failed = true
+          break
+        end
+
         begin
-          TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
+          Rails.logger.silence { TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client) }
         rescue => e
           puts "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{uid}"
           failed = true
@@ -74,7 +126,7 @@ namespace :twitter_db do
 
         begin
           ActiveRecord::Base.transaction do
-            TwitterDB::User.find_or_initialize_by(uid: uid).update!(screen_name: t_user.screen_name, user_info: TwitterUser.collect_user_info(t_user), friends_size: friend_uids.size, followers_size: follower_uids.size)
+            TwitterDB::User.find_or_initialize_by(uid: uid).update!(screen_name: t_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
             TwitterDB::Friendships.import(uid, friend_uids, follower_uids)
           end
         rescue => e

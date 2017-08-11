@@ -7,15 +7,15 @@ namespace :twitter_users do
       sigint = true
     end
 
+    persisted_uids = TwitterUser.uniq.pluck(:uid).map(&:to_i)
+
     specified_uids =
       if ENV['UIDS']
         ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
       else
-        uids = TwitterUser.uniq.pluck(:uid).map(&:to_i)
-        User.authorized.pluck(:uid).map(&:to_i).reject { |uid| uids.include? uid }.take(500)
+        User.authorized.pluck(:uid).map(&:to_i).reject { |uid| persisted_uids.include? uid }.take(500)
      end
 
-    persisted_uids = TwitterUser.uniq.pluck(:uid).map(&:to_i)
     failed = false
     processed = []
     skipped = 0
