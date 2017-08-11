@@ -11,44 +11,39 @@ namespace :old_users do
     end
   end
 
-  desc 'verify old_users'
-  task verify: :environment do
+  desc 'update authorized'
+  task update_authorized: :environment do
     sigint = false
     Signal.trap 'INT' do
       puts 'intercept INT and stop ..'
       sigint = true
     end
 
-    processed = 0
-    authorized = 0
-    process_start = Time.zone.now
-    ApiClient # avoid circular dependency
-    puts "\nverify started:"
+    ApiClient # Avoid circular dependency
 
-    OldUser.where(authorized: false).find_in_batches(batch_size: 1000) do |users|
+    OldUser.authorized.find_in_batches(batch_size: 100) do |users|
       Parallel.each(users, in_threads: 10) do |user|
-        client = ApiClient.instance(access_token: user.token, access_token_secret: user.secret, logger: Naught.build.new)
-        credential = (client.verify_credentials rescue nil)
-
-        if credential
-          user.assign_attributes(uid: credential.id, screen_name: credential.screen_name, authorized: true)
-          authorized += 1
+        begin
+          puts "Authorized #{user.api_client.verify_credentials.id}"
+        rescue => e
+          if e.message == 'Invalid or expired token.'
+            puts "Invalid #{user.uid}"
+            user.authorized = false
+          else
+            puts "Failed #{user.uid}"
+            raise
+          end
         end
-        processed += 1
       end
 
-      OldUser.import(users, on_duplicate_key_update: %i(uid screen_name authorized), validate: false)
-
-      avg = '%3.1f' % ((Time.zone.now - process_start) / processed)
-      puts "#{Time.zone.now}: processed #{processed}, authorized #{authorized}, avg #{avg}, #{users[0].id} - #{users[-1].id}"
+      changed = users.select(&:authorized_changed?)
+      if changed.any?
+        puts "Import #{changed.size} users"
+        OldUser.import(users, on_duplicate_key_update: %i(uid authorized), validate: false)
+      end
 
       break if sigint
     end
-
-    process_finish = Time.zone.now
-    elapsed = (process_finish - process_start).round(1)
-    puts "verify #{(sigint ? 'suspended:' : 'finished:')}"
-    puts "  start: #{process_start}, finish: #{process_finish}, processed: #{processed}, authorized: #{authorized}, elapsed: #{elapsed} seconds"
   end
 
   desc 'update twitter_users'

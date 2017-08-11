@@ -22,6 +22,8 @@ class OldUser < ActiveRecord::Base
   validates_with Validations::UidValidator
   validates_with Validations::ScreenNameValidator
 
+  scope :authorized, -> { where(authorized: true) }
+
   def api_client
     ApiClient.instance(access_token: token, access_token_secret: secret)
   end
