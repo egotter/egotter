@@ -38,7 +38,7 @@ class ApiClient
 
   def self.user_or_bot_client(user_id)
     user_or_bot =
-      if user_id.nil? || user_id.to_i == -1
+      if user_id.nil? || user_id.to_i <= 0 || !User.exists?(id: user_id)
         Bot.sample
       else
         User.find(user_id)

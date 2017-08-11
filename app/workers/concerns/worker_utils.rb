@@ -11,7 +11,7 @@ module Concerns::WorkerUtils
 
   UNAUTHORIZED_MESSAGES = [
     'Invalid or expired token.',
-    "You have been blocked from viewing this user's profile.",
+    "You have been blocked from viewing this user's profile.", # user_timeline, favorites
     'Could not authenticate you.',
     'Not authorized.'
   ]

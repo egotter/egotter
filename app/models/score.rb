@@ -91,7 +91,7 @@ class Score < ActiveRecord::Base
       res = open("http://api.klout.com/v2/identity.json/tw/#{uid}?key=#{API_KEY}").read
       JSON.parse(res)['id']
     rescue => e
-      Rails.logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{uid}"
+      Rails.logger.info "#{self.class}##{__method__} #{e.class} #{e.message} #{uid}"
       nil
     end
 
@@ -99,7 +99,7 @@ class Score < ActiveRecord::Base
       res = open("http://api.klout.com/v2/user.json/#{klout_id}/score?key=#{API_KEY}").read
       JSON.parse(res)['score']
     rescue => e
-      Rails.logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{klout_id}"
+      Rails.logger.info "#{self.class}##{__method__} #{e.class} #{e.message} #{klout_id}"
       nil
     end
 
@@ -111,7 +111,7 @@ class Score < ActiveRecord::Base
         influencees: extract_influencees(json)
       }
     rescue => e
-      Rails.logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{klout_id}"
+      Rails.logger.info "#{self.class}##{__method__} #{e.class} #{e.message} #{klout_id}"
       nil
     end
 
