@@ -34,6 +34,7 @@ class TwitterUser < ActiveRecord::Base
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
 
+  include Concerns::TwitterUser::Batch
   include Concerns::TwitterUser::Debug
 
   def cache_key
