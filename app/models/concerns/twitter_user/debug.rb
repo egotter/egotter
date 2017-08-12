@@ -117,7 +117,7 @@ module Concerns::TwitterUser::Debug
     end
   end
 
-  %i(consistent? debug_print_friends debug_print).each do |name|
+  %i(consistent? need_repair? debug_print_friends debug_print).each do |name|
     alias_method "orig_#{name}", name
     define_method(name) do |*args|
       Rails.logger.silence { send("orig_#{name}", *args) }

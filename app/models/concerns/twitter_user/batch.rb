@@ -16,6 +16,7 @@ module Concerns::TwitterUser::Batch
       client = user ? user.api_client : Bot.api_client
 
       begin
+        tries ||= 3
         t_user = client.user(uid)
       rescue => e
         if e.message == 'Invalid or expired token.'
@@ -25,12 +26,11 @@ module Concerns::TwitterUser::Batch
           logger "Not authorized or Not found #{uid}"
         elsif e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
           logger "Temporarily locked #{uid}"
+        elsif retryable?(e)
+          (tries -= 1).zero? ? logger("Retry limit exceeded(user) #{uid}") : retry
         else
           logger "client.user: #{e.class} #{e.message} #{uid}"
         end
-
-        # Twitter::Error execution expired
-        # Twitter::Error::InternalServerError Internal error
 
         return
       end
@@ -59,16 +59,21 @@ module Concerns::TwitterUser::Batch
         return logger "Create too many friends #{uid}"
       end
 
+      tries = 3
       begin
         signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
         friend_uids, follower_uids = client._fetch_parallelly(signatures)
       rescue => e
         if e.message == 'Invalid or expired token.'
           user&.update(authorized: false)
-          return logger "Invalid token(friend_ids) #{uid}"
+          logger "Invalid token(friend_ids) #{uid}"
+        elsif retryable?(e)
+          (tries -= 1).zero? ? logger("Retry limit exceeded(friend_ids) #{uid}") : retry
         else
-          return logger "client.friend_ids: #{e.class} #{e.message} #{uid}"
+          logger "client.friend_ids: #{e.class} #{e.message} #{uid}"
         end
+
+        return
       end
 
       if (t_user.friends_count - friend_uids.size).abs >= 5 || (t_user.followers_count - follower_uids.size).abs >= 5
@@ -85,10 +90,17 @@ module Concerns::TwitterUser::Batch
         return logger "Friendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
       end
 
+      tries = 3
       begin
         Rails.logger.silence { TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client) }
       rescue => e
-        return logger "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{uid}"
+        if retryable?(e)
+          (tries -= 1).zero? ? logger("Retry limit exceeded(fetch_and_import) #{uid}") : retry
+        else
+          logger "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{uid}"
+        end
+
+        return
       end
 
       begin
@@ -104,6 +116,14 @@ module Concerns::TwitterUser::Batch
     end
 
     private
+
+    def self.retryable?(ex)
+      # Twitter::Error::InternalServerError Internal error
+      # Twitter::Error::ServiceUnavailable Over capacity
+      # Twitter::Error execution expired
+
+      ['Internal error', 'Over capacity', 'execution expired'].include? ex.message
+    end
 
     def self.create_friendless_record(twitter_user)
       ActiveRecord::Base.transaction do
