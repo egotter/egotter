@@ -31,7 +31,12 @@ module Concerns::TwitterUser::Store
       created_at
     )
 
-  PROFILE_REJECT_KEYS = %i(id screen_name url created_at)
+  PROFILE_REJECT_KEYS = %i(
+    id
+    screen_name
+    url
+    created_at
+  )
 
   METHOD_NAME_KEYS = PROFILE_SAVE_KEYS.reject { |k| k.in?(PROFILE_REJECT_KEYS) }
 
