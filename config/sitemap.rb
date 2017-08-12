@@ -25,19 +25,21 @@ do_create = Proc.new do
     add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_friends'), options
     add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_followers'), options
     add one_sided_friend_path(screen_name: screen_name, type: 'mutual_friends'), options
-    add unfriend_path(screen_name: screen_name, type: 'removing'), options
-    add unfriend_path(screen_name: screen_name, type: 'removed'), options
-    add unfriend_path(screen_name: screen_name, type: 'blocking_or_blocked'), options
+    add unfriend_path(screen_name: screen_name), options
+    add unfollower_path(screen_name: screen_name), options
+    add blocking_or_blocked_path(screen_name: screen_name), options
     add inactive_friend_path(screen_name: screen_name, type: 'inactive_friends'), options
     add inactive_friend_path(screen_name: screen_name, type: 'inactive_followers'), options
     add inactive_friend_path(screen_name: screen_name, type: 'inactive_mutual_friends'), options
-    add friend_path(screen_name: screen_name, type: 'friends'), options
-    add friend_path(screen_name: screen_name, type: 'followers'), options
-    add friend_path(screen_name: screen_name, type: 'statuses'), options
+    add friend_path(screen_name: screen_name), options
+    add follower_path(screen_name: screen_name), options
+    add status_path(screen_name: screen_name), options
     add conversation_path(screen_name: screen_name, type: 'replying'), options
     add conversation_path(screen_name: screen_name, type: 'replied'), options
     add conversation_path(screen_name: screen_name, type: 'replying_and_replied'), options
     add cluster_path(screen_name: screen_name), options
+    add close_friend_path(screen_name: screen_name), options
+    add usage_stat_path(screen_name: screen_name), options
 
     TwitterDB::User.where(uid: twitter_user.close_friend_uids.take(3)).each do |close_friend|
       add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'conversations'), options
@@ -49,8 +51,6 @@ do_create = Proc.new do
       new_friends
       new_followers
       favoriting
-      close_friends
-      usage_stats
     ).each { |menu| add(send("#{menu}_search_path", screen_name: screen_name), options) }
 
   end
