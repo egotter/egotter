@@ -33,6 +33,10 @@ module Concerns::TwitterUser::Debug
     [friendships.size, friends_size].uniq.many? && [followerships.size, followers_size].uniq.many?
   end
 
+  def too_many_unfriendships?
+    unfriendships.size >= friends_count * 0.9
+  end
+
   def debug_print_friends
     user = TwitterDB::User.find_by(uid: uid)
     delim = ' '
