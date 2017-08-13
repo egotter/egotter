@@ -5,7 +5,10 @@ class UpdateNewsReportWorker
   def perform(attrs)
     report = NewsReport.find_by(token: attrs['token'])
     return if report.nil? || report.read?
-    report.update!(read_at: attrs['read_at'])
+
+    if report.created_at < Time.zone.now - 5.seconds
+      report.update!(read_at: attrs['read_at'])
+    end
   rescue => e
     logger.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
   end
