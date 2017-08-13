@@ -22,17 +22,17 @@ class DelayedCreateTwitterUserWorker < CreateTwitterUserWorker
   private
 
   def handle_retryable_exception(values, ex)
+    params_str = "#{values['user_id']} #{values['uid']} #{values['device_type']} #{values['auto']}"
+
     if ex.class == Twitter::Error::TooManyRequests
       sleep_seconds = ex&.rate_limit&.reset_in.to_i + 1
-      logger.warn "Retry(too many requests) after #{sleep_seconds} seconds. #{values['user_id']} #{values['uid']}"
+      logger.warn "Retry(too many requests) after #{sleep_seconds} seconds. #{params_str}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
-      # logger.warn "I will sleep for #{sleep_seconds} seconds. Bye!"
-      # sleep sleep_seconds
-      # logger.warn 'Good morning. I will retry.'
       DelayedCreateTwitterUserWorker.perform_in(sleep_seconds.seconds, values)
     else
-      logger.warn "Retry(#{ex.class.name.demodulize}) #{values['user_id']} #{values['uid']}"
-      DelayedCreateTwitterUserWorker.perform_in(egotter_retry_in, values)
+      sleep_seconds = egotter_retry_in
+      logger.warn "Retry(#{ex.class.name.demodulize}) after #{sleep_seconds} seconds. #{params_str}"
+      DelayedCreateTwitterUserWorker.perform_in(sleep_seconds, values)
     end
   end
 end
