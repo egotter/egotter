@@ -154,7 +154,7 @@ module Concerns::TwitterUser::Batch
         if retryable?(e)
           (tries -= 1).zero? ? logger("Retry limit exceeded(fetch_and_import) #{uid}") : retry
         else
-          logger "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{uid}"
+          logger "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
         end
 
         return
