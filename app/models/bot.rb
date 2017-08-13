@@ -17,6 +17,7 @@
 #
 
 class Bot < ActiveRecord::Base
+  include Concerns::ApiAccess::Common
 
   IDS = pluck(:id)
 
@@ -37,7 +38,7 @@ class Bot < ActiveRecord::Base
   def self.verify_credentials
     processed = Queue.new
     Parallel.each(all, in_threads: 10) do |bot|
-      processed << {id: bot.id, screen_name: bot.screen_name, status: !!bot.verify_credentials}
+      processed << {id: bot.id, screen_name: bot.screen_name, status: !!(bot.api_client.verify_credentials rescue nil)}
     end
 
     processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
@@ -55,49 +56,6 @@ class Bot < ActiveRecord::Base
         verify_credentials: p[:rate_limit].verify_credentials,
         friend_ids: p[:rate_limit].friend_ids,
         follower_ids: p[:rate_limit].follower_ids
-      }
-    end
-  end
-
-  def verify_credentials
-    api_client.verify_credentials rescue nil
-  end
-
-  def rate_limit
-    RateLimit.new(api_client.send(:perform_get, '/1.1/application/rate_limit_status.json')) rescue nil
-  end
-
-  def api_client
-    ApiClient.instance(access_token: token, access_token_secret: secret)
-  end
-
-  class RateLimit
-    def initialize(status)
-      @status = status
-    end
-
-    def resources
-      @status[:resources]
-    end
-
-    def verify_credentials
-      {
-        remaining: resources[:account][:'/account/verify_credentials'][:remaining],
-        reset_in: (Time.zone.at(resources[:account][:'/account/verify_credentials'][:reset]) - Time.zone.now).round
-      }
-    end
-
-    def friend_ids
-      {
-        remaining: resources[:friends][:'/friends/ids'][:remaining],
-        reset_in: (Time.zone.at(resources[:friends][:'/friends/ids'][:reset]) - Time.zone.now).round
-      }
-    end
-
-    def follower_ids
-      {
-        remaining: resources[:followers][:'/followers/ids'][:remaining],
-        reset_in: (Time.zone.at(resources[:followers][:'/followers/ids'][:reset]) - Time.zone.now).round
       }
     end
   end

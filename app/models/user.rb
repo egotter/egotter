@@ -28,6 +28,7 @@
 class User < ActiveRecord::Base
   devise :rememberable, :omniauthable
 
+  include Concerns::ApiAccess::Common
   include Concerns::TwitterUser::Inflections
   include Concerns::Visitor::Active
 
@@ -93,10 +94,6 @@ class User < ActiveRecord::Base
   rescue => e
     logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{auth.inspect}"
     raise e
-  end
-
-  def api_client
-    ApiClient.instance(access_token: token, access_token_secret: secret)
   end
 
   def twitter_user
