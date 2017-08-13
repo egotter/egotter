@@ -33,8 +33,12 @@ module Concerns::TwitterUser::Debug
     [friendships.size, friends_size].uniq.many? && [followerships.size, followers_size].uniq.many?
   end
 
+  def too_little_friendships?
+    friendships.size < friends_count * 0.9
+  end
+
   def too_many_unfriendships?
-    unfriendships.size >= friends_count * 0.9
+    unfriendships.size > friends_count * 0.9
   end
 
   def debug_print_friends
