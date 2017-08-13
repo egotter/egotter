@@ -15,7 +15,10 @@
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 #statuses.twitter.tweets
-  = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
+  - if @twitter_user.protected_account?
+    = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
+  - else
+    = render(partial: 'twitter/oembed_tweet', collection: @statuses, as: :tweet, cached: true, formats: %i(html))
 
 .gray-separator
 
