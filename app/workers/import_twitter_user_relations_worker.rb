@@ -196,13 +196,12 @@ class ImportTwitterUserRelationsWorker
   end
 
   def handle_retryable_exception(ex, user_id, uid, twitter_user_id, options = {})
-    retry_jid = DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, {'parent_jid' => jid}.merge(options))
+    params_str = "#{user_id} #{uid} #{twitter_user_id}"
 
-    if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "recover #{ex.message} Reset in #{ex.rate_limit.reset_in} seconds #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
-      logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
-    else
-      logger.warn "recover #{ex.class.name.demodulize} #{user_id} #{uid} #{twitter_user_id} #{retry_jid}"
-    end
+    sleep_seconds =
+      (ex.class == Twitter::Error::TooManyRequests) ? (ex&.rate_limit&.reset_in.to_i + 1).seconds : 0
+
+    DelayedImportTwitterUserRelationsWorker.perform_in(sleep_seconds, user_id, uid, {'parent_jid' => jid}.merge(options))
+    logger.warn "Retry(#{ex.class.name.demodulize}) after #{sleep_seconds} seconds. #{params_str}"
   end
 end

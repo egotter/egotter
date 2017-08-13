@@ -7,32 +7,18 @@ class DelayedImportTwitterUserRelationsWorker < ImportTwitterUserRelationsWorker
   end
 
   def perform(user_id, uid, options = {})
-    slept = false
-    while (queue = Sidekiq::Queue.new('ImportTwitterUserRelationsWorker')).size > BUSY_QUEUE_SIZE
-      logger.info "I will sleep. Bye! size: #{queue.size}"
-      slept = true
-      sleep(queue.size < 10 ? queue.size * 3 : 3.minutes)
-    end
-
-    logger.info 'Good morning. I will retry.' if slept
-
     super
   end
 
   private
 
   def handle_retryable_exception(ex, user_id, uid, twitter_user_id, options = {})
-    if ex.class == Twitter::Error::TooManyRequests
-      sleep_time = ex&.rate_limit&.reset_in.to_i + 1
-      logger.warn "recover #{ex.message} Reset in #{sleep_time} seconds #{user_id} #{uid} #{twitter_user_id}"
-      logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
-      logger.warn 'I will sleep. Bye!'
-      sleep sleep_time
-      logger.warn 'Good morning. I will retry.'
-    else
-      logger.warn "recover #{ex.class.name.demodulize} #{user_id} #{uid} #{twitter_user_id}"
-    end
+    params_str = "#{user_id} #{uid} #{twitter_user_id}"
 
-    DelayedImportTwitterUserRelationsWorker.perform_in(egotter_retry_in, user_id, uid, options)
+    sleep_seconds =
+      (ex.class == Twitter::Error::TooManyRequests) ? (ex&.rate_limit&.reset_in.to_i + 1).seconds : egotter_retry_in
+
+    logger.warn "Retry(#{ex.class.name.demodulize}) after #{sleep_seconds} seconds. #{params_str}"
+    DelayedImportTwitterUserRelationsWorker.perform_in(sleep_seconds, user_id, uid, options)
   end
 end

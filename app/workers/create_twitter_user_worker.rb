@@ -185,15 +185,11 @@ class CreateTwitterUserWorker
   def handle_retryable_exception(values, ex)
     params_str = "#{values['user_id']} #{values['uid']} #{values['device_type']} #{values['auto']}"
 
-    if ex.class == Twitter::Error::TooManyRequests
-      sleep_seconds = ex&.rate_limit&.reset_in.to_i + 1
-      DelayedCreateTwitterUserWorker.perform_in(sleep_seconds.seconds, values)
-      logger.warn "Retry(too many requests) after #{sleep_seconds} seconds. #{params_str}"
-      logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
-    else
-      DelayedCreateTwitterUserWorker.perform_async(values)
-      logger.warn "Retry(#{ex.class.name.demodulize}) after 0 seconds. #{params_str}"
-    end
+    sleep_seconds =
+      (ex.class == Twitter::Error::TooManyRequests) ? (ex&.rate_limit&.reset_in.to_i + 1).seconds : 0
+
+    DelayedCreateTwitterUserWorker.perform_in(sleep_seconds, values)
+    logger.warn "Retry(#{ex.class.name.demodulize}) after #{sleep_seconds} seconds. #{params_str}"
   end
 
   def handle_unknown_exception(ex, values)
