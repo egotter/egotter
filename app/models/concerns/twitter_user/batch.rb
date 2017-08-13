@@ -22,8 +22,10 @@ module Concerns::TwitterUser::Batch
         if e.message == 'Invalid or expired token.'
           user&.update(authorized: false)
           logger "Invalid token(user) #{uid}"
-        elsif ['Not authorized.', 'User not found.'].include? e.message
-          logger "Not authorized or Not found #{uid}"
+        elsif e.message == 'Not authorized.'
+          logger "Not authorized #{uid}"
+        elsif e.message == 'User not found.'
+          logger "Not found #{uid}"
         elsif e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
           logger "Temporarily locked #{uid}"
         elsif retryable?(e)
@@ -111,9 +113,10 @@ module Concerns::TwitterUser::Batch
           twitter_user.save!(validate: false)
         end
 
-        unless TwitterDB::User.exists?(uid: twitter_user.uid)
-          TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
-        end
+        user = TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
+        user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
+        user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
+        user.save!
       end
     end
 

@@ -37,7 +37,7 @@ namespace :twitter_users do
     if processed.any?
       puts "\ncreated:"
       processed.take(500).each do |twitter_user|
-        print " #{twitter_user.uid} "
+        print "  #{twitter_user.uid} "
         twitter_user.debug_print_friends
       end
     end
