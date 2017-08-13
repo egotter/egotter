@@ -44,7 +44,7 @@ class CreateTwitterUserWorker
     before_perform(values)
     log = @log
 
-    if self.class == CreateTwitterUserWorker && (too_old(log) || too_busy?(log))
+    if self.class == CreateTwitterUserWorker && (too_old?(log) || too_busy?(log))
       log = nil
       delay = true
       return DelayedCreateTwitterUserWorker.perform_async(values)
