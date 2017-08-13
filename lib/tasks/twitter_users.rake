@@ -21,7 +21,7 @@ namespace :twitter_users do
     skipped = 0
     skipped_reasons = []
 
-    specified_uids.each do |uid|
+    specified_uids.each.with_index do |uid, i|
       if persisted_uids.include? uid
         skipped += 1
         skipped_reasons << "Persisted #{uid}"
@@ -30,6 +30,8 @@ namespace :twitter_users do
 
       twitter_user = TwitterUser.fetch_and_create(uid)
       processed << twitter_user if twitter_user
+
+      puts("#{i + 1}/#{specified_uids.size}") if (i % 100).zero?
 
       break if sigint || failed
     end
