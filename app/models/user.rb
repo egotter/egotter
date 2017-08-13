@@ -56,7 +56,18 @@ class User < ActiveRecord::Base
   end
 
   scope :authorized, -> { where(authorized: true) }
-  scope :can_send_dm, -> { includes(:notification_setting).where('notification_settings.dm = ?', true).where('last_dm_at IS NULL OR last_dm_at < ?', NotificationSetting::DM_INTERVAL.ago).references(:notification_settings) }
+  scope :can_send_dm, -> do
+    includes(:notification_setting)
+      .where('notification_settings.dm = ?', true)
+      .where('last_dm_at IS NULL OR last_dm_at < ?', NotificationSetting::DM_INTERVAL.ago)
+      .references(:notification_settings)
+  end
+  scope :can_send_news, -> do
+    includes(:notification_setting)
+      .where('notification_settings.news = ?', true)
+      .where('last_dm_at IS NULL OR last_news_at < ?', NotificationSetting::NEWS_INTERVAL.ago)
+      .references(:notification_settings)
+  end
 
   def self.update_or_create_for_oauth_by!(auth)
     user = User.find_or_initialize_by(uid: auth.uid)

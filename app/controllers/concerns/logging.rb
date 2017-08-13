@@ -57,6 +57,7 @@ module Concerns::Logging
       case
         when via_prompt_report? then UpdatePromptReportWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
         when via_search_report? then UpdateSearchReportWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
+        when via_news_report?   then UpdateNewsReportWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
       end
     end
   rescue => e
@@ -250,11 +251,15 @@ module Concerns::Logging
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'prompt'
   end
 
-    def via_search_report?
-      params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'search'
-    end
+  def via_search_report?
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'search'
+  end
 
-    def find_referral(referers)
+  def via_news_report?
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'news'
+  end
+
+  def find_referral(referers)
     url = referers.find do |referer|
       referer.present? && referer.match(URI.regexp) && !URI.parse(referer).host.include?('egotter')
     end

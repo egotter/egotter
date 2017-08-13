@@ -22,7 +22,7 @@ class CreateSearchReportWorker
 
     ActiveRecord::Base.transaction do
       report.update!(message_id: dm.id)
-      user.notification_setting.touch(:search_sent_at)
+      user.notification_setting.update!(search_sent_at: Time.zone.now)
     end
 
   rescue Twitter::Error::Unauthorized => e
