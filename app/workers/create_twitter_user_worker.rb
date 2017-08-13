@@ -44,12 +44,10 @@ class CreateTwitterUserWorker
     before_perform(values)
     log = @log
 
-    if self.class == CreateTwitterUserWorker
-      if log.enqueued_at < 1.minutes.ago || (Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && log.auto)
-        log = nil
-        delay = true
-        return DelayedCreateTwitterUserWorker.perform_async(values)
-      end
+    if self.class == CreateTwitterUserWorker && (too_old(log) || too_busy?(log))
+      log = nil
+      delay = true
+      return DelayedCreateTwitterUserWorker.perform_async(values)
     end
 
     user = User.find_by(id: log.user_id)
@@ -140,7 +138,7 @@ class CreateTwitterUserWorker
       end
     else
       if delay
-        logger.warn "A delay occurs. #{values['user_id']} #{values['uid']} #{values['device_type']} #{values['auto']}"
+        logger.warn "A delay occurs. #{values['user_id']} #{values['uid']} #{values['device_type']} #{values['auto']} #{values['enqueued_at']}"
       else
         logger.warn "A log is nil. #{values.inspect}"
       end
@@ -185,13 +183,14 @@ class CreateTwitterUserWorker
   end
 
   def handle_retryable_exception(values, ex)
-    retry_jid = DelayedCreateTwitterUserWorker.perform_async(values)
-
     if ex.class == Twitter::Error::TooManyRequests
-      logger.warn "recover #{ex.message} Reset in #{ex&.rate_limit&.reset_in} seconds #{values['user_id']} #{values['uid']} #{retry_jid}"
+      sleep_seconds = ex&.rate_limit&.reset_in.to_i + 1
+      retry_jid = DelayedCreateTwitterUserWorker.perform_in(sleep_seconds.seconds, values)
+      logger.warn "Retry(too many requests) after #{sleep_seconds} seconds. #{values['user_id']} #{values['uid']} #{retry_jid}"
       logger.info ex.backtrace.grep_v(/\.bundle/).join "\n"
     else
-      logger.warn "recover #{ex.class.name.demodulize} #{values['user_id']} #{values['uid']} #{retry_jid}"
+      retry_jid = DelayedCreateTwitterUserWorker.perform_async(values)
+      logger.warn "Retry(#{ex.class.name.demodulize}) #{values['user_id']} #{values['uid']} #{retry_jid}"
     end
   end
 
@@ -207,5 +206,13 @@ class CreateTwitterUserWorker
       error_class: ex.class,
       error_message: ex.message.truncate(180)
     )
+  end
+
+  def too_old?(log)
+    log.enqueued_at < 1.minutes.ago
+  end
+
+  def too_busy?(log)
+    Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && log.auto
   end
 end
