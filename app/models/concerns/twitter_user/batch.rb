@@ -5,7 +5,7 @@ module Concerns::TwitterUser::Batch
 
   class_methods do
     def fetch_and_create(uid)
-      Batch.fetch_and_create(uid)
+      Rails.logger.silence { Batch.fetch_and_create(uid) }
     end
   end
 
@@ -40,7 +40,8 @@ module Concerns::TwitterUser::Batch
 
       if t_user.suspended
         create_friendless_record(twitter_user)
-        return logger "Create suspended #{uid}"
+        logger "Suspended#{'(create)' if twitter_user.persisted?} #{uid}"
+        return twitter_user.persisted? ? twitter_user : nil
       end
 
       if t_user.protected && client.verify_credentials.id != t_user.id
@@ -50,13 +51,15 @@ module Concerns::TwitterUser::Batch
           client = User.find_by(uid: friendship_uid).api_client
         else
           create_friendless_record(twitter_user)
-          return logger "Create protected #{uid}"
+          logger "Protected#{'(create)' if twitter_user.persisted?} #{uid}"
+          return twitter_user.persisted? ? twitter_user : nil
         end
       end
 
       if twitter_user.too_many_friends?(login_user: user)
         create_friendless_record(twitter_user)
-        return logger "Create too many friends #{uid}"
+        logger "Too many friends#{'(create)' if twitter_user.persisted?} #{uid}"
+        return twitter_user.persisted? ? twitter_user : nil
       end
 
       tries = 3
@@ -80,6 +83,41 @@ module Concerns::TwitterUser::Batch
         return logger "Inconsistent #{uid} [#{t_user.friends_count}, #{friend_uids.size}] [#{t_user.followers_count}, #{follower_uids.size}]"
       end
 
+      if twitter_user_changed?(uid, friend_uids, follower_uids)
+        create_twitter_user(twitter_user, friend_uids, follower_uids)
+      else
+        logger "Not changed #{uid}"
+      end
+
+      create_twitter_db_user(twitter_user, friend_uids, follower_uids, client: client)
+
+      twitter_user.persisted? ? twitter_user : nil
+    end
+
+    private
+
+    def self.retryable?(ex)
+      # Twitter::Error::InternalServerError Internal error
+      # Twitter::Error::ServiceUnavailable Over capacity
+      # Twitter::Error execution expired
+
+      ['Internal error', 'Over capacity', 'execution expired'].include? ex.message
+    end
+
+    def self.create_friendless_record(twitter_user)
+      ActiveRecord::Base.transaction do
+        unless TwitterUser.exists?(uid: twitter_user.uid)
+          twitter_user.assign_attributes(friends_size: 0, followers_size: 0)
+          twitter_user.save!(validate: false)
+        end
+
+        unless TwitterDB::User.exists?(uid: twitter_user.uid)
+          TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
+        end
+      end
+    end
+
+    def self.create_twitter_user(twitter_user, friend_uids, follower_uids)
       begin
         ActiveRecord::Base.transaction do
           twitter_user.assign_attributes(friends_size: friend_uids.size, followers_size: follower_uids.size)
@@ -87,12 +125,28 @@ module Concerns::TwitterUser::Batch
           Friendships.import(twitter_user.id, friend_uids, follower_uids)
         end
       rescue => e
-        return logger "Friendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
+        logger "Friendships.import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
+        return
       end
 
-      tries = 3
+      uid = twitter_user.uid.to_i
+
       begin
-        Rails.logger.silence { TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client) }
+        Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+        Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+
+        OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
+        OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
+        MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
+      rescue => e
+        logger "Unfriendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
+      end
+    end
+
+    def self.create_twitter_db_user(twitter_user, friend_uids, follower_uids, client:)
+      begin
+        tries ||= 3
+        TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
       rescue => e
         if retryable?(e)
           (tries -= 1).zero? ? logger("Retry limit exceeded(fetch_and_import) #{uid}") : retry
@@ -109,30 +163,15 @@ module Concerns::TwitterUser::Batch
           TwitterDB::Friendships.import(twitter_user.uid, friend_uids, follower_uids)
         end
       rescue => e
-        return logger "TwitterDB::Friendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
+        logger "TwitterDB::Friendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
       end
-
-      twitter_user
     end
 
-    private
-
-    def self.retryable?(ex)
-      # Twitter::Error::InternalServerError Internal error
-      # Twitter::Error::ServiceUnavailable Over capacity
-      # Twitter::Error execution expired
-
-      ['Internal error', 'Over capacity', 'execution expired'].include? ex.message
-    end
-
-    def self.create_friendless_record(twitter_user)
-      ActiveRecord::Base.transaction do
-        twitter_user.assign_attributes(friends_size: 0, followers_size: 0)
-        twitter_user.save!(validate: false)
-        unless TwitterDB::User.exists?(uid: twitter_user.uid)
-          TwitterDB::User.create!(uid: twitter_user.uid, screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: -1, followers_size: -1)
-        end
-      end
+    def self.twitter_user_changed?(uid, friend_uids, follower_uids)
+      twitter_user = TwitterUser.latest(uid)
+      twitter_user.nil? ||
+        twitter_user.friendships.pluck(:friend_uid) != friend_uids ||
+        twitter_user.followerships.pluck(:follower_uid) != follower_uids
     end
 
     def self.logger(message)

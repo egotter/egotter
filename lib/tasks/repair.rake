@@ -92,10 +92,8 @@ namespace :repair do
 
         twitter_user = TwitterUser.find(twitter_user_id)
 
-        ActiveRecord::Base.transaction do
-          Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
-          Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
-        end
+        Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+        Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
 
         OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
         OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)

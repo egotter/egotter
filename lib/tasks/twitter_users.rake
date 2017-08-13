@@ -35,12 +35,11 @@ namespace :twitter_users do
     end
 
     if processed.any?
-      users = TwitterDB::User.where(uid: processed.take(500).map(&:uid)).index_by(&:uid)
-      puts "\nprocessed:"
-      puts processed.take(500).map { |tu|
-        u = users[tu.uid.to_i]
-        "  #{tu.uid} [#{tu.friends_size}, #{tu.friends_count}, #{u&.friends_size}, #{u&.friends_count}] [#{tu.followers_size}, #{tu.followers_count}, #{u&.followers_size}, #{u&.followers_count}]"
-      }.join("\n")
+      puts "\ncreated:"
+      processed.take(500).each do |twitter_user|
+        print " #{twitter_user.uid} "
+        twitter_user.debug_print_friends
+      end
     end
 
     if skipped_reasons.any?

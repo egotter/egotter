@@ -50,8 +50,16 @@ class ImportTwitterUserRelationsWorker
 
 
     import_friendships(uid, twitter_user, friend_uids, follower_uids)
-    import_unfriendships(uid)
-    import_one_sided_friendships(uid, twitter_user)
+
+    begin
+      Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
+      Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+      OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
+      OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
+      MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
+    rescue => e
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+    end
 
     import_twitter_db_users(friend_uids + follower_uids, client)
     import_twitter_db_friendships(uid, friend_uids, follower_uids)
@@ -133,21 +141,6 @@ class ImportTwitterUserRelationsWorker
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid} #{twitter_user.inspect}"
-  end
-
-  def import_unfriendships(uid)
-    Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
-    Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
-  end
-
-  def import_one_sided_friendships(uid, twitter_user)
-    OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
-    OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
-    MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
   end
 
   def import_twitter_db_friendships(uid, friend_uids, follower_uids)
