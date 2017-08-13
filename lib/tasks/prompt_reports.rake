@@ -40,7 +40,7 @@ namespace :prompt_reports do
 
     ids[:sendable].each.with_index do |user_id, i|
       begin
-        Rails.logger.silence { CreatePromptReportWorker.new.perform(user_id) }
+        Rails.logger.silence(Logger::WARN) { CreatePromptReportWorker.new.perform(user_id) }
       rescue => e
         errors << {time: Time.zone.now, user_id: user_id, error_class: e.class, error_message: e.message}
         fatal = errors.size >= processed / 10

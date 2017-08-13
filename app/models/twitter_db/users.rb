@@ -23,13 +23,12 @@ module TwitterDB
 
       if filtered.size >= 10
         logger "#{self}##{__method__}: Too many suspended uids #{filtered.size} #{filtered.inspect.truncate(100)}"
-        []
-      else
-        t_users =  filtered.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
-        logger "#{self}##{__method__}: Import suspended uids #{filtered.inspect}" if filtered.any?
-        import(t_users)
-        filtered
       end
+
+      t_users =  filtered.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
+      logger "#{self}##{__method__}: Import suspended uids #{filtered.inspect}" if filtered.any?
+      import(t_users)
+      filtered
     end
 
     private

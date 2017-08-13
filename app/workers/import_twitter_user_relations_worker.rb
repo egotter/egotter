@@ -125,7 +125,7 @@ class ImportTwitterUserRelationsWorker
 
   def import_twitter_db_users(uids, client)
     return if uids.blank?
-    silent_transaction { TwitterDB::Users.fetch_and_import(uids, client: client) }
+    Rails.logger.silence(Logger::WARN) { TwitterDB::Users.fetch_and_import(uids, client: client) }
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
   end
