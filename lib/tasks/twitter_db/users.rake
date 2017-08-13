@@ -8,42 +8,30 @@ namespace :twitter_db do
         sigint = true
       end
 
-      with_friends_uids = TwitterDB::User.with_friends.pluck(:uid)
-
-      specified_uids =
-        if ENV['UIDS']
-          ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
-        else
-          User.authorized.pluck(:uid).map(&:to_i).reject { |user| with_friends_uids.include? user.uid }.take(500)
-        end
+      friendless_uids = []
+      TwitterDB::User.friendless.select(:id, :uid).find_in_batches(batch_size: 100) do |users|
+        friendless_uids += users.map(&:uid)
+        break if friendless_uids.size >= 500
+      end
 
       failed = false
       processed = []
       skipped = 0
       skipped_reasons = []
 
-      specified_uids.each do |uid|
-        if with_friends_uids.include? uid
-          skipped += 1
-          skipped_reasons << "With friends #{uid}"
-          next
-        end
-
-        raise 'WIP'
-
+      friendless_uids.each do |uid|
         twitter_user = TwitterUser.fetch_and_create(uid)
-        processed << twitter_user.uid.to_i if twitter_user
+        processed << twitter_user if twitter_user
 
         break if sigint || failed
       end
 
       if processed.any?
-        users = TwitterDB::User.where(uid: processed.take(500)).index_by(&:uid)
-        puts "\nprocessed:"
-        puts processed.take(500).map { |uid|
-          u = users[uid.to_i]
-          "  #{uid} [#{u&.friends_size}, #{u&.friends_count}] [#{u&.followers_size}, #{u&.followers_count}]"
-        }.join("\n")
+        puts "\ncreated:"
+        processed.take(500).each do |twitter_user|
+          print "  #{twitter_user.uid}"
+          twitter_user.debug_print_friends
+        end
       end
 
       if skipped_reasons.any?
@@ -52,7 +40,7 @@ namespace :twitter_db do
       end
 
       puts "\nupdate #{(sigint || failed ? 'suspended:' : 'finished:')}"
-      puts "  uids: #{specified_uids.size}, processed: #{processed.size}, skipped: #{skipped}"
+      puts "  uids: #{friendless_uids.size}, processed: #{processed.size}, skipped: #{skipped}"
     end
   end
 end

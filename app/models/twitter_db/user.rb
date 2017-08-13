@@ -38,6 +38,10 @@ module TwitterDB
       where.not(friends_size: -1, followers_size: -1)
     end
 
+    def self.friendless
+      where(friends_size: -1, followers_size: -1)
+    end
+
     def self.builder(uid)
       Builder.new(uid)
     end
