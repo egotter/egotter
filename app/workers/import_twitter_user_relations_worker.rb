@@ -58,7 +58,7 @@ class ImportTwitterUserRelationsWorker
       OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
       MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
     rescue => e
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+      logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
     end
 
     import_twitter_db_users(friend_uids + follower_uids, client)
@@ -75,7 +75,7 @@ class ImportTwitterUserRelationsWorker
       when 'TooManyRequests'     then handle_retryable_exception(e, user_id, uid, twitter_user.id, options)
       when 'InternalServerError' then handle_retryable_exception(e, user_id, uid, twitter_user.id, options)
       when 'ServiceUnavailable'  then handle_retryable_exception(e, user_id, uid, twitter_user.id, options)
-      else logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{values.inspect}"
+      else logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
     end
 
     job.assign_attributes(error_class: e.class, error_message: e.message)
@@ -99,7 +99,7 @@ class ImportTwitterUserRelationsWorker
     begin
       job.update!(finished_at: Time.zone.now)
     rescue => e
-      logger.warn "#{self.class}##{__method__}: Creating a log is failed. #{e.class} #{e.message}"
+      logger.warn "#{__method__}: Creating a log is failed. #{e.class} #{e.message}"
     end
   end
 
@@ -110,7 +110,7 @@ class ImportTwitterUserRelationsWorker
     FavoriteFriendship.import_from!(uid, uids)
     uids
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
     []
   end
 
@@ -119,7 +119,7 @@ class ImportTwitterUserRelationsWorker
     CloseFriendship.import_from!(uid, uids)
     uids
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
     []
   end
 
@@ -127,12 +127,12 @@ class ImportTwitterUserRelationsWorker
     return if uids.blank?
     Rails.logger.silence(Logger::WARN) { TwitterDB::Users.fetch_and_import(uids, client: client) }
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
   end
 
   def import_friendships(uid, twitter_user, friend_uids, follower_uids)
     if twitter_user.friends_size != friend_uids.size || twitter_user.followers_size != follower_uids.size
-      logger.warn "#{self.class}##{__method__}: It is not consistent. twitter_user(id=#{twitter_user.id}) [#{twitter_user.friends_size}, #{twitter_user.followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
+      logger.warn "#{__method__}: It is not consistent. twitter_user(id=#{twitter_user.id}) [#{twitter_user.friends_size}, #{twitter_user.followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
     end
 
     silent_transaction do
@@ -140,14 +140,14 @@ class ImportTwitterUserRelationsWorker
       twitter_user.update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid} #{twitter_user.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid} #{twitter_user.inspect}"
   end
 
   def import_twitter_db_friendships(uid, friend_uids, follower_uids)
     friends_size = TwitterDB::User.where(uid: friend_uids).size
     followers_size = TwitterDB::User.where(uid: follower_uids).size
     if friends_size != friend_uids.size || followers_size != follower_uids.size
-      logger.warn "#{self.class}##{__method__}: It is not consistent. #{uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
+      logger.warn "#{__method__}: It is not consistent. #{uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
     end
 
     silent_transaction do
@@ -155,7 +155,7 @@ class ImportTwitterUserRelationsWorker
       TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
   end
 
   def import_inactive_friendships(uid, twitter_user)
@@ -169,7 +169,7 @@ class ImportTwitterUserRelationsWorker
     InactiveFollowership.import_from!(uid, TwitterUser.select_inactive_users(followers).map(&:uid))
     InactiveMutualFriendship.import_from!(uid, TwitterUser.select_inactive_users(mutual_friends).map(&:uid))
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
   end
 
   def silent_transaction(retri: false, retry_limit: 3, retry_timeout: 10.seconds, retry_message: '', &block)
@@ -186,7 +186,7 @@ class ImportTwitterUserRelationsWorker
 
         retry_count += 1
         sleep_seconds = rand
-        logger.info "#{self.class}##{__method__}: #{retry_count}/#{retry_limit} #{retry_message}"
+        logger.info "#{__method__}: #{retry_count}/#{retry_limit} #{retry_message}"
         sleep(sleep_seconds)
         retry
       else

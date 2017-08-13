@@ -10,7 +10,17 @@ module TwitterDB
     class Batch
       def self.fetch_and_import(uids, client:)
         uids = uids.uniq.map(&:to_i)
-        users = client.users(uids)
+
+        begin
+          users = client.users(uids)
+        rescue => e
+          if e.message == 'No user matches for specified terms.'
+            users = []
+          else
+            raise
+          end
+        end
+
         imported = import(users)
         import_suspended(uids - users.map(&:id)) if uids.size != imported.size
       end
