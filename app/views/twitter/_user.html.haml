@@ -16,12 +16,12 @@
   .media-right
     .buttons
       - if current_user_friend_uids.any? && current_user_uid != user.uid.to_i
-        - if current_user_friend_uids.include? user.uid
-          %button.btn.btn-success.follow{type: 'button'}
+        - if current_user_friend_uids.include? user.uid.to_i
+          %a.btn.btn-success.follow{href: "https://twitter.com/intent/follow?screen_name=#{user.screen_name}", onclick: "window.open(this.href, 'window', 'width=600, height=400, menubar=no, toolbar=no, scrollbars=yes'); return false;", target: "_blank"}
             %span.glyphicon.glyphicon-ok
             .visible-md-inline.visible-lg-inline= t('searches.common.following')
         - else
-          %button.btn.btn-default.no-follow{type: 'button'}
+          %a.btn.btn-default.no-follow{href: "https://twitter.com/intent/follow?screen_name=#{user.screen_name}", onclick: "window.open(this.href, 'window', 'width=600, height=400, menubar=no, toolbar=no, scrollbars=yes'); return false;", target: "_blank"}
             %i.text-muted.fa.fa-user-plus{'area-hidden': true}
             .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
 
