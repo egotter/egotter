@@ -136,11 +136,14 @@ class CreateTwitterUserWorker
       begin
         log.update!(call_count: (client ? client.call_count : -1), finished_at: Time.zone.now)
       rescue => e
-        logger.warn "#{self.class}##{__method__}: Creating a log is failed. #{e.class} #{e.message} #{values.inspect}"
+        logger.warn "Creating a log is failed. #{e.class} #{e.message} #{values.inspect}"
       end
     else
-      comment = delay ? 'A delay occurs.' : 'A log is nil.'
-      logger.warn "#{self.class}##{__method__}: #{comment} #{values.inspect}"
+      if delay
+        logger.warn "A delay occurs. #{values['user_id']} #{values['uid']} #{values['device_type']} #{values['auto']}"
+      else
+        logger.warn "A log is nil. #{values.inspect}"
+      end
     end
 
     benchmark.finish
