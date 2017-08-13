@@ -15,6 +15,7 @@ namespace :news_reports do
       end
 
     # user_ids = User.can_send_news.where(id: user_ids).pluck(:id)
+    user_ids = user_ids.select { |id| id > 110981 }
 
     processed = 0
     failed = false
@@ -24,8 +25,13 @@ namespace :news_reports do
       user = User.find(user_id)
       twitter_user = user.twitter_user
 
+      unless twitter_user
+        puts "No TwitterUser #{user_id}"
+        next
+      end
+
       if twitter_user.unfollowerships.empty?
-        puts "Skipped #{user_id}"
+        puts "Empty #{user_id}"
         next
       end
 
@@ -35,8 +41,19 @@ namespace :news_reports do
       begin
         dm = user.api_client.create_direct_message(user.uid.to_i, report.build_message)
       rescue => e
-        puts "#{e.class} #{e.message.truncate(100)} #{user_id}"
-        failed = true
+        if e.message == 'Invalid or expired token.'
+          user&.update(authorized: false)
+          puts "Invalid token #{user_id}"
+          next
+        elsif e.message == 'Your account is suspended and is not permitted to access this feature.'
+          puts "Suspended #{user_id}"
+          next
+        elsif e.message.start_with? 'To protect our users from spam and other malicious activity,'
+          puts "Temporarily locked #{user_id}"
+        else
+          puts "#{e.class} #{e.message.truncate(100)} #{user_id}"
+          failed = true
+        end
       end
 
       if dm
