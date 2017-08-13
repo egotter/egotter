@@ -18,18 +18,9 @@
 #
 
 class SearchReport < ActiveRecord::Base
+  include Concerns::Report::Common
+
   belongs_to :user
-
-  def self.latest(user_id)
-    order(created_at: :desc).find_by(user_id: user_id)
-  end
-
-  def self.generate_token
-    begin
-      t = SecureRandom.urlsafe_base64(10)
-    end while PromptReport.exists?(token: t)
-    t
-  end
 
   def build_message(html: false)
     linebreak = html ? '<br>' : "\n"
@@ -42,26 +33,14 @@ class SearchReport < ActiveRecord::Base
     end
   end
 
-  def show_dm_text
-    user.api_client.direct_message(message_id).text
-  end
-
-  def read?
-    !read_at.nil?
-  end
-
   private
-
-  def screen_name
-    @screen_name ||= User.find(user_id).screen_name
-  end
 
   def title
     I18n.t('search_report.title', user: screen_name)
   end
 
   def url
-    Rails.application.routes.url_helpers.search_url(screen_name: screen_name, token: token, medium: 'dm', type: 'search')
+    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'search')
   end
 
   def link

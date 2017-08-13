@@ -33,4 +33,5 @@
   - UpdatePromptReportWorker
   - UpdateSearchLogWorker
   - UpdateSearchReportWorker
+  - UpdateNewsReportWorker
   - UpdateTwitterUserWorker

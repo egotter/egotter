@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170808052623) do
+ActiveRecord::Schema.define(version: 20170813091959) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -348,6 +348,19 @@ ActiveRecord::Schema.define(version: 20170808052623) do
 
   add_index "mutual_friendships", ["friend_uid"], name: "index_mutual_friendships_on_friend_uid", using: :btree
   add_index "mutual_friendships", ["from_uid"], name: "index_mutual_friendships_on_from_uid", using: :btree
+
+  create_table "news_reports", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4,   null: false
+    t.datetime "read_at"
+    t.string   "message_id", limit: 191, null: false
+    t.string   "token",      limit: 191, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "news_reports", ["created_at"], name: "index_news_reports_on_created_at", using: :btree
+  add_index "news_reports", ["token"], name: "index_news_reports_on_token", unique: true, using: :btree
+  add_index "news_reports", ["user_id"], name: "index_news_reports_on_user_id", using: :btree
 
   create_table "notification_messages", force: :cascade do |t|
     t.integer  "user_id",     limit: 4,                     null: false

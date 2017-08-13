@@ -13,6 +13,7 @@
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
   - UpdateSearchReportWorker
+  - UpdateNewsReportWorker
 
   - CreateForbiddenUserWorker
   - CreatePollingLogWorker

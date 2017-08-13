@@ -19,18 +19,9 @@
 #
 
 class PromptReport < ActiveRecord::Base
+  include Concerns::Report::Common
+
   belongs_to :user
-
-  def self.latest(user_id)
-    order(created_at: :desc).find_by(user_id: user_id)
-  end
-
-  def self.generate_token
-    begin
-      t = SecureRandom.urlsafe_base64(10)
-    end while PromptReport.exists?(token: t)
-    t
-  end
 
   def build_message(html: false)
     linebreak = html ? '<br>' : "\n"
@@ -43,23 +34,11 @@ class PromptReport < ActiveRecord::Base
     end
   end
 
-  def show_dm_text
-    user.api_client.direct_message(message_id).text
-  end
-
   def changes
     @changes ||= JSON.parse(changes_json, symbolize_names: true)
   end
 
-  def read?
-    !read_at.nil?
-  end
-
   private
-
-  def screen_name
-    @screen_name ||= user.screen_name
-  end
 
   def title
     I18n.t('prompt_report.title', user: screen_name)
@@ -74,7 +53,7 @@ class PromptReport < ActiveRecord::Base
   end
 
   def url
-    Rails.application.routes.url_helpers.search_url(screen_name: screen_name, token: token, medium: 'dm', type: 'prompt')
+    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'prompt')
   end
 
   def link

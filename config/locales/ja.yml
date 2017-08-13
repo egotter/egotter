@@ -546,6 +546,7 @@ ja:
     tweet_result: "結果をつぶやく"
     do_tweet: "つぶやく"
     delim: "、"
+    asterisk: "*"
     honorific: "さん"
     between_from: "から"
     between_to: "まで"

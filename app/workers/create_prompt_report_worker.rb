@@ -84,7 +84,7 @@ class CreatePromptReportWorker
     begin
       ActiveRecord::Base.transaction do
         new_report.update!(message_id: dm.id)
-        user.notification_setting.touch(:last_dm_at)
+        user.notification_setting.update!(last_dm_at: Time.zone.now)
       end
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
