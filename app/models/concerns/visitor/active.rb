@@ -7,6 +7,10 @@ module Concerns::Visitor::Active
     def active(days = 7)
       where('last_access_at > ?', days.days.ago)
     end
+
+    def inactive(days = 7)
+      where('last_access_at < ?', days.days.ago)
+    end
   end
 
   included do
@@ -18,8 +22,8 @@ module Concerns::Visitor::Active
   end
 
   # Last session was more than 7 days ago
-  def inactive?
-    !active?
+  def inactive?(days = 7)
+    !active?(days)
   end
 
   # Last session was within the last 7 days
