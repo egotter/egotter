@@ -40,6 +40,16 @@
       });
     }
 
+    function updatesNotFound () {
+      if (signedIn) {
+        checkForFollow();
+      } else {
+        if (friendless) {
+          $('.welcome-box').show().sticky();
+        }
+      }
+    }
+
     function checkForUpdates () {
       $.get(checkForUpdatesPath)
         .done(function (res) {
@@ -57,10 +67,7 @@
               setTimeout(checkForUpdates, 8000);
             } else {
               $updateBox.parent().hide();
-
-              if (signedIn) {
-                checkForFollow();
-              }
+              updatesNotFound();
             }
           }
         })
@@ -71,16 +78,12 @@
     }
 
     $(function () {
-      if (friendless && !signedIn) {
-        $('.welcome-box').show().sticky();
+      if (jid) {
+        console.log('Worker started', jid);
+        $updateBox.show().sticky();
+        setTimeout(checkForUpdates, 3000);
       } else {
-        if (jid) {
-          console.log('Worker started', jid);
-          $updateBox.show().sticky();
-          setTimeout(checkForUpdates, 3000);
-        } else {
-          setTimeout(checkForFollow, 3000);
-        }
+        updatesNotFound();
       }
     });
   })();
