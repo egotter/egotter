@@ -23,5 +23,6 @@
   - CreateSearchLogWorker
   - CreateSignInLogWorker
   - TweetEgotterWorker
+  - UpdateSearchHistoriesWorker
   - UpdateSearchLogWorker
   - rollbar
