@@ -28,7 +28,10 @@ class StatusesController < ApplicationController
       url = "https://twitter.com/#{@twitter_user.screen_name}/status/#{params[:status_id]}"
       render json: open("https://publish.twitter.com/oembed?align=center&url=#{url}").read
     else
-      render :bad_request
+      head :not_found
     end
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
+    head :internal_server_error
   end
 end

@@ -50,6 +50,7 @@ namespace :news_reports do
           next
         elsif e.message.start_with? 'To protect our users from spam and other malicious activity,'
           puts "Temporarily locked #{user_id}"
+          next
         else
           puts "#{e.class} #{e.message.truncate(100)} #{user_id}"
           failed = true
