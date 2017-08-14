@@ -49,15 +49,15 @@ Rails.application.routes.draw do
       inactive_followers
       friends
       followers
-    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu}/:screen_name") }
+    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu}/%{screen_name}") }
   %w(
       new_friends
       new_followers
-    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu.remove('new_')}/:screen_name") }
-  get '/searches/:screen_name/clusters_belong_to', to: redirect('/clusters/:screen_name')
+    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu.remove('new_')}/%{screen_name}") }
+  get '/searches/:screen_name/clusters_belong_to', to: redirect('/clusters/%{screen_name}')
 
   resources :searches, only: %i(show), param: :screen_name
-  get '/searches/:screen_name', to: redirect('/timelines/:screen_name')
+  get '/searches/:screen_name', to: redirect('/timelines/%{screen_name}')
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
   match 'searches/:screen_name/force_update' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :post
   match 'searches/:uid/force_reload' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :post
