@@ -31,12 +31,4 @@ class SearchResultsController < ApplicationController
       end
     end
   end
-
-  def usage_stats
-    head :not_found
-  end
-
-  def close_friends
-    head :not_found
-  end
 end

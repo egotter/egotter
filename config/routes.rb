@@ -13,9 +13,10 @@ Rails.application.routes.draw do
     end
   end
 
-  %i(maintenance privacy_policy terms_of_service sitemap menu support).each do |name|
+  %i(maintenance privacy_policy terms_of_service sitemap support).each do |name|
     get name, to: "misc##{name}", as: name
   end
+  get '/menu', to: redirect('/settings')
 
   %i(friends followers statuses close_friends scores usage_stats unfriends unfollowers blocking_or_blocked).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
@@ -25,7 +26,6 @@ Rails.application.routes.draw do
   resources :one_sided_friends, only: %i(create show), param: :screen_name
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
 
-  resources :unfriends, only: %i(create show), param: :screen_name
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
 
   resources :inactive_friends, only: %i(create show), param: :screen_name
@@ -40,26 +40,30 @@ Rails.application.routes.draw do
   get 'clusters', to: 'clusters#new', as: :clusters_top
 
   resources :searches, only: %i(create), param: :screen_name do
-    %i(
+    get 'favoriting', on: :member
+  end
+  %i(
       close_friends
       usage_stats
-      clusters_belong_to
-      new_friends
-      new_followers
-      favoriting
       inactive_friends
       inactive_followers
       friends
       followers
-    ).each { |menu| get menu, on: :member }
-  end
+    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu}/:screen_name") }
+  %w(
+      new_friends
+      new_followers
+    ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu.remove('new_')}/:screen_name") }
+  get '/searches/:screen_name/clusters_belong_to', to: redirect('/clusters/:screen_name')
+
   resources :searches, only: %i(show), param: :screen_name
+  get '/searches/:screen_name', to: redirect('/timelines/:screen_name')
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
-  post 'searches/:screen_name/force_update', to: 'searches#force_update', as: :force_update
-  post 'searches/:uid/force_reload', to: 'searches#force_reload', as: :force_reload
+  match 'searches/:screen_name/force_update' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :post
+  match 'searches/:uid/force_reload' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :post
 
   resources :search_results, only: [], param: :uid do
-    %i(favoriting usage_stats).each { |menu| get menu, on: :member }
+    %i(favoriting).each { |menu| get menu, on: :member }
   end
 
   resources :timelines, only: %i(show), param: :screen_name

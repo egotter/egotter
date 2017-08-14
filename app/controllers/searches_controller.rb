@@ -5,21 +5,20 @@ class SearchesController < ApplicationController
   include PageCachesHelper
   include WorkersHelper
 
-  before_action :need_login,     only: %i(force_update)
   before_action :reject_crawler, only: %i(create waiting)
-  before_action(only: Search::MENU + %i(create show force_update)) { valid_screen_name?(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show force_update)) { not_found_screen_name?(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show force_update)) { @tu = build_twitter_user(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show force_update)) { authorized_search?(@tu) }
-  before_action(only: Search::MENU + %i(show force_update)) { existing_uid?(@tu.uid.to_i) }
-  before_action only: Search::MENU + %i(show force_update) do
+  before_action(only: Search::MENU + %i(create show)) { valid_screen_name?(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show)) { not_found_screen_name?(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show)) { authorized_search?(@tu) }
+  before_action(only: Search::MENU + %i(show)) { existing_uid?(@tu.uid.to_i) }
+  before_action only: Search::MENU + %i(show) do
     @twitter_user = TwitterUser.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)
   end
   before_action(only: %i(waiting)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(waiting)) { searched_uid?(params[:uid].to_i) }
 
-  before_action only: (%i(new create waiting show force_update) + Search::MENU) do
+  before_action only: (%i(new create waiting show) + Search::MENU) do
     push_referer
 
     if session[:sign_in_from].present?
@@ -59,21 +58,6 @@ class SearchesController < ApplicationController
     @twitter_user = tu
   end
 
-  def force_reload
-    uid = params[:uid].to_i
-    if valid_uid?(uid) && existing_uid?(uid)
-      ::Cache::PageCache.new.delete(uid)
-      return redirect_to search_path(screen_name: TwitterUser.latest(uid).screen_name)
-    end
-
-    head :bad_request
-  end
-
-  def force_update
-    # TODO This action is currently ignored.
-    head :ok
-  end
-
   %i(favoriting).each do |menu|
     define_method(menu) do
       @menu = menu
@@ -81,43 +65,5 @@ class SearchesController < ApplicationController
       @description = "#{@title} - #{@twitter_user.description}"
       render :common
     end
-  end
-
-  def usage_stats
-    redirect_to usage_stat_path(screen_name: @twitter_user.screen_name), status: 301
-  end
-
-  %w(new_friends new_followers).each do |menu|
-    define_method(menu) do
-      redirect_to send("#{menu.remove(/^new_/).singularize}_path", screen_name: @twitter_user.screen_name), status: 301
-    end
-  end
-
-  def close_friends
-    redirect_to close_friend_path(screen_name: @twitter_user.screen_name), status: 301
-  end
-
-  def clusters_belong_to
-    redirect_to cluster_path(screen_name: @twitter_user.screen_name), status: 301
-  end
-
-  %i(inactive_friends inactive_followers friends followers).each do |menu|
-    define_method(menu) do
-      redirect_to send("#{menu.singularize}_path", screen_name: @twitter_user.screen_name), status: 301
-    end
-  end
-
-  %w(inactive_friends friends).each do |menu|
-    define_method(menu) do
-      redirect_to send("#{menu.singularize}_path", screen_name: @twitter_user.screen_name), status: 301
-    end
-  end
-
-  def inactive_followers
-    redirect_to inactive_friend_path(screen_name: @twitter_user.screen_name, type: 'inactive_followers'), status: 301
-  end
-
-  def followers
-    redirect_to friend_path(screen_name: @twitter_user.screen_name, type: 'followers'), status: 301
   end
 end
