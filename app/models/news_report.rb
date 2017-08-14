@@ -17,42 +17,58 @@
 #  index_news_reports_on_user_id     (user_id)
 #
 
-require 'forwardable'
-
 class NewsReport < ActiveRecord::Base
-  extend Forwardable
   include Concerns::Report::Common
 
   belongs_to :user
 
-  def build_message(html: false)
-    template =
-      if html
-        Rails.root.join('app/views/report_mailer/news_dm.ja.html.erb').read
-      else
-        Rails.root.join('app/views/report_mailer/news_dm.ja.text.erb').read
-      end
+  def self.come_back_inactive_user(user_id)
+    report = new(user_id: user_id, token: generate_token)
+    report.message_builder = ComeBackInactiveUserMessage.new(report.user, report.token, :text)
+    report
+  end
 
-    ERB.new(template).result(binding)
+  def self.come_back_old_user(user_id)
+    report = new(user_id: user_id, token: generate_token)
+    report.message_builder = ComeBackOldUserMessage.new(report.user, report.token, :text)
+    report
   end
 
   private
 
-  def url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'news')
+  def touch_column
+    :last_news_at
   end
-
-  def message_values
-    @message_values ||= ComeBackMessage.new(user)
-  end
-
-  def_delegators :message_values, :removing_names, :removing_count, :removed_names, :removed_count
 
   class ComeBackMessage
-    attr_reader :twitter_user
+    attr_reader :user, :token, :format
 
-    def initialize(user)
-      @twitter_user = user.twitter_user
+    def initialize(user, token, format)
+      @user = user
+      @token = token
+      @format = format
+    end
+
+    def build
+      ERB.new(Rails.root.join(template_path).read).result(binding)
+    end
+
+    private
+
+    def screen_name
+      user.screen_name
+    end
+
+    def url
+      Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'news')
+    end
+
+    def template_path
+      "app/views/news_reports/#{self.class.name.demodulize.underscore.remove(/_message$/)}.ja.#{format}.erb"
+    end
+
+    def twitter_user
+      user.twitter_user
     end
 
     def removing_names
@@ -78,5 +94,11 @@ class NewsReport < ActiveRecord::Base
     def removed_count
       twitter_user.unfollowerships.size
     end
+  end
+
+  class ComeBackInactiveUserMessage < ComeBackMessage
+  end
+
+  class ComeBackOldUserMessage < ComeBackMessage
   end
 end

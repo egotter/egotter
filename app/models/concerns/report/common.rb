@@ -17,6 +17,22 @@ module Concerns::Report::Common
   end
 
   included do
+    attr_accessor :message_builder
+  end
+
+  def deliver
+    dm = user.api_client.create_direct_message(user.uid.to_i, message_builder.build)
+
+    ActiveRecord::Base.transaction do
+      update!(message_id: dm.id)
+      user.notification_setting.update!(touch_column => Time.zone.now)
+    end
+
+    self
+  end
+
+  def touch_column
+    raise NotImplementedError
   end
 
   def show_dm_text
@@ -28,7 +44,7 @@ module Concerns::Report::Common
   end
 
   def screen_name
-    @screen_name ||= User.find(user_id).screen_name
+    @screen_name ||= user.screen_name
   end
 
 end
