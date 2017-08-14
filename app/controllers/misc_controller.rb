@@ -19,10 +19,6 @@ class MiscController < ApplicationController
     redirect_to 'https://egotter.com/sitemap.xml.gz'
   end
 
-  def menu
-    redirect_to settings_path, status: 301
-  end
-
   def support
   end
 end
