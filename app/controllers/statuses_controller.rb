@@ -22,16 +22,4 @@ class StatusesController < ApplicationController
   def show
     @statuses = @twitter_user.statuses.limit(20)
   end
-
-  def oembed
-    if @twitter_user.statuses.limit(20).any? { |status| status.tweet_id == params[:status_id].to_i }
-      url = "https://twitter.com/#{@twitter_user.screen_name}/status/#{params[:status_id]}"
-      render json: open("https://publish.twitter.com/oembed?align=center&url=#{url}").read
-    else
-      head :not_found
-    end
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-    head :internal_server_error
-  end
 end

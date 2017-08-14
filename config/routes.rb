@@ -21,7 +21,7 @@ Rails.application.routes.draw do
   %i(friends followers statuses close_friends scores usage_stats unfriends unfollowers blocking_or_blocked).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
-  get 'statuses/:screen_name/oembed', to: 'statuses#oembed', as: :oembed_status
+  match 'statuses/:screen_name/oembed' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :get
 
   resources :one_sided_friends, only: %i(create show), param: :screen_name
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top

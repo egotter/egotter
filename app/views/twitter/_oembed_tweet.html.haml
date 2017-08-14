@@ -1,10 +1,4 @@
-.oembed-tweet{class: "tweet-#{tweet.tweet_id}"}
-
-:javascript
-  $(function () {
-    var url = '#{oembed_status_path(screen_name: tweet.user.screen_name, status_id: tweet.tweet_id)}';
-    var selector = '.oembed-tweet.tweet-#{tweet.tweet_id}';
-    $.getJSON(url, function (data) {
-      $(selector).html(data.html);
-    });
-   });
+%blockquote.twitter-tweet{align: 'center'}
+  %p{dir: 'ltr', lang: 'ja'}= tweet.text
+  = "— #{tweet.user.name} (#{mention_name(tweet.user.screen_name)})"
+  = tweet_link(tweet)
