@@ -498,9 +498,14 @@ ja:
     show:
       updating: '%{user} のデータを更新中'
       update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
+      unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
+      followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
+      followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'
       update_result: 'ページを更新する'
       need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
+      need_follow: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'
       sign_in: 'ログインする'
+      follow: 'フォローする'
       let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
 
@@ -518,6 +523,8 @@ ja:
     inactive_followers: "いない"
     removing: "リム"
     removed: "リムられ"
+    unfriends: "リム"
+    unfollowers: "リムられ"
     blocking_or_blocked: "ブロック"
     others: "その他"
 

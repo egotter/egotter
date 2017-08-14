@@ -1,18 +1,18 @@
 <% result_path = update_history_path(uid: tu.uid) %>
-<div class="menu-items media">
+<div class="menu-items media" style="position: relative;">
   <%= link_to result_path, style: 'color: inherit; text-decoration: none; display: block;' do %>
     <h3 class="h4 media-heading"><%= t('update_histories.show.short_title', user: tu.mention_name) %></h3>
     <div class="text-center description"><%= t('update_histories.show.description', user: tu.mention_name) %></div>
+  <% end %>
 
-    <div class="media-body">
-      <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
-      <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
-      <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= histories.search_count %></div>
-      <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= histories.update_count %></div>
-    </div>
+    <div style="position: absolute; bottom: 15px; left: 15px; right: 15px;">
+      <div class="media-body">
+        <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
+        <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
+        <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= histories.search_count %></div>
+        <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= histories.update_count %></div>
+      </div>
 
-    <div>
       <%= link_to(t('dictionary.view_more'), result_path, class: 'btn btn-info btn-block btn-view-more') %>
     </div>
-  <% end %>
 </div>

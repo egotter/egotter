@@ -5,7 +5,7 @@
 
 .refresh-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  = t('common.show.update_is_coming', user: twitter_user.mention_name)
+  %span= t('common.show.update_is_coming', user: twitter_user.mention_name)
   = link_to(t('common.show.update_result'), timeline_path(screen_name: twitter_user.screen_name), class: 'btn btn-default btn-sm')
 
 .welcome-box.alert.alert-info.alert-dismissable
@@ -13,15 +13,32 @@
   = t('common.show.need_sign_in', user: twitter_user.mention_name)
   = link_to(t('common.show.sign_in'), sign_in_path(redirect_path: timeline_path(screen_name: twitter_user.screen_name)), class: 'btn btn-default btn-sm')
 
+.follow-box.alert.alert-warning.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('common.show.need_follow', user: twitter_user.mention_name)
+  = link_to(t('common.show.follow'), sign_in_path(redirect_path: timeline_path(screen_name: twitter_user.screen_name), follow: true), class: 'btn btn-default btn-sm')
+
 :javascript
   (function () {
     var checkForUpdatesPath = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i)}';
+    var checkForFollowPath = '#{check_for_follow_path(uid: twitter_user.uid)}';
     var retryCount = 0;
     var friendless = #{twitter_user.friendless?};
     var signedIn = #{user_signed_in?};
     var jid = "#{jid}";
 
     var $updateBox = $('.update-box');
+    var $refreshBox = $('.refresh-box');
+
+    function checkForFollow () {
+      $.getJSON(checkForFollowPath, function (res) {
+        console.log('checkForFollow', res);
+
+        if (!res.follow) {
+          $('.follow-box').show().sticky();
+        }
+      });
+    }
 
     function checkForUpdates () {
       $.get(checkForUpdatesPath)
@@ -29,19 +46,26 @@
         console.log('checkForUpdates', res);
 
           if (res.found) {
-            $updateBox.hide();
-            $('.refresh-box').show().sticky();
+            $updateBox.parent().hide();
+            if (res.text) {
+              $refreshBox.find('span').text(res.text);
+            }
+            $refreshBox.show().sticky();
           } else {
             if (retryCount < 2) {
               retryCount++;
               setTimeout(checkForUpdates, 8000);
             } else {
-              $updateBox.hide();
+              $updateBox.parent().hide();
+
+              if (signedIn) {
+                checkForFollow();
+              }
             }
           }
         })
         .fail(function (xhr) {
-          $updateBox.hide();
+          $updateBox.parent().hide();
           console.log('checkForUpdates failed.', xhr);
         });
     }
@@ -54,6 +78,8 @@
           console.log('Worker started', jid);
           $updateBox.show().sticky();
           setTimeout(checkForUpdates, 3000);
+        } else {
+          setTimeout(checkForFollow, 3000);
         }
       }
     });
