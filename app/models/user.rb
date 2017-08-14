@@ -3,7 +3,7 @@
 # Table name: users
 #
 #  id               :integer          not null, primary key
-#  uid              :string(191)      not null
+#  uid              :integer          not null
 #  screen_name      :string(191)      not null
 #  authorized       :boolean          default(TRUE), not null
 #  secret           :string(191)      not null

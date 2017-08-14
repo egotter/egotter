@@ -1,7 +1,7 @@
 class DeviseCreateUsers < ActiveRecord::Migration
   def change
     create_table(:users) do |t|
-      t.string   :uid,             null: false
+      t.integer  :uid,             null: false, limit: 8
       t.string   :screen_name,     null: false
       t.boolean  :authorized,      null: false, default: true
       t.string   :secret,          null: false

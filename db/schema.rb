@@ -824,7 +824,7 @@ ActiveRecord::Schema.define(version: 20170813091959) do
   add_index "user_retention_stats", ["date"], name: "index_user_retention_stats_on_date", unique: true, using: :btree
 
   create_table "users", force: :cascade do |t|
-    t.string   "uid",              limit: 191,                null: false
+    t.integer  "uid",              limit: 8,                  null: false
     t.string   "screen_name",      limit: 191,                null: false
     t.boolean  "authorized",                   default: true, null: false
     t.string   "secret",           limit: 191,                null: false
