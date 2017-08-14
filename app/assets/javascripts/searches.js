@@ -137,7 +137,7 @@ window.gaugeOptions = {
   title: null,
   pane: {
     center: ['50%', '85%'],
-    size: '140%',
+    size: '160%',
     startAngle: -90,
     endAngle: 90,
     background: {

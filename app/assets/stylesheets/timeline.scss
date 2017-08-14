@@ -1,13 +1,15 @@
 .update-box,
 .refresh-box,
-.welcome-box {
+.welcome-box,
+.follow-box {
   margin-bottom: 15px;
   display: none;
   z-index: 10000; // for sticky
 }
 
 .placeholder-wrapper {
-  margin-top: 15px;
+  //margin-top: 15px;
+  margin-bottom: 15px;
 
   .placeholder-item {
     background: #fff;
@@ -18,6 +20,13 @@
 
     margin: 0 auto;
     //max-width: 472px;
+  }
+
+  .menu.placeholder-item {
+    min-height: 320px;
+  }
+
+  .users.placeholder-item {
     min-height: 150px;
   }
 

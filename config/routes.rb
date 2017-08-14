@@ -64,6 +64,7 @@ Rails.application.routes.draw do
 
   resources :timelines, only: %i(show), param: :screen_name
   get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates
+  get 'timelines/:uid/check_for_follow', to: 'timelines#check_for_follow', as: :check_for_follow
 
   resources :notifications, only: :index
   resources :settings, only: :index

@@ -40,9 +40,38 @@ class TimelinesController < ApplicationController
   def check_for_updates
     @twitter_user = TwitterUser.latest(params[:uid])
     if params[:created_at].match(/\A\d+\z/) && @twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
-      return render json: {found: true}, status: 200
+      return render json: {found: true, text: changes_text(@twitter_user)}, status: 200
     end
 
     render json: {found: false}, status: 200
+  end
+
+  def check_for_follow
+    if user_signed_in?
+      follow = (Bot.api_client.friendship?(current_user.uid.to_i, User::EGOTTER_UID) rescue false)
+      render json: {follow: follow}, status: 200
+    else
+      head :bad_request
+    end
+  end
+
+  private
+
+  def changes_text(twitter_user)
+    second_latest = TwitterUser.till(twitter_user.created_at).latest(params[:uid])
+
+    if twitter_user.unfollowerships.size > second_latest.unfollowerships.size
+      I18n.t('common.show.unfollowerships_count_increased', user: twitter_user.mention_name, before: second_latest.unfollowerships.size, after: twitter_user.unfollowerships.size)
+    else
+      if twitter_user.followers_count > second_latest.followers_count
+        I18n.t('common.show.followers_count_increased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
+      elsif twitter_user.followers_count < second_latest.followers_count
+        I18n.t('common.show.followers_count_decreased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
+      else
+        I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
+      end
+    end
+  rescue => e
+    I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
   end
 end

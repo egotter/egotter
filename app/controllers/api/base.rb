@@ -18,7 +18,9 @@ module Api
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
       users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}
 
-      render json: {name: controller_name, count: size, users: users}, status: 200
+      chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'),  y: 200.0 / 3.0}]
+
+      render json: {name: controller_name, count: size, users: users, chart: chart}, status: 200
     end
 
     def list
