@@ -275,7 +275,7 @@ ja:
       feature_004: "鍵アカも検索できます"
       feature_desc_004_html: "本人やフォローされてる人は<br>鍵アカも検索できます。"
       sign_in_with_twitter: "Twitter でログイン"
-      follow_egotter_html: "%{link} をフォローする。フォロー中は検索が早くなります！"
+      follow_egotter_html: '%{link} をフォローする<br><span style="color: #ff0000;">フォローを外すと、自動更新が止まり、リムられ通知が届かなくなりますのでご注意ください。</span>'
       tweet_egotter: "このテキストをツイートする"
     goodbye:
       signed_out: "既にログアウト済みです。"

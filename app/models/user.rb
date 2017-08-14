@@ -75,12 +75,13 @@ class User < ActiveRecord::Base
     user.assign_attributes(
       screen_name: auth.info.nickname,
       secret: auth.credentials.secret,
-      token: auth.credentials.token
+      token: auth.credentials.token,
+      authorized: true
     )
     user.email = auth.info.email if auth.info.email.present?
 
     if user.new_record?
-      self.transaction do
+      transaction do
         user.save!
         user.create_notification_setting!
       end
