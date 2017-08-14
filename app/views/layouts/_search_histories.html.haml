@@ -13,6 +13,7 @@
             %h2
               %small= t('search_histories.index.title')
             .twitter.users
-              = render(partial: 'twitter/user', collection: search_histories_list, cached: true, locals: {via: 'search_histories'})
+              - histories = SearchHistory.includes(:twitter_db_user).where(user_id: current_user_id).order(created_at: :desc).limit(10)
+              = render(partial: 'twitter/user', collection: histories, cached: true, locals: {via: 'search_histories'})
         - else
           = render template: 'login/welcome', locals: {via_prefix: 'search_history_'}

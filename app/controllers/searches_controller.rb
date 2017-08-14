@@ -47,6 +47,8 @@ class SearchesController < ApplicationController
       add_create_twitter_user_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
       redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path)
     end
+
+    enqueue_update_search_histories_worker_if_needed(uid)
   end
 
   def waiting

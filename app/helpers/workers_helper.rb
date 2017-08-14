@@ -57,4 +57,9 @@ module WorkersHelper
     }
     CreateRelationshipWorker.perform_async(values)
   end
+
+  def enqueue_update_search_histories_worker_if_needed(uid)
+    return if !user_signed_in? || request.from_crawler? || from_minor_crawler?(request.user_agent)
+    UpdateSearchHistoriesWorker.perform_in(1.minutes, current_user_id, uid)
+  end
 end
