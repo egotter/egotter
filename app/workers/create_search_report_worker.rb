@@ -27,7 +27,9 @@ class CreateSearchReportWorker
 
   rescue Twitter::Error::Unauthorized => e
     handle_unauthorized_exception(e, user_id: user_id)
+  rescue Twitter::Error::Forbidden => e
+    handle_forbidden_exception(e, user_id: user_id)
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
+    logger.warn "#{e.class}: #{e.message.truncate(150)} #{user_id}"
   end
 end
