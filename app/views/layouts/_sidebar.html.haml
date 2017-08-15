@@ -1,6 +1,6 @@
 .row
   - if user_signed_in?
-    = link_to t('searches.sidebar.update_now'), '#', class: 'btn btn-default btn-block btn-lg btn-force-update', method: :post, remote: true
+    = button_tag t('searches.sidebar.update_now'), type: 'button', class: 'btn btn-default btn-block btn-lg btn-force-update'
     %span.text-info.blink-force-update{style: 'display: none;'}= '更新リクエストを送信しました'
     :javascript
       $(function () {
