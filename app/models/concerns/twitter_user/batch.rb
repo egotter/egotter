@@ -5,7 +5,7 @@ module Concerns::TwitterUser::Batch
 
   class_methods do
     def fetch_and_create(uid)
-      Rails.logger.silence { Batch.fetch_and_create(uid) }
+      Rails.logger.silence(Logger::WARN) { Batch.fetch_and_create(uid) }
     end
   end
 
@@ -148,15 +148,9 @@ module Concerns::TwitterUser::Batch
 
     def self.create_twitter_db_user(twitter_user, friend_uids, follower_uids, client:)
       begin
-        tries ||= 3
         TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
       rescue => e
-        if retryable?(e)
-          (tries -= 1).zero? ? logger("Retry limit exceeded(fetch_and_import) #{uid}") : retry
-        else
-          logger "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
-        end
-
+        logger "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
         return
       end
 
@@ -166,7 +160,7 @@ module Concerns::TwitterUser::Batch
           TwitterDB::Friendships.import(twitter_user.uid, friend_uids, follower_uids)
         end
       rescue => e
-        logger "TwitterDB::Friendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
+        logger "TwitterDB::Friendships.import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
       end
     end
 

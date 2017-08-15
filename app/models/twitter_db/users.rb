@@ -4,7 +4,7 @@ module TwitterDB
     # `followers` does not include suspended uids.
     # `followers_count` is ambiguous.
     def self.fetch_and_import(uids, client:)
-      Batch.fetch_and_import(uids, client: client)
+      Rails.logger.silence(Logger::WARN) { Batch.fetch_and_import(uids, client: client) }
     end
 
     class Batch
@@ -12,10 +12,18 @@ module TwitterDB
         uids = uids.uniq.map(&:to_i)
 
         begin
+          tries ||= 3
           users = client.users(uids)
         rescue => e
           if e.message == 'No user matches for specified terms.'
             users = []
+          elsif retryable?(e)
+            if (tries -= 1).zero?
+              logger "#{self}##{__method__}: Retry exhausted(user) #{uids.size} #{uids.inspect.truncate(100)}"
+              raise
+            else
+              retry
+            end
           else
             raise
           end
@@ -50,6 +58,14 @@ module TwitterDB
 
       def self.logger(message)
         File.basename($0) == 'rake' ? puts(message) : Rails.logger.warn(message)
+      end
+
+      def self.retryable?(ex)
+        # Twitter::Error::InternalServerError Internal error
+        # Twitter::Error::ServiceUnavailable Over capacity
+        # Twitter::Error execution expired
+
+        ['Internal error', 'Over capacity', 'execution expired'].include? ex.message
       end
     end
   end
