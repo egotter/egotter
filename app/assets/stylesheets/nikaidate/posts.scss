@@ -1,0 +1,87 @@
+.nikaidate {
+  &.parties,
+  &.ranking,
+  &.opinions {
+    .media {
+      border-bottom: 1px solid #e6e6e6;
+      padding: 0 15px 15px 15px;
+    }
+
+    .media-right .buttons {
+      display: flex;
+
+      .follow,
+      .no-follow {
+        margin-right: 10px;
+      }
+    }
+
+    .media-heading {
+      font-size: small;
+
+      .glyphicon.glyphicon-lock {
+        color: #999999;
+        font-weight: normal;
+      }
+
+      .glyphicon.glyphicon-ok {
+        color: #5cb85c;
+        font-weight: normal;
+      }
+    }
+
+    .screen-name {
+      font-size: small;
+    }
+
+    .description,
+    .tweet-text,
+    .reason {
+      font-size: small;
+      margin-top: 5px;
+    }
+  }
+
+  &.ranking .media,
+  &.parties .media {
+    height: 140px;
+    border: none;
+    padding: 0;
+  }
+
+  &.ranking .media-inner,
+  &.parties .media-inner {
+    height: 140px;
+    padding: 15px;
+    border: 1px solid #e6e6e6;
+    overflow: hidden;
+  }
+
+  &.opinions {
+    a:link {color: black;}
+    a:visited {color: black;}
+    a:hover {color: black;}
+    a:active {color: black;}
+  }
+
+  //&.users .media:first-child {
+  //  border-top: 1px solid #e6e6e6;
+  //  padding-top: 15px;
+  //}
+  //
+  //&.tweets .media:first-child {
+  //  border-top: none;
+  //}
+  //
+  //&.tweets {
+  //  margin-top: 15px;
+  //  background-color: #ffffff;
+  //
+  //  .created-at {
+  //    font-size: small;
+  //    color: #aaaaaa;
+  //    white-space: nowrap;
+  //  }
+  //}
+}
+

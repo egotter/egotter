@@ -1,0 +1,84 @@
+%h1.archive-title= "『#{@post.title}』の分析"
+
+.row
+  .col-xs-12.col-md-6
+    %div{style: 'border: 1px solid #000000;'}
+      = image_tag 'http://resize.blogsys.jp/ed3241e0c6964c56be69945e34407ae57e913ee6/crop1/292x160/http://livedoor.blogimg.jp/masorira-kabu/imgs/8/4/840df0c0-s.png'
+  .col-xs-12.col-md-6
+    %div= @post.description
+    %div= link_to '公式で見る', @post.url, class: 'btn btn-info', href: '_blank'
+
+-#%h2.h2.page-title 掲載ユーザー数
+-#.page-description.text-center= "#{@post.parties.uniq(&:uid).size} 人 (平均 10 人)"
+-#.parties-chart{style: 'height: 140px;'}
+-#
+-#.gray-separator
+-#
+-#%h2.h2.page-title 掲載ツイート数
+-#.page-description.text-center= "#{@post.opinions.size} ツイート (平均 20 ツイート)"
+-#.opinions-chart{style: 'height: 140px;'}
+-#
+-#.gray-separator
+
+%h2.h2.page-title 平均フォロー数
+.page-description.text-center= "#{nums = @post.parties.map(&:friends_count); nums.sum / nums.size} 人"
+.friends-chart{style: 'height: 200px;'}
+
+-#.gray-separator
+
+%h2.h2.page-title 平均フォロワー数
+.page-description.text-center= "#{nums = @post.parties.map(&:followers_count); nums.sum / nums.size} 人"
+.followers-chart{style: 'height: 200px;'}
+
+:javascript
+  $(function () {
+    var options = $.extend(true, {}, window.columnChartOptions);
+    options.series[0].data = #{raw Nikaidate::Post.all.map { |post| {name: post.title, y: post.parties.size} }.to_json};
+    $('.parties-chart').highcharts(options);
+
+    options = $.extend(true, {}, window.columnChartOptions);
+    options.series[0].data = #{raw Nikaidate::Post.all.map { |post| {name: post.title, y: post.opinions.size} }.to_json};
+    $('.opinions-chart').highcharts(options);
+
+    options = $.extend(true, {}, window.columnChartOptions);
+    options.series[0].data = #{raw @post.parties.sort_by(&:friends_count).map { |user| {name: user.screen_name, y: user.friends_count, friends_count: user.friends_count, followers_count: user.followers_count} }.to_json};
+    $('.friends-chart').highcharts(options);
+
+    options = $.extend(true, {}, window.columnChartOptions);
+    options.series[0].data = #{raw @post.parties.sort_by(&:followers_count).map { |user| {name: user.screen_name, y: user.followers_count, friends_count: user.friends_count, followers_count: user.followers_count} }.to_json};
+    $('.followers-chart').highcharts(options);
+
+    console.log();
+  });
+
+%h2.h2.page-title= '参加ユーザー'
+
+.nikaidate.parties
+  .row
+    = render(partial: 'user', collection: @post.parties, cached: true)
+
+-#.row
+-#  .col-xs-12
+-#    .twitter.tweets
+-#      = render(partial: 'twitter/oembed_tweet', collection: @post.opinions, as: :tweet, cached: true)
+
+-# period
+-# hashtags
+-# users -> friends_count, followers_count
+-# clusters
+-# common followers
+
+-#- content_for :canonical_url do
+-#  %link{href: @canonical_url, rel: 'canonical'}
+-#
+-#- breadcrumb @breadcrumb_name, @twitter_user.screen_name
+
+-#- title @page_title
+-#- set_meta_tags description: @meta_description, title: @meta_title
+
+-#= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+-#.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+-#  = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
+
+.gray-separator
