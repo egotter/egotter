@@ -275,6 +275,7 @@ ja:
       feature_004: "鍵アカも検索できます"
       feature_desc_004_html: "本人やフォローされてる人は<br>鍵アカも検索できます。"
       sign_in_with_twitter: "Twitter でログイン"
+      read_notes: 'ページ下部の注意書きもお読みください。'
       follow_egotter_html: '%{link} をフォローする<br><span style="color: #ff0000;">自動更新やリムられ通知が必要な方は、@ego_tter をフォローしたままにしておいてください(^ ^)</span>'
       tweet_egotter_html: 'このテキストをツイートする<br><span style="color: #ff0000;">ツイートしたくない場合は、チェックを外してください(T_T)</span>'
     goodbye:

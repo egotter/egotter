@@ -5,6 +5,8 @@
     = hidden_field_tag :redirect_path, @redirect_path if @redirect_path
     = submit_tag t('.sign_in_with_twitter'), name: nil, class: 'btn btn-lg btn-info btn-block'
 
+    .small.text-center{style: 'margin-top: 15px;'}= t('login.welcome.read_notes')
+
     = render partial: 'login/highlight'
 
     %div

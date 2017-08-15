@@ -1,4 +1,4 @@
-<%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'users'} %>
+<%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
 
 <div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
   <%= link_to search_path_for(menu_name, twitter_user.screen_name), class: 'result-link' do %>
