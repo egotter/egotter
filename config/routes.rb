@@ -46,10 +46,11 @@ Rails.application.routes.draw do
       close_friends
       usage_stats
       inactive_friends
-      inactive_followers
       friends
       followers
+      blocking_or_blocked
     ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu}/%{screen_name}") }
+  get '/searches/:screen_name/inactive_followers', to: redirect('/inactive_friends/%{screen_name}')
   %w(
       new_friends
       new_followers
@@ -115,5 +116,5 @@ Rails.application.routes.draw do
     mount Blazer::Engine, at: '/blazer'
   end
 
-  get '*unmatched_route', to: 'application#not_found'
+  match '*unmatched_route', to: 'application#not_found', via: :all
 end
