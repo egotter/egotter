@@ -27,28 +27,32 @@ module Concerns::ApiAccess::Common
     end
 
     def verify_credentials
-      {
-        remaining: resources[:account][:'/account/verify_credentials'][:remaining],
-        reset_in: (Time.zone.at(resources[:account][:'/account/verify_credentials'][:reset]) - Time.zone.now).round
-      }
+      extract_remaining_and_reset_in(resources[:account][:'/account/verify_credentials'])
     end
 
     def friend_ids
-      {
-        remaining: resources[:friends][:'/friends/ids'][:remaining],
-        reset_in: (Time.zone.at(resources[:friends][:'/friends/ids'][:reset]) - Time.zone.now).round
-      }
+      extract_remaining_and_reset_in(resources[:friends][:'/friends/ids'])
     end
 
     def follower_ids
-      {
-        remaining: resources[:followers][:'/followers/ids'][:remaining],
-        reset_in: (Time.zone.at(resources[:followers][:'/followers/ids'][:reset]) - Time.zone.now).round
-      }
+      extract_remaining_and_reset_in(resources[:followers][:'/followers/ids'])
+    end
+
+    def users
+      extract_remaining_and_reset_in(resources[:users][:'/users/lookup'])
     end
 
     def inspect
-      'verify_credentials ' + verify_credentials.inspect + ' friend_ids ' + friend_ids.inspect + ' follower_ids ' + follower_ids.inspect
+      'verify_credentials ' + verify_credentials.inspect +
+        ' friend_ids ' + friend_ids.inspect +
+        ' follower_ids ' + follower_ids.inspect +
+        ' users ' + users.inspect
+    end
+
+    private
+
+    def extract_remaining_and_reset_in(limit)
+      {remaining: limit[:remaining], reset_in: (Time.zone.at(limit[:reset]) - Time.zone.now).round}
     end
   end
 end
