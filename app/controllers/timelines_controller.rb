@@ -2,7 +2,6 @@ class TimelinesController < ApplicationController
   include Validation
   include Concerns::Logging
   include SearchesHelper
-  include PageCachesHelper
   include WorkersHelper
   include ScoresHelper
 

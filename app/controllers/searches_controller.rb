@@ -2,7 +2,6 @@ class SearchesController < ApplicationController
   include Validation
   include Concerns::Logging
   include SearchesHelper
-  include PageCachesHelper
   include WorkersHelper
 
   before_action :reject_crawler, only: %i(create waiting)

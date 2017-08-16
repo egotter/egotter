@@ -4,7 +4,6 @@
 :logfile: ./log/sidekiq_misc.log
 :queues:
   - CreateNotificationMessageWorker
-  - CreatePageCacheWorker
   - CreatePromptReportWorker
   - CreateSearchReportWorker
   - CreateSearchHistoriesWorker
@@ -18,7 +17,6 @@
   - CreateForbiddenUserWorker
   - CreatePollingLogWorker
   - CreateModalOpenLogWorker
-  - CreatePageCacheLogWorker
   - CreateCrawlerLogWorker
   - CreateSearchLogWorker
   - CreateSignInLogWorker

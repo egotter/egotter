@@ -1,6 +1,5 @@
 class BackgroundSearchLogsController < ApplicationController
   include Validation
-  include PageCachesHelper
 
   before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(show)) { searched_uid?(params[:uid].to_i) }
@@ -16,7 +15,7 @@ class BackgroundSearchLogsController < ApplicationController
         twitter_user = TwitterUser.latest(uid)
         if twitter_user
           created_at = twitter_user.created_at.to_i
-          render json: {message: log.message, created_at: created_at, hash: page_cache_token(created_at)}, status: 200
+          render json: {message: log.message, created_at: created_at}, status: 200
         else
           logger.warn "#{self.class}##{__method__}: not found #{current_user_id} #{uid} #{log.inspect}"
           render json: {reason: BackgroundSearchLog::SomethingError::MESSAGE}, status: 500

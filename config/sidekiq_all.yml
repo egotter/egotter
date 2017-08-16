@@ -7,8 +7,6 @@
   - CreateForbiddenUserWorker
   - CreateModalOpenLogWorker
   - CreateNotificationMessageWorker
-  - CreatePageCacheLogWorker
-  - CreatePageCacheWorker
   - CreatePollingLogWorker
   - CreatePromptReportWorker
   - CreateSearchReportWorker
