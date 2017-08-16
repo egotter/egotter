@@ -8,46 +8,39 @@ namespace :repair do
     end
 
     start = ENV['START'] ? ENV['START'].to_i : 1
-    last = ENV['LAST'] ? ENV['LAST'].to_i : TwitterUser.maximum(:id)
-    verbose = ENV['VERBOSE'].present?
     not_found = []
-    friendless = []
     not_consistent = []
     processed = 0
     start_time = Time.zone.now
-    puts "\ncheck started:"
 
-    Rails.logger.silence do
-      TwitterUser.where('id <= ?', last).find_in_batches(start: start, batch_size: 1000) do |twitter_users|
+    columns = %i(id uid friends_size followers_size)
+    TwitterUser.select(*columns).find_each(start: start, batch_size: 1000) do |twitter_user|
 
-        twitter_users.each do |tu|
-          user = TwitterDB::User.find_by(uid: tu.uid)
-
-          unless user
-            puts "Not found #{tu.id} #{tu.uid}"
-            not_found << tu.id
-          end
-
-          if tu.need_repair?
-            puts "Not consistent #{tu.id} #{tu.uid} [#{tu.friendships.size}, #{tu.friends_size}] [#{tu.followerships.size}, #{tu.followers_size}]"
-            not_consistent << tu.id
-          end
-
-          break if sigint
-        end
-
-        processed += twitter_users.size
-        avg = '%3.1f' % ((Time.zone.now - start_time) / processed)
-        puts "#{Time.zone.now}: processed #{processed}, avg #{avg}, #{twitter_users[0].id} - #{twitter_users[-1].id}"
-
-        break if sigint
+      unless TwitterDB::User.exists?(uid: twitter_user.uid)
+        puts "Not found #{twitter_user.id} #{twitter_user.uid}"
+        not_found << twitter_user.id
       end
+
+      if twitter_user.need_repair?
+        print "Not consistent #{twitter_user.id} #{twitter_user.uid} "
+        twitter_user.reload.debug_print_friends
+        not_consistent << twitter_user.id
+      end
+
+      processed += 1
+
+      if processed % 1000 == 0
+        avg = '%3.1f' % ((Time.zone.now - start_time) / processed)
+        puts "#{Time.zone.now}: processed #{processed}, avg #{avg}"
+      end
+
+      break if sigint
     end
 
     puts "TwitterDB::User not_found #{not_found.inspect.remove(' ')}" if not_found.any?
     puts "TwitterUser not_consistent #{not_consistent.inspect.remove(' ')}" if not_consistent.any?
     puts "check #{(sigint ? 'suspended:' : 'finished:')}"
-    puts "  start: #{start}, last: #{last}, processed: #{processed}, not_found: #{not_found.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
+    puts "  start: #{start}, processed: #{processed}, not_found: #{not_found.size}, not_consistent: #{not_consistent.size}, started_at: #{start_time}, finished_at: #{Time.zone.now}"
   end
 
   namespace :fix do
@@ -99,6 +92,7 @@ namespace :repair do
         OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
         MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
 
+        print "#{twitter_user.id} "
         twitter_user.debug_print_friends
       end
     end

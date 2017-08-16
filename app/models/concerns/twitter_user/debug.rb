@@ -30,7 +30,7 @@ module Concerns::TwitterUser::Debug
   end
 
   def need_repair?
-    [friendships.size, friends_size].uniq.many? && [followerships.size, followers_size].uniq.many?
+    friendships.size != friends_size || followerships.size != followers_size
   end
 
   def too_little_friendships?
