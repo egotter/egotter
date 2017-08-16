@@ -24,7 +24,5 @@ class OldUser < ActiveRecord::Base
 
   scope :authorized, -> { where(authorized: true) }
 
-  def api_client
-    ApiClient.instance(access_token: token, access_token_secret: secret)
-  end
+  include Concerns::ApiAccess::Common
 end
