@@ -16,6 +16,12 @@ module Api
     def summary
       uids, size = summary_uids
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+
+      # TODO Debug
+      if uids.any? { |uid| !users.has_key?(uid) }
+        logger.warn "#{self.class}##{__method__}: Not persisted #{uids.select { |uid| !users.has_key?(uid) }.inspect}"
+      end
+
       users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}
 
       chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'),  y: 200.0 / 3.0}]
@@ -27,19 +33,7 @@ module Api
       limit = (0..10).include?(params[:limit].to_i) ? params[:limit].to_i : 10
       uids, max_sequence = list_uids(params[:max_sequence].to_i, limit: limit)
 
-      # TODO Experimental
-      if uids.any? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
-        begin
-          suspended_uids = uids - client.users(uids).map(&:id)
-        rescue => e
-          if e.message != 'No user matches for specified terms.'
-            logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-          end
-          suspended_uids = []
-        end
-      else
-        suspended_uids = []
-      end
+      suspended_uids = fetch_suspended_uids(uids)
 
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
       users = uids.map { |uid| users[uid] }.compact.map do |user|
@@ -55,6 +49,20 @@ module Api
     end
 
     private
+
+    # TODO Experimental
+    def fetch_suspended_uids(uids)
+      if uids.any? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
+        uids - client.users(uids).map(&:id)
+      else
+        []
+      end
+    rescue => e
+      if e.message != 'No user matches for specified terms.'
+        logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
+      end
+      []
+    end
 
     def to_summary_hash(user)
       {
