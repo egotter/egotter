@@ -65,7 +65,8 @@ module TwitterDB
         # Twitter::Error::ServiceUnavailable Over capacity
         # Twitter::Error execution expired
 
-        ['Internal error', 'Over capacity', 'execution expired'].include? ex.message
+        ['Internal error', 'Over capacity', 'execution expired'].include?(ex.message) ||
+          (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '')
       end
     end
   end
