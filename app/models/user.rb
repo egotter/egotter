@@ -39,6 +39,7 @@ class User < ActiveRecord::Base
     obj.has_many :notification_messages
     obj.has_many :prompt_reports
     obj.has_many :search_reports
+    obj.has_many :news_reports
     obj.has_one :notification_setting
   end
 
@@ -101,7 +102,7 @@ class User < ActiveRecord::Base
     if instance_variable_defined?(:@twitter_user)
       @twitter_user
     else
-      @twitter_user = TwitterUser.latest(uid.to_i)
+      @twitter_user = TwitterUser.latest(uid)
     end
   end
 
