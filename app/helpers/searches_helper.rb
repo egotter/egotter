@@ -1,69 +1,34 @@
 module SearchesHelper
   def build_twitter_user(screen_name)
+    twitter_user = TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
+    return twitter_user if twitter_user
+
+    user = client.user(screen_name)
+    TwitterUser.build_by_user(user)
+
+  rescue => e
+    if e.message == 'User not found.'
+      Util::NotFoundScreenNames.new(redis).add(screen_name)
+    elsif e.message == 'User has been suspended.'
+      CreateForbiddenUserWorker.perform_async(screen_name)
+    end
+
+    searches_exception_handler(e, screen_name)
+  end
+
+  def searches_exception_handler(ex, screen_name)
+    logger.warn "#{self.class}#build_twitter_user: #{ex.class} #{ex.message} #{current_user_id} #{request.device_type} #{request.browser} #{screen_name}"
     redirect_path = root_path_for(controller: controller_name)
 
-    if ForbiddenUser.exists?(screen_name: screen_name)
-      twitter_user = TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
-      if twitter_user&.public_account?
-        return twitter_user
-      else
-        return redirect_to redirect_path, alert: forbidden_message(screen_name)
-      end
+    return head(:bad_request) if request.xhr?
+
+    case ex.class
+      when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(screen_name)
+      when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(screen_name)
+      when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(screen_name)
+      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(screen_name)
+      else redirect_to redirect_path, alert: alert_message(ex)
     end
-
-    user = nil
-    nf_screen_names = Util::NotFoundScreenNames.new(redis)
-    nf_uids = Util::NotFoundUids.new(redis)
-
-    begin
-      user = client.user(screen_name)
-    rescue Twitter::Error::NotFound => e
-      nf_screen_names.add(screen_name)
-    end unless nf_screen_names.exists?(screen_name)
-
-    unless user
-      begin
-        user = client.user(screen_name.to_i)
-      rescue Twitter::Error::NotFound => e
-        nf_uids.add(screen_name)
-      end if screen_name.match(Validations::UidValidator::REGEXP) && !nf_uids.exists?(screen_name)
-    end
-
-    if user
-      TwitterUser.build_by_user(user)
-    else
-      redirect_to redirect_path, alert: not_found_message(screen_name)
-    end
-
-  rescue Twitter::Error::NotFound => e
-    logger.warn "#{screen_name} is not found. #{current_user_id} #{request.device_type} #{request.browser} #{e.message}"
-    redirect_to redirect_path, alert: not_found_message(screen_name)
-  rescue Twitter::Error::Forbidden => e
-    if e.message == 'User has been suspended.'
-      CreateForbiddenUserWorker.perform_async(screen_name)
-    else
-      logger.warn "#{screen_name} is forbidden. #{current_user_id} #{request.device_type} #{request.browser} #{e.message}"
-    end
-
-    # TODO duplicate code
-    twitter_user = TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
-    if twitter_user&.public_account?
-      twitter_user
-    else
-      redirect_to redirect_path, alert: forbidden_message(screen_name)
-    end
-  rescue Twitter::Error::Unauthorized => e
-    redirect_to redirect_path, alert: unauthorized_message(screen_name)
-  rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.browser}"
-    logger.info e.backtrace.take(10).join("\n")
-    redirect_to redirect_path, alert: alert_message(e)
-  rescue => e
-    # Twitter::Error execution expired
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{screen_name} #{current_user_id} #{request.device_type} #{request.browser}"
-    logger.info e.backtrace.take(10).join("\n")
-    Rollbar.error(e)
-    redirect_to redirect_path, alert: alert_message(e)
   end
 
   def root_path_for(controller:)

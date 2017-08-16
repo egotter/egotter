@@ -2,11 +2,9 @@ class ConversationsController < ApplicationController
   include Validation
   include Concerns::Logging
   include SearchesHelper
-  include PageCachesHelper
 
   before_action :reject_crawler, only: %i(create)
-  before_action(only: %i(create show)) { valid_screen_name?(params[:screen_name]) }
-  before_action(only: %i(create show)) { not_found_screen_name?(params[:screen_name]) }
+  before_action(only: %i(create show)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
   before_action(only: %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
   before_action(only: %i(create show)) { authorized_search?(@tu) }
   before_action(only: %i(show)) { existing_uid?(@tu.uid.to_i) }

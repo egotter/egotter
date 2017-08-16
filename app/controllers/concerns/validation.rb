@@ -21,17 +21,16 @@ module Validation
   end
 
   def valid_uid?(uid)
-    tu = TwitterUser.new(uid: uid)
-    if tu.valid_uid?
-      true
+    twitte_user = TwitterUser.new(uid: uid)
+    return true if twitte_user.valid_uid?
+
+    if request.xhr?
+      head :bad_request
     else
-      if request.xhr?
-        head :bad_request
-      else
-        redirect_to root_path, alert: tu.errors[:uid].join(t('dictionary.delim'))
-      end
-      false
+      redirect_to root_path, alert: twitte_user.errors[:uid].join(t('dictionary.delim'))
     end
+
+    false
   end
 
   def existing_uid?(uid)
@@ -54,30 +53,41 @@ module Validation
   end
 
   def searched_uid?(uid)
-    if Util::SearchedUids.new(redis).exists?(uid)
+    return true if Util::SearchedUids.new(redis).exists?(uid)
+
+    if request.xhr?
+      head :bad_request
+    else
+      redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+    end
+
+    false
+  end
+
+  def valid_screen_name?(screen_name = nil)
+    screen_name ||= params[:screen_name]
+    twitter_user = TwitterUser.new(screen_name: screen_name)
+    if twitter_user.valid_screen_name?
       true
     else
-      if request.xhr?
-        render nothing: true, status: 400
-      else
-        redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
-      end
+      redirect_to root_path_for(controller: controller_name), alert: twitter_user.errors[:screen_name].join(t('dictionary.delim'))
       false
     end
   end
 
-  def valid_screen_name?(screen_name)
-    tu = TwitterUser.new(screen_name: screen_name)
-    if tu.valid_screen_name?
+  def forbidden_screen_name?(screen_name = nil)
+    screen_name ||= params[:screen_name]
+    if ForbiddenUser.exists?(screen_name: screen_name)
+      redirect_to root_path_for(controller: controller_name), alert: forbidden_message(screen_name)
       true
     else
-      redirect_to root_path_for(controller: controller_name), alert: tu.errors[:screen_name].join(t('dictionary.delim'))
       false
     end
   end
 
-  def not_found_screen_name?(screen_name)
-    if [Util::NotFoundScreenNames, Util::NotFoundUids].all? { |klass| klass.new(redis).exists?(screen_name) }
+  def not_found_screen_name?(screen_name = nil)
+    screen_name ||= params[:screen_name]
+    if Util::NotFoundScreenNames.new(redis).exists?(screen_name)
       redirect_to root_path_for(controller: controller_name), alert: not_found_message(screen_name)
       true
     else
@@ -85,49 +95,46 @@ module Validation
     end
   end
 
-  def authorized_search?(tu)
+  def authorized_search?(twitter_user)
     redirect_path = root_path_for(controller: controller_name)
 
-    if tu.suspended_account?
-      redirect_to redirect_path, alert: I18n.t('before_sign_in.suspended_user', user: view_context.user_link(tu.screen_name))
+    if twitter_user.suspended_account?
+      redirect_to redirect_path, alert: I18n.t('before_sign_in.suspended_user', user: view_context.user_link(twitter_user.screen_name))
       return false
     end
 
-    return true if tu.public_account?
-    return true if tu.readable_by?(User.find_by(id: current_user_id))
+    return true if twitter_user.public_account?
+    return true if twitter_user.readable_by?(User.find_by(id: current_user_id))
 
     if request.xhr?
       head :bad_request
     else
-      redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user_html', user: view_context.user_link(tu.screen_name), sign_in_path: _sign_in_path)
+      redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user_html', user: view_context.user_link(twitter_user.screen_name), sign_in_path: _sign_in_path)
     end
-    false
-  rescue Twitter::Error::NotFound => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
-    redirect_to redirect_path, alert: not_found_message(tu.screen_name)
-    false
-  rescue Twitter::Error::Forbidden => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
-    if e.message == 'User has been suspended.'
-      CreateForbiddenUserWorker.perform_async(tu.screen_name)
-    end
-    redirect_to redirect_path, alert: forbidden_message(tu.screen_name)
-    false
-  rescue Twitter::Error::Unauthorized => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
-    redirect_to redirect_path, alert: unauthorized_message(tu.screen_name)
-    false
-  rescue Twitter::Error::TooManyRequests => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
-    logger.info e.backtrace.take(10).join("\n")
-    redirect_to redirect_path, alert: alert_message(e)
+
     false
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{tu.inspect}"
-    logger.info e.backtrace.take(10).join("\n")
-    Rollbar.error(e)
-    redirect_to redirect_path, alert: alert_message(e)
+    if e.message == 'User has been suspended.'
+      CreateForbiddenUserWorker.perform_async(twitter_user.screen_name)
+    end
+
+    validation_exception_handler(e, twitter_user)
     false
+  end
+
+  def validation_exception_handler(ex, twitter_user)
+    logger.warn "#{self.class}#authorized_search?: #{ex.class} #{ex.message} #{current_user_id} #{twitter_user.inspect.truncate(100)}"
+    redirect_path = root_path_for(controller: controller_name)
+
+    return head(:bad_request) if request.xhr?
+
+    case ex.class
+      when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(twitter_user.screen_name)
+      when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(twitter_user.screen_name)
+      when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(twitter_user.screen_name)
+      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(twitter_user.screen_name)
+      else redirect_to redirect_path, alert: alert_message(ex)
+    end
   end
 
   def not_found_message(screen_name)
@@ -142,14 +149,12 @@ module Validation
     t('after_sign_in.unauthorized_html', sign_in_path: _sign_in_path, sign_out_path: sign_out_path)
   end
 
+  def too_many_requests_message(screen_name)
+    t('before_sign_in.too_many_requests_html', sign_in_path: _sign_in_path)
+  end
+
   def alert_message(ex)
-    case
-      when ex.kind_of?(Twitter::Error::TooManyRequests)
-        t('before_sign_in.too_many_requests_html', sign_in_path: _sign_in_path)
-      else
-        logger.warn "#{__method__}: unexpected exception #{ex.class} #{ex.message}"
-        t('before_sign_in.something_wrong_html', sign_in_path: _sign_in_path)
-    end.html_safe
+    t('before_sign_in.something_wrong_html', sign_in_path: _sign_in_path)
   end
 
   private
