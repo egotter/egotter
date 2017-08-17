@@ -114,25 +114,21 @@ module Validation
 
     false
   rescue => e
-    if e.message == 'User has been suspended.'
-      CreateForbiddenUserWorker.perform_async(twitter_user.screen_name)
-    end
-
-    validation_exception_handler(e, twitter_user)
+    twitter_exception_handler(e, twitter_user)
     false
   end
 
-  def validation_exception_handler(ex, twitter_user)
-    logger.warn "#{self.class}#authorized_search?: #{ex.class} #{ex.message} #{current_user_id} #{twitter_user.inspect.truncate(100)}"
+  def twitter_exception_handler(ex, screen_name)
+    logger.warn "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{screen_name} #{request.device_type} #{request.browser} #{params.inspect}"
     redirect_path = root_path_for(controller: controller_name)
 
     return head(:bad_request) if request.xhr?
 
-    case ex.class
-      when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(twitter_user.screen_name)
-      when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(twitter_user.screen_name)
-      when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(twitter_user.screen_name)
-      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(twitter_user.screen_name)
+    case ex
+      when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(screen_name)
+      when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(screen_name)
+      when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(screen_name)
+      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(screen_name)
       else redirect_to redirect_path, alert: alert_message(ex)
     end
   end

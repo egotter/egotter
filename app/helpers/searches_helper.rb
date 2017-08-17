@@ -13,22 +13,7 @@ module SearchesHelper
       CreateForbiddenUserWorker.perform_async(screen_name)
     end
 
-    searches_exception_handler(e, screen_name)
-  end
-
-  def searches_exception_handler(ex, screen_name)
-    logger.warn "#{self.class}#build_twitter_user: #{ex.class} #{ex.message} #{current_user_id} #{request.device_type} #{request.browser} #{screen_name}"
-    redirect_path = root_path_for(controller: controller_name)
-
-    return head(:bad_request) if request.xhr?
-
-    case ex.class
-      when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(screen_name)
-      when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(screen_name)
-      when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(screen_name)
-      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(screen_name)
-      else redirect_to redirect_path, alert: alert_message(ex)
-    end
+    twitter_exception_handler(e, screen_name)
   end
 
   def root_path_for(controller:)
