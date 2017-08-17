@@ -5,8 +5,7 @@ class SearchesController < ApplicationController
   include WorkersHelper
 
   before_action :reject_crawler, only: %i(create waiting)
-  before_action(only: Search::MENU + %i(create show)) { valid_screen_name?(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show)) { not_found_screen_name?(params[:screen_name]) }
+  before_action(only: Search::MENU + %i(create show)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
   before_action(only: Search::MENU + %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
   before_action(only: Search::MENU + %i(create show)) { authorized_search?(@tu) }
   before_action(only: Search::MENU + %i(show)) { existing_uid?(@tu.uid.to_i) }

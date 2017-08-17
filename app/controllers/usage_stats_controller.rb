@@ -4,8 +4,7 @@ class UsageStatsController < ApplicationController
   include SearchesHelper
   include TweetTextHelper
 
-  before_action(only: %i(show)) { valid_screen_name?(params[:screen_name]) }
-  before_action(only: %i(show)) { not_found_screen_name?(params[:screen_name]) }
+  before_action { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
   before_action(only: %i(show)) { @tu = build_twitter_user(params[:screen_name]) }
   before_action(only: %i(show)) { authorized_search?(@tu) }
   before_action(only: %i(show)) { existing_uid?(@tu.uid.to_i) }

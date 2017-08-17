@@ -3,8 +3,7 @@ class FollowersController < ApplicationController
   include Concerns::Logging
   include SearchesHelper
 
-  before_action { valid_screen_name?(params[:screen_name]) }
-  before_action { not_found_screen_name?(params[:screen_name]) }
+  before_action { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
   before_action { @tu = build_twitter_user(params[:screen_name]) }
   before_action { authorized_search?(@tu) }
   before_action { existing_uid?(@tu.uid.to_i) }
