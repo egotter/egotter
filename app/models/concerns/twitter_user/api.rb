@@ -22,10 +22,10 @@ module Concerns::TwitterUser::Api
     end
 
     def select_inactive_users(users)
-      users.select { |user| _inactive_user?(user) }
+      users.select { |user| inactive_user?(user) }
     end
 
-    def _inactive_user?(user)
+    def inactive_user?(user)
       user&.status&.created_at && Time.parse(user.status.created_at) < 2.weeks.ago
     rescue => e
       logger.warn "#{__method__}: #{e.class} #{e.message} [#{user&.status&.created_at}] #{user.uid} #{user.screen_name}"
@@ -246,7 +246,7 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_inactive_friend_uids
-    friends.select { |friend| self.class._inactive_user?(friend) }.map(&:uid)
+    friends.select { |friend| self.class.inactive_user?(friend) }.map(&:uid)
   end
 
   def inactive_friend_uids
@@ -254,7 +254,7 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_inactive_follower_uids
-    followers.select { |follower| self.class._inactive_user?(follower) }.map(&:uid)
+    followers.select { |follower| self.class.inactive_user?(follower) }.map(&:uid)
   end
 
   def inactive_follower_uids
@@ -262,7 +262,7 @@ module Concerns::TwitterUser::Api
   end
 
   def calc_inactive_mutual_friend_uids
-    mutual_friends.select { |friend| self.class._inactive_user?(friend) }.map(&:uid)
+    mutual_friends.select { |friend| self.class.inactive_user?(friend) }.map(&:uid)
   end
 
   def inactive_mutual_friend_uids

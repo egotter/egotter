@@ -36,8 +36,9 @@ module TwitterHelper
   def user_name(user)
     protected = '&nbsp;<span class="glyphicon glyphicon-lock"></span>'
     verified = '&nbsp;<span class="glyphicon glyphicon-ok"></span>'
-    suspended = '&nbsp;<span style="color: #ff0000;">' + t('dictionary.suspended') + '</span>'
-    "#{user.name}#{protected if user.protected}#{verified if user.verified}#{suspended if user.suspended}".html_safe
+    suspended = '&nbsp;<span class="label label-danger">' + t('dictionary.suspended') + '</span>'
+    inactive = '&nbsp;<span class="label label-default">' + t('dictionary.inactive') + '</span>'
+    "#{user.name}#{protected if user.protected}#{verified if user.verified}#{suspended if user.suspended}#{inactive if !user.suspended && TwitterUser.inactive_user?(user)}".html_safe
   end
 
   def normal_icon_url(user)
