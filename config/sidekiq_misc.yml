@@ -6,7 +6,6 @@
   - CreateNotificationMessageWorker
   - CreatePromptReportWorker
   - CreateSearchReportWorker
-  - CreateSearchHistoriesWorker
   - CreateTweetsWorker
   - SendMetricsWorker
   - UpdateNotificationMessageWorker
