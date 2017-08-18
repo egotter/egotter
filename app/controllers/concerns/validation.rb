@@ -114,7 +114,7 @@ module Validation
 
     false
   rescue => e
-    twitter_exception_handler(e, twitter_user)
+    twitter_exception_handler(e, twitter_user.screen_name)
     false
   end
 
