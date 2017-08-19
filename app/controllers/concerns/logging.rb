@@ -129,7 +129,6 @@ module Concerns::Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
-    Rollbar.warn(e)
   end
 
   def create_polling_log(uid, screen_name, action:, status:, time:, retry_count:)
@@ -157,7 +156,6 @@ module Concerns::Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{uid} #{screen_name} #{action} #{status} #{time} #{retry_count}"
     logger.info e.backtrace.take(10).join("\n")
-    Rollbar.warn(e)
   end
 
   def push_referer
@@ -168,7 +166,6 @@ module Concerns::Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
     logger.info e.backtrace.take(10).join("\n")
-    Rollbar.warn(e)
   end
 
   def pushed_referers
@@ -243,7 +240,6 @@ module Concerns::Logging
     url.blank? ? '' : URI.parse(url).host
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    Rollbar.warn(e)
     ''
   end
 
@@ -267,7 +263,6 @@ module Concerns::Logging
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    Rollbar.warn(e)
     ''
   end
 
