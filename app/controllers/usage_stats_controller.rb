@@ -1,6 +1,5 @@
 class UsageStatsController < ApplicationController
   include Validation
-  include Concerns::Logging
   include SearchesHelper
   include TweetTextHelper
 

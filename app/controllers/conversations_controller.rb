@@ -1,6 +1,5 @@
 class ConversationsController < ApplicationController
   include Validation
-  include Concerns::Logging
   include SearchesHelper
 
   before_action :reject_crawler, only: %i(create)

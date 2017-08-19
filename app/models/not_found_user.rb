@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: forbidden_users
+# Table name: not_found_users
 #
 #  id          :integer          not null, primary key
 #  screen_name :string(191)      not null
@@ -9,8 +9,8 @@
 #
 # Indexes
 #
-#  index_forbidden_users_on_created_at   (created_at)
-#  index_forbidden_users_on_screen_name  (screen_name) UNIQUE
+#  index_not_found_users_on_created_at   (created_at)
+#  index_not_found_users_on_screen_name  (screen_name) UNIQUE
 #
 
 class NotFoundUser < ActiveRecord::Base

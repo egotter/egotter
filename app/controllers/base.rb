@@ -1,7 +1,6 @@
 class Base < ApplicationController
   include SearchesHelper
   include Validation
-  include Concerns::Logging
 
   before_action(only: %i(show)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
   before_action(only: %i(show)) { @tu = build_twitter_user(params[:screen_name]) }

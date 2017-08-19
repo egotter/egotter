@@ -1,6 +1,5 @@
 class CloseFriendsController < ApplicationController
   include Validation
-  include Concerns::Logging
   include SearchesHelper
   include TweetTextHelper
   include CloseFriendsHelper

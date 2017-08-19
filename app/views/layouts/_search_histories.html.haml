@@ -8,12 +8,9 @@
       .modal-body
         = render partial: 'common/search_form', locals: {via: :search_history_input}
 
-        - if user_signed_in?
-          .search-histories-header
-            %h2
-              %small= t('search_histories.index.title')
-            .twitter.users
-              - histories = SearchHistory.includes(:twitter_db_user).where(user_id: current_user_id).order(created_at: :desc).limit(10)
-              = render(partial: 'twitter/user', collection: histories, cached: true, locals: {via: 'search_histories'})
-        - else
-          = render template: 'login/welcome', locals: {via_prefix: 'search_history_'}
+        .search-histories-header
+          %h2
+            %small= t('search_histories.index.title')
+          .twitter.users
+            - histories = user_signed_in? ? SearchHistory.latest(user_id: current_user_id) : SearchHistory.latest(session_id: session[:fingerprint])
+            = render(partial: 'twitter/user', collection: histories, cached: true, locals: {via: 'search_histories'})

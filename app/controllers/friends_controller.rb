@@ -1,6 +1,5 @@
 class FriendsController < ApplicationController
   include Validation
-  include Concerns::Logging
   include SearchesHelper
 
   before_action(only: %i(show)) do

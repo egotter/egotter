@@ -558,13 +558,15 @@ ActiveRecord::Schema.define(version: 20170819133637) do
   add_index "scores", ["uid"], name: "index_scores_on_uid", unique: true, using: :btree
 
   create_table "search_histories", force: :cascade do |t|
-    t.integer  "user_id",    limit: 4, null: false
-    t.integer  "uid",        limit: 8, null: false
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.string   "session_id", limit: 191, default: "", null: false
+    t.integer  "user_id",    limit: 4,                null: false
+    t.integer  "uid",        limit: 8,                null: false
+    t.datetime "created_at",                          null: false
+    t.datetime "updated_at",                          null: false
   end
 
   add_index "search_histories", ["created_at"], name: "index_search_histories_on_created_at", using: :btree
+  add_index "search_histories", ["session_id"], name: "index_search_histories_on_session_id", using: :btree
   add_index "search_histories", ["user_id"], name: "index_search_histories_on_user_id", using: :btree
 
   create_table "search_logs", force: :cascade do |t|

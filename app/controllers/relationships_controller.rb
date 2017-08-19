@@ -1,6 +1,5 @@
 class RelationshipsController < ApplicationController
   include Validation
-  include Concerns::Logging
   include SearchesHelper
   include WorkersHelper
 

@@ -1,6 +1,5 @@
 class SearchResultsController < ApplicationController
   include Validation
-  include Concerns::Logging
   include TweetTextHelper
   include SearchesHelper
 

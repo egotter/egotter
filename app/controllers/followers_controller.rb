@@ -1,6 +1,5 @@
 class FollowersController < ApplicationController
   include Validation
-  include Concerns::Logging
   include SearchesHelper
 
   before_action { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }

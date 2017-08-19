@@ -1,6 +1,5 @@
 class LoginController < ApplicationController
   include SearchesHelper
-  include Concerns::Logging
 
   before_action :reject_crawler, only: %i(sign_in sign_out)
   before_action :push_referer, only: %i(welcome sign_in sign_out)

@@ -1,5 +1,4 @@
 class PollingLogsController < ApplicationController
-  include Concerns::Logging
 
   layout false
 
