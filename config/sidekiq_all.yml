@@ -5,6 +5,7 @@
 :queues:
   - CreateCrawlerLogWorker
   - CreateForbiddenUserWorker
+  - CreateNotFoundUserWorker
   - CreateModalOpenLogWorker
   - CreateNotificationMessageWorker
   - CreatePollingLogWorker

@@ -8,7 +8,7 @@ module SearchesHelper
 
   rescue => e
     if e.message == 'User not found.'
-      Util::NotFoundScreenNames.new(redis).add(screen_name)
+      CreateNotFoundUserWorker.perform_async(screen_name)
     elsif e.message == 'User has been suspended.'
       CreateForbiddenUserWorker.perform_async(screen_name)
     end

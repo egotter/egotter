@@ -87,7 +87,7 @@ module Validation
 
   def not_found_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
-    if Util::NotFoundScreenNames.new(redis).exists?(screen_name)
+    if NotFoundUser.exists?(screen_name: screen_name)
       redirect_to root_path_for(controller: controller_name), alert: not_found_message(screen_name)
       true
     else
