@@ -49,16 +49,10 @@ module SearchesHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(friends followers close_friends usage_stats)
+      when *%w(friends followers close_friends usage_stats unfriends unfollowers blocking_or_blocked)
         send("#{menu.to_s.singularize}_path", screen_name: screen_name)
       when *%w(favoriting)
         send("#{menu}_search_path", screen_name: screen_name)
-      when *%w(removing)
-        unfriend_path(screen_name: screen_name)
-      when *%w(removed)
-        unfollower_path(screen_name: screen_name)
-      when *%w(blocking_or_blocked)
-        blocking_or_blocked_path(screen_name: screen_name)
       when *%w(one_sided_friends one_sided_followers mutual_friends)
         one_sided_friend_path(screen_name: screen_name, type: menu)
       when *%w(inactive_friends inactive_followers)
@@ -83,17 +77,16 @@ module SearchesHelper
 
   def title_for(menu, screen_name)
     case menu.to_sym
-      when *%i(friends followers close_friends usage_stats) then t("#{menu}.show.summary_title")
+      when *%i(friends followers close_friends usage_stats unfriends unfollowers blocking_or_blocked) then t("#{menu}.show.summary_title")
       when :clusters_belong_to then t("searches.clusters_belong_to.name")
-      when :removing then t("searches.removing.name")
-      when :removed then t("searches.removed.name")
       else t("searches.#{menu}.title", user: mention_name(screen_name))
     end
   end
 
   def description_for(menu, screen_name)
     case menu.to_sym
-      when *%i(friends followers close_friends) then t("#{menu}.show.page_description", user: mention_name(screen_name))
+      when *%i(friends followers close_friends unfriends unfollowers blocking_or_blocked)
+        t("#{menu}.show.page_description", user: mention_name(screen_name))
       else t("searches.#{menu}.description", user: mention_name(screen_name))
     end
   end

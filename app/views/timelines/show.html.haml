@@ -34,7 +34,7 @@
   .col-md-6
     = render partial: 'search_results/show/stats_summary', locals: {name: :clusters_belong_to, graph: name_y_format(@stat&.tweet_clusters), tu: @twitter_user}
 
-  - %w(removing removed blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
+  - %w(unfriends unfollowers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
     - if name == 'blocking_or_blocked' && request.from_smartphone?
       .col-md-6
         = render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})

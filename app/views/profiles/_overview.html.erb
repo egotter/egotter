@@ -52,19 +52,19 @@
     <div class="tweets col-xs-4">
       <%= link_to status_path(screen_name: user.screen_name), class: 'text-muted' do %>
         <span class="count"><%= user.statuses_count %></span>
-        <span class="text-muted"><%= t('searches.common.tweet') %></span>
+        <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
       <% end %>
     </div>
     <div class="friends col-xs-4">
       <%= link_to friend_path(screen_name: user.screen_name), class: 'text-muted' do %>
         <span class="count"><%= user.friends_count %></span>
-        <span class="text-muted"><%= t('searches.friends.name') %></span>
+        <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
       <% end %>
     </div>
     <div class="followers col-xs-4">
       <%= link_to follower_path(screen_name: user.screen_name), class: 'text-muted' do %>
         <span class="count"><%= user.followers_count %></span>
-        <span class="text-muted"><%= t('searches.followers.name') %></span>
+        <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
       <% end %>
     </div>
   </div>

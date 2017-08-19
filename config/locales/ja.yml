@@ -28,8 +28,8 @@ ja:
       information: "お知らせ"
       redirect_to: "%{user} の結果を表示します"
       popular: "人気の分析"
-      tweet: "ツイート"
       related_pages: "関連ページ"
+      related_analysis: "%{user} の他の分析"
       see_on_twitter: "ツイッターで見る"
       analyzing: "分析中"
     sidebar:
@@ -86,58 +86,18 @@ ja:
       update_result: 'データを更新する'
       latest_result: '表示されているデータは最新です。最終更新は %{time} です。'
       request_login_html: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。<a href="%{sign_in_path}" class="btn btn-default btn-sm">ログインする</a>'
-    friends:
-      num: "フォロー<br>%{num}"
-      name: "フォロー"
-      title: "%{user} のフォロー"
-      short_description: "フォローをリストアップして表示します。"
-    followers:
-      num: "フォロワー<br>%{num}"
-      name: "フォロワー"
-      title: "%{user} のフォロワー"
-      short_description: "フォロワーをリストアップして表示します。"
-    statuses:
-      num: "ツイート<br>%{num}"
-    removing:
-      name: "リムーブした"
-      num: "リムり<br>%{num}"
-      title: "%{user} がフォローを外した"
-      description: "%{user} がフォローを外したユーザーを表示します。垢消しもたまにあります。"
-      short_description: "フォローを外したユーザーを表示します。"
-    removed:
-      name: "リムーブされた"
-      num: "リムられ<br>%{num}"
-      title: "%{user} がフォローを外された"
-      description: "%{user} がフォローを外されたユーザーを表示します。垢消しもたまにあります。"
-      short_description: "フォローを外されたユーザーを表示します。"
-    new_friends:
-      name: "新しいフォロー"
-      title: "%{user} の新しいフォロー"
-      description: "%{user} が新しくフォローしたユーザーを表示します。"
-    new_followers:
-      name: "新しいフォロワー"
-      title: "%{user} の新しいフォロワー"
-      description: "%{user} が新しくフォローされたユーザーを表示します。"
-    blocking_or_blocked:
-      num: "ブロられ<br>%{num}"
-      title: "%{user} がブロックされたかも"
-      description: "%{user} がブロックされたかもしれないユーザーを表示します。<br>フォローとフォロワーから同時に外れたらブロックとみなすため、少し不正確です。"
-      short_description: "ブロックされたかもしれないユーザーを表示します。"
     replying:
       num: "リプライした<br>%{num}"
       name: "リプライ"
-      title: "%{user} がリプライした"
+      title: "リプライした"
       description: "%{user} がリプライしたユーザーを表示します。"
     replied:
       num: "リプライされた<br>%{num}"
       name: "リプライされた"
-      title: "%{user} がリプライされた"
+      title: "リプライされた"
       description: "%{user} がリプライされたユーザーを表示します。<br>本人がログインしていない場合は検索して見付けるため、少し不正確です。"
     replying_and_replied:
       num: "両方された<br>%{num}"
-    close_friends:
-      name: "仲良し"
-      title: "%{user} の仲良しランキング"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
@@ -154,14 +114,14 @@ ja:
       usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
     inactive_friends:
       num: "最近いないフォロー<br>%{num}"
-      name: "最近いないフォロー"
-      title: "%{user} の最近いないフォロー"
-      description: "%{user} がフォローしているユーザーのうち、<br>最近ツイートしていないユーザーをリストアップして表示します。"
+      name: "停止中フォロー"
+      title: "最近いないフォロー"
+      description: "%{user} がフォローしているユーザーのうち、<br>最近ツイートしていないユーザーを表示します。"
       short_description: "フォローのうち、最近ツイートしていないユーザーをリストアップして表示します。"
     inactive_followers:
       num: "最近いないフォロワー<br>%{num}"
-      name: "最近いないフォロワー"
-      title: "%{user} の最近いないフォロワー"
+      name: "停止中フォロワー"
+      title: "最近いないフォロワー"
       description: "%{user} がフォローされているユーザーのうち、<br>最近ツイートしていないユーザーを表示します。"
       short_description: "フォロワーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
     inactive_mutual_friends:
@@ -172,17 +132,17 @@ ja:
       description: "%{user} が入っているクラスタを表示します。"
     mutual_friends:
       num: "両思い<br>%{num}"
-      title: "%{user} が両思い"
+      title: "両思いフォロー"
       description: "%{user} が相互フォローしているユーザーを表示します。"
       short_description: "相互フォローしているユーザーを表示します。"
     one_sided_friends:
       num: "片思い<br>%{num}"
-      title: "%{user} が片思い"
+      title: "片思いフォロー"
       description: "%{user} がフォローしているユーザーのうち、<br>%{user} にフォロー返しをしていないユーザーを表示します。"
       short_description: "フォローしているユーザーのうち、フォロー返しをされていないユーザーを表示します。"
     one_sided_followers:
       num: "片思われ<br>%{num}"
-      title: "%{user} が片思われ"
+      title: "片思われフォロワー"
       description: "%{user} がフォローされているユーザーのうち、<br>%{user} がフォロー返しをしていないユーザーを表示します。"
       short_description: "フォローされているユーザーのうち、フォロー返しをしていないユーザーを表示します。"
     common_friends:
@@ -199,7 +159,7 @@ ja:
       num: "会話<br>%{num}"
     favoriting:
       name: "よくふぁぼる"
-      title: "%{user} がよくふぁぼる"
+      title: "よくふぁぼる"
       description: "%{user} がよくツイートをお気に入り登録するユーザーを表示します。"
   timelines:
     show:
@@ -244,7 +204,7 @@ ja:
   update_histories:
     show:
       title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
-      short_title: "%{user} のえごったー更新履歴"
+      short_title: "えごったー更新履歴"
       description: "%{user} のえごったー更新履歴を表示します。"
   search_histories:
     index:
@@ -434,6 +394,7 @@ ja:
       crumb_title: "フォローチェック"
       page_title: "%{user} のフォロー"
       meta_title: "%{user} のフォロー分析 - フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
+      summary_title: "フォロー"
       title: "フォロー"
       page_description: "%{user} がフォローしているユーザーの一覧です。"
       meta_description: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
@@ -444,6 +405,7 @@ ja:
       crumb_title: "フォロワーチェック"
       page_title: "%{user} のフォロワー"
       meta_title: "%{user} のフォロワー分析 - フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}%"
+      summary_title: "フォロワー"
       title: "フォロワー"
       page_description: "%{user} がフォローされているユーザーの一覧です。"
       meta_description: "%{user} がフォローされているユーザーの一覧 -  フォロー %{followers}人 片思い %{one_sided_followers}人 片思い率 %{one_sided_followers_rate}%"
@@ -515,6 +477,8 @@ ja:
       session_expired_and_recover_html: '一定時間操作がなかったため、@%{user} の検索に失敗しました。 再度結果を見るにはこちら → <a href="%{url1}" class="btn btn-default btn-sm">@%{user} の結果を見る</a> 表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-default btn-sm">ログインして @%{user} の結果を見る</a>'
       ready_to_search_html: 'データの準備が完了しました。結果を見るにはこちら → <a href="%{url1}" class="btn btn-default btn-sm">@%{user} の結果を見る</a> 表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-default btn-sm">ログインして @%{user} の結果を見る</a>'
   charts:
+    friends: "フォロー"
+    followers: "フォロワー"
     replying: "リプ"
     replied: "@ツイート"
     favoriting: "ふぁぼ"
@@ -684,6 +648,7 @@ ja:
         followers: "フォロワー"
         friend_uids: "フォローID"
         follower_uids: "フォロワーID"
+        statuses: "ツイート"
         search_count: "検索回数"
         update_count: "自動更新回数"
         created_at: "作成日時"
