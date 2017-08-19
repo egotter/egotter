@@ -77,7 +77,8 @@
 
   .tweets,
   .friends,
-  .followers {
+  .followers,
+  .follow-back-rate {
     font-size: small;
     padding-top: 5px;
     padding-bottom: 5px;
@@ -89,6 +90,10 @@
 
   .friends {
     border-left: 1px solid #e6e6e6;
+    border-right: 1px solid #e6e6e6;
+  }
+
+  .followers {
     border-right: 1px solid #e6e6e6;
   }
 }

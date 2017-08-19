@@ -57,6 +57,10 @@ module Concerns::TwitterUser::Api
     (one_sided_followerships.size.to_f / followerships.size) rescue 0.0
   end
 
+  def follow_back_rate
+    (mutual_friendships.size.to_f / follower_uids.size) rescue 0.0
+  end
+
   def calc_mutual_friend_uids
     friend_uids & follower_uids
   end
