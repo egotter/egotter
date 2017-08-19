@@ -6,17 +6,17 @@
 .refresh-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   %span= t('common.show.update_is_coming', user: twitter_user.mention_name)
-  = link_to(t('common.show.update_result'), timeline_path(screen_name: twitter_user.screen_name), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.update_result'), timeline_path(twitter_user), class: 'btn btn-default btn-sm')
 
 .welcome-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_sign_in', user: twitter_user.mention_name)
-  = link_to(t('common.show.sign_in'), sign_in_path(redirect_path: timeline_path(screen_name: twitter_user.screen_name)), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: "#{controller_name}/#{action_name}/welcome_box", redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
 .follow-box.alert.alert-warning.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_follow', user: twitter_user.mention_name)
-  = link_to(t('common.show.follow'), sign_in_path(redirect_path: timeline_path(screen_name: twitter_user.screen_name), follow: true), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.follow'), sign_in_path(via: "#{controller_name}/#{action_name}/follow_box", redirect_path: timeline_path(twitter_user), follow: true), class: 'btn btn-default btn-sm')
 
 :javascript
   (function () {

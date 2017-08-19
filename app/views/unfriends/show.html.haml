@@ -23,7 +23,7 @@
 
 - unless user_signed_in?
   %div.text-center{style: 'margin-bottom: 15px;'}
-    = link_to t('.additional_func'), sign_in_path(redirect_path: @canonical_path), class: 'btn btn-info btn-lg'
+    = link_to t('.additional_func'), sign_in_path(via: "#{controller_name}/#{action_name}/additional_func", redirect_path: @canonical_path), class: 'btn btn-info btn-lg'
 
 .gray-separator
 

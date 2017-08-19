@@ -28,7 +28,7 @@
               %i.text-muted.fa.fa-user-plus{'area-hidden': true}
               .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
       - else
-        %a.btn.btn-default.no-follow{href: sign_in_path}
+        %a.btn.btn-default.no-follow{href: sign_in_path(via: "#{controller_name}/#{action_name}/follow_btn")}
           %i.text-muted.fa.fa-user-plus{'area-hidden': true}
           .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
 

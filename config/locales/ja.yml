@@ -528,17 +528,17 @@ ja:
     enabled: "有効"
     disabled: "無効"
   before_sign_in:
-    need_login_html: '<a href="%{sign_in_path}">ログイン</a> が必要です。'
-    need_login_for_relationships_html: '共通検索を利用するには <a href="%{sign_in_path}">ログイン</a> が必要です。'
+    need_login_html: '<a href="%{url}">ログイン</a> が必要です。'
+    need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     login_failed_html: '<a href="%{sign_in_path}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{sign_in_path}">ログイン</a> してみてください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
-    too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{sign_in_path}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
+    too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     not_found: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。'
     forbidden: '検索された %{user} は凍結されています。'
     unauthorized_html: '認証に失敗しました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
-    something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+    something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     suspended_user: "%{user} は凍結されています。凍結が解除されてから検索してください。"
-    protected_user_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{sign_in_path}">ログイン</a> すれば検索することができます。'
+    protected_user_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     empty_and_anonymous_and_many_friends_html: '%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br><a href="%{sign_in_path}">ログイン</a> すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}'
     empty_and_other_reason_html: '結果は0件です。<a href="%{sign_in_path}">ログイン</a> すると正しく結果が表示されるかもしれません。<br>%{kaomoji}'
@@ -546,7 +546,7 @@ ja:
     reject_crawler: "The crawler is rejected."
   after_sign_in:
     too_many_requests: "アクセスが多すぎるため検索数の上限に達しました。5〜10分ほどたってから再度検索してみてください。"
-    unauthorized_html: '認証に失敗しました。一度 <a href="%{sign_out_path}">ログアウト</a> し、再度 <a href="%{sign_in_path}">ログイン</a> してから検索してみてください。'
+    unauthorized_html: '認証に失敗しました。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。<br>失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     retry_timeout_html: "アクセスが多すぎるため検索がタイムアウトしました。大半の場合は再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     empty_and_sign_in_and_too_many_friends_html: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"

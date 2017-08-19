@@ -16,7 +16,7 @@
   };
 
   var somethingWrong = function (via) {
-    var message = '<%= t('before_sign_in.something_wrong_html', sign_in_path: welcome_path(via: 'VIA')).html_safe %>';
+    var message = '<%= t('before_sign_in.something_wrong_html', url: welcome_path(via: 'VIA')).html_safe %>';
     return message.replace('VIA', via);
   };
 
@@ -27,11 +27,11 @@
 
   var tooManyRequests = new Exception(
     '<%= I18n.t('after_sign_in.too_many_requests') %>',
-    '<%= raw I18n.t('before_sign_in.too_many_requests_html', sign_in_path: welcome_path(via: 'client/too_many_requests')) %>'
+    '<%= raw I18n.t('before_sign_in.too_many_requests_html', url: welcome_path(via: 'client/too_many_requests')) %>'
   );
 
   var unauthorized = new Exception(
-    '<%= raw I18n.t('after_sign_in.unauthorized_html', sign_in_path: welcome_path(via: 'client/unauthorized'), sign_out_path: sign_out_path) %>',
+    '<%= raw I18n.t('after_sign_in.unauthorized_html', sign_in: welcome_path(via: 'client/unauthorized'), sign_out: sign_out_path) %>',
     '<%= raw I18n.t('before_sign_in.unauthorized_html', sign_in_path: welcome_path(via: 'client/unauthorized')) %>'
   );
 

@@ -9,9 +9,9 @@ module Validation
   def need_login
     unless user_signed_in?
       if controller_name == 'relationships'
-        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_for_relationships_html', sign_in_path: _sign_in_path)
+        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_for_relationships_html', url: kick_out_error_path('need_login'))
       else
-        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', sign_in_path: _sign_in_path)
+        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
       end
     end
   end
@@ -109,7 +109,7 @@ module Validation
     if request.xhr?
       head :bad_request
     else
-      redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user_html', user: view_context.user_link(twitter_user.screen_name), sign_in_path: _sign_in_path)
+      redirect_to redirect_path, alert: I18n.t('before_sign_in.protected_user_html', user: view_context.user_link(twitter_user.screen_name), url: kick_out_error_path('protected'))
     end
 
     false
@@ -144,20 +144,21 @@ module Validation
   end
 
   def unauthorized_message(screen_name)
-    t('after_sign_in.unauthorized_html', sign_in_path: _sign_in_path, sign_out_path: sign_out_path)
+    t('after_sign_in.unauthorized_html', sign_in: kick_out_error_path('unauthorized'), sign_out: sign_out_path)
   end
 
   def too_many_requests_message(screen_name)
-    t('before_sign_in.too_many_requests_html', sign_in_path: _sign_in_path)
+    t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
   end
 
   def alert_message(ex)
-    t('before_sign_in.something_wrong_html', sign_in_path: _sign_in_path)
+    reason = (ex.class.name.demodulize.underscore rescue 'exception')
+    t('before_sign_in.something_wrong_html', url: kick_out_error_path(reason))
   end
 
   private
 
-  def _sign_in_path
-    welcome_path(via: "#{controller_name}/#{action_name}/validation_error")
+  def kick_out_error_path(reason)
+    welcome_path(via: "#{controller_name}/#{action_name}/#{reason}")
   end
 end
