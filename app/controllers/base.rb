@@ -19,7 +19,8 @@ class Base < ApplicationController
   def show
     @api_path = send("api_v1_#{controller_name}_list_path")
     @breadcrumb_name = controller_name.singularize.to_sym
-    @canonical_url = send("#{controller_name.singularize}_url", screen_name: @twitter_user.screen_name)
+    @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
+    @canonical_path = send("#{controller_name.singularize}_path", @twitter_user)
     @page_title = t('.page_title', user: @twitter_user.mention_name)
     @stat = UsageStat.find_by(uid: @twitter_user.uid)
   end

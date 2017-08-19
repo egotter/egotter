@@ -43,4 +43,8 @@ class TwitterUser < ActiveRecord::Base
       else "#{self.class.model_name.cache_key}/#{id}" # do not use timestamps
     end
   end
+
+  def to_param
+    screen_name
+  end
 end

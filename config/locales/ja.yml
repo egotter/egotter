@@ -316,6 +316,7 @@ ja:
       meta_description: "%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter %{url}"
       see_more: 'もっと見る'
+      additional_func: '垢消しを厳密にチェックする'
       see_unfriends_html: 'リムりを見る <span class="badge">%{num}</span>'
       see_unfollowers_html: 'リムられを見る <span class="badge">%{num}</span>'
       see_blocking_or_blocked_html: 'ブロられを見る <span class="badge">%{num}</span>'
@@ -329,7 +330,6 @@ ja:
       page_description: "%{user} がリムーブされたユーザーの一覧です。リムーブとはフォローを外すことです。たまに垢消しもあります。"
       meta_description: "%{user} がリムーブされたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter %{url}"
-      see_more: 'もっと見る'
   blocking_or_blocked:
     show:
       title: "ブロックされたかも"
@@ -340,7 +340,6 @@ ja:
       page_description: "%{user} がブロックされたかもしれないユーザーの一覧です。フォローとフォロワーから同時に外れていたらブロックされたのかも？ たまに垢消しもあります。"
       meta_description: "%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter %{url}"
-      see_more: 'もっと見る'
   relationships:
     new:
       title_html: '<span style="font-size: small; display: inline;">会話検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
