@@ -18,5 +18,5 @@ class SearchHistory < ActiveRecord::Base
   belongs_to :user
   has_one :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
 
-  delegate :screen_name, :name, :description, :profile_image_url_https, :protected, :verified, :suspended, :status, to: :twitter_db_user, allow_nil: true
+  delegate :screen_name, :name, :description, :profile_image_url_https, :protected, :verified, :suspended, :inactive, :status, to: :twitter_db_user, allow_nil: true
 end

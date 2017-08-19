@@ -75,6 +75,10 @@ module Concerns::TwitterUser::Store
     nil
   end
 
+  def inactive
+    TwitterUser.inactive_user?(self)
+  end
+
   def account_created_at
     at = _user_info[:created_at].to_s
     if time_zone.present? && at.present?

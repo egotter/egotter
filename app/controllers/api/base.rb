@@ -79,7 +79,10 @@ module Api
         name: user.name,
         profile_image_url_https: user.profile_image_url_https.to_s,
         description: user.description,
-        suspended: suspended
+        protected: user.protected,
+        verified: user.verified,
+        suspended: suspended,
+        inactive: user.inactive
       }
     end
   end
