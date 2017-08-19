@@ -8,7 +8,7 @@
 
   <div style="position: absolute; bottom: 15px; left: 15px; right: 15px;">
     <div class="media-body">
-      <%= link_to search_path(screen_name: 'SCREEN_NAME'), class: 'user-template', style: 'display: none;' do %>
+      <%= link_to search_path(screen_name: 'SCREEN_NAME', via: "#{controller_name}/#{action_name}#{"/#{menu_name}" if menu_name}"), class: 'user-template', style: 'display: none;' do %>
         <%= normal_icon_img(Hashie::Mash.new({screen_name: '#', profile_image_url_https: image_path('/gray_48x48.png')}), class: 'img-rounded') %>
       <% end %>
       <div class="text-muted progress-msg" style="display: none;"></div>
