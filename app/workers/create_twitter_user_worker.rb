@@ -32,7 +32,7 @@ class CreateTwitterUserWorker
       started_at:  values.fetch('started_at', Time.zone.now),
     )
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{values.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
     @log = BackgroundSearchLog.new(message: '')
   end
 
@@ -82,11 +82,12 @@ class CreateTwitterUserWorker
       end
     end
 
+    update_twitter_db_user(twitter_user)
+
     if twitter_user.save
       twitter_user = TwitterUser.find(twitter_user.id)
       twitter_user.increment(:search_count).save
 
-      update_twitter_db_user(twitter_user)
       ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, twitter_user_id: twitter_user.id, 'enqueued_at' => Time.zone.now)
       update_usage_stat(twitter_user)
       create_score(twitter_user)
@@ -116,7 +117,7 @@ class CreateTwitterUserWorker
       when 'TooManyRequests'     then handle_retryable_exception(values, e)
       when 'InternalServerError' then handle_retryable_exception(values, e)
       when 'ServiceUnavailable'  then handle_retryable_exception(values, e)
-      else logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{values.inspect}"
+      else logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
     end
 
     assign_something_error(e, log)
@@ -155,13 +156,13 @@ class CreateTwitterUserWorker
     user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
     user.save!
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
 
   def update_usage_stat(twitter_user)
     UsageStat.builder(twitter_user.uid).statuses(twitter_user.statuses).build.save!
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
 
   def create_score(twitter_user)
@@ -172,7 +173,7 @@ class CreateTwitterUserWorker
       end
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
 
   def notify(login_user, twitter_user)

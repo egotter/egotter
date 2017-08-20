@@ -28,38 +28,45 @@ module Concerns::TwitterUser::Builder
       @client = nil
     end
 
+    # These validation methods (fresh?, friendless? and diff.empty?) are not implemented in
+    # Rails default validation callbacks due to too heavy.
     def build(validate: true)
       t_user = @client.user(uid)
-      new_tu = TwitterUser.build_by_user(t_user)
-      relations = TwitterUserFetcher.new(new_tu, client: @client, login_user: @login_user).fetch
-      latest = nil
+      latest = TwitterUser.latest(uid)
+
+      unless latest
+        twitter_user = TwitterUser.build_by_user(t_user)
+        relations = TwitterUserFetcher.new(twitter_user, client: @client, login_user: @login_user).fetch
+        twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
+        twitter_user.build_other_relations(relations)
+        twitter_user.user_id = @login_user ? @login_user.id : -1
+        return twitter_user
+      end
+
+      if validate && latest.fresh?
+        @error_message = 'Recently updated'
+        return nil
+      end
+
+      twitter_user = TwitterUser.build_by_user(t_user)
+      relations = TwitterUserFetcher.new(twitter_user, client: @client, login_user: @login_user).fetch
+      twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
 
       if validate
-        latest = TwitterUser.latest(uid)
-        if latest&.fresh?
-          @error_message = 'recently updated'
+        if twitter_user.friendless?
+          @error_message = 'Too many friends (already exists)'
+          return nil
+        end
+
+        if latest.diff(twitter_user).empty?
+          @error_message = 'Not changed (before building)'
           return nil
         end
       end
 
-      new_tu.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
-
-      if validate
-        latest = TwitterUser.latest(uid) unless latest
-        if latest && new_tu.friendless?
-          @error_message = 'already created and too many friends'
-          return nil
-        end
-
-        if latest&.diff(new_tu)&.empty?
-          @error_message = 'not changed (before building)'
-          return nil
-        end
-      end
-
-      new_tu.build_other_relations(relations)
-      new_tu.user_id = @login_user ? @login_user.id : -1
-      new_tu
+      twitter_user.build_other_relations(relations)
+      twitter_user.user_id = @login_user ? @login_user.id : -1
+      twitter_user
     end
 
     def login_user(login_user)

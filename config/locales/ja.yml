@@ -637,9 +637,9 @@ ja:
       background_search_log: "検索ワーカーログ"
     attributes:
       twitter_user:
-        uid: uid
-        screen_name: Twitter ID
-        user_info: "プロフィール情報"
+        uid: "uid"
+        screen_name: "Twitter ID"
+        user_info: "user_info"
         friends_count: "フォロー数"
         followers_count: "フォロワー数"
         friends: "フォロー"
@@ -678,6 +678,10 @@ ja:
         links_count: "リンク"
         hashtags_count: "ハッシュタグ"
         locations_count: "位置情報"
+      twitter_db/user:
+        uid: "uid"
+        screen_name: "Twitter ID"
+        user_info: "user_info"
 
     errors:
       models:
