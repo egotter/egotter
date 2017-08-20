@@ -137,8 +137,7 @@ module Validation
   end
 
   def twitter_exception_handler(ex, screen_name)
-    message = "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{screen_name} #{request.device_type} #{request.browser} #{params.inspect}"
-    request.from_crawler? ? logger.info(message) : logger.warn(message)
+    logger.info "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{screen_name} #{request.device_type} #{request.browser} #{params.inspect}"
 
     redirect_path = root_path_for(controller: controller_name)
 
