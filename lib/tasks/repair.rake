@@ -70,7 +70,7 @@ namespace :repair do
             break
           end
 
-          TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
+          TwitterDB::User::Batch.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
 
           ActiveRecord::Base.transaction do
             twitter_user.update!(user_info: TwitterUser.collect_user_info(t_user), friends_size: friend_uids.size, followers_size: follower_uids.size)

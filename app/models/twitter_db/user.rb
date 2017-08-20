@@ -5,6 +5,8 @@ module TwitterDB
     include Concerns::TwitterUser::Store
     include Concerns::TwitterUser::Inflections
 
+    include Concerns::TwitterDB::User::Batch
+
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
     validates_with Validations::UserInfoValidator

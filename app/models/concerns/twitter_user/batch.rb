@@ -90,10 +90,12 @@ module Concerns::TwitterUser::Batch
       twitter_user.persisted? ? twitter_user : nil
     end
 
-    %i(fetch_and_create).each do |name|
-      alias_method "orig_#{name}", name
-      define_method(name) do |*args|
-        Rails.logger.silence(Logger::WARN) { send("orig_#{name}", *args) }
+    class << self
+      %i(fetch_and_create).each do |name|
+        alias_method "orig_#{name}", name
+        define_method(name) do |*args|
+          Rails.logger.silence(Logger::WARN) { send("orig_#{name}", *args) }
+        end
       end
     end
 
@@ -149,9 +151,9 @@ module Concerns::TwitterUser::Batch
 
     def self.create_twitter_db_user(twitter_user, friend_uids, follower_uids, client:)
       begin
-        TwitterDB::Users.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
+        TwitterDB::User::Batch.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
       rescue => e
-        logger "TwitterDB::Users.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
+        logger "TwitterDB::User::Batch.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
         return
       end
 

@@ -125,7 +125,7 @@ class ImportTwitterUserRelationsWorker
 
   def import_twitter_db_users(uids, client)
     return if uids.blank?
-    TwitterDB::Users.fetch_and_import(uids, client: client)
+    TwitterDB::User::Batch.fetch_and_import(uids, client: client)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
   end
