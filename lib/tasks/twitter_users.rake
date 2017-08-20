@@ -20,9 +20,10 @@ namespace :twitter_users do
     processed = []
     skipped = 0
     skipped_reasons = []
+    skip_if_persisted = ENV['SKIP'].present?
 
     specified_uids.each.with_index do |uid, i|
-      if persisted_uids.include? uid
+      if skip_if_persisted && persisted_uids.include?(uid)
         skipped += 1
         skipped_reasons << "Persisted #{uid}"
         next

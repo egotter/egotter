@@ -4,38 +4,22 @@ module Concerns::TwitterUser::Batch
   extend ActiveSupport::Concern
 
   class Batch
-    def self.fetch_and_create(uid)
+    def self.fetch_and_create(uid, create_twitter_user: true)
       user = User.authorized.find_by(uid: uid)
       user = OldUser.authorized.find_by(uid: uid) unless user
       client = user ? user.api_client : Bot.api_client
 
-      begin
-        tries ||= 3
-        t_user = client.user(uid)
-      rescue => e
-        if e.message == 'Invalid or expired token.'
-          user&.update(authorized: false)
-          logger "Invalid token(user) #{uid}"
-        elsif e.message == 'Not authorized.'
-          logger "Not authorized #{uid}"
-        elsif e.message == 'User not found.'
-          logger "Not found #{uid}"
-        elsif e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
-          logger "Temporarily locked #{uid}"
-        elsif retryable?(e)
-          (tries -= 1).zero? ? logger("Retry limit exceeded(user) #{uid}") : retry
-        else
-          logger "client.user: #{e.class} #{e.message} #{uid}"
+      t_user =
+        fetch_user(uid, client: client) do |ex|
+          user&.update(authorized: false) if ex.message == 'Invalid or expired token.'
         end
-
-        return
-      end
+      return unless t_user
 
       twitter_user = TwitterUser.build_by_user(t_user)
       twitter_user.user_id = user ? user.id : -1
 
       if t_user.suspended
-        create_friendless_record(twitter_user)
+        create_friendless_record(twitter_user, create_twitter_user: create_twitter_user)
         logger "Suspended#{'(create)' if twitter_user.persisted?} #{uid}"
         return twitter_user.persisted? ? twitter_user : nil
       end
@@ -46,41 +30,30 @@ module Concerns::TwitterUser::Batch
           logger "Change a client to update #{uid} from #{client.verify_credentials.id} to #{friendship_uid}"
           client = User.find_by(uid: friendship_uid).api_client
         else
-          create_friendless_record(twitter_user)
+          create_friendless_record(twitter_user, create_twitter_user: create_twitter_user)
           logger "Protected#{'(create)' if twitter_user.persisted?} #{uid}"
           return twitter_user.persisted? ? twitter_user : nil
         end
       end
 
       if twitter_user.too_many_friends?(login_user: user)
-        create_friendless_record(twitter_user)
+        create_friendless_record(twitter_user, create_twitter_user: create_twitter_user)
         logger "Too many friends#{'(create)' if twitter_user.persisted?} #{uid}"
         return twitter_user.persisted? ? twitter_user : nil
       end
 
-      tries = 3
-      begin
-        signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
-        friend_uids, follower_uids = client._fetch_parallelly(signatures)
-      rescue => e
-        if e.message == 'Invalid or expired token.'
-          user&.update(authorized: false)
-          logger "Invalid token(friend_ids) #{uid}"
-        elsif retryable?(e)
-          (tries -= 1).zero? ? logger("Retry limit exceeded(friend_ids) #{uid}") : retry
-        else
-          logger "client.friend_ids: #{e.class} #{e.message} #{uid}"
+      friend_uids, follower_uids =
+        fetch_friend_ids_and_follower_ids(uid, client: client) do |ex|
+          user&.update(authorized: false) if ex.message == 'Invalid or expired token.'
         end
-
-        return
-      end
+      return if friend_uids.nil? || follower_uids.nil?
 
       if (t_user.friends_count - friend_uids.size).abs >= 5 || (t_user.followers_count - follower_uids.size).abs >= 5
-        return logger "Inconsistent #{uid} [#{t_user.friends_count}, #{friend_uids.size}] [#{t_user.followers_count}, #{follower_uids.size}]"
+        raise "Inconsistent #{uid} [#{t_user.friends_count}, #{friend_uids.size}] [#{t_user.followers_count}, #{follower_uids.size}]"
       end
 
       if twitter_user_changed?(uid, friend_uids, follower_uids)
-        create_twitter_user(twitter_user, friend_uids, follower_uids)
+        create_twitter_user(twitter_user, friend_uids, follower_uids) if create_twitter_user
       else
         logger "Not changed #{uid}"
       end
@@ -99,19 +72,61 @@ module Concerns::TwitterUser::Batch
       end
     end
 
+    def self.fetch_user(uid, client:)
+      tries ||= 3
+      client.user(uid)
+    rescue => e
+      if e.message == 'Invalid or expired token.'
+        logger "Invalid token(user) #{uid}"
+      elsif e.message == 'Not authorized.'
+        logger "Not authorized #{uid}"
+      elsif e.message == 'User not found.'
+        logger "Not found #{uid}"
+      elsif e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
+        logger "Temporarily locked #{uid}"
+      elsif retryable?(e)
+        (tries -= 1).zero? ? logger("Retry limit exceeded(user) #{uid}") : retry
+      else
+        logger "client.user: #{e.class} #{e.message} #{uid}"
+      end
+
+      yield(e) if block_given?
+
+      nil
+    end
+
+    def self.fetch_friend_ids_and_follower_ids(uid, client:)
+      tries ||= 3
+      signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
+      client._fetch_parallelly(signatures)
+    rescue => e
+      if e.message == 'Invalid or expired token.'
+        logger "Invalid token(friend_ids) #{uid}"
+      elsif retryable?(e)
+        (tries -= 1).zero? ? logger("Retry limit exceeded(friend_ids) #{uid}") : retry
+      else
+        logger "client.friend_ids: #{e.class} #{e.message} #{uid}"
+      end
+
+      yield(e) if block_given?
+
+      [nil, nil]
+    end
+
     private
 
     def self.retryable?(ex)
       # Twitter::Error::InternalServerError Internal error
       # Twitter::Error::ServiceUnavailable Over capacity
       # Twitter::Error execution expired
+      # Twitter::Error Connection reset by peer - SSL_connect
 
-      ['Internal error', 'Over capacity', 'execution expired'].include? ex.message
+      ['Internal error', 'Over capacity', 'execution expired', 'Connection reset by peer - SSL_connect'].include? ex.message
     end
 
-    def self.create_friendless_record(twitter_user)
+    def self.create_friendless_record(twitter_user, create_twitter_user:)
       ActiveRecord::Base.transaction do
-        unless TwitterUser.exists?(uid: twitter_user.uid)
+        if create_twitter_user && !TwitterUser.exists?(uid: twitter_user.uid)
           twitter_user.assign_attributes(friends_size: 0, followers_size: 0)
           twitter_user.save!(validate: false)
         end

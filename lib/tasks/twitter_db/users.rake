@@ -8,20 +8,23 @@ namespace :twitter_db do
         sigint = true
       end
 
-      friendless_uids = []
-      TwitterDB::User.friendless.select(:id, :uid).find_in_batches(batch_size: 100) do |users|
-        friendless_uids += users.map(&:uid)
-        break if friendless_uids.size >= 500
-      end
-
       failed = false
       processed = []
       skipped = 0
       skipped_reasons = []
+      skip_if_with_friends = ENV['SKIP'].present?
 
-      friendless_uids.each do |uid|
-        twitter_user = TwitterUser::Batch.fetch_and_create(uid)
+      TwitterDB::User.select(:id, :uid, :friends_size, :followers_size).find_each.with_index do |user, i|
+        if skip_if_with_friends && user.with_friends?
+          skipped += 1
+          skipped_reasons << "With friends #{user.uid}"
+          next
+        end
+
+        twitter_user = TwitterUser::Batch.fetch_and_create(user.uid, create_twitter_user: false)
         processed << twitter_user if twitter_user
+
+        puts("#{i + 1}") if (i % 100).zero?
 
         break if sigint || failed
       end
@@ -40,7 +43,7 @@ namespace :twitter_db do
       end
 
       puts "\nupdate #{(sigint || failed ? 'suspended:' : 'finished:')}"
-      puts "  uids: #{friendless_uids.size}, processed: #{processed.size}, skipped: #{skipped}"
+      puts "  uids: unknown, processed: #{processed.size}, skipped: #{skipped}"
     end
   end
 end

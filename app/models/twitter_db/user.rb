@@ -6,6 +6,7 @@ module TwitterDB
     include Concerns::TwitterUser::Inflections
 
     include Concerns::TwitterDB::User::Batch
+    include Concerns::TwitterDB::User::Debug
 
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
@@ -50,6 +51,10 @@ module TwitterDB
 
     def self.friendless
       where(friends_size: -1, followers_size: -1)
+    end
+
+    def with_friends?
+      friends_size != -1 && followers_size != -1
     end
   end
 end
