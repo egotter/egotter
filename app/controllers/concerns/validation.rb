@@ -125,11 +125,11 @@ module Validation
   end
 
   def too_many_searches?
-    return false if user_signed_in?
+    return false if request.from_crawler? || from_minor_crawler?(request.user_agent) || user_signed_in?
 
     limit = Rails.configuration.x.constants['too_many_searches']
     if today_search_histories_size >= limit
-      t('before_sign_in.too_many_searches_html', limit: limit, url: kick_out_error_path('too_many_searches'))
+      redirect_to root_path, alert: t('before_sign_in.too_many_searches_html', limit: limit, url: kick_out_error_path('too_many_searches'))
       true
     end
 
