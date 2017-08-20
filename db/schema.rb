@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170819133637) do
+ActiveRecord::Schema.define(version: 20170820142712) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -91,6 +91,15 @@ ActiveRecord::Schema.define(version: 20170819133637) do
   add_index "background_update_logs", ["created_at"], name: "index_background_update_logs_on_created_at", using: :btree
   add_index "background_update_logs", ["screen_name"], name: "index_background_update_logs_on_screen_name", using: :btree
   add_index "background_update_logs", ["uid"], name: "index_background_update_logs_on_uid", using: :btree
+
+  create_table "blacklist_words", force: :cascade do |t|
+    t.string   "text",       limit: 191, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "blacklist_words", ["created_at"], name: "index_blacklist_words_on_created_at", using: :btree
+  add_index "blacklist_words", ["text"], name: "index_blacklist_words_on_text", unique: true, using: :btree
 
   create_table "bots", force: :cascade do |t|
     t.integer  "uid",         limit: 8,   null: false
