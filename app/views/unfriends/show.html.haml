@@ -21,10 +21,6 @@
 
 = render partial: 'close_friends/users', locals: {twitter_user: @twitter_user, api_path: @api_path}
 
-- unless user_signed_in?
-  %div.text-center{style: 'margin-bottom: 15px;'}
-    = link_to t('.additional_func'), sign_in_path(via: "#{controller_name}/#{action_name}/additional_func", redirect_path: @canonical_path), class: 'btn btn-info btn-lg'
-
 .gray-separator
 
 - labels = [t('unfriends.show.see_unfriends_html', num: @twitter_user.unfriendships.size), t('unfriends.show.see_unfollowers_html', num: @twitter_user.unfollowerships.size), t('unfriends.show.see_blocking_or_blocked_html', num: @twitter_user.blocking_or_blocked_uids.size)]

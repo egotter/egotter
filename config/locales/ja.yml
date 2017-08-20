@@ -316,7 +316,6 @@ ja:
       meta_description: "%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter %{url}"
       see_more: 'もっと見る'
-      additional_func: '垢消しを厳密にチェックする'
       see_unfriends_html: 'リムりを見る <span class="badge">%{num}</span>'
       see_unfollowers_html: 'リムられを見る <span class="badge">%{num}</span>'
       see_blocking_or_blocked_html: 'ブロられを見る <span class="badge">%{num}</span>'
@@ -465,6 +464,7 @@ ja:
       update_result: 'ページを更新する'
       need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
       need_follow: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'
+      additional_func: 'リムられやブロられは、ログインすると結果がより正確になります。'
       sign_in: 'ログインする'
       follow: 'フォローする'
       let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
