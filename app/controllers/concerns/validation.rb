@@ -36,17 +36,23 @@ module Validation
   def existing_uid?(uid)
     return true if TwitterUser.exists?(uid: uid)
 
-    if controller_name == 'searches' && action_name == 'show' && !request.from_crawler? && !request.xhr?
+    if request.xhr?
+      head :bad_request
+      return false
+    end
+
+    if request.from_crawler? || from_minor_crawler?(request.user_agent)
+      redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
+      return false
+    end
+
+    if (controller_name == 'searches' && action_name == 'show') || (controller_name == 'timelines' && action_name == 'show')
       @screen_name = @tu.screen_name
-      @redirect_path = search_path(screen_name: @screen_name)
+      @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via']
       render template: 'searches/create', layout: false
     else
-      if request.xhr?
-        head :bad_request
-      else
-        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
-      end
+      redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
     end
 
     false

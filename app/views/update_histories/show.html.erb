@@ -7,7 +7,7 @@
 <div class="update-histories">
   <h2 class="h4"><%= @title %></h2>
 
-  <div class="return-to-results-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name)) %></div>
+  <div class="return-to-results-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), timeline_path(@searched_tw_user)) %></div>
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
 
@@ -49,5 +49,5 @@
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}) %>
 
-  <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), search_path(screen_name: @searched_tw_user.screen_name)) %></div>
+  <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), timeline_path(@searched_tw_user)) %></div>
 </div>

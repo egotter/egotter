@@ -3,7 +3,7 @@ crumb :root do
 end
 
 crumb :search do |screen_name|
-  link t('searches.show.simple_title', user: mention_name(screen_name)), search_path(screen_name: screen_name)
+  link t('searches.show.simple_title', user: mention_name(screen_name)), timeline_path(screen_name: screen_name)
   parent :root
 end
 

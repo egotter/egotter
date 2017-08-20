@@ -3,11 +3,11 @@
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
-          <%= link_to(search_path(screen_name: user.screen_name), class: 'icon-link') do %>
+          <%= link_to(timeline_path(user), class: 'icon-link') do %>
             <%= bigger_icon_img(user) %>
           <% end %>
           <div class="name">
-            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user_name(user)}".html_safe, search_path(screen_name: user.screen_name)) %>
+            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user_name(user)}".html_safe, timeline_path(user)) %>
           </div>
           <div class="twitter-link">
             <%= user_link(user.screen_name) do %>

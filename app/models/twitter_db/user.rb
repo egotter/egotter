@@ -19,6 +19,10 @@ module TwitterDB
       obj.has_many :followers, through: :followerships, class_name: 'TwitterDB::User'
     end
 
+    def to_param
+      screen_name
+    end
+
     CREATE_COLUMNS = %i(uid screen_name user_info friends_size followers_size)
     UPDATE_COLUMNS = %i(uid screen_name user_info)
     BATCH_SIZE = 1000

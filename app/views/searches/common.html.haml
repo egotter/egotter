@@ -9,7 +9,7 @@
 .common-result
   %h2.h4= @title
 
-  .return-to-results-top= link_to(t('searches.common.return', user: @twitter_user.mention_name), search_path(screen_name: @twitter_user.screen_name))
+  .return-to-results-top= link_to(t('searches.common.return', user: @twitter_user.mention_name), timeline_path(@twitter_user))
 
   = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 

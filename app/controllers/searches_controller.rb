@@ -36,7 +36,7 @@ class SearchesController < ApplicationController
 
   def create
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
-    redirect_path = sanitized_redirect_path(params[:redirect_path].presence || search_path(screen_name: screen_name))
+    redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(screen_name: screen_name))
     if TwitterUser.exists?(uid: uid)
       redirect_to redirect_path
     else
@@ -53,7 +53,7 @@ class SearchesController < ApplicationController
     tu = fetch_twitter_user_from_cache(uid)
     return redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist') if tu.nil?
 
-    @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || search_path(screen_name: tu.screen_name))
+    @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(tu))
     @twitter_user = tu
   end
 

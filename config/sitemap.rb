@@ -48,8 +48,6 @@ do_create = Proc.new do
     end
 
     %i(
-      new_friends
-      new_followers
       favoriting
     ).each { |menu| add(send("#{menu}_search_path", screen_name: screen_name), options) }
 

@@ -30,7 +30,7 @@ class ApplicationController < ActionController::Base
       return redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
     end
 
-    search = search_path(screen_name: screen_name)
+    search = timeline_path(screen_name: screen_name)
     sign_in = sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search)
 
     if recoverable_request?
@@ -50,14 +50,14 @@ class ApplicationController < ActionController::Base
 
     if params['screen_name'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
       @screen_name = params['screen_name']
-      @redirect_path = search_path(screen_name: @screen_name)
+      @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via']
       return render template: 'searches/create', layout: false
     end
 
     if params['from'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/profile'
       @screen_name = params['from']
-      @redirect_path = search_path(screen_name: @screen_name)
+      @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via']
       return render template: 'searches/create', layout: false
     end
