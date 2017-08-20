@@ -25,7 +25,7 @@ module Concerns::TwitterUser::Batch
       end
 
       if t_user.protected && client.verify_credentials.id != t_user.id
-        friendship_uid = TwitterDB::Friendship.where(user_uid: User.authorized.pluck(:uid), friend_uid: uid).first&.user_uid
+        friendship_uid = ::TwitterDB::Friendship.where(user_uid: User.authorized.pluck(:uid), friend_uid: uid).first&.user_uid
         if friendship_uid
           logger "Change a client to update #{uid} from #{client.verify_credentials.id} to #{friendship_uid}"
           client = User.find_by(uid: friendship_uid).api_client
@@ -131,7 +131,7 @@ module Concerns::TwitterUser::Batch
           twitter_user.save!(validate: false)
         end
 
-        user = TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
+        user = ::TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
         user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
         user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
         user.save!
@@ -166,7 +166,7 @@ module Concerns::TwitterUser::Batch
 
     def self.create_twitter_db_user(twitter_user, friend_uids, follower_uids, client:)
       begin
-        TwitterDB::User::Batch.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
+        ::TwitterDB::User::Batch.fetch_and_import((friend_uids + follower_uids).uniq, client: client)
       rescue => e
         logger "TwitterDB::User::Batch.fetch_and_import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
         return
@@ -174,8 +174,8 @@ module Concerns::TwitterUser::Batch
 
       begin
         ActiveRecord::Base.transaction do
-          TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid).update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
-          TwitterDB::Friendships.import(twitter_user.uid, friend_uids, follower_uids)
+          ::TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid).update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
+          ::TwitterDB::Friendships.import(twitter_user.uid, friend_uids, follower_uids)
         end
       rescue => e
         logger "TwitterDB::Friendships.import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
