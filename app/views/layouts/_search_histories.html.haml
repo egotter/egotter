@@ -12,5 +12,4 @@
           %h2
             %small= t('search_histories.index.title')
           .twitter.users
-            - histories = user_signed_in? ? SearchHistory.latest(user_id: current_user_id) : SearchHistory.latest(session_id: session[:fingerprint])
-            = render(partial: 'twitter/user', collection: histories, cached: true, locals: {via: 'search_histories'})
+            = render(partial: 'twitter/user', collection: latest_search_histories, cached: true, locals: {via: 'search_histories'})

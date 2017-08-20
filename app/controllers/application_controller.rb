@@ -1,6 +1,7 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper
   include Concerns::Logging
+  include SearchHistoriesHelper
 
   before_action :set_locale
 

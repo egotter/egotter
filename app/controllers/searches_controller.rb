@@ -8,6 +8,7 @@ class SearchesController < ApplicationController
   before_action(only: Search::MENU + %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
   before_action(only: Search::MENU + %i(create show)) { authorized_search?(@tu) }
   before_action(only: Search::MENU + %i(show)) { existing_uid?(@tu.uid.to_i) }
+  before_action(only: Search::MENU + %i(show)) { too_many_searches? }
   before_action only: Search::MENU + %i(show) do
     @twitter_user = TwitterUser.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)

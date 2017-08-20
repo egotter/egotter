@@ -13,6 +13,7 @@ class TimelinesController < ApplicationController
   before_action(only: %i(show)) { @tu = build_twitter_user(params[:screen_name]) }
   before_action(only: %i(show)) { authorized_search?(@tu) }
   before_action(only: %i(show)) { existing_uid?(@tu.uid.to_i) }
+  before_action(only: %i(show)) { too_many_searches? }
   before_action only: %i(show) do
     @twitter_user = TwitterUser.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)

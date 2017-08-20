@@ -124,6 +124,18 @@ module Validation
     false
   end
 
+  def too_many_searches?
+    return false if user_signed_in?
+
+    limit = Rails.configuration.x.constants['too_many_searches']
+    if today_search_histories_size >= limit
+      t('before_sign_in.too_many_searches_html', limit: limit, url: kick_out_error_path('too_many_searches'))
+      true
+    end
+
+    false
+  end
+
   def twitter_exception_handler(ex, screen_name)
     message = "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{screen_name} #{request.device_type} #{request.browser} #{params.inspect}"
     request.from_crawler? ? logger.info(message) : logger.warn(message)
