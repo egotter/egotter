@@ -3,12 +3,6 @@ require 'active_support/concern'
 module Concerns::TwitterUser::Batch
   extend ActiveSupport::Concern
 
-  class_methods do
-    def fetch_and_create(uid)
-      Rails.logger.silence(Logger::WARN) { Batch.fetch_and_create(uid) }
-    end
-  end
-
   class Batch
     def self.fetch_and_create(uid)
       user = User.authorized.find_by(uid: uid)
@@ -94,6 +88,13 @@ module Concerns::TwitterUser::Batch
       create_twitter_db_user(twitter_user, friend_uids, follower_uids, client: client)
 
       twitter_user.persisted? ? twitter_user : nil
+    end
+
+    %i(fetch_and_create).each do |name|
+      alias_method "orig_#{name}", name
+      define_method(name) do |*args|
+        Rails.logger.silence(Logger::WARN) { send("orig_#{name}", *args) }
+      end
     end
 
     private

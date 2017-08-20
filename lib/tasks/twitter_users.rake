@@ -28,7 +28,7 @@ namespace :twitter_users do
         next
       end
 
-      twitter_user = TwitterUser.fetch_and_create(uid)
+      twitter_user = TwitterUser::Batch.fetch_and_create(uid)
       processed << twitter_user if twitter_user
 
       puts("#{i + 1}/#{specified_uids.size}") if (i % 100).zero?

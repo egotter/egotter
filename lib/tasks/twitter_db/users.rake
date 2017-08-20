@@ -20,7 +20,7 @@ namespace :twitter_db do
       skipped_reasons = []
 
       friendless_uids.each do |uid|
-        twitter_user = TwitterUser.fetch_and_create(uid)
+        twitter_user = TwitterUser::Batch.fetch_and_create(uid)
         processed << twitter_user if twitter_user
 
         break if sigint || failed
