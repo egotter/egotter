@@ -59,43 +59,4 @@ RSpec.describe TwitterDB::User, type: :model do
       expect(TwitterDB::User.to_save_format(t_user)).to match({uid: t_user.id, screen_name: t_user.screen_name, user_info: {id: t_user.id, screen_name: t_user.screen_name}.to_json, friends_size: -1, followers_size: -1})
     end
   end
-
-  describe '#persist!' do
-    let(:uid) { rand(1000) }
-    let(:generator) { Proc.new { Hashie::Mash.new(id: rand(10000), screen_name: 'sn') } }
-    let(:t_user) { generator.call }
-    let(:friends) { 3.times.map { generator.call } }
-    let(:followers) { 2.times.map { generator.call } }
-    let(:client) do
-      client = Hashie::Mash.new(_fetch_parallelly: nil)
-      allow(client).to receive(:_fetch_parallelly).and_return([t_user, friends, followers])
-      client
-    end
-    let(:user) { TwitterDB::User.builder(uid).client(client).build }
-
-    it 'saves TwitterDB::User' do
-      expect { user.persist! }.to change { TwitterDB::User.all.size }.by(1 + friends.size + followers.size)
-      user = TwitterDB::User.find_by(uid: self.user.uid)
-      expect(user.friends_size).to eq(friends.size)
-      expect(user.followers_size).to eq(followers.size)
-    end
-
-    it 'saves TwitterDB::Friendship' do
-      expect { user.persist! }.to change { TwitterDB::Friendship.all.size }.by(friends.size)
-    end
-
-    it 'saves TwitterDB::Followership' do
-      expect { user.persist! }.to change { TwitterDB::Followership.all.size }.by(followers.size)
-    end
-
-    context 'with persisted records' do
-      before do
-        friends[0].tap { |f| TwitterDB::User.create!(uid: f.id, screen_name: f.screen_name, user_info: '{}', friends_size: -1, followers_size: -1) }
-      end
-
-      it 'saves only new TwitterDB::User' do
-        expect { user.persist! }.to change { TwitterDB::User.all.size }.by(1 + (friends.size - 1) + followers.size)
-      end
-    end
-  end
 end
