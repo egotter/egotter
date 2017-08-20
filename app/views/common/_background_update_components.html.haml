@@ -29,13 +29,21 @@
 
     var $updateBox = $('.update-box');
     var $refreshBox = $('.refresh-box');
+    var $welcomeBox = $('.welcome-box');
+    var $followBox = $('.follow-box');
+
+    $.each([$updateBox, $refreshBox, $welcomeBox, $followBox], function (i, btn) {
+      btn.on('close.bs.alert', function () {
+        btn.parent().hide();
+      });
+    });
 
     function checkForFollow () {
       $.getJSON(checkForFollowPath, function (res) {
         console.log('checkForFollow', res);
 
         if (!res.follow) {
-          $('.follow-box').show().sticky();
+          $followBox.show().sticky();
         }
       });
     }
@@ -45,7 +53,7 @@
         checkForFollow();
       } else {
         if (friendless) {
-          $('.welcome-box').show().sticky();
+          $welcomeBox.show().sticky();
         }
       }
     }
@@ -56,7 +64,7 @@
         console.log('checkForUpdates', res);
 
           if (res.found) {
-            $updateBox.parent().hide();
+            $updateBox.alert('close');
             if (res.text) {
               $refreshBox.find('span').text(res.text);
             }
@@ -66,13 +74,13 @@
               retryCount++;
               setTimeout(checkForUpdates, 8000);
             } else {
-              $updateBox.parent().hide();
+              $updateBox.alert('close');
               updatesNotFound();
             }
           }
         })
         .fail(function (xhr) {
-          $updateBox.parent().hide();
+          $updateBox.alert('close');
           console.log('checkForUpdates failed.', xhr);
         });
     }
