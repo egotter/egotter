@@ -27,8 +27,11 @@ module ApplicationHelper
     @current_user_uid ||= user_signed_in? ? current_user.uid.to_i : -1
   end
 
-  def egotter_share_text
-    @egotter_share_text ||= t('tweet_text.top', kaomoji: Kaomoji.happy)
+  def egotter_share_text(shorten_url: false, via: nil)
+    url = 'https://egotter.com'
+    url += '?' + {via: via}.to_query if via
+    url = Util::UrlShortener.shorten(url) if shorten_url
+    t('tweet_text.top', kaomoji: Kaomoji.happy) + ' ' + url
   end
 
   def current_user_friend_uids

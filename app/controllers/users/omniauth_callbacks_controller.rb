@@ -12,7 +12,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
         SearchHistory.where(session_id: session[:fingerprint], user_id: -1).update_all(user_id: user.id)
         FollowEgotterWorker.perform_async(user.id) if follow
-        TweetEgotterWorker.perform_async(user.id, egotter_share_text) if tweet
+        TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
