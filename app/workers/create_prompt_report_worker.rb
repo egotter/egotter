@@ -98,7 +98,7 @@ class CreatePromptReportWorker
       user.update(authorized: false)
     end
 
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
+    logger.warn "#{e.class}: #{e.message.truncate(150)} #{user_id}"
     log.update!(
       call_count: client.call_count,
       message: e.message.truncate(150)
