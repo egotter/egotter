@@ -19,20 +19,17 @@
   .col-md-6
     = render partial: 'timelines/users_summary', locals: {twitter_user: @twitter_user, menu_name: 'close_friends'}
 
-  .col-md-6
-    = render partial: 'search_results/show/stats_summary', locals: {name: :usage_stats, graph: @stat&.wday, tu: @twitter_user}
+  - if @stat
+    .col-md-6
+      = render partial: 'search_results/show/stats_summary', locals: {menu_name: :usage_stats, graph: @stat.wday, twitter_user: @twitter_user}
 
-  .col-md-6
-    .menu-items.media{style: 'position: relative;'}
-      = link_to score_path(screen_name: @twitter_user.screen_name), class: 'result-link' do
-        %h3.h4= t('scores.show.title')
-        .text-center.description= t('scores.show.page_description', user: @twitter_user.mention_name)
-      = render partial: 'scores/gauge', locals: {score: @score}
-      %div{style: 'position: absolute; bottom: 15px; left: 15px; right: 15px;'}
-        = link_to(t('dictionary.view_more'), score_path(screen_name: @twitter_user.screen_name), class: 'btn btn-info btn-block btn-view-more')
+  - if @score
+    .col-md-6
+      = render partial: 'timelines/gauge', locals: {menu_name: :score, score: @score.klout_score, twitter_user: @twitter_user}
 
-  .col-md-6
-    = render partial: 'search_results/show/stats_summary', locals: {name: :clusters_belong_to, graph: name_y_format(@stat&.tweet_clusters), tu: @twitter_user}
+  - if @stat
+    .col-md-6
+      = render partial: 'search_results/show/stats_summary', locals: {menu_name: :clusters_belong_to, graph: name_y_format(@stat.tweet_clusters), twitter_user: @twitter_user}
 
   - %w(unfriends unfollowers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favoriting inactive_friends inactive_followers).each do |name|
     - if name == 'blocking_or_blocked' && request.from_smartphone?

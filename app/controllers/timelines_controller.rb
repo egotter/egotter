@@ -34,7 +34,7 @@ class TimelinesController < ApplicationController
     end
 
     @stat = UsageStat.find_by(uid: @twitter_user.uid)
-    @score = find_or_create_score(@twitter_user.uid).klout_score
+    @score = Score.find_by(uid: @twitter_user.uid)
   end
 
   def check_for_updates

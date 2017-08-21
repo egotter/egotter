@@ -44,6 +44,7 @@ class SearchLog < ActiveRecord::Base
 
   class << self
     def except_crawler
+      # device_type NOT IN ('crawler', 'UNKNOWN') AND session_id != '-1'
       where.not(device_type: %w(crawler UNKNOWN), session_id: -1)
     end
 

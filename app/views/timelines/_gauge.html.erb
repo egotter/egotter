@@ -1,0 +1,41 @@
+<%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
+
+<div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
+  <%= link_to score_path(twitter_user), class: 'result-link' do %>
+    <h3 class="h4"><%= t('scores.show.title') %></h3>
+    <div class="text-center description"><%=t('scores.show.page_description', user: twitter_user.mention_name) %></div>
+  <% end %>
+
+  <div class="scores-gauge" style="height: 140px; margin: 0 auto; margin-top: -15px;"></div>
+
+  <div style="position: absolute; bottom: 15px; left: 15px; right: 15px;">
+    <%= link_to(t('dictionary.view_more'), score_path(twitter_user), class: 'btn btn-info btn-block btn-view-more') %>
+  </div>
+
+  <script>
+    $(function () {
+      var menuName = '<%= menu_name %>';
+      var fromCrawler = <%= request.from_crawler? %>;
+
+      function drawGauge () {
+        $("div[data-replaced-by='" + menuName + "']").remove();
+        $('.menu-items.' + menuName).show();
+
+        var gaugeChart = $.extend(true, {}, window.gaugeOptions);
+        gaugeChart.series[0].data = <%= raw [(score.to_f * 10000).round].to_json %>;
+        $('.scores-gauge').highcharts(gaugeChart);
+      }
+
+      if (fromCrawler) {
+        drawGauge();
+      } else {
+        $('.placeholder-wrapper.' + menuName)
+          .lazyload()
+          .one('appear', function () {
+            console.log('appear', menuName);
+            drawGauge();
+          });
+      }
+    });
+  </script>
+</div>

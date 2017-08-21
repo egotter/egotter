@@ -1,7 +1,9 @@
-<div class="menu-items media" style="position: relative;">
-  <%= link_to search_path_for(name, tu.screen_name), class: 'result-link' do %>
-    <h3 class="h4"><%= title_for(name, tu.screen_name) %></h3>
-    <div class="text-center description"><%= description_for(name, tu.screen_name).html_safe %></div>
+<%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
+
+<div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
+  <%= link_to search_path_for(menu_name, twitter_user.screen_name), class: 'result-link' do %>
+    <h3 class="h4"><%= title_for(menu_name, twitter_user.screen_name) %></h3>
+    <div class="text-center description"><%= description_for(menu_name, twitter_user.screen_name).html_safe %></div>
   <% end %>
 
   <div style="position: absolute; bottom: 15px; left: 15px; right: 15px;">
@@ -9,14 +11,33 @@
       <div id="<%= graph.object_id %>" style="height: 120px;"></div>
       <script>
         $(function () {
-          var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
-          graph_option.series[0].data = <%= raw graph.to_json %>;
-          graph_option.yAxis.visible = false;
-          $('#<%= graph.object_id %>').highcharts(graph_option);
+          var menuName = '<%= menu_name %>';
+          var fromCrawler = <%= request.from_crawler? %>;
+
+          function drawChart () {
+            $("div[data-replaced-by='" + menuName + "']").remove();
+            $('.menu-items.' + menuName).show();
+
+            var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
+            graph_option.series[0].data = <%= raw graph.to_json %>;
+            graph_option.yAxis.visible = false;
+            $('#<%= graph.object_id %>').highcharts(graph_option);
+          }
+
+          if (fromCrawler) {
+            drawChart();
+          } else {
+            $('.placeholder-wrapper.' + menuName)
+              .lazyload()
+              .one('appear', function () {
+                console.log('appear', menuName);
+                drawChart();
+              });
+          }
         });
       </script>
     </div>
 
-    <%= link_to(t('dictionary.view_more'), search_path_for(name, tu.screen_name), class: 'btn btn-info btn-block btn-view-more') %>
+    <%= link_to(t('dictionary.view_more'), search_path_for(menu_name, twitter_user.screen_name), class: 'btn btn-info btn-block btn-view-more') %>
   </div>
 </div>
