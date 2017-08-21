@@ -39,26 +39,28 @@ namespace :users do
     start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 30.days)
     end_day = ENV['END'] ? Time.zone.parse(ENV['END']) : Time.zone.now
 
+    puts "users:update start #{Time.zone.now}"
+
     (start_day.to_date..end_day.to_date).each do |day|
-      search_logs = SearchLog.where(user_id: User.pluck(:id)).where(created_at: day.to_time.all_day).order(created_at: :asc)
-      users = User.where(id: search_logs.pluck(:user_id)).index_by { |u| u.id }
+      search_logs = SearchLog.with_login.where(created_at: day.to_time.all_day).order(created_at: :asc)
+      users = User.where(id: search_logs.uniq.pluck(:user_id)).index_by(&:id)
 
-      search_logs.each do |log|
+      search_logs.select(:user_id, :created_at).each do |log|
         user = users[log.user_id]
-        assign_timestamp(user, :first_access_at, log.created_at) { |_user, attr, value| _user[attr] > value }
-        assign_timestamp(user, :last_access_at, log.created_at) { |_user, attr, value| _user[attr] < value }
+        users_assign_timestamp(user, :first_access_at, log.created_at) { |_user, attr, value| _user[attr] > value }
+        users_assign_timestamp(user, :last_access_at, log.created_at) { |_user, attr, value| _user[attr] < value }
       end
 
-      search_logs.where(action: 'show').each do |log|
+      search_logs.where(action: 'show').select(:user_id, :created_at).each do |log|
         user = users[log.user_id]
-        assign_timestamp(user, :first_search_at, log.created_at) { |_user, attr, value| _user[attr] > value }
-        assign_timestamp(user, :last_search_at, log.created_at) { |_user, attr, value| _user[attr] < value }
+        users_assign_timestamp(user, :first_search_at, log.created_at) { |_user, attr, value| _user[attr] > value }
+        users_assign_timestamp(user, :last_search_at, log.created_at) { |_user, attr, value| _user[attr] < value }
       end
 
-      SignInLog.where(created_at: day.to_time.all_day, user_id: users.keys).each do |log|
+      SignInLog.where(created_at: day.to_time.all_day, user_id: users.keys).select(:user_id, :created_at).each do |log|
         user = users[log.user_id]
-        assign_timestamp(user, :first_sign_in_at, log.created_at) { |_user, attr, value| _user[attr] > value }
-        assign_timestamp(user, :last_sign_in_at, log.created_at) { |_user, attr, value| _user[attr] < value }
+        users_assign_timestamp(user, :first_sign_in_at, log.created_at) { |_user, attr, value| _user[attr] > value }
+        users_assign_timestamp(user, :last_sign_in_at, log.created_at) { |_user, attr, value| _user[attr] < value }
       end
 
       changed, not_changed = users.values.partition { |u| u.changed? }
@@ -69,9 +71,10 @@ namespace :users do
       end
     end
 
+    puts "users:update finish #{Time.zone.now}"
   end
 
-  def assign_timestamp(user, attr, value)
+  def users_assign_timestamp(user, attr, value)
     if user[attr].nil? || yield(user, attr, value)
       user[attr] = value
     end
