@@ -17,9 +17,8 @@ module Api
       uids, size = summary_uids
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
 
-      # TODO Debug
       if uids.any? { |uid| !users.has_key?(uid) }
-        logger.warn "#{self.class}##{__method__}: Not persisted #{uids.select { |uid| !users.has_key?(uid) }.inspect}"
+        CreateTwitterDBUserWorker.perform_async(uids.select { |uid| !users.has_key?(uid) })
       end
 
       users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}
@@ -33,7 +32,7 @@ module Api
       limit = (0..10).include?(params[:limit].to_i) ? params[:limit].to_i : 10
       uids, max_sequence = list_uids(params[:max_sequence].to_i, limit: limit)
 
-      suspended_uids = fetch_suspended_uids(uids)
+      suspended_uids = uids.any? ? fetch_suspended_uids(uids) : []
 
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
       users = uids.map { |uid| users[uid] }.compact.map do |user|
@@ -52,7 +51,7 @@ module Api
 
     # TODO Experimental
     def fetch_suspended_uids(uids)
-      if uids.any? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
+      if %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
         uids - client.users(uids).map(&:id)
       else
         []

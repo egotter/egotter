@@ -16,6 +16,7 @@
   - CreateSignedInTwitterUserWorker
   - CreateSignInLogWorker
   - CreateTweetsWorker
+  - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
