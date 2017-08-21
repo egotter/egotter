@@ -1,6 +1,10 @@
 module SearchHistoriesHelper
   def latest_search_histories
-    user_signed_in? ? SearchHistory.latest(user_id: current_user_id) : SearchHistory.latest(session_id: session[:fingerprint])
+    if request.from_crawler?
+      []
+    else
+      user_signed_in? ? SearchHistory.latest(user_id: current_user_id) : SearchHistory.latest(session_id: session[:fingerprint])
+    end
   end
 
   def today_search_histories_size
