@@ -53,7 +53,9 @@ module Concerns::TwitterUser::Batch
       end
 
       if twitter_user_changed?(uid, friend_uids, follower_uids)
-        create_twitter_user(twitter_user, friend_uids, follower_uids) if create_twitter_user
+        if create_twitter_user && create_twitter_user(twitter_user, friend_uids, follower_uids)
+          logger "Created #{uid}"
+        end
       else
         logger "Not changed #{uid}"
       end
@@ -147,7 +149,7 @@ module Concerns::TwitterUser::Batch
         end
       rescue => e
         logger "Friendships.import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
-        return
+        return false
       end
 
       uid = twitter_user.uid.to_i
@@ -161,7 +163,10 @@ module Concerns::TwitterUser::Batch
         MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
       rescue => e
         logger "Unfriendships.import: #{e.class} #{e.message.truncate(100)} #{uid}"
+        return false
       end
+
+      true
     end
 
     def self.create_twitter_db_user(twitter_user, friend_uids, follower_uids, client:)
