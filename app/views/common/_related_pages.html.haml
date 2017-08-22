@@ -2,22 +2,22 @@
 
 .row
   .col-md-6
-    = render partial: 'timelines/users_summary', locals: {twitter_user: twitter_user, menu_name: 'friends'}
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'friends'}
 
   .col-md-6
-    = render partial: 'timelines/users_summary', locals: {twitter_user: twitter_user, menu_name: 'followers'}
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'followers'}
 
   .col-md-6
-    = render partial: 'timelines/users_summary', locals: {twitter_user: twitter_user, menu_name: 'inactive_friends'}
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'inactive_friends'}
 
   .col-md-6
-    = render partial: 'timelines/users_summary', locals: {twitter_user: twitter_user, menu_name: 'inactive_followers'}
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'inactive_followers'}
 
   .col-md-6
-    = render partial: 'timelines/users_summary', locals: {twitter_user: twitter_user, menu_name: 'unfriends'}
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'unfriends'}
 
   .col-md-6
-    = render partial: 'timelines/users_summary', locals: {twitter_user: twitter_user, menu_name: 'unfollowers'}
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'unfollowers'}
 
   .col-md-6
-    = render partial: 'timelines/users_summary', locals: {twitter_user: twitter_user, menu_name: 'blocking_or_blocked'}
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'blocking_or_blocked'}

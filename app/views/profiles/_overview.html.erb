@@ -50,19 +50,19 @@
 <div class="profile-counts-container">
   <div class="row">
     <div class="tweets col-xs-3">
-      <%= link_to status_path(screen_name: user.screen_name), class: 'text-muted' do %>
+      <%= link_to status_path(user), class: 'text-muted' do %>
         <span class="count"><%= user.statuses_count %></span>
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
       <% end %>
     </div>
     <div class="friends col-xs-3">
-      <%= link_to friend_path(screen_name: user.screen_name), class: 'text-muted' do %>
+      <%= link_to friend_path(user), class: 'text-muted' do %>
         <span class="count"><%= user.friends_count %></span>
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
       <% end %>
     </div>
     <div class="followers col-xs-3">
-      <%= link_to follower_path(screen_name: user.screen_name), class: 'text-muted' do %>
+      <%= link_to follower_path(user), class: 'text-muted' do %>
         <span class="count"><%= user.followers_count %></span>
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
       <% end %>
