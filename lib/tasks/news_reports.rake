@@ -18,6 +18,7 @@ namespace :news_reports do
     no_record = 0
     empty_count = 0
     failed = false
+    dry_run = ENV['DRY_RUN'].present?
     reports_count = NewsReport.all.size
 
     User.where(id: user_ids).select(:id, :uid).find_each do |user|
@@ -35,7 +36,7 @@ namespace :news_reports do
       end
 
       begin
-        NewsReport.come_back_inactive_user(user_id).deliver
+        NewsReport.come_back_inactive_user(user_id).deliver unless dry_run
       rescue => e
         User.find(user_id).update(authorized: false) if ex.message == 'Invalid or expired token.'
         news_reports_can_continue?(e, user_id) ? next : (failed = true)
@@ -78,6 +79,7 @@ namespace :news_reports do
     no_record = 0
     empty_count = 0
     failed = false
+    dry_run = ENV['DRY_RUN'].present?
     reports_count = NewsReport.all.size
 
     OldUser.where(id: user_ids).select(:id, :uid).find_each do |user|
@@ -95,7 +97,7 @@ namespace :news_reports do
       end
 
       begin
-        NewsReport.come_back_old_user(user_id).deliver
+        NewsReport.come_back_old_user(user_id).deliver unless dry_run
       rescue => e
         OldUser.find(user_id).update(authorized: false) if ex.message == 'Invalid or expired token.'
         news_reports_can_continue?(e, user_id) ? next : (failed = true)
