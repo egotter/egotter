@@ -49,7 +49,14 @@ module Concerns::TwitterUser::Batch
       return if friend_uids.nil? || follower_uids.nil?
 
       if (t_user.friends_count - friend_uids.size).abs >= 5 || (t_user.followers_count - follower_uids.size).abs >= 5
-        raise "Inconsistent #{uid} [#{t_user.friends_count}, #{friend_uids.size}] [#{t_user.followers_count}, #{follower_uids.size}]"
+        message = "Inconsistent #{uid} [#{t_user.friends_count}, #{friend_uids.size}] [#{t_user.followers_count}, #{follower_uids.size}]"
+        if rake_task?
+          logger message
+          print 'Continue [y,n]? '
+          raise message unless STDIN.gets.chomp.to_s == 'y'
+        else
+          raise message
+        end
       end
 
       if twitter_user_changed?(uid, friend_uids, follower_uids)
@@ -194,8 +201,12 @@ module Concerns::TwitterUser::Batch
         twitter_user.followerships.pluck(:follower_uid) != follower_uids
     end
 
+    def self.rake_task?
+      File.basename($0) == 'rake'
+    end
+
     def self.logger(message)
-      File.basename($0) == 'rake' ? puts(message) : Rails.logger.warn(message)
+      rake_task? ? puts(message) : Rails.logger.warn(message)
     end
   end
 end

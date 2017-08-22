@@ -9,25 +9,7 @@ module Concerns::TwitterDB::User::Batch
   class Batch
     def self.fetch_and_import(uids, client:)
       uids = uids.uniq.map(&:to_i)
-
-      begin
-        tries ||= 3
-        users = client.users(uids)
-      rescue => e
-        if e.message == 'No user matches for specified terms.'
-          users = []
-        elsif retryable?(e)
-          if (tries -= 1).zero?
-            logger "#{self}##{__method__}: Retry exhausted(user) #{uids.size} #{uids.inspect.truncate(100)}"
-            raise
-          else
-            retry
-          end
-        else
-          raise
-        end
-      end
-
+      users = fetch(uids, client: client)
       imported = import(users)
       import_suspended(uids - users.map(&:id)) if uids.size != imported.size
     end
@@ -41,10 +23,43 @@ module Concerns::TwitterDB::User::Batch
       end
     end
 
+    def self.fetch(uids, client:)
+      tries ||= 3
+      client.users(uids)
+    rescue => e
+      if e.message == 'No user matches for specified terms.'
+        []
+      elsif retryable?(e)
+        if (tries -= 1).zero?
+          logger "#{self}##{__method__}: Retry exhausted #{uids.size} #{uids.inspect.truncate(100)}"
+          raise
+        else
+          retry
+        end
+      else
+        raise
+      end
+    end
+
     def self.import(t_users)
       users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
       users.sort_by!(&:first)
-      TwitterDB::User.import_in_batches(users)
+      begin
+        tries ||= 3
+        TwitterDB::User.import_in_batches(users)
+      rescue => e
+        if retryable_deadlock?(e)
+          if (tries -= 1).zero?
+            logger "#{self}##{__method__}: Retry exhausted #{t_users.size} #{t_users.first.inspect.truncate(100)}"
+            raise
+          else
+            sleep(rand * 5)
+            retry
+          end
+        else
+          raise
+        end
+      end
       users
     end
 
@@ -76,6 +91,11 @@ module Concerns::TwitterDB::User::Batch
 
       ['Internal error', 'Over capacity', 'execution expired', 'Connection reset by peer - SSL_connect'].include?(ex.message) ||
         (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '')
+    end
+
+    def self.retryable_deadlock?(ex)
+      ex.class == ActiveRecord::StatementInvalid &&
+        ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')
     end
   end
 end
