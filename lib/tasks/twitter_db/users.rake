@@ -1,5 +1,22 @@
 namespace :twitter_db do
   namespace :users do
+    desc 'create TwitterDB::User'
+    task create: :environment do
+      sigint = false
+      Signal.trap 'INT' do
+        puts 'intercept INT and stop ..'
+        sigint = true
+      end
+
+      uids = ENV['UIDS'].remove(' ').split(',').map(&:to_i)
+
+      uids.each do |uid|
+        TwitterUser::Batch.fetch_and_create(uid, create_twitter_user: false)
+        TwitterDB::User.find_by(uid: uid).debug_print_friends
+        break if sigint
+      end
+    end
+
     desc 'update TwitterDB::User'
     task update: :environment do
       sigint = false
