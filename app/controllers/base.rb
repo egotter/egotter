@@ -7,6 +7,7 @@ class Base < ApplicationController
   before_action(only: %i(show)) { authorized_search?(@tu) }
   before_action(only: %i(show)) { existing_uid?(@tu.uid.to_i) }
   before_action(only: %i(show)) { twitter_db_user_persisted?(@tu.uid.to_i) }
+  before_action(only: %i(show)) { too_many_searches? }
   before_action(only: %i(show))  do
     @twitter_user = TwitterUser.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)
