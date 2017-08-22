@@ -58,7 +58,9 @@ module Api
         []
       end
     rescue => e
-      if e.message != 'No user matches for specified terms.'
+      if e.message == 'No user matches for specified terms.'
+      elsif e.message == 'Invalid or expired token.'
+      else
         logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
       end
       []

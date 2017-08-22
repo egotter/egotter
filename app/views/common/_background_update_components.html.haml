@@ -18,6 +18,11 @@
   = t('common.show.need_follow', user: twitter_user.mention_name)
   = link_to(t('common.show.follow'), sign_in_path(via: "#{controller_name}/#{action_name}/follow_box", redirect_path: timeline_path(twitter_user), follow: true), class: 'btn btn-default btn-sm')
 
+.invalid-token-box.alert.alert-warning.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('common.show.invalid_token', user: twitter_user.mention_name)
+  = link_to(t('common.show.sign_in'), sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token", redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+
 .additional-func-box.alert.alert-warning.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.additional_func')
@@ -30,6 +35,7 @@
     var retryCount = 0;
     var friendless = #{twitter_user.friendless?};
     var signedIn = #{user_signed_in?};
+    var authorized = #{user_signed_in? && current_user.authorized?};
     var jid = "#{jid}";
     var additionalFunc = #{!user_signed_in? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
 
@@ -37,9 +43,10 @@
     var $refreshBox = $('.refresh-box');
     var $welcomeBox = $('.welcome-box');
     var $followBox = $('.follow-box');
+    var $invalidTokenBox = $('.invalid-token-box');
     var $additionalFuncBox = $('.additional-func-box');
 
-    $.each([$updateBox, $refreshBox, $welcomeBox, $followBox, $additionalFuncBox], function (i, btn) {
+    $.each([$updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox], function (i, btn) {
       btn.on('close.bs.alert', function () {
         btn.parent().hide();
       });
@@ -93,6 +100,10 @@
     }
 
     $(function () {
+      if (signedIn && !authorized) {
+        $invalidTokenBox.show().sticky();
+      }
+
       if (additionalFunc) {
         $additionalFuncBox.show().sticky();
       }
