@@ -10,6 +10,7 @@ module Api
 
     before_action -> { valid_uid?(params[:uid].to_i) }
     before_action -> { existing_uid?(params[:uid].to_i) }
+    before_action -> { twitter_db_user_persisted?(params[:uid].to_i) }
     before_action -> { @twitter_user = TwitterUser.latest(params[:uid].to_i) }
     before_action -> { authorized_search?(@twitter_user) }
 

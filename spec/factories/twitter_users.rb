@@ -6,21 +6,18 @@ FactoryGirl.define do
     user_id -1
 
     after(:build) do |tu|
-      friends = 2.times.map { create(:twitter_db_user) }
-      friends.each.with_index { |f, i| tu.friendships.build(friend_uid: f.uid, sequence: i) }
-      tu.friends_size = friends.size
+      2.times.each do |i|
+        tu.friendships.build(friend_uid: create(:twitter_db_user).uid, sequence: i)
+        tu.followerships.build(follower_uid: create(:twitter_db_user).uid, sequence: i)
 
-      followers = 2.times.map { create(:twitter_db_user) }
-      followers.each.with_index { |f, i| tu.followerships.build(follower_uid: f.uid, sequence: i) }
-      tu.followers_size = followers.size
-
-      tu.statuses = 2.times.map { build(:status) }
-      tu.mentions = 2.times.map { build(:mention) }
-      tu.favorites = 2.times.map { build(:favorite) }
+        tu.statuses.build(attributes_for(:status))
+        tu.mentions.build(attributes_for(:mention))
+        tu.favorites.build(attributes_for(:favorite))
+      end
 
       json = Hashie::Mash.new(JSON.parse(tu.user_info))
-      json.friends_count = tu.friendships.size
-      json.followers_count = tu.followerships.size
+      tu.friends_size = json.friends_count = tu.friendships.size
+      tu.followers_size = json.followers_count = tu.followerships.size
       tu.user_info = json.to_json
     end
   end

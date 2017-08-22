@@ -38,7 +38,7 @@ module Concerns::TwitterUser::Debug
   end
 
   def too_many_unfriendships?
-    unfriendships.size > friends_count * 0.9
+    twitter_db_user.unfriendships.size > friends_count * 0.9
   end
 
   def debug_print_friends
@@ -54,7 +54,7 @@ module Concerns::TwitterUser::Debug
   end
 
   def debug_print(kind = nil)
-    user = TwitterDB::User.find_by(uid: uid)
+    user = twitter_db_user
     delim = ' '
 
     puts
@@ -81,11 +81,11 @@ module Concerns::TwitterUser::Debug
       puts
 
       puts %w(unfriends unfriendships calc_removing_uids).join delim
-      puts [unfriends.size, unfriendships.size, TwitterUser.calc_removing_uids(uid).size].inspect
+      puts [user.unfriends.size, user.unfriendships.size, unfriendships.size].inspect
       puts
 
       puts %w(unfollowers unfollowerships calc_removed_uids).join delim
-      puts [unfollowers.size, unfollowerships.size, TwitterUser.calc_removed_uids(uid).size].inspect
+      puts [user.unfollowers.size, user.unfollowerships.size, unfollowerships.size].inspect
       puts
 
       puts %w(one_sided_friends one_sided_friendships calc_one_sided_friend_uids).join delim

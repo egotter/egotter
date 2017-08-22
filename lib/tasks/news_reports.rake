@@ -30,7 +30,7 @@ namespace :news_reports do
         no_record += 1
       end
 
-      if twitter_user&.unfollowerships&.empty?
+      if twitter_user&.twitter_db_user&.unfollowerships&.empty?
         puts "Empty unfollowerships #{user_id}"
         empty_count += 1
       end
@@ -91,7 +91,7 @@ namespace :news_reports do
         no_record += 1
       end
 
-      if twitter_user&.unfollowerships&.empty?
+      if twitter_user&.twitter_db_user&.unfollowerships&.empty?
         puts "Empty unfollowerships #{user_id}"
         empty_count += 1
       end
