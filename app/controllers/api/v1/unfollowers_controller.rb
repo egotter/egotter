@@ -5,13 +5,14 @@ module Api
       private
 
       def summary_uids(limit: 3)
-        uids = @twitter_user.unfollowerships.limit(limit).pluck(:follower_uid)
-        size = @twitter_user.unfollowerships.size
+        user = @twitter_user.twitter_db_user
+        uids = user.unfollowerships.limit(limit).pluck(:follower_uid)
+        size = user.unfollowerships.size
         [uids, size]
       end
 
       def list_uids(min_sequence, limit: 10)
-        followerships = @twitter_user.unfollowerships.where("sequence >= ?", min_sequence).limit(limit)
+        followerships = @twitter_user.twitter_db_user.unfollowerships.where("sequence >= ?", min_sequence).limit(limit)
         if followerships.empty?
           [[], -1]
         else

@@ -23,7 +23,8 @@
 
 .gray-separator
 
-- labels = [t('unfriends.show.see_unfriends_html', num: @twitter_user.unfriendships.size), t('unfriends.show.see_unfollowers_html', num: @twitter_user.unfollowerships.size), t('unfriends.show.see_blocking_or_blocked_html', num: @twitter_user.blocking_or_blocked_uids.size)]
+- twitter_db_user = @twitter_user.twitter_db_user
+- labels = [t('unfriends.show.see_unfriends_html', num: twitter_db_user.unfriendships.size), t('unfriends.show.see_unfollowers_html', num: twitter_db_user.unfollowerships.size), t('unfriends.show.see_blocking_or_blocked_html', num: twitter_db_user.blocking_or_blocked_uids.size)]
 - urls = [unfriend_path(screen_name: @twitter_user.screen_name, type: 'removing'), unfollower_path(screen_name: @twitter_user.screen_name), blocking_or_blocked_path(screen_name: @twitter_user.screen_name)]
 = render partial: 'common/related_buttons', locals: {labels: labels, urls: urls, disabled: @disabled_label}
 

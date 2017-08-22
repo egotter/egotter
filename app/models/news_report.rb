@@ -67,12 +67,12 @@ class NewsReport < ActiveRecord::Base
       "app/views/news_reports/#{self.class.name.demodulize.underscore.remove(/_message$/)}.ja.#{format}.erb"
     end
 
-    def twitter_user
-      user.twitter_user
+    def twitter_db_user
+      user.twitter_user.twitter_db_user
     end
 
     def removing_names
-      twitter_user.unfriends.limit(3).pluck(:screen_name).map do |name|
+      twitter_db_user.unfriends.limit(3).pluck(:screen_name).map do |name|
         name[1..1] = I18n.t('dictionary.asterisk') if name.length >= 2
         name[3..3] = I18n.t('dictionary.asterisk') if name.length >= 4
         '@' + name
@@ -80,11 +80,11 @@ class NewsReport < ActiveRecord::Base
     end
 
     def removing_count
-      twitter_user.unfriendships.size
+      twitter_db_user.unfriendships.size
     end
 
     def removed_names
-      twitter_user.unfollowers.limit(3).pluck(:screen_name).map do |name|
+      twitter_db_user.unfollowers.limit(3).pluck(:screen_name).map do |name|
         name[1..1] = I18n.t('dictionary.asterisk') if name.length >= 2
         name[3..3] = I18n.t('dictionary.asterisk') if name.length >= 4
         '@' + name
@@ -92,7 +92,7 @@ class NewsReport < ActiveRecord::Base
     end
 
     def removed_count
-      twitter_user.unfollowerships.size
+      twitter_db_user.unfollowerships.size
     end
   end
 

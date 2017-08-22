@@ -3,7 +3,10 @@ require 'rails_helper'
 RSpec.describe Concerns::TwitterUser::Associations do
   let(:twitter_user) { create(:twitter_user) }
 
-  before { twitter_user.update!(created_at: Time.zone.now - 1.hour, updated_at: Time.zone.now - 1.hour) }
+  before do
+    twitter_user.reload
+    twitter_user.update!(created_at: Time.zone.now - 1.hour, updated_at: Time.zone.now - 1.hour)
+  end
 
   describe '#friends' do
     it 'returns friends sorted by sequence' do
@@ -17,17 +20,27 @@ RSpec.describe Concerns::TwitterUser::Associations do
     end
   end
 
-  describe '#unfriends' do
-    it 'returns unfriends sorted by sequence' do
-      create(:twitter_user, uid: twitter_user.uid)
-      expect(twitter_user.unfriends.map(&:uid)).to match_array(twitter_user.unfriendships.map(&:friend_uid))
+  describe '#unfriendships' do
+    let(:copy1) { copy_twitter_user(twitter_user) }
+    let(:copy2) { copy_twitter_user(copy1) }
+
+    before { copy2.friendships.last.delete }
+
+    it 'returns one uid' do
+      expect(copy1.unfriendships.size).to eq(0)
+      expect(copy2.unfriendships.size).to eq(1)
     end
   end
 
-  describe '#unfollowers' do
-    it 'returns unfollowers sorted by sequence' do
-      create(:twitter_user, uid: twitter_user.uid)
-      expect(twitter_user.unfollowers.map(&:uid)).to match_array(twitter_user.unfollowerships.map(&:follower_uid))
+  describe '#unfollowerships' do
+    let(:copy1) { copy_twitter_user(twitter_user) }
+    let(:copy2) { copy_twitter_user(copy1) }
+
+    before { copy2.followerships.last.delete }
+
+    it 'returns one uid' do
+      expect(copy1.unfollowerships.size).to eq(0)
+      expect(copy2.unfollowerships.size).to eq(1)
     end
   end
 end

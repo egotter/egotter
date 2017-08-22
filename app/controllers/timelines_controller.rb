@@ -13,6 +13,7 @@ class TimelinesController < ApplicationController
   before_action(only: %i(show)) { @tu = build_twitter_user(params[:screen_name]) }
   before_action(only: %i(show)) { authorized_search?(@tu) }
   before_action(only: %i(show)) { existing_uid?(@tu.uid.to_i) }
+  before_action(only: %i(show)) { twitter_db_user_persisted?(@tu.uid.to_i) }
   before_action(only: %i(show)) { too_many_searches? }
   before_action only: %i(show) do
     @twitter_user = TwitterUser.latest(@tu.uid.to_i)
@@ -60,8 +61,11 @@ class TimelinesController < ApplicationController
   def changes_text(twitter_user)
     second_latest = TwitterUser.till(twitter_user.created_at).latest(params[:uid])
 
-    if twitter_user.unfollowerships.size > second_latest.unfollowerships.size
-      I18n.t('common.show.unfollowerships_count_increased', user: twitter_user.mention_name, before: second_latest.unfollowerships.size, after: twitter_user.unfollowerships.size)
+    bef = second_latest.unfollowerships.size # Heavy process
+    aft = twitter_user.twitter_db_user.unfollowerships.size
+
+    if aft > bef
+      I18n.t('common.show.unfollowerships_count_increased', user: twitter_user.mention_name, before: bef, after: aft)
     else
       if twitter_user.followers_count > second_latest.followers_count
         I18n.t('common.show.followers_count_increased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)

@@ -58,6 +58,17 @@ module Validation
     false
   end
 
+  def twitter_db_user_persisted?(uid)
+    return true if TwitterDB::User.exists?(uid: uid)
+
+    logger.warn "#{controller_name}##{action_name}: TwitterDB::User not found. #{uid}"
+    TwitterDB::User::Batch.fetch_and_import([uid], client: client)
+    true
+  rescue => e
+    logger.warn "#{controller_name}##{action_name}: TwitterDB::User not found. #{e.class} #{e.message} #{uid}"
+    false
+  end
+
   def searched_uid?(uid)
     return true if Util::SearchedUids.new(redis).exists?(uid)
 

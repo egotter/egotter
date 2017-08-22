@@ -8,6 +8,7 @@ module Concerns::TwitterUser::Associations
 
   included do
     belongs_to :user
+    belongs_to :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
 
     default_options = {dependent: :destroy, validate: false, autosave: false}
     order_by_sequence_asc = -> { order(sequence: :asc) }
@@ -23,9 +24,6 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options({primary_key: :uid, foreign_key: :from_uid}.update(default_options)) do |obj|
-      obj.has_many :unfriendships,   order_by_sequence_asc
-      obj.has_many :unfollowerships, order_by_sequence_asc
-
       obj.has_many :one_sided_friendships,   order_by_sequence_asc
       obj.has_many :one_sided_followerships, order_by_sequence_asc
       obj.has_many :mutual_friendships,      order_by_sequence_asc
@@ -42,9 +40,6 @@ module Concerns::TwitterUser::Associations
       obj.has_many :friends,   through: :friendships
       obj.has_many :followers, through: :followerships
 
-      obj.has_many :unfriends,   through: :unfriendships
-      obj.has_many :unfollowers, through: :unfollowerships
-
       obj.has_many :one_sided_friends,   through: :one_sided_friendships
       obj.has_many :one_sided_followers, through: :one_sided_followerships
       obj.has_many :mutual_friends,      through: :mutual_friendships
@@ -56,5 +51,30 @@ module Concerns::TwitterUser::Associations
       obj.has_many :favorite_friends, through: :favorite_friendships
       obj.has_many :close_friends,    through: :close_friendships
     end
+  end
+
+  def unfriendships
+    TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :friends_size).order(created_at: :asc).each_cons(2).map do |older, newer|
+      next if newer.nil? || older.nil? || newer.friends_size == 0
+      older.friend_uids - newer.friend_uids
+    end.compact.flatten.reverse
+  end
+
+  def unfriendships_too_slow
+    ids = TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).order(created_at: :asc).pluck(:id)
+    friendships = Friendship.where(from_id: ids).pluck(:from_id, :friend_uid)
+    ids.each_cons(2).map do |older_id, newer_id|
+      older = friendships.select { |f| f[0] == older_id }.map { |f| f[1] }
+      newer = friendships.select { |f| f[0] == newer_id }.map { |f| f[1] }
+      next if newer.empty?
+      older - newer
+    end.compact.flatten.reverse
+  end
+
+  def unfollowerships
+    TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :followers_size).order(created_at: :asc).each_cons(2).map do |older, newer|
+      next if newer.nil? || older.nil? || newer.followers_size == 0
+      older.follower_uids - newer.follower_uids
+    end.compact.flatten.reverse
   end
 end

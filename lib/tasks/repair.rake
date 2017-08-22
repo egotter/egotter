@@ -84,9 +84,10 @@ namespace :repair do
         end
 
         twitter_user = TwitterUser.find(twitter_user_id)
+        latest = TwitterUser.latest(twitter_user.uid)
 
-        Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
-        Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+        Unfriendship.import_from!(uid, latest.unfriendships)
+        Unfollowership.import_from!(uid, latest.unfollowerships)
 
         OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
         OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)

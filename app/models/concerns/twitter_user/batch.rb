@@ -160,10 +160,11 @@ module Concerns::TwitterUser::Batch
       end
 
       uid = twitter_user.uid.to_i
+      latest = TwitterUser.latest(uid)
 
       begin
-        Unfriendship.import_from!(uid, TwitterUser.calc_removing_uids(uid))
-        Unfollowership.import_from!(uid, TwitterUser.calc_removed_uids(uid))
+        Unfriendship.import_from!(uid, latest.unfriendships)
+        Unfollowership.import_from!(uid, latest.unfollowerships)
 
         OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
         OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
