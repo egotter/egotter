@@ -14,7 +14,7 @@
 
     %div
       %label.small.tweet-egotter
-        = check_box_tag :tweet, true, true, {}
+        = check_box_tag :tweet, true, false, {}
         = t('login.welcome.tweet_egotter_html')
     .tweet-preview-box
       %textarea{readonly: 'readonly', rows: 5}= egotter_share_text
