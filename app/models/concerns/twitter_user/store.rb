@@ -64,7 +64,7 @@ module Concerns::TwitterUser::Store
     @_user_info ||= Hashie::Mash.new(JSON.load(user_info))
   end
 
-  # a url written on profile page as home page url
+  # A url written on profile page as a home page url
   def url
     return nil if entities.nil? || entities.url.nil? || entities.url.urls.nil?
 

@@ -33,12 +33,19 @@ module TwitterHelper
     "@#{screen_name}"
   end
 
-  def user_name(user)
-    protected = '&nbsp;<span class="glyphicon glyphicon-lock"></span>'
-    verified = '&nbsp;<span class="glyphicon glyphicon-ok"></span>'
-    suspended = '&nbsp;<span class="label label-danger">' + t('dictionary.suspended') + '</span>'
-    inactive = '&nbsp;<span class="label label-default">' + t('dictionary.inactive') + '</span>'
-    "#{user.name}#{protected if user.protected}#{verified if user.verified}#{suspended if user.suspended}#{inactive if !user.suspended && user.inactive}".html_safe
+  def user_name(user, label: false)
+    protected = user.protected ? '&nbsp;<span class="glyphicon glyphicon-lock"></span>' : ''
+    verified = user.verified ? '&nbsp;<span class="glyphicon glyphicon-ok"></span>' : ''
+    "#{user.name}#{protected}#{verified}#{user_label(user) if label}".html_safe
+  end
+
+  def user_label(user)
+    suspended  = user.suspended ? '&nbsp;<span class="label label-danger">' + t('dictionary.suspended') + '</span>' : ''
+    blocked    = (user.respond_to?(:blocked) && user.blocked) ? '&nbsp;<span class="label label-default">' + t('dictionary.blocked') + '</span>' : ''
+    inactive   = (!user.suspended && user.inactive) ? '&nbsp;<span class="label label-default">' + t('dictionary.inactive') + '</span>' : ''
+    refollow   = (user.respond_to?(:refollow) && user.refollow) ? '&nbsp;<span class="label label-info">' + t('dictionary.refollow') + '</span>' : ''
+    refollowed = (user.respond_to?(:refollowed) && user.refollowed) ? '&nbsp;<span class="label label-info">' + t('dictionary.refollowed') + '</span>' : ''
+    "#{suspended}#{blocked}#{inactive}#{refollow}#{refollowed}".html_safe
   end
 
   def normal_icon_url(user)

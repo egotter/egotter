@@ -33,6 +33,7 @@ module Validation
     false
   end
 
+  # TODO Rename to twitter_user_persisted?
   def existing_uid?(uid)
     return true if TwitterUser.exists?(uid: uid)
 

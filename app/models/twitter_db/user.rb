@@ -26,11 +26,11 @@ module TwitterDB
     end
 
     def self.to_import_format(t_user)
-      [t_user.id, t_user.screen_name, t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, -1, -1]
+      [t_user.id, t_user.screen_name, TwitterUser.collect_user_info(t_user), -1, -1]
     end
 
     def self.to_save_format(t_user)
-      {uid: t_user.id, screen_name: t_user.screen_name, user_info: t_user.slice(*TwitterUser::PROFILE_SAVE_KEYS).to_json, friends_size: -1, followers_size: -1}
+      {uid: t_user.id, screen_name: t_user.screen_name, user_info: TwitterUser.collect_user_info(t_user), friends_size: -1, followers_size: -1}
     end
 
     def self.with_friends

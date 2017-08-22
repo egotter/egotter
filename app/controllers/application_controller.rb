@@ -113,8 +113,4 @@ class ApplicationController < ActionController::Base
     session[:sign_out_from] = request.protocol + request.host_with_port + sign_out_path
     root_path
   end
-
-  def from_minor_crawler?(user_agent)
-    user_agent.to_s.match /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider/
-  end
 end
