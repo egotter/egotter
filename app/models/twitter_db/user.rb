@@ -1,7 +1,5 @@
 module TwitterDB
   class User < ActiveRecord::Base
-    self.table_name = 'twitter_db_users'
-
     include Concerns::TwitterUser::Store
     include Concerns::TwitterUser::Inflections
 
