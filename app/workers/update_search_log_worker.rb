@@ -4,7 +4,8 @@ class UpdateSearchLogWorker
 
   def perform(search_log_id)
     log = SearchLog.find(search_log_id)
-    log.update!(landing: landing_page?(log), first_time: first_time_session?(log))
+    log.assign_attributes(landing: landing_page?(log), first_time: first_time_session?(log))
+    log.save! if log.changed?
 
     reassign_channel(log) unless log.crawler?
     assign_timestamps(log) if log.with_login?
