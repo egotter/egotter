@@ -28,6 +28,6 @@ class UsageStatsController < ApplicationController
 
     @stat = UsageStat.find_by(uid: @twitter_user.uid)
 
-    @tweet_text = usage_time_text(@stat.usage_time, @twitter_user)
+    @tweet_text = usage_time_text(@stat&.usage_time, @twitter_user)
   end
 end
