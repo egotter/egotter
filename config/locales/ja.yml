@@ -461,6 +461,8 @@ ja:
       unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
       followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
       followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'
+      friends_count_increased: '%{user} のフォローが、%{before} から %{after} に増えました。'
+      friends_count_decreased: '%{user} のフォローが、%{before} から %{after} に減りました。'
       update_result: 'ページを更新する'
       need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
       need_follow: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'

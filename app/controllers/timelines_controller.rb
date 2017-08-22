@@ -53,6 +53,10 @@ class TimelinesController < ::Base
         I18n.t('common.show.followers_count_increased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
       elsif twitter_user.followers_count < second_latest.followers_count
         I18n.t('common.show.followers_count_decreased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
+      elsif twitter_user.friends_count > second_latest.friends_count
+        I18n.t('common.show.friends_count_increased', user: twitter_user.mention_name, before: second_latest.friends_count, after: twitter_user.friends_count)
+      elsif twitter_user.friends_count < second_latest.friends_count
+        I18n.t('common.show.friends_count_decreased', user: twitter_user.mention_name, before: second_latest.friends_count, after: twitter_user.friends_count)
       else
         I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
       end
