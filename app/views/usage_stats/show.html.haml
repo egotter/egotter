@@ -52,7 +52,7 @@
 
 .gray-separator
 
-- if @stat
+- if @stat && @stat.persisted?
   = render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
   .gray-separator
   = render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
