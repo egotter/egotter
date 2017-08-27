@@ -4,7 +4,7 @@ class TweetEgotterWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id, text)
-    User.find(user_id).api_client.update(text)
+    User.find(user_id).api_client.twitter.update(text)
   rescue Twitter::Error::Unauthorized => e
     handle_unauthorized_exception(e, user_id: user_id)
   rescue Twitter::Error::Forbidden => e
