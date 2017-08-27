@@ -4,7 +4,7 @@ module ApplicationHelper
   end
 
   def show_sidebar?
-    %w(new waiting).exclude?(action_name) && request.from_pc? && (@searched_tw_user || @twitter_user)
+    %w(new waiting all).exclude?(action_name) && request.from_pc? && (@searched_tw_user || @twitter_user)
   end
 
   def redis

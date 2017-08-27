@@ -10,7 +10,7 @@
 
 %h2.h2.page-title= @page_title
 
-.page-description.text-center= t('.page_description', user: @twitter_user.mention_name)
+.page-description.text-center= @page_description
 
 .tweet-box-wrapper{style: 'margin-bottom: 15px;'}
   = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
@@ -27,11 +27,11 @@
   = render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
   .gray-separator
 
-= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
+= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t("#{controller_name}.#{action_name}.title"))}
 
 .gray-separator
 
-= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t('.title'))}
+= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t("#{controller_name}.#{action_name}.title"))}
 
 .gray-separator
 

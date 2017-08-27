@@ -9,6 +9,6 @@ module SearchHistoriesHelper
 
   def today_search_histories_size
     start = 1.day.ago
-    SearchHistory.where(created_at: start..Time.zone.now).size
+    SearchHistory.where(created_at: start..Time.zone.now, session_id: session[:fingerprint]).size
   end
 end

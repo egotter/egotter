@@ -387,7 +387,7 @@ ja:
       lead_002: "保存ユーザー数1,000万人突破！"
       lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-    show:
+    show: &friends_show
       crumb_title: "フォローチェック"
       page_title: "%{user} のフォロー"
       meta_title: "%{user} のフォロー分析 - フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
@@ -397,8 +397,10 @@ ja:
       meta_description: "%{user} がフォローしているユーザーの一覧 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}%"
       tweet_text: "%{user} のフォロー分析 -  フォロー %{friends}人 片思い %{one_sided_friends}人 片思い率 %{one_sided_friends_rate}% #egotter %{url}"
       see_more: 'もっと見る'
+    all:
+      <<: *friends_show
   followers:
-    show:
+    show: &followers_show
       crumb_title: "フォロワーチェック"
       page_title: "%{user} のフォロワー"
       meta_title: "%{user} のフォロワー分析 - フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}%"
@@ -408,6 +410,8 @@ ja:
       meta_description: "%{user} がフォローされているユーザーの一覧 -  フォロー %{followers}人 片思い %{one_sided_followers}人 片思い率 %{one_sided_followers_rate}%"
       tweet_text: "%{user} のフォロワー分析 -  フォロワー %{followers}人 片思われ %{one_sided_followers}人 片思われ率 %{one_sided_followers_rate}% #egotter %{url}"
       see_more: 'もっと見る'
+    all:
+      <<: *followers_show
   statuses:
     show:
       crumb_title: "ツイート"
@@ -519,6 +523,7 @@ ja:
     faq: "よくあるご質問"
     view_more: "続きを見る"
     see_more: "もっと見る"
+    see_at_once_more: "一気に見る"
     view_more_detail: "もっと詳しく"
     view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
     reload_this_page: "ページを更新する"
