@@ -56,22 +56,22 @@ class CreateRelationshipWorker
     if created.size + persisted.size == uids.size
       msg1 = created.any? ? "[#{created.join(',')}] is created" : ''
       msg2 = persisted.any? ? "[#{persisted.join(',')}] is persisted" : ''
-      log.update(status: true, call_count: client.call_count, message: "#{[msg1, msg2].compact.join(', ')}.")
+      log.update(status: true, call_count: -1, message: "#{[msg1, msg2].compact.join(', ')}.")
     else
-      log.update(status: false, call_count: client.call_count, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: "#{errors.join(', ')}")
+      log.update(status: false, call_count: -1, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: "#{errors.join(', ')}")
     end
 
   rescue Twitter::Error::TooManyRequests => e
     log.update(
       status: false,
-      call_count: client.call_count,
+      call_count: -,
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
       message: ''
     )
   rescue Twitter::Error::Unauthorized => e
     log.update(
       status: false,
-      call_count: client.call_count,
+      call_count: -1,
       reason: BackgroundSearchLog::Unauthorized::MESSAGE,
       message: ''
     )
@@ -80,7 +80,7 @@ class CreateRelationshipWorker
     logger.info e.backtrace.take(10).join("\n")
     log.update(
       status: false,
-      call_count: client.call_count,
+      call_count: -1,
       reason: BackgroundSearchLog::SomethingError::MESSAGE,
       message: "#{e.class} #{e.message}"
     )
