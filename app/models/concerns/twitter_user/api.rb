@@ -130,24 +130,6 @@ module Concerns::TwitterUser::Api
     end
   end
 
-  def favorite_friend_uids
-    favorite_friendships.pluck(:friend_uid)
-  end
-
-  def favoriting_uids(uniq: true, min: 0)
-    logger.warn "DUPLICATED #{__method__}"
-    favorite_friend_uids
-  end
-
-  def favoriting(uniq: true, min: 0)
-    logger.warn "DUPLICATED #{__method__}"
-    uids = favoriting_uids(uniq: uniq, min: min)
-    users = favorites.map(&:user).index_by(&:id)
-    users = uids.map { |uid| users[uid] }
-    users.uniq!(&:id) if uniq
-    users.each { |user| user.uid = user.id }
-  end
-
   def calc_close_friend_uids
     login_user = mentions.any? ? Hashie::Mash.new(uid: uid) : nil
     uids = replying_uids(uniq: false) + replied_uids(uniq: false, login_user: login_user) + calc_favorite_friend_uids(uniq: false)

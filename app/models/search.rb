@@ -1,8 +1,4 @@
 class Search
-  MENU = %i(
-    favoriting
-  )
-
   # TODO remove new_friends and new_followers later
   API_V1_NAMES = %i(
     new_friends
@@ -10,6 +6,7 @@ class Search
     friends
     followers
     close_friends
+    favorite_friends
     unfriends
     unfollowers
     blocking_or_blocked

@@ -3,7 +3,7 @@ class UsageStatsController < ::Base
 
   def show
     @breadcrumb_name = controller_name.singularize.to_sym
-    @canonical_url = send("#{controller_name.singularize}_url", screen_name: @twitter_user.screen_name)
+    @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
     @page_title = t('.page_title', user: @twitter_user.mention_name)
 
     @meta_title = t('.meta_title', {user: @twitter_user.mention_name})

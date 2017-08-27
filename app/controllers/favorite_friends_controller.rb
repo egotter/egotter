@@ -1,6 +1,4 @@
-class CloseFriendsController < GoodFriends
-  include CloseFriendsHelper
-
+class FavoriteFriendsController < GoodFriends
   def all
     super
     render template: 'friends/all'
@@ -8,5 +6,6 @@ class CloseFriendsController < GoodFriends
 
   def show
     super
+    render template: 'close_friends/show'
   end
 end

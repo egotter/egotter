@@ -49,10 +49,8 @@ module SearchesHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(friends followers close_friends usage_stats unfriends unfollowers blocking_or_blocked)
+      when *%w(friends followers close_friends favorite_friends usage_stats unfriends unfollowers blocking_or_blocked)
         send("#{menu.to_s.singularize}_path", screen_name: screen_name)
-      when *%w(favoriting)
-        send("#{menu}_search_path", screen_name: screen_name)
       when *%w(one_sided_friends one_sided_followers mutual_friends)
         one_sided_friend_path(screen_name: screen_name, type: menu)
       when *%w(inactive_friends inactive_followers)
@@ -77,7 +75,7 @@ module SearchesHelper
 
   def title_for(menu, screen_name)
     case menu.to_sym
-      when *%i(friends followers close_friends usage_stats unfriends unfollowers blocking_or_blocked) then t("#{menu}.show.summary_title")
+      when *%i(friends followers close_friends favorite_friends usage_stats unfriends unfollowers blocking_or_blocked) then t("#{menu}.show.summary_title")
       when :clusters_belong_to then t("searches.clusters_belong_to.name")
       else t("searches.#{menu}.title", user: mention_name(screen_name))
     end
@@ -85,18 +83,10 @@ module SearchesHelper
 
   def description_for(menu, screen_name)
     case menu.to_sym
-      when *%i(friends followers close_friends unfriends unfollowers blocking_or_blocked)
+      when *%i(friends followers close_friends favorite_friends unfriends unfollowers blocking_or_blocked)
         t("#{menu}.show.page_description", user: mention_name(screen_name))
       else t("searches.#{menu}.description", user: mention_name(screen_name))
     end
-  end
-
-  def chart_for(target, rest, label)
-    total = target + rest
-    [
-      {name: t("charts.#{label}"), y: (target.to_f / total * 100)},
-      {name: t('charts.others'), y: (rest.to_f / total * 100)}
-    ]
   end
 
   def fetch_twitter_user_from_cache(uid)
