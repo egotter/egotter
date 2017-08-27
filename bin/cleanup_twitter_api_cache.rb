@@ -1,7 +1,9 @@
+require 'twitter_with_auto_pagination'
+
 start = Time.now
 before = %x(du -sh tmp/api_cache | awk '{ print $1 }').chomp
 
-ApiClient.instance.cache.cleanup
+TwitterWithAutoPagination::Client.new.cache.cleanup
 
 after = %x(du -sh tmp/api_cache | awk '{ print $1 }').chomp
 elapsed = (Time.now - start).round(3)
