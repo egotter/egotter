@@ -7,6 +7,14 @@ namespace :news_reports do
       sigint = true
     end
 
+    dry_run =
+      if ENV['DRY_RUN'].present?
+        true
+      else
+        print 'Do you really want to send messages [y,n]? '
+        STDIN.gets.chomp.to_s == 'y' ? false : true
+      end
+
     user_ids =
       if ENV['USER_IDS']
         ENV['USER_IDS'].remove(' ').split(',').map(&:to_i)
@@ -18,7 +26,6 @@ namespace :news_reports do
     no_record = 0
     empty_count = 0
     failed = false
-    dry_run = ENV['DRY_RUN'].present?
     reports_count = NewsReport.all.size
 
     User.where(id: user_ids).select(:id, :uid).find_each do |user|
@@ -59,6 +66,14 @@ namespace :news_reports do
       sigint = true
     end
 
+    dry_run =
+      if ENV['DRY_RUN'].present?
+        true
+      else
+        print 'Do you really want to send messages [y,n]? '
+        STDIN.gets.chomp.to_s == 'y' ? false : true
+      end
+
     user_ids =
       if ENV['USER_IDS']
         ENV['USER_IDS'].remove(' ').split(',').map(&:to_i)
@@ -79,7 +94,6 @@ namespace :news_reports do
     no_record = 0
     empty_count = 0
     failed = false
-    dry_run = ENV['DRY_RUN'].present?
     reports_count = NewsReport.all.size
 
     OldUser.where(id: user_ids).select(:id, :uid).find_each do |user|
