@@ -258,14 +258,31 @@ ja:
       title: "メンテナンス"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
   close_friends:
-    show:
+    show: &close_friends_show
       title: "仲良しランキング"
       crumb_title: "仲良しランキング"
       page_title: "%{user} の仲良しランキング"
+      meta_title: "%{user} の仲良し分析"
       summary_title: "仲良しランキング"
       page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
       meta_description: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
+      tweet_text: ".%{user} の仲良しランキング ↓\n%{users}\n#egotter %{url}"
       see_more: 'もっと見る'
+    all:
+      <<: *close_friends_show
+  favorite_friends:
+    show: &favorite_friends_show
+      title: "いいねランキング"
+      crumb_title: "いいねランキング"
+      page_title: "%{user} のいいねランキング"
+      meta_title: "%{user} のいいね分析"
+      summary_title: "いいねランキング"
+      page_description: "%{user} がよくいいねするユーザーの一覧です。いいねの分析には、お気に入り登録を使っています。"
+      meta_description: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
+      tweet_text: ".%{user} のいいねランキング ↓\n%{users}\n#egotter %{url}"
+      see_more: 'もっと見る'
+    all:
+      <<: *favorite_friends_show
   scores:
     show:
       crumb_title: "ツイッター戦闘力"
@@ -488,6 +505,7 @@ ja:
     replied: "@ツイート"
     favoriting: "ふぁぼ"
     close_friends: "仲良し"
+    favorite_friends: "いいね"
     one_sided_friends: "片思い"
     one_sided_followers: "片思われ"
     mutual_friends: "両思い"

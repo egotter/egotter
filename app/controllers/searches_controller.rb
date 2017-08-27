@@ -4,19 +4,19 @@ class SearchesController < ApplicationController
   include WorkersHelper
 
   before_action :reject_crawler, only: %i(create waiting)
-  before_action(only: Search::MENU + %i(create show)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
-  before_action(only: Search::MENU + %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
-  before_action(only: Search::MENU + %i(create show)) { authorized_search?(@tu) }
-  before_action(only: Search::MENU + %i(show)) { existing_uid?(@tu.uid.to_i) }
-  before_action(only: Search::MENU + %i(show)) { too_many_searches? }
-  before_action only: Search::MENU + %i(show) do
+  before_action(only: %i(create show)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
+  before_action(only: %i(create show)) { @tu = build_twitter_user(params[:screen_name]) }
+  before_action(only: %i(create show)) { authorized_search?(@tu) }
+  before_action(only: %i(show)) { existing_uid?(@tu.uid.to_i) }
+  before_action(only: %i(show)) { too_many_searches? }
+  before_action only: %i(show) do
     @twitter_user = TwitterUser.latest(@tu.uid.to_i)
     remove_instance_variable(:@tu)
   end
   before_action(only: %i(waiting)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(waiting)) { searched_uid?(params[:uid].to_i) }
 
-  before_action only: (%i(new create waiting show) + Search::MENU) do
+  before_action only: %i(new create waiting show) do
     push_referer
 
     if session[:sign_in_from].present?
@@ -56,14 +56,5 @@ class SearchesController < ApplicationController
 
     @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(tu))
     @twitter_user = tu
-  end
-
-  %i(favoriting).each do |menu|
-    define_method(menu) do
-      @menu = menu
-      @title = title_for(menu, @twitter_user.screen_name)
-      @description = "#{@title} - #{@twitter_user.description}"
-      render :common
-    end
   end
 end

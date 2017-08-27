@@ -21,36 +21,32 @@ do_create = Proc.new do
     options = {priority: 0.5, changefreq: 'weekly', lastmod: twitter_user.updated_at}
 
     screen_name = twitter_user.screen_name
-    add timeline_path(screen_name: screen_name), options
-    add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_friends'), options
-    add one_sided_friend_path(screen_name: screen_name, type: 'one_sided_followers'), options
-    add one_sided_friend_path(screen_name: screen_name, type: 'mutual_friends'), options
-    add unfriend_path(screen_name: screen_name), options
-    add unfollower_path(screen_name: screen_name), options
-    add blocking_or_blocked_path(screen_name: screen_name), options
-    add inactive_friend_path(screen_name: screen_name, type: 'inactive_friends'), options
-    add inactive_friend_path(screen_name: screen_name, type: 'inactive_followers'), options
-    add inactive_friend_path(screen_name: screen_name, type: 'inactive_mutual_friends'), options
-    add friend_path(screen_name: screen_name), options
-    add follower_path(screen_name: screen_name), options
-    add status_path(screen_name: screen_name), options
-    add conversation_path(screen_name: screen_name, type: 'replying'), options
-    add conversation_path(screen_name: screen_name, type: 'replied'), options
-    add conversation_path(screen_name: screen_name, type: 'replying_and_replied'), options
-    add cluster_path(screen_name: screen_name), options
-    add close_friend_path(screen_name: screen_name), options
-    add usage_stat_path(screen_name: screen_name), options
+    add timeline_path(twitter_user), options
+    add one_sided_friend_path(twitter_user, type: 'one_sided_friends'), options
+    add one_sided_friend_path(twitter_user, type: 'one_sided_followers'), options
+    add one_sided_friend_path(twitter_user, type: 'mutual_friends'), options
+    add unfriend_path(twitter_user), options
+    add unfollower_path(twitter_user), options
+    add blocking_or_blocked_path(twitter_user), options
+    add inactive_friend_path(twitter_user, type: 'inactive_friends'), options
+    add inactive_friend_path(twitter_user, type: 'inactive_followers'), options
+    add inactive_friend_path(twitter_user, type: 'inactive_mutual_friends'), options
+    add friend_path(twitter_user), options
+    add follower_path(twitter_user), options
+    add status_path(twitter_user), options
+    add conversation_path(twitter_user, type: 'replying'), options
+    add conversation_path(twitter_user, type: 'replied'), options
+    add conversation_path(twitter_user, type: 'replying_and_replied'), options
+    add cluster_path(twitter_user), options
+    add close_friend_path(twitter_user), options
+    add favorite_friend_path(twitter_user), options
+    add usage_stat_path(twitter_user), options
 
     TwitterDB::User.where(uid: twitter_user.close_friend_uids.take(3)).each do |close_friend|
       add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'conversations'), options
       add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'common_friends'), options
       add relationship_path(src_screen_name: screen_name, dst_screen_name: close_friend.screen_name, type: 'common_followers'), options
     end
-
-    %i(
-      favoriting
-    ).each { |menu| add(send("#{menu}_search_path", screen_name: screen_name), options) }
-
   end
 
   options = {priority: 0.3}
