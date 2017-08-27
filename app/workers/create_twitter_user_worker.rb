@@ -72,6 +72,13 @@ class CreateTwitterUserWorker
     builder = TwitterUser.builder(uid).client(client).login_user(user)
     twitter_user = builder.build
     unless twitter_user
+
+      begin
+        update_twitter_db_user(TwitterUser.build_by_user(client.user(uid)))
+      rescue => e
+        logger.warn "Relief measures in ##{__method__}: #{e.class} #{e.message} #{uid}"
+      end
+
       latest = TwitterUser.latest(uid)
       if latest
         latest.increment(:search_count).save
