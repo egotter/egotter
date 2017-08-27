@@ -21,50 +21,32 @@
 class PromptReport < ActiveRecord::Base
   include Concerns::Report::Common
 
-  belongs_to :user
-
-  def build_message(html: false)
-    linebreak = html ? '<br>' : "\n"
-    result = html ? link : url
-
-    if html
-      "#{title}#{linebreak}#{from_last_access}#{changes_text}#{linebreak}#{result}"
-    else
-      "#{title}#{linebreak}#{linebreak}#{from_last_access}#{changes_text}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"
-    end
-  end
-
-  def changes
-    @changes ||= JSON.parse(changes_json, symbolize_names: true)
+  def self.you_are_removed(user_id, changes_json:, format: 'text')
+    report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
+    report.message_builder = YouAreRemovedMessage.new(report.user, report.token, format: format)
+    report.message_builder.changes = JSON.parse(changes_json, symbolize_names: true)
+    report
   end
 
   private
 
-  def title
-    I18n.t('prompt_report.title', user: screen_name)
+  def touch_column
+    :last_dm_at
   end
 
-  def from_last_access
-    I18n.t('prompt_report.from_last_access')
-  end
+  class YouAreRemovedMessage < BasicMessage
+    attr_accessor :changes
 
-  def changes_text
-    I18n.t('prompt_report.changes', before: changes[:followers_count][0], after: changes[:followers_count][1])
-  end
+    def report_class
+      PromptReport
+    end
 
-  def url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'prompt')
-  end
+    def old_followers_count
+      changes[:followers_count][0]
+    end
 
-  def link
-    ActionController::Base.helpers.link_to(I18n.t('prompt_report.see_result'), url)
-  end
-
-  def hashtag
-    I18n.t('prompt_report.hashtag')
-  end
-
-  def ps
-    I18n.t('prompt_report.ps')
+    def new_followers_count
+      changes[:followers_count][1]
+    end
   end
 end

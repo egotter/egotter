@@ -11,12 +11,13 @@ module Concerns::Report::Common
     def generate_token
       begin
         t = SecureRandom.urlsafe_base64(10)
-      end while PromptReport.exists?(token: t)
+      end while exists?(token: t)
       t
     end
   end
 
   included do
+    belongs_to :user
     attr_accessor :message_builder
   end
 
@@ -35,8 +36,12 @@ module Concerns::Report::Common
     raise NotImplementedError
   end
 
-  def show_dm_text
-    user.api_client.direct_message(message_id).text
+  def build_message
+    message_builder.build
+  end
+
+  def fetch_dm_text
+    user.api_client.twitter.direct_message(message_id).text
   end
 
   def read?
@@ -47,4 +52,67 @@ module Concerns::Report::Common
     @screen_name ||= user.screen_name
   end
 
+  class BasicMessage
+    attr_reader :user, :token, :format
+
+    def initialize(user, token, format: 'text')
+      @user = user
+      @token = token
+      @format = format
+    end
+
+    def build
+      ERB.new(Rails.root.join(template_path).read).result(binding)
+    end
+
+    private
+
+    def screen_name
+      user.screen_name
+    end
+
+    def url
+      Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: type)
+    end
+
+    def report_class
+      raise NotImplementedError
+    end
+
+    def type
+      report_class.name.underscore.split('_')[0]
+    end
+
+    def template_path
+      "app/views/#{report_class.name.underscore.pluralize}/#{self.class.name.demodulize.underscore.remove(/_message$/)}.ja.#{format}.erb"
+    end
+
+    def twitter_db_user
+      user.twitter_user.twitter_db_user
+    end
+
+    def removing_names
+      twitter_db_user.unfriends.limit(3).pluck(:screen_name).map do |name|
+        name[1..1] = I18n.t('dictionary.asterisk') if name.length >= 2
+        name[3..3] = I18n.t('dictionary.asterisk') if name.length >= 4
+        '@' + name
+      end.join ' '
+    end
+
+    def removing_count
+      twitter_db_user.unfriendships.size
+    end
+
+    def removed_names
+      twitter_db_user.unfollowers.limit(3).pluck(:screen_name).map do |name|
+        name[1..1] = I18n.t('dictionary.asterisk') if name.length >= 2
+        name[3..3] = I18n.t('dictionary.asterisk') if name.length >= 4
+        '@' + name
+      end.join ' '
+    end
+
+    def removed_count
+      twitter_db_user.unfollowerships.size
+    end
+  end
 end

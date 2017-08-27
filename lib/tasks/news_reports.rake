@@ -31,7 +31,7 @@ namespace :news_reports do
       end
 
       if twitter_user&.twitter_db_user&.unfollowerships&.empty?
-        puts "Empty unfollowerships #{user_id}"
+        news_reports_print_details(twitter_user, login_user: user)
         empty_count += 1
       end
 
@@ -92,7 +92,7 @@ namespace :news_reports do
       end
 
       if twitter_user&.twitter_db_user&.unfollowerships&.empty?
-        puts "Empty unfollowerships #{user_id}"
+        news_reports_print_details(twitter_user, login_user: user)
         empty_count += 1
       end
 
@@ -126,5 +126,10 @@ namespace :news_reports do
       puts "#{ex.class} #{ex.message.truncate(100)} #{user_id}"
       false
     end
+  end
+
+  def news_reports_print_details(twitter_user, login_user:)
+    info = "#{'%2s' % twitter_user.size} #{'%5s' % twitter_user.friends_count}, #{'%5s' % twitter_user.followers_count}"
+    puts "Empty unfollowerships(#{'%5s' % twitter_user.too_many_friends?(login_user: login_user)}, #{info}) #{login_user.id}"
   end
 end
