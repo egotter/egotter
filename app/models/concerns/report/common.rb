@@ -41,7 +41,7 @@ module Concerns::Report::Common
   end
 
   def fetch_dm_text
-    user.api_client.twitter.direct_message(message_id).text
+    user.api_client.twitter.direct_message(message_id, full_text: true).text
   end
 
   def read?
