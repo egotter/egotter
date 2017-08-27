@@ -7,13 +7,13 @@ namespace :twitter_users do
       sigint = true
     end
 
-    persisted_uids = TwitterUser.uniq.pluck(:uid).map(&:to_i)
+    persisted_uids = nil
 
     specified_uids =
       if ENV['UIDS']
         ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
       else
-        User.authorized.pluck(:uid).map(&:to_i).reject { |uid| persisted_uids.include? uid }.take(500)
+        User.authorized.pluck(:uid).map(&:to_i).take(500)
      end
 
     failed = false
@@ -23,10 +23,13 @@ namespace :twitter_users do
     skip_if_persisted = ENV['SKIP'].present?
 
     specified_uids.each.with_index do |uid, i|
-      if skip_if_persisted && persisted_uids.include?(uid)
-        skipped += 1
-        skipped_reasons << "Persisted #{uid}"
-        next
+      if skip_if_persisted
+        persisted_uids ||= TwitterUser.uniq.pluck(:uid).map(&:to_i)
+        if persisted_uids.include?(uid)
+          skipped += 1
+          skipped_reasons << "Persisted #{uid}"
+          next
+        end
       end
 
       twitter_user = TwitterUser::Batch.fetch_and_create(uid)
