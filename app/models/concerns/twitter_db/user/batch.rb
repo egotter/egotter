@@ -84,13 +84,7 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.retryable?(ex)
-      # Twitter::Error::InternalServerError Internal error
-      # Twitter::Error::ServiceUnavailable Over capacity
-      # Twitter::Error execution expired
-      # Twitter::Error Connection reset by peer - SSL_connect
-
-      ['Internal error', 'Over capacity', 'execution expired', 'Connection reset by peer - SSL_connect'].include?(ex.message) ||
-        (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '')
+      TwitterUser::Batch.retryable?(ex)
     end
 
     def self.retryable_deadlock?(ex)

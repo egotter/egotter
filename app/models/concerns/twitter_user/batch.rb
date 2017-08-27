@@ -130,7 +130,8 @@ module Concerns::TwitterUser::Batch
       # Twitter::Error execution expired
       # Twitter::Error Connection reset by peer - SSL_connect
 
-      ['Internal error', 'Over capacity', 'execution expired', 'Connection reset by peer - SSL_connect'].include? ex.message
+      ['Internal error', 'Over capacity', 'execution expired', 'Connection reset by peer - SSL_connect'].include?(ex.message) ||
+        (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '')
     end
 
     def self.create_friendless_record(twitter_user, create_twitter_user:)
