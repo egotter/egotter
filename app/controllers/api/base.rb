@@ -66,7 +66,7 @@ module Api
     end
 
     def fetch_suspended_uids(uids)
-      uids - client.users(uids).map(&:id)
+      uids - client.users(uids).map { |u| u[:id] }
     rescue => e
       if e.message == 'No user matches for specified terms.'
       elsif e.message == 'Invalid or expired token.'
@@ -81,7 +81,7 @@ module Api
     end
 
     def fetch_blocking_uids
-      client.blocked_ids.to_a
+      client.blocked_ids
     rescue => e
       if e.message == 'Invalid or expired token.'
       else

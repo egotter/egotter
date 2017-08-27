@@ -7,8 +7,8 @@ module Concerns::TwitterUser::Builder
   class_methods do
     def build_by_user(user)
       TwitterUser.new(
-        uid: user.id,
-        screen_name: user.screen_name,
+        uid: user[:id],
+        screen_name: user[:screen_name],
         user_info: TwitterUser.collect_user_info(user)
       )
     end

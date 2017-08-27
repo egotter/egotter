@@ -42,7 +42,7 @@ class CreatePromptReportWorker
     end
 
     t_user = client.user(user.uid.to_i)
-    if t_user.suspended
+    if t_user[:suspended]
       log.update!(call_count: client.call_count, message: 'Suspended')
       return
     end

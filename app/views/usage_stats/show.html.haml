@@ -25,13 +25,13 @@
 .cloud-chart{style: 'height: 220px;'}
 
 .tweet-box-wrapper{style: 'margin-bottom: 15px;'}
-  = render(partial: 'twitter/tweet_box', locals: {text: t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.keys.take(5).join(' '), url: usage_stat_url(screen_name: @twitter_user.screen_name))})
+  = render(partial: 'twitter/tweet_box', locals: {text: t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(screen_name: @twitter_user.screen_name))})
 
 :javascript
   $(function () {
     var usageTime = #{@stat.usage_time.to_json.html_safe};
     var hashtags = #{@stat.hashtags.to_a.take(10).map { |word, count| {name: word, y: count} }.to_json.html_safe};
-    var cloud = #{@stat.hashtags.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }.to_json.html_safe};
+    var cloud = #{@stat.hashtags.to_a.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }.to_json.html_safe};
 
     if (usageTime) {
       var chart = $.extend(true, {}, window.usage_stats_column_chart_options);

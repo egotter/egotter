@@ -131,7 +131,7 @@ class UsageStat < ActiveRecord::Base
         breakdown_json:      extract_breakdown(@statuses).to_json,
         hashtags_json:       extract_hashtags(@statuses).to_json,
         mentions_json:       extract_mentions(@statuses).to_json,
-        tweet_clusters_json: ApiClient.dummy_instance.tweet_clusters(@statuses, limit: 100).to_json
+        tweet_clusters_json: ApiClient.instance.tweet_clusters(@statuses, limit: 100).to_json
       )
       stat
     end
@@ -147,7 +147,7 @@ class UsageStat < ActiveRecord::Base
       return [{}, {}, {}, {}, {}] if statuses.empty?
       one_year_ago = 365.days.ago
       times = statuses.map(&:tweeted_at).select { |time| time > one_year_ago  }
-      ApiClient.dummy_instance.usage_stats(times, day_names: I18n.t('date.abbr_day_names'))
+      ApiClient.instance.usage_stats(times, day_names: I18n.t('date.abbr_day_names'))
     end
 
     def extract_breakdown(statuses)
