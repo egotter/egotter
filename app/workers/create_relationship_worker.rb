@@ -64,7 +64,7 @@ class CreateRelationshipWorker
   rescue Twitter::Error::TooManyRequests => e
     log.update(
       status: false,
-      call_count: -,
+      call_count: -1,
       reason: BackgroundSearchLog::TooManyRequests::MESSAGE,
       message: ''
     )
