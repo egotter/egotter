@@ -91,11 +91,11 @@ module Api
     end
 
     def confirm_refollow_uids?
-      %w(unfriends blocking_or_blocked).include?(controller_name) && user_signed_in?
+      %w(unfriends blocking_or_blocked).include?(controller_name) && user_signed_in? && current_user.twitter_user
     end
 
     def confirm_refollowed_uids?
-      %w(unfollowers blocking_or_blocked).include?(controller_name) && user_signed_in?
+      %w(unfollowers blocking_or_blocked).include?(controller_name) && user_signed_in? && current_user.twitter_user
     end
 
     def to_summary_hash(user)
