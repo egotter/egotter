@@ -1,4 +1,4 @@
-/home/ec2-user/egotter/log/twitter_with_auto_pagination.log {
+/home/ec2-user/egotter/log/twitter.log {
   dateext
   dateformat _%Y%m%d
   daily

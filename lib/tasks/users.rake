@@ -12,7 +12,7 @@ namespace :users do
     User.authorized.find_in_batches(batch_size: 100) do |users|
       Parallel.each(users, in_threads: 10) do |user|
         begin
-          puts "Authorized #{user.api_client.verify_credentials.id}"
+          puts "Authorized #{user.api_client.verify_credentials[:id]}"
         rescue => e
           if e.message == 'Invalid or expired token.'
             puts "Invalid #{user.uid}"

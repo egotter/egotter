@@ -11,7 +11,7 @@ module Concerns::TwitterDB::User::Batch
       uids = uids.uniq.map(&:to_i)
       users = fetch(uids, client: client)
       imported = import(users)
-      import_suspended(uids - users.map(&:id)) if uids.size != imported.size
+      import_suspended(uids - users.map { |u| u[:id] }) if uids.size != imported.size
     end
 
     class << self

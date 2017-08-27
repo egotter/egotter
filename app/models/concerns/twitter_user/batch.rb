@@ -14,6 +14,7 @@ module Concerns::TwitterUser::Batch
           user&.update(authorized: false) if ex.message == 'Invalid or expired token.'
         end
       return unless t_user
+      t_user = Hashie::Mash.new(t_user)
 
       twitter_user = TwitterUser.build_by_user(t_user)
       twitter_user.user_id = user ? user.id : -1
@@ -24,10 +25,10 @@ module Concerns::TwitterUser::Batch
         return twitter_user.persisted? ? twitter_user : nil
       end
 
-      if t_user.protected && client.verify_credentials.id != t_user.id
+      if t_user.protected && client.verify_credentials[:id] != t_user.id
         friendship_uid = ::TwitterDB::Friendship.where(user_uid: User.authorized.pluck(:uid), friend_uid: uid).first&.user_uid
         if friendship_uid
-          logger "Change a client to update #{uid} from #{client.verify_credentials.id} to #{friendship_uid}"
+          logger "Change a client to update #{uid} from #{client.verify_credentials[:id]} to #{friendship_uid}"
           client = User.find_by(uid: friendship_uid).api_client
         else
           create_friendless_record(twitter_user, create_twitter_user: create_twitter_user)
@@ -106,8 +107,7 @@ module Concerns::TwitterUser::Batch
 
     def self.fetch_friend_ids_and_follower_ids(uid, client:)
       tries ||= 3
-      signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
-      client._fetch_parallelly(signatures)
+      client.friend_ids_and_follower_ids(uid)
     rescue => e
       if e.message == 'Invalid or expired token.'
         logger "Invalid token(friend_ids) #{uid}"

@@ -83,9 +83,9 @@ RSpec.describe User, type: :model do
   end
 
   describe '.api_client' do
-    it 'returns Twitter::REST::Client' do
+    it 'returns TwitterWithAutoPagination::Client' do
       client = user.api_client
-      expect(client).to be_a_kind_of(Twitter::REST::Client)
+      expect(client).to be_a_kind_of(TwitterWithAutoPagination::Client)
       expect(client.access_token).to eq(user.token)
       expect(client.access_token_secret).to eq(user.secret)
     end

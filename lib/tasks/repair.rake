@@ -63,8 +63,7 @@ namespace :repair do
           end
 
           begin
-            signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
-            friend_uids, follower_uids = client._fetch_parallelly(signatures)
+            friend_uids, follower_uids = client.friend_ids_and_follower_ids(uid)
           rescue => e
             puts "client.friend_ids: #{e.class} #{e.message} #{twitter_user_id}"
             break

@@ -11,8 +11,8 @@ class UsageStatsController < ::Base
     @page_description = t('.page_description', user: @twitter_user.mention_name)
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name})
 
-    @stat = UsageStat.find_by(uid: @twitter_user.uid)
+    @stat = UsageStat.find_or_initialize_by(uid: @twitter_user.uid)
 
-    @tweet_text = usage_time_text(@stat&.usage_time, @twitter_user)
+    @tweet_text = usage_time_text(@stat.usage_time, @twitter_user)
   end
 end

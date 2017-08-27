@@ -22,8 +22,10 @@ class TwitterUserFetcher
   def fetch_relations
     reject_names = reject_relation_names
     signatures = fetch_signatures(reject_names)
-    fetch_results = client._fetch_parallelly(signatures)
-    client.replying(uid) # only create a cache
+    fetch_results =
+      client.parallel do |batch|
+        signatures.each { |signature| batch.send(signature[:method], *signature[:args]) }
+      end
 
     signatures.each_with_object({}).with_index do |(item, memo), i|
       memo[item[:method]] = fetch_results[i]
@@ -36,8 +38,7 @@ class TwitterUserFetcher
       {method: :follower_ids,      args: [uid]},
       {method: :user_timeline,     args: [uid, {include_rts: false}]},     # replying
       {method: :search,            args: [search_query]}, # replied
-      {method: :home_timeline,     args: [uid]},     # TODO cache?
-      {method: :mentions_timeline, args: [uid]},     # replied
+      {method: :mentions_timeline, args: []},     # replied
       {method: :favorites,         args: [uid]}      # favoriting
     ].delete_if { |item| reject_names.include?(item[:method]) }
   end

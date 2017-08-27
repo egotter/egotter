@@ -39,8 +39,7 @@ class ImportTwitterUserRelationsWorker
     return if twitter_user.friendless?
 
     begin
-      signatures = [{method: :friend_ids,   args: [uid]}, {method: :follower_ids, args: [uid]}]
-      friend_uids, follower_uids = client._fetch_parallelly(signatures)
+      friend_uids, follower_uids = client.friend_ids_and_follower_ids(uid)
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
       friend_uids, follower_uids = [], []

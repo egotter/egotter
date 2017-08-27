@@ -9,12 +9,9 @@ class ApiClient
   end
 
   def self.instance(options = {})
-    return Twitter::REST::Client.new if options.blank?
-    Twitter::REST::Client.new(config(options))
-  end
-
-  def self.dummy_instance
-    Twitter::REST::Client.new
+    klass = TwitterWithAutoPagination::Client
+    return klass.new if options.blank?
+    klass.new(config(options))
   end
 
   # user's client > follower's client > login user's client > bot client
