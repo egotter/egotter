@@ -3,7 +3,7 @@ class CloseFriendsController < GoodFriends
 
   def all
     super
-    render template: 'friends/all'
+    render template: 'friends/all' unless performed?
   end
 
   def show

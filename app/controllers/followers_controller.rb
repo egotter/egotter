@@ -1,12 +1,12 @@
 class FollowersController < FriendsAndFollowers
   def all
     super
-    render template: 'friends/all'
+    render template: 'friends/all' unless performed?
   end
 
   def show
     super
-    render template: 'friends/show'
+    render template: 'friends/show' unless performed?
   end
 
   private
