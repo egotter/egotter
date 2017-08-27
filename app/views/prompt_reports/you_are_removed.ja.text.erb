@@ -1,0 +1,12 @@
+えごったーの @<%= screen_name %> リムられ速報です。
+
+最後にえごったーにアクセスしてから、フォロワー数が <%= old_followers_count %> から <%= new_followers_count %> に変わりました。
+@<%= screen_name %> さんの結果ページ <%= url %> #egotter
+
+<% if twitter_db_user %>
+☆☆ @<%= screen_name %> さんの最新情報 ☆☆
+リムり → <%= removing_names %> 、合計 <%= removing_count %> 人
+リムられ → <%= removed_names %> 、合計 <%= removed_count %> 人
+<% end %>
+
+※このリムられ速報は、フォロワー数に変化があった時のみ、最大で1時間に1回ほど届きます。

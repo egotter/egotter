@@ -66,29 +66,14 @@ class CreatePromptReportWorker
       return
     end
 
-    new_report = PromptReport.new(user_id: user.id, changes_json: changes.to_json, token: PromptReport.generate_token)
-    message = new_report.build_message(html: false)
-    dm = nil
-
     # TODO Implement email
     # TODO Implement onesignal
 
     begin
-      dm = client.twitter.create_direct_message(user.uid.to_i, message)
+      PromptReport.you_are_removed(user.id, changes_json: changes.to_json).deliver
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
       log.update!(call_count: -1, message: 'Creating DM failed')
-      return
-    end
-
-    begin
-      ActiveRecord::Base.transaction do
-        new_report.update!(message_id: dm.id)
-        user.notification_setting.update!(last_dm_at: Time.zone.now)
-      end
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
-      log.update!(call_count: -1, message: 'Updating records failed')
       return
     end
 

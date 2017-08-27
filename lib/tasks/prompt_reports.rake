@@ -24,7 +24,7 @@ namespace :prompt_reports do
       end
 
     ids = {specified: user_ids}
-    ids[:authorized] = User.where(id: ids[:specified], authorized: true).pluck(:id)
+    ids[:authorized] = User.authorized.where(id: ids[:specified]).pluck(:id)
     ids[:active] = User.active(14).where(id: ids[:authorized]).pluck(:id)
     ids[:sendable] = User.can_send_dm.where(id: ids[:active]).pluck(:id)
 
