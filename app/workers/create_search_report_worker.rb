@@ -18,7 +18,7 @@ class CreateSearchReportWorker
     # TODO Implement email
     # TODO Implement onesignal
 
-    dm = user.api_client.create_direct_message(user.uid.to_i, message)
+    dm = user.api_client.twitter.create_direct_message(user.uid.to_i, message)
 
     ActiveRecord::Base.transaction do
       report.update!(message_id: dm.id)

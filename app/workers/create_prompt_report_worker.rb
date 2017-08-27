@@ -74,7 +74,7 @@ class CreatePromptReportWorker
     # TODO Implement onesignal
 
     begin
-      dm = client.create_direct_message(user.uid.to_i, message)
+      dm = client.twitter.create_direct_message(user.uid.to_i, message)
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
       log.update!(call_count: client.call_count, message: 'Creating DM failed')
