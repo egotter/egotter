@@ -22,11 +22,11 @@ class SearchReport < ActiveRecord::Base
 
   belongs_to :user
 
-  def build_message(html: false)
-    linebreak = html ? '<br>' : "\n"
-    result = html ? link : url
+  def build_message(format: 'text')
+    linebreak = format == 'html' ? '<br>' : "\n"
+    result = format == 'html' ? link : url
 
-    if html
+    if format == 'html'
       "#{title}#{linebreak}#{result}"
     else
       "#{title}#{linebreak}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"

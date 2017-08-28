@@ -36,7 +36,8 @@ module Concerns::Report::Common
     raise NotImplementedError
   end
 
-  def build_message
+  def build_message(format: 'text')
+    message_builder.format = format
     message_builder.build
   end
 
@@ -53,7 +54,8 @@ module Concerns::Report::Common
   end
 
   class BasicMessage
-    attr_reader :user, :token, :format
+    attr_reader :user, :token
+    attr_accessor :format
 
     def initialize(user, token, format: 'text')
       @user = user

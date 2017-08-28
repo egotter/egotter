@@ -13,7 +13,7 @@ class CreateSearchReportWorker
     return unless user.authorized? && user.can_send_search?
 
     report = SearchReport.new(user_id: user.id, token: SearchReport.generate_token)
-    message = report.build_message(html: false)
+    message = report.build_message(format: 'text')
 
     # TODO Implement email
     # TODO Implement onesignal
