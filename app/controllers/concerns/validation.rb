@@ -159,7 +159,7 @@ module Validation
       when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(screen_name)
       when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(screen_name)
       when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(screen_name)
-      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(screen_name)
+      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(screen_name, ex)
       else redirect_to redirect_path, alert: alert_message(ex)
     end
   end
@@ -176,8 +176,12 @@ module Validation
     t('after_sign_in.unauthorized_html', sign_in: kick_out_error_path('unauthorized'), sign_out: sign_out_path)
   end
 
-  def too_many_requests_message(screen_name)
-    t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
+  def too_many_requests_message(screen_name, ex)
+    if user_signed_in?
+      t('after_sign_in.too_many_requests_with_reset_in', seconds: (ex.rate_limit.reset_in.to_i + 1).seconds)
+    else
+      t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
+    end
   end
 
   def alert_message(ex)
