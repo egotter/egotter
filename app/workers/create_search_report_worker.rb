@@ -12,17 +12,13 @@ class CreateSearchReportWorker
 
     return unless user.authorized? && user.can_send_search?
 
-    report = SearchReport.new(user_id: user.id, token: SearchReport.generate_token)
-    message = report.build_message(format: 'text')
-
     # TODO Implement email
     # TODO Implement onesignal
 
-    dm = user.api_client.twitter.create_direct_message(user.uid.to_i, message)
-
-    ActiveRecord::Base.transaction do
-      report.update!(message_id: dm.id)
-      user.notification_setting.update!(search_sent_at: Time.zone.now)
+    begin
+      SearchReport.you_are_searched(user.id).deliver
+    rescue => e
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
     end
 
   rescue Twitter::Error::Unauthorized => e

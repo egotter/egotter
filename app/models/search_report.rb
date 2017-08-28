@@ -20,38 +20,22 @@
 class SearchReport < ActiveRecord::Base
   include Concerns::Report::Common
 
-  belongs_to :user
+  def self.you_are_searched(user_id, format: 'text')
+    report = new(user_id: user_id, token: generate_token)
+    report.message_builder = YouAreSearchedMessage.new(report.user, report.token, format: format)
+    report
+  end
 
-  def build_message(format: 'text')
-    linebreak = format == 'html' ? '<br>' : "\n"
-    result = format == 'html' ? link : url
-
-    if format == 'html'
-      "#{title}#{linebreak}#{result}"
-    else
-      "#{title}#{linebreak}#{linebreak}#{result} #{hashtag}#{linebreak}#{linebreak}#{ps}"
-    end
+  def touch_column
+    :search_sent_at
   end
 
   private
 
-  def title
-    I18n.t('search_report.title', user: screen_name)
-  end
 
-  def url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'search')
-  end
-
-  def link
-    ActionController::Base.helpers.link_to(I18n.t('prompt_report.see_result'), url)
-  end
-
-  def hashtag
-    I18n.t('search_report.hashtag')
-  end
-
-  def ps
-    I18n.t('search_report.ps')
+  class YouAreSearchedMessage < BasicMessage
+    def report_class
+      SearchReport
+    end
   end
 end

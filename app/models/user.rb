@@ -107,7 +107,20 @@ class User < ActiveRecord::Base
   end
 
   def notifications
-    (prompt_reports.limit(10) + search_reports.limit(10)).sort_by { |r| -r.created_at.to_i }
+    pr = prompt_reports.limit(10).each do |r|
+      r.message_builder = PromptReport::YouAreRemovedMessage.new(r.user, r.token, format: 'html')
+      r.message_builder.changes = JSON.parse(r.changes_json, symbolize_names: true)
+    end
+
+    sr = search_reports.limit(10).each do |r|
+      r.message_builder = SearchReport::YouAreSearchedMessage.new(r.user, r.token, format: 'html')
+    end
+
+    nr = news_reports.limit(10).each do |r|
+      r.message_builder = NewsReport::ComeBackInactiveUserMessage.new(r.user, r.token, format: 'html')
+    end
+
+    (pr + sr + nr).sort_by { |r| -r.created_at.to_i }
   end
 
   def unauthorized?

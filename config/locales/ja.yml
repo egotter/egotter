@@ -715,11 +715,6 @@ ja:
       blocked:
         title: 'リム通知再登録'
         message: "通知を再登録するために、画像の手順にしたがって操作してください："
-  search_report:
-    title: "えごったーで @%{user} が検索されました。"
-    hashtag: '#egotter'
-    ps: '※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'
-    see_result: '結果を見る'
 
   activerecord:
     models:
