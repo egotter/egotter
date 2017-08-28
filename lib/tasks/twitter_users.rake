@@ -1,7 +1,7 @@
 namespace :twitter_users do
   desc 'create'
   task create: :environment do
-    sigint = Util::Siging.new.trap
+    sigint = Util::Sigint.new.trap
 
     persisted_uids = nil
 

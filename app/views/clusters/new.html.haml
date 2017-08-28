@@ -21,6 +21,5 @@
 
 .clusters.separator
 
-.twitter.tweets
-  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true)
+= render partial: 'common/public_tweets'
 .clusters.lead.in-top-page.text-center= t('clusters.new.lead_004_html')

@@ -9,7 +9,7 @@
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_users[0], unique_id: @twitter_users[0].uid})
 
-.twitter.users{style: 'margin-top: 15px;'}
+.twitter.users.row{style: 'margin-top: 15px;'}
   = render(partial: 'twitter/user', cached: true, locals: {user: @twitter_users[1]}, formats: %i(html))
 
 %h2.h2.one-sided-friends= page_title

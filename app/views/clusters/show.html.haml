@@ -1,5 +1,5 @@
 - content_for :canonical_url do
-  %link{href: cluster_url(screen_name: @twitter_user.screen_name), rel: 'canonical'}
+  %link{href: cluster_url(@twitter_user), rel: 'canonical'}
 
 - breadcrumb :cluster, @twitter_user.screen_name
 
@@ -18,7 +18,7 @@
 
 .share-buttons
   .inner
-    - text = t('clusters.show.tweet', user: mention_name(@twitter_user.screen_name), clusters: @cluster_names.take(3).join("\n"), url: cluster_url(screen_name: @twitter_user.screen_name))
+    - text = t('clusters.show.tweet', user: mention_name(@twitter_user.screen_name), clusters: @cluster_names.take(3).join("\n"), url: cluster_url(@twitter_user))
     = render partial: 'twitter/tweet_button', locals: {text: text}
 
 

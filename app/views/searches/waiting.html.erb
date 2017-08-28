@@ -24,7 +24,7 @@
     <% if user_signed_in? %>
       <div class="retry-btn">
         <%= link_to t('searches.waiting.retry_search_by', user: @twitter_user.mention_name),
-                    searches_path(screen_name: @twitter_user.screen_name, via: :retry),
+                    searches_path(@twitter_user, via: :retry),
                     class: 'btn btn-lg btn-info btn-block', method: :post %>
       </div>
     <% else %>

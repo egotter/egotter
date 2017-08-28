@@ -117,8 +117,7 @@
 .row.searches{style: 'margin-bottom: 15px;'}
   .col-xs-12.col-sm-6{style: 'height: 550px; overflow: hidden; border-right: 1px solid #e6e6e6;'}
     %h3.h4{style: 'margin-top: 15px; margin-bottom: 15px;'}= t('searches.new.twitter_feeds')
-    .twitter.tweets
-      = render(partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true)
+    = render partial: 'common/public_tweets'
   .col-xs-12.col-sm-6.text-center
     = render partial: 'layouts/share'
 

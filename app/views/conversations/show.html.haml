@@ -1,5 +1,5 @@
 - content_for :canonical_url do
-  %link{href: conversation_url(screen_name: @twitter_user.screen_name, type: @type), rel: 'canonical'}
+  %link{href: conversation_url(@twitter_user, type: @type), rel: 'canonical'}
 
 - breadcrumb :conversation, @twitter_user.screen_name
 

@@ -11,5 +11,5 @@
         .search-histories-header
           %h2
             %small= t('search_histories.index.title')
-          .twitter.users
+          .twitter.users.row
             = render(partial: 'twitter/user', collection: latest_search_histories, cached: true, locals: {via: 'search_histories'})

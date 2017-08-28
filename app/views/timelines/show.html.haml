@@ -1,5 +1,5 @@
 - content_for :canonical_url do
-  %link{href: timeline_url(screen_name: @twitter_user.screen_name), rel: 'canonical'}
+  %link{href: timeline_url(@twitter_user), rel: 'canonical'}
 
 - breadcrumb :timeline, @twitter_user.screen_name
 

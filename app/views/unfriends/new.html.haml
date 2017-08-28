@@ -21,6 +21,5 @@
 
 .unfriends.separator
 
-.twitter.tweets
-  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter OR #unfriends'), cached: true, formats: %i(html))
+= render partial: 'common/public_tweets'
 .unfriends.lead.in-top-page.text-center= t('unfriends.new.lead_004').html_safe

@@ -7,4 +7,3 @@
   - CreateRelationshipWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterUserWorker
-  - UpdateTwitterUserWorker

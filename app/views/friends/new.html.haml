@@ -21,6 +21,5 @@
 
 .friends.separator
 
-.twitter.tweets
-  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true, formats: %i(html))
+= render partial: 'common/public_tweets'
 .friends.lead.in-top-page.text-center= t('friends.new.lead_004').html_safe

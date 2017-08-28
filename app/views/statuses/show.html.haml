@@ -1,5 +1,5 @@
 - content_for :canonical_url do
-  %link{href: status_url(screen_name: @twitter_user.screen_name), rel: 'canonical'}
+  %link{href: status_url(@twitter_user), rel: 'canonical'}
 
 - breadcrumb :status, @twitter_user.screen_name
 
@@ -14,7 +14,7 @@
 = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
-#statuses.twitter.tweets
+#statuses.twitter.tweets.row
   - if @twitter_user.protected_account?
     = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
   - else

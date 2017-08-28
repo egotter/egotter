@@ -3,7 +3,8 @@ module SearchHistoriesHelper
     if request.from_crawler? || from_minor_crawler?(request.user_agent)
       []
     else
-      user_signed_in? ? SearchHistory.latest(user_id: current_user_id) : SearchHistory.latest(session_id: session[:fingerprint])
+      condition = user_signed_in? ? {user_id: current_user_id} : {session_id: session[:fingerprint]}
+      SearchHistory.latest(condition)
     end
   end
 

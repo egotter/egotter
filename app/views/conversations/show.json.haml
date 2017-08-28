@@ -1,3 +1,4 @@
+.twitter.users.row
 = render(partial: 'twitter/user', collection: users, cached: true, formats: %i(html))
 
 - unless users.last_page?

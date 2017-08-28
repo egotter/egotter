@@ -21,6 +21,5 @@
 
 .one-sided-friends.separator
 
-.twitter.tweets
-  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter OR #OneSidedFriends'), cached: true, formats: %i(html))
+= render partial: 'common/public_tweets'
 .one-sided-friends.lead.in-top-page.text-center= t('one_sided_friends.new.lead_004').html_safe
