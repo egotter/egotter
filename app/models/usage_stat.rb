@@ -20,6 +20,13 @@
 #
 
 class UsageStat < ActiveRecord::Base
+
+  DEFAULT_SECONDS = Rails.configuration.x.constants['usage_stat_recently_created']
+
+  def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
+    Time.zone.now - send(attr) < seconds
+  end
+
   %i(wday wday_drilldown hour hour_drilldown usage_time breakdown hashtags mentions tweet_clusters).each do |name|
     define_method(name) do
       ivar_name = "@#{name}_cache"

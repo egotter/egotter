@@ -1,28 +1,31 @@
-.row
-  - if user_signed_in?
-    = button_tag t('searches.sidebar.update_now'), type: 'button', class: 'btn btn-default btn-block btn-lg btn-force-update'
-    %span.text-info.blink-force-update{style: 'display: none;'}= '更新リクエストを送信しました'
-    :javascript
-      $(function () {
-        $('.btn-force-update').one('click', function () {
-          $(this).attr('disabled', true);
-          $('.blink-force-update').fadeIn(4000).fadeOut(4000);
-        });
+- if user_signed_in?
+  = button_tag t('searches.sidebar.update_now'), type: 'button', class: 'btn btn-default btn-block btn-lg btn-force-update'
+  %span.text-info.blink-force-update{style: 'display: none;'}= '更新リクエストを送信しました'
+  :javascript
+    $(function () {
+      $('.btn-force-update').one('click', function () {
+        $(this).attr('disabled', true);
+        $('.blink-force-update').fadeIn(4000).fadeOut(4000);
       });
+    });
 
+- else
+  %button.btn.btn-default.btn-lg{type: 'button', data: {toggle: 'modal', target: '.sidebar-modal'}}= t('searches.sidebar.update_now')
+.text-muted= t('searches.sidebar.updated_at', time: l(twitter_user.updated_at.in_time_zone('Tokyo'), format: :short))
+
+.separate-line{style: 'margin-top: 15px;'}
+
+%h4= t('searches.common.search')
+= render partial: 'common/search_form', locals: {via: :sidebar}
+
+.separate-line{style: 'margin-top: 15px;'}
+
+%h4= t('searches.sidebar.recommendation')
+.twitter.users
+  - if twitter_user.twitter_db_user.unfollowerships.any?
+    = render partial: 'twitter/sidebar/user', collection: twitter_user.twitter_db_user.unfollowers.take(10), locals: {reason: t('searches.sidebar.reasons.removed')}
   - else
-    %button.btn.btn-default.btn-lg{type: 'button', data: {toggle: 'modal', target: '.sidebar-modal'}}= t('searches.sidebar.update_now')
-  .text-muted= t('searches.sidebar.updated_at', time: l(twitter_user.updated_at.in_time_zone('Tokyo'), format: :short))
-.row
-  %h4= t('searches.common.search')
-  = render partial: 'common/search_form', locals: {via: :sidebar}
-.row
-  %h4= t('searches.sidebar.recommendation')
-  .twitter.users
-    - if twitter_user.twitter_db_user.unfollowerships.any?
-      = render partial: 'twitter/sidebar/user', collection: twitter_user.twitter_db_user.unfollowers.take(10), locals: {reason: t('searches.sidebar.reasons.removed')}
-    - else
-      = render partial: 'twitter/sidebar/user', collection: twitter_user.close_friends.take(10), locals: {reason: t('searches.sidebar.reasons.close_friends')}
+    = render partial: 'twitter/sidebar/user', collection: twitter_user.close_friends.take(10), locals: {reason: t('searches.sidebar.reasons.close_friends')}
 
 - unless user_signed_in?
   .modal.fade.sidebar-modal.text-center{"aria-labelledby" => 'sidebar-modal-label', role: 'dialog', tabindex: '-1'}

@@ -91,6 +91,8 @@ Rails.application.routes.draw do
   get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates
   get 'timelines/:uid/check_for_follow', to: 'timelines#check_for_follow', as: :check_for_follow
 
+  get 'usage_stats/:uid/check_for_updates', to: 'usage_stats#check_for_updates', as: :check_for_updates_usage_stat
+
   resources :notifications, only: :index
   resources :settings, only: :index
   resource :setting, only: :update

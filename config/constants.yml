@@ -1,6 +1,7 @@
 default: &default
   twitter_user_recently_created: <%= 30.minutes %>
   log_recently_created: <%= 5.minutes %>
+  usage_stat_recently_created: <%= 30.minutes %>
   recently_searched: <%= 5.minutes %>
   recently_creating: <%= 5.minutes %>
   recently_messaging: <%= 5.minutes %>
@@ -15,6 +16,7 @@ development:
   <<: *default
   twitter_user_recently_created: <%= 1.minute %>
   log_recently_created: <%= 1.minute %>
+  usage_stat_recently_created: <%= 1.minute %>
   recently_searched: <%= 1.minute %>
   recently_creating: <%= 1.minute %>
   recently_messaging: <%= 1.minute %>

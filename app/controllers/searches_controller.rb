@@ -29,7 +29,7 @@ class SearchesController < ApplicationController
   end
 
   def show
-    redirect_to timeline_path(screen_name: @twitter_user.screen_name), status: 301
+    redirect_to timeline_path(@twitter_user), status: 301
   end
 
   def new
@@ -37,7 +37,7 @@ class SearchesController < ApplicationController
 
   def create
     uid, screen_name = @tu.uid.to_i, @tu.screen_name
-    redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(screen_name: screen_name))
+    redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@tu))
     if TwitterUser.exists?(uid: uid)
       redirect_to redirect_path
     else

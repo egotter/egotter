@@ -6,7 +6,7 @@
 - title @page_title
 - set_meta_tags description: @meta_description, title: @meta_title
 
-= render partial: 'common/background_update_components', locals: {twitter_user: @twitter_user, jid: @jid}
+= render partial: 'common/background_update', locals: {twitter_user: @twitter_user, jid: @jid}
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 

@@ -544,6 +544,7 @@ ja:
     show:
       updating: '%{user} のデータを更新中'
       update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
+      update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
       followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
       followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'

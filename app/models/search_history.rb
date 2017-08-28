@@ -28,5 +28,9 @@ class SearchHistory < ActiveRecord::Base
     includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10)
   end
 
-  delegate :screen_name, :name, :description, :profile_image_url_https, :protected, :verified, :suspended, :inactive, :status, to: :twitter_db_user, allow_nil: true
+  def to_param
+    screen_name
+  end
+
+  delegate :screen_name, :name, :friends_count, :followers_count, :description, :profile_image_url_https, :protected, :verified, :suspended, :inactive, :status, to: :twitter_db_user, allow_nil: true
 end

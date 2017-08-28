@@ -5,35 +5,44 @@
   = render partial: 'common/adsense', locals: {action: action_name, vertical: :slit}
   %div{style: 'height: 0; border-top: 1px solid #e6e6e6; margin-bottom: 15px;'}
 
-.media.row
-  .media-left
-    = link_to timeline_path(screen_name: user.screen_name, via: via) do
-      = normal_icon_img(user, class: 'media-object')
-  .media-body
-    %h4.media-heading= user_name(user, label: true)
-    %span.screen-name
-      = link_to(mention_name(user.screen_name), timeline_path(screen_name: user.screen_name, via: via))
-  .media-right
-    .buttons
-      - if user_signed_in?
-        - if current_user_uid != user.uid.to_i
-          - onclick = "window.open(this.href, 'window', 'width=600, height=400, menubar=no, toolbar=no, scrollbars=yes'); return false;"
-          - url = "https://twitter.com/intent/follow?screen_name=#{user.screen_name}"
-          - if current_user_friend_uids.include? user.uid.to_i
-            %a.btn.btn-success.follow{href: url, onclick: onclick, target: '_blank'}
-              %span.glyphicon.glyphicon-ok
-              .visible-md-inline.visible-lg-inline= t('searches.common.following')
+.col-xs-12{style: 'margin-bottom: 15px;'}
+  .media
+    .media-inner
+      .media-left
+        = link_to timeline_path(user, via: via) do
+          = normal_icon_img(user, class: 'media-object')
+      .media-body
+        %h4.media-heading
+          - if request.from_pc?
+            = link_to(mention_name(user.screen_name), timeline_path(user, via: via))
+          = user_name(user, label: true)
+        - if request.from_pc?
+          %span.friends-count
+            = "#{user.friends_count} / #{user.followers_count}"
+        - else
+          %span.screen-name
+            = link_to(mention_name(user.screen_name), timeline_path(user, via: via))
+      .media-right
+        .buttons
+          - if user_signed_in?
+            - if current_user_uid != user.uid.to_i
+              - onclick = "window.open(this.href, 'window', 'width=600, height=400, menubar=no, toolbar=no, scrollbars=yes'); return false;"
+              - url = "https://twitter.com/intent/follow?screen_name=#{user.screen_name}"
+              - if current_user_is_following?(user.uid)
+                %a.btn.btn-success.follow{href: url, onclick: onclick, target: '_blank'}
+                  %span.glyphicon.glyphicon-ok
+                  .visible-md-inline.visible-lg-inline= t('searches.common.following')
+              - else
+                %a.btn.btn-default.no-follow{href: url, onclick: onclick, target: '_blank'}
+                  %i.text-muted.fa.fa-user-plus{'area-hidden': true}
+                  .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
           - else
-            %a.btn.btn-default.no-follow{href: url, onclick: onclick, target: '_blank'}
+            %a.btn.btn-default.no-follow{href: sign_in_path(via: "#{controller_name}/#{action_name}/follow_btn")}
               %i.text-muted.fa.fa-user-plus{'area-hidden': true}
               .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
-      - else
-        %a.btn.btn-default.no-follow{href: sign_in_path(via: "#{controller_name}/#{action_name}/follow_btn")}
-          %i.text-muted.fa.fa-user-plus{'area-hidden': true}
-          .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
 
-      = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: via), method: :post do
-        %button.btn.btn-info{type: 'button'}
-          %span.glyphicon.glyphicon-search
-          .visible-md-inline.visible-lg-inline= t('searches.common.do_search')
-  .description= linkify(user.description)
+          = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: via), method: :post do
+            %button.btn.btn-info{type: 'button'}
+              %span.glyphicon.glyphicon-search
+              .visible-md-inline.visible-lg-inline= t('searches.common.do_search')
+      .description= linkify(user.description)

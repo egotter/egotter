@@ -21,9 +21,9 @@ class TimelinesController < ::Base
   end
 
   def check_for_updates
-    @twitter_user = TwitterUser.latest(params[:uid])
-    if params[:created_at].match(/\A\d+\z/) && @twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
-      return render json: {found: true, text: changes_text(@twitter_user)}, status: 200
+    twitter_user = TwitterUser.latest(params[:uid])
+    if params[:created_at].match(/\A\d+\z/) && twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
+      return render json: {found: true, text: changes_text(twitter_user)}, status: 200
     end
 
     render json: {found: false}, status: 200

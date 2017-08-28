@@ -8,18 +8,3 @@
   font-size: 13px;
   color: #777777;
 }
-
-.update-histories .media {
-  border-bottom: 1px solid #e6e6e6;
-  padding-bottom: 15px;
-}
-
-.update-histories .media-body {
-  padding-right: 15px;
-}
-
-.update-histories .media-heading {
-  padding-left: 15px;
-  font-weight: bold;
-  font-size: 14px;
-}

@@ -4,16 +4,15 @@ class UpdateHistoriesController < ApplicationController
 
   before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(show)) { existing_uid?(params[:uid].to_i) }
-  before_action(only: %i(show)) { @searched_tw_user = TwitterUser.latest(params[:uid].to_i) }
-  before_action(only: %i(show)) { authorized_search?(@searched_tw_user) }
+  before_action(only: %i(show)) { @twitter_user = TwitterUser.latest(params[:uid].to_i) }
+  before_action(only: %i(show)) { authorized_search?(@twitter_user) }
   before_action only: %i(show) do
     push_referer
     create_search_log
   end
 
-  # GET /update_histories/:id
   def show
-    @title = t('update_histories.show.short_title', user: @searched_tw_user.mention_name)
-    @update_histories = UpdateHistories.new(@searched_tw_user.uid)
+    @title = t('update_histories.show.short_title', user: @twitter_user.mention_name)
+    @update_histories = UpdateHistories.new(@twitter_user.uid)
   end
 end

@@ -46,6 +46,10 @@ module ApplicationHelper
     end
   end
 
+  def current_user_is_following?(uid)
+    current_user_friend_uids.include? uid.to_i
+  end
+
   def current_user_friend_screen_names
     if instance_variable_defined?(:@current_user_friend_screen_names)
       @current_user_friend_screen_names

@@ -33,5 +33,6 @@
   - UpdateSearchHistoriesWorker
   - UpdateSearchLogWorker
   - UpdateSearchReportWorker
+  - UpdateUsageStatWorker
   - UpdateNewsReportWorker
   - UpdateTwitterUserWorker

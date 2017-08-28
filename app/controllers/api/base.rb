@@ -111,6 +111,8 @@ module Api
         uid: user.uid.to_s,
         screen_name: user.screen_name,
         name: user.name,
+        friends_count: user.friends_count,
+        followers_count: user.followers_count,
         profile_image_url_https: user.profile_image_url_https.to_s,
         description: user.description,
         protected: user.protected,

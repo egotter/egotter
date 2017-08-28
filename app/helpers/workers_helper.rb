@@ -62,4 +62,9 @@ module WorkersHelper
     return if request.from_crawler? || from_minor_crawler?(request.user_agent)
     UpdateSearchHistoriesWorker.perform_in(1.minutes, fingerprint, current_user_id, uid)
   end
+
+  def enqueue_update_usage_stat_worker_if_needed(uid)
+    return if request.from_crawler? || from_minor_crawler?(request.user_agent)
+    UpdateUsageStatWorker.perform_async(uid)
+  end
 end

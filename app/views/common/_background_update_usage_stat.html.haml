@@ -1,0 +1,46 @@
+.update-box.alert.alert-info.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('common.show.updating', user: twitter_user.mention_name)
+  = image_tag '/ajax-loader.gif'
+
+.refresh-box.alert.alert-info.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  %span= t('common.show.update_of_usage_stat_is_coming', user: twitter_user.mention_name)
+  = link_to(t('common.show.update_result'), usage_stat_path(twitter_user), class: 'btn btn-default btn-sm')
+
+:javascript
+  (function () {
+    var checkForUpdatesPath = '#{check_for_updates_usage_stat_path(uid: twitter_user.uid, updated_at: (stat ? stat.updated_at.to_i : -1))}';
+    var retryCount = 0;
+    var interval = 5000;
+    var jid = "#{jid}";
+
+    var $updateBox = $('.update-box');
+    var $refreshBox = $('.refresh-box');
+
+    $.each([$updateBox, $refreshBox], function (i, btn) {
+      btn.on('close.bs.alert', function () {
+        btn.parent().hide();
+      });
+    });
+
+    $(function () {
+      if (jid) {
+        console.log('Worker started', jid);
+        $updateBox.show().sticky();
+        checkForUpdates(checkForUpdatesPath, interval, retryCount,
+          function (res) {
+            $updateBox.alert('close');
+            if (res.text) {
+              $refreshBox.find('span').text(res.text);
+            }
+            $refreshBox.show().sticky();
+          }, function (res) {
+            $updateBox.alert('close');
+          }, function (xhr) {
+            $updateBox.alert('close');
+            console.log('checkForUpdates failed.', xhr);
+          });
+      }
+    });
+  })();

@@ -22,4 +22,12 @@ class Status < ActiveRecord::Base
   belongs_to :twitter_user
 
   include Concerns::Status::Store
+
+  def self.slice_status_info(t_status)
+    {
+      uid: t_status[:user][:id],
+      screen_name: t_status[:user][:screen_name],
+      status_info: t_status.slice(*::Status::STATUS_SAVE_KEYS).to_json
+    }
+  end
 end

@@ -96,7 +96,7 @@ class CreateTwitterUserWorker
       twitter_user.increment(:search_count).save
 
       ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, twitter_user_id: twitter_user.id, 'enqueued_at' => Time.zone.now)
-      update_usage_stat(twitter_user)
+      UpdateUsageStatWorker.perform_async(uid.to_i)
       create_score(twitter_user)
 
       notify(user, twitter_user)
@@ -162,12 +162,6 @@ class CreateTwitterUserWorker
     user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
     user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
     user.save!
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
-  end
-
-  def update_usage_stat(twitter_user)
-    UsageStat.builder(twitter_user.uid).statuses(twitter_user.statuses).build.save!
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end

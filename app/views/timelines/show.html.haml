@@ -8,7 +8,7 @@
 - description = t('timelines.show.description', user: @twitter_user.mention_name)
 - set_meta_tags title: title, site: '', description: description
 
-= render partial: 'common/background_update_components', locals: {twitter_user: @twitter_user, jid: @jid}
+= render partial: 'common/background_update', locals: {twitter_user: @twitter_user, jid: @jid}
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
@@ -41,7 +41,7 @@
       = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: name}
 
   .col-md-6
-    = render partial: 'search_results/show/update_histories_summary', locals: {histories: UpdateHistories.new(@twitter_user.uid), tu: @twitter_user}
+    = render partial: 'timelines/update_history', locals: {histories: UpdateHistories.new(@twitter_user.uid), twitter_user: @twitter_user}
 
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
 

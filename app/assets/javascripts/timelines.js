@@ -43,3 +43,26 @@ function loadSummary (apiEndpoint, uid, menuName, progressMessages) {
     $summaryBox.find('.media-right').show().end().find('.common-chart').highcharts(graphOption);
   });
 }
+
+function checkForUpdates (path, interval, retryCount, foundCallback, stopCallback, failedCallback) {
+  $.get(path)
+    .done(function (res) {
+      console.log('checkForUpdates', res);
+
+      if (res.found) {
+        foundCallback(res);
+      } else {
+        if (retryCount < 2) {
+          function doRetry () {
+            checkForUpdates(path, interval, ++retryCount, foundCallback, stopCallback, failedCallback);
+          }
+          setTimeout(doRetry, interval);
+        } else {
+          stopCallback(res);
+        }
+      }
+    })
+    .fail(function (xhr) {
+      failedCallback(xhr);
+    });
+}

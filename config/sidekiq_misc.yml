@@ -23,4 +23,5 @@
   - TweetEgotterWorker
   - UpdateSearchHistoriesWorker
   - UpdateSearchLogWorker
+  - UpdateUsageStatWorker
   - rollbar

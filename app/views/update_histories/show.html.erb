@@ -1,53 +1,29 @@
 <% title @title %>
-<% set_meta_tags description: "#{@title} - #{@searched_tw_user.description}" %>
+<% set_meta_tags description: "#{@title} - #{@twitter_user.description}" %>
 
-<%= render(partial: 'profiles/overview',
-           locals: {user: @searched_tw_user, unique_id: @searched_tw_user.uid}) %>
+<% breadcrumb :update_history, @twitter_user.screen_name %>
+
+<%= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid}) %>
 
 <div class="update-histories">
   <h2 class="h4"><%= @title %></h2>
 
-  <div class="return-to-results-top"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), timeline_path(@searched_tw_user)) %></div>
+  <div class="return-to-results-top"><%= link_to(t('searches.common.return', user: @twitter_user.mention_name), timeline_path(@twitter_user)) %></div>
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
 
   <div class="summary">
-    <div><%= TwitterUser.human_attribute_name(:created_at) %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
-    <div><%= TwitterUser.human_attribute_name(:updated_at) %>&nbsp;<%= l(@update_histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= '初回更新' %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= '最終更新' %>&nbsp;<%= l(@update_histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
     <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= @update_histories.search_count %></div>
-    <div><%= TwitterUser.human_attribute_name(:update_count) %>&nbsp;<%= @update_histories.update_count %></div>
+    <div><%= '更新回数' %>&nbsp;<%= @update_histories.size %></div>
   </div>
 
-  <% if @update_histories.size > 1 %>
-    <% @update_histories.each_cons(2).with_index do |(newer, older), i| %>
-      <div class="media">
-        <div class="media-body">
-          <h4 class="media-heading">
-            <%= TwitterUser.human_attribute_name(:updated_at) %><br>
-            <% between_from = l(older.created_at.in_time_zone('Tokyo'), format: :short) %>
-            <% between_to = l((i == 0 ? newer.updated_at : newer.created_at).in_time_zone('Tokyo'), format: :short) %>
-            <%= between_from %>&nbsp;<%= t('dictionary.between_from') %>&nbsp;<%= between_to %>&nbsp;<%= t('dictionary.between_to') %>
-          </h4>
-          <div class="summary">
-            <% older.diff(newer, only: %i(friends_count followers_count)).each do |name, (before, after)| %>
-              <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before %>&nbsp;->&nbsp;<%= after %></div>
-            <% end %>
-            <% older.diff(newer, only: %i(friend_uids follower_uids)).each do |name, (before, after)| %>
-              <% if before.size != after.size %>
-                <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;<%= before.size %>&nbsp;->&nbsp;<%= after.size %></div>
-              <% else  %>
-                <% if (before - after).any? %>
-                  <div><%= TwitterUser.human_attribute_name(name) %>&nbsp;-<%= (before - after).size %>,&nbsp;+<%= (after - before).size %></div>
-                <% end %>
-              <% end %>
-            <% end %>
-          </div>
-        </div>
-      </div>
-    <% end %>
-  <% end %>
+  <div class="twitter users row">
+    <%= render partial: 'twitter/user', collection: @update_histories.to_a, cached: true %>
+  </div>
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}) %>
 
-  <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @searched_tw_user.mention_name), timeline_path(@searched_tw_user)) %></div>
+  <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @twitter_user.mention_name), timeline_path(@twitter_user)) %></div>
 </div>
