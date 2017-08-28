@@ -14,7 +14,11 @@ class ImportTwitterUserRelationsWorker
       worker_class: self.class.name,
       started_at: Time.zone.now
     )
-    twitter_user = TwitterUser.latest(uid)
+    twitter_user = TwitterUser.find(options['twitter_user_id'])
+    unless twitter_user.latest?
+      logger.warn "A fetched record is not the latest one. #{twitter_user.id}"
+    end
+
     enqueued_at = options.fetch('enqueued_at', Time.zone.now)
     enqueued_at = Time.zone.parse(enqueued_at) if enqueued_at.is_a?(String)
 
