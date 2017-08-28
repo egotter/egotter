@@ -1,11 +1,7 @@
 namespace :twitter_users do
   desc 'create'
   task create: :environment do
-    sigint = false
-    Signal.trap 'INT' do
-      puts 'intercept INT and stop ..'
-      sigint = true
-    end
+    sigint = Util::Siging.new.trap
 
     persisted_uids = nil
 
@@ -37,7 +33,7 @@ namespace :twitter_users do
 
       puts("#{i + 1}/#{specified_uids.size}") if (i % 100).zero?
 
-      break if sigint || failed
+      break if sigint.trapped? || failed
     end
 
     if processed.any?
@@ -53,7 +49,7 @@ namespace :twitter_users do
       puts skipped_reasons.take(500).map { |r| "  #{r}" }.join("\n")
     end
 
-    puts "\ncreate #{(sigint || failed ? 'suspended:' : 'finished:')}"
+    puts "\ncreate #{(sigint.trapped? || failed ? 'suspended:' : 'finished:')}"
     puts "  uids: #{specified_uids.size}, processed: #{processed.size}, skipped: #{skipped}"
   end
 end
