@@ -28,6 +28,7 @@ class FriendsController < FriendsAndFollowers
 
   def show
     super
+    @active_tab = 0
   end
 
   private
@@ -38,5 +39,12 @@ class FriendsController < FriendsAndFollowers
       one_sided_friends: @twitter_user.one_sided_friendships.size,
       one_sided_friends_rate: (@twitter_user.one_sided_friends_rate * 100).round(1)
     }
+  end
+
+  def tabs
+    [
+      {text: t('friends.show.see_friends_html', num: @twitter_user.friendships.size), url: friend_path(@twitter_user)},
+      {text: t('friends.show.see_followers_html', num: @twitter_user.followerships.size), url: follower_path(@twitter_user)}
+    ]
   end
 end

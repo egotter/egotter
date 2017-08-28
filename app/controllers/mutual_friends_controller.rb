@@ -1,26 +1,4 @@
-class OneSidedFriendsController < FriendsAndFollowers
-
-  before_action(only: %i(show)) do
-    if request.format.html?
-      if valid_screen_name?(params[:screen_name])
-        case params[:type]
-          when 'one_sided_friends' then redirect_to(one_sided_friend_path(screen_name: params[:screen_name]), status: 301)
-          when 'one_sided_followers' then redirect_to(one_sided_follower_path(screen_name: params[:screen_name]), status: 301)
-          when 'mutual_friends' then redirect_to(mutual_friend_path(screen_name: params[:screen_name]), status: 301)
-        end
-      end
-    else
-      head :not_found
-    end
-  end
-
-  before_action only: %i(new) do
-    push_referer
-    create_search_log
-  end
-
-  def new
-  end
+class MutualFriendsController < FriendsAndFollowers
 
   def all
     super
@@ -29,7 +7,7 @@ class OneSidedFriendsController < FriendsAndFollowers
 
   def show
     super
-    @active_tab = 0
+    @active_tab = 2
     render template: 'friends/show' unless performed?
   end
 

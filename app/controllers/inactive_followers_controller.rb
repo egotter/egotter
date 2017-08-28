@@ -1,26 +1,4 @@
-class InactiveFriendsController < FriendsAndFollowers
-
-  before_action(only: %i(show)) do
-    if request.format.html?
-      if valid_screen_name?(params[:screen_name])
-        case params[:type]
-          when 'inactive_friends' then redirect_to(inactive_friend_path(screen_name: params[:screen_name]), status: 301)
-          when 'inactive_followers' then redirect_to(inactive_follower_path(screen_name: params[:screen_name]), status: 301)
-          when 'inactive_mutual_friends' then redirect_to(inactive_mutual_friend_path(screen_name: params[:screen_name]), status: 301)
-        end
-      end
-    else
-      head :not_found
-    end
-  end
-
-  before_action only: %i(new) do
-    push_referer
-    create_search_log
-  end
-
-  def new
-  end
+class InactiveFollowersController < FriendsAndFollowers
 
   def all
     super

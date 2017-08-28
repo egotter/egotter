@@ -26,6 +26,6 @@ class UnfriendsController < UnfriendsAndUnfollowers
 
   def show
     super
-    @disabled_label = 0
+    @active_tab = 0
   end
 end

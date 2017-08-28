@@ -33,6 +33,7 @@
     var checkForUpdatesPath = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i)}';
     var checkForFollowPath = '#{check_for_follow_path(uid: twitter_user.uid)}';
     var retryCount = 0;
+    var interval = 8000;
     var friendless = #{twitter_user.friendless?};
     var signedIn = #{user_signed_in?};
     var authorized = #{user_signed_in? && current_user.authorized?};
@@ -72,33 +73,6 @@
       }
     }
 
-    function checkForUpdates () {
-      $.get(checkForUpdatesPath)
-        .done(function (res) {
-        console.log('checkForUpdates', res);
-
-          if (res.found) {
-            $updateBox.alert('close');
-            if (res.text) {
-              $refreshBox.find('span').text(res.text);
-            }
-            $refreshBox.show().sticky();
-          } else {
-            if (retryCount < 2) {
-              retryCount++;
-              setTimeout(checkForUpdates, 8000);
-            } else {
-              $updateBox.alert('close');
-              updatesNotFound();
-            }
-          }
-        })
-        .fail(function (xhr) {
-          $updateBox.alert('close');
-          console.log('checkForUpdates failed.', xhr);
-        });
-    }
-
     $(function () {
       if (signedIn && !authorized) {
         $invalidTokenBox.show().sticky();
@@ -111,7 +85,21 @@
       if (jid) {
         console.log('Worker started', jid);
         $updateBox.show().sticky();
-        setTimeout(checkForUpdates, 3000);
+
+        checkForUpdates(checkForUpdatesPath, interval, retryCount,
+          function (res) {
+            $updateBox.alert('close');
+            if (res.text) {
+              $refreshBox.find('span').text(res.text);
+            }
+            $refreshBox.show().sticky();
+          }, function (res) {
+            $updateBox.alert('close');
+            updatesNotFound();
+          }, function (xhr) {
+            $updateBox.alert('close');
+            console.log('checkForUpdates failed.', xhr);
+          });
       } else {
         updatesNotFound();
       }

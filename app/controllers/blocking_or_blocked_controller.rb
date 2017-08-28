@@ -4,7 +4,7 @@ class BlockingOrBlockedController < UnfriendsAndUnfollowers
 
   def show
     super
-    @disabled_label = 2
+    @active_tab = 2
     render template: 'unfriends/show'
   end
 end

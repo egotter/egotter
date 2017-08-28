@@ -1,0 +1,4 @@
+%ul.nav.nav-tabs.nav-justified{style: 'margin-bottom: 15px;'}
+  - tabs.each.with_index do |tab, i|
+    %li.nav-item{class: ('active' if active_tab == i)}
+      = link_to tab[:text].html_safe, tab[:url]

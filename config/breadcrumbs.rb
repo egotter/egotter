@@ -17,26 +17,49 @@ crumb :common do |screen_name, menu|
   parent :search, screen_name
 end
 
-%w(friends followers statuses close_friends favorite_friends scores usage_stats unfriends unfollowers blocking_or_blocked).each do |name|
+%w(
+  friends
+  followers
+  statuses
+  close_friends
+  favorite_friends
+  scores
+  usage_stats
+  unfriends
+  unfollowers
+  blocking_or_blocked
+  inactive_friends
+  inactive_followers
+  one_sided_friends
+  one_sided_followers
+  mutual_friends
+).each do |name|
   crumb name.singularize.to_sym do |screen_name|
     link t("#{name}.show.crumb_title"), send("#{name.singularize}_path", screen_name: screen_name)
     parent :search, screen_name
   end
 end
 
-crumb :one_sided_friend do |screen_name|
-  link t('one_sided_friends.new.simple_title'), one_sided_friend_path(screen_name: screen_name)
-  parent :search, screen_name
+%w(
+  friends
+  followers
+  close_friends
+  favorite_friends
+  inactive_friends
+  inactive_followers
+  one_sided_friends
+  one_sided_followers
+  mutual_friends
+).each do |name|
+  crumb "all_#{name}".to_sym do |screen_name|
+    link t("#{name}.all.crumb_title"), send("all_#{name}_path", screen_name: screen_name)
+    parent "#{name.singularize}".to_sym, screen_name
+  end
 end
 
 crumb :relationship do |src_screen_name, dst_screen_name|
   link t('relationships.new.simple_title'), relationship_path(src_screen_name: src_screen_name, dst_screen_name: dst_screen_name)
   parent :search, src_screen_name
-end
-
-crumb :inactive_friend do |screen_name|
-  link t('inactive_friends.new.simple_title'), inactive_friend_path(screen_name: screen_name)
-  parent :search, screen_name
 end
 
 crumb :conversation do |screen_name|

@@ -18,10 +18,36 @@ Rails.application.routes.draw do
   end
   get '/menu', to: redirect('/settings')
 
-  %i(friends followers statuses close_friends favorite_friends scores usage_stats unfriends unfollowers blocking_or_blocked).each do |controller_name|
+  %i(
+    friends
+    followers
+    statuses
+    close_friends
+    favorite_friends
+    scores
+    usage_stats
+    unfriends
+    unfollowers
+    blocking_or_blocked
+    inactive_friends
+    inactive_followers
+    one_sided_friends
+    one_sided_followers
+    mutual_friends
+  ).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
-  %i(friends followers close_friends favorite_friends).each do |controller_name|
+  %i(
+    friends
+    followers
+    close_friends
+    favorite_friends
+    inactive_friends
+    inactive_followers
+    one_sided_friends
+    one_sided_followers
+    mutual_friends
+  ).each do |controller_name|
     get "#{controller_name}/:screen_name/all", to: "#{controller_name}#all", as: "all_#{controller_name}"
   end
   match 'statuses/:screen_name/oembed' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :get
@@ -30,10 +56,7 @@ Rails.application.routes.draw do
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
 
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
-
-  resources :inactive_friends, only: %i(create show), param: :screen_name
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top
-
   get 'friends', to: 'friends#new', as: :friends_top
 
   resources :conversations, only: %i(create show), param: :screen_name

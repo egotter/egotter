@@ -7,6 +7,10 @@ module ApplicationHelper
     %w(new waiting all).exclude?(action_name) && request.from_pc? && (@searched_tw_user || @twitter_user)
   end
 
+  def show_see_at_once_button?
+    %w(friends followers close_friends favorite_friends inactive_friends inactive_followers one_sided_friends one_sided_followers mutual_friends).include? controller_name
+  end
+
   def redis
     @redis ||= Redis.client
   end

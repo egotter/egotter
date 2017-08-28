@@ -15,7 +15,6 @@ class Search
     one_sided_followers
     replying
     replied
-    favoriting
     inactive_friends
     inactive_followers
   )
