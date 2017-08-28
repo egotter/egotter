@@ -1,6 +1,7 @@
 module WorkersHelper
   def add_create_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
     return if request.from_crawler? || from_minor_crawler?(request.user_agent)
+    return if uid.to_i == User::EGOTTER_UID
 
     searched_uids = Util::SearchedUids.new(redis)
     return if searched_uids.exists?(uid)
