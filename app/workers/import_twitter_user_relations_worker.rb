@@ -6,21 +6,16 @@ class ImportTwitterUserRelationsWorker
   BUSY_QUEUE_SIZE = 0
 
   def perform(user_id, uid, options = {})
-    job = Job.new(
-      user_id: user_id,
-      uid: uid,
-      jid: jid,
-      parent_jid: options.fetch('parent_jid', '').to_s,
-      worker_class: self.class.name,
-      started_at: Time.zone.now
-    )
+    track = Track.find(options['track_id'])
+    job = track.jobs.create({user_id: user_id, uid: uid, enqueued_at: options['enqueued_at']}.merge(worker_class: self.class, jid: jid, started_at: Time.zone.now))
+
     twitter_user = TwitterUser.find(options['twitter_user_id'])
     unless twitter_user.latest?
       logger.warn "A fetched record is not the latest one. #{twitter_user.id}"
     end
 
-    enqueued_at = options.fetch('enqueued_at', Time.zone.now)
-    enqueued_at = Time.zone.parse(enqueued_at) if enqueued_at.is_a?(String)
+    job.update(twitter_user_id: twitter_user.id, screen_name: twitter_user.screen_name)
+    enqueued_at = Time.zone.parse(options['enqueued_at'])
 
     if self.class == ImportTwitterUserRelationsWorker
       if enqueued_at < 1.minutes.ago
@@ -28,13 +23,7 @@ class ImportTwitterUserRelationsWorker
       end
     end
 
-    job.assign_attributes(
-      screen_name: twitter_user.screen_name,
-      twitter_user_id: twitter_user.id,
-      enqueued_at: enqueued_at
-    )
-
-    client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.client_uid = client_uid }
+    client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
 
     uids = import_favorite_friend_uids(uid, twitter_user)
     uids += import_close_friend_uids(uid, twitter_user)
@@ -79,13 +68,13 @@ class ImportTwitterUserRelationsWorker
       else logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
     end
 
-    job.assign_attributes(error_class: e.class, error_message: e.message)
+    job.update(error_class: e.class, error_message: e.message)
   rescue Twitter::Error => e
-    job.assign_attributes(error_class: e.class, error_message: e.message)
+    job.update(error_class: e.class, error_message: e.message)
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     retry if e.message == 'Connection reset by peer - SSL_connect'
   rescue WorkerError => e
-    job.assign_attributes(error_class: e.class, error_message: e.full_message)
+    job.update(error_class: e.class, error_message: e.full_message)
     if e.retryable?
       handle_retryable_exception(e.cause, user_id, uid, twitter_user.id, options)
     else
@@ -93,15 +82,11 @@ class ImportTwitterUserRelationsWorker
     end
   rescue => e
     message = e.message.truncate(100)
-    job.assign_attributes(error_class: e.class, error_message: message)
+    job.update(error_class: e.class, error_message: message)
     logger.warn "#{e.class} #{message} #{user_id} #{uid}"
     logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
   ensure
-    begin
-      job.update!(finished_at: Time.zone.now)
-    rescue => e
-      logger.warn "#{__method__}: Creating a log is failed. #{e.class} #{e.message}"
-    end
+    job.update(finished_at: Time.zone.now)
   end
 
   private

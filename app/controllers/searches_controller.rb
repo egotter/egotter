@@ -28,10 +28,6 @@ class SearchesController < ApplicationController
     end
   end
 
-  def show
-    redirect_to timeline_path(@twitter_user), status: 301
-  end
-
   def new
   end
 
@@ -42,11 +38,11 @@ class SearchesController < ApplicationController
       redirect_to redirect_path
     else
       save_twitter_user_to_cache(uid, screen_name: screen_name, user_info: @tu.user_info)
-      add_create_twitter_user_worker_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
-      redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path)
+      jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
+      redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid)
     end
 
-    enqueue_update_search_histories_worker_if_needed(uid)
+    enqueue_update_search_histories_job_if_needed(uid)
   end
 
   def waiting
@@ -56,5 +52,6 @@ class SearchesController < ApplicationController
 
     @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(tu))
     @twitter_user = tu
+    @jid = params[:jid]
   end
 end

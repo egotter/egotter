@@ -13,7 +13,7 @@ class TimelinesController < ::Base
     elsif @twitter_user.not_found_account?
       flash.now[:alert] = not_found_message(@twitter_user.screen_name)
     else
-      @jid = add_create_twitter_user_worker_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
+      @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
     end
 
     @stat = UsageStat.find_by(uid: @twitter_user.uid)
