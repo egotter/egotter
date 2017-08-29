@@ -1,6 +1,7 @@
 class CreateJobs < ActiveRecord::Migration
   def change
     create_table :jobs do |t|
+      t.integer  :track_id,        null: false, default: -1
       t.integer  :user_id,         null: false, default: -1
       t.integer  :uid,             null: false, default: -1, limit: 8
       t.string   :screen_name,     null: false, default: ''
@@ -19,6 +20,7 @@ class CreateJobs < ActiveRecord::Migration
       t.timestamps null: false
     end
 
+    add_index :jobs, :track_id
     add_index :jobs, :uid
     add_index :jobs, :screen_name
     add_index :jobs, :jid

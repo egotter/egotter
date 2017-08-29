@@ -1,5 +1,5 @@
 module WorkersHelper
-  def add_create_twitter_user_worker_if_needed(uid, user_id:, screen_name:)
+  def enqueue_create_twitter_user_job_if_needed(uid, user_id:, screen_name:)
     return if request.from_crawler? || from_minor_crawler?(request.user_agent)
     return if uid.to_i == User::EGOTTER_UID
 
@@ -28,14 +28,14 @@ module WorkersHelper
       enqueued_at: Time.zone.now
     }
 
-    if user_signed_in?
-      CreateSignedInTwitterUserWorker.perform_async(values)
-    else
-      CreateTwitterUserWorker.perform_async(values)
-    end
+    track = Track.new(values.slice(:session_id, :user_id, :uid, :screen_name, :auto, :via, :device_type, :os, :browser, :user_agent, :referer, :referral, :channel, :medium))
+    track.update(controller: controller_name, action: action_name)
+
+    worker_class = user_signed_in? ? CreateSignedInTwitterUserWorker : CreateTwitterUserWorker
+    worker_class.perform_async(values.merge(track_id: track.id))
   end
 
-  def add_create_relationship_worker_if_needed(uids, user_id:, screen_names:)
+  def enqueue_create_relationship_job_if_needed(uids, user_id:, screen_names:)
     return if request.from_crawler? || from_minor_crawler?(request.user_agent)
 
     searched_uids = Util::SearchedUids.new(redis)
@@ -59,12 +59,12 @@ module WorkersHelper
     CreateRelationshipWorker.perform_async(values)
   end
 
-  def enqueue_update_search_histories_worker_if_needed(uid)
+  def enqueue_update_search_histories_job_if_needed(uid)
     return if request.from_crawler? || from_minor_crawler?(request.user_agent)
     UpdateSearchHistoriesWorker.perform_in(1.minutes, fingerprint, current_user_id, uid)
   end
 
-  def enqueue_update_usage_stat_worker_if_needed(uid)
+  def enqueue_update_usage_stat_job_if_needed(uid)
     return if request.from_crawler? || from_minor_crawler?(request.user_agent)
     UpdateUsageStatWorker.perform_async(uid)
   end

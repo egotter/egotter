@@ -32,7 +32,7 @@
 
   var unauthorized = new Exception(
     '<%= raw I18n.t('after_sign_in.unauthorized_html', sign_in: welcome_path(via: 'client/unauthorized'), sign_out: sign_out_path) %>',
-    '<%= raw I18n.t('before_sign_in.unauthorized_html', sign_in_path: welcome_path(via: 'client/unauthorized')) %>'
+    '<%= raw I18n.t('before_sign_in.unauthorized_html', url: sign_in_path(via: 'client/unauthorized')) %>'
   );
 
   var somethingError = new Exception(

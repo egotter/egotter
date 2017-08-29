@@ -52,9 +52,7 @@ Rails.application.routes.draw do
   end
   match 'statuses/:screen_name/oembed' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :get
 
-  resources :one_sided_friends, only: %i(create show), param: :screen_name
   get 'one_sided_friends', to: 'one_sided_friends#new', as: :one_sided_friends_top
-
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top
   get 'friends', to: 'friends#new', as: :friends_top
@@ -81,11 +79,9 @@ Rails.application.routes.draw do
     ).each { |menu| get "/searches/:screen_name/#{menu}", to: redirect("/#{menu.remove('new_')}/%{screen_name}") }
   get '/searches/:screen_name/clusters_belong_to', to: redirect('/clusters/%{screen_name}')
 
-  resources :searches, only: %i(create show), param: :screen_name
+  resources :searches, only: %i(create), param: :screen_name
   get '/searches/:screen_name', to: redirect('/timelines/%{screen_name}')
   get 'searches/:uid/waiting', to: 'searches#waiting', as: :waiting_search
-  match 'searches/:screen_name/force_update' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :post
-  match 'searches/:uid/force_reload' => proc { [404, {'Content-Type' => 'text/plain'}, ''] }, via: :post
 
   resources :timelines, only: %i(show), param: :screen_name
   get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates
@@ -99,6 +95,7 @@ Rails.application.routes.draw do
 
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
+  resources :jobs, only: :show, param: :uid
   resources :modal_open_logs, only: :create
   resources :polling_logs, only: :create
 

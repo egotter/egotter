@@ -21,7 +21,7 @@ class UsageStatsController < ::Base
 
     @tweet_text = usage_time_text(@stat.usage_time, @twitter_user)
 
-    @jid = enqueue_update_usage_stat_worker_if_needed(@twitter_user.uid.to_i)
+    @jid = enqueue_update_usage_stat_job_if_needed(@twitter_user.uid.to_i)
   end
 
   def check_for_updates

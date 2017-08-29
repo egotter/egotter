@@ -1,54 +1,134 @@
-<%= render(partial: 'profiles/overview',
-           locals: {user: @twitter_user, unique_id: @twitter_user.uid}) %>
+<%= render partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid} %>
 
-<div class="waiting">
-  <div class="waiting-msg">
-    <%= t('searches.waiting.searching', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
-  </div>
-
-  <div class="finished-msg" style="display: none;">
-    <%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
-  </div>
-
-  <div class="bar">
-    <div class="progress">
-      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
-        <span class="sr-only">0% Complete</span>
-      </div>
-    </div>
-  </div>
-
-  <div class="rescue-box" style="display: none;">
-    <div class="error-msg"></div>
-
-    <% if user_signed_in? %>
-      <div class="retry-btn">
-        <%= link_to t('searches.waiting.retry_search_by', user: @twitter_user.mention_name),
-                    searches_path(@twitter_user, via: :retry),
-                    class: 'btn btn-lg btn-info btn-block', method: :post %>
-      </div>
-    <% else %>
-      <div class="login-btn">
-        <%= link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/sign_in_button"), class: 'btn btn-lg btn-info btn-block' %>
-      </div>
-    <% end %>
-
-    <div class="support-btn">
-      <%= link_to t('dictionary.link_to_support'), support_path, class: 'btn btn-lg btn-info btn-block' %>
-    </div>
-  </div>
-
-  <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
-
-  <div style="margin-top: 15px;"></div>
+<div class="waiting-msg alert alert-info text-center">
+  <%= t('searches.waiting.searching', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
+
+<div class="finished-msg alert alert-success text-center" style="display: none;">
+  <%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+</div>
+
+<div class="error-msg alert alert-warning text-center" style="display: none;">
+  <%= t('before_sign_in.something_wrong_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/something_wrong")) %>
+</div>
+
+<div class="row">
+  <div class="hidden-xs hidden-sm col-md-2"></div>
+  <div class="col-xs-12 col-sm-12 col-md-8">
+    <div class="bar">
+      <div class="progress" style="margin-bottom: 0;">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+          <span class="sr-only">0% Complete</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="hidden-xs hidden-sm col-md-2"></div>
+</div>
+
+<div class="row">
+  <div class="col-xs-12 col-sm-4 text-center">
+    <div class="retry-btn" style="display: none; margin-bottom: 15px;">
+      <%= link_to t('searches.waiting.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: "#{controller_name}/#{action_name}/retry"), class: 'btn btn-lg btn-default', method: :post %>
+    </div>
+  </div>
+
+  <div class="col-xs-12 col-sm-4 text-center">
+    <div class="login-btn" style="display: none; margin-bottom: 15px;">
+      <%= link_to t('login.welcome.sign_in_with_twitter'), sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_button"), class: 'btn btn-lg btn-info' %>
+    </div>
+  </div>
+
+  <div class="col-xs-12 col-sm-4 text-center">
+    <div class="support-btn" style="display: none; margin-bottom: 15px;">
+      <%= link_to t('dictionary.link_to_support'), support_path, class: 'btn btn-lg btn-default' %>
+    </div>
+  </div>
+</div>
+
+<%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
 
 <script>
   $(function () {
-    var checkLogPath = "<%= background_search_log_path(uid: @twitter_user.uid) %>";
+    var checkJobPath = "<%= job_path(uid: @twitter_user.uid, jid: @jid) %>";
     var resultPath = "<%= @redirect_path %>";
     var pollingLogsPath = "<%= raw polling_logs_path(uid: @twitter_user.uid, screen_name: @twitter_user.screen_name) %>";
-    var scope = {controller: "<%= controller_name %>", action: "<%= action_name %>", uid: <%= @twitter_user.uid %>};
-    searchesWaiting(checkLogPath, resultPath, pollingLogsPath, scope);
+    var signedIn = <%= user_signed_in? %>;
+    var action = '<%= "#{controller_name}/#{action_name}" %>';
+
+    var $waitingMessage = $('.waiting-msg');
+    var $finishedMessage = $('.finished-msg');
+    var $errorMessage = $('.error-msg');
+    var $retryBtn = $('.retry-btn');
+    var $loginBtn = $('.login-btn');
+    var $supportBtn = $('.support-btn');
+
+    var progressBar = new ProgressBar();
+    var pollingStart = Date.now();
+
+    function createPollingLog(status) {
+      var elapsedTime = (Date.now() - pollingStart) / 1000.0;
+      if (elapsedTime < 120.0) {
+        $.post(pollingLogsPath, {_action: action, status: status, time: elapsedTime, retry_count: -1});
+      }
+    }
+
+    function check (path, interval, retryCount, successCallback, continueCallback, stopCallback, failedCallback) {
+      $.get(path, {interval: interval, retry_count: retryCount})
+        .done(function (res, textStatus, xhr) {
+          if (xhr.status === 200) {
+            successCallback(res);
+          } else {
+            if (retryCount < 10) {
+              continueCallback(res);
+              setTimeout(function () { check(path, interval, ++retryCount, successCallback, continueCallback, stopCallback, failedCallback); }, interval);
+            } else {
+              stopCallback(res);
+            }
+          }
+        })
+        .fail(function (xhr) {
+          failedCallback(xhr);
+        });
+    }
+
+    check(checkJobPath, 5000, 0,
+      function (res) {
+        console.log('success', res);
+        createPollingLog(true);
+        progressBar.set(95);
+        $waitingMessage.hide();
+        $finishedMessage.show();
+
+        window.location.replace(resultPath);
+      }, function (res) {
+        console.log('continue', res);
+        progressBar.advance();
+      }, function (res) {
+        console.log('stop', res);
+        createPollingLog(false);
+        progressBar.hide();
+        $waitingMessage.hide();
+        $retryBtn.show();
+        if (!signedIn) $loginBtn.show();
+        $supportBtn.show();
+
+        $errorMessage.html(egotter.errors['Timeout'].msg2).show();
+      }, function (xhr) {
+        console.log('failed', xhr.responseText);
+        createPollingLog(false);
+
+        var res = $.parseJSON(xhr.responseText || null);
+        progressBar.hide();
+        $waitingMessage.hide();
+        $retryBtn.show();
+        if (!signedIn) $loginBtn.show();
+        $supportBtn.show();
+
+        if (res && res.message) {
+          $errorMessage.html(res.message);
+        }
+          $errorMessage.show();
+      });
   });
 </script>

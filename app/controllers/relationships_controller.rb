@@ -51,7 +51,7 @@ class RelationshipsController < ApplicationController
     @tu.each { |tu| save_twitter_user_to_cache(tu.uid.to_i, screen_name: tu.screen_name, user_info: tu.user_info) }
 
     if @tu.any? { |tu| !TwitterUser.exists?(uid: tu.uid.to_i) }
-      add_create_relationship_worker_if_needed(@tu.map(&:uid), user_id: current_user_id, screen_names: @tu.map(&:screen_name))
+      enqueue_create_relationship_job_if_needed(@tu.map(&:uid), user_id: current_user_id, screen_names: @tu.map(&:screen_name))
       redirect_to waiting_relationship_path(src_uid: @tu[0].uid, dst_uid: @tu[1].uid, type: params[:type])
     else
       redirect_to relationship_path(src_screen_name: @tu[0].screen_name, dst_screen_name: @tu[1].screen_name, type: params[:type])

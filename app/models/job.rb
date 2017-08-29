@@ -3,6 +3,7 @@
 # Table name: jobs
 #
 #  id              :integer          not null, primary key
+#  track_id        :integer          default(-1), not null
 #  user_id         :integer          default(-1), not null
 #  uid             :integer          default(-1), not null
 #  screen_name     :string(191)      default(""), not null
@@ -24,11 +25,34 @@
 #  index_jobs_on_created_at   (created_at)
 #  index_jobs_on_jid          (jid)
 #  index_jobs_on_screen_name  (screen_name)
+#  index_jobs_on_track_id     (track_id)
 #  index_jobs_on_uid          (uid)
 #
 
 class Job < ActiveRecord::Base
-  def error?
-    !!error_class
+  belongs_to :track
+
+  def twitter_user_created?
+    twitter_user_id != -1
+  end
+
+  def processing?
+    !!started_at && !finished_at
+  end
+
+  def finished?
+    !!finished_at
+  end
+
+  def failed?
+    error_class.present? || error_message.present?
+  end
+
+  class Error < StandardError
+    Unauthorized = Class.new(self)
+    TooOldOrTooBusy = Class.new(self)
+    RecentlyEnqueued = Class.new(self)
+    NotChanged = Class.new(self)
+    RecordInvalid = Class.new(self)
   end
 end
