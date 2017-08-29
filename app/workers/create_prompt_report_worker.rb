@@ -61,7 +61,7 @@ class CreatePromptReportWorker
     end
 
     old_report = PromptReport.latest(user.id)
-    if changes == old_report&.changes
+    if old_report && changes == JSON.parse(old_report.changes_json, symbolize_names: true)
       log.update!(call_count: -1, message: 'Message not changed')
       return
     end
