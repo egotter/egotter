@@ -7,10 +7,13 @@
 #  klout_id       :string(191)      not null
 #  klout_score    :float(53)        not null
 #  influence_json :text(65535)      not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
 #
 # Indexes
 #
-#  index_scores_on_uid  (uid) UNIQUE
+#  index_scores_on_created_at  (created_at)
+#  index_scores_on_uid         (uid) UNIQUE
 #
 
 require 'open-uri'

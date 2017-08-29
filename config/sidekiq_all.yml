@@ -10,6 +10,7 @@
   - CreateNotificationMessageWorker
   - CreatePollingLogWorker
   - CreatePromptReportWorker
+  - CreateScoreWorker
   - CreateSearchReportWorker
   - CreateRelationshipWorker
   - CreateSearchLogWorker

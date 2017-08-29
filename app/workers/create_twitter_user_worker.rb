@@ -166,17 +166,6 @@ class CreateTwitterUserWorker
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
 
-  def create_score(twitter_user)
-    unless Score.exists?(uid: twitter_user.uid)
-      score = Score.builder(twitter_user.uid).build
-      if score.valid? && !Score.exists?(uid: twitter_user.uid) # It currently validates only klout_id.
-        score.save!
-      end
-    end
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
-  end
-
   def notify(login_user, twitter_user)
     searched_user = User.authorized.find_by(uid: twitter_user.uid)
     if searched_user && (!login_user || login_user.id != searched_user.id)

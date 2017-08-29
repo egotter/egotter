@@ -5,6 +5,7 @@
 :queues:
   - CreateNotificationMessageWorker
   - CreatePromptReportWorker
+  - CreateScoreWorker
   - CreateSearchReportWorker
   - CreateTweetsWorker
   - SendMetricsWorker
