@@ -12,7 +12,7 @@ class CreateUsageStats < ActiveRecord::Migration
       t.text    :mentions_json,       null: false
       t.text    :tweet_clusters_json, null: false
 
-      t.timestamps null: true
+      t.timestamps null: false
     end
     add_index :usage_stats, :uid, unique: true
     add_index :usage_stats, :created_at

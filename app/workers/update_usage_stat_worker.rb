@@ -2,7 +2,7 @@ class UpdateUsageStatWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(uid)
+  def perform(uid, options = {})
     stat = UsageStat.find_by(uid: uid)
     return if stat&.fresh?
 
@@ -11,7 +11,8 @@ class UpdateUsageStatWorker
       if twitter_user.statuses.exists?
         twitter_user.statuses
       else
-        user = User.authorized.find_by(uid: uid)
+        user = User.find_by(id: options['user_id'])
+        user = User.authorized.find_by(uid: uid) unless user
         client = user ? user.api_client : Bot.api_client
         client.user_timeline(uid.to_i).map { |s| Status.new(Status.slice_status_info(s)) }
       end

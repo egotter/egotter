@@ -13,10 +13,13 @@
 #  hashtags_json       :text(65535)      not null
 #  mentions_json       :text(65535)      not null
 #  tweet_clusters_json :text(65535)      not null
+#  created_at          :datetime         not null
+#  updated_at          :datetime         not null
 #
 # Indexes
 #
-#  index_usage_stats_on_uid  (uid) UNIQUE
+#  index_usage_stats_on_created_at  (created_at)
+#  index_usage_stats_on_uid         (uid) UNIQUE
 #
 
 class UsageStat < ActiveRecord::Base
