@@ -33,40 +33,20 @@ module SearchesHelper
   end
 
   def search_path_for(menu, screen_name)
-    case menu.to_s
-      when *%w(friends followers close_friends favorite_friends usage_stats unfriends unfollowers blocking_or_blocked inactive_friends inactive_followers one_sided_friends one_sided_followers mutual_friends)
-        send("#{menu.to_s.singularize}_path", screen_name: screen_name)
-      when *%w(replying replied)
-        conversation_path(screen_name: screen_name, type: menu)
-      when *%w(clusters clusters_belong_to)
-        cluster_path(screen_name: screen_name)
-      else
-        raise "#{__method__}: invalid menu #{menu}"
+    if menu.to_s == 'searches'
+      timeline_path(screen_name: screen_name)
+    else
+      send("#{menu.to_s.singularize}_path", screen_name: screen_name)
     end
   end
 
-  def searches_path_for(controller:, screen_name: '', via: '')
+  def searches_path_for(screen_name:, via:)
     options = {screen_name: screen_name, via: via}.delete_if { |_, v| v.empty? }
-    if %w(relationships conversations clusters).include? controller
+    if %w(relationships clusters).include? controller
       send("#{controller}_path", options)
     else
+      options[:redirect_path] = search_path_for(controller_name, screen_name) unless options[:redirect_path]
       searches_path(options)
-    end
-  end
-
-  def title_for(menu, screen_name)
-    case menu.to_sym
-      when *%i(friends followers close_friends favorite_friends usage_stats unfriends unfollowers blocking_or_blocked inactive_friends inactive_followers one_sided_friends one_sided_followers mutual_friends) then t("#{menu}.show.summary_title")
-      when :clusters_belong_to then t("searches.clusters_belong_to.name")
-      else t("searches.#{menu}.title", user: mention_name(screen_name))
-    end
-  end
-
-  def description_for(menu, screen_name)
-    case menu.to_sym
-      when *%i(friends followers close_friends favorite_friends unfriends unfollowers blocking_or_blocked inactive_friends inactive_followers one_sided_friends one_sided_followers mutual_friends)
-        t("#{menu}.show.page_description", user: mention_name(screen_name))
-      else t("searches.#{menu}.description", user: mention_name(screen_name))
     end
   end
 

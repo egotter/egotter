@@ -30,10 +30,8 @@
 
 :javascript
   (function () {
-    var checkForUpdatesPath = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i)}';
+    var checkForUpdatesPath = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: @jid)}';
     var checkForFollowPath = '#{check_for_follow_path(uid: twitter_user.uid)}';
-    var retryCount = 0;
-    var interval = 8000;
     var friendless = #{twitter_user.friendless?};
     var signedIn = #{user_signed_in?};
     var authorized = #{user_signed_in? && current_user.authorized?};
@@ -86,7 +84,7 @@
         console.log('Worker started', jid);
         $updateBox.show().sticky();
 
-        checkForUpdates(checkForUpdatesPath, interval, retryCount,
+        checkForUpdates(checkForUpdatesPath, {interval: 8000},
           function (res) {
             $updateBox.alert('close');
             if (res.text) {

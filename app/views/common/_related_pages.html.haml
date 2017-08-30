@@ -27,3 +27,15 @@
 
   .col-md-6
     = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'blocking_or_blocked'}
+
+  .col-md-6
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'one_sided_friends'}
+
+  .col-md-6
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'one_sided_followers'}
+
+  .col-md-6
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'replying'}
+
+  .col-md-6
+    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'replied'}

@@ -6,7 +6,7 @@
 
 <div class="waiting">
   <div class="waiting-msg">
-    <%= t('searches.waiting.searching', user: @twitter_users.map(&:name).join(' ')) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+    <%= t('searches.waiting.analyzing', user: @twitter_users.map(&:name).join(' ')) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
   </div>
 
   <div class="finished-msg" style="display: none;">

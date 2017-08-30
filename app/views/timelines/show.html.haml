@@ -36,7 +36,7 @@
 
   - if @stat
     .col-md-6
-      = render partial: 'timelines/chart', locals: {menu_name: :clusters_belong_to, graph: name_y_format(@stat.tweet_clusters), twitter_user: @twitter_user}
+      = render partial: 'timelines/chart', locals: {menu_name: :clusters, graph: name_y_format(@stat.tweet_clusters), twitter_user: @twitter_user}
 
   - %w(unfriends unfollowers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favorite_friends inactive_friends inactive_followers).each do |name|
     - if name == 'blocking_or_blocked' && request.from_smartphone?
@@ -51,13 +51,14 @@
 
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
 
-%h2.h4= t('search_results.show.about_this_page', this_page: t('searches.show.heading', user: @twitter_user.mention_name))
-.this-page-is= t('search_results.show.this_page_is_html', user: @twitter_user.mention_name)
-%h2.h4= t('search_results.show.other_services')
+%h2.h4= t('.about_this_page', user: @twitter_user.mention_name)
+.this-page-is= t('.this_page_is_html', user: @twitter_user.mention_name)
+
+%h2.h4= t('.other_services')
 .row.other-services
   .text-center.col-xs-12.col-sm-4
-    = t('search_results.show.twitter_link_html', screen_name: @twitter_user.screen_name)
+    = link_to t('.see_on_twitter', user: @twitter_user.mention_name), user_url(@twitter_user.screen_name), target: '_blank', rel: 'nofollow'
   .text-center.col-xs-12.col-sm-4
-    = t('search_results.show.twilog_link_html', screen_name: @twitter_user.screen_name)
+    = link_to t('.see_on_twilog', user: @twitter_user.mention_name), "http://twilog.org/#{@twitter_user.screen_name}", target: '_blank', rel: 'nofollow'
   .text-center.col-xs-12.col-sm-4
-  = t('search_results.show.favstar_link_html', screen_name: @twitter_user.screen_name)
+  = link_to t('.see_on_favstar', user: @twitter_user.mention_name), "http://ja.favstar.fm/users/#{@twitter_user.screen_name}", target: '_blank', rel: 'nofollow'

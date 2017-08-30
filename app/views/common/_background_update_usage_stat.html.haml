@@ -11,8 +11,6 @@
 :javascript
   (function () {
     var checkForUpdatesPath = '#{check_for_updates_usage_stat_path(uid: twitter_user.uid, updated_at: (stat ? stat.updated_at.to_i : -1))}';
-    var retryCount = 0;
-    var interval = 5000;
     var jid = "#{jid}";
 
     var $updateBox = $('.update-box');
@@ -28,7 +26,7 @@
       if (jid) {
         console.log('Worker started', jid);
         $updateBox.show().sticky();
-        checkForUpdates(checkForUpdatesPath, interval, retryCount,
+        checkForUpdates(checkForUpdatesPath, {interval: 5000},
           function (res) {
             $updateBox.alert('close');
             if (res.text) {

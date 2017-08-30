@@ -1,8 +1,5 @@
 class Search
-  # TODO remove new_friends and new_followers later
   API_V1_NAMES = %i(
-    new_friends
-    new_followers
     friends
     followers
     close_friends
@@ -15,7 +12,13 @@ class Search
     one_sided_followers
     replying
     replied
+    replying_and_replied
+    conversations
     inactive_friends
     inactive_followers
+    inactive_mutual_friends
+    common_friends
+    common_followers
+    common_mutual_friends
   )
 end

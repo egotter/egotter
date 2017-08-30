@@ -8,7 +8,24 @@ module ApplicationHelper
   end
 
   def show_see_at_once_button?
-    %w(friends followers close_friends favorite_friends inactive_friends inactive_followers one_sided_friends one_sided_followers mutual_friends).include? controller_name
+    true
+  end
+
+  def show_common_friends?(twitter_user)
+    user_signed_in? && current_user.uid != twitter_user.uid.to_i && current_user.twitter_user
+  end
+
+  def top_page_paths
+    [
+      [one_sided_friends_top_path, t('one_sided_friends.new.plain_title')],
+      [unfriends_top_path, t('unfriends.new.plain_title')],
+      [relationships_top_path, t('relationships.new.plain_title')],
+      [inactive_friends_top_path, t('inactive_friends.new.plain_title')],
+      [friends_top_path, t('friends.new.plain_title')],
+      [conversations_top_path, t('conversations.new.plain_title')],
+      [clusters_top_path, t('clusters.new.plain_title')],
+      [root_path, t('searches.common.egotter')]
+    ]
   end
 
   def redis

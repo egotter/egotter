@@ -26,7 +26,8 @@ class TimelinesController < ::Base
       return render json: {found: true, text: changes_text(twitter_user)}, status: 200
     end
 
-    render json: {found: false}, status: 200
+    started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
+    render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202
   end
 
   def check_for_follow
@@ -47,16 +48,16 @@ class TimelinesController < ::Base
     aft = twitter_user.twitter_db_user.unfollowerships.size
 
     if aft > bef
-      I18n.t('common.show.unfollowerships_count_increased', user: twitter_user.mention_name, before: bef, after: aft)
+      t('.unfollowerships_count_increased', user: twitter_user.mention_name, before: bef, after: aft)
     else
       if twitter_user.followers_count > second_latest.followers_count
-        I18n.t('common.show.followers_count_increased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
+        t('.followers_count_increased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
       elsif twitter_user.followers_count < second_latest.followers_count
-        I18n.t('common.show.followers_count_decreased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
+        t('.followers_count_decreased', user: twitter_user.mention_name, before: second_latest.followers_count, after: twitter_user.followers_count)
       elsif twitter_user.friends_count > second_latest.friends_count
-        I18n.t('common.show.friends_count_increased', user: twitter_user.mention_name, before: second_latest.friends_count, after: twitter_user.friends_count)
+        t('.friends_count_increased', user: twitter_user.mention_name, before: second_latest.friends_count, after: twitter_user.friends_count)
       elsif twitter_user.friends_count < second_latest.friends_count
-        I18n.t('common.show.friends_count_decreased', user: twitter_user.mention_name, before: second_latest.friends_count, after: twitter_user.friends_count)
+        t('.friends_count_decreased', user: twitter_user.mention_name, before: second_latest.friends_count, after: twitter_user.friends_count)
       else
         I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
       end

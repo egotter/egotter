@@ -9,7 +9,7 @@
       %span.screen-name= link_to(mention_name(user.screen_name), timeline_path(user, via: via))
     .media-right
       .buttons
-        = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: via), method: :post do
+        = link_to searches_path_for(screen_name: user.screen_name, via: via), method: :post do
           %button.btn.btn-info{type: 'button'}
             %span.glyphicon.glyphicon-search
     .reason.text-left.text-muted= "#{reason}#{user_label(user)}".html_safe

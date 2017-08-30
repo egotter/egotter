@@ -31,9 +31,16 @@ Rails.application.routes.draw do
     blocking_or_blocked
     inactive_friends
     inactive_followers
+    inactive_mutual_friends
     one_sided_friends
     one_sided_followers
     mutual_friends
+    replying
+    replied
+    replying_and_replied
+    common_friends
+    common_followers
+    common_mutual_friends
   ).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
@@ -42,11 +49,21 @@ Rails.application.routes.draw do
     followers
     close_friends
     favorite_friends
+    unfriends
+    unfollowers
+    blocking_or_blocked
     inactive_friends
     inactive_followers
+    inactive_mutual_friends
     one_sided_friends
     one_sided_followers
     mutual_friends
+    replying
+    replied
+    replying_and_replied
+    common_friends
+    common_followers
+    common_mutual_friends
   ).each do |controller_name|
     get "#{controller_name}/:screen_name/all", to: "#{controller_name}#all", as: "all_#{controller_name}"
   end
@@ -56,8 +73,6 @@ Rails.application.routes.draw do
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top
   get 'friends', to: 'friends#new', as: :friends_top
-
-  resources :conversations, only: %i(create show), param: :screen_name
   get 'conversations', to: 'conversations#new', as: :conversations_top
 
   resources :clusters, only: %i(create show), param: :screen_name

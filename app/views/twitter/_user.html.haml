@@ -41,7 +41,7 @@
               %i.text-muted.fa.fa-user-plus{'area-hidden': true}
               .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
 
-          = link_to searches_path_for(controller: controller_name, screen_name: user.screen_name, via: via), method: :post do
+          = link_to searches_path_for(screen_name: user.screen_name, via: via), method: :post do
             %button.btn.btn-info{type: 'button'}
               %span.glyphicon.glyphicon-search
               .visible-md-inline.visible-lg-inline= t('searches.common.do_search')

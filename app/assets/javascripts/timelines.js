@@ -44,19 +44,23 @@ function loadSummary (apiEndpoint, uid, menuName, progressMessages) {
   });
 }
 
-function checkForUpdates (path, interval, retryCount, foundCallback, stopCallback, failedCallback) {
-  $.get(path)
-    .done(function (res) {
+function checkForUpdates (path, options, successCallback, stopCallback, failedCallback) {
+  var retryCount = options['retryCount'] || 0;
+  var interval = options['interval'] || 5000;
+  var startedAt = options['startedAt'] || Date.now() / 1000;
+
+  $.get(path, {interval: interval, retry_count: retryCount, started_at: startedAt})
+    .done(function (res, textStatus, xhr) {
       console.log('checkForUpdates', res);
 
-      if (res.found) {
-        foundCallback(res);
+      if (xhr.status === 200) {
+        successCallback(res);
       } else {
         if (retryCount < 2) {
-          function doRetry () {
-            checkForUpdates(path, interval, ++retryCount, foundCallback, stopCallback, failedCallback);
-          }
-          setTimeout(doRetry, interval);
+          setTimeout(function () {
+            var options = {interval: interval, retryCount: ++retryCount, startedAt: startedAt};
+            checkForUpdates(path, options, successCallback, stopCallback, failedCallback);
+          }, interval);
         } else {
           stopCallback(res);
         }

@@ -72,7 +72,6 @@ ja:
         search_for_now: "「とりあえず見るだけ」という方はこちら"
     waiting:
       retry_search_by: "%{user} で再度検索"
-      searching: "%{user} のデータを検索中"
       analyzing: "%{user} のデータを分析中"
       waiting_is_finished_msg: "検索が完了しました。ページを移動します"
     usage_stats:
@@ -89,43 +88,6 @@ ja:
       usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
-    inactive_mutual_friends:
-      num: "最近いない両思い<br>%{num}"
-    clusters_belong_to:
-      name: "入っているクラスタ"
-      title: "%{user} が入っているクラスタ"
-      description: "%{user} が入っているクラスタを表示します。"
-    mutual_friends:
-      num: "両思い<br>%{num}"
-      title: "両思いフォロー"
-      description: "%{user} が相互フォローしているユーザーを表示します。"
-      short_description: "相互フォローしているユーザーを表示します。"
-    one_sided_friends:
-      num: "片思い<br>%{num}"
-      title: "片思いフォロー"
-      description: "%{user} がフォローしているユーザーのうち、<br>%{user} にフォロー返しをしていないユーザーを表示します。"
-      short_description: "フォローしているユーザーのうち、フォロー返しをされていないユーザーを表示します。"
-    one_sided_followers:
-      num: "片思われ<br>%{num}"
-      title: "片思われフォロワー"
-      description: "%{user} がフォローされているユーザーのうち、<br>%{user} がフォロー返しをしていないユーザーを表示します。"
-      short_description: "フォローされているユーザーのうち、フォロー返しをしていないユーザーを表示します。"
-    common_friends:
-      num: "共通フォロー<br>%{num}"
-      name: "共通フォロー"
-      title: "%{user} と %{login} の共通フォロー"
-      description: "%{user} と%{login}が共通してフォローしているユーザーを表示します。"
-    common_followers:
-      num: "共通フォロワー<br>%{num}"
-      name: "共通フォロワー"
-      title: "%{user} と %{login} の共通フォロワー"
-      description: "%{user} と%{login}が共通してフォローされているユーザーを表示します。"
-    conversations:
-      num: "会話<br>%{num}"
-    favoriting:
-      name: "よくふぁぼる"
-      title: "よくふぁぼる"
-      description: "%{user} がよくツイートをお気に入り登録するユーザーを表示します。"
   timelines:
     show:
       title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
@@ -137,14 +99,21 @@ ja:
       view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
       under_calculation_with_details_html: 'フォロー・フォロワーの分析中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
       empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
-  search_results:
-    show:
-      about_this_page: "%{this_page}について"
+      about_this_page: "%{user} の分析 by えごったーについて"
       this_page_is_html: "このページでは、%{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。<br>リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
       other_services: "他のサービス"
       twitter_link_html: '<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwitterで見る</a>'
+      see_on_twitter: "%{user}をTwitterで見る"
       twilog_link_html: '<a href="http://twilog.org/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwilogで見る</a>'
+      see_on_twilog: "%{user}をTwilogで見る"
       favstar_link_html: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をFavstarで見る</a>'
+      see_on_favstar: "%{user}をFavstarで見る"
+    check_for_updates:
+      unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
+      followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
+      followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'
+      friends_count_increased: '%{user} のフォローが、%{before} から %{after} に増えました。'
+      friends_count_decreased: '%{user} のフォローが、%{before} から %{after} に減りました。'
   usage_stats:
     show:
       title: "ツイッター利用状況"
@@ -615,6 +584,9 @@ ja:
       lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
       lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show:
+      crumb_title: "入っているクラスタ"
+      summary_title: "入っているクラスタ"
+      page_description: "%{user} が入っているクラスタを表示します。"
       title: "%{user} のクラスタ判定 - %{clusters}"
       page_title: "%{user} のクラスタ判定 - %{clusters}"
       description: "%{user} のクラスタは、%{clusters}です。検索されたユーザーが入っているクラスタをさくっと見付けることができます。"
@@ -630,11 +602,6 @@ ja:
       updating: '%{user} のデータを更新中'
       update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
-      unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
-      followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
-      followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'
-      friends_count_increased: '%{user} のフォローが、%{before} から %{after} に増えました。'
-      friends_count_decreased: '%{user} のフォローが、%{before} から %{after} に減りました。'
       update_result: 'ページを更新する'
       need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
       need_follow: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'
@@ -721,8 +688,6 @@ ja:
     suspended_user: "%{user} は凍結されています。凍結が解除されてから検索してください。"
     protected_user_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
-    empty_and_anonymous_and_many_friends_html: '%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br><a href="%{sign_in_path}">ログイン</a> すると検索できる上限が増えますので、よければお試しください。<br>%{kaomoji}'
-    empty_and_other_reason_html: '結果は0件です。<a href="%{sign_in_path}">ログイン</a> すると正しく結果が表示されるかもしれません。<br>%{kaomoji}'
     that_page_doesnt_exist: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
     reject_crawler: "The crawler is rejected."
   after_sign_in:
@@ -731,17 +696,8 @@ ja:
     unauthorized_html: 'ツイッター連携に失敗しました。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     retry_timeout_html: "アクセスが多すぎるため検索がタイムアウトしました。大半の場合は再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
-    empty_and_sign_in_and_too_many_friends_html: "%{user} のフォロー・フォロワーが一定数を超えているため、結果を正しく表示することができませんでした。<br>表示できるように改善していきます…！<br>%{kaomoji}"
-    empty_and_other_reason_html: "結果は0件です。データはこれからたまっていきます。<br>%{kaomoji}"
   tweet_text:
     top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
-    close_friends: ".%{user} の仲良しランキング ↓\n%{users}\n#egotter %{url}"
-    mutual_friends: "%{screen_name}の両思い率は %{mutual_friends_rate}%、片思い率は %{one_sided_friends_rate}%、片思われ率は %{one_sided_followers_rate}%です！%{kaomoji} %{url}"
-    inactive_friends: "%{users}、最近どうしちゃったんですか…？%{kaomoji} #egotter %{url}"
-    common_friends: ".%{user} と %{login} の共通のフォローは、%{users} です。%{kaomoji} %{url}"
-    common_followers: ".%{user} と %{login} の共通のフォロワーは、%{users} です。%{kaomoji} %{url}"
-    empty_result: "%{title}は0件でした。%{kaomoji} %{url}"
-    others: "その他%{num}人"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   dm:
     no_diffs: "フォロー・フォロワーに変化はありません。"
