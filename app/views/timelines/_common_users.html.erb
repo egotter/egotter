@@ -1,0 +1,49 @@
+<%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
+
+<div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
+  <%= link_to search_path_for(menu_name, twitter_user.screen_name), class: 'result-link' do %>
+    <h3 class="h4"><%= t("#{menu_name}.show.summary_title") %></h3>
+    <div class="text-center description"><%= t("#{menu_name}.show.page_description", user: twitter_user.mention_name, user2: current_user.mention_name) %></div>
+  <% end %>
+
+  <div style="position: absolute; bottom: 15px; left: 15px; right: 15px;">
+    <div class="media-body">
+      <%= link_to timeline_path(screen_name: 'SCREEN_NAME', via: "#{controller_name}/#{action_name}#{"/#{menu_name}" if menu_name}"), class: 'user-template', style: 'display: none;' do %>
+        <%= normal_icon_img(Hashie::Mash.new({screen_name: '#', profile_image_url_https: image_path('/gray_48x48.png')}), class: 'img-rounded') %>
+      <% end %>
+      <div class="text-muted progress-msg" style="display: none;"></div>
+    </div>
+
+    <div class="media-right" style="display: none;">
+      <div class="common-chart"></div>
+    </div>
+
+    <%= link_to(t('timelines.show.reload_this_page'), timeline_path(screen_name: twitter_user.screen_name), class: 'btn btn-info btn-block reload-btn', style: 'display: none;') %>
+    <%= link_to(t('timelines.show.view_more_with_num_html', num: 'NUM'), search_path_for(menu_name, twitter_user.screen_name), class: 'btn btn-info btn-block btn-view-more', style: 'display: none;') %>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    var menuName = '<%= menu_name %>';
+    var apiEndpoint = '<%= send("api_v1_#{menu_name}_summary_path") %>';
+    var uid = '<%= twitter_user.uid %>';
+    var progressMessages = {
+      empty: "<%= t('timelines.show.empty_result_with_details_html') %>",
+      under_calculation: "<%= t('timelines.show.under_calculation_with_details_html') %>"
+    };
+
+    var fromCrawler = <%= request.from_crawler? %>;
+
+    if (fromCrawler) {
+      loadSummary(apiEndpoint, uid, menuName, progressMessages);
+    } else {
+      $('.placeholder-wrapper.' + menuName)
+        .lazyload()
+        .one('appear', function () {
+          console.log('appear', menuName);
+          loadSummary(apiEndpoint, uid, menuName, progressMessages);
+        });
+    }
+  });
+</script>

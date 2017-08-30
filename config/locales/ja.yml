@@ -391,6 +391,51 @@ ja:
       lead_003: '%{user1} と %{user2} の会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人です。"
+  common_friends:
+    show: &common_friends_show
+      crumb_title: "共通フォロー分析"
+      page_title: "%{user} と %{user2} の共通フォロー"
+      meta_title: "%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
+      summary_title: "共通フォロー"
+      title: "共通フォロー"
+      page_description: "%{user} と %{user2} の両方がフォローしているユーザーです。"
+      meta_description: "%{user} と %{user2} の両方がフォローしているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
+      tweet_text: "%{user} と %{user2} の共通フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
+      see_more: 'もっと見る'
+      see_common_friends_html: '共通フォロー<br>%{num}'
+      see_common_followers_html: '共通フォロワー<br>%{num}'
+      see_common_mutual_friends_html: '共通相互フォロー<br>%{num}'
+    all:
+      <<: *common_friends_show
+      crumb_title: "一気に見る"
+  common_followers:
+    show: &common_followers_show
+      crumb_title: "共通フォロワー分析"
+      page_title: "%{user} と %{user2} の共通フォロワー"
+      meta_title: "%{user} と %{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
+      summary_title: "共通フォロワー"
+      title: "共通フォロワー"
+      page_description: "%{user} と %{user2} の両方がフォローされているユーザーです。"
+      meta_description: "%{user} と %{user2} の両方がフォローされているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
+      tweet_text: "%{user} と %{user2} の共通フォロワー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
+      see_more: 'もっと見る'
+    all:
+      <<: *common_followers_show
+      crumb_title: "一気に見る"
+  common_mutual_friends:
+    show: &common_mutual_friends_show
+      crumb_title: "共通相互フォロー分析"
+      page_title: "%{user} と %{user2} の共通相互フォロー"
+      meta_title: "%{user} と %{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
+      summary_title: "共通相互フォロー"
+      title: "共通相互フォロー"
+      page_description: "%{user} と %{user2} の両方が相互フォローしているユーザーです。"
+      meta_description: "%{user} と %{user2} の両方が相互フォローしているユーザーの一覧 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人"
+      tweet_text: "%{user} と %{user2} の共通相互フォロー分析 - 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人 共通相互フォロー %{common_mutual_friends}人 #egotter %{url}"
+      see_more: 'もっと見る'
+    all:
+      <<: *common_mutual_friends_show
+      crumb_title: "一気に見る"
   inactive_friends:
     new:
       title_html: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'

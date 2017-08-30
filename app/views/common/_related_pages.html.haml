@@ -7,6 +7,12 @@
   .col-md-6
     = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'followers'}
 
+  - if show_common_friends?(twitter_user)
+    .col-md-6
+      = render partial: 'timelines/common_users', locals: {twitter_user: twitter_user, menu_name: 'common_friends'}
+    .col-md-6
+      = render partial: 'timelines/common_users', locals: {twitter_user: twitter_user, menu_name: 'common_followers'}
+
   .col-md-6
     = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'inactive_friends'}
 

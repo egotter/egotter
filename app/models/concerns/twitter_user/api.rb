@@ -56,21 +56,27 @@ module Concerns::TwitterUser::Api
   end
 
   def common_friend_uids(other)
-    friend_uids & other.friend_uids
+    friendships.where(friend_uid: other.friendships.pluck(:friend_uid)).pluck(:friend_uid)
   end
 
   def common_friends(other)
-    uids = common_friend_uids(other)
-    uids.empty? ? [] : friends.where(uid: uids)
+    friends.where(uid: common_friend_uids(other))
   end
 
   def common_follower_uids(other)
-    follower_uids & other.follower_uids
+    followerships.where(follower_uid: other.followerships.pluck(:follower_uid)).pluck(:follower_uid)
   end
 
   def common_followers(other)
-    uids = common_follower_uids(other)
-    uids.empty? ? [] : followers.where(uid: uids)
+    followers.where(uid: common_follower_uids(other))
+  end
+
+  def common_mutual_friend_uids(other)
+    mutual_friendships.where(friend_uid: other.mutual_friendships.pluck(:friend_uid)).pluck(:friend_uid)
+  end
+
+  def common_mutual_friends(other)
+    mutual_friends.where(uid: common_mutual_friend_uids(other))
   end
 
   def conversations(other)

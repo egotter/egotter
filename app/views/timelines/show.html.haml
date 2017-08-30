@@ -24,6 +24,12 @@
     .col-md-6
       = render partial: 'timelines/chart', locals: {menu_name: :usage_stats, graph: @stat.wday, twitter_user: @twitter_user}
 
+  - if show_common_friends?(@twitter_user)
+    .col-md-6
+      = render partial: 'timelines/common_users', locals: {twitter_user: @twitter_user, menu_name: 'common_friends'}
+    .col-md-6
+      = render partial: 'timelines/common_users', locals: {twitter_user: @twitter_user, menu_name: 'common_followers'}
+
   - if @score
     .col-md-6
       = render partial: 'timelines/gauge', locals: {menu_name: :score, score: @score.klout_score, twitter_user: @twitter_user}
