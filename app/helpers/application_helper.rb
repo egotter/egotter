@@ -4,7 +4,7 @@ module ApplicationHelper
   end
 
   def show_sidebar?
-    %w(new waiting all).exclude?(action_name) && request.from_pc? && (@searched_tw_user || @twitter_user)
+    %w(new waiting all).exclude?(action_name) && request.from_pc? && @twitter_user
   end
 
   def show_see_at_once_button?

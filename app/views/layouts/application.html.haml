@@ -99,7 +99,7 @@
           = yield
         - if show_sidebar?
           .hidden-xs.hidden-sm.col-md-3.col-lg-3.sidebar.text-center{style: 'padding-top: 15px;'}
-            = render partial: 'layouts/sidebar', locals: {twitter_user: (@searched_tw_user || @twitter_user)}
+            = render partial: 'layouts/sidebar', locals: {twitter_user: @twitter_user}
 
 
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.3/jquery.sticky.min.js', type: 'text/javascript'}

@@ -34,7 +34,7 @@ module Concerns::TwitterUser::Utils
   end
 
   def latest?
-    id == TwitterUser.latest(uid).id
+    id == TwitterUser.select(:id).latest(uid).id
   end
 
   def one?

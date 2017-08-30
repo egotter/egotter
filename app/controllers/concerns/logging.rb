@@ -178,9 +178,6 @@ module Concerns::Logging
         uid = @tu.uid
         screen_name = @tu.screen_name
       end
-    elsif instance_variable_defined?(:@searched_tw_user) && !@searched_tw_user.nil?
-      uid = @searched_tw_user.uid
-      screen_name = @searched_tw_user.screen_name
     elsif instance_variable_defined?(:@twitter_user) && !@twitter_user.nil?
       uid = @twitter_user.uid
       screen_name = @twitter_user.screen_name
