@@ -15,9 +15,6 @@ class TimelinesController < ::Base
     else
       @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
     end
-
-    @stat = UsageStat.find_by(uid: @twitter_user.uid)
-    @score = Score.find_by(uid: @twitter_user.uid)
   end
 
   def check_for_updates

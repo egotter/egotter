@@ -10,10 +10,13 @@ module Concerns::TwitterUser::Associations
     belongs_to :user
     belongs_to :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
 
-    has_one :usage_stat, primary_key: :uid, foreign_key: :uid
-
     default_options = {dependent: :destroy, validate: false, autosave: false}
     order_by_sequence_asc = -> { order(sequence: :asc) }
+
+    with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
+      obj.has_one :usage_stat
+      obj.has_one :score
+    end
 
     with_options({primary_key: :id, foreign_key: :from_id}.update(default_options)) do |obj|
       obj.has_many :statuses

@@ -24,10 +24,10 @@
 
 .gray-separator
 
-- if @stat
-  = render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
+- if show_friends_stat?(@twitter_user)
+  = render partial: 'usage_stats/friends_stat', locals: {stat: @twitter_user.usage_stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
   .gray-separator
-  = render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
+  = render partial: 'usage_stats/tweets_stat', locals: {stat: @twitter_user.usage_stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
   .gray-separator
 
 = render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}

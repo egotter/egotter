@@ -50,8 +50,6 @@ class GoodFriends < ::Base
     @meta_description = t('.meta_description', users: honorific_names(users.map(&:mention_name)))
 
     @tweet_text = good_friends_text(users, @twitter_user)
-
-    @stat = UsageStat.find_by(uid: @twitter_user.uid)
   end
 
   def good_friends_text(users, twitter_user)

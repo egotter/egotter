@@ -49,8 +49,6 @@ class FriendsAndFollowers < ::Base
 
     @tweet_text = t('.tweet_text', {user: @twitter_user.mention_name, url: @canonical_url}.merge(counts))
 
-    @stat = UsageStat.find_by(uid: @twitter_user.uid)
-
     @tabs = tabs
   end
 end

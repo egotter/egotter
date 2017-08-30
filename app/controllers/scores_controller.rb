@@ -20,7 +20,5 @@ class ScoresController < ::Base
     @tweet_text =  tweet_text + "\n#egotter #{@canonical_url}"
 
     @screen_names = (will_win + will_loose).uniq
-
-    @stat = UsageStat.find_by(uid: @twitter_user.uid)
   end
 end
