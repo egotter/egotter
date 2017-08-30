@@ -74,30 +74,7 @@ ja:
       retry_search_by: "%{user} で再度検索"
       searching: "%{user} のデータを検索中"
       analyzing: "%{user} のデータを分析中"
-      show_immediately: "過去の結果をすぐに表示"
-      show_immediately_msg: "過去の結果を表示します"
       waiting_is_finished_msg: "検索が完了しました。ページを移動します"
-    show:
-      title: "%{user} の分析 - フォロー外され・片思い・仲良しをえごったーで分析"
-      simple_title: "%{user} の分析"
-      heading: "%{user} の分析 by えごったー"
-      description: "えごったーなら全部無料！ %{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果です。リム通知は、えごったーにログイン後、自動で届きます。"
-      update_is_coming_html: '%{user} のフォロー・フォロワーに変化がありました。%{link_to}'
-      update_result: 'データを更新する'
-      latest_result: '表示されているデータは最新です。最終更新は %{time} です。'
-      request_login_html: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。<a href="%{sign_in_path}" class="btn btn-default btn-sm">ログインする</a>'
-    replying:
-      num: "リプライした<br>%{num}"
-      name: "リプライ"
-      title: "リプライした"
-      description: "%{user} がリプライしたユーザーを表示します。"
-    replied:
-      num: "リプライされた<br>%{num}"
-      name: "リプライされた"
-      title: "リプライされた"
-      description: "%{user} がリプライされたユーザーを表示します。<br>本人がログインしていない場合は検索して見付けるため、少し不正確です。"
-    replying_and_replied:
-      num: "両方された<br>%{num}"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
@@ -500,6 +477,51 @@ ja:
       title: "ツイート"
       page_title: "%{user} のツイート"
       meta_description: "%{user} のツイート"
+  replying:
+    show: &replying_show
+      crumb_title: "@ツイート(自分から)"
+      page_title: "%{user} の@ツイート(自分から)"
+      meta_title: "%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
+      summary_title: "@ツイート(自分から)"
+      title: "@ツイート"
+      page_description: "%{user} が自分から@ツイートしたユーザーの一覧です。"
+      meta_description: "%{user} が自分から@ツイートしたユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
+      tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
+      see_more: 'もっと見る'
+      see_replying_html: '@ツイート(自分から)<br>%{num}'
+      see_replied_html: '@ツイート(他の人から)<br>%{num}'
+      see_replying_and_replied_html: '@ツイート(相互)<br>%{num}'
+    all:
+      <<: *replying_show
+      crumb_title: "一気に見る"
+  replied:
+    show: &replied_show
+      crumb_title: "@ツイート(他の人から)"
+      page_title: "%{user} の@ツイート(他の人から)"
+      meta_title: "%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
+      summary_title: "@ツイート(他の人から)"
+      title: "@ツイート"
+      page_description: "%{user} が@ツイートされたユーザーの一覧です。本人がログインしていない場合は検索して見付けるため、少し不正確です。"
+      meta_description: "%{user} が@ツイートされたユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
+      tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
+      see_more: 'もっと見る'
+    all:
+      <<: *replied_show
+      crumb_title: "一気に見る"
+  replying_and_replied:
+    show: &replying_and_replied_show
+      crumb_title: "@ツイート(相互)"
+      page_title: "%{user} の@ツイート(相互)"
+      meta_title: "%{user} の@ツイート - @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
+      summary_title: "@ツイート(相互)"
+      title: "@ツイート"
+      page_description: "%{user} が自分からも相手からも@ツイートしているユーザーの一覧です。"
+      meta_description: "%{user} が自分からも相手からも@ツイートしているユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人"
+      tweet_text: "%{user} の@ツイート分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 両方とも %{replying_and_replied}人 #egotter %{url}"
+      see_more: 'もっと見る'
+    all:
+      <<: *replying_and_replied_show
+      crumb_title: "一気に見る"
   conversations:
     new:
       title_html: '<span style="font-size: small; display: inline;">リプライ分析</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -511,13 +533,19 @@ ja:
       lead_002: "保存ユーザー数1,000万人突破！"
       lead_003: "リプライ分析の決定版。<br>スマホから使える無料のリプライ分析アプリです。"
       lead_004: '検索されたユーザーのリプライ分析は、えごったーが分析したデータを元に集計しています。<br>もし、リプライ分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-    show:
-      title: "%{user} の分析 - リプライした %{replying}人 リプライされた %{replied}人 両方された %{replying_and_replied}人"
-      description: "%{user} は、リプライした %{replying}人、リプライされた %{replied}人、両方された %{replying_and_replied}人です。この分析は、直近の600ツイートを集計した結果です。"
-      lead_002: "リプライしたは、%{user} がリプライしたアカウント、<br>リプライされたは、%{user} がリプライされたアカウントのことです。"
-      lead_003: '%{user} のリプライ分析は、えごったーが分析したデータを元に集計しています。<br>もし、リプライ分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
-      tweet: "%{user} の分析 - リプライした %{replying}人 リプライされた %{replied}人 両方された %{replying_and_replied}人です。"
+    show: &conversations_show
+      crumb_title: "会話"
+      page_title: "%{user} の会話"
+      meta_title: "%{user} の会話 - @ツイートした %{replying}人 @ツイートされた %{replied}人 会話 %{replying_and_replied}人"
+      summary_title: "会話"
+      title: "会話"
+      page_description: "%{user} が会話したユーザーの一覧です。"
+      meta_description: "%{user} が会話したユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 会話 %{replying_and_replied}人"
+      tweet_text: "%{user} の会話分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 会話 %{replying_and_replied}人 #egotter %{url}"
+      see_more: 'もっと見る'
+    all:
+      <<: *conversations_show
+      crumb_title: "一気に見る"
   clusters:
     new:
       title_html: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
