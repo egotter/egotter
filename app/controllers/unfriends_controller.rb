@@ -24,8 +24,14 @@ class UnfriendsController < UnfriendsAndUnfollowers
   def new
   end
 
+  def all
+    super
+    render template: 'friends/all' unless performed?
+  end
+
   def show
     super
     @active_tab = 0
+    render template: 'unfriends/show' unless performed?
   end
 end

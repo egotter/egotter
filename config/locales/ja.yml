@@ -327,7 +327,7 @@ ja:
       lead_002: "保存ユーザー数1,000万人突破！"
       lead_003: "リムられチェックの決定版。<br>スマホから使える無料のリムられチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-    show:
+    show: &unfriends_show
       title: "リムり"
       crumb_title: "リムり"
       page_title: "%{user} のリムーブ"
@@ -340,8 +340,11 @@ ja:
       see_unfriends_html: 'リムり<br>%{num}'
       see_unfollowers_html: 'リムられ<br>%{num}'
       see_blocking_or_blocked_html: 'ブロられ<br>%{num}'
+    all:
+      <<: *unfriends_show
+      crumb_title: "一気に見る"
   unfollowers:
-    show:
+    show: &unfollowers_show
       title: "リムられ"
       crumb_title: "リムられ"
       page_title: "%{user} のリムーブされた"
@@ -350,8 +353,11 @@ ja:
       page_description: "%{user} がリムーブされたユーザーの一覧です。リムーブとはフォローを外すことです。たまに垢消しもあります。"
       meta_description: "%{user} がリムーブされたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter %{url}"
+    all:
+      <<: *unfollowers_show
+      crumb_title: "一気に見る"
   blocking_or_blocked:
-    show:
+    show: &blocking_or_blocked_show
       title: "ブロックされたかも"
       crumb_title: "ブロられ"
       page_title: "%{user} がブロックされたかも"
@@ -360,6 +366,9 @@ ja:
       page_description: "%{user} がブロックされたかもしれないユーザーの一覧です。フォローとフォロワーから同時に外れていたらブロックされたのかも？ たまに垢消しもあります。"
       meta_description: "%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter %{url}"
+    all:
+      <<: *blocking_or_blocked_show
+      crumb_title: "一気に見る"
   relationships:
     new:
       title_html: '<span style="font-size: small; display: inline;">会話検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'

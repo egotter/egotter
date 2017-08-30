@@ -4,7 +4,38 @@ class UnfriendsAndUnfollowers < ::Base
     @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
   end
 
+  before_action(only: %i(all)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
+  before_action(only: %i(all)) { @tu = build_twitter_user(params[:screen_name]) }
+  before_action(only: %i(all)) { authorized_search?(@tu) }
+  before_action(only: %i(all)) { existing_uid?(@tu.uid.to_i) }
+  before_action(only: %i(all)) { twitter_db_user_persisted?(@tu.uid.to_i) }
+  before_action(only: %i(all)) { too_many_searches? }
+  before_action(only: %i(all))  do
+    @twitter_user = TwitterUser.latest(@tu.uid.to_i)
+    remove_instance_variable(:@tu)
+  end
+  before_action(only: %i(all)) do
+    push_referer
+    create_search_log
+  end
+
+  def all
+    unless user_signed_in?
+      via = "#{controller_name}/#{action_name}/need_login"
+      redirect = send("all_#{controller_name}_path", @twitter_user)
+      return redirect_to sign_in_path(via: via, redirect_path: redirect)
+    end
+    initialize_instance_variables
+    @collection = @twitter_user.twitter_db_user.send(controller_name)
+  end
+
   def show
+    initialize_instance_variables
+  end
+
+  private
+
+  def initialize_instance_variables
     @api_path = send("api_v1_#{controller_name}_list_path")
     @breadcrumb_name = controller_name.singularize.to_sym
     @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
