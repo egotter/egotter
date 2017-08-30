@@ -1,5 +1,6 @@
 class Search
   API_V1_NAMES = %i(
+    statuses
     friends
     followers
     close_friends
