@@ -44,7 +44,7 @@ class CreateTwitterUserWorker
       end
 
       job.update(error_class: Job::Error::RecordInvalid, error_message: builder.error_message)
-      latest = TwitterUser.select(:uid, :search_count).latest(uid)
+      latest = TwitterUser.latest(uid)
       if latest
         latest.increment(:search_count).save
       end
@@ -65,7 +65,7 @@ class CreateTwitterUserWorker
       return
     end
 
-    latest = TwitterUser.select(:uid, :search_count).latest(uid)
+    latest = TwitterUser.latest(uid)
     if latest
       latest.increment(:search_count).save
       job.update(error_class: Job::Error::NotChanged, error_message: 'Not changed')
