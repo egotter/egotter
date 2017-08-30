@@ -89,18 +89,6 @@ ja:
       usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
-    inactive_friends:
-      num: "最近いないフォロー<br>%{num}"
-      name: "停止中フォロー"
-      title: "最近いないフォロー"
-      description: "%{user} がフォローしているユーザーのうち、<br>最近ツイートしていないユーザーを表示します。"
-      short_description: "フォローのうち、最近ツイートしていないユーザーをリストアップして表示します。"
-    inactive_followers:
-      num: "最近いないフォロワー<br>%{num}"
-      name: "停止中フォロワー"
-      title: "最近いないフォロワー"
-      description: "%{user} がフォローされているユーザーのうち、<br>最近ツイートしていないユーザーを表示します。"
-      short_description: "フォロワーのうち、最近ツイートしていないユーザーをリストアップして表示します。"
     inactive_mutual_friends:
       num: "最近いない両思い<br>%{num}"
     clusters_belong_to:
@@ -446,19 +434,20 @@ ja:
       lead_001: "最近いない人、何してるんだろう。"
       lead_002: "保存ユーザー数1,000万人突破！"
       lead_003: "最近いない人をらくらく検索。<br>スマホから使える無料の分析アプリです。"
-      lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない相互フォローのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show: &inactive_friends_show
       crumb_title: "最近いないフォロー分析"
       page_title: "%{user} の最近いないフォロー"
-      meta_title: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人"
+      meta_title: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
       summary_title: "最近いないフォロー"
       title: "最近いないフォロー"
       page_description: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。"
-      meta_description: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人"
-      tweet_text: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人 #egotter %{url}"
+      meta_description: "%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
+      tweet_text: "%{user} の最近いないフォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
       see_inactive_friends_html: '最近いないフォロー<br>%{num}'
       see_inactive_followers_html: '最近いないフォロワー<br>%{num}'
+      see_inactive_mutual_friends_html: '最近いない相互フォロー<br>%{num}'
     all:
       <<: *inactive_friends_show
       crumb_title: "一気に見る"
@@ -466,15 +455,29 @@ ja:
     show: &inactive_followers_show
       crumb_title: "最近いないフォロワー分析"
       page_title: "%{user} の最近いないフォロワー"
-      meta_title: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人"
+      meta_title: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
       summary_title: "最近いないフォロワー"
       title: "最近いないフォロワー"
       page_description: "%{user} のフォロワーのうち、最近ツイートしていないユーザーです。"
-      meta_description: "%{user} のフォロワーのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人"
-      tweet_text: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない両思い %{inactive_mutual_friends}人 #egotter %{url}"
+      meta_description: "%{user} のフォロワーのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
+      tweet_text: "%{user} の最近いないフォロワー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
       <<: *inactive_followers_show
+      crumb_title: "一気に見る"
+  inactive_mutual_friends:
+    show: &inactive_mutual_friends_show
+      crumb_title: "最近いない相互フォロー分析"
+      page_title: "%{user} の最近いない相互フォロー"
+      meta_title: "%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
+      summary_title: "最近いない相互フォロー"
+      title: "最近いない相互フォロー"
+      page_description: "%{user} の相互フォローのうち、最近ツイートしていないユーザーです。"
+      meta_description: "%{user} の相互フォローのうち、最近ツイートしていないユーザーの一覧 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人"
+      tweet_text: "%{user} の最近いない相互フォロー分析 - 最近いないフォロー %{inactive_friends}人 最近いないフォロワー %{inactive_followers}人 最近いない相互フォロー %{inactive_mutual_friends}人 #egotter %{url}"
+      see_more: 'もっと見る'
+    all:
+      <<: *inactive_mutual_friends_show
       crumb_title: "一気に見る"
   friends:
     new:

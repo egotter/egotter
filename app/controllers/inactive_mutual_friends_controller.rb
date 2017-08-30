@@ -1,4 +1,4 @@
-class InactiveFollowersController < FriendsAndFollowers
+class InactiveMutualFriendsController < FriendsAndFollowers
 
   def all
     super
@@ -7,7 +7,7 @@ class InactiveFollowersController < FriendsAndFollowers
 
   def show
     super
-    @active_tab = 0
+    @active_tab = 2
     render template: 'friends/show' unless performed?
   end
 

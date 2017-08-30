@@ -46,7 +46,8 @@ class InactiveFriendsController < FriendsAndFollowers
   def tabs
     [
       {text: t('inactive_friends.show.see_inactive_friends_html', num: @twitter_user.inactive_friendships.size), url: inactive_friend_path(@twitter_user)},
-      {text: t('inactive_friends.show.see_inactive_followers_html', num: @twitter_user.inactive_followerships.size), url: inactive_follower_path(@twitter_user)}
+      {text: t('inactive_friends.show.see_inactive_followers_html', num: @twitter_user.inactive_followerships.size), url: inactive_follower_path(@twitter_user)},
+      {text: t('inactive_friends.show.see_inactive_mutual_friends_html', num: @twitter_user.inactive_mutual_friendships.size), url: inactive_mutual_friend_path(@twitter_user)}
     ]
   end
 end
