@@ -15,12 +15,9 @@ class ImportTwitterUserRelationsWorker
     end
 
     job.update(twitter_user_id: twitter_user.id, screen_name: twitter_user.screen_name)
-    enqueued_at = Time.zone.parse(options['enqueued_at'])
 
-    if self.class == ImportTwitterUserRelationsWorker
-      if enqueued_at < 1.minutes.ago
-        return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, {'parent_jid' => jid}.merge(options))
-      end
+    if self.class == ImportTwitterUserRelationsWorker && job.too_late?
+      return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, options)
     end
 
     client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
@@ -33,7 +30,7 @@ class ImportTwitterUserRelationsWorker
 
     friend_uids, follower_uids =
       TwitterUser::Batch.fetch_friend_ids_and_follower_ids(uid, client: client) do |ex|
-        logger.warn "#{self.class}##{__method__}: #{ex.class} #{ex.message.truncate(100)} #{uid}"
+        logger.warn "#{__method__}: #{ex.class} #{ex.message.truncate(100)} #{uid}"
       end
     return if friend_uids.nil? || follower_uids.nil?
 
@@ -73,13 +70,6 @@ class ImportTwitterUserRelationsWorker
     job.update(error_class: e.class, error_message: e.message)
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
     retry if e.message == 'Connection reset by peer - SSL_connect'
-  rescue WorkerError => e
-    job.update(error_class: e.class, error_message: e.full_message)
-    if e.retryable?
-      handle_retryable_exception(e.cause, user_id, uid, twitter_user.id, options)
-    else
-      logger.warn "not retryable #{e.class} #{e.full_message} #{user_id} #{uid} #{twitter_user.id}"
-    end
   rescue => e
     message = e.message.truncate(100)
     job.update(error_class: e.class, error_message: message)
@@ -182,12 +172,10 @@ class ImportTwitterUserRelationsWorker
   end
 
   def handle_retryable_exception(ex, user_id, uid, twitter_user_id, options = {})
-    params_str = "#{user_id} #{uid} #{twitter_user_id}"
+    params_str = "#{options['track_id']} #{user_id} #{uid} #{twitter_user_id}"
+    sleep_seconds =(ex.class == Twitter::Error::TooManyRequests) ? (ex.rate_limit.reset_in.to_i + 1) : 0
 
-    sleep_seconds =
-      (ex.class == Twitter::Error::TooManyRequests) ? (ex&.rate_limit&.reset_in.to_i + 1).seconds : 0
-
-    DelayedImportTwitterUserRelationsWorker.perform_in(sleep_seconds, user_id, uid, {'parent_jid' => jid}.merge(options))
+    DelayedImportTwitterUserRelationsWorker.perform_in(sleep_seconds, user_id, uid, options)
     logger.warn "Retry(#{ex.class.name.demodulize}) after #{sleep_seconds} seconds. #{params_str}"
   end
 end

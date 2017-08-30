@@ -6,83 +6,37 @@ class CreateTwitterUserWorker
 
   BUSY_QUEUE_SIZE = 0
 
-  def before_perform(values)
-    @log = BackgroundSearchLog.new(
-      session_id:  values.fetch('session_id', ''),
-      user_id:     values['user_id'].to_i,
-      uid:         values['uid'].to_i,
-      screen_name: values.fetch('screen_name', ''),
-      action:      values.fetch('action', ''),
-      bot_uid:     -100,
-      auto:        values.fetch('auto', false),
-      message:     '',
-      call_count:  -1,
-      via:         values.fetch('via', ''),
-      device_type: values.fetch('device_type', ''),
-      os:          values.fetch('os', ''),
-      browser:     values.fetch('browser', ''),
-      user_agent:  values.fetch('user_agent', ''),
-      referer:     values.fetch('referer', ''),
-      referral:    values.fetch('referral', ''),
-      channel:     values.fetch('channel', ''),
-      medium:      values.fetch('medium', ''),
-      error_class: '',
-      error_message: '',
-      enqueued_at: values.fetch('enqueued_at', Time.zone.now),
-      started_at:  values.fetch('started_at', Time.zone.now),
-    )
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
-    @log = BackgroundSearchLog.new(message: '')
-  end
-
   def perform(values = {})
-    log = user_id = uid = client = delay = track = job = nil
+    user = user_id = uid = client = delay = track = job = nil
     benchmark
 
     track = Track.find(values['track_id'])
     job = track.jobs.create(values.slice('user_id', 'uid', 'screen_name', 'enqueued_at').merge(worker_class: self.class, jid: jid, started_at: Time.zone.now))
 
-    values['enqueued_at'] = Time.zone.parse(values['enqueued_at'])
-    before_perform(values)
-    log = @log
-
-    if self.class == CreateTwitterUserWorker && (too_old?(log) || too_busy?(log))
-      log = nil
+    if self.class == CreateTwitterUserWorker && (job.too_late? || too_busy?(track))
       delay = true
       job.update(error_class: Job::Error::TooOldOrTooBusy, error_message: 'Too old or too busy')
       return DelayedCreateTwitterUserWorker.perform_async(values)
     end
 
-    user = User.find_by(id: log.user_id)
+    user = User.find_by(id: job.user_id)
     if user&.unauthorized?
-      job.update(Job::Error::Unauthorized, error_message: 'Unauthorized')
-      return log.assign_attributes(status: false, reason: BackgroundSearchLog::Unauthorized::MESSAGE)
+      return job.update(error_class: Job::Error::Unauthorized, error_message: 'Unauthorized')
     end
 
-    user_id = log.user_id.to_i
-    uid = log.uid.to_i
-    client = ApiClient.user_or_bot_client(user&.id) do |client_uid|
-      job.update(client_uid: client_uid)
-      log.bot_uid = client_uid
-    end
+    user_id = job.user_id
+    uid = job.uid
+    client = ApiClient.user_or_bot_client(user&.id) { |client_uid| job.update(client_uid: client_uid) }
 
     creating_uids = Util::CreatingUids.new(Redis.client)
     if creating_uids.exists?(uid)
-      job.update(error_class: Job::Error::RecentlyEnqueued, error_message: 'Recently enqueued')
-
-      if TwitterUser.exists?(uid: uid)
-        return log.assign_attributes(status: true, message: "[#{uid}] is recently created.")
-      else
-        return log.assign_attributes(status: false, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: "[#{uid}] is recently created.")
-      end
+      return job.update(error_class: Job::Error::RecentlyEnqueued, error_message: 'Recently enqueued')
     end
     creating_uids.add(uid)
 
     builder = TwitterUser.builder(uid).client(client).login_user(user)
     twitter_user = builder.build
     unless twitter_user
-
       begin
         update_twitter_db_user(TwitterUser.build_by_user(client.user(uid)))
       rescue => e
@@ -90,14 +44,11 @@ class CreateTwitterUserWorker
       end
 
       job.update(error_class: Job::Error::RecordInvalid, error_message: builder.error_message)
-      latest = TwitterUser.latest(uid)
+      latest = TwitterUser.select(:uid, :search_count).latest(uid)
       if latest
         latest.increment(:search_count).save
-        notify(user, latest)
-        return log.assign_attributes(status: true, message: builder.error_message)
-      else
-        return log.assign_attributes(status: false, reason: BackgroundSearchLog::SomethingError::MESSAGE, message: builder.error_message)
       end
+      return
     end
 
     update_twitter_db_user(twitter_user)
@@ -107,28 +58,22 @@ class CreateTwitterUserWorker
       twitter_user.increment(:search_count).save
       job.update(twitter_user_id: twitter_user.id)
 
-      ImportTwitterUserRelationsWorker.perform_async(user_id, uid.to_i, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now, track_id: track.id)
-      UpdateUsageStatWorker.perform_async(uid.to_i, user_id: user_id, track_id: track.id)
-      CreateScoreWorker.perform_async(uid.to_i, track_id: track.id)
+      ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now, track_id: track.id)
+      UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: track.id)
+      CreateScoreWorker.perform_async(uid, track_id: track.id)
 
-      notify(user, twitter_user)
-      return log.assign_attributes(status: true, message: "[#{twitter_user.id}] is created.")
+      return
     end
 
-    latest = TwitterUser.latest(uid)
+    latest = TwitterUser.select(:uid, :search_count).latest(uid)
     if latest
       latest.increment(:search_count).save
-      notify(user, latest)
       job.update(error_class: Job::Error::NotChanged, error_message: 'Not changed')
-      return log.assign_attributes(status: true, message: 'not changed')
+      return
     end
 
     job.update(error_class: Job::Error::RecordInvalid, error_message: twitter_user.errors.full_messages.join(', '))
-    log.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      message: "#{twitter_user.errors.full_messages.join(', ')}."
-    )
+
   rescue Twitter::Error::Forbidden, Twitter::Error::NotFound, Twitter::Error::Unauthorized,
     Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
     case e.class.name.demodulize
@@ -141,7 +86,6 @@ class CreateTwitterUserWorker
       else logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
     end
 
-    assign_something_error(e, log)
     error_message =
       if e.class == Twitter::Error::TooManyRequests
         (Time.zone.now + e.rate_limit.reset_in.to_i).to_s(:db)
@@ -153,28 +97,17 @@ class CreateTwitterUserWorker
     retry if e.message == 'Connection reset by peer - SSL_connect'
 
     handle_unknown_exception(e, values)
-    assign_something_error(e, log)
     job.update(error_class: e.class, error_message: e.message.truncate(100))
   rescue => e
     # ActiveRecord::ConnectionTimeoutError could not obtain a database connection within 5.000 seconds
     handle_unknown_exception(e, values)
-    assign_something_error(e, log)
     job.update(error_class: e.class, error_message: e.message.truncate(100))
   ensure
     job.update(finished_at: Time.zone.now)
+    notify(user, uid) if user
 
-    if log
-      begin
-        log.update!(call_count: -1, finished_at: Time.zone.now)
-      rescue => e
-        logger.warn "Creating a log is failed. #{e.class} #{e.message} #{values.inspect}"
-      end
-    else
-      if delay
-        logger.warn "A delay occurs. #{values['user_id']} #{values['uid']} #{values['device_type']} #{values['auto']} #{values['enqueued_at']}"
-      else
-        logger.warn "A log is nil. #{values.inspect}"
-      end
+    if delay
+      logger.warn "A delay occurs. #{values.slice('track_id', 'user_id', 'uid', 'device_type', 'auto').inspect}"
     end
 
     benchmark.finish
@@ -191,16 +124,16 @@ class CreateTwitterUserWorker
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
 
-  def notify(login_user, twitter_user)
-    searched_user = User.authorized.find_by(uid: twitter_user.uid)
+  def notify(login_user, searched_uid)
+    searched_user = User.authorized.select(:id).find_by(uid: searched_uid)
     if searched_user && (!login_user || login_user.id != searched_user.id)
       CreateSearchReportWorker.perform_async(searched_user.id)
     end
   end
 
   def handle_retryable_exception(values, ex)
-    params_str = "#{values['user_id']} #{values['uid']} #{values['device_type']} #{values['auto']}"
-    sleep_seconds = (ex.class == Twitter::Error::TooManyRequests) ? (ex&.rate_limit&.reset_in.to_i + 1).seconds : 0
+    params_str = "#{values.slice('track_id', 'user_id', 'uid', 'device_type', 'auto').inspect}"
+    sleep_seconds = (ex.class == Twitter::Error::TooManyRequests) ? (ex.rate_limit.reset_in.to_i + 1) : 0
 
     DelayedCreateTwitterUserWorker.perform_in(sleep_seconds, values)
     logger.warn "Retry(#{ex.class.name.demodulize}) after #{sleep_seconds} seconds. #{params_str}"
@@ -211,20 +144,11 @@ class CreateTwitterUserWorker
     logger.info ex.backtrace.join("\n")
   end
 
-  def assign_something_error(ex, log)
-    log&.assign_attributes(
-      status: false,
-      reason: BackgroundSearchLog::SomethingError::MESSAGE,
-      error_class: ex.class,
-      error_message: ex.message.truncate(180)
-    )
-  end
-
   def too_old?(log)
     log.enqueued_at < 1.minutes.ago
   end
 
-  def too_busy?(log)
-    Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && log.auto
+  def too_busy?(track)
+    Sidekiq::Queue.new(self.class.name).size > BUSY_QUEUE_SIZE && track.auto
   end
 end

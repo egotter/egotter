@@ -48,6 +48,10 @@ class Job < ActiveRecord::Base
     error_class.present? || error_message.present?
   end
 
+  def too_late?
+    enqueued_at < 1.minutes.ago
+  end
+
   class Error < StandardError
     Unauthorized = Class.new(self)
     TooOldOrTooBusy = Class.new(self)
