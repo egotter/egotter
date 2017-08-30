@@ -23,20 +23,12 @@ module Concerns::TwitterUser::Api
     friend_uids - follower_uids
   end
 
-  def one_sided_friend_uids
-    one_sided_friendships.pluck(:friend_uid)
-  end
-
   def one_sided_friends_rate
     (one_sided_friendships.size.to_f / friendships.size) rescue 0.0
   end
 
   def calc_one_sided_follower_uids
     follower_uids - friend_uids
-  end
-
-  def one_sided_follower_uids
-    one_sided_followerships.pluck(:follower_uid)
   end
 
   def one_sided_followers_rate
@@ -86,7 +78,8 @@ module Concerns::TwitterUser::Api
   end
 
   def replying_uids(uniq: true)
-    uids = UsageStat.find_by(uid: uid)&.mentions&.keys&.map(&:to_s)&.map(&:to_i) || []
+    return [] unless usage_stat
+    uids = usage_stat.mentions.keys.map(&:to_s).map(&:to_i)
     uniq ? uids.uniq : uids
   end
 
@@ -142,31 +135,15 @@ module Concerns::TwitterUser::Api
     uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(50).map(&:first)
   end
 
-  def close_friend_uids
-    close_friendships.pluck(:friend_uid)
-  end
-
   def calc_inactive_friend_uids
     friends.select { |friend| self.class.inactive_user?(friend) }.map(&:uid)
-  end
-
-  def inactive_friend_uids
-    inactive_friendships.pluck(:friend_uid)
   end
 
   def calc_inactive_follower_uids
     followers.select { |follower| self.class.inactive_user?(follower) }.map(&:uid)
   end
 
-  def inactive_follower_uids
-    inactive_followerships.pluck(:follower_uid)
-  end
-
   def calc_inactive_mutual_friend_uids
     mutual_friends.select { |friend| self.class.inactive_user?(friend) }.map(&:uid)
-  end
-
-  def inactive_mutual_friend_uids
-    inactive_mutual_friendships.pluck(:friend_uid)
   end
 end

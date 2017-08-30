@@ -10,6 +10,8 @@ module Concerns::TwitterUser::Associations
     belongs_to :user
     belongs_to :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
 
+    has_one :usage_stat, primary_key: :uid, foreign_key: :uid
+
     default_options = {dependent: :destroy, validate: false, autosave: false}
     order_by_sequence_asc = -> { order(sequence: :asc) }
 
