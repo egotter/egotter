@@ -9,7 +9,7 @@
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 - if user_signed_in?
-  = link_to t('searches.common.search_by', user: current_user.mention_name), searches_path_for(controller: controller_name, screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"), class: 'btn btn-info btn-block', method: :post
+  = link_to t('searches.common.search_by', user: current_user.mention_name), searches_path_for(screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"), class: 'btn btn-info btn-block', method: :post
 - else
   = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: relationships_top_path, via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
 
