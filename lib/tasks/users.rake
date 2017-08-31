@@ -1,11 +1,7 @@
 namespace :users do
   desc 'update authorized'
   task update_authorized: :environment do
-    sigint = false
-    Signal.trap 'INT' do
-      puts 'intercept INT and stop ..'
-      sigint = true
-    end
+    sigint = Util::Sigint.new.trap
 
     ApiClient # Avoid circular dependency
 
@@ -13,6 +9,8 @@ namespace :users do
       Parallel.each(users, in_threads: 10) do |user|
         begin
           puts "Authorized #{user.api_client.verify_credentials[:id]}"
+        rescue Twitter::Error::ServiceUnavailable => e
+          retry
         rescue => e
           if e.message == 'Invalid or expired token.'
             puts "Invalid #{user.uid}"
@@ -27,10 +25,10 @@ namespace :users do
       changed = users.select(&:authorized_changed?)
       if changed.any?
         puts "Import #{changed.size} users"
-        User.import(users, on_duplicate_key_update: %i(uid authorized), validate: false)
+        Rails.logger.silence { User.import(users, on_duplicate_key_update: %i(uid authorized), validate: false) }
       end
 
-      break if sigint
+      break if sigint.trapped?
     end
   end
 
