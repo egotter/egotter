@@ -19,6 +19,8 @@
 
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
+= render partial: 'common/tabs', locals: {tabs: @tabs, active_tab: @active_tab}
+
 = render partial: 'close_friends/users', locals: {twitter_user: @twitter_user, api_path: @api_path}
 
 .gray-separator

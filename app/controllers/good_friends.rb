@@ -37,6 +37,15 @@ class GoodFriends < ApplicationController
     @meta_description = t('.meta_description', users: honorific_names(users.map(&:mention_name)))
 
     @tweet_text = good_friends_text(users, @twitter_user)
+
+    @tabs = tabs
+  end
+
+  def tabs
+    [
+      {text: t('close_friends.show.see_close_friends_html', num: @twitter_user.close_friendships.size), url: close_friend_path(@twitter_user)},
+      {text: t('close_friends.show.see_favorite_friends_html', num: @twitter_user.favorite_friendships.size), url: favorite_friend_path(@twitter_user)}
+    ]
   end
 
   def good_friends_text(users, twitter_user)

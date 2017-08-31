@@ -7,6 +7,7 @@ class CloseFriendsController < GoodFriends
   end
 
   def show
+    @active_tab = 0
     super
   end
 end
