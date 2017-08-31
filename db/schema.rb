@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170829020247) do
+ActiveRecord::Schema.define(version: 20170831041231) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -220,6 +220,15 @@ ActiveRecord::Schema.define(version: 20170829020247) do
   add_index "favorites", ["screen_name"], name: "index_favorites_on_screen_name", using: :btree
   add_index "favorites", ["uid"], name: "index_favorites_on_uid", using: :btree
 
+  create_table "follow_requests", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4, null: false
+    t.datetime "created_at",           null: false
+    t.datetime "updated_at",           null: false
+  end
+
+  add_index "follow_requests", ["created_at"], name: "index_follow_requests_on_created_at", using: :btree
+  add_index "follow_requests", ["user_id"], name: "index_follow_requests_on_user_id", unique: true, using: :btree
+
   create_table "followers", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
     t.string   "screen_name", limit: 191,   null: false
@@ -297,6 +306,7 @@ ActiveRecord::Schema.define(version: 20170829020247) do
   add_index "inactive_mutual_friendships", ["from_uid"], name: "index_inactive_mutual_friendships_on_from_uid", using: :btree
 
   create_table "jobs", force: :cascade do |t|
+    t.integer  "track_id",        limit: 4,   default: -1, null: false
     t.integer  "user_id",         limit: 4,   default: -1, null: false
     t.integer  "uid",             limit: 8,   default: -1, null: false
     t.string   "screen_name",     limit: 191, default: "", null: false
@@ -317,6 +327,7 @@ ActiveRecord::Schema.define(version: 20170829020247) do
   add_index "jobs", ["created_at"], name: "index_jobs_on_created_at", using: :btree
   add_index "jobs", ["jid"], name: "index_jobs_on_jid", using: :btree
   add_index "jobs", ["screen_name"], name: "index_jobs_on_screen_name", using: :btree
+  add_index "jobs", ["track_id"], name: "index_jobs_on_track_id", using: :btree
   add_index "jobs", ["uid"], name: "index_jobs_on_uid", using: :btree
 
   create_table "mentions", force: :cascade do |t|
@@ -558,12 +569,15 @@ ActiveRecord::Schema.define(version: 20170829020247) do
   add_index "prompt_reports", ["user_id"], name: "index_prompt_reports_on_user_id", using: :btree
 
   create_table "scores", force: :cascade do |t|
-    t.integer "uid",            limit: 8,     null: false
-    t.string  "klout_id",       limit: 191,   null: false
-    t.float   "klout_score",    limit: 53,    null: false
-    t.text    "influence_json", limit: 65535, null: false
+    t.integer  "uid",            limit: 8,     null: false
+    t.string   "klout_id",       limit: 191,   null: false
+    t.float    "klout_score",    limit: 53,    null: false
+    t.text     "influence_json", limit: 65535, null: false
+    t.datetime "created_at",                   null: false
+    t.datetime "updated_at",                   null: false
   end
 
+  add_index "scores", ["created_at"], name: "index_scores_on_created_at", using: :btree
   add_index "scores", ["uid"], name: "index_scores_on_uid", unique: true, using: :btree
 
   create_table "search_histories", force: :cascade do |t|
@@ -773,18 +787,21 @@ ActiveRecord::Schema.define(version: 20170829020247) do
   add_index "unfriendships", ["from_uid"], name: "index_unfriendships_on_from_uid", using: :btree
 
   create_table "usage_stats", force: :cascade do |t|
-    t.integer "uid",                 limit: 8,     null: false
-    t.text    "wday_json",           limit: 65535, null: false
-    t.text    "wday_drilldown_json", limit: 65535, null: false
-    t.text    "hour_json",           limit: 65535, null: false
-    t.text    "hour_drilldown_json", limit: 65535, null: false
-    t.text    "usage_time_json",     limit: 65535, null: false
-    t.text    "breakdown_json",      limit: 65535, null: false
-    t.text    "hashtags_json",       limit: 65535, null: false
-    t.text    "mentions_json",       limit: 65535, null: false
-    t.text    "tweet_clusters_json", limit: 65535, null: false
+    t.integer  "uid",                 limit: 8,     null: false
+    t.text     "wday_json",           limit: 65535, null: false
+    t.text     "wday_drilldown_json", limit: 65535, null: false
+    t.text     "hour_json",           limit: 65535, null: false
+    t.text     "hour_drilldown_json", limit: 65535, null: false
+    t.text     "usage_time_json",     limit: 65535, null: false
+    t.text     "breakdown_json",      limit: 65535, null: false
+    t.text     "hashtags_json",       limit: 65535, null: false
+    t.text     "mentions_json",       limit: 65535, null: false
+    t.text     "tweet_clusters_json", limit: 65535, null: false
+    t.datetime "created_at",                        null: false
+    t.datetime "updated_at",                        null: false
   end
 
+  add_index "usage_stats", ["created_at"], name: "index_usage_stats_on_created_at", using: :btree
   add_index "usage_stats", ["uid"], name: "index_usage_stats_on_uid", unique: true, using: :btree
 
   create_table "user_engagement_stats", force: :cascade do |t|
