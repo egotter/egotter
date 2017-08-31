@@ -9,7 +9,7 @@ module Concerns::Showable
     before_action(only: %i(show)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
     before_action(only: %i(show)) { @tu = build_twitter_user(params[:screen_name]) }
     before_action(only: %i(show)) { authorized_search?(@tu) }
-    before_action(only: %i(show)) { existing_uid?(@tu.uid.to_i) }
+    before_action(only: %i(show)) { twitter_user_persisted?(@tu.uid.to_i) }
     before_action(only: %i(show)) { twitter_db_user_persisted?(@tu.uid.to_i) }
     before_action(only: %i(show)) { too_many_searches? }
 

@@ -2,7 +2,7 @@ require 'active_support/concern'
 
 module Concerns::Validation
   extend ActiveSupport::Concern
-  include TwitterHelper
+  include Concerns::ExceptionHandler
 
   included do
 
@@ -35,8 +35,7 @@ module Concerns::Validation
     false
   end
 
-  # TODO Rename to twitter_user_persisted?
-  def existing_uid?(uid)
+  def twitter_user_persisted?(uid)
     return true if TwitterUser.exists?(uid: uid)
 
     if request.xhr?
@@ -148,52 +147,5 @@ module Concerns::Validation
     end
 
     false
-  end
-
-  def twitter_exception_handler(ex, screen_name)
-    logger.info "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{screen_name} #{request.device_type} #{request.browser} #{params.inspect}"
-
-    redirect_path = root_path_for(controller: controller_name)
-
-    return head(:bad_request) if request.xhr?
-
-    case ex
-      when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(screen_name)
-      when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(screen_name)
-      when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(screen_name)
-      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(screen_name, ex)
-      else redirect_to redirect_path, alert: alert_message(ex)
-    end
-  end
-
-  def not_found_message(screen_name)
-    t('before_sign_in.not_found', user: view_context.user_link(screen_name))
-  end
-
-  def forbidden_message(screen_name)
-    t('before_sign_in.forbidden', user: view_context.user_link(screen_name))
-  end
-
-  def unauthorized_message(screen_name)
-    t('after_sign_in.unauthorized_html', sign_in: kick_out_error_path('unauthorized'), sign_out: sign_out_path)
-  end
-
-  def too_many_requests_message(screen_name, ex)
-    if user_signed_in?
-      t('after_sign_in.too_many_requests_with_reset_in', seconds: (ex.rate_limit.reset_in.to_i + 1).seconds)
-    else
-      t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
-    end
-  end
-
-  def alert_message(ex)
-    reason = (ex.class.name.demodulize.underscore rescue 'exception')
-    t('before_sign_in.something_wrong_html', url: kick_out_error_path(reason))
-  end
-
-  private
-
-  def kick_out_error_path(reason)
-    welcome_path(via: "#{controller_name}/#{action_name}/#{reason}")
   end
 end

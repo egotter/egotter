@@ -4,7 +4,7 @@ class TimelinesController < ApplicationController
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i
-    valid_uid?(uid) && existing_uid?(uid)  && authorized_search?(TwitterUser.latest(uid))
+    valid_uid?(uid) && twitter_user_persisted?(uid)  && authorized_search?(TwitterUser.latest(uid))
   end
 
   def show
