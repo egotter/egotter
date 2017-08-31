@@ -11,7 +11,7 @@ class CreateTwitterUserWorker
     benchmark
 
     track = Track.find(values['track_id'])
-    job = track.jobs.create(values.slice('user_id', 'uid', 'screen_name', 'enqueued_at').merge(worker_class: self.class, jid: jid, started_at: Time.zone.now))
+    job = track.jobs.create!(values.slice('user_id', 'uid', 'screen_name', 'enqueued_at').merge(worker_class: self.class, jid: jid, started_at: Time.zone.now))
 
     if self.class == CreateTwitterUserWorker && (job.too_late? || too_busy?(track))
       delay = true
