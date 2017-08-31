@@ -1,4 +1,5 @@
-class UsageStatsController < ::Base
+class UsageStatsController < ApplicationController
+  include Concerns::Showable
   include WorkersHelper
   include TweetTextHelper
 
@@ -26,13 +27,14 @@ class UsageStatsController < ::Base
 
   def check_for_updates
     stat = UsageStat.find_by(uid: params[:uid])
-    return render json: {found: false}, status: 200 unless stat
+    started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
+    return render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202 unless stat
 
     if params[:updated_at] == '-1' ||
         (params[:updated_at].to_s.match(/\A\d+\z/) && stat.updated_at > Time.zone.at(params[:updated_at].to_i))
       return render json: {found: true}, status: 200
     end
 
-    render json: {found: false}, status: 200
+    render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202
   end
 end

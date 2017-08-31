@@ -39,9 +39,6 @@
         enable_page_level_ads: true
       });
 
-    :javascript
-      #{render partial: 'common/egotter', formats: %i(js)}
-
     - if user_signed_in?
       - if Rails.env.production?
         %link{href: '/manifest.json', rel: 'manifest'}

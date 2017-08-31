@@ -7,7 +7,7 @@ class InactiveFollowersController < FriendsAndFollowers
 
   def show
     super
-    @active_tab = 0
+    @active_tab = 1
     render template: 'friends/show' unless performed?
   end
 

@@ -1,6 +1,6 @@
-class TimelinesController < ::Base
+class TimelinesController < ApplicationController
+  include Concerns::Showable
   include WorkersHelper
-  include ScoresHelper
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i

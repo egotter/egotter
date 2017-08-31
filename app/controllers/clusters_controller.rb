@@ -1,5 +1,5 @@
 class ClustersController < ApplicationController
-  include Validation
+  include Concerns::Validation
   include SearchesHelper
   include ClustersHelper
   include TweetTextHelper

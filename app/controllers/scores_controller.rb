@@ -1,4 +1,5 @@
-class ScoresController < ::Base
+class ScoresController < ApplicationController
+  include Concerns::Showable
   include ScoresHelper
 
   def show

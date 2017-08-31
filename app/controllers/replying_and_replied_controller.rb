@@ -1,5 +1,5 @@
 class ReplyingAndRepliedController < FriendsAndFollowers
-  include Validation
+  include Concerns::Validation
   include SearchesHelper
 
   def all

@@ -113,7 +113,8 @@
         if (!signedIn) $loginBtn.show();
         $supportBtn.show();
 
-        $errorMessage.html(egotter.errors['Timeout'].msg2).show();
+        var timeOutMessage = '<%= t('before_sign_in.retry_timeout_html', sign_in_path: sign_in_path(via: "#{controller_name}/#{action_name}/timeout")).html_safe %>';
+        $errorMessage.html(timeOutMessage).show();
       }, function (xhr) {
         console.log('failed', xhr.responseText);
         createPollingLog(false);

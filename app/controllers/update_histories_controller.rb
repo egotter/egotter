@@ -1,5 +1,5 @@
 class UpdateHistoriesController < ApplicationController
-  include Validation
+  include Concerns::Validation
   include SearchesHelper
 
   before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }

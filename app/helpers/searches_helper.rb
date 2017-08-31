@@ -17,7 +17,7 @@ module SearchesHelper
   end
 
   def root_path_for(controller:)
-    if %w(one_sided_friends unfriends relationships inactive_friends friends conversations clusters).include? controller
+    if %w(one_sided_friends unfriends inactive_friends friends clusters).include? controller
       send("#{controller}_top_path")
     else
       root_path
@@ -41,13 +41,8 @@ module SearchesHelper
   end
 
   def searches_path_for(screen_name:, via:)
-    options = {screen_name: screen_name, via: via}.delete_if { |_, v| v.empty? }
-    if %w(relationships clusters).include? controller
-      send("#{controller}_path", options)
-    else
-      options[:redirect_path] = search_path_for(controller_name, screen_name) unless options[:redirect_path]
-      searches_path(options)
-    end
+    url = search_path_for(controller_name, screen_name)
+    searches_path(screen_name: screen_name, via: via, redirect_path: url)
   end
 
   def fetch_twitter_user_from_cache(uid)

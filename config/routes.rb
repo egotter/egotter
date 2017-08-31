@@ -73,7 +73,8 @@ Rails.application.routes.draw do
   get 'unfriends', to: 'unfriends#new', as: :unfriends_top
   get 'inactive_friends', to: 'inactive_friends#new', as: :inactive_friends_top
   get 'friends', to: 'friends#new', as: :friends_top
-  get 'conversations', to: 'conversations#new', as: :conversations_top
+  get 'conversations', to: redirect('/')
+  get 'relationships', to: redirect('/')
 
   resources :clusters, only: %i(create show), param: :screen_name
   get 'clusters', to: 'clusters#new', as: :clusters_top
@@ -114,11 +115,9 @@ Rails.application.routes.draw do
   resources :modal_open_logs, only: :create
   resources :polling_logs, only: :create
 
-  resources :relationships, only: %i(create)
-  get 'relationships/:src_uid/:dst_uid/waiting', to: 'relationships#waiting', as: :waiting_relationship
-  get 'relationships/:src_uid/:dst_uid/check_log', to: 'relationships#check_log', as: :check_log_relationship
-  get 'relationships/:src_screen_name/:dst_screen_name', to: 'relationships#show', as: :relationship
-  get 'relationships', to: 'relationships#new', as: :relationships_top
+  get 'relationships/:src_uid/:dst_uid/waiting', to: redirect('/')
+  get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')
+  get 'relationships/:src_screen_name/:dst_screen_name', to: redirect('/')
 
   %i(sign_in sign_out welcome goodbye).each do |name|
     get name, to: "login##{name}", as: name

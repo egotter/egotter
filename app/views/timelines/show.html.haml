@@ -56,9 +56,9 @@
 
 %h2.h4= t('.other_services')
 .row.other-services
-  .text-center.col-xs-12.col-sm-4
-    = link_to t('.see_on_twitter', user: @twitter_user.mention_name), user_url(@twitter_user.screen_name), target: '_blank', rel: 'nofollow'
-  .text-center.col-xs-12.col-sm-4
-    = link_to t('.see_on_twilog', user: @twitter_user.mention_name), "http://twilog.org/#{@twitter_user.screen_name}", target: '_blank', rel: 'nofollow'
-  .text-center.col-xs-12.col-sm-4
-  = link_to t('.see_on_favstar', user: @twitter_user.mention_name), "http://ja.favstar.fm/users/#{@twitter_user.screen_name}", target: '_blank', rel: 'nofollow'
+  .text-center.col-xs-12.col-sm-4{style: 'margin-bottom: 15px;'}
+    = link_to t('.see_on_twitter', user: @twitter_user.mention_name), user_url(@twitter_user.screen_name), class: 'btn btn-default', target: '_blank', rel: 'nofollow'
+  .text-center.col-xs-12.col-sm-4{style: 'margin-bottom: 15px;'}
+    = link_to t('.see_on_twilog', user: @twitter_user.mention_name), "http://twilog.org/#{@twitter_user.screen_name}", class: 'btn btn-default', target: '_blank', rel: 'nofollow'
+  .text-center.col-xs-12.col-sm-4{style: 'margin-bottom: 15px;'}
+    = link_to t('.see_on_favstar', user: @twitter_user.mention_name), "http://ja.favstar.fm/users/#{@twitter_user.screen_name}", class: 'btn btn-default', target: '_blank', rel: 'nofollow'

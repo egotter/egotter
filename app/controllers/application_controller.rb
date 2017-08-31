@@ -3,6 +3,8 @@ class ApplicationController < ActionController::Base
   include Concerns::Logging
   include SearchHistoriesHelper
 
+  TwitterUser # Avoid `uninitialized constant`
+
   before_action :set_locale
 
   def set_locale

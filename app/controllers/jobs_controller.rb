@@ -1,5 +1,5 @@
 class JobsController < ApplicationController
-  include Validation
+  include Concerns::Validation
 
   before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
   before_action(only: %i(show)) { searched_uid?(params[:uid].to_i) }

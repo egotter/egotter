@@ -1,4 +1,6 @@
-module Validation
+require 'active_support/concern'
+
+module Concerns::Validation
   extend ActiveSupport::Concern
   include TwitterHelper
 

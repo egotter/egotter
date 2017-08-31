@@ -273,14 +273,14 @@ ja:
       crumb_title: "一気に見る"
   mutual_friends:
     show: &mutual_friends_show
-      crumb_title: "両思い分析"
-      page_title: "%{user} の両思いフォロー"
-      meta_title: "%{user} の両思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
-      summary_title: "両思いフォロー"
-      title: "両思いフォロー"
+      crumb_title: "相互フォロー分析"
+      page_title: "%{user} 相互フォロー"
+      meta_title: "%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
+      summary_title: "相互フォロー"
+      title: "相互フォロー"
       page_description: "%{user} が相互フォローしているユーザーです。"
       meta_description: "%{user} が相互フォローしているユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
-      tweet_text: "%{user} の両思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
+      tweet_text: "%{user} の相互フォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
     all:
       <<: *mutual_friends_show
@@ -338,25 +338,6 @@ ja:
     all:
       <<: *blocking_or_blocked_show
       crumb_title: "一気に見る"
-  relationships:
-    new:
-      title_html: '<span style="font-size: small; display: inline;">会話検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: '会話分析 by えごったー'
-      simple_title: '会話分析'
-      description: "保存ユーザー数1,000万人突破！ 無料でスマホからツイッター分析！ 複数ユーザーの会話、共通フォロー、共通フォロワーをさくっと見付けることができます。"
-      short_description: "複数ユーザーの会話、共通フォロー、共通フォロワーをさくっと見付けることができます。"
-      lead_001: "スマホでさくっと会話分析"
-      lead_002: "保存ユーザー数1,000万人突破！"
-      lead_003: "共通フォロー、共通フォロワー分析の決定版。<br>スマホから使える無料の会話分析アプリです。"
-      lead_004: '検索されたユーザーの会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-    show:
-      title: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人"
-      description: "%{user1} と %{user2} は、会話 %{conversations}件、共通フォロー %{common_friends}人、共通フォロワー %{common_followers}人です。共通フォロワーには、ツイッターでのこの2人の会話が見えています。"
-      lead_002_html: "共通フォローは、%{user1} と %{user2} が共通してフォローしているアカウント、<br>共通フォロワーは、%{user1} と %{user2} が共通してフォローされているアカウントのことです。"
-      lead_002_1_html: "<strong>ちなみに、共通フォロワーには、%{user1} と %{user2} の会話がすべて見えています。</strong>"
-      lead_003: '%{user1} と %{user2} の会話、共通フォロー、共通フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、会話、共通フォロー、共通フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-      lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
-      tweet: "%{user1} と %{user2} の分析 - 会話 %{conversations}件 共通フォロー %{common_friends}人 共通フォロワー %{common_followers}人です。"
   common_friends:
     show: &common_friends_show
       crumb_title: "共通フォロー分析"
@@ -548,30 +529,6 @@ ja:
     all:
       <<: *replying_and_replied_show
       crumb_title: "一気に見る"
-  conversations:
-    new:
-      title_html: '<span style="font-size: small; display: inline;">リプライ分析</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: 'リプライ分析 by えごったー'
-      simple_title: 'リプライ分析'
-      description: "保存ユーザー数1,000万人突破！ 無料でスマホからリプライ分析！ リプライしたアカウント、リプライされたアカウントをさくっと見付けることができます。"
-      short_description: "リプライしたアカウント、リプライされたアカウントをさくっと見付けることができます。"
-      lead_001: "スマホでさくっとリプライ分析"
-      lead_002: "保存ユーザー数1,000万人突破！"
-      lead_003: "リプライ分析の決定版。<br>スマホから使える無料のリプライ分析アプリです。"
-      lead_004: '検索されたユーザーのリプライ分析は、えごったーが分析したデータを元に集計しています。<br>もし、リプライ分析に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
-    show: &conversations_show
-      crumb_title: "会話"
-      page_title: "%{user} の会話"
-      meta_title: "%{user} の会話 - @ツイートした %{replying}人 @ツイートされた %{replied}人 会話 %{replying_and_replied}人"
-      summary_title: "会話"
-      title: "会話"
-      page_description: "%{user} が会話したユーザーの一覧です。"
-      meta_description: "%{user} が会話したユーザーの一覧 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 会話 %{replying_and_replied}人"
-      tweet_text: "%{user} の会話分析 -  @ツイートした %{replying}人 @ツイートされた %{replied}人 会話 %{replying_and_replied}人 #egotter %{url}"
-      see_more: 'もっと見る'
-    all:
-      <<: *conversations_show
-      crumb_title: "一気に見る"
   clusters:
     new:
       title_html: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -691,11 +648,9 @@ ja:
     that_page_doesnt_exist: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
     reject_crawler: "The crawler is rejected."
   after_sign_in:
-    too_many_requests: "アクセスが多すぎるため検索数の上限に達しました。5〜10分ほどたってから再度検索してみてください。"
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
     unauthorized_html: 'ツイッター連携に失敗しました。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
-    retry_timeout_html: "アクセスが多すぎるため検索がタイムアウトしました。大半の場合は再検索すれば正しく結果が表示されます。<br>失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
   tweet_text:
     top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"

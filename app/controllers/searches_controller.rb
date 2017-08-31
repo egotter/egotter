@@ -1,5 +1,5 @@
 class SearchesController < ApplicationController
-  include Validation
+  include Concerns::Validation
   include SearchesHelper
   include WorkersHelper
 
