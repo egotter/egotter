@@ -6,16 +6,30 @@ module Util
       @redis = redis
     end
 
-    def self.key
-      raise NotImplementedError
+    class << self
+      def exists?(uid)
+        new(Redis.client).exists?(uid)
+      end
+
+      def add(uid)
+        new(Redis.client).add(uid)
+      end
+
+      def delete(uid)
+        new(Redis.client).delete(uid)
+      end
+
+      def key
+        raise NotImplementedError
+      end
+
+      def ttl
+        raise NotImplementedError
+      end
     end
 
     def key
       self.class.key
-    end
-
-    def self.ttl
-      raise NotImplementedError
     end
 
     def ttl

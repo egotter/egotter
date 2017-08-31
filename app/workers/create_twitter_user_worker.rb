@@ -28,11 +28,10 @@ class CreateTwitterUserWorker
     uid = job.uid
     client = ApiClient.user_or_bot_client(user&.id) { |client_uid| job.update(client_uid: client_uid) }
 
-    creating_uids = Util::CreatingUids.new(Redis.client)
-    if creating_uids.exists?(uid)
+    if Util::CreateRequests.exists?(uid)
       return job.update(error_class: Job::Error::RecentlyEnqueued, error_message: 'Recently enqueued')
     end
-    creating_uids.add(uid)
+    Util::CreateRequests.add(uid)
 
     builder = TwitterUser.builder(uid).client(client).login_user(user)
     twitter_user = builder.build

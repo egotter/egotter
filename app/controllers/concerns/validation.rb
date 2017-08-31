@@ -73,7 +73,7 @@ module Concerns::Validation
   end
 
   def searched_uid?(uid)
-    return true if Util::SearchedUids.new(redis).exists?(uid)
+    return true if Util::SearchRequests.exists?(uid)
 
     if request.xhr?
       head :bad_request

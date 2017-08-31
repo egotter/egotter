@@ -6,9 +6,8 @@ class CreatePromptReportWorker
     client = Hashie::Mash.new(call_count: -100)
     user = User.find(user_id)
 
-    messaging_uids = Util::MessagingUids.new(Redis.client)
-    return if messaging_uids.exists?(user.uid)
-    messaging_uids.add(user.uid)
+    return if Util::MessagingRequests.exists?(user.uid)
+    Util::MessagingRequests.add(user.uid)
 
     log = CreatePromptReportLog.new(
       user_id:     user.id,

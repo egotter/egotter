@@ -3,9 +3,8 @@ module WorkersHelper
     return if request.from_crawler? || from_minor_crawler?(request.user_agent)
     return if uid.to_i == User::EGOTTER_UID
 
-    searched_uids = Util::SearchedUids.new(redis)
-    return if searched_uids.exists?(uid)
-    searched_uids.add(uid)
+    return if Util::SearchRequests.exists?(uid)
+    Util::SearchRequests.add(uid)
 
     referral = find_referral(pushed_referers)
 

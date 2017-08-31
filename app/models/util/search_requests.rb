@@ -1,5 +1,5 @@
 module Util
-  class SearchedUids < OriginalSortedSet
+  class SearchRequests < OriginalSortedSet
     def self.key
       @@key ||= 'background_search_worker:searched_uids'
     end

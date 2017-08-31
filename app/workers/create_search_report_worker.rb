@@ -6,9 +6,8 @@ class CreateSearchReportWorker
   def perform(user_id)
     user = User.find(user_id)
 
-    messaging_uids = Util::MessagingUids.new(Redis.client)
-    return if messaging_uids.exists?(user.uid)
-    messaging_uids.add(user.uid)
+    return if Util::MessagingRequests.exists?(user.uid)
+    Util::MessagingRequests.add(user.uid)
 
     return unless user.authorized? && user.can_send_search?
 
