@@ -50,13 +50,10 @@ module Concerns::TwitterUser::Batch
       return if friend_uids.nil? || follower_uids.nil?
 
       if (t_user.friends_count - friend_uids.size).abs >= 5 || (t_user.followers_count - follower_uids.size).abs >= 5
-        message = "Inconsistent #{uid} [#{t_user.friends_count}, #{friend_uids.size}] [#{t_user.followers_count}, #{follower_uids.size}]"
         if rake_task?
-          logger message
-          print 'Continue [y,n]? '
-          raise message unless STDIN.gets.chomp.to_s == 'y'
+          twitter_user, friend_uids, follower_uids = confirm_continue_or_not(twitter_user, friend_uids, follower_uids, client: client)
         else
-          raise message
+          raise "Inconsistent #{uid} count [#{t_user.friends_count}, #{t_user.followers_count}] size [#{friend_uids.size}, #{follower_uids.size}]"
         end
       end
 
@@ -123,6 +120,22 @@ module Concerns::TwitterUser::Batch
     end
 
     private
+
+    def self.confirm_continue_or_not(twitter_user, friend_uids, follower_uids, client:)
+      begin
+        logger "Inconsistent #{twitter_user.uid} count [#{twitter_user.friends_count}, #{twitter_user.followers_count}] size [#{friend_uids.size}, #{follower_uids.size}]"
+        print 'Continue [r,y,n]? '
+
+        case STDIN.gets.chomp.to_s
+          when 'r'
+            twitter_user = TwitterUser.build_by_user(client.user(twitter_user.uid.to_i, cache: false))
+            friend_uids, follower_uids = client.friend_ids_and_follower_ids(twitter_user.uid.to_i, cache: false)
+          when 'y'
+            return [twitter_user, friend_uids, follower_uids]
+          else raise
+        end
+      end while true
+    end
 
     def self.retryable?(ex)
       # Twitter::Error::InternalServerError Internal error
@@ -199,8 +212,8 @@ module Concerns::TwitterUser::Batch
     def self.twitter_user_changed?(uid, friend_uids, follower_uids)
       twitter_user = TwitterUser.latest(uid)
       twitter_user.nil? ||
-        twitter_user.friendships.pluck(:friend_uid) != friend_uids ||
-        twitter_user.followerships.pluck(:follower_uid) != follower_uids
+        twitter_user.friendships.pluck(:friend_uid).sort != friend_uids.sort ||
+        twitter_user.followerships.pluck(:follower_uid).sort != follower_uids.sort
     end
 
     def self.rake_task?
