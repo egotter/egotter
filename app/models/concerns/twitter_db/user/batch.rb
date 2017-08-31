@@ -7,6 +7,10 @@ module Concerns::TwitterDB::User::Batch
   # `followers` does not include suspended uids.
   # `followers_count` is ambiguous.
   class Batch
+    def self.fetch_and_create(uid, client:)
+      fetch_and_import([uid], client: client)
+    end
+
     def self.fetch_and_import(uids, client:)
       uids = uids.uniq.map(&:to_i)
       users = fetch(uids, client: client)
@@ -15,7 +19,7 @@ module Concerns::TwitterDB::User::Batch
     end
 
     class << self
-      %i(fetch_and_import).each do |name|
+      %i(fetch_and_create fetch_and_import).each do |name|
         alias_method "orig_#{name}", name
         define_method(name) do |*args|
           Rails.logger.silence(Logger::WARN) { send("orig_#{name}", *args) }

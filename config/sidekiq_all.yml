@@ -21,6 +21,8 @@
   - CreateTwitterUserWorker
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
+  - DeleteNotFoundUserWorker
+  - DeleteForbiddenUserWorker
   - FollowEgotterWorker
   - ImportFriendsAndFollowersWorker
   - ImportFriendshipsAndFollowershipsWorker

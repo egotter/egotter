@@ -49,12 +49,7 @@ module Concerns::TwitterUser::Validation
   end
 
   def readable_by?(login_user)
-    case
-      when login_user.nil? then false
-      when login_user.uid.to_i == uid.to_i then true
-      when login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i) then true
-      else false
-    end
+    login_user.uid.to_i == uid.to_i || login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i)
   end
 
   def suspended_account?

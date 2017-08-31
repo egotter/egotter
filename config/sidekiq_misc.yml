@@ -8,6 +8,9 @@
   - CreateScoreWorker
   - CreateSearchReportWorker
   - CreateTweetsWorker
+  - DeleteNotFoundUserWorker
+  - DeleteForbiddenUserWorker
+  - FollowEgotterWorker
   - SendMetricsWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker

@@ -1,11 +1,12 @@
 module SearchesHelper
   def build_twitter_user(screen_name)
-    twitter_user = TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
-    return twitter_user if twitter_user
-
     user = client.user(screen_name)
-    TwitterUser.build_by_user(user)
+    twitter_user = TwitterUser.build_by_user(user)
 
+    DeleteNotFoundUserWorker.perform_async(screen_name)
+    DeleteForbiddenUserWorker.perform_async(screen_name)
+
+    twitter_user
   rescue => e
     if e.message == 'User not found.'
       CreateNotFoundUserWorker.perform_async(screen_name)
@@ -13,7 +14,11 @@ module SearchesHelper
       CreateForbiddenUserWorker.perform_async(screen_name)
     end
 
-    twitter_exception_handler(e, screen_name)
+    if can_see_forbidden_or_not_found?(screen_name: screen_name)
+      TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
+    else
+      twitter_exception_handler(e, screen_name)
+    end
   end
 
   def root_path_for(controller:)
