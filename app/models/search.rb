@@ -21,5 +21,6 @@ class Search
     common_friends
     common_followers
     common_mutual_friends
+    protection
   )
 end

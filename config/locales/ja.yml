@@ -96,9 +96,13 @@ ja:
       description: "えごったーなら全部無料！ %{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
       reload_this_page: "ページを更新する"
+      reinvestigate: "再度チェックする"
       view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
+      view_more_hacked_with_num_html: '乗っ取りツイートを確認する <span class="badge">%{num}</span>'
       under_calculation_with_details_html: 'フォロー・フォロワーの分析中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
       empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
+      not_hacked_with_details_html: "乗っ取りツイートは見付かりませんでした。<br>今後も安心してツイッターをご利用ください。"
+      hacked_with_details_html: '怪しいツイートが見付かりました。<a href="https://twitter.com/settings/applications" target="_blank" rel="nofollow" class="btn btn-default btn-sm">連携アプリ一覧 (公式)</a> から、怪しいアプリを削除してください。'
       about_this_page: "%{user} の分析 by えごったーについて"
       this_page_is_html: "このページでは、%{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。<br>リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
       other_services: "他のサービス"
@@ -191,6 +195,16 @@ ja:
     maintenance:
       title: "メンテナンス"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
+  protection:
+    show:
+      title: "乗っ取りガード"
+      crumb_title: "乗っ取りガード"
+      page_title: "%{user} の乗っ取りガード"
+      meta_title: "%{user} の乗っ取りガード"
+      summary_title: "乗っ取りガード"
+      page_description: "直近 数百件のツイートを元に、%{user} がスパムに乗っ取られていないかチェックします。"
+      meta_description: "%{user} の乗っ取りガード"
+      warning_html: '乗っ取りの疑いがあるツイートは下記の通りです。自分で投稿したツイートでない場合は、ツイートの削除をおすすめします。今後の乗っ取りを防ぐためには、<a href="https://twitter.com/settings/applications" target="_blank" rel="nofollow" class="btn btn-default btn-sm">連携アプリ一覧 (公式)</a> から、怪しいアプリを削除してください。'
   close_friends:
     show: &close_friends_show
       title: "仲良しランキング"

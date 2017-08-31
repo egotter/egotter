@@ -28,7 +28,8 @@
     min-height: 320px;
   }
 
-  &.users .placeholder-item {
+  &.users .placeholder-item,
+  &.tweets .placeholder-item {
     min-height: 150px;
   }
 

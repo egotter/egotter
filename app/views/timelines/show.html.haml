@@ -20,6 +20,10 @@
   .col-md-6
     = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: 'close_friends'}
 
+  - if !request.from_crawler? && !from_minor_crawler?(request.user_agent)
+    .col-md-6
+      = render partial: 'timelines/protection', locals: {menu_name: :protection, twitter_user: @twitter_user}
+
   - if show_friends_stat?(@twitter_user)
     .col-md-6
       = render partial: 'timelines/chart', locals: {menu_name: :usage_stats, graph: @twitter_user.usage_stat.wday, twitter_user: @twitter_user}

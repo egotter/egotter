@@ -1,0 +1,17 @@
+- content_for :canonical_url do
+  %link{href: @canonical_url, rel: 'canonical'}
+
+- breadcrumb @breadcrumb_name, @twitter_user.screen_name
+
+- title @page_title
+- set_meta_tags description: @meta_description, title: @meta_title
+
+= render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
+
+%h2.h2.page-title= @page_title
+
+.page-description.text-center= @page_description
+
+.page-description.text-center.text-danger= t('protection.show.warning_html')
+
+= render partial: 'protection/tweets', locals: {twitter_user: @twitter_user, api_path: @api_path}

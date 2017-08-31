@@ -30,6 +30,7 @@ end
   common_friends
   common_followers
   common_mutual_friends
+  protection
 ).each do |name|
   crumb name.singularize.to_sym do |screen_name|
     link t("#{name}.show.crumb_title"), send("#{name.singularize}_path", screen_name: screen_name)
