@@ -48,7 +48,7 @@ module Concerns::Validation
       return false
     end
 
-    if (controller_name == 'searches' && action_name == 'show') || (controller_name == 'timelines' && action_name == 'show')
+    if controller_name == 'timelines' && action_name == 'show'
       @screen_name = @tu.screen_name
       @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via']

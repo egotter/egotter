@@ -38,10 +38,9 @@ module SearchesHelper
   end
 
   def search_path_for(menu, screen_name)
-    if menu.to_s == 'searches'
-      timeline_path(screen_name: screen_name)
-    else
-      send("#{menu.to_s.singularize}_path", screen_name: screen_name)
+    case menu.to_s
+      when *%w(searches notifications login) then timeline_path(screen_name: screen_name)
+      else send("#{menu.to_s.singularize}_path", screen_name: screen_name)
     end
   end
 

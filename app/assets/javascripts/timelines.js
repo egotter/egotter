@@ -15,7 +15,7 @@ function loadSummary (apiEndpoint, uid, menuName, progressMessages) {
       $progressMsgBox.html(progressMessages.empty).show();
       $resultLinkButtons.reload.show();
       $("div[data-replaced-by='" + menuName + "']").remove();
-      $(".menu-items." + menuName).show();
+      $summaryBox.show();
       return;
     }
 
