@@ -16,15 +16,6 @@
 
 = render(partial: 'common/async_adsense', locals: {action: action_name, vertical: :top})
 
-%script{id: 'user-template', type: 'x-tmpl-mustache'}
-  = link_to CGI::unescape(timeline_path(screen_name: '{{screen_name}}', via: "#{controller_name}/#{action_name}/{{menu_name}}")), style: 'display: inline-block;' do
-    %img.img-rounded{src: '{{profile_image_url_https}}', alt: '{{screen_name}}', width: 48, height: 48}
-:javascript
-  $(function () {
-    Mustache.parse($('#user-template').html());
-  });
-
-
 .row
   .col-md-6
     = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: 'close_friends'}

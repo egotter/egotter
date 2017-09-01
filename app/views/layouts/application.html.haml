@@ -99,6 +99,15 @@
       .row
         .col-xs-12.yield-container{class: "#{'col-sm-12 col-md-9 col-lg-9' if show_sidebar?}"}
           = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
+
+          %script{id: 'user-template', type: 'x-tmpl-mustache'}
+            = link_to CGI::unescape(timeline_path(screen_name: '{{screen_name}}', via: "#{controller_name}/#{action_name}/{{menu_name}}")), style: 'display: inline-block;' do
+              %img.img-rounded{src: '{{profile_image_url_https}}', alt: '{{screen_name}}', width: 48, height: 48}
+          :javascript
+            $(function () {
+              Mustache.parse($('#user-template').html());
+            });
+
           = yield
         - if show_sidebar?
           .hidden-xs.hidden-sm.col-md-3.col-lg-3.sidebar.text-center{style: 'padding-top: 15px;'}
