@@ -12,6 +12,7 @@
     </div>
 
     <%= link_to(t('timelines.show.reinvestigate'), timeline_path(twitter_user), class: 'btn btn-info btn-block reload-btn', style: 'display: none;') %>
+    <%= link_to(t('timelines.show.sign_in_and_investigate'), sign_in_path(via: "#{controller_name}/#{action_name}/#{menu_name}", redirect_path: timeline_path(twitter_user)), class: 'btn btn-info btn-block sign-in-btn', style: 'display: none;') %>
     <%= link_to(t('timelines.show.view_more_hacked_with_num_html', num: 'NUM'), protection_path(twitter_user), class: 'btn btn-danger btn-block btn-view-more', style: 'display: none;') %>
   </div>
 </div>
@@ -19,52 +20,43 @@
 <script>
   $(function () {
     var menuName = '<%= menu_name %>';
-    var apiEndpoint = '<%= send("api_v1_#{menu_name}_summary_path") %>';
-    var uid = '<%= twitter_user.uid %>';
+    var apiEndpoint = '<%= send("api_v1_#{menu_name}_summary_path", uid: twitter_user.uid) %>';
+    var signedIn = <%= user_signed_in? %>;
     var progressMessages = {
-      empty: "<%= t('timelines.show.not_hacked_with_details_html') %>",
-      any: '<%= t('timelines.show.hacked_with_details_html') %>'
+      ok: "<%= t('timelines.show.not_hacked_with_details_html') %>",
+      found: '<%= t('timelines.show.hacked_with_details_html') %>',
+      login: '<%= t('timelines.show.sign_in_to_protect_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/#{menu_name}", redirect_path: timeline_path(twitter_user))) %>'
     };
 
-    function loadProtectionSummary () {
-      var $summaryBox = $('.menu-items.' + menuName);
-      var $progressMsgBox = $summaryBox.find('.progress-msg');
-
-      var $resultLinkButtons = {
-        reload: $summaryBox.find('.reload-btn'),
-        more: $summaryBox.find('.btn-view-more')
-      };
-
-      $.getJSON(apiEndpoint, {uid: uid}, function(data) {
+    function loadProtectionSummary (apiEndpoint, summaryBox, progressMessages) {
+      $.getJSON(apiEndpoint, function(data) {
         console.log(data);
 
         if (!data.count || data.count <= 0) {
-          $summaryBox.find('.result-link').attr('href', '#').attr('onclick', 'return false;');
-          $progressMsgBox.html(progressMessages.empty).show();
-          $resultLinkButtons.reload.show();
-          $("div[data-replaced-by='" + menuName + "']").remove();
-          $summaryBox.show();
+          summaryBox.link(false);
+          summaryBox.messageBox().html(progressMessages.ok).show();
+          summaryBox.reloadBtn().show();
+          summaryBox.show();
           return;
         }
 
-        $resultLinkButtons.more.find('span').text(data.count).end().show();
-        $progressMsgBox.removeClass('text-muted').addClass('text-danger').html(progressMessages.any).show();
-        $("div[data-replaced-by='" + menuName + "']").remove();
-        $summaryBox.show();
+        summaryBox.viewMoreBtn(data.count).show();
+        summaryBox.messageBox().switchClass('text-muted', 'text-danger').html(progressMessages.found).show();
+        summaryBox.show();
       });
     }
 
-    var fromCrawler = <%= request.from_crawler? %>;
+    var summaryBox = new SummaryBox(menuName);
 
-    if (fromCrawler) {
-      // Do nothing.
-    } else {
-      $('.placeholder-wrapper.' + menuName)
-        .lazyload()
-        .one('appear', function () {
-          console.log('appear', menuName);
-          loadProtectionSummary(apiEndpoint, uid, menuName, progressMessages);
-        });
-    }
+    summaryBox.lazyload(function () {
+      if (signedIn) {
+        loadProtectionSummary(apiEndpoint, summaryBox, progressMessages);
+      } else {
+        summaryBox.link(false);
+        summaryBox.messageBox().html(progressMessages.login).show();
+        summaryBox.signInBtn().show();
+        summaryBox.show();
+      }
+    });
   });
 </script>
