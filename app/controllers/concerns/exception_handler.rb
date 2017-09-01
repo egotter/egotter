@@ -81,4 +81,10 @@ module Concerns::ExceptionHandler
     reason = (ex.class.name.demodulize.underscore rescue 'exception')
     t('before_sign_in.something_wrong_html', url: kick_out_error_path(reason))
   end
+
+  private
+
+  def user_link(*args)
+    view_context.user_link(*args)
+  end
 end
