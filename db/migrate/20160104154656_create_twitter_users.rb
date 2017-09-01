@@ -8,7 +8,7 @@ class CreateTwitterUsers < ActiveRecord::Migration
       t.text    :user_info,      null: false
       t.integer :search_count,   null: false, default: 0
       t.integer :update_count,   null: false, default: 0
-      t.integer :user_id,        null: false
+      t.integer :user_id,        null: false, default: -1
 
       t.timestamps null: false
     end
