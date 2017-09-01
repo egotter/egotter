@@ -1,10 +1,7 @@
-module StatusesHelper
-
-
+module PublicTweetsHelper
   def tweets_for(keyword)
-    cache = Util::TweetsCache.new(redis)
-    if cache.exists?(keyword)
-      JSON.parse(cache.get(keyword)).map { |tweet| Hashie::Mash.new(tweet) }
+    if Util::TweetsCache.exists?(keyword)
+      JSON.parse(Util::TweetsCache.get(keyword)).map { |tweet| Hashie::Mash.new(tweet) }
     else
       CreateTweetsWorker.perform_async(keyword)
       []

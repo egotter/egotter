@@ -8,6 +8,20 @@ module Util
       @redis = redis
     end
 
+    class << self
+      def exists?(word)
+        new(Redis.client).exists?(word)
+      end
+
+      def set(word, json)
+        new(Redis.client).set(word, json)
+      end
+
+      def get(word)
+        new(Redis.client).get(word)
+      end
+    end
+
     def normalize_key(word)
       "tweets_cache_for:#{word}"
     end

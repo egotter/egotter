@@ -21,5 +21,11 @@
 
 .clusters.separator
 
-= render partial: 'common/public_tweets'
+#public-tweets-wrapper
+:javascript
+  $(function () {
+    var url = '#{load_public_tweets_path}';
+    new AsyncLoader(url, '#public-tweets-wrapper').load();
+  });
+
 .clusters.lead.in-top-page.text-center= t('clusters.new.lead_004_html')

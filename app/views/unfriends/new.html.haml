@@ -21,5 +21,11 @@
 
 .unfriends.separator
 
-= render partial: 'common/public_tweets'
+#public-tweets-wrapper
+:javascript
+  $(function () {
+    var url = '#{load_public_tweets_path}';
+    new AsyncLoader(url, '#public-tweets-wrapper').load();
+  });
+
 .unfriends.lead.in-top-page.text-center= t('unfriends.new.lead_004').html_safe
