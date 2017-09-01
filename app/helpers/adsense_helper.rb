@@ -100,4 +100,8 @@ module AdsenseHelper
       when true  then '6454097215' # 0198
     end
   end
+
+  def async_adsense_wrapper_id
+    "async-adsense-#{SecureRandom.urlsafe_base64(10)}"
+  end
 end

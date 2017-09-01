@@ -116,6 +116,8 @@ Rails.application.routes.draw do
   resources :modal_open_logs, only: :create
   resources :polling_logs, only: :create
 
+  get 'load_adsense', to: 'adsense#load', as: :load_adsense
+
   get 'relationships/:src_uid/:dst_uid/waiting', to: redirect('/')
   get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')
   get 'relationships/:src_screen_name/:dst_screen_name', to: redirect('/')

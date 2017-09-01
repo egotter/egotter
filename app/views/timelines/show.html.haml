@@ -14,7 +14,7 @@
 
 %h2.h3= t('timelines.show.heading', user: @twitter_user.mention_name)
 
-= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+= render(partial: 'common/async_adsense', locals: {action: action_name, vertical: :top})
 
 %script{id: 'user-template', type: 'x-tmpl-mustache'}
   = link_to CGI::unescape(timeline_path(screen_name: '{{screen_name}}', via: "#{controller_name}/#{action_name}/{{menu_name}}")), style: 'display: inline-block;' do
@@ -61,7 +61,7 @@
   .col-md-6
     = render partial: 'timelines/update_history', locals: {histories: UpdateHistories.new(@twitter_user.uid), twitter_user: @twitter_user}
 
-= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom})
+= render(partial: 'common/async_adsense', locals: {action: action_name, vertical: :bottom})
 
 %h2.h4= t('.about_this_page', user: @twitter_user.mention_name)
 .this-page-is= t('.this_page_is_html', user: @twitter_user.mention_name)
