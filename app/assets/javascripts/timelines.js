@@ -106,14 +106,3 @@ SummaryBox.prototype.lazyload = function (callback) {
       callback();
     });
 };
-
-window.PublicTweets = function (url, selector) {
-  this.url = url;
-  this.selector = selector;
-};
-
-PublicTweets.prototype.load = function () {
-  var url = this.url;
-  var $wrapper = $(this.selector);
-  $.getJSON(url, function (data) { $wrapper.html(data.html); });
-};

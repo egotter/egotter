@@ -117,6 +117,7 @@ Rails.application.routes.draw do
   resources :polling_logs, only: :create
 
   get 'load_adsense', to: 'adsense#load', as: :load_adsense
+  get 'load_public_tweets', to: 'public_tweets#load', as: :load_public_tweets
 
   get 'relationships/:src_uid/:dst_uid/waiting', to: redirect('/')
   get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')

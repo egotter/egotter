@@ -5,5 +5,5 @@
     $(function () {
       var url = '#{load_adsense_path(action: action, vertical: vertical)}';
       var selector = '#{id}';
-      new Adsense(url, '#' + selector).lazyload();
+      new AsyncLoader(url, '#' + selector).lazyload();
     });
