@@ -3,6 +3,9 @@ require 'active_support/concern'
 module Concerns::Validation
   extend ActiveSupport::Concern
   include Concerns::ExceptionHandler
+  include CrawlersHelper
+  include PathsHelper
+  include SearchHistoriesHelper
 
   included do
 
@@ -10,11 +13,7 @@ module Concerns::Validation
 
   def need_login
     unless user_signed_in?
-      if controller_name == 'relationships'
-        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_for_relationships_html', url: kick_out_error_path('need_login'))
-      else
-        redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
-      end
+      redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
     end
   end
 
@@ -43,7 +42,7 @@ module Concerns::Validation
       return false
     end
 
-    if request.from_crawler? || from_minor_crawler?(request.user_agent)
+    if from_crawler?
       redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
       return false
     end
@@ -156,7 +155,7 @@ module Concerns::Validation
   end
 
   def too_many_searches?
-    return false if request.from_crawler? || from_minor_crawler?(request.user_agent) || user_signed_in?
+    return false if from_crawler? || user_signed_in?
 
     limit = Rails.configuration.x.constants['too_many_searches']
     if today_search_histories_size >= limit

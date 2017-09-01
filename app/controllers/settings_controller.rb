@@ -1,5 +1,4 @@
 class SettingsController < ApplicationController
-  include SearchesHelper
 
   before_action only: %i(index) do
     push_referer

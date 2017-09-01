@@ -3,14 +3,15 @@ require 'active_support/concern'
 
 module Concerns::Logging
   extend ActiveSupport::Concern
-  include SearchesHelper
+  include CrawlersHelper
+  include SessionsHelper
 
   included do
 
   end
 
   def create_search_log(options = {})
-    if request.from_crawler? || from_minor_crawler?(request.user_agent)
+    if from_crawler?
       return create_crawler_log
     end
 
@@ -171,27 +172,19 @@ module Concerns::Logging
 
   def find_uid_and_screen_name
     if instance_variable_defined?(:@tu) && !@tu.nil? # create
-      if @tu.is_a?(Array)
-        uid = @tu[0].uid
-        screen_name = @tu[0].screen_name
-      else
-        uid = @tu.uid
-        screen_name = @tu.screen_name
-      end
+      uid = @tu.uid
+      screen_name = @tu.screen_name
     elsif instance_variable_defined?(:@twitter_user) && !@twitter_user.nil?
       uid = @twitter_user.uid
       screen_name = @twitter_user.screen_name
-    elsif instance_variable_defined?(:@twitter_users) && !@twitter_users[0].nil?
-      uid = @twitter_users[0].uid
-      screen_name = @twitter_users[0].screen_name
     else
-      uid = ::TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
+      uid = TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid) # waiting
         uid = tu.uid
         screen_name = tu.screen_name
       else
-        if uid != -1 && ::TwitterUser.exists?(uid: uid)
-          screen_name = ::TwitterUser.latest(uid).screen_name
+        if uid != -1 && TwitterUser.exists?(uid: uid)
+          screen_name = TwitterUser.latest(uid).screen_name
         else
           uid = screen_name = -1
         end
@@ -256,23 +249,6 @@ module Concerns::Logging
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     ''
-  end
-
-  def fingerprint
-    if request.from_crawler? || from_minor_crawler?(request.user_agent)
-      return -1
-    end
-
-    if session[:fingerprint].nil? || session[:fingerprint].to_s == '-1'
-      session[:fingerprint] = session.id.nil? ? '-1' : session.id
-    end
-
-    if session[:fingerprint] == '-1'
-      digest = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")
-      session[:fingerprint] = "digest-#{digest}"
-    end
-
-    session[:fingerprint]
   end
 
   def truncated_user_agent

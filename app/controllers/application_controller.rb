@@ -1,9 +1,15 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper
+  include UsersHelper
+  include TwitterUsersHelper
+  include CrawlersHelper
+  include SessionsHelper
+  include Concerns::Validation
   include Concerns::Logging
-  include SearchHistoriesHelper
 
-  TwitterUser # Avoid `uninitialized constant`
+  # Avoid `uninitialized constant`
+  TwitterUser
+  TwitterDB::User
 
   before_action :set_locale
 
@@ -37,7 +43,7 @@ class ApplicationController < ActionController::Base
     sign_in = sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search)
 
     if recoverable_request?
-      logger.warn "Recoverable CSRF token error #{session[:fingerprint]&.truncate(15)} #{debug_str}"
+      logger.warn "Recoverable CSRF token error #{fingerprint&.truncate(15)} #{debug_str}"
       return redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
     end
 
@@ -47,7 +53,7 @@ class ApplicationController < ActionController::Base
   def not_found
     logger.info "Not found: #{debug_str}"
 
-    if request.from_crawler? || from_minor_crawler?(request.user_agent) || request.method != 'GET' || request.xhr?
+    if from_crawler? || request.method != 'GET' || request.xhr?
       return head :not_found
     end
 

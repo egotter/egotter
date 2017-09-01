@@ -12,7 +12,7 @@
       <script>
         $(function () {
           var menuName = '<%= menu_name %>';
-          var fromCrawler = <%= request.from_crawler? %>;
+          var fromCrawler = <%= from_crawler? %>;
 
           function drawChart () {
             $("div[data-replaced-by='" + menuName + "']").remove();

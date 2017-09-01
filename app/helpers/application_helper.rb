@@ -7,10 +7,6 @@ module ApplicationHelper
     %w(new waiting all).exclude?(action_name) && request.from_pc? && @twitter_user
   end
 
-  def show_see_at_once_button?
-    true
-  end
-
   def show_common_friends?(twitter_user)
     user_signed_in? && current_user.uid != twitter_user.uid.to_i && current_user.twitter_user
   end
@@ -38,47 +34,11 @@ module ApplicationHelper
     @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
   end
 
-  def admin_signed_in?
-    user_signed_in? && current_user.admin?
-  end
-
-  def current_user_id
-    @current_user_id ||= user_signed_in? ? current_user.id : -1
-  end
-
-  def current_user_uid
-    @current_user_uid ||= user_signed_in? ? current_user.uid.to_i : -1
-  end
-
   def egotter_share_text(shorten_url: false, via: nil)
     url = 'https://egotter.com'
     url += '?' + {via: via}.to_query if via
     url = Util::UrlShortener.shorten(url) if shorten_url
     t('tweet_text.top', kaomoji: Kaomoji.happy) + ' ' + url
-  end
-
-  def current_user_friend_uids
-    if instance_variable_defined?(:@current_user_friend_uids)
-      @current_user_friend_uids
-    else
-      @current_user_friend_uids = (current_user&.twitter_user&.friend_uids || [])
-    end
-  end
-
-  def current_user_is_following?(uid)
-    current_user_friend_uids.include? uid.to_i
-  end
-
-  def current_user_friend_screen_names
-    if instance_variable_defined?(:@current_user_friend_screen_names)
-      @current_user_friend_screen_names
-    else
-      @current_user_friend_screen_names = (current_user&.twitter_user&.friends&.pluck(:screen_name) || [])
-    end
-  end
-
-  def from_minor_crawler?(user_agent)
-    user_agent.to_s.match /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider/
   end
 
   def kick_out_error_path(reason)

@@ -3,7 +3,7 @@ module ScoresHelper
     score = Score.find_by(uid: uid)
 
     unless score
-      if request.from_crawler? || from_minor_crawler?(request.user_agent)
+      if from_crawler?
         score = Score.new(uid: uid, influence_json: {influencers: [], influencees: []}.to_json)
       else
         begin

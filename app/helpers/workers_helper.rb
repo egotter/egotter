@@ -1,6 +1,6 @@
 module WorkersHelper
   def enqueue_create_twitter_user_job_if_needed(uid, user_id:, screen_name:)
-    return if request.from_crawler? || from_minor_crawler?(request.user_agent)
+    return if from_crawler?
     return if uid.to_i == User::EGOTTER_UID
 
     return if Util::SearchRequests.exists?(uid)
@@ -35,12 +35,12 @@ module WorkersHelper
   end
 
   def enqueue_update_search_histories_job_if_needed(uid)
-    return if request.from_crawler? || from_minor_crawler?(request.user_agent)
+    return if from_crawler?
     UpdateSearchHistoriesWorker.perform_in(1.minutes, fingerprint, current_user_id, uid)
   end
 
   def enqueue_update_usage_stat_job_if_needed(uid)
-    return if request.from_crawler? || from_minor_crawler?(request.user_agent)
+    return if from_crawler?
     UpdateUsageStatWorker.perform_async(uid)
   end
 end

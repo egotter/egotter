@@ -2,7 +2,6 @@ require 'active_support/concern'
 
 module Concerns::Showable
   extend ActiveSupport::Concern
-  include SearchesHelper
   include Concerns::Validation
 
   included do

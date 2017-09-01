@@ -1,4 +1,5 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+  include SessionsHelper
 
   def twitter
     via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
@@ -10,7 +11,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     begin
       user = User.update_or_create_for_oauth_by!(user_params) do |user, context|
         create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
-        SearchHistory.where(session_id: session[:fingerprint], user_id: -1).update_all(user_id: user.id)
+        SearchHistory.where(session_id: fingerprint, user_id: -1).update_all(user_id: user.id)
         FollowRequest.create(user_id: user.id) if follow
         TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
       end

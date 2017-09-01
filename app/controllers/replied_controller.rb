@@ -1,7 +1,4 @@
 class RepliedController < FriendsAndFollowers
-  include Concerns::Validation
-  include SearchesHelper
-
   def all
     super
     render template: 'friends/all' unless performed?

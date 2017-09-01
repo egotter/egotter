@@ -1,7 +1,5 @@
 module Api
   class Base < ApplicationController
-    include SearchesHelper
-    include Concerns::Validation
 
     layout false
 
