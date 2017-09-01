@@ -1,5 +1,5 @@
-<% form_tag_id = "search-form-#{Random.rand(1000)}" %>
-<% input_tag_id = "search-input-#{Random.rand(1000)}" %>
+<% form_tag_id = search_form_id %>
+<% input_tag_id = search_input_id %>
 
 <%= form_tag searches_path, id: form_tag_id, method: :post do %>
 <label for="screen_name" class="sr-only"><%= t('searches.common.twitter_id') %></label>
@@ -21,10 +21,13 @@
 <% end %>
 
 <script>
+  <% unless current_user_friend_screen_names_rendered? %>
+    window.current_user_friend_screen_names = <%= raw current_user_friend_screen_names.to_json %>;
+  <% end %>
+
   $(function () {
-    var friends = <%= raw current_user_friend_screen_names.to_json %>;
     $("#<%= input_tag_id %>").autocomplete({
-      source: friends,
+      source: window.current_user_friend_screen_names || [],
       minLength: 2,
       appendTo: "#<%= form_tag_id %>"
     });

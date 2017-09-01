@@ -27,6 +27,15 @@ module UsersHelper
     end
   end
 
+  def current_user_friend_screen_names_rendered?
+    if instance_variable_defined?(:@current_user_friend_screen_names_rendered)
+      @current_user_friend_screen_names_rendered
+    else
+      @current_user_friend_screen_names_rendered = true
+      false
+    end
+  end
+
   def admin_signed_in?
     user_signed_in? && current_user.admin?
   end
