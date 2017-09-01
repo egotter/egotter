@@ -74,7 +74,13 @@
           .col-xs-12.header-container
             = render partial: 'layouts/header'
 
-    = render partial: 'layouts/search_histories' unless under_maintenance?
+    - unless under_maintenance?
+      #search-histories-wrapper
+      :javascript
+        $(function () {
+          var url = '#{load_search_histories_path}';
+          new AsyncLoader(url, '#search-histories-wrapper').load();
+        });
 
     - if notice || alert
       .container
