@@ -20,7 +20,7 @@
   </div>
 
   <div class="twitter users row">
-    <%= render partial: 'twitter/user', collection: @update_histories.to_a, cached: true %>
+    <%= render partial: 'twitter/user', collection: @update_histories.to_a, cached: true, locals: {ad: false} %>
   </div>
 
   <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}) %>

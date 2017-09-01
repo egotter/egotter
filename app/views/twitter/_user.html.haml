@@ -1,7 +1,7 @@
 - uids << user.uid.to_i if defined?(uids) && uids.is_a?(Array)
 - via = "#{controller_name}/#{action_name}" if !defined?(via) || via.blank?
 
-- if defined?(user_counter) && user_counter == 3
+- if ad && defined?(user_counter) && user_counter == 3
   = render partial: 'common/adsense', locals: {action: action_name, vertical: :slit}
   %div{style: 'height: 0; border-top: 1px solid #e6e6e6; margin-bottom: 15px;'}
 
