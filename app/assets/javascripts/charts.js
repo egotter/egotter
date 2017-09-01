@@ -1,4 +1,4 @@
-window.common_pie_chart_options = {
+window.pieChartOptions = {
   credits: false,
   colors: ['rgba(42, 161, 152, 1.0)', 'rgba(181, 137, 0, 0.4)', 'rgba(203, 75, 22, 0.4)', 'rgba(220, 50, 47, 0.4)'],
   exporting: false,
@@ -88,7 +88,7 @@ window.usage_stats_column_chart_options = {
   }
 };
 
-window.usage_stats_tweets_stat_options = {
+window.barChartOptions = {
   credits: false,
   colors: ['rgba(181, 137, 0, 0.4)', 'rgba(42, 161, 152, 1.0'],
   chart: {

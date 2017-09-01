@@ -60,7 +60,7 @@
 :javascript
   (function () {
     var friendsStat = #{stat.to_json.html_safe};
-    var barChart = window.usage_stats_tweets_stat_options;
+    var barChart = window.barChartOptions;
     barChart.xAxis.categories = ['#{UsageStat.human_attribute_name(:friends_count)}', '#{UsageStat.human_attribute_name(:followers_count)}'];
     barChart.series = [{
       name: '#{t("usage_stats.friends_stat.nonexistence")}',

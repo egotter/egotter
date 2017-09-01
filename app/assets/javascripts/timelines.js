@@ -22,7 +22,7 @@ function loadSummary (apiEndpoint, summaryBox, progressMessages) {
     });
     summaryBox.viewMoreBtn(data.count).show();
 
-    var graphOption = $.extend(true, {}, window.common_pie_chart_options);
+    var graphOption = $.extend(true, {}, window.pieChartOptions);
     graphOption.series[0].data = data.chart;
 
     summaryBox.show();

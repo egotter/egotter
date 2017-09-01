@@ -68,7 +68,7 @@
     $(function () { $('.hour-chart').highcharts(hourStat);});
 
     var breakdownStat = #{stat[:breakdown].to_json.html_safe};
-    var barChart = $.extend(true, {}, window.usage_stats_tweets_stat_options);
+    var barChart = $.extend(true, {}, window.barChartOptions);
     barChart.xAxis.categories = [
       '#{UsageStat.human_attribute_name(:mentions_count)}',
       '#{UsageStat.human_attribute_name(:media_count)}',
