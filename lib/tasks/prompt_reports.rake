@@ -1,11 +1,11 @@
 namespace :prompt_reports do
   desc 'send'
   task send: :environment do
-    sigint = false
-    Signal.trap 'INT' do
-      puts 'intercept INT and stop ..'
-      sigint = true
-    end
+    sigint = Util::Sigint.new.trap
+
+    start_time = Time.zone.now
+    reports_count = PromptReport.all.size
+    users_count = User.all.size
 
     deadline =
       case
@@ -13,6 +13,9 @@ namespace :prompt_reports do
         when ENV['DEADLINE'].match(/\d+\.(minutes?|hours?)/) then Time.zone.now + eval(ENV['DEADLINE'])
         else Time.zone.parse(ENV['DEADLINE'])
       end
+
+    puts "\nstarted:"
+    puts %Q(  start: #{start_time}#{", deadline: #{deadline}" if deadline}, reports: #{reports_count}, users: #{users_count})
 
     user_ids = ENV['USER_IDS']
     user_ids =
@@ -28,11 +31,7 @@ namespace :prompt_reports do
     ids[:active] = User.active(14).where(id: ids[:authorized]).pluck(:id)
     ids[:sendable] = User.can_send_dm.where(id: ids[:active]).pluck(:id)
 
-    start_time = Time.zone.now
-    reports_count = PromptReport.all.size
-    users_count = User.all.size
-    puts "\nstarted:"
-    puts %Q(  start: #{start_time}#{", deadline: #{deadline}" if deadline}, reports: #{reports_count}, users: #{users_count} #{ids.map { |k, v| "#{k}: #{v.size}" }.join(', ')}\n\n)
+    puts %Q(  stats: #{ids.map { |k, v| "#{k}: #{v.size}" }.join(', ')}\n\n)
 
     processed = 0
     fatal = false
@@ -47,24 +46,29 @@ namespace :prompt_reports do
       end
       processed += 1
 
-      if i % 100 == 0
-        avg = "#{'avg %4.1f' % ((Time.zone.now - start_time) / (i + 1))} seconds"
-        elapsed = "#{'elapsed %.1f' % (Time.zone.now - start_time)} seconds"
-        remaining = deadline ? ", remaining #{'%.1f' % (deadline - Time.zone.now)} seconds" : ''
-        puts "#{Time.zone.now}: #{user_id}, #{avg}, #{elapsed}#{remaining}"
-      end
+      prompt_reports_print_progress(start_time, deadline, i) if i % 1000 == 0
 
-      break if (deadline && Time.zone.now > deadline) || sigint || fatal
+      break if (deadline && Time.zone.now > deadline) || sigint.trapped? || fatal
     end
 
     if errors.any?
       puts "\nerrors:"
-      errors.each { |error| puts "  #{error[:time]}: #{error[:user_id]}, #{error[:error_class]} #{error[:error_message]}" }
+      puts "  #{errors.map { |k, v| "#{k}: #{v.size}" }.join(', ')}"
     end
 
     new_reports_count = PromptReport.all.size
 
-    puts "\n#{(sigint || fatal ? 'suspended:' : 'finished:')}"
-    puts %Q(  start: #{start_time}, finish: #{Time.zone.now}#{", deadline: #{deadline}" if deadline}, reports: #{new_reports_count}, users: #{users_count}, #{ids.map { |k, v| "#{k}: #{v.size}" }.join(', ')}, processed: #{processed}, send: #{new_reports_count - reports_count}, errors: #{errors.size}\n\n)
+    puts "\n#{(sigint.trapped? || fatal ? 'suspended:' : 'finished:')}"
+    puts %Q(  start: #{start_time}, finish: #{Time.zone.now}#{", deadline: #{deadline}" if deadline}, reports: #{new_reports_count}, users: #{users_count}, errors: #{errors.size})
+    puts %Q(  stats: #{ids.map { |k, v| "#{k}: #{v.size}" }.join(', ')}, processed: #{processed}, send: #{new_reports_count - reports_count}\n\n)
+  end
+
+  def prompt_reports_print_progress(start_time, deadline, index)
+    puts 'progress:' if index == 0
+    avg = "#{'avg %4.1f' % ((Time.zone.now - start_time) / (index + 1))} seconds"
+    elapsed = "#{'elapsed %.1f' % (Time.zone.now - start_time)} seconds"
+    remaining = deadline ? ", remaining #{'%.1f' % (deadline - Time.zone.now)} seconds" : ''
+    puts "  #{Time.zone.now}: #{avg}, #{elapsed}#{remaining}"
+
   end
 end
