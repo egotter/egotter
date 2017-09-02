@@ -19,6 +19,7 @@ namespace :twitter_users do
     skip_if_persisted = ENV['SKIP'].present?
 
     specified_uids.each.with_index do |uid, i|
+      next if uid == User::EGOTTER_UID
       if skip_if_persisted
         persisted_uids ||= TwitterUser.uniq.pluck(:uid).map(&:to_i)
         if persisted_uids.include?(uid)
