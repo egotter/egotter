@@ -57,7 +57,7 @@ module Concerns::TwitterUser::Batch
         end
       end
 
-      if twitter_user_changed?(uid, friend_uids, follower_uids)
+      if twitter_user_changed?(TwitterUser.latest(uid), friend_uids, follower_uids)
         if create_twitter_user && create_twitter_user(twitter_user, friend_uids, follower_uids)
           logger "Created #{uid}"
         end
@@ -209,8 +209,7 @@ module Concerns::TwitterUser::Batch
       end
     end
 
-    def self.twitter_user_changed?(uid, friend_uids, follower_uids)
-      twitter_user = TwitterUser.latest(uid)
+    def self.twitter_user_changed?(twitter_user, friend_uids, follower_uids)
       twitter_user.nil? ||
         twitter_user.friendships.pluck(:friend_uid).sort != friend_uids.sort ||
         twitter_user.followerships.pluck(:follower_uid).sort != follower_uids.sort

@@ -3,7 +3,7 @@ class CreatePromptReportWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
-    user = User.find(user_id)
+    user = User.includes(:notification_setting).find(user_id)
 
     return if Util::MessagingRequests.exists?(user.uid)
     Util::MessagingRequests.add(user.uid)
@@ -14,62 +14,60 @@ class CreatePromptReportWorker
       screen_name: user.screen_name,
       bot_uid: user.uid,
       status: false,
+      message: '',
       call_count: -1
     )
     client = user.api_client
 
     unless user.authorized? && user.can_send_dm? && user.active?(14)
-      return log.update!(message: "authorized: #{user.authorized?}, can_send_dm: #{user.can_send_dm?}, active: #{user.active?(14)}")
+      return log.update!(error_message: "authorized: #{user.authorized?}, can_send_dm: #{user.can_send_dm?}, active: #{user.active?(14)}")
     end
 
-    twitter_user = (user.last_access_at ? TwitterUser.till(user.last_access_at) : TwitterUser).latest(user.uid.to_i)
-    if twitter_user.nil?
-      # TODO Create TwitterUser
-      return log.update!(message: 'No TwitterUser')
-    end
+    return log.update!(error_message: "Couldn't find TwitterUser") unless TwitterUser.exists?(uid: user.uid)
 
-    if twitter_user.friendless?
-      return log.update!(message: 'Too many friends')
-    end
+    t_user = client.user(user.uid)
+    return log.update!(error_message: 'Suspended') if t_user[:suspended]
+    return log.update!(error_message: 'Too many friends') if TwitterUser.too_many_friends?(t_user, login_user: user)
 
-    t_user = client.user(user.uid.to_i)
-    if t_user[:suspended]
-      return log.update!(message: 'Suspended')
-    end
+    twitter_user = TwitterUser.till(user.last_access_at).latest(user.uid) if user.last_access_at
+    twitter_user = TwitterUser.latest(user.uid) unless twitter_user
+    return log.update!(error_message: 'Too many friends') if twitter_user.too_many_friends?(login_user: user)
+    return log.update!(error_message: 'Friendless') if twitter_user.friendless?
 
-    new_tu = TwitterUser.build_by_user(t_user)
-    changes = twitter_user.diff(new_tu, only: %i(followers_count))
+    friend_uids, follower_uids = TwitterUser::Batch.fetch_friend_ids_and_follower_ids(user.uid, client: client)
+    return log.update!(error_message: "Couldn't fetch friend_ids or follower_ids") if friend_uids.nil? || follower_uids.nil?
+    return log.update!(error_message: 'Unfollowers not increased') unless unfollowers_increased?(twitter_user, friend_uids, follower_uids)
 
-    if changes.empty?
-      return log.update!(message: 'followers_count not changed')
-    end
-
-    if changes[:followers_count][0] <= changes[:followers_count][1]
-      return log.update!(message: 'followers_count increased')
-    end
+    changes = {followers_count: [twitter_user.followerships.size, follower_uids.size]}
 
     old_report = PromptReport.latest(user.id)
     if old_report && changes == JSON.parse(old_report.changes_json, symbolize_names: true)
-      return log.update!(message: 'Message not changed')
+      return log.update!(error_message: 'Message not changed')
     end
 
     # TODO Implement email
     # TODO Implement onesignal
 
     begin
-      PromptReport.you_are_removed(user.id, changes_json: changes.to_json).deliver
+      dm = PromptReport.you_are_removed(user.id, changes_json: changes.to_json).deliver
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
-      return log.update!(message: 'Creating DM failed')
+      return log.update!(error_message: "Couldn't create DM")
     end
 
-    log.update!(status: true, message: 'ok')
+    log.update!(status: true, message: dm.text.remove(/\R/).gsub(%r{https?://[\S]+}, 'URL').truncate(300))
   rescue => e
     if e.message == 'Invalid or expired token.'
       user.update(authorized: false)
     end
 
     logger.warn "#{e.class}: #{e.message.truncate(150)} #{user_id}"
-    log.update!(message: e.message.truncate(150))
+    log.update!(error_message: e.message.truncate(150))
+  end
+
+  private
+
+  def unfollowers_increased?(twitter_user, friend_uids, follower_uids)
+    (twitter_user.followerships.pluck(:follower_uid) - follower_uids).any?
   end
 end
