@@ -28,6 +28,11 @@
   = t('common.show.additional_func')
   = link_to(t('common.show.sign_in'), sign_in_path(via: "#{controller_name}/#{action_name}/additional_func", redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
+.via-dm-box.alert.alert-warning.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('common.show.via_dm')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: "#{controller_name}/#{action_name}/via_dm", redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+
 :javascript
   (function () {
     var checkForUpdatesPath = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: @jid)}';
@@ -37,6 +42,7 @@
     var authorized = #{user_signed_in? && current_user.authorized?};
     var jid = "#{jid}";
     var additionalFunc = #{!user_signed_in? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
+    var viaDM = #{!user_signed_in? && via_dm?};
 
     var $updateBox = $('.update-box');
     var $refreshBox = $('.refresh-box');
@@ -44,8 +50,9 @@
     var $followBox = $('.follow-box');
     var $invalidTokenBox = $('.invalid-token-box');
     var $additionalFuncBox = $('.additional-func-box');
+    var $viaDMBox = $('.via-dm-box');
 
-    $.each([$updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox], function (i, btn) {
+    $.each([$updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox], function (i, btn) {
       btn.on('close.bs.alert', function () {
         btn.parent().hide();
       });
@@ -78,6 +85,10 @@
 
       if (additionalFunc) {
         $additionalFuncBox.show().sticky();
+      }
+
+      if (viaDM) {
+        $viaDMBox.show().sticky();
       }
 
       if (jid) {

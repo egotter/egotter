@@ -14,6 +14,6 @@ module CrawlersHelper
   end
 
   def maybe_bot?
-    !user_signed_in? && %i(SymbianOS BlackBerry Linux UNKNOWN).include?(request.os)
+    !user_signed_in? && via_dm? && %i(SymbianOS BlackBerry Linux UNKNOWN).include?(request.os)
   end
 end

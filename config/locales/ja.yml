@@ -582,6 +582,7 @@ ja:
       need_follow: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'
       invalid_token: '%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
       additional_func: 'リムられやブロられは、ログインすると結果がより正確になります。'
+      via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
       sign_in: 'ログインする'
       follow: 'フォローする'
       let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
