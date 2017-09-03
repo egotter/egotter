@@ -12,4 +12,8 @@ module CrawlersHelper
   def from_minor_crawler?(user_agent)
     user_agent.to_s.match /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider/
   end
+
+  def maybe_bot?
+    !user_signed_in? && %i(SymbianOS BlackBerry Linux UNKNOWN).include?(request.os)
+  end
 end

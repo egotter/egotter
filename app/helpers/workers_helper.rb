@@ -1,6 +1,6 @@
 module WorkersHelper
   def enqueue_create_twitter_user_job_if_needed(uid, user_id:, screen_name:)
-    return if from_crawler?
+    return if from_crawler? || maybe_bot?
     return if uid.to_i == User::EGOTTER_UID
 
     return if Util::SearchRequests.exists?(uid)
