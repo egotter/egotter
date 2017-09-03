@@ -29,7 +29,7 @@ module Concerns::Report::Common
       user.notification_setting.update!(touch_column => Time.zone.now)
     end
 
-    self
+    dm
   end
 
   def touch_column

@@ -9,6 +9,8 @@ class CreateCreatePromptReportLogs < ActiveRecord::Migration
       t.string   :reason,      null: false, default: ''
       t.text     :message,     null: false
       t.integer  :call_count,  null: false, default: -1
+      t.string   :error_class,   null: false, default: ''
+      t.string   :error_message, null: false, default: ''
 
       t.datetime :created_at,  null: false
     end

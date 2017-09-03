@@ -14,6 +14,18 @@ module Concerns::TwitterUser::Validation
     validates_with Validations::DuplicateRecordValidator, on: :create
   end
 
+  class_methods do
+    def too_many_friends?(t_user, login_user:)
+      return false if login_user.present? && t_user[:id] == User::EGOTTER_UID
+
+      if t_user[:friends_count] + t_user[:followers_count] > (login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS)
+        return true
+      end
+
+      false
+    end
+  end
+
   def valid_uid?
     if uid&.to_s&.match(Validations::UidValidator::REGEXP)
       true

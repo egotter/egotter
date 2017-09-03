@@ -29,7 +29,7 @@ namespace :prompt_reports do
     ids = {specified: user_ids}
     ids[:authorized] = User.authorized.where(id: ids[:specified]).pluck(:id)
     ids[:active] = User.active(14).where(id: ids[:authorized]).pluck(:id)
-    ids[:sendable] = User.can_send_dm.where(id: ids[:active]).pluck(:id)
+    ids[:can_send] = User.can_send_dm.where(id: ids[:active]).pluck(:id)
 
     puts %Q(  stats: #{ids.map { |k, v| "#{k}: #{v.size}" }.join(', ')}\n\n)
 
@@ -37,15 +37,20 @@ namespace :prompt_reports do
     fatal = false
     errors = []
 
-    ids[:sendable].each.with_index do |user_id, i|
+    User.where(id: ids[:can_send]).select(:id, :uid).find_each.with_index do |user, i|
+      unless TwitterUser.exists?(uid: user.uid)
+        # TwitterUser::Batch.fetch_and_create(user.uid) # TODO Create in background
+        next
+      end
+
       begin
-        Rails.logger.silence(Logger::WARN) { CreatePromptReportWorker.new.perform(user_id) }
+        Rails.logger.silence(Logger::WARN) { CreatePromptReportWorker.new.perform(user.id) }
       rescue => e
-        errors << {time: Time.zone.now, user_id: user_id, error_class: e.class, error_message: e.message}
+        errors << {time: Time.zone.now, user_id: user.id, error_class: e.class, error_message: e.message}
         fatal = errors.size >= processed / 10
       end
-      processed += 1
 
+      processed += 1
       prompt_reports_print_progress(start_time, deadline, i) if i % 1000 == 0
 
       break if (deadline && Time.zone.now > deadline) || sigint.trapped? || fatal
@@ -53,7 +58,7 @@ namespace :prompt_reports do
 
     if errors.any?
       puts "\nerrors:"
-      puts "  #{errors.map { |k, v| "#{k}: #{v.size}" }.join(', ')}"
+      puts "  #{errors.map(&:inspect).join(', ')}"
     end
 
     new_reports_count = PromptReport.all.size
