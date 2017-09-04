@@ -7,6 +7,7 @@ module SearchHistoriesHelper
   def search_histories_size
     condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
     condition.merge!(created_at: 1.day.ago..Time.zone.now)
+    condition.merge!(plan_id: (current_user&.customer&.has_active_plan? ? current_user.customer.plan_id : [nil, '']))
     SearchHistory.where(condition).count('distinct uid')
   end
 
@@ -16,7 +17,7 @@ module SearchHistoriesHelper
 
   def search_histories_limit
     if user_signed_in?
-      Rails.configuration.x.constants['free_plan_search_histories_limit']
+      current_user.customer&.has_active_plan? ? current_user.customer.plan.search_limit : Rails.configuration.x.constants['free_plan_search_histories_limit']
     else
       Rails.configuration.x.constants['anonymous_search_histories_limit']
     end

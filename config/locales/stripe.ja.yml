@@ -1,0 +1,116 @@
+ja:
+  stripe:
+    customers:
+      update:
+        source_updated_successfully_html: '支払い情報の更新が完了しました。'
+    subscriptions:
+      shared: &stripe_subscriptions_shared
+        caming_soon: '準備中です。'
+        bad_request: '不正なリクエストです。'
+        duplicate_request: '同じリクエストが複数回送信されました。現在のプランは <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> で確認できます。'
+        payment_processing_failed: "決済が失敗しました。入力した情報を確認してから再び決済を行ってみて下さい。"
+      new:
+        current_plan_html: '現在のプランは <a href="%{url}">設定ページ</a> でも確認できます。'
+      create:
+        <<: *stripe_subscriptions_shared
+        plan_subscribed_successfully_html: 'プランの登録が完了しました。現在のプランは【%{plan}】です。この設定は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> で確認できます。'
+        confirm:
+          title: 'プランの登録'
+          are_you_sure_order_html: '<span style="font-size: small;">・初めて登録する場合は、%{count}日間の無料お試し期間があります。<br><br>・無料期間内に解約した場合は、料金は一切かかりません。<br>・一ヶ月毎に自動更新される定期購読プランです。<br>・入力されたカード番号等はえごったー内に保存されません。<br><br>・<a href="%{url}" target="_blank">特定商取引法に基づく表記</a></span>'
+          commit: '登録する'
+          cancel: 'やっぱりやめる'
+      update:
+        <<: *stripe_subscriptions_shared
+        plan_switched_successfully_html: 'プランの変更が完了しました。現在のプランは【%{plan}】です。この設定は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> で確認できます。'
+        plan_already_subscribed: '既に購入済みのプランです。現在のプランは【%{plan}】です。この設定は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> で確認できます。'
+      destroy:
+        <<: *stripe_subscriptions_shared
+        plan_canceled_successfully_html: 'プランの削除が完了しました。またのご利用をお待ちしております。'
+        plan_not_subscribed: '指定されたプランが見付かりませんでした。'
+        confirm:
+          title: 'プランのキャンセル'
+          are_you_sure_cancel_html: '一度キャンセルすると取り消しはできません。本当にキャンセルしますか？<br><br>※更新を希望しない場合は、最終日の前日までにキャンセルを行なってください。'
+          commit: 'キャンセルする'
+          cancel: 'やっぱりやめる'
+    current_plan:
+      title: "%{user} のプラン"
+      status: 'ステータス'
+      trialing: 'お試し期間中'
+      active: 'アクティブ'
+      past_due: '支払い期限を過ぎています'
+      canceled: 'キャンセル済み'
+      unpaid: ''
+      cancel: "キャンセルする"
+      period: '期間'
+      email: 'メール'
+      payment_method: '支払い方法'
+      last4: '下4桁'
+    currency:
+      jpy: '円'
+    interval:
+      monthly: '月'
+    already_subscribed: '登録済みです'
+    plans: &stripe_plans
+      caption: "料金プラン"
+      names:
+        key: "プラン名"
+        free: "フリー"
+        basic: "ベーシック"
+        pro: "プロ"
+      audience:
+        key: "おすすめの人"
+        free: "自分のみを検索したい方向け"
+        basic: "友達も検索したい方向け"
+        pro: "たくさん検索したい方向け"
+      remove_notification:
+        key: "リム通知"
+        free_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      private_account:
+        key: "鍵アカの検索"
+        free_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      search_count:
+        key: "検索回数"
+        free: "1〜3回"
+        basic: "5回"
+        pro: "10回"
+      ad:
+        key: '広告の非表示'
+        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      private:
+        key: "自分のデータを非公開"
+        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      delete:
+        key: "自分のデータを削除"
+        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      pricing:
+        key: "価格"
+        free: "無料"
+      purchasing:
+        key: "支払い"
+        free: ""
+        basic: "クレジットカード"
+        pro: "クレジットカード"
+      learning:
+        free: ""
+        basic: "詳しく見る"
+        pro: "詳しく見る"
+      subscribe_buttons:
+        free: "無料で始める"
+        basic: "%{count}日間のお試し期間"
+        pro: "%{count}日間のお試し期間"
+    custom_checkout_form:
+      <<: *stripe_plans
+      note: '初回の%{count}日間は無料です'
+  time:
+    formats:
+      stripe_period: "%Y/%m/%d"

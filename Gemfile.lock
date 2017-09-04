@@ -1,3 +1,12 @@
+GIT
+  remote: git://github.com/rebelidealist/stripe-ruby-mock.git
+  revision: 4db5af2f448ee605cd1134edd71b6997f7be5d3c
+  specs:
+    stripe-ruby-mock (2.5.0)
+      dante (>= 0.2.0)
+      multi_json (~> 1.0)
+      stripe (>= 2.0.3)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -63,6 +72,9 @@ GEM
     coderay (1.1.1)
     concurrent-ruby (1.0.5)
     connection_pool (2.2.1)
+    dante (0.2.0)
+    data-confirm-modal (1.4.0)
+      railties (>= 3.0)
     declarative (0.0.9)
     declarative-option (0.1.0)
     devise (4.3.0)
@@ -326,6 +338,8 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     stackprof (0.2.9)
+    stripe (3.3.1)
+      faraday (~> 0.9)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
       ref
@@ -374,6 +388,7 @@ DEPENDENCIES
   annotate
   aws-sdk
   blazer
+  data-confirm-modal
   devise
   dogstatsd-ruby
   dotenv-rails
@@ -411,6 +426,8 @@ DEPENDENCIES
   sinatra
   sitemap_generator
   stackprof
+  stripe
+  stripe-ruby-mock (~> 2.5.0)!
   therubyracer
   twitter
   twitter_with_auto_pagination

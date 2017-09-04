@@ -1,4 +1,4 @@
-- unless ad_ng_twitter_user?(@twitter_user)
+- unless ad_disabled? || ad_ng_twitter_user?(@twitter_user)
   - id = async_adsense_wrapper_id
   .async-adsense-wrapper{id: id}
   :javascript

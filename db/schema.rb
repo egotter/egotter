@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170831041231) do
+ActiveRecord::Schema.define(version: 20170909042610) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -694,6 +694,45 @@ ActiveRecord::Schema.define(version: 20170831041231) do
   add_index "statuses", ["from_id"], name: "index_statuses_on_from_id", using: :btree
   add_index "statuses", ["screen_name"], name: "index_statuses_on_screen_name", using: :btree
   add_index "statuses", ["uid"], name: "index_statuses_on_uid", using: :btree
+
+  create_table "stripe_customers", force: :cascade do |t|
+    t.integer  "uid",         limit: 8,   null: false
+    t.string   "customer_id", limit: 191, null: false
+    t.string   "plan_id",     limit: 191
+    t.datetime "created_at",              null: false
+    t.datetime "updated_at",              null: false
+  end
+
+  add_index "stripe_customers", ["created_at"], name: "index_stripe_customers_on_created_at", using: :btree
+  add_index "stripe_customers", ["customer_id"], name: "index_stripe_customers_on_customer_id", unique: true, using: :btree
+  add_index "stripe_customers", ["uid"], name: "index_stripe_customers_on_uid", unique: true, using: :btree
+
+  create_table "stripe_events", force: :cascade do |t|
+    t.string   "event_id",        limit: 191, null: false
+    t.string   "event_type",      limit: 191, null: false
+    t.string   "idempotency_key", limit: 191, null: false
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
+  end
+
+  add_index "stripe_events", ["created_at"], name: "index_stripe_events_on_created_at", using: :btree
+  add_index "stripe_events", ["event_id"], name: "index_stripe_events_on_event_id", using: :btree
+  add_index "stripe_events", ["idempotency_key"], name: "index_stripe_events_on_idempotency_key", unique: true, using: :btree
+
+  create_table "stripe_plans", force: :cascade do |t|
+    t.string   "plan_key",          limit: 191, null: false
+    t.string   "plan_id",           limit: 191, null: false
+    t.string   "name",              limit: 191, null: false
+    t.integer  "amount",            limit: 4,   null: false
+    t.integer  "trial_period_days", limit: 4,   null: false
+    t.integer  "search_limit",      limit: 4,   null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+  end
+
+  add_index "stripe_plans", ["created_at"], name: "index_stripe_plans_on_created_at", using: :btree
+  add_index "stripe_plans", ["plan_id"], name: "index_stripe_plans_on_plan_id", unique: true, using: :btree
+  add_index "stripe_plans", ["plan_key"], name: "index_stripe_plans_on_plan_key", using: :btree
 
   create_table "tracks", force: :cascade do |t|
     t.string   "session_id",  limit: 191, default: "",    null: false

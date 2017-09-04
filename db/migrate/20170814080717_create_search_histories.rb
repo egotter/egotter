@@ -4,6 +4,7 @@ class CreateSearchHistories < ActiveRecord::Migration
       t.string  :session_id, null: false, default: ''
       t.integer :user_id,    null: false
       t.integer :uid,        null: false, limit: 8
+      t.string  :plan_id,    null: true # alter table search_histories add column plan_id varchar(191) COLLATE utf8mb4_unicode_ci after uid;
 
       t.timestamps null: false
     end

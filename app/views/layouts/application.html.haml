@@ -32,12 +32,13 @@
       ga('create', 'UA-13072051-3', 'auto'#{user_signed_in? ? ", { 'userId': '#{current_user.id}' }" : ''});
       ga('send', 'pageview');
 
-    %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-    :javascript
-      (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-3146843071247817",
-        enable_page_level_ads: true
-      });
+    - unless ad_disabled? || ad_ng_twitter_user?(@twitter_user)
+      %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
+      :javascript
+        (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-3146843071247817",
+          enable_page_level_ads: true
+        });
 
     - if user_signed_in?
       - if Rails.env.production?
@@ -125,6 +126,7 @@
     %link{href: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.css', rel: 'stylesheet', type: 'text/css'}
     %link{href: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}
     %script{src: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
+    %script{src: '//js.stripe.com/v3/'}
 
     - if %w(search_results searches one_sided_friends unfriends inactive_friends friends conversations relationships statuses update_histories clusters).include?(controller_name)
       - unless user_signed_in?

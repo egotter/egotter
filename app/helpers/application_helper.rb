@@ -23,6 +23,14 @@ module ApplicationHelper
     %w(unfriends unfollowers blocking_or_blocked).exclude?(controller_name) && twitter_user.usage_stat
   end
 
+  def stripe_enabled?
+    user_signed_in? && current_user_uid == User::ADMIN_UID
+  end
+
+  def ad_disabled?
+    current_user&.customer&.has_active_plan?
+  end
+
   def top_page_paths
     [
       [one_sided_friends_top_path, t('one_sided_friends.new.plain_title')],

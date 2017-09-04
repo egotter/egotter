@@ -67,6 +67,8 @@ gem 'gretel'
 gem 'dogstatsd-ruby', require: false
 gem 'google-api-client', require: false
 gem 'aws-sdk', require: false
+gem 'stripe'
+gem 'data-confirm-modal'
 
 group :development, :production do
   gem 'blazer'
@@ -86,6 +88,7 @@ group :development, :test do
   # gem 'awesome_print'
   gem 'quiet_assets'
   gem 'puma'
+  gem 'stripe-ruby-mock', '~> 2.5.0', github: 'rebelidealist/stripe-ruby-mock', require: 'stripe_mock'
 end
 
 group :development do

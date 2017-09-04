@@ -90,4 +90,32 @@ RSpec.describe User, type: :model do
       expect(client.access_token_secret).to eq(user.secret)
     end
   end
+
+  describe '#setup_stripe' do
+    let(:stripe_helper) { StripeMock.create_test_helper }
+    let(:email) { 'a@aaa.com' }
+    let(:source) { stripe_helper.generate_card_token }
+
+    before do
+      user.save!
+      StripeMock.start
+    end
+    after { StripeMock.stop }
+
+    it 'creates Stripe::Customer' do
+      user.setup_stripe(email, source, metadata: {})
+      expect(user.customer).to be_truthy
+      expect(Stripe::Customer.retrieve(user.customer.customer_id).email).to eq(email)
+    end
+
+    context 'continuous calls' do
+      before { user.setup_stripe(email, source, metadata: {}) }
+
+      it 'does nothing' do
+        expect(Stripe::Customer).to_not receive(:create)
+        expect(user).to_not receive(:create_customer!)
+        user.setup_stripe(email, source, metadata: {})
+      end
+    end
+  end
 end

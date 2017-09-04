@@ -28,3 +28,15 @@
     attach_event_handler('search', url);
   });
 </script>
+
+<% if current_user.customer&.has_active_plan? %>
+  <div class="gray-separator"></div>
+  <h2 class="h4 text-center"><%= t('.plan_title') %></h2>
+  <div id="current-plan-wrapper"></div>
+  <script>
+    $(function () {
+      var url = '<%= load_current_plan_path %>';
+      new AsyncLoader(url, '#current-plan-wrapper').load();
+    });
+  </script>
+<% end %>

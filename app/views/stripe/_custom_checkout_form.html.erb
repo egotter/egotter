@@ -1,0 +1,48 @@
+<%= form_tag subscriptions_create_or_update_path(plan), id: stripe_form_id(plan.plan_key), method: subscriptions_post_or_patch do %>
+<% end %>
+
+<%= button_tag t(".subscribe_buttons.#{plan.plan_key}", count: plan.trial_period_days), id: stripe_btn_id(plan.plan_key), class: 'btn btn-info btn-block btn-lg', data: data_confirm_subscribe(plan) %>
+
+<script>
+  (function () {
+    var handler = StripeCheckout.configure({
+      key: "<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>",
+      amount: <%= plan.amount %>,
+      name: "<%= t('searches.common.egotter') + ' ' + t(".names.#{plan.plan_key}") %>",
+      description: "<%= t('.note', count: plan.trial_period_days) %>",
+      image: 'https://stripe.com/img/documentation/checkout/marketplace.png',
+      locale: 'auto',
+      zipCode: false,
+      allowRememberMe: false,
+      currency: 'jpy',
+      token: function(token) {
+        var form = document.getElementById('<%= stripe_form_id(plan.plan_key) %>');
+
+        var hiddenInput1 = document.createElement('input');
+        hiddenInput1.setAttribute('type', 'hidden');
+        hiddenInput1.setAttribute('name', 'stripeToken');
+        hiddenInput1.setAttribute('value', token.id);
+        form.appendChild(hiddenInput1);
+
+        var hiddenInput2 = document.createElement('input');
+        hiddenInput2.setAttribute('type', 'hidden');
+        hiddenInput2.setAttribute('name', 'stripeEmail');
+        hiddenInput2.setAttribute('value', token.email);
+        form.appendChild(hiddenInput2);
+
+        form.submit();
+      }
+    });
+
+    document.getElementById('<%= stripe_btn_id(plan.plan_key) %>').addEventListener('click', function(e) {
+      if (!e.isTrusted) {
+        handler.open(); // Triggered from a modal
+      }
+      e.preventDefault();
+    });
+
+    window.addEventListener('popstate', function() {
+      handler.close();
+    });
+  })();
+</script>

@@ -1,4 +1,4 @@
-- unless ad_ng_twitter_user?(@twitter_user)
+- unless ad_disabled? || ad_ng_twitter_user?(@twitter_user)
   .adsense-container.row
     .col-sm-12{class: "#{'col-md-6' if request.from_pc?}"}
       %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}

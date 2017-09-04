@@ -1,0 +1,25 @@
+%table.table.settings
+  %tbody
+    %tr
+      %td= t('stripe.plans.names.key')
+      %td= plan.name
+    %tr
+      %td= t('.status')
+      %td= t(".#{subscription.status}")
+    %tr
+      %td= t('.period')
+      %td= subscription_period(subscription)
+    %tr
+      %td= t('stripe.plans.pricing.key')
+      %td= plan.price_label
+    %tr
+      %td= t('.email')
+      %td= card_email(customer)
+    %tr
+      %td= t('.payment_method')
+      %td
+        %i.fa.fa-credit-card{'aria-hidden': true}
+        = card_text(customer)
+    %tr
+      %td
+      %td= link_to t('.cancel'), stripe_subscription_path(plan_id: plan.plan_id), class: 'btn btn-danger btn-sm', data: data_confirm_cancel, method: :delete

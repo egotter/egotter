@@ -35,4 +35,8 @@ module PathsHelper
     via += "/#{name}" if name
     via
   end
+
+  def pricing_table_path(transition = false)
+    new_stripe_subscription_path
+  end
 end

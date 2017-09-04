@@ -1,0 +1,15 @@
+#pricing-table {
+  &.table tbody > tr > td {
+    vertical-align: middle;
+  }
+
+  .glyphicon.glyphicon-ok-sign {
+    color: #449d44;
+    font-size: medium;
+  }
+
+  .glyphicon.glyphicon-minus-sign {
+    color: #c9302c;
+    font-size: medium;
+  }
+}

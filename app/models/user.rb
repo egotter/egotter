@@ -41,6 +41,8 @@ class User < ActiveRecord::Base
     obj.has_many :search_reports
     obj.has_many :news_reports
     obj.has_one :notification_setting
+
+    obj.has_one :customer, primary_key: :uid, foreign_key: :uid, class_name: 'StripeDB::Customer'
   end
 
   accepts_nested_attributes_for :notification_setting
@@ -119,6 +121,13 @@ class User < ActiveRecord::Base
     end
 
     (pr + sr + nr).sort_by { |r| -r.created_at.to_i }
+  end
+
+  def setup_stripe(email, source, metadata:)
+    unless customer
+      cu = Stripe::Customer.create({email: email, source: source, metadata: metadata})
+      create_customer!(customer_id: cu.id)
+    end
   end
 
   def unauthorized?

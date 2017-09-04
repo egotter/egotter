@@ -159,7 +159,7 @@ module Concerns::Validation
     return false if latest_search_histories.any? { |sh| sh.uid == twitter_user.uid.to_i }
 
     if user_signed_in?
-      redirect_to root_path, alert: t('after_sign_in.too_many_searches_html', limit: search_histories_limit)
+      redirect_to root_path, alert: t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_table_path)
     else
       redirect_to root_path, alert: t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: kick_out_error_path('too_many_searches'))
     end

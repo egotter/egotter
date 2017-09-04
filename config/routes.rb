@@ -116,9 +116,15 @@ Rails.application.routes.draw do
   resources :modal_open_logs, only: :create
   resources :polling_logs, only: :create
 
+  namespace :stripe, {format: 'html'} do
+    resources :subscriptions, only: %i(new create update destroy), param: :plan_id
+    post 'webhook', to: 'webhooks#webhook'
+  end
+
   get 'load_adsense', to: 'adsense#load', as: :load_adsense
   get 'load_search_histories', to: 'search_histories#load', as: :load_search_histories
   get 'load_public_tweets', to: 'public_tweets#load', as: :load_public_tweets
+  get 'load_current_plan', to: 'stripe/subscriptions#load', as: :load_current_plan
 
   get 'relationships/:src_uid/:dst_uid/waiting', to: redirect('/')
   get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')

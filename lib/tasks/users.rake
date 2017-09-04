@@ -3,7 +3,7 @@ namespace :users do
   task update_authorized: :environment do
     sigint = Util::Sigint.new.trap
 
-    ApiClient # Avoid circular dependency
+    ApiClient # Load in beforehand to avoid circular dependency
 
     User.authorized.find_in_batches(batch_size: 100) do |users|
       Parallel.each(users, in_threads: 10) do |user|

@@ -50,7 +50,7 @@
           = link_to settings_path do
             %span.glyphicon.glyphicon-cog
             = t('settings.title')
-        - if enable_stripe?
+        - if stripe_enabled?
           %li
             = link_to pricing_table_path do
               %span.glyphicon.glyphicon-jpy
@@ -72,7 +72,7 @@
               = link_to settings_path do
                 %span.glyphicon.glyphicon-cog
                 = t('settings.title')
-            - if enable_stripe?
+            - if stripe_enabled?
               %li
                 = link_to pricing_table_path do
                   %span.glyphicon.glyphicon-jpy

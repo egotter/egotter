@@ -7,7 +7,7 @@
         %h4#search-modal-label.modal-title.text-center= t('searches.common.search_by_egotter')
       .modal-body
         = render partial: 'common/search_form', locals: {via: :search_history_input}
-        .text-muted.text-right{style: 'margin-top: 5px;'}= t('search_histories.remaining_count_is_html', count: search_histories_remaining)
+        .text-muted.text-right{style: 'margin-top: 5px;'}= t('search_histories.remaining_count_is_html', count: search_histories_remaining, url: pricing_table_path)
 
         .search-histories-header
           %h2.text-center

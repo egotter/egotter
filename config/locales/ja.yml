@@ -8,6 +8,7 @@ ja:
       return: "%{user} の分析一覧へ戻る"
       twitter_id: "Twitter ID"
       email: "メール"
+      email_address: "support [ at ] egotter.com"
       search_by_twitter_id: "Twitter ID で検索"
       search_by_other_user: "他のユーザー で検索"
       search_by_egotter: "えごったーで検索"
@@ -152,18 +153,19 @@ ja:
     index:
       title: "検索履歴"
     remaining: '%{count} 回'
-    remaining_count_is_html: '残りの検索回数は %{count} 回です。'
+    remaining_count_is_html: '残りの検索回数は %{count} 回です。<a href="%{url}" class="alert-link">増やす方法？</a>'
   notifications:
     title: "通知"
     index:
       title: "%{user} への通知"
   settings:
+    menu: "メニュー"
     title: "設定"
     index:
       general_title: "ユーザー情報"
       general_note1: "Twitter IDを変更した場合は、自動で更新されます"
       notifications_title: "通知設定"
-      cancel: "キャンセルする"
+      plan_title: "購読プラン"
     tgl_btn:
       updated: "更新しました"
       desc:
@@ -676,7 +678,7 @@ ja:
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
   after_sign_in:
-    too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 )'
+    too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) もっとたくさん検索するには、<a href="%{url}">プランの変更</a> をご検討ください。'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
