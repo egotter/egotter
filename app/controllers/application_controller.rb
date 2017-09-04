@@ -95,7 +95,7 @@ class ApplicationController < ActionController::Base
 
   # https://github.com/plataformatec/devise/issues/1390
   def new_session_path(scope)
-    new_user_session_path(scope)
+    root_path
   end
 
   def basic_auth

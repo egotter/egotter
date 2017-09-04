@@ -35,9 +35,9 @@ module WorkersHelper
     worker_class.perform_async(values.merge(track_id: track.id))
   end
 
-  def enqueue_update_search_histories_job_if_needed(uid)
+  def enqueue_update_search_histories_job_if_needed(uid, interval)
     return if from_crawler?
-    UpdateSearchHistoriesWorker.perform_in(1.minutes, fingerprint, current_user_id, uid)
+    UpdateSearchHistoriesWorker.perform_in(interval, fingerprint, current_user_id, uid)
   end
 
   def enqueue_update_usage_stat_job_if_needed(uid)

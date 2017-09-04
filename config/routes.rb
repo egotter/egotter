@@ -128,12 +128,9 @@ Rails.application.routes.draw do
     get name, to: "login##{name}", as: name
   end
 
-  devise_for :users, skip: [:sessions, :registrations, :password], controllers: {
-    omniauth_callbacks: 'users/omniauth_callbacks'
-  }
-  as :user do
-    get '/_sign_out' => 'devise/sessions#destroy', :as => :destroy_user_session
-    get '/' => 'devise/sessions#new', :as => :new_user_session
+  devise_for :users, skip: %i(sessions confirmations registrations passwords unlocks), controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
+  devise_scope :user do
+    get SecureRandom.urlsafe_base64(10) => 'users/sessions#destroy', :as => :destroy_user_session
   end
 
   require 'sidekiq/api'
