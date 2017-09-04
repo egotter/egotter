@@ -1,12 +1,11 @@
-%button.navbar-toggle{'data-target' => '.search-modal', 'data-toggle' => 'modal', type: 'button'}
-  %span.glyphicon.glyphicon-search
+%button.navbar-toggle.collapsed{style: 'margin-right: 0;', 'aria-expanded' => 'false', 'data-target' => '#navbar-hamburger', 'data-toggle' => 'collapse', type: 'button'}
+  %span.sr-only Toggle navigation
+  %span.icon-bar
+  %span.icon-bar
+  %span.icon-bar
+
 - if user_signed_in?
-  %button.btn-with-margin.navbar-toggle{type: 'button'}
-    = link_to settings_path do
-      %span.glyphicon.glyphicon-menu-hamburger
-  %button.btn-with-margin.navbar-toggle{type: 'button'}
-    = link_to notifications_path do
-      %span.glyphicon.glyphicon-bell
 - else
-  %button.btn.btn-with-margin.navbar-toggle{type: 'button'}
-    = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header")
+  -# Emulates 'btn btn-default' with padding, text-decoration and color
+  %button.navbar-toggle{style: 'margin-right: 15px; padding: 6px 12px;'}
+    = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header"), style: 'text-decoration: none; color: #333'

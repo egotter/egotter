@@ -1,11 +1,11 @@
 = render(partial: 'searches/conversion_tracking')
 
 - if request.from_pc? && !user_signed_in?
-  .row.searches{style: 'margin-top: 15px;'}
-    .col-md-6.col-md-push-6.text-center
+  .row.text-center.searches{style: 'margin-top: 15px;'}
+    .col-md-6.col-md-push-6
       .visible-md-block.visible-lg-block{style: 'height: 15px; width: 100%;'}
-      %h3.searches{style: 'margin-top: 15px; margin-bottom: 15px;'}= t('searches.new.pc.lead_001')
-      .searches.lead= t('searches.new.pc.lead_002_html')
+      %h3.h4{style: 'margin-top: 15px; margin-bottom: 15px;'}= t('searches.new.pc.lead_001')
+      .lead= t('searches.new.pc.lead_002_html')
       %div{style: 'height: 30px; width: 100%;'}
       .text-notice
         %i.fa.fa-check.fa-lg{'aria-hidden': true}
@@ -16,24 +16,23 @@
       %div{style: 'margin-top: 5px;'}
         = link_to t('searches.new.pc.sign_up'), sign_in_path(via: "#{controller_name}/#{action_name}/button/pc_special"), class: 'btn btn-info btn-block btn-lg box-center'
       %div{style: 'height: 30px; width: 100%;'}
-      %div
-        = t('searches.new.pc.search_for_now')
+      %div= t('searches.new.pc.search_for_now')
       .box-center{style: 'margin-top: 5px;'}
         = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/input/pc_special"}
       .hidden-md-block.hidden-lg-block{style: 'height: 30px; width: 100%;'}
-    .col-md-6.col-md-pull-6.text-center
+    .col-md-6.col-md-pull-6
       = link_to timeline_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/big_icon") do
         = image_tag '/egotter_icon_400x400.jpg', size: '400x400', class: 'img-rounded', style: 'padding: 10px; border: 15px solid #f5f5f5'
 - else
-  %h3.h4.searches.text-center= t('searches.new.lead_001')
-  .searches.lead.text-center= t('searches.new.lead_002_html')
-  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/input"}
-  = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
-  - if user_signed_in?
-    = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"}
-  - else
-    = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
-    .searches.text-center
+  .text-center.searches
+    %h3.h4= t('searches.new.lead_001')
+    .lead= t('searches.new.lead_002_html')
+    = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/input"}
+    = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+    - if user_signed_in?
+      = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"}
+    - else
+      = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
       .text-notice
         %i.fa.fa-check.fa-lg{'aria-hidden': true}
         = t('searches.new.pc.check_001')
@@ -41,19 +40,19 @@
         %i.fa.fa-check.fa-lg{'aria-hidden': true}
         = t('searches.new.pc.check_002')
 
-.row.searches.screenshot
-  .col-xs-12.col-sm-6.text-center
+.row.searches.screenshot.text-center
+  .col-xs-12.col-sm-6
     = link_to timeline_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/screenshot_iphone") do
       %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_iphone_332x560.png'), height: '160px'}
-  .col-xs-12.col-sm-6.text-center
+  .col-xs-12.col-sm-6
     = link_to timeline_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/screenshot_laptop") do
       %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_961x560.png'), height: '160px'}
 
 .searches.separator
 
-%h3.searches.text-center{style: 'margin-top: 30px; margin-bottom: 0'}= t('searches.new.record_your_friends')
+%h3.h4.text-center= t('searches.new.record_your_friends')
 
-.text-center{style: 'font-size: large; margin-top: 30px; margin-bottom: 30px;'}= t('searches.new.record_every_day')
+.text-center= t('searches.new.record_every_day')
 
 .row.searches.descriptions
   .col-xs-12.col-sm-4
@@ -116,7 +115,7 @@
 
 .row.searches{style: 'margin-bottom: 15px;'}
   .col-xs-12.col-sm-6{style: 'height: 550px; overflow: hidden; border-right: 1px solid #e6e6e6;'}
-    %h3.h4{style: 'margin-top: 15px; margin-bottom: 15px;'}= t('searches.new.twitter_feeds')
+    %h3.h4.text-center= t('searches.new.twitter_feeds')
     #public-tweets-wrapper
     :javascript
       $(function () {

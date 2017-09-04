@@ -1,0 +1,30 @@
+.navbar {
+  margin-bottom: 0;
+
+  .navbar-brand {
+    display: table;
+    padding: 1px 0 0 0;
+  }
+
+  .navbar-brand img {
+    display: table-cell;
+    border-radius: 2px;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+  }
+
+  .navbar-brand span {
+    display: table-cell;
+    vertical-align: middle;
+  }
+}
+
+.search-modal {
+  .submit-btn {
+    margin-top: 10px;
+  }
+}
+
+p.alert-info, p.alert-warning {
+  margin: 0;
+}

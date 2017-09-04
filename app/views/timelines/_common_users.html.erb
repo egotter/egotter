@@ -2,7 +2,7 @@
 
 <div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
   <%= link_to search_path_for(menu_name, twitter_user.screen_name), class: 'result-link' do %>
-    <h3 class="h4"><%= t("#{menu_name}.show.summary_title") %></h3>
+    <h3 class="h4 text-center"><%= t("#{menu_name}.show.summary_title") %></h3>
     <div class="text-center description"><%= t("#{menu_name}.show.page_description", user: twitter_user.mention_name, user2: current_user.mention_name) %></div>
   <% end %>
 

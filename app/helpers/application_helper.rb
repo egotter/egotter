@@ -3,6 +3,10 @@ module ApplicationHelper
     ENV['MAINTENANCE'] == '1'
   end
 
+  def show_nav_buttons?
+    !under_maintenance? && action_name != 'welcome'
+  end
+
   def show_sidebar?
     %w(new waiting all).exclude?(action_name) && request.from_pc? && @twitter_user
   end

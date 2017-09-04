@@ -12,7 +12,7 @@
 
 = render(partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid})
 
-%h2.h3= t('timelines.show.heading', user: @twitter_user.mention_name)
+%h2.h3.text-center= t('timelines.show.heading', user: @twitter_user.mention_name)
 
 = render(partial: 'common/async_adsense', locals: {action: action_name, vertical: :top})
 
@@ -54,10 +54,10 @@
 
 = render(partial: 'common/async_adsense', locals: {action: action_name, vertical: :bottom})
 
-%h2.h4= t('.about_this_page', user: @twitter_user.mention_name)
+%h2.h4.text-center= t('.about_this_page', user: @twitter_user.mention_name)
 .this-page-is= t('.this_page_is_html', user: @twitter_user.mention_name)
 
-%h2.h4= t('.other_services')
+%h2.h4.text-center= t('.other_services')
 .row.other-services
   .text-center.col-xs-12.col-sm-4{style: 'margin-bottom: 15px;'}
     = link_to t('.see_on_twitter', user: @twitter_user.mention_name), user_url(@twitter_user.screen_name), class: 'btn btn-default', target: '_blank', rel: 'nofollow'

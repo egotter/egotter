@@ -1,21 +1,23 @@
-.collapse.navbar-collapse.navbar-large
+#navbar-hamburger.collapse.navbar-collapse
+  %ul.nav.navbar-nav
   %ul.nav.navbar-nav.navbar-right
     - if user_signed_in?
       %li
-        %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-          = link_to notifications_path do
+        %p.navbar-btn{style: 'margin-right: 15px;'}
+          = link_to notifications_path, class: 'btn btn-default' do
             %span.glyphicon.glyphicon-bell
             = t('notifications.title')
       %li
-        %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-          = link_to settings_path do
-            %span.glyphicon.glyphicon-menu-hamburger
-            = t('misc.menu.title')
+        %p.navbar-btn{style: 'margin-right: 15px;'}
+          = link_to settings_path, class: 'btn btn-default' do
+            %span.glyphicon.glyphicon-cog
+            = t('settings.title')
     - else
       %li
-        %button.btn.btn-default.navbar-btn.btn-with-margin{type: 'button'}
-          = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header")
+        %p.navbar-btn{style: 'margin-right: 15px;'}
+          = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header"), class: 'btn btn-default'
     %li
-      %button.btn.btn-default.navbar-btn{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
-        %span.glyphicon.glyphicon-search
-        = t('searches.common.search')
+      %p.navbar-btn
+        %button.btn.btn-default{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
+          %span.glyphicon.glyphicon-search
+          = t('searches.common.search')

@@ -55,7 +55,7 @@ ja:
       feature_003: "ログイン不要"
       feature_desc_003_html: "検索のみなら不要です。<br>(リム通知は要ログイン)"
       feature_007: "ログインでもっと便利に"
-      feature_desc_007: "検索が早くなり、<br>更新通知が届くようになります。<br>%{link}"
+      feature_desc_007_html: "検索が早くなり、<br>更新通知が届くようになります。<br>%{link}"
       feature_008: "リム通知あります"
       feature_desc_008_html: "フォローが外れたら<br>DMでお知らせ。<br>(要ログイン)"
       feature_009: "鍵垢も検索OK"
@@ -154,6 +154,7 @@ ja:
     index:
       title: "%{user} への通知"
   settings:
+    title: "設定"
     index:
       title: "%{user} の通知設定"
       updated: "更新しました"
@@ -187,9 +188,6 @@ ja:
     sign_in:
       signed_in: "既にログイン済みです。"
   misc:
-    menu:
-      title: "メニュー"
-      updated: "更新しました"
     terms_of_service:
       title: "利用規約"
     privacy_policy:
@@ -587,6 +585,7 @@ ja:
       follow: 'フォローする'
       let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      share_me: "えごったーをシェアする"
   application:
     invalid_token:
       session_expired_html: '一定時間操作がなかったため、セッションの有効期限が切れました。 <a href="%{url}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{url}">ログイン</a> してください。'
@@ -621,7 +620,6 @@ ja:
     inactive: "停止中"
     refollow: "再フォロー"
     refollowed: "再フォロワー"
-    share_me: "えごったーをシェアする"
     link_to_support: "お問い合わせページ"
     support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
     sign_in: "ログイン"

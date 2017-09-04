@@ -49,7 +49,7 @@ class GoodFriends < ApplicationController
   end
 
   def good_friends_text(users, twitter_user)
-    mention_names = users.map.with_index { |u, i| "#{i + 1}. #{mention_name(u.screen_name)}" }
-    t('.tweet_text', user: mention_name(twitter_user.screen_name), users: mention_names.join("\n"), url: @canonical_url)
+    mention_names = users.map.with_index { |u, i| "#{i + 1}. #{u.mention_name}" }
+    t('.tweet_text', user: twitter_user.mention_name, users: mention_names.join("\n"), url: @canonical_url)
   end
 end

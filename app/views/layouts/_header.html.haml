@@ -1,6 +1,6 @@
-.navbar-header.navbar-small
-  = render partial: 'layouts/header/small_buttons' unless under_maintenance? || action_name == 'welcome'
+.navbar-header
+  = render partial: 'layouts/header/small_buttons' if show_nav_buttons?
   %a.navbar-brand{href: root_path_for(controller: controller_name)}
     = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
     %span= t("#{controller_name}.new.title_html", default: t('searches.common.egotter'))
-= render partial: 'layouts/header/large_buttons' unless under_maintenance? || action_name == 'welcome'
+= render partial: 'layouts/header/large_buttons' if show_nav_buttons?
