@@ -21,14 +21,15 @@ module Concerns::Validation
     redirect_to root_path unless admin_signed_in?
   end
 
-  def valid_uid?(uid)
-    twitte_user = TwitterUser.new(uid: uid)
-    return true if twitte_user.valid_uid?
+  def valid_uid?(uid = nil)
+    uid ||= params[:uid]
+    twitter_user = TwitterUser.new(uid: uid)
+    return true if twitter_user.valid_uid?
 
     if request.xhr?
       head :bad_request
     else
-      redirect_to root_path, alert: twitte_user.errors[:uid].join(t('dictionary.delim'))
+      redirect_to root_path, alert: twitter_user.errors.full_messages.join(t('dictionary.delim'))
     end
 
     false
@@ -88,7 +89,7 @@ module Concerns::Validation
     if twitter_user.valid_screen_name?
       true
     else
-      redirect_to root_path_for(controller: controller_name), alert: twitter_user.errors[:screen_name].join(t('dictionary.delim'))
+      redirect_to root_path_for(controller: controller_name), alert: twitter_user.errors.full_messages.join(t('dictionary.delim'))
       false
     end
   end

@@ -27,21 +27,13 @@ module Concerns::TwitterUser::Validation
   end
 
   def valid_uid?
-    if uid&.to_s&.match(Validations::UidValidator::REGEXP)
-      true
-    else
-      errors.add(:uid, :invalid)
-      false
-    end
+    Validations::UidValidator.new.validate(self)
+    self.errors.empty?
   end
 
   def valid_screen_name?
-    if screen_name&.match(Validations::ScreenNameValidator::REGEXP)
-      true
-    else
-      errors.add(:screen_name, :invalid)
-      false
-    end
+    Validations::ScreenNameValidator.new.validate(self)
+    self.errors.empty?
   end
 
   def protected_account?

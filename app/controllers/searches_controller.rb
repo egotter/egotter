@@ -6,7 +6,7 @@ class SearchesController < ApplicationController
   before_action(only: %i(create)) { @twitter_user = build_twitter_user(params[:screen_name]) }
   before_action(only: %i(create)) { authorized_search?(@twitter_user) }
 
-  before_action(only: %i(waiting)) { valid_uid?(params[:uid].to_i) }
+  before_action(only: %i(waiting)) { valid_uid? }
   before_action(only: %i(waiting)) { searched_uid?(params[:uid].to_i) }
 
   before_action only: %i(new create waiting) do

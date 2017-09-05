@@ -1,6 +1,6 @@
 class UpdateHistoriesController < ApplicationController
 
-  before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
+  before_action(only: %i(show)) { valid_uid? }
   before_action(only: %i(show)) { twitter_user_persisted?(params[:uid].to_i) }
   before_action(only: %i(show)) { @twitter_user = TwitterUser.latest(params[:uid].to_i) }
   before_action(only: %i(show)) { authorized_search?(@twitter_user) }

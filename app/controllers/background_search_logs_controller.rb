@@ -1,7 +1,7 @@
 class BackgroundSearchLogsController < ApplicationController
   include Concerns::Validation
 
-  before_action(only: %i(show)) { valid_uid?(params[:uid].to_i) }
+  before_action(only: %i(show)) { valid_uid? }
   before_action(only: %i(show)) { searched_uid?(params[:uid].to_i) }
 
   def show
