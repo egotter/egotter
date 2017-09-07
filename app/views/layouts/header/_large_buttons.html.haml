@@ -50,6 +50,11 @@
           = link_to settings_path do
             %span.glyphicon.glyphicon-cog
             = t('settings.title')
+        - if enable_stripe?
+          %li
+            = link_to pricing_table_path do
+              %span.glyphicon.glyphicon-jpy
+              = t('stripe.plans.caption')
       - else
         %li.dropdown
           %button.navbar-toggle{style: 'display: inline-block; margin-right: 0;', 'aria-expanded' => 'false', 'data-target' => '.dropdown', 'data-toggle' => 'dropdown', type: 'button'}
@@ -67,3 +72,8 @@
               = link_to settings_path do
                 %span.glyphicon.glyphicon-cog
                 = t('settings.title')
+            - if enable_stripe?
+              %li
+                = link_to pricing_table_path do
+                  %span.glyphicon.glyphicon-jpy
+                  = t('stripe.plans.caption')
