@@ -23,10 +23,6 @@ class SearchHistory < ActiveRecord::Base
   validates :user_id, numericality: {only_integer: true}
   validates :session_id, format: {with: /\A.+\w+.+\Z/}
 
-  def self.latest(condition)
-    includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10)
-  end
-
   def to_param
     screen_name
   end

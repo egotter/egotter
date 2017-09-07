@@ -12,4 +12,4 @@
           %h2.text-center
             %small= t('search_histories.index.title')
           .twitter.users.row
-            = render(partial: 'twitter/user', collection: latest_search_histories, cached: true, locals: {ad: false, via: 'search_histories'})
+            = render(partial: 'twitter/user', collection: latest_search_histories, cached: true, locals: {ad: false, via: 'search_histories'}) unless from_crawler?

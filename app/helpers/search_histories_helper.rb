@@ -1,16 +1,17 @@
 module SearchHistoriesHelper
   def latest_search_histories
-    if from_crawler?
-      []
-    else
-      condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
-      SearchHistory.latest(condition)
-    end
+    condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
+    SearchHistory.includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10)
   end
 
-  def today_search_histories_size
-    start = 1.day.ago
-    SearchHistory.where(created_at: start..Time.zone.now, session_id: fingerprint).size
+  def search_histories_size
+    condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
+    condition.merge!(created_at: 1.day.ago..Time.zone.now)
+    SearchHistory.where(condition).size
+  end
+
+  def search_histories_limit
+    user_signed_in? ? 1000 : Rails.configuration.x.constants['anonymous_search_histories_limit']
   end
 
   def update_search_histories_when_signing_in(user)
