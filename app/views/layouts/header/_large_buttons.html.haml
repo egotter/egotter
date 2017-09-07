@@ -2,22 +2,68 @@
   %ul.nav.navbar-nav
   %ul.nav.navbar-nav.navbar-right
     - if user_signed_in?
-      %li
-        %p.navbar-btn{style: 'margin-right: 15px;'}
-          = link_to notifications_path, class: 'btn btn-default' do
+      - if request.from_smartphone?
+        %li
+          = link_to '#', class: 'disabled' do
+            %i.fa.fa-twitter{'area-hidden': true}
+            = mention_name(current_user.screen_name)
+        %li
+          = link_to notifications_path do
             %span.glyphicon.glyphicon-bell
             = t('notifications.title')
-      %li
-        %p.navbar-btn{style: 'margin-right: 15px;'}
-          = link_to settings_path, class: 'btn btn-default' do
+        %li
+          %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
+            %span.glyphicon.glyphicon-search
+            = t('searches.common.search')
+      - else
+        %li
+          %p.navbar-btn{style: 'margin-right: 15px;'}
+            = link_to notifications_path, class: 'btn btn-default' do
+              %span.glyphicon.glyphicon-bell
+              = t('notifications.title')
+        %li
+          %p.navbar-btn{style: 'margin-right: 15px;'}
+            %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal', class: 'btn btn-default'}
+              %span.glyphicon.glyphicon-search
+              = t('searches.common.search')
+    - else
+      - if request.from_smartphone?
+        %li
+          = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header")
+        %li
+          %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
+            %span.glyphicon.glyphicon-search
+            = t('searches.common.search')
+      - else
+        %li
+          %p.navbar-btn{style: 'margin-right: 15px;'}
+            = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header"), class: 'btn btn-default'
+        %li
+          %p.navbar-btn{style: 'margin-right: 15px;'}
+            %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal', class: 'btn btn-default'}
+              %span.glyphicon.glyphicon-search
+              = t('searches.common.search')
+
+    - if user_signed_in?
+      - if request.from_smartphone?
+        %li
+          = link_to settings_path do
             %span.glyphicon.glyphicon-cog
             = t('settings.title')
-    - else
-      %li
-        %p.navbar-btn{style: 'margin-right: 15px;'}
-          = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header"), class: 'btn btn-default'
-    %li
-      %p.navbar-btn
-        %button.btn.btn-default{'data-target' => '.search-modal', 'data-toggle' => 'modal'}
-          %span.glyphicon.glyphicon-search
-          = t('searches.common.search')
+      - else
+        %li.dropdown
+          %button.navbar-toggle{style: 'display: inline-block; margin-right: 0;', 'aria-expanded' => 'false', 'data-target' => '.dropdown', 'data-toggle' => 'dropdown', type: 'button'}
+            %span.sr-only Toggle navigation
+            %span.icon-bar
+            %span.icon-bar
+            %span.icon-bar
+          %ul.dropdown-menu
+            %li
+              %span{style: 'padding: 3px 20px;'}
+                %i.fa.fa-twitter{'area-hidden': true}
+                = mention_name(current_user.screen_name)
+            %li.divider{role: 'separator'}
+            %li
+              = link_to settings_path do
+                %span.glyphicon.glyphicon-cog
+                = t('settings.title')
