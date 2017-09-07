@@ -13,6 +13,9 @@ class MiscController < ApplicationController
   def terms_of_service
   end
 
+  def specified_commercial_transactions
+  end
+
   def sitemap
     redirect_to 'https://egotter.com/sitemap.xml.gz'
   end

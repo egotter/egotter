@@ -156,7 +156,10 @@ ja:
   settings:
     title: "設定"
     index:
-      title: "%{user} の通知設定"
+      notifications_title: "%{user} の通知設定"
+      subscriptions_title: "%{user} のプラン"
+      cancel: "キャンセルする"
+    tgl_btn:
       updated: "更新しました"
       desc:
         email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
@@ -192,6 +195,8 @@ ja:
       title: "利用規約"
     privacy_policy:
       title: "プライバシーポリシー"
+    specified_commercial_transactions:
+      title: "特定商取引法に基づく表記"
     maintenance:
       title: "メンテナンス"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"

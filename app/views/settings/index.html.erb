@@ -1,17 +1,6 @@
 <div class="menu">
-  <h2><small><%= @title %></small></h2>
-  <% %i(email dm news search).each do |name| %>
-    <div class="table-box">
-      <div class="table-cell-left">
-        <%= check_box_tag name, true, current_user.notification_setting.send("#{name}?"), {id: "#{name}-input", class: 'tgl tgl-ios'} %>
-        <label class='tgl-btn' for="<%= name %>-input"></label>
-      </div>
-      <div class="table-cell-right"><%= t(".desc.#{name}") %>
-        <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
-      </div>
-    </div>
-    <hr>
-  <% end %>
+  <h2 class="h4 text-center"><%= t('.notifications_title', user: current_user.mention_name) %></h2>
+  <%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name, cached: true %>
   <script>
     $(function () {
       var url = '<%= setting_path %>';

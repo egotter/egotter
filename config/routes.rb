@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     end
   end
 
-  %i(maintenance privacy_policy terms_of_service sitemap support).each do |name|
+  %i(maintenance privacy_policy terms_of_service specified_commercial_transactions support).each do |name|
     get name, to: "misc##{name}", as: name
   end
   get '/menu', to: redirect('/settings')

@@ -1,0 +1,10 @@
+<div class="table-box">
+  <div class="table-cell-left">
+    <%= check_box_tag name, true, current_user.notification_setting.send("#{name}?"), {id: "#{name}-input", class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="<%= name %>-input"></label>
+  </div>
+  <div class="table-cell-right"><%= t(".desc.#{name}") %>
+    <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
+  </div>
+</div>
+<hr>

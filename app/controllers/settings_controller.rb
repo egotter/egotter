@@ -7,8 +7,6 @@ class SettingsController < ApplicationController
 
   def index
     return redirect_to root_path unless user_signed_in?
-
-    @title = t('.title', user: current_user.mention_name)
   end
 
   def update
@@ -19,7 +17,7 @@ class SettingsController < ApplicationController
         when params[:news]   then [:news,   params[:news]]
         when params[:search] then [:search, params[:search]]
       end
-    value = value == 'true' ? true : false
+    value = (value == 'true')
     current_user.notification_setting.update!(key => value)
     render json: current_user.notification_setting.attributes.slice('email', 'dm', 'news', 'search'), status: 200
   rescue => e
