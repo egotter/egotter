@@ -53,9 +53,7 @@ class User < ActiveRecord::Base
   validates_with Validations::ScreenNameValidator
   validates :secret, presence: true
   validates :token, presence: true
-  validates_each :email do |record, attr, value|
-    record.errors.add(attr, :invalid) if value.nil? || (value != '' && !value.match(/\A[^@]+@[^@]+\z/))
-  end
+  validates_with Validations::EmailValidator
 
   scope :authorized, -> { where(authorized: true) }
   scope :can_send_dm, -> do
