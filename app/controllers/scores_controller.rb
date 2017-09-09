@@ -1,7 +1,6 @@
 class ScoresController < ApplicationController
   include Concerns::Showable
   include ScoresHelper
-  include TwitterHelper
 
   def show
     @breadcrumb_name = controller_name.singularize.to_sym
