@@ -53,6 +53,10 @@ body,
   margin-top: 5px;
 }
 
+a, a:hover, a:focus {
+  text-decoration: none;
+}
+
 /* global */
 .return-to-results-top,
 .return-to-results-bottom {

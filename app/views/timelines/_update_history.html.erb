@@ -1,5 +1,5 @@
 <div class="menu-items media" style="position: relative;">
-  <%= link_to update_history_path(uid: twitter_user.uid), style: 'color: inherit; text-decoration: none; display: block;' do %>
+  <%= link_to update_history_path(uid: twitter_user.uid), style: 'color: inherit; display: block;' do %>
     <h3 class="h4 text-center media-heading"><%= t('update_histories.show.short_title', user: twitter_user.mention_name) %></h3>
     <div class="text-center description"><%= t('update_histories.show.description', user: twitter_user.mention_name) %></div>
   <% end %>
