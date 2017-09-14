@@ -13,32 +13,33 @@ do_create = Proc.new do
   add clusters_top_path, options
 
   uids.each do |uid|
-    twitter_user = TwitterUser.select(:screen_name, :updated_at).latest(uid)
+    twitter_user = TwitterUser.select(:screen_name, :user_info, :updated_at).latest(uid)
     next if twitter_user.protected_account?
 
     options = {priority: 0.5, changefreq: 'weekly', lastmod: twitter_user.updated_at}
 
-    add timeline_path(twitter_user), options
-    add one_sided_friend_path(twitter_user), options
-    add one_sided_follower_path(twitter_user), options
-    add mutual_friend_path(twitter_user), options
-    add unfriend_path(twitter_user), options
-    add unfollower_path(twitter_user), options
-    add blocking_or_blocked_path(twitter_user), options
-    add inactive_friend_path(twitter_user), options
-    add inactive_follower_path(twitter_user), options
-    add inactive_mutual_friend_path(twitter_user), options
-    add friend_path(twitter_user), options
-    add follower_path(twitter_user), options
-    add status_path(twitter_user), options
-    add replying_path(twitter_user, type: 'replying'), options
-    add replied_path(twitter_user, type: 'replied'), options
-    add replying_and_replied_path(twitter_user), options
-    add cluster_path(twitter_user), options
-    add close_friend_path(twitter_user), options
-    add favorite_friend_path(twitter_user), options
-    add usage_stat_path(twitter_user), options
-  end
+    with_options options do |obj|
+      obj.add timeline_path twitter_user
+      obj.add one_sided_friend_path twitter_user
+      obj.add one_sided_follower_path twitter_user
+      obj.add mutual_friend_path twitter_user
+      obj.add unfriend_path twitter_user
+      obj.add unfollower_path twitter_user
+      obj.add blocking_or_blocked_path twitter_user
+      obj.add inactive_friend_path twitter_user
+      obj.add inactive_follower_path twitter_user
+      obj.add inactive_mutual_friend_path twitter_user
+      obj.add friend_path twitter_user
+      obj.add follower_path twitter_user
+      obj.add status_path twitter_user
+      obj.add replying_path twitter_user
+      obj.add replied_path twitter_user
+      obj.add replying_and_replied_path twitter_user
+      obj.add cluster_path twitter_user
+      obj.add close_friend_path twitter_user
+      obj.add favorite_friend_path twitter_user
+      obj.add usage_stat_path twitter_user
+    end
 
   options = {priority: 0.3}
 
