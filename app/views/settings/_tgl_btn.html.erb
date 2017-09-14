@@ -1,4 +1,4 @@
-<div class="table-box">
+<div class="tgl-btns">
   <div class="table-cell-left">
     <%= check_box_tag name, true, current_user.notification_setting.send("#{name}?"), {id: "#{name}-input", class: 'tgl tgl-ios'} %>
     <label class='tgl-btn' for="<%= name %>-input"></label>

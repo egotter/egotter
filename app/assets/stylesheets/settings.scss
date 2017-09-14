@@ -1,16 +1,9 @@
-.menu {
+.tgl-btns {
+  display: table;
+
   .checkbox {
     margin-left: 15px;
     margin-right: 15px;
-  }
-
-  .edit_notification hr {
-    margin-top: 5px;
-    margin-bottom: 5px;
-  }
-
-  .table-box {
-    display: table;
   }
 
   .table-cell-left,
@@ -22,4 +15,8 @@
   .table-cell-right {
     padding-left: 10px;
   }
+}
+
+.table.settings tbody > tr > td {
+  vertical-align: middle;
 }

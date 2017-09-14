@@ -1,13 +1,30 @@
-<div class="menu">
-  <h2 class="h4 text-center"><%= t('.notifications_title', user: current_user.mention_name) %></h2>
-  <%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name, cached: true %>
-  <script>
-    $(function () {
-      var url = '<%= setting_path %>';
-      attach_event_handler('email', url);
-      attach_event_handler('dm', url);
-      attach_event_handler('news', url);
-      attach_event_handler('search', url);
-    });
-  </script>
-</div>
+<h2 class="h4 text-center"><%= t('.general_title') %></h2>
+<table class="table settings">
+  <tbody>
+  <tr>
+    <td><%= t('searches.common.twitter_id') %></td>
+    <td>
+      <%= current_user.mention_name %>
+      <div class="text-muted" style="font-size: x-small;"><%= t('.general_note1') %></div>
+    </td>
+  </tr>
+  <tr>
+    <td><%= t('searches.common.email') %></td>
+    <td><%= current_user.email %></td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="gray-separator"></div>
+
+<h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
+<%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name, cached: true %>
+<script>
+  $(function () {
+    var url = '<%= setting_path %>';
+    attach_event_handler('email', url);
+    attach_event_handler('dm', url);
+    attach_event_handler('news', url);
+    attach_event_handler('search', url);
+  });
+</script>
