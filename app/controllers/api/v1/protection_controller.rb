@@ -3,10 +3,6 @@ module Api
     class ProtectionController < ::Api::Base
       def summary
         hacked = select_hacked_statuses(@twitter_user)
-        if hacked.any?
-          logger.warn "hacked #{current_user_id} #{@twitter_user.uid} #{hacked.size} #{hacked.first.text}"
-        end
-
         render json: {name: controller_name, count: hacked.size}, status: 200
       end
 
