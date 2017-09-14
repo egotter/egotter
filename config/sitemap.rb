@@ -40,6 +40,7 @@ do_create = Proc.new do
       obj.add favorite_friend_path twitter_user
       obj.add usage_stat_path twitter_user
     end
+  end
 
   options = {priority: 0.3}
 
