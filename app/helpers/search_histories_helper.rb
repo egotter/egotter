@@ -10,8 +10,20 @@ module SearchHistoriesHelper
     SearchHistory.where(condition).size
   end
 
+  def search_histories_remaining
+    search_histories_limit - search_histories_size
+  end
+
   def search_histories_limit
-    user_signed_in? ? 1000 : Rails.configuration.x.constants['anonymous_search_histories_limit']
+    if user_signed_in?
+      Rails.configuration.x.constants['free_plan_search_histories_limit']
+    else
+      Rails.configuration.x.constants['anonymous_search_histories_limit']
+    end
+  end
+
+  def remaining_count_text
+    "#{t('searches.common.search_remaining')} #{t('search_histories.remaining', count: search_histories_remaining)}"
   end
 
   def update_search_histories_when_signing_in(user)

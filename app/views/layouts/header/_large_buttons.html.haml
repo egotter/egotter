@@ -14,7 +14,7 @@
         %li
           %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
             %span.glyphicon.glyphicon-search
-            = t('searches.common.search')
+            = remaining_count_text
       - else
         %li
           %p.navbar-btn{style: 'margin-right: 15px;'}
@@ -25,7 +25,7 @@
           %p.navbar-btn{style: 'margin-right: 15px;'}
             %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal', class: 'btn btn-default'}
               %span.glyphicon.glyphicon-search
-              = t('searches.common.search')
+              = remaining_count_text
     - else
       - if request.from_smartphone?
         %li
@@ -33,7 +33,7 @@
         %li
           %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
             %span.glyphicon.glyphicon-search
-            = t('searches.common.search')
+            = remaining_count_text
       - else
         %li
           %p.navbar-btn{style: 'margin-right: 15px;'}
@@ -42,7 +42,7 @@
           %p.navbar-btn{style: 'margin-right: 15px;'}
             %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal', class: 'btn btn-default'}
               %span.glyphicon.glyphicon-search
-              = t('searches.common.search')
+              = remaining_count_text
 
     - if user_signed_in?
       - if request.from_smartphone?
