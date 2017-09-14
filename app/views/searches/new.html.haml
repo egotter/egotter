@@ -14,25 +14,25 @@
         %i.fa.fa-check.fa-lg{'aria-hidden': true}
         = t('searches.new.pc.check_002')
       %div{style: 'margin-top: 5px;'}
-        = link_to t('searches.new.pc.sign_up'), sign_in_path(via: "#{controller_name}/#{action_name}/button/pc_special"), class: 'btn btn-info btn-block btn-lg box-center'
+        = link_to t('searches.new.pc.sign_up'), sign_in_path(via: build_via('button/pc_special')), class: 'btn btn-info btn-block btn-lg box-center'
       %div{style: 'height: 30px; width: 100%;'}
       %div= t('searches.new.pc.search_for_now')
       .box-center{style: 'margin-top: 5px;'}
-        = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/input/pc_special"}
+        = render partial: 'common/search_form', locals: {via: build_via('input/pc_special')}
       .hidden-md-block.hidden-lg-block{style: 'height: 30px; width: 100%;'}
     .col-md-6.col-md-pull-6
-      = link_to timeline_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/big_icon") do
+      = search_link 'ego_tter', build_via('big_icon') do
         = image_tag '/egotter_icon_400x400.jpg', size: '400x400', class: 'img-rounded', style: 'padding: 10px; border: 15px solid #f5f5f5'
 - else
   .text-center.searches
     %h3.h4= t('searches.new.lead_001')
     .lead= t('searches.new.lead_002_html')
-    = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/input"}
+    = render partial: 'common/search_form', locals: {via: build_via('input')}
     = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
     - if user_signed_in?
-      = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"}
+      = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('top_button')}
     - else
-      = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
+      = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: build_via('button')), class: 'btn btn-info btn-block'
       .text-notice
         %i.fa.fa-check.fa-lg{'aria-hidden': true}
         = t('searches.new.pc.check_001')
@@ -42,10 +42,10 @@
 
 .row.searches.screenshot.text-center
   .col-xs-12.col-sm-6
-    = link_to timeline_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/screenshot_iphone") do
+    = search_link 'ego_tter', build_via('screenshot_iphone') do
       %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_iphone_332x560.png'), height: '160px'}
   .col-xs-12.col-sm-6
-    = link_to timeline_path(screen_name: 'ego_tter', via: "#{controller_name}/#{action_name}/screenshot_laptop") do
+    = search_link 'ego_tter', build_via('screenshot_laptop') do
       %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_961x560.png'), height: '160px'}
 
 .searches.separator
@@ -98,7 +98,7 @@
   .col-xs-12.col-sm-6.text-center{style: 'margin-top: 30px;'}
     %div
       = t('searches.new.pc.sign_in_now')
-    = link_to t('searches.new.pc.sign_up'), sign_in_path(via: "#{controller_name}/#{action_name}/button/pc_special2"), class: 'btn btn-info btn-block btn-lg box-center'
+    = link_to t('searches.new.pc.sign_up'), sign_in_path(via: build_via('button/pc_special2')), class: 'btn btn-info btn-block btn-lg box-center'
     .text-notice
       %i.fa.fa-check.fa-lg{'aria-hidden': true}
       = t('searches.new.pc.check_001')
@@ -109,7 +109,7 @@
     %div
       = t('searches.new.pc.search_for_now')
     .box-center{style: 'margin-top: 5px;'}
-      = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/input/pc_special2"}
+      = render partial: 'common/search_form', locals: {via: build_via('input/pc_special2')}
 
 .searches.separator
 

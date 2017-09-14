@@ -11,7 +11,7 @@
 
 %h2.h2.page-title= page_title
 
-= render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
+= render partial: 'common/search_form', locals: {via: build_via('top_input')}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 #statuses.twitter.tweets.row

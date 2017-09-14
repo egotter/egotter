@@ -25,7 +25,7 @@ module TwitterHelper
   end
 
   def linkify(text)
-    url = Rails.application.routes.url_helpers.timeline_path(screen_name: 'SN').sub(/SN$/, '\\\1')
+    url = timeline_path(screen_name: 'SN').sub(/SN$/, '\\\1')
     text.gsub(/@(\w+)/, %Q{<a href="#{url}">\\0</a>}).html_safe
   end
 

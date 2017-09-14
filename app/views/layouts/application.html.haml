@@ -101,7 +101,7 @@
           = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
 
           %script{id: 'user-template', type: 'x-tmpl-mustache'}
-            = search_link '{{screen_name}}', "#{controller_name}/#{action_name}/{{menu_name}}", unescape: true, style: 'display: inline-block;' do
+            = search_link '{{screen_name}}', build_via('{{menu_name}}'), unescape: true, style: 'display: inline-block;' do
               %img.img-rounded{src: '{{profile_image_url_https}}', alt: '{{screen_name}}', width: 48, height: 48}
           :javascript
             $(function () {
@@ -132,8 +132,8 @@
           .row
             .col-xs-12.pre-footer.text-center
               %h2.h4= t('searches.new.feature_007')
-              = t('searches.new.feature_desc_007_html', link: link_to(t('dictionary.view_more_detail'), welcome_path(via: "#{controller_name}/#{action_name}/feature_desc_007_bottom")))
-              = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: "#{controller_name}/#{action_name}/button_bottom"), class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;'
+              = t('searches.new.feature_desc_007_html', link: link_to(t('dictionary.view_more_detail'), welcome_path(via: build_via('feature_desc_007_bottom'))))
+              = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: build_via('button_bottom')), class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;'
 
       .container
         .row

@@ -9,7 +9,7 @@
 </div>
 
 <div class="error-msg alert alert-warning text-center" style="display: none;">
-  <%= t('before_sign_in.something_wrong_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/something_wrong")) %>
+  <%= t('before_sign_in.something_wrong_html', url: sign_in_path(via: build_via('something_wrong'))) %>
 </div>
 
 <div class="row">
@@ -29,13 +29,13 @@
 <div class="row">
   <div class="col-xs-12 col-sm-4 text-center">
     <div class="retry-btn" style="display: none; margin-bottom: 15px;">
-      <%= link_to t('searches.waiting.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: "#{controller_name}/#{action_name}/retry"), class: 'btn btn-lg btn-default', method: :post %>
+      <%= link_to t('searches.waiting.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: build_via('retry')), class: 'btn btn-lg btn-default', method: :post %>
     </div>
   </div>
 
   <div class="col-xs-12 col-sm-4 text-center">
     <div class="login-btn" style="display: none; margin-bottom: 15px;">
-      <%= link_to t('login.welcome.sign_in_with_twitter'), sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_button"), class: 'btn btn-lg btn-info' %>
+      <%= link_to t('login.welcome.sign_in_with_twitter'), sign_in_path(via: build_via('sign_in_button')), class: 'btn btn-lg btn-info' %>
     </div>
   </div>
 
@@ -113,7 +113,7 @@
         if (!signedIn) $loginBtn.show();
         $supportBtn.show();
 
-        var timeOutMessage = '<%= t('before_sign_in.retry_timeout_html', sign_in_path: sign_in_path(via: "#{controller_name}/#{action_name}/timeout")).html_safe %>';
+        var timeOutMessage = '<%= t('before_sign_in.retry_timeout_html', sign_in_path: sign_in_path(via: build_via('timeout'))).html_safe %>';
         $errorMessage.html(timeOutMessage).show();
       }, function (xhr) {
         console.log('failed', xhr.responseText);

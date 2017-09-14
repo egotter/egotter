@@ -1,5 +1,5 @@
 - uids << user.uid.to_i if defined?(uids) && uids.is_a?(Array)
-- via = "#{controller_name}/#{action_name}" if !defined?(via) || via.blank?
+- via = build_via if !defined?(via) || via.blank?
 
 - if ad && defined?(user_counter) && user_counter == 3
   = render partial: 'common/adsense', locals: {action: action_name, vertical: :slit}
@@ -37,7 +37,7 @@
                   %i.text-muted.fa.fa-user-plus{'area-hidden': true}
                   .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
           - else
-            %a.btn.btn-default.no-follow{href: sign_in_path(via: "#{controller_name}/#{action_name}/follow_btn")}
+            %a.btn.btn-default.no-follow{href: sign_in_path(via: build_via('follow_btn'))}
               %i.text-muted.fa.fa-user-plus{'area-hidden': true}
               .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
 

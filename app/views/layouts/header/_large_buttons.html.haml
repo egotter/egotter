@@ -29,7 +29,7 @@
     - else
       - if request.from_smartphone?
         %li
-          = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header")
+          = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header'))
         %li
           %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
             %span.glyphicon.glyphicon-search
@@ -37,7 +37,7 @@
       - else
         %li
           %p.navbar-btn{style: 'margin-right: 15px;'}
-            = link_to t('dictionary.sign_in'), welcome_path(via: "#{controller_name}/#{action_name}/header"), class: 'btn btn-default'
+            = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header')), class: 'btn btn-default'
         %li
           %p.navbar-btn{style: 'margin-right: 15px;'}
             %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal', class: 'btn btn-default'}

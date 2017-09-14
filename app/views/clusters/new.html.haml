@@ -5,13 +5,13 @@
 .clusters.lead.text-center= t('clusters.new.lead_002')
 .clusters.lead.text-center= t('clusters.new.lead_003_html')
 
-= render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/top_input"}
+= render partial: 'common/search_form', locals: {via: build_via('top_input')}
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
 
 - if user_signed_in?
-  = link_to t('searches.common.search_by', user: current_user.mention_name), clusters_path(screen_name: current_user.screen_name, via: "#{controller_name}/#{action_name}/top_button"), class: 'btn btn-info btn-block', method: :post
+  = link_to t('searches.common.search_by', user: current_user.mention_name), clusters_path(screen_name: current_user.screen_name, via: build_via('top_button')), class: 'btn btn-info btn-block', method: :post
 - else
-  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: clusters_top_path, via: "#{controller_name}/#{action_name}/button"), class: 'btn btn-info btn-block'
+  = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(redirect_path: clusters_top_path, via: build_via('button')), class: 'btn btn-info btn-block'
 
 .row.clusters.screenshot
   .col-xs-12.col-sm-6.text-center

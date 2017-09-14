@@ -3,10 +3,10 @@
   .media
     .media-inner
       .media-left
-        = link_to timeline_path(screen_name: user.screen_name) do
+        = search_link user.screen_name, build_via('icon') do
           = normal_icon_img(user, class: 'media-object img-rounded')
       .media-body
         %h4.media-heading= user_name(user)
-        %span.screen-name= link_to(mention_name(user.screen_name), timeline_path(screen_name: user.screen_name))
+        %span.screen-name= search_link user.screen_name, build_via('screen_name')
       .media-right.created-at= tweet_link(tweet)
       .tweet-text= linkify(tweet.text)

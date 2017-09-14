@@ -51,7 +51,7 @@
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
 
 .search_form-wrapper{style: 'margin-bottom: 15px;'}
-  = render partial: 'common/search_form', locals: {via: "#{controller_name}/#{action_name}/tweets_stat"}
+  = render partial: 'common/search_form', locals: {via: build_via('tweets_stat')}
 
 = render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
 

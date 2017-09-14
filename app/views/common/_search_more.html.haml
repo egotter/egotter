@@ -1,4 +1,4 @@
 .please-use-egotter{style: 'margin-top: 15px;'}= text
 .text-center
-  = link_to t('searches.common.search_xxx_by_egotter', user: twitter_user.mention_name), searches_path(screen_name: twitter_user.screen_name, via: "#{controller_name}/#{action_name}/bottom_button"), class: 'btn btn-info', style: 'margin-top: 15px;', method: :post
+  = link_to t('searches.common.search_xxx_by_egotter', user: twitter_user.mention_name), searches_path(screen_name: twitter_user.screen_name, via: build_via('bottom_button')), class: 'btn btn-info', style: 'margin-top: 15px;', method: :post
 = render partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}
