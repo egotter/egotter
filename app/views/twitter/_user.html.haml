@@ -9,19 +9,19 @@
   .media
     .media-inner
       .media-left
-        = link_to timeline_path(screen_name: user.screen_name, via: via) do
+        = search_link user.screen_name, via do
           = normal_icon_img(user, class: 'media-object')
       .media-body
         %h4.media-heading
           - if request.from_pc?
-            = link_to mention_name(user.screen_name), timeline_path(screen_name: user.screen_name, via: via)
+            = search_link user.screen_name, via
           = user_name(user, label: true)
         - if request.from_pc?
           %span.friends-count
             = "#{user.friends_count} / #{user.followers_count}"
         - else
           %span.screen-name
-            = link_to mention_name(user.screen_name), timeline_path(screen_name: user.screen_name, via: via)
+            = search_link user.screen_name, via
       .media-right
         .buttons
           - if user_signed_in?
@@ -41,7 +41,7 @@
               %i.text-muted.fa.fa-user-plus{'area-hidden': true}
               .visible-md-inline.visible-lg-inline= t('searches.common.do_follow')
 
-          = link_to searches_path_for(screen_name: user.screen_name, via: via), method: :post do
+          = search_link user.screen_name, via do
             %button.btn.btn-info{type: 'button'}
               %span.glyphicon.glyphicon-search
               .visible-md-inline.visible-lg-inline= t('searches.common.do_search')
