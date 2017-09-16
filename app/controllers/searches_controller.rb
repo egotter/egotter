@@ -41,7 +41,7 @@ class SearchesController < ApplicationController
   def waiting
     uid = params[:uid].to_i
     twitter_user = fetch_twitter_user_from_cache(uid)
-    return redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist') if twitter_user.nil?
+    return redirect_to root_path, alert: t('application.not_found') if twitter_user.nil?
 
     @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(twitter_user))
     @twitter_user = twitter_user

@@ -44,7 +44,7 @@ module Concerns::Validation
     end
 
     if from_crawler?
-      redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
+      redirect_to root_path_for(controller: controller_name), alert: t('application.not_found')
       return false
     end
 
@@ -54,7 +54,7 @@ module Concerns::Validation
       @via = params['via']
       render template: 'searches/create', layout: false
     else
-      redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.that_page_doesnt_exist')
+      redirect_to root_path_for(controller: controller_name), alert: t('application.not_found')
     end
 
     false
@@ -77,7 +77,7 @@ module Concerns::Validation
     if request.xhr?
       head :bad_request
     else
-      redirect_to root_path, alert: t('before_sign_in.that_page_doesnt_exist')
+      redirect_to root_path, alert: t('application.not_found')
     end
 
     false

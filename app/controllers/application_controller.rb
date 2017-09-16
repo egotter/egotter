@@ -25,17 +25,20 @@ class ApplicationController < ActionController::Base
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
 
+  rescue_from Exception do |ex|
+    logger.warn "rescue_from Exception: #{ex.class} #{ex.message} #{debug_str}"
+    request.xhr? ? head(:internal_server_error) : render_500
+  end
+
   rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_token
 
   def invalid_token
     logger.info "Invalid token: #{debug_str}"
 
-    if request.xhr?
-      return head(:bad_request)
-    end
+    return head :bad_request if request.xhr?
 
     screen_name = params[:screen_name].to_s.strip.remove /^@/
-    if screen_name.blank? || !screen_name.match(Validations::ScreenNameValidator::REGEXP)
+    unless screen_name.match(Validations::ScreenNameValidator::REGEXP)
       return redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
     end
 
@@ -43,7 +46,7 @@ class ApplicationController < ActionController::Base
     sign_in = sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search)
 
     if recoverable_request?
-      logger.warn "Recoverable CSRF token error #{fingerprint&.truncate(15)} #{debug_str}"
+      logger.warn "Recoverable CSRF token error #{fingerprint} #{debug_str}"
       return redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
     end
 
@@ -53,9 +56,8 @@ class ApplicationController < ActionController::Base
   def not_found
     logger.info "Not found: #{debug_str}"
 
-    if from_crawler? || request.method != 'GET' || request.xhr?
-      return head :not_found
-    end
+    return head :not_found if request.xhr?
+    return render_404 if from_crawler? || request.method != 'GET'
 
     if params['screen_name'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
       @screen_name = params['screen_name']
@@ -64,12 +66,12 @@ class ApplicationController < ActionController::Base
       return render template: 'searches/create', layout: false
     end
 
-    if params['from'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/profile'
-      @screen_name = params['from']
-      @redirect_path = timeline_path(screen_name: @screen_name)
-      @via = params['via']
-      return render template: 'searches/create', layout: false
-    end
+    # if params['from'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/profile'
+    #   @screen_name = params['from']
+    #   @redirect_path = timeline_path(screen_name: @screen_name)
+    #   @via = params['via']
+    #   return render template: 'searches/create', layout: false
+    # end
 
     if request.fullpath.match(%r{^/https:/egotter\.com(.+)})
       redirect = "https://egotter.com#{$1}"
@@ -77,8 +79,7 @@ class ApplicationController < ActionController::Base
       return redirect_to redirect, status: 301
     end
 
-    flash.now[:alert] = t('before_sign_in.that_page_doesnt_exist')
-    render template: 'searches/new', status: 404
+    render_404
   end
 
   def recoverable_request?
@@ -90,7 +91,7 @@ class ApplicationController < ActionController::Base
   end
 
   def debug_str
-    "#{request.method} #{current_user_id} #{request.device_type} #{request.browser} #{request.xhr?} #{request.referer} #{params.inspect}"
+    "#{request.method} #{current_user_id} #{request.device_type} #{request.browser} #{!!request.xhr?} #{request.fullpath} #{request.referer} #{params.inspect}"
   end
 
   # https://github.com/plataformatec/devise/issues/1390
@@ -120,5 +121,17 @@ class ApplicationController < ActionController::Base
   def after_sign_out_path_for(resource)
     session[:sign_out_from] = request.protocol + request.host_with_port + sign_out_path
     root_path
+  end
+
+  def render_404
+    self.sidebar_disabled = true
+    flash.now[:alert] = t('application.not_found')
+    render template: 'searches/new', status: 404
+  end
+
+  def render_500
+    self.sidebar_disabled = true
+    flash.now[:alert] = t('application.internal_server_error')
+    render template: 'searches/new', status: 500
   end
 end

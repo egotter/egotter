@@ -8,7 +8,11 @@ module ApplicationHelper
   end
 
   def show_sidebar?
-    %w(new waiting all).exclude?(action_name) && request.from_pc? && @twitter_user
+    %w(new waiting all).exclude?(action_name) && (from_crawler? || request.from_pc?) && @twitter_user && !@sidebar_disabled
+  end
+
+  def sidebar_disabled=(flag)
+    @sidebar_disabled = flag
   end
 
   def show_common_friends?(twitter_user)

@@ -597,6 +597,8 @@ ja:
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       share_me: "えごったーをシェアする"
   application:
+    not_found: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
+    internal_server_error: "エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。"
     invalid_token:
       session_expired_html: '一定時間操作がなかったため、セッションの有効期限が切れました。 <a href="%{url}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{url}">ログイン</a> してください。'
       session_expired_and_recover_html: '一定時間操作がなかったため、@%{user} の検索に失敗しました。 再度結果を見るにはこちら → <a href="%{url1}" class="btn btn-default btn-sm">@%{user} の結果を見る</a> 表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-default btn-sm">ログインして @%{user} の結果を見る</a>'
@@ -672,7 +674,6 @@ ja:
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
-    that_page_doesnt_exist: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
     reject_crawler: "The crawler is rejected."
   after_sign_in:
     too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 )'
