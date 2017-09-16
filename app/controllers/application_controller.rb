@@ -131,7 +131,12 @@ class ApplicationController < ActionController::Base
 
   def render_500
     self.sidebar_disabled = true
-    flash.now[:alert] = t('application.internal_server_error')
+    screen_name = params[:screen_name] || @twitter_user&.screen_name
+    if screen_name.present?
+      flash.now[:alert] = t('application.internal_server_error_with_recovery_html', user: screen_name, url: timeline_path(screen_name: screen_name))
+    else
+      flash.now[:alert] = t('application.internal_server_error')
+    end
     render template: 'searches/new', status: 500
   end
 end
