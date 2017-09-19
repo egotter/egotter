@@ -675,7 +675,6 @@ ja:
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
-    reject_crawler: "The crawler is rejected."
   after_sign_in:
     too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 )'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"

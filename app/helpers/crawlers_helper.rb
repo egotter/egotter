@@ -1,8 +1,6 @@
 module CrawlersHelper
   def reject_crawler
-    if from_crawler?
-      render text: t('before_sign_in.reject_crawler')
-    end
+    head :forbidden if from_crawler?
   end
 
   def from_crawler?
