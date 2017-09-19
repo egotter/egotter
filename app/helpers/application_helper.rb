@@ -34,10 +34,6 @@ module ApplicationHelper
     ]
   end
 
-  def redis
-    @redis ||= Redis.client
-  end
-
   def client
     @client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
   end
