@@ -22,7 +22,7 @@ module TwitterUsersHelper
   end
 
   def fetch_twitter_user_from_cache(uid)
-    attrs = Util::ValidTwitterUserSet.new(redis).get(uid)
+    attrs = Util::ValidTwitterUserSet.new(Redis.client).get(uid)
     return nil if attrs.nil?
 
     TwitterUser.new(
@@ -33,7 +33,7 @@ module TwitterUsersHelper
   end
 
   def save_twitter_user_to_cache(uid, screen_name:, user_info:)
-    Util::ValidTwitterUserSet.new(redis).set(
+    Util::ValidTwitterUserSet.new(Redis.client).set(
       uid,
       {uid: uid, screen_name: screen_name, user_info: user_info}
     )
