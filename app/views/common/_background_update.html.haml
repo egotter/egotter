@@ -6,7 +6,7 @@
 .refresh-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   %span= t('common.show.update_is_coming', user: twitter_user.mention_name)
-  = link_to(t('common.show.update_result'), timeline_path(twitter_user), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.update_result'), timeline_path(twitter_user, via: build_via('refresh_box')), class: 'btn btn-default btn-sm')
 
 .welcome-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;

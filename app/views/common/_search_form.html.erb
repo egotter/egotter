@@ -1,7 +1,7 @@
 <% form_tag_id = search_form_id %>
 <% input_tag_id = search_input_id %>
 
-<%= form_tag searches_path, id: form_tag_id, method: :post do %>
+<%= form_tag searches_path, id: form_tag_id, class: 'text-left', method: :post do %>
 <label for="screen_name" class="sr-only"><%= t('searches.common.twitter_id') %></label>
 <div class="input-group">
   <div class="input-group-addon">@</div>
