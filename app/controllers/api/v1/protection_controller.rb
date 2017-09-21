@@ -1,6 +1,9 @@
 module Api
   module V1
     class ProtectionController < ::Api::Base
+
+      before_action :require_login!
+
       def summary
         hacked = select_hacked_statuses(@twitter_user)
         render json: {name: controller_name, count: hacked.size}, status: 200

@@ -11,14 +11,13 @@ module Concerns::Validation
 
   end
 
-  def need_login
-    unless user_signed_in?
+  def require_login!
+    return if user_signed_in?
+    if request.xhr?
+      head :unauthorized
+    else
       redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
     end
-  end
-
-  def require_admin!
-    redirect_to root_path unless admin_signed_in?
   end
 
   def valid_uid?(uid = nil)

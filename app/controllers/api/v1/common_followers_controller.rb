@@ -2,6 +2,8 @@ module Api
   module V1
     class CommonFollowersController < ::Api::Base
 
+      before_action :require_login!
+
       private
 
       def summary_uids(limit: 3)

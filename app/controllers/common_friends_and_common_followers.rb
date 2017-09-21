@@ -2,7 +2,7 @@ class CommonFriendsAndCommonFollowers < ApplicationController
   include Concerns::Showable
   include Concerns::Indexable
 
-  before_action(only: %i(show all)) { need_login }
+  before_action(only: %i(show all)) { require_login! }
   before_action(only: %i(show all)) { twitter_user_persisted?(current_user.uid) }
 
   def all
