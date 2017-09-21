@@ -27,5 +27,22 @@ class SearchHistory < ActiveRecord::Base
     screen_name
   end
 
-  delegate :uid, :screen_name, :name, :friends_count, :followers_count, :description, :profile_image_url_https, :protected, :verified, :suspended, :inactive, :status, to: :twitter_db_user, allow_nil: true
+  delegate(
+    *%i(
+      uid
+      screen_name
+      name
+      friends_count
+      followers_count
+      description
+      profile_image_url_https
+      protected
+      verified
+      suspended
+      inactive
+      status
+    ),
+    to: :twitter_db_user,
+    allow_nil: true
+  )
 end
