@@ -11,7 +11,7 @@ module SearchHistoriesHelper
   end
 
   def search_histories_remaining
-    search_histories_limit - search_histories_size
+    [0, search_histories_limit - search_histories_size].max
   end
 
   def search_histories_limit
