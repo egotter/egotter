@@ -11,7 +11,7 @@ module Concerns::Indexable
     before_action(only: %i(all)) { authorized_search?(@tu) }
     before_action(only: %i(all)) { twitter_user_persisted?(@tu.uid.to_i) }
     before_action(only: %i(all)) { twitter_db_user_persisted?(@tu.uid.to_i) }
-    before_action(only: %i(all)) { too_many_searches? }
+    before_action(only: %i(all)) { too_many_searches?(@tu) }
 
     before_action(only: %i(all))  do
       @twitter_user = TwitterUser.latest(@tu.uid.to_i)
