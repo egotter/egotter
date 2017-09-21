@@ -1,13 +1,13 @@
 module SearchHistoriesHelper
   def latest_search_histories
     condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
-    SearchHistory.includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10)
+    SearchHistory.includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10).select(&:twitter_db_user)
   end
 
   def search_histories_size
     condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
     condition.merge!(created_at: 1.day.ago..Time.zone.now)
-    SearchHistory.where(condition).size
+    SearchHistory.where(condition).count('distinct uid')
   end
 
   def search_histories_remaining
