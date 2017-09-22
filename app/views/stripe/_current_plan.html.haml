@@ -11,7 +11,7 @@
       %td= subscription_period(subscription)
     %tr
       %td= t('stripe.plans.pricing.key')
-      %td= plan.price_label
+      %td= price_label(plan)
     %tr
       %td= t('.email')
       %td= card_email(customer)

@@ -28,7 +28,7 @@ module Stripe::SubscriptionsHelper
 
   def plan_subscribed?(plan_key)
     user_signed_in? && current_user.customer&.has_active_plan?(false) &&
-      current_user.customer.plan_id == StripeDB::Plan.find_by(plan_key: plan_key)&.plan_id
+      current_user.customer.plan.plan_key == plan_key.to_s
   end
 
   def subscribe_free_plan_button
@@ -53,15 +53,17 @@ module Stripe::SubscriptionsHelper
 
   def card_text(customer)
     card = customer.sources.data[0]
-    "#{card.brand} #{t('stripe.current_plan.last4')} #{card.last4} #{card.exp_month}/#{card.exp_year}"
+    t('stripe.current_plan.card_text', brand: card.brand, last4: card.last4, month: card.exp_month, year: card.exp_year)
   end
 
-  def subscriptions_create_or_update_path(plan)
-    current_user&.customer&.has_active_plan? ? stripe_subscription_path(plan_id: plan.plan_id) : stripe_subscriptions_path(plan_id: plan.plan_id)
+  def price_label(plan)
+    t('stripe.price_label', amount: plan.amount)
   end
 
-  def subscriptions_post_or_patch
-    current_user&.customer&.has_active_plan? ? :patch : :post
+  def subscriptions_form_tag(plan, id:, &block)
+    url = current_user&.customer&.has_active_plan? ? stripe_subscription_path(plan_id: plan.plan_id) : stripe_subscriptions_path(plan_id: plan.plan_id)
+    method = current_user&.customer&.has_active_plan? ? :patch : :post
+    form_tag url, id: id, method: method, &block
   end
 
   def data_confirm_subscribe(plan)

@@ -47,8 +47,8 @@
       %tr
         %td= t('.pricing.key')
         %td= t('.pricing.free')
-        %td= StripeDB::Plan.find_by(plan_key: :basic).price_label
-        %td= StripeDB::Plan.find_by(plan_key: :pro).price_label
+        %td= price_label(StripeDB::Plan.find_by(plan_key: :basic))
+        %td= price_label(StripeDB::Plan.find_by(plan_key: :pro))
       %tr
         %td= t('.purchasing.key')
         %td= t('.purchasing.free')

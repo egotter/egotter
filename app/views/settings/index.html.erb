@@ -29,9 +29,10 @@
   });
 </script>
 
+<div class="gray-separator"></div>
+<h2 class="h4 text-center"><%= t('.plan_title') %></h2>
+
 <% if current_user.customer&.has_active_plan? %>
-  <div class="gray-separator"></div>
-  <h2 class="h4 text-center"><%= t('.plan_title') %></h2>
   <div id="current-plan-wrapper"></div>
   <script>
     $(function () {
@@ -39,4 +40,6 @@
       new AsyncLoader(url, '#current-plan-wrapper').load();
     });
   </script>
+<% else %>
+  <div class="text-center" style="margin-bottom: 15px;"><%= t('stripe.plans.names.free') %></div>
 <% end %>

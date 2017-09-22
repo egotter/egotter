@@ -1,8 +1,5 @@
 ja:
   stripe:
-    customers:
-      update:
-        source_updated_successfully_html: '支払い情報の更新が完了しました。'
     subscriptions:
       shared: &stripe_subscriptions_shared
         caming_soon: '準備中です。'
@@ -44,11 +41,8 @@ ja:
       period: '期間'
       email: 'メール'
       payment_method: '支払い方法'
-      last4: '下4桁'
-    currency:
-      jpy: '円'
-    interval:
-      monthly: '月'
+      card_text: '%{brand} 下4桁 %{last4} %{month}/%{year}'
+    price_label: "%{amount}円 / 月"
     already_subscribed: '登録済みです'
     plans: &stripe_plans
       caption: "料金プラン"

@@ -586,6 +586,7 @@ ActiveRecord::Schema.define(version: 20170909042610) do
     t.string   "session_id", limit: 191, default: "", null: false
     t.integer  "user_id",    limit: 4,                null: false
     t.integer  "uid",        limit: 8,                null: false
+    t.string   "plan_id",    limit: 191
     t.datetime "created_at",                          null: false
     t.datetime "updated_at",                          null: false
   end

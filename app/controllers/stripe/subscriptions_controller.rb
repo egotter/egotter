@@ -13,6 +13,11 @@ class Stripe::SubscriptionsController < ApplicationController
     redirect_to root_path, alert: t('.bad_request') unless current_user.customer&.subscription
   end
 
+  before_action do
+    push_referer
+    create_search_log
+  end
+
   rescue_from Exception do |ex|
     logger.warn "#{controller_name}##{action_name}: #{ex.class} #{ex.message} #{current_user.inspect} #{params.inspect}"
     request.xhr? ? head(:internal_server_error) : redirect_to(root_path, alert: friendly_message(ex))

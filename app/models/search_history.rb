@@ -6,6 +6,7 @@
 #  session_id :string(191)      default(""), not null
 #  user_id    :integer          not null
 #  uid        :integer          not null
+#  plan_id    :string(191)
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
