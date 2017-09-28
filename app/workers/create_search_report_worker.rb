@@ -14,11 +14,7 @@ class CreateSearchReportWorker
     # TODO Implement email
     # TODO Implement onesignal
 
-    begin
-      SearchReport.you_are_searched(user.id).deliver
-    rescue => e
-      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
-    end
+    SearchReport.you_are_searched(user.id).deliver
 
   rescue Twitter::Error::Unauthorized => e
     handle_unauthorized_exception(e, user_id: user_id)

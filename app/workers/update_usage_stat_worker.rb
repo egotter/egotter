@@ -1,5 +1,6 @@
 class UpdateUsageStatWorker
   include Sidekiq::Worker
+  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(uid, options = {})
@@ -20,6 +21,8 @@ class UpdateUsageStatWorker
     if statuses.any?
       UsageStat.builder(uid).statuses(statuses).build.save!
     end
+  rescue Twitter::Error::Unauthorized => e
+    handle_unauthorized_exception(e, uid: uid)
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{uid}"
   end

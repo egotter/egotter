@@ -17,7 +17,7 @@ class FollowEgotterWorker
     handle_forbidden_exception(e, user_id: request.user.id)
 
     if e.message == FORBIDDEN_MESSAGES[2]
-      logger.warn "#{e.class} #{e.message} #{request.inspect}"
+      logger.warn "Unable to follow #{request.inspect}"
     end
     raised = true
   rescue => e
