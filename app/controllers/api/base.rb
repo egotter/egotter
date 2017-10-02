@@ -59,6 +59,17 @@ module Api
 
     private
 
+    def log_exception(ex)
+      level =
+        case ex.message
+          when 'No user matches for specified terms.' then :info
+          when 'Invalid or expired token.'            then :info
+          when 'Your account is suspended and is not permitted to access this feature.' then :info
+          else :warn
+        end
+      logger.send(level, "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{params.inspect}")
+    end
+
     def fetch_suspended_uids?
       %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
     end
@@ -66,11 +77,7 @@ module Api
     def fetch_suspended_uids(uids)
       uids - client.users(uids).map { |u| u[:id] }
     rescue => e
-      if e.message == 'No user matches for specified terms.'
-      elsif e.message == 'Invalid or expired token.'
-      else
-        logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-      end
+      log_exception(e)
       []
     end
 
@@ -81,10 +88,7 @@ module Api
     def fetch_blocking_uids
       client.blocked_ids
     rescue => e
-      if e.message == 'Invalid or expired token.'
-      else
-        logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-      end
+      log_exception(e)
       []
     end
 
