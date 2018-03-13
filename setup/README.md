@@ -2,18 +2,18 @@
 
 `sudo bash -c "$(curl -L https://raw.githubusercontent.com/ts-3156/egotter/master/setup/install_egotter.sh)"`
 
-## Run rails
+## Run Rails
 
 ```
 bundle exec rake db:create db:migrate
 bundle exec rails s --binding=0.0.0.0
 ```
 
-## Run redis on mac
+## Run Redis on mac
 
 `redis-server [project root]/redis.conf`
 
-## Run sidekiq
+## Run Sidekiq
 
 `bundle exec sidekiq -C config/sidekiq.yml`
 
