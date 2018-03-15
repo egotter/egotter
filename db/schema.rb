@@ -384,56 +384,6 @@ ActiveRecord::Schema.define(version: 20170831041231) do
   add_index "news_reports", ["token"], name: "index_news_reports_on_token", unique: true, using: :btree
   add_index "news_reports", ["user_id"], name: "index_news_reports_on_user_id", using: :btree
 
-  create_table "nikaidate_citations", force: :cascade do |t|
-    t.string "archive_id", limit: 191, null: false
-    t.string "status_id",  limit: 191, null: false
-  end
-
-  add_index "nikaidate_citations", ["archive_id"], name: "index_nikaidate_citations_on_archive_id", using: :btree
-
-  create_table "nikaidate_opinions", force: :cascade do |t|
-    t.string   "uid",        limit: 191,   null: false
-    t.string   "status_id",  limit: 191,   null: false
-    t.text     "attrs_json", limit: 65535, null: false
-    t.datetime "created_at",               null: false
-    t.datetime "updated_at",               null: false
-  end
-
-  add_index "nikaidate_opinions", ["created_at"], name: "index_nikaidate_opinions_on_created_at", using: :btree
-  add_index "nikaidate_opinions", ["status_id"], name: "index_nikaidate_opinions_on_status_id", unique: true, using: :btree
-  add_index "nikaidate_opinions", ["uid"], name: "index_nikaidate_opinions_on_uid", using: :btree
-
-  create_table "nikaidate_parties", force: :cascade do |t|
-    t.string   "uid",             limit: 191,               null: false
-    t.string   "screen_name",     limit: 191,               null: false
-    t.integer  "citations_count", limit: 4,     default: 0, null: false
-    t.integer  "rank",            limit: 4,     default: 0, null: false
-    t.text     "attrs_json",      limit: 65535,             null: false
-    t.datetime "created_at",                                null: false
-    t.datetime "updated_at",                                null: false
-  end
-
-  add_index "nikaidate_parties", ["citations_count"], name: "index_nikaidate_parties_on_citations_count", using: :btree
-  add_index "nikaidate_parties", ["created_at"], name: "index_nikaidate_parties_on_created_at", using: :btree
-  add_index "nikaidate_parties", ["rank"], name: "index_nikaidate_parties_on_rank", using: :btree
-  add_index "nikaidate_parties", ["uid"], name: "index_nikaidate_parties_on_uid", unique: true, using: :btree
-
-  create_table "nikaidate_posts", force: :cascade do |t|
-    t.string   "archive_id",       limit: 191,   null: false
-    t.string   "url",              limit: 191,   null: false
-    t.string   "title",            limit: 191,   null: false
-    t.text     "description",      limit: 65535, null: false
-    t.text     "tags_json",        limit: 65535, null: false
-    t.text     "status_urls_json", limit: 65535, null: false
-    t.datetime "published_at",                   null: false
-    t.datetime "created_at",                     null: false
-    t.datetime "updated_at",                     null: false
-  end
-
-  add_index "nikaidate_posts", ["archive_id"], name: "index_nikaidate_posts_on_archive_id", unique: true, using: :btree
-  add_index "nikaidate_posts", ["created_at"], name: "index_nikaidate_posts_on_created_at", using: :btree
-  add_index "nikaidate_posts", ["published_at"], name: "index_nikaidate_posts_on_published_at", using: :btree
-
   create_table "not_found_users", force: :cascade do |t|
     t.string   "screen_name", limit: 191, null: false
     t.datetime "created_at",              null: false
