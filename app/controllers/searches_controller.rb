@@ -1,11 +1,8 @@
 class SearchesController < ApplicationController
+  include Concerns::Creatable
   include WorkersHelper
 
-  before_action :reject_crawler, only: %i(create waiting)
-  before_action(only: %i(create)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
-  before_action(only: %i(create)) { @twitter_user = build_twitter_user(params[:screen_name]) }
-  before_action(only: %i(create)) { authorized_search?(@twitter_user) }
-
+  before_action :reject_crawler, only: %i(waiting)
   before_action(only: %i(waiting)) { valid_uid? }
   before_action(only: %i(waiting)) { searched_uid?(params[:uid].to_i) }
 
