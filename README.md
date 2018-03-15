@@ -2,12 +2,33 @@
 
 [![Build Status](https://travis-ci.org/ts-3156/egotter.svg?branch=master)](https://travis-ci.org/ts-3156/egotter)
 
-Let's enjoy egotter! ✧*｡٩(ˊᗜˋ*)و✧*｡
+Please enjoy egotter!  ✧*｡٩(ˊᗜˋ*)و✧*｡
 
-```bash
-/etc/init.d/egotter start
+### Desktop
 
-```
+<table>
+    <tr>
+        <td>Top page</td>
+        <td>Result page</td>
+    </tr>
+    <tr>
+        <td><img src="docs/001_top_page_desktop.png" width="300" height="324"></td>
+        <td><img src="docs/002_result_page_desktop.png" width="300" height="645"></td>
+    </tr>
+</table>
+
+### Mobile
+
+<table>
+    <tr>
+        <td>Top page</td>
+        <td>Result page</td>
+    </tr>
+    <tr>
+        <td><img src="docs/003_top_page_mobile.png" width="300" height="1181"></td>
+        <td><img src="docs/004_result_page_mobile.png" width="300" height="1629"></td>
+    </tr>
+</table>
 
 ## Architecture
 
@@ -47,10 +68,15 @@ Let's enjoy egotter! ✧*｡٩(ˊᗜˋ*)و✧*｡
 
 ### Monit
 
+## Design
 
 ## Setup
 
 Read `setup/install_egotter.sh`
+
+```bash
+/etc/init.d/egotter start
+```
 
 ## License
 
