@@ -4,6 +4,8 @@
 
 Please enjoy egotter!  ✧*｡٩(ˊᗜˋ*)و✧*｡
 
+## Screenshots
+
 ### Desktop
 
 <table>
@@ -34,13 +36,40 @@ Please enjoy egotter!  ✧*｡٩(ˊᗜˋ*)و✧*｡
 
 ![Server architecture](docs/architecture.png)
 
+## Design
+
+### SearchesController#new
+
+Display a top page.
+
+In routes.rb:
+
+```ruby
+root 'searches#new'
+```
+
+### SearchesController#create
+
+Create a new search result.
+
+If search results which someone created before exists,
+the user will be redirected to `TimelinesController#show` to see existing data.
+On this page the browser will periodically check new search result with ajax polling.
+
+If any search results don't exist, the user will be redirected to
+`SearchesController#waiting` and the browser will periodically check first search result.
+
+### SearchesController#waiting
+
+### TimelinesController#show
+
 ## Server Components
 
 ### Nginx
 
 [/etc/nginx/nginx.conf](setup/etc/nginx/nginx.conf)
 
-### MySQL
+### MySQL on RDS
 ### Rails
 ### Unicorn
 
@@ -52,13 +81,15 @@ Please enjoy egotter!  ✧*｡٩(ˊᗜˋ*)و✧*｡
 
 [/etc/redis.conf](setup/etc/redis.conf)
 
-[redis.rb](config/initializers/redis.rb)
+[config/initializers/redis.rb](config/initializers/redis.rb)
 
 ### Sidekiq
 
 [/etc/init.d/sidekiq_base](setup/etc/init.d/sidekiq_base)
 
-[sidekiq.rb](config/initializers/sidekiq.rb)
+[/etc/init.d/sidekiq](setup/etc/init.d/sidekiq)
+
+[config/initializers/sidekiq.rb](config/initializers/sidekiq.rb)
 
 ### td-agent
 
@@ -68,7 +99,7 @@ Please enjoy egotter!  ✧*｡٩(ˊᗜˋ*)و✧*｡
 
 ### Monit
 
-## Design
+[/etc/monit.conf](setup/etc/monit.conf)
 
 ## Setup
 
