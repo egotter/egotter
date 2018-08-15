@@ -1,4 +1,4 @@
-require 'aws-sdk'
+require 'aws-sdk-cloudwatch'
 
 class CloudwatchClient
   REGION = 'ap-northeast-1'
