@@ -48,7 +48,7 @@ gem 'sinatra', require: false
 gem 'redis'
 gem 'hiredis'
 gem 'newrelic_rpm'
-gem 'mysql2'
+gem 'mysql2', '0.4.10'
 gem 'kaminari'
 gem 'httparty'
 gem 'unicorn'

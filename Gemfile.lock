@@ -866,7 +866,7 @@ GEM
     multi_json (1.13.1)
     multi_xml (0.6.0)
     multipart-post (2.0.0)
-    mysql2 (0.5.2)
+    mysql2 (0.4.10)
     naught (1.1.0)
     newrelic_rpm (5.6.0.349)
     nokogiri (1.10.0)
@@ -1076,7 +1076,7 @@ DEPENDENCIES
   mecab
   memoist
   meta-tags
-  mysql2
+  mysql2 (= 0.4.10)
   newrelic_rpm
   oj
   omniauth-twitter
