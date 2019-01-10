@@ -10,7 +10,7 @@ class ApiClient
   end
 
   def self.instance(options = {})
-    klass = TwitterWithAutoPagination::Client
+    klass = TwitterFriendly::Client
     return klass.new if options.blank?
     klass.new(config(options))
   end

@@ -1,4 +1,4 @@
-require 'twitter_with_auto_pagination'
+require 'twitter_friendly'
 require 'dotenv/load'
 
 dir = ENV['TWITTER_CACHE_DIR']
@@ -6,7 +6,7 @@ start = Time.now
 before = %x(du -sh #{dir} | awk '{ print $1 }').chomp
 
 begin
-  TwitterWithAutoPagination::Client.new(cache_dir: dir).cache.cleanup
+  TwitterFriendly::Client.new(cache_dir: dir).cache.cleanup
 rescue => e
   puts "#{Time.now.utc} #{e.class} #{e.message}"
 end

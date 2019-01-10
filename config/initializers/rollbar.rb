@@ -4,7 +4,7 @@ Rollbar.configure do |config|
 
   config.access_token = ENV['POST_SERVER_ITEM_ACCESS_TOKEN']
   config.send_extra_frame_data = :app
-  config.project_gems = %w(twitter_with_auto_pagination)
+  config.project_gems = %w(twitter_friendly)
 
   config.js_enabled = true
   config.js_options = {

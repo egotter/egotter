@@ -1032,6 +1032,11 @@ GEM
       multipart-post (~> 2.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
+    twitter_friendly (0.3.0)
+      activesupport (>= 4.2, < 6.0)
+      oj (~> 3.7.6)
+      parallel (~> 1.12.1)
+      twitter (~> 6.2.0)
     twitter_with_auto_pagination (0.9.6)
       activesupport (< 5.0.0)
       parallel
@@ -1103,6 +1108,7 @@ DEPENDENCIES
   stackprof
   therubyracer
   twitter
+  twitter_friendly
   twitter_with_auto_pagination
   uglifier (>= 1.3.0)
   unicorn
