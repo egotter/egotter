@@ -1,9 +1,9 @@
-FactoryGirl.define do
+FactoryBot.define do
   factory :twitter_user do
     sequence(:uid) { |n| n }
-    screen_name 'sn'
+    screen_name {'sn'}
     user_info { {id: uid, screen_name: screen_name, protected: true}.to_json }
-    user_id -1
+    user_id {-1}
 
     after(:build) do |tu|
       2.times.each do |i|

@@ -80,7 +80,7 @@ group :development, :test do
   gem 'annotate'
   gem 'whenever', :require => false
   gem 'rspec-rails'
-  gem 'factory_girl_rails'
+  gem 'factory_bot_rails'
   # gem 'hirb'
   # gem 'hirb-unicode'
   # gem 'awesome_print'
