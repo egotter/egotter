@@ -17,6 +17,8 @@
   }
 }
 
-.table.settings tbody > tr > td {
-  vertical-align: middle;
+.table.settings, .table.trial {
+  tbody > tr > td {
+    vertical-align: middle;
+  }
 }

@@ -10,6 +10,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       Search::API_V1_NAMES.each {|menu| get "#{menu}/summary", to: "#{menu}#summary"}
       Search::API_V1_NAMES.each {|menu| get "#{menu}/list", to: "#{menu}#list"}
+      post "delete_tweets", to: "delete_tweets#delete"
     end
   end
 
