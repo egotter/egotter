@@ -5,28 +5,35 @@ namespace :users do
 
     ApiClient # Avoid circular dependency
 
+    green = -> (str) {print "\e[32m#{str}\e[0m"}
+    red = -> (str) {print "\e[31m#{str}\e[0m"}
+
     User.authorized.find_in_batches(batch_size: 100) do |users|
       Parallel.each(users, in_threads: 10) do |user|
         begin
-          puts "Authorized #{user.api_client.verify_credentials[:id]}"
+          green.call('.')
         rescue Twitter::Error::ServiceUnavailable => e
           retry
         rescue => e
           if e.message == 'Invalid or expired token.'
-            puts "Invalid #{user.uid}"
+            red.call('.')
             user.authorized = false
           else
-            puts "Failed #{user.uid}"
+            puts "Failed #{user.id}"
             raise
           end
         end
       end
+
+      puts "\n"
 
       changed = users.select(&:authorized_changed?)
       if changed.any?
         puts "Import #{changed.size} users"
         Rails.logger.silence { User.import(users, on_duplicate_key_update: %i(uid authorized), validate: false) }
       end
+
+      puts "Id #{users[-1].id}"
 
       break if sigint.trapped?
     end
