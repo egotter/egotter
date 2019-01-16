@@ -15,6 +15,11 @@ namespace :users do
           green.call('.')
         rescue Twitter::Error::ServiceUnavailable => e
           retry
+        rescue HTTP::ConnectionError => e
+          if e.message == 'failed to connect: Connection reset by peer - SSL_connect'
+            print e.message
+            retry
+          end
         rescue => e
           if e.message == 'Invalid or expired token.'
             red.call('.')
