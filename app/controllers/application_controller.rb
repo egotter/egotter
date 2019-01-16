@@ -126,7 +126,7 @@ class ApplicationController < ActionController::Base
   def render_404
     self.sidebar_disabled = true
     flash.now[:alert] = t('application.not_found')
-    render template: 'searches/new', formats: %i(html), status: 404
+    render template: 'home/new', formats: %i(html), status: 404
   end
 
   def render_500
@@ -137,6 +137,6 @@ class ApplicationController < ActionController::Base
     else
       flash.now[:alert] = t('application.internal_server_error')
     end
-    render template: 'searches/new', formats: %i(html), status: 500
+    render template: 'home/new', formats: %i(html), status: 500
   end
 end
