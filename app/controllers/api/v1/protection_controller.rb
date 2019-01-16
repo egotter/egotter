@@ -28,9 +28,7 @@ module Api
 
       # TODO Experimental
       def select_hacked_statuses(twitter_user)
-        statuses = client.user_timeline(twitter_user.uid.to_i, count: 600)
-        words = BlacklistWord.all.pluck(:text)
-        statuses.select { |tweet| words.any? { |w| tweet[:text].include?(w) } }.map { |s| Status.new(Status.slice_status_info(s)) }
+        []
       end
     end
   end
