@@ -9,7 +9,7 @@ class SearchesController < ApplicationController
   before_action(only: %i(waiting)) { valid_uid? }
   before_action(only: %i(waiting)) { searched_uid?(params[:uid].to_i) }
 
-  before_action only: %i(new create waiting) do
+  before_action only: %i(create waiting) do
     push_referer
 
     if session[:sign_in_from].present?
@@ -19,9 +19,6 @@ class SearchesController < ApplicationController
     else
       create_search_log
     end
-  end
-
-  def new
   end
 
   def create

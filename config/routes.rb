@@ -3,7 +3,7 @@ Rails.application.routes.draw do
     root 'misc#maintenance'
     match '*path' => 'misc#maintenance', via: :all
   else
-    root 'searches#new'
+    root 'home#new'
   end
 
   namespace :api, {format: 'json'} do
