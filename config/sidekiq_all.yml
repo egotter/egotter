@@ -23,6 +23,7 @@
   - DelayedImportTwitterUserRelationsWorker
   - DeleteNotFoundUserWorker
   - DeleteForbiddenUserWorker
+  - DeleteTweetsWorker
   - FollowEgotterWorker
   - ImportFriendsAndFollowersWorker
   - ImportFriendshipsAndFollowershipsWorker

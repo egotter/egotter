@@ -17,10 +17,61 @@
 
 <div class="gray-separator"></div>
 
+<h2 class="h4 text-center"><%= t('.trial_title') %></h2>
+
+<table class="table trial">
+  <tbody>
+  <tr>
+    <td><%= t('.trial_delete') %></td>
+    <td>
+      <div class="btn btn-danger trial-delete-btn" data-toggle="modal" data-target="#trial-delete-modal"><%= t('.trial_delete_btn') %></div>
+    </td>
+  </tr>
+  <tr style="display: none;">
+    <td><%= t('.trial_reset') %></td>
+    <td>
+      <div class="btn btn-default"><%= t('.trial_reset_btn') %></div>
+      <div class="text-muted" style="font-size: x-small;"><%= t('.trial_reset_note') %></div>
+    </td>
+  </tr>
+  </tbody>
+</table>
+
+<div class="gray-separator"></div>
+
 <h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
 <%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name, cached: true %>
+
+<div class="modal fade" id="trial-delete-modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title"><%= t('.trial_delete_btn') %></h4>
+      </div>
+      <div class="modal-body">
+        <p><%= t('.trial_delete_warning_html') %></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal"><%= t('.trial_delete_cancel') %></button>
+        <button type="button" class="btn btn-danger trial-delete-submit-btn"><%= t('.trial_delete_submit') %></button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
   $(function () {
+    $('.trial-delete-submit-btn').on('click', function (e) {
+      $('#trial-delete-modal').modal('hide');
+      $('.trial-delete-btn').attr('disabled', 'disabled')
+          .prop("disabled", true);
+      var url = '<%= api_v1_delete_tweets_path %>';
+      $.post(url, function (res) {
+        console.log(res);
+      });
+    });
+
     var url = '<%= setting_path %>';
     attach_event_handler('email', url);
     attach_event_handler('dm', url);
