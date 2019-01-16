@@ -14,6 +14,10 @@ class CreateSearchReportWorker
     # TODO Implement email
     # TODO Implement onesignal
 
+    # It's possible that a user has logged in, but a record of TwitterUser doesn't exist.
+    # In that case, user.twitter_user returns nil.
+    return if !user.twitter_user || !user.twitter_user.twitter_db_user
+
     SearchReport.you_are_searched(user.id).deliver
 
   rescue Twitter::Error::Unauthorized => e
@@ -22,5 +26,6 @@ class CreateSearchReportWorker
     handle_forbidden_exception(e, user_id: user_id)
   rescue => e
     logger.warn "#{e.class}: #{e.message.truncate(150)} #{user_id}"
+    logger.warn e.backtrace.join("\n")
   end
 end
