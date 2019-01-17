@@ -18,24 +18,49 @@
 #
 
 class SearchReport < ActiveRecord::Base
-  include Concerns::Report::Common
+  belongs_to :user
 
-  def self.you_are_searched(user_id, format: 'text')
-    report = new(user_id: user_id, token: generate_token)
-    report.message_builder = YouAreSearchedMessage.new(report.user, report.token, format: format)
-    report
+  def self.you_are_searched(user_id)
+    new(user_id: user_id, token: generate_token)
   end
 
-  def touch_column
-    :search_sent_at
+  def deliver
+    button = {label: I18n.t('dm.searchNotification.timeline_page', screen_name: screen_name), url: timeline_url}
+    resp = DirectMessageRequest.new(user.api_client.twitter, user.uid.to_i, build_message, [button]).perform
+    dm = DirectMessage.new(resp)
+
+    transaction do
+      update!(message_id: dm.id)
+      user.notification_setting.update!(search_sent_at: Time.zone.now)
+    end
+
+    dm
   end
 
   private
 
+  def screen_name
+    user.screen_name
+  end
 
-  class YouAreSearchedMessage < BasicMessage
-    def report_class
-      SearchReport
+  def build_message
+    ERB.new(Rails.root.join(template_path).read).result_with_hash(screen_name: screen_name, url: timeline_url)
+  end
+
+  def timeline_url
+    'https://egotter.com/' + Rails.application.routes.url_helpers.timeline_path(screen_name: screen_name, token: token, medium: 'dm', type: 'search')
+  end
+
+  def template_path
+    "app/views/#{self.class.name.underscore.pluralize}/you_are_searched.ja.text.erb"
+  end
+
+  class << self
+    def generate_token
+      begin
+        t = SecureRandom.urlsafe_base64(10)
+      end while exists?(token: t)
+      t
     end
   end
 end
