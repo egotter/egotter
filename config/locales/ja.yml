@@ -708,12 +708,14 @@ ja:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'
       timeline_page: '%{screen_name} さんの結果ページ'
+      whats_happening: '何かあったの？'
     updateNotification:
       title: 'えごったーで %{user} のデータが自動更新されました。'
       message: '結果を見る %{url} #egotter ※この自動更新通知は、最大で1日に1回ほど届きます。'
     promptReportNotification:
       title: 'えごったーの %{user} リムられ速報です。最後にえごったーにアクセスしてから、フォロワー数が %{before} から %{after} に変わりました。'
       message: '結果を見る %{url} #egotter ※このリムられ速報は、フォロワー数に変化があった時のみ、最大で1時間に1回ほど届きます。'
+      lets_start: '自動更新スタート！'
   onesignal:
     defaultNotification:
       title: 'えごったー'

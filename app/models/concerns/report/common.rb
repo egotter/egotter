@@ -22,7 +22,8 @@ module Concerns::Report::Common
   end
 
   def deliver
-    resp = DirectMessageRequest.new(user.api_client.twitter, user.uid.to_i, message_builder.build).perform
+    DirectMessageRequest.new(user.api_client.twitter, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start')).perform
+    resp = DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid.to_i, message_builder.build).perform
     dm = DirectMessage.new(resp)
 
     ActiveRecord::Base.transaction do
