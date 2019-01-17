@@ -110,9 +110,10 @@ class User < ActiveRecord::Base
       r.message_builder.changes = JSON.parse(r.changes_json, symbolize_names: true)
     end
 
-    sr = search_reports.limit(10).each do |r|
-      r.message_builder = SearchReport::YouAreSearchedMessage.new(r.user, r.token, format: 'html')
-    end
+    # sr = search_reports.limit(10).each do |r|
+    #   r.message_builder = SearchReport::YouAreSearchedMessage.new(r.user, r.token, format: 'html')
+    # end
+    sr = []
 
     nr = news_reports.limit(10).each do |r|
       r.message_builder = NewsReport::ComeBackInactiveUserMessage.new(r.user, r.token, format: 'html')
