@@ -22,7 +22,8 @@ module Concerns::Report::Common
   end
 
   def deliver
-    dm = user.api_client.twitter.create_direct_message(user.uid.to_i, message_builder.build)
+    resp = DirectMessageRequest.new(user.api_client.twitter, user.uid.to_i, message_builder.build).perform
+    dm = DirectMessage.new(resp)
 
     ActiveRecord::Base.transaction do
       update!(message_id: dm.id)
