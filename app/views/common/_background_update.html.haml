@@ -40,6 +40,8 @@
     var friendless = #{twitter_user.friendless?};
     var signedIn = #{user_signed_in?};
     var authorized = #{user_signed_in? && current_user.authorized?};
+    var searchMyself = #{user_signed_in? && current_user.uid.to_i == twitter_user.uid.to_i};
+
     var jid = "#{jid}";
     var additionalFunc = #{!user_signed_in? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
     var viaDM = #{!user_signed_in? && via_dm?};
@@ -70,7 +72,9 @@
 
     function updatesNotFound () {
       if (signedIn) {
-        checkForFollow();
+        if (searchMyself) {
+          checkForFollow();
+        }
       } else {
         if (friendless) {
           $welcomeBox.show().sticky();
