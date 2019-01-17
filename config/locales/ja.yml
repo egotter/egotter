@@ -715,7 +715,7 @@ ja:
     promptReportNotification:
       title: 'えごったーの %{user} リムられ速報です。最後にえごったーにアクセスしてから、フォロワー数が %{before} から %{after} に変わりました。'
       message: '結果を見る %{url} #egotter ※このリムられ速報は、フォロワー数に変化があった時のみ、最大で1時間に1回ほど届きます。'
-      lets_start: 'リムられ通知を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja'
+      lets_start: 'リムられ通知を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja #egotter'
   onesignal:
     defaultNotification:
       title: 'えごったー'
