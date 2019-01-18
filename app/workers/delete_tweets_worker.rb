@@ -10,7 +10,7 @@ class DeleteTweetsWorker
     uid = values['uid'].to_i
     log = DeleteTweetsLog.new(session_id: values['session_id'], user_id: user_id, uid: uid, screen_name: values['screen_name'])
 
-    if Util::DeleteTweetsRequests.exists?(uid)
+    if !values['skip_recently_enqueued'] && Util::DeleteTweetsRequests.exists?(uid)
       log.update(status: false, message: "[#{uid}] is recently enqueued.")
       return
     end
@@ -69,12 +69,12 @@ class DeleteTweetsWorker
     destroy_count
 
   rescue Twitter::Error::TooManyRequests => e
-    DeleteTweetsWorker.perform_in(e.rate_limit.reset_in.to_i, values)
+    DeleteTweetsWorker.perform_in(e.rate_limit.reset_in.to_i, values.merge(skip_recently_enqueued: true))
     handle_error(e, log, values)
     destroy_count
   rescue Timeout::Error, LoopCountLimitExceeded => e
     handle_error(e, log, values)
-    DeleteTweetsWorker.perform_in(60, values)
+    DeleteTweetsWorker.perform_in(60, values.merge(skip_recently_enqueued: true))
     destroy_count
   end
 

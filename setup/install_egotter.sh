@@ -24,7 +24,7 @@ sudo_cmd="sudo -u ${USER} -H bash -l -c"
 
 yum update -y
 yum groupinstall -y "Development Tools"
-yum install -y git tmux dstat htop monit tree mysql-server mysql-devel ruby23-devel nginx
+yum install -y git tmux dstat htop monit tree mysql-server mysql-devel readline-devel ruby23-devel nginx
 set +e
 rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 set -e
