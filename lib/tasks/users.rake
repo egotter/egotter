@@ -7,8 +7,9 @@ namespace :users do
 
     green = -> (str) {print "\e[32m#{str}\e[0m"}
     red = -> (str) {print "\e[31m#{str}\e[0m"}
+    start = ENV['START'] ? ENV['START'].to_i : 1
 
-    User.authorized.find_in_batches(batch_size: 100) do |users|
+    User.authorized.find_in_batches(start: start, batch_size: 100) do |users|
       Parallel.each(users, in_threads: 10) do |user|
         begin
           user.api_client.verify_credentials
@@ -39,7 +40,7 @@ namespace :users do
         Rails.logger.silence { User.import(users, on_duplicate_key_update: %i(uid authorized), validate: false) }
       end
 
-      puts "Id #{users[-1].id}"
+      puts "Last id #{users[-1].id}"
 
       break if sigint.trapped?
     end
