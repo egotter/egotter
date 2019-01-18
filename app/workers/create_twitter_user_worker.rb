@@ -97,6 +97,11 @@ class CreateTwitterUserWorker
 
     handle_unknown_exception(e, values)
     job.update(error_class: e.class, error_message: e.message.truncate(100))
+  rescue HTTP::ConnectionError => e
+    retry if e.message == 'error reading from socket: Connection reset by peer'
+
+    handle_unknown_exception(e, values)
+    job.update(error_class: e.class, error_message: e.message.truncate(100))
   rescue => e
     # ActiveRecord::ConnectionTimeoutError could not obtain a database connection within 5.000 seconds
     handle_unknown_exception(e, values)
