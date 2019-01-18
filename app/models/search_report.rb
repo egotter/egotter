@@ -38,6 +38,10 @@ class SearchReport < ActiveRecord::Base
     dm
   end
 
+  def read?
+    !read_at.nil?
+  end
+
   private
 
   def screen_name
