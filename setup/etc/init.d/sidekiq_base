@@ -48,7 +48,7 @@ is_running() {
 start() {
   cd ${APP_ROOT}
   ulimit -n 65536 1>/dev/null 2>&1 || true
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiq -e ${RAILS_ENV} -d -g ${TAG} -C ${CONFIG_FILE}"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && /usr/local/bin/bundle exec sidekiq -e ${RAILS_ENV} -d -g ${TAG} -C ${CONFIG_FILE}"
   if [ $? -ne 0 ]; then
     echo ${en} "Starting $NAME: ${ec}"; failure; echo
     return 1
@@ -64,7 +64,7 @@ start() {
 
 quiet() {
   cd ${APP_ROOT}
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl quiet ${PID_FILE}"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && /usr/local/bin/bundle exec sidekiqctl quiet ${PID_FILE}"
   if [ $? -ne 0 ]; then
     return 1
   fi
@@ -92,7 +92,7 @@ stop() {
   fi
 
   local pid=$(print_pid)
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec sidekiqctl stop ${PID_FILE}"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && /usr/local/bin/bundle exec sidekiqctl stop ${PID_FILE}"
 
   local retries=10
   while [ ${retries} -gt 1 ]; do
