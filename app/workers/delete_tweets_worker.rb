@@ -78,7 +78,8 @@ class DeleteTweetsWorker
 
   def handle_error(e, log, values)
     error_message = e.message.truncate(100)
-    logger.warn "#{e.class} #{error_message} #{values.inspect}"
+    level = e.class == LoopCountLimitExceeded ? :info : :warn
+    logger.send(level, "#{e.class} #{error_message} #{values.inspect}")
     log.update(status: false, error_class: e.class, error_message: error_message)
   end
 
