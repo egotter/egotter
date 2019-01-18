@@ -52,7 +52,8 @@ fi
 cd ${APP_ROOT}
 ${sudo_cmd} "git checkout master && git pull origin master"
 [ ! -f "/usr/bin/mecab" ] && sh ./setup/install_mecab.sh
-${sudo_cmd} "bundle install --path .bundle"
+# yum remove -y gcc48-c++ && yum install -y gcc72-c++.x86_64
+${sudo_cmd} "bundle install --path .bundle --without test development"
 
 cd ${APP_ROOT}
 
