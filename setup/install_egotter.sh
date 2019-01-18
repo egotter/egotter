@@ -24,15 +24,21 @@ sudo_cmd="sudo -u ${USER} -H bash -l -c"
 
 yum update -y
 yum groupinstall -y "Development Tools"
-yum install -y git tmux dstat htop monit tree mysql-server mysql-devel readline-devel ruby23-devel nginx
+yum install -y git tmux dstat htop monit tree mysql-server mysql-devel nginx
+yum install -y openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
 set +e
 rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 set -e
 yum install -y redis --enablerepo=remi
 yum install -y colordiff --enablerepo=epel
 
-update-alternatives --set ruby /usr/bin/ruby2.3
-${sudo_cmd} "gem install bundler --no-ri --no-rdoc"
+wget http://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.3.tar.gz
+tar xvfz ruby-2.5.3.tar.gz
+cd ruby-2.5.3
+./configure && make
+${sudo_cmd} "make install"
+
+${sudo_cmd} "gem install bundler --no-ri --no-rdoc -v 1.17.3"
 
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
@@ -93,7 +99,10 @@ service td-agent start
 
 echo "net.ipv4.tcp_max_syn_backlog = 512" >>/etc/sysctl.conf
 echo "net.core.somaxconn = 512" >>/etc/sysctl.conf
+echo "vm.overcommit_memory = 1" >>/etc/sysctl.conf
 sysctl -p
+
+echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
 
 # logrotate
 cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
@@ -139,6 +148,14 @@ Make swap:
     mkswap /swapfile
     swapon /swapfile
     echo '/swapfile swap swap defaults 0 0' >>/etc/fstab
+    # egrep "Mem|Swap" /proc/meminfo OR swapon -s
+
+Mount efs:
+
+    mkdir /efs
+    mount -t nfs4 [NAME]:/ /efs/
+    echo '[NAME]:/ /efs nfs4 defaults 0 0' >>/etc/fstab
+    # df -h
 
 User settings:
 
