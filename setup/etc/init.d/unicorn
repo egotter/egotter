@@ -36,7 +36,7 @@ print_command() {
 
 start() {
   cd $APP_ROOT
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && bundle exec unicorn_rails -c ${CONFIG_FILE} -E ${RAILS_ENV} -D"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && /usr/local/bin/bundle exec unicorn_rails -c ${CONFIG_FILE} -E ${RAILS_ENV} -D"
   echo ${en} "Starting $NAME: ${ec}"
   success
   echo
