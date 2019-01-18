@@ -6,17 +6,15 @@ class DeleteTweetsWorker
 
   def perform(values)
     destroy_count = 0
-    user_id = values['user_id'].to_i
-    uid = values['uid'].to_i
-    log = DeleteTweetsLog.new(session_id: values['session_id'], user_id: user_id, uid: uid, screen_name: values['screen_name'])
+    user = User.find(values['user_id'])
+    uid = user.uid.to_i
+    log = DeleteTweetsLog.new(session_id: values['session_id'], user_id: user.id, uid: uid, screen_name: user.screen_name)
 
     if !values['skip_recently_enqueued'] && Util::DeleteTweetsRequests.exists?(uid)
       log.update(status: false, message: "[#{uid}] is recently enqueued.")
       return
     end
     Util::DeleteTweetsRequests.add(uid)
-
-    user = User.find(user_id)
 
     unless user.authorized?
       log.update(status: false, message: "[#{user.screen_name}] is not authorized.")
