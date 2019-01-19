@@ -29,8 +29,9 @@ module Concerns::TwitterUser::Debug
     end
   end
 
-  def need_repair?
-    friendships.size != friends_size || followerships.size != followers_size
+  def need_repair?(num = 0)
+    friendships.size != friends_size && (friendships.size - friends_size).abs > num ||
+        followerships.size != followers_size && (followerships.size - followers_size).abs > num
   end
 
   def too_little_friendships?

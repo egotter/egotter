@@ -7,6 +7,7 @@ namespace :repair do
       sigint = true
     end
 
+    STDOUT.sync = true
     Rails.logger.level = Logger::WARN
 
     start = ENV['START'] ? ENV['START'].to_i : 1
