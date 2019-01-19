@@ -7,6 +7,8 @@ namespace :repair do
       sigint = true
     end
 
+    Rails.logger.level = Logger::WARN
+
     start = ENV['START'] ? ENV['START'].to_i : 1
     not_found = []
     not_consistent = []
