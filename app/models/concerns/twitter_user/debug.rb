@@ -44,14 +44,11 @@ module Concerns::TwitterUser::Debug
 
   def debug_print_friends
     user = TwitterDB::User.find_by(uid: uid)
-    delim = ' '
 
-    puts([
-           [friends.size, friendships.size, friends_size, friends_count].inspect,
-           [user.friends.size, user.friendships.size, user.friends_size, user.friends_count].inspect,
-           [followers.size, followerships.size, followers_size, followers_count].inspect,
-           [user.followers.size, user.followerships.size, user.followers_size, user.followers_count].inspect
-         ].join delim)
+    puts("friends=[#{friends.size} #{friendships.size} #{friends_size} #{friends_count}]" +
+    " user#friends=[#{user.friends.size} #{user.friendships.size} #{user.friends_size} #{user.friends_count}]" +
+    " followers=[#{followers.size} #{followerships.size} #{followers_size} #{followers_count}]" +
+    " user#followers=[#{user.followers.size} #{user.followerships.size} #{user.followers_size} #{user.followers_count}]")
   end
 
   def debug_print(kind = nil)

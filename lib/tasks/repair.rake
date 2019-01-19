@@ -25,7 +25,7 @@ namespace :repair do
       end
 
       if twitter_user.need_repair?
-        print "Not consistent #{twitter_user.id} #{twitter_user.uid} "
+        print "Not consistent id=#{twitter_user.id} uid=#{twitter_user.uid} size=#{twitter_user.size} "
         twitter_user.reload.debug_print_friends
         not_consistent << twitter_user.id
       end
