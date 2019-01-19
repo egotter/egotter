@@ -97,8 +97,6 @@ module Concerns::Report::Common
 
     def removing_names
       twitter_db_user.unfriends.limit(3).pluck(:screen_name).map do |name|
-        name[1..1] = I18n.t('dictionary.asterisk') if name.length >= 2
-        name[3..3] = I18n.t('dictionary.asterisk') if name.length >= 4
         '@' + name
       end.join ' '
     end
@@ -109,8 +107,6 @@ module Concerns::Report::Common
 
     def removed_names
       twitter_db_user.unfollowers.limit(3).pluck(:screen_name).map do |name|
-        name[1..1] = I18n.t('dictionary.asterisk') if name.length >= 2
-        name[3..3] = I18n.t('dictionary.asterisk') if name.length >= 4
         '@' + name
       end.join ' '
     end
