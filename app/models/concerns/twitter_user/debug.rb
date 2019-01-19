@@ -46,7 +46,7 @@ module Concerns::TwitterUser::Debug
     user = TwitterDB::User.find_by(uid: uid)
     delim = "\t"
 
-    puts("id=#{id}#{delim}uid=#{uid}#{delim}size=#{size}" +
+    puts("id=#{id}#{delim}uid=#{sprintf("%18d", uid)}#{delim}size=#{size}" +
              "#{delim}friends=[#{friends.size} #{friendships.size} #{friends_size} #{friends_count}]" +
              "#{delim}user#friends=[#{user.friends.size} #{user.friendships.size} #{user.friends_size} #{user.friends_count}]" +
              "#{delim}followers=[#{followers.size} #{followerships.size} #{followers_size} #{followers_count}]" +
