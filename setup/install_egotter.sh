@@ -32,6 +32,20 @@ set -e
 yum install -y redis --enablerepo=remi
 yum install -y colordiff --enablerepo=epel
 
+cat << EOS >>/etc/security/limits.conf
+root soft nofile 65536
+root hard nofile 65536
+* soft nofile 65536
+* hard nofile 65536
+EOS
+
+echo "net.ipv4.tcp_max_syn_backlog = 512" >>/etc/sysctl.conf
+echo "net.core.somaxconn = 512" >>/etc/sysctl.conf
+echo "vm.overcommit_memory = 1" >>/etc/sysctl.conf
+sysctl -p
+
+echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
+
 wget http://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.3.tar.gz
 tar xvfz ruby-2.5.3.tar.gz
 cd ruby-2.5.3
@@ -95,15 +109,10 @@ service nginx start
 # td-agent
 [ ! -f "/etc/td-agent/td-agent.conf.bak" ] && cp /etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf.bak
 cp -f ./setup/etc/td-agent/* /etc/td-agent/
+/usr/sbin/td-agent-gem install fluent-plugin-slack
+/usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter
 chkconfig td-agent on
 service td-agent start
-
-echo "net.ipv4.tcp_max_syn_backlog = 512" >>/etc/sysctl.conf
-echo "net.core.somaxconn = 512" >>/etc/sysctl.conf
-echo "vm.overcommit_memory = 1" >>/etc/sysctl.conf
-sysctl -p
-
-echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
 
 # logrotate
 cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter

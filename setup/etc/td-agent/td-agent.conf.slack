@@ -1,0 +1,40 @@
+<source>
+  @type tail
+  path /var/egotter/log/sidekiq.log
+  pos_file /tmp/sidekiq.log.pos
+  tag sidekiq.sidekiq
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/egotter/log/sidekiq_import.log
+  pos_file /tmp/sidekiq_import.log.pos
+  tag sidekiq.sidekiq_import
+  format /^(?<message>.*)$/
+</source>
+
+<match sidekiq.sidekiq*>
+  @type rewrite_tag_filter
+  <rule>
+    key message
+    pattern (WARN|ERROR)
+    tag ${tag}.$1
+  </rule>
+</match>
+
+<match sidekiq.sidekiq.**>
+  @type slack
+  webhook_url [URL]
+  channel sidekiq
+  username sidekiq
+  flush_interval 2s
+</match>
+
+<match sidekiq.sidekiq_import.**>
+  @type slack
+  webhook_url [URL]
+  channel sidekiq_import
+  username sidekiq
+  flush_interval 2s
+</match>
