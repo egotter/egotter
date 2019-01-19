@@ -1,4 +1,4 @@
-/home/ec2-user/egotter/log/unicorn.log {
+/var/egotter/log/unicorn.log {
   dateext
   dateformat _%Y%m%d
   daily
@@ -10,6 +10,6 @@
   copytruncate
 
   lastaction
-    kill -USR1 /home/ec2-user/egotter/tmp/pids/unicorn.pid
+    kill -USR1 /var/egotter/tmp/pids/unicorn.pid
   endscript
 }

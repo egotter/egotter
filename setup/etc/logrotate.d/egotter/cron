@@ -1,4 +1,4 @@
-/home/ec2-user/egotter/log/cron.log {
+/var/egotter/log/cron.log {
   dateext
   dateformat _%Y%m%d
   daily

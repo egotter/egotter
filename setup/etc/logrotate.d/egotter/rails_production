@@ -1,4 +1,4 @@
-/home/ec2-user/egotter/log/production.log {
+/var/egotter/log/production.log {
   dateext
   dateformat _%Y%m%d
   daily

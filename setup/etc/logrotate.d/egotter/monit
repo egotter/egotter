@@ -1,4 +1,4 @@
-/home/ec2-user/egotter/log/monit.log {
+/var/egotter/log/monit.log {
   dateext
   dateformat _%Y%m%d
   daily
