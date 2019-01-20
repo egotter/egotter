@@ -93,6 +93,7 @@ module Concerns::Validation
     end
   end
 
+  # The user can see a result page if the user is signed in and a record of TwitterUser exists.
   def can_see_forbidden_or_not_found?(condition)
     user_signed_in? && TwitterUser.exists?(condition)
   end

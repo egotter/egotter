@@ -38,14 +38,14 @@ Please enjoy egotter!  ✧*｡٩(ˊᗜˋ*)و✧*｡
 
 ## Design
 
-### SearchesController#new
+### HomeController#new
 
 Display a top page.
 
 In routes.rb:
 
 ```ruby
-root 'searches#new'
+root 'home#new'
 ```
 
 ### SearchesController#create
@@ -59,7 +59,7 @@ On this page the browser will periodically check new search result with ajax pol
 If any search results don't exist, the user will be redirected to
 `SearchesController#waiting` and the browser will periodically check first search result.
 
-### SearchesController#waiting
+### WaitingController#new
 
 ### TimelinesController#show
 

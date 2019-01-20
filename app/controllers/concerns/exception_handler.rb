@@ -9,7 +9,7 @@ module Concerns::ExceptionHandler
   end
 
   def twitter_exception_handler(ex, screen_name)
-    logger.info "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{screen_name} #{request.device_type} #{request.browser} #{params.inspect}"
+    logger.warn "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{screen_name} #{request.device_type} #{request.browser} #{params.inspect}"
 
     return head :bad_request if request.xhr?
 
