@@ -13,15 +13,17 @@ module Concerns::ExceptionHandler
 
     return head :bad_request if request.xhr?
 
-    redirect_path = root_path_for(controller: controller_name)
+    message =
+        case ex
+          when Twitter::Error::NotFound then not_found_message(screen_name)
+          when Twitter::Error::Forbidden then forbidden_message(screen_name)
+          when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
+          when Twitter::Error::TooManyRequests then too_many_requests_message(screen_name, ex)
+          else alert_message(ex)
+        end
 
-    case ex
-      when Twitter::Error::NotFound then redirect_to redirect_path, alert: not_found_message(screen_name)
-      when Twitter::Error::Forbidden then redirect_to redirect_path, alert: forbidden_message(screen_name)
-      when Twitter::Error::Unauthorized then redirect_to redirect_path, alert: unauthorized_message(screen_name)
-      when Twitter::Error::TooManyRequests then redirect_to redirect_path, alert: too_many_requests_message(screen_name, ex)
-      else redirect_to redirect_path, alert: alert_message(ex)
-    end
+    redirect_to root_path_for(controller: controller_name), alert: message
+    create_search_error_log(-1, screen_name, (caller[0][/`([^']*)'/, 1] rescue ''), message)
   end
 
   def not_found_message(screen_name)

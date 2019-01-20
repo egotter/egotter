@@ -24,6 +24,7 @@
   - CreateModalOpenLogWorker
   - CreateCrawlerLogWorker
   - CreateSearchLogWorker
+  - CreateSearchErrorLogWorker
   - CreateSignInLogWorker
   - TweetEgotterWorker
   - UpdateSearchHistoriesWorker

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190115070735) do
+ActiveRecord::Schema.define(version: 20190120115052) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -545,6 +545,32 @@ ActiveRecord::Schema.define(version: 20190115070735) do
 
   add_index "scores", ["created_at"], name: "index_scores_on_created_at", using: :btree
   add_index "scores", ["uid"], name: "index_scores_on_uid", unique: true, using: :btree
+
+  create_table "search_error_logs", force: :cascade do |t|
+    t.string   "session_id",  limit: 191, default: "", null: false
+    t.integer  "user_id",     limit: 4,   default: -1, null: false
+    t.string   "uid",         limit: 191, default: "", null: false
+    t.string   "screen_name", limit: 191, default: "", null: false
+    t.string   "location",    limit: 191, default: "", null: false
+    t.string   "message",     limit: 191, default: "", null: false
+    t.string   "controller",  limit: 191, default: "", null: false
+    t.string   "action",      limit: 191, default: "", null: false
+    t.string   "method",      limit: 191, default: "", null: false
+    t.string   "path",        limit: 191, default: "", null: false
+    t.string   "via",         limit: 191, default: "", null: false
+    t.string   "device_type", limit: 191, default: "", null: false
+    t.string   "os",          limit: 191, default: "", null: false
+    t.string   "browser",     limit: 191, default: "", null: false
+    t.string   "user_agent",  limit: 191, default: "", null: false
+    t.string   "referer",     limit: 191, default: "", null: false
+    t.datetime "created_at",                           null: false
+  end
+
+  add_index "search_error_logs", ["created_at"], name: "index_search_error_logs_on_created_at", using: :btree
+  add_index "search_error_logs", ["screen_name"], name: "index_search_error_logs_on_screen_name", using: :btree
+  add_index "search_error_logs", ["session_id"], name: "index_search_error_logs_on_session_id", using: :btree
+  add_index "search_error_logs", ["uid"], name: "index_search_error_logs_on_uid", using: :btree
+  add_index "search_error_logs", ["user_id"], name: "index_search_error_logs_on_user_id", using: :btree
 
   create_table "search_histories", force: :cascade do |t|
     t.string   "session_id", limit: 191, default: "", null: false
