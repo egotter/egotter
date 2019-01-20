@@ -27,6 +27,7 @@ class ApplicationController < ActionController::Base
 
   rescue_from Exception do |ex|
     logger.warn "rescue_from Exception: #{ex.class} #{ex.message} #{debug_str}"
+    logger.info ex.backtrace.join("\n")
     request.xhr? ? head(:internal_server_error) : render_500
   end
 

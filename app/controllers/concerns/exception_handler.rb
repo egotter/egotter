@@ -21,7 +21,7 @@ module Concerns::ExceptionHandler
         end
 
     redirect_to root_path_for(controller: controller_name), alert: message
-    create_search_error_log(-1, screen_name, (caller[0][/`([^']*)'/, 1] rescue ''), message)
+    create_search_error_log(-1, screen_name, (caller[0][/`([^']*)'/, 1] rescue ''), "#{ex.class} #{ex.message} #{message}")
   end
 
   def not_found_message(screen_name)
