@@ -50,6 +50,14 @@ class CreatePromptReportWorker
 
     begin
       dm = PromptReport.you_are_removed(user.id, changes_json: changes.to_json).deliver
+    rescue Twitter::Error::Forbidden => e
+      if e.message == 'You cannot send messages to users you have blocked.'
+        # Don't update User#authorized to false because the case that the user don't disable tokens is possible.
+        return log.update!(error_message: "egotter is blocked.")
+      else
+        logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
+        return log.update!(error_message: "Couldn't create DM")
+      end
     rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message.truncate(150)} #{user_id}"
       return log.update!(error_message: "Couldn't create DM")
