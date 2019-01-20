@@ -131,7 +131,9 @@ module Concerns::Validation
     false
   rescue => e
     if e.message.start_with?('You have been blocked')
-      redirect_to root_path_for(controller: controller_name), alert: blocked_message(twitter_user.screen_name)
+      message = blocked_message(twitter_user.screen_name)
+      redirect_to root_path_for(controller: controller_name), alert: message
+      create_search_error_log(twitter_user.uid, twitter_user.screen_name, __method__, message)
       true
     else
       twitter_exception_handler(e, twitter_user.screen_name)
@@ -143,7 +145,9 @@ module Concerns::Validation
     redirect_path = root_path_for(controller: controller_name)
 
     if twitter_user.suspended_account? && !can_see_forbidden_or_not_found?(uid: twitter_user.uid)
-      redirect_to redirect_path, alert: suspended_message(twitter_user.screen_name)
+      message = suspended_message(twitter_user.screen_name)
+      redirect_to redirect_path, alert: message
+      create_search_error_log(twitter_user.uid, twitter_user.screen_name, __method__, message)
       return false
     end
 
@@ -153,7 +157,9 @@ module Concerns::Validation
     if request.xhr?
       head :bad_request
     else
-      redirect_to redirect_path, alert: protected_message(twitter_user.screen_name)
+      message = protected_message(twitter_user.screen_name)
+      redirect_to redirect_path, alert: message
+      create_search_error_log(twitter_user.uid, twitter_user.screen_name, __method__, message)
     end
 
     false

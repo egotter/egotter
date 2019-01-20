@@ -4,7 +4,7 @@ class SearchesController < ApplicationController
   before_action :reject_crawler
   before_action { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
   before_action { @twitter_user = build_twitter_user(params[:screen_name]) }
-  before_action { authorized_search?(@twitter_user) }
+  before_action { !blocked_search?(@twitter_user) && authorized_search?(@twitter_user) }
 
   before_action do
     push_referer
