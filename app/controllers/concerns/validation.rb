@@ -85,10 +85,13 @@ module Concerns::Validation
   def valid_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
     twitter_user = TwitterUser.new(screen_name: screen_name)
+
     if twitter_user.valid_screen_name?
       true
     else
-      redirect_to root_path_for(controller: controller_name), alert: twitter_user.errors.full_messages.join(t('dictionary.delim'))
+      message = twitter_user.errors.full_messages.join(t('dictionary.delim'))
+      redirect_to root_path_for(controller: controller_name), alert: message
+      create_search_error_log(-1, screen_name, __method__, message)
       false
     end
   end
@@ -101,7 +104,9 @@ module Concerns::Validation
   def forbidden_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
     if ForbiddenUser.exists?(screen_name: screen_name) && !can_see_forbidden_or_not_found?(screen_name: screen_name)
-      redirect_to root_path_for(controller: controller_name), alert: forbidden_message(screen_name)
+      message = forbidden_message(screen_name)
+      redirect_to root_path_for(controller: controller_name), alert: message
+      create_search_error_log(-1, screen_name, __method__, message)
       true
     else
       false
@@ -111,7 +116,9 @@ module Concerns::Validation
   def not_found_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
     if NotFoundUser.exists?(screen_name: screen_name) && !can_see_forbidden_or_not_found?(screen_name: screen_name)
-      redirect_to root_path_for(controller: controller_name), alert: not_found_message(screen_name)
+      message = not_found_message(screen_name)
+      redirect_to root_path_for(controller: controller_name), alert: message
+      create_search_error_log(-1, screen_name, __method__, message)
       true
     else
       false

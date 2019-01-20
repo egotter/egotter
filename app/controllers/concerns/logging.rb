@@ -61,6 +61,32 @@ module Concerns::Logging
     logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
   end
 
+  def create_search_error_log(uid, screen_name, location, message)
+    attrs = {
+        session_id:  fingerprint,
+        user_id:     current_user_id,
+        uid:         uid,
+        screen_name: screen_name,
+        location:    location.to_s.truncate(180),
+        message:     ActionController::Base.helpers.strip_tags(message).truncate(180),
+        controller:  controller_name,
+        action:      action_name,
+        method:      request.method,
+        path:        request.original_fullpath.to_s.truncate(180),
+        via:         params[:via] ? params[:via] : '',
+        device_type: request.device_type,
+        os:          request.os,
+        browser:     request.browser,
+        user_agent:  truncated_user_agent,
+        referer:     truncated_referer,
+        created_at:  Time.zone.now
+    }
+
+    CreateSearchErrorLogWorker.perform_async(attrs)
+  rescue => e
+    logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+  end
+
   def create_crawler_log
     attrs = {
       controller:  controller_name,
