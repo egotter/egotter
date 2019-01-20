@@ -136,6 +136,7 @@ module Concerns::Validation
       create_search_error_log(twitter_user.uid, twitter_user.screen_name, __method__, message)
       true
     else
+      # This is a special case because it call redirect_to and returns false.
       twitter_exception_handler(e, twitter_user.screen_name)
       false
     end
