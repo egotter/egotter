@@ -105,9 +105,10 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  SANITIZE_REDIRECT_PATH_REGEXP = Regexp.union(Search::API_V1_NAMES.map(&:to_s) + %w(conversations clusters searches timelines scores))
+
   def sanitized_redirect_path(path)
-    regexp = Regexp.union(Search::API_V1_NAMES.map(&:to_s) + %w(conversations clusters searches timelines scores))
-    path.match(regexp) ? path : root_path
+    path.match?(SANITIZE_REDIRECT_PATH_REGEXP) ? path : root_path
   end
 
   def after_sign_in_path_for(resource)
