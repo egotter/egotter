@@ -67,10 +67,12 @@ class CreatePromptReportWorker
   rescue => e
     if e.message == 'Invalid or expired token.'
       user.update(authorized: false)
+      log.update!(error_message: e.message)
+    else
+      message = e.message.truncate(150)
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{message} #{user_id}"
+      log.update!(error_message: message)
     end
-
-    logger.warn "#{e.class}: #{e.message.truncate(150)} #{user_id}"
-    log.update!(error_message: e.message.truncate(150))
   end
 
   private
