@@ -5,11 +5,7 @@ class TwitterUsersController < ApplicationController
   before_action { valid_uid?(params[:uid].to_i) }
   before_action { @twitter_user = build_twitter_user_by(uid: params[:uid].to_i) }
   before_action { authorized_search?(@twitter_user) && !blocked_search?(@twitter_user) }
-  before_action { !too_many_searches?(@twitter_user) }
-  before_action do
-    # As a transitory measure
-    # !too_many_requests?(@twitter_user)
-  end
+  before_action { !too_many_searches?(@twitter_user, allow_search_history: false) && !too_many_requests?(@twitter_user) }
 
   before_action { create_search_log }
 

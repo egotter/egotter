@@ -22,14 +22,17 @@ class SearchesController < ApplicationController
   def create
     uid, screen_name = @twitter_user.uid.to_i, @twitter_user.screen_name
     redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user))
+
     if TwitterUser.exists?(uid: uid)
       redirect_to redirect_path
     else
-      save_twitter_user_to_cache(uid, screen_name: screen_name, user_info: @twitter_user.user_info)
-      jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
-      redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid)
+      unless too_many_searches?(@twitter_user) || too_many_requests?(@twitter_user) || performed?
+        save_twitter_user_to_cache(uid, screen_name: screen_name, user_info: @twitter_user.user_info)
+        jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
+        redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid)
+      end
     end
 
-    enqueue_update_search_histories_job_if_needed(uid, 0)
+    enqueue_update_search_histories_job_if_needed(uid)
   end
 end

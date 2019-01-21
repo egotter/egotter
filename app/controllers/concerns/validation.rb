@@ -28,7 +28,9 @@ module Concerns::Validation
     if request.xhr?
       head :bad_request
     else
-      redirect_to root_path, alert: twitter_user.errors.full_messages.join(t('dictionary.delim'))
+      message = twitter_user.errors.full_messages.join(t('dictionary.delim'))
+      redirect_to root_path, alert: message
+      create_search_error_log(uid, '', __method__, message)
     end
 
     false
@@ -42,18 +44,15 @@ module Concerns::Validation
       return false
     end
 
-    if from_crawler?
-      redirect_to root_path_for(controller: controller_name), alert: t('application.not_found')
-      return false
-    end
-
-    if controller_name == 'timelines' && action_name == 'show'
+    if from_crawler? || !(controller_name == 'timelines' && action_name == 'show')
+      message = t('application.not_found')
+      redirect_to root_path_for(controller: controller_name), alert: message
+      create_search_error_log(uid, screen_name, __method__, message)
+    else
       @screen_name = @tu.screen_name
       @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via']
       render template: 'searches/create', layout: false
-    else
-      redirect_to root_path_for(controller: controller_name), alert: t('application.not_found')
     end
 
     false
@@ -130,6 +129,8 @@ module Concerns::Validation
     current_user.api_client.user_timeline(twitter_user.uid.to_i, count: 1)
     false
   rescue => e
+    return head :bad_request if request.xhr?
+
     if e.message.start_with?('You have been blocked')
       message = blocked_message(twitter_user.screen_name)
       redirect_to root_path_for(controller: controller_name), alert: message
@@ -169,16 +170,37 @@ module Concerns::Validation
     false
   end
 
-  def too_many_searches?(twitter_user)
+  def too_many_searches?(twitter_user, allow_search_history: true)
     return false if from_crawler? || search_histories_remaining > 0
-    return false if latest_search_histories.any? { |sh| sh.uid == twitter_user.uid.to_i }
+    return false if allow_search_history && latest_search_histories.any? { |history| history.uid.to_i == twitter_user.uid.to_i }
+    return head :bad_request if request.xhr?
 
-    if user_signed_in?
-      redirect_to root_path, alert: t('after_sign_in.too_many_searches_html', limit: search_histories_limit)
-    else
-      redirect_to root_path, alert: t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: kick_out_error_path('too_many_searches'))
-    end
+    message =
+        if user_signed_in?
+          t('after_sign_in.too_many_searches_html', limit: search_histories_limit)
+        else
+          t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: kick_out_error_path('too_many_searches'))
+        end
 
+    redirect_to root_path, alert: message
+    create_search_error_log(twitter_user.uid, twitter_user.screen_name, __method__, message)
     true
+  end
+
+  def too_many_requests?(twitter_user)
+    return false if from_crawler? || !user_signed_in?
+    return false unless Util::TooManyRequestsRequests.exists?(current_user_id)
+    return head :bad_request if request.xhr?
+
+    limit = client.rate_limit
+    reset_in = [limit.friend_ids, limit.follower_ids, limit.users].select {|l| l[:remaining] == 0}.map {|l| l[:reset_in]}.max
+    message = too_many_requests_message(reset_in)
+    redirect_to root_path, alert: message
+    create_search_error_log(twitter_user.uid, twitter_user.screen_name, __method__, message)
+    true
+  rescue => e
+    # This is a special case because it call redirect_to and returns false.
+    twitter_exception_handler(e, twitter_user.screen_name)
+    false
   end
 end
