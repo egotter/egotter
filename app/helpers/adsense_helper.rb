@@ -71,7 +71,7 @@ module AdsenseHelper
   USER_WAITING_RESP               = 7930830419
   USER_OTHERS_RESP                = 3500630816
 
-  def left_ad_slot_RESPonsive(vertical_position)
+  def left_ad_slot_responsive(vertical_position)
     slot =
       if %w(searches search_results).include?(controller_name)
         case [user_signed_in?, action_name, vertical_position]
