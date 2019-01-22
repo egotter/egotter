@@ -9,13 +9,18 @@ class ApiClient
         tries ||= 5
         @client.send(method, *args, &block) # client#parallel uses block.
       rescue HTTP::ConnectionError, Twitter::Error => e
-        message = "#{self.class}##{method}: #{e.class} #{e.message}"
-        if !e.message.include?('Connection reset by peer') || (tries -= 1) < 0
-          Rails.logger.warn "RETRY EXHAUSTED #{message}"
+        if !e.message.include?('Connection reset by peer')
           raise
         else
-          Rails.logger.warn "RETRY #{tries} #{message}"
-          retry
+          message = "#{self.class}##{method}: #{e.class} #{e.message}"
+
+          if (tries -= 1) < 0
+            Rails.logger.warn "RETRY EXHAUSTED #{message}"
+            raise
+          else
+            Rails.logger.warn "RETRY #{tries} #{message}"
+            retry
+          end
         end
       end
     else
