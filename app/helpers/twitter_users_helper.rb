@@ -1,5 +1,7 @@
 module TwitterUsersHelper
-  def build_twitter_user(screen_name)
+  def build_twitter_user_by(uid: nil, screen_name: nil)
+    return build_twitter_user_by(screen_name: client.user(uid.to_i)[:screen_name]) if uid
+
     user = client.user(screen_name)
     twitter_user = TwitterUser.build_by_user(user)
 
