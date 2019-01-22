@@ -47,7 +47,7 @@ module Concerns::Validation
     if from_crawler? || !(controller_name == 'timelines' && action_name == 'show')
       message = t('application.not_found')
       redirect_to root_path_for(controller: controller_name), alert: message
-      create_search_error_log(uid, screen_name, __method__, message)
+      create_search_error_log(uid, '', __method__, message)
     else
       @screen_name = @tu.screen_name
       @redirect_path = timeline_path(screen_name: @screen_name)
@@ -129,9 +129,12 @@ module Concerns::Validation
     current_user.api_client.user_timeline(twitter_user.uid.to_i, count: 1)
     false
   rescue => e
-    return head :bad_request if request.xhr?
-
     if e.message.start_with?('You have been blocked')
+      if request.xhr?
+        head :bad_request
+        return true
+      end
+
       message = blocked_message(twitter_user.screen_name)
       redirect_to root_path_for(controller: controller_name), alert: message
       create_search_error_log(twitter_user.uid, twitter_user.screen_name, __method__, message)
@@ -173,7 +176,11 @@ module Concerns::Validation
   def too_many_searches?(twitter_user, allow_search_history: true)
     return false if from_crawler? || search_histories_remaining > 0
     return false if allow_search_history && latest_search_histories.any? { |history| history.uid.to_i == twitter_user.uid.to_i }
-    return head :bad_request if request.xhr?
+
+    if request.xhr?
+      head :bad_request
+      return true
+    end
 
     message =
         if user_signed_in?
@@ -190,7 +197,11 @@ module Concerns::Validation
   def too_many_requests?(twitter_user)
     return false if from_crawler? || !user_signed_in?
     return false unless Util::TooManyRequestsRequests.exists?(current_user_id)
-    return head :bad_request if request.xhr?
+
+    if request.xhr?
+      head :bad_request
+      return true
+    end
 
     limit = request_context_client.rate_limit
     reset_in = [limit.friend_ids, limit.follower_ids, limit.users].select {|l| l[:remaining] == 0}.map {|l| l[:reset_in]}.max
