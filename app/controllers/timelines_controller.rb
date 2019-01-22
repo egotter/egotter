@@ -1,6 +1,5 @@
 class TimelinesController < ApplicationController
   include Concerns::Showable
-  include WorkersHelper
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i
@@ -12,8 +11,6 @@ class TimelinesController < ApplicationController
       flash.now[:alert] = forbidden_message(@twitter_user.screen_name)
     elsif NotFoundUser.exists?(screen_name: @twitter_user.screen_name)
       flash.now[:alert] = not_found_message(@twitter_user.screen_name)
-    else
-      @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
     end
   end
 

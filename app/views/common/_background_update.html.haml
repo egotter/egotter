@@ -35,33 +35,11 @@
 
 :javascript
   (function () {
-    var checkForUpdatesPath = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: @jid)}';
-    var checkForFollowPath = '#{check_for_follow_path(uid: twitter_user.uid)}';
-    var friendless = #{twitter_user.friendless?};
-    var signedIn = #{user_signed_in?};
-    var authorized = #{user_signed_in? && current_user.authorized?};
-    var searchMyself = #{user_signed_in? && current_user.uid.to_i == twitter_user.uid.to_i};
-
-    var jid = "#{jid}";
-    var additionalFunc = #{!user_signed_in? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
-    var viaDM = #{!user_signed_in? && via_dm?};
-
-    var $updateBox = $('.update-box');
-    var $refreshBox = $('.refresh-box');
-    var $welcomeBox = $('.welcome-box');
-    var $followBox = $('.follow-box');
-    var $invalidTokenBox = $('.invalid-token-box');
-    var $additionalFuncBox = $('.additional-func-box');
-    var $viaDMBox = $('.via-dm-box');
-
-    $.each([$updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox], function (i, btn) {
-      btn.on('close.bs.alert', function () {
-        btn.parent().hide();
-      });
-    });
+    var $updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox;
 
     function checkForFollow () {
-      $.getJSON(checkForFollowPath, function (res) {
+      var url = '#{check_for_follow_path(uid: twitter_user.uid)}';
+      $.getJSON(url, function (res) {
         console.log('checkForFollow', res);
 
         if (!res.follow) {
@@ -70,7 +48,10 @@
       });
     }
 
-    function updatesNotFound () {
+    function updatesNotFound (signedIn) {
+      var friendless = #{twitter_user.friendless?};
+      var searchMyself = #{user_signed_in? && current_user.uid.to_i == twitter_user.uid.to_i};
+
       if (signedIn) {
         if (searchMyself) {
           checkForFollow();
@@ -82,7 +63,53 @@
       }
     }
 
+    function checkForUpdates (jid, signedIn) {
+      if (!jid) {
+        updatesNotFound(signedIn);
+        return;
+      }
+
+      var url = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}';
+
+      console.log('Worker started', jid);
+      $updateBox.show().sticky();
+
+      window.checkForUpdates(url.replace("JID", jid), {interval: 8000},
+        function (res) {
+          $updateBox.alert('close');
+          if (res.text) {
+            $refreshBox.find('span').text(res.text);
+          }
+          $refreshBox.show().sticky();
+        }, function (res) {
+          $updateBox.alert('close');
+          updatesNotFound(signedIn);
+        }, function (xhr) {
+          $updateBox.alert('close');
+          console.log('checkForUpdates failed.', xhr);
+        });
+    }
+
     $(function () {
+      var signedIn = #{user_signed_in?};
+      var authorized = #{user_signed_in? && current_user.authorized?};
+      var additionalFunc = #{!user_signed_in? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
+      var viaDM = #{!user_signed_in? && via_dm?};
+
+      $updateBox = $('.update-box');
+      $refreshBox = $('.refresh-box');
+      $welcomeBox = $('.welcome-box');
+      $followBox = $('.follow-box');
+      $invalidTokenBox = $('.invalid-token-box');
+      $additionalFuncBox = $('.additional-func-box');
+      $viaDMBox = $('.via-dm-box');
+
+      $.each([$updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox], function (i, btn) {
+        btn.on('close.bs.alert', function () {
+          btn.parent().hide();
+        });
+      });
+
       if (signedIn && !authorized) {
         $invalidTokenBox.show().sticky();
       }
@@ -95,26 +122,11 @@
         $viaDMBox.show().sticky();
       }
 
-      if (jid) {
-        console.log('Worker started', jid);
-        $updateBox.show().sticky();
-
-        checkForUpdates(checkForUpdatesPath, {interval: 8000},
-          function (res) {
-            $updateBox.alert('close');
-            if (res.text) {
-              $refreshBox.find('span').text(res.text);
-            }
-            $refreshBox.show().sticky();
-          }, function (res) {
-            $updateBox.alert('close');
-            updatesNotFound();
-          }, function (xhr) {
-            $updateBox.alert('close');
-            console.log('checkForUpdates failed.', xhr);
-          });
-      } else {
-        updatesNotFound();
-      }
+      var url = '#{twitter_users_path}';
+      var uid = '#{twitter_user.uid}';
+      $.post(url, {uid: uid}, function (res) {
+        console.log(res);
+        checkForUpdates(res.jid, signedIn);
+      });
     });
   })();
