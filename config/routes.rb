@@ -100,6 +100,7 @@ Rails.application.routes.draw do
   resources :searches, only: %i(create), param: :screen_name
   get '/searches/:screen_name', to: redirect('/timelines/%{screen_name}')
   get 'searches/:uid/waiting', to: 'waiting#new', as: :waiting_search
+  resources :twitter_users, only: %i(create), param: :uid
 
   resources :timelines, only: %i(show), param: :screen_name
   get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates

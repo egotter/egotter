@@ -1,6 +1,5 @@
 class UnfollowersController < UnfriendsAndUnfollowers
   include TweetTextHelper
-  include WorkersHelper
 
   def all
     super

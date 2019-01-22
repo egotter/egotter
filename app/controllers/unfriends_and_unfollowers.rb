@@ -2,10 +2,6 @@ class UnfriendsAndUnfollowers < ApplicationController
   include Concerns::Showable
   include Concerns::Indexable
 
-  before_action(only: %i(show)) do
-    @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
-  end
-
   def all
     unless user_signed_in?
       via = "#{controller_name}/#{action_name}/need_login"

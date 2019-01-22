@@ -1,6 +1,5 @@
 class UnfriendsController < UnfriendsAndUnfollowers
   include TweetTextHelper
-  include WorkersHelper
 
   before_action(only: %i(show)) do
     if request.format.html?
