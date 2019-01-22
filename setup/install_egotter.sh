@@ -164,7 +164,7 @@ Mount efs:
 
     mkdir /efs
     mount -t nfs4 [NAME]:/ /efs/
-    echo '[NAME]:/ /efs nfs4 defaults 0 0' >>/etc/fstab
+    echo '[NAME]:/ /efs efs defaults,_netdev 0 0' >>/etc/fstab
     # df -h
 
 User settings:
