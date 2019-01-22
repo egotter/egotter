@@ -26,7 +26,7 @@ class TimelinesController < ApplicationController
 
   def check_for_follow
     if user_signed_in?
-      follow = (Bot.api_client.friendship?(current_user.uid.to_i, User::EGOTTER_UID) rescue false)
+      follow = (Bot.api_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID) rescue false)
       render json: {follow: follow}
     else
       head :bad_request

@@ -8,7 +8,7 @@
   %span= t('common.show.update_is_coming', user: twitter_user.mention_name)
   = link_to(t('common.show.update_result'), timeline_path(twitter_user, via: build_via('refresh_box')), class: 'btn btn-default btn-sm')
 
-.welcome-box.alert.alert-info.alert-dismissable
+.too-many-friends-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_sign_in', user: twitter_user.mention_name)
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
@@ -35,7 +35,7 @@
 
 :javascript
   (function () {
-    var $updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox;
+    var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox;
 
     function checkForFollow () {
       var url = '#{check_for_follow_path(uid: twitter_user.uid)}';
@@ -58,7 +58,7 @@
         }
       } else {
         if (friendless) {
-          $welcomeBox.show().sticky();
+          $tooManyFriendsBox.show().sticky();
         }
       }
     }
@@ -98,13 +98,13 @@
 
       $updateBox = $('.update-box');
       $refreshBox = $('.refresh-box');
-      $welcomeBox = $('.welcome-box');
+      $tooManyFriendsBox = $('.too-many-friends-box');
       $followBox = $('.follow-box');
       $invalidTokenBox = $('.invalid-token-box');
       $additionalFuncBox = $('.additional-func-box');
       $viaDMBox = $('.via-dm-box');
 
-      $.each([$updateBox, $refreshBox, $welcomeBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox], function (i, btn) {
+      $.each([$updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox], function (i, btn) {
         btn.on('close.bs.alert', function () {
           btn.parent().hide();
         });
