@@ -75,7 +75,7 @@ module Api
     end
 
     def fetch_suspended_uids(uids)
-      uids - client.users(uids).map { |u| u[:id] }
+      uids - request_context_client.users(uids).map { |u| u[:id] }
     rescue => e
       log_exception(e)
       []
@@ -86,7 +86,7 @@ module Api
     end
 
     def fetch_blocking_uids
-      client.blocked_ids
+      request_context_client.blocked_ids
     rescue => e
       log_exception(e)
       []

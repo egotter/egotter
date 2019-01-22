@@ -62,7 +62,7 @@ module Concerns::Validation
     return true if TwitterDB::User.exists?(uid: uid)
 
     logger.warn "#{controller_name}##{action_name}: TwitterDB::User not found. #{uid}"
-    TwitterDB::User::Batch.fetch_and_create(uid, client: client)
+    TwitterDB::User::Batch.fetch_and_create(uid, client: request_context_client)
     true
   rescue => e
     logger.warn "#{controller_name}##{action_name}: TwitterDB::User not found. #{e.class} #{e.message} #{uid}"
@@ -192,7 +192,7 @@ module Concerns::Validation
     return false unless Util::TooManyRequestsRequests.exists?(current_user_id)
     return head :bad_request if request.xhr?
 
-    limit = client.rate_limit
+    limit = request_context_client.rate_limit
     reset_in = [limit.friend_ids, limit.follower_ids, limit.users].select {|l| l[:remaining] == 0}.map {|l| l[:reset_in]}.max
     message = too_many_requests_message(reset_in)
     redirect_to root_path, alert: message

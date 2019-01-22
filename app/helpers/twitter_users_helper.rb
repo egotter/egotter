@@ -1,8 +1,8 @@
 module TwitterUsersHelper
   def build_twitter_user_by(uid: nil, screen_name: nil)
-    return build_twitter_user_by(screen_name: client.user(uid.to_i)[:screen_name]) if uid
+    return build_twitter_user_by(screen_name: request_context_client.user(uid.to_i)[:screen_name]) if uid
 
-    user = client.user(screen_name)
+    user = request_context_client.user(screen_name)
     twitter_user = TwitterUser.build_by_user(user)
 
     DeleteNotFoundUserWorker.perform_async(screen_name)
