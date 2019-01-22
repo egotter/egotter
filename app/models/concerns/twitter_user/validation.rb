@@ -44,14 +44,6 @@ module Concerns::TwitterUser::Validation
     !protected_account?
   end
 
-  def forbidden_account?
-    ForbiddenUser.exists?(screen_name: screen_name)
-  end
-
-  def not_found_account?
-    NotFoundUser.exists?(screen_name: screen_name)
-  end
-
   def readable_by?(login_user)
     login_user.uid.to_i == uid.to_i || login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i)
   end

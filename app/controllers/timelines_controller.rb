@@ -8,9 +8,9 @@ class TimelinesController < ApplicationController
   end
 
   def show
-    if @twitter_user.forbidden_account?
+    if ForbiddenUser.exists?(screen_name: @twitter_user.screen_name)
       flash.now[:alert] = forbidden_message(@twitter_user.screen_name)
-    elsif @twitter_user.not_found_account?
+    elsif NotFoundUser.exists?(screen_name: @twitter_user.screen_name)
       flash.now[:alert] = not_found_message(@twitter_user.screen_name)
     else
       @jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, screen_name: @twitter_user.screen_name)
