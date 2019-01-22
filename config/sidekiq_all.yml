@@ -32,6 +32,7 @@
   - ImportReplyingRepliedAndFavoritesWorker
   - ImportTwitterUserRelationsWorker
   - ImportUserWorker
+  - ResetTooManyRequestsWorker
   - TweetEgotterWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker

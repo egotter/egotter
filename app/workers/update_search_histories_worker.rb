@@ -10,6 +10,6 @@ class UpdateSearchHistoriesWorker
       SearchHistory.create!(session_id: session_id, user_id: user_id, uid: uid)
     end
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{user_id} #{uid}"
+    logger.warn "#{e.class}: #{e.message} #{session_id} #{user_id} #{uid}"
   end
 end

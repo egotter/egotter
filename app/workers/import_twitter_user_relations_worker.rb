@@ -65,6 +65,11 @@ class ImportTwitterUserRelationsWorker
       else logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
     end
 
+    if e.class == Twitter::Error::TooManyRequests
+      Util::TooManyRequestsRequests.add(user_id)
+      ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user_id)
+    end
+
     job.update(error_class: e.class, error_message: e.message)
   rescue Twitter::Error => e
     job.update(error_class: e.class, error_message: e.message)

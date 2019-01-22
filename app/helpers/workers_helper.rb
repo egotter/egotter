@@ -4,6 +4,8 @@ module WorkersHelper
     return if !user_signed_in? && via_dm?
     return if uid.to_i == User::EGOTTER_UID
 
+    return if Util::TooManyRequestsRequests.exists?(current_user_id)
+
     return if Util::SearchRequests.exists?(uid)
     Util::SearchRequests.add(uid)
 
@@ -35,9 +37,9 @@ module WorkersHelper
     worker_class.perform_async(values.merge(track_id: track.id))
   end
 
-  def enqueue_update_search_histories_job_if_needed(uid, interval)
+  def enqueue_update_search_histories_job_if_needed(uid)
     return if from_crawler?
-    UpdateSearchHistoriesWorker.perform_in(interval, fingerprint, current_user_id, uid)
+    UpdateSearchHistoriesWorker.perform_async(fingerprint, current_user_id, uid)
   end
 
   def enqueue_update_usage_stat_job_if_needed(uid)

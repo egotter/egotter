@@ -3,6 +3,7 @@ default: &default
   log_recently_created: <%= 5.minutes %>
   usage_stat_recently_created: <%= 30.minutes %>
   recently_searched: <%= 5.minutes %>
+  recently_too_many_requests: <%= 15.minutes %>
   recently_creating: <%= 5.minutes %>
   recently_messaging: <%= 5.minutes %>
   recently_delete_tweets: <%= 30.minutes %>

@@ -85,6 +85,11 @@ class CreateTwitterUserWorker
       else logger.warn "#{__method__}: #{e.class} #{e.message} #{values.inspect}"
     end
 
+    if e.class == Twitter::Error::TooManyRequests
+      Util::TooManyRequestsRequests.add(user_id)
+      ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user_id)
+    end
+
     error_message =
       if e.class == Twitter::Error::TooManyRequests
         (Time.zone.now + e.rate_limit.reset_in.to_i).to_s(:db)

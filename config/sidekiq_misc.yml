@@ -26,6 +26,7 @@
   - CreateSearchLogWorker
   - CreateSearchErrorLogWorker
   - CreateSignInLogWorker
+  - ResetTooManyRequestsWorker
   - TweetEgotterWorker
   - UpdateSearchHistoriesWorker
   - UpdateSearchLogWorker
