@@ -1,5 +1,4 @@
 class HomeController < ApplicationController
-
   before_action do
     push_referer
 
@@ -13,5 +12,8 @@ class HomeController < ApplicationController
   end
 
   def new
+    if user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
+      redirect_to timeline_path screen_name: current_user.screen_name
+    end
   end
 end
