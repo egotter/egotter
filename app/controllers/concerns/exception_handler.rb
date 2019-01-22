@@ -16,7 +16,7 @@ module Concerns::ExceptionHandler
           when Twitter::Error::NotFound then not_found_message(screen_name)
           when Twitter::Error::Forbidden then forbidden_message(screen_name)
           when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
-          when Twitter::Error::TooManyRequests then too_many_requests_message(screen_name, ex)
+          when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
           else alert_message(ex)
         end
 
@@ -68,9 +68,9 @@ module Concerns::ExceptionHandler
     end
   end
 
-  def too_many_requests_message(screen_name, ex)
+  def too_many_requests_message(reset_in)
     if user_signed_in?
-      t('after_sign_in.too_many_requests_with_reset_in', seconds: (ex.rate_limit.reset_in.to_i + 1).seconds)
+      t('after_sign_in.too_many_requests_with_reset_in', seconds: reset_in)
     else
       t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
     end
