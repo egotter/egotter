@@ -74,11 +74,6 @@ class ImportTwitterUserRelationsWorker
   rescue Twitter::Error => e
     job.update(error_class: e.class, error_message: e.message)
     logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
-    retry if e.message == 'Connection reset by peer - SSL_connect'
-  rescue HTTP::ConnectionError => e
-    job.update(error_class: e.class, error_message: e.message)
-    logger.warn "#{e.class} #{e.message} #{user_id} #{uid}"
-    retry if e.message == 'error reading from socket: Connection reset by peer'
   rescue => e
     message = e.message.truncate(100)
     job.update(error_class: e.class, error_message: message)

@@ -98,13 +98,6 @@ class CreateTwitterUserWorker
       end
     job.update(error_class: e.class, error_message: error_message)
   rescue Twitter::Error => e
-    retry if e.message == 'Connection reset by peer - SSL_connect'
-
-    handle_unknown_exception(e, values)
-    job.update(error_class: e.class, error_message: e.message.truncate(100))
-  rescue HTTP::ConnectionError => e
-    retry if e.message == 'error reading from socket: Connection reset by peer'
-
     handle_unknown_exception(e, values)
     job.update(error_class: e.class, error_message: e.message.truncate(100))
   rescue => e
