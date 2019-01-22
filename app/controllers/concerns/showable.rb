@@ -6,7 +6,7 @@ module Concerns::Showable
 
   included do
     before_action(only: %i(show)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
-    before_action(only: %i(show)) { @tu = build_twitter_user(params[:screen_name]) }
+    before_action(only: %i(show)) { @tu = build_twitter_user_by(screen_name: params[:screen_name]) }
     before_action(only: %i(show)) { !blocked_search?(@tu) }
     before_action(only: %i(show)) { authorized_search?(@tu) }
     before_action(only: %i(show)) { twitter_user_persisted?(@tu.uid.to_i) }
