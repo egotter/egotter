@@ -5,9 +5,9 @@ class ModalOpenLogsController < ApplicationController
   def create
     # TODO specify only params[:via]
     create_modal_open_log(params[:via] || params[:name])
-    render nothing: true, status: 200
+    head :ok
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    render nothing: true, status: 500
+    head :internal_server_error
   end
 end

@@ -6,7 +6,7 @@ module Api
 
       def summary
         hacked = select_hacked_statuses(@twitter_user)
-        render json: {name: controller_name, count: hacked.size}, status: 200
+        render json: {name: controller_name, count: hacked.size}
       end
 
       def list
@@ -21,7 +21,7 @@ module Api
             end
         end
 
-        render json: {name: controller_name, max_sequence: -1, limit: -1, statuses: hacked}, status: 200
+        render json: {name: controller_name, max_sequence: -1, limit: -1, statuses: hacked}
       end
 
       private

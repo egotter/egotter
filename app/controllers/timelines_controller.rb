@@ -17,7 +17,7 @@ class TimelinesController < ApplicationController
   def check_for_updates
     twitter_user = TwitterUser.latest(params[:uid])
     if params[:created_at].to_s.match(/\A\d+\z/) && twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
-      return render json: {found: true, text: changes_text(twitter_user)}, status: 200
+      return render json: {found: true, text: changes_text(twitter_user)}
     end
 
     started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
@@ -27,7 +27,7 @@ class TimelinesController < ApplicationController
   def check_for_follow
     if user_signed_in?
       follow = (Bot.api_client.friendship?(current_user.uid.to_i, User::EGOTTER_UID) rescue false)
-      render json: {follow: follow}, status: 200
+      render json: {follow: follow}
     else
       head :bad_request
     end

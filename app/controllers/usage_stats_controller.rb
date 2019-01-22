@@ -32,7 +32,7 @@ class UsageStatsController < ApplicationController
 
     if params[:updated_at] == '-1' ||
         (params[:updated_at].to_s.match(/\A\d+\z/) && stat.updated_at > Time.zone.at(params[:updated_at].to_i))
-      return render json: {found: true}, status: 200
+      return render json: {found: true}
     end
 
     render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202

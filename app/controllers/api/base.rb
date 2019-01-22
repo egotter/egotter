@@ -24,7 +24,7 @@ module Api
 
       chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'),  y: 200.0 / 3.0}]
 
-      render json: {name: controller_name, count: size, users: users, chart: chart}, status: 200
+      render json: {name: controller_name, count: size, users: users, chart: chart}
     end
 
     def list
@@ -32,7 +32,7 @@ module Api
       uids, max_sequence = list_uids(params[:max_sequence].to_i, limit: limit)
 
       if uids.empty?
-        return render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: []}, status: 200
+        return render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: []}
       end
 
       suspended_uids = fetch_suspended_uids? ? fetch_suspended_uids(uids) : []
@@ -54,7 +54,7 @@ module Api
         users = render_to_string partial: 'twitter/user', collection: users, cached: true, locals: {ad: true}, formats: %i(html)
       end
 
-      render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: users}, status: 200
+      render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: users}
     end
 
     private

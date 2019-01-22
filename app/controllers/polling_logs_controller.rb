@@ -5,9 +5,9 @@ class PollingLogsController < ApplicationController
   def create
     status = 'true' == params[:status]
     create_polling_log(params[:uid], params[:screen_name], action: params[:_action], status: status, time: params[:time], retry_count: params[:retry_count])
-    render nothing: true, status: 200
+    head :ok
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    render nothing: true, status: 500
+    head :internal_server_error
   end
 end

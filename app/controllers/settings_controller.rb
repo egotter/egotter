@@ -19,7 +19,7 @@ class SettingsController < ApplicationController
       end
     value = (value == 'true')
     current_user.notification_setting.update!(key => value)
-    render json: current_user.notification_setting.attributes.slice('email', 'dm', 'news', 'search'), status: 200
+    render json: current_user.notification_setting.attributes.slice('email', 'dm', 'news', 'search')
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
     head :internal_server_error
