@@ -53,7 +53,7 @@
 .search_form-wrapper{style: 'margin-bottom: 15px;'}
   = render partial: 'common/search_form', locals: {via: build_via('tweets_stat')}
 
-= render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
+= render(partial: 'adsense/side_by_side', locals: {vertical: :middle})
 
 :javascript
   (function () {

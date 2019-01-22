@@ -12,7 +12,7 @@
 %h2.h2.page-title= page_title
 
 = render partial: 'common/search_form', locals: {via: build_via('top_input')}
-= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 #statuses.twitter.tweets.row
   - if @twitter_user.protected_account?

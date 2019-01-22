@@ -1,9 +1,0 @@
-- unless ad_ng_twitter_user?(@twitter_user)
-  - id = async_adsense_wrapper_id
-  .async-adsense-wrapper{id: id}
-  :javascript
-    $(function () {
-      var url = '#{load_adsense_path(action: action, vertical: vertical)}';
-      var selector = '#{id}';
-      new AsyncLoader(url, '#' + selector).lazyload();
-    });

@@ -17,7 +17,7 @@
 .tweet-box-wrapper{style: 'margin-bottom: 15px;'}
   = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
 
-= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 = render partial: 'common/tabs', locals: {tabs: @tabs, active_tab: @active_tab}
 

@@ -28,7 +28,7 @@
     %h3.h4= t('searches.new.lead_001')
     .lead= t('searches.new.lead_002_html')
     = render partial: 'common/search_form', locals: {via: build_via('input')}
-    = render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+    = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
     - if user_signed_in?
       = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('top_button')}
     - else

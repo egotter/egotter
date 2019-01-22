@@ -14,7 +14,7 @@
 .page-description.text-center= t('clusters.show.lead_002', user: @twitter_user.mention_name)
 
 = render partial: 'common/search_form', locals: {via: 'clusters/show/top_input'}
-= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top})
+= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 .share-buttons
   .inner

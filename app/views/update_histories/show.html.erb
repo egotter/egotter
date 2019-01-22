@@ -10,7 +10,7 @@
 
   <div class="return-to-results-top"><%= link_to(t('searches.common.return', user: @twitter_user.mention_name), timeline_path(@twitter_user)) %></div>
 
-  <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :top}) %>
+  <%= render(partial: 'adsense/side_by_side', locals: {vertical: :top}) %>
 
   <div class="summary">
     <div><%= '初回更新' %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
@@ -23,7 +23,7 @@
     <%= render partial: 'twitter/user', collection: @update_histories.to_a, cached: true, locals: {ad: false} %>
   </div>
 
-  <%= render(partial: 'common/adsense', locals: {action: action_name, vertical: :bottom}) %>
+  <%= render(partial: 'adsense/side_by_side', locals: {action: action_name, vertical: :bottom}) %>
 
   <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @twitter_user.mention_name), timeline_path(@twitter_user)) %></div>
 </div>

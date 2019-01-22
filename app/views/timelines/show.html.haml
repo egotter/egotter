@@ -14,7 +14,7 @@
 
 %h2.h3.text-center= t('timelines.show.heading', user: @twitter_user.mention_name)
 
-= render(partial: 'common/async_adsense', locals: {action: action_name, vertical: :top})
+= render(partial: 'adsense/side_by_side', locals: {async: true, action: action_name, vertical: :top})
 
 .row
   .col-md-6
@@ -41,7 +41,7 @@
   - %w(unfriends unfollowers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favorite_friends inactive_friends inactive_followers).each do |name|
     - if name == 'blocking_or_blocked' && request.from_smartphone?
       .col-md-6
-        = render(partial: 'common/adsense', locals: {action: action_name, vertical: :middle})
+        = render(partial: 'adsense/side_by_side', locals: {vertical: :middle})
 
     .col-md-6
       = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: name}
@@ -49,7 +49,7 @@
   .col-md-6
     = render partial: 'timelines/update_history', locals: {histories: UpdateHistories.new(@twitter_user.uid), twitter_user: @twitter_user}
 
-= render(partial: 'common/async_adsense', locals: {action: action_name, vertical: :bottom})
+= render(partial: 'adsense/side_by_side', locals: {async: true, action: action_name, vertical: :bottom})
 
 %h2.h4.text-center= t('.about_this_page', user: @twitter_user.mention_name)
 .this-page-is= t('.this_page_is_html', user: @twitter_user.mention_name)
