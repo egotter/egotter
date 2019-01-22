@@ -1,4 +1,5 @@
 ActiveRecord::Base.connection.execute('truncate table twitter_users')
+ActiveRecord::Base.connection.execute('truncate table statuses')
 ActiveRecord::Base.connection.execute('truncate table search_histories')
 ActiveRecord::Base.connection.execute('truncate table jobs')
 
