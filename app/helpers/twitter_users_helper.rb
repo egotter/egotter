@@ -10,6 +10,11 @@ module TwitterUsersHelper
 
     twitter_user
   rescue => e
+    if screen_name.blank? # TwitterUsersController#create
+      head :bad_request
+      return
+    end
+
     if e.message == 'User not found.'
       CreateNotFoundUserWorker.perform_async(screen_name)
     elsif e.message == 'User has been suspended.'

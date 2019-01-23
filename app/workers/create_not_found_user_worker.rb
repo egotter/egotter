@@ -8,5 +8,6 @@ class CreateNotFoundUserWorker
     logger.info e.message.truncate(100)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{screen_name}"
+    logger.info e.backtrace.join("\n")
   end
 end
