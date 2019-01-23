@@ -44,6 +44,10 @@ module Concerns::TwitterUser::Validation
     !protected_account?
   end
 
+  def verified_account?
+    !!self.verified
+  end
+
   def readable_by?(login_user)
     login_user.uid.to_i == uid.to_i || login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i)
   end
