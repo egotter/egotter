@@ -14,6 +14,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         update_search_histories_when_signing_in(user)
         FollowRequest.create(user_id: user.id) if follow
         TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
+        CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"

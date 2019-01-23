@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190120115052) do
+ActiveRecord::Schema.define(version: 20190123013619) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -1111,6 +1111,19 @@ ActiveRecord::Schema.define(version: 20190120115052) do
   add_index "visitors", ["session_id"], name: "index_visitors_on_session_id", unique: true, using: :btree
   add_index "visitors", ["uid"], name: "index_visitors_on_uid", using: :btree
   add_index "visitors", ["user_id"], name: "index_visitors_on_user_id", using: :btree
+
+  create_table "welcome_messages", force: :cascade do |t|
+    t.integer  "user_id",    limit: 4,   null: false
+    t.datetime "read_at"
+    t.string   "message_id", limit: 191, null: false
+    t.string   "token",      limit: 191, null: false
+    t.datetime "created_at",             null: false
+    t.datetime "updated_at",             null: false
+  end
+
+  add_index "welcome_messages", ["created_at"], name: "index_welcome_messages_on_created_at", using: :btree
+  add_index "welcome_messages", ["token"], name: "index_welcome_messages_on_token", unique: true, using: :btree
+  add_index "welcome_messages", ["user_id"], name: "index_welcome_messages_on_user_id", using: :btree
 
   add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "follower_uid", primary_key: "uid"
   add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "user_uid", primary_key: "uid"
