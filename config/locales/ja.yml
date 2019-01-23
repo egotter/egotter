@@ -270,10 +270,10 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '片思いチェック by えごったー'
       simple_title: '片思いチェック'
-      description: "保存ユーザー数1,000万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
+      description: "保存ユーザー数4,800万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       lead_001: "スマホでさくっと片思いチェック"
-      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。"
       lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show: &one_sided_friends_show
@@ -325,10 +325,10 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'リムられチェック by えごったー'
       simple_title: 'リムられチェック'
-      description: "保存ユーザー数1,000万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
+      description: "保存ユーザー数4,800万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
       short_description: "フォローを外されたアカウントをさくっと見付けることができます。"
       lead_001: "スマホでさくっとリムられチェック"
-      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "リムられチェックの決定版。<br>スマホから使える無料のリムられチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show: &unfriends_show
@@ -423,10 +423,10 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '最近いない人検索 by えごったー'
       simple_title: '最近いない人検索'
-      description: "保存ユーザー数1,000万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
+      description: "保存ユーザー数4,800万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
       short_description: "スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
       lead_001: "最近いない人、何してるんだろう。"
-      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "最近いない人をらくらく検索。<br>スマホから使える無料の分析アプリです。"
       lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない相互フォローのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show: &inactive_friends_show
@@ -478,10 +478,10 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'フォローチェック by えごったー'
       simple_title: 'フォローチェック'
-      description: "保存ユーザー数1,000万人突破！ 無料でスマホからフォローチェック！"
+      description: "保存ユーザー数4,800万人突破！ 無料でスマホからフォローチェック！"
       short_description: "フォローとフォロワーの一覧をさくっと見ることができます。"
       lead_001: "スマホでさくっとフォローチェック"
-      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show: &friends_show
@@ -569,10 +569,10 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'クラスタ判定 by えごったー'
       simple_title: 'クラスタ判定'
-      description: "保存ユーザー数1,000万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
+      description: "保存ユーザー数4,800万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
       short_description: "検索されたユーザーが入っているクラスタをさくっと判定します。"
       lead_001: "スマホでさくっとクラスタ判定"
-      lead_002: "保存ユーザー数1,000万人突破！"
+      lead_002: "保存ユーザー数4,800万人突破！"
       lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
       lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show:
