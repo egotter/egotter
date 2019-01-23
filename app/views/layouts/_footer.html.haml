@@ -56,8 +56,14 @@
 
     = succeed spaces do
       = link_to t('misc.privacy_policy.title'), privacy_policy_path
-      %br.visible-xs-block
+      %br
 
     = succeed spaces do
       = link_to t('misc.specified_commercial_transactions.title'), specified_commercial_transactions_path
       %br.visible-xs-block
+
+    = succeed spaces do
+      = link_to t('directory.profiles.link_title'), directory_path
+      %br
+
+    %span.copy &copy; 2019 EGOTTER

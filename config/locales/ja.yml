@@ -589,6 +589,15 @@ ja:
       clusters_level: "クラスタレベル"
       clusters_cloud: "クラスタクラウド"
       cluster_name: "%{name}クラスタ"
+  directory:
+    profiles:
+      link_title: プロフィール
+      show:
+        title: プロフィールディレクトリ
+      first_layer:
+        title: プロフィールディレクトリ
+      second_layer:
+        title: プロフィールディレクトリ
   common:
     show:
       updating: '%{user} のデータを更新中'

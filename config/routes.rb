@@ -14,6 +14,10 @@ Rails.application.routes.draw do
     end
   end
 
+  namespace :directory do
+    get "profiles(/:id1(/:id2))", to: "profiles#show"
+  end
+
   %i(maintenance privacy_policy terms_of_service specified_commercial_transactions support).each do |name|
     get name, to: "misc##{name}", as: name
   end
