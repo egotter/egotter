@@ -51,6 +51,14 @@ do_create = Proc.new do
     obj.add terms_of_service_path
     obj.add privacy_policy_path
   end
+
+  add directory_path, options
+  100.times do |n|
+    add directory_path(id1: n), options
+    10.times do |nn|
+      add directory_path(id1: n, id2: nn), options
+    end
+  end
 end
 
 SitemapGenerator::Sitemap.create { Rails.logger.silence(&do_create) }
