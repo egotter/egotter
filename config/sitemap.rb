@@ -6,15 +6,17 @@ puts "uids: #{uids.size}"
 do_create = Proc.new do
   options = {priority: 0.8}
 
-  add one_sided_friends_top_path, options
-  add unfriends_top_path, options
-  add inactive_friends_top_path, options
-  add friends_top_path, options
-  add clusters_top_path, options
+  with_options options do |obj|
+    obj.add one_sided_friends_top_path
+    obj.add unfriends_top_path
+    obj.add inactive_friends_top_path
+    obj.add friends_top_path
+    obj.add clusters_top_path
+  end
 
   uids.each do |uid|
     twitter_user = TwitterUser.select(:screen_name, :user_info, :updated_at).latest(uid)
-    next if twitter_user.protected_account?
+    next if twitter_user.protected_account? || twitter_user.suspended_account?
 
     options = {priority: 0.5, changefreq: 'weekly', lastmod: twitter_user.updated_at}
 
@@ -44,9 +46,11 @@ do_create = Proc.new do
 
   options = {priority: 0.3}
 
-  add support_path, options
-  add terms_of_service_path, options
-  add privacy_policy_path, options
+  with_options options do |obj|
+    obj.add support_path
+    obj.add terms_of_service_path
+    obj.add privacy_policy_path
+  end
 end
 
 SitemapGenerator::Sitemap.create { Rails.logger.silence(&do_create) }
