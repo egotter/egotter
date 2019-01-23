@@ -6,9 +6,9 @@ module Directory
       id2 = params[:id2]
 
       if id1.present? && id2.present?
-        @screen_names = TwitterUser.order(created_at: :desc).
+        @screen_names = TwitterUser.uniq.
+            where(created_at: (1.days.ago)..(Time.now)).
             where('uid % :id1 = 0 and (uid % :id1) % :id2 = 0', id1: id1.to_i, id2: id2.to_i).
-            limit(1000).
             pluck(:screen_name)
         render 'directory/profiles/second_layer'
       elsif id1.present? && id2.blank?
