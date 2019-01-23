@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: search_reports
+# Table name: welcome_messages
 #
 #  id         :integer          not null, primary key
 #  user_id    :integer          not null
@@ -12,27 +12,26 @@
 #
 # Indexes
 #
-#  index_search_reports_on_created_at  (created_at)
-#  index_search_reports_on_token       (token) UNIQUE
-#  index_search_reports_on_user_id     (user_id)
+#  index_welcome_messages_on_created_at  (created_at)
+#  index_welcome_messages_on_token       (token) UNIQUE
+#  index_welcome_messages_on_user_id     (user_id)
 #
 
-class SearchReport < ActiveRecord::Base
+class WelcomeMessage < ActiveRecord::Base
   belongs_to :user
 
-  def self.you_are_searched(user_id)
+  def self.welcome(user_id)
     new(user_id: user_id, token: generate_token)
   end
 
   def deliver
-    DirectMessageRequest.new(user.api_client.twitter, User::EGOTTER_UID, I18n.t('dm.searchNotification.whats_happening', screen_name: screen_name)).perform
-    button = {label: I18n.t('dm.searchNotification.timeline_page', screen_name: screen_name), url: timeline_url}
+    DirectMessageRequest.new(user.api_client.twitter, User::EGOTTER_UID, I18n.t('dm.welcomeMessage.lets_start')).perform
+    button = {label: I18n.t('dm.welcomeMessage.timeline_page', screen_name: screen_name), url: timeline_url}
     resp = DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid.to_i, build_message, [button]).perform
     dm = DirectMessage.new(resp)
 
     transaction do
       update!(message_id: dm.id)
-      user.notification_setting.update!(search_sent_at: Time.zone.now)
     end
 
     dm
@@ -53,11 +52,11 @@ class SearchReport < ActiveRecord::Base
   end
 
   def timeline_url
-    'https://egotter.com' + Rails.application.routes.url_helpers.timeline_path(screen_name: screen_name, token: token, medium: 'dm', type: 'search')
+    'https://egotter.com' + Rails.application.routes.url_helpers.timeline_path(screen_name: screen_name, token: token, medium: 'dm', type: 'welcome')
   end
 
   def template_path
-    "app/views/#{self.class.name.underscore.pluralize}/you_are_searched.ja.text.erb"
+    "app/views/#{self.class.name.underscore.pluralize}/welcome.ja.text.erb"
   end
 
   class << self

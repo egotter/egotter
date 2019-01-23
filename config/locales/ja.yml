@@ -704,6 +704,9 @@ ja:
     new_removing: "新しいリムーブ： %{users}"
     new_removed: "新しいリムられ： %{users}"
     omission: " ... 合計%{num}人"
+    welcomeMessage:
+      timeline_page: '%{screen_name} さんの結果ページ'
+      lets_start: 'えごったーの利用を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja #egotter'
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'

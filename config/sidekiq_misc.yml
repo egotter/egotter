@@ -8,6 +8,7 @@
   - CreateScoreWorker
   - CreateSearchReportWorker
   - CreateTweetsWorker
+  - CreateWelcomeMessageWorker
   - DeleteNotFoundUserWorker
   - DeleteForbiddenUserWorker
   - DeleteTweetsWorker
@@ -17,6 +18,7 @@
   - UpdatePromptReportWorker
   - UpdateSearchReportWorker
   - UpdateNewsReportWorker
+  - UpdateWelcomeMessageWorker
 
   - CreateForbiddenUserWorker
   - CreateNotFoundUserWorker

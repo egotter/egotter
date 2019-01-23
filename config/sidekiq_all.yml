@@ -20,6 +20,7 @@
   - CreateTweetsWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
+  - CreateWelcomeMessageWorker
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
   - DeleteNotFoundUserWorker
@@ -41,3 +42,4 @@
   - UpdateSearchReportWorker
   - UpdateUsageStatWorker
   - UpdateNewsReportWorker
+  - UpdateWelcomeMessageWorker
