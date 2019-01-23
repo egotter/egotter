@@ -1,0 +1,8 @@
+%div.directory-profiles
+  %h2= t('.title')
+  %table.table.table-condensed.table-responsive.borderless
+    - 10.times.each_slice(3) do |n1, n2, n3|
+      %tr
+        %td= link_to n1, directory_path(id1: @id1, id2: n1)
+        %td= link_to n2, directory_path(id1: @id1, id2: n2) unless n2.nil?
+        %td= link_to n3, directory_path(id1: @id1, id2: n3) unless n3.nil?
