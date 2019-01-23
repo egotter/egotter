@@ -34,6 +34,7 @@ class SearchHistory < ActiveRecord::Base
       name
       friends_count
       followers_count
+      statuses_count
       description
       profile_image_url_https
       protected

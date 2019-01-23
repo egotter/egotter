@@ -19,6 +19,7 @@
 
     .media-heading {
       font-size: small;
+      line-height: 140%;
 
       .glyphicon.glyphicon-lock {
         color: #999999;
@@ -32,8 +33,15 @@
     }
 
     .screen-name,
-    .friends-count {
+    .friends-count,
+    .followers-count,
+    .statuses-count {
       font-size: small;
+    }
+
+    .friends-count,
+    .followers-count {
+      margin-right: 10px;
     }
 
     .description,

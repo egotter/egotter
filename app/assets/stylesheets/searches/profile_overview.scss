@@ -45,11 +45,10 @@
   }
 
   .description-container {
-    color: #777777;
+    line-height: 160%;
     padding: 10px;
     border-left: 1px solid #e6e6e6;
     border-right: 1px solid #e6e6e6;
-    border-bottom: 1px solid #e6e6e6;
   }
 }
 
@@ -58,7 +57,7 @@
   margin-right: 15px;
 
   a {
-    color: #777777;
+    color: #333333;
   }
 
   .row {
@@ -68,11 +67,6 @@
     border-bottom: 1px solid #e6e6e6;
   }
 
-  .count {
-    font-weight: bold;
-    display: block;
-  }
-
   .tweets,
   .friends,
   .followers,
@@ -80,18 +74,5 @@
     font-size: small;
     padding-top: 5px;
     padding-bottom: 5px;
-  }
-
-  span.text-muted {
-    font-size: x-small;
-  }
-
-  .friends {
-    border-left: 1px solid #e6e6e6;
-    border-right: 1px solid #e6e6e6;
-  }
-
-  .followers {
-    border-right: 1px solid #e6e6e6;
   }
 }

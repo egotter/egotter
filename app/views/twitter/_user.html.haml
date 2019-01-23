@@ -13,15 +13,20 @@
           = normal_icon_img(user, class: 'media-object')
       .media-body
         %h4.media-heading
-          - if request.from_pc?
-            = search_link user.screen_name, via
+          = search_link user.screen_name, via
+          %br.visible-xs-block
           = user_name(user, label: true)
-        - if request.from_pc?
-          %span.friends-count
-            = "#{user.friends_count} / #{user.followers_count}"
-        - else
-          %span.screen-name
-            = search_link user.screen_name, via
+        .visible-md-block.visible-lg-block
+          %span
+            %span.friends-count
+              %b= user.friends_count.to_s(:delimited)
+              %span.text-muted= TwitterUser.human_attribute_name(:friends)
+            %span.followers-count
+              %b= user.followers_count.to_s(:delimited)
+              %span.text-muted= TwitterUser.human_attribute_name(:followers)
+            %span.statuses-count
+              %b= user.statuses_count.to_s(:delimited)
+              %span.text-muted= TwitterUser.human_attribute_name(:statuses)
       .media-right
         .buttons
           - if user_signed_in?

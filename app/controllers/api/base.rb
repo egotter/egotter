@@ -115,6 +115,7 @@ module Api
         name: user.name,
         friends_count: user.friends_count,
         followers_count: user.followers_count,
+        statuses_count: user.statuses_count,
         profile_image_url_https: user.profile_image_url_https.to_s,
         description: user.description,
         protected: user.protected,
