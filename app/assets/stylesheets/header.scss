@@ -19,6 +19,31 @@
   }
 }
 
+.navbar-center {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  top: 0;
+  text-align: center;
+  margin: auto;
+  margin-top: 8px;
+
+  input {
+    background-color: #ffffff !important;
+  }
+
+  .has-search .form-control-feedback {
+    right: initial;
+    left: 0;
+    color: #ccc;
+  }
+
+  .has-search .form-control {
+    //padding-right: 12px;
+    padding-left: 34px;
+  }
+}
+
 .search-modal {
   .submit-btn {
     margin-top: 10px;
@@ -27,4 +52,12 @@
 
 p.alert-info, p.alert-warning {
   margin: 0;
+}
+
+.header-container {
+  border-bottom: solid #e7e7e7 1px;
+}
+
+.header-container {
+  background-color: #ffffff;
 }

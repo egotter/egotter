@@ -1,5 +1,11 @@
 #navbar-hamburger.collapse.navbar-collapse
+  .navbar-form.navbar-center.visible-md-block.visible-lg-block
+    .form-group.has-feedback.has-search
+      %span.glyphicon.glyphicon-search.form-control-feedback
+      %input.form-control{placeholder: 'Search', type: 'text', 'data-target' => '.search-modal', 'data-toggle' => 'modal', readonly: true}
+
   %ul.nav.navbar-nav
+
   %ul.nav.navbar-nav.navbar-right
     - if user_signed_in?
       - if request.from_smartphone?
@@ -21,11 +27,6 @@
             = link_to notifications_path, class: 'btn btn-default' do
               %span.glyphicon.glyphicon-bell
               = t('notifications.title')
-        %li
-          %p.navbar-btn{style: 'margin-right: 15px;'}
-            %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal', class: 'btn btn-default'}
-              %span.glyphicon.glyphicon-search
-              = remaining_count_text
     - else
       - if request.from_smartphone?
         %li
@@ -38,11 +39,6 @@
         %li
           %p.navbar-btn{style: 'margin-right: 15px;'}
             = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header')), class: 'btn btn-default'
-        %li
-          %p.navbar-btn{style: 'margin-right: 15px;'}
-            %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal', class: 'btn btn-default'}
-              %span.glyphicon.glyphicon-search
-              = remaining_count_text
 
     - if user_signed_in?
       - if request.from_smartphone?

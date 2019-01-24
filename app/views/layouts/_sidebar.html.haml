@@ -15,11 +15,6 @@
 
 .separate-line{style: 'margin-top: 15px;'}
 
-%h4= t('searches.common.search')
-= render partial: 'common/search_form', locals: {via: :sidebar}
-
-.separate-line{style: 'margin-top: 15px;'}
-
 %h4= t('searches.sidebar.recommendation')
 .twitter.users
   - if twitter_user.twitter_db_user.unfollowerships.any?
