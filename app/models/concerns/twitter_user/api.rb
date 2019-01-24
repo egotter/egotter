@@ -11,6 +11,10 @@ module Concerns::TwitterUser::Api
       users.select { |user| inactive_user?(user) }
     end
 
+    def active_user?(user)
+      !inactive_user?(user)
+    end
+
     def inactive_user?(user)
       user&.status&.created_at && Time.parse(user.status.created_at) < 2.weeks.ago
     rescue => e

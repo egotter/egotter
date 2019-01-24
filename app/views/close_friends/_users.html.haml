@@ -1,3 +1,31 @@
+.btn-group.sort-order-and-filter.pull-right{"aria-label" => "Sort and Filter", :role => "group"}
+  .btn-group{:role => "group"}
+    %button.sort-order-dropdown.btn.btn-default.dropdown-toggle{data: {sort_order: users_sort_orders[0][1]}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+      = users_sort_orders[0][0]
+      %span.caret
+    %ul.dropdown-menu
+      - users_sort_orders.each do |label, value|
+        %li
+          %a{href: "#", class: 'sort-orders', data: {sort_order: value}}
+            %i.fa.fa-check{'area-hidden': true}
+            = label
+  .btn-group{role: "group"}
+    %button.filter-dropdown.btn.btn-default.dropdown-toggle{data: {filter: nil}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+      = t('filter.title')
+      %span.filter-count
+      %span.caret
+    %ul.dropdown-menu.dropdown-menu-right
+      - users_filters.each do |label, value|
+        %li
+          %a{href: "#", class: 'filters', data: {filter: value}}
+            %input{type: 'checkbox'}
+            = label
+
+.clearfix
+
+.empty-placeholders-wrapper{style: 'display: none;'}
+  = render partial: 'timelines/empty_placeholder', locals: {menu_name: '', menu_or_users: 'users'}
+
 .placeholders-wrapper
   - 3.times do
     = render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'}
@@ -17,29 +45,122 @@
     var url = '#{api_path}';
     var $seeMoreBtn = $('.see-more-btn');
     var $seeAtOnceBtn = $('.see-at-once-btn');
+    var $sortOrderDropdown = $('.sort-order-dropdown');
+    var $filterDropdown = $('.filter-dropdown');
     var $placeholders = $('.placeholders-wrapper');
+    var $emptyPlaceholders = $('.empty-placeholders-wrapper');
     var $usersContainer = $('.main-content.twitter.users');
 
-    $seeMoreBtn.on('click', function (e) {
-      var max_sequence = $(this).data('max-sequence');
-      var limit = $(this).data('limit');
-      $.getJSON(url, {uid: uid, html: 1, limit: limit, max_sequence: max_sequence}).done(function (res) {
-        console.log(res);
+    function fetchUsers (params) {
+      console.log('params', params);
 
-        $seeMoreBtn.show();
-        $seeAtOnceBtn.show();
+      var callback = function (res) {
         if (res.max_sequence && res.max_sequence >= 0) {
           $seeMoreBtn.data('max-sequence', res.max_sequence + 1);
           $seeMoreBtn.data('limit', 10);
         } else {
-          $seeMoreBtn.remove();
-          $seeAtOnceBtn.remove();
+          // $seeMoreBtn.remove();
+          // $seeAtOnceBtn.remove();
         }
-        $placeholders.remove();
-        $usersContainer.append(res.users);
+
+        $placeholders.hide();
+        var $users = $(res.users).hide().fadeIn(1000);
+        $usersContainer.append($users);
+
+        if ($usersContainer.find('.media').length <= 0) {
+          $emptyPlaceholders.show();
+        } else {
+          $emptyPlaceholders.hide();
+        }
+      };
+
+      var key = JSON.stringify(params);
+      var cache = $.data(document.body, key);
+      if (cache) {
+        console.log('response(CACHE)', cache);
+        callback(cache);
+        return;
+      }
+
+      $.getJSON(url, params).done(function (res) {
+        console.log('response', res);
+        callback(res);
+        $.data(document.body, key, res);
       });
+    }
+
+    $seeMoreBtn.on('click', function (e) {
+      var params = {
+        uid: uid,
+        html: 1,
+        limit: $(this).data('limit'),
+        max_sequence: $(this).data('max-sequence'),
+        sort_order: $sortOrderDropdown.data('sort-order'),
+        filter: $filterDropdown.data('filter')
+      };
+
+      fetchUsers(params);
     });
 
+    $sortOrderDropdown.parent().find('.dropdown-menu a').first().addClass('selected');
+    $seeMoreBtn.show();
+    $seeAtOnceBtn.show();
     $seeMoreBtn.trigger('click');
+
+    $('.sort-orders').on('click', function (e) {
+      var $selected = $(this);
+      var $oldSelected = $sortOrderDropdown.parent().find('a.selected');
+      $sortOrderDropdown.dropdown('toggle');
+
+      if ($selected.is($oldSelected)) {
+        console.log('sort_order not changed');
+        return false;
+      }
+      console.log('sort_order', $selected.data('sort-order'));
+
+      $sortOrderDropdown.html($selected.text() + '&nbsp;<span class="caret"></span>')
+          .data('sort-order', $selected.data('sort-order'));
+      $sortOrderDropdown.parent().find('.dropdown-menu a').removeClass('selected');
+      $selected.addClass('selected');
+      $seeMoreBtn.data('max-sequence', 0)
+          .data('limit', 3);
+
+      $placeholders.show();
+      $usersContainer.empty();
+      $seeMoreBtn.trigger('click');
+      return false;
+    });
+
+    $('.filters').on('click', function (e) {
+      var $selected = $(this);
+      console.log('filter', $selected.data('filter'));
+
+      $filterDropdown.dropdown('toggle');
+      $seeMoreBtn.data('max-sequence', 0)
+          .data('limit', 3);
+
+      var $checkbox = $selected.find('input');
+      if ($checkbox.prop('checked')) {
+        $checkbox.removeAttr('checked').prop('checked', false);
+        $selected.removeClass('selected');
+      } else {
+        $checkbox.attr('checked', true).prop('checked', true);
+        $selected.addClass('selected');
+      }
+
+      var filterCount = $filterDropdown.parent().find('a.selected').length;
+      if (filterCount > 0) {
+        $filterDropdown.data('filter', $selected.data('filter')); // Current filters.size == 0
+        $filterDropdown.find('.filter-count').text('(' + filterCount + ')');
+      } else {
+        $filterDropdown.data('filter', null);
+        $filterDropdown.find('.filter-count').text('');
+      }
+
+      $placeholders.show();
+      $usersContainer.empty();
+      $seeMoreBtn.trigger('click');
+      return false;
+    });
   });
 

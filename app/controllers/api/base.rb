@@ -1,5 +1,6 @@
 module Api
   class Base < ApplicationController
+    include SortAndFilterHelper
 
     layout false
 
@@ -28,8 +29,37 @@ module Api
     end
 
     def list
+      max_sequence = params[:max_sequence].to_i
       limit = (0..10).include?(params[:limit].to_i) ? params[:limit].to_i : 10
-      uids, max_sequence = list_uids(params[:max_sequence].to_i, limit: limit)
+      sort_order = USERS_SORT_ORDERS.map {|o| o[1]}.include?(params[:sort_order]) ? params[:sort_order] : USERS_SORT_ORDERS[0][1]
+      filter = USERS_FILTERS.map {|f| f[1]}.include?(params[:filter]) ? params[:filter] : nil
+
+      uids, max_sequence =
+          if sort_order == USERS_SORT_ORDERS[0][1] && filter.nil?
+            list_uids(max_sequence, limit: limit)
+          else
+            users = list_users.to_a
+
+            case sort_order
+              when USERS_SORT_ORDERS[1][1] then users.reverse!
+              when USERS_SORT_ORDERS[2][1] then users.sort_by!{|u| -u.friends_count}
+              when USERS_SORT_ORDERS[3][1] then users.sort_by!{|u| u.friends_count}
+              when USERS_SORT_ORDERS[4][1] then users.sort_by!{|u| -u.followers_count}
+              when USERS_SORT_ORDERS[5][1] then users.sort_by!{|u| u.followers_count}
+            end
+
+            case filter
+              when USERS_FILTERS[0][1] then users.select!{|u| TwitterUser.inactive_user?(u) }
+            end
+
+            users = users[max_sequence, limit]
+
+            if users.nil? || users.empty?
+              [[], -1]
+            else
+              [users.map(&:uid), max_sequence + (limit - 1)]
+            end
+          end
 
       if uids.empty?
         return render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: []}

@@ -643,6 +643,20 @@ ja:
     unfollowers: "リムられ"
     blocking_or_blocked: "ブロック"
     others: "その他"
+  sort:
+    desc: "新しい順"
+    asc: "古い順"
+    friends:
+      desc: "フォロー 多い順"
+      asc: "フォロー 少ない順"
+    followers:
+      desc: "フォロワー 多い順"
+      asc: "フォロワー 少ない順"
+  filter:
+    title: "絞り込み"
+    not_found: "指定された条件での検索結果は0件でした。"
+    active: "アクティブのみ"
+    inactive: "非アクティブのみ"
 
   dictionary:
     official_account: "公式アカウント"
