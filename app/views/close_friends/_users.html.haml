@@ -43,6 +43,9 @@
   $(function () {
     var uid = '#{twitter_user.uid}';
     var url = '#{api_path}';
+    var signInFromSortUrl = '#{sign_in_path(via: build_via('sort_btn'))}';
+    var signInFromFilterUrl = '#{sign_in_path(via: build_via('filter_btn'))}';
+    var signedIn = #{user_signed_in?};
     var $seeMoreBtn = $('.see-more-btn');
     var $seeAtOnceBtn = $('.see-at-once-btn');
     var $sortOrderDropdown = $('.sort-order-dropdown');
@@ -108,6 +111,11 @@
     $seeMoreBtn.trigger('click');
 
     $('.sort-orders').on('click', function (e) {
+      if (!signedIn) {
+        location.href = signInFromSortUrl;
+        return false;
+      }
+
       var $selected = $(this);
       var $oldSelected = $sortOrderDropdown.parent().find('a.selected');
       $sortOrderDropdown.dropdown('toggle');
@@ -132,6 +140,11 @@
     });
 
     $('.filters').on('click', function (e) {
+      if (!signedIn) {
+        location.href = signInFromFilterUrl;
+        return false;
+      }
+
       var $selected = $(this);
       console.log('filter', $selected.data('filter'));
 
