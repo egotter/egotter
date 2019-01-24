@@ -47,19 +47,7 @@
             %span.glyphicon.glyphicon-cog
             = t('settings.title')
       - else
-        %li.dropdown
-          %button.navbar-toggle{style: 'display: inline-block; margin-right: 0;', 'aria-expanded' => 'false', 'data-target' => '.dropdown', 'data-toggle' => 'dropdown', type: 'button'}
-            %span.sr-only Toggle navigation
-            %span.icon-bar
-            %span.icon-bar
-            %span.icon-bar
-          %ul.dropdown-menu
-            %li
-              %span{style: 'padding: 3px 20px;'}
-                %i.fa.fa-twitter{'area-hidden': true}
-                = mention_name(current_user.screen_name)
-            %li.divider{role: 'separator'}
-            %li
-              = link_to settings_path do
-                %span.glyphicon.glyphicon-cog
-                = t('settings.title')
+        %li
+          %p.navbar-btn
+            = link_to settings_path, class: 'btn btn-default' do
+              = mention_name(current_user.screen_name)
