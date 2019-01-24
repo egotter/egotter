@@ -9,13 +9,17 @@ module Api
         [uids.take(limit), uids.size]
       end
 
-      def list_uids(min_sequence, limit: 10)
+      def list_uids(min_sequence, limit:)
         uids = @twitter_user.replying_uids.slice(min_sequence, limit)
         if uids.blank?
           [[], -1]
         else
           [uids, min_sequence + uids.size - 1]
         end
+      end
+
+      def list_users
+        @twitter_user.replying
       end
     end
   end

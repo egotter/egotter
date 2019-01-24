@@ -11,13 +11,17 @@ module Api
         [uids, size]
       end
 
-      def list_uids(min_sequence, limit: 10)
+      def list_uids(min_sequence, limit:)
         followerships = @twitter_user.twitter_db_user.unfollowerships.where("sequence >= ?", min_sequence).limit(limit)
         if followerships.empty?
           [[], -1]
         else
           [followerships.map(&:follower_uid), followerships.last.sequence]
         end
+      end
+
+      def list_users
+        @twitter_user.twitter_db_user.unfollowers
       end
     end
   end

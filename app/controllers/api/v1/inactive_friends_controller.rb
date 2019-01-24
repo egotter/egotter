@@ -10,13 +10,17 @@ module Api
         [uids, size]
       end
 
-      def list_uids(min_sequence, limit: 10)
+      def list_uids(min_sequence, limit:)
         friendships = @twitter_user.inactive_friendships.where("sequence >= ?", min_sequence).limit(limit)
         if friendships.empty?
           [[], -1]
         else
           [friendships.map(&:friend_uid), friendships.last.sequence]
         end
+      end
+
+      def list_users
+        @twitter_user.inactive_friends
       end
     end
   end

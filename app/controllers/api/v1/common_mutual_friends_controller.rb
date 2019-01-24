@@ -10,7 +10,7 @@ module Api
         [uids.take(limit), uids.size]
       end
 
-      def list_uids(min_sequence, limit: 10)
+      def list_uids(min_sequence, limit:)
         return [[], -1] unless user_signed_in? && current_user.twitter_user
         uids = @twitter_user.common_mutual_friend_uids(current_user.twitter_user).slice(min_sequence, limit)
         if uids.blank?
@@ -18,6 +18,11 @@ module Api
         else
           [uids, min_sequence + uids.size - 1]
         end
+      end
+
+      def list_users
+        return [[], -1] unless user_signed_in? && current_user.twitter_user
+        @twitter_user.common_mutual_friends(current_user.twitter_user)
       end
     end
   end
