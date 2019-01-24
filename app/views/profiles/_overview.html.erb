@@ -51,21 +51,21 @@
   <div class="row">
     <div class="tweets col-xs-3">
       <%= link_to status_path(user) do %>
-        <span><b><%= user.statuses_count.to_s(:delimited) %></b></span>
+        <span><b><%= user.statuses_count.to_i.to_s(:delimited) %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
       <% end %>
     </div>
     <div class="friends col-xs-3">
       <%= link_to friend_path(user) do %>
-        <span><b><%= user.friends_count.to_s(:delimited) %></b></span>
+        <span><b><%= user.friends_count.to_i.to_s(:delimited) %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
       <% end %>
     </div>
     <div class="followers col-xs-3">
       <%= link_to follower_path(user) do %>
-        <span><b><%= user.followers_count.to_s(:delimited) %></b></span>
+        <span><b><%= user.followers_count.to_i.to_s(:delimited) %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
       <% end %>

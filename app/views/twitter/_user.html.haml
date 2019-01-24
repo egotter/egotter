@@ -19,13 +19,13 @@
         .visible-md-block.visible-lg-block
           %span
             %span.friends-count
-              %b= user.friends_count.to_s(:delimited)
+              %b= user.friends_count.to_i.to_s(:delimited)
               %span.text-muted= TwitterUser.human_attribute_name(:friends)
             %span.followers-count
-              %b= user.followers_count.to_s(:delimited)
+              %b= user.followers_count.to_i.to_s(:delimited)
               %span.text-muted= TwitterUser.human_attribute_name(:followers)
             %span.statuses-count
-              %b= user.statuses_count.to_s(:delimited)
+              %b= user.statuses_count.to_i.to_s(:delimited)
               %span.text-muted= TwitterUser.human_attribute_name(:statuses)
       .media-right
         .buttons
