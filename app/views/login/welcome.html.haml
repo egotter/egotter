@@ -42,3 +42,16 @@
         .feature-description= t('login.welcome.feature_desc_004_html')
 
     = submit_tag t('login.welcome.sign_in_with_twitter'), name: 'bottom', class: 'btn btn-lg btn-info btn-block'
+
+:javascript
+  $(function () {
+    var message = '#{t('login.welcome.follow_egotter_confirm_html')}';
+    $('.follow-egotter input').on('click', function () {
+      var $clicked = $(this);
+      if (!$clicked.prop('checked')) {
+        if (!confirm(message)) {
+          $clicked.prop('checked', true);
+        }
+      }
+    });
+  });
