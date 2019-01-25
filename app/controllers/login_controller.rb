@@ -1,19 +1,8 @@
 class LoginController < ApplicationController
 
   before_action :reject_crawler, only: %i(sign_in sign_out)
-  before_action :push_referer, only: %i(welcome sign_in sign_out)
-  before_action :create_search_log, only: %i(sign_in sign_out welcome)
-
-  def welcome
-    session[:sign_in_referer] = request.referer
-    session[:sign_in_via] = params['via']
-
-    if params['ab_test']
-      session[:sign_in_ab_test] = params['ab_test']
-    end
-
-    @redirect_path = params[:redirect_path].presence || root_path
-  end
+  before_action :push_referer, only: %i(sign_in sign_out)
+  before_action :create_search_log, only: %i(sign_in sign_out)
 
   def goodbye
     redirect_to root_path, notice: t('.signed_out') unless user_signed_in?

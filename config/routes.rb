@@ -130,9 +130,10 @@ Rails.application.routes.draw do
   get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')
   get 'relationships/:src_screen_name/:dst_screen_name', to: redirect('/')
 
-  %i(sign_in sign_out welcome goodbye).each do |name|
+  %i(sign_in sign_out goodbye).each do |name|
     get name, to: "login##{name}", as: name
   end
+  get 'welcome', to: "welcome#new"
 
   devise_for :users, skip: %i(sessions confirmations registrations passwords unlocks), controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
   devise_scope :user do

@@ -35,7 +35,7 @@
 
   <div class="col-xs-12 col-sm-4 text-center">
     <div class="login-btn" style="display: none; margin-bottom: 15px;">
-      <%= link_to t('login.welcome.sign_in_with_twitter'), sign_in_path(via: build_via('sign_in_button')), class: 'btn btn-lg btn-info' %>
+      <%= sign_in_with_twitter_link(nil, 'sign_in_button', class: 'btn btn-lg btn-info') %>
     </div>
   </div>
 

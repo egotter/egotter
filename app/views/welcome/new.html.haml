@@ -5,17 +5,17 @@
     = hidden_field_tag :redirect_path, @redirect_path if @redirect_path
     = submit_tag t('.sign_in_with_twitter'), name: nil, class: 'btn btn-lg btn-info btn-block'
 
-    %h3.h4.text-center{style: 'line-height: 140%;'}= t('login.welcome.lead_html')
+    %h3.h4.text-center{style: 'line-height: 140%;'}= t('.lead_html')
 
     %div
       %label.small.follow-egotter
         = check_box_tag :follow, true, true, {}
-        = t('login.welcome.follow_egotter_html', link: mention_name('ego_tter'))
+        = t('.follow_egotter_html', link: mention_name('ego_tter'))
 
     %div
       %label.small.tweet-egotter
         = check_box_tag :tweet, true, false, {}
-        = t('login.welcome.tweet_egotter_html')
+        = t('.tweet_egotter_html')
     .tweet-preview-box
       %textarea{readonly: 'readonly', rows: 5}= egotter_share_text
 
@@ -29,23 +29,23 @@
 
     .row
       .col-xs-12.col-sm-6
-        %h3.h4.text-center= t('login.welcome.feature_001')
-        .feature-description= t('login.welcome.feature_desc_001_html')
+        %h3.h4.text-center= t('.feature_001')
+        .feature-description= t('.feature_desc_001_html')
       .col-xs-12.col-sm-6
-        %h3.h4.text-center= t('login.welcome.feature_002')
-        .feature-description= t('login.welcome.feature_desc_002_html')
+        %h3.h4.text-center= t('.feature_002')
+        .feature-description= t('.feature_desc_002_html')
       .col-xs-12.col-sm-6
-        %h3.h4.text-center= t('login.welcome.feature_003')
-        .feature-description= t('login.welcome.feature_desc_003_html')
+        %h3.h4.text-center= t('.feature_003')
+        .feature-description= t('.feature_desc_003_html')
       .col-xs-12.col-sm-6
-        %h3.h4.text-center= t('login.welcome.feature_004')
-        .feature-description= t('login.welcome.feature_desc_004_html')
+        %h3.h4.text-center= t('.feature_004')
+        .feature-description= t('.feature_desc_004_html')
 
-    = submit_tag t('login.welcome.sign_in_with_twitter'), name: 'bottom', class: 'btn btn-lg btn-info btn-block'
+    = submit_tag t('.sign_in_with_twitter'), name: 'bottom', class: 'btn btn-lg btn-info btn-block'
 
 :javascript
   $(function () {
-    var message = '#{t('login.welcome.follow_egotter_confirm_html')}';
+    var message = '#{t('.follow_egotter_confirm_html')}';
     $('.follow-egotter input').on('click', function () {
       var $clicked = $(this);
       if (!$clicked.prop('checked')) {

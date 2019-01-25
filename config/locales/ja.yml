@@ -182,7 +182,17 @@ ja:
         news: "新機能のお知らせが届きます。配信は不定期です。"
         search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
   login:
-    welcome:
+    goodbye:
+      signed_out: "既にログアウト済みです。"
+      no_tweets: "えごったーは、ユーザーの許可なくツイートすることはありませんのでご安心ください(^ ^)"
+      advantage_html: "ログインしたままであれば、<br><br>・自動更新されます<br>・データの検索が早くなります"
+      disadvantage_html: "ログアウトすると、<br><br>・検索が遅くなります<br>・鍵垢の検索はできなくなります"
+      realy_sign_out: "それでも本当にログアウトしますか？"
+      return_to_top: "トップページに戻る"
+    sign_in:
+      signed_in: "既にログイン済みです。"
+  welcome:
+    new:
       signed_in: "既にログイン済みです。"
       lead_html: "ログインでえごったーが<br>もっと便利に！"
       feature_001: "検索が早くなります"
@@ -197,15 +207,6 @@ ja:
       follow_egotter_html: '%{link} をフォローする<br><span style="color: #ff0000;">自動更新やリムられ通知が必要な方は、@ego_tter をフォローしたままにしておいてください。</span>'
       follow_egotter_confirm_html: 'えごったーをフォローしておけば、正確なデータを素早く更新できます。本当にフォローを外しますか？'
       tweet_egotter_html: 'このテキストをツイートする<br><span style="color: #ff0000;">ツイートしない場合は、チェックを外してください。</span>'
-    goodbye:
-      signed_out: "既にログアウト済みです。"
-      no_tweets: "えごったーは、ユーザーの許可なくツイートすることはありませんのでご安心ください(^ ^)"
-      advantage_html: "ログインしたままであれば、<br><br>・自動更新されます<br>・データの検索が早くなります"
-      disadvantage_html: "ログアウトすると、<br><br>・検索が遅くなります<br>・鍵垢の検索はできなくなります"
-      realy_sign_out: "それでも本当にログアウトしますか？"
-      return_to_top: "トップページに戻る"
-    sign_in:
-      signed_in: "既にログイン済みです。"
   misc:
     terms_of_service:
       title: "利用規約"
