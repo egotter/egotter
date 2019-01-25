@@ -135,6 +135,8 @@ Rails.application.routes.draw do
   end
   get 'welcome', to: "welcome#new"
 
+  get 'search_count', to: 'search_count#new'
+
   devise_for :users, skip: %i(sessions confirmations registrations passwords unlocks), controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
   devise_scope :user do
     get SecureRandom.urlsafe_base64(10) => 'users/sessions#destroy', :as => :destroy_user_session

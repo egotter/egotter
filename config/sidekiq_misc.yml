@@ -30,6 +30,7 @@
   - CreateSignInLogWorker
   - ResetTooManyRequestsWorker
   - TweetEgotterWorker
+  - SetSearchCountWorker
   - UpdateSearchHistoriesWorker
   - UpdateSearchLogWorker
   - UpdateUsageStatWorker
