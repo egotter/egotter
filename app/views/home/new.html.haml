@@ -32,7 +32,7 @@
     - if user_signed_in?
       = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('top_button')}
     - else
-      = link_to t('login.welcome.sign_in_with_twitter'), welcome_path(via: build_via('button')), class: 'btn btn-info btn-block'
+      = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-info btn-block')
       .text-notice
         %i.fa.fa-check.fa-lg{'aria-hidden': true}
         = t('searches.new.pc.check_001')
