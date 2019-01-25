@@ -8,10 +8,10 @@
       .lead= t('searches.new.pc.lead_002_html')
       %div{style: 'height: 30px; width: 100%;'}
       .text-notice
-        %i.fa.fa-check.fa-lg{'aria-hidden': true}
+        %i.fas.fa-check
         = t('searches.new.pc.check_001')
       .text-notice
-        %i.fa.fa-check.fa-lg{'aria-hidden': true}
+        %i.fas.fa-check
         = t('searches.new.pc.check_002')
       %div{style: 'margin-top: 5px;'}
         = link_to t('searches.new.pc.sign_up'), sign_in_path(via: build_via('button/pc_special')), class: 'btn btn-info btn-block btn-lg box-center'
@@ -34,10 +34,10 @@
     - else
       = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-info btn-block')
       .text-notice
-        %i.fa.fa-check.fa-lg{'aria-hidden': true}
+        %i.fas.fa-check
         = t('searches.new.pc.check_001')
       .text-notice
-        %i.fa.fa-check.fa-lg{'aria-hidden': true}
+        %i.fas.fa-check
         = t('searches.new.pc.check_002')
 
 .row.searches.screenshot.text-center
@@ -57,41 +57,41 @@
 .row.searches.descriptions
   .col-xs-12.col-sm-4
     %h3
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.feature_001')
-    %i.fa.fa-universal-access.fa-5x{'aria-hidden': true}
+    %i.fas.fa-universal-access.fa-5x
     %div= t('searches.new.feature_desc_001_html')
   .col-xs-12.col-sm-4
     %h3
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.feature_002')
-    %i.fa.fa-bar-chart.fa-5x{'aria-hidden': true}
+    %i.fas.fa-chart-bar.fa-5x
     %div= t('searches.new.feature_desc_002_html')
   .col-xs-12.col-sm-4
     %h3
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.feature_003')
-    %i.fa.fa-user-o.fa-5x{'aria-hidden': true}
+    %i.far.fa-user.fa-5x
     %div= t('searches.new.feature_desc_003_html')
 
 .row.searches.descriptions
   .col-xs-12.col-sm-4
     %h3
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.feature_008')
-    %i.fa.fa-envelope-o.fa-5x{'aria-hidden': true}
+    %i.far.fa-envelope.fa-5x
     %div= t('searches.new.feature_desc_008_html')
   .col-xs-12.col-sm-4
     %h3
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.feature_009')
-    %i.fa.fa-user-secret.fa-5x{'aria-hidden': true}
+    %i.fas.fa-user-secret.fa-5x
     %div= t('searches.new.feature_desc_009_html')
   .col-xs-12.col-sm-4
     %h3
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.feature_010')
-    %i.fa.fa-handshake-o.fa-5x{'aria-hidden': true}
+    %i.far.fa-handshake.fa-5x
     %div= t('searches.new.feature_desc_010_html')
 
 .row.searches{class: "#{'vertical-align-bottom' if request.from_pc?}", style: 'margin-bottom: 15px;'}
@@ -100,10 +100,10 @@
       = t('searches.new.pc.sign_in_now')
     = link_to t('searches.new.pc.sign_up'), sign_in_path(via: build_via('button/pc_special2')), class: 'btn btn-info btn-block btn-lg box-center'
     .text-notice
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.pc.check_001')
     .text-notice
-      %i.fa.fa-check.fa-lg{'aria-hidden': true}
+      %i.fas.fa-check
       = t('searches.new.pc.check_002')
   .col-xs-12.col-sm-6.text-center{style: 'margin-top: 30px;'}
     %div

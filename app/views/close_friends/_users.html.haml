@@ -7,7 +7,7 @@
       - users_sort_orders.each do |label, value|
         %li
           %a{href: "#", class: 'sort-orders', data: {sort_order: value}}
-            %i.fa.fa-check{'area-hidden': true}
+            %i.fas.fa-check
             = label
   .btn-group{role: "group"}
     %button.filter-dropdown.btn.btn-default.dropdown-toggle{data: {filter: nil}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
