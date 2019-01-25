@@ -1,3 +1,5 @@
+$navbar-font-color: #333333;
+
 .navbar {
   margin-bottom: 0;
 
@@ -6,16 +8,36 @@
     padding: 1px 0 0 0;
   }
 
-  .navbar-brand img {
-    display: table-cell;
-    border-radius: 2px;
-    -webkit-border-radius: 2px;
-    -moz-border-radius: 2px;
+  .navbar-brand {
+    & img {
+      display: table-cell;
+      border-radius: 2px;
+      -webkit-border-radius: 2px;
+      -moz-border-radius: 2px;
+    }
+
+    span {
+      color: $navbar-font-color;
+    }
   }
 
   .navbar-brand span {
     display: table-cell;
     vertical-align: middle;
+  }
+
+  .navbar-right > li > a {
+    color: $navbar-font-color;
+  }
+}
+
+.navbar-header {
+  .icon-bar {
+    background-color: $navbar-font-color !important;
+  }
+
+  button.navbar-toggle a {
+    color: $navbar-font-color;
   }
 }
 
@@ -35,7 +57,7 @@
   .has-search .form-control-feedback {
     right: initial;
     left: 0;
-    color: #ccc;
+    color: $navbar-font-color;
   }
 
   .has-search .form-control {

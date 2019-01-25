@@ -1,15 +1,20 @@
 .navbar-header
   - if show_nav_buttons?
-    %button.navbar-toggle.collapsed{style: 'margin-right: 0;', 'aria-expanded' => 'false', 'data-target' => '#navbar-hamburger', 'data-toggle' => 'collapse', type: 'button'}
-      %span.sr-only Toggle navigation
-      %span.icon-bar
-      %span.icon-bar
-      %span.icon-bar
+    - if user_signed_in?
+      %button.navbar-toggle.collapsed{style: 'margin-right: 0;', 'aria-expanded' => 'false', 'data-target' => '#navbar-hamburger', 'data-toggle' => 'collapse', type: 'button'}
+        %span.sr-only Toggle navigation
+        %span.icon-bar
+        %span.icon-bar
+        %span.icon-bar
 
-    - unless user_signed_in?
+    - else
       -# Emulates 'btn btn-default' with padding, text-decoration and color
-      %button.navbar-toggle{style: 'margin-right: 15px; padding: 6px 12px;'}
-        = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header')), style: 'color: #333'
+      %button.navbar-toggle{style: 'margin-right: 0; padding: 6px 12px;'}
+        = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header'))
+
+    %button.navbar-toggle{style: 'margin-right: 15px; padding: 6px 12px;'}
+      %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
+        %span.glyphicon.glyphicon-search
 
   %a.navbar-brand{href: root_path_for(controller: controller_name)}
     = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')

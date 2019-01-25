@@ -10,44 +10,25 @@
     - if user_signed_in?
       - if request.from_smartphone?
         %li
-          = link_to '#', class: 'disabled' do
-            %i.fa.fa-twitter{'area-hidden': true}
+          = link_to settings_path do
             = mention_name(current_user.screen_name)
         %li
           = link_to notifications_path do
             %span.glyphicon.glyphicon-bell
             = t('notifications.title')
-        %li
-          %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
-            %span.glyphicon.glyphicon-search
-            = remaining_count_text
       - else
         %li
           %p.navbar-btn{style: 'margin-right: 15px;'}
             = link_to notifications_path, class: 'btn btn-default' do
               %span.glyphicon.glyphicon-bell
               = t('notifications.title')
-    - else
-      - if request.from_smartphone?
-        %li
-          = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header'))
-        %li
-          %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
-            %span.glyphicon.glyphicon-search
-            = remaining_count_text
-      - else
-        %li
-          %p.navbar-btn{style: 'margin-right: 15px;'}
-            = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header')), class: 'btn btn-default'
-
-    - if user_signed_in?
-      - if request.from_smartphone?
-        %li
-          = link_to settings_path do
-            %span.glyphicon.glyphicon-cog
-            = t('settings.title')
-      - else
         %li
           %p.navbar-btn
             = link_to settings_path, class: 'btn btn-default' do
               = mention_name(current_user.screen_name)
+    - else
+      - if request.from_smartphone?
+      - else
+        %li
+          %p.navbar-btn{style: 'margin-right: 0;'}
+            = link_to t('dictionary.sign_in'), welcome_path(via: build_via('header')), class: 'btn btn-default'
