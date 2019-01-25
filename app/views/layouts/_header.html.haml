@@ -18,7 +18,7 @@
 
   %a.navbar-brand{href: root_path_for(controller: controller_name)}
     = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
-    %span= find_header_title
+    %span= find_header_title.html_safe
 
 - if show_nav_buttons?
   #navbar-hamburger.collapse.navbar-collapse
