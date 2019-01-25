@@ -153,6 +153,7 @@ ja:
       title: "検索履歴"
     remaining: '%{count} 回'
     remaining_count_is_html: '残りの検索回数は %{count} 回です。'
+    increase_count_html: '<a href="%{url}">増やす</a>'
   notifications:
     title: "通知"
     index:
