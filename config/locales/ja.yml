@@ -203,7 +203,7 @@ ja:
       feature_desc_003_html: "フォロー・フォロワーが多い人は<br>特に効果が高いです。"
       feature_004: "鍵アカも検索できます"
       feature_desc_004_html: "本人やフォローされてる人は<br>鍵アカも検索できます。"
-      sign_in_with_twitter: "Twitter でログイン"
+      sign_in_with_twitter_html: '<i class="fab fa-twitter"></i> Twitter でログイン'
       follow_egotter_html: '%{link} をフォローする<br><span style="color: #ff0000;">自動更新やリムられ通知が必要な方は、@ego_tter をフォローしたままにしておいてください。</span>'
       follow_egotter_confirm_html: 'えごったーをフォローしておけば、正確なデータを素早く更新できます。本当にフォローを外しますか？'
       tweet_egotter_html: 'このテキストをツイートする<br><span style="color: #ff0000;">ツイートしない場合は、チェックを外してください。</span>'
