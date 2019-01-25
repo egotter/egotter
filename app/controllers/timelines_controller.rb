@@ -6,6 +6,10 @@ class TimelinesController < ApplicationController
     valid_uid?(uid) && twitter_user_persisted?(uid)  && authorized_search?(TwitterUser.latest(uid))
   end
 
+  after_action only: %i(show) do
+    Util::SearchCountCache.increment
+  end
+
   def show
     if ForbiddenUser.exists?(screen_name: @twitter_user.screen_name)
       flash.now[:alert] = forbidden_message(@twitter_user.screen_name)

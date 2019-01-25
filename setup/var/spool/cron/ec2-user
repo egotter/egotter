@@ -1,16 +1,20 @@
-PREFIX='cd /home/ec2-user/egotter && RAILS_ENV=production /usr/local/bin/bundle exec rake'
+PREFIX='cd /var/egotter && RAILS_ENV=production'
+RAKE='/usr/local/bin/bundle exec rake'
+RUBY='/usr/local/bin/bundle exec ruby'
+RUNNER='/usr/local/bin/bundle exec rails r'
 SUFFIX='--silent >>/home/ec2-user/egotter/log/cron.log 2>&1'
 
 # all
-0,15,30,45 * * * *   /bin/bash -l -c "cd /home/ec2-user/egotter && /usr/local/bin/bundle exec ruby bin/cleanup_twitter_api_cache.rb >>log/cleanup_twitter_api_cache.log 2>&1"
+0,15,30,45 * * * *   /bin/bash -l -c "$PREFIX $RUBY bin/cleanup_twitter_api_cache.rb >>log/cleanup_twitter_api_cache.log 2>&1"
 
 # web
-# 0 0-15,22-23 * * * /bin/bash -l -c "$PREFIX prompt_reports:send DEADLINE=50.minutes $SUFFIX"
-# 20 * * * *         /bin/bash -l -c "$PREFIX latest_search_logs:update $SUFFIX"
-# 0 19 * * *         /bin/bash -l -c "$PREFIX visitors:update users:update_timestamps $SUFFIX"
-# 10 19 * * *        /bin/bash -l -c "$PREFIX user_retention_stats:update visitor_retention_stats:update user_engagement_stats:update visitor_engagement_stats:update $SUFFIX"
+# 0 0-15,22-23 * * * /bin/bash -l -c "$PREFIX $RAKE prompt_reports:send DEADLINE=50.minutes $SUFFIX"
+# 20 * * * *         /bin/bash -l -c "$PREFIX $RAKE latest_search_logs:update $SUFFIX"
+# 0 19 * * *         /bin/bash -l -c "$PREFIX $RAKE visitors:update users:update_timestamps $SUFFIX"
+# 10 19 * * *        /bin/bash -l -c "$PREFIX $RAKE user_retention_stats:update visitor_retention_stats:update user_engagement_stats:update visitor_engagement_stats:update $SUFFIX"
+# 15 * * * *         /bin/bash -l -c "$PREFIX $RUNNER 'SetSearchCountWorker.perform_async'"
 # */5 * * * *        /usr/bin/sudo /bin/bash -l -c 'monit monitor all >> /home/ec2-user/egotter/log/monit.log 2>&1'
-# * * * * *          /bin/bash -l -c "cd /home/ec2-user/egotter && /usr/local/bin/bundle exec ruby bin/send_metrics.rb >>log/send_metrics.log 2>&1"
+# * * * * *          /bin/bash -l -c "$PREFIX $RUBY bin/send_metrics.rb >>log/send_metrics.log 2>&1"
 
 # sidekiq
 # */2 * * * *        /usr/bin/sudo /bin/bash -l -c "cd /home/ec2-user/egotter && ./bin/start_or_stop_sidekiq_delay.sh >>log/start_or_stop.log 2>&1"
