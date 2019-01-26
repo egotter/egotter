@@ -23,6 +23,36 @@
     .col-md-6.col-md-pull-6
       = search_link 'ego_tter', build_via('big_icon') do
         = image_tag '/egotter_icon_400x400.jpg', size: '400x400', class: 'img-rounded', style: 'padding: 10px; border: 15px solid #f5f5f5'
+- elsif request.from_smartphone?
+  .text-center.searches
+    .vertical-spacing
+    %h2.h4= t('searches.new.lead_001')
+    .vertical-spacing
+    .lead= t('searches.new.lead_002_html')
+    .center-block{style: 'width: 80%;'}
+      = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
+      .text-notice.text-right.search-hint
+        %i.fas.fa-check
+        = t('searches.new.pc.check_001')
+      .text-notice.text-right.search-hint
+        %i.fas.fa-check
+        = t('searches.new.pc.check_002')
+    .vertical-spacing
+    %div
+      %span.thin-border
+      %span.or-text または
+      %span.thin-border
+    .vertical-spacing
+    .vertical-spacing
+    .center-block{style: 'width: 80%;'}
+      = render partial: 'common/search_form', locals: {via: build_via('input')}
+      .text-notice.text-right.search-hint
+        %i.fas.fa-check
+        = t('searches.new.pc.check_003')
+      .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
+        %i.fas.fa-check
+        = t('searches.new.pc.check_004_html')
+    .vertical-spacing
 - else
   .text-center.searches
     %h3.h4= t('searches.new.lead_001')
@@ -41,12 +71,9 @@
         = t('searches.new.pc.check_002')
 
 .row.searches.screenshot.text-center
-  .col-xs-12.col-sm-6
-    = search_link 'ego_tter', build_via('screenshot_iphone') do
-      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_iphone_332x560.png'), height: '160px'}
-  .col-xs-12.col-sm-6
-    = search_link 'ego_tter', build_via('screenshot_laptop') do
-      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_961x560.png'), height: '160px'}
+  .col-xs-12
+    = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
+      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: request.from_pc? ? '300px' : '160px'}
 
 .searches.separator
 
@@ -117,10 +144,11 @@
   .col-xs-12.col-sm-6{style: 'height: 550px; overflow: hidden; border-right: 1px solid #e6e6e6;'}
     %h3.h4.text-center= t('searches.new.twitter_feeds')
     #public-tweets-wrapper
-    :javascript
-      $(function () {
-        var url = '#{load_public_tweets_path}';
-        new AsyncLoader(url, '#public-tweets-wrapper').load();
-      });
   .col-xs-12.col-sm-6.text-center
     = render partial: 'layouts/share'
+
+:javascript
+  $(function () {
+    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
+    Home.setSearchCount('#{search_count_path}');
+  });
