@@ -2,8 +2,12 @@ class FollowController < ApplicationController
   before_action :reject_crawler
 
   def create
-    FollowRequest.create!(user_id: params[:user_id])
-    head :ok
+    if user_signed_in?
+      FollowRequest.create!(user_id: current_user.id)
+      head :ok
+    else
+      head :bad_request
+    end
   end
 
   def check
