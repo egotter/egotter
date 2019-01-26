@@ -7,6 +7,10 @@ module ApplicationHelper
     !under_maintenance? && action_name != 'welcome'
   end
 
+  def show_simple_header?
+    controller_name == 'home' && action_name == 'new' && request.from_smartphone?
+  end
+
   def show_sidebar?
     %w(new waiting all).exclude?(action_name) && (from_crawler? || request.from_pc?) && @twitter_user && !@sidebar_disabled
   end

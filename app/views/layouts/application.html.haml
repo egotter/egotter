@@ -76,11 +76,16 @@
       }(document, "script", "twitter-wjs"));
 
   %body
-    %nav.navbar.navbar-default
-      .container
-        .row
-          .col-xs-12.header-container
-            = render partial: 'layouts/header'
+    - if show_simple_header?
+      %h1.top_header
+        = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
+        %span= I18n.t('searches.common.egotter')
+    - else
+      %nav.navbar.navbar-default
+        .container
+          .row
+            .col-xs-12.header-container
+              = render partial: 'layouts/header'
 
     - unless under_maintenance?
       #search-histories-wrapper

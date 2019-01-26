@@ -69,6 +69,8 @@ ja:
         lead_002_html: "えごったーは、スマホとPCから使える<br>安心で安全なツイッター分析アプリです"
         check_001: "パスワード不要"
         check_002: "ワンクリック登録"
+        check_003: "気になるあの人を検索"
+        check_004_html: '現在<span class="search-count"></span>人が利用中'
         sign_up: "新規登録"
         sign_in_now: "「リム通知を登録する」という方はこちら"
         search_for_now: "「とりあえず見るだけ」という方はこちら"
