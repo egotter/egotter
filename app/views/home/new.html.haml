@@ -23,7 +23,7 @@
     .col-md-6.col-md-pull-6
       = search_link 'ego_tter', build_via('big_icon') do
         = image_tag '/egotter_icon_400x400.jpg', size: '400x400', class: 'img-rounded', style: 'padding: 10px; border: 15px solid #f5f5f5'
-- elsif request.from_smartphone?
+- elsif show_simple_header?
   .text-center.searches
     .vertical-spacing
     %h2.h4= t('searches.new.lead_001')

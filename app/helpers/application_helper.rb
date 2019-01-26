@@ -8,7 +8,7 @@ module ApplicationHelper
   end
 
   def show_simple_header?
-    controller_name == 'home' && action_name == 'new' && request.from_smartphone?
+    controller_name == 'home' && action_name == 'new' && request.from_smartphone? && !user_signed_in?
   end
 
   def show_sidebar?
