@@ -110,6 +110,7 @@ Rails.application.routes.draw do
   get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates
   get 'check_follow', to: 'follow#check', as: :check_follow
   post 'create_follow', to: 'follow#create', as: :create_follow
+  post 'create_share', to: 'share#create', as: :create_share
 
   get 'usage_stats/:uid/check_for_updates', to: 'usage_stats#check_for_updates', as: :check_for_updates_usage_stat
 
