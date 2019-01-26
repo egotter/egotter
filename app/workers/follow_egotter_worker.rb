@@ -5,28 +5,35 @@ class FollowEgotterWorker
 
   def perform(*args)
     raised = false
-    request = FollowRequest.find_by(uid: nil, id: FollowRequest.pluck(:id).sample)
+    request = fetch_request
     if request
       follow(request.user)
       request.destroy
     end
-  rescue Twitter::Error::Unauthorized => e
-    handle_unauthorized_exception(e, user_id: request.user.id)
-    logger.warn "#{e.class} #{e.message} #{request.inspect}"
-    request.destroy
-  rescue Twitter::Error::Forbidden => e
-    handle_forbidden_exception(e, user_id: request.user.id)
-    logger.warn "#{e.class} #{e.message} #{request.inspect}"
-    raised = true
   rescue => e
+    if e.class == Twitter::Error::Unauthorized
+      handle_unauthorized_exception(e, user_id: request.user.id)
+    elsif e.class == Twitter::Error::Forbidden
+      handle_forbidden_exception(e, user_id: request.user.id)
+      raised = true
+    else
+      raised = true
+    end
+
     logger.warn "#{e.class} #{e.message} #{request.inspect}"
-    raised = true
+    request.update(error_class: e.class, error_message: e.message.truncate(150))
   ensure
     interval = raised ? 30.minutes.since : 1.minutes.since
-    FollowEgotterWorker.perform_in(interval)
+    self.class.perform_in(interval)
   end
 
   private
+
+  def fetch_request
+    FollowRequest.order(created_at: :desc).
+        where(uid: [nil, '', User::EGOTTER_UID]).
+        without_error.first
+  end
 
   def follow(user)
     client = user.api_client.twitter

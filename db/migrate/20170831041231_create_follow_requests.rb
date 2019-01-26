@@ -1,8 +1,10 @@
 class CreateFollowRequests < ActiveRecord::Migration
   def change
     create_table :follow_requests do |t|
-      t.integer :user_id, null: false
-      t.bigint :uid, null: true
+      t.integer :user_id,       null: false
+      t.bigint  :uid,           null: true
+      t.string  :error_class,   null: false, default: ''
+      t.string  :error_message, null: false, default: ''
 
       t.timestamps null: false
 
