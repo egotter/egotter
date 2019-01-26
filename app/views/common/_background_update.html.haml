@@ -37,10 +37,10 @@
   (function () {
     var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox;
 
-    function checkForFollow () {
-      var url = '#{check_for_follow_path(uid: twitter_user.uid)}';
+    function checkFollow () {
+      var url = '#{check_follow_path}';
       $.getJSON(url, function (res) {
-        console.log('checkForFollow', res);
+        console.log('checkFollow', res);
 
         if (!res.follow) {
           $followBox.show().sticky();
@@ -54,7 +54,7 @@
 
       if (signedIn) {
         if (searchMyself) {
-          checkForFollow();
+          checkFollow();
         }
       } else {
         if (friendless) {

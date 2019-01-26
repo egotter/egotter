@@ -12,13 +12,11 @@ class FollowEgotterWorker
     end
   rescue Twitter::Error::Unauthorized => e
     handle_unauthorized_exception(e, user_id: request.user.id)
+    logger.warn "#{e.class} #{e.message} #{request.inspect}"
     request.destroy
   rescue Twitter::Error::Forbidden => e
     handle_forbidden_exception(e, user_id: request.user.id)
-
-    if e.message == FORBIDDEN_MESSAGES[2]
-      logger.warn "Unable to follow #{request.inspect}"
-    end
+    logger.warn "#{e.class} #{e.message} #{request.inspect}"
     raised = true
   rescue => e
     logger.warn "#{e.class} #{e.message} #{request.inspect}"
