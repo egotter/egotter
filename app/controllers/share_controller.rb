@@ -1,13 +1,10 @@
 class ShareController < ApplicationController
   before_action :reject_crawler
+  before_action :require_login!
 
   def create
-    if user_signed_in?
-      user = current_user
-      TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}"))
-      head :ok
-    else
-      head :bad_request
-    end
+    user = current_user
+    TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}"))
+    head :ok
   end
 end
