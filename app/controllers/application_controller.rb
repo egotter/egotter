@@ -40,7 +40,7 @@ class ApplicationController < ActionController::Base
 
     screen_name = params[:screen_name].to_s.strip.remove /^@/
     unless screen_name.match(Validations::ScreenNameValidator::REGEXP)
-      return redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: welcome_path(via: "#{controller_name}/#{action_name}/invalid_token"))
+      return redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token"))
     end
 
     search = timeline_path(screen_name: screen_name)

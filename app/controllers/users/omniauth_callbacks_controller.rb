@@ -18,7 +18,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-      return redirect_to root_path, alert: t('before_sign_in.login_failed_html', sign_in_path: welcome_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
+      return redirect_to root_path, alert: t('before_sign_in.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
     end
 
     Util::SearchRequests.delete(user.uid)

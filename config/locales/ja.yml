@@ -57,7 +57,7 @@ ja:
       feature_003: "ログイン不要"
       feature_desc_003_html: "検索のみなら不要です。<br>(リム通知は要ログイン)"
       feature_007: "ログインでもっと便利に"
-      feature_desc_007_html: "検索が早くなり、<br>更新通知が届くようになります。<br>%{link}"
+      feature_desc_007_html: '検索が早くなり、<br>更新通知が届くようになります。<br><a href="%{url}">ログイン</a>'
       feature_008: "リム通知あります"
       feature_desc_008_html: "フォローが外れたら<br>DMでお知らせ。<br>(要ログイン)"
       feature_009: "鍵垢も検索OK"
@@ -701,7 +701,7 @@ ja:
   before_sign_in:
     need_login_html: '<a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
-    login_failed_html: '<a href="%{sign_in_path}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{sign_in_path}">ログイン</a> してみてください。'
+    login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_searches_html: 'ログインせずに検索できる上限に達しました。( %{limit}回/日 ) もっとたくさん検索するには、<a href="%{url}">ログイン</a> してから検索してください。'
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'

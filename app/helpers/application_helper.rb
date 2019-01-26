@@ -55,7 +55,7 @@ module ApplicationHelper
   end
 
   def kick_out_error_path(reason)
-    welcome_path(via: "#{controller_name}/#{action_name}/#{reason}")
+    sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}")
   end
 
   def png_image
