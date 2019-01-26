@@ -244,7 +244,7 @@ ActiveRecord::Schema.define(version: 20190123013619) do
   end
 
   add_index "follow_requests", ["created_at"], name: "index_follow_requests_on_created_at", using: :btree
-  add_index "follow_requests", ["user_id"], name: "index_follow_requests_on_user_id", unique: true, using: :btree
+  add_index "follow_requests", ["user_id"], name: "index_follow_requests_on_user_id", using: :btree
 
   create_table "followers", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false

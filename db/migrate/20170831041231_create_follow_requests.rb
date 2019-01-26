@@ -5,9 +5,9 @@ class CreateFollowRequests < ActiveRecord::Migration
       t.bigint :uid, null: true
 
       t.timestamps null: false
-    end
 
-    add_index :follow_requests, :user_id, unique: true
-    add_index :follow_requests, :created_at
+      t.index :user_id
+      t.index :created_at
+    end
   end
 end
