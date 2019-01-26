@@ -30,7 +30,7 @@
     .vertical-spacing
     .lead= t('searches.new.lead_002_html')
     .center-block{style: 'width: 80%;'}
-      = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
+      = welcome_link(nil, 'button', class: 'btn btn-primary btn-block')
       .text-notice.text-right.search-hint
         %i.fas.fa-check
         = t('searches.new.pc.check_001')
@@ -62,7 +62,7 @@
     - if user_signed_in?
       = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('top_button')}
     - else
-      = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-info btn-block')
+      = welcome_link(nil, 'button', class: 'btn btn-info btn-block')
       .text-notice
         %i.fas.fa-check
         = t('searches.new.pc.check_001')

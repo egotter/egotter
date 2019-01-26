@@ -11,7 +11,7 @@
 - if user_signed_in?
   = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('top_button')}
 - else
-  = sign_in_with_twitter_link(one_sided_friends_top_path, 'button', class: 'btn btn-info btn-block')
+  = welcome_link(one_sided_friends_top_path, 'button', class: 'btn btn-info btn-block')
 
 .row.one-sided-friends.screenshot
   .col-xs-12.col-sm-6.text-center

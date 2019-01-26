@@ -146,7 +146,7 @@
             .col-xs-12.pre-footer.text-center
               %h2.h4= t('searches.new.feature_007')
               = t('searches.new.feature_desc_007_html', link: link_to(t('dictionary.view_more_detail'), welcome_path(via: build_via('feature_desc_007_bottom'))))
-              = sign_in_with_twitter_link(nil, 'button_bottom', class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;')
+              = welcome_link(nil, 'button_bottom', class: 'btn btn-info btn-block', style: 'margin-top: 15px; margin-bottom: 15px;')
 
       .container
         .row
