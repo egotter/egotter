@@ -113,11 +113,15 @@ class ApplicationController < ActionController::Base
   end
 
   def after_sign_in_path_for(resource)
-    if session[:redirect_path]
-      sanitized_redirect_path(session.delete(:redirect_path))
-    else
-      root_path
-    end
+    redirect_path =
+        if session[:redirect_path]
+          sanitized_redirect_path(session.delete(:redirect_path))
+        else
+          root_path
+        end
+
+    redirect_path += redirect_path.include?('?') ? '&' : '?'
+    redirect_path + 'follow_dialog=1&share_dialog=1'
   end
 
   def after_sign_out_path_for(resource)

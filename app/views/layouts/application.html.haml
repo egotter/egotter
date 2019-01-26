@@ -168,3 +168,37 @@
               = render(partial: 'information/information', collection: information_list, cached: true)
 
     = render partial: 'layouts/footer' unless under_maintenance?
+
+  - if user_signed_in? && !under_maintenance?
+    - if params[:follow_dialog] == '1'
+      #follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+        .modal-dialog{role: 'document'}
+          .modal-content
+            .modal-header
+              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
+                %span{"aria-hidden" => "true"} ×
+              %h4.modal-title= t('welcome.follow_modal.title')
+            .modal-body
+              %img.center-block{src: image_path('/egotter_usagi_840x450.png'), height: request.from_pc? ? '200px' : '140px'}
+              .vertical-spacing
+              .vertical-spacing
+              %p= t('welcome.follow_modal.note1')
+            .modal-footer
+              %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.follow_modal.cancel')
+              %button.btn.btn-primary.ok{type: 'button', data: {url: create_follow_path}}= t('welcome.follow_modal.ok')
+
+    - if params[:share_dialog] == '1'
+      #share-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+        .modal-dialog{role: 'document'}
+          .modal-content
+            .modal-header
+              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
+                %span{"aria-hidden" => "true"} ×
+              %h4.modal-title= t('welcome.share_modal.title')
+            .modal-body
+              %img.center-block{src: image_path('/egotter_thanks_840x483.png'), height: request.from_pc? ? '200px' : '140px'}
+              .vertical-spacing
+              %textarea{rows: '3', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text
+            .modal-footer
+              %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.share_modal.cancel')
+              %button.btn.btn-primary.ok{type: 'button', data: {url: create_share_path}}= t('welcome.share_modal.ok')
