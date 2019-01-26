@@ -28,15 +28,6 @@ class TimelinesController < ApplicationController
     render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202
   end
 
-  def check_for_follow
-    if user_signed_in?
-      follow = (Bot.api_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID) rescue false)
-      render json: {follow: follow}
-    else
-      head :bad_request
-    end
-  end
-
   private
 
   def changes_text(twitter_user)
