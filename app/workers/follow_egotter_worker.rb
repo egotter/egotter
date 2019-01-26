@@ -5,7 +5,7 @@ class FollowEgotterWorker
 
   def perform(*args)
     raised = false
-    request = FollowRequest.find_by(id: FollowRequest.pluck(:id).sample)
+    request = FollowRequest.find_by(uid: nil, id: FollowRequest.pluck(:id).sample)
     if request
       follow(request.user)
       request.destroy

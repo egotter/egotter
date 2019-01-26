@@ -238,6 +238,7 @@ ActiveRecord::Schema.define(version: 20190123013619) do
 
   create_table "follow_requests", force: :cascade do |t|
     t.integer  "user_id",    limit: 4, null: false
+    t.integer  "uid",        limit: 8
     t.datetime "created_at",           null: false
     t.datetime "updated_at",           null: false
   end
