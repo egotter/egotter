@@ -1,4 +1,6 @@
 class FollowController < ApplicationController
+  before_action :reject_crawler
+
   def create
     FollowRequest.create!(user_id: params[:user_id])
     head :ok
