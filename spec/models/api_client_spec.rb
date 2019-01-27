@@ -35,7 +35,7 @@ RSpec.describe ApiClient, type: :model do
 
   describe '.instance' do
     it 'returns TwitterWithAutoPagination::Client' do
-      expect(ApiClient.instance).to be_a_kind_of(TwitterWithAutoPagination::Client)
+      expect(ApiClient.instance).to be_a_kind_of(ApiClient)
     end
   end
 
