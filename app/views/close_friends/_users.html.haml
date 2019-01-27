@@ -110,70 +110,19 @@
     $seeAtOnceBtn.show();
     $seeMoreBtn.trigger('click');
 
-    $('.sort-orders').on('click', function (e) {
-      if (!signedIn) {
-        location.href = signInFromSortUrl;
-        return false;
-      }
+    if (signedIn) {
+      var afterClick = function () {
+        $seeMoreBtn.data('max-sequence', 0).data('limit', 3);
+        $placeholders.show();
+        $usersContainer.empty();
+        $seeMoreBtn.trigger('click');
+      };
 
-      var $selected = $(this);
-      var $oldSelected = $sortOrderDropdown.parent().find('a.selected');
-      $sortOrderDropdown.dropdown('toggle');
-
-      if ($selected.is($oldSelected)) {
-        console.log('sort_order not changed');
-        return false;
-      }
-      console.log('sort_order', $selected.data('sort-order'));
-
-      $sortOrderDropdown.html($selected.text() + '&nbsp;<span class="caret"></span>')
-          .data('sort-order', $selected.data('sort-order'));
-      $sortOrderDropdown.parent().find('.dropdown-menu a').removeClass('selected');
-      $selected.addClass('selected');
-      $seeMoreBtn.data('max-sequence', 0)
-          .data('limit', 3);
-
-      $placeholders.show();
-      $usersContainer.empty();
-      $seeMoreBtn.trigger('click');
-      return false;
-    });
-
-    $('.filters').on('click', function (e) {
-      if (!signedIn) {
-        location.href = signInFromFilterUrl;
-        return false;
-      }
-
-      var $selected = $(this);
-      console.log('filter', $selected.data('filter'));
-
-      $filterDropdown.dropdown('toggle');
-      $seeMoreBtn.data('max-sequence', 0)
-          .data('limit', 3);
-
-      var $checkbox = $selected.find('input');
-      if ($checkbox.prop('checked')) {
-        $checkbox.removeAttr('checked').prop('checked', false);
-        $selected.removeClass('selected');
-      } else {
-        $checkbox.attr('checked', true).prop('checked', true);
-        $selected.addClass('selected');
-      }
-
-      var filterCount = $filterDropdown.parent().find('a.selected').length;
-      if (filterCount > 0) {
-        $filterDropdown.data('filter', $selected.data('filter')); // Current filters.size == 0
-        $filterDropdown.find('.filter-count').text('(' + filterCount + ')');
-      } else {
-        $filterDropdown.data('filter', null);
-        $filterDropdown.find('.filter-count').text('');
-      }
-
-      $placeholders.show();
-      $usersContainer.empty();
-      $seeMoreBtn.trigger('click');
-      return false;
-    });
+      Twitter.enableSortButton($('.sort-order-dropdown'), afterClick);
+      Twitter.enableFilterButton($('.filter-dropdown'), afterClick);
+    } else {
+      $('.sort-orders').attr('href', signInFromSortUrl);
+      $('.filters').attr('href', signInFromFilterUrl);
+    }
   });
 
