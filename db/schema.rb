@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190123013619) do
+ActiveRecord::Schema.define(version: 20190126150202) do
 
   create_table "background_force_update_logs", force: :cascade do |t|
     t.string   "session_id",  limit: 191,   default: "",    null: false
@@ -762,6 +762,18 @@ ActiveRecord::Schema.define(version: 20190123013619) do
   add_index "twitter_users", ["screen_name"], name: "index_twitter_users_on_screen_name", using: :btree
   add_index "twitter_users", ["uid", "user_id"], name: "index_twitter_users_on_uid_and_user_id", using: :btree
   add_index "twitter_users", ["uid"], name: "index_twitter_users_on_uid", using: :btree
+
+  create_table "unfollow_requests", force: :cascade do |t|
+    t.integer  "user_id",       limit: 4,                null: false
+    t.integer  "uid",           limit: 8,                null: false
+    t.string   "error_class",   limit: 191, default: "", null: false
+    t.string   "error_message", limit: 191, default: "", null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
+  end
+
+  add_index "unfollow_requests", ["created_at"], name: "index_unfollow_requests_on_created_at", using: :btree
+  add_index "unfollow_requests", ["user_id", "uid"], name: "index_unfollow_requests_on_user_id_and_uid", unique: true, using: :btree
 
   create_table "unfollowerships", force: :cascade do |t|
     t.integer "from_uid",     limit: 8, null: false
