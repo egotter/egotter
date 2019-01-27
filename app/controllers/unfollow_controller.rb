@@ -3,7 +3,10 @@ class UnfollowController < ApplicationController
   before_action :require_login!
 
   def create
-    FollowRequest.create!(user_id: current_user.id, uid: params[:uid].presence || User::EGOTTER_UID)
-    head :ok
+    if UnfollowRequest.create(user_id: current_user.id, uid: params[:uid])
+      head :ok
+    else
+      head :unprocessable_entity
+    end
   end
 end
