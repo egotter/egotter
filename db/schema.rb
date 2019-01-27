@@ -237,10 +237,12 @@ ActiveRecord::Schema.define(version: 20190123013619) do
   add_index "favorites", ["uid"], name: "index_favorites_on_uid", using: :btree
 
   create_table "follow_requests", force: :cascade do |t|
-    t.integer  "user_id",    limit: 4, null: false
-    t.integer  "uid",        limit: 8
-    t.datetime "created_at",           null: false
-    t.datetime "updated_at",           null: false
+    t.integer  "user_id",       limit: 4,                null: false
+    t.integer  "uid",           limit: 8
+    t.string   "error_class",   limit: 191, default: "", null: false
+    t.string   "error_message", limit: 191, default: "", null: false
+    t.datetime "created_at",                             null: false
+    t.datetime "updated_at",                             null: false
   end
 
   add_index "follow_requests", ["created_at"], name: "index_follow_requests_on_created_at", using: :btree
