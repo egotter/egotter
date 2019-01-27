@@ -30,7 +30,7 @@ module Concerns::Validation
     else
       message = twitter_user.errors.full_messages.join(t('dictionary.delim'))
       redirect_to root_path, alert: message
-      create_search_error_log(uid, '', __method__, message)
+      create_search_error_log(uid.blank? ? '' : uid, '', __method__, message)
     end
 
     false
