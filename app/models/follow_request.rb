@@ -19,6 +19,7 @@
 class FollowRequest < ActiveRecord::Base
   belongs_to :user
   validates :user_id, numericality: :only_integer
+  validates :uid, numericality: :only_integer
 
-  scope :without_error, -> {where(error_class: [nil, ''])}
+  scope :without_error, -> {where("error_message is null or error_message = '' or error_message like 'You are unable to follow more people at this time.%'")}
 end
