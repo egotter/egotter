@@ -1,30 +1,12 @@
 class CreateFollowWorker
   include Sidekiq::Worker
-  include Concerns::WorkerUtils
+  include Concerns::FollowAndUnfollowWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
-    raised = false
-    request = FollowRequest.unprocessed(user_id).first
-    if request && request.user.can_create_follow?
-      follow(request.user, request.uid)
-      request.update!(finished_at: Time.zone.now)
+    do_perform(self.class, FollowRequest, user_id) do |user, uid|
+      follow(user, uid)
     end
-  rescue => e
-    if e.class == Twitter::Error::Unauthorized
-      handle_unauthorized_exception(e, user_id: user_id)
-    elsif e.class == Twitter::Error::Forbidden
-      handle_forbidden_exception(e, user_id: user_id)
-      raised = true
-    else
-      raised = true
-    end
-
-    logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
-    request.update(error_class: e.class, error_message: e.message.truncate(150))
-  ensure
-    interval = raised ? 30.minutes.since : 10.seconds.since
-    self.class.perform_in(interval, user_id) if FollowRequest.without_error.exists?(user_id: user_id)
   end
 
   private

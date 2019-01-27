@@ -4,9 +4,11 @@ class FollowController < ApplicationController
   before_action :reject_crawler
   before_action :require_login!
 
+  before_action {create_search_log}
+
   def create
     user = current_user
-    request = FollowRequest.new(user_id: user.id, uid: params[:uid].presence || User::EGOTTER_UID)
+    request = FollowRequest.new(user_id: user.id, uid: params[:uid])
     if request.save
       enqueue_create_follow_job_if_needed(user.id)
 

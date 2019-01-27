@@ -16,7 +16,7 @@ module Concerns::User::FollowAndUnfollow
   end
 
   def can_create_follow?
-    FollowRequest.where(finished_at: 1.day.ago..Time.zone.now).size < create_follow_limit
+    FollowRequest.finished(id).where(finished_at: 1.day.ago..Time.zone.now).size < create_follow_limit
   end
 
   def create_unfollow_limit
@@ -24,6 +24,6 @@ module Concerns::User::FollowAndUnfollow
   end
 
   def can_create_unfollow?
-    UnfollowRequest.where(finished_at: 1.day.ago..Time.zone.now).size < create_unfollow_limit
+    UnfollowRequest.finished(id).where(finished_at: 1.day.ago..Time.zone.now).size < create_unfollow_limit
   end
 end
