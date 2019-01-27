@@ -32,7 +32,6 @@ class CreateFollowWorker
   def fetch_request(user_id)
     FollowRequest.order(created_at: :asc).
         where(user_id: user_id).
-        where.not(uid: [nil, '']).
         without_error.first
   end
 

@@ -31,7 +31,7 @@ class FollowEgotterWorker
 
   def fetch_request
     FollowRequest.order(created_at: :desc).
-        where(uid: [nil, '', User::EGOTTER_UID]).
+        where(uid: User::EGOTTER_UID).
         without_error.first
   end
 

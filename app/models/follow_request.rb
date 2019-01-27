@@ -4,7 +4,7 @@
 #
 #  id            :integer          not null, primary key
 #  user_id       :integer          not null
-#  uid           :integer
+#  uid           :integer          not null
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null
 #  created_at    :datetime         not null
@@ -12,8 +12,8 @@
 #
 # Indexes
 #
-#  index_follow_requests_on_created_at  (created_at)
-#  index_follow_requests_on_user_id     (user_id)
+#  index_follow_requests_on_created_at       (created_at)
+#  index_follow_requests_on_user_id_and_uid  (user_id,uid) UNIQUE
 #
 
 class FollowRequest < ActiveRecord::Base
