@@ -16,6 +16,7 @@ class FollowController < ApplicationController
           create_follow_limit: user.create_follow_limit
       }
     else
+      logger.warn "#{controller_name}##{action_name} #{request.errors.full_messages}"
       head :unprocessable_entity
     end
   end

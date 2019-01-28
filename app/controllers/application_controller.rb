@@ -121,8 +121,7 @@ class ApplicationController < ActionController::Base
           root_path
         end
 
-    redirect_path += redirect_path.include?('?') ? '&' : '?'
-    redirect_path + 'follow_dialog=1&share_dialog=1'
+    append_query_params(redirect_path, follow_dialog: 1, share_dialog: 1)
   end
 
   def after_sign_out_path_for(resource)

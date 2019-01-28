@@ -58,6 +58,11 @@ module ApplicationHelper
     sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}")
   end
 
+  def append_query_params(path, params)
+    path += path.include?('?') ? '&' : '?'
+    path + params.to_query
+  end
+
   def png_image
     @png_image ||= 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsQAAA7EAZUrDhsAAAANSURBVBhXYzh8+PB/AAffA0nNPuCLAAAAAElFTkSuQmCC'
   end
