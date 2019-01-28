@@ -13,7 +13,10 @@ class HomeController < ApplicationController
 
   def new
     if user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
-      redirect_to append_query_params(timeline_path(screen_name: current_user.screen_name), follow_dialog: 1, share_dialog: 1)
+      redirect_path = timeline_path(screen_name: current_user.screen_name)
+      redirect_path = append_query_params(redirect_path, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]
+      redirect_path = append_query_params(redirect_path, share_dialog: params[:share_dialog]) if params[:share_dialog]
+      redirect_to redirect_path
     end
   end
 end
