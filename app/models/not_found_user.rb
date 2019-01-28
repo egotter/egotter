@@ -13,6 +13,6 @@
 #  index_not_found_users_on_screen_name  (screen_name) UNIQUE
 #
 
-class NotFoundUser < ActiveRecord::Base
+class NotFoundUser < ApplicationRecord
   validates_with Validations::ScreenNameValidator
 end

@@ -13,6 +13,6 @@
 #  index_blacklist_words_on_text        (text) UNIQUE
 #
 
-class BlacklistWord < ActiveRecord::Base
+class BlacklistWord < ApplicationRecord
   validates :text, uniqueness: true
 end

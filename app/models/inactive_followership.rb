@@ -13,7 +13,7 @@
 #  index_inactive_followerships_on_from_uid      (from_uid)
 #
 
-class InactiveFollowership < ActiveRecord::Base
+class InactiveFollowership < ApplicationRecord
   belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
   belongs_to :inactive_follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 

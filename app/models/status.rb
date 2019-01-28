@@ -18,7 +18,7 @@
 #  index_statuses_on_uid          (uid)
 #
 
-class Status < ActiveRecord::Base
+class Status < ApplicationRecord
   belongs_to :twitter_user
 
   include Concerns::Status::Store

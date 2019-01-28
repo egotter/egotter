@@ -1,5 +1,5 @@
 module TwitterDB
-  class Friendship < ActiveRecord::Base
+  class Friendship < ApplicationRecord
     belongs_to :user, primary_key: :uid, class_name: 'TwitterDB::User'
     belongs_to :friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 

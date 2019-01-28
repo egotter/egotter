@@ -23,7 +23,7 @@
 #  index_twitter_users_on_uid_and_user_id          (uid,user_id)
 #
 
-class TwitterUser < ActiveRecord::Base
+class TwitterUser < ApplicationRecord
   include Concerns::TwitterUser::Associations
   include Concerns::TwitterUser::Store
   include Concerns::TwitterUser::Validation

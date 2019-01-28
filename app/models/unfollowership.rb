@@ -13,7 +13,7 @@
 #  index_unfollowerships_on_from_uid      (from_uid)
 #
 
-class Unfollowership < ActiveRecord::Base
+class Unfollowership < ApplicationRecord
   belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
   belongs_to :unfollower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 

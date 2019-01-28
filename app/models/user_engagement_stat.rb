@@ -73,5 +73,5 @@
 #  index_user_engagement_stats_on_date  (date) UNIQUE
 #
 
-class UserEngagementStat < ActiveRecord::Base
+class UserEngagementStat < ApplicationRecord
 end

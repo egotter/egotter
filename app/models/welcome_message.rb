@@ -17,7 +17,7 @@
 #  index_welcome_messages_on_user_id     (user_id)
 #
 
-class WelcomeMessage < ActiveRecord::Base
+class WelcomeMessage < ApplicationRecord
   belongs_to :user
 
   def self.welcome(user_id)

@@ -18,7 +18,7 @@
 #  index_old_users_on_uid          (uid) UNIQUE
 #
 
-class OldUser < ActiveRecord::Base
+class OldUser < ApplicationRecord
   validates_with Validations::UidValidator
   validates_with Validations::ScreenNameValidator
 

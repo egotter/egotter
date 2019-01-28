@@ -14,7 +14,7 @@
 #  index_friendships_on_from_id_and_friend_uid  (from_id,friend_uid) UNIQUE
 #
 
-class Friendship < ActiveRecord::Base
+class Friendship < ApplicationRecord
   belongs_to :twitter_user, primary_key: :id, foreign_key: :from_id
   belongs_to :friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 

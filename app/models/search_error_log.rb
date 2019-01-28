@@ -30,5 +30,5 @@
 #  index_search_error_logs_on_user_id      (user_id)
 #
 
-class SearchErrorLog < ActiveRecord::Base
+class SearchErrorLog < ApplicationRecord
 end

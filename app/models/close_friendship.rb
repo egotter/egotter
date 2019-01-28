@@ -13,7 +13,7 @@
 #  index_close_friendships_on_from_uid    (from_uid)
 #
 
-class CloseFriendship < ActiveRecord::Base
+class CloseFriendship < ApplicationRecord
   belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
   belongs_to :close_friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 

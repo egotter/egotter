@@ -23,6 +23,6 @@
 #  index_visitors_on_user_id          (user_id)
 #
 
-class Visitor < ActiveRecord::Base
+class Visitor < ApplicationRecord
   include Concerns::Visitor::Active
 end

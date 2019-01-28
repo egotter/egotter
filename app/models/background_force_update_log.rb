@@ -32,5 +32,5 @@
 #  index_background_force_update_logs_on_user_id      (user_id)
 #
 
-class BackgroundForceUpdateLog < ActiveRecord::Base
+class BackgroundForceUpdateLog < ApplicationRecord
 end

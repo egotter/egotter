@@ -73,5 +73,5 @@
 #  index_visitor_engagement_stats_on_date  (date) UNIQUE
 #
 
-class VisitorEngagementStat < ActiveRecord::Base
+class VisitorEngagementStat < ApplicationRecord
 end

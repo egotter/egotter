@@ -22,5 +22,5 @@
 #  index_create_notification_message_logs_on_user_id_and_status  (user_id,status)
 #
 
-class CreateNotificationMessageLog < ActiveRecord::Base
+class CreateNotificationMessageLog < ApplicationRecord
 end

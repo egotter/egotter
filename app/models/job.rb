@@ -29,7 +29,7 @@
 #  index_jobs_on_uid          (uid)
 #
 
-class Job < ActiveRecord::Base
+class Job < ApplicationRecord
   belongs_to :track
 
   def twitter_user_created?

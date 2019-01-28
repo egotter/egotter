@@ -1,5 +1,5 @@
 module TwitterDB
-  class Followership < ActiveRecord::Base
+  class Followership < ApplicationRecord
     belongs_to :user, primary_key: :uid, class_name: 'TwitterDB::User'
     belongs_to :follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 

@@ -17,7 +17,7 @@
 #  index_search_reports_on_user_id     (user_id)
 #
 
-class SearchReport < ActiveRecord::Base
+class SearchReport < ApplicationRecord
   belongs_to :user
 
   def self.you_are_searched(user_id)

@@ -14,7 +14,7 @@
 #  index_followerships_on_from_id_and_follower_uid  (from_id,follower_uid) UNIQUE
 #
 
-class Followership < ActiveRecord::Base
+class Followership < ApplicationRecord
   belongs_to :twitter_user, primary_key: :id, foreign_key: :from_id
   belongs_to :follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 

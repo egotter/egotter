@@ -17,7 +17,7 @@
 #  index_follow_requests_on_user_id     (user_id)
 #
 
-class FollowRequest < ActiveRecord::Base
+class FollowRequest < ApplicationRecord
   include Concerns::Request::FollowAndUnfollow
 
   belongs_to :user

@@ -29,5 +29,5 @@
 #  index_polling_logs_on_user_id      (user_id)
 #
 
-class PollingLog < ActiveRecord::Base
+class PollingLog < ApplicationRecord
 end

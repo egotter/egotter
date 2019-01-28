@@ -13,7 +13,7 @@
 #  index_one_sided_followerships_on_from_uid      (from_uid)
 #
 
-class OneSidedFollowership < ActiveRecord::Base
+class OneSidedFollowership < ApplicationRecord
   belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
   belongs_to :one_sided_follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
 

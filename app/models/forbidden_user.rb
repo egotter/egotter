@@ -13,6 +13,6 @@
 #  index_forbidden_users_on_screen_name  (screen_name) UNIQUE
 #
 
-class ForbiddenUser < ActiveRecord::Base
+class ForbiddenUser < ApplicationRecord
   validates_with Validations::ScreenNameValidator
 end

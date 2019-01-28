@@ -18,7 +18,7 @@
 #  index_prompt_reports_on_user_id     (user_id)
 #
 
-class PromptReport < ActiveRecord::Base
+class PromptReport < ApplicationRecord
   include Concerns::Report::Common
 
   def self.you_are_removed(user_id, changes_json:, format: 'text')

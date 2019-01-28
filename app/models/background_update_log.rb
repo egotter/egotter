@@ -20,5 +20,5 @@
 #  index_background_update_logs_on_uid          (uid)
 #
 
-class BackgroundUpdateLog < ActiveRecord::Base
+class BackgroundUpdateLog < ApplicationRecord
 end

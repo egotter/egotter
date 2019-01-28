@@ -25,7 +25,7 @@
 #  index_users_on_uid          (uid) UNIQUE
 #
 
-class User < ActiveRecord::Base
+class User < ApplicationRecord
   devise :rememberable, :omniauthable
 
   include Concerns::ApiAccess::Common

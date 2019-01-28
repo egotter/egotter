@@ -26,7 +26,7 @@
 #  index_notification_messages_on_user_id      (user_id)
 #
 
-class NotificationMessage < ActiveRecord::Base
+class NotificationMessage < ApplicationRecord
   with_options on: :create do |obj|
     obj.validates :uid, presence: true, numericality: :only_integer
     obj.validates :screen_name, format: {with: Validations::ScreenNameValidator::REGEXP}
