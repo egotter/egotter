@@ -26,6 +26,6 @@
 #  index_tracks_on_created_at  (created_at)
 #
 
-class Track < ActiveRecord::Base
+class Track < ApplicationRecord
   has_many :jobs, dependent: :destroy, validate: false, autosave: true
 end

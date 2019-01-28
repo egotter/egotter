@@ -20,5 +20,5 @@
 #  index_page_cache_logs_on_created_at  (created_at)
 #
 
-class PageCacheLog < ActiveRecord::Base
+class PageCacheLog < ApplicationRecord
 end

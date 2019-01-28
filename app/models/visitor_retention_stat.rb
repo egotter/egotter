@@ -73,5 +73,5 @@
 #  index_visitor_retention_stats_on_date  (date) UNIQUE
 #
 
-class VisitorRetentionStat < ActiveRecord::Base
+class VisitorRetentionStat < ApplicationRecord
 end

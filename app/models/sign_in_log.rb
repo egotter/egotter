@@ -27,6 +27,6 @@
 #  index_sign_in_logs_on_user_id     (user_id)
 #
 
-class SignInLog < ActiveRecord::Base
+class SignInLog < ApplicationRecord
   validates :via, length: {maximum: 50}
 end

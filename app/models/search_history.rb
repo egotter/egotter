@@ -16,7 +16,7 @@
 #  index_search_histories_on_user_id     (user_id)
 #
 
-class SearchHistory < ActiveRecord::Base
+class SearchHistory < ApplicationRecord
   belongs_to :user
   has_one :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
 

@@ -14,7 +14,7 @@
 #  index_followers_on_from_id  (from_id)
 #
 
-class Follower < ActiveRecord::Base
+class Follower < ApplicationRecord
   belongs_to :twitter_user
 
   include Concerns::TwitterUser::Store

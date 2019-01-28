@@ -20,6 +20,6 @@
 #  index_modal_open_logs_on_created_at  (created_at)
 #
 
-class ModalOpenLog < ActiveRecord::Base
+class ModalOpenLog < ApplicationRecord
   validates :via, inclusion: { in: %w(search_history profile) }
 end

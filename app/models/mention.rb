@@ -18,7 +18,7 @@
 #  index_mentions_on_uid          (uid)
 #
 
-class Mention < ActiveRecord::Base
+class Mention < ApplicationRecord
   belongs_to :twitter_user
 
   include Concerns::Status::Store

@@ -19,7 +19,7 @@
 #  index_search_results_on_uid          (uid)
 #
 
-class SearchResult < ActiveRecord::Base
+class SearchResult < ApplicationRecord
   belongs_to :twitter_user
 
   include Concerns::Status::Store

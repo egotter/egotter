@@ -22,5 +22,5 @@
 #  index_create_prompt_report_logs_on_uid          (uid)
 #
 
-class CreatePromptReportLog < ActiveRecord::Base
+class CreatePromptReportLog < ApplicationRecord
 end

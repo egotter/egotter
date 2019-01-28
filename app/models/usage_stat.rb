@@ -22,7 +22,7 @@
 #  index_usage_stats_on_uid         (uid) UNIQUE
 #
 
-class UsageStat < ActiveRecord::Base
+class UsageStat < ApplicationRecord
 
   DEFAULT_SECONDS = Rails.configuration.x.constants['usage_stat_recently_created']
 

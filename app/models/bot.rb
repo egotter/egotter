@@ -16,7 +16,7 @@
 #  index_bots_on_uid          (uid) UNIQUE
 #
 
-class Bot < ActiveRecord::Base
+class Bot < ApplicationRecord
   include Concerns::ApiAccess::Common
 
   IDS = pluck(:id)

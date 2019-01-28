@@ -19,5 +19,5 @@
 #  index_crawler_logs_on_created_at  (created_at)
 #
 
-class CrawlerLog < ActiveRecord::Base
+class CrawlerLog < ApplicationRecord
 end

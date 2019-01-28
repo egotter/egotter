@@ -18,7 +18,7 @@
 
 require 'open-uri'
 
-class Score < ActiveRecord::Base
+class Score < ApplicationRecord
   API_KEY = ENV['KLOUT_API_KEY']
 
   validates :klout_id, numericality: true

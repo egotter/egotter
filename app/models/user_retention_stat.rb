@@ -73,5 +73,5 @@
 #  index_user_retention_stats_on_date  (date) UNIQUE
 #
 
-class UserRetentionStat < ActiveRecord::Base
+class UserRetentionStat < ApplicationRecord
 end

@@ -39,7 +39,7 @@
 #  index_background_search_logs_on_user_id_and_status  (user_id,status)
 #
 
-class BackgroundSearchLog < ActiveRecord::Base
+class BackgroundSearchLog < ApplicationRecord
   include Concerns::Log::Status
 
   validates :via, length: {maximum: 50}

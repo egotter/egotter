@@ -14,7 +14,7 @@
 #  index_friends_on_from_id  (from_id)
 #
 
-class Friend < ActiveRecord::Base
+class Friend < ApplicationRecord
   belongs_to :twitter_user
 
   include Concerns::TwitterUser::Store

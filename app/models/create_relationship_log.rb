@@ -30,6 +30,6 @@
 #  index_create_relationship_logs_on_user_id      (user_id)
 #
 
-class CreateRelationshipLog < ActiveRecord::Base
+class CreateRelationshipLog < ApplicationRecord
   include Concerns::Log::Status
 end

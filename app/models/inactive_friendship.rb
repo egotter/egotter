@@ -13,7 +13,7 @@
 #  index_inactive_friendships_on_from_uid    (from_uid)
 #
 
-class InactiveFriendship < ActiveRecord::Base
+class InactiveFriendship < ApplicationRecord
   belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
   belongs_to :inactive_friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
 

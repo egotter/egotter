@@ -22,7 +22,7 @@
 #  index_notification_settings_on_user_id  (user_id) UNIQUE
 #
 
-class NotificationSetting < ActiveRecord::Base
+class NotificationSetting < ApplicationRecord
   belongs_to :user
 
   EMAIL_INTERVAL         = Rails.env.production? ? 1.day      : 1.minutes

@@ -18,7 +18,7 @@
 #  index_favorites_on_uid          (uid)
 #
 
-class Favorite < ActiveRecord::Base
+class Favorite < ApplicationRecord
   belongs_to :twitter_user
 
   include Concerns::Status::Store

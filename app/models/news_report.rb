@@ -17,7 +17,7 @@
 #  index_news_reports_on_user_id     (user_id)
 #
 
-class NewsReport < ActiveRecord::Base
+class NewsReport < ApplicationRecord
   include Concerns::Report::Common
 
   def self.come_back_inactive_user(user_id)

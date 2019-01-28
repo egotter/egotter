@@ -40,7 +40,7 @@
 #  index_search_logs_on_user_id         (user_id)
 #
 
-class SearchLog < ActiveRecord::Base
+class SearchLog < ApplicationRecord
 
   class << self
     def except_crawler

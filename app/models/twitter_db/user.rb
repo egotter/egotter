@@ -1,5 +1,5 @@
 module TwitterDB
-  class User < ActiveRecord::Base
+  class User < ApplicationRecord
     include Concerns::TwitterUser::Store
     include Concerns::TwitterUser::Inflections
     include Concerns::TwitterDB::User::Associations

@@ -18,5 +18,5 @@
 #  index_delete_tweets_logs_on_created_at  (created_at)
 #
 
-class DeleteTweetsLog < ActiveRecord::Base
+class DeleteTweetsLog < ApplicationRecord
 end
