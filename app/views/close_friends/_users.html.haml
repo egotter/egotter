@@ -1,5 +1,5 @@
 .btn-group.sort-order-and-filter.pull-right{"aria-label" => "Sort and Filter", :role => "group"}
-  .btn-group{:role => "group"}
+  .btn-group.sort-order-buttons{:role => "group"}
     %button.sort-order-dropdown.btn.btn-default.dropdown-toggle{data: {sort_order: users_sort_orders[0][1]}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
       = users_sort_orders[0][0]
       %span.caret
@@ -9,7 +9,7 @@
           %a{href: "#", class: 'sort-orders', data: {sort_order: value}}
             %i.fas.fa-check
             = label
-  .btn-group{role: "group"}
+  .btn-group.filter-buttons{role: "group"}
     %button.filter-dropdown.btn.btn-default.dropdown-toggle{data: {filter: nil}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
       = t('filter.title')
       %span.filter-count
@@ -30,14 +30,41 @@
   - 3.times do
     = render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'}
 
-.users-wrapper{style: 'margin-bottom: 15px;'}
+.users-wrapper
   .main-content.twitter.users.row
+.vertical-spacing
 
-.row.text-center{style: 'margin-bottom: 15px;'}
+.row.text-center
   .col-xs-6
     = link_to t('dictionary.see_more'), '#', data: {max_sequence: 0, limit: 3}, style: 'display: none;', onclick: 'return false;', class: 'see-more-btn btn btn-default btn-lg'
   .col-xs-6
     = link_to t('dictionary.see_at_once_more'), send("all_#{controller_name}_path", twitter_user), style: 'display: none;', class: 'see-at-once-btn btn btn-info btn-lg'
+.vertical-spacing
+
+- if user_signed_in?
+  #create-follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+    .modal-dialog{role: 'document'}
+      .modal-content
+        .modal-body
+          %p= t('twitter.create_follow_modal.message_html')
+          .dont-confirm
+            %input#create-follow-dont-confirm{type: 'checkbox'}
+            %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
+        .modal-footer
+          %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_follow_modal.cancel')
+          %button.btn.btn-primary.ok{type: 'button', data: {url: create_follow_path}}= t('twitter.create_follow_modal.ok')
+
+  #create-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+    .modal-dialog{role: 'document'}
+      .modal-content
+        .modal-body
+          %p= t('twitter.create_unfollow_modal.message_html')
+          .dont-confirm
+            %input#create-unfollow-dont-confirm{type: 'checkbox'}
+            %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
+        .modal-footer
+          %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_unfollow_modal.cancel')
+          %button.btn.btn-primary.ok{type: 'button', data: {url: create_unfollow_path}}= t('twitter.create_unfollow_modal.ok')
 
 :javascript
   $(function () {
@@ -57,7 +84,7 @@
     function fetchUsers (params) {
       console.log('params', params);
 
-      var callback = function (res) {
+      Twitter.cache().fetch(url, params, function (res) {
         if (res.max_sequence && res.max_sequence >= 0) {
           $seeMoreBtn.data('max-sequence', res.max_sequence + 1);
           $seeMoreBtn.data('limit', 10);
@@ -75,20 +102,6 @@
         } else {
           $emptyPlaceholders.hide();
         }
-      };
-
-      var key = JSON.stringify(params);
-      var cache = $.data(document.body, key);
-      if (cache) {
-        console.log('response(CACHE)', cache);
-        callback(cache);
-        return;
-      }
-
-      $.getJSON(url, params).done(function (res) {
-        console.log('response', res);
-        callback(res);
-        $.data(document.body, key, res);
       });
     }
 
@@ -118,11 +131,14 @@
         $seeMoreBtn.trigger('click');
       };
 
-      Twitter.enableSortButton($('.sort-order-dropdown'), afterClick);
-      Twitter.enableFilterButton($('.filter-dropdown'), afterClick);
+      Twitter.enableSortButton($('.sort-order-buttons'), afterClick);
+      Twitter.enableFilterButton($('.filter-buttons'), afterClick);
     } else {
       $('.sort-orders').attr('href', signInFromSortUrl);
       $('.filters').attr('href', signInFromFilterUrl);
     }
+
+    // Twitter.enableFollowButton();
+    // Twitter.enableUnfollowButton();
   });
 
