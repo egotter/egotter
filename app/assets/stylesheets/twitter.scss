@@ -12,7 +12,8 @@
       display: flex;
 
       .follow,
-      .no-follow {
+      .no-follow,
+      .no-follow-require-sign-in {
         margin-right: 10px;
       }
     }
@@ -62,4 +63,9 @@
       white-space: nowrap;
     }
   }
+}
+
+#create-follow-modal .dont-confirm label,
+#create-unfollow-modal .dont-confirm label {
+  font-weight: normal;
 }

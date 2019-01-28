@@ -193,6 +193,17 @@ ja:
       return_to_top: "トップページに戻る"
     sign_in:
       signed_in: "既にログイン済みです。"
+  twitter:
+    create_follow_modal:
+      message_html: '@<span class="screen-name"></span> さんをフォローしますか？'
+      dont_confirm: '次からは確認しない'
+      ok: "はい"
+      cancel: "いいえ"
+    create_unfollow_modal:
+      message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？'
+      dont_confirm: '次からは確認しない'
+      ok: "はい"
+      cancel: "いいえ"
   welcome:
     follow_modal:
       title: "えごったーをフォローしよう！"
