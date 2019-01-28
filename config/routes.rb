@@ -46,7 +46,6 @@ Rails.application.routes.draw do
     common_friends
     common_followers
     common_mutual_friends
-    protection
   ).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end

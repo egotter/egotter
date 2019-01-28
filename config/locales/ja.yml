@@ -240,16 +240,6 @@ ja:
     maintenance:
       title: "メンテナンス"
       under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
-  protection:
-    show:
-      title: "乗っ取りガード"
-      crumb_title: "乗っ取りガード"
-      page_title: "%{user} の乗っ取りガード"
-      meta_title: "%{user} の乗っ取りガード"
-      summary_title: "乗っ取りガード"
-      page_description: "直近 数百件のツイートを元に、%{user} がスパムに乗っ取られていないかチェックします。"
-      meta_description: "%{user} の乗っ取りガード"
-      warning_html: '乗っ取りの疑いがあるツイートは下記の通りです。自分で投稿したツイートでない場合は、ツイートの削除をおすすめします。今後の乗っ取りを防ぐためには、<a href="https://twitter.com/settings/applications" target="_blank" rel="nofollow" class="btn btn-default btn-sm">連携アプリ一覧 (公式)</a> から、怪しいアプリを削除してください。'
   close_friends:
     show: &close_friends_show
       title: "仲良しランキング"
