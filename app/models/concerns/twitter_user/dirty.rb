@@ -12,13 +12,16 @@ module Concerns::TwitterUser::Dirty
   def diff(newer, options = {})
     older = self
 
-    keys = %i(friends_count followers_count friend_uids follower_uids)
-    keys.select! { |k| k.in?(options[:only]) } if options.has_key?(:only)
+    attrs = %i(friends_count followers_count friend_uids follower_uids)
+    attrs.select! {|k| k.in?(options[:only])} if options.has_key?(:only)
 
-    keys.map do |key|
-      values = [older.send(key), newer.send(key)]
-      values = values.map(&:sort) if key.in?(%i(friend_uids follower_uids))
-      [key, values]
-    end.to_h.reject { |_, v| v[0] == v[1] }
+    attrs.map do |attr|
+      values = [older.send(attr), newer.send(attr)]
+      values = values.map(&:sort) if attr.in?(%i(friend_uids follower_uids))
+
+      logger.debug {"#{__method__} #{screen_name} #{attr} #{values.inspect}"}
+
+      [attr, values]
+    end.to_h.reject {|_, v| v[0] == v[1]}
   end
 end
