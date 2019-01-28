@@ -31,6 +31,7 @@ class User < ActiveRecord::Base
   include Concerns::ApiAccess::Common
   include Concerns::TwitterUser::Inflections
   include Concerns::Visitor::Active
+  include Concerns::User::FollowAndUnfollow
 
   def remember_created_at=(_)
   end
@@ -124,26 +125,6 @@ class User < ActiveRecord::Base
 
   def unauthorized?
     !authorized?
-  end
-
-  def can_create_follow?
-    followers_count = api_client.user(uid)[:followers_count]
-    limit_count =
-        case followers_count
-          when 0..99      then 20
-          when 100..499   then 30
-          when 500..999   then 40
-          when 1000..1999 then 50
-          when 2000..2999 then 70
-          else 100
-        end
-
-    FollowRequest.where(finished_at: 1.day.ago..Time.zone.now).size < limit_count
-  end
-
-  def can_create_unfollow?
-    limit_count = 20
-    UnfollowRequest.where(finished_at: 1.day.ago..Time.zone.now).size < limit_count
   end
 
   ADMIN_UID = 58135830

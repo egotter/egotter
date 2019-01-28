@@ -1,10 +1,20 @@
 class FollowController < ApplicationController
+  include WorkersHelper
+
   before_action :reject_crawler
   before_action :require_login!
 
   def create
-    if FollowRequest.create(user_id: current_user.id, uid: params[:uid].presence || User::EGOTTER_UID)
-      head :ok
+    user = current_user
+    request = FollowRequest.new(user_id: user.id, uid: params[:uid].presence || User::EGOTTER_UID)
+    if request.save
+      enqueue_create_follow_job_if_needed(user.id)
+
+      render json: {
+          follow_request_id: request.id,
+          can_create_follow: user.can_create_follow?,
+          create_follow_limit: user.create_follow_limit
+      }
     else
       head :unprocessable_entity
     end
