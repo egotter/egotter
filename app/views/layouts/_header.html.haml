@@ -13,7 +13,7 @@
         = link_to t('dictionary.sign_in'), sign_in_path(via: build_via('header'))
 
     %button.navbar-toggle{style: 'margin-right: 15px; padding: 6px 12px;'}
-      %a{href: '#', 'data-target' => '.search-modal', 'data-toggle' => 'modal'}
+      %a{href: '#', 'data-target' => '#search-modal', 'data-toggle' => 'modal'}
         %span.glyphicon.glyphicon-search
 
   %a.navbar-brand{href: root_path_for(controller: controller_name)}
@@ -25,7 +25,7 @@
     .navbar-form.navbar-center.visible-md-block.visible-lg-block
       .form-group.has-feedback.has-search
         %span.glyphicon.glyphicon-search.form-control-feedback
-        %input.form-control{placeholder: 'Search', type: 'text', 'data-target' => '.search-modal', 'data-toggle' => 'modal', readonly: true}
+        %input.form-control{placeholder: 'Search', type: 'text', 'data-target' => '#search-modal', 'data-toggle' => 'modal', readonly: true}
 
     %ul.nav.navbar-nav
 
