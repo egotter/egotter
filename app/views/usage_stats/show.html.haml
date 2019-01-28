@@ -26,8 +26,9 @@
 %h3.h5 ハッシュタグクラウド (クリックできます)
 .cloud-chart{style: 'height: 220px;'}
 
-.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+.tweet-box-wrapper
   = render(partial: 'twitter/tweet_box', locals: {text: t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))})
+.vertical-spacing
 
 :javascript
   $(function () {

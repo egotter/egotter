@@ -39,16 +39,18 @@
 %h2.h2.page-title= UsageStat.human_attribute_name(:tweets_per_hour)
 .hour-chart{style: 'margin-bottom: 30px;'}
 
-.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+.tweet-box-wrapper
   - tweet_text = t('usage_stats.tweets_stat.most_active', user: twitter_user.mention_name, wday: stat[:most_active_wday], hour: stat[:most_active_hour], url: url)
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
+.vertical-spacing
 
 %h2.h2.page-title= UsageStat.human_attribute_name(:tweets_breakdown)
 .breakdown-chart{style: 'height: 220px; margin-bottom: 30px;'}
 
-.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+.tweet-box-wrapper
   - tweet_text = t('usage_stats.tweets_stat.breakdown', {user: twitter_user.mention_name, url: url}.merge(stat[:breakdown].map { |k, v| [k, (v * 100).round(1)] }.to_h))
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
+.vertical-spacing
 
 .search_form-wrapper{style: 'margin-bottom: 15px;'}
   = render partial: 'common/search_form', locals: {via: build_via('tweets_stat')}
