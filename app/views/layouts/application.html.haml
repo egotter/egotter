@@ -100,11 +100,13 @@
         .row
           .col-xs-12.notice-container
             - if notice
-              %p.alert.alert-info.alert-dismissable{style: 'margin-top: 15px;'}
+              .vertical-spacing
+              %p.alert.alert-info.alert-dismissable
                 %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
                 = raw notice
             - if alert
-              %p.alert.alert-warning.alert-dismissable{style: 'margin-top: 15px;'}
+              .vertical-spacing
+              %p.alert.alert-warning.alert-dismissable
                 %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
                 = raw alert
 

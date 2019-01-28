@@ -2,8 +2,9 @@
 
 = render(partial: 'close_friends/friend_map', locals: {twitter_user: @twitter_user})
 
-.tweet-box-wrapper{style: 'margin-bottom: 15px;'}
+.tweet-box-wrapper
   = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
+.vertical-spacing
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 

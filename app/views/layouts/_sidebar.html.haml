@@ -13,7 +13,8 @@
   %button.btn.btn-default.btn-lg{type: 'button', data: {toggle: 'modal', target: '.sidebar-modal'}}= t('searches.sidebar.update_now')
 .text-muted= t('searches.sidebar.updated_at', time: l(twitter_user.updated_at.in_time_zone('Tokyo'), format: :short))
 
-.separate-line{style: 'margin-top: 15px;'}
+.vertical-spacing
+.separate-line
 
 %h4= t('searches.sidebar.recommendation')
 .twitter.users

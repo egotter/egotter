@@ -55,8 +55,9 @@
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
 .vertical-spacing
 
-.search_form-wrapper{style: 'margin-bottom: 15px;'}
+.search_form-wrapper
   = render partial: 'common/search_form', locals: {via: build_via('friends_stat')}
+.vertical-spacing
 
 :javascript
   (function () {
