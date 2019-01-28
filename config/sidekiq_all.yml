@@ -4,6 +4,7 @@
 :logfile: ./log/sidekiq_all.log
 :queues:
   - CreateCrawlerLogWorker
+  - CreateFollowWorker
   - CreateForbiddenUserWorker
   - CreateNotFoundUserWorker
   - CreateModalOpenLogWorker
@@ -20,6 +21,7 @@
   - CreateTweetsWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
+  - CreateUnfollowWorker
   - CreateWelcomeMessageWorker
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
