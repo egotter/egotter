@@ -5,10 +5,10 @@ class CreateUnfollowWorker
 
   def perform(user_id)
     raised = false
-    request = fetch_request(user_id)
-    if request
+    request = UnfollowRequest.unprocessed(user_id).first
+    if request && request.user.can_create_unfollow?
       unfollow(request.user, request.uid)
-      request.destroy
+      request.update!(finished_at: Time.zone.now)
     end
   rescue => e
     if e.class == Twitter::Error::Unauthorized
@@ -28,12 +28,6 @@ class CreateUnfollowWorker
   end
 
   private
-
-  def fetch_request(user_id)
-    UnfollowRequest.order(created_at: :asc).
-        where(user_id: user_id).
-        without_error.first
-  end
 
   def unfollow(user, uid)
     client = user.api_client.twitter

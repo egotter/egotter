@@ -5,10 +5,10 @@ class CreateFollowWorker
 
   def perform(user_id)
     raised = false
-    request = fetch_request(user_id)
-    if request
+    request = FollowRequest.unprocessed(user_id).first
+    if request && request.user.can_create_follow?
       follow(request.user, request.uid)
-      request.destroy
+      request.update!(finished_at: Time.zone.now)
     end
   rescue => e
     if e.class == Twitter::Error::Unauthorized
@@ -28,12 +28,6 @@ class CreateFollowWorker
   end
 
   private
-
-  def fetch_request(user_id)
-    FollowRequest.order(created_at: :asc).
-        where(user_id: user_id).
-        without_error.first
-  end
 
   def follow(user, uid)
     client = user.api_client.twitter

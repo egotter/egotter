@@ -239,6 +239,7 @@ ActiveRecord::Schema.define(version: 20190126150202) do
   create_table "follow_requests", force: :cascade do |t|
     t.integer  "user_id",       limit: 4,                null: false
     t.integer  "uid",           limit: 8,                null: false
+    t.datetime "finished_at"
     t.string   "error_class",   limit: 191, default: "", null: false
     t.string   "error_message", limit: 191, default: "", null: false
     t.datetime "created_at",                             null: false
@@ -246,7 +247,7 @@ ActiveRecord::Schema.define(version: 20190126150202) do
   end
 
   add_index "follow_requests", ["created_at"], name: "index_follow_requests_on_created_at", using: :btree
-  add_index "follow_requests", ["user_id", "uid"], name: "index_follow_requests_on_user_id_and_uid", unique: true, using: :btree
+  add_index "follow_requests", ["user_id"], name: "index_follow_requests_on_user_id", using: :btree
 
   create_table "followers", force: :cascade do |t|
     t.string   "uid",         limit: 191,   null: false
@@ -766,6 +767,7 @@ ActiveRecord::Schema.define(version: 20190126150202) do
   create_table "unfollow_requests", force: :cascade do |t|
     t.integer  "user_id",       limit: 4,                null: false
     t.integer  "uid",           limit: 8,                null: false
+    t.datetime "finished_at"
     t.string   "error_class",   limit: 191, default: "", null: false
     t.string   "error_message", limit: 191, default: "", null: false
     t.datetime "created_at",                             null: false
@@ -773,7 +775,7 @@ ActiveRecord::Schema.define(version: 20190126150202) do
   end
 
   add_index "unfollow_requests", ["created_at"], name: "index_unfollow_requests_on_created_at", using: :btree
-  add_index "unfollow_requests", ["user_id", "uid"], name: "index_unfollow_requests_on_user_id_and_uid", unique: true, using: :btree
+  add_index "unfollow_requests", ["user_id"], name: "index_unfollow_requests_on_user_id", using: :btree
 
   create_table "unfollowerships", force: :cascade do |t|
     t.integer "from_uid",     limit: 8, null: false

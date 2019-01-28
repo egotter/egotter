@@ -8,7 +8,7 @@ class FollowEgotterWorker
     request = fetch_request
     if request
       follow(request.user)
-      request.destroy
+      request.update!(finished_at: Time.zone.now)
     end
   rescue => e
     if e.class == Twitter::Error::Unauthorized
