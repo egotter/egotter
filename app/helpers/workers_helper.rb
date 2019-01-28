@@ -46,4 +46,21 @@ module WorkersHelper
     return if from_crawler?
     UpdateUsageStatWorker.perform_async(uid)
   end
+
+  def enqueue_create_follow_job_if_needed(user_id)
+    return if from_crawler?
+    jobs = collect_follow_or_unfollow_sidekiq_jobs('CreateFollowWorker', user_id)
+    CreateFollowWorker.perform_async(user_id) if jobs.empty?
+  end
+
+  def enqueue_create_unfollow_job_if_needed(user_id)
+    return if from_crawler?
+    jobs = collect_follow_or_unfollow_sidekiq_jobs('CreateUnfollowWorker', user_id)
+    CreateUnfollowWorker.perform_async(user_id) if jobs.empty?
+  end
+
+  def collect_follow_or_unfollow_sidekiq_jobs(name, user_id)
+    Sidekiq::ScheduledSet.new.select {|job| job.klass == name && job.args[0] == user_id} +
+        Sidekiq::Queue.new(name).select {|job| job.klass == name && job.args[0] == user_id}
+  end
 end
