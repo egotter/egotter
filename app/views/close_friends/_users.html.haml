@@ -41,31 +41,6 @@
     = link_to t('dictionary.see_at_once_more'), send("all_#{controller_name}_path", twitter_user), style: 'display: none;', class: 'see-at-once-btn btn btn-info btn-lg'
 .vertical-spacing
 
-- if user_signed_in?
-  #create-follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-    .modal-dialog{role: 'document'}
-      .modal-content
-        .modal-body
-          %p= t('twitter.create_follow_modal.message_html')
-          .dont-confirm
-            %input#create-follow-dont-confirm{type: 'checkbox'}
-            %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
-        .modal-footer
-          %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_follow_modal.cancel')
-          %button.btn.btn-primary.ok{type: 'button', data: {url: create_follow_path}}= t('twitter.create_follow_modal.ok')
-
-  #create-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-    .modal-dialog{role: 'document'}
-      .modal-content
-        .modal-body
-          %p= t('twitter.create_unfollow_modal.message_html')
-          .dont-confirm
-            %input#create-unfollow-dont-confirm{type: 'checkbox'}
-            %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
-        .modal-footer
-          %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_unfollow_modal.cancel')
-          %button.btn.btn-primary.ok{type: 'button', data: {url: create_unfollow_path}}= t('twitter.create_unfollow_modal.ok')
-
 :javascript
   $(function () {
     var uid = '#{twitter_user.uid}';
@@ -138,7 +113,7 @@
       $('.filters').attr('href', signInFromFilterUrl);
     }
 
-    Twitter.enableFollowButton();
-    Twitter.enableUnfollowButton();
+    Twitter.enableFollowButton('.twitter.users');
+    Twitter.enableUnfollowButton('.twitter.users');
   });
 
