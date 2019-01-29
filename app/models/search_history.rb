@@ -5,7 +5,7 @@
 #  id         :integer          not null, primary key
 #  session_id :string(191)      default(""), not null
 #  user_id    :integer          not null
-#  uid        :integer          not null
+#  uid        :bigint(8)        not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

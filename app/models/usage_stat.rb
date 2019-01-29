@@ -3,7 +3,7 @@
 # Table name: usage_stats
 #
 #  id                  :integer          not null, primary key
-#  uid                 :integer          not null
+#  uid                 :bigint(8)        not null
 #  wday_json           :text(65535)      not null
 #  wday_drilldown_json :text(65535)      not null
 #  hour_json           :text(65535)      not null

@@ -2,9 +2,9 @@
 #
 # Table name: followerships
 #
-#  id           :integer          not null, primary key
+#  id           :bigint(8)        not null, primary key
 #  from_id      :integer          not null
-#  follower_uid :integer          not null
+#  follower_uid :bigint(8)        not null
 #  sequence     :integer          not null
 #
 # Indexes

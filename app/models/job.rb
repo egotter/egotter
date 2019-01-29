@@ -5,10 +5,10 @@
 #  id              :integer          not null, primary key
 #  track_id        :integer          default(-1), not null
 #  user_id         :integer          default(-1), not null
-#  uid             :integer          default(-1), not null
+#  uid             :bigint(8)        default(-1), not null
 #  screen_name     :string(191)      default(""), not null
 #  twitter_user_id :integer          default(-1), not null
-#  client_uid      :integer          default(-1), not null
+#  client_uid      :bigint(8)        default(-1), not null
 #  jid             :string(191)      default(""), not null
 #  parent_jid      :string(191)      default(""), not null
 #  worker_class    :string(191)      default(""), not null

@@ -2,9 +2,9 @@
 #
 # Table name: friendships
 #
-#  id         :integer          not null, primary key
+#  id         :bigint(8)        not null, primary key
 #  from_id    :integer          not null
-#  friend_uid :integer          not null
+#  friend_uid :bigint(8)        not null
 #  sequence   :integer          not null
 #
 # Indexes

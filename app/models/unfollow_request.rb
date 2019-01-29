@@ -4,7 +4,7 @@
 #
 #  id            :integer          not null, primary key
 #  user_id       :integer          not null
-#  uid           :integer          not null
+#  uid           :bigint(8)        not null
 #  finished_at   :datetime
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null

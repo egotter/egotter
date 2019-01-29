@@ -2,9 +2,9 @@
 #
 # Table name: inactive_followerships
 #
-#  id           :integer          not null, primary key
-#  from_uid     :integer          not null
-#  follower_uid :integer          not null
+#  id           :bigint(8)        not null, primary key
+#  from_uid     :bigint(8)        not null
+#  follower_uid :bigint(8)        not null
 #  sequence     :integer          not null
 #
 # Indexes
