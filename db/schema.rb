@@ -254,6 +254,7 @@ ActiveRecord::Schema.define(version: 20190126150202) do
 
   create_table "forbidden_users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string   "screen_name", null: false
+    t.bigint   "uid"
     t.datetime "created_at",  null: false
     t.datetime "updated_at",  null: false
     t.index ["created_at"], name: "index_forbidden_users_on_created_at", using: :btree

@@ -4,6 +4,7 @@
 #
 #  id          :integer          not null, primary key
 #  screen_name :string(191)      not null
+#  uid         :bigint(8)
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
@@ -14,5 +15,7 @@
 #
 
 class ForbiddenUser < ApplicationRecord
+  include Concerns::User::NotFoundAndForbidden
+
   validates_with Validations::ScreenNameValidator
 end

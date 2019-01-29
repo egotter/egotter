@@ -15,5 +15,7 @@
 #
 
 class NotFoundUser < ApplicationRecord
+  include Concerns::User::NotFoundAndForbidden
+
   validates_with Validations::ScreenNameValidator
 end
