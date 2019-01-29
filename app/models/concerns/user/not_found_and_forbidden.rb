@@ -31,11 +31,16 @@ module Concerns::User::NotFoundAndForbidden
                 red.call('.')
               end
             end
+          rescue Twitter::Error::NotFound => e
+            if e.message == 'No user matches for specified terms.'
+              puts "#{e.class} #{e.message}"
+            else
+              raise
+            end
           rescue Twitter::Error::ServiceUnavailable => e
             puts "#{e.class} #{e.message}"
             retry
           rescue => e
-            puts "Failed #{user.id}"
             raise
           end
         end
