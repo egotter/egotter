@@ -6,7 +6,7 @@ start = Time.now
 before = %x(du -sh #{dir} | awk '{ print $1 }').chomp
 
 begin
-  TwitterWithAutoPagination::Client.new(cache_dir: dir).cache.cleanup
+  ApiClient.instance(cache_dir: dir).cache.cleanup
 rescue => e
   puts "#{Time.now.utc} #{e.class} #{e.message}"
 end

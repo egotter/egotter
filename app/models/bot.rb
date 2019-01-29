@@ -17,7 +17,7 @@
 #
 
 class Bot < ApplicationRecord
-  include Concerns::ApiAccess::Common
+  include Concerns::User::ApiAccess
 
   IDS = pluck(:id)
 

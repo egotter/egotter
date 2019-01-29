@@ -10,6 +10,6 @@ ActiveRecord::Base.connection.execute('truncate table twitter_db_users')
 ActiveRecord::Base.connection.execute('set foreign_key_checks = 1')
 
 dir = ENV['TWITTER_CACHE_DIR']
-TwitterWithAutoPagination::Client.new(cache_dir: dir).cache.clear
+ApiClient.instance(cache_dir: dir).cache.clear
 
 Redis.client.flushdb

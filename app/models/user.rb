@@ -28,7 +28,7 @@
 class User < ApplicationRecord
   devise :rememberable, :omniauthable
 
-  include Concerns::ApiAccess::Common
+  include Concerns::User::ApiAccess
   include Concerns::TwitterUser::Inflections
   include Concerns::Visitor::Active
   include Concerns::User::FollowAndUnfollow
