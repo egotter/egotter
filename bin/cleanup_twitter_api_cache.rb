@@ -1,3 +1,4 @@
+require 'timeout'
 require 'twitter_with_auto_pagination'
 require 'dotenv/load'
 
@@ -6,7 +7,11 @@ start = Time.now
 before = %x(du -sh #{dir} | awk '{ print $1 }').chomp
 
 begin
-  ApiClient.instance(cache_dir: dir).cache.cleanup
+  Timeout.timeout(600) do
+    ApiClient.instance(cache_dir: dir).cache.cleanup
+  end
+rescue Timeout::Error => e
+  puts "#{Time.now.utc} #{e.class} #{e.message}"
 rescue => e
   puts "#{Time.now.utc} #{e.class} #{e.message}"
 end
