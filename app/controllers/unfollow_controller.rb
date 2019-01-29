@@ -4,7 +4,7 @@ class UnfollowController < ApplicationController
   before_action :reject_crawler
   before_action :require_login!
 
-  before_action {create_search_log}
+  before_action {create_search_log(uid: params[:uid])}
 
   def create
     user = current_user
