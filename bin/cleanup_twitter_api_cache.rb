@@ -8,7 +8,8 @@ before = %x(du -sh #{dir} | awk '{ print $1 }').chomp
 
 begin
   Timeout.timeout(600) do
-    ApiClient.instance(cache_dir: dir).cache.cleanup
+    # Can't use ApiClient because the context is ruby
+    TwitterWithAutoPagination::Client.new(cache_dir: dir).cache.cleanup
   end
 rescue Timeout::Error => e
   puts "#{Time.now.utc} #{e.class} #{e.message}"
