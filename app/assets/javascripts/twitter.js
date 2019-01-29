@@ -22,31 +22,34 @@ Twitter.cache = function () {
   return {fetch: fetch}
 };
 
-Twitter.enableFollowButton = function () {
-  function follow(url, uid) {
-    console.log('follow', url, uid);
-    $.post(url, {uid: uid}, function (res) {
-      console.log('res', res);
-      if (!res.can_create_follow) {
-        console.log('warning', res.create_follow_limit);
-      }
-    });
-  }
+Twitter.follow = function (url, uid) {
+  console.log('follow', url, uid);
+  $.post(url, {uid: uid}, function (res) {
+    console.log('res', res);
+    if (!res.can_create_follow) {
+      console.log('warning', res.create_follow_limit);
+    }
+  });
+};
 
+Twitter.enableFollowButton = function (selector) {
   var $modal = $('#create-follow-modal');
 
-  $modal.find('.btn.ok').on('click', function () {
-    var $clicked = $(this).data('btn-target');
-    follow($(this).data('url'), $clicked.data('uid'));
-    $clicked.hide()
-        .siblings('.btn.follow').show();
-    $modal.modal('hide');
-  });
+  if (!$modal.data('init')) {
+    $modal.find('.btn.ok').on('click', function () {
+      var $clicked = $(this).data('btn-target');
+      Twitter.follow($(this).data('url'), $clicked.data('uid'));
+      $clicked.hide()
+          .siblings('.btn.follow').show();
+      $modal.modal('hide');
+    });
+    $modal.data('init', true);
+  }
 
-  $('.twitter.users').on('click', '.btn.no-follow', function () {
+  $(selector).on('click', '.btn.no-follow', function () {
     var $clicked = $(this);
     if ($modal.find('.dont-confirm input').prop('checked')) {
-      follow($modal.find('.btn.ok').data('url'), $clicked.data('uid'));
+      Twitter.follow($modal.find('.btn.ok').data('url'), $clicked.data('uid'));
       $clicked.hide()
           .siblings('.btn.follow').show();
     } else {
@@ -58,31 +61,35 @@ Twitter.enableFollowButton = function () {
   });
 };
 
-Twitter.enableUnfollowButton = function () {
-  function unfollow(url, uid) {
-    console.log('unfollow', url, uid);
-    $.post(url, {uid: uid}, function (res) {
-      console.log('res', res);
-      if (!res.can_create_unfollow) {
-        console.log('warning', res.create_unfollow_limit);
-      }
-    });
-  }
+Twitter.unfollow = function (url, uid) {
+  console.log('unfollow', url, uid);
+  $.post(url, {uid: uid}, function (res) {
+    console.log('res', res);
+    if (!res.can_create_unfollow) {
+      console.log('warning', res.create_unfollow_limit);
+    }
+  });
+};
 
+Twitter.enableUnfollowButton = function (selector) {
   var $modal = $('#create-unfollow-modal');
 
-  $modal.find('.btn.ok').on('click', function () {
-    var $clicked = $(this).data('btn-target');
-    unfollow($(this).data('url'), $clicked.data('uid'));
-    $clicked.hide()
-        .siblings('.btn.no-follow').show();
-    $modal.modal('hide');
-  });
+  if (!$modal.data('init')) {
+    $modal.find('.btn.ok').on('click', function () {
+      var $clicked = $(this).data('btn-target');
+      Twitter.unfollow($(this).data('url'), $clicked.data('uid'));
+      $clicked.hide()
+          .siblings('.btn.no-follow').show();
+      $modal.modal('hide');
+    });
+    $modal.data('init', true);
+  }
 
-  $('.twitter.users').on('click', '.btn.follow', function () {
+
+  $(selector).on('click', '.btn.follow', function () {
     var $clicked = $(this);
     if ($modal.find('.dont-confirm input').prop('checked')) {
-      unfollow($modal.find('.btn.ok').data('url'), $clicked.data('uid'));
+      Twitter.unfollow($modal.find('.btn.ok').data('url'), $clicked.data('uid'));
       $clicked.hide()
           .siblings('.btn.no-follow').show();
     } else {

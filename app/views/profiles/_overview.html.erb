@@ -26,6 +26,11 @@
     </div>
   </div><!-- /.profile-overview -->
 
+  <div class="text-center">
+    <div class="vertical-spacing"></div>
+    <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
+  </div>
+
   <div class="description-container">
     <% if user.description.present? %>
       <div class="description text-center"><%= auto_link(user.description, html: {target: '_blank', rel: 'nofollow'}) %></div>
@@ -79,3 +84,10 @@
     </div>
   </div>
 </div>
+
+<script>
+  $(function () {
+    Twitter.enableFollowButton('.profile-overview-container');
+    Twitter.enableUnfollowButton('.profile-overview-container');
+  });
+</script>
