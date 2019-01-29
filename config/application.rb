@@ -13,7 +13,6 @@ module Egotter
     # -- all .rb files in that directory are automatically loaded.
 
     config.i18n.default_locale = :ja
-    config.active_record.raise_in_transactional_callbacks = true
     config.eager_load_paths += %W(#{config.root}/lib)
     config.x.constants = Rails.application.config_for(:constants)
   end
