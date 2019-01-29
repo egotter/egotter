@@ -4,7 +4,13 @@ class FollowController < ApplicationController
   before_action :reject_crawler
   before_action :require_login!
 
-  before_action {create_search_log(uid: params[:uid])}
+  before_action do
+    if action_name == 'create'
+      create_search_log(uid: params[:uid])
+    else
+      create_search_log
+    end
+  end
 
   def create
     user = current_user
