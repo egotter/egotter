@@ -3,7 +3,9 @@ namespace :not_found_users do
   task update_uid: :environment do
     sigint = Util::Sigint.new.trap
 
-    ApiClient # Avoid circular dependency
+    # Avoid circular dependency
+    Bot
+    ApiClient
 
     green = -> (str) {print "\e[32m#{str}\e[0m"}
     red = -> (str) {print "\e[31m#{str}\e[0m"}
@@ -39,7 +41,7 @@ namespace :not_found_users do
       changed = users.select(&:uid_changed?)
       if changed.any?
         puts "Import uid_changed #{changed.size}"
-        Rails.logger.silence {User.import(changed, on_duplicate_key_update: %i(uid screen_name), validate: false)}
+        Rails.logger.silence {NotFoundUser.import(changed, on_duplicate_key_update: %i(uid screen_name), validate: false)}
       end
 
       puts "Last id #{users[-1].id}"
