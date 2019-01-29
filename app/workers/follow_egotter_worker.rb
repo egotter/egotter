@@ -24,6 +24,10 @@ class FollowEgotterWorker
 
     logger.warn "#{e.class} #{e.message} request=#{request.id} user=#{user.id}"
     request.update(error_class: e.class, error_message: e.message.truncate(150))
+
+    if e.message == 'Invalid or expired token.'
+      retry
+    end
   ensure
     interval = raised ? 30.minutes.since : 30.seconds.since
     self.class.perform_in(interval)
