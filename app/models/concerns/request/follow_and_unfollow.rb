@@ -16,4 +16,8 @@ module Concerns::Request::FollowAndUnfollow
           where.not(finished_at: nil)
     }
   end
+
+  def finished!
+    update!(finished_at: Time.zone.now) if finished_at.nil?
+  end
 end

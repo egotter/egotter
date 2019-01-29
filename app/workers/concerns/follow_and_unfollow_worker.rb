@@ -16,7 +16,7 @@ module Concerns::FollowAndUnfollowWorker
 
     if request.user.can_create_follow?
       yield(request.user, request.uid)
-      request.update!(finished_at: Time.zone.now)
+      request.finished!
       worker_class.perform_async(user_id) if request_class.unprocessed(user_id).exists?
     else
       worker_class.perform_in(1.hour.since, user_id)
