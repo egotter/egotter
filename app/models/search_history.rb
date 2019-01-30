@@ -17,7 +17,7 @@
 #
 
 class SearchHistory < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
   has_one :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
 
   validates :user_id, numericality: {only_integer: true}
