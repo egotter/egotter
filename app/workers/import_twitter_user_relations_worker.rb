@@ -48,6 +48,12 @@ class ImportTwitterUserRelationsWorker
       logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
     end
 
+    begin
+      BlockFriendship.import_from!(uid, latest.unfriendship_uids & latest.unfollowership_uids)
+    rescue => e
+      logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+    end
+
     import_twitter_db_users(friend_uids + follower_uids, client)
     import_twitter_db_friendships(uid, friend_uids, follower_uids)
 
