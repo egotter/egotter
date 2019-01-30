@@ -34,6 +34,7 @@ module Concerns::TwitterDB::User::Associations
   end
 
   def blocking_or_blocked
-    unfriends.where(uid: unfollowerships.pluck(:follower_uid)).uniq(&:uid)
+    # unfriends.where(uid: unfollowerships.pluck(:follower_uid)).uniq(&:uid)
+    unfriends.where(uid: unfollowerships.pluck(:follower_uid))
   end
 end
