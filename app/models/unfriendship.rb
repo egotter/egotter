@@ -20,4 +20,12 @@ class Unfriendship < ApplicationRecord
     obj.belongs_to :twitter_user, foreign_key: :from_uid
     obj.belongs_to :unfriend, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
   end
+
+  class << self
+    def import_by!(twitter_user:)
+      uids = twitter_user.unfriendship_uids
+      import_from!(twitter_user.uid, uids)
+      uids
+    end
+  end
 end

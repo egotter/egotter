@@ -16,6 +16,16 @@
 class OneSidedFollowership < ApplicationRecord
   include Concerns::Followership::Importable
 
-  belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
-  belongs_to :one_sided_follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
+  with_options(primary_key: :uid, optional: true) do |obj|
+    obj.belongs_to :twitter_user, foreign_key: :from_uid
+    obj.belongs_to :one_sided_follower, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
+  end
+
+  class << self
+    def import_by!(twitter_user:)
+      uids = twitter_user.calc_one_sided_follower_uids
+      import_from!(twitter_user.uid, uids)
+      uids
+    end
+  end
 end
