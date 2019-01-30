@@ -16,6 +16,8 @@
 class FavoriteFriendship < ApplicationRecord
   include Concerns::Friendship::Importable
 
-  belongs_to :twitter_user, primary_key: :uid, foreign_key: :from_uid
-  belongs_to :favorite_friend, primary_key: :uid, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
+  with_options(primary_key: :uid, optional: true) do |obj|
+    obj.belongs_to :twitter_user, foreign_key: :from_uid
+    obj.belongs_to :favorite_friend, foreign_key: :friend_uid, class_name: 'TwitterDB::User'
+  end
 end
