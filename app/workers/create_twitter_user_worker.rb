@@ -33,45 +33,18 @@ class CreateTwitterUserWorker
     end
     Util::CreateRequests.add(uid)
 
-    builder = TwitterUser.builder(uid).client(client).login_user(user)
-    twitter_user = builder.build
-    unless twitter_user
-      begin
-        update_twitter_db_user(TwitterUser.build_by(user: client.user(uid)))
-      rescue => e
-        logger.warn "Relief measures in ##{__method__}: #{e.class} #{e.message} #{uid}"
-      end
-
-      job.update(error_class: Job::Error::RecordInvalid, error_message: builder.error_message)
-      latest = TwitterUser.latest_by(uid: uid)
-      if latest
-        latest.increment(:search_count).save
-      end
-      return
-    end
-
-    update_twitter_db_user(twitter_user)
-
-    if twitter_user.save
-      twitter_user = TwitterUser.find(twitter_user.id)
-      twitter_user.increment(:search_count).save
+    begin
+      twitter_user = build_twitter_user(client, user, uid)
+      save_twitter_user(twitter_user)
+    rescue Job::Error => e
+      job.update(error_class: e.class, error_message: e.message)
+    else
       job.update(twitter_user_id: twitter_user.id)
 
       ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now, track_id: track.id)
       UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: track.id)
       CreateScoreWorker.perform_async(uid, track_id: track.id)
-
-      return
     end
-
-    latest = TwitterUser.latest_by(uid: uid)
-    if latest
-      latest.increment(:search_count).save
-      job.update(error_class: Job::Error::NotChanged, error_message: 'Not changed')
-      return
-    end
-
-    job.update(error_class: Job::Error::RecordInvalid, error_message: twitter_user.errors.full_messages.join(', '))
 
   rescue Twitter::Error::Forbidden, Twitter::Error::NotFound, Twitter::Error::Unauthorized,
     Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
@@ -115,9 +88,43 @@ class CreateTwitterUserWorker
     benchmark.finish
   end
 
-  private
+  def build_twitter_user(client, user, uid, builder: nil)
+    builder = TwitterUser.builder(uid).client(client).login_user(user) unless builder
+    twitter_user = builder.build
 
-  def update_twitter_db_user(twitter_user)
+    if twitter_user.invalid?
+      begin
+        save_twitter_db_user(TwitterUser.build_by(user: client.user(uid)))
+      rescue => e
+        logger.warn "Relief measures in ##{__method__}: #{e.class} #{e.message} #{uid}"
+      end
+
+      TwitterUser.latest_by(uid: uid)&.increment(:search_count)&.save
+
+      raise Job::Error::RecordInvalid.new(twitter_user.errors.full_messages.join(', '))
+    end
+
+    twitter_user
+  end
+
+  def save_twitter_user(twitter_user)
+    save_twitter_db_user(twitter_user)
+
+    if twitter_user.save
+      twitter_user = TwitterUser.find(twitter_user.id)
+      twitter_user.increment(:search_count).save
+    else
+      latest = TwitterUser.latest_by(uid: twitter_user.uid)
+      if latest
+        latest.increment(:search_count).save
+        raise Job::Error::NotChanged.new('Not changed')
+      end
+
+      raise Job::Error::RecordInvalid.new(twitter_user.errors.full_messages.join(', '))
+    end
+  end
+
+  def save_twitter_db_user(twitter_user)
     user = TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
     user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
     user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
@@ -125,6 +132,8 @@ class CreateTwitterUserWorker
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
+
+  private
 
   def notify(login_user, searched_uid)
     searched_user = User.authorized.select(:id).find_by(uid: searched_uid)

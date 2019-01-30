@@ -1,9 +1,9 @@
 language: ruby
-cache:
-  bundler: true
+cache: bundler
 sudo: required
 rvm:
-  - 2.3.1
+  - 2.5.3
+  - 2.6.0
 before_install:
   - sh ./setup/install_mecab_travis.sh
 install: bundle install --without development production --deployment

@@ -26,8 +26,14 @@ module Concerns::TwitterUser::Utils
   included do
   end
 
+  # Reason1: too many friends
+  # Reason2: near zero friends
   def friendless?
     friends_size == 0 && followers_size == 0
+  end
+
+  def consistent?(uids1, uids2)
+    friends_size == uids1.size && followers_size == uids2.size
   end
 
   def friend_uids
