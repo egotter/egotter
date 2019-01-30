@@ -59,43 +59,4 @@ module Concerns::TwitterUser::Associations
       obj.has_many :close_friends,    through: :close_friendships
     end
   end
-
-  def unfriendships
-    logger.warn "DEPRECATE WARNING: unfriendships"
-    unfriendship_uids
-  end
-
-  def unfriendship_uids
-    TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :friends_size).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.friends_size == 0
-      older.friend_uids - newer.friend_uids
-    end.compact.flatten.reverse
-  end
-
-  def unfriendships_too_slow
-    ids = TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).order(created_at: :asc).pluck(:id)
-    friendships = Friendship.where(from_id: ids).pluck(:from_id, :friend_uid)
-    ids.each_cons(2).map do |older_id, newer_id|
-      older = friendships.select { |f| f[0] == older_id }.map { |f| f[1] }
-      newer = friendships.select { |f| f[0] == newer_id }.map { |f| f[1] }
-      next if newer.empty?
-      older - newer
-    end.compact.flatten.reverse
-  end
-
-  def unfollowerships
-    logger.warn "DEPRECATE WARNING: unfollowerships"
-    unfollowership_uids
-  end
-
-  def unfollowership_uids
-    TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :followers_size).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.followers_size == 0
-      older.follower_uids - newer.follower_uids
-    end.compact.flatten.reverse
-  end
-
-  def calc_block_friend_uids
-    unfriendship_uids & unfollowership_uids
-  end
 end

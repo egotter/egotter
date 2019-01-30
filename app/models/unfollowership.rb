@@ -23,7 +23,7 @@ class Unfollowership < ApplicationRecord
 
   class << self
     def import_by!(twitter_user:)
-      uids = twitter_user.unfollowership_uids
+      uids = twitter_user.calc_unfollower_uids
       import_from!(twitter_user.uid, uids)
       uids
     end

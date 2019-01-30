@@ -49,7 +49,7 @@ module Api
             end
 
             case filter
-              when USERS_FILTERS[0][1] then users.select!{|u| TwitterUser.inactive_user?(u) }
+              when USERS_FILTERS[0][1] then users.select!(&:inactive?)
             end
 
             users = users[max_sequence, limit]

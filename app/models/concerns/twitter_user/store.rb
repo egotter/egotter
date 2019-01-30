@@ -75,10 +75,6 @@ module Concerns::TwitterUser::Store
     nil
   end
 
-  def inactive
-    TwitterUser.inactive_user?(self)
-  end
-
   def account_created_at
     at = _user_info[:created_at].to_s
     if time_zone.present? && at.present?
@@ -91,5 +87,9 @@ module Concerns::TwitterUser::Store
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{at}]"
     nil
+  end
+
+  def inactive?
+    status&.created_at && Time.parse(status.created_at) < 2.weeks.ago
   end
 end
