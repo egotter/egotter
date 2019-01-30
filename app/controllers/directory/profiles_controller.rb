@@ -6,7 +6,7 @@ module Directory
       id2 = params[:id2]
 
       if id1.present? && id2.present?
-        @screen_names = TwitterUser.uniq.
+        @screen_names = TwitterUser.distinct.
             where(created_at: (1.days.ago)..(Time.now)).
             where('uid % ? = 0', 10 * id1.to_i + id2.to_i).
             pluck(:screen_name)
