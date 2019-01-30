@@ -1,7 +1,9 @@
 module TwitterDB
   class Followership < ApplicationRecord
-    belongs_to :user, primary_key: :uid, class_name: 'TwitterDB::User'
-    belongs_to :follower, primary_key: :uid, foreign_key: :follower_uid, class_name: 'TwitterDB::User'
+    with_options(primary_key: :uid, class_name: 'TwitterDB::User', optional: true) do |obj|
+      obj.belongs_to :user
+      obj.belongs_to :follower, foreign_key: :follower_uid
+    end
 
     def self.import_from!(user_uid, follower_uids)
       followerships = follower_uids.map.with_index { |follower_uid, i| [user_uid, follower_uid, i] }

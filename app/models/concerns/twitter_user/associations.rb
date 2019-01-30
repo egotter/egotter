@@ -7,8 +7,10 @@ module Concerns::TwitterUser::Associations
   end
 
   included do
-    belongs_to :user
-    belongs_to :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
+    with_options(optional: true) do |obj|
+      obj.belongs_to :user
+      obj.belongs_to :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
+    end
 
     default_options = {dependent: :destroy, validate: false, autosave: false}
     order_by_sequence_asc = -> { order(sequence: :asc) }
