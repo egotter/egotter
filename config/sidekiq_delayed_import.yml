@@ -1,6 +1,0 @@
-:concurrency: 1
-:timeout: 10
-:pidfile: ./tmp/pids/sidekiq_delayed_import.pid
-:logfile: ./log/sidekiq_delayed_import.log
-:queues:
-  - DelayedImportTwitterUserRelationsWorker
