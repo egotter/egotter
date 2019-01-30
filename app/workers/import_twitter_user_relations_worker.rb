@@ -23,7 +23,7 @@ class ImportTwitterUserRelationsWorker
     client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
 
     uids = FavoriteFriendship.import_by!(twitter_user: twitter_user)
-    uids += CloseFriendship.import_by(twitter_user: twitter_user)
+    uids += CloseFriendship.import_by!(twitter_user: twitter_user)
     import_twitter_db_users(uids, client)
 
     return if twitter_user.friendless?
