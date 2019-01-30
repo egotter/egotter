@@ -37,13 +37,13 @@ class CreateTwitterUserWorker
     twitter_user = builder.build
     unless twitter_user
       begin
-        update_twitter_db_user(TwitterUser.build_by_user(client.user(uid)))
+        update_twitter_db_user(TwitterUser.build_by(user: client.user(uid)))
       rescue => e
         logger.warn "Relief measures in ##{__method__}: #{e.class} #{e.message} #{uid}"
       end
 
       job.update(error_class: Job::Error::RecordInvalid, error_message: builder.error_message)
-      latest = TwitterUser.latest(uid)
+      latest = TwitterUser.latest_by(uid: uid)
       if latest
         latest.increment(:search_count).save
       end
@@ -64,7 +64,7 @@ class CreateTwitterUserWorker
       return
     end
 
-    latest = TwitterUser.latest(uid)
+    latest = TwitterUser.latest_by(uid: uid)
     if latest
       latest.increment(:search_count).save
       job.update(error_class: Job::Error::NotChanged, error_message: 'Not changed')

@@ -54,7 +54,7 @@ class ApiClient
       user = User.authorized.find_by(uid: uid)
       return user.api_client if user
 
-      twitter_user = TwitterUser.latest(uid)
+      twitter_user = TwitterUser.latest_by(uid: uid)
       if twitter_user
         user_ids = User.authorized.where(uid: twitter_user.follower_uids).pluck(:id)
         return User.find(user_ids.sample).api_client if user_ids.any?

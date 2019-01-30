@@ -98,7 +98,7 @@ namespace :news_reports do
 
     OldUser.where(id: user_ids).select(:id, :uid).find_each do |user|
       user_id = user.id
-      twitter_user = TwitterUser.latest(user.uid)
+      twitter_user = TwitterUser.latest_by(uid: user.uid)
 
       unless twitter_user
         puts "No record #{user_id}"

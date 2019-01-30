@@ -17,7 +17,7 @@ module Concerns::TwitterUser::Batch
         return unless t_user
         t_user = Hashie::Mash.new(t_user)
 
-        twitter_user = TwitterUser.build_by_user(t_user)
+        twitter_user = TwitterUser.build_by(user: t_user)
         twitter_user.user_id = user ? user.id : -1
 
         if t_user.suspended
@@ -58,7 +58,7 @@ module Concerns::TwitterUser::Batch
           end
         end
 
-        if twitter_user_changed?(TwitterUser.latest(uid), friend_uids, follower_uids)
+        if twitter_user_changed?(TwitterUser.latest_by(uid: uid), friend_uids, follower_uids)
           if create_twitter_user && create_twitter_user(twitter_user, friend_uids, follower_uids)
             logger "Created #{uid}"
           end
@@ -127,7 +127,7 @@ module Concerns::TwitterUser::Batch
 
           case STDIN.gets.chomp.to_s
             when 'r'
-              twitter_user = TwitterUser.build_by_user(client.user(twitter_user.uid.to_i, cache: false))
+              twitter_user = TwitterUser.build_by(user: client.user(twitter_user.uid.to_i, cache: false))
               friend_uids, follower_uids = client.friend_ids_and_follower_ids(twitter_user.uid.to_i, cache: false)
             when 'y'
               return [twitter_user, friend_uids, follower_uids]
@@ -173,7 +173,7 @@ module Concerns::TwitterUser::Batch
         end
 
         uid = twitter_user.uid.to_i
-        latest = TwitterUser.latest(uid)
+        latest = TwitterUser.latest_by(uid: uid)
 
         begin
           Unfriendship.import_from!(uid, latest.unfriendships)

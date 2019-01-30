@@ -7,7 +7,7 @@ class UpdateUsageStatWorker
     stat = UsageStat.find_by(uid: uid)
     return if stat&.fresh?
 
-    twitter_user = TwitterUser.select(:uid).latest(uid)
+    twitter_user = TwitterUser.select(:uid).latest_by(uid: uid)
     statuses =
       if twitter_user.statuses.exists?
         twitter_user.statuses

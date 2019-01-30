@@ -29,8 +29,8 @@ class CreatePromptReportWorker
     return log.update!(error_message: 'Suspended') if t_user[:suspended]
     return log.update!(error_message: 'Too many friends') if TwitterUser.too_many_friends?(t_user, login_user: user)
 
-    twitter_user = TwitterUser.till(user.last_access_at).latest(user.uid) if user.last_access_at
-    twitter_user = TwitterUser.latest(user.uid) unless twitter_user
+    twitter_user = TwitterUser.till(user.last_access_at).latest_by(uid: user.uid) if user.last_access_at
+    twitter_user = TwitterUser.latest_by(uid: user.uid) unless twitter_user
     return log.update!(error_message: 'Too many friends') if twitter_user.too_many_friends?(login_user: user)
     return log.update!(error_message: 'Friendless') if twitter_user.friendless?
 

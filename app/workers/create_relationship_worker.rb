@@ -28,7 +28,7 @@ class CreateRelationshipWorker
     persisted = []
     errors = []
     uids.each do |uid|
-      latest = TwitterUser.latest(uid)
+      latest = TwitterUser.latest_by(uid: uid)
       if latest
         persisted << latest.id
         next

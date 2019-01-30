@@ -86,7 +86,7 @@ namespace :repair do
         end
 
         twitter_user = TwitterUser.find(twitter_user_id)
-        latest = TwitterUser.latest(twitter_user.uid)
+        latest = TwitterUser.latest_by(uid: twitter_user.uid)
 
         Unfriendship.import_from!(uid, latest.unfriendships)
         Unfollowership.import_from!(uid, latest.unfollowerships)

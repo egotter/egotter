@@ -15,7 +15,7 @@ do_create = Proc.new do
   end
 
   uids.each do |uid|
-    twitter_user = TwitterUser.select(:screen_name, :user_info, :updated_at).latest(uid)
+    twitter_user = TwitterUser.select(:screen_name, :user_info, :updated_at).latest_by(uid: uid)
     next if twitter_user.protected_account? || twitter_user.suspended_account?
 
     options = {priority: 0.5, changefreq: 'weekly', lastmod: twitter_user.updated_at}

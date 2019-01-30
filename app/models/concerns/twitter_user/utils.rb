@@ -5,6 +5,11 @@ module Concerns::TwitterUser::Utils
 
   class_methods do
     def latest(uid)
+      logger.warn "DEPRECATE WARNING: calling latest(uid)"
+      latest_by(uid: uid)
+    end
+
+    def latest_by(uid:)
       order(created_at: :desc).find_by(uid: uid)
     end
 
@@ -34,7 +39,7 @@ module Concerns::TwitterUser::Utils
   end
 
   def latest?
-    id == TwitterUser.select(:id).latest(uid).id
+    id == TwitterUser.select(:id).latest_by(uid: uid).id
   end
 
   def one?

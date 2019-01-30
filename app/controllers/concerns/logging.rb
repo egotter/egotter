@@ -212,7 +212,7 @@ module Concerns::Logging
         screen_name = tu.screen_name
       else
         if uid != -1 && TwitterUser.exists?(uid: uid)
-          screen_name = TwitterUser.latest(uid).screen_name
+          screen_name = TwitterUser.latest_by(uid: uid).screen_name
         else
           uid = screen_name = -1
         end

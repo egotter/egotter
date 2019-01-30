@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::Builder do
-  describe '.build_by_user' do
+  describe '.build_by' do
     let(:user) { Hashie::Mash.new(id: 1, screen_name: 'sn') }
-    let(:tu) { TwitterUser.build_by_user(user) }
+    let(:tu) { TwitterUser.build_by(user: user) }
 
     it 'returns TwitterUser' do
       expect(tu).to be_a_kind_of(TwitterUser)

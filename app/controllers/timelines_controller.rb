@@ -3,7 +3,7 @@ class TimelinesController < ApplicationController
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i
-    valid_uid?(uid) && twitter_user_persisted?(uid)  && authorized_search?(TwitterUser.latest(uid))
+    valid_uid?(uid) && twitter_user_persisted?(uid)  && authorized_search?(TwitterUser.latest_by(uid: uid))
   end
 
   after_action only: %i(show) do
@@ -19,7 +19,7 @@ class TimelinesController < ApplicationController
   end
 
   def check_for_updates
-    twitter_user = TwitterUser.latest(params[:uid])
+    twitter_user = TwitterUser.latest_by(uid: params[:uid])
     if params[:created_at].to_s.match(/\A\d+\z/) && twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
       return render json: {found: true, text: changes_text(twitter_user)}
     end
@@ -31,7 +31,7 @@ class TimelinesController < ApplicationController
   private
 
   def changes_text(twitter_user)
-    second_latest = TwitterUser.till(twitter_user.created_at).latest(params[:uid])
+    second_latest = TwitterUser.till(twitter_user.created_at).latest_by(uid: params[:uid])
 
     bef = second_latest.unfollowerships.size # Heavy process
     aft = twitter_user.twitter_db_user.unfollowerships.size

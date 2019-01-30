@@ -5,7 +5,7 @@ module Concerns::TwitterUser::Builder
   include Concerns::TwitterUser::AssociationBuilder
 
   class_methods do
-    def build_by_user(user)
+    def build_by(user:)
       TwitterUser.new(
         uid: user[:id],
         screen_name: user[:screen_name],
@@ -32,10 +32,10 @@ module Concerns::TwitterUser::Builder
     # Rails default validation callbacks due to too heavy.
     def build(validate: true)
       t_user = @client.user(uid)
-      latest = TwitterUser.latest(uid)
+      latest = TwitterUser.latest_by(uid: uid)
 
       unless latest
-        twitter_user = TwitterUser.build_by_user(t_user)
+        twitter_user = TwitterUser.build_by(user: t_user)
         relations = TwitterUserFetcher.new(twitter_user, client: @client, login_user: @login_user).fetch
         twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
         twitter_user.build_other_relations(relations)
@@ -48,7 +48,7 @@ module Concerns::TwitterUser::Builder
         return nil
       end
 
-      twitter_user = TwitterUser.build_by_user(t_user)
+      twitter_user = TwitterUser.build_by(user: t_user)
       relations = TwitterUserFetcher.new(twitter_user, client: @client, login_user: @login_user).fetch
       twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
 

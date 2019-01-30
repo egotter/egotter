@@ -15,7 +15,7 @@ module Concerns::Showable
     # before_action(only: %i(show)) { too_many_requests?(@tu) }
 
     before_action(only: %i(show))  do
-      @twitter_user = TwitterUser.latest(@tu.uid.to_i)
+      @twitter_user = TwitterUser.latest_by(uid: @tu.uid)
       remove_instance_variable(:@tu)
     end
 

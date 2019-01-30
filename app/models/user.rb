@@ -101,7 +101,7 @@ class User < ApplicationRecord
     if instance_variable_defined?(:@twitter_user)
       @twitter_user
     else
-      @twitter_user = TwitterUser.latest(uid)
+      @twitter_user = TwitterUser.latest_by(uid: uid)
     end
   end
 

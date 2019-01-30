@@ -47,7 +47,7 @@ class UsageStat < ApplicationRecord
   end
 
   def friends_stat
-    twitter_user = TwitterUser.latest(uid)
+    twitter_user = TwitterUser.latest_by(uid: uid)
     friend_uids = twitter_user.friendships.pluck(:friend_uid)
     follower_uids = twitter_user.followerships.pluck(:follower_uid)
     mutual_friend_uids = twitter_user.mutual_friendships.pluck(:friend_uid)
@@ -70,7 +70,7 @@ class UsageStat < ApplicationRecord
   end
 
   def tweets_stat
-    twitter_user = TwitterUser.latest(uid)
+    twitter_user = TwitterUser.latest_by(uid: uid)
     tweets = twitter_user.statuses
     tweet_days = tweets.map(&:tweeted_at).map { |time| "#{time.year}/#{time.month}/#{time.day}" }
     tweets_interval =

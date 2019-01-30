@@ -1,7 +1,7 @@
 module Validations
   class FreshRecordValidator < ActiveModel::Validator
     def validate(new_record)
-      latest = TwitterUser.latest(new_record.uid.to_i)
+      latest = TwitterUser.latest_by(uid: new_record.uid)
       return if latest.nil?
 
       if latest.fresh?

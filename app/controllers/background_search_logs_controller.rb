@@ -12,7 +12,7 @@ class BackgroundSearchLogsController < ApplicationController
       when log.nil? || log.processing?
         render nothing: true, status: 202
       when log.finished?
-        twitter_user = TwitterUser.latest(uid)
+        twitter_user = TwitterUser.latest_by(uid: uid)
         if twitter_user
           created_at = twitter_user.created_at.to_i
           render json: {message: log.message, created_at: created_at}

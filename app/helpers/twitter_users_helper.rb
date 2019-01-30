@@ -3,7 +3,7 @@ module TwitterUsersHelper
     return build_twitter_user_by(screen_name: request_context_client.user(uid.to_i)[:screen_name]) if uid
 
     user = request_context_client.user(screen_name)
-    twitter_user = TwitterUser.build_by_user(user)
+    twitter_user = TwitterUser.build_by(user: user)
 
     DeleteNotFoundUserWorker.perform_async(screen_name)
     DeleteForbiddenUserWorker.perform_async(screen_name)

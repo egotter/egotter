@@ -8,7 +8,7 @@ class ClustersController < ApplicationController
   before_action(only: %i(create show)) { authorized_search?(@tu) }
   before_action(only: %i(show)) { twitter_user_persisted?(@tu.uid.to_i) }
   before_action only: %i(show) do
-    @twitter_user = TwitterUser.latest(@tu.uid.to_i)
+    @twitter_user = TwitterUser.latest_by(uid: @tu.uid)
     remove_instance_variable(:@tu)
   end
   before_action only: %i(new create show) do

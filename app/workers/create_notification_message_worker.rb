@@ -80,7 +80,7 @@ class CreateNotificationMessageWorker
     end
 
     if type == :update && medium == 'dm'
-      tu = TwitterUser.latest(uid)
+      tu = TwitterUser.latest_by(uid: uid)
 
       message =
         if tu.fresh?(:created_at)
