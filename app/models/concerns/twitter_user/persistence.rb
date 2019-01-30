@@ -37,8 +37,4 @@ module Concerns::TwitterUser::Persistence
     logger.info e.backtrace.join("\n")
     destroy
   end
-
-  def silent_transaction(&block)
-    Rails.logger.silence { ActiveRecord::Base.transaction(&block) }
-  end
 end
