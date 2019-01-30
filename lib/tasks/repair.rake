@@ -76,12 +76,14 @@ namespace :repair do
 
           ActiveRecord::Base.transaction do
             twitter_user.update!(user_info: TwitterUser.collect_user_info(t_user), friends_size: friend_uids.size, followers_size: follower_uids.size)
-            Friendships.import(twitter_user.id, friend_uids, follower_uids)
+            Friendship.import_from!(twitter_user.id, friend_uids)
+            Followership.import_from!(twitter_user.id, follower_uids)
           end
         else
           ActiveRecord::Base.transaction do
             twitter_user.update!(friends_size: 0, followers_size: 0)
-            Friendships.import(twitter_user.id, [], [])
+            Friendship.import_from!(twitter_user.id, [])
+            Followership.import_from!(twitter_user.id, [])
           end
         end
 
