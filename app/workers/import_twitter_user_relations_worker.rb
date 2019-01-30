@@ -39,8 +39,8 @@ class ImportTwitterUserRelationsWorker
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
 
     begin
-      Unfriendship.import_from!(uid, latest.unfriendships)
-      Unfollowership.import_from!(uid, latest.unfollowerships)
+      Unfriendship.import_from!(uid, latest.unfriendship_uids)
+      Unfollowership.import_from!(uid, latest.unfollowership_uids)
       OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
       OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
       MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)

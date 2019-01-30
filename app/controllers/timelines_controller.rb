@@ -33,7 +33,7 @@ class TimelinesController < ApplicationController
   def changes_text(twitter_user)
     second_latest = TwitterUser.till(twitter_user.created_at).latest_by(uid: params[:uid])
 
-    bef = second_latest.unfollowerships.size # Heavy process
+    bef = second_latest.unfollowership_uids.size # Heavy process
     aft = twitter_user.twitter_db_user.unfollowerships.size
 
     if aft > bef
