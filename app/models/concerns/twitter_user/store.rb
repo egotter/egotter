@@ -92,4 +92,9 @@ module Concerns::TwitterUser::Store
   def inactive?
     status&.created_at && Time.parse(status.created_at) < 2.weeks.ago
   end
+
+  # Used in view
+  def inactive
+    inactive?
+  end
 end
