@@ -22,7 +22,7 @@ class Friendship < ApplicationRecord
     friendships = friend_uids.map.with_index { |friend_uid, i| [from_id, friend_uid.to_i, i] }
 
     ActiveRecord::Base.transaction do
-      delete_all(from_id: from_id) if exists?(from_id: from_id)
+      where(from_id: from_id).delete_all if exists?(from_id: from_id)
       import(%i(from_id friend_uid sequence), friendships, validate: false, timestamps: false)
     end
   end

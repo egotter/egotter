@@ -7,7 +7,7 @@ module TwitterDB
       friendships = friend_uids.map.with_index { |friend_uid, i| [user_uid, friend_uid, i] }
 
       ActiveRecord::Base.transaction do
-        delete_all(user_uid: user_uid) if exists?(user_uid: user_uid)
+        where(user_uid: user_uid).delete_all if exists?(user_uid: user_uid)
         import(%i(user_uid friend_uid sequence), friendships, validate: false, timestamps: false)
       end
     end
