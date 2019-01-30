@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190126150202) do
+ActiveRecord::Schema.define(version: 20190130071946) do
 
   create_table "background_force_update_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
@@ -94,6 +94,14 @@ ActiveRecord::Schema.define(version: 20190126150202) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_blacklist_words_on_created_at"
     t.index ["text"], name: "index_blacklist_words_on_text", unique: true
+  end
+
+  create_table "block_friendships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.bigint "from_uid", null: false
+    t.bigint "friend_uid", null: false
+    t.integer "sequence", null: false
+    t.index ["friend_uid"], name: "index_block_friendships_on_friend_uid"
+    t.index ["from_uid"], name: "index_block_friendships_on_from_uid"
   end
 
   create_table "bots", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
