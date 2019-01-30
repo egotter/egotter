@@ -7,32 +7,10 @@ module Concerns::TwitterUser::Api
   end
 
   class_methods do
-    def select_inactive_users(users)
-      users.select { |user| inactive_user?(user) }
-    end
-
-    def active_user?(user)
-      !inactive_user?(user)
-    end
-
-    def inactive_user?(user)
-      user&.status&.created_at && Time.parse(user.status.created_at) < 2.weeks.ago
-    rescue => e
-      logger.warn "#{__method__}: #{e.class} #{e.message} [#{user&.status&.created_at}] #{user.uid} #{user.screen_name}"
-      false
-    end
-  end
-
-  def calc_one_sided_friend_uids
-    friend_uids - follower_uids
   end
 
   def one_sided_friends_rate
     (one_sided_friendships.size.to_f / friendships.size) rescue 0.0
-  end
-
-  def calc_one_sided_follower_uids
-    follower_uids - friend_uids
   end
 
   def one_sided_followers_rate
@@ -41,10 +19,6 @@ module Concerns::TwitterUser::Api
 
   def follow_back_rate
     (mutual_friendships.size.to_f / followerships.size) rescue 0.0
-  end
-
-  def calc_mutual_friend_uids
-    friend_uids & follower_uids
   end
 
   def mutual_friend_uids
@@ -122,32 +96,5 @@ module Concerns::TwitterUser::Api
     uids = replying_and_replied_uids(uniq: uniq, login_user: login_user)
     users = (replying(uniq: uniq) + replied(uniq: uniq, login_user: login_user)).index_by(&:uid)
     uids.map { |uid| users[uid] }.compact
-  end
-
-  def calc_favorite_friend_uids(uniq: true)
-    uids = favorites.map { |fav| fav&.user&.id }.compact
-    if uniq
-      uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.map(&:first)
-    else
-      uids
-    end
-  end
-
-  def calc_close_friend_uids
-    login_user = mentions.any? ? Hashie::Mash.new(uid: uid) : nil
-    uids = replying_uids(uniq: false) + replied_uids(uniq: false, login_user: login_user) + calc_favorite_friend_uids(uniq: false)
-    uids.each_with_object(Hash.new(0)) { |uid, memo| memo[uid] += 1 }.sort_by { |_, v| -v }.take(50).map(&:first)
-  end
-
-  def calc_inactive_friend_uids
-    friends.select { |friend| self.class.inactive_user?(friend) }.map(&:uid)
-  end
-
-  def calc_inactive_follower_uids
-    followers.select { |follower| self.class.inactive_user?(follower) }.map(&:uid)
-  end
-
-  def calc_inactive_mutual_friend_uids
-    mutual_friends.select { |friend| self.class.inactive_user?(friend) }.map(&:uid)
   end
 end

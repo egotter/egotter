@@ -27,8 +27,8 @@ RSpec.describe Concerns::TwitterUser::Associations do
     before { copy2.friendships.last.delete }
 
     it 'returns one uid' do
-      expect(copy1.unfriendship_uids.size).to eq(0)
-      expect(copy2.unfriendship_uids.size).to eq(1)
+      expect(copy1.calc_unfriend_uids.size).to eq(0)
+      expect(copy2.calc_unfriend_uids.size).to eq(1)
     end
   end
 
@@ -39,8 +39,8 @@ RSpec.describe Concerns::TwitterUser::Associations do
     before { copy2.followerships.last.delete }
 
     it 'returns one uid' do
-      expect(copy1.unfollowership_uids.size).to eq(0)
-      expect(copy2.unfollowership_uids.size).to eq(1)
+      expect(copy1.calc_unfollower_uids.size).to eq(0)
+      expect(copy2.calc_unfollower_uids.size).to eq(1)
     end
   end
 end
