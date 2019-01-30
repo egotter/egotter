@@ -61,6 +61,11 @@ module Concerns::TwitterUser::Associations
   end
 
   def unfriendships
+    logger.warn "DEPRECATE WARNING: unfriendships"
+    unfriendship_uids
+  end
+
+  def unfriendship_uids
     TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :friends_size).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.friends_size == 0
       older.friend_uids - newer.friend_uids
@@ -79,6 +84,11 @@ module Concerns::TwitterUser::Associations
   end
 
   def unfollowerships
+    logger.warn "DEPRECATE WARNING: unfollowerships"
+    unfollowership_uids
+  end
+
+  def unfollowership_uids
     TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :followers_size).order(created_at: :asc).each_cons(2).map do |older, newer|
       next if newer.nil? || older.nil? || newer.followers_size == 0
       older.follower_uids - newer.follower_uids
