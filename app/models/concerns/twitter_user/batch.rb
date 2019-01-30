@@ -165,7 +165,8 @@ module Concerns::TwitterUser::Batch
           ActiveRecord::Base.transaction do
             twitter_user.assign_attributes(friends_size: friend_uids.size, followers_size: follower_uids.size)
             twitter_user.save!(validate: false)
-            Friendships.import(twitter_user.id, friend_uids, follower_uids)
+            Friendship.import_from!(twitter_user.id, friend_uids)
+            Followership.import_from!(twitter_user.id, follower_uids)
           end
         rescue => e
           logger "Friendships.import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
@@ -201,7 +202,8 @@ module Concerns::TwitterUser::Batch
         begin
           ActiveRecord::Base.transaction do
             ::TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid).update!(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info, friends_size: friend_uids.size, followers_size: follower_uids.size)
-            ::TwitterDB::Friendships.import(twitter_user.uid, friend_uids, follower_uids)
+            ::TwitterDB::Friendship.import_from!(twitter_user.uid, friend_uids)
+            ::TwitterDB::Followership.import_from!(twitter_user.uid, follower_uids)
           end
         rescue => e
           logger "TwitterDB::Friendships.import: #{e.class} #{e.message.truncate(100)} #{twitter_user.uid}"
