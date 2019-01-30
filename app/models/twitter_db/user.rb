@@ -1,3 +1,23 @@
+# == Schema Information
+#
+# Table name: twitter_db_users
+#
+#  id             :bigint(8)        not null, primary key
+#  followers_size :integer          default(0), not null
+#  friends_size   :integer          default(0), not null
+#  screen_name    :string(191)      not null
+#  uid            :bigint(8)        not null
+#  user_info      :text(65535)      not null
+#  created_at     :datetime         not null
+#  updated_at     :datetime         not null
+#
+# Indexes
+#
+#  index_twitter_db_users_on_created_at   (created_at)
+#  index_twitter_db_users_on_screen_name  (screen_name)
+#  index_twitter_db_users_on_uid          (uid) UNIQUE
+#
+
 module TwitterDB
   class User < ApplicationRecord
     include Concerns::TwitterUser::Store
