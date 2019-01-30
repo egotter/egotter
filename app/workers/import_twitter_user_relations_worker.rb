@@ -22,8 +22,8 @@ class ImportTwitterUserRelationsWorker
 
     client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
 
-    uids = import_favorite_friend_uids(uid, twitter_user)
-    uids += import_close_friend_uids(uid, twitter_user)
+    uids = FavoriteFriendship.import_by!(twitter_user: twitter_user)
+    uids += CloseFriendship.import_by(twitter_user: twitter_user)
     import_twitter_db_users(uids, client)
 
     return if twitter_user.friendless?
@@ -39,17 +39,12 @@ class ImportTwitterUserRelationsWorker
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
 
     begin
-      Unfriendship.import_from!(uid, latest.unfriendship_uids)
-      Unfollowership.import_from!(uid, latest.unfollowership_uids)
-      OneSidedFriendship.import_from!(uid, twitter_user.calc_one_sided_friend_uids)
-      OneSidedFollowership.import_from!(uid, twitter_user.calc_one_sided_follower_uids)
-      MutualFriendship.import_from!(uid, twitter_user.calc_mutual_friend_uids)
-    rescue => e
-      logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
-    end
-
-    begin
-      BlockFriendship.import_from!(uid, latest.unfriendship_uids & latest.unfollowership_uids)
+      Unfriendship.import_by!(twitter_user: latest)
+      Unfollowership.import_by!(twitter_user: latest)
+      OneSidedFriendship.import_by!(twitter_user: twitter_user)
+      OneSidedFollowership.import_by!(twitter_user: twitter_user)
+      MutualFriendship.import_by!(twitter_user: twitter_user)
+      BlockFriendship.import_by!(twitter_user: latest)
     rescue => e
       logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
     end
@@ -57,7 +52,9 @@ class ImportTwitterUserRelationsWorker
     import_twitter_db_users(friend_uids + follower_uids, client)
     import_twitter_db_friendships(uid, friend_uids, follower_uids)
 
-    import_inactive_friendships(uid, twitter_user)
+    InactiveFriendship.import_by!(twitter_user: twitter_user)
+    InactiveFollowership.import_by!(twitter_user: twitter_user)
+    InactiveMutualFriendship.import_by!(twitter_user: twitter_user)
 
   rescue Twitter::Error::Unauthorized,
     Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
@@ -91,24 +88,6 @@ class ImportTwitterUserRelationsWorker
 
   private
 
-  def import_favorite_friend_uids(uid, twitter_user)
-    uids = twitter_user.calc_favorite_friend_uids
-    FavoriteFriendship.import_from!(uid, uids)
-    uids
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
-    []
-  end
-
-  def import_close_friend_uids(uid, twitter_user)
-    uids = twitter_user.calc_close_friend_uids
-    CloseFriendship.import_from!(uid, uids)
-    uids
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
-    []
-  end
-
   def import_twitter_db_users(uids, client)
     return if uids.blank?
     TwitterDB::User::Batch.fetch_and_import(uids, client: client)
@@ -140,20 +119,6 @@ class ImportTwitterUserRelationsWorker
       TwitterDB::Friendships.import(uid, friend_uids, follower_uids)
       TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
-  end
-
-  def import_inactive_friendships(uid, twitter_user)
-    friends = twitter_user.friends
-    followers = twitter_user.followers
-
-    mutual_friend_uids = friends.map(&:uid) & followers.map(&:uid)
-    mutual_friends = friends.select { |friend| mutual_friend_uids.include? friend.uid }
-
-    InactiveFriendship.import_from!(uid, TwitterUser.select_inactive_users(friends).map(&:uid))
-    InactiveFollowership.import_from!(uid, TwitterUser.select_inactive_users(followers).map(&:uid))
-    InactiveMutualFriendship.import_from!(uid, TwitterUser.select_inactive_users(mutual_friends).map(&:uid))
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
   end

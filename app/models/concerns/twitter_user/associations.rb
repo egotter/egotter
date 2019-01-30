@@ -94,4 +94,8 @@ module Concerns::TwitterUser::Associations
       older.follower_uids - newer.follower_uids
     end.compact.flatten.reverse
   end
+
+  def calc_block_friend_uids
+    unfriendship_uids & unfollowership_uids
+  end
 end
