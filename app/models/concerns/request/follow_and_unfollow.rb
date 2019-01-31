@@ -6,6 +6,8 @@ module Concerns::Request::FollowAndUnfollow
   included do
     scope :without_error, -> {where("error_message is null or error_message = '' or error_message like 'You are unable to follow more people at this time.%'")}
 
+    scope :with_limit_error, -> {where("error_message like 'You are unable to follow more people at this time.%'")}
+
     scope :unprocessed, -> user_id {
       where(user_id: user_id, finished_at: nil).
           without_error

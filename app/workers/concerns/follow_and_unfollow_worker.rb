@@ -14,12 +14,13 @@ module Concerns::FollowAndUnfollowWorker
     request = request_class.unprocessed(user_id).order(created_at: :asc).first
     return unless request
 
-    if request.user.can_create_follow?
+    if Concerns::User::FollowAndUnfollow::Util.can_create_follow? && request.user.can_create_follow?
       yield(request.user, request.uid)
       request.finished!
       worker_class.perform_async(user_id) if request_class.unprocessed(user_id).exists?
     else
-      worker_class.perform_in(1.hour.since, user_id)
+      logger.warn "Follow limit exceeded #{request.inspect}"
+      worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.follow_limit_interval.since, user_id)
     end
   rescue => e
     if e.class == Twitter::Error::Unauthorized
