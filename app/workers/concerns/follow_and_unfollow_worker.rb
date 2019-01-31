@@ -31,6 +31,6 @@ module Concerns::FollowAndUnfollowWorker
 
     logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
     request.update(error_class: e.class, error_message: e.message.truncate(150))
-    worker_class.perform_in(30.minutes.since, user_id)
+    worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
   end
 end
