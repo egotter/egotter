@@ -34,6 +34,20 @@
       <div class="text-muted" style="font-size: x-small;"><%= t('.trial_reset_note') %></div>
     </td>
   </tr>
+  <tr>
+    <td><%= t('.trial_follow_request') %></td>
+    <td>
+      <a class="btn btn-default" href="<%= settings_follow_requests_path %>"><%= t('.trial_follow_request_see') %></a>
+      <div class="text-muted" style="font-size: x-small;"><%= t('.trial_follow_request_note') %></div>
+    </td>
+  </tr>
+  <tr>
+    <td><%= t('.trial_unfollow_request') %></td>
+    <td>
+      <a class="btn btn-default" href="<%= settings_unfollow_requests_path %>"><%= t('.trial_unfollow_request_see') %></a>
+      <div class="text-muted" style="font-size: x-small;"><%= t('.trial_unfollow_request_note') %></div>
+    </td>
+  </tr>
   </tbody>
 </table>
 
@@ -54,7 +68,7 @@
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal"><%= t('.trial_delete_cancel') %></button>
-        <button type="button" class="btn btn-danger trial-delete-submit-btn"><%= t('.trial_delete_submit') %></button>
+        <button type="button" class="btn btn-danger trial-delete-submit-btn" data-url="<%= api_v1_delete_tweets_path %>"><%= t('.trial_delete_submit') %></button>
       </div>
     </div>
   </div>
@@ -62,15 +76,7 @@
 
 <script>
   $(function () {
-    $('.trial-delete-submit-btn').on('click', function (e) {
-      $('#trial-delete-modal').modal('hide');
-      $('.trial-delete-btn').attr('disabled', 'disabled')
-          .prop("disabled", true);
-      var url = '<%= api_v1_delete_tweets_path %>';
-      $.post(url, function (res) {
-        console.log(res);
-      });
-    });
+    Settings.enableDeleteTweetsButton();
 
     var url = '<%= setting_path %>';
     attach_event_handler('email', url);

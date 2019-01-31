@@ -175,7 +175,17 @@ ja:
       trial_reset: "データリセット"
       trial_reset_btn: "えごったーのデータをリセットする"
       trial_reset_note: "近日公開予定！"
+      trial_follow_request: "フォローボタン履歴"
+      trial_follow_request_see: "見てみる"
+      trial_follow_request_note: "フォロー処理の履歴です"
+      trial_unfollow_request: "リムーブボタン履歴"
+      trial_unfollow_request_see: "見てみる"
+      trial_unfollow_request_note: "リムーブ処理の履歴です"
       cancel: "キャンセルする"
+    follow_requests:
+      title: 'フォローボタン履歴'
+    unfollow_requests:
+      title: 'リムーブボタン履歴'
     tgl_btn:
       updated: "更新しました"
       desc:
@@ -847,6 +857,16 @@ ja:
         links_count: "リンク"
         hashtags_count: "ハッシュタグ"
         locations_count: "位置情報"
+      follow_request:
+        uid: "ユーザー"
+        error_class: "エラー"
+        created_at: "クリック"
+        finished_at: "完了"
+      unfollow_request:
+        uid: "ユーザー"
+        error_class: "エラー"
+        created_at: "クリック"
+        finished_at: "完了"
       twitter_db/user:
         uid: "uid"
         screen_name: "Twitter ID"

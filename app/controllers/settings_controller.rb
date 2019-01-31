@@ -1,12 +1,9 @@
 class SettingsController < ApplicationController
 
-  before_action only: %i(index) do
-    push_referer
-    create_search_log
-  end
+  before_action :require_login!
+  before_action :create_search_log
 
   def index
-    return redirect_to root_path unless user_signed_in?
   end
 
   def update
@@ -23,5 +20,13 @@ class SettingsController < ApplicationController
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
     head :internal_server_error
+  end
+
+  def follow_requests
+    @requests = current_user.follow_requests
+  end
+
+  def unfollow_requests
+    @requests = current_user.unfollow_requests
   end
 end
