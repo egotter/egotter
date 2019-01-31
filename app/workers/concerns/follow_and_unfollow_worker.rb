@@ -31,6 +31,33 @@ module Concerns::FollowAndUnfollowWorker
 
     logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
     request.update(error_class: e.class, error_message: e.message.truncate(150))
-    worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
+
+    unless [CanNotFollowYourself, CanNotUnfollowYourself, HaveAlreadyFollowed, HaveNotFollowed].include?(e.class)
+      worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
+    end
+  end
+
+  class CanNotFollowYourself < StandardError
+    def initialize(message = "You can't follow yourself.")
+      super
+    end
+  end
+
+  class CanNotUnfollowYourself < StandardError
+    def initialize(message = "You can't unfollow yourself.")
+      super
+    end
+  end
+
+  class HaveAlreadyFollowed < StandardError
+    def initialize(message = "You've already followed the user.")
+      super
+    end
+  end
+
+  class HaveNotFollowed < StandardError
+    def initialize(message = "You haven't followed the user.")
+      super
+    end
   end
 end

@@ -5,18 +5,17 @@ class CreateFollowWorker
 
   def perform(user_id)
     do_perform(self.class, FollowRequest, user_id) do |request|
-      follow(request.user, request.uid)
+      follow(request.user.api_client.twitter, request.user.uid, request.uid)
     end
   end
 
-  private
+  def follow(client, from_uid, to_uid)
+    from_uid = from_uid.to_i
+    to_uid = to_uid.to_i
 
-  def follow(user, uid)
-    client = user.api_client.twitter
-    from_uid = user.uid.to_i
-    to_uid = uid.to_i
-    if from_uid != to_uid && !client.friendship?(from_uid, to_uid)
-      client.follow!(to_uid)
-    end
+    raise CanNotFollowYourself if from_uid == to_uid
+    raise HaveAlreadyFollowed if client.friendship?(from_uid, to_uid)
+
+    client.follow!(to_uid)
   end
 end

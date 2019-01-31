@@ -5,18 +5,17 @@ class CreateUnfollowWorker
 
   def perform(user_id)
     do_perform(self.class, UnfollowRequest, user_id) do |request|
-      unfollow(request.user, request.uid)
+      unfollow(request.user.api_client.twitter, request.user.uid, request.uid)
     end
   end
 
-  private
+  def unfollow(client, from_uid, to_uid)
+    from_uid = from_uid.to_i
+    to_uid = to_uid.to_i
 
-  def unfollow(user, uid)
-    client = user.api_client.twitter
-    from_uid = user.uid.to_i
-    to_uid = uid.to_i
-    if from_uid != to_uid && client.friendship?(from_uid, to_uid)
-      client.unfollow(to_uid)
-    end
+    raise CanNotUnfollowYourself if from_uid == to_uid
+    raise HaveNotFollowed unless client.friendship?(from_uid, to_uid)
+
+    client.unfollow(to_uid)
   end
 end
