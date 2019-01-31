@@ -17,10 +17,9 @@ module Concerns::FollowAndUnfollowWorker
     if request.ready?
       yield(request)
       request.finished!
-      worker_class.perform_async(user_id) if request_class.unprocessed(user_id).exists?
+      worker_class.perform_in(10.seconds.since, user_id) if request_class.unprocessed(user_id).exists?
     else
-      logger.warn "Follow or unfollow limit exceeded #{request.inspect}"
-      worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
+      raise TooManyRequests
     end
   rescue => e
     if e.class == Twitter::Error::Unauthorized
@@ -34,6 +33,12 @@ module Concerns::FollowAndUnfollowWorker
 
     unless [CanNotFollowYourself, CanNotUnfollowYourself, HaveAlreadyFollowed, HaveNotFollowed].include?(e.class)
       worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
+    end
+  end
+
+  class TooManyRequests < StandardError
+    def initialize(message = "Follow or unfollow limit exceeded")
+      super
     end
   end
 

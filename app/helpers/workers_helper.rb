@@ -50,13 +50,25 @@ module WorkersHelper
   def enqueue_create_follow_job_if_needed(user_id)
     return if from_crawler?
     jobs = collect_follow_or_unfollow_sidekiq_jobs('CreateFollowWorker', user_id)
-    CreateFollowWorker.perform_async(user_id) if jobs.empty?
+    if jobs.empty?
+      if Concerns::User::FollowAndUnfollow::Util.global_can_create_follow?
+        CreateFollowWorker.perform_async(user_id)
+      else
+        CreateFollowWorker.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
+      end
+    end
   end
 
   def enqueue_create_unfollow_job_if_needed(user_id)
     return if from_crawler?
     jobs = collect_follow_or_unfollow_sidekiq_jobs('CreateUnfollowWorker', user_id)
-    CreateUnfollowWorker.perform_async(user_id) if jobs.empty?
+    if jobs.empty?
+      if Concerns::User::FollowAndUnfollow::Util.global_can_create_unfollow?
+        CreateUnfollowWorker.perform_async(user_id)
+      else
+        CreateUnfollowWorker.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
+      end
+    end
   end
 
   def collect_follow_or_unfollow_sidekiq_jobs(name, user_id)
