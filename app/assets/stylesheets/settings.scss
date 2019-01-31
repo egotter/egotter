@@ -22,3 +22,12 @@
     vertical-align: middle;
   }
 }
+
+.table {
+  &.follow-requests th,
+  &.follow-requests td,
+  &.unfollow-requests th,
+  &.unfollow-requests td {
+    font-size: x-small;
+  }
+}

@@ -15,3 +15,16 @@ function attach_event_handler(name, url) {
       });
   });
 }
+
+var Settings = {};
+
+Settings.enableDeleteTweetsButton = function () {
+  $('.trial-delete-submit-btn').on('click', function (e) {
+    $('#trial-delete-modal').modal('hide');
+    $('.trial-delete-btn').attr('disabled', 'disabled')
+        .prop("disabled", true);
+    $.post($(this).data('url'), function (res) {
+      console.log(res);
+    });
+  });
+};

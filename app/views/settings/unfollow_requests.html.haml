@@ -1,0 +1,13 @@
+%h2.h4= t('.title')
+%table.unfollow-requests.table.table-condensed.table-responsive.borderless
+  %tr
+    %th= UnfollowRequest.human_attribute_name(:uid)
+    %th= UnfollowRequest.human_attribute_name(:error_class)
+    %th= UnfollowRequest.human_attribute_name(:created_at)
+    %th= UnfollowRequest.human_attribute_name(:finished_at)
+  - @requests.each do |req|
+    %tr
+      %td= req.uid
+      %td= req.error_class.split('::')[-1]
+      %td= req.created_at.to_s(:db)
+      %td= req.finished_at&.to_s(:db)

@@ -117,6 +117,8 @@ Rails.application.routes.draw do
   resources :notifications, only: :index
   resources :settings, only: :index
   resource :setting, only: :update
+  get 'settings/follow_requests', to: "settings#follow_requests"
+  get 'settings/unfollow_requests', to: "settings#unfollow_requests"
 
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
