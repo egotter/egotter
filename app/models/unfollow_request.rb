@@ -23,4 +23,8 @@ class UnfollowRequest < ApplicationRecord
   belongs_to :user
   validates :user_id, numericality: :only_integer
   validates :uid, numericality: :only_integer
+
+  def ready?
+    Concerns::User::FollowAndUnfollow::Util.global_can_create_unfollow? && user.can_create_unfollow?
+  end
 end

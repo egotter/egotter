@@ -30,7 +30,7 @@ module Concerns::User::FollowAndUnfollow
   module Util
     module_function
 
-    def can_create_follow?
+    def global_can_create_follow?
       follow_limit_reset_at < Time.zone.now
     end
 
@@ -39,6 +39,18 @@ module Concerns::User::FollowAndUnfollow
     end
 
     def follow_limit_interval
+      30.minutes
+    end
+
+    def global_can_create_unfollow?
+      unfollow_limit_reset_at < Time.zone.now
+    end
+
+    def unfollow_limit_reset_at
+      UnollowRequest.with_limit_error.order(updated_at: :desc).pluck(:updated_at).first + unfollow_limit_interval
+    end
+
+    def unfollow_limit_interval
       30.minutes
     end
   end
