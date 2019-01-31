@@ -1,4 +1,4 @@
-class CreateModalOpenLogs < ActiveRecord::Migration
+class CreateModalOpenLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :modal_open_logs do |t|
       t.string  :session_id,  null: false, default: ''

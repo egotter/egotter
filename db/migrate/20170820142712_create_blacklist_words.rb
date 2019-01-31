@@ -1,4 +1,4 @@
-class CreateBlacklistWords < ActiveRecord::Migration
+class CreateBlacklistWords < ActiveRecord::Migration[4.2]
   def change
     create_table :blacklist_words do |t|
       t.string :text, null: false

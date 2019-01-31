@@ -1,4 +1,4 @@
-class CreateOldUsers < ActiveRecord::Migration
+class CreateOldUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :old_users do |t|
       t.integer :uid,         null: false, limit: 8

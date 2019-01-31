@@ -1,4 +1,4 @@
-class CreateCreateNotificationMessageLogs < ActiveRecord::Migration
+class CreateCreateNotificationMessageLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :create_notification_message_logs do |t|
       t.integer :user_id,     null: false, index: true

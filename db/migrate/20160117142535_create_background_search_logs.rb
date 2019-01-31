@@ -1,4 +1,4 @@
-class CreateBackgroundSearchLogs < ActiveRecord::Migration
+class CreateBackgroundSearchLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :background_search_logs do |t|
       t.string  :session_id,  null: false, default: ''

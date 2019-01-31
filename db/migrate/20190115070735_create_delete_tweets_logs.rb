@@ -1,4 +1,4 @@
-class CreateDeleteTweetsLogs < ActiveRecord::Migration
+class CreateDeleteTweetsLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :delete_tweets_logs do |t|
       t.string  :session_id,  null: false, default: ''

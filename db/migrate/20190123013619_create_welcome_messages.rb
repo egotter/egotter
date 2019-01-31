@@ -1,4 +1,4 @@
-class CreateWelcomeMessages < ActiveRecord::Migration
+class CreateWelcomeMessages < ActiveRecord::Migration[4.2]
   def change
     create_table :welcome_messages do |t|
       t.integer  :user_id,    null: false

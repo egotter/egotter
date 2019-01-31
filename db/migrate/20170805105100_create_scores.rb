@@ -1,4 +1,4 @@
-class CreateScores < ActiveRecord::Migration
+class CreateScores < ActiveRecord::Migration[4.2]
   def change
     create_table :scores do |t|
       t.integer :uid, limit: 8,  null: false

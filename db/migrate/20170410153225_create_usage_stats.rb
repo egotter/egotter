@@ -1,4 +1,4 @@
-class CreateUsageStats < ActiveRecord::Migration
+class CreateUsageStats < ActiveRecord::Migration[4.2]
   def change
     create_table :usage_stats, options: 'ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4' do |t|
       t.integer :uid, limit: 8,       null: false

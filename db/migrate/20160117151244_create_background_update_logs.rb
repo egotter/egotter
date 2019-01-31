@@ -1,4 +1,4 @@
-class CreateBackgroundUpdateLogs < ActiveRecord::Migration
+class CreateBackgroundUpdateLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :background_update_logs do |t|
       t.integer :user_id,    null: false, default: -1

@@ -1,4 +1,4 @@
-class CreateTwitterUsers < ActiveRecord::Migration
+class CreateTwitterUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :twitter_users do |t|
       t.string  :uid,            null: false, index: true

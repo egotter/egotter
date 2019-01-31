@@ -1,4 +1,4 @@
-class CreateCreatePromptReportLogs < ActiveRecord::Migration
+class CreateCreatePromptReportLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :create_prompt_report_logs do |t|
       t.integer  :user_id,     null: false, default: -1

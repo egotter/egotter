@@ -1,4 +1,4 @@
-class CreateVisitorEngagementStats < ActiveRecord::Migration
+class CreateVisitorEngagementStats < ActiveRecord::Migration[4.2]
   def change
     create_table :visitor_engagement_stats do |t|
       t.datetime :date,  null: false

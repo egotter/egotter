@@ -1,4 +1,4 @@
-class CreateSearchReports < ActiveRecord::Migration
+class CreateSearchReports < ActiveRecord::Migration[4.2]
   def change
     create_table :search_reports do |t|
       t.integer  :user_id,      null: false

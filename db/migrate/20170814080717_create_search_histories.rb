@@ -1,4 +1,4 @@
-class CreateSearchHistories < ActiveRecord::Migration
+class CreateSearchHistories < ActiveRecord::Migration[4.2]
   def change
     create_table :search_histories do |t|
       t.string  :session_id, null: false, default: ''

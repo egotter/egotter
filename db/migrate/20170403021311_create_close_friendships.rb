@@ -1,4 +1,4 @@
-class CreateCloseFriendships < ActiveRecord::Migration
+class CreateCloseFriendships < ActiveRecord::Migration[4.2]
   def change
     create_table :close_friendships, id: false do |t|
       t.column  :id,        'BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT'

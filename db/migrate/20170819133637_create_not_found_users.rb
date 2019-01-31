@@ -1,4 +1,4 @@
-class CreateNotFoundUsers < ActiveRecord::Migration
+class CreateNotFoundUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :not_found_users do |t|
       t.string :screen_name, null: false
