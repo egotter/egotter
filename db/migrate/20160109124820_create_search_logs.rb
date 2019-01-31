@@ -1,4 +1,4 @@
-class CreateSearchLogs < ActiveRecord::Migration
+class CreateSearchLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :search_logs do |t|
       t.string  :session_id,  null: false, default: '', index: true

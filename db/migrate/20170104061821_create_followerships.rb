@@ -1,4 +1,4 @@
-class CreateFollowerships < ActiveRecord::Migration
+class CreateFollowerships < ActiveRecord::Migration[4.2]
   def change
     create_table :followerships, id: false do |t|
       t.column  :id,          'BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT'

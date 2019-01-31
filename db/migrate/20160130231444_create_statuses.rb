@@ -1,4 +1,4 @@
-class CreateStatuses < ActiveRecord::Migration
+class CreateStatuses < ActiveRecord::Migration[4.2]
   def change
     create_table :statuses, options: 'ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4' do |t|
       t.string :uid,         null: false

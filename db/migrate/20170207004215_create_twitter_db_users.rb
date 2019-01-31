@@ -1,4 +1,4 @@
-class CreateTwitterDbUsers < ActiveRecord::Migration
+class CreateTwitterDbUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :twitter_db_users, id: false, options: 'ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4' do |t|
       t.column  :id,            'BIGINT NOT NULL PRIMARY KEY AUTO_INCREMENT'

@@ -1,4 +1,4 @@
-class CreateCreateRelationshipLogs < ActiveRecord::Migration
+class CreateCreateRelationshipLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :create_relationship_logs do |t|
       t.string  :session_id,  null: false, default: ''

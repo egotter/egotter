@@ -1,4 +1,4 @@
-class CreateJobs < ActiveRecord::Migration
+class CreateJobs < ActiveRecord::Migration[4.2]
   def change
     create_table :jobs do |t|
       t.integer  :track_id,        null: false, default: -1

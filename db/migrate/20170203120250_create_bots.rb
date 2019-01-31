@@ -1,4 +1,4 @@
-class CreateBots < ActiveRecord::Migration
+class CreateBots < ActiveRecord::Migration[4.2]
   def change
     create_table :bots do |t|
       t.integer :uid,         null: false, limit: 8

@@ -1,4 +1,4 @@
-class CreateTracks < ActiveRecord::Migration
+class CreateTracks < ActiveRecord::Migration[4.2]
   def change
     create_table :tracks do |t|
       t.string  :session_id,  null: false, default: ''

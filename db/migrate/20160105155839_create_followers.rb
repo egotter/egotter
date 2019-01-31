@@ -1,4 +1,4 @@
-class CreateFollowers < ActiveRecord::Migration
+class CreateFollowers < ActiveRecord::Migration[4.2]
   def change
     create_table :followers, options: 'ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4' do |t|
       t.string :uid,         null: false

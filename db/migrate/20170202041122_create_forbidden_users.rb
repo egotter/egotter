@@ -1,4 +1,4 @@
-class CreateForbiddenUsers < ActiveRecord::Migration
+class CreateForbiddenUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :forbidden_users do |t|
       t.string :screen_name, null: false

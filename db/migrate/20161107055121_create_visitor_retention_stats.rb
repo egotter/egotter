@@ -1,4 +1,4 @@
-class CreateVisitorRetentionStats < ActiveRecord::Migration
+class CreateVisitorRetentionStats < ActiveRecord::Migration[4.2]
   def change
     create_table :visitor_retention_stats do |t|
       t.datetime :date,      null: false

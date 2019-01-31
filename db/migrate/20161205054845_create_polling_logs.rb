@@ -1,4 +1,4 @@
-class CreatePollingLogs < ActiveRecord::Migration
+class CreatePollingLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :polling_logs do |t|
       t.string  :session_id,  null: false, default: '', index: true

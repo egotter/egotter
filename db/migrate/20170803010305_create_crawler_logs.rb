@@ -1,4 +1,4 @@
-class CreateCrawlerLogs < ActiveRecord::Migration
+class CreateCrawlerLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :crawler_logs do |t|
       t.string  :controller,  null: false, default: ''

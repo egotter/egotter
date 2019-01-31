@@ -1,4 +1,4 @@
-class CreateSignInLogs < ActiveRecord::Migration
+class CreateSignInLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :sign_in_logs do |t|
       t.string  :session_id,  null: false, default: ''

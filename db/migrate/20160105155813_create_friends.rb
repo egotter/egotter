@@ -1,4 +1,4 @@
-class CreateFriends < ActiveRecord::Migration
+class CreateFriends < ActiveRecord::Migration[4.2]
   def change
     create_table :friends, options: 'ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4' do |t|
       t.string :uid,         null: false

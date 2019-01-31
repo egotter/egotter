@@ -1,4 +1,4 @@
-class CreateUnfollowRequests < ActiveRecord::Migration
+class CreateUnfollowRequests < ActiveRecord::Migration[4.2]
   def change
     create_table :unfollow_requests do |t|
       t.integer  :user_id,       null: false

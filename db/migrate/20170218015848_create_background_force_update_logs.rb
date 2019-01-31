@@ -1,4 +1,4 @@
-class CreateBackgroundForceUpdateLogs < ActiveRecord::Migration
+class CreateBackgroundForceUpdateLogs < ActiveRecord::Migration[4.2]
   def change
     create_table :background_force_update_logs do |t|
       t.string  :session_id,  null: false, default: ''

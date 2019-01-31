@@ -1,4 +1,4 @@
-class CreateSearchResults < ActiveRecord::Migration
+class CreateSearchResults < ActiveRecord::Migration[4.2]
   def change
     create_table :search_results do |t|
       t.string :uid,         null: false
