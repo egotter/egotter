@@ -4,7 +4,7 @@ class SearchCountController < ApplicationController
         if Util::SearchCountCache.exists?
           Util::SearchCountCache.get
         else
-          CreateTweetsWorker.perform_async(keyword)
+          SetSearchCountWorker.perform_async
           -1
         end
 
