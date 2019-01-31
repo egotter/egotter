@@ -807,7 +807,7 @@ ja:
     attributes:
       twitter_user:
         uid: "uid"
-        screen_name: "Twitter ID"
+        screen_name: "screen name"
         user_info: "user_info"
         friends_count: "フォロー数"
         followers_count: "フォロワー数"

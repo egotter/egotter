@@ -22,39 +22,21 @@ class ImportTwitterUserRelationsWorker
 
     client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
 
-    uids = FavoriteFriendship.import_by!(twitter_user: twitter_user)
-    uids += CloseFriendship.import_by!(twitter_user: twitter_user)
-    import_twitter_db_users(uids, client)
+    import_favorite_and_close_friendships(client, twitter_user)
 
     return if twitter_user.friendless?
 
-    friend_uids, follower_uids =
-      TwitterUser::Batch.fetch_friend_ids_and_follower_ids(uid, client: client) do |ex|
-        logger.warn "#{__method__}: #{ex.class} #{ex.message.truncate(100)} #{uid}"
-      end
-    return if friend_uids.nil? || follower_uids.nil?
+    friend_uids, follower_uids = fetch_uids(client, uid)
 
+    import_friendships(twitter_user, friend_uids, follower_uids)
+    import_twitter_db_friendships(client, twitter_user, friend_uids, follower_uids)
 
-    import_friendships(uid, twitter_user, friend_uids, follower_uids)
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
-
-    begin
-      Unfriendship.import_by!(twitter_user: latest)
-      Unfollowership.import_by!(twitter_user: latest)
-      OneSidedFriendship.import_by!(twitter_user: twitter_user)
-      OneSidedFollowership.import_by!(twitter_user: twitter_user)
-      MutualFriendship.import_by!(twitter_user: twitter_user)
-      BlockFriendship.import_by!(twitter_user: latest)
-    rescue => e
-      logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+    if latest.id != twitter_user.id
+      logger.warn "#{__method__}: latest.id != twitter_user.id #{uid}"
     end
 
-    import_twitter_db_users(friend_uids + follower_uids, client)
-    import_twitter_db_friendships(uid, friend_uids, follower_uids)
-
-    InactiveFriendship.import_by!(twitter_user: twitter_user)
-    InactiveFollowership.import_by!(twitter_user: twitter_user)
-    InactiveMutualFriendship.import_by!(twitter_user: twitter_user)
+    import_other_relationships(latest)
 
   rescue Twitter::Error::Unauthorized,
     Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
@@ -86,17 +68,52 @@ class ImportTwitterUserRelationsWorker
     job.update(finished_at: Time.zone.now)
   end
 
-  private
+  def fetch_uids(client, uid)
+    friend_uids, follower_uids =
+        TwitterUser::Batch.fetch_friend_ids_and_follower_ids(uid, client: client) do |ex|
+          logger.warn "#{__method__}: #{ex.class} #{ex.message.truncate(100)} #{uid}"
+        end
 
-  def import_twitter_db_users(uids, client)
+    if friend_uids.nil? || follower_uids.nil?
+      raise 'friend_uids.nil? || follower_uids.nil?'
+    end
+
+    [friend_uids, follower_uids]
+  end
+
+  def import_favorite_and_close_friendships(client, twitter_user)
+    uids = FavoriteFriendship.import_by!(twitter_user: twitter_user)
+    uids += CloseFriendship.import_by!(twitter_user: twitter_user)
+    import_twitter_db_users(client, uids)
+  end
+
+  def import_other_relationships(twitter_user)
+    [
+        Unfriendship,
+        Unfollowership,
+        OneSidedFriendship,
+        OneSidedFollowership,
+        MutualFriendship,
+        BlockFriendship,
+        InactiveFriendship,
+        InactiveFollowership,
+        InactiveMutualFriendship
+    ].each do |klass|
+      klass.import_by!(twitter_user: twitter_user)
+    rescue => e
+      logger.warn "#{klass}#import_by!: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
+    end
+  end
+
+  def import_twitter_db_users(client, uids)
     return if uids.blank?
     TwitterDB::User::Batch.fetch_and_import(uids, client: client)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
   end
 
-  def import_friendships(uid, twitter_user, friend_uids, follower_uids)
-    if twitter_user.friends_size != friend_uids.size || twitter_user.followers_size != follower_uids.size
+  def import_friendships(twitter_user, friend_uids, follower_uids)
+    unless twitter_user.consistent?(friend_uids, follower_uids)
       logger.warn "#{__method__}: It is not consistent. twitter_user(id=#{twitter_user.id}) [#{twitter_user.friends_size}, #{twitter_user.followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
     end
 
@@ -106,24 +123,28 @@ class ImportTwitterUserRelationsWorker
       twitter_user.update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
   rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid} #{twitter_user.inspect}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
   end
 
-  def import_twitter_db_friendships(uid, friend_uids, follower_uids)
+  def import_twitter_db_friendships(client, twitter_user, friend_uids, follower_uids)
+    import_twitter_db_users(client, friend_uids + follower_uids)
+
     friends_size = TwitterDB::User.where(uid: friend_uids).size
     followers_size = TwitterDB::User.where(uid: follower_uids).size
     if friends_size != friend_uids.size || followers_size != follower_uids.size
-      logger.warn "#{__method__}: It is not consistent. #{uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
+      logger.warn "#{__method__}: It is not consistent. #{twitter_user.uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
     end
 
     silent_transaction do
-      TwitterDB::Friendship.import_from!(uid, friend_uids)
-      TwitterDB::Followership.import_from!(uid, follower_uids)
-      TwitterDB::User.find_by(uid: uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
+      TwitterDB::Friendship.import_from!(twitter_user.uid, friend_uids)
+      TwitterDB::Followership.import_from!(twitter_user.uid, follower_uids)
+      TwitterDB::User.find_by(uid: twitter_user.uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
   rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uid}"
+    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
   end
+
+  private
 
   def silent_transaction(retri: false, retry_limit: 3, retry_timeout: 10.seconds, retry_message: '', &block)
     retry_count = 0

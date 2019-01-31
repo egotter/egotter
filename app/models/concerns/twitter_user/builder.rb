@@ -19,11 +19,10 @@ module Concerns::TwitterUser::Builder
   end
 
   class Builder
-    attr_reader :uid, :error_message
+    attr_reader :uid
 
     def initialize(uid)
       @uid = uid.to_i
-      @error_message = nil
       @login_user = nil
       @client = nil
     end
@@ -44,8 +43,7 @@ module Concerns::TwitterUser::Builder
       end
 
       if validate && latest.fresh?
-        @error_message = 'Recently updated'
-        return nil
+        return TwitterUser.new.tap{|u| u.errors[:base] << 'Recently updated' }
       end
 
       twitter_user = TwitterUser.build_by(user: t_user)
@@ -54,13 +52,11 @@ module Concerns::TwitterUser::Builder
 
       if validate
         if twitter_user.friendless?
-          @error_message = 'Too many friends (already exists)'
-          return nil
+          return TwitterUser.new.tap{|u| u.errors[:base] << 'Too many friends (already exists)' }
         end
 
         if latest.diff(twitter_user).empty?
-          @error_message = 'Not changed (before building)'
-          return nil
+          return TwitterUser.new.tap{|u| u.errors[:base] << 'Not changed (before building)' }
         end
       end
 

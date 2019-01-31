@@ -4,6 +4,5 @@
 :logfile: ./log/sidekiq.log
 :queues:
   - egotter
-  - CreateRelationshipWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterUserWorker

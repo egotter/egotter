@@ -13,7 +13,6 @@
   - CreatePromptReportWorker
   - CreateScoreWorker
   - CreateSearchReportWorker
-  - CreateRelationshipWorker
   - CreateSearchLogWorker
   - CreateSearchErrorLogWorker
   - CreateSignedInTwitterUserWorker

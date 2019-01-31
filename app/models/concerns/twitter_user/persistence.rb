@@ -26,6 +26,8 @@ module Concerns::TwitterUser::Persistence
     silent_transaction { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
     silent_transaction { favorites.each_slice(1000) { |ary| Favorite.import(ary, options) } }
 
+    # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
+
     if Rails.env.test?
       friendships.each { |f| f.from_id = id }.each(&:save!)
       followerships.each { |f| f.from_id = id }.each(&:save!)
