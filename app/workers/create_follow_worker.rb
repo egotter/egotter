@@ -4,8 +4,8 @@ class CreateFollowWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
-    do_perform(self.class, FollowRequest, user_id) do |user, uid|
-      follow(user, uid)
+    do_perform(self.class, FollowRequest, user_id) do |request|
+      follow(request.user, request.uid)
     end
   end
 

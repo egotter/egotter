@@ -4,8 +4,8 @@ class CreateUnfollowWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
-    do_perform(self.class, UnfollowRequest, user_id) do |user, uid|
-      unfollow(user, uid)
+    do_perform(self.class, UnfollowRequest, user_id) do |request|
+      unfollow(request.user, request.uid)
     end
   end
 
