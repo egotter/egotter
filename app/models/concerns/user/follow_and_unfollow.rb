@@ -35,7 +35,8 @@ module Concerns::User::FollowAndUnfollow
     end
 
     def follow_limit_reset_at
-      FollowRequest.with_limit_error.order(updated_at: :desc).pluck(:updated_at).first + follow_limit_interval
+      last_error_time = FollowRequest.with_limit_error.order(updated_at: :desc).pluck(:updated_at).first
+      last_error_time.nil? ? 1.second.ago : last_error_time + follow_limit_interval
     end
 
     def follow_limit_interval
@@ -47,7 +48,8 @@ module Concerns::User::FollowAndUnfollow
     end
 
     def unfollow_limit_reset_at
-      UnollowRequest.with_limit_error.order(updated_at: :desc).pluck(:updated_at).first + unfollow_limit_interval
+      last_error_time = UnollowRequest.with_limit_error.order(updated_at: :desc).pluck(:updated_at).first
+      last_error_time.nil? ? 1.second.ago : last_error_time + unfollow_limit_interval
     end
 
     def unfollow_limit_interval
