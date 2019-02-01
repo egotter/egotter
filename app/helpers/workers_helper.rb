@@ -48,7 +48,7 @@ module WorkersHelper
   end
 
   def enqueue_create_follow_job_if_needed(user_id)
-    return if respond_to(:from_crawler?) && from_crawler?
+    return if respond_to?(:from_crawler?) && from_crawler?
     jobs = Concerns::User::FollowAndUnfollow::Util.collect_follow_or_unfollow_sidekiq_jobs('CreateFollowWorker', user_id)
     if jobs.empty?
       if Concerns::User::FollowAndUnfollow::Util.global_can_create_follow?
