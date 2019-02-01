@@ -1,7 +1,7 @@
 class CreateTwitterUsers < ActiveRecord::Migration[4.2]
   def change
     create_table :twitter_users do |t|
-      t.string  :uid,            null: false, index: true
+      t.bigint  :uid,            null: false, index: true
       t.string  :screen_name,    null: false, index: true
       t.integer :friends_size,   null: false, default: 0
       t.integer :followers_size, null: false, default: 0

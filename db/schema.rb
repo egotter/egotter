@@ -707,7 +707,7 @@ ActiveRecord::Schema.define(version: 20190130071946) do
   end
 
   create_table "twitter_users", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
-    t.string "uid", null: false
+    t.bigint "uid", null: false
     t.string "screen_name", null: false
     t.integer "friends_size", default: 0, null: false
     t.integer "followers_size", default: 0, null: false
