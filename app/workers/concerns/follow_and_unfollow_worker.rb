@@ -24,8 +24,6 @@ module Concerns::FollowAndUnfollowWorker
   rescue => e
     if e.class == Twitter::Error::Unauthorized
       handle_unauthorized_exception(e, user_id: user_id)
-    elsif e.class == Twitter::Error::Forbidden
-      handle_forbidden_exception(e, user_id: user_id)
     end
 
     logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
@@ -40,7 +38,8 @@ module Concerns::FollowAndUnfollowWorker
 
   def retry_immediately?(ex)
     ex.message == 'Invalid or expired token.' ||
-        [CanNotFollowYourself, CanNotUnfollowYourself, HaveAlreadyFollowed, HaveNotFollowed].include?(ex.class)
+        ex.message.starts_with?("You've already requested to follow") ||
+        [CanNotFollowYourself, CanNotUnfollowYourself, HaveAlreadyFollowed, HaveNotFollowed, HaveAlreadyRequestedToFollow].include?(ex.class)
   end
 
   class TooManyRequests < StandardError
@@ -72,4 +71,12 @@ module Concerns::FollowAndUnfollowWorker
       super
     end
   end
+
+  class HaveAlreadyRequestedToFollow < StandardError
+    def initialize(message = "You've already requested to follow.")
+      super
+    end
+  end
+
+
 end

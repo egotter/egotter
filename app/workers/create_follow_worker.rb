@@ -15,7 +15,15 @@ class CreateFollowWorker
 
     raise CanNotFollowYourself if from_uid == to_uid
     raise HaveAlreadyFollowed if client.friendship?(from_uid, to_uid)
+    raise HaveAlreadyRequestedToFollow if friendship_outgoing?(client, to_uid)
 
     client.follow!(to_uid)
+  end
+
+  def friendship_outgoing?(client, uid)
+    client.friendships_outgoing.attrs[:ids].include?(uid)
+  rescue => e
+    logger.warn "#{__method__} #{e.class} #{e.message}"
+    false
   end
 end
