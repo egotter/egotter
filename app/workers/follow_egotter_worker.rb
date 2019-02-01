@@ -1,51 +1,22 @@
 class FollowEgotterWorker
   include Sidekiq::Worker
-  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(*args)
-    raised = false
-    request = fetch_request
-    user = request.user
+    request =
+        FollowRequest.order(created_at: :desc).
+            where(uid: User::EGOTTER_UID).
+            where(finished_at: nil).
+            without_error.first
 
     if request
-      follow(user)
-      request.finished!
-    end
-  rescue => e
-    if e.class == Twitter::Error::Unauthorized
-      handle_unauthorized_exception(e, user_id: user.id)
-    elsif e.class == Twitter::Error::Forbidden
-      handle_forbidden_exception(e, user_id: user.id)
-      raised = true
-    else
-      raised = true
+      WorkersHelper.enqueue_create_follow_job_if_needed(request.user_id)
     end
 
-    logger.warn "#{e.class} #{e.message} request=#{request.id} user=#{user.id}"
-    request.update(error_class: e.class, error_message: e.message.truncate(150))
-
-    if e.message == 'Invalid or expired token.'
-      retry
-    end
-  ensure
-    interval = raised ? 30.minutes.since : 30.seconds.since
+    interval = Concerns::User::FollowAndUnfollow::Util.global_can_create_follow? ? 30.seconds : 30.minutes
     self.class.perform_in(interval)
-  end
-
-  private
-
-  def fetch_request
-    FollowRequest.order(created_at: :desc).
-        where(uid: User::EGOTTER_UID).
-        where(finished_at: nil).
-        without_error.first
-  end
-
-  def follow(user)
-    client = user.api_client.twitter
-    if user.uid.to_i != User::EGOTTER_UID && !client.friendship?(user.uid.to_i, User::EGOTTER_UID)
-      client.follow!(User::EGOTTER_UID)
-    end
+  rescue => e
+    logger.warn "#{e.class} #{e.message}"
+    self.class.perform_in(30.minutes)
   end
 end

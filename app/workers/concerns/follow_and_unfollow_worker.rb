@@ -17,7 +17,7 @@ module Concerns::FollowAndUnfollowWorker
     if request.ready?
       yield(request)
       request.finished!
-      worker_class.perform_in(10.seconds.since, user_id) if request_class.unprocessed(user_id).exists?
+      worker_class.perform_in(10.seconds, user_id) if request_class.unprocessed(user_id).exists?
     else
       raise TooManyRequests
     end
@@ -31,11 +31,16 @@ module Concerns::FollowAndUnfollowWorker
     logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
     request.update(error_class: e.class, error_message: e.message.truncate(150))
 
-    if [CanNotFollowYourself, CanNotUnfollowYourself, HaveAlreadyFollowed, HaveNotFollowed].include?(e.class)
+    if retry_immediately?(e)
       worker_class.perform_async(user_id) if request_class.unprocessed(user_id).exists?
     else
-      worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval.since, user_id)
+      worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval, user_id)
     end
+  end
+
+  def retry_immediately?(ex)
+    ex.message == 'Invalid or expired token.' ||
+        [CanNotFollowYourself, CanNotUnfollowYourself, HaveAlreadyFollowed, HaveNotFollowed].include?(ex.class)
   end
 
   class TooManyRequests < StandardError
