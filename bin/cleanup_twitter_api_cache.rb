@@ -2,14 +2,14 @@ require 'timeout'
 require 'twitter_with_auto_pagination'
 require 'dotenv/load'
 
-def disk_size
+def disk_size(dir)
   # %x(du -sh #{dir} | awk '{ print $1 }').chomp
-  %x(df -h /efs | grep efs | awk '{ print $3 }').chomp
+  %x(df -h #{dir} | grep efs | awk '{ print $3 }').chomp
 end
 
 dir = ENV['TWITTER_CACHE_DIR']
 start = Time.now
-before = disk_size
+before = disk_size(dir)
 
 begin
   Timeout.timeout(600) do
@@ -24,4 +24,4 @@ end
 
 elapsed = (Time.now - start).round(3)
 
-puts "#{Time.now.utc} #{$0} #{before} -> #{disk_size} (#{elapsed}sec)"
+puts "#{Time.now.utc} #{$0} #{before} -> #{disk_size(dir)} (#{elapsed}sec)"
