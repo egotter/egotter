@@ -59,4 +59,34 @@ RSpec.describe TwitterDB::User, type: :model do
       expect(TwitterDB::User.to_save_format(t_user)).to match({uid: t_user.id, screen_name: t_user.screen_name, user_info: {id: t_user.id, screen_name: t_user.screen_name}.to_json, friends_size: -1, followers_size: -1})
     end
   end
+
+  describe '.import_by!' do
+    let(:twitter_user) { build(:twitter_user) }
+    subject { described_class.import_by!(twitter_user: twitter_user) }
+
+    it 'Updates TwitterDB::User' do
+      subject
+      TwitterDB::User.find_by(uid: twitter_user.uid).tap do |user|
+        expect(user.screen_name).to eq(twitter_user.screen_name)
+        expect(user.friends_size).to eq(-1)
+        expect(user.followers_size).to eq(-1)
+        # TODO Check user_info
+      end
+    end
+  end
+
+  describe '.import_by' do
+    let(:twitter_user) { build(:twitter_user) }
+    subject { described_class.import_by(twitter_user: twitter_user) }
+
+    it 'calls #import_by!' do
+      expect(described_class).to receive(:import_by!).with(twitter_user: twitter_user)
+      subject
+    end
+
+    it "doesn't raise an error" do
+      allow(described_class).to receive(:import_by!).and_raise(StandardError)
+      expect { subject }.to_not raise_error
+    end
+  end
 end

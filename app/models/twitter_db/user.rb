@@ -39,27 +39,42 @@ module TwitterDB
     UPDATE_COLUMNS = %i(uid screen_name user_info)
     BATCH_SIZE = 1000
 
-    # Note: This method uses index_twitter_db_users_on_uid.
-    def self.import_in_batches(users)
-      persisted_uids = where(uid: users.map(&:first), updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
-      import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: BATCH_SIZE, validate: false)
-    end
+    class << self
+      # Note: This method uses index_twitter_db_users_on_uid.
+      def import_in_batches(users)
+        persisted_uids = where(uid: users.map(&:first), updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
+        import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: BATCH_SIZE, validate: false)
+      end
 
-    def self.to_import_format(t_user)
-      [t_user[:id], t_user[:screen_name], TwitterUser.collect_user_info(t_user), -1, -1]
-    end
+      def to_import_format(t_user)
+        [t_user[:id], t_user[:screen_name], TwitterUser.collect_user_info(t_user), -1, -1]
+      end
 
-    def self.to_save_format(t_user)
-      {uid: t_user[:id], screen_name: t_user[:screen_name], user_info: TwitterUser.collect_user_info(t_user), friends_size: -1, followers_size: -1}
-    end
+      def to_save_format(t_user)
+        {uid: t_user[:id], screen_name: t_user[:screen_name], user_info: TwitterUser.collect_user_info(t_user), friends_size: -1, followers_size: -1}
+      end
 
-    def self.with_friends
-      # friends_size != -1 AND followers_size != -1
-      where.not(friends_size: -1, followers_size: -1)
-    end
+      def with_friends
+        # friends_size != -1 AND followers_size != -1
+        where.not(friends_size: -1, followers_size: -1)
+      end
 
-    def self.friendless
-      where(friends_size: -1, followers_size: -1)
+      def friendless
+        where(friends_size: -1, followers_size: -1)
+      end
+
+      def import_by!(twitter_user:)
+        user = find_or_initialize_by(uid: twitter_user.uid)
+        user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
+        user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
+        user.save!
+      end
+
+      def import_by(twitter_user:)
+        import_by!(twitter_user: twitter_user)
+      rescue => e
+        logger.warn "#{e.class} #{e.message} #{self.inspect}"
+      end
     end
 
     def with_friends?

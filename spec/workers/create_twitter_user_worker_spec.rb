@@ -54,38 +54,4 @@ RSpec.describe CreateTwitterUserWorker do
       end
     end
   end
-
-  describe '#save_twitter_db_user' do
-    subject { described_class.new.save_twitter_db_user(twitter_user) }
-
-    context 'Without persisted record' do
-      it 'saves TwitterDB::User' do
-        expect(TwitterDB::User.exists?(uid: twitter_user.uid)).to be_falsey
-        subject
-
-        twitter_db_user = TwitterDB::User.find_by(uid: twitter_user.uid)
-        expect(twitter_db_user.screen_name).to eq(twitter_user.screen_name)
-        expect(twitter_db_user.friends_size).to eq(-1)
-        expect(twitter_db_user.followers_size).to eq(-1)
-      end
-    end
-
-    context 'With persisted record' do
-      let(:friends_size) { 5 }
-      let(:followers_size) { 10 }
-      let(:twitter_db_user) do
-        create(:twitter_db_user, uid: twitter_user.uid, screen_name: twitter_user.screen_name,
-               friends_size: friends_size, followers_size: followers_size)
-      end
-      before { twitter_db_user.save! }
-      it 'updates TwitterDB::User' do
-        expect(twitter_db_user.persisted?).to be_truthy
-        subject
-
-        expect(twitter_db_user.screen_name).to eq(twitter_user.screen_name)
-        expect(twitter_db_user.friends_size).to eq(friends_size)
-        expect(twitter_db_user.followers_size).to eq(followers_size)
-      end
-    end
-  end
 end

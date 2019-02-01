@@ -35,6 +35,7 @@ class CreateTwitterUserWorker
 
     begin
       twitter_user = build_twitter_user(client, user, uid)
+      TwitterDB::User.import_by(twitter_user: twitter_user)
       save_twitter_user(twitter_user)
     rescue Job::Error => e
       job.update(error_class: e.class, error_message: e.message)
@@ -97,7 +98,7 @@ class CreateTwitterUserWorker
     twitter_user = builder.build
 
     if twitter_user.invalid?
-      save_twitter_db_user(TwitterUser.build_by(user: client.user(uid)))
+      TwitterDB::User.import_by(twitter_user: twitter_user)
       raise Job::Error::RecordInvalid.new(twitter_user.errors.full_messages.join(', '))
     end
 
@@ -105,26 +106,13 @@ class CreateTwitterUserWorker
   end
 
   def save_twitter_user(twitter_user)
-    save_twitter_db_user(twitter_user)
-
-    if twitter_user.save
-      TwitterUser.find(twitter_user.id)
-    else
-      if TwitterUser.latest_by(uid: twitter_user.uid)
+    unless twitter_user.save
+      if TwitterUser.exists?(uid: twitter_user.uid)
         raise Job::Error::NotChanged.new('Not changed')
       else
         raise Job::Error::RecordInvalid.new(twitter_user.errors.full_messages.join(', '))
       end
     end
-  end
-
-  def save_twitter_db_user(twitter_user)
-    user = TwitterDB::User.find_or_initialize_by(uid: twitter_user.uid)
-    user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
-    user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
-    user.save!
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(150)} #{twitter_user.inspect}"
   end
 
   private
