@@ -46,6 +46,10 @@ class CreateTwitterUserWorker
       CreateScoreWorker.perform_async(uid, track_id: track.id)
     end
 
+    # At this point:
+    # Saved:     friends_size, followers_size, statuses, mentions, search_results, favorites
+    # NOT saved: friendships, followerships
+
   rescue Twitter::Error::Forbidden, Twitter::Error::NotFound, Twitter::Error::Unauthorized,
     Twitter::Error::TooManyRequests, Twitter::Error::InternalServerError, Twitter::Error::ServiceUnavailable => e
     case e.class.name.demodulize

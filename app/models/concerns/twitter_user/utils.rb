@@ -36,6 +36,15 @@ module Concerns::TwitterUser::Utils
     friends_size == uids1.size && followers_size == uids2.size
   end
 
+  def inconsistent_because_import_didnt_run?
+    (friends_size >= 0 && friends_size != friendships.size) ||
+        (followers_size >= 0 && followers_size != followerships.size)
+  end
+
+  def inconsistent_because_import_failed?
+    friends_size == -1 && followers_size == -1
+  end
+
   def friend_uids
     new_record? ? friendships.map(&:friend_uid) : friendships.pluck(:friend_uid)
   end
