@@ -34,9 +34,7 @@ module Concerns::TwitterUser::Builder
       latest = TwitterUser.latest_by(uid: uid)
 
       unless latest
-        twitter_user = TwitterUser.build_by(user: t_user)
-        relations = TwitterUserFetcher.new(twitter_user, client: @client, login_user: @login_user).fetch
-        twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
+        twitter_user, relations = fetch(t_user)
         twitter_user.build_other_relations(relations)
         twitter_user.user_id = @login_user ? @login_user.id : -1
         return twitter_user
@@ -46,9 +44,7 @@ module Concerns::TwitterUser::Builder
         return TwitterUser.new.tap{|u| u.errors[:base] << 'Recently updated' }
       end
 
-      twitter_user = TwitterUser.build_by(user: t_user)
-      relations = TwitterUserFetcher.new(twitter_user, client: @client, login_user: @login_user).fetch
-      twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
+      twitter_user, relations = fetch(t_user)
 
       if validate
         if twitter_user.friendless?
@@ -63,6 +59,13 @@ module Concerns::TwitterUser::Builder
       twitter_user.build_other_relations(relations)
       twitter_user.user_id = @login_user ? @login_user.id : -1
       twitter_user
+    end
+
+    def fetch(t_user)
+      twitter_user = TwitterUser.build_by(user: t_user)
+      relations = TwitterUserFetcher.new(twitter_user, client: @client, login_user: @login_user).fetch
+      twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
+      [twitter_user, relations]
     end
 
     def login_user(login_user)
