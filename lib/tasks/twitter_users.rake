@@ -53,4 +53,23 @@ namespace :twitter_users do
     puts "\ncreate #{(sigint.trapped? || failed ? 'suspended:' : 'finished:')}"
     puts "  uids: #{specified_uids.size}, processed: #{processed.size}, skipped: #{skipped}"
   end
+
+  desc 'check'
+  task check: :environment do
+    sigint = Util::Sigint.new.trap
+
+    STDOUT.sync = true
+    Rails.logger.level = Logger::WARN
+
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    columns = %i(id uid friends_size followers_size)
+
+    TwitterUser.select(*columns).find_each(start: start, batch_size: 1000) do |twitter_user|
+      if twitter_user.inconsistent_because_import_didnt_run?
+        puts "#{twitter_user.inspect} friendships: #{twitter_user.friendships.size} followerships: #{twitter_user.followerships.size} latest: #{twitter_user.latest?} one: #{twitter_user.one?}"
+      end
+
+      break if sigint.trapped?
+    end
+  end
 end
