@@ -26,7 +26,11 @@ module Concerns::FollowAndUnfollowWorker
       handle_unauthorized_exception(e, user_id: user_id)
     end
 
-    logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
+    if e.class == HaveAlreadyFollowed && request.uid == User::EGOTTER_UID
+      logger.info "#{e.class} #{e.message} #{user_id} #{request.inspect}"
+    else
+      logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
+    end
     request.update(error_class: e.class, error_message: e.message.truncate(150))
 
     if e.class == HaveAlreadyFollowed && request.uid == User::EGOTTER_UID
