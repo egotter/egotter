@@ -99,7 +99,6 @@ class CreateTwitterUserWorker
 
     # Don't call #invalid? because it clears errors
     if twitter_user.errors.any?
-      TwitterDB::User.import_by(twitter_user: twitter_user)
       raise Job::Error::RecordInvalid.new(twitter_user.errors.full_messages.join(', '))
     end
 

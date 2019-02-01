@@ -72,8 +72,10 @@ module TwitterDB
 
       def import_by(twitter_user:)
         import_by!(twitter_user: twitter_user)
+      rescue ActiveRecord::RecordInvalid => e
+        logger.warn "#{__method__}: #{e.class} #{e.message} #{e.record.inspect} #{twitter_user.inspect}"
       rescue => e
-        logger.warn "#{e.class} #{e.message} #{self.inspect}"
+        logger.warn "#{__method__}: #{e.class} #{e.message} #{twitter_user.inspect}"
       end
     end
 

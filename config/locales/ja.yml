@@ -869,7 +869,7 @@ ja:
         finished_at: "完了"
       twitter_db/user:
         uid: "uid"
-        screen_name: "Twitter ID"
+        screen_name: "screen name"
         user_info: "user_info"
 
     errors:
