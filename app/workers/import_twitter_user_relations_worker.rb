@@ -11,7 +11,9 @@ class ImportTwitterUserRelationsWorker
 
     twitter_user = TwitterUser.find(options['twitter_user_id'])
     unless twitter_user.latest?
-      logger.warn "A fetched record is not the latest one. #{twitter_user.id}"
+      logger.warn "A record of TwitterUser is not the latest. #{twitter_user.inspect}"
+      twitter_user.update!(friends_size: -1, followers_size: -1)
+      return
     end
 
     job.update(twitter_user_id: twitter_user.id, screen_name: twitter_user.screen_name)
