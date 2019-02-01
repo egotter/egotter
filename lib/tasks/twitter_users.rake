@@ -61,6 +61,7 @@ namespace :twitter_users do
     STDOUT.sync = true
     Rails.logger.level = Logger::WARN
     green = -> (str) {print "\e[32m#{str}\e[0m"}
+    last_id = -1
 
     start = ENV['START'] ? ENV['START'].to_i : 1
     columns = %i(id uid friends_size followers_size)
@@ -72,7 +73,12 @@ namespace :twitter_users do
         green.call('.')
       end
 
+      last_id = twitter_user.id
+
       break if sigint.trapped?
     end
+
+    puts "\n"
+    puts "last id #{last_id}"
   end
 end
