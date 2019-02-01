@@ -29,6 +29,16 @@ module Concerns::FollowAndUnfollowWorker
     logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
     request.update(error_class: e.class, error_message: e.message.truncate(150))
 
+    if e.class == HaveAlreadyFollowed && request.uid == User::EGOTTER_UID
+      records = request_class.unprocessed(user_id).
+          where('created_at < ?', request.created_at).
+          where(uid: User::EGOTTER_UID)
+      unless records.empty?
+        records.update_all(error_class: e.class, error_message: e.message.truncate(150))
+        logger.warn "Bulk update #{records.size} records. #{request.inspect}"
+      end
+    end
+
     if retry_immediately?(e)
       worker_class.perform_async(user_id) if request_class.unprocessed(user_id).exists?
     else
