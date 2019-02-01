@@ -6,10 +6,6 @@ class UpdateHistories
     @records = TwitterUser.where(uid: uid).order(created_at: :desc)
   end
 
-  def search_count
-    records.sum(:search_count)
-  end
-
   def update_count
     records.sum(:update_count)
   end

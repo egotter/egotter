@@ -8,7 +8,6 @@
       <div class="media-body">
         <div><%= '初回更新' %>&nbsp;<%= l(histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
         <div><%= '最終更新' %>&nbsp;<%= l(histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
-        <div><%= TwitterUser.human_attribute_name(:search_count) %>&nbsp;<%= histories.search_count %></div>
         <div><%= '更新回数' %>&nbsp;<%= histories.size %></div>
       </div>
 
