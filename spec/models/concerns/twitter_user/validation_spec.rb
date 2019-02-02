@@ -1,58 +1,64 @@
 require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::Validation do
-  subject(:tu) { build(:twitter_user) }
+  subject(:twitter_user) { build(:twitter_user) }
 
   describe '#valid_uid?' do
+    subject { twitter_user.valid_uid? }
+
     context 'with not a number' do
       it 'returns false' do
-        tu.uid = '110a'
-        expect(tu.valid_uid?).to be_falsy
+        twitter_user.uid = '110a'
+        is_expected.to be_truthy # NOTE: '110a' is automatically converted to 110
       end
     end
 
     context 'with a number' do
       it 'returns true' do
-        tu.uid = 100
-        expect(tu.valid_uid?).to be_truthy
+        twitter_user.uid = 100
+        is_expected.to be_truthy
       end
     end
   end
 
   describe '#valid_screen_name?' do
+    subject { twitter_user.valid_screen_name? }
+
     context 'it has special chars' do
       it 'returns false' do
         (%w(! " # $ % & ' - = ^ ~ ¥ \\ | @ ; + : * [ ] { } < > / ?) + %w[( )]).each do |c|
-          tu.screen_name = c * 10
-          expect(tu.valid_screen_name?).to be_falsy
+          twitter_user.screen_name = c * 10
+          is_expected.to be_falsy
         end
       end
     end
 
     context 'it has normal chars' do
       it 'returns true' do
-        tu.screen_name = 'ego_tter'
-        expect(tu.valid_screen_name?).to be_truthy
+        twitter_user.screen_name = 'ego_tter'
+        is_expected.to be_truthy
       end
     end
   end
 
   describe '#valid?' do
+    subject { twitter_user.valid? }
+
     context 'on create' do
       it 'uses Validations::DuplicateRecordValidator' do
         expect_any_instance_of(Validations::DuplicateRecordValidator).to receive(:validate)
-        expect(tu.valid?).to be_truthy
+        is_expected.to be_truthy
       end
     end
 
     context 'on update' do
       before do
-        tu.save!
-        tu.uid = tu.uid.to_i * 2
+        twitter_user.save!
+        twitter_user.uid = twitter_user.uid.to_i * 2
       end
       it 'does not use Validations::DuplicateRecordValidator' do
         expect_any_instance_of(Validations::DuplicateRecordValidator).not_to receive(:validate)
-        expect(tu.valid?).to be_truthy
+        is_expected.to be_truthy
       end
     end
   end
