@@ -66,7 +66,6 @@ gem 'gretel'
 gem 'dogstatsd-ruby', require: false
 gem 'google-api-client', require: false
 gem 'aws-sdk-cloudwatch', require: false
-gem 'rb-readline'
 
 group :development, :production do
   gem 'blazer'
