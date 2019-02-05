@@ -17,7 +17,9 @@
   }
 }
 
-.table.settings, .table.trial {
+.table.settings,
+.table.order-histories,
+.table.trial {
   tbody > tr > td {
     vertical-align: middle;
   }

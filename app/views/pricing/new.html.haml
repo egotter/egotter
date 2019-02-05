@@ -1,0 +1,73 @@
+.vertical-spacing
+.table-responsive
+  %table#pricing.table
+    %thead
+      %tr
+        %th
+        %th= t('.names.free')
+        %th= t('.names.basic')
+        -#%th= t('.names.pro')
+    %tbody
+      %tr
+        %td= t('.pricing.key')
+        %td= t('.pricing.free')
+        %td= t('.pricing.basic')
+        -#%td= t('.pricing.pro')
+      %tr
+        %td= t('.audience.key')
+        %td= t('.audience.free')
+        %td= t('.audience.basic')
+        -#%td= t('.audience.pro')
+      %tr
+        %td= t('.search_count.key')
+        %td
+          = t('.search_count.free', count1: Rails.configuration.x.constants['anonymous_search_histories_limit'], count2: Rails.configuration.x.constants['free_plan_search_histories_limit'])
+          %span.text-muted{style: 'font-size: x-small;'}= t('.search_count.free_note', count: Rails.configuration.x.constants['free_plan_search_histories_limit'])
+        %td.text-primary= t('.search_count.basic', count: Rails.configuration.x.constants['basic_plan_search_histories_limit'])
+        -#%td= t('.search_count.pro')
+      %tr
+        %td= t('.remove_notification.key')
+        %td= t('.remove_notification.free_html')
+        %td= t('.remove_notification.basic_html')
+        -#%td= t('.remove_notification.pro_html')
+      %tr
+        %td= t('.private_account.key')
+        %td= t('.private_account.free_html')
+        %td= t('.private_account.basic_html')
+        -#%td= t('.private_account.pro_html')
+      -#%tr
+      -#  %td= t('.ad.key')
+      -#  %td= t('.ad.free_html')
+      -#  %td= t('.ad.basic_html')
+      -#  %td= t('.ad.pro_html')
+      -#%tr
+      -#  %td= t('.private.key')
+      -#  %td= t('.private.free_html')
+      -#  %td= t('.private.basic_html')
+      -#  %td= t('.private.pro_html')
+      -#%tr
+      -#  %td= t('.delete.key')
+      -#  %td= t('.delete.free_html')
+      -#  %td= t('.delete.basic_html')
+      -#  %td= t('.delete.pro_html')
+      -#%tr
+      -#  %td= t('.purchasing_method.key')
+      -#  %td= t('.purchasing_method.free')
+      -#  %td= t('.purchasing_method.basic')
+      -#  %td= t('.purchasing.pro')
+      -#%tr
+      -#  %td
+      -#  %td
+      -#  %td= link_to t('.learning.basic'), '#', class: 'btn btn-default btn-block btn-lg'
+      -#  %td= link_to t('.learning.pro'), '#', class: 'btn btn-default btn-block btn-lg'
+      %tr
+        %td
+        %td
+          - unless user_signed_in?
+            = link_to t('common.show.sign_in'), sign_in_path(via: build_via('pricing')), class: 'btn btn-primary'
+        %td
+          - if user_signed_in?
+            = render partial: 'stripe/purchase_button'
+          - else
+            = link_to t('common.show.sign_in'), sign_in_path(via: build_via('pricing_buy')), class: 'btn btn-primary'
+        -#%td= subscribe_plan_button(:pro)

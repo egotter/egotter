@@ -44,6 +44,7 @@ class User < ApplicationRecord
     obj.has_one :notification_setting
     obj.has_many :follow_requests
     obj.has_many :unfollow_requests
+    obj.has_many :orders
   end
 
   accepts_nested_attributes_for :notification_setting

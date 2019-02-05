@@ -165,6 +165,9 @@ ja:
     index:
       general_title: "ユーザー情報"
       general_note1: "Twitter IDを変更した場合は、自動で更新されます"
+      order_histories: "購入履歴"
+      order_id: "注文 %{id}"
+      order_description: "%{end_date}まで、検索回数が%{search_count}回/日になります。"
       notifications_title: "通知設定"
       trial_title: "お試し機能 (β)"
       trial_delete: "ツイート削除"
@@ -193,6 +196,80 @@ ja:
         dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
         news: "新機能のお知らせが届きます。配信は不定期です。"
         search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
+  pricing:
+    new:
+      plans: "料金プラン"
+      names:
+        key: "プラン名"
+        free: "フリー"
+        basic: "ベーシック"
+        pro: "プロ"
+      audience:
+        key: "おすすめ"
+        free: "自分のみを検索したい方"
+        basic: "友達も検索したい方"
+        pro: "たくさん検索したい方"
+      remove_notification:
+        key: "リム通知"
+        free_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      private_account:
+        key: "鍵アカの検索"
+        free_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      search_count:
+        key: "検索回数"
+        free: "%{count1}〜%{count2}回/日"
+        free_note: "※ログインで%{count}回"
+        basic: "%{count}回/日"
+        pro: "10回"
+      ad:
+        key: '広告の非表示'
+        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      private:
+        key: "自分のデータを非公開"
+        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      delete:
+        key: "自分のデータを削除"
+        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        basic_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
+        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
+      pricing:
+        key: "価格"
+        free: "無料"
+        basic: "300円/月"
+      price:
+        key: ""
+        free: ""
+        basic: "300"
+      purchasing_method:
+        key: "支払い方法"
+        free: ""
+        basic: "クレジットカード"
+        pro: "クレジットカード"
+      learning:
+        free: ""
+        basic: "詳しく見る"
+        pro: "詳しく見る"
+      purchase_buttons:
+        free: ""
+        basic: "購入する"
+        pro: "購入する"
+      purchase_description:
+        free: ""
+        basic: "ベーシックプラン"
+        pro: ""
+      has_purchased:
+        "購入済み"
+  orders:
+    create:
+      success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
   login:
     goodbye:
       signed_out: "既にログアウト済みです。"
@@ -743,6 +820,7 @@ ja:
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     blocked_html: '%{user} からブロックされているため検索できません。'
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
+    has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
   tweet_text:
     top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"

@@ -1,4 +1,5 @@
 <h2 class="h4 text-center"><%= t('.general_title') %></h2>
+
 <table class="table settings">
   <tbody>
   <tr>
@@ -16,6 +17,23 @@
 </table>
 
 <div class="gray-separator"></div>
+
+<% if current_user.orders.any? {|o| !o.expired?} %>
+  <h2 class="h4 text-center"><%= t('.order_histories') %></h2>
+
+  <table class="table order-histories">
+    <tbody>
+    <% current_user.orders.select {|o| !o.expired?}.each.with_index do |order, i| %>
+      <tr>
+        <td><%= t('.order_id', id: i + 1) %></td>
+        <td><%= t('.order_description', end_date: order.end_date, search_count: order.search_count) %></td>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+
+  <div class="gray-separator"></div>
+<% end %>
 
 <h2 class="h4 text-center"><%= t('.trial_title') %></h2>
 
