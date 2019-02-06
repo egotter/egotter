@@ -12,6 +12,16 @@ class FollowController < ApplicationController
     end
   end
 
+  before_action do
+    unless current_user.can_create_follow?
+      render json: {
+          can_create_follow: false,
+          create_follow_limit: current_user.create_follow_limit,
+          create_follow_remaining: current_user.create_follow_remaining
+      }, status: :too_many_requests
+    end
+  end
+
   def create
     user = current_user
     request = FollowRequest.new(user_id: user.id, uid: params[:uid])
@@ -20,8 +30,10 @@ class FollowController < ApplicationController
 
       render json: {
           follow_request_id: request.id,
+          global_can_create_follow: Concerns::User::FollowAndUnfollow::Util.global_can_create_follow?,
           can_create_follow: user.can_create_follow?,
-          create_follow_limit: user.create_follow_limit
+          create_follow_limit: user.create_follow_limit,
+          create_follow_remaining: user.create_follow_remaining
       }
     else
       logger.warn "#{controller_name}##{action_name} #{request.errors.full_messages}"

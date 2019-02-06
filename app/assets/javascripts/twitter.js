@@ -22,12 +22,14 @@ Twitter.cache = function () {
   return {fetch: fetch}
 };
 
-Twitter.follow = function (url, uid) {
+Twitter.follow = function (url, uid, callback) {
   console.log('follow', url, uid);
-  $.post(url, {uid: uid}, function (res) {
+  $.post(url, {uid: uid}).then(function (res) {
     console.log('res', res);
-    if (!res.can_create_follow) {
-      console.log('warning', res.create_follow_limit);
+    callback.call();
+  }, function (xhr) {
+    if (xhr.status === 429) { // Too many requests
+      $('#warning-follow-modal').modal();
     }
   });
 };
@@ -38,9 +40,9 @@ Twitter.enableFollowButton = function (selector) {
   if (!$modal.data('init')) {
     $modal.find('.btn.ok').on('click', function () {
       var $clicked = $(this).data('btn-target');
-      Twitter.follow($(this).data('url'), $clicked.data('uid'));
-      $clicked.hide()
-          .siblings('.btn.follow').show();
+      Twitter.follow($(this).data('url'), $clicked.data('uid'), function () {
+        $clicked.hide().siblings('.btn.follow').show();
+      });
       $modal.modal('hide');
     });
     $modal.data('init', true);
@@ -49,9 +51,9 @@ Twitter.enableFollowButton = function (selector) {
   $(selector).on('click', '.btn.no-follow', function () {
     var $clicked = $(this);
     if ($modal.find('.dont-confirm input').prop('checked')) {
-      Twitter.follow($modal.find('.btn.ok').data('url'), $clicked.data('uid'));
-      $clicked.hide()
-          .siblings('.btn.follow').show();
+      Twitter.follow($modal.find('.btn.ok').data('url'), $clicked.data('uid'), function () {
+        $clicked.hide().siblings('.btn.follow').show();
+      });
     } else {
       $modal.find('.btn.ok').data('btn-target', $clicked);
       $modal.find('.screen-name').text($clicked.data('screen-name'));
@@ -61,12 +63,14 @@ Twitter.enableFollowButton = function (selector) {
   });
 };
 
-Twitter.unfollow = function (url, uid) {
+Twitter.unfollow = function (url, uid, callback) {
   console.log('unfollow', url, uid);
-  $.post(url, {uid: uid}, function (res) {
+  $.post(url, {uid: uid}).then(function (res) {
     console.log('res', res);
-    if (!res.can_create_unfollow) {
-      console.log('warning', res.create_unfollow_limit);
+    callback.call();
+  }, function (xhr) {
+    if (xhr.status === 429) { // Too many requests
+      $('#warning-unfollow-modal').modal();
     }
   });
 };
@@ -77,9 +81,9 @@ Twitter.enableUnfollowButton = function (selector) {
   if (!$modal.data('init')) {
     $modal.find('.btn.ok').on('click', function () {
       var $clicked = $(this).data('btn-target');
-      Twitter.unfollow($(this).data('url'), $clicked.data('uid'));
-      $clicked.hide()
-          .siblings('.btn.no-follow').show();
+      Twitter.unfollow($(this).data('url'), $clicked.data('uid'),function () {
+        $clicked.hide().siblings('.btn.no-follow').show();
+      });
       $modal.modal('hide');
     });
     $modal.data('init', true);
@@ -89,9 +93,9 @@ Twitter.enableUnfollowButton = function (selector) {
   $(selector).on('click', '.btn.follow', function () {
     var $clicked = $(this);
     if ($modal.find('.dont-confirm input').prop('checked')) {
-      Twitter.unfollow($modal.find('.btn.ok').data('url'), $clicked.data('uid'));
-      $clicked.hide()
-          .siblings('.btn.no-follow').show();
+      Twitter.unfollow($modal.find('.btn.ok').data('url'), $clicked.data('uid'), function () {
+        $clicked.hide().siblings('.btn.no-follow').show();
+      });
     } else {
       $modal.find('.btn.ok').data('btn-target', $clicked);
       $modal.find('.screen-name').text($clicked.data('screen-name'));

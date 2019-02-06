@@ -12,6 +12,10 @@ default: &default
   anonymous_search_histories_limit: 2
   free_plan_search_histories_limit: 5
   basic_plan_search_histories_limit: 10
+  anonymous_follow_requests_limit: 2
+  basic_plan_follow_requests_limit: 100
+  anonymous_unfollow_requests_limit: 2
+  basic_plan_unfollow_requests_limit: 20
   cluster_bad_words_path: 'data/cluster_bad_words.json'
   cluster_good_words_path: 'data/cluster_good_words.json'
   faq_path: 'data/faq.json'

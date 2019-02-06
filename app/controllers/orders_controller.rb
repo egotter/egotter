@@ -21,6 +21,8 @@ class OrdersController < ApplicationController
 
     order.update!(
         search_count: Rails.configuration.x.constants['basic_plan_search_histories_limit'],
+        follow_requests_count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'],
+        unfollow_requests_count: Rails.configuration.x.constants['basic_plan_unfollow_requests_limit'],
         customer_id: customer.id,
         subscription_id: subscription.id
     )
