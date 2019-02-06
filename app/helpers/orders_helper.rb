@@ -1,7 +1,7 @@
 module OrdersHelper
   def current_plan_name
     if user_signed_in? && current_user.is_subscribing?
-      ENV['STRIPE_BASIC_PLAN_NAME']
+      t('pricing.new.xxx_plan', name: t('pricing.new.names.basic'))
     else
       nil
     end

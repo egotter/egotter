@@ -200,6 +200,7 @@ ja:
     new:
       plans: "料金プラン"
       plans_on_search_html: '<a href="%{url}">購入して増やす</a>'
+      xxx_plan: 'えごったー %{name} プラン'
       names:
         key: "プラン名"
         free: "フリー"
