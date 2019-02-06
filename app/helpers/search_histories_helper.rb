@@ -1,5 +1,6 @@
 module SearchHistoriesHelper
   def latest_search_histories
+    return [] if from_crawler?
     condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
     SearchHistory.includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10).select(&:twitter_db_user)
   end

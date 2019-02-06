@@ -1,6 +1,5 @@
 class SearchHistoriesController < ApplicationController
-  def load
-    html = render_to_string partial: 'layouts/search_histories'
-    render json: {html: html}
+  def new
+    render partial: 'twitter/user', collection: latest_search_histories, cached: true, locals: {ad: false, via: 'search_histories'}
   end
 end
