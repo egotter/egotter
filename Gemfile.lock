@@ -210,6 +210,8 @@ GEM
     mustermann (1.0.3)
     mysql2 (0.4.10)
     naught (1.1.0)
+    net-http-persistent (3.0.0)
+      connection_pool (~> 2.2)
     newrelic_rpm (6.0.0.351)
     nio4r (2.3.1)
     nokogiri (1.10.1)
@@ -357,6 +359,9 @@ GEM
       activesupport (>= 4.0)
       sprockets (>= 3.0.0)
     stackprof (0.2.12)
+    stripe (4.8.0)
+      faraday (~> 0.13)
+      net-http-persistent (~> 3.0)
     temple (0.8.0)
     therubyracer (0.12.3)
       libv8 (~> 3.16.14.15)
@@ -457,6 +462,7 @@ DEPENDENCIES
   spring
   spring-watcher-listen (~> 2.0.0)
   stackprof
+  stripe
   therubyracer
   twitter
   twitter_with_auto_pagination

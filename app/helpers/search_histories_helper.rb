@@ -17,7 +17,11 @@ module SearchHistoriesHelper
 
   def search_histories_limit
     if user_signed_in?
-      Rails.configuration.x.constants['free_plan_search_histories_limit']
+      if current_user.orders.any? {|o| !o.expired?}
+        current_user.orders.find {|o| !o.expired?}.search_count
+      else
+        Rails.configuration.x.constants['free_plan_search_histories_limit']
+      end
     else
       Rails.configuration.x.constants['anonymous_search_histories_limit']
     end

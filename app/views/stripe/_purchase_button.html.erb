@@ -1,0 +1,17 @@
+<% if user_signed_in? && current_user.orders.any? {|o| !o.expired?} %>
+  <button class="btn btn-default" disabled="disabled"><%= t('pricing.new.has_purchased') %></button>
+<% else %>
+  <%= form_tag orders_path, id: 'purchase_basic_plan', method: 'POST' do %>
+    <script
+      src="https://checkout.stripe.com/checkout.js" class="stripe-button"
+      data-key="<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>"
+      data-amount="<%= t('pricing.new.price.basic') %>"
+      data-name="<%= t('searches.common.egotter') %>"
+      data-description="<%= t('pricing.new.purchase_description.basic') %>"
+      data-image="<%= image_path('/favicon-192.png') %>"
+      data-locale="auto"
+      data-label="<%= t('pricing.new.purchase_buttons.basic') %>"
+      data-currency="jpy">
+    </script>
+  <% end %>
+<% end %>

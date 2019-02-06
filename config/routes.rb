@@ -120,6 +120,9 @@ Rails.application.routes.draw do
   get 'settings/follow_requests', to: "settings#follow_requests"
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
 
+  get 'pricing', to: "pricing#new"
+  post 'orders', to: 'orders#create'
+
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
   resources :jobs, only: :show, param: :uid

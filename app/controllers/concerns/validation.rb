@@ -214,4 +214,16 @@ module Concerns::Validation
     twitter_exception_handler(e, twitter_user.screen_name)
     false
   end
+
+  def has_already_purchased?
+    return false if current_user.orders.none? {|o| !o.expired?}
+
+    if request.xhr?
+      head :bad_request
+    else
+      redirect_to root_path, alert: t('after_sign_in.has_already_purchased_html', url: settings_path)
+    end
+
+    true
+  end
 end
