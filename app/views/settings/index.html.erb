@@ -18,7 +18,7 @@
 
 <div class="gray-separator"></div>
 
-<% if current_user.orders.any? {|o| !o.expired?} %>
+<% if current_user.is_subscribing? %>
   <h2 class="h4 text-center"><%= t('.order_histories') %></h2>
 
   <table class="table order-histories">
