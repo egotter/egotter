@@ -136,4 +136,8 @@ class User < ApplicationRecord
   def admin?
     uid.to_i == ADMIN_UID
   end
+
+  def is_subscribing?
+    orders.any? {|o| !o.expired?}
+  end
 end

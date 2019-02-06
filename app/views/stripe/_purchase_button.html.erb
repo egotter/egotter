@@ -1,4 +1,4 @@
-<% if user_signed_in? && current_user.orders.any? {|o| !o.expired?} %>
+<% if user_signed_in? && current_user.is_subscribing? %>
   <button class="btn btn-default" disabled="disabled"><%= t('pricing.new.has_purchased') %></button>
 <% else %>
   <%= form_tag orders_path, id: 'purchase_basic_plan', method: 'POST' do %>
