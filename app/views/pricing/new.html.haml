@@ -26,6 +26,14 @@
         %td.text-primary= t('.search_count.basic', count: Rails.configuration.x.constants['basic_plan_search_histories_limit'])
         -#%td= t('.search_count.pro')
       %tr
+        %td= t('.follow_requests.key')
+        %td= Rails.configuration.x.constants['anonymous_follow_requests_limit']
+        %td= t('.follow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'])
+      %tr
+        %td= t('.unfollow_requests.key')
+        %td= Rails.configuration.x.constants['anonymous_unfollow_requests_limit']
+        %td= t('.unfollow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_unfollow_requests_limit'])
+      %tr
         %td= t('.remove_notification.key')
         %td= t('.remove_notification.free_html')
         %td= t('.remove_notification.basic_html')

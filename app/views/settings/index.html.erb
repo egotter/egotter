@@ -26,7 +26,12 @@
     <% current_user.orders.select {|o| !o.expired?}.each.with_index do |order, i| %>
       <tr>
         <td><%= t('.order_id', id: i + 1) %></td>
-        <td><%= t('.order_description', end_date: order.end_date, search_count: order.search_count) %></td>
+        <td>
+          <div><%= t('.order_expired_at', date: order.end_date) %></div>
+          <div><%= t('.order_search_count', count: order.search_count) %></div>
+          <div><%= t('.order_follow_requests_count', count: order.follow_requests_count) %></div>
+          <div><%= t('.order_unfollow_requests_count', count: order.unfollow_requests_count) %></div>
+        </td>
       </tr>
     <% end %>
     </tbody>
