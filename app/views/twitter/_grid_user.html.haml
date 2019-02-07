@@ -1,13 +1,3 @@
-.col-xs-12.col-sm-6.col-md-4{style: 'margin-bottom: 15px;'}
-  .media
-    .media-inner
-      .media-left
-        = search_link user.screen_name, build_via('icon') do
-          = normal_icon_img(user, class: 'media-object')
-      .media-body
-        %h4.media-heading
-          = search_link user.screen_name, build_via('screen_name')
-          = user_name(user, label: true)
-        %span.friends-count
-          = "#{user.friends_count} / #{user.followers_count}"
-      .description= user.description
+.col-xs-12.col-sm-6{style: 'margin-bottom: 15px;'}
+  = render partial: 'twitter/user', locals: {user: user, ad: false}
+  .vertical-spacing

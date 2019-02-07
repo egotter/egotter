@@ -1,4 +1,4 @@
 = render(partial: 'common/page_top', locals: {canonical_url: @canonical_url, breadcrumb_name: @breadcrumb_name, twitter_user: @twitter_user, page_title: @page_title, meta_description: @meta_description, page_description: @page_description})
 
 .row.twitter.users
-  = render partial: 'twitter/grid_user', collection: @collection, as: :user
+  = render partial: 'twitter/grid_user', collection: @collection, cached: true, as: :user
