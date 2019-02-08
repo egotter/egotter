@@ -5,6 +5,7 @@ class ApiClient
 
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
+      Rails.logger.info "ApiClient#method_missing #{method} #{args.inspect.truncate(100)}" rescue nil
       begin
         tries ||= 5
         @client.send(method, *args, &block) # client#parallel uses block.
