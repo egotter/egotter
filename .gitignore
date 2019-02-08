@@ -33,3 +33,4 @@
 /public/assets
 /.rbenv-gemsets
 .DS_Store
+/.twitter_friendly

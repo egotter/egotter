@@ -267,7 +267,7 @@ GEM
       rack
     orm_adapter (0.5.0)
     os (1.0.0)
-    parallel (1.13.0)
+    parallel (1.12.1)
     pry (0.12.2)
       coderay (~> 1.1.0)
       method_source (~> 0.9.0)
@@ -423,6 +423,11 @@ GEM
       multipart-post (~> 2.0)
       naught (~> 1.0)
       simple_oauth (~> 0.3.0)
+    twitter_friendly (1.2.0)
+      activesupport (>= 4.2, < 6.0)
+      oj (~> 3.7.6)
+      parallel (~> 1.12.1)
+      twitter (~> 6.2.0)
     twitter_with_auto_pagination (0.10.0)
       activesupport
       parallel
@@ -509,6 +514,7 @@ DEPENDENCIES
   stripe
   therubyracer
   twitter
+  twitter_friendly
   twitter_with_auto_pagination
   tzinfo-data
   uglifier (>= 1.3.0)
