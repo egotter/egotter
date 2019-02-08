@@ -71,6 +71,7 @@ gem 'stripe'
 group :development, :production do
   gem 'blazer'
   gem 'sitemap_generator' # Be required at runtime
+  gem 'rb-readline' # Must
 end
 
 group :development, :test do
