@@ -27,9 +27,9 @@ module Concerns::FollowAndUnfollowWorker
     end
 
     if e.class == HaveAlreadyFollowed && request.uid == User::EGOTTER_UID
-      logger.info "#{e.class} #{e.message} #{user_id} #{request.inspect}"
+      logger.info "#{e.class} #{e.message} #{request.inspect}"
     else
-      logger.warn "#{e.class} #{e.message} #{user_id} #{request.inspect}"
+      logger.warn "#{e.class} #{e.message} #{request.inspect}"
     end
     request.update(error_class: e.class, error_message: e.message.truncate(150))
 
