@@ -45,8 +45,10 @@ module Concerns::FollowAndUnfollowWorker
 
     if retry_immediately?(e)
       worker_class.perform_async(user_id) if request_class.unprocessed(user_id).exists?
+      logger.info "Enqueue retry_immediately? == TRUE #{worker_class} #{request_class} #{user_id} #{request.inspect}"
     else
       worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval, user_id)
+      logger.info "Enqueue retry_immediately? == FALSE #{worker_class} #{request_class} #{user_id} #{request.inspect}"
     end
   end
 
