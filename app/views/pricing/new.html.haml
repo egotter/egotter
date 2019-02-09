@@ -1,6 +1,6 @@
 .vertical-spacing
 .table-responsive
-  %table#pricing.table
+  %table.pricing-table.table.table-bordered
     %thead
       %tr
         %th
@@ -28,11 +28,11 @@
       %tr
         %td= t('.follow_requests.key')
         %td= Rails.configuration.x.constants['anonymous_follow_requests_limit']
-        %td= t('.follow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'])
+        %td.text-primary= t('.follow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'])
       %tr
         %td= t('.unfollow_requests.key')
         %td= Rails.configuration.x.constants['anonymous_unfollow_requests_limit']
-        %td= t('.unfollow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_unfollow_requests_limit'])
+        %td.text-primary= t('.unfollow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_unfollow_requests_limit'])
       %tr
         %td= t('.remove_notification.key')
         %td= t('.remove_notification.free_html')
@@ -71,6 +71,10 @@
       %tr
         %td
         %td
+        %td= t('.money_back_guarantee')
+      %tr
+        %td
+        %td
           - unless user_signed_in?
             = link_to t('common.show.sign_in'), sign_in_path(via: build_via('pricing')), class: 'btn btn-primary'
         %td
@@ -79,6 +83,37 @@
           - else
             = link_to t('common.show.sign_in'), sign_in_path(via: build_via('pricing_buy')), class: 'btn btn-primary'
         -#%td= subscribe_plan_button(:pro)
+
+.vertical-spacing
+.vertical-spacing
+
+.col-xs-12.col-md-6.col-md-offset-3
+  %table.pricing-table.table.table-bordered
+    %thead
+      %tr
+        %th
+        %th= t('.names.enterprice')
+    %tbody
+      %tr
+        %td= t('.pricing.key')
+        %td= t('.pricing.enterprice')
+      %tr
+        %td= t('.delivery_date.key')
+        %td= t('.delivery_date.enterprice')
+      %tr
+        %td= t('.purchasing_method.key')
+        %td= t('.purchasing_method.enterprice')
+      %tr
+        %td
+        %td= t('.enterprice_description')
+      %tr
+        %td
+        %td= link_to t('.enterprice_inquiry'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
+
+.clearfix
+
+.vertical-spacing
+.vertical-spacing
 
 .text-center
   %img.center-block{src: image_path('/egotter_ask_me_840x483.png'), height: request.from_pc? ? '200px' : '140px'}

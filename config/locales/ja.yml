@@ -209,6 +209,7 @@ ja:
         free: "フリー"
         basic: "ベーシック"
         pro: "プロ"
+        enterprice: "エンタープライズ"
       audience:
         key: "おすすめ"
         free: "自分のみを検索したい方"
@@ -255,15 +256,20 @@ ja:
         key: "価格"
         free: "無料"
         basic: "300円/月"
+        enterprice: "ご相談ください"
       price:
         key: ""
         free: ""
         basic: "300"
+      delivery_date:
+        key: "納期"
+        enterprice: "ご相談ください"
       purchasing_method:
         key: "支払い方法"
         free: ""
         basic: "クレジットカード"
         pro: "クレジットカード"
+        enterprice: "クレジットカード、請求書"
       learning:
         free: ""
         basic: "詳しく見る"
@@ -276,8 +282,10 @@ ja:
         free: ""
         basic: "ベーシックプラン"
         pro: ""
-      has_purchased:
-        "購入済み"
+      has_purchased: "購入済み"
+      money_back_guarantee: "14日間は100%返金保証"
+      enterprice_description: "特定の商品に興味のあるユーザーの嗜好性調査、特定のユーザーのフォロー・フォロワー収集など、ツイッターに関する調査全般をお引き受けいたします。"
+      enterprice_inquiry: "問い合わせ"
       ask_me_html: 'ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで<br class="visible-xs-block">お気軽にご連絡ください。'
   orders:
     create:

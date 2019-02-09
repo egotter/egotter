@@ -1,5 +1,9 @@
-#pricing {
-  &.table tbody > tr > td {
+.pricing-table {
+  td:first-child {
+    white-space: nowrap;
+  }
+
+  tbody > tr > td {
     vertical-align: middle;
   }
 

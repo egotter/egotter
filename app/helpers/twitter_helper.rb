@@ -3,6 +3,10 @@ module TwitterHelper
     "https://twitter.com/#{screen_name}"
   end
 
+  def direct_message_url(uid)
+    "https://twitter.com/messages/compose?recipient_id=#{uid}"
+  end
+
   def user_link(screen_name, options = {}, &block)
     options = options.merge(target: '_blank', rel: 'nofollow')
     url = "https://twitter.com/#{screen_name}"
