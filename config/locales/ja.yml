@@ -278,6 +278,7 @@ ja:
         pro: ""
       has_purchased:
         "購入済み"
+      ask_me_html: 'ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで<br class="visible-xs-block">お気軽にご連絡ください。'
   orders:
     create:
       success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'

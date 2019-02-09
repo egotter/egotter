@@ -79,3 +79,9 @@
           - else
             = link_to t('common.show.sign_in'), sign_in_path(via: build_via('pricing_buy')), class: 'btn btn-primary'
         -#%td= subscribe_plan_button(:pro)
+
+.text-center
+  %img.center-block{src: image_path('/egotter_ask_me_840x483.png'), height: request.from_pc? ? '200px' : '140px'}
+  .vertical-spacing
+  = t('.ask_me_html')
+.vertical-spacing
