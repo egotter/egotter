@@ -47,14 +47,14 @@ module WorkersHelper
     UpdateUsageStatWorker.perform_async(uid)
   end
 
-  def enqueue_create_follow_job_if_needed(user_id)
+  def enqueue_create_follow_job_if_needed(user_id, enqueue_location: nil)
     return if respond_to?(:from_crawler?) && from_crawler?
     jobs = Concerns::User::FollowAndUnfollow::Util.collect_follow_or_unfollow_sidekiq_jobs('CreateFollowWorker', user_id)
     if jobs.empty?
       if Concerns::User::FollowAndUnfollow::Util.global_can_create_follow?
-        CreateFollowWorker.perform_async(user_id)
+        CreateFollowWorker.perform_async(user_id, enqueue_location: enqueue_location)
       else
-        CreateFollowWorker.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval, user_id)
+        CreateFollowWorker.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval, user_id, enqueue_location: enqueue_location)
       end
     end
   end

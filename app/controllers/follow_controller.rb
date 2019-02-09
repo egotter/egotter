@@ -26,7 +26,7 @@ class FollowController < ApplicationController
     user = current_user
     request = FollowRequest.new(user_id: user.id, uid: params[:uid])
     if request.save
-      enqueue_create_follow_job_if_needed(user.id)
+      enqueue_create_follow_job_if_needed(user.id, enqueue_location: 'FollowController')
 
       render json: {
           follow_request_id: request.id,

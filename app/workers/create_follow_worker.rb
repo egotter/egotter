@@ -3,8 +3,8 @@ class CreateFollowWorker
   include Concerns::FollowAndUnfollowWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(user_id)
-    do_perform(self.class, FollowRequest, user_id) do |request|
+  def perform(user_id, options = {})
+    do_perform(self.class, FollowRequest, user_id, options) do |request|
       follow(request.user.api_client.twitter, request.user.uid, request.uid)
     end
   end

@@ -10,14 +10,14 @@ module Concerns::FollowAndUnfollowWorker
   included do
   end
 
-  def do_perform(worker_class, request_class, user_id)
+  def do_perform(worker_class, request_class, user_id, options = {})
     request = request_class.unprocessed(user_id).order(created_at: :asc).first
     return unless request
 
     if request.ready?
       yield(request)
       request.finished!
-      worker_class.perform_in(10.seconds, user_id) if request_class.unprocessed(user_id).exists?
+      worker_class.perform_in(10.seconds, user_id, enqueue_location: 'FollowAndUnfollowWorker(finish)') if request_class.unprocessed(user_id).exists?
     else
       raise TooManyRequests
     end
@@ -27,9 +27,9 @@ module Concerns::FollowAndUnfollowWorker
     end
 
     if e.class == HaveAlreadyFollowed && request.uid == User::EGOTTER_UID
-      logger.info "#{e.class} #{e.message} #{request.inspect}"
+      logger.info "#{e.class} #{e.message} #{options} #{request.inspect}"
     else
-      logger.warn "#{e.class} #{e.message} #{request.inspect}"
+      logger.warn "#{e.class} #{e.message} #{options} #{request.inspect}"
     end
     request.update(error_class: e.class, error_message: e.message.truncate(150))
 
@@ -39,16 +39,16 @@ module Concerns::FollowAndUnfollowWorker
           where(uid: User::EGOTTER_UID)
       unless records.empty?
         records.update_all(error_class: e.class, error_message: e.message.truncate(150))
-        logger.warn "Bulk update #{records.size} records. #{request.inspect}"
+        logger.warn "Bulk update #{records.size} records. #{options} #{request.inspect}"
       end
     end
 
     if retry_immediately?(e)
-      worker_class.perform_async(user_id) if request_class.unprocessed(user_id).exists?
-      logger.info "Enqueue retry_immediately? == TRUE #{worker_class} #{request_class} #{user_id} #{request.inspect}"
+      worker_class.perform_async(user_id, enqueue_location: 'FollowAndUnfollowWorker(retry immediately)') if request_class.unprocessed(user_id).exists?
+      logger.info "Enqueue retry_immediately? == TRUE #{worker_class} #{request_class} #{user_id} #{options} #{request.inspect}"
     else
-      worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval, user_id)
-      logger.info "Enqueue retry_immediately? == FALSE #{worker_class} #{request_class} #{user_id} #{request.inspect}"
+      worker_class.perform_in(Concerns::User::FollowAndUnfollow::Util.limit_interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry)')
+      logger.info "Enqueue retry_immediately? == FALSE #{worker_class} #{request_class} #{user_id} #{options} #{request.inspect}"
     end
   end
 
