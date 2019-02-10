@@ -10,6 +10,7 @@ module Concerns::Request::FollowAndUnfollow
 
     scope :unprocessed, -> user_id {
       where(user_id: user_id, finished_at: nil).
+          where.not(uid: User::EGOTTER_UID).
           without_error
     }
 
