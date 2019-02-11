@@ -15,7 +15,6 @@ class FollowController < ApplicationController
   before_action do
     unless current_user.can_create_follow?
       render json: {
-          can_create_follow: false,
           create_follow_limit: current_user.create_follow_limit,
           create_follow_remaining: current_user.create_follow_remaining
       }, status: :too_many_requests

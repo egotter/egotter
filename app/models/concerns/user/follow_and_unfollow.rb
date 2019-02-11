@@ -44,30 +44,4 @@ module Concerns::User::FollowAndUnfollow
   def can_create_unfollow?
      create_unfollow_remaining > 0
   end
-
-  module Util
-    module_function
-
-    def global_can_create_follow?
-      follow_limit_reset_at < Time.zone.now
-    end
-
-    def follow_limit_reset_at
-      last_error_time = ::FollowRequest.with_limit_error.order(updated_at: :desc).pluck(:updated_at).first
-      last_error_time.nil? ? 1.second.ago : last_error_time + limit_interval
-    end
-
-    def global_can_create_unfollow?
-      unfollow_limit_reset_at < Time.zone.now
-    end
-
-    def unfollow_limit_reset_at
-      last_error_time = ::UnfollowRequest.with_limit_error.order(updated_at: :desc).pluck(:updated_at).first
-      last_error_time.nil? ? 1.second.ago : last_error_time + limit_interval
-    end
-
-    def limit_interval
-      30.minutes
-    end
-  end
 end

@@ -11,8 +11,7 @@ class FollowEgotterWorker
 
     request&.enqueue(enqueue_location: 'FollowEgotterWorker')
 
-    interval = Concerns::User::FollowAndUnfollow::Util.global_can_create_follow? ? 30.seconds : 30.minutes
-    self.class.perform_in(interval)
+    self.class.perform_in(FollowRequest.current_interval)
   rescue => e
     logger.warn "#{e.class} #{e.message}"
     self.class.perform_in(30.minutes)

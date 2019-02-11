@@ -9,7 +9,6 @@ class UnfollowController < ApplicationController
   before_action do
     unless current_user.can_create_unfollow?
       render json: {
-          can_create_unfollow: false,
           create_unfollow_limit: current_user.create_unfollow_limit,
           create_unfollow_remaining: current_user.create_unfollow_remaining
       }, status: :too_many_requests

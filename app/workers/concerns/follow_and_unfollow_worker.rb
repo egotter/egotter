@@ -12,25 +12,23 @@ module Concerns::FollowAndUnfollowWorker
 
   def do_perform(worker_class, request_class, user_id, options = {})
     request = nil
-    request = request_class.unprocessed(user_id).order(created_at: :asc).first
+    request = request_class.next_request(user_id)
     return unless request
 
-    if request.ready?
+    if request_class.global_can_perform?
       request.perform!
-      worker_class.perform_in(10.seconds, user_id, enqueue_location: 'FollowAndUnfollowWorker(finish)') if request_class.unprocessed(user_id).exists?
+      request_class.next_request(user_id)&.enqueue(enqueue_location: 'Finish')
     else
       raise TooManyRequests
     end
-  rescue => e
-    if e.class == Twitter::Error::Unauthorized
-      handle_unauthorized_exception(e, user_id: user_id)
-    end
+  rescue TooManyRequests,
+      CanNotFollowYourself,
+      CanNotUnfollowYourself,
+      HaveAlreadyFollowed,
+      HaveNotFollowed,
+      HaveAlreadyRequestedToFollow,
+      NotFound => e
 
-    if e.class == HaveAlreadyFollowed && request.uid == User::EGOTTER_UID
-      logger.info "#{e.class} #{e.message} #{options} #{request.inspect}"
-    else
-      logger.warn "#{e.class} #{e.message} #{options} #{request.inspect}"
-    end
     request.update(error_class: e.class, error_message: e.message.truncate(150))
 
     if e.class == HaveAlreadyFollowed && request.uid == User::EGOTTER_UID
@@ -43,19 +41,15 @@ module Concerns::FollowAndUnfollowWorker
       end
     end
 
-    interval = retry_immediately?(e) ? 10.seconds : Concerns::User::FollowAndUnfollow::Util.limit_interval
-
-    if retry_immediately?(e)
-      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry immediately)', request_id: request&.id, error_class: e.class)
-    else
-      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry)', request_id: request&.id, error_class: e.class)
+    request_class.next_request(user_id)&.enqueue(enqueue_location: 'Specified error', request_id: request&.id, error_class: e.class)
+  rescue => e
+    if e.class == Twitter::Error::Unauthorized
+      handle_unauthorized_exception(e, user_id: user_id)
     end
-  end
 
-  def retry_immediately?(ex)
-    ex.message == 'Invalid or expired token.' ||
-        ex.message.starts_with?("You've already requested to follow") ||
-        [CanNotFollowYourself, CanNotUnfollowYourself, HaveAlreadyFollowed, HaveNotFollowed, HaveAlreadyRequestedToFollow].include?(ex.class)
+    request.update(error_class: e.class, error_message: e.message.truncate(150))
+
+    request_class.next_request(user_id)&.enqueue(enqueue_location: 'Something error', request_id: request&.id, error_class: e.class)
   end
 
   class TooManyRequests < StandardError
