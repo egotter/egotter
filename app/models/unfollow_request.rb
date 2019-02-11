@@ -41,6 +41,12 @@ class UnfollowRequest < ApplicationRecord
 
   def perform(client = nil)
     perform!(client)
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      update(error_class: e.class, error_message: e.message)
+    else
+      raise
+    end
   rescue Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself,
       Concerns::FollowAndUnfollowWorker::NotFound,
       Concerns::FollowAndUnfollowWorker::HaveNotFollowed => e
