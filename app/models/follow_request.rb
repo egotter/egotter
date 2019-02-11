@@ -39,6 +39,13 @@ class FollowRequest < ApplicationRecord
     finished!
   end
 
+  def perform(client = nil)
+    perform!(client)
+  rescue Concerns::FollowAndUnfollowWorker::CanNotFollowYourself, Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed,
+      Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow => e
+    update(error_class: e.class, error_message: e.message.truncate(150))
+  end
+
   def friendship_outgoing?(client, uid)
     client.friendships_outgoing.attrs[:ids].include?(uid)
   rescue => e

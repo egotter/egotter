@@ -57,4 +57,14 @@ RSpec.describe FollowRequest, type: :model do
       end
     end
   end
+
+  describe '#perform' do
+    let(:client) { ApiClient.instance.twitter }
+    subject { request.perform(client) }
+
+    it 'calls #perform!' do
+      expect(request).to receive(:perform!).with(client)
+      subject
+    end
+  end
 end

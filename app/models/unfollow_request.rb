@@ -37,4 +37,10 @@ class UnfollowRequest < ApplicationRecord
     client.unfollow(uid)
     finished!
   end
+
+  def perform(client = nil)
+    perform!(client)
+  rescue Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself, Concerns::FollowAndUnfollowWorker::HaveNotFollowed => e
+    update(error_class: e.class, error_message: e.message.truncate(150))
+  end
 end
