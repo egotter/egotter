@@ -49,6 +49,7 @@ module WorkersHelper
 
   def enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: nil)
     return if from_crawler?
+    return if request.uid == User::EGOTTER_UID
     request.enqueue(enqueue_location: enqueue_location)
   end
 end
