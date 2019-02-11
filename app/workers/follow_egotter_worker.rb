@@ -9,9 +9,7 @@ class FollowEgotterWorker
             where(finished_at: nil).
             without_error.first
 
-    if request
-      WorkersHelper.enqueue_create_follow_job_if_needed(request.user_id, enqueue_location: 'FollowEgotterWorker')
-    end
+    request&.enqueue(enqueue_location: 'FollowEgotterWorker')
 
     interval = Concerns::User::FollowAndUnfollow::Util.global_can_create_follow? ? 30.seconds : 30.minutes
     self.class.perform_in(interval)

@@ -26,12 +26,10 @@ class FollowController < ApplicationController
     user = current_user
     request = FollowRequest.new(user_id: user.id, uid: params[:uid])
     if request.save
-      enqueue_create_follow_job_if_needed(user.id, enqueue_location: 'FollowController')
+      enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: 'FollowController')
 
       render json: {
           follow_request_id: request.id,
-          global_can_create_follow: Concerns::User::FollowAndUnfollow::Util.global_can_create_follow?,
-          can_create_follow: user.can_create_follow?,
           create_follow_limit: user.create_follow_limit,
           create_follow_remaining: user.create_follow_remaining
       }

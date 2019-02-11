@@ -67,4 +67,14 @@ class FollowRequest < ApplicationRecord
     logger.warn "#{__method__} #{e.class} #{e.message}"
     false
   end
+
+  def enqueue(enqueue_location: nil)
+    if collect_follow_or_unfollow_sidekiq_jobs(self.class.to_s, user_id).empty?
+      CreateFollowWorker.perform_in(current_interval, user_id, enqueue_location: enqueue_location)
+    end
+  end
+
+  def current_interval
+    Concerns::User::FollowAndUnfollow::Util.global_can_create_follow? ? 10.seconds : Concerns::User::FollowAndUnfollow::Util.limit_interval
+  end
 end
