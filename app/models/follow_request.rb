@@ -41,7 +41,8 @@ class FollowRequest < ApplicationRecord
 
   def perform(client = nil)
     perform!(client)
-  rescue Concerns::FollowAndUnfollowWorker::CanNotFollowYourself, Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed,
+  rescue Concerns::FollowAndUnfollowWorker::CanNotFollowYourself,
+      Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed,
       Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow => e
     update(error_class: e.class, error_message: e.message.truncate(150))
   end

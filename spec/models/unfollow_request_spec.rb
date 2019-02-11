@@ -27,6 +27,7 @@ RSpec.describe UnfollowRequest, type: :model do
     let(:to_uid) { request.uid }
 
     it 'calls client#unfollow' do
+      allow(client).to receive(:user?).with(to_uid).and_return(true)
       allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(true)
       expect(client).to receive(:unfollow).with(to_uid)
       subject
@@ -39,8 +40,18 @@ RSpec.describe UnfollowRequest, type: :model do
       end
     end
 
+    context 'User not found.' do
+      before { allow(client).to receive(:user?).with(to_uid).and_return(false) }
+      it do
+        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::NotFound)
+      end
+    end
+
     context "You haven't followed the user." do
-      before { allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false) }
+      before do
+        allow(client).to receive(:user?).with(to_uid).and_return(true)
+        allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
+      end
       it do
         expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::HaveNotFollowed)
       end

@@ -94,5 +94,9 @@ module Concerns::FollowAndUnfollowWorker
     end
   end
 
-
+  class NotFound < StandardError
+    def initialize(message = 'User not found.')
+      super
+    end
+  end
 end

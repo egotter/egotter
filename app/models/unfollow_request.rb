@@ -32,6 +32,7 @@ class UnfollowRequest < ApplicationRecord
     client = user.api_client.twitter unless client
 
     raise Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself if user.uid == uid
+    raise Concerns::FollowAndUnfollowWorker::NotFound unless client.user?(uid)
     raise Concerns::FollowAndUnfollowWorker::HaveNotFollowed unless client.friendship?(user.uid, uid)
 
     client.unfollow(uid)
@@ -40,7 +41,9 @@ class UnfollowRequest < ApplicationRecord
 
   def perform(client = nil)
     perform!(client)
-  rescue Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself, Concerns::FollowAndUnfollowWorker::HaveNotFollowed => e
+  rescue Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself,
+      Concerns::FollowAndUnfollowWorker::NotFound,
+      Concerns::FollowAndUnfollowWorker::HaveNotFollowed => e
     update(error_class: e.class, error_message: e.message.truncate(150))
   end
 end
