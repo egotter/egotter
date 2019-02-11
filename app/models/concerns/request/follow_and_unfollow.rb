@@ -14,7 +14,8 @@ module Concerns::Request::FollowAndUnfollow
       where(sql)
     end
 
-    # Don't include 'Follow or unfollow limit exceeded' as using to check (un)follow_limit_reset_at
+    # Don't include 'Follow or unfollow limit exceeded' as using to check perform_limit_reset_at
+    # TODO To change the query for UnfollowRequest
     scope :with_limit_error, -> {where("error_message like 'You are unable to follow more people at this time.%'")}
 
     scope :unprocessed, -> user_id {
@@ -34,8 +35,35 @@ module Concerns::Request::FollowAndUnfollow
     update!(finished_at: Time.zone.now) if finished_at.nil?
   end
 
-  def collect_follow_or_unfollow_sidekiq_jobs(name, user_id)
-    Sidekiq::ScheduledSet.new.select {|job| job.klass == name && job.args[0] == user_id} +
-        Sidekiq::Queue.new(name).select {|job| job.klass == name && job.args[0] == user_id}
+  class_methods do
+    def next_request(user_id)
+      unprocessed(user_id).order(created_at: :asc).first
+    end
+
+    def collect_follow_or_unfollow_sidekiq_jobs(name, user_id)
+      Sidekiq::ScheduledSet.new.select {|job| job.klass == name && job.args[0] == user_id} +
+          Sidekiq::Queue.new(name).select {|job| job.klass == name && job.args[0] == user_id}
+    end
+
+    def current_interval
+      global_can_perform? ? short_limit_interval : long_limit_interval
+    end
+
+    def global_can_perform?
+      perform_limit_reset_at < Time.zone.now
+    end
+
+    def perform_limit_reset_at
+      last_error_time = with_limit_error.order(updated_at: :desc).pluck(:updated_at).first
+      last_error_time.nil? ? 1.second.ago : last_error_time + long_limit_interval
+    end
+
+    def short_limit_interval
+      30.seconds
+    end
+
+    def long_limit_interval
+      30.minutes
+    end
   end
 end

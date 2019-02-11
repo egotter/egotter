@@ -24,10 +24,6 @@ class FollowRequest < ApplicationRecord
   validates :user_id, numericality: :only_integer
   validates :uid, numericality: :only_integer
 
-  def ready?
-    Concerns::User::FollowAndUnfollow::Util.global_can_create_follow? && user.can_create_follow?
-  end
-
   def perform!(client = nil)
     client = user.api_client.twitter unless client
 
@@ -68,13 +64,9 @@ class FollowRequest < ApplicationRecord
     false
   end
 
-  def enqueue(enqueue_location: nil)
-    if collect_follow_or_unfollow_sidekiq_jobs(self.class.to_s, user_id).empty?
-      CreateFollowWorker.perform_in(current_interval, user_id, enqueue_location: enqueue_location)
+  def enqueue(options = {})
+    if self.class.collect_follow_or_unfollow_sidekiq_jobs(self.class.to_s, user_id).empty?
+      CreateFollowWorker.perform_in(self.class.current_interval, user_id, options)
     end
-  end
-
-  def current_interval
-    Concerns::User::FollowAndUnfollow::Util.global_can_create_follow? ? 10.seconds : Concerns::User::FollowAndUnfollow::Util.limit_interval
   end
 end
