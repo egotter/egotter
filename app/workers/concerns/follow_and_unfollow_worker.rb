@@ -46,9 +46,9 @@ module Concerns::FollowAndUnfollowWorker
     interval = retry_immediately?(e) ? 10.seconds : Concerns::User::FollowAndUnfollow::Util.limit_interval
 
     if retry_immediately?(e)
-      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry immediately)')
+      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry immediately)', error_class: e.class)
     else
-      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry)')
+      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry)', error_class: e.class)
     end
   end
 

@@ -14,6 +14,7 @@ module Concerns::Request::FollowAndUnfollow
       where(sql)
     end
 
+    # Don't include 'Follow or unfollow limit exceeded' as using to check (un)follow_limit_reset_at
     scope :with_limit_error, -> {where("error_message like 'You are unable to follow more people at this time.%'")}
 
     scope :unprocessed, -> user_id {
