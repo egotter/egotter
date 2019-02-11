@@ -32,6 +32,7 @@ class FollowRequest < ApplicationRecord
     client = user.api_client.twitter unless client
 
     raise Concerns::FollowAndUnfollowWorker::CanNotFollowYourself if user.uid == uid
+    raise Concerns::FollowAndUnfollowWorker::NotFound unless client.user?(uid)
     raise Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed if client.friendship?(user.uid, uid)
     raise Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow if friendship_outgoing?(client, uid)
 
@@ -41,7 +42,20 @@ class FollowRequest < ApplicationRecord
 
   def perform(client = nil)
     perform!(client)
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      update(error_class: e.class, error_message: e.message)
+    else
+      raise
+    end
+  rescue Twitter::Error::Forbidden => e
+    if e.message == 'User has been suspended.'
+      update(error_class: e.class, error_message: e.message)
+    else
+      raise
+    end
   rescue Concerns::FollowAndUnfollowWorker::CanNotFollowYourself,
+      Concerns::FollowAndUnfollowWorker::NotFound,
       Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed,
       Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow => e
     update(error_class: e.class, error_message: e.message.truncate(150))

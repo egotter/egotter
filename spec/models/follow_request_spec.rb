@@ -27,6 +27,7 @@ RSpec.describe FollowRequest, type: :model do
     let(:to_uid) { request.uid }
 
     it 'calls client#follow!' do
+      allow(client).to receive(:user?).with(to_uid).and_return(true)
       allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
       allow(request).to receive(:friendship_outgoing?).with(client, to_uid).and_return(false)
       expect(client).to receive(:follow!).with(to_uid)
@@ -40,8 +41,18 @@ RSpec.describe FollowRequest, type: :model do
       end
     end
 
+    context 'User not found.' do
+      before { allow(client).to receive(:user?).with(to_uid).and_return(false) }
+      it do
+        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::NotFound)
+      end
+    end
+
     context "You've already followed the user." do
-      before { allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(true) }
+      before do
+        allow(client).to receive(:user?).with(to_uid).and_return(true)
+        allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(true)
+      end
       it do
         expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed)
       end
@@ -49,6 +60,7 @@ RSpec.describe FollowRequest, type: :model do
 
     context "You've already requested to follow." do
       before do
+        allow(client).to receive(:user?).with(to_uid).and_return(true)
         allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
         allow(request).to receive(:friendship_outgoing?).with(client, to_uid).and_return(true)
       end
