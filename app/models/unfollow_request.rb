@@ -27,4 +27,14 @@ class UnfollowRequest < ApplicationRecord
   def ready?
     Concerns::User::FollowAndUnfollow::Util.global_can_create_unfollow? && user.can_create_unfollow?
   end
+
+  def perform!(client = nil)
+    client = user.api_client.twitter unless client
+
+    raise Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself if user.uid == uid
+    raise Concerns::FollowAndUnfollowWorker::HaveNotFollowed unless client.friendship?(user.uid, uid)
+
+    client.unfollow(uid)
+    finished!
+  end
 end

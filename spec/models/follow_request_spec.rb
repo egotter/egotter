@@ -19,4 +19,42 @@ RSpec.describe FollowRequest, type: :model do
       subject
     end
   end
+
+  describe '#perform!' do
+    let(:client) { ApiClient.instance.twitter }
+    subject { request.perform!(client) }
+    let(:from_uid) { user.uid }
+    let(:to_uid) { request.uid }
+
+    it 'calls client#follow!' do
+      allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
+      allow(request).to receive(:friendship_outgoing?).with(client, to_uid).and_return(false)
+      expect(client).to receive(:follow!).with(to_uid)
+      subject
+    end
+
+    context 'from_uid == to_uid' do
+      before { request.uid = user.uid }
+      it do
+        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::CanNotFollowYourself)
+      end
+    end
+
+    context "You've already followed the user." do
+      before { allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(true) }
+      it do
+        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed)
+      end
+    end
+
+    context "You've already requested to follow." do
+      before do
+        allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
+        allow(request).to receive(:friendship_outgoing?).with(client, to_uid).and_return(true)
+      end
+      it do
+        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow)
+      end
+    end
+  end
 end
