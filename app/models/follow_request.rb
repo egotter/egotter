@@ -27,4 +27,22 @@ class FollowRequest < ApplicationRecord
   def ready?
     Concerns::User::FollowAndUnfollow::Util.global_can_create_follow? && user.can_create_follow?
   end
+
+  def perform!(client = nil)
+    client = user.api_client.twitter unless client
+
+    raise Concerns::FollowAndUnfollowWorker::CanNotFollowYourself if user.uid == uid
+    raise Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed if client.friendship?(user.uid, uid)
+    raise Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow if friendship_outgoing?(client, uid)
+
+    client.follow!(uid)
+    finished!
+  end
+
+  def friendship_outgoing?(client, uid)
+    client.friendships_outgoing.attrs[:ids].include?(uid)
+  rescue => e
+    logger.warn "#{__method__} #{e.class} #{e.message}"
+    false
+  end
 end

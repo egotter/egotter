@@ -19,4 +19,31 @@ RSpec.describe UnfollowRequest, type: :model do
       subject
     end
   end
+
+  describe '#perform!' do
+    let(:client) { ApiClient.instance.twitter }
+    subject { request.perform!(client) }
+    let(:from_uid) { user.uid }
+    let(:to_uid) { request.uid }
+
+    it 'calls client#unfollow' do
+      allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(true)
+      expect(client).to receive(:unfollow).with(to_uid)
+      subject
+    end
+
+    context 'from_uid == to_uid' do
+      before { request.uid = user.uid }
+      it do
+        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself)
+      end
+    end
+
+    context "You haven't followed the user." do
+      before { allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false) }
+      it do
+        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::HaveNotFollowed)
+      end
+    end
+  end
 end

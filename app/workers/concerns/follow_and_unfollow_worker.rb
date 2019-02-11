@@ -16,8 +16,7 @@ module Concerns::FollowAndUnfollowWorker
     return unless request
 
     if request.ready?
-      yield(request)
-      request.finished!
+      request.perform!
       worker_class.perform_in(10.seconds, user_id, enqueue_location: 'FollowAndUnfollowWorker(finish)') if request_class.unprocessed(user_id).exists?
     else
       raise TooManyRequests
