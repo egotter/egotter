@@ -11,6 +11,7 @@ module Concerns::FollowAndUnfollowWorker
   end
 
   def do_perform(worker_class, request_class, user_id, options = {})
+    request = nil
     request = request_class.unprocessed(user_id).order(created_at: :asc).first
     return unless request
 
@@ -46,9 +47,9 @@ module Concerns::FollowAndUnfollowWorker
     interval = retry_immediately?(e) ? 10.seconds : Concerns::User::FollowAndUnfollow::Util.limit_interval
 
     if retry_immediately?(e)
-      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry immediately)', error_class: e.class)
+      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry immediately)', request_id: request&.id, error_class: e.class)
     else
-      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry)', error_class: e.class)
+      worker_class.perform_in(interval, user_id, enqueue_location: 'FollowAndUnfollowWorker(retry)', request_id: request&.id, error_class: e.class)
     end
   end
 
