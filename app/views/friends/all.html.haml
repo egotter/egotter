@@ -2,3 +2,9 @@
 
 .row.twitter.users
   = render partial: 'twitter/grid_user', collection: @collection, cached: true, as: :user
+
+:javascript
+  $(function () {
+    Twitter.enableFollowButton('.twitter.users');
+    Twitter.enableUnfollowButton('.twitter.users');
+  });
