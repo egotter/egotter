@@ -59,7 +59,7 @@ module Concerns::Request::FollowAndUnfollow
     end
 
     def short_limit_interval
-      30.seconds
+      10.seconds
     end
 
     def long_limit_interval
