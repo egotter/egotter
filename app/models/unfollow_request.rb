@@ -47,6 +47,12 @@ class UnfollowRequest < ApplicationRecord
     else
       raise
     end
+  rescue Twitter::Error::Forbidden => e
+    if e.message == 'User has been suspended.'
+      update(error_class: e.class, error_message: e.message)
+    else
+      raise
+    end
   rescue Concerns::FollowAndUnfollowWorker::CanNotUnfollowYourself,
       Concerns::FollowAndUnfollowWorker::NotFound,
       Concerns::FollowAndUnfollowWorker::HaveNotFollowed => e
