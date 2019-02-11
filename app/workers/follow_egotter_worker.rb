@@ -9,11 +9,11 @@ class FollowEgotterWorker
             where(finished_at: nil).
             without_error.first
 
-    request&.enqueue(enqueue_location: 'FollowEgotterWorker')
+    request&.perform
 
     self.class.perform_in(FollowRequest.current_interval)
   rescue => e
     logger.warn "#{e.class} #{e.message}"
-    self.class.perform_in(30.minutes)
+    self.class.perform_in(FollowRequest.long_limit_interval)
   end
 end
