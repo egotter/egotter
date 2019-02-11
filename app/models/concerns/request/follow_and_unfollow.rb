@@ -33,4 +33,9 @@ module Concerns::Request::FollowAndUnfollow
   def finished!
     update!(finished_at: Time.zone.now) if finished_at.nil?
   end
+
+  def collect_follow_or_unfollow_sidekiq_jobs(name, user_id)
+    Sidekiq::ScheduledSet.new.select {|job| job.klass == name && job.args[0] == user_id} +
+        Sidekiq::Queue.new(name).select {|job| job.klass == name && job.args[0] == user_id}
+  end
 end

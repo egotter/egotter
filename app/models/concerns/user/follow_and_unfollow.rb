@@ -69,10 +69,5 @@ module Concerns::User::FollowAndUnfollow
     def limit_interval
       30.minutes
     end
-
-    def collect_follow_or_unfollow_sidekiq_jobs(name, user_id)
-      Sidekiq::ScheduledSet.new.select {|job| job.klass == name && job.args[0] == user_id} +
-          Sidekiq::Queue.new(name).select {|job| job.klass == name && job.args[0] == user_id}
-    end
   end
 end

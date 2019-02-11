@@ -58,4 +58,14 @@ class UnfollowRequest < ApplicationRecord
       Concerns::FollowAndUnfollowWorker::HaveNotFollowed => e
     update(error_class: e.class, error_message: e.message.truncate(150))
   end
+
+  def enqueue(enqueue_location: nil)
+    if collect_follow_or_unfollow_sidekiq_jobs(self.class.to_s, user_id).empty?
+      CreateUnfollowWorker.perform_in(current_interval, user_id, enqueue_location: enqueue_location)
+    end
+  end
+
+  def current_interval
+    Concerns::User::FollowAndUnfollow::Util.global_can_create_unfollow? ? 10.seconds : Concerns::User::FollowAndUnfollow::Util.limit_interval
+  end
 end
