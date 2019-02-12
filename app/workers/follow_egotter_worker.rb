@@ -5,7 +5,7 @@ class FollowEgotterWorker
   def perform(*args)
     10.times do
       request = do_perform
-      break if !request || request.finished?
+      break if !request || !request.finished?
     end
 
     self.class.perform_in(FollowRequest.current_interval)
