@@ -7,6 +7,10 @@ module TwitterHelper
     "https://twitter.com/messages/compose?recipient_id=#{uid}"
   end
 
+  def follow_url(screen_name)
+    "https://twitter.com/intent/follow?screen_name=#{screen_name}"
+  end
+
   def user_link(screen_name, options = {}, &block)
     options = options.merge(target: '_blank', rel: 'nofollow')
     url = "https://twitter.com/#{screen_name}"

@@ -26,7 +26,10 @@ $(function () {
   }
 
   $follow.find('button.ok').on('click', function () {
-    $.post($(this).data('url'), {uid: $(this).data('uid')}, function (res) {
+    var $clicked = $(this);
+    window.open($clicked.data('follow-url'), '_blank');
+
+    $.post($clicked.data('url'), {uid: $clicked.data('uid')}, function (res) {
       console.log('createFollow', res);
     });
 
