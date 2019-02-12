@@ -35,6 +35,10 @@ module Concerns::Request::FollowAndUnfollow
     update!(finished_at: Time.zone.now) if finished_at.nil?
   end
 
+  def finished?
+    !finished_at.nil?
+  end
+
   class_methods do
     def next_request(user_id)
       unprocessed(user_id).order(created_at: :asc).first
