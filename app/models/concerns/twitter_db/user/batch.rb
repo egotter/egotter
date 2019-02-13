@@ -60,17 +60,19 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.import_suspended(uids)
-      filtered = uids.uniq.map(&:to_i) - TwitterDB::User.where(uid: uids).pluck(:uid)
-      return [] if filtered.empty?
+      not_persisted = uids.uniq.map(&:to_i) - TwitterDB::User.where(uid: uids).pluck(:uid)
+      return [] if not_persisted.empty?
 
-      if filtered.size >= 10
-        logger "#{self}##{__method__}: Too many suspended uids #{filtered.size} #{filtered.inspect.truncate(100)}"
+      t_users =  not_persisted.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
+      import(t_users)
+
+      if not_persisted.size >= 10
+        logger.warn {"#{self.class}##{__method__} #{not_persisted.size} records"}
+      else
+        logger.info {"#{self.class}##{__method__} #{not_persisted.size} records"}
       end
 
-      t_users =  filtered.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
-      # logger "#{self}##{__method__}: Import suspended uids #{filtered.inspect.truncate(100)}" if filtered.any?
-      import(t_users)
-      filtered
+      not_persisted
     end
 
     private
