@@ -18,7 +18,9 @@ module Api
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
 
       if uids.any? { |uid| !users.has_key?(uid) }
-        CreateTwitterDBUserWorker.perform_async(uids.select { |uid| !users.has_key?(uid) })
+        selected_uids = uids.select { |uid| !users.has_key?(uid) }
+        logger.info {"#{controller_name}##{action_name} CreateTwitterDBUserWorker #{selected_uids.size}"}
+        CreateTwitterDBUserWorker.perform_async(selected_uids)
       end
 
       users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}

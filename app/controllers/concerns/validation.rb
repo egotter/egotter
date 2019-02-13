@@ -62,7 +62,7 @@ module Concerns::Validation
     return true if TwitterDB::User.exists?(uid: uid)
 
     logger.warn "#{controller_name}##{action_name}: TwitterDB::User not found. #{uid}"
-    TwitterDB::User::Batch.fetch_and_create(uid, client: request_context_client)
+    CreateTwitterDBUserWorker.perform_async([uid])
     true
   rescue => e
     logger.warn "#{controller_name}##{action_name}: TwitterDB::User not found. #{e.class} #{e.message} #{uid}"
