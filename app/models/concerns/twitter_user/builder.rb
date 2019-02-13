@@ -27,7 +27,7 @@ module Concerns::TwitterUser::Builder
       @client = nil
     end
 
-    # These validation methods (fresh?, friendless? and diff.empty?) are not implemented in
+    # These validation methods (fresh?, no_need_to_import_friendships? and diff.empty?) are not implemented in
     # Rails default validation callbacks due to too heavy.
     def build(validate: true)
       t_user = @client.user(uid)
@@ -47,7 +47,7 @@ module Concerns::TwitterUser::Builder
       twitter_user, relations = fetch(t_user)
 
       if validate
-        if twitter_user.friendless?
+        if twitter_user.no_need_to_import_friendships?
           return TwitterUser.new.tap{|u| u.errors[:base] << 'Too many friends (already exists)' }
         end
 

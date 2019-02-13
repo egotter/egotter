@@ -49,7 +49,7 @@
     }
 
     function updatesNotFound (signedIn) {
-      var friendless = #{twitter_user.friendless?};
+      var friendless = #{twitter_user.no_need_to_import_friendships?};
       var searchMyself = #{user_signed_in? && current_user.uid.to_i == twitter_user.uid.to_i};
 
       if (signedIn) {

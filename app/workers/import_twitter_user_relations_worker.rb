@@ -26,7 +26,7 @@ class ImportTwitterUserRelationsWorker
 
     import_favorite_and_close_friendships(client, twitter_user)
 
-    return if twitter_user.friendless?
+    return if twitter_user.no_need_to_import_friendships?
 
     friend_uids, follower_uids = fetch_uids(client, uid)
 
