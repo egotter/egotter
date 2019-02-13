@@ -9,10 +9,11 @@ class ApiClient
       begin
         tries ||= 5
         @client.send(method, *args, &block) # client#parallel uses block.
-      rescue HTTP::ConnectionError, Twitter::Error => e
-        if !e.message.include?('Connection reset by peer')
-          raise
-        else
+      rescue HTTP::ConnectionError,
+          Twitter::Error::InternalServerError,
+          Twitter::Error::ServiceUnavailable,
+          Twitter::Error => e
+        if retryable_exception?(e)
           message = "#{self.class}##{method}: #{e.class} #{e.message}"
 
           if (tries -= 1) < 0
@@ -22,11 +23,21 @@ class ApiClient
             Rails.logger.warn "RETRY #{tries} #{message}"
             retry
           end
+        else
+          raise
         end
       end
     else
       super
     end
+  end
+
+  def retryable_exception?(ex)
+    ([HTTP::ConnectionError, Twitter::Error].include?(ex.class) && ex.message.include?('Connection reset by peer')) ||
+        (ex.class == Twitter::Error::InternalServerError && ex.message == 'Internal error') ||
+        (ex.class == Twitter::Error::ServiceUnavailable && ex.message == 'Over capacity') ||
+        (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '') ||
+        (ex.class == Twitter::Error && ex.message == 'execution expired')
   end
 
   class << self
