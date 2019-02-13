@@ -28,18 +28,10 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.fetch(uids, client:)
-      tries ||= 3
       client.users(uids)
-    rescue => e
+    rescue Twitter::Error::NotFound => e
       if e.message == 'No user matches for specified terms.'
         []
-      elsif retryable?(e)
-        if (tries -= 1).zero?
-          logger "#{self}##{__method__}: Retry exhausted #{uids.size} #{uids.inspect.truncate(100)}"
-          raise
-        else
-          retry
-        end
       else
         raise
       end
@@ -85,10 +77,6 @@ module Concerns::TwitterDB::User::Batch
 
     def self.logger(message)
       File.basename($0) == 'rake' ? puts(message) : Rails.logger.warn(message)
-    end
-
-    def self.retryable?(ex)
-      TwitterUser::Batch.retryable?(ex)
     end
 
     def self.retryable_deadlock?(ex)

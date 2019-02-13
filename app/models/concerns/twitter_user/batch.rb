@@ -79,7 +79,6 @@ module Concerns::TwitterUser::Batch
       end
 
       def fetch_user(uid, client:)
-        tries ||= 3
         client.user(uid)
       rescue => e
         if e.message == 'Invalid or expired token.'
@@ -90,8 +89,6 @@ module Concerns::TwitterUser::Batch
           logger "Not found #{uid}"
         elsif e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
           logger "Temporarily locked #{uid}"
-        elsif retryable?(e)
-          (tries -= 1).zero? ? logger("Retry limit exceeded(user) #{uid}") : retry
         else
           logger "client.user: #{e.class} #{e.message} #{uid}"
         end
@@ -102,13 +99,10 @@ module Concerns::TwitterUser::Batch
       end
 
       def fetch_friend_ids_and_follower_ids(uid, client:)
-        tries ||= 3
         client.friend_ids_and_follower_ids(uid)
       rescue => e
         if e.message == 'Invalid or expired token.'
           logger "Invalid token(friend_ids) #{uid}"
-        elsif retryable?(e)
-          (tries -= 1).zero? ? logger("Retry limit exceeded(friend_ids) #{uid}") : retry
         else
           logger "client.friend_ids: #{e.class} #{e.message} #{uid}"
         end
@@ -134,16 +128,6 @@ module Concerns::TwitterUser::Batch
             else raise
           end
         end while true
-      end
-
-      def retryable?(ex)
-        # Twitter::Error::InternalServerError Internal error
-        # Twitter::Error::ServiceUnavailable Over capacity
-        # Twitter::Error execution expired
-        # Twitter::Error Connection reset by peer - SSL_connect
-
-        ['Internal error', 'Over capacity', 'execution expired'].include?(ex.message) ||
-          (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '')
       end
 
       def create_friendless_record(twitter_user, create_twitter_user:)
