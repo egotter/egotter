@@ -112,6 +112,7 @@ class ImportTwitterUserRelationsWorker
     TwitterDB::User::Batch.fetch_and_import(uids, client: client)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
+    logger.info e.backtrace.join("\n")
   end
 
   def import_friendships(twitter_user, friend_uids, follower_uids)
