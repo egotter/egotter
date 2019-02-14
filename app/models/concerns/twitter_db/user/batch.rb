@@ -42,7 +42,7 @@ module Concerns::TwitterDB::User::Batch
       rescue => e
         if retryable_deadlock?(e)
           if (tries -= 1).zero?
-            logger "#{self}##{__method__}: Retry exhausted #{t_users.size} #{t_users.first.inspect.truncate(100)}"
+            logger.warn {"#{self}##{__method__}: Retry exhausted #{t_users.size} #{t_users.first.inspect.truncate(100)}"}
             raise
           else
             sleep(rand * 5)
@@ -73,8 +73,8 @@ module Concerns::TwitterDB::User::Batch
 
     private
 
-    def self.logger(message)
-      File.basename($0) == 'rake' ? puts(message) : Rails.logger.warn(message)
+    def self.logger
+      @@logger ||= (File.basename($0) == 'rake' ? Logger.new(STDOUT) : Rails.logger)
     end
 
     def self.retryable_deadlock?(ex)
