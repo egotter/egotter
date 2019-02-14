@@ -25,5 +25,6 @@ class UpdateUsageStatWorker
     handle_unauthorized_exception(e, uid: uid)
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{uid}"
+    logger.info e.backtrace.join("\n")
   end
 end

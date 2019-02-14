@@ -37,19 +37,23 @@
     var cloud = #{@stat.hashtags.to_a.map.with_index { |(word, count), i| {text: word, size: count, group: i % 3} }.to_json.html_safe};
 
     if (usageTime) {
+      console.log('usageTime', usageTime);
       var chart = $.extend(true, {}, window.usage_stats_column_chart_options);
       chart.series[0].data = usageTime;
       $('.usage-time-chart').highcharts(chart);
     }
 
     if (hashtags) {
+      console.log('hashtags', hashtags);
       var chart = $.extend(true, {}, window.usage_stats_column_chart_options);
       chart.series[0].data = hashtags;
       $('.hashtags-chart').highcharts(chart);
     }
 
     if (cloud) {
-      wordCloud('.cloud-chart', cloud, $('cloud-chart').width(), 220);
+      console.log('cloud', cloud);
+      // TODO Decrease load
+      // wordCloud('.cloud-chart', cloud, $('cloud-chart').width(), 220);
     }
   });
 
