@@ -38,11 +38,6 @@ module ApplicationHelper
     ]
   end
 
-  def client
-    logger.warn "DEPRECATION WARNING: ApplicationHelper#client in #{controller_name}##{action_name}"
-    request_context_client
-  end
-
   def request_context_client
     @request_context_client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
   end

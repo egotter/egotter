@@ -28,11 +28,6 @@ module Concerns::TwitterUser::Utils
 
   # Reason1: too many friends
   # Reason2: near zero friends
-  def friendless?
-    logger.warn "DEPRECATION WARNING: friendless?"
-    no_need_to_import_friendships?
-  end
-
   def no_need_to_import_friendships?
     friends_size == 0 && followers_size == 0
   end
