@@ -29,12 +29,11 @@ module ApplicationHelper
 
   def top_page_paths
     [
-      [one_sided_friends_top_path, t('one_sided_friends.new.plain_title')],
-      [unfriends_top_path, t('unfriends.new.plain_title')],
-      [inactive_friends_top_path, t('inactive_friends.new.plain_title')],
-      [friends_top_path, t('friends.new.plain_title')],
-      [clusters_top_path, t('clusters.new.plain_title')],
-      [root_path, t('searches.common.egotter')]
+      [one_sided_friends_top_path, t('one_sided_friends.new.simple_title')],
+      [unfriends_top_path, t('unfriends.new.simple_title')],
+      [inactive_friends_top_path, t('inactive_friends.new.simple_title')],
+      [friends_top_path, t('friends.new.simple_title')],
+      [clusters_top_path, t('clusters.new.simple_title')]
     ]
   end
 

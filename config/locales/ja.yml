@@ -2,8 +2,6 @@ ja:
   searches:
     common:
       egotter: "えごったー"
-      page_title: "えごったー スマホでかんたん ツイッターのフォロー確認"
-      page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       or: " または "
       return: "%{user} の分析一覧へ戻る"
       twitter_id: "Twitter ID"
@@ -94,6 +92,8 @@ ja:
       usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
   home:
     new:
+      page_title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
+      page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       text001_html: 'フォロワーが1人減っている。<br class="visible-xs-block">誰だろう？'
       text002: 'えごったーを使えば、フォロワーが減ったりブロックされた時に相手がすぐに分かります。'
       text003_html: '<span style="color: #EA2184; font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
@@ -117,7 +117,7 @@ ja:
       not_hacked_with_details_html: "乗っ取りツイートは見付かりませんでした。<br>今後も安心してツイッターをご利用ください。"
       hacked_with_details_html: '怪しいツイートが見付かりました。<a href="https://twitter.com/settings/applications" target="_blank" rel="nofollow" class="btn btn-default btn-sm">連携アプリ一覧 (公式)</a> から、怪しいアプリを削除してください。'
       sign_in_to_protect_html: '<a href="%{url}">ログイン</a> してえごったーを利用すると、乗っ取りツイートのチェックを行います。'
-      about_this_page: "%{user} の分析 by えごったーについて"
+      about_this_page: "%{user} の分析結果について"
       this_page_is_html: "このページでは、%{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。<br>リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
       other_services: "他のサービス"
       twitter_link_html: '<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwitterで見る</a>'
@@ -407,7 +407,7 @@ ja:
   one_sided_friends:
     new:
       title_html: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: '片思いチェック by えごったー'
+      plain_title: '片思いチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
       simple_title: '片思いチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
@@ -462,7 +462,7 @@ ja:
   unfriends:
     new:
       title_html: '<span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: 'リムられチェック by えごったー'
+      plain_title: 'リムられチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
       simple_title: 'リムられチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
       short_description: "フォローを外されたアカウントをさくっと見付けることができます。"
@@ -560,7 +560,7 @@ ja:
   inactive_friends:
     new:
       title_html: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: '最近いない人検索 by えごったー'
+      plain_title: '最近いない人検索 - えごったー スマホでかんたん ツイッターのフォロー整理'
       simple_title: '最近いない人検索'
       description: "保存ユーザー数4,800万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
       short_description: "スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
@@ -615,7 +615,7 @@ ja:
   friends:
     new:
       title_html: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: 'フォローチェック by えごったー'
+      plain_title: 'フォローチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
       simple_title: 'フォローチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからフォローチェック！"
       short_description: "フォローとフォロワーの一覧をさくっと見ることができます。"
@@ -706,7 +706,7 @@ ja:
   clusters:
     new:
       title_html: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
-      plain_title: 'クラスタ判定 by えごったー'
+      plain_title: 'クラスタ判定 - えごったー スマホでかんたん ツイッターのフォロー整理'
       simple_title: 'クラスタ判定'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
       short_description: "検索されたユーザーが入っているクラスタをさくっと判定します。"

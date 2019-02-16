@@ -2,8 +2,6 @@ en:
   searches:
     common:
       egotter: "egotter"
-      page_title: "egotter find out who unfollowed you"
-      page_description: "You can easily find out who unfollowed you and who's not following you back."
       or: " or "
       cluster: "clusters"
       return: "return to Analysis of %{user}"
@@ -42,6 +40,10 @@ en:
       reasons:
         removed: "You are Removed"
         close_friends: "Close Friend"
+  home:
+    new:
+      page_title: "egotter find out who unfollowed you"
+      page_description: "You can easily find out who unfollowed you and who's not following you back."
   onesignal:
     defaultNotification:
       title: 'egotter'
