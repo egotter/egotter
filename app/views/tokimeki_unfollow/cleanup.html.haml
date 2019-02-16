@@ -1,0 +1,73 @@
+- title t('.plain_title')
+- set_meta_tags description: t('.description')
+
+.vertical-spacing
+
+.text-center{style: 'max-width: 600px; margin: 0 auto;'}
+  .tokimeki_unfollow.lead= t('.next_is_html', number: @user.processed_count + 1, screen_name: @friend.screen_name)
+  .vertical-spacing
+  .unfollow-or-keep.alert.alert-warning.clearfix
+    .tokimeki_unfollow.lead= t('.text001_html', screen_name: @friend.screen_name)
+    %a.btn.btn-warning.pull-left.unfollow{href: '#', data: {uid: @friend.id, url: create_unfollow_path}}
+      = t('.unfollow')
+    %a.btn.btn-warning.pull-right.keep{href: '#'}
+      = t('.keep')
+
+.twitter.tweets.center-block
+  = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
+
+.vertical-spacing
+.vertical-spacing
+
+.text-center{style: 'max-width: 600px; margin: 0 auto;'}
+  = render partial: 'twitter/profile', locals: {user: @twitter_user}
+
+.vertical-spacing
+.vertical-spacing
+
+.text-center{style: 'max-width: 600px; margin: 0 auto;'}
+  = t('.how_to_continue_html', url: tokimeki_unfollow_top_path)
+
+.vertical-spacing
+.vertical-spacing
+
+#after-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+  .modal-dialog{role: 'document'}
+    .modal-content
+      .modal-body
+        %p= t('.after_unfollow_html', screen_name: @friend.screen_name, remaining: @user.friends_count - (@user.processed_count + 1))
+      .modal-footer
+        = link_to t('.after_unfollow_modal.next'), tokimeki_unfollow_cleanup_path, class: 'btn btn-default'
+
+#after-keep-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+  .modal-dialog{role: 'document'}
+    .modal-content
+      .modal-body
+        %p= t('.after_keep_html', screen_name: @friend.screen_name, remaining: @user.friends_count - (@user.processed_count + 1))
+      .modal-footer
+        = link_to t('.after_keep_modal.next'), tokimeki_unfollow_cleanup_path, class: 'btn btn-default'
+
+:javascript
+  $(function () {
+    $('.unfollow-or-keep').sticky();
+
+    $('.btn.unfollow').on('click', function () {
+      var $clicked = $(this);
+      var $modal = $('#after-unfollow-modal').one('hidden.bs.modal', function (e) {
+        window.location.href = $(this).find('.btn').attr('href');
+      });
+
+      Twitter.unfollow($clicked.data('url'), $clicked.data('uid'), function () {
+        $.post('#{tokimeki_unfollow_unfollow_path}', {uid: $clicked.data('uid')});
+        $modal.modal();
+      });
+    });
+
+    $('.btn.keep').on('click', function () {
+      var $modal = $('#after-keep-modal').one('hidden.bs.modal', function (e) {
+        window.location.href = $(this).find('.btn').attr('href');
+      });
+      $.post('#{tokimeki_unfollow_keep_path}');
+      $modal.modal();
+    });
+  });

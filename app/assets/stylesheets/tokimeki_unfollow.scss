@@ -1,0 +1,76 @@
+.tokimeki_unfollow {
+  blockquote {
+    position: relative;
+    padding: 15px 10px 5px;
+    box-sizing: border-box;
+    font-style: italic;
+    background: #f3f3f3;
+  }
+
+  blockquote:before {
+    display: inline-block;
+    position: absolute;
+    top: -8px;
+    left: 9px;
+    width: 40px;
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
+    content: "\f10d";
+    font-family: "Font Awesome 5 Free";
+    color: #FFF;
+    font-size: 18px;
+    line-height: 30px;
+    background: #6fcdd9;
+    font-weight: 900;
+  }
+
+  blockquote:after {
+    position: absolute;
+    content: '';
+    top: -8px;
+    left: 49px;
+    border: none;
+    border-bottom: solid 8px #6cacb5;
+    border-right: solid 9px transparent;
+  }
+
+  blockquote p {
+    position: relative;
+    padding: 0;
+    margin: 10px 0;
+    z-index: 3;
+    line-height: 1.7;
+  }
+
+  blockquote cite {
+    display: block;
+    text-align: right;
+    color: #888888;
+    font-size: 0.9em;
+  }
+
+  blockquote {
+    border: none;
+    margin: 0 auto;
+    max-width: 600px;
+    margin-bottom: 15px;
+  }
+
+  blockquote p {
+    margin-bottom: 15px;
+  }
+
+  &.lead {
+    font-size: 16px;
+  }
+}
+
+.unfollow-or-keep {
+  padding: 15px;
+  z-index: 10000; // for sticky
+}
+
+#after-unfollow-modal {
+  z-index: 10000; // for sticky
+}

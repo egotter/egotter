@@ -9,7 +9,7 @@ module PathsHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(home searches notifications search_histories login misc orders application) then timeline_path(screen_name: screen_name)
+      when *%w(home searches notifications search_histories login misc orders tokimeki_unfollow application) then timeline_path(screen_name: screen_name)
       else send("#{menu.to_s.singularize}_path", screen_name: screen_name)
     end
   rescue => e

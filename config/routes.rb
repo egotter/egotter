@@ -114,6 +114,11 @@ Rails.application.routes.draw do
 
   get 'usage_stats/:uid/check_for_updates', to: 'usage_stats#check_for_updates', as: :check_for_updates_usage_stat
 
+  get 'tokimeki_unfollow', to: 'tokimeki_unfollow#new', as: :tokimeki_unfollow_top
+  get 'tokimeki_unfollow/cleanup', to: 'tokimeki_unfollow#cleanup', as: :tokimeki_unfollow_cleanup
+  post 'tokimeki_unfollow/unfollow', to: 'tokimeki_unfollow#unfollow', as: :tokimeki_unfollow_unfollow
+  post 'tokimeki_unfollow/keep', to: 'tokimeki_unfollow#keep', as: :tokimeki_unfollow_keep
+
   resources :notifications, only: :index
   resources :settings, only: :index
   resource :setting, only: :update

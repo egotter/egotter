@@ -1,0 +1,59 @@
+- title t('.plain_title')
+- set_meta_tags description: t('.description')
+
+.text-center.right-side{style: 'max-width: 600px; margin: 0 auto;'}
+  .vertical-spacing
+  %h2.h4= t('.simple_title')
+  .vertical-spacing
+
+  -#.lead= t('.text001_html')
+  .lead= t('.text002_html')
+  .lead= t('.text003_html')
+
+  .center-block{style: 'width: 80%;'}
+    = sign_in_with_twitter_link(tokimeki_unfollow_cleanup_path, 'button', class: 'btn btn-primary btn-block')
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_001')
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_002')
+  .vertical-spacing
+  %div
+    %span.thin-border
+    %span.or-text= t('searches.common.or')
+    %span.thin-border
+  .vertical-spacing
+  .vertical-spacing
+  .center-block{style: 'width: 80%;'}
+    = link_to t('.continue'), sign_in_path(redirect_path: tokimeki_unfollow_cleanup_path), class: 'btn btn-default btn-block'
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_003')
+    .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
+      %i.fas.fa-check
+      = t('searches.new.pc.check_004_html')
+  .vertical-spacing
+
+  .tokimeki_unfollow
+    .block-center
+      %blockquote
+        %p.lead= tokimeki_list.sample
+  .vertical-spacing
+  .vertical-spacing
+
+  .screenshot.text-center
+    = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
+      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
+  .vertical-spacing
+
+#public-tweets-wrapper
+:javascript
+  $(function () {
+    var url = '#{load_public_tweets_path}';
+    new AsyncLoader(url, '#public-tweets-wrapper').load();
+  });
+
+.tokimeki_unfollow.lead.text-center= t('.disclaimer')
+
+.tokimeki_unfollow.lead.text-center= t('unfriends.new.lead_004').html_safe

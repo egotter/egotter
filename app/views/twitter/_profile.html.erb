@@ -26,12 +26,12 @@
     </div>
   </div><!-- /.profile-overview -->
 
-  <div class="text-center">
-    <div class="vertical-spacing"></div>
-    <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
-  </div>
-
   <div class="description-container">
+    <div class="text-center">
+      <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
+    </div>
+    <div class="vertical-spacing"></div>
+
     <% if user.description.present? %>
       <div class="description text-center"><%= auto_link(user.description, html: {target: '_blank', rel: 'nofollow'}) %></div>
     <% end %>
