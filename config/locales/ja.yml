@@ -63,7 +63,7 @@ ja:
       feature_009: "鍵垢も検索OK"
       feature_desc_009_html: "鍵垢も検索できます。<br>(要ログイン)"
       feature_010: "多くの利用実績"
-      feature_desc_010_html: "累計40万以上の利用実績！<br>これからも安心で安全な<br>運営を継続します。"
+      feature_desc_010_html: "累計100万以上の利用実績！<br>これからも安心で安全な<br>運営を継続します。"
       pc:
         lead_001: "リムーブ、ブロックを逃さずチェック！"
         lead_002_html: "えごったーは、スマホとPCから使える<br>安心で安全なツイッター分析アプリです"
@@ -92,6 +92,14 @@ ja:
       usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
+  home:
+    new:
+      text001_html: 'フォロワーが1人減っている。<br class="visible-xs-block">誰だろう？'
+      text002: 'えごったーを使えば、フォロワーが減ったりブロックされた時に相手がすぐに分かります。'
+      text003_html: '<span style="color: #EA2184; font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
+      text004_html: 'ログインでもっと便利に。<br class="visible-xs-block">リム通知届きます。'
+      text005_html: 'えごったーにログインすることで、<br class="visible-xs-block"><span style="color: #EA2184; font-size: 20px;">リム通知</span>が届くようになります。'
+      text006_html: '<span style="color: #EA2184; font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
   timelines:
     show:
       title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"

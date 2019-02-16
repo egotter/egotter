@@ -1,0 +1,37 @@
+%h1.top_header
+  = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
+  %span= I18n.t('searches.common.egotter')
+
+.vertical-spacing
+%h2.h4= t('searches.new.lead_001')
+.vertical-spacing
+.lead= t('searches.new.lead_002_html')
+.center-block{style: 'width: 80%;'}
+  = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
+  .text-notice.text-right.search-hint
+    %i.fas.fa-check
+    = t('searches.new.pc.check_001')
+  .text-notice.text-right.search-hint
+    %i.fas.fa-check
+    = t('searches.new.pc.check_002')
+.vertical-spacing
+%div
+  %span.thin-border
+  %span.or-text= t('searches.common.or')
+  %span.thin-border
+.vertical-spacing
+.vertical-spacing
+.center-block{style: 'width: 80%;'}
+  = render partial: 'common/search_form', locals: {via: build_via('input')}
+  .text-notice.text-right.search-hint
+    %i.fas.fa-check
+    = t('searches.new.pc.check_003')
+  .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
+    %i.fas.fa-check
+    = t('searches.new.pc.check_004_html')
+.vertical-spacing
+
+.screenshot.text-center
+  = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
+    %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
+.vertical-spacing
