@@ -18,7 +18,7 @@
         = t('searches.new.pc.check_002')
 - else
   - if request.from_smartphone?
-    .text-center.searches
+    .text-center.searches.right-side
       = render partial: 'home/right_side'
   - else
     .vertical-spacing
@@ -32,7 +32,7 @@
             = image_tag '/egotter_icon_375x452.png', size: '375x452', class: 'img-rounded', style: 'display: block; margin: 0 auto;'
 
         .col-xs-12.col-md-6.center-block{style: 'awidth: 375px;'}
-          .text-center.searches{style: 'background-color: #ffffff;'}
+          .text-center.searches.right-side{style: 'background-color: #ffffff;'}
             = render partial: 'home/right_side'
 
 .vertical-spacing.hidden-xs

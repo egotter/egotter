@@ -81,7 +81,7 @@ Twitter.enableUnfollowButton = function (selector) {
   if (!$modal.data('init')) {
     $modal.find('.btn.ok').on('click', function () {
       var $clicked = $(this).data('btn-target');
-      Twitter.unfollow($(this).data('url'), $clicked.data('uid'),function () {
+      Twitter.unfollow($(this).data('url'), $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.no-follow').show();
       });
       $modal.modal('hide');
