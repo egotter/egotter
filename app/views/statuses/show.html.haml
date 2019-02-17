@@ -14,7 +14,7 @@
 = render partial: 'common/search_form', locals: {via: build_via('top_input')}
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
-#statuses.twitter.tweets.row
+#statuses.twitter.tweets.center-block
   - if @twitter_user.protected_account?
     = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
   - else

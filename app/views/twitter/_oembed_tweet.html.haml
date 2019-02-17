@@ -1,5 +1,5 @@
-.col-xs-12{style: 'margin-bottom: 15px;'}
-  %blockquote.twitter-tweet{align: 'center'}
-    %p{dir: 'ltr', lang: 'ja'}= tweet.text
-    = "— #{tweet.user.name} (#{mention_name(tweet.user.screen_name)})"
-    = tweet_link(tweet)
+%blockquote.twitter-tweet{align: 'center'}
+  %p{dir: 'ltr', lang: 'ja'}= tweet.text
+  = "— #{tweet.user.name} (#{mention_name(tweet.user.screen_name)})"
+  = tweet_link(tweet)
+.vertical-spacing

@@ -1,2 +1,3 @@
 .twitter.tweets.row
-  = render(partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true)
+  .col-xs-12
+    = render(partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true)
