@@ -1,9 +1,9 @@
 module PathsHelper
   def root_path_for(controller:)
-    if %w(one_sided_friends unfriends inactive_friends friends clusters).include? controller
-      send("#{controller}_top_path")
-    else
-      root_path
+    case controller
+    when 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters' then send("#{controller}_top_path")
+    when 'tokimeki_unfollow' then tokimeki_unfollow_cleanup_path
+    else root_path
     end
   end
 
