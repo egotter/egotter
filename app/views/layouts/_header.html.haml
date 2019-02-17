@@ -10,7 +10,7 @@
     - else
       -# Emulates 'btn btn-default' with padding, text-decoration and color
       %button.navbar-toggle{style: 'margin-right: 0; padding: 6px 12px;'}
-        = link_to t('dictionary.sign_in'), sign_in_path(via: build_via('header'))
+        = link_to t('dictionary.sign_in'), sign_in_path(via: build_via('header'), redirect_path: root_path_for(controller: controller_name))
 
     %button.navbar-toggle{style: 'margin-right: 15px; padding: 6px 12px;'}
       %a{href: '#', 'data-target' => '#search-modal', 'data-toggle' => 'modal'}
@@ -54,4 +54,4 @@
         - else
           %li
             %p.navbar-btn{style: 'margin-right: 0;'}
-              = link_to t('dictionary.sign_in'), sign_in_path(via: build_via('header')), class: 'btn btn-default'
+              = link_to t('dictionary.sign_in'), sign_in_path(via: build_via('header'), redirect_path: root_path_for(controller: controller_name)), class: 'btn btn-default'
