@@ -12,11 +12,18 @@ module ApplicationHelper
   end
 
   def show_sidebar?
-    %w(new waiting all).exclude?(action_name) && (from_crawler? || request.from_pc?) && @twitter_user && !@sidebar_disabled
+    %w(home waiting tokimeki_unfollow).exclude?(controller_name) &&
+        %w(new all).exclude?(action_name) &&
+        (from_crawler? || request.from_pc?) &&
+        @twitter_user && !@sidebar_disabled
   end
 
   def sidebar_disabled=(flag)
     @sidebar_disabled = flag
+  end
+
+  def wrap_in_container?
+    !(controller_name == 'home' && action_name == 'new')
   end
 
   def show_common_friends?(twitter_user)
@@ -33,7 +40,8 @@ module ApplicationHelper
       [unfriends_top_path, t('unfriends.new.simple_title')],
       [inactive_friends_top_path, t('inactive_friends.new.simple_title')],
       [friends_top_path, t('friends.new.simple_title')],
-      [clusters_top_path, t('clusters.new.simple_title')]
+      [clusters_top_path, t('clusters.new.simple_title')],
+      [tokimeki_unfollow_top_path, t('tokimeki_unfollow.new.simple_title')],
     ]
   end
 

@@ -106,10 +106,15 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  SANITIZE_REDIRECT_PATH_REGEXP = Regexp.union(Search::API_V1_NAMES.map(&:to_s) + %w(conversations clusters searches timelines scores))
+  SANITIZE_REDIRECT_PATH_REGEXP = Regexp.union(Search::API_V1_NAMES.map(&:to_s) + %w(conversations clusters searches timelines scores tokimeki_unfollow))
 
+  # TODO This is incomplete.
   def sanitized_redirect_path(path)
     path.match?(SANITIZE_REDIRECT_PATH_REGEXP) ? path : root_path
+  end
+
+  def referer_is_tokimeki_unfollow?
+    request.referer.to_s.match? %r{\Ahttps?://(egotter.com|localhost:3000)/tokimeki_unfollow/cleanup}
   end
 
   def after_sign_in_path_for(resource)

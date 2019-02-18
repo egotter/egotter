@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190205164722) do
+ActiveRecord::Schema.define(version: 20190217220048) do
 
   create_table "background_force_update_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
@@ -666,6 +666,34 @@ ActiveRecord::Schema.define(version: 20190205164722) do
     t.index ["uid"], name: "index_statuses_on_uid"
   end
 
+  create_table "tokimeki_friendships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.bigint "user_uid", null: false
+    t.bigint "friend_uid", null: false
+    t.integer "sequence", null: false
+    t.index ["friend_uid"], name: "index_tokimeki_friendships_on_friend_uid"
+    t.index ["user_uid", "friend_uid"], name: "index_tokimeki_friendships_on_user_uid_and_friend_uid", unique: true
+    t.index ["user_uid"], name: "index_tokimeki_friendships_on_user_uid"
+  end
+
+  create_table "tokimeki_unfriendships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.bigint "user_uid", null: false
+    t.bigint "friend_uid", null: false
+    t.integer "sequence", null: false
+    t.index ["friend_uid"], name: "index_tokimeki_unfriendships_on_friend_uid"
+    t.index ["user_uid"], name: "index_tokimeki_unfriendships_on_user_uid"
+  end
+
+  create_table "tokimeki_users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.bigint "uid", null: false
+    t.string "screen_name", null: false
+    t.integer "friends_count", default: 0, null: false
+    t.integer "processed_count", default: 0, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_tokimeki_users_on_created_at"
+    t.index ["uid"], name: "index_tokimeki_users_on_uid", unique: true
+  end
+
   create_table "tracks", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
@@ -1103,6 +1131,7 @@ ActiveRecord::Schema.define(version: 20190205164722) do
     t.index ["user_id"], name: "index_welcome_messages_on_user_id"
   end
 
+  add_foreign_key "tokimeki_friendships", "tokimeki_users", column: "user_uid", primary_key: "uid"
   add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "follower_uid", primary_key: "uid"
   add_foreign_key "twitter_db_followerships", "twitter_db_users", column: "user_uid", primary_key: "uid"
   add_foreign_key "twitter_db_friendships", "twitter_db_users", column: "friend_uid", primary_key: "uid"

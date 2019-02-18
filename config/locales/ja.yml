@@ -55,7 +55,7 @@ ja:
       feature_003: "ログイン不要"
       feature_desc_003_html: "検索のみなら不要です。<br>(リム通知は要ログイン)"
       feature_007: "ログインでもっと便利に"
-      feature_desc_007_html: '検索が早くなり、<br>更新通知が届くようになります。<br><a href="%{url}">ログイン</a>'
+      feature_desc_007_html: '検索が早くなり、<br>更新通知が届くようになります。'
       feature_008: "リム通知あります"
       feature_desc_008_html: "フォローが外れたら<br>DMでお知らせ。<br>(要ログイン)"
       feature_009: "鍵垢も検索OK"
@@ -728,6 +728,34 @@ ja:
       clusters_level: "クラスタレベル"
       clusters_cloud: "クラスタクラウド"
       cluster_name: "%{name}クラスタ"
+  tokimeki_unfollow:
+    new:
+      title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
+      simple_title: 'ときめきアンフォロー✨'
+      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。100万人以上が利用するえごったーに新機能が登場！"
+      text001_html: 'あなたは今のタイムラインにときめきますか？'
+      text002_html: '最初は良いと思ってフォローしたけど、今はときめかない・・・そんな時は、相手に感謝しつつアンフォローしましょう。'
+      text003_html: '今はもうときめかなくなったフォローを解除する。それは、新たな門出ともいえる儀式なのです。ぜひその門出を祝福してあげてください。'
+      continue: '続きから始める'
+      disclaimer: 'このツールは、実在するお掃除コンサルタントの考え方を参考にしていますが、ご本人の見解を代表するものではございません。'
+    cleanup:
+      title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
+      simple_title: 'ときめきアンフォロー✨'
+      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。100万人以上が利用するえごったーに新機能が登場！"
+      text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんに<br class="visible-xs-block">心がときめいていますか？✨'
+      next_is_html: '次は%{number}人目、<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんです。🙂'
+      how_to_continue_html: '途中から再開する場合は、再度同じURL <a href="%{url}" class="btn btn-primary">ときめきアンフォロー</a> にアクセスしてください。'
+      unfollow: 'フォローを外す'
+      after_unfollow_html: 'アンフォローは別れではなく旅立ちです。😀<br><br><a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんのこれまでの全てのツイートに感謝して、次に進みましょう。残りは %{remaining} 人です。'
+      keep: 'キープする'
+      after_keep_html: 'あなたがときめいたのなら私も嬉しいです。😁<br><br><a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんへのときめき、これからも続くといいですね。残りは %{remaining} 人です。'
+      after_unfollow_modal:
+        next: "次に進む"
+      after_keep_modal:
+        next: "次に進む"
+      finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   directory:
     profiles:
       link_title: プロフィール
@@ -857,6 +885,7 @@ ja:
     blocked_html: '%{user} からブロックされているため検索できません。'
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+    tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
   tweet_text:
     top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"

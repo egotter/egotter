@@ -7,7 +7,7 @@ class UnfollowController < ApplicationController
   before_action {create_search_log(uid: params[:uid])}
 
   before_action do
-    unless current_user.can_create_unfollow?
+    if !referer_is_tokimeki_unfollow? && !current_user.can_create_unfollow?
       render json: {
           create_unfollow_limit: current_user.create_unfollow_limit,
           create_unfollow_remaining: current_user.create_unfollow_remaining
