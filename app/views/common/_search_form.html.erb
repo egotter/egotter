@@ -3,7 +3,7 @@
 
 <%= form_tag searches_path, id: form_tag_id, class: 'text-left', method: :post do %>
 <label for="screen_name" class="sr-only"><%= t('searches.common.twitter_id') %></label>
-<div class="input-group">
+<div class="input-group" style="max-width: 375px; margin: 0 auto;">
   <div class="input-group-addon">@</div>
   <input type="hidden" name="via" value="<%= via %>">
   <input type="search" id="<%= input_tag_id %>"

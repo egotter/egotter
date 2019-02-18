@@ -7,7 +7,7 @@
 .vertical-spacing
 
 - @screen_names.each do |screen_name|
-  = link_to t('searches.common.search_by', user: mention_name(screen_name)), searches_path(screen_name: screen_name, redirect_path: score_path(screen_name: screen_name)), class: 'btn btn-default btn-md', method: :post
+  = render partial: 'common/search_button', locals: {screen_name: screen_name, via: build_via('scores')}
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 

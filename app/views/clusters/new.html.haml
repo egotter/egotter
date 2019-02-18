@@ -9,7 +9,7 @@
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 - if user_signed_in?
-  = link_to t('searches.common.search_by', user: current_user.mention_name), clusters_path(screen_name: current_user.screen_name, via: build_via('top_button')), class: 'btn btn-info btn-block', method: :post
+  = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('top_button')}
 - else
   = sign_in_with_twitter_link(clusters_top_path, 'button', class: 'btn btn-info btn-block')
 
