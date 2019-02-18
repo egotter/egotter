@@ -21,11 +21,10 @@
 
 .unfriends.separator
 
-#public-tweets-wrapper
+#public-tweets-wrapper.twitter.tweets.center-block
 :javascript
   $(function () {
-    var url = '#{load_public_tweets_path}';
-    new AsyncLoader(url, '#public-tweets-wrapper').load();
+    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
   });
 
 .unfriends.lead.in-top-page.text-center= t('unfriends.new.lead_004').html_safe

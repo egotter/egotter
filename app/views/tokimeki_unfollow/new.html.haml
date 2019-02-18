@@ -47,11 +47,11 @@
       %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
   .vertical-spacing
 
-#public-tweets-wrapper
+#public-tweets-wrapper.twitter.tweets.center-block
 :javascript
   $(function () {
-    var url = '#{load_public_tweets_path}';
-    new AsyncLoader(url, '#public-tweets-wrapper').load();
+    Home.setSearchCount('#{search_count_path}');
+    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
   });
 
 .tokimeki_unfollow.lead.text-center= t('.disclaimer')

@@ -21,11 +21,10 @@
 
 .inactive-friends.separator
 
-#public-tweets-wrapper
+#public-tweets-wrapper.twitter.tweets.center-block
 :javascript
   $(function () {
-    var url = '#{load_public_tweets_path}';
-    new AsyncLoader(url, '#public-tweets-wrapper').load();
+    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
   });
 
 .inactive-friends.lead.in-top-page.text-center= t('inactive_friends.new.lead_004').html_safe
