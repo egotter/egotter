@@ -1,4 +1,4 @@
-<%= render partial: 'profiles/overview', locals: {user: @twitter_user, unique_id: @twitter_user.uid} %>
+<%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
 
 <div class="waiting-msg alert alert-info text-center">
   <%= t('searches.waiting.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>

@@ -1,5 +1,5 @@
 <div class="profile-overview-container">
-  <div class="profile-overview uid-<%= unique_id %>">
+  <div class="profile-overview uid-<%= user.uid %>">
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
@@ -42,12 +42,12 @@
 </div>
 
 <style type="text/css">
-  .profile-overview.uid-<%= unique_id %> {
+  .profile-overview-container .uid-<%= user.uid %> {
     <% if user.profile_banner_url.present? %>
       background-size: cover;
       background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= "#{user.profile_banner_url}/#{request.from_pc? ? 'web' : 'mobile'}_retina" %>');
     <% else %>
-      background-color: #<%= user.profile_link_color %>;
+      background-color: <%= "##{user.profile_link_color}" %>;
     <% end %>
   }
 </style>
