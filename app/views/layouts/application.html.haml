@@ -147,7 +147,7 @@
     %link{href: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}
     %script{src: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
 
-    - if %w(search_results home waiting searches one_sided_friends unfriends inactive_friends friends conversations relationships statuses update_histories clusters tokimeki_unfollow).include?(controller_name)
+    - if %w(timelines home waiting searches one_sided_friends unfriends inactive_friends friends conversations relationships statuses update_histories clusters tokimeki_unfollow).include?(controller_name)
       - if !user_signed_in? && controller_name != 'home'
         .container.pre-footer.text-center
           %h2.h4= t('searches.new.feature_007')
