@@ -5,7 +5,7 @@ class ApiClient
 
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
-      Rails.logger.info "ApiClient#method_missing #{method} #{args.inspect.truncate(100)}" rescue nil
+      logger.info "ApiClient#method_missing #{method} #{args.inspect.truncate(100)}" rescue nil
       begin
         tries ||= 5
         @client.send(method, *args, &block) # client#parallel uses block.
@@ -17,10 +17,14 @@ class ApiClient
           message = "#{self.class}##{method}: #{e.class} #{e.message}"
 
           if (tries -= 1) < 0
-            Rails.logger.warn "RETRY EXHAUSTED #{message}"
+            logger.warn "RETRY EXHAUSTED #{message}"
             raise
           else
-            Rails.logger.warn "RETRY #{tries} #{message}"
+            if tries <= 3
+              logger.warn "RETRY #{tries} #{message}"
+            else
+              logger.info "RETRY #{tries} #{message}"
+            end
             retry
           end
         else
@@ -89,6 +93,10 @@ class ApiClient
           end
       yield(user_or_bot.uid) if block_given?
       user_or_bot.api_client
+    end
+
+    def logger
+      Rails.logger
     end
   end
 end
