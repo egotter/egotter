@@ -23,7 +23,8 @@ module ApplicationHelper
   end
 
   def wrap_in_container?
-    !(controller_name == 'home' && action_name == 'new')
+    !(controller_name == 'home' && action_name == 'new') &&
+        !(controller_name == 'settings' && action_name == 'index')
   end
 
   def show_common_friends?(twitter_user)

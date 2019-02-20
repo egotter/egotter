@@ -1,35 +1,40 @@
-.tgl-btns {
-  display: table;
+.settings {
+  max-width: 600px;
+  margin: 0 auto;
 
-  .checkbox {
-    margin-left: 15px;
-    margin-right: 15px;
+  .tgl-btns-wrapper {
+    background-color: #ffffff;
+    padding: 15px;
   }
 
-  .table-cell-left,
-  .table-cell-right {
-    display: table-cell;
-    vertical-align: top;
+  .tgl-btns {
+    display: table;
+
+    .checkbox {
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+
+    .table-cell-left,
+    .table-cell-right {
+      display: table-cell;
+      vertical-align: top;
+    }
+
+    .table-cell-right {
+      padding-left: 10px;
+    }
   }
 
-  .table-cell-right {
-    padding-left: 10px;
-  }
-}
+  .table {
+    background-color: #ffffff;
 
-.table.settings,
-.table.order-histories,
-.table.trial {
-  tbody > tr > td {
-    vertical-align: middle;
-  }
-}
+    td {
+      vertical-align: middle;
+    }
 
-.table {
-  &.follow-requests th,
-  &.follow-requests td,
-  &.unfollow-requests th,
-  &.unfollow-requests td {
-    font-size: x-small;
+    .notes {
+      font-size: x-small;
+    }
   }
 }

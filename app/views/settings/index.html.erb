@@ -1,83 +1,87 @@
-<h2 class="h4 text-center"><%= t('.general_title') %></h2>
+<div class="settings">
+  <h2 class="h4 text-center"><%= t('.general_title') %></h2>
 
-<table class="table settings">
-  <tbody>
-  <tr>
-    <td><%= t('searches.common.twitter_id') %></td>
-    <td>
-      <%= current_user.mention_name %>
-      <div class="text-muted" style="font-size: x-small;"><%= t('.general_note1') %></div>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t('searches.common.email') %></td>
-    <td><%= current_user.email %></td>
-  </tr>
-  </tbody>
-</table>
-
-<div class="gray-separator"></div>
-
-<% if current_user.is_subscribing? %>
-  <h2 class="h4 text-center"><%= t('.order_histories') %></h2>
-
-  <table class="table order-histories">
+  <table class="table">
     <tbody>
-    <% current_user.orders.select {|o| !o.expired?}.each.with_index do |order, i| %>
-      <tr>
-        <td><%= t('.order_id', id: i + 1) %></td>
-        <td>
-          <div><%= t('.order_expired_at', date: order.end_date) %></div>
-          <div><%= t('.order_search_count', count: order.search_count) %></div>
-          <div><%= t('.order_follow_requests_count', count: order.follow_requests_count) %></div>
-          <div><%= t('.order_unfollow_requests_count', count: order.unfollow_requests_count) %></div>
-        </td>
-      </tr>
-    <% end %>
+    <tr>
+      <td><%= t('searches.common.twitter_id') %></td>
+      <td>
+        <%= current_user.mention_name %>
+        <div class="text-muted notes" style="font-size: x-small;"><%= t('.general_note1') %></div>
+      </td>
+    </tr>
+    <tr>
+      <td><%= t('searches.common.email') %></td>
+      <td><%= current_user.email %></td>
+    </tr>
     </tbody>
   </table>
 
-  <div class="gray-separator"></div>
-<% end %>
+  <div class="vertical-spacing"></div>
 
-<h2 class="h4 text-center"><%= t('.trial_title') %></h2>
+  <% if current_user.is_subscribing? %>
+    <h2 class="h4 text-center"><%= t('.order_histories') %></h2>
 
-<table class="table trial">
-  <tbody>
-  <tr>
-    <td><%= t('.trial_delete') %></td>
-    <td>
-      <div class="btn btn-danger trial-delete-btn" data-toggle="modal" data-target="#trial-delete-modal"><%= t('.trial_delete_btn') %></div>
-    </td>
-  </tr>
-  <tr style="display: none;">
-    <td><%= t('.trial_reset') %></td>
-    <td>
-      <div class="btn btn-default"><%= t('.trial_reset_btn') %></div>
-      <div class="text-muted" style="font-size: x-small;"><%= t('.trial_reset_note') %></div>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t('.trial_follow_request') %></td>
-    <td>
-      <a class="btn btn-default" href="<%= settings_follow_requests_path %>"><%= t('.trial_follow_request_see') %></a>
-      <div class="text-muted" style="font-size: x-small;"><%= t('.trial_follow_request_note') %></div>
-    </td>
-  </tr>
-  <tr>
-    <td><%= t('.trial_unfollow_request') %></td>
-    <td>
-      <a class="btn btn-default" href="<%= settings_unfollow_requests_path %>"><%= t('.trial_unfollow_request_see') %></a>
-      <div class="text-muted" style="font-size: x-small;"><%= t('.trial_unfollow_request_note') %></div>
-    </td>
-  </tr>
-  </tbody>
-</table>
+    <table class="table order-histories">
+      <tbody>
+      <% current_user.orders.select {|o| !o.expired?}.each.with_index do |order, i| %>
+        <tr>
+          <td><%= t('.order_id', id: i + 1) %></td>
+          <td>
+            <div><%= t('.order_expired_at', date: order.end_date) %></div>
+            <div><%= t('.order_search_count', count: order.search_count) %></div>
+            <div><%= t('.order_follow_requests_count', count: order.follow_requests_count) %></div>
+            <div><%= t('.order_unfollow_requests_count', count: order.unfollow_requests_count) %></div>
+          </td>
+        </tr>
+      <% end %>
+      </tbody>
+    </table>
 
-<div class="gray-separator"></div>
+    <div class="vertical-spacing"></div>
+  <% end %>
 
-<h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
-<%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name, cached: true %>
+  <h2 class="h4 text-center"><%= t('.trial_title') %></h2>
+
+  <table class="table trial">
+    <tbody>
+    <tr>
+      <td><%= t('.trial_delete') %></td>
+      <td>
+        <div class="btn btn-danger trial-delete-btn" data-toggle="modal" data-target="#trial-delete-modal"><%= t('.trial_delete_btn') %></div>
+      </td>
+    </tr>
+    <tr style="display: none;">
+      <td><%= t('.trial_reset') %></td>
+      <td>
+        <div class="btn btn-default"><%= t('.trial_reset_btn') %></div>
+        <div class="text-muted notes" style="font-size: x-small;"><%= t('.trial_reset_note') %></div>
+      </td>
+    </tr>
+    <tr>
+      <td><%= t('.trial_follow_request') %></td>
+      <td>
+        <a class="btn btn-default" href="<%= settings_follow_requests_path %>"><%= t('.trial_follow_request_see') %></a>
+        <div class="text-muted notes" style="font-size: x-small;"><%= t('.trial_follow_request_note') %></div>
+      </td>
+    </tr>
+    <tr>
+      <td><%= t('.trial_unfollow_request') %></td>
+      <td>
+        <a class="btn btn-default" href="<%= settings_unfollow_requests_path %>"><%= t('.trial_unfollow_request_see') %></a>
+        <div class="text-muted notes" style="font-size: x-small;"><%= t('.trial_unfollow_request_note') %></div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="vertical-spacing"></div>
+
+  <h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
+  <div class="tgl-btns-wrapper">
+    <%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name, cached: true %>
+  </div>
+</div>
 
 <div class="modal fade" id="trial-delete-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">

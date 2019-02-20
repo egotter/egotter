@@ -7,4 +7,7 @@
     <span style="display: none;" class="<%= name %> text-info blink small"><%= t('.updated') %></span>
   </div>
 </div>
-<hr>
+
+<% if name_counter <= 2 %>
+  <hr>
+<% end %>

@@ -2,7 +2,7 @@ function attach_event_handler(name, url) {
   var selector = 'input[name=' + name + ']';
 
   $(selector + ':checkbox').on('change', function () {
-    var val = $(selector + ':checked').val() ? true : false;
+    var val = !!$(selector + ':checked').val();
     var params = {};
     params[name] = val;
     $.ajax({url: url, method: 'PATCH', data: params})
