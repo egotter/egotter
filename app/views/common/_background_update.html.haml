@@ -69,7 +69,7 @@
         return;
       }
 
-      var url = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}';
+      var url = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID').html_safe}';
 
       console.log('Worker started', jid);
       $updateBox.show().sticky();
@@ -94,7 +94,7 @@
       var signedIn = #{user_signed_in?};
       var authorized = #{user_signed_in? && current_user.authorized?};
       var additionalFunc = #{!user_signed_in? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
-      var viaDM = #{!user_signed_in? && via_dm?};
+      var viaDM = #{via_dm?};
 
       $updateBox = $('.update-box');
       $refreshBox = $('.refresh-box');
@@ -118,7 +118,7 @@
         $additionalFuncBox.show().sticky();
       }
 
-      if (viaDM) {
+      if (!signedIn && viaDM) {
         $viaDMBox.show().sticky();
       }
 
