@@ -11,10 +11,10 @@ class JobsController < ApplicationController
     return render json: params.slice(:uid, :jid, :interval, :retry_count), status: 202 if !job || job.processing?
     return head :ok if job.finished? && job.twitter_user_created?
 
-    render json: error_message_json(job), status: 500
+    render json: error_message_json(job), status: :internal_server_error
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{current_user_id} #{params.inspect} #{request.referer}"
-    render json: error_message_json(job), status: 500
+    render json: error_message_json(job), status: :internal_server_error
   end
 
   private

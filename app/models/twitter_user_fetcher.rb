@@ -44,7 +44,7 @@ class TwitterUserFetcher
   end
 
   def reject_relation_names
-    case [login_user&.uid&.to_i == uid, twitter_user.too_many_friends?(login_user: login_user)]
+    case [login_user&.uid&.to_i == uid, twitter_user.too_many_friends?(login_user: login_user, add_error: false)]
       when [true, true]   then %i(friend_ids follower_ids)
       when [true, false]  then []
       when [false, true]  then %i(friend_ids follower_ids home_timeline mentions_timeline)
