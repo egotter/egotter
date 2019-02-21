@@ -83,21 +83,6 @@
             .col-xs-12.header-container
               = render partial: 'layouts/header'
 
-    - unless under_maintenance?
-      #search-histories-wrapper
-      :javascript
-        $(function () {
-          var url = '#{search_histories_path}';
-          var $modal = $('#search-modal');
-          $.getJSON(url, function (res) {
-            $modal.find('.twitter.users').append(res);
-
-            $modal.on('shown.bs.modal', function (e) {
-              $(e.target).find('input').focus();
-            });
-          });
-        });
-
     - if notice || alert
       .container
         .row
@@ -176,28 +161,43 @@
 
     = render partial: 'layouts/footer' unless under_maintenance?
 
-  #search-modal.modal.fade{'aria-labelledby' => 'search-modal-label', role: 'dialog', tabindex: '-1'}
-    .modal-dialog.modal-lg{role: 'document'}
-      .modal-content
-        .modal-header
-          %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
-            %span{'aria-hidden' => 'true'} ×
-          %h4#search-modal-label.modal-title.text-center= t('searches.common.search_by_egotter')
-        .modal-body
-          = render partial: 'common/search_form', locals: {via: :search_history_input}
-          .text-muted.text-right{style: 'margin-top: 5px;'}
-            = t('search_histories.remaining_count_is_html', count: search_histories_remaining)
-            %div
-              - if user_signed_in?
-                - if current_user.is_subscribing?
-                  = link_to current_plan_name, settings_path
+  - unless under_maintenance?
+    #search-modal.modal.fade{'aria-labelledby' => 'search-modal-label', role: 'dialog', tabindex: '-1', data: {url: search_histories_path}}
+      .modal-dialog.modal-lg{role: 'document'}
+        .modal-content
+          .modal-header
+            %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
+              %span{'aria-hidden' => 'true'} ×
+            %h4#search-modal-label.modal-title.text-center= t('searches.common.search_by_egotter')
+          .modal-body
+            = render partial: 'common/search_form', locals: {via: :search_history_input}
+            .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
+              = t('search_histories.remaining_count_is_html', count: search_histories_remaining)
+              %div
+                - if user_signed_in?
+                  - if current_user.is_subscribing?
+                    = link_to current_plan_name, settings_path
+                  - else
+                    = t('pricing.new.plans_on_search_html', url: pricing_path(via: "#{controller_name}/#{action_name}/increase_count_purchase"))
                 - else
-                  = t('pricing.new.plans_on_search_html', url: pricing_path(via: "#{controller_name}/#{action_name}/increase_count_purchase"))
-              - else
-                = t('search_histories.increase_count_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/increase_count_sign_in"))
-            %h2.text-center
-              %small= t('search_histories.index.title')
+                  = t('search_histories.increase_count_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/increase_count_sign_in"))
+            %h2.text-center= t('search_histories.index.title')
             .twitter.users.row
+
+    :javascript
+      $(function () {
+        var $modal = $('#search-modal');
+        var url = $modal.data('url');
+        $.get(url).done(function (res) {
+          console.log(url, 'ok');
+          $modal.find('.twitter.users').append(res);
+
+          $modal.on('shown.bs.modal', function (e) {
+            $(e.target).find('input').focus();
+          });
+        });
+      });
+
 
   - if user_signed_in?
     #create-follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
