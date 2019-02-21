@@ -4,13 +4,13 @@
 #
 #  id         :bigint(8)        not null, primary key
 #  friend_uid :bigint(8)        not null
-#  from_uid   :bigint(8)        not null
 #  sequence   :integer          not null
+#  user_uid   :bigint(8)        not null
 #
 # Indexes
 #
 #  index_tokimeki_unfriendships_on_friend_uid  (friend_uid)
-#  index_tokimeki_unfriendships_on_from_uid    (from_uid)
+#  index_tokimeki_unfriendships_on_user_uid    (user_uid)
 #
 
 module Tokimeki

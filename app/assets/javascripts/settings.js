@@ -19,9 +19,22 @@ function attach_event_handler(name, url) {
 var Settings = {};
 
 Settings.enableDeleteTweetsButton = function () {
-  $('.trial-delete-submit-btn').on('click', function (e) {
-    $('#trial-delete-modal').modal('hide');
-    $('.trial-delete-btn').attr('disabled', 'disabled')
+  var $modal = $('#delete-tweets-modal');
+  $modal.find('.ok').on('click', function (e) {
+    $modal.modal('hide');
+    $('.delete-tweets-btn').attr('disabled', 'disabled')
+        .prop("disabled", true);
+    $.post($(this).data('url'), function (res) {
+      console.log(res);
+    });
+  });
+};
+
+Settings.enableResetEgotterButton = function () {
+  var $modal = $('#reset-egotter-modal');
+  $modal.find('.ok').on('click', function (e) {
+    $modal.modal('hide');
+    $('.reset-egotter-btn').attr('disabled', 'disabled')
         .prop("disabled", true);
     $.post($(this).data('url'), function (res) {
       console.log(res);

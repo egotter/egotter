@@ -4,6 +4,8 @@ class SettingsController < ApplicationController
   before_action :create_search_log
 
   def index
+    @delete_tweets_log = DeleteTweetsLog.where(user_id: current_user.id, created_at: 1.hour.ago..Time.zone.now).exists?
+    @reset_egotter_log = ResetEgotterLog.where(user_id: current_user.id).exists?
   end
 
   def update
