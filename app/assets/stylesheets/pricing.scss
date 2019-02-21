@@ -1,4 +1,11 @@
 .pricing-table {
+  max-width: 600px;
+  margin: 0 auto;
+
+  th {
+    font-weight: bold;
+  }
+
   td:first-child {
     white-space: nowrap;
   }
