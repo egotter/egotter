@@ -22,7 +22,7 @@
   <h2 class="h4 text-center"><%= t('.order.order_histories') %></h2>
 
   <% if current_user.is_subscribing? %>
-    <table class="table order-histories">
+    <table class="table">
       <tbody>
       <% current_user.orders.select {|o| !o.expired?}.each.with_index do |order, i| %>
         <tr>
@@ -35,10 +35,14 @@
           </td>
         </tr>
       <% end %>
+      <tr>
+        <td></td>
+        <td><%= link_to t('.order.plans'), pricing_path %></td>
+      </tr>
       </tbody>
     </table>
   <% else %>
-    <table class="table order-histories">
+    <table class="table">
       <tbody>
         <tr>
           <td><%= t('.order.has_not_purchased') %></td>
