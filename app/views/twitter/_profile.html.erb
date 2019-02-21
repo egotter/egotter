@@ -8,6 +8,7 @@
           <% end %>
           <div class="name">
             <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user_name(user)}".html_safe, timeline_path(user)) %>
+            <%= user_label(user) %>
           </div>
           <div class="twitter-link">
             <%= user_link(user.screen_name) do %>

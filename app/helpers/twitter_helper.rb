@@ -41,10 +41,10 @@ module TwitterHelper
     "@#{screen_name}"
   end
 
-  def user_name(user, label: false)
+  def user_name(user)
     protected = user.protected ? '&nbsp;<span class="glyphicon glyphicon-lock"></span>' : ''
     verified = user.verified ? '&nbsp;<span class="glyphicon glyphicon-ok"></span>' : ''
-    "#{user.name}#{protected}#{verified}#{user_label(user) if label}".html_safe
+    "#{user.name}#{protected}#{verified}".html_safe
   end
 
   def user_label(user)
