@@ -1,13 +1,17 @@
 function attach_event_handler(name, url) {
-  var selector = 'input[name=' + name + ']';
-
   var $checkbox = $('.settings #' + name + '-input');
-  if (!$checkbox.data('checked')) {
-    $checkbox.removeAttr('checked');
+  if ($checkbox.data('checked')) {
+    console.log(name, true);
+  } else {
+    console.log(name, false);
+    $checkbox.removeAttr('checked')
+        .prop('checked', false);
   }
 
-  $(selector + ':checkbox').on('change', function () {
-    var val = !!$(selector + ':checked').val();
+  $checkbox.on('change', function () {
+    var val = $checkbox.prop('checked');
+    console.log(name, val);
+
     var params = {};
     params[name] = val;
     $.ajax({url: url, method: 'PATCH', data: params})
