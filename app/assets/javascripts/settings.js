@@ -1,12 +1,5 @@
 function attach_event_handler(name, url) {
   var $checkbox = $('.settings #' + name + '-input');
-  if ($checkbox.data('checked')) {
-    console.log(name, true);
-  } else {
-    console.log(name, false);
-    $checkbox.removeAttr('checked')
-        .prop('checked', false);
-  }
 
   $checkbox.on('change', function () {
     var val = $checkbox.prop('checked');
