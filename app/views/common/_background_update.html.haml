@@ -35,7 +35,7 @@
 
 :javascript
   (function () {
-    var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox;
+    var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox;
 
     function checkFollow () {
       var url = '#{check_follow_path}';
@@ -93,7 +93,7 @@
     $(function () {
       var signedIn = #{user_signed_in?};
       var authorized = #{user_signed_in? && current_user.authorized?};
-      var additionalFunc = #{!user_signed_in? && %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
+      var encourageToSignIn = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
       var viaDM = #{via_dm?};
 
       $updateBox = $('.update-box');
@@ -101,10 +101,10 @@
       $tooManyFriendsBox = $('.too-many-friends-box');
       $followBox = $('.follow-box');
       $invalidTokenBox = $('.invalid-token-box');
-      $additionalFuncBox = $('.additional-func-box');
+      $encourageToSignInBox = $('.additional-func-box');
       $viaDMBox = $('.via-dm-box');
 
-      $.each([$updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $additionalFuncBox, $viaDMBox], function (i, btn) {
+      $.each([$updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox], function (i, btn) {
         btn.on('close.bs.alert', function () {
           btn.parent().hide();
         });
@@ -114,8 +114,8 @@
         $invalidTokenBox.show().sticky();
       }
 
-      if (additionalFunc) {
-        $additionalFuncBox.show().sticky();
+      if (!signedIn && encourageToSignIn) {
+        $encourageToSignInBox.show().sticky();
       }
 
       if (!signedIn && viaDM) {
