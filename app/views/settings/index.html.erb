@@ -19,27 +19,36 @@
 
   <div class="vertical-spacing"></div>
 
-  <% if current_user.is_subscribing? %>
-    <h2 class="h4 text-center"><%= t('.order_histories') %></h2>
+  <h2 class="h4 text-center"><%= t('.order.order_histories') %></h2>
 
+  <% if current_user.is_subscribing? %>
     <table class="table order-histories">
       <tbody>
       <% current_user.orders.select {|o| !o.expired?}.each.with_index do |order, i| %>
         <tr>
-          <td><%= t('.order_id', id: i + 1) %></td>
+          <td><%= t('.order.id', id: i + 1) %></td>
           <td>
-            <div><%= t('.order_expired_at', date: order.end_date) %></div>
-            <div><%= t('.order_search_count', count: order.search_count) %></div>
-            <div><%= t('.order_follow_requests_count', count: order.follow_requests_count) %></div>
-            <div><%= t('.order_unfollow_requests_count', count: order.unfollow_requests_count) %></div>
+            <div><%= t('.order.expired_at', date: order.end_date) %></div>
+            <div><%= t('.order.search_count', count: order.search_count) %></div>
+            <div><%= t('.order.follow_requests_count', count: order.follow_requests_count) %></div>
+            <div><%= t('.order.unfollow_requests_count', count: order.unfollow_requests_count) %></div>
           </td>
         </tr>
       <% end %>
       </tbody>
     </table>
-
-    <div class="vertical-spacing"></div>
+  <% else %>
+    <table class="table order-histories">
+      <tbody>
+        <tr>
+          <td><%= t('.order.has_not_purchased') %></td>
+          <td><%= link_to t('.order.plans'), pricing_path %></td>
+        </tr>
+      </tbody>
+    </table>
   <% end %>
+
+  <div class="vertical-spacing"></div>
 
   <h2 class="h4 text-center"><%= t('.trial_title') %></h2>
 

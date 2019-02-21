@@ -173,12 +173,15 @@ ja:
     index:
       general_title: "ユーザー情報"
       general_note1: "Twitter IDを変更した場合は、自動で更新されます"
-      order_histories: "購入履歴"
-      order_id: "注文 %{id}"
-      order_expired_at: "有効期限 %{date}"
-      order_search_count: "検索回数 %{count}"
-      order_follow_requests_count: "フォロー %{count}"
-      order_unfollow_requests_count: "フォロー解除 %{count}"
+      order:
+        order_histories: "購入履歴"
+        id: "注文 %{id}"
+        expired_at: "有効期限 %{date}"
+        search_count: "検索回数 %{count}"
+        follow_requests_count: "フォロー %{count}"
+        unfollow_requests_count: "フォロー解除 %{count}"
+        has_not_purchased: "まだ購入していません"
+        plans: '料金プラン'
       notifications_title: "通知設定"
       trial_title: "お試し機能 (β)"
       delete_tweets:
