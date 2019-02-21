@@ -1,3 +1,10 @@
+<% if user.persisted? && user.respond_to?(:twitter_db_user) && user&.twitter_db_user&.persisted? && user.updated_at <= user.twitter_db_user.updated_at %>
+  <% twitter_user = user %>
+  <% user = user.twitter_db_user %>
+<% else %>
+  <% twitter_user = user %>
+<% end %>
+
 <div class="profile-overview-container">
   <div class="profile-overview uid-<%= user.uid %>">
     <div class="profile-overview-overlay">
@@ -78,7 +85,7 @@
     </div>
     <div class="follow-back-rate col-xs-3">
       <div>
-        <span><b><%= number_to_percentage(user.follow_back_rate * 100, precision: 1) %></b></span>
+        <span><b><%= number_to_percentage(twitter_user.follow_back_rate * 100, precision: 1) %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
       </div>

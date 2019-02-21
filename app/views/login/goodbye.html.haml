@@ -1,9 +1,17 @@
-%h2.h3= t('dictionary.sign_out')
+%h2{style: 'font-size: 22px;'}= t('dictionary.sign_out')
 
-%div{style: 'margin-bottom: 30px;'}= t('.no_tweets')
-%div{style: 'margin-bottom: 30px;'}= t('.advantage_html')
-%div{style: 'margin-bottom: 30px;'}= t('.disadvantage_html')
-%div{style: 'margin-bottom: 30px;'}= t('.realy_sign_out')
+%div= t('.no_tweets')
+.vertical-spacing
+.vertical-spacing
+%div= t('.advantage_html')
+.vertical-spacing
+.vertical-spacing
+%div= t('.disadvantage_html')
+.vertical-spacing
+.vertical-spacing
+%div= t('.realy_sign_out')
+.vertical-spacing
+.vertical-spacing
 
 .row
   .col-xs-6
@@ -11,4 +19,7 @@
   .col-xs-6
     = link_to t('dictionary.do_sign_out'), sign_out_path, class: 'btn btn-default btn-block'
 
-= image_tag '/egotter_icon_400x400.jpg', class: "#{'img-responsive' if request.from_smartphone?}", style: 'margin-top: 30px; margin-bottom: 15px;'
+.vertical-spacing
+.vertical-spacing
+= image_tag '/egotter_icon_400x400.jpg', class: "#{'img-responsive' if request.from_smartphone?}"
+.vertical-spacing

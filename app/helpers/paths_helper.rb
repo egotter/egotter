@@ -9,11 +9,11 @@ module PathsHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(home searches notifications search_histories login misc orders tokimeki_unfollow application) then timeline_path(screen_name: screen_name)
+      when *%w(home searches waiting notifications search_histories login misc orders tokimeki_unfollow application) then timeline_path(screen_name: screen_name)
       else send("#{menu.to_s.singularize}_path", screen_name: screen_name)
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{menu} #{screen_name}"
     logger.warn e.backtrace.join("\n")
     timeline_path(screen_name: screen_name)
   end
