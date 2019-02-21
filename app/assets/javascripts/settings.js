@@ -41,3 +41,17 @@ Settings.enableResetEgotterButton = function () {
     });
   });
 };
+
+Settings.enableUpdateProfileButton = function (callback) {
+  $('.update-profile').on('click', function (e) {
+    e.preventDefault();
+    var $clicked = $(this);
+    $.post($clicked.data('url'), function (res) {
+      console.log(res);
+      if (callback) {
+        callback(res);
+      }
+    });
+    return false;
+  });
+};

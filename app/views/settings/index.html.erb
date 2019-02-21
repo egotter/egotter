@@ -6,13 +6,17 @@
     <tr>
       <td><%= t('searches.common.twitter_id') %></td>
       <td>
-        <%= current_user.mention_name %>
-        <div class="text-muted notes" style="font-size: x-small;"><%= t('.general_note1') %></div>
+        <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
+        <div class="text-muted notes screen-name-updated" style="display: none;"><%= t('.profile_updated') %></div>
       </td>
     </tr>
     <tr>
       <td><%= t('searches.common.email') %></td>
       <td><%= current_user.email %></td>
+    </tr>
+    <tr>
+      <td></td>
+      <td><%= link_to t('.update_profile'), '#', class: 'btn btn-default update-profile', data: {url: user_path, target: '.settings.screen-name'} %></td>
     </tr>
     </tbody>
   </table>
@@ -145,6 +149,10 @@
   $(function () {
     Settings.enableDeleteTweetsButton();
     Settings.enableResetEgotterButton();
+    Settings.enableUpdateProfileButton(function (res) {
+      $('.screen-name').text(res.screen_name);
+      $('.screen-name-updated').show();
+    });
 
     var url = '<%= setting_path %>';
     attach_event_handler('email', url);

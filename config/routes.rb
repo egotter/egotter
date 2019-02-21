@@ -13,6 +13,7 @@ Rails.application.routes.draw do
     end
   end
 
+  post 'user', to: 'user#update'
   post "delete_tweets", to: "delete_tweets#delete"
   post "reset_egotter", to: "reset_egotter#reset"
 
