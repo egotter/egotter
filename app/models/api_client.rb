@@ -44,6 +44,10 @@ class ApiClient
         (ex.class == Twitter::Error && ex.message == 'execution expired')
   end
 
+  def logger
+    Rails.logger
+  end
+
   class << self
     def config(options = {})
       {
@@ -93,10 +97,6 @@ class ApiClient
           end
       yield(user_or_bot.uid) if block_given?
       user_or_bot.api_client
-    end
-
-    def logger
-      Rails.logger
     end
   end
 end
