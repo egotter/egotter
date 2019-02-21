@@ -19,4 +19,7 @@
 #
 
 class DeleteTweetsLog < ApplicationRecord
+  validates :session_id, presence: true
+  validates :uid, presence: true
+  validates :screen_name, presence: true
 end

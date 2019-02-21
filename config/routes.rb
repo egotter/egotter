@@ -10,9 +10,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       Search::API_V1_NAMES.each {|menu| get "#{menu}/summary", to: "#{menu}#summary"}
       Search::API_V1_NAMES.each {|menu| get "#{menu}/list", to: "#{menu}#list"}
-      post "delete_tweets", to: "delete_tweets#delete"
     end
   end
+
+  post "delete_tweets", to: "delete_tweets#delete"
+  post "reset_egotter", to: "reset_egotter#reset"
 
   namespace :directory do
     get "profiles(/:id1(/:id2))", to: "profiles#show"

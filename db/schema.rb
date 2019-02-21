@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190217220048) do
+ActiveRecord::Schema.define(version: 20190221134655) do
 
   create_table "background_force_update_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
@@ -521,6 +521,19 @@ ActiveRecord::Schema.define(version: 20190217220048) do
     t.index ["created_at"], name: "index_prompt_reports_on_created_at"
     t.index ["token"], name: "index_prompt_reports_on_token", unique: true
     t.index ["user_id"], name: "index_prompt_reports_on_user_id"
+  end
+
+  create_table "reset_egotter_logs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.string "session_id", default: "", null: false
+    t.integer "user_id", default: -1, null: false
+    t.string "uid", default: "-1", null: false
+    t.string "screen_name", default: "", null: false
+    t.boolean "status", default: false, null: false
+    t.string "message", default: "", null: false
+    t.string "error_class", default: "", null: false
+    t.string "error_message", default: "", null: false
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_reset_egotter_logs_on_created_at"
   end
 
   create_table "scores", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
