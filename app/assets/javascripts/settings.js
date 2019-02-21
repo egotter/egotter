@@ -1,6 +1,11 @@
 function attach_event_handler(name, url) {
   var selector = 'input[name=' + name + ']';
 
+  var $checkbox = $('.settings #' + name + '-input');
+  if (!$checkbox.data('checked')) {
+    $checkbox.removeAttr('checked');
+  }
+
   $(selector + ':checkbox').on('change', function () {
     var val = !!$(selector + ':checked').val();
     var params = {};
@@ -8,7 +13,6 @@ function attach_event_handler(name, url) {
     $.ajax({url: url, method: 'PATCH', data: params})
       .done(function (res) {
         console.log(res);
-        $('.blink.' + name).fadeIn(2000).fadeOut(2000);
       })
       .fail(function (xhr) {
         console.log(xhr.responseText);
