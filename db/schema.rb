@@ -524,10 +524,10 @@ ActiveRecord::Schema.define(version: 20190221134655) do
   end
 
   create_table "reset_egotter_logs", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
-    t.string "session_id", default: "", null: false
-    t.integer "user_id", default: -1, null: false
-    t.string "uid", default: "-1", null: false
-    t.string "screen_name", default: "", null: false
+    t.string "session_id", null: false
+    t.integer "user_id", null: false
+    t.bigint "uid", null: false
+    t.string "screen_name", null: false
     t.boolean "status", default: false, null: false
     t.string "message", default: "", null: false
     t.string "error_class", default: "", null: false

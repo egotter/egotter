@@ -6,12 +6,12 @@
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null
 #  message       :string(191)      default(""), not null
-#  screen_name   :string(191)      default(""), not null
+#  screen_name   :string(191)      not null
 #  status        :boolean          default(FALSE), not null
-#  uid           :string(191)      default("-1"), not null
+#  uid           :bigint(8)        not null
 #  created_at    :datetime         not null
-#  session_id    :string(191)      default(""), not null
-#  user_id       :integer          default(-1), not null
+#  session_id    :string(191)      not null
+#  user_id       :integer          not null
 #
 # Indexes
 #
