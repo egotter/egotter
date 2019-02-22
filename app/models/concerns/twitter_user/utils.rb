@@ -9,8 +9,8 @@ module Concerns::TwitterUser::Utils
       latest_by(uid: uid)
     end
 
-    def latest_by(uid:)
-      order(created_at: :desc).find_by(uid: uid)
+    def latest_by(condition)
+      order(created_at: :desc).find_by(condition)
     end
 
     def till(time)
