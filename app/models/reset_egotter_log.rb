@@ -24,10 +24,10 @@ class ResetEgotterLog < ApplicationRecord
   validates :screen_name, presence: true
 
   def perform(send_dm: false)
+    raise "This request has already been finished. #{self.inspect}" if status
+
     user = twitter_user
-    unless user
-      raise "Record of TwitterUser not found #{self.inspect}"
-    end
+    raise "Record of TwitterUser not found #{self.inspect}" unless user
 
     result = user.reset_data
     update(status: true)
