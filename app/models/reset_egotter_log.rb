@@ -29,8 +29,9 @@ class ResetEgotterLog < ApplicationRecord
       raise "Record of TwitterUser not found #{self.inspect}"
     end
 
-    user.reset_data
+    result = user.reset_data
     update(status: true)
+    result
   end
 
   private
