@@ -47,10 +47,6 @@ module TwitterDB
         import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: BATCH_SIZE, validate: false)
       end
 
-      def to_import_format(t_user)
-        [t_user[:id], t_user[:screen_name], TwitterUser.collect_user_info(t_user), -1, -1]
-      end
-
       def with_friends
         # friends_size != -1 AND followers_size != -1
         where.not(friends_size: -1, followers_size: -1)

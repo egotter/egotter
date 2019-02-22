@@ -34,7 +34,7 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.import(t_users)
-      users = t_users.map { |user| TwitterDB::User.to_import_format(user) }
+      users = t_users.map { |user| [user[:id], user[:screen_name], TwitterUser.collect_user_info(user), -1, -1] }
       users.sort_by!(&:first)
       begin
         tries ||= 3

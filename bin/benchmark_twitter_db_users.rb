@@ -19,11 +19,11 @@ module TwitterDB
       users = []
 
       report.report 'build all' do
-        users.concat friends.map { |friend| TwitterDB::User.to_import_format(friend) }
-        users.concat followers.map { |follower| TwitterDB::User.to_import_format(follower) }
+        # users.concat friends.map { |friend| TwitterDB::User.to_import_format(friend) }
+        # users.concat followers.map { |follower| TwitterDB::User.to_import_format(follower) }
       end
 
-      users << TwitterDB::User.to_import_format(t_user)
+      # users << TwitterDB::User.to_import_format(t_user)
       users.uniq!(&:first)
       users.sort_by!(&:first)
 
