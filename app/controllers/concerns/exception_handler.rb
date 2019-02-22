@@ -26,7 +26,7 @@ module Concerns::ExceptionHandler
 
   def not_found_message(screen_name)
     if user_signed_in?
-      t('after_sign_in.not_found_html', user: user_link(screen_name))
+      t('after_sign_in.not_found_html', user: user_link(screen_name), screen_name: screen_name)
     else
       t('before_sign_in.not_found_html', user: user_link(screen_name), url: kick_out_error_path('not_found'))
     end
@@ -34,7 +34,7 @@ module Concerns::ExceptionHandler
 
   def forbidden_message(screen_name)
     if user_signed_in?
-      t('after_sign_in.forbidden_html', user: user_link(screen_name))
+      t('after_sign_in.forbidden_html', user: user_link(screen_name), screen_name: screen_name)
     else
       t('before_sign_in.forbidden_html', user: user_link(screen_name), url: kick_out_error_path('forbidden'))
     end

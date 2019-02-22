@@ -887,8 +887,8 @@ ja:
   after_sign_in:
     too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 )'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
-    not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。'
-    forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
+    not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
+    forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     unauthorized_html: 'ツイッター連携に失敗しました。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
