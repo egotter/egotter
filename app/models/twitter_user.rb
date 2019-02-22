@@ -48,4 +48,29 @@ class TwitterUser < ApplicationRecord
   def to_param
     screen_name
   end
+
+  def reset_data
+    twitter_user_ids = TwitterUser.where(uid: uid).pluck(:id)
+    result = {}
+
+    [UsageStat, Score].each do |klass|
+      result[klass.to_s] = klass.where(uid: uid).delete_all
+    end
+
+    [OneSidedFriendship, OneSidedFollowership, MutualFriendship,
+     InactiveFriendship, InactiveFollowership, InactiveMutualFriendship,
+     FavoriteFriendship, CloseFriendship,
+     Unfriendship, Unfollowership, BlockFriendship].each do |klass|
+      result[klass.to_s] = klass.where(from_uid: uid).delete_all
+    end
+
+    [Status, Mention, SearchResult, Favorite,
+     Friendship, Followership].each do |klass|
+      result[klass.to_s] = klass.where(from_id: twitter_user_ids).delete_all
+    end
+
+    result[self.class.to_s] = TwitterUser.where(id: twitter_user_ids).delete_all
+
+    result
+  end
 end

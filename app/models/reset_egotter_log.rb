@@ -22,4 +22,20 @@ class ResetEgotterLog < ApplicationRecord
   validates :session_id, presence: true
   validates :uid, presence: true
   validates :screen_name, presence: true
+
+  def perform
+    user = twitter_user
+    unless user
+      raise "Record of TwitterUser not found #{self.inspect}"
+    end
+
+    user.reset_data
+    update(status: true)
+  end
+
+  private
+
+  def twitter_user
+    TwitterUser.latest_by(uid: uid)
+  end
 end
