@@ -50,9 +50,9 @@ module TwitterDB
 
       new_user = nil
       report.report 'build all' do
-        new_user = TwitterDB::User.new(TwitterDB::User.to_save_format(t_user))
-        friends.each { |friend| new_user.friends.build(TwitterDB::User.to_save_format(friend)) }
-        followers.each { |follower| new_user.followers.build(TwitterDB::User.to_save_format(follower)) }
+        # new_user = TwitterDB::User.new(TwitterDB::User.to_save_format(t_user))
+        # friends.each { |friend| new_user.friends.build(TwitterDB::User.to_save_format(friend)) }
+        # followers.each { |follower| new_user.followers.build(TwitterDB::User.to_save_format(follower)) }
 
         new_user.friends.each.with_index { |friend, i| new_user.friendships.build(friend_uid: friend.uid, sequence: i) }
         new_user.followers.each.with_index { |follower, i| new_user.followerships.build(follower_uid: follower.uid, sequence: i) }

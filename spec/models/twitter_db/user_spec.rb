@@ -38,7 +38,9 @@ RSpec.describe TwitterDB::User, type: :model do
 
     context 'with new records and recently persisted records' do
       before do
-        t_users[0].tap { |t_user| TwitterDB::User.create!(TwitterDB::User.to_save_format(t_user)) }
+        t_users[0].tap do |t_user|
+          TwitterDB::User.create!(uid: t_user[:id], screen_name: t_user[:screen_name], user_info: TwitterUser.collect_user_info(t_user), friends_size: -1, followers_size: -1)
+        end
       end
       it 'updates only new records' do
         expect { TwitterDB::User.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size - 1)
@@ -50,13 +52,6 @@ RSpec.describe TwitterDB::User, type: :model do
     let(:t_user) { Hashie::Mash.new(id: rand(1000), screen_name: 'sn') }
     it 'matches an array' do
       expect(TwitterDB::User.to_import_format(t_user)).to match([t_user.id, t_user.screen_name, {id: t_user.id, screen_name: t_user.screen_name}.to_json, -1, -1])
-    end
-  end
-
-  describe '.to_save_format' do
-    let(:t_user) { Hashie::Mash.new(id: rand(1000), screen_name: 'sn') }
-    it 'matches a hash' do
-      expect(TwitterDB::User.to_save_format(t_user)).to match({uid: t_user.id, screen_name: t_user.screen_name, user_info: {id: t_user.id, screen_name: t_user.screen_name}.to_json, friends_size: -1, followers_size: -1})
     end
   end
 

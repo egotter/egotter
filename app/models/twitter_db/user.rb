@@ -51,10 +51,6 @@ module TwitterDB
         [t_user[:id], t_user[:screen_name], TwitterUser.collect_user_info(t_user), -1, -1]
       end
 
-      def to_save_format(t_user)
-        {uid: t_user[:id], screen_name: t_user[:screen_name], user_info: TwitterUser.collect_user_info(t_user), friends_size: -1, followers_size: -1}
-      end
-
       def with_friends
         # friends_size != -1 AND followers_size != -1
         where.not(friends_size: -1, followers_size: -1)

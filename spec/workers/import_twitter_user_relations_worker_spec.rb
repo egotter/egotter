@@ -56,7 +56,10 @@ RSpec.describe ImportTwitterUserRelationsWorker do
     let(:friend_uids) { [1, 2, 3] }
     let(:follower_uids) { [2, 3, 4] }
 
-    before { create(:twitter_db_user,  uid: twitter_user.uid) }
+    before do
+      create(:twitter_db_user, uid: twitter_user.uid)
+      allow(instance).to receive(:import_twitter_db_users).with(client, friend_uids + follower_uids)
+    end
 
     it 'calls TwitterDB::Friendship.import_from!' do
       expect(TwitterDB::Friendship).to receive(:import_from!).with(twitter_user.uid, friend_uids)
