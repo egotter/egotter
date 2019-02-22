@@ -41,10 +41,13 @@ module Concerns::TwitterDB::User::Batch
         TwitterDB::User.import_in_batches(users)
       rescue => e
         if retryable_deadlock?(e)
-          if (tries -= 1).zero?
-            logger.warn {"#{self}##{__method__}: Retry exhausted #{t_users.size} #{t_users.first.inspect.truncate(100)}"}
+          message = "#{self}##{__method__}: #{e.class} #{e.message.truncate(100)} #{t_users.size}"
+
+          if (tries -= 1) < 0
+            logger.warn "RETRY EXHAUSTED #{message}"
             raise
           else
+            logger.warn "RETRY #{tries} #{message}"
             sleep(rand * 5)
             retry
           end
@@ -78,8 +81,8 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.retryable_deadlock?(ex)
-      ex.class == ActiveRecord::StatementInvalid &&
-        ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')
+      (ex.class == ActiveRecord::StatementInvalid && ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
+          (ex.class == ActiveRecord::Deadlocked &&   ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction'))
     end
   end
 end
