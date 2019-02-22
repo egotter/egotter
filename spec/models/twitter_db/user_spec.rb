@@ -32,7 +32,7 @@ RSpec.describe TwitterDB::User, type: :model do
 
     context 'with new records' do
       it 'creates all records' do
-        expect { TwitterDB::User.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size)
+        expect { TwitterDB::User::Batch.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size)
       end
     end
 
@@ -43,7 +43,7 @@ RSpec.describe TwitterDB::User, type: :model do
         end
       end
       it 'updates only new records' do
-        expect { TwitterDB::User.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size - 1)
+        expect { TwitterDB::User::Batch.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size - 1)
       end
     end
   end

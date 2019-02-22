@@ -38,7 +38,7 @@ module Concerns::TwitterDB::User::Batch
       users.sort_by!(&:first)
       begin
         tries ||= 3
-        TwitterDB::User.import_in_batches(users)
+        import_in_batches(users)
       rescue => e
         if retryable_deadlock?(e)
           message = "#{self}##{__method__}: #{e.class} #{e.message.truncate(100)} #{t_users.size}"
@@ -56,6 +56,15 @@ module Concerns::TwitterDB::User::Batch
         end
       end
       users
+    end
+
+    CREATE_COLUMNS = %i(uid screen_name user_info friends_size followers_size)
+    UPDATE_COLUMNS = %i(uid screen_name user_info)
+
+    # Note: This method uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
+    def self.import_in_batches(users)
+      persisted_uids = TwitterDB::User.where(uid: users.map(&:first), updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
+      TwitterDB::User.import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: 1000, validate: false)
     end
 
     def self.import_suspended(uids)

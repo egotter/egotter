@@ -36,17 +36,7 @@ module TwitterDB
       screen_name
     end
 
-    CREATE_COLUMNS = %i(uid screen_name user_info friends_size followers_size)
-    UPDATE_COLUMNS = %i(uid screen_name user_info)
-    BATCH_SIZE = 1000
-
     class << self
-      # Note: This method uses index_twitter_db_users_on_uid.
-      def import_in_batches(users)
-        persisted_uids = where(uid: users.map(&:first), updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
-        import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: BATCH_SIZE, validate: false)
-      end
-
       def with_friends
         # friends_size != -1 AND followers_size != -1
         where.not(friends_size: -1, followers_size: -1)
