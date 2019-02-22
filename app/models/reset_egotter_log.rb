@@ -23,7 +23,7 @@ class ResetEgotterLog < ApplicationRecord
   validates :uid, presence: true
   validates :screen_name, presence: true
 
-  def perform
+  def perform(send_dm: false)
     user = twitter_user
     unless user
       raise "Record of TwitterUser not found #{self.inspect}"
@@ -31,6 +31,11 @@ class ResetEgotterLog < ApplicationRecord
 
     result = user.reset_data
     update(status: true)
+
+    if send_dm
+      DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, uid, I18n.t('settings.index.reset_egotter.direct_message')).perform
+    end
+
     result
   end
 

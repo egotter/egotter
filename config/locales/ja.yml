@@ -198,6 +198,7 @@ ja:
         warning_html: "データがおかしくなっている場合のみ、@%{screen_name} のえごったーのデータをリセットします。本当にリセットしますか？<br><br><b>※リセット完了まで少し時間がかかります。</b>"
         ok: "はい、リセットします"
         cancel: "いいえ"
+        direct_message: "えごったーのデータリセットが完了しました。今後もえごったーをよろしくお願いいたします。"
       trial_follow_request: "フォローボタン履歴"
       trial_follow_request_see: "見てみる"
       trial_follow_request_note: "フォロー処理の履歴です"
