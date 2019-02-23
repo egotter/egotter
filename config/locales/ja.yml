@@ -187,10 +187,7 @@ ja:
       trial_title: "お試し機能 (β)"
       delete_tweets:
         title: "ツイート削除"
-        delete: "ツイートを一括削除する"
-        warning_html: "@%{screen_name} のTwitterのツイートをすべて削除します。本当にツイートを削除しますか？<br><br><b>※この操作は取り消すことができません。</b>"
-        ok: "はい、削除します"
-        cancel: "いいえ"
+        move_to: 'に移動しました'
       reset_egotter:
         title: "データリセット"
         reset: "データをリセットする"
@@ -766,6 +763,21 @@ ja:
       after_keep_modal:
         next: "次に進む"
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
+  delete_tweets:
+    new:
+      title_html: '<span style="font-size: small; display: inline;">ツイートクリーナー🧹</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      plain_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
+      simple_title: 'ツイートクリーナー🧹'
+      description: "黒歴史よさようなら！ ワンクリックでツイートを一括削除。100万人以上が利用するえごったーに新機能が登場！"
+      text001_html: 'ワンクリックでツイートを一括削除<br>100万人以上が利用するえごったーに新機能が登場！'
+      text002_html: 'ツイッターの一括削除にはえごったーを利用しています。<br>もし、ツイートの一括削除ができない場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      delete_tweets: 'ツイートを一括削除する'
+      requested: 'リクエスト済み'
+      modal:
+        title: 'ツイート一括削除'
+        warning_html: "@%{screen_name} のTwitterのツイートをすべて削除します。本当にツイートを削除しますか？<br><br><b>※この操作は取り消すことができません。</b>"
+        ok: "はい、削除します"
+        cancel: "いいえ"
   directory:
     profiles:
       link_title: プロフィール

@@ -1,7 +1,7 @@
 module PathsHelper
   def root_path_for(controller:)
     case controller
-    when 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters' then send("#{controller}_top_path")
+    when 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters', 'delete_tweets' then send("#{controller}_top_path")
     when 'tokimeki_unfollow' then tokimeki_unfollow_cleanup_path
     else root_path
     end
@@ -9,7 +9,7 @@ module PathsHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
-      when *%w(home searches waiting notifications search_histories login misc orders tokimeki_unfollow application) then timeline_path(screen_name: screen_name)
+      when *%w(home searches waiting notifications search_histories login misc orders tokimeki_unfollow delete_tweets application) then timeline_path(screen_name: screen_name)
       else send("#{menu.to_s.singularize}_path", screen_name: screen_name)
     end
   rescue => e

@@ -43,6 +43,7 @@ module ApplicationHelper
       [friends_top_path, t('friends.new.simple_title')],
       [clusters_top_path, t('clusters.new.simple_title')],
       [tokimeki_unfollow_top_path, t('tokimeki_unfollow.new.simple_title')],
+      [delete_tweets_top_path, t('delete_tweets.new.simple_title')],
     ]
   end
 
