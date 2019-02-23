@@ -70,10 +70,8 @@ module Concerns::TwitterUser::Api
   def reply_tweets(login_user: nil)
     if login_user&.uid&.to_i == uid.to_i
       mentions
-    elsif search_results.any?
-      search_results.select { |status| status.mention_to?(mention_name) }
     else
-      []
+      mentions.select { |status| !status.user&.protected }
     end
   end
 

@@ -48,7 +48,7 @@ class CreateTwitterUserWorker
     end
 
     # At this point:
-    # Saved:     friends_size, followers_size, statuses, mentions, search_results, favorites
+    # Saved:     friends_size, followers_size, statuses, mentions, favorites
     # NOT saved: friendships, followerships
 
   rescue Twitter::Error::Forbidden, Twitter::Error::NotFound, Twitter::Error::Unauthorized,

@@ -21,9 +21,6 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options({primary_key: :id, foreign_key: :from_id}.update(default_options)) do |obj|
-      obj.has_many :mentions
-      obj.has_many :search_results
-
       obj.has_many :friendships, order_by_sequence_asc
       obj.has_many :followerships, order_by_sequence_asc
     end
@@ -31,6 +28,7 @@ module Concerns::TwitterUser::Associations
     with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
       obj.has_many :statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
       obj.has_many :favorites, order_by_sequence_asc, class_name: 'TwitterDB::Favorite'
+      obj.has_many :mentions,  order_by_sequence_asc, class_name: 'TwitterDB::Mention'
     end
 
     with_options({primary_key: :uid, foreign_key: :from_uid}.update(default_options)) do |obj|

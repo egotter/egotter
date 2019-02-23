@@ -22,8 +22,8 @@ class CloseFriendship < ApplicationRecord
   end
 
   class << self
-    def import_by!(twitter_user:)
-      uids = twitter_user.calc_close_friend_uids
+    def import_by!(twitter_user:, login_user: nil)
+      uids = twitter_user.calc_close_friend_uids(login_user: login_user)
       import_from!(twitter_user.uid, uids)
       uids
     end

@@ -15,13 +15,13 @@ RSpec.describe ImportTwitterUserRelationsWorker do
 
     it 'calls CloseFriendship.import_by!' do
       allow(FavoriteFriendship).to receive(:import_by!).with(twitter_user: twitter_user).and_return([])
-      expect(CloseFriendship).to receive(:import_by!).with(twitter_user: twitter_user).and_return([])
+      expect(CloseFriendship).to receive(:import_by!).with(twitter_user: twitter_user, login_user: nil).and_return([])
       subject
     end
 
     it 'calls #import_twitter_db_users' do
       allow(FavoriteFriendship).to receive(:import_by!).with(twitter_user: twitter_user).and_return([1])
-      allow(CloseFriendship).to receive(:import_by!).with(twitter_user: twitter_user).and_return([2])
+      allow(CloseFriendship).to receive(:import_by!).with(twitter_user: twitter_user, login_user: nil).and_return([2])
       expect(instance).to receive(:import_twitter_db_users).with(client, [1, 2])
       subject
     end

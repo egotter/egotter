@@ -36,8 +36,7 @@ module Concerns::TwitterUser::Calculator
     uniq ? sort_by_count_desc(uids) : uids
   end
 
-  def calc_close_friend_uids
-    login_user = mentions.any? ? Hashie::Mash.new(uid: uid) : nil
+  def calc_close_friend_uids(login_user:)
     uids = replying_uids(uniq: false) + replied_uids(uniq: false, login_user: login_user) + calc_favorite_friend_uids(uniq: false)
     sort_by_count_desc(uids).take(50)
   end
