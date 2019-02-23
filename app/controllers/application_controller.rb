@@ -31,16 +31,14 @@ class ApplicationController < ActionController::Base
     request.xhr? ? head(:internal_server_error) : render_500
   end
 
-  rescue_from ActionController::InvalidAuthenticityToken, with: :invalid_token
-
-  def invalid_token
+  rescue_from ActionController::InvalidAuthenticityToken do |ex|
     logger.info "Invalid token: #{debug_str}"
 
-    return head :bad_request if request.xhr?
+    next head :bad_request if request.xhr?
 
     screen_name = params[:screen_name].to_s.strip.remove /^@/
     unless screen_name.match(Validations::ScreenNameValidator::REGEXP)
-      return redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token"))
+      next redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token"))
     end
 
     search = timeline_path(screen_name: screen_name)
@@ -48,7 +46,7 @@ class ApplicationController < ActionController::Base
 
     if recoverable_request?
       logger.warn "Recoverable CSRF token error #{fingerprint} #{debug_str}"
-      return redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
+      next redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
     end
 
     redirect_to root_path, alert: t('application.invalid_token.session_expired_and_recover_html', user: screen_name, url1: search, url2: sign_in)
@@ -92,7 +90,7 @@ class ApplicationController < ActionController::Base
   end
 
   def debug_str
-    "#{request.method} #{current_user_id} #{request.device_type} #{request.browser} #{!!request.xhr?} #{request.fullpath} #{request.referer} #{params.inspect}"
+    "#{request.method} #{current_user_id} #{request.device_type} #{request.browser} #{request.xhr?} #{request.fullpath} #{request.referer} #{params.inspect}"
   end
 
   # https://github.com/plataformatec/devise/issues/1390
