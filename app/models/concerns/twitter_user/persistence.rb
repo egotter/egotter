@@ -14,14 +14,17 @@ module Concerns::TwitterUser::Persistence
   private
 
   def put_relations_back
-    statuses.each       { |r| r.from_id = id }
     mentions.each       { |r| r.from_id = id }
     search_results.each { |r| r.from_id = id }
     favorites.each      { |r| r.from_id = id }
 
     options = {validate: false}
 
-    silent_transaction { statuses.each_slice(1000)       { |ary| Status.import(ary, options) } }
+    begin
+      silent_transaction { TwitterDB::Status.import_by!(twitter_user: self) }
+    rescue => e
+      logger.warn "#{__method__} statuses: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"
+    end
     silent_transaction { mentions.each_slice(1000)       { |ary| Mention.import(ary, options) } }
     silent_transaction { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
     silent_transaction { favorites.each_slice(1000)      { |ary| Favorite.import(ary, options) } }

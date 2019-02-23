@@ -10,7 +10,7 @@ FactoryBot.define do
         tu.friendships.build(friend_uid: create(:twitter_db_user).uid, sequence: i)
         tu.followerships.build(follower_uid: create(:twitter_db_user).uid, sequence: i)
 
-        tu.statuses.build(attributes_for(:status))
+        tu.statuses.build(attributes_for(:twitter_db_status))
         tu.mentions.build(attributes_for(:mention))
         tu.favorites.build(attributes_for(:favorite))
       end

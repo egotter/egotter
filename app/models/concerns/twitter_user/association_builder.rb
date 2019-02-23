@@ -28,14 +28,14 @@ module Concerns::TwitterUser::AssociationBuilder
   def build_other_relations(relations)
     user_timeline, mentions_timeline, search, _favorites = %i(user_timeline mentions_timeline search favorites).map { |key| relations[key] }
 
-    user_timeline.each { |status| statuses.build(Status.slice_status_info(status)) } if user_timeline&.any?
-    mentions_timeline.each { |mention| mentions.build(Status.slice_status_info(mention)) } if mentions_timeline&.any?
+    user_timeline.each { |status| statuses.build(screen_name: screen_name, raw_attrs_text: status.slice(*TwitterDB::Status::SAVE_KEYS).to_json) } if user_timeline&.any?
+    mentions_timeline.each { |mention| mentions.build(::Status.slice_status_info(mention)) } if mentions_timeline&.any?
 
     if search&.any?
-      search.each { |status| search_results.build(Status.slice_status_info(status)) }
+      search.each { |status| search_results.build(::Status.slice_status_info(status)) }
       search_results.each { |status| status.query = mention_name }
     end
 
-    _favorites.each { |favorite| favorites.build(Status.slice_status_info(favorite)) } if _favorites&.any?
+    _favorites.each { |favorite| favorites.build(::Status.slice_status_info(favorite)) } if _favorites&.any?
   end
 end
