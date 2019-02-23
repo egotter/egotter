@@ -24,7 +24,7 @@ class ImportTwitterUserRelationsWorker
 
     client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
 
-    import_favorite_and_close_friendships(client, twitter_user)
+    import_favorite_and_close_friendships(client, twitter_user, login_user: User.find_by(id: user_id))
 
     return if twitter_user.no_need_to_import_friendships?
 
@@ -83,9 +83,9 @@ class ImportTwitterUserRelationsWorker
     [friend_uids, follower_uids]
   end
 
-  def import_favorite_and_close_friendships(client, twitter_user)
+  def import_favorite_and_close_friendships(client, twitter_user, login_user: nil)
     uids = FavoriteFriendship.import_by!(twitter_user: twitter_user)
-    uids += CloseFriendship.import_by!(twitter_user: twitter_user)
+    uids += CloseFriendship.import_by!(twitter_user: twitter_user, login_user: login_user)
     import_twitter_db_users(client, uids)
   end
 

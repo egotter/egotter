@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190223015714) do
+ActiveRecord::Schema.define(version: 20190223023447) do
 
   create_table "background_force_update_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
@@ -756,6 +756,18 @@ ActiveRecord::Schema.define(version: 20190223015714) do
     t.index ["friend_uid"], name: "index_twitter_db_friendships_on_friend_uid"
     t.index ["user_uid", "friend_uid"], name: "index_twitter_db_friendships_on_user_uid_and_friend_uid", unique: true
     t.index ["user_uid"], name: "index_twitter_db_friendships_on_user_uid"
+  end
+
+  create_table "twitter_db_mentions", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.bigint "uid", null: false
+    t.string "screen_name", null: false
+    t.integer "sequence", null: false
+    t.text "raw_attrs_text", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_twitter_db_mentions_on_created_at"
+    t.index ["screen_name"], name: "index_twitter_db_mentions_on_screen_name"
+    t.index ["uid"], name: "index_twitter_db_mentions_on_uid"
   end
 
   create_table "twitter_db_statuses", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|

@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: twitter_db_favorites
+# Table name: twitter_db_mentions
 #
 #  id             :bigint(8)        not null, primary key
 #  raw_attrs_text :text(65535)      not null
@@ -12,13 +12,13 @@
 #
 # Indexes
 #
-#  index_twitter_db_favorites_on_created_at   (created_at)
-#  index_twitter_db_favorites_on_screen_name  (screen_name)
-#  index_twitter_db_favorites_on_uid          (uid)
+#  index_twitter_db_mentions_on_created_at   (created_at)
+#  index_twitter_db_mentions_on_screen_name  (screen_name)
+#  index_twitter_db_mentions_on_uid          (uid)
 #
 
 module TwitterDB
-  class Favorite < ApplicationRecord
+  class Mention < ApplicationRecord
     # This class doesn't belongs to TwitterDB::User because the user posts this tweet is another user.
 
     include Concerns::TwitterDB::Status::RawAttrs
@@ -26,7 +26,7 @@ module TwitterDB
 
     class << self
       def import_by!(twitter_user:)
-        import_from!(twitter_user.uid, twitter_user.screen_name, twitter_user.favorites)
+        import_from!(twitter_user.uid, twitter_user.screen_name, twitter_user.mentions)
       end
     end
   end

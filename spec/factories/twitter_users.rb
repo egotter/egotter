@@ -11,7 +11,7 @@ FactoryBot.define do
         tu.followerships.build(follower_uid: create(:twitter_db_user).uid, sequence: i)
 
         tu.statuses.build(attributes_for(:twitter_db_status))
-        tu.mentions.build(attributes_for(:mention))
+        tu.mentions.build(attributes_for(:twitter_db_mention))
         tu.favorites.build(attributes_for(:twitter_db_favorite))
       end
 

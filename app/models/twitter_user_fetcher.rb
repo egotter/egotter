@@ -37,18 +37,21 @@ class TwitterUserFetcher
       {method: :friend_ids,        args: [uid]},
       {method: :follower_ids,      args: [uid]},
       {method: :user_timeline,     args: [uid, {include_rts: false}]},     # replying
-      {method: :search,            args: [search_query]}, # replied
-      {method: :mentions_timeline, args: []},     # replied
+      sign_in_yourself? ? {method: :mentions_timeline, args: []} : {method: :search, args: [search_query]}, # replied
       {method: :favorites,         args: [uid]}      # favoriting
     ].delete_if { |item| reject_names.include?(item[:method]) }
   end
 
   def reject_relation_names
-    case [login_user&.uid&.to_i == uid, twitter_user.too_many_friends?(login_user: login_user, add_error: false)]
+    case [sign_in_yourself?, twitter_user.too_many_friends?(login_user: login_user, add_error: false)]
       when [true, true]   then %i(friend_ids follower_ids)
       when [true, false]  then []
-      when [false, true]  then %i(friend_ids follower_ids home_timeline mentions_timeline)
-      when [false, false] then %i(home_timeline mentions_timeline)
+      when [false, true]  then %i(friend_ids follower_ids home_timeline)
+      when [false, false] then %i(home_timeline)
     end
+  end
+
+  def sign_in_yourself?
+    login_user&.uid&.to_i == uid
   end
 end

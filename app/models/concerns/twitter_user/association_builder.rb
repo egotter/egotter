@@ -26,16 +26,14 @@ module Concerns::TwitterUser::AssociationBuilder
 
   # Each process takes a few seconds if the relation has thousands of objects.
   def build_other_relations(relations)
-    user_timeline, mentions_timeline, search, _favorites = %i(user_timeline mentions_timeline search favorites).map { |key| relations[key] }
+    user_timeline, mentions_timeline, _favorites = %i(user_timeline mentions_timeline favorites).map { |key| relations[key] }
 
-    user_timeline.each { |status| statuses.build(Util.to_build_format(self, status)) } if user_timeline&.any?
-    mentions_timeline.each { |mention| mentions.build(::Status.slice_status_info(mention)) } if mentions_timeline&.any?
-
-    if search&.any?
-      search.each { |status| search_results.build(::Status.slice_status_info(status)) }
-      search_results.each { |status| status.query = mention_name }
+    if (mentions_timeline.nil? || mentions_timeline.empty?) && relations.has_key?(:search)
+      mentions_timeline = relations[:search].reject {|status| uid == status[:user][:id] || status[:text].start_with?("RT @#{screen_name}")}
     end
 
+    user_timeline.each { |status| statuses.build(Util.to_build_format(self, status)) } if user_timeline&.any?
+    mentions_timeline.each { |status| mentions.build(Util.to_build_format(self, status)) } if mentions_timeline&.any?
     _favorites.each { |status| favorites.build(Util.to_build_format(self, status)) } if _favorites&.any?
   end
 

@@ -28,14 +28,9 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       expect { twitter_user.save }.to change { TwitterDB::Status.all.size }.by(size)
     end
 
-    it 'saves search_results' do
-      size = twitter_user.search_results.size
-      expect { twitter_user.save }.to change { SearchResult.all.size }.by(size)
-    end
-
     it 'saves mentions' do
       size = twitter_user.mentions.size
-      expect { twitter_user.save }.to change { Mention.all.size }.by(size)
+      expect { twitter_user.save }.to change { TwitterDB::Mention.all.size }.by(size)
     end
 
     it 'saves favorites' do
