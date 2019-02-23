@@ -64,8 +64,7 @@ class TwitterUser < ApplicationRecord
       result[klass.to_s] = klass.where(from_uid: uid).delete_all
     end
 
-    [Status, Mention, SearchResult, Favorite,
-     Friendship, Followership].each do |klass|
+    [Friendship, Followership].each do |klass|
       result[klass.to_s] = klass.where(from_id: twitter_user_ids).delete_all
     end
 

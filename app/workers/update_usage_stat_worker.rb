@@ -15,7 +15,7 @@ class UpdateUsageStatWorker
         user = User.find_by(id: options['user_id'])
         user = User.authorized.find_by(uid: uid) unless user
         client = user ? user.api_client : Bot.api_client
-        client.user_timeline(uid.to_i).map { |s| Status.new(Status.slice_status_info(s)) }
+        client.user_timeline(uid.to_i).map { |s| TwitterDB::Status.build_attrs_by(twitter_user: twitter_user, status: s) }
       end
 
     if statuses.any?
