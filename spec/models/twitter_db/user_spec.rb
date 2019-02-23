@@ -26,8 +26,16 @@ RSpec.describe TwitterDB::User, type: :model do
     end
   end
 
+  describe '#statuses' do
+    let(:user) { create(:twitter_db_user) }
+    before { 3.times.each.with_index {|i| create(:twitter_db_status, uid: user.uid, screen_name: user.screen_name, sequence: i)} }
+    it 'has many statuses' do
+      expect(user.statuses.size).to eq(3)
+    end
+  end
+
   describe '.import_in_batches' do
-    let(:t_users) { 3.times.map { Hashie::Mash.new(id: rand(1000), screen_name: 'sn') } }
+    let(:t_users) { 3.times.map { Hashie::Mash.new(id: rand(1000000), screen_name: 'sn') } }
     let(:import_users) { t_users.map { |t_user| [t_user[:id], t_user[:screen_name], TwitterUser.collect_user_info(t_user), -1, -1] } }
 
     context 'with new records' do

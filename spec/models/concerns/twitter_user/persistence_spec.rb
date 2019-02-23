@@ -25,7 +25,7 @@ RSpec.describe Concerns::TwitterUser::Persistence do
 
     it 'saves statuses' do
       size = twitter_user.statuses.size
-      expect { twitter_user.save }.to change { Status.all.size }.by(size)
+      expect { twitter_user.save }.to change { TwitterDB::Status.all.size }.by(size)
     end
 
     it 'saves search_results' do
