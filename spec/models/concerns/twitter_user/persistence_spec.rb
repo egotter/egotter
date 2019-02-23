@@ -40,7 +40,7 @@ RSpec.describe Concerns::TwitterUser::Persistence do
 
     it 'saves favorites' do
       size = twitter_user.favorites.size
-      expect { twitter_user.save }.to change { Favorite.all.size }.by(size)
+      expect { twitter_user.save }.to change { TwitterDB::Favorite.all.size }.by(size)
     end
   end
 end

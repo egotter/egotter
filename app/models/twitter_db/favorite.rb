@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: twitter_db_statuses
+# Table name: twitter_db_favorites
 #
 #  id             :bigint(8)        not null, primary key
 #  raw_attrs_text :text(65535)      not null
@@ -12,13 +12,13 @@
 #
 # Indexes
 #
-#  index_twitter_db_statuses_on_created_at   (created_at)
-#  index_twitter_db_statuses_on_screen_name  (screen_name)
-#  index_twitter_db_statuses_on_uid          (uid)
+#  index_twitter_db_favorites_on_created_at   (created_at)
+#  index_twitter_db_favorites_on_screen_name  (screen_name)
+#  index_twitter_db_favorites_on_uid          (uid)
 #
 
 module TwitterDB
-  class Status < ApplicationRecord
+  class Favorite < ApplicationRecord
     belongs_to :user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User', optional: true
 
     include Concerns::TwitterDB::Status::RawAttrs
@@ -26,7 +26,7 @@ module TwitterDB
 
     class << self
       def import_by!(twitter_user:)
-        import_from!(twitter_user.uid, twitter_user.screen_name, twitter_user.statuses)
+        import_from!(twitter_user.uid, twitter_user.screen_name, twitter_user.favorites)
       end
     end
   end

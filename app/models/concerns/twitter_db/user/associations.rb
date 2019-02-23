@@ -16,7 +16,8 @@ module Concerns::TwitterDB::User::Associations
     end
 
     with_options default_options.merge(primary_key: :uid, foreign_key: :uid) do |obj|
-      obj.has_many :statuses, order_by_sequence_asc, class_name: 'TwitterDB::Status'
+      obj.has_many :statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
+      obj.has_many :favorites, order_by_sequence_asc, class_name: 'TwitterDB::Favorite'
     end
 
     with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|

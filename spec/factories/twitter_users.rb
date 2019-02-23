@@ -12,7 +12,7 @@ FactoryBot.define do
 
         tu.statuses.build(attributes_for(:twitter_db_status))
         tu.mentions.build(attributes_for(:mention))
-        tu.favorites.build(attributes_for(:favorite))
+        tu.favorites.build(attributes_for(:twitter_db_favorite))
       end
 
       json = Hashie::Mash.new(JSON.parse(tu.user_info))
