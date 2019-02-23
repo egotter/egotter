@@ -4,6 +4,7 @@ module Concerns::TwitterDB::Status::RawAttrs
   extend ActiveSupport::Concern
 
   # https://dev.twitter.com/overview/api/tweets
+  # 'user' is used in #replied_uids
   SAVE_KEYS = %i(
     created_at
     id
@@ -13,6 +14,7 @@ module Concerns::TwitterDB::Status::RawAttrs
     coordinates
     place
     entities
+    user
     contributors
     is_quote_status
     retweet_count
