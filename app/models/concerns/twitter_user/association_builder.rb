@@ -32,8 +32,8 @@ module Concerns::TwitterUser::AssociationBuilder
       mentions_timeline = relations[:search].reject {|status| uid == status[:user][:id] || status[:text].start_with?("RT @#{screen_name}")}
     end
 
-    user_timeline.each { |status| statuses.build(TwitterDB::Status.build_attrs_by(twitter_user: self, status: status)) } if user_timeline&.any?
-    mentions_timeline.each { |status| mentions.build(TwitterDB::Mention.build_attrs_by(twitter_user: self, status: status)) } if mentions_timeline&.any?
-    _favorites.each { |status| favorites.build(TwitterDB::Favorite.build_attrs_by(twitter_user: self, status: status)) } if _favorites&.any?
+    user_timeline.each { |status| statuses.build(TwitterDB::Status.attrs_by(twitter_user: self, status: status)) } if user_timeline&.any?
+    mentions_timeline.each { |status| mentions.build(TwitterDB::Mention.attrs_by(twitter_user: self, status: status)) } if mentions_timeline&.any?
+    _favorites.each { |status| favorites.build(TwitterDB::Favorite.attrs_by(twitter_user: self, status: status)) } if _favorites&.any?
   end
 end

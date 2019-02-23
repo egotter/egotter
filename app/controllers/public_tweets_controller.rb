@@ -7,7 +7,7 @@ class PublicTweetsController < ApplicationController
   private
 
   def tweets_for(keyword)
-    if Util::TweetsCache.exists?(keyword)
+    if ::Util::TweetsCache.exists?(keyword)
       JSON.parse(Util::TweetsCache.get(keyword)).map { |tweet| Hashie::Mash.new(tweet) }
     else
       CreateTweetsWorker.perform_async(keyword)

@@ -13,8 +13,12 @@ module Concerns::TwitterDB::Status::Importable
       end
     end
 
-    def build_attrs_by(twitter_user:, status:)
+    def attrs_by(twitter_user:, status:)
       {uid: twitter_user.uid, screen_name: twitter_user.screen_name, raw_attrs_text: status.slice(*Concerns::TwitterDB::Status::RawAttrs::SAVE_KEYS).to_json}
+    end
+
+    def build_by(twitter_user:, status:)
+      new(attrs_by(twitter_user: twitter_user, status: status))
     end
   end
 
