@@ -1,0 +1,63 @@
+- title t('.plain_title')
+- set_meta_tags description: t('.description')
+
+.text-center.right-side{style: 'max-width: 600px; margin: 0 auto;'}
+  .vertical-spacing
+  %h2.h4= t('.simple_title')
+  .vertical-spacing
+
+  .lead= t('.text001_html')
+
+  - if user_signed_in?
+    .center-block{style: 'width: 80%;'}
+      - if @delete_tweets_log
+        .btn.btn-danger.btn-block{disabled: 'disabled'}= t('.delete_tweets')
+        .text-muted.notes.text-right= t('.requested')
+      - else
+        .btn.btn-danger.btn-block.delete-tweets-btn{"data-target" => "#delete-tweets-modal", "data-toggle" => "modal"}= t('.delete_tweets')
+        .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
+          %i.fas.fa-check
+          = t('searches.new.pc.check_004_html')
+    .vertical-spacing
+    .vertical-spacing
+  - else
+    .center-block{style: 'width: 80%;'}
+      = sign_in_with_twitter_link(delete_tweets_top_path, 'button', class: 'btn btn-primary btn-block')
+      .text-notice.text-right.search-hint
+        %i.fas.fa-check
+        = t('searches.new.pc.check_002')
+      .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
+        %i.fas.fa-check
+        = t('searches.new.pc.check_004_html')
+    .vertical-spacing
+
+
+  .screenshot.text-center
+    = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
+      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
+  .vertical-spacing
+
+#public-tweets-wrapper.twitter.tweets.center-block
+
+.delete-tweets.lead.text-center= t('.text002_html').html_safe
+
+- if user_signed_in?
+  #delete-tweets-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+    .modal-dialog{role: 'document'}
+      .modal-content
+        .modal-header
+          %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
+            %span{'aria-hidden' => 'true'} ×
+          %h4.modal-title= t('.modal.title')
+        .modal-body
+          %p= t('.modal.warning_html', screen_name: current_user.screen_name)
+        .modal-footer
+          %button.btn.btn-default{'data-dismiss' => 'modal', type: 'button'}= t('.modal.cancel')
+          %button.btn.btn-danger.ok{'data-url' => delete_tweets_path, type: 'button'}= t('.modal.ok')
+
+:javascript
+  $(function () {
+    Home.setSearchCount('#{search_count_path}');
+    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
+    Settings.enableDeleteTweetsButton();
+  });

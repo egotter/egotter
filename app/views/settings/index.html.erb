@@ -65,12 +65,7 @@
     <tr>
       <td><%= t('.delete_tweets.title') %></td>
       <td>
-        <% if @delete_tweets_log %>
-          <div class="btn btn-danger delete-tweets-btn" disabled="disabled"><%= t('.delete_tweets.delete') %></div>
-          <div class="text-muted notes"><%= t('.reset_egotter.requested') %></div>
-        <% else %>
-          <div class="btn btn-danger delete-tweets-btn" data-toggle="modal" data-target="#delete-tweets-modal"><%= t('.delete_tweets.delete') %></div>
-        <% end %>
+        <a href="<%= delete_tweets_top_path %>"><%= t('delete_tweets.new.simple_title') %></a><%= t('.delete_tweets.move_to') %>
       </td>
     </tr>
     <tr>
@@ -109,24 +104,6 @@
   </div>
 </div>
 
-<div class="modal fade" id="delete-tweets-modal" tabindex="-1" role="dialog">
-  <div class="modal-dialog" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title"><%= t('.delete_tweets.title') %></h4>
-      </div>
-      <div class="modal-body">
-        <p><%= t('.delete_tweets.warning_html', screen_name: current_user.screen_name) %></p>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal"><%= t('.delete_tweets.cancel') %></button>
-        <button type="button" class="btn btn-danger ok" data-url="<%= delete_tweets_path %>"><%= t('.delete_tweets.ok') %></button>
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="modal fade" id="reset-egotter-modal" tabindex="-1" role="dialog">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
@@ -147,7 +124,6 @@
 
 <script>
   $(function () {
-    Settings.enableDeleteTweetsButton();
     Settings.enableResetEgotterButton();
     Settings.enableUpdateProfileButton(function (res) {
       $('.screen-name').text(res.screen_name);

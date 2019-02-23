@@ -24,6 +24,10 @@
 
     = succeed spaces do
       %a{href: root_path_for(controller: 'tokimeki_unfollow')}= t('tokimeki_unfollow.new.simple_title')
+      %br.visible-xs-block
+
+    = succeed spaces do
+      %a{href: root_path_for(controller: 'delete_tweets')}= t('delete_tweets.new.simple_title')
       %br
 
     = succeed spaces do
