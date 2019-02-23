@@ -69,6 +69,10 @@ class TwitterUser < ApplicationRecord
       result[klass.to_s] = klass.where(from_id: twitter_user_ids).delete_all
     end
 
+    [TwitterDB::Status, TwitterDB::Favorite].each do |klass|
+      result[klass.to_s] = klass.where(uid: uid).delete_all
+    end
+
     result[self.class.to_s] = TwitterUser.where(id: twitter_user_ids).delete_all
 
     result
