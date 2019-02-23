@@ -16,7 +16,6 @@ module Concerns::TwitterUser::Persistence
   def put_relations_back
     mentions.each       { |r| r.from_id = id }
     search_results.each { |r| r.from_id = id }
-    favorites.each      { |r| r.from_id = id }
 
     options = {validate: false}
 
@@ -27,7 +26,11 @@ module Concerns::TwitterUser::Persistence
     end
     silent_transaction { mentions.each_slice(1000)       { |ary| Mention.import(ary, options) } }
     silent_transaction { search_results.each_slice(1000) { |ary| SearchResult.import(ary, options) } }
-    silent_transaction { favorites.each_slice(1000)      { |ary| Favorite.import(ary, options) } }
+    begin
+      silent_transaction { TwitterDB::Favorite.import_by!(twitter_user: self) }
+    rescue => e
+      logger.warn "#{__method__} favorites: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"
+    end
 
     # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
 

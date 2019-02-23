@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190223002241) do
+ActiveRecord::Schema.define(version: 20190223015714) do
 
   create_table "background_force_update_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
@@ -726,6 +726,18 @@ ActiveRecord::Schema.define(version: 20190223002241) do
     t.string "medium", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_tracks_on_created_at"
+  end
+
+  create_table "twitter_db_favorites", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.bigint "uid", null: false
+    t.string "screen_name", null: false
+    t.integer "sequence", null: false
+    t.text "raw_attrs_text", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_twitter_db_favorites_on_created_at"
+    t.index ["screen_name"], name: "index_twitter_db_favorites_on_screen_name"
+    t.index ["uid"], name: "index_twitter_db_favorites_on_uid"
   end
 
   create_table "twitter_db_followerships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
