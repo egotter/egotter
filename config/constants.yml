@@ -8,7 +8,7 @@ default: &default
   recently_messaging: <%= 5.minutes %>
   recently_delete_tweets: <%= 30.minutes %>
   many_friends_threshold: 1000
-  too_many_friends_threshold: 5000
+  too_many_friends_threshold: 10000
   anonymous_search_histories_limit: 2
   free_plan_search_histories_limit: 5
   basic_plan_search_histories_limit: 10
