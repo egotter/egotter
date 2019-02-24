@@ -26,7 +26,7 @@ module TwitterDB
 
     class << self
       def import_by!(twitter_user:)
-        import_from!(twitter_user.uid, twitter_user.screen_name, twitter_user.statuses)
+        import_from!(twitter_user.uid, twitter_user.screen_name, twitter_user.statuses.select(&:new_record?))
       end
     end
   end

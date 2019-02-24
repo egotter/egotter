@@ -16,7 +16,11 @@ module Concerns::TwitterUser::Persistence
   def put_relations_back
     [TwitterDB::Status, TwitterDB::Mention, TwitterDB::Favorite].each do |klass|
       begin
-        silent_transaction { klass.import_by!(twitter_user: self) }
+        if Rails.env.production?
+          silent_transaction { klass.import_by!(twitter_user: self) }
+        else
+          klass.import_by!(twitter_user: self)
+        end
       rescue => e
         logger.warn "#{__method__} #{klass}: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"
       end
