@@ -11,6 +11,7 @@ end
   friends
   followers
   statuses
+  audience_insights
   close_friends
   favorite_friends
   scores

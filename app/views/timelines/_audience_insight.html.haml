@@ -1,0 +1,43 @@
+.audience-insight-on-timeline
+  %h3.text-center= t('timelines.show.audience_insight.title')
+  .vertical-spacing
+  .text-center= t('timelines.show.audience_insight.description', screen_name: twitter_user.screen_name)
+  .chart-container
+  .btn-container
+    = link_to t('timelines.show.audience_insight.view_more'), search_path_for('audience_insights', twitter_user.screen_name), class: 'btn btn-info btn-block'
+
+:javascript
+  $(function () {
+    var series = [];
+    var categories = #{chart_builder.categories.to_json.html_safe};
+
+    series.push(#{chart_builder.friends.to_json.html_safe});
+    series.push(#{chart_builder.followers.tap{|data| data[:yAxis] = 1}.to_json.html_safe});
+
+    Highcharts.chart({
+      chart: {
+        renderTo: $('.audience-insight-on-timeline .chart-container')[0]
+      },
+      title: null,
+      xAxis: {
+        categories: categories,
+        title: {
+          text: null
+        }
+      },
+      yAxis: [{
+        title: {
+          text: null
+        }
+      }, {
+        opposite: true,
+        title: {
+          text: null
+        }
+      }],
+      series: series,
+      legend: false,
+      exporting: false,
+        credits: false
+    });
+  });

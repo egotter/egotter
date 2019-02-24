@@ -1,0 +1,83 @@
+- content_for :canonical_url do
+  %link{href: @canonical_url, rel: 'canonical'}
+
+- breadcrumb @breadcrumb_name, @twitter_user.screen_name
+
+- title @page_title
+- set_meta_tags description: @meta_description, title: @meta_title
+
+= render partial: 'twitter/profile', locals: {user: @twitter_user}
+
+.audience-insights
+  %h2.h2.page-title= @page_title
+
+.audience-insights
+  .page-description.text-center= @page_description
+.vertical-spacing
+.vertical-spacing
+
+.audience-insights
+  %h3.audience-insights.text-center= t('.friends.title')
+  .vertical-spacing
+  .chart-container.friends
+  .note= t('.friends.note')
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3.text-center= t('.followers.title')
+  .vertical-spacing
+  .chart-container.followers
+  .note= t('.followers.note')
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3.audience-insights.text-center= t('.new_friends.title')
+  .vertical-spacing
+  .chart-container.new-friends
+  .note= t('.new_friends.note')
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3.audience-insights.text-center= t('.new_followers.title')
+  .vertical-spacing
+  .chart-container.new-followers
+  .note= t('.new_followers.note')
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3.audience-insights.text-center= t('.tweets.title')
+  .vertical-spacing
+  .chart-container.tweets
+  .note= t('.tweets.note')
+  .vertical-spacing
+  .vertical-spacing
+
+:javascript
+  $(function () {
+    var categories = #{@chart_builder.categories.to_json.html_safe};
+
+    var series = [#{@chart_builder.friends.to_json.html_safe}];
+    AudienceInsights.drawChart('.chart-container.friends', categories, series);
+
+    series = [#{@chart_builder.followers.to_json.html_safe}];
+    AudienceInsights.drawChart('.chart-container.followers', categories, series);
+
+    series = [#{@chart_builder.new_friends.to_json.html_safe}];
+    AudienceInsights.drawChart('.chart-container.new-friends', categories, series);
+
+    series = [#{@chart_builder.new_followers.to_json.html_safe}];
+    AudienceInsights.drawChart('.chart-container.new-followers', categories, series);
+
+    series = [#{@chart_builder.tweets.to_json.html_safe}];
+    AudienceInsights.drawChart('.chart-container.tweets', #{@chart_builder.tweets_categories.to_json.html_safe}, series);
+  });
+
+= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
+
+.vertical-spacing
+
+= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t('.title'))}
+
+.vertical-spacing
+
+= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}
