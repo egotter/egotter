@@ -17,7 +17,7 @@ module Concerns::TwitterUser::Persistence
     [TwitterDB::Status, TwitterDB::Mention, TwitterDB::Favorite].each do |klass|
       begin
         if Rails.env.production?
-          silent_transaction { klass.import_by!(twitter_user: self) }
+          Rails.logger.silence { klass.import_by!(twitter_user: self) }
         else
           klass.import_by!(twitter_user: self)
         end
