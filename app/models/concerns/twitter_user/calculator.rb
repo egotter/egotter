@@ -91,4 +91,14 @@ module Concerns::TwitterUser::Calculator
       older.follower_uids - newer.follower_uids
     end.compact.flatten.reverse
   end
+
+  def calc_new_friend_uids
+    older = TwitterUser.where('created_at < ?', created_at).with_friends.where(uid: uid).select(:id).order(created_at: :desc).limit(1).first
+    older ? friend_uids - older.friend_uids : []
+  end
+
+  def calc_new_follower_uids
+    older = TwitterUser.where('created_at < ?', created_at).with_friends.where(uid: uid).select(:id).order(created_at: :desc).limit(1).first
+    older ? follower_uids - older.follower_uids : []
+  end
 end

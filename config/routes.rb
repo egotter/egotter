@@ -32,6 +32,7 @@ Rails.application.routes.draw do
     friends
     followers
     statuses
+    audience_insights
     close_friends
     favorite_friends
     scores

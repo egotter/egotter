@@ -58,4 +58,20 @@ RSpec.describe Concerns::TwitterUser::Calculator do
 
     end
   end
+
+  describe '#calc_new_friend_uids' do
+    let(:newer) { create(:twitter_user, created_at: twitter_user.created_at + 1.second) }
+    before do
+      newer.update(uid: twitter_user.uid) # Avoid recently updated error
+    end
+    it { expect(newer.calc_new_friend_uids).to match_array(newer.friend_uids - twitter_user.friend_uids) }
+  end
+
+  describe '#calc_new_follower_uids' do
+    let(:newer) { create(:twitter_user, created_at: twitter_user.created_at + 1.second) }
+    before do
+      newer.update(uid: twitter_user.uid) # Avoid recently updated error
+    end
+    it { expect(newer.calc_new_follower_uids).to match_array(newer.follower_uids - twitter_user.follower_uids) }
+  end
 end

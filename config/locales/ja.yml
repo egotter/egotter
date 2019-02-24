@@ -126,6 +126,10 @@ ja:
       see_on_twilog: "%{user}をTwilogで見る"
       favstar_link_html: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をFavstarで見る</a>'
       see_on_favstar: "%{user}をFavstarで見る"
+      audience_insight:
+        title: 'オーディエンス分析'
+        description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
+        view_more: '続きを見る'
     check_for_updates:
       unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
       followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
@@ -153,6 +157,31 @@ ja:
       existence: "あり"
       nonexistence: "なし"
       wday_suffix: "曜日"
+  audience_insights:
+    show:
+      title: "オーディエンス分析"
+      crumb_title: "オーディエンス分析"
+      page_title: "%{user} のオーディエンス分析"
+      meta_title: "%{user} のオーディエンス分析"
+      summary_title: "オーディエンス分析"
+      page_description: "%{user} のツイッター オーディエンス分析です。フォロー数 / フォロワー数 / ツイート数の時系列推移が分かります。"
+      meta_description: "%{user} のツイッター オーディエンス分析です。フォロー数 / フォロワー数 / ツイート数の時系列推移が分かります。"
+      friends:
+        title: 'フォロー数'
+        note: 'フォロー数の時系列推移です。ツイッターのプロフィールに書いてあるフォロー数の変化が日付毎に分かります。'
+      followers:
+        title: 'フォロワー数'
+        note: 'フォロワー数の時系列推移です。ツイッターのプロフィールに書いてあるフォロワー数の変化が日付毎に分かります。'
+      new_friends:
+        title: '新しいフォロー'
+        note: '新しいフォローの時系列推移です。合計フォロー数が減っていても、新しい人をフォローすれば数値が増えます。例：2人リムーブした + 3人フォローした = 新しいフォローは3人'
+      new_followers:
+        title: '新しいフォロワー'
+        note: '新しいフォロワーの時系列推移です。合計フォロワー数が減っていても、新しい人からフォローされれば数値が増えます。例：2人からリムられた + 3人からフォローされた = 新しいフォロワーは3人'
+      tweets:
+        title: 'ツイート'
+        note: '日付ごとのツイート数です。公式リツイートやリプライも含んでいます。'
+      see_more: 'もっと見る'
   update_histories:
     show:
       title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
@@ -1032,6 +1061,15 @@ ja:
         error_class: "エラー"
         created_at: "クリック"
         finished_at: "完了"
+      audience_insight_chart_builder:
+        friends: "フォロー"
+        followers: "フォロワー"
+        new_friends: "新しいフォロー"
+        new_followers: "新しいフォロワー"
+        unfriends: "フォロー解除した"
+        unfollowers: "フォロー解除された"
+        tweets: "ツイート"
+        replies: "リプライ"
       twitter_db/user:
         uid: "uid"
         screen_name: "screen name"
