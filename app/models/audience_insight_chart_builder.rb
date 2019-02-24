@@ -4,7 +4,7 @@ class AudienceInsightChartBuilder
     @statuses = TwitterDB::User.find_by(uid: uid)&.statuses || TwitterDB::Status.none
   end
 
-  DATE_FORMAT = "%m-%d"
+  DATE_FORMAT = "%Y-%m-%d"
 
   def categories
     @twitter_users.map(&:created_at).map {|t| t.strftime(DATE_FORMAT)}
