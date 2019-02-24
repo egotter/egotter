@@ -1,6 +1,6 @@
 class AudienceInsightChartBuilder
   def initialize(uid, limit: 10)
-    @twitter_users = TwitterUser.where(uid: uid).order(created_at: :asc).limit(limit)
+    @twitter_users = TwitterUser.where(uid: uid).order(created_at: :desc).limit(limit).reverse
     @statuses = TwitterDB::User.find_by(uid: uid)&.statuses || TwitterDB::Status.none
   end
 
