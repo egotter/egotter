@@ -19,7 +19,6 @@ class DeleteTweetsWorker
 
     unless user.authorized?
       log.update(status: false, message: "[#{user.screen_name}] is not authorized.")
-      request.finished!
       return
     end
 
@@ -40,6 +39,7 @@ class DeleteTweetsWorker
     else
       log.update(status: true, message: "#{destroy_count} tweets are destroyed.")
       request.finished!
+      notify(user)
     end
 
   rescue => e
@@ -47,6 +47,10 @@ class DeleteTweetsWorker
   end
 
   private
+
+  def notify(user)
+    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('delete_tweets.new.dm_messge')).perform
+  end
 
   def save_error(e, log, values)
     error_message = e.message.truncate(100)

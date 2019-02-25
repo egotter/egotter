@@ -807,6 +807,7 @@ ja:
         warning_html: "@%{screen_name} のTwitterのツイートをすべて削除します。本当にツイートを削除しますか？<br><br><b>※この操作は取り消すことができません。</b>"
         ok: "はい、削除します"
         cancel: "いいえ"
+      dm_messge: 'ツイートの削除が完了しました。'
   directory:
     profiles:
       link_title: プロフィール
