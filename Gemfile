@@ -67,6 +67,7 @@ gem 'dogstatsd-ruby', require: false
 gem 'google-api-client', require: false
 gem 'aws-sdk-cloudwatch', require: false
 gem 'aws-sdk-dynamodb'
+gem 'aws-sdk-s3'
 gem 'stripe'
 
 group :development, :production do
