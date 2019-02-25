@@ -28,15 +28,19 @@ module S3
       def import_from!(twitter_user_id, uid, screen_name, follower_uids)
         client.put_object(
             bucket: bucket_name,
-            body: {
-                twitter_user_id: twitter_user_id,
-                uid: uid,
-                screen_name: screen_name,
-                follower_uids: Base64.encode64(compress(follower_uids.to_json)),
-                compress: 1
-            }.to_json,
+            body: encoded_body(twitter_user_id, uid, screen_name, follower_uids),
             key: twitter_user_id.to_s
         )
+      end
+
+      def encoded_body(twitter_user_id, uid, screen_name, uids)
+        {
+            twitter_user_id: twitter_user_id,
+            uid: uid,
+            screen_name: screen_name,
+            follower_uids: Base64.encode64(compress(uids.to_json)),
+            compress: 1
+        }.to_json
       end
     end
   end

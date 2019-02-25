@@ -1,6 +1,7 @@
 # -*- SkipSchemaAnnotations
 require 'zlib'
 require 'base64'
+require 'fileutils'
 
 module S3
   REGION = 'ap-northeast-1'
@@ -36,6 +37,12 @@ module S3
           end
       threads.each(&:join)
       q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
+    end
+
+    def write_to_file(twitter_user_id, uid, screen_name, uids)
+      dir = ENV['S3_IMPORT_DIR'] + '/' + bucket_name.split('.')[-1]
+      FileUtils.mkdir_p(dir) unless File.exists?(dir)
+      File.write(dir + '/' + twitter_user_id.to_s, encoded_body(twitter_user_id, uid, screen_name, uids))
     end
 
     def compress(text)
