@@ -1,7 +1,7 @@
 # -*- SkipSchemaAnnotations
 module DynamoDB
-  class Friendship
-    TABLE_NAME = "egotter.#{Rails.env}.friendships"
+  class Followership
+    TABLE_NAME = "egotter.#{Rails.env}.followerships"
 
     class << self
       def client
@@ -14,7 +14,7 @@ module DynamoDB
             twitter_user_id: item['twitter_user_id'],
             uid: item['uid'],
             screen_name: item['screen_name'],
-            friend_uids: item['friend_uids']
+            follower_uids: item['follower_uids']
         }
       end
 
@@ -25,7 +25,7 @@ module DynamoDB
                 twitter_user_id: twitter_user.id,
                 uid: twitter_user.uid,
                 screen_name: twitter_user.screen_name,
-                friend_uids: twitter_user.friend_uids
+                follower_uids: twitter_user.follower_uids
             }
         )
       end
