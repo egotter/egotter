@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190223023447) do
+ActiveRecord::Schema.define(version: 20190225091559) do
 
   create_table "background_force_update_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
@@ -197,16 +197,24 @@ ActiveRecord::Schema.define(version: 20190223023447) do
   end
 
   create_table "delete_tweets_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
-    t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
-    t.string "uid", default: "-1", null: false
-    t.string "screen_name", default: "", null: false
+    t.integer "request_id", default: -1, null: false
     t.boolean "status", default: false, null: false
     t.string "message", default: "", null: false
     t.string "error_class", default: "", null: false
     t.string "error_message", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_delete_tweets_logs_on_created_at"
+  end
+
+  create_table "delete_tweets_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.string "session_id", null: false
+    t.integer "user_id", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_delete_tweets_requests_on_created_at"
+    t.index ["user_id"], name: "index_delete_tweets_requests_on_user_id"
   end
 
   create_table "favorite_friendships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
