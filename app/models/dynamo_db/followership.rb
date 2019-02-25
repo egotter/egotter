@@ -1,15 +1,13 @@
 # -*- SkipSchemaAnnotations
 module DynamoDB
   class Followership
-    TABLE_NAME = "egotter.#{Rails.env}.followerships"
+    extend DynamoDB::Util
+
+    self.table_name = "egotter.#{Rails.env}.followerships"
 
     class << self
-      def client
-        @@client ||= Aws::DynamoDB::Client.new(region: REGION)
-      end
-
       def find_by(twitter_user_id:)
-        item = client.get_item(table_name: TABLE_NAME, key: {twitter_user_id: twitter_user_id}).item
+        item = client.get_item(table_name: table_name, key: {twitter_user_id: twitter_user_id}).item
         return {} unless item
         {
             twitter_user_id: item['twitter_user_id'],
@@ -25,7 +23,7 @@ module DynamoDB
 
       def import_from!(twitter_user_id, uid, screen_name, follower_uids)
         client.put_item(
-            table_name: TABLE_NAME,
+            table_name: table_name,
             item: {
                 twitter_user_id: twitter_user_id,
                 uid: uid,
