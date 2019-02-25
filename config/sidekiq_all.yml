@@ -28,6 +28,8 @@
   - DeleteForbiddenUserWorker
   - DeleteTweetsWorker
   - FollowEgotterWorker
+  - ImportDynamodbFriendshipsWorker
+  - ImportDynamodbFollowershipsWorker
   - ImportFriendsAndFollowersWorker
   - ImportFriendshipsAndFollowershipsWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker

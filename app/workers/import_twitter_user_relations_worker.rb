@@ -125,6 +125,9 @@ class ImportTwitterUserRelationsWorker
       Followership.import_from!(twitter_user.id, follower_uids)
       twitter_user.update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
+
+    ImportDynamodbFriendshipsWorker.perform_async(twitter_user.id, friend_uids)
+    ImportDynamodbFollowershipsWorker.perform_async(twitter_user.id, follower_uids)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
   end
