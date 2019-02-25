@@ -1,3 +1,7 @@
+# -*- SkipSchemaAnnotations
+require 'zlib'
+require 'base64'
+
 module S3
   REGION = 'ap-northeast-1'
 
@@ -22,6 +26,28 @@ module S3
           end
       threads.each(&:join)
       q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
+    end
+
+    def import!(twitter_users)
+      q = Queue.new
+      threads =
+          twitter_users.map.with_index do |user, i|
+            Thread.new {q.push(i: i, result: import_by!(twitter_user: user))}
+          end
+      threads.each(&:join)
+      q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
+    end
+
+    def compress(text)
+      Zlib::Deflate.deflate(text)
+    end
+
+    def decompress(data)
+      Zlib::Inflate.inflate(data)
+    end
+
+    def parse_json(text)
+      Oj.load(text)
     end
   end
 end
