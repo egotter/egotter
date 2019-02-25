@@ -66,6 +66,7 @@ gem 'gretel'
 gem 'dogstatsd-ruby', require: false
 gem 'google-api-client', require: false
 gem 'aws-sdk-cloudwatch', require: false
+gem 'aws-sdk-dynamodb'
 gem 'stripe'
 
 group :development, :production do

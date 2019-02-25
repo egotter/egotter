@@ -1,0 +1,2 @@
+module DynamoDB
+end
