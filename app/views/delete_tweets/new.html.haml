@@ -10,7 +10,7 @@
 
   - if user_signed_in?
     .center-block{style: 'width: 80%;'}
-      - if @delete_tweets_log
+      - if @delete_tweets_request
         .btn.btn-danger.btn-block{disabled: 'disabled'}= t('.delete_tweets')
         .text-muted.notes.text-right= t('.requested')
       - else

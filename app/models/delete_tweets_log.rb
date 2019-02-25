@@ -3,15 +3,13 @@
 # Table name: delete_tweets_logs
 #
 #  id            :integer          not null, primary key
-#  session_id    :string(191)      default(""), not null
-#  user_id       :integer          default(-1), not null
-#  uid           :string(191)      default("-1"), not null
-#  screen_name   :string(191)      default(""), not null
-#  status        :boolean          default(FALSE), not null
-#  message       :string(191)      default(""), not null
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null
+#  message       :string(191)      default(""), not null
+#  status        :boolean          default(FALSE), not null
 #  created_at    :datetime         not null
+#  request_id    :integer          default(-1), not null
+#  user_id       :integer          default(-1), not null
 #
 # Indexes
 #
@@ -19,7 +17,4 @@
 #
 
 class DeleteTweetsLog < ApplicationRecord
-  validates :session_id, presence: true
-  validates :uid, presence: true
-  validates :screen_name, presence: true
 end
