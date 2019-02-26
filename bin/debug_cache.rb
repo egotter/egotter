@@ -14,5 +14,6 @@ puts %x(ls #{dir})
 
 sleep 2
 
+puts %x(ls #{dir})
 puts cache.read(key)
 puts %x(ls #{dir})
