@@ -7,12 +7,18 @@ namespace :search_logs do
 
     table_name = "search_logs_#{year}#{month}"
     ActiveRecord::Base.connection.execute("CREATE TABLE IF NOT EXISTS #{table_name} LIKE search_logs")
+    ArchiveSearchLog = Class.new(ApplicationRecord) do; end.tap {|c| c.table_name = table_name}
 
-    start_time = Time.zone.parse("#{year}-#{month}-01 00:00:00").beginning_of_month.to_s(:db)
-    end_time = Time.zone.parse("#{year}-#{month}-01 00:00:00").end_of_month.to_s(:db)
-    puts "Archive #{SearchLog.where(created_at: start_time..end_time).size} records"
-    ActiveRecord::Base.connection.execute("INSERT INTO #{table_name} select * from search_logs where created_at BETWEEN '#{start_time}' AND '#{end_time}' and device_type not in ('crawler', 'UNKNOWN', 'misc')")
-    ActiveRecord::Base.connection.execute("DELETE from search_logs where created_at BETWEEN '#{start_time}' AND '#{end_time}' and device_type not in ('crawler', 'UNKNOWN', 'misc')")
+    start_time = Time.zone.now.change(year: year, month: month).beginning_of_month.to_s(:db)
+    end_time = Time.zone.now.change(year: year, month: month).end_of_month.to_s(:db)
+
+    logs = SearchLog.where(created_at: start_time..end_time).where.not(device_type: %w(crawler UNKNOWN misc))
+    puts "Archive #{logs.size} records to #{table_name}"
+
+    ActiveRecord::Base.connection.execute("INSERT INTO #{table_name} #{logs.to_sql}")
+    logs.select(:id).find_in_batches(batch_size: 100000) do |group|
+      SearchLog.where(id: group.map(&:id)).delete_all
+    end
   end
 
   desc 'update first_time'
@@ -23,9 +29,9 @@ namespace :search_logs do
     (start_day.to_date..end_day.to_date).each do |day|
       session_ids = SearchLog.session_ids(created_at: day.to_time.all_day)
       search_logs = SearchLog # TODO time‐consuming
-        .where(session_id: session_ids)
-        .order(created_at: :asc)
-        .each_with_object(Hash.new { |h, k| h[k] = [] }) { |log, memo| memo[log.session_id] << log }
+                        .where(session_id: session_ids)
+                        .order(created_at: :asc)
+                        .each_with_object(Hash.new {|h, k| h[k] = []}) {|log, memo| memo[log.session_id] << log}
 
       # logs.shift.tap { |log| changed << [log.id, true, log.created_at] unless log.first_time? }
       # logs.select { |log| log.first_time? }.each { |log| changed << [log.id, false, log.created_at] }
@@ -54,7 +60,7 @@ namespace :search_logs do
       puts "#{day} search_logs: #{search_logs.size}, changed: #{changed.size}, not changed: #{not_changed.size}"
 
       if changed.any?
-        changed = changed.map { |log| [log.id, log.first_time, log.created_at] }
+        changed = changed.map {|log| [log.id, log.first_time, log.created_at]}
         SearchLog.import(%i(id first_time created_at), changed, validate: false, timestamps: false, on_duplicate_key_update: %i(first_time))
       end
     end
