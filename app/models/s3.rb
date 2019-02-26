@@ -89,12 +89,14 @@ module S3
     end
 
     def import!(twitter_users)
+      twitter_users.each {|user| user.send(uids_key)}
       parallel(twitter_users) {|user| import_by!(twitter_user: user)}
     end
 
     def write_to_file(twitter_users)
       dir = File.join(ENV['S3_SYNC_DIR'], bucket_name.split('.')[-1])
       FileUtils.mkdir_p(dir) unless File.exists?(dir)
+      twitter_users.each {|user| user.send(uids_key)}
       parallel(twitter_users) do |user|
         File.write(File.join(dir, user.id.to_s), encoded_body(user.id, user.uid, user.screen_name, user.send(uids_key)))
       end
