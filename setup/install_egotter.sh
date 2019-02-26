@@ -113,6 +113,10 @@ cp -f ./setup/etc/td-agent/* /etc/td-agent/
 /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter
 chkconfig td-agent on
 service td-agent start
+echo '$FileCreateMode 0644' >>/etc/rsyslog.conf
+echo '$DirCreateMode 0755' >>/etc/rsyslog.conf
+chmod +r /var/log/messages
+/etc/init.d/rsyslog restart
 
 # logrotate
 cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
