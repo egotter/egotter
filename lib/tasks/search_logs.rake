@@ -1,4 +1,19 @@
 namespace :search_logs do
+  desc 'Archive'
+  task archive: :environment do
+    year = ENV['YEAR']
+    month = ENV['MONTH']
+    raise 'Specify YEAR and MONTH' if year.blank? || month.blank?
+
+    table_name = "search_logs_#{year}#{month}"
+    ActiveRecord::Base.connection.execute("CREATE TABLE IF NOT EXISTS #{table_name} LIKE search_logs")
+
+    start_time = Time.zone.parse("#{year}-#{month}-01 00:00:00").beginning_of_month.to_s(:db)
+    end_time = Time.zone.parse("#{year}-#{month}-01 00:00:00").end_of_month.to_s(:db)
+    ActiveRecord::Base.connection.execute("INSERT INTO #{table_name} select * from search_logs where created_at BETWEEN '#{start_time}' AND '#{end_time}' and device_type not in ('crawler', 'UNKNOWN', 'misc')")
+    ActiveRecord::Base.connection.execute("DELETE from search_logs where created_at BETWEEN '#{start_time}' AND '#{end_time}' and device_type not in ('crawler', 'UNKNOWN', 'misc')")
+  end
+
   desc 'update first_time'
   task update_first_time: :environment do
     start_day = ENV['START'] ? Time.zone.parse(ENV['START']) : (Time.zone.now - 40.days)
