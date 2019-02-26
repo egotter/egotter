@@ -13,10 +13,11 @@ namespace :search_logs do
     end_time = Time.zone.now.change(year: year, month: month).end_of_month.to_s(:db)
 
     logs = SearchLog.where(created_at: start_time..end_time).where.not(device_type: %w(crawler UNKNOWN misc))
-    puts "Archive #{logs.size} records to #{table_name}"
+    logs_count = logs.select(:id).find_in_batches(batch_size: 1_000_000).lazy.map(&:size).sum
+    puts "Archive #{logs_count} records to #{table_name}"
 
     ActiveRecord::Base.connection.execute("INSERT INTO #{table_name} #{logs.to_sql}")
-    logs.select(:id).find_in_batches(batch_size: 100000) do |group|
+    logs.select(:id).find_in_batches(batch_size: 1_000_000) do |group|
       SearchLog.where(id: group.map(&:id)).delete_all
     end
   end
