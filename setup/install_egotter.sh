@@ -105,6 +105,7 @@ service monit stop
 cp -f ./setup/etc/nginx/nginx.conf /etc/nginx
 chkconfig nginx on
 service nginx start
+chmod +rx /var/log/nginx
 
 # td-agent
 [ ! -f "/etc/td-agent/td-agent.conf.bak" ] && cp /etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf.bak
