@@ -30,6 +30,8 @@
   - FollowEgotterWorker
   - ImportDynamodbFriendshipsWorker
   - ImportDynamodbFollowershipsWorker
+  - ImportS3FriendshipsWorker
+  - ImportS3FollowershipsWorker
   - ImportFriendsAndFollowersWorker
   - ImportFriendshipsAndFollowershipsWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker

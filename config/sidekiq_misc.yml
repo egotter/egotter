@@ -17,6 +17,8 @@
   - FollowEgotterWorker
   - ImportDynamodbFriendshipsWorker
   - ImportDynamodbFollowershipsWorker
+  - ImportS3FriendshipsWorker
+  - ImportS3FollowershipsWorker
   - SendMetricsWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
