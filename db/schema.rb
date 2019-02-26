@@ -132,6 +132,7 @@ ActiveRecord::Schema.define(version: 20190225091559) do
     t.string "ip", default: "", null: false
     t.string "method", default: "", null: false
     t.string "path", default: "", null: false
+    t.integer "status", default: -1, null: false
     t.string "user_agent", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_crawler_logs_on_created_at"
@@ -566,6 +567,7 @@ ActiveRecord::Schema.define(version: 20190225091559) do
     t.string "action", default: "", null: false
     t.string "method", default: "", null: false
     t.string "path", default: "", null: false
+    t.integer "status", default: -1, null: false
     t.string "via", default: "", null: false
     t.string "device_type", default: "", null: false
     t.string "os", default: "", null: false
@@ -602,6 +604,7 @@ ActiveRecord::Schema.define(version: 20190225091559) do
     t.boolean "ego_surfing", default: false, null: false
     t.string "method", default: "", null: false
     t.string "path", default: "", null: false
+    t.integer "status", default: -1, null: false
     t.string "via", default: "", null: false
     t.string "device_type", default: "", null: false
     t.string "os", default: "", null: false

@@ -11,6 +11,7 @@ class CreateCrawlerLogs < ActiveRecord::Migration[4.2]
       t.string  :ip,          null: false, default: ''
       t.string  :method,      null: false, default: ''
       t.string  :path,        null: false, default: ''
+      t.integer :status,      null: false, default: -1
       t.string  :user_agent,  null: false, default: ''
 
       t.datetime :created_at, null: false

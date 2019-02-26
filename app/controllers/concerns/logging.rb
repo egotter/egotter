@@ -30,6 +30,7 @@ module Concerns::Logging
       ego_surfing: user_signed_in? && current_user_uid == uid.to_i,
       method:      request.method,
       path:        request.original_fullpath.to_s.truncate(180),
+      status:      200,
       via:         params[:via] ? params[:via] : '',
       device_type: request.device_type,
       os:          request.os,
@@ -74,6 +75,7 @@ module Concerns::Logging
         action:      action_name,
         method:      request.method,
         path:        request.original_fullpath.to_s.truncate(180),
+        status:      performed? ? response.status : 500,
         via:         params[:via] ? params[:via] : '',
         device_type: request.device_type,
         os:          request.os,
@@ -98,6 +100,7 @@ module Concerns::Logging
       ip:          request.ip,
       method:      request.method,
       path:        request.original_fullpath.to_s.truncate(180),
+      status:      200,
       user_agent:  request.user_agent.to_s.truncate(180),
     }
     CreateCrawlerLogWorker.perform_async(attrs)

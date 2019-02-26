@@ -12,6 +12,7 @@ class CreateSearchLogs < ActiveRecord::Migration[4.2]
       t.boolean :ego_surfing, null: false, default: false
       t.string  :method,      null: false, default: ''
       t.string  :path,        null: false, default: ''
+      t.integer :status,      null: false, default: -1
       t.string  :via,         null: false, default: ''
 
       t.string  :device_type, null: false, default: ''
