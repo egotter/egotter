@@ -6,9 +6,9 @@
     %meta{content: 'IE=edge', 'http-equiv' => 'X-UA-Compatible'}
     %meta{content: 'width=device-width, initial-scale=1', name: 'viewport'}
     %link{rel: "icon", sizes: "192x192", href: image_path('/favicon-192.png')}
-    %link{href: '/apple-touch-icon.png', rel: 'apple-touch-icon'}
-    %link{href: '/apple-touch-icon-120x120.png', rel: 'apple-touch-icon', sizes: '120x120'}
-    %link{href: '/apple-touch-icon-152x152.png', rel: 'apple-touch-icon', sizes: '152x152'}
+    %link{href: image_path('/apple-touch-icon.png'), rel: 'apple-touch-icon'}
+    %link{href: image_path('/apple-touch-icon-120x120.png'), rel: 'apple-touch-icon', sizes: '120x120'}
+    %link{href: image_path('/apple-touch-icon-152x152.png'), rel: 'apple-touch-icon', sizes: '152x152'}
     = render partial: 'common/meta_tags'
     %meta{content: 'summary_large_image', name: 'twitter:card'}
     %meta{content: '@ego_tter', name: 'twitter:site'}
