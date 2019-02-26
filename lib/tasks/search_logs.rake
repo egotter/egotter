@@ -10,6 +10,7 @@ namespace :search_logs do
 
     start_time = Time.zone.parse("#{year}-#{month}-01 00:00:00").beginning_of_month.to_s(:db)
     end_time = Time.zone.parse("#{year}-#{month}-01 00:00:00").end_of_month.to_s(:db)
+    puts "Archive #{SearchLog.where(created_at: start_time..end_time).size} records"
     ActiveRecord::Base.connection.execute("INSERT INTO #{table_name} select * from search_logs where created_at BETWEEN '#{start_time}' AND '#{end_time}' and device_type not in ('crawler', 'UNKNOWN', 'misc')")
     ActiveRecord::Base.connection.execute("DELETE from search_logs where created_at BETWEEN '#{start_time}' AND '#{end_time}' and device_type not in ('crawler', 'UNKNOWN', 'misc')")
   end
