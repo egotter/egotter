@@ -7,13 +7,14 @@ module Concerns::TwitterUser::Persistence
 
   included do
     # Relations are created on `after_commit` in order to avoid long transaction.
-    # With transactional_fixtures = true, after_commit callbacks is not fired.
-    Rails.env.test? ? after_create { put_relations_back } : after_commit(on: :create) { put_relations_back }
+    after_commit(on: :create) {put_relations_back}
   end
 
   private
 
   def put_relations_back
+    start = Time.zone.now
+
     [TwitterDB::Status, TwitterDB::Mention, TwitterDB::Favorite].each do |klass|
       begin
         if Rails.env.production?
@@ -32,6 +33,9 @@ module Concerns::TwitterUser::Persistence
       friendships.each { |f| f.from_id = id }.each(&:save!)
       followerships.each { |f| f.from_id = id }.each(&:save!)
     end
+
+    logger.debug {"#{__method__} #{screen_name} #{Time.zone.now - start}"}
+
   rescue => e
     # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000
     # ActiveRecord::StatementInvalid Mysql2::Error: Deadlock found when trying to get lock;
