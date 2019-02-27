@@ -69,8 +69,8 @@ module Api
 
       suspended_uids = fetch_suspended_uids? ? fetch_suspended_uids(uids) : []
       blocking_uids = fetch_blocking_uids? ? fetch_blocking_uids : []
-      friend_uids = confirm_refollow_uids? ? current_user.twitter_user.friendships.where(friend_uid: uids).pluck(:friend_uid) : []
-      follower_uids = confirm_refollowed_uids? ? current_user.twitter_user.followerships.where(follower_uid: uids).pluck(:follower_uid) : []
+      friend_uids = confirm_refollow_uids? ? current_user.twitter_user.friend_uids : []
+      follower_uids = confirm_refollowed_uids? ? current_user.twitter_user.follower_uids : []
 
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
       users =

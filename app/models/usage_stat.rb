@@ -48,8 +48,8 @@ class UsageStat < ApplicationRecord
 
   def friends_stat
     twitter_user = TwitterUser.latest_by(uid: uid)
-    friend_uids = twitter_user.friendships.pluck(:friend_uid)
-    follower_uids = twitter_user.followerships.pluck(:follower_uid)
+    friend_uids = twitter_user.friend_uids
+    follower_uids = twitter_user.follower_uids
     mutual_friend_uids = twitter_user.mutual_friendships.pluck(:friend_uid)
 
     {
