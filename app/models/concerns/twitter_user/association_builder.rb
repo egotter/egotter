@@ -14,12 +14,12 @@ module Concerns::TwitterUser::AssociationBuilder
     self.friends_size = self.followers_size = 0
 
     if friend_ids&.any?
-      friend_ids.each.with_index { |friend_id, i| friendships.build(friend_uid: friend_id, sequence: i) }
+      self.friend_uids = friend_ids
       self.friends_size = friend_ids.size
     end
 
     if follower_ids&.any?
-      follower_ids.each.with_index { |follower_id, i| followerships.build(follower_uid: follower_id, sequence: i) }
+      self.follower_uids = follower_ids
       self.followers_size = follower_ids.size
     end
   end

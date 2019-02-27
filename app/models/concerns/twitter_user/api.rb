@@ -26,7 +26,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_friend_uids(other)
-    friendships.where(friend_uid: other.friendships.pluck(:friend_uid)).pluck(:friend_uid)
+    friend_uids & other.friend_uids
   end
 
   def common_friends(other)
@@ -34,7 +34,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_follower_uids(other)
-    followerships.where(follower_uid: other.followerships.pluck(:follower_uid)).pluck(:follower_uid)
+    follower_uids & other.follower_uids
   end
 
   def common_followers(other)

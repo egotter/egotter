@@ -45,12 +45,22 @@ module Concerns::TwitterUser::Utils
     friends_size == -1 && followers_size == -1
   end
 
+  # #diff calls this method in context of new record
   def friend_uids
-    new_record? ? friendships.map(&:friend_uid) : friendships.pluck(:friend_uid)
+    new_record? ? @friend_uids : (S3::Friendship.find_by(twitter_user_id: id)[:friend_uids] || [])
   end
 
+  def friend_uids=(uids)
+    @friend_uids = uids
+  end
+
+  # #diff calls this method in context of new record
   def follower_uids
-    new_record? ? followerships.map(&:follower_uid) : followerships.pluck(:follower_uid)
+    new_record? ? @follower_uids : (S3::Followership.find_by(twitter_user_id: id)[:follower_uids] || [])
+  end
+
+  def follower_uids=(uids)
+    @follower_uids = uids
   end
 
   def latest?

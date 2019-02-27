@@ -20,11 +20,6 @@ module Concerns::TwitterUser::Associations
       obj.has_one :score
     end
 
-    with_options({primary_key: :id, foreign_key: :from_id}.update(default_options)) do |obj|
-      obj.has_many :friendships, order_by_sequence_asc
-      obj.has_many :followerships, order_by_sequence_asc
-    end
-
     with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
       obj.has_many :statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
       obj.has_many :favorites, order_by_sequence_asc, class_name: 'TwitterDB::Favorite'
@@ -44,10 +39,17 @@ module Concerns::TwitterUser::Associations
       obj.has_many :close_friendships,    order_by_sequence_asc
     end
 
-    with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
-      obj.has_many :friends,   through: :friendships
-      obj.has_many :followers, through: :followerships
+    def friends
+      friend_uids = self.friend_uids
+      TwitterDB::User.where(uid: friend_uids).sort_by {|user| friend_uids.index(user.uid)}
+    end
 
+    def followers
+      follower_uids = self.follower_uids
+      TwitterDB::User.where(uid: follower_uids).sort_by {|user| follower_uids.index(user.uid)}
+    end
+
+    with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
       obj.has_many :one_sided_friends,   through: :one_sided_friendships
       obj.has_many :one_sided_followers, through: :one_sided_followerships
       obj.has_many :mutual_friends,      through: :mutual_friendships

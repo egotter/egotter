@@ -9,11 +9,9 @@ module Concerns::TwitterUser::Dirty
   included do
   end
 
-  def diff(newer, options = {})
+  def diff(newer)
     older = self
-
     attrs = %i(friends_count followers_count friend_uids follower_uids)
-    attrs.select! {|k| k.in?(options[:only])} if options.has_key?(:only)
 
     attrs.map do |attr|
       values = [older.send(attr), newer.send(attr)]
