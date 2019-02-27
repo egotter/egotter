@@ -109,6 +109,7 @@ class ImportTwitterUserRelationsWorker
   def import_twitter_db_users(client, uids)
     return if uids.blank?
     TwitterDB::User::Batch.fetch_and_import(uids, client: client)
+    ImportTwitterDbS3UsersWorker.perform_async(uids)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")
@@ -123,14 +124,16 @@ class ImportTwitterUserRelationsWorker
       logger.warn "#{__method__}: It is not consistent. #{twitter_user.uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
     end
 
+    user = nil
     silent_transaction do
       TwitterDB::Friendship.import_from!(twitter_user.uid, friend_uids)
       TwitterDB::Followership.import_from!(twitter_user.uid, follower_uids)
-      TwitterDB::User.find_by(uid: twitter_user.uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
+      (user = TwitterDB::User.find_by(uid: twitter_user.uid)).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
 
     TwitterDB::S3::Friendship.import_from!(twitter_user.uid, twitter_user.screen_name, friend_uids)
     TwitterDB::S3::Followership.import_from!(twitter_user.uid, twitter_user.screen_name, follower_uids)
+    TwitterDB::S3::Profile.import_from!(twitter_user.uid, twitter_user.screen_name, user.user_info) if user
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
   end

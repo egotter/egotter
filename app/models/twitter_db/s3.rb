@@ -53,5 +53,61 @@ module TwitterDB
         }.to_json
       end
     end
+
+    module ProfileApi
+      def profile_key
+        :user_info
+      end
+
+      def find_by!(uid:)
+        text = fetch(uid)
+        item = parse_json(text)
+        profile = item.has_key?('compress') ? unpack(item[profile_key.to_s]) : item[profile_key.to_s]
+        {
+            uid: item['uid'],
+            screen_name: item['screen_name'],
+            profile_key => profile
+        }
+      end
+
+      def find_by(uid:)
+        tries ||= 5
+        find_by!(uid: uid)
+      rescue Aws::S3::Errors::NoSuchKey => e
+        message = "#{self}##{__method__} #{e.class} #{e.message} #{uid}"
+
+        if (tries -= 1) < 0
+          Rails.logger.warn "RETRY EXHAUSTED #{message}"
+          Rails.logger.info {e.backtrace.join("\n")}
+          {}
+        else
+          Rails.logger.info "RETRY #{tries} #{message}"
+          sleep 0.1 * (5 - tries)
+          retry
+        end
+      end
+
+      def import_by!(twitter_db_user:)
+        import_from!(twitter_db_user.uid, twitter_db_user.screen_name, twitter_db_user.send(profile_key))
+      end
+
+      def import_from!(uid, screen_name, profile)
+        store(uid, encoded_body(uid, screen_name, profile))
+      end
+
+
+      def import!(twitter_db_users)
+        parallel(twitter_db_users) {|user| import_by!(twitter_db_user: user)}
+      end
+
+      def encoded_body(uid, screen_name, profile)
+        {
+            uid: uid,
+            screen_name: screen_name,
+            profile_key => pack(profile),
+            compress: 1
+        }.to_json
+      end
+    end
   end
 end
