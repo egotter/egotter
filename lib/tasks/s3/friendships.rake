@@ -19,6 +19,10 @@ namespace :s3 do
         next unless twitter_user
 
         friendship = S3::Friendship.find_by(twitter_user_id: twitter_user.id)
+        if friendship.empty?
+          puts "Invalid empty #{candidate_id} #{twitter_user.uid} #{twitter_user.screen_name}"
+        end
+
         if twitter_user.id != friendship[:twitter_user_id] ||
             twitter_user.uid != friendship[:uid] ||
             twitter_user.screen_name != friendship[:screen_name] ||
@@ -31,6 +35,7 @@ namespace :s3 do
         twitter_user.friend_uids.each.with_index do |friend_uid, i|
           unless friend_uid == friend_uids[i]
             puts "Invalid ids #{candidate_id} #{twitter_user.uid} #{twitter_user.screen_name}"
+            break
           end
         end
 

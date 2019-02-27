@@ -19,6 +19,10 @@ namespace :s3 do
         next unless twitter_user
 
         followership = S3::Followership.find_by(twitter_user_id: twitter_user.id)
+        if followership.empty?
+          puts "Invalid empty #{candidate_id} #{twitter_user.uid} #{twitter_user.screen_name}"
+        end
+
         if twitter_user.id != followership[:twitter_user_id] ||
             twitter_user.uid != followership[:uid] ||
             twitter_user.screen_name != followership[:screen_name] ||
@@ -31,6 +35,7 @@ namespace :s3 do
         twitter_user.follower_uids.each.with_index do |follower_uid, i|
           unless follower_uid == follower_uids[i]
             puts "Invalid ids #{candidate_id} #{twitter_user.uid} #{twitter_user.screen_name}"
+            break
           end
         end
 
