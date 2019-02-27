@@ -48,6 +48,31 @@ namespace :s3 do
       puts Time.zone.now - start
     end
 
+    desc 'Repair'
+    task repair: :environment do
+      twitter_user = TwitterUser.find(ENV['ID'])
+
+      print = -> (twitter_user) do
+        friendship = S3::Friendship.find_by(twitter_user_id: twitter_user.id)
+        followership = S3::Followership.find_by(twitter_user_id: twitter_user.id)
+        puts "id: #{twitter_user.id}"
+        puts "friend_uids: #{twitter_user.friend_uids.size}"
+        puts "follower_uids: #{twitter_user.follower_uids.size}"
+        puts "friendship.friend_uids: #{friendship[:friend_uids]&.size}"
+        puts "followership.follower_uids: #{followership[:follower_uids]&.size}"
+      end
+
+      print.call(twitter_user)
+      puts "Do you want to repair this record?: "
+
+      input = STDIN.gets.chomp
+      if input == 'yes'
+        S3::Friendship.import_by!(twitter_user: twitter_user)
+        puts 'Imported'
+        print.call(twitter_user)
+      end
+    end
+
     desc 'Write friendships to S3'
     task write_to_s3: :environment do
       sigint = false
