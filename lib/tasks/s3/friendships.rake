@@ -55,11 +55,11 @@ namespace :s3 do
       print = -> (twitter_user) do
         friendship = S3::Friendship.find_by(twitter_user_id: twitter_user.id)
         followership = S3::Followership.find_by(twitter_user_id: twitter_user.id)
-        puts "id: #{twitter_user.id}"
-        puts "friend_uids: #{twitter_user.friend_uids.size}"
-        puts "follower_uids: #{twitter_user.follower_uids.size}"
-        puts "friendship.friend_uids: #{friendship[:friend_uids]&.size}"
-        puts "followership.follower_uids: #{followership[:follower_uids]&.size}"
+        puts "id:    #{twitter_user.id}"
+        puts "count: #{twitter_user.friends_count}, #{twitter_user.followers_count}"
+        puts "size:  #{twitter_user.friends_size}, #{twitter_user.followers_size}"
+        puts "uids:  #{twitter_user.friend_uids.size}, #{twitter_user.follower_uids.size}"
+        puts "s3:    #{friendship[:friend_uids]&.size}, #{followership[:follower_uids]&.size}"
       end
 
       print.call(twitter_user)
