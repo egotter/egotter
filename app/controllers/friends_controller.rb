@@ -35,7 +35,7 @@ class FriendsController < FriendsAndFollowers
 
   def related_counts
     {
-      friends: @twitter_user.friendships.size,
+      friends: @twitter_user.friend_uids.size,
       one_sided_friends: @twitter_user.one_sided_friendships.size,
       one_sided_friends_rate: (@twitter_user.one_sided_friends_rate * 100).round(1)
     }
