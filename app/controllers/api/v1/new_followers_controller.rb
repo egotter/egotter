@@ -5,8 +5,8 @@ module Api
       private
 
       def summary_uids(limit: 3)
-        uids = @twitter_user.followerships.limit(limit).pluck(:follower_uid)
-        size = @twitter_user.followerships.size
+        uids = @twitter_user.follower_uids.take(limit)
+        size = @twitter_user.follower_uids.size
         [uids, size]
       end
     end

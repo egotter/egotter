@@ -37,8 +37,8 @@ module Concerns::TwitterUser::Utils
   end
 
   def inconsistent_because_import_didnt_run?
-    (friends_size >= 0 && friends_size != friendships.size) ||
-        (followers_size >= 0 && followers_size != followerships.size)
+    (friends_size >= 0 && friends_size != friend_uids.size) ||
+        (followers_size >= 0 && followers_size != follower_uids.size)
   end
 
   def inconsistent_because_import_failed?

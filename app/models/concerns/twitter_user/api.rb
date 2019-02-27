@@ -10,15 +10,15 @@ module Concerns::TwitterUser::Api
   end
 
   def one_sided_friends_rate
-    (one_sided_friendships.size.to_f / friendships.size) rescue 0.0
+    (one_sided_friendships.size.to_f / friend_uids.size) rescue 0.0
   end
 
   def one_sided_followers_rate
-    (one_sided_followerships.size.to_f / followerships.size) rescue 0.0
+    (one_sided_followerships.size.to_f / follower_uids.size) rescue 0.0
   end
 
   def follow_back_rate
-    (mutual_friendships.size.to_f / followerships.size) rescue 0.0
+    (mutual_friendships.size.to_f / follower_uids.size) rescue 0.0
   end
 
   def mutual_friend_uids

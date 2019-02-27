@@ -22,8 +22,8 @@ class FollowersController < FriendsAndFollowers
 
   def tabs
     [
-      {text: t('friends.show.see_friends_html', num: @twitter_user.friendships.size), url: friend_path(@twitter_user)},
-      {text: t('friends.show.see_followers_html', num: @twitter_user.followerships.size), url: follower_path(@twitter_user)}
+      {text: t('friends.show.see_friends_html', num: @twitter_user.friend_uids.size), url: friend_path(@twitter_user)},
+      {text: t('friends.show.see_followers_html', num: @twitter_user.follower_uids.size), url: follower_path(@twitter_user)}
     ]
   end
 end
