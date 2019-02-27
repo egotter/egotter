@@ -90,7 +90,7 @@ module S3
           uids_key => uids
       }
     rescue Aws::S3::Errors::NoSuchKey => e
-      Rails.logger.debug {"#{e.class} #{e.message} #{twitter_user_id}"}
+      Rails.logger.warn {"#{__method__} #{e.class} #{e.message} #{twitter_user_id}"}
       {}
     end
 
