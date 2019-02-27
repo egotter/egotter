@@ -47,8 +47,40 @@ module S3
       parse_json(decompress(Base64.decode64(text)))
     end
 
+    def store(twitter_user_id, body)
+      client.put_object(
+          bucket: bucket_name,
+          body: body,
+          key: twitter_user_id.to_s
+      )
+    end
+
+    def fetch(twitter_user_id)
+      client.get_object(bucket: bucket_name, key: twitter_user_id.to_s).body.read
+    end
+
+    def encoded_body(twitter_user_id, uid, screen_name, uids)
+      {
+          twitter_user_id: twitter_user_id,
+          uid: uid,
+          screen_name: screen_name,
+          uids_key => pack(uids),
+          compress: 1
+      }.to_json
+    end
+
+    def parallel(enum, &block)
+      q = Queue.new
+      enum.map.with_index do |obj, i|
+        Thread.new {q.push(i: i, result: yield(obj))}
+      end.each(&:join)
+      q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
+    end
+  end
+
+  module Api
     def find_by(twitter_user_id:)
-      text = client.get_object(bucket: bucket_name, key: twitter_user_id.to_s).body.read
+      text = fetch(twitter_user_id)
       item = parse_json(text)
       uids = item.has_key?('compress') ? unpack(item[uids_key.to_s]) : item[uids_key.to_s]
       {
@@ -67,22 +99,9 @@ module S3
     end
 
     def import_from!(twitter_user_id, uid, screen_name, uids)
-      client.put_object(
-          bucket: bucket_name,
-          body: encoded_body(twitter_user_id, uid, screen_name, uids),
-          key: twitter_user_id.to_s
-      )
+      store(twitter_user_id, encoded_body(twitter_user_id, uid, screen_name, uids))
     end
 
-    def encoded_body(twitter_user_id, uid, screen_name, uids)
-      {
-          twitter_user_id: twitter_user_id,
-          uid: uid,
-          screen_name: screen_name,
-          uids_key => pack(uids),
-          compress: 1
-      }.to_json
-    end
 
     def where(twitter_user_ids:)
       parallel(twitter_user_ids) {|id| find_by(twitter_user_id: id)}
@@ -100,14 +119,6 @@ module S3
       parallel(twitter_users) do |user|
         File.write(File.join(dir, user.id.to_s), encoded_body(user.id, user.uid, user.screen_name, user.send(uids_key)))
       end
-    end
-
-    def parallel(enum, &block)
-      q = Queue.new
-      enum.map.with_index do |obj, i|
-        Thread.new {q.push(i: i, result: yield(obj))}
-      end.each(&:join)
-      q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
     end
   end
 end
