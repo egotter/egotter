@@ -22,3 +22,4 @@ S3::Profile.send(:extend, StoreToFile)
 
 TwitterDB::S3::Friendship.send(:extend, StoreToFile)
 TwitterDB::S3::Followership.send(:extend, StoreToFile)
+TwitterDB::S3::Profile.send(:extend, StoreToFile)

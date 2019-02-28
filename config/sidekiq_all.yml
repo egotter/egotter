@@ -32,6 +32,7 @@
   - ImportDynamodbFollowershipsWorker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
+  - ImportTwitterDbS3UsersWorker
   - ImportFriendsAndFollowersWorker
   - ImportFriendshipsAndFollowershipsWorker
   - ImportInactiveFriendsAndInactiveFollowersWorker

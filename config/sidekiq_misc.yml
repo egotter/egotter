@@ -19,6 +19,7 @@
   - ImportDynamodbFollowershipsWorker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
+  - ImportTwitterDbS3UsersWorker
   - SendMetricsWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
