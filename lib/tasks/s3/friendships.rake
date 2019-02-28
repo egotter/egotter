@@ -13,38 +13,44 @@ namespace :s3 do
       processed_count = 0
       found_ids = []
 
+      print = -> (reason, user) do
+        puts "#{reason}\t#{user.id}\t#{user.uid}\t#{user.screen_name}\t#{user.friends_size}\t#{user.followers_size}"
+      end
+
       (start_id..(TwitterUser.maximum(:id))).each do |candidate_id|
         # next unless candidate_id % 100 == 0
+        puts "#{now = Time.zone.now} #{candidate_id} #{(now - start) / processed_count}" if processed_count % 1000 == 0
+        processed_count += 1
 
-        twitter_user = TwitterUser.select(:id, :uid, :screen_name).find_by(id: candidate_id)
+        twitter_user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size).find_by(id: candidate_id)
         next unless twitter_user
+
+        unless S3::Friendship.exists?(twitter_user_id: twitter_user.id)
+          puts "Not found #{candidate_id}"
+          found_ids << twitter_user.id
+          next
+        end
 
         friendship = S3::Friendship.find_by(twitter_user_id: twitter_user.id)
         if friendship.empty?
-          puts "Invalid empty #{candidate_id} #{twitter_user.uid} #{twitter_user.screen_name}"
+          print.call('Empty', twitter_user)
           found_ids << twitter_user.id
+          next
         end
 
         if twitter_user.id != friendship[:twitter_user_id] ||
             twitter_user.uid != friendship[:uid] ||
-            twitter_user.screen_name != friendship[:screen_name] ||
-            twitter_user.friend_uids.size != friendship[:friend_uids].size
-          puts "Invalid keys #{candidate_id} #{twitter_user.uid} #{twitter_user.screen_name}"
+            twitter_user.screen_name != friendship[:screen_name]
+
+          print.call('Keys', twitter_user)
+          found_ids << twitter_user.id
+          next
+        end
+
+        if twitter_user.friends_size != friendship[:friend_uids].size
+          print.call('friends_size', twitter_user)
           found_ids << twitter_user.id
         end
-
-        friend_uids = friendship[:friend_uids]
-
-        twitter_user.friend_uids.each.with_index do |friend_uid, i|
-          unless friend_uid == friend_uids[i]
-            puts "Invalid ids #{candidate_id} #{twitter_user.uid} #{twitter_user.screen_name}"
-            found_ids << twitter_user.id
-            break
-          end
-        end
-
-        processed_count += 1
-        # puts "#{now = Time.zone.now} #{candidate_id} #{(now - start) / processed_count}"
 
         break if sigint
       end
