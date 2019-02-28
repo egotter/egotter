@@ -68,7 +68,7 @@ namespace :s3 do
       processed_count = 0
 
       TwitterUser.select(:id, :uid, :screen_name, :user_info).find_in_batches(start: start_id, batch_size: 100) do |group|
-        S3::Profile.import!(group)
+        S3::Profile.import!(group.select{|g| g.user_info.present? && g.user_info != '{}' })
         processed_count += group.size
         puts "#{now = Time.zone.now} #{group.last.id} #{(now - start) / processed_count}"
 

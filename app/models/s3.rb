@@ -129,7 +129,6 @@ module S3
 
 
     def import!(twitter_users)
-      twitter_users.each {|user| user.send(profile_key)}
       parallel(twitter_users) {|user| import_by!(twitter_user: user)}
     end
 
