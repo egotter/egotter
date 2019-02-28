@@ -27,6 +27,30 @@ module S3
       @client ||= Aws::S3::Client.new(region: REGION)
     end
 
+    def cache
+      if instance_variable_defined?(:@cache)
+        @cache
+      else
+        if cache_enabled?
+          dir = Rails.root.join(ENV['S3_CACHE_DIR'] || 'tmp/s3_cache', bucket_name)
+          FileUtils.mkdir_p(dir) unless File.exists?(dir)
+          options = {expires_in: 1.hour, race_condition_ttl: 5.minutes}
+          @cache = ActiveSupport::Cache::FileStore.new(dir, options)
+        else
+          @cache = ActiveSupport::Cache::NullStore.new
+        end
+      end
+    end
+
+    def cache_enabled?
+      @cache_enabled
+    end
+
+    def cache_enabled=(enabled)
+      remove_instance_variable(:@cache) if instance_variable_defined?(:@cache)
+      @cache_enabled = enabled
+    end
+
     def parse_json(text)
       Oj.load(text)
     end
@@ -50,18 +74,23 @@ module S3
     def store(key, body)
       ApplicationRecord.benchmark("#{self} Store by #{key}", level: :debug) do
         client.put_object(bucket: bucket_name, key: key.to_s, body: body)
+        cache.write(key.to_s, body)
       end
     end
 
     def fetch(key)
       ApplicationRecord.benchmark("#{self} Fetch by #{key}", level: :debug) do
-        client.get_object(bucket: bucket_name, key: key.to_s).body.read
+        cache.fetch(key.to_s) do
+          client.get_object(bucket: bucket_name, key: key.to_s).body.read
+        end
       end
     end
 
     def exist(key)
       ApplicationRecord.benchmark("#{self} Exist by #{key}", level: :debug) do
-        Aws::S3::Resource.new(region: REGION).bucket(bucket_name).object(key.to_s).exists?
+        cache.fetch("exist-#{key.to_s}") do
+          Aws::S3::Resource.new(region: REGION).bucket(bucket_name).object(key.to_s).exists?
+        end
       end
     end
 

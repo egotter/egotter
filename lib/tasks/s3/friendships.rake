@@ -12,6 +12,8 @@ namespace :s3 do
       start = Time.zone.now
       processed_count = 0
       found_ids = []
+      S3::Friendship.cache_enabled = false
+      S3::Followership.cache_enabled = false
 
       print = -> (reason, user) do
         puts "#{reason}\t#{user.id}\t#{user.uid}\t#{user.screen_name}\t#{user.friends_size}\t#{user.followers_size}"

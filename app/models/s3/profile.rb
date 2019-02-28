@@ -5,5 +5,6 @@ module S3
     extend S3::ProfileApi
 
     self.bucket_name = "egotter.#{Rails.env}.profiles"
+    self.cache_enabled = true
   end
 end

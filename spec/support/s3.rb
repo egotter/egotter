@@ -1,6 +1,6 @@
 module StoreToFile
   def dir
-    d = Rails.root.join("tmp/s3/#{bucket_name}")
+    d = Rails.root.join("tmp/s3_test/#{bucket_name}")
     FileUtils.mkdir_p(d) unless File.exists?(d)
     d
   end

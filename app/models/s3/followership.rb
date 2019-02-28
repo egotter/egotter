@@ -6,5 +6,6 @@ module S3
 
     self.bucket_name = "egotter.#{Rails.env}.followerships"
     self.uids_key = :follower_uids
+    self.cache_enabled = true
   end
 end
