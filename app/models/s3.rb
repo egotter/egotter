@@ -59,6 +59,12 @@ module S3
       end
     end
 
+    def exist(key)
+      ApplicationRecord.benchmark("#{self} Exist by #{key}", level: :debug) do
+        Aws::S3::Resource.new(region: REGION).bucket(bucket_name).object(key.to_s).exists?
+      end
+    end
+
     def parallel(enum, &block)
       q = Queue.new
       enum.map.with_index do |obj, i|
@@ -69,6 +75,10 @@ module S3
   end
 
   module Api
+    def exists?(twitter_user_id:)
+      exist(twitter_user_id)
+    end
+
     def find_by!(twitter_user_id:)
       text = fetch(twitter_user_id)
       item = parse_json(text)
@@ -116,6 +126,10 @@ module S3
   module ProfileApi
     def profile_key
       :user_info
+    end
+
+    def exists?(twitter_user_id:)
+      exist(twitter_user_id)
     end
 
     def find_by!(twitter_user_id:)
