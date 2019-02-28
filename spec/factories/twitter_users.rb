@@ -2,7 +2,6 @@ FactoryBot.define do
   factory :twitter_user do
     sequence(:uid) { |n| rand(1090286694065070080) }
     sequence(:screen_name) { |n| "twitter_user#{n}" }
-    user_info { '{}' }
     raw_attrs_text { {id: uid, screen_name: screen_name, protected: true}.to_json }
     user_id {-1}
 
