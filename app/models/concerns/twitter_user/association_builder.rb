@@ -16,11 +16,15 @@ module Concerns::TwitterUser::AssociationBuilder
     if friend_ids&.any?
       self.friend_uids = friend_ids
       self.friends_size = friend_ids.size
+    else
+      self.friend_uids = []
     end
 
     if follower_ids&.any?
       self.follower_uids = follower_ids
       self.followers_size = follower_ids.size
+    else
+      self.follower_uids = []
     end
   end
 
