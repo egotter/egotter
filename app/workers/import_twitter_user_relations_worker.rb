@@ -128,6 +128,9 @@ class ImportTwitterUserRelationsWorker
       TwitterDB::Followership.import_from!(twitter_user.uid, follower_uids)
       TwitterDB::User.find_by(uid: twitter_user.uid).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
     end
+
+    TwitterDB::S3::Friendship.import_from!(twitter_user.uid, twitter_user.screen_name, friend_uids)
+    TwitterDB::S3::Followership.import_from!(twitter_user.uid, twitter_user.screen_name, follower_uids)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
   end

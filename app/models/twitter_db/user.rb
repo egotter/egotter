@@ -36,6 +36,14 @@ module TwitterDB
       screen_name
     end
 
+    def friend_uids
+      friendships.pluck(:friend_uid)
+    end
+
+    def follower_uids
+      followerships.pluck(:follower_uid)
+    end
+
     class << self
       def with_friends
         # friends_size != -1 AND followers_size != -1
