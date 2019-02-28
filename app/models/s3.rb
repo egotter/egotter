@@ -69,7 +69,7 @@ module S3
   end
 
   module Api
-    def find_by(twitter_user_id:)
+    def find_by!(twitter_user_id:)
       text = fetch(twitter_user_id)
       item = parse_json(text)
       uids = item.has_key?('compress') ? unpack(item[uids_key.to_s]) : item[uids_key.to_s]
@@ -79,10 +79,22 @@ module S3
           screen_name: item['screen_name'],
           uids_key => uids
       }
+    end
+
+    def find_by(twitter_user_id:)
+      tries ||= 3
+      find_by!(twitter_user_id: twitter_user_id)
     rescue Aws::S3::Errors::NoSuchKey => e
-      Rails.logger.warn {"#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"}
-      Rails.logger.info {e.backtrace.join("\n")}
-      {}
+      message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
+
+      if (tries -= 1) < 0
+        Rails.logger.warn "RETRY EXHAUSTED #{message}"
+        Rails.logger.info {e.backtrace.join("\n")}
+        {}
+      else
+        Rails.logger.warn "RETRY #{tries} #{message}"
+        retry
+      end
     end
 
     def import_from!(twitter_user_id, uid, screen_name, uids)
@@ -105,7 +117,7 @@ module S3
       :user_info
     end
 
-    def find_by(twitter_user_id:)
+    def find_by!(twitter_user_id:)
       text = fetch(twitter_user_id)
       item = parse_json(text)
       profile = item.has_key?('compress') ? unpack(item[profile_key.to_s]) : item[profile_key.to_s]
@@ -115,10 +127,22 @@ module S3
           screen_name: item['screen_name'],
           profile_key => profile
       }
+    end
+
+    def find_by(twitter_user_id:)
+      tries ||= 3
+      find_by!(twitter_user_id: twitter_user_id)
     rescue Aws::S3::Errors::NoSuchKey => e
-      Rails.logger.warn {"#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"}
-      Rails.logger.info {e.backtrace.join("\n")}
-      {}
+      message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
+
+      if (tries -= 1) < 0
+        Rails.logger.warn "RETRY EXHAUSTED #{message}"
+        Rails.logger.info {e.backtrace.join("\n")}
+        {}
+      else
+        Rails.logger.warn "RETRY #{tries} #{message}"
+        retry
+      end
     end
 
     def import_by!(twitter_user:)
