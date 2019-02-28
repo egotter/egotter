@@ -3,6 +3,11 @@ class CreateCacheWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(values)
+    if values['enqueued_at'].blank? || Time.zone.parse(values['enqueued_at']) < Time.zone.now - 1.minute
+      logger.info {"Don't create cache since it is too late."}
+      return
+    end
+
     ApplicationRecord.benchmark("#{self.class} Create cache #{values}", level: :debug) do
       do_perform(values)
     end

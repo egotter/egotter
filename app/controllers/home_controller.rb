@@ -12,7 +12,7 @@ class HomeController < ApplicationController
   end
 
   def new
-    CreateCacheWorker.perform_async(user_id: current_user.id) if user_signed_in?
+    CreateCacheWorker.perform_async(user_id: current_user.id, enqueued_at: Time.zone.now) if user_signed_in?
 
     if user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
       redirect_path = timeline_path(screen_name: current_user.screen_name)
