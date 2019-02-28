@@ -82,7 +82,7 @@ module S3
     end
 
     def find_by(twitter_user_id:)
-      tries ||= 3
+      tries ||= 5
       find_by!(twitter_user_id: twitter_user_id)
     rescue Aws::S3::Errors::NoSuchKey => e
       message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
@@ -92,8 +92,8 @@ module S3
         Rails.logger.info {e.backtrace.join("\n")}
         {}
       else
-        Rails.logger.warn "RETRY #{tries} #{message}"
-        sleep 0.1
+        Rails.logger.info "RETRY #{tries} #{message}"
+        sleep 0.1 * (5 - tries)
         retry
       end
     end
@@ -131,7 +131,7 @@ module S3
     end
 
     def find_by(twitter_user_id:)
-      tries ||= 3
+      tries ||= 5
       find_by!(twitter_user_id: twitter_user_id)
     rescue Aws::S3::Errors::NoSuchKey => e
       message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
@@ -141,8 +141,8 @@ module S3
         Rails.logger.info {e.backtrace.join("\n")}
         {}
       else
-        Rails.logger.warn "RETRY #{tries} #{message}"
-        sleep 0.1
+        Rails.logger.info "RETRY #{tries} #{message}"
+        sleep 0.1 * (5 - tries)
         retry
       end
     end
