@@ -33,5 +33,15 @@ class CreateCacheWorker
     threads << Proc.new {client.user(user.screen_name)}
 
     Parallel.each(threads, in_threads: 3, &:call)
+
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      user.update(authorized: false)
+    else
+      raise
+    end
+  rescue => e
+    logger.warn "#{e.class}: #{e.message} #{values}"
+    logger.info e.backtrace.join("\n")
   end
 end
