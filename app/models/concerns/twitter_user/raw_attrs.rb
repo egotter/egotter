@@ -105,6 +105,7 @@ module Concerns::TwitterUser::RawAttrs
         @raw_attrs
       else
         text = S3::Profile.find_by(twitter_user_id: id)[:user_info]
+        text = user_info if text.blank?
         @raw_attrs = Hashie::Mash.new(JSON.parse(text))
       end
     end
