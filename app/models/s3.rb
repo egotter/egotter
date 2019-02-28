@@ -81,6 +81,7 @@ module S3
       }
     rescue Aws::S3::Errors::NoSuchKey => e
       Rails.logger.warn {"#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"}
+      Rails.logger.info {e.backtrace.join("\n")}
       {}
     end
 
@@ -116,6 +117,7 @@ module S3
       }
     rescue Aws::S3::Errors::NoSuchKey => e
       Rails.logger.warn {"#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"}
+      Rails.logger.info {e.backtrace.join("\n")}
       {}
     end
 
