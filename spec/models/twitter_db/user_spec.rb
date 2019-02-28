@@ -50,13 +50,13 @@ RSpec.describe TwitterDB::User, type: :model do
     end
   end
 
-  describe '.import_in_batches' do
-    let(:t_users) { 3.times.map { Hashie::Mash.new(id: rand(1000000), screen_name: 'sn') } }
+  describe '.import' do
+    let(:t_users) { 3.times.map { Hashie::Mash.new(id: rand(1000_000_000), screen_name: 'sn') } }
     let(:import_users) { t_users.map { |t_user| [t_user[:id], t_user[:screen_name], TwitterUser.collect_user_info(t_user), -1, -1] } }
 
     context 'with new records' do
       it 'creates all records' do
-        expect { TwitterDB::User::Batch.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size)
+        expect { TwitterDB::User::Batch.import(t_users) }.to change { TwitterDB::User.all.size }.by(t_users.size)
       end
     end
 
@@ -67,7 +67,7 @@ RSpec.describe TwitterDB::User, type: :model do
         end
       end
       it 'updates only new records' do
-        expect { TwitterDB::User::Batch.import_in_batches(import_users) }.to change { TwitterDB::User.all.size }.by(import_users.size - 1)
+        expect { TwitterDB::User::Batch.import(t_users) }.to change { TwitterDB::User.all.size }.by(t_users.size - 1)
       end
     end
   end
