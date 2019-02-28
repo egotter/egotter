@@ -93,6 +93,7 @@ module S3
         {}
       else
         Rails.logger.warn "RETRY #{tries} #{message}"
+        sleep 0.1
         retry
       end
     end
@@ -141,6 +142,7 @@ module S3
         {}
       else
         Rails.logger.warn "RETRY #{tries} #{message}"
+        sleep 0.1
         retry
       end
     end
