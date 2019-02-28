@@ -56,7 +56,8 @@
 .vertical-spacing
 
 .tweet-box-wrapper
-  - tweet_text = t('usage_stats.tweets_stat.breakdown', {user: twitter_user.mention_name, url: url}.merge(stat[:breakdown].map { |k, v| [k, (v * 100).round(1)] }.to_h))
+  - i18n_options = ({user: twitter_user.mention_name, url: url}.merge(stat[:breakdown].map { |k, v| [k, (v * 100).round(1)] }.to_h) rescue {})
+  - tweet_text = t('usage_stats.tweets_stat.breakdown', i18n_options)
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
 .vertical-spacing
 
