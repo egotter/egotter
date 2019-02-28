@@ -48,15 +48,15 @@ module S3
     end
 
     def store(key, body)
-      client.put_object(
-          bucket: bucket_name,
-          body: body,
-          key: key.to_s
-      )
+      ApplicationRecord.benchmark("#{self} Store by #{key}", level: :debug) do
+        client.put_object(bucket: bucket_name, key: key.to_s, body: body)
+      end
     end
 
     def fetch(key)
-      client.get_object(bucket: bucket_name, key: key.to_s).body.read
+      ApplicationRecord.benchmark("#{self} Fetch by #{key}", level: :debug) do
+        client.get_object(bucket: bucket_name, key: key.to_s).body.read
+      end
     end
 
     def parallel(enum, &block)

@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe TwitterUserFetcher do
-  let(:twitter_user) { TwitterUser.new(uid: 1, screen_name: 'sn', user_info: {}.to_json) }
+  let(:twitter_user) { TwitterUser.new(uid: 1, screen_name: 'sn', raw_attrs_text: {}.to_json) }
   let(:fetcher) { TwitterUserFetcher.new(twitter_user, client: nil, login_user: nil) }
 
   describe '#reject_relation_names' do

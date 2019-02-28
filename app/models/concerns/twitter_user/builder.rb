@@ -9,7 +9,8 @@ module Concerns::TwitterUser::Builder
       TwitterUser.new(
         uid: user[:id],
         screen_name: user[:screen_name],
-        user_info: TwitterUser.collect_user_info(user)
+        user_info: '{}',
+        raw_attrs_text: TwitterUser.collect_user_info(user)
       )
     end
 

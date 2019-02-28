@@ -9,7 +9,7 @@ module Concerns::TwitterUser::Validation
   included do
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
-    validates_with Validations::UserInfoValidator
+    validates_with Validations::RawAttrsTextValidator
     validates_with Validations::FreshRecordValidator, on: :create
     validates_with Validations::DuplicateRecordValidator, on: :create
   end
