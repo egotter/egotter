@@ -22,6 +22,7 @@ module Concerns::TwitterUser::Persistence
 
       S3::Friendship.import_from!(id, uid, screen_name, @friend_uids)
       S3::Followership.import_from!(id, uid, screen_name, @follower_uids)
+      S3::Profile.import_from!(id, uid, screen_name, user_info)
 
       logger.debug {"#{__method__} #{screen_name} #{Time.zone.now - start}"}
 
