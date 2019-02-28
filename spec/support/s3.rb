@@ -18,3 +18,4 @@ end
 
 S3::Friendship.send(:extend, StoreToFile)
 S3::Followership.send(:extend, StoreToFile)
+S3::Profile.send(:extend, StoreToFile)
