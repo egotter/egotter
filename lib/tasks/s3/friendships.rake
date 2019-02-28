@@ -62,7 +62,26 @@ namespace :s3 do
 
     desc 'Repair'
     task repair: :environment do
-      twitter_user = TwitterUser.find(ENV['ID'])
+      ids = ENV['IDS'].split(',')
+      repaired_ids = []
+
+      TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size).where(id: ids).find_each do |user|
+        if twitter_user.friends_size == 0 &&
+            twitter_user.followers_size == 0 &&
+            !S3::Friendship.exists?(twitter_user_id: user.id)
+
+          S3::Friendship.import_from!(user.id, user.uid, user.screen_name, [])
+
+          unless S3::Followership.exists?(twitter_user_id: user.id)
+            S3::Followership.import_from!(user.id, user.uid, user.screen_name, [])
+          end
+
+          puts "Repaired #{user.id}"
+          repaired_ids << user.id
+          next
+        end
+
+      end
 
       print = -> (twitter_user) do
         friendship = S3::Friendship.find_by(twitter_user_id: twitter_user.id)
@@ -74,15 +93,17 @@ namespace :s3 do
         puts "s3:    #{friendship[:friend_uids]&.size}, #{followership[:follower_uids]&.size}"
       end
 
-      print.call(twitter_user)
-      puts "Do you want to repair this record?: "
+      puts "ids #{ids.size}, repair #{repaired_ids.size}"
 
-      input = STDIN.gets.chomp
-      if input == 'yes'
-        # S3::Friendship.import_by!(twitter_user: twitter_user)
-        puts 'Imported'
-        print.call(twitter_user)
-      end
+      # print.call(twitter_user)
+      # puts "Do you want to repair this record?: "
+      #
+      # input = STDIN.gets.chomp
+      # if input == 'yes'
+      #   # S3::Friendship.import_by!(twitter_user: twitter_user)
+      #   puts 'Imported'
+      #   print.call(twitter_user)
+      # end
     end
 
     desc 'Write friendships to S3'
