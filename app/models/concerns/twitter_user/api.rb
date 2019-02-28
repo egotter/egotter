@@ -30,7 +30,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_friends(other)
-    friends.where(uid: common_friend_uids(other))
+    friends.select {|f| other.friend_uids.include?(f.uid)}
   end
 
   def common_follower_uids(other)
@@ -38,7 +38,7 @@ module Concerns::TwitterUser::Api
   end
 
   def common_followers(other)
-    followers.where(uid: common_follower_uids(other))
+    followers.select {|f| other.follower_uids.include?(f.uid)}
   end
 
   def common_mutual_friend_uids(other)
