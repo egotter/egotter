@@ -1,9 +1,9 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUser::Store
+module Concerns::TwitterUser::RawAttrs
   extend ActiveSupport::Concern
 
-  PROFILE_SAVE_KEYS = %i(
+  SAVE_KEYS = %i(
       id
       name
       screen_name
@@ -31,14 +31,14 @@ module Concerns::TwitterUser::Store
       created_at
     )
 
-  PROFILE_REJECT_KEYS = %i(
+  REJECT_KEYS = %i(
     id
     screen_name
     url
     created_at
   )
 
-  METHOD_NAME_KEYS = PROFILE_SAVE_KEYS.reject { |k| k.in?(PROFILE_REJECT_KEYS) }
+  METHOD_NAME_KEYS = SAVE_KEYS.reject { |k| k.in?(REJECT_KEYS) }
 
   TIME_ZONE_MAPPING = {
     'JST' => 'Asia/Tokyo',
@@ -51,17 +51,14 @@ module Concerns::TwitterUser::Store
 
   class_methods do
     def collect_user_info(t_user)
-      t_user.slice(*PROFILE_SAVE_KEYS).to_json
+      t_user.slice(*SAVE_KEYS).to_json
     end
   end
 
   included do
-    delegate *METHOD_NAME_KEYS, to: :_user_info
-    # store :user_info, accessors: METHOD_NAME_KEYS, coder: JSON
-  end
+    attr_accessor :raw_attrs_text
 
-  def _user_info
-    @_user_info ||= Hashie::Mash.new(JSON.load(user_info))
+    delegate *METHOD_NAME_KEYS, to: :raw_attrs
   end
 
   # A url written on profile page as a home page url
@@ -76,7 +73,7 @@ module Concerns::TwitterUser::Store
   end
 
   def account_created_at
-    at = _user_info[:created_at].to_s
+    at = raw_attrs[:created_at].to_s
     if time_zone.present? && at.present?
       ActiveSupport::TimeZone[TIME_ZONE_MAPPING[time_zone.to_s] || time_zone.to_s].parse(at)
     elsif at.present?
@@ -96,5 +93,20 @@ module Concerns::TwitterUser::Store
   # Used in view
   def inactive
     inactive?
+  end
+
+  private
+
+  def raw_attrs
+    if new_record?
+      Hashie::Mash.new(JSON.parse(raw_attrs_text))
+    else
+      if instance_variable_defined?(:@raw_attrs)
+        @raw_attrs
+      else
+        text = S3::Profile.find_by(twitter_user_id: id)[:user_info]
+        @raw_attrs = Hashie::Mash.new(JSON.parse(text))
+      end
+    end
   end
 end

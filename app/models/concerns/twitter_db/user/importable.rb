@@ -6,7 +6,7 @@ module Concerns::TwitterDB::User::Importable
   class_methods do
     def import_by!(twitter_user:)
       user = find_or_initialize_by(uid: twitter_user.uid)
-      user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.user_info)
+      user.assign_attributes(screen_name: twitter_user.screen_name, user_info: twitter_user.raw_attrs_text)
       user.assign_attributes(friends_size: -1, followers_size: -1) if user.new_record?
       user.save!
     end

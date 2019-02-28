@@ -2,7 +2,8 @@ FactoryBot.define do
   factory :twitter_user do
     sequence(:uid) { |n| rand(1090286694065070080) }
     sequence(:screen_name) { |n| "twitter_user#{n}" }
-    user_info { {id: uid, screen_name: screen_name, protected: true}.to_json }
+    user_info { '{}' }
+    raw_attrs_text { {id: uid, screen_name: screen_name, protected: true}.to_json }
     user_id {-1}
 
     after(:build) do |tu|
@@ -15,10 +16,10 @@ FactoryBot.define do
       tu.friend_uids = 2.times.map {create(:twitter_db_user).uid}
       tu.follower_uids = 2.times.map {create(:twitter_db_user).uid}
 
-      json = Hashie::Mash.new(JSON.parse(tu.user_info))
+      json = Hashie::Mash.new(JSON.parse(tu.raw_attrs_text))
       tu.friends_size = json.friends_count = 2
       tu.followers_size = json.followers_count = 2
-      tu.user_info = json.to_json
+      tu.raw_attrs_text = json.to_json
     end
   end
 end
