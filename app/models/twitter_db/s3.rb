@@ -44,6 +44,10 @@ module TwitterDB
         parallel(users) {|user| import_by!(user: user)}
       end
 
+      def delete_cache_by(uid:)
+        delete_cache(uid)
+      end
+
       def encoded_body(uid, screen_name, uids)
         {
             uid: uid,
@@ -98,6 +102,10 @@ module TwitterDB
 
       def import!(twitter_db_users)
         parallel(twitter_db_users) {|user| import_by!(twitter_db_user: user)}
+      end
+
+      def delete_cache_by(uid:)
+        delete_cache(uid)
       end
 
       def encoded_body(uid, screen_name, profile)

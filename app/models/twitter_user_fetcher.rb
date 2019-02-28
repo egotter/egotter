@@ -46,8 +46,8 @@ class TwitterUserFetcher
     case [sign_in_yourself?, twitter_user.too_many_friends?(login_user: login_user, add_error: false)]
       when [true, true]   then %i(friend_ids follower_ids)
       when [true, false]  then []
-      when [false, true]  then %i(friend_ids follower_ids home_timeline)
-      when [false, false] then %i(home_timeline)
+      when [false, true]  then %i(friend_ids follower_ids)
+      when [false, false] then []
     end
   end
 

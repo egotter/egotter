@@ -3,6 +3,7 @@
 :pidfile: ./tmp/pids/sidekiq_misc.pid
 :logfile: ./log/sidekiq_misc.log
 :queues:
+  - CreateCacheWorker
   - CreateFollowWorker
   - CreateNotificationMessageWorker
   - CreatePromptReportWorker

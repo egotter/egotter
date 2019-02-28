@@ -12,6 +12,8 @@ class HomeController < ApplicationController
   end
 
   def new
+    CreateCacheWorker.perform_async(user_id: current_user.id) if user_signed_in?
+
     if user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
       redirect_path = timeline_path(screen_name: current_user.screen_name)
       redirect_path = append_query_params(redirect_path, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]

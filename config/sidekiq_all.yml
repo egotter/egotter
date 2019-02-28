@@ -3,6 +3,7 @@
 :pidfile: ./tmp/pids/sidekiq_all.pid
 :logfile: ./log/sidekiq_all.log
 :queues:
+  - CreateCacheWorker
   - CreateCrawlerLogWorker
   - CreateFollowWorker
   - CreateForbiddenUserWorker

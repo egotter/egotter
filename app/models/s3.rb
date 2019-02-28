@@ -51,6 +51,11 @@ module S3
       @cache_enabled = enabled
     end
 
+    def delete_cache(key)
+      cache.delete(key.to_s)
+      cache.delete("exist-#{key}")
+    end
+
     def parse_json(text)
       Oj.load(text)
     end
@@ -88,7 +93,7 @@ module S3
 
     def exist(key)
       ApplicationRecord.benchmark("#{self} Exist by #{key}", level: :debug) do
-        cache.fetch("exist-#{key.to_s}") do
+        cache.fetch("exist-#{key}") do
           Aws::S3::Resource.new(region: REGION).bucket(bucket_name).object(key.to_s).exists?
         end
       end
