@@ -83,7 +83,7 @@ module Api
         end
 
       if params[:html]
-        users = render_to_string partial: 'twitter/user', collection: users, cached: true, locals: {ad: true}, formats: %i(html)
+        users = render_to_string partial: 'twitter/user', collection: users, cached: true, locals: {grid_class: 'col-xs-12', ad: true}, formats: %i(html)
       end
 
       render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: users}
