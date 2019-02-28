@@ -115,7 +115,7 @@ module S3
           profile_key => profile
       }
     rescue Aws::S3::Errors::NoSuchKey => e
-      Rails.logger.warn {"#{e.class} #{e.message} #{twitter_user_id}"}
+      Rails.logger.warn {"#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"}
       {}
     end
 
