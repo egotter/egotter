@@ -47,7 +47,11 @@ module Concerns::TwitterUser::Utils
 
   # #diff calls this method in context of new record
   def friend_uids
-    new_record? ? @friend_uids : (S3::Friendship.find_by(twitter_user_id: id)[:friend_uids] || [])
+    if new_record?
+      @friend_uids
+    else
+      @persisted_friend_uids ||= (S3::Friendship.find_by(twitter_user_id: id)[:friend_uids] || [])
+    end
   end
 
   def friend_uids=(uids)
@@ -56,7 +60,11 @@ module Concerns::TwitterUser::Utils
 
   # #diff calls this method in context of new record
   def follower_uids
-    new_record? ? @follower_uids : (S3::Followership.find_by(twitter_user_id: id)[:follower_uids] || [])
+    if new_record?
+      @follower_uids
+    else
+      @persisted_follower_uids ||= (S3::Followership.find_by(twitter_user_id: id)[:follower_uids] || [])
+    end
   end
 
   def follower_uids=(uids)
