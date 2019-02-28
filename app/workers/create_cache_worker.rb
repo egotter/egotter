@@ -20,12 +20,12 @@ class CreateCacheWorker
     end
 
     # twitter_db_user = TwitterDB::User.select(:id).find_by(uid: user.uid)
-    [TwitterDB::S3::Friendship, TwitterDB::S3::Followership, TwitterDB::S3::Profile].each do |klass|
-      threads << Proc.new do
-        klass.delete_cache_by(uid: user.uid)
-        klass.find_by(uid: user.uid)
-      end
-    end
+    # [TwitterDB::S3::Friendship, TwitterDB::S3::Followership, TwitterDB::S3::Profile].each do |klass|
+    #   threads << Proc.new do
+    #     klass.delete_cache_by(uid: user.uid)
+    #     klass.find_by(uid: user.uid)
+    #   end
+    # end
 
     client = user.api_client
     threads << Proc.new {client.user}
