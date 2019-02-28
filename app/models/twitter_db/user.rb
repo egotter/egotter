@@ -20,7 +20,7 @@
 
 module TwitterDB
   class User < ApplicationRecord
-    include Concerns::TwitterUser::Store
+    include Concerns::TwitterDB::User::Store
     include Concerns::TwitterUser::Inflections
     include Concerns::TwitterDB::User::Associations
     include Concerns::TwitterDB::User::Importable

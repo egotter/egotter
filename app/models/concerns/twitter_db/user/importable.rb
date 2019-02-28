@@ -15,8 +15,10 @@ module Concerns::TwitterDB::User::Importable
       import_by!(twitter_user: twitter_user)
     rescue ActiveRecord::RecordInvalid => e
       logger.warn "#{__method__}: #{e.class} #{e.message} #{e.record.inspect} #{twitter_user.inspect}"
+      logger.info e.backtrace.join("\n")
     rescue => e
       logger.warn "#{__method__}: #{e.class} #{e.message} #{twitter_user.inspect}"
+      logger.info e.backtrace.join("\n")
     end
   end
 
