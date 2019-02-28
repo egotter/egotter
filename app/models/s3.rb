@@ -123,8 +123,8 @@ module S3
       import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(profile_key))
     end
 
-    def import_from!(twitter_user_id, uid, screen_name, profile_key)
-      store(twitter_user_id, encoded_body(twitter_user_id, uid, screen_name, profile_key))
+    def import_from!(twitter_user_id, uid, screen_name, profile)
+      store(twitter_user_id, encoded_body(twitter_user_id, uid, screen_name, profile))
     end
 
 
