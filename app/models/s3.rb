@@ -94,31 +94,8 @@ module S3
       {}
     end
 
-    def import_by!(twitter_user:)
-      import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(uids_key))
-    end
-
     def import_from!(twitter_user_id, uid, screen_name, uids)
       store(twitter_user_id, encoded_body(twitter_user_id, uid, screen_name, uids))
-    end
-
-
-    def where(twitter_user_ids:)
-      parallel(twitter_user_ids) {|id| find_by(twitter_user_id: id)}
-    end
-
-    def import!(twitter_users)
-      twitter_users.each {|user| user.send(uids_key)}
-      parallel(twitter_users) {|user| import_by!(twitter_user: user)}
-    end
-
-    def write_to_file(twitter_users)
-      dir = File.join(ENV['S3_SYNC_DIR'], bucket_name.split('.')[-1])
-      FileUtils.mkdir_p(dir) unless File.exists?(dir)
-      twitter_users.each {|user| user.send(uids_key)}
-      parallel(twitter_users) do |user|
-        File.write(File.join(dir, user.id.to_s), encoded_body(user.id, user.uid, user.screen_name, user.send(uids_key)))
-      end
     end
   end
 end

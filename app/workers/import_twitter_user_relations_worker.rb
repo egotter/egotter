@@ -30,7 +30,6 @@ class ImportTwitterUserRelationsWorker
 
     friend_uids, follower_uids = fetch_uids(client, uid)
 
-    import_friendships(twitter_user, friend_uids, follower_uids)
     import_twitter_db_friendships(client, twitter_user, friend_uids, follower_uids)
 
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
@@ -113,20 +112,6 @@ class ImportTwitterUserRelationsWorker
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")
-  end
-
-  def import_friendships(twitter_user, friend_uids, follower_uids)
-    unless twitter_user.consistent?(friend_uids, follower_uids)
-      logger.warn "#{__method__}: It is not consistent. twitter_user(id=#{twitter_user.id}) [#{twitter_user.friends_size}, #{twitter_user.followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
-    end
-
-    silent_transaction do
-      Friendship.import_from!(twitter_user.id, friend_uids)
-      Followership.import_from!(twitter_user.id, follower_uids)
-      twitter_user.update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
-    end
-  rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
   end
 
   def import_twitter_db_friendships(client, twitter_user, friend_uids, follower_uids)
