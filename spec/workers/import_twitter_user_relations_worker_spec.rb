@@ -27,30 +27,6 @@ RSpec.describe ImportTwitterUserRelationsWorker do
     end
   end
 
-  describe '#import_friendships' do
-    subject { instance.import_friendships(twitter_user, friend_uids, follower_uids) }
-    let(:friend_uids) { [1, 2, 3] }
-    let(:follower_uids) { [2, 3, 4] }
-
-    it 'calls Friendship.import_from!' do
-      expect(Friendship).to receive(:import_from!).with(twitter_user.id, friend_uids)
-      subject
-    end
-
-    it 'calls Followership.import_from!' do
-      allow(Friendship).to receive(:import_from!).with(twitter_user.id, friend_uids)
-      expect(Followership).to receive(:import_from!).with(twitter_user.id, follower_uids)
-      subject
-    end
-
-    it 'Updates TwitterUser' do
-      allow(Friendship).to receive(:import_from!).with(twitter_user.id, friend_uids)
-      allow(Followership).to receive(:import_from!).with(twitter_user.id, follower_uids)
-      expect(twitter_user).to receive(:update!).with(friends_size: friend_uids.size, followers_size: follower_uids.size)
-      subject
-    end
-  end
-
   describe '#import_twitter_db_friendships' do
     subject { instance.import_twitter_db_friendships(client, twitter_user, friend_uids, follower_uids) }
     let(:friend_uids) { [1, 2, 3] }
