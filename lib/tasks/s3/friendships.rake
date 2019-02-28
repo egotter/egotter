@@ -66,16 +66,25 @@ namespace :s3 do
     task repair: :environment do
       ids = ENV['IDS'].split(',')
       repaired_ids = []
+      S3::Friendship.cache_enabled = false
+      S3::Followership.cache_enabled = false
+      S3::Profile.cache_enabled = false
 
       TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size).where(id: ids).find_each do |user|
-        if twitter_user.friends_size == 0 &&
-            twitter_user.followers_size == 0 &&
+        if user.friends_size == 0 &&
+            user.followers_size == 0 &&
             !S3::Friendship.exists?(twitter_user_id: user.id)
 
           S3::Friendship.import_from!(user.id, user.uid, user.screen_name, [])
 
           unless S3::Followership.exists?(twitter_user_id: user.id)
             S3::Followership.import_from!(user.id, user.uid, user.screen_name, [])
+          end
+
+          if !S3::Profile.exists?(twitter_user_id: user.id) &&
+              user.user_info.present? &&
+              user.user_info != '{}'
+            S3::Profile.import_from!(user.id, user.uid, user.screen_name, user.user_info)
           end
 
           puts "Repaired #{user.id}"
