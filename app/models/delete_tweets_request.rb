@@ -26,7 +26,7 @@ class DeleteTweetsRequest < ApplicationRecord
     !finished_at.nil?
   end
 
-  def perform!(timeout_seconds: 600, loop_limit: 2)
+  def perform!(timeout_seconds: 60, loop_limit: 1)
     client = user.api_client.twitter
     destroy_count = 0
 
