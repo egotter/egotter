@@ -91,12 +91,21 @@ module S3
         else
           dir = Rails.root.join(ENV['S3_CACHE_DIR'] || 'tmp/s3_cache', bucket_name)
           FileUtils.mkdir_p(dir) unless File.exists?(dir)
-          options = {expires_in: 1.hour, race_condition_ttl: 5.minutes}
+          options = {expires_in: cache_expires_in || 1.hour, race_condition_ttl: 5.minutes}
           @cache = ActiveSupport::Cache::FileStore.new(dir, options)
         end
       else
         ActiveSupport::Cache::NullStore.new
       end
+    end
+
+    def cache_expires_in
+      @cache_expires_in
+    end
+
+    def cache_expires_in=(seconds)
+      remove_instance_variable(:@cache) if instance_variable_defined?(:@cache)
+      @cache_expires_in = seconds
     end
 
     def cache_enabled?
