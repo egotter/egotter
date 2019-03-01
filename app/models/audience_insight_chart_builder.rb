@@ -38,11 +38,13 @@ class AudienceInsightChartBuilder
   end
 
   def new_unfriends
-    {name: I18n.t('activerecord.attributes.audience_insight_chart_builder.new_unfriends'), data: @twitter_users.map {|user| user.calc_new_unfriend_uids.size}}
+    # {name: I18n.t('activerecord.attributes.audience_insight_chart_builder.new_unfriends'), data: @twitter_users.map {|user| user.calc_new_unfriend_uids.size}}
+    {name: I18n.t('activerecord.attributes.audience_insight_chart_builder.new_unfriends'), data: []}
   end
 
   def new_unfollowers
     {name: I18n.t('activerecord.attributes.audience_insight_chart_builder.new_unfollowers'), data: @twitter_users.map {|user| user.calc_new_unfollower_uids.size}}
+    {name: I18n.t('activerecord.attributes.audience_insight_chart_builder.new_unfollowers'), data: []}
   end
 
   def tweets_categories
