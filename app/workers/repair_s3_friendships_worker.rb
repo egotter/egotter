@@ -2,9 +2,9 @@ class RepairS3FriendshipsWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(twitter_user_id)
+  def perform(twitter_user_id, options = {})
     queue = RunningQueue.new(self.class)
-    return if queue.exists?(twitter_user_id)
+    return if !options['skip_queue'] && queue.exists?(twitter_user_id)
     queue.add(twitter_user_id)
 
     user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).find(twitter_user_id)
