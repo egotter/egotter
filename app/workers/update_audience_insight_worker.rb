@@ -4,6 +4,10 @@ class UpdateAudienceInsightWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(uid, options = {})
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(uid)
+    queue.add(uid)
+
     insight = AudienceInsight.find_or_initialize_by(uid: uid)
     return if insight.fresh?
 
