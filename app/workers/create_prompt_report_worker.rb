@@ -38,7 +38,7 @@ class CreatePromptReportWorker
     return log.update!(error_message: "Couldn't fetch friend_ids or follower_ids") if friend_uids.nil? || follower_uids.nil?
     return log.update!(error_message: 'Unfollowers not increased') unless unfollowers_increased?(twitter_user, friend_uids, follower_uids)
 
-    changes = {followers_count: [twitter_user.followerships.size, follower_uids.size]}
+    changes = {followers_count: [twitter_user.follower_uids.size, follower_uids.size]}
 
     old_report = PromptReport.latest(user.id)
     if old_report && changes == JSON.parse(old_report.changes_json, symbolize_names: true)
@@ -78,6 +78,6 @@ class CreatePromptReportWorker
   private
 
   def unfollowers_increased?(twitter_user, friend_uids, follower_uids)
-    (twitter_user.followerships.pluck(:follower_uid) - follower_uids).any?
+    (twitter_user.follower_uids - follower_uids).any?
   end
 end
