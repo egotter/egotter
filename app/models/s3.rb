@@ -156,6 +156,7 @@ module S3
         {}
       else
         Rails.logger.info "RETRY #{tries} #{message}"
+        Rails.logger.info {e.backtrace.join("\n")}
         sleep 0.1 * (5 - tries)
         retry
       end
