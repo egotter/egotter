@@ -2,11 +2,7 @@ namespace :s3 do
   namespace :profiles do
     desc 'Check'
     task check: :environment do
-      sigint = false
-      Signal.trap 'INT' do
-        puts 'intercept INT and stop ..'
-        sigint = true
-      end
+      sigint = Util::Sigint.new.trap
 
       start_id = ENV['START'] ? ENV['START'].to_i : 1
       start = Time.zone.now
@@ -28,7 +24,7 @@ namespace :s3 do
         processed_count += 1
         # puts "#{now = Time.zone.now} #{candidate_id} #{(now - start) / processed_count}"
 
-        break if sigint
+        break if sigint.trapped?
       end
 
       puts found_ids.join(',') if found_ids.any?
@@ -61,11 +57,7 @@ namespace :s3 do
 
     desc 'Write profiles to S3'
     task write_to_s3: :environment do
-      sigint = false
-      Signal.trap 'INT' do
-        puts 'intercept INT and stop ..'
-        sigint = true
-      end
+      sigint = Util::Sigint.new.trap
 
       start_id = ENV['START'] ? ENV['START'].to_i : 1
       start = Time.zone.now
@@ -76,7 +68,7 @@ namespace :s3 do
         processed_count += group.size
         puts "#{now = Time.zone.now} #{group.last.id} #{(now - start) / processed_count}"
 
-        break if sigint
+        break if sigint.trapped?
       end
 
       puts Time.zone.now - start
