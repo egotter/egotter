@@ -9,6 +9,8 @@ class CreateAudienceInsights < ActiveRecord::Migration[5.1]
       t.text   :new_followers_text,     null: false
       t.text   :unfriends_text,         null: false
       t.text   :unfollowers_text,       null: false
+      t.text   :new_unfriends_text,     null: false
+      t.text   :new_unfollowers_text,   null: false
       t.text   :tweets_categories_text, null: false
       t.text   :tweets_text,            null: false
 

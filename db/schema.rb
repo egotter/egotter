@@ -21,6 +21,8 @@ ActiveRecord::Schema.define(version: 20190301030522) do
     t.text "new_followers_text", null: false
     t.text "unfriends_text", null: false
     t.text "unfollowers_text", null: false
+    t.text "new_unfriends_text", null: false
+    t.text "new_unfollowers_text", null: false
     t.text "tweets_categories_text", null: false
     t.text "tweets_text", null: false
     t.datetime "created_at", null: false

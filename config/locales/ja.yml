@@ -1069,6 +1069,8 @@ ja:
         new_followers: "新しいフォロワー"
         unfriends: "フォロー解除した"
         unfollowers: "フォロー解除された"
+        new_unfriends: "新しいフォロー解除（フォロー）"
+        new_unfollowers: "新しいフォロー解除（フォロワー）"
         tweets: "ツイート"
         replies: "リプライ"
       twitter_db/user:

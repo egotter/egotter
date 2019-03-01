@@ -8,6 +8,8 @@
 #  friends_text           :text(65535)      not null
 #  new_followers_text     :text(65535)      not null
 #  new_friends_text       :text(65535)      not null
+#  new_unfollowers_text   :text(65535)      not null
+#  new_unfriends_text     :text(65535)      not null
 #  tweets_categories_text :text(65535)      not null
 #  tweets_text            :text(65535)      not null
 #  uid                    :bigint(8)        not null
