@@ -153,13 +153,10 @@ module S3
     rescue Aws::S3::Errors::NoSuchKey => e
       message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
 
-      if tries == 5
-        RepairS3FriendshipsWorker.perform_async(twitter_user_id)
-      end
-
       if (tries -= 1) < 0
         Rails.logger.warn "RETRY EXHAUSTED #{message}"
         Rails.logger.info {e.backtrace.join("\n")}
+        RepairS3FriendshipsWorker.perform_async(twitter_user_id)
         {}
       else
         Rails.logger.info "RETRY #{tries} #{message}"
@@ -215,13 +212,10 @@ module S3
     rescue Aws::S3::Errors::NoSuchKey => e
       message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
 
-      if tries == 5
-        RepairS3FriendshipsWorker.perform_async(twitter_user_id)
-      end
-
       if (tries -= 1) < 0
         Rails.logger.warn "RETRY EXHAUSTED #{message}"
         Rails.logger.info {e.backtrace.join("\n")}
+        RepairS3FriendshipsWorker.perform_async(twitter_user_id)
         {}
       else
         Rails.logger.info "RETRY #{tries} #{message}"
