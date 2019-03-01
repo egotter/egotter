@@ -35,7 +35,7 @@ class RepairS3FriendshipsWorker
         user.followers_size == 0 &&
         !s3_status[0] &&
         s3_status[1] &&
-        s3_status[1][:follower_uids].size == 0
+        S3::Followership.cache_disabled {S3::Followership.find_by(twitter_user_id: user.id)}[:follower_uids].size == 0
 
       S3::Followership.import_from!(user.id, user.uid, user.screen_name, [])
 
@@ -47,7 +47,7 @@ class RepairS3FriendshipsWorker
         user.followers_size == 0 &&
         !s3_status[1] &&
         s3_status[0] &&
-        s3_status[0][:friend_uids].size == 0
+        S3::Friendship.cache_disabled {S3::Friendship.find_by(twitter_user_id: user.id)}[:friend_uids].size == 0
 
       S3::Friendship.import_from!(user.id, user.uid, user.screen_name, [])
 
@@ -109,9 +109,10 @@ class RepairS3FriendshipsWorker
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{to_s(s3_status, user) rescue nil}"
     logger.info e.backtrace.join("\n")
+    nil
   end
 
   def to_s(s3_status, user)
-    "#{s3_status} #{user.slice(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).tap{|h| h[:user_info].truncate(10) }}"
+    "#{s3_status} #{user.slice(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).tap{|h| h[:user_info] = h[:user_info].truncate(10) }}"
   end
 end
