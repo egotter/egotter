@@ -16,7 +16,16 @@ class RepairS3FriendshipsWorker
     ]
 
     if s3_status[0] && s3_status[1] && s3_status[2]
-      logger.warn "There is no need to update #{s3_status.inspect} #{twitter_user_id}"
+
+      if S3::Friendship.find_by(twitter_user_id: user.id)[:friend_uids].size == user.friends_size &&
+        S3::Followership.find_by(twitter_user_id: user.id)[:follower_uids].size == user.followers_size &&
+        S3::Profile.find_by(twitter_user_id: user.id)[:user_info].present?
+
+        logger.info "There is no need to update #{s3_status.inspect} #{twitter_user_id}"
+      else
+        logger.warn "File is found but there is mismatch  #{s3_status.inspect} #{twitter_user_id}"
+      end
+
       return false
     end
 
