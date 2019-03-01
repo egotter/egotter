@@ -38,6 +38,11 @@ namespace :s3 do
         next
       end
 
+      if relationship[uids_key].nil?
+        print.call("#{uids_key} is nil", twitter_user)
+        found_ids << twitter_user.id
+      end
+
       if twitter_user.send(size_key) != relationship[uids_key].size
         print.call("#{size_key} #{relationship[uids_key].size} is mismatch", twitter_user)
         found_ids << twitter_user.id
