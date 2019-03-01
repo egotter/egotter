@@ -28,17 +28,17 @@ module S3
     end
 
     def cache
-      if instance_variable_defined?(:@cache)
-        @cache
-      else
-        if cache_enabled?
+      if cache_enabled?
+        if instance_variable_defined?(:@cache)
+          @cache
+        else
           dir = Rails.root.join(ENV['S3_CACHE_DIR'] || 'tmp/s3_cache', bucket_name)
           FileUtils.mkdir_p(dir) unless File.exists?(dir)
           options = {expires_in: 1.hour, race_condition_ttl: 5.minutes}
           @cache = ActiveSupport::Cache::FileStore.new(dir, options)
-        else
-          @cache = ActiveSupport::Cache::NullStore.new
         end
+      else
+        ActiveSupport::Cache::NullStore.new
       end
     end
 
@@ -49,6 +49,13 @@ module S3
     def cache_enabled=(enabled)
       remove_instance_variable(:@cache) if instance_variable_defined?(:@cache)
       @cache_enabled = enabled
+    end
+
+    def cache_disabled(&block)
+      old, @cache_enabled = @cache_enabled, false
+      yield
+    ensure
+      @cache_enabled = old
     end
 
     def delete_cache(key)
@@ -131,6 +138,10 @@ module S3
     rescue Aws::S3::Errors::NoSuchKey => e
       message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
 
+      if tries == 5
+        RepairS3FriendshipsWorker.perform_async(twitter_user_id)
+      end
+
       if (tries -= 1) < 0
         Rails.logger.warn "RETRY EXHAUSTED #{message}"
         Rails.logger.info {e.backtrace.join("\n")}
@@ -183,6 +194,10 @@ module S3
       find_by!(twitter_user_id: twitter_user_id)
     rescue Aws::S3::Errors::NoSuchKey => e
       message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
+
+      if tries == 5
+        RepairS3FriendshipsWorker.perform_async(twitter_user_id)
+      end
 
       if (tries -= 1) < 0
         Rails.logger.warn "RETRY EXHAUSTED #{message}"

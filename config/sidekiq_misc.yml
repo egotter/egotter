@@ -36,6 +36,7 @@
   - CreateSearchLogWorker
   - CreateSearchErrorLogWorker
   - CreateSignInLogWorker
+  - RepairS3FriendshipsWorker
   - ResetTooManyRequestsWorker
   - TweetEgotterWorker
   - SetSearchCountWorker
