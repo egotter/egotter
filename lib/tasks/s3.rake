@@ -41,6 +41,7 @@ namespace :s3 do
       if relationship[uids_key].nil?
         print.call("#{uids_key} is nil", twitter_user)
         found_ids << twitter_user.id
+        next
       end
 
       if twitter_user.send(size_key) != relationship[uids_key].size
