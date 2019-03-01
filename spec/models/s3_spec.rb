@@ -43,12 +43,40 @@ RSpec.describe S3 do
   end
 
   describe '.cache_disabled' do
-    before { dummy_class.instance_variable_set(:@cache_enabled, true) }
+    before do
+      @value = -> {dummy_class.instance_variable_get(:@cache_enabled)}
+      dummy_class.instance_variable_set(:@cache_enabled, true)
+    end
+
     it do
-      dummy_class.cache_disabled do
-        expect(dummy_class.instance_variable_get(:@cache_enabled)).to be_falsey
+      expect(@value.call).to be_truthy
+      dummy_class.cache_disabled {expect(@value.call).to be_falsey}
+      expect(@value.call).to be_truthy
+    end
+
+    context 'Double nested' do
+      it do
+        expect(@value.call).to be_truthy
+        dummy_class.cache_disabled do
+          expect(@value.call).to be_falsey
+          dummy_class.cache_enabled {expect(@value.call).to be_truthy}
+          expect(@value.call).to be_falsey
+        end
+        expect(@value.call).to be_truthy
       end
-      expect(dummy_class.instance_variable_get(:@cache_enabled)).to be_truthy
+    end
+  end
+
+  describe '.cache_enabled' do
+    before do
+      @value = -> {dummy_class.instance_variable_get(:@cache_enabled)}
+      dummy_class.instance_variable_set(:@cache_enabled, false)
+    end
+
+    it do
+      expect(@value.call).to be_falsey
+      dummy_class.cache_enabled {expect(@value.call).to be_truthy}
+      expect(@value.call).to be_falsey
     end
   end
 

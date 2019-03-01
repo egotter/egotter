@@ -115,6 +115,13 @@ module S3
       @cache_enabled = old
     end
 
+    def cache_enabled(&block)
+      old, @cache_enabled = @cache_enabled, true
+      yield
+    ensure
+      @cache_enabled = old
+    end
+
     def delete_cache(key)
       cache.delete(key.to_s)
       cache.delete("exist-#{key}")
