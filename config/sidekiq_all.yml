@@ -4,6 +4,7 @@
 :logfile: ./log/sidekiq_all.log
 :queues:
   - logging
+  - misc
   - CreateCacheWorker
   - CreateFollowWorker
   - CreateForbiddenUserWorker

@@ -1,7 +1,7 @@
 class TweetEgotterWorker
   include Sidekiq::Worker
   include Concerns::WorkerUtils
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform(user_id, text)
     User.find(user_id).api_client.twitter.update(text)

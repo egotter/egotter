@@ -1,6 +1,6 @@
 class UpdateSearchHistoriesWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform(session_id, user_id, uid)
     condition = (user_id.to_s == '-1') ? {session_id: session_id} : {user_id: user_id}
