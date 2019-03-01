@@ -45,7 +45,7 @@ module WorkersHelper
 
   def enqueue_update_usage_stat_job_if_needed(uid)
     return if from_crawler?
-    UpdateUsageStatWorker.perform_async(uid)
+    UpdateUsageStatWorker.perform_async(uid, enqueued_at: Time.zone.now)
   end
 
   def enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: nil)

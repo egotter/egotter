@@ -44,7 +44,7 @@ class CreateTwitterUserWorker
       job.update(twitter_user_id: twitter_user.id)
 
       ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now, track_id: track.id)
-      UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: track.id)
+      UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: track.id, enqueued_at: Time.zone.now)
       CreateScoreWorker.perform_async(uid, track_id: track.id)
       UpdateAudienceInsightWorker.perform_async(uid)
     end
