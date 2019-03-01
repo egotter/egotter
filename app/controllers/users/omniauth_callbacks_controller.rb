@@ -21,7 +21,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       return redirect_to root_path, alert: t('before_sign_in.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
     end
 
-    Util::SearchRequests.delete(user.uid)
+    QueueingRequests.new(CreateTwitterUserWorker).delete(user.uid)
 
     sign_in_and_redirect user, event: :authentication
     notification_status = t("dictionary.#{user.notification_setting.dm? ? 'enabled' : 'disabled'}")

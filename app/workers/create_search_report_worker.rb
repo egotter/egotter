@@ -5,11 +5,12 @@ class CreateSearchReportWorker
 
   def perform(user_id)
     user = User.find(user_id)
-
-    return if Util::MessagingRequests.exists?(user.uid)
-    Util::MessagingRequests.add(user.uid)
-
     return unless user.authorized? && user.can_send_search?
+
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(user.uid)
+    queue.add(user.uid)
+
 
     # TODO Implement email
     # TODO Implement onesignal

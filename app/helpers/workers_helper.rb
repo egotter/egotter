@@ -4,10 +4,11 @@ module WorkersHelper
     return if !user_signed_in? && via_dm?
     return if uid.to_i == User::EGOTTER_UID
 
-    return if Util::TooManyRequestsRequests.exists?(current_user_id)
+    return if TooManyRequestsQueue.new.exists?(current_user_id)
 
-    return if Util::SearchRequests.exists?(uid)
-    Util::SearchRequests.add(uid)
+    requests = QueueingRequests.new(CreateTwitterUserWorker)
+    return if requests.exists?(uid)
+    requests.add(uid)
 
     referral = find_referral(pushed_referers)
 
@@ -56,18 +57,28 @@ module WorkersHelper
   def enqueue_update_authorized
     return unless user_signed_in?
 
-    return if Util::UpdateAuthorizedRequests.exists?(current_user.uid)
-    Util::UpdateAuthorizedRequests.add(current_user.uid)
+    requests = QueueingRequests.new(UpdateAuthorizedWorker)
+    return if requests.exists?(current_user.uid)
+    requests.add(current_user.uid)
 
-    UpdateAuthorizedWorker.perform_async(current_user.id)
+    UpdateAuthorizedWorker.perform_async(current_user.id, enqueued_at: Time.zone.now)
   end
 
   def enqueue_create_cache
     return unless user_signed_in?
 
-    return if Util::CreateCacheRequests.exists?(current_user.uid)
-    Util::CreateCacheRequests.add(current_user.uid)
+    requests = QueueingRequests.new(CreateCacheWorker)
+    return if requests.exists?(current_user.uid)
+    requests.add(current_user.uid)
 
     CreateCacheWorker.perform_async(user_id: current_user.id, enqueued_at: Time.zone.now)
+  end
+
+  def enqueue_audience_insight(uid)
+    requests = QueueingRequests.new(UpdateAudienceInsightWorker)
+    return if requests.exists?(uid)
+    requests.add(uid)
+
+    UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
   end
 end

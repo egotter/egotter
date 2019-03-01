@@ -5,11 +5,11 @@ class CreateWelcomeMessageWorker
 
   def perform(user_id)
     user = User.find(user_id)
-
-    return if Util::MessagingRequests.exists?(user.uid)
-    Util::MessagingRequests.add(user.uid)
-
     return unless user.authorized?
+
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(user.uid)
+    queue.add(user.uid)
 
     WelcomeMessage.welcome(user.id).deliver
 

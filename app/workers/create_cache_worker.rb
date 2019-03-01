@@ -9,7 +9,7 @@ class CreateCacheWorker
     queue.add(user_id)
 
     if values['enqueued_at'].blank? || Time.zone.parse(values['enqueued_at']) < Time.zone.now - 1.minute
-      logger.info {"Don't create cache since it is too late."}
+      logger.info {"Don't run this job since it is too late."}
       return
     end
 

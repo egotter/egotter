@@ -52,7 +52,7 @@ class ImportTwitterUserRelationsWorker
     end
 
     if e.class == Twitter::Error::TooManyRequests
-      Util::TooManyRequestsRequests.add(user_id)
+      TooManyRequestsQueue.new.add(user_id)
       ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user_id)
     end
 

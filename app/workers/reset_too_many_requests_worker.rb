@@ -3,7 +3,7 @@ class ResetTooManyRequestsWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
-    Util::TooManyRequestsRequests.delete(user_id)
+    TooManyRequestsQueue.new.delete(user_id)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{user_id}"
   end
