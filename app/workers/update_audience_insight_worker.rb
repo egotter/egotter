@@ -8,6 +8,18 @@ class UpdateAudienceInsightWorker
     return if queue.exists?(uid)
     queue.add(uid)
 
+    Timeout.timeout(10) do
+      do_perform(uid)
+    end
+  rescue Timeout::Error => e
+    logger.warn "#{e.class}: #{e.message} #{uid}"
+    logger.info e.backtrace.join("\n")
+
+    self.class.perform_in(600 + rand(120), uid, options)
+  end
+
+  def do_perform(uid)
+
     insight = AudienceInsight.find_or_initialize_by(uid: uid)
     return if insight.fresh?
 
