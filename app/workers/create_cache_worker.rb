@@ -15,7 +15,7 @@ class CreateCacheWorker
 
   def do_perform(values)
     user_id = values['user_id']
-    user = User.select(:id, :uid, :screen_name, :token, :secret).find(user_id)
+    user = User.find(user_id)
     threads = []
 
     TwitterUser.select(:id).where(uid: user.uid).order(created_at: :desc).each do |twitter_user|

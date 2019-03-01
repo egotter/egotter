@@ -3,7 +3,7 @@ class RepairS3FriendshipsWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(twitter_user_id)
-    user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size).find(twitter_user_id)
+    user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).find(twitter_user_id)
 
     s3_status = [
         S3::Friendship.cache_disabled {S3::Friendship.exists?(twitter_user_id: user.id)},
@@ -12,7 +12,7 @@ class RepairS3FriendshipsWorker
     ]
 
     if s3_status[0] && s3_status[1] && s3_status[2]
-      logger.warn "There is not need to update #{twitter_user_id}"
+      logger.warn "There is not need to update #{s3_status.inspect} #{twitter_user_id}"
       return false
     end
 
