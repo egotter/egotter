@@ -2,11 +2,6 @@ default: &default
   twitter_user_recently_created: <%= 30.minutes %>
   log_recently_created: <%= 5.minutes %>
   usage_stat_recently_created: <%= 30.minutes %>
-  recently_searched: <%= 5.minutes %>
-  recently_too_many_requests: <%= 15.minutes %>
-  recently_creating: <%= 5.minutes %>
-  recently_messaging: <%= 5.minutes %>
-  recently_delete_tweets: <%= 30.minutes %>
   many_friends_threshold: 1000
   too_many_friends_threshold: 10000
   anonymous_search_histories_limit: 2
@@ -25,10 +20,6 @@ development:
   twitter_user_recently_created: <%= 1.minute %>
   log_recently_created: <%= 1.minute %>
   usage_stat_recently_created: <%= 1.minute %>
-  recently_searched: <%= 1.minute %>
-  recently_creating: <%= 1.minute %>
-  recently_messaging: <%= 1.minute %>
-  recently_delete_tweets: <%= 1.minutes %>
 production:
   <<: *default
 test:

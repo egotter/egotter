@@ -5,8 +5,9 @@ class CreatePromptReportWorker
   def perform(user_id)
     user = User.includes(:notification_setting).find(user_id)
 
-    return if Util::MessagingRequests.exists?(user.uid)
-    Util::MessagingRequests.add(user.uid)
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(user.uid)
+    queue.add(user.uid)
 
     log = CreatePromptReportLog.new(
       user_id: user.id,

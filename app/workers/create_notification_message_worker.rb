@@ -14,11 +14,12 @@ class CreateNotificationMessageWorker
     changes = options['changes'].symbolize_keys! if options['changes']
     log = CreateNotificationMessageLog.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium)
 
-    if Util::MessagingRequests.exists?(uid)
+    queue = RunningQueue.new(self.class)
+    if queue.exists?(uid)
       log.update(status: false, message: "[#{uid}] is recently messaging.")
       return
     end
-    Util::MessagingRequests.add(uid)
+    queue.add(uid)
 
     token = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")[0...5]
     notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)

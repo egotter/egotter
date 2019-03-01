@@ -28,10 +28,11 @@ class CreateTwitterUserWorker
     uid = job.uid
     client = ApiClient.user_or_bot_client(user&.id) { |client_uid| job.update(client_uid: client_uid) }
 
-    if Util::CreateRequests.exists?(uid)
+    queue = RunningQueue.new(self.class)
+    if queue.exists?(uid)
       return job.update(error_class: Job::Error::RecentlyEnqueued, error_message: 'Recently enqueued')
     end
-    Util::CreateRequests.add(uid)
+    queue.add(uid)
 
     begin
       twitter_user = build_twitter_user(client, user, uid)
@@ -65,7 +66,7 @@ class CreateTwitterUserWorker
     end
 
     if e.class == Twitter::Error::TooManyRequests
-      Util::TooManyRequestsRequests.add(user_id)
+      TooManyRequestsQueue.new.add(user_id)
       ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user_id)
     end
 

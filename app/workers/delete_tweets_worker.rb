@@ -10,12 +10,13 @@ class DeleteTweetsWorker
     user = request.user
     log = DeleteTweetsLog.create!(user_id: user.id, request_id: request.id)
 
-    if !values['skip_recently_enqueued'] && Util::DeleteTweetsRequests.exists?(user.uid)
+    queue = RunningQueue.new(self.class)
+    if !values['skip_recently_enqueued'] && queue.exists?(user.id)
       log.update(status: false, message: "[#{user.uid}] is recently enqueued.")
       request.finished!
       return
     end
-    Util::DeleteTweetsRequests.add(user.uid)
+    queue.add(user.id)
 
     unless user.authorized?
       log.update(status: false, message: "[#{user.screen_name}] is not authorized.")

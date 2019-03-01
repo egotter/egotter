@@ -4,36 +4,15 @@ module Util
 
     def initialize(redis)
       @redis = redis
-    end
-
-    class << self
-      def exists?(uid)
-        new(Redis.client).exists?(uid)
-      end
-
-      def add(uid)
-        new(Redis.client).add(uid)
-      end
-
-      def delete(uid)
-        new(Redis.client).delete(uid)
-      end
-
-      def key
-        raise NotImplementedError
-      end
-
-      def ttl
-        raise NotImplementedError
-      end
+      @ttl = (Rails.env.production? ? 1.hour : 10.minutes)
     end
 
     def key
-      self.class.key
+      @key
     end
 
     def ttl
-      self.class.ttl
+      @ttl
     end
 
     def clear

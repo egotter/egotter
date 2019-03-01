@@ -70,7 +70,7 @@ module Concerns::Validation
   end
 
   def searched_uid?(uid)
-    return true if Util::SearchRequests.exists?(uid)
+    return true if QueueingRequests.new(CreateTwitterUserWorker).exists?(uid)
 
     if request.xhr?
       head :bad_request
@@ -196,7 +196,7 @@ module Concerns::Validation
 
   def too_many_requests?(twitter_user)
     return false if from_crawler? || !user_signed_in?
-    return false unless Util::TooManyRequestsRequests.exists?(current_user_id)
+    return false unless TooManyRequestsQueue.new.exists?(current_user_id)
 
     if request.xhr?
       head :bad_request

@@ -8,6 +8,11 @@ class UpdateAudienceInsightWorker
     return if queue.exists?(uid)
     queue.add(uid)
 
+    if options['enqueued_at'].blank? || Time.zone.parse(options['enqueued_at']) < Time.zone.now - 10.minute
+      logger.info {"Don't run this job since it is too late."}
+      return
+    end
+
     Timeout.timeout(10) do
       do_perform(uid)
     end
