@@ -39,16 +39,6 @@ module Concerns::TwitterUser::Associations
       obj.has_many :close_friendships,    order_by_sequence_asc
     end
 
-    def friends
-      friend_uids = self.friend_uids
-      TwitterDB::User.where(uid: friend_uids).sort_by {|user| friend_uids.index(user.uid)}
-    end
-
-    def followers
-      follower_uids = self.follower_uids
-      TwitterDB::User.where(uid: follower_uids).sort_by {|user| follower_uids.index(user.uid)}
-    end
-
     with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
       obj.has_many :one_sided_friends,   through: :one_sided_friendships
       obj.has_many :one_sided_followers, through: :one_sided_followerships
@@ -61,5 +51,25 @@ module Concerns::TwitterUser::Associations
       obj.has_many :favorite_friends, through: :favorite_friendships
       obj.has_many :close_friends,    through: :close_friendships
     end
+
+    with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
+      obj.has_many :unfriendships,     order_by_sequence_asc
+      obj.has_many :unfollowerships,   order_by_sequence_asc
+    end
+
+    with_options default_options.merge(class_name: 'TwitterDB::User') do |obj|
+      obj.has_many :unfriends,     through: :unfriendships
+      obj.has_many :unfollowers,   through: :unfollowerships
+    end
+  end
+
+  def friends
+    friend_uids = self.friend_uids
+    TwitterDB::User.where(uid: friend_uids).sort_by {|user| friend_uids.index(user.uid)}
+  end
+
+  def followers
+    follower_uids = self.follower_uids
+    TwitterDB::User.where(uid: follower_uids).sort_by {|user| follower_uids.index(user.uid)}
   end
 end

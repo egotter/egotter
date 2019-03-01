@@ -3,8 +3,7 @@
 
 - breadcrumb :timeline, @twitter_user.screen_name
 
-- twitter_db_user = @twitter_user.twitter_db_user
-- title = t('timelines.show.title', user: @twitter_user.mention_name, removing: twitter_db_user.unfriendships.size, removed: twitter_db_user.unfollowerships.size)
+- title = t('timelines.show.title', user: @twitter_user.mention_name, removing: @twitter_user.unfriendships.size, removed: @twitter_user.unfollowerships.size)
 - description = t('timelines.show.description', user: @twitter_user.mention_name)
 - set_meta_tags title: title, site: '', description: description
 

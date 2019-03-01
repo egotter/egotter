@@ -34,7 +34,7 @@ class TimelinesController < ApplicationController
     second_latest = TwitterUser.till(twitter_user.created_at).latest_by(uid: params[:uid])
 
     bef = second_latest.calc_unfollower_uids.size # Heavy process
-    aft = twitter_user.twitter_db_user.unfollowerships.size
+    aft = twitter_user.unfollowerships.size
 
     if aft > bef
       t('.unfollowerships_count_increased', user: twitter_user.mention_name, before: bef, after: aft)
