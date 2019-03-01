@@ -58,17 +58,27 @@ module Concerns::TwitterUser::Calculator
   end
 
   def calc_unfriend_uids
-    TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :friends_size).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.friends_size == 0
-      older.friend_uids - newer.friend_uids
-    end.compact.flatten.reverse
+    ApplicationRecord.benchmark("#{self.class} #{__method__} #{id} #{uid}") do
+      users = TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :friends_size).order(created_at: :asc)
+      S3::Friendship.where(twitter_user_ids: users.map(&:id))
+
+      users.each_cons(2).map do |older, newer|
+        next if newer.nil? || older.nil? || newer.friends_size == 0
+        older.friend_uids - newer.friend_uids
+      end.compact.flatten.reverse
+    end
   end
 
   def calc_unfollower_uids
-    TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :followers_size).order(created_at: :asc).each_cons(2).map do |older, newer|
-      next if newer.nil? || older.nil? || newer.followers_size == 0
-      older.follower_uids - newer.follower_uids
-    end.compact.flatten.reverse
+    ApplicationRecord.benchmark("#{self.class} #{__method__} #{id} #{uid}") do
+      users = TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :followers_size).order(created_at: :asc)
+      S3::Followership.where(twitter_user_ids: users.map(&:id))
+
+      users.each_cons(2).map do |older, newer|
+        next if newer.nil? || older.nil? || newer.followers_size == 0
+        older.follower_uids - newer.follower_uids
+      end.compact.flatten.reverse
+    end
   end
 
   def calc_new_friend_uids

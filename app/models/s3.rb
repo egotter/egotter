@@ -106,11 +106,15 @@ module S3
       end
     end
 
-    def parallel(enum, &block)
+    def parallel(enum, in_threads: 5, &block)
       q = Queue.new
-      enum.map.with_index do |obj, i|
-        Thread.new {q.push(i: i, result: yield(obj))}
-      end.each(&:join)
+
+      enum.each_slice(in_threads) do |group|
+        group.map.with_index do |obj, i|
+          Thread.new {q.push(i: i, result: yield(obj))}
+        end.each(&:join)
+      end
+
       q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
     end
   end
@@ -151,6 +155,10 @@ module S3
         sleep 0.1 * (5 - tries)
         retry
       end
+    end
+
+    def where(twitter_user_ids:)
+      parallel(twitter_user_ids) {|id| find_by(twitter_user_id: id)}
     end
 
     def import_from!(twitter_user_id, uid, screen_name, uids)
