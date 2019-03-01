@@ -3,6 +3,10 @@ class UpdateAuthorizedWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(user_id)
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(user_id)
+    queue.add(user_id)
+
     user = User.find(user_id)
     t_user = user.api_client.verify_credentials
 

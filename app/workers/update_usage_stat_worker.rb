@@ -4,6 +4,10 @@ class UpdateUsageStatWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(uid, options = {})
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(uid)
+    queue.add(uid)
+
     stat = UsageStat.find_by(uid: uid)
     return if stat&.fresh?
 

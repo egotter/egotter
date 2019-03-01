@@ -3,6 +3,11 @@ class CreateCacheWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(values)
+    user_id = values['user_id']
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(user_id)
+    queue.add(user_id)
+
     if values['enqueued_at'].blank? || Time.zone.parse(values['enqueued_at']) < Time.zone.now - 1.minute
       logger.info {"Don't create cache since it is too late."}
       return

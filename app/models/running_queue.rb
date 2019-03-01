@@ -1,6 +1,6 @@
 class RunningQueue < Util::OriginalSortedSet
   def initialize(worker_class)
-    @@key = "#{self.class}:#{worker_class}:uids"
+    @@key = "#{self.class}:#{worker_class}:any_ids"
     super(Redis.client)
   end
 

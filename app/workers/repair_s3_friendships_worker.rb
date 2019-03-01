@@ -3,6 +3,10 @@ class RepairS3FriendshipsWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(twitter_user_id)
+    queue = RunningQueue.new(self.class)
+    return if queue.exists?(twitter_user_id)
+    queue.add(twitter_user_id)
+
     user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).find(twitter_user_id)
 
     s3_status = [
