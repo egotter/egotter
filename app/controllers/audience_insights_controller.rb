@@ -11,6 +11,6 @@ class AudienceInsightsController < ApplicationController
     @page_description = t('.page_description', user: @twitter_user.mention_name)
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name})
 
-    @chart_builder = AudienceInsightChartBuilder.new(@twitter_user.uid, limit: 100)
+    @chart_builder = AudienceInsight.find_by(uid: @twitter_user.uid) || AudienceInsightChartBuilder.new(@twitter_user.uid)
   end
 end

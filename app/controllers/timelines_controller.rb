@@ -14,6 +14,7 @@ class TimelinesController < ApplicationController
   def show
     enqueue_update_authorized
     enqueue_create_cache
+    UpdateAudienceInsightWorker.perform_async(@twitter_user.uid)
 
     if ForbiddenUser.exists?(screen_name: @twitter_user.screen_name)
       flash.now[:alert] = forbidden_message(@twitter_user.screen_name)

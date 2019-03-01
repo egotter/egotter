@@ -1,7 +1,8 @@
 class AudienceInsightChartBuilder
   def initialize(uid, limit: 10)
     @twitter_users = TwitterUser.where(uid: uid).order(created_at: :desc).limit(limit).reverse
-    @statuses = TwitterDB::User.find_by(uid: uid)&.statuses || TwitterDB::Status.none
+    S3::Profile.where(twitter_user_ids: @twitter_users.map(&:id))
+    @statuses = TwitterDB::User.new(uid: uid).statuses
   end
 
   DATE_FORMAT = "%Y-%m-%d"

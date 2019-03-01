@@ -10,7 +10,24 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190225091559) do
+ActiveRecord::Schema.define(version: 20190301030522) do
+
+  create_table "audience_insights", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.bigint "uid", null: false
+    t.text "categories_text", null: false
+    t.text "friends_text", null: false
+    t.text "followers_text", null: false
+    t.text "new_friends_text", null: false
+    t.text "new_followers_text", null: false
+    t.text "unfriends_text", null: false
+    t.text "unfollowers_text", null: false
+    t.text "tweets_categories_text", null: false
+    t.text "tweets_text", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_audience_insights_on_created_at"
+    t.index ["uid"], name: "index_audience_insights_on_uid", unique: true
+  end
 
   create_table "background_force_update_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
