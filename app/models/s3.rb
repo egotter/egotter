@@ -218,6 +218,10 @@ module S3
       end
     end
 
+    def where(twitter_user_ids:)
+      parallel(twitter_user_ids) {|id| find_by(twitter_user_id: id)}
+    end
+
     def import_by!(twitter_user:)
       import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(profile_key))
     end
