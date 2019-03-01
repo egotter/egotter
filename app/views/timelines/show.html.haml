@@ -17,7 +17,7 @@
 
 .row
   .col-xs-12.col-md-6
-    = render partial: 'audience_insight', locals: {twitter_user: @twitter_user, chart_builder: AudienceInsight.find_by(uid: @twitter_user.uid) || AudienceInsightChartBuilder.new(@twitter_user.uid)}
+    = render partial: 'audience_insight', locals: {twitter_user: @twitter_user, chart_builder: ::AudienceInsight.find_by(uid: @twitter_user.uid) || AudienceInsightChartBuilder.new(@twitter_user.uid)}
 
   .col-xs-12.col-md-6
     = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: 'close_friends'}
