@@ -13,6 +13,7 @@ SUFFIX='--silent >>/home/ec2-user/egotter/log/cron.log 2>&1'
 # 0 19 * * *         /bin/bash -l -c "$PREFIX $RAKE visitors:update users:update_timestamps $SUFFIX"
 # 10 19 * * *        /bin/bash -l -c "$PREFIX $RAKE user_retention_stats:update visitor_retention_stats:update user_engagement_stats:update visitor_engagement_stats:update $SUFFIX"
 # 15 * * * *         /bin/bash -l -c "$PREFIX $RUNNER 'SetSearchCountWorker.perform_async'"
+# 20 * * * *         /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.perform_async'"
 # */5 * * * *        /usr/bin/sudo /bin/bash -l -c 'monit monitor all >> /home/ec2-user/egotter/log/monit.log 2>&1'
 # * * * * *          /bin/bash -l -c "$PREFIX $RUBY bin/send_metrics.rb >>log/send_metrics.log 2>&1"
 

@@ -19,7 +19,6 @@
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker
-  - SendMetricsWorker
   - UpdateAudienceInsightWorker
   - UpdateAuthorizedWorker
   - UpdateNotificationMessageWorker
