@@ -1,4 +1,5 @@
 class TimelinesController < ApplicationController
+  include WorkersHelper
   include Concerns::Showable
 
   before_action only: %i(check_for_updates) do
@@ -11,6 +12,9 @@ class TimelinesController < ApplicationController
   end
 
   def show
+    enqueue_update_authorized
+    enqueue_create_cache
+
     if ForbiddenUser.exists?(screen_name: @twitter_user.screen_name)
       flash.now[:alert] = forbidden_message(@twitter_user.screen_name)
     elsif NotFoundUser.exists?(screen_name: @twitter_user.screen_name)

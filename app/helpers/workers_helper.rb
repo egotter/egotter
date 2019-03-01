@@ -52,4 +52,22 @@ module WorkersHelper
     return if request.uid == User::EGOTTER_UID
     request.enqueue(enqueue_location: enqueue_location)
   end
+
+  def enqueue_update_authorized
+    return unless user_signed_in?
+
+    return if Util::UpdateAuthorizedRequests.exists?(current_user.uid)
+    Util::UpdateAuthorizedRequests.add(current_user.uid)
+
+    UpdateAuthorizedWorker.perform_async(current_user.id)
+  end
+
+  def enqueue_create_cache
+    return unless user_signed_in?
+
+    return if Util::CreateCacheRequests.exists?(current_user.uid)
+    Util::CreateCacheRequests.add(current_user.uid)
+
+    CreateCacheWorker.perform_async(user_id: current_user.id, enqueued_at: Time.zone.now)
+  end
 end

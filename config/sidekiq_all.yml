@@ -43,6 +43,7 @@
   - RepairS3FriendshipsWorker
   - ResetTooManyRequestsWorker
   - TweetEgotterWorker
+  - UpdateAuthorizedWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
   - UpdateSearchHistoriesWorker

@@ -43,7 +43,8 @@ class CreateCacheWorker
     if e.message == 'Invalid or expired token.'
       user.update(authorized: false)
     else
-      raise
+      logger.warn "#{e.class}: #{e.message} #{values}"
+      logger.info e.backtrace.join("\n")
     end
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{values}"
