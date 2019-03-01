@@ -37,9 +37,9 @@ class RepairS3FriendshipsWorker
         s3_status[1] &&
         S3::Followership.cache_disabled {S3::Followership.find_by(twitter_user_id: user.id)}[:follower_uids].size == 0
 
-      S3::Followership.import_from!(user.id, user.uid, user.screen_name, [])
+      S3::Friendship.import_from!(user.id, user.uid, user.screen_name, [])
 
-      logger.warn "S3::Followership are updated with empty array #{to_s(s3_status, user)}"
+      logger.warn "S3::Friendship are updated with empty array #{to_s(s3_status, user)}"
       updated = true
     end
 
@@ -49,9 +49,9 @@ class RepairS3FriendshipsWorker
         s3_status[0] &&
         S3::Friendship.cache_disabled {S3::Friendship.find_by(twitter_user_id: user.id)}[:friend_uids].size == 0
 
-      S3::Friendship.import_from!(user.id, user.uid, user.screen_name, [])
+      S3::Followership.import_from!(user.id, user.uid, user.screen_name, [])
 
-      logger.warn "S3::Friendship are updated with empty array #{to_s(s3_status, user)}"
+      logger.warn "S3::Followership are updated with empty array #{to_s(s3_status, user)}"
       updated = true
     end
 
