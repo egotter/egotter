@@ -27,42 +27,6 @@ module S3
       @client ||= Aws::S3::Client.new(region: REGION)
     end
 
-    def cache
-      if cache_enabled?
-        if instance_variable_defined?(:@cache)
-          @cache
-        else
-          dir = Rails.root.join(ENV['S3_CACHE_DIR'] || 'tmp/s3_cache', bucket_name)
-          FileUtils.mkdir_p(dir) unless File.exists?(dir)
-          options = {expires_in: 1.hour, race_condition_ttl: 5.minutes}
-          @cache = ActiveSupport::Cache::FileStore.new(dir, options)
-        end
-      else
-        ActiveSupport::Cache::NullStore.new
-      end
-    end
-
-    def cache_enabled?
-      @cache_enabled
-    end
-
-    def cache_enabled=(enabled)
-      remove_instance_variable(:@cache) if instance_variable_defined?(:@cache)
-      @cache_enabled = enabled
-    end
-
-    def cache_disabled(&block)
-      old, @cache_enabled = @cache_enabled, false
-      yield
-    ensure
-      @cache_enabled = old
-    end
-
-    def delete_cache(key)
-      cache.delete(key.to_s)
-      cache.delete("exist-#{key}")
-    end
-
     def parse_json(text)
       Oj.load(text)
     end
@@ -118,6 +82,46 @@ module S3
       q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
     end
   end
+
+  module Cache
+    def cache
+      if cache_enabled?
+        if instance_variable_defined?(:@cache)
+          @cache
+        else
+          dir = Rails.root.join(ENV['S3_CACHE_DIR'] || 'tmp/s3_cache', bucket_name)
+          FileUtils.mkdir_p(dir) unless File.exists?(dir)
+          options = {expires_in: 1.hour, race_condition_ttl: 5.minutes}
+          @cache = ActiveSupport::Cache::FileStore.new(dir, options)
+        end
+      else
+        ActiveSupport::Cache::NullStore.new
+      end
+    end
+
+    def cache_enabled?
+      @cache_enabled
+    end
+
+    def cache_enabled=(enabled)
+      remove_instance_variable(:@cache) if instance_variable_defined?(:@cache)
+      @cache_enabled = enabled
+    end
+
+    def cache_disabled(&block)
+      old, @cache_enabled = @cache_enabled, false
+      yield
+    ensure
+      @cache_enabled = old
+    end
+
+    def delete_cache(key)
+      cache.delete(key.to_s)
+      cache.delete("exist-#{key}")
+    end
+  end
+
+  Util.send(:include, Cache)
 
   module Api
     def exists?(twitter_user_id:)
