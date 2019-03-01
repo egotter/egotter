@@ -70,28 +70,11 @@ namespace :s3 do
       S3::Followership.cache_enabled = false
       S3::Profile.cache_enabled = false
 
-      TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size).where(id: ids).find_each do |user|
-        if user.friends_size == 0 &&
-            user.followers_size == 0 &&
-            !S3::Friendship.exists?(twitter_user_id: user.id)
-
-          S3::Friendship.import_from!(user.id, user.uid, user.screen_name, [])
-
-          unless S3::Followership.exists?(twitter_user_id: user.id)
-            S3::Followership.import_from!(user.id, user.uid, user.screen_name, [])
-          end
-
-          if !S3::Profile.exists?(twitter_user_id: user.id) &&
-              user.user_info.present? &&
-              user.user_info != '{}'
-            S3::Profile.import_from!(user.id, user.uid, user.screen_name, user.user_info)
-          end
-
-          puts "Repaired #{user.id}"
-          repaired_ids << user.id
-          next
+      ids.each do |twitter_user_id|
+        if RepairS3FriendshipsWorker.new.perform(twitter_user_id)
+          puts "Repaired #{twitter_user_id}"
+          repaired_ids << twitter_user_id
         end
-
       end
 
       print = -> (twitter_user) do
