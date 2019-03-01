@@ -5,10 +5,6 @@
 :queues:
   - logging
   - misc
-  - CreateCacheWorker
-  - CreateFollowWorker
-  - CreateForbiddenUserWorker
-  - CreateNotFoundUserWorker
   - CreateNotificationMessageWorker
   - CreatePromptReportWorker
   - CreateScoreWorker
@@ -21,8 +17,6 @@
   - CreateWelcomeMessageWorker
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
-  - DeleteNotFoundUserWorker
-  - DeleteForbiddenUserWorker
   - DeleteTweetsWorker
   - FollowEgotterWorker
   - ImportDynamodbFriendshipsWorker
@@ -30,12 +24,7 @@
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker
-  - ImportFriendsAndFollowersWorker
-  - ImportFriendshipsAndFollowershipsWorker
-  - ImportInactiveFriendsAndInactiveFollowersWorker
-  - ImportReplyingRepliedAndFavoritesWorker
   - ImportTwitterUserRelationsWorker
-  - ImportUserWorker
   - RepairS3FriendshipsWorker
   - ResetTooManyRequestsWorker
   - TweetEgotterWorker

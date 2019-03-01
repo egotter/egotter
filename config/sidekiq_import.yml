@@ -4,8 +4,4 @@
 :logfile: ./log/sidekiq_import.log
 :queues:
   - CreateTwitterDBUserWorker
-  - ImportFriendsAndFollowersWorker
-  - ImportFriendshipsAndFollowershipsWorker
-  - ImportInactiveFriendsAndInactiveFollowersWorker
-  - ImportReplyingRepliedAndFavoritesWorker
   - ImportTwitterUserRelationsWorker
