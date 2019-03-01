@@ -1,6 +1,6 @@
 class CreateSearchErrorLogWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def perform(attrs)
     SearchErrorLog.create!(attrs)

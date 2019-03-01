@@ -3,6 +3,7 @@
 :pidfile: ./tmp/pids/sidekiq_misc.pid
 :logfile: ./log/sidekiq_misc.log
 :queues:
+  - logging
   - CreateCacheWorker
   - CreateFollowWorker
   - CreateNotificationMessageWorker
@@ -32,17 +33,10 @@
 
   - CreateForbiddenUserWorker
   - CreateNotFoundUserWorker
-  - CreatePollingLogWorker
-  - CreateModalOpenLogWorker
-  - CreateCrawlerLogWorker
-  - CreateSearchLogWorker
-  - CreateSearchErrorLogWorker
-  - CreateSignInLogWorker
   - RepairS3FriendshipsWorker
   - ResetTooManyRequestsWorker
   - TweetEgotterWorker
   - SetSearchCountWorker
   - UpdateSearchHistoriesWorker
-  - UpdateSearchLogWorker
   - UpdateUsageStatWorker
   - rollbar

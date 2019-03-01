@@ -1,6 +1,6 @@
 class UpdateSearchLogWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def perform(search_log_id)
     log = SearchLog.find(search_log_id)

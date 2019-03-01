@@ -3,21 +3,16 @@
 :pidfile: ./tmp/pids/sidekiq_all.pid
 :logfile: ./log/sidekiq_all.log
 :queues:
+  - logging
   - CreateCacheWorker
-  - CreateCrawlerLogWorker
   - CreateFollowWorker
   - CreateForbiddenUserWorker
   - CreateNotFoundUserWorker
-  - CreateModalOpenLogWorker
   - CreateNotificationMessageWorker
-  - CreatePollingLogWorker
   - CreatePromptReportWorker
   - CreateScoreWorker
   - CreateSearchReportWorker
-  - CreateSearchLogWorker
-  - CreateSearchErrorLogWorker
   - CreateSignedInTwitterUserWorker
-  - CreateSignInLogWorker
   - CreateTweetsWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
@@ -48,7 +43,6 @@
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
   - UpdateSearchHistoriesWorker
-  - UpdateSearchLogWorker
   - UpdateSearchReportWorker
   - UpdateUsageStatWorker
   - UpdateNewsReportWorker
