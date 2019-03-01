@@ -13,7 +13,7 @@ class ImportTwitterDbS3UsersWorker
     end
 
     next_target_uids = persisted_uids - target_uids
-    self.class.perform_async(next_target_uids) if next_target_uids.any?
+    self.class.perform_in(60 + rand(120), next_target_uids) if next_target_uids.any?
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{uids.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")
