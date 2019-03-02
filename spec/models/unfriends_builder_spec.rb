@@ -1,6 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe UnfriendsBuilder do
+  describe '#unfriends' do
+
+  end
+
+  describe '#unfollowers' do
+
+  end
 end
 
 RSpec.describe UnfriendsBuilder::Util do
@@ -14,6 +21,33 @@ RSpec.describe UnfriendsBuilder::Util do
     if newer
       allow(newer).to receive(:friend_uids).with(no_args).and_return([2, 3, 4])
       allow(newer).to receive(:follower_uids).with(no_args).and_return([5, 6, 7])
+    end
+  end
+
+  def users(uid, created_at)
+    TwitterUser.where('created_at <= ?', created_at).creation_completed.where(uid: uid).select(:id).order(created_at: :asc)
+  end
+
+  describe '.users' do
+    let(:time) { Time.zone.now - 10.second }
+    let(:uid) { 1 }
+    let(:limit) { 2 }
+    let(:users) { described_class.users(uid, @user.created_at) }
+
+    before do
+      build(:twitter_user, uid: uid, created_at: time + 1.second).save!(validate: false)
+      build(:twitter_user, uid: uid, created_at: time + 2.second).tap do |user|
+        user.save!(validate: false)
+        user.update(friends_size: 0)
+      end
+      (@user = build(:twitter_user, uid: uid, created_at: time + 3.second)).save!(validate: false)
+      build(:twitter_user, uid: uid, created_at: time + 4.second).save!(validate: false)
+      create(:twitter_user, uid: uid + 1)
+    end
+
+    it do
+      expect(users.size).to eq(2)
+      expect(TwitterUser.find(users[0].id).created_at).to be < TwitterUser.find(users[1].id).created_at
     end
   end
 
