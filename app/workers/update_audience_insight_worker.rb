@@ -5,7 +5,7 @@ class UpdateAudienceInsightWorker
 
   def perform(uid, options = {})
     queue = RunningQueue.new(self.class)
-    return if queue.exists?(uid)
+    return if !options['skip_queue'] && queue.exists?(uid)
     queue.add(uid)
 
     if options['enqueued_at'].blank? || Time.zone.parse(options['enqueued_at']) < Time.zone.now - 10.minute
@@ -22,7 +22,6 @@ class UpdateAudienceInsightWorker
   end
 
   def do_perform(uid)
-
     insight = AudienceInsight.find_or_initialize_by(uid: uid)
     return if insight.fresh?
 
