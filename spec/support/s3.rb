@@ -5,21 +5,26 @@ module StoreToFile
     d
   end
 
-  def store(twitter_user_id, body)
-    File.write(File.join(dir, twitter_user_id.to_s), body)
+  def store(key, body)
+    raise 'key is nil' if key.nil?
+    File.write(File.join(dir, key.to_s), body)
   end
 
-  def fetch(twitter_user_id)
-    File.read(File.join(dir, twitter_user_id.to_s))
+  def fetch(key)
+    raise 'key is nil' if key.nil?
+    File.read(File.join(dir, key.to_s))
   rescue Errno::ENOENT => e
     raise unless e.message.start_with?('No such file or directory')
   end
 end
 
-S3::Friendship.send(:extend, StoreToFile)
-S3::Followership.send(:extend, StoreToFile)
-S3::Profile.send(:extend, StoreToFile)
-
-TwitterDB::S3::Friendship.send(:extend, StoreToFile)
-TwitterDB::S3::Followership.send(:extend, StoreToFile)
-TwitterDB::S3::Profile.send(:extend, StoreToFile)
+[
+    S3::Friendship,
+    S3::Followership,
+    S3::Profile,
+    TwitterDB::S3::Friendship,
+    TwitterDB::S3::Followership,
+    TwitterDB::S3::Profile
+].each do |klass|
+  klass.send(:extend, StoreToFile)
+end

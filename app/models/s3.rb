@@ -48,6 +48,7 @@ module S3
     end
 
     def store(key, body)
+      raise 'key is nil' if key.nil?
       ApplicationRecord.benchmark("#{self} Store by #{key}", level: :debug) do
         client.put_object(bucket: bucket_name, key: key.to_s, body: body)
         cache.write(key.to_s, body)
@@ -55,6 +56,7 @@ module S3
     end
 
     def fetch(key)
+      raise 'key is nil' if key.nil?
       ApplicationRecord.benchmark("#{self} Fetch by #{key}", level: :debug) do
         cache.fetch(key.to_s) do
           client.get_object(bucket: bucket_name, key: key.to_s).body.read
