@@ -55,7 +55,24 @@ RSpec.describe Concerns::TwitterUser::Calculator do
       before do
         allow(twitter_user).to receive(:mentions).and_return([])
       end
+    end
+  end
 
+  describe '#calc_unfriend_uids' do
+    let(:builder) { UnfriendsBuilder.new(twitter_user) }
+    before { twitter_user.instance_variable_set(:@unfriends_builder, builder) }
+    it do
+      expect(builder).to receive(:unfriends).with(no_args).and_call_original
+      twitter_user.calc_unfriend_uids
+    end
+  end
+
+  describe '#calc_unfollower_uids' do
+    let(:builder) { UnfriendsBuilder.new(twitter_user) }
+    before { twitter_user.instance_variable_set(:@unfriends_builder, builder) }
+    it do
+      expect(builder).to receive(:unfollowers).with(no_args).and_call_original
+      twitter_user.calc_unfollower_uids
     end
   end
 end

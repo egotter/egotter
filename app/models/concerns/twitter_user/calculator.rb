@@ -57,11 +57,15 @@ module Concerns::TwitterUser::Calculator
     calc_unfriend_uids & calc_unfollower_uids
   end
 
+  def unfriends_builder
+    @unfriends_builder ||= UnfriendsBuilder.new(self)
+  end
+
   def calc_unfriend_uids
-    UnfriendsBuilder.new(self).unfriends
+    unfriends_builder.unfriends.flatten
   end
 
   def calc_unfollower_uids
-    UnfriendsBuilder.new(self).unfollowers
+    unfriends_builder.unfollowers.flatten
   end
 end
