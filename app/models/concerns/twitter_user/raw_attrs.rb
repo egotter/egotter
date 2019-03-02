@@ -105,7 +105,15 @@ module Concerns::TwitterUser::RawAttrs
         @raw_attrs
       else
         text = S3::Profile.find_by(twitter_user_id: id)[:user_info]
-        text = user_info if text.blank?
+
+        # There is a case that user_info is not selected.
+        text = user_info if text.blank? && respond_to?(:user_info)
+
+        if text.blank?
+          logger.warn {"Both S3::Profile[:user_info] and user_info are blank #{id}"}
+          text = '{}'
+        end
+
         @raw_attrs = Hashie::Mash.new(JSON.parse(text))
       end
     end
