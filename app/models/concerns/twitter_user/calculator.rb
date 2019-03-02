@@ -58,46 +58,10 @@ module Concerns::TwitterUser::Calculator
   end
 
   def calc_unfriend_uids
-    ApplicationRecord.benchmark("#{self.class} #{__method__} #{id} #{uid}") do
-      users = TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :friends_size).order(created_at: :asc)
-      S3::Friendship.where(twitter_user_ids: users.map(&:id))
-
-      users.each_cons(2).map do |older, newer|
-        next if newer.nil? || older.nil? || newer.friends_size == 0
-        older.friend_uids - newer.friend_uids
-      end.compact.flatten.reverse
-    end
+    UnfriendsBuilder.new(self).unfriends
   end
 
   def calc_unfollower_uids
-    ApplicationRecord.benchmark("#{self.class} #{__method__} #{id} #{uid}") do
-      users = TwitterUser.where('created_at <= ?', created_at).with_friends.where(uid: uid).select(:id, :followers_size).order(created_at: :asc)
-      S3::Followership.where(twitter_user_ids: users.map(&:id))
-
-      users.each_cons(2).map do |older, newer|
-        next if newer.nil? || older.nil? || newer.followers_size == 0
-        older.follower_uids - newer.follower_uids
-      end.compact.flatten.reverse
-    end
-  end
-
-  def calc_new_unfriend_uids
-    older = TwitterUser.where('created_at < ?', created_at).with_friends.where(uid: uid).select(:id).order(created_at: :desc).limit(1).first
-    older ? older.friend_uids - friend_uids : []
-  end
-
-  def calc_new_unfollower_uids
-    older = TwitterUser.where('created_at < ?', created_at).with_friends.where(uid: uid).select(:id).order(created_at: :desc).limit(1).first
-    older ? older.follower_uids - follower_uids : []
-  end
-
-  def calc_new_friend_uids
-    older = TwitterUser.where('created_at < ?', created_at).with_friends.where(uid: uid).select(:id).order(created_at: :desc).limit(1).first
-    older ? friend_uids - older.friend_uids : []
-  end
-
-  def calc_new_follower_uids
-    older = TwitterUser.where('created_at < ?', created_at).with_friends.where(uid: uid).select(:id).order(created_at: :desc).limit(1).first
-    older ? follower_uids - older.follower_uids : []
+    UnfriendsBuilder.new(self).unfollowers
   end
 end

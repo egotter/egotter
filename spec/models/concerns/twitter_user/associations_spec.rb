@@ -17,43 +17,55 @@ RSpec.describe Concerns::TwitterUser::Associations do
 
   describe '#unfriendships' do
     let(:copy1) do
-      build(:twitter_user, uid: twitter_user.uid, screen_name: twitter_user.screen_name, created_at: twitter_user.created_at + 1.second)
+      build(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at + 1.second)
     end
     let(:copy2) do
-      build(:twitter_user, uid: copy1.uid, screen_name: copy1.screen_name, created_at: copy1.created_at + 1.second)
+      build(:twitter_user, uid: copy1.uid, created_at: copy1.created_at + 1.second)
     end
 
     before do
       copy1.save(validate: false)
-      copy2.save(validate: false)
       S3::Friendship.import_from!(copy1.id, copy1.uid, copy1.screen_name, twitter_user.friend_uids)
-      S3::Friendship.import_from!(copy2.id, copy2.uid, copy2.screen_name, [twitter_user.friend_uids[0]])
     end
 
-    it 'returns one uid' do
-      expect(copy1.calc_unfriend_uids.size).to eq(0)
-      expect(copy2.calc_unfriend_uids.size).to eq(1)
+    context 'Not removed' do
+      it { expect(copy1.calc_unfriend_uids.size).to eq(0) }
+    end
+
+    context 'Removed from 1 user' do
+      before do
+        copy2.save(validate: false)
+        S3::Friendship.import_from!(copy2.id, copy2.uid, copy2.screen_name, [twitter_user.friend_uids[0]])
+      end
+
+      it { expect(copy2.calc_unfriend_uids.size).to eq(1) }
     end
   end
 
   describe '#unfollowerships' do
     let(:copy1) do
-      build(:twitter_user, uid: twitter_user.uid, screen_name: twitter_user.screen_name, created_at: twitter_user.created_at + 1.second)
+      build(:twitter_user, uid: twitter_user.uid, created_at: twitter_user.created_at + 1.second)
     end
     let(:copy2) do
-      build(:twitter_user, uid: copy1.uid, screen_name: copy1.screen_name, created_at: copy1.created_at + 1.second)
+      build(:twitter_user, uid: copy1.uid, created_at: copy1.created_at + 1.second)
     end
 
     before do
       copy1.save(validate: false)
-      copy2.save(validate: false)
       S3::Followership.import_from!(copy1.id, copy1.uid, copy1.screen_name, twitter_user.follower_uids)
-      S3::Followership.import_from!(copy2.id, copy2.uid, copy2.screen_name, [twitter_user.follower_uids[0]])
     end
 
-    it 'returns one uid' do
-      expect(copy1.calc_unfollower_uids.size).to eq(0)
-      expect(copy2.calc_unfollower_uids.size).to eq(1)
+    context 'Not removed' do
+      it { expect(copy1.calc_unfollower_uids.size).to eq(0) }
+    end
+
+    context 'Removed from 1 user' do
+      before do
+        copy2.save(validate: false)
+        S3::Followership.import_from!(copy2.id, copy2.uid, copy2.screen_name, [twitter_user.follower_uids[0]])
+      end
+
+      it { expect(copy2.calc_unfollower_uids.size).to eq(1) }
     end
   end
 end
