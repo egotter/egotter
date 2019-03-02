@@ -17,7 +17,7 @@ module Concerns::TwitterUser::Utils
       where('created_at < ?', time)
     end
 
-    def with_friends
+    def creation_completed
       # friends_size != 0 AND followers_size != 0
       where.not(friends_size: 0, followers_size: 0)
     end
