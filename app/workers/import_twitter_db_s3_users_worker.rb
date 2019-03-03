@@ -6,6 +6,8 @@ class ImportTwitterDbS3UsersWorker
     Timeout.timeout(10) do
       do_perform(uids)
     end
+
+    logger.info "Processing count #{processing_count}, Retry in #{retry_in}"
   rescue Timeout::Error => e
     logger.info "#{e.class}: #{e.message} #{uids.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")
@@ -13,11 +15,15 @@ class ImportTwitterDbS3UsersWorker
   end
 
   def retry_in
-    60 + rand(120)
+    busy? ? 60 + rand(120) : 1
   end
 
   def processing_count
-    SidekiqStats.busy?('sidekiq_misc') ? 3 : 10
+    busy? ? 3 : 10
+  end
+
+  def busy?
+    @busy ||= SidekiqStats.busy?('sidekiq_misc')
   end
 
   def do_perform(uids)
