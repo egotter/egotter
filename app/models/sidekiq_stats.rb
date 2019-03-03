@@ -41,4 +41,17 @@ class SidekiqStats
   def to_h
     @stats
   end
+
+  BUSY_COUNT = 1
+
+  class << self
+    def busy?(type)
+      process = Sidekiq::ProcessSet.new.find {|p| p['tag'] == "egotter:#{type}"}
+      if process
+        process['busy'] > BUSY_COUNT
+      else
+        false
+      end
+    end
+  end
 end

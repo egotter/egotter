@@ -16,11 +16,15 @@ class ImportTwitterDbS3UsersWorker
     60 + rand(120)
   end
 
+  def processing_count
+    SidekiqStats.busy?('sidekiq_misc') ? 3 : 10
+  end
+
   def do_perform(uids)
     persisted_uids = TwitterDB::User.where(uid: uids, updated_at: 1.hour.ago..Time.zone.now).pluck(:uid)
     logger.debug {"uids #{uids.size}, persisted_uids #{persisted_uids.size}"}
 
-    target_uids = persisted_uids.take(3)
+    target_uids = persisted_uids.take(processing_count)
 
     TwitterDB::User.where(uid: target_uids).select(:id, :uid, :screen_name, :user_info).each do |user|
       TwitterDB::S3::Profile.import_from!(user.uid, user.screen_name, user.user_info)
