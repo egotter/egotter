@@ -13,7 +13,7 @@
   = t('common.show.need_sign_in', user: twitter_user.mention_name)
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
-.follow-box.alert.alert-warning.alert-dismissable
+.follow-box.alert.alert-warning.alert-dismissable{data: {url: check_follow_path}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_follow', user: twitter_user.mention_name)
   = link_to(t('common.show.follow'), sign_in_path(via: build_via('follow_box'), redirect_path: timeline_path(twitter_user), follow: true), class: 'btn btn-default btn-sm')
@@ -38,8 +38,7 @@
     var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox;
 
     function checkFollow () {
-      var url = '#{check_follow_path}';
-      $.getJSON(url, function (res) {
+      $.getJSON($followBox.data('url'), function (res) {
         console.log('checkFollow', res);
 
         if (!res.follow) {

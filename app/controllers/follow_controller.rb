@@ -39,7 +39,10 @@ class FollowController < ApplicationController
   end
 
   def check
-    follow = Bot.api_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID)
+    follow = request_context_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID)
     render json: {follow: follow}
+  rescue Twitter::Error::Forbidden => e
+    raise if e.message != 'Could not determine source user.'
+    render json: {follow: nil}
   end
 end
