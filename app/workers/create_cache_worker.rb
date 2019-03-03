@@ -14,8 +14,13 @@ class CreateCacheWorker
     end
 
     ApplicationRecord.benchmark("#{self.class} Create cache #{values}", level: :debug) do
-      do_perform(values)
+      Timeout.timeout(10) do
+        do_perform(values)
+      end
     end
+  rescue Timeout::Error => e
+    logger.info "#{e.class}: #{e.message} #{values}"
+    logger.info e.backtrace.join("\n")
   end
 
   def do_perform(values)

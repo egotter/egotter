@@ -18,6 +18,7 @@ class UpdateAudienceInsightWorker
     end
   rescue Timeout::Error => e
     logger.info "#{e.class}: #{e.message} #{uid}"
+    logger.info e.backtrace.join("\n")
     self.class.perform_in(600 + rand(120), uid, options)
   end
 
