@@ -7,7 +7,7 @@ class SendMetricsToSlackWorker
       [klass.to_s, klass.where(created_at: 1.hour.ago..Time.zone.now).size]
     end.to_h
 
-    counts['rt:activeUsers' => GoogleAnalyticsClient.new.active_users]
+    counts['rt:activeUsers'] = GoogleAnalyticsClient.new.active_users
 
     send_message(counts.to_s)
   rescue => e
