@@ -44,6 +44,13 @@ class CreateCacheWorker
 
     Parallel.each(threads, in_threads: 3, &:call)
 
+  rescue Twitter::Error::NotFound => e
+    if e.message == 'User not found.'
+      logger.info "#{e.class}: #{e.message} #{values}"
+    else
+      logger.warn "#{e.class}: #{e.message} #{values}"
+    end
+    logger.info e.backtrace.join("\n")
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       user.update(authorized: false)
