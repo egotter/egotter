@@ -15,13 +15,19 @@ class SidekiqStats
       times = matches.select {|m| m[:worker] == worker}.map {|m| m[:running_time]}.map(&:to_f)
       stats[worker] = {
           size: times.size,
-          avg: times.sum / times.size,
-          max: times.max,
-          min: times.min
+          avg: sprintf("%.3f", divide(times.sum, times.size)),
+          max: sprintf("%.3f", times.max),
+          min: sprintf("%.3f", times.min)
       }
     end
 
     @stats = stats
+  end
+
+  def divide(num1, num2)
+    num1 / num2
+  rescue ZeroDivisionError => e
+    0
   end
 
   def to_s

@@ -3,7 +3,7 @@ class SendMetricsToSlackWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform
-    send_log_metrics
+    send_table_metrics
     send_google_analytics_metrics
     send_sidekiq_queue_metrics
     send_sidekiq_worker_metrics
@@ -12,7 +12,7 @@ class SendMetricsToSlackWorker
     logger.info e.backtrace.join("\n")
   end
 
-  def send_log_metrics
+  def send_table_metrics
     logs_count =
         [SearchLog, SignInLog, TwitterUser, SearchHistory, Job].map do |klass|
           [klass.to_s, klass.where(created_at: 1.hour.ago..Time.zone.now).size]
@@ -34,8 +34,11 @@ class SendMetricsToSlackWorker
   end
 
   def send_sidekiq_worker_metrics
-    workers = SidekiqStats.new('sidekiq_misc').to_s
-    send_message(workers.to_s)
+    send_message(SidekiqStats.new('sidekiq_misc').to_s)
+  end
+
+  def send_nginx_metrics
+    send_message(NginxStats.new.to_s)
   end
 
   URL = ENV['SLACK_METRICS_WEBHOOK_URL']
