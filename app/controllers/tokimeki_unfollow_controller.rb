@@ -28,8 +28,19 @@ class TokimekiUnfollowController < UnfriendsAndUnfollowers
       return redirect_to root_path, notice: t('.finish')
     end
 
-    friend_id = friend_uids[@user.processed_count]
-    @friend = Hashie::Mash.new(request_context_client.user(friend_id))
+    friend_id = @friend = nil
+    begin
+      friend_id = friend_uids[@user.processed_count]
+      @friend = Hashie::Mash.new(request_context_client.user(friend_id))
+    rescue Twitter::Error::NotFound => e
+      if e.messag == 'User not found.'
+        @user.increment(:processed_count).save!
+        retry
+      else
+        raise
+      end
+    end
+
     @statuses = request_context_client.user_timeline(friend_id, count: 100).select {|s| !s[:text].to_s.starts_with?('@')}.take(20).map {|s| Hashie::Mash.new(s)}
 
     @twitter_user = TwitterUser.exists?(friend_id) ? TwitterUser.latest_by(uid: friend_id) : TwitterUser.build_by(user: @friend)
