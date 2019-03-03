@@ -3,24 +3,39 @@ class SendMetricsToSlackWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform
+    send_log_metrics
+    send_google_analytics_metrics
+    send_sidekiq_queue_metrics
+    send_sidekiq_worker_metrics
+  rescue => e
+    logger.warn "#{e.class} #{e.message}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  def send_log_metrics
     logs_count =
         [SearchLog, SignInLog, TwitterUser, SearchHistory, Job].map do |klass|
           [klass.to_s, klass.where(created_at: 1.hour.ago..Time.zone.now).size]
         end.to_h
+    send_message(logs_count.to_s)
+  end
 
+  def send_google_analytics_metrics
     google_analytics = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
+    send_message(google_analytics.to_s)
+  end
 
-    sidekiq =
+  def send_sidekiq_queue_metrics
+    queues =
         Sidekiq::Queue.all.select {|queue| queue.latency > 0}.map do |queue|
           {name: queue.name, size: queue.size, latency: queue.latency}
         end
+    send_message(queues.to_s)
+  end
 
-    send_message(logs_count.to_s)
-    send_message(google_analytics.to_s)
-    send_message(sidekiq.to_s)
-  rescue => e
-    logger.warn "#{e.class} #{e.message}"
-    logger.info e.backtrace.join("\n")
+  def send_sidekiq_worker_metrics
+    workers = SidekiqStats.new('sidekiq_misc').to_s
+    send_message(workers.to_s)
   end
 
   URL = ENV['SLACK_METRICS_WEBHOOK_URL']
