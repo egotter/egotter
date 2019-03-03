@@ -3,13 +3,21 @@ class SendMetricsToSlackWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform
-    counts = [SearchLog, SignInLog, TwitterUser, SearchHistory, Job].map do |klass|
-      [klass.to_s, klass.where(created_at: 1.hour.ago..Time.zone.now).size]
-    end.to_h
+    logs_count =
+        [SearchLog, SignInLog, TwitterUser, SearchHistory, Job].map do |klass|
+          [klass.to_s, klass.where(created_at: 1.hour.ago..Time.zone.now).size]
+        end.to_h
 
-    counts['rt:activeUsers'] = GoogleAnalyticsClient.new.active_users
+    google_analytics = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
 
-    send_message(counts.to_s)
+    sidekiq =
+        Sidekiq::Queue.all.select {|queue| queue.latency > 0}.map do |queue|
+          {name: queue.name, size: queue.size, latency: queue.latency}
+        end
+
+    send_message(logs_count.to_s)
+    send_message(google_analytics.to_s)
+    send_message(sidekiq.to_s)
   rescue => e
     logger.warn "#{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
