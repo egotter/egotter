@@ -41,6 +41,10 @@ module Concerns::TwitterUser::Utils
         (followers_size >= 0 && followers_size != follower_uids.size)
   end
 
+  def import_batch_failed?
+    friends_size == 0 && followers_size == 0
+  end
+
   def inconsistent_because_import_failed?
     friends_size == -1 && followers_size == -1
   end

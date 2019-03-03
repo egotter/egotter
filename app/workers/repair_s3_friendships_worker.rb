@@ -1,6 +1,6 @@
 class RepairS3FriendshipsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform(twitter_user_id, options = {})
     queue = RunningQueue.new(self.class)
@@ -11,7 +11,7 @@ class RepairS3FriendshipsWorker
   end
 
   def fix_relationship(user, klass, relation_klass, uids_key, size_key, exist, file)
-    if import_batch_failed?(user)
+    if user.import_batch_failed?
       if !exist || file[uids_key].nil? || file[uids_key].any?
         klass.import_from!(user.id, user.uid, user.screen_name, [])
         print("#{klass} is updated with empty array", user)
@@ -85,9 +85,5 @@ class RepairS3FriendshipsWorker
   def print(reason, user)
     user = user.slice(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).tap {|h| h[:user_info] = h[:user_info].truncate(10)}
     logger.warn "#{reason} #{s3_exist.values} #{user}"
-  end
-
-  def import_batch_failed?(user)
-    user.friends_size == 0 && user.followers_size == 0
   end
 end
