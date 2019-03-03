@@ -39,10 +39,18 @@ class FollowController < ApplicationController
   end
 
   def check
+    tries ||= 3
     follow = request_context_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID)
+
     render json: {follow: follow}
   rescue Twitter::Error::Forbidden => e
     raise if e.message != 'Could not determine source user.'
     render json: {follow: nil}
+  rescue Twitter::Error::ServiceUnavailable => e
+    if e.message == 'Over capacity' && (tries -= 1) > 0
+      retry
+    else
+      raise
+    end
   end
 end
