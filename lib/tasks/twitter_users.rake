@@ -68,7 +68,7 @@ namespace :twitter_users do
     columns = %i(id uid friends_size followers_size)
 
     TwitterUser.select(*columns).find_each(start: start, batch_size: 1000) do |twitter_user|
-      if twitter_user.inconsistent_because_import_didnt_run?
+      if twitter_user.import_batch_failed?
         puts "#{twitter_user.inspect} friendships: #{twitter_user.friendships.size} followerships: #{twitter_user.followerships.size} latest: #{twitter_user.latest?} one: #{twitter_user.one?}"
         found_ids << twitter_user.id
       else

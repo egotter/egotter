@@ -36,17 +36,9 @@ module Concerns::TwitterUser::Utils
     friends_size == uids1.size && followers_size == uids2.size
   end
 
-  def inconsistent_because_import_didnt_run?
-    (friends_size >= 0 && friends_size != friend_uids.size) ||
-        (followers_size >= 0 && followers_size != follower_uids.size)
-  end
-
   def import_batch_failed?
-    friends_size == 0 && followers_size == 0
-  end
-
-  def inconsistent_because_import_failed?
-    friends_size == -1 && followers_size == -1
+    Math.abs(friends_size - friends_count) > 1 ||
+        Math.abs(followers_size - followers_count) > 1
   end
 
   # #diff calls this method in context of new record
