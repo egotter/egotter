@@ -1,10 +1,10 @@
 require 'aws-sdk-cloudwatch'
 
-class CloudwatchClient
+class CloudWatchClient
   REGION = 'ap-northeast-1'
 
   def initialize
-    @cloudwatch = Aws::CloudWatch::Client.new(region: REGION)
+    @client = Aws::CloudWatch::Client.new(region: REGION)
   end
 
   def put_metric_data(metric_name, value, namespace:, dimensions: nil)
@@ -20,6 +20,6 @@ class CloudwatchClient
         }
       ]
     }
-    @cloudwatch.put_metric_data(values)
+    @client.put_metric_data(values)
   end
 end
