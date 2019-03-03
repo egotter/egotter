@@ -13,11 +13,7 @@ class DetectFailureWorker
   def do_perform(twitter_user_id)
     user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info, :created_at).find(twitter_user_id)
 
-    if !user.import_batch_failed? &&
-        user.s3_exist.values.all? {|v| v} &&
-        user.s3_file[:friend][:friend_uids]&.size == user.friends_size &&
-        user.s3_file[:follower][:follower_uids]&.size == user.followers_size
-    else
+    if user.s3_need_fix?
       logger.warn "Failed something. #{twitter_user_id} #{user.created_at}"
     end
 
