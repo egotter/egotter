@@ -29,6 +29,7 @@
 /data/bot.json
 /data/cluster_bad_words.json
 /data/cluster_good_words.json
+/.google
 /.env
 /public/assets
 /.rbenv-gemsets
