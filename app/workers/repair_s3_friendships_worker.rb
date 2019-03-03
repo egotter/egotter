@@ -54,32 +54,16 @@ class RepairS3FriendshipsWorker
   end
 
   def do_perform(twitter_user_id)
-    @user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).find(twitter_user_id)
+    user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).find(twitter_user_id)
 
-    fix_relationship(@user, S3::Friendship, Friendship, :friend_uids, :friends_size, s3_exist[:friend], s3_file[:friend])
-    fix_relationship(@user, S3::Followership, Followership, :follower_uids, :followers_size, s3_exist[:follower], s3_file[:follower])
-    fix_profile(@user, s3_exist[:profile], s3_file[:profile])
+    fix_relationship(user, S3::Friendship, Friendship, :friend_uids, :friends_size, user.s3_exist[:friend], user.s3_file[:friend])
+    fix_relationship(user, S3::Followership, Followership, :follower_uids, :followers_size, user.s3_exist[:follower], user.s3_file[:follower])
+    fix_profile(user, user.s3_exist[:profile], user.s3_file[:profile])
 
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{@user.inspect}"
+    logger.warn "#{e.class}: #{e.message} #{user.inspect}"
     logger.info e.backtrace.join("\n")
     nil
-  end
-
-  def s3_exist
-    @s3_exist ||= {
-        friend: S3::Friendship.cache_disabled {S3::Friendship.exists?(twitter_user_id: @user.id)},
-        follower: S3::Followership.cache_disabled {S3::Followership.exists?(twitter_user_id: @user.id)},
-        profile: S3::Profile.cache_disabled {S3::Profile.exists?(twitter_user_id: @user.id)}
-    }
-  end
-
-  def s3_file
-    @s3_file ||= {
-        friend: S3::Friendship.cache_disabled {S3::Friendship.find_by(twitter_user_id: @user.id)},
-        follower: S3::Followership.cache_disabled {S3::Followership.find_by(twitter_user_id: @user.id)},
-        profile: S3::Profile.cache_disabled {S3::Profile.find_by(twitter_user_id: @user.id)}
-    }
   end
 
   def print(reason, user)
