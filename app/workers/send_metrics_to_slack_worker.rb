@@ -11,7 +11,7 @@ class SendMetricsToSlackWorker
 
     send_message(counts.to_s)
   rescue => e
-    logger.warn "#{e.class}: #{e.message}"
+    logger.warn "#{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
   end
 
