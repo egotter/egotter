@@ -32,6 +32,9 @@ class UpdateAudienceInsightWorker
     end
 
     insight.save!
+  rescue ActiveRecord::RecordNotUnique => e
+    logger.info "#{e.class}: #{e.message} #{uid}"
+    logger.info e.backtrace.join("\n")
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{uid}"
     logger.info e.backtrace.join("\n")
