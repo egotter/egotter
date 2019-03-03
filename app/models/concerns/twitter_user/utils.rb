@@ -37,8 +37,8 @@ module Concerns::TwitterUser::Utils
   end
 
   def import_batch_failed?
-    Math.abs(friends_size - friends_count) > 1 ||
-        Math.abs(followers_size - followers_count) > 1
+    (friends_size - friends_count).abs > 1 ||
+        (followers_size - followers_count).abs > 1
   end
 
   # #diff calls this method in context of new record
