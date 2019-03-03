@@ -28,13 +28,14 @@ class SendMetricsToSlackWorker
   def send_sidekiq_queue_metrics
     queues =
         Sidekiq::Queue.all.select {|queue| queue.latency > 0}.map do |queue|
-          {name: queue.name, size: queue.size, latency: queue.latency}
+          [queue.name, {size: queue.size, latency: queue.latency}].to_s
         end
-    send_message(queues.to_s)
+    send_message(queues.join("\n"))
   end
 
   def send_sidekiq_worker_metrics
-    send_message(SidekiqStats.new('sidekiq_misc').to_s)
+    stats = SidekiqStats.new('sidekiq_misc').map {|key, value| [key, value].to_s}
+    send_message(stats.join("\n"))
   end
 
   def send_nginx_metrics

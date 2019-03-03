@@ -30,6 +30,10 @@ class SidekiqStats
     0
   end
 
+  def map(*args, &block)
+    @stats.map(*args, &block)
+  end
+
   def to_s
     @stats.to_s
   end
