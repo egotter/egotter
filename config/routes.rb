@@ -137,7 +137,6 @@ Rails.application.routes.draw do
   resources :update_histories, only: :show, param: :uid
   resources :background_search_logs, only: :show, param: :uid
   resources :jobs, only: :show, param: :uid
-  resources :modal_open_logs, only: :create
   resources :polling_logs, only: :create
 
   get 'load_adsense', to: 'adsense#load', as: :load_adsense

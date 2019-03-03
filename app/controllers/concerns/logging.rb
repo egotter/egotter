@@ -136,28 +136,6 @@ module Concerns::Logging
     logger.info e.backtrace.take(10).join("\n")
   end
 
-  def create_modal_open_log(via)
-    referral = find_referral(pushed_referers)
-
-    attrs = {
-      session_id:  fingerprint,
-      user_id:     current_user_id,
-      via:         via,
-      device_type: request.device_type,
-      os:          request.os,
-      browser:     request.browser,
-      user_agent:  truncated_user_agent,
-      referer:     truncated_referer,
-      referral:    referral,
-      channel:     find_channel(referral),
-      created_at:  Time.zone.now
-    }
-    CreateModalOpenLogWorker.perform_async(attrs)
-  rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
-    logger.info e.backtrace.take(10).join("\n")
-  end
-
   def create_polling_log(uid, screen_name, action:, status:, time:, retry_count:)
     referral = find_referral(pushed_referers)
 
