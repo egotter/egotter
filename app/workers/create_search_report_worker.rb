@@ -25,8 +25,15 @@ class CreateSearchReportWorker
     handle_unauthorized_exception(e, user_id: user_id)
   rescue Twitter::Error::Forbidden => e
     handle_forbidden_exception(e, user_id: user_id)
+  rescue Twitter::Error::Forbidden => e
+    if e.message == 'You cannot send messages to users you have blocked.'
+      logger.info "#{e.class}: #{e.message.truncate(150)} #{user_id}"
+    else
+      logger.warn "#{e.class}: #{e.message.truncate(150)} #{user_id}"
+    end
+    logger.info e.backtrace.join("\n")
   rescue => e
     logger.warn "#{e.class}: #{e.message.truncate(150)} #{user_id}"
-    logger.warn e.backtrace.join("\n")
+    logger.info e.backtrace.join("\n")
   end
 end
