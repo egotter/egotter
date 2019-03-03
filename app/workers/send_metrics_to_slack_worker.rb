@@ -28,7 +28,7 @@ class SendMetricsToSlackWorker
   def send_sidekiq_queue_metrics
     queues =
         Sidekiq::Queue.all.select {|queue| queue.latency > 0}.map do |queue|
-          [queue.name, {size: queue.size, latency: queue.latency}].to_s
+          [queue.name, {size: queue.size, latency: sprintf("%.3f", queue.latency)}].to_s
         end
     send_message(queues.join("\n"))
   end
