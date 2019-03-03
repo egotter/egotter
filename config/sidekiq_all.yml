@@ -23,7 +23,6 @@
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
   - UpdateAudienceInsightWorker
-  - UpdateAuthorizedWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
   - UpdateSearchHistoriesWorker

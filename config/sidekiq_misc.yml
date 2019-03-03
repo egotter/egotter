@@ -16,7 +16,6 @@
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker
   - UpdateAudienceInsightWorker
-  - UpdateAuthorizedWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
   - UpdateSearchReportWorker
