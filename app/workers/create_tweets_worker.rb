@@ -1,6 +1,6 @@
 class CreateTweetsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform(keyword)
     json = Bot.api_client.search(keyword, count: 10).take(5).to_json

@@ -9,11 +9,7 @@
   - CreatePromptReportWorker
   - CreateScoreWorker
   - CreateSearchReportWorker
-  - CreateTweetsWorker
-  - CreateUnfollowWorker
   - CreateWelcomeMessageWorker
-  - DeleteTweetsWorker
-  - FollowEgotterWorker
   - ImportDynamodbFriendshipsWorker
   - ImportDynamodbFollowershipsWorker
   - ImportS3FriendshipsWorker
@@ -27,10 +23,7 @@
   - UpdateNewsReportWorker
   - UpdateWelcomeMessageWorker
 
-  - RepairS3FriendshipsWorker
   - ResetTooManyRequestsWorker
-  - TweetEgotterWorker
-  - SetSearchCountWorker
   - UpdateSearchHistoriesWorker
   - UpdateUsageStatWorker
   - rollbar
