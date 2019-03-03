@@ -24,7 +24,7 @@ module TwitterHelper
   def tweet_link(tweet)
     time_ago = time_ago_in_words(tweet.try(:tweeted_at) || tweet.created_at)
     tweet_id = tweet.try(:tweet_id) || tweet.id
-    link_to time_ago, tweet_url(tweet.user.screen_name, tweet_id), target: '_blank', rel: 'nofollow'
+    link_to time_ago, tweet_url(tweet.user&.screen_name, tweet_id), target: '_blank', rel: 'nofollow'
   end
 
   def intent_url(text, params = {})
