@@ -1,15 +1,13 @@
 Sidekiq::Logging.logger.level = Logger::DEBUG
 
 module UniqueJobUtil
-  module_function
-
   def perform(worker, args, queue, &block)
     if worker.respond_to?(:unique_key)
       options = args.dup.extract_options!
       unique_key = worker.unique_key(*args)
 
       if !options['skip_unique'] && queue.exists?(unique_key)
-        worker.logger.info "Server:#{worker.class} Skip duplicate job. #{args.inspect.truncate(100)}"
+        worker.logger.info "#{self.class}:#{worker.class} Skip duplicate job. #{args.inspect.truncate(100)}"
 
         if worker.respond_to?(:after_skip)
           worker.after_skip(*args)
@@ -26,23 +24,31 @@ module UniqueJobUtil
 end
 
 class SidekiqServerUniqueJob
+  include UniqueJobUtil
+
   def initialize(queue_class)
     @queue_class = queue_class
   end
 
   def call(worker, msg, queue, &block)
-    UniqueJobUtil.perform(worker, msg['args'], @queue_class.new(worker.class), &block)
+    perform(worker, msg['args'], @queue_class.new(worker.class), &block)
   end
 end
 
 class SidekiqClientUniqueJob
+  include UniqueJobUtil
+
   def initialize(queue_class)
     @queue_class = queue_class
   end
 
   def call(worker_class, job, queue, redis_pool, &block)
-    worker_class = worker_class.constantize
-    UniqueJobUtil.perform(worker_class.new, job['args'], @queue_class.new(worker_class), &block)
+    if job.has_key?('at')
+      yield
+    else
+      worker_class = worker_class.constantize
+      perform(worker_class.new, job['args'], @queue_class.new(worker_class), &block)
+    end
   end
 end
 
