@@ -23,7 +23,7 @@ class ResetEgotterLog < ApplicationRecord
   validates :uid, presence: true
   validates :screen_name, presence: true
 
-  def perform(send_dm: false)
+  def perform!(send_dm: false)
     raise "This request has already been finished. #{self.inspect}" if status
 
     user = twitter_user
@@ -35,6 +35,13 @@ class ResetEgotterLog < ApplicationRecord
     send_goodbye_message if send_dm
 
     result
+  end
+
+  def perform(send_dm: false)
+    perform!(send_dm: send_dm)
+  rescue => e
+    logger.warn "#{e.class} #{e.message}"
+    update(error_class: e.class, error_message: e.message.truncate(100))
   end
 
   private
