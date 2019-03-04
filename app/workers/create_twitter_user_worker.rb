@@ -46,7 +46,7 @@ class CreateTwitterUserWorker
       ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now, track_id: track.id)
       UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: track.id, enqueued_at: Time.zone.now)
       CreateScoreWorker.perform_async(uid, track_id: track.id)
-      UpdateAudienceInsightWorker.perform_async(uid)
+      UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
 
       DetectFailureWorker.perform_in(60.seconds, twitter_user.id, enqueued_at: Time.zone.now)
     end
