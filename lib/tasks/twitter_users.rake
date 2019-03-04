@@ -3,55 +3,38 @@ namespace :twitter_users do
   task create: :environment do
     sigint = Util::Sigint.new.trap
 
-    persisted_uids = nil
+    specified_uids = ENV['UIDS'].split(',').map(&:to_i)
+    created_ids = []
 
-    specified_uids =
-      if ENV['UIDS']
-        ENV['UIDS'].remove(/ /).split(',').map(&:to_i)
+    specified_uids.each do |uid|
+      user = User.authorized.find_by(uid: uid)
+      client = user ? user.api_client : Bot.api_client
+
+      builder = TwitterUser.builder(uid).client(client).login_user(user)
+      twitter_user = builder.build
+
+      if twitter_user.errors.any?
+        puts "Validation error: #{uid} #{twitter_user.errors.full_messages.join(', ')}"
+        next
+      end
+
+      TwitterDB::User.import_by(twitter_user: twitter_user)
+
+      if twitter_user.save
+        created_ids << twitter_user.id
+        next
+      end
+
+      if TwitterUser.exists?(uid: twitter_user.uid)
+        puts "Validation error: #{uid} Not changed"
       else
-        User.authorized.pluck(:uid).map(&:to_i).take(500)
-     end
-
-    failed = false
-    processed = []
-    skipped = 0
-    skipped_reasons = []
-    skip_if_persisted = ENV['SKIP'].present?
-
-    specified_uids.each.with_index do |uid, i|
-      next if uid == User::EGOTTER_UID
-      if skip_if_persisted
-        persisted_uids ||= TwitterUser.uniq.pluck(:uid).map(&:to_i)
-        if persisted_uids.include?(uid)
-          skipped += 1
-          skipped_reasons << "Persisted #{uid}"
-          next
-        end
+        puts "Validation error: #{uid} #{twitter_user.errors.full_messages.join(', ')}"
       end
 
-      twitter_user = TwitterUser::Batch.fetch_and_create(uid)
-      processed << twitter_user if twitter_user
-
-      puts("#{i + 1}/#{specified_uids.size}") if (i % 100).zero?
-
-      break if sigint.trapped? || failed
+      break if sigint.trapped?
     end
 
-    if processed.any?
-      puts "\ncreated:"
-      processed.take(500).each do |twitter_user|
-        print "  #{twitter_user.uid} "
-        twitter_user.debug_print_friends
-      end
-    end
-
-    if skipped_reasons.any?
-      puts "\nskipped reasons:"
-      puts skipped_reasons.take(500).map { |r| "  #{r}" }.join("\n")
-    end
-
-    puts "\ncreate #{(sigint.trapped? || failed ? 'suspended:' : 'finished:')}"
-    puts "  uids: #{specified_uids.size}, processed: #{processed.size}, skipped: #{skipped}"
+    puts created_ids.join(',') if created_ids.any?
   end
 
   desc 'check'

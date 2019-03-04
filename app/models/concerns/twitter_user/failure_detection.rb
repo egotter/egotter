@@ -40,7 +40,7 @@ module Concerns::TwitterUser::FailureDetection
     ]
   end
 
-  def S3_force_update_with_empty_values(update_unfriends: false)
+  def S3_force_update_with_empty_values(update_unfriends = false)
     update!(friends_size: 0, followers_size: 0)
     S3::Friendship.import_from!(id, uid, screen_name, [])
     S3::Followership.import_from!(id, uid, screen_name, [])
