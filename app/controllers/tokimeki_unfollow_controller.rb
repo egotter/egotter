@@ -33,7 +33,7 @@ class TokimekiUnfollowController < UnfriendsAndUnfollowers
       friend_id = friend_uids[@user.processed_count]
       @friend = Hashie::Mash.new(request_context_client.user(friend_id))
     rescue Twitter::Error::NotFound => e
-      if e.messag == 'User not found.'
+      if e.message == 'User not found.'
         @user.increment(:processed_count).save!
         retry
       else
