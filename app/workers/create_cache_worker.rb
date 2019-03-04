@@ -7,7 +7,7 @@ class CreateCacheWorker
   end
 
   def timeout_in
-    10.second
+    10.seconds
   end
 
   def expire_in

@@ -2,7 +2,11 @@ require 'digest/md5'
 
 class CreateNotificationMessageWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
+
+  def unique_key(user_id, uid, screen_name, options)
+    uid
+  end
 
   def perform(user_id, uid, screen_name, options)
     user = nil
@@ -13,13 +17,6 @@ class CreateNotificationMessageWorker
     medium = options['medium']
     changes = options['changes'].symbolize_keys! if options['changes']
     log = CreateNotificationMessageLog.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium)
-
-    queue = RunningQueue.new(self.class)
-    if queue.exists?(uid)
-      log.update(status: false, message: "[#{uid}] is recently messaging.")
-      return
-    end
-    queue.add(uid)
 
     token = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")[0...5]
     notification = NotificationMessage.new(user_id: user_id, uid: uid, screen_name: screen_name, context: type, medium: medium, token: token)

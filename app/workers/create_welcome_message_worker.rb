@@ -1,15 +1,15 @@
 class CreateWelcomeMessageWorker
   include Sidekiq::Worker
   include Concerns::WorkerUtils
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
+
+  def unique_key(user_id)
+    user_id
+  end
 
   def perform(user_id)
     user = User.find(user_id)
     return unless user.authorized?
-
-    queue = RunningQueue.new(self.class)
-    return if queue.exists?(user.uid)
-    queue.add(user.uid)
 
     WelcomeMessage.welcome(user.id).deliver
 

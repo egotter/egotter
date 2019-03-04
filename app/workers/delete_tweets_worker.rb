@@ -4,19 +4,19 @@ class DeleteTweetsWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
+  def unique_key(values)
+    DeleteTweetsRequest.find(values['request_id']).user_id
+  end
+
+  def after_skip(values)
+    DeleteTweetsRequest.find(values['request_id']).finished!
+  end
+
   def perform(values)
     destroy_count = 0
     request = DeleteTweetsRequest.find(values['request_id'])
     user = request.user
     log = DeleteTweetsLog.create!(user_id: user.id, request_id: request.id)
-
-    queue = RunningQueue.new(self.class)
-    if !values['skip_recently_enqueued'] && queue.exists?(user.id)
-      log.update(status: false, message: "[#{user.uid}] is recently enqueued.")
-      request.finished!
-      return
-    end
-    queue.add(user.id)
 
     unless user.authorized?
       log.update(status: false, message: "[#{user.screen_name}] is not authorized.")
@@ -32,11 +32,11 @@ class DeleteTweetsWorker
     begin
       destroy_count = request.perform!
     rescue Twitter::Error::TooManyRequests => e
-      DeleteTweetsWorker.perform_in(e.rate_limit.reset_in.to_i, values.merge(skip_recently_enqueued: true))
+      DeleteTweetsWorker.perform_in(e.rate_limit.reset_in.to_i, values.merge(skiq_unique: true))
       save_error(e, log, values)
     rescue Timeout::Error, DeleteTweetsRequest::LoopCountLimitExceeded => e
       save_error(e, log, values)
-      DeleteTweetsWorker.perform_in(60, values.merge(skip_recently_enqueued: true))
+      DeleteTweetsWorker.perform_in(60, values.merge(skiq_unique: true))
     else
       log.update(status: true, message: "#{destroy_count} tweets are destroyed.")
       request.finished!

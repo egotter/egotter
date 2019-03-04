@@ -15,6 +15,11 @@ class SidekiqServerUniqueJob
 
       if !options['skip_unique'] && unique_queueing.exists?(unique_key)
         worker.logger.info "Server:#{worker_class} Skip duplicate job. #{options.inspect}"
+
+        if worker.respond_to?(:after_skip)
+          worker.after_skip(*msg['args'])
+        end
+
         return false
       end
       unique_queueing.add(unique_key)
@@ -40,6 +45,11 @@ class SidekiqClientUniqueJob
 
       if !options['skip_unique'] && unique_queueing.exists?(unique_key)
         worker_instance.logger.info "Client:#{worker_class} Skip duplicate job. #{options.inspect}"
+
+        if worker_instance.respond_to?(:after_skip)
+          worker_instance.after_skip(*msg['args'])
+        end
+
         return false
       end
       unique_queueing.add(unique_key)
@@ -57,7 +67,7 @@ class SidekiqTimeoutJob
           yield
         end
       rescue Timeout::Error => e
-        worker.logger.warn "#{e.class}: #{e.message} #{msg['args']}"
+        worker.logger.warn "#{e.class}: #{e.message.truncate(100)} #{worker.timeout_in} #{msg['args']}"
         worker.logger.info e.backtrace.join("\n")
 
         if worker.respond_to?(:retry_in)
