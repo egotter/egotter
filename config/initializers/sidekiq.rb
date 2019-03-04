@@ -20,7 +20,7 @@ module UniqueJobUtil
       unique_key = worker.unique_key(*args)
 
       if !options['skip_unique'] && queue.exists?(unique_key)
-        worker.logger.info "#{self.class}:#{worker.class} Skip duplicate job. #{args.inspect.inspect.truncate(100)}"
+        worker.logger.info "#{self.class}:#{worker.class} Skip duplicate job. #{args.inspect.truncate(100)}"
 
         send_callback(worker, :after_skip, args)
 
@@ -73,7 +73,7 @@ class SidekiqTimeoutJob
           yield
         end
       rescue Timeout::Error => e
-        worker.logger.warn "#{e.class}: #{e.message} #{worker.timeout_in} #{msg['args'].truncate(100)}"
+        worker.logger.warn "#{e.class}: #{e.message} #{worker.timeout_in} #{msg['args'].inspect.truncate(100)}"
         worker.logger.info e.backtrace.join("\n")
 
         send_callback(worker, :after_timeout, msg['args'])
