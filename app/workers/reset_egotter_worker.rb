@@ -10,6 +10,14 @@ class ResetEgotterWorker
     10.seconds
   end
 
+  def after_timeout(request_id, options = {})
+    ResetEgotterLog.find(request_id).update(error_class: Timeout::Error, error_message: 'Timeout')
+  end
+
+  def retry_in
+    1.minute
+  end
+
   def perform(request_id, options = {})
     log = ResetEgotterLog.find(request_id)
     log.perform(send_dm: true)

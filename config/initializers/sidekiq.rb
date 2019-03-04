@@ -70,6 +70,10 @@ class SidekiqTimeoutJob
         worker.logger.warn "#{e.class}: #{e.message} #{worker.timeout_in} #{msg['args']}"
         worker.logger.info e.backtrace.join("\n")
 
+        if worker.respond_to?(:after_timeout)
+          worker.after_timeout(*msg['args'])
+        end
+
         if worker.respond_to?(:retry_in)
           worker.class.perform_in(worker.retry_in, *msg['args'])
         end
