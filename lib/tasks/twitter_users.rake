@@ -7,15 +7,25 @@ namespace :twitter_users do
     created_ids = []
 
     specified_uids.each do |uid|
+      if TwitterUser.exists?(uid: uid)
+        puts "Already persisted. #{uid}"
+        next
+      end
+
       user = User.authorized.find_by(uid: uid)
       client = user ? user.api_client : Bot.api_client
-
       builder = TwitterUser.builder(uid).client(client).login_user(user)
+
       begin
         twitter_user = builder.build
-      rescue => e
+      rescue Twitter::Error::Unauthorized, Twitter::Error::NotFound => e
         puts "Error: #{uid} #{e.class} #{e.message}"
-        next
+
+        if e.message == 'Not authorized.' || e.message == 'User not found.'
+          next
+        else
+          raise
+        end
       end
 
       if twitter_user.errors.any?
