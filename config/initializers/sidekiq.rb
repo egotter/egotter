@@ -59,6 +59,10 @@ class SidekiqTimeoutJob
       rescue Timeout::Error => e
         worker.logger.warn "#{e.class}: #{e.message} #{msg['args']}"
         worker.logger.info e.backtrace.join("\n")
+
+        if worker.respond_to?(:retry_in)
+          worker.class.perform_in(worker.retry_in, *msg['args'])
+        end
       end
     else
       yield
@@ -71,9 +75,13 @@ class SidekiqExpireJob
     if worker.respond_to?(:expire_in)
       options = msg['args'].dup.extract_options!
 
-      if options['enqueued_at'].blank? || Time.zone.parse(options['enqueued_at']) < Time.zone.now - worker.expire_in
-        worker.logger.info {"Skip expired job. #{options.inspect}"}
-        return false
+      if options['enqueued_at'].blank?
+        worker.logger.warn {"enqueued_at not found. #{options.inspect}"}
+      else
+        if Time.zone.parse(options['enqueued_at']) < Time.zone.now - worker.expire_in
+          worker.logger.info {"Skip expired job. #{options.inspect}"}
+          return false
+        end
       end
     end
     yield

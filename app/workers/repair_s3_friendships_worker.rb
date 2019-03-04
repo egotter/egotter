@@ -2,12 +2,8 @@ class RepairS3FriendshipsWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
-  def perform(twitter_user_id, options = {})
-    queue = RunningQueue.new(self.class)
-    return if !options['skip_queue'] && queue.exists?(twitter_user_id)
-    queue.add(twitter_user_id)
-
-    do_perform(twitter_user_id)
+  def unique_key(twitter_user_id, options = {})
+    twitter_user_id
   end
 
   def fix_relationship(user, klass, relation_klass, uids_key, size_key, exist, file)
@@ -53,7 +49,7 @@ class RepairS3FriendshipsWorker
     end
   end
 
-  def do_perform(twitter_user_id)
+  def perform(twitter_user_id, options = {})
     user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).find(twitter_user_id)
 
     fix_relationship(user, S3::Friendship, Friendship, :friend_uids, :friends_size, user.s3_exist[:friend], user.s3_file[:friend])

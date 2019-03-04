@@ -2,15 +2,11 @@ class DetectFailureWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
-  def perform(twitter_user_id, options = {})
-    queue = RunningQueue.new(self.class)
-    return if !options['skip_queue'] && queue.exists?(twitter_user_id)
-    queue.add(twitter_user_id)
-
-    do_perform(twitter_user_id)
+  def unique_key(twitter_user_id, options = {})
+    twitter_user_id
   end
 
-  def do_perform(twitter_user_id)
+  def perform(twitter_user_id, options = {})
     user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info, :created_at).find(twitter_user_id)
 
     if user.s3_need_fix?

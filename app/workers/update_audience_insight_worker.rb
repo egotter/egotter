@@ -3,30 +3,23 @@ class UpdateAudienceInsightWorker
   include Concerns::WorkerUtils
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
-  def perform(uid, options = {})
-    queue = RunningQueue.new(self.class)
-    return if !options['skip_queue'] && queue.exists?(uid)
-    queue.add(uid)
+  def unique_key(uid, options = {})
+    uid
+  end
 
-    if options['enqueued_at'].blank? || Time.zone.parse(options['enqueued_at']) < Time.zone.now - 10.minute
-      logger.info {"Don't run this job since it is too late."}
-      return
-    end
-
-    Timeout.timeout(10) do
-      do_perform(uid)
-    end
-  rescue Timeout::Error => e
-    logger.info "#{e.class}: #{e.message} #{uid}"
-    logger.info e.backtrace.join("\n")
-    self.class.perform_in(retry_in, uid, options)
+  def timeout_in
+    10.second
   end
 
   def retry_in
     60 + rand(120)
   end
 
-  def do_perform(uid)
+  def expire_in
+    10.minute
+  end
+
+  def perform(uid, options = {})
     insight = AudienceInsight.find_or_initialize_by(uid: uid)
     return if insight.fresh?
 
