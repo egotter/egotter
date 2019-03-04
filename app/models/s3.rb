@@ -64,6 +64,11 @@ module S3
       end
     end
 
+    def delete(key)
+      client.delete_object(bucket: bucket_name, key: key.to_s)
+      cache.delete(key.to_s)
+    end
+
     def exist(key)
       ApplicationRecord.benchmark("#{self} Exist by #{key}", level: :debug) do
         cache.fetch("exist-#{key}") do
@@ -181,6 +186,10 @@ module S3
       parallel(twitter_user_ids) {|id| find_by(twitter_user_id: id)}
     end
 
+    def delete_by(twitter_user_id:)
+      delete(twitter_user_id)
+    end
+
     def import_from!(twitter_user_id, uid, screen_name, uids)
       store(twitter_user_id, encoded_body(twitter_user_id, uid, screen_name, uids))
     end
@@ -238,6 +247,10 @@ module S3
 
     def where(twitter_user_ids:)
       parallel(twitter_user_ids) {|id| find_by(twitter_user_id: id)}
+    end
+
+    def delete_by(twitter_user_id:)
+      delete(twitter_user_id)
     end
 
     def import_by!(twitter_user:)

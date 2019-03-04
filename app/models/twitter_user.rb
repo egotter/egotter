@@ -54,7 +54,7 @@ class TwitterUser < ApplicationRecord
     twitter_user_ids = TwitterUser.where(uid: uid).pluck(:id)
     result = {}
 
-    [UsageStat, Score].each do |klass|
+    [UsageStat, Score, AudienceInsight].each do |klass|
       result[klass.to_s] = klass.where(uid: uid).delete_all
     end
 
@@ -71,6 +71,12 @@ class TwitterUser < ApplicationRecord
 
     [TwitterDB::Status, TwitterDB::Favorite, TwitterDB::Mention].each do |klass|
       result[klass.to_s] = klass.where(uid: uid).delete_all
+    end
+
+    twitter_user_ids.each do |id|
+      S3::Friendship.delete_by(twitter_user_id: id)
+      S3::Followership.delete_by(twitter_user_id: id)
+      S3::Profile.delete_by(twitter_user_id: id)
     end
 
     result[self.class.to_s] = TwitterUser.where(id: twitter_user_ids).delete_all

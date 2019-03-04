@@ -54,6 +54,13 @@ namespace :twitter_users do
     puts created_ids.join(',') if created_ids.any?
   end
 
+  desc 'Reset'
+  task reset: :environment do
+    id = ENV['ID'].to_i
+    user = TwitterUser.find(id)
+    puts "#{id} #{user.reset_data.inspect}"
+  end
+
   desc 'check'
   task check: :environment do
     sigint = Util::Sigint.new.trap
