@@ -4,7 +4,7 @@ class SettingsController < ApplicationController
   before_action :create_search_log
 
   def index
-    @reset_egotter_log = ResetEgotterLog.where(user_id: current_user.id, status: false).exists?
+    @reset_egotter_request = ResetEgotterRequest.not_finished(current_user.id).exists?
   end
 
   def update

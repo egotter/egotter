@@ -16,15 +16,11 @@
 #
 
 class DeleteTweetsRequest < ApplicationRecord
+  include Concerns::Request::Runnable
   belongs_to :user
 
-  def finished!
-    update!(finished_at: Time.zone.now) if finished_at.nil?
-  end
-
-  def finished?
-    !finished_at.nil?
-  end
+  validates :session_id, presence: true
+  validates :user_id, presence: true
 
   def perform!(timeout_seconds: 60, loop_limit: 1)
     client = user.api_client.twitter
