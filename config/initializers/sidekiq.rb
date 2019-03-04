@@ -1,31 +1,37 @@
 Sidekiq::Logging.logger.level = Logger::DEBUG
 
+module UniqueJobUtil
+  module_function
+
+  def perform(worker, args, queue, &block)
+    if worker.respond_to?(:unique_key)
+      options = args.dup.extract_options!
+      unique_key = worker.unique_key(*args)
+
+      if !options['skip_unique'] && queue.exists?(unique_key)
+        worker.logger.info "Server:#{worker.class} Skip duplicate job. #{args.inspect.truncate(100)}"
+
+        if worker.respond_to?(:after_skip)
+          worker.after_skip(*args)
+        end
+
+        return false
+      end
+
+      queue.add(unique_key)
+    end
+
+    yield
+  end
+end
+
 class SidekiqServerUniqueJob
   def initialize(queue_class)
     @queue_class = queue_class
   end
 
-  def call(worker, msg, queue)
-    worker_class = worker.class
-
-    if worker.respond_to?(:unique_key)
-      unique_queueing = @queue_class.new(worker_class)
-      options = msg['args'].dup.extract_options!
-      unique_key = worker.unique_key(*msg['args'])
-
-      if !options['skip_unique'] && unique_queueing.exists?(unique_key)
-        worker.logger.info "Server:#{worker_class} Skip duplicate job. #{options.inspect}"
-
-        if worker.respond_to?(:after_skip)
-          worker.after_skip(*msg['args'])
-        end
-
-        return false
-      end
-      unique_queueing.add(unique_key)
-    end
-
-    yield
+  def call(worker, msg, queue, &block)
+    UniqueJobUtil.perform(worker, msg['args'], @queue_class.new(worker.class), &block)
   end
 end
 
@@ -34,28 +40,9 @@ class SidekiqClientUniqueJob
     @queue_class = queue_class
   end
 
-  def call(worker_class, job, queue, redis_pool)
+  def call(worker_class, job, queue, redis_pool, &block)
     worker_class = worker_class.constantize
-    worker_instance = worker_class.new
-
-    if worker_instance.respond_to?(:unique_key)
-      unique_queueing = @queue_class.new(worker_class)
-      options = job['args'].dup.extract_options!
-      unique_key = worker_instance.unique_key(*job['args'])
-
-      if !options['skip_unique'] && unique_queueing.exists?(unique_key)
-        worker_instance.logger.info "Client:#{worker_class} Skip duplicate job. #{options.inspect}"
-
-        if worker_instance.respond_to?(:after_skip)
-          worker_instance.after_skip(*msg['args'])
-        end
-
-        return false
-      end
-      unique_queueing.add(unique_key)
-    end
-
-    yield
+    UniqueJobUtil.perform(worker_class.new, job['args'], @queue_class.new(worker_class), &block)
   end
 end
 
