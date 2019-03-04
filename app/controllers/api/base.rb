@@ -97,6 +97,7 @@ module Api
           when 'No user matches for specified terms.' then :info
           when 'Invalid or expired token.'            then :info
           when 'Your account is suspended and is not permitted to access this feature.' then :info
+          when 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.' then :info
           else :warn
         end
       logger.send(level, "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{params.inspect}")
