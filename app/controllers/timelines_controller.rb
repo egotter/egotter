@@ -35,7 +35,7 @@ class TimelinesController < ApplicationController
       rescue Timeout::Error => e
         text = I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
 
-        logger.warn "#{controller_name}##{__method__} #{e.class} #{e.message} #{twitter_user.inspect}"
+        logger.info "#{controller_name}##{__method__} #{e.class} #{e.message} #{twitter_user.inspect}"
         logger.info e.backtrace.join("\n")
       end
 
