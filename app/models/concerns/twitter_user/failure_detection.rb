@@ -31,7 +31,7 @@ module Concerns::TwitterUser::FailureDetection
 
   def s3_need_fix_reasons
     @s3_need_fix_reasons ||= [
-        import_batch_failed?,
+        # import_batch_failed?,
         s3_exist.values.any? {|v| !v},
         s3_file[:friend][:friend_uids]&.size != friends_size,
         s3_file[:follower][:follower_uids]&.size != followers_size,
