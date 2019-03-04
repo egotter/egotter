@@ -6,12 +6,16 @@ class ResetEgotterWorker
     request_id
   end
 
+  def after_skip(request_id, options = {})
+    logger.warn "Skipped #{request_id}"
+  end
+
   def timeout_in
     10.seconds
   end
 
   def after_timeout(request_id, options = {})
-    ResetEgotterLog.find(request_id).update(error_class: Timeout::Error, error_message: 'Timeout')
+    ResetEgotterLog.create(request_id: request_id, error_class: Timeout::Error, error_message: 'Timeout')
     QueueingRequests.new(self.class).delete(request_id)
     RunningQueue.new(self.class).delete(request_id)
     self.class.perform_in(retry_in, request_id, options)
@@ -22,10 +26,15 @@ class ResetEgotterWorker
   end
 
   def perform(request_id, options = {})
-    log = ResetEgotterLog.find(request_id)
-    log.perform(send_dm: true)
+    request = ResetEgotterRequest.find(request_id)
+    request.perform!(send_dm: true)
+    request.finished!
+  rescue ResetEgotterRequest::RecordNotFound => e
+    request.finished!
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{request_id}"
     logger.info e.backtrace.join("\n")
+
+    ResetEgotterLog.create(request_id: request_id, error_class: e.class, error_message: e.message.truncate(100))
   end
 end
