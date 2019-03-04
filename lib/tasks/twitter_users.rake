@@ -56,9 +56,9 @@ namespace :twitter_users do
 
   desc 'Reset'
   task reset: :environment do
-    id = ENV['ID'].to_i
-    user = TwitterUser.find(id)
-    puts "#{id} #{user.reset_data.inspect}"
+    uid = ENV['UID'].to_i
+    user = TwitterUser.latest_by(uid: uid)
+    puts "#{uid} #{user.reset_data.inspect}"
   end
 
   desc 'check'
