@@ -11,6 +11,11 @@ class UpdateAudienceInsightWorker
     10.seconds
   end
 
+  def after_timeout(uid, options = {})
+    QueueingRequests.new(self.class).delete(uid)
+    RunningQueue.new(self.class).delete(uid)
+  end
+
   def retry_in
     60 + rand(120)
   end
