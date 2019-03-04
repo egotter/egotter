@@ -32,14 +32,18 @@ class ResetEgotterLog < ApplicationRecord
     result = user.reset_data
     update(status: true)
 
-    if send_dm
-      DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, uid, I18n.t('settings.index.reset_egotter.direct_message')).perform
-    end
+    send_goodbye_message if send_dm
 
     result
   end
 
   private
+
+  def send_goodbye_message
+    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, uid, I18n.t('settings.index.reset_egotter.direct_message')).perform
+  rescue => e
+    logger.warn "#{e.class} #{e.message}"
+  end
 
   def twitter_user
     TwitterUser.latest_by(uid: uid)
