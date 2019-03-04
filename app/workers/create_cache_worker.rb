@@ -2,28 +2,19 @@ class CreateCacheWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
-  def perform(values)
-    user_id = values['user_id']
-    queue = RunningQueue.new(self.class)
-    return if queue.exists?(user_id)
-    queue.add(user_id)
-
-    if values['enqueued_at'].blank? || Time.zone.parse(values['enqueued_at']) < Time.zone.now - 1.minute
-      logger.info {"Don't run this job since it is too late."}
-      return
-    end
-
-    ApplicationRecord.benchmark("#{self.class} Create cache #{values}", level: :debug) do
-      Timeout.timeout(10) do
-        do_perform(values)
-      end
-    end
-  rescue Timeout::Error => e
-    logger.info "#{e.class}: #{e.message} #{values}"
-    logger.info e.backtrace.join("\n")
+  def unique_key(values)
+    values['user_id']
   end
 
-  def do_perform(values)
+  def timeout_in
+    10.second
+  end
+
+  def expire_in
+    1.minute
+  end
+
+  def perform(values)
     user_id = values['user_id']
     user = User.find(user_id)
     threads = []

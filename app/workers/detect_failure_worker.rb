@@ -17,6 +17,9 @@ class DetectFailureWorker
       logger.warn "Failed something. #{twitter_user_id} #{user.created_at} #{user.s3_need_fix_reasons.inspect}"
     end
 
+  rescue ActiveRecord::RecordNotFound => e
+    # When the user reset data.
+    raise e
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{twitter_user_id}"
     logger.info e.backtrace.join("\n")
