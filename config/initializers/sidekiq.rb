@@ -1,6 +1,19 @@
 Sidekiq::Logging.logger.level = Logger::DEBUG
 
+module JobCallbackUtil
+  def send_callback(context, method_name, args)
+    if context.respond_to?(method_name)
+      context.send(method_name, *args)
+    end
+  rescue => e
+    context.logger.warn "#{e.class}: #{e.message} #{context.class} #{method_name} #{args.inspect.truncate(100)}"
+    context.logger.info e.backtrace.join("\n")
+  end
+end
+
 module UniqueJobUtil
+  include JobCallbackUtil
+
   def perform(worker, args, queue, &block)
     if worker.respond_to?(:unique_key)
       options = args.dup.extract_options!
@@ -9,9 +22,7 @@ module UniqueJobUtil
       if !options['skip_unique'] && queue.exists?(unique_key)
         worker.logger.info "#{self.class}:#{worker.class} Skip duplicate job. #{args.inspect.inspect.truncate(100)}"
 
-        if worker.respond_to?(:after_skip)
-          worker.after_skip(*args)
-        end
+        send_callback(worker, :after_skip, args)
 
         return false
       end
@@ -53,6 +64,8 @@ class SidekiqClientUniqueJob
 end
 
 class SidekiqTimeoutJob
+  include JobCallbackUtil
+
   def call(worker, msg, queue)
     if worker.respond_to?(:timeout_in)
       begin
@@ -63,13 +76,7 @@ class SidekiqTimeoutJob
         worker.logger.warn "#{e.class}: #{e.message} #{worker.timeout_in} #{msg['args'].truncate(100)}"
         worker.logger.info e.backtrace.join("\n")
 
-        if worker.respond_to?(:after_timeout)
-          worker.after_timeout(*msg['args'])
-        end
-
-        if worker.respond_to?(:retry_in)
-          worker.class.perform_in(worker.retry_in, *msg['args'])
-        end
+        send_callback(worker, :after_timeout, msg['args'])
       end
     else
       yield
@@ -83,10 +90,10 @@ class SidekiqExpireJob
       options = msg['args'].dup.extract_options!
 
       if options['enqueued_at'].blank?
-        worker.logger.warn {"enqueued_at not found. #{options.inspect.truncate(100)}"}
+        worker.logger.warn {"enqueued_at not found. #{msg['args'].inspect.truncate(100)}"}
       else
         if Time.zone.parse(options['enqueued_at']) < Time.zone.now - worker.expire_in
-          worker.logger.info {"Skip expired job. #{options.inspect.truncate(100)}"}
+          worker.logger.info {"Skip expired job. #{msg['args'].inspect.truncate(100)}"}
           return false
         end
       end

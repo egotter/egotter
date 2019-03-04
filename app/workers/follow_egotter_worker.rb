@@ -22,6 +22,10 @@ class FollowEgotterWorker
     self.class.perform_in(retry_in)
   end
 
+  def after_timeout(*args)
+    self.class.perform_in(retry_in, *args)
+  end
+
   def retry_in
     60.minutes
   end

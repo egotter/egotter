@@ -6,6 +6,10 @@ class ImportTwitterDbS3UsersWorker
     10.seconds
   end
 
+  def after_timeout(uids)
+    self.class.perform_in(retry_in, uids)
+  end
+
   def retry_in
     busy? ? 60 + rand(120) : 1
   end
