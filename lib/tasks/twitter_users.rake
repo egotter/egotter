@@ -11,7 +11,12 @@ namespace :twitter_users do
       client = user ? user.api_client : Bot.api_client
 
       builder = TwitterUser.builder(uid).client(client).login_user(user)
-      twitter_user = builder.build
+      begin
+        twitter_user = builder.build
+      rescue => e
+        puts "Error: #{uid} #{e.class} #{e.message}"
+        next
+      end
 
       if twitter_user.errors.any?
         puts "Validation error: #{uid} #{twitter_user.errors.full_messages.join(', ')}"
