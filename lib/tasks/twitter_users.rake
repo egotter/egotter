@@ -18,10 +18,12 @@ namespace :twitter_users do
 
       begin
         twitter_user = builder.build
-      rescue Twitter::Error::Unauthorized, Twitter::Error::NotFound => e
+      rescue Twitter::Error::Unauthorized, Twitter::Error::NotFound, Twitter::Error::Forbidden => e
         puts "Error: #{uid} #{e.class} #{e.message}"
 
-        if e.message == 'Not authorized.' || e.message == 'User not found.'
+        if e.message == 'Not authorized.' ||
+            e.message == 'User not found.' ||
+            e.message == 'User has been suspended.'
           next
         else
           raise
