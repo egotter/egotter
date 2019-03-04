@@ -14,6 +14,7 @@ class ResetEgotterWorker
     ResetEgotterLog.find(request_id).update(error_class: Timeout::Error, error_message: 'Timeout')
     QueueingRequests.new(self.class).delete(request_id)
     RunningQueue.new(self.class).delete(request_id)
+    self.class.perform_in(retry_in, request_id, options)
   end
 
   def retry_in
