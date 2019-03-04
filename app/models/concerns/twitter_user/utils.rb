@@ -36,9 +36,13 @@ module Concerns::TwitterUser::Utils
     friends_size == uids1.size && followers_size == uids2.size
   end
 
+  def import_batch_succeeded?
+    (friends_size == 0 && friends_count == 0 && followers_size == 0 && followers_count == 0) ||
+        ((friends_size - friends_count).abs <= 1 && (followers_size - followers_count).abs <= 1)
+  end
+
   def import_batch_failed?
-    (friends_size - friends_count).abs > 1 ||
-        (followers_size - followers_count).abs > 1
+    !import_batch_succeeded?
   end
 
   # #diff calls this method in context of new record
