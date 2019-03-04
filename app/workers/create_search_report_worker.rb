@@ -24,8 +24,6 @@ class CreateSearchReportWorker
   rescue Twitter::Error::Unauthorized => e
     handle_unauthorized_exception(e, user_id: user_id)
   rescue Twitter::Error::Forbidden => e
-    handle_forbidden_exception(e, user_id: user_id)
-  rescue Twitter::Error::Forbidden => e
     if e.message == 'You cannot send messages to users you have blocked.'
       logger.info "#{e.class}: #{e.message} #{user_id}"
     else

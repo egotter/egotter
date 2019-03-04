@@ -1,7 +1,7 @@
 class UpdateAudienceInsightWorker
   include Sidekiq::Worker
   include Concerns::WorkerUtils
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform(uid, options = {})
     queue = RunningQueue.new(self.class)

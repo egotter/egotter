@@ -22,7 +22,6 @@
   - ImportTwitterDbS3UsersWorker
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
-  - UpdateAudienceInsightWorker
   - UpdateNotificationMessageWorker
   - UpdatePromptReportWorker
   - UpdateSearchHistoriesWorker
