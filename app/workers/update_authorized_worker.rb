@@ -2,16 +2,15 @@ class UpdateAuthorizedWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
+  def unique_key(user_id, options = {})
+    user_id
+  end
+
+  def expire_in
+    10.minutes
+  end
+
   def perform(user_id, options = {})
-    queue = RunningQueue.new(self.class)
-    return if queue.exists?(user_id)
-    queue.add(user_id)
-
-    if options['enqueued_at'].blank? || Time.zone.parse(options['enqueued_at']) < Time.zone.now - 10.minute
-      logger.info {"Don't run this job since it is too late."}
-      return
-    end
-
     user = User.find(user_id)
     t_user = user.api_client.verify_credentials
 

@@ -1,13 +1,13 @@
 class CreatePromptReportWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
+
+  def unique_key(user_id)
+    user_id
+  end
 
   def perform(user_id)
     user = User.includes(:notification_setting).find(user_id)
-
-    queue = RunningQueue.new(self.class)
-    return if queue.exists?(user.uid)
-    queue.add(user.uid)
 
     log = CreatePromptReportLog.new(
       user_id: user.id,

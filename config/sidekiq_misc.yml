@@ -4,6 +4,7 @@
 :logfile: ./log/sidekiq_misc.log
 :queues:
   - logging
+  - messaging
   - misc
   - CreateNotificationMessageWorker
   - CreatePromptReportWorker

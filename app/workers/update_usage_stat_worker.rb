@@ -3,16 +3,15 @@ class UpdateUsageStatWorker
   include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
+  def unique_key(uid, options = {})
+    uid
+  end
+
+  def expire_in
+    10.minutes
+  end
+
   def perform(uid, options = {})
-    queue = RunningQueue.new(self.class)
-    return if queue.exists?(uid)
-    queue.add(uid)
-
-    if options['enqueued_at'].blank? || Time.zone.parse(options['enqueued_at']) < Time.zone.now - 10.minute
-      logger.info {"Don't run this job since it is too late."}
-      return
-    end
-
     stat = UsageStat.find_by(uid: uid)
     return if stat&.fresh?
 

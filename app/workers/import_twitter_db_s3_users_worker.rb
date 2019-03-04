@@ -2,16 +2,8 @@ class ImportTwitterDbS3UsersWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def perform(uids)
-    Timeout.timeout(10) do
-      do_perform(uids)
-    end
-
-    logger.info "Processing count #{processing_count}, Retry in #{retry_in}"
-  rescue Timeout::Error => e
-    logger.info "#{e.class}: #{e.message} #{uids.inspect.truncate(100)}"
-    logger.info e.backtrace.join("\n")
-    self.class.perform_in(retry_in, uids)
+  def timeout_in
+    10.seconds
   end
 
   def retry_in
@@ -26,7 +18,9 @@ class ImportTwitterDbS3UsersWorker
     @busy ||= SidekiqStats.busy?('sidekiq_misc')
   end
 
-  def do_perform(uids)
+  def perform(uids)
+    logger.info "Processing count #{processing_count}, Retry in #{retry_in}"
+
     persisted_uids = TwitterDB::User.where(uid: uids, updated_at: 1.hour.ago..Time.zone.now).pluck(:uid)
     logger.debug {"uids #{uids.size}, persisted_uids #{persisted_uids.size}"}
 

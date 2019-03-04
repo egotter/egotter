@@ -1,16 +1,15 @@
 class CreateSearchReportWorker
   include Sidekiq::Worker
   include Concerns::WorkerUtils
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
+
+  def unique_key(user_id)
+    user_id
+  end
 
   def perform(user_id)
     user = User.find(user_id)
     return unless user.authorized? && user.can_send_search?
-
-    queue = RunningQueue.new(self.class)
-    return if queue.exists?(user.uid)
-    queue.add(user.uid)
-
 
     # TODO Implement email
     # TODO Implement onesignal

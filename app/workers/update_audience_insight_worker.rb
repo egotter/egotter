@@ -8,7 +8,7 @@ class UpdateAudienceInsightWorker
   end
 
   def timeout_in
-    10.second
+    10.seconds
   end
 
   def retry_in
