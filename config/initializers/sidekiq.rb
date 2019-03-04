@@ -67,7 +67,7 @@ class SidekiqTimeoutJob
           yield
         end
       rescue Timeout::Error => e
-        worker.logger.warn "#{e.class}: #{e.message.truncate(100)} #{worker.timeout_in} #{msg['args']}"
+        worker.logger.warn "#{e.class}: #{e.message} #{worker.timeout_in} #{msg['args']}"
         worker.logger.info e.backtrace.join("\n")
 
         if worker.respond_to?(:retry_in)

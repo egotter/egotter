@@ -4,7 +4,7 @@ class TimelinesController < ApplicationController
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i
-    valid_uid?(uid) && twitter_user_persisted?(uid)  && authorized_search?(TwitterUser.latest_by(uid: uid))
+    valid_uid?(uid) && twitter_user_persisted?(uid) && authorized_search?(TwitterUser.latest_by(uid: uid))
   end
 
   after_action only: %i(show) do
@@ -25,20 +25,41 @@ class TimelinesController < ApplicationController
 
   def check_for_updates
     twitter_user = TwitterUser.latest_by(uid: params[:uid])
-    if params[:created_at].to_s.match(/\A\d+\z/) && twitter_user.created_at > Time.zone.at(params[:created_at].to_i)
-      return render json: {found: true, text: changes_text(twitter_user)}
+
+    if new_record_found?(twitter_user)
+      begin
+        text = nil
+        Timeout.timeout(2.seconds) do
+          text = changes_text(twitter_user)
+        end
+      rescue Timeout::Error => e
+        text = I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
+
+        logger.warn "#{controller_name}##{__method__} #{e.class} #{e.message} #{twitter_user.inspect}"
+        logger.info e.backtrace.join("\n")
+      end
+
+      return render json: {found: true, text: text}
     end
 
     started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
-    render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: 202
+    render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: :accepted
   end
 
   private
 
+  def new_record_found?(twitter_user)
+    params[:created_at].to_s.match(/\A\d+\z/) && Time.zone.at(params[:created_at].to_i) < twitter_user.created_at
+  end
+
   def changes_text(twitter_user)
     second_latest = TwitterUser.till(twitter_user.created_at).latest_by(uid: params[:uid])
 
-    bef = second_latest.calc_unfollower_uids.size # Heavy process
+    bef = nil
+    benchmark("#{controller_name}##{__method__} #{twitter_user.inspect}", level: :info) do
+      bef = second_latest.calc_unfollower_uids.size # Heavy process
+    end
+
     aft = twitter_user.unfollowerships.size
 
     if aft > bef

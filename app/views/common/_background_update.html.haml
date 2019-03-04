@@ -1,4 +1,4 @@
-.update-box.alert.alert-info.alert-dismissable
+.update-box.alert.alert-info.alert-dismissable{data: {url: check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.updating', user: twitter_user.mention_name)
   = image_tag '/ajax-loader.gif'
@@ -68,12 +68,10 @@
         return;
       }
 
-      var url = '#{check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID').html_safe}';
-
       console.log('Worker started', jid);
       $updateBox.show().sticky();
 
-      window.checkForUpdates(url.replace("JID", jid), {interval: 8000},
+      window.checkForUpdates($updateBox.data('url').replace("JID", jid), {interval: 8000},
         function (res) {
           $updateBox.alert('close');
           if (res.text) {
