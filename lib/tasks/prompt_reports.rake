@@ -12,7 +12,7 @@ namespace :prompt_reports do
     logger.info task.to_s(:deadline) if task.deadline
     logger.info task.to_s(:ids_stats)
 
-    task.users.find_each.with_index do |user, i|
+    task.users.each.with_index do |user, i|
       unless TwitterUser.exists?(uid: user.uid)
         # TwitterUser::Batch.fetch_and_create(user.uid) # TODO Create in background
         next

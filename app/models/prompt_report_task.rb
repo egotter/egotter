@@ -63,7 +63,14 @@ class PromptReportTask
   end
 
   def users
-    @users ||= User.where(id: can_send_ids).select(:id, :uid)
+    if instance_variable_defined?(:@users)
+      @users
+    else
+      candidates = User.where(id: can_send_ids).select(:id, :uid)
+      follower_uids = EgotterFollower.pluck(:uid)
+      high, low = candidates.partition {|user| follower_uids.include?(user.uid)}
+      @users = high + low
+    end
   end
 
   def user_ids
