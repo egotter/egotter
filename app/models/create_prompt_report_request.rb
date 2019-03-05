@@ -26,9 +26,9 @@ class CreatePromptReportRequest < ApplicationRecord
     raise Inactive unless user.active?(14)
     raise RecordNotFound unless TwitterUser.exists?(uid: user.uid)
 
-    t_user = fetch_user
-    raise Suspended if t_user[:suspended]
-    raise TooManyFriends if TwitterUser.too_many_friends?(t_user, login_user: user)
+    raise Suspended if suspended?
+    raise TooManyFriends if too_many_friends?
+    raise Blocked if blocked?
 
     twitter_user = self.twitter_user
     raise TooManyFriends if twitter_user.too_many_friends?(login_user: user)
@@ -70,8 +70,24 @@ class CreatePromptReportRequest < ApplicationRecord
 
   private
 
+  def suspended?
+    fetch_user[:suspended]
+  end
+
+  def too_many_friends?
+    TwitterUser.too_many_friends?(fetch_user, login_user: user)
+  end
+
+  def blocked?
+    client.blocked_ids.include? User::EGOTTER_UID
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+    raise
+  end
+
   def fetch_user
-    client.user(user.uid)
+    @fetch_user ||= client.user(user.uid)
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
@@ -115,6 +131,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class TooManyFriends < Error
+  end
+
+  class Blocked < Error
   end
 
   class MaybeImportBatchFailed < Error
