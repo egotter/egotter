@@ -1,5 +1,6 @@
 class AudienceInsightsController < ApplicationController
   include Concerns::Showable
+  include Concerns::AudienceInsights
 
   def show
     @breadcrumb_name = controller_name.singularize.to_sym
@@ -11,6 +12,6 @@ class AudienceInsightsController < ApplicationController
     @page_description = t('.page_description', user: @twitter_user.mention_name)
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name})
 
-    @chart_builder = AudienceInsight.find_by(uid: @twitter_user.uid) || AudienceInsightChartBuilder.new(@twitter_user.uid)
+    @chart_builder = find_or_create_chart_builder(@twitter_user)
   end
 end

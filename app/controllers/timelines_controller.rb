@@ -1,6 +1,7 @@
 class TimelinesController < ApplicationController
   include WorkersHelper
   include Concerns::Showable
+  include Concerns::AudienceInsights
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i
@@ -21,25 +22,15 @@ class TimelinesController < ApplicationController
     elsif NotFoundUser.exists?(screen_name: @twitter_user.screen_name)
       flash.now[:alert] = not_found_message(@twitter_user.screen_name)
     end
+
+    @chart_builder = find_or_create_chart_builder(@twitter_user)
   end
 
   def check_for_updates
     twitter_user = TwitterUser.latest_by(uid: params[:uid])
 
     if new_record_found?(twitter_user)
-      begin
-        text = nil
-        Timeout.timeout(2.seconds) do
-          text = changes_text(twitter_user)
-        end
-      rescue Timeout::Error => e
-        text = I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
-
-        logger.info "#{controller_name}##{__method__} #{e.class} #{e.message} #{twitter_user.inspect}"
-        logger.info e.backtrace.join("\n")
-      end
-
-      return render json: {found: true, text: text}
+      return render json: {found: true, text: create_changes_text(twitter_user)}
     end
 
     started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
@@ -50,6 +41,16 @@ class TimelinesController < ApplicationController
 
   def new_record_found?(twitter_user)
     params[:created_at].to_s.match(/\A\d+\z/) && Time.zone.at(params[:created_at].to_i) < twitter_user.created_at
+  end
+
+  def create_changes_text(twitter_user)
+    Timeout.timeout(2.seconds) do
+      changes_text(twitter_user)
+    end
+  rescue Timeout::Error => e
+    logger.info "#{controller_name}##{__method__} #{e.class} #{e.message} #{twitter_user.inspect}"
+    logger.info e.backtrace.join("\n")
+    I18n.t('common.show.update_is_coming', user: twitter_user.mention_name)
   end
 
   def changes_text(twitter_user)

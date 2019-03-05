@@ -49,8 +49,11 @@ class AudienceInsight < ApplicationRecord
   end
 
   def fresh?
-    return false if new_record?
-    seconds = Rails.env.production? ? 30.minutes : 1.minutes
-    Time.zone.now - updated_at < seconds
+    if new_record?
+      false
+    else
+      seconds = Rails.env.production? ? 30.minutes : 1.minutes
+      Time.zone.now - updated_at < seconds
+    end
   end
 end
