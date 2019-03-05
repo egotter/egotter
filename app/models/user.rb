@@ -3,26 +3,28 @@
 # Table name: users
 #
 #  id               :integer          not null, primary key
-#  uid              :bigint(8)        not null
-#  screen_name      :string(191)      not null
 #  authorized       :boolean          default(TRUE), not null
-#  secret           :string(191)      not null
-#  token            :string(191)      not null
 #  email            :string(191)      default(""), not null
 #  first_access_at  :datetime
-#  last_access_at   :datetime
 #  first_search_at  :datetime
-#  last_search_at   :datetime
 #  first_sign_in_at :datetime
+#  last_access_at   :datetime
+#  last_search_at   :datetime
 #  last_sign_in_at  :datetime
+#  screen_name      :string(191)      not null
+#  secret           :string(191)      not null
+#  token            :string(191)      not null
+#  uid              :bigint(8)        not null
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
 #
 # Indexes
 #
-#  index_users_on_created_at   (created_at)
-#  index_users_on_screen_name  (screen_name)
-#  index_users_on_uid          (uid) UNIQUE
+#  index_users_on_created_at       (created_at)
+#  index_users_on_first_access_at  (first_access_at)
+#  index_users_on_last_access_at   (last_access_at)
+#  index_users_on_screen_name      (screen_name)
+#  index_users_on_uid              (uid) UNIQUE
 #
 
 class User < ApplicationRecord

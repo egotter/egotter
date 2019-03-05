@@ -23,7 +23,7 @@
 #  referral    :string(191)      default(""), not null
 #  screen_name :string(191)      default(""), not null
 #  status      :integer          default(-1), not null
-#  uid         :string(191)      default(""), not null
+#  uid         :bigint(8)        default(-1), not null
 #  user_agent  :string(191)      default(""), not null
 #  via         :string(191)      default(""), not null
 #  created_at  :datetime         not null

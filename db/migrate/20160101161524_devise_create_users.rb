@@ -1,7 +1,7 @@
 class DeviseCreateUsers < ActiveRecord::Migration[4.2]
   def change
     create_table(:users) do |t|
-      t.integer  :uid,              null: false, limit: 8
+      t.bigint   :uid,              null: false
       t.string   :screen_name,      null: false
       t.boolean  :authorized,       null: false, default: true
       t.string   :secret,           null: false
@@ -15,10 +15,12 @@ class DeviseCreateUsers < ActiveRecord::Migration[4.2]
       t.datetime :last_sign_in_at,  null: true
 
       t.timestamps null: false
-    end
 
-    add_index :users, :uid, unique: true
-    add_index :users, :screen_name
-    add_index :users, :created_at
+      t.index :uid, unique: true
+      t.index :screen_name
+      t.index :first_access_at
+      t.index :last_access_at
+      t.index :created_at
+    end
   end
 end

@@ -1051,6 +1051,8 @@ ActiveRecord::Schema.define(version: 20190304225052) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_users_on_created_at"
+    t.index ["first_access_at"], name: "index_users_on_first_access_at"
+    t.index ["last_access_at"], name: "index_users_on_last_access_at"
     t.index ["screen_name"], name: "index_users_on_screen_name"
     t.index ["uid"], name: "index_users_on_uid", unique: true
   end
