@@ -4,7 +4,10 @@ class CreateSearchLogWorker
 
   def perform(attrs)
     log = SearchLog.create!(attrs)
-    UpdateSearchLogWorker.perform_async(log.id)
+
+    unless log.crawler?
+      UpdateSearchLogWorker.perform_async(log.id)
+    end
   rescue => e
     logger.warn "#{e.class} #{e.message} #{attrs.inspect}"
   end

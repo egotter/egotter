@@ -7,22 +7,27 @@ class UpdateSearchLogWorker
     log.assign_attributes(landing: landing_page?(log), first_time: first_time_session?(log))
     log.save! if log.changed?
 
-    reassign_channel(log) unless log.crawler?
-    assign_timestamps(log) if log.with_login?
+    reassign_channel(log)
+
+    if log.with_login?
+      update_user_access_at(log)
+      update_user_search_at(log)
+    end
   rescue => e
     logger.warn "#{e.class} #{e.message} #{search_log_id}"
   end
 
   private
 
-  def assign_timestamps(log)
-    user = User.find(log.user_id)
-    assign_timestamp(user, :first_access_at, log.created_at, :>)
-    assign_timestamp(user, :last_access_at, log.created_at, :<)
+  def update_user_access_at(log)
+    user = log.user
 
-    if log.action == 'show' && user.uid.to_i == log.uid.to_i
-      assign_timestamp(user, :first_search_at, log.created_at, :>)
-      assign_timestamp(user, :last_search_at, log.created_at, :<)
+    if user[:first_access_at].nil? || log.created_at < user[:first_access_at]
+      user[:first_access_at] = log.created_at
+    end
+
+    if user[:last_access_at].nil? || user[:last_access_at] < log.created_at
+      user[:last_access_at] = log.created_at
     end
 
     user.save! if user.changed?
@@ -31,19 +36,32 @@ class UpdateSearchLogWorker
     logger.warn "#{e.class} #{e.message} #{log.inspect}"
   end
 
-  def assign_timestamp(user, attr, value, less_or_greater)
-    if user[attr].nil? || user[attr].send(less_or_greater, value)
-      user[attr] = value
+  def update_user_search_at(log)
+    user = log.user
+    return unless log.controller == 'timelines' && log.action == 'show' && user.uid == log.uid
+
+
+    if user[:first_search_at].nil? || log.created_at < user[:first_search_at]
+      user[:first_search_at] = log.created_at
     end
+
+    if user[:last_search_at].nil? || user[:last_search_at] < log.created_at
+      user[:last_search_at] = log.created_at
+    end
+
+    user.save! if user.changed?
+
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{log.inspect}"
   end
 
   def landing_page?(log)
-    !log.crawler? && !log.referer.start_with?('https://egotter.com') &&
-      !SearchLog.exists?(session_id: log.session_id, created_at: (log.created_at - 30.minutes)..log.created_at)
+    !log.referer.start_with?('https://egotter.com') &&
+        !SearchLog.exists?(session_id: log.session_id, created_at: (log.created_at - 30.minutes)..log.created_at)
   end
 
   def first_time_session?(log)
-    !log.crawler? && !SearchLog.exists?(session_id: log.session_id)
+    !SearchLog.exists?(session_id: log.session_id)
   end
 
   def reassign_channel(log)
