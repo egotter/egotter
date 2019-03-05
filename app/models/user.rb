@@ -111,9 +111,9 @@ class User < ApplicationRecord
   end
 
   def notifications
-    pr = prompt_reports.limit(10).each do |r|
-      r.message_builder = PromptReport::YouAreRemovedMessage.new(r.user, r.token, format: 'html')
-      r.message_builder.changes = JSON.parse(r.changes_json, symbolize_names: true)
+    pr = prompt_reports.limit(10).each do |report|
+      report.message_builder = PromptReport::YouAreRemovedMessage.new(report.user, report.token, format: 'html')
+      report.message_builder.changes = report.last_changes
     end
 
     # sr = search_reports.limit(10).each do |r|

@@ -2,14 +2,15 @@
 #
 # Table name: prompt_reports
 #
-#  id           :integer          not null, primary key
-#  user_id      :integer          not null
-#  read_at      :datetime
-#  changes_json :text(65535)      not null
-#  message_id   :string(191)      not null
-#  token        :string(191)      not null
-#  created_at   :datetime         not null
-#  updated_at   :datetime         not null
+#  id            :integer          not null, primary key
+#  changes_json  :text(65535)      not null
+#  message_cache :string(191)      default(""), not null
+#  read_at       :datetime
+#  token         :string(191)      not null
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
+#  message_id    :string(191)      not null
+#  user_id       :integer          not null
 #
 # Indexes
 #
@@ -26,6 +27,10 @@ class PromptReport < ApplicationRecord
     report.message_builder = YouAreRemovedMessage.new(report.user, report.token, format: format)
     report.message_builder.changes = JSON.parse(changes_json, symbolize_names: true)
     report
+  end
+
+  def last_changes
+    @last_changes ||= JSON.parse(changes_json, symbolize_names: true)
   end
 
   private
