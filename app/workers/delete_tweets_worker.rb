@@ -5,11 +5,12 @@ class DeleteTweetsWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(values)
+    values = values.with_indifferent_access
     DeleteTweetsRequest.find(values['request_id']).user_id
   end
 
   def after_skip(values)
-    DeleteTweetsRequest.find(values['request_id']).finished!
+    logger.warn "Skipped #{values.inspect}"
   end
 
   def perform(values)

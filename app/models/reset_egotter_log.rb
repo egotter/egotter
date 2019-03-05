@@ -6,12 +6,13 @@
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null
 #  message       :string(191)      default(""), not null
-#  screen_name   :string(191)      not null
+#  screen_name   :string(191)      default(""), not null
 #  status        :boolean          default(FALSE), not null
-#  uid           :bigint(8)        not null
+#  uid           :bigint(8)        default(-1), not null
 #  created_at    :datetime         not null
-#  session_id    :string(191)      not null
-#  user_id       :integer          not null
+#  request_id    :integer          default(-1), not null
+#  session_id    :string(191)      default("-1"), not null
+#  user_id       :integer          default(-1), not null
 #
 # Indexes
 #
@@ -24,35 +25,16 @@ class ResetEgotterLog < ApplicationRecord
   validates :screen_name, presence: true
 
   def perform!(send_dm: false)
-    raise "This request has already been finished. #{self.inspect}" if status
-
-    user = twitter_user
-    raise "Record of TwitterUser not found #{self.inspect}" unless user
-
-    result = user.reset_data
-    update(status: true)
-
-    send_goodbye_message if send_dm
-
-    result
+    logger.warn 'DEPRECATED WARNING: ResetEgotterLog#perform!'
+    request.perform!(send_dm: send_dm)
   end
 
   def perform(send_dm: false)
-    perform!(send_dm: send_dm)
-  rescue => e
-    logger.warn "#{e.class} #{e.message}"
-    update(error_class: e.class, error_message: e.message.truncate(100))
+    logger.warn 'DEPRECATED WARNING: ResetEgotterLog#perform'
+    request.perform(send_dm: send_dm)
   end
 
-  private
-
-  def send_goodbye_message
-    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, uid, I18n.t('settings.index.reset_egotter.direct_message')).perform
-  rescue => e
-    logger.warn "#{e.class} #{e.message}"
-  end
-
-  def twitter_user
-    TwitterUser.latest_by(uid: uid)
+  def request
+    ResetEgotterRequest.find(request_id)
   end
 end
