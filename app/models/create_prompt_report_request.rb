@@ -79,7 +79,13 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def blocked?
-    client.blocked_ids.include? User::EGOTTER_UID
+    if BlockedUser.exists?(uid: fetch_user[:id])
+      true
+    else
+      blocked = client.blocked_ids.include? User::EGOTTER_UID
+      CreateBlockedUserWorker.perform_async(fetch_user[:id], fetch_user[:screen_name]) if blocked
+      blocked
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
