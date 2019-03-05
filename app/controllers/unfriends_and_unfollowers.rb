@@ -2,12 +2,15 @@ class UnfriendsAndUnfollowers < ApplicationController
   include Concerns::Showable
   include Concerns::Indexable
 
-  def all
+  before_action only: :all do
     unless user_signed_in?
       via = "#{controller_name}/#{action_name}/need_login"
-      redirect = send("all_#{controller_name}_path", @twitter_user)
-      return redirect_to sign_in_path(via: via, redirect_path: redirect)
+      redirect_path = send("all_#{controller_name}_path", @twitter_user)
+      redirect_to sign_in_path(via: via, redirect_path: redirect_path)
     end
+  end
+
+  def all
     initialize_instance_variables
     @collection = @twitter_user.twitter_db_user.send(controller_name)
   end
@@ -40,11 +43,24 @@ class UnfriendsAndUnfollowers < ApplicationController
 
   def related_counts(twitter_user)
     user = twitter_user.twitter_db_user
-    {
-      unfriends: user.unfriendships.size,
-      unfollowers: user.unfollowerships.size,
-      blocking_or_blocked: user.blocking_or_blocked_uids.size
-    }
+    values = {}
+
+    Timeout.timeout(2.seconds) do
+      values[:unfriends] = user.unfriendships.size
+      values[:unfollowers] = user.unfollowerships.size
+      values[:blocking_or_blocked] = user.blocking_or_blocked_uids.size
+    end
+
+    values
+  rescue Timeout::Error => e
+    logger.info "#{controller_name}##{__method__} #{e.class} #{e.message} #{twitter_user.inspect}"
+    logger.info e.backtrace.join("\n")
+
+    values[:unfriends] = -1 unless values.has_key?(:unfriends)
+    values[:unfollowers] = -1 unless values.has_key?(:unfollowers)
+    values[:blocking_or_blocked] = -1 unless values.has_key?(:blocking_or_blocked)
+
+    values
   end
 
   def tabs(counts)

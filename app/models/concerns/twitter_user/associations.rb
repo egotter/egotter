@@ -52,6 +52,7 @@ module Concerns::TwitterUser::Associations
       obj.has_many :close_friends,    through: :close_friendships
     end
 
+    # Aliases of twitter_db_user.*
     with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
       obj.has_many :unfriendships,     order_by_sequence_asc
       obj.has_many :unfollowerships,   order_by_sequence_asc

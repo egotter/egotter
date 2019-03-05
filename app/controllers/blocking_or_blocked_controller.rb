@@ -1,6 +1,5 @@
 class BlockingOrBlockedController < UnfriendsAndUnfollowers
   include TweetTextHelper
-  include WorkersHelper
 
   def all
     super

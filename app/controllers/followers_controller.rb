@@ -13,11 +13,24 @@ class FollowersController < FriendsAndFollowers
   private
 
   def related_counts
-    {
-      followers: @twitter_user.follower_uids.size,
-      one_sided_followers: @twitter_user.one_sided_followerships.size,
-      one_sided_followers_rate: (@twitter_user.one_sided_followers_rate * 100).round(1)
-    }
+    values = {}
+
+    Timeout.timeout(2.seconds) do
+      values[:followers] = @twitter_user.follower_uids.size
+      values[:one_sided_followers] = @twitter_user.one_sided_followerships.size
+      values[:one_sided_followers_rate] = (@twitter_user.one_sided_followers_rate * 100).round(1)
+    end
+
+    values
+  rescue Timeout::Error => e
+    logger.info "#{controller_name}##{__method__} #{e.class} #{e.message} #{@twitter_user.inspect}"
+    logger.info e.backtrace.join("\n")
+
+    values[:followers] = -1 unless values.has_key?(:followers)
+    values[:one_sided_followers] = -1 unless values.has_key?(:one_sided_followers)
+    values[:one_sided_followers_rate] = -1 unless values.has_key?(:one_sided_followers_rate)
+
+    values
   end
 
   def tabs
