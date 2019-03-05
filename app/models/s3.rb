@@ -160,6 +160,8 @@ module S3
       logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
       logger.info {e.backtrace.join("\n")}
       yield
+    rescue Aws::S3::Errors::NoSuchKey => e
+      raise
     rescue => e
       logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
       logger.info {e.backtrace.join("\n")}
