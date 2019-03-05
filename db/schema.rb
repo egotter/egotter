@@ -626,7 +626,7 @@ ActiveRecord::Schema.define(version: 20190304225052) do
   create_table "search_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
-    t.string "uid", default: "", null: false
+    t.bigint "uid", default: -1, null: false
     t.string "screen_name", default: "", null: false
     t.string "controller", default: "", null: false
     t.string "action", default: "", null: false

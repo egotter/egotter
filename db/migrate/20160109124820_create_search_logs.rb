@@ -3,7 +3,7 @@ class CreateSearchLogs < ActiveRecord::Migration[4.2]
     create_table :search_logs do |t|
       t.string  :session_id,  null: false, default: '', index: true
       t.integer :user_id,     null: false, default: -1, index: true
-      t.string  :uid,         null: false, default: '', index: true
+      t.bigint  :uid,         null: false, default: -1, index: true
       t.string  :screen_name, null: false, default: '', index: true
 
       t.string  :controller,  null: false, default: ''
