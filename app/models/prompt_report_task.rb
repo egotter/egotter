@@ -6,6 +6,18 @@ class PromptReportTask
     def start(user_ids_str:, deadline_str: nil)
       new(user_ids_str, deadline_str)
     end
+
+    def logger
+      logger = ActiveSupport::Logger.new(Rails.root.join('log/batch.log'))
+      logger.level = Rails.logger.level
+      logger.formatter = ::Logger::Formatter.new
+
+      console = ActiveSupport::Logger.new(STDOUT)
+      console.formatter = ::Logger::Formatter.new
+      logger.extend ActiveSupport::Logger.broadcast(console)
+
+      logger
+    end
   end
 
   def initialize(user_ids_str, deadline_str)
