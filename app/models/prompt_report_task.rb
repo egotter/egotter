@@ -50,7 +50,8 @@ class PromptReportTask
   end
 
   def fatal?
-    @processed_count > 20 && @errors.size >= @processed_count / 10
+    @processed_count > 20 &&
+        @errors.select {|e| e[:error_class].is_a?(CreatePromptReportRequest::Error)}.size >= @processed_count / 10
   end
 
   def start_time

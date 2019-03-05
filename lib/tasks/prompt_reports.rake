@@ -28,7 +28,9 @@ namespace :prompt_reports do
       task.processed_count += 1
       logger.info task.to_s(:progress) if i % 1000 == 0
 
-      break if task.overdue? || sigint.trapped? || task.fatal?
+      logger.warn "It's overdue." && break if task.overdue?
+      logger.warn "Too many errors." && break if task.fatal?
+      break if sigint.trapped?
     end
 
     logger.info task.to_s(:finishing)
