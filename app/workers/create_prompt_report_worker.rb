@@ -20,7 +20,9 @@ class CreatePromptReportWorker
 
     dm = request.perform!
     request.finished!
-    log.update(status: true, message: truncated_message(dm))
+
+    PromptReport.find_by(message_id: dm.id).update(message_cache: truncated_message(dm))
+    log.update(status: true)
 
   rescue CreatePromptReportRequest::Error => e
     log.update(error_class: e.class, error_message: e.message)
@@ -41,7 +43,7 @@ class CreatePromptReportWorker
     end
   end
 
-  def truncated_message(dm, truncate_at: 150)
+  def truncated_message(dm, truncate_at: 100)
     dm.text.remove(/\R/).gsub(%r{https?://[\S]+}, 'URL').truncate(truncate_at)
   end
 end

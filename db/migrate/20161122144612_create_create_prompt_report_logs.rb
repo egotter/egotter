@@ -6,7 +6,6 @@ class CreateCreatePromptReportLogs < ActiveRecord::Migration[4.2]
       t.bigint  :uid,           null: false, default: -1
       t.string  :screen_name,   null: false, default: ''
       t.boolean :status,        null: false, default: false
-      t.string  :message,       null: false, default: ''
       t.string  :error_class,   null: false, default: ''
       t.string  :error_message, null: false, default: ''
 

@@ -180,7 +180,6 @@ ActiveRecord::Schema.define(version: 20190305091103) do
     t.bigint "uid", default: -1, null: false
     t.string "screen_name", default: "", null: false
     t.boolean "status", default: false, null: false
-    t.string "message", default: "", null: false
     t.string "error_class", default: "", null: false
     t.string "error_message", default: "", null: false
     t.datetime "created_at", null: false
