@@ -26,7 +26,7 @@ class CreatePromptReportRequest < ApplicationRecord
     raise Inactive unless user.active?(14)
     raise RecordNotFound unless TwitterUser.exists?(uid: user.uid)
 
-    t_user = client.user(user.uid)
+    t_user = fetch_user
     raise Suspended if t_user[:suspended]
     raise TooManyFriends if TwitterUser.too_many_friends?(t_user, login_user: user)
 
@@ -70,13 +70,21 @@ class CreatePromptReportRequest < ApplicationRecord
 
   private
 
+  def fetch_user
+    client.user(user.uid)
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+    raise
+  end
+
   def friend_uids_and_follower_uids
     client.friend_ids_and_follower_ids(user.uid)
   rescue Twitter::Error::Unauthorized => e
     raise unless e.message != 'Invalid or expired token.'
     [nil, nil]
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{self.inspect}"
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
     raise
   end
