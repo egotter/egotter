@@ -2,6 +2,12 @@ class PromptReportTask
 
   attr_accessor :processed_count
 
+  class << self
+    def start(user_ids_str:, deadline_str: nil)
+      new(user_ids_str, deadline_str)
+    end
+  end
+
   def initialize(user_ids_str, deadline_str)
     @start_time = Time.zone.now
     @processed_count = 0
@@ -21,10 +27,6 @@ class PromptReportTask
         when deadline_str.match(/\d+\.(minutes?|hours?)/) then Time.zone.now + eval(ENV['DEADLINE'])
         else Time.zone.parse(deadline_str)
         end
-  end
-
-  def start(user_ids_str:, deadline_str: nil)
-    new(user_ids_str, deadline_str)
   end
 
   def errors
