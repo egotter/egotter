@@ -9,7 +9,7 @@ class DeleteTweetsController < ApplicationController
 
   def delete
     request = DeleteTweetsRequest.create!(session_id: fingerprint, user_id: current_user.id)
-    jid = DeleteTweetsWorker.perform_async(request_id: request.id, user_id: current_user.id)
+    jid = DeleteTweetsWorker.perform_async(request.id, user_id: current_user.id)
     render json: {jid: jid}
   end
 end
