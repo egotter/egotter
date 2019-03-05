@@ -3,10 +3,10 @@
 # Table name: twitter_db_users
 #
 #  id             :bigint(8)        not null, primary key
-#  followers_size :integer          default(0), not null
-#  friends_size   :integer          default(0), not null
-#  screen_name    :string(191)      not null
 #  uid            :bigint(8)        not null
+#  screen_name    :string(191)      not null
+#  friends_size   :integer          default(0), not null
+#  followers_size :integer          default(0), not null
 #  user_info      :text(65535)      not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null

@@ -3,14 +3,14 @@
 # Table name: orders
 #
 #  id                      :bigint(8)        not null, primary key
-#  follow_requests_count   :integer          default(0), not null
+#  user_id                 :integer          not null
 #  search_count            :integer          default(0), not null
+#  follow_requests_count   :integer          default(0), not null
 #  unfollow_requests_count :integer          default(0), not null
-#  created_at              :datetime         not null
-#  updated_at              :datetime         not null
 #  customer_id             :string(191)
 #  subscription_id         :string(191)
-#  user_id                 :integer          not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
 #
 # Indexes
 #

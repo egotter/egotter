@@ -4,6 +4,7 @@
 #
 #  id            :integer          not null, primary key
 #  user_id       :integer          default(-1), not null
+#  request_id    :integer          default(-1), not null
 #  uid           :string(191)      default("-1"), not null
 #  screen_name   :string(191)      default(""), not null
 #  bot_uid       :string(191)      default("-1"), not null

@@ -3,9 +3,9 @@
 # Table name: twitter_db_friendships
 #
 #  id         :bigint(8)        not null, primary key
+#  user_uid   :bigint(8)        not null
 #  friend_uid :bigint(8)        not null
 #  sequence   :integer          not null
-#  user_uid   :bigint(8)        not null
 #
 # Indexes
 #

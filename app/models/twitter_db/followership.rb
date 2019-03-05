@@ -3,9 +3,9 @@
 # Table name: twitter_db_followerships
 #
 #  id           :bigint(8)        not null, primary key
+#  user_uid     :bigint(8)        not null
 #  follower_uid :bigint(8)        not null
 #  sequence     :integer          not null
-#  user_uid     :bigint(8)        not null
 #
 # Indexes
 #

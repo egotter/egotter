@@ -3,24 +3,24 @@
 # Table name: search_error_logs
 #
 #  id          :integer          not null, primary key
-#  action      :string(191)      default(""), not null
-#  browser     :string(191)      default(""), not null
-#  controller  :string(191)      default(""), not null
-#  device_type :string(191)      default(""), not null
-#  location    :string(191)      default(""), not null
-#  message     :string(191)      default(""), not null
-#  method      :string(191)      default(""), not null
-#  os          :string(191)      default(""), not null
-#  path        :string(191)      default(""), not null
-#  referer     :string(191)      default(""), not null
-#  screen_name :string(191)      default(""), not null
-#  status      :integer          default(-1), not null
-#  uid         :string(191)      default(""), not null
-#  user_agent  :string(191)      default(""), not null
-#  via         :string(191)      default(""), not null
-#  created_at  :datetime         not null
 #  session_id  :string(191)      default(""), not null
 #  user_id     :integer          default(-1), not null
+#  uid         :string(191)      default(""), not null
+#  screen_name :string(191)      default(""), not null
+#  location    :string(191)      default(""), not null
+#  message     :string(191)      default(""), not null
+#  controller  :string(191)      default(""), not null
+#  action      :string(191)      default(""), not null
+#  method      :string(191)      default(""), not null
+#  path        :string(191)      default(""), not null
+#  status      :integer          default(-1), not null
+#  via         :string(191)      default(""), not null
+#  device_type :string(191)      default(""), not null
+#  os          :string(191)      default(""), not null
+#  browser     :string(191)      default(""), not null
+#  user_agent  :string(191)      default(""), not null
+#  referer     :string(191)      default(""), not null
+#  created_at  :datetime         not null
 #
 # Indexes
 #

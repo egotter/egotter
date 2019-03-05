@@ -3,9 +3,9 @@
 # Table name: tokimeki_friendships
 #
 #  id         :bigint(8)        not null, primary key
+#  user_uid   :bigint(8)        not null
 #  friend_uid :bigint(8)        not null
 #  sequence   :integer          not null
-#  user_uid   :bigint(8)        not null
 #
 # Indexes
 #
@@ -15,7 +15,6 @@
 #
 # Foreign Keys
 #
-#  fk_rails_...  (friend_uid => tokimeki_users.uid)
 #  fk_rails_...  (user_uid => tokimeki_users.uid)
 #
 

@@ -3,10 +3,10 @@
 # Table name: twitter_db_favorites
 #
 #  id             :bigint(8)        not null, primary key
-#  raw_attrs_text :text(65535)      not null
+#  uid            :bigint(8)        not null
 #  screen_name    :string(191)      not null
 #  sequence       :integer          not null
-#  uid            :bigint(8)        not null
+#  raw_attrs_text :text(65535)      not null
 #  created_at     :datetime         not null
 #  updated_at     :datetime         not null
 #

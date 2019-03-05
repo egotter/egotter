@@ -3,11 +3,11 @@
 # Table name: reset_egotter_requests
 #
 #  id          :bigint(8)        not null, primary key
+#  session_id  :string(191)      not null
+#  user_id     :integer          not null
 #  finished_at :datetime
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
-#  session_id  :string(191)      not null
-#  user_id     :integer          not null
 #
 # Indexes
 #

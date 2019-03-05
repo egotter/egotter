@@ -3,14 +3,14 @@
 # Table name: prompt_reports
 #
 #  id            :integer          not null, primary key
-#  changes_json  :text(65535)      not null
-#  message_cache :string(191)      default(""), not null
+#  user_id       :integer          not null
 #  read_at       :datetime
+#  changes_json  :text(65535)      not null
 #  token         :string(191)      not null
+#  message_id    :string(191)      not null
+#  message_cache :string(191)      default(""), not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
-#  message_id    :string(191)      not null
-#  user_id       :integer          not null
 #
 # Indexes
 #
