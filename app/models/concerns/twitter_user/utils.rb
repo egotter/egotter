@@ -16,14 +16,13 @@ module Concerns::TwitterUser::Utils
     def till(time)
       where('created_at < ?', time)
     end
-
-    def creation_completed
-      # friends_size != 0 AND followers_size != 0
-      where.not(friends_size: 0, followers_size: 0)
-    end
   end
 
   included do
+    scope :creation_completed, -> do
+      # friends_size != 0 AND followers_size != 0
+      where.not(friends_size: 0, followers_size: 0)
+    end
   end
 
   # Reason1: too many friends

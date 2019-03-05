@@ -4,6 +4,7 @@ class SendMetricsToSlackWorker
 
   def perform
     send_table_metrics
+    send_user_metrics
     send_twitter_user_metrics
     send_google_analytics_metrics
     send_sidekiq_queue_metrics
@@ -15,47 +16,68 @@ class SendMetricsToSlackWorker
   end
 
   def send_table_metrics
-    logs_count =
-        [SearchLog, SignInLog, TwitterUser, SearchHistory, Job].map do |klass|
-          [klass.to_s, klass.where(created_at: 1.hour.ago..Time.zone.now).size]
-        end.to_h
-    send_message(logs_count.to_s)
+    stats = {}
+    [
+        SearchLog,
+        SearchErrorLog,
+        SignInLog,
+        TwitterUser,
+        SearchHistory,
+        Job,
+        FollowRequest,
+        UnfollowRequest,
+        ForbiddenUser,
+        NotFoundUser
+    ].map do |klass|
+      stats[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
+    end
+    send_message(stats.to_s, channel: TABLE_MONITORING)
+  end
+
+  def send_user_metrics
+    stats = {
+        first_access: User.where(first_access_at: 1.hour.ago..Time.zone.now).size,
+        last_access: User.where(last_access_at: 1.hour.ago..Time.zone.now).size
+    }
+
+    send_message(stats.to_s)
   end
 
   def send_twitter_user_metrics
+    users = TwitterUser.where(created_at: 1.hour.ago..Time.zone.now)
+
     friends_count = []
     followers_count = []
     friends_size = []
     followers_size = []
-    TwitterUser.where(created_at: 1.hour.ago..Time.zone.now).each do |user|
+
+    users.each do |user|
       friends_count << user.friends_count
       followers_count << user.followers_count
       friends_size << user.friends_size
       followers_size << user.followers_size
     end
-    size = friends_count.size
+    size = users.size
 
     stats = {
+        size: size,
+        creation_completed: users.creation_completed.size,
         friends_count: {
-            size: size,
             avg: sprintf("%.1f", divide(friends_count.sum, size)),
             min: friends_count.min,
             max: friends_count.max
         },
         followers_count: {
-            size: size,
             avg: sprintf("%.1f", divide(followers_count.sum, size)),
             min: followers_count.min,
             max: followers_count.max
         },
         friends_size: {
-            size: size,
             avg: sprintf("%.1f", divide(friends_size.sum, size)),
             min: friends_size.min,
             max: friends_size.max
         },
         followers_size: {
-            size: size,
             avg: sprintf("%.1f", divide(followers_size.sum, size)),
             min: followers_size.min,
             max: followers_size.max
@@ -91,6 +113,7 @@ class SendMetricsToSlackWorker
 
   URL = ENV['SLACK_METRICS_WEBHOOK_URL']
   SIDEKIQ_MONITORING = ENV['SLACK_SIDEKIQ_MONITORING_WEBHOOK_URL']
+  TABLE_MONITORING = ENV['SLACK_TABLE_MONITORING_WEBHOOK_URL']
 
   def send_message(text, channel: URL)
     HTTParty.post(channel, body: {text: text}.to_json)
