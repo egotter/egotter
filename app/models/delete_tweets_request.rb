@@ -22,29 +22,74 @@ class DeleteTweetsRequest < ApplicationRecord
   validates :session_id, presence: true
   validates :user_id, presence: true
 
-  def perform!(timeout_seconds: 60, loop_limit: 1)
-    client = user.api_client.twitter
-    destroy_count = 0
-
+  def perform!(timeout_seconds: 30)
     Timeout.timeout(timeout_seconds) do
-      loop_limit.times do |n|
-        tweets = client.user_timeline(count: 200).select {|t| t.created_at < created_at}
-        break if tweets.empty?
+      do_perform!
+    end
+  rescue Timeout::Error => e
+    @timeout = true
+    logger.warn "#{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+  end
 
-        tweets.each do |tweet|
-          begin
-            client.destroy_status(tweet.id)
-            destroy_count += 1
-          rescue Twitter::Error::NotFound => e
-            raise unless e.message == 'No status found with that ID.'
-          end
-        end
+  def timeout?
+    @timeout ||= false
+  end
 
-        raise LoopCountLimitExceeded.new("Loop index #{n}, destroy count #{destroy_count}") if n == loop_limit - 1
-      end
+  def too_many_requests?
+    @too_many_requests ||= false
+  end
+
+  def error
+    @error
+  end
+
+  def tweets_not_found?
+    @tweets_not_found ||= false
+  end
+
+  def destroy_count
+    @destroy_count ||= 0
+  end
+
+  def send_finished_message
+    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('delete_tweets.new.dm_messge')).perform
+  rescue => e
+    logger.warn "#{e.class} #{e.message}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def do_perform!
+    tweets = client.user_timeline(count: 200).select {|t| t.created_at < created_at}
+    if tweets.empty?
+      @tweets_not_found = true
+      return
     end
 
-    destroy_count
+    @destroy_count = 0
+
+    tweets.each do |tweet|
+      destroy_status!(tweet.id)
+      @destroy_count += 1
+    end
+
+  rescue Twitter::Error::TooManyRequests => e
+    @too_many_requests = true
+    @error = e
+    logger.warn "#{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  def destroy_status!(tweet_id)
+    client.destroy_status(tweet_id)
+  rescue Twitter::Error::NotFound => e
+    raise unless e.message == 'No status found with that ID.'
+  end
+
+  def client
+    @client ||= user.api_client.twitter
   end
 
   class LoopCountLimitExceeded < StandardError
