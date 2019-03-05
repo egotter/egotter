@@ -7,6 +7,7 @@ class SendMetricsToSlackWorker
     send_user_metrics
     send_twitter_user_metrics
     send_google_analytics_metrics
+    send_prompt_report_metrics
     send_sidekiq_queue_metrics
     send_sidekiq_worker_metrics
     send_nginx_metrics
@@ -18,6 +19,7 @@ class SendMetricsToSlackWorker
   def send_table_metrics
     stats = {}
     [
+        User,
         SearchLog,
         SearchErrorLog,
         SignInLog,
@@ -90,6 +92,15 @@ class SendMetricsToSlackWorker
   def send_google_analytics_metrics
     google_analytics = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
     send_message(google_analytics.to_s)
+  end
+
+  def send_prompt_report_metrics
+    stats = {
+        prompt_reports: PromptReport.where(created_at: 1.hour.ago..Time.zone.now).size,
+        create_prompt_report_logs: CreatePromptReportLog.where(created_at: 1.hour.ago..Time.zone.now).size,
+    }
+
+    send_message(stats.to_s)
   end
 
   def send_sidekiq_queue_metrics
