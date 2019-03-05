@@ -18,6 +18,10 @@ namespace :prompt_reports do
         next
       end
 
+      if CreatePromptReportRequest.where(user_id: user.id, created_at: 1.hour.ago..Time.zone.now).exists?
+        next
+      end
+
       begin
         request = CreatePromptReportRequest.create(user_id: user.id)
         CreatePromptReportWorker.new.perform(request.id, user_id: user.id, exception: true)
