@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190305224828) do
+ActiveRecord::Schema.define(version: 20190305231052) do
 
   create_table "audience_insights", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.bigint "uid", null: false
@@ -250,6 +250,15 @@ ActiveRecord::Schema.define(version: 20190305224828) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_delete_tweets_requests_on_created_at"
     t.index ["user_id"], name: "index_delete_tweets_requests_on_user_id"
+  end
+
+  create_table "egotter_followers", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.string "screen_name", null: false
+    t.bigint "uid", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_egotter_followers_on_created_at"
+    t.index ["uid"], name: "index_egotter_followers_on_uid", unique: true
   end
 
   create_table "favorite_friendships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
