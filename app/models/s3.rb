@@ -15,12 +15,12 @@ module S3
       @bucket_name = bucket_name
     end
 
-    def uids_key
-      @uids_key
+    def payload_key
+      @payload_key
     end
 
-    def uids_key=(uids_key)
-      @uids_key = uids_key
+    def payload_key=(key)
+      @payload_key = key
     end
 
     def client
@@ -212,7 +212,7 @@ module S3
     end
 
     def find_by(twitter_user_id:)
-      find_by_current_scope(uids_key, :twitter_user_id, twitter_user_id)
+      find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
     end
 
     def where(twitter_user_ids:)
@@ -232,23 +232,19 @@ module S3
           twitter_user_id: twitter_user_id,
           uid: uid,
           screen_name: screen_name,
-          uids_key => pack(uids),
+          payload_key => pack(uids),
           compress: 1
       }.to_json
     end
   end
 
   module ProfileApi
-    def profile_key
-      :user_info
-    end
-
     def exists?(twitter_user_id:)
       exist(twitter_user_id)
     end
 
     def find_by(twitter_user_id:)
-      find_by_current_scope(uids_key, :twitter_user_id, twitter_user_id)
+      find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
     end
 
     def where(twitter_user_ids:)
@@ -260,7 +256,7 @@ module S3
     end
 
     def import_by!(twitter_user:)
-      import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(profile_key))
+      import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(payload_key))
     end
 
     def import_from!(twitter_user_id, uid, screen_name, profile)
@@ -277,7 +273,7 @@ module S3
           twitter_user_id: twitter_user_id,
           uid: uid,
           screen_name: screen_name,
-          profile_key => pack(profile),
+          payload_key => pack(profile),
           compress: 1
       }.to_json
     end

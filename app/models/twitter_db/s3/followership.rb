@@ -6,7 +6,7 @@ module TwitterDB
       extend TwitterDB::S3::Api
 
       self.bucket_name = "egotter.#{Rails.env}.twitter-db.followerships"
-      self.uids_key = :follower_uids
+      self.payload_key = :follower_uids
       self.cache_enabled = true
     end
   end

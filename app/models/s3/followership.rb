@@ -5,7 +5,7 @@ module S3
     extend S3::Api
 
     self.bucket_name = "egotter.#{Rails.env}.followerships"
-    self.uids_key = :follower_uids
+    self.payload_key = :follower_uids
     self.cache_enabled = true
     self.cache_expires_in = 1.week
   end
