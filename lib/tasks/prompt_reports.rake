@@ -2,78 +2,39 @@ namespace :prompt_reports do
   desc 'send'
   task send: :environment do
     sigint = Util::Sigint.new.trap
+    Rails.logger.level = Logger::WARN
 
-    start_time = Time.zone.now
-    reports_count = PromptReport.all.size
-    users_count = User.all.size
+    task = PromptReportTask.start(user_ids_str: ENV['USER_IDS'], deadline_str: ENV['DEADLINE'])
 
-    deadline =
-      case
-        when ENV['DEADLINE'].blank? then nil
-        when ENV['DEADLINE'].match(/\d+\.(minutes?|hours?)/) then Time.zone.now + eval(ENV['DEADLINE'])
-        else Time.zone.parse(ENV['DEADLINE'])
-      end
+    puts Time.zone.now.to_s + ' ' + 'Started'
+    puts Time.zone.now.to_s + ' ' + task.to_s(:deadline) if task.deadline
+    puts Time.zone.now.to_s + ' ' + task.to_s(:ids_stats)
 
-    puts "\nstarted:"
-    puts %Q(  start: #{start_time}#{", deadline: #{deadline}" if deadline}, reports: #{reports_count}, users: #{users_count})
-
-    user_ids = ENV['USER_IDS']
-    user_ids =
-      case
-        when user_ids.blank? then 1..User.maximum(:id)
-        when user_ids.include?('..') then Range.new(*user_ids.split('..').map(&:to_i))
-        when user_ids.include?(',') then user_ids.remove(' ').split(',').map(&:to_i)
-        else [user_ids.to_i]
-      end
-
-    ids = {specified: user_ids}
-    ids[:authorized] = User.authorized.where(id: ids[:specified]).pluck(:id)
-    ids[:active] = User.active(14).where(id: ids[:authorized]).pluck(:id)
-    ids[:can_send] = User.can_send_dm.where(id: ids[:active]).pluck(:id)
-
-    puts %Q(  stats: #{ids.map { |k, v| "#{k}: #{v.size}" }.join(', ')}\n\n)
-
-    processed = 0
-    fatal = false
-    errors = []
-
-    User.where(id: ids[:can_send]).select(:id, :uid).find_each.with_index do |user, i|
+    task.users.find_each.with_index do |user, i|
       unless TwitterUser.exists?(uid: user.uid)
         # TwitterUser::Batch.fetch_and_create(user.uid) # TODO Create in background
         next
       end
 
       begin
-        Rails.logger.silence(Logger::WARN) { CreatePromptReportWorker.new.perform(user.id) }
+        request = CreatePromptReportRequest.create(user_id: user.id)
+        CreatePromptReportWorker.new.perform(request.id, user_id: user.id, exception: true)
       rescue => e
-        errors << {time: Time.zone.now, user_id: user.id, error_class: e.class, error_message: e.message}
-        fatal = errors.size >= processed / 10
+        task.add_error(user.id, e)
       end
 
-      processed += 1
-      prompt_reports_print_progress(start_time, deadline, i) if i % 1000 == 0
+      task.processed_count += 1
+      puts (Time.zone.now.to_s + ' ' + task.to_s(:progress)) if i % 1000 == 0
 
-      break if (deadline && Time.zone.now > deadline) || sigint.trapped? || fatal
+      break if task.overdue? || sigint.trapped? || task.fatal?
     end
 
-    if errors.any?
-      puts "\nerrors:"
-      puts "  #{errors.map(&:inspect).join(', ')}"
+    puts Time.zone.now.to_s + ' ' + task.to_s(:finishing)
+    puts Time.zone.now.to_s + ' ' + 'Finished'
+
+    if task.errors.any?
+      puts "Errors:"
+      puts task.to_s(:errors)
     end
-
-    new_reports_count = PromptReport.all.size
-
-    puts "\n#{(sigint.trapped? || fatal ? 'suspended:' : 'finished:')}"
-    puts %Q(  start: #{start_time}, finish: #{Time.zone.now}#{", deadline: #{deadline}" if deadline}, reports: #{new_reports_count}, users: #{users_count}, errors: #{errors.size})
-    puts %Q(  stats: #{ids.map { |k, v| "#{k}: #{v.size}" }.join(', ')}, processed: #{processed}, send: #{new_reports_count - reports_count}\n\n)
-  end
-
-  def prompt_reports_print_progress(start_time, deadline, index)
-    puts 'progress:' if index == 0
-    avg = "#{'avg %4.1f' % ((Time.zone.now - start_time) / (index + 1))} seconds"
-    elapsed = "#{'elapsed %.1f' % (Time.zone.now - start_time)} seconds"
-    remaining = deadline ? ", remaining #{'%.1f' % (deadline - Time.zone.now)} seconds" : ''
-    puts "  #{Time.zone.now}: #{avg}, #{elapsed}#{remaining}"
-
   end
 end

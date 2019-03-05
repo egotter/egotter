@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190304225052) do
+ActiveRecord::Schema.define(version: 20190305091103) do
 
   create_table "audience_insights", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.bigint "uid", null: false
@@ -176,6 +176,7 @@ ActiveRecord::Schema.define(version: 20190304225052) do
 
   create_table "create_prompt_report_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "user_id", default: -1, null: false
+    t.integer "request_id", default: -1, null: false
     t.string "uid", default: "-1", null: false
     t.string "screen_name", default: "", null: false
     t.string "bot_uid", default: "-1", null: false
@@ -189,6 +190,15 @@ ActiveRecord::Schema.define(version: 20190304225052) do
     t.index ["created_at"], name: "index_create_prompt_report_logs_on_created_at"
     t.index ["screen_name"], name: "index_create_prompt_report_logs_on_screen_name"
     t.index ["uid"], name: "index_create_prompt_report_logs_on_uid"
+  end
+
+  create_table "create_prompt_report_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.integer "user_id", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_create_prompt_report_requests_on_created_at"
+    t.index ["user_id"], name: "index_create_prompt_report_requests_on_user_id"
   end
 
   create_table "create_relationship_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
@@ -542,8 +552,9 @@ ActiveRecord::Schema.define(version: 20190304225052) do
     t.integer "user_id", null: false
     t.datetime "read_at"
     t.text "changes_json", null: false
-    t.string "message_id", null: false
     t.string "token", null: false
+    t.string "message_id", null: false
+    t.string "message_cache", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_prompt_reports_on_created_at"
