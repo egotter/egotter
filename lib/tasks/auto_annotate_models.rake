@@ -41,7 +41,7 @@ if Rails.env.development?
       'format_rdoc'               => 'false',
       'format_markdown'           => 'false',
       'sort'                      => 'false',
-      'force'                     => 'true',
+      'force'                     => 'false',
       'classified_sort'           => 'false',
       'trace'                     => 'false',
       'wrapper_open'              => nil,
