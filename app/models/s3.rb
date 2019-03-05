@@ -15,12 +15,12 @@ module S3
       @bucket_name = bucket_name
     end
 
-    def uids_key
-      @uids_key
+    def payload_key
+      @payload_key
     end
 
-    def uids_key=(uids_key)
-      @uids_key = uids_key
+    def payload_key=(key)
+      @payload_key = key
     end
 
     def client
@@ -58,7 +58,7 @@ module S3
     def fetch(key)
       raise 'key is nil' if key.nil?
       ApplicationRecord.benchmark("#{self} Fetch by #{key}", level: :debug) do
-        cache.fetch(key.to_s) do
+        cache_fetch(key.to_s) do
           client.get_object(bucket: bucket_name, key: key.to_s).body.read
         end
       end
@@ -71,7 +71,7 @@ module S3
 
     def exist(key)
       ApplicationRecord.benchmark("#{self} Exist by #{key}", level: :debug) do
-        cache.fetch("exist-#{key}") do
+        cache_fetch("exist-#{key}") do
           Aws::S3::Resource.new(region: REGION).bucket(bucket_name).object(key.to_s).exists?
         end
       end
@@ -88,7 +88,54 @@ module S3
 
       q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
     end
+
+    def logger
+      Rails.logger
+    end
   end
+
+  module Querying
+    def find_by_current_scope!(payload_key, key_attr, key_value)
+      text = fetch(key_value)
+      item = parse_json(text)
+      payload = item.has_key?('compress') ? unpack(item[payload_key.to_s]) : item[payload_key.to_s]
+      values = {
+          key_attr.to_sym => item[key_value.to_s],
+          screen_name: item['screen_name'],
+          payload_key.to_sym => payload
+      }
+
+      unless key_attr.to_sym == :uid
+        values[:uid] = item['uid']
+      end
+
+      values
+    end
+
+    def find_by_current_scope(payload_key, key_attr, key_value)
+      tries ||= 5
+      find_by_current_scope!(payload_key, key_attr, key_value)
+    rescue Aws::S3::Errors::NoSuchKey => e
+      message = "#{self}##{__method__} #{e.class} #{e.message} #{payload_key} #{key_attr} #{key_value}"
+
+      if (tries -= 1) < 0
+        logger.warn "RETRY EXHAUSTED #{message}"
+        logger.info {e.backtrace.join("\n")}
+        {}
+      else
+        logger.info "RETRY #{tries} #{message}"
+        logger.info {e.backtrace.join("\n")}
+        sleep 0.1 * (5 - tries)
+        retry
+      end
+    rescue => e
+      logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{payload_key} #{key_attr} #{key_value}"
+      logger.info {e.backtrace.join("\n")}
+      {}
+    end
+  end
+
+  Util.send(:include, Querying)
 
   module Cache
     def cache
@@ -104,6 +151,19 @@ module S3
       else
         ActiveSupport::Cache::NullStore.new
       end
+    end
+
+    # A network failure may occur
+    def cache_fetch(key, &block)
+      cache.fetch(key.to_s, &block)
+    rescue Errno::ENOENT => e
+      logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
+      logger.info {e.backtrace.join("\n")}
+      yield
+    rescue => e
+      logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
+      logger.info {e.backtrace.join("\n")}
+      yield
     end
 
     def cache_expires_in
@@ -151,35 +211,8 @@ module S3
       exist(twitter_user_id)
     end
 
-    def find_by!(twitter_user_id:)
-      text = fetch(twitter_user_id)
-      item = parse_json(text)
-      uids = item.has_key?('compress') ? unpack(item[uids_key.to_s]) : item[uids_key.to_s]
-      {
-          twitter_user_id: item['twitter_user_id'],
-          uid: item['uid'],
-          screen_name: item['screen_name'],
-          uids_key => uids
-      }
-    end
-
     def find_by(twitter_user_id:)
-      tries ||= 5
-      find_by!(twitter_user_id: twitter_user_id)
-    rescue Aws::S3::Errors::NoSuchKey => e
-      message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
-
-      if (tries -= 1) < 0
-        Rails.logger.warn "RETRY EXHAUSTED #{message}"
-        Rails.logger.info {e.backtrace.join("\n")}
-        # RepairS3FriendshipsWorker.perform_async(twitter_user_id)
-        {}
-      else
-        Rails.logger.info "RETRY #{tries} #{message}"
-        Rails.logger.info {e.backtrace.join("\n")}
-        sleep 0.1 * (5 - tries)
-        retry
-      end
+      find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
     end
 
     def where(twitter_user_ids:)
@@ -199,50 +232,19 @@ module S3
           twitter_user_id: twitter_user_id,
           uid: uid,
           screen_name: screen_name,
-          uids_key => pack(uids),
+          payload_key => pack(uids),
           compress: 1
       }.to_json
     end
   end
 
   module ProfileApi
-    def profile_key
-      :user_info
-    end
-
     def exists?(twitter_user_id:)
       exist(twitter_user_id)
     end
 
-    def find_by!(twitter_user_id:)
-      text = fetch(twitter_user_id)
-      item = parse_json(text)
-      profile = item.has_key?('compress') ? unpack(item[profile_key.to_s]) : item[profile_key.to_s]
-      {
-          twitter_user_id: item['twitter_user_id'],
-          uid: item['uid'],
-          screen_name: item['screen_name'],
-          profile_key => profile
-      }
-    end
-
     def find_by(twitter_user_id:)
-      tries ||= 5
-      find_by!(twitter_user_id: twitter_user_id)
-    rescue Aws::S3::Errors::NoSuchKey => e
-      message = "#{self}##{__method__} #{e.class} #{e.message} #{twitter_user_id}"
-
-      if (tries -= 1) < 0
-        Rails.logger.warn "RETRY EXHAUSTED #{message}"
-        Rails.logger.info {e.backtrace.join("\n")}
-        # RepairS3FriendshipsWorker.perform_async(twitter_user_id)
-        {}
-      else
-        Rails.logger.info "RETRY #{tries} #{message}"
-        Rails.logger.info {e.backtrace.join("\n")}
-        sleep 0.1 * (5 - tries)
-        retry
-      end
+      find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
     end
 
     def where(twitter_user_ids:)
@@ -254,7 +256,7 @@ module S3
     end
 
     def import_by!(twitter_user:)
-      import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(profile_key))
+      import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(payload_key))
     end
 
     def import_from!(twitter_user_id, uid, screen_name, profile)
@@ -271,7 +273,7 @@ module S3
           twitter_user_id: twitter_user_id,
           uid: uid,
           screen_name: screen_name,
-          profile_key => pack(profile),
+          payload_key => pack(profile),
           compress: 1
       }.to_json
     end

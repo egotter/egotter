@@ -103,6 +103,7 @@ class ImportTwitterUserRelationsWorker
       klass.import_by!(twitter_user: twitter_user)
     rescue => e
       logger.warn "#{klass}#import_by!: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
+      logger.info e.backtrace.join("\n")
     end
   end
 
