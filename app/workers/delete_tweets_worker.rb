@@ -13,6 +13,10 @@ class DeleteTweetsWorker
     logger.warn "Skipped #{values.inspect}"
   end
 
+  def retry_in
+    60.seconds
+  end
+
   def perform(values)
     destroy_count = 0
     request = DeleteTweetsRequest.find(values['request_id'])
@@ -33,11 +37,17 @@ class DeleteTweetsWorker
     begin
       destroy_count = request.perform!
     rescue Twitter::Error::TooManyRequests => e
-      DeleteTweetsWorker.perform_in(e.rate_limit.reset_in.to_i, values.merge(skiq_unique: true))
       save_error(e, log, values)
+
+      QueueingRequests.new(self.class).delete(user.id)
+      RunningQueue.new(self.class).delete(user.id)
+      DeleteTweetsWorker.perform_in(e.rate_limit.reset_in.to_i, values.merge(skip_unique: true))
     rescue Timeout::Error, DeleteTweetsRequest::LoopCountLimitExceeded => e
       save_error(e, log, values)
-      DeleteTweetsWorker.perform_in(60, values.merge(skiq_unique: true))
+
+      QueueingRequests.new(self.class).delete(user.id)
+      RunningQueue.new(self.class).delete(user.id)
+      DeleteTweetsWorker.perform_in(retry_in, values.merge(skip_unique: true))
     else
       log.update(status: true, message: "#{destroy_count} tweets are destroyed.")
       request.finished!
