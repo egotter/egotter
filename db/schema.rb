@@ -177,13 +177,10 @@ ActiveRecord::Schema.define(version: 20190305091103) do
   create_table "create_prompt_report_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "user_id", default: -1, null: false
     t.integer "request_id", default: -1, null: false
-    t.string "uid", default: "-1", null: false
+    t.bigint "uid", default: -1, null: false
     t.string "screen_name", default: "", null: false
-    t.string "bot_uid", default: "-1", null: false
     t.boolean "status", default: false, null: false
-    t.string "reason", default: "", null: false
-    t.text "message", null: false
-    t.integer "call_count", default: -1, null: false
+    t.string "message", default: "", null: false
     t.string "error_class", default: "", null: false
     t.string "error_message", default: "", null: false
     t.datetime "created_at", null: false

@@ -15,8 +15,7 @@ class CreatePromptReportWorker
         user_id: user.id,
         request_id: request_id,
         uid: user.uid,
-        screen_name: user.screen_name,
-        message: ''
+        screen_name: user.screen_name
     )
 
     dm = request.perform!
