@@ -20,6 +20,28 @@ class UidsGroupBuilder
     @users.map(&:follower_uids)
   end
 
+  # New friends between old record and new record
+  def new_friends
+    #This is a stub implementation.
+  end
+
+  # New followers between old record and new record
+  def new_followers
+    #This is a stub implementation.
+  end
+
+  # Used by AudienceInsightChartBuilder
+  # TODO Not enough implementation. Rename to new_unfriends
+  def unfriends
+    #This is a stub implementation.
+  end
+
+  # Used by AudienceInsightChartBuilder
+  # TODO Not enough implementation. Rename to new_unfollowers
+  def unfollowers
+    #This is a stub implementation.
+  end
+
   def new_unfriends
     raise NotImplementedError
   end
@@ -28,7 +50,7 @@ class UidsGroupBuilder
     raise NotImplementedError
   end
 
-  %i(unfriends unfollowers new_friends new_followers).each do |method_name|
+  %i(new_friends new_followers unfriends unfollowers).each do |method_name|
     define_method(method_name) do
       @users.each_cons(2).map {|older, newer| Util.send(method_name, older, newer)}.compact.tap {|ary| ary.prepend([])}
     end
@@ -37,6 +59,7 @@ class UidsGroupBuilder
   module Util
     module_function
 
+    # Fetch users over an entire period with limit
     def users(uid, limit:)
       TwitterUser.creation_completed.where(uid: uid).select(:id, :uid, :created_at).order(created_at: :desc).limit(limit).reverse
     end

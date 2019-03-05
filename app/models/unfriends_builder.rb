@@ -19,6 +19,7 @@ class UnfriendsBuilder
   module Util
     module_function
 
+    # Fetch users that are created before the specified date. without limit
     def users(uid, created_at)
       TwitterUser.where('created_at <= ?', created_at).creation_completed.where(uid: uid).select(:id).order(created_at: :asc)
     end

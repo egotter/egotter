@@ -35,6 +35,8 @@ class DeleteTweetsWorker
   rescue => e
     error_message = e.message.truncate(100)
     logger.warn "#{e.class} #{error_message} #{request_id} #{options.inspect}"
+    logger.info e.backtrace.join("\n")
+
     log.update(error_class: e.class, error_message: error_message)
   end
 
