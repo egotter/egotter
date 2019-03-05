@@ -86,6 +86,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class Error < StandardError
+    def initialize(*args)
+      super('')
+    end
   end
 
   class Unauthorized < Error

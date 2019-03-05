@@ -98,10 +98,12 @@ class PromptReportTask
       remaining = deadline ? deadline - Time.zone.now : nil
       "avg #{sprintf('%4.1f', avg)} seconds, elapsed #{sprintf('%d', elapsed)} seconds#{", remaining #{sprintf('%d', remaining)} seconds" if remaining}"
     when :errors
-      errors.map(&:inspect).join(', ')
+      errors.map do |e|
+        "#{e[:time]} #{e[:user_id]} #{e[:error_class]} #{e[:error_message]}"
+      end.join("\n")
     when :finishing
       elapsed = Time.zone.now - start_time
-      "elapsed #{sprintf('%d', elapsed)}#{", deadline #{deadline}" if deadline}, processed #{processed_count}, sent #{sent_count}, users #{users.size}, errors #{errors.size}"
+      "elapsed #{sprintf('%d', elapsed)} seconds#{", deadline #{deadline}" if deadline}, processed #{processed_count}, sent #{sent_count}, users #{users.size}, errors #{errors.size}"
     else
       raise "Invalid kind #{kind}"
     end
