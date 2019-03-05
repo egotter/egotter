@@ -22,7 +22,9 @@ class UsageStatsController < ApplicationController
 
     @tweet_text = usage_time_text(@stat.usage_time, @twitter_user)
 
-    @jid = enqueue_update_usage_stat_job_if_needed(@twitter_user.uid.to_i)
+    unless from_crawler?
+      @jid = UpdateUsageStatWorker.perform_async(@twitter_user.uid, enqueued_at: Time.zone.now)
+    end
   end
 
   def check_for_updates

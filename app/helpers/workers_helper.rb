@@ -38,16 +38,6 @@ module WorkersHelper
     worker_class.perform_async(values.merge(track_id: track.id))
   end
 
-  def enqueue_update_search_histories_job_if_needed(uid)
-    return if from_crawler?
-    UpdateSearchHistoriesWorker.perform_async(fingerprint, current_user_id, uid)
-  end
-
-  def enqueue_update_usage_stat_job_if_needed(uid)
-    return if from_crawler?
-    UpdateUsageStatWorker.perform_async(uid, enqueued_at: Time.zone.now)
-  end
-
   def enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: nil)
     return if from_crawler?
     return if request.uid == User::EGOTTER_UID
@@ -56,29 +46,15 @@ module WorkersHelper
 
   def enqueue_update_authorized
     return unless user_signed_in?
-
-    requests = QueueingRequests.new(UpdateAuthorizedWorker)
-    return if requests.exists?(current_user.uid)
-    requests.add(current_user.uid)
-
     UpdateAuthorizedWorker.perform_async(current_user.id, enqueued_at: Time.zone.now)
   end
 
   def enqueue_create_cache
     return unless user_signed_in?
-
-    requests = QueueingRequests.new(CreateCacheWorker)
-    return if requests.exists?(current_user.uid)
-    requests.add(current_user.uid)
-
     CreateCacheWorker.perform_async(user_id: current_user.id, enqueued_at: Time.zone.now)
   end
 
   def enqueue_audience_insight(uid)
-    requests = QueueingRequests.new(UpdateAudienceInsightWorker)
-    return if requests.exists?(uid)
-    requests.add(uid)
-
     UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
   end
 end
