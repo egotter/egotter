@@ -91,7 +91,4 @@ class DeleteTweetsRequest < ApplicationRecord
   def client
     @client ||= user.api_client.twitter
   end
-
-  class LoopCountLimitExceeded < StandardError
-  end
 end
