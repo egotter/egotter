@@ -13,8 +13,6 @@
   - CreateTwitterUserWorker
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
-  - ImportDynamodbFriendshipsWorker
-  - ImportDynamodbFollowershipsWorker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker

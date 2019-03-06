@@ -8,8 +8,6 @@
   - misc
   - CreateNotificationMessageWorker
   - CreatePromptReportWorker
-  - ImportDynamodbFriendshipsWorker
-  - ImportDynamodbFollowershipsWorker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker
