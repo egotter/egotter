@@ -21,27 +21,15 @@ class ImportTwitterUserRelationsWorker
       return DelayedImportTwitterUserRelationsWorker.perform_async(user_id, uid, options)
     end
 
-    ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
-
-    begin
-      uids = FavoriteFriendship.import_by!(twitter_user: twitter_user)
-      WriteProfilesToS3Worker.perform_async(uids, user_id: user_id)
-
-      uids = CloseFriendship.import_by!(twitter_user: twitter_user, login_user: User.find_by(id: user_id))
-      WriteProfilesToS3Worker.perform_async(uids, user_id: user_id)
-    rescue => e
-      logger.warn "#{e.class}: #{e.message.truncate(100)}"
-      logger.info e.backtrace.join("\n")
-    end
-
-    return if twitter_user.no_need_to_import_friendships?
-
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
     if latest.id != twitter_user.id
       logger.warn "#{__method__}: latest.id != twitter_user.id #{uid}"
+      twitter_user = latest
     end
 
-    import_other_relationships(latest)
+    client = ApiClient.user_or_bot_client(user_id) { |client_uid| job.update(client_uid: client_uid) }
+
+    do_perform(client, user_id, twitter_user)
 
   rescue => e
     message = e.message.truncate(100)
@@ -50,6 +38,32 @@ class ImportTwitterUserRelationsWorker
     logger.info e.backtrace.grep_v(/\.bundle/).join "\n"
   ensure
     job.update(finished_at: Time.zone.now)
+  end
+
+  def do_perform(client, user_id, twitter_user)
+    begin
+      uids = FavoriteFriendship.import_by!(twitter_user: twitter_user)
+      import_twitter_db_users(client, uids)
+
+      uids = CloseFriendship.import_by!(twitter_user: twitter_user, login_user: User.find_by(id: user_id))
+      import_twitter_db_users(client, uids)
+    rescue => e
+      logger.warn "#{e.class}: #{e.message.truncate(100)}"
+      logger.info e.backtrace.join("\n")
+    end
+
+    return if twitter_user.no_need_to_import_friendships?
+
+    import_twitter_db_users(client, [twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids)
+
+    import_other_relationships(twitter_user)
+  end
+
+  def import_twitter_db_users(client, uids)
+    TwitterDB::User::Batch.fetch_and_import(uids, client: client)
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{uids.size}"
+    logger.info e.backtrace.join("\n")
   end
 
   def import_other_relationships(twitter_user)
