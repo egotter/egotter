@@ -112,7 +112,7 @@ class SendMetricsToSlackWorker
   end
 
   def send_sidekiq_worker_metrics
-    %w(sidekiq sidekiq_import).each do |type|
+    %w(sidekiq sidekiq_misc sidekiq_import).each do |type|
       stats = SidekiqStats.new(type).map {|key, value| [key, value].to_s}
       send_message(stats.join("\n"), channel: SIDEKIQ_MONITORING)
     end
