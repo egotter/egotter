@@ -47,11 +47,16 @@ module S3
       parse_json(decompress(Base64.decode64(text)))
     end
 
-    def store(key, body)
+    def store(key, body, async: true)
       raise 'key is nil' if key.nil?
-      ApplicationRecord.benchmark("#{self} Store by #{key}", level: :debug) do
-        client.put_object(bucket: bucket_name, key: key.to_s, body: body)
+      ApplicationRecord.benchmark("#{self} Store by #{key} with async #{async}", level: :debug) do
         cache.write(key.to_s, body)
+
+        if async
+          WriteToS3Worker.perform_async(klass: self, bucket: bucket_name, key: key.to_s, body: body)
+        else
+          client.put_object(bucket: bucket_name, key: key.to_s, body: body)
+        end
       end
     end
 
