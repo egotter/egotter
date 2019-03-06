@@ -5,25 +5,6 @@ RSpec.describe TwitterDB::User, type: :model do
     let(:users) { 3.times.map { create(:twitter_db_user) } }
     let(:rest_users) { users - [users[0]] }
 
-    describe '#friends' do
-      it 'has many friends through friendships' do
-        friendships = rest_users.map.with_index { |u, i| TwitterDB::Friendship.new(user_uid: users[0].uid, friend_uid: u.uid, sequence: i) }
-        expect(friendships.all? { |f| f.save! }).to be_truthy
-
-        expect(users[0].friends.size).to eq(friendships.size)
-        expect(users[0].friends.map(&:uid)).to eq(friendships.map(&:friend_uid))
-      end
-    end
-
-    describe '#followers' do
-      it 'has many followers through followerships' do
-        followerships = rest_users.map.with_index { |u, i| TwitterDB::Followership.new(user_uid: users[0].uid, follower_uid: u.uid, sequence: i) }
-        expect(followerships.all? { |f| f.save! }).to be_truthy
-
-        expect(users[0].followers.size).to eq(followerships.size)
-        expect(users[0].followers.map(&:uid)).to eq(followerships.map(&:follower_uid))
-      end
-    end
   end
 
   describe '#statuses' do
