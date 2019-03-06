@@ -10,10 +10,10 @@ module Concerns::TwitterDB::User::Associations
     default_options = {dependent: :destroy, validate: false, autosave: false}
     order_by_sequence_asc = -> { order(sequence: :asc) }
 
-    with_options default_options.merge(primary_key: :uid, foreign_key: :user_uid) do |obj|
-      obj.has_many :friendships,   order_by_sequence_asc, class_name: 'TwitterDB::Friendship'
-      obj.has_many :followerships, order_by_sequence_asc, class_name: 'TwitterDB::Followership'
-    end
+    # with_options default_options.merge(primary_key: :uid, foreign_key: :user_uid) do |obj|
+    #   obj.has_many :friendships,   order_by_sequence_asc, class_name: 'TwitterDB::Friendship'
+    #   obj.has_many :followerships, order_by_sequence_asc, class_name: 'TwitterDB::Followership'
+    # end
 
     with_options default_options.merge(primary_key: :uid, foreign_key: :uid) do |obj|
       obj.has_many :statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
@@ -29,8 +29,8 @@ module Concerns::TwitterDB::User::Associations
     end
 
     with_options default_options.merge(class_name: 'TwitterDB::User') do |obj|
-      obj.has_many :friends,       through: :friendships
-      obj.has_many :followers,     through: :followerships
+      # obj.has_many :friends,       through: :friendships
+      # obj.has_many :followers,     through: :followerships
 
       obj.has_many :unfriends,     through: :unfriendships
       obj.has_many :unfollowers,   through: :unfollowerships

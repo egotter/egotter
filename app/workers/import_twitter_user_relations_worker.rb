@@ -119,22 +119,25 @@ class ImportTwitterUserRelationsWorker
   def import_twitter_db_friendships(client, twitter_user, friend_uids, follower_uids)
     import_twitter_db_users(client, friend_uids + follower_uids)
 
-    friends_size = TwitterDB::User.where(uid: friend_uids).size
-    followers_size = TwitterDB::User.where(uid: follower_uids).size
-    if friends_size != friend_uids.size || followers_size != follower_uids.size
-      logger.warn "#{__method__}: It is not consistent. #{twitter_user.uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
-    end
+    # friends_size = TwitterDB::User.where(uid: friend_uids).size
+    # followers_size = TwitterDB::User.where(uid: follower_uids).size
+    # if friends_size != friend_uids.size || followers_size != follower_uids.size
+    #   logger.warn "#{__method__}: It is not consistent. #{twitter_user.uid} persisted [#{friends_size}, #{followers_size}] uids [#{friend_uids.size}, #{follower_uids.size}]"
+    # end
 
-    user = nil
-    silent_transaction do
-      TwitterDB::Friendship.import_from!(twitter_user.uid, friend_uids)
-      TwitterDB::Followership.import_from!(twitter_user.uid, follower_uids)
-      (user = TwitterDB::User.find_by(uid: twitter_user.uid)).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
-    end
+    # user = nil
+    # silent_transaction do
+    #   TwitterDB::Friendship.import_from!(twitter_user.uid, friend_uids)
+    #   TwitterDB::Followership.import_from!(twitter_user.uid, follower_uids)
+    #   (user = TwitterDB::User.find_by(uid: twitter_user.uid)).update!(friends_size: friend_uids.size, followers_size: follower_uids.size)
+    # end
 
-    TwitterDB::S3::Friendship.import_from!(twitter_user.uid, twitter_user.screen_name, friend_uids)
-    TwitterDB::S3::Followership.import_from!(twitter_user.uid, twitter_user.screen_name, follower_uids)
-    TwitterDB::S3::Profile.import_from!(twitter_user.uid, twitter_user.screen_name, user.user_info) if user
+    # TwitterDB::S3::Friendship.import_from!(twitter_user.uid, twitter_user.screen_name, friend_uids)
+    # TwitterDB::S3::Followership.import_from!(twitter_user.uid, twitter_user.screen_name, follower_uids)
+    # TwitterDB::S3::Profile.import_from!(twitter_user.uid, twitter_user.screen_name, user.user_info) if user
+
+    user = TwitterDB::User.find_by(uid: twitter_user.uid)
+    TwitterDB::S3::Profile.import_from!(twitter_user.uid, twitter_user.screen_name, user.user_info)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
   end
