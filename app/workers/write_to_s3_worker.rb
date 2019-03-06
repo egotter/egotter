@@ -7,7 +7,7 @@ class WriteToS3Worker
   end
 
   def perform(params, options = {})
-    params[:klass].constantize.client.put_object(bucket: params[:bucket], key: params[:key], body: params[:body])
+    params['klass'].constantize.client.put_object(bucket: params['bucket'], key: params['key'], body: params['body'])
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{params.inspect} #{options.inspect}"
     logger.info e.backtrace.join("\n")
