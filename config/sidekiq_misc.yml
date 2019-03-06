@@ -16,5 +16,6 @@
   - ResetTooManyRequestsWorker
   - UpdateSearchHistoriesWorker
   - UpdateUsageStatWorker
+  - WriteProfilesToS3Worker
   - WriteToS3Worker
   - rollbar
