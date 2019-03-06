@@ -34,6 +34,10 @@ class SidekiqStats
     @stats.map(*args, &block)
   end
 
+  def to_a
+    @stats.to_a
+  end
+
   def to_s
     @stats.to_s
   end

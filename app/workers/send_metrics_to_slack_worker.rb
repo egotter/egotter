@@ -29,11 +29,13 @@ class SendMetricsToSlackWorker
         FollowRequest,
         UnfollowRequest,
         ForbiddenUser,
-        NotFoundUser
+        NotFoundUser,
+        BlockedUser
     ].map do |klass|
       stats[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
     end
-    send_message(stats.to_s, channel: TABLE_MONITORING)
+    stats = stats.sort_by {|k, _| k}.map {|k, v| "#{k} #{v}"}.join("\n")
+    send_message(stats, channel: TABLE_MONITORING)
   end
 
   def send_user_metrics
@@ -104,16 +106,17 @@ class SendMetricsToSlackWorker
   end
 
   def send_sidekiq_queue_metrics
-    queues =
-        Sidekiq::Queue.all.select {|queue| queue.latency > 0}.map do |queue|
-          [queue.name, {size: queue.size, latency: sprintf("%.3f", queue.latency)}].to_s
-        end
-    send_message(queues.join("\n"), channel: SIDEKIQ_MONITORING)
+    queues = Sidekiq::Queue.all.select {|queue| queue.latency > 0}.sort_by(&:name)
+    queues = queues.map do |queue|
+      "#{queue.name} size #{queue.size} latency #{sprintf("%.3f", queue.latency)}"
+    end.join("\n")
+    send_message(queues, channel: SIDEKIQ_MONITORING)
   end
 
   def send_sidekiq_worker_metrics
-    %w(sidekiq sidekiq_misc sidekiq_import).each do |type|
-      stats = SidekiqStats.new(type).map {|key, value| [key, value].to_s}
+    types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import)
+    types.each do |type|
+      stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.map {|key, value| "#{key} #{value}"}
       send_message(stats.join("\n"), channel: SIDEKIQ_MONITORING)
     end
   end
@@ -127,7 +130,9 @@ class SendMetricsToSlackWorker
   TABLE_MONITORING = ENV['SLACK_TABLE_MONITORING_WEBHOOK_URL']
 
   def send_message(text, channel: URL)
+    HTTParty.post(channel, body: {text: '-- start --'}.to_json) if Rails.env.development?
     HTTParty.post(channel, body: {text: text}.to_json)
+    HTTParty.post(channel, body: {text: '-- end --'}.to_json) if Rails.env.development?
   end
 
   def divide(num1, num2)
