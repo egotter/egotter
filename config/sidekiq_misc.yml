@@ -8,18 +8,11 @@
   - misc
   - CreateNotificationMessageWorker
   - CreatePromptReportWorker
-  - CreateScoreWorker
-  - CreateSearchReportWorker
-  - CreateWelcomeMessageWorker
   - ImportDynamodbFriendshipsWorker
   - ImportDynamodbFollowershipsWorker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker
-  - UpdateNotificationMessageWorker
-  - UpdatePromptReportWorker
-  - UpdateSearchReportWorker
-  - UpdateNewsReportWorker
   - UpdateWelcomeMessageWorker
 
   - ResetTooManyRequestsWorker

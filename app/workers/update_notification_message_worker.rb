@@ -1,6 +1,6 @@
 class UpdateNotificationMessageWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def perform(attrs)
     notification = NotificationMessage.order(created_at: :desc).find_by(token: attrs['token'], medium: attrs['medium'], read: false)

@@ -1,6 +1,6 @@
 class UpdateNewsReportWorker
   include Sidekiq::Worker
-  sidekiq_options queue: self, retry: 0, backtrace: false
+  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def perform(attrs)
     report = NewsReport.find_by(token: attrs['token'])
