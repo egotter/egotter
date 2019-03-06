@@ -20,6 +20,7 @@ class SendMetricsToSlackWorker
     stats = {}
     [
         User,
+        Visitor,
         SearchLog,
         SearchErrorLog,
         SignInLog,

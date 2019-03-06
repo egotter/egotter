@@ -7,6 +7,7 @@ class CreateSearchLogWorker
 
     unless log.crawler?
       UpdateSearchLogWorker.perform_async(log.id)
+      UpdateVisitorWorker.perform_async(log.slice(:session_id, :user_id, :created_at))
     end
   rescue => e
     logger.warn "#{e.class} #{e.message} #{attrs.inspect}"
