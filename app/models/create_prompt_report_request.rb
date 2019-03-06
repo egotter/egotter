@@ -94,6 +94,15 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def fetch_user
     @fetch_user ||= client.user(user.uid)
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now)
+      raise Unauthorized
+    else
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+      logger.info e.backtrace.join("\n")
+      raise
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
