@@ -48,6 +48,10 @@ class CreateTwitterUserWorker
       CreateScoreWorker.perform_async(uid, track_id: track.id)
       UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
 
+      WriteProfilesToS3Worker.perform_async([twitter_user.uid], user_id: user_id)
+      WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@friend_uids), user_id: user_id)
+      WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@follower_uids), user_id: user_id)
+
       DetectFailureWorker.perform_in(60.seconds, twitter_user.id, enqueued_at: Time.zone.now)
     end
 
