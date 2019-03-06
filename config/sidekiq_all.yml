@@ -21,3 +21,4 @@
   - UpdateSearchHistoriesWorker
   - UpdateUsageStatWorker
   - UpdateWelcomeMessageWorker
+  - WriteToS3Worker
