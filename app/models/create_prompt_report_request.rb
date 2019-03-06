@@ -55,11 +55,21 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def send_report!(changes)
     PromptReport.you_are_removed(user.id, changes_json: changes.to_json).deliver
+  rescue Twitter::Error::Forbidden => e
+    if e.message == 'You cannot send messages to users you have blocked.'
+      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
+    elsif e.message == 'You cannot send messages to users who are not following you.'
+    else
+      logger.warn "#{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
+      logger.info e.backtrace.join("\n")
+    end
+
+    raise DirectMessageNotSent
   rescue => e
     logger.warn "#{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
     logger.info e.backtrace.join("\n")
 
-    raise DirectMessageNotSent.new(e.message.truncate(100))
+    raise DirectMessageNotSent
   end
 
   def twitter_user
@@ -94,6 +104,14 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def fetch_user
     @fetch_user ||= client.user(user.uid)
+  rescue Twitter::Error::Forbidden => e
+    if e.message.start_with? 'To protect our users from spam and other malicious activity, this account is temporarily locked.'
+      raise Forbidden
+    else
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+      logger.info e.backtrace.join("\n")
+      raise
+    end
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now)
@@ -112,8 +130,12 @@ class CreatePromptReportRequest < ApplicationRecord
   def friend_uids_and_follower_uids
     client.friend_ids_and_follower_ids(user.uid)
   rescue Twitter::Error::Unauthorized => e
-    raise unless e.message != 'Invalid or expired token.'
-    [nil, nil]
+    if e.message == 'Invalid or expired token.'
+      UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now)
+      [nil, nil]
+    else
+      raise
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
@@ -131,6 +153,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class Unauthorized < Error
+  end
+
+  class Forbidden < Error
   end
 
   class ReportDisabled < Error
