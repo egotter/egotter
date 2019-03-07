@@ -18,7 +18,7 @@ namespace :prompt_reports do
         next
       end
 
-      if CreatePromptReportRequest.where(user_id: user.id, created_at: 1.hour.ago..Time.zone.now).exists?
+      if CreatePromptReportRequest.where(user_id: user.id, created_at: 2.hour.ago..Time.zone.now).exists?
         next
       end
 
