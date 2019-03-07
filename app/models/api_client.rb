@@ -17,7 +17,7 @@ class ApiClient
     @client.send(method, *args, &block) # client#parallel uses block.
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
-      user = User.select(:id).find_by(token: client.access_token, secret: client.access_token_secret)
+      user = User.select(:id).find_by(token: @client.access_token, secret: @client.access_token_secret)
       UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now) if user
     end
 
