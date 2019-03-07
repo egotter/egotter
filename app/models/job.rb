@@ -51,12 +51,4 @@ class Job < ApplicationRecord
   def too_late?
     enqueued_at < 1.minutes.ago
   end
-
-  class Error < StandardError
-    Unauthorized = Class.new(self)
-    TooOldOrTooBusy = Class.new(self)
-    RecentlyEnqueued = Class.new(self)
-    NotChanged = Class.new(self)
-    RecordInvalid = Class.new(self)
-  end
 end
