@@ -14,7 +14,7 @@ module Concerns::Validation
   def require_login!
     return if user_signed_in?
     if request.xhr?
-      head :unauthorized
+      render json: {error: 'require_login'}, status: :unauthorized
     else
       redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
     end
@@ -26,7 +26,7 @@ module Concerns::Validation
     return true if twitter_user.valid_uid?
 
     if request.xhr?
-      head :bad_request
+      render json: {error: 'valid_uid'}, status: :bad_request
     else
       message = twitter_user.errors.full_messages.join(t('dictionary.delim'))
       redirect_to root_path, alert: message
@@ -40,7 +40,7 @@ module Concerns::Validation
     return true if TwitterUser.exists?(uid: uid)
 
     if request.xhr?
-      head :bad_request
+      render json: {error: 'too_many_searches'}, status: :bad_request
       return false
     end
 
@@ -73,7 +73,7 @@ module Concerns::Validation
     return true if QueueingRequests.new(CreateTwitterUserWorker).exists?(uid)
 
     if request.xhr?
-      head :bad_request
+      render json: {error: 'searched_uid'}, status: :bad_request
     else
       redirect_to root_path, alert: t('application.not_found')
     end
@@ -131,7 +131,7 @@ module Concerns::Validation
   rescue => e
     if e.message.start_with?('You have been blocked')
       if request.xhr?
-        head :bad_request
+        render json: {error: 'blocked_search'}, status: :bad_request
         return true
       end
 
@@ -160,7 +160,7 @@ module Concerns::Validation
     return true if user_signed_in? && twitter_user.readable_by?(current_user)
 
     if request.xhr?
-      head :bad_request
+      render json: {error: 'authorized_search'}, status: :bad_request
     else
       message = protected_message(twitter_user.screen_name)
       redirect_to redirect_path, alert: message
@@ -199,7 +199,7 @@ module Concerns::Validation
     return false unless TooManyRequestsQueue.new.exists?(current_user_id)
 
     if request.xhr?
-      head :bad_request
+      render json: {error: 'too_many_requests'}, status: :bad_request
       return true
     end
 
@@ -219,7 +219,7 @@ module Concerns::Validation
     return false if current_user.orders.none? {|o| !o.expired?}
 
     if request.xhr?
-      head :bad_request
+      render json: {error: 'has_already_purchased'}, status: :bad_request
     else
       redirect_to root_path, alert: t('after_sign_in.has_already_purchased_html', url: settings_path)
     end
