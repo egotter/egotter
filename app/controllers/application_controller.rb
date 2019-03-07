@@ -1,7 +1,7 @@
 class ApplicationController < ActionController::Base
   include ApplicationHelper
   include UsersHelper
-  include TwitterUsersHelper
+  include Concerns::TwitterUsers
   include CrawlersHelper
   include SessionsHelper
   include Concerns::Validation

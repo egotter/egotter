@@ -1,4 +1,11 @@
-module TwitterUsersHelper
+require 'active_support/concern'
+
+module Concerns::TwitterUsers
+  extend ActiveSupport::Concern
+
+  included do
+  end
+
   def build_twitter_user_by(uid: nil, screen_name: nil)
     return build_twitter_user_by(screen_name: request_context_client.user(uid.to_i)[:screen_name]) if uid
 
