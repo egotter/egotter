@@ -69,10 +69,6 @@ class TwitterUser < ApplicationRecord
 
     logger.info {"checkpoint 1 #{result.inspect}"}
 
-    [Friendship, Followership].each do |klass|
-      result[klass.to_s] = klass.where(from_id: twitter_user_ids).delete_all
-    end
-
     logger.info {"checkpoint 2 #{result.inspect}"}
 
     [TwitterDB::Status, TwitterDB::Favorite, TwitterDB::Mention].each do |klass|
