@@ -88,7 +88,6 @@ class CreateTwitterUserRequest < ApplicationRecord
     @fetch_user ||= client.user(uid)
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
-      UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now)
       raise Unauthorized
     else
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"

@@ -53,9 +53,7 @@ class CreateCacheWorker
     end
     logger.info e.backtrace.join("\n")
   rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      user.update(authorized: false)
-    else
+    unless e.message == 'Invalid or expired token.'
       logger.warn "#{e.class}: #{e.message} #{values}"
       logger.info e.backtrace.join("\n")
     end

@@ -10,10 +10,7 @@ module Concerns::TwitterUser::Batch
         user = OldUser.authorized.find_by(uid: uid) unless user
         client = user ? user.api_client : Bot.api_client
 
-        t_user =
-          fetch_user(uid, client: client) do |ex|
-            user&.update(authorized: false) if ex.message == 'Invalid or expired token.'
-          end
+        t_user = fetch_user(uid, client: client)
         return unless t_user
         t_user = Hashie::Mash.new(t_user)
 
@@ -45,9 +42,7 @@ module Concerns::TwitterUser::Batch
         end
 
         friend_uids, follower_uids =
-          fetch_friend_ids_and_follower_ids(uid, client: client) do |ex|
-            user&.update(authorized: false) if ex.message == 'Invalid or expired token.'
-          end
+          fetch_friend_ids_and_follower_ids(uid, client: client)
         return if friend_uids.nil? || follower_uids.nil?
 
         if (t_user.friends_count - friend_uids.size).abs >= 5 || (t_user.followers_count - follower_uids.size).abs >= 5

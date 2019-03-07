@@ -21,7 +21,10 @@ class CreateSearchReportWorker
     SearchReport.you_are_searched(user.id).deliver
 
   rescue Twitter::Error::Unauthorized => e
-    handle_unauthorized_exception(e, user_id: user_id)
+    unless e.message == 'Invalid or expired token.'
+      logger.warn "#{e.class}: #{e.message} #{user_id}"
+      logger.info e.backtrace.join("\n")
+    end
   rescue Twitter::Error::Forbidden => e
     if e.message == 'You cannot send messages to users you have blocked.' ||
         e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'

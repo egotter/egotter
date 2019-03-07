@@ -30,7 +30,10 @@ class UpdateUsageStatWorker
       UsageStat.builder(uid).statuses(statuses).build.save!
     end
   rescue Twitter::Error::Unauthorized => e
-    handle_unauthorized_exception(e, uid: uid)
+    unless e.message == 'Invalid or expired token.'
+      logger.warn "#{e.class}: #{e.message} #{uid}"
+      logger.info e.backtrace.join("\n")
+    end
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{uid}"
     logger.info e.backtrace.join("\n")
