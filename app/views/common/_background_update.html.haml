@@ -33,9 +33,14 @@
   = t('common.show.via_dm')
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('via_dm'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
+.sign-in-box.alert.alert-info.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('timelines.show.lets_sign_in')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('lets_sign_in'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+
 :javascript
   (function () {
-    var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox;
+    var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox, $signInBox;
 
     function checkFollow () {
       $.getJSON($followBox.data('url'), function (res) {
@@ -89,8 +94,9 @@
 
     $(function () {
       var signedIn = #{user_signed_in?};
+      var crawler = #{from_crawler?};
       var authorized = #{user_signed_in? && current_user.authorized?};
-      var encourageToSignIn = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
+      var removedPage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
       var viaDM = #{via_dm?};
 
       $updateBox = $('.update-box');
@@ -100,6 +106,7 @@
       $invalidTokenBox = $('.invalid-token-box');
       $encourageToSignInBox = $('.additional-func-box');
       $viaDMBox = $('.via-dm-box');
+      $signInBox = $('.sign-in-box');
 
       $.each([$updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox], function (i, btn) {
         btn.on('close.bs.alert', function () {
@@ -107,23 +114,27 @@
         });
       });
 
-      if (signedIn && !authorized) {
-        $invalidTokenBox.show().sticky();
+      if (signedIn) {
+        if (!authorized) {
+          $invalidTokenBox.show().sticky();
+        }
+      } else {
+        if (removedPage) {
+          $encourageToSignInBox.show().sticky();
+        } else if (viaDM) {
+          $viaDMBox.show().sticky();
+        } else if (!crawler) {
+          $signInBox.show().sticky();
+        }
       }
 
-      if (!signedIn && encourageToSignIn) {
-        $encourageToSignInBox.show().sticky();
+      if (signedIn) {
+        var url = '#{twitter_users_path}';
+        var uid = '#{twitter_user.uid}';
+        $.post(url, {uid: uid}, function (res) {
+          console.log(res);
+          checkForUpdates(res.jid, signedIn);
+        });
       }
-
-      if (!signedIn && viaDM) {
-        $viaDMBox.show().sticky();
-      }
-
-      var url = '#{twitter_users_path}';
-      var uid = '#{twitter_user.uid}';
-      $.post(url, {uid: uid}, function (res) {
-        console.log(res);
-        checkForUpdates(res.jid, signedIn);
-      });
     });
   })();
