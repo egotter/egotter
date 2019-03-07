@@ -17,7 +17,7 @@
 
 class CreateTwitterUserRequest < ApplicationRecord
   include Concerns::Request::Runnable
-  belongs_to :user
+  belongs_to :user, optional: true
 
   validates :user_id, presence: true
   validates :uid, presence: true

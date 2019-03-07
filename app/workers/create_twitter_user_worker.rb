@@ -22,7 +22,7 @@ class CreateTwitterUserWorker
     user_id = job.user_id
     uid = job.uid
 
-    request = CreateTwitterUserRequest.new(user_id: user_id, uid: uid)
+    request = CreateTwitterUserRequest.create(user_id: user_id, uid: uid)
     twitter_user = request.perform!
     request.finished!
 
