@@ -178,7 +178,7 @@ module Concerns::Validation
     return false if allow_search_history && latest_search_histories.any? { |history| history.uid.to_i == twitter_user.uid.to_i }
 
     if request.xhr?
-      head :bad_request
+      render json: {error: 'too_many_searches'}, status: :bad_request
       return true
     end
 

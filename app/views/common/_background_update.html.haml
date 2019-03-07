@@ -1,11 +1,11 @@
-.update-box.alert.alert-info.alert-dismissable{data: {url: check_for_updates_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}}
+.update-box.alert.alert-info.alert-dismissable{data: {url: twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.updating', user: twitter_user.mention_name)
   = image_tag '/ajax-loader.gif'
 
 .refresh-box.alert.alert-info.alert-dismissable
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  %span= t('common.show.update_is_coming', user: twitter_user.mention_name)
+  %span= t('twitter_users.show.update_is_coming', user: twitter_user.mention_name)
   = link_to(t('common.show.update_result'), timeline_path(twitter_user, via: build_via('refresh_box')), class: 'btn btn-default btn-sm')
 
 .too-many-friends-box.alert.alert-info.alert-dismissable
@@ -13,7 +13,7 @@
   = t('common.show.need_sign_in', user: twitter_user.mention_name)
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
-.follow-box.alert.alert-warning.alert-dismissable{data: {url: check_follow_path}}
+.follow-box.alert.alert-warning.alert-dismissable{data: {url: follow_path}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_follow', user: twitter_user.mention_name)
   = link_to(t('common.show.follow'), sign_in_path(via: build_via('follow_box'), redirect_path: timeline_path(twitter_user), follow: true), class: 'btn btn-default btn-sm')
@@ -131,9 +131,12 @@
       if (signedIn) {
         var url = '#{twitter_users_path}';
         var uid = '#{twitter_user.uid}';
-        $.post(url, {uid: uid}, function (res) {
+        $.post(url, {uid: uid})
+        .done(function (res) {
           console.log(res);
           checkForUpdates(res.jid, signedIn);
+        }).fail(function (xhr) {
+          console.log(xhr.responseText);
         });
       }
     });

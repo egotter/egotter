@@ -38,11 +38,15 @@ class FollowController < ApplicationController
     end
   end
 
-  def check
-    tries ||= 3
-    follow = request_context_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID)
+  def show
+    render json: {follow: friendship?}
+  end
 
-    render json: {follow: follow}
+  private
+
+  def friendship?
+    tries ||= 3
+    request_context_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID)
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       UpdateAuthorizedWorker.perform_async(current_user.id)
@@ -50,10 +54,10 @@ class FollowController < ApplicationController
       logger.warn "#{e.class}: #{e.message} #{current_user.id}"
       logger.info e.backtrace.join("\n")
     end
-    render json: {follow: nil}
+    nil
   rescue Twitter::Error::Forbidden => e
     raise if e.message != 'Could not determine source user.'
-    render json: {follow: nil}
+    nil
   rescue Twitter::Error::ServiceUnavailable => e
     if e.message == 'Over capacity' && (tries -= 1) > 0
       retry

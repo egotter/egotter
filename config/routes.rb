@@ -109,12 +109,14 @@ Rails.application.routes.draw do
   resources :searches, only: %i(create), param: :screen_name
   get '/searches/:screen_name', to: redirect('/timelines/%{screen_name}')
   get 'searches/:uid/waiting', to: 'waiting#new', as: :waiting_search
-  resources :twitter_users, only: %i(create), param: :uid
+
+  resources :twitter_users, only: %i(create show), param: :uid
 
   resources :timelines, only: %i(show), param: :screen_name
-  get 'timelines/:uid/check_for_updates', to: 'timelines#check_for_updates', as: :check_for_updates
-  get 'check_follow', to: 'follow#check', as: :check_follow
-  post 'create_follow', to: 'follow#create', as: :create_follow
+
+  get 'follow', to: 'follow#show'
+  post 'follow', to: 'follow#create'
+
   post 'create_unfollow', to: 'unfollow#create', as: :create_unfollow
   post 'create_share', to: 'share#create', as: :create_share
 

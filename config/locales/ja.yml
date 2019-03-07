@@ -131,12 +131,6 @@ ja:
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
         view_more: '続きを見る'
       lets_sign_in: 'ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます！'
-    check_for_updates:
-      unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
-      followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
-      followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'
-      friends_count_increased: '%{user} のフォローが、%{before} から %{after} に増えました。'
-      friends_count_decreased: '%{user} のフォローが、%{before} から %{after} に減りました。'
   usage_stats:
     show:
       title: "ツイッター利用状況"
@@ -765,6 +759,14 @@ ja:
       clusters_level: "クラスタレベル"
       clusters_cloud: "クラスタクラウド"
       cluster_name: "%{name}クラスタ"
+  twitter_users:
+    show:
+      unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
+      followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
+      followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'
+      friends_count_increased: '%{user} のフォローが、%{before} から %{after} に増えました。'
+      friends_count_decreased: '%{user} のフォローが、%{before} から %{after} に減りました。'
+      update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
   tokimeki_unfollow:
     new:
       title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -821,7 +823,6 @@ ja:
   common:
     show:
       updating: '%{user} のデータを更新中'
-      update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       update_result: 'ページを更新する'
       need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'

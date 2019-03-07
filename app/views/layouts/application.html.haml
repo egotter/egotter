@@ -210,7 +210,7 @@
               %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_follow_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: create_follow_path}}= t('twitter.create_follow_modal.ok')
+            %button.btn.btn-primary.ok{type: 'button', data: {url: follow_path}}= t('twitter.create_follow_modal.ok')
 
     #create-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
@@ -258,7 +258,7 @@
               %p= t('welcome.follow_modal.note1')
             .modal-footer
               %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.follow_modal.cancel')
-              %button.btn.btn-primary.ok{type: 'button', data: {url: create_follow_path, uid: User::EGOTTER_UID, follow_url: follow_url('ego_tter')}}= t('welcome.follow_modal.ok')
+              %button.btn.btn-primary.ok{type: 'button', data: {url: follow_path, uid: User::EGOTTER_UID, follow_url: follow_url('ego_tter')}}= t('welcome.follow_modal.ok')
 
     - if params[:share_dialog] == '1'
       #share-modal.modal.fade{role: 'dialog', tabindex: '-1'}
