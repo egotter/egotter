@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190305231052) do
+ActiveRecord::Schema.define(version: 20190307012634) do
 
   create_table "audience_insights", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.bigint "uid", null: false
@@ -229,6 +229,16 @@ ActiveRecord::Schema.define(version: 20190305231052) do
     t.index ["screen_name"], name: "index_create_relationship_logs_on_screen_name"
     t.index ["uid"], name: "index_create_relationship_logs_on_uid"
     t.index ["user_id"], name: "index_create_relationship_logs_on_user_id"
+  end
+
+  create_table "create_twitter_user_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.integer "user_id", null: false
+    t.bigint "uid", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_create_twitter_user_requests_on_created_at"
+    t.index ["user_id"], name: "index_create_twitter_user_requests_on_user_id"
   end
 
   create_table "delete_tweets_logs", id: :integer, force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|

@@ -29,43 +29,6 @@ module Concerns::WorkerUtils
     'No user matches for specified terms.'
   ]
 
-  class WorkerError < StandardError
-    attr_reader :jid, :worker_class
-
-    RETRYABLE_ERRORS = [
-      Twitter::Error::TooManyRequests,
-      Twitter::Error::InternalServerError,
-      Twitter::Error::ServiceUnavailable
-    ]
-
-    def initialize(worker_class, jid)
-      super("#{worker_class} #{jid}")
-      @worker_class = worker_class
-      @jid = jid
-    end
-
-    def full_message
-      "#{message} #{cause.class} #{cause&.message&.truncate(100)}"
-    end
-
-    def retryable?
-      RETRYABLE_ERRORS.any? { |klass| klass == cause.class } || retryable_dead_lock?(cause)
-    end
-
-    private
-
-    def retryable_dead_lock?(ex)
-      if ex.class == ActiveRecord::StatementInvalid
-        ex.message.starts_with?('Mysql2::Error: Lock wait timeout exceeded; try restarting transaction') ||
-          ex.message.starts_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')
-      end
-    end
-  end
-
-  def short_hour(time)
-    time.nil? ? '' : I18n.l(time, format: :short_hour)
-  end
-
   def handle_unauthorized_exception(ex, user_id: -1, uid: -1, twitter_user_id: -1)
     if ex.message == 'Invalid or expired token.'
       User.find_by(id: user_id)&.update(authorized: false)
@@ -73,11 +36,6 @@ module Concerns::WorkerUtils
 
     message = "#{ex.class} #{ex.message} #{user_id} #{uid} #{twitter_user_id}"
     UNAUTHORIZED_MESSAGES.include?(ex.message) ? logger.info(message) : logger.warn(message)
-  end
-
-  def handle_not_found_exception(ex, user_id: -1, uid: -1, twitter_user_id: -1)
-    message = "#{ex.class} #{ex.message} #{user_id} #{uid} #{twitter_user_id}"
-    NOT_FOUND_MESSAGES.include?(ex.message) ? logger.info(message) : logger.warn(message)
   end
 
   def handle_forbidden_exception(ex, user_id: -1, uid: -1, twitter_user_id: -1)
