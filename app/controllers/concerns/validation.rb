@@ -20,6 +20,15 @@ module Concerns::Validation
     end
   end
 
+  def require_admin!
+    return if user_signed_in? && current_user.admin?
+    if request.xhr?
+      render json: {error: 'require_admin'}, status: :unauthorized
+    else
+      redirect_to root_path_for(controller: controller_name), alert: t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
+    end
+  end
+
   def valid_uid?(uid = nil)
     uid ||= params[:uid]
     twitter_user = TwitterUser.new(uid: uid)

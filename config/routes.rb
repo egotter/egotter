@@ -134,6 +134,12 @@ Rails.application.routes.draw do
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
   get 'settings/create_prompt_requests', to: "settings#create_prompt_report_requests"
 
+  namespace :admin do
+    get "settings/:user_id/follow_requests", to: "settings#follow_requests"
+    get "settings/:user_id/unfollow_requests", to: "settings#unfollow_requests"
+    get "settings/:user_id/create_prompt_report_requests", to: "settings#create_prompt_report_requests"
+  end
+
   get 'pricing', to: "pricing#new"
   post 'orders', to: 'orders#create'
 
