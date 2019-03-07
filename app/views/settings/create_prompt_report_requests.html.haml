@@ -1,8 +1,16 @@
+.vertical-spacing
 %h2.h4.text-center= t('.title')
+.vertical-spacing
+
+%p= t('.description')
+.vertical-spacing
+.vertical-spacing
+
 %table.unfollow-requests.table.table-condensed.table-responsive.borderless
   %tr
     %th= CreatePromptReportRequest.human_attribute_name(:created_at)
     %th= CreatePromptReportRequest.human_attribute_name(:finished_at)
+    %th= CreatePromptReportLog.human_attribute_name(:error_message)
   - @requests.each do |req|
     %tr
       %td= req.created_at < 6.hours.ago ? req.created_at.to_s(:month_and_day_ja) : time_ago_in_words(req.created_at)
@@ -11,3 +19,4 @@
           .text-info= t('.sent')
         - else
           .text-muted= t('.not_changed')
+      %td= !req.finished? && req.logs.any? ? req.logs.last.error_message : ''

@@ -17,6 +17,7 @@
 class CreatePromptReportRequest < ApplicationRecord
   include Concerns::Request::Runnable
   belongs_to :user
+  has_many :logs, -> { order(created_at: :asc) }, foreign_key: :request_id, class_name: 'CreatePromptReportLog'
 
   validates :user_id, presence: true
 

@@ -32,6 +32,6 @@ class SettingsController < ApplicationController
   end
 
   def create_prompt_report_requests
-    @requests = current_user.create_prompt_report_requests.limit(20)
+    @requests = current_user.create_prompt_report_requests.includes(:logs).limit(20)
   end
 end

@@ -237,6 +237,7 @@ ja:
       title: 'リムーブボタン履歴'
     create_prompt_report_requests:
       title: 'リムられ通知履歴'
+      description: 'リムられ通知は、最後にアクセスしてからのフォロワーの変化を集計します。そのため、頻繁にえごったーを見る方には通知があまり届かないことがあります。'
       sent: '送信済み'
       not_changed: '更新なし'
     tgl_btn:
@@ -1075,6 +1076,8 @@ ja:
       create_prompt_report_request:
         created_at: "処理開始"
         finished_at: "ステータス"
+      create_prompt_report_log:
+        error_message: "エラーメッセージ"
       audience_insight_chart_builder:
         friends: "フォロー"
         followers: "フォロワー"
