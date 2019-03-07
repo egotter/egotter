@@ -5,7 +5,7 @@
     %th= CreatePromptReportRequest.human_attribute_name(:finished_at)
   - @requests.each do |req|
     %tr
-      %td= req.created_at.to_s(:db)
+      %td= req.created_at < 6.hours.ago ? req.created_at.to_s(:month_and_day_ja) : time_ago_in_words(req.created_at)
       %td
         - if req.finished_at
           .text-info= t('.sent')
