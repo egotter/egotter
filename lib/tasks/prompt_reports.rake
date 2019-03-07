@@ -15,10 +15,12 @@ namespace :prompt_reports do
     task.users.each.with_index do |user, i|
       unless TwitterUser.exists?(uid: user.uid)
         # TwitterUser::Batch.fetch_and_create(user.uid) # TODO Create in background
+        task.skipped_count += 1
         next
       end
 
       if CreatePromptReportRequest.where(user_id: user.id, created_at: 2.hour.ago..Time.zone.now).exists?
+        task.skipped_count += 1
         next
       end
 

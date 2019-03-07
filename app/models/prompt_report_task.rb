@@ -1,6 +1,6 @@
 class PromptReportTask
 
-  attr_accessor :processed_count
+  attr_accessor :processed_count, :skipped_count
 
   class << self
     def start(user_ids_str:, deadline_str: nil)
@@ -23,6 +23,7 @@ class PromptReportTask
   def initialize(user_ids_str, deadline_str)
     @start_time = Time.zone.now
     @processed_count = 0
+    @skipped_count = 0
     @errors = []
 
     @user_ids =
@@ -123,7 +124,7 @@ class PromptReportTask
       end.join("\n")
     when :finishing
       elapsed = Time.zone.now - start_time
-      "elapsed #{sprintf('%d', elapsed)} seconds#{", deadline #{deadline}" if deadline}, processed #{processed_count}, sent #{sent_count}, users #{users.size}, errors #{errors.size}"
+      "elapsed #{sprintf('%d', elapsed)} seconds#{", deadline #{deadline}" if deadline}, processed #{processed_count}, skipped #{skipped_count}, sent #{sent_count}, users #{users.size}, errors #{errors.size}"
     else
       raise "Invalid kind #{kind}"
     end
