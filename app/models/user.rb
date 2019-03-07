@@ -43,10 +43,10 @@ class User < ApplicationRecord
     obj.has_many :prompt_reports
     obj.has_many :search_reports
     obj.has_many :news_reports
-    obj.has_many :create_prompt_report_requests
+    obj.has_many :create_prompt_report_requests, -> { order(created_at: :desc) }
     obj.has_one :notification_setting
-    obj.has_many :follow_requests
-    obj.has_many :unfollow_requests
+    obj.has_many :follow_requests, -> { order(created_at: :desc) }
+    obj.has_many :unfollow_requests, -> { order(created_at: :desc) }
     obj.has_many :orders
   end
 

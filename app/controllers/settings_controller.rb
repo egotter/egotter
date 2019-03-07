@@ -24,14 +24,14 @@ class SettingsController < ApplicationController
   end
 
   def follow_requests
-    @requests = current_user.follow_requests
+    @requests = current_user.follow_requests.limit(20)
   end
 
   def unfollow_requests
-    @requests = current_user.unfollow_requests
+    @requests = current_user.unfollow_requests.limit(20)
   end
 
   def create_prompt_report_requests
-    @requests = current_user.create_prompt_report_requests
+    @requests = current_user.create_prompt_report_requests.limit(20)
   end
 end
