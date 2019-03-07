@@ -102,6 +102,18 @@
   <div class="tgl-btns-wrapper">
     <%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name %>
   </div>
+
+  <table class="table trial">
+    <tbody>
+    <tr>
+      <td><%= t('.prompt_report.title') %></td>
+      <td>
+        <a class="btn btn-default" href="<%= settings_create_prompt_requests_path %>"><%= t('.prompt_report.see') %></a>
+        <div class="text-muted notes"><%= t('.prompt_report.note') %></div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
 </div>
 
 <div class="modal fade" id="reset-egotter-modal" tabindex="-1" role="dialog">

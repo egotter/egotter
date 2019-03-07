@@ -220,6 +220,10 @@ ja:
         ok: "はい、リセットします"
         cancel: "いいえ"
         direct_message: "えごったーのデータリセットが完了しました。今後もえごったーをよろしくお願いいたします。"
+      prompt_report:
+        title: "リムられ通知履歴"
+        see: "見てみる"
+        note: "リムられ通知の処理履歴です"
       trial_follow_request: "フォローボタン履歴"
       trial_follow_request_see: "見てみる"
       trial_follow_request_note: "フォロー処理の履歴です"
@@ -231,6 +235,10 @@ ja:
       title: 'フォローボタン履歴'
     unfollow_requests:
       title: 'リムーブボタン履歴'
+    create_prompt_report_requests:
+      title: 'リムられ通知履歴'
+      sent: '送信済み'
+      not_changed: '更新なし'
     tgl_btn:
       updated: "更新しました"
       desc:
@@ -1064,6 +1072,9 @@ ja:
         error_class: "エラー"
         created_at: "クリック"
         finished_at: "完了"
+      create_prompt_report_request:
+        created_at: "処理開始"
+        finished_at: "ステータス"
       audience_insight_chart_builder:
         friends: "フォロー"
         followers: "フォロワー"

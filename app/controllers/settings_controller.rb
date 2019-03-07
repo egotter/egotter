@@ -30,4 +30,8 @@ class SettingsController < ApplicationController
   def unfollow_requests
     @requests = current_user.unfollow_requests
   end
+
+  def create_prompt_report_requests
+    @requests = current_user.create_prompt_report_requests
+  end
 end

@@ -1,0 +1,13 @@
+%h2.h4.text-center= t('.title')
+%table.unfollow-requests.table.table-condensed.table-responsive.borderless
+  %tr
+    %th= CreatePromptReportRequest.human_attribute_name(:created_at)
+    %th= CreatePromptReportRequest.human_attribute_name(:finished_at)
+  - @requests.each do |req|
+    %tr
+      %td= req.created_at.to_s(:db)
+      %td
+        - if req.finished_at
+          .text-info= t('.sent')
+        - else
+          .text-muted= t('.not_changed')

@@ -132,6 +132,7 @@ Rails.application.routes.draw do
   resource :setting, only: :update
   get 'settings/follow_requests', to: "settings#follow_requests"
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
+  get 'settings/create_prompt_requests', to: "settings#create_prompt_report_requests"
 
   get 'pricing', to: "pricing#new"
   post 'orders', to: 'orders#create'
