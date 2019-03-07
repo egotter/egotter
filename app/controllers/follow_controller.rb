@@ -46,11 +46,10 @@ class FollowController < ApplicationController
 
   def friendship?
     tries ||= 3
+    request_context_client.verify_credentials
     request_context_client.twitter.friendship?(current_user.uid.to_i, User::EGOTTER_UID)
   rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      UpdateAuthorizedWorker.perform_async(current_user.id)
-    else
+    unless e.message == 'Invalid or expired token.'
       logger.warn "#{e.class}: #{e.message} #{current_user.id}"
       logger.info e.backtrace.join("\n")
     end

@@ -6,7 +6,10 @@ class TweetEgotterWorker
   def perform(user_id, text)
     User.find(user_id).api_client.twitter.update(text)
   rescue Twitter::Error::Unauthorized => e
-    handle_unauthorized_exception(e, user_id: user_id)
+    unless e.message == 'Invalid or expired token.'
+      logger.warn "#{e.class}: #{e.message} #{user_id}"
+      logger.info e.backtrace.join("\n")
+    end
   rescue Twitter::Error::Forbidden => e
     handle_forbidden_exception(e, user_id: user_id)
   rescue => e

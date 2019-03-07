@@ -29,15 +29,6 @@ module Concerns::WorkerUtils
     'No user matches for specified terms.'
   ]
 
-  def handle_unauthorized_exception(ex, user_id: -1, uid: -1, twitter_user_id: -1)
-    if ex.message == 'Invalid or expired token.'
-      User.find_by(id: user_id)&.update(authorized: false)
-    end
-
-    message = "#{ex.class} #{ex.message} #{user_id} #{uid} #{twitter_user_id}"
-    UNAUTHORIZED_MESSAGES.include?(ex.message) ? logger.info(message) : logger.warn(message)
-  end
-
   def handle_forbidden_exception(ex, user_id: -1, uid: -1, twitter_user_id: -1)
     message = "#{ex.class} #{ex.message} #{user_id} #{uid} #{twitter_user_id}"
     FORBIDDEN_MESSAGES.include?(ex.message) ? logger.info(message) : logger.warn(message)

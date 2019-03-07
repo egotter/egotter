@@ -14,7 +14,10 @@ class CreateWelcomeMessageWorker
     WelcomeMessage.welcome(user.id).deliver
 
   rescue Twitter::Error::Unauthorized => e
-    handle_unauthorized_exception(e, user_id: user_id)
+    unless e.message == 'Invalid or expired token.'
+      logger.warn "#{e.class}: #{e.message} #{user_id}"
+      logger.info e.backtrace.join("\n")
+    end
   rescue Twitter::Error::Forbidden => e
     if e.message == 'You are sending a Direct Message to users that do not follow you.'
       logger.info "#{e.class}: #{e.message} #{user_id}"

@@ -4,8 +4,8 @@ class DeviseCreateUsers < ActiveRecord::Migration[4.2]
       t.bigint   :uid,              null: false
       t.string   :screen_name,      null: false
       t.boolean  :authorized,       null: false, default: true
-      t.string   :secret,           null: false
       t.string   :token,            null: false
+      t.string   :secret,           null: false
       t.string   :email,            null: false, default: ''
       t.datetime :first_access_at,  null: true
       t.datetime :last_access_at,   null: true
@@ -18,6 +18,7 @@ class DeviseCreateUsers < ActiveRecord::Migration[4.2]
 
       t.index :uid, unique: true
       t.index :screen_name
+      t.index :token
       t.index :first_access_at
       t.index :last_access_at
       t.index :created_at

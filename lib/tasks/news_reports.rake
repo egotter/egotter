@@ -45,7 +45,6 @@ namespace :news_reports do
       begin
         NewsReport.come_back_inactive_user(user_id).deliver unless dry_run
       rescue => e
-        User.find(user_id).update(authorized: false) if ex.message == 'Invalid or expired token.'
         news_reports_can_continue?(e, user_id) ? next : (failed = true)
       end
 

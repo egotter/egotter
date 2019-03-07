@@ -44,7 +44,10 @@ module Concerns::FollowAndUnfollowWorker
     request_class.next_request(user_id)&.enqueue(enqueue_location: 'Specified error', request_id: request&.id, error_class: e.class)
   rescue => e
     if e.class == Twitter::Error::Unauthorized
-      handle_unauthorized_exception(e, user_id: user_id)
+      unless e.message == 'Invalid or expired token.'
+        logger.warn "#{e.class}: #{e.message} #{user_id}"
+        logger.info e.backtrace.join("\n")
+      end
     end
 
     request.update(error_class: e.class, error_message: e.message.truncate(150))

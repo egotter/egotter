@@ -6,33 +6,42 @@ class ApiClient
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
       logger.info "ApiClient#method_missing #{method} #{args.inspect.truncate(100)}" rescue nil
-      begin
-        tries ||= 5
-        @client.send(method, *args, &block) # client#parallel uses block.
-      rescue HTTP::ConnectionError,
-          Twitter::Error::InternalServerError,
-          Twitter::Error::ServiceUnavailable,
-          Twitter::Error => e
-        if retryable_exception?(e)
-          message = "#{self.class}##{method}: #{e.class} #{e.message}"
-
-          if (tries -= 1) < 0
-            logger.warn "RETRY EXHAUSTED #{message}"
-            raise
-          else
-            if tries <= 3
-              logger.warn "RETRY #{tries} #{message}"
-            else
-              logger.info "RETRY #{tries} #{message}"
-            end
-            retry
-          end
-        else
-          raise
-        end
-      end
+      do_request(method, args, &block)
     else
       super
+    end
+  end
+
+  def do_request(method, args, &block)
+    tries ||= 5
+    @client.send(method, *args, &block) # client#parallel uses block.
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      user = User.select(:id).find_by(token: client.access_token, secret: client.access_token_secret)
+      UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now) if user
+    end
+
+    raise
+  rescue HTTP::ConnectionError,
+      Twitter::Error::InternalServerError,
+      Twitter::Error::ServiceUnavailable,
+      Twitter::Error => e
+    if retryable_exception?(e)
+      message = "#{self.class}##{method}: #{e.class} #{e.message}"
+
+      if (tries -= 1) < 0
+        logger.warn "RETRY EXHAUSTED #{message}"
+        raise
+      else
+        if tries <= 3
+          logger.warn "RETRY #{tries} #{message}"
+        else
+          logger.info "RETRY #{tries} #{message}"
+        end
+        retry
+      end
+    else
+      raise
     end
   end
 
