@@ -60,6 +60,7 @@ class CreatePromptReportRequest < ApplicationRecord
     if e.message == 'You cannot send messages to users you have blocked.'
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     elsif e.message == 'You cannot send messages to users who are not following you.'
+    elsif e.message == 'You are sending a Direct Message to users that do not follow you.'
     else
       logger.warn "#{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
       logger.info e.backtrace.join("\n")

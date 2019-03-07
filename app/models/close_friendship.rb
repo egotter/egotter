@@ -27,5 +27,13 @@ class CloseFriendship < ApplicationRecord
       import_from!(twitter_user.uid, uids)
       uids
     end
+
+    def import_by(twitter_user:, login_user: nil)
+      import_by!(twitter_user: twitter_user, login_user: login_user)
+    rescue => e
+      logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect} #{login_user.inspect}"
+      logger.info e.backtrace.join("\n")
+      []
+    end
   end
 end

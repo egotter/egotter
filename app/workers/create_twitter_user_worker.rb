@@ -30,16 +30,7 @@ class CreateTwitterUserWorker
     TwitterDB::User.import_by(twitter_user: twitter_user)
     job.update(twitter_user_id: twitter_user.id, finished_at: Time.zone.now)
 
-    ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now, track_id: track.id)
-    UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: track.id, enqueued_at: Time.zone.now)
-    CreateScoreWorker.perform_async(uid, track_id: track.id)
-    UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
-
-    # WriteProfilesToS3Worker.perform_async([twitter_user.uid], user_id: user_id)
-    # WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@friend_uids), user_id: user_id)
-    # WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@follower_uids), user_id: user_id)
-
-    DetectFailureWorker.perform_in(60.seconds, twitter_user.id, enqueued_at: Time.zone.now)
+    enqueue_next_jobs(user_id, uid, twitter_user, track)
 
     # Saved relations At this point:
     # friends_size, followers_size, statuses, mentions, favorites, friendships, followerships
@@ -57,6 +48,19 @@ class CreateTwitterUserWorker
     job.update(error_class: e.class, error_message: e.message.truncate(100))
     logger.warn "#{e.class} #{e.message} #{values.inspect}"
     logger.info e.backtrace.join("\n")
+  end
+
+  def enqueue_next_jobs(user_id, uid, twitter_user, track)
+    ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now, track_id: track.id)
+    UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: track.id, enqueued_at: Time.zone.now)
+    CreateScoreWorker.perform_async(uid, track_id: track.id)
+    UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
+
+    # WriteProfilesToS3Worker.perform_async([twitter_user.uid], user_id: user_id)
+    # WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@friend_uids), user_id: user_id)
+    # WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@follower_uids), user_id: user_id)
+
+    DetectFailureWorker.perform_in(60.seconds, twitter_user.id, enqueued_at: Time.zone.now)
   end
 
   private

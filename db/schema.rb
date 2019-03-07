@@ -349,6 +349,16 @@ ActiveRecord::Schema.define(version: 20190307103459) do
     t.index ["from_id"], name: "index_friendships_on_from_id"
   end
 
+  create_table "import_twitter_user_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
+    t.integer "user_id", null: false
+    t.integer "twitter_user_id", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_import_twitter_user_requests_on_created_at"
+    t.index ["user_id"], name: "index_import_twitter_user_requests_on_user_id"
+  end
+
   create_table "inactive_followerships", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.bigint "from_uid", null: false
     t.bigint "follower_uid", null: false
