@@ -11,6 +11,10 @@ class CreateCacheWorker
     10.seconds
   end
 
+  def after_timeout(*args)
+    logger.info "Timeout #{timeout_in} #{args.inspect.truncate(100)}"
+  end
+
   def expire_in
     1.minute
   end

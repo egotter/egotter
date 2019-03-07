@@ -7,6 +7,7 @@ class WriteProfilesToS3Worker
   end
 
   def after_timeout(uids, options = {})
+    logger.warn "Timeout #{timeout_in} #{uids.inspect.truncate(100)}"
     self.class.perform_in(retry_in, uids)
   end
 

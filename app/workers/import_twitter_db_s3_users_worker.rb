@@ -7,6 +7,7 @@ class ImportTwitterDbS3UsersWorker
   end
 
   def after_timeout(uids)
+    logger.warn "Timeout #{timeout_in} #{uids.inspect.truncate(100)}"
     self.class.perform_in(retry_in, uids)
   end
 

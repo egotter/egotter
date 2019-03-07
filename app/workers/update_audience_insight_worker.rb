@@ -12,6 +12,8 @@ class UpdateAudienceInsightWorker
   end
 
   def after_timeout(uid, options = {})
+    logger.info "Timeout #{timeout_in} #{uid} #{options}"
+
     QueueingRequests.new(self.class).delete(uid)
     RunningQueue.new(self.class).delete(uid)
     self.class.perform_in(retry_in, uid, options)
