@@ -18,7 +18,6 @@
   - ImportTwitterDbS3UsersWorker
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
-  - UpdateSearchHistoriesWorker
   - UpdateUsageStatWorker
   - UpdateWelcomeMessageWorker
   - WriteProfilesToS3Worker
