@@ -6,8 +6,11 @@
     <tr>
       <td><%= t('searches.common.twitter_id') %></td>
       <td>
-        <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
-        <div class="text-muted notes screen-name-updated" style="display: none;"><%= t('.profile_updated') %></div>
+        <div class="screen-name-container">
+          <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
+          <div class="text-muted notes updated" style="display: none;"><%= t('.profile_updated') %></div>
+          <div class="text-danger notes error" style="display: none;"></div>
+        </div>
       </td>
     </tr>
     <tr>
@@ -136,11 +139,20 @@
 
 <script>
   $(function () {
+    (function () {
+      var $elem = $('.screen-name-container');
+
+      Settings.enableUpdateProfileButton(function (res) {
+        $elem.find('.screen-name').text(res.screen_name);
+        $elem.find('.error').hide();
+        $elem.find('.updated').show();
+      }, function (res) {
+        $elem.find('.updated').hide();
+        $elem.find('.error').text('Error: ' + res.error).show();
+      });
+    })();
+
     Settings.enableResetEgotterButton();
-    Settings.enableUpdateProfileButton(function (res) {
-      $('.screen-name').text(res.screen_name);
-      $('.screen-name-updated').show();
-    });
 
     var url = '<%= setting_path %>';
     attach_event_handler('email', url);

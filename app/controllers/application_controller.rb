@@ -28,13 +28,21 @@ class ApplicationController < ActionController::Base
   rescue_from Exception do |ex|
     logger.warn "rescue_from Exception: #{ex.class} #{ex.message} #{debug_str}"
     logger.info ex.backtrace.join("\n")
-    request.xhr? ? head(:internal_server_error) : render_500
+
+    if request.xhr?
+      render json: {error: ex.message.truncate(100)}, status: :internal_server_error
+    else
+      render_500
+    end
   end
 
   rescue_from ActionController::InvalidAuthenticityToken do |ex|
     logger.info "Invalid token: #{debug_str}"
 
-    next head :bad_request if request.xhr?
+    if request.xhr?
+      render json: {error: ex.message.truncate(100)}, status: :bad_request
+      next
+    end
 
     screen_name = params[:screen_name].to_s.strip.remove /^@/
     unless screen_name.match(Validations::ScreenNameValidator::REGEXP)

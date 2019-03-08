@@ -8,12 +8,12 @@ function attach_event_handler(name, url) {
     var params = {};
     params[name] = val;
     $.ajax({url: url, method: 'PATCH', data: params})
-      .done(function (res) {
-        console.log(res);
-      })
-      .fail(function (xhr) {
-        console.log(xhr.responseText);
-      });
+        .done(function (res) {
+          console.log(res);
+        })
+        .fail(function (xhr) {
+          console.log(xhr.responseText);
+        });
   });
 }
 
@@ -43,16 +43,29 @@ Settings.enableResetEgotterButton = function () {
   });
 };
 
-Settings.enableUpdateProfileButton = function (callback) {
+Settings.enableUpdateProfileButton = function (callback, errorCallback) {
   $('.update-profile').on('click', function (e) {
     e.preventDefault();
     var $clicked = $(this);
-    $.post($clicked.data('url'), function (res) {
-      console.log(res);
-      if (callback) {
-        callback(res);
-      }
-    });
+    $.post($clicked.data('url'))
+        .done(function (res) {
+          console.log(res);
+          if (callback) {
+            callback(res);
+          }
+        })
+        .fail(function (xhr) {
+          console.log(xhr.responseText);
+          if (xhr.responseText) {
+            if (errorCallback) {
+              errorCallback(JSON.parse(xhr.responseText));
+            }
+          }
+        });
+    {
+
+    }
+    ;
     return false;
   });
 };
