@@ -182,9 +182,9 @@ module Concerns::Validation
     false
   end
 
-  def too_many_searches?(twitter_user, allow_search_history: true)
+  def too_many_searches?(twitter_user)
     return false if from_crawler? || search_histories_remaining > 0
-    return false if allow_search_history && latest_search_histories.any? { |history| history.uid.to_i == twitter_user.uid.to_i }
+    return false if latest_search_histories.any? { |history| history.uid.to_i == twitter_user.uid.to_i }
 
     if request.xhr?
       render json: {error: 'too_many_searches'}, status: :bad_request
@@ -193,7 +193,7 @@ module Concerns::Validation
 
     message =
         if user_signed_in?
-          t('after_sign_in.too_many_searches_html', limit: search_histories_limit)
+          t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path)
         else
           t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: kick_out_error_path('too_many_searches'))
         end

@@ -38,6 +38,14 @@
   = t('timelines.show.lets_sign_in')
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('lets_sign_in'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
+.too-many-searches-box.alert.alert-info.alert-dismissable
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  - if user_signed_in?
+    = t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path)
+  - else
+    - url = sign_in_path(via: build_via('too_many_searches'), redirect_path: timeline_path(twitter_user))
+    = t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: url)
+
 :javascript
   (function () {
     var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox, $signInBox;
@@ -107,6 +115,7 @@
       $encourageToSignInBox = $('.additional-func-box');
       $viaDMBox = $('.via-dm-box');
       $signInBox = $('.sign-in-box');
+      $tooManySearchesBox = $('.too-many-searches-box');
 
       $.each([$updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox], function (i, btn) {
         btn.on('close.bs.alert', function () {
@@ -131,12 +140,17 @@
       if (signedIn) {
         var url = '#{twitter_users_path}';
         var uid = '#{twitter_user.uid}';
+
         $.post(url, {uid: uid})
         .done(function (res) {
           console.log(res);
           checkForUpdates(res.jid, signedIn);
         }).fail(function (xhr) {
           console.log(xhr.responseText);
+
+          if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['error'] === 'too_many_searches') {
+            $tooManySearchesBox.show().sticky();
+          }
         });
       }
     });

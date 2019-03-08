@@ -6,7 +6,7 @@ class TwitterUsersController < ApplicationController
 
   before_action(only: :create) { @twitter_user = build_twitter_user_by(uid: params[:uid].to_i) }
   before_action(only: :create) { authorized_search?(@twitter_user) && !blocked_search?(@twitter_user) }
-  before_action(only: :create) { !too_many_searches?(@twitter_user, allow_search_history: false) && !too_many_requests?(@twitter_user) }
+  before_action(only: :create) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
   before_action only: %i(show) do
     uid = params[:uid].to_i
