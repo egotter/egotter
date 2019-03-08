@@ -27,6 +27,9 @@ namespace :prompt_reports do
       begin
         request = CreatePromptReportRequest.create(user_id: user.id)
         CreatePromptReportWorker.new.perform(request.id, user_id: user.id, exception: true)
+      rescue CreatePromptReportRequest::Blocked => e
+        task.blocked_count += 1
+        task.add_error(user.id, e)
       rescue => e
         task.add_error(user.id, e)
       end
@@ -46,5 +49,7 @@ namespace :prompt_reports do
       logger.info "Errors:"
       logger.info task.to_s(:errors)
     end
+
+    SlackClient.send_message(task.to_s(:finishing))
   end
 end
