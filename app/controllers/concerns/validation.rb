@@ -193,7 +193,7 @@ module Concerns::Validation
 
     message =
         if user_signed_in?
-          t('after_sign_in.too_many_searches_html', limit: search_histories_limit)
+          t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path)
         else
           t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: kick_out_error_path('too_many_searches'))
         end

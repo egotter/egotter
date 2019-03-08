@@ -5,7 +5,8 @@
 .invalid-token-box,
 .additional-func-box,
 .via-dm-box,
-.sign-in-box {
+.sign-in-box,
+.too-many-searches-box {
   margin-bottom: 15px;
   display: none;
   z-index: 10000; // for sticky

@@ -928,7 +928,7 @@ ja:
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
-    too_many_searches_html: 'ログインせずに検索できる上限に達しました。( %{limit}回/日 ) もっとたくさん検索するには、<a href="%{url}">ログイン</a> してから検索してください。'
+    too_many_searches_html: 'ログインせずに検索できる上限に達しました。( %{limit}回/日 ) もっとたくさん検索するには、<a href="%{url}" class="btn btn-default btn-sm">ログイン</a> してください。'
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
@@ -938,7 +938,7 @@ ja:
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
   after_sign_in:
-    too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 )'
+    too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
