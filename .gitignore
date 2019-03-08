@@ -23,7 +23,6 @@
 /.pryrc
 /dump.rdb
 /*.dump
-/*.sql
 /redis.conf
 /*.json
 /data/bot.json
