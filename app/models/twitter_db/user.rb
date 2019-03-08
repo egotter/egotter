@@ -23,7 +23,6 @@ module TwitterDB
     include Concerns::TwitterDB::User::Store
     include Concerns::TwitterUser::Inflections
     include Concerns::TwitterDB::User::Associations
-    include Concerns::TwitterDB::User::Importable
 
     include Concerns::TwitterDB::User::Batch
     include Concerns::TwitterDB::User::Debug

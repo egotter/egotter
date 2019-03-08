@@ -18,6 +18,7 @@
 class CreateTwitterUserRequest < ApplicationRecord
   include Concerns::Request::Runnable
   belongs_to :user, optional: true
+  belongs_to :twitter_user, optional: true
 
   validates :user_id, presence: true
   validates :uid, presence: true
@@ -27,13 +28,26 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     # Don't call #invalid? because it clears errors
     raise RecordInvalid.new(twitter_user) if twitter_user.errors.any?
-    return twitter_user if twitter_user.save
+
+    if twitter_user.save
+      update(twitter_user_id: twitter_user.id)
+      CreateTwitterDBUserWorker.perform_async([uid])
+      return twitter_user
+    end
 
     if TwitterUser.exists?(uid: twitter_user.uid)
       raise NotChanged.new('After build')
     else
       raise RecordInvalid.new(twitter_user)
     end
+  end
+
+  def perform
+    perform!
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+    nil
   end
 
   # These validation methods (fresh?, no_need_to_import_friendships? and diff.empty?) are not implemented in

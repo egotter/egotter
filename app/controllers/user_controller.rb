@@ -5,7 +5,7 @@ class UserController < ApplicationController
   def update
     t_user = request_context_client.user(current_user.uid)
     current_user.update!(screen_name: t_user[:screen_name])
-    TwitterDB::User.import_by!(twitter_user: TwitterUser.build_by(user: t_user))
+    CreateTwitterDBUserWorker.perform_async([current_user.uid])
     render json: {screen_name: current_user.screen_name}
   end
 end
