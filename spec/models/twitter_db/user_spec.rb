@@ -52,34 +52,4 @@ RSpec.describe TwitterDB::User, type: :model do
       end
     end
   end
-
-  describe '.import_by!' do
-    let(:twitter_user) { build(:twitter_user) }
-    subject { described_class.import_by!(twitter_user: twitter_user) }
-
-    it 'Updates TwitterDB::User' do
-      subject
-      TwitterDB::User.find_by(uid: twitter_user.uid).tap do |user|
-        expect(user.screen_name).to eq(twitter_user.screen_name)
-        expect(user.friends_size).to eq(-1)
-        expect(user.followers_size).to eq(-1)
-        # TODO Check user_info
-      end
-    end
-  end
-
-  describe '.import_by' do
-    let(:twitter_user) { build(:twitter_user) }
-    subject { described_class.import_by(twitter_user: twitter_user) }
-
-    it 'calls #import_by!' do
-      expect(described_class).to receive(:import_by!).with(twitter_user: twitter_user)
-      subject
-    end
-
-    it "doesn't raise an error" do
-      allow(described_class).to receive(:import_by!).and_raise(StandardError)
-      expect { subject }.to_not raise_error
-    end
-  end
 end
