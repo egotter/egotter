@@ -92,28 +92,28 @@ module Concerns::Report::Common
       "app/views/#{report_class.name.underscore.pluralize}/#{self.class.name.demodulize.underscore.remove(/_message$/)}.ja.#{format}.erb"
     end
 
-    def twitter_db_user
-      user.twitter_user.twitter_db_user
+    def twitter_user
+      user.twitter_user
     end
 
     def removing_names
-      twitter_db_user.unfriends.limit(3).pluck(:screen_name).map do |name|
+      twitter_user.unfriends.limit(3).pluck(:screen_name).map do |name|
         '@' + name
       end.join ' '
     end
 
     def removing_count
-      twitter_db_user.unfriendships.size
+      twitter_user.unfriendships.size
     end
 
     def removed_names
-      twitter_db_user.unfollowers.limit(3).pluck(:screen_name).map do |name|
+      twitter_user.unfollowers.limit(3).pluck(:screen_name).map do |name|
         '@' + name
       end.join ' '
     end
 
     def removed_count
-      twitter_db_user.unfollowerships.size
+      twitter_user.unfollowerships.size
     end
   end
 end
