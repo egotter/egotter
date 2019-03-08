@@ -892,7 +892,7 @@ ja:
     official_account: "公式アカウント"
     suspended: "垢消し"
     blocked: "ブロック中"
-    inactive: "停止中"
+    inactive: "非アクティブ"
     refollow: "再フォロー"
     refollowed: "再フォロワー"
     link_to_support: "お問い合わせページ"
