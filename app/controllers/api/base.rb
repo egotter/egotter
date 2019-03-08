@@ -1,6 +1,5 @@
 module Api
   class Base < ApplicationController
-    include SortAndFilterHelper
 
     layout false
 
@@ -15,16 +14,11 @@ module Api
 
     def summary
       uids, size = summary_uids
-      users = TwitterDB::User.where(uid: uids).index_by(&:uid)
 
-      if uids.any? { |uid| !users.has_key?(uid) }
-        selected_uids = uids.select { |uid| !users.has_key?(uid) }
-        logger.info {"#{controller_name}##{action_name} CreateTwitterDBUserWorker #{selected_uids.size}"}
-        CreateTwitterDBUserWorker.perform_async(selected_uids)
-      end
+      users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+      create_users_for_not_persisted_uids(uids, users)
 
       users = uids.map { |uid| users[uid] }.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}
-
       chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'),  y: 200.0 / 3.0}]
 
       render json: {name: controller_name, count: size, users: users, chart: chart}
@@ -33,26 +27,18 @@ module Api
     def list
       max_sequence = params[:max_sequence].to_i
       limit = (0..10).include?(params[:limit].to_i) ? params[:limit].to_i : 10
-      sort_order = USERS_SORT_ORDERS.map {|o| o[1]}.include?(params[:sort_order]) ? params[:sort_order] : USERS_SORT_ORDERS[0][1]
-      filter = USERS_FILTERS.map {|f| f[1]}.include?(params[:filter]) ? params[:filter] : nil
+
+      sort_order = SortOrder.new(params[:sort_order])
+      filter = Filter.new(params[:filter])
 
       uids, max_sequence =
-          if sort_order == USERS_SORT_ORDERS[0][1] && filter.nil?
+          if sort_order.default_order? && filter.default_filter?
             list_uids(max_sequence, limit: limit)
           else
             users = list_users.to_a
 
-            case sort_order
-              when USERS_SORT_ORDERS[1][1] then users.reverse!
-              when USERS_SORT_ORDERS[2][1] then users.sort_by!{|u| -u.friends_count}
-              when USERS_SORT_ORDERS[3][1] then users.sort_by!{|u| u.friends_count}
-              when USERS_SORT_ORDERS[4][1] then users.sort_by!{|u| -u.followers_count}
-              when USERS_SORT_ORDERS[5][1] then users.sort_by!{|u| u.followers_count}
-            end
-
-            case filter
-              when USERS_FILTERS[0][1] then users.select!(&:inactive?)
-            end
+            sort_order.apply!(users)
+            filter.apply!(users)
 
             users = users[max_sequence, limit]
 
@@ -67,12 +53,14 @@ module Api
         return render json: {name: controller_name, max_sequence: max_sequence, limit: limit, users: []}
       end
 
-      suspended_uids = fetch_suspended_uids? ? fetch_suspended_uids(uids) : []
-      blocking_uids = fetch_blocking_uids? ? fetch_blocking_uids : []
-      friend_uids = confirm_refollow_uids? ? current_user.twitter_user.friend_uids : []
-      follower_uids = confirm_refollowed_uids? ? current_user.twitter_user.follower_uids : []
+      suspended_uids = fetch_suspended_uids(uids)
+      blocking_uids = fetch_blocking_uids
+      friend_uids = friend_related_page? ? current_user.twitter_user.friend_uids : []
+      follower_uids = follower_related_page? ? current_user.twitter_user.follower_uids : []
 
       users = TwitterDB::User.where(uid: uids).index_by(&:uid)
+      create_users_for_not_persisted_uids(uids, users)
+
       users =
         uids.map { |uid| users[uid] }.compact.map do |user|
           suspended = suspended_uids.include?(user.uid)
@@ -91,6 +79,14 @@ module Api
 
     private
 
+    def create_users_for_not_persisted_uids(uids, users)
+      if uids.any? { |uid| !users.has_key?(uid) }
+        selected_uids = uids.select { |uid| !users.has_key?(uid) }
+        logger.warn {"#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{selected_uids.size}"}
+        CreateTwitterDBUserWorker.perform_async(selected_uids)
+      end
+    end
+
     def log_exception(ex)
       level =
         case ex.message
@@ -103,33 +99,37 @@ module Api
       logger.send(level, "#{caller[0][/`([^']*)'/, 1] rescue ''}: #{ex.class} #{ex.message} #{current_user_id} #{params.inspect}")
     end
 
-    def fetch_suspended_uids?
+    def remove_related_page?
       %w(unfriends unfollowers blocking_or_blocked).include?(controller_name)
     end
 
     def fetch_suspended_uids(uids)
-      uids - request_context_client.users(uids).map { |u| u[:id] }
+      if remove_related_page?
+        uids - request_context_client.users(uids).map { |u| u[:id] }
+      else
+        []
+      end
     rescue => e
       log_exception(e)
       []
-    end
-
-    def fetch_blocking_uids?
-      fetch_suspended_uids? && user_signed_in?
     end
 
     def fetch_blocking_uids
-      request_context_client.blocked_ids
+      if remove_related_page? && user_signed_in?
+        request_context_client.blocked_ids
+      else
+        []
+      end
     rescue => e
       log_exception(e)
       []
     end
 
-    def confirm_refollow_uids?
+    def friend_related_page?
       %w(unfriends blocking_or_blocked).include?(controller_name) && user_signed_in? && current_user.twitter_user
     end
 
-    def confirm_refollowed_uids?
+    def follower_related_page?
       %w(unfollowers blocking_or_blocked).include?(controller_name) && user_signed_in? && current_user.twitter_user
     end
 
