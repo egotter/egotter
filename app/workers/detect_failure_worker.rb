@@ -14,10 +14,10 @@ class DetectFailureWorker
     end
 
   rescue ActiveRecord::RecordNotFound => e
-    # When the user reset data.
-    raise e
+    # When the user resets data.
+    logger.warn "#{e.class} #{e.message} User probably resets data. #{twitter_user_id} #{options.inspect}"
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{twitter_user_id}"
+    logger.warn "#{e.class} #{e.message} #{twitter_user_id} #{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 end

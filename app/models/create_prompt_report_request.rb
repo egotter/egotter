@@ -98,6 +98,14 @@ class CreatePromptReportRequest < ApplicationRecord
       CreateBlockedUserWorker.perform_async(fetch_user[:id], fetch_user[:screen_name]) if blocked
       blocked
     end
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      raise Unauthorized
+    else
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+      logger.info e.backtrace.join("\n")
+      raise
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
