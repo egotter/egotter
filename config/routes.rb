@@ -16,7 +16,8 @@ Rails.application.routes.draw do
   post "delete_tweets", to: "delete_tweets#delete"
   get 'delete_tweets', to: 'delete_tweets#new', as: :delete_tweets_top
 
-  post 'user', to: 'user#update'
+  post 'user', to: 'users#update'
+
   post "reset_egotter", to: "reset_egotter#reset"
 
   namespace :directory do
