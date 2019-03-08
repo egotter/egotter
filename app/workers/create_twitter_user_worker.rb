@@ -27,7 +27,6 @@ class CreateTwitterUserWorker
     request.finished!
 
     notify(user, uid) if user
-    TwitterDB::User.import_by(twitter_user: twitter_user)
     job.update(twitter_user_id: twitter_user.id, finished_at: Time.zone.now)
 
     enqueue_next_jobs(user_id, uid, twitter_user, track)

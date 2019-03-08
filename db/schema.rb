@@ -234,6 +234,7 @@ ActiveRecord::Schema.define(version: 20190307103459) do
   create_table "create_twitter_user_requests", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci" do |t|
     t.integer "user_id", null: false
     t.bigint "uid", null: false
+    t.integer "twitter_user_id"
     t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

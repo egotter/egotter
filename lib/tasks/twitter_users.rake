@@ -3,49 +3,26 @@ namespace :twitter_users do
   task create: :environment do
     sigint = Util::Sigint.new.trap
 
-    specified_uids = ENV['UIDS'].split(',').map(&:to_i)
+    uids = ENV['UIDS'].split(',').map(&:to_i)
     created_ids = []
+    user_id = -1
 
-    specified_uids.each do |uid|
-      if TwitterUser.exists?(uid: uid)
-        puts "Already persisted. #{uid}"
-        next
-      end
+    uids.each do |uid|
+      request = CreateTwitterUserRequest.create(user_id: user_id, uid: uid)
+      twitter_user = request.perform
 
-      user = User.authorized.find_by(uid: uid)
-      client = user ? user.api_client : Bot.api_client
-      builder = TwitterUser.builder(uid).client(client).login_user(user)
-
-      begin
-        twitter_user = builder.build
-      rescue Twitter::Error::Unauthorized, Twitter::Error::NotFound, Twitter::Error::Forbidden => e
-        puts "Error: #{uid} #{e.class} #{e.message}"
-
-        if e.message == 'Not authorized.' ||
-            e.message == 'User not found.' ||
-            e.message == 'User has been suspended.'
-          next
-        else
-          raise
-        end
-      end
-
-      if twitter_user.errors.any?
-        puts "Validation error: #{uid} #{twitter_user.errors.full_messages.join(', ')}"
-        next
-      end
-
-      TwitterDB::User.import_by(twitter_user: twitter_user)
-
-      if twitter_user.save
+      if twitter_user
+        request.finished!
         created_ids << twitter_user.id
-        next
-      end
 
-      if TwitterUser.exists?(uid: twitter_user.uid)
-        puts "Validation error: #{uid} Not changed"
-      else
-        puts "Validation error: #{uid} #{twitter_user.errors.full_messages.join(', ')}"
+        import_request = ImportTwitterUserRequest.create(user_id: user_id, twitter_user_id: twitter_user.id)
+        import_request.perform
+        import_request.finished!
+
+        UpdateUsageStatWorker.perform_async(uid, user_id: user_id, track_id: nil, enqueued_at: Time.zone.now)
+        CreateScoreWorker.perform_async(uid, track_id: nil)
+        UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
+        DetectFailureWorker.perform_in(60.seconds, twitter_user.id, enqueued_at: Time.zone.now)
       end
 
       break if sigint.trapped?

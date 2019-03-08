@@ -46,6 +46,13 @@ class ImportTwitterUserRequest < ApplicationRecord
     InactiveMutualFriendship.import_by(twitter_user: twitter_user)
   end
 
+  def perform
+    perform!
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+  end
+
   def client
     if instance_variable_defined?(:@client)
       @client
