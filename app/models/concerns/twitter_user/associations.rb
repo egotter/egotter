@@ -73,4 +73,20 @@ module Concerns::TwitterUser::Associations
     follower_uids = self.follower_uids
     TwitterDB::User.where(uid: follower_uids).sort_by {|user| follower_uids.index(user.uid)}
   end
+
+
+  # Aliases of twitter_db_user.*
+  def blocking_or_blocked_uids
+    # logger.warn "DEPRECATED WARNING: blocking_or_blocked_uids"
+    # block_friendships.pluck(:friend_uid).uniq
+    unfriendships.where(friend_uid: unfollowerships.pluck(:follower_uid)).pluck(:friend_uid).uniq
+  end
+
+  # Aliases of twitter_db_user.*
+  def blocking_or_blocked
+    # logger.warn "DEPRECATED WARNING: blocking_or_blocked"
+    # block_friends.distinct(:uid)
+    # unfriends.where(uid: unfollowerships.pluck(:follower_uid)).uniq(&:uid)
+    unfriends.where(uid: unfollowerships.pluck(:follower_uid))
+  end
 end

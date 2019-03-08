@@ -12,7 +12,7 @@ class UnfriendsAndUnfollowers < ApplicationController
 
   def all
     initialize_instance_variables
-    @collection = @twitter_user.twitter_db_user.send(controller_name)
+    @collection = @twitter_user.send(controller_name)
   end
 
   def show
@@ -34,7 +34,7 @@ class UnfriendsAndUnfollowers < ApplicationController
     @page_description = t('.page_description', user: @twitter_user.mention_name)
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name}.merge(counts))
 
-    mention_names = @twitter_user.twitter_db_user.send(controller_name).select(:screen_name).limit(3).map(&:mention_name)
+    mention_names = @twitter_user.send(controller_name).select(:screen_name).limit(3).map(&:mention_name)
     names = '.' + honorific_names(mention_names)
     @tweet_text = t('.tweet_text', users: names, url: @canonical_url)
 
@@ -42,13 +42,12 @@ class UnfriendsAndUnfollowers < ApplicationController
   end
 
   def related_counts(twitter_user)
-    user = twitter_user.twitter_db_user
     values = {}
 
     Timeout.timeout(2.seconds) do
-      values[:unfriends] = user.unfriendships.size
-      values[:unfollowers] = user.unfollowerships.size
-      values[:blocking_or_blocked] = user.blocking_or_blocked_uids.size
+      values[:unfriends] = twitter_user.unfriendships.size
+      values[:unfollowers] = twitter_user.unfollowerships.size
+      values[:blocking_or_blocked] = twitter_user.blocking_or_blocked_uids.size
     end
 
     values
