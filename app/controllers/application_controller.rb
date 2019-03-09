@@ -45,7 +45,7 @@ class ApplicationController < ActionController::Base
     end
 
     screen_name = params[:screen_name].to_s.strip.remove /^@/
-    unless screen_name.match(Validations::ScreenNameValidator::REGEXP)
+    unless screen_name.match? Validations::ScreenNameValidator::REGEXP
       next redirect_to root_path, alert: t('application.invalid_token.session_expired_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token"))
     end
 
@@ -53,11 +53,10 @@ class ApplicationController < ActionController::Base
     sign_in = sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search)
 
     if recoverable_request?
-      logger.warn "Recoverable CSRF token error #{fingerprint} #{debug_str}"
-      next redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
+      redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
+    else
+      redirect_to root_path, alert: t('application.invalid_token.session_expired_and_recover_html', user: screen_name, url1: search, url2: sign_in)
     end
-
-    redirect_to root_path, alert: t('application.invalid_token.session_expired_and_recover_html', user: screen_name, url1: search, url2: sign_in)
   end
 
   def not_found
@@ -90,11 +89,13 @@ class ApplicationController < ActionController::Base
   end
 
   def recoverable_request?
-    %i(pc smartphone).include?(request.device_type) && !request.xhr? &&
-      params['screen_name'].to_s.match(Validations::ScreenNameValidator::REGEXP) &&
-      controller_name == 'searches' && action_name == 'create'
-      # session[:fingerprint].present? &&
-      # SearchLog.exists?(created_at: 3.hours.ago..Time.zone.now, session_id: session[:fingerprint])
+    %i(pc smartphone).include?(request.device_type) &&
+        !request.xhr? &&
+        params['screen_name'].to_s.match?(Validations::ScreenNameValidator::REGEXP) &&
+        controller_name == 'searches' &&
+        action_name == 'create' &&
+        fingerprint.present?
+    # SearchLog.exists?(created_at: 3.hours.ago..Time.zone.now, session_id: session[:fingerprint])
   end
 
   def debug_str
