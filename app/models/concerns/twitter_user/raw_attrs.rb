@@ -95,6 +95,27 @@ module Concerns::TwitterUser::RawAttrs
     inactive?
   end
 
+  def load_raw_attrs_text_from_s3!
+    profile = S3::Profile.find_by(twitter_user_id: id)
+    if profile.empty?
+      raise S3::Profile::MaybeFetchFailed
+    end
+
+    text = profile[:user_info]
+    if text.blank? || text == '{}'
+      logger.warn {"S3::Profile[:user_info] is blank. #{id}"}
+      text = '{}'
+    end
+
+    @raw_attrs = Hashie::Mash.new(JSON.parse(text))
+  end
+
+  def load_raw_attrs_text_from_s3
+    load_raw_attrs_text_from_s3!
+  rescue => e
+    @raw_attrs = Hashie::Mash.new({})
+  end
+
   private
 
   def raw_attrs
@@ -104,17 +125,7 @@ module Concerns::TwitterUser::RawAttrs
       if instance_variable_defined?(:@raw_attrs)
         @raw_attrs
       else
-        text = S3::Profile.find_by(twitter_user_id: id)[:user_info]
-
-        # There is a case that user_info is not selected.
-        text = user_info if text.blank? && respond_to?(:user_info)
-
-        if text.blank?
-          logger.warn {"Both S3::Profile[:user_info] and user_info are blank #{id}"}
-          text = '{}'
-        end
-
-        @raw_attrs = Hashie::Mash.new(JSON.parse(text))
+        load_raw_attrs_text_from_s3
       end
     end
   end

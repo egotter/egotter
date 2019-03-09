@@ -158,6 +158,15 @@ module Concerns::Validation
   def authorized_search?(twitter_user)
     redirect_path = root_path_for(controller: controller_name)
 
+    if twitter_user.persisted?
+      begin
+        twitter_user.load_raw_attrs_text_from_s3!
+      rescue S3::Profile::MaybeFetchFailed => e
+        logger.warn "#{controller_name}##{action_name} #{__method__} #{e.class} #{twitter_user.inspect}"
+        twitter_user.load_raw_attrs_text_from_s3
+      end
+    end
+
     if twitter_user.suspended_account? && !can_see_forbidden_or_not_found?(uid: twitter_user.uid)
       message = suspended_message(twitter_user.screen_name)
       redirect_to redirect_path, alert: message

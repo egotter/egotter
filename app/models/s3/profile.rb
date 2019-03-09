@@ -8,5 +8,8 @@ module S3
     self.payload_key = :user_info
     self.cache_enabled = true
     self.cache_expires_in = 1.week
+
+    class MaybeFetchFailed < StandardError
+    end
   end
 end
