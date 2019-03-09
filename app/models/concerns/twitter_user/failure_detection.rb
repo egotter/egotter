@@ -40,6 +40,16 @@ module Concerns::TwitterUser::FailureDetection
     ]
   end
 
+  def s3_need_fix_headers
+    [
+        "one of s3 files doesn't exists",
+        'friend_uids.size stored in s3 != friends_size',
+        'follower_uids.size stored in s3 != followers_size',
+        'user_info is blank',
+        "user_info == '{}'"
+    ]
+  end
+
   def S3_force_update_with_empty_values(update_unfriends = false)
     update!(friends_size: 0, followers_size: 0)
     S3::Friendship.import_from!(id, uid, screen_name, [])

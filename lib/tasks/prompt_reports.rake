@@ -3,7 +3,7 @@ namespace :prompt_reports do
   task send: :environment do
     sigint = Util::Sigint.new.trap
 
-    logger = PromptReportTask.logger
+    logger = TaskLogger.logger('log/batch.log')
     Rails.logger = logger
 
     task = PromptReportTask.start(user_ids_str: ENV['USER_IDS'], deadline_str: ENV['DEADLINE'])
