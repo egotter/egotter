@@ -70,7 +70,7 @@ module Concerns::Validation
   def twitter_db_user_persisted?(uid)
     return true if TwitterDB::User.exists?(uid: uid)
 
-    logger.warn "#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{uid}"
+    logger.info "#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{uid}"
     CreateTwitterDBUserWorker.perform_async([uid])
     true
   rescue => e
@@ -158,13 +158,13 @@ module Concerns::Validation
   def authorized_search?(twitter_user)
     redirect_path = root_path_for(controller: controller_name)
 
-    if twitter_user.persisted?
-      begin
+    begin
+      if twitter_user.persisted?
         twitter_user.load_raw_attrs_text_from_s3!
-      rescue S3::Profile::MaybeFetchFailed => e
-        logger.warn "#{controller_name}##{action_name} #{__method__} #{e.class} #{twitter_user.inspect}"
-        twitter_user.load_raw_attrs_text_from_s3
       end
+    rescue S3::Profile::MaybeFetchFailed => e
+      logger.warn "#{controller_name}##{action_name} #{__method__} #{e.class} #{twitter_user.inspect}"
+      twitter_user.load_raw_attrs_text_from_s3
     end
 
     if twitter_user.suspended_account? && !can_see_forbidden_or_not_found?(uid: twitter_user.uid)
