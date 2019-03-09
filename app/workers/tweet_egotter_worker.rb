@@ -10,9 +10,9 @@ class TweetEgotterWorker
     elsif e.message == 'Could not authenticate you.'
       logger.warn "#{e.class} #{e.message} #{slice_user(user)} #{options}"
 
-      retry_count = options[:retry_count] || 0
+      retry_count = options['retry_count'] || 0
       if retry_count < 5
-        self.class.perform_in(5.seconds, user_id, text, options.merge(retry_count: retry_count + 1))
+        self.class.perform_in(5.seconds, user_id, text, options.merge('retry_count' => retry_count + 1))
       end
     else
       logger.warn "#{e.class} #{e.message} #{slice_user(user)} #{options}"
