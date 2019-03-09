@@ -1,6 +1,6 @@
 <%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
 
-<div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
+<div class="menu-items media <%= menu_name %>" data-url="<%= send("api_v1_#{menu_name}_summary_path", uid: twitter_user.uid) %>" style="display: none; position: relative;">
   <%= link_to search_path_for(menu_name, twitter_user.screen_name), class: 'result-link' do %>
     <h3 class="h4 text-center"><%= t("#{menu_name}.show.summary_title") %></h3>
     <div class="vertical-spacing"></div>
@@ -24,7 +24,7 @@
 <script>
   $(function () {
     var menuName = '<%= menu_name %>';
-    var apiEndpoint = '<%= send("api_v1_#{menu_name}_summary_path", uid: twitter_user.uid) %>';
+    var url = $('.menu-items.' + menuName).data('url');
     var progressMessages = {
       empty: "<%= t('timelines.show.empty_result_with_details_html') %>",
       under_calculation: "<%= t('timelines.show.under_calculation_with_details_html') %>"
@@ -34,10 +34,10 @@
     var summaryBox = new SummaryBox(menuName);
 
     if (fromCrawler) {
-      loadSummary(apiEndpoint, summaryBox, progressMessages);
+      loadSummary(url, summaryBox, progressMessages);
     } else {
       summaryBox.lazyload(function () {
-        loadSummary(apiEndpoint, summaryBox, progressMessages);
+        loadSummary(url, summaryBox, progressMessages);
       });
     }
   });
