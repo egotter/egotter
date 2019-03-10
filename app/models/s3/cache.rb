@@ -27,6 +27,7 @@ module S3
       # Handle this error in #find_by_current_scope
       raise
     rescue => e
+      # Zlib::DataError data error
       logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
       logger.info {e.backtrace.join("\n")}
       yield

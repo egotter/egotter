@@ -57,7 +57,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     unless latest
       twitter_user = TwitterUser.build_by(user: fetch_user)
-      relations = fetch_relations(twitter_user)
+      relations = fetch_relations!(twitter_user)
       twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
       twitter_user.build_other_relations(relations)
       twitter_user.user_id = user_id
@@ -67,7 +67,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     raise RecentlyUpdated if latest.fresh?
 
     twitter_user = TwitterUser.build_by(user: fetch_user)
-    relations = fetch_relations(twitter_user)
+    relations = fetch_relations!(twitter_user)
     twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
 
     if twitter_user.no_need_to_import_friendships?
@@ -110,7 +110,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def fetch_relations(twitter_user)
+  def fetch_relations!(twitter_user)
     @fetch_relations ||= TwitterUserFetcher.new(twitter_user, client: client, login_user: user).fetch
   end
 
