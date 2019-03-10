@@ -5,6 +5,10 @@ bots =
 
 Bot.transaction {Bot.import! bots}
 
+CacheDirectory.create(name: 'twitter', dir: 'tmp/twitter_cache_xxxx')
+CacheDirectory.create(name: 's3', dir: 'tmp/s3_cache')
+
+
 dir = CacheDirectory.find_by(name: 'twitter')&.dir || ENV['TWITTER_CACHE_DIR']
 ApiClient.instance(cache_dir: dir).cache.clear
 
