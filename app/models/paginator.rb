@@ -4,7 +4,12 @@ class Paginator
   end
 
   def paginate
-    users = @users.dup
+    users =
+        if !@sort_order.default_order? || !@filter.default_filter?
+          @users.to_a
+        else
+          @users
+        end
 
     @sort_order.apply!(users) if @sort_order
     @filter.apply!(users) if @filter
