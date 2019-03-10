@@ -18,4 +18,9 @@ RSpec.describe TwitterDB::Status, type: :model do
       expect { subject }.to change { described_class.all.size }.by(twitter_user.statuses.size)
     end
   end
+
+  describe '.collect_raw_attrs' do
+    let(:method_name) { :collect_raw_attrs }
+    it_should_behave_like 'Accept any kind of keys'
+  end
 end

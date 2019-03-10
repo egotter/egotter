@@ -20,4 +20,9 @@ RSpec.describe TwitterUser, type: :model do
       expect(user.mentions.size).to eq(2) # TODO Tightly coupled with factory
     end
   end
+
+  describe '.collect_user_info' do
+    let(:method_name) { :collect_user_info }
+    it_should_behave_like 'Accept any kind of keys'
+  end
 end

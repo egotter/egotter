@@ -51,7 +51,7 @@ module Concerns::TwitterUser::RawAttrs
 
   class_methods do
     def collect_user_info(t_user)
-      t_user.slice(*SAVE_KEYS).to_json
+      t_user.symbolize_keys.slice(*SAVE_KEYS).to_json
     end
   end
 

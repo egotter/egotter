@@ -51,7 +51,7 @@ module Concerns::TwitterDB::User::Store
 
   class_methods do
     def collect_user_info(t_user)
-      t_user.slice(*PROFILE_SAVE_KEYS).to_json
+      t_user.symbolize_keys.slice(*PROFILE_SAVE_KEYS).to_json
     end
   end
 
