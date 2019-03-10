@@ -65,15 +65,18 @@ module Concerns::TwitterUser::Associations
   end
 
   def friends
-    friend_uids = self.friend_uids
-    TwitterDB::User.where(uid: friend_uids).sort_by {|user| friend_uids.index(user.uid)}
+    uids = self.friend_uids
+    TwitterDB::User.where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
+      CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+    end
   end
 
   def followers
-    follower_uids = self.follower_uids
-    TwitterDB::User.where(uid: follower_uids).sort_by {|user| follower_uids.index(user.uid)}
+    uids = self.follower_uids
+    TwitterDB::User.where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
+      CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+    end
   end
-
 
   # Aliases of twitter_db_user.*
   def blocking_or_blocked_uids

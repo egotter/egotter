@@ -23,8 +23,11 @@ module Api
       end
 
       def list_users
-        return [[], -1] unless current_user.twitter_user
-        @twitter_user.common_followers(current_user.twitter_user)
+        if user_signed_in? && current_user.twitter_user
+          @twitter_user.common_followers(current_user.twitter_user)
+        else
+          []
+        end
       end
     end
   end
