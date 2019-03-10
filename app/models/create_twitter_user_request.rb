@@ -2,12 +2,13 @@
 #
 # Table name: create_twitter_user_requests
 #
-#  id          :bigint(8)        not null, primary key
-#  user_id     :integer          not null
-#  uid         :bigint(8)        not null
-#  finished_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id              :bigint(8)        not null, primary key
+#  user_id         :integer          not null
+#  uid             :bigint(8)        not null
+#  twitter_user_id :integer
+#  finished_at     :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
 #
 # Indexes
 #

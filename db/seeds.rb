@@ -5,7 +5,7 @@ bots =
 
 Bot.transaction {Bot.import! bots}
 
-dir = ENV['TWITTER_CACHE_DIR']
+dir = CacheDirectory.find_by(name: 'twitter')&.dir || ENV['TWITTER_CACHE_DIR']
 ApiClient.instance(cache_dir: dir).cache.clear
 
 Redis.client.flushdb

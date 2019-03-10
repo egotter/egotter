@@ -7,7 +7,7 @@ def disk_size(dir)
   %x(df -h #{dir} | grep efs | awk '{ print $3 }').chomp
 end
 
-dir = ENV['TWITTER_CACHE_DIR']
+dir = CacheDirectory.find_by(name: 'twitter')&.dir || ENV['TWITTER_CACHE_DIR']
 start = Time.now
 before = disk_size(dir)
 
