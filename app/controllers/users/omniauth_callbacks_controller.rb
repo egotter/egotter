@@ -47,7 +47,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   private
 
   def user_params
-    Hashie::Mash.new(request.env['omniauth.auth'].slice(:provider, :uid, :info, :credentials).to_h)
+    Hashie::Mash.new(request.env['omniauth.auth'].symbolize_keys.slice(:provider, :uid, :info, :credentials).to_h)
   end
 end
 
