@@ -12,16 +12,6 @@ module Api
         [uids.take(limit), uids.size]
       end
 
-      def list_uids(min_sequence, limit:)
-        return [[], -1] unless current_user.twitter_user
-        uids = @twitter_user.common_follower_uids(current_user.twitter_user).slice(min_sequence, limit)
-        if uids.blank?
-          [[], -1]
-        else
-          [uids, min_sequence + uids.size - 1]
-        end
-      end
-
       def list_users
         if user_signed_in? && current_user.twitter_user
           @twitter_user.common_followers(current_user.twitter_user)

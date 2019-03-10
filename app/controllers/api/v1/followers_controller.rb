@@ -10,15 +10,6 @@ module Api
         [uids, size]
       end
 
-      def list_uids(min_sequence, limit:)
-        uids = @twitter_user.follower_uids.slice(min_sequence, limit)
-        if uids.empty?
-          [[], -1]
-        else
-          [uids, min_sequence + uids.size - 1]
-        end
-      end
-
       def list_users
         @twitter_user.followers
       end
