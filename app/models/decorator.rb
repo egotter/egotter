@@ -49,6 +49,11 @@ class Decorator
     else
       []
     end
+  rescue Twitter::Error::Unauthorized => e
+    unless e.message == 'Invalid or expired token.'
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
+      logger.info e.backtrace.join("\n")
+    end
   rescue Twitter::Error::NotFound => e
     unless e.message == 'No user matches for specified terms.'
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
@@ -64,6 +69,11 @@ class Decorator
 
   def blocking_uids
     (remove_related_page? && user) ? client.blocked_ids : []
+  rescue Twitter::Error::Unauthorized => e
+    unless e.message == 'Invalid or expired token.'
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
+      logger.info e.backtrace.join("\n")
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")

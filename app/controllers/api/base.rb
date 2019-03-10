@@ -59,7 +59,7 @@ module Api
 
     def create_users_for_not_persisted_uids(uids)
       if uids.any?
-        logger.warn {"#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{uids.size}"}
+        logger.info {"#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{uids.size}"}
         CreateTwitterDBUserWorker.perform_async(uids)
       end
     end
