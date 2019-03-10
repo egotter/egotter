@@ -6,13 +6,8 @@ class CommonFriendsAndCommonFollowers < ApplicationController
   before_action(only: %i(show all)) { twitter_user_persisted?(current_user.uid) }
 
   def all
-    unless user_signed_in?
-      via = "#{controller_name}/#{action_name}/need_login"
-      redirect = send("all_#{controller_name}_path", @twitter_user)
-      return redirect_to sign_in_path(via: via, redirect_path: redirect)
-    end
     initialize_instance_variables
-    @collection = @twitter_user.send(controller_name, current_user.twitter_user)
+    @collection = @twitter_user.common_users_by(controller_name: controller_name, friend: current_user.twitter_user)
   end
 
   def show

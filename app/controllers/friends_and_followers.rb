@@ -3,13 +3,8 @@ class FriendsAndFollowers < ApplicationController
   include Concerns::Indexable
 
   def all
-    unless user_signed_in?
-      via = "#{controller_name}/#{action_name}/need_login"
-      redirect = send("all_#{controller_name}_path", @twitter_user)
-      return redirect_to sign_in_path(via: via, redirect_path: redirect)
-    end
     initialize_instance_variables
-    @collection = @twitter_user.send(controller_name)
+    @collection = @twitter_user.users_by(controller_name: controller_name)
   end
 
   def show

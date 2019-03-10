@@ -4,13 +4,8 @@ class GoodFriends < ApplicationController
   include TweetTextHelper
 
   def all
-    unless user_signed_in?
-      via = "#{controller_name}/#{action_name}/need_login"
-      redirect = send("all_#{controller_name}_path", @twitter_user)
-      return redirect_to sign_in_path(via: via, redirect_path: redirect)
-    end
     initialize_instance_variables
-    @collection = @twitter_user.send(controller_name)
+    @collection = @twitter_user.users_by(controller_name: controller_name)
   end
 
   def show
@@ -31,7 +26,7 @@ class GoodFriends < ApplicationController
     @page_title = t('.page_title', user: @twitter_user.mention_name)
     @meta_title = t('.meta_title', {user: @twitter_user.mention_name})
 
-    users = @twitter_user.send(controller_name).limit(5)
+    users = @twitter_user.users_by(controller_name: controller_name).limit(5)
 
     @page_description = t('.page_description', user: @twitter_user.mention_name)
     @meta_description = t('.meta_description', users: honorific_names(users.map(&:mention_name)))

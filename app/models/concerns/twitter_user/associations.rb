@@ -92,4 +92,13 @@ module Concerns::TwitterUser::Associations
     # unfriends.where(uid: unfollowerships.pluck(:follower_uid)).uniq(&:uid)
     unfriends.where(uid: unfollowerships.pluck(:follower_uid))
   end
+
+  def users_by(controller_name:, limit: 300)
+    users = send(controller_name)
+    users.is_a?(Array) ? users.take(limit) : users.limit(limit)
+  end
+
+  def common_users_by(controller_name:, friend:, limit: 300)
+    send(controller_name, friend).take(limit)
+  end
 end

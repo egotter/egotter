@@ -2,17 +2,9 @@ class UnfriendsAndUnfollowers < ApplicationController
   include Concerns::Showable
   include Concerns::Indexable
 
-  before_action only: :all do
-    unless user_signed_in?
-      via = "#{controller_name}/#{action_name}/need_login"
-      redirect_path = send("all_#{controller_name}_path", @twitter_user)
-      redirect_to sign_in_path(via: via, redirect_path: redirect_path)
-    end
-  end
-
   def all
     initialize_instance_variables
-    @collection = @twitter_user.send(controller_name)
+    @collection = @twitter_user.users_by(controller_name: controller_name)
   end
 
   def show
@@ -34,7 +26,8 @@ class UnfriendsAndUnfollowers < ApplicationController
     @page_description = t('.page_description', user: @twitter_user.mention_name)
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name}.merge(counts))
 
-    mention_names = @twitter_user.send(controller_name).select(:screen_name).limit(3).map(&:mention_name)
+    mention_names = @twitter_user.users_by(controller_name: controller_name).
+        select(:screen_name).limit(3).map(&:mention_name)
     names = '.' + honorific_names(mention_names)
     @tweet_text = t('.tweet_text', users: names, url: @canonical_url)
 
