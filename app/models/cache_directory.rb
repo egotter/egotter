@@ -17,4 +17,10 @@
 class CacheDirectory < ApplicationRecord
   validates :name, uniqueness: true
   validates :dir, uniqueness: true
+
+  def rotate!
+    prefix = dir.remove(/\d+$/)
+    suffix = Time.zone.now.strftime('%Y%m%d')
+    update!(dir: prefix + suffix)
+  end
 end
