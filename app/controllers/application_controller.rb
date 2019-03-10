@@ -22,7 +22,7 @@ class ApplicationController < ActionController::Base
   end
 
   before_action only: :all do
-    unless user_signed_in?
+    if !user_signed_in? && !from_crawler?
       via = "#{controller_name}/#{action_name}/need_login"
       redirect_path = send("all_#{controller_name}_path", @twitter_user)
       redirect_to sign_in_path(via: via, redirect_path: redirect_path)
