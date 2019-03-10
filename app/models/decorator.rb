@@ -42,7 +42,13 @@ class Decorator
   memoize
 
   def suspended_uids
-    remove_related_page? ? (@uids - client.users(@uids).map {|u| u[:id]}) : []
+    if remove_related_page?
+      uids = @users.map(&:uid)
+      t_uids = client.users(uids).map {|u| u[:id]}
+      uids - t_uids
+    else
+      []
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
