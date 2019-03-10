@@ -52,4 +52,9 @@ RSpec.describe TwitterDB::User, type: :model do
       end
     end
   end
+
+  describe '.collect_user_info' do
+    let(:method_name) { :collect_user_info }
+    it_should_behave_like 'Accept any kind of keys'
+  end
 end
