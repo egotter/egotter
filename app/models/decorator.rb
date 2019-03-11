@@ -54,6 +54,7 @@ class Decorator
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
       logger.info e.backtrace.join("\n")
     end
+    []
   rescue Twitter::Error::NotFound => e
     unless e.message == 'No user matches for specified terms.'
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
@@ -74,6 +75,7 @@ class Decorator
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
       logger.info e.backtrace.join("\n")
     end
+    []
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")
