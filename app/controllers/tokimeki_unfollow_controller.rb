@@ -1,4 +1,4 @@
-class TokimekiUnfollowController < UnfriendsAndUnfollowers
+class TokimekiUnfollowController < ::Page::UnfriendsAndUnfollowers
 
   before_action only: :cleanup do
     redirect_to tokimeki_unfollow_top_path unless user_signed_in?

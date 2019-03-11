@@ -1,4 +1,4 @@
-class CloseFriendsController < GoodFriends
+class CloseFriendsController < ::Page::GoodFriends
   include CloseFriendsHelper
 
   def all

@@ -1,4 +1,4 @@
-class RepliedController < FriendsAndFollowers
+class RepliedController < ::Page::FriendsAndFollowers
   def all
     super
     render template: 'friends/all' unless performed?

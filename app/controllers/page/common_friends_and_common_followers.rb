@@ -1,7 +1,4 @@
-class CommonFriendsAndCommonFollowers < ApplicationController
-  include Concerns::Showable
-  include Concerns::Indexable
-
+class Page::CommonFriendsAndCommonFollowers < ::Page::Base
   before_action(only: %i(show all)) { require_login! }
   before_action(only: %i(show all)) { twitter_user_persisted?(current_user.uid) }
 
