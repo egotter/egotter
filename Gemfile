@@ -52,6 +52,7 @@ gem 'newrelic_rpm'
 gem 'kaminari'
 gem 'httparty'
 gem 'unicorn-worker-killer'
+gem 'rack-timeout'
 gem 'meta-tags'
 gem 'mecab', require: false
 gem 'twitter_with_auto_pagination'

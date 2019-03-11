@@ -259,6 +259,7 @@ GEM
       rack
     rack-test (1.1.0)
       rack (>= 1.0, < 3)
+    rack-timeout (0.5.1)
     rack-user_agent (0.5.2)
       rack (>= 1.5)
       woothee (>= 1.0.0)
@@ -468,6 +469,7 @@ DEPENDENCIES
   parallel
   pry-rails
   puma
+  rack-timeout
   rack-user_agent
   rails (~> 5.2)
   rails_autolink
