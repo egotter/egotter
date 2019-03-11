@@ -20,10 +20,6 @@
 #
 
 class ResetEgotterLog < ApplicationRecord
-  validates :session_id, presence: true
-  validates :uid, presence: true
-  validates :screen_name, presence: true
-
   def perform!(send_dm: false)
     logger.warn 'DEPRECATED WARNING: ResetEgotterLog#perform!'
     request.perform!(send_dm: send_dm)
