@@ -1,4 +1,4 @@
-class InactiveMutualFriendsController < ::Page::endsAndFollowers
+class InactiveMutualFriendsController < ::Page::FriendsAndFollowers
 
   def all
     super
