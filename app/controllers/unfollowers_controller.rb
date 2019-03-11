@@ -1,4 +1,4 @@
-class UnfollowersController < UnfriendsAndUnfollowers
+class UnfollowersController < ::Page::UnfriendsAndUnfollowers
   include TweetTextHelper
 
   def all

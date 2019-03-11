@@ -1,6 +1,4 @@
-class GoodFriends < ApplicationController
-  include Concerns::Showable
-  include Concerns::Indexable
+class  Page::GoodFriends < ::Page::Base
   include TweetTextHelper
 
   def all

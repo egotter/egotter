@@ -1,4 +1,4 @@
-class FavoriteFriendsController < GoodFriends
+class FavoriteFriendsController < ::Page::GoodFriends
   def all
     super
     render template: 'friends/all' unless performed?

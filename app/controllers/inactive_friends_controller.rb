@@ -1,4 +1,4 @@
-class InactiveFriendsController < FriendsAndFollowers
+class InactiveFriendsController < ::Page::FriendsAndFollowers
 
   before_action(only: %i(show)) do
     if request.format.html?

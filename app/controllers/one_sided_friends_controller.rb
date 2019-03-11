@@ -1,4 +1,4 @@
-class OneSidedFriendsController < FriendsAndFollowers
+class OneSidedFriendsController < ::Page::FriendsAndFollowers
 
   before_action(only: %i(show)) do
     if request.format.html?

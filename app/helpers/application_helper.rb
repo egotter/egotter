@@ -58,8 +58,12 @@ module ApplicationHelper
     t('tweet_text.top', kaomoji: Kaomoji.happy) + ' ' + url
   end
 
-  def kick_out_error_path(reason)
-    sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}")
+  def kick_out_error_path(reason, redirect_path: nil)
+    if redirect_path
+      sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}", redirect_path: redirect_path)
+    else
+      sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}")
+    end
   end
 
   def append_query_params(path, params)

@@ -1,4 +1,4 @@
-class CommonFollowersController < CommonFriendsAndCommonFollowers
+class CommonFollowersController < ::Page::CommonFriendsAndCommonFollowers
 
   def all
     super

@@ -21,14 +21,6 @@ class ApplicationController < ActionController::Base
     {locale: I18n.locale}.merge options
   end
 
-  before_action only: :all do
-    if !user_signed_in? && !from_crawler?
-      via = "#{controller_name}/#{action_name}/need_login"
-      redirect_path = send("all_#{controller_name}_path", @twitter_user)
-      redirect_to sign_in_path(via: via, redirect_path: redirect_path)
-    end
-  end
-
   # Prevent CSRF attacks by raising an exception.
   # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception

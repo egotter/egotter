@@ -1,4 +1,4 @@
-class OneSidedFollowersController < FriendsAndFollowers
+class OneSidedFollowersController < ::Page::FriendsAndFollowers
 
   def all
     super

@@ -1,4 +1,4 @@
-class ReplyingAndRepliedController < FriendsAndFollowers
+class ReplyingAndRepliedController < ::Page::FriendsAndFollowers
 
   def all
     super

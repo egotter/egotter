@@ -1,4 +1,4 @@
-class UnfriendsController < UnfriendsAndUnfollowers
+class UnfriendsController < ::Page::UnfriendsAndUnfollowers
   include TweetTextHelper
 
   before_action(only: %i(show)) do

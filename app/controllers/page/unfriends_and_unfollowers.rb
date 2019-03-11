@@ -1,7 +1,4 @@
-class UnfriendsAndUnfollowers < ApplicationController
-  include Concerns::Showable
-  include Concerns::Indexable
-
+class  Page::UnfriendsAndUnfollowers < ::Page::Base
   def all
     initialize_instance_variables
     @collection = @twitter_user.users_by(controller_name: controller_name)
