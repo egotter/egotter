@@ -26,7 +26,11 @@ class CreateCacheWorker
 
     TwitterUser.select(:id).where(uid: user.uid).order(created_at: :desc).each do |twitter_user|
       [S3::Friendship, S3::Followership, S3::Profile].each do |klass|
-        threads << Proc.new {klass.find_by!(twitter_user_id: twitter_user.id)}
+        threads << Proc.new do
+          klass.find_by!(twitter_user_id: twitter_user.id)
+        rescue Aws::S3::Errors::NoSuchKey => e
+          logger.warn "#{e.class} #{e.message} Please check whether the TwitterUser exists or not. #{klass} #{twitter_user.id} #{values}"
+        end
       end
     end
 
