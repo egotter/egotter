@@ -5,6 +5,7 @@ class SettingsController < ApplicationController
 
   def index
     @reset_egotter_request = ResetEgotterRequest.not_finished(current_user.id).exists?
+    @reset_cache_request = ResetCacheRequest.not_finished(current_user.id).exists?
   end
 
   def update
