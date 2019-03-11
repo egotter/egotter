@@ -1,4 +1,4 @@
-class SidekiqStats < Hash
+class SidekiqStats
 
   REGEXP = %r{\A(?<time>\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z) (\d+) (TID-\w+) (?<worker>\w+) (JID-\w+) INFO: done: (?<running_time>[0-9\.]+) sec\z}
 
@@ -21,13 +21,21 @@ class SidekiqStats < Hash
       }
     end
 
-    super(stats)
+    @stats = stats
   end
 
   def divide(num1, num2)
     num1 / num2
   rescue ZeroDivisionError => e
     0
+  end
+
+  def method_missing(method, *args, &block)
+    if @stats.respond_to?(method)
+      @stats.send(method, *args, &block)
+    else
+      super
+    end
   end
 
   BUSY_COUNT = 1

@@ -1,4 +1,4 @@
-class NginxStats < Hash
+class NginxStats
 
   TIME_REGEXP = Regexp.new(1.minute.ago.strftime("%Y-%m-%dT%H:%M:\\d{2}\\+00:00"))
   LINE_REGEXP = %r{^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} .+? .+? (?<time>\[.+?\]) "(?<path>GET /timelines/\w+.+?)" \d{3} \d+ ".+?" ".+?" "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" "(?<ratio>.+?)" "(?<req>.+?)"(?: "(?<upstream>.+?)" "(?<rack>.+?)")?$}
@@ -24,7 +24,15 @@ class NginxStats < Hash
         rack: sprintf("%.3f", divide(times.map {|t| t[:rack]}.sum, size))
     }
 
-    super(stats)
+    @stats = stats
+  end
+
+  def method_missing(method, *args, &block)
+    if @stats.respond_to?(method)
+      @stats.send(method, *args, &block)
+    else
+      super
+    end
   end
 
   def divide(num1, num2)
