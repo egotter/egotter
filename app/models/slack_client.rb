@@ -6,9 +6,21 @@ class SlackClient
 
   class << self
     def send_message(text, channel: MONITORING)
-      HTTParty.post(channel, body: {text: '-- start --'}.to_json) if Rails.env.development?
       HTTParty.post(channel, body: {text: text}.to_json)
-      HTTParty.post(channel, body: {text: '-- end --'}.to_json) if Rails.env.development?
+    end
+
+    def format(hash)
+      text =
+          if hash.empty?
+            'Empty'
+          else
+            key_length = hash.keys.max_by {|k| k.length}.length
+            hash.map do |key, value|
+              sprintf("%#{key_length}s %s", key, value)
+            end.join("\n")
+          end
+
+      "```\n" + text + "\n```"
     end
   end
 end

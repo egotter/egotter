@@ -122,4 +122,24 @@ class PromptReportTask
       raise "Invalid kind #{kind}"
     end
   end
+
+  def to_h(kind)
+    case kind
+    when :finishing
+      {
+          start: start_time,
+          deadline: deadline,
+          elapsed: sprintf('%d', Time.zone.now - start_time) + ' seconds',
+          processed: processed_count,
+          skipped: skipped_count,
+          blocked: blocked_count,
+          remaining: remaining_count,
+          sent: sent_count,
+          users: users.size,
+          errors: errors.size
+      }
+    else
+      raise "Invalid kind #{kind}"
+    end
+  end
 end

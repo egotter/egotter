@@ -3,6 +3,13 @@ class SendMetricsToSlackWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform
+    if Rails.env.development?
+      SlackClient.send_message('-- start --', channel: SlackClient::MONITORING)
+      SlackClient.send_message('-- start --', channel: SlackClient::SIDEKIQ_MONITORING)
+      SlackClient.send_message('-- start --', channel: SlackClient::TABLE_MONITORING)
+      SlackClient.send_message('-- start --', channel: SlackClient::MESSAGING_MONITORING)
+    end
+
     send_table_metrics
     send_user_metrics
     send_twitter_user_metrics
@@ -11,6 +18,13 @@ class SendMetricsToSlackWorker
     send_sidekiq_queue_metrics
     send_sidekiq_worker_metrics
     send_nginx_metrics
+
+    if Rails.env.development?
+      SlackClient.send_message('-- end --', channel: SlackClient::MONITORING)
+      SlackClient.send_message('-- end --', channel: SlackClient::SIDEKIQ_MONITORING)
+      SlackClient.send_message('-- end --', channel: SlackClient::TABLE_MONITORING)
+      SlackClient.send_message('-- end --', channel: SlackClient::MESSAGING_MONITORING)
+    end
   rescue => e
     logger.warn "#{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
@@ -36,7 +50,7 @@ class SendMetricsToSlackWorker
       stats[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
     end
     stats = stats.sort_by {|k, _| k}.to_h
-    SlackClient.send_message(format(stats), channel: SlackClient::TABLE_MONITORING)
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::TABLE_MONITORING)
   end
 
   def send_user_metrics
@@ -45,7 +59,7 @@ class SendMetricsToSlackWorker
         last_access: User.where(last_access_at: 1.hour.ago..Time.zone.now).size
     }
 
-    SlackClient.send_message(stats.to_s)
+    SlackClient.send_message(SlackClient.format(stats))
   end
 
   def send_twitter_user_metrics
@@ -89,12 +103,12 @@ class SendMetricsToSlackWorker
         }
     }
 
-    SlackClient.send_message(stats.to_s)
+    SlackClient.send_message(SlackClient.format(stats))
   end
 
   def send_google_analytics_metrics
-    google_analytics = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
-    SlackClient.send_message(google_analytics.to_s)
+    stats = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
+    SlackClient.send_message(SlackClient.format(stats))
   end
 
   def send_prompt_report_metrics
@@ -103,7 +117,7 @@ class SendMetricsToSlackWorker
         create_prompt_report_logs: CreatePromptReportLog.where(created_at: 1.hour.ago..Time.zone.now).size,
     }
 
-    SlackClient.send_message(stats.to_s)
+    SlackClient.send_message(SlackClient.format(stats))
   end
 
   def send_sidekiq_queue_metrics
@@ -111,28 +125,20 @@ class SendMetricsToSlackWorker
     queues = queues.map do |queue|
       [queue.name, {size: queue.size, latency: sprintf("%.3f", queue.latency)}]
     end.to_h
-    SlackClient.send_message(format(queues), channel: SlackClient::SIDEKIQ_MONITORING)
+    SlackClient.send_message(SlackClient.format(queues), channel: SlackClient::SIDEKIQ_MONITORING)
   end
 
   def send_sidekiq_worker_metrics
     types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import)
     types.each do |type|
       stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.to_h
-      next if stats.empty?
-      SlackClient.send_message(format(stats), channel: SlackClient::SIDEKIQ_MONITORING)
+      SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SIDEKIQ_MONITORING)
     end
   end
 
   def send_nginx_metrics
-    SlackClient.send_message(NginxStats.new.to_s)
-  end
-
-  def format(hash)
-    key_length = hash.keys.max_by {|k| k.length}.length
-    formatted = hash.map do |key, value|
-      sprintf("%#{key_length}s %s", key, value)
-    end.join("\n")
-    "```\n" + formatted + "\n```"
+    stats = NginxStats.new
+    SlackClient.send_message(SlackClient.format(stats))
   end
 
   def divide(num1, num2)

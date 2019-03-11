@@ -50,6 +50,6 @@ namespace :prompt_reports do
       logger.info task.to_s(:errors)
     end
 
-    SlackClient.send_message(task.to_s(:finishing), channel: SlackClient::MESSAGING_MONITORING)
+    SlackClient.send_message(SlackClient.format(task.to_h(:finishing)), channel: SlackClient::MESSAGING_MONITORING)
   end
 end
