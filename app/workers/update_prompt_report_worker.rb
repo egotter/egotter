@@ -8,8 +8,10 @@ class UpdatePromptReportWorker
 
     if report.created_at < Time.zone.now - 5.seconds
       report.update!(read_at: attrs['read_at'])
+    else
+      logger.info "Too fast read #{report.id} #{attrs}"
     end
   rescue => e
-    logger.warn "#{self.class}: #{e.class} #{e.message} #{attrs.inspect}"
+    logger.warn "#{e.class} #{e.message} #{attrs}"
   end
 end
