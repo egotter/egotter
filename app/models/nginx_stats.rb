@@ -1,4 +1,4 @@
-class NginxStats
+class NginxStats < Hash
 
   TIME_REGEXP = Regexp.new(1.minute.ago.strftime("%Y-%m-%dT%H:%M:\\d{2}\\+00:00"))
   LINE_REGEXP = %r{^\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3} .+? .+? (?<time>\[.+?\]) "(?<path>GET /timelines/\w+.+?)" \d{3} \d+ ".+?" ".+?" "\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}" "(?<ratio>.+?)" "(?<req>.+?)"(?: "(?<upstream>.+?)" "(?<rack>.+?)")?$}
@@ -24,20 +24,12 @@ class NginxStats
         rack: sprintf("%.3f", divide(times.map {|t| t[:rack]}.sum, size))
     }
 
-    @stats = stats
+    super(stats)
   end
 
   def divide(num1, num2)
     num1 / num2
   rescue ZeroDivisionError => e
     0
-  end
-
-  def to_s
-    @stats.to_s
-  end
-
-  def to_h
-    @stats
   end
 end
