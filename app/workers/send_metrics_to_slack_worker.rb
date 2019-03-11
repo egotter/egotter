@@ -35,8 +35,8 @@ class SendMetricsToSlackWorker
     ].map do |klass|
       stats[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
     end
-    stats = stats.sort_by {|k, _| k}.map {|k, v| "#{k} #{v}"}.join("\n")
-    SlackClient.send_message(stats, channel: SlackClient::TABLE_MONITORING)
+    stats = stats.sort_by {|k, _| k}.to_h
+    SlackClient.send_message(format(stats), channel: SlackClient::TABLE_MONITORING)
   end
 
   def send_user_metrics
@@ -109,21 +109,29 @@ class SendMetricsToSlackWorker
   def send_sidekiq_queue_metrics
     queues = Sidekiq::Queue.all.select {|queue| queue.latency > 0}.sort_by(&:name)
     queues = queues.map do |queue|
-      "#{queue.name} size #{queue.size} latency #{sprintf("%.3f", queue.latency)}"
-    end.join("\n")
-    SlackClient.send_message(queues, channel: SlackClient::SIDEKIQ_MONITORING)
+      [queue.name, {size: queue.size, latency: sprintf("%.3f", queue.latency)}]
+    end.to_h
+    SlackClient.send_message(format(queues), channel: SlackClient::SIDEKIQ_MONITORING)
   end
 
   def send_sidekiq_worker_metrics
     types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import)
     types.each do |type|
-      stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.map {|key, value| "#{key} #{value}"}
-      SlackClient.send_message(stats.join("\n"), channel: SlackClient::SIDEKIQ_MONITORING)
+      stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.to_h
+      SlackClient.send_message(format(stats), channel: SlackClient::SIDEKIQ_MONITORING)
     end
   end
 
   def send_nginx_metrics
     SlackClient.send_message(NginxStats.new.to_s)
+  end
+
+  def format(hash)
+    key_length = hash.keys.max_by {|k| k.length}.length
+    formatted = hash.map do |key, value|
+      sprintf("%#{key_length}s %s", key, value)
+    end.join("\n")
+    "```\n" + formatted + "\n```"
   end
 
   def divide(num1, num2)

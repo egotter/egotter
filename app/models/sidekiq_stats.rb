@@ -14,7 +14,7 @@ class SidekiqStats
     workers.each do |worker|
       times = matches.select {|m| m[:worker] == worker}.map {|m| m[:running_time]}.map(&:to_f)
       stats[worker] = {
-          size: times.size,
+          size: sprintf("%3d", times.size),
           avg: sprintf("%.3f", divide(times.sum, times.size)),
           max: sprintf("%.3f", times.max),
           min: sprintf("%.3f", times.min)
