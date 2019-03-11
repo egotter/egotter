@@ -20,23 +20,7 @@
 #
 
 class ResetEgotterLog < ApplicationRecord
-  def finished!(message = 'Finished')
-    update(status: true, message: message)
-  end
-
-  def failed!(error_class, error_message)
-    update(message: '', error_class: error_class, error_message: error_message)
-  end
-
-  def perform!(send_dm: false)
-    logger.warn 'DEPRECATED WARNING: ResetEgotterLog#perform!'
-    request.perform!(send_dm: send_dm)
-  end
-
-  def perform(send_dm: false)
-    logger.warn 'DEPRECATED WARNING: ResetEgotterLog#perform'
-    request.perform(send_dm: send_dm)
-  end
+  include Concerns::Log::Runnable
 
   def request
     ResetEgotterRequest.find(request_id)

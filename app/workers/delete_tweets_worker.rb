@@ -37,7 +37,7 @@ class DeleteTweetsWorker
     logger.warn "#{e.class} #{error_message} #{request_id} #{options.inspect}"
     logger.info e.backtrace.join("\n")
 
-    log.update(error_class: e.class, error_message: error_message)
+    log.failed!(e.class, error_message)
   end
 
   def do_perform(request, log, options)
@@ -45,20 +45,20 @@ class DeleteTweetsWorker
     destroy_count = request.destroy_count
 
     if request.timeout?
-      log.update(error_class: Timeout::Error, error_message: "Timeout and destroyed #{destroy_count}")
+      log.failed!(Timeout::Error, "Timeout and destroyed #{destroy_count}")
       retry_after(request.id, retry_in, options)
       return
     end
 
     if request.too_many_requests?
-      log.update(error_class: Twitter::Error::TooManyRequests, error_message: "TooManyRequests and destroyed #{destroy_count}")
+      log.failed!(Twitter::Error::TooManyRequests, "TooManyRequests and destroyed #{destroy_count}")
       retry_after(request.id, request.error.rate_limit.reset_in.to_i, options)
       return
     end
 
     if request.tweets_not_found?
-      log.update(status: true, message: "Tweets not found")
       request.finished!
+      log.finished!("Tweets not found")
       request.send_finished_message
       return
     end

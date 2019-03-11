@@ -22,7 +22,7 @@ class DeleteTweetsRequest < ApplicationRecord
   validates :session_id, presence: true
   validates :user_id, presence: true
 
-  def perform!(timeout_seconds: 30)
+  def perform!(timeout_seconds: 10)
     Timeout.timeout(timeout_seconds) do
       do_perform!
     end
@@ -62,7 +62,7 @@ class DeleteTweetsRequest < ApplicationRecord
   private
 
   def do_perform!
-    tweets = client.user_timeline(count: 200).select {|t| t.created_at < created_at}
+    tweets = client.user_timeline(count: 100).select {|t| t.created_at < created_at}
     if tweets.empty?
       @tweets_not_found = true
       return

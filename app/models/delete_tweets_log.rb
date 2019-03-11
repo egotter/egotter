@@ -17,4 +17,5 @@
 #
 
 class DeleteTweetsLog < ApplicationRecord
+  include Concerns::Log::Runnable
 end
