@@ -13,6 +13,7 @@
   - CreateTwitterUserWorker
   - DelayedCreateTwitterUserWorker
   - DelayedImportTwitterUserRelationsWorker
+  - DeleteFromS3Worker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker
