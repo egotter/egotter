@@ -1,6 +1,6 @@
 class PromptReportTask
 
-  attr_accessor :processed_count, :skipped_count, :blocked_count
+  attr_accessor :processed_count, :not_exist_count, :too_early_count, :blocked_count
 
   class << self
     def start(user_ids_str:, deadline_str: nil)
@@ -8,10 +8,11 @@ class PromptReportTask
     end
   end
 
-  def initialize(user_ids_str, deadline_str)
+  def initialize(user_ids_str = nil, deadline_str = nil)
     @start_time = Time.zone.now
     @processed_count = 0
-    @skipped_count = 0
+    @not_exist_count = 0
+    @too_early_count = 0
     @blocked_count = 0
     @errors = []
 
@@ -93,7 +94,7 @@ class PromptReportTask
   end
 
   def remaining_count
-    users.size - (processed_count + skipped_count + blocked_count)
+    users.size - (processed_count + not_exist_count + too_early_count + blocked_count)
   end
 
   def deadline
@@ -116,8 +117,7 @@ class PromptReportTask
         "#{e[:time]} #{e[:user_id]} #{e[:error_class]} #{e[:error_message]}"
       end.join("\n")
     when :finishing
-      elapsed = Time.zone.now - start_time
-      "start #{start_time}#{", deadline #{deadline}" if deadline}, elapsed #{sprintf('%d', elapsed)} seconds, processed #{processed_count}, skipped #{skipped_count}, blocked #{blocked_count}, remaining #{remaining_count}, sent #{sent_count}, users #{users.size}, errors #{errors.size}"
+      to_h(kind).map{|k, v| "#{k} #{v}" }.join(', ')
     else
       raise "Invalid kind #{kind}"
     end
@@ -131,7 +131,8 @@ class PromptReportTask
           deadline: deadline,
           elapsed: sprintf('%d', Time.zone.now - start_time) + ' seconds',
           processed: processed_count,
-          skipped: skipped_count,
+          not_exist_count: not_exist_count,
+          too_early_count: too_early_count,
           blocked: blocked_count,
           remaining: remaining_count,
           sent: sent_count,
