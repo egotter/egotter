@@ -19,6 +19,7 @@ Rails.application.routes.draw do
   post 'user', to: 'users#update'
 
   post "reset_egotter", to: "reset_egotter#reset"
+  post "reset_cache", to: "reset_cache#reset"
 
   namespace :directory do
     get "profiles(/:id1(/:id2))", to: "profiles#show"

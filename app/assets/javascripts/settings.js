@@ -43,6 +43,18 @@ Settings.enableResetEgotterButton = function () {
   });
 };
 
+Settings.enableResetCacheButton = function () {
+  var $modal = $('#reset-cache-modal');
+  $modal.find('.ok').on('click', function (e) {
+    $modal.modal('hide');
+    $('.reset-cache-btn').attr('disabled', 'disabled')
+        .prop("disabled", true);
+    $.post($(this).data('url'), function (res) {
+      console.log(res);
+    });
+  });
+};
+
 Settings.enableUpdateProfileButton = function (callback, errorCallback) {
   $('.update-profile').on('click', function (e) {
     e.preventDefault();
