@@ -17,7 +17,7 @@ class ResetEgotterWorker
   def after_timeout(request_id, options = {})
     logger.warn "Timeout #{timeout_in} #{request_id}"
 
-    ResetEgotterLog.create(request_id: request_id, error_class: Timeout::Error, error_message: 'Timeout')
+    ResetEgotterLog.find_by(request_id: request_id)&.failed!(Timeout::Error, 'Timeout')
     QueueingRequests.new(self.class).delete(request_id)
     RunningQueue.new(self.class).delete(request_id)
     self.class.perform_in(retry_in, request_id, options)
@@ -29,14 +29,19 @@ class ResetEgotterWorker
 
   def perform(request_id, options = {})
     request = ResetEgotterRequest.find(request_id)
+    log = ResetEgotterLog.create(request_id: request_id, message: 'Starting')
+
     request.perform!(send_dm: true)
     request.finished!
+
+    log.finished!
   rescue ResetEgotterRequest::RecordNotFound => e
     request.finished!
+    log.finished!('Record not found')
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{request_id}"
     logger.info e.backtrace.join("\n")
 
-    ResetEgotterLog.create(request_id: request_id, error_class: e.class, error_message: e.message.truncate(100))
+    ResetEgotterLog.find_by(request_id: request_id)&.failed!(e.class, e.message.truncate(100))
   end
 end
