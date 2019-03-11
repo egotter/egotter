@@ -92,6 +92,10 @@ class PromptReportTask
     @sent_count ||= PromptReport.where(created_at: start_time..Time.zone.now).size
   end
 
+  def remaining_count
+    users.size - (processed_count + skipped_count + blocked_count)
+  end
+
   def deadline
     @deadline
   end
@@ -113,7 +117,7 @@ class PromptReportTask
       end.join("\n")
     when :finishing
       elapsed = Time.zone.now - start_time
-      "start #{start_time}#{", deadline #{deadline}" if deadline}, elapsed #{sprintf('%d', elapsed)} seconds, processed #{processed_count}, skipped #{skipped_count}, blocked #{blocked_count}, sent #{sent_count}, users #{users.size}, errors #{errors.size}"
+      "start #{start_time}#{", deadline #{deadline}" if deadline}, elapsed #{sprintf('%d', elapsed)} seconds, processed #{processed_count}, skipped #{skipped_count}, blocked #{blocked_count}, remaining #{remaining_count}, sent #{sent_count}, users #{users.size}, errors #{errors.size}"
     else
       raise "Invalid kind #{kind}"
     end
