@@ -15,9 +15,18 @@ class DetectFailureWorker
 
   rescue ActiveRecord::RecordNotFound => e
     # When the user resets data.
-    logger.warn "#{e.class} #{e.message} User probably resets data. #{twitter_user_id} #{options.inspect}"
+    message = "#{e.class} #{e.message} User probably reset data. #{twitter_user_id} #{options.inspect}"
+    if reset_request_found?(options)
+      logger.info message
+    else
+      logger.warn message
+    end
   rescue => e
     logger.warn "#{e.class} #{e.message} #{twitter_user_id} #{options.inspect}"
     logger.info e.backtrace.join("\n")
+  end
+
+  def reset_request_found?(values)
+    ResetEgotterRequest.exists?(user_id: values['user_id'], created_at: 10.minutes.ago..Time.zone.now)
   end
 end

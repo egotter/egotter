@@ -59,7 +59,7 @@ class CreateTwitterUserWorker
     # WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@friend_uids), user_id: user_id)
     # WriteProfilesToS3Worker.perform_async(twitter_user.instance_variable_get(:@follower_uids), user_id: user_id)
 
-    DetectFailureWorker.perform_in(60.seconds, twitter_user.id, track_id: track.id, enqueued_at: Time.zone.now)
+    DetectFailureWorker.perform_in(60.seconds, twitter_user.id, user_id: user_id, track_id: track.id, enqueued_at: Time.zone.now)
   end
 
   private
