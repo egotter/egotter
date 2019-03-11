@@ -22,6 +22,9 @@
 class PromptReport < ApplicationRecord
   include Concerns::Report::Common
 
+  scope :read, -> {where.not(read_at: nil)}
+  scope :unread, -> {where(read_at: nil)}
+
   def self.you_are_removed(user_id, changes_json:, format: 'text')
     report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
     report.message_builder = YouAreRemovedMessage.new(report.user, report.token, format: format)
