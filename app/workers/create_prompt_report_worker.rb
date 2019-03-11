@@ -6,12 +6,20 @@ class CreatePromptReportWorker
     request_id
   end
 
+  def request_class
+    CreatePromptReportRequest
+  end
+
+  def log_class
+    CreatePromptReportLog
+  end
+
   def perform(request_id, options = {})
     options = options.with_indifferent_access
-    request = CreatePromptReportRequest.find(request_id)
+    request = request_class.find(request_id)
     user = request.user
 
-    log = CreatePromptReportLog.new(
+    log = log_class.create(
         user_id: user.id,
         request_id: request_id,
         uid: user.uid,
@@ -24,7 +32,7 @@ class CreatePromptReportWorker
     PromptReport.find_by(message_id: dm.id).update(message_cache: truncated_message(dm))
     log.update(status: true)
 
-  rescue CreatePromptReportRequest::Error => e
+  rescue request_class::Error => e
     log.update(error_class: e.class, error_message: e.message)
 
     if options['exception']
