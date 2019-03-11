@@ -112,9 +112,11 @@ class SendMetricsToSlackWorker
   end
 
   def send_prompt_report_metrics
+    condition = {created_at: 1.hour.ago..Time.zone.now}
     stats = {
-        prompt_reports: PromptReport.where(created_at: 1.hour.ago..Time.zone.now).size,
-        create_prompt_report_logs: CreatePromptReportLog.where(created_at: 1.hour.ago..Time.zone.now).size,
+        prompt_reports: PromptReport.where(condition).size,
+        'prompt_reports(read)' => PromptReport.where(condition.merge(read_at: 1.hour.ago..Time.zone.now)).size,
+        create_prompt_report_logs: CreatePromptReportLog.where(condition).size,
     }
 
     SlackClient.send_message(SlackClient.format(stats))
