@@ -29,7 +29,7 @@ class CreateCacheWorker
         threads << Proc.new do
           klass.find_by!(twitter_user_id: twitter_user.id)
         rescue Aws::S3::Errors::NoSuchKey => e
-          logger.warn "#{e.class} #{e.message} Please check whether the TwitterUser exists or not. #{klass} #{twitter_user.id} #{values}"
+          logger.warn "#{self.class} #{e.class} #{e.message} Please check whether the TwitterUser exists or not. #{klass} #{twitter_user.id} #{twitter_user.created_at.to_s(:db)} #{values}"
         end
       end
     end
