@@ -7,6 +7,7 @@ namespace :prompt_reports do
     Rails.logger = logger
 
     task = PromptReportTask.start(user_ids_str: ENV['USER_IDS'], deadline_str: ENV['DEADLINE'])
+    dry_run = ENV['DRY_RUN'].present?
 
     logger.info 'Started'
     logger.info task.to_s(:deadline) if task.deadline
@@ -25,8 +26,10 @@ namespace :prompt_reports do
       end
 
       begin
-        request = CreatePromptReportRequest.create(user_id: user.id)
-        CreatePromptReportWorker.new.perform(request.id, user_id: user.id, exception: true)
+        unless dry_run
+          request = CreatePromptReportRequest.create(user_id: user.id)
+          CreatePromptReportWorker.new.perform(request.id, user_id: user.id, exception: true)
+        end
       rescue CreatePromptReportRequest::Blocked => e
         task.blocked_count += 1
         task.add_error(user.id, e)
