@@ -43,5 +43,8 @@ namespace :prompt_reports do
     end
 
     SlackClient.send_message(SlackClient.format(task.to_h(:finishing)), channel: SlackClient::MESSAGING_MONITORING)
+
+    SendMetricsToSlackWorker.new.send_prompt_report_metrics
+    SendMetricsToSlackWorker.new.send_prompt_report_error_metrics
   end
 end

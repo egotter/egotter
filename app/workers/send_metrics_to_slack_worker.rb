@@ -15,8 +15,6 @@ class SendMetricsToSlackWorker
         :send_user_metrics,
         :send_twitter_user_metrics,
         :send_google_analytics_metrics,
-        :send_prompt_report_metrics,
-        :send_prompt_report_error_metrics,
         :send_sidekiq_queue_metrics,
         :send_sidekiq_worker_metrics,
         :send_nginx_metrics
@@ -138,6 +136,16 @@ class SendMetricsToSlackWorker
             order('cnt desc').map do |record|
           [record.error_class, record.cnt]
         end.to_h
+
+    stats.transform_keys! do |key|
+      if key.include?(':')
+        key.split(':')[-1]
+      elsif key.empty?
+        'EMPTY'
+      else
+        key
+      end
+    end
 
     SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::MESSAGING_MONITORING)
   end
