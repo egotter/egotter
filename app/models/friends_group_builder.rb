@@ -1,10 +1,10 @@
-class UidsGroupBuilder
+class FriendsGroupBuilder
   def initialize(uid, limit:, preload: true)
     @users = Util.users(uid, limit: limit)
 
     if preload
-      S3::Friendship.where(twitter_user_ids: @users.map(&:id))
-      S3::Followership.where(twitter_user_ids: @users.map(&:id))
+      S3::Friendship.where!(twitter_user_ids: @users.map(&:id))
+      S3::Followership.where!(twitter_user_ids: @users.map(&:id))
     end
   end
 

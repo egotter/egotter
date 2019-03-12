@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe UidsGroupBuilder do
+RSpec.describe FriendsGroupBuilder do
   let(:uid) { 1 }
   let(:limit) { 10 }
   let(:uids1) { [1, 2, 3] }
@@ -55,7 +55,7 @@ RSpec.describe UidsGroupBuilder do
   end
 end
 
-RSpec.describe UidsGroupBuilder::Util do
+RSpec.describe FriendsGroupBuilder::Util do
   let(:older) { TwitterUser.new }
   let(:newer) { TwitterUser.new }
 
