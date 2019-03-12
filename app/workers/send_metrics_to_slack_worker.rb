@@ -150,8 +150,11 @@ class SendMetricsToSlackWorker
     SlackClient.send_message(SlackClient.format(queues), channel: SlackClient::SIDEKIQ_MONITORING)
   end
 
-  def send_sidekiq_worker_metrics
-    types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import)
+  def send_sidekiq_worker_metrics(types = nil)
+    unless types
+      types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import)
+    end
+
     types.each do |type|
       stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.to_h
       SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SIDEKIQ_MONITORING)
