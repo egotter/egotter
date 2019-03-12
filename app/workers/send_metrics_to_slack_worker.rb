@@ -2,36 +2,27 @@ class SendMetricsToSlackWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
-  def perform
-    if Rails.env.development?
-      SlackClient.send_message('-- start --', channel: SlackClient::MONITORING)
-      SlackClient.send_message('-- start --', channel: SlackClient::SIDEKIQ_MONITORING)
-      SlackClient.send_message('-- start --', channel: SlackClient::TABLE_MONITORING)
-      SlackClient.send_message('-- start --', channel: SlackClient::MESSAGING_MONITORING)
+  def perform(steps = nil)
+    unless steps
+      steps = [
+          :send_table_metrics,
+          :send_user_metrics,
+          :send_twitter_user_metrics,
+          :send_google_analytics_metrics,
+          :send_sidekiq_queue_metrics,
+          :send_sidekiq_worker_metrics,
+          :send_nginx_metrics
+      ]
     end
 
-    [
-        :send_table_metrics,
-        :send_user_metrics,
-        :send_twitter_user_metrics,
-        :send_google_analytics_metrics,
-        :send_sidekiq_queue_metrics,
-        :send_sidekiq_worker_metrics,
-        :send_nginx_metrics
-    ].each do |method_name|
-      send(method_name)
-    rescue => e
-      logger.warn "#{method_name} #{e.class} #{e.message}"
-    end
+    do_perform(steps.shift)
+    self.class.perform_async(steps) if steps.any?
+  end
 
-    if Rails.env.development?
-      SlackClient.send_message('-- end --', channel: SlackClient::MONITORING)
-      SlackClient.send_message('-- end --', channel: SlackClient::SIDEKIQ_MONITORING)
-      SlackClient.send_message('-- end --', channel: SlackClient::TABLE_MONITORING)
-      SlackClient.send_message('-- end --', channel: SlackClient::MESSAGING_MONITORING)
-    end
+  def do_perform(step)
+    send(step)
   rescue => e
-    logger.warn "#{e.class} #{e.message}"
+    logger.warn "#{e.class} #{e.message} #{step}"
     logger.info e.backtrace.join("\n")
   end
 
