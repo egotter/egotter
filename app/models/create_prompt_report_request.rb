@@ -22,6 +22,8 @@ class CreatePromptReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
+    raise TwitterUserNotExist if twitter_user_not_exist?
+    raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
     raise ReportDisabled unless user.can_send_dm?
     raise Inactive unless user.active?(14)
@@ -81,6 +83,14 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   private
+
+  def twitter_user_not_exist?
+    !TwitterUser.exists?(uid: user.uid)
+  end
+
+  def too_short_request_interval?
+    self.class.where(user_id: user.id, created_at: 2.hour.ago..Time.zone.now).exists?
+  end
 
   def suspended?
     fetch_user[:suspended]
@@ -158,6 +168,12 @@ class CreatePromptReportRequest < ApplicationRecord
     def initialize(*args)
       super('')
     end
+  end
+
+  class TwitterUserNotExist < Error
+  end
+
+  class TooShortRequestInterval < Error
   end
 
   class Unauthorized < Error

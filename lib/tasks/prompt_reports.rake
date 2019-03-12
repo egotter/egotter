@@ -14,17 +14,6 @@ namespace :prompt_reports do
     logger.info task.to_s(:ids_stats)
 
     task.users.each.with_index do |user, i|
-      unless TwitterUser.exists?(uid: user.uid)
-        # TwitterUser::Batch.fetch_and_create(user.uid) # TODO Create in background
-        task.not_exist_count += 1
-        next
-      end
-
-      if CreatePromptReportRequest.where(user_id: user.id, created_at: 2.hour.ago..Time.zone.now).exists?
-        task.too_early_count += 1
-        next
-      end
-
       begin
         unless dry_run
           request = CreatePromptReportRequest.create(user_id: user.id)
