@@ -7,6 +7,14 @@ class ImportTwitterUserRelationsWorker
     "#{user_id}-#{uid}-#{options['twitter_user_id']}"
   end
 
+  def expire_in
+    1.minute
+  end
+
+  def after_expire(*args)
+    DelayedImportTwitterUserRelationsWorker.perform_async(*args)
+  end
+
   def perform(user_id, uid, options = {})
     track = Track.find(options['track_id'])
 

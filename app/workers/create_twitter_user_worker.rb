@@ -7,6 +7,14 @@ class CreateTwitterUserWorker
     "#{values['user_id']}-#{values['uid']}"
   end
 
+  def expire_in
+    1.minute
+  end
+
+  def after_expire(*args)
+    DelayedCreateTwitterUserWorker.perform_async(*args)
+  end
+
   def perform(values = {})
     track = Track.find(values['track_id'])
 
