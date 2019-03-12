@@ -22,7 +22,10 @@ class CreatePromptReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
-    raise TwitterUserNotExist if twitter_user_not_exist?
+    if twitter_user_not_exist?
+      send_initialization_message
+    end
+
     raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
     raise ReportDisabled unless user.can_send_dm?
@@ -54,6 +57,27 @@ class CreatePromptReportRequest < ApplicationRecord
     raise MessageNotChanged if last_report && changes == last_report.last_changes
 
     send_report!(changes)
+  end
+
+  def send_initialization_message
+    DirectMessageRequest.new(user.api_client.twitter, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.initialization_start')).perform
+    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name))).perform
+
+    raise InitializationStarted
+  rescue Twitter::Error::Forbidden => e
+    if e.message == 'You cannot send messages to users you have blocked.'
+      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
+    else
+      logger.warn "#{e.class} #{e.message} #{self.inspect}"
+      logger.info e.backtrace.join("\n")
+    end
+
+    raise InitializationFailed
+  rescue => e
+    logger.warn "#{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+
+    raise InitializationFailed
   end
 
   def send_report!(changes)
@@ -171,6 +195,12 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class TwitterUserNotExist < Error
+  end
+
+  class InitializationStarted < Error
+  end
+
+  class InitializationFailed < Error
   end
 
   class TooShortRequestInterval < Error
