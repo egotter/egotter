@@ -30,6 +30,7 @@ class CreatePromptReportRequest < ApplicationRecord
       end
     end
 
+    raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
     raise ReportDisabled unless user.dm_enabled?
     raise TooShortSendInterval unless user.dm_interval_ok?
@@ -123,7 +124,7 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def too_short_request_interval?
-    self.class.where(user_id: user.id, created_at: 2.hour.ago..Time.zone.now).exists?
+    self.class.where(user_id: user.id, created_at: 30.minutes.ago..Time.zone.now).exists?
   end
 
   def suspended?
