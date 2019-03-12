@@ -31,12 +31,16 @@ class NotificationSetting < ApplicationRecord
   SEARCH_INTERVAL        = Rails.env.production? ? 60.minutes : 1.minutes
   PROMPT_REPORT_INTERVAL = Rails.env.production? ? 60.minutes : 1.minutes
 
+  def dm_enabled?
+    dm?
+  end
+
   def can_send_email?
     email? && (!last_email_at || last_email_at < EMAIL_INTERVAL.ago)
   end
 
   def can_send_dm?
-    dm? && (!last_dm_at || last_dm_at < DM_INTERVAL.ago)
+    dm_enabled? && dm_interval_ok?
   end
 
   def can_send_news?
@@ -51,12 +55,7 @@ class NotificationSetting < ApplicationRecord
     prompt_report? && (!prompt_report_sent_at || prompt_report_sent_at < PROMPT_REPORT_INTERVAL.ago)
   end
 
-  def can_send?(type)
-    case type
-      when :search        then can_send_search?
-      when :update        then can_send_dm?
-      when :prompt_report then can_send_prompt_report?
-      else raise "#{self.class}##{__method__}: #{type} is not permitted."
-    end
+  def dm_interval_ok?
+    last_dm_at.nil? || last_dm_at < DM_INTERVAL.ago
   end
 end

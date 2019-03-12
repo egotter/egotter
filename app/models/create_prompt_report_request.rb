@@ -30,9 +30,9 @@ class CreatePromptReportRequest < ApplicationRecord
       end
     end
 
-    raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
-    raise ReportDisabled unless user.can_send_dm?
+    raise ReportDisabled unless user.dm_enabled?
+    raise TooShortSendInterval unless user.dm_interval_ok?
     raise Inactive unless user.active?(14)
     raise RecordNotFound unless TwitterUser.exists?(uid: user.uid)
 
@@ -214,6 +214,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class TooShortRequestInterval < Error
+  end
+
+  class TooShortSendInterval < Error
   end
 
   class Unauthorized < Error

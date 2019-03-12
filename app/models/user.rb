@@ -53,7 +53,10 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :notification_setting
 
-  delegate :can_send?, :can_send_dm?, :can_send_search?, to: :notification_setting, allow_nil: true
+  with_options to: :notification_setting, allow_nil: true do |obj|
+    obj.delegate :dm_enabled?, :dm_interval_ok?, :can_send_dm?
+    obj.delegate :can_send_search?
+  end
 
   validates :uid, presence: true, uniqueness: true
   validates_with Validations::UidValidator
