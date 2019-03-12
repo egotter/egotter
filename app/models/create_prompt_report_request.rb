@@ -73,6 +73,8 @@ class CreatePromptReportRequest < ApplicationRecord
     end
 
     raise InitializationFailed
+  rescue InitializationStarted => e
+    raise
   rescue => e
     logger.warn "#{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
