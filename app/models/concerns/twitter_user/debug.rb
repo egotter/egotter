@@ -9,50 +9,6 @@ module Concerns::TwitterUser::Debug
   included do
   end
 
-  def debug_consistent?(verbose: false)
-    user = TwitterDB::User.find_by(uid: uid)
-
-    friends_counts1 = [friends.size, friendships.size, friends_size, friends_count]
-    friends_counts2 = [user.friends.size, user.friendships.size, user.friends_size, user.friends_count]
-
-    followers_counts1 = [followers.size, followerships.size, followers_size, followers_count]
-    followers_counts2 = [user.followers.size, user.followerships.size, user.followers_size, user.followers_count]
-
-    if verbose
-      (friends_counts1 + friends_counts2).uniq.one? && (followers_counts1 + followers_counts2).uniq.one?
-    else
-      ((friends_counts1 + friends_counts2).uniq.one? && (followers_counts1 + followers_counts2).uniq.one?) ||
-        (friends_counts1.take(3) == [0, 0, 0] && friends_counts2.take(3) == [0, 0, -1] &&
-          followers_counts1.take(3) == [0, 0, 0] && followers_counts2.take(3) == [0, 0, -1]) ||
-        ((friends_counts1.take(3) + friends_counts2.take(3)).uniq.one? &&
-          (followers_counts1.take(3) + followers_counts2.take(3)).uniq.one?)
-    end
-  end
-
-  def need_repair?(num = 0)
-    friendships.size != friends_size && (friendships.size - friends_size).abs > num ||
-        followerships.size != followers_size && (followerships.size - followers_size).abs > num
-  end
-
-  def too_little_friendships?
-    friendships.size < friends_count * 0.9
-  end
-
-  def too_many_unfriendships?
-    twitter_db_user.unfriendships.size > friends_count * 0.9
-  end
-
-  def debug_print_friends
-    user = TwitterDB::User.find_by(uid: uid)
-    delim = "\t"
-
-    puts("id=#{id}#{delim}uid=#{sprintf("%18d", uid)}#{delim}name=#{sprintf("%18s", screen_name)}#{delim}size=#{size}" +
-             "#{delim}friends=[#{friends.size} #{friendships.size} #{friends_size} #{friends_count}]" +
-             "#{delim}user#friends=[#{user.friends.size} #{user.friendships.size} #{user.friends_size} #{user.friends_count}]" +
-             "#{delim}followers=[#{followers.size} #{followerships.size} #{followers_size} #{followers_count}]" +
-             "#{delim}user#followers=[#{user.followers.size} #{user.followerships.size} #{user.followers_size} #{user.followers_count}]")
-  end
-
   def debug_print(kind = nil)
     user = twitter_db_user
     delim = ' '
