@@ -1,6 +1,6 @@
 class PromptReportTask
 
-  attr_accessor :processed_count, :not_exist_count, :too_early_count, :blocked_count
+  attr_accessor :processed_count, :blocked_count
 
   class << self
     def start(user_ids_str:, deadline_str: nil)
@@ -11,8 +11,6 @@ class PromptReportTask
   def initialize(user_ids_str = nil, deadline_str = nil)
     @start_time = Time.zone.now
     @processed_count = 0
-    @not_exist_count = 0
-    @too_early_count = 0
     @blocked_count = 0
     @errors = []
 
@@ -94,7 +92,7 @@ class PromptReportTask
   end
 
   def remaining_count
-    users.size - (processed_count + not_exist_count + too_early_count + blocked_count)
+    users.size - (processed_count + blocked_count)
   end
 
   def deadline
@@ -131,8 +129,6 @@ class PromptReportTask
           deadline: deadline,
           elapsed: sprintf('%d', Time.zone.now - start_time) + ' seconds',
           processed: processed_count,
-          not_exist_count: not_exist_count,
-          too_early_count: too_early_count,
           blocked: blocked_count,
           remaining: remaining_count,
           sent: sent_count,
