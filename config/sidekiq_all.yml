@@ -6,7 +6,6 @@
   - logging
   - messaging
   - misc
-  - CreateNotificationMessageWorker
   - CreatePromptReportWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
