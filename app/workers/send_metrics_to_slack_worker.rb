@@ -50,7 +50,11 @@ class SendMetricsToSlackWorker
         UnfollowRequest,
         ForbiddenUser,
         NotFoundUser,
-        BlockedUser
+        BlockedUser,
+        ResetEgotterRequest,
+        DeleteTweetsRequest,
+        ResetCacheRequest,
+        Tokimeki::User,
     ].map do |klass|
       stats[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
     end
