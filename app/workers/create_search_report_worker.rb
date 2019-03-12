@@ -1,6 +1,5 @@
 class CreateSearchReportWorker
   include Sidekiq::Worker
-  include Concerns::WorkerUtils
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id)

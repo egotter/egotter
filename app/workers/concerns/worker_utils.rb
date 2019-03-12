@@ -28,8 +28,4 @@ module Concerns::WorkerUtils
     'User not found.',
     'No user matches for specified terms.'
   ]
-
-  def egotter_retry_in
-    30.minutes + rand(10.minutes)
-  end
 end

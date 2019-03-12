@@ -1,6 +1,5 @@
 class UpdateUsageStatWorker
   include Sidekiq::Worker
-  include Concerns::WorkerUtils
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(uid, options = {})

@@ -2,7 +2,6 @@ require 'active_support/concern'
 
 module Concerns::FollowAndUnfollowWorker
   extend ActiveSupport::Concern
-  include Concerns::WorkerUtils
 
   class_methods do
   end
