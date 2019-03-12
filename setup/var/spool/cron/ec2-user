@@ -20,4 +20,4 @@ SUFFIX='--silent >>/home/ec2-user/egotter/log/cron.log 2>&1'
 
 # sidekiq
 # */2 * * * *        /usr/bin/sudo /bin/bash -l -c "cd /home/ec2-user/egotter && ./bin/start_or_stop_sidekiq_delay.sh >>log/start_or_stop.log 2>&1"
-# */10 * * * *       /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.new.send_sidekiq_worker_metrics([\'sidekiq_import\'])'"
+# */10 * * * *       /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.new.send_sidekiq_worker_metrics(\%w{sidekiq_import})'"
