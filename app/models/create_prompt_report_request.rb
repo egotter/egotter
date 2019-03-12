@@ -124,7 +124,8 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def too_short_request_interval?
-    self.class.where(user_id: user.id, created_at: 30.minutes.ago..Time.zone.now).exists?
+    self.class.where(user_id: user.id, created_at: 30.minutes.ago..Time.zone.now).
+        where.not(id: id).exists?
   end
 
   def suspended?
