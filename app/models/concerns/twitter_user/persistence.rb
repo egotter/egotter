@@ -6,25 +6,24 @@ module Concerns::TwitterUser::Persistence
   end
 
   included do
-    # Relations are created on `after_commit` in order to avoid long transaction.
+    # There data are created on `after_commit` in order to avoid long transaction.
     after_commit(on: :create) do
-      ApplicationRecord.benchmark("Persistence##{__method__} first half #{id} #{screen_name}", level: :info) do
-        [TwitterDB::Status, TwitterDB::Mention, TwitterDB::Favorite].each do |klass|
-          begin
-            klass.import_by!(twitter_user: self)
-          rescue => e
-            logger.warn "Persistence##{__method__} #{klass}: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"
-          end
-        end
-      end
-
-      # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
-
-      ApplicationRecord.benchmark("Persistence##{__method__} second half #{id} #{screen_name}", level: :info) do
+      # Store data to S3 as soon as possible
+      ApplicationRecord.benchmark("Persistence##{__method__} Import data to S3 #{id} #{screen_name}", level: :info) do
         S3::Friendship.import_from!(id, uid, screen_name, @friend_uids)
         S3::Followership.import_from!(id, uid, screen_name, @follower_uids)
         S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text)
       end
+
+      ApplicationRecord.benchmark("Persistence##{__method__} Save relations to RDB #{id} #{screen_name}", level: :info) do
+        [TwitterDB::Status, TwitterDB::Mention, TwitterDB::Favorite].each do |klass|
+          klass.import_by!(twitter_user: self)
+        rescue => e
+          logger.warn "Persistence##{__method__} #{klass}: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"
+        end
+      end
+
+      # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
 
     rescue => e
       # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000
