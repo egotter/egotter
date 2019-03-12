@@ -86,6 +86,8 @@ module Egotter::Sidekiq
   end
 
   class ExpireJob
+    include JobCallbackUtil
+
     def call(worker, msg, queue)
       if worker.respond_to?(:expire_in)
         options = msg['args'].dup.extract_options!
