@@ -55,6 +55,6 @@ module WorkersHelper
   end
 
   def enqueue_audience_insight(uid)
-    UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now)
+    UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: controller_name)
   end
 end
