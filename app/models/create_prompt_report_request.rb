@@ -23,7 +23,11 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def perform!
     if twitter_user_not_exist?
-      send_initialization_message
+      if initialization_started?
+        raise TwitterUserNotExist
+      else
+        send_initialization_message
+      end
     end
 
     raise TooShortRequestInterval if too_short_request_interval?
@@ -112,6 +116,10 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def twitter_user_not_exist?
     !TwitterUser.exists?(uid: user.uid)
+  end
+
+  def initialization_started?
+    CreatePromptReportLog.where(user_id: user_id).pluck(:error_class).any? {|err| err.include? 'Initialization' }
   end
 
   def too_short_request_interval?
