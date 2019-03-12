@@ -24,7 +24,7 @@ module Concerns::TwitterUser::Persistence
       S3::Followership.import_from!(id, uid, screen_name, @follower_uids)
       S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text)
 
-      logger.debug {"#{__method__} #{screen_name} #{Time.zone.now - start}"}
+      logger.debug {"Persistence##{__method__} #{id} #{screen_name} #{Time.zone.now - start}"}
 
     rescue => e
       # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000

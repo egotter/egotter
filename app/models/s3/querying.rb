@@ -6,7 +6,7 @@ module S3
       item = parse_json(text)
       payload = item.has_key?('compress') ? unpack(item[payload_key.to_s]) : item[payload_key.to_s]
       values = {
-          key_attr.to_sym => item[key_value.to_s],
+          key_attr.to_sym => item[key_attr.to_s],
           screen_name: item['screen_name'],
           payload_key.to_sym => payload
       }
