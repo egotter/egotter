@@ -10,14 +10,21 @@ class SendMetricsToSlackWorker
       SlackClient.send_message('-- start --', channel: SlackClient::MESSAGING_MONITORING)
     end
 
-    send_table_metrics
-    send_user_metrics
-    send_twitter_user_metrics
-    send_google_analytics_metrics
-    send_prompt_report_metrics
-    send_sidekiq_queue_metrics
-    send_sidekiq_worker_metrics
-    send_nginx_metrics
+    [
+        :send_table_metrics,
+        :send_user_metrics,
+        :send_twitter_user_metrics,
+        :send_google_analytics_metrics,
+        :send_prompt_report_metrics,
+        :send_prompt_report_error_metrics,
+        :send_sidekiq_queue_metrics,
+        :send_sidekiq_worker_metrics,
+        :send_nginx_metrics
+    ].each do |method_name|
+      send(method_name)
+    rescue => e
+      logger.warn "#{method_name} #{e.class} #{e.message}"
+    end
 
     if Rails.env.development?
       SlackClient.send_message('-- end --', channel: SlackClient::MONITORING)
@@ -119,7 +126,20 @@ class SendMetricsToSlackWorker
         create_prompt_report_logs: CreatePromptReportLog.where(condition).size,
     }
 
-    SlackClient.send_message(SlackClient.format(stats))
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::MESSAGING_MONITORING)
+  end
+
+  def send_prompt_report_error_metrics
+    condition = {created_at: 1.hour.ago..Time.zone.now}
+    stats =
+        CreatePromptReportLog.select('error_class, count(*) cnt').
+            where(condition).
+            group('error_class').
+            order('cnt desc').map do |record|
+          [record.error_class, record.cnt]
+        end.to_h
+
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::MESSAGING_MONITORING)
   end
 
   def send_sidekiq_queue_metrics
