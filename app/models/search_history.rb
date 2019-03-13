@@ -65,8 +65,9 @@ class SearchHistory < ApplicationRecord
     host = url.blank? ? '' : URI.parse(url).host
 
     case host
-    when 't.co' then 'twitter(dm)'
-    when 'api.twitter.com' then 'twitter(sign in)'
+    when 't.co' then 't.co(dm)'
+    when 'api.twitter.com' then 'api.twitter.com(sign in)'
+    when '' then 'not set'
     else host
     end
   end

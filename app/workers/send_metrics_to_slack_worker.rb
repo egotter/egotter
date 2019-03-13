@@ -11,7 +11,8 @@ class SendMetricsToSlackWorker
           :send_google_analytics_metrics,
           :send_sidekiq_queue_metrics,
           :send_sidekiq_worker_metrics,
-          :send_nginx_metrics
+          :send_nginx_metrics,
+          :send_search_histories_metrics,
       ]
     end
 
@@ -165,6 +166,18 @@ class SendMetricsToSlackWorker
 
   def send_nginx_metrics
     stats = NginxStats.new
+    SlackClient.send_message(SlackClient.format(stats))
+  end
+
+  def send_search_histories_metrics
+    histories = SearchHistory.where(created_at: 1.hour.ago..Time.zone.now)
+
+    stats =
+        histories.each_with_object(Hash.new(0)).each do |his, memo|
+          memo[his.referral] += 1
+        end
+
+    stats = stats.sort_by {|k, _| k}.to_h
     SlackClient.send_message(SlackClient.format(stats))
   end
 
