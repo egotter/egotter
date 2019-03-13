@@ -62,11 +62,12 @@ class SearchHistory < ApplicationRecord
               URI.parse(ref).host.exclude?('egotter')
         end
 
-    url.blank? ? '' : URI.parse(url).host
+    host = url.blank? ? '' : URI.parse(url).host
 
-    case url
-    when 't.co' then 'twitter'
-    else url
+    case host
+    when 't.co' then 'twitter(dm)'
+    when 'api.twitter.com' then 'twitter(sign in)'
+    else host
     end
   end
 end
