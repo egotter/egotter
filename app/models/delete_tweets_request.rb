@@ -28,7 +28,7 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   rescue Timeout::Error => e
     @timeout = true
-    logger.warn "#{e.class} #{e.message} #{self.inspect}"
+    logger.info "#{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
   end
 
