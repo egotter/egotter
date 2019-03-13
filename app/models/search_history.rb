@@ -47,7 +47,7 @@ class SearchHistory < ApplicationRecord
     allow_nil: true
   )
 
-  def referral(session_id)
+  def referral
     logs =
         SearchLog.select(:referer).
             where(created_at: 30.minutes.ago..Time.zone.now).
