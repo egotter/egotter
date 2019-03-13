@@ -27,30 +27,29 @@ class SendMetricsToSlackWorker
   end
 
   def send_table_metrics
-    stats = {}
     [
-        User,
-        Visitor,
-        SearchLog,
-        SearchErrorLog,
+        [User, Visitor],
+        [SearchLog, SearchErrorLog],
         SignInLog,
         TwitterUser,
         SearchHistory,
         Job,
-        FollowRequest,
-        UnfollowRequest,
-        ForbiddenUser,
-        NotFoundUser,
-        BlockedUser,
-        ResetEgotterRequest,
-        DeleteTweetsRequest,
-        ResetCacheRequest,
+        [FollowRequest, UnfollowRequest],
+        [ForbiddenUser, NotFoundUser, BlockedUser],
+        [ResetEgotterRequest, ResetEgotterLog],
+        [DeleteTweetsRequest, DeleteTweetsLog],
+        [ResetCacheRequest, ResetCacheLog],
         Tokimeki::User,
-    ].map do |klass|
-      stats[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
+    ].map do |klasses|
+      klasses = [klasses] unless klasses.is_a?(Array)
+      stats =
+          klasses.each_with_object(Hash.new(0)) do |klass, memo|
+            memo[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
+          end
+
+      stats = stats.sort_by {|k, _| k}.to_h
+      SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::TABLE_MONITORING)
     end
-    stats = stats.sort_by {|k, _| k}.to_h
-    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::TABLE_MONITORING)
   end
 
   def send_user_metrics
