@@ -54,23 +54,24 @@ class SearchHistory < ApplicationRecord
   end
 
   def source
-    logs = search_logs.select(:path, :referer)
+    log = search_logs.select(:path, :referer).first
+    return 'not found' unless log
 
-    if logs[0].referer.blank?
-      uri = URI.parse(logs[0].path)
+    if log.referer.blank?
+      uri = URI.parse(log.path)
       query = URI::decode_www_form(uri.query).to_h
 
       if uri.path.start_with?('/timelines') && query['medium'] == 'dm'
         "dm(#{query['type']})"
       else
-        'not set(path)'
+        "#{uri.path.split('/')[1]}(path)"
       end
     else
-      uri = URI.parse(logs[0].referer)
+      uri = URI.parse(log.referer)
       query = URI::decode_www_form(uri.query).to_h
 
       case
-      when uri.host == 'egotter.com' && uri.path == '/sign_out' then 'sign out'
+      when uri.host == 'egotter.com' then "#{uri.path.split('/')[1]}(referer)"
       else uri.host
       end
     end
