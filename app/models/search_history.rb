@@ -50,7 +50,7 @@ class SearchHistory < ApplicationRecord
   def referral
     logs =
         SearchLog.select(:referer).
-            where(created_at: 30.minutes.ago..Time.zone.now).
+            where(created_at: (created_at - 30.minutes)..created_at).
             where(session_id: session_id).
             where.not(referer: ['', nil]).
             order(created_at: :desc)
