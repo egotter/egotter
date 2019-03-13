@@ -47,13 +47,42 @@ class SearchHistory < ApplicationRecord
     allow_nil: true
   )
 
+  def search_logs(duration: 30.minutes)
+    SearchLog.where(created_at: (created_at - duration)..created_at).
+        where(session_id: session_id).
+        order(created_at: :asc)
+  end
+
+  def source
+    logs = search_logs.select(:path, :referer)
+
+    if logs[0].referer.blank?
+      uri = URI.parse(logs[0].path)
+      query = URI::decode_www_form(uri.query).to_h
+
+      if uri.path.start_with?('/timelines') && query['medium'] == 'dm'
+        "dm(#{query['type']})"
+      else
+        'not set(path)'
+      end
+    else
+      uri = URI.parse(logs[0].referer)
+      query = URI::decode_www_form(uri.query).to_h
+
+      case
+      when uri.host == 'egotter.com' && uri.path == '/sign_out' then 'sign out'
+      else uri.host
+      end
+    end
+  end
+
   def referral
     logs =
         SearchLog.select(:referer).
             where(created_at: (created_at - 30.minutes)..created_at).
             where(session_id: session_id).
             where.not(referer: ['', nil]).
-            order(created_at: :desc)
+            order(created_at: :asc)
 
     url =
         logs.pluck(:referer).find do |ref|
