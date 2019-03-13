@@ -46,4 +46,27 @@ class SearchHistory < ApplicationRecord
     to: :twitter_db_user,
     allow_nil: true
   )
+
+  def referral(session_id)
+    logs =
+        SearchLog.select(:referer).
+            where(created_at: 30.minutes.ago..Time.zone.now).
+            where(session_id: session_id).
+            where.not(referer: ['', nil]).
+            order(created_at: :desc)
+
+    url =
+        logs.pluck(:referer).find do |ref|
+          ref.present? &&
+              ref.match?(URI.regexp) &&
+              URI.parse(ref).host.exclude?('egotter')
+        end
+
+    url.blank? ? '' : URI.parse(url).host
+
+    case url
+    when 't.co' then 'twitter'
+    else url
+    end
+  end
 end
