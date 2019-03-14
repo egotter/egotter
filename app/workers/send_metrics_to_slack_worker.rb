@@ -13,6 +13,7 @@ class SendMetricsToSlackWorker
           :send_sidekiq_worker_metrics,
           :send_nginx_metrics,
           :send_search_histories_metrics,
+          :send_visitors_metrics,
           :send_prompt_report_metrics,
           :send_prompt_report_error_metrics,
       ]
@@ -180,6 +181,24 @@ class SendMetricsToSlackWorker
         end
 
     stats = stats.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats))
+  end
+
+  def send_visitors_metrics
+    condition = {created_at: 1.hour.ago..Time.zone.now}
+    visitors = Visitor.where(condition)
+
+    stats =
+        visitors.each_with_object(Hash.new(0)) do |v, memo|
+          key = [
+              v.user_found? ? 'user' : 'visitor',
+              v.search_history_found? ? 'search' : 'not',
+              v.source,
+
+          ].join('/')
+          memo[key] += 1
+        end
+
     SlackClient.send_message(SlackClient.format(stats))
   end
 

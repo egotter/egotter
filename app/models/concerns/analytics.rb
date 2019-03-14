@@ -40,7 +40,7 @@ module Concerns::Analytics
         uri.host
       end
     else
-      uri.host
+      uri.host.remove(/\.cdn\.ampproject\.org$/)
     end
   end
 end
