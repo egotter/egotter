@@ -17,7 +17,8 @@ namespace :prompt_reports do
       begin
         unless dry_run
           request = CreatePromptReportRequest.create(user_id: user.id)
-          CreatePromptReportWorker.new.perform(request.id, user_id: user.id, exception: true)
+          # CreatePromptReportWorker.new.perform(request.id, user_id: user.id, exception: true)
+          CreatePromptReportWorker.perform_async(request.id, user_id: user.id, index: i)
         end
       rescue CreatePromptReportRequest::Blocked => e
         task.blocked_count += 1
