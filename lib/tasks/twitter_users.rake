@@ -68,4 +68,35 @@ namespace :twitter_users do
     puts "Found ids #{found_ids.join(',')}"
     puts "last id #{last_id}"
   end
+
+  desc 'Update friends_count and followers_count'
+  task update_friends_count: :environment do
+    sigint = Util::Sigint.new.trap
+
+    start = ENV['START'] ? ENV['START'].to_i : 1
+    error_ids = []
+
+    TwitterUser.find_each(start: start, batch_size: 1000) do |twitter_user|
+      profile = S3::Profile.find_by(twitter_user_id: twitter_user.id)[:user_info]
+      if profile.blank?
+        error_ids << twitter_user.id
+        next
+      end
+
+      user_info = JSON.load(profile)
+      if !user_info.has_key?('friends_count') || !user_info.has_key?('followers_count')
+        error_ids << twitter_user.id
+        next
+      end
+
+      twitter_user.update!(friends_count: user_info['friends_count'], followers_count: user_info['followers_count'])
+
+      if sigint.trapped?
+        puts "current id #{twitter_user.id}"
+        break
+      end
+    end
+
+    puts error_ids.join(',') if error_ids.any?
+  end
 end
