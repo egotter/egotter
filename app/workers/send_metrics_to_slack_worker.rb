@@ -199,7 +199,16 @@ class SendMetricsToSlackWorker
           memo[key] += 1
         end
 
-    SlackClient.send_message(SlackClient.format(stats))
+    [
+        stats.select {|k, v| k.start_with?('visitor/not')},
+        stats.select {|k, v| k.start_with?('visitor/search')},
+        stats.select {|k, v| k.start_with?('user/not')},
+        stats.select {|k, v| k.start_with?('user/search')},
+
+    ].each do |stats|
+      stats = stats.sort_by {|k, v| -v}
+      SlackClient.send_message(SlackClient.format(stats))
+    end
   end
 
   def divide(num1, num2)
