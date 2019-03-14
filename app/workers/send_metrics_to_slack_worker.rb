@@ -206,7 +206,7 @@ class SendMetricsToSlackWorker
         stats.select {|k, v| k.start_with?('user/search')},
 
     ].each do |stats|
-      stats = stats.sort_by {|k, v| -v}
+      stats = stats.sort_by {|k, v| -v}.to_h
       SlackClient.send_message(SlackClient.format(stats))
     end
   end
