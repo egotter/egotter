@@ -55,25 +55,23 @@ class SearchHistory < ApplicationRecord
 
   def source
     log = search_logs.select(:path, :referer).first
-    return 'not found' unless log
+    return 'log not found' unless log
+    return 'blank referer' if log.referer.blank?
 
-    if log.referer.blank?
-      uri = URI.parse(log.path)
-      query = URI::decode_www_form(uri.query).to_h
+    uri = URI.parse(log.referer)
+    query = URI::decode_www_form(uri.query.to_s).to_h
 
-      if uri.path.start_with?('/timelines') && query['medium'] == 'dm'
-        "dm(#{query['type']})"
+    if uri.host == 't.co'
+      path_uri = URI.parse(log.path)
+      path_query = URI::decode_www_form(path_uri.query.to_s).to_h
+
+      if path_uri.path.start_with?('/timelines/') && path_query['medium'] == 'dm'
+        "dm(#{path_query['type']})"
       else
-        "#{uri.path.split('/')[1]}(path)"
+        uri.host
       end
     else
-      uri = URI.parse(log.referer)
-      query = URI::decode_www_form(uri.query).to_h
-
-      case
-      when uri.host == 'egotter.com' then "#{uri.path.split('/')[1]}(referer)"
-      else uri.host
-      end
+      uri.host
     end
   end
 
