@@ -41,7 +41,7 @@ class CreatePromptReportWorker
     logger.info e.backtrace.join("\n")
   ensure
     if options['start_next_loop']
-      StartSendingPromptReportsWorker.perform_async
+      StartSendingPromptReportsWorker.perform_in(10.minutes)
     end
   end
 
