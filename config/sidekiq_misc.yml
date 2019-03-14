@@ -10,7 +10,6 @@
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
   - ImportTwitterDbS3UsersWorker
-  - UpdateWelcomeMessageWorker
 
   - ResetTooManyRequestsWorker
   - UpdateUsageStatWorker
