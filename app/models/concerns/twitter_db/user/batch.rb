@@ -33,7 +33,7 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.import(t_users)
-      users = t_users.map { |user| [user[:id], user[:screen_name], ::TwitterUser.collect_user_info(user), -1, -1] }
+      users = t_users.map { |user| [user[:id], user[:screen_name], user[:friends_count], user[:followers_count], ::TwitterUser.collect_user_info(user)] }
       users.sort_by!(&:first)
       begin
         tries ||= 3
@@ -60,8 +60,8 @@ module Concerns::TwitterDB::User::Batch
       users
     end
 
-    CREATE_COLUMNS = %i(uid screen_name user_info friends_size followers_size)
-    UPDATE_COLUMNS = %i(uid screen_name user_info)
+    CREATE_COLUMNS = %i(uid screen_name friends_count followers_count user_info)
+    UPDATE_COLUMNS = %i(uid screen_name friends_count followers_count user_info)
 
     def self.import_suspended(uids)
       not_persisted = uids.uniq.map(&:to_i) - TwitterDB::User.where(uid: uids).pluck(:uid)

@@ -907,6 +907,8 @@ ActiveRecord::Schema.define(version: 2019_03_11_093004) do
     t.string "screen_name", null: false
     t.integer "friends_size", default: 0, null: false
     t.integer "followers_size", default: 0, null: false
+    t.integer "friends_count", default: -1, null: false
+    t.integer "followers_count", default: -1, null: false
     t.text "user_info", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
