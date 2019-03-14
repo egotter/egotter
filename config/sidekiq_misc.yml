@@ -6,7 +6,6 @@
   - logging
   - messaging
   - misc
-  - CreatePromptReportWorker
   - DeleteFromS3Worker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
