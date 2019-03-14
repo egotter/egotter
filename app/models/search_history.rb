@@ -74,29 +74,4 @@ class SearchHistory < ApplicationRecord
       uri.host
     end
   end
-
-  def referral
-    logs =
-        SearchLog.select(:referer).
-            where(created_at: (created_at - 30.minutes)..created_at).
-            where(session_id: session_id).
-            where.not(referer: ['', nil]).
-            order(created_at: :asc)
-
-    url =
-        logs.pluck(:referer).find do |ref|
-          ref.present? &&
-              ref.match?(URI.regexp) &&
-              URI.parse(ref).host.exclude?('egotter')
-        end
-
-    host = url.blank? ? '' : URI.parse(url).host
-
-    case host
-    when 't.co' then 't.co(dm)'
-    when 'api.twitter.com' then 'api.twitter.com(sign in)'
-    when '' then 'not set'
-    else host
-    end
-  end
 end

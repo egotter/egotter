@@ -174,10 +174,10 @@ class SendMetricsToSlackWorker
 
     stats =
         histories.each_with_object(Hash.new(0)).each do |his, memo|
-          memo[his.referral] += 1
+          memo[his.source] += 1
         end
 
-    stats = stats.sort_by {|k, _| k}.to_h
+    stats = stats.sort_by {|_, v| -v}.to_h
     SlackClient.send_message(SlackClient.format(stats))
   end
 
