@@ -7,7 +7,6 @@
 #  screen_name    :string(191)      not null
 #  friends_size   :integer          default(0), not null
 #  followers_size :integer          default(0), not null
-#  user_info      :text(65535)      not null
 #  search_count   :integer          default(0), not null
 #  update_count   :integer          default(0), not null
 #  user_id        :integer          default(-1), not null
