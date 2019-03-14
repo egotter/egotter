@@ -56,7 +56,20 @@ class SearchHistory < ApplicationRecord
   def source
     log = search_logs.select(:path, :referer).first
     return 'log not found' unless log
-    return 'blank referer' if log.referer.blank?
+
+    if log.referer.blank?
+      path_uri = URI.parse(log.path)
+      path_query = URI::decode_www_form(path_uri.query.to_s).to_h
+
+      result =
+          if path_uri.path.start_with?('/timelines/') && path_query['medium'] == 'dm'
+            "dm(#{path_query['type']}, direct)"
+          else
+            'blank referer'
+          end
+
+      return result
+    end
 
     uri = URI.parse(log.referer)
     query = URI::decode_www_form(uri.query.to_s).to_h
