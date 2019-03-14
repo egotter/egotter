@@ -25,9 +25,10 @@
 
 class Visitor < ApplicationRecord
   include Concerns::Visitor::Active
+  include Concerns::Analytics
 
   def search_logs(duration: 30.minutes)
-    SearchLog.where(created_at: created_at..(created_at + duration)).
+    SearchLog.where(created_at: (created_at - 10.seconds)..(created_at + duration)).
         where(session_id: session_id).
         order(created_at: :asc)
   end

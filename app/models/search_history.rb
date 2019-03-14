@@ -23,6 +23,8 @@ class SearchHistory < ApplicationRecord
   validates :user_id, numericality: {only_integer: true}
   validates :session_id, format: {with: /\A.+\w+.+\Z/}
 
+  include Concerns::Analytics
+
   def to_param
     screen_name
   end
@@ -51,40 +53,5 @@ class SearchHistory < ApplicationRecord
     SearchLog.where(created_at: (created_at - duration)..created_at).
         where(session_id: session_id).
         order(created_at: :asc)
-  end
-
-  def source
-    log = search_logs.select(:path, :referer).first
-    return 'log not found' unless log
-
-    if log.referer.blank?
-      path_uri = URI.parse(log.path)
-      path_query = URI::decode_www_form(path_uri.query.to_s).to_h
-
-      result =
-          if path_uri.path.start_with?('/timelines/') && path_query['medium'] == 'dm'
-            "dm(#{path_query['type']}, direct)"
-          else
-            'blank referer'
-          end
-
-      return result
-    end
-
-    uri = URI.parse(log.referer)
-    query = URI::decode_www_form(uri.query.to_s).to_h
-
-    if uri.host == 't.co'
-      path_uri = URI.parse(log.path)
-      path_query = URI::decode_www_form(path_uri.query.to_s).to_h
-
-      if path_uri.path.start_with?('/timelines/') && path_query['medium'] == 'dm'
-        "dm(#{path_query['type']})"
-      else
-        uri.host
-      end
-    else
-      uri.host
-    end
   end
 end
