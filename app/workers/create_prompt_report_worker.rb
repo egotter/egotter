@@ -1,6 +1,6 @@
 class CreatePromptReportWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
     request_id
