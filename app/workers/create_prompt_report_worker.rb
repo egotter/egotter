@@ -34,20 +34,14 @@ class CreatePromptReportWorker
 
   rescue request_class::Error => e
     log.update(error_class: e.class, error_message: e.message)
-
-    if options['exception']
-      raise
-    else
-      logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
-    end
+    logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
   rescue => e
     log.update(error_class: e.class, error_message: e.message)
-
-    if options['exception']
-      raise
-    else
-      logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
-      logger.info e.backtrace.join("\n")
+    logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
+    logger.info e.backtrace.join("\n")
+  ensure
+    if options['start_next_loop']
+      StartSendingPromptReportsWorker.perform_async
     end
   end
 
