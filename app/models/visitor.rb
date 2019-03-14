@@ -25,4 +25,18 @@
 
 class Visitor < ApplicationRecord
   include Concerns::Visitor::Active
+
+  def search_logs(duration: 30.minutes)
+    SearchLog.where(created_at: created_at..(created_at + duration)).
+        where(session_id: session_id).
+        order(created_at: :asc)
+  end
+
+  def search_history_found?
+    SearchHistory.where(session_id: session_id).exists?
+  end
+
+  def user_found?
+    user_id != -1
+  end
 end
