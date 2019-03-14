@@ -13,6 +13,8 @@ class SendMetricsToSlackWorker
           :send_sidekiq_worker_metrics,
           :send_nginx_metrics,
           :send_search_histories_metrics,
+          :send_prompt_report_metrics,
+          :send_prompt_report_error_metrics,
       ]
     end
 
@@ -155,7 +157,7 @@ class SendMetricsToSlackWorker
 
   def send_sidekiq_worker_metrics(types = nil)
     unless types
-      types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import)
+      types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import sidekiq_prompt_reports)
     end
 
     types.each do |type|
