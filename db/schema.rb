@@ -934,8 +934,8 @@ ActiveRecord::Schema.define(version: 2019_03_15_065415) do
   create_table "twitter_db_users", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4", force: :cascade do |t|
     t.bigint "uid", null: false
     t.string "screen_name", null: false
-    t.integer "friends_size", default: 0, null: false
-    t.integer "followers_size", default: 0, null: false
+    t.integer "friends_size", default: -1, null: false
+    t.integer "followers_size", default: -1, null: false
     t.text "user_info", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
