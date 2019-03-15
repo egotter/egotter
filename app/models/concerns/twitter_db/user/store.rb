@@ -85,7 +85,7 @@ module Concerns::TwitterDB::User::Store
       nil
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{at}]"
+    logger.info "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{at}]"
     nil
   end
 
