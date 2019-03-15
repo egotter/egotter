@@ -5,7 +5,8 @@ class CreateTwitterDBProfileWorker
   def perform(uids, options = {})
     profiles = []
 
-    TwitterDB::User.where(uid: uids).find_each(batch_size: 100).each do |user|
+    uids.each do |uid|
+      user = TwitterDB::User.find_by(uid: uid)
       profiles << TwitterDB::Profile.build_by(user: user)
     end
 
