@@ -8,6 +8,7 @@ class DetectFailureWorker
 
   def perform(twitter_user_id, options = {})
     user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :created_at).find(twitter_user_id)
+    user.s3_file!
 
     if user.s3_need_fix?
       logger.warn "Failed something. #{twitter_user_id} #{user.created_at} #{user.s3_need_fix_reasons.inspect}"

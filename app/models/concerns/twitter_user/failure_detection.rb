@@ -17,6 +17,14 @@ module Concerns::TwitterUser::FailureDetection
     }
   end
 
+  def s3_file!
+    @s3_file ||= {
+        friend: S3::Friendship.cache_disabled {S3::Friendship.find_by!(twitter_user_id: id)},
+        follower: S3::Followership.cache_disabled {S3::Followership.find_by!(twitter_user_id: id)},
+        profile: S3::Profile.cache_disabled {S3::Profile.find_by!(twitter_user_id: id)}
+    }
+  end
+
   def s3_file
     @s3_file ||= {
         friend: S3::Friendship.cache_disabled {S3::Friendship.find_by(twitter_user_id: id)},

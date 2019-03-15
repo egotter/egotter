@@ -26,7 +26,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   rescue_from Exception do |ex|
-    logger.warn "rescue_from Exception: #{ex.class} #{ex.message} #{debug_str}"
+    logger.warn "rescue_from Exception: #{ex.class} #{ex.message.truncate(100)} #{debug_str}"
     logger.info ex.backtrace.join("\n")
 
     if request.xhr?
