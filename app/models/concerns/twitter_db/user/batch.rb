@@ -41,8 +41,8 @@ module Concerns::TwitterDB::User::Batch
             ]
           else
             [
-                %i(uid screen_name friends_count followers_count user_info),
-                %i(uid screen_name friends_count followers_count user_info)
+                %i(uid screen_name user_info friends_size followers_size),
+                %i(uid screen_name user_info)
             ]
           end
 
@@ -72,12 +72,16 @@ module Concerns::TwitterDB::User::Batch
               user[:suspended],
               user[:entities].to_json,
               (user[:status][:created_at] rescue nil),
+              (user[:status][:created_at] rescue nil),
           ]
         else
-          create_columns = %i(uid screen_name friends_count followers_count user_info)
-          update_columns = %i(uid screen_name friends_count followers_count user_info)
-
-
+          [
+              user[:id],
+              user[:screen_name],
+              ::TwitterUser.collect_user_info(user),
+              -1,
+              -1
+          ]
         end
       end
 
