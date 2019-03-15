@@ -17,7 +17,7 @@ namespace :s3 do
       logger.info "#{twitter_user_id} #{(Time.zone.now - start) / processed_count}" if processed_count % 1000 == 0
       processed_count += 1
 
-      user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :user_info).find_by(id: twitter_user_id)
+      user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size).find_by(id: twitter_user_id)
       next unless user
 
       if logger.silence { user.s3_need_fix? }
