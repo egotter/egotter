@@ -33,14 +33,62 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.import(t_users)
-      users = t_users.map { |user| [user[:id], user[:screen_name], user[:friends_count], user[:followers_count], ::TwitterUser.collect_user_info(user)] }
-      users.sort_by!(&:first)
+      create_columns, update_columns =
+          if TwitterDB::User.column_names.include?('entities_text')
+            [
+                %i(uid screen_name friends_count followers_count user_info),
+                %i(uid screen_name friends_count followers_count user_info)
+            ]
+          else
+            [
+                %i(uid screen_name friends_count followers_count user_info),
+                %i(uid screen_name friends_count followers_count user_info)
+            ]
+          end
+
+      users = t_users.map do |user|
+        if TwitterDB::User.column_names.include?('entities_text')
+          [
+              user[:id],
+              user[:screen_name],
+              user[:friends_count],
+              user[:followers_count],
+              user[:name],
+              user[:location],
+              user[:description],
+              user[:url],
+              user[:protected],
+              user[:listed_count],
+              user[:favourites_count],
+              user[:utc_offset],
+              user[:time_zone],
+              user[:geo_enabled],
+              user[:verified],
+              user[:statuses_count],
+              user[:lang],
+              user[:profile_image_url_https],
+              user[:profile_banner_url],
+              user[:profile_link_color],
+              user[:suspended],
+              user[:entities].to_json,
+              (user[:status][:created_at] rescue nil),
+          ]
+        else
+          create_columns = %i(uid screen_name friends_count followers_count user_info)
+          update_columns = %i(uid screen_name friends_count followers_count user_info)
+
+
+        end
+      end
+
+      users.sort_by! {|user| user[:uid] }
+
       begin
         tries ||= 3
 
         # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
-        persisted_uids = TwitterDB::User.where(uid: users.map(&:first), updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
-        TwitterDB::User.import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: 1000, validate: false)
+        persisted_uids = TwitterDB::User.where(uid: users.map {|user| user[:uid]}, updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
+        TwitterDB::User.import(CREATE_COLUMNS, users.reject { |user| persisted_uids.include? user[:uid] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: 1000, validate: false)
       rescue => e
         if retryable_deadlock?(e)
           message = "#{self}##{__method__}: #{e.class} #{e.message.truncate(100)} #{t_users.size}"
@@ -59,9 +107,6 @@ module Concerns::TwitterDB::User::Batch
       end
       users
     end
-
-    CREATE_COLUMNS = %i(uid screen_name friends_count followers_count user_info)
-    UPDATE_COLUMNS = %i(uid screen_name friends_count followers_count user_info)
 
     def self.import_suspended(uids)
       not_persisted = uids.uniq.map(&:to_i) - TwitterDB::User.where(uid: uids).pluck(:uid)
