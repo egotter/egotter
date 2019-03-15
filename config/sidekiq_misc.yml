@@ -6,6 +6,7 @@
   - logging
   - messaging
   - misc
+  - CreateTwitterDBProfileWorker
   - DeleteFromS3Worker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker

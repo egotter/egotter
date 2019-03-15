@@ -21,6 +21,10 @@ module Concerns::TwitterDB::User::Associations
       obj.has_many :mentions,  order_by_sequence_asc, class_name: 'TwitterDB::Mention'
     end
 
+    with_options default_options.merge(primary_key: :uid, foreign_key: :uid) do |obj|
+      obj.has_one :profile, class_name: 'TwitterDB::Profile'
+    end
+
     with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
       obj.has_many :unfriendships,     order_by_sequence_asc
       obj.has_many :unfollowerships,   order_by_sequence_asc
