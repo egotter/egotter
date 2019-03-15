@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_11_093004) do
+ActiveRecord::Schema.define(version: 2019_03_15_065415) do
 
   create_table "audience_insights", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "uid", null: false
@@ -888,6 +888,35 @@ ActiveRecord::Schema.define(version: 2019_03_11_093004) do
     t.index ["created_at"], name: "index_twitter_db_mentions_on_created_at"
     t.index ["screen_name"], name: "index_twitter_db_mentions_on_screen_name"
     t.index ["uid"], name: "index_twitter_db_mentions_on_uid"
+  end
+
+  create_table "twitter_db_profiles", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.bigint "uid", null: false
+    t.string "screen_name", default: "", null: false
+    t.integer "friends_count", default: -1, null: false
+    t.integer "followers_count", default: -1, null: false
+    t.boolean "protected", default: false, null: false
+    t.boolean "suspended", default: false, null: false
+    t.datetime "status_created_at"
+    t.datetime "account_created_at"
+    t.boolean "statuses_count", default: true, null: false
+    t.integer "favourites_count", default: -1, null: false
+    t.integer "listed_count", default: -1, null: false
+    t.string "name", default: "", null: false
+    t.string "location", default: "", null: false
+    t.string "description", default: "", null: false
+    t.string "url", default: "", null: false
+    t.string "geo_enabled", default: "0", null: false
+    t.boolean "verified", default: false, null: false
+    t.string "lang", default: "", null: false
+    t.string "profile_image_url_https", default: "", null: false
+    t.string "profile_banner_url", default: "", null: false
+    t.string "profile_link_color", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_twitter_db_profiles_on_created_at"
+    t.index ["screen_name"], name: "index_twitter_db_profiles_on_screen_name"
+    t.index ["uid"], name: "index_twitter_db_profiles_on_uid", unique: true
   end
 
   create_table "twitter_db_statuses", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

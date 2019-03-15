@@ -8,6 +8,7 @@
   - misc
   - CreatePromptReportWorker
   - CreateSignedInTwitterUserWorker
+  - CreateTwitterDBProfileWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
   - DeleteFromS3Worker
