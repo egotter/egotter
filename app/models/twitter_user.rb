@@ -6,8 +6,8 @@
 #  user_id         :integer          default(-1), not null
 #  uid             :bigint(8)        not null
 #  screen_name     :string(191)      not null
-#  friends_size    :integer          default(0), not null
-#  followers_size  :integer          default(0), not null
+#  friends_size    :integer          default(-1), not null
+#  followers_size  :integer          default(-1), not null
 #  friends_count   :integer          default(-1), not null
 #  followers_count :integer          default(-1), not null
 #  search_count    :integer          default(0), not null

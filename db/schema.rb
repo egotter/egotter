@@ -948,8 +948,8 @@ ActiveRecord::Schema.define(version: 2019_03_15_065415) do
     t.integer "user_id", default: -1, null: false
     t.bigint "uid", null: false
     t.string "screen_name", null: false
-    t.integer "friends_size", default: 0, null: false
-    t.integer "followers_size", default: 0, null: false
+    t.integer "friends_size", default: -1, null: false
+    t.integer "followers_size", default: -1, null: false
     t.integer "friends_count", default: -1, null: false
     t.integer "followers_count", default: -1, null: false
     t.integer "search_count", default: 0, null: false
