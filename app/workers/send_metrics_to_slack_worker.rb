@@ -31,6 +31,8 @@ class SendMetricsToSlackWorker
   end
 
   def send_table_metrics
+    SlackClient.send_message(__method__, channel: SlackClient::TABLE_MONITORING)
+
     [
         [User, Visitor],
         [SearchLog, SearchErrorLog],
@@ -57,6 +59,8 @@ class SendMetricsToSlackWorker
   end
 
   def send_user_metrics
+    SlackClient.send_message(__method__)
+
     stats = {
         first_access: User.where(first_access_at: 1.hour.ago..Time.zone.now).size,
         last_access: User.where(last_access_at: 1.hour.ago..Time.zone.now).size
@@ -66,6 +70,8 @@ class SendMetricsToSlackWorker
   end
 
   def send_twitter_user_metrics
+    SlackClient.send_message(__method__)
+
     users = TwitterUser.where(created_at: 1.hour.ago..Time.zone.now)
 
     friends_count = []
@@ -110,11 +116,15 @@ class SendMetricsToSlackWorker
   end
 
   def send_google_analytics_metrics
+    SlackClient.send_message(__method__)
+
     stats = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
     SlackClient.send_message(SlackClient.format(stats))
   end
 
   def send_prompt_report_metrics
+    SlackClient.send_message(__method__, channel: SlackClient::MESSAGING_MONITORING)
+
     condition = {created_at: 1.hour.ago..Time.zone.now}
     stats = {
         prompt_reports: PromptReport.where(condition).size,
@@ -126,6 +136,8 @@ class SendMetricsToSlackWorker
   end
 
   def send_prompt_report_error_metrics
+    SlackClient.send_message(__method__, channel: SlackClient::MESSAGING_MONITORING)
+
     condition = {created_at: 1.hour.ago..Time.zone.now}
     stats =
         CreatePromptReportLog.select('error_class, count(*) cnt').
@@ -149,6 +161,8 @@ class SendMetricsToSlackWorker
   end
 
   def send_sidekiq_queue_metrics
+    SlackClient.send_message(__method__, channel: SlackClient::SIDEKIQ_MONITORING)
+
     queues = Sidekiq::Queue.all.select {|queue| queue.latency > 0}.sort_by(&:name)
     queues = queues.map do |queue|
       [queue.name, {size: queue.size, latency: sprintf("%.3f", queue.latency)}]
@@ -157,6 +171,8 @@ class SendMetricsToSlackWorker
   end
 
   def send_sidekiq_worker_metrics(types = nil)
+    SlackClient.send_message(__method__, channel: SlackClient::SIDEKIQ_MONITORING)
+
     unless types
       types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import sidekiq_prompt_reports)
     end
@@ -168,11 +184,15 @@ class SendMetricsToSlackWorker
   end
 
   def send_nginx_metrics
+    SlackClient.send_message(__method__)
+
     stats = NginxStats.new
     SlackClient.send_message(SlackClient.format(stats))
   end
 
   def send_search_histories_metrics
+    SlackClient.send_message(__method__)
+
     histories = SearchHistory.where(created_at: 1.hour.ago..Time.zone.now)
 
     stats =
@@ -185,6 +205,8 @@ class SendMetricsToSlackWorker
   end
 
   def send_visitors_metrics
+    SlackClient.send_message(__method__)
+
     condition = {created_at: 1.hour.ago..Time.zone.now}
     visitors = Visitor.where(condition)
 
@@ -200,14 +222,14 @@ class SendMetricsToSlackWorker
         end
 
     [
-        stats.select {|k, v| k.start_with?('visitor/not')},
-        stats.select {|k, v| k.start_with?('visitor/search')},
-        stats.select {|k, v| k.start_with?('user/not')},
-        stats.select {|k, v| k.start_with?('user/search')},
+        stats.select {|k, _| k.start_with?('visitor/not')},
+        stats.select {|k, _| k.start_with?('visitor/search')},
+        stats.select {|k, _| k.start_with?('user/not')},
+        stats.select {|k, _| k.start_with?('user/search')},
 
-    ].each do |stats|
-      stats = stats.sort_by {|k, v| -v}.to_h
-      SlackClient.send_message(SlackClient.format(stats))
+    ].each do |stat|
+      stat = stat.sort_by {|_, v| -v}.to_h
+      SlackClient.send_message(SlackClient.format(stat))
     end
   end
 
