@@ -19,8 +19,4 @@ Redis.class_eval do
       get(key)
     end
   end
-
-  def self.debug_info_key
-    'update_job_dispatcher:debug'
-  end
 end
