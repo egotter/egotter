@@ -2,6 +2,14 @@ class SendMetricsToSlackWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
+  def unique_key(steps = nil)
+    steps.inspect
+  end
+
+  def unique_in
+    5.minutes
+  end
+
   def perform(steps = nil)
     unless steps
       steps = [
