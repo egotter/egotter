@@ -25,6 +25,10 @@ namespace :twitter_db do
           break
         end
       end
+
+      if profiles.any?
+        TwitterDB::Profile.import! profiles, validate: false
+      end
     end
   end
 end
