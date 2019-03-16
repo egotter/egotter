@@ -1,6 +1,6 @@
 class StartSendingPromptReportsWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'messaging', retry: 0, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(*args)
     task = PromptReportTask.start(user_ids_str: nil, deadline_str: nil)

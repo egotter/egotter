@@ -41,8 +41,12 @@ class CreatePromptReportWorker
     logger.info e.backtrace.join("\n")
   ensure
     if options['start_next_loop']
-      start_time = Time.zone.parse(options['queueing_started_at'])
-      StartSendingPromptReportsWorker.perform_at(start_time + request_class::INTERVAL)
+      if options['queueing_started_at']
+        start_time = Time.zone.parse(options['queueing_started_at'])
+        StartSendingPromptReportsWorker.perform_at(start_time + request_class::INTERVAL)
+      else
+        StartSendingPromptReportsWorker.perform_in(request_class::INTERVAL.since)
+      end
     end
   end
 

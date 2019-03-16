@@ -4,3 +4,4 @@
 :logfile: ./log/sidekiq_prompt_reports.log
 :queues:
   - CreatePromptReportWorker
+  - StartSendingPromptReportsWorker
