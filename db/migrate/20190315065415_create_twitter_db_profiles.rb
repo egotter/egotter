@@ -9,7 +9,7 @@ class CreateTwitterDbProfiles < ActiveRecord::Migration[5.2]
       t.boolean  :suspended,               null: false, default: false
       t.datetime :status_created_at,       null: true
       t.datetime :account_created_at,      null: true
-      t.boolean  :statuses_count,          null: false, default: -1
+      t.integer  :statuses_count,          null: false, default: -1
       t.integer  :favourites_count,        null: false, default: -1
       t.integer  :listed_count,            null: false, default: -1
       t.string   :name,                    null: false, default: ''

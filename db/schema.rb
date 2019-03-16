@@ -899,7 +899,7 @@ ActiveRecord::Schema.define(version: 2019_03_15_065415) do
     t.boolean "suspended", default: false, null: false
     t.datetime "status_created_at"
     t.datetime "account_created_at"
-    t.boolean "statuses_count", default: true, null: false
+    t.integer "statuses_count", default: -1, null: false
     t.integer "favourites_count", default: -1, null: false
     t.integer "listed_count", default: -1, null: false
     t.string "name", default: "", null: false

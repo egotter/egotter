@@ -11,7 +11,7 @@
 #  suspended               :boolean          default(FALSE), not null
 #  status_created_at       :datetime
 #  account_created_at      :datetime
-#  statuses_count          :boolean          default(TRUE), not null
+#  statuses_count          :integer          default(-1), not null
 #  favourites_count        :integer          default(-1), not null
 #  listed_count            :integer          default(-1), not null
 #  name                    :string(191)      default(""), not null
