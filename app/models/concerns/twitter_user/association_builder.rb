@@ -18,6 +18,7 @@ module Concerns::TwitterUser::AssociationBuilder
       self.friends_size = friend_ids.size
     else
       self.friend_uids = []
+      self.friends_size = 0
     end
 
     if follower_ids&.any?
@@ -25,6 +26,7 @@ module Concerns::TwitterUser::AssociationBuilder
       self.followers_size = follower_ids.size
     else
       self.follower_uids = []
+      self.followers_size = 0
     end
   end
 
