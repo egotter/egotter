@@ -21,7 +21,8 @@ module Concerns::Analytics
           if path_uri.path.start_with?('/timelines/') && path_query['medium'] == 'dm'
             "dm(#{path_query['type']}, direct)"
           else
-            "blank referer(#{path_uri.path})"
+            path_name = path_uri.path == '/' ? '/' : path_uri.path.split('/')[1]
+            "blank referer(#{path_name})"
           end
 
       return result
