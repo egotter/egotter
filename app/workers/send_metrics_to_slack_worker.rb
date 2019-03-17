@@ -22,6 +22,7 @@ class SendMetricsToSlackWorker
           :send_nginx_metrics,
           :send_search_histories_metrics,
           :send_visitors_metrics,
+          :send_sign_in_metrics,
           :send_prompt_report_metrics,
           :send_prompt_report_error_metrics,
           :send_rate_limit_metrics,
@@ -238,6 +239,20 @@ class SendMetricsToSlackWorker
       SlackClient.send_message("#{__method__} (#{prefix})", channel: SlackClient::VISITORS_MONITORING)
       SlackClient.send_message(SlackClient.format(stat), channel: SlackClient::VISITORS_MONITORING)
     end
+  end
+
+  def send_sign_in_metrics
+    SlackClient.send_message(__method__)
+
+    logs = SignInLog.where(created_at: 1.hour.ago..Time.zone.now)
+
+    stats =
+        logs.each_with_object(Hash.new(0)).each do |log, memo|
+          memo[log.via] += 1
+        end
+
+    stats = stats.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats))
   end
 
   def send_rate_limit_metrics
