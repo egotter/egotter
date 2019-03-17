@@ -4,18 +4,18 @@ class SendMetricsToCloudWatchWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
+  def unique_key(*args)
+    -1
+  end
+
+  def unique_in
+    4.minutes
+  end
+
   def perform
     client = CloudWatchClient.new
     send_sidekiq_metrics(client)
     send_google_analytics_metrics(client)
-
-    # begin
-    #   rate_limits = Bot.rate_limit
-    # rescue => e
-    #   logger.warn "#{e.class} #{e.message}"
-    #   rate_limits = []
-    # end
-    # datadog(queue_values, ga_active_users, rate_limits)
 
   rescue => e
     logger.warn "#{e.class} #{e.message}"
