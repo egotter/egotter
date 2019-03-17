@@ -42,11 +42,14 @@ class SendMetricsToSlackWorker
   def send_table_metrics
     SlackClient.send_message(__method__, channel: SlackClient::TABLE_MONITORING)
 
+    condition = 1.hour.ago..Time.zone.now
+
     [
         [User, Visitor],
         [SearchLog, SearchErrorLog],
         SignInLog,
         TwitterUser,
+        [TwitterDB::User, TwitterDB::Profile],
         SearchHistory,
         Job,
         [FollowRequest, UnfollowRequest],
@@ -59,7 +62,7 @@ class SendMetricsToSlackWorker
       klasses = [klasses] unless klasses.is_a?(Array)
       stats =
           klasses.each_with_object(Hash.new(0)) do |klass, memo|
-            memo[klass.to_s] = klass.where(created_at: 1.hour.ago..Time.zone.now).size
+            memo[klass.to_s] = klass.where(created_at: condition).size
           end
 
       stats = stats.sort_by {|k, _| k}.to_h
