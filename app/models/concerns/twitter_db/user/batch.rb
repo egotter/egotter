@@ -13,7 +13,7 @@ module Concerns::TwitterDB::User::Batch
       imported = import(users)
       import_suspended(uids - users.map { |u| u[:id] }) if uids.size != imported.size
 
-      CreateTwitterDBProfileWorker.perform_async(uids)
+      CreateTwitterDBProfileWorker.perform_async(uids) if uids.any?
     end
 
     def self.fetch_and_import(uids, client:)

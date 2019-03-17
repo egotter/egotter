@@ -3,11 +3,14 @@ class CreateTwitterDBProfileWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def perform(uids, options = {})
+    client = Bot.api_client
+    users = client.users(uids)
+    suspended_users = (uids - users.map {|u| u[:id]}).map {|uid| {id: uid, screen_name: 'suspended'}}
+
     profiles = []
 
-    uids.each do |uid|
-      user = TwitterDB::User.find_by(uid: uid)
-      profiles << TwitterDB::Profile.build_by(user: user)
+    (users + suspended_users).each do |user|
+      profiles << TwitterDB::Profile.build_by_t_user(user)
     end
 
     TwitterDB::Profile::import profiles, validate: false
