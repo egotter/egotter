@@ -30,5 +30,18 @@ namespace :twitter_db do
         TwitterDB::Profile.import! profiles, validate: false
       end
     end
+
+    desc 'Copy from uids'
+    task copy_from_uids: :environment do
+      uids = ENV['UIDS'].split(',').map(&:to_i)
+      client = Bot.api_client
+
+      t_users = client.users(uids)
+      profiles = t_users.map {|user| TwitterDB::Profile.build_by_t_user(user)}
+
+      TwitterDB::Profile.import profiles, validate: false
+
+      puts "Imported #{uids.size}"
+    end
   end
 end
