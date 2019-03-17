@@ -1,26 +1,34 @@
 class Kaomoji
-  def self.init
-    @@kaomoji ||= JSON.parse(File.read(Rails.configuration.x.constants['kaomoji_path'])).map { |b| Hashie::Mash.new(b) }
-    raise 'create kaomoji' if @@kaomoji.empty?
-  end
+  HAPPY = [
+      "✧*｡٩(ˊᗜˋ*)و✧*｡",
+      "(*´ヮ`*)",
+      ".:*･ﾟ(*´-`)ﾟ･*:.",
+      ":゜☆ヽ(*’∀’*)/☆゜:。",
+      "(n'∀')ηﾟ*｡:*!",
+  ]
 
-  def self.sample
-    init
-    @@kaomoji.map { |k| k.text }.sample
-  end
+  SAFE_HAPPY = [
+      "(๑•̀ㅂ•́)و✧",
+      "٩(๑❛ᴗ❛๑)۶",
+  ]
+
+  UNHAPPY = [
+      ":;(∩´﹏`∩);:",
+  ]
+
+  SHIROME = [
+      "(ㆆ_ㆆ)"
+  ]
 
   def self.happy
-    init
-    @@kaomoji.select { |k| k.happy }.map { |k| k.text }.sample
+    SAFE_HAPPY.sample
   end
 
   def self.unhappy
-    init
-    @@kaomoji.select { |k| k.unhappy }.map { |k| k.text }.sample
+    UNHAPPY.sample
   end
 
   def self.shirome
-    init
-    @@kaomoji.select { |k| k.shirome }.map { |k| k.text }.sample
+    SHIROME.sample
   end
 end
