@@ -213,8 +213,6 @@ class SendMetricsToSlackWorker
   end
 
   def send_visitors_metrics
-    SlackClient.send_message(__method__)
-
     condition = {created_at: 1.hour.ago..Time.zone.now}
     visitors = Visitor.where(condition)
 
@@ -229,15 +227,12 @@ class SendMetricsToSlackWorker
           memo[key] += 1
         end
 
-    [
-        stats.select {|k, _| k.start_with?('visitor/not')},
-        stats.select {|k, _| k.start_with?('visitor/search')},
-        stats.select {|k, _| k.start_with?('user/not')},
-        stats.select {|k, _| k.start_with?('user/search')},
-
-    ].each do |stat|
+    %w(visitor/not visitor/search user/not user/search).each do |prefix|
+      stat = stats.select {|k, _| k.start_with?(prefix)}.transform_keys {|k| k.remove(prefix)}
       stat = stat.sort_by {|_, v| -v}.to_h
-      SlackClient.send_message(SlackClient.format(stat))
+
+      SlackClient.send_message("#{__method__} (#{prefix})", channel: SlackClient::VISITORS_MONITORING)
+      SlackClient.send_message(SlackClient.format(stat), channel: SlackClient::VISITORS_MONITORING)
     end
   end
 
