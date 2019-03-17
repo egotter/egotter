@@ -40,7 +40,7 @@ module Concerns::TwitterDB::User::Batch
 
       t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
 
-      users = t_users.map {|user| [user[:id], user[:screen_name], ::TwitterUser.collect_user_info(user), -1, -1]}
+      users = t_users.map {|user| [user[:id], user[:screen_name], ::TwitterUser.collect_user_info(user)]}
       users.sort_by!(&:first)
 
       profiles = t_users.map {|user| TwitterDB::Profile.build_by_t_user(user)}
@@ -76,7 +76,7 @@ module Concerns::TwitterDB::User::Batch
       users
     end
 
-    CREATE_COLUMNS = %i(uid screen_name user_info friends_size followers_size)
+    CREATE_COLUMNS = %i(uid screen_name user_info)
     UPDATE_COLUMNS = %i(uid screen_name user_info)
 
     def self.import_suspended(uids)
