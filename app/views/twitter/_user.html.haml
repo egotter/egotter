@@ -26,7 +26,7 @@
               %b= user.followers_count.to_i.to_s(:delimited)
               %span.text-muted= TwitterUser.human_attribute_name(:followers)
             %span.statuses-count
-              %b= user.statuses_count.to_i.to_s(:delimited)
+              -#%b= user.statuses_count.to_i.to_s(:delimited)
               %span.text-muted= TwitterUser.human_attribute_name(:statuses)
       .media-right
         .buttons
