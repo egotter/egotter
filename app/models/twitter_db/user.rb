@@ -20,7 +20,6 @@
 
 module TwitterDB
   class User < ApplicationRecord
-    include Concerns::TwitterDB::User::Store
     include Concerns::TwitterUser::Inflections
     include Concerns::TwitterDB::User::Associations
 
@@ -30,6 +29,17 @@ module TwitterDB
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
     validates_with Validations::UserInfoValidator
+
+    delegate :name, :location, :description, :url, :protected, :followers_count, :friends_count, :verified, :statuses_count, :profile_image_url_https, :profile_banner_url, :profile_link_color, :suspended, to: :profile, allow_nil: true
+
+    def inactive?
+      profile&.status_created_at && profile.status_created_at < 2.weeks.ago
+    end
+
+    # Used in view
+    def inactive
+      inactive?
+    end
 
     def to_param
       screen_name
