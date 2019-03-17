@@ -4,7 +4,7 @@ class MiscController < ApplicationController
   before_action :create_search_log, only: %i(menu)
 
   def maintenance
-    render status: 503
+    render file: "#{Rails.root}/public/503.html", formats: %i(html), layout: false, status: :service_unavailable
   end
 
   def privacy_policy
