@@ -13,7 +13,7 @@ module Concerns::TwitterDB::User::Batch
       imported = import(users)
       import_suspended(uids - users.map { |u| u[:id] }) if uids.size != imported.size
 
-      CreateTwitterDBProfileWorker.perform_async(uids) if uids.any?
+      # CreateTwitterDBProfileWorker.perform_async(uids) if uids.any?
     end
 
     def self.fetch_and_import(uids, client:)
@@ -35,14 +35,28 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.import(t_users)
-      users = t_users.map { |user| [user[:id], user[:screen_name], ::TwitterUser.collect_user_info(user), -1, -1] }
+      # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
+      persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
+
+      t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
+
+      users = t_users.map {|user| [user[:id], user[:screen_name], ::TwitterUser.collect_user_info(user), -1, -1]}
       users.sort_by!(&:first)
+
+      profiles = t_users.map {|user| TwitterDB::Profile.build_by_t_user(user)}
+      profiles.sort_by!(&:uid)
+
       begin
         tries ||= 3
 
-        # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
-        persisted_uids = TwitterDB::User.where(uid: users.map(&:first), updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
-        TwitterDB::User.import(CREATE_COLUMNS, users.reject { |v| persisted_uids.include? v[0] }, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: 1000, validate: false)
+        users.each_slice(500) do |users_group|
+          target_uids = users_group.map(&:first)
+
+          ApplicationRecord.transaction do
+            TwitterDB::User.import(CREATE_COLUMNS, users_group, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: 500, validate: false)
+            TwitterDB::Profile.import profiles.select {|p| target_uids.include?(p.uid)}, batch_size: 500, validate: false
+          end
+        end
       rescue => e
         if retryable_deadlock?(e)
           message = "#{self}##{__method__}: #{e.class} #{e.message.truncate(100)} #{t_users.size}"
