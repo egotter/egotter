@@ -54,6 +54,7 @@ class Bot < ApplicationRecord
       {
         id: p[:id],
         verify_credentials: p[:rate_limit].verify_credentials,
+        users: p[:rate_limit].users,
         friend_ids: p[:rate_limit].friend_ids,
         follower_ids: p[:rate_limit].follower_ids
       }

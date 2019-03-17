@@ -24,6 +24,7 @@ class SendMetricsToSlackWorker
           :send_visitors_metrics,
           :send_prompt_report_metrics,
           :send_prompt_report_error_metrics,
+          :send_rate_limit_metrics,
       ]
     end
 
@@ -227,13 +228,24 @@ class SendMetricsToSlackWorker
           memo[key] += 1
         end
 
-    %w(visitor/not visitor/search user/not user/search).each do |prefix|
+    %w(visitor/not/ visitor/search/ user/not/ user/search/).each do |prefix|
       stat = stats.select {|k, _| k.start_with?(prefix)}.transform_keys {|k| k.remove(prefix)}
       stat = stat.sort_by {|_, v| -v}.to_h
 
       SlackClient.send_message("#{__method__} (#{prefix})", channel: SlackClient::VISITORS_MONITORING)
       SlackClient.send_message(SlackClient.format(stat), channel: SlackClient::VISITORS_MONITORING)
     end
+  end
+
+  def send_rate_limit_metrics
+    SlackClient.send_message(__method__, channel: SlackClient::RATE_LIMIT_MONITORING)
+
+    stats =
+        Bot.rate_limit.map do |limit|
+          [limit.delete(:id).to_s, limit]
+        end.to_h
+
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::RATE_LIMIT_MONITORING)
   end
 
   def divide(num1, num2)
