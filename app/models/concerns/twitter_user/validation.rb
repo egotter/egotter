@@ -16,9 +16,9 @@ module Concerns::TwitterUser::Validation
 
   class_methods do
     def too_many_friends?(t_user, login_user:)
-      return false if login_user.present? && t_user[:id] == User::EGOTTER_UID
+      return false if t_user[:id] == User::EGOTTER_UID
 
-      if t_user[:friends_count] + t_user[:followers_count] > (login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS)
+      if t_user[:friends_count] + t_user[:followers_count] > TOO_MANY_FRIENDS
         return true
       end
 
@@ -57,20 +57,10 @@ module Concerns::TwitterUser::Validation
   end
 
   # not using in valid?
-  def many_friends?
-    if friends_count + followers_count > MANY_FRIENDS
-      errors[:base] << "many friends #{friends_count} and followers #{followers_count}"
-      return true
-    end
-
-    false
-  end
-
-  # not using in valid?
   def too_many_friends?(login_user:, add_error: true)
-    return false if login_user.present? && uid.to_i == User::EGOTTER_UID
+    return false if uid == User::EGOTTER_UID
 
-    if friends_count + followers_count > (login_user.nil? ? MANY_FRIENDS : TOO_MANY_FRIENDS)
+    if friends_count + followers_count > TOO_MANY_FRIENDS
       errors[:base] << "too many friends #{friends_count} and followers #{followers_count}" if add_error
       return true
     end
