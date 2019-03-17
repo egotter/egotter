@@ -408,8 +408,8 @@ ja:
     specified_commercial_transactions:
       title: "特定商取引法に基づく表記"
     maintenance:
-      title: "メンテナンス"
-      under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください(^ ^)/"
+      title: "メンテナンス中"
+      under_maintenance: "メンテナンス中です。<br>作業完了まで今しばらくお待ちください。"
   close_friends:
     show: &close_friends_show
       title: "仲良しランキング"

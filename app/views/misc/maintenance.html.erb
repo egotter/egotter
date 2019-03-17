@@ -1,8 +1,10 @@
-<div class="maintenance">
+<div>
+  <h2 class="text-center h3"><%= t('.title') %></h2>
 
-  <h2>
-    <small><%= t('.title') %></small>
-  </h2>
+  <img class="center-block" src="<%= image_path('/egotter_maintenance_840x450.png') %>" width="<%= request.from_pc? ? '450px' : '300px' %>">
 
-  <div><%= raw t('.under_maintenance') %></div>
+  <div class="vertical-spacing"></div>
+  <div class="text-center"><%= raw t('.under_maintenance') %></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
 </div>
