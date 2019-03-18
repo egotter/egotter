@@ -274,7 +274,9 @@ class SendMetricsToSlackWorker
   def send_search_error_metrics
     SlackClient.send_message(__method__, channel: SlackClient::SEARCH_ERROR_MONITORING)
 
-    logs = SearchErrorLog.where(created_at: 1.hour.ago..Time.zone.now)
+    logs = SearchErrorLog.where(created_at: 1.hour.ago..Time.zone.now).
+        where.not(device_type: 'crawler').
+        where.not(session_id: '-1')
 
     stats =
         logs.each_with_object(Hash.new(0)).each do |log, memo|
