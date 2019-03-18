@@ -21,13 +21,15 @@ module Concerns::Validation
     respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))
   end
 
-  def valid_uid?(uid = nil)
+  def valid_uid?(uid = nil, redirect: true)
     uid ||= params[:uid]
 
     if Validations::UidValidator::REGEXP.match?(uid.to_s)
       true
     else
-      respond_with_error(:bad_request, TwitterUser.human_attribute_name(:uid) + t('errors.messages.invalid'))
+      if redirect
+        respond_with_error(:bad_request, TwitterUser.human_attribute_name(:uid) + t('errors.messages.invalid'))
+      end
       false
     end
   end

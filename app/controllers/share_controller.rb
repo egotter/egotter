@@ -3,8 +3,8 @@ class ShareController < ApplicationController
   before_action :require_login!
 
   def create
-    user = current_user
-    TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}"))
+    request = TweetRequest.create(user_id: current_user.id, text: params[:text])
+    TweetEgotterWorker.perform_async(request.id)
     head :ok
   end
 end
