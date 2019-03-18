@@ -20,6 +20,10 @@
 class Order < ApplicationRecord
   belongs_to :user
 
+  scope :unexpired, -> do
+    where('customer_id is not null AND subscription_id is not null AND now() < (created_at + interval 30 day)')
+  end
+
   def stripe_customer
     ::Stripe::Customer.retrieve(customer_id)
   end

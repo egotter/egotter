@@ -148,7 +148,7 @@ module Concerns::Validation
 
   def too_many_searches?(twitter_user)
     return false if from_crawler? || search_histories_remaining > 0
-    return false if latest_search_histories.any? { |history| history.uid.to_i == twitter_user.uid.to_i }
+    return false if current_search_histories.any? { |history| history.uid == twitter_user.uid }
 
     respond_with_error(:bad_request, too_many_searches_message)
     true
@@ -180,7 +180,7 @@ module Concerns::Validation
   end
 
   def has_already_purchased?
-    return false if current_user.orders.none? {|o| !o.expired?}
+    return false if current_user.orders.unexpired.none?
 
     respond_with_error(:bad_request, t('after_sign_in.has_already_purchased_html', url: settings_path))
     true

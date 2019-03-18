@@ -145,6 +145,6 @@ class User < ApplicationRecord
   end
 
   def is_subscribing?
-    orders.any? {|o| !o.expired?}
+    orders.unexpired.any?
   end
 end

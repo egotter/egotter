@@ -31,7 +31,7 @@
   <% if current_user.is_subscribing? %>
     <table class="table">
       <tbody>
-      <% current_user.orders.select {|o| !o.expired?}.each.with_index do |order, i| %>
+      <% current_user.orders.unexpired.each.with_index do |order, i| %>
         <tr>
           <td><%= t('.order.id', id: i + 1) %></td>
           <td>
