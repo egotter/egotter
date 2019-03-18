@@ -7,9 +7,8 @@ module Concerns::Request::Runnable
   end
 
   included do
-    scope :not_finished, -> user_id do
-      where(user_id: user_id, finished_at: nil)
-    end
+    scope :finished, -> {where.not(finished_at: nil)}
+    scope :not_finished, -> {where(finished_at: nil)}
   end
 
   def finished!

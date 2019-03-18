@@ -3,7 +3,7 @@ class DeleteTweetsController < ApplicationController
 
   def new
     if user_signed_in?
-      @delete_tweets_request = DeleteTweetsRequest.not_finished(current_user.id).exists?
+      @delete_tweets_request = current_user.delete_tweets_requests.not_finished.exists?
     end
   end
 

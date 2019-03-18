@@ -2,7 +2,7 @@ class WaitingController < ApplicationController
 
   before_action :reject_crawler
   before_action { valid_uid? }
-  before_action { searched_uid?(params[:uid].to_i) }
+  before_action { searched_uid?(params[:uid]) }
 
   before_action do
     push_referer

@@ -11,14 +11,12 @@ module SearchHistoriesHelper
     SearchHistory.where(condition).count('distinct uid')
   end
 
-  def search_histories_remaining
-    [0, search_histories_limit - search_histories_size].max
-  end
-
   def search_histories_limit
     if user_signed_in?
       if current_user.is_subscribing?
         current_user.orders.unexpired[-1].search_count
+      elsif current_user.tweet_requests.finished.where(created_at: 1.day.ago..Time.zone.now).exists?
+        Rails.configuration.x.constants['tweet_egotter_search_histories_limit']
       else
         Rails.configuration.x.constants['free_plan_search_histories_limit']
       end
@@ -27,8 +25,8 @@ module SearchHistoriesHelper
     end
   end
 
-  def remaining_count_text
-    "#{t('searches.common.search_remaining')} #{t('search_histories.remaining', count: search_histories_remaining)}"
+  def search_histories_remaining
+    [0, search_histories_limit - search_histories_size].max
   end
 
   def update_search_histories_when_signing_in(user)

@@ -15,7 +15,6 @@ ja:
       search_first: "Twitter ID 1"
       search_second: "Twitter ID 2"
       search: "検索"
-      search_remaining: "残り"
       do_search: "検索する"
       do_follow: "フォローする"
       following: "フォロー中"
@@ -185,7 +184,6 @@ ja:
   search_histories:
     index:
       title: "検索履歴"
-    remaining: '%{count} 回'
     remaining_count_is_html: '残りの検索回数は %{count} 回です。'
     increase_count_html: '<a href="%{url}">ログインして増やす</a>'
   notifications:
@@ -945,7 +943,7 @@ ja:
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
   after_sign_in:
-    too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>'
+    too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>  <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'

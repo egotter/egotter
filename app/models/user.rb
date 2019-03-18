@@ -48,6 +48,10 @@ class User < ApplicationRecord
     obj.has_one :notification_setting
     obj.has_many :follow_requests, -> { order(created_at: :desc) }
     obj.has_many :unfollow_requests, -> { order(created_at: :desc) }
+    obj.has_many :reset_egotter_requests, -> { order(created_at: :desc) }
+    obj.has_many :delete_tweets_requests, -> { order(created_at: :desc) }
+    obj.has_many :reset_cache_requests, -> { order(created_at: :desc) }
+    obj.has_many :tweet_requests, -> { order(created_at: :desc) }
     obj.has_many :orders
   end
 

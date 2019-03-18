@@ -214,7 +214,7 @@ module Concerns::Logging
 
   def find_referral(referers)
     url = referers.find do |referer|
-      referer.present? && referer.match(URI.regexp) && !URI.parse(referer).host.include?('egotter')
+      referer.present? && referer.match?(URI.regexp) && !URI.parse(referer).host.include?('egotter')
     end
     url.blank? ? '' : URI.parse(url).host
   rescue => e

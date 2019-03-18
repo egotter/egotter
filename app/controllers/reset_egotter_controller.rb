@@ -2,7 +2,7 @@ class ResetEgotterController < ApplicationController
   before_action :require_login!
 
   before_action do
-    if ResetEgotterRequest.not_finished(current_user.id).exists?
+    if current_user.reset_egotter_requests.not_finished.exists?
       render json: {error: 'Already requested.'}, status: :bad_request
     end
   end

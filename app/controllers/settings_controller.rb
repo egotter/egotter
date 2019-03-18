@@ -4,8 +4,8 @@ class SettingsController < ApplicationController
   before_action :create_search_log
 
   def index
-    @reset_egotter_request = ResetEgotterRequest.not_finished(current_user.id).exists?
-    @reset_cache_request = ResetCacheRequest.not_finished(current_user.id).exists?
+    @reset_egotter_request = current_user.reset_egotter_requests.not_finished.exists?
+    @reset_cache_request = current_user.reset_cache_requests.not_finished.exists?
   end
 
   def update

@@ -2,7 +2,7 @@ class ResetCacheController < ApplicationController
   before_action :require_login!
 
   before_action do
-    if ResetCacheRequest.not_finished(current_user.id).exists?
+    if current_user.reset_cache_requests.not_finished.exists?
       render json: {error: 'Already requested.'}, status: :bad_request
     end
   end
