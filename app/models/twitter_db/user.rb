@@ -2,13 +2,30 @@
 #
 # Table name: twitter_db_users
 #
-#  id             :bigint(8)        not null, primary key
-#  uid            :bigint(8)        not null
-#  screen_name    :string(191)      not null
-#  friends_size   :integer          default(-1), not null
-#  followers_size :integer          default(-1), not null
-#  created_at     :datetime         not null
-#  updated_at     :datetime         not null
+#  id                      :bigint(8)        not null, primary key
+#  uid                     :bigint(8)        not null
+#  screen_name             :string(191)      default(""), not null
+#  friends_count           :integer          default(-1), not null
+#  followers_count         :integer          default(-1), not null
+#  protected               :boolean          default(FALSE), not null
+#  suspended               :boolean          default(FALSE), not null
+#  status_created_at       :datetime
+#  account_created_at      :datetime
+#  statuses_count          :integer          default(-1), not null
+#  favourites_count        :integer          default(-1), not null
+#  listed_count            :integer          default(-1), not null
+#  name                    :string(191)      default(""), not null
+#  location                :string(191)      default(""), not null
+#  description             :string(191)      default(""), not null
+#  url                     :string(191)      default(""), not null
+#  geo_enabled             :boolean          default(FALSE), not null
+#  verified                :boolean          default(FALSE), not null
+#  lang                    :string(191)      default(""), not null
+#  profile_image_url_https :string(191)      default(""), not null
+#  profile_banner_url      :string(191)      default(""), not null
+#  profile_link_color      :string(191)      default(""), not null
+#  created_at              :datetime         not null
+#  updated_at              :datetime         not null
 #
 # Indexes
 #
@@ -21,6 +38,7 @@ module TwitterDB
   class User < ApplicationRecord
     include Concerns::TwitterUser::Inflections
     include Concerns::TwitterDB::User::Associations
+    include Concerns::TwitterDB::User::Builder
 
     include Concerns::TwitterDB::User::Batch
     include Concerns::TwitterDB::User::Debug
@@ -41,21 +59,6 @@ module TwitterDB
 
     def to_param
       screen_name
-    end
-
-    class << self
-      def with_friends
-        # friends_size != -1 AND followers_size != -1
-        where.not(friends_size: -1, followers_size: -1)
-      end
-
-      def friendless
-        where(friends_size: -1, followers_size: -1)
-      end
-    end
-
-    def with_friends?
-      friends_size != -1 && followers_size != -1
     end
   end
 end
