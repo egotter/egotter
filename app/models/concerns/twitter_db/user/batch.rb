@@ -34,6 +34,10 @@ module Concerns::TwitterDB::User::Batch
       end
     end
 
+    def self.has_user_info?
+      TwitterDB::User.column_names.include?('user_info')
+    end
+
     def self.import(t_users)
       # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
       persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
@@ -42,7 +46,7 @@ module Concerns::TwitterDB::User::Batch
 
       users = t_users.map do |user|
         values = [user[:id], user[:screen_name]]
-        values << ::TwitterUser.collect_user_info(user) if TwitterDB::User.respond_to?(:user_info)
+        values << ::TwitterUser.collect_user_info(user) if has_user_info?
         values
       end
       users.sort_by!(&:first)
@@ -51,7 +55,7 @@ module Concerns::TwitterDB::User::Batch
       profiles.sort_by!(&:uid)
 
       create_columns = %i(uid screen_name)
-      create_columns << :user_info if TwitterDB::User.respond_to?(:user_info)
+      create_columns << :user_info if has_user_info?
 
       begin
         tries ||= 3
