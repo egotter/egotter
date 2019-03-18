@@ -1,7 +1,6 @@
 module Page
   class Base < ApplicationController
     include Concerns::SearchByUidConcern
-    include Concerns::Indexable
 
     before_action only: :all do
       if !user_signed_in? && !from_crawler?
