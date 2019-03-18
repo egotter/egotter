@@ -280,7 +280,7 @@ class SendMetricsToSlackWorker
 
     stats =
         logs.each_with_object(Hash.new(0)).each do |log, memo|
-          memo[log.source] += 1
+          memo["#{log.location}/#{log.source}"] += 1
         end
 
     stats = stats.sort_by {|_, v| -v}.to_h
