@@ -26,16 +26,6 @@ module Concerns::TwitterUser::Validation
     end
   end
 
-  def valid_uid?
-    Validations::UidValidator.new.validate(self)
-    self.errors.empty?
-  end
-
-  def valid_screen_name?
-    Validations::ScreenNameValidator.new.validate(self)
-    self.errors.empty?
-  end
-
   def protected_account?
     !!self.protected
   end
