@@ -44,4 +44,8 @@ module Concerns::Analytics
       uri.host.remove(/\.cdn\.ampproject\.org$/)
     end
   end
+
+  def user_found?
+    user_id != -1
+  end
 end

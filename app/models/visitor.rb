@@ -36,8 +36,4 @@ class Visitor < ApplicationRecord
   def search_history_found?
     SearchHistory.where(session_id: session_id).exists?
   end
-
-  def user_found?
-    user_id != -1
-  end
 end
