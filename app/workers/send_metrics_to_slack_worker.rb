@@ -252,8 +252,8 @@ class SendMetricsToSlackWorker
 
       stats = stats.sort_by {|_, v| -v}.to_h
 
-      SlackClient.send_message("#{__method__} (#{context})")
-      SlackClient.send_message(SlackClient.format(stats))
+      SlackClient.send_message("#{__method__} (#{context})", channel: SlackClient::SIGN_IN_MONITORING)
+      SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SIGN_IN_MONITORING)
     end
   end
 
