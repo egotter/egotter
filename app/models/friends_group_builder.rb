@@ -3,8 +3,10 @@ class FriendsGroupBuilder
     @users = Util.users(uid, limit: limit)
 
     if preload
-      S3::Friendship.where!(twitter_user_ids: @users.map(&:id))
-      S3::Followership.where!(twitter_user_ids: @users.map(&:id))
+      ApplicationRecord.benchmark("#{self.class}##{__method__} Preload s3 files #{uid} #{limit} #{@users.size}", level: :info) do
+        S3::Friendship.where!(twitter_user_ids: @users.map(&:id))
+        S3::Followership.where!(twitter_user_ids: @users.map(&:id))
+      end
     end
   end
 
@@ -61,7 +63,12 @@ class FriendsGroupBuilder
 
     # Fetch users over an entire period with limit
     def users(uid, limit:)
-      TwitterUser.creation_completed.where(uid: uid).select(:id, :uid, :created_at).order(created_at: :desc).limit(limit).reverse
+      TwitterUser.creation_completed.
+          where(uid: uid).
+          select(:id, :uid, :created_at).
+          order(created_at: :desc).
+          limit(limit).
+          reverse
     end
 
     def unfriends(older, newer)

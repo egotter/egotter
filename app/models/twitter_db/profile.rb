@@ -107,7 +107,7 @@ module TwitterDB
           user[:description] = user[:description].truncate(180)
         end
 
-        user[:description] = user[:description].gsub(/\R/, ' ')
+        user[:description] = user[:description].to_s.gsub(/\R/, ' ')
 
         %i(url profile_image_url_https profile_banner_url).each do |key|
           user[key] = '' if !user.has_key?(key) || user[key].nil?

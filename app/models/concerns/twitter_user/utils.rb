@@ -4,11 +4,6 @@ module Concerns::TwitterUser::Utils
   extend ActiveSupport::Concern
 
   class_methods do
-    def latest(uid)
-      logger.warn "DEPRECATE WARNING: calling latest(uid)"
-      latest_by(uid: uid)
-    end
-
     def latest_by(condition)
       order(created_at: :desc).find_by(condition)
     end

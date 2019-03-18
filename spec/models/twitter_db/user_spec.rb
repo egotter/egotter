@@ -32,8 +32,22 @@ RSpec.describe TwitterDB::User, type: :model do
   end
 
   describe '.import' do
-    let(:t_users) { 3.times.map { Hashie::Mash.new(id: rand(1000_000_000), screen_name: 'sn') } }
-    let(:import_users) { t_users.map { |t_user| [t_user[:id], t_user[:screen_name], TwitterUser.collect_user_info(t_user), -1, -1] } }
+    let(:t_users) do
+      3.times.map do
+        Hashie::Mash.new(
+            id: rand(1000_000_000),
+            screen_name: 'screen_name',
+            name: 'name',
+            friends_count: 100,
+            followers_count: 200,
+            statuses_count: 300,
+            favourites_count: 400,
+            listed_count: 500,
+        )
+      end
+    end
+
+    let(:import_users) { t_users.map { |t_user| [t_user[:id], t_user[:screen_name], -1, -1] } }
 
     context 'with new records' do
       it 'creates all records' do
@@ -44,17 +58,12 @@ RSpec.describe TwitterDB::User, type: :model do
     context 'with new records and recently persisted records' do
       before do
         t_users[0].tap do |t_user|
-          TwitterDB::User.create!(uid: t_user[:id], screen_name: t_user[:screen_name], user_info: TwitterUser.collect_user_info(t_user), friends_size: -1, followers_size: -1)
+          TwitterDB::User.create!(uid: t_user[:id], screen_name: t_user[:screen_name], friends_size: -1, followers_size: -1)
         end
       end
       it 'updates only new records' do
         expect { TwitterDB::User::Batch.import(t_users) }.to change { TwitterDB::User.all.size }.by(t_users.size - 1)
       end
     end
-  end
-
-  describe '.collect_user_info' do
-    let(:method_name) { :collect_user_info }
-    it_should_behave_like 'Accept any kind of keys'
   end
 end

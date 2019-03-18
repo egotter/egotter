@@ -6,7 +6,6 @@ class CreateTwitterDbUsers < ActiveRecord::Migration[4.2]
       t.string  :screen_name,    null: false, index: true
       t.integer :friends_size,   null: false, default: -1
       t.integer :followers_size, null: false, default: -1
-      t.text    :user_info,      null: false
 
       t.timestamps null: false
     end

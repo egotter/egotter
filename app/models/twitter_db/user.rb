@@ -28,7 +28,6 @@ module TwitterDB
 
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
-    validates_with Validations::UserInfoValidator
 
     delegate :name, :location, :description, :url, :protected, :followers_count, :friends_count, :verified, :statuses_count, :account_created_at, :profile_image_url_https, :profile_banner_url, :profile_link_color, :suspended, to: :profile, allow_nil: true
 
@@ -43,14 +42,6 @@ module TwitterDB
 
     def to_param
       screen_name
-    end
-
-    def friend_uids
-      friendships.pluck(:friend_uid)
-    end
-
-    def follower_uids
-      followerships.pluck(:follower_uid)
     end
 
     class << self
