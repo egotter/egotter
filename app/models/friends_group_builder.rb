@@ -24,24 +24,24 @@ class FriendsGroupBuilder
 
   # New friends between old record and new record
   def new_friends
-    #This is a stub implementation.
+    @users.each_cons(2).map {|older, newer| Util.new_friends(method_name, older, newer)}.compact.tap {|ary| ary.prepend([])}
   end
 
   # New followers between old record and new record
   def new_followers
-    #This is a stub implementation.
+    @users.each_cons(2).map {|older, newer| Util.new_followers(method_name, older, newer)}.compact.tap {|ary| ary.prepend([])}
   end
 
   # Used by AudienceInsightChartBuilder
   # TODO Not enough implementation. Rename to new_unfriends
   def unfriends
-    #This is a stub implementation.
+    @users.each_cons(2).map {|older, newer| Util.unfriends(method_name, older, newer)}.compact.tap {|ary| ary.prepend([])}
   end
 
   # Used by AudienceInsightChartBuilder
   # TODO Not enough implementation. Rename to new_unfollowers
   def unfollowers
-    #This is a stub implementation.
+    @users.each_cons(2).map {|older, newer| Util.unfollowers(method_name, older, newer)}.compact.tap {|ary| ary.prepend([])}
   end
 
   def new_unfriends
@@ -50,12 +50,6 @@ class FriendsGroupBuilder
 
   def new_unfollowers
     raise NotImplementedError
-  end
-
-  %i(new_friends new_followers unfriends unfollowers).each do |method_name|
-    define_method(method_name) do
-      @users.each_cons(2).map {|older, newer| Util.send(method_name, older, newer)}.compact.tap {|ary| ary.prepend([])}
-    end
   end
 
   module Util
