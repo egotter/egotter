@@ -23,12 +23,12 @@ module Concerns::TwitterUser::Calculator
 
   # private
   def calc_favorite_uids
-    favorites.map { |fav| fav&.user&.id }.compact
+    favorites.map {|fav| fav&.user&.id}.compact
   end
 
   # private
   def sort_by_count_desc(ids)
-    ids.each_with_object(Hash.new(0)) { |id, memo| memo[id] += 1 }.sort_by { |_, v| -v }.map(&:first)
+    ids.each_with_object(Hash.new(0)) {|id, memo| memo[id] += 1}.sort_by {|_, v| -v}.map(&:first)
   end
 
   def calc_favorite_friend_uids(uniq: true)

@@ -5,12 +5,12 @@ module Api
       private
 
       def summary_uids(limit: 3)
-        uids = @twitter_user.blocking_or_blocked_uids
-        [uids.take(limit), uids.size]
+        relation = @twitter_user.block_friendships
+        [relation.limit(limit).pluck(:friend_uid), relation.size]
       end
 
       def list_users
-        @twitter_user.blocking_or_blocked
+        @twitter_user.block_friends
       end
     end
   end

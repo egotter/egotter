@@ -37,7 +37,7 @@ class  Page::UnfriendsAndUnfollowers < ::Page::Base
     Timeout.timeout(2.seconds) do
       values[:unfriends] = twitter_user.unfriendships.size
       values[:unfollowers] = twitter_user.unfollowerships.size
-      values[:blocking_or_blocked] = twitter_user.blocking_or_blocked_uids.size
+      values[:blocking_or_blocked] = twitter_user.block_friendships.size
     end
 
     values
