@@ -16,7 +16,7 @@ class CreateTwitterDbProfiles < ActiveRecord::Migration[5.2]
       t.string   :location,                null: false, default: ''
       t.string   :description,             null: false, default: ''
       t.string   :url,                     null: false, default: ''
-      t.string   :geo_enabled,             null: false, default: false
+      t.boolean  :geo_enabled,             null: false, default: false
       t.boolean  :verified,                null: false, default: false
       t.string   :lang,                    null: false, default: ''
       t.string   :profile_image_url_https, null: false, default: ''

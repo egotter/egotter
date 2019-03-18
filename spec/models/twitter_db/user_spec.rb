@@ -31,6 +31,72 @@ RSpec.describe TwitterDB::User, type: :model do
     end
   end
 
+  describe '.build_by' do
+    let(:t_user) do
+      {
+          id:                      123,
+          screen_name:             'screen_name',
+          friends_count:           10,
+          followers_count:         20,
+          protected:               true,
+          suspended:               true,
+          status:                  {created_at: '2019-01-01 10:00:00'},
+          created_at:              '2010-01-01 10:00:00',
+          statuses_count:          30,
+          favourites_count:        40,
+          listed_count:            50,
+          name:                    'name',
+          location:                'Japan',
+          description:             'Hi.',
+          url:                     'https://example.com',
+          geo_enabled:             true,
+          verified:                true,
+          lang:                    'ja',
+          profile_image_url_https: 'https://profile.image',
+          profile_banner_url:      'https://profile.banner',
+          profile_link_color:      '123456',
+      }
+    end
+
+    it do
+      user = TwitterDB::User.build_by(user: t_user)
+
+      expect(user.screen_name).to eq(t_user[:screen_name])
+      expect(user.friends_count).to eq(t_user[:friends_count])
+      expect(user.followers_count).to eq(t_user[:followers_count])
+      expect(user.protected).to eq(t_user[:protected])
+      expect(user.suspended).to eq(t_user[:suspended])
+      expect(user.status_created_at).to eq(t_user[:status][:created_at])
+      expect(user.account_created_at).to eq(t_user[:created_at])
+      expect(user.statuses_count).to eq(t_user[:statuses_count])
+      expect(user.favourites_count).to eq(t_user[:favourites_count])
+      expect(user.listed_count).to eq(t_user[:listed_count])
+      expect(user.name).to eq(t_user[:name])
+      expect(user.location).to eq(t_user[:location])
+      expect(user.description).to eq(t_user[:description])
+      expect(user.geo_enabled).to eq(t_user[:geo_enabled])
+      expect(user.verified).to eq(t_user[:verified])
+      expect(user.lang).to eq(t_user[:lang])
+      expect(user.profile_image_url_https).to eq(t_user[:profile_image_url_https])
+      expect(user.profile_banner_url).to eq(t_user[:profile_banner_url])
+      expect(user.profile_link_color).to eq(t_user[:profile_link_color])
+
+      expect(user.valid?).to be_truthy
+    end
+
+    context 'With suspended user' do
+      let(:t_user) do
+        {id: 123, screen_name: 'screen_name'}
+      end
+
+      it do
+        user = TwitterDB::User.build_by(user: t_user)
+        expect(user.uid).to eq(t_user[:id])
+        expect(user.screen_name).to eq(t_user[:screen_name])
+      end
+    end
+  end
+
   describe '.import' do
     let(:t_users) do
       3.times.map do
@@ -58,7 +124,7 @@ RSpec.describe TwitterDB::User, type: :model do
     context 'with new records and recently persisted records' do
       before do
         t_users[0].tap do |t_user|
-          TwitterDB::User.create!(uid: t_user[:id], screen_name: t_user[:screen_name], friends_size: -1, followers_size: -1)
+          TwitterDB::User.create!(uid: t_user[:id], screen_name: t_user[:screen_name])
         end
       end
       it 'updates only new records' do

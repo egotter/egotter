@@ -44,27 +44,22 @@ module Concerns::TwitterDB::User::Batch
 
       t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
 
-      users = t_users.map do |user|
-        values = [user[:id], user[:screen_name]]
-        values << ::TwitterUser.collect_user_info(user) if has_user_info?
-        values
-      end
-      users.sort_by!(&:first)
+      users = t_users.map {|user| TwitterDB::User.build_by(user: user)}
+      users.sort_by!(&:uid)
 
       profiles = t_users.map {|user| TwitterDB::Profile.build_by_t_user(user)}
       profiles.sort_by!(&:uid)
 
-      create_columns = %i(uid screen_name)
-      create_columns << :user_info if has_user_info?
+      update_columns = TwitterDB::User.column_names.reject {|name| %w(id created_at updated_at).include?(name)}
 
       begin
         tries ||= 3
 
         users.each_slice(500) do |users_group|
-          target_uids = users_group.map(&:first)
+          target_uids = users_group.map(&:uid)
 
           ApplicationRecord.transaction do
-            TwitterDB::User.import(create_columns, users_group, on_duplicate_key_update: create_columns, batch_size: 500, validate: false)
+            TwitterDB::User.import users_group, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
             TwitterDB::Profile.import profiles.select {|p| target_uids.include?(p.uid)}, batch_size: 500, validate: false
           end
         end
