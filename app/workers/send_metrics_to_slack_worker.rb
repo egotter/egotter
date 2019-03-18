@@ -26,6 +26,7 @@ class SendMetricsToSlackWorker
           :send_prompt_report_metrics,
           :send_prompt_report_error_metrics,
           :send_rate_limit_metrics,
+          :send_search_error_metrics,
       ]
     end
 
@@ -268,6 +269,20 @@ class SendMetricsToSlackWorker
         end.to_h
 
     SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::RATE_LIMIT_MONITORING)
+  end
+
+  def send_search_error_metrics
+    SlackClient.send_message(__method__, channel: SlackClient::SEARCH_ERROR_MONITORING)
+
+    logs = SearchErrorLog.where(created_at: 1.hour.ago..Time.zone.now)
+
+    stats =
+        logs.each_with_object(Hash.new(0)).each do |log, memo|
+          memo[log.source] += 1
+        end
+
+    stats = stats.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SEARCH_ERROR_MONITORING)
   end
 
   def divide(num1, num2)
