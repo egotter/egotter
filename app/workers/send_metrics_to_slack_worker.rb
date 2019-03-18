@@ -262,7 +262,9 @@ class SendMetricsToSlackWorker
 
     stats =
         Bot.rate_limit.map do |limit|
-          [limit.delete(:id).to_s, limit]
+          id = limit.delete(:id).to_s
+          values = limit.map {|key, value| [key, value[:remaining]]}.to_h
+          [id, values]
         end.to_h
 
     SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::RATE_LIMIT_MONITORING)
