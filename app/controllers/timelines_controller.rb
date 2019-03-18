@@ -1,6 +1,6 @@
 class TimelinesController < ApplicationController
   include WorkersHelper
-  include Concerns::Showable
+  include Concerns::SearchByUidConcern
   include Concerns::AudienceInsights
 
   after_action {Util::SearchCountCache.increment}

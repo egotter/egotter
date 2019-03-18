@@ -1,5 +1,5 @@
 class AudienceInsightsController < ApplicationController
-  include Concerns::Showable
+  include Concerns::SearchByUidConcern
   include Concerns::AudienceInsights
 
   def show

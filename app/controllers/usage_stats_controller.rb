@@ -1,5 +1,5 @@
 class UsageStatsController < ApplicationController
-  include Concerns::Showable
+  include Concerns::SearchByUidConcern
   include WorkersHelper
   include TweetTextHelper
 

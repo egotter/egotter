@@ -1,6 +1,6 @@
 module Page
   class Base < ApplicationController
-    include Concerns::Showable
+    include Concerns::SearchByUidConcern
     include Concerns::Indexable
 
     before_action only: :all do
