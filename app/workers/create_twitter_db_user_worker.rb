@@ -2,6 +2,10 @@ class CreateTwitterDBUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
+  def unique_key(uids)
+    Digest::MD5.hexdigest(uids.join)
+  end
+
   def perform(uids)
     TwitterDB::User::Batch.fetch_and_import(uids.map(&:to_i), client: Bot.api_client)
   rescue => e

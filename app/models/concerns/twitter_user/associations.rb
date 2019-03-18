@@ -69,14 +69,18 @@ module Concerns::TwitterUser::Associations
   def friends
     uids = self.friend_uids
     TwitterDB::User.where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
-      CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+      unless uids.size == users.size
+        CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+      end
     end
   end
 
   def followers
     uids = self.follower_uids
     TwitterDB::User.where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
-      CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+      unless uids.size == users.size
+        CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+      end
     end
   end
 
