@@ -12,13 +12,14 @@ namespace :twitter_db do
       start_time = Time.zone.now
       start = ENV['START'] ? ENV['START'].to_i : 1
 
+      update_columns = TwitterDB::User.column_names.reject {|name| %w(id created_at updated_at).include?(name)}
       users = []
 
       TwitterDB::Profile.find_each(start: start, batch_size: 1000).each do |profile|
         users << TwitterDB::User.build_by_profile(profile)
 
         if users.size >= 1000
-          TwitterDB::User.import users, validate: false
+          TwitterDB::User.import users, on_duplicate_key_update: update_columns, validate: false
           users.clear
         end
 
