@@ -59,8 +59,11 @@ module Concerns::TwitterDB::User::Batch
           target_uids = users_group.map(&:uid)
 
           ApplicationRecord.transaction do
-            TwitterDB::User.import users_group, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
-            TwitterDB::Profile.import profiles.select {|p| target_uids.include?(p.uid)}, batch_size: 500, validate: false
+            users_for_import = users_group.map{|user| user.slice(*update_columns).values }
+            TwitterDB::User.import update_columns, users_for_import, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
+
+            profiles_for_import = profiles.select {|p| target_uids.include?(p.uid)}.map{|profile| profile.slice(*update_columns).values }
+            TwitterDB::Profile.import update_columns, profiles_for_import, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
           end
         end
       rescue => e
