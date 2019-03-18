@@ -40,11 +40,18 @@ module Concerns::TwitterDB::User::Batch
 
       t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
 
-      users = t_users.map {|user| [user[:id], user[:screen_name], ::TwitterUser.collect_user_info(user)]}
+      users = t_users.map do |user|
+        values = [user[:id], user[:screen_name]]
+        values << ::TwitterUser.collect_user_info(user) if TwitterDB::User.respond_to?(:user_info)
+        values
+      end
       users.sort_by!(&:first)
 
       profiles = t_users.map {|user| TwitterDB::Profile.build_by_t_user(user)}
       profiles.sort_by!(&:uid)
+
+      create_columns = %i(uid screen_name)
+      create_columns << :user_info if TwitterDB::User.respond_to?(:user_info)
 
       begin
         tries ||= 3
@@ -53,7 +60,7 @@ module Concerns::TwitterDB::User::Batch
           target_uids = users_group.map(&:first)
 
           ApplicationRecord.transaction do
-            TwitterDB::User.import(CREATE_COLUMNS, users_group, on_duplicate_key_update: UPDATE_COLUMNS, batch_size: 500, validate: false)
+            TwitterDB::User.import(create_columns, users_group, on_duplicate_key_update: create_columns, batch_size: 500, validate: false)
             TwitterDB::Profile.import profiles.select {|p| target_uids.include?(p.uid)}, batch_size: 500, validate: false
           end
         end
@@ -75,9 +82,6 @@ module Concerns::TwitterDB::User::Batch
       end
       users
     end
-
-    CREATE_COLUMNS = %i(uid screen_name user_info)
-    UPDATE_COLUMNS = %i(uid screen_name user_info)
 
     def self.import_suspended(uids)
       not_persisted = uids.uniq.map(&:to_i) - TwitterDB::User.where(uid: uids).pluck(:uid)
