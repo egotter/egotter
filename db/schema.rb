@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_15_065415) do
+ActiveRecord::Schema.define(version: 2019_03_18_143224) do
 
   create_table "audience_insights", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "uid", null: false
@@ -848,6 +848,16 @@ ActiveRecord::Schema.define(version: 2019_03_15_065415) do
     t.index ["created_at"], name: "index_tracks_on_created_at"
   end
 
+  create_table "tweet_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "text", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_tweet_requests_on_created_at"
+    t.index ["user_id"], name: "index_tweet_requests_on_user_id"
+  end
+
   create_table "twitter_db_favorites", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "uid", null: false
     t.string "screen_name", null: false
@@ -944,8 +954,8 @@ ActiveRecord::Schema.define(version: 2019_03_15_065415) do
   end
 
   create_table "twitter_users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.bigint "uid", null: false
     t.integer "user_id", default: -1, null: false
+    t.bigint "uid", null: false
     t.string "screen_name", null: false
     t.integer "friends_size", default: -1, null: false
     t.integer "followers_size", default: -1, null: false

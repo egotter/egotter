@@ -27,6 +27,7 @@ module S3
       # Handle this error in #find_by_current_scope
       raise
     rescue => e
+      # Aws::Errors::NoSuchEndpointError Encountered a `SocketError` while attempting to connect to:
       # Zlib::DataError data error
       logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
       logger.info {e.backtrace.join("\n")}
