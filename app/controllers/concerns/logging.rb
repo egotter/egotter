@@ -67,7 +67,10 @@ module Concerns::Logging
     logger.info e.backtrace.join("\n")
   end
 
-  def create_search_error_log(uid, screen_name, location, message)
+  def create_search_error_log(location, message)
+    uid = @twitter_user&.uid || params[:uid] || -1
+    screen_name = @twitter_user&.screen_name || params[:screen_name] || ''
+
     attrs = {
         session_id:  fingerprint,
         user_id:     current_user_id,
@@ -193,7 +196,7 @@ module Concerns::Logging
       uid = @twitter_user.uid
       screen_name = @twitter_user.screen_name
     else
-      uid = TwitterUser.new(uid: params[:uid]).valid_uid? ? params[:uid].to_i : -1
+      uid = valid_uid? ? params[:uid].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid) # waiting
         uid = tu.uid
         screen_name = tu.screen_name

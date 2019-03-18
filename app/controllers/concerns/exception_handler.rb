@@ -9,19 +9,13 @@ module Concerns::ExceptionHandler
   end
 
   def twitter_exception_handler(ex, screen_name)
-    return head :bad_request if request.xhr?
-
-    message =
-        case ex
-          when Twitter::Error::NotFound then not_found_message(screen_name)
-          when Twitter::Error::Forbidden then forbidden_message(screen_name)
-          when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
-          when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
-          else alert_message(ex)
-        end
-
-    redirect_to root_path_for(controller: controller_name), alert: message
-    create_search_error_log(-1, screen_name, (caller[0][/`([^']*)'/, 1] rescue ''), "#{ex.class} #{ex.message} #{message}")
+    case ex
+    when Twitter::Error::NotFound then not_found_message(screen_name)
+    when Twitter::Error::Forbidden then forbidden_message(screen_name)
+    when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
+    when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
+    else alert_message(ex)
+    end
   end
 
   def not_found_message(screen_name)
