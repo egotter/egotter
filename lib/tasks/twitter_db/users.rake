@@ -39,5 +39,37 @@ namespace :twitter_db do
 
       puts "Elapsed #{Time.zone.now - start_time}"
     end
+
+    desc 'Copy from profiles by sql'
+    task copy_from_profiles_by_sql: :environment do
+      sigint = Util::Sigint.new.trap
+      start_time = Time.zone.now
+      start = ENV['START'] ? ENV['START'].to_i : 1
+      processed_count = 0
+
+      columns = %w(uid screen_name friends_count followers_count protected suspended status_created_at account_created_at statuses_count favourites_count listed_count `name` location description url geo_enabled verified lang profile_image_url_https profile_banner_url profile_link_color created_at updated_at)
+
+      TwitterDB::Profile.select(:id).find_in_batches(start: start, batch_size: 100_000).each do |profiles|
+
+        sql = <<~SQL
+          INSERT INTO twitter_db_users (#{columns.join(', ')})
+          SELECT #{columns.join(', ')}
+          FROM twitter_db_profiles p
+          WHERE id in (#{profiles.map(&:id).join(', ')})
+          ON DUPLICATE KEY UPDATE
+          #{columns.map{|c| "#{c} = p.#{c}"}.join(', ')}
+        SQL
+
+        ActiveRecord::Base.connection.execute(sql)
+
+        processed_count += profiles.size
+        puts "#{profiles.last.id} #{processed_count} #{sprintf('%.5f', (Time.zone.now - start_time) / processed_count)}"
+
+        if sigint.trapped?
+          puts "Id #{profiles.last.id}"
+          break
+        end
+      end
+    end
   end
 end
