@@ -1,6 +1,9 @@
 class AdsenseController < ApplicationController
-  def load
-    html = render_to_string partial: 'adsense/side_by_side', locals: {controller: params[:_controller], action: params[:_action], vertical: params[:vertical]}
+  include AdsenseHelper
+
+  def new
+    @left_slot_ad_id = left_slot_ad_id(params[:_controller], params[:_action], params[:vertical])
+    html = render_to_string layout: false
     render json: {html: html}
   end
 end

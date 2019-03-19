@@ -150,7 +150,7 @@ Rails.application.routes.draw do
   resources :jobs, only: :show, param: :uid
   resources :polling_logs, only: :create
 
-  get 'load_adsense', to: 'adsense#load', as: :load_adsense
+  get 'adsense', to: 'adsense#new'
   get 'search_histories', to: 'search_histories#new'
   get 'load_public_tweets', to: 'public_tweets#load', as: :load_public_tweets
 

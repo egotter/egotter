@@ -1,33 +1,8 @@
 - unless ad_ng_twitter_user?(@twitter_user)
-  - action = action_name if !defined?(action) || action.to_s.empty?
-  - controller = controller_name if !defined?(controller) || controller.to_s.empty?
-
-  - if defined?(async) && async
-    - id = async_adsense_wrapper_id
-    .async-adsense-wrapper{id: id}
-    :javascript
-      $(function () {
-        var url = '#{load_adsense_path(_controller: controller, _action: action, vertical: vertical)}';
-        var selector = '#{id}';
-        new AsyncLoader(url, '#' + selector).lazyload();
-      });
-  - else
-    .adsense-container.row
-      .col-sm-12{class: "#{'col-md-6' if request.from_pc?}"}
-        - if Rails.env.production?
-          - left_slot = request.from_pc? ? left_ad_slot(user_signed_in?, controller, action, vertical) : left_ad_slot_responsive(vertical)
-          %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-          %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => left_slot, style: 'display:inline-block;width:300px;height:250px'}
-          :javascript
-            (adsbygoogle = window.adsbygoogle || []).push({});
-        - else
-          %div{style: 'width: 300px; height: 250px; margin: 0 auto; background-color: #cccccc;'}
-      - if request.from_pc?
-        .hidden-xs.hidden-sm.col-md-6
-          - if Rails.env.production?
-            %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-            %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => right_ad_slot(user_signed_in?), style: 'display:inline-block;width:300px;height:250px'}
-            :javascript
-              (adsbygoogle = window.adsbygoogle || []).push({});
-          - else
-            %div{style: 'width: 300px; height: 250px; margin: 0 auto; background-color: #cccccc;'}
+  .async-adsense-wrapper{id: async_adsense_wrapper_id(vertical)}
+  :javascript
+    $(function () {
+      var url = '#{adsense_path(_controller: controller_name, _action: action_name, vertical: vertical).html_safe}';
+      var selector = '#{async_adsense_wrapper_id(vertical)}';
+      new AsyncLoader(url, '#' + selector).lazyload();
+    });

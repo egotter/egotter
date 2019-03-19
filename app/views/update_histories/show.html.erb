@@ -22,7 +22,7 @@
     <%= render partial: 'twitter/user', collection: @update_histories.to_a, cached: true, locals: {grid_class: 'col-xs-12', ad: false} %>
   </div>
 
-  <%= render(partial: 'adsense/side_by_side', locals: {action: action_name, vertical: :bottom}) %>
+  <%= render(partial: 'adsense/side_by_side', locals: {vertical: :bottom}) %>
 
   <div class="return-to-results-bottom"><%= link_to(t('searches.common.return', user: @twitter_user.mention_name), timeline_path(@twitter_user)) %></div>
 </div>
