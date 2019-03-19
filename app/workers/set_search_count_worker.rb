@@ -11,7 +11,7 @@ class SetSearchCountWorker
         SearchLog.where(created_at: 1.day.ago..Time.zone.now)
             .where(controller: 'timelines', action: 'show')
             .size
-    Util::SearchCountCache.set(count)
+    ::Util::SearchCountCache.set(count)
   rescue => e
     logger.warn "#{e.class} #{e.message}"
   end

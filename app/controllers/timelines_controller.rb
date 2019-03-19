@@ -3,7 +3,7 @@ class TimelinesController < ApplicationController
   include Concerns::SearchByUidConcern
   include Concerns::AudienceInsights
 
-  after_action {Util::SearchCountCache.increment}
+  after_action {::Util::SearchCountCache.increment}
 
   def show
     enqueue_update_authorized
