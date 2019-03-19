@@ -5,6 +5,7 @@ module Concerns::SearchByUidConcern
   include Concerns::Validation
 
   included do
+    before_action(only: %i(show all)) { internet_connected? }
     before_action(only: %i(show all)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
     before_action(only: %i(show all)) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
     before_action(only: %i(show all)) { !blocked_search?(@twitter_user) }

@@ -217,6 +217,10 @@ module AdsenseHelper
   USER_USAGE_STATS_RESP           = 7385183503
 
   def left_ad_slot_responsive(vertical_position)
+    if controller_name == 'timelines'
+      logger.warn "Action #{action_name} Vertical position #{vertical_position}"
+    end
+
     slot =
         case [user_signed_in?, controller_name.to_s, action_name.to_s, vertical_position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME_RESP
@@ -401,7 +405,12 @@ module AdsenseHelper
     end
   end
 
-  def async_adsense_wrapper_id
-    "async-adsense-#{SecureRandom.urlsafe_base64(10)}"
+  def async_adsense_wrapper_id(vertical)
+    @async_adsense_wrapper_rand ||= SecureRandom.urlsafe_base64(10)
+    "async-adsense-#{vertical}-#{@async_adsense_wrapper_rand}"
+  end
+
+  def left_slot(controller, action, vertical)
+    request.from_pc? ? left_ad_slot(user_signed_in?, controller, action, vertical) : left_ad_slot_responsive(vertical)
   end
 end

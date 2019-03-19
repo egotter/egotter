@@ -1,0 +1,8 @@
+- unless ad_ng_twitter_user?(@twitter_user)
+  .async-adsense-wrapper{id: async_adsense_wrapper_id(vertical)}
+  :javascript
+    $(function () {
+      var url = '#{adsense_path(_controller: controller_name, _action: action_name, vertical: vertical).html_safe}';
+      var selector = '#{async_adsense_wrapper_id(vertical)}';
+      new AsyncLoader(url, '#' + selector).lazyload();
+    });
