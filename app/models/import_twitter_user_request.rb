@@ -24,32 +24,59 @@ class ImportTwitterUserRequest < ApplicationRecord
   validates :twitter_user_id, presence: true
 
   def perform!
-    uids = FavoriteFriendship.import_by(twitter_user: twitter_user)
-    TwitterDB::User::Batch.fetch_and_import(uids, client: client)
-
-    uids = CloseFriendship.import_by(twitter_user: twitter_user, login_user: user)
-    TwitterDB::User::Batch.fetch_and_import(uids, client: client)
+    import_favorite_friendship
+    import_close_friendship
 
     return if twitter_user.no_need_to_import_friendships?
 
-    uids = [twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids
-    TwitterDB::User::Batch.fetch_and_import(uids, client: client)
+    import_twitter_db_users
 
-    Unfriendship.import_by(twitter_user: twitter_user)
-    Unfollowership.import_by(twitter_user: twitter_user)
-    OneSidedFriendship.import_by(twitter_user: twitter_user)
-    OneSidedFollowership.import_by(twitter_user: twitter_user)
-    MutualFriendship.import_by(twitter_user: twitter_user)
-    BlockFriendship.import_by(twitter_user: twitter_user)
-    InactiveFriendship.import_by(twitter_user: twitter_user)
-    InactiveFollowership.import_by(twitter_user: twitter_user)
-    InactiveMutualFriendship.import_by(twitter_user: twitter_user)
+    [
+        Unfriendship,
+        Unfollowership,
+        OneSidedFriendship,
+        OneSidedFollowership,
+        MutualFriendship,
+        BlockFriendship,
+        InactiveFriendship,
+        InactiveFollowership,
+        InactiveMutualFriendship,
+    ].each do |klass|
+      klass.import_by!(twitter_user: twitter_user)
+    rescue => e
+      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
+      logger.info e.backtrace.join("\n")
+    end
   end
 
   def perform
     perform!
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  def import_favorite_friendship
+    uids = FavoriteFriendship.import_by(twitter_user: twitter_user)
+    TwitterDB::User::Batch.fetch_and_import!(uids, client: client)
+  rescue => e
+    logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  def import_close_friendship
+    uids = CloseFriendship.import_by(twitter_user: twitter_user, login_user: user)
+    TwitterDB::User::Batch.fetch_and_import!(uids, client: client)
+  rescue => e
+    logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  def import_twitter_db_users
+    uids = [twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids
+    TwitterDB::User::Batch.fetch_and_import!(uids, client: client)
+  rescue => e
+    logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
     logger.info e.backtrace.join("\n")
   end
 
