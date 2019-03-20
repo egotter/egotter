@@ -1,9 +1,9 @@
 - via = build_via if !defined?(via) || via.blank?
 
 - if ad && defined?(user_counter) && user_counter == 3
-  = render partial: 'adsense/side_by_side', locals: {vertical: :slit}
-  %div{style: 'height: 0; border-top: 1px solid #e6e6e6;'}
-  .vertical-spacing
+  %div{class: grid_class}
+    = render partial: 'adsense/side_by_side', locals: {vertical: :slit}
+    .vertical-spacing
 
 %div{class: grid_class}
   .media
