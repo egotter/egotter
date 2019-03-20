@@ -95,10 +95,10 @@ ja:
       page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       text001_html: 'フォロワーが1人減っている。<br class="visible-xs-block">誰だろう？'
       text002: 'えごったーを使えば、フォロワーが減ったりブロックされた時に相手がすぐに分かります。'
-      text003_html: '<span style="color: #EA2184; font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
+      text003_html: '<span class="egotter-pink" style="font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
       text004_html: 'ログインでもっと便利に。<br class="visible-xs-block">リム通知届きます。'
-      text005_html: 'えごったーにログインすることで、<br class="visible-xs-block"><span style="color: #EA2184; font-size: 20px;">リム通知</span>が届くようになります。'
-      text006_html: '<span style="color: #EA2184; font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
+      text005_html: 'えごったーにログインすることで、<br class="visible-xs-block"><span class="egotter-pink" style="font-size: 20px;">リム通知</span>が届くようになります。'
+      text006_html: '<span class="egotter-pink" style="font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
   timelines:
     show:
       title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"

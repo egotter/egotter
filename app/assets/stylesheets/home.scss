@@ -1,3 +1,5 @@
+$egotter-pink: #EA2184;
+
 .searches {
   background-color: #ffffff;
 
@@ -10,7 +12,7 @@
     }
 
     i {
-      color: #EA2184;
+      color: $egotter-pink;
     }
   }
 
@@ -19,7 +21,7 @@
   }
 
   .text-notice {
-    color: #EA2184;
+    color: $egotter-pink;
   }
 }
 
@@ -37,7 +39,7 @@
   }
 
   .text-notice {
-    color: #EA2184;
+    color: $egotter-pink;
   }
 
   .thin-border {
