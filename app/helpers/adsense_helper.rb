@@ -50,9 +50,9 @@ module AdsenseHelper
   GUEST_RIGHT         = 8511414414
   GUEST_WAITING       = 9863392014
 
-  def left_ad_slot(signed_in, controller, action, vertical)
+  def left_slot_fixed_ad_id(controller, action, position)
     slot =
-        case [signed_in, controller.to_s, action.to_s, vertical.to_sym]
+        case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME
         when [true,  'timelines',             'show', :top]    then USER_TIMELINES_TOP
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM
@@ -129,13 +129,13 @@ module AdsenseHelper
     if slot
       slot
     else
-      logger.info "#{__method__}: Not classified adsense #{signed_in} #{controller} #{action} #{vertical} #{request.original_fullpath}"
-      signed_in ? USER_OTHERS : GUEST_OTHERS
+      logger.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
+      user_signed_in? ? USER_OTHERS : GUEST_OTHERS
     end
   end
 
-  def right_ad_slot(signed_in)
-    signed_in ? USER_RIGHT : GUEST_RIGHT
+  def right_slot_ad_id
+    user_signed_in? ? USER_RIGHT : GUEST_RIGHT
   end
 
   GUEST_TOP_TOP_RESP              = 1384769219
@@ -216,9 +216,9 @@ module AdsenseHelper
   USER_UPDATE_HISTORIES_RESP      = 3332234330
   USER_USAGE_STATS_RESP           = 7385183503
 
-  def left_ad_slot_responsive(vertical_position)
+  def left_slot_responsive_ad_id(controller, action, position)
     slot =
-        case [user_signed_in?, controller_name.to_s, action_name.to_s, vertical_position.to_sym]
+        case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME_RESP
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM_RESP
         when [true,  'timelines',             'show', :middle] then USER_TIMELINES_MIDDLE_RESP
@@ -396,12 +396,21 @@ module AdsenseHelper
     if slot
       slot
     else
-      logger.info "#{__method__}: Not classified adsense #{user_signed_in?} #{controller_name} #{action_name} #{vertical_position} #{request.original_fullpath}"
+      logger.info "#{__method__}: Ad ID is not found #{user_signed_in?} #{controller} #{action} #{position} #{request.original_fullpath}"
       user_signed_in? ? USER_OTHERS_RESP : GUEST_OTHERS_RESP
     end
   end
 
-  def async_adsense_wrapper_id
-    "async-adsense-#{SecureRandom.urlsafe_base64(10)}"
+  def async_adsense_wrapper_id(vertical)
+    @async_adsense_wrapper_rand ||= SecureRandom.urlsafe_base64(10)
+    "async-adsense-#{vertical}-#{@async_adsense_wrapper_rand}"
+  end
+
+  def left_slot_ad_id(controller, action, vertical)
+    if request.from_pc?
+      left_slot_fixed_ad_id(controller, action, vertical)
+    else
+      left_slot_responsive_ad_id(controller, action, vertical)
+    end
   end
 end
