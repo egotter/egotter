@@ -31,6 +31,29 @@ RSpec.describe TwitterDB::User, type: :model do
     end
   end
 
+  describe '#inactive?' do
+    context 'status_created_at is nil' do
+      let(:user) { create(:twitter_db_user, status_created_at: nil) }
+      it do
+        expect(user.inactive?).to be_falsey
+      end
+    end
+
+    context 'status_created_at is 1.month.ago' do
+      let(:user) { create(:twitter_db_user, status_created_at: 1.month.ago) }
+      it do
+        expect(user.inactive?).to be_truthy
+      end
+    end
+
+    context 'status_created_at is 1.day.ago' do
+      let(:user) { create(:twitter_db_user, status_created_at: 1.day.ago) }
+      it do
+        expect(user.inactive?).to be_falsey
+      end
+    end
+  end
+
   describe '.build_by' do
     let(:t_user) do
       {

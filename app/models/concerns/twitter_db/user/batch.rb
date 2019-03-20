@@ -47,25 +47,13 @@ module Concerns::TwitterDB::User::Batch
       users = t_users.map {|user| TwitterDB::User.build_by(user: user)}
       users.sort_by!(&:uid)
 
-      profiles = t_users.map {|user| TwitterDB::Profile.build_by_t_user(user)}
-      profiles.sort_by!(&:uid)
-
       update_columns = TwitterDB::User.column_names.reject {|name| %w(id created_at updated_at).include?(name)}
 
       begin
         tries ||= 3
 
-        users.each_slice(500) do |users_group|
-          target_uids = users_group.map(&:uid)
-
-          ApplicationRecord.transaction do
-            users_for_import = users_group.map{|user| user.slice(*update_columns).values }
-            TwitterDB::User.import update_columns, users_for_import, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
-
-            profiles_for_import = profiles.select {|p| target_uids.include?(p.uid)}.map{|profile| profile.slice(*update_columns).values }
-            TwitterDB::Profile.import update_columns, profiles_for_import, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
-          end
-        end
+        users_for_import = users.map{|user| user.slice(*update_columns).values }
+        TwitterDB::User.import update_columns, users_for_import, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
       rescue => e
         if retryable_deadlock?(e)
           message = "#{self}##{__method__}: #{e.class} #{e.message.truncate(100)} #{t_users.size}"
