@@ -11,14 +11,6 @@ module Concerns::Validation
 
   end
 
-  def internet_connected?
-    HTTParty.get('https://egotter.com/ping.html', verify: false)
-    true
-  rescue SocketError, HTTP::ConnectionError => e
-    respond_with_error(:bad_request, t('before_sign_in.internet_not_connected'))
-    false
-  end
-
   def require_login!
     return if user_signed_in?
     respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))
