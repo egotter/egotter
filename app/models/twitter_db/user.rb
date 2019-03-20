@@ -46,10 +46,8 @@ module TwitterDB
     validates_with Validations::UidValidator
     validates_with Validations::ScreenNameValidator
 
-    delegate :name, :location, :description, :url, :protected, :followers_count, :friends_count, :verified, :statuses_count, :account_created_at, :profile_image_url_https, :profile_banner_url, :profile_link_color, :suspended, to: :profile, allow_nil: true
-
     def inactive?
-      profile&.status_created_at && profile.status_created_at < 2.weeks.ago
+      status_created_at && status_created_at < 2.weeks.ago
     end
 
     # Used in view
