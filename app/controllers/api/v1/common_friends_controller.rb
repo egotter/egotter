@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CommonFriendsController < ::Api::Base
+    class CommonFriendsController < ::Api::V1::Base
 
       before_action :require_login!
 

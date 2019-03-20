@@ -1,6 +1,6 @@
 module Api
   module V1
-    class InactiveFriendsController < ::Api::Base
+    class InactiveFriendsController < ::Api::V1::Base
 
       private
 

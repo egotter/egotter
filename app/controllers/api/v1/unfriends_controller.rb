@@ -1,6 +1,6 @@
 module Api
   module V1
-    class UnfriendsController < ::Api::Base
+    class UnfriendsController < ::Api::V1::Base
 
       private
 

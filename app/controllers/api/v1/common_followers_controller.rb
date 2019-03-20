@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CommonFollowersController < ::Api::Base
+    class CommonFollowersController < ::Api::V1::Base
 
       before_action :require_login!
 

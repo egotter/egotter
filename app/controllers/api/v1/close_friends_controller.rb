@@ -1,6 +1,6 @@
 module Api
   module V1
-    class CloseFriendsController < ::Api::Base
+    class CloseFriendsController < ::Api::V1::Base
 
       private
 

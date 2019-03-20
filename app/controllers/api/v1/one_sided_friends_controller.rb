@@ -1,6 +1,6 @@
 module Api
   module V1
-    class OneSidedFriendsController < ::Api::Base
+    class OneSidedFriendsController < ::Api::V1::Base
 
       private
 

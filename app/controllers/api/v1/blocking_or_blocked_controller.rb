@@ -1,6 +1,6 @@
 module Api
   module V1
-    class BlockingOrBlockedController < ::Api::Base
+    class BlockingOrBlockedController < ::Api::V1::Base
 
       private
 

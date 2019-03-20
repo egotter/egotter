@@ -1,6 +1,6 @@
 module Api
   module V1
-    class FollowersController < ::Api::Base
+    class FollowersController < ::Api::V1::Base
 
       private
 

@@ -1,6 +1,6 @@
 module Api
   module V1
-    class OneSidedFollowersController < ::Api::Base
+    class OneSidedFollowersController < ::Api::V1::Base
 
       private
 

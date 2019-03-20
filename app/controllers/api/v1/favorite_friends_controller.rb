@@ -1,6 +1,6 @@
 module Api
   module V1
-    class FavoriteFriendsController < ::Api::Base
+    class FavoriteFriendsController < ::Api::V1::Base
 
       private
 
