@@ -59,6 +59,7 @@ class SendMetricsToSlackWorker
         [ResetEgotterRequest, ResetEgotterLog],
         [DeleteTweetsRequest, DeleteTweetsLog],
         [ResetCacheRequest, ResetCacheLog],
+        [SearchReport, PromptReport, NewsReport, WelcomeMessage],
         Tokimeki::User,
     ].map do |klasses|
       klasses = [klasses] unless klasses.is_a?(Array)
