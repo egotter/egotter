@@ -143,6 +143,7 @@ class SendMetricsToSlackWorker
     stats = {
         prompt_reports: PromptReport.where(condition).size,
         'prompt_reports(read)' => PromptReport.where(condition.merge(read_at: 1.hour.ago..Time.zone.now)).size,
+        'prompt_reports(timelines)' => SearchLog.where(condition).where(via: 'prompt_report_shortcut').size,
         create_prompt_report_logs: CreatePromptReportLog.where(condition).size,
     }
 
