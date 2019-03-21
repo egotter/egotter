@@ -41,7 +41,7 @@ class User < ApplicationRecord
 
   with_options dependent: :destroy, validate: false, autosave: false do |obj|
     obj.has_many :notification_messages
-    obj.has_many :prompt_reports
+    obj.has_many :prompt_reports, -> { order(created_at: :asc) }
     obj.has_many :search_reports
     obj.has_many :news_reports
     obj.has_many :create_prompt_report_requests, -> { order(created_at: :desc) }
