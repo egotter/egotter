@@ -18,16 +18,22 @@
 #
 
 class WelcomeMessage < ApplicationRecord
+  include Concerns::Report::HasToken
+  include Concerns::Report::HasDirectMessage
+  include Concerns::Report::Readable
+
   belongs_to :user
 
-  def self.welcome(user_id)
-    new(user_id: user_id, token: generate_token)
+  class << self
+    def welcome(user_id)
+      new(user_id: user_id, token: generate_token)
+    end
   end
 
   def deliver
-    DirectMessageRequest.new(user.api_client.twitter, User::EGOTTER_UID, I18n.t('dm.welcomeMessage.lets_start')).perform
+    DirectMessageRequest.new(user_client, User::EGOTTER_UID, I18n.t('dm.welcomeMessage.lets_start')).perform
     button = {label: I18n.t('dm.welcomeMessage.timeline_page', screen_name: screen_name), url: timeline_url}
-    resp = DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid.to_i, build_message, [button]).perform
+    resp = DirectMessageRequest.new(egotter_client, user.uid, build_message, [button]).perform
     dm = DirectMessage.new(resp)
 
     transaction do
@@ -37,34 +43,26 @@ class WelcomeMessage < ApplicationRecord
     dm
   end
 
-  def read?
-    !read_at.nil?
+  private
+
+  def user_client
+    @user_client ||= user.api_client.twitter
   end
 
-  private
+  def egotter_client
+    @egotter_client ||= User.find_by(uid: User::EGOTTER_UID).api_client.twitter
+  end
 
   def screen_name
     user.screen_name
   end
 
   def build_message
-    ERB.new(Rails.root.join(template_path).read).result_with_hash(screen_name: screen_name, url: timeline_url)
+    template = Rails.root.join('app/views/welcome_messages/welcome.ja.text.erb')
+    ERB.new(template.read).result_with_hash(screen_name: screen_name, url: timeline_url)
   end
 
   def timeline_url
-    'https://egotter.com' + Rails.application.routes.url_helpers.timeline_path(screen_name: screen_name, token: token, medium: 'dm', type: 'welcome')
-  end
-
-  def template_path
-    "app/views/#{self.class.name.underscore.pluralize}/welcome.ja.text.erb"
-  end
-
-  class << self
-    def generate_token
-      begin
-        t = SecureRandom.urlsafe_base64(10)
-      end while exists?(token: t)
-      t
-    end
+    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'welcome')
   end
 end
