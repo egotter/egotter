@@ -119,24 +119,6 @@ class User < ApplicationRecord
     end
   end
 
-  def notifications
-    pr = prompt_reports.limit(10).each do |report|
-      report.message_builder = PromptReport::YouAreRemovedMessage.new(report.user, report.token, format: 'html')
-      report.message_builder.changes = report.last_changes
-    end
-
-    # sr = search_reports.limit(10).each do |r|
-    #   r.message_builder = SearchReport::YouAreSearchedMessage.new(r.user, r.token, format: 'html')
-    # end
-    sr = []
-
-    nr = news_reports.limit(10).each do |r|
-      r.message_builder = NewsReport::ComeBackInactiveUserMessage.new(r.user, r.token, format: 'html')
-    end
-
-    (pr + sr + nr).sort_by { |r| -r.created_at.to_i }
-  end
-
   def unauthorized?
     !authorized?
   end
