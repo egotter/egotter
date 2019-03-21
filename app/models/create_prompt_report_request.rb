@@ -61,7 +61,7 @@ class CreatePromptReportRequest < ApplicationRecord
     last_report = user.prompt_reports.last
     raise MessageNotChanged if last_report && changes == last_report.last_changes
 
-    send_report!(changes)
+    send_report!(changes, new_unfollower_uids: new_unfollower_uids)
   end
 
   def send_initialization_message
@@ -87,8 +87,8 @@ class CreatePromptReportRequest < ApplicationRecord
     raise InitializationFailed
   end
 
-  def send_report!(changes)
-    PromptReport.you_are_removed(user.id, changes_json: changes.to_json).deliver
+  def send_report!(changes, new_unfollower_uids:)
+    PromptReport.you_are_removed(user.id, changes_json: changes.to_json, new_unfollower_uids: new_unfollower_uids).deliver
   rescue Twitter::Error::Forbidden => e
     if e.message == 'You cannot send messages to users you have blocked.'
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
