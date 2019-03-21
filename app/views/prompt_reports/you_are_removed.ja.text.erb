@@ -7,10 +7,10 @@
 ----
 
 最新リムられ
-<%= new_unfollowers.map(&:screen_name).map{|name| "#{name} #{timeline_url.gsub('__SN__', name)}" }.join("\n") %>
+<%= new_unfollowers.map(&:screen_name).map{|name| "#{name} #{generic_timeline_url.gsub('__SN__', name)}" }.join("\n") %>
 
 リムられの一覧
-<%= timeline_url.gsub('__SN__', user.screen_name) %>
+<%= timeline_url %>
 ----
 
 ※このリムられ速報は、フォロワーに変化があった時のみ、最大で1時間に1回ほど届きます。

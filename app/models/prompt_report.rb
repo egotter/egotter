@@ -21,6 +21,7 @@
 
 class PromptReport < ApplicationRecord
   include Concerns::Report::HasToken
+  include Concerns::Report::HasDirectMessage
   include Concerns::Report::Readable
 
   belongs_to :user
@@ -83,7 +84,7 @@ class PromptReport < ApplicationRecord
           old_followers_count: changes[:followers_count][0],
           new_followers_count: changes[:followers_count][1],
           new_unfollowers: new_unfollowers,
-          user: user,
+          generic_timeline_url: generic_timeline_url,
           timeline_url: timeline_url,
           settings_url: settings_url,
       )
@@ -99,8 +100,12 @@ class PromptReport < ApplicationRecord
       @new_unfollowers ||= TwitterDB::User.where_and_order_by_field(uids: new_unfollower_uids)
     end
 
+    def generic_timeline_url
+      @generic_timeline_url ||= Rails.application.routes.url_helpers.timeline_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
+    end
+
     def timeline_url
-      @timeline_url ||= Rails.application.routes.url_helpers.timeline_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt')
     end
 
     def settings_url
