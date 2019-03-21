@@ -1,16 +1,22 @@
-えごったーのリムられ速報です。
-
-最後にえごったーにアクセスしてから、フォロワー数が <%= old_followers_count %> から <%= new_followers_count %> に変わりました。
-@<%= screen_name %> さんの結果ページ <%= url %> #egotter
-
-<% if twitter_user %>
-☆☆ @<%= screen_name %> さんの最新情報 ☆☆
-リムり → <%= removing_names %> 、合計 <%= removing_count %> 人
-リムられ → <%= removed_names %> 、合計 <%= removed_count %> 人
+新しく <%= new_unfollowers.size %> 人にリムられました。<% if old_followers_count == new_followers_count %>
+フォロワー数は <%= old_followers_count %> 人のままです。
+<% else %>
+フォロワー数は <%= old_followers_count %> 人から <%= new_followers_count %> 人に<%= old_followers_count < new_followers_count ? '増えて' : '減って' %>います。
 <% end %>
+
+----
+
+最新リムられ
+<%= new_unfollowers.map(&:screen_name).map{|name| "#{name} #{timeline_url.gsub('__SN__', name)}" }.join("\n") %>
+
+リムられの一覧
+<%= timeline_url.gsub('__SN__', user.screen_name) %>
+----
 
 ※このリムられ速報は、フォロワーに変化があった時のみ、最大で1時間に1回ほど届きます。
 
 ※フォロワー数に変化がなくても、「1人新しくフォローされて、1人リムられた」という場合は速報が届きます。
 
 ※えごったーにアクセスすると、上記のリムられは完全なデータに更新されます。
+
+通知の設定変更はこちら <%= settings_url %> #egotter
