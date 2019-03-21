@@ -453,10 +453,11 @@ ActiveRecord::Schema.define(version: 2019_03_18_143224) do
     t.index ["from_uid"], name: "index_mutual_friendships_on_from_uid"
   end
 
-  create_table "news_reports", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "news_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "read_at"
     t.string "message_id", null: false
+    t.string "message", default: "", null: false
     t.string "token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -592,13 +593,13 @@ ActiveRecord::Schema.define(version: 2019_03_18_143224) do
     t.index ["user_id"], name: "index_polling_logs_on_user_id"
   end
 
-  create_table "prompt_reports", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "prompt_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "read_at"
     t.text "changes_json", null: false
     t.string "token", null: false
     t.string "message_id", null: false
-    t.string "message_cache", default: "", null: false
+    t.string "message", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_prompt_reports_on_created_at"
@@ -738,10 +739,11 @@ ActiveRecord::Schema.define(version: 2019_03_18_143224) do
     t.index ["user_id"], name: "index_search_logs_on_user_id"
   end
 
-  create_table "search_reports", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "search_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "read_at"
     t.string "message_id", null: false
+    t.string "message", default: "", null: false
     t.string "token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -1347,10 +1349,11 @@ ActiveRecord::Schema.define(version: 2019_03_18_143224) do
     t.index ["user_id"], name: "index_visitors_on_user_id"
   end
 
-  create_table "welcome_messages", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "welcome_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "read_at"
     t.string "message_id", null: false
+    t.string "message", default: "", null: false
     t.string "token", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

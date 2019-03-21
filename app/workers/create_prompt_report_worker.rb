@@ -26,10 +26,9 @@ class CreatePromptReportWorker
         screen_name: user.screen_name
     )
 
-    dm = request.perform!
+    request.perform!
     request.finished!
 
-    PromptReport.find_by(message_id: dm.id).update(message_cache: truncated_message(dm))
     log.update(status: true)
 
   rescue request_class::Error => e
@@ -48,9 +47,5 @@ class CreatePromptReportWorker
         StartSendingPromptReportsWorker.perform_in(request_class::INTERVAL.since)
       end
     end
-  end
-
-  def truncated_message(dm, truncate_at: 100)
-    dm.text.remove(/\R/).gsub(%r{https?://[\S]+}, 'URL').truncate(truncate_at)
   end
 end

@@ -1,10 +1,11 @@
-class CreateNewsReports < ActiveRecord::Migration[4.2]
+class CreateNewsReports < ActiveRecord::Migration[5.2]
   def change
     create_table :news_reports do |t|
-      t.integer  :user_id,      null: false
-      t.datetime :read_at,      null: true
-      t.string   :message_id,   null: false
-      t.string   :token,        null: false
+      t.integer  :user_id,    null: false
+      t.datetime :read_at,    null: true
+      t.string   :message_id, null: false
+      t.string   :message,    null: false, default: ''
+      t.string   :token,      null: false
 
       t.timestamps null: false
     end

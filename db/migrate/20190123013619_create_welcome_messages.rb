@@ -1,9 +1,10 @@
-class CreateWelcomeMessages < ActiveRecord::Migration[4.2]
+class CreateWelcomeMessages < ActiveRecord::Migration[5.2]
   def change
     create_table :welcome_messages do |t|
       t.integer  :user_id,    null: false
       t.datetime :read_at,    null: true
       t.string   :message_id, null: false
+      t.string   :message,    null: false, default: ''
       t.string   :token,      null: false
 
       t.timestamps null: false

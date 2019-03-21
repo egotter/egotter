@@ -1,4 +1,4 @@
-class CreatePromptReports < ActiveRecord::Migration[4.2]
+class CreatePromptReports < ActiveRecord::Migration[5.2]
   def change
     create_table :prompt_reports do |t|
       t.integer  :user_id,       null: false
@@ -6,7 +6,7 @@ class CreatePromptReports < ActiveRecord::Migration[4.2]
       t.text     :changes_json,  null: false
       t.string   :token,         null: false
       t.string   :message_id,    null: false
-      t.string   :message_cache, null: false, default: ''
+      t.string   :message,       null: false, default: ''
 
       t.timestamps null: false
 

@@ -2,10 +2,11 @@
 #
 # Table name: search_reports
 #
-#  id         :integer          not null, primary key
+#  id         :bigint(8)        not null, primary key
 #  user_id    :integer          not null
 #  read_at    :datetime
 #  message_id :string(191)      not null
+#  message    :string(191)      default(""), not null
 #  token      :string(191)      not null
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
@@ -35,7 +36,7 @@ class SearchReport < ApplicationRecord
     dm = DirectMessage.new(resp)
 
     transaction do
-      update!(message_id: dm.id)
+      update!(message_id: dm.id, message: truncated_message(dm))
       user.notification_setting.update!(search_sent_at: Time.zone.now)
     end
 

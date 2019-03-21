@@ -2,15 +2,15 @@
 #
 # Table name: prompt_reports
 #
-#  id            :integer          not null, primary key
-#  user_id       :integer          not null
-#  read_at       :datetime
-#  changes_json  :text(65535)      not null
-#  token         :string(191)      not null
-#  message_id    :string(191)      not null
-#  message_cache :string(191)      default(""), not null
-#  created_at    :datetime         not null
-#  updated_at    :datetime         not null
+#  id           :bigint(8)        not null, primary key
+#  user_id      :integer          not null
+#  read_at      :datetime
+#  changes_json :text(65535)      not null
+#  token        :string(191)      not null
+#  message_id   :string(191)      not null
+#  message      :string(191)      default(""), not null
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
@@ -38,7 +38,7 @@ class PromptReport < ApplicationRecord
     dm = DirectMessage.new(resp)
 
     ActiveRecord::Base.transaction do
-      update!(message_id: dm.id)
+      update!(message_id: dm.id, message: truncated_message(dm))
       user.notification_setting.update!(last_dm_at: Time.zone.now)
     end
 
