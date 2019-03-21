@@ -4,7 +4,6 @@ RSpec.describe TwitterDB::User, type: :model do
   context 'association' do
     let(:users) { 3.times.map { create(:twitter_db_user) } }
     let(:rest_users) { users - [users[0]] }
-
   end
 
   describe '#statuses' do

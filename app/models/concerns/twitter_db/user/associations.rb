@@ -4,6 +4,13 @@ module Concerns::TwitterDB::User::Associations
   extend ActiveSupport::Concern
 
   class_methods do
+    def where_and_order_by_field(uids:)
+      where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
+        unless uids.size == users.size
+          CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+        end
+      end
+    end
   end
 
   included do
