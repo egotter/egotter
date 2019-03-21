@@ -1,4 +1,10 @@
 Rails.application.routes.draw do
+  namespace :nikaidate do
+    resources :posts, only: %i(index show), param: :archive_id
+    resources :parties, only: %i(show), param: :uid
+    get 'ranking/:year', to: 'ranking#top', as: :ranking
+  end
+
   if ENV['MAINTENANCE'] == '1'
     root 'misc#maintenance'
     match '*path' => 'misc#maintenance', via: :all

@@ -1,0 +1,26 @@
+%h1.h4.text-center= "全力２階建て - 引用ツイートランキング #{@year}"
+
+.row
+  - if @year - 1 >= 2015
+    .col-xs-12.col-sm-4
+      .text-center{style: 'margin-bottom: 15px;'}
+        = link_to nikaidate_ranking_path(year: @year - 1), class: 'btn btn-default btn-md' do
+          %span.glyphicon.glyphicon-arrow-left
+          = "#{@year - 1} 年のランキングを見る"
+  - else
+    .col-xs-12.col-sm-4
+
+  .col-xs-12.col-sm-4
+
+  - if @year + 1 >= 2017
+    .col-xs-12.col-sm-4
+      .text-center{style: 'margin-bottom: 15px;'}
+        = link_to nikaidate_ranking_path(year: @year + 1), class: 'btn btn-default btn-md' do
+          = "#{@year + 1} 年のランキングを見る"
+          %span.glyphicon.glyphicon-arrow-right
+  - else
+    .col-xs-12.col-sm-4
+
+.nikaidate.ranking
+  .row
+    = render(partial: 'user', collection: @users, cached: true)

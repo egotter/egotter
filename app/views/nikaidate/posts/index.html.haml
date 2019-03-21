@@ -1,0 +1,14 @@
+%h1 分析済みの記事一覧
+
+%table
+  %thead
+    %tr
+      %th
+      %th
+      %th
+
+  %tbody
+    - @posts.each do |post|
+      %tr
+        %td= link_to post.title, post
+

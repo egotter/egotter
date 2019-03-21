@@ -1,0 +1,42 @@
+%h2.h3.text-center= "全力２階建て分析 - #{@user.name}(#{@user.mention_name}) の引用ツイート"
+
+.nikaidate.parties
+  .row
+    .col-xs-12.col-sm-offset-1.col-sm-10.col-sm-offset-1.col-md-offset-2.col-md-8.col-md-offset-2{style: 'margin-bottom: 15px;'}
+      = render(partial: 'user', locals: {user: @user})
+
+.row
+  - if @user.rank >= 2
+    .col-xs-12.col-sm-4
+      .text-center{style: 'margin-bottom: 15px;'}
+        = link_to Nikaidate::Party.find_by(rank: @user.rank - 1), class: 'btn btn-default btn-md' do
+          %span.glyphicon.glyphicon-arrow-left
+          = "第 #{@user.rank - 1} 位を見る"
+  - else
+    .col-xs-12.col-sm-4
+
+  .col-xs-12.col-sm-4
+    .text-center{style: 'margin-bottom: 15px;'}
+      = link_to nikaidate_ranking_path(year: 2017), class: 'btn btn-default btn-md' do
+        = "ランキング #{2017} に戻る"
+        %span.glyphicon.glyphicon-arrow-up
+
+  - if @user.rank < Nikaidate::Party.maximum(:rank)
+    .col-xs-12.col-sm-4
+      .text-center{style: 'margin-bottom: 15px;'}
+        = link_to Nikaidate::Party.find_by(rank: @user.rank + 1), class: 'btn btn-default btn-md' do
+          = "第 #{@user.rank + 1} 位を見る"
+          %span.glyphicon.glyphicon-arrow-right
+  - else
+    .col-xs-12.col-sm-4
+
+.nikaidate.opinions
+  - @posts.each.with_index do |post, i|
+    .gray-separator
+    %h3.h4
+      = link_to "『#{post.title}』の引用ツイート", post.url
+    .text-center
+      - post.tags.each do |tag|
+        %span.label.label-info= tag
+    .row
+      = render(partial: 'nikaidate/posts/tweet', collection: post.opinions.where(uid: @user.uid), as: :tweet, cached: true)

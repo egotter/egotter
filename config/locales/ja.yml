@@ -16,6 +16,7 @@ ja:
       search_second: "Twitter ID 2"
       search: "検索"
       do_search: "検索する"
+      follow: "フォロー"
       do_follow: "フォローする"
       following: "フォロー中"
       empty_html: '結果は 0 件です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。<br><br>フォロー・フォロワーが多すぎる場合は、<a href="%{sign_in_path}">ログイン</a> しないと検索できないことがあります。その場合は、<a href="%{sign_in_path}">ログイン</a> してから再度検索してみてください。'

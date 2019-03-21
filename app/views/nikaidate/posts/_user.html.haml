@@ -1,0 +1,25 @@
+- if defined?(user_counter) && user_counter != 0 && user_counter % 100 == 0
+  .col-xs-12
+    .gray-separator
+
+- if defined?(user_counter) && user_counter % 100 == 0
+  .col-xs-12
+    %h2.h4{style: 'margin-bottom: 15px;'}= "#{user.rank} 位 〜 #{user.rank + 99} 位"
+
+.col-xs-12.col-sm-6.col-md-4{style: 'margin-bottom: 15px;'}
+  .media
+    .media-inner
+      .media-left
+        = link_to user do
+          = normal_icon_img(user, class: 'media-object')
+      .media-body
+        %h4.media-heading= user_name(user).html_safe
+        %span.screen-name
+          = link_to(mention_name(user.screen_name), user)
+      .media-right
+        .buttons
+          = link_to user do
+            %button.btn.btn-default{type: 'button'}
+              %span.glyphicon.glyphicon-search
+              .visible-xs-inline.visible-sm-inline.visible-md-inline.visible-lg-inline= "第 #{user.rank} 位"
+      .description= user.description

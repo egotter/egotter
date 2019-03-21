@@ -1,0 +1,19 @@
+.media
+  .media-inner
+    .media-left
+      = link_to user do
+        = normal_icon_img(user, class: 'media-object')
+    .media-body
+      %h4.media-heading= user_name(user).html_safe
+      %span.screen-name
+        = link_to(mention_name(user.screen_name), user)
+    .media-right
+      .buttons
+        = link_to user do
+          %button.btn.btn-default.btn-sm{type: 'button', style: 'margin-right: 15px;'}
+            %span.glyphicon.glyphicon-search
+            .visible-xs-inline.visible-sm-inline.visible-md-inline.visible-lg-inline= "第 #{user.rank} 位"
+        %button.btn.btn-default.btn-sm{type: 'button'}
+          %span.glyphicon.glyphicon-paperclip
+          .visible-xs-inline.visible-sm-inline.visible-md-inline.visible-lg-inline= "引用 #{user.citations_count} 回"
+    .description= user.description
