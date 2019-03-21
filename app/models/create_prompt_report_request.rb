@@ -104,7 +104,7 @@ class CreatePromptReportRequest < ApplicationRecord
     logger.warn "#{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
     logger.info e.backtrace.join("\n")
 
-    raise DirectMessageNotSent
+    raise DirectMessageNotSent.new(e.message.truncate(100))
   end
 
   def twitter_user
@@ -203,57 +203,60 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class Error < StandardError
+  end
+
+  class DeadErrorTellsNoTales < Error
     def initialize(*args)
       super('')
     end
   end
 
-  class TwitterUserNotExist < Error
+  class TwitterUserNotExist < DeadErrorTellsNoTales
   end
 
-  class InitializationStarted < Error
+  class InitializationStarted < DeadErrorTellsNoTales
   end
 
-  class InitializationFailed < Error
+  class InitializationFailed < DeadErrorTellsNoTales
   end
 
-  class TooShortRequestInterval < Error
+  class TooShortRequestInterval < DeadErrorTellsNoTales
   end
 
-  class TooShortSendInterval < Error
+  class TooShortSendInterval < DeadErrorTellsNoTales
   end
 
-  class Unauthorized < Error
+  class Unauthorized < DeadErrorTellsNoTales
   end
 
-  class Forbidden < Error
+  class Forbidden < DeadErrorTellsNoTales
   end
 
-  class ReportDisabled < Error
+  class ReportDisabled < DeadErrorTellsNoTales
   end
 
-  class Inactive < Error
+  class Inactive < DeadErrorTellsNoTales
   end
 
-  class RecordNotFound < Error
+  class RecordNotFound < DeadErrorTellsNoTales
   end
 
-  class Suspended < Error
+  class Suspended < DeadErrorTellsNoTales
   end
 
-  class TooManyFriends < Error
+  class TooManyFriends < DeadErrorTellsNoTales
   end
 
-  class Blocked < Error
+  class Blocked < DeadErrorTellsNoTales
   end
 
-  class MaybeImportBatchFailed < Error
+  class MaybeImportBatchFailed < DeadErrorTellsNoTales
   end
 
-  class UnfollowersNotChanged < Error
+  class UnfollowersNotChanged < DeadErrorTellsNoTales
   end
 
-  class MessageNotChanged < Error
+  class MessageNotChanged < DeadErrorTellsNoTales
   end
 
   class DirectMessageNotSent < Error
