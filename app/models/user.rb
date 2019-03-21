@@ -40,18 +40,21 @@ class User < ApplicationRecord
   end
 
   with_options dependent: :destroy, validate: false, autosave: false do |obj|
-    obj.has_many :notification_messages
-    obj.has_many :prompt_reports, -> { order(created_at: :asc) }
-    obj.has_many :search_reports
-    obj.has_many :news_reports
-    obj.has_many :create_prompt_report_requests, -> { order(created_at: :desc) }
+    order_by_desc = -> { order(created_at: :desc) }
+
+    obj.has_many :prompt_reports,                order_by_desc
+    obj.has_many :search_reports,                order_by_desc
+    obj.has_many :news_reports,                  order_by_desc
+    obj.has_many :welcome_messages,              order_by_desc
+    obj.has_many :create_prompt_report_requests, order_by_desc
+    obj.has_many :follow_requests,               order_by_desc
+    obj.has_many :unfollow_requests,             order_by_desc
+    obj.has_many :reset_egotter_requests,        order_by_desc
+    obj.has_many :delete_tweets_requests,        order_by_desc
+    obj.has_many :reset_cache_requests,          order_by_desc
+    obj.has_many :tweet_requests,                order_by_desc
+
     obj.has_one :notification_setting
-    obj.has_many :follow_requests, -> { order(created_at: :desc) }
-    obj.has_many :unfollow_requests, -> { order(created_at: :desc) }
-    obj.has_many :reset_egotter_requests, -> { order(created_at: :desc) }
-    obj.has_many :delete_tweets_requests, -> { order(created_at: :desc) }
-    obj.has_many :reset_cache_requests, -> { order(created_at: :desc) }
-    obj.has_many :tweet_requests, -> { order(created_at: :desc) }
     obj.has_many :orders
   end
 
@@ -132,5 +135,9 @@ class User < ApplicationRecord
 
   def is_subscribing?
     orders.unexpired.any?
+  end
+
+  def latest_prompt_report
+    prompt_reports.reorder(created_at: :desc).first
   end
 end

@@ -7,4 +7,4 @@
       %h4.media-heading
         = "#{mention_name(current_user.screen_name)} - #{time_ago_in_words(notification.created_at)}"
       %span.text
-        = notification.build_message(format: 'html').html_safe
+        = notification.message.html_safe

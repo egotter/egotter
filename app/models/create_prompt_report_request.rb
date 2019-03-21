@@ -58,7 +58,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
     changes = {followers_count: [twitter_user.follower_uids.size, latest.follower_uids.size]}
 
-    last_report = user.prompt_reports.last
+    last_report = user.latest_prompt_report
     raise MessageNotChanged if last_report && changes == last_report.last_changes
 
     send_report!(changes, new_unfollower_uids: new_unfollower_uids)
