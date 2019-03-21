@@ -60,5 +60,6 @@ Rails.application.configure do
   config.file_watcher = ActiveSupport::EventedFileUpdateChecker
 
   config.log_formatter = ::Logger::Formatter.new
-  Rails.application.routes.default_url_options[:host] = 'localhost:3000'
+  Rails.application.routes.default_url_options[:protocol] = 'https'
+  Rails.application.routes.default_url_options[:host] = 'egotter.com'
 end
