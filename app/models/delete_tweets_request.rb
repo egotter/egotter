@@ -53,7 +53,8 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_finished_message
-    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('delete_tweets.new.dm_messge')).perform
+    dm_client = DirectMessageClient.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter)
+    dm_client.create_direct_message(user.uid, I18n.t('delete_tweets.new.dm_messge'))
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
