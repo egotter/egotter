@@ -97,7 +97,7 @@ class PromptReport < ApplicationRecord
     end
 
     def new_unfollowers
-      @new_unfollowers ||= TwitterDB::User.where_and_order_by_field(uids: new_unfollower_uids)
+      @new_unfollowers ||= TwitterDB::User.where_and_order_by_field(uids: new_unfollower_uids.take(30))
     end
 
     def generic_timeline_url
