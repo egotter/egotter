@@ -101,7 +101,7 @@ class CreatePromptReportRequest < ApplicationRecord
       logger.info e.backtrace.join("\n")
     end
 
-    raise DirectMessageNotSent
+    raise DirectMessageNotSent.new(e.message.truncate(100))
   rescue => e
     logger.warn "#{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
     logger.info e.backtrace.join("\n")
@@ -125,12 +125,12 @@ class CreatePromptReportRequest < ApplicationRecord
     else
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
       logger.info e.backtrace.join("\n")
-      raise
+      raise Unknown.new(e.message)
     end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
-    raise
+    raise Unknown.new(e.message)
   end
 
   def twitter_user_not_exist?
@@ -167,7 +167,7 @@ class CreatePromptReportRequest < ApplicationRecord
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
-    raise
+    raise Unknown.new(e.message)
   end
 
   def fetch_user
@@ -178,12 +178,12 @@ class CreatePromptReportRequest < ApplicationRecord
     else
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
       logger.info e.backtrace.join("\n")
-      raise
+      raise Unknown.new(e.message)
     end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
-    raise
+    raise Unknown.new(e.message)
   end
 
   def friend_uids_and_follower_uids
@@ -191,7 +191,7 @@ class CreatePromptReportRequest < ApplicationRecord
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
-    raise
+    raise Unknown.new(e.message)
   end
 
   def client
@@ -263,5 +263,8 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class DirectMessageNotSent < Error
+  end
+
+  class Unknown < Error
   end
 end
