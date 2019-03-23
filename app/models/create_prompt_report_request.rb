@@ -22,6 +22,8 @@ class CreatePromptReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
+    raise InvalidToken unless valid_token?
+
     if twitter_user_not_exist?
       if initialization_started?
         raise TwitterUserNotExist
@@ -65,7 +67,7 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def send_initialization_message
-    DirectMessageRequest.new(user.api_client.twitter, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.initialization_start')).perform
+    DirectMessageRequest.new(internal_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.initialization_start')).perform
     DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name))).perform
 
     raise InitializationStarted
@@ -77,14 +79,14 @@ class CreatePromptReportRequest < ApplicationRecord
       logger.info e.backtrace.join("\n")
     end
 
-    raise InitializationFailed
+    raise InitializationFailed.new(e.message.truncate(100))
   rescue InitializationStarted => e
     raise
   rescue => e
     logger.warn "#{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
 
-    raise InitializationFailed
+    raise InitializationFailed.new(e.message.truncate(100))
   end
 
   def send_report!(changes, new_unfollower_uids:)
@@ -114,6 +116,22 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   private
+
+  def valid_token?
+    internal_client.verify_credentials
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      raise Unauthorized
+    else
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+      logger.info e.backtrace.join("\n")
+      raise
+    end
+  rescue => e
+    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+    logger.info e.backtrace.join("\n")
+    raise
+  end
 
   def twitter_user_not_exist?
     !TwitterUser.exists?(uid: user.uid)
@@ -146,14 +164,6 @@ class CreatePromptReportRequest < ApplicationRecord
       CreateBlockedUserWorker.perform_async(fetch_user[:id], fetch_user[:screen_name]) if blocked
       blocked
     end
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      raise Unauthorized
-    else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-      raise
-    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
@@ -170,14 +180,6 @@ class CreatePromptReportRequest < ApplicationRecord
       logger.info e.backtrace.join("\n")
       raise
     end
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      raise Unauthorized
-    else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-      raise
-    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
@@ -186,12 +188,6 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def friend_uids_and_follower_uids
     client.friend_ids_and_follower_ids(user.uid)
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      [nil, nil]
-    else
-      raise
-    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
@@ -200,6 +196,10 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def client
     @client ||= user.api_client
+  end
+
+  def internal_client
+    @internal_client ||= client.twitter
   end
 
   class Error < StandardError
@@ -217,13 +217,16 @@ class CreatePromptReportRequest < ApplicationRecord
   class InitializationStarted < DeadErrorTellsNoTales
   end
 
-  class InitializationFailed < DeadErrorTellsNoTales
+  class InitializationFailed < Error
   end
 
   class TooShortRequestInterval < DeadErrorTellsNoTales
   end
 
   class TooShortSendInterval < DeadErrorTellsNoTales
+  end
+
+  class InvalidToken < DeadErrorTellsNoTales
   end
 
   class Unauthorized < DeadErrorTellsNoTales
