@@ -71,4 +71,18 @@ RSpec.describe ApiClient, type: :model do
       end
     end
   end
+
+  describe '.logger' do
+    it 'calls Rails.logger' do
+      expect(Rails).to receive(:logger).with(no_args)
+      ApiClient.logger
+    end
+  end
+
+  describe '#logger' do
+    it 'calls ApiClient.logger' do
+      expect(ApiClient).to receive(:logger).with(no_args)
+      ApiClient.new(nil).send(:logger)
+    end
+  end
 end

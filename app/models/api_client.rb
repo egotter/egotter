@@ -73,11 +73,15 @@ class ApiClient
           end
       new(client)
     end
+
+    def logger
+      Rails.logger
+    end
   end
 
   private
 
   def logger
-    Rails.logger
+    self.class.logger
   end
 end
