@@ -10,6 +10,32 @@ RSpec.describe ApiClient, type: :model do
     }
   end
 
+  describe '#method_missing' do
+    let(:client) { TwitterWithAutoPagination::Client.new }
+    let(:instance) { ApiClient.new(client) }
+
+    let(:method_name) { :user }
+    let(:args) { ['ts_3156'] }
+
+    it 'calls ApiClient.do_request_with_retry' do
+      expect(client).to receive(:respond_to?).with(method_name).and_call_original
+      expect(ApiClient).to receive(:do_request_with_retry).with(client, method_name, args)
+      instance.user('ts_3156')
+    end
+  end
+
+  describe '.do_request_with_retry' do
+    let(:client) { TwitterWithAutoPagination::Client.new }
+
+    let(:method_name) { :user }
+    let(:args) { ['ts_3156'] }
+
+    it 'passes params to client' do
+      expect(ApiClient).to receive(:do_request_with_retry).with(client, method_name, args)
+      ApiClient.do_request_with_retry(client, method_name, args)
+    end
+  end
+
   describe '.config' do
     context 'without option' do
       let(:config) { ApiClient.config }
@@ -37,79 +63,11 @@ RSpec.describe ApiClient, type: :model do
     it 'returns ApiClient' do
       expect(ApiClient.instance).to be_a_kind_of(ApiClient)
     end
-  end
 
-  describe '.better_client' do
-    let(:user) { create(:user) }
-
-    context 'target user is persisted' do
-      it 'returns a client of target user' do
-        client = ApiClient.better_client(user.uid)
-        expect(client.access_token).to eq(user.token)
-        expect(client.access_token_secret).to eq(user.secret)
-      end
-    end
-
-    context 'target user is not persisted and target twitter_user is persisted' do
-      let(:twitter_user) { build(:twitter_user) }
-      let(:user2) { create(:user) }
-      before do
-        user.update!(authorized: false)
-        twitter_user.tap { |tu| tu.uid = user.uid }.save!
-        user2.update!(uid: twitter_user.followers[0].uid)
-      end
-
-      it 'returns a client of follower' do
-        client = ApiClient.better_client(user.uid)
-        expect(client.access_token).to eq(user2.token)
-        expect(client.access_token_secret).to eq(user2.secret)
-      end
-    end
-
-    context 'both target user and target twitter_user are not persisted' do
-      let(:bot) { create(:bot) }
-      before do
-        user.update!(authorized: false)
-        bot
-        Bot::IDS = Bot.pluck(:id)
-      end
-      it 'returns a client of bot' do
-        client = ApiClient.better_client(user.uid)
-        expect(client.access_token).to eq(bot.token)
-        expect(client.access_token_secret).to eq(bot.secret)
-      end
-    end
-  end
-
-  describe '.user_or_bot_client' do
-    let(:bot) { create(:bot) }
-    before do
-      bot
-      Bot::IDS = Bot.pluck(:id)
-    end
-
-    context 'user_id == -1' do
-      let(:user_id) { -1 }
-      it 'calls Bot.sample' do
-        expect(Bot).to receive(:sample).and_return(Bot.first)
-        ApiClient.user_or_bot_client(user_id)
-      end
-    end
-
-    context 'user_id == nil' do
-      let(:user_id) { nil }
-      it 'calls Bot.sample' do
-        expect(Bot).to receive(:sample).and_return(Bot.first)
-        ApiClient.user_or_bot_client(user_id)
-      end
-    end
-
-    context 'user_id != -1' do
-      let(:user) { create(:user) }
-      let(:user_id) { user.id }
-      it 'calls User.find' do
-        expect(User).to receive(:find).with(user_id).and_return(User.first)
-        ApiClient.user_or_bot_client(user_id)
+    context 'With empty options' do
+      it do
+        expect(TwitterWithAutoPagination::Client).to receive(:new).with(no_args)
+        ApiClient.instance
       end
     end
   end

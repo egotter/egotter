@@ -118,7 +118,7 @@ class CreatePromptReportRequest < ApplicationRecord
   private
 
   def valid_token?
-    internal_client.verify_credentials
+    ApiClient.do_request_with_retry(internal_client, :verify_credentials, [])
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       raise Unauthorized
