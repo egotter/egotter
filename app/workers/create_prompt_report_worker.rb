@@ -33,7 +33,6 @@ class CreatePromptReportWorker
 
   rescue request_class::Error => e
     log.update(error_class: e.class, error_message: e.message)
-    logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
   rescue => e
     log.update(error_class: e.class, error_message: e.message)
     logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"

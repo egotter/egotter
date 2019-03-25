@@ -265,6 +265,6 @@ class CreatePromptReportRequest < ApplicationRecord
   class DirectMessageNotSent < Error
   end
 
-  class Unknown < Error
+  class Unknown < StandardError
   end
 end
