@@ -21,6 +21,7 @@ RSpec.describe S3 do
       end
 
       context '@cache is NOT defined' do
+        before { CacheDirectory.create!(name: 's3', dir: 'tmp/s3_cache') }
         it do
           expect(dummy_class.cache).to a_kind_of(ActiveSupport::Cache::FileStore)
         end

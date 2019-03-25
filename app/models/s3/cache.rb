@@ -18,17 +18,24 @@ module S3
 
     # A network failure may occur
     def cache_fetch(key, &block)
+      tries ||= 3
       cache.fetch(key.to_s, &block)
-    rescue Errno::ENOENT => e
-      logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
-      logger.info {e.backtrace.join("\n")}
-      yield
     rescue Aws::S3::Errors::NoSuchKey => e
       # Handle this error in #find_by_current_scope
       raise
+    rescue Errno::ENOENT, Errno::ESTALE, Zlib::DataError => e
+      # Errno::ENOENT No such file or directory @ apply2files - ...
+      # Errno::ESTALE Stale file handle @ apply2files - ...
+      # Zlib::DataError data error
+      if (tries -= 1) < 0
+        logger.warn "RETRY EXHAUSTED #{self}##{__method__} #{e.class} #{e.message} #{key}"
+        logger.info {e.backtrace.join("\n")}
+        raise
+      else
+        retry
+      end
     rescue => e
       # Aws::Errors::NoSuchEndpointError Encountered a `SocketError` while attempting to connect to:
-      # Zlib::DataError data error
       logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{key}"
       logger.info {e.backtrace.join("\n")}
       yield
