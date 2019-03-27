@@ -36,6 +36,16 @@ class ApplicationController < ActionController::Base
     end
   end
 
+  rescue_from Rack::Timeout::RequestTimeoutException do |ex|
+    logger.warn "#{ex.class} #{ex.message.truncate(100)} #{debug_str}"
+
+    if request.xhr?
+      render json: {error: ex.message.truncate(100)}, status: :request_timeout
+    else
+      render_500
+    end
+  end
+
   rescue_from ActionController::InvalidAuthenticityToken do |ex|
     logger.info "Invalid token: #{debug_str}"
 

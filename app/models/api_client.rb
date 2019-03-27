@@ -49,6 +49,7 @@ class ApiClient
     def retryable_exception?(ex)
       ([HTTP::ConnectionError, Twitter::Error].include?(ex.class) && ex.message.include?('Connection reset by peer')) ||
           (ex.class == Twitter::Error::InternalServerError && ex.message == 'Internal error') ||
+          (ex.class == Twitter::Error::InternalServerError && ex.message == '') ||
           (ex.class == Twitter::Error::ServiceUnavailable && ex.message == 'Over capacity') ||
           (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '') ||
           (ex.class == Twitter::Error && ex.message == 'execution expired')
