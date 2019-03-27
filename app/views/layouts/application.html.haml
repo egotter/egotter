@@ -251,7 +251,7 @@
               %img.center-block{src: image_path('/egotter_usagi_840x450.png'), height: request.from_pc? ? '200px' : '140px'}
               .vertical-spacing
               .vertical-spacing
-              %p= t('welcome.follow_modal.note1')
+              %p= t('welcome.follow_modal.note1_html')
             .modal-footer
               %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.follow_modal.cancel')
               %button.btn.btn-primary.ok{type: 'button', data: {url: follow_path, uid: User::EGOTTER_UID, follow_url: follow_url('ego_tter')}}= t('welcome.follow_modal.ok')

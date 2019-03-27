@@ -375,7 +375,7 @@ ja:
   welcome:
     follow_modal:
       title_html: 'えごったーを<span class="egotter-pink">フォロー</span>しよう！'
-      note1: "えごったーをフォローすると検索が早くなります。リムられ通知も届きます。早速フォローしましょう！"
+      note1_html: 'えごったーをフォローすると<span class="egotter-pink">検索が早く</span>なります。<span class="egotter-pink">リムられ通知</span>も届きます。早速フォローしましょう！'
       ok: "フォローする"
       cancel: "やめておく"
     share_modal:
