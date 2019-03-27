@@ -65,6 +65,8 @@ class PromptReport < ApplicationRecord
   def send_starting_message
     dm_client = DirectMessageClient.new(user_client)
     dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start'))
+  rescue Twitter::Error::Forbidden => e
+    raise
   rescue => e
     raise StartingFailed.new("#{e.class}: #{e.message.truncate(100)}")
   end
@@ -72,6 +74,8 @@ class PromptReport < ApplicationRecord
   def send_reporting_message
     dm_client = DirectMessageClient.new(egotter_client)
     dm_client.create_direct_message(user.uid, message_builder.build)
+  rescue Twitter::Error::Forbidden => e
+    raise
   rescue => e
     raise ReportingFailed.new("#{e.class}: #{e.message.truncate(100)}")
   end
