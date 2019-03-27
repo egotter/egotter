@@ -24,9 +24,9 @@ class CreateCacheWorker
     user = User.find(user_id)
     threads = []
 
-    TwitterUser.select(:id, :created_at).
+    TwitterUser.cache_ready.
+        select(:id, :created_at).
         where(uid: user.uid).
-        where('created_at < ?', 1.minute.ago).
         order(created_at: :desc).each do |twitter_user|
       [S3::Friendship, S3::Followership, S3::Profile].each do |klass|
         threads << Proc.new do
