@@ -6,7 +6,7 @@ class StatusesController < ApplicationController
     @statuses = statuses.select(&:user)
 
     if statuses.size != @statuses.size
-      logger.warn "Status doesn't have user. #{@twitter_user.inspect}"
+      logger.warn "Status doesn't have user. Continue to rendering #{@twitter_user.inspect}"
     end
   end
 end

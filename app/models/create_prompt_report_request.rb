@@ -164,6 +164,14 @@ class CreatePromptReportRequest < ApplicationRecord
       CreateBlockedUserWorker.perform_async(fetch_user[:id], fetch_user[:screen_name]) if blocked
       blocked
     end
+  rescue Twitter::Error::Forbidden => e
+    if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
+      raise TemporarilyLocked.new(__method__.to_s)
+    else
+      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
+      logger.info e.backtrace.join("\n")
+      raise Unknown.new(e.message)
+    end
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
@@ -174,7 +182,7 @@ class CreatePromptReportRequest < ApplicationRecord
     @fetch_user ||= client.user(user.uid)
   rescue Twitter::Error::Forbidden => e
     if e.message.start_with? 'To protect our users from spam and other malicious activity, this account is temporarily locked.'
-      raise Forbidden
+      raise TemporarilyLocked.new(__method__.to_s)
     else
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
       logger.info e.backtrace.join("\n")
@@ -248,6 +256,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class TooManyFriends < DeadErrorTellsNoTales
+  end
+
+  class TemporarilyLocked < Error
   end
 
   class Blocked < DeadErrorTellsNoTales
