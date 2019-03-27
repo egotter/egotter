@@ -6,7 +6,7 @@ default: &default
   too_many_friends_threshold: 10000
   anonymous_search_histories_limit: 2
   free_plan_search_histories_limit: 5
-  tweet_egotter_search_histories_limit: 7
+  search_histories_sharing_bonus: 2
   basic_plan_search_histories_limit: 10
   anonymous_follow_requests_limit: 2
   basic_plan_follow_requests_limit: 100

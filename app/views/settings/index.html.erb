@@ -4,22 +4,66 @@
   <table class="table">
     <tbody>
     <tr>
-      <td><%= t('searches.common.twitter_id') %></td>
+      <td><%= User.human_attribute_name(:screen_name) %></td>
       <td>
-        <div class="screen-name-container">
-          <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
-          <div class="text-muted notes updated" style="display: none;"><%= t('.profile_updated') %></div>
-          <div class="text-danger notes error" style="display: none;"></div>
-        </div>
+        <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
       </td>
     </tr>
     <tr>
-      <td><%= t('searches.common.email') %></td>
+      <td><%= User.human_attribute_name(:email) %></td>
       <td><%= current_user.email %></td>
     </tr>
     <tr>
+      <td><%= User.human_attribute_name(:authorized) %></td>
+      <td>
+        <% if current_user.authorized? %>
+          <%= t('.authorized.true') %>
+          <div class="text-muted notes"><%= t('.authorized.note1', count: search_histories_limit) %></div>
+        <% else %>
+          <div>
+            <span><%= t('.authorized.false') %></span>
+            <%= link_to t('.update_authorized'), sign_in_path(via: build_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-primary btn-xs' %>
+          </div>
+          <div class="text-muted notes"><%= t('.authorized.note2') %></div>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td><%= User.human_attribute_name(:following_egotter) %></td>
+      <td>
+        <% if current_user.following_egotter? %>
+          <%= t('.following_egotter.true') %>
+          <div class="text-muted notes"><%= t('.following_egotter.note1') %></div>
+        <% else %>
+          <div>
+            <span><%= t('.following_egotter.false') %></span>
+            <%= link_to t('.update_following'), '#', data: {url: follow_path, uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-xs' %>
+          </div>
+          <div class="text-muted notes"><%= t('.following_egotter.note2') %></div>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td><%= User.human_attribute_name(:sharing_egotter) %></td>
+      <td>
+        <% if current_user.sharing_egotter? %>
+          <%= t('.sharing_egotter.true') %>
+          <div class="text-muted notes"><%= t('.sharing_egotter.note1', count: search_histories_sharing_bonus) %></div>
+      <% else %>
+          <div>
+            <span><%= t('.sharing_egotter.false') %></span>
+            <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-xs"><%= t('.update_sharing') %></a>
+          </div>
+          <div class="text-muted notes"><%= t('.sharing_egotter.note2') %></div>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
       <td></td>
-      <td><%= link_to t('.update_profile'), '#', class: 'btn btn-default update-profile', data: {url: user_path, target: '.settings.screen-name'} %></td>
+      <td>
+        <%= link_to t('.update_profile'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
+        <div class="text-muted notes"><%= t('.update_profile_note') %></div>
+      </td>
     </tr>
     </tbody>
   </table>
@@ -168,18 +212,11 @@
 
 <script>
   $(function () {
-    (function () {
-      var $elem = $('.screen-name-container');
-
-      Settings.enableUpdateProfileButton(function (res) {
-        $elem.find('.screen-name').text(res.screen_name);
-        $elem.find('.error').hide();
-        $elem.find('.updated').show();
-      }, function (res) {
-        $elem.find('.updated').hide();
-        $elem.find('.error').text('Error: ' + res.error).show();
-      });
-    })();
+    $('.update-following').on('click', function () {
+      var $clicked = $(this);
+      Twitter.follow($clicked.data('url'), $clicked.data('uid'));
+      return false;
+    });
 
     Settings.enableResetEgotterButton();
 

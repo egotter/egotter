@@ -12,17 +12,30 @@ module SearchHistoriesHelper
   end
 
   def search_histories_limit
+    count = 0
+
     if user_signed_in?
-      if current_user.is_subscribing?
-        current_user.orders.unexpired[-1].search_count
-      elsif current_user.tweet_requests.finished.where(created_at: 1.day.ago..Time.zone.now).exists?
-        Rails.configuration.x.constants['tweet_egotter_search_histories_limit']
-      else
-        Rails.configuration.x.constants['free_plan_search_histories_limit']
+      user = current_user
+
+      count =
+          if user.is_subscribing?
+            user.orders.unexpired[-1].search_count
+          else
+            Rails.configuration.x.constants['free_plan_search_histories_limit']
+          end
+
+      if user.sharing_egotter?
+        count += search_histories_sharing_bonus
       end
     else
-      Rails.configuration.x.constants['anonymous_search_histories_limit']
+      count = Rails.configuration.x.constants['anonymous_search_histories_limit']
     end
+
+    count
+  end
+
+  def search_histories_sharing_bonus
+    Rails.configuration.x.constants['search_histories_sharing_bonus']
   end
 
   def search_histories_remaining
