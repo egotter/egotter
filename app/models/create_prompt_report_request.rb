@@ -182,15 +182,15 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def temporarily_dm_exception?(ex)
     if ex.class == Twitter::Error::Forbidden
-      e.message == 'You cannot send messages to users you have blocked.' ||
-          e.message == 'You cannot send messages to users who are not following you.' ||
-          e.message == 'You are sending a Direct Message to users that do not follow you.' ||
-          e.message == "This request looks like it might be automated. To protect our users from spam and other malicious activity, we can't complete this action right now. Please try again later."
+      ex.message == 'You cannot send messages to users you have blocked.' ||
+          ex.message == 'You cannot send messages to users who are not following you.' ||
+          ex.message == 'You are sending a Direct Message to users that do not follow you.' ||
+          ex.message == "This request looks like it might be automated. To protect our users from spam and other malicious activity, we can't complete this action right now. Please try again later."
     end
   end
 
   def blocked_exception?(ex)
-    ex.class == Twitter::Error::Forbidden && e.message == 'You cannot send messages to users you have blocked.'
+    ex.class == Twitter::Error::Forbidden && ex.message == 'You cannot send messages to users you have blocked.'
   end
 
   def fetch_user
