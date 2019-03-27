@@ -126,6 +126,14 @@ class User < ApplicationRecord
     !authorized?
   end
 
+  def following_egotter?
+    EgotterFollower.exists?(uid: uid)
+  end
+
+  def sharing_egotter?
+    tweet_requests.finished.where(created_at: 1.day.ago..Time.zone.now).exists?
+  end
+
   ADMIN_UID = 58135830
   EGOTTER_UID = 187385226
 

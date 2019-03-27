@@ -54,30 +54,3 @@ Settings.enableResetCacheButton = function () {
     });
   });
 };
-
-Settings.enableUpdateProfileButton = function (callback, errorCallback) {
-  $('.update-profile').on('click', function (e) {
-    e.preventDefault();
-    var $clicked = $(this);
-    $.post($clicked.data('url'))
-        .done(function (res) {
-          console.log(res);
-          if (callback) {
-            callback(res);
-          }
-        })
-        .fail(function (xhr) {
-          console.log(xhr.responseText);
-          if (xhr.responseText) {
-            if (errorCallback) {
-              errorCallback(JSON.parse(xhr.responseText));
-            }
-          }
-        });
-    {
-
-    }
-    ;
-    return false;
-  });
-};

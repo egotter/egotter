@@ -26,6 +26,7 @@ class FollowController < ApplicationController
     request = FollowRequest.new(user_id: user.id, uid: params[:uid])
     if request.save
       enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: 'FollowController')
+      append_egotter_follower(request)
 
       render json: {
           follow_request_id: request.id,
@@ -43,6 +44,14 @@ class FollowController < ApplicationController
   end
 
   private
+
+  def append_egotter_follower(request)
+    if request.uid == User::EGOTTER_UID && !EgotterFollower.exists?(uid: request.uid)
+      EgotterFollower.create!(uid: current_user.uid, screen_name: current_user.screen_name)
+    end
+  rescue => e
+    logger.warn "#{controller_name}##{action_name} #{__method__} #{e.class} #{e.message} #{request.inspect}"
+  end
 
   def friendship?
     tries ||= 3
