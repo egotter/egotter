@@ -21,45 +21,57 @@ class TokimekiUnfollowController < ::Page::UnfriendsAndUnfollowers
   end
 
   def cleanup
-    @user = Tokimeki::User.find_by(uid: current_user.uid)
+    @user = current_tokimeki_user
+    @friend = fetch_friend(@user)
+    return if performed?
 
-    friend_uids = @user.friendships.pluck(:friend_uid)
-    if @user.processed_count >= friend_uids.size
-      return redirect_to root_path, notice: t('.finish')
-    end
+    @statuses = request_context_client.user_timeline(@friend[:id], count: 100).select {|s| !s[:text].to_s.starts_with?('@')}.take(20).map {|s| Hashie::Mash.new(s)}
 
-    friend_id = @friend = nil
-    begin
-      friend_id = friend_uids[@user.processed_count]
-      @friend = Hashie::Mash.new(request_context_client.user(friend_id))
-    rescue Twitter::Error::NotFound => e
-      if e.message == 'User not found.'
-        @user.increment(:processed_count).save!
-        retry
-      else
-        raise
-      end
-    end
-
-    @statuses = request_context_client.user_timeline(friend_id, count: 100).select {|s| !s[:text].to_s.starts_with?('@')}.take(20).map {|s| Hashie::Mash.new(s)}
-
-    @twitter_user = TwitterUser.exists?(friend_id) ? TwitterUser.latest_by(uid: friend_id) : TwitterUser.build_by(user: @friend)
+    @twitter_user = TwitterUser.exists?(@friend[:id]) ? TwitterUser.latest_by(uid: @friend[:id]) : TwitterUser.build_by(user: @friend)
   end
 
   def unfollow
     ActiveRecord::Base.transaction do
-      Tokimeki::User.find_by(uid: current_user.uid).increment(:processed_count).save!
+      current_tokimeki_user.increment(:processed_count).save!
       Tokimeki::Unfriendship.create!(user_uid: current_user.uid, friend_uid: params[:uid], sequence: Tokimeki::Unfriendship.where(user_uid: current_user.uid).size)
     end
     head :ok
   end
 
   def keep
-    Tokimeki::User.find_by(uid: current_user.uid).increment(:processed_count).save!
+    current_tokimeki_user.increment(:processed_count).save!
     head :ok
   end
 
   private
+
+  def current_tokimeki_user
+    @current_tokimeki_user ||= Tokimeki::User.find_by(uid: current_user.uid)
+  end
+
+  def fetch_friend(user)
+    friend_uids ||= user.friendships.pluck(:friend_uid)
+
+    if user.processed_count >= friend_uids.size
+      redirect_to root_path, notice: t('.finish')
+      return
+    end
+
+    uid = friend_uids[user.processed_count]
+    Hashie::Mash.new(request_context_client.user(uid))
+  rescue Twitter::Error::NotFound, Twitter::Error::Forbidden => e
+    if skippable_exception?(e)
+      user.increment(:processed_count).save!
+      retry
+    else
+      raise
+    end
+  end
+
+  def skippable_exception?(e)
+    (e.class == Twitter::Error::NotFound && e.message == 'User not found.') ||
+        (e.class == Twitter::Error::Forbidden && e.message == 'User has been suspended.')
+  end
 
   def save_data
     t_user = request_context_client.user(current_user.uid)
