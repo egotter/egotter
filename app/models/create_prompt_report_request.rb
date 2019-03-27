@@ -72,8 +72,10 @@ class CreatePromptReportRequest < ApplicationRecord
 
     raise InitializationStarted
   rescue Twitter::Error::Forbidden => e
-    if e.message == 'You cannot send messages to users you have blocked.'
-      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
+    if temporarily_dm_exception?(e)
+      if blocked_exception?(e)
+        CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
+      end
     else
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
       logger.info e.backtrace.join("\n")
@@ -92,10 +94,10 @@ class CreatePromptReportRequest < ApplicationRecord
   def send_report!(changes, new_unfollower_uids:)
     PromptReport.you_are_removed(user.id, changes_json: changes.to_json, new_unfollower_uids: new_unfollower_uids).deliver
   rescue Twitter::Error::Forbidden => e
-    if e.message == 'You cannot send messages to users you have blocked.'
-      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-    elsif e.message == 'You cannot send messages to users who are not following you.'
-    elsif e.message == 'You are sending a Direct Message to users that do not follow you.'
+    if temporarily_dm_exception?(e)
+      if blocked_exception?(e)
+        CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
+      end
     else
       logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
       logger.info e.backtrace.join("\n")
@@ -176,6 +178,19 @@ class CreatePromptReportRequest < ApplicationRecord
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
     raise Unknown.new(e.message)
+  end
+
+  def temporarily_dm_exception?(ex)
+    if ex.class == Twitter::Error::Forbidden
+      e.message == 'You cannot send messages to users you have blocked.' ||
+          e.message == 'You cannot send messages to users who are not following you.' ||
+          e.message == 'You are sending a Direct Message to users that do not follow you.' ||
+          e.message == "This request looks like it might be automated. To protect our users from spam and other malicious activity, we can't complete this action right now. Please try again later."
+    end
+  end
+
+  def blocked_exception?(ex)
+    ex.class == Twitter::Error::Forbidden && e.message == 'You cannot send messages to users you have blocked.'
   end
 
   def fetch_user
