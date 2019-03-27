@@ -58,6 +58,7 @@ class FriendsGroupBuilder
     # Fetch users over an entire period with limit
     def users(uid, limit:)
       TwitterUser.creation_completed.
+          cache_ready.
           where(uid: uid).
           select(:id, :uid, :created_at).
           order(created_at: :desc).

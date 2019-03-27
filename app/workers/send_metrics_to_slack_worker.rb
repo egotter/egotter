@@ -87,7 +87,7 @@ class SendMetricsToSlackWorker
   def send_twitter_user_metrics
     SlackClient.send_message(__method__)
 
-    users = TwitterUser.where(created_at: 1.hour.ago..Time.zone.now)
+    users = TwitterUser.cache_ready.where(created_at: 1.hour.ago..Time.zone.now)
 
     friends_count = []
     followers_count = []
