@@ -33,8 +33,10 @@ class PromptReport < ApplicationRecord
 
   def deliver
     user.api_client.verify_credentials
-    DirectMessageRequest.new(user_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start')).perform
-    resp = DirectMessageRequest.new(egotter_client, user.uid, message_builder.build).perform
+
+    send_starting_message
+    resp = send_reporting_message
+
     dm = DirectMessage.new(resp)
 
     ActiveRecord::Base.transaction do
@@ -59,6 +61,26 @@ class PromptReport < ApplicationRecord
   end
 
   private
+
+  def send_starting_message
+    dm_client = DirectMessageClient.new(user_client)
+    dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start'))
+  rescue => e
+    raise StartingFailed.new("#{e.class}: #{e.message.truncate(100)}")
+  end
+
+  def send_reporting_message
+    dm_client = DirectMessageClient.new(egotter_client)
+    dm_client.create_direct_message(user.uid, message_builder.build)
+  rescue => e
+    raise ReportingFailed.new("#{e.class}: #{e.message.truncate(100)}")
+  end
+
+  class StartingFailed < StandardError
+  end
+
+  class ReportingFailed < StandardError
+  end
 
   def user_client
     @user_client ||= user.api_client.twitter

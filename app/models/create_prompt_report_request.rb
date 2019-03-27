@@ -103,12 +103,12 @@ class CreatePromptReportRequest < ApplicationRecord
       logger.info e.backtrace.join("\n")
     end
 
-    raise DirectMessageNotSent.new(e.message.truncate(100))
+    raise DirectMessageNotSent.new("#{e.class}: #{e.message.truncate(100)}")
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
     logger.info e.backtrace.join("\n")
 
-    raise DirectMessageNotSent.new(e.message.truncate(100))
+    raise DirectMessageNotSent.new("#{e.class}: #{e.message.truncate(100)}")
   end
 
   def twitter_user
