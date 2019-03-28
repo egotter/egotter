@@ -41,21 +41,6 @@ module TwitterHelper
     "@#{screen_name}"
   end
 
-  def user_name(user)
-    protected = user.protected ? '&nbsp;<span class="glyphicon glyphicon-lock"></span>' : ''
-    verified = user.verified ? '&nbsp;<span class="glyphicon glyphicon-ok"></span>' : ''
-    "#{user.name}#{protected}#{verified}".html_safe
-  end
-
-  def user_label(user)
-    suspended  = user.suspended ? '&nbsp;<span class="label label-danger">' + t('dictionary.suspended') + '</span>' : ''
-    blocked    = (user.respond_to?(:blocked) && user.blocked) ? '&nbsp;<span class="label label-default">' + t('dictionary.blocked') + '</span>' : ''
-    inactive   = (!user.suspended && user.inactive) ? '&nbsp;<span class="label label-default">' + t('dictionary.inactive') + '</span>' : ''
-    refollow   = (user.respond_to?(:refollow) && user.refollow) ? '&nbsp;<span class="label label-info">' + t('dictionary.refollow') + '</span>' : ''
-    refollowed = (user.respond_to?(:refollowed) && user.refollowed) ? '&nbsp;<span class="label label-info">' + t('dictionary.refollowed') + '</span>' : ''
-    "#{suspended}#{blocked}#{inactive}#{refollow}#{refollowed}".html_safe
-  end
-
   def normal_icon_url(user)
     user.profile_image_url_https.to_s
   end

@@ -50,11 +50,6 @@ module TwitterDB
       status_created_at && status_created_at < 2.weeks.ago
     end
 
-    # Used in view
-    def inactive
-      inactive?
-    end
-
     def to_param
       screen_name
     end

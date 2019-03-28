@@ -14,9 +14,6 @@ ja:
       search_first: "Twitter ID 1"
       search_second: "Twitter ID 2"
       search: "検索"
-      do_search: "検索する"
-      do_follow: "フォローする"
-      following: "フォロー中"
       empty_html: '結果は 0 件です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。<br><br>フォロー・フォロワーが多すぎる場合は、<a href="%{sign_in_path}">ログイン</a> しないと検索できないことがあります。その場合は、<a href="%{sign_in_path}">ログイン</a> してから再度検索してみてください。'
       top: "トップ"
       top_page: "トップページ"
@@ -28,7 +25,6 @@ ja:
       popular: "人気の分析"
       related_pages: "関連ページ"
       related_analysis: "%{user} の他の分析"
-      see_on_twitter: "ツイッターで見る"
       analyzing: "分析中"
     sidebar:
       update_request: "更新リクエスト"
@@ -371,6 +367,19 @@ ja:
     sign_in:
       signed_in: "既にログイン済みです。"
   twitter:
+    user:
+      search: "検索する"
+    profile:
+      see_on_twitter: "ツイッターで見る"
+      labels:
+        suspended: "垢消し"
+        blocked: "ブロック中"
+        inactive: "非アクティブ"
+        refollow: "再フォロー"
+        refollowed: "再フォロワー"
+    follow_button:
+      do_follow: "フォローする"
+      following: "フォロー中"
     create_follow_modal:
       message_html: '@<span class="screen-name"></span> さんをフォローしますか？ 数が多い場合は凍結されないようゆっくりフォローしていきます。'
       dont_confirm: '次からは確認しない'
@@ -916,11 +925,6 @@ ja:
 
   dictionary:
     official_account: "公式アカウント"
-    suspended: "垢消し"
-    blocked: "ブロック中"
-    inactive: "非アクティブ"
-    refollow: "再フォロー"
-    refollowed: "再フォロワー"
     link_to_support: "お問い合わせページ"
     support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
     sign_in: "ログイン"
