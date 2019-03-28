@@ -11,8 +11,10 @@ module Concerns::ExceptionHandler
   def twitter_exception_messages(ex, screen_name)
     if ex.message.start_with?('You have been blocked')
       blocked_message(screen_name)
-    elsif ex.message == 'Not authorized.' && confirm_forbidden_or_not?(screen_name)
+    elsif ex.message == 'Not authorized.' && error_reason_is_forbidden?(screen_name)
       forbidden_message(screen_name)
+    elsif ex.message == 'Not authorized.' && error_reason_is_protected?(screen_name)
+      protected_message(screen_name)
     else
       case ex
       when Twitter::Error::NotFound then not_found_message(screen_name)
@@ -24,11 +26,17 @@ module Concerns::ExceptionHandler
     end
   end
 
-  def confirm_forbidden_or_not?(screen_name)
+  def error_reason_is_forbidden?(screen_name)
     request_context_client.user(screen_name)
     false
   rescue Twitter::Error::Forbidden => e
     true
+  rescue => e
+    false
+  end
+
+  def error_reason_is_protected?(screen_name)
+    request_context_client.user(screen_name)[:protected]
   rescue => e
     false
   end
