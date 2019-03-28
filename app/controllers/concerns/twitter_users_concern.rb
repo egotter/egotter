@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterUsers
+module Concerns::TwitterUsersConcern
   extend ActiveSupport::Concern
 
   included do
