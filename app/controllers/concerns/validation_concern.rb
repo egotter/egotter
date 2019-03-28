@@ -99,8 +99,20 @@ module Concerns::ValidationConcern
   def not_found_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
 
-    if NotFoundUser.exists?(screen_name: screen_name) && !can_see_forbidden_or_not_found?(screen_name: screen_name)
-      respond_with_error(:bad_request, not_found_message(screen_name))
+    if NotFoundUser.exists?(screen_name: screen_name) || not_found_user?(screen_name)
+      redirect_to not_found_path(screen_name: screen_name)
+      true
+    else
+      false
+    end
+  end
+
+  def not_found_user?(screen_name)
+    request_context_client.user(screen_name)
+    false
+  rescue => e
+    if e.message == 'User not found.'
+      CreateNotFoundUserWorker.perform_async(screen_name)
       true
     else
       false
