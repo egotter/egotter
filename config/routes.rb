@@ -114,6 +114,8 @@ Rails.application.routes.draw do
 
   resources :timelines, only: %i(show), param: :screen_name
 
+  resources :not_found, only: %i(show), param: :screen_name
+
   get 'follow', to: 'follow#show'
   post 'follow', to: 'follow#create'
 

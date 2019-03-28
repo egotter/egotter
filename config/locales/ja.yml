@@ -798,6 +798,8 @@ ja:
       friends_count_increased: '%{user} のフォローが、%{before} から %{after} に増えました。'
       friends_count_decreased: '%{user} のフォローが、%{before} から %{after} に減りました。'
       update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
+  not_found:
+    index:
   tokimeki_unfollow:
     new:
       title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'

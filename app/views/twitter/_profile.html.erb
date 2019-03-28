@@ -85,7 +85,7 @@
     </div>
     <div class="follow-back-rate col-xs-3">
       <div>
-        <span><b><%= number_to_percentage(twitter_user.follow_back_rate * 100, precision: 1) %></b></span>
+        <span><b><%= number_to_percentage(twitter_user.follow_back_rate * 100, precision: 1) rescue '0.0%' %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
       </div>
