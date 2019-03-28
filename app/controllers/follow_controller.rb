@@ -46,7 +46,7 @@ class FollowController < ApplicationController
   private
 
   def append_egotter_follower(request)
-    if request.uid == User::EGOTTER_UID && !EgotterFollower.exists?(uid: request.uid)
+    if request.uid == User::EGOTTER_UID && !EgotterFollower.exists?(uid: current_user.uid)
       EgotterFollower.create!(uid: current_user.uid, screen_name: current_user.screen_name)
     end
   rescue => e
