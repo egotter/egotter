@@ -19,6 +19,8 @@ module AdsenseHelper
   USER_HOME                  = 8784049177
   USER_TIMELINES_TOP         = 8209334100
   USER_TIMELINES_BOTTOM      = 6513765598
+  USER_NOT_FOUND             = 5795444240
+  USER_FORBIDDEN             = 6885643561
   USER_BLOCKING_OR_BLOCKED   = 2652565728
   USER_CLOSE_FRIENDS         = 9760899557
   USER_CLUSTERS              = 3003919518
@@ -56,6 +58,8 @@ module AdsenseHelper
         when [true,  'home',                  'new',  :top]    then USER_HOME
         when [true,  'timelines',             'show', :top]    then USER_TIMELINES_TOP
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM
+        when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND
+        when [true,  'forbidden',             'show', :top]    then USER_FORBIDDEN
         when [true,  'waiting',               'new',  :top]    then USER_WAITING
         when [true,  'blocking_or_blocked',   'list', :slit]   then USER_BLOCKING_OR_BLOCKED
         when [true,  'blocking_or_blocked',   'show', :bottom] then USER_BLOCKING_OR_BLOCKED
@@ -119,6 +123,7 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :bottom] then USER_USAGE_STATS
         when [true,  'usage_stats',           'show', :middle] then USER_USAGE_STATS
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS
+
         when [false, 'home',                  'new',  :top]    then GUEST_HOME
         when [false, 'timelines',             'show', :top]    then GUEST_TIMELINES_TOP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
@@ -152,6 +157,8 @@ module AdsenseHelper
   GUEST_TIMELINES_TOP_RESP        = 6629315666
   GUEST_TIMELINES_MIDDLE_RESP     = 6046113305
   GUEST_TIMELINES_BOTTOM_RESP     = 1185417297
+  GUEST_NOT_FOUND_RESP            = 5567503094
+  GUEST_FORBIDDEN_RESP            = 2749768065
 
   GUEST_AUDIENCE_INSIGHTS_RESP    = 3303210523
   GUEST_BLOCKING_OR_BLOCKED_RESP  = 8863848337
@@ -190,6 +197,8 @@ module AdsenseHelper
   USER_TIMELINES_TOP_RESP         = 3564168622
   USER_TIMELINES_MIDDLE_RESP      = 4253330115
   USER_TIMELINES_BOTTOM_RESP      = 9147011257
+  USER_NOT_FOUND_RESP             = 2206842589
+  USER_FORBIDDEN_RESP             = 4641434232
   USER_AUDIENCE_INSIGHTS_RESP     = 8987971417
   USER_BLOCKING_OR_BLOCKED_RESP   = 4128464773
   USER_CLOSE_FRIENDS_RESP         = 1523672104
@@ -223,6 +232,8 @@ module AdsenseHelper
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM_RESP
         when [true,  'timelines',             'show', :middle] then USER_TIMELINES_MIDDLE_RESP
         when [true,  'timelines',             'show', :top]    then USER_TIMELINES_TOP_RESP
+        when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND_RESP
+        when [true,  'forbidden',             'show', :top]    then USER_FORBIDDEN_RESP
         when [true,  'waiting',               'new',  :top]    then USER_WAITING_RESP
         when [true,  'audience_insights',     'show', :bottom] then USER_AUDIENCE_INSIGHTS_RESP
         when [true,  'blocking_or_blocked',   'list', :slit]   then USER_BLOCKING_OR_BLOCKED_RESP
@@ -314,6 +325,8 @@ module AdsenseHelper
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM_RESP
         when [false, 'timelines',             'show', :middle] then GUEST_TIMELINES_MIDDLE_RESP
         when [false, 'timelines',             'show', :top]    then GUEST_TIMELINES_TOP_RESP
+        when [false, 'not_found',             'show', :top]    then GUEST_NOT_FOUND_RESP
+        when [false, 'forbidden',             'show', :top]    then GUEST_FORBIDDEN_RESP
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING_RESP
         when [false, 'audience_insights',     'show', :bottom] then GUEST_AUDIENCE_INSIGHTS_RESP
         when [false, 'blocking_or_blocked',   'list', :slit]   then GUEST_BLOCKING_OR_BLOCKED_RESP
