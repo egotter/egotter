@@ -108,16 +108,19 @@ module Concerns::Validation
   end
 
   def blocked_search?(twitter_user)
-    return false unless user_signed_in?
-    request_context_client.user_timeline(twitter_user.uid, count: 1)
-    false
+    if user_signed_in?
+      request_context_client.user_timeline(twitter_user.uid, count: 1)
+      false
+    else
+      false
+    end
   rescue => e
     if e.message.start_with?('You have been blocked')
       respond_with_error(:bad_request, blocked_message(twitter_user.screen_name))
       true
     else
       # This is a special case because it call redirect_to and returns false.
-      respond_with_error(:bad_request, twitter_exception_handler(e, twitter_user.screen_name))
+      respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
       false
     end
   end
@@ -144,7 +147,7 @@ module Concerns::Validation
 
     false
   rescue => e
-    respond_with_error(:bad_request, twitter_exception_handler(e, twitter_user.screen_name))
+    respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false
   end
 
@@ -172,7 +175,7 @@ module Concerns::Validation
     true
   rescue => e
     # This is a special case because it call redirect_to and returns false.
-    respond_with_error(:bad_request, twitter_exception_handler(e, twitter_user.screen_name))
+    respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false
   end
 

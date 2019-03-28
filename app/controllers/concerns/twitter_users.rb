@@ -31,7 +31,7 @@ module Concerns::TwitterUsers
     if can_see_forbidden_or_not_found?(screen_name: screen_name)
       TwitterUser.order(created_at: :desc).find_by(screen_name: screen_name)
     else
-      respond_with_error(:bad_request, twitter_exception_handler(e, screen_name))
+      respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
     end
   end
 
