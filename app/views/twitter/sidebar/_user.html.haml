@@ -1,16 +1,17 @@
 - via = 'sidebar'
+- user = TwitterUserDecorator.new(user)
 .media
   .media-inner
     .media-left
       = search_link user.screen_name, via do
         = normal_icon_img(user, class: 'media-object')
     .media-body.text-left
-      %h4.media-heading= user_name(user)
+      %h4.media-heading= user.name_with_icon
       %span.screen-name= search_link user.screen_name, via
     .media-right
       .buttons
         = search_link user.screen_name, via do
           %button.btn.btn-info{type: 'button'}
             %span.glyphicon.glyphicon-search
-    .reason.text-left.text-muted= "#{reason}#{user_label(user)}".html_safe
+    .reason.text-left.text-muted= "#{reason}#{user.status_labels}".html_safe
     .description= user.description.truncate(40)

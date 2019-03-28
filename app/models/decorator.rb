@@ -134,7 +134,7 @@ class Decorator
         blocked: blocking_uids.include?(user.uid),
         refollow: friend_uids.include?(user.uid),
         refollowed: follower_uids.include?(user.uid),
-        inactive: user.inactive
+        inactive: user.inactive?
     }
   end
 

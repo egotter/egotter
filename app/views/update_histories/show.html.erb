@@ -13,8 +13,8 @@
   <%= render(partial: 'adsense/side_by_side', locals: {vertical: :top}) %>
 
   <div class="summary">
-    <div><%= '初回更新' %>&nbsp;<%= l(@update_histories.created_at.in_time_zone('Tokyo'), format: :short) %></div>
-    <div><%= '最終更新' %>&nbsp;<%= l(@update_histories.updated_at.in_time_zone('Tokyo'), format: :short) %></div>
+    <div><%= '初回更新' %>&nbsp;<%= l(UpdateHistoriesDecorator.new(@update_histories).created_at, format: :short) %></div>
+    <div><%= '最終更新' %>&nbsp;<%= l(UpdateHistoriesDecorator.new(@update_histories).updated_at, format: :short) %></div>
     <div><%= '更新回数' %>&nbsp;<%= @update_histories.size %></div>
   </div>
 

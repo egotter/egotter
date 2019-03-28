@@ -86,15 +86,6 @@ module Concerns::TwitterUser::RawAttrs
     nil
   end
 
-  def inactive?
-    status&.created_at && Time.parse(status.created_at) < 2.weeks.ago
-  end
-
-  # Used in view
-  def inactive
-    inactive?
-  end
-
   def load_raw_attrs_text_from_s3!
     profile = S3::Profile.find_by(twitter_user_id: id)
     if profile.empty?

@@ -1,9 +1,7 @@
-<% if user.persisted? && user.respond_to?(:twitter_db_user) && user&.twitter_db_user&.persisted? && user.updated_at <= user.twitter_db_user.updated_at %>
-  <% twitter_user = user %>
+<% if user.respond_to?(:persisted?) && user.persisted? && user.respond_to?(:twitter_db_user) && user&.twitter_db_user&.persisted? && user.updated_at <= user.twitter_db_user.updated_at %>
   <% user = user.twitter_db_user %>
-<% else %>
-  <% twitter_user = user %>
 <% end %>
+<% user = TwitterUserDecorator.new(user) %>
 
 <div class="profile-overview-container">
   <div class="profile-overview uid-<%= user.uid %>">
@@ -14,19 +12,19 @@
             <%= bigger_icon_img(user) %>
           <% end %>
           <div class="name">
-            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user_name(user)}".html_safe, timeline_path(user)) %>
-            <%= user_label(user) %>
+            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user.name_with_icon}".html_safe, timeline_path(user)) %>
+            <%= user.status_labels %>
           </div>
           <div class="twitter-link">
             <%= user_link(user.screen_name) do %>
-              <%= t('searches.common.see_on_twitter') %>&nbsp;<i class="fas fa-external-link-alt" aria-hidden="true"></i>
+              <%= t('twitter.profile.see_on_twitter') %>&nbsp;<i class="fas fa-external-link-alt" aria-hidden="true"></i>
             <% end %>
           </div>
 
-          <% if user.location.present? %>
+          <% if user.location? %>
             <div class="location visible-md-block visible-lg-block"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;<%= user.location %></div>
           <% end %>
-          <% if user.account_created_at.present? && !user.account_created_at.kind_of?(String) %>
+          <% if user.account_created_at? %>
             <div class="calendar visible-md-block visible-lg-block"><span class="glyphicon glyphicon-calendar"></span>&nbsp;<%= l(user.account_created_at) %></div>
           <% end %>
         </div>
@@ -40,10 +38,10 @@
     </div>
     <div class="vertical-spacing"></div>
 
-    <% if user.description.present? %>
+    <% if user.description? %>
       <div class="description text-center"><%= auto_link(user.description, html: {target: '_blank', rel: 'nofollow'}) %></div>
     <% end %>
-    <% if user.url.present? %>
+    <% if user.url? %>
       <div class="link text-center"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %></div>
     <% end %>
   </div>
@@ -51,11 +49,11 @@
 
 <style type="text/css">
   .profile-overview-container .uid-<%= user.uid %> {
-    <% if user.profile_banner_url.present? %>
+    <% if user.profile_banner_url? %>
       background-size: cover;
-      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= "#{user.profile_banner_url}/#{request.from_pc? ? 'web' : 'mobile'}_retina" %>');
+      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= "#{user.profile_banner_url_for(request)}" %>');
     <% else %>
-      background-color: <%= "##{user.profile_link_color}" %>;
+      background-color: <%= user.profile_link_color_code %>;
     <% end %>
   }
 </style>
@@ -64,28 +62,28 @@
   <div class="row">
     <div class="tweets col-xs-3">
       <%= link_to status_path(user) do %>
-<!--        <span><b><%#= user.statuses_count.to_i.to_s(:delimited) %></b></span>-->
+<!--        <span><b><%#= user.delimited_statuses_count %></b></span>-->
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:statuses) %></span>
       <% end %>
     </div>
     <div class="friends col-xs-3">
       <%= link_to friend_path(user) do %>
-        <span><b><%= user.friends_count.to_i.to_s(:delimited) %></b></span>
+        <span><b><%= user.delimited_friends_count %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:friends) %></span>
       <% end %>
     </div>
     <div class="followers col-xs-3">
       <%= link_to follower_path(user) do %>
-        <span><b><%= user.followers_count.to_i.to_s(:delimited) %></b></span>
+        <span><b><%= user.delimited_followers_count %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:followers) %></span>
       <% end %>
     </div>
     <div class="follow-back-rate col-xs-3">
       <div>
-        <span><b><%= number_to_percentage(twitter_user.follow_back_rate * 100, precision: 1) rescue '0.0%' %></b></span>
+        <span><b><%= user.percent_follow_back_rate %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
       </div>

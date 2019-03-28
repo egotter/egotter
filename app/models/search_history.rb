@@ -29,26 +29,6 @@ class SearchHistory < ApplicationRecord
     screen_name
   end
 
-  delegate(
-    *%i(
-      uid
-      screen_name
-      name
-      friends_count
-      followers_count
-      statuses_count
-      description
-      profile_image_url_https
-      protected
-      verified
-      suspended
-      inactive
-      status
-    ),
-    to: :twitter_db_user,
-    allow_nil: true
-  )
-
   def search_logs(duration: 30.minutes)
     SearchLog.where(created_at: (created_at - duration)..created_at).
         where(session_id: session_id).
