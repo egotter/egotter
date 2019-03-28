@@ -3,8 +3,8 @@ class CreateTweetsWorker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def perform(keyword)
-    json = Bot.api_client.search(keyword, count: 10).take(5).to_json
-    ::Util::TweetsCache.set(keyword, json)
+    tweets = Bot.api_client.search(keyword, count: 10).take(5)
+    ::Util::TweetsCache.set(keyword, tweets.to_json)
   rescue => e
     logger.warn "#{self.class}: #{e.class} #{e.message} #{keyword}"
   end

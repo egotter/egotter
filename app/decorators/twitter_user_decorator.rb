@@ -47,7 +47,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def suspended?
-    suspended
+    object.suspended
   end
 
   def blocked?

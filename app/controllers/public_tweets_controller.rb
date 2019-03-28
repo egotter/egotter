@@ -1,14 +1,15 @@
 class PublicTweetsController < ApplicationController
   def load
-    html = render_to_string partial: 'twitter/tweet', collection: tweets_for('#egotter'), cached: true
+    keyword = 'egotter OR えごったー OR #egotter'
+    html = render_to_string partial: 'twitter/tweet', collection: fetch_tweets(keyword), cached: true
     render json: {html: html}
   end
 
   private
 
-  def tweets_for(keyword)
+  def fetch_tweets(keyword)
     if ::Util::TweetsCache.exists?(keyword)
-      JSON.parse(::Util::TweetsCache.get(keyword)).map { |tweet| Hashie::Mash.new(tweet) }
+      JSON.parse(::Util::TweetsCache.get(keyword)).map {|tweet| Hashie::Mash.new(tweet)}
     else
       CreateTweetsWorker.perform_async(keyword)
       []
