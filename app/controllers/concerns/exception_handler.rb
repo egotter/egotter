@@ -15,6 +15,8 @@ module Concerns::ExceptionHandler
       forbidden_message(screen_name)
     elsif ex.message == 'Not authorized.' && error_reason_is_protected?(screen_name)
       protected_message(screen_name)
+    elsif ex.message == 'Not authorized.' && error_reason_is_not_found?(screen_name)
+      not_found_message(screen_name)
     else
       case ex
       when Twitter::Error::NotFound then not_found_message(screen_name)
@@ -39,6 +41,13 @@ module Concerns::ExceptionHandler
     request_context_client.user(screen_name)[:protected]
   rescue => e
     false
+  end
+
+  def error_reason_is_not_found?(screen_name)
+    request_context_client.user(screen_name)
+    false
+  rescue => e
+    e.class == Twitter::Error::NotFound && e.message == 'User not found.'
   end
 
   def not_found_message(screen_name)
