@@ -25,7 +25,7 @@ class ForbiddenController < ApplicationController
     if ForbiddenUser.exists?(screen_name: params[:screen_name]) || forbidden_user?
       true
     else
-      # redirect_to timeline_path(screen_name: params[:screen_name])
+      redirect_to timeline_path(screen_name: params[:screen_name])
       false
     end
   end

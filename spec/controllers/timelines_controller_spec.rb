@@ -20,7 +20,7 @@ RSpec.describe TimelinesController, type: :controller do
         allow(controller).to receive(:valid_screen_name?).with(no_args).and_return(true)
       end
       it do
-        is_expected.to redirect_to root_path
+        is_expected.to redirect_to not_found_path(screen_name: screen_name)
       end
     end
 
@@ -31,18 +31,7 @@ RSpec.describe TimelinesController, type: :controller do
         allow(controller).to receive(:not_found_screen_name?).with(no_args).and_return(false)
       end
       it do
-        is_expected.to redirect_to root_path
-      end
-    end
-
-    context 'With forbidden screen_name' do
-      before do
-        ForbiddenUser.create!(screen_name: screen_name)
-        allow(controller).to receive(:valid_screen_name?).with(no_args).and_return(true)
-        allow(controller).to receive(:not_found_screen_name?).with(no_args).and_return(false)
-      end
-      it do
-        is_expected.to redirect_to root_path
+        is_expected.to redirect_to forbidden_path(screen_name: screen_name)
       end
     end
 
