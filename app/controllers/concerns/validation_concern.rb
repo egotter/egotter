@@ -88,8 +88,20 @@ module Concerns::ValidationConcern
   def forbidden_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
 
-    if ForbiddenUser.exists?(screen_name: screen_name) && !can_see_forbidden_or_not_found?(screen_name: screen_name)
-      respond_with_error(:bad_request, forbidden_message(screen_name))
+    if ForbiddenUser.exists?(screen_name: screen_name) || forbidden_user?(screen_name)
+      redirect_to forbidden_path(screen_name: screen_name)
+      true
+    else
+      false
+    end
+  end
+
+  def forbidden_user?(screen_name)
+    request_context_client.user(screen_name)
+    false
+  rescue => e
+    if e.message == 'User has been suspended.'
+      CreateForbiddenUserWorker.perform_async(screen_name)
       true
     else
       false
