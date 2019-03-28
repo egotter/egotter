@@ -2,7 +2,7 @@ require 'active_support/concern'
 
 module Concerns::SearchByUidConcern
   extend ActiveSupport::Concern
-  include Concerns::Validation
+  include Concerns::ValidationConcern
 
   included do
     before_action(only: %i(show all)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }

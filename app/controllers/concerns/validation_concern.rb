@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::Validation
+module Concerns::ValidationConcern
   extend ActiveSupport::Concern
   include Concerns::ExceptionHandler
   include CrawlersHelper

@@ -4,7 +4,7 @@ class ApplicationController < ActionController::Base
   include Concerns::TwitterUsersConcern
   include CrawlersHelper
   include SessionsHelper
-  include Concerns::Validation
+  include Concerns::ValidationConcern
   include Concerns::Logging
 
   # Avoid `uninitialized constant`

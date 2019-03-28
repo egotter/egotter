@@ -1,8 +1,8 @@
 require 'rails_helper'
 
-describe Concerns::Validation, type: :controller do
+describe Concerns::ValidationConcern, type: :controller do
   controller ApplicationController do
-    include Concerns::Validation
+    include Concerns::ValidationConcern
   end
 
   describe '#require_login!' do
