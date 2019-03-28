@@ -8,14 +8,29 @@ module Concerns::ExceptionHandler
 
   end
 
-  def twitter_exception_handler(ex, screen_name)
-    case ex
-    when Twitter::Error::NotFound then not_found_message(screen_name)
-    when Twitter::Error::Forbidden then forbidden_message(screen_name)
-    when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
-    when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
-    else alert_message(ex)
+  def twitter_exception_messages(ex, screen_name)
+    if ex.message.start_with?('You have been blocked')
+      blocked_message(screen_name)
+    elsif ex.message == 'Not authorized.' && confirm_forbidden_or_not?(screen_name)
+      forbidden_message(screen_name)
+    else
+      case ex
+      when Twitter::Error::NotFound then not_found_message(screen_name)
+      when Twitter::Error::Forbidden then forbidden_message(screen_name)
+      when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
+      when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
+      else unknown_alert_message(ex)
+      end
     end
+  end
+
+  def confirm_forbidden_or_not?(screen_name)
+    request_context_client.user(screen_name)
+    false
+  rescue Twitter::Error::Forbidden => e
+    true
+  rescue => e
+    false
   end
 
   def not_found_message(screen_name)
@@ -70,7 +85,7 @@ module Concerns::ExceptionHandler
     end
   end
 
-  def alert_message(ex)
+  def unknown_alert_message(ex)
     reason = (ex.class.name.demodulize.underscore rescue 'exception')
     t('before_sign_in.something_wrong_html', url: kick_out_error_path(reason))
   end
