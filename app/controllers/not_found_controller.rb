@@ -12,7 +12,9 @@ class NotFoundController < ApplicationController
 
     flash.now[:alert] = not_found_message(@screen_name)
 
-    unless @user
+    if @user
+      render status: :not_found
+    else
       render 'really_not_found', status: :not_found
     end
   end

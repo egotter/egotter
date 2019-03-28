@@ -800,6 +800,8 @@ ja:
       update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
   not_found:
     index:
+  forbidden:
+    index:
   tokimeki_unfollow:
     new:
       title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
