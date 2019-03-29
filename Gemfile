@@ -70,6 +70,7 @@ gem 'aws-sdk-cloudwatch', require: false
 gem 'aws-sdk-dynamodb'
 gem 'aws-sdk-s3'
 gem 'stripe'
+gem 'ahoy_matey'
 
 group :development, :production do
   gem 'blazer'

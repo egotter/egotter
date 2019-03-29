@@ -24,6 +24,8 @@
 #
 
 class Visitor < ApplicationRecord
+  # visitable :ahoy_visit
+
   include Concerns::Visitor::Active
   include Concerns::Analytics
 

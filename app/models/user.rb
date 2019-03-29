@@ -31,6 +31,8 @@
 class User < ApplicationRecord
   devise :rememberable, :omniauthable
 
+  has_many :visits, class_name: 'Ahoy::Visit'
+
   include Concerns::User::ApiAccess
   include Concerns::TwitterUser::Inflections
   include Concerns::Visitor::Active
