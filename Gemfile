@@ -11,8 +11,8 @@ gem 'dotenv-rails'
 gem 'rails', '~> 5.2'
 # Use mysql as the database for Active Record
 gem 'mysql2', '>= 0.3.18', '< 0.5'
-# Use Unicorn as the app server
-gem 'unicorn'
+# Use Puma as the app server
+gem 'puma'
 # Use SCSS for stylesheets
 gem 'sass-rails', '~> 5.0'
 # Use Uglifier as compressor for JavaScript assets
@@ -51,7 +51,6 @@ gem 'hiredis'
 gem 'newrelic_rpm'
 gem 'kaminari'
 gem 'httparty'
-gem 'unicorn-worker-killer'
 gem 'rack-timeout'
 gem 'meta-tags'
 gem 'mecab', require: false
@@ -90,7 +89,6 @@ group :development, :test do
   gem 'whenever', :require => false
   gem 'rspec-rails'
   gem 'factory_bot_rails'
-  gem 'puma'
 end
 
 group :development do
