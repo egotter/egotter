@@ -74,8 +74,12 @@ class PromptReportTask
     @active_ids ||= User.active(14).where(id: authorized_ids).pluck(:id)
   end
 
+  def not_blocked_ids
+    @not_blocked_ids ||= User.where(id: active_ids).where.not(uid: BlockedUser.pluck(:uid)).pluck(:id)
+  end
+
   def can_send_ids
-    @can_send_ids ||= User.can_send_dm.where(id: active_ids).pluck(:id)
+    @can_send_ids ||= User.can_send_dm.where(id: not_blocked_ids).pluck(:id)
   end
 
   def ids_stats
@@ -83,6 +87,7 @@ class PromptReportTask
         user_ids: user_ids.size,
         authorized_ids: authorized_ids.size,
         active_ids: active_ids.size,
+        not_blocked_ids: not_blocked_ids.size,
         can_send_ids: can_send_ids.size
     }
   end
