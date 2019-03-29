@@ -39,7 +39,7 @@ class CreateAhoyVisitsAndEvents < ActiveRecord::Migration[5.2]
       # t.string :os_version
       # t.string :platform
 
-      t.timestamp :started_at
+      t.timestamp :started_at, null: false
 
       t.index :visit_token, unique: true
       t.index :started_at
@@ -51,7 +51,7 @@ class CreateAhoyVisitsAndEvents < ActiveRecord::Migration[5.2]
 
       t.string :name
       t.json :properties
-      t.timestamp :time
+      t.timestamp :time, null: false
 
       t.index [:name, :time]
       t.index :time

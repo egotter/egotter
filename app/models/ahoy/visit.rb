@@ -14,7 +14,7 @@
 #  browser          :string(191)
 #  os               :string(191)
 #  device_type      :string(191)
-#  started_at       :datetime
+#  started_at       :datetime         not null
 #
 # Indexes
 #

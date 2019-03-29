@@ -17,7 +17,7 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
     t.bigint "user_id"
     t.string "name"
     t.json "properties"
-    t.timestamp "time"
+    t.timestamp "time", null: false
     t.index ["name", "time"], name: "index_ahoy_events_on_name_and_time"
     t.index ["time"], name: "index_ahoy_events_on_time"
     t.index ["user_id"], name: "index_ahoy_events_on_user_id"
@@ -36,7 +36,7 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
     t.string "browser"
     t.string "os"
     t.string "device_type"
-    t.timestamp "started_at"
+    t.timestamp "started_at", null: false
     t.index ["started_at"], name: "index_ahoy_visits_on_started_at"
     t.index ["user_id"], name: "index_ahoy_visits_on_user_id"
     t.index ["visit_token"], name: "index_ahoy_visits_on_visit_token", unique: true

@@ -7,7 +7,7 @@
 #  user_id    :bigint(8)
 #  name       :string(191)
 #  properties :json
-#  time       :datetime
+#  time       :datetime         not null
 #
 # Indexes
 #
