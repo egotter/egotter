@@ -1,0 +1,96 @@
+#!/bin/sh
+
+# /etc/init.d/puma
+
+if [ -f /etc/init.d/functions ]; then
+  . /etc/init.d/functions
+fi
+
+if echo ' \c' | grep 'c' > /dev/null 2>&1; then
+  en='-n'
+  ec=''
+else
+  en=''
+  ec='\c'
+fi
+
+APP_ROOT="/home/ec2-user/egotter/"
+USER="ec2-user"
+RAILS_ENV="production"
+NAME=puma
+PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
+
+print_pid() {
+  cat ${PID_FILE}
+}
+
+print_command() {
+  ps -o command= -p $(print_pid)
+}
+
+start() {
+  cd $APP_ROOT
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && RAILS_ENV=$RAILS_ENV /usr/local/bin/bundle exec pumactl start"
+  echo ${en} "Starting $NAME: ${ec}"
+  success
+  echo
+}
+
+stop() {
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && RAILS_ENV=$RAILS_ENV /usr/local/bin/bundle exec pumactl stop"
+  echo ${en} "Stopping $NAME: ${ec}"
+  success
+  echo
+}
+
+restart() {
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && RAILS_ENV=$RAILS_ENV /usr/local/bin/bundle exec pumactl restart"
+  echo ${en} "Restarting $NAME: ${ec}"
+  success
+  echo
+}
+
+rh_status() {
+  [ -f ${PID_FILE} ] && print_command
+  status -p ${PID_FILE} ${NAME}
+}
+
+case "$1" in
+  start)
+          if [ -f ${PID_FILE} ]; then
+            rh_status
+            if checkpid $(print_pid); then
+              :
+            else
+              rm ${PID_FILE}
+              start
+            fi
+          else
+            start
+          fi
+          ;;
+  stop)
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+            stop
+          else
+            rh_status
+            [ -f ${PID_FILE} ] && rm ${PID_FILE}
+          fi
+          ;;
+  restart)
+          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+            restart
+          else
+            rh_status
+            [ -f ${PID_FILE} ] && rm ${PID_FILE}
+            start
+          fi
+          ;;
+  status)
+          rh_status
+          ;;
+  *)
+          echo "Usage: puma {start|stop|restart|status}" >&2
+          exit 2
+          ;;
+esac

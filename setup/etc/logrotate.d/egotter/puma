@@ -1,0 +1,15 @@
+/var/egotter/log/puma.log {
+  dateext
+  dateformat _%Y%m%d
+  daily
+  missingok
+  rotate 30
+  compress
+  delaycompress
+  notifempty
+  copytruncate
+
+  lastaction
+    kill -USR1 /var/egotter/tmp/pids/puma.pid
+  endscript
+}

@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# /etc/init.d/unicorn
-
 if [ -f /etc/init.d/functions ]; then
   . /etc/init.d/functions
 fi
@@ -18,7 +16,7 @@ APP_ROOT="/home/ec2-user/egotter/"
 USER="ec2-user"
 
 do_action() {
-  /etc/init.d/unicorn ${1} && \
+  /etc/init.d/puma ${1} && \
   /etc/init.d/sidekiq_delayed_create ${1} && \
   /etc/init.d/sidekiq_delay ${1} && \
   /etc/init.d/sidekiq ${1} && \
@@ -45,8 +43,8 @@ rh_status() {
   cd $APP_ROOT
 
   cmd1=":"
-  if ls ${APP_ROOT}/tmp/pids/unicorn.pid >/dev/null 2>&1; then
-    cmd1="ps x -o pid,command | grep unicorn | grep -v grep"
+  if ls ${APP_ROOT}/tmp/pids/puma.pid >/dev/null 2>&1; then
+    cmd1="ps x -o pid,command | grep puma | grep -v grep"
   fi
 
   cmd2=":"
