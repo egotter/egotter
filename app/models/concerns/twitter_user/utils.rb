@@ -26,6 +26,10 @@ module Concerns::TwitterUser::Utils
     scope :cache_ready, -> do
       where('created_at < ?', TwitterUser.cache_ready_interval.ago)
     end
+
+    scope :has_user, -> do
+      where('user_id != -1')
+    end
   end
 
   # Reason1: too many friends
@@ -89,9 +93,5 @@ module Concerns::TwitterUser::Utils
 
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
     Time.zone.now - send(attr) < seconds
-  end
-
-  def self_searching?
-    uid.to_i == user&.uid&.to_i
   end
 end

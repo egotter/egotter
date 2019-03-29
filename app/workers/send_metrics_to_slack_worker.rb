@@ -44,10 +44,11 @@ class SendMetricsToSlackWorker
   def send_table_metrics
     SlackClient.send_message(__method__, channel: SlackClient::TABLE_MONITORING)
 
-    condition = 1.hour.ago..Time.zone.now
+    condition_value = 1.hour.ago..Time.zone.now
 
     [
         [User, Visitor],
+        [Ahoy::Visit, Ahoy::Event],
         [SearchLog, SearchErrorLog],
         SignInLog,
         TwitterUser,
@@ -65,7 +66,15 @@ class SendMetricsToSlackWorker
       klasses = [klasses] unless klasses.is_a?(Array)
       stats =
           klasses.each_with_object(Hash.new(0)) do |klass, memo|
-            memo[klass.to_s] = klass.where(created_at: condition).size
+            condition =
+                if klass == Ahoy::Visit
+                  {started_at: condition_value}
+                elsif klass == Ahoy::Event
+                  {time: condition_value}
+                else
+                  {created_at: condition_value}
+                end
+            memo[klass.to_s] = klass.where(condition).size
           end
 
       stats = stats.sort_by {|k, _| k}.to_h
@@ -74,20 +83,41 @@ class SendMetricsToSlackWorker
   end
 
   def send_user_metrics
-    SlackClient.send_message(__method__)
+    SlackClient.send_message(__method__, channel: SlackClient::USERS_MONITORING)
 
     stats = {
+        creation: User.where(created_at: 1.hour.ago..Time.zone.now).size,
         first_access: User.where(first_access_at: 1.hour.ago..Time.zone.now).size,
         last_access: User.where(last_access_at: 1.hour.ago..Time.zone.now).size
     }
 
-    SlackClient.send_message(SlackClient.format(stats))
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::USERS_MONITORING)
+
+    logs = SignInLog.where(created_at: 1.hour.ago..Time.zone.now, context: 'create')
+
+    stats =
+        logs.each_with_object(Hash.new(0)).each do |log, memo|
+          memo[log.via] += 1
+        end
+
+    stats = stats.sort_by {|_, v| -v}.to_h
+
+    SlackClient.send_message("creation details", channel: SlackClient::USERS_MONITORING)
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::USERS_MONITORING)
   end
 
   def send_twitter_user_metrics
-    SlackClient.send_message(__method__)
+    SlackClient.send_message(__method__, channel: SlackClient::TWITTER_USERS_MONITORING)
 
     users = TwitterUser.cache_ready.where(created_at: 1.hour.ago..Time.zone.now)
+
+    stats = {
+        size: users.size,
+        creation_completed: users.creation_completed.size,
+        has_user: users.has_user.size,
+    }
+
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::TWITTER_USERS_MONITORING)
 
     friends_count = []
     followers_count = []
@@ -103,8 +133,6 @@ class SendMetricsToSlackWorker
     size = users.size
 
     stats = {
-        size: size,
-        creation_completed: users.creation_completed.size,
         friends_count: {
             avg: sprintf("%.1f", divide(friends_count.sum, size)),
             min: friends_count.min,
@@ -127,14 +155,14 @@ class SendMetricsToSlackWorker
         }
     }
 
-    SlackClient.send_message(SlackClient.format(stats))
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::TWITTER_USERS_MONITORING)
   end
 
   def send_google_analytics_metrics
-    SlackClient.send_message(__method__)
+    SlackClient.send_message(__method__, channel: SlackClient::GA_MONITORING)
 
     stats = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
-    SlackClient.send_message(SlackClient.format(stats))
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::GA_MONITORING)
   end
 
   def send_prompt_report_metrics
