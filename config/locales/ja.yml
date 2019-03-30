@@ -177,10 +177,12 @@ ja:
       short_title: "えごったー更新履歴"
       description: "%{user} のえごったー更新履歴を表示します。"
   search_histories:
-    index:
+    search_modal:
       title: "検索履歴"
-    remaining_count_is_html: '残りの検索回数は %{count} 回です。'
-    increase_count_html: '<a href="%{url}">ログインして増やす</a>'
+      remaining_count_is_html: '残りの検索回数は %{count} 回です。'
+      sign_in_html: '<a href="%{url}" class="btn btn-default btn-sm">ログインして増やす</a>'
+      tweet_html: '<a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
+      purchase_html: '<a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>'
   notifications:
     title: "通知"
     index:
@@ -268,7 +270,6 @@ ja:
   pricing:
     new:
       plans: "料金プラン"
-      plans_on_search_html: '<a href="%{url}">購入して増やす</a>'
       xxx_plan: 'えごったー %{name} プラン'
       names:
         key: "プラン名"
