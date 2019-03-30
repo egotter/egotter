@@ -6,6 +6,7 @@ class SearchesController < ApplicationController
   before_action { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
   # You must call blocked_search? after you call authorized_search?
   before_action { authorized_search?(@twitter_user) && !blocked_search?(@twitter_user) }
+  before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
   before_action do
     push_referer
@@ -28,11 +29,9 @@ class SearchesController < ApplicationController
     if TwitterUser.exists?(uid: uid)
       redirect_to redirect_path
     else
-      unless too_many_searches?(@twitter_user) || too_many_requests?(@twitter_user) || performed?
-        save_twitter_user_to_cache(uid, screen_name, @twitter_user.raw_attrs_text)
-        jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
-        redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid)
-      end
+      save_twitter_user_to_cache(uid, screen_name, @twitter_user.raw_attrs_text)
+      jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
+      redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid)
     end
   end
 end
