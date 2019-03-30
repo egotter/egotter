@@ -237,9 +237,17 @@ class SendMetricsToSlackWorker
   end
 
   def send_search_histories_metrics
-    SlackClient.send_message(__method__)
+    SlackClient.send_message(__method__, channel: SlackClient::SEARCH_HISTRIES_MONITORING)
 
     histories = SearchHistory.where(created_at: 1.hour.ago..Time.zone.now)
+
+    stats = {
+        size: histories.size,
+        unique_uid: histories.select('distinct uid').count,
+        unique_user_id: histories.select('distinct user_id').count,
+    }
+
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SEARCH_HISTRIES_MONITORING)
 
     stats =
         histories.each_with_object(Hash.new(0)).each do |his, memo|
@@ -247,7 +255,7 @@ class SendMetricsToSlackWorker
         end
 
     stats = stats.sort_by {|_, v| -v}.to_h
-    SlackClient.send_message(SlackClient.format(stats))
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SEARCH_HISTRIES_MONITORING)
   end
 
   def send_visitors_metrics
