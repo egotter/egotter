@@ -23,10 +23,6 @@ class CreateSearchLogs < ActiveRecord::Migration[4.2]
       t.string  :referral,    null: false, default: ''
       t.string  :channel,     null: false, default: ''
 
-      t.boolean :first_time,  null: false, default: false
-      t.boolean :landing,     null: false, default: false
-      t.boolean :bouncing,    null: false, default: false
-      t.boolean :exiting,     null: false, default: false
       t.string  :medium,      null: false, default: ''
       t.string  :ab_test,     null: false, default: ''
 

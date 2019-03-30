@@ -753,10 +753,6 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
     t.string "referer", default: "", null: false
     t.string "referral", default: "", null: false
     t.string "channel", default: "", null: false
-    t.boolean "first_time", default: false, null: false
-    t.boolean "landing", default: false, null: false
-    t.boolean "bouncing", default: false, null: false
-    t.boolean "exiting", default: false, null: false
     t.string "medium", default: "", null: false
     t.string "ab_test", default: "", null: false
     t.datetime "created_at", null: false

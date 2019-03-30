@@ -39,8 +39,6 @@ module Concerns::Logging
       referer:     truncated_referer,
       referral:    referral,
       channel:     find_channel(referral),
-      first_time:  false,
-      landing:     false,
       bouncing:    false,
       exiting:     false,
       medium:      params[:medium] ? params[:medium] : '',

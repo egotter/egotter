@@ -4,7 +4,6 @@ class UpdateSearchLogWorker
 
   def perform(search_log_id)
     log = SearchLog.find(search_log_id)
-    log.assign_attributes(landing: landing_page?(log), first_time: first_time_session?(log))
     log.save! if log.changed?
 
     reassign_channel(log)
@@ -53,15 +52,6 @@ class UpdateSearchLogWorker
 
   rescue => e
     logger.warn "#{e.class} #{e.message} #{log.inspect}"
-  end
-
-  def landing_page?(log)
-    !log.referer.start_with?('https://egotter.com') &&
-        !SearchLog.exists?(session_id: log.session_id, created_at: (log.created_at - 30.minutes)..log.created_at)
-  end
-
-  def first_time_session?(log)
-    !SearchLog.exists?(session_id: log.session_id)
   end
 
   def reassign_channel(log)
