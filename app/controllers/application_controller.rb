@@ -167,7 +167,7 @@ class ApplicationController < ActionController::Base
     render template: 'home/new', formats: %i(html), status: 500
   end
 
-  def respond_with_error(code, message)
+  def respond_with_error(code, message, ex = nil)
     location = (caller[0][/`([^']*)'/, 1] rescue '')
 
     if request.xhr?
@@ -176,6 +176,6 @@ class ApplicationController < ActionController::Base
       redirect_to root_path_for(controller: controller_name), alert: message
     end
 
-    create_search_error_log(location, message)
+    create_search_error_log(location, message, ex)
   end
 end

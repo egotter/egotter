@@ -63,9 +63,12 @@ module Concerns::Logging
     logger.info e.backtrace.join("\n")
   end
 
-  def create_search_error_log(location, message)
+  def create_search_error_log(location, message, ex = nil)
     uid = @twitter_user&.uid || params[:uid] || -1
     screen_name = @twitter_user&.screen_name || params[:screen_name] || ''
+
+    message = ActionController::Base.helpers.strip_tags(message)
+    message += ex.message if ex
 
     attrs = {
         session_id:  fingerprint,
@@ -73,7 +76,7 @@ module Concerns::Logging
         uid:         uid,
         screen_name: screen_name,
         location:    location.to_s.truncate(180),
-        message:     ActionController::Base.helpers.strip_tags(message).truncate(180),
+        message:     message.truncate(180),
         controller:  controller_name,
         action:      action_name,
         method:      request.method,

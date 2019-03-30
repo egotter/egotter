@@ -138,7 +138,7 @@ module Concerns::ValidationConcern
       true
     else
       # This is a special case because it call redirect_to and returns false.
-      respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
+      respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name), e)
       false
     end
   end
