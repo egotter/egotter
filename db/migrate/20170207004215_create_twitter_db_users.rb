@@ -28,6 +28,7 @@ class CreateTwitterDbUsers < ActiveRecord::Migration[5.2]
       t.index :uid, unique: true
       t.index :screen_name
       t.index :created_at
+      t.index :updated_at
     end
   end
 end

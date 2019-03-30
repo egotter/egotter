@@ -997,6 +997,7 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
     t.index ["created_at"], name: "index_twitter_db_users_on_created_at"
     t.index ["screen_name"], name: "index_twitter_db_users_on_screen_name"
     t.index ["uid"], name: "index_twitter_db_users_on_uid", unique: true
+    t.index ["updated_at"], name: "index_twitter_db_users_on_updated_at"
   end
 
   create_table "twitter_users", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
