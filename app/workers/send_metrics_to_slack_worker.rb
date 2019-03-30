@@ -115,6 +115,8 @@ class SendMetricsToSlackWorker
         size: users.size,
         creation_completed: users.creation_completed.size,
         has_user: users.has_user.size,
+        unique_uid: users.select('distinct uid').count,
+        unique_user_id: users.select('distinct user_id').count,
     }
 
     SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::TWITTER_USERS_MONITORING)
