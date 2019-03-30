@@ -1,15 +1,18 @@
-/var/egotter/log/puma.log {
+/var/egotter/log/puma.log
+/var/egotter/log/production.log {
   dateext
   dateformat _%Y%m%d
   daily
   missingok
-  rotate 30
+  rotate 14
   compress
   delaycompress
   notifempty
-  copytruncate
-
-  lastaction
-    kill -USR1 /var/egotter/tmp/pids/puma.pid
-  endscript
+  sharedscripts
+    postrotate
+      [ -e /var/egotter/tmp/pids/puma.pid ] && kill -HUP `cat /var/egotter/tmp/pids/puma.pid` && kill -USR1 `cat /var/egotter/tmp/pids/puma.pid`
+    endscript
 }
+
+# kill -HUP reopen puma.log
+# kill -USR1 reopen production.log

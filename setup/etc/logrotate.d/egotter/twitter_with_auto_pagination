@@ -3,7 +3,7 @@
   dateformat _%Y%m%d
   daily
   missingok
-  rotate 30
+  rotate 14
   compress
   delaycompress
   notifempty
