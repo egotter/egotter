@@ -194,17 +194,12 @@ module Concerns::ValidationConcern
     return false if from_crawler? || !user_signed_in?
     return false unless TooManyRequestsQueue.new.exists?(current_user_id)
 
-    respond_with_error(:bad_request, too_many_requests_message(rate_limit_reset_in))
+    respond_with_error(:bad_request, too_many_requests_message)
     true
   rescue => e
     # This is a special case because it call redirect_to and returns false.
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false
-  end
-
-  def rate_limit_reset_in
-    limit = request_context_client.rate_limit
-    [limit.friend_ids, limit.follower_ids, limit.users].select {|l| l[:remaining] == 0}.map {|l| l[:reset_in]}.max
   end
 
   def has_already_purchased?

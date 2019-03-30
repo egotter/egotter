@@ -102,7 +102,8 @@ module Concerns::ExceptionHandler
     end
   end
 
-  def too_many_requests_message(reset_in)
+  def too_many_requests_message(reset_in = nil)
+    reset_in ||= rate_limit_reset_in
     if user_signed_in?
       t('after_sign_in.too_many_requests_with_reset_in', seconds: reset_in)
     else
@@ -116,6 +117,11 @@ module Concerns::ExceptionHandler
   end
 
   private
+
+  def rate_limit_reset_in
+    limit = request_context_client.rate_limit
+    [limit.friend_ids, limit.follower_ids, limit.users].select {|l| l[:remaining] == 0}.map {|l| l[:reset_in]}.max
+  end
 
   def user_link(*args)
     view_context.user_link(*args)
