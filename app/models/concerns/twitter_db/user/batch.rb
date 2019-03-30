@@ -34,13 +34,9 @@ module Concerns::TwitterDB::User::Batch
       end
     end
 
-    def self.has_user_info?
-      TwitterDB::User.column_names.include?('user_info')
-    end
-
     def self.import(t_users)
       # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
-      persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 1.weeks.ago..Time.zone.now).pluck(:uid)
+      persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 3.days.ago..Time.zone.now).pluck(:uid)
 
       t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
 
