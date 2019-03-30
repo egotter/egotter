@@ -11,3 +11,5 @@ Ahoy.user_agent_parser = :device_detector
 Ahoy.bot_detection_version = 2
 
 Ahoy.visit_duration = 30.minutes
+
+Ahoy.geocode = false
