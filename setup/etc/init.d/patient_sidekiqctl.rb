@@ -61,7 +61,7 @@ def start(options)
 end
 
 def start?(pidfile)
-  pidfile_exists?(pidfile) && process_exists?(pidfile: pidfile) && print_process(pidfile: pidfile).strip.match?(/\[0 of [0-9]+ busy\]$/)
+  pidfile_exists?(pidfile) && process_exists?(pidfile: pidfile) && print_process(pidfile: pidfile).strip.match?(/\[[0-9]+ of [0-9]+ busy\]$/)
 end
 
 def status(pidfile)
