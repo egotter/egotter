@@ -6,8 +6,6 @@ class UpdateSearchLogWorker
     log = SearchLog.find(search_log_id)
     log.save! if log.changed?
 
-    reassign_channel(log)
-
     if log.with_login?
       update_user_access_at(log)
       update_user_search_at(log)
@@ -52,36 +50,5 @@ class UpdateSearchLogWorker
 
   rescue => e
     logger.warn "#{e.class} #{e.message} #{log.inspect}"
-  end
-
-  def reassign_channel(log)
-    channel =
-      if log.landing?
-        case
-          when log.channel.blank? then 'direct'
-          when log.channel == 'twitter' && log.medium == 'dm' then 'dm'
-          else log.channel
-        end
-      else
-        log.channel
-      end
-
-    if channel.blank? || channel == 'others'
-      logs =
-        SearchLog
-          .where(session_id: log.session_id, created_at: (log.created_at - 30.minutes)..log.created_at)
-          .where.not(channel: ['', 'others'])
-          .order(created_at: :desc)
-          .limit(1)
-          .to_a
-
-      channel = logs[0].channel if logs.any?
-    end
-
-    log.assign_attributes(channel: channel)
-    log.save! if log.changed?
-
-  rescue => e
-    logger.warn "##{__method__} #{e.class} #{e.message} #{log.inspect}"
   end
 end
