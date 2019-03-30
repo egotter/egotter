@@ -55,7 +55,7 @@ class SendMetricsToSlackWorker
         [TwitterDB::User, TwitterDB::Profile],
         SearchHistory,
         Job,
-        [FollowRequest, UnfollowRequest],
+        [FollowRequest, UnfollowRequest, TweetRequest],
         [ForbiddenUser, NotFoundUser, BlockedUser],
         [ResetEgotterRequest, ResetEgotterLog],
         [DeleteTweetsRequest, DeleteTweetsLog],
