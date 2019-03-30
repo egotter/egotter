@@ -182,16 +182,7 @@
 
     :javascript
       $(function () {
-        var $modal = $('#search-modal');
-        var url = $modal.data('url');
-        $.get(url).done(function (res) {
-          console.log(url, 'ok');
-          $modal.find('.twitter.users').append(res);
-
-          $modal.on('shown.bs.modal', function (e) {
-            $(e.target).find('input').focus();
-          });
-        });
+        SearchHistories.initializeSearchModal();
       });
 
 
