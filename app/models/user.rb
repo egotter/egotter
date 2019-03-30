@@ -133,7 +133,11 @@ class User < ApplicationRecord
   end
 
   def sharing_egotter?
-    tweet_requests.finished.where(created_at: 1.day.ago..Time.zone.now).exists?
+    tweet_requests.finished.where(created_at: 1.hour.ago..Time.zone.now).exists?
+  end
+
+  def sharing_egotter_count
+    tweet_requests.finished.where(created_at: 1.hour.ago..Time.zone.now).size
   end
 
   ADMIN_UID = 58135830

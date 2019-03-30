@@ -2,13 +2,7 @@ module SearchHistoriesHelper
   def current_search_histories
     return [] if from_crawler?
     condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
-    SearchHistory.includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10).select(&:twitter_db_user)
-  end
-
-  def search_histories_size
-    condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
-    condition.merge!(created_at: 1.day.ago..Time.zone.now)
-    SearchHistory.where(condition).count('distinct uid')
+    SearchHistory.includes(:twitter_db_user).where(condition).order(created_at: :desc).limit(10)
   end
 
   def search_histories_limit
@@ -35,7 +29,11 @@ module SearchHistoriesHelper
   end
 
   def search_histories_sharing_bonus
-    Rails.configuration.x.constants['search_histories_sharing_bonus']
+    if user_signed_in?
+      current_user.sharing_egotter_count * Rails.configuration.x.constants['search_histories_sharing_bonus']
+    else
+      0
+    end
   end
 
   def search_histories_remaining
@@ -53,5 +51,13 @@ module SearchHistoriesHelper
     new_session_id = fingerprint
     SearchHistory.where(session_id: old_session_id).update_all(session_id: new_session_id)
     logger.info "#{old_session_id} turned into #{new_session_id}."
+  end
+
+  private
+
+  def search_histories_size
+    condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
+    condition.merge!(created_at: 1.day.ago..Time.zone.now)
+    SearchHistory.where(condition).size
   end
 end
