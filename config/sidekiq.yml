@@ -2,6 +2,8 @@
 :timeout: 10
 :pidfile: ./tmp/pids/sidekiq.pid
 :logfile: ./log/sidekiq.log
+:tag: sidekiq
+:environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - CreateSignedInTwitterUserWorker
   - CreateTwitterUserWorker

@@ -3,4 +3,4 @@
 # chkconfig: 345 85 15
 # description: sidekiq_import
 
-/etc/init.d/sidekiq_base sidekiq_import $1
+/etc/init.d/patient_sidekiqctl.rb -e production --dir /var/egotter --user ec2-user --name sidekiq_import --state $1

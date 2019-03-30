@@ -2,6 +2,8 @@
 :timeout: 10
 :pidfile: ./tmp/pids/sidekiq_all.pid
 :logfile: ./log/sidekiq_all.log
+:tag: sidekiq_all
+:environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - logging
   - messaging

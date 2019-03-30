@@ -1,3 +1,6 @@
 #!/bin/sh
 
-/etc/init.d/sidekiq_base sidekiq_misc $1
+# chkconfig: 345 85 15
+# description: sidekiq_misc
+
+/etc/init.d/patient_sidekiqctl.rb -e production --dir /var/egotter --user ec2-user --name sidekiq_misc --state $1
