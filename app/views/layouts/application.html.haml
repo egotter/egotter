@@ -168,16 +168,17 @@
           .modal-body
             = render partial: 'common/search_form', locals: {via: :search_history_input}
             .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
-              = t('search_histories.remaining_count_is_html', count: search_histories_remaining)
+              = t('search_histories.search_modal.remaining_count_is_html', count: search_histories_remaining)
               %div
                 - if user_signed_in?
                   - if current_user.is_subscribing?
                     = link_to current_plan_name, settings_path
                   - else
-                    = t('pricing.new.plans_on_search_html', url: pricing_path(via: "#{controller_name}/#{action_name}/increase_count_purchase"))
+                    = t('search_histories.search_modal.purchase_html', url: pricing_path(via: build_via('increase_count_purchase')))
                 - else
-                  = t('search_histories.increase_count_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/increase_count_sign_in"))
-            %h2.text-center= t('search_histories.index.title')
+                  = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: build_via('increase_count_sign_in')))
+                = t('search_histories.search_modal.tweet_html')
+            %h2.text-center= t('search_histories.search_modal.title')
             .twitter.users.row
 
     :javascript
