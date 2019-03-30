@@ -20,7 +20,7 @@ class SearchesController < ApplicationController
   end
 
   def create
-    uid, screen_name = @twitter_user.uid.to_i, @twitter_user.screen_name
+    uid, screen_name = @twitter_user.uid, @twitter_user.screen_name
     redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user))
 
     if TwitterUser.exists?(uid: uid)

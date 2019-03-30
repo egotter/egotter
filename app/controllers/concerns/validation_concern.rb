@@ -175,6 +175,11 @@ module Concerns::ValidationConcern
     false
   end
 
+  def screen_name_changed?(twitter_user)
+    latest = TwitterUser.latest_by(uid: twitter_user.uid)
+    latest && latest&.screen_name != twitter_user.screen_name
+  end
+
   def too_many_searches?(twitter_user)
     return false if from_crawler? || search_histories_remaining > 0
     return false if current_search_histories.any? { |history| history.uid == twitter_user.uid }
