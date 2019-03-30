@@ -2,12 +2,13 @@
 #
 # Table name: search_histories
 #
-#  id         :integer          not null, primary key
-#  session_id :string(191)      default(""), not null
-#  user_id    :integer          not null
-#  uid        :bigint(8)        not null
-#  created_at :datetime         not null
-#  updated_at :datetime         not null
+#  id            :bigint(8)        not null, primary key
+#  session_id    :string(191)      default(""), not null
+#  user_id       :integer          not null
+#  uid           :bigint(8)        not null
+#  ahoy_visit_id :bigint(8)
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #
@@ -17,6 +18,8 @@
 #
 
 class SearchHistory < ApplicationRecord
+  visitable :ahoy_visit
+
   belongs_to :user, optional: true
   has_one :twitter_db_user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User'
 

@@ -1,14 +1,16 @@
-class CreateSearchHistories < ActiveRecord::Migration[4.2]
+class CreateSearchHistories < ActiveRecord::Migration[5.2]
   def change
     create_table :search_histories do |t|
-      t.string  :session_id, null: false, default: ''
-      t.integer :user_id,    null: false
-      t.integer :uid,        null: false, limit: 8
+      t.string  :session_id,    null: false, default: ''
+      t.integer :user_id,       null: false
+      t.bigint  :uid,           null: false
+      t.bigint  :ahoy_visit_id, null: true
 
       t.timestamps null: false
+
+      t.index :session_id
+      t.index :user_id
+      t.index :created_at
     end
-    add_index :search_histories, :session_id
-    add_index :search_histories, :user_id
-    add_index :search_histories, :created_at
   end
 end
