@@ -2,6 +2,8 @@
 :timeout: 10
 :pidfile: ./tmp/pids/sidekiq_prompt_reports.pid
 :logfile: ./log/sidekiq_prompt_reports.log
+:tag: sidekiq_prompt_reports
+:environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - CreatePromptReportWorker
   - StartSendingPromptReportsWorker
