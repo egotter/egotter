@@ -50,14 +50,8 @@ module Concerns::ValidationConcern
   end
 
   def twitter_db_user_persisted?(uid)
-    return true if TwitterDB::User.exists?(uid: uid)
-
-    logger.info "#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{uid}"
     CreateTwitterDBUserWorker.perform_async([uid])
-    true
-  rescue => e
-    logger.warn "#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and do nothing. #{e.class} #{e.message} #{uid}"
-    false
+    TwitterDB::User.exists?(uid: uid)
   end
 
   def searched_uid?(uid)
