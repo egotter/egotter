@@ -76,8 +76,3 @@ crumb :cluster do |screen_name|
   link t('clusters.new.simple_title'), cluster_path(screen_name: screen_name)
   parent :timeline, screen_name
 end
-
-crumb :update_history do |screen_name|
-  link t('update_histories.show.short_title'), update_history_path(screen_name: screen_name)
-  parent :timeline, screen_name
-end

@@ -70,6 +70,27 @@
 
   <div class="vertical-spacing"></div>
 
+  <h2 class="h4 text-center"><%= t('.update_histories.title') %></h2>
+
+  <table class="table">
+    <tbody>
+    <tr>
+      <td><%= t('.update_histories.size') %></td>
+      <td><%= @update_histories.size %></td>
+    </tr>
+    <tr>
+      <td><%= t('.update_histories.created_at') %></td>
+      <td><%= @update_histories.created_at %></td>
+    </tr>
+    <tr>
+      <td><%= t('.update_histories.updated_at') %></td>
+      <td><%= @update_histories.updated_at %></td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="vertical-spacing"></div>
+
   <h2 class="h4 text-center"><%= t('.order.order_histories') %></h2>
 
   <% if current_user.is_subscribing? %>

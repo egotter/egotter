@@ -4,6 +4,7 @@ class SettingsController < ApplicationController
   before_action :create_search_log
 
   def index
+    @update_histories = UpdateHistories.new(current_user.uid)
     @reset_egotter_request = current_user.reset_egotter_requests.not_finished.exists?
     @reset_cache_request = current_user.reset_cache_requests.not_finished.exists?
   end

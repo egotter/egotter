@@ -50,9 +50,6 @@
     .col-xs-12.col-md-6
       = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: name}
 
-  .col-xs-12.col-md-6
-    = render partial: 'timelines/update_history', locals: {histories: UpdateHistories.new(@twitter_user.uid), twitter_user: @twitter_user}
-
 = render(partial: 'adsense/side_by_side', locals: {vertical: :bottom})
 
 %h2.h4.text-center= t('.about_this_page', user: @twitter_user.mention_name)

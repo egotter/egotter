@@ -146,7 +146,7 @@ Rails.application.routes.draw do
   get 'pricing', to: "pricing#new"
   post 'orders', to: 'orders#create'
 
-  resources :update_histories, only: :show, param: :uid
+  get 'update_histories/:uid', to: redirect('/settings')
   resources :background_search_logs, only: :show, param: :uid
   resources :jobs, only: :show, param: :uid
   resources :polling_logs, only: :create

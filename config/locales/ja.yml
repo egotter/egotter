@@ -3,7 +3,6 @@ ja:
     common:
       egotter: "えごったー"
       or: " または "
-      return: "%{user} の分析一覧へ戻る"
       twitter_id: "Twitter ID"
       search_by_twitter_id: "Twitter ID で検索"
       search_by_other_user: "他のユーザー で検索"
@@ -171,11 +170,6 @@ ja:
         title: 'ツイート'
         note: '日付ごとのツイート数です。公式リツイートやリプライも含んでいます。'
       see_more: 'もっと見る'
-  update_histories:
-    show:
-      title: "%{user} のえごったー分析履歴 - フォロー外され・片思い・仲良しをえごったーで分析"
-      short_title: "えごったー更新履歴"
-      description: "%{user} のえごったー更新履歴を表示します。"
   search_histories:
     search_modal:
       title: "検索履歴"
@@ -196,6 +190,11 @@ ja:
       update_sharing: 'egotter.com をツイートする'
       update_profile: 'ユーザー情報を更新する'
       update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
+      update_histories:
+        title: '更新履歴'
+        size: '更新回数'
+        created_at: '初回更新'
+        updated_at: '最終更新'
       order:
         order_histories: "購入履歴"
         id: "注文 %{id}"

@@ -1,25 +1,12 @@
 class UpdateHistories
-
   attr_reader :records
 
   def initialize(uid)
-    @records = TwitterUser.where(uid: uid).order(created_at: :desc)
-  end
-
-  def update_count
-    records.sum(:update_count)
-  end
-
-  def each_cons(num)
-    records.each_cons(num)
+    @records = TwitterUser.includes(:twitter_db_user).where(uid: uid).order(created_at: :desc)
   end
 
   def size
     records.size
-  end
-
-  def to_a
-    records
   end
 
   def created_at
