@@ -11,9 +11,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     begin
       user = User.update_or_create_for_oauth_by!(user_params) do |user, context|
         create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
-        update_search_histories_when_signing_in(user)
-        FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID) if follow
-        TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
         CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
       end
     rescue =>  e
@@ -21,7 +18,12 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       return redirect_to root_path, alert: t('before_sign_in.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
     end
 
+    update_search_histories_when_signing_in(user)
+    FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID) if follow
+    TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
     QueueingRequests.new(CreateTwitterUserWorker).delete(user.uid)
+    DeleteNotFoundUserWorker.perform_async(user.screen_name)
+    DeleteForbiddenUserWorker.perform_async(user.screen_name)
 
     sign_in_and_redirect user, event: :authentication
     notification_status = t("dictionary.#{user.notification_setting.dm? ? 'enabled' : 'disabled'}")

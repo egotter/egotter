@@ -188,8 +188,11 @@ ja:
       update_authorized: 'ログイン連携を更新する'
       update_following: '@ego_tter をフォローする'
       update_sharing: 'egotter.com をツイートする'
-      update_profile: 'ユーザー情報を更新する'
-      update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
+      reset_menu:
+        title: 'データのリセット'
+        profile: 'ユーザー情報'
+        update_profile: 'ユーザー情報を更新する'
+        update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
       update_histories:
         title: '更新履歴'
         size: '更新回数'
@@ -228,6 +231,7 @@ ja:
         title: "データリセット"
         reset: "データをリセットする"
         requested: "リクエスト済み"
+        danger: "危険"
         warning_html: "データがおかしくなっている場合のみ、@%{screen_name} のえごったーのデータをリセットします。本当にリセットしますか？<br><br><b>※リセット完了まで少し時間がかかります。</b>"
         ok: "はい、リセットします"
         cancel: "いいえ"

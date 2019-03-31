@@ -58,11 +58,43 @@
         <% end %>
       </td>
     </tr>
+    </tbody>
+  </table>
+
+  <div class="vertical-spacing"></div>
+
+  <h2 class="h4 text-center"><%= t('.reset_menu.title') %></h2>
+
+  <table class="table">
+    <tbody>
     <tr>
-      <td></td>
+      <td><%= t('.reset_menu.profile') %></td>
       <td>
-        <%= link_to t('.update_profile'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
-        <div class="text-muted notes"><%= t('.update_profile_note') %></div>
+        <%= link_to t('.reset_menu.update_profile'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
+        <div class="text-muted notes"><%= t('.reset_menu.update_profile_note') %></div>
+      </td>
+    </tr>
+    <tr>
+      <td><%= t('.reset_cache.title') %></td>
+      <td>
+        <% if @reset_cache_request %>
+          <div class="btn btn-warning reset-cache-btn" disabled="disabled"><%= t('.reset_cache.reset') %></div>
+          <div class="text-muted notes"><%= t('.reset_cache.requested') %></div>
+        <% else %>
+          <div class="btn btn-warning reset-cache-btn" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.reset_cache.reset') %></div>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td><%= t('.reset_egotter.title') %></td>
+      <td>
+        <% if @reset_egotter_request %>
+          <div class="btn btn-danger reset-egotter-btn" disabled="disabled"><%= t('.reset_egotter.reset') %></div>
+          <div class="text-muted notes"><%= t('.reset_egotter.requested') %></div>
+        <% else %>
+          <div class="btn btn-danger reset-egotter-btn" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.reset_egotter.reset') %></div>
+        <% end %>
+        <div class="text-danger notes"><%= t('.reset_egotter.danger') %></div>
       </td>
     </tr>
     </tbody>
@@ -137,17 +169,6 @@
       </td>
     </tr>
     <tr>
-      <td><%= t('.reset_egotter.title') %></td>
-      <td>
-        <% if @reset_egotter_request %>
-          <div class="btn btn-danger reset-egotter-btn" disabled="disabled"><%= t('.reset_egotter.reset') %></div>
-          <div class="text-muted notes"><%= t('.reset_egotter.requested') %></div>
-        <% else %>
-          <div class="btn btn-danger reset-egotter-btn" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.reset_egotter.reset') %></div>
-        <% end %>
-      </td>
-    </tr>
-    <tr>
       <td><%= t('.trial_follow_request') %></td>
       <td>
         <a class="btn btn-default" href="<%= settings_follow_requests_path %>"><%= t('.trial_follow_request_see') %></a>
@@ -159,17 +180,6 @@
       <td>
         <a class="btn btn-default" href="<%= settings_unfollow_requests_path %>"><%= t('.trial_unfollow_request_see') %></a>
         <div class="text-muted notes"><%= t('.trial_unfollow_request_note') %></div>
-      </td>
-    </tr>
-    <tr>
-      <td><%= t('.reset_cache.title') %></td>
-      <td>
-        <% if @reset_cache_request %>
-          <div class="btn btn-warning reset-cache-btn" disabled="disabled"><%= t('.reset_cache.reset') %></div>
-          <div class="text-muted notes"><%= t('.reset_cache.requested') %></div>
-        <% else %>
-          <div class="btn btn-warning reset-cache-btn" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.reset_cache.reset') %></div>
-        <% end %>
       </td>
     </tr>
     </tbody>
