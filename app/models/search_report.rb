@@ -63,6 +63,6 @@ class SearchReport < ApplicationRecord
   end
 
   def timeline_url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'search')
+    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'search', via: 'search_report')
   end
 end

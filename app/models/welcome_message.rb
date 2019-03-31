@@ -64,6 +64,6 @@ class WelcomeMessage < ApplicationRecord
   end
 
   def timeline_url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'welcome')
+    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message')
   end
 end

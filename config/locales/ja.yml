@@ -999,7 +999,7 @@ ja:
     omission: " ... 合計%{num}人"
     welcomeMessage:
       timeline_page: '%{screen_name} さんの結果ページ'
-      lets_start: 'えごったーの利用を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja #egotter'
+      lets_start: 'えごったーの利用を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja&via=welcome_message_lets_start #egotter'
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'

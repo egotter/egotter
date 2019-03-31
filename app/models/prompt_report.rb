@@ -131,11 +131,11 @@ class PromptReport < ApplicationRecord
     end
 
     def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt')
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
     end
 
     def settings_url
-      @settings_url ||= Rails.application.routes.url_helpers.settings_url
+      @settings_url ||= Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
     end
   end
 end
