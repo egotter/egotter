@@ -11,7 +11,13 @@ module Concerns::LastSessionAnalytics
 
 
   def last_session_search_logs
-    condition = respond_to?(:session_id) ? {session_id: session_id} : {user_id: user_id}
+    condition =
+        if respond_to?(:session_id)
+          {session_id: session_id}
+        elsif self.class == User
+          {user_id: id}
+        end
+
     SearchLog.where(created_at: last_session_duration).
         where(condition).
         order(created_at: :asc)

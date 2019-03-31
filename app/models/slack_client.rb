@@ -23,7 +23,7 @@ class SlackClient
           if hash.empty?
             'Empty'
           else
-            key_length = hash.keys.max_by {|k| k.length}.length
+            key_length = hash.keys.max_by {|k| k.to_s.length}.length
             hash.map do |key, value|
               sprintf("%#{key_length}s %s", key, value)
             end.join("\n")
