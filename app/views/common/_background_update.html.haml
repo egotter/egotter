@@ -51,7 +51,7 @@
     var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox, $signInBox;
 
     function checkFollow () {
-      $.getJSON($followBox.data('url'), function (res) {
+      $.getJSON($followBox.data('url'), {via: 'check_follow'}, function (res) {
         console.log('checkFollow', res);
 
         if (!res.follow) {
@@ -61,6 +61,7 @@
     }
 
     function updatesNotFound (signedIn) {
+      console.log('updatesNotFound', signedIn);
       var searchMyself = #{user_signed_in? && current_user.uid.to_i == twitter_user.uid.to_i};
 
       if (signedIn) {
@@ -73,11 +74,6 @@
     }
 
     function checkForUpdates (jid, signedIn) {
-      if (!jid) {
-        updatesNotFound(signedIn);
-        return;
-      }
-
       console.log('Worker started', jid);
       $updateBox.show().sticky();
 
@@ -141,7 +137,12 @@
         $.post(url, {uid: uid})
         .done(function (res) {
           console.log(res);
-          checkForUpdates(res.jid, signedIn);
+
+          if (res.jid) {
+            checkForUpdates(res.jid, signedIn);
+          } else {
+            updatesNotFound(signedIn);
+          }
         }).fail(function (xhr) {
           console.log(xhr.responseText);
 

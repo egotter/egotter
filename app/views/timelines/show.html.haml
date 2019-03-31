@@ -7,8 +7,7 @@
 - description = t('timelines.show.description', user: @twitter_user.mention_name)
 - set_meta_tags title: title, site: '', description: description
 
-- if !notice && !alert
-  = render partial: 'common/background_update', locals: {twitter_user: @twitter_user}
+= render partial: 'common/background_update', locals: {twitter_user: @twitter_user}
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
