@@ -1,4 +1,6 @@
 module SearchHistoriesHelper
+  include Concerns::SessionsConcern
+
   def current_search_histories
     return [] if from_crawler?
     condition = user_signed_in? ? {user_id: current_user_id} : {session_id: fingerprint}
