@@ -33,11 +33,13 @@
 
 class SearchErrorLog < ApplicationRecord
   belongs_to :user, optional: true
-  include Concerns::Analytics
+  include Concerns::LastSessionAnalytics
 
-  def search_logs(duration: 30.minutes)
-    SearchLog.where(created_at: (created_at - duration)..created_at).
-        where(session_id: session_id).
-        order(created_at: :asc)
+  def last_session_duration
+    (created_at - 30.minutes)..created_at
+  end
+
+  def user_found?
+    user_id != -1
   end
 end

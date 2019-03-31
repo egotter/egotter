@@ -26,15 +26,14 @@ class SearchHistory < ApplicationRecord
   validates :user_id, numericality: {only_integer: true}
   validates :session_id, format: {with: /\A.+\w+.+\Z/}
 
-  include Concerns::Analytics
+  include Concerns::LastSessionAnalytics
 
   def to_param
+    logger.warn "SearchHistory#to_param deprecated"
     screen_name
   end
 
-  def search_logs(duration: 30.minutes)
-    SearchLog.where(created_at: (created_at - duration)..created_at).
-        where(session_id: session_id).
-        order(created_at: :asc)
+  def last_session_duration
+    (created_at - 30.minutes)..created_at
   end
 end

@@ -27,61 +27,6 @@ RSpec.describe User, type: :model do
     end
   end
 
-  describe '.update_or_create_for_oauth_by!' do
-    let(:auth) do
-      Hashie::Mash.new(
-        uid: 1,
-        info: {nickname: 'sn', email: 'info@egotter.com'},
-        credentials: {secret: 's', token: 't'},
-      )
-    end
-
-    it 'saves new user' do
-      result = nil
-      expect { result = User.update_or_create_for_oauth_by!(auth) }.to change { User.all.size }.by(1)
-      expect(result.uid.to_i).to eq(auth.uid)
-      expect(result.screen_name).to eq(auth.info.nickname)
-      expect(result.email).to eq(auth.info.email)
-      expect(result.secret).to eq(auth.credentials.secret)
-      expect(result.token).to eq(auth.credentials.token)
-    end
-
-    context 'without uid' do
-      it 'raises an ActiveRecord::RecordInvalid' do
-        auth.delete(:uid)
-        expect { User.update_or_create_for_oauth_by!(auth) }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'without info.nickname' do
-      it 'raises an ActiveRecord::RecordInvalid' do
-        auth.info.delete(:nickname)
-        expect { User.update_or_create_for_oauth_by!(auth) }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'without info.email' do
-      it 'does not raise any exception' do
-        auth.info.delete(:email)
-        expect { User.update_or_create_for_oauth_by!(auth) }.to_not raise_error
-      end
-    end
-
-    context 'without credentials.secret' do
-      it 'raises an ActiveRecord::RecordInvalid' do
-        auth.credentials.delete(:secret)
-        expect { User.update_or_create_for_oauth_by!(auth) }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-
-    context 'without credentials.token' do
-      it 'raises an ActiveRecord::RecordInvalid' do
-        auth.credentials.delete(:token)
-        expect { User.update_or_create_for_oauth_by!(auth) }.to raise_error(ActiveRecord::RecordInvalid)
-      end
-    end
-  end
-
   describe '.update_or_create_with_token!' do
     let(:values) do
       {

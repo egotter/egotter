@@ -82,27 +82,6 @@ class SendMetricsToSlackWorker
     end
   end
 
-  def send_user_metrics
-    stats = {
-        creation: User.where(created_at: 1.hour.ago..Time.zone.now).size,
-        first_access: User.where(first_access_at: 1.hour.ago..Time.zone.now).size,
-        last_access: User.where(last_access_at: 1.hour.ago..Time.zone.now).size
-    }
-
-    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::USERS_MONITORING)
-
-    logs = SignInLog.where(created_at: 1.hour.ago..Time.zone.now, context: 'create')
-
-    stats =
-        logs.each_with_object(Hash.new(0)).each do |log, memo|
-          memo[log.via] += 1
-        end
-
-    stats = stats.sort_by {|_, v| -v}.to_h
-
-    SlackClient.send_message(SlackClient.format(stats), title: 'via (create)', channel: SlackClient::USERS_MONITORING)
-  end
-
   def send_twitter_user_metrics
     users = TwitterUser.cache_ready.where(created_at: 1.hour.ago..Time.zone.now)
 
@@ -229,58 +208,83 @@ class SendMetricsToSlackWorker
         unique_uid: histories.select('distinct uid').count,
         unique_user_id: histories.select('distinct user_id').count,
     }
-
     SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SEARCH_HISTORIES_MONITORING)
 
-    stats =
-        histories.each_with_object(Hash.new(0)).each do |his, memo|
-          memo[his.source] += 1
-        end
+    stats = histories.each_with_object(Hash.new(0)).each {|his, memo| memo[his.last_session_via] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (via)', channel: SlackClient::SEARCH_HISTORIES_MONITORING)
 
-    stats = stats.sort_by {|_, v| -v}.to_h
+    stats = histories.each_with_object(Hash.new(0)).each {|his, memo| memo[his.last_session_source] += 1}.sort_by {|_, v| -v}.to_h
     SlackClient.send_message(SlackClient.format(stats), title: 'total (source)', channel: SlackClient::SEARCH_HISTORIES_MONITORING)
 
-    # TODO device_type
+    stats = histories.each_with_object(Hash.new(0)).each {|his, memo| memo[his.last_session_device_type] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (device_type)', channel: SlackClient::SEARCH_HISTORIES_MONITORING)
   end
 
   def send_visitors_metrics
     condition = {created_at: 1.hour.ago..Time.zone.now}
     visitors = Visitor.where(condition)
 
-    stats =
-        visitors.each_with_object(Hash.new(0)) do |v, memo|
-          key = [
-              v.user_found? ? 'user' : 'visitor',
-              v.search_history_found? ? 'search' : 'not',
-              v.source,
+    stats = {
+        size: visitors.size,
+        unique_user_id: visitors.select('distinct user_id').count,
+    }
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::VISITORS_MONITORING)
 
-          ].join('/')
-          memo[key] += 1
-        end
+    stats = visitors.each_with_object(Hash.new(0)).each {|vis, memo| memo[vis.last_session_via] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (via)', channel: SlackClient::VISITORS_MONITORING)
 
-    %w(visitor/not/ visitor/search/ user/not/ user/search/).each do |prefix|
-      stat = stats.select {|k, _| k.start_with?(prefix)}.transform_keys {|k| k.remove(prefix)}
-      stat = stat.sort_by {|_, v| -v}.to_h
+    stats = visitors.each_with_object(Hash.new(0)).each {|vis, memo| memo[vis.last_session_source] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (source)', channel: SlackClient::VISITORS_MONITORING)
 
-      SlackClient.send_message(SlackClient.format(stat), title: "source (#{prefix.split('/').join(', ')})", channel: SlackClient::VISITORS_MONITORING)
-    end
+    stats = visitors.each_with_object(Hash.new(0)).each {|vis, memo| memo[vis.last_session_device_type] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (device_type)', channel: SlackClient::VISITORS_MONITORING)
+  end
 
-    # TODO device_type
+  def send_user_metrics
+    condition_value = 1.hour.ago..Time.zone.now
+    stats = {
+        creation: User.where(created_at: condition_value).size,
+        first_access: User.where(first_access_at: condition_value).size,
+        last_access: User.where(last_access_at: condition_value).size
+    }
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::USERS_MONITORING)
+
+    users = User.where(created_at: condition_value)
+
+    stats = users.each_with_object(Hash.new(0)).each {|vis, memo| memo[vis.last_session_via] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (via)', channel: SlackClient::USERS_MONITORING)
+
+    stats = users.each_with_object(Hash.new(0)).each {|vis, memo| memo[vis.last_session_source] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (source)', channel: SlackClient::USERS_MONITORING)
+
+    stats = users.each_with_object(Hash.new(0)).each {|vis, memo| memo[vis.last_session_device_type] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (device_type)', channel: SlackClient::USERS_MONITORING)
   end
 
   def send_sign_in_metrics
     logs = SignInLog.where(created_at: 1.hour.ago..Time.zone.now)
 
-    %w(create update).each do |context|
-      stats =
-          logs.select {|log| log.context == context}.each_with_object(Hash.new(0)).each do |log, memo|
-            memo[log.via] += 1
-          end
+    stats = {
+        size: logs.size,
+        create: logs.where(context: 'create').size,
+        update: logs.where(context: 'update').size,
+    }
+    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SIGN_IN_MONITORING)
 
-      stats = stats.sort_by {|_, v| -v}.to_h
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.via] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (via)', channel: SlackClient::SIGN_IN_MONITORING)
 
-      SlackClient.send_message(SlackClient.format(stats), title: "via (#{context})", channel: SlackClient::SIGN_IN_MONITORING)
-    end
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.via] += 1 if log.context == 'create'}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'create (via)', channel: SlackClient::SIGN_IN_MONITORING)
+
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.via] += 1 if log.context == 'update'}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'update (via)', channel: SlackClient::SIGN_IN_MONITORING)
+
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.last_session_source] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (source)', channel: SlackClient::SIGN_IN_MONITORING)
+
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.device_type] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (device_type)', channel: SlackClient::SIGN_IN_MONITORING)
   end
 
   def send_rate_limit_metrics
@@ -299,37 +303,23 @@ class SendMetricsToSlackWorker
         where.not(device_type: 'crawler').
         where.not(session_id: '-1')
 
-    stats =
-        logs.each_with_object(Hash.new(0)).each do |log, memo|
-          memo[log.location] += 1
-        end
-    stats = stats.sort_by {|_, v| -v}.to_h
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.location] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (location)', channel: SlackClient::SEARCH_ERROR_MONITORING)
 
-    SlackClient.send_message(SlackClient.format(stats), title: 'total', channel: SlackClient::SEARCH_ERROR_MONITORING)
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.location] += 1 if log.user_found?}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'user (location)', channel: SlackClient::SEARCH_ERROR_MONITORING)
 
-    stats =
-        logs.each_with_object(Hash.new(0)).each do |log, memo|
-          memo[log.location] += 1 unless log.user_found?
-        end
-    stats = stats.sort_by {|_, v| -v}.to_h
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.location] += 1 unless log.user_found?}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'visitor (location)', channel: SlackClient::SEARCH_ERROR_MONITORING)
 
-    SlackClient.send_message(SlackClient.format(stats), title: 'visitor', channel: SlackClient::SEARCH_ERROR_MONITORING)
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.via] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (via)', channel: SlackClient::SEARCH_ERROR_MONITORING)
 
-    stats =
-        logs.each_with_object(Hash.new(0)).each do |log, memo|
-          memo[log.location] += 1 if log.user_found?
-        end
-    stats = stats.sort_by {|_, v| -v}.to_h
-
-    SlackClient.send_message(SlackClient.format(stats), title: 'user', channel: SlackClient::SEARCH_ERROR_MONITORING)
-
-    stats =
-        logs.each_with_object(Hash.new(0)).each do |log, memo|
-          memo[log.source] += 1
-        end
-    stats = stats.sort_by {|_, v| -v}.to_h
-
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.last_session_source] += 1}.sort_by {|_, v| -v}.to_h
     SlackClient.send_message(SlackClient.format(stats), title: 'total (source)', channel: SlackClient::SEARCH_ERROR_MONITORING)
+
+    stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.device_type] += 1}.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (device_type)', channel: SlackClient::SEARCH_ERROR_MONITORING)
   end
 
   def divide(num1, num2)

@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::Analytics
+module Concerns::LastSessionAnalytics
   extend ActiveSupport::Concern
 
   class_methods do
@@ -9,8 +9,29 @@ module Concerns::Analytics
   included do
   end
 
-  def source
-    log = search_logs.select(:path, :referer).first
+
+  def last_session_search_logs
+    condition = respond_to?(:session_id) ? {session_id: session_id} : {user_id: user_id}
+    SearchLog.where(created_at: last_session_duration).
+        where(condition).
+        order(created_at: :asc)
+  end
+
+  def last_session_device_type
+    last_session_search_logs.first&.device_type
+  end
+
+  def last_session_via
+    last_session_search_logs.first&.via
+  end
+
+  def last_session_user_found?
+    user_id = last_session_search_logs.first&.user_id
+    user_id && user_id != -1
+  end
+
+  def last_session_source
+    log = last_session_search_logs.select(:path, :referer).first
     return 'log not found' unless log
 
     if log.referer.blank?
@@ -43,9 +64,5 @@ module Concerns::Analytics
     else
       uri.host.remove(/\.cdn\.ampproject\.org$/)
     end
-  end
-
-  def user_found?
-    user_id != -1
   end
 end

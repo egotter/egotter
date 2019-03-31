@@ -27,15 +27,9 @@ class Visitor < ApplicationRecord
   # visitable :ahoy_visit
 
   include Concerns::Visitor::Active
-  include Concerns::Analytics
+  include Concerns::LastSessionAnalytics
 
-  def search_logs(duration: 30.minutes)
-    SearchLog.where(created_at: (created_at - 10.seconds)..(created_at + duration)).
-        where(session_id: session_id).
-        order(created_at: :asc)
-  end
-
-  def search_history_found?
-    SearchHistory.where(session_id: session_id).exists?
+  def last_session_duration
+    (last_access_at - 30.minutes)..last_access_at
   end
 end
