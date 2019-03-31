@@ -38,7 +38,7 @@ class SearchesController < ApplicationController
 
   def current_visit_id
     if current_visit.nil?
-      logger.info "current_visit is nil. #{fingerprint} #{current_user_id}"
+      logger.info "current_visit is nil. #{fingerprint} #{current_user_id} #{ahoy.new_visit?} #{ahoy.visit_token} #{ahoy.visitor_token}"
       nil
     else
       current_visit.id
