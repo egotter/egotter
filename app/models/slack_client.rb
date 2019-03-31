@@ -13,7 +13,8 @@ class SlackClient
   SEARCH_HISTORIES_MONITORING = ENV['SLACK_SEARCH_HISTRIES_MONITORING_WEBHOOK_URL']
 
   class << self
-    def send_message(text, channel: MONITORING)
+    def send_message(text, title: nil, channel: MONITORING)
+      text = title + "\n" + text if title
       HTTParty.post(channel, body: {text: text}.to_json)
     end
 

@@ -318,16 +318,35 @@ class SendMetricsToSlackWorker
 
     stats =
         logs.each_with_object(Hash.new(0)).each do |log, memo|
-          memo["#{log.user_found? ? 'user' : 'visitor'}/#{log.location}/#{log.source}"] += 1
+          memo[log.location] += 1
         end
+    stats = stats.sort_by {|_, v| -v}.to_h
 
-    %w(visitor/ user/).each do |prefix|
-      stat = stats.select {|k, _| k.start_with?(prefix)}.transform_keys {|k| k.remove(prefix)}
-      stat = stat.sort_by {|_, v| -v}.to_h
+    SlackClient.send_message(SlackClient.format(stats), title: 'total', channel: SlackClient::SEARCH_ERROR_MONITORING)
 
-      SlackClient.send_message("#{__method__} (#{prefix})", channel: SlackClient::SEARCH_ERROR_MONITORING)
-      SlackClient.send_message(SlackClient.format(stat), channel: SlackClient::SEARCH_ERROR_MONITORING)
-    end
+    stats =
+        logs.each_with_object(Hash.new(0)).each do |log, memo|
+          memo[log.location] += 1 unless log.user_found?
+        end
+    stats = stats.sort_by {|_, v| -v}.to_h
+
+    SlackClient.send_message(SlackClient.format(stats), title: 'visitor', channel: SlackClient::SEARCH_ERROR_MONITORING)
+
+    stats =
+        logs.each_with_object(Hash.new(0)).each do |log, memo|
+          memo[log.location] += 1 if log.user_found?
+        end
+    stats = stats.sort_by {|_, v| -v}.to_h
+
+    SlackClient.send_message(SlackClient.format(stats), title: 'user', channel: SlackClient::SEARCH_ERROR_MONITORING)
+
+    stats =
+        logs.each_with_object(Hash.new(0)).each do |log, memo|
+          memo[log.source] += 1
+        end
+    stats = stats.sort_by {|_, v| -v}.to_h
+
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (source)', channel: SlackClient::SEARCH_ERROR_MONITORING)
   end
 
   def divide(num1, num2)
