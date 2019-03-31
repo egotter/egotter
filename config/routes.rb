@@ -26,7 +26,7 @@ Rails.application.routes.draw do
   %i(maintenance privacy_policy terms_of_service specified_commercial_transactions support).each do |name|
     get name, to: "misc##{name}", as: name
   end
-  get '/menu', to: redirect('/settings')
+  get '/menu', to: redirect('/settings?via=routing_menu')
 
   %i(
     friends
@@ -146,7 +146,7 @@ Rails.application.routes.draw do
   get 'pricing', to: "pricing#new"
   post 'orders', to: 'orders#create'
 
-  get 'update_histories/:uid', to: redirect('/settings')
+  get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
   resources :background_search_logs, only: :show, param: :uid
   resources :jobs, only: :show, param: :uid
   resources :polling_logs, only: :create
