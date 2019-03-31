@@ -968,6 +968,8 @@ ja:
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+    ajax:
+      need_login_html: 'この操作を行うためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
   after_sign_in:
     too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>  <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"

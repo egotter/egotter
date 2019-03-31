@@ -10,10 +10,6 @@ body,
   border: none;
 }
 
-.notice-container {
-  background-color: #ffffff;
-}
-
 /* change color of carousel dots end */
 
 .tweet-preview-box {
@@ -40,24 +36,4 @@ body,
 
 a, a:hover, a:focus {
   text-decoration: none;
-}
-
-/* global */
-.return-to-results-top,
-.return-to-results-bottom {
-  margin-top: 15px;
-  text-align: center;
-}
-
-.return-to-results-bottom {
-  margin-bottom: 15px;
-}
-
-.page-entries-info-top {
-  margin-bottom: 15px;
-}
-
-.page-entries-info-bottom {
-  margin-top: 15px;
-  margin-bottom: 15px;
 }

@@ -195,7 +195,7 @@ module Concerns::Logging
       uid = @twitter_user.uid
       screen_name = @twitter_user.screen_name
     else
-      uid = valid_uid?(redirect: false) ? params[:uid].to_i : -1
+      uid = valid_uid?(only_validation: true) ? params[:uid].to_i : -1
       if tu = fetch_twitter_user_from_cache(uid) # waiting
         uid = tu.uid
         screen_name = tu.screen_name

@@ -83,10 +83,17 @@
             .col-xs-12.header-container
               = render partial: 'layouts/header'
 
+      .container.ajax-alert-container{style: 'display: none;'}
+        .row
+          .col-xs-12{style: 'background-color: #ffffff;'}
+            .vertical-spacing
+            %p.alert.alert-warning.alert-dismissable
+              %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+
     - if notice || alert
       .container
         .row
-          .col-xs-12.notice-container
+          .col-xs-12{style: 'background-color: #ffffff;'}
             - if notice
               .vertical-spacing
               %p.alert.alert-info.alert-dismissable

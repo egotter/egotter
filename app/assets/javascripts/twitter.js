@@ -30,6 +30,8 @@ Twitter.follow = function (url, uid, callback) {
   }, function (xhr) {
     if (xhr.status === 429) { // Too many requests
       $('#warning-follow-modal').modal();
+    } else {
+      Util.alert(JSON.parse(xhr.responseText)['message']);
     }
   });
 };

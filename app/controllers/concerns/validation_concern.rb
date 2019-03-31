@@ -13,7 +13,14 @@ module Concerns::ValidationConcern
 
   def require_login!
     return if user_signed_in?
-    respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))
+
+    message =
+        if request.xhr?
+          t('before_sign_in.ajax.need_login_html', url: kick_out_error_path('need_login'))
+        else
+          t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
+        end
+    respond_with_error(:unauthorized, message)
   end
 
   def require_admin!
@@ -21,13 +28,13 @@ module Concerns::ValidationConcern
     respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))
   end
 
-  def valid_uid?(uid = nil, redirect: true)
+  def valid_uid?(uid = nil, only_validation: false)
     uid ||= params[:uid]
 
     if Validations::UidValidator::REGEXP.match?(uid.to_s)
       true
     else
-      if redirect
+      unless only_validation
         respond_with_error(:bad_request, TwitterUser.human_attribute_name(:uid) + t('errors.messages.invalid'))
       end
       false

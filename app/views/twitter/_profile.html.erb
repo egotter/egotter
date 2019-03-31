@@ -91,9 +91,11 @@
   </div>
 </div>
 
-<script>
-  $(function () {
-    Twitter.enableFollowButton('.profile-overview-container');
-    Twitter.enableUnfollowButton('.profile-overview-container');
-  });
-</script>
+<% if user_signed_in? %>
+  <script>
+    $(function () {
+      Twitter.enableFollowButton('.profile-overview-container');
+      Twitter.enableUnfollowButton('.profile-overview-container');
+    });
+  </script>
+<% end %>
