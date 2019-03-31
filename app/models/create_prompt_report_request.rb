@@ -68,7 +68,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def send_initialization_message
     DirectMessageRequest.new(internal_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.initialization_start')).perform
-    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name))).perform
+    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: search_yourself_url)).perform
 
     raise InitializationStarted
   rescue Twitter::Error::Forbidden => e
@@ -89,6 +89,10 @@ class CreatePromptReportRequest < ApplicationRecord
     logger.info e.backtrace.join("\n")
 
     raise InitializationFailed.new(e.message.truncate(100))
+  end
+
+  def search_yourself_url
+    Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, via: 'prompt_report_search_yourself')
   end
 
   def send_report!(changes, new_unfollower_uids:)
