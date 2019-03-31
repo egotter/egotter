@@ -10,10 +10,10 @@ class UpdateHistories
   end
 
   def created_at
-    records.last.created_at
+    records.last&.created_at
   end
 
   def updated_at
-    records.first.updated_at
+    records.first&.updated_at
   end
 end
