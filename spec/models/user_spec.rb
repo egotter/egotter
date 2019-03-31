@@ -82,6 +82,74 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '.update_or_create_with_token!' do
+    let(:values) do
+      {
+          uid: 123,
+          screen_name: 'sn',
+          secret: 's',
+          token: 't',
+          authorized: true,
+          email: 'a@a.com',
+      }.compact
+    end
+    subject { User.update_or_create_with_token!(values) }
+
+    context 'With new uid' do
+      it 'creates new user' do
+        expect { subject }.to change {User.all.size}.by(1)
+
+        user = User.last
+        expect(user.slice(values.keys)).to match(values)
+      end
+    end
+
+    context 'With persisted uid' do
+      before { create(:user, uid: values[:uid]) }
+      it 'updates the user' do
+        expect { subject }.to_not change {User.all.size}
+
+        user = User.last
+        expect(user.slice(values.keys)).to match(values)
+      end
+    end
+
+    context 'without uid' do
+      before { values.delete(:uid) }
+      it 'raises an ActiveRecord::RecordInvalid' do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    context 'without screen_name' do
+      before { values.delete(:screen_name) }
+      it 'raises an ActiveRecord::RecordInvalid' do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    context 'without email' do
+      before { values.delete(:email) }
+      it 'does not raise any exception' do
+        expect { subject }.to_not raise_error
+      end
+    end
+
+    context 'without secret' do
+      before { values.delete(:secret) }
+      it 'raises an ActiveRecord::RecordInvalid' do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+
+    context 'without token' do
+      before { values.delete(:token) }
+      it 'raises an ActiveRecord::RecordInvalid' do
+        expect { subject }.to raise_error(ActiveRecord::RecordInvalid)
+      end
+    end
+  end
+
   describe '.api_client' do
     it 'returns ApiClient' do
       client = user.api_client

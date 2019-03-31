@@ -9,7 +9,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     tweet = 'true' == session.delete(:sign_in_tweet)
 
     begin
-      user = User.update_or_create_for_oauth_by!(user_params) do |user, context|
+      user = User.update_or_create_with_token!(user_params) do |user, context|
         create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
         CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
       end
@@ -49,7 +49,16 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   private
 
   def user_params
-    Hashie::Mash.new(request.env['omniauth.auth'].symbolize_keys.slice(:provider, :uid, :info, :credentials).to_h)
+    values = Hashie::Mash.new(request.env['omniauth.auth'].symbolize_keys.slice(:provider, :uid, :info, :credentials).to_h)
+
+    {
+        uid: values.uid,
+        screen_name: values.info.nickname,
+        secret: values.credentials.secret,
+        token: values.credentials.token,
+        authorized: true,
+        email: values.info.email,
+    }.compact
   end
 end
 
