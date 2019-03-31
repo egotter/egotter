@@ -4,7 +4,7 @@ require 'active_support/concern'
 module Concerns::Logging
   extend ActiveSupport::Concern
   include CrawlersHelper
-  include SessionsHelper
+  include Concerns::SessionsConcern
   include ReportsHelper
 
   included do

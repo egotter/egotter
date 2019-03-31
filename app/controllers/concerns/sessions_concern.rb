@@ -1,4 +1,11 @@
-module SessionsHelper
+require 'active_support/concern'
+
+module Concerns::SessionsConcern
+  extend ActiveSupport::Concern
+
+  included do
+  end
+
   def fingerprint
     if from_crawler?
       return -1

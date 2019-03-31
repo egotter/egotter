@@ -1,5 +1,5 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-  include SessionsHelper
+  include Concerns::SessionsConcern
 
   def twitter
     via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
