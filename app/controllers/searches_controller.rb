@@ -41,7 +41,7 @@ class SearchesController < ApplicationController
       logger.info "[debug ahoy] current_visit is nil #{fingerprint} #{current_user_id} #{ahoy.new_visit?} #{ahoy.visit_token} #{ahoy.visitor_token}"
       begin
         track_ahoy_visit
-        logger.info "[debug ahoy] call track_ahoy_visit #{current_visit.inspect} #{Ahoy.server_side_visits} #{Ahoy.cookies} #{Ahoy.server_side_visits != true && !Ahoy.cookies} #{ahoy.new_visit?} #{ahoy.send(:exclude?)} #{ahoy.send(:missing_params?)} #{DeviceDetector.new(request.user_agent).device_type}"
+        logger.info "[debug ahoy] call track_ahoy_visit #{current_visit.inspect} ssv=#{Ahoy.server_side_visits} cookie=#{Ahoy.cookies} cond=#{Ahoy.server_side_visits != true && !Ahoy.cookies} new=#{ahoy.new_visit?} evt=#{ahoy.send(:existing_visit_token)} ex=#{ahoy.send(:exclude?)} miss=#{ahoy.send(:missing_params?)} dt=#{DeviceDetector.new(request.user_agent).device_type.inspect} #{request.user_agent.inspect}"
       rescue => e
         logger.warn "[debug ahoy] #{fingerprint} #{current_user_id} #{e.inspect}"
       end
