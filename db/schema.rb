@@ -232,6 +232,7 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
     t.string "error_message", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_create_prompt_report_logs_on_created_at"
+    t.index ["request_id"], name: "index_create_prompt_report_logs_on_request_id"
     t.index ["screen_name"], name: "index_create_prompt_report_logs_on_screen_name"
     t.index ["uid"], name: "index_create_prompt_report_logs_on_uid"
   end

@@ -11,6 +11,7 @@ class CreateCreatePromptReportLogs < ActiveRecord::Migration[4.2]
 
       t.datetime :created_at,  null: false
 
+      t.index :request_id
       t.index :uid
       t.index :screen_name
       t.index :created_at
