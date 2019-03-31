@@ -83,8 +83,6 @@ class SendMetricsToSlackWorker
   end
 
   def send_user_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::USERS_MONITORING)
-
     stats = {
         creation: User.where(created_at: 1.hour.ago..Time.zone.now).size,
         first_access: User.where(first_access_at: 1.hour.ago..Time.zone.now).size,
@@ -102,13 +100,10 @@ class SendMetricsToSlackWorker
 
     stats = stats.sort_by {|_, v| -v}.to_h
 
-    SlackClient.send_message("creation details", channel: SlackClient::USERS_MONITORING)
-    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::USERS_MONITORING)
+    SlackClient.send_message(SlackClient.format(stats), title: 'via (create)', channel: SlackClient::USERS_MONITORING)
   end
 
   def send_twitter_user_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::TWITTER_USERS_MONITORING)
-
     users = TwitterUser.cache_ready.where(created_at: 1.hour.ago..Time.zone.now)
 
     stats = {
@@ -161,15 +156,11 @@ class SendMetricsToSlackWorker
   end
 
   def send_google_analytics_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::GA_MONITORING)
-
     stats = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
     SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::GA_MONITORING)
   end
 
   def send_prompt_report_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::MESSAGING_MONITORING)
-
     condition = {created_at: 1.hour.ago..Time.zone.now}
     stats = {
         prompt_reports: PromptReport.where(condition).size,
@@ -182,8 +173,6 @@ class SendMetricsToSlackWorker
   end
 
   def send_prompt_report_error_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::MESSAGING_MONITORING)
-
     condition = {created_at: 1.hour.ago..Time.zone.now}
     stats =
         CreatePromptReportLog.select('error_class, count(*) cnt').
@@ -207,25 +196,21 @@ class SendMetricsToSlackWorker
   end
 
   def send_sidekiq_queue_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::SIDEKIQ_MONITORING)
-
     queues = Sidekiq::Queue.all.select {|queue| queue.latency > 0}.sort_by(&:name)
     queues = queues.map do |queue|
       [queue.name, {size: queue.size, latency: sprintf("%.3f", queue.latency)}]
     end.to_h
-    SlackClient.send_message(SlackClient.format(queues), channel: SlackClient::SIDEKIQ_MONITORING)
+    SlackClient.send_message(SlackClient.format(queues), title: 'queues', channel: SlackClient::SIDEKIQ_MONITORING)
   end
 
   def send_sidekiq_worker_metrics(types = nil)
-    SlackClient.send_message(__method__, channel: SlackClient::SIDEKIQ_MONITORING)
-
     unless types
       types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import sidekiq_prompt_reports)
     end
 
     types.each do |type|
       stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.to_h
-      SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SIDEKIQ_MONITORING)
+      SlackClient.send_message(SlackClient.format(stats), title: type, channel: SlackClient::SIDEKIQ_MONITORING)
     end
   end
 
@@ -237,8 +222,6 @@ class SendMetricsToSlackWorker
   end
 
   def send_search_histories_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::SEARCH_HISTORIES_MONITORING)
-
     histories = SearchHistory.where(created_at: 1.hour.ago..Time.zone.now)
 
     stats = {
@@ -255,7 +238,9 @@ class SendMetricsToSlackWorker
         end
 
     stats = stats.sort_by {|_, v| -v}.to_h
-    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SEARCH_HISTORIES_MONITORING)
+    SlackClient.send_message(SlackClient.format(stats), title: 'total (source)', channel: SlackClient::SEARCH_HISTORIES_MONITORING)
+
+    # TODO device_type
   end
 
   def send_visitors_metrics
@@ -277,9 +262,10 @@ class SendMetricsToSlackWorker
       stat = stats.select {|k, _| k.start_with?(prefix)}.transform_keys {|k| k.remove(prefix)}
       stat = stat.sort_by {|_, v| -v}.to_h
 
-      SlackClient.send_message("#{__method__} (#{prefix})", channel: SlackClient::VISITORS_MONITORING)
-      SlackClient.send_message(SlackClient.format(stat), channel: SlackClient::VISITORS_MONITORING)
+      SlackClient.send_message(SlackClient.format(stat), title: "source (#{prefix.split('/').join(', ')})", channel: SlackClient::VISITORS_MONITORING)
     end
+
+    # TODO device_type
   end
 
   def send_sign_in_metrics
@@ -293,14 +279,11 @@ class SendMetricsToSlackWorker
 
       stats = stats.sort_by {|_, v| -v}.to_h
 
-      SlackClient.send_message("#{__method__} (#{context})", channel: SlackClient::SIGN_IN_MONITORING)
-      SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SIGN_IN_MONITORING)
+      SlackClient.send_message(SlackClient.format(stats), title: "via (#{context})", channel: SlackClient::SIGN_IN_MONITORING)
     end
   end
 
   def send_rate_limit_metrics
-    SlackClient.send_message(__method__, channel: SlackClient::RATE_LIMIT_MONITORING)
-
     stats =
         Bot.rate_limit.map do |limit|
           id = limit.delete(:id).to_s
