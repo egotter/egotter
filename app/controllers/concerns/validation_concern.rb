@@ -126,6 +126,7 @@ module Concerns::ValidationConcern
   end
 
   def blocked_search?(twitter_user)
+    raise 'Call #blocked_search? after calling #authorized_search?' unless @authorized_search_called
     if user_signed_in?
       request_context_client.user_timeline(twitter_user.uid, count: 1)
       false
@@ -144,6 +145,8 @@ module Concerns::ValidationConcern
   end
 
   def authorized_search?(twitter_user)
+    @authorized_search_called = true
+
     begin
       if twitter_user.persisted?
         twitter_user.load_raw_attrs_text_from_s3!
