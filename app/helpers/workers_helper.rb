@@ -3,8 +3,7 @@ module WorkersHelper
     return if from_crawler?
     return if !user_signed_in? && via_dm?
     return if uid.to_i == User::EGOTTER_UID
-
-    return if TooManyRequestsQueue.new.exists?(current_user_id)
+    return if user_signed_in? && TooManyRequestsQueue.new.exists?(current_user.id)
 
     requests = QueueingRequests.new(CreateTwitterUserWorker)
     return if requests.exists?(uid)

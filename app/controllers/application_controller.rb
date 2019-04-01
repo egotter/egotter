@@ -3,7 +3,7 @@ class ApplicationController < ActionController::Base
   include Concerns::InternalServerErrorHandler
   include Concerns::RoutingErrorHandler
   include Concerns::ApiClientConcern
-  include UsersHelper
+  include Concerns::UsersConcern
   include Concerns::TwitterUsersConcern
   include CrawlersHelper
   include Concerns::SessionsConcern

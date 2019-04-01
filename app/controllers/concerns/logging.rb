@@ -27,7 +27,7 @@ module Concerns::Logging
       controller:  controller_name,
       action:      action_name,
       cache_hit:   false,
-      ego_surfing: user_signed_in? && current_user_uid == uid.to_i,
+      ego_surfing: user_signed_in? && current_user.uid == uid.to_i,
       method:      request.method,
       path:        request.original_fullpath.to_s.truncate(180),
       status:      200,

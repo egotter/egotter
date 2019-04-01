@@ -1,7 +1,7 @@
 - with_text = false unless defined?(with_text)
 
 - if user_signed_in?
-  - if current_user_uid != user.uid && !user.suspended?
+  - if current_user.uid != user.uid && !user.suspended?
     - is_following = current_user_is_following?(user.uid)
     %a.btn.btn-success.follow{href: '#', data: {uid: user.uid, screen_name: user.screen_name}, style: "#{'display: none;' unless is_following}"}
       %span.glyphicon.glyphicon-ok
