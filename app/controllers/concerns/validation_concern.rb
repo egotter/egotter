@@ -2,7 +2,7 @@ require 'active_support/concern'
 
 module Concerns::ValidationConcern
   extend ActiveSupport::Concern
-  include Concerns::ExceptionHandler
+  include Concerns::TwitterExceptionHandler
   include CrawlersHelper
   include PathsHelper
   include SearchHistoriesHelper

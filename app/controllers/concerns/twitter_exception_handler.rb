@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::ExceptionHandler
+module Concerns::TwitterExceptionHandler
   extend ActiveSupport::Concern
   include PathsHelper
 
