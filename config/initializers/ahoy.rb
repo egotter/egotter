@@ -15,7 +15,7 @@ Ahoy.track_bots = true
 Ahoy.exclude_method = lambda do |controller, request|
   controller.from_crawler?
 rescue => e
-  Rails.logger.warn "controller doesn't respond to #from_crawler? #{controller.class} #{request.inspect}"
+  Rails.logger.warn "controller doesn't respond to #from_crawler? #{controller.class} #{request.fullpath} #{request.referer}"
   raise
 end
 
