@@ -212,7 +212,7 @@
               %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_follow_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: follow_path}}= t('twitter.create_follow_modal.ok')
+            %button.btn.btn-primary.ok{type: 'button', data: {url: follow_path(via: build_via('create_follow_modal'))}}= t('twitter.create_follow_modal.ok')
 
     #create-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
@@ -224,7 +224,7 @@
               %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_unfollow_modal.cancel')
-            %button.btn.btn-danger.ok{type: 'button', data: {url: create_unfollow_path}}= t('twitter.create_unfollow_modal.ok')
+            %button.btn.btn-danger.ok{type: 'button', data: {url: create_unfollow_path(via: build_via('create_unfollow_modal'))}}= t('twitter.create_unfollow_modal.ok')
 
     #warning-follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
@@ -260,7 +260,7 @@
               %p= t('welcome.follow_modal.note1_html')
             .modal-footer
               %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.follow_modal.cancel')
-              %button.btn.btn-primary.ok{type: 'button', data: {url: follow_path, uid: User::EGOTTER_UID, follow_url: follow_url('ego_tter')}}= t('welcome.follow_modal.ok')
+              %button.btn.btn-primary.ok{type: 'button', data: {url: follow_path(via: build_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_url('ego_tter')}}= t('welcome.follow_modal.ok')
 
     #share-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}

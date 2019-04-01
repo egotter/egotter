@@ -1,4 +1,4 @@
-.update-box.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}}
+.update-box.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID', via: build_via('update_box'))}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.updating', user: twitter_user.mention_name)
   = image_tag '/ajax-loader.gif'
@@ -11,39 +11,39 @@
 .too-many-friends-box.alert.alert-info.alert-dismissable{data: {name: 'too-many-friends-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_sign_in', user: twitter_user.mention_name)
-  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_friends_box'))), class: 'btn btn-default btn-sm')
 
-.follow-box.alert.alert-warning.alert-dismissable{data: {name: 'follow-box', url: follow_path}}
+.follow-box.alert.alert-warning.alert-dismissable{data: {name: 'follow-box', url: follow_path(via: build_via('follow_box'))}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_follow', user: twitter_user.mention_name)
-  = link_to(t('common.show.follow'), sign_in_path(via: build_via('follow_box'), redirect_path: timeline_path(twitter_user), follow: true), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.follow'), sign_in_path(via: build_via('follow_box'), redirect_path: timeline_path(twitter_user, via: build_via('follow_box')), follow: true), class: 'btn btn-default btn-sm')
 
 .invalid-token-box.alert.alert-warning.alert-dismissable{data: {name: 'invaild-token-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.invalid_token', user: twitter_user.mention_name)
-  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('invalid_token'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('invalid_token_box'), redirect_path: timeline_path(twitter_user, via: build_via('invalid_token_box'))), class: 'btn btn-default btn-sm')
 
 .additional-func-box.alert.alert-warning.alert-dismissable{data: {name: 'additional-func-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.additional_func')
-  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('additional_func'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('additional_func_box'), redirect_path: timeline_path(twitter_user, via: build_via('additional_func_box'))), class: 'btn btn-default btn-sm')
 
 .via-dm-box.alert.alert-warning.alert-dismissable{data: {name: 'via-dm-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.via_dm')
-  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('via_dm'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('via_dm_box'), redirect_path: timeline_path(twitter_user, via: build_via('via_dm_box'))), class: 'btn btn-default btn-sm')
 
 .sign-in-box.alert.alert-info.alert-dismissable{data: {name: 'sign-in-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('timelines.show.lets_sign_in')
-  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('lets_sign_in'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
+  = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('sign_in_box'), redirect_path: timeline_path(twitter_user, via: build_via('sign_in_box'))), class: 'btn btn-default btn-sm')
 
 .too-many-searches-box.alert.alert-info.alert-dismissable{data: {name: 'too-many-searches-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   - if user_signed_in?
-    = t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path)
+    = t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path(via: build_via('too_many_searches_box')))
   - else
-    - url = sign_in_path(via: build_via('too_many_searches'), redirect_path: timeline_path(twitter_user))
+    - url = sign_in_path(via: build_via('too_many_searches_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_searches_box')))
     = t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: url)
 
 :javascript
@@ -51,7 +51,7 @@
     var $updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox, $signInBox;
 
     function checkFollow () {
-      $.getJSON($followBox.data('url'), {via: 'check_follow'}, function (res) {
+      $.getJSON($followBox.data('url'), function (res) {
         console.log('checkFollow', res);
 
         if (!res.follow) {
@@ -164,7 +164,7 @@
       }
 
       if (signedIn) {
-        var url = '#{twitter_users_path}';
+        var url = "#{twitter_users_path(via: build_via('background_update'))}";
         var uid = '#{twitter_user.uid}';
 
         $.post(url, {uid: uid})

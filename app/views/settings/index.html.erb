@@ -37,7 +37,7 @@
         <% else %>
           <div>
             <span><%= t('.following_egotter.false') %></span>
-            <%= link_to t('.update_following'), '#', data: {url: follow_path, uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-xs' %>
+            <%= link_to t('.update_following'), '#', data: {url: follow_path(via: build_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-xs' %>
           </div>
           <div class="text-muted notes"><%= t('.following_egotter.note2') %></div>
         <% end %>
