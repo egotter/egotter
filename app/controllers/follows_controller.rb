@@ -1,4 +1,4 @@
-class FollowController < ApplicationController
+class FollowsController < ApplicationController
   include Concerns::JobQueueingConcern
 
   before_action :reject_crawler

@@ -7,7 +7,7 @@ module TwitterHelper
     "https://twitter.com/messages/compose?recipient_id=#{uid}"
   end
 
-  def follow_url(screen_name)
+  def follow_intent_url(screen_name)
     "https://twitter.com/intent/follow?screen_name=#{screen_name}"
   end
 

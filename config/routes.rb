@@ -118,7 +118,7 @@ Rails.application.routes.draw do
   resources :forbidden, only: %i(show), param: :screen_name
 
   get 'follow', to: 'follow#show'
-  post 'follow', to: 'follow#create'
+  resources :follows, only: %i(create)
 
   post 'create_unfollow', to: 'unfollow#create', as: :create_unfollow
   resources :shares, only: %i(create)
