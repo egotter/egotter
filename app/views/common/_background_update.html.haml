@@ -1,44 +1,44 @@
-.update-box.alert.alert-info.alert-dismissable{data: {url: twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}}
+.update-box.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, jid: 'JID')}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.updating', user: twitter_user.mention_name)
   = image_tag '/ajax-loader.gif'
 
-.refresh-box.alert.alert-info.alert-dismissable
+.refresh-box.alert.alert-info.alert-dismissable{data: {name: 'refresh-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   %span= t('twitter_users.show.update_is_coming', user: twitter_user.mention_name)
   = link_to(t('common.show.update_result'), timeline_path(twitter_user, via: build_via('refresh_box')), class: 'btn btn-default btn-sm')
 
-.too-many-friends-box.alert.alert-info.alert-dismissable
+.too-many-friends-box.alert.alert-info.alert-dismissable{data: {name: 'too-many-friends-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_sign_in', user: twitter_user.mention_name)
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
-.follow-box.alert.alert-warning.alert-dismissable{data: {url: follow_path}}
+.follow-box.alert.alert-warning.alert-dismissable{data: {name: 'follow-box', url: follow_path}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.need_follow', user: twitter_user.mention_name)
   = link_to(t('common.show.follow'), sign_in_path(via: build_via('follow_box'), redirect_path: timeline_path(twitter_user), follow: true), class: 'btn btn-default btn-sm')
 
-.invalid-token-box.alert.alert-warning.alert-dismissable
+.invalid-token-box.alert.alert-warning.alert-dismissable{data: {name: 'invaild-token-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.invalid_token', user: twitter_user.mention_name)
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('invalid_token'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
-.additional-func-box.alert.alert-warning.alert-dismissable
+.additional-func-box.alert.alert-warning.alert-dismissable{data: {name: 'additional-func-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.additional_func')
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('additional_func'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
-.via-dm-box.alert.alert-warning.alert-dismissable
+.via-dm-box.alert.alert-warning.alert-dismissable{data: {name: 'via-dm-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('common.show.via_dm')
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('via_dm'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
-.sign-in-box.alert.alert-info.alert-dismissable
+.sign-in-box.alert.alert-info.alert-dismissable{data: {name: 'sign-in-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('timelines.show.lets_sign_in')
   = link_to(t('common.show.sign_in'), sign_in_path(via: build_via('lets_sign_in'), redirect_path: timeline_path(twitter_user)), class: 'btn btn-default btn-sm')
 
-.too-many-searches-box.alert.alert-info.alert-dismissable
+.too-many-searches-box.alert.alert-info.alert-dismissable{data: {name: 'too-many-searches-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   - if user_signed_in?
     = t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path)
@@ -133,9 +133,19 @@
       $signInBox = $('.sign-in-box');
       $tooManySearchesBox = $('.too-many-searches-box');
 
-      $.each([$updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox], function (i, btn) {
-        btn.on('close.bs.alert', function () {
-          btn.parent().hide();
+      $.each([$updateBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $encourageToSignInBox, $viaDMBox, $signInBox, $tooManySearchesBox], function (i, box) {
+        box.on('close.bs.alert', function () {
+          box.parent('.sticky-wrapper').hide();
+        });
+
+        box.find('a').on('click', function (e) {
+          ga('send', {
+            hitType: 'event',
+            eventCategory: box.data('name'),
+            eventAction: 'click',
+            eventLabel: e.target.href,
+            transport: 'beacon'
+          });
         });
       });
 
