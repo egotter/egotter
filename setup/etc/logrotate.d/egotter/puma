@@ -8,10 +8,11 @@
   compress
   delaycompress
   notifempty
+  copytruncate
   sharedscripts
-    postrotate
-      [ -e /var/egotter/tmp/pids/puma.pid ] && kill -HUP `cat /var/egotter/tmp/pids/puma.pid` && kill -USR1 `cat /var/egotter/tmp/pids/puma.pid`
-    endscript
+  postrotate
+    [ -e /var/egotter/tmp/pids/puma.pid ] && kill -HUP `cat /var/egotter/tmp/pids/puma.pid` && kill -USR1 `cat /var/egotter/tmp/pids/puma.pid`
+  endscript
 }
 
 # kill -HUP reopen puma.log
