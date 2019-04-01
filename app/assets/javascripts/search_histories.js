@@ -15,6 +15,13 @@ SearchHistories.initializeSearchModal = function () {
         $modal.find('.twitter.users').append(res);
       });
     }
+
+    ga('send', {
+      hitType: 'event',
+      eventCategory: 'SearchModal',
+      eventAction: 'show',
+      eventLabel: 'SearchModal shown'
+    });
   });
 
   $modal.on('shown.bs.modal', function (e) {

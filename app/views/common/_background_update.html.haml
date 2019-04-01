@@ -80,6 +80,13 @@
       window.checkForUpdates($updateBox.data('url').replace("JID", jid), {interval: 3000},
         function (res) {
           console.log('checkForUpdates found.');
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'show',
+            eventLabel: 'NewRecord found'
+          });
+
           $updateBox.alert('close');
           if (res.text) {
             $refreshBox.find('span').text(res.text);
@@ -87,10 +94,24 @@
           $refreshBox.show().sticky();
         }, function (res) {
           console.log('checkForUpdates retry exhausted.');
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'show',
+            eventLabel: 'Retry exhausted'
+          });
+
           $updateBox.alert('close');
           updatesNotFound(signedIn);
         }, function (xhr) {
           console.log('checkForUpdates failed.', xhr.responseText);
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'show',
+            eventLabel: 'Polling failed'
+          });
+
           $updateBox.alert('close');
         });
     }
@@ -139,6 +160,12 @@
         $.post(url, {uid: uid})
         .done(function (res) {
           console.log(res);
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'create',
+            eventLabel: 'Done'
+          });
 
           if (res.jid) {
             checkForUpdates(res.jid, signedIn);
@@ -147,6 +174,12 @@
           }
         }).fail(function (xhr) {
           console.log(xhr.responseText);
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'create',
+            eventLabel: 'Failed'
+          });
 
           if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['error'] === 'too_many_searches') {
             $tooManySearchesBox.show().sticky();
