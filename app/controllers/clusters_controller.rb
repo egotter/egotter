@@ -30,7 +30,7 @@ class ClustersController < ApplicationController
       @screen_name = @tu.screen_name
       @redirect_path = redirect_path
       @via = params['via']
-      render template: 'searches/create', layout: false
+      render template: 'searches/create', formats: %i(html), layout: false
     end
   end
 

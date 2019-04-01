@@ -885,6 +885,7 @@ ja:
       share_me: "えごったーをシェアする"
   application:
     not_found: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
+    routing_not_found: "お探しのページが見付かりませんでした。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error: "エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error_with_recovery_html: 'エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a>'
     invalid_token:

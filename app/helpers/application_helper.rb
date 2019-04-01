@@ -47,10 +47,6 @@ module ApplicationHelper
     ]
   end
 
-  def request_context_client
-    @request_context_client ||= (user_signed_in? ? current_user.api_client : Bot.api_client)
-  end
-
   def egotter_share_text(shorten_url: false, via: nil)
     url = 'https://egotter.com'
     url += '?' + {via: via}.to_query if via
