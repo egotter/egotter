@@ -20,6 +20,5 @@
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
   - StartSendingPromptReportsWorker
-  - UpdateUsageStatWorker
   - WriteProfilesToS3Worker
   - WriteToS3Worker
