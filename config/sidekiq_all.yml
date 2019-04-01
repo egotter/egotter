@@ -22,3 +22,4 @@
   - StartSendingPromptReportsWorker
   - WriteProfilesToS3Worker
   - WriteToS3Worker
+  - rollbar
