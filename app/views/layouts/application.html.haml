@@ -277,4 +277,4 @@
             %textarea{rows: '3', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.share_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: create_share_path}}= t('welcome.share_modal.ok')
+            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: build_via('share_egotter_modal'))}}= t('welcome.share_modal.ok')
