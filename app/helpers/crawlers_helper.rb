@@ -7,6 +7,8 @@ module CrawlersHelper
     request.from_crawler? || !!from_minor_crawler?(request.user_agent)
   end
 
+  private
+
   CRAWLERS_REGEXP = /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider/
 
   def from_minor_crawler?(user_agent)
