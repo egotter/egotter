@@ -10,7 +10,7 @@ class SendExceptionToRollbarWorker
 
     Rollbar.process_from_async_handler(payload)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{payload.truncate(100)}"
+    logger.warn "#{e.class} #{e.message} #{payload.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")
   end
 end
