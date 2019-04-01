@@ -56,7 +56,15 @@
 
     - if user_signed_in?
       :javascript
-        #{render(partial: 'common/rollbar', formats: %i(js))}
+        Rollbar.configure({
+          payload: {
+            person: {
+              id: #{current_user.id},
+              username: "#{current_user.screen_name}",
+              email: ""
+            }
+          }
+        });
 
     :javascript
       window.twttr = (function(d, s, id) {
