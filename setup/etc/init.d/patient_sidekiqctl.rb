@@ -69,33 +69,7 @@ def status(pidfile)
   puts "#{pid} #{print_process(pid: pid)}"
 end
 
-def do_quiet(pidfile, options)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      10.times do
-        quiet(pidfile)
-        break if quiet?(pidfile)
-        puts "waiting to be quiet #{print_process(pidfile: pidfile)}"
-        sleep 2
-      end
-
-      if quiet?(pidfile)
-        puts "being quiet #{options[:name]} [ #{green('OK')} ]"
-      else
-        puts "being quiet #{options[:name]} [ #{red('FAILED')} ]"
-        exit 1
-      end
-    else
-      puts 'process dead but pid file exists'
-      exit 1
-    end
-  else
-    puts "pid file doesn't exist"
-    exit 1
-  end
-end
-
-def do_stop(pidfile, print_success = true, **options)
+def patient_quiet(pidfile)
   if pidfile_exists?(pidfile)
     if process_exists?(pidfile: pidfile)
       pid = print_pid(pidfile)
@@ -108,11 +82,24 @@ def do_stop(pidfile, print_success = true, **options)
       end
 
       if quiet?(pidfile)
-        puts "being quiet #{options[:name]} [ #{green('OK')} ]" if print_success
+        true
       else
-        puts "'being quiet #{options[:name]} [ #{red('FAILED')} ]'"
-        exit 1
+        false
       end
+    else
+      puts 'process dead but pid file exists'
+      false
+    end
+  else
+    puts "pid file doesn't exist"
+    false
+  end
+end
+
+def patient_stop(pidfile)
+  if pidfile_exists?(pidfile)
+    if process_exists?(pidfile: pidfile)
+      pid = print_pid(pidfile)
 
       10.times do
         stop(pidfile) if pidfile_exists?(pidfile)
@@ -122,29 +109,28 @@ def do_stop(pidfile, print_success = true, **options)
       end
 
       if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
-        puts "stopping #{options[:name]} [ #{green('OK')} ]" if print_success
+        true
       else
-        puts "stopping #{options[:name]} [ #{red('FAILED')} ]"
-        exit 1
+        false
       end
     else
       puts 'process dead but pid file exists'
-      exit 1
+      false
     end
   else
     puts "pid file doesn't exist"
-    exit 1
+    false
   end
 end
 
-def do_start(pidfile, print_success = true, **options)
+def patient_start(pidfile, options)
   if pidfile_exists?(pidfile)
     if process_exists?(pidfile: pidfile)
       puts 'process exists'
-      exit 1
+      false
     else
       puts 'process dead but pid file exists'
-      exit 1
+      false
     end
   else
     start(options)
@@ -155,18 +141,56 @@ def do_start(pidfile, print_success = true, **options)
     end
 
     if start?(pidfile)
-      puts "starting #{options[:name]} [ #{green('OK')} ]" if print_success
+      true
     else
-      puts "starting #{options[:name]} [ #{red('FAILED')} ]"
-      exit 1
+      false
     end
   end
 end
 
+def do_quiet(pidfile, options)
+  if patient_quiet(pidfile)
+    success('being quiet', options[:name])
+  else
+    failure('being quiet', options[:name])
+    exit 1
+  end
+end
+
+def do_stop(pidfile, options)
+  if patient_quiet(pidfile) && patient_stop(pidfile)
+    success('stopping', options[:name])
+  else
+    failure('stopping', options[:name])
+    exit 1
+  end
+end
+
+def do_force_stop(pidfile, options)
+  if patient_stop(pidfile)
+    success('force stopping', options[:name])
+  else
+    failure('force stopping', options[:name])
+    exit 1
+  end
+end
+
+def do_start(pidfile, options)
+  if patient_start(pidfile, options)
+    success('starting', options[:name])
+  else
+    failure('starting', options[:name])
+    exit 1
+  end
+end
+
 def do_restart(pidfile, options)
-  do_stop(pidfile, false, options)
-  do_start(pidfile, false, options)
-  puts "restarting #{options[:name]} [ #{green('OK')} ]"
+  if patient_quiet(pidfile) && patient_stop(pidfile) && patient_start(pidfile, options)
+    success('restarting', options[:name])
+  else
+    failure('restarting', options[:name])
+    exit 1
+  end
 end
 
 def do_status(pidfile)
@@ -183,12 +207,12 @@ def do_status(pidfile)
   end
 end
 
-def green(str)
-  "\e[32m#{str}\e[0m"
+def success(state, name)
+  puts "#{state} #{name} [ \e[32m OK \e[0m ]"
 end
 
-def red(str)
-  "\e[31m#{str}\e[0m"
+def failure(state, name)
+  puts "#{state} #{name} [ \e[31m FAILED \e[0m ]"
 end
 
 params = ARGV.getopts('e:', 'dir:', 'user:', 'name:', 'state:')
@@ -229,9 +253,10 @@ SIDEKIQCTL_CMD = "cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} #{sidekiqctl_
 SIDEKIQ_CMD = "cd #{app_root} && RAILS_ENV=#{env} #{bundle_cmd} exec #{ruby_cmd} #{sidekiq_cmd}"
 
 case state
-when 'quiet'   then do_quiet(pidfile, options)
-when 'stop'    then do_stop(pidfile, options)
-when 'start'   then do_start(pidfile, options)
-when 'restart' then do_restart(pidfile, options)
-when 'status'  then do_status(pidfile)
+when 'quiet'      then do_quiet(pidfile, options)
+when 'stop'       then do_stop(pidfile, options)
+when 'force-stop' then do_force_stop(pidfile, options)
+when 'start'      then do_start(pidfile, options)
+when 'restart'    then do_restart(pidfile, options)
+when 'status'     then do_status(pidfile)
 end
