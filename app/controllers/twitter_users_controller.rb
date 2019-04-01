@@ -28,10 +28,14 @@ class TwitterUsersController < ApplicationController
     end
 
     started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
-    render json: params.slice(:uid, :jid, :interval, :retry_count).merge(started_at: started_at), status: :accepted
+    render json: {found: false, started_at: started_at}.merge(echo_back_params), status: :accepted
   end
 
   private
+
+  def echo_back_params
+    params.permit(:uid, :jid, :interval, :retry_count)
+  end
 
   def new_record_found?(twitter_user)
     params[:created_at].to_s.match(/\A\d+\z/) && Time.zone.at(params[:created_at].to_i) < twitter_user.created_at

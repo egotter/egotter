@@ -34,6 +34,7 @@ function checkForUpdates (path, options, successCallback, stopCallback, failedCa
   var retryCount = options['retryCount'] || 0;
   var interval = options['interval'] || 5000;
   var startedAt = options['startedAt'] || Date.now() / 1000;
+  var maxRetryCount = 5;
 
   $.get(path, {interval: interval, retry_count: retryCount, started_at: startedAt})
     .done(function (res, textStatus, xhr) {
@@ -42,7 +43,7 @@ function checkForUpdates (path, options, successCallback, stopCallback, failedCa
       if (xhr.status === 200) {
         successCallback(res);
       } else {
-        if (retryCount < 2) {
+        if (retryCount < maxRetryCount - 1) {
           setTimeout(function () {
             var options = {interval: interval, retryCount: ++retryCount, startedAt: startedAt};
             checkForUpdates(path, options, successCallback, stopCallback, failedCallback);

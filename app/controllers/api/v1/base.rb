@@ -54,10 +54,6 @@ module Api
 
       private
 
-      def list_params
-        params.permit(:max_sequence, :limit, :sort_order, :filter)
-      end
-
       def create_users_for_not_persisted_uids(uids)
         if uids.any?
           logger.info {"#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{uids.size}"}

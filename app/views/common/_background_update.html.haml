@@ -77,19 +77,21 @@
       console.log('Worker started', jid);
       $updateBox.show().sticky();
 
-      window.checkForUpdates($updateBox.data('url').replace("JID", jid), {interval: 8000},
+      window.checkForUpdates($updateBox.data('url').replace("JID", jid), {interval: 3000},
         function (res) {
+          console.log('checkForUpdates found.');
           $updateBox.alert('close');
           if (res.text) {
             $refreshBox.find('span').text(res.text);
           }
           $refreshBox.show().sticky();
         }, function (res) {
+          console.log('checkForUpdates retry exhausted.');
           $updateBox.alert('close');
           updatesNotFound(signedIn);
         }, function (xhr) {
+          console.log('checkForUpdates failed.', xhr.responseText);
           $updateBox.alert('close');
-          console.log('checkForUpdates failed.', xhr);
         });
     }
 
