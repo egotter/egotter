@@ -1,4 +1,11 @@
-module WorkersHelper
+require 'active_support/concern'
+
+module Concerns::JobQueueingConcern
+  extend ActiveSupport::Concern
+
+  included do
+  end
+
   def enqueue_create_twitter_user_job_if_needed(uid, user_id:, screen_name:)
     return if from_crawler?
     return if !user_signed_in? && via_dm?
@@ -12,23 +19,23 @@ module WorkersHelper
     referral = find_referral(pushed_referers)
 
     values = {
-      session_id:  fingerprint,
-      user_id:     user_id,
-      uid:         uid,
-      screen_name: screen_name,
-      controller:  controller_name,
-      action:      action_name,
-      auto:        %w(show).include?(action_name),
-      via:         params[:via] ? params[:via] : '',
-      device_type: request.device_type,
-      os:          request.os,
-      browser:     request.browser,
-      user_agent:  truncated_user_agent,
-      referer:     truncated_referer,
-      referral:    referral,
-      channel:     find_channel(referral),
-      medium:      params[:medium] ? params[:medium] : '',
-      enqueued_at: Time.zone.now
+        session_id:  fingerprint,
+        user_id:     user_id,
+        uid:         uid,
+        screen_name: screen_name,
+        controller:  controller_name,
+        action:      action_name,
+        auto:        %w(show).include?(action_name),
+        via:         params[:via] ? params[:via] : '',
+        device_type: request.device_type,
+        os:          request.os,
+        browser:     request.browser,
+        user_agent:  truncated_user_agent,
+        referer:     truncated_referer,
+        referral:    referral,
+        channel:     find_channel(referral),
+        medium:      params[:medium] ? params[:medium] : '',
+        enqueued_at: Time.zone.now
     }
 
     track = Track.create!(values.except(:enqueued_at))

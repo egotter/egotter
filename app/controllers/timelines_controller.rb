@@ -1,5 +1,5 @@
 class TimelinesController < ApplicationController
-  include WorkersHelper
+  include Concerns::JobQueueingConcern
   include Concerns::SearchByUidConcern
   include Concerns::AudienceInsights
 

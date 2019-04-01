@@ -1,5 +1,5 @@
 class HomeController < ApplicationController
-  include WorkersHelper
+  include Concerns::JobQueueingConcern
 
   before_action do
     push_referer

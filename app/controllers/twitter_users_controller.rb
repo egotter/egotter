@@ -1,5 +1,5 @@
 class TwitterUsersController < ApplicationController
-  include WorkersHelper
+  include Concerns::JobQueueingConcern
 
   before_action :reject_crawler
   before_action { valid_uid?(params[:uid]) }

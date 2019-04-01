@@ -1,6 +1,6 @@
 class UsageStatsController < ApplicationController
   include Concerns::SearchByUidConcern
-  include WorkersHelper
+  include Concerns::JobQueueingConcern
   include TweetTextHelper
 
   before_action only: %i(check_for_updates) do
