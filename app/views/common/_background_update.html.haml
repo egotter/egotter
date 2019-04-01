@@ -83,7 +83,7 @@
           ga('send', {
             hitType: 'event',
             eventCategory: 'TwitterUsers',
-            eventAction: 'show',
+            eventAction: 'found',
             eventLabel: 'NewRecord found'
           });
 
@@ -97,7 +97,7 @@
           ga('send', {
             hitType: 'event',
             eventCategory: 'TwitterUsers',
-            eventAction: 'show',
+            eventAction: 'exhausted',
             eventLabel: 'Retry exhausted'
           });
 
@@ -108,7 +108,7 @@
           ga('send', {
             hitType: 'event',
             eventCategory: 'TwitterUsers',
-            eventAction: 'show',
+            eventAction: 'failed',
             eventLabel: 'Polling failed'
           });
 
@@ -170,25 +170,31 @@
         $.post(url, {uid: uid})
         .done(function (res) {
           console.log(res);
-          ga('send', {
-            hitType: 'event',
-            eventCategory: 'TwitterUsers',
-            eventAction: 'create',
-            eventLabel: 'Done'
-          });
 
           if (res.jid) {
+            ga('send', {
+              hitType: 'event',
+              eventCategory: 'UpdateJobs',
+              eventAction: 'started',
+              eventLabel: 'Done'
+            });
             checkForUpdates(res.jid, signedIn);
           } else {
+            ga('send', {
+              hitType: 'event',
+              eventCategory: 'UpdateJobs',
+              eventAction: 'not started',
+              eventLabel: 'Done'
+            });
             updatesNotFound(signedIn);
           }
         }).fail(function (xhr) {
           console.log(xhr.responseText);
           ga('send', {
             hitType: 'event',
-            eventCategory: 'TwitterUsers',
-            eventAction: 'create',
-            eventLabel: 'Failed'
+            eventCategory: 'UpdateJobs',
+            eventAction: 'failed',
+            eventLabel: 'Done'
           });
 
           if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['error'] === 'too_many_searches') {
