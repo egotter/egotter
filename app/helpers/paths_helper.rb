@@ -9,6 +9,7 @@ module PathsHelper
 
   def search_path_for(menu, screen_name)
     case menu.to_s
+      when 'omniauth_callbacks' then timeline_path(screen_name: screen_name)
       when *%w(home searches waiting notifications search_histories login misc orders tokimeki_unfollow delete_tweets application) then timeline_path(screen_name: screen_name)
       else send("#{menu.to_s.singularize}_path", screen_name: screen_name)
     end

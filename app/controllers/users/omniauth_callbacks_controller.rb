@@ -1,5 +1,6 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include Concerns::SearchHistoriesConcern
+  include Concerns::SanitizationConcern
 
   def twitter
     via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
@@ -25,9 +26,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     DeleteNotFoundUserWorker.perform_async(user.screen_name)
     DeleteForbiddenUserWorker.perform_async(user.screen_name)
 
-    sign_in_and_redirect user, event: :authentication
-    notification_status = t("dictionary.#{user.notification_setting.dm? ? 'enabled' : 'disabled'}")
-    flash[:notice] = t('devise.omniauth_callbacks.success_html', kind: 'Twitter', status: notification_status, url: settings_path) if is_navigational_format?
+    flash[:notice] = after_sign_in_message(user)
+    sign_in user, event: :authentication
+    redirect_to after_sign_in_path_for(user)
   end
 
   def failure
@@ -47,6 +48,23 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   private
+
+  def after_sign_in_path_for(user)
+    redirect_path = sanitized_redirect_path(session.delete(:redirect_path) || root_path)
+    append_query_params(redirect_path, follow_dialog: 1, share_dialog: 1)
+  end
+
+  def after_sign_in_message(user)
+    t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: notification_status_message(user), url: settings_path(via: 'after_sign_in'))
+  end
+
+  def notification_status_message(user)
+    if user.notification_setting.dm?
+      t('devise.omniauth_callbacks.enabled')
+    else
+      t('devise.omniauth_callbacks.disabled')
+    end
+  end
 
   def user_params
     values = Hashie::Mash.new(request.env['omniauth.auth'].symbolize_keys.slice(:provider, :uid, :info, :credentials).to_h)

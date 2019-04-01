@@ -13,9 +13,12 @@ Ahoy.user_agent_parser = :device_detector
 Ahoy.track_bots = true
 
 Ahoy.exclude_method = lambda do |controller, request|
-  controller.from_crawler?
+  # After signing in, Devise calls callbacks without controller.
+  unless controller.nil?
+    controller.from_crawler?
+  end
 rescue => e
-  Rails.logger.warn "controller doesn't respond to #from_crawler? #{controller.class} #{request.fullpath} #{request.referer}"
+  Rails.logger.warn "in ahoy.rb something happened. #{e.class} #{e.message} #{controller.class} #{request.fullpath} #{request.referer}"
   raise
 end
 

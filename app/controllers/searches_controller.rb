@@ -1,5 +1,6 @@
 class SearchesController < ApplicationController
   include Concerns::JobQueueingConcern
+  include Concerns::SanitizationConcern
 
   before_action :reject_crawler
   before_action { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }

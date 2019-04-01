@@ -1,4 +1,5 @@
 class WaitingController < ApplicationController
+  include Concerns::SanitizationConcern
 
   before_action :reject_crawler
   before_action { valid_uid? }

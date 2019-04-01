@@ -956,8 +956,6 @@ ja:
     honorific: "さん"
     between_from: "から"
     between_to: "まで"
-    enabled: "有効"
-    disabled: "無効"
   before_sign_in:
     need_login_html: 'このページを見るためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
