@@ -6,7 +6,7 @@ class SendExceptionToRollbarWorker
 
   def perform(payload)
     data = payload['data']
-    logger.warn "exception=#{data['body']['trace']['exception']} context=#{data['context']} person=#{data['person']}"
+    logger.warn "exception=#{data.dig('body', 'trace', 'exception')} context=#{data['context']} person=#{data['person']}"
 
     Rollbar.process_from_async_handler(payload)
   rescue => e
