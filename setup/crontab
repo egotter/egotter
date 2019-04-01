@@ -1,0 +1,18 @@
+PREFIX='cd /var/egotter && RAILS_ENV=production'
+RAKE='/usr/local/bin/bundle exec rake'
+RUBY='/usr/local/bin/bundle exec ruby'
+RUNNER='/usr/local/bin/bundle exec rails r'
+SUFFIX='>>/var/egotter/log/cron.log 2>&1'
+
+# all
+# 0,15,30,45 * * * * /bin/bash -l -c "$PREFIX $RUBY bin/cleanup_twitter_api_cache.rb $SUFFIX"
+
+# web
+# 30 19 * * *        /bin/bash -l -c "$PREFIX $RAKE cache_directories:rotate $SUFFIX"
+# 15 * * * *         /bin/bash -l -c "$PREFIX $RUNNER 'SetSearchCountWorker.perform_async' $SUFFIX"
+# */10 * * * *       /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.perform_async' $SUFFIX"
+# */5 * * * *        /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToCloudWatchWorker.perform_async' $SUFFIX"
+# */5 * * * *        /usr/bin/sudo /bin/bash -l -c "monit monitor all $SUFFIX"
+
+# sidekiq
+# */10 * * * *       /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.new.send_sidekiq_worker_metrics(\%w{sidekiq_import})' $SUFFIX"
