@@ -6,11 +6,22 @@ class SendExceptionToRollbarWorker
 
   def perform(payload)
     data = payload['data']
-    logger.warn "exception=#{data.dig('body', 'trace', 'exception')} context=#{data['context']} person=#{data['person']}"
+    logger.warn "exception=#{extract_exception(data)} context=#{data['context']} person=#{data['person']}"
 
     Rollbar.process_from_async_handler(payload)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{payload.inspect.truncate(100)}"
     logger.info e.backtrace.join("\n")
+  end
+
+  private
+
+  def extract_exception(data)
+    message = data.dig('body', 'trace', 'exception')
+    if message.blank?
+      logger.info "exception is blank #{data.inspect.truncate(100)}}"
+      logger.info "#{JSON.pretty_generate(data)}"
+    end
+    message
   end
 end
