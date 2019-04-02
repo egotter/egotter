@@ -210,7 +210,7 @@ class SendMetricsToSlackWorker
     }
     SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::SEARCH_HISTORIES_MONITORING)
 
-    stats = histories.each_with_object(Hash.new(0)).each {|his, memo| memo[his.last_session_via] += 1}.sort_by {|_, v| -v}.to_h
+    stats = histories.each_with_object(Hash.new(0)).each {|his, memo| memo[his.via] += 1}.sort_by {|_, v| -v}.to_h
     SlackClient.send_message(SlackClient.format(stats), title: 'total (via)', channel: SlackClient::SEARCH_HISTORIES_MONITORING)
 
     stats = histories.each_with_object(Hash.new(0)).each {|his, memo| memo[his.last_session_source] += 1}.sort_by {|_, v| -v}.to_h
