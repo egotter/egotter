@@ -20,7 +20,7 @@ class TweetRequest < ApplicationRecord
   belongs_to :user
 
   validates :user_id, presence: true
-  validates :text, format: %r[\A.*https://egotter.com.*\z]
+  validates :text, format: %r[https://egotter.com]
 
   def perform!
     client.update(text)

@@ -4,14 +4,29 @@ RSpec.describe TweetRequest, type: :model do
   context 'validation' do
     let(:user) { create(:user) }
     let(:request) { TweetRequest.new(user_id: user.id) }
-    it 'saves text with https://egotter.com' do
-      request.text = 'Hello. https://egotter.com'
-      expect(request.valid?).to be_truthy
+
+    context 'With https://egotter.com' do
+      it 'saves' do
+        request.text = 'Hello. https://egotter.com'
+        expect(request.valid?).to be_truthy
+      end
     end
 
-    it 'does not save text without https://egotter.com' do
-      request.text = 'Hello.'
-      expect(request.valid?).to be_falsey
+    context 'With line breaks' do
+      it 'saves' do
+        request.text = "@user Hello. \n https://egotter.com"
+        expect(request.valid?).to be_truthy
+
+        request.text = "https://egotter.com\nGreat!"
+        expect(request.valid?).to be_truthy
+      end
+    end
+
+    context 'Without https://egotter.com' do
+      it 'does not save' do
+        request.text = 'Hello.'
+        expect(request.valid?).to be_falsey
+      end
     end
   end
 end
