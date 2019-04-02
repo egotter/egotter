@@ -19,7 +19,7 @@ module Api
         CreateTwitterDBUserWorker.perform_async(uids)
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
 
-        users = uids.map {|uid| users[uid]}.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}
+        users = users.map {|user| Hashie::Mash.new(to_summary_hash(user))}
         chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'),  y: 200.0 / 3.0}]
 
         render json: {name: controller_name, count: size, users: users, chart: chart}
