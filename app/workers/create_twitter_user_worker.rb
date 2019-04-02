@@ -16,29 +16,38 @@ class CreateTwitterUserWorker
 
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
-
-    user = User.find_by(id: request.user_id)
+    user = request.user
     return if user&.unauthorized?
+
+    log = CreateTwitterUserLog.create(
+        user_id: user&.id,
+        request_id: request_id,
+        uid: request.uid,
+        )
 
     twitter_user = request.perform!
     request.finished!
 
     notify(user, request.uid) if user
-
     enqueue_next_jobs(request.user_id, request.uid, twitter_user)
 
-    # Saved relations At this point:
+    log.update(status: true)
+
+      # Saved relations At this point:
     # friends_size, followers_size, statuses, mentions, favorites, friendships, followerships
 
   rescue Twitter::Error::TooManyRequests => e
+    log.update(error_class: e.class, error_message: e.message.truncate(100))
+
     if user
       TooManyRequestsQueue.new.add(user.id)
       ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user.id)
     end
-
   rescue CreateTwitterUserRequest::Error => e
+    log.update(error_class: e.class, error_message: e.message.truncate(100))
     logger.info "#{e.class} #{e.message} #{request_id} #{options.inspect}"
   rescue => e
+    log.update(error_class: e.class, error_message: e.message.truncate(100))
     logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
     logger.info e.backtrace.join("\n")
   end

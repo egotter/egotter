@@ -3,10 +3,12 @@
 # Table name: create_twitter_user_requests
 #
 #  id              :bigint(8)        not null, primary key
+#  session_id      :string(191)
 #  user_id         :integer          not null
 #  uid             :bigint(8)        not null
 #  twitter_user_id :integer
 #  finished_at     :datetime
+#  ahoy_visit_id   :bigint(8)
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #

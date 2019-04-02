@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_03_29_111357) do
+ActiveRecord::Schema.define(version: 2019_04_02_120551) do
 
   create_table "ahoy_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "visit_id"
@@ -269,6 +269,20 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
     t.index ["screen_name"], name: "index_create_relationship_logs_on_screen_name"
     t.index ["uid"], name: "index_create_relationship_logs_on_uid"
     t.index ["user_id"], name: "index_create_relationship_logs_on_user_id"
+  end
+
+  create_table "create_twitter_user_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "request_id"
+    t.bigint "uid"
+    t.boolean "status", default: false, null: false
+    t.string "error_class"
+    t.string "error_message"
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_create_twitter_user_logs_on_created_at"
+    t.index ["request_id"], name: "index_create_twitter_user_logs_on_request_id"
+    t.index ["uid"], name: "index_create_twitter_user_logs_on_uid"
+    t.index ["user_id"], name: "index_create_twitter_user_logs_on_user_id"
   end
 
   create_table "create_twitter_user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

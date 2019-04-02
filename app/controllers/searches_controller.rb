@@ -1,6 +1,7 @@
 class SearchesController < ApplicationController
   include Concerns::JobQueueingConcern
   include Concerns::SanitizationConcern
+  include PathsHelper
 
   before_action :reject_crawler
   before_action { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
@@ -23,14 +24,13 @@ class SearchesController < ApplicationController
   def create
     CreateSearchHistoryWorker.perform_async(fingerprint, current_user_id, @twitter_user.uid, current_visit&.id, via: params[:via])
 
-    uid, screen_name = @twitter_user.uid, @twitter_user.screen_name
     redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user))
 
-    if TwitterUser.exists?(uid: uid)
+    if TwitterUser.exists?(uid: @twitter_user.uid)
       redirect_to redirect_path
     else
-      jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
-      redirect_to waiting_path(uid: uid, redirect_path: redirect_path, jid: jid, via: 'searches/create')
+      jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id)
+      redirect_to waiting_path(uid: @twitter_user.uid, redirect_path: redirect_path, jid: jid, via: build_via)
     end
   end
 end
