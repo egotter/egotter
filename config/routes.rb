@@ -119,8 +119,7 @@ Rails.application.routes.draw do
 
   get 'follow', to: 'follows#show'
   resources :follows, only: %i(create)
-
-  post 'create_unfollow', to: 'unfollow#create', as: :create_unfollow
+  resources :unfollows, only: %i(create)
   resources :shares, only: %i(create)
 
   get 'usage_stats/:uid/check_for_updates', to: 'usage_stats#check_for_updates', as: :check_for_updates_usage_stat
