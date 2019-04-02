@@ -40,8 +40,10 @@ module Concerns::JobQueueingConcern
 
     track = Track.create!(values.except(:enqueued_at))
 
+    request = CreateTwitterUserRequest.create(session_id: fingerprint, user_id: user_id, uid: uid, ahoy_visit_id: current_visit&.id)
+
     worker_class = user_signed_in? ? CreateSignedInTwitterUserWorker : CreateTwitterUserWorker
-    worker_class.perform_async(values.merge(track_id: track.id))
+    worker_class.perform_async(values.merge(track_id: track.id, request_id: request.id))
   end
 
   def enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: nil)

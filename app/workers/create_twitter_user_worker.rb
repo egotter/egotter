@@ -30,7 +30,13 @@ class CreateTwitterUserWorker
     user_id = job.user_id
     uid = job.uid
 
-    request = CreateTwitterUserRequest.create(user_id: user_id, uid: uid)
+    request =
+        if values.has_key?('request_id')
+          CreateTwitterUserRequest.find(values['request_id'])
+        else
+          CreateTwitterUserRequest.create(user_id: user_id, uid: uid)
+        end
+
     twitter_user = request.perform!
     request.finished!
 
