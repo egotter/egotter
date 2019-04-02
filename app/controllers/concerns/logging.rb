@@ -34,8 +34,8 @@ module Concerns::Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
-      user_agent:  truncated_user_agent,
-      referer:     truncated_referer,
+      user_agent:  request.user_agent.to_s.truncate(180),
+      referer:     request.referer.to_s.truncate(180),
       referral:    referral,
       channel:     find_channel(referral),
       medium:      params[:medium] ? params[:medium] : '',
@@ -85,8 +85,8 @@ module Concerns::Logging
         device_type: request.device_type,
         os:          request.os,
         browser:     request.browser,
-        user_agent:  truncated_user_agent,
-        referer:     truncated_referer,
+        user_agent:  request.user_agent.to_s.truncate(180),
+        referer:     request.referer.to_s.truncate(180),
         created_at:  Time.zone.now
     }
 
@@ -130,8 +130,8 @@ module Concerns::Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
-      user_agent:  truncated_user_agent,
-      referer:     truncate_referer(referer),
+      user_agent:  request.user_agent.to_s.truncate(180),
+      referer:     referer.to_s.truncate(180),
       referral:    referral,
       channel:     find_channel(referral),
       ab_test:     ab_test,
@@ -158,8 +158,8 @@ module Concerns::Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
-      user_agent:  truncated_user_agent,
-      referer:     truncated_referer,
+      user_agent:  request.user_agent.to_s.truncate(180),
+      referer:     request.referer.to_s.truncate(180),
       referral:    referral,
       channel:     find_channel(referral),
       created_at:  Time.zone.now
@@ -171,7 +171,7 @@ module Concerns::Logging
   end
 
   def push_referer
-    referer = truncated_referer
+    referer = request.referer.to_s.truncate(180)
     if referer.present? && !referer.start_with?('https://egotter.com')
       Util::RefererList.new(Redis.client).push(fingerprint, referer)
     end
@@ -242,17 +242,5 @@ module Concerns::Logging
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
     ''
-  end
-
-  def truncated_user_agent
-    request.user_agent.nil? ? '' : view_context.truncate(request.user_agent, length: 180, escape: false)
-  end
-
-  def truncated_referer
-    request.referer.nil? ? '' : view_context.truncate(request.referer, length: 180, escape: false)
-  end
-
-  def truncate_referer(referer)
-    referer.nil? ? '' : view_context.truncate(referer, length: 180, escape: false)
   end
 end
