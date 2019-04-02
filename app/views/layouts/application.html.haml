@@ -180,7 +180,7 @@
               %span{'aria-hidden' => 'true'} ×
             %h4#search-modal-label.modal-title.text-center= t('searches.common.search_by_egotter')
           .modal-body
-            = render partial: 'common/search_form', locals: {via: :search_history_input}
+            = render partial: 'common/search_form', locals: {via: build_via('search_modal_input')}
             .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
               = t('search_histories.search_modal.remaining_count_is_html', count: search_histories_remaining)
               %div

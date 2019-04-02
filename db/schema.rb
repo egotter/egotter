@@ -728,6 +728,7 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
     t.integer "user_id", null: false
     t.bigint "uid", null: false
     t.bigint "ahoy_visit_id"
+    t.string "via"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_search_histories_on_created_at"

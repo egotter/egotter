@@ -5,6 +5,7 @@ class CreateSearchHistories < ActiveRecord::Migration[5.2]
       t.integer :user_id,       null: false
       t.bigint  :uid,           null: false
       t.bigint  :ahoy_visit_id, null: true
+      t.string  :via,           null: true
 
       t.timestamps null: false
 

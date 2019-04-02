@@ -7,6 +7,7 @@
 #  user_id       :integer          not null
 #  uid           :bigint(8)        not null
 #  ahoy_visit_id :bigint(8)
+#  via           :string(191)
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
