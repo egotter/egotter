@@ -13,7 +13,11 @@ class FollowsController < ApplicationController
     end
   end
 
-  before_action do
+  before_action only: :create do
+    CreateEgotterFollowerWorker.perform_async(current_user.id) if params[:uid].to_i == User::EGOTTER_UID
+  end
+
+  before_action only: :create do
     unless current_user.can_create_follow?
       render json: {
           create_follow_limit: current_user.create_follow_limit,
@@ -27,7 +31,6 @@ class FollowsController < ApplicationController
     request = FollowRequest.new(user_id: user.id, uid: params[:uid])
     if request.save
       enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: 'FollowController')
-      append_egotter_follower(request)
 
       render json: {
           follow_request_id: request.id,
@@ -41,23 +44,21 @@ class FollowsController < ApplicationController
   end
 
   def show
-    render json: {follow: friendship?}
+    friendship = friendship?(params[:uid] || User::EGOTTER_UID)
+    if friendship
+      CreateEgotterFollowerWorker.perform_async(current_user.id)
+    else
+      DeleteEgotterFollowerWorker.perform_async(current_user.id)
+    end
+    render json: {follow: friendship}
   end
 
   private
 
-  def append_egotter_follower(request)
-    if request.uid == User::EGOTTER_UID && !EgotterFollower.exists?(uid: current_user.uid)
-      EgotterFollower.create!(uid: current_user.uid, screen_name: current_user.screen_name)
-    end
-  rescue => e
-    logger.warn "#{controller_name}##{action_name} #{__method__} #{e.class} #{e.message} #{request.inspect}"
-  end
-
-  def friendship?
+  def friendship?(uid)
     tries ||= 3
     request_context_client.verify_credentials
-    request_context_client.twitter.friendship?(current_user.uid, User::EGOTTER_UID)
+    request_context_client.twitter.friendship?(current_user.uid, uid.to_i)
   rescue Twitter::Error::Unauthorized => e
     unless e.message == 'Invalid or expired token.'
       logger.warn "#{e.class}: #{e.message} #{current_user.id}"
