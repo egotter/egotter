@@ -31,7 +31,7 @@ class SearchesController < ApplicationController
     else
       save_twitter_user_to_cache(uid, screen_name, @twitter_user.raw_attrs_text)
       jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
-      redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid)
+      redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid, via: 'searches/create')
     end
   end
 
