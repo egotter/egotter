@@ -16,8 +16,8 @@ module Api
       def summary
         uids, size = summary_uids
 
-        users = TwitterDB::User.where(uid: uids).index_by(&:uid)
-        create_users_for_not_persisted_uids(uids - users.values.map(&:uid))
+        CreateTwitterDBUserWorker.perform_async(uids)
+        users = TwitterDB::User.where_and_order_by_field(uids: uids)
 
         users = uids.map {|uid| users[uid]}.compact.map {|user| Hashie::Mash.new(to_summary_hash(user))}
         chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'),  y: 200.0 / 3.0}]
@@ -53,13 +53,6 @@ module Api
       end
 
       private
-
-      def create_users_for_not_persisted_uids(uids)
-        if uids.any?
-          logger.info {"#{controller_name}##{action_name} #{__method__} TwitterDB::User not found and enqueue CreateTwitterDBUserWorker. #{uids.size}"}
-          CreateTwitterDBUserWorker.perform_async(uids)
-        end
-      end
 
       def to_summary_hash(user)
         {
