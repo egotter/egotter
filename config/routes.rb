@@ -146,7 +146,6 @@ Rails.application.routes.draw do
   post 'orders', to: 'orders#create'
 
   get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
-  resources :background_search_logs, only: :show, param: :uid
   resources :jobs, only: :show, param: :uid
   resources :polling_logs, only: :create
 

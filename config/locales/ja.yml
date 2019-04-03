@@ -1058,7 +1058,6 @@ ja:
   activerecord:
     models:
       twitter_user: "ツイッターユーザー"
-      background_search_log: "検索ワーカーログ"
     attributes:
       user:
         screen_name: 'Twitter ID'
