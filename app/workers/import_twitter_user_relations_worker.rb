@@ -16,20 +16,12 @@ class ImportTwitterUserRelationsWorker
   end
 
   def perform(user_id, uid, options = {})
-    track = Track.find(options['track_id'])
-
-    job_attrs = {user_id: user_id, uid: uid, enqueued_at: options['enqueued_at']}.
-        merge(worker_class: self.class, jid: jid, started_at: Time.zone.now)
-    job = track.jobs.create(job_attrs)
-
     twitter_user = TwitterUser.find(options['twitter_user_id'])
     unless twitter_user.latest?
       logger.warn "A record of TwitterUser is not the latest. #{twitter_user.inspect}"
       twitter_user.update!(friends_size: -1, followers_size: -1)
       return
     end
-
-    job.update(twitter_user_id: twitter_user.id, screen_name: twitter_user.screen_name)
 
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
     if latest.id != twitter_user.id
@@ -42,11 +34,7 @@ class ImportTwitterUserRelationsWorker
     request.finished!
 
   rescue => e
-    message = e.message.truncate(100)
-    job.update(error_class: e.class, error_message: message)
-    logger.warn "#{e.class} #{message} #{user_id} #{uid} #{options.inspect}"
+    logger.warn "#{e.class} #{e.message.truncate(100)} #{user_id} #{uid} #{options.inspect}"
     logger.info e.backtrace.join("\n")
-  ensure
-    job.update(finished_at: Time.zone.now)
   end
 end
