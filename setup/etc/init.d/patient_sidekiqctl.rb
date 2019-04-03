@@ -252,6 +252,8 @@ sidekiq_cmd = `cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} -e "print Gem.bi
 SIDEKIQCTL_CMD = "cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} #{sidekiqctl_cmd}"
 SIDEKIQ_CMD = "cd #{app_root} && RAILS_ENV=#{env} #{bundle_cmd} exec #{ruby_cmd} #{sidekiq_cmd}"
 
+`ulimit -n 4096`
+
 case state
 when 'quiet'      then do_quiet(pidfile, options)
 when 'stop'       then do_stop(pidfile, options)
