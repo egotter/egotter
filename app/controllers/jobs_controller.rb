@@ -1,6 +1,6 @@
 class JobsController < ApplicationController
 
-  before_action(only: %i(show)) { valid_uid? }
+  before_action(only: %i(show)) { valid_uid?(params[:uid]) }
   before_action(only: %i(show)) { searched_uid?(params[:uid]) }
 
   def show

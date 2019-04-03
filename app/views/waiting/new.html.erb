@@ -1,15 +1,15 @@
 <%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
 
 <div class="waiting-msg alert alert-info text-center">
-  <%= t('searches.waiting.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+  <%= t('.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
 
 <div class="finished-msg alert alert-success text-center" style="display: none;">
-  <%= t("searches.waiting.waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+  <%= t(".waiting_is_finished_msg") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
 
 <div class="error-msg alert alert-warning text-center" style="display: none;">
-  <%= t('before_sign_in.something_wrong_html', url: sign_in_path(via: build_via('something_wrong'))) %>
+  <%= t('.something_wrong_html', url: sign_in_path(via: build_via('something_wrong'))) %>
 </div>
 
 <div class="row">
@@ -29,7 +29,7 @@
 <div class="row">
   <div class="col-xs-12 col-sm-4 text-center">
     <div class="retry-btn" style="display: none; margin-bottom: 15px;">
-      <%= link_to t('searches.waiting.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: build_via('retry')), class: 'btn btn-lg btn-default', method: :post %>
+      <%= link_to t('.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: build_via('retry')), class: 'btn btn-lg btn-default', method: :post %>
     </div>
   </div>
 
@@ -41,7 +41,7 @@
 
   <div class="col-xs-12 col-sm-4 text-center">
     <div class="support-btn" style="display: none; margin-bottom: 15px;">
-      <%= link_to t('dictionary.link_to_support'), support_path, class: 'btn btn-lg btn-default' %>
+      <%= link_to t('.link_to_support'), support_path(via: build_via), class: 'btn btn-lg btn-default' %>
     </div>
   </div>
 </div>
@@ -50,11 +50,9 @@
 
 <script>
   $(function () {
-    var checkJobPath = "<%= job_path(uid: @twitter_user.uid, jid: @jid) %>";
+    var url = "<%= twitter_user_path(uid: @twitter_user.uid, created_at: Time.zone.now.to_i, jid: @jid, via: build_via) %>";
     var resultPath = "<%= @redirect_path %>";
-    var pollingLogsPath = "<%= raw polling_logs_path(uid: @twitter_user.uid, screen_name: @twitter_user.screen_name) %>";
     var signedIn = <%= user_signed_in? %>;
-    var action = '<%= "#{controller_name}/#{action_name}" %>';
 
     var $waitingMessage = $('.waiting-msg');
     var $finishedMessage = $('.finished-msg');
@@ -64,14 +62,6 @@
     var $supportBtn = $('.support-btn');
 
     var progressBar = new ProgressBar();
-    var pollingStart = Date.now();
-
-    function createPollingLog(status) {
-      var elapsedTime = (Date.now() - pollingStart) / 1000.0;
-      if (elapsedTime < 120.0) {
-        $.post(pollingLogsPath, {_action: action, status: status, time: elapsedTime, retry_count: -1});
-      }
-    }
 
     function check (path, interval, retryCount, successCallback, continueCallback, stopCallback, failedCallback) {
       $.get(path, {interval: interval, retry_count: retryCount})
@@ -88,14 +78,23 @@
           }
         })
         .fail(function (xhr) {
-          failedCallback(xhr);
+          if (xhr.status === 404 && xhr.responseText && JSON.parse(xhr.responseText).hasOwnProperty('found')) {
+            var res = JSON.parse(xhr.responseText);
+            if (retryCount < 10) {
+              continueCallback(res);
+              setTimeout(function () { check(path, interval, ++retryCount, successCallback, continueCallback, stopCallback, failedCallback); }, interval);
+            } else {
+              stopCallback(res);
+            }
+          } else {
+            failedCallback(xhr);
+          }
         });
     }
 
-    check(checkJobPath, 5000, 0,
+    check(url, 3000, 0,
       function (res) {
         console.log('success', res);
-        createPollingLog(true);
         progressBar.set(95);
         $waitingMessage.hide();
         $finishedMessage.show();
@@ -106,18 +105,16 @@
         progressBar.advance();
       }, function (res) {
         console.log('stop', res);
-        createPollingLog(false);
         progressBar.hide();
         $waitingMessage.hide();
         $retryBtn.show();
         if (!signedIn) $loginBtn.show();
         $supportBtn.show();
 
-        var timeOutMessage = '<%= t('before_sign_in.retry_timeout_html', sign_in_path: sign_in_path(via: build_via('timeout'))).html_safe %>';
+        var timeOutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: build_via('timeout'))).html_safe %>';
         $errorMessage.html(timeOutMessage).show();
       }, function (xhr) {
         console.log('failed', xhr.responseText);
-        createPollingLog(false);
 
         var res = $.parseJSON(xhr.responseText || null);
         progressBar.hide();

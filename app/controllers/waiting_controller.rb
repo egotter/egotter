@@ -2,7 +2,7 @@ class WaitingController < ApplicationController
   include Concerns::SanitizationConcern
 
   before_action :reject_crawler
-  before_action { valid_uid? }
+  before_action { valid_uid?(params[:uid]) }
   before_action { searched_uid?(params[:uid]) }
 
   before_action do

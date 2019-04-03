@@ -24,7 +24,6 @@ ja:
       popular: "人気の分析"
       related_pages: "関連ページ"
       related_analysis: "%{user} の他の分析"
-      analyzing: "分析中"
     sidebar:
       update_request: "更新リクエスト"
       update_request_needs_login: "更新リクエストにはログインが必要です。"
@@ -65,10 +64,6 @@ ja:
         sign_up: "新規登録"
         sign_in_now: "「リム通知を登録する」という方はこちら"
         search_for_now: "「とりあえず見るだけ」という方はこちら"
-    waiting:
-      retry_search_by: "%{user} で再度検索"
-      analyzing: "%{user} のデータを分析中"
-      waiting_is_finished_msg: "検索が完了しました。ページを移動します"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
@@ -83,6 +78,14 @@ ja:
       usage_active_time: ".%{user} がもっとも活発な曜日は%{wday}曜日、時間は%{hour}時くらいです。 #egotter %{url}"
       usage_kind: ".%{user} のツイートのうち、%{mentions}%はメンション、%{media}%は画像付き、%{urls}%はリンク付き、%{hashtags}%はハッシュタグ付き、%{location}%は位置情報付きです。 #egotter %{url}"
       usage_hashtags: ".%{user} のよく使うハッシュタグは、 %{hashtags} です。 #egotter %{url}"
+  waiting:
+    new:
+      analyzing: "%{user} のデータを分析中"
+      waiting_is_finished_msg: "検索が完了しました。ページを移動します"
+      retry_search_by: "%{user} で再度検索"
+      something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+      retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+      link_to_support: "お問い合わせページ"
   home:
     new:
       page_title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
@@ -930,7 +933,6 @@ ja:
 
   dictionary:
     official_account: "公式アカウント"
-    link_to_support: "お問い合わせページ"
     support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
     sign_in: "ログイン"
     sign_out: "ログアウト"
