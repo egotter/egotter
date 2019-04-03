@@ -272,10 +272,12 @@ ActiveRecord::Schema.define(version: 2019_03_29_111357) do
   end
 
   create_table "create_twitter_user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "session_id"
     t.integer "user_id", null: false
     t.bigint "uid", null: false
     t.integer "twitter_user_id"
     t.datetime "finished_at"
+    t.bigint "ahoy_visit_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_create_twitter_user_requests_on_created_at"
