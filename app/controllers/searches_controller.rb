@@ -21,7 +21,7 @@ class SearchesController < ApplicationController
   end
 
   def create
-    CreateSearchHistoryWorker.perform_async(fingerprint, current_user_id, @twitter_user.uid, current_visit_id, via: params[:via])
+    CreateSearchHistoryWorker.perform_async(fingerprint, current_user_id, @twitter_user.uid, current_visit&.id, via: params[:via])
 
     uid, screen_name = @twitter_user.uid, @twitter_user.screen_name
     redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user))
@@ -32,17 +32,6 @@ class SearchesController < ApplicationController
       save_twitter_user_to_cache(uid, screen_name, @twitter_user.raw_attrs_text)
       jid = enqueue_create_twitter_user_job_if_needed(uid, user_id: current_user_id, screen_name: screen_name)
       redirect_to waiting_search_path(uid: uid, redirect_path: redirect_path, jid: jid, via: 'searches/create')
-    end
-  end
-
-  private
-
-  def current_visit_id
-    if current_visit.nil?
-      logger.info "current_visit is nil. exclude?=#{ahoy.send(:exclude?)} missing_params?=#{ahoy.send(:missing_params?)} ua=#{request.user_agent}"
-      nil
-    else
-      current_visit.id
     end
   end
 end
