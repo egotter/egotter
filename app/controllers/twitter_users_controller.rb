@@ -3,15 +3,9 @@ class TwitterUsersController < ApplicationController
 
   before_action :reject_crawler
   before_action { valid_uid?(params[:uid]) }
-
-  before_action(only: :create) { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
-  before_action(only: :create) { authorized_search?(@twitter_user) && !blocked_search?(@twitter_user) }
-  before_action(only: :create) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
-
-  before_action only: %i(show) do
-    uid = params[:uid].to_i
-    twitter_user_persisted?(uid) && authorized_search?(TwitterUser.latest_by(uid: uid))
-  end
+  before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
+  before_action { authorized_search?(@twitter_user) && !blocked_search?(@twitter_user) }
+  before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
   before_action { create_search_log }
 
@@ -21,24 +15,24 @@ class TwitterUsersController < ApplicationController
   end
 
   def show
-    twitter_user = TwitterUser.latest_by(uid: params[:uid])
-
-    if new_record_found?(twitter_user)
-      return render json: {found: true, text: create_changes_text(twitter_user)}
+    twitter_user = TwitterUser.latest_by(uid: @twitter_user.uid)
+    unless twitter_user
+      return render json: {found: false}.merge(echo_back_params), status: :not_found
     end
 
-    started_at = (Time.zone.at(params[:started_at].to_i).to_s(:db) rescue '')
-    render json: {found: false, started_at: started_at}.merge(echo_back_params), status: :accepted
+    started_at = params[:created_at].to_s.match?(/\A\d+\z/) ? Time.zone.at(params[:created_at].to_i) : nil
+
+    if started_at.nil? || started_at < twitter_user.created_at
+      render json: {found: true, created_at: twitter_user.created_at.to_i, text: create_changes_text(twitter_user)}
+    else
+      render json: {found: false, started_at: started_at.to_s(:db)}.merge(echo_back_params), status: :accepted
+    end
   end
 
   private
 
   def echo_back_params
     params.permit(:uid, :jid, :interval, :retry_count)
-  end
-
-  def new_record_found?(twitter_user)
-    params[:created_at].to_s.match(/\A\d+\z/) && Time.zone.at(params[:created_at].to_i) < twitter_user.created_at
   end
 
   def create_changes_text(twitter_user)

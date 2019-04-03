@@ -27,9 +27,7 @@ module Concerns::ValidationConcern
     respond_with_error(:unauthorized, t('before_sign_in.need_login_html', url: kick_out_error_path('need_login')))
   end
 
-  def valid_uid?(uid = nil, only_validation: false)
-    uid ||= params[:uid]
-
+  def valid_uid?(uid, only_validation: false)
     if Validations::UidValidator::REGEXP.match?(uid.to_s)
       true
     else
