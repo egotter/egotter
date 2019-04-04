@@ -4,6 +4,7 @@ class WaitingController < ApplicationController
   before_action :reject_crawler
   before_action { valid_uid?(params[:uid]) }
   before_action { searched_uid?(params[:uid]) }
+  before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
 
   before_action do
     push_referer
@@ -18,10 +19,6 @@ class WaitingController < ApplicationController
   end
 
   def new
-    uid = params[:uid].to_i
-    twitter_user = fetch_twitter_user_from_cache(uid)
-    return redirect_to root_path, alert: t('application.not_found') if twitter_user.nil?
-
     @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(twitter_user))
     @twitter_user = twitter_user
     @jid = params[:jid]
