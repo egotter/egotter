@@ -6,10 +6,10 @@ module Concerns::JobQueueingConcern
   included do
   end
 
-  def enqueue_create_twitter_user_job_if_needed(uid, user_id:, screen_name:)
+  def enqueue_create_twitter_user_job_if_needed(uid, user_id:)
     return if from_crawler?
     return if !user_signed_in? && via_dm?
-    return if uid.to_i == User::EGOTTER_UID
+    return if uid == User::EGOTTER_UID
     return if user_signed_in? && TooManyRequestsQueue.new.exists?(current_user.id)
 
     # This value is used in #searched_uid?
