@@ -2,9 +2,8 @@ class CreateTwitterUserWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def unique_key(values = {})
-    values = values.with_indifferent_access
-    "#{values['user_id']}-#{values['uid']}"
+  def unique_key(request_id, options = {})
+    request_id
   end
 
   def expire_in
@@ -15,51 +14,32 @@ class CreateTwitterUserWorker
     DelayedCreateTwitterUserWorker.perform_async(*args)
   end
 
-  def perform(values = {})
-    track = Track.find(values['track_id'])
+  def perform(request_id, options = {})
+    request = CreateTwitterUserRequest.find(request_id)
 
-    job_attrs = values.slice('user_id', 'uid', 'screen_name', 'enqueued_at').
-        merge(worker_class: self.class, jid: jid, started_at: Time.zone.now)
-    job = track.jobs.create!(job_attrs)
-
-    user = User.find_by(id: job.user_id)
-    if user&.unauthorized?
-      return job.update(error_class: 'Unauthorized')
-    end
-
-    user_id = job.user_id
-    uid = job.uid
-
-    request =
-        if values.has_key?('request_id')
-          CreateTwitterUserRequest.find(values['request_id'])
-        else
-          CreateTwitterUserRequest.create(user_id: user_id, uid: uid)
-        end
+    user = User.find_by(id: request.user_id)
+    return if user&.unauthorized?
 
     twitter_user = request.perform!
     request.finished!
 
-    notify(user, uid) if user
-    job.update(twitter_user_id: twitter_user.id, finished_at: Time.zone.now)
+    notify(user, request.uid) if user
 
-    enqueue_next_jobs(user_id, uid, twitter_user)
+    enqueue_next_jobs(request.user_id, request.uid, twitter_user)
 
     # Saved relations At this point:
     # friends_size, followers_size, statuses, mentions, favorites, friendships, followerships
 
   rescue Twitter::Error::TooManyRequests => e
-    job.update(error_class: e.class, error_message: e.message.truncate(100))
-
-    TooManyRequestsQueue.new.add(user_id)
-    ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user_id)
+    if user
+      TooManyRequestsQueue.new.add(user.id)
+      ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user.id)
+    end
 
   rescue CreateTwitterUserRequest::Error => e
-    job.update(error_class: e.class, error_message: e.message.truncate(100))
-    logger.info "#{e.class} #{e.message} #{values.inspect}"
+    logger.info "#{e.class} #{e.message} #{request_id} #{options.inspect}"
   rescue => e
-    job.update(error_class: e.class, error_message: e.message.truncate(100))
-    logger.warn "#{e.class} #{e.message} #{values.inspect}"
+    logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 

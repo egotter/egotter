@@ -10,9 +10,10 @@ class ApplicationController < ActionController::Base
   include Concerns::ValidationConcern
   include Concerns::Logging
 
-  # Avoid `uninitialized constant`
-  TwitterUser
-  TwitterDB::User
+  # Avoid `uninitialized constant` or `Unable to autoload constant`
+  ::TwitterUser
+  ::TwitterDB::User
+  ::Api::V1
 
   before_action :set_locale
 

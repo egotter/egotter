@@ -147,7 +147,6 @@ Rails.application.routes.draw do
   post 'orders', to: 'orders#create'
 
   get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
-  resources :jobs, only: :show, param: :uid
 
   get 'adsense', to: 'adsense#new'
   get 'search_histories', to: 'search_histories#new'
