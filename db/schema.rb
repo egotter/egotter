@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_02_120551) do
+ActiveRecord::Schema.define(version: 2019_04_05_174700) do
 
   create_table "ahoy_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "visit_id"
@@ -205,6 +205,19 @@ ActiveRecord::Schema.define(version: 2019_04_02_120551) do
     t.index ["created_at"], name: "index_crawler_logs_on_created_at"
   end
 
+  create_table "create_follow_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "request_id"
+    t.bigint "uid"
+    t.boolean "status", default: false, null: false
+    t.string "error_class"
+    t.string "error_message"
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_create_follow_logs_on_created_at"
+    t.index ["request_id"], name: "index_create_follow_logs_on_request_id"
+    t.index ["user_id"], name: "index_create_follow_logs_on_user_id"
+  end
+
   create_table "create_notification_message_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "uid", null: false
@@ -296,6 +309,19 @@ ActiveRecord::Schema.define(version: 2019_04_02_120551) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_create_twitter_user_requests_on_created_at"
     t.index ["user_id"], name: "index_create_twitter_user_requests_on_user_id"
+  end
+
+  create_table "create_unfollow_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id"
+    t.integer "request_id"
+    t.bigint "uid"
+    t.boolean "status", default: false, null: false
+    t.string "error_class"
+    t.string "error_message"
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_create_unfollow_logs_on_created_at"
+    t.index ["request_id"], name: "index_create_unfollow_logs_on_request_id"
+    t.index ["user_id"], name: "index_create_unfollow_logs_on_user_id"
   end
 
   create_table "delete_tweets_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

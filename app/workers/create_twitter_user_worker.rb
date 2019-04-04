@@ -23,7 +23,7 @@ class CreateTwitterUserWorker
         user_id: user&.id,
         request_id: request_id,
         uid: request.uid,
-        )
+    )
 
     twitter_user = request.perform!
     request.finished!

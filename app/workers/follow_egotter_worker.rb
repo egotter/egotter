@@ -2,46 +2,38 @@ class FollowEgotterWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
-  def perform(*args)
-    10.times do
-      request = do_perform
-      break if !request || !request.finished?
-    end
-
-    self.class.perform_in(FollowRequest.current_interval)
-  rescue Twitter::Error::Forbidden => e
-    if e.message == 'Your account is suspended and is not permitted to access this feature.'
-      logger.info "#{e.class} #{e.message}"
-    else
-      logger.warn "#{e.class} #{e.message}"
-    end
-
-    self.class.perform_in(retry_in)
-  rescue => e
-    logger.warn "#{e.class} #{e.message}"
-    self.class.perform_in(retry_in)
-  end
-
   def after_timeout(*args)
     self.class.perform_in(retry_in, *args)
   end
 
   def retry_in
-    60.minutes
+    1.hour
   end
 
-  def do_perform
-    request =
-        FollowRequest.order(created_at: :desc).
-            where(uid: User::EGOTTER_UID).
-            where(finished_at: nil).
-            without_error.first
+  def perform(*args)
+    10.times do
+      request = FollowRequest.not_finished.order(created_at: :desc).find_by(uid: User::EGOTTER_UID)
+      break unless request
+      do_perform(request)
+    end
 
-    return unless request
+    self.class.perform_in(1.minute)
+  rescue => e
+    self.class.perform_in(retry_in)
+  end
 
-    request.perform
-    logger.info {"#{self.class}##{__method__} #{request.inspect}"}
+  def do_perform(request)
+    log = CreateFollowLog.create_by(request: request)
+    request.perform!
+    request.finished!
+    log.update(status: true)
+  rescue => e
+    logger.warn "#{e.class}: #{e.message} #{request.inspect}"
+    logger.info e.backtrace.join("\n")
 
-    request
+    log.update(error_class: e.class, error_message: e.message.truncate(100))
+    request.update(error_class: e.class, error_message: e.message.truncate(100))
+
+    raise
   end
 end

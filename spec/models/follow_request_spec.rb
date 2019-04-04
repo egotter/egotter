@@ -4,32 +4,18 @@ RSpec.describe FollowRequest, type: :model do
   let(:user) { create(:user) }
   let(:request) { described_class.new(user: user, uid: 1) }
 
-  # describe '#can_perform?' do
-  #   subject { request.can_perform? }
-  #   it { is_expected.to be_truthy }
-  #
-  #   it 'calls .global_can_perform?' do
-  #     expect(described_class).to receive(:global_can_perform?)
-  #     subject
-  #   end
-  #
-  #   it 'calls user.can_create_follow?' do
-  #     allow(described_class).to receive(:global_can_perform?).and_return(true)
-  #     expect(user).to receive(:can_create_follow?)
-  #     subject
-  #   end
-  # end
-
   describe '#perform!' do
     let(:client) { ApiClient.instance.twitter }
-    subject { request.perform!(client) }
+    subject { request.perform! }
     let(:from_uid) { user.uid }
     let(:to_uid) { request.uid }
+
+    before { allow(request).to receive(:client).with(no_args).and_return(client) }
 
     it 'calls client#follow!' do
       allow(client).to receive(:user?).with(to_uid).and_return(true)
       allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
-      allow(request).to receive(:friendship_outgoing?).with(client, to_uid).and_return(false)
+      allow(request).to receive(:friendship_outgoing?).with(to_uid).and_return(false)
       expect(client).to receive(:follow!).with(to_uid)
       subject
     end
@@ -37,14 +23,14 @@ RSpec.describe FollowRequest, type: :model do
     context 'from_uid == to_uid' do
       before { request.uid = user.uid }
       it do
-        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::CanNotFollowYourself)
+        expect { subject }.to raise_error(FollowRequest::CanNotFollowYourself)
       end
     end
 
     context 'User not found.' do
       before { allow(client).to receive(:user?).with(to_uid).and_return(false) }
       it do
-        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::NotFound)
+        expect { subject }.to raise_error(FollowRequest::NotFound)
       end
     end
 
@@ -54,7 +40,7 @@ RSpec.describe FollowRequest, type: :model do
         allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(true)
       end
       it do
-        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed)
+        expect { subject }.to raise_error(FollowRequest::AlreadyFollowing)
       end
     end
 
@@ -62,21 +48,11 @@ RSpec.describe FollowRequest, type: :model do
       before do
         allow(client).to receive(:user?).with(to_uid).and_return(true)
         allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
-        allow(request).to receive(:friendship_outgoing?).with(client, to_uid).and_return(true)
+        allow(request).to receive(:friendship_outgoing?).with(to_uid).and_return(true)
       end
       it do
-        expect { subject }.to raise_error(Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow)
+        expect { subject }.to raise_error(FollowRequest::AlreadyRequestedToFollow)
       end
-    end
-  end
-
-  describe '#perform' do
-    let(:client) { ApiClient.instance.twitter }
-    subject { request.perform(client) }
-
-    it 'calls #perform!' do
-      expect(request).to receive(:perform!).with(client)
-      subject
     end
   end
 end

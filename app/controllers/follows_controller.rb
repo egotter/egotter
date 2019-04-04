@@ -14,33 +14,21 @@ class FollowsController < ApplicationController
   end
 
   before_action only: :create do
-    CreateEgotterFollowerWorker.perform_async(current_user.id) if params[:uid].to_i == User::EGOTTER_UID
+    if params[:uid].to_i == User::EGOTTER_UID
+      CreateEgotterFollowerWorker.perform_async(current_user.id)
+    end
   end
 
   before_action only: :create do
-    unless current_user.can_create_follow?
-      render json: {
-          create_follow_limit: current_user.create_follow_limit,
-          create_follow_remaining: current_user.create_follow_remaining
-      }, status: :too_many_requests
+    unless current_user.create_follow_remaining?
+      render json: rate_limit_values(current_user, nil), status: :too_many_requests
     end
   end
 
   def create
-    user = current_user
-    request = FollowRequest.new(user_id: user.id, uid: params[:uid])
-    if request.save
-      enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: 'FollowController')
-
-      render json: {
-          follow_request_id: request.id,
-          create_follow_limit: user.create_follow_limit,
-          create_follow_remaining: user.create_follow_remaining
-      }
-    else
-      logger.warn "#{controller_name}##{action_name} #{request.errors.full_messages}"
-      head :unprocessable_entity
-    end
+    request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid])
+    enqueue_create_follow_job_if_needed(request, enqueue_location: controller_name)
+    render json: rate_limit_values(current_user, request)
   end
 
   def show
@@ -54,6 +42,14 @@ class FollowsController < ApplicationController
   end
 
   private
+
+  def rate_limit_values(user, request)
+    {
+        request_id: request&.id,
+        limit: user.create_follow_limit,
+        remaining: user.create_follow_remaining
+    }
+  end
 
   def friendship?(uid)
     tries ||= 3

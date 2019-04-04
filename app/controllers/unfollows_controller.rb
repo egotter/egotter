@@ -8,28 +8,24 @@ class UnfollowsController < ApplicationController
   before_action {create_search_log(uid: params[:uid])}
 
   before_action do
-    if !referer_is_tokimeki_unfollow? && !current_user.can_create_unfollow?
-      render json: {
-          create_unfollow_limit: current_user.create_unfollow_limit,
-          create_unfollow_remaining: current_user.create_unfollow_remaining
-      }, status: :too_many_requests
+    if !referer_is_tokimeki_unfollow? && !current_user.create_unfollow_remaining?
+      render json: rate_limit_values(user, nil), status: :too_many_requests
     end
   end
 
   def create
-    user = current_user
-    request = UnfollowRequest.new(user_id: user.id, uid: params[:uid])
-    if request.save
-      enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: 'UnfollowController')
+    request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid])
+    enqueue_create_unfollow_job_if_needed(request, enqueue_location: controller_name)
+    render json: rate_limit_values(current_user, request)
+  end
 
-      render json: {
-          unfollow_request_id: request.id,
-          create_unfollow_limit: user.create_unfollow_limit,
-          create_unfollow_remaining: user.create_unfollow_remaining
-      }
-    else
-      logger.warn "#{controller_name}##{action_name} #{request.errors.full_messages}"
-      head :unprocessable_entity
-    end
+  private
+
+  def rate_limit_values(user, request)
+    {
+        request_id: request&.id,
+        limit: user.create_unfollow_limit,
+        remaining: user.create_unfollow_remaining
+    }
   end
 end

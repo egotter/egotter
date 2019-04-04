@@ -34,9 +34,9 @@ module UsersHelper
             uids = Set.new(twitter_user.friend_uids)
             requests =
                 FollowRequest.unprocessed(user.id).where('created_at > ?', twitter_user.created_at).to_a +
-                    FollowRequest.finished(user.id).where('created_at > ?', twitter_user.created_at).to_a +
+                    FollowRequest.finished.where(user_id: user.id).where('created_at > ?', twitter_user.created_at).to_a +
                     UnfollowRequest.unprocessed(user.id).where('created_at > ?', twitter_user.created_at).to_a +
-                    UnfollowRequest.finished(user.id).where('created_at > ?', twitter_user.created_at).to_a
+                    UnfollowRequest.finished.where(user_id: user.id).where('created_at > ?', twitter_user.created_at).to_a
 
             requests.sort_by!(&:created_at)
 
