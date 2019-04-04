@@ -16,7 +16,7 @@ module Egotter
               end
 
           if !options['skip_unique'] && queue.exists?(unique_key)
-            worker.logger.info "#{self.class}:#{worker.class} Skip duplicate job in #{queue.ttl}. #{args.inspect.truncate(100)}"
+            worker.logger.info "#{self.class}:#{worker.class} Skip duplicate job for #{queue.ttl} seconds. #{args.inspect.truncate(100)}"
 
             send_callback(worker, :after_skip, args)
 

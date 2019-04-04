@@ -12,38 +12,15 @@ module Concerns::JobQueueingConcern
     return if uid.to_i == User::EGOTTER_UID
     return if user_signed_in? && TooManyRequestsQueue.new.exists?(current_user.id)
 
+    # This value is used in #searched_uid?
     requests = QueueingRequests.new(CreateTwitterUserWorker)
     return if requests.exists?(uid)
     requests.add(uid)
 
-    referral = find_referral(pushed_referers)
-
-    values = {
-        session_id:  fingerprint,
-        user_id:     user_id,
-        uid:         uid,
-        screen_name: screen_name,
-        controller:  controller_name,
-        action:      action_name,
-        auto:        %w(show).include?(action_name),
-        via:         params[:via] ? params[:via] : '',
-        device_type: request.device_type,
-        os:          request.os,
-        browser:     request.browser,
-        user_agent:  request.user_agent.to_s.truncate(180),
-        referer:     request.referer.to_s.truncate(180),
-        referral:    referral,
-        channel:     find_channel(referral),
-        medium:      params[:medium] ? params[:medium] : '',
-        enqueued_at: Time.zone.now
-    }
-
-    track = Track.create!(values.except(:enqueued_at))
-
     request = CreateTwitterUserRequest.create(session_id: fingerprint, user_id: user_id, uid: uid, ahoy_visit_id: current_visit&.id)
 
     worker_class = user_signed_in? ? CreateSignedInTwitterUserWorker : CreateTwitterUserWorker
-    worker_class.perform_async(values.merge(track_id: track.id, request_id: request.id))
+    worker_class.perform_async(request.id, enqueued_at: Time.zone.now)
   end
 
   def enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: nil)
