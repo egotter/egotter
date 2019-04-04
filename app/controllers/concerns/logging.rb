@@ -168,15 +168,10 @@ module Concerns::Logging
       screen_name = @twitter_user.screen_name
     else
       uid = valid_uid?(params[:uid], only_validation: true) ? params[:uid].to_i : -1
-      if tu = fetch_twitter_user_from_cache(uid) # waiting
-        uid = tu.uid
-        screen_name = tu.screen_name
+      if uid != -1 && TwitterUser.exists?(uid: uid)
+        screen_name = TwitterUser.latest_by(uid: uid).screen_name
       else
-        if uid != -1 && TwitterUser.exists?(uid: uid)
-          screen_name = TwitterUser.latest_by(uid: uid).screen_name
-        else
-          uid = screen_name = -1
-        end
+        uid = screen_name = -1
       end
     end
 
