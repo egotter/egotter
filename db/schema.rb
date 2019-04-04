@@ -752,7 +752,7 @@ ActiveRecord::Schema.define(version: 2019_04_02_120551) do
     t.index ["user_id"], name: "index_search_histories_on_user_id"
   end
 
-  create_table "search_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+  create_table "search_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id", default: "", null: false
     t.integer "user_id", default: -1, null: false
     t.bigint "uid", default: -1, null: false
@@ -769,7 +769,7 @@ ActiveRecord::Schema.define(version: 2019_04_02_120551) do
     t.string "os", default: "", null: false
     t.string "browser", default: "", null: false
     t.string "user_agent", default: "", null: false
-    t.string "referer", default: "", null: false
+    t.text "referer"
     t.string "referral", default: "", null: false
     t.string "channel", default: "", null: false
     t.string "medium", default: "", null: false

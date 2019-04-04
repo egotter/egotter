@@ -2,7 +2,7 @@
 #
 # Table name: search_logs
 #
-#  id          :integer          not null, primary key
+#  id          :bigint(8)        not null, primary key
 #  session_id  :string(191)      default(""), not null
 #  user_id     :integer          default(-1), not null
 #  uid         :bigint(8)        default(-1), not null
@@ -19,7 +19,7 @@
 #  os          :string(191)      default(""), not null
 #  browser     :string(191)      default(""), not null
 #  user_agent  :string(191)      default(""), not null
-#  referer     :string(191)      default(""), not null
+#  referer     :text(65535)
 #  referral    :string(191)      default(""), not null
 #  channel     :string(191)      default(""), not null
 #  medium      :string(191)      default(""), not null

@@ -1,4 +1,4 @@
-class CreateSearchLogs < ActiveRecord::Migration[4.2]
+class CreateSearchLogs < ActiveRecord::Migration[5.2]
   def change
     create_table :search_logs do |t|
       t.string  :session_id,  null: false, default: '', index: true
@@ -19,7 +19,7 @@ class CreateSearchLogs < ActiveRecord::Migration[4.2]
       t.string  :os,          null: false, default: ''
       t.string  :browser,     null: false, default: ''
       t.string  :user_agent,  null: false, default: ''
-      t.string  :referer,     null: false, default: ''
+      t.text    :referer,     null: true
       t.string  :referral,    null: false, default: ''
       t.string  :channel,     null: false, default: ''
 
@@ -27,9 +27,10 @@ class CreateSearchLogs < ActiveRecord::Migration[4.2]
       t.string  :ab_test,     null: false, default: ''
 
       t.datetime :created_at, null: false
+
+      t.index :action
+      t.index :created_at
+      t.index [:uid, :action]
     end
-    add_index :search_logs, :action
-    add_index :search_logs, :created_at
-    add_index :search_logs, [:uid, :action]
   end
 end
