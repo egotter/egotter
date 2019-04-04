@@ -34,11 +34,6 @@ class ApiClient
           logger.warn "RETRY EXHAUSTED #{message}"
           raise
         else
-          if tries <= 3
-            logger.warn "RETRY #{tries} #{message}"
-          else
-            logger.info "RETRY #{tries} #{message}"
-          end
           retry
         end
       else

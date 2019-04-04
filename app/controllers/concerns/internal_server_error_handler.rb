@@ -73,9 +73,9 @@ module Concerns::InternalServerErrorHandler
     screen_name = params[:screen_name] || @twitter_user&.screen_name
 
     if screen_name.present?
-      t('application.internal_server_error_with_recovery_html', user: screen_name, url: timeline_path(screen_name: screen_name))
+      t('application.request_timeout_with_recovery_html', user: screen_name, url: timeline_path(screen_name: screen_name))
     else
-      t('application.internal_server_error')
+      t('application.request_timeout_html')
     end
   end
 

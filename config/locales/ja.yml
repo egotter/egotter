@@ -891,6 +891,8 @@ ja:
     routing_not_found: "お探しのページが見付かりませんでした。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error: "エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error_with_recovery_html: 'エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a>'
+    request_timeout_html: '一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。'
+    request_timeout_with_recovery_html: '一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a>'
     invalid_token:
       session_expired_html: '一定時間操作がなかったため、セッションの有効期限が切れました。 <a href="%{url}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{url}">ログイン</a> してください。'
       session_expired_and_recover_html: '一定時間操作がなかったため、@%{user} の検索に失敗しました。 再度結果を見るにはこちら → <a href="%{url1}" class="btn btn-default btn-sm">@%{user} の結果を見る</a> 表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-default btn-sm">ログインして @%{user} の結果を見る</a>'
