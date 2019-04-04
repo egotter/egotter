@@ -17,19 +17,14 @@ class ImportTwitterUserRelationsWorker
 
   def perform(user_id, uid, options = {})
     twitter_user = TwitterUser.find(options['twitter_user_id'])
-    unless twitter_user.latest?
-      logger.warn "A record of TwitterUser is not the latest. #{twitter_user.inspect}"
-      twitter_user.update!(friends_size: -1, followers_size: -1)
-      return
-    end
 
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
     if latest.id != twitter_user.id
-      logger.warn "#{__method__}: latest.id != twitter_user.id #{uid}"
+      logger.warn "twitter_user_id is not the latest. Continue to processing #{user_id} #{uid} #{options.inspect}"
       twitter_user = latest
     end
 
-    request = ImportTwitterUserRequest.create(user_id: user_id, twitter_user: twitter_user)
+    request = ImportTwitterUserRequest.create!(user_id: user_id, twitter_user: twitter_user)
     request.perform!
     request.finished!
 

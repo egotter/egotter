@@ -45,7 +45,6 @@ class CreateTwitterUserWorker
     end
   rescue CreateTwitterUserRequest::Error => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
-    logger.info "#{e.class} #{e.message} #{request_id} #{options.inspect}"
   rescue => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
     logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
