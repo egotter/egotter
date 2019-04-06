@@ -1,6 +1,5 @@
 class ForbiddenController < ApplicationController
 
-  before_action :reject_crawler
   before_action :valid_screen_name?
   before_action :forbidden_screen_name?
   before_action :create_search_log
@@ -22,22 +21,10 @@ class ForbiddenController < ApplicationController
   private
 
   def forbidden_screen_name?
-    if ForbiddenUser.exists?(screen_name: params[:screen_name]) || forbidden_user?
+    if ForbiddenUser.exists?(screen_name: params[:screen_name]) || forbidden_user?(params[:screen_name])
       true
     else
       redirect_to timeline_path(screen_name: params[:screen_name])
-      false
-    end
-  end
-
-  def forbidden_user?
-    request_context_client.user(params[:screen_name])
-    false
-  rescue => e
-    if e.message == 'User has been suspended.'
-      CreateForbiddenUserWorker.perform_async(params[:screen_name])
-      true
-    else
       false
     end
   end

@@ -1,6 +1,5 @@
 class NotFoundController < ApplicationController
 
-  before_action :reject_crawler
   before_action :valid_screen_name?
   before_action :not_found_screen_name?
   before_action :create_search_log
@@ -22,22 +21,10 @@ class NotFoundController < ApplicationController
   private
 
   def not_found_screen_name?
-    if NotFoundUser.exists?(screen_name: params[:screen_name]) || not_found_user?
+    if NotFoundUser.exists?(screen_name: params[:screen_name]) || not_found_user?(params[:screen_name])
       true
     else
       redirect_to timeline_path(screen_name: params[:screen_name])
-      false
-    end
-  end
-
-  def not_found_user?
-    request_context_client.user(params[:screen_name])
-    false
-  rescue => e
-    if e.message == 'User not found.'
-      CreateNotFoundUserWorker.perform_async(params[:screen_name])
-      true
-    else
       false
     end
   end

@@ -160,8 +160,8 @@ module Concerns::ValidationConcern
       twitter_user.load_raw_attrs_text_from_s3
     end
 
-    if twitter_user.suspended_account? && !can_see_forbidden_or_not_found?(uid: twitter_user.uid)
-      respond_with_error(:bad_request, suspended_message(twitter_user.screen_name))
+    if twitter_user.suspended_account?
+      redirect_to forbidden_path(screen_name: twitter_user.screen_name)
       return false
     end
 
