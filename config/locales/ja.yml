@@ -986,7 +986,7 @@ ja:
     unauthorized_html: 'ツイッター連携の有効期限が切れています。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
-    blocked_html: '%{user} からブロックされているため検索できません。'
+    blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'

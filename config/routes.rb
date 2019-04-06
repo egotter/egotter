@@ -117,6 +117,7 @@ Rails.application.routes.draw do
 
   resources :not_found, only: %i(show), param: :screen_name
   resources :forbidden, only: %i(show), param: :screen_name
+  resources :blocked, only: %i(show), param: :screen_name
 
   get 'follow', to: 'follows#show'
   resources :follows, only: %i(create)
