@@ -27,7 +27,8 @@ class FollowEgotterWorker
     request.perform!
     request.finished!
     log.update(status: true)
-  rescue FollowRequest::Unauthorized,
+  rescue FollowRequest::TooManyRetries,
+      FollowRequest::Unauthorized,
       FollowRequest::CanNotFollowYourself,
       FollowRequest::NotFound,
       FollowRequest::Suspended,
@@ -36,6 +37,10 @@ class FollowEgotterWorker
       FollowRequest::AlreadyFollowing => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
     request.finished!
+
+    if e.class == FollowRequest::TooManyRetries
+      logger.warn "Stop retrying #{e.class} #{e.message} #{request.inspect}"
+    end
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{request.inspect}"
     logger.info e.backtrace.join("\n")

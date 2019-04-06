@@ -13,7 +13,8 @@ class CreateFollowWorker
 
     enqueue_next_request(request)
 
-  rescue FollowRequest::Unauthorized,
+  rescue FollowRequest::TooManyRetries,
+      FollowRequest::Unauthorized,
       FollowRequest::CanNotFollowYourself,
       FollowRequest::NotFound,
       FollowRequest::Suspended,
@@ -22,6 +23,10 @@ class CreateFollowWorker
       FollowRequest::AlreadyFollowing => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
     request.finished!
+
+    if e.class == FollowRequest::TooManyRetries
+      logger.warn "Stop retrying #{e.class} #{e.message} #{request.inspect}"
+    end
 
     enqueue_next_request(request)
   rescue FollowRequest::Error => e

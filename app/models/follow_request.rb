@@ -21,11 +21,14 @@ class FollowRequest < ApplicationRecord
   include Concerns::Request::FollowAndUnfollow
   include Concerns::FollowRequest::Runnable
 
+  has_many :logs, primary_key: :id, foreign_key: :request_id, class_name: 'CreateFollowLog'
+
   belongs_to :user
   validates :user_id, numericality: :only_integer
   validates :uid, numericality: :only_integer
 
   def perform!
+    raise TooManyRetries if logs.size >= 5
     raise AlreadyFinished if finished?
     raise Unauthorized if unauthorized?
     raise CanNotFollowYourself if user.uid == uid
@@ -116,6 +119,9 @@ class FollowRequest < ApplicationRecord
     def initialize(*args)
       super('')
     end
+  end
+
+  class TooManyRetries < DeadErrorTellsNoTales
   end
 
   class AlreadyFinished < DeadErrorTellsNoTales

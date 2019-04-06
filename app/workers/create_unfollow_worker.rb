@@ -13,9 +13,17 @@ class CreateUnfollowWorker
 
     enqueue_next_request(request)
 
-  rescue UnfollowRequest::Unauthorized, UnfollowRequest::CanNotUnfollowYourself, UnfollowRequest::NotFound, UnfollowRequest::NotFollowing => e
+  rescue UnfollowRequest::TooManyRetries,
+      UnfollowRequest::Unauthorized,
+      UnfollowRequest::CanNotUnfollowYourself,
+      UnfollowRequest::NotFound,
+      UnfollowRequest::NotFollowing => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
     request.finished!
+
+    if e.class == UnfollowRequest::TooManyRetries
+      logger.warn "Stop retrying #{e.class} #{e.message} #{request.inspect}"
+    end
 
     enqueue_next_request(request)
   rescue UnfollowRequest::Error => e
