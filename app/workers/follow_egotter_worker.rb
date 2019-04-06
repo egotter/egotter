@@ -27,6 +27,7 @@ class FollowEgotterWorker
     request.perform!
     request.finished!
     log.update(status: true)
+
   rescue FollowRequest::TooManyRetries,
       FollowRequest::Unauthorized,
       FollowRequest::CanNotFollowYourself,
