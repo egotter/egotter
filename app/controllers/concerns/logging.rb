@@ -34,7 +34,7 @@ module Concerns::Logging
       device_type: request.device_type,
       os:          request.os,
       browser:     request.browser,
-      user_agent:  request.user_agent.to_s.truncate(180),
+      user_agent:  ensure_utf8(request.user_agent.to_s.truncate(180)),
       referer:     request.referer.to_s.truncate(180),
       referral:    referral,
       channel:     find_channel(referral),
@@ -85,7 +85,7 @@ module Concerns::Logging
         device_type: request.device_type,
         os:          request.os,
         browser:     request.browser,
-        user_agent:  request.user_agent.to_s.truncate(180),
+        user_agent:  ensure_utf8(request.user_agent.to_s.truncate(180)),
         referer:     request.referer.to_s.truncate(180),
         created_at:  Time.zone.now
     }
@@ -210,5 +210,9 @@ module Concerns::Logging
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
     ''
+  end
+
+  def ensure_utf8(str)
+    str.encode("UTF-8", "binary", invalid: :replace, undef: :replace, replace: '')
   end
 end
