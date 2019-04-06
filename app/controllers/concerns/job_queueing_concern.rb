@@ -23,10 +23,15 @@ module Concerns::JobQueueingConcern
     worker_class.perform_async(request.id, enqueued_at: Time.zone.now)
   end
 
-  def enqueue_create_follow_or_unfollow_job_if_needed(request, enqueue_location: nil)
+  def enqueue_create_follow_job_if_needed(request, enqueue_location: nil)
     return if from_crawler?
     return if request.uid == User::EGOTTER_UID
-    request.enqueue(enqueue_location: enqueue_location)
+    CreateFollowWorker.perform_async(request.id, enqueue_location: enqueue_location)
+  end
+
+  def enqueue_create_unfollow_job_if_needed(request, enqueue_location: nil)
+    return if from_crawler?
+    CreateUnfollowWorker.perform_async(request.id, enqueue_location: enqueue_location)
   end
 
   def enqueue_update_authorized

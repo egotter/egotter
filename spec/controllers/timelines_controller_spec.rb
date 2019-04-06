@@ -56,7 +56,10 @@ RSpec.describe TimelinesController, type: :controller do
       end
 
       context 'Without signed in' do
-        before { allow(controller).to receive(:user_signed_in?).with(no_args).and_return(false) }
+        before do
+          allow(controller).to receive(:user_signed_in?).with(no_args).and_return(false)
+          allow(controller).to receive(:authorized_search?).with(twitter_user).and_return(true)
+        end
         it do
           expect(controller).to receive(:blocked_search?).with(twitter_user).and_return(false)
           subject

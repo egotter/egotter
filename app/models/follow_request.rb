@@ -19,54 +19,105 @@
 
 class FollowRequest < ApplicationRecord
   include Concerns::Request::FollowAndUnfollow
+  include Concerns::Request::Runnable
 
   belongs_to :user
   validates :user_id, numericality: :only_integer
   validates :uid, numericality: :only_integer
 
-  def perform!(client = nil)
-    client = user.api_client.twitter unless client
+  def perform!
+    raise AlreadyFinished if finished?
+    raise Unauthorized unless user.authorized?
+    raise CanNotFollowYourself if user.uid == uid
+    raise NotFound unless user_found?
+    raise AlreadyRequestedToFollow if friendship_outgoing?
+    raise AlreadyFollowing if friendship?
 
-    raise Concerns::FollowAndUnfollowWorker::CanNotFollowYourself if user.uid == uid
-    raise Concerns::FollowAndUnfollowWorker::NotFound unless client.user?(uid)
-    raise Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed if client.friendship?(user.uid, uid)
-    raise Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow if friendship_outgoing?(client, uid)
+    raise GlobalTooManyFollows unless global_can_perform?
+    raise UserTooManyFollows unless user_can_perform?
 
-    client.follow!(uid)
-    finished!
+    begin
+      client.follow!(uid)
+    rescue Twitter::Error::Unauthorized => e
+      raise Unauthorized.new(e.message)
+    rescue Twitter::Error::Forbidden => e
+      raise Forbidden.new(e.message)
+    end
   end
 
-  def perform(client = nil)
-    perform!(client)
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      update(error_class: e.class, error_message: e.message)
+  TOO_MANY_FOLLOWS_INTERVAL = 1.hour
+  NORMAL_INTERVAL = 1.second
+
+  def perform_interval
+    if global_can_perform? && user_can_perform?
+      NORMAL_INTERVAL
     else
-      raise
+      TOO_MANY_FOLLOWS_INTERVAL
     end
-  rescue Twitter::Error::Forbidden => e
-    if e.message == 'User has been suspended.'
-      update(error_class: e.class, error_message: e.message)
-    else
-      raise
-    end
-  rescue Concerns::FollowAndUnfollowWorker::CanNotFollowYourself,
-      Concerns::FollowAndUnfollowWorker::NotFound,
-      Concerns::FollowAndUnfollowWorker::HaveAlreadyFollowed,
-      Concerns::FollowAndUnfollowWorker::HaveAlreadyRequestedToFollow => e
-    update(error_class: e.class, error_message: e.message.truncate(150))
   end
 
-  def friendship_outgoing?(client, uid)
+  def global_can_perform?
+    time = CreateFollowLog.global_last_too_many_follows_time
+    time.nil? || time + TOO_MANY_FOLLOWS_INTERVAL < Time.zone.now
+  end
+
+  def user_can_perform?
+    time = CreateFollowLog.user_last_too_many_follows_time(user_id)
+    time.nil? || time + TOO_MANY_FOLLOWS_INTERVAL < Time.zone.now
+  end
+
+  def user_found?
+    client.user?(uid)
+  end
+
+  def friendship_outgoing?
     client.friendships_outgoing.attrs[:ids].include?(uid)
   rescue => e
-    logger.warn "#{__method__} #{e.class} #{e.message}"
+    logger.warn "#{__method__} #{e.class} #{e.message} #{self.inspect}"
     false
   end
 
-  def enqueue(options = {})
-    if self.class.collect_follow_or_unfollow_sidekiq_jobs(self.class.to_s, user_id).empty?
-      CreateFollowWorker.perform_in(self.class.current_interval, user_id, options)
+  def friendship?
+    client.friendship?(user.uid, uid)
+  end
+
+  def client
+    @client ||= user.api_client.twitter
+  end
+
+  class Error < StandardError
+  end
+
+  class DeadErrorTellsNoTales < Error
+    def initialize(*args)
+      super('')
     end
+  end
+
+  class AlreadyFinished < DeadErrorTellsNoTales
+  end
+
+  class Unauthorized < Error
+  end
+
+  class Forbidden < Error
+  end
+
+  class GlobalTooManyFollows < DeadErrorTellsNoTales
+  end
+
+  class UserTooManyFollows < DeadErrorTellsNoTales
+  end
+
+  class CanNotFollowYourself < DeadErrorTellsNoTales
+  end
+
+  class NotFound < DeadErrorTellsNoTales
+  end
+
+  class AlreadyFollowing < DeadErrorTellsNoTales
+  end
+
+  class AlreadyRequestedToFollow < DeadErrorTellsNoTales
   end
 end

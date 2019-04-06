@@ -5,11 +5,11 @@ RSpec.describe User, type: :model do
 
   context 'validation' do
     it 'passes all' do
-      expect(User.new.tap { |u| u.valid? }.errors[:uid].size).to eq(2)
+      expect(User.new.tap { |u| u.valid? }.errors[:uid].any?).to be_truthy
       expect(User.new(uid: -1).tap { |u| u.valid? }.errors[:uid].size).to eq(1)
       expect(User.new(uid: 1).tap { |u| u.valid? }.errors[:uid].size).to eq(0)
 
-      expect(User.new.tap { |u| u.valid? }.errors[:screen_name].size).to eq(2)
+      expect(User.new.tap { |u| u.valid? }.errors[:screen_name].any?).to be_truthy
       expect(User.new(screen_name: '$sn').tap { |u| u.valid? }.errors[:screen_name].size).to eq(1)
       expect(User.new(screen_name: 'sn').tap { |u| u.valid? }.errors[:screen_name].size).to eq(0)
 
