@@ -43,6 +43,8 @@ class FollowRequest < ApplicationRecord
     rescue Twitter::Error::Forbidden => e
       if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
         raise TemporarilyLocked
+      elsif e.message.start_with?('Your account is suspended and is not permitted to access this feature.')
+        raise Suspended
       elsif e.message.start_with?('You are unable to follow more people at this time.')
         raise TooManyFollows
       else
@@ -123,6 +125,9 @@ class FollowRequest < ApplicationRecord
   end
 
   class Forbidden < Error
+  end
+
+  class Suspended < DeadErrorTellsNoTales
   end
 
   class TemporarilyLocked < DeadErrorTellsNoTales

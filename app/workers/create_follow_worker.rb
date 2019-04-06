@@ -16,6 +16,7 @@ class CreateFollowWorker
   rescue FollowRequest::Unauthorized,
       FollowRequest::CanNotFollowYourself,
       FollowRequest::NotFound,
+      FollowRequest::Suspended,
       FollowRequest::TemporarilyLocked,
       FollowRequest::AlreadyRequestedToFollow,
       FollowRequest::AlreadyFollowing => e
