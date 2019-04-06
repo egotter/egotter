@@ -14,7 +14,7 @@ module Concerns::Log::TooManyFollows
       order(created_at: :desc).
           where(status: false).
           where(user_id: user_id).
-          find_by('error_class like ?', "%#{sanitize_sql_like('TooManyFollows')}")&.created_at
+          find_by('error_class regexp "TooManyFollows|TooManyRequests"')&.created_at
     end
   end
 
