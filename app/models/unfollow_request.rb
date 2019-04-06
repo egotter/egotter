@@ -32,8 +32,8 @@ class UnfollowRequest < ApplicationRecord
     raise NotFound unless user_found?
     raise NotFollowing unless friendship?
 
-    raise GlobalTooManyUnfollows unless global_can_perform?
-    raise UserTooManyUnfollows unless user_can_perform?
+    raise GlobalRateLimited if global_rate_limited?
+    raise UserRateLimited if user_rate_limited?
 
     begin
       client.unfollow(uid)
@@ -48,7 +48,7 @@ class UnfollowRequest < ApplicationRecord
     end
   end
 
-  TOO_MANY_FOLLOWS_INTERVAL = 1.hour
+  TOO_MANY_UNFOLLOWS_INTERVAL = 1.hour
   NORMAL_INTERVAL = 1.second
 
   def perform_interval
@@ -59,14 +59,14 @@ class UnfollowRequest < ApplicationRecord
     end
   end
 
-  def global_can_perform?
+  def global_rate_limited?
     time = CreateUnfollowLog.global_last_too_many_follows_time
-    time.nil? || time + TOO_MANY_FOLLOWS_INTERVAL < Time.zone.now
+    time && Time.zone.now < time + TOO_MANY_UNFOLLOWS_INTERVAL
   end
 
-  def user_can_perform?
+  def user_rate_limited?
     time = CreateUnfollowLog.user_last_too_many_follows_time(user_id)
-    time.nil? || time + TOO_MANY_FOLLOWS_INTERVAL < Time.zone.now
+    time && Time.zone.now < time + TOO_MANY_UNFOLLOWS_INTERVAL
   end
 
   def user_found?
@@ -102,10 +102,10 @@ class UnfollowRequest < ApplicationRecord
   class TemporarilyLocked < DeadErrorTellsNoTales
   end
 
-  class GlobalTooManyUnfollows < DeadErrorTellsNoTales
+  class GlobalRateLimited < DeadErrorTellsNoTales
   end
 
-  class UserTooManyUnfollows < DeadErrorTellsNoTales
+  class UserRateLimited < DeadErrorTellsNoTales
   end
 
   class CanNotUnfollowYourself < DeadErrorTellsNoTales

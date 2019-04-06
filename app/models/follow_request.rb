@@ -33,8 +33,8 @@ class FollowRequest < ApplicationRecord
     raise AlreadyRequestedToFollow if friendship_outgoing?
     raise AlreadyFollowing if friendship?
 
-    raise GlobalTooManyFollows unless global_can_perform?
-    raise UserTooManyFollows unless user_can_perform?
+    raise GlobalRateLimited if global_rate_limited?
+    raise UserRateLimited if user_rate_limited?
 
     begin
       client.follow!(uid)
@@ -43,6 +43,8 @@ class FollowRequest < ApplicationRecord
     rescue Twitter::Error::Forbidden => e
       if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
         raise TemporarilyLocked
+      elsif e.message.start_with?('You are unable to follow more people at this time.')
+        raise TooManyFollows
       else
         raise Forbidden.new(e.message)
       end
@@ -60,14 +62,14 @@ class FollowRequest < ApplicationRecord
     end
   end
 
-  def global_can_perform?
+  def global_rate_limited?
     time = CreateFollowLog.global_last_too_many_follows_time
-    time.nil? || time + TOO_MANY_FOLLOWS_INTERVAL < Time.zone.now
+    time && Time.zone.now < time + TOO_MANY_FOLLOWS_INTERVAL
   end
 
-  def user_can_perform?
+  def user_rate_limited?
     time = CreateFollowLog.user_last_too_many_follows_time(user_id)
-    time.nil? || time + TOO_MANY_FOLLOWS_INTERVAL < Time.zone.now
+    time && Time.zone.now < time + TOO_MANY_FOLLOWS_INTERVAL
   end
 
   def user_found?
@@ -110,10 +112,13 @@ class FollowRequest < ApplicationRecord
   class TemporarilyLocked < DeadErrorTellsNoTales
   end
 
-  class GlobalTooManyFollows < DeadErrorTellsNoTales
+  class GlobalRateLimited < DeadErrorTellsNoTales
   end
 
-  class UserTooManyFollows < DeadErrorTellsNoTales
+  class UserRateLimited < DeadErrorTellsNoTales
+  end
+
+  class TooManyFollows < DeadErrorTellsNoTales
   end
 
   class CanNotFollowYourself < DeadErrorTellsNoTales
