@@ -27,7 +27,7 @@ class UnfollowRequest < ApplicationRecord
 
   def perform!
     raise AlreadyFinished if finished?
-    raise Unauthorized if user.unauthorized?
+    raise Unauthorized if unauthorized?
     raise CanNotUnfollowYourself if user.uid == uid
     raise NotFound unless user_found?
     raise NotFollowing unless friendship?
@@ -67,6 +67,16 @@ class UnfollowRequest < ApplicationRecord
   def user_rate_limited?
     time = CreateUnfollowLog.user_last_too_many_follows_time(user_id)
     time && Time.zone.now < time + TOO_MANY_UNFOLLOWS_INTERVAL
+  end
+
+  def unauthorized?
+    !user.authorized? || !user.verify_credentials
+  rescue Twitter::Error::Unauthorized => e
+    if e.message == 'Invalid or expired token.'
+      true
+    else
+      raise
+    end
   end
 
   def user_found?
