@@ -983,7 +983,7 @@ ja:
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
-    unauthorized_html: 'ツイッター連携に失敗しました。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
+    unauthorized_html: 'ツイッター連携の有効期限が切れています。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     blocked_html: '%{user} からブロックされているため検索できません。'
