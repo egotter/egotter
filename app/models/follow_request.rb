@@ -41,7 +41,11 @@ class FollowRequest < ApplicationRecord
     rescue Twitter::Error::Unauthorized => e
       raise Unauthorized.new(e.message)
     rescue Twitter::Error::Forbidden => e
-      raise Forbidden.new(e.message)
+      if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
+        raise TemporarilyLocked
+      else
+        raise Forbidden.new(e.message)
+      end
     end
   end
 
@@ -101,6 +105,9 @@ class FollowRequest < ApplicationRecord
   end
 
   class Forbidden < Error
+  end
+
+  class TemporarilyLocked < DeadErrorTellsNoTales
   end
 
   class GlobalTooManyFollows < DeadErrorTellsNoTales

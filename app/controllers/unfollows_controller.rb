@@ -9,7 +9,7 @@ class UnfollowsController < ApplicationController
 
   before_action do
     if !referer_is_tokimeki_unfollow? && !current_user.create_unfollow_remaining?
-      render json: rate_limit_values(user, nil), status: :too_many_requests
+      render json: rate_limit_values(current_user, nil), status: :too_many_requests
     end
   end
 
