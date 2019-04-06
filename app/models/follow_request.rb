@@ -19,7 +19,7 @@
 
 class FollowRequest < ApplicationRecord
   include Concerns::Request::FollowAndUnfollow
-  include Concerns::Request::Runnable
+  include Concerns::FollowRequest::Runnable
 
   belongs_to :user
   validates :user_id, numericality: :only_integer
