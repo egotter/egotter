@@ -55,7 +55,7 @@ class UnfollowRequest < ApplicationRecord
     if !global_rate_limited? && !user_rate_limited?
       NORMAL_INTERVAL
     else
-      TOO_MANY_FOLLOWS_INTERVAL
+      TOO_MANY_UNFOLLOWS_INTERVAL
     end
   end
 
