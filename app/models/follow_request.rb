@@ -55,7 +55,7 @@ class FollowRequest < ApplicationRecord
   NORMAL_INTERVAL = 1.second
 
   def perform_interval
-    if global_can_perform? && user_can_perform?
+    if !global_rate_limited? && !user_rate_limited?
       NORMAL_INTERVAL
     else
       TOO_MANY_FOLLOWS_INTERVAL
