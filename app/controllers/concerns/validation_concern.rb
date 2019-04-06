@@ -146,29 +146,27 @@ module Concerns::ValidationConcern
     blocked
   end
 
+  def protected_user?(screen_name)
+    if user_signed_in?
+      request_context_client.user_timeline(screen_name, count: 1)
+      false
+    else
+      user = request_context_client.user(screen_name)
+      user[:protected]
+    end
+  rescue => e
+    if e.message == 'Not authorized.'
+      true
+    else
+      false
+    end
+  end
+
   def authorized_search?(twitter_user)
     @authorized_search_called = true
-
-    begin
-      if twitter_user.persisted?
-        twitter_user.load_raw_attrs_text_from_s3!
-      end
-    rescue S3::Profile::MaybeFetchFailed => e
-      logger.warn "#{controller_name}##{action_name} #{__method__} #{e.class} #{twitter_user.inspect}"
-      twitter_user.load_raw_attrs_text_from_s3
-    end
-
-    if twitter_user.suspended_account?
-      redirect_to forbidden_path(screen_name: twitter_user.screen_name)
-      return false
-    end
-
-    return true if twitter_user.public_account?
-    return true if user_signed_in? && twitter_user.readable_by?(current_user)
-
-    respond_with_error(:bad_request, protected_message(twitter_user.screen_name))
-
-    false
+    protected = protected_user?(twitter_user.screen_name)
+    redirect_to protected_path(screen_name: twitter_user.screen_name) if protected
+    protected
   rescue => e
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false
