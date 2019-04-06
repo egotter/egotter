@@ -21,11 +21,13 @@ class CreateFollowWorker
       FollowRequest::TemporarilyLocked,
       FollowRequest::AlreadyRequestedToFollow,
       FollowRequest::AlreadyFollowing => e
+
     log.update(error_class: e.class, error_message: e.message.truncate(100))
+    request.update(error_class: e.class, error_message: e.message.truncate(100))
     request.finished!
 
     if e.class == FollowRequest::TooManyRetries
-      logger.warn "Stop retrying #{e.class} #{e.message} #{request.inspect}"
+      logger.warn "Stop retrying #{e.class} #{e.message} #{request.inspect} #{request.logs.pluck(:error_class).inspect}"
     end
 
     enqueue_next_request(request)
