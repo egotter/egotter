@@ -27,7 +27,12 @@ class FollowEgotterWorker
     request.perform!
     request.finished!
     log.update(status: true)
-  rescue FollowRequest::Unauthorized, FollowRequest::CanNotFollowYourself, FollowRequest::NotFound, FollowRequest::AlreadyRequestedToFollow, FollowRequest::AlreadyFollowing => e
+  rescue FollowRequest::Unauthorized,
+      FollowRequest::CanNotFollowYourself,
+      FollowRequest::NotFound,
+      FollowRequest::TemporarilyLocked,
+      FollowRequest::AlreadyRequestedToFollow,
+      FollowRequest::AlreadyFollowing => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
     request.finished!
   rescue => e

@@ -84,6 +84,12 @@ class FollowRequest < ApplicationRecord
 
   def user_found?
     client.user?(uid)
+  rescue => e
+    if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
+      raise TemporarilyLocked
+    else
+      raise
+    end
   end
 
   def friendship_outgoing?

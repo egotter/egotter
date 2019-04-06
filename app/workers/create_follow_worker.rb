@@ -13,7 +13,12 @@ class CreateFollowWorker
 
     enqueue_next_request(request)
 
-  rescue FollowRequest::Unauthorized, FollowRequest::CanNotFollowYourself, FollowRequest::NotFound, FollowRequest::AlreadyRequestedToFollow, FollowRequest::AlreadyFollowing => e
+  rescue FollowRequest::Unauthorized,
+      FollowRequest::CanNotFollowYourself,
+      FollowRequest::NotFound,
+      FollowRequest::TemporarilyLocked,
+      FollowRequest::AlreadyRequestedToFollow,
+      FollowRequest::AlreadyFollowing => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
     request.finished!
 
