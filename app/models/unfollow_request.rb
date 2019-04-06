@@ -70,7 +70,7 @@ class UnfollowRequest < ApplicationRecord
   end
 
   def unauthorized?
-    !user.authorized? || !user.verify_credentials
+    !user.authorized? || !user.api_client.verify_credentials
   rescue Twitter::Error::Unauthorized => e
     if e.message == 'Invalid or expired token.'
       true
