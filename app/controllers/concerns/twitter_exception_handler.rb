@@ -96,7 +96,7 @@ module Concerns::TwitterExceptionHandler
 
   def blocked_message(screen_name)
     if user_signed_in?
-      t('after_sign_in.blocked_html', user: user_link(screen_name))
+      t('after_sign_in.blocked_html', user: user_link(screen_name), screen_name: screen_name)
     else
       raise
     end

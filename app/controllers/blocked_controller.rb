@@ -1,7 +1,8 @@
-class ForbiddenController < ApplicationController
+class BlockedController < ApplicationController
 
+  before_action :require_login!
   before_action :valid_screen_name?
-  before_action :forbidden_screen_name?
+  before_action :blocked_screen_name?
   before_action :create_search_log
 
   def show
@@ -9,7 +10,7 @@ class ForbiddenController < ApplicationController
     @user = TwitterDB::User.find_by(screen_name: @screen_name)
     @user = TwitterUser.latest_by(screen_name: @screen_name) unless @user
 
-    flash.now[:alert] = forbidden_message(@screen_name)
+    flash.now[:alert] = blocked_message(@screen_name)
 
     if @user
       render 'not_found/show'
@@ -20,8 +21,8 @@ class ForbiddenController < ApplicationController
 
   private
 
-  def forbidden_screen_name?
-    if ForbiddenUser.exists?(screen_name: params[:screen_name]) || forbidden_user?(params[:screen_name])
+  def blocked_screen_name?
+    if blocked_user?(params[:screen_name])
       true
     else
       redirect_to timeline_path(screen_name: params[:screen_name])

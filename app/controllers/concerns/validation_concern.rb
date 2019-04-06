@@ -78,11 +78,6 @@ module Concerns::ValidationConcern
     end
   end
 
-  # The user can see a result page if the user is signed in and a record of TwitterUser exists.
-  def can_see_forbidden_or_not_found?(condition)
-    user_signed_in? && TwitterUser.exists?(condition)
-  end
-
   def forbidden_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
 
@@ -129,23 +124,26 @@ module Concerns::ValidationConcern
     end
   end
 
-  def blocked_search?(twitter_user)
-    raise 'Call #blocked_search? after calling #authorized_search?' unless @authorized_search_called
+  def blocked_user?(screen_name)
     if user_signed_in?
-      request_context_client.user_timeline(twitter_user.uid, count: 1)
+      request_context_client.user_timeline(screen_name, count: 1)
       false
     else
       false
     end
   rescue => e
     if e.message.start_with?('You have been blocked')
-      respond_with_error(:bad_request, blocked_message(twitter_user.screen_name))
       true
     else
-      # This is a special case because it call redirect_to and returns false.
-      respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name), e)
       false
     end
+  end
+
+  def blocked_search?(twitter_user)
+    raise 'Call #blocked_search? after calling #authorized_search?' unless @authorized_search_called
+    blocked = blocked_user?(twitter_user.screen_name)
+    redirect_to blocked_path(screen_name: twitter_user.screen_name) if blocked
+    blocked
   end
 
   def authorized_search?(twitter_user)
