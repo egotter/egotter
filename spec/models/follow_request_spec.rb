@@ -10,12 +10,15 @@ RSpec.describe FollowRequest, type: :model do
     let(:from_uid) { user.uid }
     let(:to_uid) { request.uid }
 
-    before { allow(request).to receive(:client).with(no_args).and_return(client) }
+    before do
+      allow(request).to receive(:client).with(no_args).and_return(client)
+      allow(request).to receive(:unauthorized?).with(no_args).and_return(false)
+    end
 
     it 'calls client#follow!' do
       allow(client).to receive(:user?).with(to_uid).and_return(true)
       allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
-      allow(request).to receive(:friendship_outgoing?).with(to_uid).and_return(false)
+      allow(request).to receive(:friendship_outgoing?).with(no_args).and_return(false)
       expect(client).to receive(:follow!).with(to_uid)
       subject
     end
@@ -48,7 +51,7 @@ RSpec.describe FollowRequest, type: :model do
       before do
         allow(client).to receive(:user?).with(to_uid).and_return(true)
         allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
-        allow(request).to receive(:friendship_outgoing?).with(to_uid).and_return(true)
+        allow(request).to receive(:friendship_outgoing?).with(no_args).and_return(true)
       end
       it do
         expect { subject }.to raise_error(FollowRequest::AlreadyRequestedToFollow)

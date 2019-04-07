@@ -10,7 +10,10 @@ RSpec.describe UnfollowRequest, type: :model do
     let(:from_uid) { user.uid }
     let(:to_uid) { request.uid }
 
-    before { allow(request).to receive(:client).with(no_args).and_return(client) }
+    before do
+      allow(request).to receive(:client).with(no_args).and_return(client)
+      allow(request).to receive(:unauthorized?).with(no_args).and_return(false)
+    end
 
     it 'calls client#unfollow' do
       allow(client).to receive(:user?).with(to_uid).and_return(true)

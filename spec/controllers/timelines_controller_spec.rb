@@ -36,7 +36,7 @@ RSpec.describe TimelinesController, type: :controller do
     end
 
     context 'With blocked screen_name' do
-      let(:twitter_user) { build(:twitter_user) }
+      let(:twitter_user) { build(:twitter_user, screen_name: screen_name) }
       before do
         ForbiddenUser.create!(screen_name: screen_name)
         allow(controller).to receive(:valid_screen_name?).with(no_args).and_return(true)
@@ -51,7 +51,7 @@ RSpec.describe TimelinesController, type: :controller do
           allow(controller).to receive(:request_context_client).and_raise(RuntimeError, 'You have been blocked')
         end
         it do
-          is_expected.to redirect_to root_path
+          is_expected.to redirect_to blocked_path(screen_name: screen_name)
         end
       end
 
@@ -67,8 +67,8 @@ RSpec.describe TimelinesController, type: :controller do
       end
     end
 
-    context 'With not authorized screen_name' do
-      let(:twitter_user) { build(:twitter_user) }
+    context 'With protected screen_name' do
+      let(:twitter_user) { build(:twitter_user, screen_name: screen_name) }
       before do
         ForbiddenUser.create!(screen_name: screen_name)
         allow(controller).to receive(:valid_screen_name?).with(no_args).and_return(true)
@@ -76,56 +76,12 @@ RSpec.describe TimelinesController, type: :controller do
         allow(controller).to receive(:forbidden_screen_name?).with(no_args).and_return(false)
         allow(controller).to receive(:build_twitter_user_by).with(screen_name: screen_name).and_return(twitter_user)
         allow(controller).to receive(:blocked_search?).with(twitter_user).and_return(false)
+        allow(controller).to receive(:protected_user?).with(screen_name).and_return(true)
       end
 
-      context 'twitter_user.suspended_account? returns true' do
-        before { allow(twitter_user).to receive(:suspended_account?).with(no_args).and_return(true) }
-        it do
-          is_expected.to redirect_to root_path
-        end
+      it do
+        is_expected.to redirect_to protected_path(screen_name: screen_name)
       end
-
-      context 'twitter_user.suspended_account? returns false' do
-        before { allow(twitter_user).to receive(:suspended_account?).with(no_args).and_return(false) }
-
-        context 'twitter_user.public_account? returns true' do
-          before do
-            allow(twitter_user).to receive(:public_account?).with(no_args).and_return(true)
-          end
-          it do
-            expect(controller).to receive(:authorized_search?).with(twitter_user).and_return(true)
-            subject
-          end
-        end
-
-        context 'twitter_user.public_account? returns false' do
-          before do
-            allow(twitter_user).to receive(:public_account?).with(no_args).and_return(false)
-          end
-
-          context 'user_signed_in? && twitter_user.readable_by?(current_user)' do
-            before do
-              allow(controller).to receive(:user_signed_in?).with(no_args).and_return(true)
-              allow(twitter_user).to receive(:readable_by?).with(anything).and_return(true)
-            end
-            it do
-              expect(controller).to receive(:authorized_search?).with(twitter_user).and_return(true)
-              subject
-            end
-          end
-
-          context 'else' do
-            before do
-              allow(controller).to receive(:user_signed_in?).with(no_args).and_return(true)
-              allow(twitter_user).to receive(:readable_by?).with(anything).and_return(false)
-            end
-            it do
-              is_expected.to redirect_to root_path
-            end
-          end
-        end
-      end
-
     end
   end
 end

@@ -166,7 +166,7 @@ module Concerns::ValidationConcern
     @authorized_search_called = true
     protected = protected_user?(twitter_user.screen_name)
     redirect_to protected_path(screen_name: twitter_user.screen_name) if protected
-    protected
+    !protected
   rescue => e
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false

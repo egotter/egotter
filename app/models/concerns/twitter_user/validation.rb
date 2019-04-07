@@ -30,22 +30,6 @@ module Concerns::TwitterUser::Validation
     !!self.protected
   end
 
-  def public_account?
-    !protected_account?
-  end
-
-  def verified_account?
-    !!self.verified
-  end
-
-  def readable_by?(login_user)
-    login_user.uid.to_i == uid.to_i || login_user.api_client.friendship?(login_user.uid.to_i, uid.to_i)
-  end
-
-  def suspended_account?
-    !!self.suspended
-  end
-
   # not using in valid?
   def too_many_friends?(login_user:, add_error: true)
     return false if uid == User::EGOTTER_UID
