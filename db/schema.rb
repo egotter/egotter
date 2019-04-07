@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_05_174700) do
+ActiveRecord::Schema.define(version: 2019_04_07_014044) do
 
   create_table "ahoy_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "visit_id"
@@ -430,6 +430,14 @@ ActiveRecord::Schema.define(version: 2019_04_05_174700) do
     t.index ["friend_uid"], name: "index_friendships_on_friend_uid"
     t.index ["from_id", "friend_uid"], name: "index_friendships_on_from_id_and_friend_uid", unique: true
     t.index ["from_id"], name: "index_friendships_on_from_id"
+  end
+
+  create_table "gauges", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.string "name"
+    t.string "label"
+    t.integer "value"
+    t.datetime "time"
+    t.index ["time"], name: "index_gauges_on_time"
   end
 
   create_table "import_twitter_user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
