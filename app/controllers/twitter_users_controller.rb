@@ -4,7 +4,7 @@ class TwitterUsersController < ApplicationController
   before_action :reject_crawler
   before_action { valid_uid?(params[:uid]) }
   before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
-  before_action { authorized_search?(@twitter_user) && !blocked_search?(@twitter_user) }
+  before_action { !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
   before_action { create_search_log }

@@ -6,7 +6,7 @@ class SearchesController < ApplicationController
   before_action :reject_crawler
   before_action { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
   before_action { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
-  before_action { authorized_search?(@twitter_user) && !blocked_search?(@twitter_user) }
+  before_action { !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
   before_action do
