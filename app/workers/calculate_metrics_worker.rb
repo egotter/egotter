@@ -198,7 +198,7 @@ class CalculateMetricsWorker
 
   def send_nginx_metrics
     stats = NginxStats.new
-    Gauge.create_by_hash("nginx", stats)
+    Gauge.create_by_hash('nginx', stats)
   end
 
   def send_search_histories_metrics
@@ -289,12 +289,6 @@ class CalculateMetricsWorker
   end
 
   def send_rate_limit_metrics
-    # stats =
-    #     Bot.rate_limit.map do |limit|
-    #       id = limit.delete(:id).to_s
-    #       values = limit.map {|key, value| [key, value[:remaining]]}.to_h
-    #       [id, values]
-    #     end.to_h
   end
 
   def send_search_error_metrics
