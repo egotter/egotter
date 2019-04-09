@@ -43,12 +43,12 @@ class SendMetricsToSlackWorker
 
   def send_table_metrics
     values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'tables').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(values, title: 'tables', channel: SlackClient::TABLE_MONITORING)
+    SlackClient.send_message(SlackClient.format(values), title: 'tables', channel: SlackClient::TABLE_MONITORING)
   end
 
   def send_twitter_user_metrics
     values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'twitter_user').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(values, title: 'twitter_user', channel: SlackClient::TWITTER_USERS_MONITORING)
+    SlackClient.send_message(SlackClient.format(values), title: 'twitter_user', channel: SlackClient::TWITTER_USERS_MONITORING)
 
     friends_count = []
     followers_count = []
@@ -91,7 +91,7 @@ class SendMetricsToSlackWorker
 
   def send_google_analytics_metrics
     values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'ga rt:activeUsers').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(values, title: 'ga rt:activeUsers', channel: SlackClient::GA_MONITORING)
+    SlackClient.send_message(SlackClient.format(values), title: 'ga rt:activeUsers', channel: SlackClient::GA_MONITORING)
   end
 
   def send_prompt_report_metrics
