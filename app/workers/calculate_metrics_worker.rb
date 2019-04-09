@@ -108,28 +108,32 @@ class CalculateMetricsWorker
     size = users.size
 
     stats = {
-        friends_count: {
-            avg: sprintf("%.1f", divide(friends_count.sum, size)),
-            min: friends_count.min,
-            max: friends_count.max
-        },
-        followers_count: {
-            avg: sprintf("%.1f", divide(followers_count.sum, size)),
-            min: followers_count.min,
-            max: followers_count.max
-        },
-        friends_size: {
-            avg: sprintf("%.1f", divide(friends_size.sum, size)),
-            min: friends_size.min,
-            max: friends_size.max
-        },
-        followers_size: {
-            avg: sprintf("%.1f", divide(followers_size.sum, size)),
-            min: followers_size.min,
-            max: followers_size.max
-        }
+        avg: sprintf("%.1f", divide(friends_count.sum, size)),
+        min: friends_count.min,
+        max: friends_count.max
     }
+    Gauge.create_by_hash('twitter_user friends_count', stats)
 
+    stats = {
+        avg: sprintf("%.1f", divide(followers_count.sum, size)),
+        min: followers_count.min,
+        max: followers_count.max
+    }
+    Gauge.create_by_hash('twitter_user followers_count', stats)
+
+    stats = {
+        avg: sprintf("%.1f", divide(friends_size.sum, size)),
+        min: friends_size.min,
+        max: friends_size.max
+    }
+    Gauge.create_by_hash('twitter_user friends_size', stats)
+
+    stats = {
+        avg: sprintf("%.1f", divide(followers_size.sum, size)),
+        min: followers_size.min,
+        max: followers_size.max
+    }
+    Gauge.create_by_hash('twitter_user followers_size', stats)
   end
 
   def send_google_analytics_metrics
@@ -146,7 +150,6 @@ class CalculateMetricsWorker
         'prompt_reports(timelines)' => SearchLog.where(condition).where(via: 'prompt_report_shortcut').size,
         create_prompt_report_logs: CreatePromptReportLog.where(condition).size,
     }
-
     Gauge.create_by_hash('prompt_report', stats)
   end
 
@@ -175,9 +178,11 @@ class CalculateMetricsWorker
 
   def send_sidekiq_queue_metrics
     queues = Sidekiq::Queue.all.select {|queue| queue.latency > 0}.sort_by(&:name)
-    queues = queues.map do |queue|
-      [queue.name, {size: queue.size, latency: sprintf("%.3f", queue.latency)}]
-    end.to_h
+
+    queues.each do |queue|
+      stats = {size: queue.size, latency: sprintf("%.3f", queue.latency)}
+      Gauge.create_by_hash("sidekiq_queue #{queue.name}", stats)
+    end
   end
 
   def send_sidekiq_worker_metrics(types = nil)
@@ -187,15 +192,16 @@ class CalculateMetricsWorker
 
     types.each do |type|
       stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.to_h
+      Gauge.create_by_hash("sidekiq_worker #{type}", stats)
     end
   end
 
   def send_nginx_metrics
     stats = NginxStats.new
+    Gauge.create_by_hash("nginx", stats)
   end
 
   def send_search_histories_metrics
-    channel = SlackClient::SEARCH_HISTORIES_MONITORING
     histories = SearchHistory.where(created_at: 10.minutes.ago..Time.zone.now)
 
     stats = {
@@ -283,12 +289,12 @@ class CalculateMetricsWorker
   end
 
   def send_rate_limit_metrics
-    stats =
-        Bot.rate_limit.map do |limit|
-          id = limit.delete(:id).to_s
-          values = limit.map {|key, value| [key, value[:remaining]]}.to_h
-          [id, values]
-        end.to_h
+    # stats =
+    #     Bot.rate_limit.map do |limit|
+    #       id = limit.delete(:id).to_s
+    #       values = limit.map {|key, value| [key, value[:remaining]]}.to_h
+    #       [id, values]
+    #     end.to_h
   end
 
   def send_search_error_metrics
@@ -297,16 +303,22 @@ class CalculateMetricsWorker
         where.not(session_id: '-1')
 
     stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.location] += 1}.sort_by {|_, v| -v}.to_h
+    Gauge.create_by_hash('search_error location', stats)
 
     stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.location] += 1 if log.user_found?}.sort_by {|_, v| -v}.to_h
+    Gauge.create_by_hash('search_error location (user)', stats)
 
     stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.location] += 1 unless log.user_found?}.sort_by {|_, v| -v}.to_h
+    Gauge.create_by_hash('search_error location (visitor)', stats)
 
     stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.via] += 1}.sort_by {|_, v| -v}.to_h
+    Gauge.create_by_hash('search_error via', stats)
 
     stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.last_session_source] += 1}.sort_by {|_, v| -v}.to_h
+    Gauge.create_by_hash('search_error source', stats)
 
     stats = logs.each_with_object(Hash.new(0)).each {|log, memo| memo[log.device_type] += 1}.sort_by {|_, v| -v}.to_h
+    Gauge.create_by_hash('search_error device_type', stats)
   end
 
   def divide(num1, num2)
