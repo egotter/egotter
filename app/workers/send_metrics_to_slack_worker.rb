@@ -54,6 +54,7 @@ class SendMetricsToSlackWorker
     followers_count = []
     friends_size = []
     followers_size = []
+    users = TwitterUser.cache_ready.where(created_at: 10.minutes.ago..Time.zone.now)
 
     users.each do |user|
       friends_count << user.friends_count
