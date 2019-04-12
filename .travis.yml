@@ -1,3 +1,4 @@
+dist: xenial
 language: ruby
 cache: bundler
 sudo: required
@@ -11,4 +12,5 @@ script:
   - bundle exec rake db:create db:schema:load
   - bundle exec rspec
 services:
-    - redis-server
+  - mysql
+  - redis-server
