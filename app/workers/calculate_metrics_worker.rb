@@ -91,7 +91,6 @@ class CalculateMetricsWorker
         unique_uid: users.select('distinct uid').count,
         unique_user_id: users.select('distinct user_id').count,
     }
-
     Gauge.create_by_hash('twitter_user', stats)
 
     friends_count = []

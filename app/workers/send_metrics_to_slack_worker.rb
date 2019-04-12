@@ -41,9 +41,17 @@ class SendMetricsToSlackWorker
     logger.info e.backtrace.join("\n")
   end
 
+  def fetch_gauges(name, aggregation)
+    if %i(sum average).include?(aggregation)
+      Gauge.where(time: 1.hour.ago..Time.zone.now).where(name: name).group('label').send(aggregation, 'value').to_h
+    else
+      raise "Invalid aggregation #{aggregation}"
+    end
+  end
+
   def send_table_metrics
-    values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'tables').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(SlackClient.format(values), title: 'tables', channel: SlackClient::TABLE_MONITORING)
+    name = 'tables'
+    SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::TABLE_MONITORING)
   end
 
   def send_twitter_user_metrics
@@ -54,47 +62,42 @@ class SendMetricsToSlackWorker
         'twitter_user friends_size',
         'twitter_user followers_size',
     ].each do |name|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: name).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: name, channel: SlackClient::TWITTER_USERS_MONITORING)
+      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::TWITTER_USERS_MONITORING)
     end
   end
 
   def send_google_analytics_metrics
-    values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'ga rt:activeUsers').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(SlackClient.format(values), title: 'ga rt:activeUsers', channel: SlackClient::GA_MONITORING)
+    name = 'ga rt:activeUsers'
+    SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::GA_MONITORING)
   end
 
   def send_prompt_report_metrics
-    values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'prompt_report').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(SlackClient.format(values), title: 'prompt_report', channel: SlackClient::MESSAGING_MONITORING)
+    name = 'prompt_report'
+    SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::MESSAGING_MONITORING)
   end
 
   def send_prompt_report_error_metrics
-    values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'prompt_report_error').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(SlackClient.format(values), title: 'prompt_report_error', channel: SlackClient::MESSAGING_MONITORING)
+    name = 'prompt_report_error'
+    SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::MESSAGING_MONITORING)
   end
 
   def send_sidekiq_queue_metrics
-    Gauge.where(time: 10.minutes.ago..Time.zone.now).where('name like "sidekiq_queue %"').pluck(:name).each do |name|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: name).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: name, channel: SlackClient::SIDEKIQ_MONITORING)
+    names = Gauge.where(time: 10.minutes.ago..Time.zone.now).where('name like "sidekiq_queue %"').pluck(:name).uniq
+    names.each do |name|
+      SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::SIDEKIQ_MONITORING)
     end
   end
 
-  def send_sidekiq_worker_metrics(types = nil)
-    unless types
-      types = Rails.env.development? ? %w(sidekiq_all) : %w(sidekiq sidekiq_misc sidekiq_import sidekiq_prompt_reports)
-    end
-
-    types.each do |type|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: type).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: type, channel: SlackClient::SIDEKIQ_MONITORING)
+  def send_sidekiq_worker_metrics
+    names = Gauge.where(time: 10.minutes.ago..Time.zone.now).where('name like "sidekiq_worker %"').pluck(:name).uniq
+    names.each do |name|
+      SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::SIDEKIQ_MONITORING)
     end
   end
 
   def send_nginx_metrics
-    values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: 'nginx').map {|g| [g.label, g.value]}.to_h
-    SlackClient.send_message(SlackClient.format(values), title: 'nginx', channel: SlackClient::MONITORING)
+    name = 'nginx'
+    SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::MONITORING)
   end
 
   def send_search_histories_metrics
@@ -104,8 +107,7 @@ class SendMetricsToSlackWorker
         'search_histories source',
         'search_histories device_type',
     ].each do |name|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: name).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: name, channel: SlackClient::SEARCH_HISTORIES_MONITORING)
+      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::SEARCH_HISTORIES_MONITORING)
     end
   end
 
@@ -116,8 +118,7 @@ class SendMetricsToSlackWorker
         'visitors source',
         'visitors device_type',
     ].each do |name|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: name).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: name, channel: SlackClient::VISITORS_MONITORING)
+      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::VISITORS_MONITORING)
     end
   end
 
@@ -128,8 +129,7 @@ class SendMetricsToSlackWorker
         'users source',
         'users device_type',
     ].each do |name|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: name).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: name, channel: SlackClient::USERS_MONITORING)
+      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::USERS_MONITORING)
     end
   end
 
@@ -142,8 +142,7 @@ class SendMetricsToSlackWorker
         'sign_in source',
         'sign_in device_type',
     ].each do |name|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: name).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: name, channel: SlackClient::SIGN_IN_MONITORING)
+      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::SIGN_IN_MONITORING)
     end
   end
 
@@ -155,7 +154,7 @@ class SendMetricsToSlackWorker
           [id, values]
         end.to_h
 
-    SlackClient.send_message(SlackClient.format(stats), channel: SlackClient::RATE_LIMIT_MONITORING)
+    SlackClient.send_message(stats, channel: SlackClient::RATE_LIMIT_MONITORING)
   end
 
   def send_search_error_metrics
@@ -167,8 +166,7 @@ class SendMetricsToSlackWorker
         'search_error source',
         'search_error device_type',
     ].each do |name|
-      values = Gauge.where(time: 10.minutes.ago..Time.zone.now).where(name: name).map {|g| [g.label, g.value]}.to_h
-      SlackClient.send_message(SlackClient.format(values), title: name, channel: SlackClient::SEARCH_ERROR_MONITORING)
+      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::SEARCH_ERROR_MONITORING)
     end
   end
 end
