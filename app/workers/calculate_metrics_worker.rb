@@ -190,14 +190,16 @@ class CalculateMetricsWorker
     end
 
     types.each do |type|
-      stats = SidekiqStats.new(type).to_a.sort_by {|k, _| k}.to_h
-      Gauge.create_by_hash("sidekiq_worker #{type}", stats)
+      SidekiqStats.new(type).each do |key, value|
+        Gauge.create_by_hash("sidekiq_worker #{type} #{key}", value)
+      end
     end
   end
 
   def send_nginx_metrics
-    stats = NginxStats.new
-    Gauge.create_by_hash('nginx', stats)
+    NginxStats.new.each do |key, value|
+      Gauge.create_by_hash("nginx #{key}", value)
+    end
   end
 
   def send_search_histories_metrics
