@@ -43,7 +43,7 @@ class SendMetricsToSlackWorker
 
   def fetch_gauges(name, aggregation)
     if %i(sum average).include?(aggregation)
-      Gauge.where(time: 1.hour.ago..Time.zone.now).where(name: name).group('label').send(aggregation, 'value').to_h
+      Gauge.where(time: 1.hour.ago..Time.zone.now).where(name: name).group('label').send(aggregation, 'value').sort_by {|_, v| -v}.to_h
     else
       raise "Invalid aggregation #{aggregation}"
     end
@@ -68,7 +68,8 @@ class SendMetricsToSlackWorker
 
   def send_google_analytics_metrics
     name = 'ga rt:activeUsers'
-    SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::GA_MONITORING)
+    value = Gauge.order(created_at: :desc).find_by(name: name).value
+    SlackClient.send_message(value, title: name, channel: SlackClient::GA_MONITORING)
   end
 
   def send_prompt_report_metrics
