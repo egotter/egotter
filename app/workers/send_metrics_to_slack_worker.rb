@@ -68,7 +68,7 @@ class SendMetricsToSlackWorker
 
   def send_google_analytics_metrics
     name = 'ga rt:activeUsers'
-    value = Gauge.order(created_at: :desc).find_by(name: name).value
+    value = Gauge.order(time: :desc).find_by(name: name).value
     SlackClient.send_message(value, title: name, channel: SlackClient::GA_MONITORING)
   end
 
