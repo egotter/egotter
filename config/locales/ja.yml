@@ -53,7 +53,7 @@ ja:
       feature_009: "鍵垢も検索OK"
       feature_desc_009_html: "鍵垢も検索できます。<br>(要ログイン)"
       feature_010: "多くの利用実績"
-      feature_desc_010_html: "累計100万以上の利用実績！<br>これからも安心で安全な<br>運営を継続します。"
+      feature_desc_010_html: "累計350万以上の利用実績！<br>これからも安心で安全な<br>運営を継続します。"
       pc:
         lead_001: "リムーブ、ブロックを逃さずチェック！"
         lead_002_html: "えごったーは、スマホとPCから使える<br>安心で安全なツイッター分析アプリです"
@@ -92,10 +92,10 @@ ja:
       page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       text001_html: 'フォロワーが1人減っている。<br class="visible-xs-block">誰だろう？'
       text002: 'えごったーを使えば、フォロワーが減ったりブロックされた時に相手がすぐに分かります。'
-      text003_html: '<span class="egotter-pink" style="font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
+      text003_html: '<span class="egotter-pink" style="font-size: 20px;">350万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
       text004_html: 'ログインでもっと便利に。<br class="visible-xs-block">リム通知届きます。'
       text005_html: 'えごったーにログインすることで、<br class="visible-xs-block"><span class="egotter-pink" style="font-size: 20px;">リム通知</span>が届くようになります。'
-      text006_html: '<span class="egotter-pink" style="font-size: 20px;">100万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
+      text006_html: '<span class="egotter-pink" style="font-size: 20px;">350万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
   timelines:
     show:
       title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
@@ -823,7 +823,7 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
-      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。100万人以上が利用するえごったーに新機能が登場！"
+      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
       text001_html: 'あなたは今のタイムラインにときめきますか？'
       text002_html: '最初は良いと思ってフォローしたけど、今はときめかない・・・そんな時は、相手に感謝しつつアンフォローしましょう。'
       text003_html: '今はもうときめかなくなったフォローを解除する。それは、新たな門出ともいえる儀式なのです。ぜひその門出を祝福してあげてください。'
@@ -833,7 +833,7 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
-      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。100万人以上が利用するえごったーに新機能が登場！"
+      description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
       text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんに<br class="visible-xs-block">心がときめいていますか？✨'
       next_is_html: '次は%{number}人目、<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんです。🙂'
       how_to_continue_html: '途中から再開する場合は、再度同じURL <a href="%{url}" class="btn btn-primary">ときめきアンフォロー</a> にアクセスしてください。'
@@ -851,8 +851,8 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">ツイートクリーナー🧹</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
       simple_title: 'ツイートクリーナー🧹'
-      description: "黒歴史よさようなら！ ワンクリックでツイートを一括削除。100万人以上が利用するえごったーに新機能が登場！"
-      text001_html: 'ワンクリックでツイートを一括削除<br>100万人以上が利用するえごったーに新機能が登場！'
+      description: "黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万人以上が利用するえごったーに新機能が登場！"
+      text001_html: 'ワンクリックでツイートを一括削除<br>350万人以上が利用するえごったーに新機能が登場！'
       text002_html: 'ツイッターの一括削除にはえごったーを利用しています。<br>もし、ツイートの一括削除ができない場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       delete_tweets: 'ツイートを一括削除する'
       requested: 'リクエスト済み'
