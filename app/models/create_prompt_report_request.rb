@@ -191,6 +191,7 @@ class CreatePromptReportRequest < ApplicationRecord
       ex.message == 'You cannot send messages to users you have blocked.' ||
           ex.message == 'You cannot send messages to users who are not following you.' ||
           ex.message == 'You are sending a Direct Message to users that do not follow you.' ||
+          ex.message == 'You cannot send messages to this user.' ||
           ex.message == "This request looks like it might be automated. To protect our users from spam and other malicious activity, we can't complete this action right now. Please try again later."
     end
   end
