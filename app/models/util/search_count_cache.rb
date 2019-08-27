@@ -2,7 +2,7 @@ module Util
   class SearchCountCache
     attr_reader :redis
 
-    TTL = Rails.env.development? ? 5.minutes : 1.day
+    TTL = Rails.env.development? ? 5.minutes : 1.hour
 
     def initialize(redis)
       @redis = redis
