@@ -49,8 +49,10 @@ class ResetEgotterRequest < ApplicationRecord
   def send_goodbye_message
     DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('settings.index.reset_egotter.direct_message')).perform
   rescue Twitter::Error::Forbidden => e
-    unless e.message == 'You cannot send messages to this user.'
-      logger.warn "#{e.class} #{e.message}"
+    if e.message == 'You cannot send messages to this user.' ||
+        e.message == 'You cannot send messages to users who are not following you.'
+    else
+      logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
       logger.info e.backtrace.join("\n")
     end
   rescue => e
