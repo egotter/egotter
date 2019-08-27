@@ -18,6 +18,7 @@
 class DeleteTweetsRequest < ApplicationRecord
   include Concerns::Request::Runnable
   belongs_to :user
+  has_many :logs, -> { order(created_at: :desc) }, primary_key: :id, foreign_key: :request_id, class_name: 'DeleteTweetsLog'
 
   validates :session_id, presence: true
   validates :user_id, presence: true
@@ -71,7 +72,7 @@ class DeleteTweetsRequest < ApplicationRecord
 
     @destroy_count = 0
 
-    tweets.each do |tweet|
+    Parallel.each(tweets, in_threads: 3) do |tweet|
       destroy_status!(tweet.id)
       @destroy_count += 1
     end
