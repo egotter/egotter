@@ -43,7 +43,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       sign_in_tweet_text
       redirect_path
     ).each { |key| session.delete(key) }
-    set_flash_message :alert, :failure, kind: 'Twitter', reason: request.env['omniauth.error.type'].to_s.humanize
+    flash[:notice] = after_failure_message(request.env['omniauth.error.type'].to_s)
     redirect_to after_omniauth_failure_path_for(resource_name)
   end
 
@@ -56,6 +56,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   def after_sign_in_message(user)
     t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: notification_status_message(user), url: settings_path(via: 'after_sign_in'))
+  end
+
+  def after_failure_message(reason)
+    unless reason == 'invalid_credentials'
+      logger.warn "#{self.class}##{__method__}: unknown reason #{reason}"
+    end
+    t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: sign_in_path(via: "#{controller_name}/#{action_name}/retry_message"))
   end
 
   def notification_status_message(user)
