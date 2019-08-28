@@ -9,25 +9,37 @@ module Util
     end
 
     class << self
+      def ttl
+        instance.ttl
+      end
+
       def exists?
-        new(Redis.client).exists?
+        instance.exists?
       end
 
       def set(num)
-        new(Redis.client).set(num)
+        instance.set(num)
       end
 
       def get
-        new(Redis.client).get.to_i
+        instance.get.to_i
       end
 
       def increment
-        new(Redis.client).increment
+        instance.increment
+      end
+
+      def instance
+        new(Redis.client)
       end
     end
 
     def key
       "search_count_cache"
+    end
+
+    def ttl
+      redis.ttl(key)
     end
 
     def exists?
@@ -43,7 +55,9 @@ module Util
     end
 
     def increment
-      redis.incr(key)
+      # Use get and set instead of incr to update the expire.
+      # redis.incr(key)
+      set(redis.get(key).to_i + 1)
     end
   end
 end
