@@ -7,7 +7,7 @@ class UpdateEgotterFollowersWorker
   end
 
   def timeout_in
-    300.seconds
+    60.seconds
   end
 
   def after_timeout(*args)
@@ -22,9 +22,22 @@ class UpdateEgotterFollowersWorker
     user = User.find_by(id: options['user_id'])
     client = user ? user.api_client : User.find_by(uid: User::EGOTTER_UID).api_client
 
+    if client.user(User::EGOTTER_UID)[:followers_count] > 70000 # Max is 5000 * 15 = 75000
+      logger.warn 'Danger! The followers_count is over 70000!'
+    end
+
     follower_ids = client.follower_ids(User::EGOTTER_UID)
-    users = client.users(follower_ids)
-    followers = users.map {|user| EgotterFollower.new(uid: user[:id], screen_name: user[:screen_name])}
+
+    followers =
+        EgotterFollower.where(uid: follower_ids).map do |user|
+          EgotterFollower.new(uid: user.uid, screen_name: user.screen_name)
+        end
+
+    remaining_ids = follower_ids - followers.map(&:uid)
+    users = client.users(remaining_ids)
+    followers += users.map { |user| EgotterFollower.new(uid: user[:id], screen_name: user[:screen_name]) }
+
+    followers.sort_by! { |f| follower_ids.index(f.uid) }
 
     EgotterFollower.transaction do
       EgotterFollower.delete_all
