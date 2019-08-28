@@ -851,10 +851,20 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">ツイートクリーナー🧹</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
       simple_title: 'ツイートクリーナー🧹'
-      description: "黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万人以上が利用するえごったーに新機能が登場！"
-      text001_html: 'ワンクリックでツイートを一括削除<br>350万人以上が利用するえごったーに新機能が登場！'
+      description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万人以上が利用するえごったーに新機能が登場！'
+      text001_html: 'ワンクリックでツイートを一括削除<br><span class="egotter-pink">350万人</span>以上が利用するえごったーに新機能が登場！'
       text002_html: 'ツイッターの一括削除にはえごったーを利用しています。<br>もし、ツイートの一括削除ができない場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
       delete_tweets: 'ツイートを一括削除する'
+      see_progress: 'ツイート削除ステータスを見る'
+      delete_tweets_log: 'ツイート削除ログ'
+      feature_title1: '安全にツイートを削除'
+      feature_text1_html: '<span class="egotter-pink" style="font-size: 20px;">350万人</span>以上が利用するえごったーなら、<br>安全にツイートを削除することができます。'
+      feature_title2: '完全にツイートを削除'
+      feature_text2_html: '可能な限り完全にツイートを削除します。<br>※ツイッターの仕様上、最大で3200件までしか削除できない点にご注意ください。'
+      feature_title3: 'ツイート削除の進捗をお知らせ'
+      feature_text3_html: '今どこまで進んでいるのかを簡単に確認できます。'
+      feature_title4: 'リムられ通知をDMでお知らせ'
+      feature_text4_html: 'フォローを外されたときにDMが届きます。<br>※設定でオフにすることができます。'
       requested: 'リクエスト済み'
       modal:
         title: 'ツイート一括削除'
@@ -1141,6 +1151,15 @@ ja:
         uid: "uid"
         screen_name: "screen name"
         user_info: "user_info"
+      delete_tweets_request:
+        processing: "ツイート削除中"
+        not_authorized_html: '@%{name} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
+        invalid_token_html: '@%{name} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
+        something_error: 'ツイート削除中にエラーが起きました。'
+        zero_tweets: '削除対象のツイートがありません。完了しました。'
+        timeout: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
+        too_many_requests: '%{count} ツイートを削除しました。次の削除は %{reset_in} 秒後です。'
+        continue: '%{count} ツイートを削除しました。'
 
     errors:
       models:
@@ -1358,6 +1377,7 @@ ja:
       default: "%Y/%m/%d %H:%M:%S"
       long: "%Y年%m月%d日(%a) %H時%M分%S秒 %z"
       short: "%y/%m/%d %H:%M"
+      delete_tweets_short: "%m/%d %H時%M分%S秒"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"
     pm: 午後

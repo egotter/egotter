@@ -10,14 +10,23 @@
 
   - if user_signed_in?
     .center-block{style: 'width: 80%;'}
-      - if @delete_tweets_request
-        .btn.btn-danger.btn-block{disabled: 'disabled'}= t('.delete_tweets')
+      - if @processing
+        %a.btn.btn-default.btn-block{href: delete_tweets_path}= t('.see_progress')
         .text-muted.notes.text-right= t('.requested')
       - else
         .btn.btn-danger.btn-block.delete-tweets-btn{"data-target" => "#delete-tweets-modal", "data-toggle" => "modal"}= t('.delete_tweets')
         .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
           %i.fas.fa-check
           = t('searches.new.pc.check_004_html')
+
+      - if @requests.any?
+        .vertical-spacing
+        %h4= t('.delete_tweets_log')
+        - @requests.first.logs.take(5).each do |log|
+          %div{style: 'font-size: 12px;'}= "#{l(log.created_at.in_time_zone('Tokyo'), format: :delete_tweets_short)}"
+          %div{style: 'font-size: 12px;'}= log.message.html_safe
+          .vertical-spacing
+
     .vertical-spacing
     .vertical-spacing
   - else
@@ -35,6 +44,27 @@
   .screenshot.text-center
     = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
       %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3= t('.feature_title1')
+  %div= t('.feature_text1_html')
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3= t('.feature_title2')
+  %div= t('.feature_text2_html')
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3= t('.feature_title3')
+  %div= t('.feature_text3_html')
+  .vertical-spacing
+  .vertical-spacing
+
+  %h3= t('.feature_title4')
+  %div= t('.feature_text4_html')
+  .vertical-spacing
   .vertical-spacing
 
 #public-tweets-wrapper.twitter.tweets.center-block
