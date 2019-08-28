@@ -18,10 +18,13 @@ class SendExceptionToRollbarWorker
 
   def extract_exception(data)
     message = data.dig('body', 'trace', 'exception')
-    message = data.dig('body', 'trace_chain', 'exception') if message.blank?
+    begin
+      message = data.dig('body', 'trace_chain', 'exception') if message.blank?
+    rescue => e
+    end
 
     if message.blank?
-      logger.info "exception is blank #{data.inspect.truncate(100)}}"
+      logger.warn "exception is blank #{data.inspect.truncate(100)}}"
       logger.info "#{JSON.pretty_generate(data)}"
     end
 
