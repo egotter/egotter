@@ -59,7 +59,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def after_failure_message(reason)
-    unless reason == 'invalid_credentials'
+    unless %w(invalid_credentials session_expired).include?(reason)
       logger.warn "#{self.class}##{__method__}: unknown reason #{reason}"
     end
     t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: sign_in_path(via: "#{controller_name}/#{action_name}/retry_message"))
