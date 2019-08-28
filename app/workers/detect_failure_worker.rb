@@ -6,6 +6,14 @@ class DetectFailureWorker
     twitter_user_id
   end
 
+  def timeout_in
+    15.seconds
+  end
+
+  def after_timeout(twitter_user_id, options = {})
+    logger.warn "Timeout #{timeout_in} #{twitter_user_id} #{options.inspect}"
+  end
+
   def perform(twitter_user_id, options = {})
     user = TwitterUser.select(:id, :uid, :screen_name, :friends_size, :followers_size, :created_at).find(twitter_user_id)
     user.s3_file!
