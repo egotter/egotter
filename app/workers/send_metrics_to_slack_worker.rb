@@ -41,14 +41,6 @@ class SendMetricsToSlackWorker
     logger.info e.backtrace.join("\n")
   end
 
-  def fetch_gauges(name, aggregation)
-    if %i(sum average).include?(aggregation)
-      Gauge.where(time: 1.hour.ago..Time.zone.now).where(name: name).group('label').send(aggregation, 'value').sort_by {|_, v| -v}.to_h
-    else
-      raise "Invalid aggregation #{aggregation}"
-    end
-  end
-
   def send_table_metrics
     name = 'tables'
     SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::TABLE_MONITORING)
@@ -168,6 +160,16 @@ class SendMetricsToSlackWorker
         'search_error device_type',
     ].each do |name|
       SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::SEARCH_ERROR_MONITORING)
+    end
+  end
+
+  private
+
+  def fetch_gauges(name, aggregation)
+    if %i(sum average).include?(aggregation)
+      Gauge.where(time: 1.hour.ago..Time.zone.now).where(name: name).group('label').send(aggregation, 'value').sort_by {|_, v| -v}.to_h
+    else
+      raise "Invalid aggregation #{aggregation}"
     end
   end
 end

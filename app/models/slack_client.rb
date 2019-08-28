@@ -15,7 +15,7 @@ class SlackClient
   class << self
     def send_message(text, title: nil, channel: MONITORING)
       text = format(text) if text.is_a?(Hash)
-      text = title + "\n" + text if title
+      text = "#{title}\n#{text}" if title
       HTTParty.post(channel, body: {text: text}.to_json)
     end
 
