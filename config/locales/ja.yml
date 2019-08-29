@@ -872,6 +872,7 @@ ja:
         ok: "はい、削除します"
         cancel: "いいえ"
       dm_messge: 'ツイートの削除が完了しました。'
+      dm_error_messge: 'ツイートの削除中にエラーが起きました。大抵のエラーは一時的なものです。お手数ですが、再度お試しください。%{url}'
   directory:
     profiles:
       link_title: プロフィール

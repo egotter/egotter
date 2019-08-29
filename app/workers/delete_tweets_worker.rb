@@ -22,7 +22,7 @@ class DeleteTweetsWorker
 
     unless user.authorized?
       redirect_path = Rails.application.routes.url_helpers.delete_tweets_path
-      url = Rails.application.routes.url_helpers.sign_in_path(via: "delete_tweets_worker/not_authorized", redirect_path: redirect_path)
+      url = Rails.application.routes.url_helpers.sign_in_url(via: "delete_tweets_worker/not_authorized", redirect_path: redirect_path)
       log.update(message: I18n.t('activerecord.attributes.delete_tweets_request.not_authorized_html', name: user.screen_name, url: url))
       request.finished!
       return
@@ -32,7 +32,7 @@ class DeleteTweetsWorker
       user.api_client.verify_credentials
     rescue => e
       redirect_path = Rails.application.routes.url_helpers.delete_tweets_path
-      url = Rails.application.routes.url_helpers.sign_in_path(via: "delete_tweets_worker/invalid_token", redirect_path: redirect_path)
+      url = Rails.application.routes.url_helpers.sign_in_url(via: "delete_tweets_worker/invalid_token", redirect_path: redirect_path)
       log.update(message: I18n.t('activerecord.attributes.delete_tweets_request.invalid_token_html', name: user.screen_name, url: url))
       request.finished!
       return
@@ -54,6 +54,7 @@ class DeleteTweetsWorker
     log.update(message: I18n.t('activerecord.attributes.delete_tweets_request.something_error'))
     log.update(error_class: e.class, error_message: error_message)
     request.finished!
+    request.send_error_message
   end
 
   def do_perform(request, log, options)
