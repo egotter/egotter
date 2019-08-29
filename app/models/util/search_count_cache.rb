@@ -55,9 +55,8 @@ module Util
     end
 
     def increment
-      # Use get and set instead of incr to update the expire.
-      # redis.incr(key)
-      set(redis.get(key).to_i + 1)
+      redis.expire(key, TTL)
+      redis.incr(key)
     end
   end
 end
