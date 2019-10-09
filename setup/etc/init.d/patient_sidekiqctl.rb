@@ -11,213 +11,249 @@ if Gem::Version.new(RUBY_VERSION) < Gem::Version.new('2.4.0')
   end
 end
 
-def print_pid(pidfile)
-  `cat #{pidfile}`.to_i
+class Util
+  class << self
+    def print_pid(pidfile)
+      `cat #{pidfile}`.to_i
+    end
+
+    def print_process(params)
+      pid = params[:pid] || print_pid(params[:pidfile])
+      `ps -o command= -p #{pid}`
+    end
+
+    def pidfile_exists?(pidfile)
+      File.exists?(pidfile)
+    end
+
+    def process_exists?(params)
+      pid = params[:pid] || print_pid(params[:pidfile])
+      Process.kill(0, pid)
+    rescue Errno::ESRCH => e
+      false
+    end
+
+    def success(state, name)
+      puts "#{state} #{name} [ \e[32m OK \e[0m ]"
+    end
+
+    def failure(state, name)
+      puts "#{state} #{name} [ \e[31m FAILED \e[0m ]"
+    end
+  end
 end
 
-def print_process(params)
-  pid =
-      if params[:pidfile]
-        print_pid(params[:pidfile])
-      elsif params[:pid]
-        params[:pid]
-      end
-  `ps -o command= -p #{pid}`
+class SidekiqCtl
+  class << self
+    def quiet(pidfile)
+      result = `#{SIDEKIQCTL_CMD} quiet #{pidfile} 2>&1`
+      puts "sidekiqctl: #{result}"
+    end
+
+    def quiet?(pidfile)
+      Util.pidfile_exists?(pidfile) &&
+          Util.process_exists?(pidfile: pidfile) &&
+          Util.print_process(pidfile: pidfile).strip.match?(/\[0 of [0-9]+ busy\] stopping/)
+    end
+
+    def stop(pidfile)
+      result = `#{SIDEKIQCTL_CMD} stop #{pidfile} 2>&1`
+      puts "sidekiqctl: #{result}"
+    end
+
+    def start(options)
+      cmd = "#{SIDEKIQ_CMD} -d -C #{options[:conf]}"
+      result = `sudo -u #{options[:user]} sh -c "#{cmd}"`
+      puts "sidekiq: #{result}"
+    end
+
+    def start?(pidfile)
+      Util.pidfile_exists?(pidfile) &&
+          Util.process_exists?(pidfile: pidfile) &&
+          Util.print_process(pidfile: pidfile).strip.match?(/\[[0-9]+ of [0-9]+ busy\]$/)
+    end
+  end
 end
 
-def pidfile_exists?(pidfile)
-  File.exists?(pidfile)
-end
-
-def process_exists?(params)
-  pid =
-      if params[:pidfile]
-        print_pid(params[:pidfile])
-      elsif params[:pid]
-        params[:pid]
-      end
-  Process.kill(0, pid)
-rescue Errno::ESRCH => e
-  false
-end
-
-def quiet(pidfile)
-  result = `#{SIDEKIQCTL_CMD} quiet #{pidfile}`
-  puts "sidekiqctl: #{result}" unless result.empty?
-end
-
-def quiet?(pidfile)
-  process_exists?(pidfile: pidfile) && print_process(pidfile: pidfile).strip.match?(/\[0 of [0-9]+ busy\] stopping/)
-end
-
-def stop(pidfile)
-  result = `#{SIDEKIQCTL_CMD} stop #{pidfile}`
-  puts "sidekiqctl: #{result}" unless result.empty?
-end
-
-def start(options)
-  result = `sudo -u #{options[:user]} sh -c "#{SIDEKIQ_CMD} -d -C #{options[:conf]}"`
-  puts "sidekiq: #{result}" unless result.empty?
-end
-
-def start?(pidfile)
-  pidfile_exists?(pidfile) && process_exists?(pidfile: pidfile) && print_process(pidfile: pidfile).strip.match?(/\[[0-9]+ of [0-9]+ busy\]$/)
-end
-
-def status(pidfile)
-  pid = print_pid(pidfile)
-  puts "#{pid} #{print_process(pid: pid)}"
-end
-
-def patient_quiet(pidfile)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      pid = print_pid(pidfile)
-
-      10.times do
-        quiet(pidfile)
-        break if quiet?(pidfile)
-        puts "waiting to be quiet #{print_process(pid: pid)}"
-        sleep 2
-      end
-
-      if quiet?(pidfile)
-        true
+class Patient
+  class << self
+    def status(pidfile)
+      if Util.pidfile_exists?(pidfile)
+        if Util.process_exists?(pidfile: pidfile)
+          pid = Util.print_pid(pidfile)
+          puts "#{pid} #{Util.print_process(pid: pid)}"
+        else
+          puts 'process dead but pidfile exists'
+        end
       else
+        puts "pidfile doesn't exist"
+      end
+    end
+
+    def quiet(pidfile)
+      if Util.pidfile_exists?(pidfile)
+        if Util.process_exists?(pidfile: pidfile)
+          pid = Util.print_pid(pidfile)
+
+          max_count = 10
+          sleep_interval = 2
+
+          max_count.times.with_index do |i|
+            SidekiqCtl.quiet(pidfile)
+            break if SidekiqCtl.quiet?(pidfile)
+            puts "waiting to be quiet #{Util.print_process(pid: pid)} (#{i + 1}/#{max_count})"
+            sleep sleep_interval
+          end
+
+          if SidekiqCtl.quiet?(pidfile)
+            true
+          else
+            puts 'retries have been exhausted'
+            false
+          end
+        else
+          puts 'process dead but pidfile exists'
+          false
+        end
+      else
+        puts "pidfile doesn't exist"
         false
       end
-    else
-      puts 'process dead but pid file exists'
-      false
     end
-  else
-    puts "pid file doesn't exist"
-    false
-  end
-end
 
-def patient_stop(pidfile)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      pid = print_pid(pidfile)
+    def stop(pidfile)
+      if Util.pidfile_exists?(pidfile)
+        if Util.process_exists?(pidfile: pidfile)
+          pid = Util.print_pid(pidfile)
 
-      10.times do
-        stop(pidfile) if pidfile_exists?(pidfile)
-        break if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
-        puts "waiting to stop #{print_process(pid: pid)}"
-        sleep 2
-      end
+          max_count = 10
+          sleep_interval = 2
 
-      if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
-        true
+          max_count.times.with_index do |i|
+            SidekiqCtl.stop(pidfile) if Util.pidfile_exists?(pidfile)
+            break if !Util.pidfile_exists?(pidfile) && !Util.process_exists?(pid: pid)
+            puts "waiting to stop #{Util.print_process(pid: pid)} (#{i + 1}/#{max_count})"
+            sleep sleep_interval
+          end
+
+          if Util.pidfile_exists?(pidfile)
+            puts 'pidfile exists'
+            false
+          elsif Util.process_exists?(pid: pid)
+            puts "process doesn't dead"
+            false
+          else
+            true
+          end
+        else
+          puts 'process dead but pidfile exists'
+          false
+        end
       else
+        puts "pidfile doesn't exist"
         false
       end
-    else
-      puts 'process dead but pid file exists'
-      false
-    end
-  else
-    puts "pid file doesn't exist"
-    false
-  end
-end
-
-def patient_start(pidfile, options)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      puts 'process exists'
-      false
-    else
-      puts 'process dead but pid file exists'
-      false
-    end
-  else
-    start(options)
-    10.times do
-      break if start?(pidfile)
-      puts "waiting to start"
-      sleep 2
     end
 
-    if start?(pidfile)
-      true
-    else
-      false
+    def start(pidfile, options)
+      if Util.pidfile_exists?(pidfile)
+        if Util.process_exists?(pidfile: pidfile)
+          puts 'process exists'
+          false
+        else
+          puts 'process dead but pidfile exists'
+          false
+        end
+      else
+        SidekiqCtl.start(options)
+
+        max_count = 10
+        sleep_interval = 2
+
+        max_count.times.with_index do |i|
+          break if SidekiqCtl.start?(pidfile)
+          puts "waiting to start (#{i + 1}/#{max_count})"
+          sleep sleep_interval
+        end
+
+        if SidekiqCtl.start?(pidfile)
+          true
+        else
+          puts "process hasn't started yet"
+          false
+        end
+      end
     end
   end
 end
 
-def do_quiet(pidfile, options)
-  if patient_quiet(pidfile)
-    success('being quiet', options[:name])
-  else
-    failure('being quiet', options[:name])
-    exit 1
-  end
-end
-
-def do_stop(pidfile, options)
-  if patient_quiet(pidfile) && patient_stop(pidfile)
-    success('stopping', options[:name])
-  else
-    failure('stopping', options[:name])
-    exit 1
-  end
-end
-
-def do_force_stop(pidfile, options)
-  if patient_stop(pidfile)
-    success('force stopping', options[:name])
-  else
-    failure('force stopping', options[:name])
-    exit 1
-  end
-end
-
-def do_start(pidfile, options)
-  if patient_start(pidfile, options)
-    success('starting', options[:name])
-  else
-    failure('starting', options[:name])
-    exit 1
-  end
-end
-
-def do_restart(pidfile, options)
-  if patient_quiet(pidfile) && patient_stop(pidfile) && patient_start(pidfile, options)
-    success('restarting', options[:name])
-  else
-    failure('restarting', options[:name])
-    exit 1
-  end
-end
-
-def do_status(pidfile)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      status(pidfile)
-    else
-      puts 'process dead but pid file exists'
-      exit 1
+class Process
+  class << self
+    def quiet(pidfile, options)
+      if Patient.quiet(pidfile)
+        Util.success('being quiet', options[:name])
+      else
+        Util.failure('being quiet', options[:name])
+        exit 1
+      end
     end
-  else
-    puts "pid file doesn't exist"
-    exit 1
+
+    def stop(pidfile, options)
+      if Patient.quiet(pidfile) && Patient.stop(pidfile)
+        Util.success('stopping', options[:name])
+      else
+        Util.failure('stopping', options[:name])
+        exit 1
+      end
+    end
+
+    def force_stop(pidfile, options)
+      if Patient.stop(pidfile)
+        Util.success('force stopping', options[:name])
+      else
+        Util.failure('force stopping', options[:name])
+        exit 1
+      end
+    end
+
+    def force_restart(pidfile, options)
+      if Patient.stop(pidfile) && Patient.start(pidfile, options)
+        Util.success('force restarting', options[:name])
+      else
+        Util.failure('force restarting', options[:name])
+        exit 1
+      end
+    end
+
+    def start(pidfile, options)
+      if Patient.start(pidfile, options)
+        Util.success('starting', options[:name])
+      else
+        Util.failure('starting', options[:name])
+        exit 1
+      end
+    end
+
+    def restart(pidfile, options)
+      if Patient.quiet(pidfile) && Patient.stop(pidfile) && Patient.start(pidfile, options)
+        Util.success('restarting', options[:name])
+      else
+        Util.failure('restarting', options[:name])
+        exit 1
+      end
+    end
+
+    def status(pidfile)
+      unless Patient.status(pidfile)
+        exit 1
+      end
+    end
   end
-end
-
-def success(state, name)
-  puts "#{state} #{name} [ \e[32m OK \e[0m ]"
-end
-
-def failure(state, name)
-  puts "#{state} #{name} [ \e[31m FAILED \e[0m ]"
 end
 
 params = ARGV.getopts('e:', 'dir:', 'user:', 'name:', 'state:')
 
-env = params['e']
+rails_env = params['e']
 app_root = params['dir']
 user = params['user']
 name = params['name']
@@ -250,13 +286,14 @@ sidekiqctl_cmd = `cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} -e "print Gem
 sidekiq_cmd = `cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} -e "print Gem.bin_path('sidekiq', 'sidekiq')"`
 
 SIDEKIQCTL_CMD = "cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} #{sidekiqctl_cmd}"
-SIDEKIQ_CMD = "cd #{app_root} && RAILS_ENV=#{env} #{bundle_cmd} exec #{ruby_cmd} #{sidekiq_cmd}"
+SIDEKIQ_CMD = "cd #{app_root} && RAILS_ENV=#{rails_env} #{bundle_cmd} exec #{ruby_cmd} #{sidekiq_cmd}"
 
 case state
-when 'quiet'      then do_quiet(pidfile, options)
-when 'stop'       then do_stop(pidfile, options)
-when 'force-stop' then do_force_stop(pidfile, options)
-when 'start'      then do_start(pidfile, options)
-when 'restart'    then do_restart(pidfile, options)
-when 'status'     then do_status(pidfile)
+when 'quiet'         then Process.quiet(pidfile, options)
+when 'stop'          then Process.stop(pidfile, options)
+when 'force-stop'    then Process.force_stop(pidfile, options)
+when 'force-restart' then Process.force_restart(pidfile, options)
+when 'start'         then Process.start(pidfile, options)
+when 'restart'       then Process.restart(pidfile, options)
+when 'status'        then Process.status(pidfile)
 end
