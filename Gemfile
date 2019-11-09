@@ -49,6 +49,7 @@ gem 'sinatra', require: false
 gem 'redis'
 gem 'hiredis'
 gem 'newrelic_rpm'
+gem 'scout_apm'
 gem 'kaminari'
 gem 'httparty'
 gem 'rack-timeout'
