@@ -32,6 +32,9 @@ set -e
 yum install -y redis --enablerepo=remi
 yum install -y colordiff --enablerepo=epel
 
+# If failed to build unf_ext
+# yum install -y ruby-devel gcc72-c++.x86_64
+
 cat << EOS >>/etc/security/limits.conf
 root soft nofile 65536
 root hard nofile 65536
