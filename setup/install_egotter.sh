@@ -86,6 +86,7 @@ service mysqld stop
 
 # sidekiq
 cp -f ./setup/etc/init.d/sidekiq* /etc/init.d
+cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d
 # service sidekiq start
 
 # unicorn
@@ -158,6 +159,7 @@ Install datadog:
     /etc/init.d/datadog-agent restart; chkconfig datadog-agent on
     cp setup/etc/dd-agent/checks.d/sidekiq.py /etc/dd-agent/checks.d/sidekiq.py
     cp setup/etc/dd-agent/conf.d/sidekiq.yaml /etc/dd-agent/conf.d/sidekiq.yaml
+    # Enable process_config
 
 Make swap:
 
