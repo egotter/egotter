@@ -37,7 +37,7 @@ if ENV.fetch("RAILS_ENV") == 'production'
   # There is no request timeout mechanism inside of Puma.
   # rack-timeout 15, proxy_read_timeout(nginx) 35
 
-  threads 5, 5
+  threads 10, 10
   workers 2
   daemonize true
   pidfile "#{Dir.pwd}/tmp/pids/puma.pid"
