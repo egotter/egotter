@@ -32,8 +32,11 @@ set -e
 yum install -y redis --enablerepo=remi
 yum install -y colordiff --enablerepo=epel
 
-# If failed to build unf_ext
-# yum install -y ruby-devel gcc72-c++.x86_64
+# For unf_ext
+yum install -y gcc72-c++.x86_64
+
+# If failed to bundle install
+# yum install -y ruby-devel
 
 cat << EOS >>/etc/security/limits.conf
 root soft nofile 65536
@@ -49,13 +52,11 @@ sysctl -p
 
 echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
 
-wget http://cache.ruby-lang.org/pub/ruby/2.5/ruby-2.5.3.tar.gz
-tar xvfz ruby-2.5.3.tar.gz
-cd ruby-2.5.3
-./configure && make
-${sudo_cmd} "make install"
-
-${sudo_cmd} "gem install bundler --no-ri --no-rdoc -v 1.17.3"
+# https://github.com/egotter/egotter/wiki/Install-Ruby
+wget http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.4.tar.gz
+tar xvfz ruby-2.6.4.tar.gz
+cd ruby-2.6.4
+./configure && make && ${sudo_cmd} "make install"
 
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
@@ -64,7 +65,7 @@ curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh
 
 cd ${HOME}
 if [ ! -d "./egotter" ]; then
-  ${sudo_cmd} "git clone https://github.com/ts-3156/egotter.git"
+  ${sudo_cmd} "git clone https://github.com/egotter/egotter.git"
 fi
 cd ${APP_ROOT}
 ${sudo_cmd} "git checkout master && git pull origin master"
@@ -89,9 +90,9 @@ cp -f ./setup/etc/init.d/sidekiq* /etc/init.d
 cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d
 # service sidekiq start
 
-# unicorn
-cp -f ./setup/etc/init.d/unicorn /etc/init.d
-# service unicorn start
+# puma
+cp -f ./setup/etc/init.d/puma /etc/init.d
+# service puma start
 
 # egotter
 cp -f ./setup/etc/init.d/egotter /etc/init.d
@@ -137,6 +138,7 @@ Create .env:
 
 Precompile assets:
 
+    # WARN: There is a possibility of deleting necessary assets
     RAILS_ENV=production bundle exec rake assets:precompile
 
 Write crontab:
@@ -159,7 +161,7 @@ Install datadog:
     /etc/init.d/datadog-agent restart; chkconfig datadog-agent on
     cp setup/etc/dd-agent/checks.d/sidekiq.py /etc/dd-agent/checks.d/sidekiq.py
     cp setup/etc/dd-agent/conf.d/sidekiq.yaml /etc/dd-agent/conf.d/sidekiq.yaml
-    # Enable process_config
+    # Enable process_config and logs_enabled
 
 Make swap:
 
@@ -170,12 +172,12 @@ Make swap:
     echo '/swapfile swap swap defaults 0 0' >>/etc/fstab
     # egrep "Mem|Swap" /proc/meminfo OR swapon -s
 
-Mount efs:
-
-    mkdir /efs
-    mount -t nfs4 [NAME]:/ /efs/
-    echo '[NAME]:/ /efs efs defaults,_netdev 0 0' >>/etc/fstab
-    # df -h
+# Mount efs:
+# 
+#     mkdir /efs
+#     mount -t nfs4 [NAME]:/ /efs/
+#     echo '[NAME]:/ /efs efs defaults,_netdev 0 0' >>/etc/fstab
+#     # df -h
     
 Install monitoring script:
 
