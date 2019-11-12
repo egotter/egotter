@@ -12,7 +12,7 @@ else
   ec='\c'
 fi
 
-APP_ROOT="/home/ec2-user/egotter/"
+APP_ROOT="/var/egotter/"
 USER="ec2-user"
 
 do_action() {
