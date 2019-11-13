@@ -111,7 +111,7 @@ service monit stop
 
 # nginx
 [ ! -f "/etc/nginx/nginx.conf.bak" ] && cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
-cp -f ./setup/etc/nginx/nginx.conf /etc/nginx
+\cp -f ./setup/etc/nginx/nginx.conf /etc/nginx
 chkconfig nginx on
 service nginx start
 chmod +rx /var/log/nginx
@@ -143,7 +143,6 @@ Create .env:
 
 Precompile assets:
 
-    # WARN: There is a possibility of deleting necessary assets
     RAILS_ENV=production bundle exec rake assets:precompile
 
 Write crontab:
@@ -163,7 +162,7 @@ Install datadog:
 
     # https://app.datadoghq.com/account/settings#agent/aws
     sed -i -e 's/# hostname: .\+/hostname: xxx.egotter/' /etc/dd-agent/datadog.conf
-    /etc/init.d/datadog-agent restart; chkconfig datadog-agent on
+    restart datadog-agent; chkconfig datadog-agent on
     cp setup/etc/dd-agent/checks.d/sidekiq.py /etc/dd-agent/checks.d/sidekiq.py
     cp setup/etc/dd-agent/conf.d/sidekiq.yaml /etc/dd-agent/conf.d/sidekiq.yaml
     # Enable process_config and logs_enabled
@@ -187,9 +186,9 @@ Make swap:
 Install monitoring script:
 
     # https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/mon-scripts.html
-    sudo yum install -y perl-Switch perl-DateTime perl-Sys-Syslog perl-LWP-Protocol-https perl-Digest-SHA.x86_64
+    yum install -y perl-Switch perl-DateTime perl-Sys-Syslog perl-LWP-Protocol-https perl-Digest-SHA.x86_64
     curl https://aws-cloudwatch.s3.amazonaws.com/downloads/CloudWatchMonitoringScripts-1.2.2.zip -O
-    unzip CloudWatchMonitoringScripts-1.2.2.zip && rm CloudWatchMonitoringScripts-1.2.2.zip && cd aws-scripts-mon
+    unzip CloudWatchMonitoringScripts-1.2.2.zip && rm -f CloudWatchMonitoringScripts-1.2.2.zip && cd aws-scripts-mon
     # root's crontab -> */5 * * * * ~/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail --disk-space-util --disk-path=/ --from-cron
 
 User settings:
