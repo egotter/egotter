@@ -4,7 +4,8 @@ set -e
 
 USER="ec2-user"
 HOME="/home/${USER}"
-APP_ROOT="${HOME}/egotter"
+APP_PARENT="/var"
+APP_ROOT="${APP_PARENT}/egotter"
 LOG_FILE="${HOME}/egotter-install.log"
 
 npipe="/tmp/$$.tmp"
@@ -61,19 +62,21 @@ cd ruby-2.6.4
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
 
-curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh
+# curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh
 
-cd ${HOME}
+cd ${APP_PARENT}
 if [ ! -d "./egotter" ]; then
   ${sudo_cmd} "git clone https://github.com/egotter/egotter.git"
+  chown ${USER}:${USER} ./egotter
 fi
 cd ${APP_ROOT}
 ${sudo_cmd} "git checkout master && git pull origin master"
+
 [ ! -f "/usr/bin/mecab" ] && sh ./setup/install_mecab.sh
 # yum remove -y gcc48-c++ && yum install -y gcc72-c++.x86_64
-${sudo_cmd} "bundle install --path .bundle --without test development"
 
 cd ${APP_ROOT}
+${sudo_cmd} "bundle install --path .bundle --without test development"
 
 # redis
 [ ! -f "/etc/redis.conf.bak" ] && cp /etc/redis.conf /etc/redis.conf.bak
