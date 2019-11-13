@@ -32,5 +32,5 @@
 .vertical-spacing
 
 .screenshot.text-center
-  = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
+  = link_to sign_in_path(via: build_via('screenshots')) do
     %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}

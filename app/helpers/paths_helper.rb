@@ -32,9 +32,9 @@ module PathsHelper
     block_given? ? link_to(url, options, &block) : link_to(mention_name(screen_name), url, options)
   end
 
-  def build_via(name = nil)
+  def build_via(suffix = nil)
     via = "#{controller_name}/#{action_name}"
-    via += "/#{name}" if name
+    via += "/#{suffix}" if suffix
     via
   end
 end
