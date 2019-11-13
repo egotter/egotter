@@ -52,7 +52,7 @@ rh_status() {
     cmd2='ps -o pid=,command= -p$(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)'
   fi
 
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && ${cmd1} && ${cmd2}"
+  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && ${cmd1} ; ${cmd2}"
 }
 
 case "$1" in
