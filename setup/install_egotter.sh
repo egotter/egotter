@@ -53,11 +53,12 @@ sysctl -p
 
 echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
 
+cd ~
 # https://github.com/egotter/egotter/wiki/Install-Ruby
 wget http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.4.tar.gz
 tar xvfz ruby-2.6.4.tar.gz
 cd ruby-2.6.4
-./configure && make && ${sudo_cmd} "make install"
+./configure && make && make install
 
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
@@ -66,8 +67,8 @@ git config --global user.name "Your Name"
 
 cd ${APP_PARENT}
 if [ ! -d "./egotter" ]; then
-  ${sudo_cmd} "git clone https://github.com/egotter/egotter.git"
-  chown ${USER}:${USER} ./egotter
+  git clone https://github.com/egotter/egotter.git
+  chown -R ${USER}:${USER} ./egotter
 fi
 cd ${APP_ROOT}
 ${sudo_cmd} "git checkout master && git pull origin master"
@@ -76,7 +77,7 @@ ${sudo_cmd} "git checkout master && git pull origin master"
 # yum remove -y gcc48-c++ && yum install -y gcc72-c++.x86_64
 
 cd ${APP_ROOT}
-${sudo_cmd} "bundle install --path .bundle --without test development"
+${sudo_cmd} "/usr/local/bin/bundle install --path .bundle --without test development"
 
 # redis
 [ ! -f "/etc/redis.conf.bak" ] && cp /etc/redis.conf /etc/redis.conf.bak
