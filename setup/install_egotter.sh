@@ -194,7 +194,8 @@ Install monitoring script:
 
 User settings:
 
-    wget -q -O .bashrc https://gist.githubusercontent.com/ts-3156/5373957/raw/.bashrc
+    wget -q -O .bashrc https://raw.githubusercontent.com/ts-3156/dotfiles/master/.bashrc
     source .bashrc >/dev/null 2>&1
+    wget -q -O .tmux.conf https://raw.githubusercontent.com/ts-3156/dotfiles/master/.tmux.conf
 
 \033[0m"
