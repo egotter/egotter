@@ -2,7 +2,7 @@
   # set default values
   display_meta_tags(
       description: t('home.new.page_description'),
-      title: t('home.new.page_title'),
+      title: "#{'[dev] ' if Rails.env.development?}#{t('home.new.page_title')}",
       og: {
           title: :title,
           type: (action_name == 'new' ? 'website' : 'article'),
