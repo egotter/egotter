@@ -2,7 +2,7 @@ class PublicTweetsController < ApplicationController
   def load
     keyword = 'えごったー 便利' # 'egotter OR えごったー OR #egotter'
     html = render_to_string partial: 'twitter/tweet', collection: fetch_tweets(keyword), cached: true
-    html.gsub!(/(DM)/) { %Q(<span class="egotter-pink">便利</span>) }
+    html = html.gsub(/(DM)/) { %Q(<span class="egotter-pink">便利</span>) } # Avoid FrozenError can't modify frozen String
     render json: {html: html}
   end
 
