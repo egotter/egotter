@@ -23,7 +23,6 @@
 /.pryrc
 /dump.rdb
 /*.dump
-/redis.conf
 /*.json
 /data/bot.json
 /data/cluster_bad_words.json

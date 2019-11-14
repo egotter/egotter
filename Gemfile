@@ -65,13 +65,16 @@ gem 'draper'
 gem 'rollbar'
 gem 'oj'
 gem 'gretel'
-gem 'dogstatsd-ruby', require: false
 gem 'google-api-client', require: false
 gem 'aws-sdk-cloudwatch', require: false
 gem 'aws-sdk-dynamodb'
 gem 'aws-sdk-s3'
 gem 'stripe'
 gem 'ahoy_matey'
+
+# Datadog APM
+gem 'dogstatsd-ruby'
+gem 'ddtrace'
 
 group :development, :production do
   gem 'blazer'
