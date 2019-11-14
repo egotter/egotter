@@ -30,7 +30,28 @@
     %i.fas.fa-check
     = t('searches.new.pc.check_004_html')
 .vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+
+%h2.h4= t('searches.new.lead_003_html')
+.vertical-spacing
 
 .screenshot.text-center
   = link_to sign_in_path(via: build_via('screenshots')) do
     %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
+
+.vertical-spacing
+%div{style: 'font-size: 14px;'}= t('home.new.text003_html')
+
+.vertical-spacing
+.center-block{style: 'max-width: 375px; width: 80%;'}
+  = sign_in_with_twitter_link(nil, 'screenshots_button', class: 'btn btn-primary btn-block')
+  .text-notice.text-right.search-hint
+    %i.fas.fa-check
+    = t('searches.new.pc.check_005')
+  .text-notice.text-right.search-hint
+    %i.fas.fa-check
+    = t('searches.new.pc.check_006')

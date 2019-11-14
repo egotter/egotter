@@ -27,23 +27,123 @@
           .text-center.searches.right-side{style: 'background-color: #ffffff;'}
             = render partial: 'home/right_side'
 
+.vertical-spacing
+.vertical-spacing
+
 .vertical-spacing.hidden-xs
 .vertical-spacing.hidden-xs
 .vertical-spacing.hidden-xs
+
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
 
 %div.text-center{style: 'margin: 0 15px;'}
-  %h3{style: 'font-size: 22px;'}= t('.text001_html')
+  %i.fas.fa-star
+  %i.fas.fa-star
+  %i.fas.fa-star
+  %i.fas.fa-star
+  %i.far.fa-star
+  &nbsp;
+  3,500,000+
+  &nbsp;
+  %i.fas.fa-user
+
+  %h2.h4{style: 'font-size: 22px;'}= t('.text011_html')
+  #public-tweets-wrapper.twitter.tweets.center-block
+
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+
+%div.text-center{style: 'margin: 0 15px;'}
+  %h2.h4{style: 'font-size: 22px;'}= t('.text001_html')
   .vertical-spacing
   .vertical-spacing
-  %div{style: 'font-size: 16px;'}= t('.text002')
-  %div{style: 'font-size: 16px;'}= t('.text003_html')
+  = image_tag '/egotter_matte_384x432.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
   .vertical-spacing
+  %div{style: 'font-size: 14px;'}= t('.text002_html')
   .vertical-spacing
-  %div{style: 'width: 275px; margin: 0 auto;'}
-    = sign_in_with_twitter_link('who_unfollow', 'button', class: 'btn btn-primary btn-block')
+  %div.small-tips{style: 'width: 275px; margin: 0 auto;'}
+    = sign_in_with_twitter_link(nil, 'who_unfollow_button', class: 'btn btn-primary btn-block')
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_007')
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_008')
   .vertical-spacing
   .vertical-spacing
 
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+
+%div.text-center{style: 'margin: 0 15px;'}
+  %h2.h4{style: 'font-size: 22px;'}= t('.text007')
+  .vertical-spacing
+  .vertical-spacing
+  = image_tag '/egotter_mail_346x430.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+  .vertical-spacing
+  %div{style: 'font-size: 14px;'}= t('.text008_html')
+  .vertical-spacing
+  %div.small-tips{style: 'width: 275px; margin: 0 auto;'}
+    = sign_in_with_twitter_link(nil, 'remove_notif_button', class: 'btn btn-primary btn-block')
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_009')
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_010')
+  .vertical-spacing
+  .vertical-spacing
+
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+
+%div.text-center{style: 'margin: 0 15px;'}
+  %h2.h4{style: 'font-size: 22px;'}= t('.text009_html')
+  .vertical-spacing
+  .vertical-spacing
+  = image_tag '/egotter_chart_346x430.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+  .vertical-spacing
+  %div{style: 'font-size: 14px;'}= t('.text010_html')
+  .vertical-spacing
+  %div.small-tips{style: 'width: 275px; margin: 0 auto;'}
+    = sign_in_with_twitter_link(nil, 'chart_button', class: 'btn btn-primary btn-block')
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_011')
+  .vertical-spacing
+  .vertical-spacing
+
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+.vertical-spacing
+
+%div.text-center{style: 'margin: 0 15px;'}
+  %h2.h4{style: 'font-size: 22px;'}= t('.text012_html')
+  .vertical-spacing
+  = image_tag '/egotter_chat_362x450.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+  .vertical-spacing
+  %div{style: 'font-size: 14px;'}= t('.text013_html')
+  .vertical-spacing
+  %div.small-tips{style: 'width: 275px; margin: 0 auto;'}
+    = link_to t('.text014_html'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'
+    .text-notice.text-right.search-hint
+      %i.fas.fa-check
+      = t('searches.new.pc.check_012')
+  .vertical-spacing
+  .vertical-spacing
+
+.vertical-spacing
+.vertical-spacing
 .vertical-spacing
 .vertical-spacing
 
@@ -107,16 +207,6 @@
   .vertical-spacing
 
 .vertical-spacing
-.vertical-spacing
-
-.container
-  .row.searches
-    .col-xs-12.col-sm-6{style: 'height: 550px; overflow: hidden; border-right: 1px solid #e6e6e6;'}
-      %h3.h4.text-center= t('searches.new.twitter_feeds')
-      #public-tweets-wrapper.twitter.tweets.center-block
-    .col-xs-12.col-sm-6.text-center
-      = render partial: 'layouts/share'
-
 .vertical-spacing
 
 :javascript

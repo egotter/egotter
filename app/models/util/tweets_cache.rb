@@ -2,24 +2,36 @@ module Util
   class TweetsCache
     attr_reader :redis
 
-    TTL = Rails.env.development? ? 1.minute : 1.hour
+    TTL = Rails.env.development? ? 10.minute : 1.hour
 
     def initialize(redis)
       @redis = redis
     end
 
     class << self
+      def instance
+        new(Redis.client)
+      end
+
+      def ttl(word)
+        instance.ttl(word)
+      end
+
       def exists?(word)
-        new(Redis.client).exists?(word)
+        instance.exists?(word)
       end
 
       def set(word, json)
-        new(Redis.client).set(word, json)
+        instance.set(word, json)
       end
 
       def get(word)
-        new(Redis.client).get(word)
+        instance.get(word)
       end
+    end
+
+    def ttl(word)
+      redis.ttl(normalize_key(word))
     end
 
     def normalize_key(word)
