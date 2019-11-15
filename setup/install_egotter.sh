@@ -81,9 +81,9 @@ ${sudo_cmd} "/usr/local/bin/bundle install --path .bundle --without test develop
 
 # redis
 [ ! -f "/etc/redis.conf.bak" ] && cp /etc/redis.conf /etc/redis.conf.bak
-cp -f ./setup/etc/redis.conf /etc
+\cp -f ./setup/etc/redis.conf /etc
 chkconfig redis on
-service redis start
+service redis stop; service redis start
 
 # mysql
 chkconfig mysqld off
@@ -102,31 +102,31 @@ cp -f ./setup/etc/init.d/puma /etc/init.d
 cp -f ./setup/etc/init.d/egotter /etc/init.d
 
 # monit
-[ ! -f "/etc/monit.conf.bak" ] && cp /etc/monit.conf /etc/monit.conf.bak
-cp -f ./setup/etc/monit.conf /etc
-chown root:root /etc/monit.conf
-cp -f ./setup/etc/monit.d/sidekiq /etc/monit.d
-chkconfig monit on
-service monit stop
+# [ ! -f "/etc/monit.conf.bak" ] && cp /etc/monit.conf /etc/monit.conf.bak
+# cp -f ./setup/etc/monit.conf /etc
+# chown root:root /etc/monit.conf
+# cp -f ./setup/etc/monit.d/sidekiq /etc/monit.d
+# chkconfig monit on
+# service monit stop
 
 # nginx
 [ ! -f "/etc/nginx/nginx.conf.bak" ] && cp /etc/nginx/nginx.conf /etc/nginx/nginx.conf.bak
 \cp -f ./setup/etc/nginx/nginx.conf /etc/nginx
 chkconfig nginx on
-service nginx start
+service nginx restart
 chmod +rx /var/log/nginx
 
 # td-agent
-[ ! -f "/etc/td-agent/td-agent.conf.bak" ] && cp /etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf.bak
-cp -f ./setup/etc/td-agent/* /etc/td-agent/
-/usr/sbin/td-agent-gem install fluent-plugin-slack
-/usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter
-chkconfig td-agent on
-service td-agent start
-echo '$FileCreateMode 0644' >>/etc/rsyslog.conf
-echo '$DirCreateMode 0755' >>/etc/rsyslog.conf
-chmod +r /var/log/messages
-/etc/init.d/rsyslog restart
+# [ ! -f "/etc/td-agent/td-agent.conf.bak" ] && cp /etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf.bak
+# cp -f ./setup/etc/td-agent/* /etc/td-agent/
+# /usr/sbin/td-agent-gem install fluent-plugin-slack
+# /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter
+# chkconfig td-agent on
+# service td-agent start
+# echo '$FileCreateMode 0644' >>/etc/rsyslog.conf
+# echo '$DirCreateMode 0755' >>/etc/rsyslog.conf
+# chmod +r /var/log/messages
+# /etc/init.d/rsyslog restart
 
 # logrotate
 cp -fr ./setup/etc/logrotate.d/egotter /etc/logrotate.d/egotter
