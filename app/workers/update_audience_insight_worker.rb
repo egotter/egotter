@@ -56,7 +56,7 @@ class UpdateAudienceInsightWorker
 
     logger.info 'before charts'
     AudienceInsight::CHART_NAMES.each do |chart_name|
-      logger.info 'in charts loop'
+      logger.info "in loop #{uid} #{chart_name}"
       insight.send("#{chart_name}_text=", chart_builder.send(chart_name).to_json)
     end
     logger.info 'after charts'

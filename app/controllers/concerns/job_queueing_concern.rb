@@ -43,7 +43,7 @@ module Concerns::JobQueueingConcern
   end
 
   def enqueue_audience_insight(uid)
-    return if from_crawler?
+    # return if from_crawler?
     UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: controller_name)
   end
 end
