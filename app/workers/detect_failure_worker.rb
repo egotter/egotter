@@ -1,6 +1,6 @@
 class DetectFailureWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'misc', retry: 0, backtrace: false
+  sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(twitter_user_id, options = {})
     twitter_user_id
