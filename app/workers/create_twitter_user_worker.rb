@@ -58,7 +58,6 @@ class CreateTwitterUserWorker
   def enqueue_next_jobs(user_id, uid, twitter_user)
     ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now)
     UpdateUsageStatWorker.perform_async(uid, user_id: user_id, enqueued_at: Time.zone.now)
-    CreateScoreWorker.perform_async(uid)
     UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: self.class, twitter_user_id: twitter_user.id)
 
     # WriteProfilesToS3Worker.perform_async([twitter_user.uid], user_id: user_id)
