@@ -15,7 +15,7 @@ class UpdateAudienceInsightWorker
 
     QueueingRequests.new(self.class).delete(uid)
     RunningQueue.new(self.class).delete(uid)
-    UpdateAudienceInsightWorker.class.perform_in(retry_in, uid, options)
+    UpdateAudienceInsightWorker.perform_in(retry_in, uid, options)
   end
 
   def retry_in
