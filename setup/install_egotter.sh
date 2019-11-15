@@ -53,7 +53,7 @@ sysctl -p
 
 echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
 
-cd ~
+cd /tmp
 # https://github.com/egotter/egotter/wiki/Install-Ruby
 wget http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.4.tar.gz
 tar xvfz ruby-2.6.4.tar.gz
