@@ -13,8 +13,6 @@
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
   - DeleteFromS3Worker
-  - ImportS3FriendshipsWorker
-  - ImportS3FollowershipsWorker
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
   - StartSendingPromptReportsWorker

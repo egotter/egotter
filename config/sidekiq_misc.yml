@@ -9,8 +9,6 @@
   - messaging
   - misc
   - DeleteFromS3Worker
-  - ImportS3FriendshipsWorker
-  - ImportS3FollowershipsWorker
 
   - ResetTooManyRequestsWorker
   - UpdateUsageStatWorker
