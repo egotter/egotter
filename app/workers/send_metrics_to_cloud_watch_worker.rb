@@ -9,7 +9,7 @@ class SendMetricsToCloudWatchWorker
   end
 
   def unique_in
-    4.minutes
+    30.seconds
   end
 
   def perform
