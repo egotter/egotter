@@ -45,15 +45,24 @@ class UpdateAudienceInsightWorker
   end
 
   def do_perform(uid, dry_run: false)
+    logger.info 'start do_perform'
     insight = AudienceInsight.find_or_initialize_by(uid: uid)
+    logger.info 'after find_or_initialize_by'
     return if insight.fresh?
 
+    logger.info 'before chart_builder'
     chart_builder = AudienceInsightChartBuilder.new(uid, limit: 100)
+    logger.info 'after chart_builder'
 
+    logger.info 'before charts'
     AudienceInsight::CHART_NAMES.each do |chart_name|
+      logger.info 'in charts loop'
       insight.send("#{chart_name}_text=", chart_builder.send(chart_name).to_json)
     end
+    logger.info 'after charts'
 
+    logger.info 'before save'
     insight.save! unless dry_run
+    logger.info 'after save'
   end
 end
