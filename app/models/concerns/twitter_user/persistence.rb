@@ -8,6 +8,10 @@ module Concerns::TwitterUser::Persistence
   included do
     # There data are created on `after_commit` in order to avoid long transaction.
     after_commit(on: :create) do
+      ApplicationRecord.benchmark("Persistence##{__method__} Import data to efs #{id} #{screen_name}", level: :info) do
+        Efs::TwitterUser.import_from!(id, uid, screen_name, raw_attrs_text, @friend_uids, @follower_uids)
+      end
+
       # Store data to S3 as soon as possible
       ApplicationRecord.benchmark("Persistence##{__method__} Import data to S3 #{id} #{screen_name}", level: :info) do
         S3::Friendship.import_from!(id, uid, screen_name, @friend_uids)
