@@ -1,6 +1,6 @@
 class DeleteForbiddenUserWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'misc', retry: 0, backtrace: false
+  sidekiq_options queue: 'deleting', retry: 0, backtrace: false
 
   def unique_key(screen_name)
     screen_name

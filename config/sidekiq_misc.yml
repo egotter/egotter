@@ -8,9 +8,8 @@
   - logging
   - messaging
   - misc
-  - DeleteFromS3Worker
-
   - ResetTooManyRequestsWorker
   - UpdateUsageStatWorker
   - WriteToS3Worker
+  - deleting
   - rollbar

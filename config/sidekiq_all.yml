@@ -12,9 +12,9 @@
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
-  - DeleteFromS3Worker
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
   - StartSendingPromptReportsWorker
   - WriteToS3Worker
+  - deleting
   - rollbar
