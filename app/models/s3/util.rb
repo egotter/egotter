@@ -87,18 +87,6 @@ module S3
       end
     end
 
-    def parallel(enum, in_threads: 5, &block)
-      q = Queue.new
-
-      enum.each_slice(in_threads) do |group|
-        group.map.with_index do |obj, i|
-          Thread.new {q.push(i: i, result: yield(obj))}
-        end.each(&:join)
-      end
-
-      q.size.times.map {q.pop}.sort_by {|item| item[:i]}.map {|item| item[:result]}
-    end
-
     def logger
       Rails.logger
     end

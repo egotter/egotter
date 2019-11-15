@@ -15,14 +15,6 @@ module S3
       find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
     end
 
-    def where!(twitter_user_ids:)
-      parallel(twitter_user_ids) {|id| find_by!(twitter_user_id: id)}
-    end
-
-    def where(twitter_user_ids:)
-      parallel(twitter_user_ids) {|id| find_by(twitter_user_id: id)}
-    end
-
     def delete_by(twitter_user_id:)
       delete(twitter_user_id)
     end
