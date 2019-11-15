@@ -51,7 +51,7 @@ class CalculateMetricsWorker
             [SearchLog, SearchErrorLog],
             SignInLog,
             TwitterUser,
-            [TwitterDB::User, TwitterDB::Profile],
+            [TwitterDB::User],
             SearchHistory,
             [FollowRequest, CreateFollowLog],
             [UnfollowRequest, CreateUnfollowLog],
