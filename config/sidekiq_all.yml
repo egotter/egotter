@@ -1,7 +1,7 @@
 :concurrency: 3
 :timeout: 10
 :pidfile: ./tmp/pids/sidekiq_all.pid
-:logfile: ./log/sidekiq_all.log
+:logfile: ./log/sidekiq.log
 :tag: sidekiq_all
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:

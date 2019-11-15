@@ -8,12 +8,12 @@ SUFFIX='>>/var/egotter/log/cron.log 2>&1'
 # 0,15,30,45 * * * * /bin/bash -l -c "$PREFIX $RUBY bin/cleanup_twitter_api_cache.rb $SUFFIX"
 
 # web
-# 30 19 * * *        /bin/bash -l -c "$PREFIX $RAKE cache_directories:rotate $SUFFIX"
-# 15 * * * *         /bin/bash -l -c "$PREFIX $RUNNER 'SetSearchCountWorker.perform_async' $SUFFIX"
-# 1-51/10 * * * *    /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.perform_async' $SUFFIX"
-# 6-56/10 * * * *    /bin/bash -l -c "$PREFIX $RUNNER 'CalculateMetricsWorker.perform_async' $SUFFIX"
-# * * * * *        /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToCloudWatchWorker.perform_async' $SUFFIX"
-# */5 * * * *        /usr/bin/sudo /bin/bash -l -c "monit monitor all $SUFFIX"
+# 30 19 * * *     /bin/bash -l -c "$PREFIX $RAKE cache_directories:rotate $SUFFIX"
+# 15 * * * *      /bin/bash -l -c "$PREFIX $RUNNER 'SetSearchCountWorker.perform_async' $SUFFIX"
+# 1-51/10 * * * * /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.perform_async' $SUFFIX"
+# 6-56/10 * * * * /bin/bash -l -c "$PREFIX $RUNNER 'CalculateMetricsWorker.perform_async' $SUFFIX"
+# * * * * *       /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToCloudWatchWorker.perform_async' $SUFFIX"
+# */5 * * * *     /usr/bin/sudo /bin/bash -l -c "monit monitor all $SUFFIX"
 
 # sidekiq
-# */10 * * * *       /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.new.send_sidekiq_worker_metrics(\%w{sidekiq_import})' $SUFFIX"
+# */10 * * * *    /bin/bash -l -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.new.send_sidekiq_worker_metrics(\%w{sidekiq_import})' $SUFFIX"

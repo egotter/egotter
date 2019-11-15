@@ -116,7 +116,12 @@ module Concerns::TwitterUser::RawAttrs
       if instance_variable_defined?(:@raw_attrs)
         @raw_attrs
       else
-        load_raw_attrs_text_from_s3
+        profile = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil)
+        if profile && profile.class == Hash && !profile.blank?
+          @raw_attrs = Hashie::Mash.new(profile)
+        else
+          load_raw_attrs_text_from_s3
+        end
       end
     end
   end

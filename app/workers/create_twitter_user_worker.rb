@@ -14,6 +14,8 @@ class CreateTwitterUserWorker
     DelayedCreateTwitterUserWorker.perform_async(*args)
   end
 
+  # options:
+  #   enqueued_at
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
     user = request.user
@@ -33,8 +35,10 @@ class CreateTwitterUserWorker
 
     log.update(status: true)
 
-      # Saved relations At this point:
-    # friends_size, followers_size, statuses, mentions, favorites, friendships, followerships
+    # Saved values and relations At this point:
+    #   friends_size, followers_size
+    #   friendships, followerships
+    #   statuses, mentions, favorites
 
   rescue Twitter::Error::TooManyRequests => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))

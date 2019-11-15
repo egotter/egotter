@@ -2,10 +2,10 @@ class UnfriendsBuilder
   def initialize(twitter_user, preload: true)
     @users = Util.users(twitter_user.uid, twitter_user.created_at)
 
-    if preload
-      S3::Friendship.where(twitter_user_ids: @users.map(&:id))
-      S3::Followership.where(twitter_user_ids: @users.map(&:id))
-    end
+    # if preload
+    #   S3::Friendship.where(twitter_user_ids: @users.map(&:id))
+    #   S3::Followership.where(twitter_user_ids: @users.map(&:id))
+    # end
   end
 
   def unfriends

@@ -2,12 +2,12 @@ class FriendsGroupBuilder
   def initialize(uid, limit:, preload: true)
     @users = Util.users(uid, limit: limit)
 
-    if preload
-      ApplicationRecord.benchmark("#{self.class}##{__method__} Preload s3 files #{uid} #{limit} #{@users.size}", level: :info) do
-        S3::Friendship.where!(twitter_user_ids: @users.map(&:id))
-        S3::Followership.where!(twitter_user_ids: @users.map(&:id))
-      end
-    end
+    # if preload
+    #   ApplicationRecord.benchmark("#{self.class}##{__method__} Preload s3 files #{uid} #{limit} #{@users.size}", level: :info) do
+    #     S3::Friendship.where!(twitter_user_ids: @users.map(&:id))
+    #     S3::Followership.where!(twitter_user_ids: @users.map(&:id))
+    #   end
+    # end
   end
 
   def users
