@@ -13,9 +13,28 @@ RSpec.describe Concerns::TwitterUser::Utils do
 
     context 'With persisted records' do
       before { twitter_user.save! }
-      it do
-        expect(S3::Friendship).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(friend_uids: nil)
-        twitter_user.friend_uids
+
+      context 'EFS returns the result' do
+        let(:friend_uids) { [1, 2, 3] }
+        before do
+          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(friend_uids: friend_uids)
+        end
+
+        it do
+          expect(twitter_user.friend_uids).to match_array(friend_uids)
+        end
+      end
+
+      context 'S3 returns the result' do
+        let(:friend_uids) { [1, 2, 3] }
+        before do
+          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(nil)
+          allow(S3::Friendship).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(friend_uids: friend_uids)
+        end
+
+        it do
+          expect(twitter_user.friend_uids).to match_array(friend_uids)
+        end
       end
     end
   end
@@ -30,9 +49,28 @@ RSpec.describe Concerns::TwitterUser::Utils do
 
     context 'With persisted records' do
       before { twitter_user.save! }
-      it do
-        expect(S3::Followership).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(follower_uids: nil)
-        twitter_user.follower_uids
+
+      context 'EFS returns the result' do
+        let(:follower_uids) { [1, 2, 3] }
+        before do
+          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(follower_uids: follower_uids)
+        end
+
+        it do
+          expect(twitter_user.follower_uids).to match_array(follower_uids)
+        end
+      end
+
+      context 'S3 returns the result' do
+        let(:follower_uids) { [1, 2, 3] }
+        before do
+          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(nil)
+          allow(S3::Followership).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(follower_uids: follower_uids)
+        end
+
+        it do
+          expect(twitter_user.follower_uids).to match_array(follower_uids)
+        end
       end
     end
   end

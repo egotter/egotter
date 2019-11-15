@@ -6,7 +6,7 @@ module S3
         if instance_variable_defined?(:@cache)
           @cache
         else
-          dir = Rails.root.join(CacheDirectory.find_by(name: 's3')&.dir || ENV['S3_CACHE_DIR'], bucket_name)
+          dir = Rails.root.join(CacheDirectory.find_by(name: 's3')&.dir || 'tmp/s3_cache', bucket_name)
           FileUtils.mkdir_p(dir) unless File.exists?(dir)
           options = {expires_in: cache_expires_in || 1.hour, race_condition_ttl: 5.minutes}
           @cache = ActiveSupport::Cache::FileStore.new(dir, options)
