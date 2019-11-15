@@ -15,7 +15,6 @@ class HomeController < ApplicationController
 
   def new
     enqueue_update_authorized
-    enqueue_create_cache
 
     if flash.empty? && user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
       redirect_path = timeline_path(screen_name: current_user.screen_name)

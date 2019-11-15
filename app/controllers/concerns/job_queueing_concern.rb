@@ -39,11 +39,6 @@ module Concerns::JobQueueingConcern
     UpdateAuthorizedWorker.perform_async(current_user.id, enqueued_at: Time.zone.now)
   end
 
-  def enqueue_create_cache
-    return unless user_signed_in?
-    CreateCacheWorker.perform_async(user_id: current_user.id, enqueued_at: Time.zone.now)
-  end
-
   def enqueue_audience_insight(uid)
     UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: controller_name)
   end

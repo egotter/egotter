@@ -11,20 +11,12 @@ module Concerns::TwitterUser::Utils
     def till(time)
       where('created_at < ?', time)
     end
-
-    def cache_ready_interval
-      1.seconds
-    end
   end
 
   included do
     scope :creation_completed, -> do
       # friends_size != 0 AND followers_size != 0
       where.not(friends_size: 0, followers_size: 0)
-    end
-
-    scope :cache_ready, -> do
-      where('created_at < ?', TwitterUser.cache_ready_interval.ago)
     end
 
     scope :has_user, -> do

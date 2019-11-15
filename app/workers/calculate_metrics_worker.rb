@@ -82,8 +82,6 @@ class CalculateMetricsWorker
   end
 
   def send_twitter_user_metrics
-    users = TwitterUser.cache_ready.where(created_at: 10.minutes.ago..Time.zone.now)
-
     stats = {
         size: users.size,
         creation_completed: users.creation_completed.size,
