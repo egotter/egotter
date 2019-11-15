@@ -15,7 +15,7 @@ class UpdateAudienceInsightWorker
 
     QueueingRequests.new(self.class).delete(uid)
     RunningQueue.new(self.class).delete(uid)
-    self.class.perform_in(retry_in, uid, options)
+    UpdateAudienceInsightWorker.class.perform_in(retry_in, uid, options)
   end
 
   def retry_in
@@ -26,7 +26,25 @@ class UpdateAudienceInsightWorker
     10.minute
   end
 
+  # options:
+  #   enqueued_at
+  #   location
+  #   twitter_user_id
   def perform(uid, options = {})
+    Timeout.timeout(self.timeout_in.seconds) do
+      do_perform(uid)
+    end
+  rescue Timeout::Error => e
+    logger.warn "#{e.class}: #{e.message} #{uid} #{options}"
+    logger.info e.backtrace.join("\n")
+  rescue ActiveRecord::RecordNotUnique => e
+    logger.info "#{e.class}: #{e.message} #{uid} #{options}"
+  rescue => e
+    logger.warn "#{e.class}: #{e.message} #{uid} #{options}"
+    logger.info e.backtrace.join("\n")
+  end
+
+  def do_perform(uid, dry_run: false)
     insight = AudienceInsight.find_or_initialize_by(uid: uid)
     return if insight.fresh?
 
@@ -36,12 +54,6 @@ class UpdateAudienceInsightWorker
       insight.send("#{chart_name}_text=", chart_builder.send(chart_name).to_json)
     end
 
-    insight.save!
-  rescue ActiveRecord::RecordNotUnique => e
-    logger.info "#{e.class}: #{e.message} #{uid} #{options}"
-    logger.info e.backtrace.join("\n")
-  rescue => e
-    logger.warn "#{e.class}: #{e.message} #{uid} #{options}"
-    logger.info e.backtrace.join("\n")
+    insight.save! unless dry_run
   end
 end
