@@ -11,10 +11,8 @@
   - DeleteFromS3Worker
   - ImportS3FriendshipsWorker
   - ImportS3FollowershipsWorker
-  - ImportTwitterDbS3UsersWorker
 
   - ResetTooManyRequestsWorker
   - UpdateUsageStatWorker
-  - WriteProfilesToS3Worker
   - WriteToS3Worker
   - rollbar
