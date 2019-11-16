@@ -5,6 +5,7 @@
 :tag: sidekiq_misc
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
+  - deleting_high
   - logging
   - messaging
   - misc
