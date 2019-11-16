@@ -5,9 +5,12 @@
 :tag: sidekiq_all
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
+  - creating_high
+  - deleting_high
   - logging
   - messaging
   - misc
+  - creating_low
   - CreatePromptReportWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker

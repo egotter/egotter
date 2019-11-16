@@ -13,7 +13,7 @@ namespace :efs do
           Efs::TwitterUser.import_from_s3!(user.id, skip_if_found: true)
         rescue TypeError => e
           puts e.message
-          raise unless e.message != 'Nil is not a valid JSON source.'
+          raise unless e.message == 'Nil is not a valid JSON source.'
         end
 
         processed += 1

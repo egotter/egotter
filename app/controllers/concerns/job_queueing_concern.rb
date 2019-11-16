@@ -19,8 +19,11 @@ module Concerns::JobQueueingConcern
 
     request = CreateTwitterUserRequest.create(session_id: fingerprint, user_id: user_id, uid: uid, ahoy_visit_id: current_visit&.id)
 
-    worker_class = user_signed_in? ? CreateSignedInTwitterUserWorker : CreateTwitterUserWorker
-    worker_class.perform_async(request.id, enqueued_at: Time.zone.now)
+    if user_signed_in?
+      CreateSignedInTwitterUserWorker.perform_async(request.id, enqueued_at: Time.zone.now)
+    else
+      CreateTwitterUserWorker.perform_async(request.id, enqueued_at: Time.zone.now)
+    end
   end
 
   def enqueue_create_follow_job_if_needed(request, enqueue_location: nil)
