@@ -216,6 +216,15 @@ def do_start(pidfile, options)
 end
 
 def do_restart(pidfile, options)
+  if Patient.stop(pidfile) && Patient.start(pidfile, options)
+    success('force restarting', options[:name])
+  else
+    failure('force restarting', options[:name])
+    exit 1
+  end
+end
+
+def do_force_restart(pidfile, options)
   if Patient.quiet(pidfile) && Patient.stop(pidfile) && Patient.start(pidfile, options)
     success('restarting', options[:name])
   else
@@ -300,11 +309,27 @@ SIDEKIQCTL_CMD = "cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} #{sidekiqctl_
 SIDEKIQ_CMD = "cd #{app_root} && RAILS_ENV=#{env} #{bundle_cmd} exec #{ruby_cmd} #{sidekiq_cmd}"
 
 case state
-when 'quiet'      then do_quiet(pidfile, options)
-when 'stop'       then do_stop(pidfile, options)
-when 'force-stop' then do_force_stop(pidfile, options)
-when 'start'      then do_start(pidfile, options)
-when 'restart'    then do_restart(pidfile, options)
-when 'status'     then do_status(pidfile)
+when 'quiet'         then do_quiet(pidfile, options)
+when 'stop'          then do_stop(pidfile, options)
+when 'force-stop'    then do_force_stop(pidfile, options)
+when 'start'         then do_start(pidfile, options)
+when 'restart'       then do_restart(pidfile, options)
+when 'force-restart' then do_restart(pidfile, options)
+when 'status'        then do_status(pidfile)
 when 'backtrace'     then do_backtrace(pidfile)
+else print_usage
+end
+
+def print_usage
+  puts <<'TEXT'
+Usage:
+  quiet         - Stop fetching new jobs but continue working on current jobs
+  stop          - Shut down after being quiet
+  force-stop    - Shut down within the default timeout (25 seconds)
+  start         - 
+  restart       - Stop and start
+  force-restart - Force-stop and start
+  status        - 
+  backtrace     -
+TEXT
 end
