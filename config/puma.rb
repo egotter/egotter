@@ -48,9 +48,9 @@ if ENV.fetch("RAILS_ENV") == 'production'
 
   before_fork do
     PumaWorkerKiller.config do |config|
-      config.ram           = 7977 # mb, free -m
-      config.frequency     = 5    # seconds
-      config.percent_usage = 0.50
+      config.ram           = ENV.fetch("PUMA_WORKER_KILLER_RAM") { 3887 } # mb
+      config.frequency     = 5 # seconds
+      config.percent_usage = ENV.fetch("PUMA_WORKER_KILLER_PERCENT_USAGE") { 0.90 }
       config.rolling_restart_frequency = 12 * 3600 # 12 hours in seconds
     end
     PumaWorkerKiller.start
