@@ -22,7 +22,7 @@ def print_process(params)
       elsif params[:pid]
         params[:pid]
       end
-  `ps -o command= -p #{pid}`
+  `ps -o command= -p #{pid}`.strip
 end
 
 def pidfile_exists?(pidfile)
@@ -42,26 +42,35 @@ rescue Errno::ESRCH => e
 end
 
 def quiet(pidfile)
-  result = `#{SIDEKIQCTL_CMD} quiet #{pidfile}`
+  cmd = "#{SIDEKIQCTL_CMD} quiet #{pidfile}"
+  puts cmd
+  result = `#{cmd}`
   puts "sidekiqctl: #{result}" unless result.empty?
 end
 
 def quiet?(pidfile)
-  process_exists?(pidfile: pidfile) && print_process(pidfile: pidfile).strip.match?(/\[0 of [0-9]+ busy\] stopping/)
+  process_exists?(pidfile: pidfile) &&
+      print_process(pidfile: pidfile).match?(/\[0 of [0-9]+ busy\] stopping/)
 end
 
 def stop(pidfile)
-  result = `#{SIDEKIQCTL_CMD} stop #{pidfile}`
+  cmd = "#{SIDEKIQCTL_CMD} stop #{pidfile}"
+  puts cmd
+  result = `#{cmd}`
   puts "sidekiqctl: #{result}" unless result.empty?
 end
 
 def start(options)
-  result = `sudo -u #{options[:user]} sh -c "#{SIDEKIQ_CMD} -d -C #{options[:conf]}"`
+  cmd = %Q(sudo -u #{options[:user]} sh -c "#{SIDEKIQ_CMD} -d -C #{options[:conf]}")
+  puts cmd
+  result = `#{cmd}`
   puts "sidekiq: #{result}" unless result.empty?
 end
 
 def start?(pidfile)
-  pidfile_exists?(pidfile) && process_exists?(pidfile: pidfile) && print_process(pidfile: pidfile).strip.match?(/\[[0-9]+ of [0-9]+ busy\]$/)
+  pidfile_exists?(pidfile) &&
+      process_exists?(pidfile: pidfile) &&
+      print_process(pidfile: pidfile).match?(/\[[0-9]+ of [0-9]+ busy\]$/)
 end
 
 def status(pidfile)
