@@ -41,41 +41,45 @@ rescue Errno::ESRCH => e
   false
 end
 
-def quiet(pidfile)
-  cmd = "#{SIDEKIQCTL_CMD} quiet #{pidfile}"
-  puts cmd
-  result = `#{cmd}`
-  puts "sidekiqctl: #{result}" unless result.empty?
-end
+class Sidekiqctl
+  class << self
+    def quiet(pidfile)
+      cmd = "#{SIDEKIQCTL_CMD} quiet #{pidfile}"
+      puts cmd if DEBUG
+      result = `#{cmd}`
+      puts "sidekiqctl: #{result}" unless result.empty?
+    end
 
-def quiet?(pidfile)
-  process_exists?(pidfile: pidfile) &&
-      print_process(pidfile: pidfile).match?(/\[0 of [0-9]+ busy\] stopping/)
-end
-
-def stop(pidfile)
-  cmd = "#{SIDEKIQCTL_CMD} stop #{pidfile}"
-  puts cmd
-  result = `#{cmd}`
-  puts "sidekiqctl: #{result}" unless result.empty?
-end
-
-def start(options)
-  cmd = %Q(sudo -u #{options[:user]} sh -c "#{SIDEKIQ_CMD} -d -C #{options[:conf]}")
-  puts cmd
-  result = `#{cmd}`
-  puts "sidekiq: #{result}" unless result.empty?
-end
-
-def start?(pidfile)
-  pidfile_exists?(pidfile) &&
+    def quiet?(pidfile)
       process_exists?(pidfile: pidfile) &&
-      print_process(pidfile: pidfile).match?(/\[[0-9]+ of [0-9]+ busy\]$/)
-end
+          print_process(pidfile: pidfile).match?(/\[0 of [0-9]+ busy\] stopping/)
+    end
 
-def status(pidfile)
-  pid = print_pid(pidfile)
-  puts "#{pid} #{print_process(pid: pid)}"
+    def stop(pidfile)
+      cmd = "#{SIDEKIQCTL_CMD} stop #{pidfile}"
+      puts cmd if DEBUG
+      result = `#{cmd}`
+      puts "sidekiqctl: #{result}" unless result.empty?
+    end
+
+    def start(options)
+      cmd = "#{SIDEKIQ_CMD} -d -C #{options[:conf]}"
+      puts cmd if DEBUG
+      result = `#{cmd}`
+      puts "sidekiq: #{result}" unless result.empty?
+    end
+
+    def start?(pidfile)
+      pidfile_exists?(pidfile) &&
+          process_exists?(pidfile: pidfile) &&
+          print_process(pidfile: pidfile).match?(/\[[0-9]+ of [0-9]+ busy\]$/)
+    end
+
+    def status(pidfile)
+      pid = print_pid(pidfile)
+      puts "#{pid} #{print_process(pid: pid)}"
+    end
+  end
 end
 
 def patient_quiet(pidfile)
@@ -87,13 +91,13 @@ def patient_quiet(pidfile)
       sleep_seconds = 2
 
       max_waiting.times do |i|
-        quiet(pidfile)
-        break if quiet?(pidfile)
+        Sidekiqctl.quiet(pidfile)
+        break if Sidekiqctl.quiet?(pidfile)
         puts "waiting to be quiet #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
         sleep sleep_seconds
       end
 
-      if quiet?(pidfile)
+      if Sidekiqctl.quiet?(pidfile)
         true
       else
         false
@@ -117,7 +121,7 @@ def patient_stop(pidfile)
       sleep_seconds = 2
 
       max_waiting.times do |i|
-        stop(pidfile) if pidfile_exists?(pidfile)
+        Sidekiqctl.stop(pidfile) if pidfile_exists?(pidfile)
         break if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
         puts "waiting to stop #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
         sleep sleep_seconds
@@ -148,18 +152,18 @@ def patient_start(pidfile, options)
       false
     end
   else
-    start(options)
+    Sidekiqctl.start(options)
 
     max_waiting = 30
     sleep_seconds = 2
 
-    max_waiting.times do
-      break if start?(pidfile)
+    max_waiting.times do |i|
+      break if Sidekiqctl.start?(pidfile)
       puts "waiting to start #{i + 1}/#{max_waiting}"
       sleep sleep_seconds
     end
 
-    if start?(pidfile)
+    if Sidekiqctl.start?(pidfile)
       true
     else
       false
@@ -215,7 +219,7 @@ end
 def do_status(pidfile)
   if pidfile_exists?(pidfile)
     if process_exists?(pidfile: pidfile)
-      status(pidfile)
+      Sidekiq.status(pidfile)
     else
       puts 'process dead but pid file exists'
       exit 1
@@ -233,6 +237,8 @@ end
 def failure(state, name)
   puts "#{state} #{name} [ \e[31m FAILED \e[0m ]"
 end
+
+DEBUG = false
 
 params = ARGV.getopts('e:', 'dir:', 'user:', 'name:', 'state:')
 
