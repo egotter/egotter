@@ -79,100 +79,108 @@ class Sidekiqctl
       pid = print_pid(pidfile)
       puts "#{pid} #{print_process(pid: pid)}"
     end
+
+    def backtrace(pidfile)
+      `kill -TTIN #{print_pid(pidfile)}`
+    end
   end
 end
 
-def patient_quiet(pidfile)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      pid = print_pid(pidfile)
+class Patient
+  class << self
+    def quiet(pidfile)
+      if pidfile_exists?(pidfile)
+        if process_exists?(pidfile: pidfile)
+          pid = print_pid(pidfile)
 
-      max_waiting = 30
-      sleep_seconds = 2
+          max_waiting = 30
+          sleep_seconds = 2
 
-      max_waiting.times do |i|
-        Sidekiqctl.quiet(pidfile)
-        break if Sidekiqctl.quiet?(pidfile)
-        puts "waiting to be quiet #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
-        sleep sleep_seconds
-      end
+          max_waiting.times do |i|
+            Sidekiqctl.quiet(pidfile)
+            break if Sidekiqctl.quiet?(pidfile)
+            puts "waiting to be quiet #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
+            sleep sleep_seconds
+          end
 
-      if Sidekiqctl.quiet?(pidfile)
-        true
+          if Sidekiqctl.quiet?(pidfile)
+            true
+          else
+            false
+          end
+        else
+          puts 'process dead but pid file exists'
+          false
+        end
       else
+        puts "pid file doesn't exist"
         false
       end
-    else
-      puts 'process dead but pid file exists'
-      false
     end
-  else
-    puts "pid file doesn't exist"
-    false
-  end
-end
 
-def patient_stop(pidfile)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      pid = print_pid(pidfile)
+    def stop(pidfile)
+      if pidfile_exists?(pidfile)
+        if process_exists?(pidfile: pidfile)
+          pid = print_pid(pidfile)
 
-      max_waiting = 30
-      sleep_seconds = 2
+          max_waiting = 30
+          sleep_seconds = 2
 
-      max_waiting.times do |i|
-        Sidekiqctl.stop(pidfile) if pidfile_exists?(pidfile)
-        break if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
-        puts "waiting to stop #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
-        sleep sleep_seconds
-      end
+          max_waiting.times do |i|
+            Sidekiqctl.stop(pidfile) if pidfile_exists?(pidfile)
+            break if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
+            puts "waiting to stop #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
+            sleep sleep_seconds
+          end
 
-      if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
-        true
+          if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
+            true
+          else
+            false
+          end
+        else
+          puts 'process dead but pid file exists'
+          false
+        end
       else
+        puts "pid file doesn't exist"
         false
       end
-    else
-      puts 'process dead but pid file exists'
-      false
-    end
-  else
-    puts "pid file doesn't exist"
-    false
-  end
-end
-
-def patient_start(pidfile, options)
-  if pidfile_exists?(pidfile)
-    if process_exists?(pidfile: pidfile)
-      puts 'process exists'
-      false
-    else
-      puts 'process dead but pid file exists'
-      false
-    end
-  else
-    Sidekiqctl.start(options)
-
-    max_waiting = 30
-    sleep_seconds = 2
-
-    max_waiting.times do |i|
-      break if Sidekiqctl.start?(pidfile)
-      puts "waiting to start #{i + 1}/#{max_waiting}"
-      sleep sleep_seconds
     end
 
-    if Sidekiqctl.start?(pidfile)
-      true
-    else
-      false
+    def start(pidfile, options)
+      if pidfile_exists?(pidfile)
+        if process_exists?(pidfile: pidfile)
+          puts 'process exists'
+          false
+        else
+          puts 'process dead but pid file exists'
+          false
+        end
+      else
+        Sidekiqctl.start(options)
+
+        max_waiting = 30
+        sleep_seconds = 2
+
+        max_waiting.times do |i|
+          break if Sidekiqctl.start?(pidfile)
+          puts "waiting to start #{i + 1}/#{max_waiting}"
+          sleep sleep_seconds
+        end
+
+        if Sidekiqctl.start?(pidfile)
+          true
+        else
+          false
+        end
+      end
     end
   end
 end
 
 def do_quiet(pidfile, options)
-  if patient_quiet(pidfile)
+  if Patient.quiet(pidfile)
     success('being quiet', options[:name])
   else
     failure('being quiet', options[:name])
@@ -181,7 +189,7 @@ def do_quiet(pidfile, options)
 end
 
 def do_stop(pidfile, options)
-  if patient_quiet(pidfile) && patient_stop(pidfile)
+  if Patient.quiet(pidfile) && Patient.stop(pidfile)
     success('stopping', options[:name])
   else
     failure('stopping', options[:name])
@@ -190,7 +198,7 @@ def do_stop(pidfile, options)
 end
 
 def do_force_stop(pidfile, options)
-  if patient_stop(pidfile)
+  if Patient.stop(pidfile)
     success('force stopping', options[:name])
   else
     failure('force stopping', options[:name])
@@ -199,7 +207,7 @@ def do_force_stop(pidfile, options)
 end
 
 def do_start(pidfile, options)
-  if patient_start(pidfile, options)
+  if Patient.start(pidfile, options)
     success('starting', options[:name])
   else
     failure('starting', options[:name])
@@ -208,7 +216,7 @@ def do_start(pidfile, options)
 end
 
 def do_restart(pidfile, options)
-  if patient_quiet(pidfile) && patient_stop(pidfile) && patient_start(pidfile, options)
+  if Patient.quiet(pidfile) && Patient.stop(pidfile) && Patient.start(pidfile, options)
     success('restarting', options[:name])
   else
     failure('restarting', options[:name])
@@ -219,7 +227,21 @@ end
 def do_status(pidfile)
   if pidfile_exists?(pidfile)
     if process_exists?(pidfile: pidfile)
-      Sidekiq.status(pidfile)
+      Sidekiqctl.status(pidfile)
+    else
+      puts 'process dead but pid file exists'
+      exit 1
+    end
+  else
+    puts "pid file doesn't exist"
+    exit 1
+  end
+end
+
+def do_backtrace(pidfile)
+  if pidfile_exists?(pidfile)
+    if process_exists?(pidfile: pidfile)
+      Sidekiqctl.backtrace(pidfile)
     else
       puts 'process dead but pid file exists'
       exit 1
@@ -284,4 +306,5 @@ when 'force-stop' then do_force_stop(pidfile, options)
 when 'start'      then do_start(pidfile, options)
 when 'restart'    then do_restart(pidfile, options)
 when 'status'     then do_status(pidfile)
+when 'backtrace'     then do_backtrace(pidfile)
 end
