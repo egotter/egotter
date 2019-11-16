@@ -261,6 +261,20 @@ def do_backtrace(pidfile)
   end
 end
 
+def print_usage
+  puts <<'TEXT'
+Usage:
+  quiet         - Stop fetching new jobs but continue working on current jobs
+  stop          - Shut down after being quiet
+  force-stop    - Shut down within the -t timeout option given at start-up
+  start         - 
+  restart       - Stop and start
+  force-restart - Force-stop and start
+  status        - 
+  backtrace     -
+TEXT
+end
+
 def success(state, name)
   puts "#{state} #{name} [ \e[32m OK \e[0m ]"
 end
@@ -317,19 +331,6 @@ when 'restart'       then do_restart(pidfile, options)
 when 'force-restart' then do_restart(pidfile, options)
 when 'status'        then do_status(pidfile)
 when 'backtrace'     then do_backtrace(pidfile)
+when 'help'          then print_usage
 else print_usage
-end
-
-def print_usage
-  puts <<'TEXT'
-Usage:
-  quiet         - Stop fetching new jobs but continue working on current jobs
-  stop          - Shut down after being quiet
-  force-stop    - Shut down within the -t timeout option given at start-up
-  start         - 
-  restart       - Stop and start
-  force-restart - Force-stop and start
-  status        - 
-  backtrace     -
-TEXT
 end
