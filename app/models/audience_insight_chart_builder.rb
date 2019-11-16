@@ -1,6 +1,6 @@
 class AudienceInsightChartBuilder
-  def initialize(uid, limit: 10, jid: nil)
-    @builder = FriendsGroupBuilder.new(uid, limit: limit, jid: jid)
+  def initialize(uid, limit: 10)
+    @builder = FriendsGroupBuilder.new(uid, limit: limit)
     @statuses = TwitterDB::User.new(uid: uid).statuses
   end
 

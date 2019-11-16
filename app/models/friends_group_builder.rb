@@ -1,7 +1,6 @@
 class FriendsGroupBuilder
-  def initialize(uid, limit:, preload: true, jid: nil)
+  def initialize(uid, limit:, preload: true)
     @users = Util.users(uid, limit: limit)
-    @jid = jid
 
     # if preload
     #   ApplicationRecord.benchmark("#{self.class}##{__method__} Preload s3 files #{uid} #{limit} #{@users.size}", level: :info) do
@@ -17,16 +16,18 @@ class FriendsGroupBuilder
 
   def friends
     # @users.map(&:friend_uids)
+    Sidekiq.logger.info @users.first.inspect
     @users.map.with_index do |user, i|
-      Sidekiq.logger.info "#{@jid} debug FriendsGroupBuilder#friends #{user.uid} #{i}"
+      Sidekiq.logger.info "debug FriendsGroupBuilder#friends #{user.uid} #{i}"
       user.friend_uids
     end
   end
 
   def followers
     # @users.map(&:follower_uids)
+    Sidekiq.logger.info @users.first.inspect
     @users.map.with_index do |user, i|
-      Sidekiq.logger.info "#{@jid} debug FriendsGroupBuilder#followers #{user.uid} #{i}"
+      Sidekiq.logger.info "debug FriendsGroupBuilder#followers #{user.uid} #{i}"
       user.follower_uids
     end
   end

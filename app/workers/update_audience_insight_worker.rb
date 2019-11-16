@@ -51,7 +51,7 @@ class UpdateAudienceInsightWorker
     return if insight.fresh?
 
     logger.info 'before chart_builder'
-    chart_builder = AudienceInsightChartBuilder.new(uid, limit: 100, jid: jid)
+    chart_builder = AudienceInsightChartBuilder.new(uid, limit: 100)
     logger.info 'after chart_builder'
 
     logger.info 'before charts'
