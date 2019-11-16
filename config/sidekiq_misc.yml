@@ -13,7 +13,6 @@
   - creating_low
   - ResetTooManyRequestsWorker
   - UpdateUsageStatWorker
-  - WriteToS3Worker
   - deleting
   - DetectFailureWorker
   - rollbar

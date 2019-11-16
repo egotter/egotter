@@ -10,6 +10,11 @@ class WriteToS3Worker
     logger.warn "Timeout #{timeout_in} #{args.inspect.truncate(100)}"
   end
 
+  # params:
+  #   klass
+  #   bucket
+  #   key
+  #   body
   def perform(params, options = {})
     params['klass'].constantize.client.put_object(bucket: params['bucket'], key: params['key'], body: params['body'])
   rescue => e
