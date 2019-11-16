@@ -25,7 +25,8 @@ class LoginController < ApplicationController
     redirect_to '/users/auth/twitter'
   end
 
-  # GET /sign_out
+  # This implementation is for logging.
+  # GET /goodbye -> DELETE /sign_out -> this action
   def sign_out
     redirect_to destroy_user_session_path
   end

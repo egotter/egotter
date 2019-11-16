@@ -158,16 +158,17 @@ Rails.application.routes.draw do
   get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')
   get 'relationships/:src_screen_name/:dst_screen_name', to: redirect('/')
 
-  %i(sign_in sign_out goodbye).each do |name|
+  %i(sign_in goodbye).each do |name|
     get name, to: "login##{name}", as: name
   end
+  delete :sign_out, to: "login#sign_out", as: :sign_out
   get 'welcome', to: "welcome#new"
 
   get 'search_count', to: 'search_count#new'
 
   devise_for :users, skip: %i(sessions confirmations registrations passwords unlocks), controllers: {omniauth_callbacks: 'users/omniauth_callbacks'}
   devise_scope :user do
-    get SecureRandom.urlsafe_base64(10) => 'users/sessions#destroy', :as => :destroy_user_session
+    get '_sign_out' => 'users/sessions#destroy', :as => :destroy_user_session
   end
 
   require 'sidekiq/api'

@@ -17,7 +17,7 @@
   .col-xs-6
     = link_to t('.return_to_top'), root_path, class: 'btn btn-info btn-block'
   .col-xs-6
-    = link_to t('dictionary.do_sign_out'), sign_out_path, class: 'btn btn-default btn-block'
+    = link_to t('dictionary.do_sign_out'), sign_out_path, class: 'btn btn-default btn-block', method: :delete
 
 .vertical-spacing
 .vertical-spacing
