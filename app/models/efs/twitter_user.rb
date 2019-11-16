@@ -22,7 +22,9 @@ module Efs
         cache_client.write(cache_key(twitter_user_id), compress(json))
       end
 
-      def import_from_s3!(twitter_user_id)
+      def import_from_s3!(twitter_user_id, skip_if_found: false)
+        return if skip_if_found && find_by(twitter_user_id)
+
         ApplicationRecord.benchmark("#{self} Import from s3 by #{twitter_user_id}", level: :debug) do
           twitter_user = ::TwitterUser.find(twitter_user_id)
           profile = parse_json(S3::Profile.find_by(twitter_user_id: twitter_user_id)[:user_info])
