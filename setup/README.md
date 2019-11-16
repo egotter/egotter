@@ -22,4 +22,4 @@ bundle exec rails s --binding=0.0.0.0
 1. Write `MAINTENANCE="1"` in .env
 1. Change DB host, username and password from production to staging in .env
 1. Comment out crontab
-1. Restart Unicorn and Sidekiq
+1. Restart Puma and Sidekiq

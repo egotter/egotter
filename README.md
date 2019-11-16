@@ -71,11 +71,11 @@ If any search results don't exist, the user will be redirected to
 
 ### MySQL on RDS
 ### Rails
-### Unicorn
+### Puma
 
-[config/unicorn.rb](config/unicorn.rb)
+[config/puma.rb](config/puma.rb)
 
-[/etc/init.d/unicorn](setup/etc/init.d/unicorn)
+[/etc/init.d/puma](setup/etc/init.d/puma)
 
 ### Redis
 
