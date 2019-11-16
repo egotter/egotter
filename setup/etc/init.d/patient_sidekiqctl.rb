@@ -74,11 +74,14 @@ def patient_quiet(pidfile)
     if process_exists?(pidfile: pidfile)
       pid = print_pid(pidfile)
 
-      30.times do
+      max_waiting = 30
+      sleep_seconds = 2
+
+      max_waiting.times do |i|
         quiet(pidfile)
         break if quiet?(pidfile)
-        puts "waiting to be quiet #{print_process(pid: pid)}"
-        sleep 2
+        puts "waiting to be quiet #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
+        sleep sleep_seconds
       end
 
       if quiet?(pidfile)
@@ -101,11 +104,14 @@ def patient_stop(pidfile)
     if process_exists?(pidfile: pidfile)
       pid = print_pid(pidfile)
 
-      30.times do
+      max_waiting = 30
+      sleep_seconds = 2
+
+      max_waiting.times do |i|
         stop(pidfile) if pidfile_exists?(pidfile)
         break if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
-        puts "waiting to stop #{print_process(pid: pid)}"
-        sleep 2
+        puts "waiting to stop #{print_process(pid: pid)} #{i + 1}/#{max_waiting}"
+        sleep sleep_seconds
       end
 
       if !pidfile_exists?(pidfile) && !process_exists?(pid: pid)
@@ -134,10 +140,14 @@ def patient_start(pidfile, options)
     end
   else
     start(options)
-    30.times do
+
+    max_waiting = 30
+    sleep_seconds = 2
+
+    max_waiting.times do
       break if start?(pidfile)
-      puts "waiting to start"
-      sleep 2
+      puts "waiting to start #{i + 1}/#{max_waiting}"
+      sleep sleep_seconds
     end
 
     if start?(pidfile)
