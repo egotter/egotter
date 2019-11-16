@@ -1,6 +1,7 @@
 class FriendsGroupBuilder
-  def initialize(uid, limit:, preload: true)
+  def initialize(uid, limit:, preload: true, jid: nil)
     @users = Util.users(uid, limit: limit)
+    @jid = jid
 
     # if preload
     #   ApplicationRecord.benchmark("#{self.class}##{__method__} Preload s3 files #{uid} #{limit} #{@users.size}", level: :info) do
@@ -15,11 +16,19 @@ class FriendsGroupBuilder
   end
 
   def friends
-    @users.map(&:friend_uids)
+    # @users.map(&:friend_uids)
+    @users.map.with_index do |user, i|
+      Sidekiq.logger.info "#{@jid} debug FriendsGroupBuilder#friends #{user.uid} #{i}"
+      user.friend_uids
+    end
   end
 
   def followers
-    @users.map(&:follower_uids)
+    # @users.map(&:follower_uids)
+    @users.map.with_index do |user, i|
+      Sidekiq.logger.info "#{@jid} debug FriendsGroupBuilder#followers #{user.uid} #{i}"
+      user.follower_uids
+    end
   end
 
   # New friends between old record and new record
