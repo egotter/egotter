@@ -1,6 +1,6 @@
 class CreateSearchHistoryWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'misc', retry: 0, backtrace: false
+  sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
   def perform(session_id, user_id, uid, ahoy_visit_id, options = {})
     condition = (user_id == -1) ? {session_id: session_id} : {user_id: user_id}
