@@ -325,7 +325,7 @@ def print_usage
 Usage:
   quiet         - Stop fetching new jobs but continue working on current jobs
   stop          - Shut down after being quiet
-  force-stop    - Shut down within the default timeout (25 seconds)
+  force-stop    - Shut down within the -t timeout option given at start-up
   start         - 
   restart       - Stop and start
   force-restart - Force-stop and start
