@@ -101,16 +101,16 @@
       .container
         .row
           .col-xs-12{style: 'background-color: #ffffff;'}
-            - if notice
-              .vertical-spacing
-              %p.alert.alert-info.alert-dismissable
-                %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-                = raw notice
             - if alert
               .vertical-spacing
               %p.alert.alert-warning.alert-dismissable
                 %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
                 = raw alert
+            - elsif notice
+              .vertical-spacing
+              %p.alert.alert-info.alert-dismissable
+                %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+                = raw notice
 
     - if wrap_in_container?
       %script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}

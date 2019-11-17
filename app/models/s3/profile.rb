@@ -6,8 +6,5 @@ module S3
 
     self.bucket_name = "egotter.#{Rails.env}.profiles"
     self.payload_key = :user_info
-
-    class MaybeFetchFailed < StandardError
-    end
   end
 end

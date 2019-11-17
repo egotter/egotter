@@ -140,6 +140,11 @@
       var authorized = #{user_signed_in? && current_user.authorized?};
       var removedPage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
       var viaDM = #{via_dm?};
+      var profileNotFound = #{twitter_user.profile_not_found?};
+
+      if (profileNotFound) {
+        return;
+      }
 
       $updateBox = $('.update-box');
       $refreshBox = $('.refresh-box');

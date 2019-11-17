@@ -86,32 +86,20 @@ module Concerns::TwitterUser::RawAttrs
     nil
   end
 
-  def load_raw_attrs_text_from_s3!
-    profile = S3::Profile.find_by(twitter_user_id: id)
-    if profile.empty?
-      raise S3::Profile::MaybeFetchFailed
+  def profile_not_found?
+    if instance_variable_defined?(:@profile_not_found)
+      @profile_not_found
+    else
+      raw_attrs
+      @profile_not_found
     end
-
-    text = profile[:user_info]
-    if text.blank? || text == '{}'
-      logger.warn {"S3::Profile[:user_info] is blank. #{id}"}
-      text = '{}'
-    end
-
-    @raw_attrs = Hashie::Mash.new(JSON.parse(text))
-  end
-
-  def load_raw_attrs_text_from_s3
-    load_raw_attrs_text_from_s3!
-  rescue => e
-    @raw_attrs = Hashie::Mash.new({})
   end
 
   private
 
   def raw_attrs
     if new_record?
-      Hashie::Mash.new(JSON.parse(raw_attrs_text))
+      Hashie::Mash.new(Oj.load(raw_attrs_text, symbol_keys: true))
     else
       if instance_variable_defined?(:@raw_attrs)
         @raw_attrs
@@ -119,10 +107,19 @@ module Concerns::TwitterUser::RawAttrs
         profile = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil)
         profile = Oj.load(profile, symbol_keys: true) if profile.class == String # Fix me.
         if profile && profile.class == Hash && !profile.blank?
-          @raw_attrs = Hashie::Mash.new(profile)
-        else
-          load_raw_attrs_text_from_s3
+          return (@raw_attrs = Hashie::Mash.new(profile))
         end
+
+        profile = S3::Profile.find_by(twitter_user_id: id)
+        if !profile.blank? && !profile[:user_info].blank?
+          profile = Oj.load(profile[:user_info], symbol_keys: true)
+          return (@raw_attrs = Hashie::Mash.new(profile))
+        end
+
+        logger.warn "Profile not found in EFS and S3. #{id} #{sprintf("%.3f sec", Time.zone.now - created_at)}"
+
+        @profile_not_found = true
+        @raw_attrs = Hashie::Mash.new({})
       end
     end
   end

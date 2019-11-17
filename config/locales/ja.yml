@@ -996,6 +996,7 @@ ja:
     too_many_searches_html: 'ログインせずに検索できる上限に達しました。( %{limit}回/日 ) もっとたくさん検索するには、<a href="%{url}" class="btn btn-default btn-sm">ログイン</a> してください。'
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
+    profile_not_found_html: '@%{user} のプロフィール更新に失敗しました。何度も起きる場合は<a class="btn btn-default btn-sm" href="%{url}">ログイン</a>してから検索してください。'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     unauthorized_html: 'ツイッター連携に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
@@ -1010,6 +1011,7 @@ ja:
     too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>  <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
+    profile_not_found_html: '@%{user} のプロフィール更新に失敗しました。<a class="btn btn-default btn-sm" href="%{url}">ページを更新</a>してください。'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     unauthorized_html: 'ツイッター連携の有効期限が切れています。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
