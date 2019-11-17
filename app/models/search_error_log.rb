@@ -11,6 +11,7 @@
 #  message     :string(191)      default(""), not null
 #  controller  :string(191)      default(""), not null
 #  action      :string(191)      default(""), not null
+#  xhr         :boolean          default(FALSE), not null
 #  method      :string(191)      default(""), not null
 #  path        :string(191)      default(""), not null
 #  status      :integer          default(-1), not null

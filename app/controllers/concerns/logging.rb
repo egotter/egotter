@@ -78,6 +78,7 @@ module Concerns::Logging
         message:     message.truncate(180),
         controller:  controller_name,
         action:      action_name,
+        xhr:         !!request.xhr?,
         method:      request.method,
         path:        request.original_fullpath.to_s.truncate(180),
         status:      performed? ? response.status : 500,

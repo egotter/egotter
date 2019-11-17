@@ -756,6 +756,7 @@ ActiveRecord::Schema.define(version: 2019_04_07_014044) do
     t.string "message", default: "", null: false
     t.string "controller", default: "", null: false
     t.string "action", default: "", null: false
+    t.boolean "xhr", default: false, null: false
     t.string "method", default: "", null: false
     t.string "path", default: "", null: false
     t.integer "status", default: -1, null: false
