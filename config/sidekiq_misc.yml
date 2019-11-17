@@ -11,9 +11,10 @@
   - messaging
   - misc
   - UpdateAudienceInsightWorker
-  - creating_low
   - ResetTooManyRequestsWorker
   - UpdateUsageStatWorker
+  - creating_low
+  - deleting_low
   - deleting
   - DetectFailureWorker
   - rollbar
