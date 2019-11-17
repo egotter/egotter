@@ -23,15 +23,14 @@ module Efs
         cache_client.write(cache_key(twitter_user_id), compress(json))
       end
 
-      def import_from_s3!(twitter_user_id, skip_if_found: false)
-        return if skip_if_found && find_by(twitter_user_id)
+      def import_from_s3!(twitter_user, skip_if_found: false)
+        return if skip_if_found && find_by(twitter_user.id)
 
-        ApplicationRecord.benchmark("#{self} Import from s3 by #{twitter_user_id}", level: :debug) do
-          twitter_user = ::TwitterUser.find(twitter_user_id)
-          profile = parse_json(S3::Profile.find_by(twitter_user_id: twitter_user_id)[:user_info])
-          friend_uids = S3::Friendship.find_by(twitter_user_id: twitter_user_id)[:friend_uids]
-          follower_uids = S3::Followership.find_by(twitter_user_id: twitter_user_id)[:follower_uids]
-          import_from!(twitter_user_id, twitter_user.uid, twitter_user.screen_name, profile, friend_uids, follower_uids)
+        ApplicationRecord.benchmark("#{self} Import from s3 by #{twitter_user.id}", level: :debug) do
+          profile = parse_json(S3::Profile.find_by(twitter_user_id: twitter_user.id)[:user_info])
+          friend_uids = S3::Friendship.find_by(twitter_user_id: twitter_user.id)[:friend_uids]
+          follower_uids = S3::Followership.find_by(twitter_user_id: twitter_user.id)[:follower_uids]
+          import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, profile, friend_uids, follower_uids)
         end
       end
 
