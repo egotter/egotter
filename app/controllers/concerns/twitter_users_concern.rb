@@ -22,6 +22,9 @@ module Concerns::TwitterUsersConcern
       CreateForbiddenUserWorker.perform_async(screen_name)
       redirect_to forbidden_path(screen_name: screen_name)
     else
+      logger.info "#{self.class}##{__method__} Something error in #build_twitter_user_by #{e.class} #{e.message}}"
+      logger.info e.backtrace.join("\n")
+
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
     end
   end
