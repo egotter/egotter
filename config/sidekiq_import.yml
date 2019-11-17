@@ -1,4 +1,4 @@
-:concurrency: <%= ENV.fetch("SIDEKIQ_IMPORT_CONCURRENCY") { 5 } %>
+:concurrency: <%= require 'dotenv/load'; ENV.fetch("SIDEKIQ_IMPORT_CONCURRENCY") { 5 } %>
 :timeout: 10
 :pidfile: ./tmp/pids/sidekiq_import.pid
 :logfile: ./log/sidekiq_import.log
