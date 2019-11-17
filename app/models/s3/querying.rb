@@ -25,7 +25,7 @@ module S3
       message = "#{self}##{__method__} #{e.class} #{e.message} #{payload_key} #{key_attr} #{key_value}"
 
       if (tries -= 1) < 0
-        logger.warn "RETRY EXHAUSTED #{message}"
+        logger.warn "RETRY EXHAUSTED Return empty hash. #{message}"
         logger.info {e.backtrace.join("\n")}
         {}
       else
