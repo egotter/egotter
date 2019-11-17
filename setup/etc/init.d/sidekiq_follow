@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# chkconfig: 345 85 15
+# description: sidekiq_follow
+
+/etc/init.d/patient_sidekiqctl.rb -e production --dir /var/egotter --user ec2-user --name sidekiq_follow --state $1

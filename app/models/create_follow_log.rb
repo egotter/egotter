@@ -19,8 +19,6 @@
 #
 
 class CreateFollowLog < ApplicationRecord
-  include Concerns::Log::TooManyFollows
-
   class << self
     def create_by(request:)
       create(
