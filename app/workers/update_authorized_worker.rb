@@ -6,6 +6,10 @@ class UpdateAuthorizedWorker
     user_id
   end
 
+  def unique_in
+    1.minute
+  end
+
   def expire_in
     10.minutes
   end
