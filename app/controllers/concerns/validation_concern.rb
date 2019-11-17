@@ -67,6 +67,17 @@ module Concerns::ValidationConcern
     end
   end
 
+  def signed_in_user_authorized?
+    return true unless user_signed_in?
+
+    if current_user.authorized?
+      true
+    else
+      respond_with_error(:unauthorized, t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.mention_name, url: sign_in_path(via: "#{controller_name}/#{action_name}/signed_in_user_not_authorized")))
+      false
+    end
+  end
+
   def valid_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
 
