@@ -316,6 +316,7 @@ ruby_cmd =
       `which ruby`.strip
     end
 
+# Gem.bin_path(name, exec_name = nil, *requirements)
 sidekiqctl_cmd = `cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} -e "print Gem.bin_path('sidekiq', 'sidekiqctl')"`
 sidekiq_cmd = `cd #{app_root} && #{bundle_cmd} exec #{ruby_cmd} -e "print Gem.bin_path('sidekiq', 'sidekiq')"`
 

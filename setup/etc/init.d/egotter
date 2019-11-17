@@ -13,7 +13,6 @@ else
 fi
 
 APP_ROOT="/var/egotter/"
-USER="ec2-user"
 
 do_action() {
   /etc/init.d/puma ${1} && \
@@ -40,8 +39,6 @@ restart() {
 }
 
 rh_status() {
-  cd $APP_ROOT
-
   cmd1=":"
   if ls ${APP_ROOT}/tmp/pids/puma.pid >/dev/null 2>&1; then
     cmd1="ps x -o pid,command | grep puma | grep -v grep"
@@ -52,7 +49,7 @@ rh_status() {
     cmd2='ps -o pid=,command= -p$(cat ${APP_ROOT}tmp/pids/sidekiq*.pid)'
   fi
 
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && ${cmd1} ; ${cmd2}"
+  sh -c "cd $APP_ROOT && ${cmd1} ; ${cmd2}"
 }
 
 case "$1" in

@@ -16,10 +16,14 @@ else
 fi
 
 APP_ROOT="/var/egotter/"
-USER="ec2-user"
 RAILS_ENV="production"
 NAME=puma
 PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
+
+bundle_cmd="/usr/local/bin/bundle"
+ruby_cmd="/usr/local/bin/ruby"
+pumactl_cmd=`cd $APP_ROOT && $bundle_cmd exec $ruby_cmd -e "print Gem.bin_path('puma', 'pumactl')"`
+PUMACTL_CMD="cd $APP_ROOT && RAILS_ENV=$RAILS_ENV HOME=$APP_ROOT $bundle_cmd exec $ruby_cmd $pumactl_cmd"
 
 print_pid() {
   cat ${PID_FILE}
@@ -30,22 +34,21 @@ print_command() {
 }
 
 start() {
-  cd $APP_ROOT
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && RAILS_ENV=$RAILS_ENV /usr/local/bin/bundle exec pumactl start"
+  sh -c "$PUMACTL_CMD start"
   echo ${en} "Starting $NAME: ${ec}"
   success
   echo
 }
 
 stop() {
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && RAILS_ENV=$RAILS_ENV /usr/local/bin/bundle exec pumactl stop"
+  sh -c "$PUMACTL_CMD stop"
   echo ${en} "Stopping $NAME: ${ec}"
   success
   echo
 }
 
 restart() {
-  sudo -u ${USER} -H bash -l -c "cd $APP_ROOT && RAILS_ENV=$RAILS_ENV /usr/local/bin/bundle exec pumactl restart"
+  sh -c "$PUMACTL_CMD restart"
   echo ${en} "Restarting $NAME: ${ec}"
   success
   echo
