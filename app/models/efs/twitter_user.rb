@@ -14,7 +14,7 @@ module Efs
             twitter_user_id: twitter_user_id,
             uid: uid,
             screen_name: screen_name,
-            profile: profile,
+            profile: parse_json(profile),
             friend_uids: friend_uids,
             follower_uids: follower_uids
         }.to_json

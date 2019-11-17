@@ -117,6 +117,7 @@ module Concerns::TwitterUser::RawAttrs
         @raw_attrs
       else
         profile = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil)
+        profile = Oj.load(profile, symbol_keys: true) if profile.class == String # Fix me.
         if profile && profile.class == Hash && !profile.blank?
           @raw_attrs = Hashie::Mash.new(profile)
         else
