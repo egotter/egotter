@@ -10,11 +10,12 @@ module Efs
       end
 
       def import_from!(twitter_user_id, uid, screen_name, profile, friend_uids, follower_uids)
+        profile = parse_json(profile) if profile.class == String
         json = {
             twitter_user_id: twitter_user_id,
             uid: uid,
             screen_name: screen_name,
-            profile: parse_json(profile),
+            profile: profile,
             friend_uids: friend_uids,
             follower_uids: follower_uids
         }.to_json
