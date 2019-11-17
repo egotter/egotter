@@ -24,7 +24,7 @@ class CreateUnfollowWorker
     request.finished!
 
     if e.class == UnfollowRequest::TooManyRetries
-      logger.warn "Stop retrying #{e.class} #{e.message} #{request.inspect} #{request.logs.pluck(:error_class).inspect}"
+      logger.warn "Stop retrying #{e.class} #{request.inspect} #{request.logs.pluck(:error_class).inspect}"
     end
   rescue UnfollowRequest::Error => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))

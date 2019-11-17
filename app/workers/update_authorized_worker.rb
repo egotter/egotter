@@ -11,13 +11,11 @@ class UpdateAuthorizedWorker
   end
 
   def timeout_in
-    5.seconds
+    10.seconds
   end
 
-  def after_timeout(user_id, options = {})
-    logger.warn "Timeout #{timeout_in} #{user_id} #{options.inspect}"
-  end
-
+  # options:
+  #   enqueued_at
   def perform(user_id, options = {})
     user = User.find(user_id)
     t_user = user.api_client.verify_credentials
