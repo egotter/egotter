@@ -6,7 +6,5 @@ module S3
 
     self.bucket_name = "egotter.#{Rails.env}.followerships"
     self.payload_key = :follower_uids
-    self.cache_enabled = true
-    self.cache_expires_in = 1.week
   end
 end
