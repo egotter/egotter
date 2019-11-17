@@ -89,25 +89,31 @@ class User < ApplicationRecord
       .references(:notification_settings)
   end
 
-  def self.update_or_create_with_token!(values)
-    user = User.find_or_initialize_by(uid: values.delete(:uid))
-    user.assign_attributes(values)
-
-    if user.new_record?
-      transaction do
-        user.save!
-        user.create_notification_setting!
-      end
-      yield(user, :create) if block_given?
-    else
-      user.save! if user.changed?
-      yield(user, :update) if block_given?
+  class << self
+    def egotter
+      find_by(uid: User::EGOTTER_UID)
     end
 
-    user
-  rescue => e
-    logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{values.inspect}"
-    raise e
+    def update_or_create_with_token!(values)
+      user = User.find_or_initialize_by(uid: values.delete(:uid))
+      user.assign_attributes(values)
+
+      if user.new_record?
+        transaction do
+          user.save!
+          user.create_notification_setting!
+        end
+        yield(user, :create) if block_given?
+      else
+        user.save! if user.changed?
+        yield(user, :update) if block_given?
+      end
+
+      user
+    rescue => e
+      logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{values.inspect}"
+      raise e
+    end
   end
 
   def twitter_user

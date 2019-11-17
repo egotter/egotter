@@ -50,7 +50,7 @@ class SearchReport < ApplicationRecord
   end
 
   def egotter_client
-    @egotter_client ||= User.find_by(uid: User::EGOTTER_UID).api_client.twitter
+    @egotter_client ||= User.egotter.api_client.twitter
   end
 
   def screen_name

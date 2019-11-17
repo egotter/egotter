@@ -68,7 +68,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def send_initialization_message
     DirectMessageRequest.new(internal_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.initialization_start')).perform
-    DirectMessageRequest.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: search_yourself_url)).perform
+    DirectMessageRequest.new(User.egotter.api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: search_yourself_url)).perform
 
     raise InitializationStarted
   rescue Twitter::Error::Forbidden => e

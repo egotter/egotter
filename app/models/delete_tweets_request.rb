@@ -54,7 +54,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_finished_message
-    dm_client = DirectMessageClient.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter)
+    dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
     dm_client.create_direct_message(user.uid, I18n.t('delete_tweets.new.dm_messge'))
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
@@ -62,7 +62,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_error_message
-    dm_client = DirectMessageClient.new(User.find_by(uid: User::EGOTTER_UID).api_client.twitter)
+    dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
     url = Rails.application.routes.url_helpers.delete_tweets_url
     dm_client.create_direct_message(user.uid, I18n.t('delete_tweets.new.dm_error_messge', url: url))
   rescue => e

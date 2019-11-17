@@ -18,12 +18,15 @@ class UpdateEgotterFollowersWorker
     10.minutes
   end
 
+  # options:
+  #   user_id
+  #   enqueued_at
   def perform(options = {})
     user = User.find_by(id: options['user_id'])
-    client = user ? user.api_client : User.find_by(uid: User::EGOTTER_UID).api_client
+    client = user ? user.api_client : User.egotter.api_client
 
     if client.user(User::EGOTTER_UID)[:followers_count] > 70000 # Max is 5000 * 15 = 75000
-      logger.warn 'Danger! The followers_count is over 70000!'
+      logger.warn 'Danger! The followers_count is over 70,000!'
     end
 
     follower_ids = client.follower_ids(User::EGOTTER_UID)
