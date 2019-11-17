@@ -75,9 +75,6 @@ GEM
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
-    aws-sdk-dynamodb (1.19.0)
-      aws-sdk-core (~> 3, >= 3.39.0)
-      aws-sigv4 (~> 1.0)
     aws-sdk-kms (1.13.0)
       aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
@@ -474,7 +471,6 @@ DEPENDENCIES
   ahoy_matey
   annotate
   aws-sdk-cloudwatch
-  aws-sdk-dynamodb
   aws-sdk-s3
   blazer
   byebug

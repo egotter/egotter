@@ -67,7 +67,6 @@ gem 'oj'
 gem 'gretel'
 gem 'google-api-client', require: false
 gem 'aws-sdk-cloudwatch', require: false
-gem 'aws-sdk-dynamodb'
 gem 'aws-sdk-s3'
 gem 'stripe'
 gem 'ahoy_matey'
