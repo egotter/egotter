@@ -1,0 +1,8 @@
+:concurrency: 1
+:timeout: 10
+:pidfile: ./tmp/pids/sidekiq_follow.pid
+:logfile: ./log/sidekiq_follow.log
+:tag: sidekiq_follow
+:environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
+:queues:
+  - follow

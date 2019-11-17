@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# chkconfig: 345 85 15
+# description: sidekiq_unfollow
+
+/etc/init.d/patient_sidekiqctl.rb -e production --dir /var/egotter --user ec2-user --name sidekiq_unfollow --state $1

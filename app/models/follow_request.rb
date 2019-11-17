@@ -36,9 +36,6 @@ class FollowRequest < ApplicationRecord
     raise AlreadyRequestedToFollow if friendship_outgoing?
     raise AlreadyFollowing if friendship?
 
-    raise GlobalRateLimited if global_rate_limited?
-    raise UserRateLimited if user_rate_limited?
-
     begin
       client.follow!(uid)
     rescue Twitter::Error::Unauthorized => e
@@ -54,27 +51,6 @@ class FollowRequest < ApplicationRecord
         raise Forbidden.new(e.message)
       end
     end
-  end
-
-  TOO_MANY_FOLLOWS_INTERVAL = 1.hour
-  NORMAL_INTERVAL = 1.second
-
-  def perform_interval
-    if !global_rate_limited? && !user_rate_limited?
-      NORMAL_INTERVAL
-    else
-      TOO_MANY_FOLLOWS_INTERVAL
-    end
-  end
-
-  def global_rate_limited?
-    time = CreateFollowLog.global_last_too_many_follows_time
-    time && Time.zone.now < time + TOO_MANY_FOLLOWS_INTERVAL
-  end
-
-  def user_rate_limited?
-    time = CreateFollowLog.user_last_too_many_follows_time(user_id)
-    time && Time.zone.now < time + TOO_MANY_FOLLOWS_INTERVAL
   end
 
   def unauthorized?

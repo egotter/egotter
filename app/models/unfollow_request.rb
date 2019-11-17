@@ -35,9 +35,6 @@ class UnfollowRequest < ApplicationRecord
     raise NotFound unless user_found?
     raise NotFollowing unless friendship?
 
-    raise GlobalRateLimited if global_rate_limited?
-    raise UserRateLimited if user_rate_limited?
-
     begin
       client.unfollow(uid)
     rescue Twitter::Error::Unauthorized => e
@@ -49,27 +46,6 @@ class UnfollowRequest < ApplicationRecord
         raise Forbidden.new(e.message)
       end
     end
-  end
-
-  TOO_MANY_UNFOLLOWS_INTERVAL = 1.hour
-  NORMAL_INTERVAL = 1.second
-
-  def perform_interval
-    if !global_rate_limited? && !user_rate_limited?
-      NORMAL_INTERVAL
-    else
-      TOO_MANY_UNFOLLOWS_INTERVAL
-    end
-  end
-
-  def global_rate_limited?
-    time = CreateUnfollowLog.global_last_too_many_follows_time
-    time && Time.zone.now < time + TOO_MANY_UNFOLLOWS_INTERVAL
-  end
-
-  def user_rate_limited?
-    time = CreateUnfollowLog.user_last_too_many_follows_time(user_id)
-    time && Time.zone.now < time + TOO_MANY_UNFOLLOWS_INTERVAL
   end
 
   def unauthorized?

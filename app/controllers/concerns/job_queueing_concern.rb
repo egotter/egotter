@@ -28,7 +28,6 @@ module Concerns::JobQueueingConcern
 
   def enqueue_create_follow_job_if_needed(request, enqueue_location: nil)
     return if from_crawler?
-    return if request.uid == User::EGOTTER_UID
     CreateFollowWorker.perform_async(request.id, enqueue_location: enqueue_location)
   end
 

@@ -20,4 +20,6 @@
   - StartSendingPromptReportsWorker
   - WriteToS3Worker
   - deleting
+  - follow
+  - unfollow
   - rollbar
