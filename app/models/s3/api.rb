@@ -19,8 +19,9 @@ module S3
       delete(twitter_user_id)
     end
 
-    def import_from!(twitter_user_id, uid, screen_name, uids)
-      store(twitter_user_id, encoded_body(twitter_user_id, uid, screen_name, uids))
+    def import_from!(twitter_user_id, uid, screen_name, uids, async: true)
+      body = encoded_body(twitter_user_id, uid, screen_name, uids)
+      store(twitter_user_id, body, async: async)
     end
 
     def encoded_body(twitter_user_id, uid, screen_name, uids)

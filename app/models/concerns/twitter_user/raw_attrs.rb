@@ -107,12 +107,14 @@ module Concerns::TwitterUser::RawAttrs
         profile = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil)
         profile = Oj.load(profile, symbol_keys: true) if profile.class == String # Fix me.
         if profile && profile.class == Hash && !profile.blank?
+          @profile_not_found = false
           return (@raw_attrs = Hashie::Mash.new(profile))
         end
 
         profile = S3::Profile.find_by(twitter_user_id: id)
         if !profile.blank? && !profile[:user_info].blank?
           profile = Oj.load(profile[:user_info], symbol_keys: true)
+          @profile_not_found = false
           return (@raw_attrs = Hashie::Mash.new(profile))
         end
 

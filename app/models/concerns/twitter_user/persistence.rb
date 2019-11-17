@@ -14,9 +14,9 @@ module Concerns::TwitterUser::Persistence
 
       # Store data to S3 as soon as possible
       ApplicationRecord.benchmark("Persistence##{__method__} Import data to S3 #{id} #{screen_name}", level: :info) do
-        S3::Friendship.import_from!(id, uid, screen_name, @friend_uids)
-        S3::Followership.import_from!(id, uid, screen_name, @follower_uids)
-        S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text)
+        S3::Friendship.import_from!(id, uid, screen_name, @friend_uids, async: true)
+        S3::Followership.import_from!(id, uid, screen_name, @follower_uids, async: true)
+        S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text, async: true)
       end
 
       ApplicationRecord.benchmark("Persistence##{__method__} Save relations to RDB #{id} #{screen_name}", level: :info) do
