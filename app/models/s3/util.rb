@@ -2,7 +2,6 @@
 module S3
   module Util
     include Querying
-    include Cache
 
     def bucket_name
       @bucket_name
@@ -52,17 +51,13 @@ module S3
         else
           client.put_object(bucket: bucket_name, key: key.to_s, body: body)
         end
-
-        cache.write(key.to_s, body)
       end
     end
 
     def fetch(key)
       raise 'key is nil' if key.nil?
       ApplicationRecord.benchmark("#{self} Fetch by #{key}", level: :debug) do
-        cache_fetch(key.to_s) do
-          client.get_object(bucket: bucket_name, key: key.to_s).body.read
-        end
+        client.get_object(bucket: bucket_name, key: key.to_s).body.read
       end
     end
 
@@ -74,16 +69,12 @@ module S3
         else
           client.delete_object(bucket: bucket_name, key: key.to_s)
         end
-
-        cache.delete(key.to_s)
       end
     end
 
     def exist(key)
       ApplicationRecord.benchmark("#{self} Exist by #{key}", level: :debug) do
-        cache_fetch("exist-#{key}") do
-          Aws::S3::Resource.new(region: REGION).bucket(bucket_name).object(key.to_s).exists?
-        end
+        Aws::S3::Resource.new(region: REGION).bucket(bucket_name).object(key.to_s).exists?
       end
     end
 

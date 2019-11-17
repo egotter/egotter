@@ -21,10 +21,7 @@ end
 [
     S3::Friendship,
     S3::Followership,
-    S3::Profile,
-    TwitterDB::S3::Friendship,
-    TwitterDB::S3::Followership,
-    TwitterDB::S3::Profile
+    S3::Profile
 ].each do |klass|
   klass.send(:extend, StoreToFile)
 end
