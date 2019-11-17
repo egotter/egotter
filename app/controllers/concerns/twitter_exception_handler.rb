@@ -58,6 +58,14 @@ module Concerns::TwitterExceptionHandler
     end
   end
 
+  def profile_not_found_message(screen_name, url)
+    if user_signed_in?
+      t('after_sign_in.profile_not_found_html', user: screen_name, url: kick_out_error_path('profile_not_found', redirect_path: url))
+    else
+      t('before_sign_in.profile_not_found_html', user: screen_name, url: kick_out_error_path('profile_not_found', redirect_path: url))
+    end
+  end
+
   def not_found_message(screen_name)
     if user_signed_in?
       t('after_sign_in.not_found_html', user: user_link(screen_name), screen_name: screen_name)

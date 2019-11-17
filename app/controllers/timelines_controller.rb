@@ -10,5 +10,9 @@ class TimelinesController < ApplicationController
     enqueue_audience_insight(@twitter_user.uid)
 
     @chart_builder = find_or_create_chart_builder(@twitter_user)
+
+    if @twitter_user.profile_not_found?
+      flash.now[:alert] = profile_not_found_message(@twitter_user.screen_name, request.path)
+    end
   end
 end
