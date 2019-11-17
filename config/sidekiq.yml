@@ -1,4 +1,4 @@
-:concurrency: 2
+:concurrency: ENV.fetch("SIDEKIQ_CONCURRENCY") { 5 }
 :timeout: 10
 :pidfile: ./tmp/pids/sidekiq.pid
 :logfile: ./log/sidekiq.log
