@@ -1,0 +1,8 @@
+:concurrency: 10
+:timeout: 10
+:pidfile: ./tmp/pids/sidekiq_debug.pid
+:logfile: ./log/sidekiq_debug.log
+:tag: sidekiq_debug
+:environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
+:queues:
+  - UpdateAudienceInsightWorker
