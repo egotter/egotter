@@ -113,7 +113,8 @@ module Concerns::TwitterExceptionHandler
 
   def unknown_alert_message(ex)
     reason = (ex.class.name.demodulize.underscore rescue 'exception')
-    t('before_sign_in.something_wrong_html', url: kick_out_error_path(reason))
+    # Show a sign-in button whether or not current user is signed in.
+    t('before_sign_in.something_wrong_with_error_html', url: kick_out_error_path(reason), error: reason)
   end
 
   private
