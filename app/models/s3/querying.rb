@@ -19,21 +19,13 @@ module S3
     end
 
     def find_by_current_scope(payload_key, key_attr, key_value)
-      tries ||= 5
       find_by_current_scope!(payload_key, key_attr, key_value)
     rescue Aws::S3::Errors::NoSuchKey => e
       message = "#{self}##{__method__} #{e.class} #{e.message} #{payload_key} #{key_attr} #{key_value}"
 
-      if (tries -= 1) < 0
-        logger.warn "RETRY EXHAUSTED Return empty hash. #{message}"
-        logger.info {e.backtrace.join("\n")}
-        {}
-      else
-        logger.info "RETRY #{tries} #{message}"
-        logger.info {e.backtrace.join("\n")}
-        sleep 0.1 * (5 - tries)
-        retry
-      end
+      logger.warn "Return empty hash. #{message}"
+      logger.info {e.backtrace.join("\n")}
+      {}
     rescue => e
       logger.warn "#{self}##{__method__} #{e.class} #{e.message} #{payload_key} #{key_attr} #{key_value}"
       logger.info {e.backtrace.join("\n")}

@@ -7,7 +7,6 @@ module TwitterDB
 
       self.bucket_name = "egotter.#{Rails.env}.twitter-db.profiles"
       self.payload_key = :user_info
-      self.cache_enabled = true
     end
   end
 end
