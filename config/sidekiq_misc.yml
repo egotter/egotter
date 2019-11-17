@@ -16,5 +16,4 @@
   - creating_low
   - deleting_low
   - deleting
-  - DetectFailureWorker
   - rollbar

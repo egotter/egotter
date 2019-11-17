@@ -36,8 +36,6 @@ class TwitterUser < ApplicationRecord
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
 
-  include Concerns::TwitterUser::FailureDetection
-
   def cache_key
     case
       when new_record? then super

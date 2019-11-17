@@ -21,7 +21,6 @@ namespace :twitter_users do
 
         UpdateUsageStatWorker.perform_async(uid, user_id: user_id, enqueued_at: Time.zone.now)
         UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: 'rake', twitter_user_id: twitter_user.id)
-        DetectFailureWorker.perform_in(60.seconds, twitter_user.id, enqueued_at: Time.zone.now)
       end
 
       break if sigint.trapped?

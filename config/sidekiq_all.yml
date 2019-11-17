@@ -20,5 +20,4 @@
   - StartSendingPromptReportsWorker
   - WriteToS3Worker
   - deleting
-  - DetectFailureWorker
   - rollbar

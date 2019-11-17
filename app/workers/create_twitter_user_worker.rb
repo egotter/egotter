@@ -59,8 +59,6 @@ class CreateTwitterUserWorker
     ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now)
     UpdateUsageStatWorker.perform_async(uid, user_id: user_id, enqueued_at: Time.zone.now)
     UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: self.class, twitter_user_id: twitter_user.id)
-
-    DetectFailureWorker.perform_in(60.seconds, twitter_user.id, user_id: user_id, enqueued_at: Time.zone.now)
   end
 
   private
