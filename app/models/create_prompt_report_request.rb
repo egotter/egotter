@@ -28,7 +28,7 @@ class CreatePromptReportRequest < ApplicationRecord
       if initialization_started?
         raise TwitterUserNotExist
       else
-        send_initialization_message
+        send_initialization_message!
       end
     end
 
@@ -59,14 +59,18 @@ class CreatePromptReportRequest < ApplicationRecord
     raise UnfollowersNotChanged if new_unfollower_uids.none?
 
     changes = {followers_count: [twitter_user.follower_uids.size, latest.follower_uids.size]}
+    removed_uid = new_unfollower_uids.first
 
     last_report = user.latest_prompt_report
-    raise MessageNotChanged if last_report && changes == last_report.last_changes
+    if last_report
+      raise FollowersCountNotChanged if changes == last_report.last_changes
+      raise RemovedUidNotChanged if last_report.removed_uid && removed_uid == last_report.removed_uid
+    end
 
     send_report!(changes, new_unfollower_uids: new_unfollower_uids)
   end
 
-  def send_initialization_message
+  def send_initialization_message!
     DirectMessageRequest.new(internal_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.initialization_start')).perform
     DirectMessageRequest.new(User.egotter.api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: search_yourself_url)).perform
 
@@ -299,6 +303,12 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class MessageNotChanged < DeadErrorTellsNoTales
+  end
+
+  class FollowersCountNotChanged < DeadErrorTellsNoTales
+  end
+
+  class RemovedUidNotChanged < DeadErrorTellsNoTales
   end
 
   class DirectMessageNotSent < Error

@@ -5,6 +5,7 @@
 #  id           :bigint(8)        not null, primary key
 #  user_id      :integer          not null
 #  read_at      :datetime
+#  removed_uid  :bigint(8)
 #  changes_json :text(65535)      not null
 #  token        :string(191)      not null
 #  message_id   :string(191)      not null
@@ -50,6 +51,7 @@ class PromptReport < ApplicationRecord
   class << self
     def you_are_removed(user_id, changes_json:, new_unfollower_uids:)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
+      report.removed_uid = new_unfollower_uids.first if report.respond_to?(:removed_uid)
 
       message_builder = MessageBuilder.new(report.user, report.token)
       message_builder.changes = JSON.parse(changes_json, symbolize_names: true)

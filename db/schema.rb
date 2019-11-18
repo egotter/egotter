@@ -677,6 +677,7 @@ ActiveRecord::Schema.define(version: 2019_04_07_014044) do
   create_table "prompt_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.datetime "read_at"
+    t.bigint "removed_uid"
     t.text "changes_json", null: false
     t.string "token", null: false
     t.string "message_id", null: false
