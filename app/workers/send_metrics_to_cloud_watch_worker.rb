@@ -14,7 +14,10 @@ class SendMetricsToCloudWatchWorker
 
   # Run every minute
   def perform
-    %i(send_google_analytics_metrics send_sidekiq_metrics send_prompt_reports_metrics).each do |method_name|
+    %i(send_google_analytics_metrics
+       send_sidekiq_metrics
+       send_prompt_reports_metrics
+       send_search_error_logs_metrics).each do |method_name|
       send(method_name)
     rescue => e
       logger.warn "#{method_name} #{e.class} #{e.message}"
@@ -44,22 +47,26 @@ class SendMetricsToCloudWatchWorker
     # region = %x(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')
     # instance_id=%x(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 
+    namespace = "Sidekiq/#{Rails.env}"
+
     total = 0
     Sidekiq::Queue.all.each do |queue|
       next if queue.size == 0
       total += queue.size
-      options = {namespace: "Sidekiq/#{Rails.env}", dimensions: [{name: 'QueueName', value: queue.name}]}
+      options = {namespace: namespace, dimensions: [{name: 'QueueName', value: queue.name}]}
       client.put_metric_data('QueueSize', queue.size, options)
       client.put_metric_data('QueueLatency', queue.latency, options)
     end
 
-    options = {namespace: "Sidekiq/#{Rails.env}", dimensions: [{name: 'QueueName', value: 'total'}]}
+    options = {namespace: namespace, dimensions: [{name: 'QueueName', value: 'total'}]}
     client.put_metric_data('QueueSize', total, options)
   end
 
   def send_google_analytics_metrics
+    namespace = "Google Analytics/#{Rails.env}"
+
     dimensions = [{name: 'rt:total', value: 'total'}]
-    options = {namespace: "Google Analytics/#{Rails.env}", dimensions: dimensions}
+    options = {namespace: namespace, dimensions: dimensions}
     client.put_metric_data('rt:activeUsers', GoogleAnalyticsClient.new.active_users, options)
 
     # There are many kinds of sources.
@@ -81,31 +88,47 @@ class SendMetricsToCloudWatchWorker
           {name: 'rt:userType', value: user_type}
       ]
 
-      options = {namespace: "Google Analytics/#{Rails.env}", dimensions: dimensions}
+      options = {namespace: namespace, dimensions: dimensions}
       client.put_metric_data('rt:activeUsers', active_users, options)
     end
   end
 
   def send_prompt_reports_metrics
+    namespace = "PromptReports/#{Rails.env}"
     duration = {created_at: 5.minutes.ago..Time.zone.now}
 
     CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, value|
       name = key.split('::').last
-      options = {namespace: "PromptReports/#{Rails.env}", dimensions: [{name: 'ErrorName', value: name}]}
+      options = {namespace: namespace, dimensions: [{name: 'ErrorName', value: name}]}
       client.put_metric_data('Count', value, options)
     end
 
     send_count = PromptReport.where(duration).size
-    options = {namespace: "PromptReports/#{Rails.env}", dimensions: [{name: 'SendCount', value: 'SendCount'}]}
+    options = {namespace: namespace, dimensions: [{name: 'SendCount', value: 'SendCount'}]}
     client.put_metric_data('Count', send_count, options)
 
     read_count = PromptReport.where(duration).where.not(read_at: nil).size
-    options = {namespace: "PromptReports/#{Rails.env}", dimensions: [{name: 'ReadCount', value: 'ReadCount'}]}
+    options = {namespace: namespace, dimensions: [{name: 'ReadCount', value: 'ReadCount'}]}
     client.put_metric_data('Count', read_count, options)
 
     read_rate = 100.0 * read_count / send_count
-    options = {namespace: "PromptReports/#{Rails.env}", dimensions: [{name: 'ReadRate', value: 'ReadRate'}]}
+    options = {namespace: namespace, dimensions: [{name: 'ReadRate', value: 'ReadRate'}]}
     client.put_metric_data('Rate', read_rate, options)
+  end
+
+  def send_search_error_logs_metrics
+    namespace = "SearchErrorLogs/#{Rails.env}"
+    duration = {created_at: 30.minutes.ago..Time.zone.now}
+
+    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where(user_id: -1).group(:location).count.each do |key, value|
+      options = {namespace: namespace, dimensions: [{name: 'Location', value: key}, {name: 'Sign in', value: 'false'}]}
+      client.put_metric_data('Count', value, options)
+    end
+
+    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where.not(user_id: -1).group(:location).count.each do |key, value|
+      options = {namespace: namespace, dimensions: [{name: 'Location', value: key}, {name: 'Sign in', value: 'true'}]}
+      client.put_metric_data('Count', value, options)
+    end
   end
 
   private
