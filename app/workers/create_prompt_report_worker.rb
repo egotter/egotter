@@ -41,7 +41,8 @@ class CreatePromptReportWorker
   ensure
     if options['start_next_loop']
       time_diff = Time.zone.now - Time.zone.parse(options['queueing_started_at'])
-      logger.warn "Prompt reports time elapsed #{sprintf('%.3f sec', time_diff)}"
+      time_diff /= 3600
+      logger.warn "Prompt reports time elapsed #{sprintf('%.3f hours', time_diff)}"
       StartSendingPromptReportsWorker.perform_async(last_queueing_started_at: options['queueing_started_at'])
     end
   end
