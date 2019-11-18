@@ -3,6 +3,7 @@ class CreatePromptReports < ActiveRecord::Migration[5.2]
     create_table :prompt_reports do |t|
       t.integer  :user_id,       null: false
       t.datetime :read_at,       null: true,  default: nil
+      t.bigint   :removed_uid,   null: true, default: nil
       t.text     :changes_json,  null: false
       t.string   :token,         null: false
       t.string   :message_id,    null: false
