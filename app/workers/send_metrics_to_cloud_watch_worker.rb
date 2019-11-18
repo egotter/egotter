@@ -90,6 +90,8 @@ class SendMetricsToCloudWatchWorker
 
       options = {namespace: namespace, dimensions: dimensions}
       client.put_metric_data('rt:activeUsers', active_users, options)
+    rescue => e
+      logger.warn "#{e.class} #{e.message} #{device_category} #{medium} #{source} #{user_type} #{active_users}"
     end
   end
 
