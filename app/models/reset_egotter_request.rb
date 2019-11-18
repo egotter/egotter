@@ -34,16 +34,6 @@ class ResetEgotterRequest < ApplicationRecord
     result
   end
 
-  def perform(send_dm: false)
-    perform!(send_dm: send_dm)
-  rescue => e
-    logger.warn "#{e.class} #{e.message}"
-    logger.info e.backtrace.join("\n")
-
-    # TODO Not enough columns
-    ResetEgotterLog.create(request_id: id, error_class: e.class, error_message: e.message.truncate(100))
-  end
-
   private
 
   def send_goodbye_message

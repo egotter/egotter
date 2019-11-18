@@ -29,7 +29,7 @@ class ResetEgotterWorker
 
   def perform(request_id, options = {})
     request = ResetEgotterRequest.find(request_id)
-    log = ResetEgotterLog.create(request_id: request_id, message: 'Starting')
+    log = ResetEgotterLog.create(request_id: request_id, user_id: request.user.id, message: 'Starting')
 
     request.perform!(send_dm: true)
     request.finished!
@@ -37,11 +37,11 @@ class ResetEgotterWorker
     log.finished!
   rescue ResetEgotterRequest::RecordNotFound => e
     request.finished!
-    log.finished!('Record not found')
+    log.finished!('TwitterUser record not found')
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{request_id}"
     logger.info e.backtrace.join("\n")
 
-    ResetEgotterLog.find_by(request_id: request_id)&.failed!(e.class, e.message.truncate(100))
+    log.failed!(e.class, e.message.truncate(100))
   end
 end
