@@ -67,7 +67,9 @@ class CreatePromptReportRequest < ApplicationRecord
       raise RemovedUidNotChanged if last_report.removed_uid && removed_uid == last_report.removed_uid
     end
 
-    send_report!(changes, new_unfollower_uids: new_unfollower_uids)
+    ApplicationRecord.benchmark("CreatePromptReportRequest#send_report! Send DM #{self.id}", level: :debug) do
+      send_report!(changes, new_unfollower_uids: new_unfollower_uids)
+    end
   end
 
   def send_initialization_message!
