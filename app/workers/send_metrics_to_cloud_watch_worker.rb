@@ -80,7 +80,7 @@ class SendMetricsToCloudWatchWorker
         metrics: %w(rt:activeUsers),
         dimensions: %w(rt:deviceCategory rt:medium rt:source rt:userType)
     ).rows.each do |device_category, medium, source, user_type, active_users|
-      next if active_users <= 3
+      next if active_users.to_i <= 3
       dimensions = [
           {name: 'rt:deviceCategory', value: device_category},
           {name: 'rt:medium', value: medium},
