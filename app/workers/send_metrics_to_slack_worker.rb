@@ -50,7 +50,7 @@ class SendMetricsToSlackWorker
         'twitter_user friends_size',
         'twitter_user followers_size',
     ].each do |name|
-      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::TWITTER_USERS_MONITORING)
+      SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::TWITTER_USERS_MONITORING)
     end
   end
 
