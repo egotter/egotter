@@ -44,11 +44,17 @@ class SendMetricsToCloudWatchWorker
     # region = %x(curl -s http://169.254.169.254/latest/meta-data/placement/availability-zone | sed -e 's/.$//')
     # instance_id=%x(curl -s http://169.254.169.254/latest/meta-data/instance-id)
 
+    total = 0
     Sidekiq::Queue.all.each do |queue|
+      next if queue.size == 0
+      total += queue.size
       options = {namespace: "Sidekiq/#{Rails.env}", dimensions: [{name: 'QueueName', value: queue.name}]}
       client.put_metric_data('QueueSize', queue.size, options)
       client.put_metric_data('QueueLatency', queue.latency, options)
     end
+
+    options = {namespace: "Sidekiq/#{Rails.env}", dimensions: [{name: 'QueueName', value: 'total'}]}
+    client.put_metric_data('QueueSize', total, options)
   end
 
   def send_google_analytics_metrics
@@ -96,7 +102,7 @@ class SendMetricsToCloudWatchWorker
     options = {namespace: "PromptReports/#{Rails.env}", dimensions: [{name: 'ReadCount', value: 'ReadCount'}]}
     client.put_metric_data('Count', read_count, options)
 
-    read_rate = read_count.to_f / send_count
+    read_rate = 100.0 * read_count / send_count
     options = {namespace: "PromptReports/#{Rails.env}", dimensions: [{name: 'ReadRate', value: 'ReadRate'}]}
     client.put_metric_data('Rate', read_rate, options)
   end
