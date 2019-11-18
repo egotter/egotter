@@ -6,20 +6,21 @@ class CreatePromptReportWorker
     request_id
   end
 
-  def request_class
-    CreatePromptReportRequest
+  def unique_in
+    10.minutes
   end
 
-  def log_class
-    CreatePromptReportLog
-  end
-
+  # options:
+  #   user_id
+  #   index
+  #   start_next_loop
+  #   queueing_started_at
   def perform(request_id, options = {})
     options = options.with_indifferent_access
-    request = request_class.find(request_id)
+    request = CreatePromptReportRequest.find(request_id)
     user = request.user
 
-    log = log_class.create(
+    log = CreatePromptReportLog.create(
         user_id: user.id,
         request_id: request_id,
         uid: user.uid,
@@ -31,7 +32,7 @@ class CreatePromptReportWorker
 
     log.update(status: true)
 
-  rescue request_class::Error => e
+  rescue CreatePromptReportRequest::Error => e
     log.update(error_class: e.class, error_message: e.message)
   rescue => e
     log.update(error_class: e.class, error_message: e.message.truncate(100))
@@ -39,12 +40,9 @@ class CreatePromptReportWorker
     logger.info e.backtrace.join("\n")
   ensure
     if options['start_next_loop']
-      if options['queueing_started_at']
-        start_time = Time.zone.parse(options['queueing_started_at'])
-        StartSendingPromptReportsWorker.perform_at(start_time + request_class::INTERVAL)
-      else
-        StartSendingPromptReportsWorker.perform_in(request_class::INTERVAL.since)
-      end
+      time_diff = Time.zone.now - Time.zone.parse(options['queueing_started_at'])
+      logger.warn "Prompt reports time elapsed #{sprintf('%.3f sec', time_diff)}"
+      StartSendingPromptReportsWorker.perform_async(last_queueing_started_at: options['queueing_started_at'])
     end
   end
 end
