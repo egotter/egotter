@@ -27,7 +27,7 @@ class CreatePromptReportWorker
         screen_name: user.screen_name
     )
 
-    ApplicationRecord.benchmark("CreatePromptReportRequest#perform! Perform request #{request_id}", level: :debug) do
+    ApplicationRecord.benchmark("CreatePromptReportRequest#perform! Perform request #{request_id}", level: :info) do
       request.perform!
     end
     request.finished!

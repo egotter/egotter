@@ -122,6 +122,7 @@ class Patient
       if pidfile_exists?(pidfile)
         if process_exists?(pidfile: pidfile)
           pid = print_pid(pidfile)
+          puts print_process(pid: pid)
 
           max_waiting = 30
           sleep_seconds = 2
