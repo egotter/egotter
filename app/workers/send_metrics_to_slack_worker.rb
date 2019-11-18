@@ -16,10 +16,6 @@ class SendMetricsToSlackWorker
           :send_table_metrics,
           :send_user_metrics,
           :send_twitter_user_metrics,
-          :send_google_analytics_metrics,
-          :send_sidekiq_queue_metrics,
-          :send_sidekiq_worker_metrics,
-          :send_nginx_metrics,
           :send_search_histories_metrics,
           :send_visitors_metrics,
           :send_sign_in_metrics,
@@ -58,12 +54,6 @@ class SendMetricsToSlackWorker
     end
   end
 
-  def send_google_analytics_metrics
-    name = 'ga rt:activeUsers'
-    value = Gauge.order(time: :desc).find_by(name: name).value
-    SlackClient.send_message(value, title: name, channel: SlackClient::GA_MONITORING)
-  end
-
   def send_prompt_report_metrics
     name = 'prompt_report'
     SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::MESSAGING_MONITORING)
@@ -86,11 +76,6 @@ class SendMetricsToSlackWorker
     names.each do |name|
       SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::SIDEKIQ_MONITORING)
     end
-  end
-
-  def send_nginx_metrics
-    name = 'nginx'
-    SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::MONITORING)
   end
 
   def send_search_histories_metrics

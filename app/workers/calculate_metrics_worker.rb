@@ -16,10 +16,6 @@ class CalculateMetricsWorker
           :send_table_metrics,
           :send_user_metrics,
           :send_twitter_user_metrics,
-          :send_google_analytics_metrics,
-          :send_sidekiq_queue_metrics,
-          :send_sidekiq_worker_metrics,
-          :send_nginx_metrics,
           :send_search_histories_metrics,
           :send_visitors_metrics,
           :send_sign_in_metrics,
@@ -135,11 +131,6 @@ class CalculateMetricsWorker
     Gauge.create_by_hash('twitter_user followers_size', stats)
   end
 
-  def send_google_analytics_metrics
-    stats = {'rt:activeUsers' => GoogleAnalyticsClient.new.active_users}
-    Gauge.create_by_hash('ga rt:activeUsers', stats)
-  end
-
   def send_prompt_report_metrics
     condition_value = 10.minutes.ago..Time.zone.now
     condition = {created_at: condition_value}
@@ -193,12 +184,6 @@ class CalculateMetricsWorker
       SidekiqStats.new(type).each do |key, value|
         Gauge.create_by_hash("sidekiq_worker #{type} #{key}", value)
       end
-    end
-  end
-
-  def send_nginx_metrics
-    NginxStats.new.each do |key, value|
-      Gauge.create_by_hash("nginx #{key}", value)
     end
   end
 

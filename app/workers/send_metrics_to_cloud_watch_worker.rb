@@ -97,7 +97,7 @@ class SendMetricsToCloudWatchWorker
 
   def send_prompt_reports_metrics
     namespace = "PromptReports/#{Rails.env}"
-    duration = {created_at: 5.minutes.ago..Time.zone.now}
+    duration = {created_at: 10.minutes.ago..Time.zone.now}
 
     CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, value|
       name = key.split('::').last

@@ -10,6 +10,8 @@ class CreatePromptReportWorker
     10.minutes
   end
 
+  # Because it is difficult to adjust the degree of parallelism,
+  # this job is executed by a background-worker instead of cron.
   # options:
   #   user_id
   #   index
