@@ -80,9 +80,18 @@ class CreatePromptReportRequest < ApplicationRecord
         user_id: user.id,
         uid: user.uid)
 
-    created_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
-    Unfriendship.import_by!(twitter_user: created_user)
-    Unfollowership.import_by!(twitter_user: created_user)
+    created_user = nil
+    ApplicationRecord.benchmark("#{self.class} #{id} create task start", level: :info) do
+     created_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
+    end
+
+    ApplicationRecord.benchmark("#{self.class} #{id} Unfriendship.import_by!", level: :info) do
+      Unfriendship.import_by!(twitter_user: created_user)
+    end
+
+    ApplicationRecord.benchmark("#{self.class} #{id} Unfollowership.import_by!", level: :info) do
+      Unfollowership.import_by!(twitter_user: created_user)
+    end
 
     created_user
   rescue CreateTwitterUserRequest::NotChanged, CreateTwitterUserRequest::RecentlyUpdated, CreateTwitterUserRequest::TooManyFriends => e
