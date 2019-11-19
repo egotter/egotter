@@ -48,7 +48,7 @@ class CreatePromptReportRequest < ApplicationRecord
     end
 
     ApplicationRecord.benchmark("#{self.class} #{id} Send report", level: :info) do
-      send_report!(changes, previous_twitter_user: persisted_twitter_user, current_twitter_user: latest_twitter_user, changed: unfollowers_changed)
+      send_report(changes, previous_twitter_user: persisted_twitter_user, current_twitter_user: latest_twitter_user, changed: unfollowers_changed)
     end
   end
 
@@ -105,60 +105,26 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def send_initialization_message!
-    DirectMessageRequest.new(internal_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.initialization_start')).perform
-    DirectMessageRequest.new(User.egotter.api_client.twitter, user.uid, I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: search_yourself_url)).perform
-
+    CreatePromptReportInitializationMessageWorker.perform_async(user.id, create_prompt_report_request_id: id)
     raise InitializationStarted
-  rescue Twitter::Error::Forbidden => e
-    if temporarily_dm_exception?(e)
-      if blocked_exception?(e)
-        CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-      end
-    else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-    end
-
-    raise InitializationFailed.new(e.message.truncate(100))
-  rescue InitializationStarted => e
-    raise
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-
-    raise InitializationFailed.new(e.message.truncate(100))
   end
 
-  def search_yourself_url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, via: 'prompt_report_search_yourself')
-  end
-
-  def send_report!(changes, previous_twitter_user:, current_twitter_user:, changed: true)
+  def send_report(changes, previous_twitter_user:, current_twitter_user:, changed: true)
     if changed
-      PromptReport.you_are_removed(user.id, changes_json: changes.to_json,
-                                   previous_twitter_user: previous_twitter_user, current_twitter_user: current_twitter_user).deliver
+      CreatePromptReportRemovedMessageWorker.perform_async(
+          user.id,
+          changes_json: changes.to_json,
+          previous_twitter_user_id: previous_twitter_user.id,
+          current_twitter_user_id: current_twitter_user.id,
+          create_prompt_report_request_id: id)
     else
-      PromptReport.not_changed(user.id, changes_json: changes.to_json,
-                               previous_twitter_user: previous_twitter_user, current_twitter_user: current_twitter_user).deliver
+      CreatePromptReportNotChangedMessageWorker.perform_async(
+          user.id,
+          changes_json: changes.to_json,
+          previous_twitter_user_id: previous_twitter_user.id,
+          current_twitter_user_id: current_twitter_user.id,
+          create_prompt_report_request_id: id)
     end
-  rescue Twitter::Error::Forbidden => e
-    if temporarily_dm_exception?(e)
-      if blocked_exception?(e)
-        CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-      end
-    elsif not_allowed_to_access_or_delete_dm_exception?(e)
-      # https://twittercommunity.com/t/updates-to-app-permissions-direct-message-write-permission-change/128221
-    else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
-      logger.info e.backtrace.join("\n")
-    end
-
-    raise DirectMessageNotSent.new("#{e.class}: #{e.message.truncate(100)}")
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect} #{changes.inspect}"
-    logger.info e.backtrace.join("\n")
-
-    raise DirectMessageNotSent.new("#{e.class}: #{e.message.truncate(100)}")
   end
 
   private
@@ -220,26 +186,6 @@ class CreatePromptReportRequest < ApplicationRecord
     raise Unknown.new(e.message)
   end
 
-  def temporarily_dm_exception?(ex)
-    if ex.class == Twitter::Error::Forbidden
-      ex.message == 'You cannot send messages to users you have blocked.' ||
-          ex.message == 'You cannot send messages to users who are not following you.' ||
-          ex.message == 'You are sending a Direct Message to users that do not follow you.' ||
-          ex.message == 'You cannot send messages to this user.' ||
-          ex.message == "This request looks like it might be automated. To protect our users from spam and other malicious activity, we can't complete this action right now. Please try again later."
-    end
-  end
-
-  def not_allowed_to_access_or_delete_dm_exception?(ex)
-    if ex.class == Twitter::Error::Forbidden
-      ex.message == 'This application is not allowed to access or delete your direct messages.'
-    end
-  end
-
-  def blocked_exception?(ex)
-    ex.class == Twitter::Error::Forbidden && ex.message == 'You cannot send messages to users you have blocked.'
-  end
-
   def fetch_user
     @fetch_user ||= client.user(user.uid)
   rescue Twitter::Error::Forbidden => e
@@ -250,14 +196,6 @@ class CreatePromptReportRequest < ApplicationRecord
       logger.info e.backtrace.join("\n")
       raise Unknown.new(e.message)
     end
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-    raise Unknown.new(e.message)
-  end
-
-  def friend_uids_and_follower_uids
-    client.friend_ids_and_follower_ids(user.uid)
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
     logger.info e.backtrace.join("\n")
