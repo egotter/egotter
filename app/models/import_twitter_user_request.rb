@@ -57,24 +57,27 @@ class ImportTwitterUserRequest < ApplicationRecord
   end
 
   def import_favorite_friendship
-    uids = FavoriteFriendship.import_by(twitter_user: twitter_user)
-    TwitterDB::User::Batch.fetch_and_import!(uids, client: client)
+    FavoriteFriendship.import_by(twitter_user: twitter_user).each_slice(100) do |uids|
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+    end
   rescue => e
     logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
     logger.info e.backtrace.join("\n")
   end
 
   def import_close_friendship
-    uids = CloseFriendship.import_by(twitter_user: twitter_user, login_user: user)
-    TwitterDB::User::Batch.fetch_and_import!(uids, client: client)
+    CloseFriendship.import_by(twitter_user: twitter_user, login_user: user).each_slice(100) do |uids|
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+    end
   rescue => e
     logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
     logger.info e.backtrace.join("\n")
   end
 
   def import_twitter_db_users
-    uids = [twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids
-    TwitterDB::User::Batch.fetch_and_import!(uids, client: client)
+    ([twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids).each_slice(100) do |uids|
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+    end
   rescue => e
     logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
     logger.info e.backtrace.join("\n")
