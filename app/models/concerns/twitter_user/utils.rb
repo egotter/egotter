@@ -15,8 +15,7 @@ module Concerns::TwitterUser::Utils
 
   included do
     scope :creation_completed, -> do
-      # friends_size != 0 AND followers_size != 0
-      where.not(friends_size: 0, followers_size: 0)
+      where.not('friends_size = 0 and followers_size = 0')
     end
 
     scope :has_user, -> do
