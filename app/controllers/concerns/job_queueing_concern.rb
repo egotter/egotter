@@ -17,8 +17,12 @@ module Concerns::JobQueueingConcern
     return if requests.exists?(uid)
     requests.add(uid)
 
-    request = CreateTwitterUserRequest.create(session_id: fingerprint, user_id: user_id, uid: uid, ahoy_visit_id: current_visit&.id)
-    request.update(requested_by: requested_by)
+    request = CreateTwitterUserRequest.create(
+        requested_by: requested_by,
+        session_id: fingerprint,
+        user_id: user_id,
+        uid: uid,
+        ahoy_visit_id: current_visit&.id)
 
     if user_signed_in?
       CreateSignedInTwitterUserWorker.perform_async(request.id, enqueued_at: Time.zone.now)

@@ -20,7 +20,7 @@ module Concerns::TwitterUser::Persistence
       end
 
       ApplicationRecord.benchmark("Persistence##{__method__} Save relations to RDB #{id} #{screen_name}", level: :info) do
-        [TwitterDB::Status, TwitterDB::Mention, TwitterDB::Favorite].each do |klass|
+        [::TwitterDB::Status, ::TwitterDB::Mention, ::TwitterDB::Favorite].each do |klass|
           klass.import_by!(twitter_user: self)
         rescue => e
           logger.warn "Persistence##{__method__} #{klass}: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"

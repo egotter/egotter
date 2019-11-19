@@ -47,6 +47,21 @@ class CreatePromptReportRequest < ApplicationRecord
     raise TooManyFriends if SearchLimitation.too_many_friends?(twitter_user: twitter_user)
     raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
 
+    begin
+      create_request = CreateTwitterUserRequest.create(
+          requested_by: 'report',
+          user_id: user.id,
+          uid: user.uid)
+
+      user = CreateTwitterUserTask.new(create_request).start!.twitter_user
+      Unfriendship.import_by!(twitter_user: user)
+      Unfollowership.import_by!(twitter_user: user)
+    rescue CreateTwitterUserRequest::NotChanged, CreateTwitterUserRequest::RecentlyUpdated, CreateTwitterUserRequest::TooManyFriends => e
+    rescue => e
+      logger.warn "#{self.class} #{e.class} #{e.message} CreateTwitterUserTask is failed. #{create_request.inspect}"
+      logger.info e.backtrace.join("\n")
+    end
+
     friend_uids, follower_uids = friend_uids_and_follower_uids
     raise Unauthorized if friend_uids.nil? && follower_uids.nil?
 
