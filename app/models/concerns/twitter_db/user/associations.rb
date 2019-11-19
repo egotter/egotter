@@ -4,6 +4,7 @@ module Concerns::TwitterDB::User::Associations
   extend ActiveSupport::Concern
 
   class_methods do
+    # This method makes the result unique.
     def where_and_order_by_field(uids:)
       where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
         unless uids.size == users.size

@@ -17,6 +17,8 @@ module Api
         uids, size = summary_uids
 
         CreateTwitterDBUserWorker.perform_async(uids)
+
+        # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
 
         users = users.map {|user| Hashie::Mash.new(to_summary_hash(user))}
