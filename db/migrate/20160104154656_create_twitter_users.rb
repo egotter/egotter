@@ -8,8 +8,6 @@ class CreateTwitterUsers < ActiveRecord::Migration[4.2]
       t.integer :followers_size,  null: false, default: -1
       t.integer :friends_count,   null: false, default: -1
       t.integer :followers_count, null: false, default: -1
-      t.integer :search_count,    null: false, default: 0
-      t.integer :update_count,    null: false, default: 0
 
       t.timestamps null: false
 
