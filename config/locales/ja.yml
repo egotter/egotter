@@ -243,6 +243,13 @@ ja:
         note1: 'ボーナス検索回数 %{count} 回分をGET！'
         note2: 'egotter.com をツイートすると検索回数が増えます'
       notifications_title: "通知設定"
+      report_interval_title: "通知間隔"
+      report_interval_note: "通知の間隔は目安です"
+      report_interval:
+        3600: "1時間毎"
+        10800: "3時間毎"
+        21600: "6時間毎"
+        43200: "12時間毎"
       trial_title: "お試し機能 (β)"
       delete_tweets:
         title: "ツイート削除"
@@ -286,10 +293,10 @@ ja:
     tgl_btn:
       updated: "更新しました"
       desc:
-        email: "フォローを外されたことをメールでお知らせ。配信はなる早です。"
-        dm: "フォローを外されたことをDMでお知らせ。配信はなる早です。"
-        news: "新機能のお知らせが届きます。配信は不定期です。"
-        search: "あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。"
+        email_html: 'リムられ通知（メール）<br>フォローを外されたことを<span class="egotter-pink">メール</span>でお知らせ。'
+        dm_html: 'リムられ通知（DM）<br>フォローを外されたことを<span class="egotter-pink">DM</span>でお知らせ。'
+        news_html: '新機能のお知らせが届きます。配信は不定期です。'
+        search_html: 'あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。'
   pricing:
     new:
       plans: "料金プラン"

@@ -153,7 +153,7 @@ class CreatePromptReportRequest < ApplicationRecord
     CreatePromptReportLog.where(user_id: user_id).pluck(:error_class).any? {|err| err.include? 'Initialization' }
   end
 
-  INTERVAL = 30.minutes
+  INTERVAL = 1.hour
 
   def too_short_request_interval?
     self.class.where(user_id: user.id, created_at: INTERVAL.ago..Time.zone.now).

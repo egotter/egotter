@@ -135,6 +135,7 @@ Rails.application.routes.draw do
   resources :notifications, only: :index
   resources :settings, only: :index
   resource :setting, only: :update
+  post 'settings/update_report_interval', to: 'settings#update_report_interval', as: :update_report_interval
   get 'settings/follow_requests', to: "settings#follow_requests"
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
   get 'settings/create_prompt_requests', to: "settings#create_prompt_report_requests"

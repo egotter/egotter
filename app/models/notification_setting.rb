@@ -8,6 +8,7 @@
 #  news                  :boolean          default(TRUE), not null
 #  search                :boolean          default(TRUE), not null
 #  prompt_report         :boolean          default(TRUE), not null
+#  report_interval       :integer          default(0), not null
 #  last_email_at         :datetime
 #  last_dm_at            :datetime
 #  last_news_at          :datetime
@@ -30,6 +31,19 @@ class NotificationSetting < ApplicationRecord
   NEWS_INTERVAL          = Rails.env.production? ? 1.day      : 1.minutes
   SEARCH_INTERVAL        = Rails.env.production? ? 60.minutes : 1.minutes
   PROMPT_REPORT_INTERVAL = Rails.env.production? ? 60.minutes : 1.minutes
+
+  REPORT_INTERVAL_VALUES = [3600, 10800, 21600, 43200]
+
+  validates :report_interval, inclusion: {in: REPORT_INTERVAL_VALUES + [0]}
+
+  def self.report_interval_options
+    [
+        [I18n.t('settings.index.report_interval.3600'), NotificationSetting::REPORT_INTERVAL_VALUES[0]],
+        [I18n.t('settings.index.report_interval.10800'), NotificationSetting::REPORT_INTERVAL_VALUES[1]],
+        [I18n.t('settings.index.report_interval.21600'), NotificationSetting::REPORT_INTERVAL_VALUES[2]],
+        [I18n.t('settings.index.report_interval.43200'), NotificationSetting::REPORT_INTERVAL_VALUES[3]]
+    ]
+  end
 
   def dm_enabled?
     dm?
@@ -56,6 +70,7 @@ class NotificationSetting < ApplicationRecord
   end
 
   def dm_interval_ok?
-    last_dm_at.nil? || last_dm_at < DM_INTERVAL.ago
+    interval = REPORT_INTERVAL_VALUES.include?(report_interval) ? report_interval.seconds : DM_INTERVAL
+    last_dm_at.nil? || last_dm_at < interval.ago
   end
 end

@@ -17,6 +17,26 @@ function attach_event_handler(name, url) {
   });
 }
 
+function attach_report_interval_handler(url) {
+  var $selectbox = $('.settings #report_interval');
+
+  $selectbox.on('change', function () {
+    var name = 'report_interval';
+    var val = $(this).val();
+    console.log(name, val);
+
+    var params = {};
+    params[name] = val;
+    $.ajax({url: url, method: 'POST', data: params})
+        .done(function (res) {
+          console.log(res);
+        })
+        .fail(function (xhr) {
+          console.log(xhr.responseText);
+        });
+  });
+}
+
 var Settings = {};
 
 Settings.enableDeleteTweetsButton = function () {

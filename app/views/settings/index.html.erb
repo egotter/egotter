@@ -1,4 +1,8 @@
 <div class="settings">
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+
   <h2 class="h4 text-center"><%= t('.general_title') %></h2>
 
   <table class="table">
@@ -7,6 +11,7 @@
       <td><%= User.human_attribute_name(:screen_name) %></td>
       <td>
         <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
+        <%= link_to t('.reset_menu.update_profile'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default btn-xs' %>
       </td>
     </tr>
     <tr>
@@ -62,18 +67,52 @@
   </table>
 
   <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+
+  <h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
+  <div class="tgl-btns-wrapper">
+    <%= render partial: 'tgl_btn', collection: %i(dm email news search), as: :name %>
+  </div>
+
+  <div class="form-group">
+    <label for="report_interval" class="control-label col-xs-4"><%= t('.report_interval_title') %></label>
+    <div class="col-xs-8">
+      <% options = NotificationSetting.report_interval_options %>
+      <%= select_tag 'report_interval', options_for_select(options, selected: current_user.notification_setting.report_interval), class: 'form-control' %>
+      <div class="text-muted notes"><%= t('.report_interval_note') %></div>
+    </div>
+  </div>
+
+  <div class="clearfix"></div>
+  <div class="vertical-spacing"></div>
+
+  <table class="table trial">
+    <tbody>
+    <tr>
+      <td><%= t('.prompt_report.title') %></td>
+      <td>
+        <a class="btn btn-default" href="<%= settings_create_prompt_requests_path %>"><%= t('.prompt_report.see') %></a>
+        <div class="text-muted notes"><%= t('.prompt_report.note') %></div>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
 
   <h2 class="h4 text-center"><%= t('.reset_menu.title') %></h2>
 
   <table class="table">
     <tbody>
-    <tr>
-      <td><%= t('.reset_menu.profile') %></td>
-      <td>
-        <%= link_to t('.reset_menu.update_profile'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
-        <div class="text-muted notes"><%= t('.reset_menu.update_profile_note') %></div>
-      </td>
-    </tr>
     <tr>
       <td><%= t('.reset_cache.title') %></td>
       <td>
@@ -101,6 +140,11 @@
   </table>
 
   <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
 
   <h2 class="h4 text-center"><%= t('.update_histories.title') %></h2>
 
@@ -121,6 +165,11 @@
     </tbody>
   </table>
 
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
 
   <h2 class="h4 text-center"><%= t('.order.order_histories') %></h2>
@@ -157,6 +206,11 @@
   <% end %>
 
   <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
 
   <h2 class="h4 text-center"><%= t('.trial_title') %></h2>
 
@@ -186,23 +240,9 @@
   </table>
 
   <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
+  <div class="vertical-spacing"></div>
 
-  <h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
-  <div class="tgl-btns-wrapper">
-    <%= render partial: 'tgl_btn', collection: %i(email dm news search), as: :name %>
-  </div>
-
-  <table class="table trial">
-    <tbody>
-    <tr>
-      <td><%= t('.prompt_report.title') %></td>
-      <td>
-        <a class="btn btn-default" href="<%= settings_create_prompt_requests_path %>"><%= t('.prompt_report.see') %></a>
-        <div class="text-muted notes"><%= t('.prompt_report.note') %></div>
-      </td>
-    </tr>
-    </tbody>
-  </table>
 </div>
 
 <div class="modal fade" id="reset-egotter-modal" tabindex="-1" role="dialog">
@@ -258,5 +298,7 @@
     attach_event_handler('dm', url);
     attach_event_handler('news', url);
     attach_event_handler('search', url);
+
+    attach_report_interval_handler('<%= update_report_interval_path %>');
   });
 </script>
