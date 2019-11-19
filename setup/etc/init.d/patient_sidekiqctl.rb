@@ -217,7 +217,7 @@ def do_start(pidfile, options)
 end
 
 def do_restart(pidfile, options)
-  if Patient.stop(pidfile) && Patient.start(pidfile, options)
+  if Patient.quiet(pidfile) && Patient.stop(pidfile) && Patient.start(pidfile, options)
     success('restarting', options[:name])
   else
     failure('restarting', options[:name])
@@ -226,7 +226,7 @@ def do_restart(pidfile, options)
 end
 
 def do_force_restart(pidfile, options)
-  if Patient.quiet(pidfile) && Patient.stop(pidfile) && Patient.start(pidfile, options)
+  if Patient.stop(pidfile) && Patient.start(pidfile, options)
     success('force restarting', options[:name])
   else
     failure('force restarting', options[:name])
