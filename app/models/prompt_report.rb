@@ -49,13 +49,27 @@ class PromptReport < ApplicationRecord
   end
 
   class << self
-    def you_are_removed(user_id, changes_json:, new_unfollower_uids:)
+    def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
-      report.removed_uid = new_unfollower_uids.first if report.respond_to?(:removed_uid)
+      report.removed_uid = current_twitter_user.unfollowerships.pluck(:follower_uid).first
 
       message_builder = MessageBuilder.new(report.user, report.token)
-      message_builder.changes = JSON.parse(changes_json, symbolize_names: true)
-      message_builder.new_unfollower_uids = new_unfollower_uids
+      message_builder.previous_twitter_user = previous_twitter_user
+      message_builder.current_twitter_user = current_twitter_user
+      message_builder.build # If something is wrong, an error will occur here.
+
+      report.message_builder = message_builder
+      report
+    end
+
+    def not_changed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
+      report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
+      report.removed_uid = current_twitter_user.unfollowerships.pluck(:follower_uid).first
+
+      message_builder = NotChangedMessageBuilder.new(report.user, report.token)
+      message_builder.previous_twitter_user = previous_twitter_user
+      message_builder.current_twitter_user = current_twitter_user
+      message_builder.build # If something is wrong, an error will occur here.
 
       report.message_builder = message_builder
       report
@@ -98,8 +112,8 @@ class PromptReport < ApplicationRecord
 
   class MessageBuilder
     attr_reader :user, :token
-    attr_accessor :changes
-    attr_accessor :new_unfollower_uids
+    attr_accessor :previous_twitter_user
+    attr_accessor :current_twitter_user
 
     def initialize(user, token)
       @user = user
@@ -107,26 +121,27 @@ class PromptReport < ApplicationRecord
     end
 
     def build
-      template = Rails.root.join('app/views/prompt_reports/you_are_removed.ja.text.erb')
-      ERB.new(template.read).result_with_hash(
-          old_followers_count: changes[:followers_count][0],
-          new_followers_count: changes[:followers_count][1],
-          new_unfollowers: new_unfollowers,
-          generic_timeline_url: generic_timeline_url,
-          timeline_url: timeline_url,
-          settings_url: settings_url,
-      )
+      if instance_variable_defined?(:@message)
+        @message
+      else
+        template = Rails.root.join('app/views/prompt_reports/you_are_removed.ja.text.erb')
+        @message = ERB.new(template.read).result_with_hash(
+            previous_twitter_user: previous_twitter_user,
+            current_twitter_user: current_twitter_user,
+            new_unfollowers_size: (current_twitter_user.unfollowerships.pluck(:follower_uid) - previous_twitter_user.calc_unfollower_uids).size,
+            previous_created_at: I18n.l(previous_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
+            current_created_at: I18n.l(current_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
+            now: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
+            current_unfollowers_size: current_twitter_user.unfollowerships.size,
+            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(10),
+            generic_timeline_url: generic_timeline_url,
+            timeline_url: timeline_url,
+            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
+        )
+      end
     end
 
     private
-
-    def twitter_user
-      user.twitter_user
-    end
-
-    def new_unfollowers
-      @new_unfollowers ||= TwitterDB::User.where_and_order_by_field(uids: new_unfollower_uids.take(30))
-    end
 
     def generic_timeline_url
       @generic_timeline_url ||= Rails.application.routes.url_helpers.timeline_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
@@ -135,9 +150,46 @@ class PromptReport < ApplicationRecord
     def timeline_url
       Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
     end
+  end
 
-    def settings_url
-      @settings_url ||= Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
+  class NotChangedMessageBuilder
+    attr_reader :user, :token
+    attr_accessor :previous_twitter_user
+    attr_accessor :current_twitter_user
+
+    def initialize(user, token)
+      @user = user
+      @token = token
+    end
+
+    def build
+      if instance_variable_defined?(:@message)
+        @message
+      else
+        template = Rails.root.join('app/views/prompt_reports/not_changed.ja.text.erb')
+        @message = ERB.new(template.read).result_with_hash(
+            previous_twitter_user: previous_twitter_user,
+            current_twitter_user: current_twitter_user,
+            previous_created_at: I18n.l(previous_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
+            current_created_at: I18n.l(current_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
+            now: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
+            current_unfollowers_size: current_twitter_user.unfollowerships.size,
+            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(10),
+            generic_timeline_url: generic_timeline_url,
+            timeline_url: timeline_url,
+            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
+        )
+      end
+    end
+
+    private
+
+    def generic_timeline_url
+      @generic_timeline_url ||= Rails.application.routes.url_helpers.timeline_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
+    end
+
+    def timeline_url
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
     end
   end
 end

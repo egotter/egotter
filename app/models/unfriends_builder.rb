@@ -8,10 +8,14 @@ class UnfriendsBuilder
     # end
   end
 
+  # Format:
+  #   [[1, 2, 3], [4, 5, 6], [7, 8, 9] ...]
   def unfriends
     @users.each_cons(2).map {|older, newer| Util.unfriends(older, newer)}.compact.reverse
   end
 
+  # Format:
+  #   [[1, 2, 3], [4, 5, 6], [7, 8, 9] ...]
   def unfollowers
     @users.each_cons(2).map {|older, newer| Util.unfollowers(older, newer)}.compact.reverse
   end

@@ -53,6 +53,8 @@ module Concerns::TwitterUser::Associations
     end
 
     # Aliases of twitter_db_user.*
+    # IMPORTANT: The primary key of these associations is uid. If you update unfriendships,
+    # all other records of twitter_users return same unfriendships.
     with_options default_options.merge(primary_key: :uid, foreign_key: :from_uid) do |obj|
       obj.has_many :unfriendships,     order_by_sequence_asc
       obj.has_many :unfollowerships,   order_by_sequence_asc
