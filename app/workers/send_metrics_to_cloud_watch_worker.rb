@@ -17,7 +17,8 @@ class SendMetricsToCloudWatchWorker
     %i(send_google_analytics_metrics
        send_sidekiq_metrics
        send_prompt_reports_metrics
-       send_search_error_logs_metrics).each do |method_name|
+       send_search_error_logs_metrics
+       send_create_twitter_user_logs_metrics).each do |method_name|
       send(method_name)
     rescue => e
       logger.warn "#{method_name} #{e.class} #{e.message}"
