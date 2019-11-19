@@ -74,6 +74,7 @@ class ImportTwitterUserRequest < ApplicationRecord
     logger.info e.backtrace.join("\n")
   end
 
+  # TODO Remove later. Currently, This importing is processed in CreateTwitterUserTask.
   def import_twitter_db_users
     ([twitter_user.uid] + twitter_user.friend_uids + twitter_user.follower_uids).each_slice(100) do |uids|
       CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)

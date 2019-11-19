@@ -35,7 +35,6 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     if twitter_user.save
       update(twitter_user_id: twitter_user.id)
-      CreateTwitterDBUserWorker.perform_async([uid])
       return twitter_user
     end
 

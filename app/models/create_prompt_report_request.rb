@@ -85,6 +85,8 @@ class CreatePromptReportRequest < ApplicationRecord
      created_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
     end
 
+    # TODO Create TwitterDB::User of imported uids
+
     ApplicationRecord.benchmark("#{self.class} #{id} Unfriendship.import_by!", level: :info) do
       Unfriendship.import_by!(twitter_user: created_user)
     end

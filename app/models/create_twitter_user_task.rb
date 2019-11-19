@@ -17,6 +17,10 @@ class CreateTwitterUserTask
     request.finished!
     @log.update(status: true)
 
+    ([@twitter_user.uid] + @twitter_user.friend_uids + @twitter_user.follower_uids).each_slice(100) do |uids|
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+    end
+
     self
   rescue => e
     @log.update(error_class: e.class, error_message: e.message)
