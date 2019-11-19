@@ -40,11 +40,11 @@ class CreatePromptReportRequest < ApplicationRecord
     raise RecordNotFound unless TwitterUser.exists?(uid: user.uid)
 
     raise Suspended if suspended?
-    raise TooManyFriends if too_many_friends?
+    raise TooManyFriends if SearchLimitation.too_many_friends?(user: user)
     raise Blocked if blocked?
 
     twitter_user = self.twitter_user
-    raise TooManyFriends if twitter_user.too_many_friends?(login_user: user)
+    raise TooManyFriends if SearchLimitation.too_many_friends?(twitter_user: twitter_user)
     raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
 
     friend_uids, follower_uids = friend_uids_and_follower_uids
@@ -164,10 +164,6 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def suspended?
     fetch_user[:suspended]
-  end
-
-  def too_many_friends?
-    TwitterUser.too_many_friends?(fetch_user, login_user: user)
   end
 
   def blocked?
