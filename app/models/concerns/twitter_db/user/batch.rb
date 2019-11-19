@@ -14,14 +14,6 @@ module Concerns::TwitterDB::User::Batch
       import_suspended(uids - users.map { |u| u[:id] }) if uids.size != imported.size
     end
 
-    def self.fetch_and_import(uids, client:)
-      fetch_and_import!(uids, client: client)
-    rescue => e
-      logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{uids.inspect.truncate(100)}"
-      logger.info e.backtrace.join("\n")
-      []
-    end
-
     def self.fetch(uids, client:)
       client.users(uids)
     rescue Twitter::Error::NotFound => e

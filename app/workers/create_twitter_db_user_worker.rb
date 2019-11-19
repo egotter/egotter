@@ -12,9 +12,12 @@ class CreateTwitterDBUserWorker
     if options['compressed']
       uids = decompress(uids)
     end
-    TwitterDB::User::Batch.fetch_and_import(uids.map(&:to_i), client: Bot.api_client)
+
+    client = Bot.api_client
+    TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{uids.inspect.truncate(150)}"
+    logger.warn client.inspect
     logger.info e.backtrace.join("\n")
   end
 
