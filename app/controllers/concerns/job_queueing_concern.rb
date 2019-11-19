@@ -6,7 +6,7 @@ module Concerns::JobQueueingConcern
   included do
   end
 
-  def enqueue_create_twitter_user_job_if_needed(uid, user_id:)
+  def enqueue_create_twitter_user_job_if_needed(uid, user_id:, requested_by: '')
     return if from_crawler?
     return if !user_signed_in? && via_dm?
     return if uid == User::EGOTTER_UID
@@ -18,6 +18,7 @@ module Concerns::JobQueueingConcern
     requests.add(uid)
 
     request = CreateTwitterUserRequest.create(session_id: fingerprint, user_id: user_id, uid: uid, ahoy_visit_id: current_visit&.id)
+    request.update(requested_by: requested_by)
 
     if user_signed_in?
       CreateSignedInTwitterUserWorker.perform_async(request.id, enqueued_at: Time.zone.now)

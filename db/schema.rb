@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_04_07_014044) do
+ActiveRecord::Schema.define(version: 2019_11_18_165120) do
 
   create_table "ahoy_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "visit_id"
@@ -303,6 +303,7 @@ ActiveRecord::Schema.define(version: 2019_04_07_014044) do
     t.integer "user_id", null: false
     t.bigint "uid", null: false
     t.integer "twitter_user_id"
+    t.string "requested_by", default: "", null: false
     t.datetime "finished_at"
     t.bigint "ahoy_visit_id"
     t.datetime "created_at", null: false
@@ -1062,8 +1063,7 @@ ActiveRecord::Schema.define(version: 2019_04_07_014044) do
     t.integer "followers_size", default: -1, null: false
     t.integer "friends_count", default: -1, null: false
     t.integer "followers_count", default: -1, null: false
-    t.integer "search_count", default: 0, null: false
-    t.integer "update_count", default: 0, null: false
+    t.string "created_by", default: "", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_twitter_users_on_created_at"

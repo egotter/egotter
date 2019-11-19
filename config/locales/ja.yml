@@ -1112,8 +1112,6 @@ ja:
         friend_uids: "フォローIDs"
         follower_uids: "フォロワーIDs"
         statuses: "ツイート"
-        search_count: "検索回数"
-        update_count: "自動更新回数"
         created_at: "作成日時"
         updated_at: "更新日時"
       usage_stat:

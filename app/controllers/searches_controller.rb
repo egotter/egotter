@@ -29,7 +29,7 @@ class SearchesController < ApplicationController
     if TwitterUser.exists?(uid: @twitter_user.uid)
       redirect_to redirect_path
     else
-      jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id)
+      jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, requested_by: 'search')
       redirect_to waiting_path(uid: @twitter_user.uid, redirect_path: redirect_path, jid: jid, via: build_via)
     end
   end
