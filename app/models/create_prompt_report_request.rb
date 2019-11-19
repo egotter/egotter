@@ -53,9 +53,9 @@ class CreatePromptReportRequest < ApplicationRecord
           user_id: user.id,
           uid: user.uid)
 
-      user = CreateTwitterUserTask.new(create_request).start!.twitter_user
-      Unfriendship.import_by!(twitter_user: user)
-      Unfollowership.import_by!(twitter_user: user)
+      _user = CreateTwitterUserTask.new(create_request).start!.twitter_user
+      Unfriendship.import_by!(twitter_user: _user)
+      Unfollowership.import_by!(twitter_user: _user)
     rescue CreateTwitterUserRequest::NotChanged, CreateTwitterUserRequest::RecentlyUpdated, CreateTwitterUserRequest::TooManyFriends => e
     rescue => e
       logger.warn "#{self.class} #{e.class} #{e.message} CreateTwitterUserTask is failed. #{create_request.inspect}"
