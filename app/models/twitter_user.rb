@@ -10,8 +10,7 @@
 #  followers_size  :integer          default(-1), not null
 #  friends_count   :integer          default(-1), not null
 #  followers_count :integer          default(-1), not null
-#  search_count    :integer          default(0), not null
-#  update_count    :integer          default(0), not null
+#  created_by      :string(191)      default(""), not null
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #
