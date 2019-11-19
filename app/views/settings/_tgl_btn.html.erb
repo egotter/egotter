@@ -4,9 +4,7 @@
     <%= check_box_tag name, true, val, {id: "#{name}-input", class: 'tgl tgl-ios'} %>
     <label class='tgl-btn' for="<%= name %>-input"></label>
   </div>
-  <div class="table-cell-right"><%= t(".desc.#{name}") %></div>
+  <div class="table-cell-right"><%= t(".desc.#{name}_html") %></div>
 </div>
 
-<% if name_counter <= 2 %>
-  <hr>
-<% end %>
+<hr>

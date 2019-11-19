@@ -25,6 +25,14 @@ class SettingsController < ApplicationController
     head :internal_server_error
   end
 
+  def update_report_interval
+    current_user.notification_setting.update!(report_interval: params[:report_interval])
+    render json: {report_interval: current_user.notification_setting.report_interval}
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
+    head :internal_server_error
+  end
+
   def follow_requests
     @requests = current_user.follow_requests.limit(20)
   end

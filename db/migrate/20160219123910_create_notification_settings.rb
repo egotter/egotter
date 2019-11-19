@@ -6,6 +6,7 @@ class CreateNotificationSettings < ActiveRecord::Migration[4.2]
       t.boolean :news,                   null: false, default: true
       t.boolean :search,                 null: false, default: true
       t.boolean :prompt_report,          null: false, default: true
+      t.integer :report_interval,       null: false, default: 0
 
       t.datetime :last_email_at,         null: true
       t.datetime :last_dm_at,            null: true
