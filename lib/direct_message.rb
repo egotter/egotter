@@ -5,10 +5,10 @@ class DirectMessage
   end
 
   def id
-    @response[:event][:id]
+    @response.dig(:event, :id)
   end
 
   def text
-    @response[:event][:message_create][:message_data][:text]
+    @response.dig(:event, :mesnilsage_create, :message_data, :text)
   end
 end

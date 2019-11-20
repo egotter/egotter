@@ -31,7 +31,7 @@ class WelcomeMessage < ApplicationRecord
     end
   end
 
-  def deliver
+  def deliver!
     DirectMessageRequest.new(user_client, User::EGOTTER_UID, I18n.t('dm.welcomeMessage.lets_start')).perform
     button = {label: I18n.t('dm.welcomeMessage.timeline_page', screen_name: screen_name), url: timeline_url}
     resp = DirectMessageRequest.new(egotter_client, user.uid, build_message, [button]).perform

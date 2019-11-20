@@ -10,7 +10,7 @@ class CreateWelcomeMessageWorker
     user = User.find(user_id)
     return unless user.authorized?
 
-    WelcomeMessage.welcome(user.id).deliver
+    WelcomeMessage.welcome(user.id).deliver!
 
   rescue Twitter::Error::Unauthorized => e
     unless e.message == 'Invalid or expired token.'
