@@ -3,18 +3,19 @@
 # Table name: notification_settings
 #
 #  id                    :integer          not null, primary key
+#  user_id               :integer          not null
 #  email                 :boolean          default(TRUE), not null
 #  dm                    :boolean          default(TRUE), not null
 #  news                  :boolean          default(TRUE), not null
 #  search                :boolean          default(TRUE), not null
 #  prompt_report         :boolean          default(TRUE), not null
 #  report_interval       :integer          default(0), not null
+#  permission_level      :string(191)
 #  last_email_at         :datetime
 #  last_dm_at            :datetime
 #  last_news_at          :datetime
 #  search_sent_at        :datetime
 #  prompt_report_sent_at :datetime
-#  user_id               :integer          not null
 #  created_at            :datetime         not null
 #  updated_at            :datetime         not null
 #
