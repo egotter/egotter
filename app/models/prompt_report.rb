@@ -133,7 +133,7 @@ class PromptReport < ApplicationRecord
             current_created_at: I18n.l(current_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
             now: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
             current_unfollowers_size: current_twitter_user.unfollowerships.size,
-            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(10),
+            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(5),
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
             settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
@@ -174,7 +174,7 @@ class PromptReport < ApplicationRecord
             current_created_at: I18n.l(current_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
             now: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
             current_unfollowers_size: current_twitter_user.unfollowerships.size,
-            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(10),
+            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(5),
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
             settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
