@@ -51,4 +51,41 @@ namespace :notification_settings do
       break if sigint.trapped?
     end
   end
+
+  desc 'update report_interval'
+  task update_report_interval: :environment do
+    sigint = Util::Sigint.new.trap
+
+    # Avoid circular dependency
+    ApiClient
+    PermissionLevelClient
+    CacheDirectory
+
+    green = -> (str) {print "\e[32m#{str}\e[0m"}
+    red = -> (str) {print "\e[31m#{str}\e[0m"}
+    start = ENV['START'] ? ENV['START'].to_i : 1
+
+    NotificationSetting.find_in_batches(start: start, batch_size: 1000) do |settings|
+      Parallel.each(settings, in_threads: 10) do |setting|
+        if setting.report_interval == 0
+          setting.report_interval = 43200
+          green.call('.')
+        else
+          red.call('.')
+        end
+      end
+
+      puts "\n"
+
+      interval_changed = settings.select { |setting| setting.report_interval_changed? }
+      if interval_changed.any?
+        puts "Import interval_changed #{interval_changed.size}"
+        Rails.logger.silence { NotificationSetting.import(interval_changed, on_duplicate_key_update: %i(report_interval), validate: false, timestamps: false) }
+      end
+
+      puts "Last id #{settings[-1].id}"
+
+      break if sigint.trapped?
+    end
+  end
 end
