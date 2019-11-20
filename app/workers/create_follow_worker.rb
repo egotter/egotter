@@ -6,12 +6,7 @@ class CreateFollowWorker
   #   enqueue_location
   def perform(request_id, options = {})
     request = FollowRequest.find(request_id)
-    log = CreateFollowLog.create_by(request: request)
-
-    request.perform!
-    request.finished!
-
-    log.update(status: true)
+    CreateFollowTask.new(request).start!
 
   rescue FollowRequest::TooManyRetries,
       FollowRequest::Unauthorized,
@@ -22,7 +17,6 @@ class CreateFollowWorker
       FollowRequest::AlreadyRequestedToFollow,
       FollowRequest::AlreadyFollowing => e
 
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
     request.update(error_class: e.class, error_message: e.message.truncate(100))
     request.finished!
 
@@ -30,18 +24,23 @@ class CreateFollowWorker
       logger.warn "Stop retrying #{e.class} #{e.message} #{request.inspect} #{request.logs.pluck(:error_class).inspect}"
     end
   rescue FollowRequest::TooManyFollows => e
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
     logger.warn "#{e.class} Sleep for 1 hour"
     sleep 1.hour
     CreateFollowWorker.perform_async(request_id, options)
   rescue FollowRequest::Error => e
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
     CreateFollowWorker.perform_async(request_id, options)
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{request_id} #{options.inspect}"
     logger.info e.backtrace.join("\n")
 
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
     CreateFollowWorker.perform_async(request_id, options)
+  end
+
+  def fetch_one
+    request = FollowRequest.where(finished_at: nil).
+        where(uid: User::EGOTTER_UID).
+        where(error_class: '').
+        order(created_at: :desc).first
+    CreateFollowWorker.perform_async(request.id)
   end
 end
