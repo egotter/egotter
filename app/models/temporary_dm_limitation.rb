@@ -18,9 +18,8 @@ class TemporaryDmLimitation
 
     # https://twittercommunity.com/t/updates-to-app-permissions-direct-message-write-permission-change/128221
     def not_allowed_to_access_or_delete_dm?(ex)
-      if ex.class == Twitter::Error::Forbidden &&
+      ex.class == Twitter::Error::Forbidden &&
           ex.message == 'This application is not allowed to access or delete your direct messages.'
-      end
     end
   end
 end
