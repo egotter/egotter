@@ -56,6 +56,7 @@ class FriendsGroupBuilder
     module_function
 
     # Fetch users over an entire period with limit
+    # Separated for test
     def users(uid, limit:)
       TwitterUser.creation_completed.
           where(uid: uid).

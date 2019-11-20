@@ -24,11 +24,13 @@ class UnfriendsBuilder
     module_function
 
     # Fetch users that are created before the specified date without limit
-    def users(uid, created_at)
+    # Separated for test
+    def users(uid, created_at, limit: 1000)
       TwitterUser.creation_completed.
           where('created_at <= ?', created_at).
           where(uid: uid).select(:id).
-          order(created_at: :asc)
+          order(created_at: :asc).
+          limit(limit)
     end
 
     def unfriends(older, newer)
