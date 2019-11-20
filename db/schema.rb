@@ -579,6 +579,7 @@ ActiveRecord::Schema.define(version: 2019_11_18_165120) do
   end
 
   create_table "notification_settings", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
     t.boolean "email", default: true, null: false
     t.boolean "dm", default: true, null: false
     t.boolean "news", default: true, null: false
@@ -590,7 +591,6 @@ ActiveRecord::Schema.define(version: 2019_11_18_165120) do
     t.datetime "last_news_at"
     t.datetime "search_sent_at"
     t.datetime "prompt_report_sent_at"
-    t.integer "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_notification_settings_on_user_id", unique: true

@@ -1,6 +1,7 @@
 class CreateNotificationSettings < ActiveRecord::Migration[4.2]
   def change
     create_table :notification_settings do |t|
+      t.integer  :user_id,               null: false
       t.boolean :email,                  null: false, default: true
       t.boolean :dm,                     null: false, default: true
       t.boolean :news,                   null: false, default: true
@@ -13,7 +14,6 @@ class CreateNotificationSettings < ActiveRecord::Migration[4.2]
       t.datetime :last_news_at,          null: true
       t.datetime :search_sent_at,        null: true
       t.datetime :prompt_report_sent_at, null: true
-      t.integer  :user_id,               null: false
 
       t.timestamps null: false
     end
