@@ -38,7 +38,7 @@ class WelcomeMessage < ApplicationRecord
     dm = DirectMessage.new(resp)
 
     transaction do
-      update!(message_id: dm.id, message: truncated_message(dm))
+      update!(message_id: dm.id, message: dm.truncated_message)
     end
 
     dm

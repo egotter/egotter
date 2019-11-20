@@ -32,7 +32,7 @@ class NewsReport < ApplicationRecord
     dm = DirectMessage.new(resp)
 
     ActiveRecord::Base.transaction do
-      update!(message_id: dm.id, message: truncated_message(dm))
+      update!(message_id: dm.id, message: dm.truncated_message)
       user.notification_setting.update!(last_news_at: Time.zone.now)
     end
 

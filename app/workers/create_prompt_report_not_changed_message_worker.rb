@@ -20,7 +20,7 @@ class CreatePromptReportNotChangedMessageWorker
         changes_json: options['changes_json'],
         previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
         current_twitter_user: TwitterUser.find(options['current_twitter_user_id'])
-    ).deliver
+    ).deliver!
 
   rescue => e
     if TemporaryDmLimitation.temporarily_locked?(e)

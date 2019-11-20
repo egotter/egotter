@@ -32,7 +32,7 @@ class PromptReport < ApplicationRecord
     @last_changes ||= JSON.parse(changes_json, symbolize_names: true)
   end
 
-  def deliver
+  def deliver!
     user.api_client.verify_credentials
 
     send_starting_message
@@ -40,8 +40,13 @@ class PromptReport < ApplicationRecord
 
     dm = DirectMessage.new(resp)
 
+    if dm.id.blank? || dm.truncated_message.blank?
+      logger.warn "#{self.class}##{__method__} dm_id or dm_message is blank."
+      logger.info resp.inspect
+    end
+
     ActiveRecord::Base.transaction do
-      update!(message_id: dm.id, message: truncated_message(dm))
+      update!(message_id: dm.id, message: dm.truncated_message)
       user.notification_setting.update!(last_dm_at: Time.zone.now)
     end
 

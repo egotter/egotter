@@ -36,7 +36,7 @@ class SearchReport < ApplicationRecord
     dm = DirectMessage.new(resp)
 
     transaction do
-      update!(message_id: dm.id, message: truncated_message(dm))
+      update!(message_id: dm.id, message: dm.truncated_message)
       user.notification_setting.update!(search_sent_at: Time.zone.now)
     end
 
