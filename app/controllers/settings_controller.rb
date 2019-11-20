@@ -3,6 +3,9 @@ class SettingsController < ApplicationController
   before_action :require_login!
   before_action :create_search_log
 
+  before_action(only: %i(index)) { signed_in_user_authorized? }
+  before_action(only: %i(index)) { enough_permission_level? }
+
   def index
     @update_histories = UpdateHistories.new(current_user.uid)
     @reset_egotter_request = current_user.reset_egotter_requests.not_finished.exists?
