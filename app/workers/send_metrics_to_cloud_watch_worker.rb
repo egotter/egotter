@@ -68,7 +68,12 @@ class SendMetricsToCloudWatchWorker
 
     dimensions = [{name: 'rt:total', value: 'total'}]
     options = {namespace: namespace, dimensions: dimensions}
-    client.put_metric_data('rt:activeUsers', GoogleAnalyticsClient.new.active_users, options)
+    begin
+      active_users = GoogleAnalyticsClient.new.active_users
+      client.put_metric_data('rt:activeUsers', active_users, options)
+    rescue => e
+      logger.warn "#{e.class} #{e.message} activeUsers=#{active_users} #{options.inspect}"
+    end
 
     # There are many kinds of sources.
     # [["DESKTOP", "(none)", "(direct)", "NEW", "0"],
@@ -84,15 +89,15 @@ class SendMetricsToCloudWatchWorker
       next if active_users.to_i <= 3
       dimensions = [
           {name: 'rt:deviceCategory', value: device_category},
-          {name: 'rt:medium', value: medium},
-          {name: 'rt:source', value: source},
+          {name: 'rt:medium', value: encode(medium)},
+          {name: 'rt:source', value: encode(source)},
           {name: 'rt:userType', value: user_type}
       ]
 
       options = {namespace: namespace, dimensions: dimensions}
       client.put_metric_data('rt:activeUsers', active_users, options)
     rescue => e
-      logger.warn "#{e.class} #{e.message} device_category=#{device_category} medium=#{medium} source=#{source} user_type=#{user_type} active_users=#{active_users}"
+      logger.warn "#{e.class} #{e.message} device_category=#{device_category} medium=#{encode(medium)} source=#{encode(source)} user_type=#{user_type} active_users=#{active_users}"
     end
   end
 
@@ -155,5 +160,15 @@ class SendMetricsToCloudWatchWorker
 
   def client
     @client ||= CloudWatchClient.new
+  end
+
+  def encode(str)
+    options = {
+        invalid: :replace,
+        undef: :replace,
+        replace: '',
+        universal_newline: true
+    }
+    str.encode(Encoding.find('ASCII'), options)
   end
 end
