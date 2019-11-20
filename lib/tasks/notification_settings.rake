@@ -21,6 +21,9 @@ namespace :notification_settings do
         rescue Twitter::Error::ServiceUnavailable => e
           puts "#{e.class} #{e.message}"
           retry
+        rescue HTTP::ConnectionError => e
+          puts "#{e.class} #{e.message}"
+          retry
         rescue => e
           if e.message == 'Invalid or expired token.'
             user.authorized = false
