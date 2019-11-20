@@ -36,11 +36,11 @@ class CreateFollowWorker
     CreateFollowWorker.perform_async(request_id, options)
   end
 
-  def fetch_one
+  def self.fetch_one
     request = FollowRequest.where(finished_at: nil).
         where(uid: User::EGOTTER_UID).
         where(error_class: '').
         order(created_at: :desc).first
-    CreateFollowWorker.perform_async(request.id)
+    CreateFollowWorker.perform_async(request.id) if request
   end
 end
