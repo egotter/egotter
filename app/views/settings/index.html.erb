@@ -11,7 +11,7 @@
       <td><%= User.human_attribute_name(:screen_name) %></td>
       <td>
         <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
-        <%= link_to t('.reset_menu.update_profile'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default btn-xs' %>
+        <%= link_to t('.reset_menu.update_profile_html'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default btn-xs' %>
       </td>
     </tr>
     <tr>
@@ -74,7 +74,19 @@
   <div class="vertical-spacing"></div>
 
   <h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
+
+  <hr>
+
+  <div class="col-xs-4"><%= t('.report_is_not_coming') %></div>
+  <div class="col-xs-8">
+    <div><%= t('.update_authorized_for_dm_note_html') %></div>
+    <%= link_to t('.update_authorized_for_dm'), sign_in_path(force_login: true, via: build_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
+  </div>
+
+  <div class="clearfix"></div>
+
   <div class="tgl-btns-wrapper">
+    <hr>
     <%= render partial: 'tgl_btn', collection: %i(dm email news search), as: :name %>
   </div>
 

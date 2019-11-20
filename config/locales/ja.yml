@@ -206,12 +206,14 @@ ja:
     index:
       general_title: "ユーザー情報"
       update_authorized: 'ログイン連携を更新する'
+      update_authorized_for_dm: 'リムられ通知を復活させる'
+      update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。'
       update_following: '@ego_tter をフォローする'
-      update_sharing: 'egotter.com をツイートする'
+      update_sharing: '詳しく見る'
       reset_menu:
         title: 'データのリセット'
         profile: 'ユーザー情報'
-        update_profile: 'ユーザー情報を更新する'
+        update_profile_html: '更新する&nbsp;<i class="fas fa-sync"></i>'
         update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
       update_histories:
         title: '更新履歴'
@@ -243,6 +245,7 @@ ja:
         note1: 'ボーナス検索回数 %{count} 回分をGET！'
         note2: 'egotter.com をツイートすると検索回数が増えます'
       notifications_title: "通知設定"
+      report_is_not_coming: "リムられ通知がこない場合"
       report_interval_title: "通知間隔"
       report_interval_note: "通知の間隔は目安です"
       report_interval:

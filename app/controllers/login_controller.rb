@@ -19,10 +19,12 @@ class LoginController < ApplicationController
       session[:sign_in_ab_test] = params['ab_test']
     end
 
+    force_login = params[:force_login] && params[:force_login] == 'true'
+
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
     session[:sign_in_tweet] = 'true' == params[:tweet] ? 'true' : 'false'
     session[:redirect_path] = params[:redirect_path].presence || root_path
-    redirect_to '/users/auth/twitter'
+    redirect_to "/users/auth/twitter?force_login=#{force_login}"
   end
 
   # This implementation is for logging.
