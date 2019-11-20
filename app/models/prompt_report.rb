@@ -42,7 +42,7 @@ class PromptReport < ApplicationRecord
 
     if dm.id.blank? || dm.truncated_message.blank?
       logger.warn "#{self.class}##{__method__} dm_id or dm_message is blank."
-      logger.info resp.inspect
+      logger.info JSON.pretty_generate(resp) rescue nil
     end
 
     ActiveRecord::Base.transaction do
