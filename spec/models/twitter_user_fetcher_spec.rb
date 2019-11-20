@@ -6,7 +6,7 @@ RSpec.describe TwitterUserFetcher do
 
   describe '#reject_relation_names' do
     context '#too_many_friends? returns true' do
-      before { allow(twitter_user).to receive(:too_many_friends?).and_return(true) }
+      before { allow(SearchLimitation).to receive(:too_many_friends?).and_return(true) }
 
       it 'includes :friend_ids and :follower_ids' do
         candidates = fetcher.send(:reject_relation_names)

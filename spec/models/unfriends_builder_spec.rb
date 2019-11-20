@@ -38,7 +38,7 @@ RSpec.describe UnfriendsBuilder::Util do
       build(:twitter_user, uid: uid, created_at: time + 1.second).save!(validate: false)
       build(:twitter_user, uid: uid, created_at: time + 2.second).tap do |user|
         user.save!(validate: false)
-        user.update(friends_size: 0)
+        user.update(friends_size: 0, followers_size: 0)
       end
       (@user = build(:twitter_user, uid: uid, created_at: time + 3.second)).save!(validate: false)
       build(:twitter_user, uid: uid, created_at: time + 4.second).save!(validate: false)

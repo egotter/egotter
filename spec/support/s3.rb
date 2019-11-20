@@ -5,7 +5,7 @@ module StoreToFile
     d
   end
 
-  def store(key, body)
+  def store(key, body, async: true)
     raise 'key is nil' if key.nil?
     File.write(File.join(dir, key.to_s), body)
   end

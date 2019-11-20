@@ -48,6 +48,7 @@ RSpec.describe TimelinesController, type: :controller do
       context 'With signed in' do
         before do
           allow(controller).to receive(:user_signed_in?).with(no_args).and_return(true)
+          allow(controller).to receive(:current_user).with(no_args).and_return(build(:user, authorized: true))
           allow(controller).to receive(:request_context_client).and_raise(RuntimeError, 'You have been blocked')
         end
         it do
