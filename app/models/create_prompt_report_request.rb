@@ -118,7 +118,8 @@ class CreatePromptReportRequest < ApplicationRecord
   PROCESS_REQUEST_INTERVAL = 1.hour
 
   def too_short_request_interval?
-    self.class.where(user_id: user.id, created_at: PROCESS_REQUEST_INTERVAL.ago..Time.zone.now).
+    self.class.where(user_id: user.id).
+        where(created_at: PROCESS_REQUEST_INTERVAL.ago..Time.zone.now).
         where.not(id: id).exists?
   end
 

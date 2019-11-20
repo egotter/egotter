@@ -1,9 +1,9 @@
 <%=
-  # set default values
-  display_meta_tags(
-      description: t('home.new.page_description'),
-      title: "#{'[dev] ' if Rails.env.development?}#{t('home.new.page_title')}",
-      og: {
+  og_tag =
+    if params[:og_tag] == 'false'
+      {}
+    else
+      {
           title: :title,
           type: (action_name == 'new' ? 'website' : 'article'),
           url: request.original_url,
@@ -12,5 +12,12 @@
           description: :description,
           locale: 'ja_JP'
       }
+    end
+
+  # set default values
+  display_meta_tags(
+      description: t('home.new.page_description'),
+      title: "#{'[dev] ' if Rails.env.development?}#{t('home.new.page_title')}",
+      og: og_tag
   )
 %>
