@@ -18,6 +18,8 @@ class CreatePromptReportInitializationMessageWorker
     DirectMessageRequest.new(user.api_client.twitter, User::EGOTTER_UID, message1).perform
     DirectMessageRequest.new(User.egotter.api_client.twitter, user.uid, message2).perform
 
+    log(options).update(status: false, error_class: CreatePromptReportRequest::InitializationStarted)
+
   rescue => e
     if TemporaryDmLimitation.temporarily_locked?(e)
       if TemporaryDmLimitation.you_have_blocked?(e)
@@ -30,10 +32,14 @@ class CreatePromptReportInitializationMessageWorker
     end
 
     ex = CreatePromptReportRequest::DirectMessageNotSent.new("#{e.class}: #{e.message}")
-    CreatePromptReportLog.find_by(request_id: options['create_prompt_report_request_id']).update(status: false, error_class: ex.class, error_message: ex.message)
+    log(options).update(status: false, error_class: ex.class, error_message: ex.message)
   end
 
   def timeline_url(screen_name)
     Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, via: 'prompt_report_search_yourself')
+  end
+
+  def log(options)
+    CreatePromptReportLog.find_by(request_id: options['create_prompt_report_request_id'])
   end
 end

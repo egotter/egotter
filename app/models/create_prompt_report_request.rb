@@ -22,47 +22,40 @@ class CreatePromptReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
-    validate!
+    validate! unless @validated
 
-    persisted_twitter_user = TwitterUser.latest_by(uid: user.uid)
-    raise TooManyFriends if SearchLimitation.too_many_friends?(twitter_user: persisted_twitter_user)
-    raise MaybeImportBatchFailed if persisted_twitter_user.no_need_to_import_friendships?
-
-    latest_twitter_user = nil
-    ApplicationRecord.benchmark("#{self.class} #{id} Create twitter_user", level: :info) do
-      latest_twitter_user = create_twitter_user
+    unless TwitterUser.exists?(uid: user.uid)
+      send_initialization_message
+      return
     end
 
+    current_twitter_user = TwitterUser.latest_by(uid: user.uid)
+    previous_twitter_user = TwitterUser.where.not(id: current_twitter_user.id).order(created_at: :desc).find_by(uid: user.uid)
+    previous_twitter_user = current_twitter_user unless previous_twitter_user
+
     changes = unfollowers_changed = nil
+
     ApplicationRecord.benchmark("#{self.class} #{id} Setup parameters", level: :info) do
-      if latest_twitter_user
-        changes = {followers_count: [persisted_twitter_user.follower_uids.size, latest_twitter_user.follower_uids.size]}
-        previous_uids = persisted_twitter_user.calc_unfollower_uids
-        current_uids = latest_twitter_user.unfollowerships.pluck(:follower_uid)
-        unfollowers_changed = previous_uids != current_uids
-      else
-        latest_twitter_user = persisted_twitter_user
-        changes = {followers_count: [persisted_twitter_user.follower_uids.size, latest_twitter_user.follower_uids.size]}
-        unfollowers_changed = false
-      end
+      previous_uids = previous_twitter_user.calc_unfollower_uids
+      current_uids = current_twitter_user.unfollowerships.pluck(:follower_uid)
+      changes = {
+          twitter_user_id: [previous_twitter_user.id, current_twitter_user.id],
+          followers_count: [previous_twitter_user.follower_uids.size, current_twitter_user.follower_uids.size],
+          unfollowers_count: [previous_uids.size, current_uids.size],
+          removed_uid: [previous_uids.first, current_uids.first],
+      }
+      unfollowers_changed = previous_uids != current_uids
     end
 
     ApplicationRecord.benchmark("#{self.class} #{id} Send report", level: :info) do
-      send_report(changes, previous_twitter_user: persisted_twitter_user, current_twitter_user: latest_twitter_user, changed: unfollowers_changed)
+      send_report(changes, previous_twitter_user: previous_twitter_user, current_twitter_user: current_twitter_user, changed: unfollowers_changed)
     end
   end
 
   def validate!
     verify_credentials!
 
-    if twitter_user_not_exist?
-      if initialization_started?
-        raise TwitterUserNotPersisted
-      else
-        send_initialization_message!
-      end
-    end
-
+    raise PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
     raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
     raise ReportDisabled unless user.dm_enabled?
@@ -72,41 +65,18 @@ class CreatePromptReportRequest < ApplicationRecord
     raise UserSuspended if suspended?
     raise TooManyFriends if SearchLimitation.too_many_friends?(user: user)
     raise EgotterBlocked if blocked?
+
+    if TwitterUser.exists?(uid: user.uid)
+      twitter_user = TwitterUser.latest_by(uid: user.uid)
+      raise TooManyFriends if SearchLimitation.too_many_friends?(twitter_user: twitter_user)
+      raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
+    end
+
+    @validated = true
   end
 
-  def create_twitter_user
-    create_request = CreateTwitterUserRequest.create(
-        requested_by: 'report',
-        user_id: user.id,
-        uid: user.uid)
-
-    created_user = nil
-    ApplicationRecord.benchmark("#{self.class} #{id} create task start", level: :info) do
-     created_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
-    end
-
-    # TODO Create TwitterDB::User of imported uids
-
-    ApplicationRecord.benchmark("#{self.class} #{id} Unfriendship.import_by!", level: :info) do
-      Unfriendship.import_by!(twitter_user: created_user)
-    end
-
-    ApplicationRecord.benchmark("#{self.class} #{id} Unfollowership.import_by!", level: :info) do
-      Unfollowership.import_by!(twitter_user: created_user)
-    end
-
-    created_user
-  rescue CreateTwitterUserRequest::NotChanged, CreateTwitterUserRequest::RecentlyUpdated, CreateTwitterUserRequest::TooManyFriends => e
-    nil
-  rescue => e
-    logger.warn "#{self.class} #{e.class} #{e.message} CreateTwitterUserTask is failed. #{create_request.inspect}"
-    logger.info e.backtrace.join("\n")
-    nil
-  end
-
-  def send_initialization_message!
+  def send_initialization_message
     CreatePromptReportInitializationMessageWorker.perform_async(user.id, create_prompt_report_request_id: id)
-    raise InitializationStarted
   end
 
   def send_report(changes, previous_twitter_user:, current_twitter_user:, changed: true)
@@ -145,18 +115,10 @@ class CreatePromptReportRequest < ApplicationRecord
     raise Unknown.new(e.message)
   end
 
-  def twitter_user_not_exist?
-    !TwitterUser.exists?(uid: user.uid)
-  end
-
-  def initialization_started?
-    CreatePromptReportLog.where(user_id: user_id).pluck(:error_class).any? {|err| err.include? 'Initialization' }
-  end
-
-  INTERVAL = 1.hour
+  PROCESS_REQUEST_INTERVAL = 1.hour
 
   def too_short_request_interval?
-    self.class.where(user_id: user.id, created_at: INTERVAL.ago..Time.zone.now).
+    self.class.where(user_id: user.id, created_at: PROCESS_REQUEST_INTERVAL.ago..Time.zone.now).
         where.not(id: id).exists?
   end
 
@@ -226,6 +188,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class InitializationFailed < Error
+  end
+
+  class PermissionLevelNotEnough < DeadErrorTellsNoTales
   end
 
   class TooShortRequestInterval < DeadErrorTellsNoTales

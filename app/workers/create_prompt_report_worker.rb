@@ -18,28 +18,11 @@ class CreatePromptReportWorker
   #   start_next_loop
   #   queueing_started_at
   def perform(request_id, options = {})
-    options = options.with_indifferent_access
     request = CreatePromptReportRequest.find(request_id)
-    user = request.user
-
-    log = CreatePromptReportLog.create(
-        user_id: user.id,
-        request_id: request_id,
-        uid: user.uid,
-        screen_name: user.screen_name
-    )
-
-    ApplicationRecord.benchmark("CreatePromptReportRequest #{request_id} Perform request", level: :info) do
-      request.perform!
-    end
-    request.finished!
-
-    log.update(status: true)
+    CreatePromptReportTask.new(request).start!
 
   rescue CreatePromptReportRequest::Error => e
-    log.update(error_class: e.class, error_message: e.message)
   rescue => e
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
     logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
     logger.info e.backtrace.join("\n")
   ensure

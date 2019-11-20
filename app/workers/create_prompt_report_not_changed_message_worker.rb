@@ -34,6 +34,10 @@ class CreatePromptReportNotChangedMessageWorker
     end
 
     ex = CreatePromptReportRequest::DirectMessageNotSent.new("#{e.class}: #{e.message}")
-    CreatePromptReportLog.find_by(request_id: options['create_prompt_report_request_id']).update(status: false, error_class: ex.class, error_message: ex.message)
+    log(options).update(status: false, error_class: ex.class, error_message: ex.message)
+  end
+
+  def log(options)
+    CreatePromptReportLog.find_by(request_id: options['create_prompt_report_request_id'])
   end
 end
