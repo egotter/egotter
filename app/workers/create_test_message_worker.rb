@@ -30,7 +30,7 @@ class CreateTestMessageWorker
     end
 
   rescue => e
-    logger.warn "¥#{e.class} #{e.message} #{user_id} #{options.inspect}"
+    logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
 
     if TemporaryDmLimitation.temporarily_locked?(e)
       if TemporaryDmLimitation.you_have_blocked?(e)

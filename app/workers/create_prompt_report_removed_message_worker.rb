@@ -29,7 +29,7 @@ class CreatePromptReportRemovedMessageWorker
       end
     elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
     else
-      logger.warn "¥#{e.class} #{e.message} #{user_id} #{options.inspect}"
+      logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
       logger.info e.backtrace.join("\n")
     end
 
