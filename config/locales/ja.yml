@@ -1035,8 +1035,8 @@ ja:
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
-    signed_in_user_not_authorized_html: '%{user} のツイッター連携が無効になっています。再度 <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。'
-    permission_level_not_enough_html: '%{user} のツイッター連携（DM）が無効になっています。再度 <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。'
+    signed_in_user_not_authorized_html: '%{user} のツイッター連携が無効になっています。再度 <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。エラー：NA403'
+    permission_level_not_enough_html: '%{user} のツイッター連携（DM）が無効になっています。再度 <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。エラー：PLNE403'
   tweet_text:
     top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
