@@ -67,17 +67,6 @@ module Concerns::ValidationConcern
     end
   end
 
-  def enough_permission_level?
-    return true unless user_signed_in?
-
-    if current_user.notification_setting.enough_permission_level?
-      true
-    else
-      respond_with_error(:unauthorized, t('after_sign_in.permission_level_not_enough_html', user: current_user.mention_name, url: sign_in_path(force_login: true, via: "#{controller_name}/#{action_name}/permission_level_not_enough")))
-      false
-    end
-  end
-
   def signed_in_user_authorized?
     return true unless user_signed_in?
 
@@ -85,6 +74,17 @@ module Concerns::ValidationConcern
       true
     else
       respond_with_error(:unauthorized, t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.mention_name, url: sign_in_path(via: "#{controller_name}/#{action_name}/signed_in_user_not_authorized")))
+      false
+    end
+  end
+
+  def enough_permission_level?
+    return true unless user_signed_in?
+
+    if current_user.notification_setting.enough_permission_level?
+      true
+    else
+      respond_with_error(:unauthorized, t('after_sign_in.permission_level_not_enough_html', user: current_user.mention_name, url: sign_in_path(force_login: true, via: "#{controller_name}/#{action_name}/permission_level_not_enough")))
       false
     end
   end

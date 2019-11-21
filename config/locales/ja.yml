@@ -1035,8 +1035,24 @@ ja:
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
-    signed_in_user_not_authorized_html: '%{user} のツイッター連携（API）が無効になっています。再度 <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。<br>何度も起きる場合は、このエラーのスクショを@ego_tterまで送ってください。<br>エラー：NA403'
-    permission_level_not_enough_html: '%{user} のツイッター連携（DM）が無効になっています。再度 <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。<br><br>何度も起きる場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで送ってください。<br>エラー：PLNE403'
+    signed_in_user_not_authorized_html: >
+      %{user} のツイッター連携（API）が無効になっています。<br>
+      <br>
+      1. <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
+      <br>
+      2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで送ってください。<br>
+      <br>
+      エラー：NA403
+    permission_level_not_enough_html: >
+      %{user} のツイッター連携（DM）が無効になっています。<br>
+      <br>
+      1. <a class="btn btn-default btn-sm" href="%{url}">強制ログイン</a> してください。ほとんどの場合これで解決します。<br>
+      <br>
+      2. <a href="https://twitter.com/settings/applications/185425" class="btn btn-default btn-sm" target="_blank">連携アプリ</a> からえごったーを削除した後、ログインしてください。<br>
+      <br>
+      3. [1]と[2]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで送ってください。<br>
+      <br>
+      エラー：PLNE403
   tweet_text:
     top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
