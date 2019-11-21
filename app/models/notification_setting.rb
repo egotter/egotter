@@ -46,6 +46,10 @@ class NotificationSetting < ApplicationRecord
     ]
   end
 
+  def enough_permission_level?
+    permission_level == 'read-write-directmessages'
+  end
+
   def dm_enabled?
     dm?
   end
