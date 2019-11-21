@@ -162,6 +162,7 @@ class SendMetricsToCloudWatchWorker
     @client ||= CloudWatchClient.new
   end
 
+  # It is not working
   def encode(str)
     options = {
         invalid: :replace,
