@@ -6,7 +6,7 @@ module Concerns::Report::HasToken
   class_methods do
     def generate_token
       begin
-        t = SecureRandom.urlsafe_base64(10)
+        t = ReadConfirmationToken.generate
       end while exists?(token: t)
       t
     end

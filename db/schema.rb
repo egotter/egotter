@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_11_18_165120) do
+ActiveRecord::Schema.define(version: 2019_11_21_041312) do
 
   create_table "ahoy_events", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "visit_id"
@@ -282,6 +282,30 @@ ActiveRecord::Schema.define(version: 2019_11_18_165120) do
     t.index ["screen_name"], name: "index_create_relationship_logs_on_screen_name"
     t.index ["uid"], name: "index_create_relationship_logs_on_uid"
     t.index ["user_id"], name: "index_create_relationship_logs_on_user_id"
+  end
+
+  create_table "create_test_report_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", default: -1, null: false
+    t.integer "request_id", default: -1, null: false
+    t.bigint "uid", default: -1, null: false
+    t.string "screen_name", default: "", null: false
+    t.boolean "status", default: false, null: false
+    t.string "error_class", default: "", null: false
+    t.string "error_message", default: "", null: false
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_create_test_report_logs_on_created_at"
+    t.index ["request_id"], name: "index_create_test_report_logs_on_request_id"
+    t.index ["screen_name"], name: "index_create_test_report_logs_on_screen_name"
+    t.index ["uid"], name: "index_create_test_report_logs_on_uid"
+  end
+
+  create_table "create_test_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_create_test_report_requests_on_created_at"
+    t.index ["user_id"], name: "index_create_test_report_requests_on_user_id"
   end
 
   create_table "create_twitter_user_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

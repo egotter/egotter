@@ -11,6 +11,7 @@
   - messaging
   - misc
   - creating_low
+  - CreateTestReportWorker
   - CreatePromptReportWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
