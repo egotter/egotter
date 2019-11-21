@@ -5,7 +5,7 @@ class TestMessage
 
   attr_accessor :user, :text
 
-  def initialize(user_id: user_id, text: text)
+  def initialize(user_id:, text:)
     self.user = User.find(user_id)
     self.text = text
   end
