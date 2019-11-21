@@ -8,12 +8,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     ab_test = session[:sign_in_ab_test] ? session.delete(:sign_in_ab_test) : ''
     follow = 'true' == session.delete(:sign_in_follow)
     tweet = 'true' == session.delete(:sign_in_tweet)
+    force_login = 'true' == session.delete(:force_login)
 
     begin
       user = User.update_or_create_with_token!(user_params) do |user, context|
         create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
         CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
-        UpdatePermissionLevelWorker.perform_async(user.id, enqueued_at: Time.zone.now)
+        UpdatePermissionLevelWorker.perform_async(user.id, enqueued_at: Time.zone.now, send_test_report: force_login)
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
@@ -43,6 +44,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       sign_in_tweet
       sign_in_tweet_text
       redirect_path
+      force_login
     ).each { |key| session.delete(key) }
     flash[:notice] = after_failure_message(request.env['omniauth.error.type'].to_s)
     redirect_to after_omniauth_failure_path_for(resource_name)

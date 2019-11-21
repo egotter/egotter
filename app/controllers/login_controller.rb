@@ -20,6 +20,7 @@ class LoginController < ApplicationController
     end
 
     force_login = params[:force_login] && params[:force_login] == 'true'
+    session[:force_login] = force_login.to_s
 
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
     session[:sign_in_tweet] = 'true' == params[:tweet] ? 'true' : 'false'
