@@ -4,12 +4,12 @@
 なし
 
 最新のリムられ通知：<% if user.prompt_reports.any? %>
-<%= I18n.l(user.prompt_reports.last.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
+<%= I18n.l(user.prompt_reports.first.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
 <% else %>
 リムられ通知はこれから送信されます。
 <% end %>
 
-最後のデータ更新：<% if twitter_user %>
+最新のデータ更新：<% if twitter_user %>
 <%= I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
 <% else %>
 データはこれから更新されます。
