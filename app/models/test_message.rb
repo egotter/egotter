@@ -39,17 +39,29 @@ class TestMessage
       new(user_id: user_id, text: message)
     end
 
+    def permission_level_not_enough(user_id)
+      template = Rails.root.join('app/views/test_reports/permission_level_not_enough.ja.text.erb')
+      message = ERB.new(template.read).result
+
+      new(user_id: user_id, text: message)
+    end
+
     def timeline_url(screen_name)
       Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: ReadConfirmationToken.generate, medium: 'dm', type: 'prompt', via: 'test_report', og_tag: 'false')
     end
   end
 
-  def deliver!
-    dm_client = DirectMessageClient.new(user.api_client.twitter)
-    dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.testMessage.lets_start'))
+  def deliver!(permission_level_not_enough: false)
+    if permission_level_not_enough
+      dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
+      resp = dm_client.create_direct_message(user.uid, text)
+    else
+      dm_client = DirectMessageClient.new(user.api_client.twitter)
+      dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.testMessage.lets_start'))
 
-    dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
-    resp = dm_client.create_direct_message(user.uid, text)
+      dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
+      resp = dm_client.create_direct_message(user.uid, text)
+    end
 
     DirectMessage.new(resp)
   end

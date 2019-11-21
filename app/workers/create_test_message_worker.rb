@@ -15,12 +15,20 @@ class CreateTestMessageWorker
     user = User.find(user_id)
     return unless user.authorized?
 
-    if options['error_class']
-      # If the error is that the DM cannot be sent, an additional exception occurs here.
-      TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
+    # If the error is that the DM cannot be sent, an additional exception occurs here.
+    begin
+      dm_client = DirectMessageClient.new(user.api_client.twitter)
+      dm_client.create_direct_message(User::EGOTTER_UID, 'Start sending test message.')
+    rescue => e
+      TestMessage.permission_level_not_enough(user.id).deliver!(permission_level_not_enough: true)
     else
-      TestMessage.ok(user.id).deliver!
+      if options['error_class']
+        TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
+      else
+        TestMessage.ok(user.id).deliver!
+      end
     end
+
   rescue => e
     logger.warn "¥#{e.class} #{e.message} #{user_id} #{options.inspect}"
 
