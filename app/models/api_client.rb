@@ -5,7 +5,7 @@ class ApiClient
 
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
-      logger.info "ApiClient#method_missing #{method} #{args.inspect.truncate(100)}" rescue nil
+      logger.debug {"ApiClient#method_missing #{method} #{args.inspect.truncate(100)}"} rescue nil
       self.class.do_request_with_retry(@client, method, args, &block)
     else
       super
