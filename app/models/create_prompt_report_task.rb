@@ -10,7 +10,7 @@ class CreatePromptReportTask
     @log = CreatePromptReportLog.create_by(request: request)
 
     ApplicationRecord.benchmark("#{self.class} #{request.id} Perform request", level: :info) do
-      request.validate!
+      request.error_check!
 
       if TwitterUser.exists?(uid: request.user.uid)
         ApplicationRecord.benchmark("#{self.class} #{request.id} Create twitter_user", level: :info) do

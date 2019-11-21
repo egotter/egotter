@@ -22,7 +22,7 @@ class CreatePromptReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
-    validate! unless @validated
+    error_check! unless @error_check
 
     unless TwitterUser.exists?(uid: user.uid)
       send_initialization_message
@@ -52,7 +52,7 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
-  def validate!
+  def error_check!
     verify_credentials!
 
     raise PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
@@ -72,7 +72,7 @@ class CreatePromptReportRequest < ApplicationRecord
       raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
     end
 
-    @validated = true
+    @error_check = true
   end
 
   def send_initialization_message

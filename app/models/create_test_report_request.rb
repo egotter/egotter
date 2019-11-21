@@ -22,6 +22,6 @@ class CreateTestReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
-    CreatePromptReportRequest.new(user_id: user.id).validate!
+    CreatePromptReportRequest.new(user_id: user.id).error_check!
   end
 end

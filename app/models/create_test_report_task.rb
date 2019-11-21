@@ -9,7 +9,7 @@ class CreateTestReportTask
   def start!
     @log = CreateTestReportLog.create_by(request: request)
 
-    request.validate!
+    request.perform!
     request.finished!
 
     @log.update(status: true)
