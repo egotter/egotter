@@ -330,7 +330,7 @@ when 'stop'          then do_stop(pidfile, options)
 when 'force-stop'    then do_force_stop(pidfile, options)
 when 'start'         then do_start(pidfile, options)
 when 'restart'       then do_restart(pidfile, options)
-when 'force-restart' then do_restart(pidfile, options)
+when 'force-restart' then do_force_restart(pidfile, options)
 when 'status'        then do_status(pidfile)
 when 'backtrace'     then do_backtrace(pidfile)
 when 'help'          then print_usage
