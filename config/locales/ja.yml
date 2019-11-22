@@ -1106,10 +1106,12 @@ ja:
       lets_start: 'リムられ通知のテスト送信を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja&via=test_message_lets_start&og_tag=false #egotter'
       errors:
         too_short_send_interval: '前回の送信から時間が経っていない'
+        too_short_request_interval: '前回の更新から時間が経っていない'
         report_disabled: 'リムられ通知が無効になっている'
         egotter_blocked: '@ego_tter がブロックされている'
       messages:
         too_short_send_interval: '一定の時間が経過すればまた届きます。'
+        too_short_request_interval: '一定の時間が経過すればまた届きます。'
         report_disabled: '設定ページからリムられ通知を有効に設定してください。'
         egotter_blocked: '@ego_tter のブロックを解除してください。'
     searchNotification:

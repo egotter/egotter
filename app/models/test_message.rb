@@ -119,6 +119,7 @@ class TestMessage < ApplicationRecord
     def readable_error_class(error)
       case error
         when 'CreatePromptReportRequest::TooShortSendInterval' then I18n.t('dm.testMessage.errors.too_short_send_interval')
+        when 'CreatePromptReportRequest::TooShortRequestInterval' then I18n.t('dm.testMessage.errors.too_short_request_interval')
         when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.errors.report_disabled')
         when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.errors.egotter_blocked')
         else error
@@ -128,6 +129,7 @@ class TestMessage < ApplicationRecord
     def readable_error_message(error, message)
       case error
       when 'CreatePromptReportRequest::TooShortSendInterval' then I18n.t('dm.testMessage.messages.too_short_send_interval')
+      when 'CreatePromptReportRequest::TooShortRequestInterval' then I18n.t('dm.testMessage.messages.too_short_request_interval')
       when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.messages.report_disabled')
       when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.messages.egotter_blocked')
       else message
