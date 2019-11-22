@@ -7,6 +7,7 @@ class TimelinesController < ApplicationController
 
   def show
     enqueue_update_authorized
+    enqueue_update_egotter_friendship
     enqueue_audience_insight(@twitter_user.uid)
 
     @chart_builder = find_or_create_chart_builder(@twitter_user)

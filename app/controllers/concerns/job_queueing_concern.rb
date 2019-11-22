@@ -47,6 +47,12 @@ module Concerns::JobQueueingConcern
     UpdateAuthorizedWorker.perform_async(current_user.id, enqueued_at: Time.zone.now)
   end
 
+  def enqueue_update_egotter_friendship
+    return if from_crawler?
+    return unless user_signed_in?
+    UpdateEgotterFriendshipWorker.perform_async(current_user.id, enqueued_at: Time.zone.now)
+  end
+
   def enqueue_audience_insight(uid)
     return if from_crawler?
     UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: controller_name)
