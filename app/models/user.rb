@@ -35,7 +35,7 @@ class User < ApplicationRecord
 
   include Concerns::User::ApiAccess
   include Concerns::TwitterUser::Inflections
-  include Concerns::Visitor::Active
+  include Concerns::Visitor::Activeness
   include Concerns::User::FollowAndUnfollow
 
   def remember_created_at=(_)

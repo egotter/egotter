@@ -9,7 +9,7 @@ RSpec.describe FriendsGroupBuilder do
   let(:uids4) { [3, 4, 5] }
   let(:time) { Time.zone.now - 10.seconds }
   let(:users) { [TwitterUser.new(created_at: time + 1.second), TwitterUser.new(created_at: time + 2.second)] }
-  let(:instance) { described_class.new(uid, limit: limit, preload: false) }
+  let(:instance) { described_class.new(uid, limit: limit) }
 
   before do
     allow(users[0]).to receive(:friend_uids).with(no_args).and_return(uids1)

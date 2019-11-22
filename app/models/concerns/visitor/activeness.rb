@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::Visitor::Active
+module Concerns::Visitor::Activeness
   extend ActiveSupport::Concern
 
   class_methods do
@@ -16,20 +16,32 @@ module Concerns::Visitor::Active
   included do
   end
 
-  # Last session was within the last 7 days
+  # Remove later
   def active?(days = 7)
+    logger.warn "Deprecated call for #active?"
+    active_access?(days)
+  end
+
+  # Last session was within the last 7 days
+  def active_access?(days = 7)
     last_access_at && last_access_at > days.days.ago
   end
 
-  # Last session was more than 7 days ago
+  # Remove later
   def inactive?(days = 7)
-    !active?(days)
+    logger.warn "Deprecated call for #inactive?"
+    inactive_access?(days)
+  end
+
+  # Last session was more than 7 days ago
+  def inactive_access?(days = 7)
+    !active_access?(days)
   end
 
   # Last session was within the last 7 days
   # Session count is greater than 4.0
   def engaged?
-    active? && session_count > 4
+    active_access? && session_count > 4
   end
 
   def signed_in?

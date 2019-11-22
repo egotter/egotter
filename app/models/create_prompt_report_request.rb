@@ -52,6 +52,8 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
+  INACTIVE_DAYS = 14
+
   def error_check!
     verify_credentials!
 
@@ -60,8 +62,6 @@ class CreatePromptReportRequest < ApplicationRecord
     raise Unauthorized unless user.authorized?
     raise ReportDisabled unless user.dm_enabled?
     raise TooShortSendInterval unless user.dm_interval_ok?
-    raise UserInactive unless user.active?(14)
-
     raise UserSuspended if suspended?
     raise TooManyFriends if SearchLimitation.too_many_friends?(user: user)
     raise EgotterBlocked if blocked?
@@ -71,6 +71,8 @@ class CreatePromptReportRequest < ApplicationRecord
       raise TooManyFriends if SearchLimitation.too_many_friends?(twitter_user: twitter_user)
       raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
     end
+
+    raise UserInactive unless user.active_access?(INACTIVE_DAYS)
 
     @error_check = true
   end
