@@ -52,7 +52,8 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
-  INACTIVE_DAYS = 14
+  ACTIVE_DAYS = 14
+  ACTIVE_DAYS_WARNING_INTERVAL = 2
 
   def error_check!
     verify_credentials!
@@ -72,7 +73,7 @@ class CreatePromptReportRequest < ApplicationRecord
       raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
     end
 
-    raise UserInactive unless user.active_access?(INACTIVE_DAYS)
+    raise UserInactive unless user.active_access?(ACTIVE_DAYS)
 
     @error_check = true
   end

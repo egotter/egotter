@@ -50,6 +50,10 @@ class PromptReport < ApplicationRecord
       user.notification_setting.update!(last_dm_at: Time.zone.now)
     end
 
+    unless user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS - CreatePromptReportRequest::ACTIVE_DAYS_WARNING_INTERVAL)
+      send_activeness_warning_message
+    end
+
     dm
   end
 
@@ -99,6 +103,18 @@ class PromptReport < ApplicationRecord
     raise
   rescue => e
     raise ReportingFailed.new("#{e.class}: #{e.message.truncate(100)}")
+  end
+
+  def send_activeness_warning_message
+    template = Rails.root.join('app/views/prompt_reports/activeness_warning.ja.text.erb')
+    message = ERB.new(template.read).result_with_hash(
+        timeline_url: Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, follow_dialog: 1, share_dialog: 1, via: 'prompt_report_activeness_warning')
+    )
+
+    dm_client = DirectMessageClient.new(egotter_client)
+    dm_client.create_direct_message(user.uid, message)
+  rescue => e
+    logger.warn "#{__method__} #{e.class}: #{e.message}"
   end
 
   class StartingFailed < StandardError
