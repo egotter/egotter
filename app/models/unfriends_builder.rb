@@ -1,6 +1,6 @@
 class UnfriendsBuilder
 
-  DEFAULT_LIMIT = 1000
+  DEFAULT_LIMIT = 100
 
   def initialize(twitter_user, limit: DEFAULT_LIMIT)
     @users = Util.users(twitter_user.uid, twitter_user.created_at, limit: limit)
