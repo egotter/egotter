@@ -56,4 +56,11 @@ module TwitterHelper
   def bigger_icon_img(user, options = {})
     image_tag bigger_icon_url(user), {size: '73x73', alt: user.screen_name}.merge(options)
   end
+
+  def auto_linking(text)
+    auto_link(text, html: {target: '_blank', rel: 'nofollow'})
+  rescue => e
+    logger.info "auto_linking: ##{e.class} #{e.message} #{text}"
+    text
+  end
 end

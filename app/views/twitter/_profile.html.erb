@@ -39,7 +39,7 @@
     <div class="vertical-spacing"></div>
 
     <% if user.description? %>
-      <div class="description text-center"><%= auto_link(user.description, html: {target: '_blank', rel: 'nofollow'}) %></div>
+      <div class="description text-center"><%= auto_linking(user.description) %></div>
     <% end %>
     <% if user.url? %>
       <div class="link text-center"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %></div>
