@@ -5,66 +5,107 @@
 
   <h2 class="h4 text-center"><%= t('.general_title') %></h2>
 
-  <table class="table">
-    <tbody>
-    <tr>
-      <td><%= User.human_attribute_name(:screen_name) %></td>
-      <td>
-        <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
-        <%= link_to t('.reset_menu.update_profile_html'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default btn-xs' %>
-      </td>
-    </tr>
-    <tr>
-      <td><%= User.human_attribute_name(:email) %></td>
-      <td><%= current_user.email %></td>
-    </tr>
-    <tr>
-      <td><%= User.human_attribute_name(:authorized) %></td>
-      <td>
-        <% if current_user.authorized? %>
-          <%= t('.authorized.true') %>
-          <div class="text-muted notes"><%= t('.authorized.note1', count: search_histories_limit) %></div>
-        <% else %>
-          <div>
-            <span><%= t('.authorized.false') %></span>
-            <%= link_to t('.update_authorized'), sign_in_path(via: build_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-primary btn-xs' %>
-          </div>
-          <div class="text-muted notes"><%= t('.authorized.note2') %></div>
-        <% end %>
-      </td>
-    </tr>
-    <tr>
-      <td><%= User.human_attribute_name(:following_egotter) %></td>
-      <td>
-        <% if current_user.following_egotter? %>
-          <%= t('.following_egotter.true') %>
-          <div class="text-muted notes"><%= t('.following_egotter.note1') %></div>
-        <% else %>
-          <div>
-            <span><%= t('.following_egotter.false') %></span>
-            <%= link_to t('.update_following'), '#', data: {url: follows_path(via: build_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary btn-xs' %>
-          </div>
-          <div class="text-muted notes"><%= t('.following_egotter.note2') %></div>
-        <% end %>
-      </td>
-    </tr>
-    <tr>
-      <td><%= User.human_attribute_name(:sharing_egotter) %></td>
-      <td>
-        <% if current_user.sharing_egotter? %>
-          <%= t('.sharing_egotter.true') %>
-          <div class="text-muted notes"><%= t('.sharing_egotter.note1', count: search_histories_sharing_bonus) %></div>
-      <% else %>
-          <div>
-            <span><%= t('.sharing_egotter.false') %></span>
-            <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary btn-xs"><%= t('.update_sharing') %></a>
-          </div>
-          <div class="text-muted notes"><%= t('.sharing_egotter.note2') %></div>
-        <% end %>
-      </td>
-    </tr>
-    </tbody>
-  </table>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.screen_name.title') %></div>
+  <div class="col-xs-8">
+    <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
+    <%= link_to t('.reset_menu.update_profile_html'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.email.title') %></div>
+  <div class="col-xs-8"><%= current_user.email %></div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.authorized.title') %></div>
+  <div class="col-xs-8">
+    <% if current_user.authorized? %>
+      <%= t('.authorized.true') %>
+      <div class="text-muted notes"><%= t('.authorized.bonus', count: search_histories_sign_in_bonus) %></div>
+    <% else %>
+      <div>
+        <span><%= t('.authorized.false') %></span>
+        <%= link_to t('.authorized.update_now_html'), sign_in_path(via: build_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-danger' %>
+      </div>
+      <div class="text-danger notes"><%= t('.authorized.stop') %></div>
+    <% end %>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.following_egotter.title') %></div>
+  <div class="col-xs-8">
+    <% if current_user.following_egotter? %>
+      <%= t('.following_egotter.true') %>
+      <div class="text-muted notes"><%= t('.following_egotter.fast_mode') %></div>
+    <% else %>
+      <div>
+        <span><%= t('.following_egotter.false') %></span>
+        <%= link_to t('.following_egotter.follow_now'), '#', data: {url: follows_path(via: build_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary' %>
+      </div>
+      <div class="text-muted notes"><%= t('.following_egotter.note') %></div>
+    <% end %>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.sharing_egotter.title') %></div>
+  <div class="col-xs-8">
+    <%= t('.sharing_egotter.count', count: current_user.sharing_egotter_count) %>
+    <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary"><%= t('.sharing_egotter.see_more') %></a>
+    <div class="text-muted notes"><%= t('.sharing_egotter.promotion', hours: User::SHARE_EGOTTER_DURATION, count: search_histories_sharing_bonus) %></div>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.search_mode.title') %></div>
+  <div class="col-xs-8">
+    <% if current_user.search_mode.fast? %>
+      <div class="text-primary"><%= t(".search_mode.fast") %></div>
+      <div class="text-muted notes"><%= t('.search_mode.advantage') %></div>
+    <% else %>
+      <div class="text-danger"><%= t(".search_mode.#{current_user.search_mode}") %></div>
+      <div class="text-muted notes"><%= t('.search_mode.advise') %></div>
+    <% end %>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.search_count.title') %></div>
+  <div class="col-xs-8">
+    <div><%= t('.search_count.count', count: search_histories_limit) %><%= t('.search_count.remaining', count: search_histories_remaining) %></div>
+    <div class="text-muted notes"><%= t('.search_count.note', days: search_histories_duration) %></div>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.follow_count.title') %></div>
+  <div class="col-xs-8">
+    <div><%= t('.follow_count.count', count: current_user.create_follow_limit) %><%= t('.follow_count.remaining', count: current_user.create_follow_remaining) %></div>
+    <div class="text-muted notes"><%= t('.follow_count.note', days: current_user.create_follow_duration) %></div>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
+  <div class="col-xs-4"><%= t('.unfollow_count.title') %></div>
+  <div class="col-xs-8">
+    <div><%= t('.unfollow_count.count', count: current_user.create_unfollow_limit) %><%= t('.unfollow_count.remaining', count: current_user.create_unfollow_remaining) %></div>
+    <div class="text-muted notes"><%= t('.unfollow_count.note', days: current_user.create_unfollow_duration) %></div>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
 
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
@@ -126,6 +167,8 @@
     <a class="btn btn-default" href="<%= settings_create_prompt_requests_path %>"><%= t('.prompt_report.see') %></a>
     <div class="text-muted notes"><%= t('.prompt_report.note') %></div>
   </div>
+
+  <div class="clearfix"></div>
 
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>

@@ -132,12 +132,18 @@ class User < ApplicationRecord
     EgotterFollower.exists?(uid: uid)
   end
 
-  def sharing_egotter?
-    tweet_requests.finished.where(created_at: 1.hour.ago..Time.zone.now).exists?
-  end
+  SHARE_EGOTTER_DURATION = 1
 
   def sharing_egotter_count
-    tweet_requests.finished.where(created_at: 1.hour.ago..Time.zone.now).size
+    tweet_requests.where(created_at: SHARE_EGOTTER_DURATION.hour.ago..Time.zone.now).size
+  end
+
+  def search_mode
+    if following_egotter?
+      ActiveSupport::StringInquirer.new('fast')
+    else
+      ActiveSupport::StringInquirer.new('slow')
+    end
   end
 
   ADMIN_UID = 58135830

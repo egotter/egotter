@@ -5,6 +5,6 @@ class SharesController < ApplicationController
   def create
     request = TweetRequest.create!(user_id: current_user.id, text: params[:text])
     TweetEgotterWorker.perform_async(request.id)
-    head :ok
+    render json: {count: current_user.sharing_egotter_count}
   end
 end
