@@ -7,6 +7,7 @@ class CreateEgotterFollowerWorker
     unless EgotterFollower.exists?(uid: user.uid)
       EgotterFollower.create!(uid: user.uid, screen_name: user.screen_name)
     end
+  rescue ActiveRecord::RecordNotUnique => e
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{user_id}"
   end

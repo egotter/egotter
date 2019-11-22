@@ -18,6 +18,10 @@ class UpdatePermissionLevelWorker
     10.seconds
   end
 
+  def after_timeout(user_id, options = {})
+    UpdatePermissionLevelWorker.perform_in(2.minutes, user_id, options)
+  end
+
   # options:
   #   enqueued_at
   #   send_test_report
