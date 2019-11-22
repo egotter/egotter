@@ -60,7 +60,6 @@ class PromptReport < ApplicationRecord
   class << self
     def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
-      report.removed_uid = current_twitter_user.unfollowerships.pluck(:follower_uid).first
 
       message_builder = MessageBuilder.new(report.user, report.token)
       message_builder.previous_twitter_user = previous_twitter_user
@@ -73,7 +72,6 @@ class PromptReport < ApplicationRecord
 
     def not_changed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
-      report.removed_uid = current_twitter_user.unfollowerships.pluck(:follower_uid).first
 
       message_builder = NotChangedMessageBuilder.new(report.user, report.token)
       message_builder.previous_twitter_user = previous_twitter_user
