@@ -61,6 +61,19 @@ class SendMetricsToCloudWatchWorker
 
     options = {namespace: namespace, dimensions: [{name: 'QueueName', value: 'total'}]}
     client.put_metric_data('QueueSize', total, options)
+
+    long_running_jobs = []
+    Sidekiq::Workers.new.each do |pid, tid, work|
+      if Time.zone.at(work['run_at']) < 10.minutes.ago
+        job_name = work['payload']['class']
+        long_running_jobs << job_name
+      end
+    end
+
+    long_running_jobs.group_by { |name| name }.map { |k, v| [k, v.length] }.each do |job_name, count|
+      options = {namespace: namespace, dimensions: [{name: 'JobName', value: job_name}]}
+      client.put_metric_data('LongRunningSize', count, options)
+    end
   end
 
   def send_google_analytics_metrics
