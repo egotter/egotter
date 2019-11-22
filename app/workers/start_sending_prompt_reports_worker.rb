@@ -7,7 +7,7 @@ class StartSendingPromptReportsWorker
   def perform(options = {})
     if options['last_queueing_started_at']
       time_diff = Time.zone.now - Time.zone.parse(options['last_queueing_started_at'])
-      if time_diff < CreatePromptReportRequest::INTERVAL
+      if time_diff < CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL
         logger.warn "Interval is too short #{options['last_queueing_started_at']}"
         StartSendingPromptReportsWorker.perform_in(CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL - time_diff, options)
         return
