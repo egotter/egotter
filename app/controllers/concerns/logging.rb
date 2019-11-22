@@ -53,6 +53,7 @@ module Concerns::Logging
         when via_news_report?     then UpdateNewsReportWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
         when via_welcome_message? then UpdateWelcomeMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
         when via_warning_message? then UpdateActivenessWarningMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
+        when via_test_message?    then UpdateTestMessageWorker.perform_async(token: params[:token], read_at: attrs[:created_at])
       end
     end
   rescue Encoding::UndefinedConversionError => e
