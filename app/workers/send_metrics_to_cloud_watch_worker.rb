@@ -119,7 +119,7 @@ class SendMetricsToCloudWatchWorker
     options = {namespace: namespace, dimensions: [{name: 'ReadCount', value: 'ReadCount'}]}
     client.put_metric_data('Count', read_count, options)
 
-    read_rate = 100.0 * read_count / send_count
+    read_rate = send_count == 0 ? 0.0 : 100.0 * read_count / send_count
     options = {namespace: namespace, dimensions: [{name: 'ReadRate', value: 'ReadRate'}]}
     client.put_metric_data('Rate', read_rate, options)
   end
