@@ -7,7 +7,7 @@ class UpdateEgotterFollowersWorker
   end
 
   def timeout_in
-    60.seconds
+    2.minutes
   end
 
   def after_timeout(*args)
