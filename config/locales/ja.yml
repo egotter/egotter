@@ -205,13 +205,10 @@ ja:
     title: "設定"
     index:
       general_title: "ユーザー情報"
-      update_authorized: 'ログイン連携を更新する'
       update_authorized_for_dm: 'リムられ通知を復活させる'
       update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。'
       send_test_report: 'リムられ通知をテスト送信する'
       send_test_report_note_html: '通知が届かない方はお試しください'
-      update_following: '@ego_tter をフォローする'
-      update_sharing: '詳しく見る'
       reset_menu:
         title: 'データのリセット'
         profile: 'ユーザー情報'
@@ -231,21 +228,52 @@ ja:
         unfollow_requests_count: "フォロー解除 %{count}"
         has_not_purchased: "まだ購入していません"
         plans: '料金プラン'
+      screen_name:
+        title: 'Twitter ID'
+      email:
+        title: 'メール'
       authorized:
+        title: 'ログイン連携'
         true: 'OK'
         false: '無効'
-        note1: '現在の検索上限 %{count} 回'
-        note2: 'ログイン連携を更新するまで検索機能は止まっています'
+        bonus: '%{count} 回の検索ボーナス付与'
+        update_now_html: 'ログイン連携を更新する&nbsp;<i class="fas fa-sync"></i>'
+        stop: '検索停止中'
       following_egotter:
+        title: '@ego_tter のフォロー'
         true: 'OK'
         false: 'いいえ'
-        note1: '現在の検索は高速モードです！'
-        note2: 'フォローしていると検索や通知が高速になります'
+        fast_mode: '高速モード'
+        follow_now: '@ego_tter をフォローする'
+        note: 'フォローしていると検索や通知が高速になります'
       sharing_egotter:
+        title: 'egotter.com をシェア'
+        count: '%{count} 回'
         true: 'OK'
         false: 'いいえ'
-        note1: 'ボーナス検索回数 %{count} 回分をGET！'
-        note2: 'egotter.com をツイートすると検索回数が増えます'
+        see_more: '詳しく見る'
+        promotion: '直近 %{hours} 時間のツイート毎に %{count} 回の検索ボーナス付与'
+      search_mode:
+        title: '検索速度'
+        fast: '高速モード'
+        slow: '低速モード'
+        advantage: '検索やリムられ通知が早くなります'
+        advise: '@ego_tter ををフォローすると高速モードになります'
+      search_count:
+        title: '検索回数'
+        count: '合計 %{count} 回'
+        remaining: '（残り %{count} 回）'
+        note: '直近の %{days} 日が対象'
+      follow_count:
+        title: 'フォロー回数'
+        count: '合計 %{count} 回'
+        remaining: '（残り %{count} 回）'
+        note: '直近の %{days} 日が対象'
+      unfollow_count:
+        title: 'アンフォロー回数'
+        count: '合計 %{count} 回'
+        remaining: '（残り %{count} 回）'
+        note: '直近の %{days} 日が対象'
       notifications_title: "通知設定"
       report_is_not_coming: "リムられ通知がこない場合"
       reporting_test: "リムられ通知のテスト"
@@ -1137,11 +1165,6 @@ ja:
       twitter_user: "ツイッターユーザー"
     attributes:
       user:
-        screen_name: 'Twitter ID'
-        email: 'メール'
-        authorized: 'ログイン連携'
-        following_egotter: '@ego_tter のフォロー'
-        sharing_egotter: 'egotter.com のツイート'
       twitter_user:
         uid: "uid"
         screen_name: "screen name"

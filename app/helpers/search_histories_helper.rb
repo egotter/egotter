@@ -8,45 +8,42 @@ module SearchHistoriesHelper
   end
 
   def search_histories_limit
-    count = 0
+    count = Rails.configuration.x.constants['anonymous_search_histories_limit']
 
     if user_signed_in?
-      user = current_user
+      count += search_histories_sign_in_bonus
+    end
 
-      count =
-          if user.is_subscribing?
-            user.orders.unexpired[-1].search_count
-          else
-            Rails.configuration.x.constants['free_plan_search_histories_limit']
-          end
+    if user_signed_in? && current_user.is_subscribing?
+      count = user.orders.unexpired[-1].search_count
+    end
 
-      if user.sharing_egotter?
-        count += search_histories_sharing_bonus
-      end
-    else
-      count = Rails.configuration.x.constants['anonymous_search_histories_limit']
+    if user_signed_in? && current_user.sharing_egotter_count > 0
+      count += current_user.sharing_egotter_count * search_histories_sharing_bonus
     end
 
     count
   end
 
+  def search_histories_sign_in_bonus
+    Rails.configuration.x.constants['search_histories_sign_in_bonus']
+  end
+
   def search_histories_sharing_bonus
-    if user_signed_in?
-      current_user.sharing_egotter_count * Rails.configuration.x.constants['search_histories_sharing_bonus']
-    else
-      0
-    end
+    Rails.configuration.x.constants['search_histories_sharing_bonus']
   end
 
   def search_histories_remaining
     [0, search_histories_limit - search_histories_size].max
   end
 
-  private
+  def search_histories_duration
+    1
+  end
 
   def search_histories_size
     condition = user_signed_in? ? {user_id: current_user.id} : {session_id: fingerprint}
-    condition.merge!(created_at: 1.day.ago..Time.zone.now)
+    condition.merge!(created_at: search_histories_duration.day.ago..Time.zone.now)
     SearchHistory.where(condition).size
   end
 end
