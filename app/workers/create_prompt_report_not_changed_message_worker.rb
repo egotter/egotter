@@ -22,7 +22,7 @@ class CreatePromptReportNotChangedMessageWorker
         current_twitter_user: TwitterUser.find(options['current_twitter_user_id'])
     ).deliver!
 
-    if user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS - CreatePromptReportRequest::ACTIVE_DAYS_WARNING_INTERVAL)
+    unless user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS_WARNING)
       ActivenessWarningMessage.warn(user.id).deliver!
     end
 
