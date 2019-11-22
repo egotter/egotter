@@ -2,6 +2,9 @@ class UpdateNewsReportWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
+  # attrs:
+  #   token
+  #   read_at
   def perform(attrs)
     report = NewsReport.find_by(token: attrs['token'])
     return if report.nil? || report.read?

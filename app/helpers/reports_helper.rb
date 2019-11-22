@@ -26,4 +26,8 @@ module ReportsHelper
   def via_welcome_message?
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'welcome'
   end
+
+  def via_warning_message?
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'warning'
+  end
 end
