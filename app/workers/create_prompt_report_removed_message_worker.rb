@@ -22,6 +22,11 @@ class CreatePromptReportRemovedMessageWorker
         current_twitter_user: TwitterUser.find(options['current_twitter_user_id'])
     ).deliver!
 
+
+    unless user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS - CreatePromptReportRequest::ACTIVE_DAYS_WARNING_INTERVAL)
+      ActivenessWarningMessage.warn(user.id).deliver!
+    end
+
   rescue => e
     if TemporaryDmLimitation.temporarily_locked?(e)
       if TemporaryDmLimitation.you_have_blocked?(e)

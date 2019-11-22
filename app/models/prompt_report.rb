@@ -50,10 +50,6 @@ class PromptReport < ApplicationRecord
       user.notification_setting.update!(last_dm_at: Time.zone.now)
     end
 
-    unless user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS - CreatePromptReportRequest::ACTIVE_DAYS_WARNING_INTERVAL)
-      send_activeness_warning_message
-    end
-
     dm
   end
 
