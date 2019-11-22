@@ -22,7 +22,8 @@ module Concerns::User::FollowAndUnfollow
   end
 
   def create_follow_remaining
-    create_follow_limit - follow_requests.where(created_at: 1.day.ago..Time.zone.now).size
+    consumed = follow_requests.where.not(uid: User::EGOTTER_UID).where(created_at: 1.day.ago..Time.zone.now).size
+    create_follow_limit - consumed
   end
 
   def create_follow_remaining?
