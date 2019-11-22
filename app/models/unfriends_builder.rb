@@ -27,8 +27,9 @@ class UnfriendsBuilder
       TwitterUser.creation_completed.
           where('created_at <= ?', created_at).
           where(uid: uid).select(:id).
-          order(created_at: :asc).
-          limit(limit)
+          order(created_at: :desc).
+          limit(limit).
+          reverse
     end
 
     def unfriends(older, newer)
