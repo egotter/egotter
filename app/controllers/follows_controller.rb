@@ -32,13 +32,7 @@ class FollowsController < ApplicationController
   end
 
   def show
-    friendship = friendship?(params[:uid] || User::EGOTTER_UID)
-    if friendship
-      CreateEgotterFollowerWorker.perform_async(current_user.id)
-    else
-      DeleteEgotterFollowerWorker.perform_async(current_user.id)
-    end
-    render json: {follow: friendship}
+    render json: {follow: current_user.following_egotter?}
   end
 
   private
@@ -49,26 +43,5 @@ class FollowsController < ApplicationController
         limit: user.create_follow_limit,
         remaining: user.create_follow_remaining
     }
-  end
-
-  def friendship?(uid)
-    tries ||= 3
-    request_context_client.verify_credentials
-    request_context_client.twitter.friendship?(current_user.uid, uid.to_i)
-  rescue Twitter::Error::Unauthorized => e
-    unless e.message == 'Invalid or expired token.'
-      logger.warn "#{e.class}: #{e.message} #{current_user.id}"
-      logger.info e.backtrace.join("\n")
-    end
-    nil
-  rescue Twitter::Error::Forbidden => e
-    raise if e.message != 'Could not determine source user.'
-    nil
-  rescue Twitter::Error::ServiceUnavailable => e
-    if e.message == 'Over capacity' && (tries -= 1) > 0
-      retry
-    else
-      raise
-    end
   end
 end
