@@ -11,7 +11,7 @@ class ResetEgotterWorker
   end
 
   def timeout_in
-    10.seconds
+    1.minute
   end
 
   def after_timeout(request_id, options = {})
