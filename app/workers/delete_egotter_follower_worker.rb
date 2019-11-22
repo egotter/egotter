@@ -1,6 +1,6 @@
 class DeleteEgotterFollowerWorker
   include Sidekiq::Worker
-  sidekiq_options queue: 'deleting_low', retry: 0, backtrace: false
+  sidekiq_options queue: 'deleting_high', retry: 0, backtrace: false
 
   def perform(user_id)
     user = User.find(user_id)
