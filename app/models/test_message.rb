@@ -107,14 +107,33 @@ class TestMessage < ApplicationRecord
       ERB.new(template.read).result_with_hash(
           user: user,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
-          error_class: error_class,
-          error_message: error_message,
+          error_class: readable_error_class(error_class),
+          error_message: readable_error_message(error_class, error_message),
           timeline_url: timeline_url(user.screen_name, token),
           settings_url: Rails.application.routes.url_helpers.settings_url(via: 'test_report', og_tag: 'false')
       )
     end
 
     private
+
+    def readable_error_class(error)
+      case error
+        when 'CreatePromptReportRequest::TooShortSendInterval' then I18n.t('dm.testMessage.errors.too_short_send_interval')
+        when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.errors.report_disabled')
+        when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.errors.egotter_blocked')
+        else error
+      end
+    end
+
+    def readable_error_message(error, message)
+      case error
+      when 'CreatePromptReportRequest::TooShortSendInterval' then I18n.t('dm.testMessage.messages.too_short_send_interval')
+      when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.messages.report_disabled')
+      when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.messages.egotter_blocked')
+      else message
+      end
+    end
+
 
     def timeline_url(screen_name, token)
       Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'test', via: 'test_report', og_tag: 'false')
