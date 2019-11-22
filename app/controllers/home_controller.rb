@@ -17,7 +17,7 @@ class HomeController < ApplicationController
     enqueue_update_authorized
 
     if params[:back_from_twitter] == 'true'
-      flash[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/back_from_twitter"))
+      flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/back_from_twitter"))
     end
 
     if flash.empty? && user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
