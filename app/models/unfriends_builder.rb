@@ -1,11 +1,9 @@
 class UnfriendsBuilder
-  def initialize(twitter_user, preload: true)
-    @users = Util.users(twitter_user.uid, twitter_user.created_at)
 
-    # if preload
-    #   S3::Friendship.where(twitter_user_ids: @users.map(&:id))
-    #   S3::Followership.where(twitter_user_ids: @users.map(&:id))
-    # end
+  DEFAULT_LIMIT = 1000
+
+  def initialize(twitter_user, limit: DEFAULT_LIMIT)
+    @users = Util.users(twitter_user.uid, twitter_user.created_at, limit: limit)
   end
 
   # Format:
@@ -25,7 +23,7 @@ class UnfriendsBuilder
 
     # Fetch users that are created before the specified date without limit
     # Separated for test
-    def users(uid, created_at, limit: 1000)
+    def users(uid, created_at, limit: DEFAULT_LIMIT)
       TwitterUser.creation_completed.
           where('created_at <= ?', created_at).
           where(uid: uid).select(:id).
