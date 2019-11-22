@@ -16,6 +16,10 @@ class HomeController < ApplicationController
   def new
     enqueue_update_authorized
 
+    if params[:back_from_twitter] == 'true'
+      flash[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/back_from_twitter"))
+    end
+
     if flash.empty? && user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
       redirect_path = timeline_path(screen_name: current_user.screen_name)
       redirect_path = append_query_params(redirect_path, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]

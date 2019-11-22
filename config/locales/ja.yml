@@ -1021,6 +1021,13 @@ ja:
     retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     ajax:
       need_login_html: 'この操作を行うためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
+    back_from_twitter_html: >
+      えごったーは <span class="egotter-pink">350万回</span> 以上利用されている安心のサービスです。<br>
+      <br>
+      <span class="egotter-pink">ログインすることでデータが貯まります</span>。<br>
+      ログインして使い始めよう。<br>
+      <br>
+      <a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank">公式アカウントに質問</a>
   after_sign_in:
     too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>  <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
     too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
