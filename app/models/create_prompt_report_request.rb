@@ -53,7 +53,7 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   ACTIVE_DAYS = 14
-  ACTIVE_DAYS_WARNING_INTERVAL = 2
+  ACTIVE_DAYS_WARNING_INTERVAL = 3
 
   def error_check!
     verify_credentials!
