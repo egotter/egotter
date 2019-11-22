@@ -20,7 +20,7 @@ class CreateTestMessageWorker
       dm_client = DirectMessageClient.new(user.api_client.twitter)
       dm_client.create_direct_message(User::EGOTTER_UID, 'Start sending test message.')
     rescue => e
-      TestMessage.permission_level_not_enough(user.id).deliver!(permission_level_not_enough: true)
+      TestMessage.permission_level_not_enough(user.id).deliver!
     else
       if options['error_class']
         TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
