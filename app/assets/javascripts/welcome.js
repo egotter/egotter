@@ -39,6 +39,9 @@ $(function () {
   $share.find('button.ok').on('click', function () {
     $.post($(this).data('url'), {text: $('#share-modal').find('textarea').val()}, function (res) {
       console.log('createShare', res);
+      if (window.location.pathname.startsWith('/settings')) {
+        window.location.reload();
+      }
     });
 
     $share.modal('hide');
