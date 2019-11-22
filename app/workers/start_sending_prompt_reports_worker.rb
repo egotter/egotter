@@ -14,7 +14,7 @@ class StartSendingPromptReportsWorker
       end
     end
 
-    task = StartEnqueueingPromptReportsTask.new
+    task = StartSendingPromptReportsTask.new
     start_time = Time.zone.now
     users_size = task.users.size
     logger.warn "Start queueing #{task.ids_stats.inspect} #{start_time}"

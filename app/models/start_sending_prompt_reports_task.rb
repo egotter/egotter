@@ -1,4 +1,4 @@
-class StartEnqueueingPromptReportsTask
+class StartSendingPromptReportsTask
   def users
     if instance_variable_defined?(:@users)
       @users
