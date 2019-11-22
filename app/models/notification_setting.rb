@@ -33,7 +33,8 @@ class NotificationSetting < ApplicationRecord
   SEARCH_INTERVAL        = Rails.env.production? ? 60.minutes : 1.minutes
   PROMPT_REPORT_INTERVAL = Rails.env.production? ? 60.minutes : 1.minutes
 
-  REPORT_INTERVAL_VALUES = [3600, 10800, 21600, 43200]
+  REPORT_INTERVAL_VALUES = [3600, 10800, 21600, 43200] # [1 hour, 3 hours, 6 hours, 12 hours]
+  DEFAULT_REPORT_INTERVAL = 43200
 
   validates :report_interval, inclusion: {in: REPORT_INTERVAL_VALUES + [0]}
 

@@ -101,7 +101,7 @@ class User < ApplicationRecord
       if user.new_record?
         transaction do
           user.save!
-          user.create_notification_setting!
+          user.create_notification_setting!(report_interval: NotificationSetting::DEFAULT_REPORT_INTERVAL)
         end
         yield(user, :create) if block_given?
       else
