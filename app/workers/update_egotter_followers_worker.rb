@@ -29,22 +29,19 @@ class UpdateEgotterFollowersWorker
       logger.warn 'Danger! The followers_count is over 70,000!'
     end
 
-    follower_ids = client.follower_ids(User::EGOTTER_UID)
+    current_follower_uids = client.follower_ids(User::EGOTTER_UID)
 
-    followers =
-        EgotterFollower.where(uid: follower_ids).map do |user|
-          EgotterFollower.new(uid: user.uid, screen_name: user.screen_name)
-        end
+    persisted_followers = EgotterFollower.where(uid: current_follower_uids)
 
-    remaining_ids = follower_ids - followers.map(&:uid)
-    users = client.users(remaining_ids)
-    followers += users.map { |user| EgotterFollower.new(uid: user[:id], screen_name: user[:screen_name]) }
+    remaining_uids = current_follower_uids - persisted_followers.map(&:uid)
+    users = client.users(remaining_uids)
+    new_followers = users.map { |user| EgotterFollower.new(uid: user[:id], screen_name: user[:screen_name]) }
 
-    followers.sort_by! { |f| follower_ids.index(f.uid) }
+    current_followers = persisted_followers + new_followers
 
     EgotterFollower.transaction do
-      EgotterFollower.delete_all
-      EgotterFollower.import followers, validate: false
+      EgotterFollower.where.not(uid: current_followers.map(&:uid)).delete_all
+      EgotterFollower.import current_followers, on_duplicate_key_update: %i(uid screen_name), validate: false
     end
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{options.inspect}"
