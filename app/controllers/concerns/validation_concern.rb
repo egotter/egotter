@@ -101,6 +101,7 @@ module Concerns::ValidationConcern
   end
 
   def forbidden_screen_name?(screen_name = nil)
+    logger.warn "#{__method__} Don't pass screen_name"
     screen_name ||= params[:screen_name]
 
     if ForbiddenUser.exists?(screen_name: screen_name) || forbidden_user?(screen_name)
@@ -113,6 +114,7 @@ module Concerns::ValidationConcern
 
   def forbidden_user?(screen_name)
     request_context_client.user(screen_name)
+    DeleteForbiddenUserWorker.perform_async(screen_name)
     false
   rescue => e
     if AccountStatus.suspended?(e)
@@ -124,6 +126,7 @@ module Concerns::ValidationConcern
   end
 
   def not_found_screen_name?(screen_name = nil)
+    logger.warn "#{__method__} Don't pass screen_name"
     screen_name ||= params[:screen_name]
 
     if NotFoundUser.exists?(screen_name: screen_name) || not_found_user?(screen_name)
@@ -136,6 +139,7 @@ module Concerns::ValidationConcern
 
   def not_found_user?(screen_name)
     request_context_client.user(screen_name)
+    DeleteNotFoundUserWorker.perform_async(screen_name)
     false
   rescue => e
     if AccountStatus.not_found?(e)
