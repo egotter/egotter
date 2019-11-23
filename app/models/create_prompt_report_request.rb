@@ -36,14 +36,21 @@ class CreatePromptReportRequest < ApplicationRecord
     changes = unfollowers_changed = nil
 
     ApplicationRecord.benchmark("#{self.class} #{id} Setup parameters", level: :info) do
-      previous_uids = previous_twitter_user.calc_unfollower_uids
-      current_uids = current_twitter_user.unfollowerships.pluck(:follower_uid)
+      if previous_twitter_user.id == current_twitter_user.id
+        previous_uids = previous_twitter_user.unfollowerships.pluck(:follower_uid)
+        current_uids = previous_uids
+      else
+        previous_uids = previous_twitter_user.calc_unfollower_uids
+        current_uids = current_twitter_user.unfollowerships.pluck(:follower_uid)
+      end
+
       changes = {
           twitter_user_id: [previous_twitter_user.id, current_twitter_user.id],
           followers_count: [previous_twitter_user.follower_uids.size, current_twitter_user.follower_uids.size],
           unfollowers_count: [previous_uids.size, current_uids.size],
           removed_uid: [previous_uids.first, current_uids.first],
       }
+
       unfollowers_changed = previous_uids != current_uids
     end
 
