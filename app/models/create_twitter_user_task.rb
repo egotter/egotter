@@ -13,6 +13,9 @@ class CreateTwitterUserTask
         uid: request.uid,
     )
 
+    # Regardless of whether or not the TwitterUser record is created, the TwitterDB::User record is updated.
+    CreateTwitterDBUserWorker.perform_async([request.uid], force_update: true)
+
     @twitter_user = request.perform!
     request.finished!
     @log.update(status: true)

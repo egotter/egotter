@@ -8,13 +8,14 @@ class CreateTwitterDBUserWorker
 
   # options:
   #   compressed
+  #   force_update
   def perform(uids, options = {})
     if options['compressed']
       uids = decompress(uids)
     end
 
     client = Bot.api_client
-    TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client)
+    TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client, force_update: options['force_update'])
   rescue => e
     logger.warn "#{e.class} #{e.message} #{uids.inspect.truncate(150)}"
     logger.warn client.inspect

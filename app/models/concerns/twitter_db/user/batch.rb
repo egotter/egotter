@@ -7,10 +7,10 @@ module Concerns::TwitterDB::User::Batch
   # `followers` does not include suspended uids.
   # `followers_count` is ambiguous.
   class Batch
-    def self.fetch_and_import!(uids, client:)
+    def self.fetch_and_import!(uids, client:, force_update: false)
       uids = uids.uniq.map(&:to_i)
       users = fetch(uids, client: client)
-      imported = import(users)
+      imported = import(users, force_update: force_update)
       import_suspended(uids - users.map { |u| u[:id] }) if uids.size != imported.size
     end
 
@@ -24,9 +24,13 @@ module Concerns::TwitterDB::User::Batch
       end
     end
 
-    def self.import(t_users)
-      # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
-      persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 3.days.ago..Time.zone.now).pluck(:uid)
+    def self.import(t_users, force_update: false)
+      if force_update
+        persisted_uids = []
+      else
+        # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
+        persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 3.days.ago..Time.zone.now).pluck(:uid)
+      end
 
       t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
 
