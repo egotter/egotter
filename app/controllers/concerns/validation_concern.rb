@@ -47,7 +47,7 @@ module Concerns::ValidationConcern
       @via = params['via']
       render template: 'searches/create', formats: %i(html), layout: false
     else
-      respond_with_error(:bad_request, t('application.not_found'))
+      respond_with_error(:bad_request, t('application.twitter_user_not_found'))
     end
 
     false
@@ -62,7 +62,7 @@ module Concerns::ValidationConcern
     if QueueingRequests.new(CreateTwitterUserWorker).exists?(uid)
       true
     else
-      respond_with_error(:bad_request, t('application.not_found'))
+      respond_with_error(:bad_request, t('application.searched_uid_not_found'))
       false
     end
   end

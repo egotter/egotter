@@ -90,9 +90,9 @@ ja:
   waiting:
     new:
       analyzing: "%{user} のデータを分析中"
-      waiting_is_finished_msg: "検索が完了しました。ページを移動します"
+      finished: "検索が完了しました。ページを移動します"
       retry_search_by: "%{user} で再度検索"
-      something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+      something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
       retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
       link_to_support: "お問い合わせページ"
   home:
@@ -969,7 +969,8 @@ ja:
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       share_me: "えごったーをシェアする"
   application:
-    not_found: "無効なURLです。大変お手数ですが、トップページから再度検索してみてください。"
+    twitter_user_not_found: "レコードが見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：TUNF404"
+    searched_uid_not_found: "レコードの作成を開始できませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：SUNF404"
     routing_not_found: "お探しのページが見付かりませんでした。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error: "エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error_with_recovery_html: 'エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a>'
