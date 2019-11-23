@@ -7,7 +7,6 @@ en:
       return: "return to Analysis of %{user}"
       twitter_id: "Twitter ID"
       search_by_twitter_id: "Search by Twitter ID"
-      search_by_other_user: "Search by other Twitter ID"
       search_by_egotter: "Search by egotter"
       search_xxx_by_egotter: "Search %{user} by egotter"
       search_a_and_b: "Search %{user1} and %{user2}"
