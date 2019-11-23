@@ -99,18 +99,6 @@ class PromptReport < ApplicationRecord
     raise ReportingFailed.new("#{e.class}: #{e.message.truncate(100)}")
   end
 
-  def send_activeness_warning_message
-    template = Rails.root.join('app/views/prompt_reports/activeness_warning.ja.text.erb')
-    message = ERB.new(template.read).result_with_hash(
-        timeline_url: Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, follow_dialog: 1, share_dialog: 1, via: 'prompt_report_activeness_warning')
-    )
-
-    dm_client = DirectMessageClient.new(egotter_client)
-    dm_client.create_direct_message(user.uid, message)
-  rescue => e
-    logger.warn "#{__method__} #{e.class}: #{e.message}"
-  end
-
   class StartingFailed < StandardError
   end
 
@@ -160,11 +148,11 @@ class PromptReport < ApplicationRecord
     private
 
     def generic_timeline_url
-      @generic_timeline_url ||= Rails.application.routes.url_helpers.timeline_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
+      @generic_timeline_url ||= Rails.application.routes.url_helpers.profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
     end
 
     def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
+      Rails.application.routes.url_helpers.profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
     end
   end
 
@@ -202,11 +190,11 @@ class PromptReport < ApplicationRecord
     private
 
     def generic_timeline_url
-      @generic_timeline_url ||= Rails.application.routes.url_helpers.timeline_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
+      @generic_timeline_url ||= Rails.application.routes.url_helpers.profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
     end
 
     def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
+      Rails.application.routes.url_helpers.profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
     end
   end
 end

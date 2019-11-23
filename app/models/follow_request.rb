@@ -75,6 +75,8 @@ class FollowRequest < ApplicationRecord
     end
   end
 
+  # Returns a collection of numeric IDs for every protected user for whom the authenticating user has a pending follow request.
+  # TODO Cache this value.
   def friendship_outgoing?
     client.friendships_outgoing.attrs[:ids].include?(uid)
   rescue => e
