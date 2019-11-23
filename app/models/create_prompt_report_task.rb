@@ -39,22 +39,26 @@ class CreatePromptReportTask
         uid: user.uid)
 
     twitter_user = nil
-    ApplicationRecord.benchmark("#{self.class} #{request.id} create task start", level: :info) do
-      twitter_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
+    begin
+      ApplicationRecord.benchmark("#{self.class} #{request.id} create task start", level: :info) do
+        twitter_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
+      end
+    ensure
+      # Regardless of whether or not the TwitterUser record is created, the Unfriendship and the Unfollowership are updated.
+      # Since the internal logic has been changed, otherwise the unfriends and the unfollowers will remain inaccurate.
+
+      twitter_user = TwitterUser.latest_by(uid: user.uid) unless twitter_user
+
+      ApplicationRecord.benchmark("#{self.class} #{request.id} Unfriendship.import_by!", level: :info) do
+        Unfriendship.import_by!(twitter_user: twitter_user)
+      end
+
+      ApplicationRecord.benchmark("#{self.class} #{request.id} Unfollowership.import_by!", level: :info) do
+        Unfollowership.import_by!(twitter_user: twitter_user)
+      end
     end
 
     # TODO Create TwitterDB::User of imported uids
-
-    ApplicationRecord.benchmark("#{self.class} #{request.id} Unfriendship.import_by!", level: :info) do
-      Unfriendship.import_by!(twitter_user: twitter_user)
-    end
-
-    ApplicationRecord.benchmark("#{self.class} #{request.id} Unfollowership.import_by!", level: :info) do
-      Unfollowership.import_by!(twitter_user: twitter_user)
-    end
-
-    twitter_user
   rescue CreateTwitterUserRequest::NotChanged, CreateTwitterUserRequest::RecentlyUpdated, CreateTwitterUserRequest::TooManyFriends => e
-    nil
   end
 end
