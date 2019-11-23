@@ -18,6 +18,7 @@
 #  index_create_prompt_report_logs_on_request_id   (request_id)
 #  index_create_prompt_report_logs_on_screen_name  (screen_name)
 #  index_create_prompt_report_logs_on_uid          (uid)
+#  index_create_prompt_report_logs_on_user_id      (user_id)
 #
 
 class CreatePromptReportLog < ApplicationRecord
