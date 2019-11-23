@@ -29,6 +29,7 @@ Rails.application.routes.draw do
   get '/menu', to: redirect('/settings?via=routing_menu')
 
   %i(
+    profiles
     friends
     followers
     statuses

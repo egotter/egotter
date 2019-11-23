@@ -26,8 +26,10 @@ module Concerns::SearchByUidConcern
     before_action(only: %i(show all)) do
       if flash.empty?
         if ForbiddenUser.exists?(screen_name: @twitter_user.screen_name)
+          logger.info "It should not reach this block. SearchByUidConcern ForbiddenUser.exists? #{controller_name} #{action_name}"
           flash.now[:alert] = forbidden_message(@twitter_user.screen_name)
         elsif NotFoundUser.exists?(screen_name: @twitter_user.screen_name)
+          logger.info "It should not reach this block. SearchByUidConcern NotFoundUser.exists? #{controller_name} #{action_name}"
           flash.now[:alert] = not_found_message(@twitter_user.screen_name)
         end
       end
