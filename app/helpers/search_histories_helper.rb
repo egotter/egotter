@@ -15,7 +15,7 @@ module SearchHistoriesHelper
     end
 
     if user_signed_in? && current_user.is_subscribing?
-      count = user.orders.unexpired[-1].search_count
+      count = current_user.orders.unexpired[-1].search_count
     end
 
     if user_signed_in? && current_user.sharing_egotter_count > 0
