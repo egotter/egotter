@@ -9,6 +9,9 @@ class NotFoundController < ApplicationController
     @user = TwitterDB::User.find_by(screen_name: @screen_name)
     @user = TwitterUser.latest_by(screen_name: @screen_name) unless @user
 
+    # Even if this value is not set, the sidebar will not be displayed because @twitter_user is not set.
+    self.sidebar_disabled = true
+
     flash.now[:alert] = not_found_message(@screen_name)
 
     if @user

@@ -12,6 +12,9 @@ class BlockedController < ApplicationController
 
     flash.now[:alert] = blocked_message(@screen_name)
 
+    # Even if this value is not set, the sidebar will not be displayed because @twitter_user is not set.
+    self.sidebar_disabled = true
+
     if @user
       render 'not_found/show'
     else
