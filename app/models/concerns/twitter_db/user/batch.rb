@@ -29,7 +29,7 @@ module Concerns::TwitterDB::User::Batch
         persisted_uids = []
       else
         # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
-        persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 2.days.ago..Time.zone.now).pluck(:uid)
+        persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 1.days.ago..Time.zone.now).pluck(:uid)
       end
 
       t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
