@@ -269,6 +269,9 @@ class CreatePromptReportRequest < ApplicationRecord
   class DirectMessageNotSent < Error
   end
 
+  class DuplicateJobSkipped < DeadErrorTellsNoTales
+  end
+
   class Unknown < StandardError
   end
 end

@@ -6,12 +6,16 @@ class CreatePromptReportInitializationMessageWorker
     user_id
   end
 
+  def after_skip(user_id, options = {})
+    log(Hashie::Mash.new(options)).update(status: false, error_class: CreatePromptReportRequest::InitializationFailed, error_message: "#{self.class} #{CreatePromptReportRequest::DuplicateJobSkipped}")
+  end
+
   # options:
   #   create_prompt_report_request_id
   def perform(user_id, options = {})
     user = User.find(user_id)
     unless user.authorized?
-      log(options).update(status: false, error_class: CreatePromptReportRequest::Unauthorized, error_message: '')
+      log(options).update(status: false, error_class: CreatePromptReportRequest::InitializationFailed, error_message: "#{self.class} #{CreatePromptReportRequest::Unauthorized}")
       return
     end
 

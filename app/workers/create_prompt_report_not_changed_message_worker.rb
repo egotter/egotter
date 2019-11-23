@@ -6,6 +6,10 @@ class CreatePromptReportNotChangedMessageWorker
     user_id
   end
 
+  def after_skip(user_id, options = {})
+    log(Hashie::Mash.new(options)).update(status: false, error_class: CreatePromptReportRequest::NotChangedMessageNotSent, error_message: "#{self.class} #{CreatePromptReportRequest::DuplicateJobSkipped}")
+  end
+
   # options:
   #   changes_json
   #   previous_twitter_user_id
@@ -13,7 +17,10 @@ class CreatePromptReportNotChangedMessageWorker
   #   create_prompt_report_request_id
   def perform(user_id, options = {})
     user = User.find(user_id)
-    return unless user.authorized?
+    unless user.authorized?
+      log(options).update(status: false, error_class: CreatePromptReportRequest::NotChangedMessageNotSent, error_message: "#{self.class} #{CreatePromptReportRequest::Unauthorized}")
+      return
+    end
 
     PromptReport.not_changed(
         user.id,
