@@ -55,7 +55,7 @@ class TestMessage < ApplicationRecord
       resp = dm_client.create_direct_message(user.uid, message_builder.build)
     else
       dm_client = DirectMessageClient.new(user.api_client.twitter)
-      dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.testMessage.lets_start'))
+      dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.testMessage.lets_start', url: Rails.application.routes.url_helpers.settings_url(via: 'test_message_lets_start', og_tag: 'false')))
 
       dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
       resp = dm_client.create_direct_message(user.uid, message_builder.build)
@@ -79,6 +79,7 @@ class TestMessage < ApplicationRecord
       template = Rails.root.join('app/views/test_reports/ok.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           user: user,
+          report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           timeline_url: timeline_url(user.screen_name, token),
           settings_url: Rails.application.routes.url_helpers.settings_url(via: 'test_report', og_tag: 'false')
@@ -106,6 +107,7 @@ class TestMessage < ApplicationRecord
       template = Rails.root.join('app/views/test_reports/need_fix.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           user: user,
+          report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           error_class: readable_error_class(error_class),
           error_message: readable_error_message(error_class, error_message),
@@ -122,6 +124,8 @@ class TestMessage < ApplicationRecord
         when 'CreatePromptReportRequest::TooShortRequestInterval' then I18n.t('dm.testMessage.errors.too_short_request_interval')
         when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.errors.report_disabled')
         when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.errors.egotter_blocked')
+        when 'CreatePromptReportRequest::TooManyFriends' then I18n.t('dm.testMessage.errors.too_many_friends')
+        when 'CreatePromptReportRequest::TooManyErrors' then I18n.t('dm.testMessage.errors.too_many_errors')
         else error
       end
     end
@@ -132,6 +136,8 @@ class TestMessage < ApplicationRecord
       when 'CreatePromptReportRequest::TooShortRequestInterval' then I18n.t('dm.testMessage.messages.too_short_request_interval')
       when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.messages.report_disabled')
       when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.messages.egotter_blocked')
+      when 'CreatePromptReportRequest::TooManyFriends' then I18n.t('dm.testMessage.messages.too_many_friends')
+      when 'CreatePromptReportRequest::TooManyErrors' then I18n.t('dm.testMessage.messages.too_many_errors')
       else message
       end
     end

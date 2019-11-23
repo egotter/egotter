@@ -9,6 +9,9 @@
 リムられ通知はこれから送信されます。
 <% end %>
 
+通知間隔：
+<%= I18n.t("settings.index.report_interval.#{report_interval}") %>
+
 最新のデータ更新：<% if twitter_user %>
 <%= I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
 <% else %>
