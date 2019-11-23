@@ -37,5 +37,9 @@ class CreatePromptReportLog < ApplicationRecord
           screen_name: request.user.screen_name
       )
     end
+
+    def latest_by(condition)
+      order(created_at: :desc).find_by(condition)
+    end
   end
 end
