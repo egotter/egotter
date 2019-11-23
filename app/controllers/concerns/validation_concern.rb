@@ -112,6 +112,7 @@ module Concerns::ValidationConcern
     end
   end
 
+  # Temporarily suspended users ( user[:suspended] == true ) are not checked.
   def forbidden_user?(screen_name)
     request_context_client.user(screen_name)
     DeleteForbiddenUserWorker.perform_async(screen_name)

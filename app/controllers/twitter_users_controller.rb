@@ -9,11 +9,14 @@ class TwitterUsersController < ApplicationController
 
   before_action { create_search_log }
 
+  # First access of background-update
   def create
     jid = enqueue_create_twitter_user_job_if_needed(@twitter_user.uid, user_id: current_user_id, requested_by: 'background')
     render json: {uid: @twitter_user.uid, screen_name: @twitter_user.screen_name, jid: jid}
   end
 
+  # Polling access of waiting
+  # Polling access of background-update
   def show
     twitter_user = TwitterUser.latest_by(uid: @twitter_user.uid)
     unless twitter_user

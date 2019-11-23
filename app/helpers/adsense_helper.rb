@@ -34,6 +34,7 @@ module AdsenseHelper
   USER_INACTIVE_FRIENDS      = 2330321466
   USER_ONE_SIDED_FOLLOWERS   = 9526941741
   USER_ONE_SIDED_FRIENDS     = 8022288381
+  USER_PROFILES              = 9008650779
   USER_REPLIED               = 9578256099
   USER_REPLYING              = 8180224575
   USER_STATUSES              = 5354750688
@@ -48,6 +49,7 @@ module AdsenseHelper
   GUEST_OTHERS        = 6928462015
   GUEST_RIGHT         = 8511414414
   GUEST_WAITING       = 9863392014
+  GUEST_PROFILES      = 2634814114
 
   def left_slot_fixed_ad_id(controller, action, position)
     slot =
@@ -101,6 +103,7 @@ module AdsenseHelper
         when [true,  'one_sided_friends',     'show', :bottom] then USER_ONE_SIDED_FRIENDS
         when [true,  'one_sided_friends',     'show', :middle] then USER_ONE_SIDED_FRIENDS
         when [true,  'one_sided_friends',     'show', :top]    then USER_ONE_SIDED_FRIENDS
+        when [true,  'profiles',              'show', :top]    then USER_PROFILES
         when [true,  'replied',               'show', :bottom] then USER_REPLIED
         when [true,  'replied',               'show', :middle] then USER_REPLIED
         when [true,  'replied',               'show', :top]    then USER_REPLIED
@@ -125,6 +128,7 @@ module AdsenseHelper
         when [false, 'timelines',             'show', :top]    then GUEST_TIMELINES_TOP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING
+        when [false, 'profiles',              'show', :top]    then GUEST_PROFILES
         else nil
         end
 
@@ -170,6 +174,7 @@ module AdsenseHelper
   GUEST_MUTUAL_FRIENDS_RESP       = 9377664280
   GUEST_ONE_SIDED_FOLLOWERS_RESP  = 1755514503
   GUEST_ONE_SIDED_FRIENDS_RESP    = 9554113474
+  GUEST_PROFILES_RESP             = 4714182547
   GUEST_REPLIED_RESP              = 4125337604
   GUEST_REPLYING_AND_REPLIED_RESP = 5169335276
   GUEST_REPLYING_RESP             = 9046491792
@@ -212,6 +217,7 @@ module AdsenseHelper
   USER_MUTUAL_FRIENDS_RESP        = 7809431740
   USER_ONE_SIDED_FOLLOWERS_RESP   = 2425690232
   USER_ONE_SIDED_FRIENDS_RESP     = 9346321801
+  USER_PROFILES_RESP              = 8650909191
   USER_REPLIED_RESP               = 5230627600
   USER_REPLYING_RESP              = 3725974245
   USER_REPLYING_AND_REPLIED_RESP  = 8305445130
@@ -290,6 +296,7 @@ module AdsenseHelper
         when [true,  'one_sided_friends',     'show', :bottom] then USER_ONE_SIDED_FRIENDS_RESP
         when [true,  'one_sided_friends',     'show', :middle] then USER_ONE_SIDED_FRIENDS_RESP
         when [true,  'one_sided_friends',     'show', :top]    then USER_ONE_SIDED_FRIENDS_RESP
+        when [true,  'profiles',              'show', :top]    then USER_PROFILES_RESP
         when [true,  'replied',               'list', :slit]   then USER_REPLIED_RESP
         when [true,  'replied',               'show', :bottom] then USER_REPLIED_RESP
         when [true,  'replied',               'show', :middle] then USER_REPLIED_RESP
@@ -373,6 +380,7 @@ module AdsenseHelper
         when [false, 'one_sided_friends',     'show', :bottom] then GUEST_ONE_SIDED_FRIENDS_RESP
         when [false, 'one_sided_friends',     'show', :middle] then GUEST_ONE_SIDED_FRIENDS_RESP
         when [false, 'one_sided_friends',     'show', :top]    then GUEST_ONE_SIDED_FRIENDS_RESP
+        when [false, 'profiles',              'show', :top]    then GUEST_PROFILES_RESP
         when [false, 'replied',               'list', :slit]   then GUEST_REPLIED_RESP
         when [false, 'replied',               'show', :bottom] then GUEST_REPLIED_RESP
         when [false, 'replied',               'show', :middle] then GUEST_REPLIED_RESP

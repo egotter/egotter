@@ -62,6 +62,11 @@ end
   end
 end
 
+crumb :profile do |screen_name|
+  link t('profiles.show.crumb_title', user: screen_name), profile_path(screen_name: screen_name)
+  parent :root
+end
+
 crumb :relationship do |src_screen_name, dst_screen_name|
   link t('relationships.new.simple_title'), relationship_path(src_screen_name: src_screen_name, dst_screen_name: dst_screen_name)
   parent :timeline, src_screen_name
