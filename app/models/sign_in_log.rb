@@ -28,7 +28,7 @@
 #
 
 class SignInLog < ApplicationRecord
-  validates :via, length: {maximum: 50}
+  validates :via, length: {maximum: 100}
 
   include Concerns::LastSessionAnalytics
 
