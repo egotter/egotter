@@ -13,16 +13,29 @@ $(function () {
 
   var $follow = $('#follow-modal');
   var $share = $('#share-modal');
+  var cache = window['sessionStorage'] || {};
 
   if (getParameterByName('follow_dialog') === '1' && getParameterByName('share_dialog') === '1') {
     $follow.on('hidden.bs.modal', function (e) {
-      $share.modal();
+      if (!cache['share_dialog']) {
+        cache['share_dialog'] = true;
+        $share.modal();
+      }
     });
-    $follow.modal();
+    if (!cache['follow_dialog']) {
+      cache['follow_dialog'] = true;
+      $follow.modal();
+    }
   } else if (getParameterByName('follow_dialog') === '1') {
-    $follow.modal();
+    if (!cache['follow_dialog']) {
+      cache['follow_dialog'] = true;
+      $follow.modal();
+    }
   } else if (getParameterByName('share_dialog') === '1') {
-    $share.modal();
+    if (!cache['share_dialog']) {
+      cache['share_dialog'] = true;
+      $share.modal();
+    }
   }
 
   $follow.find('button.ok').on('click', function () {
