@@ -115,7 +115,7 @@ module Concerns::ValidationConcern
     request_context_client.user(screen_name)
     false
   rescue => e
-    if e.message == 'User has been suspended.'
+    if AccountStatus.suspended?(e)
       CreateForbiddenUserWorker.perform_async(screen_name)
       true
     else
@@ -138,7 +138,7 @@ module Concerns::ValidationConcern
     request_context_client.user(screen_name)
     false
   rescue => e
-    if e.message == 'User not found.'
+    if AccountStatus.not_found?(e)
       CreateNotFoundUserWorker.perform_async(screen_name)
       true
     else

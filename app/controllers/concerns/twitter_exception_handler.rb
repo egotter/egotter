@@ -47,7 +47,7 @@ module Concerns::TwitterExceptionHandler
     request_context_client.user(screen_name)
     false
   rescue => e
-    e.class == Twitter::Error::NotFound && e.message == 'User not found.'
+    AccountStatus.not_found?(e)
   end
 
   def screen_name_changed_message(screen_name)

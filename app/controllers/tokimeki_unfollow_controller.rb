@@ -69,8 +69,7 @@ class TokimekiUnfollowController < ::Page::UnfriendsAndUnfollowers
   end
 
   def skippable_exception?(e)
-    (e.class == Twitter::Error::NotFound && e.message == 'User not found.') ||
-        (e.class == Twitter::Error::Forbidden && e.message == 'User has been suspended.')
+    AccountStatus.not_found?(e) || AccountStatus.suspended?(e)
   end
 
   def save_data

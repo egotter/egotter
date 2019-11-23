@@ -63,7 +63,7 @@ class UnfollowRequest < ApplicationRecord
   rescue => e
     if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
       raise TemporarilyLocked
-    elsif e.message == 'User has been suspended.'
+    elsif AccountStatus.suspended?(e)
       raise Suspended
     else
       raise
