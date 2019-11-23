@@ -65,6 +65,11 @@ class CreatePromptReportRequest < ApplicationRecord
   def error_check!
     verify_credentials!
 
+    previous_errors = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(3).pluck(:error_class)
+    if previous_errors.size == 3 && previous_errors.all? { |err| err.present? }
+      raise TooManyErrors
+    end
+
     raise PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
     raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
@@ -235,6 +240,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class TooManyFriends < DeadErrorTellsNoTales
+  end
+
+  class TooManyErrors < DeadErrorTellsNoTales
   end
 
   class TemporarilyLocked < Error
