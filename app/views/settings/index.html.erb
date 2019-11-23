@@ -114,23 +114,23 @@
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
 
-  <h2 class="h4 text-center"><%= t('.notifications_title') %></h2>
+  <h2 class="h4 text-center"><%= t('.notifications.title') %></h2>
 
   <hr>
 
-  <div class="col-xs-4"><%= t('.report_is_not_coming') %></div>
+  <div class="col-xs-4"><%= t('.notifications.prompt_reports.not_coming') %></div>
   <div class="col-xs-8">
-    <div><%= t('.update_authorized_for_dm_note_html') %></div>
-    <%= link_to t('.update_authorized_for_dm'), sign_in_path(force_login: true, via: build_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
+    <%= link_to t('.notifications.prompt_reports.update_authorized_for_dm'), sign_in_path(force_login: true, via: build_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
+    <div class="notes"><%= t('.notifications.prompt_reports.update_authorized_for_dm_note_html') %></div>
   </div>
 
   <div class="clearfix"></div>
   <hr>
 
-  <div class="col-xs-4"><%= t('.reporting_test') %></div>
+  <div class="col-xs-4"><%= t('.notifications.prompt_reports.reporting_test') %></div>
   <div class="col-xs-8">
-    <%= link_to t('.send_test_report'), sign_in_path(force_login: true, via: build_via('send_test_report'), redirect_path: settings_path), class: 'btn btn-default' %>
-    <div class="text-muted notes"><%= t('.send_test_report_note_html') %></div>
+    <%= link_to t('.notifications.prompt_reports.send_test_report'), sign_in_path(force_login: true, via: build_via('send_test_report'), redirect_path: settings_path), class: 'btn btn-default' %>
+    <div class="text-muted notes"><%= t('.notifications.prompt_reports.send_test_report_note_html') %></div>
   </div>
 
   <div class="clearfix"></div>
@@ -141,11 +141,11 @@
   </div>
 
   <div class="form-group">
-    <label for="report_interval" class="control-label col-xs-4"><%= t('.report_interval_title') %></label>
+    <label for="report_interval" class="control-label col-xs-4"><%= t('.notifications.prompt_reports.report_interval_title') %></label>
     <div class="col-xs-8">
       <% options = NotificationSetting.report_interval_options %>
       <%= select_tag 'report_interval', options_for_select(options, selected: current_user.notification_setting.report_interval), class: 'form-control' %>
-      <div class="text-muted notes"><%= t('.report_interval_note') %></div>
+      <div class="text-muted notes"><%= t('.notifications.prompt_reports.report_interval_note') %></div>
     </div>
   </div>
 
@@ -153,9 +153,18 @@
   <hr>
   <div class="vertical-spacing"></div>
 
-  <div class="col-xs-4"><%= t('.last_prompt_report') %></div>
+  <div class="col-xs-4"><%= t('.notifications.prompt_reports.latest_prompt_report') %></div>
   <div class="col-xs-8">
-    <%= current_user.prompt_reports.any? ? l(current_user.prompt_reports.last.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : 'aaa' %>
+    <%= @latest_prompt_report ? l(@latest_prompt_report.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : t('.notifications.prompt_reports.not_sent') %>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+  <div class="vertical-spacing"></div>
+
+  <div class="col-xs-4"><%= t('.notifications.prompt_reports.status') %></div>
+  <div class="col-xs-8">
+    <%= @latest_prompt_report_log&.error_class&.present? ? t('.notifications.prompt_reports.error_html', text: @latest_prompt_report_log.error_class) : t('.notifications.prompt_reports.running_normally_html') %>
   </div>
 
   <div class="clearfix"></div>

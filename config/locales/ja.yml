@@ -205,10 +205,6 @@ ja:
     title: "設定"
     index:
       general_title: "ユーザー情報"
-      update_authorized_for_dm: 'リムられ通知を復活させる'
-      update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。'
-      send_test_report: 'リムられ通知をテスト送信する'
-      send_test_report_note_html: '通知が届かない方はお試しください'
       reset_menu:
         title: 'データのリセット'
         profile: 'ユーザー情報'
@@ -274,12 +270,26 @@ ja:
         count: '合計 %{count} 回'
         remaining: '（残り %{count} 回）'
         note: '直近の %{days} 日が対象'
-      notifications_title: "通知設定"
-      report_is_not_coming: "リムられ通知がこない場合"
-      reporting_test: "リムられ通知のテスト"
-      last_prompt_report: "最新のリムられ通知"
-      report_interval_title: "通知間隔"
-      report_interval_note: "通知の間隔は目安です"
+      notifications:
+        title: "通知設定"
+        prompt_reports:
+          not_coming: "リムられ通知がこない場合"
+          update_authorized_for_dm: 'リムられ通知を復活させる'
+          update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。'
+          reporting_test: "リムられ通知のテスト"
+          send_test_report: 'リムられ通知をテスト送信する'
+          send_test_report_note_html: '通知が届かない方はお試しください'
+          report_interval_title: "通知間隔"
+          report_interval_note: "通知の間隔は目安です"
+          latest_prompt_report: "最新のリムられ通知"
+          status: "通知ステータス"
+          running_normally_html: '<div class="text-primary">正常</div>'
+          error_html: '<div class="text-warning">%{text}</div>'
+          not_sent: 'リムられ通知はこれから送信されます。'
+      prompt_report:
+        title: "リムられ通知履歴"
+        see: "見てみる"
+        note: "リムられ通知の処理履歴です"
       report_interval:
         3600: "1時間毎"
         10800: "3時間毎"
@@ -305,10 +315,6 @@ ja:
         warning_html: "キャッシュ（表示の高速化のためのデータ）をリセットします。本当にリセットしますか？<br><br><b>※保存されたデータは残ります</b>"
         ok: "はい、リセットします"
         cancel: "いいえ"
-      prompt_report:
-        title: "リムられ通知履歴"
-        see: "見てみる"
-        note: "リムられ通知の処理履歴です"
       trial_follow_request: "フォローボタン履歴"
       trial_follow_request_see: "見てみる"
       trial_follow_request_note: "フォロー処理の履歴です"

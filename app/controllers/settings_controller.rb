@@ -8,6 +8,8 @@ class SettingsController < ApplicationController
     enqueue_update_authorized
     enqueue_update_egotter_friendship
 
+    @latest_prompt_report = current_user.prompt_reports.first
+    @latest_prompt_report_log = CreatePromptReportLog.latest_by(user_id: current_user.id)
     @update_histories = UpdateHistories.new(current_user.uid)
     @reset_egotter_request = current_user.reset_egotter_requests.not_finished.exists?
     @reset_cache_request = current_user.reset_cache_requests.not_finished.exists?
