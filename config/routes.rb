@@ -111,6 +111,7 @@ Rails.application.routes.draw do
   get 'searches/:uid/waiting', to: redirect('/waiting/%{uid}')
   get 'waiting/:uid', to: 'waiting#new', as: :waiting
 
+  resources :account_statuses, only: %i(show), param: :uid
   resources :twitter_users, only: %i(create show), param: :uid
 
   resources :timelines, only: %i(show), param: :screen_name

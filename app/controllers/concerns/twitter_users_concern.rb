@@ -6,6 +6,8 @@ module Concerns::TwitterUsersConcern
   included do
   end
 
+  # Normally you will not be redirected to not_found_path or forbidden_path here.
+  # See also #not_found_user? in #not_found_screen_name? or #forbidden_user? in #forbidden_screen_name?
   def build_twitter_user_by(screen_name:)
     user = request_context_client.user(screen_name)
     twitter_user = TwitterUser.build_by(user: user)
@@ -15,10 +17,12 @@ module Concerns::TwitterUsersConcern
 
     twitter_user
   rescue => e
-    if e.message == 'User not found.'
+    status = AccountStatus.new(ex: e)
+
+    if status.not_found?
       CreateNotFoundUserWorker.perform_async(screen_name)
       redirect_to not_found_path(screen_name: screen_name)
-    elsif e.message == 'User has been suspended.'
+    elsif status.suspended?
       CreateForbiddenUserWorker.perform_async(screen_name)
       redirect_to forbidden_path(screen_name: screen_name)
     else

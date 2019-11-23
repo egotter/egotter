@@ -226,6 +226,16 @@
         });
       }
 
+      (function (){
+        var url = "#{account_status_path(uid: twitter_user.uid)}";
+        $.get(url)
+        .done(function (res) {
+          console.log(url, res);
+        }).fail(function (xhr) {
+          console.log(url, xhr.responseText);
+        });
+      })();
+
       detectSecretMode();
     });
   })();
