@@ -346,6 +346,7 @@ ActiveRecord::Schema.define(version: 2019_11_22_232415) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_create_twitter_user_requests_on_created_at"
+    t.index ["twitter_user_id"], name: "index_create_twitter_user_requests_on_twitter_user_id"
     t.index ["user_id"], name: "index_create_twitter_user_requests_on_user_id"
   end
 

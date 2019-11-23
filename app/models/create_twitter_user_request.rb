@@ -15,8 +15,9 @@
 #
 # Indexes
 #
-#  index_create_twitter_user_requests_on_created_at  (created_at)
-#  index_create_twitter_user_requests_on_user_id     (user_id)
+#  index_create_twitter_user_requests_on_created_at       (created_at)
+#  index_create_twitter_user_requests_on_twitter_user_id  (twitter_user_id)
+#  index_create_twitter_user_requests_on_user_id          (user_id)
 #
 
 class CreateTwitterUserRequest < ApplicationRecord

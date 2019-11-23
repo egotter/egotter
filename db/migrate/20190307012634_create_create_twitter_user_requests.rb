@@ -12,6 +12,7 @@ class CreateCreateTwitterUserRequests < ActiveRecord::Migration[5.1]
       t.timestamps null: false
 
       t.index :user_id
+      t.index :twitter_user_id
       t.index :created_at
     end
   end
