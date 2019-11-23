@@ -40,11 +40,11 @@ class CreatePromptReportRemovedMessageWorker
       logger.info e.backtrace.join("\n")
     end
 
-    ex = CreatePromptReportRequest::DirectMessageNotSent.new("#{e.class}: #{e.message}")
+    ex = CreatePromptReportRequest::RemovedMessageNotSent.new("#{e.class}: #{e.message}")
     log(options).update(status: false, error_class: ex.class, error_message: ex.message)
   end
 
   def log(options)
-    CreatePromptReportLog.find_by(request_id: options['create_prompt_report_request_id'])
+    CreatePromptReportLog.find_or_initialize_by(request_id: options['create_prompt_report_request_id'])
   end
 end

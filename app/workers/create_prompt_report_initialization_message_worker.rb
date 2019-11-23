@@ -31,7 +31,7 @@ class CreatePromptReportInitializationMessageWorker
         logger.info e.backtrace.join("\n")
       end
 
-      ex = CreatePromptReportRequest::DirectMessageNotSent.new("Initialization message1 from user #{e.class}: #{e.message}")
+      ex = CreatePromptReportRequest::InitializationMessageNotSent.new("message1 from user #{e.class}: #{e.message}")
       log(options).update(status: false, error_class: ex.class, error_message: ex.message)
     end
 
@@ -49,7 +49,7 @@ class CreatePromptReportInitializationMessageWorker
         logger.info e.backtrace.join("\n")
       end
 
-      ex = CreatePromptReportRequest::DirectMessageNotSent.new("Initialization message2 from egotter #{e.class}: #{e.message}")
+      ex = CreatePromptReportRequest::InitializationMessageNotSent.new("message2 from egotter #{e.class}: #{e.message}")
       log(options).update(status: false, error_class: ex.class, error_message: ex.message)
     end
 

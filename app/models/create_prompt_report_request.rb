@@ -198,7 +198,16 @@ class CreatePromptReportRequest < ApplicationRecord
   class InitializationStarted < DeadErrorTellsNoTales
   end
 
+  class InitializationMessageNotSent < DeadErrorTellsNoTales
+  end
+
   class InitializationFailed < Error
+  end
+
+  class RemovedMessageNotSent < DeadErrorTellsNoTales
+  end
+
+  class NotChangedMessageNotSent < DeadErrorTellsNoTales
   end
 
   class PermissionLevelNotEnough < DeadErrorTellsNoTales
