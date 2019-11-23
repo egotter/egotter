@@ -18,9 +18,6 @@ class CreateTwitterUserWorker
   #   enqueued_at
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
-    user = request.user
-    return if user&.unauthorized?
-
     task = CreateTwitterUserTask.new(request)
     task.start!
     twitter_user = task.twitter_user

@@ -28,6 +28,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   validates :uid, presence: true
 
   def perform!
+    raise Unauthorized if user&.unauthorized?
+
     twitter_user = build_twitter_user
 
     # Don't call #invalid? because it clears errors
