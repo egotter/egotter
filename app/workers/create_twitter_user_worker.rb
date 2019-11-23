@@ -21,6 +21,7 @@ class CreateTwitterUserWorker
     task = CreateTwitterUserTask.new(request)
     task.start!
     twitter_user = task.twitter_user
+    user = request.user
 
     notify(user, request.uid) if user
     enqueue_next_jobs(request.user_id, request.uid, twitter_user)
