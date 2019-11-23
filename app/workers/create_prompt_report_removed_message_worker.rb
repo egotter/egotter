@@ -23,8 +23,10 @@ class CreatePromptReportRemovedMessageWorker
     ).deliver!
 
 
-    unless user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS_WARNING)
-      ActivenessWarningMessage.warn(user.id).deliver!
+    if !user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS_WARNING)
+      WarningMessage.inactive(user.id).deliver!
+    elsif !user.following_egotter?
+      WarningMessage.not_following(user.id).deliver!
     end
 
   rescue => e
