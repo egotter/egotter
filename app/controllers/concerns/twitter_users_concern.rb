@@ -6,7 +6,7 @@ module Concerns::TwitterUsersConcern
   included do
   end
 
-  def build_twitter_user_by(screen_name:)
+  def build_twitter_user_by!(screen_name:)
     user = request_context_client.user(screen_name)
     twitter_user = TwitterUser.build_by(user: user)
 
@@ -15,11 +15,25 @@ module Concerns::TwitterUsersConcern
 
     twitter_user
   rescue => e
-    if e.message == 'User not found.'
+    status = AccountStatus.new(e)
+
+    if status.not_found?
       CreateNotFoundUserWorker.perform_async(screen_name)
-      redirect_to not_found_path(screen_name: screen_name)
-    elsif e.message == 'User has been suspended.'
+    elsif status.suspended?
       CreateForbiddenUserWorker.perform_async(screen_name)
+    end
+
+    raise
+  end
+
+  def build_twitter_user_by(screen_name:)
+    build_twitter_user_by!(screen_name: screen_name)
+  rescue => e
+    status = AccountStatus.new(e)
+
+    if status.not_found?
+      redirect_to not_found_path(screen_name: screen_name)
+    elsif status.suspended?
       redirect_to forbidden_path(screen_name: screen_name)
     else
       logger.info "#{self.class}##{__method__} Something error in #build_twitter_user_by #{e.class} #{e.message}}"
