@@ -57,7 +57,7 @@ class PromptReport < ApplicationRecord
     def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
 
-      message_builder = MessageBuilder.new(report.user, report.token)
+      message_builder = YouAreRemovedMessageBuilder.new(report.user, report.token)
       message_builder.previous_twitter_user = previous_twitter_user
       message_builder.current_twitter_user = current_twitter_user
       message_builder.build # If something is wrong, an error will occur here.
@@ -125,7 +125,7 @@ class PromptReport < ApplicationRecord
     @egotter_client ||= User.egotter.api_client.twitter
   end
 
-  class MessageBuilder
+  class YouAreRemovedMessageBuilder
     attr_reader :user, :token
     attr_accessor :previous_twitter_user
     attr_accessor :current_twitter_user
@@ -188,7 +188,7 @@ class PromptReport < ApplicationRecord
             previous_twitter_user: previous_twitter_user,
             current_twitter_user: current_twitter_user,
             previous_created_at: I18n.l(previous_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
-            current_created_at: I18n.l(current_twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short),
+            current_created_at: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
             now: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
             current_unfollowers_size: current_twitter_user.unfollowerships.size,
             current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(5),
