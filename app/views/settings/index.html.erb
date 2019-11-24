@@ -82,7 +82,10 @@
 
   <div class="col-xs-4"><%= t('.search_count.title') %></div>
   <div class="col-xs-8">
-    <div><%= t('.search_count.count', count: search_histories_limit) %><%= t('.search_count.remaining', count: search_histories_remaining) %></div>
+    <div>
+      <%= t('.search_count.count', count: search_histories_limit) %><%= t('.search_count.remaining', count: search_histories_remaining) %>
+      <span><a href="#" data-target="#search-modal" data-toggle="modal"><%= t('.search_count.history') %></a></span>
+    </div>
     <div class="text-muted notes"><%= t('.search_count.note', days: search_histories_duration) %></div>
   </div>
 
@@ -91,7 +94,10 @@
 
   <div class="col-xs-4"><%= t('.follow_count.title') %></div>
   <div class="col-xs-8">
-    <div><%= t('.follow_count.count', count: current_user.create_follow_limit) %><%= t('.follow_count.remaining', count: current_user.create_follow_remaining) %></div>
+    <div>
+      <%= t('.follow_count.count', count: current_user.create_follow_limit) %><%= t('.follow_count.remaining', count: current_user.create_follow_remaining) %>
+      <span><a href="<%= settings_follow_requests_path %>"><%= t('.follow_count.history') %></a></span>
+    </div>
     <div class="text-muted notes"><%= t('.follow_count.note', days: current_user.create_follow_duration) %></div>
   </div>
 
@@ -100,7 +106,10 @@
 
   <div class="col-xs-4"><%= t('.unfollow_count.title') %></div>
   <div class="col-xs-8">
-    <div><%= t('.unfollow_count.count', count: current_user.create_unfollow_limit) %><%= t('.unfollow_count.remaining', count: current_user.create_unfollow_remaining) %></div>
+    <div>
+      <%= t('.unfollow_count.count', count: current_user.create_unfollow_limit) %><%= t('.unfollow_count.remaining', count: current_user.create_unfollow_remaining) %>
+      <span><a href="<%= settings_unfollow_requests_path %>"><%= t('.unfollow_count.history') %></a></span>
+    </div>
     <div class="text-muted notes"><%= t('.unfollow_count.note', days: current_user.create_unfollow_duration) %></div>
   </div>
 
@@ -297,20 +306,6 @@
       <td><%= t('.delete_tweets.title') %></td>
       <td>
         <a href="<%= delete_tweets_top_path %>"><%= t('delete_tweets.new.simple_title') %></a><%= t('.delete_tweets.move_to') %>
-      </td>
-    </tr>
-    <tr>
-      <td><%= t('.trial_follow_request') %></td>
-      <td>
-        <a class="btn btn-default" href="<%= settings_follow_requests_path %>"><%= t('.trial_follow_request_see') %></a>
-        <div class="text-muted notes"><%= t('.trial_follow_request_note') %></div>
-      </td>
-    </tr>
-    <tr>
-      <td><%= t('.trial_unfollow_request') %></td>
-      <td>
-        <a class="btn btn-default" href="<%= settings_unfollow_requests_path %>"><%= t('.trial_unfollow_request_see') %></a>
-        <div class="text-muted notes"><%= t('.trial_unfollow_request_note') %></div>
       </td>
     </tr>
     </tbody>

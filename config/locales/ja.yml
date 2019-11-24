@@ -258,16 +258,19 @@ ja:
         title: '検索回数'
         count: '合計 %{count} 回'
         remaining: '（残り %{count} 回）'
+        history: '履歴'
         note: '直近の %{days} 日が対象'
       follow_count:
         title: 'フォロー回数'
         count: '合計 %{count} 回'
         remaining: '（残り %{count} 回）'
+        history: '履歴'
         note: '直近の %{days} 日が対象'
       unfollow_count:
         title: 'アンフォロー回数'
         count: '合計 %{count} 回'
         remaining: '（残り %{count} 回）'
+        history: '履歴'
         note: '直近の %{days} 日が対象'
       notifications:
         title: "通知設定"
@@ -314,12 +317,6 @@ ja:
         warning_html: "キャッシュ（表示の高速化のためのデータ）をリセットします。本当にリセットしますか？<br><br><b>※保存されたデータは残ります</b>"
         ok: "はい、リセットします"
         cancel: "いいえ"
-      trial_follow_request: "フォローボタン履歴"
-      trial_follow_request_see: "見てみる"
-      trial_follow_request_note: "フォロー処理の履歴です"
-      trial_unfollow_request: "リムーブボタン履歴"
-      trial_unfollow_request_see: "見てみる"
-      trial_unfollow_request_note: "リムーブ処理の履歴です"
       cancel: "キャンセルする"
     follow_requests:
       title: 'フォローボタン履歴'
