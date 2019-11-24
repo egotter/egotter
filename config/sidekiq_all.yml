@@ -12,6 +12,7 @@
   - misc
   - creating_low
   - CreateTestReportWorker
+  - ForceCreatePromptReportWorker
   - CreatePromptReportWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
