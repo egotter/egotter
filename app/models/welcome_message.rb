@@ -32,12 +32,24 @@ class WelcomeMessage < ApplicationRecord
   end
 
   def deliver!
-    DirectMessageRequest.new(user_client, User::EGOTTER_UID, I18n.t('dm.welcomeMessage.lets_start')).perform
-    button = {label: I18n.t('dm.welcomeMessage.timeline_page', screen_name: screen_name), url: timeline_url}
-    resp = DirectMessageRequest.new(egotter_client, user.uid, build_message, [button]).perform
+    message = FirstOfAllMessageBuilder.new(user, token).build
+    resp = DirectMessageClient.new(user_client).create_direct_message(User::EGOTTER_UID, message)
     dm = DirectMessage.new(resp)
+    update!(message_id: dm.id, message: dm.truncated_message)
 
-    transaction do
+    begin
+      resp = DirectMessageClient.new(User.egotter.api_client.twitter).create_direct_message(user.uid, I18n.t('dm.welcomeMessage.from_egotter', user: user.screen_name))
+      dm = DirectMessage.new(resp)
+      update!(message_id: dm.id, message: dm.truncated_message)
+
+      message = InitializationSuccessMessageBuilder.new(user, token).build
+      resp = DirectMessageClient.new(user_client).create_direct_message(User::EGOTTER_UID, message)
+      dm = DirectMessage.new(resp)
+      update!(message_id: dm.id, message: dm.truncated_message)
+    rescue => e
+      message = InitializationFailedMessageBuilder.new(user, token).build
+      resp = DirectMessageClient.new(user_client).create_direct_message(User::EGOTTER_UID, message)
+      dm = DirectMessage.new(resp)
       update!(message_id: dm.id, message: dm.truncated_message)
     end
 
@@ -50,20 +62,77 @@ class WelcomeMessage < ApplicationRecord
     @user_client ||= user.api_client.twitter
   end
 
-  def egotter_client
-    @egotter_client ||= User.egotter.api_client.twitter
+  class FirstOfAllMessageBuilder
+    attr_reader :user, :token
+
+    def initialize(user, token)
+      @user = user
+      @token = token
+    end
+
+    def build
+      template = Rails.root.join('app/views/welcome_messages/first_of_all.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          screen_name: user.screen_name,
+          timeline_url: timeline_url,
+          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_first_of_all'),
+          )
+    end
+
+    private
+
+    def timeline_url
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_first_of_all')
+    end
   end
 
-  def screen_name
-    user.screen_name
+  class InitializationSuccessMessageBuilder
+    attr_reader :user, :token
+
+    def initialize(user, token)
+      @user = user
+      @token = token
+    end
+
+    def build
+      template = Rails.root.join('app/views/welcome_messages/initialization_success.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          report_interval: user.notification_setting.report_interval,
+          twitter_user: TwitterUser.latest_by(uid: user.uid),
+          timeline_url: timeline_url,
+          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_success'),
+          )
+    end
+
+    private
+
+    def timeline_url
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_initialization_success')
+    end
   end
 
-  def build_message
-    template = Rails.root.join('app/views/welcome_messages/welcome.ja.text.erb')
-    ERB.new(template.read).result_with_hash(screen_name: screen_name, url: timeline_url)
-  end
+  class InitializationFailedMessageBuilder
+    attr_reader :user, :token
 
-  def timeline_url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message')
+    def initialize(user, token)
+      @user = user
+      @token = token
+    end
+
+    def build
+      template = Rails.root.join('app/views/welcome_messages/initialization_failed.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          report_interval: user.notification_setting.report_interval,
+          twitter_user: TwitterUser.latest_by(uid: user.uid),
+          timeline_url: timeline_url,
+          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_failed'),
+          )
+    end
+
+    private
+
+    def timeline_url
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_initialization_failed')
+    end
   end
 end

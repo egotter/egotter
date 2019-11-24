@@ -1,0 +1,21 @@
+リムられ通知の初期設定が完了しました。
+
+リムられ通知 初期設定：
+完了
+
+最新のリムられ通知：
+リムられ通知はこれから送信されます。
+
+通知間隔：
+<%= I18n.t("settings.index.report_interval.#{report_interval}") %>
+
+最新のデータ更新：<% if twitter_user %>
+<%= I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
+<% else %>
+データはこれから更新されます。
+<% end %>
+
+検索結果ページ：
+<%= timeline_url %>
+
+通知の設定変更はこちら <%= settings_url %> #egotter
