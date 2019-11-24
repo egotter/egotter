@@ -33,24 +33,25 @@ class PromptReport < ApplicationRecord
   end
 
   def deliver!
-    user.api_client.verify_credentials
+    dm = DirectMessage.new(send_starting_message!)
+    update_with_dm!(dm)
 
-    send_starting_message
-    resp = send_reporting_message
-
-    dm = DirectMessage.new(resp)
-
-    if dm.id.blank? || dm.truncated_message.blank?
-      logger.warn "#{self.class}##{__method__} dm_id or dm_message is blank."
-      logger.info JSON.pretty_generate(resp) rescue nil
-    end
-
-    ActiveRecord::Base.transaction do
-      update!(message_id: dm.id, message: dm.truncated_message)
-      user.notification_setting.update!(last_dm_at: Time.zone.now)
+    begin
+      dm = DirectMessage.new(send_reporting_message!)
+      update_with_dm!(dm)
+    rescue => e
+      dm = DirectMessage.new(send_failed_message!)
+      update_with_dm!(dm)
+      raise ReportingFailed
     end
 
     dm
+  end
+
+  class ReportingFailed < StandardError
+    def initialize(*args)
+      super('')
+    end
   end
 
   class << self
@@ -81,36 +82,27 @@ class PromptReport < ApplicationRecord
 
   private
 
-  def send_starting_message
-    dm_client = DirectMessageClient.new(user_client)
-    dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start'))
-  rescue Twitter::Error::Forbidden => e
-    raise
-  rescue => e
-    raise StartingFailed.new("#{e.class}: #{e.message.truncate(100)}")
+  def dm_client(sender)
+    DirectMessageClient.new(sender.api_client.twitter)
   end
 
-  def send_reporting_message
-    dm_client = DirectMessageClient.new(egotter_client)
-    dm_client.create_direct_message(user.uid, message_builder.build)
-  rescue Twitter::Error::Forbidden => e
-    raise
-  rescue => e
-    raise ReportingFailed.new("#{e.class}: #{e.message.truncate(100)}")
+  def send_starting_message!
+    dm_client(user).create_direct_message(User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start'))
   end
 
-  class StartingFailed < StandardError
+  def send_reporting_message!
+    dm_client(User.egotter).create_direct_message(user.uid, message_builder.build)
   end
 
-  class ReportingFailed < StandardError
+  def send_failed_message!
+    dm_client(user).create_direct_message(User::EGOTTER_UID, ReportingFailedMessageBuilder.new.build)
   end
 
-  def user_client
-    @user_client ||= user.api_client.twitter
-  end
-
-  def egotter_client
-    @egotter_client ||= User.egotter.api_client.twitter
+  def update_with_dm!(dm)
+    ActiveRecord::Base.transaction do
+      update!(message_id: dm.id, message: dm.truncated_message)
+      user.notification_setting.update!(last_dm_at: Time.zone.now)
+    end
   end
 
   class YouAreRemovedMessageBuilder
@@ -205,6 +197,17 @@ class PromptReport < ApplicationRecord
 
     def timeline_url
       Rails.application.routes.url_helpers.profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
+    end
+  end
+
+  class ReportingFailedMessageBuilder
+    def build
+      template = Rails.root.join('app/views/prompt_reports/reporting_failed.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_failed'),
+          egotter_url: Rails.application.routes.url_helpers.root_url(via: 'prompt_report_failed'),
+      )
+
     end
   end
 end

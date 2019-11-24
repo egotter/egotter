@@ -38,9 +38,8 @@ class CreatePromptReportRemovedMessageWorker
 
   rescue => e
     if TemporaryDmLimitation.temporarily_locked?(e)
-      if TemporaryDmLimitation.you_have_blocked?(e)
-        CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-      end
+    elsif TemporaryDmLimitation.you_have_blocked?(e)
+      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
     else
       logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
