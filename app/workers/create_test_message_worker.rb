@@ -2,6 +2,10 @@ class CreateTestMessageWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
+  def unique_key(user_id, options = {})
+    user_id
+  end
+
   def timeout_in
     1.minute
   end
@@ -13,7 +17,10 @@ class CreateTestMessageWorker
   #   create_test_report_request_id
   def perform(user_id, options = {})
     user = User.find(user_id)
-    return unless user.authorized?
+    unless user.authorized?
+      log(options).update(status: false, error_class: 'Unauthorized', error_message: self.class)
+      return
+    end
 
     # If the error is that the DM cannot be sent, an additional exception occurs here.
     begin
@@ -26,6 +33,9 @@ class CreateTestMessageWorker
         TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
       else
         TestMessage.ok(user.id).deliver!
+
+        request = CreatePromptReportRequest.create(user_id: user.id)
+        ForceCreatePromptReportWorker.perform_in(10.seconds, request.id, user_id: user.id)
       end
     end
 
@@ -46,6 +56,6 @@ class CreateTestMessageWorker
   end
 
   def log(options)
-    CreateTestReportLog.find_by(request_id: options['create_test_report_request_id'])
+    CreateTestReportLog.find_or_initialize_by(request_id: options['create_test_report_request_id'])
   end
 end

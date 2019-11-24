@@ -6,5 +6,6 @@
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - CreateTestReportWorker
+  - ForceCreatePromptReportWorker
   - CreatePromptReportWorker
   - StartSendingPromptReportsWorker

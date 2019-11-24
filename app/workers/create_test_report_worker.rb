@@ -24,7 +24,8 @@ class CreateTestReportWorker
       CreateTestMessageWorker.perform_async(request.user_id, enqueued_at: Time.zone.now, create_test_report_request_id: request.id)
     rescue CreatePromptReportRequest::Error => e
       # At this point, I don't know if DM can be sent.
-      CreateTestMessageWorker.perform_async(request.user_id, error_class: e.class, error_message: e.message.truncate(100), enqueued_at: Time.zone.now, create_test_report_request_id: request.id)
+      error_values = {error_class: e.class, error_message: e.message.truncate(100)}
+      CreateTestMessageWorker.perform_async(request.user_id, {enqueued_at: Time.zone.now, create_test_report_request_id: request.id}.merge(error_values))
     end
 
   rescue => e
