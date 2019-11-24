@@ -61,10 +61,6 @@ class NotificationSetting < ApplicationRecord
     email? && (!last_email_at || last_email_at < EMAIL_INTERVAL.ago)
   end
 
-  def can_send_dm?
-    dm_enabled? && dm_interval_ok?
-  end
-
   def can_send_news?
     news? && (!last_news_at || last_news_at < NEWS_INTERVAL.ago)
   end
@@ -77,7 +73,7 @@ class NotificationSetting < ApplicationRecord
     prompt_report? && (!prompt_report_sent_at || prompt_report_sent_at < PROMPT_REPORT_INTERVAL.ago)
   end
 
-  def dm_interval_ok?
+  def prompt_report_interval_ok?
     interval = REPORT_INTERVAL_VALUES.include?(report_interval) ? report_interval.seconds : DM_INTERVAL
     last_dm_at.nil? || last_dm_at < interval.ago
   end

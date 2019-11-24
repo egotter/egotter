@@ -63,7 +63,6 @@ class User < ApplicationRecord
   accepts_nested_attributes_for :notification_setting
 
   with_options to: :notification_setting, allow_nil: true do |obj|
-    obj.delegate :dm_enabled?, :dm_interval_ok?, :can_send_dm?
     obj.delegate :can_send_search?
   end
 
@@ -87,6 +86,17 @@ class User < ApplicationRecord
       .where('notification_settings.news = ?', true)
       .where('last_dm_at IS NULL OR last_news_at < ?', NotificationSetting::NEWS_INTERVAL.ago)
       .references(:notification_settings)
+  end
+
+  scope :prompt_report_enabled, -> do
+    includes(:notification_setting)
+        .where('notification_settings.dm = TRUE')
+        .references(:notification_settings)
+  end
+  scope :prompt_report_interval_ok, -> do
+    includes(:notification_setting)
+        .where('last_dm_at IS NULL OR last_dm_at < NOW() - INTERVAL notification_settings.report_interval SECOND')
+        .references(:notification_settings)
   end
 
   class << self
