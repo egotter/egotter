@@ -116,30 +116,12 @@ class TestMessage < ApplicationRecord
       )
     end
 
-    private
-
     def readable_error_class(error)
-      case error
-        when 'CreatePromptReportRequest::TooShortSendInterval' then I18n.t('dm.testMessage.errors.too_short_send_interval')
-        when 'CreatePromptReportRequest::TooShortRequestInterval' then I18n.t('dm.testMessage.errors.too_short_request_interval')
-        when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.errors.report_disabled')
-        when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.errors.egotter_blocked')
-        when 'CreatePromptReportRequest::TooManyFriends' then I18n.t('dm.testMessage.errors.too_many_friends')
-        when 'CreatePromptReportRequest::TooManyErrors' then I18n.t('dm.testMessage.errors.too_many_errors')
-        else error
-      end
+      I18n.t("dm.testMessage.errors.#{error.split('::').last}", default: error)
     end
 
     def readable_error_message(error, message)
-      case error
-      when 'CreatePromptReportRequest::TooShortSendInterval' then I18n.t('dm.testMessage.messages.too_short_send_interval')
-      when 'CreatePromptReportRequest::TooShortRequestInterval' then I18n.t('dm.testMessage.messages.too_short_request_interval')
-      when 'CreatePromptReportRequest::ReportDisabled' then I18n.t('dm.testMessage.messages.report_disabled')
-      when 'CreatePromptReportRequest::EgotterBlocked' then I18n.t('dm.testMessage.messages.egotter_blocked')
-      when 'CreatePromptReportRequest::TooManyFriends' then I18n.t('dm.testMessage.messages.too_many_friends')
-      when 'CreatePromptReportRequest::TooManyErrors' then I18n.t('dm.testMessage.messages.too_many_errors')
-      else message
-      end
+      I18n.t("dm.testMessage.messages.#{error.split('::').last}", default: message)
     end
 
 

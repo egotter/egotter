@@ -285,13 +285,10 @@ ja:
           report_interval_note: "通知の間隔は目安です"
           latest_prompt_report: "最新のリムられ通知"
           status: "通知ステータス"
-          running_normally_html: '<div class="text-primary">正常</div>'
-          error_html: '<div class="text-warning">%{text}</div>'
+          running_normally_html: '正常'
+          error_html: '<span class="text-warning">失敗：%{text}</span>'
+          history: '履歴'
           not_sent: 'リムられ通知はこれから送信されます。'
-      prompt_report:
-        title: "リムられ通知履歴"
-        see: "見てみる"
-        note: "リムられ通知の処理履歴です"
       report_interval:
         3600: "1時間毎"
         10800: "3時間毎"
@@ -1114,19 +1111,25 @@ ja:
       timeline_page: '%{screen_name} さんの結果ページ'
       lets_start: 'リムられ通知のテスト送信を開始します。通知の設定変更はこちら → %{url} #egotter'
       errors:
-        too_short_send_interval: '前回の送信から時間が経っていない'
-        too_short_request_interval: '前回の更新から時間が経っていない'
-        report_disabled: 'リムられ通知が無効になっている'
-        egotter_blocked: '@ego_tter がブロックされている'
-        too_many_friends: 'フォロー・フォロワーが多すぎる'
-        too_many_errors: 'DMの送信ができない'
+        TooShortSendInterval: '前回の送信から時間が経っていない'
+        TooShortRequestInterval: '前回の更新から時間が経っていない'
+        ReportDisabled: 'リムられ通知が無効になっている'
+        EgotterBlocked: '@ego_tter がブロックされている'
+        TooManyFriends: 'フォロー・フォロワーが多すぎる'
+        TooManyErrors: 'DMの送信ができない'
+        RemovedMessageNotSent: 'DMの送信ができない'
       messages:
-        too_short_send_interval: '一定の時間が経過すればまた届きます。'
-        too_short_request_interval: '一定の時間が経過すればまた届きます。'
-        report_disabled: '設定ページからリムられ通知を有効に設定してください。'
-        egotter_blocked: '@ego_tter のブロックを解除してください。'
-        too_many_friends: 'フォロー・フォロワーが多すぎる場合、通知が止まることがあります。'
-        too_many_errors: '@ego_tter からDMを送れるようにしてください。1. @ego_tter をブロック解除し、2. えごったー設定ページで「リムられ通知を復活させるボタン」を押し、3. 最後に @ego_tter へ試しに1つDMを送ってみてください。'
+        TooShortSendInterval: '一定の時間が経過すればまた届きます。'
+        TooShortRequestInterval: '一定の時間が経過すればまた届きます。'
+        ReportDisabled: '設定ページからリムられ通知を有効に設定してください。'
+        EgotterBlocked: '@ego_tter のブロックを解除してください。'
+        TooManyFriends: 'フォロー・フォロワーが多すぎる場合、通知が止まることがあります。'
+        TooManyErrors: |
+          @ego_tter からDMを送れるようにしてください。手順は下記の通りです。
+          1. @ego_tter をブロック解除する
+          2. えごったー設定ページで「リムられ通知を復活させるボタン」を押す
+          3. @ego_tter へ試しに1つDMを送ってみる
+        RemovedMessageNotSent: 'DMの送信ができない'
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'
