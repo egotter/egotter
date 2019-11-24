@@ -138,6 +138,7 @@ class PromptReport < ApplicationRecord
             now: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
             current_unfollowers_size: current_twitter_user.unfollowerships.size,
             current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(5),
+            last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
             settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
@@ -146,6 +147,10 @@ class PromptReport < ApplicationRecord
     end
 
     private
+
+    def last_access_at
+      user.last_access_at ? I18n.l(user.last_access_at.in_time_zone('Tokyo'), format: :prompt_report_short) : nil
+    end
 
     def generic_timeline_url
       @generic_timeline_url ||= Rails.application.routes.url_helpers.profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
@@ -180,6 +185,7 @@ class PromptReport < ApplicationRecord
             now: I18n.l(Time.zone.now.in_time_zone('Tokyo'), format: :prompt_report_short),
             current_unfollowers_size: current_twitter_user.unfollowerships.size,
             current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(5),
+            last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
             settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
@@ -188,6 +194,10 @@ class PromptReport < ApplicationRecord
     end
 
     private
+
+    def last_access_at
+      user.last_access_at ? I18n.l(user.last_access_at.in_time_zone('Tokyo'), format: :prompt_report_short) : nil
+    end
 
     def generic_timeline_url
       @generic_timeline_url ||= Rails.application.routes.url_helpers.profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')

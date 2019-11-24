@@ -23,4 +23,11 @@
 リムられ一覧：
 <% end %><%= timeline_url %>
 
+最終アクセス：<% if last_access_at %>
+<%= last_access_at %>
+<% else %>
+アクセスなし
+<% end %>
+
+
 通知の設定変更はこちら <%= settings_url %> #egotter
