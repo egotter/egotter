@@ -141,6 +141,7 @@ Rails.application.routes.draw do
   get 'settings/follow_requests', to: "settings#follow_requests"
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
   get 'settings/create_prompt_requests', to: "settings#create_prompt_report_requests"
+  get 'settings/create_test_requests', to: "settings#create_test_report_requests"
 
   namespace :admin do
     get "settings/:user_id/follow_requests", to: "settings#follow_requests"

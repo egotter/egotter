@@ -6,6 +6,10 @@ class CreateTestMessageWorker
     user_id
   end
 
+  def after_skip(user_id, options = {})
+    log(Hashie::Mash.new(options)).update(status: false, error_class: CreatePromptReportRequest::DuplicateJobSkipped, error_message: '')
+  end
+
   def timeout_in
     1.minute
   end

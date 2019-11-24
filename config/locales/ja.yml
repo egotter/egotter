@@ -280,6 +280,7 @@ ja:
           update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。'
           reporting_test: "リムられ通知のテスト"
           send_test_report: 'リムられ通知をテスト送信する'
+          send_test_report_history: '履歴'
           send_test_report_note_html: '通知が届かない方はお試しください'
           report_interval_title: "通知間隔"
           report_interval_note: "通知の間隔は目安です"
@@ -322,6 +323,11 @@ ja:
     create_prompt_report_requests:
       title: 'リムられ通知履歴'
       description: 'リムられ通知は、最後にアクセスしてからのフォロワーの変化を集計します。そのため、頻繁にえごったーを見る方には通知があまり届かないことがあります。'
+      sent: '送信済み'
+      not_changed: '更新なし'
+    create_test_report_requests:
+      title: 'リムられ通知テスト履歴'
+      description: 'リムられ通知テストの送信履歴です。'
       sent: '送信済み'
       not_changed: '更新なし'
     tgl_btn:

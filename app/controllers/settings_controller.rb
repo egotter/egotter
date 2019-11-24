@@ -50,4 +50,8 @@ class SettingsController < ApplicationController
   def create_prompt_report_requests
     @requests = current_user.create_prompt_report_requests.includes(:logs).limit(20)
   end
+
+  def create_test_report_requests
+    @requests = current_user.create_test_report_requests.includes(:logs).limit(20)
+  end
 end
