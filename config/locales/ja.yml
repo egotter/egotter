@@ -1111,8 +1111,7 @@ ja:
     new_removed: "新しいリムられ： %{users}"
     omission: " ... 合計%{num}人"
     welcomeMessage:
-      timeline_page: '%{screen_name} さんの結果ページ'
-      lets_start: 'えごったーの利用を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja&via=welcome_message_lets_start #egotter'
+      from_egotter: '@ego_tter から @%{user} へのDM送信テスト'
     testMessage:
       timeline_page: '%{screen_name} さんの結果ページ'
       lets_start: 'リムられ通知のテスト送信を開始します。通知の設定変更はこちら → %{url} #egotter'
