@@ -33,14 +33,14 @@ class PromptReport < ApplicationRecord
   end
 
   def deliver!
-    dm = DirectMessage.new(send_starting_message!)
+    dm = DirectMessage.new(retry_sending { send_starting_message! })
     update_with_dm!(dm)
 
     begin
-      dm = DirectMessage.new(send_reporting_message!)
+      dm = DirectMessage.new(retry_sending { send_reporting_message! })
       update_with_dm!(dm)
     rescue => e
-      dm = DirectMessage.new(send_failed_message!)
+      dm = DirectMessage.new(retry_sending { send_failed_message! })
       update_with_dm!(dm)
       raise ReportingFailed
     end
@@ -102,6 +102,17 @@ class PromptReport < ApplicationRecord
     ActiveRecord::Base.transaction do
       update!(message_id: dm.id, message: dm.truncated_message)
       user.notification_setting.update!(last_dm_at: Time.zone.now)
+    end
+  end
+
+  def retry_sending(&block)
+    tries ||= 3
+    yield
+  rescue => e
+    if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
+      retry
+    else
+      raise
     end
   end
 
