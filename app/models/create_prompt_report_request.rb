@@ -73,8 +73,8 @@ class CreatePromptReportRequest < ApplicationRecord
     raise PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
     raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
-    raise ReportDisabled unless user.dm_enabled?
-    raise TooShortSendInterval unless user.dm_interval_ok?
+    raise ReportDisabled unless user.notification_setting.dm_enabled?
+    raise TooShortSendInterval unless user.notification_setting.prompt_report_interval_ok?
     raise UserSuspended if suspended?
     raise TooManyFriends if SearchLimitation.too_many_friends?(user: user)
     raise EgotterBlocked if blocked?

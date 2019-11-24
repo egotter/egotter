@@ -135,4 +135,46 @@ RSpec.describe User, type: :model do
       it { expect(user.inactive_access?(days_count)).to be_truthy}
     end
   end
+
+  describe 'Scope prompt_report_enabled' do
+    subject { User.prompt_report_enabled }
+    before do
+      user.save!
+      user.create_notification_setting!(dm: dm_value)
+    end
+
+    context 'notification_settings.dm == true' do
+      let(:dm_value) { true }
+      it { is_expected.to match_array([user]) }
+    end
+
+    context 'notification_settings.dm == false' do
+      let(:dm_value) { false }
+      it { is_expected.to be_empty }
+    end
+  end
+
+  describe 'Scope prompt_report_interval_ok' do
+    subject { User.prompt_report_interval_ok }
+    let(:report_interval) { NotificationSetting::DEFAULT_REPORT_INTERVAL }
+    before do
+      user.save!
+      user.create_notification_setting!(last_dm_at: last_dm_at, report_interval: report_interval)
+    end
+
+    context 'notification_settings.last_dm_at == nil' do
+      let(:last_dm_at) { nil }
+      it { is_expected.to match_array([user]) }
+    end
+
+    context 'notification_settings.last_dm_at is less than report_interval' do
+      let(:last_dm_at) { report_interval.seconds.ago - 1 }
+      it { is_expected.to match_array([user]) }
+    end
+
+    context 'notification_settings.last_dm_at is more than report_interval' do
+      let(:last_dm_at) { report_interval.seconds.ago + 1 }
+      it { is_expected.to be_empty }
+    end
+  end
 end
