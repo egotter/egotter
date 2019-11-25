@@ -27,8 +27,12 @@ class StartSendingPromptReportsTask
     @can_send_ids ||= User.can_send_dm.where(id: not_blocked_ids).pluck(:id)
   end
 
+  def enough_permission_ids
+    @enough_permission_ids ||= User.enough_permission_level.where(id: not_blocked_ids).pluck(:id)
+  end
+
   def report_enabled_ids
-    @report_enabled_ids ||= User.prompt_report_enabled.where(id: not_blocked_ids).pluck(:id)
+    @report_enabled_ids ||= User.prompt_report_enabled.where(id: enough_permission_ids).pluck(:id)
   end
 
   def report_interval_ok_ids
@@ -42,6 +46,7 @@ class StartSendingPromptReportsTask
         active_ids: active_ids.size,
         not_blocked_ids: not_blocked_ids.size,
         can_send_ids: can_send_ids.size,
+        enough_permission_ids: enough_permission_ids.size,
         report_enabled_ids: report_enabled_ids.size,
         report_interval_ok_ids: report_interval_ok_ids.size,
     }

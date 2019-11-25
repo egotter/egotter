@@ -89,6 +89,11 @@ class User < ApplicationRecord
       .references(:notification_settings)
   end
 
+  scope :enough_permission_level, -> do
+    includes(:notification_setting)
+        .where("notification_settings.permission_level = '#{NotificationSetting::PROPER_PERMISSION}'")
+        .references(:notification_settings)
+  end
   scope :prompt_report_enabled, -> do
     includes(:notification_setting)
         .where('notification_settings.dm = TRUE')
