@@ -51,29 +51,33 @@ class FollowRequest < ApplicationRecord
   end
 
   def perform!
+    error_check! unless @error_check
+
+    client.follow!(uid)
+  rescue Twitter::Error::Unauthorized => e
+    raise Unauthorized.new(e.message)
+  rescue Twitter::Error::Forbidden => e
+    if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
+      raise TemporarilyLocked
+    elsif e.message.start_with?('Your account is suspended and is not permitted to access this feature.')
+      raise Suspended
+    elsif e.message.start_with?('You are unable to follow more people at this time.')
+      raise TooManyFollows
+    else
+      raise Forbidden.new(e.message)
+    end
+  end
+
+  def error_check!
     raise TooManyRetries if logs.size >= 5
     raise AlreadyFinished if finished?
     raise Unauthorized if unauthorized?
     raise CanNotFollowYourself if user.uid == uid
-    raise NotFound unless user_found?
+    raise NotFound if not_found?
     raise AlreadyRequestedToFollow if friendship_outgoing?
     raise AlreadyFollowing if friendship?
 
-    begin
-      client.follow!(uid)
-    rescue Twitter::Error::Unauthorized => e
-      raise Unauthorized.new(e.message)
-    rescue Twitter::Error::Forbidden => e
-      if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
-        raise TemporarilyLocked
-      elsif e.message.start_with?('Your account is suspended and is not permitted to access this feature.')
-        raise Suspended
-      elsif e.message.start_with?('You are unable to follow more people at this time.')
-        raise TooManyFollows
-      else
-        raise Forbidden.new(e.message)
-      end
-    end
+    @error_check = true
   end
 
   def unauthorized?
@@ -86,8 +90,8 @@ class FollowRequest < ApplicationRecord
     end
   end
 
-  def user_found?
-    client.user?(uid)
+  def not_found?
+    !client.user?(uid)
   rescue => e
     if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
       raise TemporarilyLocked
@@ -124,42 +128,50 @@ class FollowRequest < ApplicationRecord
     end
   end
 
+  class RetryableError < StandardError
+  end
+
+  # Don't retry
   class TooManyRetries < DeadErrorTellsNoTales
   end
 
   class AlreadyFinished < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class Unauthorized < Error
   end
 
   class Forbidden < Error
   end
 
+  # Don't retry
   class Suspended < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class TemporarilyLocked < DeadErrorTellsNoTales
   end
 
-  class GlobalRateLimited < DeadErrorTellsNoTales
+  class TooManyFollows < RetryableError
+    def initialize(*args)
+      super('')
+    end
   end
 
-  class UserRateLimited < DeadErrorTellsNoTales
-  end
-
-  class TooManyFollows < DeadErrorTellsNoTales
-  end
-
+  # Don't retry
   class CanNotFollowYourself < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class NotFound < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class AlreadyFollowing < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class AlreadyRequestedToFollow < DeadErrorTellsNoTales
   end
 end

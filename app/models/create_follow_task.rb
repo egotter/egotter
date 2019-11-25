@@ -9,10 +9,13 @@ class CreateFollowTask
   def start!
     @log = CreateFollowLog.create_by(request: request)
 
-    request.perform!
-    request.finished!
-
-    log.update(status: true)
+    if request.finished?
+      log.update(status: false, error_class: FollowRequest::AlreadyFinished)
+    else
+      request.perform!
+      request.finished!
+      log.update(status: true)
+    end
 
     self
   rescue => e

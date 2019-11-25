@@ -27,7 +27,7 @@ class FollowsController < ApplicationController
 
   def create
     request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid])
-    CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name) unless from_crawler?
+    CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
     render json: rate_limit_values(current_user, request)
   end
 

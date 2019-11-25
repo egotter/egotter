@@ -2,6 +2,10 @@ class CreateUnfollowWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'unfollow', retry: 0, backtrace: false
 
+  def unique_key(request_id, options = {})
+    request_id
+  end
+
   # options:
   #   enqueue_location
   def perform(request_id, options = {})
