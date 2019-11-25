@@ -3,7 +3,9 @@ require 'rails_helper'
 RSpec.describe CreatePromptReportRequest, type: :model do
   describe '#too_many_errors?' do
     let(:user) { create(:user) }
-    subject { CreatePromptReportRequest.new(user_id: user.id) }
+    subject { CreatePromptReportRequest.create(user_id: user.id) }
+
+    before { CreatePromptReportLog.create_by(request: subject) }
 
     it { expect(subject.too_many_errors?).to be_falsey }
 
