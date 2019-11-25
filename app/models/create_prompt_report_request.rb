@@ -25,7 +25,7 @@ class CreatePromptReportRequest < ApplicationRecord
     error_check! unless @error_check
 
     unless TwitterUser.exists?(uid: user.uid)
-      send_initialization_message
+      CreatePromptReportInitializationMessageWorker.perform_async(user.id, create_prompt_report_request_id: id)
       return
     end
 
@@ -65,11 +65,7 @@ class CreatePromptReportRequest < ApplicationRecord
   def error_check!
     verify_credentials!
 
-    previous_errors = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(3).pluck(:error_class)
-    if previous_errors.size == 3 && previous_errors.all? { |err| err.present? }
-      raise TooManyErrors
-    end
-
+    raise TooManyErrors if too_many_errors?
     raise PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
     raise TooShortRequestInterval if too_short_request_interval?
     raise Unauthorized unless user.authorized?
@@ -90,10 +86,6 @@ class CreatePromptReportRequest < ApplicationRecord
     @error_check = true
   end
 
-  def send_initialization_message
-    CreatePromptReportInitializationMessageWorker.perform_async(user.id, create_prompt_report_request_id: id)
-  end
-
   def send_report(changes, previous_twitter_user:, current_twitter_user:, changed: true)
     if changed
       CreatePromptReportRemovedMessageWorker.perform_async(
@@ -112,6 +104,13 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
+  TOO_MANY_ERRORS_SIZE = 3
+
+  def too_many_errors?
+    errors = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(3).pluck(:error_class)
+    errors.size == TOO_MANY_ERRORS_SIZE && errors.all? { |err| err.present? }
+  end
+
   private
 
   def verify_credentials!
@@ -120,14 +119,10 @@ class CreatePromptReportRequest < ApplicationRecord
     if e.message == 'Invalid or expired token.'
       raise Unauthorized
     else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-      raise Unknown.new(e.message)
+      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-    raise Unknown.new(e.message)
+    raise Unknown.new("#{__method__} #{e.class} #{e.message}")
   end
 
   PROCESS_REQUEST_INTERVAL = 1.hour
@@ -154,30 +149,22 @@ class CreatePromptReportRequest < ApplicationRecord
     if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
       raise TemporarilyLocked.new(__method__.to_s)
     else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-      raise Unknown.new(e.message)
+      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-    raise Unknown.new(e.message)
+    raise Unknown.new("#{__method__} #{e.class} #{e.message}")
   end
 
   def fetch_user
     @fetch_user ||= client.user(user.uid)
   rescue Twitter::Error::Forbidden => e
     if e.message.start_with? 'To protect our users from spam and other malicious activity, this account is temporarily locked.'
-      raise TemporarilyLocked.new(__method__.to_s)
+      raise TemporarilyLocked.new("#{__method__}: #{e.class} #{e.message}")
     else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-      raise Unknown.new(e.message)
+      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-    raise Unknown.new(e.message)
+    raise Unknown.new("#{__method__} #{e.class} #{e.message}")
   end
 
   def client

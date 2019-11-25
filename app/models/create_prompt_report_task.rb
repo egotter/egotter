@@ -59,6 +59,8 @@ class CreatePromptReportTask
     end
 
     # TODO Create TwitterDB::User of imported uids
-  rescue CreateTwitterUserRequest::NotChanged, CreateTwitterUserRequest::RecentlyUpdated, CreateTwitterUserRequest::TooManyFriends => e
+  rescue CreateTwitterUserRequest::NotChanged,
+      CreateTwitterUserRequest::RecentlyUpdated,
+      CreateTwitterUserRequest::TooManyFriends => e
   end
 end

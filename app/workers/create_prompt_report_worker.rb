@@ -12,6 +12,7 @@ class CreatePromptReportWorker
 
   # Because it is difficult to adjust the degree of parallelism,
   # this job is executed by a background-worker instead of cron.
+  #
   # options:
   #   user_id
   #   index
@@ -23,7 +24,8 @@ class CreatePromptReportWorker
 
   rescue CreatePromptReportRequest::Error => e
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
+    logger.warn "#{e.inspect} #{request_id} #{options.inspect}"
+    logger.warn "Caused by #{e.cause.inspect}" if e.cause
     logger.info e.backtrace.join("\n")
   ensure
     if options['start_next_loop']
