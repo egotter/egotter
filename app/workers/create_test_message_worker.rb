@@ -7,11 +7,17 @@ class CreateTestMessageWorker
   end
 
   def after_skip(user_id, options = {})
-    log(Hashie::Mash.new(options)).update(status: false, error_class: CreatePromptReportRequest::DuplicateJobSkipped, error_message: '')
+    log(Hashie::Mash.new(options)).update(status: false, error_class: DuplicateJobSkipped, error_message: "Direct message not sent #{user_id} #{options.inspect}")
   end
 
   def timeout_in
     1.minute
+  end
+
+  class Unauthorized < StandardError
+  end
+
+  class DuplicateJobSkipped < StandardError
   end
 
   # options:
@@ -22,7 +28,7 @@ class CreateTestMessageWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
     unless user.authorized?
-      log(options).update(status: false, error_class: 'Unauthorized', error_message: self.class)
+      log(options).update(status: false, error_class: Unauthorized, error_message: "Direct message not sent #{user_id} #{options.inspect}")
       return
     end
 
@@ -44,16 +50,9 @@ class CreateTestMessageWorker
     end
 
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
-
-    if TemporaryDmLimitation.temporarily_locked?(e)
-      if TemporaryDmLimitation.you_have_blocked?(e)
-        CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-      end
-    elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
-    else
-      logger.info e.backtrace.join("\n")
-    end
+    logger.warn "#{e.inspect} #{user_id} #{options.inspect}"
+    logger.warn "Caused by #{e.cause.inspect}" if e.cause
+    logger.info e.backtrace.join("\n")
 
     # Overwrite existing error_class and error_message
     log(options).update(status: false, error_class: e.class, error_message: e.message)

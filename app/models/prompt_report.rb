@@ -33,28 +33,46 @@ class PromptReport < ApplicationRecord
   end
 
   def deliver!
-    dm = DirectMessage.new(retry_sending { send_starting_message! })
-    update_with_dm!(dm)
+    begin
+      dm = DirectMessage.new(retry_sending { send_starting_message! })
+      update_with_dm!(dm)
+    rescue => e
+      raise StartingFailed.new("#{e.class} #{e.message}")
+    end
 
     begin
       dm = DirectMessage.new(retry_sending { send_reporting_message! })
       update_with_dm!(dm)
     rescue => e
-      dm = DirectMessage.new(retry_sending { send_failed_message! })
-      update_with_dm!(dm)
-      raise ReportingFailed
+      begin
+        dm = DirectMessage.new(retry_sending { send_failed_message! })
+        update_with_dm!(dm)
+      rescue => e
+        raise FallbackFailed.new("#{e.class} #{e.message}")
+      end
+
+      raise ReportingFailed.new("#{e.class} #{e.message}")
     end
 
     dm
   end
 
+  class StartingFailed < StandardError
+  end
+
   class ReportingFailed < StandardError
-    def initialize(*args)
-      super('')
-    end
+  end
+
+  class FallbackFailed < StandardError
   end
 
   class << self
+    def initialization(user_id)
+      report = new(user_id: user_id, changes_json: '{}', token: generate_token)
+      report.message_builder = InitializationMessageBuilder.new(report.user, report.token)
+      report
+    end
+
     def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
 
@@ -123,6 +141,23 @@ class PromptReport < ApplicationRecord
 
     def build
       ''
+    end
+  end
+
+  class InitializationMessageBuilder
+    attr_reader :user, :token
+
+    def initialize(user, token)
+      @user = user
+      @token = token
+    end
+
+    def build
+      I18n.t('dm.promptReportNotification.search_yourself', screen_name: user.screen_name, url: timeline_url(user.screen_name))
+    end
+
+    def timeline_url(screen_name)
+      Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report_initialization', og_tag: 'false')
     end
   end
 

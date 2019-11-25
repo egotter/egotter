@@ -32,25 +32,47 @@ class WelcomeMessage < ApplicationRecord
   end
 
   def deliver!
-    dm = DirectMessage.new(retry_sending { send_first_of_all_message! })
-    update!(message_id: dm.id, message: dm.truncated_message)
+    begin
+      dm = DirectMessage.new(retry_sending { send_first_of_all_message! })
+      update!(message_id: dm.id, message: dm.truncated_message)
+    rescue => e
+      raise StartingFailed.new("#{e.class} #{e.message}")
+    end
 
     begin
       dm = DirectMessage.new(retry_sending { send_test_message_from_egotter! })
       update!(message_id: dm.id, message: dm.truncated_message)
     rescue => e
-      dm = DirectMessage.new(retry_sending { send_initialization_failed_message! })
-      update!(message_id: dm.id, message: dm.truncated_message)
-      raise ReportingFailed.new("#{e.class} #{e.message}")
+      begin
+        dm = DirectMessage.new(retry_sending { send_initialization_failed_message! })
+        update!(message_id: dm.id, message: dm.truncated_message)
+      rescue => e
+        raise FailedMessageFailed.new("#{e.class} #{e.message}")
+      end
+
+      raise TestMessageFailed.new("#{e.class} #{e.message}")
     else
-      dm = DirectMessage.new(retry_sending { send_initialization_success_message! })
-      update!(message_id: dm.id, message: dm.truncated_message)
+      begin
+        dm = DirectMessage.new(retry_sending { send_initialization_success_message! })
+        update!(message_id: dm.id, message: dm.truncated_message)
+      rescue => e
+        raise SuccessMessageFailed.new("#{e.class} #{e.message}")
+      end
     end
 
     dm
   end
 
-  class ReportingFailed < StandardError
+  class StartingFailed < StandardError
+  end
+
+  class TestMessageFailed < StandardError
+  end
+
+  class FailedMessageFailed < StandardError
+  end
+
+  class SuccessMessageFailed < StandardError
   end
 
   private

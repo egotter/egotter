@@ -184,22 +184,7 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
-  class TwitterUserNotPersisted < DeadErrorTellsNoTales
-  end
-
   class InitializationStarted < DeadErrorTellsNoTales
-  end
-
-  class InitializationMessageNotSent < Error
-  end
-
-  class InitializationFailed < Error
-  end
-
-  class RemovedMessageNotSent < Error
-  end
-
-  class NotChangedMessageNotSent < Error
   end
 
   class PermissionLevelNotEnough < DeadErrorTellsNoTales
@@ -239,24 +224,6 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class MaybeImportBatchFailed < DeadErrorTellsNoTales
-  end
-
-  class UnfollowersNotChanged < DeadErrorTellsNoTales
-  end
-
-  class MessageNotChanged < DeadErrorTellsNoTales
-  end
-
-  class FollowersCountNotChanged < DeadErrorTellsNoTales
-  end
-
-  class RemovedUidNotChanged < DeadErrorTellsNoTales
-  end
-
-  class DirectMessageNotSent < Error
-  end
-
-  class DuplicateJobSkipped < DeadErrorTellsNoTales
   end
 
   class Unknown < StandardError

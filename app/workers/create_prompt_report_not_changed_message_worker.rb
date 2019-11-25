@@ -7,7 +7,13 @@ class CreatePromptReportNotChangedMessageWorker
   end
 
   def after_skip(user_id, options = {})
-    log(Hashie::Mash.new(options)).update(status: false, error_class: CreatePromptReportRequest::NotChangedMessageNotSent, error_message: "#{self.class} #{CreatePromptReportRequest::DuplicateJobSkipped}")
+    log(Hashie::Mash.new(options)).update(status: false, error_class: DuplicateJobSkipped, error_message: "Direct message not sent #{user_id} #{options.inspect}")
+  end
+
+  class Unauthorized < StandardError
+  end
+
+  class DuplicateJobSkipped < StandardError
   end
 
   # options:
@@ -18,7 +24,7 @@ class CreatePromptReportNotChangedMessageWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
     unless user.authorized?
-      log(options).update(status: false, error_class: CreatePromptReportRequest::NotChangedMessageNotSent, error_message: "#{self.class} #{CreatePromptReportRequest::Unauthorized}")
+      log(options).update(status: false, error_class: Unauthorized, error_message: "Direct message not sent #{user_id} #{options.inspect}")
       return
     end
 
@@ -37,17 +43,16 @@ class CreatePromptReportNotChangedMessageWorker
 
   rescue => e
     if TemporaryDmLimitation.temporarily_locked?(e)
-      if TemporaryDmLimitation.you_have_blocked?(e)
-        CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-      end
+    elsif TemporaryDmLimitation.you_have_blocked?(e)
+      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
     else
       logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
+      logger.warn e.cause.inspect if e.cause
       logger.info e.backtrace.join("\n")
     end
 
-    ex = CreatePromptReportRequest::NotChangedMessageNotSent.new("#{e.class}: #{e.message}")
-    log(options).update(status: false, error_class: ex.class, error_message: ex.message)
+    log(options).update(status: false, error_class: e.class, error_message: e.message)
   end
 
   def log(options)
