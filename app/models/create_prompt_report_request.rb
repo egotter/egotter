@@ -109,7 +109,11 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def too_many_errors?
     errors = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(3).pluck(:error_class)
-    errors.size == TOO_MANY_ERRORS_SIZE && errors.all? { |err| err.present? }
+    result = errors.size == TOO_MANY_ERRORS_SIZE && errors.all? { |err| err.present? }
+
+    logger.info "DEBUG too_many_errors? user=#{user.id} request=#{id} size=#{errors.size} #{errors.inspect}"
+
+    result
   end
 
   private
