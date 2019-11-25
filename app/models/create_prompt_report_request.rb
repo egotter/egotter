@@ -25,7 +25,7 @@ class CreatePromptReportRequest < ApplicationRecord
     error_check! unless @error_check
 
     unless TwitterUser.exists?(uid: user.uid)
-      CreatePromptReportInitializationMessageWorker.perform_async(user.id, create_prompt_report_request_id: id)
+      CreatePromptReportMessageWorker.perform_async(user.id, kind: :initialization, create_prompt_report_request_id: id)
       return
     end
 
@@ -87,20 +87,21 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def send_report(changes, previous_twitter_user:, current_twitter_user:, changed: true)
+    options = {
+        changes_json: changes.to_json,
+        previous_twitter_user_id: previous_twitter_user.id,
+        current_twitter_user_id: current_twitter_user.id,
+        create_prompt_report_request_id: id
+    }
+
     if changed
-      CreatePromptReportRemovedMessageWorker.perform_async(
+      CreatePromptReportMessageWorker.perform_async(
           user.id,
-          changes_json: changes.to_json,
-          previous_twitter_user_id: previous_twitter_user.id,
-          current_twitter_user_id: current_twitter_user.id,
-          create_prompt_report_request_id: id)
+          options.merge(kind: :you_are_removed))
     else
-      CreatePromptReportNotChangedMessageWorker.perform_async(
+      CreatePromptReportMessageWorker.perform_async(
           user.id,
-          changes_json: changes.to_json,
-          previous_twitter_user_id: previous_twitter_user.id,
-          current_twitter_user_id: current_twitter_user.id,
-          create_prompt_report_request_id: id)
+          options.merge(kind: :not_changed))
     end
   end
 
