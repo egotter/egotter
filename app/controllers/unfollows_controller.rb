@@ -15,7 +15,7 @@ class UnfollowsController < ApplicationController
 
   def create
     request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid])
-    CreateUnfollowWorker.perform_async(request.id, enqueue_location: controller_name) unless from_crawler?
+    CreateUnfollowWorker.perform_async(request.id, enqueue_location: controller_name)
     render json: rate_limit_values(current_user, request)
   end
 

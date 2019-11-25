@@ -128,12 +128,6 @@ class UnfollowRequest < ApplicationRecord
   class TemporarilyLocked < DeadErrorTellsNoTales
   end
 
-  class GlobalRateLimited < DeadErrorTellsNoTales
-  end
-
-  class UserRateLimited < DeadErrorTellsNoTales
-  end
-
   class CanNotUnfollowYourself < DeadErrorTellsNoTales
   end
 
