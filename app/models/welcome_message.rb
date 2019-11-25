@@ -41,7 +41,7 @@ class WelcomeMessage < ApplicationRecord
     rescue => e
       dm = DirectMessage.new(retry_sending { send_initialization_failed_message! })
       update!(message_id: dm.id, message: dm.truncated_message)
-      raise ReportingFailed
+      raise ReportingFailed.new("#{e.class} #{e.message}")
     else
       dm = DirectMessage.new(retry_sending { send_initialization_success_message! })
       update!(message_id: dm.id, message: dm.truncated_message)
@@ -51,9 +51,6 @@ class WelcomeMessage < ApplicationRecord
   end
 
   class ReportingFailed < StandardError
-    def initialize(*args)
-      super('')
-    end
   end
 
   private
