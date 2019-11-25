@@ -25,7 +25,8 @@ class TwitterUsersController < ApplicationController
 
     started_at = params[:created_at].to_s.match?(/\A\d+\z/) ? Time.zone.at(params[:created_at].to_i) : nil
 
-    if started_at.nil? || started_at < twitter_user.created_at
+    # Use '<=' instead of '<'. Otherwise, it will fail when the record is created too fast.
+    if started_at.nil? || started_at <= twitter_user.created_at
       render json: {found: true, created_at: twitter_user.created_at.to_i, text: create_changes_text(twitter_user)}
     else
       render json: {found: false, started_at: started_at.to_s(:db)}.merge(echo_back_params), status: :accepted
