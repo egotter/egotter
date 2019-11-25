@@ -10,34 +10,19 @@ class CreateUnfollowWorker
   #   enqueue_location
   def perform(request_id, options = {})
     request = UnfollowRequest.find(request_id)
-    log = CreateUnfollowLog.create_by(request: request)
+    CreateUnfollowTask.new(request).start!
 
-    request.perform!
-    request.finished!
-
-    log.update(status: true)
-
-  rescue UnfollowRequest::TooManyRetries,
-      UnfollowRequest::Unauthorized,
-      UnfollowRequest::CanNotUnfollowYourself,
-      UnfollowRequest::NotFound,
-      UnfollowRequest::NotFollowing => e
-
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
-    request.update(error_class: e.class, error_message: e.message.truncate(100))
-    request.finished!
-
-    if e.class == UnfollowRequest::TooManyRetries
-      logger.warn "Stop retrying #{e.class} #{request.inspect} #{request.logs.pluck(:error_class).inspect}"
-    end
-  rescue UnfollowRequest::Error => e
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
+  rescue UnfollowRequest::TooManyUnfollows => e
+    logger.warn "#{e.class} Sleep for 1 hour"
+    sleep 1.hour
     CreateUnfollowWorker.perform_async(request_id, options)
+
+  rescue UnfollowRequest::RetryableError => e
+    CreateUnfollowWorker.perform_async(request_id, options)
+
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{request_id} #{options.inspect}"
+    logger.warn "Don't retry. #{e.class} #{e.message} #{request_id} #{options.inspect}"
+    logger.warn "Caused by #{e.cause.inspect}" if e.cause
     logger.info e.backtrace.join("\n")
-
-    log.update(error_class: e.class, error_message: e.message.truncate(100))
-    CreateUnfollowWorker.perform_async(request_id, options)
   end
 end

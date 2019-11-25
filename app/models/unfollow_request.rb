@@ -55,7 +55,7 @@ class UnfollowRequest < ApplicationRecord
     raise AlreadyFinished if finished?
     raise Unauthorized if unauthorized?
     raise CanNotUnfollowYourself if user.uid == uid
-    raise NotFound unless user_found?
+    raise NotFound if not_found?
     raise NotFollowing unless friendship?
 
     begin
@@ -81,8 +81,8 @@ class UnfollowRequest < ApplicationRecord
     end
   end
 
-  def user_found?
-    client.user?(uid)
+  def not_found?
+    !client.user?(uid)
   rescue => e
     if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
       raise TemporarilyLocked
@@ -110,12 +110,17 @@ class UnfollowRequest < ApplicationRecord
     end
   end
 
+  class RetryableError < StandardError
+  end
+
+  # Don't retry
   class TooManyRetries < DeadErrorTellsNoTales
   end
 
   class AlreadyFinished < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class Unauthorized < Error
   end
 
@@ -128,12 +133,21 @@ class UnfollowRequest < ApplicationRecord
   class TemporarilyLocked < DeadErrorTellsNoTales
   end
 
+  class TooManyUnfollows < RetryableError
+    def initialize(*args)
+      super('')
+    end
+  end
+
+  # Don't retry
   class CanNotUnfollowYourself < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class NotFound < DeadErrorTellsNoTales
   end
 
+  # Don't retry
   class NotFollowing < DeadErrorTellsNoTales
   end
 end
