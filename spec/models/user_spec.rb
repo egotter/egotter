@@ -136,6 +136,62 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe '#is_following?' do
+    let(:user) { create(:user) }
+
+    before do
+      allow(user).to receive(:current_friend_uids).with(no_args).and_return([1, 2])
+    end
+
+    it do
+      expect(user.is_following?(1)).to be_truthy
+      expect(user.is_following?(2)).to be_truthy
+      expect(user.is_following?(3)).to be_falsey
+    end
+  end
+
+  describe '#current_friend_uids' do
+    let(:user) { create(:user) }
+    let(:time) { Time.zone.now }
+    let(:twitter_user) { Hashie::Mash.new(friend_uids: [1, 2, 3], created_at: 1.year.ago) }
+    let(:following_request1) { FollowRequest.new(uid: 4, created_at: time + 1.second) }
+    let(:unfollowing_request1) { UnfollowRequest.new(uid: 2, created_at: time + 2.seconds) }
+    let(:following_request2) { FollowRequest.new(uid: 5, created_at: time + 3.seconds) }
+    let(:unfollowing_request2) { UnfollowRequest.new(uid: 4, created_at: time + 4.seconds) }
+
+    context 'There are no requests' do
+      before do
+        allow(TwitterUser).to receive(:latest_by).with(uid: user.uid).and_return(twitter_user)
+        allow(user).to receive(:following_requests).with(twitter_user.created_at).and_return([])
+        allow(user).to receive(:unfollowing_requests).with(twitter_user.created_at).and_return([])
+      end
+
+      it { expect(user.current_friend_uids).to match_array([1, 2, 3]) }
+    end
+
+    context 'There are 2 following requests and 2 unfollowing requests' do
+      before do
+        allow(TwitterUser).to receive(:latest_by).with(uid: user.uid).and_return(twitter_user)
+        allow(user).to receive(:following_requests).with(twitter_user.created_at).and_return([following_request1, following_request2])
+        allow(user).to receive(:unfollowing_requests).with(twitter_user.created_at).and_return([unfollowing_request1, unfollowing_request2])
+      end
+
+      it { expect(user.current_friend_uids).to match_array([1, 3, 5]) }
+    end
+
+    context 'Without twitter_user' do
+      context 'There are 2 following requests and 2 unfollowing requests' do
+        before do
+          allow(TwitterUser).to receive(:latest_by).with(uid: user.uid).and_return(nil)
+          allow(user).to receive(:following_requests).with(nil).and_return([following_request1, following_request2])
+          allow(user).to receive(:unfollowing_requests).with(nil).and_return([unfollowing_request1, unfollowing_request2])
+        end
+
+        it { expect(user.current_friend_uids).to match_array([5]) }
+      end
+    end
+  end
+
   describe 'Scope enough_permission_level' do
     subject { User.enough_permission_level }
     before do
