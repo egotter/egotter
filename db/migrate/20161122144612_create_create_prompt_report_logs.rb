@@ -15,6 +15,7 @@ class CreateCreatePromptReportLogs < ActiveRecord::Migration[4.2]
       t.index :request_id
       t.index :uid
       t.index :screen_name
+      t.index :error_class
       t.index :created_at
     end
   end
