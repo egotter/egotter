@@ -48,7 +48,9 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
+  # TODO Remove later
   def perform
+    logger.warn "Deprecated calling CreateTwitterUserRequest#perform"
     perform!
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
@@ -94,14 +96,10 @@ class CreateTwitterUserRequest < ApplicationRecord
     if e.message.start_with? 'To protect our users from spam and other malicious activity, this account is temporarily locked.'
       raise Forbidden
     else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-      raise
+      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
   rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-    raise
+    raise Unknown.new("#{__method__} #{e.class} #{e.message}")
   end
 
   def fetch_user
@@ -110,9 +108,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     if e.message == 'Invalid or expired token.'
       raise Unauthorized
     else
-      logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-      logger.info e.backtrace.join("\n")
-      raise
+      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
   end
 
@@ -156,5 +152,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class NotChanged < Error
+  end
+
+  class Unknown < StandardError
   end
 end

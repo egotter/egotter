@@ -17,8 +17,9 @@ class CreateTwitterDBUserWorker
     client = Bot.api_client
     TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client, force_update: options['force_update'])
   rescue => e
+    # Errno::EEXIST File exists @ dir_s_mkdir
+    # Errno::ENOENT No such file or directory @ rb_sysopen
     logger.warn "#{e.class} #{e.message} #{uids.inspect.truncate(150)}"
-    logger.warn client.inspect
     logger.info e.backtrace.join("\n")
   end
 
