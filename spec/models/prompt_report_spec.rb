@@ -15,12 +15,8 @@ RSpec.describe PromptReport, type: :model do
       Class.new do
         def create_direct_message(uid, message)
           @count ||= 0
-          if @count == 0
-            @count += 1
-            {event: {id: 'id1', message_create: {message_data: {text: 'text1'}}}}
-          else
-            {event: {id: 'id2', message_create: {message_data: {text: 'text2'}}}}
-          end
+          @count += 1
+          {event: {id: "id#{@count}", message_create: {message_data: {text: "text#{@count}"}}}}
         end
       end
     end
@@ -31,6 +27,7 @@ RSpec.describe PromptReport, type: :model do
     before do
       user.create_notification_setting!
       allow(subject).to receive(:dm_client).with(anything).and_return(dm_client_class.new)
+      subject.message_builder = PromptReport::EmptyMessageBuilder.new
     end
 
     it 'calls #send_starting_message! and #send_reporting_message!' do
@@ -43,7 +40,7 @@ RSpec.describe PromptReport, type: :model do
       expect(subject.message).to eq('text2')
     end
 
-    context 'send_reporting_message! raises an exception' do
+    context '#send_reporting_message! raises an exception' do
       before do
         allow(subject).to receive(:send_reporting_message!).and_raise
       end
@@ -52,7 +49,7 @@ RSpec.describe PromptReport, type: :model do
         is_expected.to receive(:send_starting_message!).with(no_args).and_call_original
         is_expected.to receive(:send_failed_message!).with(no_args).and_call_original
         is_expected.to receive(:update_with_dm!).with(anything).twice.and_call_original
-        subject.deliver!
+        expect { subject.deliver! }.to raise_error(PromptReport::ReportingFailed)
 
         expect(subject.message_id).to eq('id2')
         expect(subject.message).to eq('text2')
