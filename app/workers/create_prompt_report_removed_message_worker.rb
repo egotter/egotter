@@ -7,7 +7,13 @@ class CreatePromptReportRemovedMessageWorker
   end
 
   def after_skip(user_id, options = {})
-    log(Hashie::Mash.new(options)).update(status: false, error_class: CreatePromptReportRequest::RemovedMessageNotSent, error_message: "#{self.class} #{CreatePromptReportRequest::DuplicateJobSkipped}")
+    log(Hashie::Mash.new(options)).update(status: false, error_class: DuplicateJobSkipped, error_message: "Direct message not sent #{user_id} #{options.inspect}")
+  end
+
+  class Unauthorized < StandardError
+  end
+
+  class DuplicateJobSkipped < StandardError
   end
 
   # options:
@@ -18,7 +24,7 @@ class CreatePromptReportRemovedMessageWorker
   def perform(user_id, options = {})
     user = User.find(user_id)
     unless user.authorized?
-      log(options).update(status: false, error_class: CreatePromptReportRequest::RemovedMessageNotSent, error_message: "#{self.class} #{CreatePromptReportRequest::Unauthorized}")
+      log(options).update(status: false, error_class: Unauthorized, error_message: "Direct message not sent #{user_id} #{options.inspect}")
       return
     end
 
@@ -43,11 +49,11 @@ class CreatePromptReportRemovedMessageWorker
     elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
     else
       logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
+      logger.warn e.cause.inspect if e.cause
       logger.info e.backtrace.join("\n")
     end
 
-    ex = CreatePromptReportRequest::RemovedMessageNotSent.new("#{e.class}: #{e.message}")
-    log(options).update(status: false, error_class: ex.class, error_message: ex.message)
+    log(options).update(status: false, error_class: e.class, error_message: e.message)
   end
 
   def log(options)

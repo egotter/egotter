@@ -42,7 +42,7 @@ RSpec.describe WelcomeMessage, type: :model do
         is_expected.to receive(:send_initialization_failed_message!).with(no_args).and_call_original
         is_expected.not_to receive(:send_initialization_success_message!)
         is_expected.to receive(:update!).with(anything).twice.and_call_original
-        expect { subject.deliver! }.to raise_error(WelcomeMessage::ReportingFailed)
+        expect { subject.deliver! }.to raise_error(WelcomeMessage::TestMessageFailed)
 
 
         expect(subject.message_id).to eq('id2')
