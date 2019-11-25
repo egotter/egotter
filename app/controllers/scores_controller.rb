@@ -1,5 +1,5 @@
 class ScoresController < ApplicationController
-  include Concerns::SearchByUidConcern
+  include Concerns::SearchRequestConcern
   include ScoresHelper
 
   def show

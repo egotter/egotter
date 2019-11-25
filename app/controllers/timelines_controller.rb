@@ -1,6 +1,6 @@
 class TimelinesController < ApplicationController
   include Concerns::JobQueueingConcern
-  include Concerns::SearchByUidConcern
+  include Concerns::SearchRequestConcern
   include Concerns::AudienceInsights
 
   after_action {::Util::SearchCountCache.increment}
