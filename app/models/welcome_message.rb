@@ -32,34 +32,61 @@ class WelcomeMessage < ApplicationRecord
   end
 
   def deliver!
-    message = FirstOfAllMessageBuilder.new(user, token).build
-    resp = DirectMessageClient.new(user_client).create_direct_message(User::EGOTTER_UID, message)
-    dm = DirectMessage.new(resp)
+    dm = DirectMessage.new(retry_sending { send_first_of_all_message! })
     update!(message_id: dm.id, message: dm.truncated_message)
 
     begin
-      resp = DirectMessageClient.new(User.egotter.api_client.twitter).create_direct_message(user.uid, I18n.t('dm.welcomeMessage.from_egotter', user: user.screen_name))
-      dm = DirectMessage.new(resp)
-      update!(message_id: dm.id, message: dm.truncated_message)
-
-      message = InitializationSuccessMessageBuilder.new(user, token).build
-      resp = DirectMessageClient.new(user_client).create_direct_message(User::EGOTTER_UID, message)
-      dm = DirectMessage.new(resp)
+      dm = DirectMessage.new(retry_sending { send_test_message_from_egotter! })
       update!(message_id: dm.id, message: dm.truncated_message)
     rescue => e
-      message = InitializationFailedMessageBuilder.new(user, token).build
-      resp = DirectMessageClient.new(user_client).create_direct_message(User::EGOTTER_UID, message)
-      dm = DirectMessage.new(resp)
+      dm = DirectMessage.new(retry_sending { send_initialization_failed_message! })
+      update!(message_id: dm.id, message: dm.truncated_message)
+      raise ReportingFailed
+    else
+      dm = DirectMessage.new(retry_sending { send_initialization_success_message! })
       update!(message_id: dm.id, message: dm.truncated_message)
     end
 
     dm
   end
 
+  class ReportingFailed < StandardError
+    def initialize(*args)
+      super('')
+    end
+  end
+
   private
 
-  def user_client
-    @user_client ||= user.api_client.twitter
+  def dm_client(sender)
+    DirectMessageClient.new(sender.api_client.twitter)
+  end
+
+  def send_first_of_all_message!
+    dm_client(user).create_direct_message(User::EGOTTER_UID, FirstOfAllMessageBuilder.new(user, token).build)
+  end
+
+  def send_test_message_from_egotter!
+    dm_client(User.egotter).create_direct_message(user.uid, I18n.t('dm.welcomeMessage.from_egotter', user: user.screen_name))
+  end
+
+  def send_initialization_success_message!
+    dm_client(user).create_direct_message(User::EGOTTER_UID, InitializationSuccessMessageBuilder.new(user, token).build)
+  end
+
+  def send_initialization_failed_message!
+    dm_client(user).create_direct_message(User::EGOTTER_UID, InitializationFailedMessageBuilder.new(user, token).build)
+  end
+
+  def retry_sending(&block)
+    tries ||= 3
+    yield
+  rescue => e
+    if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
+      retry
+    else
+      raise
+    end
   end
 
   class FirstOfAllMessageBuilder

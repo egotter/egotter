@@ -116,6 +116,16 @@ class PromptReport < ApplicationRecord
     end
   end
 
+  # This class is created for testing.
+  class EmptyMessageBuilder
+    def initialize(*args)
+    end
+
+    def build
+      ''
+    end
+  end
+
   class YouAreRemovedMessageBuilder
     attr_reader :user, :token
     attr_accessor :previous_twitter_user
