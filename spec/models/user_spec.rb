@@ -136,6 +136,24 @@ RSpec.describe User, type: :model do
     end
   end
 
+  describe 'Scope enough_permission_level' do
+    subject { User.enough_permission_level }
+    before do
+      user.save!
+      user.create_notification_setting!(permission_level: level)
+    end
+
+    context 'Enough permission_level' do
+      let(:level) { 'read-write-directmessages' }
+      it { is_expected.to match_array([user]) }
+    end
+
+    context 'Not enough permission_level' do
+      let(:level) { 'read-write' }
+      it { is_expected.to be_empty }
+    end
+  end
+
   describe 'Scope prompt_report_enabled' do
     subject { User.prompt_report_enabled }
     before do
