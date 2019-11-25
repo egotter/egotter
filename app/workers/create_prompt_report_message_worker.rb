@@ -70,7 +70,7 @@ class CreatePromptReportMessageWorker
     elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
     else
       logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
-      logger.warn e.cause.inspect if e.cause
+      logger.warn "Caused by #{e.cause.inspect}" if e.cause
       logger.info e.backtrace.join("\n")
     end
 

@@ -25,4 +25,14 @@ class CreateTwitterUserLog < ApplicationRecord
       self.error_message = self.error_message.truncate(100)
     end
   end
+
+  class << self
+    def create_by(request:)
+      create(
+          user_id: request.user&.id,
+          request_id: request.id,
+          uid: request.uid,
+      )
+    end
+  end
 end

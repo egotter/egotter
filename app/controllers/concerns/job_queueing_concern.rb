@@ -31,16 +31,6 @@ module Concerns::JobQueueingConcern
     end
   end
 
-  def enqueue_create_follow_job_if_needed(request, enqueue_location: nil)
-    return if from_crawler?
-    CreateFollowWorker.perform_async(request.id, enqueue_location: enqueue_location)
-  end
-
-  def enqueue_create_unfollow_job_if_needed(request, enqueue_location: nil)
-    return if from_crawler?
-    CreateUnfollowWorker.perform_async(request.id, enqueue_location: enqueue_location)
-  end
-
   def enqueue_update_authorized
     return if from_crawler?
     return unless user_signed_in?
