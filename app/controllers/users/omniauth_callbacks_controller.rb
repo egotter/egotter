@@ -46,8 +46,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       redirect_path
       force_login
     ).each { |key| session.delete(key) }
-    flash[:notice] = after_failure_message(request.env['omniauth.error.type'].to_s)
-    redirect_to after_omniauth_failure_path_for(resource_name)
+
+    if user_signed_in?
+      redirect_to root_path
+    else
+      flash[:notice] = after_failure_message(request.env['omniauth.error.type'].to_s)
+      redirect_to after_omniauth_failure_path_for(resource_name)
+    end
   end
 
   private
@@ -62,10 +67,20 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def after_failure_message(reason)
-    unless %w(invalid_credentials session_expired).include?(reason)
+    unless %w(invalid_credentials session_expired service_unavailable).include?(reason)
       logger.warn "#{self.class}##{__method__}: unknown reason #{reason}"
     end
-    t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: sign_in_path(via: "#{controller_name}/#{action_name}/retry_message"))
+
+    if %w(invalid_credentials session_expired).include?(reason)
+      url = sign_in_path(via: "#{controller_name}/#{action_name}/retry_invalid_or_expired")
+      t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: url)
+    elsif %w(service_unavailable).include?(reason)
+      url = sign_in_path(via: "#{controller_name}/#{action_name}/retry_service_unavailable")
+      t('devise.omniauth_callbacks.service_unavailable_html', kind: 'Twitter', url: url)
+    else
+      url = sign_in_path(via: "#{controller_name}/#{action_name}/retry_something_error")
+      t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: url)
+    end
   end
 
   def notification_status_message(user)

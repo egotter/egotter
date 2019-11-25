@@ -34,6 +34,7 @@ ja:
         本当にキャンセルしますか？<br>
         <br>
         <a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank">公式アカウントに質問</a>
+      service_unavailable_html: 'ツイッターのエラーによりログインができませんでした。お手数ですがもう一度お試しください。<a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank">公式アカウントに質問</a>'
       enabled: "有効"
       disabled: "無効"
     passwords:
