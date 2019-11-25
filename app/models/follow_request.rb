@@ -18,7 +18,6 @@
 #
 
 class FollowRequest < ApplicationRecord
-  include Concerns::Request::FollowAndUnfollow
   include Concerns::FollowRequest::Runnable
 
   has_many :logs, primary_key: :id, foreign_key: :request_id, class_name: 'CreateFollowLog'
@@ -26,6 +25,30 @@ class FollowRequest < ApplicationRecord
   belongs_to :user
   validates :user_id, numericality: :only_integer
   validates :uid, numericality: :only_integer
+
+  class << self
+    # The finished_at is null and the error_class is empty.
+    def finished(user_id:, created_at:)
+      where(user_id: user_id).
+          where('created_at > ?', created_at).
+          where.not(finished_at: nil).
+          where(error_class: '')
+    end
+
+    # The finished_at is NOT null and there are no logs.
+    def unprocessed(user_id:, created_at:)
+      includes(:logs).
+          where(user_id: user_id).
+          where('created_at > ?', created_at).
+          where(finished_at: nil).
+          where(error_class: '').
+          select {|req| req.logs.empty? }
+    end
+
+    def temporarily_following(user_id:, created_at:)
+      (finished(user_id: user_id, created_at: created_at) + unprocessed(user_id: user_id, created_at: created_at)).sort_by(&:created_at)
+    end
+  end
 
   def perform!
     raise TooManyRetries if logs.size >= 5

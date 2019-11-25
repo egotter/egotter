@@ -58,4 +58,41 @@ RSpec.describe FollowRequest, type: :model do
       end
     end
   end
+
+  describe '.finished' do
+    subject { described_class.finished(user_id: user.id, created_at: time) }
+    let(:user) { create(:user) }
+    let!(:time) { Time.zone.now }
+
+    let!(:req1) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: 'Error') }
+    let!(:req2) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: '') }
+    let!(:req3) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: 'Error') }
+    let!(:req4) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: '') }
+    let!(:req5) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: 'Error') }
+    let!(:req6) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: '') }
+    let!(:req7) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: 'Error') }
+    let!(:req8) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: '') }
+
+    it { is_expected.to match_array([req6]) }
+  end
+
+  describe '.unprocessed' do
+    let(:subject) { described_class.unprocessed(user_id: user.id, created_at: time) }
+    let(:user) { create(:user) }
+    let!(:time) { Time.zone.now }
+
+    let!(:req1) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: 'Error') }
+    let!(:req2) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: '') }
+    let!(:req3) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: 'Error') }
+    let!(:req4) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: '') }
+    let!(:req5) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: 'Error') }
+    let!(:req6) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: '') }
+    let!(:req7) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: 'Error') }
+    let!(:req8) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: '') }
+    let!(:req9) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: '') }
+
+    before { req8.logs.create }
+
+    it { is_expected.to match_array([req9]) }
+  end
 end
