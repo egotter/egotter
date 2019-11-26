@@ -71,10 +71,6 @@ class NotificationSetting < ApplicationRecord
     search? && (!search_sent_at || search_sent_at < SEARCH_INTERVAL.ago)
   end
 
-  def can_send_prompt_report?
-    prompt_report? && (!prompt_report_sent_at || prompt_report_sent_at < PROMPT_REPORT_INTERVAL.ago)
-  end
-
   def prompt_report_interval_ok?
     interval = REPORT_INTERVAL_VALUES.include?(report_interval) ? report_interval.seconds : DM_INTERVAL
     last_dm_at.nil? || last_dm_at < interval.ago

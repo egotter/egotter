@@ -63,16 +63,16 @@ class PromptReport < ApplicationRecord
   end
 
   class << self
-    def initialization(user_id)
+    def initialization(user_id, request_id: nil)
       report = new(user_id: user_id, changes_json: '{}', token: generate_token)
-      report.message_builder = InitializationMessageBuilder.new(report.user, report.token)
+      report.message_builder = InitializationMessageBuilder.new(report.user, report.token, request: CreatePromptReportRequest.find_by(id: request_id))
       report
     end
 
-    def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
+    def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:, request_id: nil)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
 
-      message_builder = YouAreRemovedMessageBuilder.new(report.user, report.token)
+      message_builder = YouAreRemovedMessageBuilder.new(report.user, report.token, request: CreatePromptReportRequest.find_by(id: request_id))
       message_builder.previous_twitter_user = previous_twitter_user
       message_builder.current_twitter_user = current_twitter_user
       message_builder.period = Oj.load(changes_json, symbol_keys: true)[:period]
@@ -82,10 +82,10 @@ class PromptReport < ApplicationRecord
       report
     end
 
-    def not_changed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:)
+    def not_changed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:, request_id: nil)
       report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
 
-      message_builder = NotChangedMessageBuilder.new(report.user, report.token)
+      message_builder = NotChangedMessageBuilder.new(report.user, report.token, request: CreatePromptReportRequest.find_by(id: request_id))
       message_builder.previous_twitter_user = previous_twitter_user
       message_builder.current_twitter_user = current_twitter_user
       message_builder.period = Oj.load(changes_json, symbol_keys: true)[:period]
@@ -105,7 +105,7 @@ class PromptReport < ApplicationRecord
   def send_starting_message!
     template = Rails.root.join('app/views/prompt_reports/start.ja.text.erb')
     message = ERB.new(template.read).result_with_hash(
-        url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_lets_start', og_tag: 'false')
+        url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_lets_start', og_tag: 'false'),
     )
     dm_client(user).create_direct_message(User::EGOTTER_UID, message)
   end
@@ -147,18 +147,20 @@ class PromptReport < ApplicationRecord
   end
 
   class InitializationMessageBuilder
-    attr_reader :user, :token
+    attr_reader :user, :token, :request
 
-    def initialize(user, token)
+    def initialize(user, token, request: nil)
       @user = user
       @token = token
+      @request = request
     end
 
     def build
       template = Rails.root.join('app/views/prompt_reports/initialization.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           screen_name: user.screen_name,
-          url: timeline_url(user.screen_name)
+          url: timeline_url(user.screen_name),
+          request_id: "#{request&.id}-#{token}",
       )
     end
 
@@ -168,14 +170,15 @@ class PromptReport < ApplicationRecord
   end
 
   class YouAreRemovedMessageBuilder
-    attr_reader :user, :token
+    attr_reader :user, :token, :request
     attr_accessor :previous_twitter_user
     attr_accessor :current_twitter_user
     attr_accessor :period
 
-    def initialize(user, token)
+    def initialize(user, token, request: nil)
       @user = user
       @token = token
+      @request = request
     end
 
     def build
@@ -195,7 +198,8 @@ class PromptReport < ApplicationRecord
             last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
-            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
+            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report'),
+            request_id: "#{request&.id}-#{token}",
         )
       end
     end
@@ -216,14 +220,15 @@ class PromptReport < ApplicationRecord
   end
 
   class NotChangedMessageBuilder
-    attr_reader :user, :token
+    attr_reader :user, :token, :request
     attr_accessor :previous_twitter_user
     attr_accessor :current_twitter_user
     attr_accessor :period
 
-    def initialize(user, token)
+    def initialize(user, token, request: nil)
       @user = user
       @token = token
+      @request = request
     end
 
     def build
@@ -242,7 +247,8 @@ class PromptReport < ApplicationRecord
             last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
-            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report')
+            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report'),
+            request_id: "#{request&.id}-#{token}",
         )
       end
     end
@@ -263,6 +269,12 @@ class PromptReport < ApplicationRecord
   end
 
   class ReportingFailedMessageBuilder
+    attr_reader :request
+
+    def initialize(request: nil)
+      @request = request
+    end
+
     def build
       template = Rails.root.join('app/views/prompt_reports/reporting_failed.ja.text.erb')
       ERB.new(template.read).result_with_hash(

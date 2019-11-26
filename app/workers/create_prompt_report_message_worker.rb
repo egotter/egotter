@@ -36,17 +36,22 @@ class CreatePromptReportMessageWorker
           user.id,
           changes_json: options['changes_json'],
           previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
-          current_twitter_user: TwitterUser.find(options['current_twitter_user_id'])
+          current_twitter_user: TwitterUser.find(options['current_twitter_user_id']),
+          request_id: options['create_prompt_report_request_id'],
       ).deliver!
     elsif kind == :not_changed
       PromptReport.not_changed(
           user.id,
           changes_json: options['changes_json'],
           previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
-          current_twitter_user: TwitterUser.find(options['current_twitter_user_id'])
+          current_twitter_user: TwitterUser.find(options['current_twitter_user_id']),
+          request_id: options['create_prompt_report_request_id'],
       ).deliver!
     elsif kind == :initialization
-      PromptReport.initialization(user.id).deliver!
+      PromptReport.initialization(
+          user.id,
+          request_id: options['create_prompt_report_request_id'],
+      ).deliver!
     else
       logger.warn "Invalid value #{kind}"
     end
