@@ -16,7 +16,7 @@ Rails.application.routes.draw do
   post "delete_tweets", to: "delete_tweets#delete"
   get 'delete_tweets', to: 'delete_tweets#new', as: :delete_tweets_top
 
-  post "reset_egotter", to: "reset_egotter#reset"
+  delete "reset_egotter", to: "reset_egotter#reset"
   post "reset_cache", to: "reset_cache#reset"
 
   namespace :directory do
@@ -142,6 +142,7 @@ Rails.application.routes.draw do
   get 'settings/unfollow_requests', to: "settings#unfollow_requests"
   get 'settings/create_prompt_requests', to: "settings#create_prompt_report_requests"
   get 'settings/create_test_requests', to: "settings#create_test_report_requests"
+  get 'settings/twitter_users', to: "settings#twitter_users"
 
   namespace :admin do
     get "settings/:user_id/follow_requests", to: "settings#follow_requests"

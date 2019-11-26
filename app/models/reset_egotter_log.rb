@@ -22,7 +22,19 @@
 class ResetEgotterLog < ApplicationRecord
   include Concerns::Log::Runnable
 
-  def request
-    ResetEgotterRequest.find(request_id)
+  before_validation do
+    if self.error_message
+      self.error_message = self.error_message.truncate(100)
+    end
+  end
+
+  class << self
+    def create_by(request:)
+      create(
+          request_id: request.id,
+          user_id: request.user.id,
+          message: 'Starting'
+      )
+    end
   end
 end

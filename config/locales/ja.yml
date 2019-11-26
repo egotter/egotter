@@ -204,16 +204,45 @@ ja:
     title: "設定"
     index:
       general_title: "ユーザー情報"
+      data:
+        title: 'データ設定'
+        updated_at: '最終更新'
+        no_records: 'データはこれから更新されます'
+        history: '履歴'
+        requested: 'リクエスト済み'
+        reset_cache:
+          title: 'キャッシュのリセット'
+          do: 'リセットする'
+          note: '表示データがおかしい方はお試しください'
+          modal:
+            warning_html: >
+              キャッシュ（表示の高速化のためのデータ）をリセットします。<br>
+              本当にリセットしますか？<br>
+              <br>
+              <b>※保存されたデータは残ります</b>
+            ok: 'リセットします'
+            cancel: 'キャンセルする'
+        delete_data:
+          title: 'データの削除'
+          do: 'データを削除する'
+          note: '非常に危険です。この操作は取り消しできません'
+          history: '履歴'
+          modal:
+            warning_html: >
+              データがおかしくなっている場合のみ、@%{screen_name} のえごったーのデータを削除します。<br>
+              本当に削除しますか？<br>
+              <br>
+              <b>※この操作は取り消しできません</b><br>
+              <b>※リセット完了まで少し時間がかかります</b>
+            ok: '削除します'
+            cancel: 'キャンセルする'
+        delete_tweets:
+          title: "ツイート削除"
+          move_to: 'に移動しました'
       reset_menu:
-        title: 'データのリセット'
         profile: 'ユーザー情報'
         update_profile_html: '更新する&nbsp;<i class="fas fa-sync"></i>'
         update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
-      update_histories:
-        title: '更新履歴'
-        size: '更新回数'
-        created_at: '初回更新'
-        updated_at: '最終更新'
       order:
         order_histories: "購入履歴"
         id: "注文 %{id}"
@@ -231,7 +260,7 @@ ja:
         title: 'ログイン連携'
         true: 'OK'
         false: '無効'
-        bonus: '%{count} 回の検索ボーナス付与'
+        bonus_html: '%{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
         update_now_html: 'ログイン連携を更新する&nbsp;<i class="fas fa-sync"></i>'
         stop: '検索停止中'
       following_egotter:
@@ -240,20 +269,21 @@ ja:
         false: 'いいえ'
         fast_mode: '高速モード'
         follow_now: '@ego_tter をフォローする'
-        note: 'フォローしていると検索や通知が高速になります'
+        note_html: 'フォローしていると<span class="egotter-pink">検索や通知が高速</span>になります'
       sharing_egotter:
         title: 'egotter.com をシェア'
         count: '%{count} 回'
         true: 'OK'
         false: 'いいえ'
         see_more: '詳しく見る'
-        promotion: '直近 %{hours} 時間のツイート毎に %{count} 回の検索ボーナス付与'
+        promotion_html: '直近 %{hours} 時間のツイート毎に %{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
+      search_title: '検索設定'
       search_mode:
         title: '検索速度'
         fast: '高速モード'
         slow: '低速モード'
         advantage: '検索やリムられ通知が早くなります'
-        advise: '@ego_tter ををフォローすると高速モードになります'
+        advise_html: '@ego_tter ををフォローすると<span class="egotter-pink">高速モード</span>になります'
       search_count:
         title: '検索回数'
         count: '合計 %{count} 回'
@@ -274,10 +304,11 @@ ja:
         note: '直近の %{days} 日が対象'
       notifications:
         title: "通知設定"
+        prompt_report_title: 'リムられ通知設定'
         prompt_reports:
           not_coming: "リムられ通知がこない場合"
           update_authorized_for_dm: 'リムられ通知を復活させる'
-          update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。'
+          update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>'
           reporting_test: "リムられ通知のテスト"
           send_test_report: 'リムられ通知をテスト送信する'
           send_test_report_history: '履歴'
@@ -296,26 +327,6 @@ ja:
         21600: "6時間毎"
         43200: "12時間毎"
       trial_title: "お試し機能 (β)"
-      delete_tweets:
-        title: "ツイート削除"
-        move_to: 'に移動しました'
-      reset_egotter:
-        title: "データリセット"
-        reset: "データをリセットする"
-        requested: "リクエスト済み"
-        danger: "危険"
-        warning_html: "データがおかしくなっている場合のみ、@%{screen_name} のえごったーのデータをリセットします。本当にリセットしますか？<br><br><b>※リセット完了まで少し時間がかかります。</b>"
-        ok: "はい、リセットします"
-        cancel: "いいえ"
-        direct_message: "えごったーのデータリセットが完了しました。今後もえごったーをよろしくお願いいたします。"
-      reset_cache:
-        title: "キャッシュリセット"
-        reset: "キャッシュをリセットする"
-        requested: "リクエスト済み"
-        warning_html: "キャッシュ（表示の高速化のためのデータ）をリセットします。本当にリセットしますか？<br><br><b>※保存されたデータは残ります</b>"
-        ok: "はい、リセットします"
-        cancel: "いいえ"
-      cancel: "キャンセルする"
     follow_requests:
       title: 'フォローボタン履歴'
     unfollow_requests:
@@ -330,6 +341,13 @@ ja:
       description: 'リムられ通知テストの送信履歴です。'
       sent: '送信済み'
       not_changed: '更新なし'
+    twitter_users:
+      title: 'データ更新履歴'
+      description: 'データ更新の履歴です。データは、検索した時やリムられ通知の時に更新されます。'
+      created_at: '日時'
+      screen_name: 'ユーザー名'
+      friends_count: 'フォロー数'
+      followers_count: 'フォロワー数'
     tgl_btn:
       updated: "更新しました"
       desc:

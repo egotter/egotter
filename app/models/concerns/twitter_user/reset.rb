@@ -29,7 +29,7 @@ module Concerns::TwitterUser::Reset
 
     logger.info {"checkpoint 2 #{result.inspect}"}
 
-    [TwitterDB::Status, TwitterDB::Favorite, TwitterDB::Mention].each do |klass|
+    [::TwitterDB::Status, ::TwitterDB::Favorite, ::TwitterDB::Mention].each do |klass|
       result[klass.to_s] = klass.where(uid: uid).delete_all
     end
 
