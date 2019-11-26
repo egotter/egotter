@@ -1,10 +1,7 @@
 新しく <%= new_unfollowers_size %> 人にリムられました。次の更新は <%= report_interval_hours %>時間後 くらいです。
 
-集計期間：<% if previous_twitter_user.id == current_twitter_user.id %>
-<%= previous_created_at %> - <%= now %>
-<% else %>
+集計期間：
 <%= previous_created_at %> - <%= current_created_at %>
-<% end %>
 
 フォロワー数：<% if previous_twitter_user.followers_count == current_twitter_user.followers_count %>
 <%= previous_twitter_user.followers_count %> 人のままです。

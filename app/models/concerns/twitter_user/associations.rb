@@ -76,6 +76,10 @@ module Concerns::TwitterUser::Associations
     TwitterDB::User.where_and_order_by_field(uids: follower_uids)
   end
 
+  def unfollower_uids
+    unfollowerships.pluck(:follower_uid)
+  end
+
   def users_by(controller_name:, limit: 300)
     users =
         if controller_name == 'blocking_or_blocked'

@@ -4,6 +4,12 @@ class DirectMessageClient
   end
 
   def create_direct_message(user_id, text, options = {})
+    if Rails.env.development?
+      text = '[dev]' + text
+      Rails.logger.debug 'message start ----------------------------------------'
+      Rails.logger.debug text
+      Rails.logger.debug 'message end ------------------------------------------'
+    end
     request = Request.new(@client).init(:json_post, '/1.1/direct_messages/events/new.json', 'message_create', user_id, text)
     request.perform
   end

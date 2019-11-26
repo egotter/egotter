@@ -6,6 +6,7 @@ class CreateTwitterUserTask
     @request = request
   end
 
+  # Create a record or raise an exception
   def start!
     @log = CreateTwitterUserLog.create_by(request: request)
 
