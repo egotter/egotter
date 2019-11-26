@@ -35,7 +35,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
     changes = nil
     ApplicationRecord.benchmark("CreatePromptReportRequest #{id} Setup parameters", level: :info) do
-      changes = calculate_changes(previous_twitter_user, current_twitter_user)
+      changes = ChangesBuilder.new(previous_twitter_user, current_twitter_user).build
       changes.merge!(period: calculate_period(record_created, previous_twitter_user, current_twitter_user))
     end
 
@@ -44,22 +44,31 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
-  def calculate_changes(previous_twitter_user, current_twitter_user)
-    if previous_twitter_user.id == current_twitter_user.id
-      previous_uids = previous_twitter_user.unfollower_uids
-      current_uids = previous_uids
-    else
-      previous_uids = previous_twitter_user.calc_unfollower_uids
-      current_uids = current_twitter_user.unfollower_uids
+  class ChangesBuilder
+    attr_reader :previous_twitter_user, :current_twitter_user
+
+    def initialize(previous_twitter_user, current_twitter_user)
+      @previous_twitter_user = previous_twitter_user
+      @current_twitter_user = current_twitter_user
     end
 
-    {
-        unfollowers_changed: previous_uids != current_uids,
-        twitter_user_id: [previous_twitter_user.id, current_twitter_user.id],
-        followers_count: [previous_twitter_user.follower_uids.size, current_twitter_user.follower_uids.size],
-        unfollowers_count: [previous_uids.size, current_uids.size],
-        removed_uid: [previous_uids.first, current_uids.first],
-    }
+    def build
+      if previous_twitter_user.id == current_twitter_user.id
+        previous_uids = previous_twitter_user.unfollower_uids
+        current_uids = previous_uids
+      else
+        previous_uids = previous_twitter_user.calc_unfollower_uids
+        current_uids = current_twitter_user.unfollower_uids
+      end
+
+      {
+          unfollowers_changed: previous_uids != current_uids,
+          twitter_user_id: [previous_twitter_user.id, current_twitter_user.id],
+          followers_count: [previous_twitter_user.follower_uids.size, current_twitter_user.follower_uids.size],
+          unfollowers_count: [previous_uids.size, current_uids.size],
+          removed_uid: [previous_uids.first, current_uids.first],
+      }
+    end
   end
 
   # 1. There are more than 2 records (prev.id != cur.id)
