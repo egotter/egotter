@@ -21,7 +21,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  def perform!
+  def perform!(record_created)
     error_check! unless @error_check
 
     unless TwitterUser.exists?(uid: user.uid)
@@ -33,29 +33,66 @@ class CreatePromptReportRequest < ApplicationRecord
     previous_twitter_user = TwitterUser.where.not(id: current_twitter_user.id).order(created_at: :desc).find_by(uid: user.uid)
     previous_twitter_user = current_twitter_user unless previous_twitter_user
 
-    changes = unfollowers_changed = nil
-
-    ApplicationRecord.benchmark("#{self.class} #{id} Setup parameters", level: :info) do
-      if previous_twitter_user.id == current_twitter_user.id
-        previous_uids = previous_twitter_user.unfollowerships.pluck(:follower_uid)
-        current_uids = previous_uids
-      else
-        previous_uids = previous_twitter_user.calc_unfollower_uids
-        current_uids = current_twitter_user.unfollowerships.pluck(:follower_uid)
-      end
-
-      changes = {
-          twitter_user_id: [previous_twitter_user.id, current_twitter_user.id],
-          followers_count: [previous_twitter_user.follower_uids.size, current_twitter_user.follower_uids.size],
-          unfollowers_count: [previous_uids.size, current_uids.size],
-          removed_uid: [previous_uids.first, current_uids.first],
-      }
-
-      unfollowers_changed = previous_uids != current_uids
+    changes = nil
+    ApplicationRecord.benchmark("CreatePromptReportRequest #{id} Setup parameters", level: :info) do
+      changes = calculate_changes(previous_twitter_user, current_twitter_user)
+      changes.merge!(period: calculate_period(record_created, previous_twitter_user, current_twitter_user))
     end
 
-    ApplicationRecord.benchmark("#{self.class} #{id} Send report", level: :info) do
-      send_report(changes, previous_twitter_user: previous_twitter_user, current_twitter_user: current_twitter_user, changed: unfollowers_changed)
+    ApplicationRecord.benchmark("CreatePromptReportRequest #{id} Send report", level: :info) do
+      send_report(changes, previous_twitter_user, current_twitter_user)
+    end
+  end
+
+  def calculate_changes(previous_twitter_user, current_twitter_user)
+    if previous_twitter_user.id == current_twitter_user.id
+      previous_uids = previous_twitter_user.unfollower_uids
+      current_uids = previous_uids
+    else
+      previous_uids = previous_twitter_user.calc_unfollower_uids
+      current_uids = current_twitter_user.unfollower_uids
+    end
+
+    {
+        unfollowers_changed: previous_uids != current_uids,
+        twitter_user_id: [previous_twitter_user.id, current_twitter_user.id],
+        followers_count: [previous_twitter_user.follower_uids.size, current_twitter_user.follower_uids.size],
+        unfollowers_count: [previous_uids.size, current_uids.size],
+        removed_uid: [previous_uids.first, current_uids.first],
+    }
+  end
+
+  # 1. There are more than 2 records (prev.id != cur.id)
+  #   New record is created
+  #     Unfollowers are changed
+  #       prev <-> cur
+  #     Unfollowers are NOT changed
+  #       prev <-> cur
+  #   New record is NOT created
+  #     Unfollowers are NOT changed
+  #       cur <-> now
+  #
+  # 2. There is one record (prev.id == cur.id)
+  #   New record is NOT created
+  #     cur <-> now
+  #
+  def calculate_period(record_created, previous_twitter_user, current_twitter_user)
+    records_size = TwitterUser.where(uid: previous_twitter_user.uid).size
+
+    if records_size >= 2
+      if record_created
+        {start: previous_twitter_user.created_at, end: current_twitter_user.created_at}
+      else
+        {start: current_twitter_user.created_at, end: Time.zone.now}
+      end
+    elsif records_size == 1
+      if record_created # Always false here
+        raise "There is a record and new record is created."
+      else
+        {start: current_twitter_user.created_at, end: Time.zone.now}
+      end
+    else
+      raise "There are no records."
     end
   end
 
@@ -86,23 +123,15 @@ class CreatePromptReportRequest < ApplicationRecord
     @error_check = true
   end
 
-  def send_report(changes, previous_twitter_user:, current_twitter_user:, changed: true)
+  def send_report(changes, previous_twitter_user, current_twitter_user)
     options = {
         changes_json: changes.to_json,
         previous_twitter_user_id: previous_twitter_user.id,
         current_twitter_user_id: current_twitter_user.id,
-        create_prompt_report_request_id: id
+        create_prompt_report_request_id: id,
+        kind: changes[:unfollowers_changed] ? :you_are_removed : :not_changed,
     }
-
-    if changed
-      CreatePromptReportMessageWorker.perform_async(
-          user.id,
-          options.merge(kind: :you_are_removed))
-    else
-      CreatePromptReportMessageWorker.perform_async(
-          user.id,
-          options.merge(kind: :not_changed))
-    end
+    CreatePromptReportMessageWorker.perform_async(user.id, options)
   end
 
   TOO_MANY_ERRORS_SIZE = 3
