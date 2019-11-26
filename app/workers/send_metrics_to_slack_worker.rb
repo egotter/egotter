@@ -39,7 +39,7 @@ class SendMetricsToSlackWorker
 
   def send_table_metrics
     name = 'tables'
-    SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::TABLE_MONITORING)
+    SlackClient.table_monitoring.send_message(fetch_gauges(name, :sum), title: name)
   end
 
   def send_twitter_user_metrics
@@ -50,31 +50,31 @@ class SendMetricsToSlackWorker
         'twitter_user friends_size',
         'twitter_user followers_size',
     ].each do |name|
-      SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::TWITTER_USERS_MONITORING)
+      SlackClient.twitter_users_monitoring.send_message(fetch_gauges(name, :average), title: name)
     end
   end
 
   def send_prompt_report_metrics
     name = 'prompt_report'
-    SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::MESSAGING_MONITORING)
+    SlackClient.messaging_monitoring.send_message(fetch_gauges(name, :sum), title: name)
   end
 
   def send_prompt_report_error_metrics
     name = 'prompt_report_error'
-    SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::MESSAGING_MONITORING)
+    SlackClient.messaging_monitoring.send_message(fetch_gauges(name, :sum), title: name)
   end
 
   def send_sidekiq_queue_metrics
     names = Gauge.where(time: 10.minutes.ago..Time.zone.now).where('name like "sidekiq_queue %"').pluck(:name).uniq
     names.each do |name|
-      SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::SIDEKIQ_MONITORING)
+      SlackClient.sidekiq_monitoring.send_message(fetch_gauges(name, :average), title: name)
     end
   end
 
   def send_sidekiq_worker_metrics
     names = Gauge.where(time: 10.minutes.ago..Time.zone.now).where('name like "sidekiq_worker %"').pluck(:name).uniq
     names.each do |name|
-      SlackClient.send_message(fetch_gauges(name, :average), title: name, channel: SlackClient::SIDEKIQ_MONITORING)
+      SlackClient.sidekiq_monitoring.send_message(fetch_gauges(name, :average), title: name)
     end
   end
 
@@ -85,7 +85,7 @@ class SendMetricsToSlackWorker
         'search_histories source',
         'search_histories device_type',
     ].each do |name|
-      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::SEARCH_HISTORIES_MONITORING)
+      SlackClient.search_histories_monitoring.send_message(fetch_gauges(name, :sum), title: name)
     end
   end
 
@@ -96,7 +96,7 @@ class SendMetricsToSlackWorker
         'visitors source',
         'visitors device_type',
     ].each do |name|
-      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::VISITORS_MONITORING)
+      SlackClient.visitors_monitoring.send_message(fetch_gauges(name, :sum), title: name)
     end
   end
 
@@ -107,7 +107,7 @@ class SendMetricsToSlackWorker
         'users source',
         'users device_type',
     ].each do |name|
-      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::USERS_MONITORING)
+      SlackClient.users_monitoring.send_message(fetch_gauges(name, :sum), title: name)
     end
   end
 
@@ -120,7 +120,7 @@ class SendMetricsToSlackWorker
         'sign_in source',
         'sign_in device_type',
     ].each do |name|
-      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::SIGN_IN_MONITORING)
+      SlackClient.sign_in_monitoring.send_message(fetch_gauges(name, :sum), title: name)
     end
   end
 
@@ -132,7 +132,7 @@ class SendMetricsToSlackWorker
           [id, values]
         end.to_h
 
-    SlackClient.send_message(stats, channel: SlackClient::RATE_LIMIT_MONITORING)
+    SlackClient.rate_limit_monitoring.send_message(stats)
   end
 
   def send_search_error_metrics
@@ -144,7 +144,7 @@ class SendMetricsToSlackWorker
         'search_error source',
         'search_error device_type',
     ].each do |name|
-      SlackClient.send_message(fetch_gauges(name, :sum), title: name, channel: SlackClient::SEARCH_ERROR_MONITORING)
+      SlackClient.search_error_monitoring.send_message(fetch_gauges(name, :sum), title: name)
     end
   end
 
