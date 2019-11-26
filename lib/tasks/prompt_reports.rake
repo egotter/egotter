@@ -15,6 +15,17 @@ namespace :prompt_reports do
     else
       CreatePromptReportWorker.perform_async(request.id)
     end
+
+    sleep 10
+
+    logger.info 'Request'
+    logger.info request.inspect
+    logger.info ''
+    logger.info 'Log'
+    logger.info CreatePromptReportLog.find_by(request_id: request.id).inspect
+    logger.info ''
+    logger.info 'Message'
+    logger.info PromptReport.order(created_at: :desc).find_by(user_id: user.id).inspect
   end
 
   desc 'Print errors'

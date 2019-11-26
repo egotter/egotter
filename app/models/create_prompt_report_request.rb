@@ -136,6 +136,8 @@ class CreatePromptReportRequest < ApplicationRecord
 
   TOO_MANY_ERRORS_SIZE = 3
 
+  # Notice: If the InitializationStarted occurs three times,
+  # you will not be able to send a message.
   def too_many_errors?
     errors = CreatePromptReportLog.where(user_id: user.id).
         where.not(request_id: id).
