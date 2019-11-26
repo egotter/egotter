@@ -37,12 +37,15 @@ class CreateTestMessageWorker
       dm_client = DirectMessageClient.new(user.api_client.twitter)
       dm_client.create_direct_message(User::EGOTTER_UID, 'Start sending test message.')
     rescue => e
-      TestMessage.permission_level_not_enough(user.id).deliver!
+      dm = TestMessage.permission_level_not_enough(user.id).deliver!
+      send_message_to_slack(dm.text, title: 'plne')
     else
       if options['error_class']
-        TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
+        dm = TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
+        send_message_to_slack(dm.text, title: 'need_fix')
       else
-        TestMessage.ok(user.id).deliver!
+        dm = TestMessage.ok(user.id).deliver!
+        send_message_to_slack(dm.text, title: 'ok')
 
         request = CreatePromptReportRequest.create(user_id: user.id)
         ForceCreatePromptReportWorker.perform_in(10.seconds, request.id, user_id: user.id)
@@ -56,6 +59,12 @@ class CreateTestMessageWorker
 
     # Overwrite existing error_class and error_message
     log(options).update(status: false, error_class: e.class, error_message: e.message)
+  end
+
+  def send_message_to_slack(text, title: nil)
+    SlackClient.test_messages.send_message(text, title: title)
+  rescue => e
+    logger.warn "Sending a message to slack is failed #{e.inspect}"
   end
 
   def log(options)
