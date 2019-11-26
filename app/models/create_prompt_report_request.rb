@@ -56,13 +56,25 @@ class CreatePromptReportRequest < ApplicationRecord
       if previous_twitter_user.id == current_twitter_user.id
         previous_uids = previous_twitter_user.unfollower_uids
         current_uids = previous_uids
+        changed = false
       else
         previous_uids = previous_twitter_user.calc_unfollower_uids
         current_uids = current_twitter_user.unfollower_uids
+
+        previous_size = previous_uids.size
+        current_size = current_uids.size
+
+        if previous_size < current_size
+          changed = previous_uids != current_uids.take(previous_size)
+        elsif previous_size > current_size
+          changed = previous_uids.take(current_size) != current_uids
+        else
+          changed = previous_uids != current_uids
+        end
       end
 
       {
-          unfollowers_changed: previous_uids != current_uids,
+          unfollowers_changed: changed,
           twitter_user_id: [previous_twitter_user.id, current_twitter_user.id],
           followers_count: [previous_twitter_user.follower_uids.size, current_twitter_user.follower_uids.size],
           unfollowers_count: [previous_uids.size, current_uids.size],
