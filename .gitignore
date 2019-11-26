@@ -23,7 +23,6 @@
 /.pryrc
 /dump.rdb
 /*.dump
-/*.json
 /data/bot.json
 /data/cluster_bad_words.json
 /data/cluster_good_words.json

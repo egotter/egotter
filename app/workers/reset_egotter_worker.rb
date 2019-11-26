@@ -20,28 +20,22 @@ class ResetEgotterWorker
     ResetEgotterLog.find_by(request_id: request_id)&.failed!(Timeout::Error, 'Timeout')
     QueueingRequests.new(self.class).delete(request_id)
     RunningQueue.new(self.class).delete(request_id)
-    self.class.perform_in(retry_in, request_id, options)
+
+    ResetEgotterWorker.perform_in(retry_in, request_id, options)
   end
 
   def retry_in
     1.minute
   end
 
+  # options:
   def perform(request_id, options = {})
     request = ResetEgotterRequest.find(request_id)
-    log = ResetEgotterLog.create(request_id: request_id, user_id: request.user.id, message: 'Starting')
+    task = ResetEgotterTask.new(request)
+    task.start!
 
-    request.perform!(send_dm: true)
-    request.finished!
-
-    log.finished!
-  rescue ResetEgotterRequest::RecordNotFound => e
-    request.finished!
-    log.finished!('TwitterUser record not found')
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{request_id}"
+    logger.warn "#{e.inspect} #{request_id}"
     logger.info e.backtrace.join("\n")
-
-    log.failed!(e.class, e.message.truncate(100))
   end
 end

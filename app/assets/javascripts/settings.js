@@ -57,9 +57,11 @@ Settings.enableResetEgotterButton = function () {
     $modal.modal('hide');
     $('.reset-egotter-btn').attr('disabled', 'disabled')
         .prop("disabled", true);
-    $.post($(this).data('url'), function (res) {
-      console.log(res);
-    });
+
+    $.ajax({url: $(this).data('url'), type: 'DELETE'})
+        .done(function (res) {
+          console.log(res);
+        });
   });
 };
 

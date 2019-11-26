@@ -1,0 +1,20 @@
+.vertical-spacing
+%h2.h4.text-center= t('.title')
+.vertical-spacing
+
+%p= t('.description')
+.vertical-spacing
+.vertical-spacing
+
+%table.unfollow-requests.table.table-condensed.table-responsive.borderless
+  %tr
+    %th= t('.created_at')
+    %th= t('.screen_name')
+    %th= t('.friends_count')
+    %th= t('.followers_count')
+  - @twitter_users.each do |twitter_user|
+    %tr
+      %td= l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short)
+      %td= "@#{twitter_user.screen_name}"
+      %td= twitter_user.friends_count
+      %td= twitter_user.followers_count
