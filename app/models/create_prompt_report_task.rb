@@ -26,6 +26,7 @@ class CreatePromptReportTask
 
   # 1. New record is created
   #   Return the record
+  #
   # 2. New record is NOT created
   #     2.1. Because the user is not changed
   #       Return nil
@@ -66,7 +67,7 @@ class CreatePromptReportTask
 
     ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} Import unfollowership", level: :info) do
       Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true, force_update: true)
       end
     end
   end
