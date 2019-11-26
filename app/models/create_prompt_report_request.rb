@@ -73,6 +73,8 @@ class CreatePromptReportRequest < ApplicationRecord
   #       cur <-> now
   #
   # 2. There is one record (prev.id == cur.id)
+  #   New record is created
+  #     cur <-> cur
   #   New record is NOT created
   #     cur <-> now
   #
@@ -86,8 +88,8 @@ class CreatePromptReportRequest < ApplicationRecord
         {start: current_twitter_user.created_at, end: Time.zone.now}
       end
     elsif records_size == 1
-      if record_created # Always false here
-        raise "There is a record and new record is created."
+      if record_created
+        {start: current_twitter_user.created_at, end: current_twitter_user.created_at}
       else
         {start: current_twitter_user.created_at, end: Time.zone.now}
       end

@@ -112,7 +112,9 @@ RSpec.describe CreatePromptReportRequest, type: :model do
       context 'New record is created' do
         let(:record_created) { true }
         it do
-          expect { subject }.to raise_error(RuntimeError, 'There is a record and new record is created.')
+          freeze_time do
+            is_expected.to match(start: record2.created_at, end: record2.created_at)
+          end
         end
       end
 
