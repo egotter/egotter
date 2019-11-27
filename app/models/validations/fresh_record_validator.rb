@@ -4,7 +4,7 @@ module Validations
       latest = TwitterUser.latest_by(uid: new_record.uid)
       return if latest.nil?
 
-      if latest.fresh?
+      if latest.too_short_create_interval?
         new_record.errors[:base] << "[#{latest.id}] is recently updated."
       end
     end
