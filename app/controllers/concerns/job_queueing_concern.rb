@@ -11,7 +11,7 @@ module Concerns::JobQueueingConcern
     return if !user_signed_in? && via_dm?
     return if user_signed_in? && TooManyRequestsQueue.new.exists?(current_user.id)
 
-    # This value is used in #searched_uid?
+    # This value is used in #searched_uid? to redirect to an error page when the uid is not searched.
     requests = QueueingRequests.new(CreateTwitterUserWorker)
     return if requests.exists?(uid)
     requests.add(uid)

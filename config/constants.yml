@@ -1,5 +1,6 @@
 default: &default
-  twitter_user_recently_created: <%= 30.minutes %>
+  twitter_users:
+    create_record_interval: <%= 30.minutes %>
   log_recently_created: <%= 5.minutes %>
   usage_stat_recently_created: <%= 30.minutes %>
   many_friends_threshold: 1000
@@ -18,13 +19,15 @@ default: &default
   faq_path: 'data/faq.json'
 development:
   <<: *default
-  twitter_user_recently_created: <%= 1.minute %>
+  twitter_users:
+    create_record_interval: <%= 1.minute %>
   log_recently_created: <%= 1.minute %>
   usage_stat_recently_created: <%= 1.minute %>
 production:
   <<: *default
 test:
   <<: *default
-  twitter_user_recently_created: <%= 1.minute %>
+  twitter_users:
+    create_record_interval: <%= 1.minute %>
   cluster_bad_words_path: 'data/cluster_bad_words.test.json'
   cluster_good_words_path: 'data/cluster_good_words.test.json'

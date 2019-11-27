@@ -50,7 +50,8 @@
 
 <script>
   $(function () {
-    var url = "<%= twitter_user_path(uid: @twitter_user.uid, created_at: Time.zone.now.to_i, jid: @jid, via: build_via) %>";
+    // If I don't adjust the time, the user won't be able to find a record when the job finishes before the page is loaded.
+    var url = "<%= twitter_user_path(uid: @twitter_user.uid, created_at: Time.zone.now.to_i - 3, jid: @jid, via: build_via) %>";
     var resultPath = "<%= @redirect_path %>";
     var signedIn = <%= user_signed_in? %>;
 
