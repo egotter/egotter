@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe EnqueuedSearchRequest do
+  describe '#ttl' do
+    let(:queue) { described_class.new }
+    it do
+      expect(queue.ttl).to be < TwitterUser::CREATE_RECORD_INTERVAL
+      expect(queue.ttl).to eq(30.seconds.to_i)
+    end
+  end
+
   describe '#exists?' do
     let!(:queue) { described_class.new }
     let(:val) { 123 }
@@ -12,7 +20,6 @@ RSpec.describe EnqueuedSearchRequest do
     end
 
     it do
-      expect(queue.ttl).to eq(10.minutes.to_i)
       expect(queue.size).to eq(1)
     end
 
