@@ -84,11 +84,6 @@ module Concerns::TwitterUser::Utils
 
   CREATE_RECORD_INTERVAL = Rails.configuration.x.constants['twitter_users']['create_record_interval']
 
-  def fresh?(attr = :updated_at, seconds: CREATE_RECORD_INTERVAL)
-    logger.warn "Deprecated calling #fresh?"
-    too_short_create_interval?
-  end
-
   def too_short_create_interval?(interval = nil)
     interval = CREATE_RECORD_INTERVAL unless interval
     interval.seconds.ago < created_at
