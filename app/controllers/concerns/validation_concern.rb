@@ -59,7 +59,7 @@ module Concerns::ValidationConcern
   end
 
   def searched_uid?(uid)
-    if QueueingRequests.new(CreateTwitterUserWorker).exists?(uid)
+    if EnqueuedSearchRequest.new.exists?(uid)
       true
     else
       respond_with_error(:bad_request, t('application.searched_uid_not_found'))
