@@ -1,9 +1,9 @@
 require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::Utils do
-  subject(:twitter_user) { build(:twitter_user) }
-
   describe '#friend_uids' do
+    subject(:twitter_user) { build(:twitter_user) }
+
     context 'With new record' do
       before { twitter_user.instance_variable_set(:@friend_uids, 'hello') }
       it do
@@ -40,6 +40,8 @@ RSpec.describe Concerns::TwitterUser::Utils do
   end
 
   describe '#follower_uids' do
+    subject(:twitter_user) { build(:twitter_user) }
+
     context 'With new record' do
       before { twitter_user.instance_variable_set(:@follower_uids, 'hello') }
       it do
@@ -72,6 +74,29 @@ RSpec.describe Concerns::TwitterUser::Utils do
           expect(twitter_user.follower_uids).to match_array(follower_uids)
         end
       end
+    end
+  end
+
+  describe '#too_short_create_interval?' do
+    let(:twitter_user) { build(:twitter_user) }
+    let(:interval) { TwitterUser::CREATE_RECORD_INTERVAL }
+    subject { twitter_user.too_short_create_interval? }
+
+    before { twitter_user.save!(validate: false) }
+
+    context 'The record was created more than (interval + 1 second) ago' do
+      before { twitter_user.update!(created_at: (interval + 1).seconds.ago) }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'The record was created less than (interval - 1 second) ago' do
+      before { twitter_user.update!(created_at: (interval - 1).seconds.ago) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'The record was created less than interval ago' do
+      before { twitter_user.update!(created_at: interval.seconds.ago) }
+      it { is_expected.to be_falsey }
     end
   end
 end
