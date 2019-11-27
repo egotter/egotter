@@ -50,7 +50,7 @@ class TwitterUsersController < ApplicationController
       ChangesTextBuilder.new(twitter_user).build
     end
   rescue Timeout::Error => e
-    logger.warn "#{controller_name}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{twitter_user.id}"
+    logger.info "#{controller_name}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{twitter_user.id}"
     logger.info e.backtrace.join("\n")
     I18n.t('twitter_users.show.update_is_coming_with_timeout', user: twitter_user.mention_name)
   end
