@@ -66,6 +66,8 @@ class CreateTwitterUserRequest < ApplicationRecord
       return twitter_user
     end
 
+    # The purpose of this code is to determine as soon as possible whether a record can be created.
+
     raise TooShortCreateInterval if previous_twitter_user.too_short_create_interval?
 
     current_twitter_user = TwitterUser.build_by(user: fetch_user)
