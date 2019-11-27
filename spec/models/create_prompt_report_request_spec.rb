@@ -70,31 +70,67 @@ RSpec.describe CreatePromptReportRequest, type: :model do
 
   describe '#too_many_errors?' do
     let(:user) { create(:user) }
-    subject { CreatePromptReportRequest.create(user_id: user.id) }
+    let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
+    let(:sorted_set) { TooManyErrorsUsers.new }
+    subject { request.too_many_errors? }
 
-    before { CreatePromptReportLog.create_by(request: subject) }
+    before do
+      CreatePromptReportLog.create_by(request: request)
+      request.instance_variable_set(:@too_many_errors_users, sorted_set)
+    end
 
-    it { expect(subject.too_many_errors?).to be_falsey }
+    context 'There is a error log' do
+      before do
+        1.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error') }
+      end
+      it do
+        expect(sorted_set).not_to receive(:add)
+        is_expected.to be_falsey
+      end
+    end
 
     context 'There are 2 error logs' do
       before do
         2.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error') }
       end
-      it { expect(subject.too_many_errors?).to be_falsey }
+      it do
+        expect(sorted_set).not_to receive(:add)
+        is_expected.to be_falsey
+      end
     end
 
-    context 'There are more than 3 error logs' do
+    context 'There are 3 error logs' do
       before do
         3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error') }
       end
-      it { expect(subject.too_many_errors?).to be_truthy }
+      it do
+        expect(sorted_set).to receive(:add).with(user.id).and_call_original
+        is_expected.to be_truthy
+      end
     end
 
-    context 'There are more than 3 error logs, but error_class is empty' do
+    context 'There are 3 error logs, but error_class is empty' do
       before do
         3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: '', error_message: "I'm an error") }
       end
-      it { expect(subject.too_many_errors?).to be_falsey }
+      it do
+        expect(sorted_set).not_to receive(:add)
+        is_expected.to be_falsey
+      end
+    end
+
+    context 'There is a success log between 3 error logs.' do
+      before do
+        now = Time.zone.now
+        CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: now - 4.seconds)
+        CreatePromptReportLog.create!(user_id: user.id, error_class: '',      created_at: now - 3.seconds)
+        CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: now - 2.seconds)
+        CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: now - 1.second)
+      end
+      it do
+        expect(sorted_set).not_to receive(:add)
+        is_expected.to be_falsey
+      end
     end
   end
 end

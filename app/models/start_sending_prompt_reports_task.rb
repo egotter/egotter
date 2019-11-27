@@ -40,7 +40,7 @@ class StartSendingPromptReportsTask
   end
 
   def too_many_errors_rejected_ids
-    @too_many_errors_rejected_ids ||= User.where.not(::Egotter::TooManyErrorsUsers.new.to_a).where(id: report_interval_ok_ids).pluck(:id)
+    @too_many_errors_rejected_ids ||= User.where.not(TooManyErrorsUsers.new.to_a).where(id: report_interval_ok_ids).pluck(:id)
   end
 
   def ids_stats

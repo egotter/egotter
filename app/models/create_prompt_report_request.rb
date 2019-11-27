@@ -170,7 +170,9 @@ class CreatePromptReportRequest < ApplicationRecord
 
     (errors.size == TOO_MANY_ERRORS_SIZE && errors.all? { |err| err.present? }).tap do |val|
       # Save this value in Redis since it is difficult to retrieve this value efficiently with SQL.
-      ::Egotter::TooManyErrorsUsers.new.add(val)
+      if val
+        (@too_many_errors_users ||= TooManyErrorsUsers.new).add(user.id) # The ivar is used for testing
+      end
     end
   end
 
