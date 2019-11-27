@@ -3,7 +3,7 @@ class StartSendingPromptReportsTask
     if instance_variable_defined?(:@users)
       @users
     else
-      candidates = User.where(id: report_interval_ok_ids).select(:id, :uid)
+      candidates = User.where(id: too_many_errors_rejected_ids).select(:id, :uid)
       follower_uids = EgotterFollower.pluck(:uid)
       high, low = candidates.partition {|user| follower_uids.include?(user.uid)}
       @users = high + low
@@ -39,6 +39,10 @@ class StartSendingPromptReportsTask
     @report_interval_ok_ids ||= User.prompt_report_interval_ok.where(id: report_enabled_ids).pluck(:id)
   end
 
+  def too_many_errors_rejected_ids
+    @too_many_errors_rejected_ids ||= User.where.not(TooManyErrorsUsers.new.to_a).where(id: report_interval_ok_ids).pluck(:id)
+  end
+
   def ids_stats
     @ids_stats ||= {
         user_ids: User.all.size,
@@ -49,6 +53,7 @@ class StartSendingPromptReportsTask
         enough_permission_ids: enough_permission_ids.size,
         report_enabled_ids: report_enabled_ids.size,
         report_interval_ok_ids: report_interval_ok_ids.size,
+        too_many_errors_rejected_ids: too_many_errors_rejected_ids.size,
     }
   end
 end

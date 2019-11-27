@@ -49,6 +49,7 @@ class User < ApplicationRecord
     obj.has_many :news_reports,                  order_by_desc
     obj.has_many :welcome_messages,              order_by_desc
     obj.has_many :create_prompt_report_requests, order_by_desc
+    obj.has_many :create_prompt_report_logs,     order_by_desc
     obj.has_many :create_test_report_requests,   order_by_desc
     obj.has_many :follow_requests,               order_by_desc
     obj.has_many :unfollow_requests,             order_by_desc

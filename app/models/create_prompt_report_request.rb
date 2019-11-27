@@ -167,7 +167,11 @@ class CreatePromptReportRequest < ApplicationRecord
         order(created_at: :desc).
         limit(3).
         pluck(:error_class)
-    errors.size == TOO_MANY_ERRORS_SIZE && errors.all? { |err| err.present? }
+
+    (errors.size == TOO_MANY_ERRORS_SIZE && errors.all? { |err| err.present? }).tap do |val|
+      # Save this value in Redis since it is difficult to retrieve this value efficiently with SQL.
+      ::Egotter::TooManyErrorsUsers.new.add(val)
+    end
   end
 
   private
