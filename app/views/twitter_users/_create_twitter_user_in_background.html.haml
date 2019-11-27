@@ -1,0 +1,232 @@
+.update-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, via: build_via('update_box'))}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('twitter_users.in_background.updating', user: twitter_user.mention_name)
+  = image_tag '/ajax-loader.gif'
+
+.latest-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'latest-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  %span= t('twitter_users.in_background.latest', user: twitter_user.mention_name)
+  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: build_via('latest_box')), class: 'btn btn-default btn-sm')
+
+.failed-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'failed-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  %span= t('twitter_users.in_background.failed', user: twitter_user.mention_name)
+  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: build_via('failed_box')), class: 'btn btn-default btn-sm')
+
+.refresh-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'refresh-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  %span= t('twitter_users.show.update_is_coming', user: twitter_user.mention_name)
+  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: build_via('refresh_box')), class: 'btn btn-default btn-sm')
+
+.too-many-friends-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'too-many-friends-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('twitter_users.in_background.too_many_friends', user: twitter_user.mention_name)
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_friends_box'))), class: 'btn btn-default btn-sm')
+
+.follow-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'follow-box', url: follow_path(via: build_via('follow_box'))}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('twitter_users.in_background.automated_update_stopped', user: twitter_user.mention_name)
+  = link_to(t('twitter_users.in_background.do_follow'), sign_in_path(via: build_via('follow_box'), redirect_path: timeline_path(twitter_user, via: build_via('follow_box')), follow: true), class: 'btn btn-default btn-sm')
+
+.invalid-token-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'invaild-token-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('twitter_users.in_background.invalid_token', user: twitter_user.mention_name)
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('invalid_token_box'), redirect_path: timeline_path(twitter_user, via: build_via('invalid_token_box'))), class: 'btn btn-default btn-sm')
+
+.accurate-counting-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'accurate-counting-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('twitter_users.in_background.accurate_counting')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('accurate_counting_box'), redirect_path: timeline_path(twitter_user, via: build_via('accurate_counting_box'))), class: 'btn btn-default btn-sm')
+
+.via-dm-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'via-dm-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('twitter_users.in_background.via_dm')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('via_dm_box'), redirect_path: timeline_path(twitter_user, via: build_via('via_dm_box'))), class: 'btn btn-default btn-sm')
+
+.sign-in-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'sign-in-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  = t('twitter_users.in_background.lets_sign_in')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('sign_in_box'), redirect_path: timeline_path(twitter_user, via: build_via('sign_in_box'))), class: 'btn btn-default btn-sm')
+
+.too-many-searches-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'too-many-searches-box'}}
+  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+  - if user_signed_in?
+    = t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path(via: build_via('too_many_searches_box')))
+  - else
+    - url = sign_in_path(via: build_via('too_many_searches_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_searches_box')))
+    = t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: url)
+
+:javascript
+  (function () {
+    var $updateBox, $latestBox, $failedBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $accurateCountingBox, $viaDMBox, $signInBox;
+
+    function checkLatestTwitterUser (url) {
+      Timelines.checkLatestTwitterUser(url, {interval: 3000, maxRetryCount: 5},
+        function (res) {
+          console.log('checkLatestTwitterUser found.');
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'found',
+            eventLabel: 'NewRecord found'
+          });
+
+          $updateBox.alert('close');
+          if (res.text) {
+            $refreshBox.find('span').text(res.text);
+          }
+          $refreshBox.show().sticky();
+
+        }, function (res) {
+          console.log('checkLatestTwitterUser retry exhausted.');
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'exhausted',
+            eventLabel: 'Retry exhausted'
+          });
+
+          $updateBox.alert('close');
+          $latestBox.show().sticky();
+
+        }, function (xhr) {
+          console.log('checkLatestTwitterUser failed.', xhr.responseText);
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'TwitterUsers',
+            eventAction: 'failed',
+            eventLabel: 'Polling failed'
+          });
+
+          $updateBox.alert('close');
+          $failedBox.show().sticky();
+        });
+    }
+
+    function requestToCreateTwitterUser(url, uid) {
+      TwitterUsers.requestToCreateTwitterUser(url, uid, function (res) {
+        console.log('requestToCreateTwitterUser', res);
+
+        if (res.jid) {
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'UpdateJobs',
+            eventAction: 'started',
+            eventLabel: 'Done'
+          });
+
+          $updateBox.show().sticky();
+          checkLatestTwitterUser($updateBox.data('url'));
+        } else {
+          ga('send', {
+            hitType: 'event',
+            eventCategory: 'UpdateJobs',
+            eventAction: 'not started',
+            eventLabel: 'Done'
+          });
+          $latestBox.show().sticky();
+        }
+      }, function (xhr) {
+        console.log('failed', xhr.responseText);
+        ga('send', {
+          hitType: 'event',
+          eventCategory: 'UpdateJobs',
+          eventAction: 'failed',
+          eventLabel: 'Done'
+        });
+
+        if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['error'] === 'too_many_searches') {
+          $tooManySearchesBox.show().sticky();
+        }
+      });
+    }
+
+    $(function () {
+      var signedIn = #{user_signed_in?};
+      var crawler = #{from_crawler?};
+      var authorized = #{user_signed_in? && current_user.authorized?};
+      var removedPage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
+      var viaDM = #{via_dm?};
+      var profileNotFound = #{twitter_user.profile_not_found?};
+      var tooShortCreateInterval = #{twitter_user.too_short_create_interval?};
+
+      if (profileNotFound) {
+        return;
+      }
+
+      $updateBox = $('.update-box');
+      $latestBox = $('.latest-box');
+      $failedBox = $('.failed-box');
+      $refreshBox = $('.refresh-box');
+      $tooManyFriendsBox = $('.too-many-friends-box');
+      $followBox = $('.follow-box');
+      $invalidTokenBox = $('.invalid-token-box');
+      $accurateCountingBox = $('.accurate-counting-box');
+      $viaDMBox = $('.via-dm-box');
+      $signInBox = $('.sign-in-box');
+      $tooManySearchesBox = $('.too-many-searches-box');
+
+      $('.sticky-box').each(function (i, box) {
+        var $box = $(box);
+
+        $box.on('close.bs.alert', function () {
+          $box.parent('.sticky-wrapper').hide();
+        });
+
+        $box.find('a').on('click', function (e) {
+          ga('send', {
+            hitType: 'event',
+            eventCategory: $box.data('name'),
+            eventAction: 'click',
+            eventLabel: e.target.href,
+            transport: 'beacon'
+          });
+        });
+      });
+
+      if (signedIn) {
+        if (!authorized) {
+          $invalidTokenBox.show().sticky();
+          return;
+        }
+
+        TwitterUsers.isFollowingEgotter($followBox.data('url'), function (res) {
+          if (res.follow) {
+            var url = "#{twitter_users_path(via: build_via('background_update'))}";
+            var uid = '#{twitter_user.uid}';
+
+            if (tooShortCreateInterval) {
+              console.log('tooShortCreateInterval');
+              $latestBox.show().sticky();
+            } else {
+              requestToCreateTwitterUser(url, uid);
+            }
+          } else {
+            $followBox.show().sticky();
+          }
+        });
+      } else {
+        if (removedPage) {
+          $accurateCountingBox.show().sticky();
+        } else if (viaDM) {
+          $viaDMBox.show().sticky();
+        } else if (!crawler) {
+          $signInBox.show().sticky();
+        } else {
+          // Maybe crawler
+        }
+      }
+
+      (function (){
+        var url = "#{account_status_path(uid: twitter_user.uid)}";
+        $.get(url)
+        .done(function (res) {
+          console.log('accountStatus', res);
+        }).fail(function (xhr) {
+          console.log(url, xhr.responseText);
+        });
+      })();
+
+      TwitterUsers.detectSecretMode();
+    });
+  })();

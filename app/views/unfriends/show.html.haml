@@ -1,5 +1,6 @@
 - if !notice && !alert
-  = render partial: 'common/background_update', locals: {twitter_user: @twitter_user}
+  = render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user}
+  .vertical-spacing
 
 = render(partial: 'common/page_top', locals: {canonical_url: @canonical_url, breadcrumb_name: @breadcrumb_name, twitter_user: @twitter_user, page_title: @page_title, meta_description: @meta_description, page_description: @page_description})
 

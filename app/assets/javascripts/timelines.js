@@ -34,7 +34,7 @@ function checkForUpdates (path, options, successCallback, stopCallback, failedCa
   var retryCount = options['retryCount'] || 0;
   var interval = options['interval'] || 5000;
   var startedAt = options['startedAt'] || Date.now() / 1000;
-  var maxRetryCount = 5;
+  var maxRetryCount = options['maxRetryCount'] || 5;
 
   $.get(path, {interval: interval, retry_count: retryCount, started_at: startedAt})
     .done(function (res, textStatus, xhr) {
@@ -57,6 +57,10 @@ function checkForUpdates (path, options, successCallback, stopCallback, failedCa
       failedCallback(xhr);
     });
 }
+
+var Timelines = {};
+
+Timelines.checkLatestTwitterUser = checkForUpdates;
 
 window.SummaryBox = function (menuName) {
   this.menuName = menuName;

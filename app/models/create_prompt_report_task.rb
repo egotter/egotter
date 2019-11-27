@@ -45,7 +45,7 @@ class CreatePromptReportTask
       begin
         twitter_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
       rescue CreateTwitterUserRequest::NotChanged,
-          CreateTwitterUserRequest::RecentlyUpdated,
+          CreateTwitterUserRequest::TooShortCreateInterval,
           CreateTwitterUserRequest::TooManyFriends => e
       ensure
         # Regardless of whether or not the TwitterUser record is created, the Unfriendship and the Unfollowership are updated.

@@ -72,7 +72,7 @@ class CreateTwitterUserRequest < ApplicationRecord
       return twitter_user
     end
 
-    raise RecentlyUpdated if latest.fresh?
+    raise TooShortCreateInterval if latest.too_short_create_interval?
 
     twitter_user = TwitterUser.build_by(user: fetch_user)
     relations = fetch_relations!(twitter_user)
@@ -140,6 +140,12 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class RecentlyUpdated < Error
+  end
+
+  class TooShortCreateInterval < Error
+    def initialize(*args)
+      super('')
+    end
   end
 
   class TooManyFriends < Error

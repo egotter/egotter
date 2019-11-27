@@ -142,7 +142,6 @@ ja:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
         view_more: '続きを見る'
-      lets_sign_in: 'ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます！'
   usage_stats:
     show:
       title: "ツイッター利用状況"
@@ -898,12 +897,33 @@ ja:
       cluster_name: "%{name}クラスタ"
   twitter_users:
     show:
-      unfollowerships_count_increased: '%{user} のリムられが、%{before} から %{after} に増えました。'
-      followers_count_increased: '%{user} のフォロワーが、%{before} から %{after} に増えました。'
-      followers_count_decreased: '%{user} のフォロワーが、%{before} から %{after} に減りました。'
-      friends_count_increased: '%{user} のフォローが、%{before} から %{after} に増えました。'
-      friends_count_decreased: '%{user} のフォローが、%{before} から %{after} に減りました。'
-      update_is_coming: '%{user} のフォロー・フォロワーに変化がありました。'
+      unfollowerships_count_increased: '@%{user} のリムられが、%{before} から %{after} に増えました。'
+      unfollowerships_count_changed: '@%{user} のリムられに更新がありました。'
+      followers_count_increased: '@%{user} のフォロワーが、%{before} から %{after} に増えました。'
+      followers_count_decreased: '@%{user} のフォロワーが、%{before} から %{after} に減りました。'
+      friends_count_increased: '@%{user} のフォローが、%{before} から %{after} に増えました。'
+      friends_count_decreased: '@%{user} のフォローが、%{before} から %{after} に減りました。'
+      update_is_coming: '@%{user} のフォロー・フォロワーに変化がありました。'
+      update_is_coming_with_timeout: '@%{user} のフォロー・フォロワーに変化がありました。（WTO）'
+      update_is_coming_with_error: '@%{user} のフォロー・フォロワーに変化がありました。（WE）'
+      new_record_created: '@%{user} のデータが新しく作成されました。'
+    in_background:
+      latest: '表示されているデータは最新です。'
+      failed: 'データの更新に失敗しました。'
+      updating: '%{user} のデータを更新中'
+      update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
+      reload_page: 'ページを更新する'
+      too_many_friends: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
+      automated_update_stopped: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'
+      invalid_token: '%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
+      accurate_counting: 'リムられやブロられは、ログインすると結果がより正確になります。'
+      via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
+      lets_sign_in: 'ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます！'
+      do_sign_in: 'ログインする'
+      do_follow: 'フォローする'
+      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
+      share_me: "えごったーをシェアする"
   not_found:
     index:
   forbidden:

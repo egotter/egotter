@@ -7,10 +7,6 @@ module Concerns::TwitterUser::Utils
     def latest_by(condition)
       order(created_at: :desc).find_by(condition)
     end
-
-    def till(time)
-      where('created_at < ?', time)
-    end
   end
 
   included do
@@ -82,21 +78,19 @@ module Concerns::TwitterUser::Utils
     @follower_uids = uids
   end
 
-  def latest?
-    id == TwitterUser.select(:id).latest_by(uid: uid).id
-  end
-
-  def one?
-    TwitterUser.where(uid: uid).one?
-  end
-
   def size
     TwitterUser.where(uid: uid).size
   end
 
-  DEFAULT_SECONDS = Rails.configuration.x.constants['twitter_user_recently_created']
+  CREATE_RECORD_INTERVAL = Rails.configuration.x.constants['twitter_users']['create_record_interval']
 
   def fresh?(attr = :updated_at, seconds: DEFAULT_SECONDS)
-    Time.zone.now - send(attr) < seconds
+    logger.warn "Deprecated calling #fresh?"
+    too_short_create_interval?
+  end
+
+  def too_short_create_interval?(interval = nil)
+    interval = CREATE_RECORD_INTERVAL unless interval
+    interval.seconds.ago < created_at
   end
 end
