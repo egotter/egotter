@@ -48,22 +48,16 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  # TODO Remove later
-  def perform
-    logger.warn "Deprecated calling CreateTwitterUserRequest#perform"
-    perform!
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-    nil
-  end
-
-  # These validation methods (fresh?, no_need_to_import_friendships? and diff.empty?) are not implemented in
-  # Rails default validation callbacks due to too heavy.
+  # These methods are not registered as validation callbacks due to too heavy.
+  #
+  # #too_short_create_interval?
+  # #no_need_to_import_friendships?
+  # #diff.empty?
+  #
   def build_twitter_user
-    latest = TwitterUser.latest_by(uid: uid)
+    previous_twitter_user = TwitterUser.latest_by(uid: uid)
 
-    unless latest
+    unless previous_twitter_user
       twitter_user = TwitterUser.build_by(user: fetch_user)
       relations = fetch_relations!(twitter_user)
       twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
@@ -72,23 +66,23 @@ class CreateTwitterUserRequest < ApplicationRecord
       return twitter_user
     end
 
-    raise TooShortCreateInterval if latest.too_short_create_interval?
+    raise TooShortCreateInterval if previous_twitter_user.too_short_create_interval?
 
-    twitter_user = TwitterUser.build_by(user: fetch_user)
-    relations = fetch_relations!(twitter_user)
-    twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
+    current_twitter_user = TwitterUser.build_by(user: fetch_user)
+    relations = fetch_relations!(current_twitter_user)
+    current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
 
-    if twitter_user.no_need_to_import_friendships?
+    if current_twitter_user.no_need_to_import_friendships?
       raise CreateTwitterUserRequest::TooManyFriends.new("Already exists. #{user_id}")
     end
 
-    if latest.diff(twitter_user).empty?
+    if previous_twitter_user.diff(current_twitter_user).empty?
       raise CreateTwitterUserRequest::NotChanged.new('Before build')
     end
 
-    twitter_user.build_other_relations(relations)
-    twitter_user.user_id = user_id
-    twitter_user
+    current_twitter_user.build_other_relations(relations)
+    current_twitter_user.user_id = user_id
+    current_twitter_user
 
   rescue Error => e
     raise
