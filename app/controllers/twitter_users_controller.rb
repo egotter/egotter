@@ -66,7 +66,7 @@ class TwitterUsersController < ApplicationController
 
     def build
       unless previous_twitter_user
-        return t('twitter_users.show.new_record_created', user: screen_name)
+        return I18n.t('twitter_users.show.new_record_created', user: screen_name)
       end
 
       previous_size = previous_twitter_user.calc_unfollower_uids.size
@@ -75,26 +75,26 @@ class TwitterUsersController < ApplicationController
       # TODO At this point, the import batch may not be finished yet.
 
       if current_size > previous_size
-        t('twitter_users.show.unfollowerships_count_increased', user: screen_name, before: previous_size, after: current_size)
+        I18n.t('twitter_users.show.unfollowerships_count_increased', user: screen_name, before: previous_size, after: current_size)
       elsif current_size < previous_size
-        t('twitter_users.show.unfollowerships_count_changed', user: screen_name)
+        I18n.t('twitter_users.show.unfollowerships_count_changed', user: screen_name)
       else
         if current_twitter_user.followers_count > previous_twitter_user.followers_count
-          t('twitter_users.show.followers_count_increased', user: screen_name, before: previous_twitter_user.followers_count, after: current_twitter_user.followers_count)
+          I18n.t('twitter_users.show.followers_count_increased', user: screen_name, before: previous_twitter_user.followers_count, after: current_twitter_user.followers_count)
         elsif current_twitter_user.followers_count < previous_twitter_user.followers_count
-          t('twitter_users.show.followers_count_decreased', user: screen_name, before: previous_twitter_user.followers_count, after: current_twitter_user.followers_count)
+          I18n.t('twitter_users.show.followers_count_decreased', user: screen_name, before: previous_twitter_user.followers_count, after: current_twitter_user.followers_count)
         elsif current_twitter_user.friends_count > previous_twitter_user.friends_count
-          t('twitter_users.show.friends_count_increased', user: screen_name, before: previous_twitter_user.friends_count, after: current_twitter_user.friends_count)
+          I18n.t('twitter_users.show.friends_count_increased', user: screen_name, before: previous_twitter_user.friends_count, after: current_twitter_user.friends_count)
         elsif current_twitter_user.friends_count < previous_twitter_user.friends_count
-          t('twitter_users.show.friends_count_decreased', user: screen_name, before: previous_twitter_user.friends_count, after: current_twitter_user.friends_count)
+          I18n.t('twitter_users.show.friends_count_decreased', user: screen_name, before: previous_twitter_user.friends_count, after: current_twitter_user.friends_count)
         else
-          t('twitter_users.show.update_is_coming', user: screen_name)
+          I18n.t('twitter_users.show.update_is_coming', user: screen_name)
         end
       end
     rescue => e
       Rails.logger.warn "#{self.class}##{__method__} #{e.inspect} #{previous_twitter_user&.id} #{current_twitter_user.id}"
       Rails.logger.info e.backtrace.join("\n")
-      t('twitter_users.show.update_is_coming_with_error', user: screen_name)
+      I18n.t('twitter_users.show.update_is_coming_with_error', user: screen_name)
     end
   end
 end
