@@ -27,13 +27,5 @@ class FavoriteFriendship < ApplicationRecord
       import_from!(twitter_user.uid, uids)
       uids
     end
-
-    def import_by(twitter_user:)
-      import_by!(twitter_user: twitter_user)
-    rescue => e
-      logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.inspect}"
-      logger.info e.backtrace.join("\n")
-      []
-    end
   end
 end

@@ -47,15 +47,8 @@ class ImportTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def perform
-    perform!
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-  end
-
   def import_favorite_friendship
-    FavoriteFriendship.import_by(twitter_user: twitter_user).each_slice(100) do |uids|
+    FavoriteFriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
       CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
     end
   rescue => e
@@ -64,7 +57,7 @@ class ImportTwitterUserRequest < ApplicationRecord
   end
 
   def import_close_friendship
-    CloseFriendship.import_by(twitter_user: twitter_user, login_user: user).each_slice(100) do |uids|
+    CloseFriendship.import_by!(twitter_user: twitter_user, login_user: user).each_slice(100) do |uids|
       CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
     end
   rescue => e
