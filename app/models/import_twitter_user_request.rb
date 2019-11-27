@@ -29,9 +29,10 @@ class ImportTwitterUserRequest < ApplicationRecord
 
     return if twitter_user.no_need_to_import_friendships?
 
+    import_unfollowership
+
     [
         Unfriendship,
-        Unfollowership,
         OneSidedFriendship,
         OneSidedFollowership,
         MutualFriendship,
@@ -45,6 +46,15 @@ class ImportTwitterUserRequest < ApplicationRecord
       logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
       logger.info e.backtrace.join("\n")
     end
+  end
+
+  def import_unfollowership
+    Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true, force_update: true)
+    end
+  rescue => e
+    logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
+    logger.info e.backtrace.join("\n")
   end
 
   def import_favorite_friendship
