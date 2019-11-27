@@ -7,28 +7,21 @@ class ResetCacheWorker
   end
 
   def after_skip(request_id, options = {})
-    logger.warn "Skipped #{request_id}"
+    ResetCacheLog.find_or_initialize_by(request_id: request_id)&.failed!('Skipped', '')
   end
 
   def timeout_in
-    10.seconds
+    30.seconds
   end
 
   def after_timeout(request_id, options = {})
     logger.warn "Timeout #{timeout_in} #{request_id}"
-  end
-
-  def request_class
-    ResetCacheRequest
-  end
-
-  def log_class
-    ResetCacheLog
+    ResetCacheLog.find_or_create_by(request_id: request_id)&.failed!('Timeout', '')
   end
 
   def perform(request_id, options = {})
-    request = request_class.find(request_id)
-    log = log_class.create(request_id: request_id, message: 'Starting')
+    request = ResetCacheRequest.find(request_id)
+    log = ResetCacheLog.create(request_id: request_id, user_id: request.user.id, message: 'Starting')
 
     request.perform!
     request.finished!
@@ -38,6 +31,6 @@ class ResetCacheWorker
     logger.warn "#{e.class}: #{e.message} #{request_id}"
     logger.info e.backtrace.join("\n")
 
-    log_class.find_by(request_id: request_id)&.failed!(e.class, e.message.truncate(100))
+    ResetCacheLog.find_or_create_by(request_id: request_id)&.failed!(e.class, e.message.truncate(100))
   end
 end

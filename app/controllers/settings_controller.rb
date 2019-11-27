@@ -10,9 +10,8 @@ class SettingsController < ApplicationController
 
     @latest_prompt_report = current_user.prompt_reports.first
     @latest_prompt_report_log = CreatePromptReportLog.latest_by(user_id: current_user.id)
-    @update_histories = UpdateHistories.new(current_user.uid)
-    @reset_egotter_request = current_user.reset_egotter_requests.not_finished.exists?
-    @reset_cache_request = current_user.reset_cache_requests.not_finished.exists?
+    @reset_egotter_request = current_user.reset_egotter_requests.not_finished.where(created_at: 12.hours.ago..Time.zone.now).exists?
+    @reset_cache_request = current_user.reset_cache_requests.not_finished.where(created_at: 12.hours.ago..Time.zone.now).exists?
   end
 
   def update

@@ -23,22 +23,21 @@ class ResetCacheRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
-    raise AlreadyFinished.new("This request has already been finished. #{self.inspect}") if finished?
+    raise AlreadyFinished if finished?
+
+    if TwitterUser.exists?(uid: user.uid)
+      twitter_user = TwitterUser.latest_by(uid: user.uid)
+
+      Unfriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
+        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+      end
+
+      Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
+        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true, force_update: true)
+      end
+    end
 
     UpdateEgotterFollowersWorker.perform_async(user_id: user.id, enqueued_at: Time.zone.now)
-  end
-
-  def perform
-    perform!
-  rescue => e
-    logger.warn "#{e.class} #{e.message}"
-    logger.info e.backtrace.join("\n")
-  end
-
-  private
-
-  def client
-    @client ||= user.api_client
   end
 
   class AlreadyFinished < StandardError
