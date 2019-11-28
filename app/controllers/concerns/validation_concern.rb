@@ -100,9 +100,8 @@ module Concerns::ValidationConcern
     end
   end
 
-  def forbidden_screen_name?(screen_name = nil)
-    logger.warn "#{__method__} Don't pass screen_name" if screen_name
-    screen_name ||= params[:screen_name]
+  def forbidden_screen_name?
+    screen_name = params[:screen_name]
 
     if ForbiddenUser.exists?(screen_name: screen_name) || forbidden_user?(screen_name)
       redirect_to forbidden_path(screen_name: screen_name)
@@ -126,9 +125,8 @@ module Concerns::ValidationConcern
     end
   end
 
-  def not_found_screen_name?(screen_name = nil)
-    logger.warn "#{__method__} Don't pass screen_name" if screen_name
-    screen_name ||= params[:screen_name]
+  def not_found_screen_name?
+    screen_name = params[:screen_name]
 
     if NotFoundUser.exists?(screen_name: screen_name) || not_found_user?(screen_name)
       redirect_to not_found_path(screen_name: screen_name)

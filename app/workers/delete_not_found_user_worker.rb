@@ -6,6 +6,10 @@ class DeleteNotFoundUserWorker
     screen_name
   end
 
+  def unique_in
+    1.minute
+  end
+
   def perform(screen_name)
     NotFoundUser.find_by(screen_name: screen_name)&.delete
   rescue ActiveRecord::RecordNotUnique => e

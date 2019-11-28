@@ -74,9 +74,25 @@ module Concerns::TwitterExceptionHandler
     end
   end
 
+  def not_found_with_request_message(screen_name, url)
+    if user_signed_in?
+      t('after_sign_in.not_found_with_request_html', user: user_link(screen_name), url: url)
+    else
+      t('before_sign_in.not_found_html', user: user_link(screen_name), url: kick_out_error_path('not_found'))
+    end
+  end
+
   def forbidden_message(screen_name)
     if user_signed_in?
       t('after_sign_in.forbidden_html', user: user_link(screen_name), screen_name: screen_name)
+    else
+      t('before_sign_in.forbidden_html', user: user_link(screen_name), url: kick_out_error_path('forbidden'))
+    end
+  end
+
+  def forbidden_with_request_message(screen_name, url)
+    if user_signed_in?
+      t('after_sign_in.forbidden_with_request_html', user: user_link(screen_name), url: url)
     else
       t('before_sign_in.forbidden_html', user: user_link(screen_name), url: kick_out_error_path('forbidden'))
     end
@@ -102,9 +118,25 @@ module Concerns::TwitterExceptionHandler
     end
   end
 
+  def protected_with_request_message(screen_name, url)
+    if user_signed_in?
+      t('after_sign_in.protected_with_request_html', user: user_link(screen_name), url: url)
+    else
+      t('before_sign_in.protected_html', user: user_link(screen_name), url: kick_out_error_path('protected'))
+    end
+  end
+
   def blocked_message(screen_name)
     if user_signed_in?
       t('after_sign_in.blocked_html', user: user_link(screen_name), screen_name: screen_name)
+    else
+      raise
+    end
+  end
+
+  def blocked_with_request_message(screen_name, url)
+    if user_signed_in?
+      t('after_sign_in.blocked_with_request_html', user: user_link(screen_name), url: url)
     else
       raise
     end

@@ -24,18 +24,6 @@ module Concerns::SearchRequestConcern
     end
 
     before_action(only: %i(show all)) do
-      if flash.empty?
-        if ForbiddenUser.exists?(screen_name: @twitter_user.screen_name)
-          logger.info "It should not reach this block. SearchRequestConcern ForbiddenUser.exists? #{controller_name} #{action_name}"
-          flash.now[:alert] = forbidden_message(@twitter_user.screen_name)
-        elsif NotFoundUser.exists?(screen_name: @twitter_user.screen_name)
-          logger.info "It should not reach this block. SearchRequestConcern NotFoundUser.exists? #{controller_name} #{action_name}"
-          flash.now[:alert] = not_found_message(@twitter_user.screen_name)
-        end
-      end
-    end
-
-    before_action(only: %i(show all)) do
       push_referer
       create_search_log
     end
