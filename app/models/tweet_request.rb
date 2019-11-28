@@ -20,7 +20,7 @@ class TweetRequest < ApplicationRecord
   belongs_to :user
 
   validates :user_id, presence: true
-  validates :text, format: %r[https://egotter.com]
+  validates :text, format: %r[#{Rails.env.production? ? 'https://egotter\.com' : 'http://localhost:3000'}]
 
   def perform!
     client.update(text)

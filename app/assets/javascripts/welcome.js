@@ -50,11 +50,22 @@ $(function () {
   });
 
   $share.find('button.ok').on('click', function () {
-    $.post($(this).data('url'), {text: $('#share-modal').find('textarea').val()}, function (res) {
-      console.log('createShare', res);
-      if (window.location.pathname.startsWith('/settings')) {
-        window.location.reload();
+    var $clicked = $(this);
+    var tweet = $('#share-modal').find('textarea').val();
+
+    $.post($clicked.data('url'), {text: tweet}).done(function (res) {
+      var text = $clicked.data('success-message');
+      $('#global-info-message-box').find('.message').text(text).end().show();
+
+      // if (window.location.pathname.startsWith('/settings')) {
+      //   window.location.reload();
+      // }
+    }).fail(function (xhr) {
+      var reason = $clicked.data('error-message');
+      if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['reason']) {
+        reason = JSON.parse(xhr.responseText)['reason'];
       }
+      $('#global-warning-message-box').find('.message').text(reason).end().show();
     });
 
     $share.modal('hide');

@@ -497,6 +497,9 @@ ja:
     share_modal:
       title_html: 'えごったーを<span class="egotter-pink">ツイート</span>しませんか？'
       note1_html: '今ツイートしていただくと、<span class="egotter-pink">検索回数にボーナスが付与</span>されます。'
+      note_html: '※テキストの最後にえごったーのURLが付きます'
+      success_message: 'ツイートに成功しました。ありがとうございます！'
+      error_message: 'ツイートに失敗しました。長すぎたり、特殊な文字が入ったりしていませんか？'
       ok: "ツイートする"
       cancel: "やめておく"
     new:
@@ -895,6 +898,10 @@ ja:
       clusters_level: "クラスタレベル"
       clusters_cloud: "クラスタクラウド"
       cluster_name: "%{name}クラスタ"
+  shares:
+    create:
+      text: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} %{url} #egotter"
+      text_without_url: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji}"
   twitter_users:
     show:
       unfollowerships_count_increased: '@%{user} のリムられが、%{before} から %{after} に増えました。'
@@ -1174,7 +1181,6 @@ ja:
       <br>
       エラー：PLNE403
   tweet_text:
-    top: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter"
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   dm:
     no_diffs: "フォロー・フォロワーに変化はありません。"
@@ -1569,6 +1575,7 @@ ja:
       delete_tweets_short: "%m月%d日 %H時%M分%S秒"
       next_creation_short: "%-H時%-M分"
       next_creation_long: "%-m月%-d日 %-H時%-M分"
+      share_text_short: "%m%d%H%M"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"
     pm: 午後

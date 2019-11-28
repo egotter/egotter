@@ -47,13 +47,6 @@ module ApplicationHelper
     ]
   end
 
-  def egotter_share_text(shorten_url: false, via: nil)
-    url = 'https://egotter.com'
-    url += '?' + {via: via}.to_query if via
-    url = Util::UrlShortener.shorten(url) if shorten_url
-    t('tweet_text.top', kaomoji: Kaomoji.happy) + ' ' + url
-  end
-
   def kick_out_error_path(reason, redirect_path: nil)
     if redirect_path
       sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}", redirect_path: redirect_path)

@@ -1,10 +1,17 @@
 class SharesController < ApplicationController
+  include SharesHelper
+
   before_action :reject_crawler
   before_action :require_login!
 
   def create
-    request = TweetRequest.create!(user_id: current_user.id, text: params[:text])
-    TweetEgotterWorker.perform_async(request.id)
-    render json: {count: current_user.sharing_egotter_count}
+    request = TweetRequest.new(user_id: current_user.id, text: "#{params[:text]} #{egotter_share_url} #egotter")
+    if request.valid?
+      request.save!
+      TweetEgotterWorker.perform_async(request.id)
+      render json: {count: current_user.sharing_egotter_count}
+    else
+      render json: {reason: t('welcome.share_modal.error_message')}, status: :bad_request
+    end
   end
 end

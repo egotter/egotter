@@ -297,7 +297,9 @@
             .vertical-spacing
             %p= t('welcome.share_modal.note1_html')
             .vertical-spacing
-            %textarea{rows: '3', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text
+            %textarea{rows: '5', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text(without_url: true)
+            .share-text-note= t('welcome.share_modal.note_html')
+            .share-text-note https://egotter.com #egotter
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.share_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: build_via('share_egotter_modal'))}}= t('welcome.share_modal.ok')
+            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: build_via('share_egotter_modal')), success_message: t('welcome.share_modal.success_message'), error_message: t('welcome.share_modal.error_message')}}= t('welcome.share_modal.ok')
