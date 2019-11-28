@@ -188,6 +188,7 @@ class PromptReport < ApplicationRecord
         template = Rails.root.join('app/views/prompt_reports/you_are_removed.ja.text.erb')
         @message = ERB.new(template.read).result_with_hash(
             report_interval_hours: user.notification_setting.report_interval / 1.hour,
+            report_interval_in_words: report_interval_in_words,
             previous_twitter_user: previous_twitter_user,
             current_twitter_user: current_twitter_user,
             new_unfollowers_size: (current_twitter_user.unfollowerships.pluck(:follower_uid) - previous_twitter_user.calc_unfollower_uids).size,
@@ -205,6 +206,14 @@ class PromptReport < ApplicationRecord
     end
 
     private
+
+    def report_interval_in_words
+      if user.notification_setting.report_interval >= 1.day
+        I18n.t('datetime.distance_in_words.x_days.other', count: user.notification_setting.report_interval / 1.day)
+      else
+        I18n.t('datetime.distance_in_words.about_x_hours.other', count: user.notification_setting.report_interval / 1.hour)
+      end
+    end
 
     def last_access_at
       user.last_access_at ? I18n.l(user.last_access_at.in_time_zone('Tokyo'), format: :prompt_report_short) : nil
@@ -238,6 +247,7 @@ class PromptReport < ApplicationRecord
         template = Rails.root.join('app/views/prompt_reports/not_changed.ja.text.erb')
         @message = ERB.new(template.read).result_with_hash(
             report_interval_hours: user.notification_setting.report_interval / 1.hour,
+            report_interval_in_words: report_interval_in_words,
             previous_twitter_user: previous_twitter_user,
             current_twitter_user: current_twitter_user,
             previous_created_at: I18n.l(period[:start].in_time_zone('Tokyo'), format: :prompt_report_short),
@@ -254,6 +264,14 @@ class PromptReport < ApplicationRecord
     end
 
     private
+
+    def report_interval_in_words
+      if user.notification_setting.report_interval >= 1.day
+        I18n.t('datetime.distance_in_words.x_days.other', count: user.notification_setting.report_interval / 1.day)
+      else
+        I18n.t('datetime.distance_in_words.about_x_hours.other', count: user.notification_setting.report_interval / 1.hour)
+      end
+    end
 
     def last_access_at
       user.last_access_at ? I18n.l(user.last_access_at.in_time_zone('Tokyo'), format: :prompt_report_short) : nil
