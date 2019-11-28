@@ -6,6 +6,11 @@ class CreateTwitterUserWorker
     request_id
   end
 
+  # Notice: This interval is for the request_id. It is not for creating records.
+  def unique_in
+    30.minutes
+  end
+
   def expire_in
     1.minute
   end

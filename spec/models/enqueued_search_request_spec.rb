@@ -5,7 +5,6 @@ RSpec.describe EnqueuedSearchRequest do
     let(:queue) { described_class.new }
     it do
       expect(queue.ttl).to be < TwitterUser::CREATE_RECORD_INTERVAL
-      expect(queue.ttl).to eq(30.seconds.to_i)
     end
   end
 

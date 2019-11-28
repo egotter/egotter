@@ -84,17 +84,17 @@ RSpec.describe Concerns::TwitterUser::Utils do
 
     before { twitter_user.save!(validate: false) }
 
-    context 'The record was created more than (interval + 1 second) ago' do
+    context 'The record was created more than [interval + 1 second] ago' do
       before { twitter_user.update!(created_at: (interval + 1).seconds.ago) }
       it { is_expected.to be_falsey }
     end
 
-    context 'The record was created less than (interval - 1 second) ago' do
+    context 'The record was created less than [interval - 1 second] ago' do
       before { twitter_user.update!(created_at: (interval - 1).seconds.ago) }
       it { is_expected.to be_truthy }
     end
 
-    context 'The record was created less than interval ago' do
+    context 'The record was created [interval] ago' do
       before { twitter_user.update!(created_at: interval.seconds.ago) }
       it { is_expected.to be_falsey }
     end

@@ -25,19 +25,6 @@ module Concerns::TwitterUser::Utils
     friends_size == 0 && followers_size == 0
   end
 
-  def consistent?(uids1, uids2)
-    friends_size == uids1.size && followers_size == uids2.size
-  end
-
-  def import_batch_succeeded?
-    (friends_size == 0 && friends_count == 0 && followers_size == 0 && followers_count == 0) ||
-        ((friends_size - friends_count).abs <= 1 && (followers_size - followers_count).abs <= 1)
-  end
-
-  def import_batch_failed?
-    !import_batch_succeeded?
-  end
-
   # #diff calls this method in context of new record
   def friend_uids
     if new_record?
@@ -87,5 +74,10 @@ module Concerns::TwitterUser::Utils
   def too_short_create_interval?(interval = nil)
     interval = CREATE_RECORD_INTERVAL unless interval
     interval.seconds.ago < created_at
+  end
+
+  def next_creation_time(interval = nil)
+    interval = CREATE_RECORD_INTERVAL unless interval
+    created_at + interval.seconds
   end
 end

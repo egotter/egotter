@@ -913,6 +913,11 @@ ja:
       updating: '%{user} のデータを更新中'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'
+      request_to_update: '更新をリクエストする'
+      next_creation_is: '表示されているデータは %{time} のものです。次の更新は%{distance_of_time}です。その頃にまた検索してください。'
+      displayed_data_is: '表示されているデータは %{time} のものです。'
+      go: '%{time}後'
+      soon: 'もうすぐ'
       too_many_friends: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
       automated_update_stopped: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'
       invalid_token: '%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
@@ -1534,6 +1539,8 @@ ja:
       short: "%y/%m/%d %H:%M"
       prompt_report_short: "%m月%d日 %-H時%-M分"
       delete_tweets_short: "%m月%d日 %H時%M分%S秒"
+      next_creation_short: "%-H時%-M分"
+      next_creation_long: "%m月%d日 %-H時%-M分"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"
     pm: 午後

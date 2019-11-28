@@ -7,6 +7,15 @@ class TwitterUsersController < ApplicationController
   before_action { !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
+  before_action do
+    if params[:current_twitter_user_id] && params[:current_twitter_user_id].to_s.match?(/\A\d+\z/)
+      previous_twitter_user = TwitterUser.find(params[:current_twitter_user_id])
+      if previous_twitter_user.too_short_create_interval?
+        render json: {found: false, stop_polling: true, reason: 'too_short_create_interval'}.merge(echo_back_params), status: :accepted
+      end
+    end
+  end
+
   before_action { create_search_log }
 
   # First access of background-update
@@ -20,7 +29,7 @@ class TwitterUsersController < ApplicationController
   def show
     twitter_user = TwitterUser.latest_by(uid: @twitter_user.uid)
     unless twitter_user
-      return render json: {found: false}.merge(echo_back_params), status: :not_found
+      return render json: {found: false, reason: 'record_not_found'}.merge(echo_back_params), status: :not_found
     end
 
     starting_time = params[:created_at].to_s.match?(/\A\d+\z/) ? Time.zone.at(params[:created_at].to_i) : nil
@@ -33,6 +42,8 @@ class TwitterUsersController < ApplicationController
     #
     if starting_time.nil? || starting_time < twitter_user.created_at
       render json: {found: true, created_at: twitter_user.created_at.to_i, text: create_changes_text(twitter_user)}
+    elsif starting_time < twitter_user.next_creation_time
+      render json: {found: false, started_at: starting_time.to_s(:db), stop_polling: true, reason: 'too_short_create_interval'}.merge(echo_back_params), status: :accepted
     else
       render json: {found: false, started_at: starting_time.to_s(:db)}.merge(echo_back_params), status: :accepted
     end
@@ -41,7 +52,11 @@ class TwitterUsersController < ApplicationController
   private
 
   def echo_back_params
-    params.permit(:uid, :jid, :interval, :retry_count)
+    if Rails.env.development?
+      params.permit(:uid, :current_twitter_user_id, :jid, :interval, :retry_count)
+    else
+      {}
+    end
   end
 
   def create_changes_text(twitter_user)

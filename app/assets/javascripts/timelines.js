@@ -43,13 +43,15 @@ function checkForUpdates (path, options, successCallback, stopCallback, failedCa
       if (xhr.status === 200) {
         successCallback(res);
       } else {
-        if (retryCount < maxRetryCount - 1) {
+        if (res.stop_polling) {
+          stopCallback(res, 'Ordered to stop polling');
+        } else if (retryCount < maxRetryCount - 1) {
           setTimeout(function () {
             var options = {interval: interval, retryCount: ++retryCount, startedAt: startedAt};
             checkForUpdates(path, options, successCallback, stopCallback, failedCallback);
           }, interval);
         } else {
-          stopCallback(res);
+          stopCallback(res, 'Retry exhausted');
         }
       }
     })

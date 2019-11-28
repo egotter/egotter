@@ -2,8 +2,8 @@
 
 var TwitterUsers = {};
 
-TwitterUsers.requestToCreateTwitterUser = function (url, uid, done, fail) {
-  $.post(url, {uid: uid}).done(done).fail(fail);
+TwitterUsers.requestToCreateTwitterUser = function (url, params, done, fail) {
+  $.post(url, params).done(done).fail(fail);
 };
 
 TwitterUsers.isFollowingEgotter = function (url, callback) {
