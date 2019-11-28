@@ -65,6 +65,16 @@
   (function () {
     var $updateBox, $updateThisPageBox, $requestToUpdateBox, $failedBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $accurateCountingBox, $viaDMBox, $signInBox;
 
+    var logger = {
+      warn: function () {
+        var args = Array.from(arguments);
+        var text = args.join(' ');
+        console.warn(text);
+        $('.global-sneak-error-message').text(text);
+      }
+    };
+
+
     function checkLatestTwitterUser (url) {
       Timelines.checkLatestTwitterUser(url, {interval: 3000, maxRetryCount: 5},
         function success (res) {
@@ -83,7 +93,7 @@
           $refreshBox.show().sticky();
 
         }, function stopped (res, reason) {
-          console.warn('checkLatestTwitterUser', reason);
+          logger.warn('checkLatestTwitterUser', reason);
           ga('send', {
             hitType: 'event',
             eventCategory: 'TwitterUsers',
@@ -113,7 +123,7 @@
         console.log('requestToCreateTwitterUser', res);
 
         if (res.stop_polling) {
-          console.warn('requestToCreateTwitterUser', 'Ordered to stop polling');
+          logger.warn('requestToCreateTwitterUser', 'Ordered to stop polling');
           return;
         }
 
@@ -128,7 +138,7 @@
           $updateBox.show().sticky();
           checkLatestTwitterUser($updateBox.data('url'));
         } else {
-          console.warn('JobNotStarted', "Don't start polling");
+          logger.warn('JobNotStarted', "Don't start polling");
 
           ga('send', {
             hitType: 'event',
@@ -216,10 +226,10 @@
           if (res.follow) {
             var url = "#{twitter_users_path(via: build_via('background_update'))}";
             var uid = '#{twitter_user.uid}';
-            var currentTwitterUserId = #{twitter_user.id};
+            var currentTwitterUserId = '#{twitter_user.id}';
 
             if (tooShortCreateInterval) {
-              console.warn('tooShortCreateInterval', "Don't start polling");
+              logger.warn("tooShortCreateInterval: Don't start polling");
               $updateThisPageBox.show().sticky();
             } else {
               var params = {uid: uid, current_twitter_user_id: currentTwitterUserId};

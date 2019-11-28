@@ -44,7 +44,7 @@ function checkForUpdates (path, options, successCallback, stopCallback, failedCa
         successCallback(res);
       } else {
         if (res.stop_polling) {
-          stopCallback(res, 'Ordered to stop polling');
+          stopCallback(res, res.reason || 'Ordered to stop polling');
         } else if (retryCount < maxRetryCount - 1) {
           setTimeout(function () {
             var options = {interval: interval, retryCount: ++retryCount, startedAt: startedAt};
