@@ -1540,7 +1540,7 @@ ja:
       prompt_report_short: "%m月%d日 %-H時%-M分"
       delete_tweets_short: "%m月%d日 %H時%M分%S秒"
       next_creation_short: "%-H時%-M分"
-      next_creation_long: "%m月%d日 %-H時%-M分"
+      next_creation_long: "%-m月%-d日 %-H時%-M分"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"
     pm: 午後
