@@ -87,7 +87,10 @@ h1.top_header {
   }
 }
 
-#header-info.alert-info, #header-warning.alert-warning {
+#header-info.alert-info,
+#header-warning.alert-warning,
+#global-info-message,
+#global-warning-message {
   margin-bottom: 0;
 }
 

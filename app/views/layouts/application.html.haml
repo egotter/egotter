@@ -97,10 +97,30 @@
             %p.alert.alert-warning.alert-dismissable
               %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
 
+    .container
+      .row
+        .col-xs-12
+          #global-warning-message-box{style: 'display: none;'}
+            .vertical-spacing
+            #global-warning-message.alert.alert-warning.alert-dismissible{role: "alert"}
+              %button.close{"aria-label" => "Close", type: "button"}
+                %span{"aria-hidden" => "true", onclick: "$('#global-warning-message-box').hide().find('.message').empty();"} &times;
+              .message
+
+    .container
+      .row
+        .col-xs-12
+          #global-info-message-box{style: 'display: none;'}
+            .vertical-spacing
+            #global-info-message.alert.alert-info.alert-dismissible{role: "alert"}
+              %button.close{"aria-label" => "Close", type: "button"}
+                %span{"aria-hidden" => "true", onclick: "$('#global-info-message-box').hide().find('.message').empty();"} &times;
+              .message
+
     - if notice || alert
       .container
         .row
-          .col-xs-12{style: 'background-color: #ffffff;'}
+          .col-xs-12
             - if alert
               .vertical-spacing
               #header-warning.alert.alert-warning.alert-dismissible{role: "alert"}
