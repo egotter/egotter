@@ -3,7 +3,7 @@ FactoryBot.define do
     sequence(:uid) { |n| rand(1090286694065070080) }
     sequence(:screen_name) { |n| "twitter_user#{n}" }
     raw_attrs_text { {id: uid, screen_name: screen_name, protected: true}.to_json }
-    user_id {-1}
+    user_id { -1 }
 
     after(:build) do |tu|
       2.times.each do
@@ -12,13 +12,18 @@ FactoryBot.define do
         tu.favorites.build(attributes_for(:twitter_db_favorite))
       end
 
-      tu.friend_uids = 2.times.map {create(:twitter_db_user).uid}
-      tu.follower_uids = 2.times.map {create(:twitter_db_user).uid}
+      tu.friend_uids = 2.times.map { create(:twitter_db_user).uid }
+      tu.follower_uids = 2.times.map { create(:twitter_db_user).uid }
 
-      json = Hashie::Mash.new(JSON.parse(tu.raw_attrs_text))
-      tu.friends_size = json.friends_count = 2
-      tu.followers_size = json.followers_count = 2
-      tu.raw_attrs_text = json.to_json
+      unless tu.raw_attrs_text.blank?
+        begin
+          json = Hashie::Mash.new(JSON.parse(tu.raw_attrs_text))
+          tu.friends_size = json.friends_count = 2
+          tu.followers_size = json.followers_count = 2
+          tu.raw_attrs_text = json.to_json
+        rescue JSON::ParserError => e
+        end
+      end
     end
   end
 end
