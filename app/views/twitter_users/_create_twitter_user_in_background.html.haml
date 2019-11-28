@@ -242,13 +242,14 @@
       }
 
       (function (){
-        var url = "#{account_status_path(uid: twitter_user.uid)}";
-        $.get(url)
-        .done(function (res) {
-          console.log('accountStatus', res);
-        }).fail(function (xhr) {
-          console.log(url, xhr.responseText);
-        });
+        if (signedIn && authorized) {
+          var url = "#{account_status_path(uid: twitter_user.uid)}";
+          TwitterUsers.confirmAccountStatus(url, function done (res) {
+            console.log('accountStatus', res);
+          }, function failed (xhr) {
+            console.log(url, xhr.responseText);
+          });
+        }
       })();
 
       TwitterUsers.detectSecretMode();
