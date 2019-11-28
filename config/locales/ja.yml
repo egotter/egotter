@@ -536,7 +536,10 @@ ja:
       summary_title: "仲良しランキング"
       page_description: "%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。"
       meta_description: "%{users} いつもありがとう！ ☆_(*ﾟ∇ﾟ)ﾉ~☆ｷﾗｷﾗ"
-      tweet_text: ".%{user} の仲良しランキング ↓\n%{users}\n#egotter %{url}"
+      tweet_text: |
+        .%{user} の仲良しランキング ↓
+        %{users}
+        #egotter %{url}
       see_more: 'もっと見る'
       see_close_friends_html: '仲良しランキング<br>%{num}'
       see_favorite_friends_html: 'いいねランキング<br>%{num}'

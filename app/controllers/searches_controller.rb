@@ -24,7 +24,7 @@ class SearchesController < ApplicationController
   def create
     CreateSearchHistoryWorker.perform_async(fingerprint, current_user_id, @twitter_user.uid, current_visit&.id, via: params[:via])
 
-    redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user))
+    redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user, via: 'searches_create'))
 
     if TwitterUser.exists?(uid: @twitter_user.uid)
       redirect_to redirect_path

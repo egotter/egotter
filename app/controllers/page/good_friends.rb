@@ -42,7 +42,14 @@ class  Page::GoodFriends < ::Page::Base
   end
 
   def good_friends_text(users, twitter_user)
+    share_url =
+        if action_name == 'show'
+          send("#{controller_name.singularize}_url", @twitter_user, via: 'close_friends_text')
+        else
+          send("all_#{controller_name}_url", @twitter_user, via: 'close_friends_text')
+        end
+
     mention_names = users.map.with_index { |u, i| "#{i + 1}. #{u.mention_name}" }
-    t('.tweet_text', user: twitter_user.mention_name, users: mention_names.join("\n"), url: @canonical_url)
+    t('.tweet_text', user: twitter_user.mention_name, users: mention_names.join("\n"), url: share_url)
   end
 end
