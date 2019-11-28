@@ -35,7 +35,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
     changes = nil
     ApplicationRecord.benchmark("CreatePromptReportRequest #{id} Setup parameters", level: :info) do
-      changes = ChangesBuilder.new(previous_twitter_user, current_twitter_user).build
+      changes = ChangesBuilder.new(previous_twitter_user, current_twitter_user, record_created: record_created).build
       changes.merge!(period: calculate_period(record_created, previous_twitter_user, current_twitter_user))
     end
 
@@ -45,19 +45,31 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class ChangesBuilder
-    attr_reader :previous_twitter_user, :current_twitter_user
+    attr_reader :previous_twitter_user, :current_twitter_user, :record_created
 
-    def initialize(previous_twitter_user, current_twitter_user)
+    def initialize(previous_twitter_user, current_twitter_user, record_created:)
       @previous_twitter_user = previous_twitter_user
       @current_twitter_user = current_twitter_user
+      @record_created = record_created
     end
 
+    # There is one record. (prev.id == cur.id)
+    #   There is no diff between previous record and current record.
+    #
+    # There are more than 2 records. (prev.id != cur.id)
+    #   There is no diff if current record was not created immediately before.
+    #
     def build
       if previous_twitter_user.id == current_twitter_user.id
         previous_uids = previous_twitter_user.unfollower_uids
         current_uids = previous_uids
         changed = false
+      elsif !record_created
+        previous_uids = previous_twitter_user.calc_unfollower_uids
+        current_uids = current_twitter_user.unfollower_uids
+        changed = false
       else
+        #
         previous_uids = previous_twitter_user.calc_unfollower_uids
         current_uids = current_twitter_user.unfollower_uids
 
@@ -84,19 +96,19 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   # 1. There are more than 2 records (prev.id != cur.id)
-  #   New record is created
-  #     Unfollowers are changed
+  #   New record was created
+  #     Unfollowers were changed
   #       prev <-> cur
-  #     Unfollowers are NOT changed
+  #     Unfollowers were NOT changed
   #       prev <-> cur
-  #   New record is NOT created
-  #     Unfollowers are NOT changed
+  #   New record was NOT created
+  #     Unfollowers were NOT changed
   #       cur <-> now
   #
   # 2. There is one record (prev.id == cur.id)
-  #   New record is created
+  #   New record was created
   #     cur <-> cur
-  #   New record is NOT created
+  #   New record was NOT created
   #     cur <-> now
   #
   def calculate_period(record_created, previous_twitter_user, current_twitter_user)

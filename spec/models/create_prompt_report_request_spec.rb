@@ -139,7 +139,7 @@ RSpec.describe CreatePromptReportRequest::ChangesBuilder, type: :model do
   describe '#build' do
     let(:user) { create(:user) }
     let(:time) { Time.zone.now}
-    subject { described_class.new(record1, record2).build }
+    subject { described_class.new(record1, record2, record_created: record_created).build }
 
     let(:result) do
       {
@@ -151,9 +151,10 @@ RSpec.describe CreatePromptReportRequest::ChangesBuilder, type: :model do
       }
     end
 
-    context 'record1 == record2' do
+    context 'record1 == record2 and record_created == true' do
       let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
       let(:record2) { record1 }
+      let(:record_created) { true }
       let(:previous_uids) { [4, 3, 2, 1] }
       let(:current_uids) { previous_uids }
       let(:changed) { false }
@@ -167,9 +168,27 @@ RSpec.describe CreatePromptReportRequest::ChangesBuilder, type: :model do
       it { expect(subject).to match(result) }
     end
 
-    context 'record1 != record2' do
+    context 'record1 == record2 and record_created == false' do
+      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
+      let(:record2) { record1 }
+      let(:record_created) { false }
+      let(:previous_uids) { [4, 3, 2, 1] }
+      let(:current_uids) { previous_uids }
+      let(:changed) { false }
+
+      before do
+        record1.save!(validate: false)
+        allow(record1).to receive(:calc_unfollower_uids).and_return(current_uids)
+        allow(record1).to receive(:unfollower_uids).and_return(current_uids)
+      end
+
+      it { expect(subject).to match(result) }
+    end
+
+    context 'record1 != record2 and record_created == true' do
       let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
       let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
+      let(:record_created) { true }
 
       before do
         record1.save!(validate: false)
@@ -225,6 +244,77 @@ RSpec.describe CreatePromptReportRequest::ChangesBuilder, type: :model do
           let(:previous_uids) { [3, 2, 0] }
           let(:current_uids) { [3, 2, 1] }
           let(:changed) { true } # That's impossible, but it's changed.
+          it { expect(subject).to match(result) }
+        end
+
+        context 'The previous_uids perfectly match the current_uids' do
+          let(:previous_uids) { [3, 2, 1] }
+          let(:current_uids) { [3, 2, 1] }
+          let(:changed) { false }
+          it { expect(subject).to match(result) }
+        end
+      end
+    end
+
+    context 'record1 != record2 and record_created == false' do
+      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
+      let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
+      let(:record_created) { false }
+
+      before do
+        record1.save!(validate: false)
+        allow(record1).to receive(:calc_unfollower_uids).and_return(previous_uids)
+        allow(record1).to receive(:unfollower_uids).and_return(current_uids)
+
+        record2.save!(validate: false)
+        allow(record2).to receive(:calc_unfollower_uids).and_return(current_uids)
+        allow(record2).to receive(:unfollower_uids).and_return(current_uids) # The #unfollower_uids returns the same value for the same id.
+      end
+
+      context 'The number of previous_uids is more than current_uids' do
+        context 'Added to the beginning of the array' do
+          let(:previous_uids) { [3, 2, 1] }
+          let(:current_uids) { [2, 1] }
+          let(:changed) { false }
+          it { expect(subject).to match(result) }
+        end
+
+        context 'Added to the end of the array' do
+          let(:previous_uids) { [3, 2, 1] }
+          let(:current_uids) { [3, 2] }
+          let(:changed) { false }
+          it { expect(subject).to match(result) }
+        end
+      end
+
+      context 'The number of previous_uids is less than current_uids' do
+        context 'Added to the beginning of the array' do
+          let(:previous_uids) { [2, 1] }
+          let(:current_uids) { [3, 2, 1] }
+          let(:changed) { false }
+          it { expect(subject).to match(result) }
+        end
+
+        context 'Added to the end of the array' do
+          let(:previous_uids) { [2, 1] }
+          let(:current_uids) { [2, 1, 0] }
+          let(:changed) { false }
+          it { expect(subject).to match(result) }
+        end
+      end
+
+      context 'The number of previous_uids is the same as the number of current_uids' do
+        context 'The beginning of the array is changed' do
+          let(:previous_uids) { [0, 2, 1] }
+          let(:current_uids) { [3, 2, 1] }
+          let(:changed) { false }
+          it { expect(subject).to match(result) }
+        end
+
+        context 'The end of the array is changed' do
+          let(:previous_uids) { [3, 2, 0] }
+          let(:current_uids) { [3, 2, 1] }
+          let(:changed) { false }
           it { expect(subject).to match(result) }
         end
 
