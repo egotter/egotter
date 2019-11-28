@@ -5,7 +5,7 @@
 
 - page_title = t('profiles.show.page_title', user: @twitter_user.screen_name)
 - title page_title
-- set_meta_tags description: t('profiles.show.meta_description', user: @twitter_user.mention_name)
+- set_meta_tags description: t('profiles.show.meta_description', user: @twitter_user.screen_name)
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 

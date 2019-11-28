@@ -1,5 +1,5 @@
 - content_for :canonical_url do
-  %link{href: not_found_url(@user), rel: 'canonical'}
+  %link{href: blocked_url(@user), rel: 'canonical'}
 
 - page_title = t('.page_title', user: @user.screen_name)
 - title page_title
