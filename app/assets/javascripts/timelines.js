@@ -30,33 +30,30 @@ function loadSummary (apiEndpoint, summaryBox, progressMessages) {
   });
 }
 
-function checkForUpdates (path, options, successCallback, stopCallback, failedCallback) {
-  var retryCount = options['retryCount'] || 0;
+function checkForUpdates (path, options, done, stopped, failed) {
+  var retryCount = options['retry_count'] || 0;
   var interval = options['interval'] || 5000;
-  var startedAt = options['startedAt'] || Date.now() / 1000;
-  var maxRetryCount = options['maxRetryCount'] || 5;
+  var maxRetryCount = options['max_retry_count'] || 5;
 
-  $.get(path, {interval: interval, retry_count: retryCount, started_at: startedAt})
-    .done(function (res, textStatus, xhr) {
-      console.log('checkForUpdates', res);
+  var request_options = {interval: interval, retry_count: retryCount, max_retry_count: maxRetryCount};
 
-      if (xhr.status === 200) {
-        successCallback(res);
-      } else {
-        if (res.stop_polling) {
-          stopCallback(res, res.reason || 'Ordered to stop polling');
-        } else if (retryCount < maxRetryCount - 1) {
+  $.get(path, request_options)
+    .done(function (res) {
+      console.log('checkForUpdates', res, request_options);
+
+      if (!done(res)) {
+        if (retryCount < maxRetryCount - 1) {
           setTimeout(function () {
-            var options = {interval: interval, retryCount: ++retryCount, startedAt: startedAt};
-            checkForUpdates(path, options, successCallback, stopCallback, failedCallback);
+            request_options['retry_count']++;
+            checkForUpdates(path, request_options, done, stopped, failed);
           }, interval);
         } else {
-          stopCallback(res, 'Retry exhausted');
+          stopped(res, 'Retry exhausted');
         }
       }
     })
     .fail(function (xhr) {
-      failedCallback(xhr);
+      failed(xhr);
     });
 }
 

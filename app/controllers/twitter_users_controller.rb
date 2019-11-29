@@ -7,15 +7,6 @@ class TwitterUsersController < ApplicationController
   before_action { !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
   before_action { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) }
 
-  before_action do
-    if params[:current_twitter_user_id] && params[:current_twitter_user_id].to_s.match?(/\A\d+\z/)
-      previous_twitter_user = TwitterUser.find(params[:current_twitter_user_id])
-      if previous_twitter_user.too_short_create_interval?
-        render json: {found: false, stop_polling: true, reason: 'too_short_create_interval'}.merge(echo_back_params), status: :accepted
-      end
-    end
-  end
-
   before_action { create_search_log }
 
   # First access of background-update
@@ -27,55 +18,22 @@ class TwitterUsersController < ApplicationController
   # Polling access of waiting
   # Polling access of background-update
   def show
-    twitter_user = TwitterUser.latest_by(uid: @twitter_user.uid)
-    unless twitter_user
-      return render json: {found: false, reason: 'record_not_found'}.merge(echo_back_params), status: :not_found
-    end
+    twitter_user = TwitterUser.latest_by(uid: params[:uid])
+    render json: {uid: params[:uid].to_s, created_at: twitter_user&.created_at&.to_i}
+  end
 
-    starting_time = params[:created_at].to_s.match?(/\A\d+\z/) ? Time.zone.at(params[:created_at].to_i) : nil
-
-    # Use '<' instead of '<='.
-    #   On waiting page
-    #     params[:created_at] means the time when polling was started.
-    #   On background-update page
-    #     params[:created_at] means the time when the latest record was created.
-    #
-    if starting_time.nil? || starting_time < twitter_user.created_at
-      render json: {found: true, created_at: twitter_user.created_at.to_i, text: create_changes_text(twitter_user)}
-    elsif starting_time < twitter_user.next_creation_time
-      render json: {found: false, started_at: starting_time.to_s(:db), stop_polling: true, reason: 'too_short_create_interval'}.merge(echo_back_params), status: :accepted
-    else
-      render json: {found: false, started_at: starting_time.to_s(:db)}.merge(echo_back_params), status: :accepted
-    end
+  def changes
+    render json: {text: ChangesTextBuilder.new(params[:uid]).build}
   end
 
   private
 
-  def echo_back_params
-    if Rails.env.development?
-      params.permit(:uid, :current_twitter_user_id, :jid, :interval, :retry_count)
-    else
-      {}
-    end
-  end
-
-  def create_changes_text(twitter_user)
-    seconds = 2.seconds
-    Timeout.timeout(seconds) do
-      ChangesTextBuilder.new(twitter_user).build
-    end
-  rescue Timeout::Error => e
-    logger.info "#{controller_name}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{twitter_user.id}"
-    logger.info e.backtrace.join("\n")
-    I18n.t('twitter_users.show.update_is_coming_with_timeout', user: twitter_user.mention_name)
-  end
-
   class ChangesTextBuilder
     attr_reader :current_twitter_user, :previous_twitter_user, :screen_name
 
-    def initialize(current_twitter_user)
-      @current_twitter_user = current_twitter_user
-      @previous_twitter_user = TwitterUser.where('created_at < ?', current_twitter_user.created_at).order(created_at: :desc).find_by(uid: current_twitter_user.uid)
+    def initialize(uid)
+      @current_twitter_user = TwitterUser.latest_by(uid: uid)
+      @previous_twitter_user = TwitterUser.where.not(id: @current_twitter_user.id).latest_by(uid: uid)
       @screen_name = current_twitter_user.screen_name
     end
 
@@ -84,15 +42,23 @@ class TwitterUsersController < ApplicationController
         return I18n.t('twitter_users.show.new_record_created', user: screen_name)
       end
 
-      previous_size = previous_twitter_user.calc_unfollower_uids.size
-      current_size = current_twitter_user.unfollowerships.size
+      new_unfollower_uids = []
+      begin
+        seconds = 2.seconds
+        Timeout.timeout(seconds) do
+          # To save time, only the latest differences are calculated.
+          new_unfollower_uids = UnfriendsBuilder::Util.unfollowers(previous_twitter_user, current_twitter_user)
+        end
+      rescue Timeout::Error => e
+        logger.info "#{self.class}##{__method__} The request has timed out. (#{seconds.inspect}) #{e.class} #{e.message} #{previous_twitter_user.id} #{current_twitter_user.id}"
+        logger.info e.backtrace.join("\n")
+        return I18n.t('twitter_users.show.update_is_coming_with_timeout', user: screen_name)
+      end
 
       # TODO At this point, the import batch may not be finished yet.
 
-      if current_size > previous_size
-        I18n.t('twitter_users.show.unfollowerships_count_increased', user: screen_name, before: previous_size, after: current_size)
-      elsif current_size < previous_size
-        I18n.t('twitter_users.show.unfollowerships_count_changed', user: screen_name)
+      if new_unfollower_uids.any?
+        I18n.t('twitter_users.show.new_unfollowers_are_coming', user: screen_name, count: new_unfollower_uids.size)
       else
         if current_twitter_user.followers_count > previous_twitter_user.followers_count
           I18n.t('twitter_users.show.followers_count_increased', user: screen_name, before: previous_twitter_user.followers_count, after: current_twitter_user.followers_count)

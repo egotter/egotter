@@ -114,6 +114,7 @@ Rails.application.routes.draw do
 
   resources :account_statuses, only: %i(show), param: :uid
   resources :twitter_users, only: %i(create show), param: :uid
+  get 'twitter_users/:uid/changes', to: 'twitter_users#changes', as: :twitter_users_changes
 
   resources :timelines, only: %i(show), param: :screen_name
 

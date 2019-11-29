@@ -4,9 +4,9 @@ module TwitterUsersHelper
     time = I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: format)
 
     if switch_to_request?(twitter_user)
-      t('twitter_users.in_background.displayed_data_is', time: time)
+      t('twitter_users.in_background.displayed_data_is_html', time: time)
     else
-      t('twitter_users.in_background.next_creation_is', time: time, distance_of_time: short_time_ago_in_words(twitter_user))
+      t('twitter_users.in_background.next_creation_is_html', time: time, distance_of_time: short_time_ago_in_words(twitter_user))
     end
   end
 

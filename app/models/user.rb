@@ -210,7 +210,7 @@ class User < ApplicationRecord
   EGOTTER_UID = 187385226
 
   def admin?
-    uid.to_i == ADMIN_UID
+    uid == ADMIN_UID
   end
 
   def is_subscribing?
