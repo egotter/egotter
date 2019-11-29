@@ -29,7 +29,7 @@
 <div class="row">
   <div class="col-xs-12 col-sm-4 text-center">
     <div class="retry-btn" style="display: none; margin-bottom: 15px;">
-      <%= link_to t('.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: build_via('retry')), class: 'btn btn-lg btn-default', method: :post %>
+      <%= link_to t('.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: build_via('waiting_retry')), class: 'btn btn-lg btn-default', method: :post %>
     </div>
   </div>
 
@@ -50,9 +50,8 @@
 
 <script>
   $(function () {
-    // If I don't adjust the time, the user won't be able to find a record when the job finishes before the page is loaded.
-    var url = "<%= twitter_user_path(uid: @twitter_user.uid, created_at: Time.zone.now.to_i - 3, jid: @jid, via: build_via) %>";
-    var resultPath = "<%= @redirect_path %>";
+    var url = "<%= twitter_user_path(uid: @twitter_user.uid, via: build_via) %>";
+    var redirectPath = "<%= @redirect_path %>";
     var signedIn = <%= user_signed_in? %>;
 
     var $waitingMessage = $('.waiting-msg');
@@ -64,70 +63,75 @@
 
     var progressBar = new ProgressBar();
 
-    function check (path, interval, retryCount, successCallback, continueCallback, stopCallback, failedCallback) {
-      $.get(path, {interval: interval, retry_count: retryCount})
-        .done(function (res, textStatus, xhr) {
-          if (xhr.status === 200) {
-            successCallback(res);
+    function ticktak(path, options, done, keep_on, stopped, failed) {
+      var retryCount = options['retryCount'] || 0;
+      var interval = options['interval'] || 3000;
+      var maxRetryCount = options['maxRetryCount'] || 10;
+
+      $.get(path, options).done(function (res) {
+        if (res.created_at) {
+          done(res);
+        } else {
+          if (retryCount < maxRetryCount - 1) {
+            keep_on(res);
+            var options = {interval: interval, retry_count: ++retryCount};
+            setTimeout(function () { ticktak(path, options, done, keep_on, stopped, failed); }, interval);
           } else {
-            if (retryCount < 10) {
-              continueCallback(res);
-              setTimeout(function () { check(path, interval, ++retryCount, successCallback, continueCallback, stopCallback, failedCallback); }, interval);
-            } else {
-              stopCallback(res);
-            }
+            stopped(res);
           }
-        })
-        .fail(function (xhr) {
-          if (xhr.status === 404 && xhr.responseText && JSON.parse(xhr.responseText).hasOwnProperty('found')) {
-            var res = JSON.parse(xhr.responseText);
-            if (retryCount < 10) {
-              continueCallback(res);
-              setTimeout(function () { check(path, interval, ++retryCount, successCallback, continueCallback, stopCallback, failedCallback); }, interval);
-            } else {
-              stopCallback(res);
-            }
+        }
+      }).fail(function (xhr) {
+        if (xhr.status === 404 && xhr.responseText && JSON.parse(xhr.responseText).hasOwnProperty('found')) {
+          var res = JSON.parse(xhr.responseText);
+          if (retryCount < maxRetryCount - 1) {
+            keep_on(res);
+            var options = {interval: interval, retry_count: ++retryCount};
+            setTimeout(function () { ticktak(path, options, done, keep_on, stopped, failed); }, interval);
           } else {
-            failedCallback(xhr);
+            stopped(res);
           }
-        });
+        } else {
+          failed(xhr);
+        }
+      });
     }
 
-    check(url, 3000, 0,
-      function (res) {
-        console.log('success', res);
-        progressBar.set(95);
-        $waitingMessage.hide();
-        $finishedMessage.show();
+    function succeeded () {
+      progressBar.set(95);
+      $waitingMessage.hide();
+      $finishedMessage.show();
+      window.location.replace(redirectPath);
+    }
 
-        window.location.replace(resultPath);
-      }, function (res) {
-        console.log('continue', res);
-        progressBar.advance();
-      }, function (res) {
-        console.log('stop', res);
-        progressBar.hide();
-        $waitingMessage.hide();
-        $retryBtn.show();
-        if (!signedIn) $loginBtn.show();
-        $supportBtn.show();
+    function failed () {
+      progressBar.hide();
+      $waitingMessage.hide();
+      $retryBtn.show();
+      if (!signedIn) $loginBtn.show();
+      $supportBtn.show();
+    }
 
-        var timeOutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: build_via('timeout'))).html_safe %>';
-        $errorMessage.html(timeOutMessage).show();
-      }, function (xhr) {
-        console.log('failed', xhr.responseText);
+    ticktak(url, {interval: 3000, retry_count: 0}, function done (res) {
+      console.log('success', res);
+      succeeded();
+    }, function keep_on (res) {
+      console.log('continue', res);
+      progressBar.advance();
+    }, function stopped (res) {
+      console.log('stop', res);
+      failed();
+      var timeOutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: build_via('waiting_timeout'))).html_safe %>';
+      $errorMessage.html(timeOutMessage).show();
+    }, function fail (xhr) {
+      console.log('failed', xhr.responseText);
 
-        var res = $.parseJSON(xhr.responseText || null);
-        progressBar.hide();
-        $waitingMessage.hide();
-        $retryBtn.show();
-        if (!signedIn) $loginBtn.show();
-        $supportBtn.show();
+      var res = $.parseJSON(xhr.responseText || null);
+      failed();
 
-        if (res && res.message) {
-          $errorMessage.html(res.message);
-        }
-          $errorMessage.show();
-      });
+      if (res && res.message) {
+        $errorMessage.html(res.message);
+      }
+        $errorMessage.show();
+    });
   });
 </script>

@@ -1,7 +1,8 @@
-#update-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, via: build_via('update_box'))}}
+- url = twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, current_twitter_user_created_at: twitter_user.created_at.to_i, via: build_via('update_box'))
+#update-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: url}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('twitter_users.in_background.updating', user: twitter_user.mention_name)
-  = image_tag '/ajax-loader.gif'
+  = image_tag '/ajax-loader-blue.gif?a=1'
 
 #update-this-page-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'update-this-page-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
@@ -65,35 +66,56 @@
   (function () {
     var $updateBox, $updateThisPageBox, $requestToUpdateBox, $failedBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $accurateCountingBox, $viaDMBox, $signInBox;
 
+    var signedIn = #{user_signed_in?};
+    var crawler = #{from_crawler?};
+    var authorized = #{user_signed_in? && current_user.authorized?};
+    var removedPage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
+    var viaDM = #{via_dm?};
+    var profileNotFound = #{twitter_user.profile_not_found?};
+    var tooShortCreateInterval = #{twitter_user.too_short_create_interval?};
+    var nextCreationTimeMessage = '#{next_creation_message(twitter_user)}';
+    var requestToUpdate = #{switch_to_request?(twitter_user)};
+
+    var twitterUser = {
+      uid: '#{twitter_user.uid}',
+      createdAt: #{twitter_user.created_at.to_i}
+    };
+
     var logger = {
       warn: function () {
         var args = Array.from(arguments);
         var text = args.join(' ');
-        console.warn(text);
         $('#global-sneak-error-message').text(text);
       }
     };
 
-
     function checkLatestTwitterUser (url) {
-      Timelines.checkLatestTwitterUser(url, {interval: 3000, maxRetryCount: 5},
-        function success (res) {
-          console.log('checkLatestTwitterUser found.');
-          ga('send', {
-            hitType: 'event',
-            eventCategory: 'TwitterUsers',
-            eventAction: 'found',
-            eventLabel: 'NewRecord found'
-          });
+      Timelines.checkLatestTwitterUser(url, {interval: 3000, max_retry_count: 5},
+        function done (res) {
+          console.log('checkLatestTwitterUser', res);
 
-          $updateBox.alert('close');
-          if (res.text) {
-            $refreshBox.find('span').text(res.text);
+          if (res.created_at > twitterUser.createdAt) {
+            var url = '#{twitter_users_changes_path(uid: twitter_user.uid)}';
+            $.get(url).done(function (res) {
+              $updateBox.alert('close');
+              if (res.text) {
+                $refreshBox.find('span').text(res.text);
+              }
+              $refreshBox.show().sticky();
+            }).fail(function (xhr) {
+              console.warn(url, xhr.responseText);
+              $updateBox.alert('close');
+              $refreshBox.show().sticky();
+            });
+
+            return true;
+          } else {
+            return false;
           }
-          $refreshBox.show().sticky();
-
         }, function stopped (res, reason) {
-          logger.warn('checkLatestTwitterUser', reason);
+          console.warn('checkLatestTwitterUser', reason, res);
+          logger.warn(reason);
+
           ga('send', {
             hitType: 'event',
             eventCategory: 'TwitterUsers',
@@ -106,6 +128,8 @@
 
         }, function failed (xhr) {
           console.log('checkLatestTwitterUser failed.', xhr.responseText);
+          logger.warn(xhr.responseText);
+
           ga('send', {
             hitType: 'event',
             eventCategory: 'TwitterUsers',
@@ -122,23 +146,12 @@
       TwitterUsers.requestToCreateTwitterUser(url, params, function (res) {
         console.log('requestToCreateTwitterUser', res);
 
-        if (res.stop_polling) {
-          logger.warn('requestToCreateTwitterUser', 'Ordered to stop polling');
-          return;
-        }
-
         if (res.jid) {
-          ga('send', {
-            hitType: 'event',
-            eventCategory: 'UpdateJobs',
-            eventAction: 'started',
-            eventLabel: 'Done'
-          });
-
           $updateBox.show().sticky();
           checkLatestTwitterUser($updateBox.data('url'));
         } else {
-          logger.warn('JobNotStarted', "Don't start polling");
+          console.warn("Don't start polling since a job is not started.");
+          logger.warn("Don't start polling since a job is not started.");
 
           ga('send', {
             hitType: 'event',
@@ -146,10 +159,17 @@
             eventAction: 'not started',
             eventLabel: 'Done'
           });
-          $updateThisPageBox.show().sticky();
+
+          $updateBox.show().sticky();
+          setTimeout(function () {
+            $updateBox.alert('close');
+            $updateThisPageBox.show().sticky();
+          }, 3000);
         }
       }, function (xhr) {
-        console.log('failed', xhr.responseText);
+        console.warn('requestToCreateTwitterUser failed.', xhr.responseText);
+        logger.warn(xhr.responseText);
+
         ga('send', {
           hitType: 'event',
           eventCategory: 'UpdateJobs',
@@ -164,16 +184,6 @@
     }
 
     $(function () {
-      var signedIn = #{user_signed_in?};
-      var crawler = #{from_crawler?};
-      var authorized = #{user_signed_in? && current_user.authorized?};
-      var removedPage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
-      var viaDM = #{via_dm?};
-      var profileNotFound = #{twitter_user.profile_not_found?};
-      var tooShortCreateInterval = #{twitter_user.too_short_create_interval?};
-      var nextCreationTimeMessage = '#{next_creation_message(twitter_user)}';
-      var requestToUpdate = #{switch_to_request?(twitter_user)};
-
       if (profileNotFound) {
         return;
       }
@@ -196,7 +206,7 @@
         $updateThisPageBox = $requestToUpdateBox;
       }
       console.log(nextCreationTimeMessage);
-      $updateThisPageBox.find('.next-creation-note').text(nextCreationTimeMessage);
+      $updateThisPageBox.find('.next-creation-note').html(nextCreationTimeMessage);
 
       $('.sticky-box').each(function (i, box) {
         var $box = $(box);
@@ -225,14 +235,18 @@
         TwitterUsers.isFollowingEgotter($followBox.data('url'), function (res) {
           if (res.follow) {
             var url = "#{twitter_users_path(via: build_via('background_update'))}";
-            var uid = '#{twitter_user.uid}';
-            var currentTwitterUserId = '#{twitter_user.id}';
 
             if (tooShortCreateInterval) {
-              logger.warn("tooShortCreateInterval: Don't start polling");
-              $updateThisPageBox.show().sticky();
+              console.warn("Don't start polling since the create interval is too short.");
+              logger.warn("Don't start polling since the create interval is too short.");
+
+              $updateBox.show().sticky();
+              setTimeout(function () {
+                $updateBox.alert('close');
+                $updateThisPageBox.show().sticky();
+              }, 3000);
             } else {
-              var params = {uid: uid, current_twitter_user_id: currentTwitterUserId};
+              var params = {uid: twitterUser.uid};
               requestToCreateTwitterUser(url, params);
             }
           } else {

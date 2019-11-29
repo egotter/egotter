@@ -80,4 +80,5 @@
 
     %span.copy &copy; 2019 EGOTTER
 
-    #global-sneak-error-message
+    - if user_signed_in? && current_user.admin?
+      #global-sneak-error-message

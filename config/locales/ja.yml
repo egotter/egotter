@@ -907,6 +907,7 @@ ja:
       text_without_url: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji}"
   twitter_users:
     show:
+      new_unfollowers_are_coming: '@%{user} のリムられが %{count}人 増えました。'
       unfollowerships_count_increased: '@%{user} のリムられが、%{before} から %{after} に増えました。'
       unfollowerships_count_changed: '@%{user} のリムられに更新がありました。'
       followers_count_increased: '@%{user} のフォロワーが、%{before} から %{after} に増えました。'
@@ -924,8 +925,8 @@ ja:
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'
       request_to_update: '更新をリクエストする'
-      next_creation_is: '表示されているデータは %{time} のものです。次の更新は%{distance_of_time}です。その頃にまた検索してください。'
-      displayed_data_is: '表示されているデータは %{time} のものです。'
+      next_creation_is_html: '表示されているデータは <b>%{time}</b> に更新されました。次の更新は%{distance_of_time}です。その頃にまた検索してください。'
+      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。'
       go: '%{time}後'
       soon: 'もうすぐ'
       too_many_friends: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
