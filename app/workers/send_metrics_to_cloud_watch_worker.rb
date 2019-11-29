@@ -66,7 +66,7 @@ class SendMetricsToCloudWatchWorker
     end
 
     options = {namespace: namespace, dimensions: [{name: 'QueueName', value: 'total'}]}
-    client.put_metric_data('QueueSize', total, options)
+    client.put_metric_data('QueueSize', total, options) if total > 0
 
     duration = 10.minutes
     long_running_jobs = []
@@ -133,15 +133,15 @@ class SendMetricsToCloudWatchWorker
 
     send_count = PromptReport.where(duration).size
     options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
-    client.put_metric_data('SendCount', send_count, options)
+    client.put_metric_data('SendCount', send_count, options) if send_count > 0
 
     read_count = PromptReport.where(duration).where.not(read_at: nil).size
     options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
-    client.put_metric_data('ReadCount', read_count, options)
+    client.put_metric_data('ReadCount', read_count, options) if read_count > 0
 
     read_rate = send_count == 0 ? 0.0 : 100.0 * read_count / send_count
     options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
-    client.put_metric_data('ReadRate', read_rate, options)
+    client.put_metric_data('ReadRate', read_rate, options) if send_count > 0 && read_count > 0
   end
 
   def send_search_error_logs_metrics
@@ -194,11 +194,11 @@ class SendMetricsToCloudWatchWorker
     ].each do |klass|
       finished_count = klass.where(duration).where.not(finished_at: nil).count
       options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data('FinishCount', finished_count, options)
+      client.put_metric_data('FinishCount', finished_count, options) if finished_count > 0
 
       unfinished_count = klass.where(duration).where(finished_at: nil).count
       options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data('NotFinishedCount', unfinished_count, options)
+      client.put_metric_data('NotFinishedCount', unfinished_count, options) if unfinished_count > 0
     end
   end
 
