@@ -1,4 +1,4 @@
-- url = twitter_user_path(uid: twitter_user.uid, created_at: twitter_user.created_at.to_i, current_twitter_user_created_at: twitter_user.created_at.to_i, via: build_via('update_box'))
+- url = twitter_user_path(uid: twitter_user.uid, via: build_via('update_box'))
 #update-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: url}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
   = t('twitter_users.in_background.updating', user: twitter_user.mention_name)
