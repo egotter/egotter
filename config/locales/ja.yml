@@ -472,6 +472,7 @@ ja:
       following: "フォロー中"
     create_follow_modal:
       message_html: '@<span class="screen-name"></span> さんをフォローしますか？ 数が多い場合は凍結されないようゆっくりフォローしていきます。'
+      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-default">設定 &gt; フォロー回数 &gt; 履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       ok: "はい"
       cancel: "いいえ"
@@ -481,6 +482,7 @@ ja:
       cancel: "いいえ"
     create_unfollow_modal:
       message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？ 数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
+      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-default">設定 &gt; アンフォロー回数 &gt; 履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       ok: "はい"
       cancel: "いいえ"
@@ -903,7 +905,7 @@ ja:
       cluster_name: "%{name}クラスタ"
   shares:
     create:
-      text: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} %{url} #egotter"
+      text: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter %{url}"
       text_without_url: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji}"
   twitter_users:
     show:

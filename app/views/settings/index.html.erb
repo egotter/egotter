@@ -103,7 +103,7 @@
   <div class="clearfix"></div>
   <hr>
 
-  <div class="col-xs-4"><%= t('.follow_count.title') %></div>
+  <div id="follow-count" class="col-xs-4"><%= t('.follow_count.title') %></div>
   <div class="col-xs-8">
     <div>
       <%= t('.follow_count.count', count: current_user.create_follow_limit) %><%= t('.follow_count.remaining', count: current_user.create_follow_remaining) %>
@@ -115,7 +115,7 @@
   <div class="clearfix"></div>
   <hr>
 
-  <div class="col-xs-4"><%= t('.unfollow_count.title') %></div>
+  <div id="unfollow-count" class="col-xs-4"><%= t('.unfollow_count.title') %></div>
   <div class="col-xs-8">
     <div>
       <%= t('.unfollow_count.count', count: current_user.create_unfollow_limit) %><%= t('.unfollow_count.remaining', count: current_user.create_unfollow_remaining) %>

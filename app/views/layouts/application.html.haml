@@ -229,6 +229,7 @@
         .modal-content
           .modal-body
             %p= t('twitter.create_follow_modal.message_html')
+            %p= t('twitter.create_follow_modal.history_link_html', url: settings_path(via: build_via('create_follow_modal'), anchor: 'follow-count'))
             .dont-confirm
               %input#create-follow-dont-confirm{type: 'checkbox'}
               %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
@@ -241,6 +242,7 @@
         .modal-content
           .modal-body
             %p= t('twitter.create_unfollow_modal.message_html')
+            %p= t('twitter.create_unfollow_modal.history_link_html', url: settings_path(via: build_via('create_unfollow_modal'), anchor: 'unfollow-count'))
             .dont-confirm
               %input#create-unfollow-dont-confirm{type: 'checkbox'}
               %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
