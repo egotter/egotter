@@ -75,6 +75,9 @@ class WelcomeMessage < ApplicationRecord
   class SuccessMessageFailed < StandardError
   end
 
+  class RetryExhausted < StandardError
+  end
+
   private
 
   def dm_client(sender)
@@ -104,7 +107,7 @@ class WelcomeMessage < ApplicationRecord
     if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
       retry
     else
-      raise
+      raise RetryExhausted.new("#{e.class} #{e.message}")
     end
   end
 

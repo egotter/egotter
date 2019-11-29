@@ -53,8 +53,7 @@ class CreateTestMessageWorker
     end
 
   rescue => e
-    logger.warn "#{e.inspect} #{user_id} #{options.inspect}"
-    logger.warn "Caused by #{e.cause.inspect}" if e.cause
+    logger.warn "#{e.inspect} #{user_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
     logger.info e.backtrace.join("\n")
 
     # Overwrite existing error_class and error_message

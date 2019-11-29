@@ -24,8 +24,7 @@ class CreatePromptReportWorker
 
   rescue CreatePromptReportRequest::Error => e
   rescue => e
-    logger.warn "#{e.inspect} #{request_id} #{options.inspect}"
-    logger.warn "Caused by #{e.cause.inspect}" if e.cause
+    logger.warn "#{e.inspect} #{request_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
     logger.info e.backtrace.join("\n")
   ensure
     if options['start_next_loop']

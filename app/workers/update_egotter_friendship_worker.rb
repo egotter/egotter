@@ -39,11 +39,15 @@ class UpdateEgotterFriendshipWorker
     if e.message == 'Invalid or expired token.'
       user.update!(authorized: false)
     else
-      logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
+      logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
       logger.info e.backtrace.join("\n")
     end
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    if e.message.include?('Connection reset by peer')
+      retry
+    else
+      logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
+      logger.info e.backtrace.join("\n")
+    end
   end
 end
