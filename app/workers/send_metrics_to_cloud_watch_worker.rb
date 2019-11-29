@@ -18,7 +18,9 @@ class SendMetricsToCloudWatchWorker
        send_sidekiq_metrics
        send_prompt_reports_metrics
        send_search_error_logs_metrics
-       send_create_twitter_user_logs_metrics).each do |method_name|
+       send_create_twitter_user_logs_metrics
+       send_requests_metrics
+    ).each do |method_name|
       send(method_name)
     rescue => e
       logger.warn "#{method_name} #{e.class} #{e.message}"
@@ -66,14 +68,13 @@ class SendMetricsToCloudWatchWorker
     long_running_jobs = []
     Sidekiq::Workers.new.each do |pid, tid, work|
       if Time.zone.at(work['run_at']) < duration.ago
-        job_name = work['payload']['class']
-        long_running_jobs << job_name
+        long_running_jobs << work['payload']['class']
       end
     end
 
     long_running_jobs.group_by { |name| name }.map { |k, v| [k, v.length] }.each do |job_name, count|
-      options = {namespace: namespace, dimensions: [{name: 'JobName', value: job_name}, {name: 'Duration', value: duration.inspect}]} # "10 minutes"
-      puts count
+      dimensions = [{name: 'JobName', value: job_name}, {name: 'RunningTime', value: "more than #{duration.inspect}"}] # "10 minutes"
+      options = {namespace: namespace, dimensions: dimensions}
       client.put_metric_data('LongRunningSize', count, options)
     end
   end
@@ -120,54 +121,80 @@ class SendMetricsToCloudWatchWorker
     namespace = "PromptReports/#{Rails.env}"
     duration = {created_at: 10.minutes.ago..Time.zone.now}
 
-    CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, value|
+    CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, count|
       name = key.split('::').last
-      options = {namespace: namespace, dimensions: [{name: 'ErrorName', value: name}]}
-      client.put_metric_data('Count', value, options)
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+      client.put_metric_data(name, count, options)
     end
 
     send_count = PromptReport.where(duration).size
-    options = {namespace: namespace, dimensions: [{name: 'SendCount', value: 'SendCount'}]}
-    client.put_metric_data('Count', send_count, options)
+    options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+    client.put_metric_data('SendCount', send_count, options)
 
     read_count = PromptReport.where(duration).where.not(read_at: nil).size
-    options = {namespace: namespace, dimensions: [{name: 'ReadCount', value: 'ReadCount'}]}
-    client.put_metric_data('Count', read_count, options)
+    options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+    client.put_metric_data('ReadCount', read_count, options)
 
     read_rate = send_count == 0 ? 0.0 : 100.0 * read_count / send_count
-    options = {namespace: namespace, dimensions: [{name: 'ReadRate', value: 'ReadRate'}]}
-    client.put_metric_data('Rate', read_rate, options)
+    options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+    client.put_metric_data('ReadRate', read_rate, options)
   end
 
   def send_search_error_logs_metrics
     namespace = "SearchErrorLogs/#{Rails.env}"
-    duration = {created_at: 30.minutes.ago..Time.zone.now}
+    duration = {created_at: 10.minutes.ago..Time.zone.now}
 
-    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where(user_id: -1).group(:location).count.each do |key, value|
-      options = {namespace: namespace, dimensions: [{name: 'Location', value: key}, {name: 'Sign in', value: 'false'}]}
-      client.put_metric_data('Count', value, options)
+    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where(user_id: -1).group(:location).count.each do |location, count|
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: duration.inspect}]}
+      client.put_metric_data(location, count, options)
     end
 
-    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where.not(user_id: -1).group(:location).count.each do |key, value|
-      options = {namespace: namespace, dimensions: [{name: 'Location', value: key}, {name: 'Sign in', value: 'true'}]}
-      client.put_metric_data('Count', value, options)
+    SearchErrorLog.where(duration).where.not(device_type: 'crawler').where.not(user_id: -1).group(:location).count.each do |location, count|
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: duration.inspect}]}
+      client.put_metric_data(location, count, options)
     end
   end
 
   def send_create_twitter_user_logs_metrics
     namespace = "CreateTwitterUserLogs/#{Rails.env}"
-    duration = {created_at: 30.minutes.ago..Time.zone.now}
+    duration = {created_at: 10.minutes.ago..Time.zone.now}
 
-    CreateTwitterUserLog.where(duration).where(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, value|
+    CreateTwitterUserLog.where(duration).where(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
       name = key.split('::').last
-      options = {namespace: namespace, dimensions: [{name: 'ErrorName', value: name}, {name: 'Sign in', value: 'false'}]}
-      client.put_metric_data('Count', value, options)
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: duration.inspect}]}
+      client.put_metric_data(name, count, options)
     end
 
-    CreateTwitterUserLog.where(duration).where.not(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, value|
+    CreateTwitterUserLog.where(duration).where.not(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
       name = key.split('::').last
-      options = {namespace: namespace, dimensions: [{name: 'ErrorName', value: name}, {name: 'Sign in', value: 'true'}]}
-      client.put_metric_data('Count', value, options)
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: duration.inspect}]}
+      client.put_metric_data(name, count, options)
+    end
+  end
+
+  def send_requests_metrics
+    namespace = "Requests#{"/#{Rails.env}" unless Rails.env.production?}"
+    duration = {created_at: 10.minutes.ago..Time.zone.now}
+
+    [
+        CreatePromptReportRequest,
+        CreateTestReportRequest,
+        CreateTwitterUserRequest,
+        DeleteTweetsRequest,
+        FollowRequest,
+        ImportTwitterUserRequest,
+        ResetCacheRequest,
+        ResetEgotterRequest,
+        TweetRequest,
+        UnfollowRequest,
+    ].each do |klass|
+      finished_count = klass.where(duration).where.not(finished_at: nil).count
+      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass}, {name: 'Finished', value: 'true'}, {name: 'Duration', value: duration.inspect}]}
+      client.put_metric_data('FinishCount', finished_count, options)
+
+      unfinished_count = klass.where(duration).where(finished_at: nil).count
+      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass}, {name: 'Finished', value: 'false'}, {name: 'Duration', value: duration.inspect}]}
+      client.put_metric_data('NotFinishedCount', unfinished_count, options)
     end
   end
 
