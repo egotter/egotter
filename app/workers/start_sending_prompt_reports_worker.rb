@@ -2,13 +2,17 @@ class StartSendingPromptReportsWorker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
+  def timeout_in
+    10.minutes
+  end
+
   # options:
   #   last_queueing_started_at
   def perform(options = {})
     if options['last_queueing_started_at']
       time_diff = Time.zone.now - Time.zone.parse(options['last_queueing_started_at'])
       if time_diff < CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL
-        logger.warn "Queueing interval of PromptReport is too short. It's started at #{options['last_queueing_started_at']}"
+        logger.info "Queueing interval of PromptReport is too short. It's started at #{options['last_queueing_started_at']}"
         StartSendingPromptReportsWorker.perform_in(CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL - time_diff, options)
         return
       end
@@ -17,7 +21,7 @@ class StartSendingPromptReportsWorker
     task = StartSendingPromptReportsTask.new
     start_time = Time.zone.now
     users_size = task.users.size
-    logger.warn "Start queueing #{task.ids_stats.inspect} #{start_time}"
+    logger.warn "Start queueing #{task.ids_stats.inspect}"
 
     task.users.each.with_index do |user, i|
       request = CreatePromptReportRequest.create(user_id: user.id)
@@ -31,7 +35,7 @@ class StartSendingPromptReportsWorker
       CreatePromptReportWorker.perform_async(request.id, options)
     end
 
-    logger.warn "Finish queueing #{users_size} users #{start_time}"
+    logger.warn "Finish queueing #{users_size} users"
 
   rescue => e
     logger.warn "#{e.class} #{e.message}"
