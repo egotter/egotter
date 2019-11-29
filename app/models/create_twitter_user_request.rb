@@ -75,11 +75,11 @@ class CreateTwitterUserRequest < ApplicationRecord
     current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
 
     if current_twitter_user.no_need_to_import_friendships?
-      raise CreateTwitterUserRequest::TooManyFriends.new("Already exists. #{user_id}")
+      raise TooManyFriends.new('Already exists')
     end
 
     if previous_twitter_user.diff(current_twitter_user).empty?
-      raise CreateTwitterUserRequest::NotChanged.new('Before build')
+      raise NotChanged.new('Before build')
     end
 
     current_twitter_user.build_other_relations(relations)
@@ -133,9 +133,6 @@ class CreateTwitterUserRequest < ApplicationRecord
     def initialize(*args)
       super('')
     end
-  end
-
-  class RecentlyUpdated < Error
   end
 
   class TooShortCreateInterval < Error

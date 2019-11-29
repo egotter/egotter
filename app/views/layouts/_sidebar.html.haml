@@ -29,10 +29,10 @@
       .modal-content
         .modal-header
           %button.close{"aria-label" => 'Close', "data-dismiss" => 'modal', type: 'button'}
-            %span{"aria-hidden" => 'true'} ×
+            %span{"aria-hidden" => 'true'} &times;
           %h4#sidebar-modal-label.modal-title= t('searches.sidebar.update_request')
         .modal-body{style: 'padding: 15px 0 0 0;'}
           = t('searches.sidebar.update_request_needs_login')
           %div{style: 'margin: 15px;'}
-            = sign_in_with_twitter_link(nil, 'sidebar', class: 'btn btn-info btn-block')
+            = sign_in_with_twitter_link(nil, build_via('sidebar_update_request_modal'), class: 'btn btn-info btn-block')
           = image_tag '/egotter_icon_400x400.jpg', style: 'margin-bottom: 15px;'
