@@ -12,6 +12,10 @@ class SendMetricsToCloudWatchWorker
     30.seconds
   end
 
+  def timeout_in
+    50.seconds
+  end
+
   # Run every minute
   def perform
     %i(send_google_analytics_metrics
@@ -123,20 +127,20 @@ class SendMetricsToCloudWatchWorker
 
     CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, count|
       name = key.split('::').last
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(name, count, options)
     end
 
     send_count = PromptReport.where(duration).size
-    options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+    options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
     client.put_metric_data('SendCount', send_count, options)
 
     read_count = PromptReport.where(duration).where.not(read_at: nil).size
-    options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+    options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
     client.put_metric_data('ReadCount', read_count, options)
 
     read_rate = send_count == 0 ? 0.0 : 100.0 * read_count / send_count
-    options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+    options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
     client.put_metric_data('ReadRate', read_rate, options)
   end
 
@@ -145,12 +149,12 @@ class SendMetricsToCloudWatchWorker
     duration = {created_at: 10.minutes.ago..Time.zone.now}
 
     SearchErrorLog.where(duration).where.not(device_type: 'crawler').where(user_id: -1).group(:location).count.each do |location, count|
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: duration.inspect}]}
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(location, count, options)
     end
 
     SearchErrorLog.where(duration).where.not(device_type: 'crawler').where.not(user_id: -1).group(:location).count.each do |location, count|
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: duration.inspect}]}
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(location, count, options)
     end
   end
@@ -161,13 +165,13 @@ class SendMetricsToCloudWatchWorker
 
     CreateTwitterUserLog.where(duration).where(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
       name = key.split('::').last
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: duration.inspect}]}
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(name, count, options)
     end
 
     CreateTwitterUserLog.where(duration).where.not(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
       name = key.split('::').last
-      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: duration.inspect}]}
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(name, count, options)
     end
   end
@@ -189,11 +193,11 @@ class SendMetricsToCloudWatchWorker
         UnfollowRequest,
     ].each do |klass|
       finished_count = klass.where(duration).where.not(finished_at: nil).count
-      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass}, {name: 'Finished', value: 'true'}, {name: 'Duration', value: duration.inspect}]}
+      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data('FinishCount', finished_count, options)
 
       unfinished_count = klass.where(duration).where(finished_at: nil).count
-      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass}, {name: 'Finished', value: 'false'}, {name: 'Duration', value: duration.inspect}]}
+      options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data('NotFinishedCount', unfinished_count, options)
     end
   end
