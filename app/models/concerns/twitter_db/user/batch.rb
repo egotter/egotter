@@ -24,29 +24,31 @@ module Concerns::TwitterDB::User::Batch
       end
     end
 
-    def self.import(t_users, force_update: false)
+    UPDATE_INTERVAL = 12.hours
+
+    def self.import(users, force_update: false)
       unless force_update
         # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
-        persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 1.days.ago..Time.zone.now).pluck(:uid)
-        t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
+        persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }, updated_at: UPDATE_INTERVAL.ago..Time.zone.now).pluck(:uid)
+        users = users.reject { |user| persisted_uids.include? user[:id] }
       end
 
-      retry_importing { TwitterDB::User.import_by!(users: t_users) }
+      retry_importing { TwitterDB::User.import_by!(users: users) }
 
-      t_users
+      users
     end
 
     def self.import_suspended(uids)
       not_persisted = uids.uniq.map(&:to_i) - TwitterDB::User.where(uid: uids).pluck(:uid)
       return [] if not_persisted.empty?
 
-      t_users =  not_persisted.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
+      t_users = not_persisted.map { |uid| Hashie::Mash.new(id: uid, screen_name: 'suspended', description: '') }
       import(t_users)
 
       if not_persisted.size >= 10
-        logger.warn {"#{self.class}##{__method__} #{not_persisted.size} records"}
+        logger.warn { "#{self.class}##{__method__} #{not_persisted.size} records" }
       else
-        logger.info {"#{self.class}##{__method__} #{not_persisted.size} records"}
+        logger.info { "#{self.class}##{__method__} #{not_persisted.size} records" }
       end
 
       not_persisted
@@ -73,7 +75,7 @@ module Concerns::TwitterDB::User::Batch
 
     def self.retryable_exception?(ex)
       (ex.class == ActiveRecord::StatementInvalid && ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
-          (ex.class == ActiveRecord::Deadlocked &&   ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
+          (ex.class == ActiveRecord::Deadlocked && ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
           ex.message.include?('Connection reset by peer')
     end
   end
