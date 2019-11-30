@@ -50,10 +50,6 @@ module Concerns::TwitterDB::User::Builder
           profile_link_color:      user[:profile_link_color] || '',
           )
     end
-
-    def build_by_profile(profile)
-      new(profile.attributes)
-    end
   end
 
   included do

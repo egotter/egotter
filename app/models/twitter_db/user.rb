@@ -54,5 +54,17 @@ module TwitterDB
     def to_param
       screen_name
     end
+
+    class << self
+      def import_by!(users:)
+        built_users = users.map { |user| build_by(user: user) }
+        built_users.sort_by!(&:uid)
+
+        columns = column_names.reject { |name| %w(id created_at updated_at).include?(name) }
+        values = built_users.map { |user| user.slice(*columns).values }
+
+        import columns, values, on_duplicate_key_update: columns, batch_size: 500, validate: false
+      end
+    end
   end
 end

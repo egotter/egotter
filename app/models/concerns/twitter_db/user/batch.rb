@@ -25,42 +25,15 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.import(t_users, force_update: false)
-      if force_update
-        persisted_uids = []
-      else
+      unless force_update
         # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
         persisted_uids = TwitterDB::User.where(uid: t_users.map {|user| user[:id]}, updated_at: 1.days.ago..Time.zone.now).pluck(:uid)
+        t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
       end
 
-      t_users = t_users.reject {|user| persisted_uids.include? user[:id]}
+      retry_importing { TwitterDB::User.import_by!(users: t_users) }
 
-      users = t_users.map {|user| TwitterDB::User.build_by(user: user)}
-      users.sort_by!(&:uid)
-
-      update_columns = TwitterDB::User.column_names.reject {|name| %w(id created_at updated_at).include?(name)}
-
-      begin
-        tries ||= 3
-
-        users_for_import = users.map{|user| user.slice(*update_columns).values }
-        TwitterDB::User.import update_columns, users_for_import, on_duplicate_key_update: update_columns, batch_size: 500, validate: false
-      rescue => e
-        if retryable_deadlock?(e)
-          message = "#{self}##{__method__}: #{e.class} #{e.message.truncate(100)} #{t_users.size}"
-
-          if (tries -= 1) < 0
-            logger.warn "RETRY EXHAUSTED #{message}"
-            raise
-          else
-            logger.warn "RETRY #{tries} #{message}"
-            sleep(rand * 5)
-            retry
-          end
-        else
-          raise
-        end
-      end
-      users
+      t_users
     end
 
     def self.import_suspended(uids)
@@ -85,9 +58,23 @@ module Concerns::TwitterDB::User::Batch
       @@logger ||= (File.basename($0) == 'rake' ? Logger.new(STDOUT) : Rails.logger)
     end
 
-    def self.retryable_deadlock?(ex)
+    def self.retry_importing(&block)
+      tries ||= 3
+      yield
+    rescue => e
+      if retryable_exception?(e) && (tries -= 1) > 0
+        sleep(rand * 5)
+        retry
+      else
+        logger.warn "RETRY EXHAUSTED #{e.class} #{e.message.truncate(100)}"
+        raise
+      end
+    end
+
+    def self.retryable_exception?(ex)
       (ex.class == ActiveRecord::StatementInvalid && ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
-          (ex.class == ActiveRecord::Deadlocked &&   ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction'))
+          (ex.class == ActiveRecord::Deadlocked &&   ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
+          ex.message.include?('Connection reset by peer')
     end
   end
 end

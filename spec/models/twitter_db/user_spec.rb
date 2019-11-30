@@ -8,7 +8,7 @@ RSpec.describe TwitterDB::User, type: :model do
 
   describe '#statuses' do
     let(:user) { create(:twitter_db_user) }
-    before { 3.times.each.with_index {|i| create(:twitter_db_status, uid: user.uid, screen_name: user.screen_name, sequence: i)} }
+    before { 3.times.each.with_index { |i| create(:twitter_db_status, uid: user.uid, screen_name: user.screen_name, sequence: i) } }
     it 'has many statuses' do
       expect(user.statuses.size).to eq(3)
     end
@@ -16,7 +16,7 @@ RSpec.describe TwitterDB::User, type: :model do
 
   describe '#favorites' do
     let(:user) { create(:twitter_db_user) }
-    before { 3.times.each.with_index {|i| create(:twitter_db_favorite, uid: user.uid, screen_name: user.screen_name, sequence: i)} }
+    before { 3.times.each.with_index { |i| create(:twitter_db_favorite, uid: user.uid, screen_name: user.screen_name, sequence: i) } }
     it 'has many favorites' do
       expect(user.favorites.size).to eq(3)
     end
@@ -24,7 +24,7 @@ RSpec.describe TwitterDB::User, type: :model do
 
   describe '#mentions' do
     let(:user) { create(:twitter_db_user) }
-    before { 3.times.each.with_index {|i| create(:twitter_db_mention, uid: user.uid, screen_name: user.screen_name, sequence: i)} }
+    before { 3.times.each.with_index { |i| create(:twitter_db_mention, uid: user.uid, screen_name: user.screen_name, sequence: i) } }
     it 'has many mentions' do
       expect(user.mentions.size).to eq(3)
     end
@@ -54,35 +54,10 @@ RSpec.describe TwitterDB::User, type: :model do
   end
 
   describe '.build_by' do
-    let(:t_user) do
-      {
-          id:                      123,
-          screen_name:             'screen_name',
-          friends_count:           10,
-          followers_count:         20,
-          protected:               true,
-          suspended:               true,
-          status:                  {created_at: '2019-01-01 10:00:00'},
-          created_at:              '2010-01-01 10:00:00',
-          statuses_count:          30,
-          favourites_count:        40,
-          listed_count:            50,
-          name:                    'name',
-          location:                'Japan',
-          description:             'Hi.',
-          url:                     'https://example.com',
-          geo_enabled:             true,
-          verified:                true,
-          lang:                    'ja',
-          profile_image_url_https: 'https://profile.image',
-          profile_banner_url:      'https://profile.banner',
-          profile_link_color:      '123456',
-      }
-    end
+    let(:t_user) { build(:t_user) }
+    let(:user) { TwitterDB::User.build_by(user: t_user) }
 
     it do
-      user = TwitterDB::User.build_by(user: t_user)
-
       expect(user.screen_name).to eq(t_user[:screen_name])
       expect(user.friends_count).to eq(t_user[:friends_count])
       expect(user.followers_count).to eq(t_user[:followers_count])
@@ -107,34 +82,28 @@ RSpec.describe TwitterDB::User, type: :model do
     end
 
     context 'With suspended user' do
-      let(:t_user) do
-        {id: 123, screen_name: 'screen_name'}
-      end
+      let(:t_user) { build(:t_user, id: 123, screen_name: 'screen_name') }
+      let(:user) { TwitterDB::User.build_by(user: t_user) }
 
       it do
-        user = TwitterDB::User.build_by(user: t_user)
         expect(user.uid).to eq(t_user[:id])
         expect(user.screen_name).to eq(t_user[:screen_name])
       end
     end
   end
 
-  describe '.import' do
-    let(:t_users) do
-      3.times.map do
-        Hashie::Mash.new(
-            id: rand(1000_000_000),
-            screen_name: 'screen_name',
-            name: 'name',
-            friends_count: 100,
-            followers_count: 200,
-            statuses_count: 300,
-            favourites_count: 400,
-            listed_count: 500,
-        )
-      end
-    end
+  describe '.import_by!' do
+    let(:t_users) { 3.times.map { build(:t_user) } }
 
+    it do
+      expect { TwitterDB::User.import_by!(users: t_users) }.to change { TwitterDB::User.all.size }.by(t_users.size)
+    end
+  end
+end
+
+RSpec.describe TwitterDB::User::Batch, type: :model do
+  describe '.import' do
+    let(:t_users) { 3.times.map { build(:t_user) } }
     let(:import_users) { t_users.map { |t_user| [t_user[:id], t_user[:screen_name], -1, -1] } }
 
     context 'with new records' do
@@ -145,9 +114,7 @@ RSpec.describe TwitterDB::User, type: :model do
 
     context 'with new records and recently persisted records' do
       before do
-        t_users[0].tap do |t_user|
-          TwitterDB::User.create!(uid: t_user[:id], screen_name: t_user[:screen_name])
-        end
+        TwitterDB::User.create!(uid: t_users[0][:id], screen_name: t_users[0][:screen_name])
       end
       it 'updates only new records' do
         expect { TwitterDB::User::Batch.import(t_users) }.to change { TwitterDB::User.all.size }.by(t_users.size - 1)
