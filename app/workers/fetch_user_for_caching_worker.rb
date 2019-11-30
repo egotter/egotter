@@ -32,7 +32,8 @@ class FetchUserForCachingWorker
 
     client.user(uid_or_screen_name)
   rescue => e
-    if e.class == Twitter::Error::NotFound && e.message == 'User not found.'
+    if (e.class == Twitter::Error::NotFound && e.message == 'User not found.') ||
+        (e.class == Twitter::Error::Forbidden && e.message == 'User has been suspended.')
     else
       logger.warn "#{e.inspect} #{uid_or_screen_name} #{options.inspect}"
       logger.info e.backtrace.join("\n")
