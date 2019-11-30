@@ -31,12 +31,21 @@ class CreatePromptReportMessageWorker
 
     kind = options['kind'].to_sym
 
+    if %i(you_are_removed not_changed).include?(kind)
+      current_twitter_user = TwitterUser.find(options['current_twitter_user_id'])
+      current_twitter_user.unfollowers.take(PromptReport::UNFOLLOWERS_SIZE_LIMIT).each do |unfollower|
+        FetchUserForCachingWorker.perform_async(unfollower.uid, user_id: user.id, enqueued_at: Time.zone.now)
+        FetchUserForCachingWorker.perform_async(unfollower.screen_name, user_id: user.id, enqueued_at: Time.zone.now)
+        # TwitterDB::User has already been forcibly updated in CreatePromptReportTask.
+      end
+    end
+
     if kind == :you_are_removed
       PromptReport.you_are_removed(
           user.id,
           changes_json: options['changes_json'],
           previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
-          current_twitter_user: TwitterUser.find(options['current_twitter_user_id']),
+          current_twitter_user: current_twitter_user,
           request_id: options['create_prompt_report_request_id'],
       ).deliver!
     elsif kind == :not_changed
@@ -44,7 +53,7 @@ class CreatePromptReportMessageWorker
           user.id,
           changes_json: options['changes_json'],
           previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
-          current_twitter_user: TwitterUser.find(options['current_twitter_user_id']),
+          current_twitter_user: current_twitter_user,
           request_id: options['create_prompt_report_request_id'],
       ).deliver!
     elsif kind == :initialization
@@ -74,8 +83,7 @@ class CreatePromptReportMessageWorker
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
     else
-      logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
-      logger.warn "Caused by #{e.cause.inspect}" if e.cause
+      logger.warn "#{e.inspect} #{user_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
       logger.info e.backtrace.join("\n")
     end
 

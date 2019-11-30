@@ -28,6 +28,8 @@ class PromptReport < ApplicationRecord
   belongs_to :user
   attr_accessor :message_builder
 
+  UNFOLLOWERS_SIZE_LIMIT = 5
+
   def deliver!
     begin
       dm = DirectMessage.new(retry_sending { send_starting_message! })
@@ -195,7 +197,7 @@ class PromptReport < ApplicationRecord
             previous_created_at: I18n.l(period[:start].in_time_zone('Tokyo'), format: :prompt_report_short),
             current_created_at: I18n.l(period[:end].in_time_zone('Tokyo'), format: :prompt_report_short),
             current_unfollowers_size: current_twitter_user.unfollowerships.size,
-            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(5),
+            current_unfollower_names: current_twitter_user.unfollowers.take(UNFOLLOWERS_SIZE_LIMIT).map(&:screen_name),
             last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
@@ -253,7 +255,7 @@ class PromptReport < ApplicationRecord
             previous_created_at: I18n.l(period[:start].in_time_zone('Tokyo'), format: :prompt_report_short),
             current_created_at: I18n.l(period[:end].in_time_zone('Tokyo'), format: :prompt_report_short),
             current_unfollowers_size: current_twitter_user.unfollowerships.size,
-            current_unfollower_names: current_twitter_user.unfollowers.map(&:screen_name).take(5),
+            current_unfollower_names: current_twitter_user.unfollowers.take(UNFOLLOWERS_SIZE_LIMIT).map(&:screen_name),
             last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
