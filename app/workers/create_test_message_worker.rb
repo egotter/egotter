@@ -32,10 +32,13 @@ class CreateTestMessageWorker
       return
     end
 
-    # If the error is that the DM cannot be sent, an additional exception occurs here.
+    template = Rails.root.join('app/views/test_reports/test.ja.text.erb')
+    message = ERB.new(template.read).result
+
     begin
+      # If the error is that the DM cannot be sent, an additional exception occurs here.
       dm_client = DirectMessageClient.new(user.api_client.twitter)
-      dm_client.create_direct_message(User::EGOTTER_UID, 'Start sending test message.')
+      dm_client.create_direct_message(User::EGOTTER_UID, message)
     rescue => e
       dm = TestMessage.permission_level_not_enough(user.id).deliver!
       send_message_to_slack(dm.text, title: 'plne')
