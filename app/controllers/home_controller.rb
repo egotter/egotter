@@ -21,7 +21,7 @@ class HomeController < ApplicationController
     end
 
     if flash.empty? && user_signed_in? && TwitterUser.exists?(uid: current_user.uid)
-      redirect_path = timeline_path(screen_name: current_user.screen_name)
+      redirect_path = timeline_path(screen_name: current_user.screen_name, via: build_via('auto_redirect'))
       redirect_path = append_query_params(redirect_path, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]
       redirect_path = append_query_params(redirect_path, share_dialog: params[:share_dialog]) if params[:share_dialog]
       redirect_to redirect_path
