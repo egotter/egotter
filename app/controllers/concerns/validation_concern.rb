@@ -13,13 +13,15 @@ module Concerns::ValidationConcern
   def require_login!
     return if user_signed_in?
 
-    message =
-        if request.xhr?
-          t('before_sign_in.ajax.need_login_html', url: kick_out_error_path('need_login'))
-        else
-          t('before_sign_in.need_login_html', url: kick_out_error_path('need_login'))
-        end
-    respond_with_error(:unauthorized, message)
+    if request.xhr?
+      message = t('before_sign_in.ajax.need_login_html', url: kick_out_error_path('need_login'))
+      respond_with_error(:unauthorized, message)
+    else
+      message = t('before_sign_in.need_login_html', url: sign_in_path(via: build_via(__method__), redirect_path: request.fullpath))
+      create_search_error_log(__method__, message)
+      flash.now[:alert] = message
+      render template: 'home/new', formats: %i(html), status: :unauthorized
+    end
   end
 
   def require_admin!
