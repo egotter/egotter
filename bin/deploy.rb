@@ -8,7 +8,7 @@ CMD = [
     'sudo service puma restart',
 ].join(' && ')
 
-[3, 5, 7].each do |id|
+[3, 7].each do |id|
   host = "egotter_web#{id}"
   puts "#{host} #{CMD}"
 
