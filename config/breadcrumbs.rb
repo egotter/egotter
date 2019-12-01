@@ -2,6 +2,11 @@ crumb :root do
   link t('searches.common.top'), root_path(via: build_via('breadcrumb_root'))
 end
 
+crumb :start do |screen_name|
+  link t('home.start.crumb_title', user: screen_name), profile_path(screen_name: screen_name, via: build_via("breadcrumb_start"))
+  parent :root
+end
+
 crumb :timeline do |screen_name|
   link t('timelines.show.short_title', user: mention_name(screen_name)), timeline_path(screen_name: screen_name, via: build_via('breadcrumb_timeline'))
   parent :root
