@@ -205,7 +205,15 @@ module Concerns::ValidationConcern
     return false if from_crawler? || search_histories_remaining > 0
     return false if current_search_histories.any? { |history| history.uid == twitter_user.uid }
 
-    respond_with_error(:bad_request, too_many_searches_message)
+    message = too_many_searches_message
+
+    if request.xhr?
+      respond_with_error(:bad_request, message)
+    else
+      redirect_to profile_path(screen_name: twitter_user.screen_name), alert: message
+      create_search_error_log(__method__, message)
+    end
+
     true
   end
 
@@ -221,7 +229,15 @@ module Concerns::ValidationConcern
     return false if from_crawler? || !user_signed_in?
     return false unless TooManyRequestsQueue.new.exists?(current_user_id)
 
-    respond_with_error(:bad_request, too_many_requests_message)
+    message = too_many_requests_message
+
+    if request.xhr?
+      respond_with_error(:bad_request, message)
+    else
+      redirect_to profile_path(screen_name: twitter_user.screen_name), alert: message
+      create_search_error_log(__method__, message)
+    end
+
     true
   rescue => e
     # This is a special case because it call redirect_to and returns false.

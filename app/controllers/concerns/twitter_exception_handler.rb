@@ -142,7 +142,7 @@ module Concerns::TwitterExceptionHandler
     end
   end
 
-  def too_many_requests_message(reset_in = nil)
+  def too_many_requests_message(reset_in = 30)
     reset_in ||= rate_limit_reset_in
     if user_signed_in?
       t('after_sign_in.too_many_requests_with_reset_in', seconds: reset_in)
