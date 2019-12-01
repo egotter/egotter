@@ -178,6 +178,7 @@ ActiveRecord::Schema.define(version: 2019_11_22_232415) do
   create_table "bots", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.bigint "uid", null: false
     t.string "screen_name", null: false
+    t.boolean "authorized", default: true, null: false
     t.string "secret", null: false
     t.string "token", null: false
     t.datetime "created_at", null: false
