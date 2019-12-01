@@ -69,7 +69,8 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   end
 
   def after_sign_in_message(user)
-    t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: notification_status_message(user), url: settings_path(via: 'after_sign_in'))
+    status = t("devise.omniauth_callbacks.#{user.notification_setting.dm_enabled?}")
+    t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: status, url: settings_path(via: 'after_sign_in'))
   end
 
   def after_failure_message(reason)
@@ -86,14 +87,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     else
       url = sign_in_path(via: "#{controller_name}/#{action_name}/retry_something_error")
       t('devise.omniauth_callbacks.failure_with_retry_message_html', kind: 'Twitter', url: url)
-    end
-  end
-
-  def notification_status_message(user)
-    if user.notification_setting.dm?
-      t('devise.omniauth_callbacks.enabled')
-    else
-      t('devise.omniauth_callbacks.disabled')
     end
   end
 

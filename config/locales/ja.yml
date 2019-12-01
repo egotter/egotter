@@ -119,7 +119,7 @@ ja:
       start_by: '@%{user} で始める'
       dm_setting: 'DMの設定を確認する（公式ページ）'
       ask: '@ego_tter に質問する'
-      message1_html: 'えごったーは、ユーザーのツイッターデータを個別に分析することで、<span class="egotter-pink">仲良しランキング</span>、<span class="egotter-pink">リムられ（フォロー解除）</span>、入っているクラスタなどを分析していきます。'
+      message1_html: 'えごったーは、ツイッターのデータを分析することで、<span class="egotter-pink">仲良しランキング</span>、<span class="egotter-pink">リムられ（フォロー解除）</span>、入っているクラスタなどを分析していきます。'
       message2: 'それでは、さっそく初めてみましょう。'
       message3_html: '<span class="egotter-pink">リムられ通知</span>は、<span class="egotter-pink">DM</span>で届きます。@ego_tter からのDMが届くように、忘れずに設定しておいてください。'
       message4_html: '何か<span class="egotter-pink">分からないこと</span>がありますか？'
