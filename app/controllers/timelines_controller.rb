@@ -6,6 +6,7 @@ class TimelinesController < ApplicationController
   after_action {::Util::SearchCountCache.increment}
 
   def show
+    CreateSearchHistoryWorker.perform_async(fingerprint, current_user_id, @twitter_user.uid, current_visit&.id, via: params[:via])
     enqueue_update_authorized
     enqueue_update_egotter_friendship
     enqueue_audience_insight(@twitter_user.uid)
