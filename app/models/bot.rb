@@ -20,45 +20,54 @@
 class Bot < ApplicationRecord
   include Concerns::User::ApiAccess
 
-  IDS = pluck(:id)
-
-  def self.api_client
-    sample.api_client
-  end
-
-  def self.sample
-    find(IDS.sample)
-  end
-
-  def self.load(path)
-    JSON.parse(File.read(path)).each do |bot|
-      create!(uid: bot['uid'], screen_name: bot['screen_name'], secret: bot['secret'], token: bot['token'])
-    end
-  end
-
-  def self.verify_credentials
-    processed = Queue.new
-    Parallel.each(all, in_threads: 10) do |bot|
-      processed << {id: bot.id, screen_name: bot.screen_name, status: !!(bot.api_client.verify_credentials rescue nil)}
+  class << self
+    def current_ids
+      where(authorized: true).pluck(:id)
     end
 
-    processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
-  end
-
-  def self.rate_limit
-    processed = Queue.new
-    Parallel.each(all, in_threads: 10) do |bot|
-      processed << {id: bot.id, rate_limit: bot.rate_limit}
+    def api_client
+      find(current_ids.sample).api_client
     end
 
-    processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }.map do |p|
-      {
-        id: p[:id],
-        verify_credentials: p[:rate_limit].verify_credentials,
-        users: p[:rate_limit].users,
-        friend_ids: p[:rate_limit].friend_ids,
-        follower_ids: p[:rate_limit].follower_ids
-      }
+    def load(path)
+      JSON.parse(File.read(path)).each do |bot|
+        create!(uid: bot['uid'], screen_name: bot['screen_name'], secret: bot['secret'], token: bot['token'])
+      end
+    end
+
+    def verify_credentials
+      processed = Queue.new
+      Parallel.each(all, in_threads: 10) do |bot|
+        begin
+          authorized = !!bot.api_client.verify_credentials
+        rescue => e
+          if e.message == 'Invalid or expired token.'
+            authorized = false
+          else
+            raise
+          end
+        end
+        processed << {id: bot.id, screen_name: bot.screen_name, authorized: authorized}
+      end
+
+      processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
+    end
+
+    def rate_limit
+      processed = Queue.new
+      Parallel.each(all, in_threads: 10) do |bot|
+        processed << {id: bot.id, rate_limit: bot.rate_limit}
+      end
+
+      processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }.map do |p|
+        {
+            id: p[:id],
+            verify_credentials: p[:rate_limit].verify_credentials,
+            users: p[:rate_limit].users,
+            friend_ids: p[:rate_limit].friend_ids,
+            follower_ids: p[:rate_limit].follower_ids
+        }
+      end
     end
   end
 end
