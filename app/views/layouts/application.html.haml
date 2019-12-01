@@ -173,7 +173,7 @@
           = sign_in_with_twitter_link(nil, 'button_bottom', class: 'btn btn-info btn-block center-block', style: 'width: 80%; max-width: 375px;')
           .vertical-spacing
 
-      - unless controller_name == 'tokimeki_unfollow' && action_name == 'cleanup'
+      - unless hide_favorite_menu?
         .container.pre-footer
           %h2.h4.text-center= t('searches.common.popular')
           .container
@@ -185,7 +185,7 @@
                       = image_tag '/egotter_icon_400x400.jpg', class: 'img-responsive'
                       %div{style: 'font-size: x-large; color: white; padding: 4px 8px; background: rgb(0, 0, 0); background: rgba(0, 0, 0, 0.7); position: absolute; left: 0; bottom: 0; width: 100%;'}= label
 
-      - unless controller_name == 'tokimeki_unfollow' && action_name == 'cleanup'
+      - unless hide_new_information?
         .container.pre-footer
           %h2.h4.text-center= t('searches.common.information')
           %table.table.table-bordered.table-condensed.table-responsive

@@ -35,6 +35,16 @@ module ApplicationHelper
     %w(unfriends unfollowers blocking_or_blocked).exclude?(controller_name) && twitter_user.usage_stat
   end
 
+  def hide_favorite_menu?
+    (controller_name == 'tokimeki_unfollow' && action_name == 'cleanup') ||
+        (controller_name == 'home' && action_name == 'start')
+  end
+
+  def hide_new_information?
+    (controller_name == 'tokimeki_unfollow' && action_name == 'cleanup') ||
+        (controller_name == 'home' && action_name == 'start')
+  end
+
   def top_page_paths
     [
       [one_sided_friends_top_path, t('one_sided_friends.new.simple_title')],
