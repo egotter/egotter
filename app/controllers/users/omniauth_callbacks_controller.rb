@@ -1,6 +1,7 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include Concerns::SearchHistoriesConcern
   include Concerns::SanitizationConcern
+  include Concerns::JobQueueingConcern
 
   def twitter
     via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
@@ -24,9 +25,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     update_search_histories_when_signing_in(user)
     FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID) if follow
     TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
-    QueueingRequests.new(CreateTwitterUserWorker).delete(user.uid)
+    EnqueuedSearchRequest.new.delete(user.uid)
     DeleteNotFoundUserWorker.perform_async(user.screen_name)
     DeleteForbiddenUserWorker.perform_async(user.screen_name)
+    CreateTwitterDBUserWorker.perform_async([user.uid], force_update: true)
+    enqueue_create_twitter_user_job_if_needed(user.uid, user_id: current_user.id, requested_by: 'sign_in')
 
     flash[:notice] = after_sign_in_message(user)
     sign_in user, event: :authentication
