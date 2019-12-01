@@ -4,6 +4,7 @@ Rails.application.routes.draw do
     match '*path' => 'misc#maintenance', via: :all
   else
     root 'home#new'
+    get 'start', to: 'home#start', as: 'start'
   end
 
   namespace :api, {format: 'json'} do

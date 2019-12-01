@@ -11,11 +11,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     tweet = 'true' == session.delete(:sign_in_tweet)
     force_login = 'true' == session.delete(:force_login)
 
+    save_context = nil
     begin
       user = User.update_or_create_with_token!(user_params) do |user, context|
         create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
         CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
         UpdatePermissionLevelWorker.perform_async(user.id, enqueued_at: Time.zone.now, send_test_report: force_login)
+        save_context = context
       end
     rescue =>  e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
@@ -29,11 +31,11 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     DeleteNotFoundUserWorker.perform_async(user.screen_name)
     DeleteForbiddenUserWorker.perform_async(user.screen_name)
     CreateTwitterDBUserWorker.perform_async([user.uid], force_update: true)
-    enqueue_create_twitter_user_job_if_needed(user.uid, user_id: current_user.id, requested_by: 'sign_in')
+    enqueue_create_twitter_user_job_if_needed(user.uid, user_id: user.id, requested_by: 'sign_in')
 
     flash[:notice] = after_sign_in_message(user)
     sign_in user, event: :authentication
-    redirect_to after_sign_in_path_for(user)
+    redirect_to after_sign_in_path_for(user, save_context: save_context)
   end
 
   def failure
@@ -60,9 +62,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   private
 
-  def after_sign_in_path_for(user)
-    redirect_path = sanitized_redirect_path(session.delete(:redirect_path) || root_path)
-    append_query_params(redirect_path, follow_dialog: 1, share_dialog: 1)
+  def after_sign_in_path_for(user, save_context:)
+    url = session.delete(:redirect_path)
+    url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") unless url
+    append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
   end
 
   def after_sign_in_message(user)

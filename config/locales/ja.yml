@@ -112,6 +112,18 @@ ja:
       text012_html: '公式アカウント'
       text013_html: '何か分からないことがありますか？<br><span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
       text014_html: '@ego_tter に質問してみる'
+    start:
+      crumb_title: "@%{user}さん えごったーへようこそ！"
+      page_title: "@%{user}さん えごったーへようこそ！"
+      meta_description: "@%{user}さん えごったーへようこそ！"
+      start_by: '@%{user} で始める'
+      dm_setting: 'DMの設定を確認する（公式ページ）'
+      ask: '@ego_tter に質問する'
+      message1_html: 'えごったーは、ユーザーのツイッターデータを個別に分析することで、<span class="egotter-pink">仲良しランキング</span>、<span class="egotter-pink">リムられ（フォロー解除）</span>、入っているクラスタなどを分析していきます。'
+      message2: 'それでは、さっそく初めてみましょう。'
+      message3_html: '<span class="egotter-pink">リムられ通知</span>は、<span class="egotter-pink">DM</span>で届きます。@ego_tter からのDMが届くように、忘れずに設定しておいてください。'
+      message4_html: '何か<span class="egotter-pink">分からないこと</span>がありますか？'
+      message5_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご質問ください。'
   timelines:
     show:
       title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
