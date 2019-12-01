@@ -8,8 +8,8 @@ Rails.application.routes.draw do
 
   namespace :api, {format: 'json'} do
     namespace :v1 do
-      Search::API_V1_NAMES.each {|menu| get "#{menu}/summary", to: "#{menu}#summary"}
-      Search::API_V1_NAMES.each {|menu| get "#{menu}/list", to: "#{menu}#list"}
+      Search::API_V1_NAMES.each { |menu| get "#{menu}/summary", to: "#{menu}#summary" }
+      Search::API_V1_NAMES.each { |menu| get "#{menu}/list", to: "#{menu}#list" }
     end
   end
 
@@ -56,6 +56,9 @@ Rails.application.routes.draw do
   ).each do |controller_name|
     resources controller_name, only: %i(show), param: :screen_name
   end
+
+  get 'profiles/:screen_name/latest', to: 'profiles#latest', as: 'latest_profile'
+
   %i(
     friends
     followers

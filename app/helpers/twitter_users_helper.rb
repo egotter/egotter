@@ -1,6 +1,6 @@
 module TwitterUsersHelper
   def next_creation_message(twitter_user)
-    format = (twitter_user.created_at.to_date === Time.zone.now.to_date) ? :next_creation_short : :next_creation_long
+    format = (twitter_user.created_at.in_time_zone('Tokyo').to_date === Time.zone.now.in_time_zone('Tokyo').to_date) ? :next_creation_short : :next_creation_long
     time = I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: format)
 
     if switch_to_request?(twitter_user)

@@ -786,7 +786,10 @@ ja:
       crumb_title: "@%{user} の最新プロフィール"
       page_title: "@%{user} の最新プロフィール"
       meta_description: "@%{user} の最新プロフィール"
+      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。<a href="%{url}" class="btn btn-default">更新をリクエストする</a>'
       see_more: '@%{user} で分析する'
+    latest:
+      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。'
   friends:
     new:
       title_html: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
