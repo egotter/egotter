@@ -5,12 +5,15 @@ require 'optparse'
 module Deploy
   class Web
     CMD = [
-        'cd /var/egotter',
         'git pull origin master',
         'bundle install --path .bundle --without test development',
         'RAILS_ENV=production bundle exec rake assets:precompile',
         'sudo service puma restart',
-    ].join(' && ')
+    ]
+
+    def current_dir
+      '/var/egotter'
+    end
 
     def hosts
       [3, 7].map { |id| "egotter_web#{id}" }
@@ -18,16 +21,19 @@ module Deploy
 
     def run
       hosts.each do |host|
-        puts "#{host} #{CMD}"
-
-        %x(ssh #{host} "#{CMD}").each_line do |line|
-          puts "#{host} #{line}"
+        CMD.each do |cmd|
+          puts "#{host} #{cmd}"
+          %x(ssh #{host} "cd #{current_dir} && #{cmd}").each_line do |line|
+            puts "#{host} #{line}"
+          end
         end
 
-        3.times do
-          seconds = 10
-          puts "Sleep in #{seconds} seconds."
-          sleep seconds
+        unless hosts.last == host
+          3.times do
+            seconds = 10
+            puts "Sleep in #{seconds} seconds."
+            sleep seconds
+          end
         end
       end
 
@@ -38,7 +44,6 @@ module Deploy
 
   class Sidekiq
     CMD = [
-        'cd /var/egotter',
         'sudo service sidekiq_misc stop',
         'sudo service sidekiq_prompt_reports stop',
         'git pull origin master',
@@ -47,7 +52,11 @@ module Deploy
         'sudo service sidekiq_prompt_reports start',
         'sudo service sidekiq restart',
         'sudo service sidekiq_import restart',
-    ].join(' && ')
+    ]
+
+    def current_dir
+      '/var/egotter'
+    end
 
     def hosts
       ['egotter_web']
@@ -55,10 +64,11 @@ module Deploy
 
     def run
       hosts.each do |host|
-        puts "#{host} #{CMD}"
-
-        %x(ssh #{host} "#{CMD}").each_line do |line|
-          puts "#{host} #{line}"
+        CMD.each do |cmd|
+          puts "#{host} #{cmd}"
+          %x(ssh #{host} "cd #{current_dir} && #{cmd}").each_line do |line|
+            puts "#{host} #{line}"
+          end
         end
       end
 
@@ -67,6 +77,8 @@ module Deploy
     end
   end
 end
+
+STDOUT.sync = true
 
 params = ARGV.getopts('r:', 'role:')
 
