@@ -787,7 +787,7 @@ ja:
       page_title: "@%{user} の最新プロフィール"
       meta_description: "@%{user} の最新プロフィール"
       displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。<a href="%{url}" class="btn btn-default">更新をリクエストする</a>'
-      see_more: '@%{user} で分析する'
+      analyze: '@%{user} を分析する'
     latest:
       displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。'
   friends:

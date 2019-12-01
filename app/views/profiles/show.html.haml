@@ -3,15 +3,15 @@
 
 - breadcrumb :profile, @user.screen_name
 
-- page_title = t('profiles.show.page_title', user: @user.screen_name)
+- page_title = t('.page_title', user: @user.screen_name)
 - title page_title
-- set_meta_tags description: t('profiles.show.meta_description', user: @user.screen_name)
+- set_meta_tags description: t('.meta_description', user: @user.screen_name)
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 .text-center{style: 'max-width: 600px; margin: 0 auto;'}
   - url = searches_path(screen_name: @user.screen_name, via: build_via('only_profile_page_button'))
-  = link_to t('.see_more', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg center-block', method: :post
+  = link_to t('.analyze', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg center-block', method: :post
   .vertical-spacing
   = render partial: 'twitter/profile', locals: {user: @user}
 
