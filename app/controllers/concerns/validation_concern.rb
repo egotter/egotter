@@ -45,6 +45,7 @@ module Concerns::ValidationConcern
       @screen_name = @twitter_user.screen_name
       @redirect_path = timeline_path(screen_name: @screen_name)
       @via = params['via']
+      create_search_error_log(__method__, '')
       render template: 'searches/create', formats: %i(html), layout: false
     else
       respond_with_error(:bad_request, t('application.twitter_user_not_found'))
