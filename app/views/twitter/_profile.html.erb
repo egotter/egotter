@@ -16,11 +16,6 @@
             <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user.name_with_icon}".html_safe, timeline_path(user)) %>
             <%= user.status_labels %>
           </div>
-          <div class="twitter-link">
-            <%= user_link(user.screen_name) do %>
-              <%= t('twitter.profile.see_on_twitter') %>&nbsp;<i class="fas fa-external-link-alt" aria-hidden="true"></i>
-            <% end %>
-          </div>
 
           <% if user.location? %>
             <div class="location visible-md-block visible-lg-block"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;<%= user.location %></div>
@@ -34,14 +29,25 @@
   </div><!-- /.profile-overview -->
 
   <div class="description-container">
-    <div class="text-center">
+    <div>
+    <span class="text-center">
       <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
+    </span>
+
+      <span class="text-center">
+      <%= link_to user_url(user.screen_name), class: 'btn btn-default', target: '_blank' do %>
+        <i class="text-muted fab fa-twitter no-follow"></i>
+        <div class="visible-lg-inline visible-md-inline visible-xs-inline"><%= t('twitter.profile.see_on_twitter') %></div>
+      <% end %>
+    </span>
     </div>
+
     <div class="vertical-spacing"></div>
 
     <% if user.description? %>
       <div class="description text-center"><%= auto_linking(user.description) %></div>
     <% end %>
+
     <% if user.url? %>
       <div class="link text-center"><span class="glyphicon glyphicon-link"></span>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %></div>
     <% end %>

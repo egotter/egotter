@@ -15,18 +15,7 @@
     }
   }
 
-  .twitter-link {
-    .glyphicon.glyphicon-lock {
-      color: #ffffff;
-    }
-
-    .glyphicon.glyphicon-ok {
-      color: #5cb85c;
-    }
-  }
-
-  .name,
-  .twitter-link {
+  .name {
     margin-top: 10px;
 
     a {
@@ -35,7 +24,6 @@
     }
   }
 
-  .twitter-link,
   .calendar {
     padding-bottom: 10px;
   }
