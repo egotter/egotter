@@ -122,6 +122,7 @@ Rails.application.routes.draw do
   resources :timelines, only: %i(show), param: :screen_name
 
   resources :not_found, only: %i(show), param: :screen_name
+  get 'not_found/:screen_name/latest', to: 'not_found#latest', as: 'latest_not_found'
   resources :forbidden, only: %i(show), param: :screen_name
   resources :blocked, only: %i(show), param: :screen_name
   resources :protected, only: %i(show), param: :screen_name

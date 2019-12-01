@@ -1,5 +1,5 @@
 class ProfilesController < ApplicationController
-  before_action { valid_screen_name? }
+  before_action :valid_screen_name?
 
   before_action only: :latest do
     request_context_client.user(params[:screen_name])
@@ -17,14 +17,14 @@ class ProfilesController < ApplicationController
     self.sidebar_disabled = true
     @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
     @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
-    @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user
+    @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
 
     flash.now[:notice] = flash_message(@user) if flash.empty?
   end
 
   def latest
     self.sidebar_disabled = true
-    @user = build_twitter_user_by(screen_name: params[:screen_name])
+    @user = build_twitter_user_by(screen_name: params[:screen_name]) # It's possible to be redirected
 
     flash.now[:notice] = flash_message(@user) if flash.empty?
     render 'show'

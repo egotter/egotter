@@ -786,10 +786,10 @@ ja:
       crumb_title: "@%{user} の最新プロフィール"
       page_title: "@%{user} の最新プロフィール"
       meta_description: "@%{user} の最新プロフィール"
-      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。<a href="%{url}" class="btn btn-default">更新をリクエストする</a>'
+      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。<a href="%{url}" class="btn btn-default">更新をリクエストする</a>'
       see_more: '@%{user} で分析する'
     latest:
-      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。'
+      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。'
   friends:
     new:
       title_html: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -952,6 +952,10 @@ ja:
       meta_description: "@%{user} のプロフィール（垢消し）"
       request_to_update: '更新をリクエストする'
       see_on_twitter: '@%{user} をツイッターで見る'
+      displayed_data_is_html: '検索された @%{user} が見付かりません。アカウントが削除されています。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
+    latest:
+      displayed_data_is_html: '検索された @%{user} が見付かりません。アカウントが削除されています。'
+
   forbidden:
     show:
       crumb_title: "@%{user} のプロフィール（凍結）"
@@ -1159,7 +1163,6 @@ ja:
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     profile_not_found_html: '@%{user} のプロフィール更新に失敗しました。<a class="btn btn-default btn-sm" href="%{url}">ページを更新</a>してください。'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
-    not_found_with_request_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     forbidden_with_request_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
     unauthorized_html: 'ツイッター連携の有効期限が切れています。一度 <a href="%{sign_out}">ログアウト</a> し、再度 <a href="%{sign_in}">ログイン</a> してから検索してみてください。'
