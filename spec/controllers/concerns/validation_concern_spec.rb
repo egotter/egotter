@@ -19,7 +19,7 @@ describe Concerns::ValidationConcern, type: :controller do
     context 'Without signing in' do
       before { allow(controller).to receive(:user_signed_in?).with(no_args).and_return(false) }
       it do
-        expect(controller).to receive(:respond_with_error)
+        expect(controller).to receive(:render).with(hash_including(status: :unauthorized))
         subject
       end
     end
