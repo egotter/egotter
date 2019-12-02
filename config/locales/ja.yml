@@ -1227,6 +1227,7 @@ ja:
         TooManyErrors: 'エラーの回数が多すぎる'
         RemovedMessageNotSent: 'DMの送信ができない'
         MaybeImportBatchFailed: 'データの更新に失敗した'
+        UserInactive: 'Webサイトへのアクセスが一定期間なかった'
       messages:
         TooShortSendInterval: '一定の時間が経過すればまた届きます。'
         TooShortRequestInterval: '一定の時間が経過すればまた届きます。'
@@ -1240,6 +1241,7 @@ ja:
           3. @ego_tter へ試しに1つDMを送ってみる
         RemovedMessageNotSent: 'DMの送信ができない'
         MaybeImportBatchFailed: '一時的なエラーです。次の通知は届くと思います。'
+        UserInactive: 'Webサイトへのアクセスが一定期間ないと、リムられ通知は止まってしまいます。アクセスすれば、また届くようになります。'
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'

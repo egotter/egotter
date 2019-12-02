@@ -44,8 +44,13 @@ class CreateTestMessageWorker
       send_message_to_slack(dm.text, title: 'plne')
     else
       if options['error_class']
-        dm = TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
-        send_message_to_slack(dm.text, title: 'need_fix')
+        if [CreatePromptReportRequest::TooShortSendInterval, CreatePromptReportRequest::TooShortRequestInterval].map(&:to_s).include?(options['error_class'])
+          dm = TestMessage.ok(user.id).deliver!
+          send_message_to_slack(dm.text, title: 'ok')
+        else
+          dm = TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
+          send_message_to_slack(dm.text, title: 'need_fix')
+        end
       else
         dm = TestMessage.ok(user.id).deliver!
         send_message_to_slack(dm.text, title: 'ok')
