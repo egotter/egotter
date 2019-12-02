@@ -1224,7 +1224,7 @@ ja:
         ReportDisabled: 'リムられ通知が無効になっている'
         EgotterBlocked: '@ego_tter がブロックされている'
         TooManyFriends: 'フォロー・フォロワーが多すぎる'
-        TooManyErrors: 'DMの送信ができない'
+        TooManyErrors: 'エラーの回数が多すぎる'
         RemovedMessageNotSent: 'DMの送信ができない'
         MaybeImportBatchFailed: 'データの更新に失敗した'
       messages:
