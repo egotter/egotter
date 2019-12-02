@@ -9,18 +9,33 @@ class CreateTwitterDBUserWorker
   # options:
   #   compressed
   #   force_update
+  #   user_id
   def perform(uids, options = {})
     if options['compressed']
       uids = decompress(uids)
     end
 
-    client = Bot.api_client
-    TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client, force_update: options['force_update'])
+    client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
+    do_perform(uids, client, options['force_update'], options['user_id'])
+
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
     # Errno::ENOENT No such file or directory @ rb_sysopen
     logger.warn "#{e.class} #{e.message} #{uids.inspect.truncate(150)}"
     logger.info e.backtrace.join("\n")
+  end
+
+  def do_perform(uids, client, force_update, user_id)
+    tries ||= 2
+    TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client, force_update: force_update)
+  rescue => e
+    if e.message == 'Invalid or expired token.' && user_id && (tries -= 1) > 0
+      client = Bot.api_client
+      logger.warn "Retry with a bot client"
+      retry
+    else
+      raise
+    end
   end
 
   class << self
