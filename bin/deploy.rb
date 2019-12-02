@@ -22,10 +22,8 @@ module Deploy
     def run
       hosts.each do |host|
         CMD.each do |cmd|
-          puts "#{host} #{cmd}"
-          %x(ssh #{host} "cd #{current_dir} && #{cmd}").each_line do |line|
-            puts "#{host} #{line}"
-          end
+          puts "\e[32m#{host} #{cmd}\e[0m" # Green
+          puts system('ssh', host, "cd #{current_dir} && #{cmd}", exception: true)
         end
 
         unless hosts.last == host
@@ -65,10 +63,8 @@ module Deploy
     def run
       hosts.each do |host|
         CMD.each do |cmd|
-          puts "#{host} #{cmd}"
-          %x(ssh #{host} "cd #{current_dir} && #{cmd}").each_line do |line|
-            puts "#{host} #{line}"
-          end
+          puts "\e[32m#{host} #{cmd}\e[0m" # Green
+          puts system('ssh', host, "cd #{current_dir} && #{cmd}", exception: true)
         end
       end
 
