@@ -10,8 +10,18 @@ class DirectMessageClient
       Rails.logger.debug text
       Rails.logger.debug 'message end ------------------------------------------'
     end
-    request = Request.new(@client).init(:json_post, '/1.1/direct_messages/events/new.json', 'message_create', user_id, text)
-    request.perform
+
+    begin
+      tries ||= 3
+      request = Request.new(@client).init(:json_post, '/1.1/direct_messages/events/new.json', 'message_create', user_id, text)
+      request.perform
+    rescue => e
+      if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
+        retry
+      else
+        raise
+      end
+    end
   end
 
   def destroy_direct_message(id)
