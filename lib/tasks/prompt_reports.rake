@@ -36,11 +36,12 @@ namespace :prompt_reports do
     Rails.logger = logger
 
     user = ENV['USER_ID'] ? User.find(ENV['USER_ID']) : User.find_by(screen_name: ENV['SCREEN_NAME'])
+    limit = ENV['LIMIT'] || 10
     setting = user.notification_setting
 
-    requests = CreatePromptReportRequest.where(user_id: user.id).order(created_at: :desc).limit(10).reverse
-    logs = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(10).reverse
-    reports = PromptReport.where(user_id: user.id).order(created_at: :desc).limit(10).reverse
+    requests = CreatePromptReportRequest.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
+    logs = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
+    reports = PromptReport.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
 
     logger.info 'User'
     logger.info user.attributes.symbolize_keys.slice(:id, :uid, :screen_name, :authorized).inspect
