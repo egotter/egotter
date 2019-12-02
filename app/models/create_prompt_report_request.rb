@@ -21,6 +21,8 @@ class CreatePromptReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
+  attr_accessor :kind
+
   def perform!(record_created)
     error_check! unless @error_check
 
@@ -37,11 +39,10 @@ class CreatePromptReportRequest < ApplicationRecord
     ApplicationRecord.benchmark("CreatePromptReportRequest #{id} Setup parameters", level: :info) do
       changes = ChangesBuilder.new(previous_twitter_user, current_twitter_user, record_created: record_created).build
       changes.merge!(period: calculate_period(record_created, previous_twitter_user, current_twitter_user))
+      self.kind = changes[:unfollowers_changed] ? :you_are_removed : :not_changed
     end
 
-    ApplicationRecord.benchmark("CreatePromptReportRequest #{id} Send report", level: :info) do
-      send_report(changes, previous_twitter_user, current_twitter_user)
-    end
+    send_report(changes, previous_twitter_user, current_twitter_user)
   end
 
   class ChangesBuilder
@@ -164,7 +165,7 @@ class CreatePromptReportRequest < ApplicationRecord
         previous_twitter_user_id: previous_twitter_user.id,
         current_twitter_user_id: current_twitter_user.id,
         create_prompt_report_request_id: id,
-        kind: changes[:unfollowers_changed] ? :you_are_removed : :not_changed,
+        kind: self.kind,
     }
     CreatePromptReportMessageWorker.perform_async(user.id, options)
   end

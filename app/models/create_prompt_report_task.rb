@@ -14,9 +14,13 @@ class CreatePromptReportTask
       twitter_user = create_twitter_user!(request.user)
       request.perform!(twitter_user)
     end
-    request.finished!
 
+    request.finished!
     @log.update(status: true)
+
+    if %i(you_are_removed not_changed).include?(request.kind)
+      update_api_caches(TwitterUser.latest_by(uid: request.user.uid))
+    end
 
     self
   rescue => e
@@ -50,8 +54,7 @@ class CreatePromptReportTask
       ensure
         # Regardless of whether or not the TwitterUser record is created, the Unfriendship and the Unfollowership are updated.
         # Since the internal logic has been changed, otherwise the unfriends and the unfollowers will remain inaccurate.
-        persisted_user = TwitterUser.latest_by(uid: user.uid)
-        update_unfriendships(persisted_user) if persisted_user
+        update_unfriendships(TwitterUser.latest_by(uid: user.uid))
       end
     end
 
@@ -59,6 +62,8 @@ class CreatePromptReportTask
   end
 
   def update_unfriendships(twitter_user)
+    return unless twitter_user
+
     ApplicationRecord.benchmark("Benchmark CreatePromptReportTask  #{request.id} Import unfriendship", level: :info) do
       Unfriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
         CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
@@ -69,6 +74,16 @@ class CreatePromptReportTask
       Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
         CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true, force_update: true)
       end
+    end
+  end
+
+  def update_api_caches(twitter_user)
+    return unless twitter_user
+
+    twitter_user.unfollowers.take(PromptReport::UNFOLLOWERS_SIZE_LIMIT).each do |unfollower|
+      FetchUserForCachingWorker.perform_async(unfollower.uid, user_id: request.user.id, enqueued_at: Time.zone.now)
+      FetchUserForCachingWorker.perform_async(unfollower.screen_name, user_id: request.user.id, enqueued_at: Time.zone.now)
+      # TwitterDB::User has already been forcibly updated in #update_unfriendships .
     end
   end
 end
