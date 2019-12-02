@@ -252,7 +252,7 @@ ja:
           move_to: 'に移動しました'
       reset_menu:
         profile: 'ユーザー情報'
-        update_profile_html: '更新する&nbsp;<i class="fas fa-sync"></i>'
+        update_profile_html: '<i class="fas fa-sync"></i>&nbsp;更新する'
         update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
       order:
         order_histories: "購入履歴"
