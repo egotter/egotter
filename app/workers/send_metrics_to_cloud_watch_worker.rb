@@ -24,6 +24,7 @@ class SendMetricsToCloudWatchWorker
        send_search_error_logs_metrics
        send_create_twitter_user_logs_metrics
        send_requests_metrics
+       send_bots_metrics
     ).each do |method_name|
       send(method_name)
     rescue => e
@@ -200,6 +201,14 @@ class SendMetricsToCloudWatchWorker
       options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data('NotFinishedCount', unfinished_count, options) if unfinished_count > 0
     end
+  end
+
+  def send_bots_metrics
+    namespace = "Bots#{"/#{Rails.env}" unless Rails.env.production?}"
+
+    count = Bot.where(authorized: false).size
+    options = {namespace: namespace, dimensions: []}
+    client.put_metric_data('UnauthorizedCount', count, options) if count > 0
   end
 
   private
