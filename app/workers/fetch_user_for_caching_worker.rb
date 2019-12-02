@@ -23,18 +23,12 @@ class FetchUserForCachingWorker
   #   user_id
   #   enqueued_at
   def perform(uid_or_screen_name, options = {})
-    client =
-        if options['user_id']
-          User.find(options['user_id']).api_client
-        else
-          Bot.api_client
-        end
-
+    client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
     client.user(uid_or_screen_name)
   rescue => e
-    if e.class == Twitter::Error::NotFound && e.message == 'User not found.'
+    if AccountStatus.not_found?(e)
       CreateNotFoundUserWorker.perform_async(uid_or_screen_name) if uid_or_screen_name.class == String
-    elsif e.class == Twitter::Error::Forbidden && e.message == 'User has been suspended.'
+    elsif AccountStatus.suspended?(e)
       CreateForbiddenUserWorker.perform_async(uid_or_screen_name) if uid_or_screen_name.class == String
     else
       logger.warn "#{e.inspect} #{uid_or_screen_name} #{options.inspect}"

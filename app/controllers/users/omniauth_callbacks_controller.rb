@@ -31,6 +31,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     DeleteNotFoundUserWorker.perform_async(user.screen_name)
     DeleteForbiddenUserWorker.perform_async(user.screen_name)
     CreateTwitterDBUserWorker.perform_async([user.uid], force_update: true)
+    FetchUserForCachingWorker.perform_async(user.uid, user_id: user.id, enqueued_at: Time.zone.now)
+    FetchUserForCachingWorker.perform_async(user.screen_name, user_id: user.id, enqueued_at: Time.zone.now)
+
     enqueue_create_twitter_user_job_if_needed(user.uid, user_id: user.id, requested_by: 'sign_in')
 
     flash[:notice] = after_sign_in_message(user)
