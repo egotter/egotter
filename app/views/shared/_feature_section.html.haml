@@ -1,0 +1,24 @@
+%div.text-center{style: 'margin: 0 15px;'}
+  %h2.h4{style: 'font-size: 22px;'}= title
+  .vertical-spacing
+  .vertical-spacing
+  = image_tag image, class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+  .vertical-spacing
+  %div{style: 'font-size: 14px;'}= description
+  - if note
+    %div.text-muted{style: 'font-size: x-small;'}= note
+  .vertical-spacing
+  .small-tips{style: 'width: 275px; margin: 0 auto;'}
+    = link
+    - check = [check] unless check.class == Array
+    - check.each do |chk|
+      .text-notice.text-right.search-hint
+        %i.fas.fa-check
+        = chk
+  .vertical-spacing
+  .vertical-spacing
+
+  .vertical-spacing
+  .vertical-spacing
+  .vertical-spacing
+  .vertical-spacing
