@@ -50,6 +50,10 @@ Settings.enableDeleteTweetsButton = function () {
 
     $.post($(this).data('url'), {tweet: tweet}, function (res) {
       console.log(res);
+
+      setTimeout(function () {
+        window.location.reload();
+      }, 3000);
     });
   });
 };
