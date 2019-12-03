@@ -18,4 +18,23 @@
 
 class DeleteTweetsLog < ApplicationRecord
   include Concerns::Log::Runnable
+
+  before_validation do
+    if self.error_message
+      self.error_message = self.error_message.truncate(150)
+    end
+
+    if self.message
+      self.message = self.message.truncate(150)
+    end
+  end
+
+  class << self
+    def create_by(request:)
+      create(
+          user_id: request.user.id,
+          request_id: request.id,
+      )
+    end
+  end
 end

@@ -1022,20 +1022,35 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">ツイートクリーナー🧹</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
       simple_title: 'ツイートクリーナー🧹'
-      description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万人以上が利用するえごったーに新機能が登場！'
-      text001_html: 'ワンクリックでツイートを一括削除<br><span class="egotter-pink">350万人</span>以上が利用するえごったーに新機能が登場！'
-      text002_html: 'ツイッターの一括削除にはえごったーを利用しています。<br>もし、ツイートの一括削除ができない場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      footer_title: 'ツイートを一括削除'
+      description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万回以上利用されたえごったーに新機能が登場！'
+      text001_html: 'ワンクリックでツイートを一括削除<br><span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！'
       delete_tweets: 'ツイートを一括削除する'
       see_progress: 'ツイート削除ステータスを見る'
       delete_tweets_log: 'ツイート削除ログ'
-      feature_title1: '安全にツイートを削除'
-      feature_text1_html: '<span class="egotter-pink" style="font-size: 20px;">350万人</span>以上が利用するえごったーなら、<br>安全にツイートを削除することができます。'
-      feature_title2: '完全にツイートを削除'
-      feature_text2_html: '可能な限り完全にツイートを削除します。<br>※ツイッターの仕様上、最大で3200件までしか削除できない点にご注意ください。'
-      feature_title3: 'ツイート削除の進捗をお知らせ'
-      feature_text3_html: '今どこまで進んでいるのかを簡単に確認できます。'
-      feature_title4: 'リムられ通知をDMでお知らせ'
-      feature_text4_html: 'フォローを外されたときにDMが届きます。<br>※設定でオフにすることができます。'
+      features:
+          title1_html: '<span class="egotter-pink">安全に</span>ツイートを削除'
+          title2_html: '<span class="egotter-pink">完全に</span>ツイートを削除'
+          title3_html: 'ツイート削除の<span class="egotter-pink">進捗</span>をお知らせ'
+          title4_html: 'えごったーって何？'
+          title5_html: '公式アカウント'
+          text1_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、<br>安全にツイートを削除することができます。'
+          text2_html: '可能な限り完全にツイートを削除します。'
+          text3_html: 'どこまで進んでいるのかを簡単に確認できます。'
+          text4_html: 'フォローを外されたときにDMが届きます。'
+          text5_html: |
+            ツイッターの一括削除にはえごったーを利用しています。<br>
+            もし、ツイートの一括削除ができない場合は、<br>
+            <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。
+          note2: '※ツイッターの仕組み上、最大で3200件まで削除できます。'
+          note4: '※設定でオフにすることができます。'
+          button5: '@ego_tter に質問してみる'
+          check1: '安全で安心'
+          check2: '完全に削除'
+          check3: '進捗がすぐ分かる'
+          check4: 'リムられ通知'
+          check5: '質問はお気軽に'
+      review: 'レビュー'
       requested: 'リクエスト済み'
       modal:
         title: 'ツイート一括削除'
@@ -1470,7 +1485,7 @@ ja:
         not_authorized_html: '@%{name} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
         invalid_token_html: '@%{name} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
         something_error: 'ツイート削除中にエラーが起きました。'
-        zero_tweets: '削除対象のツイートがありません。完了しました。'
+        zero_tweets: '完了しました。削除対象のツイートはありません。'
         timeout: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
         too_many_requests: '%{count} ツイートを削除しました。次の削除は %{reset_in} 秒後です。'
         continue: '%{count} ツイートを削除しました。'
@@ -1692,7 +1707,7 @@ ja:
       long: "%Y年%m月%d日(%a) %H時%M分%S秒 %z"
       short: "%y/%m/%d %H:%M"
       prompt_report_short: "%m月%d日 %-H時%-M分"
-      delete_tweets_short: "%m月%d日 %H時%M分%S秒"
+      delete_tweets_short: "%-m月%-d日 %-H時%-M分"
       next_creation_short: "%-H時%-M分"
       next_creation_long: "%-m月%-d日 %-H時%-M分"
       share_text_short: "%m%d%H%M"

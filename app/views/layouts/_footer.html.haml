@@ -27,7 +27,7 @@
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: root_path_for(controller: 'delete_tweets')}= t('delete_tweets.new.simple_title')
+      %a{href: delete_tweets_path(via: build_via('footer'))}= t('delete_tweets.new.footer_title')
       %br
 
     = succeed spaces do
