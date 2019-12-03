@@ -184,7 +184,7 @@
   <div class="col-xs-8">
     <div>
       <% if @latest_prompt_report_log&.error_class&.present? %>
-        <% error_class = @latest_prompt_report_log.error_class.split('::').last %>
+        <% error_class = @latest_prompt_report_log.error_class.demodulize %>
         <%= t('.notifications.prompt_reports.error_html', text: t("dm.testMessage.errors.#{error_class}", default: error_class)) %>
       <% else %>
         <%= t('.notifications.prompt_reports.running_normally_html') %>

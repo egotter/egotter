@@ -127,7 +127,7 @@ class SendMetricsToCloudWatchWorker
     duration = {created_at: 10.minutes.ago..Time.zone.now}
 
     CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, count|
-      name = key.split('::').last
+      name = key.demodulize
       options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(name, count, options)
     end
@@ -165,13 +165,13 @@ class SendMetricsToCloudWatchWorker
     duration = {created_at: 10.minutes.ago..Time.zone.now}
 
     CreateTwitterUserLog.where(duration).where(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
-      name = key.split('::').last
+      name = key.demodulize
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(name, count, options)
     end
 
     CreateTwitterUserLog.where(duration).where.not(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
-      name = key.split('::').last
+      name = key.demodulize
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(name, count, options)
     end

@@ -117,11 +117,11 @@ class TestMessage < ApplicationRecord
     end
 
     def readable_error_class(error)
-      I18n.t("dm.testMessage.errors.#{error.split('::').last}", default: error)
+      I18n.t("dm.testMessage.errors.#{error.demodulize}", default: error)
     end
 
     def readable_error_message(error, message)
-      I18n.t("dm.testMessage.messages.#{error.split('::').last}", default: message)
+      I18n.t("dm.testMessage.messages.#{error.demodulize}", default: message)
     end
 
 
