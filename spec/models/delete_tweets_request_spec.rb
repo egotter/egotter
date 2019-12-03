@@ -20,7 +20,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
       before do
         client = double('Client')
-        allow(user).to receive(:api_client).with(no_args).and_return(client)
+        allow(user).to receive_message_chain(:api_client, :twitter).with(no_args).with(no_args).and_return(client)
         allow(client).to receive(:verify_credentials).with(no_args).and_raise('Invalid or expired token.')
       end
 
@@ -32,7 +32,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
       before do
         client = double('Client', verify_credentials: nil, user: {statuses_count: 0})
-        allow(user).to receive(:api_client).with(no_args).and_return(client)
+        allow(user).to receive_message_chain(:api_client, :twitter).with(no_args).with(no_args).and_return(client)
       end
 
       it { expect { subject }.to raise_error(DeleteTweetsRequest::TweetsNotFound) }
