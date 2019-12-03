@@ -5,6 +5,7 @@
 #  id          :bigint(8)        not null, primary key
 #  session_id  :string(191)      not null
 #  user_id     :integer          not null
+#  tweet       :boolean          default(FALSE), not null
 #  finished_at :datetime
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
@@ -23,83 +24,133 @@ class DeleteTweetsRequest < ApplicationRecord
   validates :session_id, presence: true
   validates :user_id, presence: true
 
-  def perform!(timeout_seconds: 10)
-    Timeout.timeout(timeout_seconds) do
-      do_perform!
-    end
-  rescue Timeout::Error => e
-    @timeout = true
-    logger.info "#{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
-  end
+  attr_reader :destroy_count, :retry_in
 
-  def timeout?
-    @timeout ||= false
-  end
+  TIMEOUT_SECONDS = 10
+  RETRY_INTERVAL = 10
 
-  def too_many_requests?
-    @too_many_requests ||= false
-  end
+  FETCH_COUNT = 100
+  THREADS_NUM = 3
 
-  def error
-    @error
-  end
-
-  def tweets_not_found?
-    @tweets_not_found ||= false
-  end
-
-  def destroy_count
-    @destroy_count ||= 0
-  end
-
-  def send_finished_message
-    dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
-    dm_client.create_direct_message(user.uid, I18n.t('delete_tweets.new.dm_messge'))
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
-    logger.info e.backtrace.join("\n")
-  end
-
-  def send_error_message
-    dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
-    url = Rails.application.routes.url_helpers.delete_tweets_url
-    dm_client.create_direct_message(user.uid, I18n.t('delete_tweets.new.dm_error_messge', url: url))
-  rescue => e
-    logger.warn "#{self.class}##{__method__} #{e.class} #{e.message}"
-    logger.info e.backtrace.join("\n")
-  end
-
-  private
-
-  def do_perform!
-    tweets = client.user_timeline(count: 100).select {|t| t.created_at < created_at}
-    if tweets.empty?
-      @tweets_not_found = true
-      return
-    end
+  def perform!
+    error_check! unless @error_check
 
     @destroy_count = 0
 
-    Parallel.each(tweets, in_threads: 3) do |tweet|
-      destroy_status!(tweet.id)
-      @destroy_count += 1
+    ::Timeout.timeout(TIMEOUT_SECONDS) do
+      tweets = api_client.user_timeline(count: FETCH_COUNT).select { |t| t.created_at < created_at }
+      raise TweetsNotFound if tweets.empty?
+
+      Parallel.each(tweets, in_threads: THREADS_NUM) do |tweet|
+        destroy_status!(tweet.id)
+        @destroy_count += 1
+      end
     end
 
+    raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
+
   rescue Twitter::Error::TooManyRequests => e
-    @too_many_requests = true
-    @error = e
-    logger.warn "#{e.class} #{e.message} #{self.inspect}"
-    logger.info e.backtrace.join("\n")
+    raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: destroy_count)
+  rescue ::Timeout::Error => e
+    raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
+  end
+
+  def error_check!
+    raise Unauthorized unless user.authorized?
+
+    begin
+      api_client.verify_credentials
+    rescue => e
+      if e.message == 'Invalid or expired token.'
+        raise InvalidToken.new(e.message)
+      else
+        raise Unknown.new("#{e.class} #{e.message}")
+      end
+    end
+
+    raise TweetsNotFound if api_client.user[:statuses_count] == 0
+
+    @error_check = true
   end
 
   def destroy_status!(tweet_id)
-    client.destroy_status(tweet_id)
+    api_client.destroy_status(tweet_id)
   rescue Twitter::Error::NotFound => e
     raise unless e.message == 'No status found with that ID.'
   end
 
-  def client
-    @client ||= user.api_client.twitter
+  def tweet_finished_message
+    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_tweet')
+    api_client.update(I18n.t('delete_tweets.tweet.message', url: url, kaomoji: Kaomoji.unhappy))
+  rescue => e
+    raise FinishedTweetNotSent.new("#{e.class} #{e.message}")
+  end
+
+  def send_finished_message(sender)
+    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_dm')
+    dm_client(sender).create_direct_message(user.uid, I18n.t('delete_tweets.dm.message', url: url))
+  rescue => e
+    raise FinishedMessageNotSent.new("#{e.class} #{e.message}")
+  end
+
+  def send_error_message(sender)
+    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_error_dm')
+    dm_client(sender).create_direct_message(user.uid, I18n.t('delete_tweets.dm.error_message', url: url))
+  rescue => e
+    raise ErrorMessageNotSent.new("#{e.class} #{e.message}")
+  end
+
+  def api_client
+    user.api_client.twitter
+  end
+
+  def dm_client(sender)
+    DirectMessageClient.new(sender.api_client.twitter)
+  end
+
+  class Error < StandardError
+  end
+
+  class Retryable < StandardError
+    attr_reader :retry_in, :destroy_count
+
+    def initialize(retry_in:, destroy_count:)
+      super('')
+      @retry_in = retry_in
+      @destroy_count = destroy_count
+    end
+  end
+
+  class AlreadyFinished < Error
+  end
+
+  class Unauthorized < Error
+  end
+
+  class InvalidToken < Error
+  end
+
+  class TweetsNotFound < Error
+  end
+
+  class Timeout < Retryable
+  end
+
+  class TooManyRequests < Retryable
+  end
+
+  class Continue < Retryable
+  end
+
+  class FinishedMessageNotSent < Error
+  end
+
+  class ErrorMessageNotSent < Error
+  end
+
+  class FinishedTweetNotSent < Error
+  end
+
+  class Unknown < Error
   end
 end

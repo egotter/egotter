@@ -45,7 +45,10 @@ Settings.enableDeleteTweetsButton = function () {
     $modal.modal('hide');
     $('.delete-tweets-btn').attr('disabled', 'disabled')
         .prop("disabled", true);
-    $.post($(this).data('url'), function (res) {
+
+    var tweet = $modal.find('#tweet-after-finishing').prop('checked');
+
+    $.post($(this).data('url'), {tweet: tweet}, function (res) {
       console.log(res);
     });
   });
