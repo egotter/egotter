@@ -83,6 +83,6 @@ crumb :conversation do |screen_name|
 end
 
 crumb :cluster do |screen_name|
-  link t('clusters.new.simple_title'), cluster_path(screen_name: screen_name, via: build_via("breadcrumb_cluster"))
+  link t('clusters.new.crumb_title'), cluster_path(screen_name: screen_name, via: build_via("breadcrumb_cluster"))
   parent :timeline, screen_name
 end

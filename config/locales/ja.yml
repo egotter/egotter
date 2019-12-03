@@ -14,8 +14,6 @@ ja:
       search: "検索"
       empty_html: '結果は 0 件です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。<br><br>フォロー・フォロワーが多すぎる場合は、<a href="%{sign_in_path}">ログイン</a> しないと検索できないことがあります。その場合は、<a href="%{sign_in_path}">ログイン</a> してから再度検索してみてください。'
       top: "トップ"
-      top_page: "トップページ"
-      feedback: "ご意見"
       support: "お問い合わせ"
       github: "Github"
       information: "お知らせ"
@@ -589,7 +587,7 @@ ja:
     new:
       title_html: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '片思いチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
-      simple_title: '片思いチェック'
+      footer_title: '片思いチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       lead_001: "スマホでさくっと片思いチェック"
@@ -644,7 +642,7 @@ ja:
     new:
       title_html: '<span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'リムられチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
-      simple_title: 'リムられチェック'
+      footer_title: 'リムられチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
       short_description: "フォローを外されたアカウントをさくっと見付けることができます。"
       lead_001: "スマホでさくっとリムられチェック"
@@ -742,7 +740,7 @@ ja:
     new:
       title_html: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: '最近いない人検索 - えごったー スマホでかんたん ツイッターのフォロー整理'
-      simple_title: '最近いない人検索'
+      footer_title: '最近いない人検索'
       description: "保存ユーザー数4,800万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
       short_description: "スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
       lead_001: "最近いない人、何してるんだろう。"
@@ -897,7 +895,8 @@ ja:
     new:
       title_html: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'クラスタ判定 - えごったー スマホでかんたん ツイッターのフォロー整理'
-      simple_title: 'クラスタ判定'
+      crumb_title: 'クラスタ判定'
+      footer_title: 'クラスタ判定'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからクラスタ判定！ 検索されたユーザーが入っているクラスタをさくっと判定します。"
       short_description: "検索されたユーザーが入っているクラスタをさくっと判定します。"
       lead_001: "スマホでさくっとクラスタ判定"
@@ -994,6 +993,7 @@ ja:
       title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
+      footer_title: 'ときめきアンフォロー✨'
       description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
       text001_html: 'あなたは今のタイムラインにときめきますか？'
       text002_html: '最初は良いと思ってフォローしたけど、今はときめかない・・・そんな時は、相手に感謝しつつアンフォローしましょう。'
@@ -1053,6 +1053,10 @@ ja:
         title: プロフィールディレクトリ
       second_layer:
         title: プロフィールディレクトリ
+  footer:
+    feedback: "ご意見"
+    titles:
+      root: 'トップページ'
   shared:
     functions:
       text_html: >
