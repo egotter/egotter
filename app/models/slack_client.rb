@@ -14,6 +14,7 @@ class SlackClient
       search_histories_monitoring: ENV['SLACK_SEARCH_HISTRIES_MONITORING_WEBHOOK_URL'],
       test_messages:               ENV['SLACK_TEST_MESSAGES_URL'],
       bot:                         ENV['SLACK_BOT_URL'],
+      delete_tweets:               ENV['SLACK_DELETE_TWEETS_URL'],
   }
 
   def initialize(webhook:)

@@ -12,6 +12,7 @@ class DeleteTweetsController < ApplicationController
   def delete
     request = DeleteTweetsRequest.create!(session_id: fingerprint, user_id: current_user.id)
     jid = DeleteTweetsWorker.perform_async(request.id, user_id: current_user.id)
+    SlackClient.delete_tweets.send_message("Started `#{jid}` `#{request.id}` `#{request.tweet}`") rescue nil
     render json: {jid: jid}
   end
 end
