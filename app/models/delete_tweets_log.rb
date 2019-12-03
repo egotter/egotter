@@ -6,6 +6,8 @@
 #  user_id       :integer          default(-1), not null
 #  request_id    :integer          default(-1), not null
 #  status        :boolean          default(FALSE), not null
+#  destroy_count :integer          default(0), not null
+#  retry_in      :integer          default(0), not null
 #  message       :string(191)      default(""), not null
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null

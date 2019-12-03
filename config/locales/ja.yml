@@ -1027,7 +1027,7 @@ ja:
       text001_html: 'ワンクリックでツイートを一括削除<br><span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！'
       delete_tweets: 'ツイートを一括削除する'
       see_progress: 'ツイート削除ステータスを見る'
-      delete_tweets_log: 'ツイート削除ログ'
+      delete_tweets_log: 'ツイート削除ステータス'
       features:
           title1_html: '<span class="egotter-pink">安全に</span>ツイートを削除'
           title2_html: '<span class="egotter-pink">完全に</span>ツイートを削除'
@@ -1051,14 +1051,28 @@ ja:
           check4: 'リムられ通知'
           check5: '質問はお気軽に'
       review: 'レビュー'
-      requested: 'リクエスト済み'
+      requested: '削除リクエスト済み'
       modal:
         title: 'ツイート一括削除'
-        warning_html: "@%{screen_name} のTwitterのツイートをすべて削除します。本当にツイートを削除しますか？<br><br><b>※この操作は取り消すことができません。</b>"
+        warning1_html: "@%{screen_name} のツイートをすべて削除します。本当に削除しますか？"
+        warning2_html: "<b>※この操作は取り消すことができません。</b>"
+        tweet_after_finishing: "削除の完了後にツイートする"
         ok: "はい、削除します"
         cancel: "いいえ"
-      dm_messge: 'ツイートの削除が完了しました。'
-      dm_error_messge: 'ツイートの削除中にエラーが起きました。大抵のエラーは一時的なものです。お手数ですが、再度お試しください。%{url}'
+    tweet:
+      message: 'ツイートの削除が完了しました。%{kaomoji} #egotter %{url}'
+    dm:
+      message: 'ツイートの削除が完了しました。#egotter %{url}'
+      error_message: 'ツイートの削除中にエラーが起きました。大抵のエラーは一時的なものです。お手数ですが、再度お試しください。#egotter %{url}'
+    log:
+      errors:
+        Unauthorized_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
+        InvalidToken_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
+        Unknown_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
+        TweetsNotFound_html: '完了しました。削除対象のツイートは 0 です。'
+        Continue_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
+        TooManyRequests_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
+        Timeout_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
   directory:
     profiles:
       link_title: プロフィール
@@ -1480,15 +1494,6 @@ ja:
         uid: "uid"
         screen_name: "screen name"
         user_info: "user_info"
-      delete_tweets_request:
-        processing: "ツイート削除中"
-        not_authorized_html: '@%{name} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
-        invalid_token_html: '@%{name} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
-        something_error: 'ツイート削除中にエラーが起きました。'
-        zero_tweets: '完了しました。削除対象のツイートはありません。'
-        timeout: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
-        too_many_requests: '%{count} ツイートを削除しました。次の削除は %{reset_in} 秒後です。'
-        continue: '%{count} ツイートを削除しました。'
 
     errors:
       models:

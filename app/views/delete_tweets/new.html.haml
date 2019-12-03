@@ -89,7 +89,12 @@
             %span{'aria-hidden' => 'true'} ×
           %h4.modal-title= t('.modal.title')
         .modal-body
-          %p= t('.modal.warning_html', screen_name: current_user.screen_name)
+          %div= t('.modal.warning1_html', screen_name: current_user.screen_name)
+          .vertical-spacing
+          %div= t('.modal.warning2_html')
+          .vertical-spacing
+          = check_box_tag('tweet-after-finishing', '1', true)
+          %label{for: 'tweet-after-finishing'}= t('.modal.tweet_after_finishing')
         .modal-footer
           %button.btn.btn-default{'data-dismiss' => 'modal', type: 'button'}= t('.modal.cancel')
           %button.btn.btn-danger.ok{'data-url' => delete_tweets_path, type: 'button'}= t('.modal.ok')

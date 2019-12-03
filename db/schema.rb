@@ -370,6 +370,8 @@ ActiveRecord::Schema.define(version: 2019_11_22_232415) do
     t.integer "user_id", default: -1, null: false
     t.integer "request_id", default: -1, null: false
     t.boolean "status", default: false, null: false
+    t.integer "destroy_count", default: 0, null: false
+    t.integer "retry_in", default: 0, null: false
     t.string "message", default: "", null: false
     t.string "error_class", default: "", null: false
     t.string "error_message", default: "", null: false
@@ -380,6 +382,7 @@ ActiveRecord::Schema.define(version: 2019_11_22_232415) do
   create_table "delete_tweets_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.string "session_id", null: false
     t.integer "user_id", null: false
+    t.boolean "tweet", default: false, null: false
     t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

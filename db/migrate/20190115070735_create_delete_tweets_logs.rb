@@ -4,6 +4,8 @@ class CreateDeleteTweetsLogs < ActiveRecord::Migration[4.2]
       t.integer :user_id,       null: false, default: -1
       t.integer :request_id,    null: false, default: -1
       t.boolean :status,        null: false, default: false
+      t.integer :destroy_count, null: false, default: 0
+      t.integer :retry_in,      null: false, default: 0
       t.string  :message,       null: false, default: ''
       t.string  :error_class,   null: false, default: ''
       t.string  :error_message, null: false, default: ''
