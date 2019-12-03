@@ -175,15 +175,23 @@
 
       - unless hide_favorite_menu?
         .container.pre-footer
-          %h2.h4.text-center= t('searches.common.popular')
-          .container
+          #functions-section.container
+            .thin-border
+            .vertical-spacing
+            .vertical-spacing
+            %h2.h4.text-center= t('shared.functions.text_html')
+            .vertical-spacing
+            .vertical-spacing
+            .vertical-spacing
+            .vertical-spacing
             .row
-              - top_page_paths.each do |path, label|
-                .col-xs-12.col-sm-4.col-md-3.col-lg-3{style: 'margin-bottom: 15px;'}
-                  %div{style: 'max-width: 400px; margin-left: auto; margin-right: auto; position: relative; border: 4px solid #999999;'}
-                    = link_to path, style: 'display: block;' do
-                      = image_tag '/egotter_icon_400x400.jpg', class: 'img-responsive'
-                      %div{style: 'font-size: x-large; color: white; padding: 4px 8px; background: rgb(0, 0, 0); background: rgba(0, 0, 0, 0.7); position: absolute; left: 0; bottom: 0; width: 100%;'}= label
+              = render(partial: 'shared/function_section', locals: {path: one_sided_friends_top_path(build_via('functions_icon')), title: t('shared.functions.one_sided_friends.title'), what_is_this: t('shared.functions.one_sided_friends.what_is_this_html'), description: t('shared.functions.one_sided_friends.text_html', title: strip_tags(t('shared.functions.one_sided_friends.title')), url: one_sided_friends_top_path(via: build_via('functions_description'))), image: '/egotter_onesided_friends_with_text_400x453.png'})
+              = render(partial: 'shared/function_section', locals: {path: unfriends_top_path(build_via('functions_icon')), title: t('shared.functions.unfriends.title'), what_is_this: t('shared.functions.unfriends.what_is_this_html'), description: t('shared.functions.unfriends.text_html', title: strip_tags(t('shared.functions.unfriends.title')), url: unfriends_top_path(via: build_via('functions_description'))), image: '/egotter_unfriends_with_text_400x453.png'})
+              = render(partial: 'shared/function_section', locals: {path: inactive_friends_top_path(build_via('functions_icon')), title: t('shared.functions.inactive_friends.title'), what_is_this: t('shared.functions.inactive_friends.what_is_this_html'), description: t('shared.functions.inactive_friends.text_html', title: strip_tags(t('shared.functions.inactive_friends.title')), url: inactive_friends_top_path(build_via('functions_description'))), image: '/egotter_inactive_friends_with_text_400x453.png'})
+              = render(partial: 'shared/function_section', locals: {path: friends_top_path(build_via('functions_icon')), title: t('shared.functions.friends.title'), what_is_this: t('shared.functions.friends.what_is_this_html'), description: t('shared.functions.friends.text_html', title: strip_tags(t('shared.functions.friends.title')), url: friends_top_path(build_via('functions_description'))), image: '/egotter_friends_with_text_400x453.png'})
+              = render(partial: 'shared/function_section', locals: {path: clusters_top_path(build_via('functions_icon')), title: t('shared.functions.clusters.title'), what_is_this: t('shared.functions.clusters.what_is_this_html'), description: t('shared.functions.clusters.text_html', title: strip_tags(t('shared.functions.clusters.title')), url: clusters_top_path(build_via('functions_description'))), image: '/egotter_clusters_with_text_400x453.png'})
+              = render(partial: 'shared/function_section', locals: {path: tokimeki_unfollow_top_path(build_via('functions_icon')), title: t('shared.functions.tokimeki_unfollow.title'), what_is_this: t('shared.functions.tokimeki_unfollow.what_is_this_html'), description: t('shared.functions.tokimeki_unfollow.text_html', title: strip_tags(t('shared.functions.tokimeki_unfollow.title')), url: tokimeki_unfollow_top_path(build_via('functions_description'))), image: '/egotter_tokimeki_unfollow_with_text_400x453.png'})
+              = render(partial: 'shared/function_section', locals: {path: delete_tweets_path(build_via('functions_icon')), title: t('shared.functions.delete_tweets.title'), what_is_this: t('shared.functions.delete_tweets.what_is_this_html'), description: t('shared.functions.delete_tweets.text_html', title: strip_tags(t('shared.functions.delete_tweets.title')), url: delete_tweets_path(build_via('functions_description'))), image: '/egotter_delete_tweets_with_text_400x453.png'})
 
       - unless hide_new_information?
         .container.pre-footer

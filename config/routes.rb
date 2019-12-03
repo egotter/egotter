@@ -15,7 +15,7 @@ Rails.application.routes.draw do
   end
 
   post "delete_tweets", to: "delete_tweets#delete"
-  get 'delete_tweets', to: 'delete_tweets#new', as: :delete_tweets_top
+  get 'delete_tweets', to: 'delete_tweets#new'
 
   delete "reset_egotter", to: "reset_egotter#reset"
   post "reset_cache", to: "reset_cache#reset"

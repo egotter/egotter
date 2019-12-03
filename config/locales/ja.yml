@@ -1053,6 +1053,96 @@ ja:
         title: プロフィールディレクトリ
       second_layer:
         title: プロフィールディレクトリ
+  shared:
+    functions:
+      text_html: >
+        えごったーを使えば、他にもたくさんのツイッター分析ができます。<br>
+        <br>
+        リムられチェック、リムられの自動通知、片思いチェックなどが特に人気です。
+      one_sided_friends:
+        title: '片思いチェック'
+        what_is_this_html: >
+          片思いとは、<span class="egotter-pink">フォローだけ</span>の関係のことです。<br>
+          <br>
+          片思いの例：<br>
+          &nbsp;&nbsp;・自分から相手へのフォロー ○<br>
+          &nbsp;&nbsp;・相手から自分へのフォロー ☓
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、自分のフォローの中から、片思いになっているアカウントを簡単に見付けることができます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>で片思いになっているアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。
+      unfriends:
+        title: 'リムられチェック'
+        what_is_this_html: >
+          リムられとは、<span class="egotter-pink">フォローを解除された</span>の関係のことです。<br>
+          <br>
+          リムられの例：<br>
+          &nbsp;&nbsp;・相手から自分へのフォロー （以前は）○<br>
+          &nbsp;&nbsp;・相手から自分へのフォロー （いつの間にか）☓
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、自分のフォロワーの中から、フォローを解除されたアカウントを簡単に見付けることができます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>でフォローを解除されたアカウントを見付けた後は、その場で簡単にフォロワー整理を行うことができます。
+      inactive_friends:
+        title: '最近いない人検索'
+        what_is_this_html: >
+          最近いない人とは、<span class="egotter-pink">一定の期間ツイートしなかった</span>アカウントのことです。<br>
+          <br>
+          アクティブ（活発）の反対なので、えごったーでは<span class="egotter-pink">非アクティブ</span>とも書いています。<br>
+          <br>
+          最近いない人（非アクティブ）の例：<br>
+          &nbsp;&nbsp;・最後のツイートから一定期間経っている<br>
+          &nbsp;&nbsp;・これまで一度もツイートしていない
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、自分のフォロー・フォロワーの中から、一定期間ツイートしていないアカウントを簡単に見付けることができます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>で一定期間ツイートしていないアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。
+      friends:
+        title: 'フォローチェック'
+        what_is_this_html: >
+          フォローチェックとは、フォローしているユーザーの中から<span class="egotter-pink">様々な条件でユーザーを検索できる</span>機能のことです。<br>
+          <br>
+          検索条件の例：<br>
+          &nbsp;&nbsp;・フォロー返し率の高い順に並び替え<br>
+          &nbsp;&nbsp;・非アクティブのみを抽出
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、自分のフォロー・フォロワーの中から、フォロー返し率の高いアカウントを簡単に見付けることができます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>でフォロー返し率の高いアカウントを見付けた後は、その場で簡単にフォロー整理を行うことができます。
+      clusters:
+        title: 'クラスタ判定'
+        what_is_this_html: >
+          クラスタ判定とは、今までのツイートを分析して、検索されたユーザーが入っている<span class="egotter-pink">クラスタを検索できる</span>機能のことです。<br>
+          <br>
+          クラスタとは、興味のあるテーマみたいなものです。<br>
+          <br>
+          クラスタ判定の例：<br>
+          &nbsp;&nbsp;・可愛いクラスタ<br>
+          &nbsp;&nbsp;・クソリプクラスタ
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、人には内緒にしていたはずの興味・趣味が丸分かりになります。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>で興味のあるクラスタを見付けた後は、同じクラスタに入っている他のユーザーを簡単に見付けることができます。
+      tokimeki_unfollow:
+        title: 'ときめきアンフォロー'
+        what_is_this_html: >
+          ときめきアンフォローとは、<span class="egotter-pink">昔はときめいていたけど、今はそうでもない</span>ユーザーのフォローを解除する機能のことです。<br>
+          <br>
+          今はもうときめかなくなったフォローを解除する。それは、<span class="egotter-pink">新たな門出</span>ともいえる儀式なのです。ぜひその門出を祝福してあげてください。
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、フォローの中から、ときめかなくなったユーザーを簡単に見付けることができます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>でときめかなくなったユーザーを見付けた後は、相手に感謝しつつ、フォロー解除しましょう。
+      delete_tweets:
+        title: 'ツイートクリーナー'
+        what_is_this_html: >
+          ツイートクリーナーとは、ワンクリックで<span class="egotter-pink">ツイートを一括削除する</span>機能のことです。<br>
+          <br>
+          黒歴史を消したくなるとき、ありますよね。そんなときは、えごったーでツイートを<span class="egotter-pink">ワンクリック削除</span>してしまいましょう。
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使うと、これまでのツイートをワンクリックで一括削除することができます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>でツイートを一括削除した後は、作業の完了をDMでお知らせします。
   common:
     show:
       updating: '%{user} のデータを更新中'

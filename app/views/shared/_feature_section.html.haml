@@ -1,14 +1,14 @@
-%div.text-center{style: 'margin: 0 15px;'}
-  %h2.h4{style: 'font-size: 22px;'}= title
+.feature-section.text-center
+  %h2.h4= title
   .vertical-spacing
   .vertical-spacing
-  = image_tag image, class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+  = image_tag image, class: 'img-rounded', height: '160px'
   .vertical-spacing
-  %div{style: 'font-size: 14px;'}= description
+  .description= description
   - if note
-    %div.text-muted{style: 'font-size: x-small;'}= note
+    .text-muted= note
   .vertical-spacing
-  .small-tips{style: 'width: 275px; margin: 0 auto;'}
+  .small-tips
     = link
     - check = [check] unless check.class == Array
     - check.each do |chk|
@@ -17,7 +17,6 @@
         = chk
   .vertical-spacing
   .vertical-spacing
-
   .vertical-spacing
   .vertical-spacing
   .vertical-spacing

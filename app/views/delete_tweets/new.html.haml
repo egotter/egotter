@@ -31,7 +31,7 @@
     .vertical-spacing
   - else
     .center-block{style: 'width: 80%;'}
-      = sign_in_with_twitter_link(delete_tweets_top_path, 'button', class: 'btn btn-primary btn-block')
+      = sign_in_with_twitter_link(delete_tweets_path, 'button', class: 'btn btn-primary btn-block')
       .text-notice.text-right.search-hint
         %i.fas.fa-check
         = t('searches.new.pc.check_002')

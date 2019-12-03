@@ -45,18 +45,6 @@ module ApplicationHelper
         (controller_name == 'home' && action_name == 'start')
   end
 
-  def top_page_paths
-    [
-      [one_sided_friends_top_path, t('one_sided_friends.new.simple_title')],
-      [unfriends_top_path, t('unfriends.new.simple_title')],
-      [inactive_friends_top_path, t('inactive_friends.new.simple_title')],
-      [friends_top_path, t('friends.new.simple_title')],
-      [clusters_top_path, t('clusters.new.simple_title')],
-      [tokimeki_unfollow_top_path, t('tokimeki_unfollow.new.simple_title')],
-      [delete_tweets_top_path, t('delete_tweets.new.simple_title')],
-    ]
-  end
-
   def kick_out_error_path(reason, redirect_path: nil)
     if redirect_path
       sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}", redirect_path: redirect_path)
