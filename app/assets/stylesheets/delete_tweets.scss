@@ -1,5 +1,21 @@
-.delete-tweets {
-  &.lead {
-    font-size: 16px;
+#delete-tweets {
+  max-width: 600px;
+  margin: 0 auto;
+
+  h2 {
+    font-size: 22px;
+  }
+
+  .lead {
+    font-size: 14px;
+  }
+
+  .btn-width-wrapper {
+    width: 275px;
+    margin: 0 auto;
+
+    .text-right {
+      font-size: x-small;
+    }
   }
 }
