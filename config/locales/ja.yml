@@ -1056,6 +1056,7 @@ ja:
         title: 'ツイート一括削除'
         warning1_html: "@%{screen_name} のツイートをすべて削除します。本当に削除しますか？"
         warning2_html: "<b>※この操作は取り消すことができません。</b>"
+        warning3_html: "<b>※削除できるのは最大3200件までです。</b>"
         tweet_after_finishing: "削除の完了後にツイートする"
         ok: "はい、削除します"
         cancel: "いいえ"
