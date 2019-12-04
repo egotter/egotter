@@ -1422,7 +1422,7 @@ ja:
       from_egotter: '@ego_tter から @%{user} へのDM送信テスト'
     testMessage:
       timeline_page: '%{screen_name} さんの結果ページ'
-      lets_start: 'リムられ通知のテスト送信を開始します。通知の設定変更はこちら → %{url} #egotter'
+      lets_start: 'リムられ通知のテスト送信を開始します。通知の設定変更はこちら #egotter %{url}'
       errors:
         TooShortSendInterval: '前回の送信から時間が経っていない'
         TooShortRequestInterval: '前回の更新から時間が経っていない'
@@ -1458,7 +1458,7 @@ ja:
     promptReportNotification:
       title: 'えごったーの %{user} リムられ速報です。最後にえごったーにアクセスしてから、フォロワー数が %{before} から %{after} に変わりました。'
       message: '結果を見る %{url} #egotter ※このリムられ速報は、フォロワー数に変化があった時のみ、最大で1時間に1回ほど届きます。'
-      lets_start: 'リムられ通知を開始します。通知の設定変更はこちら → https://egotter.com/settings?locale=ja&via=prompt_report_lets_start #egotter'
+      lets_start: 'リムられ通知を開始します。通知の設定変更はこちら #egotter https://egotter.com/settings?locale=ja&via=prompt_report_lets_start'
   onesignal:
     defaultNotification:
       title: 'えごったー'

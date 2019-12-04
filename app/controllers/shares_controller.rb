@@ -5,7 +5,7 @@ class SharesController < ApplicationController
   before_action :require_login!
 
   def create
-    request = TweetRequest.new(user_id: current_user.id, text: "#{params[:text]} #{egotter_share_url} #egotter")
+    request = TweetRequest.new(user_id: current_user.id, text: "#{params[:text]} #egotter #{egotter_share_url}")
     if request.valid?
       request.save!
       TweetEgotterWorker.perform_async(request.id)
