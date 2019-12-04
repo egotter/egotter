@@ -11,6 +11,10 @@ class AccountStatus
     @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'User has been suspended.'
   end
 
+  def unauthorized?
+    @ex && @ex.class == Twitter::Error::Unauthorized && @ex.message == 'Invalid or expired token.'
+  end
+
   class << self
     def not_found?(ex)
       new(ex: ex).not_found?
@@ -18,6 +22,10 @@ class AccountStatus
 
     def suspended?(ex)
       new(ex: ex).suspended?
+    end
+
+    def unauthorized?(ex)
+      new(ex: ex).unauthorized?
     end
   end
 end
