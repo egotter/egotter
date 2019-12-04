@@ -1,0 +1,4 @@
+.container.pre-footer
+  %h2.h4.text-center= t('shared.announcement.title')
+  %table.table.table-bordered.table-condensed.table-responsive
+    = render(partial: 'announcement/announcement', collection: Announcement.list, cached: true)

@@ -152,7 +152,6 @@
     - else
       = yield
 
-
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.sticky/1.0.3/jquery.sticky.min.js', type: 'text/javascript'}
     %script{src: '//code.highcharts.com/7.0.2/highcharts.js', type: 'text/javascript'}
     %script{src: '//code.highcharts.com/7.0.2/highcharts-more.js', type: 'text/javascript'}
@@ -164,41 +163,9 @@
     %link{href: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}
     %script{src: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
 
-    - if %w(timelines home waiting searches one_sided_friends unfriends inactive_friends friends conversations relationships statuses clusters tokimeki_unfollow delete_tweets).include?(controller_name)
-      - if !user_signed_in? && controller_name != 'home'
-        .container.pre-footer.text-center
-          %h2.h4= t('searches.new.feature_007')
-          = t('searches.new.feature_desc_007_html', url: sign_in_path(via: build_via('feature_desc_007_bottom')))
-          .vertical-spacing
-          = sign_in_with_twitter_link(nil, 'button_bottom', class: 'btn btn-info btn-block center-block', style: 'width: 80%; max-width: 375px;')
-          .vertical-spacing
-
-      - unless hide_favorite_menu?
-        .container.pre-footer
-          #functions-section.container
-            .thin-border
-            .vertical-spacing
-            .vertical-spacing
-            %h2.h4.text-center= t('shared.functions.text_html')
-            .vertical-spacing
-            .vertical-spacing
-            .vertical-spacing
-            .vertical-spacing
-            .row
-              = render(partial: 'shared/function_section', locals: {path: one_sided_friends_top_path(via: build_via('functions_icon')), title: t('shared.functions.one_sided_friends.title'), what_is_this: t('shared.functions.one_sided_friends.what_is_this_html'), description: t('shared.functions.one_sided_friends.text_html', title: strip_tags(t('shared.functions.one_sided_friends.title')), url: one_sided_friends_top_path(via: build_via('functions_description'))), image: '/egotter_onesided_friends_with_text_400x453.png'})
-              = render(partial: 'shared/function_section', locals: {path: unfriends_top_path(via: build_via('functions_icon')), title: t('shared.functions.unfriends.title'), what_is_this: t('shared.functions.unfriends.what_is_this_html'), description: t('shared.functions.unfriends.text_html', title: strip_tags(t('shared.functions.unfriends.title')), url: unfriends_top_path(via: build_via('functions_description'))), image: '/egotter_unfriends_with_text_400x453.png'})
-              = render(partial: 'shared/function_section', locals: {path: inactive_friends_top_path(via: build_via('functions_icon')), title: t('shared.functions.inactive_friends.title'), what_is_this: t('shared.functions.inactive_friends.what_is_this_html'), description: t('shared.functions.inactive_friends.text_html', title: strip_tags(t('shared.functions.inactive_friends.title')), url: inactive_friends_top_path(via: build_via('functions_description'))), image: '/egotter_inactive_friends_with_text_400x453.png'})
-              = render(partial: 'shared/function_section', locals: {path: friends_top_path(via: build_via('functions_icon')), title: t('shared.functions.friends.title'), what_is_this: t('shared.functions.friends.what_is_this_html'), description: t('shared.functions.friends.text_html', title: strip_tags(t('shared.functions.friends.title')), url: friends_top_path(via: build_via('functions_description'))), image: '/egotter_friends_with_text_400x453.png'})
-              = render(partial: 'shared/function_section', locals: {path: clusters_top_path(via: build_via('functions_icon')), title: t('shared.functions.clusters.title'), what_is_this: t('shared.functions.clusters.what_is_this_html'), description: t('shared.functions.clusters.text_html', title: strip_tags(t('shared.functions.clusters.title')), url: clusters_top_path(via: build_via('functions_description'))), image: '/egotter_clusters_with_text_400x453.png'})
-              = render(partial: 'shared/function_section', locals: {path: tokimeki_unfollow_top_path(via: build_via('functions_icon')), title: t('shared.functions.tokimeki_unfollow.title'), what_is_this: t('shared.functions.tokimeki_unfollow.what_is_this_html'), description: t('shared.functions.tokimeki_unfollow.text_html', title: strip_tags(t('shared.functions.tokimeki_unfollow.title')), url: tokimeki_unfollow_top_path(via: build_via('functions_description'))), image: '/egotter_tokimeki_unfollow_with_text_400x453.png'})
-              = render(partial: 'shared/function_section', locals: {path: delete_tweets_path(via: build_via('functions_icon')), title: t('shared.functions.delete_tweets.title'), what_is_this: t('shared.functions.delete_tweets.what_is_this_html'), description: t('shared.functions.delete_tweets.text_html', title: strip_tags(t('shared.functions.delete_tweets.title')), url: delete_tweets_path(via: build_via('functions_description'))), image: '/egotter_delete_tweets_with_text_400x453.png'})
-
-      - unless hide_new_information?
-        .container.pre-footer
-          %h2.h4.text-center= t('searches.common.information')
-          %table.table.table-bordered.table-condensed.table-responsive
-            = render(partial: 'announcement/announcement', collection: Announcement.list, cached: true)
-
+    = render partial: 'shared/feature_section', locals: {title: t('shared.sign_in_button_at_bottom.title_html'), image: '/egotter_useful_with_text_400x448.png', description: t('shared.sign_in_button_at_bottom.description_html'), note: nil, link: sign_in_with_twitter_link(nil, 'sign_in_button_at_bottom', class: 'btn btn-primary btn-block'), check: [t('shared.sign_in_button_at_bottom.check1'), t('shared.sign_in_button_at_bottom.check2'), t('shared.sign_in_button_at_bottom.check3')]} if show_sign_in_button_at_bottom?
+    = render partial: 'shared/functions_section' if show_functions_section?
+    = render partial: 'shared/announcement_section' if show_announcement_section?
     = render partial: 'layouts/footer' unless under_maintenance?
 
   - unless under_maintenance?

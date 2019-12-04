@@ -35,14 +35,20 @@ module ApplicationHelper
     %w(unfriends unfollowers blocking_or_blocked).exclude?(controller_name) && twitter_user.usage_stat
   end
 
-  def hide_favorite_menu?
-    (controller_name == 'tokimeki_unfollow' && action_name == 'cleanup') ||
-        (controller_name == 'home' && action_name == 'start')
+  def show_sign_in_button_at_bottom?
+    !user_signed_in? && show_announcement_section?
   end
 
-  def hide_new_information?
-    (controller_name == 'tokimeki_unfollow' && action_name == 'cleanup') ||
-        (controller_name == 'home' && action_name == 'start')
+  def show_functions_section?
+    show_announcement_section?
+  end
+
+  def show_announcement_section?
+    tokimeki_page = controller_name == 'tokimeki_unfollow' && action_name == 'cleanup'
+    start_page = controller_name == 'home' && action_name == 'start'
+    directory_page = controller_path.match?(/^directory/)
+
+    !tokimeki_page && !start_page && !directory_page
   end
 
   def kick_out_error_path(reason, redirect_path: nil)
