@@ -19,8 +19,9 @@ class CacheDirectory < ApplicationRecord
   validates :dir, uniqueness: true
 
   def rotate!
-    prefix = dir.remove(/\d+$/)
-    suffix = Time.zone.now.strftime('%Y%m%d')
-    update!(dir: prefix + suffix)
+    previous_dir = dir
+    update!(dir: dir.remove(/\d+$/) + Time.zone.now.strftime('%Y%m%d'))
+    sleep 30
+    File.rename(previous_dir, previous_dir + '_remove_ok')
   end
 end

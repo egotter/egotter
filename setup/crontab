@@ -9,6 +9,7 @@ SUFFIX='>>/var/egotter/log/cron.log 2>&1'
 
 # web
 # 30 19 * * *     /bin/bash -c "$PREFIX $RAKE cache_directories:rotate $SUFFIX"
+# 40 19 * * *     /bin/rm -rf /efs/*remove_ok
 # * * * * *       /bin/bash -c "$PREFIX $RAKE bots:update_authorized $SUFFIX"
 # 15 * * * *      /bin/bash -c "$PREFIX $RUNNER 'SetSearchCountWorker.perform_async' $SUFFIX"
 # 1-51/10 * * * * /bin/bash -c "$PREFIX $RUNNER 'SendMetricsToSlackWorker.perform_async' $SUFFIX"
