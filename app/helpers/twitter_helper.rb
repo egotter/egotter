@@ -32,8 +32,9 @@ module TwitterHelper
     "https://twitter.com/intent/tweet?#{params}"
   end
 
+  # @screen_name -> <a href="/timelines/[screen_name]">@screen_name</a>
   def linkify(text)
-    url = timeline_path(screen_name: 'SN').sub(/SN$/, '\\\1')
+    url = timeline_path(screen_name: '__SN__', via: 'link_by_linkify').sub(/__SN__/, '\\\1')
     text.gsub(/@(\w+)/, %Q{<a href="#{url}">\\0</a>}).html_safe
   end
 

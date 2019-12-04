@@ -9,11 +9,11 @@
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
-          <%= link_to(timeline_path(user), class: 'icon-link') do %>
+          <%= link_to(timeline_path(user, via: build_via('icon_on_profile')), class: 'icon-link') do %>
             <%= bigger_icon_img(user) %>
           <% end %>
           <div class="name">
-            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user.name_with_icon}".html_safe, timeline_path(user)) %>
+            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user.name_with_icon}".html_safe, timeline_path(user, via: build_via('mention_name_on_profile'))) %>
             <%= user.status_labels %>
           </div>
 

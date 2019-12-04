@@ -45,8 +45,8 @@ module Concerns::InternalServerErrorHandler
     else
       screen_name = params[:screen_name].to_s.strip.remove /^@/
       if screen_name.match? Validations::ScreenNameValidator::REGEXP
-        search = timeline_path(screen_name: screen_name)
-        sign_in = sign_in_path(via: "#{controller_name}/#{action_name}/invalid_token_and_recover", redirect_path: search)
+        search = timeline_path(screen_name: screen_name, via: build_via('invalid_token_and_recover'))
+        sign_in = sign_in_path(via: build_via('invalid_token_and_recover'), redirect_path: search)
 
         if recoverable_request?
           redirect_to root_path, alert: t('application.invalid_token.ready_to_search_html', user: screen_name, url1: search, url2: sign_in)
@@ -73,7 +73,8 @@ module Concerns::InternalServerErrorHandler
     screen_name = params[:screen_name] || @twitter_user&.screen_name
 
     if screen_name.present?
-      t('application.request_timeout_with_recovery_html', user: screen_name, url: timeline_path(screen_name: screen_name))
+      url = timeline_path(screen_name: screen_name, via: build_via('request_timeout'))
+      t('application.request_timeout_with_recovery_html', user: screen_name, url: url)
     else
       t('application.request_timeout_html')
     end
@@ -83,7 +84,8 @@ module Concerns::InternalServerErrorHandler
     screen_name = params[:screen_name] || @twitter_user&.screen_name
 
     if screen_name.present?
-      t('application.internal_server_error_with_recovery_html', user: screen_name, url: timeline_path(screen_name: screen_name))
+      url = timeline_path(screen_name: screen_name, via: build_via('server_error'))
+      t('application.internal_server_error_with_recovery_html', user: screen_name, url: url)
     else
       t('application.internal_server_error')
     end
