@@ -1,6 +1,4 @@
 .feature-section {
-  margin: 0 15px;
-
   h2 {
     font-size: 22px;
   }
@@ -66,6 +64,12 @@
   }
 }
 
-#review-title {
-  font-size: 22px;
+#review-section {
+  #review-title {
+    font-size: 22px;
+  }
+
+  .description {
+    font-size: 14px;
+  }
 }

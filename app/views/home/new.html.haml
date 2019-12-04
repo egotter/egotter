@@ -39,10 +39,7 @@
 .vertical-spacing
 .vertical-spacing
 
-%div.text-center{style: 'margin: 0 15px;'}
-  = render partial: 'shared/review_stars'
-  %h2#review-title.h4= t('.text011_html')
-  #public-tweets-wrapper.twitter.tweets.center-block
+= render partial: 'shared/review_section'
 
 .vertical-spacing
 .vertical-spacing
@@ -105,6 +102,5 @@
 
 :javascript
   $(function () {
-    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
     Home.setSearchCount('#{search_count_path}');
   });

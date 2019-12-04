@@ -1,5 +1,5 @@
-- title t('.plain_title')
-- set_meta_tags description: t('.description')
+- title t('.page_title')
+- set_meta_tags description: t('.meta_description')
 
 #delete-tweets.text-center
   .vertical-spacing
@@ -23,7 +23,7 @@
           %span.egotter-pink= t('searches.new.pc.check_004_html')
 
     - else
-      = sign_in_with_twitter_link(delete_tweets_path, 'button', class: 'btn btn-primary btn-block')
+      = sign_in_with_twitter_link(delete_tweets_path(via: build_via('sign_in_with_twitter')), build_via('sign_in_with_twitter'), class: 'btn btn-primary btn-block')
       .text-right
         %i.fas.fa-check.egotter-pink
         %span.egotter-pink= t('searches.new.pc.check_002')
@@ -62,11 +62,11 @@
 .vertical-spacing
 .vertical-spacing
 
-= render partial: 'shared/feature_section', locals: {title: t('.features.title1_html'), image: '/egotter_globe_with_text_400x448.png', description: t('.features.text1_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('.features.check1')}
-= render partial: 'shared/feature_section', locals: {title: t('.features.title2_html'), image: '/egotter_trash_with_text_400x448.png', description: t('.features.text2_html'), note: t('.features.note2'), link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_complete')), 'feature_complete', class: 'btn btn-primary btn-block'), check: t('.features.check2')}
-= render partial: 'shared/feature_section', locals: {title: t('.features.title3_html'), image: '/egotter_clock_with_text_400x448.png', description: t('.features.text3_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_progress')), 'feature_progress', class: 'btn btn-primary btn-block'), check: t('.features.check3')}
-= render partial: 'shared/feature_section', locals: {title: t('.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('.features.text4_html'), note: t('.features.note4'), link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('.features.check4')}
-= render partial: 'shared/feature_section', locals: {title: t('.features.title5_html'), image: '/egotter_chat_with_text_400x448.png', description: t('.features.text5_html'), note: nil, link: link_to(t('.features.button5'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'), check: t('.features.check5')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title1_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text1_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check1')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title2_html'), image: '/egotter_trash_with_text_400x448.png', description: t('shared.features.text2_html'), note: t('shared.features.note2'), link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_complete')), 'feature_complete', class: 'btn btn-primary btn-block'), check: t('shared.features.check2')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title3_html'), image: '/egotter_clock_with_text_400x448.png', description: t('shared.features.text3_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_progress')), 'feature_progress', class: 'btn btn-primary btn-block'), check: t('shared.features.check3')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('shared.features.check4')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title5_html'), image: '/egotter_chat_with_text_400x448.png', description: t('shared.features.text5_html'), note: nil, link: link_to(t('shared.features.button5'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'), check: t('shared.features.check5')}
 
 .vertical-spacing
 .vertical-spacing
@@ -77,7 +77,7 @@
 
 .text-center
   = render partial: 'shared/review_stars'
-  %h2#review-title.h4= t('.review')
+  %h2#review-title.h4= t('shared.review.title')
   #public-tweets-wrapper.twitter.tweets.center-block
 
 - if user_signed_in?
