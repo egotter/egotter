@@ -124,10 +124,11 @@ ja:
       message5_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご質問ください。'
   timelines:
     show:
-      title: "%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
+      page_title: "%@{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
+      directory_page_title: "@%{user} の分析"
       short_title: "%{user} の分析"
       heading: "%{user} の分析結果"
-      description: "えごったーなら全部無料！ %{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
+      meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
       reload_this_page: "ページを更新する"
       reinvestigate: "再度チェックする"
@@ -1076,13 +1077,21 @@ ja:
         Timeout_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
   directory:
     profiles:
-      link_title: プロフィール
+      footer_title: プロフィール
       show:
         title: プロフィールディレクトリ
       first_layer:
         title: プロフィールディレクトリ
       second_layer:
         title: プロフィールディレクトリ
+    timelines:
+      footer_title: タイムライン
+      show:
+        title: タイムラインディレクトリ
+      first_layer:
+        title: タイムラインディレクトリ
+      second_layer:
+        title: タイムラインディレクトリ
   footer:
     feedback: "ご意見"
     titles:

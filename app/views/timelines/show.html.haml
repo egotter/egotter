@@ -3,8 +3,8 @@
 
 - breadcrumb :timeline, @twitter_user.screen_name
 
-- title = t('timelines.show.title', user: @twitter_user.mention_name, removing: @twitter_user.unfriendships.size, removed: @twitter_user.unfollowerships.size)
-- description = t('timelines.show.description', user: @twitter_user.mention_name)
+- title = t('.page_title', user: @twitter_user.screen￿_name, removing: @twitter_user.unfriendships.size, removed: @twitter_user.unfollowerships.size)
+- description = t('.meta_description', user: @twitter_user.screen_name)
 - set_meta_tags title: title, site: '', description: description
 
 = render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user}

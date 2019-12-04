@@ -1,5 +1,5 @@
 module Directory
-  class ProfilesController < ApplicationController
+  class TimelinesController < ApplicationController
 
     NUM_REGEXP = /\A\d{1,2}\z/
 
@@ -12,10 +12,10 @@ module Directory
             where(created_at: 1.days.ago..Time.zone.now).
             where('uid % ? = 0', 10 * id1.to_i + id2.to_i).
             pluck(:screen_name)
-        render 'directory/profiles/second_layer'
+        render 'directory/timelines/second_layer'
       elsif id1.to_s.match?(NUM_REGEXP) && id2.blank?
         @id1 = id1
-        render 'directory/profiles/first_layer'
+        render 'directory/timelines/first_layer'
       else
         render
       end

@@ -21,7 +21,8 @@ Rails.application.routes.draw do
   post "reset_cache", to: "reset_cache#reset"
 
   namespace :directory do
-    get "profiles(/:id1(/:id2))", to: "profiles#show"
+    get "profiles(/:id1(/:id2))", to: "profiles#show", as: :profile
+    get "timelines(/:id1(/:id2))", to: "timelines#show", as: :timeline
   end
 
   %i(maintenance privacy_policy terms_of_service specified_commercial_transactions support).each do |name|

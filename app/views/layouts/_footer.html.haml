@@ -75,7 +75,11 @@
       %br.visible-xs-block
 
     = succeed spaces do
-      = link_to t('directory.profiles.link_title'), directory_path
+      = link_to t('directory.profiles.footer_title'), directory_profile_path
+      %br.visible-xs-block
+
+    = succeed spaces do
+      = link_to t('directory.timelines.footer_title'), directory_timeline_path
       %br
 
     %span.copy &copy; 2019 EGOTTER
