@@ -1,6 +1,8 @@
 class DeleteTweetsController < ApplicationController
   before_action :require_login!, only: :delete
 
+  before_action { create_search_log }
+
   def new
     if user_signed_in?
       requests = current_user.delete_tweets_requests
