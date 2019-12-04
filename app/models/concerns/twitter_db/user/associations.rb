@@ -8,7 +8,7 @@ module Concerns::TwitterDB::User::Associations
     def where_and_order_by_field(uids:)
       where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
         unless uids.size == users.size
-          CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid))
+          CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid), enqueued_by: 'where_and_order_by_field')
         end
       end
     end

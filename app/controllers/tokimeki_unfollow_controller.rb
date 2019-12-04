@@ -77,7 +77,7 @@ class TokimekiUnfollowController < ::Page::UnfriendsAndUnfollowers
     return false if t_user[:friends_count].to_i >= 10000
 
     friend_ids = request_context_client.friend_ids(t_user[:id])
-    CreateTwitterDBUserWorker.perform_async(friend_ids)
+    CreateTwitterDBUserWorker.perform_async(friend_ids, user_id: current_user_id, enqueued_by: 'tokimeki unfollow')
 
     ActiveRecord::Base.transaction do
       user = Tokimeki::User.find_or_create_by!(uid: t_user[:id], screen_name: t_user[:screen_name], friends_count: t_user[:friends_count], processed_count: 0)

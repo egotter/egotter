@@ -29,11 +29,11 @@ class ResetCacheRequest < ApplicationRecord
       twitter_user = TwitterUser.latest_by(uid: user.uid)
 
       Unfriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, enqueued_by: 'ResetCacheRequest Unfriendship.import_by!')
       end
 
       Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true, force_update: true)
+        CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, force_update: true, enqueued_by: 'ResetCacheRequest Unfollowership.import_by!')
       end
     end
 

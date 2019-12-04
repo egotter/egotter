@@ -6,16 +6,21 @@ class CreateTwitterDBUserWorker
     Digest::MD5.hexdigest(uids.to_s)
   end
 
+  def unique_in
+    10.minutes
+  end
+
   # options:
   #   compressed
   #   force_update
   #   user_id
+  #   enqueued_by
   def perform(uids, options = {})
     if options['compressed']
       uids = decompress(uids)
     end
 
-    client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
+    client = (options['user_id'] && options['user_id'] != -1) ? User.find(options['user_id']).api_client : Bot.api_client
     do_perform(uids, client, options['force_update'], options['user_id'])
 
   rescue => e

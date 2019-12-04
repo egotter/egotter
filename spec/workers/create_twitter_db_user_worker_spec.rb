@@ -10,30 +10,42 @@ RSpec.describe CreateTwitterDBUserWorker do
   describe '#perform' do
     subject { worker.perform(uids, options) }
 
-    context 'The options includes force_update' do
+    context 'The options includes only force_update' do
       let(:options) { {'force_update' => true} }
       it do
+        expect(User).not_to receive(:find)
         expect(Bot).to receive(:api_client).with(no_args).and_return(client)
         expect(worker).to receive(:do_perform).with(uids, client, true, nil)
         subject
       end
     end
 
-    context 'The options includes user_id' do
-      let(:options) { {'user_id' => user.id} }
-      before do
-        allow(User).to receive_message_chain(:find, :api_client).with(user.id).with(no_args).and_return(client)
+    context 'The options includes only user_id' do
+      context 'user_id != -1' do
+        let(:options) { {'user_id' => user.id} }
+        it do
+          expect(User).to receive_message_chain(:find, :api_client).with(user.id).with(no_args).and_return(client)
+          expect(Bot).not_to receive(:api_client)
+          expect(worker).to receive(:do_perform).with(uids, client, nil, user.id)
+          subject
+        end
       end
-      it do
-        expect(Bot).not_to receive(:api_client)
-        expect(worker).to receive(:do_perform).with(uids, client, nil, user.id)
-        subject
+
+      context 'user_id == -1' do
+        let(:options) { {'user_id' => -1} }
+        it do
+          expect(User).not_to receive(:find)
+          expect(Bot).to receive(:api_client).with(no_args).and_return(client)
+          expect(worker).to receive(:do_perform).with(uids, client, nil, -1)
+          subject
+        end
       end
     end
 
     context "The options is empty" do
       let(:options) { {} }
       it do
+        expect(User).not_to receive(:find)
         expect(Bot).to receive(:api_client).and_return(client)
         expect(worker).to receive(:do_perform).with(uids, client, nil, nil)
         subject

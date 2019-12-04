@@ -16,7 +16,7 @@ module Api
       def summary
         uids, size = summary_uids
 
-        CreateTwitterDBUserWorker.perform_async(uids)
+        CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user_id, enqueued_by: 'Api::V1::Base summary')
 
         # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
