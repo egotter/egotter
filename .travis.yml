@@ -4,7 +4,6 @@ cache: bundler
 sudo: required
 rvm:
   - 2.6.4
-  - 2.7.0-preview3
 before_install:
   - sh ./setup/install_mecab_travis.sh
 install: bundle install --without development production --deployment
