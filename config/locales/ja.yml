@@ -118,7 +118,7 @@ ja:
       message5_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご質問ください。'
   timelines:
     show:
-      page_title: "%@{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
+      page_title: "@%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
       directory_page_title: "@%{user} の分析"
       short_title: "%{user} の分析"
       heading: "%{user} の分析結果"
