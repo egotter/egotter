@@ -21,7 +21,7 @@ class CacheDirectory < ApplicationRecord
   def rotate!
     previous_dir = dir
     update!(dir: dir.remove(/\d+$/) + Time.zone.now.strftime('%Y%m%d'))
-    sleep 30
-    File.rename(previous_dir, previous_dir + '_remove_ok')
+    sleep 30 if Rails.env.production?
+    File.rename(previous_dir, previous_dir + '_remove_ok') if Dir.exist?(previous_dir)
   end
 end

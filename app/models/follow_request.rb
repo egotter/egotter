@@ -26,6 +26,12 @@ class FollowRequest < ApplicationRecord
   validates :user_id, numericality: :only_integer
   validates :uid, numericality: :only_integer
 
+  before_validation do
+    if self.error_message
+      self.error_message = self.error_message.truncate(100)
+    end
+  end
+
   class << self
     # The finished_at is null and the error_class is empty.
     def finished(user_id:, created_at:)

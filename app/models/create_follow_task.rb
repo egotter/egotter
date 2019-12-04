@@ -19,6 +19,7 @@ class CreateFollowTask
 
     self
   rescue => e
+    request.update(error_class: e.class, error_message: e.message)
     @log.update(error_class: e.class, error_message: e.message)
     raise
   end
