@@ -20,12 +20,11 @@ class CreateUnfollowWorker
   rescue UnfollowRequest::RetryableError => e
     CreateUnfollowWorker.perform_async(request_id, options)
 
-  rescue UnfollowRequest::NotFollowing, UnfollowRequest::NotFound => e
+  rescue UnfollowRequest::Error => e
     logger.warn e.inspect
 
   rescue => e
-    logger.warn "Don't retry. #{e.class} #{e.message} #{request_id} #{options.inspect}"
-    logger.warn "Caused by #{e.cause.inspect}" if e.cause
+    logger.warn "Don't retry. #{e.class} #{e.message} #{request_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
     logger.info e.backtrace.join("\n")
   end
 end
