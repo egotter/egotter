@@ -1,8 +1,8 @@
-:concurrency: <%= require 'dotenv/load'; ENV.fetch("SIDEKIQ_ALL_CONCURRENCY") { 5 } %>
+:concurrency: 5
 :timeout: 10
-:pidfile: ./tmp/pids/sidekiq_all.pid
+:pidfile: ./tmp/pids/sidekiq.pid
 :logfile: ./log/sidekiq.log
-:tag: sidekiq_all
+:tag: sidekiq
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - creating_high
@@ -24,4 +24,3 @@
   - deleting
   - follow
   - unfollow
-  - rollbar

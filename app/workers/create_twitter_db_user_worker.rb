@@ -26,7 +26,7 @@ class CreateTwitterDBUserWorker
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
     # Errno::ENOENT No such file or directory @ rb_sysopen
-    logger.warn "#{e.class} #{e.message} #{uids.inspect.truncate(150)}"
+    logger.warn "#{e.class} #{e.message} #{uids.inspect.truncate(150)} #{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 
