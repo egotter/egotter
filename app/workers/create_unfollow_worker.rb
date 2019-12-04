@@ -6,6 +6,10 @@ class CreateUnfollowWorker
     request_id
   end
 
+  def unique_in
+    10.minutes
+  end
+
   # options:
   #   enqueue_location
   def perform(request_id, options = {})
