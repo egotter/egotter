@@ -50,7 +50,7 @@ class ImportTwitterUserRequest < ApplicationRecord
 
   def import_unfollowership
     Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true, force_update: true)
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, force_update: true, enqueued_by: 'ImportTwitterUserRequest import_unfollowership')
     end
   rescue => e
     logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
@@ -59,7 +59,7 @@ class ImportTwitterUserRequest < ApplicationRecord
 
   def import_favorite_friendship
     FavoriteFriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, enqueued_by: 'ImportTwitterUserRequest import_favorite_friendship')
     end
   rescue => e
     logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
@@ -68,7 +68,7 @@ class ImportTwitterUserRequest < ApplicationRecord
 
   def import_close_friendship
     CloseFriendship.import_by!(twitter_user: twitter_user, login_user: user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), compressed: true)
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, enqueued_by: 'ImportTwitterUserRequest import_close_friendship')
     end
   rescue => e
     logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
