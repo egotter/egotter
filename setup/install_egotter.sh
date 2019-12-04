@@ -25,13 +25,16 @@ sudo_cmd="sudo -u ${USER} -H bash -l -c"
 
 yum update -y
 yum groupinstall -y "Development Tools"
-yum install -y git tmux dstat htop monit tree mysql-server mysql-devel nginx
+yum install -y git tmux dstat htop monit tree nginx
 yum install -y openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
 set +e
 rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
 set -e
 yum install -y redis --enablerepo=remi
 yum install -y colordiff --enablerepo=epel
+
+rpm -ivh https://dev.mysql.com/get/mysql80-community-release-el6-1.noarch.rpm
+yum install -y mysql-community-server mysql-community-devel
 
 # For unf_ext
 yum install -y gcc72-c++.x86_64
