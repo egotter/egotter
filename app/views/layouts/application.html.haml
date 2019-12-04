@@ -197,7 +197,7 @@
         .container.pre-footer
           %h2.h4.text-center= t('searches.common.information')
           %table.table.table-bordered.table-condensed.table-responsive
-            = render(partial: 'information/information', collection: information_list, cached: true)
+            = render(partial: 'announcement/announcement', collection: Announcement.list, cached: true)
 
     = render partial: 'layouts/footer' unless under_maintenance?
 
