@@ -145,12 +145,12 @@ class CreatePromptReportRequest < ApplicationRecord
     raise ReportDisabled unless user.notification_setting.dm_enabled?
     raise TooShortSendInterval unless user.notification_setting.prompt_report_interval_ok?
     raise UserSuspended if suspended?
-    raise TooManyFriends if SearchLimitation.too_many_friends?(user: user)
+    raise TooManyFriends if SearchLimitation.limited?(fetch_user, signed_in: true)
     raise EgotterBlocked if blocked?
 
     if TwitterUser.exists?(uid: user.uid)
       twitter_user = TwitterUser.latest_by(uid: user.uid)
-      raise TooManyFriends if SearchLimitation.too_many_friends?(twitter_user: twitter_user)
+      raise TooManyFriends if SearchLimitation.limited?(twitter_user, signed_in: true)
       raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
     end
 
