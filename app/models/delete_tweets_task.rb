@@ -31,8 +31,8 @@ class DeleteTweetsTask
     ensure
       if e
         @log.assign_attributes(error_class: e.class, error_message: e.message)
-        @log.retry_in = e.retry_in if e.respond_to?(:retry_in)
-        @log.destroy_count = e.destroy_count if e.respond_to?(:destroy_count)
+        @log.retry_in = e.retry_in if (e.respond_to?(:retry_in) && e.retry_in)
+        @log.destroy_count = e.destroy_count if (e.respond_to?(:destroy_count) && e.destroy_count)
         @log.save if @log.changed?
       end
     end
