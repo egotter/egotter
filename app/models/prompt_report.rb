@@ -131,8 +131,12 @@ class PromptReport < ApplicationRecord
     tries ||= 3
     yield
   rescue => e
-    if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
-      retry
+    if e.message.include?('Connection reset by peer')
+      if (tries -= 1) > 0
+        retry
+      else
+        raise RetryExhausted.new("#{e.class} #{e.message}")
+      end
     else
       raise
     end

@@ -16,8 +16,12 @@ class DirectMessageClient
       request = Request.new(@client).init(:json_post, '/1.1/direct_messages/events/new.json', 'message_create', user_id, text)
       request.perform
     rescue => e
-      if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
-        retry
+      if e.message.include?('Connection reset by peer')
+        if (tries -= 1) > 0
+          retry
+        else
+          raise
+        end
       else
         raise
       end

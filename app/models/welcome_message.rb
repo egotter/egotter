@@ -104,10 +104,14 @@ class WelcomeMessage < ApplicationRecord
     tries ||= 3
     yield
   rescue => e
-    if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
-      retry
+    if e.message.include?('Connection reset by peer')
+      if (tries -= 1) > 0
+        retry
+      else
+        raise RetryExhausted.new("#{e.class} #{e.message}")
+      end
     else
-      raise RetryExhausted.new("#{e.class} #{e.message}")
+      raise
     end
   end
 
@@ -125,7 +129,7 @@ class WelcomeMessage < ApplicationRecord
           screen_name: user.screen_name,
           timeline_url: timeline_url,
           settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_first_of_all'),
-          )
+      )
     end
 
     private
@@ -150,7 +154,7 @@ class WelcomeMessage < ApplicationRecord
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           timeline_url: timeline_url,
           settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_success'),
-          )
+      )
     end
 
     private
@@ -175,7 +179,7 @@ class WelcomeMessage < ApplicationRecord
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           timeline_url: timeline_url,
           settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_failed'),
-          )
+      )
     end
 
     private
