@@ -53,6 +53,12 @@ class DeleteTweetsRequest < ApplicationRecord
     raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: destroy_count)
   rescue ::Timeout::Error => e
     raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
+  rescue => e
+    if e.message.include?('Connection reset by peer')
+      raise ConnectionResetByPeer
+    else
+      raise
+    end
   end
 
   def error_check!
@@ -140,6 +146,9 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   class Continue < Retryable
+  end
+
+  class ConnectionResetByPeer < Retryable
   end
 
   class FinishedMessageNotSent < Error
