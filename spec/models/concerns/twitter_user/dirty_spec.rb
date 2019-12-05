@@ -1,40 +1,42 @@
 require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::Dirty do
-  subject(:twitter_user) { create(:twitter_user) }
+  let(:twitter_user) { create(:twitter_user, friends_count: 5, followers_count: 5) }
 
   describe '#diff' do
-    context 'with same record' do
-      subject(:copy) do
+    subject { twitter_user.diff(copied) }
+
+    context 'Same record is passed' do
+      let(:copied) do
         build(:twitter_user, uid: twitter_user.uid, screen_name: twitter_user.screen_name)
       end
 
       before do
-        allow(copy).to receive(:friends_count).and_return(twitter_user.friends_count)
-        allow(copy).to receive(:friend_uids).and_return(twitter_user.friend_uids)
-        allow(copy).to receive(:followers_count).and_return(twitter_user.followers_count)
-        allow(copy).to receive(:follower_uids).and_return(twitter_user.follower_uids)
+        allow(copied).to receive(:friends_count).and_return(twitter_user.friends_count)
+        allow(copied).to receive(:friend_uids).and_return(twitter_user.friend_uids)
+        allow(copied).to receive(:followers_count).and_return(twitter_user.followers_count)
+        allow(copied).to receive(:follower_uids).and_return(twitter_user.follower_uids)
       end
 
-      it 'returns empty hash' do
-        expect(twitter_user.diff(copy).keys).to be_empty
-      end
+      it { is_expected.to be_empty }
     end
 
-    context 'with different record' do
-      subject(:copy) do
+    context 'Different record is passed' do
+      let(:copied) do
         build(:twitter_user, uid: twitter_user.uid, screen_name: twitter_user.screen_name)
       end
 
       before do
-        allow(copy).to receive(:friends_count).and_return(1)
-        allow(copy).to receive(:friend_uids).and_return([twitter_user.friend_uids[0]])
-        allow(copy).to receive(:followers_count).and_return(twitter_user.followers_count)
-        allow(copy).to receive(:follower_uids).and_return(twitter_user.follower_uids)
+        allow(copied).to receive(:friends_count).and_return(1)
+        allow(copied).to receive(:friend_uids).and_return([2, 3, 4])
+        allow(copied).to receive(:followers_count).and_return(5)
+        allow(copied).to receive(:follower_uids).and_return([6, 7])
       end
 
-      it 'returns hash with keys' do
-        expect(twitter_user.diff(copy).keys).to match_array(%i(friends_count friend_uids))
+      it do
+        is_expected.to match(friends_count: [twitter_user.friends_count, 1],
+                             friend_uids: [twitter_user.friend_uids.sort, [2, 3, 4]],
+                             follower_uids: [twitter_user.follower_uids.sort, [6, 7]])
       end
     end
   end

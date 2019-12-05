@@ -9,11 +9,16 @@ module Concerns::TwitterUser::Dirty
   included do
   end
 
+  # {
+  #    friends_count: [before ,after],
+  #    followers_count: [before, after],
+  #    friend_uids: [[before], [after]],
+  #    follower_uids: [[before], [after]]
+  #  }
   def diff(newer)
     older = self
-    attrs = %i(friends_count followers_count friend_uids follower_uids)
 
-    attrs.map do |attr|
+    %i(friends_count followers_count friend_uids follower_uids).map do |attr|
       values = [older.send(attr), newer.send(attr)]
       values = values.map(&:sort) if attr.in?(%i(friend_uids follower_uids))
 

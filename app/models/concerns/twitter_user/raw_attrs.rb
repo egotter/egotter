@@ -99,7 +99,13 @@ module Concerns::TwitterUser::RawAttrs
 
   def raw_attrs
     if new_record?
-      Hashie::Mash.new(Oj.load(raw_attrs_text, symbol_keys: true))
+      attrs = nil
+      begin
+        attrs = Oj.load(raw_attrs_text.presence || '{}', symbol_keys: true)
+      rescue => e
+        attrs = {}
+      end
+      Hashie::Mash.new(attrs)
     else
       if instance_variable_defined?(:@raw_attrs)
         @raw_attrs
