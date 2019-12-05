@@ -175,6 +175,11 @@ class SendMetricsToCloudWatchWorker
         options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
         client.put_metric_data('UniqueRecordsDiff', records_count - unique_count, options)
       end
+
+      if records_count > 0
+        options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
+        client.put_metric_data('RecordsCreationCount', records_count, options)
+      end
     end
   end
 
