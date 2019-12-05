@@ -42,12 +42,10 @@ module Deploy
 
   class Sidekiq
     CMD = [
-        'sudo service sidekiq_misc stop',
-        'sudo service sidekiq_prompt_reports stop',
         'git pull origin master',
         'bundle',
-        'sudo service sidekiq_misc start',
-        'sudo service sidekiq_prompt_reports start',
+        'sudo service sidekiq_misc restart',
+        'sudo service sidekiq_prompt_reports restart',
         'sudo service sidekiq restart',
         'sudo service sidekiq_import restart',
     ]
