@@ -199,6 +199,8 @@ module Concerns::ValidationConcern
   end
 
   def search_limitation_soft_limited?(user)
+    return false if from_crawler?
+
     if !user_signed_in? && SearchLimitation.soft_limited?(user)
       message = search_limitation_soft_limited_message(user[:screen_name], sign_in_path(via: build_via(__method__), redirect_path: request.fullpath))
       redirect_to profile_path(screen_name: user[:screen_name]), alert: message
