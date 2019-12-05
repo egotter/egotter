@@ -1,6 +1,6 @@
 require 'active_support/concern'
 
-module Concerns::TwitterExceptionHandler
+module Concerns::AlertMessagesConcern
   extend ActiveSupport::Concern
   include PathsHelper
 
@@ -140,6 +140,14 @@ module Concerns::TwitterExceptionHandler
       t('after_sign_in.too_many_requests_with_reset_in', seconds: reset_in)
     else
       t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
+    end
+  end
+
+  def search_limitation_soft_limited_message(screen_name, url)
+    if user_signed_in?
+      raise
+    else
+      t('before_sign_in.search_limitation_soft_limited_html', user: screen_name, url: url)
     end
   end
 

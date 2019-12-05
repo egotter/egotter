@@ -5,7 +5,7 @@ default: &default
     skip_duplicate_job_interval: <%= 1.minute %>
   usage_stat_recently_created: <%= 30.minutes %>
   search_limitation:
-    soft_limit: 1000
+    soft_limit: 2000
     hard_limit: 10000
   anonymous_search_histories_limit: 2
   free_plan_search_histories_limit: 5

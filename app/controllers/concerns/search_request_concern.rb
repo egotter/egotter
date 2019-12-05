@@ -9,6 +9,7 @@ module Concerns::SearchRequestConcern
     before_action(only: %i(show all)) { enough_permission_level? }
     before_action(only: %i(show all)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
     before_action(only: %i(show all)) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
+    before_action(only: %i(show all)) { search_limitation_soft_limited?(@twitter_user) }
     before_action(only: %i(show all)) { !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
     before_action(only: %i(show all)) { twitter_user_persisted?(@twitter_user.uid) }
     before_action(only: %i(show all)) { twitter_db_user_persisted?(@twitter_user.uid) } # Not redirected

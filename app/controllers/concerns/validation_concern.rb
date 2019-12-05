@@ -2,7 +2,7 @@ require 'active_support/concern'
 
 module Concerns::ValidationConcern
   extend ActiveSupport::Concern
-  include Concerns::TwitterExceptionHandler
+  include Concerns::AlertMessagesConcern
   include PathsHelper
   include SearchHistoriesHelper
 
@@ -196,6 +196,17 @@ module Concerns::ValidationConcern
   rescue => e
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false
+  end
+
+  def search_limitation_soft_limited?(user)
+    if !user_signed_in? && SearchLimitation.soft_limited?(user)
+      message = search_limitation_soft_limited_message(user[:screen_name], sign_in_path(via: build_via(__method__), redirect_path: request.fullpath))
+      redirect_to profile_path(screen_name: user[:screen_name]), alert: message
+      create_search_error_log(__method__, message)
+      true
+    else
+      false
+    end
   end
 
   def screen_name_changed?(twitter_user)
