@@ -31,16 +31,16 @@ RSpec.describe SearchLimitation, type: :model do
       allow(user).to receive(:[]).with(:followers_count).and_return(followers_count)
     end
 
-    context 'friends_count + followers_count > 1000' do
-      let(:friends_count) { 500 }
-      let(:followers_count) { 501 }
+    context 'friends_count + followers_count > 2000' do
+      let(:friends_count) { 1000 }
+      let(:followers_count) { 1001 }
       it { expect(friends_count + followers_count).to be > SearchLimitation::SOFT_LIMIT }
       it { is_expected.to be_truthy }
     end
 
-    context 'friends_count + followers_count <= 1000' do
-      let(:friends_count) { 500 }
-      let(:followers_count) { 500 }
+    context 'friends_count + followers_count <= 2000' do
+      let(:friends_count) { 1000 }
+      let(:followers_count) { 1000 }
       it { expect(friends_count + followers_count).to be <= SearchLimitation::SOFT_LIMIT }
       it { is_expected.to be_falsey }
     end
@@ -55,16 +55,16 @@ RSpec.describe SearchLimitation, type: :model do
       allow(user).to receive(:[]).with(:followers_count).and_return(followers_count)
     end
 
-    context 'friends_count + followers_count > 10000' do
-      let(:friends_count) { 5000 }
-      let(:followers_count) { 5001 }
+    context 'friends_count + followers_count > 15000' do
+      let(:friends_count) { 7500 }
+      let(:followers_count) { 7501 }
       it { expect(friends_count + followers_count).to be > SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_truthy }
     end
 
-    context 'friends_count + followers_count <= 10000' do
-      let(:friends_count) { 5000 }
-      let(:followers_count) { 5000 }
+    context 'friends_count + followers_count <= 15000' do
+      let(:friends_count) { 7500 }
+      let(:followers_count) { 7500 }
       it { expect(friends_count + followers_count).to be <= SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_falsey }
     end
