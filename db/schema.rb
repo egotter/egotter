@@ -376,8 +376,10 @@ ActiveRecord::Schema.define(version: 2019_12_04_014754) do
   end
 
   create_table "delete_tweets_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.integer "user_id", default: -1, null: false
     t.integer "request_id", default: -1, null: false
+    t.integer "user_id", default: -1, null: false
+    t.bigint "uid", default: -1, null: false
+    t.string "screen_name", default: "", null: false
     t.boolean "status", default: false, null: false
     t.integer "destroy_count", default: 0, null: false
     t.integer "retry_in", default: 0, null: false
