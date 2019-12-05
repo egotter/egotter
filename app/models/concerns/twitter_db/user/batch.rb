@@ -24,11 +24,11 @@ module Concerns::TwitterDB::User::Batch
       end
     end
 
-    UPDATE_INTERVAL = 12.hours
+    UPDATE_INTERVAL = 6.hours
 
     def self.import(users, force_update: false)
       unless force_update
-        # Note: This process uses index_twitter_db_users_on_uid instead of index_twitter_db_users_on_updated_at.
+        # Note: This query uses the index on uid instead of the index on updated_at.
         persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }, updated_at: UPDATE_INTERVAL.ago..Time.zone.now).pluck(:uid)
         users = users.reject { |user| persisted_uids.include? user[:id] }
       end
