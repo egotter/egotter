@@ -22,6 +22,7 @@ class SendMetricsToCloudWatchWorker
        send_sidekiq_metrics
        send_prompt_reports_metrics
        send_search_error_logs_metrics
+       send_twitter_users_metrics
        send_create_twitter_user_logs_metrics
        send_requests_metrics
        send_bots_metrics
@@ -157,6 +158,23 @@ class SendMetricsToCloudWatchWorker
     SearchErrorLog.where(duration).where.not(device_type: 'crawler').where.not(user_id: -1).group(:location).count.each do |location, count|
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(location, count, options)
+    end
+  end
+
+  def send_twitter_users_metrics
+    namespace = "TwitterUsers#{"/#{Rails.env}" unless Rails.env.production?}"
+    duration = {created_at: 10.minutes.ago..Time.zone.now}
+
+    [
+        [TwitterUser.where(duration).where(user_id: -1), false],
+        [TwitterUser.where(duration).where.not(user_id: -1), true]
+    ].each do |records, signed_in|
+      records_count = records.size
+      unique_count = records.map(&:uid).uniq.size
+      if records_count != unique_count
+        options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
+        client.put_metric_data('UniqueRecordsDiff', records_count - unique_count, options)
+      end
     end
   end
 
