@@ -20,7 +20,7 @@ class DeleteTweetsTask
     rescue DeleteTweetsRequest::TweetsNotFound => e
       request.finished!
       request.tweet_finished_message if request.tweet
-      SlackClient.delete_tweets.send_message("Finished `#{request.id}` `#{request.tweet}`") rescue nil
+      SlackClient.delete_tweets.send_message("Finished `#{request.id}` `#{request.user_id}` `#{request.screen_name}` `#{request.tweet}`") rescue nil
       request.send_finished_message(User.egotter)
     rescue DeleteTweetsRequest::Retryable => e
       @retry_in = e.retry_in

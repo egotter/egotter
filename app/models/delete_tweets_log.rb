@@ -36,8 +36,10 @@ class DeleteTweetsLog < ApplicationRecord
   class << self
     def create_by(request:)
       create(
-          user_id: request.user.id,
           request_id: request.id,
+          user_id: request.user.id,
+          uid: request.user.uid,
+          screen_name: request.user.screen_name,
       )
     end
   end
