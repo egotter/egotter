@@ -24,6 +24,7 @@ class SendMetricsToCloudWatchWorker
        send_search_error_logs_metrics
        send_twitter_users_metrics
        send_create_twitter_user_logs_metrics
+       send_search_histories_metrics
        send_requests_metrics
        send_bots_metrics
     ).each do |method_name|
@@ -197,6 +198,31 @@ class SendMetricsToCloudWatchWorker
       name = key.demodulize
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data(name, count, options)
+    end
+  end
+
+  def send_search_histories_metrics
+    namespace = "SearchHistories#{"/#{Rails.env}" unless Rails.env.production?}"
+    duration = {created_at: 10.minutes.ago..Time.zone.now}
+
+    [
+        [SearchHistory.where(duration).where(user_id: -1), false],
+        [SearchHistory.where(duration).where.not(user_id: -1), true]
+    ].each do |records, signed_in|
+      avg =
+          if signed_in
+            records.size / records.map(&:user_id).uniq.size rescue nil
+          else
+            records.size / records.map(&:session_id).uniq.size rescue nil
+          end
+      if avg
+        options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
+        client.put_metric_data('AvgSearchHistoriesCount', avg, options)
+      end
+
+      max = records.each_with_object(Hash.new(0)) { |record, memo| memo[record.user_id] += 1 }.values.max
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
+      client.put_metric_data('MaxSearchHistoriesCount', max, options)
     end
   end
 
