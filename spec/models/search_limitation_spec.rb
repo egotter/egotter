@@ -55,16 +55,16 @@ RSpec.describe SearchLimitation, type: :model do
       allow(user).to receive(:[]).with(:followers_count).and_return(followers_count)
     end
 
-    context 'friends_count + followers_count > 15000' do
-      let(:friends_count) { 7500 }
-      let(:followers_count) { 7501 }
+    context 'friends_count + followers_count > 30000' do
+      let(:friends_count) { 15000 }
+      let(:followers_count) { 15001 }
       it { expect(friends_count + followers_count).to be > SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_truthy }
     end
 
-    context 'friends_count + followers_count <= 15000' do
-      let(:friends_count) { 7500 }
-      let(:followers_count) { 7500 }
+    context 'friends_count + followers_count <= 30000' do
+      let(:friends_count) { 15000 }
+      let(:followers_count) { 15000 }
       it { expect(friends_count + followers_count).to be <= SearchLimitation::HARD_LIMIT }
       it { is_expected.to be_falsey }
     end
