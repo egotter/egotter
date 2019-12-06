@@ -25,7 +25,7 @@ class CreateFollowWorker
     CreateFollowWorker.perform_async(request_id, options)
 
   rescue FollowRequest::Error => e
-    logger.warn e.inspect
+    "Don't care. #{logger.warn e.inspect}"
 
   rescue => e
     logger.warn "Don't retry. #{e.class} #{e.message} #{request_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
