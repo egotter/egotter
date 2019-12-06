@@ -177,6 +177,8 @@ class CreatePromptReportRequest < ApplicationRecord
   def too_many_errors?
     errors = CreatePromptReportLog.where(user_id: user.id).
         where.not(request_id: id).
+        where(created_at: 1.day.ago..Time.zone.now).
+        where.not(error_class: CreatePromptReportRequest::TooManyErrors).
         order(created_at: :desc).
         limit(3).
         pluck(:error_class)

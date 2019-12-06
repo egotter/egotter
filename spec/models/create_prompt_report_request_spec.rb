@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CreatePromptReportRequest, type: :model do
   describe '#calculate_period' do
     let(:user) { create(:user) }
-    let(:time) { Time.zone.now}
+    let(:time) { Time.zone.now }
     subject { CreatePromptReportRequest.create(user_id: user.id).calculate_period(record_created, record1, record2) }
 
     context 'There are more than 2 records' do
@@ -22,10 +22,10 @@ RSpec.describe CreatePromptReportRequest, type: :model do
 
       context 'New record is NOT created' do
         let(:record_created) { false }
-          it do
-            freeze_time do
-              is_expected.to match(start: record2.created_at, end: Time.zone.now)
-            end
+        it do
+          freeze_time do
+            is_expected.to match(start: record2.created_at, end: Time.zone.now)
+          end
         end
       end
     end
@@ -109,6 +109,26 @@ RSpec.describe CreatePromptReportRequest, type: :model do
       end
     end
 
+    context 'There are 3 error logs, but they are outdated' do
+      before do
+        3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: 1.day.ago - 1) }
+      end
+      it do
+        expect(sorted_set).not_to receive(:add)
+        is_expected.to be_falsey
+      end
+    end
+
+    context 'There are 3 error logs, but the error_class is CreatePromptReportRequest::TooManyErrors' do
+      before do
+        3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'CreatePromptReportRequest::TooManyErrors') }
+      end
+      it do
+        expect(sorted_set).not_to receive(:add)
+        is_expected.to be_falsey
+      end
+    end
+
     context 'There are 3 error logs, but error_class is empty' do
       before do
         3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: '', error_message: "I'm an error") }
@@ -138,7 +158,7 @@ end
 RSpec.describe CreatePromptReportRequest::ChangesBuilder, type: :model do
   describe '#build' do
     let(:user) { create(:user) }
-    let(:time) { Time.zone.now}
+    let(:time) { Time.zone.now }
     subject { described_class.new(record1, record2, record_created: record_created).build }
 
     let(:result) do
