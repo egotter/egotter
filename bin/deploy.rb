@@ -44,10 +44,12 @@ module Deploy
     CMD = [
         'git pull origin master',
         'bundle',
-        'sudo service sidekiq_misc restart',
-        'sudo service sidekiq_prompt_reports restart',
-        'sudo service sidekiq restart',
-        'sudo service sidekiq_import restart',
+        ['sudo service sidekiq_misc status'          , 'sudo service sidekiq_misc restart'],
+        ['sudo service sidekiq_prompt_reports status', 'sudo service sidekiq_prompt_reports restart'],
+        ['sudo service sidekiq status'               , 'sudo service sidekiq restart'],
+        ['sudo service sidekiq_import status'        , 'sudo service sidekiq_import restart'],
+        ['sudo service sidekiq_follow status'        , 'sudo service sidekiq_follow restart'],
+        ['sudo service sidekiq_unfollow status'      , 'sudo service sidekiq_unfollow restart'],
     ]
 
     def current_dir
@@ -55,14 +57,24 @@ module Deploy
     end
 
     def hosts
-      ['egotter_web']
+      %w(
+        egotter_web
+        egotter_sidekiq5
+      )
     end
 
     def run
       hosts.each do |host|
         CMD.each do |cmd|
-          puts "\e[32m#{host} #{cmd}\e[0m" # Green
-          puts system('ssh', host, "cd #{current_dir} && #{cmd}", exception: true)
+          if cmd.class == Array
+            cmd.each do |c|
+              puts "\e[32m#{host} #{c}\e[0m" # Green
+              break unless (system('ssh', host, "cd #{current_dir} && #{c}", exception: true) rescue false)
+            end
+          else
+            puts "\e[32m#{host} #{cmd}\e[0m" # Green
+            puts system('ssh', host, "cd #{current_dir} && #{cmd}", exception: true)
+          end
         end
       end
 
