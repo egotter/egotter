@@ -171,16 +171,18 @@ class SendMetricsToCloudWatchWorker
         [TwitterUser.where(duration).where(user_id: -1), false],
         [TwitterUser.where(duration).where.not(user_id: -1), true]
     ].each do |records, signed_in|
+      options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
       records_count = records.size
       unique_count = records.map(&:uid).uniq.size
+
       if records_count != unique_count
-        options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
         client.put_metric_data('UniqueRecordsDiff', records_count - unique_count, options)
       end
 
       if records_count > 0
-        options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
         client.put_metric_data('RecordsCreationCount', records_count, options)
+        client.put_metric_data('MaxFriendsCount', records.map(&:friends_count).max, options)
+        client.put_metric_data('MaxFollowersCount', records.map(&:followers_count).max, options)
       end
     end
   end
