@@ -209,18 +209,14 @@ class SendMetricsToCloudWatchWorker
         [SearchHistory.where(duration).where(user_id: -1), false],
         [SearchHistory.where(duration).where.not(user_id: -1), true]
     ].each do |records, signed_in|
-      avg =
-          if signed_in
-            records.size / records.map(&:user_id).uniq.size rescue nil
-          else
-            records.size / records.map(&:session_id).uniq.size rescue nil
-          end
+      key = signed_in ? :user_id : :session_id
+      avg = records.size / records.map{|r| r.send(key) }.uniq.size rescue nil
       if avg
         options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
         client.put_metric_data('AvgSearchHistoriesCount', avg, options)
       end
 
-      max = records.each_with_object(Hash.new(0)) { |record, memo| memo[record.user_id] += 1 }.values.max
+      max = records.each_with_object(Hash.new(0)) { |record, memo| memo[record.send(key)] += 1 }.values.max
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data('MaxSearchHistoriesCount', max, options)
     end
