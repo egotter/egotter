@@ -25,8 +25,9 @@ class CreateFollowTask
     if e.class == FollowRequest::AlreadyFollowing
       records = FollowRequest.where(user_id: request.user_id, uid: request.uid, finished_at: nil, error_class: '')
       if records.exists?
+        size = records.size
         records.update_all(error_class: e.class, error_message: 'Bulk update')
-        Rails.logger.warn "Bulk updated #{records.size} records #{request.user_id} #{request.uid}"
+        Rails.logger.warn "Bulk updated #{size} records #{request.user_id} #{request.uid}"
       end
     end
 
