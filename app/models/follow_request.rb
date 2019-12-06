@@ -113,7 +113,7 @@ class FollowRequest < ApplicationRecord
   def friendship_outgoing?
     client.friendships_outgoing.attrs[:ids].include?(uid)
   rescue => e
-    logger.warn "#{__method__} #{e.class} #{e.message} #{self.inspect}"
+    logger.warn "#{__method__} Always return false #{e.class} #{e.message} #{self.slice(:id, :user_id, :uid)}"
     false
   end
 

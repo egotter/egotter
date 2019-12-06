@@ -59,6 +59,21 @@ RSpec.describe FollowRequest, type: :model do
     end
   end
 
+  describe '#friendship_outgoing?' do
+    let(:client) { double('Client') }
+    subject { request.friendship_outgoing? }
+
+    before do
+      allow(client).to receive(:friendships_outgoing).with(no_args).and_raise('Something happened.')
+      allow(request).to receive(:client).with(no_args).and_return(client)
+    end
+
+    it do
+      expect(request.logger).to receive(:warn).with(any_args).and_call_original
+      expect(subject).to be_falsey
+    end
+  end
+
   describe '.finished' do
     subject { described_class.finished(user_id: user.id, created_at: time) }
     let(:user) { create(:user) }
