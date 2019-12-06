@@ -69,7 +69,7 @@ class CreateTestMessageWorker
   end
 
   def send_message_to_slack(text, title: nil)
-    SlackClient.test_messages.send_message(text, title: title)
+    SlackClient.test_messages.send_message(text, title: "`#{title}`")
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
   end

@@ -13,6 +13,7 @@ class SlackClient
       ga_monitoring:               ENV['SLACK_GA_MONITORING_WEBHOOK_URL'],
       search_histories_monitoring: ENV['SLACK_SEARCH_HISTRIES_MONITORING_WEBHOOK_URL'],
       test_messages:               ENV['SLACK_TEST_MESSAGES_URL'],
+      welcome_messages:            ENV['SLACK_WELCOME_MESSAGES_URL'],
       bot:                         ENV['SLACK_BOT_URL'],
       delete_tweets:               ENV['SLACK_DELETE_TWEETS_URL'],
   }
