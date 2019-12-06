@@ -15,7 +15,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       it do
         expect(User).not_to receive(:find)
         expect(Bot).to receive(:api_client).with(no_args).and_return(client)
-        expect(worker).to receive(:do_perform).with(uids, client, true, nil)
+        expect(worker).to receive(:do_perform).with(uids, client, true, nil, enqueued_by: nil)
         subject
       end
     end
@@ -26,7 +26,7 @@ RSpec.describe CreateTwitterDBUserWorker do
         it do
           expect(User).to receive_message_chain(:find, :api_client).with(user.id).with(no_args).and_return(client)
           expect(Bot).not_to receive(:api_client)
-          expect(worker).to receive(:do_perform).with(uids, client, nil, user.id)
+          expect(worker).to receive(:do_perform).with(uids, client, nil, user.id, enqueued_by: nil)
           subject
         end
       end
@@ -36,7 +36,7 @@ RSpec.describe CreateTwitterDBUserWorker do
         it do
           expect(User).not_to receive(:find)
           expect(Bot).to receive(:api_client).with(no_args).and_return(client)
-          expect(worker).to receive(:do_perform).with(uids, client, nil, -1)
+          expect(worker).to receive(:do_perform).with(uids, client, nil, -1, enqueued_by: nil)
           subject
         end
       end
@@ -47,14 +47,14 @@ RSpec.describe CreateTwitterDBUserWorker do
       it do
         expect(User).not_to receive(:find)
         expect(Bot).to receive(:api_client).and_return(client)
-        expect(worker).to receive(:do_perform).with(uids, client, nil, nil)
+        expect(worker).to receive(:do_perform).with(uids, client, nil, nil, enqueued_by: nil)
         subject
       end
     end
   end
 
   describe '#do_perform' do
-    subject { worker.do_perform(uids, nil, false, user_id) }
+    subject { worker.do_perform(uids, nil, false, user_id, enqueued_by: nil) }
 
     before do
       allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(any_args).and_raise(exception)

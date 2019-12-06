@@ -21,7 +21,7 @@ class CreateTwitterDBUserWorker
     end
 
     client = (options['user_id'] && options['user_id'] != -1) ? User.find(options['user_id']).api_client : Bot.api_client
-    do_perform(uids, client, options['force_update'], options['user_id'])
+    do_perform(uids, client, options['force_update'], options['user_id'], enqueued_by: options[:enqueued_by])
 
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
@@ -30,13 +30,13 @@ class CreateTwitterDBUserWorker
     logger.info e.backtrace.join("\n")
   end
 
-  def do_perform(uids, client, force_update, user_id)
+  def do_perform(uids, client, force_update, user_id, enqueued_by:)
     tries ||= 2
     TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client, force_update: force_update)
   rescue => e
     if e.message == 'Invalid or expired token.' && user_id && (tries -= 1) > 0
       client = Bot.api_client
-      logger.warn "Retry with a bot client"
+      logger.warn "Retry with a bot client #{user_id} #{enqueued_by}"
       retry
     else
       raise
