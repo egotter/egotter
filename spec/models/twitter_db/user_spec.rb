@@ -119,7 +119,7 @@ RSpec.describe TwitterDB::User::Batch, type: :model do
     end
 
     context 'There are 3 persisted records' do
-      let(:time) { (TwitterDB::User::Batch::UPDATE_INTERVAL - 1.second).ago.round }
+      let(:time) { (TwitterDB::User::Batch::UPDATE_RECORD_INTERVAL - 1.second).ago.round }
       before do
         users.each do |user|
           TwitterDB::User.create!(uid: user[:id], screen_name: user[:screen_name], created_at: time, updated_at: time)

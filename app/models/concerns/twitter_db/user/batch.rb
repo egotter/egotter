@@ -24,12 +24,12 @@ module Concerns::TwitterDB::User::Batch
       end
     end
 
-    UPDATE_INTERVAL = 6.hours
+    UPDATE_RECORD_INTERVAL = Rails.configuration.x.constants['twitter_db_users']['update_record_interval']
 
     def self.import(users, force_update: false)
       unless force_update
         # Note: This query uses the index on uid instead of the index on updated_at.
-        persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }, updated_at: UPDATE_INTERVAL.ago..Time.zone.now).pluck(:uid)
+        persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }, updated_at: UPDATE_RECORD_INTERVAL.seconds.ago..Time.zone.now).pluck(:uid)
         users = users.reject { |user| persisted_uids.include? user[:id] }
       end
 
