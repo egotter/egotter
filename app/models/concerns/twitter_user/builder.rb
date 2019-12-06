@@ -11,8 +11,14 @@ module Concerns::TwitterUser::Builder
           screen_name: user[:screen_name],
           friends_count: user[:friends_count],
           followers_count: user[:followers_count],
-          raw_attrs_text: TwitterUser.collect_user_info(user)
+          raw_attrs_text: Concerns::TwitterUser::Builder.filter_save_keys(user)
       )
     end
+  end
+
+  module_function
+
+  def filter_save_keys(user)
+    user.symbolize_keys.slice(*Concerns::TwitterUser::RawAttrs::SAVE_KEYS).to_json
   end
 end

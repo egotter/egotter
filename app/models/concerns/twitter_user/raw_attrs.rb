@@ -51,12 +51,6 @@ module Concerns::TwitterUser::RawAttrs
       'GMT-4' => 'America/Puerto_Rico'
   }
 
-  class_methods do
-    def collect_user_info(t_user)
-      t_user.symbolize_keys.slice(*SAVE_KEYS).to_json
-    end
-  end
-
   included do
     attr_accessor :raw_attrs_text
 
