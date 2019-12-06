@@ -25,4 +25,18 @@ RSpec.describe TwitterUser, type: :model do
     let(:method_name) { :collect_user_info }
     it_should_behave_like 'Accept any kind of keys'
   end
+
+  describe '#friends_count' do
+    it do
+      expect(Efs::TwitterUser).not_to receive(:find_by)
+      user.friends_count
+    end
+  end
+
+  describe '#followers_count' do
+    it do
+      expect(Efs::TwitterUser).not_to receive(:find_by)
+      user.followers_count
+    end
+  end
 end

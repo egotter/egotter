@@ -34,6 +34,8 @@ module Concerns::TwitterUser::RawAttrs
   REJECT_KEYS = %i(
     id
     screen_name
+    followers_count
+    friends_count
     url
     created_at
   )
@@ -41,12 +43,12 @@ module Concerns::TwitterUser::RawAttrs
   METHOD_NAME_KEYS = SAVE_KEYS.reject { |k| k.in?(REJECT_KEYS) }
 
   TIME_ZONE_MAPPING = {
-    'JST' => 'Asia/Tokyo',
-    'GMT+9' => 'Asia/Tokyo',
-    'Ulaan Bataar' => 'Asia/Ulaanbaatar',
-    'GMT-8' => 'America/Los_Angeles',
-    'Kiev' => 'Europe/Kiev',
-    'GMT-4' => 'America/Puerto_Rico'
+      'JST' => 'Asia/Tokyo',
+      'GMT+9' => 'Asia/Tokyo',
+      'Ulaan Bataar' => 'Asia/Ulaanbaatar',
+      'GMT-8' => 'America/Los_Angeles',
+      'Kiev' => 'Europe/Kiev',
+      'GMT-4' => 'America/Puerto_Rico'
   }
 
   class_methods do
