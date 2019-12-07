@@ -683,11 +683,15 @@ ActiveRecord::Schema.define(version: 2019_12_04_014754) do
 
   create_table "orders", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.string "email"
+    t.string "name"
+    t.integer "price"
     t.integer "search_count", default: 0, null: false
     t.integer "follow_requests_count", default: 0, null: false
     t.integer "unfollow_requests_count", default: 0, null: false
     t.string "customer_id"
     t.string "subscription_id"
+    t.datetime "canceled_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["user_id"], name: "index_orders_on_user_id"

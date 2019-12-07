@@ -71,7 +71,7 @@
       %br.visible-xs-block
 
     = succeed spaces do
-      = link_to t('pricing.new.plans'), pricing_path
+      = link_to t('pricing.new.plans'), pricing_path(via: build_via('footer'))
       %br.visible-xs-block
 
     = succeed spaces do
