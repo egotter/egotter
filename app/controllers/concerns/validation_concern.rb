@@ -203,7 +203,7 @@ module Concerns::ValidationConcern
 
     if !user_signed_in? && SearchLimitation.soft_limited?(user)
       message = search_limitation_soft_limited_message(user[:screen_name], sign_in_path(via: build_via(__method__), redirect_path: request.fullpath))
-      redirect_to profile_path(screen_name: user[:screen_name]), alert: message
+      redirect_to profile_path(screen_name: user[:screen_name]), notice: message
       create_search_error_log(__method__, message)
       true
     else
