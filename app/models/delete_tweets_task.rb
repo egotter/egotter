@@ -7,6 +7,10 @@ class DeleteTweetsTask
   end
 
   def start!
+    if request.logs.empty?
+      send_message_to_slack('Started', request)
+    end
+
     @log = DeleteTweetsLog.create_by(request: request)
 
     if request.finished?
@@ -20,8 +24,9 @@ class DeleteTweetsTask
     rescue DeleteTweetsRequest::TweetsNotFound => e
       request.finished!
       request.tweet_finished_message if request.tweet
-      SlackClient.delete_tweets.send_message("Finished `#{request.id}` `#{request.user_id}` `#{request.screen_name}` `#{request.tweet}`") rescue nil
       request.send_finished_message(User.egotter)
+      send_message_to_slack('Finished', request)
+
     rescue DeleteTweetsRequest::Retryable => e
       @retry_in = e.retry_in
     rescue => e
@@ -38,5 +43,11 @@ class DeleteTweetsTask
     end
 
     self
+  end
+
+  def send_message_to_slack(status, request)
+    SlackClient.delete_tweets.send_message("#{status} `#{request.id}` `#{request.user_id}` `#{request.tweet}`")
+  rescue => e
+    Rails.logger.warn "#{self.class} Sending a message to slack is failed #{e.inspect}"
   end
 end
