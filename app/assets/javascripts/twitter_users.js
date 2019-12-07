@@ -16,22 +16,3 @@ TwitterUsers.isFollowingEgotter = function (url, callback) {
 TwitterUsers.confirmAccountStatus = function (url, done, fail) {
   $.get(url).done(done).fail(fail);
 };
-
-TwitterUsers.detectSecretMode = function () {
-  var fs = window.RequestFileSystem || window.webkitRequestFileSystem;
-  if (fs) {
-    fs(window.TEMPORARY,
-        100,
-        function (fs) {
-        },
-        function (fe) {
-          ga('send', {
-            hitType: 'event',
-            eventCategory: 'SecretMode',
-            eventAction: 'found',
-            eventLabel: 'found'
-          });
-        });
-  }
-}
-
