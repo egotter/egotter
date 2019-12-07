@@ -33,6 +33,12 @@ class OrdersController < ApplicationController
     flash[:notice] = t('orders.create.success_html', url: settings_path)
     redirect_to root_path
 
+    begin
+      SlackClient.orders.send_message("#{order.inspect}", title: '`Created`')
+    rescue => e
+      logger.warn "#{self.class}##{__method__} Sending a message to slack is failed #{e.inspect} #{order.inspect}"
+    end
+
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
     redirect_to root_path, alert: t('orders.create.failed_html', url: settings_path) unless performed?
