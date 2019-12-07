@@ -1088,6 +1088,7 @@ ja:
       error_message: 'ツイートの削除中にエラーが起きました。大抵のエラーは一時的なものです。お手数ですが、再度お試しください。#egotter %{url}'
     log:
       errors:
+        default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
         Unauthorized_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
         InvalidToken_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
         Unknown_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'

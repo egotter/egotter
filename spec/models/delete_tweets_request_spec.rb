@@ -15,7 +15,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       it { expect { subject }.to raise_error(DeleteTweetsRequest::Unauthorized) }
     end
 
-    context 'The #verify_credentials raises an error' do
+    context 'The #verify_credentials raises an error with "Invalid or expired token."' do
       let(:authorized) { true }
 
       before do
@@ -25,6 +25,18 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       end
 
       it { expect { subject }.to raise_error(DeleteTweetsRequest::InvalidToken) }
+    end
+
+    context 'The #verify_credentials raises Twitter::Error::TooManyRequests' do
+      let(:authorized) { true }
+
+      before do
+        client = double('Client')
+        allow(user).to receive_message_chain(:api_client, :twitter).with(no_args).with(no_args).and_return(client)
+        allow(client).to receive(:verify_credentials).with(no_args).and_raise(Twitter::Error::TooManyRequests)
+      end
+
+      it { expect { subject }.to raise_error(DeleteTweetsRequest::TooManyRequests) }
     end
 
     context 'statuses_count == 0' do

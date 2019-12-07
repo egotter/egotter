@@ -66,6 +66,8 @@ class DeleteTweetsRequest < ApplicationRecord
 
     begin
       api_client.verify_credentials
+    rescue Twitter::Error::TooManyRequests => e
+      raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: 0)
     rescue => e
       if e.message == 'Invalid or expired token.'
         raise InvalidToken.new(e.message)
