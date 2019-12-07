@@ -44,6 +44,10 @@ class Order < ApplicationRecord
     customer_id.nil? || subscription_id.nil?
   end
 
+  def cancel!
+    update!(canceled_at: Subscription.new(::Stripe::Subscription.delete(subscription_id)).canceled_at)
+  end
+
   class Customer
     def initialize(customer)
       @customer = customer
