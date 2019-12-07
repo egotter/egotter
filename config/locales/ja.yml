@@ -996,7 +996,7 @@ ja:
       reload_page: 'ページを更新する'
       request_to_update: '更新をリクエストする'
       next_creation_is_html: '表示されているデータは <b>%{time}</b> に更新されました。次の更新は%{distance_of_time}です。その頃にまた検索してください。'
-      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。'
+      displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。次の更新は「フォローまたはフォロワーに変化があったとき」です。'
       go: '%{time}後'
       soon: 'もうすぐ'
       too_many_friends: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
