@@ -281,14 +281,18 @@
 
   <h2 class="h4 text-center"><i class="fas fa-shopping-cart"></i>&nbsp;<%= t('.order.order_histories') %></h2>
 
-  <% if current_user.is_subscribing? %>
+  <% if current_user.orders.any? %>
     <table class="table">
       <tbody>
-      <% current_user.orders.unexpired.each.with_index do |order, i| %>
+      <% current_user.orders.select { |o| !o.purchase_failed? }.each do |order| %>
         <tr>
-          <td><%= t('.order.id', id: i + 1) %></td>
           <td>
-            <div><%= t('.order.expired_at', date: order.end_date) %></div>
+            <div><%= order.name %></div>
+            <div><%= t('.order.created_at', date: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
+          </td>
+          <td>
+            <div><%= order.expired? ? t('.order.expired_at', date: order.canceled_at) : t('.order.not_expired') %></div>
+            <div><%= t('.order.price', price: order.price) %></div>
             <div><%= t('.order.search_count', count: order.search_count) %></div>
             <div><%= t('.order.follow_requests_count', count: order.follow_requests_count) %></div>
             <div><%= t('.order.unfollow_requests_count', count: order.unfollow_requests_count) %></div>
@@ -297,7 +301,7 @@
       <% end %>
       <tr>
         <td></td>
-        <td><%= link_to t('.order.plans'), pricing_path %></td>
+        <td><%= link_to t('.order.plans'), pricing_path(via: build_via('subscribing')) %></td>
       </tr>
       </tbody>
     </table>
@@ -306,7 +310,7 @@
       <tbody>
         <tr>
           <td><%= t('.order.has_not_purchased') %></td>
-          <td><%= link_to t('.order.plans'), pricing_path %></td>
+          <td><%= link_to t('.order.plans'), pricing_path(via: build_via('has_not_purchased')) %></td>
         </tr>
       </tbody>
     </table>
