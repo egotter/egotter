@@ -153,6 +153,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   class NotChanged < Error
   end
 
+  class TooManyRequests < Error
+  end
+
   class Unknown < StandardError
   end
 end

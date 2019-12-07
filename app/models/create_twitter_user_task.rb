@@ -22,6 +22,12 @@ class CreateTwitterUserTask
     end
 
     self
+  rescue Twitter::Error::TooManyRequests => e
+    if request.user
+      TooManyRequestsQueue.new.add(request.user.id)
+      ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, request.user.id)
+    end
+    raise CreateTwitterUserRequest::TooManyRequests
   rescue => e
     @log.update(error_class: e.class, error_message: e.message)
     raise

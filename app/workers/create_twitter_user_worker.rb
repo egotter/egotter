@@ -36,15 +36,10 @@ class CreateTwitterUserWorker
     #   friendships(efs+s3), followerships(efs+s3)
     #   statuses, mentions, favorites
 
-  rescue Twitter::Error::TooManyRequests => e
-    if user
-      TooManyRequestsQueue.new.add(user.id)
-      ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user.id)
-    end
   rescue CreateTwitterUserRequest::Error => e
   rescue => e
     logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
-    logger.warn "Caused by #{e.cause.inspect}" if e.cause
+    logger.info "Caused by #{e.cause.inspect}" if e.cause
     logger.info e.backtrace.join("\n")
   end
 
