@@ -1,4 +1,4 @@
-namespace :users do
+namespace :orders do
   desc 'update email'
   task update_email: :environment do
     sigint = Util::Sigint.new.trap

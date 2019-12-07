@@ -15,7 +15,7 @@ class SearchCountLimitation
         count += SearchCountLimitation::SIGN_IN_BONUS
       end
 
-      if user&.is_subscribing?
+      if user&.has_valid_subscription?
         count = user.purchased_search_count
       end
 
