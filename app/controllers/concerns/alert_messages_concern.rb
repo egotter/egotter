@@ -135,9 +135,9 @@ module Concerns::AlertMessagesConcern
   end
 
   def too_many_requests_message(reset_in = 30)
-    reset_in ||= rate_limit_reset_in
     if user_signed_in?
-      t('after_sign_in.too_many_requests_with_reset_in', seconds: reset_in)
+      reset_in ||= rate_limit_reset_in
+      t('after_sign_in.too_many_requests_with_reset_in', seconds: sprintf('%d', reset_in))
     else
       t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
     end

@@ -244,7 +244,8 @@ module Concerns::ValidationConcern
     return false if from_crawler? || !user_signed_in?
     return false unless TooManyRequestsUsers.new.exists?(current_user_id)
 
-    message = too_many_requests_message
+    reset_in = TooManyRequestsUsers.new.ttl(current_user_id)
+    message = too_many_requests_message(reset_in || 900)
 
     if request.xhr?
       respond_with_error(:bad_request, message)

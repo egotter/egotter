@@ -87,7 +87,17 @@ ja:
       finished: "検索が完了しました。ページを移動します"
       retry_search_by: "%{user} で再度検索"
       something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
-      retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+      retry_timeout_html:
+        アクセスが多すぎるため検索がタイムアウトしました。<a class="btn btn-default" href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。
+        <br>
+        1. これは何？<br>
+        検索数が多いときに起きる一時的なエラーです。少し待てば回復します。<br>
+        <br>
+        2. どうやったら直るの？<br>
+        待っているだけで自然に直ります。10分ほどたったらまた検索してみてください。<br>
+        <br>
+        3. どうして起きたの？<br>
+        検索数が多かったり、検索したユーザーのフォロー＋フォロワー数が多いと起きます。
       link_to_support: "お問い合わせページ"
   home:
     new:
@@ -1365,7 +1375,6 @@ ja:
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
-    retry_timeout_html: 'アクセスが多すぎるため検索がタイムアウトしました。<a href="%{sign_in_path}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     search_limitation_soft_limited_html: '検索されたユーザー @%{user} はフォローとフォロワーが多いため、<a class="btn btn-default" href="%{url}">ログイン</a> した後のみ検索できます。'
     ajax:
       need_login_html: 'この操作を行うためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
@@ -1378,7 +1387,17 @@ ja:
       <a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank">公式アカウントに質問</a>
   after_sign_in:
     too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>  <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
-    too_many_requests_with_reset_in: "アクセスが多すぎるため検索数の上限に達しました。%{seconds}秒後に再度検索してみてください。"
+    too_many_requests_with_reset_in: >
+      一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
+      <br>
+      1. これは何？<br>
+      検索数が多いときに起きるツイッターAPIの制限です。少し待てば回復します。<br>
+      <br>
+      2. どうやったら直るの？<br>
+      あと %{seconds}秒 ほど待てば自然に直ります。<br>
+      <br>
+      3. どうして起きたの？<br>
+      検索数が多かったり、検索したユーザーのフォロー＋フォロワー数が多いと起きます。
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
     profile_not_found_html: '@%{user} のプロフィール更新に失敗しました。<a class="btn btn-default btn-sm" href="%{url}">ページを更新</a>してください。'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'

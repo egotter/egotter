@@ -8,7 +8,7 @@
   <%= t(".finished") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
 </div>
 
-<div class="error-msg alert alert-warning text-center" style="display: none;">
+<div class="error-msg alert alert-warning text-left" style="display: none;">
   <%= t('.something_wrong_html', url: sign_in_path(via: build_via('something_wrong'))) %>
 </div>
 
@@ -73,8 +73,8 @@
           done(res);
         } else {
           if (retryCount < maxRetryCount - 1) {
-            keep_on(res);
-            var options = {interval: interval, retry_count: ++retryCount};
+            var options = {interval: interval, retryCount: ++retryCount, maxRetryCount: maxRetryCount};
+            keep_on(res, options);
             setTimeout(function () { ticktak(path, options, done, keep_on, stopped, failed); }, interval);
           } else {
             stopped(res);
@@ -114,8 +114,8 @@
     ticktak(url, {interval: 3000, retry_count: 0}, function done (res) {
       console.log('success', res);
       succeeded();
-    }, function keep_on (res) {
-      console.log('continue', res);
+    }, function keep_on (res, options) {
+      console.log('continue', res, options);
       progressBar.advance();
     }, function stopped (res) {
       console.log('stop', res);
@@ -124,10 +124,9 @@
       $errorMessage.html(timeOutMessage).show();
     }, function fail (xhr) {
       console.log('failed', xhr.responseText);
-
-      var res = $.parseJSON(xhr.responseText || null);
       failed();
 
+      var res = $.parseJSON(xhr.responseText || null);
       if (res && res.message) {
         $errorMessage.html(res.message);
       }

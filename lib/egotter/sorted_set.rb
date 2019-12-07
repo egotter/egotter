@@ -10,7 +10,8 @@ module Egotter
 
     def ttl(val = nil)
       if val
-        ttl - (Time.zone.now.to_i - redis.zscore(key, val.to_s))
+        score = redis.zscore(key, val.to_s)
+        score ? (ttl - (Time.zone.now.to_i - score)) : nil
       else
         @ttl
       end
