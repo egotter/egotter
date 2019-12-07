@@ -9,11 +9,11 @@ default: &default
   search_limitation:
     soft_limit: 2000
     hard_limit: 30000
-  anonymous_search_histories_limit: 2
-  free_plan_search_histories_limit: 5
-  search_histories_sharing_bonus: 2
-  search_histories_sign_in_bonus: 3
-  basic_plan_search_histories_limit: 10
+  search_count_limitation:
+    sign_in_bonus: 3
+    sharing_bonus: 2
+    anonymous: 2
+    basic_plan: 10
   anonymous_follow_requests_limit: 2
   basic_plan_follow_requests_limit: 100
   anonymous_unfollow_requests_limit: 2

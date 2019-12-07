@@ -142,6 +142,7 @@ class User < ApplicationRecord
     end
   end
 
+  # TODO Remove later
   def unauthorized?
     !authorized?
   end
@@ -215,6 +216,10 @@ class User < ApplicationRecord
 
   def is_subscribing?
     orders.unexpired.any?
+  end
+
+  def purchased_search_count
+    orders.unexpired[-1].search_count
   end
 
   def latest_prompt_report

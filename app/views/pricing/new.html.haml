@@ -14,8 +14,8 @@
     %tr
       %td= t('.search_count.key')
       %td
-        = t('.search_count.free', count1: Rails.configuration.x.constants['anonymous_search_histories_limit'], count2: Rails.configuration.x.constants['free_plan_search_histories_limit'])
-        %span.text-muted{style: 'font-size: x-small;'}= t('.search_count.free_note', count: Rails.configuration.x.constants['free_plan_search_histories_limit'])
+        = t('.search_count.free', count1: SearchCountLimitation::ANONYMOUS, count2: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
+        %span.text-muted{style: 'font-size: x-small;'}= t('.search_count.free_note', count: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
     %tr
       %td= t('.follow_requests.key')
       %td= Rails.configuration.x.constants['anonymous_follow_requests_limit']
@@ -64,7 +64,7 @@
       %td= t('.audience.basic')
     %tr
       %td= t('.search_count.key')
-      %td.text-primary= t('.search_count.basic', count: Rails.configuration.x.constants['basic_plan_search_histories_limit'])
+      %td.text-primary= t('.search_count.basic', count: SearchCountLimitation::BASIC_PLAN)
     %tr
       %td= t('.follow_requests.key')
       %td.text-primary= t('.follow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'])
@@ -94,7 +94,7 @@
 .vertical-spacing
 .vertical-spacing
 
-%h3.text-center= t('.names.enterprice')
+%h3#enterprise-plan.text-center= t('.names.enterprice')
 .vertical-spacing
 
 %table.pricing-table.table.table-bordered
@@ -113,7 +113,12 @@
       %td= t('.enterprice_description')
     %tr
       %td
-      %td= link_to t('.enterprice_inquiry'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
+      %td
+        %div= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
+        .vertical-spacing
+        %div
+          = link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-default'
+          %span{style: 'font-size: x-small;'}= t('.enterprice_inquiry_by_dm_note_html')
 
 .clearfix
 

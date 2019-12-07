@@ -181,16 +181,23 @@
           .modal-body
             = render partial: 'common/search_form', locals: {via: build_via('search_modal_input')}
             .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
-              = t('search_histories.search_modal.remaining_count_is_html', count: search_histories_remaining)
+              = t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: fingerprint))
               %div
                 - if user_signed_in?
                   - if current_user.is_subscribing?
                     = link_to current_plan_name, settings_path
                   - else
-                    = t('search_histories.search_modal.purchase_html', url: pricing_path(via: build_via('increase_count_purchase')))
+                    = t('search_histories.search_modal.purchase_html', url: pricing_path(via: build_via('purchase_button_on_search_modal')))
                 - else
-                  = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: build_via('increase_count_sign_in')))
-                = t('search_histories.search_modal.tweet_html')
+                  = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: build_via('sign_in_button_on_search_modal')))
+                %a.btn.btn-default.btn-sm{data: {target: '#share-modal', toggle: 'modal'}}= t('search_histories.search_modal.tweet')
+            - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: fingerprint) == 0
+              .vertical-spacing
+              .alert.alert-info.text-left
+                - sign_in_url = sign_in_path(via: build_via('too_many_searches_search_modal'))
+                - pricing_url = pricing_path(via: build_via('too_many_searches_search_modal'))
+                - support_url = pricing_path(via: build_via('too_many_searches_search_modal'), anchor: 'enterprise-plan')
+                = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
             %h2.text-center= t('search_histories.search_modal.title')
             .twitter.users.row
 

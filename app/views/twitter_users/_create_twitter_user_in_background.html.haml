@@ -56,11 +56,10 @@
 
 #too-many-searches-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'too-many-searches-box'}}
   %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  - if user_signed_in?
-    = t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path(via: build_via('too_many_searches_box')))
-  - else
-    - url = sign_in_path(via: build_via('too_many_searches_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_searches_box')))
-    = t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: url)
+  - sign_in_url = sign_in_path(via: build_via('too_many_searches_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_searches_box')))
+  - pricing_url = pricing_path(via: build_via('too_many_searches_box'))
+  - support_url = pricing_path(via: build_via('too_many_searches_box'), anchor: 'enterprise-plan')
+  = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
 
 :javascript
   (function () {
