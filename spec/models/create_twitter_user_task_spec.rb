@@ -23,7 +23,7 @@ RSpec.describe CreateTwitterUserTask, type: :model do
 
       it do
         expect { subject }.to raise_error(CreateTwitterUserRequest::TooManyRequests).
-            and change { TooManyRequestsQueue.new.size }.by(1)
+            and change { TooManyRequestsUsers.new.size }.by(1)
       end
     end
   end

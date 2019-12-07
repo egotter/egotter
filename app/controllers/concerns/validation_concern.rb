@@ -242,7 +242,7 @@ module Concerns::ValidationConcern
 
   def too_many_requests?(twitter_user)
     return false if from_crawler? || !user_signed_in?
-    return false unless TooManyRequestsQueue.new.exists?(current_user_id)
+    return false unless TooManyRequestsUsers.new.exists?(current_user_id)
 
     message = too_many_requests_message
 

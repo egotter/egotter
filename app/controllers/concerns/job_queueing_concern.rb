@@ -9,7 +9,7 @@ module Concerns::JobQueueingConcern
   def enqueue_create_twitter_user_job_if_needed(uid, user_id:, requested_by: '')
     return if from_crawler?
     return if !user_signed_in? && via_dm?
-    return if user_signed_in? && TooManyRequestsQueue.new.exists?(current_user.id)
+    return if user_signed_in? && TooManyRequestsUsers.new.exists?(current_user.id)
 
     # This value is used in #searched_uid? to redirect to an error page when the uid is not searched.
     queue = EnqueuedSearchRequest.new
