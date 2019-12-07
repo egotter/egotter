@@ -258,7 +258,6 @@ ja:
         update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
       order:
         order_histories: "購入履歴"
-        id: "注文 %{id}"
         created_at: "（購入日 %{date}）"
         not_expired: '有効期限 キャンセルするまで'
         expired_at: "有効期限 %{date}"
@@ -376,7 +375,6 @@ ja:
   pricing:
     new:
       plans: "料金プラン"
-      xxx_plan: 'えごったー %{name} プラン'
       names:
         key: "プラン名"
         free: "フリー"

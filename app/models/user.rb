@@ -214,12 +214,16 @@ class User < ApplicationRecord
     uid == ADMIN_UID
   end
 
-  def is_subscribing?
+  def has_valid_subscription?
     orders.unexpired.any?
   end
 
+  def purchased_plan_name
+    orders.unexpired.last.name
+  end
+
   def purchased_search_count
-    orders.unexpired[-1].search_count
+    orders.unexpired.last.search_count
   end
 
   def latest_prompt_report

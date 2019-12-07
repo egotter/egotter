@@ -255,7 +255,7 @@ module Concerns::ValidationConcern
   end
 
   def has_already_purchased?
-    return false if current_user.orders.unexpired.none?
+    return false unless current_user.has_valid_subscription?
 
     respond_with_error(:bad_request, t('after_sign_in.has_already_purchased_html', url: settings_path))
     true

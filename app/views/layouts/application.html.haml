@@ -184,8 +184,8 @@
               = t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: fingerprint))
               %div
                 - if user_signed_in?
-                  - if current_user.is_subscribing?
-                    = link_to current_plan_name, settings_path
+                  - if current_user.has_valid_subscription?
+                    = link_to current_user.purchased_plan_name, settings_path(via: build_via('plan_button_on_search_modal')), class: 'btn btn-default btn-sm'
                   - else
                     = t('search_histories.search_modal.purchase_html', url: pricing_path(via: build_via('purchase_button_on_search_modal')))
                 - else
