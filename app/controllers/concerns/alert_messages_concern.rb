@@ -151,6 +151,25 @@ module Concerns::AlertMessagesConcern
     end
   end
 
+  def too_many_searches_message
+    values = {
+        limit: SearchCountLimitation.max_search_count(current_user),
+        sign_in_bonus: SearchCountLimitation::SIGN_IN_BONUS,
+        sharing_bonus: SearchCountLimitation::SHARING_BONUS,
+        basic_plan: SearchCountLimitation::BASIC_PLAN,
+        reset_in: SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: fingerprint),
+        sign_in_url: sign_in_path(via: build_via('too_many_searches_message')),
+        pricing_url: pricing_path(via: build_via('too_many_searches_message')),
+        support_url: pricing_path(via: build_via('too_many_searches_message'), anchor: 'enterprise-plan'),
+    }
+
+    if user_signed_in?
+      t('after_sign_in.too_many_searches_html', values)
+    else
+      t('before_sign_in.too_many_searches_html', values)
+    end
+  end
+
   def unknown_alert_message(ex)
     reason = (ex.class.name.demodulize.underscore rescue 'exception')
     # Show a sign-in button whether or not current user is signed in.
@@ -161,7 +180,7 @@ module Concerns::AlertMessagesConcern
 
   def rate_limit_reset_in
     limit = request_context_client.rate_limit
-    [limit.friend_ids, limit.follower_ids, limit.users].select {|l| l[:remaining] == 0}.map {|l| l[:reset_in]}.max
+    [limit.friend_ids, limit.follower_ids, limit.users].select { |l| l[:remaining] == 0 }.map { |l| l[:reset_in] }.max
   end
 
   def user_link(*args)

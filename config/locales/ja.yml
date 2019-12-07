@@ -207,7 +207,7 @@ ja:
       title: "検索履歴"
       remaining_count_is_html: '残りの検索回数は %{count} 回です。'
       sign_in_html: '<a href="%{url}" class="btn btn-default btn-sm">ログインして増やす</a>'
-      tweet_html: '<a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
+      tweet: 'ツイートして増やす'
       purchase_html: '<a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>'
   notifications:
     title: "通知"
@@ -455,7 +455,9 @@ ja:
       has_purchased: "購入済み"
       money_back_guarantee: "14日間は100%返金保証"
       enterprice_description: "特定の商品に興味のあるユーザーの嗜好性調査、特定のユーザーのフォロー・フォロワー収集など、ツイッターに関する調査全般をお引き受けいたします。"
-      enterprice_inquiry: "問い合わせ"
+      enterprice_inquiry_by_email: "メールで問い合わせ"
+      enterprice_inquiry_by_dm: "DMで問い合わせ"
+      enterprice_inquiry_by_dm_note_html: '※DMですと見逃すことがあります。可能な限り、<span class="egotter-pink">メール</span>をご利用ください'
       ask_me_html: 'ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで<br class="visible-xs-block">お気軽にご連絡ください。'
   orders:
     create:
@@ -1364,7 +1366,26 @@ ja:
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
-    too_many_searches_html: 'ログインせずに検索できる上限に達しました。( %{limit}回/日 ) もっとたくさん検索するには、<a href="%{url}" class="btn btn-default btn-sm">ログイン</a> してください。'
+    too_many_searches_html:
+      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
+      <br>
+      1. これは何？<br>
+      えごったーで1日に検索できる回数の制限です。<br>
+      <br>
+      2. 次はいつ検索できるの？<br>
+      あと %{reset_in} ほど待てばまた検索できるようになります。<br>
+      <br>
+      3. 検索回数は増やせるの？<br>
+      ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
+      <br>
+      <a class="btn btn-default" href="%{sign_in_url}">ログイン</a>：%{sign_in_bonus}回/日<br>
+      <br>
+      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">えごったーをツイート</a>：ツイート回数×%{sharing_bonus}回<br>
+      <br>
+      <a href="%{pricing_url}" class="btn btn-default">購入して増やす</a>：最大%{basic_plan}回/日<br>
+      <br>
+      4. マーケティングでご利用の方へ<br>
+      ツイッターでの各種データ調査については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
     profile_not_found_html: '@%{user} のプロフィール更新に失敗しました。何度も起きる場合は<a class="btn btn-default btn-sm" href="%{url}">ログイン</a>してから検索してください。'
@@ -1399,7 +1420,26 @@ ja:
       <br>
       <a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank">公式アカウントに質問</a>
   after_sign_in:
-    too_many_searches_html: '現在のプランで検索できる上限に達しました。( %{limit}回/日 ) <a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>  <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default btn-sm">ツイートして増やす</a>'
+    too_many_searches_html:
+      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
+      <br>
+      1. これは何？<br>
+      えごったーで1日に検索できる回数の制限です。<br>
+      <br>
+      2. 次はいつ検索できるの？<br>
+      あと %{reset_in} ほど待てばまた検索できるようになります。<br>
+      <br>
+      3. 検索回数は増やせるの？<br>
+      ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
+      <br>
+      <a class="btn btn-default" href="%{sign_in_url}">ログイン</a>：%{sign_in_bonus}回/日<br>
+      <br>
+      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">えごったーをツイート</a>：ツイート回数×%{sharing_bonus}回<br>
+      <br>
+      <a href="%{pricing_url}" class="btn btn-default">購入して増やす</a>：最大%{basic_plan}回/日<br>
+      <br>
+      4. マーケティングでご利用の方へ<br>
+      ツイッターでの各種データ調査については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
     too_many_requests_with_reset_in: >
       一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
       <br>

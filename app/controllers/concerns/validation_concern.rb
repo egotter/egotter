@@ -217,7 +217,8 @@ module Concerns::ValidationConcern
   end
 
   def too_many_searches?(twitter_user)
-    return false if from_crawler? || search_histories_remaining > 0
+    return false if from_crawler?
+    return false if SearchCountLimitation.remaining_search_count(user: current_user, session_id: fingerprint) > 0
     return false if current_search_histories.any? { |history| history.uid == twitter_user.uid }
 
     message = too_many_searches_message
@@ -225,19 +226,11 @@ module Concerns::ValidationConcern
     if request.xhr?
       respond_with_error(:bad_request, message)
     else
-      redirect_to profile_path(screen_name: twitter_user.screen_name), alert: message
+      redirect_to profile_path(screen_name: twitter_user.screen_name), notice: message
       create_search_error_log(__method__, message)
     end
 
     true
-  end
-
-  def too_many_searches_message
-    if user_signed_in?
-      t('after_sign_in.too_many_searches_html', limit: search_histories_limit, url: pricing_path)
-    else
-      t('before_sign_in.too_many_searches_html', limit: search_histories_limit, url: kick_out_error_path('too_many_searches'))
-    end
   end
 
   def too_many_requests?(twitter_user)
