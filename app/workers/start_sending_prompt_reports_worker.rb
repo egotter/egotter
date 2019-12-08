@@ -18,10 +18,11 @@ class StartSendingPromptReportsWorker
       end
     end
 
+    log = StartSendingPromptReportsLog.create(started_at: Time.zone.now)
+
     task = StartSendingPromptReportsTask.new
-    start_time = Time.zone.now
+    log.update(properties: task.ids_stats)
     users_size = task.users.size
-    logger.warn "Start queueing #{task.ids_stats.inspect}"
 
     task.users.each.with_index do |user, i|
       request = CreatePromptReportRequest.create(user_id: user.id)
@@ -29,13 +30,13 @@ class StartSendingPromptReportsWorker
 
       if users_size - 1 == i
         options[:start_next_loop] = true
-        options[:queueing_started_at] = start_time
+        options[:queueing_started_at] = log.started_at
       end
 
       CreatePromptReportWorker.perform_async(request.id, options)
     end
 
-    logger.warn "Finish queueing #{users_size} users"
+    log.update(finished_at: Time.zone.now)
 
   rescue => e
     logger.warn "#{e.class} #{e.message}"

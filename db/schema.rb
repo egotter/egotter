@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_04_014754) do
+ActiveRecord::Schema.define(version: 2019_12_08_081808) do
 
   create_table "activeness_warning_messages", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -929,6 +929,14 @@ ActiveRecord::Schema.define(version: 2019_12_04_014754) do
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_sign_in_logs_on_created_at"
     t.index ["user_id"], name: "index_sign_in_logs_on_user_id"
+  end
+
+  create_table "start_sending_prompt_reports_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.json "properties"
+    t.datetime "started_at"
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_start_sending_prompt_reports_logs_on_created_at"
   end
 
   create_table "statuses", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=COMPRESSED KEY_BLOCK_SIZE=4", force: :cascade do |t|

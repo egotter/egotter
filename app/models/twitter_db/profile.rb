@@ -18,7 +18,7 @@
 #  location                :string(191)      default(""), not null
 #  description             :string(191)      default(""), not null
 #  url                     :string(191)      default(""), not null
-#  geo_enabled             :string(191)      default("0"), not null
+#  geo_enabled             :boolean          default(FALSE), not null
 #  verified                :boolean          default(FALSE), not null
 #  lang                    :string(191)      default(""), not null
 #  profile_image_url_https :string(191)      default(""), not null
