@@ -48,12 +48,14 @@ Settings.enableDeleteTweetsButton = function () {
 
     var tweet = $modal.find('#tweet-after-finishing').prop('checked');
 
-    $.post($(this).data('url'), {tweet: tweet}, function (res) {
+    $.post($(this).data('url'), {tweet: tweet}).done(function (res) {
       console.log(res);
 
       setTimeout(function () {
         window.location.reload();
       }, 3000);
+    }).fail(function (xhr) {
+      Logger.warn(JSON.parse(xhr.responseText)['message']);
     });
   });
 };
