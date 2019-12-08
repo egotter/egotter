@@ -6,7 +6,7 @@ module Deploy
   class Web
     CMD = [
         'git pull origin master',
-        'bundle install --path .bundle --without test development',
+        'bundle check || bundle install --path .bundle --without test development',
         'RAILS_ENV=production bundle exec rake assets:precompile',
         'sudo service puma restart',
     ]
