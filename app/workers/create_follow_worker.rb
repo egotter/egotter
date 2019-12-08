@@ -18,7 +18,7 @@ class CreateFollowWorker
 
   rescue FollowRequest::TooManyFollows => e
     logger.warn "#{e.class} Sleep for 1 hour"
-    (1.hour / 10).times { sleep 10 }
+    1.hour.times { sleep 1 }
     CreateFollowWorker.perform_async(request_id, options)
 
   rescue FollowRequest::RetryableError => e
