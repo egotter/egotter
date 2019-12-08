@@ -235,8 +235,9 @@ class SendMetricsToCloudWatchWorker
       client.put_metric_data('MaxSearchHistoriesCount', max, options)
 
       records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
+        next if count < 2
         options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-        client.put_metric_data("via(#{via})", max, options)
+        client.put_metric_data("via(#{via})", count, options)
       end
     end
   end
