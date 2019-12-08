@@ -21,7 +21,7 @@ class CreateTwitterDBUserWorker
     end
 
     client = (options['user_id'] && options['user_id'] != -1) ? User.find(options['user_id']).api_client : Bot.api_client
-    do_perform(uids, client, options['force_update'], options['user_id'], enqueued_by: options[:enqueued_by])
+    do_perform(uids, client, options['force_update'], options['user_id'], enqueued_by: options['enqueued_by'])
 
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
