@@ -19,6 +19,6 @@ module Concerns::TwitterUser::Builder
   module_function
 
   def filter_save_keys(user)
-    user.symbolize_keys.slice(*Concerns::TwitterUser::RawAttrs::SAVE_KEYS).to_json
+    user.symbolize_keys.slice(*Concerns::TwitterUser::Profile::SAVE_KEYS).to_json
   end
 end
