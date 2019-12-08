@@ -24,10 +24,22 @@ RSpec.describe CreateTwitterDBUserWorker do
       context 'user_id != -1' do
         let(:options) { {'user_id' => user.id} }
         it do
-          expect(User).to receive_message_chain(:find, :api_client).with(user.id).with(no_args).and_return(client)
+          expect(User).to receive(:find).with(user.id).and_return(user)
+          expect(user).to receive(:api_client).with(no_args).and_return(client)
           expect(Bot).not_to receive(:api_client)
           expect(worker).to receive(:do_perform).with(uids, client, nil, user.id, enqueued_by: nil)
           subject
+        end
+
+        context 'The user is not authorized' do
+          before { allow(user).to receive(:authorized?).with(no_args).and_return(false) }
+          it do
+            expect(User).to receive(:find).with(user.id).and_return(user)
+            expect(user).not_to receive(:api_client)
+            expect(Bot).to receive(:api_client).with(no_args).and_return(client)
+            expect(worker).to receive(:do_perform).with(uids, client, nil, user.id, enqueued_by: nil)
+            subject
+          end
         end
       end
 

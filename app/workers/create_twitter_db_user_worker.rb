@@ -20,7 +20,13 @@ class CreateTwitterDBUserWorker
       uids = decompress(uids)
     end
 
-    client = (options['user_id'] && options['user_id'] != -1) ? User.find(options['user_id']).api_client : Bot.api_client
+    client = nil
+    if options['user_id'] && options['user_id'] != -1
+      user = User.find(options['user_id'])
+      client = user.api_client if user.authorized?
+    end
+    client = Bot.api_client unless client
+
     do_perform(uids, client, options['force_update'], options['user_id'], enqueued_by: options['enqueued_by'])
 
   rescue => e
