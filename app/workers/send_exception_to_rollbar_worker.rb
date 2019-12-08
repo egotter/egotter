@@ -6,28 +6,38 @@ class SendExceptionToRollbarWorker
 
   def perform(payload)
     data = payload['data']
-    logger.warn "exception=#{extract_exception(data)} context=#{data['context']} person=#{data['person']}"
+
+    logger.warn "The #{data['person'] || 'anonymous'} encountered #{traverse('exception', data) || 'something'} in #{data['context']}}"
+    logger.info "#{JSON.pretty_generate(data)}"
 
     Rollbar.process_from_async_handler(payload)
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{payload.inspect.truncate(100)}"
+    logger.warn "#{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
+    logger.info "#{JSON.pretty_generate(data)}"
   end
 
-  private
+  def traverse(key, hash)
+    traverse_hash(key, hash)
+    nil
+  rescue Found => e
+    e.message
+  end
 
-  def extract_exception(data)
-    message = data.dig('body', 'trace', 'exception')
-    begin
-      message = data.dig('body', 'trace_chain', 'exception') if message.blank?
-    rescue => e
+  class Found < StandardError
+  end
+
+  def traverse_hash(target_key, hash)
+    if hash.respond_to?(:each)
+      hash.each do |key, value|
+        if key == target_key
+          raise Found.new(value)
+        elsif value.is_a?(Hash)
+          traverse_hash(target_key, value)
+        elsif value.is_a?(Array)
+          value.map { |v| traverse_hash(target_key, v) }
+        end
+      end
     end
-
-    if message.blank?
-      logger.warn "exception is blank #{data.inspect.truncate(100)}}"
-      logger.info "#{JSON.pretty_generate(data)}"
-    end
-
-    message
   end
 end
