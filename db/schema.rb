@@ -1074,7 +1074,7 @@ ActiveRecord::Schema.define(version: 2019_12_04_014754) do
     t.string "location", default: "", null: false
     t.string "description", default: "", null: false
     t.string "url", default: "", null: false
-    t.string "geo_enabled", default: "0", null: false
+    t.boolean "geo_enabled", default: false, null: false
     t.boolean "verified", default: false, null: false
     t.string "lang", default: "", null: false
     t.string "profile_image_url_https", default: "", null: false
