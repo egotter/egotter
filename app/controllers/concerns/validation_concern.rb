@@ -226,7 +226,8 @@ module Concerns::ValidationConcern
     if request.xhr?
       respond_with_error(:bad_request, message)
     else
-      redirect_to profile_path(screen_name: twitter_user.screen_name), notice: message
+      # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
+      redirect_to profile_path(screen_name: twitter_user.screen_name, notice_message: 'too_many_searches')
       create_search_error_log(__method__, message)
     end
 

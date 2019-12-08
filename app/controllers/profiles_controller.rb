@@ -20,7 +20,13 @@ class ProfilesController < ApplicationController
     @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
     return if performed?
 
-    flash.now[:notice] = flash_message(@user) if @user && flash.empty?
+    if params[:notice_message] == 'too_many_searches'
+      flash.now[:notice] = too_many_searches_message
+    end
+
+    if @user && flash.empty?
+      flash.now[:notice] = flash_message(@user)
+    end
   end
 
   def latest
@@ -28,7 +34,10 @@ class ProfilesController < ApplicationController
     @user = build_twitter_user_by(screen_name: params[:screen_name]) # It's possible to be redirected
     return if performed?
 
-    flash.now[:notice] = flash_message(@user) if @user && flash.empty?
+    if @user && flash.empty?
+      flash.now[:notice] = flash_message(@user)
+    end
+
     render 'show'
   end
 
