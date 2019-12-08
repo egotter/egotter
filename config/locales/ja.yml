@@ -659,18 +659,17 @@ ja:
         <span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">
         &nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>
       page_title: 'リムられチェック - リムられの簡単な調べ方、自動で通知する方法'
-      simple_title_html: >
-        スマホでさくっと<br>
-        リムられチェック
+      simple_title_html: 'リムられチェック'
       footer_title: 'リムられチェック'
+      first_title_sub_text: 'スマホでサクッと'
       meta_description: "保存ユーザー数4,800万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
       what_is_unfriends:
         title: '「リムり」「リムられ」ってどういう意味？'
-        description_html: >
+        description1_html: >
           リムるは「<span class="egotter-pink">リムーブする</span>」を省略した言葉です。直訳すると、「取り除く」や「削除する」という意味になります。<br>
           <br>
-          このことから、ツイッターでは「<span class="egotter-pink">フォローを解除する</span>」ことを「リムる」と表現します。<br>
-          <br>
+          このことから、ツイッターでは「<span class="egotter-pink">フォローを解除する</span>」ことを「リムる」と表現します。
+        description2_html: >
           フォローを解除すると、解除された人のツイートはもう見ることができません。<br>
           <br>
           「リムーブする」にはさらにいくつかのバリエーションがあります。<br>
@@ -692,17 +691,22 @@ ja:
       how_to_use_unfriends:
         title: 'リムられチェックはどうやって使うの？'
         description_html: >
-          <a href="%{url}">リムられチェックにログイン</a>するだけで、利用登録は完了です。後は自動でリムられの集計を行います。<br>
+          <a href="%{url}">リムられチェックにログイン</a>するだけで、利用登録は完了です。<br>
+          後は自動でリムられの集計を行います。<br>
           <br>
           その後は、リムられが増えたタイミングで、<span class="egotter-pink">DMで通知</span>が届きます。<br>
           <br>
           通知の中には、「新しく ○ 人にリムられました。次の更新は 約○時間後 です」という内容と、リムられた具体的な<span class="egotter-pink">ユーザー名</span>が書かれています。
+        check: 'ログインするだけ'
       when_to_use_unfriends:
         title: 'リムられチェックの登録はいつでもいいの？'
         description_html: >
-          できるだけ早く登録した方がよいです。リムられデータは、<span class="egotter-pink">登録を開始してから</span>たまっていきます。<br>
+          できるだけ早く登録した方がよいです。リムられデータは、<br>
+          <span class="egotter-pink">登録を開始してから</span>たまっていきます。<br>
           <br>
-          そのため、<a href="%{url}">リムられチェックへのログイン</a>は先にしておきましょう。リムられた後にログインしても、もう誰にリムられたのか<span class="egotter-pink">分からない</span>ままになってしまいます。
+          そのため、<a href="%{url}">リムられチェックへのログイン</a>は先にしておきましょう。<br>
+          リムられた後にログインしても、もう誰にリムられたのか<span class="egotter-pink">分からない</span>ままになってしまいます。
+        check: 'すぐに登録'
       text001_html: >
         ワンクリックでリムられチェック<br>
         <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！

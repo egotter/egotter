@@ -8,7 +8,8 @@ module ApplicationHelper
   end
 
   def show_simple_header?
-    controller_name == 'home' && action_name == 'new' && !user_signed_in?
+    (controller_name == 'home' && action_name == 'new' && !user_signed_in?) ||
+        (controller_name == 'unfriends' && action_name == 'new' && !user_signed_in?)
   end
 
   def show_sidebar?

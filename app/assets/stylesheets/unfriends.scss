@@ -7,12 +7,21 @@
     line-height: 160%;
   }
 
+  h2.first-title {
+    margin-top: 0;
+  }
+
+  .first-title-sub-text {
+    font-size: 14px;
+  }
+
   img {
     border: 1px solid #999999;
   }
 
   .lead {
     font-size: 14px;
+    line-height: 160%;
   }
 
   .btn-width-wrapper {

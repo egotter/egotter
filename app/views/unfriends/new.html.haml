@@ -3,14 +3,17 @@
 
 #unfriends.text-center
   .vertical-spacing
-  %h2.h4= t('.simple_title_html')
+  %span.text-muted.first-title-sub-text= t('.first_title_sub_text')
+  %h2.h4.first-title= t('.simple_title_html')
+  .vertical-spacing
   .vertical-spacing
 
   .lead= t('.text001_html')
 
-  = image_tag '/egotter_unfriends_with_text_400x453.png', class: 'img-rounded', height: '200px'
+  = sign_in_with_twitter_link(unfriends_top_path(via: build_via('sign_in_with_twitter_on_image')), 'sign_in_with_twitter_on_image') do
+    = image_tag '/egotter_unfriends_with_text_400x453.png', class: 'img-rounded', height: '300px'
   .vertical-spacing
-  .lead.text-center= t('.text002_html')
+  .vertical-spacing
 
   .btn-width-wrapper
     - if user_signed_in?
@@ -20,14 +23,17 @@
         %span.egotter-pink= t('searches.new.pc.check_004_html')
 
     - else
-      - url = unfriends_top_path(via: build_via('sign_in_with_twitter'))
-      = sign_in_with_twitter_link(url, 'sign_in_with_twitter', class: 'btn btn-primary btn-block')
+      = sign_in_with_twitter_link(unfriends_top_path(via: build_via('sign_in_with_twitter')), 'sign_in_with_twitter', class: 'btn btn-primary btn-block')
       .text-right
         %i.fas.fa-check.egotter-pink
         %span.egotter-pink= t('searches.new.pc.check_002')
       .text-right.search-count-wrapper{style: 'visibility: hidden;'}
         %i.fas.fa-check.egotter-pink
         %span.egotter-pink= t('searches.new.pc.check_004_html')
+  .vertical-spacing
+  .vertical-spacing
+
+  .lead.text-center= t('.text002_html')
 
 .vertical-spacing
 .vertical-spacing
@@ -41,8 +47,11 @@
   .vertical-spacing
   .vertical-spacing
   - url = sign_in_path(via: build_via('what_is_unfriends'), redirect_path: unfriends_top_path(via: build_via('what_is_unfriends')))
-  .description= t('.what_is_unfriends.description_html', url: url)
+  .description= t('.what_is_unfriends.description1_html', url: url)
   .vertical-spacing
+  = image_tag '/egotter_rimuru_400x177.png', class: 'img-rounded center-block', height: '100px'
+  .vertical-spacing
+  .description= t('.what_is_unfriends.description2_html', url: url)
   .vertical-spacing
   = sign_in_with_twitter_link(url, 'what_is_unfriends_button', class: 'btn btn-primary btn-block')
 
@@ -50,38 +59,18 @@
 .vertical-spacing
 .vertical-spacing
 .vertical-spacing
-.vertical-spacing
-.vertical-spacing
 
 #how_to_use_unfriends
-  %h2.h4.text-center= t('.how_to_use_unfriends.title')
-  .vertical-spacing
-  .vertical-spacing
-  - url = sign_in_path(via: build_via('how_to_use_unfriends'), redirect_path: unfriends_top_path(via: build_via('how_to_use_unfriends')))
-  .description= t('.how_to_use_unfriends.description_html', url: url)
-  .vertical-spacing
-  .vertical-spacing
-  = sign_in_with_twitter_link(url, build_via('how_to_use_unfriends_button'), class: 'btn btn-primary btn-block')
+  = render partial: 'shared/feature_section', locals: {title: t('.how_to_use_unfriends.title'), image: '/egotter_only_signin_with_text_400x448.png', description: t('.how_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: build_via('how_to_use_unfriends')), build_via('how_to_use_unfriends_button'), class: 'btn btn-primary btn-block'), check: t('.how_to_use_unfriends.check')}
 
-.vertical-spacing
-.vertical-spacing
 .vertical-spacing
 .vertical-spacing
 .vertical-spacing
 .vertical-spacing
 
 #when_to_use_unfriends
-  %h2.h4.text-center= t('.when_to_use_unfriends.title')
-  .vertical-spacing
-  .vertical-spacing
-  - url = sign_in_path(via: build_via('when_to_use_unfriends'), redirect_path: unfriends_top_path(via: build_via('when_to_use_unfriends')))
-  .description= t('.when_to_use_unfriends.description_html', url: url)
-  .vertical-spacing
-  .vertical-spacing
-  = sign_in_with_twitter_link(url, build_via('when_to_use_unfriends_button'), class: 'btn btn-primary btn-block')
+  = render partial: 'shared/feature_section', locals: {title: t('.when_to_use_unfriends.title'), image: '/egotter_hurry_up_with_text_400x448.png', description: t('.when_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: build_via('when_to_use_unfriends')), build_via('when_to_use_unfriends_button'), class: 'btn btn-primary btn-block'), check: t('.when_to_use_unfriends.check')}
 
-.vertical-spacing
-.vertical-spacing
 .vertical-spacing
 .vertical-spacing
 .vertical-spacing
