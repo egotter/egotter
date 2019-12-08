@@ -21,7 +21,7 @@
 
     - else
       - url = unfriends_top_path(via: build_via('sign_in_with_twitter'))
-      = sign_in_with_twitter_link(url, build_via('sign_in_with_twitter'), class: 'btn btn-primary btn-block')
+      = sign_in_with_twitter_link(url, 'sign_in_with_twitter', class: 'btn btn-primary btn-block')
       .text-right
         %i.fas.fa-check.egotter-pink
         %span.egotter-pink= t('searches.new.pc.check_002')
@@ -44,7 +44,7 @@
   .description= t('.what_is_unfriends.description_html', url: url)
   .vertical-spacing
   .vertical-spacing
-  = sign_in_with_twitter_link(url, build_via('what_is_unfriends_button'), class: 'btn btn-primary btn-block')
+  = sign_in_with_twitter_link(url, 'what_is_unfriends_button', class: 'btn btn-primary btn-block')
 
 .vertical-spacing
 .vertical-spacing
