@@ -26,7 +26,7 @@ module Concerns::TwitterUsersConcern
       CreateForbiddenUserWorker.perform_async(screen_name)
       redirect_to forbidden_path(screen_name: screen_name)
     else
-      logger.info "#{self.class}##{__method__} Something error in #build_twitter_user_by #{screen_name} #{e.class} #{e.message}}"
+      logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{screen_name} #{current_user_id} #{e.class} #{e.message}}"
       logger.info e.backtrace.join("\n")
 
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
@@ -38,8 +38,11 @@ module Concerns::TwitterUsersConcern
     screen_name = request_context_client.user(uid.to_i)[:screen_name]
     build_twitter_user_by(screen_name: screen_name)
   rescue => e
-    logger.warn "#{self.class}##{__method__} Something error in #build_twitter_user_by_uid #{uid} #{e.class} #{e.message}}"
-    logger.info e.backtrace.join("\n")
+    status = AccountStatus.new(ex: e)
+    if !status.suspended? && !status.not_found? && !status.unauthorized?
+      logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{uid} #{current_user_id} #{e.class} #{e.message}}"
+      logger.info e.backtrace.join("\n")
+    end
 
     respond_with_error(:bad_request, twitter_exception_messages(e, "ID #{uid}"))
     nil
