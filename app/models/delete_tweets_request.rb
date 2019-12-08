@@ -35,7 +35,7 @@ class DeleteTweetsRequest < ApplicationRecord
   def perform!
     error_check! unless @error_check
 
-    @destroy_count = 0
+    @destroy_count ||= 0
 
     ::Timeout.timeout(TIMEOUT_SECONDS) do
       tweets = api_client.user_timeline(count: FETCH_COUNT).select { |t| t.created_at < created_at }
@@ -49,6 +49,8 @@ class DeleteTweetsRequest < ApplicationRecord
 
     raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
 
+  rescue Twitter::Error::InternalServerError => e
+    retry
   rescue Twitter::Error::TooManyRequests => e
     raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: destroy_count)
   rescue ::Timeout::Error => e
