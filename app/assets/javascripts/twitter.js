@@ -31,7 +31,7 @@ Twitter.follow = function (url, uid, callback) {
     if (xhr.status === 429) { // Too many requests
       $('#warning-follow-modal').modal();
     } else {
-      Util.alert(JSON.parse(xhr.responseText)['message']);
+      Logger.warn(JSON.parse(xhr.responseText)['message']);
     }
   });
 };

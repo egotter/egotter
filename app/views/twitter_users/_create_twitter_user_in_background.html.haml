@@ -275,10 +275,22 @@
         }
       })();
 
-      Detectors.secretMode(function () {
-      });
+      if (!crawler) {
+        Detectors.secretMode(function () {
+          var message = '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}';
+          Logger.warn(message);
+          setTimeout(function() {
+            window.location.href = "#{root_path(via: build_via('secret_mode_detected'))}";
+          }, 3000);
+        });
 
-      Detectors.adBlocker(function () {
-      });
+        Detectors.adBlocker(function () {
+          var message = '#{t('before_sign_in.ad_blocker_detected_with_count', seconds: 3)}';
+          Logger.warn(message);
+          setTimeout(function() {
+            window.location.href = "#{root_path(via: build_via('ad_blocker_detected'))}";
+          }, 3000);
+        });
+      }
     });
   })();
