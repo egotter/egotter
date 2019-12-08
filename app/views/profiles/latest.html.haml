@@ -1,11 +1,11 @@
 - content_for :canonical_url do
-  %link{href: profile_url(@user), rel: 'canonical'}
+  %link{href: latest_profile_url(@user), rel: 'canonical'}
 
-- breadcrumb :profile, @user.screen_name, @display_time
+- breadcrumb :latest_profile, @user.screen_name
 
-- page_title = t('.page_title', user: @user.screen_name, time: @display_time)
+- page_title = t('.page_title', user: @user.screen_name)
 - title page_title
-- set_meta_tags description: t('.meta_description', user: @user.screen_name, time: @display_time)
+- set_meta_tags description: t('.meta_description', user: @user.screen_name)
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 

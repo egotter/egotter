@@ -860,13 +860,17 @@ ja:
       crumb_title: "一気に見る"
   profiles:
     show:
-      crumb_title: "@%{user} の最新プロフィール"
-      page_title: "@%{user} の最新プロフィール"
-      meta_description: "@%{user} の最新プロフィール"
+      crumb_title: "@%{user} の %{time} のプロフィール"
+      page_title: "@%{user} の %{time} のプロフィール"
+      meta_description: "@%{user} の %{time} のプロフィール"
       displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。<a href="%{url}" class="btn btn-default">更新をリクエストする</a>'
       analyze: '@%{user} を分析する'
     latest:
+      crumb_title: "@%{user} の最新プロフィール"
+      page_title: "@%{user} の最新プロフィール"
+      meta_description: "@%{user} の最新プロフィール"
       displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。'
+      analyze: '@%{user} を分析する'
   friends:
     new:
       title_html: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
@@ -1889,6 +1893,7 @@ ja:
       next_creation_short: "%-H時%-M分"
       next_creation_long: "%-m月%-d日 %-H時%-M分"
       order_short: "%-m月%-d日 %-H時"
+      profile_short: "%-m月%-d日 %-H時"
       share_text_short: "%m%d%H%M"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"

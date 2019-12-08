@@ -25,6 +25,7 @@ do_create = Proc.new do
 
     with_options options do |obj|
       obj.add profile_path(twitter_user)
+      obj.add latest_profile_path(twitter_user)
       obj.add timeline_path(twitter_user)
       obj.add one_sided_friend_path(twitter_user)
       obj.add one_sided_follower_path(twitter_user)

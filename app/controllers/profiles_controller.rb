@@ -25,8 +25,10 @@ class ProfilesController < ApplicationController
     end
 
     if @user && flash.empty?
-      flash.now[:notice] = flash_message(@user)
+      flash.now[:notice] = updated_at_message(@user)
     end
+
+    @display_time = l((@user.updated_at || Time.zone.now).in_time_zone('Tokyo'), format: :profile_short)
   end
 
   def latest
@@ -35,15 +37,13 @@ class ProfilesController < ApplicationController
     return if performed?
 
     if @user && flash.empty?
-      flash.now[:notice] = flash_message(@user)
+      flash.now[:notice] = updated_at_message(@user)
     end
-
-    render 'show'
   end
 
   private
 
-  def flash_message(user)
+  def updated_at_message(user)
     url = latest_profile_path(screen_name: user.screen_name, via: build_via('request_to_update'))
     time = user.updated_at || Time.zone.now
     format = (time.in_time_zone('Tokyo').to_date === Time.zone.now.in_time_zone('Tokyo').to_date) ? :next_creation_short : :next_creation_long
