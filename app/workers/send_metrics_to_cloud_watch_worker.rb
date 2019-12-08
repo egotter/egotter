@@ -233,6 +233,11 @@ class SendMetricsToCloudWatchWorker
       max = records.each_with_object(Hash.new(0)) { |record, memo| memo[record.send(key)] += 1 }.values.max
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
       client.put_metric_data('MaxSearchHistoriesCount', max, options)
+
+      records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
+        options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
+        client.put_metric_data("via(#{via})", max, options)
+      end
     end
   end
 
