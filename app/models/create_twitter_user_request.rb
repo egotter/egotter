@@ -97,13 +97,17 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
   rescue => e
-    raise Unknown.new("#{__method__} #{e.class} #{e.message}")
+    if AccountStatus.unauthorized?(e)
+      raise Unauthorized
+    else
+      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
+    end
   end
 
   def fetch_user
     @fetch_user ||= client.user(uid)
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
+  rescue => e
+    if AccountStatus.unauthorized?(e)
       raise Unauthorized
     else
       raise Unknown.new("#{__method__} #{e.class} #{e.message}")
