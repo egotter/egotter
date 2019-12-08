@@ -1,8 +1,8 @@
 .directory-profiles
   %h2.text-center= t('.title')
   %table.table.table-condensed.table-responsive.borderless
-    - @screen_names.each_slice(3) do |n1, n2, n3|
+    - @twitter_users.each_slice(3) do |u1, u2, u3|
       %tr
-        %td= link_to n1, profile_path(screen_name: n1, via: 'directory_profiles'), title: t('profiles.show.page_title', user: n1)
-        %td= link_to n2, profile_path(screen_name: n2, via: 'directory_profiles'), title: t('profiles.show.page_title', user: n2) unless n2.nil?
-        %td= link_to n3, profile_path(screen_name: n3, via: 'directory_profiles'), title: t('profiles.show.page_title', user: n3) unless n3.nil?
+        %td= link_to u1.screen_name, profile_path(u1, via: 'directory_profiles'), title: t('profiles.show.page_title', user: u1.screen_name, time: l(u1.updated_at.in_time_zone('Tokyo'), format: :profile_short))
+        %td= link_to u2.screen_name, profile_path(u2, via: 'directory_profiles'), title: t('profiles.show.page_title', user: u2.screen_name, time: l(u2.updated_at.in_time_zone('Tokyo'), format: :profile_short)) unless u2.nil?
+        %td= link_to u3.screen_name, profile_path(u3, via: 'directory_profiles'), title: t('profiles.show.page_title', user: u3.screen_name, time: l(u3.updated_at.in_time_zone('Tokyo'), format: :profile_short)) unless u3.nil?

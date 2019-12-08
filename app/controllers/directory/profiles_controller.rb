@@ -8,10 +8,10 @@ module Directory
       id2 = params[:id2]
 
       if id1.to_s.match?(NUM_REGEXP) && id2.to_s.match?(NUM_REGEXP)
-        @screen_names = TwitterUser.distinct.
+        @twitter_users = TwitterUser.distinct.
             where(created_at: 1.days.ago..Time.zone.now).
             where('uid % ? = 0', 10 * id1.to_i + id2.to_i).
-            pluck(:screen_name)
+            uniq(&:uid)
         render 'directory/profiles/second_layer'
       elsif id1.to_s.match?(NUM_REGEXP) && id2.blank?
         @id1 = id1
