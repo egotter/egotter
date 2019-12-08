@@ -158,7 +158,7 @@ Rails.application.routes.draw do
   end
 
   get 'pricing', to: "pricing#new"
-  post 'orders', to: 'orders#create'
+  resources :orders, only: %i(create destroy)
 
   get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
 

@@ -280,38 +280,51 @@
   <div class="vertical-spacing"></div>
 
   <h2 class="h4 text-center"><i class="fas fa-shopping-cart"></i>&nbsp;<%= t('.order.order_histories') %></h2>
+  <div class="vertical-spacing"></div>
+
+  <div class="text-center"><%= link_to t('.order.see_plans'), pricing_path(via: build_via('orders_table')) %></div>
+  <div class="vertical-spacing"></div>
 
   <% if current_user.orders.any? %>
-    <table class="table">
+    <table id="orders-table" class="table">
       <tbody>
       <% current_user.orders.select { |o| !o.purchase_failed? }.each do |order| %>
-        <tr>
+        <tr class="<%= 'text-muted' if order.canceled_at %>">
           <td>
             <div><%= order.name %></div>
             <div><%= t('.order.created_at', date: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
           </td>
           <td>
-            <div><%= order.expired? ? t('.order.expired_at', date: order.canceled_at) : t('.order.not_expired') %></div>
+            <% unless order.canceled_at %>
+              <div><%= t('.order.not_canceled') %></div>
+            <% end %>
             <div><%= t('.order.price', price: order.price) %></div>
-            <div><%= t('.order.search_count', count: order.search_count) %></div>
-            <div><%= t('.order.follow_requests_count', count: order.follow_requests_count) %></div>
-            <div><%= t('.order.unfollow_requests_count', count: order.unfollow_requests_count) %></div>
+            <% unless order.canceled_at %>
+              <div><%= t('.order.search_count', count: order.search_count) %></div>
+              <div><%= t('.order.follow_requests_count', count: order.follow_requests_count) %></div>
+              <div><%= t('.order.unfollow_requests_count', count: order.unfollow_requests_count) %></div>
+            <% end %>
           </td>
+          <% if order.canceled_at %>
+            <td>
+              <div><%= t('.order.canceled') %></div>
+              <div><%= t('.order.canceled_at', date: l(order.canceled_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
+            </td>
+          <% else %>
+            <td>
+              <div><%= link_to t('.order.cancel'), order_path(id: order.id), method: :delete, data: {confirm: t('.order.cancel_confirmation', name: order.name)} %></div>
+            </td>
+          <% end %>
         </tr>
       <% end %>
-      <tr>
-        <td></td>
-        <td><%= link_to t('.order.plans'), pricing_path(via: build_via('subscribing')) %></td>
-      </tr>
       </tbody>
     </table>
   <% else %>
     <table class="table">
       <tbody>
-        <tr>
-          <td><%= t('.order.has_not_purchased') %></td>
-          <td><%= link_to t('.order.plans'), pricing_path(via: build_via('has_not_purchased')) %></td>
-        </tr>
+      <tr>
+        <td><%= t('.order.has_not_purchased') %></td>
+      </tr>
       </tbody>
     </table>
   <% end %>

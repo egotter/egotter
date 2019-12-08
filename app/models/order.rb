@@ -36,10 +36,6 @@ class Order < ApplicationRecord
     @stripe_subscription ||= (subscription_id ? Subscription.new(::Stripe::Subscription.retrieve(subscription_id)) : nil)
   end
 
-  def expired?
-    customer_id.nil? || subscription_id.nil? || canceled_at
-  end
-
   def purchase_failed?
     customer_id.nil? || subscription_id.nil?
   end

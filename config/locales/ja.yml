@@ -258,15 +258,18 @@ ja:
         update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
       order:
         order_histories: "購入履歴"
-        created_at: "（購入日 %{date}）"
-        not_expired: '有効期限 キャンセルするまで'
-        expired_at: "有効期限 %{date}"
+        created_at: "（%{date}）"
+        not_canceled: '有効期限 キャンセルするまで'
+        canceled_at: "（%{date}）"
         price: "%{price}円/月（税別）"
         search_count: "検索回数 %{count}/日"
         follow_requests_count: "フォロー %{count}/日"
         unfollow_requests_count: "フォロー解除 %{count}/日"
+        cancel: 'キャンセルする'
+        canceled: 'キャンセル済み'
+        cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
         has_not_purchased: "まだ購入していません"
-        plans: '料金プラン'
+        see_plans: '料金プランを見る'
       screen_name:
         title: 'Twitter ID'
       email:
@@ -464,6 +467,10 @@ ja:
     create:
       success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
       failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+    destroy:
+      success_html: 'ベーシックプランを解約しました。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      already_canceled_html: '指定されたプランは既に解約済みです。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      failed_html: '解約に失敗しました。お手数ですが再度お試しください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
   login:
     goodbye:
       signed_out: "既にログアウト済みです。"
@@ -1873,7 +1880,7 @@ ja:
       delete_tweets_short: "%-m月%-d日 %-H時%-M分"
       next_creation_short: "%-H時%-M分"
       next_creation_long: "%-m月%-d日 %-H時%-M分"
-      order_short: "%-m月%-d日 %-H時%-M分"
+      order_short: "%-m月%-d日 %-H時"
       share_text_short: "%m%d%H%M"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"
