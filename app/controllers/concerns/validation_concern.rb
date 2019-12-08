@@ -46,7 +46,7 @@ module Concerns::ValidationConcern
     if !from_crawler? && controller_name == 'timelines' && action_name == 'show'
       @screen_name = @twitter_user.screen_name
       @redirect_path = timeline_path(screen_name: @screen_name)
-      @via = params['via']
+      @via = params['via'].presence || build_via('render_template')
       create_search_error_log(__method__, '')
       render template: 'searches/create', formats: %i(html), layout: false
     else

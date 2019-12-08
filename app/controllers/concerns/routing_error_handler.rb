@@ -18,7 +18,7 @@ module Concerns::RoutingErrorHandler
     elsif params['screen_name'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
       @screen_name = params['screen_name']
       @redirect_path = timeline_path(screen_name: @screen_name)
-      @via = params['via']
+      @via = params['via'].presence || build_via('render_template')
       render template: 'searches/create', formats: %i(html), layout: false
 
     elsif request.fullpath.match(%r{^/https:/egotter\.com(.+)})
