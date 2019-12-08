@@ -34,9 +34,9 @@ class CreateTwitterDBUserWorker
     tries ||= 2
     TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client, force_update: force_update)
   rescue => e
-    if e.message == 'Invalid or expired token.' && user_id && (tries -= 1) > 0
+    if (AccountStatus.unauthorized?(e) || e.class == Twitter::Error::Forbidden) && user_id && (tries -= 1) > 0
       client = Bot.api_client
-      logger.warn "Retry with a bot client #{user_id} #{enqueued_by}"
+      logger.warn "Retry with a bot client #{user_id} #{enqueued_by} #{e.class}"
       retry
     elsif e.message.include?('Connection reset by peer')
       retry

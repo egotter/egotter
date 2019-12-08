@@ -60,7 +60,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(any_args).and_raise(exception)
     end
 
-    context 'A exception is raised' do
+    context 'An exception is raised' do
       let(:user_id) { user.id }
       let(:exception) { RuntimeError.new('Something happened.') }
 
@@ -70,7 +70,7 @@ RSpec.describe CreateTwitterDBUserWorker do
       end
     end
 
-    context 'A retryable exception is raised and the valid user_id is passed' do
+    context 'Twitter::Error::Unauthorized is raised and the valid user_id is passed' do
       let(:user_id) { user.id }
       let(:exception) { Twitter::Error::Unauthorized.new('Invalid or expired token.') }
 
@@ -80,7 +80,17 @@ RSpec.describe CreateTwitterDBUserWorker do
       end
     end
 
-    context 'A retryable exception is raised and the user_id is invalid' do
+    context 'Twitter::Error::Forbidden is raised and the valid user_id is passed' do
+      let(:user_id) { user.id }
+      let(:exception) { Twitter::Error::Forbidden.new('Message') }
+
+      it do
+        expect(Bot).to receive(:api_client).with(no_args)
+        expect { subject }.to raise_error(Twitter::Error::Forbidden)
+      end
+    end
+
+    context 'A retryable exception is raised and the user_id is nil' do
       let(:user_id) { nil }
       let(:exception) { Twitter::Error::Unauthorized.new('Invalid or expired token.') }
 
