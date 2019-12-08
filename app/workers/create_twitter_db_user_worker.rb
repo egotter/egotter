@@ -38,6 +38,8 @@ class CreateTwitterDBUserWorker
       client = Bot.api_client
       logger.warn "Retry with a bot client #{user_id} #{enqueued_by}"
       retry
+    elsif e.message.include?('Connection reset by peer')
+      retry
     else
       raise
     end
