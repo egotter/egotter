@@ -50,7 +50,8 @@ class HomeController < ApplicationController
         redirect_to url
       else
         @user = build_twitter_user_by_uid(current_user.uid) # It's possible to be redirected
-        @screen_name = @user&.screen_name
+        return if performed?
+        @screen_name = @user.screen_name
       end
     else
       @user = nil

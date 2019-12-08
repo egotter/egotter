@@ -18,6 +18,7 @@ class ProfilesController < ApplicationController
     @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
     @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
     @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
+    return if performed?
 
     flash.now[:notice] = flash_message(@user) if @user && flash.empty?
   end
@@ -25,6 +26,7 @@ class ProfilesController < ApplicationController
   def latest
     self.sidebar_disabled = true
     @user = build_twitter_user_by(screen_name: params[:screen_name]) # It's possible to be redirected
+    return if performed?
 
     flash.now[:notice] = flash_message(@user) if @user && flash.empty?
     render 'show'
