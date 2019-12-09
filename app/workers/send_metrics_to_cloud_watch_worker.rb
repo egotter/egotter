@@ -26,6 +26,7 @@ class SendMetricsToCloudWatchWorker
        send_create_twitter_user_logs_metrics
        send_twitter_db_users_metrics
        send_search_histories_metrics
+       send_sign_in_logs_metrics
        send_requests_metrics
        send_bots_metrics
     ).each do |method_name|
@@ -238,6 +239,22 @@ class SendMetricsToCloudWatchWorker
         next if count < 2
         options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
         client.put_metric_data("via(#{via})", count, options)
+      end
+    end
+  end
+
+  def send_sign_in_logs_metrics
+    namespace = "SignInLogs#{"/#{Rails.env}" unless Rails.env.production?}"
+    duration = {created_at: 10.minutes.ago..Time.zone.now}
+
+    [
+        [SignInLog.where(duration).where(context: 'create'), :create],
+        #[SignInLog.where(duration).where(context: 'update'), :update],
+    ].each do |records, context|
+      records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
+        #next if count < 2
+        options = {namespace: namespace, dimensions: [{name: 'Context', value: context.to_s}, {name: 'Duration', value: '10 minutes'}]}
+        client.put_metric_data("#{via}", count, options)
       end
     end
   end
