@@ -1,23 +1,23 @@
 <%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
 
-<div class="waiting-msg alert alert-info text-center">
-  <%= t('.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+<div id="waiting-msg" class="alert alert-info text-center">
+  <%= t('.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
 </div>
 
-<div class="finished-msg alert alert-success text-center" style="display: none;">
-  <%= t(".finished") %>&nbsp;<%= image_tag '/ajax-loader.gif' %>
+<div id="finished-msg" class="alert alert-success text-center" style="display: none;">
+  <%= t(".finished") %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
 </div>
 
-<div class="error-msg alert alert-warning text-left" style="display: none;">
+<div id="error-msg" class="alert alert-warning text-left" style="display: none;">
   <%= t('.something_wrong_html', url: sign_in_path(via: build_via('something_wrong'))) %>
 </div>
 
-<div class="row">
+<div id="waiting-progress" class="row">
   <div class="hidden-xs hidden-sm col-md-2"></div>
   <div class="col-xs-12 col-sm-12 col-md-8">
     <div class="bar">
-      <div class="progress" style="margin-bottom: 0;">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;">
+      <div class="progress">
+        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
           <span class="sr-only">0% Complete</span>
         </div>
       </div>
@@ -28,21 +28,24 @@
 
 <div class="row">
   <div class="col-xs-12 col-sm-4 text-center">
-    <div class="retry-btn" style="display: none; margin-bottom: 15px;">
-      <%= link_to t('.retry_search_by', user: @twitter_user.mention_name), searches_path(screen_name: @twitter_user.screen_name, via: build_via('waiting_retry')), class: 'btn btn-lg btn-default', method: :post %>
+    <div id="retry-btn" style="display: none;">
+      <%= link_to t('.retry_search_by', user: @twitter_user.screen_name), searches_path(screen_name: @twitter_user.screen_name, via: build_via('waiting_retry')), class: 'btn btn-lg btn-default', method: :post %>
     </div>
+    <div class="vertical-spacing"></div>
   </div>
 
   <div class="col-xs-12 col-sm-4 text-center">
-    <div class="login-btn" style="display: none; margin-bottom: 15px;">
+    <div id="login-btn" style="display: none;">
       <%= sign_in_with_twitter_link(nil, 'sign_in_button', class: 'btn btn-lg btn-info') %>
     </div>
+    <div class="vertical-spacing"></div>
   </div>
 
   <div class="col-xs-12 col-sm-4 text-center">
-    <div class="support-btn" style="display: none; margin-bottom: 15px;">
+    <div id="support-btn" style="display: none;">
       <%= link_to t('.link_to_support'), support_path(via: build_via), class: 'btn btn-lg btn-default' %>
     </div>
+    <div class="vertical-spacing"></div>
   </div>
 </div>
 
@@ -53,84 +56,50 @@
     var url = "<%= twitter_user_path(uid: @twitter_user.uid, via: build_via) %>";
     var redirectPath = "<%= @redirect_path %>";
     var signedIn = <%= user_signed_in? %>;
+    var timeoutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: build_via('waiting_timeout'))) %>';
 
-    var $waitingMessage = $('.waiting-msg');
-    var $finishedMessage = $('.finished-msg');
-    var $errorMessage = $('.error-msg');
-    var $retryBtn = $('.retry-btn');
-    var $loginBtn = $('.login-btn');
-    var $supportBtn = $('.support-btn');
+    var twitterUser = {
+      userId: <%= current_user&.id %>,
+      uid: "<%= @twitter_user.uid %>",
+      screenName: "<%= @twitter_user.screen_name %>"
+    };
 
-    var progressBar = new ProgressBar();
+    var alertBox = new Waiting.AlertBox(signedIn, timeoutMessage);
 
-    function ticktak(path, options, done, keep_on, stopped, failed) {
-      var retryCount = options['retryCount'] || 0;
-      var interval = options['interval'] || 3000;
-      var maxRetryCount = options['maxRetryCount'] || 10;
-
-      $.get(path, options).done(function (res) {
-        if (res.created_at) {
-          done(res);
-        } else {
-          if (retryCount < maxRetryCount - 1) {
-            var options = {interval: interval, retryCount: ++retryCount, maxRetryCount: maxRetryCount};
-            keep_on(res, options);
-            setTimeout(function () { ticktak(path, options, done, keep_on, stopped, failed); }, interval);
-          } else {
-            stopped(res);
-          }
-        }
-      }).fail(function (xhr) {
-        if (xhr.status === 404 && xhr.responseText && JSON.parse(xhr.responseText).hasOwnProperty('found')) {
-          var res = JSON.parse(xhr.responseText);
-          if (retryCount < maxRetryCount - 1) {
-            keep_on(res);
-            var options = {interval: interval, retry_count: ++retryCount};
-            setTimeout(function () { ticktak(path, options, done, keep_on, stopped, failed); }, interval);
-          } else {
-            stopped(res);
-          }
-        } else {
-          failed(xhr);
-        }
-      });
-    }
-
-    function succeeded () {
-      progressBar.set(95);
-      $waitingMessage.hide();
-      $finishedMessage.show();
-      window.location.replace(redirectPath);
-    }
-
-    function failed () {
-      progressBar.hide();
-      $waitingMessage.hide();
-      $retryBtn.show();
-      if (!signedIn) $loginBtn.show();
-      $supportBtn.show();
-    }
-
-    ticktak(url, {interval: 3000, retry_count: 0}, function done (res) {
+    Waiting.poll(url, {interval: 3000}, function done(res) {
       console.log('success', res);
-      succeeded();
-    }, function keep_on (res, options) {
+      alertBox.finished();
+      window.location.replace(redirectPath);
+
+    }, function keep_on(res, options) {
       console.log('continue', res, options);
-      progressBar.advance();
-    }, function stopped (res) {
+      alertBox.keepOn();
+
+    }, function stopped(res) {
       console.log('stop', res);
-      failed();
-      var timeOutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: build_via('waiting_timeout'))).html_safe %>';
-      $errorMessage.html(timeOutMessage).show();
-    }, function fail (xhr) {
+      alertBox.failed();
+
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Waiting#new',
+        eventAction: 'Retry exhausted',
+        eventLabel: JSON.stringify(twitterUser)
+      });
+    }, function fail(xhr) {
       console.log('failed', xhr.responseText);
-      failed();
 
       var res = $.parseJSON(xhr.responseText || null);
       if (res && res.message) {
-        $errorMessage.html(res.message);
+        alertBox.setErrorMessage(res.message);
       }
-        $errorMessage.show();
+      alertBox.failed();
+
+      ga('send', {
+        hitType: 'event',
+        eventCategory: 'Waiting#new',
+        eventAction: 'Failed',
+        eventLabel: JSON.stringify($.extend({status: xhr.status}, twitterUser))
+      });
     });
   });
 </script>

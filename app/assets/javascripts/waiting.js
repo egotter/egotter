@@ -1,5 +1,7 @@
 'use strict';
 
+var Waiting = {};
+
 window.ProgressBar = function () {
   this.$progressBar = $('.bar');
   this.$bar = this.$progressBar.find('.progress-bar');
@@ -23,4 +25,71 @@ ProgressBar.prototype.hide = function () {
 
 ProgressBar.prototype.random = function (min, max) {
   return Math.random() * (max - min) + min;
+};
+
+Waiting.AlertBox = function (signedIn, timeoutMessage) {
+  if (this === undefined) {
+    throw new TypeError();
+  }
+
+  this._progressBar = new ProgressBar();
+
+  this._waitingMessage = $('#waiting-msg');
+  this._finishedMessage = $('#finished-msg');
+  this._errorMessage = $('#error-msg');
+  this._retryBtn = $('#retry-btn');
+  this._loginBtn = $('#login-btn');
+  this._supportBtn = $('#support-btn');
+
+  this._signedIn = signedIn;
+  this._errorMessage.html(timeoutMessage);
+};
+
+Waiting.AlertBox.prototype = {
+  constructor: Waiting.AlertBox,
+  keepOn: function () {
+    this._progressBar.advance();;
+  },
+  finished: function () {
+    this._progressBar.set(95);
+    this._waitingMessage.hide();
+    this._finishedMessage.show();
+  },
+  failed: function () {
+    this._progressBar.hide();
+    this._waitingMessage.hide();
+    this._retryBtn.show();
+    if (!this._signedIn) {
+      this._loginBtn.show();
+    }
+    this._supportBtn.show();
+    this._errorMessage.show();
+  },
+  setErrorMessage: function (message) {
+    this._errorMessage.html(message);
+  }
+};
+
+Waiting.poll = function (path, options, done, keep_on, stopped, failed) {
+  var retryCount = options['retryCount'] || 0;
+  var interval = options['interval'] || 3000;
+  var maxRetryCount = options['maxRetryCount'] || 10;
+
+  $.get(path, options).done(function (res) {
+    if (res.created_at) {
+      done(res);
+    } else {
+      if (retryCount < maxRetryCount - 1) {
+        var options = {interval: interval, retryCount: ++retryCount, maxRetryCount: maxRetryCount};
+        keep_on(res, options);
+        setTimeout(function () {
+          Waiting.poll(path, options, done, keep_on, stopped, failed);
+        }, interval);
+      } else {
+        stopped(res);
+      }
+    }
+  }).fail(function (xhr) {
+    failed(xhr);
+  });
 };

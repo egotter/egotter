@@ -85,7 +85,7 @@ ja:
     new:
       analyzing: "%{user} のデータを分析中"
       finished: "検索が完了しました。ページを移動します"
-      retry_search_by: "%{user} で再度検索"
+      retry_search_by: "@%{user} で再度検索"
       something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
       retry_timeout_html:
         アクセスが多すぎるため検索がタイムアウトしました。<a class="btn btn-default" href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。<br>
