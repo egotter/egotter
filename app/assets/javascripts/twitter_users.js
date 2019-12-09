@@ -2,7 +2,7 @@
 
 var TwitterUsers = {};
 
-TwitterUsers.AlertBox = function (requestToUpdate, nextCreationTimeMessage) {
+TwitterUsers.AlertBox = function (requestToUpdate, nextCreationTimeMessage, twitterUser, eventCategory) {
   if (this === undefined) {
     throw new TypeError();
   }
@@ -41,9 +41,9 @@ TwitterUsers.AlertBox = function (requestToUpdate, nextCreationTimeMessage) {
     $box.find('a').on('click', function (e) {
       ga('send', {
         hitType: 'event',
-        eventCategory: $box.data('name'),
-        eventAction: 'click',
-        eventLabel: e.target.href,
+        eventCategory: eventCategory,
+        eventAction: $box.data('name') + ' clicked',
+        eventLabel: JSON.stringify($.extend({href: e.target.href}, twitterUser)),
         transport: 'beacon'
       });
     });

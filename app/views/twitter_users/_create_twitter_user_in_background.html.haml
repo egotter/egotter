@@ -113,11 +113,18 @@
 
           alertBox.show('failed');
 
+          var error = {error: 'Something'};
+          try {
+            error = JSON.parse(xhr.responseText);
+          } catch (e) {
+            console.error(e);
+          }
+
           ga('send', {
             hitType: 'event',
             eventCategory: eventCategory,
             eventAction: 'poll failed',
-            eventLabel: JSON.stringify(twitterUser)
+            eventLabel: JSON.stringify($.extend({status: xhr.status, error: error['error']}, twitterUser))
           });
         });
     }
@@ -143,7 +150,14 @@
         console.warn('requestToCreateTwitterUser failed.', xhr.responseText);
         TwitterUsers.sneakLogger.warn(xhr.responseText);
 
-        if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['error'] === 'too_many_searches') {
+        var error = {error: 'Something'};
+        try {
+          error = JSON.parse(xhr.responseText);
+        } catch (e) {
+          console.error(e);
+        }
+
+        if (error['error'] === 'too_many_searches') {
           alertBox.show('tooManySearches');
         } else {
           alertBox.show('failed');
@@ -153,7 +167,7 @@
           hitType: 'event',
           eventCategory: eventCategory,
           eventAction: 'requestToCreateTwitterUser failed',
-          eventLabel: JSON.stringify(twitterUser)
+          eventLabel: JSON.stringify($.extend({status: xhr.status, error: error['error']}, twitterUser))
         });
       });
     }
@@ -163,7 +177,7 @@
         return;
       }
 
-      alertBox = new TwitterUsers.AlertBox(requestToUpdate, nextCreationTimeMessage);
+      alertBox = new TwitterUsers.AlertBox(requestToUpdate, nextCreationTimeMessage, twitterUser, eventCategory);
 
       if (signedIn) {
         if (!authorized) {
