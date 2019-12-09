@@ -18,7 +18,11 @@ module Concerns::TwitterUser::Api
   end
 
   def follow_back_rate
-    (mutual_friendships.size.to_f / follower_uids.size) rescue 0.0
+    numerator = mutual_friendships.size
+    denominator = follower_uids.size
+    (numerator == 0 || denominator == 0) ? 0.0 : numerator.to_f / denominator
+  rescue
+    0.0
   end
 
   def mutual_friend_uids
