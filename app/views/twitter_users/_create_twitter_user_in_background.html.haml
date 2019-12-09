@@ -52,8 +52,6 @@
 
 :javascript
   (function () {
-    var $updateBox, $updateThisPageBox, $requestToUpdateBox, $failedBox, $refreshBox, $tooManyFriendsBox, $followBox, $invalidTokenBox, $accurateCountingBox, $viaDMBox, $signInBox, $tooManySearchesBox;
-
     var signedIn = #{user_signed_in?};
     var crawler = #{from_crawler?};
     var authorized = #{user_signed_in? && current_user.authorized?};
@@ -64,17 +62,19 @@
     var nextCreationTimeMessage = '#{next_creation_message(twitter_user)}';
     var requestToUpdate = #{switch_to_request?(twitter_user)};
 
+    var alertBox;
+
+    var urls = {
+      twitter_users_changes: '#{twitter_users_changes_path(uid: twitter_user.uid)}',
+      twitter_user: '#{twitter_user_path(uid: twitter_user.uid, via: build_via('update_box'))}',
+      follow: '#{follow_path(via: build_via('follow_box'))}',
+      twitter_users: "#{twitter_users_path(via: build_via('background_update'))}",
+      account_status: "#{account_status_path(uid: twitter_user.uid)}"
+    };
+
     var twitterUser = {
       uid: '#{twitter_user.uid}',
       createdAt: #{twitter_user.created_at.to_i}
-    };
-
-    var logger = {
-      warn: function () {
-        var args = Array.from(arguments);
-        var text = args.join(' ');
-        $('#global-sneak-error-message').text(text);
-      }
     };
 
     function checkLatestTwitterUser (url) {
@@ -83,17 +83,15 @@
           console.log('checkLatestTwitterUser', res);
 
           if (res.created_at > twitterUser.createdAt) {
-            var url = '#{twitter_users_changes_path(uid: twitter_user.uid)}';
+            var url = urls.twitter_users_changes;
             $.get(url).done(function (res) {
-              $updateBox.alert('close');
               if (res.text) {
-                $refreshBox.find('.message').text(res.text);
+                alertBox.find('refresh').find('.message').text(res.text);
               }
-              $refreshBox.show().sticky();
+              alertBox.show('refresh');
             }).fail(function (xhr) {
               console.warn(url, xhr.responseText);
-              $updateBox.alert('close');
-              $refreshBox.show().sticky();
+              alertBox.show('refresh');
             });
 
             return true;
@@ -102,7 +100,7 @@
           }
         }, function stopped (res, reason) {
           console.warn('checkLatestTwitterUser', reason, res);
-          logger.warn(reason);
+          TwitterUsers.sneakLogger.warn(reason);
 
           ga('send', {
             hitType: 'event',
@@ -111,12 +109,11 @@
             eventLabel: 'Retry exhausted'
           });
 
-          $updateBox.alert('close');
-          $updateThisPageBox.show().sticky();
+          alertBox.show('updateThisPage');
 
         }, function failed (xhr) {
           console.log('checkLatestTwitterUser failed.', xhr.responseText);
-          logger.warn(xhr.responseText);
+          TwitterUsers.sneakLogger.warn(xhr.responseText);
 
           ga('send', {
             hitType: 'event',
@@ -125,8 +122,7 @@
             eventLabel: 'Polling failed'
           });
 
-          $updateBox.alert('close');
-          $failedBox.show().sticky();
+          alertBox.show('failed');
         });
     }
 
@@ -135,12 +131,12 @@
         console.log('requestToCreateTwitterUser', res);
 
         if (res.jid) {
-          $updateBox.show().sticky();
-          var url = '#{twitter_user_path(uid: twitter_user.uid, via: build_via('update_box'))}';
+          alertBox.show('update');
+          var url = urls.twitter_user;
           checkLatestTwitterUser(url);
         } else {
           console.warn("Don't start polling since a job is not started.");
-          logger.warn("Don't start polling since a job is not started.");
+          TwitterUsers.sneakLogger.warn("Don't start polling since a job is not started.");
 
           ga('send', {
             hitType: 'event',
@@ -149,15 +145,14 @@
             eventLabel: 'Done'
           });
 
-          $updateBox.show().sticky();
+          alertBox.show('update');
           setTimeout(function () {
-            $updateBox.alert('close');
-            $updateThisPageBox.show().sticky();
+            alertBox.show('updateThisPage');
           }, 3000);
         }
       }, function (xhr) {
         console.warn('requestToCreateTwitterUser failed.', xhr.responseText);
-        logger.warn(xhr.responseText);
+        TwitterUsers.sneakLogger.warn(xhr.responseText);
 
         ga('send', {
           hitType: 'event',
@@ -167,7 +162,7 @@
         });
 
         if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['error'] === 'too_many_searches') {
-          $tooManySearchesBox.show().sticky();
+          alertBox.show('tooManySearches');
         }
       });
     }
@@ -177,79 +172,42 @@
         return;
       }
 
-      $updateBox = $('#update-box');
-      $updateThisPageBox = $('#update-this-page-box');
-      $requestToUpdateBox = $('#request-to-update-box');
-      $failedBox = $('#failed-box');
-      $refreshBox = $('#refresh-box');
-      $tooManyFriendsBox = $('#too-many-friends-box');
-      $followBox = $('#follow-box');
-      $invalidTokenBox = $('#invalid-token-box');
-      $accurateCountingBox = $('#accurate-counting-box');
-      $viaDMBox = $('#via-dm-box');
-      $signInBox = $('#sign-in-box');
-      $tooManySearchesBox = $('#too-many-searches-box');
-
-      if (requestToUpdate) {
-        console.log('Switch to request');
-        $updateThisPageBox = $requestToUpdateBox;
-      }
-      console.log(nextCreationTimeMessage);
-      $updateThisPageBox.find('.next-creation-note').html(nextCreationTimeMessage);
-
-      $('.sticky-box').each(function (i, box) {
-        var $box = $(box);
-
-        $box.on('close.bs.alert', function () {
-          $box.parent('.sticky-wrapper').hide();
-        });
-
-        $box.find('a').on('click', function (e) {
-          ga('send', {
-            hitType: 'event',
-            eventCategory: $box.data('name'),
-            eventAction: 'click',
-            eventLabel: e.target.href,
-            transport: 'beacon'
-          });
-        });
-      });
+      alertBox = new TwitterUsers.AlertBox(requestToUpdate, nextCreationTimeMessage);
 
       if (signedIn) {
         if (!authorized) {
-          $invalidTokenBox.show().sticky();
+          alertBox.show('invalidToken');
           return;
         }
 
-        var url = '#{follow_path(via: build_via('follow_box'))}';
+        var url = urls.follow;
         TwitterUsers.isFollowingEgotter(url, function (res) {
           if (res.follow) {
-            var url = "#{twitter_users_path(via: build_via('background_update'))}";
+            var url = urls.twitter_users;
 
             if (tooShortCreateInterval) {
               console.warn("Don't start polling since the create interval is too short.");
-              logger.warn("Don't start polling since the create interval is too short.");
+              TwitterUsers.sneakLogger.warn("Don't start polling since the create interval is too short.");
 
-              $updateBox.show().sticky();
+              alertBox.show('update');
               setTimeout(function () {
-                $updateBox.alert('close');
-                $updateThisPageBox.show().sticky();
+                alertBox.show('updateThisPage');
               }, 3000);
             } else {
               var params = {uid: twitterUser.uid};
               requestToCreateTwitterUser(url, params);
             }
           } else {
-            $followBox.show().sticky();
+            alertBox.show('follow');
           }
         });
       } else {
         if (removedPage) {
-          $accurateCountingBox.show().sticky();
+          alertBox.show('accurateCounting');
         } else if (viaDM) {
-          $viaDMBox.show().sticky();
+          alertBox.show('viaDM');
         } else if (!crawler) {
-          $signInBox.show().sticky();
+          alertBox.show('signIn');
         } else {
           // Maybe crawler
         }
@@ -257,7 +215,7 @@
 
       (function (){
         if (signedIn && authorized) {
-          var url = "#{account_status_path(uid: twitter_user.uid)}";
+          var url = urls.account_status;
           TwitterUsers.confirmAccountStatus(url, function done (res) {
             console.log('accountStatus', res);
           }, function failed (xhr) {

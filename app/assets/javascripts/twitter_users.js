@@ -2,6 +2,82 @@
 
 var TwitterUsers = {};
 
+TwitterUsers.AlertBox = function (requestToUpdate, nextCreationTimeMessage) {
+  if (this === undefined) {
+    throw new TypeError();
+  }
+
+  this._boxes = {
+    update: $('#update-box'),
+    updateThisPage: $('#update-this-page-box'),
+    requestToUpdate: $('#request-to-update-box'),
+    failed: $('#failed-box'),
+    refresh: $('#refresh-box'),
+    tooManyFriends: $('#too-many-friends-box'),
+    follow: $('#follow-box'),
+    invalidToken: $('#invalid-token-box'),
+    accurateCounting: $('#accurate-counting-box'),
+    viaDM: $('#via-dm-box'),
+    signIn: $('#sign-in-box'),
+    tooManySearches: $('#too-many-searches-box')
+  };
+
+  this._shown = null;
+
+  if (requestToUpdate) {
+    console.log('Switch to request');
+    this._boxes['updateThisPage'] = this._boxes['requestToUpdate'];
+  }
+  console.log(nextCreationTimeMessage);
+  this._boxes['updateThisPage'].find('.next-creation-note').html(nextCreationTimeMessage);
+
+  $('.sticky-box').each(function (i, box) {
+    var $box = $(box);
+
+    $box.on('close.bs.alert', function () {
+      $box.parent('.sticky-wrapper').hide();
+    });
+
+    $box.find('a').on('click', function (e) {
+      ga('send', {
+        hitType: 'event',
+        eventCategory: $box.data('name'),
+        eventAction: 'click',
+        eventLabel: e.target.href,
+        transport: 'beacon'
+      });
+    });
+  });
+};
+
+TwitterUsers.AlertBox.prototype = {
+  constructor: TwitterUsers.AlertBox,
+  find: function (name) {
+    return this._boxes[name];
+  },
+  show: function (name) {
+    var box = this._boxes[name];
+    console.log('show', box);
+
+    if (box) {
+      if (this._shown) {
+        this._shown.alert('close');
+        this._shown = null;
+      }
+      box.show().sticky();
+      this._shown = box;
+    }
+  }
+};
+
+TwitterUsers.sneakLogger = {
+  warn: function () {
+    var args = Array.from(arguments);
+    var text = args.join(' ');
+    $('#global-sneak-error-message').text(text);
+  }
+};
+
 TwitterUsers.requestToCreateTwitterUser = function (url, params, done, fail) {
   $.post(url, params).done(done).fail(fail);
 };
