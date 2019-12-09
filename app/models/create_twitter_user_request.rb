@@ -99,6 +99,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   rescue => e
     if AccountStatus.unauthorized?(e)
       raise Unauthorized
+    elsif e.message == 'Connection reset by peer'
+      retry
     else
       raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
