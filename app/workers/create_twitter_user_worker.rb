@@ -26,10 +26,9 @@ class CreateTwitterUserWorker
     task = CreateTwitterUserTask.new(request)
     task.start!
     twitter_user = task.twitter_user
-    user = request.user
 
-    notify(user, request.uid) if user
     enqueue_next_jobs(request.user_id, request.uid, twitter_user)
+    notify(request.user, request.uid)
 
     # Saved values and relations At this point:
     #   friends_size, followers_size
@@ -51,10 +50,10 @@ class CreateTwitterUserWorker
 
   private
 
-  def notify(login_user, searched_uid)
-    searched_user = User.authorized.select(:id).find_by(uid: searched_uid)
-    if searched_user && (!login_user || login_user.id != searched_user.id)
-      CreateSearchReportWorker.perform_async(searched_user.id)
+  def notify(searcher, searchee_uid)
+    searchee = User.authorized.select(:id).find_by(uid: searchee_uid)
+    if searchee && (!searcher || searcher.id != searchee.id)
+      CreateSearchReportWorker.perform_async(searchee.id, searcher_uid: searcher&.uid)
     end
   end
 end

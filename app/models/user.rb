@@ -64,10 +64,6 @@ class User < ApplicationRecord
 
   accepts_nested_attributes_for :notification_setting
 
-  with_options to: :notification_setting, allow_nil: true do |obj|
-    obj.delegate :can_send_search?
-  end
-
   validates :uid, presence: true, uniqueness: true
   validates_with Validations::UidValidator
   validates :screen_name, presence: true

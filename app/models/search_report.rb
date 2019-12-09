@@ -25,14 +25,14 @@ class SearchReport < ApplicationRecord
 
   belongs_to :user
 
-  def self.you_are_searched(user_id)
-    new(user_id: user_id, token: generate_token)
+  attr_accessor :searcher_uid
+
+  def self.you_are_searched(searchee_id, searcher_uid = nil)
+    new(user_id: searchee_id, token: generate_token, searcher_uid: searcher_uid)
   end
 
-  def deliver
-    DirectMessageRequest.new(user_client, User::EGOTTER_UID, I18n.t('dm.searchNotification.whats_happening', screen_name: screen_name)).perform
-    button = {label: I18n.t('dm.searchNotification.timeline_page', screen_name: screen_name), url: timeline_url}
-    resp = DirectMessageRequest.new(egotter_client, user.uid, build_message, [button]).perform
+  def deliver!
+    resp = DirectMessageClient.new(user.api_client.twitter).create_direct_message(User::EGOTTER_UID, start_message)
     dm = DirectMessage.new(resp)
 
     transaction do
@@ -40,29 +40,41 @@ class SearchReport < ApplicationRecord
       user.notification_setting.update!(search_sent_at: Time.zone.now)
     end
 
+    button = {label: I18n.t('dm.searchNotification.timeline_button', screen_name: user.screen_name), url: timeline_url}
+    resp = DirectMessageRequest.new(User.egotter.api_client.twitter, user.uid, report_message, [button]).perform
+    dm = DirectMessage.new(resp)
+
+    update!(message_id: dm.id, message: dm.truncated_message)
+
     dm
   end
 
   private
 
-  def user_client
-    @user_client ||= user.api_client.twitter
+  def start_message
+    template = Rails.root.join('app/views/search_reports/start.ja.text.erb')
+    ERB.new(template.read).result_with_hash(screen_name: user.screen_name)
   end
 
-  def egotter_client
-    @egotter_client ||= User.egotter.api_client.twitter
-  end
+  def report_message
+    relationship =
+        if (searchee = TwitterUser.latest_by(uid: user.uid))
+          is_following = searchee.friend_uids.include?(searcher_uid)
+          is_follower = searchee.follower_uids.include?(searcher_uid)
+          I18n.t("dm.searchNotification.relationship.#{is_following}.#{is_follower}", user: user.screen_name)
+        else
+          I18n.t('dm.searchNotification.relationship.none')
+        end
 
-  def screen_name
-    user.screen_name
-  end
-
-  def build_message
     template = Rails.root.join('app/views/search_reports/you_are_searched.ja.text.erb')
-    ERB.new(template.read).result_with_hash(screen_name: screen_name, url: timeline_url)
-  end
+    ERB.new(template.read).result_with_hash(
+        screen_name: user.screen_name,
+        relationship: relationship,
+        settings_url: Rails.application.routes.url_helpers.settings_url(via: 'search_report', og_tag: 'false')
+    )
+    end
 
-  def timeline_url
-    Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'search', via: 'search_report')
+    def timeline_url
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'search', via: 'search_report', og_tag: 'false')
+    end
   end
-end
