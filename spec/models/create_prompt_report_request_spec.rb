@@ -153,6 +153,18 @@ RSpec.describe CreatePromptReportRequest, type: :model do
       end
     end
   end
+
+  describe '#fetch_user' do
+    let(:user) { create(:user) }
+    let(:client) { double('Client') }
+    subject { CreatePromptReportRequest.create(user_id: user.id).send(:fetch_user) }
+
+    before do
+      allow(client).to receive(:user).with(user.uid).and_raise(Twitter::Error::Unauthorized, 'Invalid or expired token.')
+    end
+
+    it { expect { subject }.to raise_error(described_class::Unauthorized) }
+  end
 end
 
 RSpec.describe CreatePromptReportRequest::ChangesBuilder, type: :model do
