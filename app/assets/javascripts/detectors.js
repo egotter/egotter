@@ -10,12 +10,6 @@ Detectors.secretMode = function (detected) {
 
       if (quota < 120000000) {
         console.log('Incognito');
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'SecretMode detected',
-          eventAction: 'detected',
-          eventLabel: 'detected'
-        });
         detected();
       } else {
         console.log('Not Incognito')
@@ -31,12 +25,6 @@ Detectors.adBlocker = function (detected) {
     console.log('Blocking Ads: No');
   } else {
     console.log('Blocking Ads: Yes');
-    ga('send', {
-      hitType: 'event',
-      eventCategory: 'AdBlocker detected',
-      eventAction: 'detected',
-      eventLabel: 'detected'
-    });
     detected();
   }
 };

@@ -1007,7 +1007,7 @@ ja:
       new_record_created: '@%{user} のデータが新しく作成されました。'
     in_background:
       latest: '表示されているデータは最新です。'
-      failed: 'データの更新に失敗しました。'
+      failed: 'データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。'
       updating: '%{user} のデータを更新中'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'

@@ -61,6 +61,7 @@
     var tooShortCreateInterval = #{twitter_user.too_short_create_interval?};
     var nextCreationTimeMessage = '#{next_creation_message(twitter_user)}';
     var requestToUpdate = #{switch_to_request?(twitter_user)};
+    var eventCategory = '#{controller_name}##{action_name}';
 
     var alertBox;
 
@@ -73,14 +74,16 @@
     };
 
     var twitterUser = {
+      userId: #{current_user&.id},
       uid: '#{twitter_user.uid}',
+      screenName: "#{twitter_user.screen_name}",
       createdAt: #{twitter_user.created_at.to_i}
     };
 
-    function checkLatestTwitterUser (url) {
+    function poll (url) {
       Timelines.checkLatestTwitterUser(url, {interval: 3000, max_retry_count: 5},
         function done (res) {
-          console.log('checkLatestTwitterUser', res);
+          console.log('poll', res);
 
           if (res.created_at > twitterUser.createdAt) {
             var url = urls.twitter_users_changes;
@@ -99,71 +102,59 @@
             return false;
           }
         }, function stopped (res, reason) {
-          console.warn('checkLatestTwitterUser', reason, res);
+          console.warn('poll', reason, res);
           TwitterUsers.sneakLogger.warn(reason);
-
-          ga('send', {
-            hitType: 'event',
-            eventCategory: 'TwitterUsers',
-            eventAction: 'exhausted',
-            eventLabel: 'Retry exhausted'
-          });
 
           alertBox.show('updateThisPage');
 
         }, function failed (xhr) {
-          console.log('checkLatestTwitterUser failed.', xhr.responseText);
+          console.log('poll failed.', xhr.responseText);
           TwitterUsers.sneakLogger.warn(xhr.responseText);
+
+          alertBox.show('failed');
 
           ga('send', {
             hitType: 'event',
-            eventCategory: 'TwitterUsers',
-            eventAction: 'failed',
-            eventLabel: 'Polling failed'
+            eventCategory: eventCategory,
+            eventAction: 'poll failed',
+            eventLabel: JSON.stringify(twitterUser)
           });
-
-          alertBox.show('failed');
         });
     }
 
     function requestToCreateTwitterUser(url, params) {
-      TwitterUsers.requestToCreateTwitterUser(url, params, function (res) {
+      TwitterUsers.requestToCreateTwitterUser(url, params, function done (res) {
         console.log('requestToCreateTwitterUser', res);
 
         if (res.jid) {
           alertBox.show('update');
           var url = urls.twitter_user;
-          checkLatestTwitterUser(url);
+          poll(url);
         } else {
           console.warn("Don't start polling since a job is not started.");
           TwitterUsers.sneakLogger.warn("Don't start polling since a job is not started.");
-
-          ga('send', {
-            hitType: 'event',
-            eventCategory: 'UpdateJobs',
-            eventAction: 'not started',
-            eventLabel: 'Done'
-          });
 
           alertBox.show('update');
           setTimeout(function () {
             alertBox.show('updateThisPage');
           }, 3000);
         }
-      }, function (xhr) {
+      }, function failed (xhr) {
         console.warn('requestToCreateTwitterUser failed.', xhr.responseText);
         TwitterUsers.sneakLogger.warn(xhr.responseText);
 
-        ga('send', {
-          hitType: 'event',
-          eventCategory: 'UpdateJobs',
-          eventAction: 'failed',
-          eventLabel: 'Done'
-        });
-
         if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['error'] === 'too_many_searches') {
           alertBox.show('tooManySearches');
+        } else {
+          alertBox.show('failed');
         }
+
+        ga('send', {
+          hitType: 'event',
+          eventCategory: eventCategory,
+          eventAction: 'requestToCreateTwitterUser failed',
+          eventLabel: JSON.stringify(twitterUser)
+        });
       });
     }
 
@@ -225,20 +216,34 @@
       })();
 
       if (!crawler) {
-        Detectors.secretMode(function () {
+        Detectors.secretMode(function detected () {
           var message = '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}';
           Logger.warn(message);
           setTimeout(function() {
             window.location.href = "#{root_path(via: build_via('secret_mode_detected'))}";
           }, 3000);
+
+          ga('send', {
+            hitType: 'event',
+            eventCategory: eventCategory,
+            eventAction: 'SecretMode detected',
+            eventLabel: JSON.stringify(twitterUser)
+          });
         });
 
-        Detectors.adBlocker(function () {
+        Detectors.adBlocker(function detected () {
           var message = '#{t('before_sign_in.ad_blocker_detected_with_count', seconds: 3)}';
           Logger.warn(message);
           setTimeout(function() {
             window.location.href = "#{root_path(via: build_via('ad_blocker_detected'))}";
           }, 3000);
+
+          ga('send', {
+            hitType: 'event',
+            eventCategory: eventCategory,
+            eventAction: 'AdBlocker detected',
+            eventLabel: JSON.stringify(twitterUser)
+          });
         });
       }
     });
