@@ -107,10 +107,10 @@
   <div id="follow-count" class="col-xs-4"><%= t('.follow_count.title') %></div>
   <div class="col-xs-8">
     <div>
-      <%= t('.follow_count.count', count: current_user.create_follow_limit) %><%= t('.follow_count.remaining', count: current_user.create_follow_remaining) %>
+      <%= t('.follow_count.count', count: CreateFollowLimitation.max_count(current_user)) %><%= t('.follow_count.remaining', count: CreateFollowLimitation.remaining_count(current_user)) %>
       <span><a href="<%= settings_follow_requests_path %>"><%= t('.follow_count.history') %></a></span>
     </div>
-    <div class="text-muted notes"><%= t('.follow_count.note', days: current_user.create_follow_duration) %></div>
+    <div class="text-muted notes"><%= t('.follow_count.note', days: CreateFollowLimitation::CREATE_FOLLOW_PERIOD / 1.day) %></div>
   </div>
 
   <div class="clearfix"></div>
@@ -119,10 +119,10 @@
   <div id="unfollow-count" class="col-xs-4"><%= t('.unfollow_count.title') %></div>
   <div class="col-xs-8">
     <div>
-      <%= t('.unfollow_count.count', count: current_user.create_unfollow_limit) %><%= t('.unfollow_count.remaining', count: current_user.create_unfollow_remaining) %>
+      <%= t('.unfollow_count.count', count: CreateUnfollowLimitation.max_count(current_user)) %><%= t('.unfollow_count.remaining', count: CreateUnfollowLimitation.remaining_count(current_user)) %>
       <span><a href="<%= settings_unfollow_requests_path %>"><%= t('.unfollow_count.history') %></a></span>
     </div>
-    <div class="text-muted notes"><%= t('.unfollow_count.note', days: current_user.create_unfollow_duration) %></div>
+    <div class="text-muted notes"><%= t('.unfollow_count.note', days: CreateUnfollowLimitation::CREATE_UNFOLLOW_PERIOD / 1.day) %></div>
   </div>
 
   <div class="clearfix"></div>

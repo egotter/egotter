@@ -48,7 +48,7 @@ class SearchCountLimitation
 
     def search_count_reset_in(user: nil, session_id: nil)
       record = SearchHistory.order(created_at: :asc).find_by(where_condition(user: user, session_id: session_id))
-      record ? [0, (record.created_at + 1.day - Time.zone.now).to_i].max : 0
+      record ? [0, (record.created_at + SEARCH_COUNT_PERIOD.seconds - Time.zone.now).to_i].max : 0
     end
 
     module DateHelper

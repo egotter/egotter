@@ -51,7 +51,7 @@ RSpec.describe OrdersController, type: :controller do
         expect(Stripe::Customer).to receive(:create).with(email: stripeEmail, source: stripeToken, metadata: {order_id: order.id}).and_return(customer)
         expect(order).to receive(:update!).with(customer_id: customer.id).and_call_original
         expect(Stripe::Subscription).to receive(:create).with(customer: customer.id, items: [{plan: ENV['STRIPE_BASIC_PLAN_ID']}], metadata: {order_id: order.id}).and_return(subscription)
-        expect(order).to receive(:update!).with(subscription_id: subscription.id, name: 'plan name', price: 100, search_count: SearchCountLimitation::BASIC_PLAN, follow_requests_count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'], unfollow_requests_count: Rails.configuration.x.constants['basic_plan_unfollow_requests_limit']).and_call_original
+        expect(order).to receive(:update!).with(subscription_id: subscription.id, name: 'plan name', price: 100, search_count: SearchCountLimitation::BASIC_PLAN, follow_requests_count: CreateFollowLimitation::BASIC_PLAN, unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN).and_call_original
         subject
         expect(response).to have_http_status(:found)
         is_expected.to redirect_to root_path

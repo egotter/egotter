@@ -36,7 +36,6 @@ class User < ApplicationRecord
   include Concerns::User::ApiAccess
   include Concerns::TwitterUser::Inflections
   include Concerns::Visitor::Activeness
-  include Concerns::User::FollowAndUnfollow
 
   def remember_created_at=(_)
   end
@@ -157,7 +156,6 @@ class User < ApplicationRecord
         if req.class == FollowRequest
           uids.add(req.uid)
         elsif req.class == UnfollowRequest
-          puts "subtract #{req.uid}"
           uids.subtract([req.uid])
         else
           logger.warn "#{__method__} Invalid #{req.inspect}"

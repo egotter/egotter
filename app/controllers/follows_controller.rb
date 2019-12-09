@@ -20,15 +20,15 @@ class FollowsController < ApplicationController
   end
 
   before_action only: :create do
-    unless current_user.create_follow_remaining?
-      render json: rate_limit_values(current_user, nil), status: :too_many_requests
+    if CreateFollowLimitation.remaining_count(current_user) <= 0
+      render json: RateLimit.new(current_user).to_h, status: :too_many_requests
     end
   end
 
   def create
     request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid])
     CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
-    render json: rate_limit_values(current_user, request)
+    render json: {request_id: request.id}.merge(RateLimit.new(current_user).to_h)
   end
 
   def show
@@ -37,11 +37,16 @@ class FollowsController < ApplicationController
 
   private
 
-  def rate_limit_values(user, request)
-    {
-        request_id: request&.id,
-        limit: user.create_follow_limit,
-        remaining: user.create_follow_remaining
-    }
+  class RateLimit
+    attr_reader :limit, :remaining
+
+    def initialize(user)
+      @limit = CreateFollowLimitation.max_count(user)
+      @remaining = CreateFollowLimitation.remaining_count(user)
+    end
+
+    def to_h
+      {limit: limit, remaining: remaining}
+    end
   end
 end

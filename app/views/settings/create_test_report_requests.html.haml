@@ -19,4 +19,4 @@
           .text-info= t('.sent')
         - else
           .text-muted= t('.not_changed')
-      %td= !req.finished? && req.logs.any? ? req.logs.last.error_class.split('::')[-1] : ''
+      %td= !req.finished? && req.logs.any? ? req.logs.last.error_class.demodulize : ''
