@@ -23,15 +23,11 @@ default: &default
   faq_path: 'data/faq.json'
 development:
   <<: *default
-  twitter_users:
-    create_record_interval: <%= 10.minutes %>
   usage_stat_recently_created: <%= 1.minute %>
 production:
   <<: *default
 test:
   <<: *default
-  twitter_users:
-    create_record_interval: <%= 1.minute %>
   search_requests:
     skip_duplicate_job_interval: <%= 1.minute - 1 %>
   cluster_bad_words_path: 'data/cluster_bad_words.test.json'
