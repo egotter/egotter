@@ -1,4 +1,18 @@
 module TwitterUsersHelper
+  def alert_info_box(id, &block)
+    tag.div id: id, class: %w(sticky-box hide-at-first alert alert-info alert-dismissable), data: {name: id} do
+      tag.a('&times;', class: 'close', href: '#', data: {dismiss: 'alert'}, aria: {label: 'close'}, escape_attributes: false) +
+          tag.span { yield(id, build_via(id.underscore)) }
+    end
+  end
+
+  def alert_warning_box(id, &block)
+    tag.div id: id, class: %w(sticky-box hide-at-first alert alert-warning alert-dismissable), data: {name: id} do
+      tag.a('&times;', class: 'close', href: '#', data: {dismiss: 'alert'}, aria: {label: 'close'}, escape_attributes: false) +
+          tag.span { yield(id, build_via(id.underscore)) }
+    end
+  end
+
   def next_creation_message(twitter_user)
     format = (twitter_user.created_at.in_time_zone('Tokyo').to_date === Time.zone.now.in_time_zone('Tokyo').to_date) ? :next_creation_short : :next_creation_long
     time = I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: format)

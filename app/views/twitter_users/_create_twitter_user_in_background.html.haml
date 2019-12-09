@@ -1,64 +1,53 @@
-- url = twitter_user_path(uid: twitter_user.uid, via: build_via('update_box'))
-#update-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'update-box', url: url}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_info_box('update-box') do
   = t('twitter_users.in_background.updating', user: twitter_user.mention_name)
   = image_tag '/ajax-loader-blue.gif?a=1'
 
-#update-this-page-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'update-this-page-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  %span.next-creation-note= ''
-  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: build_via('update_this_page_box')), class: 'btn btn-default btn-sm')
+- button_classes = 'btn btn-default btn-sm'
 
-#request-to-update-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'request-to-update-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_info_box('update-this-page-box') do |id, via|
   %span.next-creation-note= ''
-  = link_to(t('twitter_users.in_background.request_to_update'), timeline_path(twitter_user, via: build_via('request_to_update_box')), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: via), class: button_classes)
 
-#failed-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'failed-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_info_box('request-to-update-box') do |id, via|
+  %span.next-creation-note= ''
+  = link_to(t('twitter_users.in_background.request_to_update'), timeline_path(twitter_user, via: via), class: button_classes)
+
+= alert_warning_box('failed-box') do |id, via|
   %span= t('twitter_users.in_background.failed', user: twitter_user.mention_name)
-  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: build_via('failed_box')), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: via), class: button_classes)
 
-#refresh-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'refresh-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  %span= t('twitter_users.show.update_is_coming', user: twitter_user.mention_name)
-  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: build_via('refresh_box')), class: 'btn btn-default btn-sm')
+= alert_info_box('refresh-box') do |id, via|
+  %span.message= t('twitter_users.show.update_is_coming', user: twitter_user.mention_name)
+  = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: via), class: button_classes)
 
-#too-many-friends-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'too-many-friends-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_info_box('too-many-friends-box') do |id, via|
   = t('twitter_users.in_background.too_many_friends', user: twitter_user.mention_name)
-  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('welcome_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_friends_box'))), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
-#follow-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'follow-box', url: follow_path(via: build_via('follow_box'))}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_warning_box('follow-box') do |id, via|
   = t('twitter_users.in_background.automated_update_stopped', user: twitter_user.mention_name)
-  = link_to(t('twitter_users.in_background.do_follow'), sign_in_path(via: build_via('follow_box'), redirect_path: timeline_path(twitter_user, via: build_via('follow_box')), follow: true), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.do_follow'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via), follow: true), class: button_classes)
 
-#invalid-token-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'invaild-token-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_warning_box('invalid-token-box') do |id, via|
   = t('twitter_users.in_background.invalid_token', user: twitter_user.mention_name)
-  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('invalid_token_box'), redirect_path: timeline_path(twitter_user, via: build_via('invalid_token_box'))), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
-#accurate-counting-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'accurate-counting-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_warning_box('accurate-counting-box') do |id, via|
   = t('twitter_users.in_background.accurate_counting')
-  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('accurate_counting_box'), redirect_path: timeline_path(twitter_user, via: build_via('accurate_counting_box'))), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
-#via-dm-box.sticky-box.hide-at-first.alert.alert-warning.alert-dismissable{data: {name: 'via-dm-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_warning_box('via-dm-box') do |id, via|
   = t('twitter_users.in_background.via_dm')
-  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('via_dm_box'), redirect_path: timeline_path(twitter_user, via: build_via('via_dm_box'))), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
-#sign-in-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'sign-in-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+= alert_info_box('sign-in-box') do |id, via|
   = t('twitter_users.in_background.lets_sign_in')
-  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: build_via('sign_in_box'), redirect_path: timeline_path(twitter_user, via: build_via('sign_in_box'))), class: 'btn btn-default btn-sm')
+  = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
-#too-many-searches-box.sticky-box.hide-at-first.alert.alert-info.alert-dismissable{data: {name: 'too-many-searches-box'}}
-  %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
-  - sign_in_url = sign_in_path(via: build_via('too_many_searches_box'), redirect_path: timeline_path(twitter_user, via: build_via('too_many_searches_box')))
-  - pricing_url = pricing_path(via: build_via('too_many_searches_box'))
-  - support_url = pricing_path(via: build_via('too_many_searches_box'), anchor: 'enterprise-plan')
+= alert_info_box('too-many-searches-box') do |id, via|
+  - sign_in_url = sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via))
+  - pricing_url = pricing_path(via: via)
+  - support_url = pricing_path(via: via, anchor: 'enterprise-plan')
   = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
 
 :javascript
@@ -98,7 +87,7 @@
             $.get(url).done(function (res) {
               $updateBox.alert('close');
               if (res.text) {
-                $refreshBox.find('span').text(res.text);
+                $refreshBox.find('.message').text(res.text);
               }
               $refreshBox.show().sticky();
             }).fail(function (xhr) {
@@ -147,7 +136,8 @@
 
         if (res.jid) {
           $updateBox.show().sticky();
-          checkLatestTwitterUser($updateBox.data('url'));
+          var url = '#{twitter_user_path(uid: twitter_user.uid, via: build_via('update_box'))}';
+          checkLatestTwitterUser(url);
         } else {
           console.warn("Don't start polling since a job is not started.");
           logger.warn("Don't start polling since a job is not started.");
@@ -231,7 +221,8 @@
           return;
         }
 
-        TwitterUsers.isFollowingEgotter($followBox.data('url'), function (res) {
+        var url = '#{follow_path(via: build_via('follow_box'))}';
+        TwitterUsers.isFollowingEgotter(url, function (res) {
           if (res.follow) {
             var url = "#{twitter_users_path(via: build_via('background_update'))}";
 
