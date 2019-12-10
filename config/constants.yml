@@ -1,6 +1,6 @@
 default: &default
   twitter_users:
-    create_record_interval: <%= 1.hour %>
+    create_record_interval: <%= 2.hours %>
   twitter_db_users:
     update_record_interval: <%= 6.hours %>
   search_requests:
