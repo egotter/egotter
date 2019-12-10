@@ -157,6 +157,55 @@ ja:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
         view_more: '続きを見る'
+    feeds:
+      friends:
+        title: 'フォロー'
+        description: '@%{user} がフォローしているユーザーです。'
+      followers:
+        title: 'フォロワー'
+        description: '@%{user} がフォローされているユーザーです。'
+      close_friends:
+        title: '仲良しランキング'
+        description: '@%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。'
+      common_friends:
+        title: "共通フォロー"
+        description: '@%{user1} と @%{user2} の両方がフォローしているユーザーです。'
+      common_followers:
+        title: "共通フォロワー"
+        description: '@%{user1} と @%{user2} の両方がフォローされているユーザーです。'
+      unfriends:
+        title: 'リムーブした'
+        description: '@%{user} がフォローを解除したユーザーです。'
+      unfollowers:
+        title: 'リムーブされた'
+        description: '@%{user} がフォローを解除されたユーザーです。'
+      blocking_or_blocked:
+        title: 'ブロックされたかも'
+        description: '@%{user} がブロックされたかもしれないユーザーです。'
+      mutual_friends:
+        title: '相互フォロー'
+        description: '@%{user} が相互フォローしているユーザーです。'
+      one_sided_friends:
+        title: '片思いフォロー'
+        description: '@%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーです。'
+      one_sided_followers:
+        title: '片思いフォロワー'
+        description: '@%{user} のフォロワーのうち、フォロー返ししていないユーザーです。'
+      replying:
+        title: '自分から@ツイート'
+        description: '@%{user} が自分から@ツイートしたユーザーです。'
+      replied:
+        title: '他の人から@ツイート'
+        description: '@%{user} が@ツイートされたユーザーです。本人がログインしていない場合は検索して見付けるため、少し不正確です。'
+      favorite_friends:
+        title: 'いいねランキング'
+        description: '@%{user} がよくいいねするユーザーです。いいねの分析には、お気に入り登録を使っています。'
+      inactive_friends:
+        title: '最近いないフォロー'
+        description: '@%{user} がフォローしているユーザーのうち、最近ツイートしていないユーザーです。'
+      inactive_followers:
+        title: '最近いないフォロワー'
+        description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。'
   usage_stats:
     show:
       title: "ツイッター利用状況"

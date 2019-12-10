@@ -19,36 +19,65 @@
 .row
   - if @chart_builder
     .col-xs-12.col-md-6
-      = render partial: 'audience_insight', locals: {twitter_user: @twitter_user, chart_builder: @chart_builder}
+      = render partial: 'timelines/feeds/audience_insight', locals: {twitter_user: @twitter_user, chart_builder: @chart_builder}
 
   .col-xs-12.col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: 'close_friends'}
+    = render partial: 'timelines/feeds/close_friends', locals: {twitter_user: @twitter_user}
 
   - if show_friends_stat?(@twitter_user)
     .col-xs-12.col-md-6
-      = render partial: 'timelines/chart', locals: {menu_name: :usage_stats, graph: @twitter_user.usage_stat.wday, twitter_user: @twitter_user}
+      = render partial: 'timelines/feeds/chart', locals: {menu_name: :usage_stats, graph: @twitter_user.usage_stat.wday, twitter_user: @twitter_user}
 
   - if show_common_friends?(@twitter_user)
     .col-xs-12.col-md-6
-      = render partial: 'timelines/common_users', locals: {twitter_user: @twitter_user, menu_name: 'common_friends'}
+      = render partial: 'timelines/feeds/common_friends', locals: {twitter_user: @twitter_user}
     .col-xs-12.col-md-6
-      = render partial: 'timelines/common_users', locals: {twitter_user: @twitter_user, menu_name: 'common_followers'}
+      = render partial: 'timelines/feeds/common_followers', locals: {twitter_user: @twitter_user}
 
   - if @twitter_user.score
     .col-xs-12.col-md-6
-      = render partial: 'timelines/gauge', locals: {menu_name: :score, score: @twitter_user.score.klout_score, twitter_user: @twitter_user}
+      = render partial: 'timelines/feeds/gauge', locals: {menu_name: :score, score: @twitter_user.score.klout_score, twitter_user: @twitter_user}
 
   - if show_friends_stat?(@twitter_user)
     .col-xs-12.col-md-6
-      = render partial: 'timelines/chart', locals: {menu_name: :clusters, graph: name_y_format(@twitter_user.usage_stat.tweet_clusters), twitter_user: @twitter_user}
+      = render partial: 'timelines/feeds/chart', locals: {menu_name: :clusters, graph: name_y_format(@twitter_user.usage_stat.tweet_clusters), twitter_user: @twitter_user}
 
-  - %w(unfriends unfollowers blocking_or_blocked mutual_friends one_sided_friends one_sided_followers replying replied favorite_friends inactive_friends inactive_followers).each do |name|
-    - if name == 'blocking_or_blocked' && request.from_smartphone?
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/unfriends", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/unfollowers", locals: {twitter_user: @twitter_user}
+
+    - if request.from_smartphone?
       .col-xs-12.col-md-6
         = render(partial: 'adsense/side_by_side', locals: {vertical: :middle})
 
     .col-xs-12.col-md-6
-      = render partial: 'timelines/users', locals: {twitter_user: @twitter_user, menu_name: name}
+      = render partial: "timelines/feeds/blocking_or_blocked", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/mutual_friends", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/one_sided_friends", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/one_sided_followers", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/replying", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/replied", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/favorite_friends", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/inactive_friends", locals: {twitter_user: @twitter_user}
+
+    .col-xs-12.col-md-6
+      = render partial: "timelines/feeds/inactive_followers", locals: {twitter_user: @twitter_user}
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :bottom})
 

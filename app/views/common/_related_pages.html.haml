@@ -2,40 +2,40 @@
 
 .row
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'friends'}
+    = render partial: 'timelines/feeds/friends', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'followers'}
+    = render partial: 'timelines/feeds/followers', locals: {twitter_user: twitter_user}
 
   - if show_common_friends?(twitter_user)
     .col-md-6
-      = render partial: 'timelines/common_users', locals: {twitter_user: twitter_user, menu_name: 'common_friends'}
+      = render partial: 'timelines/feeds/common_friends', locals: {twitter_user: twitter_user}
     .col-md-6
-      = render partial: 'timelines/common_users', locals: {twitter_user: twitter_user, menu_name: 'common_followers'}
+      = render partial: 'timelines/feeds/common_followers', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'inactive_friends'}
+    = render partial: 'timelines/feeds/inactive_friends', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'inactive_followers'}
+    = render partial: 'timelines/feeds/inactive_followers', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'unfriends'}
+    = render partial: 'timelines/feeds/unfriends', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'unfollowers'}
+    = render partial: 'timelines/feeds/unfollowers', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'blocking_or_blocked'}
+    = render partial: 'timelines/feeds/blocking_or_blocked', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'one_sided_friends'}
+    = render partial: 'timelines/feeds/one_sided_friends', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'one_sided_followers'}
+    = render partial: 'timelines/feeds/one_sided_followers', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'replying'}
+    = render partial: 'timelines/feeds/replying', locals: {twitter_user: twitter_user}
 
   .col-md-6
-    = render partial: 'timelines/users', locals: {twitter_user: twitter_user, menu_name: 'replied'}
+    = render partial: 'timelines/feeds/replied', locals: {twitter_user: twitter_user}
