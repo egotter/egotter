@@ -6,6 +6,7 @@ class ScoresController < ApplicationController
     @breadcrumb_name = controller_name.singularize.to_sym
     @canonical_url = send("#{controller_name.singularize}_url", @twitter_user)
     @page_title = t('.page_title', user: @twitter_user.mention_name)
+    @content_title = t('.page_title', user: @twitter_user.mention_name)
 
     score = find_or_create_score(@twitter_user.uid)
     @score = score.klout_score.to_f

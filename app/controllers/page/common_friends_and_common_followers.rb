@@ -22,6 +22,7 @@ class Page::CommonFriendsAndCommonFollowers < ::Page::Base
         ["all_#{controller_name}".to_sym, send("all_#{controller_name}_url", @twitter_user)]
       end
     @page_title = t('.page_title', user: @twitter_user.mention_name, user2: current_user.twitter_user.mention_name)
+    @content_title = t('.content_title', user: @twitter_user.mention_name, user2: current_user.twitter_user.mention_name)
 
     counts = related_counts
 

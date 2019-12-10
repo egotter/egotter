@@ -1,4 +1,19 @@
-= render(partial: 'common/page_top', locals: {canonical_url: @canonical_url, breadcrumb_name: @breadcrumb_name, twitter_user: @twitter_user, page_title: @page_title, meta_description: @meta_description, page_description: @page_description})
+- content_for :canonical_url do
+  %link{href: @canonical_url, rel: 'canonical'}
+
+- breadcrumb @breadcrumb_name, @twitter_user.screen_name
+- title @page_title
+- set_meta_tags description: @meta_description
+
+= render partial: 'twitter/profile', locals: {user: @twitter_user}
+.vertical-spacing
+
+%h2.h2.page-title= @content_title
+.vertical-spacing
+.vertical-spacing
+
+.page-description.text-center= @page_description
+.vertical-spacing
 
 .tweet-box-wrapper
   = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
