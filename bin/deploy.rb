@@ -43,7 +43,7 @@ module Deploy
   class Sidekiq
     CMD = [
         'git pull origin master',
-        'bundle',
+        'bundle check || bundle install --path .bundle --without test development',
         ['sudo service sidekiq_misc status'          , 'sudo service sidekiq_misc restart'],
         ['sudo service sidekiq_prompt_reports status', 'sudo service sidekiq_prompt_reports restart'],
         ['sudo service sidekiq status'               , 'sudo service sidekiq restart'],
