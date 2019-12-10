@@ -50,8 +50,9 @@ module ApplicationHelper
     directory = controller_path.match?(/^directory/)
     settings = controller_name == 'settings'
     pricing = controller_name == 'pricing'
+    login = controller_name == 'login'
 
-    !tokimeki && !start && !directory && !settings && !pricing
+    !tokimeki && !start && !directory && !settings && !pricing && !login
   end
 
   def kick_out_error_path(reason, redirect_path: nil)

@@ -1,11 +1,11 @@
 class LoginController < ApplicationController
 
-  before_action :reject_crawler, only: %i(sign_in sign_out)
-  before_action :push_referer, only: %i(sign_in sign_out)
-  before_action :create_search_log, only: %i(sign_in sign_out)
+  before_action :reject_crawler, except: :goodbye
+  before_action :push_referer, except: :goodbye
+  before_action :create_search_log
 
   def goodbye
-    redirect_to root_path, notice: t('.signed_out') unless user_signed_in?
+    redirect_to root_path(via: build_via('already_signed_out')), notice: t('.signed_out') unless user_signed_in?
   end
 
   def sign_in
@@ -28,6 +28,22 @@ class LoginController < ApplicationController
     session[:force_login] = force_login.to_s
 
     redirect_to "/users/auth/twitter?force_login=#{force_login}"
+  end
+
+  # This action is created for conversion tracking.
+  def after_sign_in
+    @redirect_path = params[:redirect_path]
+    status = t("devise.omniauth_callbacks.#{current_user.notification_setting.dm_enabled?}")
+    flash[:notice] = t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: status, url: settings_path(via: 'after_sign_in'))
+    render layout: false
+  end
+
+  # This action is created for conversion tracking.
+  def after_sign_up
+    @redirect_path = params[:redirect_path]
+    status = t("devise.omniauth_callbacks.#{current_user.notification_setting.dm_enabled?}")
+    flash[:notice] = t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: status, url: settings_path(via: 'after_sign_in'))
+    render 'after_sign_in', layout: false
   end
 
   # This implementation is for logging.

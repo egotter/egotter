@@ -170,7 +170,7 @@ Rails.application.routes.draw do
   get 'relationships/:src_uid/:dst_uid/check_log', to: redirect('/')
   get 'relationships/:src_screen_name/:dst_screen_name', to: redirect('/')
 
-  %i(sign_in goodbye).each do |name|
+  %i(sign_in after_sign_in after_sign_up goodbye).each do |name|
     get name, to: "login##{name}", as: name
   end
   delete :sign_out, to: "login#sign_out", as: :sign_out

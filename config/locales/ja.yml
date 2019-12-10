@@ -16,7 +16,6 @@ ja:
       top: "トップ"
       support: "お問い合わせ"
       github: "Github"
-      redirect_to: "%{user} の結果を表示します"
       popular: "人気の分析"
       related_pages: "関連ページ"
       related_analysis: "%{user} の他の分析"
@@ -67,6 +66,8 @@ ja:
         sign_up: "新規登録"
         sign_in_now: "「リム通知を登録する」という方はこちら"
         search_for_now: "「とりあえず見るだけ」という方はこちら"
+    create:
+      redirect_to: "@%{user} の結果を表示します"
     usage_stats:
       name: "ツイッター利用状況"
       title: "%{user} のツイッター利用状況"
@@ -485,6 +486,8 @@ ja:
       return_to_top: "トップページに戻る"
     sign_in:
       signed_in: "既にログイン済みです。"
+    after_sign_in:
+      proceccing: 'ログイン中'
   twitter:
     user:
       search: "検索する"

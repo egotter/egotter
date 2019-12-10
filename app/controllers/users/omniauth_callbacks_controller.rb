@@ -36,9 +36,13 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     enqueue_create_twitter_user_job_if_needed(user.uid, user_id: user.id, requested_by: 'sign_in')
 
-    flash[:notice] = after_sign_in_message(user)
     sign_in user, event: :authentication
-    redirect_to after_sign_in_path_for(user, save_context: save_context)
+
+    if save_context == :create
+      redirect_to after_sign_up_path(redirect_path: after_sign_in_path_for(user, save_context: save_context))
+    else
+      redirect_to after_sign_in_path(redirect_path: after_sign_in_path_for(user, save_context: save_context))
+    end
   end
 
   def failure
@@ -69,11 +73,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     url = session.delete(:redirect_path)
     url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") unless url
     append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
-  end
-
-  def after_sign_in_message(user)
-    status = t("devise.omniauth_callbacks.#{user.notification_setting.dm_enabled?}")
-    t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: status, url: settings_path(via: 'after_sign_in'))
   end
 
   def after_failure_message(reason)
