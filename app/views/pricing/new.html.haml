@@ -18,10 +18,10 @@
         %span.text-muted{style: 'font-size: x-small;'}= t('.search_count.free_note', count: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
     %tr
       %td= t('.follow_requests.key')
-      %td= Rails.configuration.x.constants['anonymous_follow_requests_limit']
+      %td= CreateFollowLimitation::ANONYMOUS
     %tr
       %td= t('.unfollow_requests.key')
-      %td= Rails.configuration.x.constants['anonymous_unfollow_requests_limit']
+      %td= CreateUnfollowLimitation::ANONYMOUS
     %tr
       %td= t('.remove_notification.key')
       %td= t('.remove_notification.free_html')
@@ -67,10 +67,10 @@
       %td.text-primary= t('.search_count.basic', count: SearchCountLimitation::BASIC_PLAN)
     %tr
       %td= t('.follow_requests.key')
-      %td.text-primary= t('.follow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'])
+      %td.text-primary= t('.follow_requests.basic_html', count: CreateFollowLimitation::BASIC_PLAN)
     %tr
       %td= t('.unfollow_requests.key')
-      %td.text-primary= t('.unfollow_requests.basic_html', count: Rails.configuration.x.constants['basic_plan_unfollow_requests_limit'])
+      %td.text-primary= t('.unfollow_requests.basic_html', count: CreateUnfollowLimitation::BASIC_PLAN)
     %tr
       %td= t('.remove_notification.key')
       %td= t('.remove_notification.basic_html')

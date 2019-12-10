@@ -39,8 +39,8 @@ class OrdersController < ApplicationController
         name: subscription.items.data[0].plan.nickname,
         price: subscription.items.data[0].plan.amount,
         search_count: SearchCountLimitation::BASIC_PLAN,
-        follow_requests_count: Rails.configuration.x.constants['basic_plan_follow_requests_limit'],
-        unfollow_requests_count: Rails.configuration.x.constants['basic_plan_unfollow_requests_limit'],
+        follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
+        unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
     )
 
     redirect_to root_path, notice: t('.success_html', url: after_purchase_path('after_purchasing'))

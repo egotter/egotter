@@ -40,10 +40,12 @@ class SettingsController < ApplicationController
 
   def follow_requests
     @requests = current_user.follow_requests.limit(20)
+    @users = TwitterDB::User.where(uid: @requests.map(&:uid)).index_by(&:uid)
   end
 
   def unfollow_requests
     @requests = current_user.unfollow_requests.limit(20)
+    @users = TwitterDB::User.where(uid: @requests.map(&:uid)).index_by(&:uid)
   end
 
   def create_prompt_report_requests

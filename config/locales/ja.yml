@@ -348,9 +348,11 @@ ja:
         259200: "3日毎"
       trial_title: "お試し機能 (β)"
     follow_requests:
-      title: 'フォローボタン履歴'
+      title: 'フォロー 履歴'
+      return: '設定ページへ戻る'
     unfollow_requests:
-      title: 'リムーブボタン履歴'
+      title: 'フォロー解除 履歴'
+      return: '設定ページへ戻る'
     create_prompt_report_requests:
       title: 'リムられ通知履歴'
       description: 'リムられ通知は、最後にアクセスしてからのフォロワーの変化を集計します。そのため、頻繁にえごったーを見る方には通知があまり届かないことがあります。'
@@ -497,7 +499,7 @@ ja:
       following: "フォロー中"
     create_follow_modal:
       message_html: '@<span class="screen-name"></span> さんをフォローしますか？ 数が多い場合は凍結されないようゆっくりフォローしていきます。'
-      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-default">設定 &gt; フォロー回数 &gt; 履歴</a> から見ることができます。'
+      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-default" target="_blank">設定 &gt; フォロー回数 &gt; 履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       ok: "はい"
       cancel: "いいえ"
@@ -507,7 +509,7 @@ ja:
       cancel: "いいえ"
     create_unfollow_modal:
       message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？ 数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
-      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-default">設定 &gt; アンフォロー回数 &gt; 履歴</a> から見ることができます。'
+      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-default" target="_blank">設定 &gt; アンフォロー回数 &gt; 履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       ok: "はい"
       cancel: "いいえ"
@@ -1902,6 +1904,7 @@ ja:
       order_short: "%-m月%-d日 %-H時"
       profile_short: "%-m月%-d日 %-H時"
       share_text_short: "%m%d%H%M"
+      settings_short: "%m-%d %H:%M"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"
     pm: 午後

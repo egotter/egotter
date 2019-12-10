@@ -45,11 +45,13 @@ module ApplicationHelper
   end
 
   def show_announcement_section?
-    tokimeki_page = controller_name == 'tokimeki_unfollow' && action_name == 'cleanup'
-    start_page = controller_name == 'home' && action_name == 'start'
-    directory_page = controller_path.match?(/^directory/)
+    tokimeki = controller_name == 'tokimeki_unfollow' && action_name == 'cleanup'
+    start = controller_name == 'home' && action_name == 'start'
+    directory = controller_path.match?(/^directory/)
+    settings = controller_name == 'settings'
+    pricing = controller_name == 'pricing'
 
-    !tokimeki_page && !start_page && !directory_page
+    !tokimeki && !start && !directory && !settings && !pricing
   end
 
   def kick_out_error_path(reason, redirect_path: nil)

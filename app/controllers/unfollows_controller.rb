@@ -8,24 +8,29 @@ class UnfollowsController < ApplicationController
   before_action {create_search_log(uid: params[:uid])}
 
   before_action do
-    if !referer_is_tokimeki_unfollow? && !current_user.create_unfollow_remaining?
-      render json: rate_limit_values(current_user, nil), status: :too_many_requests
+    if !referer_is_tokimeki_unfollow? && CreateUnfollowLimitation.remaining_count(current_user) <= 0
+      render json: RateLimit.new(current_user).to_h, status: :too_many_requests
     end
   end
 
   def create
     request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid])
     CreateUnfollowWorker.perform_async(request.id, enqueue_location: controller_name)
-    render json: rate_limit_values(current_user, request)
+    render json: {request_id: request.id}.merge(RateLimit.new(current_user).to_h)
   end
 
   private
 
-  def rate_limit_values(user, request)
-    {
-        request_id: request&.id,
-        limit: user.create_unfollow_limit,
-        remaining: user.create_unfollow_remaining
-    }
+  class RateLimit
+    attr_reader :limit, :remaining
+
+    def initialize(user)
+      @limit = CreateUnfollowLimitation.max_count(user)
+      @remaining = CreateUnfollowLimitation.remaining_count(user)
+    end
+
+    def to_h
+      {limit: limit, remaining: remaining}
+    end
   end
 end
