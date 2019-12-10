@@ -15,8 +15,16 @@
 .vertical-spacing
 .vertical-spacing
 
-.page-description.text-center= @page_description
+.page-description.text-center.text-muted= raw @page_description
 .vertical-spacing
+
+:javascript
+  $(function () {
+    var crawler = #{from_crawler?};
+    if (crawler) {
+      $('#hidden-page-description').show();
+    }
+  });
 
 .tweet-box-wrapper
   = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
@@ -31,11 +39,3 @@
 .gray-separator
 
 = render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t("#{controller_name}.#{action_name}.title"))}
-
-.gray-separator
-
-= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t("#{controller_name}.#{action_name}.title"))}
-
-.gray-separator
-
-= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}

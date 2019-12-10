@@ -21,7 +21,7 @@ class  Page::UnfriendsAndUnfollowers < ::Page::Base
     counts = related_counts(@twitter_user)
     @meta_title = t('.meta_title', {user: @twitter_user.mention_name}.merge(counts))
 
-    @page_description = t('.page_description', user: @twitter_user.mention_name)
+    @page_description = t('.page_description_html', user: user_link(@twitter_user.screen_name), url: unfriends_top_path(via: build_via('page_description')))
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name}.merge(counts))
 
     mention_names = @twitter_user.users_by(controller_name: controller_name).
@@ -55,9 +55,9 @@ class  Page::UnfriendsAndUnfollowers < ::Page::Base
 
   def tabs(counts)
     [
-      {text: t('unfriends.show.see_unfriends_html', num: counts[:unfriends]), url: unfriend_path(@twitter_user)},
-      {text: t('unfriends.show.see_unfollowers_html', num: counts[:unfollowers]), url: unfollower_path(@twitter_user)},
-      {text: t('unfriends.show.see_blocking_or_blocked_html', num: counts[:blocking_or_blocked]), url: blocking_or_blocked_path(@twitter_user)}
+      {text: t('unfriends.show.unfriends_tab_html', num: counts[:unfriends]), url: unfriend_path(@twitter_user)},
+      {text: t('unfriends.show.unfollowers_tab_html', num: counts[:unfollowers]), url: unfollower_path(@twitter_user)},
+      {text: t('unfriends.show.blocking_or_blocked_tab_html', num: counts[:blocking_or_blocked]), url: blocking_or_blocked_path(@twitter_user)}
     ]
   end
 end

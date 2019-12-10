@@ -668,12 +668,11 @@ ja:
       title_html: >
         <span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">
         &nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>
-      page_title: 'リムられチェック - リムられの簡単な調べ方、自動で通知する方法'
-      content_title: 'リムられチェック'
+      page_title: 'リムられチェック - 保存ユーザー数4,800万人突破！スマホから使えて無料！ 一番使われているリムられチェックアプリです'
       simple_title_html: 'リムられチェック'
       footer_title: 'リムられチェック'
       first_title_sub_text: 'スマホでサクッと'
-      meta_description: "保存ユーザー数4,800万人突破！ 無料でスマホからリムられチェック！ フォローを外されたアカウントをさくっと見付けることができます。定期的にリムられ通知が届きます。"
+      meta_description: "保存ユーザー数4,800万人突破！ 無料で使える！ スマホ対応OK！ 一番使われているリムられチェッカーです。ツイッターであなたをリムった人を無料で確認できます。自動リムられ通知もあります。データは登録してからたまるので、今すぐ登録しましょう。"
       what_is_unfriends:
         title: '「リムり」「リムられ」ってどういう意味？'
         description1_html: >
@@ -729,31 +728,45 @@ ja:
       lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
     show: &unfriends_show
       title: "リムり"
-      crumb_title: "リムり"
+      crumb_title: "リムーブした"
       page_title: "%{user} のリムーブ"
       content_title: "%{user} のリムーブ"
       meta_title: "%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       summary_title: "リムーブした"
-      page_description: "%{user} がリムーブしたユーザーの一覧です。リムーブとはフォローを外すことです。たまに垢消しもあります。"
+      page_description_html: |
+        「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
+        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
+        <span id="hidden-page-description" style="display: none;">
+        リムったユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
+        %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+        <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムったユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
+        </span>
       meta_description: "%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter %{url}"
       see_more: 'もっと見る'
-      see_unfriends_html: 'リムり<br>%{num}'
-      see_unfollowers_html: 'リムられ<br>%{num}'
-      see_blocking_or_blocked_html: 'ブロられ<br>%{num}'
+      unfriends_tab_html: 'リムーブした<br>%{num}'
+      unfollowers_tab_html: 'リムーブされた<br>%{num}'
+      blocking_or_blocked_tab_html: 'ブロックされた<br>%{num}'
     all:
       <<: *unfriends_show
       crumb_title: "一気に見る"
   unfollowers:
     show: &unfollowers_show
-      title: "リムられ"
-      crumb_title: "リムられ"
-      page_title: "%{user} のリムーブされた"
-      content_title: "%{user} のリムーブされた"
-      meta_title: "%{user} のリムられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      title: "リムられチェック"
+      crumb_title: "リムられチェック"
+      page_title: "%{user} のリムられチェック - %{user} のリムられを見るなら、保存ユーザー数4,800万人突破のリムられチェック！"
+      content_title: "%{user} のリムられチェック"
+      meta_title: "%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       summary_title: "リムーブされた"
-      page_description: "%{user} がリムーブされたユーザーの一覧です。リムーブとはフォローを外すことです。たまに垢消しもあります。"
-      meta_description: "%{user} がリムーブされたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      page_description_html: |
+        「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
+        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
+        <span id="hidden-page-description" style="display: none;">
+        リムられたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
+        %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+        <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムられたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
+        </span>
+      meta_description: "%{user} のリムられを見るならここ！ 保存ユーザー数4,800万人突破のリムられチェック！ 無料で使えてスマホ対応OK！ 「リムられチェック」は一番使われているリムられ確認アプリです。"
       tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter %{url}"
     all:
       <<: *unfollowers_show
@@ -761,12 +774,19 @@ ja:
   blocking_or_blocked:
     show: &blocking_or_blocked_show
       title: "ブロックされたかも"
-      crumb_title: "ブロられ"
+      crumb_title: "ブロックされた"
       page_title: "%{user} がブロックされたかも"
       content_title: "%{user} がブロックされたかも"
       meta_title: "%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       summary_title: "ブロックされたかも"
-      page_description: "%{user} がブロックされたかもしれないユーザーの一覧です。フォローとフォロワーから同時に外れていたらブロックされたのかも？ たまに垢消しもあります。"
+      page_description_html: |
+        「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
+        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
+        <span id="hidden-page-description" style="display: none;">
+        ブロックされたユーザーの中には、アカウント削除（=垢消し）やアカウント停止（=凍結）も含まれています。よく見られているページほど頻繁にデータが更新されるため、
+        %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+        <a href="%{url}">リムられチェック</a>を使うことで、%{user} のブロックされたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
+        </span>
       meta_description: "%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter %{url}"
     all:
