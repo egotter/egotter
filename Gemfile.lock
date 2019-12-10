@@ -207,18 +207,6 @@ GEM
       railties (>= 4.2.0)
       thor (>= 0.14, < 2.0)
     jwt (2.2.1)
-    kaminari (1.1.1)
-      activesupport (>= 4.1.0)
-      kaminari-actionview (= 1.1.1)
-      kaminari-activerecord (= 1.1.1)
-      kaminari-core (= 1.1.1)
-    kaminari-actionview (1.1.1)
-      actionview
-      kaminari-core (= 1.1.1)
-    kaminari-activerecord (1.1.1)
-      activerecord
-      kaminari-core (= 1.1.1)
-    kaminari-core (1.1.1)
     libv8 (3.16.14.19)
     listen (3.1.5)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -484,7 +472,6 @@ DEPENDENCIES
   hiredis
   httparty
   jquery-rails
-  kaminari
   listen (>= 3.0.5, < 3.2)
   mecab
   memoist
