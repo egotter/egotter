@@ -125,7 +125,7 @@ ja:
       message2: 'それでは、さっそく初めてみましょう。'
       message3_html: '<span class="egotter-pink">リムられ通知</span>は、<span class="egotter-pink">DM</span>で届きます。@ego_tter からのDMが届くように、忘れずに設定しておいてください。'
       message4_html: '何か<span class="egotter-pink">分からないこと</span>がありますか？'
-      message5_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご質問ください。'
+      message5_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご質問ください。'
   timelines:
     show:
       page_title: "@%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
@@ -516,7 +516,7 @@ ja:
       enterprice_inquiry_by_email: "メールで問い合わせ"
       enterprice_inquiry_by_dm: "DMで問い合わせ"
       enterprice_inquiry_by_dm_note_html: '※DMですと見逃すことがあります。可能な限り、<span class="egotter-pink">メール</span>をご利用ください'
-      ask_me_html: 'ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで<br class="visible-xs-block">お気軽にご連絡ください。'
+      ask_me_html: 'ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで<br class="visible-xs-block">お気軽にご連絡ください。'
   orders:
     create:
       success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
@@ -667,7 +667,7 @@ ja:
       lead_001: "スマホでさくっと片思いチェック"
       lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。"
-      lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show: &one_sided_friends_show
       crumb_title: "片思い分析"
       page_title: "%{user} の片思いフォロー"
@@ -777,7 +777,7 @@ ja:
         <br>
         スマホから使える<span class="egotter-pink">無料</span>の<br>
         リムられチェックアプリです。
-      lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: '検索されたユーザーのフォロー外し、フォロー外されは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー外し、フォロー外されのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show: &unfriends_show
       title: "リムり"
       crumb_title: "リムーブした"
@@ -902,7 +902,7 @@ ja:
       lead_001: "最近いない人、何してるんだろう。"
       lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "最近いない人をらくらく検索。<br>スマホから使える無料の分析アプリです。"
-      lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない相互フォローのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない相互フォローのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show: &inactive_friends_show
       crumb_title: "最近いないフォロー分析"
       page_title: "%{user} の最近いないフォロー"
@@ -973,7 +973,7 @@ ja:
       lead_001: "スマホでさくっとフォローチェック"
       lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
-      lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show: &friends_show
       crumb_title: "フォローチェック"
       page_title: "%{user} のフォロー"
@@ -1071,7 +1071,7 @@ ja:
       lead_001: "スマホでさくっとクラスタ判定"
       lead_002: "保存ユーザー数4,800万人突破！"
       lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
-      lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
     show:
       crumb_title: "入っているクラスタ"
       summary_title: "入っているクラスタ"
@@ -1081,7 +1081,7 @@ ja:
       content_title: "%{user} のクラスタ判定"
       description: "%{user} のクラスタは、%{clusters}です。検索されたユーザーが入っているクラスタをさくっと見付けることができます。"
       lead_002: "クラスタとは、「あるユーザーが入っているグループ」のことです。えごったーでは、よくツイートするジャンルやフォロー関係からクラスタを判定しています。"
-      lead_003: '%{user} のクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      lead_003: '%{user} のクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       lead_004: 'この分析にはえごったーのデータを利用しています。えごったーを使うと、仲良し、リムーブした、リムーブされたなど他にもたくさんの情報が分かります。ぜひえごったーもご利用ください。'
       tweet: ".%{user} のクラスタ ↓\n%{clusters}\n#egotter %{url}"
       clusters_level: "クラスタレベル"
@@ -1123,7 +1123,7 @@ ja:
       lets_sign_in: 'ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます！'
       do_sign_in: 'ログインする'
       do_follow: 'フォローする'
-      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       share_me: "えごったーをシェアする"
   not_found:
@@ -1175,13 +1175,13 @@ ja:
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
       description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
-      text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんに<br class="visible-xs-block">心がときめいていますか？✨'
-      next_is_html: '次は%{number}人目、<a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんです。🙂'
+      text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんに<br class="visible-xs-block">心がときめいていますか？✨'
+      next_is_html: '次は%{number}人目、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんです。🙂'
       how_to_continue_html: '途中から再開する場合は、再度同じURL <a href="%{url}" class="btn btn-primary">ときめきアンフォロー</a> にアクセスしてください。'
       unfollow: 'フォローを外す'
-      after_unfollow_html: 'アンフォローは別れではなく旅立ちです。😀<br><br><a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんのこれまでの全てのツイートに感謝して、次に進みましょう。残りは %{remaining} 人です。'
+      after_unfollow_html: 'アンフォローは別れではなく旅立ちです。😀<br><br><a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんのこれまでの全てのツイートに感謝して、次に進みましょう。残りは %{remaining} 人です。'
       keep: 'キープする'
-      after_keep_html: 'あなたがときめいたのなら私も嬉しいです。😁<br><br><a href="https://twitter.com/%{screen_name}" target="_blank">@%{screen_name}</a> さんへのときめき、これからも続くといいですね。残りは %{remaining} 人です。'
+      after_keep_html: 'あなたがときめいたのなら私も嬉しいです。😁<br><br><a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんへのときめき、これからも続くといいですね。残りは %{remaining} 人です。'
       after_unfollow_modal:
         next: "次に進む"
       after_keep_modal:
@@ -1279,14 +1279,14 @@ ja:
       text5_html: |
         ツイッターの一括削除にはえごったーを利用しています。<br>
         もし、ツイートの一括削除ができない場合は、<br>
-        <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。
+        <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
       text6_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、<br>安全にリムられをチェックできます。'
       text7_html: |
         ユーザーのフォロー解除、リムられは、<br>
         えごったーが分析したデータから集計しています。<br>
         <br>
         フォロー解除やリムられに間違いがある場合は、<br>
-        <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。
+        <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
       note2: '※ツイッターの仕組み上、最大で3200件まで削除できます。'
       note4: '※設定でオフにすることができます。'
       button5: '@ego_tter に質問してみる'
@@ -1399,7 +1399,7 @@ ja:
       via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
       sign_in: 'ログインする'
       follow: 'フォローする'
-      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> までお気軽にご連絡ください。'
+      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       share_me: "えごったーをシェアする"
   application:
@@ -1525,7 +1525,7 @@ ja:
       専用のツイッターAPIで検索するので、フォロー＋フォロワー数が多くても検索できるようになります。さらに、検索が早くなったり、リムられ通知が届くようになります。<br>
       <br>
       4. 公式アカウントはある？<br>
-      <a class="btn btn-default" href="https://twitter.com/ego_tter">@ego_tter</a> が公式アカウントです。分からないことがあれば何でもご質問ください。
+      <a class="btn btn-default" href="https://twitter.com/ego_tter" rel="nofollow">@ego_tter</a> が公式アカウントです。分からないことがあれば何でもご質問ください。
     ajax:
       need_login_html: 'この操作を行うためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
     back_from_twitter_html: >
@@ -1534,7 +1534,7 @@ ja:
       <span class="egotter-pink">ログインすることでデータが貯まります</span>。<br>
       ログインして使い始めよう。<br>
       <br>
-      <a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank">公式アカウントに質問</a>
+      <a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">公式アカウントに質問</a>
     secret_mode_detected: 'えごったーはシークレットモードではご利用いただけません。'
     secret_mode_detected_with_count: 'えごったーはシークレットモードではご利用いただけません。%{seconds}秒後にトップページへ移動します。'
     ad_blocker_detected: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。'
@@ -1571,16 +1571,16 @@ ja:
       <br>
       3. どうして起きたの？<br>
       検索数が多かったり、検索したユーザーのフォロー＋フォロワー数が多いと起きます。
-    screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
+    screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
     profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。<a class="btn btn-default btn-sm" href="%{url}">ページを更新</a>してください。'
-    not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
-    forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
+    not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
+    forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
     forbidden_with_request_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
     unauthorized_html: 'ツイッター連携の有効期限が切れています。一度 <a class="btn btn-default" href="%{sign_out}">ログアウト</a> し、再度 <a class="btn btn-default" href="%{sign_in}">ログイン</a> してから検索してみてください。'
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     protected_with_request_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
-    blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank">ツイッターで見る</a>'
+    blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
     blocked_with_request_html: '%{user} からブロックされているため検索できません。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
     something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
@@ -1590,7 +1590,7 @@ ja:
       <br>
       1. <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
       <br>
-      2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで送ってください。<br>
+      2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>
       エラー：NA403
     permission_level_not_enough_html: >
@@ -1598,9 +1598,9 @@ ja:
       <br>
       1. <a class="btn btn-default btn-sm" href="%{url}">強制ログイン</a> してください。ほとんどの場合これで解決します。<br>
       <br>
-      2. <a href="https://twitter.com/settings/applications/185425" class="btn btn-default btn-sm" target="_blank">連携アプリ</a> からえごったーを削除した後、ログインしてください。<br>
+      2. <a href="https://twitter.com/settings/applications/185425" class="btn btn-default btn-sm" target="_blank" rel="nofollow">連携アプリ</a> からえごったーを削除した後、ログインしてください。<br>
       <br>
-      3. [1]と[2]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> まで送ってください。<br>
+      3. [1]と[2]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>
       エラー：PLNE403
   tweet_text:
