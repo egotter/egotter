@@ -24,7 +24,7 @@
 
     = yield(:canonical_url) if content_for?(:canonical_url)
 
-    = render partial: 'shared/google_analytics', formats: %i(js)
+    = render partial: 'shared/google_analytics'
 
     %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
     :javascript
