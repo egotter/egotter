@@ -110,6 +110,10 @@ class Order < ApplicationRecord
       @checkout_session = checkout_session
     end
 
+    def id
+      @checkout_session.id
+    end
+
     def client_reference_id
       @checkout_session.client_reference_id
     end
