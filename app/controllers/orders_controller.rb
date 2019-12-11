@@ -13,12 +13,13 @@ class OrdersController < ApplicationController
         elsif action_name == 'destroy'
           current_user.orders.find_by(id: params[:id])
         elsif action_name == 'checkout_session_completed'
-          current_user.orders.last
+          Order.where(created_at: 3.seconds.ago..Time.zone.now).last
         else
           raise
         end
-
-    send_message_to_slack("#{order.inspect}", title: "`#{action_name}`")
+    send_message_to_slack("#{order.inspect}", title: "`#{Rails.env}:#{action_name}`") if order
+  rescue => e
+    logger.warn "#{self.class} Sending a message to slack is failed #{e.inspect}"
   end
 
   def create
