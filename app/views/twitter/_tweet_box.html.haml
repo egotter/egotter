@@ -1,12 +1,53 @@
 .tweet-preview-box{class: text.object_id}
   %textarea{readonly: 'readonly', rows: [text.scan(/\R/).size + 3, 6].max}= text
 .tweet-box.text-right
-  - label = action_name == 'new' ? t('dictionary.do_tweet') : t('dictionary.tweet_result')
-  = link_to label, intent_url(text), class: 'btn btn-info', onclick: "window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes'); return false;"
+  = link_to t('dictionary.do_copy'), intent_url(text), class: "btn btn-default btn-copy #{text.object_id}"
+  = link_to t('dictionary.do_tweet'), intent_url(text), class: "btn btn-primary btn-tweet #{text.object_id}"
 
 :javascript
   $(function () {
-    $('.tweet-preview-box.#{text.object_id} textarea').on('click', function () {
+    var id = '#{text.object_id}';
+    var eventCategory = '#{controller_name}##{action_name}';
+    var twitterUser = {
+      userId: #{current_user&.id},
+      uid: '#{twitter_user.uid}',
+      screenName: "#{twitter_user.screen_name}"
+    };
+
+    $('.tweet-preview-box.' + id + ' textarea').on('click', function () {
       $(this).select();
+
+      ga('send', {
+        hitType: 'event',
+        eventCategory: eventCategory,
+        eventAction: 'Textarea clicked',
+        eventLabel: JSON.stringify(twitterUser)
+      });
+    });
+
+    $('.btn-copy.' + id).on('click', function () {
+      window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
+
+      ga('send', {
+        hitType: 'event',
+        eventCategory: eventCategory,
+        eventAction: 'Copy button clicked',
+        eventLabel: JSON.stringify(twitterUser)
+      });
+
+      return false;
+    });
+
+    $('.btn-tweet.' + id).on('click', function () {
+      window.open(this.href, 'TwitterWindow', 'width=650, height=450, menubar=no, toolbar=no, scrollbars=yes');
+
+      ga('send', {
+        hitType: 'event',
+        eventCategory: eventCategory,
+        eventAction: 'Tweet button clicked',
+        eventLabel: JSON.stringify(twitterUser)
+      });
+
+      return false;
     });
   });

@@ -16,7 +16,7 @@
 
 %h3.h5 曜日ごとのツイッター利用時間 (分)
 .usage-time-chart
-= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text})
+= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user})
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
@@ -27,7 +27,8 @@
 .cloud-chart{style: 'height: 220px;'}
 
 .tweet-box-wrapper
-  = render(partial: 'twitter/tweet_box', locals: {text: t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))})
+  - text = t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))
+  = render(partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user})
 .vertical-spacing
 
 :javascript

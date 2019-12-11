@@ -1,5 +1,5 @@
 %h3.h4.text-center= t('common.show.share_me')
-= render(partial: 'twitter/tweet_box', locals: {text: egotter_share_text})
+= render(partial: 'twitter/tweet_box', locals: {text: egotter_share_text, twitter_user: Hashie::Mash.new({})})
 
 .text-center
   %h3.h4= t('dictionary.official_account')

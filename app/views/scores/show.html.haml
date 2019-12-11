@@ -18,7 +18,7 @@
 = render partial: 'gauge', locals: {score: @score}
 
 .tweet-box-wrapper
-  = render(partial: 'twitter/tweet_box', locals: {text: strip_tags(@tweet_text)})
+  = render(partial: 'twitter/tweet_box', locals: {text: strip_tags(@tweet_text), twitter_user: @twitter_user})
 .vertical-spacing
 
 - @screen_names.each do |screen_name|

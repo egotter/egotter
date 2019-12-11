@@ -24,7 +24,7 @@
 
 %h2.h3.clusters= t('clusters.show.clusters_level')
 #clusters-graph.chart
-= render partial: 'twitter/tweet_box', locals: {text: text}
+= render partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user}
 %hr
 %h2.h3.clusters= t('clusters.show.clusters_cloud')
 #clusters-word-cloud.chart{style: 'height: 220px;'}

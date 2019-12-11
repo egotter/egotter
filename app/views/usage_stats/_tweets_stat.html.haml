@@ -47,7 +47,7 @@
 
 .tweet-box-wrapper
   - tweet_text = t('usage_stats.tweets_stat.most_active', user: twitter_user.mention_name, wday: stat[:most_active_wday], hour: stat[:most_active_hour], url: url)
-  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
+  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
 .vertical-spacing
 
 %h2.h2.page-title= UsageStat.human_attribute_name(:tweets_breakdown)
@@ -58,7 +58,7 @@
 .tweet-box-wrapper
   - i18n_options = ({user: twitter_user.mention_name, url: url}.merge(stat[:breakdown].map { |k, v| [k, (v * 100).round(1)] }.to_h) rescue {})
   - tweet_text = t('usage_stats.tweets_stat.breakdown', i18n_options)
-  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text})
+  = render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
 .vertical-spacing
 
 .search_form-wrapper
