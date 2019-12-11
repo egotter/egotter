@@ -314,9 +314,9 @@ ja:
         not_canceled: '有効期限 キャンセルするまで'
         canceled_at: "（%{date}）"
         price: "%{price}円/月（税別）"
-        search_count: "検索回数 %{count}/日"
-        follow_requests_count: "フォロー %{count}/日"
-        unfollow_requests_count: "フォロー解除 %{count}/日"
+        search_count: "検索回数 %{count}回/日"
+        follow_requests_count: "フォロー %{count}回/日"
+        unfollow_requests_count: "フォロー解除 %{count}回/日"
         cancel: 'キャンセルする'
         canceled: 'キャンセル済み'
         cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
