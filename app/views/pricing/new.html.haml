@@ -87,7 +87,7 @@
           - if current_user.has_valid_subscription?
             .btn.btn-primary{disabled: 'disabled'}= t('.has_purchased')
           - else
-            = render partial: 'stripe/purchase_button'
+            = render partial: 'stripe/checkout_button'
         - else
           = link_to t('common.show.sign_in'), sign_in_path(via: build_via('pricing_buy')), class: 'btn btn-primary'
 

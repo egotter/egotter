@@ -99,9 +99,19 @@ class OrdersController < ApplicationController
     if event['type'] == 'checkout.session.completed'
       checkout_session = Order::CheckoutSession.new(event['data']['object'])
       if User.find(checkout_session.client_reference_id).has_valid_subscription?
-        ::Stripe::Subscription.delete(checkout_session.subscription_id)
+        Stripe::Subscription.delete(checkout_session.subscription_id)
       else
-        Order.create_by!(checkout_session: checkout_session)
+        Stripe::Subscription.update(
+            checkout_session.subscription_id,
+            {default_tax_rates: [ENV['STRIPE_TAX_RATE_ID']]}
+        )
+
+        order = Order.create_by!(checkout_session: checkout_session)
+
+        Stripe::Subscription.update(
+            checkout_session.subscription_id,
+            {metadata: {order_id: order.id}}
+        )
       end
     end
 

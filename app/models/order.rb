@@ -40,6 +40,7 @@ class Order < ApplicationRecord
           email: checkout_session.customer_email,
           name: checkout_session.plan_name,
           price: checkout_session.plan_price,
+          tax_rate: checkout_session.tax_rate,
           search_count: SearchCountLimitation::BASIC_PLAN,
           follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
           unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
@@ -97,6 +98,14 @@ class Order < ApplicationRecord
       @subscription.items.data[0].plan.amount
     end
 
+    def tax_rate
+      @subscription.default_tax_rates[0].percentage / 100.0
+    end
+
+    def trial?
+      Time.zone.now < Time.zone.at(@subscription.trial_end)
+    end
+
     def created_at
       Time.zone.at(@subscription.created)
     end
@@ -141,6 +150,10 @@ class Order < ApplicationRecord
 
     def plan_price
       @checkout_session.display_items[0].amount
+    end
+
+    def tax_rate
+      subscription.default_tax_rates[0].percentage / 100.0
     end
 
     def created_at

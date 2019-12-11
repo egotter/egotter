@@ -3,7 +3,7 @@
     $(function () {
       var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
       var eventCategory = '<%= "#{controller_name}##{action_name}" %>';
-      var user = {id: <%= current_user.id %>};
+      var user = {id: '<%= current_user.id %>'};
 
       $(document).on('click', '.btn-checkout', function () {
         ga('send', {

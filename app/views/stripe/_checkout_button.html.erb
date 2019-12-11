@@ -1,5 +1,5 @@
 <% if current_user.has_valid_subscription? %>
   <button class="btn btn-default" disabled="disabled"><%= t('pricing.new.has_purchased') %></button>
 <% else %>
-  <button class="btn btn-default btn-checkout"><%= t('pricing.new.purchase_buttons.basic') %></button>
+  <button class="btn btn-primary btn-checkout"><%= t('pricing.new.purchase_buttons.basic') %></button>
 <% end %>
