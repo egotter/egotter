@@ -6,12 +6,14 @@ class OrdersController < ApplicationController
   before_action :has_already_purchased?, only: :create
   before_action :create_search_log
 
-  after_action only: %i(create destroy) do
+  after_action only: %i(create destroy checkout_session_completed) do
     order =
         if action_name == 'create'
           current_user.orders.last
         elsif action_name == 'destroy'
           current_user.orders.find_by(id: params[:id])
+        elsif action_name == 'checkout_session_completed'
+          current_user.orders.last
         else
           raise
         end
@@ -95,7 +97,11 @@ class OrdersController < ApplicationController
 
     if event['type'] == 'checkout.session.completed'
       checkout_session = Order::CheckoutSession.new(event['data']['object'])
-      Order.create_by!(checkout_session: checkout_session)
+      if User.find(checkout_session.client_reference_id).has_valid_subscription?
+        ::Stripe::Subscription.delete(checkout_session.subscription_id)
+      else
+        Order.create_by!(checkout_session: checkout_session)
+      end
     end
 
     head :ok
