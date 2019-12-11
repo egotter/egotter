@@ -29,8 +29,9 @@ module Concerns::UnfriendsConcern
     if mention_names.empty?
       @tweet_text = t('unfriends.show.tweet_empty_text', url: unfriends_top_url(via: build_via('tweet_for_empty')))
     else
-      names = '.' + honorific_names(mention_names)
-      @tweet_text = t('.tweet_text', users: names, url: unfriends_top_url(via: build_via('tweet_for_empty')))
+      names = '.' + mention_names.map { |name| honorific_name(name) }.join("\n") + "\n\n"
+
+      @tweet_text = t('.tweet_text', users: names, url: unfriends_top_url(via: build_via('tweet_for_users')))
     end
 
     @tabs = tabs(counts)
