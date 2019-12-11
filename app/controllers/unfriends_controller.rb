@@ -1,4 +1,5 @@
-class UnfriendsController < ::Page::UnfriendsAndUnfollowers
+class UnfriendsController < ::Page::Base
+  include Concerns::UnfriendsConcern
   include TweetTextHelper
 
   before_action(only: %i(show)) do
@@ -24,12 +25,13 @@ class UnfriendsController < ::Page::UnfriendsAndUnfollowers
   end
 
   def all
-    super
+    initialize_instance_variables
+    @collection = @twitter_user.unfriends.limit(300)
     render template: 'friends/all' unless performed?
   end
 
   def show
-    super
+    initialize_instance_variables
     @active_tab = 0
     render template: 'unfriends/show' unless performed?
   end

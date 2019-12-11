@@ -781,9 +781,9 @@ ja:
     show: &unfriends_show
       title: "リムり"
       crumb_title: "リムーブした"
-      page_title: "%{user} のリムーブ"
-      content_title: "%{user} のリムーブ"
-      meta_title: "%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      page_title: "@%{user} のリムーブ"
+      content_title: "@%{user} のリムーブ"
+      meta_title: "@%{user} のリムり分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       summary_title: "リムーブした"
       page_description_html: |
         「リムった」とは、フォローを解除した関係のことです。このページでは、%{user} がリムった（=フォローを解除した）ユーザーを見ることができます。
@@ -793,8 +793,9 @@ ja:
         %{user} のリムったユーザーを見たい場合は、定期的にこのページにアクセスしてください。
         <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムったユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
         </span>
-      meta_description: "%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
-      tweet_text: "%{users} さようなら(^ ^)/~ #egotter %{url}"
+      meta_description: "@%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      tweet_text: "%{users} さようなら(^ ^)/~ #egotter #リムられチェック %{url}"
+      tweet_empty_text: "えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑) #egotter #リムられチェック %{url}"
       see_more: 'もっと見る'
       unfriends_tab_html: 'リムーブした<br>%{num}'
       unfollowers_tab_html: 'リムーブされた<br>%{num}'
@@ -806,9 +807,9 @@ ja:
     show: &unfollowers_show
       title: "リムられチェック"
       crumb_title: "リムられチェック"
-      page_title: "%{user} のリムられチェック - %{user} のリムられを見るなら、保存ユーザー数4,800万人突破のリムられチェック！"
-      content_title: "%{user} のリムられチェック"
-      meta_title: "%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      page_title: "@%{user} のリムられチェック - %{user} のリムられを見るなら、保存ユーザー数4,800万人突破のリムられチェック！"
+      content_title: "@%{user} のリムられチェック"
+      meta_title: "@%{user} のリムられチェック - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       summary_title: "リムーブされた"
       page_description_html: |
         「リムられ」とは、フォローを解除された関係のことです。このページでは、%{user} がリムられた（=フォローを解除された）ユーザーを見ることができます。
@@ -818,8 +819,8 @@ ja:
         %{user} のリムられたユーザーを見たい場合は、定期的にこのページにアクセスしてください。
         <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムられたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
         </span>
-      meta_description: "%{user} のリムられを見るならここ！ 保存ユーザー数4,800万人突破のリムられチェック！ 無料で使えてスマホ対応OK！ 「リムられチェック」は一番使われているリムられ確認アプリです。"
-      tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter %{url}"
+      meta_description: "@%{user} のリムられを見るならここ！ 保存ユーザー数4,800万人突破のリムられチェック！ 無料で使えてスマホ対応OK！ 「リムられチェック」は一番使われているリムられ確認アプリです。"
+      tweet_text: "%{users} お元気そうでなによりです。私をリムった後に、私より面白い人は見付かりましたか？(^ ^) #egotter #リムられチェック %{url}"
     all:
       <<: *unfollowers_show
       crumb_title: "一気に見る"
@@ -827,9 +828,9 @@ ja:
     show: &blocking_or_blocked_show
       title: "ブロックされたかも"
       crumb_title: "ブロックされた"
-      page_title: "%{user} がブロックされたかも"
-      content_title: "%{user} がブロックされたかも"
-      meta_title: "%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      page_title: "@%{user} がブロックされたかも"
+      content_title: "@%{user} がブロックされたかも"
+      meta_title: "@%{user} のブロられ分析 - リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
       summary_title: "ブロックされたかも"
       page_description_html: |
         「ブロられ」とは、ブロックされた関係のことです。このページでは、%{user} がブロられた（=ブロックされた）ユーザーを見ることができます。
@@ -839,8 +840,8 @@ ja:
         %{user} のブロックされたユーザーを見たい場合は、定期的にこのページにアクセスしてください。
         <a href="%{url}">リムられチェック</a>を使うことで、%{user} のブロックされたユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
         </span>
-      meta_description: "%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
-      tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter %{url}"
+      meta_description: "@%{user} がブロックされたかもしれないユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      tweet_text: "%{users} 私のことブロックしたんですか？(^ ^) #egotter #リムられチェック %{url}"
     all:
       <<: *blocking_or_blocked_show
       crumb_title: "一気に見る"

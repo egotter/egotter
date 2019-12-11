@@ -1,13 +1,15 @@
-class BlockingOrBlockedController < ::Page::UnfriendsAndUnfollowers
+class BlockingOrBlockedController < ::Page::Base
+  include Concerns::UnfriendsConcern
   include TweetTextHelper
 
   def all
-    super
+    initialize_instance_variables
+    @collection = @twitter_user.block_friends.limit(300)
     render template: 'friends/all' unless performed?
   end
 
   def show
-    super
+    initialize_instance_variables
     @active_tab = 2
     render template: 'unfriends/show' unless performed?
   end
