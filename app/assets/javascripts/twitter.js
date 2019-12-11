@@ -29,7 +29,7 @@ Twitter.follow = function (url, uid, callback) {
     callback.call();
   }, function (xhr) {
     if (xhr.status === 429) { // Too many requests
-      $('#warning-follow-modal').modal();
+      $('#follow-limitation-warning-modal').modal();
     } else {
       Logger.warn(JSON.parse(xhr.responseText)['message']);
     }
@@ -77,7 +77,7 @@ Twitter.unfollow = function (url, uid, callback) {
     callback.call();
   }, function (xhr) {
     if (xhr.status === 429) { // Too many requests
-      $('#warning-unfollow-modal').modal();
+      $('#unfollow-limitation-warning-modal').modal();
     }
   });
 };

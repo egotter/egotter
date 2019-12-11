@@ -226,7 +226,7 @@
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_unfollow_modal.cancel')
             %button.btn.btn-danger.ok{type: 'button', data: {url: unfollows_path(via: build_via('create_unfollow_modal'))}}= t('twitter.create_unfollow_modal.ok')
 
-    #warning-follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+    #follow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
         .modal-content
           .modal-body
@@ -241,7 +241,7 @@
             - else
               = link_to t('twitter.warning_follow_modal.login'), sign_in_path(via: build_via('follow_limit_warning')), class: 'btn btn-primary'
 
-    #warning-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+    #unfollow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
         .modal-content
           .modal-body
