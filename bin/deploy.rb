@@ -16,7 +16,12 @@ module Deploy
     end
 
     def hosts
-      [3, 7].map { |id| "egotter_web#{id}" }
+      %w(
+        egotter_web3
+        egotter_web4
+        egotter_web5
+        egotter_web7
+      )
     end
 
     def run
