@@ -11,7 +11,7 @@ class NotFoundController < ApplicationController
 
   before_action do
     if !NotFoundUser.exists?(screen_name: params[:screen_name]) && !not_found_user?(params[:screen_name])
-      redirect_to timeline_path(screen_name: params[:screen_name], via: build_via('not_found_redirect'))
+      redirect_to timeline_path(screen_name: params[:screen_name], via: build_via('not_found_redirect')), notice: t('not_found.show.come_back', user: params[:screen_name])
     end
   end
 

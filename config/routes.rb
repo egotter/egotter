@@ -126,6 +126,7 @@ Rails.application.routes.draw do
   resources :not_found, only: %i(show), param: :screen_name
   get 'not_found/:screen_name/latest', to: 'not_found#latest', as: 'latest_not_found'
   resources :forbidden, only: %i(show), param: :screen_name
+  get 'forbidden/:screen_name/latest', to: 'forbidden#latest', as: 'latest_forbidden'
   resources :blocked, only: %i(show), param: :screen_name
   resources :protected, only: %i(show), param: :screen_name
 

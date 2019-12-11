@@ -47,6 +47,6 @@ class ProfilesController < ApplicationController
     url = latest_profile_path(screen_name: user.screen_name, via: build_via('request_to_update'))
     time = user.updated_at || Time.zone.now
     format = (time.in_time_zone('Tokyo').to_date === Time.zone.now.in_time_zone('Tokyo').to_date) ? :next_creation_short : :next_creation_long
-    t("profiles.#{action_name}.displayed_data_is_html", url: url, time: l(time.in_time_zone('Tokyo'), format: format))
+    t("profiles.#{action_name}.displayed_data_is_html", user: user.screen_name, url: url, time: l(time.in_time_zone('Tokyo'), format: format))
   end
 end

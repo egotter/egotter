@@ -82,14 +82,6 @@ module Concerns::AlertMessagesConcern
     end
   end
 
-  def forbidden_with_request_message(screen_name, url)
-    if user_signed_in?
-      t('after_sign_in.forbidden_with_request_html', user: user_link(screen_name), url: url)
-    else
-      t('before_sign_in.forbidden_html', user: user_link(screen_name), url: kick_out_error_path('forbidden'))
-    end
-  end
-
   def unauthorized_message(screen_name)
     t('after_sign_in.unauthorized_html', sign_in: kick_out_error_path('unauthorized'), sign_out: sign_out_path)
   end
