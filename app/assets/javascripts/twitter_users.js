@@ -23,6 +23,8 @@ TwitterUsers.AlertBox = function (requestToUpdate, nextCreationTimeMessage, twit
   };
 
   this._shown = null;
+  this._eventCategory = eventCategory;
+  this._twitterUser = twitterUser;
 
   if (requestToUpdate) {
     console.log('Switch to request');
@@ -56,16 +58,24 @@ TwitterUsers.AlertBox.prototype = {
     return this._boxes[name];
   },
   show: function (name) {
-    var box = this._boxes[name];
-    console.log('show', box);
+    var $box = this._boxes[name];
+    console.log('show', $box);
 
-    if (box) {
+    if ($box) {
       if (this._shown) {
         this._shown.alert('close');
         this._shown = null;
       }
-      box.show().sticky();
-      this._shown = box;
+      $box.show().sticky();
+      this._shown = $box;
+
+      ga('send', {
+        hitType: 'event',
+        eventCategory: this._eventCategory,
+        eventAction: $box.data('name') + ' shown',
+        eventLabel: JSON.stringify(this._twitterUser),
+        transport: 'beacon'
+      });
     }
   }
 };
