@@ -9,7 +9,7 @@
     var id = '#{text.object_id}';
     var eventCategory = '#{controller_name}##{action_name}';
     var twitterUser = {
-      userId: #{current_user&.id},
+      userId: '#{current_user&.id}',
       uid: '#{twitter_user.uid}',
       screenName: "#{twitter_user.screen_name}"
     };

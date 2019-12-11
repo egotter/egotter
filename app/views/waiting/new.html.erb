@@ -59,7 +59,7 @@
     var timeoutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: build_via('waiting_timeout'))) %>';
 
     var twitterUser = {
-      userId: <%= current_user&.id %>,
+      userId: '<%= current_user&.id %>',
       uid: "<%= @twitter_user.uid %>",
       screenName: "<%= @twitter_user.screen_name %>"
     };

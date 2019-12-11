@@ -74,7 +74,7 @@
     };
 
     var twitterUser = {
-      userId: #{current_user&.id},
+      userId: '#{current_user&.id}',
       uid: '#{twitter_user.uid}',
       screenName: "#{twitter_user.screen_name}",
       createdAt: #{twitter_user.created_at.to_i}
