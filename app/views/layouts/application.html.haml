@@ -153,6 +153,7 @@
     %link{href: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}
     %script{src: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
     %script{src: 'https://js.stripe.com/v3'}
+    = render partial: 'shared/stripe' if user_signed_in?
 
     = render partial: 'shared/feature_section', locals: {title: t('shared.sign_in_button_at_bottom.title_html'), image: '/egotter_useful_with_text_400x448.png', description: t('shared.sign_in_button_at_bottom.description_html'), note: nil, link: sign_in_with_twitter_link(nil, 'sign_in_button_at_bottom', class: 'btn btn-primary btn-block'), check: [t('shared.sign_in_button_at_bottom.check1'), t('shared.sign_in_button_at_bottom.check2'), t('shared.sign_in_button_at_bottom.check3')]} if show_sign_in_button_at_bottom?
     = render partial: 'shared/functions_section' if show_functions_section?
@@ -197,6 +198,7 @@
 
 
   - if user_signed_in?
+    -# This modal will be initialized in Twitter.enableFollowButton('selector') after follow buttons are rendered.
     #create-follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
         .modal-content
@@ -210,6 +212,7 @@
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_follow_modal.cancel')
             %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: build_via('create_follow_modal'))}}= t('twitter.create_follow_modal.ok')
 
+    -# This modal will be initialized in Twitter.enableUnfollowButton('selector') after unfollow buttons are rendered.
     #create-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
         .modal-content
@@ -227,19 +230,31 @@
       .modal-dialog{role: 'document'}
         .modal-content
           .modal-body
-            %p= t('twitter.warning_follow_modal.message')
+            %p= t('twitter.warning_follow_modal.message_html')
           .modal-footer
-            %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.warning_follow_modal.cancel')
-            = link_to t('twitter.warning_follow_modal.ok'), pricing_path(via: build_via('follow_warning')), class: 'btn btn-primary ok'
+            = link_to t('twitter.warning_follow_modal.see_pricing'), pricing_path(via: build_via('follow_limit_warning')), class: 'btn btn-default', target: '_blank'
+            - if user_signed_in?
+              - if current_user.has_valid_subscription?
+                %button.btn.btn-default{disabled: true}= t('twitter.warning_follow_modal.purchased')
+              - else
+                = link_to t('twitter.warning_follow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
+            - else
+              = link_to t('twitter.warning_follow_modal.login'), sign_in_path(via: build_via('follow_limit_warning')), class: 'btn btn-primary'
 
     #warning-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
         .modal-content
           .modal-body
-            %p= t('twitter.warning_unfollow_modal.message')
+            %p= t('twitter.warning_unfollow_modal.message_html')
           .modal-footer
-            %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.warning_unfollow_modal.cancel')
-            = link_to t('twitter.warning_unfollow_modal.ok'), pricing_path(via: build_via('unfollow_warning')), class: 'btn btn-primary ok'
+            = link_to t('twitter.warning_unfollow_modal.see_pricing'), pricing_path(via: build_via('unfollow_limit_warning')), class: 'btn btn-default', target: '_blank'
+            - if user_signed_in?
+              - if current_user.has_valid_subscription?
+                %button.btn.btn-default{disabled: true}= t('twitter.warning_unfollow_modal.purchased')
+              - else
+                = link_to t('twitter.warning_unfollow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
+            - else
+              = link_to t('twitter.warning_unfollow_modal.login'), sign_in_path(via: build_via('unfollow_limit_warning')), class: 'btn btn-primary'
 
   - if user_signed_in? && !under_maintenance?
     - if params[:follow_dialog] == '1'

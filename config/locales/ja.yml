@@ -563,9 +563,16 @@ ja:
       ok: "はい"
       cancel: "いいえ"
     warning_follow_modal:
-      message: '1日にフォローできる上限を超えました。ベーシックプランを購入して制限を解除しますか？'
+      message_html:
+        1日にフォローできる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
+        <br>
+        今なら <span class="egotter-pink">最初の14日間は無料</span> です。
       ok: "はい"
       cancel: "いいえ"
+      see_pricing: "料金プランを見る"
+      purchase: '購入する'
+      purchased: '購入済み'
+      login: 'ログインする'
     create_unfollow_modal:
       message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？ 数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
       history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-default" target="_blank">設定 &gt; アンフォロー回数 &gt; 履歴</a> から見ることができます。'
@@ -573,9 +580,16 @@ ja:
       ok: "はい"
       cancel: "いいえ"
     warning_unfollow_modal:
-      message: '1日にフォロー解除できる上限を超えました。ベーシックプランを購入して制限を解除しますか？'
+      message_html:
+        1日にフォロー解除できる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
+        <br>
+        今なら <span class="egotter-pink">最初の14日間は無料</span> です。
       ok: "はい"
       cancel: "いいえ"
+      see_pricing: "料金プランを見る"
+      purchase: '購入する'
+      purchased: '購入済み'
+      login: 'ログインする'
   welcome:
     follow_modal:
       title_html: 'えごったーを<span class="egotter-pink">フォロー</span>しよう！'
