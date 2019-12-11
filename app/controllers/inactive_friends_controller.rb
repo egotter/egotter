@@ -1,4 +1,5 @@
-class InactiveFriendsController < ::Page::FriendsAndFollowers
+class InactiveFriendsController < ::Page::Base
+  include Concerns::FriendsConcern
 
   before_action(only: %i(show)) do
     if request.format.html?
@@ -23,12 +24,13 @@ class InactiveFriendsController < ::Page::FriendsAndFollowers
   end
 
   def all
-    super
+    initialize_instance_variables
+    @collection = @twitter_user.inactive_friends.limit(300)
     render template: 'friends/all' unless performed?
   end
 
   def show
-    super
+    initialize_instance_variables
     @active_tab = 0
     render template: 'friends/show' unless performed?
   end

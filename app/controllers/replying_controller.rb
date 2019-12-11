@@ -1,11 +1,14 @@
-class ReplyingController < ::Page::FriendsAndFollowers
+class ReplyingController < ::Page::Base
+  include Concerns::FriendsConcern
+
   def all
-    super
+    initialize_instance_variables
+    @collection = @twitter_user.replying.limit(300)
     render template: 'friends/all' unless performed?
   end
 
   def show
-    super
+    initialize_instance_variables
     @active_tab = 0
     render template: 'friends/show' unless performed?
   end

@@ -1,12 +1,14 @@
-class MutualFriendsController < ::Page::FriendsAndFollowers
+class MutualFriendsController < ::Page::Base
+  include Concerns::FriendsConcern
 
   def all
-    super
+    initialize_instance_variables
+    @collection = @twitter_user.mutual_friends.limit(300)
     render template: 'friends/all' unless performed?
   end
 
   def show
-    super
+    initialize_instance_variables
     @active_tab = 2
     render template: 'friends/show' unless performed?
   end

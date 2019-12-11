@@ -1,4 +1,5 @@
-class FriendsController < ::Page::FriendsAndFollowers
+class FriendsController < ::Page::Base
+  include Concerns::FriendsConcern
 
   before_action(only: %i(show)) do
     if request.format.html?
@@ -23,11 +24,12 @@ class FriendsController < ::Page::FriendsAndFollowers
   end
 
   def all
-    super
+    initialize_instance_variables
+    @collection = @twitter_user.friends.limit(300)
   end
 
   def show
-    super
+    initialize_instance_variables
     @active_tab = 0
   end
 

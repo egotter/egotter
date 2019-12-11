@@ -1,12 +1,14 @@
-class InactiveFollowersController < ::Page::FriendsAndFollowers
+class InactiveFollowersController < ::Page::Base
+  include Concerns::FriendsConcern
 
   def all
-    super
+    initialize_instance_variables
+    @collection = @twitter_user.inactive_followers.limit(300)
     render template: 'friends/all' unless performed?
   end
 
   def show
-    super
+    initialize_instance_variables
     @active_tab = 1
     render template: 'friends/show' unless performed?
   end
