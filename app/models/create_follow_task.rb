@@ -27,7 +27,7 @@ class CreateFollowTask
       if records.exists?
         size = records.size
         records.update_all(error_class: e.class, error_message: 'Bulk update')
-        Rails.logger.warn "Bulk updated #{size} records #{request.user_id} #{request.uid}"
+        Rails.logger.info "Bulk updated #{size} records #{request.user_id} #{request.uid}"
       end
     end
 
