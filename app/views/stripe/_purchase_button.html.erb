@@ -1,4 +1,4 @@
-<% if user_signed_in? && current_user.has_valid_subscription? %>
+<% if current_user.has_valid_subscription? %>
   <button class="btn btn-default" disabled="disabled"><%= t('pricing.new.has_purchased') %></button>
 <% else %>
   <%= form_tag orders_path, id: 'purchase_basic_plan', method: 'POST' do %>
@@ -14,27 +14,4 @@
       data-currency="jpy">
     </script>
   <% end %>
-<% end %>
-
-<% if user_signed_in? && current_user.id == 2 %>
-  <button id="checkout-button" class="btn btn-default">Subscribe</button>
-
-  <script>
-    $(function () {
-      var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
-
-      var checkoutButton = document.querySelector('#checkout-button');
-      checkoutButton.addEventListener('click', function () {
-        stripe.redirectToCheckout({
-          items: [{
-            plan: "<%= Order::BASIC_PLAN_ID %>",
-            quantity: 1
-          }],
-          clientReferenceId: '<%= current_user.id %>',
-          successUrl: 'https://egotter.com/orders/success?stripe_session_id={CHECKOUT_SESSION_ID}',
-          cancelUrl: 'https://egotter.com/orders/cancel'
-        });
-      });
-    });
-  </script>
 <% end %>

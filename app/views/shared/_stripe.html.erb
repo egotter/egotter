@@ -1,0 +1,32 @@
+<% unless current_user.has_valid_subscription? %>
+  <script>
+    $(function () {
+      var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
+      var eventCategory = '<%= "#{controller_name}##{action_name}" %>';
+      var user = {id: <%= current_user.id %>};
+
+      $(document).on('click', '.btn-checkout', function () {
+        ga('send', {
+          hitType: 'event',
+          eventCategory: eventCategory,
+          eventAction: 'CheckoutButton clicked',
+          eventLabel: JSON.stringify(user)
+        });
+
+        stripe.redirectToCheckout({
+          items: [{
+            plan: "<%= Order::BASIC_PLAN_ID %>",
+            quantity: 1
+          }],
+          clientReferenceId: user.id,
+          successUrl: '<%= ENV['STRIPE_SUCCESS_URL'] %>',
+          cancelUrl: '<%= ENV['STRIPE_CANCEL_URL'] %>'
+        }).then(function (result) {
+          console.log(result.error.message);
+        });
+
+        return false;
+      });
+    });
+  </script>
+<% end %>
