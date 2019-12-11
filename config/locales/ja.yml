@@ -529,7 +529,7 @@ ja:
       success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
       failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
     cancel:
-      failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      canceled_html: 'えごったーは、350万回以上利用されている安心の実績があります。何か気になることがありますか？ 分からないこと、気になることは、@ego_tter にいつでもご質問ください。<a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">@ego_tter に質問する</a>'
   login:
     goodbye:
       signed_out: "既にログアウト済みです。"

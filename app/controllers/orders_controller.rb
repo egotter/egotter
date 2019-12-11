@@ -83,7 +83,7 @@ class OrdersController < ApplicationController
   end
 
   def cancel
-    redirect_to root_path(via: build_via), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error'))
+    redirect_to root_path(via: build_via), notice: t('.canceled_html')
   end
 
   def checkout_session_completed
