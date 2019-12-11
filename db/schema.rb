@@ -686,6 +686,7 @@ ActiveRecord::Schema.define(version: 2019_12_08_081808) do
     t.string "email"
     t.string "name"
     t.integer "price"
+    t.decimal "tax_rate", precision: 4, scale: 2
     t.integer "search_count", default: 0, null: false
     t.integer "follow_requests_count", default: 0, null: false
     t.integer "unfollow_requests_count", default: 0, null: false

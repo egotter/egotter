@@ -7,6 +7,7 @@
 #  email                   :string(191)
 #  name                    :string(191)
 #  price                   :integer
+#  tax_rate                :decimal(4, 2)
 #  search_count            :integer          default(0), not null
 #  follow_requests_count   :integer          default(0), not null
 #  unfollow_requests_count :integer          default(0), not null

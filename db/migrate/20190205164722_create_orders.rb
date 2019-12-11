@@ -5,6 +5,7 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.string  :email,                   null: true,  default: nil
       t.string  :name,                    null: true,  default: nil
       t.integer :price,                   null: true,  default: nil
+      t.decimal :tax_rate,                null: true,  default: nil, precision: 4, scale: 2
       t.integer :search_count,            null: false, default: 0
       t.integer :follow_requests_count,   null: false, default: 0
       t.integer :unfollow_requests_count, null: false, default: 0
