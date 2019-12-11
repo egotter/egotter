@@ -162,6 +162,7 @@ Rails.application.routes.draw do
   resources :orders, only: %i(create destroy)
   get 'orders/success', to: "orders#success"
   get 'orders/cancel', to: "orders#cancel"
+  get 'orders/checkout_session_completed', to: "orders#checkout_session_completed"
 
   get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
 

@@ -689,6 +689,7 @@ ActiveRecord::Schema.define(version: 2019_12_08_081808) do
     t.integer "search_count", default: 0, null: false
     t.integer "follow_requests_count", default: 0, null: false
     t.integer "unfollow_requests_count", default: 0, null: false
+    t.string "checkout_session_id"
     t.string "customer_id"
     t.string "subscription_id"
     t.datetime "canceled_at"

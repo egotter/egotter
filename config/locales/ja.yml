@@ -525,6 +525,11 @@ ja:
       success_html: 'ベーシックプランを解約しました。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
       already_canceled_html: '指定されたプランは既に解約済みです。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
       failed_html: '解約に失敗しました。お手数ですが再度お試しください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+    success:
+      success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+    cancel:
+      failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
   login:
     goodbye:
       signed_out: "既にログアウト済みです。"

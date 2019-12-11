@@ -10,6 +10,7 @@
 #  search_count            :integer          default(0), not null
 #  follow_requests_count   :integer          default(0), not null
 #  unfollow_requests_count :integer          default(0), not null
+#  checkout_session_id     :string(191)
 #  customer_id             :string(191)
 #  subscription_id         :string(191)
 #  canceled_at             :datetime
@@ -31,12 +32,33 @@ class Order < ApplicationRecord
     where('customer_id is not null AND subscription_id is not null AND canceled_at is null')
   end
 
+  class << self
+    def create_by!(checkout_session:)
+      create!(
+          user_id: checkout_session.client_reference_id,
+          email: checkout_session.customer_email,
+          name: checkout_session.plan_name,
+          price: checkout_session.plan_price,
+          search_count: SearchCountLimitation::BASIC_PLAN,
+          follow_requests_count: CreateFollowLimitation::BASIC_PLAN,
+          unfollow_requests_count: CreateUnfollowLimitation::BASIC_PLAN,
+          checkout_session_id: checkout_session.id,
+          customer_id: checkout_session.customer_id,
+          subscription_id: checkout_session.subscription_id
+      )
+    end
+  end
+
   def stripe_customer
     @stripe_customer ||= (customer_id ? Customer.new(::Stripe::Customer.retrieve(customer_id)) : nil)
   end
 
   def stripe_subscription
     @stripe_subscription ||= (subscription_id ? Subscription.new(::Stripe::Subscription.retrieve(subscription_id)) : nil)
+  end
+
+  def stripe_checkout_session
+    @stripe_checkout_session ||= (checkout_session_id ? Subscription.new(::Stripe::Checkout::Session.retrieve(checkout_session_id)) : nil)
   end
 
   def purchase_failed?
@@ -80,6 +102,48 @@ class Order < ApplicationRecord
 
     def canceled_at
       @subscription.canceled_at ? Time.zone.at(@subscription.canceled_at) : nil
+    end
+  end
+
+  class CheckoutSession
+    def initialize(checkout_session)
+      @checkout_session = checkout_session
+    end
+
+    def client_reference_id
+      @checkout_session.client_reference_id
+    end
+
+    def customer_id
+      @checkout_session.customer
+    end
+
+    def subscription_id
+      @checkout_session.subscription
+    end
+
+    def subscription
+      @subscription ||= ::Stripe::Subscription.retrieve(subscription_id)
+    end
+
+    def customer_email
+      @checkout_session.customer_email
+    end
+
+    def plan_name
+      @checkout_session.display_items[0].plan.nickname
+    end
+
+    def plan_price
+      @checkout_session.display_items[0].amount
+    end
+
+    def created_at
+      Time.zone.at(subscription.created)
+    end
+
+    def canceled_at
+      subscription.canceled_at ? Time.zone.at(subscription.canceled_at) : nil
     end
   end
 end

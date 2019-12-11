@@ -67,11 +67,46 @@ class OrdersController < ApplicationController
   end
 
   def success
-    redirect_to root_path(stripe_session_id: params[:stripe_session_id])
+    checkout_session = Stripe::Checkout::Session.retrieve(params[:stripe_session_id])
+    subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id
+
+    if Order.exists?(user_id: current_user.id, subscription_id: subscription_id)
+      redirect_to root_path(via: build_via('order_found')), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
+    else
+      redirect_to root_path(via: build_via('order_not_found')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error'))
+    end
   end
 
   def cancel
-    redirect_to root_path
+    redirect_to root_path(via: build_via), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error'))
+  end
+
+  def checkout_session_completed
+    payload = request.body.read
+    sig_header = request.headers['HTTP_STRIPE_SIGNATURE']
+
+    event = Stripe::Webhook.construct_event(
+        payload,
+        sig_header,
+        ENV['STRIPE_ENDPOINT_SECRET']
+    )
+
+    if event['type'] == 'checkout.session.completed'
+      checkout_session = Order::CheckoutSession.new(event['data']['object'])
+      Order.create_by!(checkout_session: checkout_session)
+    end
+
+    head :ok
+
+  rescue JSON::ParserError => e
+    logger.warn "#{controller_name}##{action_name} Invalid payload #{payload.inspect}"
+    head :bad_request
+  rescue Stripe::SignatureVerificationError => e
+    logger.warn "#{controller_name}##{action_name} Invalid signature #{sig_header.inspect}"
+    head :bad_request
+  rescue => e
+    logger.warn "#{controller_name}##{action_name} #{e.class} #{e.message}"
+    head :bad_request
   end
 
   private

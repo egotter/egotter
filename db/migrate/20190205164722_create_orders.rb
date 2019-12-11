@@ -8,6 +8,7 @@ class CreateOrders < ActiveRecord::Migration[5.1]
       t.integer :search_count,            null: false, default: 0
       t.integer :follow_requests_count,   null: false, default: 0
       t.integer :unfollow_requests_count, null: false, default: 0
+      t.string  :checkout_session_id,     null: true
       t.string  :customer_id,             null: true
       t.string  :subscription_id,         null: true
       t.datetime :canceled_at,            null: true,  default: nil
