@@ -9,6 +9,8 @@ Disallow: /page_caches
 Disallow: /polling_logs
 Disallow: /sign_in
 Disallow: /sign_out
+Disallow: /after_sign_in
+Disallow: /after_sign_up
 Disallow: /account_statuses
 Disallow: /follow
 Disallow: /settings
