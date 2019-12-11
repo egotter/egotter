@@ -482,7 +482,7 @@ ja:
         pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
       pricing:
         key: "価格"
-        free: "無料"
+        free: "無料（ログインのみ）"
         basic: "300円/月"
         enterprice: "ご相談ください"
       price:
@@ -508,10 +508,10 @@ ja:
         pro: "購入する"
       purchase_description:
         free: ""
-        basic: "ベーシックプラン"
+        basic: "ベーシックプラン（%{count}日間は無料）"
         pro: ""
       has_purchased: "購入済み"
-      money_back_guarantee: "14日間は100%返金保証"
+      money_back_guarantee: "%{count}日間は100%返金保証"
       enterprice_description: "特定の商品に興味のあるユーザーの嗜好性調査、特定のユーザーのフォロー・フォロワー収集など、ツイッターに関する調査全般をお引き受けいたします。"
       enterprice_inquiry_by_email: "メールで問い合わせ"
       enterprice_inquiry_by_dm: "DMで問い合わせ"

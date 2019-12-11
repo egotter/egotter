@@ -24,6 +24,8 @@
 class Order < ApplicationRecord
   belongs_to :user
 
+  TRIAL_DAYS = 14
+
   scope :unexpired, -> do
     where('customer_id is not null AND subscription_id is not null AND canceled_at is null')
   end

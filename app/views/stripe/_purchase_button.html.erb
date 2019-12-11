@@ -7,7 +7,7 @@
       data-key="<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>"
       data-amount="<%= t('pricing.new.price.basic') %>"
       data-name="<%= t('searches.common.egotter') %>"
-      data-description="<%= t('pricing.new.purchase_description.basic') %>"
+      data-description="<%= t('pricing.new.purchase_description.basic', count: Order::TRIAL_DAYS) %>"
       data-image="<%= image_path('/favicon-192.png') %>"
       data-locale="auto"
       data-label="<%= t('pricing.new.purchase_buttons.basic') %>"
