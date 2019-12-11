@@ -24,6 +24,7 @@
 class Order < ApplicationRecord
   belongs_to :user
 
+  BASIC_PLAN_ID = ENV['STRIPE_BASIC_PLAN_ID']
   TRIAL_DAYS = 14
 
   scope :unexpired, -> do

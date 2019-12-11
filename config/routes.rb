@@ -160,6 +160,8 @@ Rails.application.routes.draw do
 
   get 'pricing', to: "pricing#new"
   resources :orders, only: %i(create destroy)
+  get 'orders/success', to: "orders#success"
+  get 'orders/cancel', to: "orders#cancel"
 
   get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
 

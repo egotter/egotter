@@ -15,3 +15,23 @@
     </script>
   <% end %>
 <% end %>
+
+<% if user_signed_in? && current_user.id == 2 %>
+  <button id="checkout-button" class="btn btn-default">Subscribe</button>
+
+  <script>
+    var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
+
+    var checkoutButton = document.querySelector('#checkout-button');
+    checkoutButton.addEventListener('click', function () {
+      stripe.redirectToCheckout({
+        items: [{
+          plan: "<%= Order::BASIC_PLAN_ID %>",
+          quantity: 1
+        }],
+        successUrl: 'https://egotter.com/orders/success?stripe_session_id={CHECKOUT_SESSION_ID}',
+        cancelUrl: 'https://egotter.com/orders/cancel'
+      });
+    });
+  </script>
+<% end %>

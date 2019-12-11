@@ -1,10 +1,10 @@
 class OrdersController < ApplicationController
 
-  before_action :require_login!
+  before_action :require_login!, except: %i(success cancel)
   before_action :has_already_purchased?, only: :create
   before_action :create_search_log
 
-  after_action do
+  after_action only: %i(create destroy) do
     order =
         if action_name == 'create'
           current_user.orders.last
@@ -30,7 +30,7 @@ class OrdersController < ApplicationController
 
     subscription = Stripe::Subscription.create(
         customer: customer.id,
-        items: [{plan: ENV['STRIPE_BASIC_PLAN_ID']}],
+        items: [{plan: Order::BASIC_PLAN_ID}],
         metadata: {order_id: order.id}
     )
 
@@ -64,6 +64,14 @@ class OrdersController < ApplicationController
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
     logger.info e.backtrace.join("\n")
     redirect_to root_path, alert: t('.failed_html', url: after_purchase_path('after_canceling_with_error')) unless performed?
+  end
+
+  def success
+    redirect_to root_path(stripe_session_id: params[:stripe_session_id])
+  end
+
+  def cancel
+    redirect_to root_path
   end
 
   private

@@ -152,6 +152,7 @@
     %link{href: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.css', rel: 'stylesheet', type: 'text/css'}
     %link{href: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials-theme-flat.css', rel: 'stylesheet', type: 'text/css'}
     %script{src: '//cdn.jsdelivr.net/jquery.jssocials/1.3.1/jssocials.min.js'}
+    %script{src: 'https://js.stripe.com/v3'}
 
     = render partial: 'shared/feature_section', locals: {title: t('shared.sign_in_button_at_bottom.title_html'), image: '/egotter_useful_with_text_400x448.png', description: t('shared.sign_in_button_at_bottom.description_html'), note: nil, link: sign_in_with_twitter_link(nil, 'sign_in_button_at_bottom', class: 'btn btn-primary btn-block'), check: [t('shared.sign_in_button_at_bottom.check1'), t('shared.sign_in_button_at_bottom.check2'), t('shared.sign_in_button_at_bottom.check3')]} if show_sign_in_button_at_bottom?
     = render partial: 'shared/functions_section' if show_functions_section?
