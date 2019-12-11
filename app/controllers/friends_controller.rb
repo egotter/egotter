@@ -25,7 +25,7 @@ class FriendsController < ::Page::Base
 
   def all
     initialize_instance_variables
-    @collection = @twitter_user.friends.limit(300)
+    @collection = @twitter_user.friends(limit: 300)
   end
 
   def show

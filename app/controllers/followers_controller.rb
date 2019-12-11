@@ -3,7 +3,7 @@ class FollowersController < ::Page::Base
 
   def all
     initialize_instance_variables
-    @collection = @twitter_user.followers.limit(300)
+    @collection = @twitter_user.followers(limit: 300)
     render template: 'friends/all' unless performed?
   end
 

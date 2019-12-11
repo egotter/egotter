@@ -68,12 +68,12 @@ module Concerns::TwitterUser::Associations
     end
   end
 
-  def friends
-    TwitterDB::User.where_and_order_by_field(uids: friend_uids)
+  def friends(limit: 100_000)
+    TwitterDB::User.where_and_order_by_field(uids: friend_uids.take(limit))
   end
 
-  def followers
-    TwitterDB::User.where_and_order_by_field(uids: follower_uids)
+  def followers(limit: 100_000)
+    TwitterDB::User.where_and_order_by_field(uids: follower_uids.take(limit))
   end
 
   def unfollower_uids
