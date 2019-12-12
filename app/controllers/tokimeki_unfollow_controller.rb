@@ -1,5 +1,15 @@
-class TokimekiUnfollowController < ::Page::Base
+class TokimekiUnfollowController < ApplicationController
+  include Concerns::SearchRequestConcern
   include Concerns::UnfriendsConcern
+
+  rescue_from Exception do |ex|
+    if AccountStatus.unauthorized?(ex)
+      redirect_to tokimeki_unfollow_top_path(via: build_via('unauthorized')), alert: signed_in_user_not_authorized_message
+    else
+      logger.warn "#{controller_name}##{action_name} #{current_user_id} #{ex.inspect}"
+      redirect_to tokimeki_unfollow_top_path(via: build_via('something_error')), alert: unknown_alert_message(ex)
+    end
+  end
 
   before_action only: :cleanup do
     redirect_to tokimeki_unfollow_top_path unless user_signed_in?
