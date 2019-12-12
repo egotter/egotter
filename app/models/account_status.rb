@@ -12,7 +12,15 @@ class AccountStatus
   end
 
   def unauthorized?
+    invalid_or_expired_token? || bad_authentication_data?
+  end
+
+  def invalid_or_expired_token?
     @ex && @ex.class == Twitter::Error::Unauthorized && @ex.message == 'Invalid or expired token.'
+  end
+
+  def bad_authentication_data?
+    @ex && @ex.class == Twitter::Error::BadRequest && @ex.message == 'Bad Authentication data.'
   end
 
   class << self
