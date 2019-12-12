@@ -10,6 +10,7 @@ module SearchCountLimitationHelper
         sign_in_url: sign_in_url,
         pricing_url: pricing_url,
         support_url: support_url,
+        id_hash: SecureRandom.urlsafe_base64(10),
     }
 
     if user_signed_in?

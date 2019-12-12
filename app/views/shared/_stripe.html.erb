@@ -1,4 +1,13 @@
-<% unless current_user.has_valid_subscription? %>
+<% if current_user.has_valid_subscription? %>
+  <script>
+    $(function () {
+      $(document).on('click', '.btn-checkout', function () {
+        $(this).attr('disabled', 'disabled');
+        return false;
+      });
+    });
+  </script>
+<%= else %>
   <script>
     $(function () {
       var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
@@ -10,7 +19,8 @@
           hitType: 'event',
           eventCategory: eventCategory,
           eventAction: 'CheckoutButton clicked',
-          eventLabel: JSON.stringify(user)
+          eventLabel: JSON.stringify(user),
+          transport: 'beacon'
         });
 
         stripe.redirectToCheckout({

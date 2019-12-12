@@ -153,6 +153,7 @@ module Concerns::AlertMessagesConcern
         sign_in_url: sign_in_path(via: build_via('too_many_searches_message')),
         pricing_url: pricing_path(via: build_via('too_many_searches_message')),
         support_url: pricing_path(via: build_via('too_many_searches_message'), anchor: 'enterprise-plan'),
+        id_hash: SecureRandom.urlsafe_base64(10),
     }
 
     if user_signed_in?

@@ -260,7 +260,8 @@ ja:
       remaining_count_is_html: '残りの検索回数は %{count} 回です。'
       sign_in_html: '<a href="%{url}" class="btn btn-default btn-sm">ログインして増やす</a>'
       tweet: 'ツイートして増やす'
-      purchase_html: '<a href="%{url}" class="btn btn-default btn-sm">購入して増やす</a>'
+      purchase: '購入して増やす'
+      pricing: '※料金プランはこちら'
   notifications:
     title: "通知"
     index:
@@ -1554,8 +1555,10 @@ ja:
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
-    too_many_searches_html:
-      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
+    too_many_searches_html: |
+      現在のプランで検索できる上限に達しました。%{limit}回/日 <a class="btn btn-default" href="%{sign_in_url}">ログインして増やす</a><br>
+      <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+      <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
       <br>
       1. これは何？<br>
       えごったーで1日に検索できる回数の制限です。<br>
@@ -1568,12 +1571,13 @@ ja:
       <br>
       <a class="btn btn-default" href="%{sign_in_url}">ログイン</a>：%{sign_in_bonus}回/日<br>
       <br>
-      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">えごったーをツイート</a>：ツイート回数×%{sharing_bonus}回<br>
+      <button class="btn btn-default" disabled>ツイートして増やす</button>：ツイート回数×%{sharing_bonus}回 ※先にログインが必要です<br>
       <br>
-      <a href="%{pricing_url}" class="btn btn-default">購入して増やす</a>：最大%{basic_plan}回/日<br>
+      <button class="btn btn-default" disabled>購入して増やす</button>：最大%{basic_plan}回/日 ※先にログインが必要です <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
       <br>
       4. マーケティングでご利用の方へ<br>
-      ツイッターでの各種データ調査については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
+      ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
+      </div>
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
     profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。何度も起きる場合は<a class="btn btn-default btn-sm" href="%{url}">ログイン</a>してから検索してください。'
@@ -1615,8 +1619,10 @@ ja:
     ad_blocker_detected: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。'
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
   after_sign_in:
-    too_many_searches_html:
-      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
+    too_many_searches_html: |
+      現在のプランで検索できる上限に達しました。%{limit}回/日 <a href="#" class="btn btn-default btn-checkout">購入して増やす</a> <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">ツイートして増やす</a><br>
+      <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+      <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
       <br>
       1. これは何？<br>
       えごったーで1日に検索できる回数の制限です。<br>
@@ -1627,14 +1633,15 @@ ja:
       3. 検索回数は増やせるの？<br>
       ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
       <br>
-      <a class="btn btn-default" href="%{sign_in_url}">ログイン</a>：%{sign_in_bonus}回/日<br>
+      <button class="btn btn-default" disabled>ログイン済み</button>：%{sign_in_bonus}回/日<br>
       <br>
-      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">えごったーをツイート</a>：ツイート回数×%{sharing_bonus}回<br>
+      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">ツイートして増やす</a>：ツイート回数×%{sharing_bonus}回<br>
       <br>
-      <a href="%{pricing_url}" class="btn btn-default">購入して増やす</a>：最大%{basic_plan}回/日<br>
+      <a href="#" class="btn btn-default btn-checkout">購入して増やす</a>：最大%{basic_plan}回/日 <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
       <br>
       4. マーケティングでご利用の方へ<br>
-      ツイッターでの各種データ調査については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
+      ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
+      </div>
     too_many_requests_with_reset_in: >
       一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
       <br>
