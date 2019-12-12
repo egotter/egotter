@@ -27,7 +27,7 @@ class ProfilesController < ApplicationController
     elsif params[:notice_message] == 'search_limitation_soft_limited'
       if SearchLimitationSoftLimitedUsers.new.exists?(fingerprint)
         url = sign_in_path(via: build_via('search_limitation_soft_limited'))
-        message = search_limitation_soft_limited_message(log.screen_name, url)
+        message = search_limitation_soft_limited_message('user', url) # The user name can be anything
         flash.now[:notice] = message
       end
     end
