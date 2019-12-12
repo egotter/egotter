@@ -347,6 +347,10 @@ ja:
         false: 'いいえ'
         see_more: '詳しく見る'
         promotion_html: '直近 %{hours} 時間のツイート毎に %{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
+      swich_account:
+        title: '他のアカウントでログイン'
+        switch: '再ログイン'
+        note_html: '複数のツイッターアカウントを切り替えできます'
       search_title: '検索設定'
       search_mode:
         title: '検索速度'

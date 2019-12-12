@@ -66,6 +66,15 @@
   <div class="clearfix"></div>
   <hr>
 
+  <div class="col-xs-4"><%= t('.swich_account.title') %></div>
+  <div class="col-xs-8">
+    <%= link_to t('.swich_account.switch'), sign_in_path(force_login: true, via: build_via('switch_account'), redirect_path: settings_path), class: 'btn btn-default' %>
+    <div class="text-muted notes"><%= t('.swich_account.note_html') %></div>
+  </div>
+
+  <div class="clearfix"></div>
+  <hr>
+
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
