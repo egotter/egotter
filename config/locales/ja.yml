@@ -1584,11 +1584,13 @@ ja:
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
     something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
-    search_limitation_soft_limited_html:
+    search_limitation_soft_limited_html: |
       検索されたユーザー @%{user} はフォローとフォロワーが多いため、<a class="btn btn-default" href="%{url}">ログイン</a> した後のみ検索できます。<br>
+      <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+      <div id="hidden-detailed-message" style="display: none;">
       <br>
       1. これは何？<br>
-      検索されたユーザーのフォロー＋フォロワーが多いときに起きるエラーです。<br>
+      検索されたユーザーのフォロー＋フォロワーが多く、さらに、検索したユーザーがログインしていない時に起きるエラーです。<br>
       <br>
       2. どうやったら検索できるの？<br>
       <a class="btn btn-default" href="%{url}">ログイン</a> して検索すればOKです。<br>
@@ -1598,6 +1600,7 @@ ja:
       <br>
       4. 公式アカウントはある？<br>
       <a class="btn btn-default" href="https://twitter.com/ego_tter" rel="nofollow">@ego_tter</a> が公式アカウントです。分からないことがあれば何でもご質問ください。
+      </div>
     ajax:
       need_login_html: 'この操作を行うためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
     back_from_twitter_html: >

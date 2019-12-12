@@ -202,8 +202,11 @@ module Concerns::ValidationConcern
     return false if from_crawler?
 
     if !user_signed_in? && SearchLimitation.soft_limited?(user)
-      message = search_limitation_soft_limited_message(user[:screen_name], sign_in_path(via: build_via(__method__), redirect_path: request.fullpath))
-      redirect_to profile_path(screen_name: user[:screen_name]), notice: message
+      # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
+      redirect_to profile_path(screen_name: user[:screen_name], notice_message: 'search_limitation_soft_limited')
+
+      url = sign_in_path(via: build_via(__method__), redirect_path: request.fullpath)
+      message = search_limitation_soft_limited_message(user[:screen_name], url)
       create_search_error_log(__method__, message)
       true
     else

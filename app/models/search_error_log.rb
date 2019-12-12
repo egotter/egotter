@@ -36,6 +36,18 @@ class SearchErrorLog < ApplicationRecord
   belongs_to :user, optional: true
   include Concerns::LastSessionAnalytics
 
+  scope :too_many_searches, -> (session_id) do
+    where(created_at: 10.seconds.ago..Time.zone.now).
+        where(session_id: session_id).
+        where(location: 'too_many_searches?')
+  end
+
+  scope :search_limitation_soft_limited, -> (session_id) do
+    where(created_at: 10.seconds.ago..Time.zone.now).
+        where(session_id: session_id).
+        where(location: 'search_limitation_soft_limited?')
+  end
+
   def last_session_duration
     (created_at - 30.minutes)..created_at
   end
