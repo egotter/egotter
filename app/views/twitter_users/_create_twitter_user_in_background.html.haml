@@ -238,6 +238,21 @@
           var url = urls.account_status;
           TwitterUsers.confirmAccountStatus(url, function done (res) {
             console.log('accountStatus', res);
+
+            if (!res.authorized) {
+              var message = '#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}';
+              Logger.warn(message);
+              setTimeout(function() {
+                window.location.href = "#{root_path(via: build_via('unauthorized_detected'))}";
+              }, 2000);
+
+              ga('send', {
+                hitType: 'event',
+                eventCategory: eventCategory,
+                eventAction: 'Unauthorized detected',
+                eventLabel: JSON.stringify(twitterUser)
+              });
+            }
           }, function failed (xhr) {
             console.log(url, xhr.responseText);
           });
@@ -250,7 +265,7 @@
           Logger.warn(message);
           setTimeout(function() {
             window.location.href = "#{root_path(via: build_via('secret_mode_detected'))}";
-          }, 3000);
+          }, 2000);
 
           ga('send', {
             hitType: 'event',
@@ -265,7 +280,7 @@
           Logger.warn(message);
           setTimeout(function() {
             window.location.href = "#{root_path(via: build_via('ad_blocker_detected'))}";
-          }, 3000);
+          }, 2000);
 
           ga('send', {
             hitType: 'event',

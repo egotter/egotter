@@ -26,6 +26,11 @@ class HomeController < ApplicationController
       flash.now[:alert] = t('before_sign_in.secret_mode_detected')
     elsif params[:via].to_s.end_with?('ad_blocker_detected')
       flash.now[:alert] = t('before_sign_in.ad_blocker_detected')
+    elsif params[:via].to_s.end_with?('unauthorized_detected')
+      if user_signed_in?
+        url = sign_in_path(via: build_via('signed_in_user_not_authorized'))
+        flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
+      end
     end
 
     if flash.empty? && user_signed_in?

@@ -11,14 +11,17 @@ class AccountStatusesController < ApplicationController
     uid = params[:uid].to_i
     status = AccountStatus.new
 
-    # TODO Update TwitterDB::User
-    # CreateTwitterDBUserWorker.perform_async([uid], force_update: true)
-
     begin
       request_context_client.twitter.user(uid)
     rescue => e
       status = AccountStatus.new(ex: e)
     end
+
+    if status.unauthorized?
+      return render json: {authorized: false}
+    end
+
+    CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: true)
 
     if status.not_found? || status.suspended?
       # TODO Create NotFoundUser or ForbiddenUser
@@ -34,6 +37,6 @@ class AccountStatusesController < ApplicationController
       # end
     end
 
-    render json: {uid: uid, suspended: status.suspended?, not_found: status.not_found?}
+    render json: {authorized: true, uid: uid, suspended: status.suspended?, not_found: status.not_found?}
   end
 end

@@ -1668,7 +1668,7 @@ ja:
     has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
     signed_in_user_not_authorized_html: >
-      %{user} のツイッター連携（API）が無効になっています。<br>
+      @%{user} のツイッター連携（API）が無効になっています。<br>
       <br>
       1. <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
       <br>
@@ -1685,6 +1685,7 @@ ja:
       3. [1]と[2]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>
       エラー：PLNE403
+    unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
   tweet_text:
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   dm:
