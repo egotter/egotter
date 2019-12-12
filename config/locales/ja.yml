@@ -1188,16 +1188,33 @@ ja:
     latest:
       <<: *not_found_show
   forbidden:
-    show:
+    show: &forbidden_show
       crumb_title: "@%{user} のプロフィール（凍結）"
       page_title: "@%{user} のプロフィール（凍結）"
       meta_description: "@%{user} のプロフィール（凍結）"
       request_to_update: '更新をリクエストする'
+      update: '最新のデータに更新する'
+      displayed_data_is_latest: '表示されているデータは最新です'
       see_on_twitter: '@%{user} をツイッターで見る'
       come_back: '@%{user} はアカウント凍結から復帰しました。'
-      displayed_data_is_html: '検索された @%{user} が見付かりません。アカウントが凍結されています。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
+      displayed_data_is_html: |
+        検索された @%{user} が見付かりません。アカウントが凍結されています。
+        <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+        <div id="hidden-detailed-message" style="display: none;">
+        <br>
+        1. どういう時に起きる？<br>
+        様々な理由があります。一例として、ツイッターの利用規約に違反したり、ツイートが多すぎたり、短い時間でフォロー・フォロー解除を繰り返したり、等です。<br>
+        <br>
+        2. 二度と復活しない？<br>
+        一時的な凍結であれば、そのうち復活します。完全な凍結だと、よほどのことが無い限り復活することはありません。<br>
+        <br>
+        3. えごったーでの表示とずれている？<br>
+        凍結された直後だったり、凍結と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、ツイッターで見ると確実です。
+        </div>
+    not_persisted:
+      see_on_twitter: '@%{user} をツイッターで見る'
     latest:
-      displayed_data_is_html: '検索された @%{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{user}" class="btn btn-default" target="_blank" rel="nofollow">ツイッターで見る</a>'
+      <<: *forbidden_show
   blocked:
     show:
       crumb_title: "@%{user} のプロフィール（ブロック）"
