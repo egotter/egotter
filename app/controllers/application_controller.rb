@@ -2,6 +2,7 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
   include Concerns::InternalServerErrorHandler
   include Concerns::RoutingErrorHandler
+  include Concerns::TwitterErrorHandler
   include Concerns::ApiClientConcern
   include Concerns::UsersConcern
   include Concerns::TwitterUsersConcern
