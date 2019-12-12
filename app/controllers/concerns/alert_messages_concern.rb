@@ -126,6 +126,15 @@ module Concerns::AlertMessagesConcern
     end
   end
 
+  def signed_in_user_not_authorized_message
+    if user_signed_in?
+      url = sign_in_path(via: build_via('signed_in_user_not_authorized'))
+      t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
+    else
+      raise
+    end
+  end
+
   def too_many_requests_message(reset_in = 30)
     if user_signed_in?
       reset_in ||= rate_limit_reset_in
@@ -165,7 +174,7 @@ module Concerns::AlertMessagesConcern
 
   def unknown_alert_message(ex)
     reason = (ex.class.name.demodulize.underscore rescue 'exception')
-    # Show a sign-in button whether or not current user is signed in.
+    # Show a sign-in button whether current user is signed in or not.
     t('before_sign_in.something_wrong_with_error_html', url: kick_out_error_path(reason), error: reason)
   end
 
