@@ -1160,16 +1160,33 @@ ja:
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       share_me: "えごったーをシェアする"
   not_found:
-    show:
+    show: &not_found_show
       crumb_title: "@%{user} のプロフィール（垢消し）"
       page_title: "@%{user} のプロフィール（垢消し）"
       meta_description: "@%{user} のプロフィール（垢消し）"
       request_to_update: '更新をリクエストする'
+      update: '最新のデータに更新する'
+      displayed_data_is_latest: '表示されているデータは最新です'
       see_on_twitter: '@%{user} をツイッターで見る'
       come_back: '@%{user} はアカウント削除から復帰しました。'
-      displayed_data_is_html: '検索された @%{user} が見付かりません。アカウントが削除されています。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
+      displayed_data_is_html: |
+        検索された @%{user} が見付かりません。アカウントが削除されています。
+        <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
+        <div id="hidden-detailed-message" style="display: none;">
+        <br>
+        1. どういう時に起きる？<br>
+        アカウントの持ち主がアカウントを削除すると、この状態になります。もうフォローすることもツイートを見ることもできません。<br>
+        <br>
+        2. 二度と復活しない？<br>
+        アカウントの持ち主であれば、削除から一定期間内であれば復活させることができます。<br>
+        <br>
+        3. えごったーでの表示とずれている？<br>
+        削除した直後だったり、削除と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、ツイッターで見ると確実です。
+        </div>
+    not_persisted:
+      see_on_twitter: '@%{user} をツイッターで見る'
     latest:
-      displayed_data_is_html: '検索された @%{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{user}" class="btn btn-default" target="_blank" rel="nofollow">ツイッターで見る</a>'
+      <<: *not_found_show
   forbidden:
     show:
       crumb_title: "@%{user} のプロフィール（凍結）"
