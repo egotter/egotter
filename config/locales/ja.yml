@@ -979,13 +979,15 @@ ja:
       crumb_title: "@%{user} の %{time} のプロフィール"
       page_title: "@%{user} の %{time} のプロフィール"
       meta_description: "@%{user} の %{time} のプロフィール"
-      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。<a href="%{url}" class="btn btn-default">更新をリクエストする</a>'
+      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。'
+      update: '@%{user} のプロフィールを更新する'
       analyze: '@%{user} を分析する'
     latest:
       crumb_title: "@%{user} の最新プロフィール"
       page_title: "@%{user} の最新プロフィール"
       meta_description: "@%{user} の最新プロフィール"
-      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。<a href="https://twitter.com/%{user}" class="btn btn-default" target="_blank" rel="nofollow">ツイッターで見る</a>'
+      displayed_data_is_html: '表示されているプロフィールは <b>%{time}</b> に更新されました。'
+      see_on_twitter: '@%{user} をツイッターで見る'
       analyze: '@%{user} を分析する'
   friends:
     new:
