@@ -11,17 +11,14 @@ module Deploy
         'sudo service puma restart',
     ]
 
-    def current_dir
-      '/var/egotter'
+    attr_reader :hosts
+
+    def initialize(hosts)
+      @hosts = hosts.split(',')
     end
 
-    def hosts
-      %w(
-        egotter_web3
-        egotter_web4
-        egotter_web5
-        egotter_web7
-      )
+    def current_dir
+      '/var/egotter'
     end
 
     def run
@@ -57,15 +54,14 @@ module Deploy
         ['sudo service sidekiq_unfollow status'      , 'sudo service sidekiq_unfollow restart'],
     ]
 
-    def current_dir
-      '/var/egotter'
+    attr_reader :hosts
+
+    def initialize(hosts)
+      @hosts = hosts.split(',')
     end
 
-    def hosts
-      %w(
-        egotter_web
-        egotter_sidekiq5
-      )
+    def current_dir
+      '/var/egotter'
     end
 
     def run
@@ -91,12 +87,12 @@ end
 
 STDOUT.sync = true
 
-params = ARGV.getopts('r:', 'role:')
+params = ARGV.getopts('r:', 'role:', 'hosts:')
 
 if params['role'] == 'web'
-  Deploy::Web.new.run
+  Deploy::Web.new(params['hosts']).run
 elsif params['role'] == 'sidekiq'
-  Deploy::Sidekiq.new.run
+  Deploy::Sidekiq.new(params['hosts']).run
 else
   puts "Invalid #{params.inspect}"
 end
