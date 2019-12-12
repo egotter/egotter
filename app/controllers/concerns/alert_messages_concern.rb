@@ -22,6 +22,7 @@ module Concerns::AlertMessagesConcern
       when Twitter::Error::NotFound then not_found_message(screen_name)
       when Twitter::Error::Forbidden then forbidden_message(screen_name)
       when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
+      when Twitter::Error::BadRequest then unauthorized_message(screen_name)
       when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
       else unknown_alert_message(ex)
       end
