@@ -32,7 +32,20 @@ class FollowsController < ApplicationController
   end
 
   def show
-    render json: {follow: current_user.following_egotter?}
+    if EgotterFollower.exists?(uid: current_user.uid, updated_at: 5.minutes.ago..Time.zone.now)
+      return render json: {follow: true, record_found: true}
+    end
+
+    if request_context_client.twitter.friendship?(current_user.uid, User::EGOTTER_UID)
+      CreateEgotterFollowerWorker.perform_async(current_user.id)
+      render json: {follow: true, record_found: false}
+    else
+      DeleteEgotterFollowerWorker.perform_async(current_user.id)
+      render json: {follow: false, record_found: false}
+    end
+  rescue => e
+    logger.warn "#{controller_name}##{action_name} #{e.inspect} #{request.referer}"
+    render json: {follow: current_user.following_egotter?, record_found: nil}
   end
 
   private

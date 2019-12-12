@@ -8,6 +8,7 @@ class CreateEgotterFollowers < ActiveRecord::Migration[5.1]
 
       t.index :uid, unique: true
       t.index :created_at
+      t.index :updated_at
     end
   end
 end

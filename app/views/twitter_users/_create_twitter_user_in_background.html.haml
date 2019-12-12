@@ -25,8 +25,13 @@
   = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
 = alert_warning_box('follow-box') do |id, via|
-  = t('twitter_users.in_background.automated_update_stopped', user: twitter_user.mention_name)
-  = link_to(t('twitter_users.in_background.do_follow'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via), follow: true), class: button_classes)
+  = t('twitter_users.in_background.automated_update_stopped_html', user: twitter_user.screen_name)
+
+= alert_info_box('just-followed-box') do |id, via|
+  = t('twitter_users.in_background.automated_update_restarted_html')
+
+= alert_warning_box('not-followed-box') do |id, via|
+  = t('twitter_users.in_background.automated_update_not_restarted_html')
 
 = alert_warning_box('invalid-token-box') do |id, via|
   = t('twitter_users.in_background.invalid_token', user: twitter_user.mention_name)
@@ -63,8 +68,6 @@
     var requestToUpdate = #{switch_to_request?(twitter_user)};
     var eventCategory = '#{controller_name}##{action_name}';
 
-    var alertBox;
-
     var urls = {
       twitter_users_changes: '#{twitter_users_changes_path(uid: twitter_user.uid)}',
       twitter_user: '#{twitter_user_path(uid: twitter_user.uid, via: build_via('update_box'))}',
@@ -80,23 +83,49 @@
       createdAt: #{twitter_user.created_at.to_i}
     };
 
+    var alertBox;
+
+    function parseError (xhr) {
+      var err = 'Something';
+      try {
+        err = JSON.parse(xhr.responseText)['error'];
+      } catch (e) {
+        console.error(e);
+      }
+      return err;
+    }
+
+    function enableJustFollowedButton () {
+      $('.btn-just-followed').on('click', function () {
+        TwitterUsers.isFollowingEgotter(urls.follow, function done (res) {
+          if (res.follow) {
+            alertBox.show('justFollowed');
+          } else {
+            alertBox.show('notFollowed');
+          }
+        });
+      });
+    }
+
+    function fetchChangesText (url) {
+      $.get(url).done(function (res) {
+        if (res.text) {
+          alertBox.find('refresh').find('.message').text(res.text);
+        }
+        alertBox.show('refresh');
+      }).fail(function (xhr) {
+        console.warn(url, xhr.responseText);
+        alertBox.show('refresh');
+      });
+    }
+
     function poll (url) {
       Timelines.checkLatestTwitterUser(url, {interval: 3000, max_retry_count: 5},
         function done (res) {
           console.log('poll', res);
 
           if (res.created_at > twitterUser.createdAt) {
-            var url = urls.twitter_users_changes;
-            $.get(url).done(function (res) {
-              if (res.text) {
-                alertBox.find('refresh').find('.message').text(res.text);
-              }
-              alertBox.show('refresh');
-            }).fail(function (xhr) {
-              console.warn(url, xhr.responseText);
-              alertBox.show('refresh');
-            });
-
+            fetchChangesText(urls.twitter_users_changes);
             return true;
           } else {
             return false;
@@ -113,18 +142,11 @@
 
           alertBox.show('failed');
 
-          var error = {error: 'Something'};
-          try {
-            error = JSON.parse(xhr.responseText);
-          } catch (e) {
-            console.error(e);
-          }
-
           ga('send', {
             hitType: 'event',
             eventCategory: eventCategory,
             eventAction: 'poll failed',
-            eventLabel: JSON.stringify($.extend({status: xhr.status, error: error['error']}, twitterUser))
+            eventLabel: JSON.stringify($.extend({status: xhr.status, error: parseError(xhr)}, twitterUser))
           });
         });
     }
@@ -150,14 +172,9 @@
         console.warn('requestToCreateTwitterUser failed.', xhr.responseText);
         TwitterUsers.sneakLogger.warn(xhr.responseText);
 
-        var error = {error: 'Something'};
-        try {
-          error = JSON.parse(xhr.responseText);
-        } catch (e) {
-          console.error(e);
-        }
+        var error = parseError(xhr);
 
-        if (error['error'] === 'too_many_searches') {
+        if (error === 'too_many_searches') {
           alertBox.show('tooManySearches');
         } else {
           alertBox.show('failed');
@@ -167,7 +184,7 @@
           hitType: 'event',
           eventCategory: eventCategory,
           eventAction: 'requestToCreateTwitterUser failed',
-          eventLabel: JSON.stringify($.extend({status: xhr.status, error: error['error']}, twitterUser))
+          eventLabel: JSON.stringify($.extend({status: xhr.status, error: error}, twitterUser))
         });
       });
     }
@@ -185,11 +202,8 @@
           return;
         }
 
-        var url = urls.follow;
-        TwitterUsers.isFollowingEgotter(url, function (res) {
+        TwitterUsers.isFollowingEgotter(urls.follow, function done (res) {
           if (res.follow) {
-            var url = urls.twitter_users;
-
             if (tooShortCreateInterval) {
               console.warn("Don't start polling since the create interval is too short.");
               TwitterUsers.sneakLogger.warn("Don't start polling since the create interval is too short.");
@@ -200,9 +214,10 @@
               }, 3000);
             } else {
               var params = {uid: twitterUser.uid};
-              requestToCreateTwitterUser(url, params);
+              requestToCreateTwitterUser(urls.twitter_users, params);
             }
           } else {
+            enableJustFollowedButton();
             alertBox.show('follow');
           }
         });

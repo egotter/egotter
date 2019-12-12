@@ -15,6 +15,8 @@ TwitterUsers.AlertBox = function (requestToUpdate, nextCreationTimeMessage, twit
     refresh: $('#refresh-box'),
     tooManyFriends: $('#too-many-friends-box'),
     follow: $('#follow-box'),
+    justFollowed: $('#just-followed-box'),
+    notFollowed: $('#not-followed-box'),
     invalidToken: $('#invalid-token-box'),
     accurateCounting: $('#accurate-counting-box'),
     viaDM: $('#via-dm-box'),
@@ -36,9 +38,9 @@ TwitterUsers.AlertBox = function (requestToUpdate, nextCreationTimeMessage, twit
   $('.sticky-box').each(function (i, box) {
     var $box = $(box);
 
-    $box.on('close.bs.alert', function () {
-      $box.parent('.sticky-wrapper').hide();
-    });
+    // $box.on('close.bs.alert', function () {
+    //   $box.parent('.sticky-wrapper').hide();
+    // });
 
     $box.find('a').on('click', function (e) {
       ga('send', {
@@ -63,7 +65,7 @@ TwitterUsers.AlertBox.prototype = {
 
     if ($box) {
       if (this._shown) {
-        this._shown.alert('close');
+        this._shown.hide().unstick();
         this._shown = null;
       }
       $box.show().sticky();

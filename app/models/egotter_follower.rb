@@ -12,6 +12,7 @@
 #
 #  index_egotter_followers_on_created_at  (created_at)
 #  index_egotter_followers_on_uid         (uid) UNIQUE
+#  index_egotter_followers_on_updated_at  (updated_at)
 #
 
 class EgotterFollower < ApplicationRecord
