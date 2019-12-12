@@ -1578,7 +1578,7 @@ ja:
       4. マーケティングでご利用の方へ<br>
       ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
       </div>
-    too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
+    too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
     profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。何度も起きる場合は<a class="btn btn-default btn-sm" href="%{url}">ログイン</a>してから検索してください。'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
@@ -1586,8 +1586,7 @@ ja:
     unauthorized_html: 'ツイッター連携に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
-    something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
-    something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
+    something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
     search_limitation_soft_limited_html: |
       検索されたユーザー @%{user} はフォローとフォロワーが多いため、<a class="btn btn-default" href="%{url}">ログイン</a> した後のみ検索できます。<br>
       <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
@@ -1664,7 +1663,6 @@ ja:
     protected_with_request_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
     blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
     blocked_with_request_html: '%{user} からブロックされているため検索できません。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
-    something_wrong_html: "アクセスが多すぎるため検索に失敗しました。大半の失敗は一時的なものです。失敗が続く場合は、5〜10分ほどたってから再度検索してみてください。"
     has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
     signed_in_user_not_authorized_html: >
