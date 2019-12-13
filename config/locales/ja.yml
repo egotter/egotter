@@ -554,6 +554,7 @@ ja:
       search: "検索する"
     profile:
       see_on_twitter: "ツイッターで見る"
+      unknown_follow_back_rate: '集計中'
       labels:
         suspended: "垢消し"
         blocked: "ブロック中"

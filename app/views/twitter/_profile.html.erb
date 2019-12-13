@@ -1,7 +1,5 @@
+<% user = user.twitter_db_user if switch_to_twitter_db_user?(user) %>
 <% logger.info "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" %>
-<% if user.respond_to?(:persisted?) && user.persisted? && user.respond_to?(:twitter_db_user) && user&.twitter_db_user&.persisted? && user.updated_at <= user.twitter_db_user.updated_at %>
-  <% user = user.twitter_db_user %>
-<% end %>
 <% user = TwitterUserDecorator.new(user) %>
 
 <div class="profile-overview-container">

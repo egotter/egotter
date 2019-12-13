@@ -51,6 +51,10 @@ module TwitterDB
       status_created_at && status_created_at < 2.weeks.ago
     end
 
+    def follow_back_rate
+      TwitterUser.latest_by(uid: uid)&.follow_back_rate
+    end
+
     def to_param
       screen_name
     end

@@ -14,7 +14,7 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def percent_follow_back_rate
-    h.number_to_percentage(follow_back_rate * 100, precision: 1) rescue '0.0%'
+    h.number_to_percentage(follow_back_rate * 100, precision: 1) rescue I18n.t('twitter.profile.unknown_follow_back_rate')
   end
 
   def account_created_at?

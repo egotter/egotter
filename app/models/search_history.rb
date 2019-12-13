@@ -29,11 +29,6 @@ class SearchHistory < ApplicationRecord
 
   include Concerns::LastSessionAnalytics
 
-  def to_param
-    logger.warn "SearchHistory#to_param deprecated"
-    screen_name
-  end
-
   def last_session_duration
     (created_at - 30.minutes)..created_at
   end
