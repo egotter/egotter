@@ -9,9 +9,15 @@ namespace :follow_requests do
     puts "requests #{requests.size}"
 
     requests.each do |request|
+      unless request.user.authorized?
+        request.update(error_class: FollowRequest::Unauthorized, error_message: 'Updated by rake')
+        puts "Unauthorized #{request.id} #{request.user_id} #{request.uid}"
+        next
+      end
+
       if follower_uids.include?(request.user.uid)
         request.update(error_class: FollowRequest::AlreadyFollowing, error_message: 'Updated by rake')
-        puts "Updated #{request.id} #{request.user_id} #{request.uid}"
+        puts "Already Following #{request.id} #{request.user_id} #{request.uid}"
       end
     end
   end
