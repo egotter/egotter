@@ -17,27 +17,32 @@ function attach_event_handler(name, url) {
   });
 }
 
-function attach_report_interval_handler(url) {
-  var $selectbox = $('.settings #report_interval');
-
-  $selectbox.on('change', function () {
-    var name = 'report_interval';
-    var val = $(this).val();
-    console.log(name, val);
-
-    var params = {};
-    params[name] = val;
-    $.ajax({url: url, method: 'POST', data: params})
-        .done(function (res) {
-          console.log(res);
-        })
-        .fail(function (xhr) {
-          console.log(xhr.responseText);
-        });
-  });
-}
-
 var Settings = {};
+
+Settings.enableUpdateReportIntervalButton = function (url, beforeChange) {
+  var previous;
+
+  $('.settings #report_interval').on('focus', function () {
+    previous = this.value;
+  }).on('change', function () {
+    var $selected = $(this);
+    var value = $selected.val();
+    var label = $selected.find('option:selected').text();
+    $selected.blur();
+
+    console.log('report_interval', previous, value, label);
+
+    if (beforeChange(value, label)) {
+      $.post(url, {report_interval: value}).done(function (res) {
+        console.log(res);
+      }).fail(function (xhr) {
+        console.log(xhr.responseText);
+      });
+    } else {
+      $selected.val(previous);
+    }
+  });
+};
 
 Settings.enableDeleteTweetsButton = function () {
   var $modal = $('#delete-tweets-modal');

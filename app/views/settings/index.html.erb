@@ -209,8 +209,7 @@
   <div class="form-group">
     <label for="report_interval" class="control-label col-xs-4"><%= t('.notifications.prompt_reports.report_interval_title') %></label>
     <div class="col-xs-8">
-      <% options = NotificationSetting.report_interval_options %>
-      <%= select_tag 'report_interval', options_for_select(options, selected: current_user.notification_setting.report_interval), class: 'form-control' %>
+      <%= select_tag 'report_interval', report_interval_options_for_select(current_user), class: 'form-control' %>
       <div class="text-muted notes"><%= t('.notifications.prompt_reports.report_interval_note') %></div>
     </div>
   </div>
@@ -400,12 +399,25 @@
     Settings.enableResetEgotterButton();
     Settings.enableResetCacheButton();
 
-    var url = '<%= setting_path %>';
-    attach_event_handler('email', url);
-    attach_event_handler('dm', url);
-    attach_event_handler('news', url);
-    attach_event_handler('search', url);
+    (function () {
+      var url = '<%= setting_path %>';
+      attach_event_handler('email', url);
+      attach_event_handler('dm', url);
+      attach_event_handler('news', url);
+      attach_event_handler('search', url);
+    })();
 
-    attach_report_interval_handler('<%= update_report_interval_path %>');
+    (function () {
+      var url = '<%= update_report_interval_path %>';
+      var defaultValue = <%= NotificationSetting::DEFAULT_REPORT_INTERVAL %>;
+      var message = '<%= t('settings.index.report_interval.confirm') %>';
+      Settings.enableUpdateReportIntervalButton(url, function (value, label) {
+        if (value > defaultValue) {
+          return confirm(message.replace(/_INTERVAL_/, label));
+        } else {
+          return true;
+        }
+      });
+    })();
   });
 </script>
