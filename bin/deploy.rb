@@ -23,6 +23,12 @@ module Deploy
 
     def run
       hosts.each do |host|
+        cmd = "ssh -q #{host} exit"
+        puts "\e[32m#{cmd}\e[0m" # Green
+        puts system(cmd, exception: true)
+      end
+
+      hosts.each do |host|
         CMD.each do |cmd|
           puts "\e[32m#{host} #{cmd}\e[0m" # Green
           puts system('ssh', host, "cd #{current_dir} && #{cmd}", exception: true)
