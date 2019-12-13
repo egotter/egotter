@@ -236,22 +236,33 @@
       }
 
       (function (){
+        function redirectTo (url) {
+          setTimeout(function() {
+            window.location.href = url;
+          }, 2000);
+        }
+
         if (signedIn && authorized) {
           var url = urls.account_status;
           TwitterUsers.confirmAccountStatus(url, function done (res) {
             console.log('accountStatus', res);
 
             if (!res.authorized) {
-              var message = '#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}';
-              Logger.warn(message);
-              setTimeout(function() {
-                window.location.href = "#{root_path(via: build_via('unauthorized_detected'))}";
-              }, 2000);
+              var url = "#{root_path(via: build_via('unauthorized_detected'))}";
+              Logger.warn("#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}");
+              redirectTo(url);
 
               ga('send', {
                 hitType: 'event',
                 eventCategory: eventCategory,
                 eventAction: 'Unauthorized detected',
+                eventLabel: JSON.stringify(twitterUser)
+              });
+            } else if (res.egotter_blocked) {
+              ga('send', {
+                hitType: 'event',
+                eventCategory: eventCategory,
+                eventAction: 'egotterBlocked detected',
                 eventLabel: JSON.stringify(twitterUser)
               });
             }
@@ -266,7 +277,7 @@
           var message = '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}';
           Logger.warn(message);
           setTimeout(function() {
-            window.location.href = "#{root_path(via: build_via('secret_mode_detected'))}";
+            window.location.href = "#{root_path(via: build_via('secret_mode_detected')).html_safe}";
           }, 2000);
 
           ga('send', {
@@ -281,7 +292,7 @@
           var message = '#{t('before_sign_in.ad_blocker_detected_with_count', seconds: 3)}';
           Logger.warn(message);
           setTimeout(function() {
-            window.location.href = "#{root_path(via: build_via('ad_blocker_detected'))}";
+            window.location.href = "#{root_path(via: build_via('ad_blocker_detected')).html_safe}";
           }, 2000);
 
           ga('send', {

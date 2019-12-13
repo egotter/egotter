@@ -218,7 +218,7 @@ module Concerns::ValidationConcern
 
   def screen_name_changed?(twitter_user)
     latest = TwitterUser.latest_by(uid: twitter_user.uid)
-    latest && latest&.screen_name != twitter_user.screen_name
+    latest && latest.screen_name != twitter_user.screen_name
   end
 
   def too_many_searches?(twitter_user)

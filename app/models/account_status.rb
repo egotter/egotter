@@ -11,9 +11,16 @@ class AccountStatus
     @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'User has been suspended.'
   end
 
+  # This exception is raised when calling #user_timeline .
   def blocked?
     @ex && @ex.class == Twitter::Error::Unauthorized && @ex.message == "You have been blocked from viewing this user's profile."
   end
+
+  # This exception is raised when calling #user_timeline .
+  def protected?
+    @ex && @ex.class == Twitter::Error::Unauthorized && @ex.message == "Not authorized."
+  end
+  alias_method :not_authorized?, :protected?
 
   def unauthorized?
     invalid_or_expired_token? || bad_authentication_data?

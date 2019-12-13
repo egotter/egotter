@@ -7,8 +7,8 @@ class AccountStatusesController < ApplicationController
 
   before_action { create_search_log }
 
-  def show
-    uid = params[:uid].to_i
+  before_action do
+    uid = searchee_uid
     status = AccountStatus.new
 
     begin
@@ -18,25 +18,68 @@ class AccountStatusesController < ApplicationController
     end
 
     if status.unauthorized?
-      return render json: {authorized: false}
+      render json: {authorized: false, uid: uid}
+    elsif status.not_found? || status.suspended?
+      # It's strange to reach here because you can search.
+
+      searchee = TwitterUser.latest_by(uid: uid)
+      searchee = TwitterDB::User.find_by(uid: uid) unless searchee
+
+      if searchee
+        if status.not_found?
+          CreateNotFoundUserWorker.perform_async(searchee.screen_name)
+        elsif status.suspended?
+          CreateForbiddenUserWorker.perform_async(searchee.screen_name)
+        end
+      end
+
+      render json: {authorized: true, uid: uid, suspended: status.suspended?, not_found: status.not_found?}
+    else
+      CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: true)
+    end
+  end
+
+  before_action do
+    next if current_user.uid == searchee_uid
+
+    uid = searchee_uid
+    status = AccountStatus.new
+
+    begin
+      request_context_client.twitter.user_timeline(uid, count: 1)
+    rescue => e
+      status = AccountStatus.new(ex: e)
     end
 
-    CreateTwitterDBUserWorker.perform_async([uid], user_id: current_user.id, force_update: true)
+    if status.protected? || status.blocked?
+      # It's strange to reach here because you can search.
+      render json: {authorized: true, uid: uid, not_authorized: status.protected?, blocked: status.blocked?}
+    end
+  end
 
-    if status.not_found? || status.suspended?
-      # TODO Create NotFoundUser or ForbiddenUser
-      # user = TwitterUser.latest_by(uid: uid)
-      # user = TwitterDB::User.find_by(uid: uid) unless user
-      #
-      # if user
-      #   if status.not_found?
-      #     CreateNotFoundUserWorker.perform_async(user.screen_name, uid: uid)
-      #   elsif status.suspended?
-      #     CreateForbiddenUserWorker.perform_async(user.screen_name, uid: uid)
-      #   end
-      # end
+
+  before_action do
+    uid = searchee_uid
+    status = AccountStatus.new
+
+    begin
+      User.egotter.api_client.twitter.user_timeline(uid, count: 1)
+    rescue => e
+      status = AccountStatus.new(ex: e)
     end
 
-    render json: {authorized: true, uid: uid, suspended: status.suspended?, not_found: status.not_found?}
+    if status.protected? || status.blocked?
+      render json: {authorized: true, uid: uid, egotter_not_authorized: status.protected?, egotter_blocked: status.blocked?}
+    end
+  end
+
+  def show
+    render json: {authorized: true, uid: searchee_uid}
+  end
+
+  private
+
+  def searchee_uid
+    params[:uid].to_i
   end
 end
