@@ -55,6 +55,12 @@ class FollowRequest < ApplicationRecord
     def temporarily_following(user_id:, created_at:)
       (finished(user_id: user_id, created_at: created_at) + unprocessed(user_id: user_id, created_at: created_at)).sort_by(&:created_at)
     end
+
+    def requests_for_egotter
+      where(finished_at: nil).
+          where(uid: User::EGOTTER_UID).
+          where(error_class: '')
+    end
   end
 
   def perform!
