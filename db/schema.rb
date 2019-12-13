@@ -435,9 +435,10 @@ ActiveRecord::Schema.define(version: 2019_12_08_081808) do
   create_table "follow_requests", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
     t.bigint "uid", null: false
-    t.datetime "finished_at"
+    t.string "requested_by", default: "", null: false
     t.string "error_class", default: "", null: false
     t.string "error_message", default: "", null: false
+    t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_follow_requests_on_created_at"

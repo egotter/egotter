@@ -5,9 +5,10 @@
 #  id            :integer          not null, primary key
 #  user_id       :integer          not null
 #  uid           :bigint(8)        not null
-#  finished_at   :datetime
+#  requested_by  :string(191)      default(""), not null
 #  error_class   :string(191)      default(""), not null
 #  error_message :string(191)      default(""), not null
+#  finished_at   :datetime
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #
