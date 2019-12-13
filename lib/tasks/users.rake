@@ -3,7 +3,9 @@ namespace :users do
   task update_authorized: :environment do
     sigint = Util::Sigint.new.trap
 
-    ApiClient # Avoid circular dependency
+    # Avoid circular dependency
+    ApiClient
+    CacheDirectory
 
     green = -> (str) {print "\e[32m#{str}\e[0m"}
     red = -> (str) {print "\e[31m#{str}\e[0m"}
