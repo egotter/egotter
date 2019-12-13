@@ -1147,10 +1147,18 @@ ja:
         @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。
         <a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">フォローする</a>
         <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
+      automated_update_stopped_and_signing_in_html: |
+        @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。
+        <a href="%{url}" class="btn btn-default">フォローする</a>
+        <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
       automated_update_restarted_html: '@ego_tter のフォローありがとうございます。自動更新は再開されました。'
       automated_update_not_restarted_html: |
         まだ @ego_tter をフォローしていないようです。自動更新は停止したままです。
         <a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">フォローする</a>
+        <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
+      automated_update_not_restarted_and_signing_in_html: |
+        まだ @ego_tter をフォローしていないようです。自動更新は停止したままです。
+        <a href="%{url}" class="btn btn-default">フォローする</a>
         <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
       invalid_token: '%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
       accurate_counting: 'リムられやブロられは、ログインすると結果がより正確になります。'

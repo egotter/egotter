@@ -25,13 +25,15 @@
   = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
 = alert_warning_box('follow-box') do |id, via|
-  = t('twitter_users.in_background.automated_update_stopped_html', user: twitter_user.screen_name)
+  - url = sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via), follow: true)
+  = t('twitter_users.in_background.automated_update_stopped_and_signing_in_html', user: twitter_user.screen_name, url: url)
 
 = alert_info_box('just-followed-box') do |id, via|
   = t('twitter_users.in_background.automated_update_restarted_html')
 
 = alert_warning_box('not-followed-box') do |id, via|
-  = t('twitter_users.in_background.automated_update_not_restarted_html')
+  - url = sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via), follow: true)
+  = t('twitter_users.in_background.automated_update_not_restarted_and_signing_in_html', url: url)
 
 = alert_warning_box('invalid-token-box') do |id, via|
   = t('twitter_users.in_background.invalid_token', user: twitter_user.mention_name)

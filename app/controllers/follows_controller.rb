@@ -26,7 +26,7 @@ class FollowsController < ApplicationController
   end
 
   def create
-    request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid])
+    request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: 'follows#create')
     CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
     render json: {request_id: request.id}.merge(RateLimit.new(current_user).to_h)
   end

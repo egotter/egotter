@@ -25,7 +25,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     end
 
     update_search_histories_when_signing_in(user)
-    FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID) if follow
+    if follow
+      request = FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
+      CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
+    end
     TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
     EnqueuedSearchRequest.new.delete(user.uid)
     DeleteNotFoundUserWorker.perform_async(user.screen_name)
