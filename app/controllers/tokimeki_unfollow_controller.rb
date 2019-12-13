@@ -2,6 +2,8 @@ class TokimekiUnfollowController < ApplicationController
   include Concerns::SearchRequestConcern
   include Concerns::UnfriendsConcern
 
+  before_action :require_login!, only: %i(cleanup unfollow keep)
+
   rescue_from Exception do |ex|
     if AccountStatus.unauthorized?(ex)
       redirect_to tokimeki_unfollow_top_path(via: build_via('unauthorized')), alert: signed_in_user_not_authorized_message
@@ -12,16 +14,15 @@ class TokimekiUnfollowController < ApplicationController
   end
 
   before_action only: :cleanup do
-    redirect_to tokimeki_unfollow_top_path unless user_signed_in?
-  end
-
-  before_action only: :cleanup do
-    if !Tokimeki::User.exists?(uid: current_user.uid) && !save_data
-      redirect_to root_path, alert: t('after_sign_in.tokimeki_unfollow_too_many_friends')
+    if current_twitter_user[:friends_count] >= 10000
+      redirect_to root_path(via: build_via), alert: t('after_sign_in.tokimeki_unfollow_too_many_friends')
+    else
+      initialize_data!
+      if current_tokimeki_user.processed_count >= current_tokimeki_user.friendships.size
+        redirect_to root_path(via: build_via), notice: t('tokimeki_unfollow.cleanup.finish')
+      end
     end
   end
-
-  before_action :require_login!, only: %i(unfollow keep)
 
   before_action do
     push_referer
@@ -33,18 +34,21 @@ class TokimekiUnfollowController < ApplicationController
 
   def cleanup
     @user = current_tokimeki_user
-    @friend = fetch_friend(@user)
-    return if performed?
+    @friend = Friend.new(current_friend(@user))
+    @statuses = current_tweets(@friend.uid)
 
-    @statuses = request_context_client.user_timeline(@friend[:id], count: 100).select {|s| !s[:text].to_s.starts_with?('@')}.take(20).map {|s| Hashie::Mash.new(s)}
-
-    @twitter_user = TwitterUser.exists?(@friend[:id]) ? TwitterUser.latest_by(uid: @friend[:id]) : TwitterUser.build_by(user: @friend)
+    @twitter_user = TwitterUser.latest_by(uid: @friend.uid)
+    @twitter_user = TwitterUser.build_by(user: @friend.user) unless @twitter_user
   end
 
   def unfollow
     ActiveRecord::Base.transaction do
       current_tokimeki_user.increment(:processed_count).save!
-      Tokimeki::Unfriendship.create!(user_uid: current_user.uid, friend_uid: params[:uid], sequence: Tokimeki::Unfriendship.where(user_uid: current_user.uid).size)
+      Tokimeki::Unfriendship.create!(
+          user_uid: current_user.uid,
+          friend_uid: params[:uid],
+          sequence: Tokimeki::Unfriendship.where(user_uid: current_user.uid).size
+      )
     end
     head :ok
   end
@@ -56,22 +60,34 @@ class TokimekiUnfollowController < ApplicationController
 
   private
 
+  class Friend
+    attr_reader :user
+
+    def initialize(user)
+      @user = user
+    end
+
+    def uid
+      @user[:id]
+    end
+
+    def screen_name
+      @user[:screen_name]
+    end
+  end
+
   def current_tokimeki_user
     @current_tokimeki_user ||= Tokimeki::User.find_by(uid: current_user.uid)
   end
 
-  def fetch_friend(user)
+  def current_friend(user)
     friend_uids ||= user.friendships.pluck(:friend_uid)
 
-    if user.processed_count >= friend_uids.size
-      redirect_to root_path, notice: t('.finish')
-      return
-    end
-
     uid = friend_uids[user.processed_count]
-    Hashie::Mash.new(request_context_client.user(uid))
-  rescue Twitter::Error::NotFound, Twitter::Error::Forbidden => e
-    if skippable_exception?(e)
+    request_context_client.user(uid)
+
+  rescue => e
+    if AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.blocked?(e)
       user.increment(:processed_count).save!
       retry
     else
@@ -79,22 +95,28 @@ class TokimekiUnfollowController < ApplicationController
     end
   end
 
-  def skippable_exception?(e)
-    AccountStatus.not_found?(e) || AccountStatus.suspended?(e)
+  def current_tweets(uid)
+    request_context_client.user_timeline(uid, count: 100).reject do |tweet|
+      tweet[:text].to_s.starts_with?('@')
+    end.take(20).map { |t| Hashie::Mash.new(t) }
   end
 
-  def save_data
-    t_user = request_context_client.user(current_user.uid)
-    return false if t_user[:friends_count].to_i >= 10000
+  def current_twitter_user
+    request_context_client.user(current_user.uid)
+  end
 
-    friend_ids = request_context_client.friend_ids(t_user[:id])
-    CreateTwitterDBUserWorker.perform_async(friend_ids, user_id: current_user_id, enqueued_by: 'tokimeki unfollow')
+  # TODO Reset function
+  def initialize_data!
+    return if current_tokimeki_user
+
+    user = current_twitter_user
+    friend_uids = request_context_client.friend_ids(user[:id])
+
+    CreateTwitterDBUserWorker.perform_async(friend_uids, user_id: current_user.id, enqueued_by: 'tokimeki unfollow')
 
     ActiveRecord::Base.transaction do
-      user = Tokimeki::User.find_or_create_by!(uid: t_user[:id], screen_name: t_user[:screen_name], friends_count: t_user[:friends_count], processed_count: 0)
-      Tokimeki::Friendship.import_from!(user.uid, friend_ids)
+      Tokimeki::User.create!(uid: user[:id], screen_name: user[:screen_name], friends_count: user[:friends_count], processed_count: 0)
+      Tokimeki::Friendship.import_from!(current_user.uid, friend_uids)
     end
-
-    true
   end
 end
