@@ -3,10 +3,10 @@ require 'rails_helper'
 RSpec.describe ApiClient, type: :model do
   let(:option) do
     {
-      consumer_key: 'ck',
-      consumer_secret: 'cs',
-      access_token: 'at',
-      access_token_secret: 'ats',
+        consumer_key: 'ck',
+        consumer_secret: 'cs',
+        access_token: 'at',
+        access_token_secret: 'ats',
     }
   end
 
@@ -25,14 +25,38 @@ RSpec.describe ApiClient, type: :model do
   end
 
   describe '.do_request_with_retry' do
-    let(:client) { TwitterWithAutoPagination::Client.new }
-
+    let(:client) { instance_double(TwitterWithAutoPagination::Client) }
     let(:method_name) { :user }
     let(:args) { ['ts_3156'] }
+    subject { ApiClient.do_request_with_retry(client, method_name, args) }
 
     it 'passes params to client' do
-      expect(ApiClient).to receive(:do_request_with_retry).with(client, method_name, args)
-      ApiClient.do_request_with_retry(client, method_name, args)
+      expect(client).to receive(method_name).with(*args)
+      subject
+    end
+
+    context 'The client raises unauthorized exception' do
+      let(:exception) { Twitter::Error::Unauthorized.new('Invalid or expired token.') }
+      before do
+        allow(client).to receive(method_name).with(*args).and_raise(exception)
+      end
+
+      it do
+        expect(client).to receive(method_name).with(*args)
+        expect(AccountStatus).to receive(:unauthorized?).with(exception)
+        expect { subject }.to raise_error(Twitter::Error::Unauthorized)
+      end
+    end
+
+    context 'The client raises retryable exception' do
+      before do
+        allow(client).to receive(method_name).with(*args).and_raise(Twitter::Error::InternalServerError)
+      end
+
+      it do
+        expect(client).to receive(method_name).with(*args).exactly(6).times
+        expect { subject }.to raise_error(Twitter::Error::InternalServerError)
+      end
     end
   end
 

@@ -17,7 +17,7 @@ class ApiClient
       tries ||= 5
       client.send(method, *args, &block) # client#parallel uses block.
     rescue Twitter::Error::Unauthorized => e
-      if e.message == 'Invalid or expired token.'
+      if AccountStatus.unauthorized?(e)
         user = User.select(:id).find_by(token: client.access_token, secret: client.access_token_secret)
         UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now) if user
       end
@@ -27,7 +27,7 @@ class ApiClient
         Twitter::Error::InternalServerError,
         Twitter::Error::ServiceUnavailable,
         Twitter::Error => e
-      if retryable_exception?(e)
+      if ServiceStatus.new(ex: e).retryable?
         message = "#{self.class}##{method}: #{e.class} #{e.message}"
 
         if (tries -= 1) < 0
@@ -39,15 +39,6 @@ class ApiClient
       else
         raise
       end
-    end
-
-    def retryable_exception?(ex)
-      ([Errno::ECONNRESET, HTTP::ConnectionError, Twitter::Error].include?(ex.class) && ex.message.include?('Connection reset by peer')) ||
-          (ex.class == Twitter::Error::InternalServerError && ex.message == 'Internal error') ||
-          (ex.class == Twitter::Error::InternalServerError && ex.message == '') ||
-          (ex.class == Twitter::Error::ServiceUnavailable && ex.message == 'Over capacity') ||
-          (ex.class == Twitter::Error::ServiceUnavailable && ex.message == '') ||
-          (ex.class == Twitter::Error && ex.message == 'execution expired')
     end
 
     def config(options = {})
