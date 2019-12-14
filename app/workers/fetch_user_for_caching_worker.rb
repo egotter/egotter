@@ -30,10 +30,13 @@ class FetchUserForCachingWorker
     client = options['user_id'] ? User.find(options['user_id']).api_client : Bot.api_client
     client.user(uid_or_screen_name)
   rescue => e
-    if AccountStatus.not_found?(e)
+    status = AccountStatus.new(ex: e)
+
+    if status.not_found?
       CreateNotFoundUserWorker.perform_async(uid_or_screen_name) if uid_or_screen_name.class == String
-    elsif AccountStatus.suspended?(e)
+    elsif status.suspended?
       CreateForbiddenUserWorker.perform_async(uid_or_screen_name) if uid_or_screen_name.class == String
+    elsif status.unauthorized?
     else
       logger.warn "#{e.inspect} #{uid_or_screen_name} #{options.inspect}"
       logger.info e.backtrace.join("\n")
