@@ -15,6 +15,7 @@ class SlackClient
       test_messages:               ENV['SLACK_TEST_MESSAGES_URL'],
       welcome_messages:            ENV['SLACK_WELCOME_MESSAGES_URL'],
       bot:                         ENV['SLACK_BOT_URL'],
+      tweet:                       ENV['SLACK_TWEET_URL'],
       delete_tweets:               ENV['SLACK_DELETE_TWEETS_URL'],
       orders:                      ENV['SLACK_ORDERS_URL'],
   }
