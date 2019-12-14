@@ -5,6 +5,10 @@ class CreateSearchLogWorker
   def perform(attrs)
     log = SearchLog.create!(attrs)
 
+    if log.user_id != -1
+      CreateAccessDayWorker.perform_async(log.user_id)
+    end
+
     unless log.crawler?
       UpdateSearchLogWorker.perform_async(log.id)
       UpdateVisitorWorker.perform_async(log.slice(:session_id, :user_id, :created_at))

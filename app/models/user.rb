@@ -59,6 +59,7 @@ class User < ApplicationRecord
 
     obj.has_one :notification_setting
     obj.has_many :orders
+    obj.has_many :access_days
   end
 
   accepts_nested_attributes_for :notification_setting
