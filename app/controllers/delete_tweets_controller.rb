@@ -6,7 +6,7 @@ class DeleteTweetsController < ApplicationController
   def new
     if user_signed_in?
       requests = current_user.delete_tweets_requests
-      @logs = requests.any? ? requests.first.logs.take(5) : []
+      @logs = requests.any? ? requests.first.logs.take(50) : []
       @processing = requests.where(created_at: 1.hour.ago..Time.zone.now).where(finished_at: nil).exists?
 
       unless current_user.authorized?

@@ -57,7 +57,7 @@ class DeleteTweetsRequest < ApplicationRecord
     raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
   rescue => e
     if e.message.include?('Connection reset by peer')
-      raise ConnectionResetByPeer
+      raise ConnectionResetByPeer.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
     else
       raise
     end

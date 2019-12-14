@@ -39,7 +39,11 @@
     .vertical-spacing
     .vertical-spacing
     .center-block
-      %h2.h4= t('.delete_tweets_log')
+      %h2.h4= t('.delete_tweets_status.title')
+      .vertical-spacing
+      .vertical-spacing
+      .description= t('.delete_tweets_status.description', user: @current_user.screen_name)
+      .vertical-spacing
       .vertical-spacing
       %table.text-center.table.table-bordered.table-condensed.table-responsive
         = render(partial: 'log', collection: @logs, cached: true)

@@ -2,7 +2,16 @@ require 'rails_helper'
 
 RSpec.describe DeleteTweetsRequest, type: :model do
   describe '#perform!' do
+    let(:user) { create(:user, authorized: true) }
+    let(:request) { DeleteTweetsRequest.create(session_id: -1, user: user) }
+    let(:subject) { request.perform! }
 
+    before do
+      allow(request).to receive(:error_check!).with(no_args)
+      allow(request).to receive(:api_client).and_raise('xxx Connection reset by peer xxx')
+    end
+
+    it { expect { subject }.to raise_error(described_class::ConnectionResetByPeer) }
   end
 
   describe '#error_check!' do

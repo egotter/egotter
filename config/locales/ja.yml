@@ -1282,7 +1282,9 @@ ja:
         <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！
       delete_tweets: 'ツイートを一括削除する'
       see_progress: 'ツイート削除ステータスを見る'
-      delete_tweets_log: 'ツイート削除ステータス'
+      delete_tweets_status:
+        title: 'ツイート削除ステータス'
+        description: '@%{user} のツイート削除状況です。'
       requested: '削除リクエスト済み'
       modal:
         title: 'ツイート一括削除'

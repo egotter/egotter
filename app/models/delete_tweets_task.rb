@@ -31,6 +31,7 @@ class DeleteTweetsTask
       @retry_in = e.retry_in
     rescue => e
       request.send_error_message(User.egotter)
+      raise
     else
       raise "#{self.class}##{__method__} DeleteTweetsRequest#perform! must raise an exception #{request.id}"
     ensure
