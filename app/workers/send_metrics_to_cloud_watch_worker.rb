@@ -127,26 +127,31 @@ class SendMetricsToCloudWatchWorker
   end
 
   def send_prompt_reports_metrics
-    namespace = "PromptReports/#{Rails.env}"
-    duration = {created_at: 10.minutes.ago..Time.zone.now}
+    namespace = "PromptReports#{"/#{Rails.env}" unless Rails.env.production?}"
 
-    CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, count|
-      name = key.demodulize
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data(name, count, options)
+    [[10.minutes.ago, '10 minutes'], [1.hour.ago, '1 hour']].each do |duration_start, duration_label|
+      duration = {created_at: duration_start..Time.zone.now}
+
+      CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, count|
+        name = key.demodulize
+        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Error reason'}]}
+        client.put_metric_data(name, count, options)
+      end
+
+      send_count = PromptReport.where(duration).size
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
+      client.put_metric_data('SendCount', send_count, options) if send_count > 0
+
+      read_count = PromptReport.where(duration).where.not(read_at: nil).size
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
+      client.put_metric_data('ReadCount', read_count, options) if read_count > 0
+
+      if send_count > 0 && read_count > 0
+        read_rate = 100.0 * read_count / send_count
+        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
+        client.put_metric_data('ReadRate', read_rate, options)
+      end
     end
-
-    send_count = PromptReport.where(duration).size
-    options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
-    client.put_metric_data('SendCount', send_count, options) if send_count > 0
-
-    read_count = PromptReport.where(duration).where.not(read_at: nil).size
-    options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
-    client.put_metric_data('ReadCount', read_count, options) if read_count > 0
-
-    read_rate = send_count == 0 ? 0.0 : 100.0 * read_count / send_count
-    options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
-    client.put_metric_data('ReadRate', read_rate, options) if send_count > 0 && read_count > 0
   end
 
   def send_search_error_logs_metrics
