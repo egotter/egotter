@@ -30,15 +30,15 @@ class UpdateAuthorizedWorker
 
     user.screen_name = t_user[:screen_name]
     user.save! if user.changed?
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
+  rescue => e
+    status = AccountStatus.new(ex: e)
+
+    if status.unauthorized?
       user.update!(authorized: false)
+    elsif status.not_found? || status.suspended? || status.too_many_requests?
     else
       logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
       logger.info e.backtrace.join("\n")
     end
-  rescue => e
-    logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
-    logger.info e.backtrace.join("\n")
   end
 end

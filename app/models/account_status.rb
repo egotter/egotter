@@ -34,6 +34,10 @@ class AccountStatus
     @ex && @ex.class == Twitter::Error::BadRequest && @ex.message == 'Bad Authentication data.'
   end
 
+  def too_many_requests?
+    @ex && @ex.class == Twitter::Error::TooManyRequests && @ex.message == 'Rate limit exceeded'
+  end
+
   class << self
     def not_found?(ex)
       new(ex: ex).not_found?
