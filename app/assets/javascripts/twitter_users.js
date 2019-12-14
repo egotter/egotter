@@ -68,7 +68,7 @@ TwitterUsers.AlertBox.prototype = {
         this._shown.hide().unstick();
         this._shown = null;
       }
-      $box.show().sticky();
+      $box.show().sticky({zIndex: 1000});
       this._shown = $box;
 
       ga('send', {
