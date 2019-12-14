@@ -72,6 +72,12 @@ module Deploy
 
     def run
       hosts.each do |host|
+        cmd = "ssh -q #{host} exit"
+        puts "\e[32m#{cmd}\e[0m" # Green
+        puts system(cmd, exception: true)
+      end
+
+      hosts.each do |host|
         CMD.each do |cmd|
           if cmd.class == Array
             cmd.each do |c|
