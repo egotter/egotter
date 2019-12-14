@@ -17,6 +17,7 @@
 
 .page-description.text-center.text-muted= raw @page_description
 .vertical-spacing
+.vertical-spacing
 
 :javascript
   $(function () {
@@ -26,9 +27,18 @@
     }
   });
 
-.tweet-box-wrapper
-  = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user})
+.text-center= t('unfriends.show.tweet.biginner.title_html')
 .vertical-spacing
+.tweet-box-wrapper
+  = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text_for_empty_users, twitter_user: @twitter_user})
+
+- if @tweet_text
+  .vertical-spacing
+  .vertical-spacing
+  .text-center= t('unfriends.show.tweet.expert.title_html')
+  .vertical-spacing
+  .tweet-box-wrapper
+    = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user})
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 

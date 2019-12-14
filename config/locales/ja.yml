@@ -821,6 +821,11 @@ ja:
         <a href="%{url}">リムられチェック</a>を使うことで、%{user} のリムったユーザーは集計されています。<a href="%{url}">リムられチェック</a>は自分以外のアカウントも検索できます。
         </span>
       meta_description: "@%{user} がリムーブしたユーザーの一覧 -  リムーブした %{unfriends}人 リムられた %{unfollowers}人 ブロックされたかも %{blocking_or_blocked}人"
+      tweet:
+        biginner:
+          title_html: 'えごったーを<span class="egotter-pink">これから使う</span>方向け'
+        expert:
+          title_html: 'えごったーに<span class="egotter-pink">慣れてきた</span>方向け'
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter #リムられチェック %{url}"
       tweet_empty_text: "えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑) #egotter #リムられチェック %{url}"
       see_more: 'もっと見る'
