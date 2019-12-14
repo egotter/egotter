@@ -2,6 +2,10 @@ class CreateAccessDayWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
+  def unique_key(user_id, options = {})
+    user_id
+  end
+
   def unique_in
     1.hour
   end
