@@ -19,6 +19,10 @@ class FetchUserForCachingWorker
     5.seconds
   end
 
+  def after_timeout(uid_or_screen_name, options = {})
+    # Do nothing.
+  end
+
   # options:
   #   user_id
   #   enqueued_at
