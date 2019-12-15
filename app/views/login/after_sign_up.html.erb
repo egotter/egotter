@@ -1,0 +1,11 @@
+<html>
+<body>
+<%= render partial: 'shared/google_analytics' %>
+<%= image_tag '/ajax-loader.gif' %>&nbsp;<%= t('login.after_sign_up.proceccing') %>
+<script>
+  setTimeout(function () {
+    window.location.href = '<%= @redirect_path.html_safe %>';
+  }, 3000);
+</script>
+</body>
+</html>

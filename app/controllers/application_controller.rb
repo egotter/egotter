@@ -9,6 +9,7 @@ class ApplicationController < ActionController::Base
   include CrawlersHelper
   include Concerns::SessionsConcern
   include Concerns::ValidationConcern
+  include Concerns::BypassFlashMessagesConcern
   include Concerns::Logging
 
   # Avoid `uninitialized constant` or `Unable to autoload constant`

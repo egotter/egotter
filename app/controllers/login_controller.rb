@@ -32,19 +32,17 @@ class LoginController < ApplicationController
   end
 
   # This action is created for conversion tracking.
-  def after_sign_in
+  def after_sign_up
     @redirect_path = params[:redirect_path]
-    status = t("devise.omniauth_callbacks.#{current_user.notification_setting.dm_enabled?}")
-    flash[:notice] = t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: status, url: settings_path(via: 'after_sign_in'))
+    set_bypassed_notice_message('after_sign_up')
     render layout: false
   end
 
   # This action is created for conversion tracking.
-  def after_sign_up
+  def after_sign_in
     @redirect_path = params[:redirect_path]
-    status = t("devise.omniauth_callbacks.#{current_user.notification_setting.dm_enabled?}")
-    flash[:notice] = t('devise.omniauth_callbacks.success_with_notification_status_html', kind: 'Twitter', status: status, url: settings_path(via: 'after_sign_in'))
-    render 'after_sign_in', layout: false
+    set_bypassed_notice_message('after_sign_in')
+    render layout: false
   end
 
   # This implementation is for logging.
