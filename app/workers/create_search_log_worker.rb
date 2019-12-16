@@ -10,7 +10,7 @@ class CreateSearchLogWorker
     end
 
     unless log.crawler?
-      UpdateSearchLogWorker.perform_async(log.id)
+      UpdateFootprintsWorker.perform_async(log.id) if log.with_login?
       UpdateVisitorWorker.perform_async(log.slice(:session_id, :user_id, :created_at))
     end
   rescue => e
