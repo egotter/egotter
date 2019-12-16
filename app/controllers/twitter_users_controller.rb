@@ -18,7 +18,7 @@ class TwitterUsersController < ApplicationController
   # Polling access of waiting
   # Polling access of background-update
   def show
-    twitter_user = TwitterUser.latest_by(uid: params[:uid])
+    twitter_user = TwitterUser.with_delay.latest_by(uid: params[:uid])
     render json: {uid: params[:uid].to_s, created_at: twitter_user&.created_at&.to_i}
   end
 

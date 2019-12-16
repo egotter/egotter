@@ -21,7 +21,7 @@ module Concerns::SearchRequestConcern
         @new_screen_name = @twitter_user.screen_name
       end
 
-      @twitter_user = TwitterUser.latest_by(uid: @twitter_user.uid)
+      @twitter_user = TwitterUser.with_delay.latest_by(uid: @twitter_user.uid)
       @twitter_user.screen_name = @new_screen_name if @new_screen_name
     end
 
