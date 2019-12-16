@@ -2,8 +2,6 @@ class UpdateFootprintsWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
-  # TODO Remove UpdateSearchLogWorker
-
   #def unique_key(search_log_id, options = {})
   #  options['user_id']
   #end
@@ -12,6 +10,8 @@ class UpdateFootprintsWorker
     1.minute
   end
 
+  # options:
+  #   user_id
   def perform(search_log_id, options = {})
     log = SearchLog.find(search_log_id)
 
