@@ -55,13 +55,16 @@ class PromptReport < ApplicationRecord
     dm
   end
 
-  class StartingFailed < StandardError
+  class ReportingError < StandardError
   end
 
-  class ReportingFailed < StandardError
+  class StartingFailed < ReportingError
   end
 
-  class FallbackFailed < StandardError
+  class ReportingFailed < ReportingError
+  end
+
+  class FallbackFailed < ReportingError
   end
 
   class << self

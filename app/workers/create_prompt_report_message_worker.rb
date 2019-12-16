@@ -68,11 +68,15 @@ class CreatePromptReportMessageWorker
       logger.warn "Invalid value #{kind}"
     end
 
-  rescue => e
-    if TemporaryDmLimitation.temporarily_locked?(e)
-    elsif TemporaryDmLimitation.you_have_blocked?(e)
+  rescue PromptReport::ReportingError => e
+    if e.cause && DirectMessageStatus.you_have_blocked?(e.cause)
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-    elsif TemporaryDmLimitation.not_allowed_to_access_or_delete_dm?(e)
+    end
+    log(options).update(status: false, error_class: e.class, error_message: e.message)
+  rescue => e
+    if DirectMessageStatus.you_have_blocked?(e)
+      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
+    elsif DirectMessageStatus.cannot_send_messages?(e)
     else
       logger.warn "#{e.inspect} #{user_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
       logger.info e.backtrace.join("\n")
