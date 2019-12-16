@@ -43,11 +43,12 @@ class  Page::GoodFriends < ::Page::Base
   end
 
   def good_friends_text(users, twitter_user)
+    via = "close_friends#{l(Time.zone.now.in_time_zone('Tokyo'), format: :share_text_short)}"
     share_url =
         if action_name == 'show'
-          send("#{controller_name.singularize}_url", @twitter_user, via: 'close_friends_text')
+          send("#{controller_name.singularize}_url", @twitter_user, via: via)
         else
-          send("all_#{controller_name}_url", @twitter_user, via: 'close_friends_text')
+          send("all_#{controller_name}_url", @twitter_user, via: via)
         end
 
     mention_names = users.map.with_index { |u, i| "#{i + 1}. #{u.mention_name}" }
