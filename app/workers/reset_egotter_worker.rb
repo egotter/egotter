@@ -6,6 +6,10 @@ class ResetEgotterWorker
     request_id
   end
 
+  def unique_in
+    1.minute
+  end
+
   def after_skip(request_id, options = {})
     logger.warn "Skipped #{request_id}"
   end
@@ -21,11 +25,7 @@ class ResetEgotterWorker
     QueueingRequests.new(self.class).delete(request_id)
     RunningQueue.new(self.class).delete(request_id)
 
-    ResetEgotterWorker.perform_in(retry_in, request_id, options)
-  end
-
-  def retry_in
-    1.minute
+    ResetEgotterWorker.perform_in(1.minute, request_id, options)
   end
 
   # options:
