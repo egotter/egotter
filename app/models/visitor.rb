@@ -30,6 +30,7 @@ class Visitor < ApplicationRecord
   include Concerns::LastSessionAnalytics
 
   def last_session_duration
-    (last_access_at - 30.minutes)..last_access_at
+    period_end = last_access_at || created_at
+    (period_end - 30.minutes)..period_end
   end
 end
