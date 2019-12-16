@@ -41,7 +41,7 @@ module Concerns::ValidationConcern
   end
 
   def twitter_user_persisted?(uid)
-    return true if TwitterUser.exists?(uid: uid)
+    return true if TwitterUser.with_delay.exists?(uid: uid)
 
     if !from_crawler? && controller_name == 'timelines' && action_name == 'show'
       @screen_name = @twitter_user.screen_name
