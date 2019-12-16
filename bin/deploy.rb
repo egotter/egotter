@@ -56,7 +56,7 @@ module Deploy
         ['sudo service sidekiq_prompt_reports status', 'sudo service sidekiq_prompt_reports restart'],
         ['sudo service sidekiq status'               , 'sudo service sidekiq restart'],
         ['sudo service sidekiq_import status'        , 'sudo service sidekiq_import restart'],
-        ['sudo service sidekiq_follow status'        , 'sudo service sidekiq_follow restart'],
+        ['sudo service sidekiq_follow status'        , 'sudo service sidekiq_follow force-restart'],
         ['sudo service sidekiq_unfollow status'      , 'sudo service sidekiq_unfollow restart'],
     ]
 
