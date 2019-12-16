@@ -136,26 +136,7 @@ class CreatePromptReportRequest < ApplicationRecord
   ACTIVE_DAYS_WARNING = 7
 
   def error_check!
-    verify_credentials!
-
-    raise TooManyErrors if too_many_errors?
-    raise PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
-    raise TooShortRequestInterval if too_short_request_interval?
-    raise Unauthorized unless user.authorized?
-    raise ReportDisabled unless user.notification_setting.dm_enabled?
-    raise TooShortSendInterval unless user.notification_setting.prompt_report_interval_ok?
-    raise UserSuspended if suspended?
-    raise TooManyFriends if SearchLimitation.limited?(fetch_user, signed_in: true)
-    raise EgotterBlocked if blocked?
-
-    if TwitterUser.exists?(uid: user.uid)
-      twitter_user = TwitterUser.latest_by(uid: user.uid)
-      raise TooManyFriends if SearchLimitation.limited?(twitter_user, signed_in: true)
-      raise MaybeImportBatchFailed if twitter_user.no_need_to_import_friendships?
-    end
-
-    raise UserInactive unless user.active_access?(ACTIVE_DAYS)
-
+    CreatePromptReportValidator.new(request: self).validate!
     @error_check = true
   end
 
@@ -172,92 +153,9 @@ class CreatePromptReportRequest < ApplicationRecord
 
   TOO_MANY_ERRORS_SIZE = 3
 
-  # Notice: If the InitializationStarted occurs three times,
-  # you will not be able to send a message.
-  def too_many_errors?
-    errors = CreatePromptReportLog.where(user_id: user.id).
-        where.not(request_id: id).
-        where(created_at: 1.day.ago..Time.zone.now).
-        where.not(error_class: CreatePromptReportRequest::TooManyErrors).
-        order(created_at: :desc).
-        limit(3).
-        pluck(:error_class)
-
-    (errors.size == TOO_MANY_ERRORS_SIZE && errors.all? { |err| err.present? }).tap do |val|
-      # Save this value in Redis since it is difficult to retrieve this value efficiently with SQL.
-      if val
-        (@too_many_errors_users ||= TooManyErrorsUsers.new).add(user.id) # The ivar is used for testing
-      end
-    end
-  end
-
   private
 
-  def verify_credentials!
-    ApiClient.do_request_with_retry(internal_client, :verify_credentials, [])
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      raise Unauthorized
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
-  rescue => e
-    raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-  end
-
   PROCESS_REQUEST_INTERVAL = 1.hour
-
-  def too_short_request_interval?
-    self.class.where(user_id: user.id).
-        where(created_at: PROCESS_REQUEST_INTERVAL.ago..Time.zone.now).
-        where.not(id: id).exists?
-  end
-
-  def suspended?
-    fetch_user[:suspended]
-  end
-
-  def blocked?
-    if BlockedUser.exists?(uid: fetch_user[:id])
-      true
-    else
-      blocked = client.blocked_ids.include? User::EGOTTER_UID
-      CreateBlockedUserWorker.perform_async(fetch_user[:id], fetch_user[:screen_name]) if blocked
-      blocked
-    end
-  rescue Twitter::Error::Forbidden => e
-    if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
-      raise TemporarilyLocked.new(__method__.to_s)
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
-  rescue => e
-    raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-  end
-
-  def fetch_user
-    @fetch_user ||= client.user(user.uid)
-  rescue Twitter::Error::Forbidden => e
-    if e.message.start_with? 'To protect our users from spam and other malicious activity, this account is temporarily locked.'
-      raise TemporarilyLocked.new("#{__method__}: #{e.class} #{e.message}")
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
-  rescue => e
-    if AccountStatus.unauthorized?(e)
-      raise Unauthorized
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
-  end
-
-  def client
-    @client ||= user.api_client
-  end
-
-  def internal_client
-    @internal_client ||= client.twitter
-  end
 
   class Error < StandardError
   end

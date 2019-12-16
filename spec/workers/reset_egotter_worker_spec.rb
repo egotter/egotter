@@ -7,13 +7,14 @@ RSpec.describe ResetEgotterWorker do
   end
 
   before do
+    Redis.client.flushdb
     Sidekiq::Worker.clear_all
   end
 
   describe '#unique_key' do
     let(:request_id) { 1 }
-    let(:queueing_requests) { QueueingRequests.new(described_class) }
-    let(:running_queue) { RunningQueue.new(described_class) }
+    let(:queueing_requests) { QueueingRequests.new(described_class, 1.minute) }
+    let(:running_queue) { RunningQueue.new(described_class, 1.minute) }
 
     before do
       described_class.send(:prepend, DoNothingWorker)
