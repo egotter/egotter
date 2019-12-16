@@ -5,7 +5,7 @@ class CreateSearchLogWorker
   def perform(attrs)
     log = SearchLog.create!(attrs)
 
-    if log.user_id != -1
+    if log.with_login?
       CreateAccessDayWorker.perform_async(log.user_id)
     end
 

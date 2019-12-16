@@ -2,18 +2,26 @@ require 'rails_helper'
 
 RSpec.describe SearchLog, type: :model do
   describe '#with_login?' do
-    context 'user_id != -1' do
-      it 'returns true' do
-        expect(SearchLog.new(user_id: 1).with_login?).to be_truthy
-        expect(SearchLog.new(user_id: '10').with_login?).to be_truthy
-      end
+    subject { SearchLog.new(user_id: user_id).with_login? }
+
+    context 'user_id == 1' do
+      let(:user_id) { 1 }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'user_id == 10' do
+      let(:user_id) { 10 }
+      it { is_expected.to be_truthy }
     end
 
     context 'user_id == -1' do
-      it 'returns false' do
-        expect(SearchLog.new(user_id: -1).with_login?).to be_falsey
-        expect(SearchLog.new(user_id: '-1').with_login?).to be_falsey
-      end
+      let(:user_id) { -1 }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'user_id == "-1"' do
+      let(:user_id) { '-1' }
+      it { is_expected.to be_falsey }
     end
   end
 

@@ -15,7 +15,7 @@ class StartSendingPromptReportsTask
   end
 
   def active_ids
-    @active_ids ||= User.active(CreatePromptReportRequest::ACTIVE_DAYS).where(id: authorized_ids).pluck(:id)
+    @active_ids ||= User.active_access(CreatePromptReportRequest::ACTIVE_DAYS).where(id: authorized_ids).pluck(:id)
   end
 
   def not_blocked_ids

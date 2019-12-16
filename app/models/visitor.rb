@@ -26,7 +26,7 @@
 class Visitor < ApplicationRecord
   # visitable :ahoy_visit
 
-  include Concerns::Visitor::Activeness
+  #include Concerns::Visitor::Activeness
   include Concerns::LastSessionAnalytics
 
   def last_session_duration

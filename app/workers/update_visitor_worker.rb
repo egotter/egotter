@@ -2,6 +2,10 @@ class UpdateVisitorWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
+  # attrs:
+  #   session_id
+  #   user_id
+  #   created_at
   def perform(attrs)
     visitor = Visitor.find_or_initialize_by(session_id: attrs['session_id'])
 
