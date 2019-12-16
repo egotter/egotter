@@ -41,19 +41,19 @@ class CreateTestMessageWorker
       dm_client.create_direct_message(User::EGOTTER_UID, message)
     rescue => e
       dm = TestMessage.permission_level_not_enough(user.id).deliver!
-      send_message_to_slack(dm.text, title: 'plne')
+      send_message_to_slack(dm.text, title: 'plne', user_id: user_id)
     else
       if options['error_class']
         if [CreatePromptReportRequest::TooShortSendInterval, CreatePromptReportRequest::TooShortRequestInterval].map(&:to_s).include?(options['error_class'])
           dm = TestMessage.ok(user.id).deliver!
-          send_message_to_slack(dm.text, title: 'ok')
+          send_message_to_slack(dm.text, title: 'ok', user_id: user_id)
         else
           dm = TestMessage.need_fix(user.id, options['error_class'], options['error_message']).deliver!
-          send_message_to_slack(dm.text, title: 'need_fix')
+          send_message_to_slack(dm.text, title: 'need_fix', user_id: user_id)
         end
       else
         dm = TestMessage.ok(user.id).deliver!
-        send_message_to_slack(dm.text, title: 'ok')
+        send_message_to_slack(dm.text, title: 'ok', user_id: user_id)
 
         request = CreatePromptReportRequest.create(user_id: user.id)
         ForceCreatePromptReportWorker.perform_in(10.seconds, request.id, user_id: user.id)
@@ -68,8 +68,9 @@ class CreateTestMessageWorker
     log(options).update(status: false, error_class: e.class, error_message: e.message)
   end
 
-  def send_message_to_slack(text, title: nil)
-    SlackClient.test_messages.send_message(text, title: "`#{title}`")
+  def send_message_to_slack(text, title: nil, user_id: nil)
+    text = '' if title == 'ok'
+    SlackClient.test_messages.send_message(text, title: "`#{title}` `#{user_id}`")
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
   end
