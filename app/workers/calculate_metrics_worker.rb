@@ -83,7 +83,7 @@ class CalculateMetricsWorker
     stats = {
         size: users.size,
         creation_completed: users.creation_completed.size,
-        has_user: users.has_user.size,
+        has_user: users.where('user_id != -1').size,
         unique_uid: users.select('distinct uid').count,
         unique_user_id: users.select('distinct user_id').count,
     }

@@ -3,22 +3,6 @@ require 'active_support/concern'
 module Concerns::TwitterUser::Utils
   extend ActiveSupport::Concern
 
-  class_methods do
-    def latest_by(condition)
-      order(created_at: :desc).find_by(condition)
-    end
-  end
-
-  included do
-    scope :creation_completed, -> do
-      where.not('friends_size = 0 and followers_size = 0')
-    end
-
-    scope :has_user, -> do
-      where('user_id != -1')
-    end
-  end
-
   # Reason1: too many friends
   # Reason2: near zero friends
   def no_need_to_import_friendships?

@@ -30,6 +30,7 @@ class TwitterUser < ApplicationRecord
   include Concerns::TwitterUser::Validation
   include Concerns::TwitterUser::Inflections
   include Concerns::TwitterUser::Builder
+  include Concerns::TwitterUser::QueryMethods
   include Concerns::TwitterUser::Utils
   include Concerns::TwitterUser::Api
   include Concerns::TwitterUser::Dirty
