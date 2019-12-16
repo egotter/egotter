@@ -23,7 +23,7 @@ class HomeController < ApplicationController
     end
 
     if params[:via].to_s.end_with?('secret_mode_detected')
-      flash.now[:alert] = t('before_sign_in.secret_mode_detected')
+      flash.now[:alert] = t('before_sign_in.secret_mode_detected', device_type: request.device_type, os: request.os, os_version: request.os_version, browser: request.browser, browser_version: request.browser_version)
     elsif params[:via].to_s.end_with?('ad_blocker_detected')
       flash.now[:alert] = t('before_sign_in.ad_blocker_detected')
     elsif params[:via].to_s.end_with?('unauthorized_detected')
