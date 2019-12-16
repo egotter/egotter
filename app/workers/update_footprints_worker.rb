@@ -2,9 +2,9 @@ class UpdateFootprintsWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
-  #def unique_key(search_log_id, options = {})
-  #  options['user_id']
-  #end
+  def unique_key(search_log_id, options = {})
+    options['user_id']
+  end
 
   def unique_in
     1.minute
