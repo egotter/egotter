@@ -13,7 +13,10 @@ module Concerns::JobQueueingConcern
 
     # This value is used in #searched_uid? to redirect to an error page when the uid is not searched.
     queue = EnqueuedSearchRequest.new
-    return if queue.exists?(uid)
+    if queue.exists?(uid)
+      logger.debug { "#{controller_name}##{action_name} Queueing of CreateSignedInTwitterUserWorker is skipped #{user_id} #{uid}" }
+      return
+    end
     queue.add(uid)
 
     request = CreateTwitterUserRequest.create(
