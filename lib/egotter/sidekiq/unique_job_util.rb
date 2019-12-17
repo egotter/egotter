@@ -1,32 +1,37 @@
 module Egotter
   module Sidekiq
     module UniqueJobUtil
-      include JobCallbackUtil
-
-      def perform(worker, args, queue_class, &block)
+      def perform(worker, args, history, &block)
         if worker.respond_to?(:unique_key)
-          options = args.dup.extract_options!
-          unique_key = worker.unique_key(*args)
+          if perform_unique_check(worker, args, history, worker.unique_key(*args))
+            yield
+          end
+        else
+          yield
+        end
+      end
 
-          queue =
-              if worker.respond_to?(:unique_in)
-                queue_class.new(worker.class, worker.unique_in)
-              else
-                queue_class.new(worker.class)
-              end
+      def perform_unique_check(worker, args, history, unique_key)
+        if history.exists?(unique_key)
+          worker.logger.info { "#{self.class}:#{worker.class} Skip duplicate job for #{history.ttl} seconds. #{args.inspect.truncate(100)}" }
 
-          if !options['skip_unique'] && queue.exists?(unique_key)
-            worker.logger.info "#{self.class}:#{worker.class} Skip duplicate job for #{queue.ttl} seconds. #{args.inspect.truncate(100)}"
-
-            send_callback(worker, :after_skip, args)
-
-            return false
+          if worker.respond_to?(:after_skip)
+            worker.after_skip(*args)
           end
 
-          queue.add(unique_key)
+          false
+        else
+          history.add(unique_key)
+          true
         end
+      end
 
-        yield
+      def run_history(worker, queue_class, queueing_context)
+        if worker.respond_to?(:unique_in)
+          queue_class.new(worker.class, queueing_context, worker.unique_in)
+        else
+          queue_class.new(worker.class, queueing_context, 1.hour)
+        end
       end
     end
   end

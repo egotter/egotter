@@ -3,12 +3,15 @@ module Egotter
     class ServerUniqueJob
       include UniqueJobUtil
 
-      def initialize(queue_class)
-        @queue_class = queue_class
+      def initialize(process_context = nil)
+        @queue_class = Egotter::Sidekiq::RunHistory
+        @queueing_context = 'server'
+        @process_context = process_context || 'unspecified'
       end
 
       def call(worker, msg, queue, &block)
-        perform(worker, msg['args'], @queue_class, &block)
+        history = run_history(worker, @queue_class, @queueing_context)
+        perform(worker, msg['args'], history, &block)
       end
     end
   end

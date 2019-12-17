@@ -3,16 +3,19 @@ module Egotter
     class ClientUniqueJob
       include UniqueJobUtil
 
-      def initialize(queue_class)
-        @queue_class = queue_class
+      def initialize(process_context = nil)
+        @queue_class = Egotter::Sidekiq::RunHistory
+        @queueing_context = 'client'
+        @process_context = process_context || 'unspecified'
       end
 
-      def call(worker_class, job, queue, redis_pool, &block)
+      def call(worker_str, job, queue, redis_pool, &block)
         if job.has_key?('at')
           yield
         else
-          worker_class = worker_class.constantize
-          perform(worker_class.new, job['args'], @queue_class, &block)
+          worker = worker_str.constantize.new
+          history = run_history(worker, @queue_class, @queueing_context)
+          perform(worker, job['args'], history, &block)
         end
       end
     end
