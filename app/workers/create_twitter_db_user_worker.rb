@@ -42,7 +42,9 @@ class CreateTwitterDBUserWorker
   rescue => e
     if (AccountStatus.unauthorized?(e) || e.class == Twitter::Error::Forbidden) && user_id && (tries -= 1) > 0
       client = Bot.api_client
-      logger.warn "Retry with a bot client #{user_id} #{enqueued_by} #{e.class}"
+      unless AccountStatus.unauthorized?(e)
+        logger.warn "Retry with a bot client #{user_id} #{enqueued_by} #{e.class}"
+      end
       retry
     elsif e.message.include?('Connection reset by peer')
       retry

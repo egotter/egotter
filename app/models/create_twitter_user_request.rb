@@ -99,6 +99,10 @@ class CreateTwitterUserRequest < ApplicationRecord
   rescue => e
     if AccountStatus.unauthorized?(e)
       raise Unauthorized
+    elsif ServiceStatus.service_unavailable?(e)
+      raise ServiceUnavailable
+    elsif ServiceStatus.internal_server_error?(e)
+      raise InternalServerError
     elsif e.message == 'Connection reset by peer'
       retry
     else
@@ -162,6 +166,12 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class TooManyRequests < Error
+  end
+
+  class ServiceUnavailable < Error
+  end
+
+  class InternalServerError < Error
   end
 
   class Unknown < StandardError

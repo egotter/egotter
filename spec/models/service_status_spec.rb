@@ -33,4 +33,14 @@ RSpec.describe ServiceStatus, type: :model do
       expect(status.retryable?).to be_truthy
     end
   end
+
+  describe '.internal_server_error?' do
+    let(:ex) { Twitter::Error::InternalServerError.new('Internal error') }
+    it { expect(described_class.internal_server_error?(ex)).to be_truthy }
+  end
+
+  describe '.service_unavailable?' do
+    let(:ex) { Twitter::Error::ServiceUnavailable.new('Over capacity') }
+    it { expect(described_class.service_unavailable?(ex)).to be_truthy }
+  end
 end

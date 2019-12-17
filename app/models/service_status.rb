@@ -25,4 +25,14 @@ class ServiceStatus
   def retryable?
     connection_reset_by_peer? || internal_server_error? || service_unavailable? || execution_expired?
   end
+
+  class << self
+    def internal_server_error?(ex)
+      new(ex: ex).internal_server_error?
+    end
+
+    def service_unavailable?(ex)
+      new(ex: ex).service_unavailable?
+    end
+  end
 end
