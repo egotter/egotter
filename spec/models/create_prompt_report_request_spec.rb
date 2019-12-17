@@ -68,104 +68,15 @@ RSpec.describe CreatePromptReportRequest, type: :model do
     end
   end
 
-  describe '#too_many_errors?' do
+  describe '#error_check!' do
     let(:user) { create(:user) }
     let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
-    let(:sorted_set) { TooManyErrorsUsers.new }
-    subject { request.too_many_errors? }
-
-    before do
-      CreatePromptReportLog.create_by(request: request)
-      request.instance_variable_set(:@too_many_errors_users, sorted_set)
+    subject { request.error_check! }
+    it do
+      expect(CreatePromptReportValidator).to receive_message_chain(:new, :validate!).with(request: request).with(no_args)
+      is_expected.to be_truthy
+      expect(request.instance_variable_get(:@error_check)).to be_truthy
     end
-
-    context 'There is a error log' do
-      before do
-        1.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error') }
-      end
-      it do
-        expect(sorted_set).not_to receive(:add)
-        is_expected.to be_falsey
-      end
-    end
-
-    context 'There are 2 error logs' do
-      before do
-        2.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error') }
-      end
-      it do
-        expect(sorted_set).not_to receive(:add)
-        is_expected.to be_falsey
-      end
-    end
-
-    context 'There are 3 error logs' do
-      before do
-        3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error') }
-      end
-      it do
-        expect(sorted_set).to receive(:add).with(user.id).and_call_original
-        is_expected.to be_truthy
-      end
-    end
-
-    context 'There are 3 error logs, but they are outdated' do
-      before do
-        3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: 1.day.ago - 1) }
-      end
-      it do
-        expect(sorted_set).not_to receive(:add)
-        is_expected.to be_falsey
-      end
-    end
-
-    context 'There are 3 error logs, but the error_class is CreatePromptReportRequest::TooManyErrors' do
-      before do
-        3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: 'CreatePromptReportRequest::TooManyErrors') }
-      end
-      it do
-        expect(sorted_set).not_to receive(:add)
-        is_expected.to be_falsey
-      end
-    end
-
-    context 'There are 3 error logs, but error_class is empty' do
-      before do
-        3.times { CreatePromptReportLog.create!(user_id: user.id, error_class: '', error_message: "I'm an error") }
-      end
-      it do
-        expect(sorted_set).not_to receive(:add)
-        is_expected.to be_falsey
-      end
-    end
-
-    context 'There is a success log between 3 error logs.' do
-      before do
-        now = Time.zone.now
-        CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: now - 4.seconds)
-        CreatePromptReportLog.create!(user_id: user.id, error_class: '',      created_at: now - 3.seconds)
-        CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: now - 2.seconds)
-        CreatePromptReportLog.create!(user_id: user.id, error_class: 'Error', created_at: now - 1.second)
-      end
-      it do
-        expect(sorted_set).not_to receive(:add)
-        is_expected.to be_falsey
-      end
-    end
-  end
-
-  describe '#fetch_user' do
-    let(:user) { create(:user) }
-    let(:client) { double('Client') }
-    let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
-    subject { request.send(:fetch_user) }
-
-    before do
-      allow(request).to receive(:client).with(no_args).and_return(client)
-      allow(client).to receive(:user).with(user.uid).and_raise(Twitter::Error::Unauthorized, 'Invalid or expired token.')
-    end
-
-    it { expect { subject }.to raise_error(described_class::Unauthorized) }
   end
 end
 

@@ -38,6 +38,10 @@ class AccountStatus
     @ex && @ex.class == Twitter::Error::TooManyRequests && @ex.message == 'Rate limit exceeded'
   end
 
+  def temporarily_locked?
+    @ex && @ex.class == Twitter::Error::Forbidden && @ex.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
+  end
+
   class << self
     def not_found?(ex)
       new(ex: ex).not_found?
@@ -53,6 +57,10 @@ class AccountStatus
 
     def unauthorized?(ex)
       new(ex: ex).unauthorized?
+    end
+
+    def temporarily_locked?(ex)
+      new(ex: ex).temporarily_locked?
     end
   end
 end

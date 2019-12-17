@@ -42,5 +42,14 @@ class CreatePromptReportLog < ApplicationRecord
     def latest_by(condition)
       order(created_at: :desc).find_by(condition)
     end
+
+    def recent_error_logs(user_id:, request_id:)
+      where(user_id: user_id).
+          where.not(request_id: request_id).
+          where(created_at: 1.day.ago..Time.zone.now).
+          where.not(error_class: CreatePromptReportRequest::TooManyErrors).
+          order(created_at: :desc).
+          limit(3)
+    end
   end
 end
