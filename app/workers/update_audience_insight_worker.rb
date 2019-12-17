@@ -6,20 +6,21 @@ class UpdateAudienceInsightWorker
     uid
   end
 
+  def unique_in
+    1.minute
+  end
+
   def timeout_in
     10.seconds
   end
 
   def after_timeout(uid, options = {})
     logger.info "Timeout #{timeout_in} #{uid} #{options}"
-
-    QueueingRequests.new(self.class).delete(uid)
-    RunningQueue.new(self.class).delete(uid)
     UpdateAudienceInsightWorker.perform_in(retry_in, uid, options)
   end
 
   def retry_in
-    60 + rand(120)
+    unique_in + rand(120)
   end
 
   def expire_in
