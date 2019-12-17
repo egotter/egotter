@@ -69,8 +69,13 @@ class CreateTestMessageWorker
   end
 
   def send_message_to_slack(text, title: nil, user_id: nil)
-    text = '' if title == 'ok'
-    SlackClient.test_messages.send_message(text, title: "`#{title}` `#{user_id}`")
+    if title == 'ok'
+      text = ''
+      title = "#{title} #{user_id}"
+    else
+      title = "#{title} #{user_id} #{User.find(user_id).inspect}"
+    end
+    SlackClient.test_messages.send_message(text, title: title)
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
   end
