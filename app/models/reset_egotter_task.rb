@@ -30,6 +30,6 @@ class ResetEgotterTask
   def send_message_to_slack(status, request)
     SlackClient.reset_egotter.send_message("`#{status}` `#{request.id}` `#{request.user_id}`")
   rescue => e
-    logger.warn "Sending a message to slack is failed #{e.inspect}"
+    Rails.logger.warn "Sending a message to slack is failed #{e.inspect}"
   end
 end

@@ -35,7 +35,7 @@ class ResetEgotterWorker
     task.start!
 
   rescue => e
-    logger.warn "#{e.inspect} #{request_id}"
+    logger.warn "#{e.inspect} #{request_id} #{"Caused by #{e.cause.inspect}" if e.cause}"
     logger.info e.backtrace.join("\n")
   end
 end
