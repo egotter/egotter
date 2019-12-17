@@ -3,6 +3,7 @@ class UpdateFootprintsWorker
   sidekiq_options queue: 'logging', retry: 0, backtrace: false
 
   def unique_key(search_log_id, options = {})
+    options = options.with_indifferent_access
     options['user_id']
   end
 

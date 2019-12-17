@@ -1,6 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe UpdateFootprintsWorker do
+  describe '#unique_key' do
+    let(:worker) { described_class.new }
+    it do
+      expect(worker.unique_key(nil, {user_id: 1})).to eq(1)
+      expect(worker.unique_key(nil, {'user_id' => 1})).to eq(1)
+    end
+  end
+
   describe '#perform' do
     let(:user) { create(:user, first_access_at: nil, last_access_at: nil) }
     let(:log) { create(:search_log, user: user) }
