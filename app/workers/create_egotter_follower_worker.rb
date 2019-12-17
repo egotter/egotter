@@ -2,7 +2,11 @@ class CreateEgotterFollowerWorker
   include Sidekiq::Worker
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
-  def unique_in(user_id, options = {})
+  def unique_key(user_id, options = {})
+    user_id
+  end
+
+  def unique_in
     1.minute
   end
 
