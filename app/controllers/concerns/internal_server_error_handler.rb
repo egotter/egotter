@@ -2,6 +2,7 @@ require 'active_support/concern'
 
 module Concerns::InternalServerErrorHandler
   extend ActiveSupport::Concern
+  include Concerns::AlertMessagesConcern
   include Concerns::DebugConcern
 
   included do
@@ -16,11 +17,14 @@ module Concerns::InternalServerErrorHandler
     logger.warn "rescue_from Exception: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
     logger.info ex.backtrace.join("\n")
 
+    message = internal_server_error_message
+    create_search_error_log(__method__, message, ex)
+
     if request.xhr?
-      render json: {error: ex.message.truncate(100)}, status: :internal_server_error
+      render json: {error: message}, status: :internal_server_error
     else
       self.sidebar_disabled = true
-      flash.now[:alert] = internal_server_error_message
+      flash.now[:alert] = message
       render template: 'home/new', formats: %i(html), status: :internal_server_error
     end
   end
@@ -77,17 +81,6 @@ module Concerns::InternalServerErrorHandler
       t('application.request_timeout_with_recovery_html', user: screen_name, url: url)
     else
       t('application.request_timeout_html')
-    end
-  end
-
-  def internal_server_error_message
-    screen_name = params[:screen_name] || @twitter_user&.screen_name
-
-    if screen_name.present?
-      url = timeline_path(screen_name: screen_name, via: build_via('server_error'))
-      t('application.internal_server_error_with_recovery_html', user: screen_name, url: url)
-    else
-      t('application.internal_server_error')
     end
   end
 end

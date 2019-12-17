@@ -1551,8 +1551,8 @@ ja:
     twitter_user_not_found: "レコードが見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：TUNF404"
     searched_uid_not_found: "レコードの作成を開始できませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：SUNF404"
     routing_not_found: "お探しのページが見付かりませんでした。大変お手数ですが、トップページから再度検索してみてください。"
-    internal_server_error: "エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。"
-    internal_server_error_with_recovery_html: 'エラーが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a>'
+    internal_server_error: "一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。エラー：ISE500"
+    internal_server_error_with_recovery_html: '一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a> エラー：ISEWR500'
     request_timeout_html: '一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。'
     request_timeout_with_recovery_html: '一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a>'
     invalid_token:

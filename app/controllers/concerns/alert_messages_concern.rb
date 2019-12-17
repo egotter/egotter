@@ -24,6 +24,8 @@ module Concerns::AlertMessagesConcern
       when Twitter::Error::Unauthorized then unauthorized_message(screen_name)
       when Twitter::Error::BadRequest then unauthorized_message(screen_name)
       when Twitter::Error::TooManyRequests then too_many_requests_message(ex.rate_limit.reset_in.to_i + 1)
+      when Twitter::Error::ServiceUnavailable then internal_server_error_message
+      when Twitter::Error::InternalServerError then internal_server_error_message
       else unknown_alert_message(ex)
       end
     end
@@ -142,6 +144,17 @@ module Concerns::AlertMessagesConcern
       t('after_sign_in.too_many_requests_with_reset_in', seconds: sprintf('%d', reset_in))
     else
       t('before_sign_in.too_many_requests_html', url: kick_out_error_path('too_many_requests'))
+    end
+  end
+
+  def internal_server_error_message
+    screen_name = params[:screen_name] || @twitter_user&.screen_name
+
+    if screen_name.present?
+      url = timeline_path(screen_name: screen_name, via: build_via('internal_server_error'))
+      t('application.internal_server_error_with_recovery_html', user: screen_name, url: url)
+    else
+      t('application.internal_server_error')
     end
   end
 
