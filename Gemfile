@@ -67,6 +67,7 @@ gem 'gretel'
 gem 'google-api-client', require: false
 gem 'aws-sdk-cloudwatch', require: false
 gem 'aws-sdk-s3'
+gem 'aws-sdk-ec2', require: false
 gem 'stripe'
 gem 'ahoy_matey'
 
