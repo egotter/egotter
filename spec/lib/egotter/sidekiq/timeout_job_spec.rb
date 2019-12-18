@@ -55,9 +55,14 @@ RSpec.describe Egotter::Sidekiq::TimeoutJob do
       sidekiq_options queue: 'test', retry: 0, backtrace: false
 
       @@count = 0
+      @@callback_count = 0
 
       def timeout_in
         0.1
+      end
+
+      def after_timeout(*args)
+        @@callback_count += 1
       end
 
       def perform(*args)
@@ -67,9 +72,14 @@ RSpec.describe Egotter::Sidekiq::TimeoutJob do
     end
 
     before do
+      Sidekiq::Testing.server_middleware do |chain|
+        chain.add Egotter::Sidekiq::TimeoutJob
+      end
+
       Redis.client.flushdb
       TestTimeoutWorker.clear
       TestTimeoutWorker.class_variable_set(:@@count, 0)
+      TestTimeoutWorker.class_variable_set(:@@callback_count, 0)
     end
 
     specify 'Sidekiq server terminates long-running jobs' do

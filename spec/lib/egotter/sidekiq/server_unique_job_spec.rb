@@ -31,6 +31,7 @@ RSpec.describe Egotter::Sidekiq::ServerUniqueJob do
       sidekiq_options queue: 'test', retry: 0, backtrace: false
 
       @@count = 0
+      @@callback_count = 0
 
       def unique_key(*args)
         args[0]
@@ -40,15 +41,24 @@ RSpec.describe Egotter::Sidekiq::ServerUniqueJob do
         1.minute
       end
 
+      def after_skip(*args)
+        @@callback_count += 1
+      end
+
       def perform(*args)
         @@count += 1
       end
     end
 
     before do
+      Sidekiq::Testing.server_middleware do |chain|
+        chain.add Egotter::Sidekiq::ServerUniqueJob, 'test server'
+      end
+
       Redis.client.flushdb
       TestServerWorker.clear
       TestServerWorker.class_variable_set(:@@count, 0)
+      TestServerWorker.class_variable_set(:@@callback_count, 0)
     end
 
     specify "Sidekiq server doesn't run jobs that have the same unique_key" do
@@ -63,7 +73,9 @@ RSpec.describe Egotter::Sidekiq::ServerUniqueJob do
       expect(TestServerWorker.jobs.size).to eq(2)
 
       TestServerWorker.drain
+      expect(TestServerWorker.jobs.size).to eq(0)
       expect(TestServerWorker.class_variable_get(:@@count)).to eq(1)
+      expect(TestServerWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
 
     specify 'Sidekiq server runs jobs that have the same unique_key after the specified time has elapsed' do
@@ -73,7 +85,9 @@ RSpec.describe Egotter::Sidekiq::ServerUniqueJob do
       expect(TestServerWorker.jobs.size).to eq(1)
 
       TestServerWorker.drain
+      expect(TestServerWorker.jobs.size).to eq(0)
       expect(TestServerWorker.class_variable_get(:@@count)).to eq(1)
+      expect(TestServerWorker.class_variable_get(:@@callback_count)).to eq(0)
 
       travel TestServerWorker.new.unique_in
 
@@ -81,7 +95,9 @@ RSpec.describe Egotter::Sidekiq::ServerUniqueJob do
       expect(TestServerWorker.jobs.size).to eq(1)
 
       TestServerWorker.drain
+      expect(TestServerWorker.jobs.size).to eq(0)
       expect(TestServerWorker.class_variable_get(:@@count)).to eq(2)
+      expect(TestServerWorker.class_variable_get(:@@callback_count)).to eq(0)
     end
   end
 end

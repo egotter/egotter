@@ -40,6 +40,8 @@ RSpec.describe Egotter::Sidekiq::ClientUniqueJob do
       include Sidekiq::Worker
       sidekiq_options queue: 'test', retry: 0, backtrace: false
 
+      @@callback_count = 0
+
       def unique_key(*args)
         args[0]
       end
@@ -47,12 +49,20 @@ RSpec.describe Egotter::Sidekiq::ClientUniqueJob do
       def unique_in
         1.minute
       end
+
+      def after_skip(*args)
+        @@callback_count += 1
+      end
+
+      def perform(*args)
+        raise
+      end
     end
 
     before do
       Redis.client.flushdb
       TestClientWorker.clear
-      TestClientWorker.class_variable_set(:@@count, 0)
+      TestClientWorker.class_variable_set(:@@callback_count, 0)
     end
 
     specify "Sidekiq client doesn't push jobs that have the same unique_key" do
@@ -60,9 +70,11 @@ RSpec.describe Egotter::Sidekiq::ClientUniqueJob do
 
       TestClientWorker.perform_async(1)
       expect(TestClientWorker.jobs.size).to eq(1)
+      expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(0)
 
       TestClientWorker.perform_async(1)
       expect(TestClientWorker.jobs.size).to eq(1)
+      expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
 
     specify 'Sidekiq client pushes jobs that have the same unique_key after the specified time has elapsed' do
@@ -70,14 +82,17 @@ RSpec.describe Egotter::Sidekiq::ClientUniqueJob do
 
       TestClientWorker.perform_async(1)
       expect(TestClientWorker.jobs.size).to eq(1)
+      expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(0)
 
       TestClientWorker.perform_async(1)
       expect(TestClientWorker.jobs.size).to eq(1)
+      expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(1)
 
       travel TestClientWorker.new.unique_in
 
       TestClientWorker.perform_async(1)
       expect(TestClientWorker.jobs.size).to eq(2)
+      expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
 
     context 'Scheduled jobs' do
@@ -87,9 +102,11 @@ RSpec.describe Egotter::Sidekiq::ClientUniqueJob do
 
           TestClientWorker.perform_in(1.minute, 1)
           expect(Sidekiq::ScheduledSet.new.size).to eq(1)
+          expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(0)
 
           TestClientWorker.perform_in(1.minute, 1)
           expect(Sidekiq::ScheduledSet.new.size).to eq(2)
+          expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(0)
         end
       end
     end

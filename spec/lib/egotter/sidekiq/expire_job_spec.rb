@@ -106,9 +106,14 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
       sidekiq_options queue: 'test', retry: 0, backtrace: false
 
       @@count = 0
+      @@callback_count = 0
 
       def expire_in
         1.minute
+      end
+
+      def after_expire(*args)
+        @@callback_count += 1
       end
 
       def perform(*args)
@@ -117,9 +122,14 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
     end
 
     before do
+      Sidekiq::Testing.server_middleware do |chain|
+        chain.add Egotter::Sidekiq::ExpireJob
+      end
+
       Redis.client.flushdb
       TestExpireWorker.clear
       TestExpireWorker.class_variable_set(:@@count, 0)
+      TestExpireWorker.class_variable_set(:@@callback_count, 0)
     end
 
     specify "Sidekiq server doesn't run jobs that have a expired enqueued_at" do
@@ -132,7 +142,9 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
       expect(TestExpireWorker.jobs.size).to eq(2)
 
       TestExpireWorker.drain
+      expect(TestExpireWorker.jobs.size).to eq(0)
       expect(TestExpireWorker.class_variable_get(:@@count)).to eq(1)
+      expect(TestExpireWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
 
     specify 'Sidekiq server expires jobs with no enqueued_at specified' do
@@ -144,7 +156,9 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
       travel 1.hour
 
       TestExpireWorker.drain
+      expect(TestExpireWorker.jobs.size).to eq(0)
       expect(TestExpireWorker.class_variable_get(:@@count)).to eq(0)
+      expect(TestExpireWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
   end
 end
