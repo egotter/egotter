@@ -11,15 +11,19 @@ class UpdateAuthorizedWorker
   end
 
   def expire_in
-    10.minutes
+    1.minute
   end
 
   def timeout_in
-    10.seconds
+    5.seconds
   end
 
-  def after_timeout(user_id, options = {})
-    UpdateAuthorizedWorker.perform_in(2.minutes, user_id, options)
+  def after_timeout(*args)
+    UpdateAuthorizedWorker.perform_in(retry_in, *args)
+  end
+
+  def retry_in
+    unique_in + rand(120)
   end
 
   # options:

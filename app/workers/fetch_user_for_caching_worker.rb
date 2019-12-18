@@ -12,7 +12,7 @@ class FetchUserForCachingWorker
   end
 
   def expire_in
-    3.minutes
+    1.minute
   end
 
   def timeout_in
