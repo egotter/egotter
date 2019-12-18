@@ -107,23 +107,23 @@ class SendMetricsToCloudWatchWorker
     #  ["MOBILE", "(none)", "(direct)", "NEW", "0"],
     #  ["MOBILE", "ORGANIC", "google", "NEW", "0"],
     #  ["MOBILE", "SOCIAL", "Twitter", "NEW", "0"]]
-    GoogleAnalyticsClient.new.realtime_data(
-        metrics: %w(rt:activeUsers),
-        dimensions: %w(rt:deviceCategory rt:medium rt:source rt:userType)
-    ).rows.each do |device_category, medium, source, user_type, active_users|
-      next if active_users.to_i <= 3
-      dimensions = [
-          {name: 'rt:deviceCategory', value: device_category},
-          {name: 'rt:medium', value: encode(medium)},
-          {name: 'rt:source', value: encode(source)},
-          {name: 'rt:userType', value: user_type}
-      ]
-
-      options = {namespace: namespace, dimensions: dimensions}
-      client.put_metric_data('rt:activeUsers', active_users, options)
-    rescue => e
-      logger.warn "#{e.class} #{e.message} device_category=#{device_category} medium=#{encode(medium)} source=#{encode(source)} user_type=#{user_type} active_users=#{active_users}"
-    end
+    #GoogleAnalyticsClient.new.realtime_data(
+    #    metrics: %w(rt:activeUsers),
+    #    dimensions: %w(rt:deviceCategory rt:medium rt:source rt:userType)
+    #).rows.each do |device_category, medium, source, user_type, active_users|
+    #  next if active_users.to_i <= 3
+    #  dimensions = [
+    #      {name: 'rt:deviceCategory', value: device_category},
+    #      {name: 'rt:medium', value: encode(medium)},
+    #      {name: 'rt:source', value: encode(source)},
+    #      {name: 'rt:userType', value: user_type}
+    #  ]
+    #
+    #  options = {namespace: namespace, dimensions: dimensions}
+    #  client.put_metric_data('rt:activeUsers', active_users, options)
+    #rescue => e
+    #  logger.warn "#{e.class} #{e.message} device_category=#{device_category} medium=#{encode(medium)} source=#{encode(source)} user_type=#{user_type} active_users=#{active_users}"
+    #end
   end
 
   def send_prompt_reports_metrics
