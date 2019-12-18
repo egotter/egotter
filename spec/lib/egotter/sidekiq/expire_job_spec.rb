@@ -12,10 +12,7 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
     before { allow(middleware).to receive(:extract_enqueued_at).with(msg).and_return(enqueued_at) }
 
     context 'The worker implements #expire_in' do
-      before do
-        allow(worker).to receive(:respond_to?).with(:expire_in).and_return(true)
-        allow(worker).to receive(:expire_in).and_return(expire_in)
-      end
+      before { allow(worker).to receive(:expire_in).and_return(expire_in) }
 
       it do
         expect(middleware).to receive(:perform_expire_check).with(worker, msg['args'], expire_in, enqueued_at)

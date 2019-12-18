@@ -13,10 +13,7 @@ RSpec.describe Egotter::Sidekiq::UniqueJobUtil do
     let(:history) { double('History') }
 
     context 'The worker implements #unique_key' do
-      before do
-        allow(worker).to receive(:respond_to?).with(:unique_key).and_return(true)
-        allow(worker).to receive(:unique_key).with(*args).and_return('unique_key')
-      end
+      before { allow(worker).to receive(:unique_key).with(*args).and_return('unique_key') }
 
       it do
         expect(middleware).to receive(:perform_unique_check).with(worker, args, history, 'unique_key')
