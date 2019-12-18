@@ -18,6 +18,8 @@ class SendMetricsToCloudWatchWorker
 
   # Run every minute
   def perform
+    @put_count = 0
+
     %i(send_google_analytics_metrics
        send_sidekiq_metrics
        send_prompt_reports_metrics
@@ -35,6 +37,8 @@ class SendMetricsToCloudWatchWorker
       logger.warn "#{method_name} #{e.class} #{e.message}"
       logger.info e.backtrace.join("\n")
     end
+
+    logger.info "Sent #{@put_count} metrics"
   end
 
   # def datadog(values, ga_active_users, rate_limits)
@@ -66,12 +70,12 @@ class SendMetricsToCloudWatchWorker
       next if queue.size == 0
       total += queue.size
       options = {namespace: namespace, dimensions: [{name: 'QueueName', value: queue.name}]}
-      client.put_metric_data('QueueSize', queue.size, options)
-      client.put_metric_data('QueueLatency', queue.latency, options)
+      put_metric_data('QueueSize', queue.size, options)
+      put_metric_data('QueueLatency', queue.latency, options)
     end
 
     options = {namespace: namespace, dimensions: [{name: 'QueueName', value: 'total'}]}
-    client.put_metric_data('QueueSize', total, options) if total > 0
+    put_metric_data('QueueSize', total, options) if total > 0
 
     duration = 10.minutes
     long_running_jobs = []
@@ -84,7 +88,7 @@ class SendMetricsToCloudWatchWorker
     long_running_jobs.group_by { |name| name }.map { |k, v| [k, v.length] }.each do |job_name, count|
       dimensions = [{name: 'JobName', value: job_name}, {name: 'RunningTime', value: "more than #{duration.inspect}"}] # "10 minutes"
       options = {namespace: namespace, dimensions: dimensions}
-      client.put_metric_data('LongRunningSize', count, options)
+      put_metric_data('LongRunningSize', count, options)
     end
   end
 
@@ -95,7 +99,7 @@ class SendMetricsToCloudWatchWorker
     options = {namespace: namespace, dimensions: dimensions}
     begin
       active_users = GoogleAnalyticsClient.new.active_users
-      client.put_metric_data('rt:activeUsers', active_users, options)
+      put_metric_data('rt:activeUsers', active_users, options)
     rescue => e
       logger.warn "#{e.class} #{e.message} activeUsers=#{active_users} #{options.inspect}"
     end
@@ -120,7 +124,7 @@ class SendMetricsToCloudWatchWorker
     #  ]
     #
     #  options = {namespace: namespace, dimensions: dimensions}
-    #  client.put_metric_data('rt:activeUsers', active_users, options)
+    #  put_metric_data('rt:activeUsers', active_users, options)
     #rescue => e
     #  logger.warn "#{e.class} #{e.message} device_category=#{device_category} medium=#{encode(medium)} source=#{encode(source)} user_type=#{user_type} active_users=#{active_users}"
     #end
@@ -135,21 +139,21 @@ class SendMetricsToCloudWatchWorker
       CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, count|
         name = key.demodulize
         options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Error reason'}]}
-        client.put_metric_data(name, count, options)
+        put_metric_data(name, count, options)
       end
 
       send_count = PromptReport.where(duration).size
       options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
-      client.put_metric_data('SendCount', send_count, options) if send_count > 0
+      put_metric_data('SendCount', send_count, options) if send_count > 0
 
       read_count = PromptReport.where(duration).where.not(read_at: nil).size
       options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
-      client.put_metric_data('ReadCount', read_count, options) if read_count > 0
+      put_metric_data('ReadCount', read_count, options) if read_count > 0
 
       if send_count > 0 && read_count > 0
         read_rate = 100.0 * read_count / send_count
         options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
-        client.put_metric_data('ReadRate', read_rate, options)
+        put_metric_data('ReadRate', read_rate, options)
       end
     end
   end
@@ -160,12 +164,12 @@ class SendMetricsToCloudWatchWorker
 
     SearchErrorLog.where(duration).where.not(device_type: 'crawler').where(user_id: -1).group(:location).count.each do |location, count|
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data(location, count, options)
+      put_metric_data(location, count, options)
     end
 
     SearchErrorLog.where(duration).where.not(device_type: 'crawler').where.not(user_id: -1).group(:location).count.each do |location, count|
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data(location, count, options)
+      put_metric_data(location, count, options)
     end
   end
 
@@ -182,13 +186,13 @@ class SendMetricsToCloudWatchWorker
       unique_count = records.map(&:uid).uniq.size
 
       if records_count != unique_count
-        client.put_metric_data('UniqueRecordsDiff', records_count - unique_count, options)
+        put_metric_data('UniqueRecordsDiff', records_count - unique_count, options)
       end
 
       if records_count > 0
-        client.put_metric_data('RecordsCreationCount', records_count, options)
-        client.put_metric_data('MaxFriendsCount', records.map(&:friends_count).max, options)
-        client.put_metric_data('MaxFollowersCount', records.map(&:followers_count).max, options)
+        put_metric_data('RecordsCreationCount', records_count, options)
+        put_metric_data('MaxFriendsCount', records.map(&:friends_count).max, options)
+        put_metric_data('MaxFollowersCount', records.map(&:followers_count).max, options)
       end
     end
   end
@@ -200,13 +204,13 @@ class SendMetricsToCloudWatchWorker
     CreateTwitterUserLog.where(duration).where(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
       name = key.demodulize
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data(name, count, options)
+      put_metric_data(name, count, options)
     end
 
     CreateTwitterUserLog.where(duration).where.not(user_id: -1).where.not(error_class: nil).group(:error_class).count.each do |key, count|
       name = key.demodulize
       options = {namespace: namespace, dimensions: [{name: 'Sign in', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data(name, count, options)
+      put_metric_data(name, count, options)
     end
   end
 
@@ -215,10 +219,10 @@ class SendMetricsToCloudWatchWorker
     options = {namespace: namespace, dimensions: [{name: 'Duration', value: '10 minutes'}]}
 
     duration = {created_at: 10.minutes.ago..Time.zone.now}
-    client.put_metric_data('RecordsCreateCount', TwitterDB::User.where(duration).size, options)
+    put_metric_data('RecordsCreateCount', TwitterDB::User.where(duration).size, options)
 
     duration = {updated_at: 10.minutes.ago..Time.zone.now}
-    client.put_metric_data('RecordsUpdateCount', TwitterDB::User.where(duration).size, options)
+    put_metric_data('RecordsUpdateCount', TwitterDB::User.where(duration).size, options)
   end
 
   def send_search_histories_metrics
@@ -233,17 +237,17 @@ class SendMetricsToCloudWatchWorker
     #  avg = records.size / records.map{|r| r.send(key) }.uniq.size rescue nil
     #  if avg
     #    options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-    #    client.put_metric_data('AvgSearchHistoriesCount', avg, options)
+    #    put_metric_data('AvgSearchHistoriesCount', avg, options)
     #  end
     #
     #  max = records.each_with_object(Hash.new(0)) { |record, memo| memo[record.send(key)] += 1 }.values.max
     #  options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-    #  client.put_metric_data('MaxSearchHistoriesCount', max, options)
+    #  put_metric_data('MaxSearchHistoriesCount', max, options)
     #
     #  records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
     #    next if count < 2
     #    options = {namespace: namespace, dimensions: [{name: 'Sign in', value: signed_in.to_s}, {name: 'Duration', value: '10 minutes'}]}
-    #    client.put_metric_data("via(#{via})", count, options)
+    #    put_metric_data("via(#{via})", count, options)
     #  end
     #end
   end
@@ -259,7 +263,7 @@ class SendMetricsToCloudWatchWorker
     #  records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
     #    #next if count < 2
     #    options = {namespace: namespace, dimensions: [{name: 'Context', value: context.to_s}, {name: 'Duration', value: '10 minutes'}]}
-    #    client.put_metric_data("#{via}", count, options)
+    #    put_metric_data("#{via}", count, options)
     #  end
     #end
   end
@@ -282,11 +286,11 @@ class SendMetricsToCloudWatchWorker
     ].each do |klass|
       finished_count = klass.where(duration).where.not(finished_at: nil).count
       options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'true'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data('FinishCount', finished_count, options) if finished_count > 0
+      put_metric_data('FinishCount', finished_count, options) if finished_count > 0
 
       unfinished_count = klass.where(duration).where(finished_at: nil).count
       options = {namespace: namespace, dimensions: [{name: 'Class', value: klass.to_s}, {name: 'Finished', value: 'false'}, {name: 'Duration', value: '10 minutes'}]}
-      client.put_metric_data('NotFinishedCount', unfinished_count, options) if unfinished_count > 0
+      put_metric_data('NotFinishedCount', unfinished_count, options) if unfinished_count > 0
     end
   end
 
@@ -295,13 +299,18 @@ class SendMetricsToCloudWatchWorker
 
     count = Bot.where(authorized: false).size
     options = {namespace: namespace, dimensions: []}
-    client.put_metric_data('UnauthorizedCount', count, options) if count > 0
+    put_metric_data('UnauthorizedCount', count, options) if count > 0
   end
 
   private
 
   def client
     @client ||= CloudWatchClient.new
+  end
+
+  def put_metric_data(*args)
+    put_metric_data(*args)
+    @put_count += 1
   end
 
   # It is not working
