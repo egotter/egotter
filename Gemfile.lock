@@ -78,6 +78,9 @@ GEM
     aws-sdk-ec2 (1.126.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
+    aws-sdk-elasticloadbalancingv2 (1.39.0)
+      aws-sdk-core (~> 3, >= 3.71.0)
+      aws-sigv4 (~> 1.1)
     aws-sdk-kms (1.13.0)
       aws-sdk-core (~> 3, >= 3.39.0)
       aws-sigv4 (~> 1.0)
@@ -459,6 +462,7 @@ DEPENDENCIES
   annotate
   aws-sdk-cloudwatch
   aws-sdk-ec2
+  aws-sdk-elasticloadbalancingv2
   aws-sdk-s3
   blazer
   byebug
