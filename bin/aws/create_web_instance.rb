@@ -16,6 +16,10 @@ class Instance
     @name = name
     @id = nil
     @public_ip = nil
+
+    if @name.to_s.empty?
+      @name = "egotter_web#{Time.now.strftime('%m%d%H%M')}"
+    end
   end
 
   def start
