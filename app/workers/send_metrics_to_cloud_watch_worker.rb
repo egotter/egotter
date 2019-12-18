@@ -252,16 +252,16 @@ class SendMetricsToCloudWatchWorker
     namespace = "SignInLogs#{"/#{Rails.env}" unless Rails.env.production?}"
     duration = {created_at: 10.minutes.ago..Time.zone.now}
 
-    [
-        [SignInLog.where(duration).where(context: 'create'), :create],
-        #[SignInLog.where(duration).where(context: 'update'), :update],
-    ].each do |records, context|
-      records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
-        #next if count < 2
-        options = {namespace: namespace, dimensions: [{name: 'Context', value: context.to_s}, {name: 'Duration', value: '10 minutes'}]}
-        client.put_metric_data("#{via}", count, options)
-      end
-    end
+    #[
+    #    [SignInLog.where(duration).where(context: 'create'), :create],
+    #    #[SignInLog.where(duration).where(context: 'update'), :update],
+    #].each do |records, context|
+    #  records.group_by(&:via).map { |k, v| [k.blank? ? 'EMPTY' : k, v.length] }.each do |via, count|
+    #    #next if count < 2
+    #    options = {namespace: namespace, dimensions: [{name: 'Context', value: context.to_s}, {name: 'Duration', value: '10 minutes'}]}
+    #    client.put_metric_data("#{via}", count, options)
+    #  end
+    #end
   end
 
   def send_requests_metrics
