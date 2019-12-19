@@ -96,7 +96,7 @@ class Server
 
   def test_ssh_connection
     cmd = "ssh -q #{@name} exit"
-    puts "\e[32m#{cmd}\e[0m" # Green
+    Util.green(cmd)
     30.times do |n|
       puts "waiting for test_ssh_connection #{@id}"
       if system(cmd, exception: false)
@@ -149,6 +149,7 @@ class Server
   def restart_processes
     [
         'sudo rm -rf /var/tmp/aws-mon/*',
+        'sudo rm -rf /var/egotter/tmp/cache/*',
         'git pull origin master >/dev/null',
         'bundle check || bundle install --quiet --path .bundle --without test development',
         'RAILS_ENV=production bundle exec rake assets:precompile',
@@ -158,29 +159,6 @@ class Server
         'sudo service puma restart',
     ].each do |cmd|
       run_command(cmd)
-    end
-
-    self
-  end
-
-  def register_for(target_group)
-    alb = Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
-    params = {
-        target_group_arn: target_group,
-        targets: [{id: @id}]
-    }
-    puts params.inspect
-    alb.register_targets(params)
-
-    begin
-      alb.wait_until(:target_in_service, params) do |w|
-        w.before_wait do |n, resp|
-          puts "waiting for target_in_service #{@id}"
-        end
-      end
-    rescue Aws::Waiters::Errors::WaiterFailed => e
-      puts "failed waiting for target_in_service: #{e.message}"
-      exit
     end
 
     self
@@ -207,7 +185,7 @@ class Server
 
   def run_command(cmd, exception: true)
     raise 'Hostname is empty.' if @name.to_s.empty?
-    puts "\e[32m#{@name} #{cmd}\e[0m" # Green
+    Util.green("#{@name} #{cmd}")
     system('ssh', @name, "cd /var/egotter && #{cmd}", exception: exception).tap { |r| puts r }
   end
 
@@ -227,70 +205,119 @@ class TargetGroup
     @arn = arn
   end
 
-  def list_instances
-    alb = Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
+  def register(instance_id)
+    params = {
+        target_group_arn: @arn,
+        targets: [{id: instance_id}]
+    }
+    puts params.inspect
+    client.register_targets(params)
+    wait_until(:target_in_service, params)
+
+    self
+  end
+
+  def list_instances(state: 'healthy')
     params = {target_group_arn: @arn}
-    alb.describe_target_health(params).target_health_descriptions.map do |description|
+
+    client.describe_target_health(params).
+        target_health_descriptions.
+        select { |d| d.target_health.state == state }.map do |description|
       Instance.retrieve(description.target.id)
     end
   end
-end
 
-def generate_name
-  "egotter_web#{Time.now.strftime('%m%d%H%M')}"
-end
+  private
 
-def az_to_subnet(az)
-  case az
-  when 'ap-northeast-1b' then ENV['AWS_SUBNET_1B']
-  when 'ap-northeast-1c' then ENV['AWS_SUBNET_1C']
-  when 'ap-northeast-1d' then ENV['AWS_SUBNET_1D']
+  def wait_until(name, params)
+    instance_id = params[:targets][0][:id]
+
+    client.wait_until(name, params) do |w|
+      w.before_wait do |n, resp|
+        puts "waiting for target_in_service #{instance_id}"
+      end
+    end
+  rescue Aws::Waiters::Errors::WaiterFailed => e
+    puts "failed waiting for target_in_service: #{e.message}"
+    exit
+  end
+
+  def client
+    @client ||= Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
   end
 end
 
-def assign_availability_zone(target_group)
-  count = {
-      'ap-northeast-1b' => 0,
-      'ap-northeast-1c' => 0,
-      'ap-northeast-1d' => 0,
-  }
-  TargetGroup.new(target_group).list_instances.each { |i| count[i.availability_zone] += 1 }
-  count.sort_by { |k, v| v }[0][0]
+module Util
+  module_function
+
+  def green(str)
+    puts "\e[32m#{str}\e[0m"
+  end
+
+  def generate_name
+    "egotter_web#{Time.now.strftime('%m%d%H%M')}"
+  end
+
+  def az_to_subnet(az)
+    case az
+    when 'ap-northeast-1b' then ENV['AWS_SUBNET_1B']
+    when 'ap-northeast-1c' then ENV['AWS_SUBNET_1C']
+    when 'ap-northeast-1d' then ENV['AWS_SUBNET_1D']
+    end
+  end
+
+  def assign_availability_zone(target_group)
+    count = {
+        'ap-northeast-1b' => 0,
+        'ap-northeast-1c' => 0,
+        'ap-northeast-1d' => 0,
+    }
+    TargetGroup.new(target_group).list_instances.each { |i| count[i.availability_zone] += 1 }
+    count.sort_by { |k, v| v }[0][0]
+  end
 end
 
 if __FILE__ == $0
   params = ARGV.getopts(
-      'r:',
+      'h:',
       'launch-template:',
       'name-tag:',
       'security-group:',
       'subnet:',
       'target-group:',
       'availability-zone:',
+      'delim:',
+      'state:',
+      'rotate:',
       'create',
       'list',
       'debug',
   )
 
-  target_group = params['target-group'] || ENV['AWS_TARGET_GROUP']
+  target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
 
   if params['create']
-    az = params['availability-zone'].to_s.empty? ? assign_availability_zone(target_group) : params['availability-zone']
-    subnet = az_to_subnet(az)
+    az = params['availability-zone'].to_s.empty? ? Util.assign_availability_zone(target_group_arn) : params['availability-zone']
+    subnet = Util.az_to_subnet(az)
 
     values = {
         template: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE'],
         security_group: params['security-group'] || ENV['AWS_SECURITY_GROUP'],
-        name: params['name-tag'].to_s.empty? ? generate_name : params['name-tag'],
+        name: params['name-tag'].to_s.empty? ? Util.generate_name : params['name-tag'],
         subnet: subnet || ENV['AWS_SUBNET']
     }
     puts values.inspect
 
     server = Server.new(values).start
-    server.register_for(target_group)
+
+    target_group = TargetGroup.new(target_group_arn)
+    previous_count = target_group.list_instances.size
+    target_group.register(server.id)
+    Util.green "Current targets count #{target_group.list_instances.size} (was #{previous_count})"
 
   elsif params['list']
-    puts TargetGroup.new(target_group).list_instances.map(&:name).join(' ')
+    state = params['state'].to_s.empty? ? 'healthy' : params['state']
+    puts TargetGroup.new(target_group).list_instances(state: state).map(&:name).join(params['delim'] || ' ')
   elsif params['debug']
   end
 end
