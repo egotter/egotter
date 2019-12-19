@@ -309,7 +309,7 @@ class SendMetricsToCloudWatchWorker
   end
 
   def put_metric_data(*args)
-    put_metric_data(*args)
+    client.put_metric_data(*args)
     @put_count += 1
   end
 
