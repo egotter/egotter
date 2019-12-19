@@ -1,10 +1,12 @@
 #!/usr/bin/env ruby
 
-require 'optparse'
 require 'dotenv/load'
+
+require 'optparse'
 require 'aws-sdk-ec2'
 require 'aws-sdk-elasticloadbalancingv2'
 require 'base64'
+require 'erb'
 
 STDOUT.sync = true
 
@@ -33,7 +35,7 @@ class Instance
 end
 
 class Server
-  def initialize(template:, security_group:, subnet:, name:)
+  def initialize(template: nil, security_group: nil, subnet: nil, name: nil)
     @template = template
     @security_group = security_group
     @subnet = subnet
@@ -47,6 +49,7 @@ class Server
         append_to_ssh_config.
         test_ssh_connection.
         update_env.
+        install_td_agent.
         restart_processes
   end
 
@@ -107,6 +110,36 @@ class Server
     self
   end
 
+  def install_td_agent
+    [
+        'test -f "/usr/sbin/td-agent" || curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh',
+        '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-slack" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-slack',
+        '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
+    ].each { |cmd| run_command(cmd) }
+
+    conf = ERB.new(File.read('./setup/etc/td-agent/td-agent.web.conf.erb')).result_with_hash(
+        name: @name,
+        webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
+        webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
+        webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
+        webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'])
+    fname = "td-agent.#{Time.now.to_f}.conf"
+
+    File.write(fname, conf)
+    system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
+
+    if run_command("diff /var/egotter/#{fname} /etc/td-agent/td-agent.conf >/dev/null 2>&1", exception: false)
+      run_command("rm /var/egotter/#{fname}")
+    else
+      puts conf
+      puts fname
+      run_command("sudo mv /var/egotter/#{fname} /etc/td-agent/td-agent.conf")
+    end
+    File.delete(fname)
+
+    self
+  end
+
   def update_env
     system("rsync -auz .web.env #{@name}:/var/egotter/.env")
 
@@ -116,15 +149,15 @@ class Server
   def restart_processes
     [
         'sudo rm -rf /var/tmp/aws-mon/*',
-        'cd /var/egotter && git pull origin master >/dev/null',
-        'cd /var/egotter && bundle check || bundle install --quiet --path .bundle --without test development',
-        'cd /var/egotter && RAILS_ENV=production bundle exec rake assets:precompile',
-        'cd /var/egotter && RAILS_ENV=production bundle exec rake assets:sync:download',
+        'git pull origin master >/dev/null',
+        'bundle check || bundle install --quiet --path .bundle --without test development',
+        'RAILS_ENV=production bundle exec rake assets:precompile',
+        'RAILS_ENV=production bundle exec rake assets:sync:download',
+        'sudo service td-agent restart',
         'sudo service nginx restart',
         'sudo service puma restart',
     ].each do |cmd|
-      puts "\e[32m#{@name} #{cmd}\e[0m" # Green
-      puts system('ssh', @name, cmd, exception: true)
+      run_command(cmd)
     end
 
     self
@@ -172,14 +205,20 @@ class Server
     exit
   end
 
+  def run_command(cmd, exception: true)
+    raise 'Hostname is empty.' if @name.to_s.empty?
+    puts "\e[32m#{@name} #{cmd}\e[0m" # Green
+    system('ssh', @name, "cd /var/egotter && #{cmd}", exception: exception).tap { |r| puts r }
+  end
+
   def to_ssh_config
-    <<"TEXT"
-# #{@id}
-Host #{@name}
-  HostName        #{@public_ip}
-  IdentityFile    ~/.ssh/egotter.pem
-  User            ec2-user
-TEXT
+    <<~"TEXT"
+      # #{@id}
+      Host #{@name}
+        HostName        #{@public_ip}
+        IdentityFile    ~/.ssh/egotter.pem
+        User            ec2-user
+    TEXT
   end
 end
 
@@ -219,35 +258,39 @@ def assign_availability_zone(target_group)
   count.sort_by { |k, v| v }[0][0]
 end
 
-params = ARGV.getopts(
-    'r:',
-    'launch-template:',
-    'name-tag:',
-    'security-group:',
-    'subnet:',
-    'target-group:',
-    'availability-zone:',
-    'create',
-    'list'
-)
+if __FILE__ == $0
+  params = ARGV.getopts(
+      'r:',
+      'launch-template:',
+      'name-tag:',
+      'security-group:',
+      'subnet:',
+      'target-group:',
+      'availability-zone:',
+      'create',
+      'list',
+      'debug',
+  )
 
-target_group = params['target-group'] || ENV['AWS_TARGET_GROUP']
+  target_group = params['target-group'] || ENV['AWS_TARGET_GROUP']
 
-if params['create']
-  az = params['availability-zone'].to_s.empty? ? assign_availability_zone(target_group) : params['availability-zone']
-  subnet = az_to_subnet(az)
+  if params['create']
+    az = params['availability-zone'].to_s.empty? ? assign_availability_zone(target_group) : params['availability-zone']
+    subnet = az_to_subnet(az)
 
-  values = {
-      template: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE'],
-      security_group: params['security-group'] || ENV['AWS_SECURITY_GROUP'],
-      name: params['name-tag'].to_s.empty? ? generate_name : params['name-tag'],
-      subnet: subnet || ENV['AWS_SUBNET']
-  }
-  puts values.inspect
+    values = {
+        template: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE'],
+        security_group: params['security-group'] || ENV['AWS_SECURITY_GROUP'],
+        name: params['name-tag'].to_s.empty? ? generate_name : params['name-tag'],
+        subnet: subnet || ENV['AWS_SUBNET']
+    }
+    puts values.inspect
 
-  server = Server.new(values).start
-  server.register_for(target_group)
+    server = Server.new(values).start
+    server.register_for(target_group)
 
-elsif params['list']
-  puts TargetGroup.new(target_group).list_instances.map(&:name).join(' ')
+  elsif params['list']
+    puts TargetGroup.new(target_group).list_instances.map(&:name).join(' ')
+  elsif params['debug']
+  end
 end
