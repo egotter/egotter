@@ -36,6 +36,8 @@ class Instance
 end
 
 class Server
+  attr_reader :id, :name, :public_id
+
   def initialize(template: nil, security_group: nil, subnet: nil, name: nil, id: nil)
     @template = template
     @security_group = security_group
@@ -81,18 +83,6 @@ class Server
     wait_until(@id, :instance_terminated)
 
     self
-  end
-
-  def id
-    @id
-  end
-
-  def host
-    @name
-  end
-
-  def public_ip
-    @public_ip
   end
 
   def append_to_ssh_config
@@ -227,7 +217,7 @@ class TargetGroup
     client.register_targets(params)
     wait_until(:target_in_service, params)
 
-    Util.green "Current targets count #{list_instances.size} (was #{previous_count})"
+    Util.green "Current targets count is #{list_instances.size} (was #{previous_count})"
 
     self
   end
@@ -243,7 +233,7 @@ class TargetGroup
     client.deregister_targets(params)
     wait_until(:target_deregistered, params)
 
-    Util.green "Current targets count #{list_instances.size} (was #{previous_count})"
+    Util.green "Current targets count is #{list_instances.size} (was #{previous_count})"
 
     self
   end
@@ -348,6 +338,9 @@ if __FILE__ == $0
       target_group.deregister(instance.id)
       Server.new(id: instance.id).terminate
     end
+
+    %x(git tag deploy-web-#{server.name}-#{Time.now.to_i})
+    %x(git push origin --tags)
 
   elsif params['list']
     state = params['state'].to_s.empty? ? 'healthy' : params['state']

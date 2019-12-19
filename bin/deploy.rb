@@ -43,7 +43,7 @@ module Deploy
         end
       end
 
-      %x(git tag deploy-web-#{Time.now.to_i})
+      %x(git tag deploy-web-all-#{Time.now.to_i})
       %x(git push origin --tags)
     end
   end
