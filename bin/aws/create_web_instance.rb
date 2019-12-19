@@ -11,13 +11,14 @@ require 'erb'
 STDOUT.sync = true
 
 class Instance
-  attr_reader :id, :name, :public_ip, :availability_zone
+  attr_reader :id, :name, :public_ip, :availability_zone, :launched_at
 
   def initialize(instance)
     @id = instance.id
     @name = instance.tags.find { |t| t.key == 'Name' }&.value
     @public_ip = instance.public_ip_address
     @availability_zone = instance.placement.availability_zone
+    @launched_at = instance.launch_time
   end
 
   class << self
@@ -35,12 +36,12 @@ class Instance
 end
 
 class Server
-  def initialize(template: nil, security_group: nil, subnet: nil, name: nil)
+  def initialize(template: nil, security_group: nil, subnet: nil, name: nil, id: nil)
     @template = template
     @security_group = security_group
     @subnet = subnet
     @name = name
-    @id = nil
+    @id = id
     @public_ip = nil
   end
 
@@ -62,8 +63,7 @@ class Server
         subnet_id: @subnet
     }
 
-    ec2 = Aws::EC2::Resource.new(region: 'ap-northeast-1')
-    instance = ec2.create_instances(params).first
+    instance = resource.create_instances(params).first
     @id = instance.id
 
     wait_until(@id, :instance_running)
@@ -71,6 +71,14 @@ class Server
 
     add_tag(instance, @name)
     @public_ip = Instance.retrieve(instance.id)&.public_ip
+
+    self
+  end
+
+  def terminate
+    params = {instance_ids: [@id]}
+    resource.client.terminate_instances(params)
+    wait_until(@id, :instance_terminated)
 
     self
   end
@@ -166,14 +174,17 @@ class Server
 
   private
 
+  def resource
+    @resource ||= Aws::EC2::Resource.new(region: 'ap-northeast-1')
+  end
+
   def add_tag(instance, value)
     tags = [{key: 'Name', value: value}]
     instance.create_tags(tags: tags)
   end
 
   def wait_until(id, name)
-    ec2 = Aws::EC2::Resource.new(region: 'ap-northeast-1')
-    ec2.client.wait_until(name, instance_ids: [id]) do |w|
+    resource.client.wait_until(name, instance_ids: [id]) do |w|
       w.before_wait do |n, resp|
         puts "waiting for #{name} #{id}"
       end
@@ -206,6 +217,8 @@ class TargetGroup
   end
 
   def register(instance_id)
+    previous_count = list_instances.size
+
     params = {
         target_group_arn: @arn,
         targets: [{id: instance_id}]
@@ -213,6 +226,24 @@ class TargetGroup
     puts params.inspect
     client.register_targets(params)
     wait_until(:target_in_service, params)
+
+    Util.green "Current targets count #{list_instances.size} (was #{previous_count})"
+
+    self
+  end
+
+  def deregister(instance_id)
+    previous_count = list_instances.size
+
+    params = {
+        target_group_arn: @arn,
+        targets: [{id: instance_id}]
+    }
+    puts params.inspect
+    client.deregister_targets(params)
+    wait_until(:target_deregistered, params)
+
+    Util.green "Current targets count #{list_instances.size} (was #{previous_count})"
 
     self
   end
@@ -234,11 +265,11 @@ class TargetGroup
 
     client.wait_until(name, params) do |w|
       w.before_wait do |n, resp|
-        puts "waiting for target_in_service #{instance_id}"
+        puts "waiting for #{name} #{instance_id}"
       end
     end
   rescue Aws::Waiters::Errors::WaiterFailed => e
-    puts "failed waiting for target_in_service: #{e.message}"
+    puts "failed waiting for #{name}: #{e.message}"
     exit
   end
 
@@ -288,13 +319,14 @@ if __FILE__ == $0
       'availability-zone:',
       'delim:',
       'state:',
-      'rotate:',
+      'rotate',
       'create',
       'list',
       'debug',
   )
 
   target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
+  target_group = TargetGroup.new(target_group_arn)
 
   if params['create']
     az = params['availability-zone'].to_s.empty? ? Util.assign_availability_zone(target_group_arn) : params['availability-zone']
@@ -309,15 +341,17 @@ if __FILE__ == $0
     puts values.inspect
 
     server = Server.new(values).start
-
-    target_group = TargetGroup.new(target_group_arn)
-    previous_count = target_group.list_instances.size
     target_group.register(server.id)
-    Util.green "Current targets count #{target_group.list_instances.size} (was #{previous_count})"
+
+    if params['rotate']
+      instance = target_group.list_instances.sort_by { |i| i.launched_at }.first
+      target_group.deregister(instance.id)
+      Server.new(id: instance.id).terminate
+    end
 
   elsif params['list']
     state = params['state'].to_s.empty? ? 'healthy' : params['state']
-    puts TargetGroup.new(target_group).list_instances(state: state).map(&:name).join(params['delim'] || ' ')
+    puts target_group.list_instances(state: state).map(&:name).join(params['delim'] || ' ')
   elsif params['debug']
   end
 end
