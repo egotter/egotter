@@ -192,7 +192,7 @@ Install monitoring script:
     yum install -y perl-Switch perl-DateTime perl-Sys-Syslog perl-LWP-Protocol-https perl-Digest-SHA.x86_64
     curl https://aws-cloudwatch.s3.amazonaws.com/downloads/CloudWatchMonitoringScripts-1.2.2.zip -O
     unzip CloudWatchMonitoringScripts-1.2.2.zip && rm -f CloudWatchMonitoringScripts-1.2.2.zip && cd aws-scripts-mon
-    # root's crontab -> */5 * * * * ~/aws-scripts-mon/mon-put-instance-data.pl --mem-util --mem-used --mem-avail --disk-space-util --disk-path=/ --from-cron
+    # root's crontab -> */5 * * * * ~/aws-scripts-mon/mon-put-instance-data.pl --mem-util --disk-space-util --disk-path=/ --from-cron
 
 User settings:
 
