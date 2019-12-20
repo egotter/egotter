@@ -174,6 +174,12 @@ class Server
     self
   end
 
+  def run_command(cmd, exception: true)
+    raise 'Hostname is empty.' if @name.to_s.empty?
+    Util.green("#{@name} #{cmd}")
+    system('ssh', @name, "cd /var/egotter && #{cmd}", exception: exception).tap { |r| puts r }
+  end
+
   private
 
   def resource
@@ -194,12 +200,6 @@ class Server
   rescue Aws::Waiters::Errors::WaiterFailed => e
     puts "failed waiting for #{name}: #{e.message}"
     exit
-  end
-
-  def run_command(cmd, exception: true)
-    raise 'Hostname is empty.' if @name.to_s.empty?
-    Util.green("#{@name} #{cmd}")
-    system('ssh', @name, "cd /var/egotter && #{cmd}", exception: exception).tap { |r| puts r }
   end
 
   def to_ssh_config
