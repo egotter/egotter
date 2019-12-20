@@ -37,246 +37,248 @@ class Instance
   end
 end
 
-class Server
-  attr_reader :id, :name, :public_id
+module Server
+  class Web
+    attr_reader :id, :name, :public_id
 
-  def initialize(template: nil, security_group: nil, subnet: nil, name: nil, id: nil)
-    @template = template
-    @security_group = security_group
-    @subnet = subnet
-    @name = name
-    @id = id
-    @public_ip = nil
-  end
+    def initialize(template: nil, security_group: nil, subnet: nil, name: nil, id: nil)
+      @template = template
+      @security_group = security_group
+      @subnet = subnet
+      @name = name
+      @id = id
+      @public_ip = nil
+    end
 
-  def start
-    launch.
-        append_to_ssh_config.
-        test_ssh_connection.
-        update_env.
-        install_td_agent.
-        restart_processes
-  end
+    def start
+      launch.
+          append_to_ssh_config.
+          test_ssh_connection.
+          update_env.
+          install_td_agent.
+          restart_processes
+    end
 
-  def launch
-    params = {
-        launch_template: {launch_template_id: @template},
-        min_count: 1,
-        max_count: 1,
-        security_group_ids: [@security_group],
-        subnet_id: @subnet
-    }
+    def launch
+      params = {
+          launch_template: {launch_template_id: @template},
+          min_count: 1,
+          max_count: 1,
+          security_group_ids: [@security_group],
+          subnet_id: @subnet
+      }
 
-    instance = resource.create_instances(params).first
-    @id = instance.id
+      instance = resource.create_instances(params).first
+      @id = instance.id
 
-    wait_until(@id, :instance_running)
-    wait_until(@id, :instance_status_ok)
+      wait_until(@id, :instance_running)
+      wait_until(@id, :instance_status_ok)
 
-    add_tag(instance, @name)
-    @public_ip = Instance.retrieve(instance.id)&.public_ip
+      add_tag(instance, @name)
+      @public_ip = Instance.retrieve(instance.id)&.public_ip
 
-    self
-  end
+      self
+    end
 
-  def terminate
-    params = {instance_ids: [@id]}
-    resource.client.terminate_instances(params)
-    wait_until(@id, :instance_terminated)
+    def terminate
+      params = {instance_ids: [@id]}
+      resource.client.terminate_instances(params)
+      wait_until(@id, :instance_terminated)
 
-    self
-  end
+      self
+    end
 
-  def append_to_ssh_config
-    puts to_ssh_config
-    File.open('./ssh_config', 'a') { |f| f.puts(to_ssh_config) }
+    def append_to_ssh_config
+      puts to_ssh_config
+      File.open('./ssh_config', 'a') { |f| f.puts(to_ssh_config) }
 
-    self
-  end
+      self
+    end
 
-  def test_ssh_connection
-    cmd = "ssh -q #{@name} exit"
-    Util.green(cmd)
-    30.times do |n|
-      puts "waiting for test_ssh_connection #{@id}"
-      if system(cmd, exception: false)
-        break
+    def test_ssh_connection
+      cmd = "ssh -q #{@name} exit"
+      Util.green(cmd)
+      30.times do |n|
+        puts "waiting for test_ssh_connection #{@id}"
+        if system(cmd, exception: false)
+          break
+        else
+          sleep 5
+        end
+        raise if n == 29
+      end
+
+      self
+    end
+
+    def install_td_agent
+      [
+          'test -f "/usr/sbin/td-agent" || curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh',
+          '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-slack" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-slack',
+          '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
+      ].each { |cmd| run_command(cmd) }
+
+      conf = ERB.new(File.read('./setup/etc/td-agent/td-agent.web.conf.erb')).result_with_hash(
+          name: @name,
+          webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
+          webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
+          webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
+          webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'])
+      fname = "td-agent.#{Time.now.to_f}.conf"
+
+      File.write(fname, conf)
+      system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
+
+      if run_command("colordiff -u /etc/td-agent/td-agent.conf /var/egotter/#{fname}", exception: false)
+        run_command("rm /var/egotter/#{fname}")
       else
-        sleep 5
+        puts fname
+        run_command("sudo mv /var/egotter/#{fname} /etc/td-agent/td-agent.conf")
       end
-      raise if n == 29
+      File.delete(fname)
+
+      self
     end
 
-    self
-  end
+    def update_env
+      contents = ::SecretFile.read('env/web.env.enc')
+      fname = "web.env.#{Time.now.to_f}.tmp"
+      File.write(fname, contents)
+      system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
 
-  def install_td_agent
-    [
-        'test -f "/usr/sbin/td-agent" || curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh',
-        '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-slack" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-slack',
-        '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
-    ].each { |cmd| run_command(cmd) }
-
-    conf = ERB.new(File.read('./setup/etc/td-agent/td-agent.web.conf.erb')).result_with_hash(
-        name: @name,
-        webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
-        webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
-        webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
-        webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'])
-    fname = "td-agent.#{Time.now.to_f}.conf"
-
-    File.write(fname, conf)
-    system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
-
-    if run_command("colordiff -u /etc/td-agent/td-agent.conf /var/egotter/#{fname}", exception: false)
-      run_command("rm /var/egotter/#{fname}")
-    else
-      puts fname
-      run_command("sudo mv /var/egotter/#{fname} /etc/td-agent/td-agent.conf")
-    end
-    File.delete(fname)
-
-    self
-  end
-
-  def update_env
-    contents = ::SecretFile.read('env/web.env.enc')
-    fname = "web.env.#{Time.now.to_f}.tmp"
-    File.write(fname, contents)
-    system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
-
-    if run_command("colordiff -u /var/egotter/.env /var/egotter/#{fname}", exception: false)
-      run_command("rm /var/egotter/#{fname}")
-    else
-      puts fname
-      run_command("mv /var/egotter/#{fname} /var/egotter/.env")
-    end
-    File.delete(fname)
-
-    self
-  end
-
-  def restart_processes
-    [
-        'sudo rm -rf /var/tmp/aws-mon/*',
-        'sudo rm -rf /var/egotter/tmp/cache/*',
-        'git pull origin master >/dev/null',
-        'bundle check || bundle install --quiet --path .bundle --without test development',
-        'RAILS_ENV=production bundle exec rake assets:precompile',
-        'RAILS_ENV=production bundle exec rake assets:sync:download',
-        'sudo service td-agent restart',
-        'sudo service nginx restart',
-        'sudo service puma restart',
-    ].each do |cmd|
-      run_command(cmd)
-    end
-
-    self
-  end
-
-  def run_command(cmd, exception: true)
-    raise 'Hostname is empty.' if @name.to_s.empty?
-    Util.green("#{@name} #{cmd}")
-    system('ssh', @name, "cd /var/egotter && #{cmd}", exception: exception).tap { |r| puts r }
-  end
-
-  private
-
-  def resource
-    @resource ||= Aws::EC2::Resource.new(region: 'ap-northeast-1')
-  end
-
-  def add_tag(instance, value)
-    tags = [{key: 'Name', value: value}]
-    instance.create_tags(tags: tags)
-  end
-
-  def wait_until(id, name)
-    resource.client.wait_until(name, instance_ids: [id]) do |w|
-      w.before_wait do |n, resp|
-        puts "waiting for #{name} #{id}"
+      if run_command("colordiff -u /var/egotter/.env /var/egotter/#{fname}", exception: false)
+        run_command("rm /var/egotter/#{fname}")
+      else
+        puts fname
+        run_command("mv /var/egotter/#{fname} /var/egotter/.env")
       end
+      File.delete(fname)
+
+      self
     end
-  rescue Aws::Waiters::Errors::WaiterFailed => e
-    puts "failed waiting for #{name}: #{e.message}"
-    exit
-  end
 
-  def to_ssh_config
-    <<~"TEXT"
-      # #{@id}
-      Host #{@name}
-        HostName        #{@public_ip}
-        IdentityFile    ~/.ssh/egotter.pem
-        User            ec2-user
-    TEXT
-  end
-end
+    def restart_processes
+      [
+          'sudo rm -rf /var/tmp/aws-mon/*',
+          'sudo rm -rf /var/egotter/tmp/cache/*',
+          'git pull origin master >/dev/null',
+          'bundle check || bundle install --quiet --path .bundle --without test development',
+          'RAILS_ENV=production bundle exec rake assets:precompile',
+          'RAILS_ENV=production bundle exec rake assets:sync:download',
+          'sudo service td-agent restart',
+          'sudo service nginx restart',
+          'sudo service puma restart',
+      ].each do |cmd|
+        run_command(cmd)
+      end
 
-class TargetGroup
-  def initialize(arn)
-    @arn = arn
-  end
+      self
+    end
 
-  def register(instance_id)
-    previous_count = list_instances.size
+    def run_command(cmd, exception: true)
+      raise 'Hostname is empty.' if @name.to_s.empty?
+      Util.green("#{@name} #{cmd}")
+      system('ssh', @name, "cd /var/egotter && #{cmd}", exception: exception).tap { |r| puts r }
+    end
 
-    params = {
-        target_group_arn: @arn,
-        targets: [{id: instance_id}]
-    }
-    puts params.inspect
-    client.register_targets(params)
-    wait_until(:target_in_service, params)
+    private
 
-    Util.green "Current targets count is #{list_instances.size} (was #{previous_count})"
+    def resource
+      @resource ||= Aws::EC2::Resource.new(region: 'ap-northeast-1')
+    end
 
-    self
-  end
+    def add_tag(instance, value)
+      tags = [{key: 'Name', value: value}]
+      instance.create_tags(tags: tags)
+    end
 
-  def deregister(instance_id)
-    previous_count = list_instances.size
+    def wait_until(id, name)
+      resource.client.wait_until(name, instance_ids: [id]) do |w|
+        w.before_wait do |n, resp|
+          puts "waiting for #{name} #{id}"
+        end
+      end
+    rescue Aws::Waiters::Errors::WaiterFailed => e
+      puts "failed waiting for #{name}: #{e.message}"
+      exit
+    end
 
-    params = {
-        target_group_arn: @arn,
-        targets: [{id: instance_id}]
-    }
-    puts params.inspect
-    client.deregister_targets(params)
-    wait_until(:target_deregistered, params)
-
-    Util.green "Current targets count is #{list_instances.size} (was #{previous_count})"
-
-    self
-  end
-
-  def list_instances(state: 'healthy')
-    params = {target_group_arn: @arn}
-
-    client.describe_target_health(params).
-        target_health_descriptions.
-        select { |d| d.target_health.state == state }.map do |description|
-      Instance.retrieve(description.target.id)
+    def to_ssh_config
+      <<~"TEXT"
+        # #{@id}
+        Host #{@name}
+          HostName        #{@public_ip}
+          IdentityFile    ~/.ssh/egotter.pem
+          User            ec2-user
+      TEXT
     end
   end
 
-  private
+  class TargetGroup
+    def initialize(arn)
+      @arn = arn
+    end
 
-  def wait_until(name, params)
-    instance_id = params[:targets][0][:id]
+    def register(instance_id)
+      previous_count = list_instances.size
 
-    client.wait_until(name, params) do |w|
-      w.before_wait do |n, resp|
-        puts "waiting for #{name} #{instance_id}"
+      params = {
+          target_group_arn: @arn,
+          targets: [{id: instance_id}]
+      }
+      puts params.inspect
+      client.register_targets(params)
+      wait_until(:target_in_service, params)
+
+      Util.green "Current targets count is #{list_instances.size} (was #{previous_count})"
+
+      self
+    end
+
+    def deregister(instance_id)
+      previous_count = list_instances.size
+
+      params = {
+          target_group_arn: @arn,
+          targets: [{id: instance_id}]
+      }
+      puts params.inspect
+      client.deregister_targets(params)
+      wait_until(:target_deregistered, params)
+
+      Util.green "Current targets count is #{list_instances.size} (was #{previous_count})"
+
+      self
+    end
+
+    def list_instances(state: 'healthy')
+      params = {target_group_arn: @arn}
+
+      client.describe_target_health(params).
+          target_health_descriptions.
+          select { |d| d.target_health.state == state }.map do |description|
+        Instance.retrieve(description.target.id)
       end
     end
-  rescue Aws::Waiters::Errors::WaiterFailed => e
-    puts "failed waiting for #{name}: #{e.message}"
-    exit
-  end
 
-  def client
-    @client ||= Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
+    private
+
+    def wait_until(name, params)
+      instance_id = params[:targets][0][:id]
+
+      client.wait_until(name, params) do |w|
+        w.before_wait do |n, resp|
+          puts "waiting for #{name} #{instance_id}"
+        end
+      end
+    rescue Aws::Waiters::Errors::WaiterFailed => e
+      puts "failed waiting for #{name}: #{e.message}"
+      exit
+    end
+
+    def client
+      @client ||= Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
+    end
   end
 end
 
@@ -342,13 +344,13 @@ if __FILE__ == $0
     }
     puts values.inspect
 
-    server = Server.new(values).start
+    server = Server::Web.new(values).start
     target_group.register(server.id)
 
     if params['rotate']
       instance = target_group.list_instances.sort_by { |i| i.launched_at }.first
       target_group.deregister(instance.id)
-      Server.new(id: instance.id).terminate
+      Server::Web.new(id: instance.id).terminate
     end
 
     %x(git tag deploy-web-#{server.name}-#{Time.now.to_i})
