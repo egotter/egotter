@@ -19,6 +19,7 @@ module Egotter
             append_to_ssh_config(@id, @name, @public_ip).
             test_ssh_connection(@name).
             update_env(@name, 'env/sidekiq.env.enc').
+            update_datadog.
             update_sidekiq.
             install_td_agent(@name, './setup/etc/td-agent/td-agent.sidekiq.conf.erb').
             restart_processes
@@ -43,6 +44,14 @@ module Egotter
         ].each do |cmd|
           run_command(cmd)
         end
+
+        self
+      end
+
+      def update_datadog
+        system("rsync -auz ./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml #{@name}:/var/egotter/datadog.sidekiq.conf.yaml.tmp")
+        run_command('test -e "/etc/datadog-agent/conf.d/sidekiq.d" || sudo mkdir /etc/datadog-agent/conf.d/sidekiq.d')
+        run_command('sudo mv /var/egotter/datadog.sidekiq.conf.yaml.tmp /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml')
 
         self
       end
