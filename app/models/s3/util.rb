@@ -56,9 +56,14 @@ module S3
 
     def fetch(key)
       raise 'key is nil' if key.nil?
-      ApplicationRecord.benchmark("#{self} Fetch by #{key}", level: :debug) do
-        client.get_object(bucket: bucket_name, key: key.to_s).body.read
-      end
+
+      start = Time.zone.now
+      result = client.get_object(bucket: bucket_name, key: key.to_s).body.read
+
+      time = sprintf("%.1f", Time.zone.now - start)
+      Rails.logger.debug { "#{self} Fetch by #{key}#{' HIT' if result} (#{time}ms)" }
+
+      result
     end
 
     def delete(key, async: true)

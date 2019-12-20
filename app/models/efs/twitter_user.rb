@@ -3,10 +3,15 @@ module Efs
   class TwitterUser
     class << self
       def find_by(twitter_user_id)
-        ApplicationRecord.benchmark("#{self} Fetch by #{twitter_user_id}", level: :debug) do
-          obj = cache_client.read(cache_key(twitter_user_id))
-          obj ? parse_json(decompress(obj)) : obj
-        end
+        start = Time.zone.now
+
+        obj = cache_client.read(cache_key(twitter_user_id))
+        result = obj ? parse_json(decompress(obj)) : obj
+
+        time = sprintf("%.1f", Time.zone.now - start)
+        Rails.logger.debug { "#{self} Fetch by #{twitter_user_id}#{' HIT' if result} (#{time}ms)" }
+
+        result
       end
 
       def delete_by(twitter_user_id)
