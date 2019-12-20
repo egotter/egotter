@@ -9,10 +9,18 @@ class CreatePromptReportTask
   def start!
     @log = CreatePromptReportLog.create_by(request: request)
 
+    start = Time.zone.now
+
     ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} Perform request", level: :info) do
       request.error_check!
       twitter_user = create_twitter_user!(request.user)
       request.perform!(twitter_user)
+    end
+
+    elapsed = Time.zone.now - start
+    if elapsed > 3000
+      records_size = TwitterUser.where(uid: request.user.uid).size
+      logger.info { "Benchmark CreatePromptReportTask too slow #{request.id} #{records_size}" }
     end
 
     request.finished!
@@ -64,7 +72,7 @@ class CreatePromptReportTask
   def update_unfriendships(twitter_user)
     return unless twitter_user
 
-    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask  #{request.id} Import unfriendship", level: :info) do
+    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} Import unfriendship", level: :info) do
       Unfriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
         CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: request.user.id, compressed: true, enqueued_by: 'CreatePromptReportTask Unfriendship.import_by!')
       end
