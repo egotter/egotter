@@ -128,10 +128,9 @@ class Server
     File.write(fname, conf)
     system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
 
-    if run_command("diff /var/egotter/#{fname} /etc/td-agent/td-agent.conf >/dev/null 2>&1", exception: false)
+    if run_command("colordiff -u /etc/td-agent/td-agent.conf /var/egotter/#{fname}", exception: false)
       run_command("rm /var/egotter/#{fname}")
     else
-      puts conf
       puts fname
       run_command("sudo mv /var/egotter/#{fname} /etc/td-agent/td-agent.conf")
     end
@@ -146,10 +145,9 @@ class Server
     File.write(fname, contents)
     system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
 
-    if run_command("diff /var/egotter/.env /var/egotter/#{fname} >/dev/null 2>&1", exception: false)
+    if run_command("colordiff -u /var/egotter/.env /var/egotter/#{fname}", exception: false)
       run_command("rm /var/egotter/#{fname}")
     else
-      puts contents
       puts fname
       run_command("mv /var/egotter/#{fname} /var/egotter/.env")
     end
