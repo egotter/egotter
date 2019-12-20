@@ -8,6 +8,8 @@ require 'aws-sdk-elasticloadbalancingv2'
 require 'base64'
 require 'erb'
 
+require_relative '../../lib/secret_file.rb'
+
 STDOUT.sync = true
 
 class Instance
@@ -139,7 +141,19 @@ class Server
   end
 
   def update_env
-    system("rsync -auz .web.env #{@name}:/var/egotter/.env")
+    contents = ::SecretFile.read('env/web.env.enc')
+    fname = "web.env.#{Time.now.to_f}.tmp"
+    File.write(fname, contents)
+    system("rsync -auz #{fname} #{@name}:/var/egotter/#{fname}")
+
+    if run_command("diff /var/egotter/.env /var/egotter/#{fname} >/dev/null 2>&1", exception: false)
+      run_command("rm /var/egotter/#{fname}")
+    else
+      puts contents
+      puts fname
+      run_command("mv /var/egotter/#{fname} /var/egotter/.env")
+    end
+    File.delete(fname)
 
     self
   end
