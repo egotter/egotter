@@ -1,0 +1,25 @@
+init_config:
+logs:
+  - type: file
+    path: /var/egotter/log/sidekiq.log
+    source: sidekiq
+    sourcecategory: jobrunner
+    service: sidekiq
+
+  - type: file
+    path: /var/egotter/log/sidekiq_import.log
+    source: sidekiq
+    sourcecategory: jobrunner
+    service: sidekiq_import
+
+  - type: file
+    path: /var/egotter/log/sidekiq_misc.log
+    source: sidekiq
+    sourcecategory: jobrunner
+    service: sidekiq_misc
+
+  - type: file
+    path: /var/egotter/log/sidekiq_prompt_reports.log
+    source: sidekiq
+    sourcecategory: jobrunner
+    service: sidekiq_prompt_reports
