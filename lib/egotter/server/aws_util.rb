@@ -11,6 +11,10 @@ module Egotter
         "egotter_web#{Time.now.strftime('%m%d%H%M')}"
       end
 
+      def generate_sidekiq_name
+        "egotter_sidekiq#{Time.now.strftime('%m%d%H%M')}"
+      end
+
       def az_to_subnet(az)
         case az
         when 'ap-northeast-1b' then ENV['AWS_SUBNET_1B']

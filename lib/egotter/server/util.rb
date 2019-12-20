@@ -35,7 +35,7 @@ module Egotter
         TEXT
       end
 
-      def install_td_agent(host)
+      def install_td_agent(host, src)
         fname = "td-agent.#{Time.now.to_f}.conf"
 
         [
@@ -44,12 +44,17 @@ module Egotter
             '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
         ].each { |cmd| exec_command(host, cmd) }
 
-        conf = ERB.new(File.read('./setup/etc/td-agent/td-agent.web.conf.erb')).result_with_hash(
+        conf = ERB.new(File.read(src)).result_with_hash(
             name: host,
             webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
             webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
+            webhook_sidekiq: ENV['SLACK_TD_AGENT_SIDEKIQ'],
+            webhook_sidekiq_import: ENV['SLACK_TD_AGENT_SIDEKIQ_IMPORT'],
+            webhook_sidekiq_misc: ENV['SLACK_TD_AGENT_SIDEKIQ_MISC'],
+            webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
             webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
-            webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'])
+            webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
+        )
 
         File.write(fname, conf)
         system("rsync -auz #{fname} #{host}:/var/egotter/#{fname}")

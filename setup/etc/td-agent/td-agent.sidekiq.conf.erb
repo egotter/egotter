@@ -1,0 +1,136 @@
+<source>
+  @type tail
+  path /var/egotter/log/production.log
+  pos_file /tmp/production.log.pos
+  tag <%= name %>.rails
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/egotter/log/puma.log
+  pos_file /tmp/puma.log.pos
+  tag <%= name %>.puma
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/egotter/log/sidekiq.log
+  pos_file /tmp/sidekiq.log.pos
+  tag <%= name %>.sidekiq
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/egotter/log/sidekiq_import.log
+  pos_file /tmp/sidekiq_import.log.pos
+  tag <%= name %>.sidekiq_import
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/egotter/log/sidekiq_misc.log
+  pos_file /tmp/sidekiq_misc.log.pos
+  tag <%= name %>.sidekiq_misc
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/egotter/log/sidekiq_prompt_reports.log
+  pos_file /tmp/sidekiq_prompt_reports.log.pos
+  tag <%= name %>.sidekiq_prompt_reports
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/log/messages
+  pos_file /tmp/messages.log.pos
+  tag <%= name %>.syslog
+  format /^(?<message>.*)$/
+</source>
+
+<source>
+  @type tail
+  path /var/log/nginx/error.log
+  pos_file /tmp/error.log.pos
+  tag <%= name %>.error_log
+  format /^(?<message>.*)$/
+</source>
+
+<match <%= name %>.*>
+  @type rewrite_tag_filter
+  <rule>
+    key message
+    pattern (WARN|ERROR|Killed|\[error\])
+    tag ${tag}.$1
+  </rule>
+</match>
+
+<match <%= name %>.rails.*>
+  @type slack
+  webhook_url <%= webhook_rails %>
+  channel rails
+  username <%= name %>
+  flush_interval 2s
+</match>
+
+<match <%= name %>.puma.*>
+  @type slack
+  webhook_url <%= webhook_puma %>
+  channel puma
+  username <%= name %>
+  flush_interval 2s
+</match>
+
+<match <%= name %>.sidekiq.*>
+  @type slack
+  webhook_url <%= webhook_sidekiq %>
+  channel sidekiq
+  username <%= name %>
+  flush_interval 2s
+</match>
+
+<match <%= name %>.sidekiq_import.*>
+  @type slack
+  webhook_url <%= webhook_sidekiq_import %>
+  channel sidekiq_import
+  username <%= name %>
+  flush_interval 2s
+</match>
+
+  <match <%= name %>.sidekiq_misc.*>
+  @type slack
+  webhook_url <%= webhook_sidekiq_misc %>
+  channel sidekiq_misc
+  username <%= name %>
+  flush_interval 2s
+</match>
+
+<match <%= name %>.sidekiq_prompt_reports.*>
+  @type slack
+  webhook_url <%= webhook_sidekiq_prompt_reports %>
+  channel sidekiq_prompt_reports
+  username <%= name %>
+  flush_interval 2s
+</match>
+
+<match <%= name %>.syslog.*>
+  @type slack
+  webhook_url <%= webhook_syslog %>
+  channel syslog
+  username <%= name %>
+  flush_interval 2s
+</match>
+
+<match <%= name %>.error_log.*>
+  @type slack
+  webhook_url <%= webhook_error_log %>
+  channel error_log
+  username <%= name %>
+  flush_interval 2s
+</match>

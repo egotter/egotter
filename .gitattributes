@@ -1,2 +1,2 @@
 env/web.env.enc diff=secret_file
-
+env/sidekiq.env.enc diff=secret_file
