@@ -47,9 +47,10 @@ module Egotter
       end
 
       def update_crontab
-        run_command('crontab -r')
-        run_command('sudo crontab -r')
+        run_command('crontab -r || :')
+        run_command('sudo crontab -r || :')
         upload_file(@name, './setup/etc/crontab', '/etc/crontab')
+        run_command('sudo chown root:root /etc/crontab')
         self
       end
 

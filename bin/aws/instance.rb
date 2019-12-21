@@ -83,5 +83,6 @@ if __FILE__ == $0
     state = params['state'].to_s.empty? ? 'healthy' : params['state']
     puts target_group.list_instances(state: state).map(&:name).join(params['delim'] || ' ')
   elsif params['debug']
+    Egotter::Server::Sidekiq.new(name: 'egotter_sidekiq12210222').update_crontab
   end
 end
