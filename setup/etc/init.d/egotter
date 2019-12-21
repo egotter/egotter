@@ -16,22 +16,25 @@ APP_ROOT="/var/egotter/"
 
 do_action() {
   /etc/init.d/puma ${1} && \
-  /etc/init.d/sidekiq_delayed_create ${1} && \
-  /etc/init.d/sidekiq_delay ${1} && \
   /etc/init.d/sidekiq ${1} && \
-  /etc/init.d/sidekiq2 ${1} && \
-  /etc/init.d/sidekiq3 ${1} && \
   /etc/init.d/sidekiq_import ${1} && \
-  /etc/init.d/sidekiq_logging ${1} && \
   /etc/init.d/sidekiq_misc ${1}
 }
 
 start() {
-  do_action start
+  /etc/init.d/puma stop || echo 'Already started'
+  /etc/init.d/sidekiq stop || echo 'Already started'
+  /etc/init.d/sidekiq_import stop || echo 'Already started'
+  /etc/init.d/sidekiq_misc stop || echo 'Already started'
+  /etc/init.d/sidekiq_prompt_reports stop || echo 'Already started'
 }
 
 stop() {
-  do_action stop
+  /etc/init.d/puma stop || echo 'Not running'
+  /etc/init.d/sidekiq stop || echo 'Not running'
+  /etc/init.d/sidekiq_import stop || echo 'Not running'
+  /etc/init.d/sidekiq_misc stop || echo 'Not running'
+  /etc/init.d/sidekiq_prompt_reports stop || echo 'Not running'
 }
 
 restart() {
