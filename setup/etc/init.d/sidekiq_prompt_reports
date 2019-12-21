@@ -6,4 +6,4 @@
 # You must call ulimit in this file rather than patient_sidekiqctl.rb as this command affects processes spawned by this shell.
 ulimit -n 65536
 
-/etc/init.d/patient_sidekiqctl.rb ---env production --dir /var/egotter --name sidekiq_prompt_reports --state $1
+/etc/init.d/patient_sidekiqctl.rb --env production --dir /var/egotter --name sidekiq_prompt_reports --state $1

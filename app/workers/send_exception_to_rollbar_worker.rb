@@ -21,7 +21,7 @@ class SendExceptionToRollbarWorker
     traverse_hash(key, hash)
     nil
   rescue Found => e
-    e.message
+    e.message.truncate(300)
   end
 
   class Found < StandardError
