@@ -21,6 +21,7 @@ module Egotter
             update_env.
             update_datadog.
             update_egotter.
+            update_crontab.
             update_sidekiq.
             install_td_agent(@name, './setup/etc/td-agent/td-agent.sidekiq.conf.erb').
             restart_processes
@@ -44,7 +45,13 @@ module Egotter
 
       def update_egotter
         run_command('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
+        self
+      end
 
+      def update_crontab
+        run_command('crontab -r')
+        run_command('sudo crontab -r')
+        upload_file(@name, './setup/etc/crontab', '/etc/crontab')
         self
       end
 

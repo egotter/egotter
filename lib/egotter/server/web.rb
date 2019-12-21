@@ -20,6 +20,7 @@ module Egotter
             test_ssh_connection(@name).
             update_env.
             update_egotter.
+            update_crontab.
             install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb').
             restart_processes
       rescue => e
@@ -42,7 +43,13 @@ module Egotter
 
       def update_egotter
         run_command('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
+        self
+      end
 
+      def update_crontab
+        run_command('crontab -r')
+        run_command('sudo crontab -r')
+        upload_file(@name, './setup/etc/crontab', '/etc/crontab')
         self
       end
 
