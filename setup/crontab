@@ -10,7 +10,7 @@ SUFFIX='>>/var/egotter/log/cron.log 2>&1'
 # web
 # 20 19 * * *     /bin/sh -c "/var/egotter/bin/cron/rake tmp:cache:clear"
 # 30 19 * * *     /bin/sh -c "/var/egotter/bin/cron/rake cache_directories:rotate"
-# 40 19 * * *     /bin/sh -c "/bin/rm -rf /efs/*remove_ok"
+# 40 19 * * *     /bin/sh -c "/bin/rm -rf /efs2/*remove_ok"
 # * * * * *       /bin/sh -c "/var/egotter/bin/cron/rake bots:update_authorized"
 # 30 * * * *      /bin/sh -c "/var/egotter/bin/cron/rake orders:update_stripe_attributes"
 # 15 * * * *      /bin/sh -c "/var/egotter/bin/cron/runner 'SetSearchCountWorker.perform_async'"
