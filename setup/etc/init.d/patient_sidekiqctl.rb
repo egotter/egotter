@@ -317,9 +317,12 @@ if __FILE__ == $0
 
   DEBUG = params['debug']
 
+  if DEBUG
+    puts params.inspect
+  end
+
   env = params['env'] || params['e']
   app_root = params['dir']
-  user = params['user']
   name = params['name']
   state = params['state']
 
@@ -334,7 +337,6 @@ if __FILE__ == $0
   options = {
       name: name,
       conf: conf,
-      user: user,
   }
 
   bundle = Patient::Util.pick_bundle_command

@@ -3,4 +3,7 @@
 # chkconfig: 345 85 15
 # description: sidekiq_import
 
-/etc/init.d/patient_sidekiqctl.rb -e production --dir /var/egotter --user ec2-user --name sidekiq_import --state $1
+# You must call ulimit in this file rather than patient_sidekiqctl.rb as this command affects processes spawned by this shell.
+ulimit -n 65536
+
+/etc/init.d/patient_sidekiqctl.rb --env production --dir /var/egotter --name sidekiq_import --state $1
