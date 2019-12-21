@@ -4,7 +4,7 @@ if [ -f /etc/init.d/functions ]; then
   . /etc/init.d/functions
 fi
 
-if echo ' \c' | grep 'c' > /dev/null 2>&1; then
+if echo ' \c' | grep 'c' >/dev/null 2>&1; then
   en='-n'
   ec=''
 else
@@ -14,19 +14,12 @@ fi
 
 APP_ROOT="/var/egotter/"
 
-do_action() {
-  /etc/init.d/puma ${1} && \
-  /etc/init.d/sidekiq ${1} && \
-  /etc/init.d/sidekiq_import ${1} && \
-  /etc/init.d/sidekiq_misc ${1}
-}
-
 start() {
-  /etc/init.d/puma stop || echo 'Already started'
-  /etc/init.d/sidekiq stop || echo 'Already started'
-  /etc/init.d/sidekiq_import stop || echo 'Already started'
-  /etc/init.d/sidekiq_misc stop || echo 'Already started'
-  /etc/init.d/sidekiq_prompt_reports stop || echo 'Already started'
+  /etc/init.d/puma start || echo 'Already started'
+  /etc/init.d/sidekiq start || echo 'Already started'
+  /etc/init.d/sidekiq_import start || echo 'Already started'
+  /etc/init.d/sidekiq_misc start || echo 'Already started'
+  /etc/init.d/sidekiq_prompt_reports start || echo 'Already started'
 }
 
 stop() {
@@ -38,7 +31,11 @@ stop() {
 }
 
 restart() {
-  do_action restart
+  /etc/init.d/puma status && /etc/init.d/puma restart || echo 'Not running'
+  /etc/init.d/sidekiq status && /etc/init.d/sidekiq restart || echo 'Not running'
+  /etc/init.d/sidekiq_import status && /etc/init.d/sidekiq_import restart || echo 'Not running'
+  /etc/init.d/sidekiq_misc status && /etc/init.d/sidekiq_misc restart || echo 'Not running'
+  /etc/init.d/sidekiq_prompt_reports status && /etc/init.d/sidekiq_prompt_reports restart || echo 'Not running'
 }
 
 rh_status() {
@@ -56,20 +53,20 @@ rh_status() {
 }
 
 case "$1" in
-  start)
-          start
-          ;;
-  stop)
-          stop
-          ;;
-  restart)
-          restart
-          ;;
-  status)
-          rh_status
-          ;;
-  *)
-          echo "Usage: egotter {restart|status}" >&2
-          exit 2
-          ;;
+start)
+  start
+  ;;
+stop)
+  stop
+  ;;
+restart)
+  restart
+  ;;
+status)
+  rh_status
+  ;;
+*)
+  echo "Usage: egotter {restart|status}" >&2
+  exit 2
+  ;;
 esac
