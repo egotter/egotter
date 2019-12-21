@@ -12,7 +12,6 @@
   - logging
   - messaging
   - misc
-  - UpdateAudienceInsightWorker
   - ResetTooManyRequestsWorker
   - UpdateUsageStatWorker
   - creating_low
