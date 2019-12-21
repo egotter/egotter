@@ -33,7 +33,10 @@ class WelcomeMessage < ApplicationRecord
 
   def deliver!
     begin
-      dm = DirectMessage.new(retry_sending { send_first_of_all_message! })
+      resp = retry_sending { send_first_of_all_message! }
+      raise "Response of #create_direct_message is empty #{user_id}" if resp.blank?
+
+      dm = DirectMessage.new(resp)
       update!(message_id: dm.id, message: dm.truncated_message)
     rescue => e
       raise StartingFailed.new("#{e.class} #{e.message}")
