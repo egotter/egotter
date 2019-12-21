@@ -57,42 +57,46 @@ module Egotter
         )
 
         File.write(fname, conf)
-        system("rsync -auz #{fname} #{host}:/var/egotter/#{fname}")
 
-        if exec_command(host, "colordiff -u /etc/td-agent/td-agent.conf /var/egotter/#{fname}", exception: false)
-          exec_command(host, "rm /var/egotter/#{fname}")
-        else
-          puts fname
-          exec_command(host, "sudo mv /var/egotter/#{fname} /etc/td-agent/td-agent.conf")
-        end
-
-        self
+        upload_file(host, fname, '/etc/td-agent/td-agent.conf')
       ensure
         File.delete(fname) if File.exists?(fname)
       end
 
-      def update_env(host, src)
-        fname = ".env.#{Time.now.to_f}.tmp"
+      def upload_file(host, src_path, dst_path)
+        tmp_file = "#{File.basename(dst_path)}.#{Process.pid}.tmp"
+        tmp_path = File.join('/var/egotter', tmp_file)
+
+        system("rsync -auz #{src_path} #{host}:#{tmp_path}")
+
+        if exec_command(host, "colordiff -u #{dst_path} #{tmp_path}", exception: false)
+          exec_command(host, "rm #{tmp_path}")
+        else
+          puts dst_path
+          exec_command(host, "sudo mv #{tmp_path} #{dst_path}")
+        end
+
+        self
+      end
+
+      def upload_contents(host, contents, dst_path)
+        tmp_file = "upload_contents.#{Time.now.to_f}.#{Process.pid}.tmp"
+        tmp_path = File.join(Dir.tmpdir, tmp_file)
+        IO.binwrite(tmp_path, contents)
+        upload_file(host, tmp_path, dst_path)
+      ensure
+        File.delete(tmp_path) if File.exists?(tmp_path)
+      end
+
+      def upload_env(host, src)
         contents = ::SecretFile.read(src)
-        File.write(fname, contents)
-        system("rsync -auz #{fname} #{host}:/var/egotter/#{fname}")
-
-        if exec_command(host, "colordiff -u /var/egotter/.env /var/egotter/#{fname}", exception: false)
-          exec_command(host, "rm /var/egotter/#{fname}")
-        else
-          puts fname
-          exec_command(host, "mv /var/egotter/#{fname} /var/egotter/.env")
-        end
-
-        self
-      ensure
-        File.delete(fname) if File.exists?(fname)
+        upload_contents(host, contents, '/var/egotter/.env')
       end
 
-      def exec_command(host, cmd, exception: true)
+      def exec_command(host, cmd, dir: '/var/egotter', exception: true)
         raise 'Hostname is empty.' if host.to_s.empty?
         AwsUtil.green("#{host} #{cmd}")
-        system('ssh', host, "cd /var/egotter && #{cmd}", exception: exception).tap { |r| puts r }
+        system('ssh', host, "cd #{dir} && #{cmd}", exception: exception).tap { |r| puts r }
       end
 
       def launch_instance(template:, security_group:, subnet:, name:)

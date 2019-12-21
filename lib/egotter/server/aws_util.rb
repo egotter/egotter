@@ -7,6 +7,10 @@ module Egotter
         puts "\e[32m#{str}\e[0m"
       end
 
+      def red(str)
+        puts "\e[31m#{str}\e[0m"
+      end
+
       def generate_name
         "egotter_web#{Time.now.strftime('%m%d%H%M')}"
       end

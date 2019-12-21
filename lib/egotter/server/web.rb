@@ -18,12 +18,13 @@ module Egotter
         launch.
             append_to_ssh_config(@id, @name, @public_ip).
             test_ssh_connection(@name).
-            update_env(@name, 'env/web.env.enc').
+            update_env.
+            update_egotter.
             install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb').
             restart_processes
       rescue => e
         if @id
-          puts "Terminate #{@id} as #{e.class} is raised"
+          AwsUtil.red("Terminate #{@id} as #{e.class} is raised")
           terminate
         end
         raise
@@ -31,6 +32,16 @@ module Egotter
 
       def launch
         @id, @public_ip = launch_instance(template: @template, security_group: @security_group, subnet: @subnet, name: @name)
+
+        self
+      end
+
+      def update_env
+        upload_env(@name, 'env/web.env.enc')
+      end
+
+      def update_egotter
+        run_command('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
 
         self
       end
