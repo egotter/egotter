@@ -16,6 +16,11 @@ module Egotter
           exec_command(@name, cmd, exception: exception)
         end
 
+        def pull_latest_code
+          run_command('git pull origin master >/dev/null')
+          run_command('bundle check || bundle install --quiet --path .bundle --without test development')
+        end
+
         def update_egotter
           run_command('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
           self

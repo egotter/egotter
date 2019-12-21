@@ -9,6 +9,7 @@ module Egotter
           append_to_ssh_config(@id, @name, @public_ip).
               test_ssh_connection(@name).
               upload_env(@name, 'env/web.env.enc').
+              pull_latest_code.
               update_egotter.
               update_crontab.
               install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb').
@@ -21,11 +22,10 @@ module Egotter
 
         def restart_processes
           [
+              'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
               'sudo rm -rf /var/tmp/aws-mon/*',
               'sudo rm -rf /var/egotter/tmp/cache/*',
               'sudo rm -rf /var/egotter/log/*',
-              'git pull origin master >/dev/null',
-              'bundle check || bundle install --quiet --path .bundle --without test development',
               'RAILS_ENV=production bundle exec rake assets:precompile',
               'RAILS_ENV=production bundle exec rake assets:sync:download',
               'sudo service td-agent restart',
