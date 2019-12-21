@@ -1,8 +1,10 @@
-:concurrency: <%= require 'dotenv/load'; ENV.fetch("SIDEKIQ_IMPORT_CONCURRENCY") { 5 } %>
+<% require 'dotenv/load' %>:concurrency: <%= ENV.fetch("SIDEKIQ_IMPORT_CONCURRENCY") { 5 } %>
 :timeout: 60
 :pidfile: ./tmp/pids/sidekiq_import.pid
 :logfile: ./log/sidekiq_import.log
-:tag: sidekiq_import
+:tag:
+  - sidekiq_import
+  - <%= ENV.fetch("AWS_NAME_TAG") { "NONAME" } %>
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - ImportTwitterUserRelationsWorker

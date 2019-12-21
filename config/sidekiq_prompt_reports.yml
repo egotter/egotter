@@ -1,8 +1,10 @@
-:concurrency: <%= require 'dotenv/load'; ENV.fetch("SIDEKIQ_PROMPT_REPORTS_CONCURRENCY") { 3 } %>
+<% require 'dotenv/load' %>:concurrency: <%= ENV.fetch("SIDEKIQ_PROMPT_REPORTS_CONCURRENCY") { 3 } %>
 :timeout: 60
 :pidfile: ./tmp/pids/sidekiq_prompt_reports.pid
 :logfile: ./log/sidekiq_prompt_reports.log
-:tag: sidekiq_prompt_reports
+:tag:
+  - sidekiq_prompt_reports
+  - <%= ENV.fetch("AWS_NAME_TAG") { "NONAME" } %>
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - CreateTestReportWorker
