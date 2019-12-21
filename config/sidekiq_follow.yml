@@ -1,5 +1,5 @@
 :concurrency: 1
-:timeout: 10
+:timeout: 60
 :pidfile: ./tmp/pids/sidekiq_follow.pid
 :logfile: ./log/sidekiq_follow.log
 :tag: sidekiq_follow

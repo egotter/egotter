@@ -1,5 +1,5 @@
 :concurrency: 1
-:timeout: 10
+:timeout: 60
 :pidfile: ./tmp/pids/sidekiq_unfollow.pid
 :logfile: ./log/sidekiq_unfollow.log
 :tag: sidekiq_unfollow
