@@ -1,6 +1,7 @@
 class DirectMessage
 
   def initialize(response)
+    raise EmptyResponse.new('Response is empty') if response.blank?
     @response = response
   end
 
@@ -14,5 +15,8 @@ class DirectMessage
 
   def truncated_message(at: 100)
     @truncated_message ||= text.to_s.remove(/\R/).gsub(%r{https?://[\S]+}, 'URL').truncate(at)
+  end
+
+  class EmptyResponse < StandardError
   end
 end
