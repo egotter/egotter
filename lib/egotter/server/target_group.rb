@@ -1,3 +1,5 @@
+require_relative './instance'
+
 module Egotter
   module Server
     class TargetGroup
@@ -6,7 +8,7 @@ module Egotter
       end
 
       def register(instance_id)
-        previous_count = list_instances.size
+        previous_count = instances.size
 
         params = {
             target_group_arn: @arn,
@@ -16,13 +18,13 @@ module Egotter
         client.register_targets(params)
         wait_until(:target_in_service, params)
 
-        AwsUtil.green "Current targets count is #{list_instances.size} (was #{previous_count})"
+        green "Current targets count is #{instances.size} (was #{previous_count})"
 
         self
       end
 
       def deregister(instance_id)
-        previous_count = list_instances.size
+        previous_count = instances.size
 
         params = {
             target_group_arn: @arn,
@@ -32,19 +34,34 @@ module Egotter
         client.deregister_targets(params)
         wait_until(:target_deregistered, params)
 
-        AwsUtil.green "Current targets count is #{list_instances.size} (was #{previous_count})"
+        green "Current targets count is #{instances.size} (was #{previous_count})"
 
         self
       end
 
-      def list_instances(state: 'healthy')
+      def instances(state: 'healthy')
         params = {target_group_arn: @arn}
 
         client.describe_target_health(params).
             target_health_descriptions.
             select { |d| d.target_health.state == state }.map do |description|
-          Instance.retrieve(description.target.id)
+          ::Egotter::Server::Instance.retrieve(description.target.id)
         end
+      end
+
+      def oldest_instance
+        id = instances.sort_by(&:launched_at).first.id
+        ::Egotter::Server::Instance.retrieve(id)
+      end
+
+      def availability_zone_with_fewest_instances
+        count = {
+            'ap-northeast-1b' => 0,
+            'ap-northeast-1c' => 0,
+            'ap-northeast-1d' => 0,
+        }
+        instances.each { |i| count[i.availability_zone] += 1 }
+        count.sort_by { |k, v| v }[0][0]
       end
 
       private
@@ -64,6 +81,10 @@ module Egotter
 
       def client
         @client ||= Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
+      end
+
+      def green(str)
+        puts "\e[32m#{str}\e[0m"
       end
     end
   end

@@ -1,3 +1,5 @@
+require_relative './ec2_util'
+
 module Egotter
   module Server
     class Instance
@@ -11,16 +13,13 @@ module Egotter
         @launched_at = instance.launch_time
       end
 
+      def terminate
+        ::Egotter::Server::Ec2Util.terminate_instance(@id)
+      end
+
       class << self
         def retrieve(id)
-          instance = nil
-          filters = [name: 'instance-id', values: [id]]
-          ec2 = Aws::EC2::Resource.new(region: 'ap-northeast-1')
-          ec2.instances(filters: filters).each do |i|
-            instance = i
-            break
-          end
-          instance ? new(instance) : nil
+          new(::Egotter::Server::Ec2Util.retrieve_instance(id))
         end
       end
     end

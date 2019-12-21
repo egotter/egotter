@@ -9,12 +9,10 @@ require 'base64'
 require 'erb'
 
 require_relative '../../lib/secret_file'
-require_relative '../../lib/egotter/server/aws_util'
-require_relative '../../lib/egotter/server/instance'
+
 require_relative '../../lib/egotter/server/target_group'
-require_relative '../../lib/egotter/server/util'
-require_relative '../../lib/egotter/server/web'
-require_relative '../../lib/egotter/server/sidekiq'
+require_relative '../../lib/egotter/server/launcher'
+require_relative '../../lib/egotter/server/installer'
 
 STDOUT.sync = true
 
@@ -39,41 +37,36 @@ if __FILE__ == $0
   target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
   target_group = ::Egotter::Server::TargetGroup.new(target_group_arn)
 
-  if params['create-sidekiq']
-    subnet = ::Egotter::Server::AwsUtil.az_to_subnet('ap-northeast-1b')
-    values = {
-        template: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE'],
-        security_group: params['security-group'] || ENV['AWS_SECURITY_GROUP'],
-        name: params['name-tag'].to_s.empty? ? ::Egotter::Server::AwsUtil.generate_sidekiq_name : params['name-tag'],
-        subnet: subnet || ENV['AWS_SUBNET']
-    }
-    puts values.inspect
+  availability_zone =
+      if params['create-sidekiq']
+        'ap-northeast-1b'
+      elsif params['create']
+        target_group.availability_zone_with_fewest_instances
+      end
+  params['availability-zone'] = availability_zone
 
-    server = ::Egotter::Server::Sidekiq.new(values).start
+  Launcher = ::Egotter::Server::Launcher
+  Installer = ::Egotter::Server::Installer
+
+  if params['create-sidekiq']
+    launch_params = Launcher::Params.new(params)
+    server = Launcher::Sidekiq.new(launch_params).launch
+    Installer::Sidekiq.new(server.name, id: server.id, public_ip: server.public_ip).install
 
     %x(git tag deploy-sidekiq-#{server.name}-#{Time.now.to_i})
     %x(git push origin --tags)
 
   elsif params['create']
-    az = params['availability-zone'].to_s.empty? ?
-             ::Egotter::Server::AwsUtil.assign_availability_zone(target_group_arn) : params['availability-zone']
-    subnet = ::Egotter::Server::AwsUtil.az_to_subnet(az)
+    launch_params = Launcher::Params.new(params)
+    server = Launcher::Web.new(launch_params).launch
+    Installer::Web.new(server.name, id: server.id, public_ip: server.public_ip).install
 
-    values = {
-        template: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE'],
-        security_group: params['security-group'] || ENV['AWS_SECURITY_GROUP'],
-        name: params['name-tag'].to_s.empty? ? ::Egotter::Server::AwsUtil.generate_name : params['name-tag'],
-        subnet: subnet || ENV['AWS_SUBNET']
-    }
-    puts values.inspect
-
-    server = ::Egotter::Server::Web.new(values).start
     target_group.register(server.id)
 
     if params['rotate']
-      instance = target_group.list_instances.sort_by { |i| i.launched_at }.first
+      instance = target_group.oldest_instance
       target_group.deregister(instance.id)
-      ::Egotter::Server::Web.new(id: instance.id).terminate
+      instance.terminate
     end
 
     %x(git tag deploy-web-#{server.name}-#{Time.now.to_i})
@@ -81,7 +74,7 @@ if __FILE__ == $0
 
   elsif params['list']
     state = params['state'].to_s.empty? ? 'healthy' : params['state']
-    puts target_group.list_instances(state: state).map(&:name).join(params['delim'] || ' ')
+    puts target_group.instances(state: state).map(&:name).join(params['delim'] || ' ')
   elsif params['debug']
   end
 end
