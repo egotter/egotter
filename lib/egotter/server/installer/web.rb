@@ -8,7 +8,7 @@ module Egotter
         def install
           append_to_ssh_config(@id, @name, @public_ip).
               test_ssh_connection(@name).
-              upload_env(@name, 'env/web.env.enc').
+              update_env.
               pull_latest_code.
               update_egotter.
               update_crontab.
@@ -18,6 +18,10 @@ module Egotter
           red("Terminate #{@id} as #{e.class} is raised")
           ::Egotter::Server::Ec2Util.terminate_instance(@id)
           raise
+        end
+
+        def update_env
+          upload_env(@name, 'env/web.env.enc')
         end
 
         def restart_processes
@@ -31,6 +35,7 @@ module Egotter
               'sudo service td-agent restart',
               'sudo service nginx restart',
               'sudo service puma restart',
+              'sudo restart datadog-agent',
           ].each do |cmd|
             run_command(cmd)
           end

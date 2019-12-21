@@ -19,6 +19,7 @@ module Egotter
         def pull_latest_code
           run_command('git pull origin master >/dev/null')
           run_command('bundle check || bundle install --quiet --path .bundle --without test development')
+          self
         end
 
         def update_egotter

@@ -11,6 +11,10 @@ module Egotter
               security_group: params['security-group'] || ENV['AWS_SECURITY_GROUP'],
               subnet: pick_subnet(params),
           }
+
+          if params['instance-type']
+            @values[:instance_type] = params['instance-type']
+          end
         end
 
         def pick_subnet(params)

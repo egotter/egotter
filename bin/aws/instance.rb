@@ -25,6 +25,7 @@ if __FILE__ == $0
       'subnet:',
       'target-group:',
       'availability-zone:',
+      'instance-type:',
       'delim:',
       'state:',
       'rotate',

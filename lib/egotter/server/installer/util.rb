@@ -36,11 +36,11 @@ module Egotter
 
         def to_ssh_config(id, host, public_ip)
           <<~"TEXT"
-          # #{id}
-          Host #{host}
-            HostName        #{public_ip}
-            IdentityFile    ~/.ssh/egotter.pem
-            User            ec2-user
+            # #{id}
+            Host #{host}
+              HostName        #{public_ip}
+              IdentityFile    ~/.ssh/egotter.pem
+              User            ec2-user
           TEXT
         end
 
@@ -61,7 +61,7 @@ module Egotter
               webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
               webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
               webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
-              )
+          )
 
           upload_contents(host, conf, '/etc/td-agent/td-agent.conf')
         end
@@ -93,6 +93,11 @@ module Egotter
 
         def upload_env(host, src)
           contents = ::SecretFile.read(src)
+
+          if contents.match?(/AWS_NAME_TAG="NONAME"/)
+            contents.gsub!(/AWS_NAME_TAG="NONAME"/, "AWS_NAME_TAG=\"#{host}\"")
+          end
+
           upload_contents(host, contents, '/var/egotter/.env')
         end
 

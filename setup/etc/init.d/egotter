@@ -23,11 +23,11 @@ start() {
 }
 
 stop() {
-  /etc/init.d/puma stop || echo 'Not running'
-  /etc/init.d/sidekiq stop || echo 'Not running'
-  /etc/init.d/sidekiq_import stop || echo 'Not running'
-  /etc/init.d/sidekiq_misc stop || echo 'Not running'
-  /etc/init.d/sidekiq_prompt_reports stop || echo 'Not running'
+  /etc/init.d/puma status && /etc/init.d/puma stop || echo 'Not running'
+  /etc/init.d/sidekiq status && /etc/init.d/sidekiq stop || echo 'Not running'
+  /etc/init.d/sidekiq_import status && /etc/init.d/sidekiq_import stop || echo 'Not running'
+  /etc/init.d/sidekiq_misc status && /etc/init.d/sidekiq_misc stop || echo 'Not running'
+  /etc/init.d/sidekiq_prompt_reports status && /etc/init.d/sidekiq_prompt_reports stop || echo 'Not running'
 }
 
 restart() {

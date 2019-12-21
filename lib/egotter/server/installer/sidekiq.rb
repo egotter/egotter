@@ -8,7 +8,7 @@ module Egotter
         def install
           append_to_ssh_config(@id, @name, @public_ip).
               test_ssh_connection(@name).
-              upload_env(@name, 'env/sidekiq.env.enc').
+              update_env.
               pull_latest_code.
               update_datadog.
               update_egotter.
@@ -25,6 +25,10 @@ module Egotter
           raise
         end
 
+        def update_env
+          upload_env(@name, 'env/sidekiq.env.enc')
+        end
+
         def restart_processes
           [
               'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
@@ -38,6 +42,7 @@ module Egotter
               'sudo service sidekiq_import start',
               'sudo service sidekiq_misc start',
               'sudo service sidekiq_prompt_reports start',
+              'sudo restart datadog-agent',
           ].each do |cmd|
             run_command(cmd)
           end

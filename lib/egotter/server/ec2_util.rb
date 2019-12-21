@@ -3,7 +3,7 @@ module Egotter
     module Ec2Util
       module_function
 
-      def launch_instance(template:, security_group:, subnet:, name:)
+      def launch_instance(template:, security_group:, subnet:, name:, instance_type: nil)
         params = {
             launch_template: {launch_template_id: template},
             min_count: 1,
@@ -11,6 +11,10 @@ module Egotter
             security_group_ids: [security_group],
             subnet_id: subnet
         }
+
+        if instance_type
+          params[:instance_type] = instance_type
+        end
 
         instance = resource.create_instances(params).first
         wait_until(instance.id, :instance_running)
