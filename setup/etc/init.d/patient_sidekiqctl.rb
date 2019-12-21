@@ -11,13 +11,8 @@ module Patient
       `cat #{pidfile}`.to_i
     end
 
-    def print_process(params)
-      pid =
-          if params[:pidfile]
-            print_pid(params[:pidfile])
-          elsif params[:pid]
-            params[:pid]
-          end
+    def print_process(pid: nil, pidfile: nil)
+      pid = print_pid(pidfile) unless pid
       `ps -o command= -p #{pid}`.strip
     end
 
@@ -25,13 +20,8 @@ module Patient
       File.exists?(pidfile)
     end
 
-    def process_exists?(params)
-      pid =
-          if params[:pidfile]
-            print_pid(params[:pidfile])
-          elsif params[:pid]
-            params[:pid]
-          end
+    def process_exists?(pid: nil, pidfile: nil)
+      pid = print_pid(pidfile) unless pid
       ::Process.kill(0, pid)
     rescue Errno::ESRCH => e
       false
@@ -348,6 +338,11 @@ if __FILE__ == $0
 
   SIDEKIQCTL = "cd #{app_root} && #{bundle} exec #{ruby} #{sidekiqctl}"
   SIDEKIQ = "cd #{app_root} && RAILS_ENV=#{env} #{bundle} exec #{ruby} #{sidekiq}"
+
+  if DEBUG
+    puts `cd #{app_root} && #{bundle} --version`
+    puts `cd #{app_root} && #{bundle} exec #{ruby} --version`
+  end
 
   case state
   when 'quiet'         then Patient::Process.quiet(pidfile, options)
