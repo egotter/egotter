@@ -9,7 +9,7 @@ module Deploy
     end
   end
 
-  class Server
+  class Task
     include Util
 
     attr_reader :host
@@ -36,7 +36,7 @@ module Deploy
     end
   end
 
-  class Web < Server
+  class Web < Task
     CMD = [
         'git fetch origin',
         'git pull origin master',
@@ -60,12 +60,10 @@ module Deploy
     end
 
     def after_deploy
-      frontend("git tag deploy-web-all-#{Time.now.to_i}")
-      frontend('git push origin --tags')
     end
   end
 
-  class Sidekiq < Server
+  class Sidekiq < Task
     CMD = [
         'git fetch origin',
         'git pull origin master',
@@ -93,8 +91,6 @@ module Deploy
     end
 
     def after_deploy
-      frontend("git tag deploy-sidekiq-all-#{Time.now.to_i}")
-      frontend('git push origin --tags')
     end
   end
 end
@@ -108,8 +104,14 @@ if __FILE__ == $0
   case params['role']
   when 'web'
     hosts.each { |host| Deploy::Web.new(host).deploy }
+    frontend("git tag deploy-web-all-#{Time.now.to_i}")
+    frontend('git push origin --tags')
+
   when 'sidekiq'
     hosts.each { |host| Deploy::Sidekiq.new(host).deploy }
+    frontend("git tag deploy-sidekiq-all-#{Time.now.to_i}")
+    frontend('git push origin --tags')
+
   else
     puts "Invalid #{params.inspect}"
   end
