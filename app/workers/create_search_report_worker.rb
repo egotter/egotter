@@ -1,5 +1,6 @@
 class CreateSearchReportWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(searchee_id, options = {})
@@ -17,19 +18,10 @@ class CreateSearchReportWorker
 
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
 
-  rescue Twitter::Error::Forbidden => e
-    if e.message == 'You cannot send messages to users you have blocked.' ||
-        e.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
-      logger.info "#{e.class}: #{e.message} #{searchee_id} #{options.inspect}"
-    else
-      logger.warn "#{e.class}: #{e.message} #{searchee_id} #{options.inspect}"
-    end
-    logger.info e.backtrace.join("\n")
   rescue => e
     if AccountStatus.unauthorized?(e)
     else
-      logger.warn "#{e.class}: #{e.message} #{searchee_id} #{options.inspect}"
-      logger.info e.backtrace.join("\n")
+      notify_airbrake(e, searchee_id: searchee_id, options: options)
     end
   end
 end
