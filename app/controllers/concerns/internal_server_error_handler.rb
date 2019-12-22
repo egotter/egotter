@@ -14,6 +14,7 @@ module Concerns::InternalServerErrorHandler
   private
 
   def handle_general_error(ex)
+    notify_airbrake(ex)
     logger.warn "rescue_from Exception: #{ex.class} #{ex.message.truncate(100)} #{request_details}"
     logger.info ex.backtrace.join("\n")
 
@@ -30,6 +31,7 @@ module Concerns::InternalServerErrorHandler
   end
 
   def handle_request_timeout(ex)
+    notify_airbrake(ex)
     logger.warn "#{ex.class} #{ex.message.truncate(100)} #{request_details}"
 
     if request.xhr?
@@ -42,6 +44,7 @@ module Concerns::InternalServerErrorHandler
   end
 
   def handle_csrf_error(ex)
+    notify_airbrake(ex)
     logger.info "#{ex.class} #{request_details}"
 
     if request.xhr?
