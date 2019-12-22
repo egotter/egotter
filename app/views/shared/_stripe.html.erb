@@ -1,4 +1,6 @@
-<% if current_user.has_valid_subscription? %>
+<script src='https://js.stripe.com/v3'></script>
+
+<% if user_signed_in? && current_user.has_valid_subscription? %>
   <script>
     $(function () {
       $(document).on('click', '.btn-checkout', function () {
@@ -7,7 +9,7 @@
       });
     });
   </script>
-<% else %>
+<% elsif user_signed_in? %>
   <script>
     $(function () {
       var stripe = Stripe("<%= ENV['STRIPE_PUBLISHABLE_KEY'] %>");
