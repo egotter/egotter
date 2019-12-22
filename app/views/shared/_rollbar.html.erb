@@ -1,0 +1,11 @@
+<script>
+    Rollbar.configure({
+        payload: {
+            person: {
+                id: "<%= current_user.id %>",
+                username: "<%= current_user.screen_name %>",
+                email: ""
+            }
+        }
+    });
+</script>

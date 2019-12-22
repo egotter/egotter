@@ -24,51 +24,12 @@
 
     = yield(:canonical_url) if content_for?(:canonical_url)
 
-    = render partial: 'shared/google_analytics'
-
-    %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-    :javascript
-      (adsbygoogle = window.adsbygoogle || []).push({
-        google_ad_client: "ca-pub-3146843071247817",
-        enable_page_level_ads: true,
-        overlays: {bottom: true}
-      });
+    = render partial: 'shared/google'
+    = render partial: 'shared/twitter'
 
     - if user_signed_in?
-      - if Rails.env.production?
-        %link{href: '/manifest.json', rel: 'manifest'}
-      %script{src: 'https://cdn.onesignal.com/sdks/OneSignalSDK.js'}
-      :javascript
-        #{render(partial: 'common/onesignal', formats: %i(js))}
-
-    - if user_signed_in?
-      :javascript
-        Rollbar.configure({
-          payload: {
-            person: {
-              id: #{current_user.id},
-              username: "#{current_user.screen_name}",
-              email: ""
-            }
-          }
-        });
-
-    :javascript
-      window.twttr = (function(d, s, id) {
-        var js, fjs = d.getElementsByTagName(s)[0], t = window.twttr || {};
-        if (d.getElementById(id)) return t;
-        js = d.createElement(s);
-        js.id = id;
-        js.src = "https://platform.twitter.com/widgets.js";
-        fjs.parentNode.insertBefore(js, fjs);
-
-        t._e = [];
-        t.ready = function(f) {
-          t._e.push(f);
-        };
-
-        return t;
-      }(document, "script", "twitter-wjs"));
+      = render partial: 'shared/onesignal'
+      = render partial: 'shared/rollbar'
 
   %body
     = javascript_include_tag '/adsense.js'
