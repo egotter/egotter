@@ -134,9 +134,6 @@ class UnfollowRequest < ApplicationRecord
   end
 
   class TooManyUnfollows < RetryableError
-    def initialize(*args)
-      super('')
-    end
   end
 
   # Don't retry

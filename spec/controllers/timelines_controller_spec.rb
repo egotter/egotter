@@ -38,7 +38,6 @@ RSpec.describe TimelinesController, type: :controller do
     context 'With blocked screen_name' do
       let(:twitter_user) { build(:twitter_user, screen_name: screen_name) }
       before do
-        ForbiddenUser.create!(screen_name: screen_name)
         allow(controller).to receive(:valid_screen_name?).with(no_args).and_return(true)
         allow(controller).to receive(:not_found_screen_name?).with(no_args).and_return(false)
         allow(controller).to receive(:forbidden_screen_name?).with(no_args).and_return(false)
@@ -53,7 +52,7 @@ RSpec.describe TimelinesController, type: :controller do
 
           allow(controller).to receive(:user_signed_in?).with(no_args).and_return(true)
           allow(controller).to receive(:current_user).with(no_args).and_return(user)
-          allow(controller).to receive(:request_context_client).and_raise(RuntimeError, 'You have been blocked')
+          allow(controller).to receive(:blocked_user?).with(screen_name).and_return(true)
         end
         it do
           is_expected.to redirect_to blocked_path(screen_name: screen_name)
@@ -75,7 +74,6 @@ RSpec.describe TimelinesController, type: :controller do
     context 'With protected screen_name' do
       let(:twitter_user) { build(:twitter_user, screen_name: screen_name) }
       before do
-        ForbiddenUser.create!(screen_name: screen_name)
         allow(controller).to receive(:valid_screen_name?).with(no_args).and_return(true)
         allow(controller).to receive(:not_found_screen_name?).with(no_args).and_return(false)
         allow(controller).to receive(:forbidden_screen_name?).with(no_args).and_return(false)

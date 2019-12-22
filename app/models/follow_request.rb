@@ -161,9 +161,6 @@ class FollowRequest < ApplicationRecord
   end
 
   class TooManyFollows < RetryableError
-    def initialize(*args)
-      super('')
-    end
   end
 
   # Don't retry

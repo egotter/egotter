@@ -99,6 +99,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   rescue => e
     if AccountStatus.unauthorized?(e)
       raise Unauthorized
+    elsif AccountStatus.protected?(e)
+      raise Protected
     elsif ServiceStatus.service_unavailable?(e)
       raise ServiceUnavailable
     elsif ServiceStatus.internal_server_error?(e)
@@ -136,21 +138,15 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class Unauthorized < Error
-    def initialize(*args)
-      super('')
-    end
   end
 
   class Forbidden < Error
-    def initialize(*args)
-      super('')
-    end
+  end
+
+  class Protected < Error
   end
 
   class TooShortCreateInterval < Error
-    def initialize(*args)
-      super('')
-    end
   end
 
   class TooManyFriends < Error

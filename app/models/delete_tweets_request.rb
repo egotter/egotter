@@ -139,7 +139,6 @@ class DeleteTweetsRequest < ApplicationRecord
     attr_reader :retry_in, :destroy_count
 
     def initialize(retry_in:, destroy_count:)
-      super('')
       @retry_in = retry_in
       @destroy_count = destroy_count
     end

@@ -17,9 +17,14 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   describe '#build_twitter_user' do
     subject { request.build_twitter_user }
 
-    context '#fetch_user raises Twitter::Error::Unauthorized' do
+    context 'The token is invalid' do
       before { allow(request).to receive(:fetch_user).and_raise(Twitter::Error::Unauthorized, 'Invalid or expired token.') }
       it { expect { subject }.to raise_error(described_class::Unauthorized) }
+    end
+
+    context 'The user is protected' do
+      before { allow(request).to receive(:fetch_user).and_raise(Twitter::Error::Unauthorized, 'Not authorized.') }
+      it { expect { subject }.to raise_error(described_class::Protected) }
     end
 
     context '#fetch_user raises Twitter::Error::InternalServerError' do
@@ -31,7 +36,6 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       before { allow(request).to receive(:fetch_user).and_raise(Twitter::Error::ServiceUnavailable, 'Over capacity') }
       it { expect { subject }.to raise_error(described_class::ServiceUnavailable) }
     end
-
   end
 
   describe '#fetch_user' do
