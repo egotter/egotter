@@ -9,6 +9,7 @@ module Egotter
           append_to_ssh_config(@id, @name, @public_ip).
               test_ssh_connection(@name).
               update_env.
+              upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
               pull_latest_code.
               update_datadog.
               update_egotter.

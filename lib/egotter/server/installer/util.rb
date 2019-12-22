@@ -2,6 +2,10 @@ module Egotter
   module Server
     module Installer
       module Util
+        def yellow(str)
+          puts "\e[33m#{str}\e[0m"
+        end
+
         def green(str)
           puts "\e[32m#{str}\e[0m"
         end
@@ -15,7 +19,7 @@ module Egotter
           green(cmd)
           30.times do |n|
             puts "waiting for test_ssh_connection #{host}"
-            if system(cmd, exception: false)
+            if frontend(cmd, exception: false)
               break
             else
               sleep 5
@@ -70,12 +74,18 @@ module Egotter
           tmp_file = "#{File.basename(dst_path)}.#{Process.pid}.tmp"
           tmp_path = File.join('/var/egotter', tmp_file)
 
-          system("rsync -auz #{src_path} #{host}:#{tmp_path}")
+          frontend("rsync -auz #{src_path} #{host}:#{tmp_path}")
 
-          if exec_command(host, "colordiff -u #{dst_path} #{tmp_path}", exception: false)
+          diff_src =
+              if exec_command(host, "sudo test -f #{dst_path}", exception: false)
+                dst_path
+              else
+                '/dev/null'
+              end
+
+          if exec_command(host, "sudo colordiff -u #{diff_src} #{tmp_path}", exception: false)
             exec_command(host, "rm #{tmp_path}")
           else
-            puts dst_path
             exec_command(host, "sudo mv #{tmp_path} #{dst_path}")
           end
 
@@ -99,6 +109,11 @@ module Egotter
           end
 
           upload_contents(host, contents, '/var/egotter/.env')
+        end
+
+        def frontend(cmd, exception: true)
+          yellow("localhost #{cmd}")
+          system(cmd, exception: exception)
         end
 
         def exec_command(host, cmd, dir: '/var/egotter', exception: true)
