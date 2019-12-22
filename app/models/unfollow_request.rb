@@ -110,20 +110,14 @@ class UnfollowRequest < ApplicationRecord
   class Error < StandardError
   end
 
-  class DeadErrorTellsNoTales < Error
-    def initialize(*args)
-      super('')
-    end
-  end
-
   class RetryableError < StandardError
   end
 
   # Don't retry
-  class TooManyRetries < DeadErrorTellsNoTales
+  class TooManyRetries < Error
   end
 
-  class AlreadyFinished < DeadErrorTellsNoTales
+  class AlreadyFinished < Error
   end
 
   # Don't retry
@@ -133,10 +127,10 @@ class UnfollowRequest < ApplicationRecord
   class Forbidden < Error
   end
 
-  class Suspended < DeadErrorTellsNoTales
+  class Suspended < Error
   end
 
-  class TemporarilyLocked < DeadErrorTellsNoTales
+  class TemporarilyLocked < Error
   end
 
   class TooManyUnfollows < RetryableError
@@ -146,14 +140,14 @@ class UnfollowRequest < ApplicationRecord
   end
 
   # Don't retry
-  class CanNotUnfollowYourself < DeadErrorTellsNoTales
+  class CanNotUnfollowYourself < Error
   end
 
   # Don't retry
-  class NotFound < DeadErrorTellsNoTales
+  class NotFound < Error
   end
 
   # Don't retry
-  class NotFollowing < DeadErrorTellsNoTales
+  class NotFollowing < Error
   end
 end

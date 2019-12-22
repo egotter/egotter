@@ -135,20 +135,14 @@ class FollowRequest < ApplicationRecord
   class Error < StandardError
   end
 
-  class DeadErrorTellsNoTales < Error
-    def initialize(*args)
-      super('')
-    end
-  end
-
   class RetryableError < StandardError
   end
 
   # Don't retry
-  class TooManyRetries < DeadErrorTellsNoTales
+  class TooManyRetries < Error
   end
 
-  class AlreadyFinished < DeadErrorTellsNoTales
+  class AlreadyFinished < Error
   end
 
   # Don't retry
@@ -159,11 +153,11 @@ class FollowRequest < ApplicationRecord
   end
 
   # Don't retry
-  class Suspended < DeadErrorTellsNoTales
+  class Suspended < Error
   end
 
   # Don't retry
-  class TemporarilyLocked < DeadErrorTellsNoTales
+  class TemporarilyLocked < Error
   end
 
   class TooManyFollows < RetryableError
@@ -173,18 +167,18 @@ class FollowRequest < ApplicationRecord
   end
 
   # Don't retry
-  class CanNotFollowYourself < DeadErrorTellsNoTales
+  class CanNotFollowYourself < Error
   end
 
   # Don't retry
-  class NotFound < DeadErrorTellsNoTales
+  class NotFound < Error
   end
 
   # Don't retry
-  class AlreadyFollowing < DeadErrorTellsNoTales
+  class AlreadyFollowing < Error
   end
 
   # Don't retry
-  class AlreadyRequestedToFollow < DeadErrorTellsNoTales
+  class AlreadyRequestedToFollow < Error
   end
 end

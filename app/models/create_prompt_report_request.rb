@@ -160,52 +160,46 @@ class CreatePromptReportRequest < ApplicationRecord
   class Error < StandardError
   end
 
-  class DeadErrorTellsNoTales < Error
-    def initialize(*args)
-      super('')
-    end
+  class InitializationStarted < Error
   end
 
-  class InitializationStarted < DeadErrorTellsNoTales
+  class PermissionLevelNotEnough < Error
   end
 
-  class PermissionLevelNotEnough < DeadErrorTellsNoTales
+  class TooShortRequestInterval < Error
   end
 
-  class TooShortRequestInterval < DeadErrorTellsNoTales
+  class TooShortSendInterval < Error
   end
 
-  class TooShortSendInterval < DeadErrorTellsNoTales
+  class Unauthorized < Error
   end
 
-  class Unauthorized < DeadErrorTellsNoTales
+  class Forbidden < Error
   end
 
-  class Forbidden < DeadErrorTellsNoTales
+  class ReportDisabled < Error
   end
 
-  class ReportDisabled < DeadErrorTellsNoTales
+  class UserInactive < Error
   end
 
-  class UserInactive < DeadErrorTellsNoTales
+  class UserSuspended < Error
   end
 
-  class UserSuspended < DeadErrorTellsNoTales
+  class TooManyFriends < Error
   end
 
-  class TooManyFriends < DeadErrorTellsNoTales
-  end
-
-  class TooManyErrors < DeadErrorTellsNoTales
+  class TooManyErrors < Error
   end
 
   class TemporarilyLocked < Error
   end
 
-  class EgotterBlocked < DeadErrorTellsNoTales
+  class EgotterBlocked < Error
   end
 
-  class MaybeImportBatchFailed < DeadErrorTellsNoTales
+  class MaybeImportBatchFailed < Error
   end
 
   class Unknown < StandardError
