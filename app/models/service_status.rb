@@ -34,5 +34,9 @@ class ServiceStatus
     def service_unavailable?(ex)
       new(ex: ex).service_unavailable?
     end
+
+    def retryable?(ex)
+      new(ex: ex).retryable?
+    end
   end
 end

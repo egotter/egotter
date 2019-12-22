@@ -35,6 +35,7 @@ class DeleteTweetsRequest < ApplicationRecord
   def perform!
     error_check! unless @error_check
 
+    retries ||= 5
     @destroy_count ||= 0
 
     ::Timeout.timeout(TIMEOUT_SECONDS) do
@@ -49,36 +50,41 @@ class DeleteTweetsRequest < ApplicationRecord
 
     raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
 
-  rescue Twitter::Error::InternalServerError => e
-    retry
   rescue Twitter::Error::TooManyRequests => e
     raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: destroy_count)
   rescue ::Timeout::Error => e
     raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
   rescue => e
-    if e.message.include?('Connection reset by peer')
-      raise ConnectionResetByPeer.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
+    if AccountStatus.unauthorized?(e)
+      raise InvalidToken.new(e.message)
+    elsif ServiceStatus.retryable?(e) && (retries -= 1) > 0
+      retry
     else
-      raise
+      raise Unknown.new("#{e.class} #{e.message}")
     end
   end
 
   def error_check!
     raise Unauthorized unless user.authorized?
 
+    retries ||= 5
+
     begin
       api_client.verify_credentials
+      raise TweetsNotFound if api_client.user[:statuses_count] == 0
+    rescue TweetsNotFound => e
+      raise
     rescue Twitter::Error::TooManyRequests => e
       raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: 0)
     rescue => e
-      if e.message == 'Invalid or expired token.'
+      if AccountStatus.unauthorized?(e)
         raise InvalidToken.new(e.message)
+      elsif ServiceStatus.retryable?(e) && (retries -= 1) > 0
+        retry
       else
         raise Unknown.new("#{e.class} #{e.message}")
       end
     end
-
-    raise TweetsNotFound if api_client.user[:statuses_count] == 0
 
     @error_check = true
   end
