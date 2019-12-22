@@ -11,7 +11,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       allow(request).to receive(:api_client).and_raise('xxx Connection reset by peer xxx')
     end
 
-    it { expect { subject }.to raise_error(described_class::ConnectionResetByPeer) }
+    it { expect { subject }.to raise_error(described_class::RetryExhausted) }
   end
 
   describe '#error_check!' do
@@ -30,7 +30,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       before do
         client = double('Client')
         allow(user).to receive_message_chain(:api_client, :twitter).with(no_args).with(no_args).and_return(client)
-        allow(client).to receive(:verify_credentials).with(no_args).and_raise('Invalid or expired token.')
+        allow(client).to receive(:verify_credentials).with(no_args).and_raise(Twitter::Error::Unauthorized.new('Invalid or expired token.'))
       end
 
       it { expect { subject }.to raise_error(DeleteTweetsRequest::InvalidToken) }
@@ -45,7 +45,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
         allow(client).to receive(:verify_credentials).with(no_args).and_raise(Twitter::Error::TooManyRequests)
       end
 
-      it { expect { subject }.to raise_error(DeleteTweetsRequest::TooManyRequests) }
+      it { expect { subject }.to raise_error(Twitter::Error::TooManyRequests) }
     end
 
     context 'statuses_count == 0' do
@@ -57,6 +57,17 @@ RSpec.describe DeleteTweetsRequest, type: :model do
       end
 
       it { expect { subject }.to raise_error(DeleteTweetsRequest::TweetsNotFound) }
+    end
+  end
+
+  describe '#exception_handler' do
+    let(:user) { create(:user) }
+    let(:request) { DeleteTweetsRequest.create(session_id: -1, user: user) }
+    let(:subject) { request.exception_handler(exception, 99) }
+
+    context 'exception.is_a?(DeleteTweetsRequest::Error) == true' do
+      let(:exception) { DeleteTweetsRequest::InvalidToken.new }
+      it { expect { subject }.to raise_error(DeleteTweetsRequest::InvalidToken) }
     end
   end
 end

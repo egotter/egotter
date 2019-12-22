@@ -55,13 +55,9 @@ class DeleteTweetsRequest < ApplicationRecord
   rescue ::Timeout::Error => e
     raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
   rescue => e
-    if AccountStatus.unauthorized?(e)
-      raise InvalidToken.new(e.message)
-    elsif ServiceStatus.retryable?(e) && (retries -= 1) > 0
-      retry
-    else
-      raise Unknown.new("#{e.class} #{e.message}")
-    end
+    exception_handler(e, retries)
+    retries -= 1
+    retry
   end
 
   def error_check!
@@ -75,18 +71,30 @@ class DeleteTweetsRequest < ApplicationRecord
     rescue TweetsNotFound => e
       raise
     rescue Twitter::Error::TooManyRequests => e
-      raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: 0)
+      raise
     rescue => e
-      if AccountStatus.unauthorized?(e)
-        raise InvalidToken.new(e.message)
-      elsif ServiceStatus.retryable?(e) && (retries -= 1) > 0
-        retry
-      else
-        raise Unknown.new("#{e.class} #{e.message}")
-      end
+      exception_handler(e, retries)
+      retries -= 1
+      retry
     end
 
     @error_check = true
+  end
+
+  def exception_handler(e, retries)
+    if AccountStatus.unauthorized?(e)
+      raise InvalidToken.new(e.message)
+    elsif ServiceStatus.retryable?(e)
+      if retries > 0
+        return true
+      else
+        raise RetryExhausted.new("#{e.class} #{e.message}")
+      end
+    elsif e.is_a?(Error)
+      raise e
+    else
+      raise Unknown.new("#{e.class} #{e.message}")
+    end
   end
 
   def destroy_status!(tweet_id)
@@ -168,6 +176,9 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   class FinishedTweetNotSent < Error
+  end
+
+  class RetryExhausted < Error
   end
 
   class Unknown < Error

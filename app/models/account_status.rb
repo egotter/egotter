@@ -59,6 +59,10 @@ class AccountStatus
       new(ex: ex).unauthorized?
     end
 
+    def too_many_requests?(ex)
+      new(ex: ex).too_many_requests?
+    end
+
     def temporarily_locked?(ex)
       new(ex: ex).temporarily_locked?
     end
