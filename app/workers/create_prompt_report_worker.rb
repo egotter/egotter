@@ -1,5 +1,6 @@
 class CreatePromptReportWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -23,11 +24,9 @@ class CreatePromptReportWorker
     CreatePromptReportTask.new(request).start!
 
   rescue CreatePromptReportRequest::Error => e
-    Airbrake.notify(e)
+    notify_airbrake(e, request_id: request_id, options: options)
   rescue => e
-    Airbrake.notify(e)
-    logger.warn "#{e.inspect} #{request_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e, request_id: request_id, options: options)
   ensure
     if options['start_next_loop']
       time_diff = Time.zone.now - Time.zone.parse(options['queueing_started_at'])

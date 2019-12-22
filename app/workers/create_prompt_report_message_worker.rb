@@ -1,5 +1,6 @@
 class CreatePromptReportMessageWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -69,13 +70,13 @@ class CreatePromptReportMessageWorker
     end
 
   rescue PromptReport::ReportingError => e
-    Airbrake.notify(e)
+    notify_airbrake(e, user_id: user_id, options: options)
     if e.cause && DirectMessageStatus.you_have_blocked?(e.cause)
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     end
     log(options).update(status: false, error_class: e.class, error_message: e.message)
   rescue => e
-    Airbrake.notify(e)
+    notify_airbrake(e, user_id: user_id, options: options)
     if DirectMessageStatus.you_have_blocked?(e)
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     elsif DirectMessageStatus.cannot_send_messages?(e)

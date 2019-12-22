@@ -1,5 +1,6 @@
 class CreateWelcomeMessageWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -21,8 +22,7 @@ class CreateWelcomeMessageWorker
       send_message_to_slack(dm.text, title: 'OK')
     end
   rescue => e
-    logger.warn "#{e.inspect} #{user_id} #{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e, user_id: user_id, options: options)
   end
 
   def send_message_to_slack(text, title: nil)
