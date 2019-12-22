@@ -6,15 +6,7 @@ Rollbar.configure do |config|
   config.send_extra_frame_data = :app
   config.project_gems = %w(twitter_with_auto_pagination)
 
-  config.js_enabled = true
-  config.js_options = {
-    accessToken: ENV['ROLLBAR_POST_CLIENT_ITEM_ACCESS_TOKEN'],
-    captureUncaught: true,
-    captureUnhandledRejections: true,
-    payload: {
-      environment: Rails.env
-    }
-  }
+  config.js_enabled = false
 
   # Here we'll disable in 'test':
   if Rails.env.test?
