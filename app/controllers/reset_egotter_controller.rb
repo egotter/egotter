@@ -9,7 +9,7 @@ class ResetEgotterController < ApplicationController
 
   def reset
     request = ResetEgotterRequest.create!(
-        session_id: fingerprint,
+        session_id: egotter_visit_id,
         user_id: current_user.id
     )
     jid = ResetEgotterWorker.perform_async(request.id)

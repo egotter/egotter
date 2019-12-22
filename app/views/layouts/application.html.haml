@@ -171,7 +171,7 @@
           .modal-body
             = render partial: 'common/search_form', locals: {via: build_via('search_modal_input')}
             .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
-              = t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: fingerprint))
+              = t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id))
               %div
                 - if user_signed_in?
                   - if current_user.has_valid_subscription?
@@ -183,7 +183,7 @@
                     %a.btn.btn-default{data: {target: '#share-modal', toggle: 'modal'}}= t('search_histories.search_modal.tweet')
                 - else
                   = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: build_via('sign_in_button_on_search_modal')))
-            - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: fingerprint) == 0
+            - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id) == 0
               .vertical-spacing
               .alert.alert-info.text-left
                 - sign_in_url = sign_in_path(via: build_via('too_many_searches_search_modal'))

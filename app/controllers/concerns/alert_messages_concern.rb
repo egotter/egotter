@@ -172,7 +172,7 @@ module Concerns::AlertMessagesConcern
         sign_in_bonus: SearchCountLimitation::SIGN_IN_BONUS,
         sharing_bonus: SearchCountLimitation::SHARING_BONUS,
         basic_plan: SearchCountLimitation::BASIC_PLAN,
-        reset_in: SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: fingerprint),
+        reset_in: SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: egotter_visit_id),
         sign_in_url: sign_in_path(via: build_via('too_many_searches_message')),
         pricing_url: pricing_path(via: build_via('too_many_searches_message')),
         support_url: pricing_path(via: build_via('too_many_searches_message'), anchor: 'enterprise-plan'),

@@ -19,7 +19,7 @@ module Concerns::Logging
     referral = find_referral(pushed_referers)
 
     attrs = {
-      session_id:  fingerprint,
+      session_id:  egotter_visit_id,
       user_id:     current_user_id,
       uid:         uid,
       screen_name: screen_name,
@@ -72,7 +72,7 @@ module Concerns::Logging
     message += ex.message if ex
 
     attrs = {
-        session_id:  fingerprint,
+        session_id:  egotter_visit_id,
         user_id:     current_user_id,
         uid:         uid,
         screen_name: screen_name,
@@ -122,7 +122,7 @@ module Concerns::Logging
     referral = find_referral(pushed_referers)
 
     attrs = {
-      session_id:  fingerprint,
+      session_id:  egotter_visit_id,
       user_id:     user.id,
       uid:         user.uid,
       screen_name: user.screen_name,
@@ -149,7 +149,7 @@ module Concerns::Logging
   def push_referer
     referer = request.referer.to_s.truncate(180)
     if referer.present? && !referer.start_with?('https://egotter.com')
-      Util::RefererList.new(Redis.client).push(fingerprint, referer)
+      Util::RefererList.new(Redis.client).push(egotter_visit_id, referer)
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
@@ -157,7 +157,7 @@ module Concerns::Logging
   end
 
   def pushed_referers
-    Util::RefererList.new(Redis.client).to_a(fingerprint)
+    Util::RefererList.new(Redis.client).to_a(egotter_visit_id)
   end
 
   private

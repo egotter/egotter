@@ -69,8 +69,8 @@ module Concerns::InternalServerErrorHandler
         params['screen_name'].to_s.match?(Validations::ScreenNameValidator::REGEXP) &&
         controller_name == 'searches' &&
         action_name == 'create' &&
-        fingerprint.present?
-    # SearchLog.exists?(created_at: 3.hours.ago..Time.zone.now, session_id: session[:fingerprint])
+        egotter_visit_id.present?
+    # SearchLog.exists?(created_at: 3.hours.ago..Time.zone.now, session_id: session[:egotter_visit_id])
   end
 
   def request_timeout_message

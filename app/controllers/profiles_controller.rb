@@ -21,11 +21,11 @@ class ProfilesController < ApplicationController
     return if performed?
 
     if params[:notice_message] == 'too_many_searches'
-      if TooManySearchesUsers.new.exists?(user_signed_in? ? current_user.id : fingerprint)
+      if TooManySearchesUsers.new.exists?(user_signed_in? ? current_user.id : egotter_visit_id)
         flash.now[:notice] = too_many_searches_message
       end
     elsif params[:notice_message] == 'search_limitation_soft_limited'
-      if SearchLimitationSoftLimitedUsers.new.exists?(fingerprint)
+      if SearchLimitationSoftLimitedUsers.new.exists?(egotter_visit_id)
         url = sign_in_path(via: build_via('search_limitation_soft_limited'))
         message = search_limitation_soft_limited_message('user', url) # The user name can be anything
         flash.now[:notice] = message

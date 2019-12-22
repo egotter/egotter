@@ -21,7 +21,7 @@ module Concerns::JobQueueingConcern
 
     request = CreateTwitterUserRequest.create(
         requested_by: requested_by,
-        session_id: fingerprint,
+        session_id: egotter_visit_id,
         user_id: user_id,
         uid: uid,
         ahoy_visit_id: current_visit&.id)

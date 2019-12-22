@@ -9,7 +9,7 @@ class ResetCacheController < ApplicationController
 
   def reset
     request = ResetCacheRequest.create!(
-        session_id: fingerprint,
+        session_id: egotter_visit_id,
         user_id: current_user.id
     )
     jid = ResetCacheWorker.perform_async(request.id)
