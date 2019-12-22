@@ -16,9 +16,6 @@ module Concerns::SessionsConcern
       return -1
     end
 
-    session[:egotter_visit_id] = session[:fingerprint]
-    session.delete(:fingerprint)
-
     if session[:egotter_visit_id].nil? || session[:egotter_visit_id].to_s == '-1'
       session[:egotter_visit_id] = session.id.nil? ? '-1' : session.id
     end

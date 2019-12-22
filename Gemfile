@@ -62,6 +62,7 @@ gem 'haml-rails'
 gem 'rails_autolink'
 gem 'draper'
 gem 'rollbar'
+gem 'airbrake'
 gem 'oj'
 gem 'gretel'
 gem 'google-api-client', require: false

@@ -60,6 +60,9 @@ GEM
       request_store
       safely_block (>= 0.2.1)
       user_agent_parser
+    airbrake (5.8.1)
+      airbrake-ruby (~> 1.8)
+    airbrake-ruby (1.8.0)
     annotate (3.0.3)
       activerecord (>= 3.2, < 7.0)
       rake (>= 10.4, < 14.0)
@@ -459,6 +462,7 @@ PLATFORMS
 DEPENDENCIES
   activerecord-import
   ahoy_matey
+  airbrake
   annotate
   aws-sdk-cloudwatch
   aws-sdk-ec2
