@@ -55,6 +55,11 @@ class AccountStatus
       new(ex: ex).blocked?
     end
 
+    def protected?(ex)
+      new(ex: ex).protected?
+    end
+    alias_method :not_authorized?, :protected?
+
     def unauthorized?(ex)
       new(ex: ex).unauthorized?
     end

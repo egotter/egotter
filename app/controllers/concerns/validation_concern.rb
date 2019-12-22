@@ -153,46 +153,23 @@ module Concerns::ValidationConcern
   end
 
   def blocked_user?(screen_name)
-    if user_signed_in?
-      request_context_client.user_timeline(screen_name, count: 1)
-      false
-    else
-      false
-    end
-  rescue => e
-    if e.message.start_with?('You have been blocked')
-      true
-    else
-      false
-    end
+    SearchRequestValidator.new(current_user).blocked_user?(screen_name)
   end
 
   def blocked_search?(twitter_user)
-    blocked = blocked_user?(twitter_user.screen_name)
-    redirect_to blocked_path(screen_name: twitter_user.screen_name) if blocked
-    blocked
+    blocked_user?(twitter_user.screen_name).tap do |value|
+      redirect_to blocked_path(screen_name: twitter_user.screen_name) if value
+    end
   end
 
   def protected_user?(screen_name)
-    if user_signed_in?
-      request_context_client.user_timeline(screen_name, count: 1)
-      false
-    else
-      user = request_context_client.user(screen_name)
-      user[:protected]
-    end
-  rescue => e
-    if e.message == 'Not authorized.'
-      true
-    else
-      false
-    end
+    SearchRequestValidator.new(current_user).protected_user?(screen_name)
   end
 
   def protected_search?(twitter_user)
-    protected = protected_user?(twitter_user.screen_name)
-    redirect_to protected_path(screen_name: twitter_user.screen_name) if protected
-    protected
+    protected_user?(twitter_user.screen_name).tap do |value|
+      redirect_to protected_path(screen_name: twitter_user.screen_name) if value
+    end
   rescue => e
     respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
     false
