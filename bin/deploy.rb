@@ -104,13 +104,13 @@ if __FILE__ == $0
   case params['role']
   when 'web'
     hosts.each { |host| Deploy::Web.new(host).deploy }
-    frontend("git tag deploy-web-all-#{Time.now.to_i}")
-    frontend('git push origin --tags')
+    system("git tag deploy-web-all-#{Time.now.to_i}")
+    system('git push origin --tags')
 
   when 'sidekiq'
     hosts.each { |host| Deploy::Sidekiq.new(host).deploy }
-    frontend("git tag deploy-sidekiq-all-#{Time.now.to_i}")
-    frontend('git push origin --tags')
+    system("git tag deploy-sidekiq-all-#{Time.now.to_i}")
+    system('git push origin --tags')
 
   else
     puts "Invalid #{params.inspect}"
