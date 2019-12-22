@@ -8,6 +8,16 @@
 
     airbrake.addFilter(function (notice) {
         notice.context.environment = "<%= Rails.env %>";
+        notice.context.component = "JS";
+        notice.params = {
+            user_id: '<%= user_signed_in? ? current_user.id : -1 %>',
+            uid: '<%= user_signed_in? ? current_user.uid : -1 %>',
+            screen_name: '<%= user_signed_in? ? current_user.screen_name : '' %>',
+            os: '<%= request.os %>',
+            device_type: '<%= request.device_type %>',
+            browser: '<%= request.browser %>',
+            browser_version: '<%= request.browser_version %>'
+        };
         return notice;
     });
 
