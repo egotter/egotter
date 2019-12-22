@@ -23,7 +23,9 @@ class CreatePromptReportWorker
     CreatePromptReportTask.new(request).start!
 
   rescue CreatePromptReportRequest::Error => e
+    Airbrake.notify(e)
   rescue => e
+    Airbrake.notify(e)
     logger.warn "#{e.inspect} #{request_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
     logger.info e.backtrace.join("\n")
   ensure

@@ -69,11 +69,13 @@ class CreatePromptReportMessageWorker
     end
 
   rescue PromptReport::ReportingError => e
+    Airbrake.notify(e)
     if e.cause && DirectMessageStatus.you_have_blocked?(e.cause)
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     end
     log(options).update(status: false, error_class: e.class, error_message: e.message)
   rescue => e
+    Airbrake.notify(e)
     if DirectMessageStatus.you_have_blocked?(e)
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
     elsif DirectMessageStatus.cannot_send_messages?(e)
