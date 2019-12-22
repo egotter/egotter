@@ -4,7 +4,7 @@ module Egotter
       include UniqueJobUtil
 
       def initialize(process_context = nil)
-        @queue_class = Egotter::Sidekiq::RunHistory
+        @queue_class = ::Egotter::Sidekiq::RunHistory
         @queueing_context = 'server'
         @process_context = process_context || 'unspecified'
       end

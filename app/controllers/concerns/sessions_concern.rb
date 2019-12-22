@@ -6,11 +6,6 @@ module Concerns::SessionsConcern
   included do
   end
 
-  def fingerprint
-    logger.warn 'Decrecated calling #fingerprint'
-    egotter_visit_id
-  end
-
   def egotter_visit_id
     if from_crawler?
       return -1
