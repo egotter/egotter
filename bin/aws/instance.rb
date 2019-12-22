@@ -54,7 +54,7 @@ if __FILE__ == $0
     server = Launcher::Sidekiq.new(launch_params).launch
     Installer::Sidekiq.new(server.name, id: server.id, public_ip: server.public_ip).install
 
-    %x(git tag deploy-sidekiq-#{server.name}-#{Time.now.to_i})
+    %x(git tag deploy-#{server.name})
     %x(git push origin --tags)
 
   elsif params['create']
@@ -70,7 +70,7 @@ if __FILE__ == $0
       instance.terminate
     end
 
-    %x(git tag deploy-web-#{server.name}-#{Time.now.to_i})
+    %x(git tag deploy-#{server.name})
     %x(git push origin --tags)
 
   elsif params['list']
