@@ -1,5 +1,5 @@
 <% require 'dotenv/load' %>:concurrency: <%= ENV.fetch("SIDEKIQ_MISC_CONCURRENCY") { 5 } %>
-:timeout: 60
+:timeout: 600
 :pidfile: ./tmp/pids/sidekiq_misc.pid
 :logfile: ./log/sidekiq_misc.log
 :tag:
