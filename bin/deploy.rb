@@ -37,14 +37,6 @@ module Deploy
   end
 
   class Web < Task
-    CMD = [
-        'git fetch origin',
-        'git pull origin master',
-        'bundle check || bundle install --path .bundle --without test development',
-        'RAILS_ENV=production bundle exec rake assets:precompile',
-        'sudo service puma restart',
-    ]
-
     def before_deploy
       backend('echo "ssh connection test"')
     end
@@ -52,30 +44,20 @@ module Deploy
     def deploy
       before_deploy
 
-      CMD.each do |cmd|
+      [
+          'git fetch origin',
+          'git pull origin master',
+          'bundle check || bundle install --path .bundle --without test development',
+          'RAILS_ENV=production bundle exec rake assets:precompile',
+          'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
+          'sudo service puma restart',
+      ].each do |cmd|
         backend(cmd)
       end
-
-      after_deploy
-    end
-
-    def after_deploy
     end
   end
 
   class Sidekiq < Task
-    CMD = [
-        'git fetch origin',
-        'git pull origin master',
-        'bundle check || bundle install --path .bundle --without test development',
-        'sudo restart sidekiq_misc || :',
-        'sudo restart sidekiq_prompt_reports || :',
-        'sudo restart sidekiq || :',
-        'sudo restart sidekiq_import || :',
-        'sudo restart sidekiq_follow || :',
-        'sudo restart sidekiq_unfollow || :',
-    ]
-
     def before_deploy
       backend('echo "ssh connection test"')
     end
@@ -83,14 +65,20 @@ module Deploy
     def deploy
       before_deploy
 
-      CMD.each do |cmd|
+      [
+          'git fetch origin',
+          'git pull origin master',
+          'bundle check || bundle install --path .bundle --without test development',
+          'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
+          'sudo restart sidekiq_misc || :',
+          'sudo restart sidekiq_prompt_reports || :',
+          'sudo restart sidekiq || :',
+          'sudo restart sidekiq_import || :',
+          'sudo restart sidekiq_follow || :',
+          'sudo restart sidekiq_unfollow || :',
+      ].each do |cmd|
         backend(cmd)
       end
-
-      after_deploy
-    end
-
-    def after_deploy
     end
   end
 end
