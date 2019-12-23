@@ -73,14 +73,30 @@ class CloudWatchClient
       @client = CloudWatchClient.new
       @name = name
       @dashboard_body = JSON.parse(@client.get_dashboard(name).dashboard_body)
-      @changed = false
+      @changes = []
     end
 
-    def append_instance(widget_name, instance_id)
+    def append_cpu_utilization(instance_id)
+      append_instance('CPUUtilization', 'AWS/EC2', ['...', instance_id])
+    end
+
+    def append_memory_utilization(instance_id)
+      append_instance('MemoryUtilization', 'System/Linux', ['...', instance_id])
+    end
+
+    def append_cpu_credit_balance(instance_id)
+      append_instance('CPUCreditBalance1', 'AWS/EC2', ['...', instance_id])
+    end
+
+    def append_disk_space_utilization(instance_id)
+      append_instance('DiskSpaceUtilization1', 'System/Linux', ['...', instance_id, '.', '.'])
+    end
+
+    def append_instance(widget_name, namespace, metric)
       @dashboard_body['widgets'].each do |widget|
-        if widget['properties']['title'].to_s == widget_name && widget['properties']['metrics'][0][0] == 'AWS/EC2'
-          widget['properties']['metrics'] << ['...', instance_id]
-          @changed = true
+        if widget['properties']['title'].to_s == widget_name && widget['properties']['metrics'][0][0] == namespace
+          widget['properties']['metrics'] << metric
+          @changes << widget['properties']['metrics']
           break
         end
       end
@@ -89,7 +105,14 @@ class CloudWatchClient
     end
 
     def update
-      @client.put_dashboard(@name, @dashboard_body) if @changed
+      unless @changes.empty?
+        logger.info @changes.inspect
+        @client.put_dashboard(@name, @dashboard_body)
+      end
+    end
+
+    def logger
+      defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
     end
   end
 end

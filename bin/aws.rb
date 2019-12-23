@@ -75,10 +75,10 @@ if __FILE__ == $0
       end
 
       CloudWatchClient::Dashboard.new('egotter-linux-system').
-          append_instance('CPUUtilization', server.id).
-          append_instance('MemoryUtilization', server.id).
-          append_instance('CPUCreditBalance', server.id).
-          append_instance('DiskSpaceUtilization', server.id).
+          append_cpu_utilization(server.id).
+          append_memory_utilization(server.id).
+          append_cpu_credit_balance(server.id).
+          append_disk_space_utilization(server.id).
           update
     elsif params['role'] == 'sidekiq'
       az = 'ap-northeast-1b'
