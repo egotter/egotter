@@ -30,7 +30,7 @@ module Egotter
             webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
             webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
             webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
-            )
+        )
 
         upload_contents(host, conf, '/etc/td-agent/td-agent.conf')
       end
@@ -95,10 +95,6 @@ module Egotter
         @name = name
       end
 
-      def install
-        raise NotImplementedError
-      end
-
       def run_command(cmd, exception: true)
         exec_command(@name, cmd, exception: exception)
       end
@@ -148,15 +144,18 @@ module Egotter
         super(name)
       end
 
-      def install
+      def sync
         update_env.
             upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_egotter.
             update_crontab.
             update_puma.
-            install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb').
-            restart_processes
+            install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb')
+      end
+
+      def install
+        sync.restart_processes
       rescue => e
         red("Terminate #{@id} as #{e.class} is raised")
         ::Egotter::Aws::EC2.terminate_instance(@id)
@@ -193,7 +192,7 @@ module Egotter
         super(name)
       end
 
-      def install
+      def sync
         update_env.
             upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
@@ -201,8 +200,11 @@ module Egotter
             update_egotter.
             update_crontab.
             update_sidekiq.
-            install_td_agent(@name, './setup/etc/td-agent/td-agent.sidekiq.conf.erb').
-            restart_processes
+            install_td_agent(@name, './setup/etc/td-agent/td-agent.sidekiq.conf.erb')
+      end
+
+      def install
+        sync.restart_processes
       rescue => e
         if @id
           red("Terminate #{@id} as #{e.class} is raised")
