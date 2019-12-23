@@ -25,6 +25,7 @@ module Egotter
 
       def deregister(instance_id)
         previous_count = instances.size
+        return false if previous_count <= 1
 
         params = {
             target_group_arn: @arn,
@@ -36,7 +37,7 @@ module Egotter
 
         green "Current targets count is #{instances.size} (was #{previous_count})"
 
-        self
+        true
       end
 
       def instances(state: 'healthy')

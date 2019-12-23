@@ -69,8 +69,9 @@ if __FILE__ == $0
 
       if params['rotate']
         instance = target_group.oldest_instance
-        target_group.deregister(instance.id)
-        instance.terminate
+        if instance && target_group.deregister(instance.id)
+          instance.terminate
+        end
       end
 
       CloudWatchClient::Dashboard.new('egotter-linux-system').
