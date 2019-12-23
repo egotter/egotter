@@ -44,7 +44,7 @@ gem 'memoist'
 gem 'activerecord-import'
 gem 'sidekiq', '< 6'
 # gem 'sidekiq-unique-jobs'
-gem 'sidekiq-benchmark'
+# gem 'sidekiq-benchmark'
 # gem 'sidekiq-status'
 gem 'sinatra', require: false
 gem 'redis'

@@ -379,9 +379,6 @@ GEM
       rack (>= 1.5.0)
       rack-protection (>= 1.5.0)
       redis (>= 3.3.5, < 5)
-    sidekiq-benchmark (0.6.0)
-      chartkick (>= 1.1.1)
-      sidekiq (~> 5)
     signet (0.12.0)
       addressable (~> 2.3)
       faraday (~> 0.9)
@@ -508,7 +505,6 @@ DEPENDENCIES
   scout_apm
   selenium-webdriver
   sidekiq (< 6)
-  sidekiq-benchmark
   sinatra
   sitemap_generator
   spring
