@@ -38,6 +38,7 @@ class SendMetricsToCloudWatchWorker
       logger.info e.backtrace.join("\n")
     end
 
+    client.update
     logger.info "Sent #{@put_count} metrics"
   end
 
@@ -305,11 +306,11 @@ class SendMetricsToCloudWatchWorker
   private
 
   def client
-    @client ||= CloudWatchClient.new
+    @client ||= CloudWatchClient::Metrics.new
   end
 
   def put_metric_data(*args)
-    client.put_metric_data(*args)
+    client.append(*args)
     @put_count += 1
   end
 

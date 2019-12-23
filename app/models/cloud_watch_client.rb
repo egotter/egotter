@@ -7,6 +7,39 @@ class CloudWatchClient
     @client = Aws::CloudWatch::Client.new(region: REGION)
   end
 
+  class Metrics
+    def initialize
+      @client = CloudWatchClient.new
+      @metrics = Hash.new(Array.new)
+      @changed = false
+    end
+
+    def append(name, value, namespace:, dimensions: nil)
+      @metrics[namespace] << {
+          metric_name: name,
+          dimensions: dimensions,
+          timestamp: Time.zone.now,
+          value: value,
+          unit: 'Count'
+      }
+      @changed = true
+
+      self
+    end
+
+    def update
+      if @changed
+        @metrics.each do |namespace, metric_data|
+          params = {
+              namespace: namespace,
+              metric_data: metric_data,
+          }
+          @client.instance_variable_get(:@client).put_metric_data(params)
+        end
+      end
+    end
+  end
+
   def put_metric_data(metric_name, value, namespace:, dimensions: nil)
     values = {
         namespace: namespace,
@@ -56,7 +89,7 @@ class CloudWatchClient
     end
 
     def update
-      @client.put_dashboard(@name, @dashboard_body)
+      @client.put_dashboard(@name, @dashboard_body) if @changed
     end
   end
 end
