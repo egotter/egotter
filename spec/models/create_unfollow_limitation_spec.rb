@@ -86,6 +86,6 @@ RSpec.describe CreateUnfollowLimitation, type: :model do
       allow(described_class).to receive(:unfollow_requests).with(user).and_return([request])
     end
 
-    it { is_expected.to be_within(1).of(23.hours.to_i) }
+    it { is_expected.to be_within(3).of(23.hours.to_i) }
   end
 end

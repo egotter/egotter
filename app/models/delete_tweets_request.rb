@@ -54,6 +54,8 @@ class DeleteTweetsRequest < ApplicationRecord
     raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: destroy_count)
   rescue ::Timeout::Error => e
     raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
+  rescue Error, RetryableError => e
+    raise
   rescue => e
     exception_handler(e, retries)
     retries -= 1
@@ -62,22 +64,8 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def error_check!
     raise Unauthorized unless user.authorized?
-
-    retries ||= 5
-
-    begin
-      api_client.verify_credentials
-      raise TweetsNotFound if api_client.user[:statuses_count] == 0
-    rescue TweetsNotFound => e
-      raise
-    rescue Twitter::Error::TooManyRequests => e
-      raise
-    rescue => e
-      exception_handler(e, retries)
-      retries -= 1
-      retry
-    end
-
+    api_client.verify_credentials
+    raise TweetsNotFound if api_client.user[:statuses_count] == 0
     @error_check = true
   end
 
@@ -90,8 +78,6 @@ class DeleteTweetsRequest < ApplicationRecord
       else
         raise RetryExhausted.new("#{e.class} #{e.message}")
       end
-    elsif e.is_a?(Error)
-      raise e
     else
       raise Unknown.new("#{e.class} #{e.message}")
     end
@@ -135,7 +121,7 @@ class DeleteTweetsRequest < ApplicationRecord
   class Error < StandardError
   end
 
-  class Retryable < StandardError
+  class RetryableError < StandardError
     attr_reader :retry_in, :destroy_count
 
     def initialize(retry_in:, destroy_count:)
@@ -156,16 +142,16 @@ class DeleteTweetsRequest < ApplicationRecord
   class TweetsNotFound < Error
   end
 
-  class Timeout < Retryable
+  class Timeout < RetryableError
   end
 
-  class TooManyRequests < Retryable
+  class TooManyRequests < RetryableError
   end
 
-  class Continue < Retryable
+  class Continue < RetryableError
   end
 
-  class ConnectionResetByPeer < Retryable
+  class ConnectionResetByPeer < RetryableError
   end
 
   class FinishedMessageNotSent < Error

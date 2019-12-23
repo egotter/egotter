@@ -27,7 +27,7 @@ class DeleteTweetsTask
       request.send_finished_message(User.egotter)
       send_message_to_slack('Finished', request)
 
-    rescue DeleteTweetsRequest::Retryable => e
+    rescue DeleteTweetsRequest::RetryableError => e
       @retry_in = e.retry_in
     rescue => e
       request.send_error_message(User.egotter)

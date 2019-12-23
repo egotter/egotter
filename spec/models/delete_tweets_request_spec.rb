@@ -33,7 +33,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
         allow(client).to receive(:verify_credentials).with(no_args).and_raise(Twitter::Error::Unauthorized.new('Invalid or expired token.'))
       end
 
-      it { expect { subject }.to raise_error(DeleteTweetsRequest::InvalidToken) }
+      it { expect { subject }.to raise_error(Twitter::Error::Unauthorized) }
     end
 
     context 'The #verify_credentials raises Twitter::Error::TooManyRequests' do
@@ -67,7 +67,7 @@ RSpec.describe DeleteTweetsRequest, type: :model do
 
     context 'exception.is_a?(DeleteTweetsRequest::Error) == true' do
       let(:exception) { DeleteTweetsRequest::InvalidToken.new }
-      it { expect { subject }.to raise_error(DeleteTweetsRequest::InvalidToken) }
+      it { expect { subject }.to raise_error(DeleteTweetsRequest::Unknown) }
     end
   end
 end
