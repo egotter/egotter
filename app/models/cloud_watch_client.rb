@@ -9,17 +9,54 @@ class CloudWatchClient
 
   def put_metric_data(metric_name, value, namespace:, dimensions: nil)
     values = {
-      namespace: namespace,
-      metric_data: [
-        {
-          metric_name: metric_name,
-          dimensions: dimensions,
-          timestamp: Time.zone.now,
-          value: value,
-          unit: 'Count'
-        }
-      ]
+        namespace: namespace,
+        metric_data: [
+            {
+                metric_name: metric_name,
+                dimensions: dimensions,
+                timestamp: Time.zone.now,
+                value: value,
+                unit: 'Count'
+            }
+        ]
     }
     @client.put_metric_data(values)
+  end
+
+  def list_dashboards
+    @client.list_dashboards.dashboard_entries
+  end
+
+  def get_dashboard(name)
+    @client.get_dashboard(dashboard_name: name)
+  end
+
+  def put_dashboard(name, body)
+    @client.put_dashboard(dashboard_name: name, dashboard_body: body.to_json)
+  end
+
+  class Dashboard
+    def initialize(name)
+      @client = CloudWatchClient.new
+      @name = name
+      @dashboard_body = JSON.parse(@client.get_dashboard(name).dashboard_body)
+      @changed = false
+    end
+
+    def append_instance(widget_name, instance_id)
+      @dashboard_body['widgets'].each do |widget|
+        if widget['properties']['title'].to_s == widget_name && widget['properties']['metrics'][0][0] == 'AWS/EC2'
+          widget['properties']['metrics'] << ['...', instance_id]
+          @changed = true
+          break
+        end
+      end
+
+      self
+    end
+
+    def update
+      @client.put_dashboard(@name, @dashboard_body)
+    end
   end
 end

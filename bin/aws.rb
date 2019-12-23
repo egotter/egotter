@@ -8,6 +8,8 @@ require 'aws-sdk-elasticloadbalancingv2'
 require 'base64'
 require 'erb'
 
+require_relative '../app/models/cloud_watch_client'
+
 require_relative '../lib/secret_file'
 
 require_relative '../lib/egotter/aws'
@@ -70,6 +72,13 @@ if __FILE__ == $0
         target_group.deregister(instance.id)
         instance.terminate
       end
+
+      CloudWatchClient::Dashboard.new('egotter-linux-system').
+          append_instance('CPUUtilization', server.id).
+          append_instance('MemoryUtilization', server.id).
+          append_instance('CPUCreditBalance', server.id).
+          append_instance('DiskSpaceUtilization', server.id).
+          update
     elsif params['role'] == 'sidekiq'
       az = 'ap-northeast-1b'
       server = Launch::Sidekiq.new(Launch::Params.new(params.merge('availability-zone' => az))).launch
