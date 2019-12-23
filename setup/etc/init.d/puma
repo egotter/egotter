@@ -21,6 +21,15 @@ PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
 
 PATH=$PATH:/usr/local/bin
 
+export RAILS_ENV=production
+export HOME=/root
+
+# Greatly reduce Ruby memory fragmentation and heap usage
+# https://www.mikeperham.com/2018/04/25/taming-rails-memory-bloat/
+export MALLOC_ARENA_MAX=2
+
+cd $APP_ROOT
+
 print_pid() {
   cat ${PID_FILE}
 }
@@ -30,21 +39,21 @@ print_command() {
 }
 
 start() {
-  cd $APP_ROOT && HOME=/root RAILS_ENV=production bundle exec pumactl start
+  bundle exec pumactl start
   echo ${en} "Starting $NAME: ${ec}"
   success
   echo
 }
 
 stop() {
-  cd $APP_ROOT && HOME=/root RAILS_ENV=production bundle exec pumactl stop
+  bundle exec pumactl stop
   echo ${en} "Stopping $NAME: ${ec}"
   success
   echo
 }
 
 restart() {
-  cd $APP_ROOT && HOME=/root RAILS_ENV=production bundle exec pumactl restart
+  bundle exec pumactl restart
   echo ${en} "Restarting $NAME: ${ec}"
   success
   echo
