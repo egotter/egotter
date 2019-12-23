@@ -1,24 +1,15 @@
 module Egotter
-  module Server
-    module Ec2Util
+  module Aws
+    module EC2
       module_function
 
-      def launch_instance(template:, security_group:, subnet:, name:, instance_type: nil)
-        params = {
-            launch_template: {launch_template_id: template},
-            min_count: 1,
-            max_count: 1,
-            security_group_ids: [security_group],
-            subnet_id: subnet
-        }
-
-        if instance_type
-          params[:instance_type] = instance_type
-        end
-
+      def launch_instance(name, params)
         instance = resource.create_instances(params).first
         wait_until(instance.id, :instance_running)
         wait_until(instance.id, :instance_status_ok)
+
+        instance = retrieve_instance(instance.id)
+        test_ssh_connection(instance.public_ip_address)
 
         instance.create_tags(tags: [{key: 'Name', value: name}])
         instance.id
@@ -45,19 +36,32 @@ module Egotter
         instance
       end
 
+      def test_ssh_connection(public_ip)
+        cmd = "ssh -q -i ~/.ssh/egotter.pem ec2-user@#{public_ip} exit"
+        30.times do |n|
+          puts "waiting for test_ssh_connection #{public_ip}"
+          if system(cmd, exception: false)
+            break
+          else
+            sleep 5
+          end
+          raise if n == 29
+        end
+      end
+
       def wait_until(id, state)
         resource.client.wait_until(state, instance_ids: [id]) do |w|
           w.before_wait do |n, resp|
             puts "waiting for #{state} #{id}"
           end
         end
-      rescue Aws::Waiters::Errors::WaiterFailed => e
+      rescue ::Aws::Waiters::Errors::WaiterFailed => e
         puts "failed waiting for #{state}: #{e.message}"
         exit
       end
 
       def resource
-        @resource ||= Aws::EC2::Resource.new(region: 'ap-northeast-1')
+        @resource ||= ::Aws::EC2::Resource.new(region: 'ap-northeast-1')
       end
     end
   end

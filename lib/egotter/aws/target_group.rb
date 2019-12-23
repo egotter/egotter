@@ -1,7 +1,7 @@
 require_relative './instance'
 
 module Egotter
-  module Server
+  module Aws
     class TargetGroup
       def initialize(arn)
         @arn = arn
@@ -45,13 +45,13 @@ module Egotter
         client.describe_target_health(params).
             target_health_descriptions.
             select { |d| d.target_health.state == state }.map do |description|
-          ::Egotter::Server::Instance.retrieve(description.target.id)
+          ::Egotter::Aws::Instance.retrieve(description.target.id)
         end
       end
 
       def oldest_instance
         id = instances.sort_by(&:launched_at).first.id
-        ::Egotter::Server::Instance.retrieve(id)
+        ::Egotter::Aws::Instance.retrieve(id)
       end
 
       def availability_zone_with_fewest_instances
@@ -74,13 +74,13 @@ module Egotter
             puts "waiting for #{name} #{instance_id}"
           end
         end
-      rescue Aws::Waiters::Errors::WaiterFailed => e
+      rescue ::Aws::Waiters::Errors::WaiterFailed => e
         puts "failed waiting for #{name}: #{e.message}"
         exit
       end
 
       def client
-        @client ||= Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
+        @client ||= ::Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
       end
 
       def green(str)

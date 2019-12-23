@@ -1,7 +1,7 @@
-require_relative './ec2_util'
+require_relative './ec2'
 
 module Egotter
-  module Server
+  module Aws
     class Instance
       attr_reader :id, :name, :public_ip, :availability_zone, :launched_at
 
@@ -13,13 +13,17 @@ module Egotter
         @launched_at = instance.launch_time
       end
 
+      def host
+        @name
+      end
+
       def terminate
-        ::Egotter::Server::Ec2Util.terminate_instance(@id)
+        ::Egotter::Aws::EC2.terminate_instance(@id)
       end
 
       class << self
         def retrieve(id)
-          new(::Egotter::Server::Ec2Util.retrieve_instance(id))
+          new(::Egotter::Aws::EC2.retrieve_instance(id))
         end
       end
     end
