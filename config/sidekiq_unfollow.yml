@@ -1,5 +1,5 @@
 <% require 'dotenv/load' %>:concurrency: 1
-:timeout: 60
+:timeout: 30
 :pidfile: ./tmp/pids/sidekiq_unfollow.pid
 :logfile: ./log/sidekiq_unfollow.log
 :tag:

@@ -94,8 +94,9 @@ service mysqld stop
 
 # sidekiq
 cp -f ./setup/etc/init.d/sidekiq* /etc/init.d
+cp -f ./setup/etc/init/sidekiq* /etc/init
 cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d
-# service sidekiq start
+# start sidekiq
 
 # puma
 cp -f ./setup/etc/init.d/puma /etc/init.d

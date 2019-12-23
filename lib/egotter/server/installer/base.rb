@@ -37,6 +37,7 @@ module Egotter
 
         def update_sidekiq
           run_command('sudo cp -f ./setup/etc/init.d/sidekiq* /etc/init.d')
+          run_command('sudo cp -f ./setup/etc/init/sidekiq* /etc/init')
           run_command('sudo cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d')
           self
         end

@@ -68,12 +68,12 @@ module Deploy
         'git fetch origin',
         'git pull origin master',
         'bundle check || bundle install --path .bundle --without test development',
-        'sudo service sidekiq_misc status           && sudo service sidekiq_misc restart || :',
-        'sudo service sidekiq_prompt_reports status && sudo service sidekiq_prompt_reports restart || :',
-        'sudo service sidekiq status                && sudo service sidekiq restart || :',
-        'sudo service sidekiq_import status         && sudo service sidekiq_import restart || :',
-        'sudo service sidekiq_follow status         && sudo service sidekiq_follow force-restart || :',
-        'sudo service sidekiq_unfollow status       && sudo service sidekiq_unfollow restart || :',
+        'sudo restart sidekiq_misc || :',
+        'sudo restart sidekiq_prompt_reports || :',
+        'sudo restart sidekiq || :',
+        'sudo restart sidekiq_import || :',
+        'sudo restart sidekiq_follow || :',
+        'sudo restart sidekiq_unfollow || :',
     ]
 
     def before_deploy

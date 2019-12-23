@@ -39,11 +39,11 @@ module Egotter
               'sudo service td-agent restart',
               'sudo service nginx stop',
               'sudo service puma stop',
-              'sudo service sidekiq start',
-              'sudo service sidekiq_import start',
-              'sudo service sidekiq_misc start',
-              'sudo service sidekiq_prompt_reports start',
-              'sudo restart datadog-agent',
+              'sudo start sidekiq',
+              'sudo start sidekiq_import',
+              'sudo start sidekiq_misc',
+              'sudo start sidekiq_prompt_reports',
+              'sudo start datadog-agent',
           ].each do |cmd|
             run_command(cmd)
           end
