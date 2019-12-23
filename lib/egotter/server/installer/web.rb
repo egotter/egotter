@@ -13,6 +13,7 @@ module Egotter
               pull_latest_code.
               update_egotter.
               update_crontab.
+              update_puma.
               install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb').
               restart_processes
         rescue => e

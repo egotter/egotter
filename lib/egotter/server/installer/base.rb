@@ -35,6 +35,11 @@ module Egotter
           self
         end
 
+        def update_puma
+          run_command('sudo cp -f ./setup/etc/init.d/puma /etc/init.d')
+          self
+        end
+
         def update_sidekiq
           run_command('sudo cp -f ./setup/etc/init.d/sidekiq* /etc/init.d')
           run_command('sudo cp -f ./setup/etc/init/sidekiq* /etc/init')

@@ -7,7 +7,7 @@ if [ -f /etc/init.d/functions ]; then
   . /etc/init.d/functions
 fi
 
-if echo ' \c' | grep 'c' > /dev/null 2>&1; then
+if echo ' \c' | grep 'c' >/dev/null 2>&1; then
   en='-n'
   ec=''
 else
@@ -16,14 +16,10 @@ else
 fi
 
 APP_ROOT="/var/egotter/"
-RAILS_ENV="production"
 NAME=puma
 PID_FILE="${APP_ROOT}tmp/pids/${NAME}.pid"
 
-bundle_cmd="/usr/local/bin/bundle"
-ruby_cmd="/usr/local/bin/ruby"
-pumactl_cmd=`cd $APP_ROOT && $bundle_cmd exec $ruby_cmd -e "print Gem.bin_path('puma', 'pumactl')"`
-PUMACTL_CMD="cd $APP_ROOT && RAILS_ENV=$RAILS_ENV HOME=$APP_ROOT $bundle_cmd exec $ruby_cmd $pumactl_cmd"
+PATH=$PATH:/usr/local/bin
 
 print_pid() {
   cat ${PID_FILE}
@@ -34,21 +30,21 @@ print_command() {
 }
 
 start() {
-  sh -c "$PUMACTL_CMD start"
+  cd $APP_ROOT && HOME=/root RAILS_ENV=production bundle exec pumactl start
   echo ${en} "Starting $NAME: ${ec}"
   success
   echo
 }
 
 stop() {
-  sh -c "$PUMACTL_CMD stop"
+  cd $APP_ROOT && HOME=/root RAILS_ENV=production bundle exec pumactl stop
   echo ${en} "Stopping $NAME: ${ec}"
   success
   echo
 }
 
 restart() {
-  sh -c "$PUMACTL_CMD restart"
+  cd $APP_ROOT && HOME=/root RAILS_ENV=production bundle exec pumactl restart
   echo ${en} "Restarting $NAME: ${ec}"
   success
   echo
@@ -60,41 +56,41 @@ rh_status() {
 }
 
 case "$1" in
-  start)
-          if [ -f ${PID_FILE} ]; then
-            rh_status
-            if checkpid $(print_pid); then
-              :
-            else
-              rm ${PID_FILE}
-              start
-            fi
-          else
-            start
-          fi
-          ;;
-  stop)
-          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-            stop
-          else
-            rh_status
-            [ -f ${PID_FILE} ] && rm ${PID_FILE}
-          fi
-          ;;
-  restart)
-          if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
-            restart
-          else
-            rh_status
-            [ -f ${PID_FILE} ] && rm ${PID_FILE}
-            start
-          fi
-          ;;
-  status)
-          rh_status
-          ;;
-  *)
-          echo "Usage: puma {start|stop|restart|status}" >&2
-          exit 2
-          ;;
+start)
+  if [ -f ${PID_FILE} ]; then
+    rh_status
+    if checkpid $(print_pid); then
+      :
+    else
+      rm ${PID_FILE}
+      start
+    fi
+  else
+    start
+  fi
+  ;;
+stop)
+  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+    stop
+  else
+    rh_status
+    [ -f ${PID_FILE} ] && rm ${PID_FILE}
+  fi
+  ;;
+restart)
+  if [ -f ${PID_FILE} ] && checkpid $(print_pid); then
+    restart
+  else
+    rh_status
+    [ -f ${PID_FILE} ] && rm ${PID_FILE}
+    start
+  fi
+  ;;
+status)
+  rh_status
+  ;;
+*)
+  echo "Usage: puma {start|stop|restart|status}" >&2
+  exit 2
+  ;;
 esac
