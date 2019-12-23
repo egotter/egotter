@@ -13,6 +13,9 @@ module Egotter
 
         instance.create_tags(tags: [{key: 'Name', value: name}])
         instance.id
+      rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
+        puts "Invalid params #{params.inspect}"
+        raise
       rescue => e
         if defined?(instance) && instance
           terminate_instance(instance.id)
