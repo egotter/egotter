@@ -43,7 +43,7 @@ module Egotter
               'sudo start sidekiq_import',
               'sudo start sidekiq_misc',
               'sudo start sidekiq_prompt_reports',
-              'sudo start datadog-agent',
+              'sudo restart datadog-agent',
           ].each do |cmd|
             run_command(cmd)
           end
@@ -52,8 +52,12 @@ module Egotter
         end
 
         def before_terminate
-          %w(sidekiq sidekiq_import sidekiq_misc sidekiq_prompt_reports).each do |name|
-            cmd = %Q(sudo service #{name} status && sudo service #{name} stop || echo "Not running")
+          [
+              'sudo stop sidekiq || :',
+              'sudo stop sidekiq_import || :',
+              'sudo stop sidekiq_misc || :',
+              'sudo stop sidekiq_prompt_reports || :',
+          ].each do |cmd|
             run_command(cmd)
           end
         end
