@@ -50,7 +50,6 @@ gem 'sinatra', require: false
 gem 'redis'
 gem 'hiredis'
 gem 'newrelic_rpm'
-gem 'scout_apm'
 gem 'httparty'
 gem 'rack-timeout'
 gem 'meta-tags'
