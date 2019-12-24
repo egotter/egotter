@@ -3,11 +3,25 @@ require 'aws-sdk-cloudwatch'
 class CloudWatchClient
   REGION = 'ap-northeast-1'
 
+  module Util
+    def logger
+      if defined?(Sidekiq)
+        Sidekiq.logger
+      elsif defined?(Rails)
+        Rails.logger
+      else
+        Logger.new(STDOUT)
+      end
+    end
+  end
+
   def initialize
     @client = Aws::CloudWatch::Client.new(region: REGION)
   end
 
   class Metrics
+    include Util
+
     def initialize
       @client = CloudWatchClient.new
       @metrics = Hash.new { |hash, key| hash[key] = [] }
@@ -38,10 +52,6 @@ class CloudWatchClient
           @client.instance_variable_get(:@client).put_metric_data(params)
         end
       end
-    end
-
-    def logger
-      defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
     end
   end
 
@@ -74,11 +84,17 @@ class CloudWatchClient
   end
 
   class Dashboard
+    include Util
+
     def initialize(name)
       @client = CloudWatchClient.new
       @name = name
-      @dashboard_body = JSON.parse(@client.get_dashboard(name).dashboard_body)
+      @dashboard_body = nil
       @changes = []
+    end
+
+    def set_dashboard_body
+      @dashboard_body ||= JSON.parse(@client.get_dashboard(@name).dashboard_body)
     end
 
     def append_cpu_utilization(instance_id)
@@ -98,7 +114,7 @@ class CloudWatchClient
     end
 
     def append_instance(widget_name, namespace, metric)
-      @dashboard_body['widgets'].each do |widget|
+      set_dashboard_body['widgets'].each do |widget|
         if widget['properties']['title'].to_s == widget_name && widget['properties']['metrics'][0][0] == namespace
           widget['properties']['metrics'] << metric
           @changes << widget['properties']['metrics']
@@ -114,10 +130,6 @@ class CloudWatchClient
         logger.info @changes.inspect
         @client.put_dashboard(@name, @dashboard_body)
       end
-    end
-
-    def logger
-      defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
     end
   end
 end
