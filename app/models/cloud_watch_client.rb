@@ -97,20 +97,28 @@ class CloudWatchClient
       @dashboard_body ||= JSON.parse(@client.get_dashboard(@name).dashboard_body)
     end
 
-    def append_cpu_utilization(instance_id)
-      append_instance('CPUUtilization', 'AWS/EC2', ['...', instance_id])
+    def append_cpu_utilization(role, instance_id)
+      append_instance("CPUUtilization#{role_suffix(role)}", 'AWS/EC2', ['...', instance_id])
     end
 
-    def append_memory_utilization(instance_id)
-      append_instance('MemoryUtilization', 'System/Linux', ['...', instance_id])
+    def append_memory_utilization(role, instance_id)
+      append_instance("MemoryUtilization#{role_suffix(role)}", 'System/Linux', ['...', instance_id])
     end
 
-    def append_cpu_credit_balance(instance_id)
-      append_instance('CPUCreditBalance1', 'AWS/EC2', ['...', instance_id])
+    def append_cpu_credit_balance(role, instance_id)
+      append_instance("CPUCreditBalance#{role_suffix(role)}", 'AWS/EC2', ['...', instance_id])
     end
 
-    def append_disk_space_utilization(instance_id)
-      append_instance('DiskSpaceUtilization1', 'System/Linux', ['...', instance_id, '.', '.'])
+    def append_disk_space_utilization(role, instance_id)
+      append_instance("DiskSpaceUtilization#{role_suffix(role)}", 'System/Linux', ['...', instance_id, '.', '.'])
+    end
+
+    def role_suffix(role)
+      case role
+      when 'web' then '1'
+      when 'sidekiq' then '2'
+      else raise "Invalid role #{role}"
+      end
     end
 
     def append_instance(widget_name, namespace, metric)

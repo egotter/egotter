@@ -59,7 +59,9 @@ if __FILE__ == $0
     Launch = ::Egotter::Launch
     Install = ::Egotter::Install
 
-    if params['role'] == 'web'
+    role = params['role']
+
+    if role == 'web'
       az = target_group.availability_zone_with_fewest_instances
       server = Launch::Web.new(Launch::Params.new(params.merge('availability-zone' => az))).launch
       append_to_ssh_config(server.id, server.host, server.public_ip)
@@ -73,21 +75,21 @@ if __FILE__ == $0
           instance.terminate
         end
       end
-
-      CloudWatchClient::Dashboard.new('egotter-linux-system').
-          append_cpu_utilization(server.id).
-          append_memory_utilization(server.id).
-          append_cpu_credit_balance(server.id).
-          append_disk_space_utilization(server.id).
-          update
-    elsif params['role'] == 'sidekiq'
+    elsif role == 'sidekiq'
       az = 'ap-northeast-1b'
       server = Launch::Sidekiq.new(Launch::Params.new(params.merge('availability-zone' => az))).launch
       append_to_ssh_config(server.id, server.host, server.public_ip)
       Install::Sidekiq.new(server.id, server.host).install
     else
-      raise "Invalid role #{params['role']}"
+      raise "Invalid role #{role}"
     end
+
+    CloudWatchClient::Dashboard.new('egotter-linux-system').
+        append_cpu_utilization(role, server.id).
+        append_memory_utilization(role, server.id).
+        append_cpu_credit_balance(role, server.id).
+        append_disk_space_utilization(role, server.id).
+        update
 
     %x(git tag deploy-#{server.name})
     %x(git push origin --tags)
