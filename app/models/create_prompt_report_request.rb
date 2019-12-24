@@ -21,7 +21,13 @@ class CreatePromptReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
+  # According to this value, the cache creation job is enqueued in CreatePromptReportTask.
   attr_accessor :kind
+
+  ACTIVE_DAYS = 14
+  ACTIVE_DAYS_WARNING = 7
+  TOO_MANY_ERRORS_SIZE = 3
+  PROCESS_REQUEST_INTERVAL = 1.hour
 
   def perform!(record_created)
     error_check! unless @error_check
@@ -31,18 +37,64 @@ class CreatePromptReportRequest < ApplicationRecord
       return
     end
 
-    current_twitter_user = TwitterUser.latest_by(uid: user.uid)
-    previous_twitter_user = TwitterUser.where.not(id: current_twitter_user.id).order(created_at: :desc).find_by(uid: user.uid)
-    previous_twitter_user = current_twitter_user unless previous_twitter_user
+    prompt_report = send_starting_confirmation_message!
+    report_options = ReportOptionsBuilder.new(user, self, record_created, prompt_report.id).build
+    CreatePromptReportMessageWorker.perform_async(user.id, report_options)
+  end
 
-    changes = nil
-    ApplicationRecord.benchmark("CreatePromptReportRequest #{id} Setup parameters", level: :info) do
-      changes = ChangesBuilder.new(previous_twitter_user, current_twitter_user, record_created: record_created).build
-      changes.merge!(period: calculate_period(record_created, previous_twitter_user, current_twitter_user))
-      self.kind = changes[:unfollowers_changed] ? :you_are_removed : :not_changed
+  def error_check!
+    CreatePromptReportValidator.new(request: self).validate!
+    @error_check = true
+  end
+
+  def send_starting_confirmation_message!
+    PromptReport.new(user_id: user.id).tap do |report|
+      report.deliver_starting_message!
+    end
+  rescue PromptReport::StartingFailed => e
+    raise StartingConfirmationFailed.new(e.message)
+  end
+
+  class ReportOptionsBuilder
+    def initialize(user, request, record_created, prompt_report_id)
+      @user = user
+      @request = request
+      @record_created = record_created
+      @prompt_report_id = prompt_report_id
     end
 
-    send_report(changes, previous_twitter_user, current_twitter_user)
+    def build
+      current_twitter_user = latest
+      previous_twitter_user = second_latest(current_twitter_user.id)
+      previous_twitter_user = current_twitter_user unless previous_twitter_user
+
+      changes_builder = ChangesBuilder.new(previous_twitter_user, current_twitter_user, record_created: @record_created)
+      period_builder = PeriodBuilder.new(@record_created, previous_twitter_user, current_twitter_user)
+
+      changes = nil
+      ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{@request.id} Setup parameters", level: :info) do
+        changes = changes_builder.build
+        changes.merge!(period: period_builder.build)
+        @request.kind = changes[:unfollowers_changed] ? :you_are_removed : :not_changed
+      end
+
+      {
+          changes_json: changes.to_json,
+          previous_twitter_user_id: previous_twitter_user.id,
+          current_twitter_user_id: current_twitter_user.id,
+          create_prompt_report_request_id: @request.id,
+          kind: @request.kind,
+          prompt_report_id: @prompt_report_id,
+      }
+    end
+
+    def latest
+      TwitterUser.latest_by(uid: @user.uid)
+    end
+
+    def second_latest(id)
+      TwitterUser.where.not(id: id).latest_by(uid: @user.uid)
+    end
   end
 
   class ChangesBuilder
@@ -96,66 +148,51 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
-  # 1. There are more than 2 records (prev.id != cur.id)
-  #   New record was created
-  #     Unfollowers were changed
-  #       prev <-> cur
-  #     Unfollowers were NOT changed
-  #       prev <-> cur
-  #   New record was NOT created
-  #     Unfollowers were NOT changed
-  #       cur <-> now
-  #
-  # 2. There is one record (prev.id == cur.id)
-  #   New record was created
-  #     cur <-> cur
-  #   New record was NOT created
-  #     cur <-> now
-  #
-  def calculate_period(record_created, previous_twitter_user, current_twitter_user)
-    records_size = TwitterUser.where(uid: previous_twitter_user.uid).size
+  class PeriodBuilder
+    attr_reader :record_created, :previous_twitter_user, :current_twitter_user
 
-    if records_size >= 2
-      if record_created
-        {start: previous_twitter_user.created_at, end: current_twitter_user.created_at}
+    def initialize(record_created, previous_twitter_user, current_twitter_user)
+      @record_created = record_created
+      @previous_twitter_user = previous_twitter_user
+      @current_twitter_user = current_twitter_user
+    end
+
+    # 1. There are more than 2 records (prev.id != cur.id)
+    #   New record was created
+    #     Unfollowers were changed
+    #       prev <-> cur
+    #     Unfollowers were NOT changed
+    #       prev <-> cur
+    #   New record was NOT created
+    #     Unfollowers were NOT changed
+    #       cur <-> now
+    #
+    # 2. There is one record (prev.id == cur.id)
+    #   New record was created
+    #     cur <-> cur
+    #   New record was NOT created
+    #     cur <-> now
+    #
+    def build
+      records_size = TwitterUser.where(uid: previous_twitter_user.uid).size
+
+      if records_size >= 2
+        if record_created
+          {start: previous_twitter_user.created_at, end: current_twitter_user.created_at}
+        else
+          {start: current_twitter_user.created_at, end: Time.zone.now}
+        end
+      elsif records_size == 1
+        if record_created
+          {start: current_twitter_user.created_at, end: current_twitter_user.created_at}
+        else
+          {start: current_twitter_user.created_at, end: Time.zone.now}
+        end
       else
-        {start: current_twitter_user.created_at, end: Time.zone.now}
+        raise "There are no records."
       end
-    elsif records_size == 1
-      if record_created
-        {start: current_twitter_user.created_at, end: current_twitter_user.created_at}
-      else
-        {start: current_twitter_user.created_at, end: Time.zone.now}
-      end
-    else
-      raise "There are no records."
     end
   end
-
-  ACTIVE_DAYS = 14
-  ACTIVE_DAYS_WARNING = 7
-
-  def error_check!
-    CreatePromptReportValidator.new(request: self).validate!
-    @error_check = true
-  end
-
-  def send_report(changes, previous_twitter_user, current_twitter_user)
-    options = {
-        changes_json: changes.to_json,
-        previous_twitter_user_id: previous_twitter_user.id,
-        current_twitter_user_id: current_twitter_user.id,
-        create_prompt_report_request_id: id,
-        kind: self.kind,
-    }
-    CreatePromptReportMessageWorker.perform_async(user.id, options)
-  end
-
-  TOO_MANY_ERRORS_SIZE = 3
-
-  private
-
-  PROCESS_REQUEST_INTERVAL = 1.hour
 
   class Error < StandardError
   end
@@ -200,6 +237,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class MaybeImportBatchFailed < Error
+  end
+
+  class StartingConfirmationFailed < Error
   end
 
   class Unknown < StandardError

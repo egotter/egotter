@@ -1,82 +1,103 @@
 require 'rails_helper'
 
 RSpec.describe CreatePromptReportRequest, type: :model do
-  describe '#calculate_period' do
-    let(:user) { create(:user) }
-    let(:time) { Time.zone.now }
-    subject { CreatePromptReportRequest.create(user_id: user.id).calculate_period(record_created, record1, record2) }
+  let(:user) { create(:user) }
+  let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
 
-    context 'There are more than 2 records' do
-      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
-      let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
+  describe '#perform!' do
+    let(:prompt_report) { create(:prompt_report, user_id: user.id) }
+    let(:report_options_builder) { CreatePromptReportRequest::ReportOptionsBuilder.new(user, self, true, prompt_report) }
+    subject { request.perform!(true) }
 
-      before do
-        record1.save!(validate: false)
-        record2.save!(validate: false)
-      end
-
-      context 'New record is created' do
-        let(:record_created) { true }
-        it { is_expected.to match(start: record1.created_at, end: record2.created_at) }
-      end
-
-      context 'New record is NOT created' do
-        let(:record_created) { false }
-        it do
-          freeze_time do
-            is_expected.to match(start: record2.created_at, end: Time.zone.now)
-          end
-        end
-      end
+    before do
+      allow(request).to receive(:error_check!)
+      allow(TwitterUser).to receive(:exists?).with(uid: user.uid).and_return(true)
+      allow(report_options_builder).to receive(:build).and_return('ok')
     end
 
-    context 'There is one record' do
-      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
-      let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
-
-      before do
-        record2.save!(validate: false)
-      end
-
-      context 'New record is created' do
-        let(:record_created) { true }
-        it do
-          freeze_time do
-            is_expected.to match(start: record2.created_at, end: record2.created_at)
-          end
-        end
-      end
-
-      context 'New record is NOT created' do
-        let(:record_created) { false }
-        it do
-          freeze_time do
-            is_expected.to match(start: record2.created_at, end: Time.zone.now)
-          end
-        end
-      end
-    end
-
-    context 'There is no records' do
-      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
-      let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
-
-      let(:record_created) { false }
-      it do
-        expect { subject }.to raise_error(RuntimeError, 'There are no records.')
-      end
+    it do
+      expect(request).to receive(:send_starting_confirmation_message!).and_return(prompt_report)
+      expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, prompt_report.id).and_return(report_options_builder)
+      expect(CreatePromptReportMessageWorker).to receive(:perform_async).with(user.id, 'ok')
+      subject
     end
   end
 
   describe '#error_check!' do
-    let(:user) { create(:user) }
-    let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
     subject { request.error_check! }
     it do
       expect(CreatePromptReportValidator).to receive_message_chain(:new, :validate!).with(request: request).with(no_args)
       is_expected.to be_truthy
       expect(request.instance_variable_get(:@error_check)).to be_truthy
     end
+  end
+
+  describe '#send_starting_confirmation_message!' do
+    let(:prompt_report) { PromptReport.new(user_id: user.id) }
+    subject { request.send_starting_confirmation_message! }
+    it do
+      expect(PromptReport).to receive(:new).with(user_id: user.id).and_return(prompt_report)
+      expect(prompt_report).to receive(:deliver_starting_message!)
+      is_expected.to eq(prompt_report)
+    end
+
+    context 'PromptReport::StartingFailed is raised' do
+      let(:exception) { PromptReport::StartingFailed.new('message') }
+      before { allow(PromptReport).to receive(:new).with(any_args).and_raise(exception) }
+      it { expect { subject }.to raise_error(described_class::StartingConfirmationFailed, 'message') }
+    end
+  end
+end
+
+RSpec.describe CreatePromptReportRequest::ReportOptionsBuilder, type: :model do
+  let(:user) { create(:user) }
+  let(:record1) { build(:twitter_user, uid: user.uid, created_at: 1.minute.ago) }
+  let(:record2) { build(:twitter_user, uid: user.uid, created_at: 1.second.ago) }
+
+  before do
+    record1.save!(validate: false)
+    record2.save!(validate: false)
+  end
+
+  describe '#build' do
+    let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
+    let(:builder) { described_class.new(user, request, true, 2) }
+    let(:changes_builder) { CreatePromptReportRequest::ChangesBuilder.new(record1, record2, record_created: true) }
+    let(:period_builder) { CreatePromptReportRequest::PeriodBuilder.new(true, record1, record2) }
+    subject { builder.build }
+
+    it do
+      expect(builder).to receive(:latest).and_return(record2)
+      expect(builder).to receive(:second_latest).and_return(record1)
+
+      expect(CreatePromptReportRequest::ChangesBuilder).to receive(:new).with(record1, record2, record_created: true).and_return(changes_builder)
+      expect(CreatePromptReportRequest::PeriodBuilder).to receive(:new).with(true, record1, record2).and_return(period_builder)
+
+      expect(changes_builder).to receive(:build).and_return(a: 1, unfollowers_changed: true)
+      expect(period_builder).to receive(:build).and_return(b: 2)
+
+      values = {
+          changes_json: {a: 1, unfollowers_changed: true, period: {b: 2}}.to_json,
+          previous_twitter_user_id: record1.id,
+          current_twitter_user_id: record2.id,
+          create_prompt_report_request_id: request.id,
+          kind: :you_are_removed,
+          prompt_report_id: 2,
+      }
+      is_expected.to match(values)
+    end
+  end
+
+  describe '#latest' do
+    let(:builder) { described_class.new(user, nil, nil, nil) }
+    subject { builder.latest }
+    it { is_expected.to eq(record2) }
+  end
+
+  describe '#second_latest' do
+    let(:builder) { described_class.new(user, nil, nil, nil) }
+    subject { builder.second_latest(record2.id) }
+    it { is_expected.to eq(record1) }
   end
 end
 
@@ -269,6 +290,75 @@ RSpec.describe CreatePromptReportRequest::ChangesBuilder, type: :model do
           let(:changed) { false }
           it { expect(subject).to match(result) }
         end
+      end
+    end
+  end
+end
+
+RSpec.describe CreatePromptReportRequest::PeriodBuilder, type: :model do
+  describe '#build' do
+    let(:user) { create(:user) }
+    let(:time) { Time.zone.now }
+    subject { described_class.new(record_created, record1, record2).build }
+
+    context 'There are more than 2 records' do
+      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
+      let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
+
+      before do
+        record1.save!(validate: false)
+        record2.save!(validate: false)
+      end
+
+      context 'New record is created' do
+        let(:record_created) { true }
+        it { is_expected.to match(start: record1.created_at, end: record2.created_at) }
+      end
+
+      context 'New record is NOT created' do
+        let(:record_created) { false }
+        it do
+          freeze_time do
+            is_expected.to match(start: record2.created_at, end: Time.zone.now)
+          end
+        end
+      end
+    end
+
+    context 'There is one record' do
+      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
+      let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
+
+      before do
+        record2.save!(validate: false)
+      end
+
+      context 'New record is created' do
+        let(:record_created) { true }
+        it do
+          freeze_time do
+            is_expected.to match(start: record2.created_at, end: record2.created_at)
+          end
+        end
+      end
+
+      context 'New record is NOT created' do
+        let(:record_created) { false }
+        it do
+          freeze_time do
+            is_expected.to match(start: record2.created_at, end: Time.zone.now)
+          end
+        end
+      end
+    end
+
+    context 'There is no records' do
+      let(:record1) { build(:twitter_user, uid: user.uid, created_at: time - 2.seconds) }
+      let(:record2) { build(:twitter_user, uid: user.uid, created_at: time - 1.seconds) }
+
+      let(:record_created) { false }
+      it do
+        expect { subject }.to raise_error(RuntimeError, 'There are no records.')
       end
     end
   end
