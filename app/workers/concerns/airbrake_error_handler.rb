@@ -10,6 +10,7 @@ module Concerns::AirbrakeErrorHandler
   end
 
   def notify_airbrake(exception, params = {})
+    params.merge!(cause: exception.cause) if exception.cause
     begin
       notice = Airbrake.build_notice(exception, params)
       notice[:context][:component] = 'sidekiq'

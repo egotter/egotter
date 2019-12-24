@@ -31,32 +31,39 @@ class CreatePromptReportMessageWorker
     end
 
     kind = options['kind'].to_sym
+    send_report(kind, user, options)
+    send_warning_message(kind, user, options)
 
+  rescue => e
+    notify_airbrake(e, user_id: user_id, options: options)
+    if DirectMessageStatus.you_have_blocked?(e) || (e.cause && DirectMessageStatus.you_have_blocked?(e.cause))
+      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
+    elsif DirectMessageStatus.cannot_send_messages?(e)
+    else
+      logger.warn "#{e.inspect} #{user_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
+      logger.info e.backtrace.join("\n")
+    end
+
+    log(options).update(status: false, error_class: e.class, error_message: e.message)
+  end
+
+  def send_report(kind, user, options)
     if kind == :you_are_removed
-      PromptReport.you_are_removed(
-          user.id,
-          changes_json: options['changes_json'],
-          previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
-          current_twitter_user: TwitterUser.find(options['current_twitter_user_id']),
-          request_id: options['create_prompt_report_request_id'],
-      ).deliver!
+      PromptReport.you_are_removed(*report_args(user, options)).deliver!
     elsif kind == :not_changed
-      PromptReport.not_changed(
-          user.id,
-          changes_json: options['changes_json'],
-          previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
-          current_twitter_user: TwitterUser.find(options['current_twitter_user_id']),
-          request_id: options['create_prompt_report_request_id'],
-      ).deliver!
+      PromptReport.not_changed(*report_args(user, options)).deliver!
     elsif kind == :initialization
       PromptReport.initialization(
           user.id,
           request_id: options['create_prompt_report_request_id'],
+          id: options['prompt_report_id'],
       ).deliver!
     else
       logger.warn "Invalid value #{kind}"
     end
+  end
 
+  def send_warning_message(kind, user, options)
     if kind == :you_are_removed || kind == :not_changed
       if !user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS_WARNING)
         WarningMessage.inactive(user.id).deliver!
@@ -68,24 +75,19 @@ class CreatePromptReportMessageWorker
     else
       logger.warn "Invalid value #{kind}"
     end
+  end
 
-  rescue PromptReport::ReportingError => e
-    notify_airbrake(e, user_id: user_id, options: options)
-    if e.cause && DirectMessageStatus.you_have_blocked?(e.cause)
-      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-    end
-    log(options).update(status: false, error_class: e.class, error_message: e.message)
-  rescue => e
-    notify_airbrake(e, user_id: user_id, options: options)
-    if DirectMessageStatus.you_have_blocked?(e)
-      CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-    elsif DirectMessageStatus.cannot_send_messages?(e)
-    else
-      logger.warn "#{e.inspect} #{user_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
-      logger.info e.backtrace.join("\n")
-    end
-
-    log(options).update(status: false, error_class: e.class, error_message: e.message)
+  def report_args(user, options)
+    [
+        user.id,
+        {
+            changes_json: options['changes_json'],
+            previous_twitter_user: TwitterUser.find(options['previous_twitter_user_id']),
+            current_twitter_user: TwitterUser.find(options['current_twitter_user_id']),
+            request_id: options['create_prompt_report_request_id'],
+            id: options['prompt_report_id'],
+        }
+    ]
   end
 
   def log(options)

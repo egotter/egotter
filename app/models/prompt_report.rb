@@ -28,14 +28,26 @@ class PromptReport < ApplicationRecord
   belongs_to :user
   attr_accessor :message_builder
 
+  before_validation do
+    if self.token.blank?
+      self.token = self.class.generate_token
+    end
+
+    if self.changes_json.blank?
+      self.changes_json = '{}'
+    end
+  end
+
   UNFOLLOWERS_SIZE_LIMIT = 5
 
   def deliver!
-    begin
-      dm = DirectMessage.new(retry_sending { send_starting_message! })
-      update_with_dm!(dm)
-    rescue => e
-      raise StartingFailed.new("#{e.class} #{e.message}")
+    if new_record?
+      begin
+        dm = DirectMessage.new(retry_sending { send_starting_message! })
+        update_with_dm!(dm)
+      rescue => e
+        raise StartingFailed.new("#{e.class} #{e.message}")
+      end
     end
 
     begin
@@ -55,6 +67,14 @@ class PromptReport < ApplicationRecord
     dm
   end
 
+  # PromptReport.new(user_id: user.id).deliver_starting_message!
+  def deliver_starting_message!
+    dm = DirectMessage.new(retry_sending { send_starting_message! })
+    update_with_dm!(dm)
+  rescue => e
+    raise StartingFailed.new("#{e.class} #{e.message}")
+  end
+
   class ReportingError < StandardError
   end
 
@@ -68,33 +88,44 @@ class PromptReport < ApplicationRecord
   end
 
   class << self
-    def initialization(user_id, request_id: nil)
-      report = new(user_id: user_id, changes_json: '{}', token: generate_token)
-      report.message_builder = InitializationMessageBuilder.new(report.user, report.token, request: CreatePromptReportRequest.find_by(id: request_id))
+    def initialization(user_id, request_id: nil, id: nil)
+      report = id ? find(id) : new(user_id: user_id)
+      report.token = generate_token if report.token.blank?
+
+      request = CreatePromptReportRequest.find_by(id: request_id)
+      report.message_builder = InitializationMessageBuilder.new(report.user, report.token, request: request)
       report
     end
 
-    def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:, request_id: nil)
-      report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
+    def you_are_removed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:, request_id: nil, id: nil)
+      report = id ? find(id) : new(user_id: user_id)
+      report.changes_json = changes_json
+      report.token = generate_token if report.token.blank?
 
-      message_builder = YouAreRemovedMessageBuilder.new(report.user, report.token, request: CreatePromptReportRequest.find_by(id: request_id))
-      message_builder.previous_twitter_user = previous_twitter_user
-      message_builder.current_twitter_user = current_twitter_user
-      message_builder.period = Oj.load(changes_json, symbol_keys: true)[:period]
-      message_builder.build # If something is wrong, an error will occur here.
+      request = CreatePromptReportRequest.find_by(id: request_id)
+      message_builder = YouAreRemovedMessageBuilder.new(report.user, report.token, request: request).tap do |builder|
+        builder.previous_twitter_user = previous_twitter_user
+        builder.current_twitter_user = current_twitter_user
+        builder.period = Oj.load(changes_json, symbol_keys: true)[:period]
+        builder.build # If something is wrong, an error will occur here.
+      end
 
       report.message_builder = message_builder
       report
     end
 
-    def not_changed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:, request_id: nil)
-      report = new(user_id: user_id, changes_json: changes_json, token: generate_token)
+    def not_changed(user_id, changes_json:, previous_twitter_user:, current_twitter_user:, request_id: nil, id: nil)
+      report = id ? find(id) : new(user_id: user_id)
+      report.changes_json = changes_json
+      report.token = generate_token if report.token.blank?
 
-      message_builder = NotChangedMessageBuilder.new(report.user, report.token, request: CreatePromptReportRequest.find_by(id: request_id))
-      message_builder.previous_twitter_user = previous_twitter_user
-      message_builder.current_twitter_user = current_twitter_user
-      message_builder.period = Oj.load(changes_json, symbol_keys: true)[:period]
-      message_builder.build # If something is wrong, an error will occur here.
+      request = CreatePromptReportRequest.find_by(id: request_id)
+      message_builder = NotChangedMessageBuilder.new(report.user, report.token, request: request).tap do |builder|
+        builder.previous_twitter_user = previous_twitter_user
+        builder.current_twitter_user = current_twitter_user
+        builder.period = Oj.load(changes_json, symbol_keys: true)[:period]
+        builder.build # If something is wrong, an error will occur here.
+      end
 
       report.message_builder = message_builder
       report

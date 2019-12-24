@@ -20,7 +20,7 @@ class CreatePromptReportTask
     elapsed = Time.zone.now - start
     if elapsed > 30
       records_size = TwitterUser.where(uid: request.user.uid).size
-      Rails.logger.info { "Benchmark CreatePromptReportTask too slow #{request.id} #{records_size}" }
+      Rails.logger.info { "Benchmark CreatePromptReportTask #{request.id} too slow #{records_size}" }
     end
 
     request.finished!

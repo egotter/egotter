@@ -1,6 +1,8 @@
 FactoryBot.define do
   factory :prompt_report do
-    token {'token'}
-    changes_json {'{}'}
+    user_id { nil }
+    message_id { 1 }
+    token { 'token' }
+    changes_json { '{}' }
   end
 end
