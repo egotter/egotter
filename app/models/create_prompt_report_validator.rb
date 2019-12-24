@@ -40,7 +40,8 @@ class CreatePromptReportValidator
   # Notice: If the InitializationStarted occurs three times,
   # you will not be able to send a message.
   def too_many_errors?
-    errors = CreatePromptReportLog.recent_error_logs(user_id: user.id, request_id: request.id).pluck(:error_class)
+    errors = CreatePromptReportLog.error_logs_for_one_day(user_id: user.id, request_id: request.id).
+        pluck(:error_class)
 
     meet_requirements_for_too_many_errors?(errors).tap do |val|
       # Save this value in Redis since it is difficult to retrieve this value efficiently with SQL.

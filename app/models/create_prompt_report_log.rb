@@ -43,11 +43,15 @@ class CreatePromptReportLog < ApplicationRecord
       order(created_at: :desc).find_by(condition)
     end
 
-    def recent_error_logs(user_id:, request_id:)
+    def error_logs_for_one_day(user_id:, request_id:)
       where(user_id: user_id).
           where.not(request_id: request_id).
           where(created_at: 1.day.ago..Time.zone.now).
           where.not(error_class: CreatePromptReportRequest::TooManyErrors).
+          where.not(error_class: CreatePromptReportRequest::TooShortSendInterval).
+          where.not(error_class: CreatePromptReportRequest::TooShortRequestInterval).
+          where.not(error_class: CreatePromptReportRequest::UserInactive).
+          where.not(error_class: CreatePromptReportRequest::InitializationStarted).
           order(created_at: :desc).
           limit(3)
     end

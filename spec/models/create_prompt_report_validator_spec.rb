@@ -78,7 +78,7 @@ RSpec.describe CreatePromptReportValidator, type: :model do
     before { validator.instance_variable_set(:@too_many_errors_users, sorted_set) }
 
     it do
-      expect(CreatePromptReportLog).to receive_message_chain(:recent_error_logs, :pluck).
+      expect(CreatePromptReportLog).to receive_message_chain(:error_logs_for_one_day, :pluck).
           with(user_id: user.id, request_id: request.id).with(:error_class).and_return('Hello')
       expect(validator).to receive(:meet_requirements_for_too_many_errors?).with('Hello')
       is_expected.to be_falsey

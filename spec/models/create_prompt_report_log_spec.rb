@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe CreatePromptReportLog, type: :model do
-  describe '.recent_error_logs' do
+  describe '.error_logs_for_one_day' do
     let(:user_id) { 1 }
     let(:request_id) { 2 }
-    subject { described_class.recent_error_logs(user_id: user_id, request_id: request_id) }
+    subject { described_class.error_logs_for_one_day(user_id: user_id, request_id: request_id) }
 
     context 'user_id' do
       let!(:record1) { create(:create_prompt_report_log, user_id: user_id, request_id: request_id + 1) }
@@ -25,9 +25,21 @@ RSpec.describe CreatePromptReportLog, type: :model do
     end
 
     context 'error_class' do
-      let!(:record1) { create(:create_prompt_report_log, user_id: user_id, request_id: request_id + 1, error_class: CreatePromptReportRequest::TooManyErrors) }
-      let!(:record2) { create(:create_prompt_report_log, user_id: user_id, request_id: request_id + 1, error_class: RuntimeError) }
-      it { is_expected.to match([record2]) }
+      let!(:record) { create(:create_prompt_report_log, user_id: user_id, request_id: request_id + 1, error_class: RuntimeError) }
+
+      before do
+        [
+            CreatePromptReportRequest::TooManyErrors,
+            CreatePromptReportRequest::TooShortSendInterval,
+            CreatePromptReportRequest::TooShortRequestInterval,
+            CreatePromptReportRequest::UserInactive,
+            CreatePromptReportRequest::InitializationStarted,
+        ].each do |error_class|
+          create(:create_prompt_report_log, user_id: user_id, request_id: request_id + 1, error_class: error_class)
+        end
+      end
+
+      it { is_expected.to match([record]) }
     end
 
     context 'order' do
