@@ -113,6 +113,22 @@ class CloudWatchClient
       append_instance("DiskSpaceUtilization#{role_suffix(role)}", 'System/Linux', ['...', instance_id, '.', '.'])
     end
 
+    def remove_cpu_utilization(role, instance_id)
+      remove_instance("CPUUtilization#{role_suffix(role)}", 'AWS/EC2', instance_id)
+    end
+
+    def remove_memory_utilization(role, instance_id)
+      remove_instance("MemoryUtilization#{role_suffix(role)}", 'System/Linux', instance_id)
+    end
+
+    def remove_cpu_credit_balance(role, instance_id)
+      remove_instance("CPUCreditBalance#{role_suffix(role)}", 'AWS/EC2', instance_id)
+    end
+
+    def remove_disk_space_utilization(role, instance_id)
+      remove_instance("DiskSpaceUtilization#{role_suffix(role)}", 'System/Linux', instance_id)
+    end
+
     def role_suffix(role)
       case role
       when 'web' then '1'
@@ -133,9 +149,21 @@ class CloudWatchClient
       self
     end
 
+    def remove_instance(widget_name, namespace, instance_id)
+      set_dashboard_body['widgets'].each do |widget|
+        if widget['properties']['title'].to_s == widget_name && widget['properties']['metrics'][0][0] == namespace
+          widget['properties']['metrics'].delete_if.with_index { |metric, i| i != 0 && metric.include?(instance_id) }
+          @changes << widget['properties']['metrics']
+          break
+        end
+      end
+
+      self
+    end
+
     def update
       unless @changes.empty?
-        logger.info @changes.inspect
+        @changes.each { |change| logger.info change.inspect }
         @client.put_dashboard(@name, @dashboard_body)
       end
     end
