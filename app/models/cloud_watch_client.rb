@@ -10,7 +10,7 @@ class CloudWatchClient
   class Metrics
     def initialize
       @client = CloudWatchClient.new
-      @metrics = Hash.new(Array.new)
+      @metrics = Hash.new { |hash, key| hash[key] = [] }
       @changed = false
     end
 
@@ -34,9 +34,14 @@ class CloudWatchClient
               namespace: namespace,
               metric_data: metric_data,
           }
+          logger.info params.inspect
           @client.instance_variable_get(:@client).put_metric_data(params)
         end
       end
+    end
+
+    def logger
+      defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
     end
   end
 
