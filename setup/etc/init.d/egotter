@@ -14,28 +14,20 @@ fi
 
 APP_ROOT="/var/egotter/"
 
-start() {
-  /etc/init.d/puma start || echo 'Already started'
-  /etc/init.d/sidekiq start || echo 'Already started'
-  /etc/init.d/sidekiq_import start || echo 'Already started'
-  /etc/init.d/sidekiq_misc start || echo 'Already started'
-  /etc/init.d/sidekiq_prompt_reports start || echo 'Already started'
+do_start() {
+  /etc/init.d/puma start
+  start sidekiq
+  start sidekiq_import
+  start sidekiq_misc
+  start sidekiq_prompt_reports
 }
 
-stop() {
-  /etc/init.d/puma status && /etc/init.d/puma stop || echo 'Not running'
-  /etc/init.d/sidekiq status && /etc/init.d/sidekiq stop || echo 'Not running'
-  /etc/init.d/sidekiq_import status && /etc/init.d/sidekiq_import stop || echo 'Not running'
-  /etc/init.d/sidekiq_misc status && /etc/init.d/sidekiq_misc stop || echo 'Not running'
-  /etc/init.d/sidekiq_prompt_reports status && /etc/init.d/sidekiq_prompt_reports stop || echo 'Not running'
-}
-
-restart() {
-  /etc/init.d/puma status && /etc/init.d/puma restart || echo 'Not running'
-  /etc/init.d/sidekiq status && /etc/init.d/sidekiq restart || echo 'Not running'
-  /etc/init.d/sidekiq_import status && /etc/init.d/sidekiq_import restart || echo 'Not running'
-  /etc/init.d/sidekiq_misc status && /etc/init.d/sidekiq_misc restart || echo 'Not running'
-  /etc/init.d/sidekiq_prompt_reports status && /etc/init.d/sidekiq_prompt_reports restart || echo 'Not running'
+do_stop() {
+  /etc/init.d/puma stop
+  stop sidekiq
+  stop sidekiq_import
+  stop sidekiq_misc
+  stop sidekiq_prompt_reports
 }
 
 rh_status() {
@@ -54,19 +46,16 @@ rh_status() {
 
 case "$1" in
 start)
-  start
+  do_start
   ;;
 stop)
-  stop
-  ;;
-restart)
-  restart
+  do_stop
   ;;
 status)
   rh_status
   ;;
 *)
-  echo "Usage: egotter {restart|status}" >&2
+  echo "Usage: egotter {start|stop|status}" >&2
   exit 2
   ;;
 esac
