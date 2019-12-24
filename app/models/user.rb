@@ -75,15 +75,15 @@ class User < ApplicationRecord
   scope :authorized, -> { where(authorized: true) }
   scope :can_send_dm, -> do
     includes(:notification_setting)
-      .where('notification_settings.dm = ?', true)
-      .where('last_dm_at IS NULL OR last_dm_at < ?', NotificationSetting::DM_INTERVAL.ago)
-      .references(:notification_settings)
+        .where('notification_settings.dm = ?', true)
+        .where('last_dm_at IS NULL OR last_dm_at < ?', NotificationSetting::DM_INTERVAL.ago)
+        .references(:notification_settings)
   end
   scope :can_send_news, -> do
     includes(:notification_setting)
-      .where('notification_settings.news = ?', true)
-      .where('last_dm_at IS NULL OR last_news_at < ?', NotificationSetting::NEWS_INTERVAL.ago)
-      .references(:notification_settings)
+        .where('notification_settings.news = ?', true)
+        .where('last_dm_at IS NULL OR last_news_at < ?', NotificationSetting::NEWS_INTERVAL.ago)
+        .references(:notification_settings)
   end
 
   scope :enough_permission_level, -> do

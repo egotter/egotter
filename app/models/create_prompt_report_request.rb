@@ -29,6 +29,15 @@ class CreatePromptReportRequest < ApplicationRecord
   TOO_MANY_ERRORS_SIZE = 3
   PROCESS_REQUEST_INTERVAL = 1.hour
 
+  class << self
+    def interval_ng_user_ids
+      where(created_at: PROCESS_REQUEST_INTERVAL.ago..Time.zone.now).
+          select(:user_id).
+          distinct.
+          pluck(:user_id)
+    end
+  end
+
   def perform!(record_created)
     error_check! unless @error_check
 

@@ -2,7 +2,17 @@ require 'rails_helper'
 
 RSpec.describe CreatePromptReportRequest, type: :model do
   let(:user) { create(:user) }
-  let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
+  let(:request) { CreatePromptReportRequest.create!(user_id: user.id) }
+
+  describe '.interval_ng_user_ids' do
+    let(:user2) { create(:user) }
+    subject { described_class.interval_ng_user_ids }
+    before do
+      CreatePromptReportRequest.create!(user_id: user.id)
+      CreatePromptReportRequest.create!(user_id: user2.id, created_at: (described_class::PROCESS_REQUEST_INTERVAL + 1).ago)
+    end
+    it { is_expected.to satisfy { |ids| ids.include?(user.id) && ids.exclude?(user2.id) } }
+  end
 
   describe '#perform!' do
     let(:prompt_report) { create(:prompt_report, user_id: user.id) }

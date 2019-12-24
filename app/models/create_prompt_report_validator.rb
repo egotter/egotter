@@ -56,8 +56,9 @@ class CreatePromptReportValidator
 
   def too_short_request_interval?
     CreatePromptReportRequest.where(user_id: user.id).
-        where(created_at: CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL.ago..Time.zone.now).
-        where.not(id: request.id).exists?
+        where.not(id: request.id).
+        interval_ng_user_ids.
+        any?
   end
 
   def suspended?

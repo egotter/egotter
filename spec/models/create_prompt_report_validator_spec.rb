@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CreatePromptReportValidator, type: :model do
   let(:user) { create(:user) }
-  let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
+  let(:request) { CreatePromptReportRequest.create!(user_id: user.id) }
   let(:validator) { described_class.new(request: request) }
 
   describe '#validate!' do
@@ -131,8 +131,12 @@ RSpec.describe CreatePromptReportValidator, type: :model do
 
   describe '#too_short_request_interval?' do
     subject { validator.too_short_request_interval? }
-    before { CreatePromptReportRequest.create!(user_id: user.id) }
-    it { is_expected.to be_truthy }
+    it { is_expected.to be_falsey }
+
+    context 'Recently created record found' do
+      before { CreatePromptReportRequest.create!(user_id: user.id) }
+      it { is_expected.to be_truthy }
+    end
   end
 
   describe '#suspended?' do

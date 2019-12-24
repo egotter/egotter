@@ -22,11 +22,6 @@ class StartSendingPromptReportsTask
     @not_blocked_ids ||= User.where(id: active_ids).where.not(uid: BlockedUser.pluck(:uid)).pluck(:id)
   end
 
-  # This method is left for testing.
-  def can_send_ids
-    @can_send_ids ||= User.can_send_dm.where(id: not_blocked_ids).pluck(:id)
-  end
-
   def enough_permission_ids
     @enough_permission_ids ||= User.enough_permission_level.where(id: not_blocked_ids).pluck(:id)
   end
@@ -35,12 +30,18 @@ class StartSendingPromptReportsTask
     @report_enabled_ids ||= User.prompt_report_enabled.where(id: enough_permission_ids).pluck(:id)
   end
 
+  def request_interval_ok_ids
+    @request_interval_ok_ids ||= User.where(id: report_enabled_ids).
+        where.not(id: CreatePromptReportRequest.interval_ng_user_ids).pluck(:id)
+  end
+
   def report_interval_ok_ids
-    @report_interval_ok_ids ||= User.prompt_report_interval_ok.where(id: report_enabled_ids).pluck(:id)
+    @report_interval_ok_ids ||= User.prompt_report_interval_ok.where(id: request_interval_ok_ids).pluck(:id)
   end
 
   def too_many_errors_rejected_ids
-    @too_many_errors_rejected_ids ||= User.where.not(id: TooManyErrorsUsers.new.to_a).where(id: report_interval_ok_ids).pluck(:id)
+    @too_many_errors_rejected_ids ||= User.where.not(id: TooManyErrorsUsers.new.to_a).
+        where(id: report_interval_ok_ids).pluck(:id)
   end
 
   def ids_stats
@@ -49,9 +50,9 @@ class StartSendingPromptReportsTask
         authorized_ids: authorized_ids.size,
         active_ids: active_ids.size,
         not_blocked_ids: not_blocked_ids.size,
-        can_send_ids: can_send_ids.size,
         enough_permission_ids: enough_permission_ids.size,
         report_enabled_ids: report_enabled_ids.size,
+        request_interval_ok_ids: request_interval_ok_ids.size,
         report_interval_ok_ids: report_interval_ok_ids.size,
         too_many_errors_rejected_ids: too_many_errors_rejected_ids.size,
     }
