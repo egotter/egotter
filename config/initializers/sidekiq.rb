@@ -1,3 +1,5 @@
+require_relative '../../lib/egotter/sidekiq/run_history'
+
 Sidekiq::Logging.logger.level = Logger::DEBUG
 
 Sidekiq.configure_server do |config|
