@@ -160,7 +160,7 @@ if __FILE__ == $0
 
       def launch
         az = 'ap-northeast-1b'
-        params = ::Egotter::Launch::Params.new(params.merge('availability-zone' => az))
+        params = ::Egotter::Launch::Params.new(@params.merge('availability-zone' => az))
         server = ::Egotter::Launch::Sidekiq.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
         ::Egotter::Install::Sidekiq.new(server.id).install
