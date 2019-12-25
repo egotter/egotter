@@ -59,8 +59,10 @@ module Egotter
             'git pull origin master',
             'bundle check || bundle install --path .bundle --without test development',
             'RAILS_ENV=production bundle exec rake assets:precompile',
+            'sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf',
             'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
             'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
+            'sudo service nginx restart',
             'sudo service puma restart',
         ].each do |cmd|
           backend(cmd)
@@ -70,6 +72,7 @@ module Egotter
       end
 
       def after_deploy
+        10.times { backend('curl localhost:80 -s -o /dev/null -w  "%{time_starttransfer}\n"') }
         @target_group.register(@instance.id)
       end
     end

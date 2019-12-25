@@ -10,7 +10,12 @@ require_relative '../lib/egotter/deploy'
 
 STDOUT.sync = true
 
-params = ARGV.getopts('h', 'help', 'role:', 'hosts:')
+params = ARGV.getopts(
+    'h',
+    'help',
+    'role:',
+    'hosts:',
+)
 
 if params['h'] || params['help']
   puts <<~'TEXT'

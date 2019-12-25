@@ -121,6 +121,11 @@ module Egotter
         self
       end
 
+      def update_nginx
+        run_command('sudo cp -f ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf')
+        self
+      end
+
       def update_puma
         run_command('sudo cp -f ./setup/etc/init.d/puma /etc/init.d')
         self
@@ -153,6 +158,7 @@ module Egotter
             pull_latest_code.
             update_egotter.
             update_crontab.
+            update_nginx.
             update_puma.
             install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb')
       end
