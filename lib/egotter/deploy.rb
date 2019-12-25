@@ -49,6 +49,7 @@ module Egotter
             'bundle check || bundle install --path .bundle --without test development',
             'RAILS_ENV=production bundle exec rake assets:precompile',
             'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
+            'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
             'sudo service puma restart',
         ].each do |cmd|
           backend(cmd)
@@ -69,6 +70,7 @@ module Egotter
             'git pull origin master',
             'bundle check || bundle install --path .bundle --without test development',
             'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
+            'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
             'sudo restart sidekiq_misc || :',
             'sudo restart sidekiq_prompt_reports || :',
             'sudo restart sidekiq || :',

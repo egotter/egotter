@@ -6,7 +6,18 @@ require_relative '../lib/egotter/deploy'
 
 STDOUT.sync = true
 
-params = ARGV.getopts('r:', 'role:', 'hosts:')
+params = ARGV.getopts('h', 'help', 'role:', 'hosts:')
+
+if params['h'] || params['help']
+  puts <<~'TEXT'
+    Usage:
+      deploy.rb --role web --hosts aaa,bbb,ccc
+      deploy.rb --role sidekiq --hosts aaa,bbb,ccc
+  TEXT
+
+  exit
+end
+
 hosts = params['hosts'].split(',')
 
 case params['role']
