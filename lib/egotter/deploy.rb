@@ -45,6 +45,7 @@ module Egotter
 
         [
             'git fetch origin',
+            'git log --oneline master..origin/master',
             'git pull origin master',
             'bundle check || bundle install --path .bundle --without test development',
             'RAILS_ENV=production bundle exec rake assets:precompile',
@@ -67,6 +68,7 @@ module Egotter
 
         [
             'git fetch origin',
+            'git log --oneline master..origin/master',
             'git pull origin master',
             'bundle check || bundle install --path .bundle --without test development',
             'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
