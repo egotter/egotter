@@ -3,10 +3,8 @@
 require 'dotenv/load'
 
 require 'optparse'
-require 'aws-sdk-ec2'
-require 'aws-sdk-elasticloadbalancingv2'
 
-require_relative '../lib/egotter/deploy'
+require_relative '../lib/deploy'
 
 STDOUT.sync = true
 
@@ -34,14 +32,14 @@ hosts = params['hosts'].split(',')
 
 case params['role']
 when 'web'
-  hosts.each { |host| ::Egotter::Deploy::Web.new(host).deploy }
+  hosts.each { |host| Deploy::WebTask.new(host).run }
 
   if params['git-tag']
     system("git tag deploy-web-all-#{Time.now.to_i}")
     system('git push origin --tags')
   end
 when 'sidekiq'
-  hosts.each { |host| Egotter::Deploy::Sidekiq.new(host).deploy }
+  hosts.each { |host| Deploy::SidekiqTask.new(host).run }
 
   if params['git-tag']
     system("git tag deploy-sidekiq-all-#{Time.now.to_i}")
