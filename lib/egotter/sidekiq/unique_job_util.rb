@@ -1,6 +1,8 @@
 module Egotter
   module Sidekiq
     module UniqueJobUtil
+      include JobCallbackUtil
+
       def perform(worker, args, history, &block)
         if worker.respond_to?(:unique_key)
           if perform_unique_check(worker, args, history, worker.unique_key(*args))
@@ -15,9 +17,7 @@ module Egotter
         if history.exists?(unique_key)
           worker.logger.info { "#{self.class}:#{worker.class} Skip duplicate job for #{history.ttl} seconds. #{args.inspect.truncate(100)}" }
 
-          if worker.respond_to?(:after_skip)
-            worker.after_skip(*args)
-          end
+          perform_callback(worker, :after_skip, args)
 
           false
         else

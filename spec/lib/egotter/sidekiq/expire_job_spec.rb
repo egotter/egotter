@@ -55,7 +55,7 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
     context 'enqueued_at < Time.zone.now - expire_in' do
       let(:enqueued_at) { Time.zone.now - expire_in - 1.second }
       it do
-        expect(worker).to receive(:after_expire).with(*args)
+        expect(middleware).to receive(:perform_callback).with(worker, :after_expire, args)
         is_expected.to be_falsey
       end
     end

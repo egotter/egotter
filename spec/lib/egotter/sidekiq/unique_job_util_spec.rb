@@ -50,15 +50,15 @@ RSpec.describe Egotter::Sidekiq::UniqueJobUtil do
 
     before { allow(worker).to receive_message_chain(:logger, :info) }
 
-    context 'history.exists?(unique_key) == true' do
+    context 'The history includes a job that has the same unique_key' do
       before { allow(history).to receive(:exists?).with(unique_key).and_return(true) }
       it do
-        expect(worker).to receive(:after_skip).with(*args)
+        expect(middleware).to receive(:perform_callback).with(worker, :after_skip, args)
         is_expected.to be_falsey
       end
     end
 
-    context 'history.exists?(unique_key) == false' do
+    context 'The history does not include a job that has the same unique_key' do
       before { allow(history).to receive(:exists?).with(unique_key).and_return(false) }
       it do
         expect(history).to receive(:add).with(unique_key)

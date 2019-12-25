@@ -1,6 +1,8 @@
 module Egotter
   module Sidekiq
     class TimeoutJob
+      include JobCallbackUtil
+
       def call(worker, msg, queue, &block)
         if worker.respond_to?(:timeout_in)
           yield_with_timeout(worker, msg['args'], worker.timeout_in, &block)
@@ -17,9 +19,7 @@ module Egotter
         worker.logger.info "#{e.class}: #{e.message} #{timeout_in} #{args.inspect.truncate(100)}"
         worker.logger.info e.backtrace.join("\n")
 
-        if worker.respond_to?(:after_timeout)
-          worker.after_timeout(*args)
-        end
+        perform_callback(worker, :after_timeout, args)
 
         nil
       end

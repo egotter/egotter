@@ -1,6 +1,8 @@
 module Egotter
   module Sidekiq
     class ExpireJob
+      include JobCallbackUtil
+
       def call(worker, msg, queue)
         if worker.respond_to?(:expire_in)
           if perform_expire_check(worker, msg['args'], worker.expire_in, extract_enqueued_at(msg))
@@ -20,9 +22,7 @@ module Egotter
         if enqueued_at < Time.zone.now - expire_in
           worker.logger.info { "Skip expired job. #{args.inspect.truncate(100)}" }
 
-          if worker.respond_to?(:after_expire)
-            worker.after_expire(*args)
-          end
+          perform_callback(worker, :after_expire, args)
 
           false
         else

@@ -43,7 +43,7 @@ RSpec.describe Egotter::Sidekiq::TimeoutJob do
     context 'Time is up' do
       let(:block) { Proc.new { sleep 1; true } }
       it do
-        expect(worker).to receive(:after_timeout).with(*args)
+        expect(middleware).to receive(:perform_callback).with(worker, :after_timeout, args)
         is_expected.to be_nil
       end
     end
