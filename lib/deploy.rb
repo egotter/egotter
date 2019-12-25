@@ -2,19 +2,15 @@ require_relative './egotter/aws'
 
 module Deploy
   module DSL
-    def frontend(cmd)
-      execute(cmd)
-    end
-
-    def backend(host, cmd)
-      execute('ssh', host, "cd #{current_dir} && #{cmd}")
+    def backend(host, dir, cmd)
+      execute(host, "cd #{dir} && #{cmd}")
     end
 
     private
 
-    def execute(*cmd)
-      green(cmd.join(' '))
-      puts system(*cmd, exception: true)
+    def execute(host, cmd)
+      puts green(cmd)
+      system('ssh', host, cmd, exception: true)
     end
 
     def green(str)
@@ -36,7 +32,7 @@ module Deploy
     end
 
     def backend(cmd)
-      super(@host, cmd)
+      super(@host, current_dir, cmd)
     end
 
     def ssh_connection_test
