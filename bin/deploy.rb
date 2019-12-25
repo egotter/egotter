@@ -1,6 +1,10 @@
 #!/usr/bin/env ruby
 
+require 'dotenv/load'
+
 require 'optparse'
+require 'aws-sdk-ec2'
+require 'aws-sdk-elasticloadbalancingv2'
 
 require_relative '../lib/egotter/deploy'
 

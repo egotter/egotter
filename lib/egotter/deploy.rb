@@ -1,3 +1,5 @@
+require_relative './aws'
+
 module Egotter
   module Deploy
     class Task
@@ -36,8 +38,16 @@ module Egotter
     end
 
     class Web < Task
+      def initialize(host)
+        super
+
+        @instance = ::Egotter::Aws::Instance.retrieve_by(name: host)
+        @target_group = ::Egotter::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
+      end
+
       def before_deploy
         ssh_connection_test
+        @target_group.deregister(@instance.id)
       end
 
       def deploy
@@ -55,6 +65,12 @@ module Egotter
         ].each do |cmd|
           backend(cmd)
         end
+
+        after_deploy
+      end
+
+      def after_deploy
+        @target_group.register(@instance.id)
       end
     end
 
