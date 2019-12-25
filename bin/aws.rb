@@ -51,6 +51,7 @@ if __FILE__ == $0
       'state:',
       'launch',
       'terminate',
+      'sync',
       'role:',
       'rotate',
       'list',
@@ -63,6 +64,8 @@ if __FILE__ == $0
         aws.rb --launch --role web
         aws.rb --launch --role web --rotate
         aws.rb --launch --role sidekiq --instance-type m5.large
+        aws.rb --sync --role web --instance-id i-0000
+        aws.rb --sync --role sidekiq --instance-id i-0000
         aws.rb --list
         aws.rb --terminate --role web
         aws.rb --terminate --role sidekiq --instance-id i-0000
@@ -264,6 +267,14 @@ if __FILE__ == $0
     terminator = Terminator.build(params)
     terminator.terminate
 
+  elsif params['sync']
+    if params['role'] == 'web'
+      ::Egotter::Install::Web.new(params['instance-id']).sync
+    elsif params['role'] == 'sidekiq'
+      ::Egotter::Install::Sidekiq.new(params['instance-id']).sync
+    else
+      raise "Invalid role #{params['role']}"
+    end
   elsif params['list']
     state = params['state'].to_s.empty? ? 'healthy' : params['state']
     delim = params['delim'] || ' '

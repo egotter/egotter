@@ -153,7 +153,8 @@ module Egotter
       end
 
       def sync
-        update_env.
+        update_misc.
+            update_env.
             upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_egotter.
@@ -175,7 +176,7 @@ module Egotter
         upload_env(@name, 'env/web.env.enc')
       end
 
-      def restart_processes
+      def update_misc
         [
             'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
             'sudo yum install -y httpd-tools',
@@ -185,6 +186,15 @@ module Egotter
             "sed -i -e 's/web3/#{@name}/g' ~/.bashrc",
             'RAILS_ENV=production bundle exec rake assets:precompile',
             'RAILS_ENV=production bundle exec rake assets:sync:download',
+        ].each do |cmd|
+          run_command(cmd)
+        end
+
+        self
+      end
+
+      def restart_processes
+        [
             'sudo service td-agent restart',
             'sudo service nginx restart',
             'sudo service puma restart',
@@ -204,7 +214,8 @@ module Egotter
       end
 
       def sync
-        update_env.
+        update_misc.
+            update_env.
             upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog.
@@ -229,13 +240,22 @@ module Egotter
         upload_env(@name, 'env/sidekiq.env.enc')
       end
 
-      def restart_processes
+      def update_misc
         [
             'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
             'sudo rm -rf /var/tmp/aws-mon/*',
             'sudo rm -rf /var/egotter/tmp/cache/*',
             'sudo rm -rf /var/egotter/log/*',
             "sed -i -e 's/web3/#{@name}/g' ~/.bashrc",
+        ].each do |cmd|
+          run_command(cmd)
+        end
+
+        self
+      end
+
+      def restart_processes
+        [
             'sudo service td-agent restart',
             'sudo service nginx stop',
             'sudo service puma stop',
