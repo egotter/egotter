@@ -1,0 +1,9 @@
+:concurrency: 1
+:timeout: 600
+:pidfile: ./tmp/pids/sidekiq_sleep.pid
+:logfile: ./log/sidekiq_sleep.log
+:tag:
+  - sidekiq_sleep
+:environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
+:queues:
+  - sleep
