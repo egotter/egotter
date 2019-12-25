@@ -1,3 +1,5 @@
+require_relative './aws/instance'
+
 module Egotter
   module Install
     module Util
@@ -139,9 +141,9 @@ module Egotter
     end
 
     class Web < Task
-      def initialize(id, name)
+      def initialize(id)
         @id = id
-        super(name)
+        super(::Egotter::Aws::Instance.retrieve(id).name)
       end
 
       def sync
@@ -187,9 +189,9 @@ module Egotter
     end
 
     class Sidekiq < Task
-      def initialize(id, name)
+      def initialize(id)
         @id = id
-        super(name)
+        super(::Egotter::Aws::Instance.retrieve(id).name)
       end
 
       def sync

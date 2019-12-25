@@ -15,6 +15,7 @@ require_relative '../lib/secret_file'
 require_relative '../lib/egotter/aws'
 require_relative '../lib/egotter/launch'
 require_relative '../lib/egotter/install'
+require_relative '../lib/egotter/uninstall'
 
 STDOUT.sync = true
 
@@ -44,6 +45,8 @@ if __FILE__ == $0
       'target-group:',
       'availability-zone:',
       'instance-type:',
+      'instance-id:',
+      'instance-name:',
       'delim:',
       'state:',
       'launch',
@@ -62,6 +65,7 @@ if __FILE__ == $0
           aws.rb --launch --role sidekiq --instance-type m5.large
           aws.rb --list
           aws.rb --terminate --role web
+          aws.rb --terminate --role sidekiq --instance-id i-0000
     TEXT
 
     exit
@@ -70,17 +74,19 @@ if __FILE__ == $0
   target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
   target_group = ::Egotter::Aws::TargetGroup.new(target_group_arn)
 
-  if params['launch']
-    Launch = ::Egotter::Launch
-    Install = ::Egotter::Install
+  Launch = ::Egotter::Launch
+  Install = ::Egotter::Install
+  Uninstall = ::Egotter::Uninstall
+  Instance = ::Egotter::Aws::Instance
 
+  if params['launch']
     role = params['role']
 
     if role == 'web'
       az = target_group.availability_zone_with_fewest_instances
       server = Launch::Web.new(Launch::Params.new(params.merge('availability-zone' => az))).launch
       append_to_ssh_config(server.id, server.host, server.public_ip)
-      Install::Web.new(server.id, server.host).install
+      Install::Web.new(server.id).install
 
       target_group.register(server.id)
 
@@ -94,7 +100,7 @@ if __FILE__ == $0
       az = 'ap-northeast-1b'
       server = Launch::Sidekiq.new(Launch::Params.new(params.merge('availability-zone' => az))).launch
       append_to_ssh_config(server.id, server.host, server.public_ip)
-      Install::Sidekiq.new(server.id, server.host).install
+      Install::Sidekiq.new(server.id).install
     else
       raise "Invalid role #{role}"
     end
@@ -115,6 +121,13 @@ if __FILE__ == $0
     if role == 'web'
       instance = target_group.oldest_instance
       if instance && target_group.deregister(instance.id)
+        instance.terminate
+        terminated = true
+      end
+    elsif role == 'sidekiq'
+      instance = Instance.retrieve_by(id: params['instance-id'], name: params['instance-name'])
+      if instance
+        Uninstall::Sidekiq.new(instance.id).uninstall
         instance.terminate
         terminated = true
       end

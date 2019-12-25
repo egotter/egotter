@@ -25,6 +25,14 @@ module Egotter
         def retrieve(id)
           new(::Egotter::Aws::EC2.retrieve_instance(id))
         end
+
+        def retrieve_by(id: nil, name: nil)
+          if id
+            retrieve(id)
+          else
+            new(::Egotter::Aws::EC2.retrieve_instance_by(name: name))
+          end
+        end
       end
     end
   end

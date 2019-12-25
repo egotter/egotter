@@ -39,6 +39,16 @@ module Egotter
         instance
       end
 
+      def retrieve_instance_by(name:)
+        instance = nil
+        filters = [name: 'tag:Name', values: [name]]
+        resource.instances(filters: filters).each do |i|
+          instance = i
+          break
+        end
+        instance
+      end
+
       def test_ssh_connection(public_ip)
         cmd = "ssh -q -i ~/.ssh/egotter.pem ec2-user@#{public_ip} exit"
         30.times do |n|
