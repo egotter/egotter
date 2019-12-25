@@ -28,6 +28,7 @@ RSpec.describe StartSendingPromptReportsWorker do
     it do
       users.each { |user| expect(CreatePromptReportRequest).to receive(:new).with(user_id: user.id).and_call_original }
       expect { subject }.to change { CreatePromptReportRequest.all.size }.by(users.size)
+      expect(subject).to all(satisfy { |r| r.persisted? })
     end
   end
 

@@ -44,9 +44,12 @@ class StartSendingPromptReportsWorker
   end
 
   def create_requests(users)
-    users.map { |user| CreatePromptReportRequest.new(user_id: user.id) }.tap do |requests|
-      CreatePromptReportRequest.import requests, validate: false
-    end
+    last_created_at = CreatePromptReportRequest.maximum(:created_at)
+    last_created_at = Time.zone.now - 1 unless last_created_at
+
+    requests = users.map { |user| CreatePromptReportRequest.new(user_id: user.id) }
+    CreatePromptReportRequest.import requests, validate: false
+    CreatePromptReportRequest.where('created_at > ?', last_created_at).order(id: :asc)
   end
 
   def enqueue_requests(requests, started_at)
