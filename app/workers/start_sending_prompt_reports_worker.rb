@@ -3,7 +3,7 @@ class StartSendingPromptReportsWorker
   include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def unique_key
+  def unique_key(*args)
     -1
   end
 
