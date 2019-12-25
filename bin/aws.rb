@@ -71,14 +71,6 @@ if __FILE__ == $0
     exit
   end
 
-  target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
-  target_group = ::Egotter::Aws::TargetGroup.new(target_group_arn)
-
-  Launch = ::Egotter::Launch
-  Install = ::Egotter::Install
-  Uninstall = ::Egotter::Uninstall
-  Instance = ::Egotter::Aws::Instance
-
   module Launcher
     def build(params)
       role = params['role']
@@ -137,9 +129,10 @@ if __FILE__ == $0
 
       def launch
         az = @target_group.availability_zone_with_fewest_instances
-        server = Launch::Web.new(Launch::Params.new(@params.merge('availability-zone' => az))).launch
+        params = ::Egotter::Launch::Params.new(@params.merge('availability-zone' => az))
+        server = ::Egotter::Launch::Web.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
-        Install::Web.new(server.id).install
+        ::Egotter::Install::Web.new(server.id).install
 
         @target_group.register(server.id)
         @launched = server
@@ -167,9 +160,10 @@ if __FILE__ == $0
 
       def launch
         az = 'ap-northeast-1b'
-        server = Launch::Sidekiq.new(Launch::Params.new(params.merge('availability-zone' => az))).launch
+        params = ::Egotter::Launch::Params.new(params.merge('availability-zone' => az))
+        server = ::Egotter::Launch::Sidekiq.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
-        Install::Sidekiq.new(server.id).install
+        ::Egotter::Install::Sidekiq.new(server.id).install
 
         @launched = server
 
@@ -180,44 +174,102 @@ if __FILE__ == $0
     end
   end
 
+  module Terminator
+    def build(params)
+      role = params['role']
+
+      if role == 'web'
+        Web.new(params)
+      elsif role == 'sidekiq'
+        Sidekiq.new(params)
+      else
+        raise "Invalid role #{role}"
+      end
+    end
+
+    module_function :build
+
+    class Base
+      def initialize
+        @role = nil
+        @terminated = nil
+      end
+
+      def terminate
+        after_terminate if @terminated
+      end
+
+      def after_terminate
+        CloudWatchClient::Dashboard.new('egotter-linux-system').
+            remove_cpu_utilization(@role, @terminated.id).
+            remove_memory_utilization(@role, @terminated.id).
+            remove_cpu_credit_balance(@role, @terminated.id).
+            remove_disk_space_utilization(@role, @terminated.id).
+            update
+      end
+    end
+
+    class Web < Base
+      def initialize(params)
+        super()
+        @role = params['role']
+
+        target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
+        @target_group = ::Egotter::Aws::TargetGroup.new(target_group_arn)
+      end
+
+      def terminate
+        instance = @target_group.oldest_instance
+        if instance && @target_group.deregister(instance.id)
+          instance.terminate
+          @terminated = instance
+        end
+
+        super
+
+        @terminated
+      end
+    end
+
+    class Sidekiq < Base
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
+      end
+
+      def terminate
+        instance = ::Egotter::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
+        if instance
+          ::Egotter::Uninstall::Sidekiq.new(instance.id).uninstall
+          instance.terminate
+          @terminated = instance
+        end
+
+        super
+
+        @terminated
+      end
+    end
+  end
+
   if params['launch']
     launcher = Launcher.build(params)
     instance = launcher.launch
 
     %x(git tag deploy-#{instance.name})
     %x(git push origin --tags)
+
   elsif params['terminate']
-    role = params['role']
-    terminated = nil
+    terminator = Terminator.build(params)
+    terminator.terminate
 
-    if role == 'web'
-      instance = target_group.oldest_instance
-      if instance && target_group.deregister(instance.id)
-        instance.terminate
-        terminated = instance
-      end
-    elsif role == 'sidekiq'
-      instance = Instance.retrieve_by(id: params['instance-id'], name: params['instance-name'])
-      if instance
-        Uninstall::Sidekiq.new(instance.id).uninstall
-        instance.terminate
-        terminated = instance
-      end
-    else
-      raise "Invalid role #{role}"
-    end
-
-    if terminated
-      CloudWatchClient::Dashboard.new('egotter-linux-system').
-          remove_cpu_utilization(role, terminated.id).
-          remove_memory_utilization(role, terminated.id).
-          remove_cpu_credit_balance(role, terminated.id).
-          remove_disk_space_utilization(role, terminated.id).
-          update
-    end
   elsif params['list']
     state = params['state'].to_s.empty? ? 'healthy' : params['state']
-    puts target_group.instances(state: state).map(&:name).join(params['delim'] || ' ')
+    delim = params['delim'] || ' '
+
+    target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
+    puts ::Egotter::Aws::TargetGroup.new(target_group_arn).instances(state: state).map(&:name).join(delim)
   elsif params['debug']
   end
 end
