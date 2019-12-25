@@ -72,7 +72,7 @@ module Egotter
       end
 
       def after_deploy
-        10.times { backend('curl localhost:80 -s -o /dev/null -w  "%{time_starttransfer}\n"') }
+        10.times { backend('ab -n 100 -c 10 http://localhost:80/') }
         @target_group.register(@instance.id)
       end
     end

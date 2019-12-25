@@ -178,6 +178,7 @@ module Egotter
       def restart_processes
         [
             'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
+            'sudo yum install -y httpd-tools',
             'sudo rm -rf /var/tmp/aws-mon/*',
             'sudo rm -rf /var/egotter/tmp/cache/*',
             'sudo rm -rf /var/egotter/log/*',
