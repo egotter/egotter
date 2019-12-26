@@ -39,7 +39,7 @@ if params['h'] || params['help']
       aws.rb --launch --role sidekiq --instance-type m5.large
       aws.rb --sync --role web --instance-id i-0000
       aws.rb --sync --role sidekiq --instance-id i-0000
-      aws.rb --list
+      aws.rb --list --role web
       aws.rb --terminate --role web
       aws.rb --terminate --role sidekiq --instance-id i-0000
   TEXT
@@ -47,33 +47,10 @@ if params['h'] || params['help']
   exit
 end
 
-if params['launch']
-  task = LaunchTask.build(params)
-  instance = task.run
+task = AwsTask.build(params)
+task.run
 
-  %x(git tag launch-#{instance.name})
+if %i(launch terminate sync).include?(task.kind)
+  %x(git tag #{task.kind}-#{task.instance.name})
   %x(git push origin --tags)
-
-elsif params['terminate']
-  task = TerminateTask.build(params)
-  instance = task.run
-
-  %x(git tag terminate-#{instance.name})
-  %x(git push origin --tags)
-
-elsif params['sync']
-  if params['role'] == 'web'
-    ::Egotter::Install::Web.new(params['instance-id']).sync
-  elsif params['role'] == 'sidekiq'
-    ::Egotter::Install::Sidekiq.new(params['instance-id']).sync
-  else
-    raise "Invalid role #{params['role']}"
-  end
-elsif params['list']
-  state = params['state'].to_s.empty? ? 'healthy' : params['state']
-  delim = params['delim'] || ' '
-
-  target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
-  puts ::Egotter::Aws::TargetGroup.new(target_group_arn).instances(state: state).map(&:name).join(delim)
-elsif params['debug']
 end

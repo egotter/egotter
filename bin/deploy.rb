@@ -28,23 +28,10 @@ if params['h'] || params['help']
   exit
 end
 
-hosts = params['hosts'].split(',')
+tasks = DeployTask.build(params)
+tasks.each(&:run)
 
-case params['role']
-when 'web'
-  hosts.each { |host| Deploy::WebTask.new(host).run }
-
-  if params['git-tag']
-    system("git tag deploy-web-all-#{Time.now.to_i}")
-    system('git push origin --tags')
-  end
-when 'sidekiq'
-  hosts.each { |host| Deploy::SidekiqTask.new(host).run }
-
-  if params['git-tag']
-    system("git tag deploy-sidekiq-all-#{Time.now.to_i}")
-    system('git push origin --tags')
-  end
-else
-  puts "Invalid #{params.inspect}"
+if params['git-tag']
+  system("git tag deploy-#{params['role']}-all-#{Time.now.to_i}")
+  system('git push origin --tags')
 end

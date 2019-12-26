@@ -1,6 +1,3 @@
-require 'base64'
-require 'erb'
-
 require_relative '../app/models/cloud_watch_client'
 
 require_relative './secret_file'
@@ -9,6 +6,22 @@ require_relative './egotter/aws'
 require_relative './egotter/launch'
 require_relative './egotter/install'
 require_relative './egotter/uninstall'
+
+module AwsTask
+  def build(params)
+    if params['launch']
+      LaunchTask.build(params)
+    elsif params['terminate']
+      TerminateTask.build(params)
+    elsif params['sync']
+      SyncTask.build(params)
+    elsif params['list']
+      ListTask.build(params)
+    end
+  end
+
+  module_function :build
+end
 
 module LaunchTask
   def build(params)
@@ -26,7 +39,11 @@ module LaunchTask
   module_function :build
 
   class Task
+    attr_reader :kind, :instance
+
     def initialize
+      @kind = :launch
+      @instance = nil
       @role = nil
       @launched = nil
       @terminated = nil
@@ -89,7 +106,7 @@ module LaunchTask
       ::Egotter::Install::Web.new(server.id).install
 
       @target_group.register(server.id)
-      @launched = server
+      @instance = @launched = server
 
       if @params['rotate']
         instance = @target_group.oldest_instance
@@ -100,8 +117,6 @@ module LaunchTask
       end
 
       super
-
-      @launched
     end
   end
 
@@ -119,11 +134,9 @@ module LaunchTask
       append_to_ssh_config(server.id, server.host, server.public_ip)
       ::Egotter::Install::Sidekiq.new(server.id).install
 
-      @launched = server
+      @instance = @launched = server
 
       super
-
-      @launched
     end
   end
 end
@@ -144,7 +157,11 @@ module TerminateTask
   module_function :build
 
   class Task
+    attr_reader :kind, :instance
+
     def initialize
+      @kind = :terminate
+      @instance = nil
       @role = nil
       @terminated = nil
     end
@@ -176,12 +193,10 @@ module TerminateTask
       instance = @target_group.oldest_instance
       if instance && @target_group.deregister(instance.id)
         instance.terminate
-        @terminated = instance
+        @instance = @terminated = instance
       end
 
       super
-
-      @terminated
     end
   end
 
@@ -197,12 +212,95 @@ module TerminateTask
       if instance
         ::Egotter::Uninstall::Sidekiq.new(instance.id).uninstall
         instance.terminate
-        @terminated = instance
+        @instance = @terminated = instance
       end
 
       super
+    end
+  end
+end
 
-      @terminated
+module SyncTask
+  def build(params)
+    role = params['role']
+
+    if role == 'web'
+      WebTask.new(params)
+    elsif role == 'sidekiq'
+      SidekiqTask.new(params)
+    else
+      raise "Invalid role #{role}"
+    end
+  end
+
+  module_function :build
+
+  class Task
+    attr_reader :kind, :instance
+
+    def initialize
+      @kind = :sync
+      @instance = nil
+    end
+  end
+
+  class WebTask < Task
+    def initialize(params)
+      @instance_id = params['instance-id']
+    end
+
+    def run
+      task = ::Egotter::Install::Web.new(@instance_id)
+      task.sync
+      @instance = task.instance
+    end
+  end
+
+  class SidekiqTask < Task
+    def initialize(params)
+      @instance_id = params['instance-id']
+    end
+
+    def run
+      task = ::Egotter::Install::Sidekiq.new(@instance_id)
+      task.sync
+      @instance = task.instance
+    end
+  end
+end
+
+module ListTask
+  def build(params)
+    role = params['role']
+
+    if role == 'web'
+      WebTask.new(params)
+    else
+      raise "Invalid role #{role}"
+    end
+  end
+
+  module_function :build
+
+  class Task
+    attr_reader :kind
+
+    def initialize
+      @kind = :list
+    end
+  end
+
+  class WebTask < Task
+    def initialize(params)
+      @state = params['state'].to_s.empty? ? 'healthy' : params['state']
+      @delim = params['delim'] || ' '
+
+      target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
+      @target_group = ::Egotter::Aws::TargetGroup.new(target_group_arn)
+    end
+
+    def run
+      puts @target_group.instances(state: @state).map(&:name).join(@delim)
     end
   end
 end

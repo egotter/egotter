@@ -1,6 +1,21 @@
 require_relative './egotter/aws'
 
-module Deploy
+module DeployTask
+  def build(params)
+    role = params['role']
+    hosts = params['hosts'].split(',')
+
+    if role == 'web'
+      hosts.map { |host| WebTask.new(host) }
+    elsif role == 'sidekiq'
+      hosts.map { |host| SidekiqTask.new(host) }
+    else
+      raise "Invalid role #{role}"
+    end
+  end
+
+  module_function :build
+
   module DSL
     def backend(host, dir, cmd)
       execute(host, "cd #{dir} && #{cmd}")

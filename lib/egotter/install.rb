@@ -1,3 +1,5 @@
+require 'erb'
+
 require_relative './aws/instance'
 
 module Egotter
@@ -97,7 +99,7 @@ module Egotter
             webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
             webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
             webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
-            )
+        )
 
         upload_contents(host, conf, '/etc/td-agent/td-agent.conf')
       end
@@ -150,9 +152,12 @@ module Egotter
     end
 
     class Web < Task
+      attr_reader :instance
+
       def initialize(id)
         @id = id
-        super(::Egotter::Aws::Instance.retrieve(id).name)
+        @instance = ::Egotter::Aws::Instance.retrieve(id)
+        super(@instance.name)
       end
 
       def sync
@@ -210,9 +215,12 @@ module Egotter
     end
 
     class Sidekiq < Task
+      attr_reader :instance
+
       def initialize(id)
         @id = id
-        super(::Egotter::Aws::Instance.retrieve(id).name)
+        @instance = ::Egotter::Aws::Instance.retrieve(id)
+        super(@instance.name)
       end
 
       def sync
