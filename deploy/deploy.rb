@@ -1,4 +1,4 @@
-require_relative './egotter/aws'
+require_relative './lib/aws'
 
 module DeployTask
   def build(params)

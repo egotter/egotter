@@ -4,7 +4,7 @@ require 'dotenv/load'
 
 require 'optparse'
 
-require_relative '../lib/aws'
+require_relative '../deploy/aws'
 
 STDOUT.sync = true
 

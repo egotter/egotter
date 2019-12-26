@@ -4,7 +4,7 @@ require 'dotenv/load'
 
 require 'optparse'
 
-require_relative '../lib/deploy'
+require_relative '../deploy/deploy'
 
 STDOUT.sync = true
 

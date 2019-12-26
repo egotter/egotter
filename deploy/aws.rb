@@ -1,11 +1,11 @@
 require_relative '../app/models/cloud_watch_client'
 
-require_relative './secret_file'
+require_relative '../lib/secret_file'
 
-require_relative './egotter/aws'
-require_relative './egotter/launch'
-require_relative './egotter/install'
-require_relative './egotter/uninstall'
+require_relative './lib/aws'
+require_relative './lib/launch'
+require_relative './lib/install'
+require_relative './lib/uninstall'
 
 module AwsTask
   def build(params)
