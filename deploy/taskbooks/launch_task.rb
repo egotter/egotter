@@ -1,9 +1,9 @@
 require_relative '../../app/models/cloud_watch_client'
 
 require_relative '../lib/aws'
-require_relative '../lib/launch'
-require_relative '../lib/install'
-require_relative '../lib/uninstall'
+require_relative '../tasks/launch'
+require_relative '../tasks/install'
+require_relative '../tasks/uninstall'
 
 module LaunchTask
   def build(params)

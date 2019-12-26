@@ -1,4 +1,4 @@
-require_relative './aws/instance'
+require_relative '../lib/aws/instance'
 
 module Egotter
   module Uninstall

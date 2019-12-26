@@ -1,7 +1,7 @@
 require_relative '../../app/models/cloud_watch_client'
 
 require_relative '../lib/aws'
-require_relative '../lib/uninstall'
+require_relative '../tasks/uninstall'
 
 module TerminateTask
   def build(params)

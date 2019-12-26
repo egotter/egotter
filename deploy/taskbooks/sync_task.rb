@@ -1,4 +1,4 @@
-require_relative '../lib/install'
+require_relative '../tasks/install'
 
 module SyncTask
   def build(params)

@@ -2,7 +2,7 @@ require 'erb'
 
 require_relative '../../lib/secret_file'
 
-require_relative './aws/instance'
+require_relative '../lib/aws/instance'
 
 module Egotter
   module Install
