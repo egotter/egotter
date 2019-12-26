@@ -4,7 +4,7 @@ require 'dotenv/load'
 
 require 'optparse'
 
-require_relative '../deploy/deploy'
+require_relative '../taskbooks/deploy_task'
 
 STDOUT.sync = true
 
@@ -28,7 +28,7 @@ if params['h'] || params['help']
   exit
 end
 
-tasks = DeployTask.build(params)
+tasks = TaskBooks::DeployTask.build(params)
 tasks.each(&:run)
 
 if params['git-tag']
