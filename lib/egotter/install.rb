@@ -15,28 +15,6 @@ module Egotter
         puts "\e[31m#{str}\e[0m"
       end
 
-      def install_td_agent(host, src)
-        [
-            'test -f "/usr/sbin/td-agent" || curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh',
-            '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-slack" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-slack',
-            '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
-        ].each { |cmd| exec_command(host, cmd) }
-
-        conf = ERB.new(File.read(src)).result_with_hash(
-            name: host,
-            webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
-            webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
-            webhook_sidekiq: ENV['SLACK_TD_AGENT_SIDEKIQ'],
-            webhook_sidekiq_import: ENV['SLACK_TD_AGENT_SIDEKIQ_IMPORT'],
-            webhook_sidekiq_misc: ENV['SLACK_TD_AGENT_SIDEKIQ_MISC'],
-            webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
-            webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
-            webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
-        )
-
-        upload_contents(host, conf, '/etc/td-agent/td-agent.conf')
-      end
-
       def upload_file(host, src_path, dst_path)
         tmp_file = "#{File.basename(dst_path)}.#{Process.pid}.tmp"
         tmp_path = File.join('/var/egotter', tmp_file)
@@ -85,8 +63,9 @@ module Egotter
 
       def exec_command(host, cmd, dir: '/var/egotter', exception: true)
         raise 'Hostname is empty.' if host.to_s.empty?
+        cmd = "cd #{dir} && #{cmd}"
         green("#{host} #{cmd}")
-        system('ssh', host, "cd #{dir} && #{cmd}", exception: exception).tap { |r| puts r }
+        system('ssh', host, cmd, exception: exception)
       end
     end
 
@@ -97,51 +76,75 @@ module Egotter
         @name = name
       end
 
-      def run_command(cmd, exception: true)
+      def backend(cmd, exception: true)
         exec_command(@name, cmd, exception: exception)
       end
 
+      def install_td_agent(host, src)
+        [
+            'test -f "/usr/sbin/td-agent" || curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh',
+            '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-slack" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-slack',
+            '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
+        ].each { |cmd| backend(cmd) }
+
+        conf = ERB.new(File.read(src)).result_with_hash(
+            name: host,
+            webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
+            webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
+            webhook_sidekiq: ENV['SLACK_TD_AGENT_SIDEKIQ'],
+            webhook_sidekiq_import: ENV['SLACK_TD_AGENT_SIDEKIQ_IMPORT'],
+            webhook_sidekiq_misc: ENV['SLACK_TD_AGENT_SIDEKIQ_MISC'],
+            webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
+            webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
+            webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
+            )
+
+        upload_contents(host, conf, '/etc/td-agent/td-agent.conf')
+      end
+
       def pull_latest_code
-        run_command('git fetch origin >/dev/null')
-        run_command('git pull origin master >/dev/null')
-        run_command('bundle check || bundle install --quiet --path .bundle --without test development')
+        backend('git fetch origin >/dev/null')
+        backend('git pull origin master >/dev/null')
+        backend('bundle check || bundle install --quiet --path .bundle --without test development')
+        backend('RAILS_ENV=production bundle exec rake assets:precompile')
+        backend('RAILS_ENV=production bundle exec rake assets:sync:download')
         self
       end
 
       def update_egotter
-        run_command('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
+        backend('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
         self
       end
 
       def update_crontab
-        run_command('crontab -r || :')
-        run_command('sudo crontab -r || :')
+        backend('crontab -r || :')
+        backend('sudo crontab -r || :')
         upload_file(@name, './setup/etc/crontab', '/etc/crontab')
-        run_command('sudo chown root:root /etc/crontab')
+        backend('sudo chown root:root /etc/crontab')
         self
       end
 
       def update_nginx
-        run_command('sudo cp -f ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf')
+        backend('sudo cp -f ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf')
         self
       end
 
       def update_puma
-        run_command('sudo cp -f ./setup/etc/init.d/puma /etc/init.d')
+        backend('sudo cp -f ./setup/etc/init.d/puma /etc/init.d')
         self
       end
 
       def update_sidekiq
-        run_command('sudo cp -f ./setup/etc/init.d/sidekiq* /etc/init.d')
-        run_command('sudo cp -f ./setup/etc/init/sidekiq* /etc/init')
-        run_command('sudo cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d')
+        backend('sudo cp -f ./setup/etc/init.d/sidekiq* /etc/init.d')
+        backend('sudo cp -f ./setup/etc/init/sidekiq* /etc/init')
+        backend('sudo cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d')
         self
       end
 
       def update_datadog
-        system("rsync -auz ./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml #{@name}:/var/egotter/datadog.sidekiq.conf.yaml.tmp")
-        run_command('test -e "/etc/datadog-agent/conf.d/sidekiq.d" || sudo mkdir /etc/datadog-agent/conf.d/sidekiq.d')
-        run_command('sudo mv /var/egotter/datadog.sidekiq.conf.yaml.tmp /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml')
+        frontend("rsync -auz ./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml #{@name}:/var/egotter/datadog.sidekiq.conf.yaml.tmp")
+        backend('test -e "/etc/datadog-agent/conf.d/sidekiq.d" || sudo mkdir /etc/datadog-agent/conf.d/sidekiq.d')
+        backend('sudo mv /var/egotter/datadog.sidekiq.conf.yaml.tmp /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml')
         self
       end
     end
@@ -167,8 +170,8 @@ module Egotter
       def install
         sync.restart_processes
       rescue => e
-        red("Terminate #{@id} as #{e.class} is raised")
-        ::Egotter::Aws::EC2.terminate_instance(@id)
+        red("Terminate #{@id} since #{e.class} is raised")
+        #::Egotter::Aws::EC2.terminate_instance(@id)
         raise
       end
 
@@ -184,10 +187,8 @@ module Egotter
             'sudo rm -rf /var/egotter/tmp/cache/*',
             'sudo rm -rf /var/egotter/log/*',
             "sed -i -e 's/web3/#{@name}/g' ~/.bashrc",
-            'RAILS_ENV=production bundle exec rake assets:precompile',
-            'RAILS_ENV=production bundle exec rake assets:sync:download',
         ].each do |cmd|
-          run_command(cmd)
+          backend(cmd)
         end
 
         self
@@ -199,8 +200,9 @@ module Egotter
             'sudo service nginx restart',
             'sudo service puma restart',
             'sudo restart datadog-agent',
+            'ab -n 100 -c 10 http://localhost:80/',
         ].each do |cmd|
-          run_command(cmd)
+          backend(cmd)
         end
 
         self
@@ -248,7 +250,7 @@ module Egotter
             'sudo rm -rf /var/egotter/log/*',
             "sed -i -e 's/web3/#{@name}/g' ~/.bashrc",
         ].each do |cmd|
-          run_command(cmd)
+          backend(cmd)
         end
 
         self
@@ -265,7 +267,7 @@ module Egotter
             'sudo start sidekiq_prompt_reports',
             'sudo restart datadog-agent',
         ].each do |cmd|
-          run_command(cmd)
+          backend(cmd)
         end
 
         self
@@ -278,10 +280,9 @@ module Egotter
             'sudo stop sidekiq_misc || :',
             'sudo stop sidekiq_prompt_reports || :',
         ].each do |cmd|
-          run_command(cmd)
+          backend(cmd)
         end
       end
     end
   end
-
 end
