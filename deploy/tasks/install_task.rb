@@ -5,7 +5,7 @@ require_relative '../../lib/secret_file'
 require_relative '../lib/aws/instance'
 
 module Tasks
-  module Install
+  module InstallTask
     module Util
       def yellow(str)
         puts "\e[33m#{str}\e[0m"

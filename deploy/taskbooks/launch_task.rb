@@ -1,9 +1,9 @@
 require_relative '../../app/models/cloud_watch_client'
 
 require_relative '../lib/aws'
-require_relative '../tasks/launch'
-require_relative '../tasks/install'
-require_relative '../tasks/uninstall'
+require_relative '../tasks/launch_task'
+require_relative '../tasks/install_task'
+require_relative '../tasks/uninstall_task'
 
 module Taskbooks
   module LaunchTask
@@ -83,10 +83,10 @@ module Taskbooks
 
       def run
         az = @target_group.availability_zone_with_fewest_instances
-        params = Tasks::Launch::Params.new(@params.merge('availability-zone' => az))
-        server = Tasks::Launch::Web.new(params).launch
+        params = Tasks::LaunchTask::Params.new(@params.merge('availability-zone' => az))
+        server = Tasks::LaunchTask::Web.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
-        Tasks::Install::Web.new(server.id).install
+        Tasks::InstallTask::Web.new(server.id).install
 
         @target_group.register(server.id)
         @instance = @launched = server
@@ -94,7 +94,7 @@ module Taskbooks
         if @params['rotate']
           instance = @target_group.oldest_instance
           if instance && @target_group.deregister(instance.id)
-            Tasks::Uninstall::Web.new(instance.id).uninstall
+            Tasks::UninstallTask::Web.new(instance.id).uninstall
             instance.terminate
             @terminated = instance
           end
@@ -113,10 +113,10 @@ module Taskbooks
 
       def run
         az = 'ap-northeast-1b'
-        params = Tasks::Launch::Params.new(@params.merge('availability-zone' => az))
-        server = Tasks::Launch::Sidekiq.new(params).launch
+        params = Tasks::LaunchTask::Params.new(@params.merge('availability-zone' => az))
+        server = Tasks::LaunchTask::Sidekiq.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
-        Tasks::Install::Sidekiq.new(server.id).install
+        Tasks::InstallTask::Sidekiq.new(server.id).install
 
         @instance = @launched = server
 

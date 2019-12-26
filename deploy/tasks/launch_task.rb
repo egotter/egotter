@@ -1,5 +1,5 @@
 module Tasks
-  module Launch
+  module LaunchTask
     class Params < ::Hash
       def initialize(params)
         self[:launch_template] = {launch_template_id: params['launch-template'] || ENV['AWS_LAUNCH_TEMPLATE']}

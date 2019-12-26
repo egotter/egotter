@@ -1,7 +1,7 @@
 require_relative '../lib/aws/instance'
 
 module Tasks
-  module Uninstall
+  module UninstallTask
     module Util
       def green(str)
         puts "\e[32m#{str}\e[0m"

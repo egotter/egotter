@@ -1,7 +1,7 @@
 require_relative '../../app/models/cloud_watch_client'
 
 require_relative '../lib/aws'
-require_relative '../tasks/uninstall'
+require_relative '../tasks/uninstall_task'
 
 module Taskbooks
   module TerminateTask
@@ -55,7 +55,7 @@ module Taskbooks
       def run
         instance = @target_group.oldest_instance
         if instance && @target_group.deregister(instance.id)
-          Tasks::Uninstall::Web.new(instance.id).uninstall
+          Tasks::UninstallTask::Web.new(instance.id).uninstall
           instance.terminate
           @instance = @terminated = instance
         end
@@ -74,7 +74,7 @@ module Taskbooks
       def run
         instance = ::Egotter::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
         if instance
-          ::Egotter::Uninstall::Sidekiq.new(instance.id).uninstall
+          ::Egotter::UninstallTask::Sidekiq.new(instance.id).uninstall
           instance.terminate
           @instance = @terminated = instance
         end
