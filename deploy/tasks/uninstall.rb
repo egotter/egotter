@@ -1,6 +1,6 @@
 require_relative '../lib/aws/instance'
 
-module Egotter
+module Tasks
   module Uninstall
     module Util
       def green(str)

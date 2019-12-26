@@ -55,7 +55,7 @@ module Taskbooks
       def run
         instance = @target_group.oldest_instance
         if instance && @target_group.deregister(instance.id)
-          ::Egotter::Uninstall::Web.new(instance.id).uninstall
+          Tasks::Uninstall::Web.new(instance.id).uninstall
           instance.terminate
           @instance = @terminated = instance
         end

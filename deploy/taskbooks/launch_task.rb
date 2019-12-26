@@ -83,10 +83,10 @@ module Taskbooks
 
       def run
         az = @target_group.availability_zone_with_fewest_instances
-        params = ::Egotter::Launch::Params.new(@params.merge('availability-zone' => az))
-        server = ::Egotter::Launch::Web.new(params).launch
+        params = Tasks::Launch::Params.new(@params.merge('availability-zone' => az))
+        server = Tasks::Launch::Web.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
-        ::Egotter::Install::Web.new(server.id).install
+        Tasks::Install::Web.new(server.id).install
 
         @target_group.register(server.id)
         @instance = @launched = server
@@ -94,7 +94,7 @@ module Taskbooks
         if @params['rotate']
           instance = @target_group.oldest_instance
           if instance && @target_group.deregister(instance.id)
-            ::Egotter::Uninstall::Web.new(instance.id).uninstall
+            Tasks::Uninstall::Web.new(instance.id).uninstall
             instance.terminate
             @terminated = instance
           end
@@ -113,10 +113,10 @@ module Taskbooks
 
       def run
         az = 'ap-northeast-1b'
-        params = ::Egotter::Launch::Params.new(@params.merge('availability-zone' => az))
-        server = ::Egotter::Launch::Sidekiq.new(params).launch
+        params = Tasks::Launch::Params.new(@params.merge('availability-zone' => az))
+        server = Tasks::Launch::Sidekiq.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
-        ::Egotter::Install::Sidekiq.new(server.id).install
+        Tasks::Install::Sidekiq.new(server.id).install
 
         @instance = @launched = server
 

@@ -1,4 +1,4 @@
-module Egotter
+module Tasks
   module Launch
     class Params < ::Hash
       def initialize(params)

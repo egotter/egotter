@@ -31,7 +31,7 @@ module Taskbooks
       end
 
       def run
-        task = ::Egotter::Install::Web.new(@instance_id)
+        task = Tasks::Install::Web.new(@instance_id)
         task.sync
         @instance = task.instance
       end
@@ -43,7 +43,7 @@ module Taskbooks
       end
 
       def run
-        task = ::Egotter::Install::Sidekiq.new(@instance_id)
+        task = Tasks::Install::Sidekiq.new(@instance_id)
         task.sync
         @instance = task.instance
       end

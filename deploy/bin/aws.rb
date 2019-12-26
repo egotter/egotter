@@ -49,7 +49,7 @@ if params['h'] || params['help']
   exit
 end
 
-task = AwsTask.build(params)
+task = Taskbooks::AwsTask.build(params)
 task.run
 
 if %i(launch terminate sync).include?(task.kind)

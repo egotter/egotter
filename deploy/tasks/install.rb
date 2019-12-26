@@ -4,7 +4,7 @@ require_relative '../../lib/secret_file'
 
 require_relative '../lib/aws/instance'
 
-module Egotter
+module Tasks
   module Install
     module Util
       def yellow(str)
