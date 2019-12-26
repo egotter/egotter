@@ -11,22 +11,57 @@ class StartSendingPromptReportsWorker
     1.minute
   end
 
+  def after_skip
+    logger.warn "The job execution is skipped."
+  end
+
   def timeout_in
     10.minutes
+  end
+
+  def after_timeout
+    logger.warn "The job execution is timed out."
   end
 
   # options:
   #   last_queueing_started_at
   def perform(options = {})
-    if options['last_queueing_started_at']
-      time_diff = Time.zone.now - Time.zone.parse(options['last_queueing_started_at'])
-      if time_diff < CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL
-        logger.info "Queueing interval of PromptReport is too short. It's started at #{options['last_queueing_started_at']}"
-        StartSendingPromptReportsWorker.perform_in(CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL - time_diff, options)
-        return
-      end
+    unless queueing_interval_too_short?(options)
+      start_queueing
     end
+  rescue => e
+    notify_airbrake(e, options: options)
+    logger.warn "#{e.class} #{e.message}"
+    logger.info e.backtrace.join("\n")
+  end
 
+  def queueing_interval_too_short?(options)
+    wait_time = next_wait_time(options['last_queueing_started_at'])
+    if wait_time > 0
+      logger.info "Interval is too short. Wait for #{wait_time.inspect}."
+      StartSendingPromptReportsWorker.perform_in(wait_time, options)
+
+      true
+    else
+      false
+    end
+  end
+
+  QUEUEING_INTERVAL = CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL
+
+  def next_wait_time(previous_started_at)
+    if previous_started_at.nil?
+      -1
+    else
+      started_at = Time.zone.parse(previous_started_at)
+      interval = Time.zone.now - started_at
+      wait_time = QUEUEING_INTERVAL - interval
+      wait_time = unique_in + 1.second if 0 < wait_time && wait_time < unique_in
+      wait_time
+    end
+  end
+
+  def start_queueing
     task = StartSendingPromptReportsTask.new
 
     log = StartSendingPromptReportsLog.create(started_at: Time.zone.now)
@@ -36,11 +71,6 @@ class StartSendingPromptReportsWorker
     enqueue_requests(requests, log.started_at)
 
     log.update(finished_at: Time.zone.now)
-
-  rescue => e
-    notify_airbrake(e, options: options)
-    logger.warn "#{e.class} #{e.message}"
-    logger.info e.backtrace.join("\n")
   end
 
   def create_requests(users)

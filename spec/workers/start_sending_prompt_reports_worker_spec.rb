@@ -4,6 +4,75 @@ RSpec.describe StartSendingPromptReportsWorker do
   let(:worker) { described_class.new }
 
   describe '#perform' do
+    let(:options) { 'options' }
+    subject { worker.perform(options) }
+
+    context 'With an appropriate interval' do
+      before { allow(worker).to receive(:queueing_interval_too_short?).with(options).and_return(false) }
+      it do
+        expect(worker).to receive(:start_queueing)
+        subject
+      end
+    end
+
+    context 'Without an appropriate interval' do
+      before { allow(worker).to receive(:queueing_interval_too_short?).with(options).and_return(true) }
+      it do
+        expect(worker).not_to receive(:start_queueing)
+        subject
+      end
+    end
+  end
+
+  describe '#queueing_interval_too_short?' do
+    let(:time) { 'time' }
+    let(:options) { {'last_queueing_started_at' => time} }
+    subject { worker.queueing_interval_too_short?(options) }
+
+    before { allow(worker).to receive(:next_wait_time).with(time).and_return(wait_time) }
+
+    context 'wait_time is greater than zero' do
+      let(:wait_time) { 1 }
+      it do
+        expect(StartSendingPromptReportsWorker).to receive(:perform_in).with(wait_time, options)
+        is_expected.to be_truthy
+      end
+    end
+
+    context 'wait_time is zero' do
+      let(:wait_time) { 0 }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'wait_time is less than zero' do
+      let(:wait_time) { -1 }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#next_wait_time' do
+    subject { worker.next_wait_time(previous_started_at) }
+
+    it { expect(described_class::QUEUEING_INTERVAL).to eq(CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL) }
+
+    context 'previous_started_at is nil' do
+      let(:previous_started_at) { nil }
+      it { is_expected.to eq(-1) }
+    end
+
+    context 'previous_started_at is before QUEUEING_INTERVAL.ago' do
+      let(:previous_started_at) { (described_class::QUEUEING_INTERVAL + 1.second).ago.to_s }
+      it { is_expected.to be < 0 }
+    end
+
+    context 'previous_started_at is after to QUEUEING_INTERVAL.ago' do
+      let(:previous_started_at) { (described_class::QUEUEING_INTERVAL - 1.second).ago.to_s }
+      before { allow(worker).to receive(:unique_in).and_return(10.seconds) }
+      it { is_expected.to be > 10 }
+    end
+  end
+
+  describe '#start_queueing' do
     let(:task) { instance_double(StartSendingPromptReportsTask) }
     let(:users) { double('users') }
     let(:requests) { double('requests') }
@@ -21,6 +90,7 @@ RSpec.describe StartSendingPromptReportsWorker do
       expect { subject }.to change { StartSendingPromptReportsLog.all.size }.by(1)
     end
   end
+
 
   describe '#create_requests' do
     let(:users) { 10.times.map { create(:user) } }
