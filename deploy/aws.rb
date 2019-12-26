@@ -10,7 +10,11 @@ require_relative './lib/uninstall'
 module AwsTask
   def build(params)
     if params['launch']
-      LaunchTask.build(params)
+      if params['count'] && (count = params['count'].to_i) > 1
+        EnumerableTask.new(count.times.map { LaunchTask.build(params) })
+      else
+        LaunchTask.build(params)
+      end
     elsif params['terminate']
       TerminateTask.build(params)
     elsif params['sync']
@@ -21,6 +25,16 @@ module AwsTask
   end
 
   module_function :build
+end
+
+class EnumerableTask
+  def initialize(tasks)
+    @tasks = tasks
+  end
+
+  def run
+    @tasks.each(&:run)
+  end
 end
 
 module LaunchTask
@@ -111,6 +125,7 @@ module LaunchTask
       if @params['rotate']
         instance = @target_group.oldest_instance
         if instance && @target_group.deregister(instance.id)
+          ::Egotter::Uninstall::Web.new(instance.id).uninstall
           instance.terminate
           @terminated = instance
         end
@@ -192,6 +207,7 @@ module TerminateTask
     def run
       instance = @target_group.oldest_instance
       if instance && @target_group.deregister(instance.id)
+        ::Egotter::Uninstall::Web.new(instance.id).uninstall
         instance.terminate
         @instance = @terminated = instance
       end

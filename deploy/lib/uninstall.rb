@@ -26,6 +26,28 @@ module Egotter
       end
     end
 
+    class Web < Task
+      def initialize(id)
+        @id = id
+        super(::Egotter::Aws::Instance.retrieve(id).name)
+      end
+
+      def uninstall
+        stop_processes
+      end
+
+      def stop_processes
+        [
+            'sudo service nginx stop',
+            'sudo service puma stop',
+        ].each do |cmd|
+          run_command(cmd)
+        end
+
+        self
+      end
+    end
+
     class Sidekiq < Task
       def initialize(id)
         @id = id
@@ -50,5 +72,4 @@ module Egotter
       end
     end
   end
-
 end

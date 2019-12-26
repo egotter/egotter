@@ -23,6 +23,7 @@ params = ARGV.getopts(
     'delim:',
     'state:',
     'launch',
+    'count:',
     'terminate',
     'sync',
     'role:',
@@ -36,6 +37,7 @@ if params['h'] || params['help']
     Usage:
       aws.rb --launch --role web
       aws.rb --launch --role web --rotate
+      aws.rb --launch --role web --rotate --count 3
       aws.rb --launch --role sidekiq --instance-type m5.large
       aws.rb --sync --role web --instance-id i-0000
       aws.rb --sync --role sidekiq --instance-id i-0000
