@@ -141,7 +141,9 @@ class PromptReport < ApplicationRecord
   def send_starting_message!
     template = Rails.root.join('app/views/prompt_reports/start.ja.text.erb')
     message = ERB.new(template.read).result_with_hash(
-        url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_lets_start', og_tag: 'false'),
+        url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_starting', og_tag: 'false'),
+        egotter_url: Rails.application.routes.url_helpers.root_url(via: 'prompt_report_starting'),
+        settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_starting', og_tag: 'false'),
     )
     dm_client(user).create_direct_message(User::EGOTTER_UID, message)
   end
