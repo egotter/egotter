@@ -16,8 +16,7 @@ RSpec.describe NotFoundController, type: :controller do
       it do
         expect(NotFoundUser).not_to receive(:exists?)
         expect(controller).not_to receive(:not_found_user?)
-        subject
-        expect(response).to have_http_status(:success)
+        is_expected.to have_http_status(:success)
       end
     end
 
@@ -25,8 +24,7 @@ RSpec.describe NotFoundController, type: :controller do
       before { allow(controller).to receive(:twitter_crawler?).and_return(false) }
       it do
         expect(NotFoundUser).to receive(:exists?).with(screen_name: screen_name).and_return(true)
-        subject
-        expect(response).to have_http_status(:success)
+        is_expected.to have_http_status(:success)
       end
     end
   end

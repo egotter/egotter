@@ -16,8 +16,7 @@ RSpec.describe ProfilesController, type: :controller do
       it do
         expect(controller).not_to receive(:not_found_screen_name?)
         expect(controller).not_to receive(:forbidden_screen_name?)
-        subject
-        expect(response).to have_http_status(:success)
+        is_expected.to have_http_status(:success)
       end
     end
 
@@ -26,8 +25,7 @@ RSpec.describe ProfilesController, type: :controller do
       it do
         expect(controller).to receive(:not_found_screen_name?).and_return(false)
         expect(controller).to receive(:forbidden_screen_name?).and_return(false)
-        subject
-        expect(response).to have_http_status(:success)
+        is_expected.to have_http_status(:success)
       end
     end
   end

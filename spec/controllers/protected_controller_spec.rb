@@ -15,8 +15,7 @@ RSpec.describe ProtectedController, type: :controller do
       before { allow(controller).to receive(:twitter_crawler?).and_return(true) }
       it do
         expect(controller).not_to receive(:protected_user?)
-        subject
-        expect(response).to have_http_status(:success)
+        is_expected.to have_http_status(:success)
       end
     end
 
@@ -24,8 +23,7 @@ RSpec.describe ProtectedController, type: :controller do
       before { allow(controller).to receive(:twitter_crawler?).and_return(false) }
       it do
         expect(controller).to receive(:protected_user?).with(screen_name).and_return(true)
-        subject
-        expect(response).to have_http_status(:success)
+        is_expected.to have_http_status(:success)
       end
     end
   end

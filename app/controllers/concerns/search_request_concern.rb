@@ -7,7 +7,8 @@ module Concerns::SearchRequestConcern
   included do
     before_action(only: %i(show all)) { signed_in_user_authorized? }
     before_action(only: %i(show all)) { enough_permission_level? }
-    before_action(only: %i(show all)) { valid_screen_name? && !not_found_screen_name? && !forbidden_screen_name? }
+    before_action(only: %i(show all)) { valid_screen_name? }
+    before_action(only: %i(show all)) { !not_found_screen_name? && !forbidden_screen_name? }
     before_action(only: %i(show all)) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
     before_action(only: %i(show all)) { search_limitation_soft_limited?(@twitter_user) }
     before_action(only: %i(show all)) { !protected_search?(@twitter_user) && !blocked_search?(@twitter_user) }
