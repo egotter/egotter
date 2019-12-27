@@ -44,7 +44,8 @@ class WarningMessage < ApplicationRecord
 
       template = Rails.root.join('app/views/warning_messages/not_following.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          timeline_url: timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'warning', follow_dialog: 1, share_dialog: 1, via: 'not_following_warning')
+          timeline_url: timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'warning', follow_dialog: 1, share_dialog: 1, via: 'not_following_warning'),
+          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'not_following_warning', og_tag: 'false'),
       )
       new(user_id: user_id, message: message, token: token)
     end
