@@ -14,6 +14,8 @@ module Taskbooks
         WebTask.new(params)
       elsif role == 'sidekiq'
         SidekiqTask.new(params)
+      elsif role == 'sidekiq_prompt_reports'
+        SidekiqPromptReportsTask.new(params)
       else
         raise "Invalid role #{role}"
       end
@@ -117,6 +119,26 @@ module Taskbooks
         server = Tasks::LaunchTask::Sidekiq.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
         Tasks::InstallTask::Sidekiq.new(server.id).install
+
+        @instance = @launched = server
+
+        super
+      end
+    end
+
+    class SidekiqPromptReportsTask < Task
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
+      end
+
+      def run
+        az = 'ap-northeast-1b'
+        params = Tasks::LaunchTask::Params.new(@params.merge('availability-zone' => az))
+        server = Tasks::LaunchTask::Sidekiq.new(params).launch
+        append_to_ssh_config(server.id, server.host, server.public_ip)
+        Tasks::InstallTask::SidekiqPromptReports.new(server.id).install
 
         @instance = @launched = server
 

@@ -130,10 +130,12 @@ class CloudWatchClient
     end
 
     def role_suffix(role)
-      case role
-      when 'web' then '1'
-      when 'sidekiq' then '2'
-      else raise "Invalid role #{role}"
+      if role.start_with?('web')
+        '1'
+      elsif role.start_with?('sidekiq')
+        '2'
+      else
+        raise "Invalid role #{role}"
       end
     end
 

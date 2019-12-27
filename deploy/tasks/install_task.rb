@@ -294,5 +294,30 @@ module Tasks
         end
       end
     end
+
+    class SidekiqPromptReports < Sidekiq
+      attr_reader :instance
+
+      def update_env
+        upload_env(@name, 'env/sidekiq_prompt_reports.env.enc')
+      end
+
+      def restart_processes
+        [
+            'sudo service td-agent restart',
+            'sudo service nginx stop',
+            'sudo service puma stop',
+            'sudo stop sidekiq || :',
+            'sudo stop sidekiq_import || :',
+            'sudo stop sidekiq_misc || :',
+            'sudo start sidekiq_prompt_reports',
+            'sudo restart datadog-agent',
+        ].each do |cmd|
+          backend(cmd)
+        end
+
+        self
+      end
+    end
   end
 end
