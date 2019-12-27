@@ -16,7 +16,8 @@ module Egotter
       rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
         puts "Invalid params #{params.inspect}"
         raise
-      rescue => e
+      rescue Interrupt, StandardError => e
+        puts "#{e.class} is raised and terminates already started instance."
         if defined?(instance) && instance
           terminate_instance(instance.id)
         end
