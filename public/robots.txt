@@ -4,7 +4,22 @@ Disallow: /
 User-agent: AhrefsBot
 Disallow: /
 
-User-agent: Twitterbot/1.0
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+User-agent: proximic
+Disallow: /
+
+User-agent: BLEXBot
+Disallow: /
+
+User-agent: GrapeshotCrawler
+Disallow: /
+
+User-agent: Twitterbot
 Disallow: /profiles
 
 User-agent: *
