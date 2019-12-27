@@ -17,6 +17,7 @@ module Concerns::TwitterUsersConcern
 
     twitter_user
   rescue => e
+    notify_airbrake(e)
     status = AccountStatus.new(ex: e)
 
     if status.not_found?
@@ -38,6 +39,7 @@ module Concerns::TwitterUsersConcern
     screen_name = request_context_client.user(uid.to_i)[:screen_name]
     build_twitter_user_by(screen_name: screen_name)
   rescue => e
+    notify_airbrake(e)
     status = AccountStatus.new(ex: e)
     if !status.suspended? && !status.not_found? && !status.unauthorized?
       logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{uid} #{current_user_id} #{e.class} #{e.message}}"

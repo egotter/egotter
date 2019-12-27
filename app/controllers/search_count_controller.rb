@@ -13,8 +13,6 @@ class SearchCountController < ApplicationController
     render json: {count: count}
   rescue => e
     notify_airbrake(e)
-    logger.warn "#{controller_name}##{action_name} #{e.inspect}"
-    logger.info e.backtrace.join("\n")
     render json: {count: DEFAULT_COUNT}
   end
 end

@@ -1,4 +1,5 @@
 class ApplicationController < ActionController::Base
+  include Concerns::AirbrakeConcern
   include ApplicationHelper
   include Concerns::InternalServerErrorHandler
   include Concerns::RoutingErrorHandler

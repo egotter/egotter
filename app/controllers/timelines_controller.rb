@@ -3,7 +3,7 @@ class TimelinesController < ApplicationController
   include Concerns::SearchRequestConcern
   include Concerns::AudienceInsights
 
-  after_action { ::Util::SearchCountCache.increment }
+  after_action { UsageCount.increment }
 
   def show
     CreateSearchHistoryWorker.perform_async(egotter_visit_id, current_user_id, @twitter_user.uid, current_visit&.id, via: params[:via]) unless from_crawler?
