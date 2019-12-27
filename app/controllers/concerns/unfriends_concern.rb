@@ -50,7 +50,7 @@ module Concerns::UnfriendsConcern
     values
   rescue Timeout::Error => e
     logger.warn "#{controller_name}##{__method__} #{e.class} #{e.message} #{current_user_id} #{twitter_user.id}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
 
     values[:unfriends] = -1 unless values.has_key?(:unfriends)
     values[:unfollowers] = -1 unless values.has_key?(:unfollowers)

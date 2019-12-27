@@ -25,7 +25,7 @@ class RepliedController < ::Page::Base
     values
   rescue Timeout::Error => e
     logger.info "#{controller_name}##{__method__} #{e.class} #{e.message} #{@twitter_user.inspect}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
 
     values[:replying] = -1 unless values.has_key?(:replying)
     values[:replied] = -1 unless values.has_key?(:replied)

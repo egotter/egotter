@@ -28,8 +28,6 @@ module Concerns::TwitterUsersConcern
       redirect_to forbidden_path(screen_name: screen_name)
     else
       logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{screen_name} #{current_user_id} #{e.class} #{e.message}}"
-      logger.info e.backtrace.join("\n")
-
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
       nil
     end
@@ -43,7 +41,6 @@ module Concerns::TwitterUsersConcern
     status = AccountStatus.new(ex: e)
     if !status.suspended? && !status.not_found? && !status.unauthorized?
       logger.warn "#{self.class}##{action_name} in #build_twitter_user_by_uid #{uid} #{current_user_id} #{e.class} #{e.message}}"
-      logger.info e.backtrace.join("\n")
     end
 
     respond_with_error(:bad_request, twitter_exception_messages(e, "ID #{uid}"))

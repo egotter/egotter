@@ -4,7 +4,7 @@ class ProfilesController < ApplicationController
   before_action only: :latest do
     request_context_client.user(params[:screen_name])
   rescue => e
-    logger.info "#{controller_name}##{action_name} #{e.inspect}"
+    notify_airbrake(e)
   else
     DeleteNotFoundUserWorker.new.perform(params[:screen_name])
     DeleteForbiddenUserWorker.new.perform(params[:screen_name])

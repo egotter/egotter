@@ -27,7 +27,7 @@ class FollowersController < ::Page::Base
     values
   rescue Timeout::Error => e
     logger.info "#{controller_name}##{__method__} #{e.class} #{e.message} #{@twitter_user.inspect}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
 
     values[:followers] = -1 unless values.has_key?(:followers)
     values[:one_sided_followers] = -1 unless values.has_key?(:one_sided_followers)

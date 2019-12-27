@@ -21,7 +21,7 @@ class PublicTweetsController < ApplicationController
     end
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message} #{keyword}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
     []
   end
 end

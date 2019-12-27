@@ -51,7 +51,7 @@ class OrdersController < ApplicationController
     redirect_to root_path, notice: t('.success_html', url: after_purchase_path('after_purchasing'))
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
     redirect_to root_path, alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error')) unless performed?
   end
 
@@ -67,7 +67,7 @@ class OrdersController < ApplicationController
 
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.class} #{e.message} #{current_user_id}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
     redirect_to root_path, alert: t('.failed_html', url: after_purchase_path('after_canceling_with_error')) unless performed?
   end
 

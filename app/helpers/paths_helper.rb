@@ -18,7 +18,7 @@ module PathsHelper
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{menu} #{screen_name}"
-    logger.warn e.backtrace.join("\n")
+    notify_airbrake(e)
     timeline_path(screen_name: screen_name, via: via)
   end
 

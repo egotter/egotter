@@ -22,7 +22,7 @@ class UsersController < ApplicationController
   rescue Twitter::Error::Unauthorized => e
     unless e.message == 'Invalid or expired token.'
       logger.warn "#{controller_name}##{action_name} #{e.class} #{e.message} #{current_user.id}"
-      logger.info e.backtrace.join("\n")
+      notify_airbrake(e)
     end
     nil
   end

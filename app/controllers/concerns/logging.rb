@@ -58,10 +58,10 @@ module Concerns::Logging
     end
   rescue Encoding::UndefinedConversionError => e
     logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   end
 
   def create_search_error_log(location, message, ex = nil)
@@ -96,7 +96,7 @@ module Concerns::Logging
     CreateSearchErrorLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   end
 
   def create_crawler_log
@@ -115,7 +115,7 @@ module Concerns::Logging
     CreateCrawlerLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   end
 
   def create_sign_in_log(user, context:, via:, follow:, tweet:, referer:, ab_test: '')
@@ -143,7 +143,7 @@ module Concerns::Logging
     CreateSignInLogWorker.perform_async(attrs)
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   end
 
   def push_referer
@@ -153,7 +153,7 @@ module Concerns::Logging
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   end
 
   def pushed_referers
@@ -211,7 +211,7 @@ module Concerns::Logging
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
     ''
   end
 
