@@ -10,10 +10,8 @@ class ProfilesController < ApplicationController
     DeleteForbiddenUserWorker.new.perform(params[:screen_name])
   end
 
-  before_action do
-    unless twitter_crawler?
-      !not_found_screen_name? && !forbidden_screen_name?
-    end
+  before_action unless: :twitter_crawler? do
+    !not_found_screen_name? && !forbidden_screen_name?
   end
   before_action :create_search_log
 

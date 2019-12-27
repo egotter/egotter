@@ -9,7 +9,7 @@ class ForbiddenController < ApplicationController
     DeleteForbiddenUserWorker.new.perform(params[:screen_name])
   end
 
-  before_action do
+  before_action unless: :twitter_crawler? do
     if !ForbiddenUser.exists?(screen_name: params[:screen_name]) && !forbidden_user?(params[:screen_name])
       redirect_to timeline_path(screen_name: params[:screen_name], via: build_via('forbidden_redirect')), notice: t('forbidden.show.come_back', user: params[:screen_name])
     end

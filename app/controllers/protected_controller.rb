@@ -8,13 +8,10 @@ class ProtectedController < ApplicationController
     end
   end
 
-  before_action do
-    if protected_user?(params[:screen_name])
-      true
-    else
+  before_action unless: :twitter_crawler? do
+    unless protected_user?(params[:screen_name])
       via = params[:force_update] == 'true' ? 'protected_force_update' : 'protected_redirect'
       redirect_to timeline_path(screen_name: params[:screen_name], via: build_via(via))
-      false
     end
   end
 
