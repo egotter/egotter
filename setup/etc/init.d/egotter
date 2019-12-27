@@ -14,20 +14,14 @@ fi
 
 APP_ROOT="/var/egotter/"
 
-do_start() {
-  /etc/init.d/puma start
-  start sidekiq
-  start sidekiq_import
-  start sidekiq_misc
-  start sidekiq_prompt_reports
-}
-
 do_stop() {
   /etc/init.d/puma stop
   stop sidekiq
   stop sidekiq_import
   stop sidekiq_misc
   stop sidekiq_prompt_reports
+  stop sidekiq_follow
+  stop sidekiq_unfollow
 }
 
 rh_status() {
@@ -45,9 +39,6 @@ rh_status() {
 }
 
 case "$1" in
-start)
-  do_start
-  ;;
 stop)
   do_stop
   ;;
@@ -55,7 +46,7 @@ status)
   rh_status
   ;;
 *)
-  echo "Usage: egotter {start|stop|status}" >&2
+  echo "Usage: egotter {stop|status}" >&2
   exit 2
   ;;
 esac
