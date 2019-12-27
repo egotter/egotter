@@ -7,6 +7,10 @@ module CrawlersHelper
     request.from_crawler? || !!from_minor_crawler?(request.user_agent)
   end
 
+  def twitter_crawler?
+    request.from_crawler? && request.browser == 'twitter'
+  end
+
   private
 
   CRAWLERS_REGEXP = /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider|Yahoo Ad monitoring|KZ BRAIN Mobile|Researchscan\/t13rl|Y!J-BRW\/1.0|NetcraftSurveyAgent|https?:\/\//

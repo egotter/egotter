@@ -116,16 +116,7 @@ module Concerns::ValidationConcern
 
   # Temporarily suspended users ( user[:suspended] == true ) are not checked.
   def forbidden_user?(screen_name)
-    request_context_client.user(screen_name)
-    DeleteForbiddenUserWorker.perform_async(screen_name)
-    false
-  rescue => e
-    if AccountStatus.suspended?(e)
-      CreateForbiddenUserWorker.perform_async(screen_name)
-      true
-    else
-      false
-    end
+    SearchRequestValidator.new(current_user).forbidden_user?(screen_name)
   end
 
   def not_found_screen_name?
@@ -140,16 +131,7 @@ module Concerns::ValidationConcern
   end
 
   def not_found_user?(screen_name)
-    request_context_client.user(screen_name)
-    DeleteNotFoundUserWorker.perform_async(screen_name)
-    false
-  rescue => e
-    if AccountStatus.not_found?(e)
-      CreateNotFoundUserWorker.perform_async(screen_name)
-      true
-    else
-      false
-    end
+    SearchRequestValidator.new(current_user).not_found_user?(screen_name)
   end
 
   def blocked_user?(screen_name)

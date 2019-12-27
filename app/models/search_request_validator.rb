@@ -3,6 +3,32 @@ class SearchRequestValidator
     @user = user
   end
 
+  def not_found_user?(screen_name)
+    client.user(screen_name)
+    DeleteNotFoundUserWorker.perform_async(screen_name)
+    false
+  rescue => e
+    if AccountStatus.not_found?(e)
+      CreateNotFoundUserWorker.perform_async(screen_name)
+      true
+    else
+      false
+    end
+  end
+
+  def forbidden_user?(screen_name)
+    client.user(screen_name)
+    DeleteForbiddenUserWorker.perform_async(screen_name)
+    false
+  rescue => e
+    if AccountStatus.suspended?(e)
+      CreateForbiddenUserWorker.perform_async(screen_name)
+      true
+    else
+      false
+    end
+  end
+
   def blocked_user?(screen_name)
     if user_signed_in?
       client.user_timeline(screen_name, count: 1)
