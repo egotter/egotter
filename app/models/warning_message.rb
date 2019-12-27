@@ -33,7 +33,8 @@ class WarningMessage < ApplicationRecord
       template = Rails.root.join('app/views/warning_messages/inactive.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
           last_access_at: I18n.l(user.last_access_at.in_time_zone('Tokyo'), format: :prompt_report_short),
-          timeline_url: timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'warning', follow_dialog: 1, share_dialog: 1, via: 'inactive_warning')
+          timeline_url: timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'warning', follow_dialog: 1, share_dialog: 1, via: 'inactive_warning'),
+          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'inactive_warning', og_tag: 'false'),
       )
       new(user_id: user_id, message: message, token: token)
     end
