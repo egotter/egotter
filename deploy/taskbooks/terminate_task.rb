@@ -74,7 +74,7 @@ module Taskbooks
       def run
         instance = ::Egotter::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
         if instance
-          ::Egotter::UninstallTask::Sidekiq.new(instance.id).uninstall
+          Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
           instance.terminate
           @instance = @terminated = instance
         end
