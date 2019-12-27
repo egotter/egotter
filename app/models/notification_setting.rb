@@ -10,6 +10,7 @@
 #  search                :boolean          default(TRUE), not null
 #  prompt_report         :boolean          default(TRUE), not null
 #  report_interval       :integer          default(0), not null
+#  report_if_changed     :boolean          default(FALSE), not null
 #  permission_level      :string(191)
 #  last_email_at         :datetime
 #  last_dm_at            :datetime
