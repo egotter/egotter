@@ -207,15 +207,21 @@
   <hr>
 
   <div class="form-group">
-    <label for="report_interval" class="control-label col-xs-4"><%= t('.notifications.prompt_reports.report_interval_title') %></label>
+    <label for="report_interval" class="control-label col-xs-4"><%= t('.notifications.prompt_reports.report_interval.title') %></label>
     <div class="col-xs-8">
       <%= select_tag 'report_interval', report_interval_options_for_select(current_user), class: 'form-control' %>
-      <div class="text-muted notes"><%= t('.notifications.prompt_reports.report_interval_note') %></div>
+      <div class="text-muted notes"><%= t('.notifications.prompt_reports.report_interval.note') %></div>
     </div>
   </div>
 
   <div class="clearfix"></div>
   <hr>
+
+  <div class="tgl-btns-wrapper">
+    <%= render partial: 'tgl_btn', collection: %i(report_if_changed), as: :name %>
+  </div>
+
+  <div class="clearfix"></div>
 
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
@@ -405,6 +411,7 @@
       attach_event_handler('dm', url);
       attach_event_handler('news', url);
       attach_event_handler('search', url);
+      attach_event_handler('report_if_changed', url);
     })();
 
     (function () {

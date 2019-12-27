@@ -15,16 +15,9 @@ class SettingsController < ApplicationController
   end
 
   def update
-    key, value =
-      case
-        when params[:email]  then [:email,  params[:email]]
-        when params[:dm]     then [:dm,     params[:dm]]
-        when params[:news]   then [:news,   params[:news]]
-        when params[:search] then [:search, params[:search]]
-      end
-    value = (value == 'true')
-    current_user.notification_setting.update!(key => value)
-    render json: current_user.notification_setting.attributes.slice('email', 'dm', 'news', 'search')
+    key, value = pick_sent_value
+    current_user.notification_setting.update!(key => value) if key
+    render json: current_user.notification_setting.attributes.slice('email', 'dm', 'news', 'search', 'report_if_changed')
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
     head :internal_server_error
@@ -58,5 +51,16 @@ class SettingsController < ApplicationController
 
   def twitter_users
     @twitter_users = TwitterUser.where(uid: current_user.uid).order(created_at: :desc).limit(20)
+  end
+
+  private
+
+  def pick_sent_value
+    %i(email dm news search report_if_changed).each do |name|
+      if params[name]
+        return [name, params[name] == 'true']
+      end
+    end
+    [nil, nil]
   end
 end

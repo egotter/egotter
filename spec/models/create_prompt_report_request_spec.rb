@@ -20,6 +20,7 @@ RSpec.describe CreatePromptReportRequest, type: :model do
     subject { request.perform!(true) }
 
     before do
+      user.create_notification_setting!
       allow(request).to receive(:error_check!)
       allow(TwitterUser).to receive(:exists?).with(uid: user.uid).and_return(true)
       allow(report_options_builder).to receive(:build).and_return('ok')
@@ -30,6 +31,34 @@ RSpec.describe CreatePromptReportRequest, type: :model do
       expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, prompt_report.id).and_return(report_options_builder)
       expect(CreatePromptReportMessageWorker).to receive(:perform_async).with(user.id, 'ok')
       subject
+    end
+
+    context '#report_if_changed is checked' do
+      before { user.notification_setting.update!(report_if_changed: true) }
+
+      it do
+        expect(request).not_to receive(:send_starting_confirmation_message!)
+        expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, nil).and_return(report_options_builder)
+        subject
+      end
+
+      context 'kind is :you_are_removed' do
+        before { request.kind = :you_are_removed }
+        it do
+          expect(CreatePromptReportMessageWorker).to receive(:perform_async).with(user.id, 'ok')
+          expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, nil).and_return(report_options_builder)
+          subject
+        end
+      end
+
+      context 'kind is :not_changed' do
+        before { request.kind = :not_changed }
+        it do
+          expect(CreatePromptReportMessageWorker).not_to receive(:perform_async)
+          expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, nil).and_return(report_options_builder)
+          subject
+        end
+      end
     end
   end
 

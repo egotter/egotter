@@ -46,9 +46,24 @@ class CreatePromptReportRequest < ApplicationRecord
       return
     end
 
-    prompt_report = send_starting_confirmation_message!
+    prompt_report =
+        if user.notification_setting.report_if_changed?
+          PromptReport.new
+        else
+          send_starting_confirmation_message!
+        end
+
     report_options = ReportOptionsBuilder.new(user, self, record_created, prompt_report.id).build
-    CreatePromptReportMessageWorker.perform_async(user.id, report_options)
+
+    if user.notification_setting.report_if_changed?
+      if self.kind == :you_are_removed
+        CreatePromptReportMessageWorker.perform_async(user.id, report_options)
+      else
+        logger.info "Don't send a report because the data has not changed #{self.inspect}"
+      end
+    else
+      CreatePromptReportMessageWorker.perform_async(user.id, report_options)
+    end
   end
 
   def error_check!

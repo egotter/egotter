@@ -388,8 +388,12 @@ ja:
           send_test_report: 'リムられ通知をテスト送信する'
           send_test_report_history: '履歴'
           send_test_report_note_html: '通知が届かない方はお試しください'
-          report_interval_title: "通知間隔"
-          report_interval_note: "通知の間隔は目安です"
+          report_interval:
+            title: "通知間隔"
+            note: "通知の間隔は目安です"
+          report_if_changed:
+            title: "通知間隔"
+            note: "通知の間隔は目安です"
           latest_prompt_report: "最新のリムられ通知"
           status: "通知ステータス"
           running_normally_html: '正常'
@@ -436,6 +440,7 @@ ja:
         dm_html: 'リムられ通知（DM）<br>フォローを外されたことを<span class="egotter-pink">DM</span>でお知らせ。'
         news_html: '新機能のお知らせが届きます。配信は不定期です。'
         search_html: 'あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。'
+        report_if_changed_html: 'リムられに変化があったときのみ通知を送信する'
   pricing:
     new:
       plans: "料金プラン"
