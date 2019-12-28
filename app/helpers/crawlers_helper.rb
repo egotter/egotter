@@ -23,6 +23,7 @@ module CrawlersHelper
       'Mozilla/5.0 (compatible; evc-batch/2.0)',
       'Mozilla/5.0 zgrab/0.x',
       'Ruby',
+      '',
   ]
 
   def from_minor_crawler?(user_agent)
