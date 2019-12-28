@@ -29,9 +29,13 @@ class CreatePromptReportWorker
     notify_airbrake(e, request_id: request_id, options: options)
   ensure
     if options['start_next_loop']
-      time_diff = Time.zone.now - Time.zone.parse(options['queueing_started_at'])
-      time_diff /= 3600
-      StartSendingPromptReportsWorker.perform_async(last_queueing_started_at: options['queueing_started_at'])
+      elapsed_time = Time.zone.now - Time.zone.parse(options['queueing_started_at'])
+      unique_in = StartSendingPromptReportsWorker.new.unique_in
+      if elapsed_time < unique_in
+        StartSendingPromptReportsWorker.perform_in(unique_in + 1.second, last_queueing_started_at: options['queueing_started_at'])
+      else
+        StartSendingPromptReportsWorker.perform_async(last_queueing_started_at: options['queueing_started_at'])
+      end
     end
   end
 end
