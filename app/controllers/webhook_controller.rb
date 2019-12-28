@@ -9,21 +9,21 @@ class WebhookController < ApplicationController
   end
 
   def twitter
-    begin
-      logger.info "#{controller_name}##{action_name} #{params[:for_user_id]}"
-      if params[:direct_message_events]
-        params[:direct_message_events].each do |event|
-          logger.info "#{controller_name}##{action_name} event #{JSON.pretty_generate(event)}"
-          if event['type'] == 'message_create'
-            logger.info "#{controller_name}##{action_name} sender_id #{event['sender_id']}"
-            logger.info "#{controller_name}##{action_name} text #{event['message_data']['text']}"
-          end
+    if params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
+      params[:direct_message_events].each do |event|
+        if event['type'] == 'message_create'
+          dm = DirectMessage.new(event: event.symbolize_keys)
+          found = dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
+          logger.info "#{controller_name}##{action_name} #{found} #{dm.id} #{dm.text}"
+          CreateAnswerMessageWorker.perform_async(dm.sender_id, text: "#{found} #{dm.id} #{dm.text}")
         end
       end
-    rescue => e
-      logger.warn "#{controller_name}##{action_name} #{e.inspect}"
     end
 
+    head :ok
+  rescue => e
+    logger.warn "#{controller_name}##{action_name} #{e.inspect}"
+    notify_airbrake(e)
     head :ok
   end
 

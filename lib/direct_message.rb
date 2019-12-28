@@ -6,7 +6,7 @@ class DirectMessage
   end
 
   def id
-    @response.dig(:event, :id)
+    @response.dig(:event, :id)&.to_i
   end
 
   def text
@@ -15,6 +15,10 @@ class DirectMessage
 
   def truncated_message(at: 100)
     @truncated_message ||= text.to_s.remove(/\R/).gsub(%r{https?://[\S]+}, 'URL').truncate(at)
+  end
+
+  def sender_id
+    @response.dig(:event, :message_create, :sender_id)&.to_i
   end
 
   class EmptyResponse < StandardError

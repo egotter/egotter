@@ -14,6 +14,7 @@ class SlackClient
       search_histories_monitoring: ENV['SLACK_SEARCH_HISTRIES_MONITORING_WEBHOOK_URL'],
       test_messages:               ENV['SLACK_TEST_MESSAGES_URL'],
       welcome_messages:            ENV['SLACK_WELCOME_MESSAGES_URL'],
+      answer_messages:             ENV['SLACK_ANSWER_MESSAGES_URL'],
       bot:                         ENV['SLACK_BOT_URL'],
       tweet:                       ENV['SLACK_TWEET_URL'],
       reset_egotter:               ENV['SLACK_RESET_EGOTTER_URL'],
