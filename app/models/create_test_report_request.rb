@@ -24,23 +24,27 @@ class CreateTestReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   def perform!
-    @error = {}
-    error_check!
-
     unless user.notification_setting.dm_enabled?
       user.notification_setting.update(dm: true, prompt_report: true)
     end
 
+    @error = {}
+    error_check!
+
     if @error && interval_error?(@error[:name])
-      @error = nil
+      @error = {}
     end
+
+    # Reset the state of TooManyErrors regardless of whether an error has occurred.
+    CreatePromptReportLog.create_test_report_log(user)
+    TooManyErrorsUsers.new.delete(user_id)
   end
 
   def error_check!
     communication_test!
     CreatePromptReportRequest.new(user_id: user.id).error_check!
   rescue => e
-    @error = {name: e.class, message: e.message.truncate(100)}
+    @error = {name: e.class.to_s, message: e.message.truncate(100)}
   end
 
   def communication_test!

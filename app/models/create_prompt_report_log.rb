@@ -39,6 +39,16 @@ class CreatePromptReportLog < ApplicationRecord
       )
     end
 
+    def create_test_report_log(user)
+      create(
+          user_id: user.id,
+          request_id: -1,
+          uid: user.uid,
+          screen_name: user.screen_name,
+          error_message: 'TestReport was sent'
+      )
+    end
+
     def latest_by(condition)
       order(created_at: :desc).find_by(condition)
     end
