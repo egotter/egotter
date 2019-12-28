@@ -9,10 +9,14 @@ class WebhookController < ApplicationController
   end
 
   def twitter
+    logger.info "generated digest #{digest(request.body.read)}"
+    logger.info "passed signature #{request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}"
+    logger.info "match? #{digest(request.body.read) == request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}"
+
     if params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
       params[:direct_message_events].each do |event|
         if event['type'] == 'message_create'
-          dm = DirectMessage.new(event: event.symbolize_keys)
+          dm = DirectMessage.new(event: event.to_unsafe_h.symbolize_keys)
           found = dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
           logger.info "#{controller_name}##{action_name} #{found} #{dm.id} #{dm.text}"
           CreateAnswerMessageWorker.perform_async(dm.sender_id, text: "#{found} #{dm.id} #{dm.text}")
@@ -27,10 +31,15 @@ class WebhookController < ApplicationController
     head :ok
   end
 
+  private
+
   def crc_response
-    token = params[:crc_token]
+    digest(params[:crc_token])
+  end
+
+  def digest(payload)
     secret = ENV['TWITTER_CONSUMER_SECRET']
-    digest = OpenSSL::HMAC::digest('sha256', secret, token)
+    digest = OpenSSL::HMAC::digest('sha256', secret, payload)
     Base64.encode64(digest).strip!
   end
 end
