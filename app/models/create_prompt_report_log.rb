@@ -14,12 +14,13 @@
 #
 # Indexes
 #
-#  index_create_prompt_report_logs_on_created_at   (created_at)
-#  index_create_prompt_report_logs_on_error_class  (error_class)
-#  index_create_prompt_report_logs_on_request_id   (request_id)
-#  index_create_prompt_report_logs_on_screen_name  (screen_name)
-#  index_create_prompt_report_logs_on_uid          (uid)
-#  index_create_prompt_report_logs_on_user_id      (user_id)
+#  index_create_prompt_report_logs_on_created_at              (created_at)
+#  index_create_prompt_report_logs_on_error_class             (error_class)
+#  index_create_prompt_report_logs_on_request_id              (request_id)
+#  index_create_prompt_report_logs_on_screen_name             (screen_name)
+#  index_create_prompt_report_logs_on_uid                     (uid)
+#  index_create_prompt_report_logs_on_user_id                 (user_id)
+#  index_create_prompt_report_logs_on_user_id_and_created_at  (user_id,created_at)
 #
 
 class CreatePromptReportLog < ApplicationRecord

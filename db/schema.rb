@@ -280,6 +280,7 @@ ActiveRecord::Schema.define(version: 2019_12_14_123932) do
     t.index ["request_id"], name: "index_create_prompt_report_logs_on_request_id"
     t.index ["screen_name"], name: "index_create_prompt_report_logs_on_screen_name"
     t.index ["uid"], name: "index_create_prompt_report_logs_on_uid"
+    t.index ["user_id", "created_at"], name: "index_create_prompt_report_logs_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_create_prompt_report_logs_on_user_id"
   end
 
