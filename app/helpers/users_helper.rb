@@ -8,7 +8,7 @@ module UsersHelper
       twitter_user = TwitterUser.latest_by(uid: current_user.uid)
       return (@current_user_friend_screen_names = []) unless twitter_user
 
-      @current_user_friend_screen_names = twitter_user.friends.pluck(:screen_name)
+      @current_user_friend_screen_names = (twitter_user.friends_count < 300) ? twitter_user.friends.pluck(:screen_name) : []
     end
   end
 
