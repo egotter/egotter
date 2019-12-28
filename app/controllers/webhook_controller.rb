@@ -9,6 +9,7 @@ class WebhookController < ApplicationController
   end
 
   def twitter
+    logger.info request.headers.sort.inspect
     logger.info "generated digest #{digest(request.body.read)}"
     logger.info "passed signature #{request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}"
     logger.info "match? #{digest(request.body.read) == request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}"
@@ -16,9 +17,11 @@ class WebhookController < ApplicationController
     if params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
       params[:direct_message_events].each do |event|
         if event['type'] == 'message_create'
-          dm = DirectMessage.new(event: event.to_unsafe_h.symbolize_keys)
-          logger.info "event #{event.to_unsafe_h.symbolize_keys.inspect}"
+          dm = DirectMessage.new(event: event.to_unsafe_h.deep_symbolize_keys)
+          logger.info "event #{event.to_unsafe_h.deep_symbolize_keys.inspect}"
           logger.info "direct message #{dm.inspect}"
+          logger.info "direct message #{dm.id}"
+          logger.info "direct message #{dm.text}"
 
           found = dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
           logger.info "#{controller_name}##{action_name} #{found} #{dm.id} #{dm.text}"
