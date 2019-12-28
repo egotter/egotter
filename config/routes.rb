@@ -164,6 +164,9 @@ Rails.application.routes.draw do
   get 'orders/cancel', to: "orders#cancel"
   post 'orders/checkout_session_completed', to: "orders#checkout_session_completed"
 
+  get 'webhook/twitter', to: 'webhook#challenge'
+  post 'webhook/twitter', to: 'webhook#twitter'
+
   get 'update_histories/:uid', to: redirect('/settings?via=routing_update_histories')
 
   get 'adsense', to: 'adsense#new'
