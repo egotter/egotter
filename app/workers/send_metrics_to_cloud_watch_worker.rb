@@ -2,6 +2,7 @@ require 'datadog/statsd'
 
 class SendMetricsToCloudWatchWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(*args)
@@ -18,8 +19,6 @@ class SendMetricsToCloudWatchWorker
 
   # Run every minute
   def perform
-    @put_count = 0
-
     %i(send_google_analytics_metrics
        send_sidekiq_metrics
        send_prompt_reports_metrics
@@ -35,11 +34,10 @@ class SendMetricsToCloudWatchWorker
       send(method_name)
     rescue => e
       logger.warn "#{method_name} #{e.class} #{e.message}"
-      logger.info e.backtrace.join("\n")
+      notify_airbrake(e, method_name: method_name)
     end
 
     client.update
-    logger.info "Sent #{@put_count} metrics"
   end
 
   # def datadog(values, ga_active_users, rate_limits)
@@ -311,7 +309,6 @@ class SendMetricsToCloudWatchWorker
 
   def put_metric_data(*args)
     client.append(*args)
-    @put_count += 1
   end
 
   # It is not working

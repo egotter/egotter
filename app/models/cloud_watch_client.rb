@@ -48,6 +48,8 @@ class CloudWatchClient
               namespace: namespace,
               metric_data: metric_data,
           }
+
+          logger.info "Send #{metric_data.size} metrics to #{namespace}"
           logger.info params.inspect
           @client.instance_variable_get(:@client).put_metric_data(params)
         end
