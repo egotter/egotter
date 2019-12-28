@@ -400,6 +400,7 @@ ja:
           error_html: '<span class="text-warning">失敗：%{text}</span>'
           history: '履歴'
           not_sent: 'リムられ通知はこれから送信されます。'
+          see_report_dm_html: '<a href="https://twitter.com/messages/%{user_uid}-%{egotter_uid}" target="_blank">通知DMを見る</a>'
       report_interval:
         confirm: 'レポート間隔を長くしすぎると、リムられの取りこぼしが発生しやすくなります。本当に _INTERVAL_ に変更しますか？'
         3600: "1時間毎（有料プラン限定）"
@@ -436,11 +437,25 @@ ja:
     tgl_btn:
       updated: "更新しました"
       desc:
-        email_html: 'リムられ通知（メール）<br>フォローを外されたことを<span class="egotter-pink">メール</span>でお知らせ。'
-        dm_html: 'リムられ通知（DM）<br>フォローを外されたことを<span class="egotter-pink">DM</span>でお知らせ。'
-        news_html: '新機能のお知らせが届きます。配信は不定期です。'
-        search_html: 'あなたのアカウントが検索されたことをDMでお知らせ。配信はなる早です。'
-        report_if_changed_html: 'リムられに変化があったときのみ通知を送信する'
+        email_html:
+          <b>リムられ通知（メール）</b><br>
+          フォローを外されたことを<span class="egotter-pink">メール</span>でお知らせ。
+        dm_html:
+          <b>リムられ通知（DM）</b><br>
+          フォローを外されたことを<span class="egotter-pink">DM</span>でお知らせ。
+        news_html:
+          <b>新機能のお知らせ（DM）</b><br>
+          配信は不定期です。
+        search_html:
+          <b>検索通知（DM）</b><br>
+          えごったーで誰かに検索されたら通知します。配信はなる早です。
+        report_if_changed_html: 'リムられに変化があったときのみ通知を送信する <span class="egotter-pink">新機能！</span>'
+      note:
+        email_html: 'メール通知は現在停止中です'
+        dm_html: ''
+        news_html: ''
+        search_html: ''
+        report_if_changed_html: 'この設定がオンになっていると、リムられに変化があったときのみ、リムられ通知が届くようになります'
   pricing:
     new:
       plans: "料金プラン"

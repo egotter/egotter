@@ -1,10 +1,11 @@
-<div class="tgl-btns">
-  <div class="table-cell-left">
-    <% val = current_user.notification_setting.send("#{name}?") %>
-    <%= check_box_tag name, true, val, {id: "#{name}-input", class: 'tgl tgl-ios'} %>
-    <label class='tgl-btn' for="<%= name %>-input"></label>
-  </div>
-  <div class="table-cell-right"><%= t(".desc.#{name}_html") %></div>
+<div class="col-xs-3 col-sm-2">
+  <%= check_box_tag name, true, current_user.notification_setting.send("#{name}?"), {id: "#{name}-input", class: 'tgl tgl-ios'} %>
+  <label class='tgl-btn' for="<%= name %>-input"></label>
+</div>
+<div class="col-xs-9 col-sm-10">
+  <div><%= t(".desc.#{name}_html") %></div>
+  <div class="text-muted"><%= t(".note.#{name}_html") %></div>
 </div>
 
+<div class="clearfix"></div>
 <hr>

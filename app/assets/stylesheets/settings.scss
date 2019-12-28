@@ -2,27 +2,11 @@
   max-width: 600px;
   margin: 0 auto;
 
-  .tgl-btns-wrapper {
+  .tgl-buttons {
     background-color: #ffffff;
-    padding: 15px;
-  }
 
-  .tgl-btns {
-    display: table;
-
-    .checkbox {
-      margin-left: 15px;
-      margin-right: 15px;
-    }
-
-    .table-cell-left,
-    .table-cell-right {
-      display: table-cell;
-      vertical-align: top;
-    }
-
-    .table-cell-right {
-      padding-left: 10px;
+    .text-muted {
+      font-size: x-small;
     }
   }
 

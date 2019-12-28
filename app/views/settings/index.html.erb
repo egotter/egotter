@@ -146,7 +146,7 @@
 
   <h2 class="h4 text-center"><i class="far fa-envelope"></i>&nbsp;<%= t('.notifications.title') %></h2>
 
-  <div class="tgl-btns-wrapper">
+  <div class="tgl-buttons">
     <hr>
     <%= render partial: 'tgl_btn', collection: %i(dm email news search), as: :name %>
   </div>
@@ -184,7 +184,12 @@
 
   <div class="col-xs-4"><%= t('.notifications.prompt_reports.latest_prompt_report') %></div>
   <div class="col-xs-8">
-    <%= @latest_prompt_report ? l(@latest_prompt_report.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : t('.notifications.prompt_reports.not_sent') %>
+    <% if @latest_prompt_report %>
+      <%= l(@latest_prompt_report.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
+      <%= t('.notifications.prompt_reports.see_report_dm_html', user_uid: current_user.uid, egotter_uid: User.egotter.uid) %>
+    <% else %>
+      <%= t('.notifications.prompt_reports.not_sent') %>
+    <% end %>
   </div>
 
   <div class="clearfix"></div>
@@ -217,7 +222,7 @@
   <div class="clearfix"></div>
   <hr>
 
-  <div class="tgl-btns-wrapper">
+  <div class="tgl-buttons">
     <%= render partial: 'tgl_btn', collection: %i(report_if_changed), as: :name %>
   </div>
 
