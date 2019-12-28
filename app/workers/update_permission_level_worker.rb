@@ -1,5 +1,6 @@
 class UpdatePermissionLevelWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
@@ -34,7 +35,7 @@ class UpdatePermissionLevelWorker
 
     if options['send_test_report']
       request = CreateTestReportRequest.create(user_id: user.id)
-      CreateTestReportWorker.perform_async(request.id, enqueued_at: Time.zone.now)
+      CreateTestReportWorker.perform_async(request.id)
     end
   rescue => e
     status = AccountStatus.new(ex: e)
@@ -44,7 +45,7 @@ class UpdatePermissionLevelWorker
     elsif status.not_found? || status.suspended? || status.too_many_requests?
     else
       logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
-      logger.info e.backtrace.join("\n")
+      notify_airbrake(e, user_id: user_id, options: options)
     end
   end
 end

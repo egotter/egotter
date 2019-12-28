@@ -1,5 +1,6 @@
 class CreateTestReportWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'misc', retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
@@ -7,7 +8,7 @@ class CreateTestReportWorker
   end
 
   def unique_in
-    10.minutes
+    1.minute
   end
 
   def timeout_in
@@ -15,21 +16,17 @@ class CreateTestReportWorker
   end
 
   # options:
-  #   enqueued_at
   def perform(request_id, options = {})
     request = CreateTestReportRequest.find(request_id)
 
-    begin
-      CreateTestReportTask.new(request).start!
-      CreateTestMessageWorker.perform_async(request.user_id, enqueued_at: Time.zone.now, create_test_report_request_id: request.id)
-    rescue CreatePromptReportRequest::Error => e
-      # At this point, I don't know if DM can be sent.
-      error_values = {error_class: e.class, error_message: e.message.truncate(100)}
-      CreateTestMessageWorker.perform_async(request.user_id, {enqueued_at: Time.zone.now, create_test_report_request_id: request.id}.merge(error_values))
-    end
+    task = CreateTestReportTask.new(request)
+    task.start!
+
+    message_options = {create_test_report_request_id: request.id, error: task.error}
+    CreateTestMessageWorker.perform_async(request.user_id, message_options)
 
   rescue => e
     logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e, request_id: request_id, options: options)
   end
 end

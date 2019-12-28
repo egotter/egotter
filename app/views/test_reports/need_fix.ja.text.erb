@@ -9,7 +9,7 @@
 最新のリムられ通知：<% if user.prompt_reports.any? %>
 <%= I18n.l(user.prompt_reports.first.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
 <% else %>
-リムられ通知はこれから送信されます。
+まだリムられ通知は送信されていません。
 <% end %>
 
 通知間隔：

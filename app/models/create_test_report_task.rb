@@ -2,6 +2,8 @@
 class CreateTestReportTask
   attr_reader :request, :log
 
+  attr_reader :error
+
   def initialize(request)
     @request = request
   end
@@ -11,6 +13,8 @@ class CreateTestReportTask
 
     request.perform!
     request.finished!
+
+    @error = request.error
 
     @log.update(status: true)
 
