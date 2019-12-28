@@ -762,6 +762,7 @@ ActiveRecord::Schema.define(version: 2019_12_14_123932) do
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_prompt_reports_on_created_at"
     t.index ["token"], name: "index_prompt_reports_on_token", unique: true
+    t.index ["user_id", "created_at"], name: "index_prompt_reports_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_prompt_reports_on_user_id"
   end
 

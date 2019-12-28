@@ -14,6 +14,7 @@ class CreatePromptReports < ActiveRecord::Migration[5.2]
       t.index :user_id
       t.index :token, unique: true
       t.index :created_at
+      t.index %i(user_id created_at)
     end
   end
 end

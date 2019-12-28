@@ -15,9 +15,10 @@
 #
 # Indexes
 #
-#  index_prompt_reports_on_created_at  (created_at)
-#  index_prompt_reports_on_token       (token) UNIQUE
-#  index_prompt_reports_on_user_id     (user_id)
+#  index_prompt_reports_on_created_at              (created_at)
+#  index_prompt_reports_on_token                   (token) UNIQUE
+#  index_prompt_reports_on_user_id                 (user_id)
+#  index_prompt_reports_on_user_id_and_created_at  (user_id,created_at)
 #
 
 class PromptReport < ApplicationRecord
