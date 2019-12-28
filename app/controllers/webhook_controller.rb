@@ -10,12 +10,14 @@ class WebhookController < ApplicationController
 
   def twitter
     begin
-      logger.info "#{controller_name}##{action_name} params #{params.inspect}"
-      logger.info "#{controller_name}##{action_name} query_params #{request.query_parameters.inspect}"
       logger.info "#{controller_name}##{action_name} #{params[:for_user_id]}"
       if params[:direct_message_events]
-        JSON.parse(params[:direct_message_events]).each do |event|
+        params[:direct_message_events].each do |event|
           logger.info "#{controller_name}##{action_name} event #{JSON.pretty_generate(event)}"
+          if event['type'] == 'message_create'
+            logger.info "#{controller_name}##{action_name} sender_id #{event['sender_id']}"
+            logger.info "#{controller_name}##{action_name} text #{event['message_data']['text']}"
+          end
         end
       end
     rescue => e
