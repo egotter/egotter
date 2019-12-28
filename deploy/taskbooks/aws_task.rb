@@ -8,7 +8,11 @@ module Taskbooks
           LaunchTask.build(params)
         end
       elsif params['terminate']
-        TerminateTask.build(params)
+        if params['count'] && (count = params['count'].to_i) > 1
+          EnumerableTask.new(count.times.map { TerminateTask.build(params) })
+        else
+          TerminateTask.build(params)
+        end
       elsif params['sync']
         SyncTask.build(params)
       elsif params['list']

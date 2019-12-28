@@ -44,6 +44,7 @@ if params['h'] || params['help']
       aws.rb --list --role web
       aws.rb --list --role sidekiq
       aws.rb --terminate --role web
+      aws.rb --terminate --role web --count 3
       aws.rb --terminate --role sidekiq --instance-id i-0000
   TEXT
 
