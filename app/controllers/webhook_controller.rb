@@ -15,7 +15,7 @@ class WebhookController < ApplicationController
   def crc_response
     token = params[:crc_token]
     secret = ENV['TWITTER_CONSUMER_SECRET']
-    digest = OpenSSL::HMAC::hexdigest('sha256', secret, token)
+    digest = OpenSSL::HMAC::digest('sha256', secret, token)
     Base64.encode64(digest).strip!
   end
 end
