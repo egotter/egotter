@@ -44,14 +44,16 @@ class CloudWatchClient
     def update
       if @changed
         @metrics.each do |namespace, metric_data|
-          params = {
-              namespace: namespace,
-              metric_data: metric_data,
-          }
-
           logger.info "Send #{metric_data.size} metrics to #{namespace}"
-          logger.info params.inspect
-          @client.instance_variable_get(:@client).put_metric_data(params)
+          logger.info metric_data.inspect
+
+          metric_data.each_slice(20).each do |data|
+            params = {
+                namespace: namespace,
+                metric_data: data,
+            }
+            @client.instance_variable_get(:@client).put_metric_data(params)
+          end
         end
       end
     end
