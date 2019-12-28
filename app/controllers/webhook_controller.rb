@@ -5,15 +5,17 @@ class WebhookController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def challenge
-    render json: {response_token: "sha256=#{crc_response(params[:crc_token])}"}
+    render json: {response_token: "sha256=#{crc_response}"}
   end
 
   def twitter
     head :ok
   end
 
-  def crc_response(token)
+  def crc_response
+    token = params[:crc_token]
     secret = ENV['TWITTER_CONSUMER_SECRET']
-    Base64.strict_encode64(OpenSSL::HMAC::hexdigest('sha256', secret, token))
+    digest = OpenSSL::HMAC::hexdigest('sha256', secret, token)
+    Base64.encode64(digest).strip!
   end
 end
