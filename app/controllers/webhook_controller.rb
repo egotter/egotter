@@ -17,6 +17,9 @@ class WebhookController < ApplicationController
       params[:direct_message_events].each do |event|
         if event['type'] == 'message_create'
           dm = DirectMessage.new(event: event.to_unsafe_h.symbolize_keys)
+          logger.info "event #{event.to_unsafe_h.symbolize_keys.inspect}"
+          logger.info "direct message #{dm.inspect}"
+
           found = dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
           logger.info "#{controller_name}##{action_name} #{found} #{dm.id} #{dm.text}"
           CreateAnswerMessageWorker.perform_async(dm.sender_id, text: "#{found} #{dm.id} #{dm.text}")
