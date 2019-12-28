@@ -4,7 +4,7 @@ module Concerns::DebugConcern
   extend ActiveSupport::Concern
 
   def request_details
-    "#{request.method} #{current_user_id} #{request.device_type} #{request.browser} #{request.xhr?} #{request.fullpath} #{request.referer} #{request.query_parameters}"
+    request_details_json.values.join(' ')
   end
 
   def request_details_json
@@ -17,6 +17,7 @@ module Concerns::DebugConcern
         full_path: request.fullpath,
         referer: request.referer,
         params: request.query_parameters,
+        '@twitter_user': @twitter_user.inspect
     }
   end
 end
