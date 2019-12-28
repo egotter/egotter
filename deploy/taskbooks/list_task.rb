@@ -7,6 +7,8 @@ module Taskbooks
 
       if role == 'web'
         WebTask.new(params)
+      elsif role == 'sidekiq'
+        SidekiqTask.new(params)
       else
         raise "Invalid role #{role}"
       end
@@ -33,6 +35,22 @@ module Taskbooks
 
       def run
         puts @target_group.instances(state: @state).map(&:name).join(@delim)
+      end
+    end
+
+    class SidekiqTask < Task
+      def initialize(params)
+        @delim = params['delim'] || ' '
+      end
+
+      def run
+        instances =
+            ::Egotter::Aws::EC2.retrieve_instances.map do |i|
+              ::Egotter::Aws::Instance.new(i)
+            end.select do |i|
+              i.name.start_with?('egotter_sidekiq')
+            end
+        puts instances.map(&:name).join(@delim)
       end
     end
   end

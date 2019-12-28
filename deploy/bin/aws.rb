@@ -42,6 +42,7 @@ if params['h'] || params['help']
       aws.rb --sync --role web --instance-id i-0000
       aws.rb --sync --role sidekiq --instance-id i-0000
       aws.rb --list --role web
+      aws.rb --list --role sidekiq
       aws.rb --terminate --role web
       aws.rb --terminate --role sidekiq --instance-id i-0000
   TEXT

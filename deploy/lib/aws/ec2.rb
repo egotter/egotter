@@ -50,6 +50,10 @@ module Egotter
         instance
       end
 
+      def retrieve_instances
+        resource.instances
+      end
+
       def test_ssh_connection(public_ip)
         cmd = "ssh -q -i ~/.ssh/egotter.pem ec2-user@#{public_ip} exit"
         30.times do |n|
