@@ -20,7 +20,7 @@ class CreatePromptReportTask
     elapsed = Time.zone.now - start
     if elapsed > 30
       records_size = TwitterUser.where(uid: request.user.uid).size
-      Rails.logger.info { "Benchmark CreatePromptReportTask #{request.id} too slow #{records_size}" }
+      logger.warn { "Benchmark CreatePromptReportTask #{request.id} too slow #{records_size}" }
     end
 
     request.finished!
@@ -93,5 +93,9 @@ class CreatePromptReportTask
       FetchUserForCachingWorker.perform_async(unfollower.screen_name, user_id: request.user.id, enqueued_at: Time.zone.now)
       # TwitterDB::User has already been forcibly updated in #update_unfriendships .
     end
+  end
+
+  def logger
+    Sidekiq.logger
   end
 end

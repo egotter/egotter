@@ -8,7 +8,7 @@ class CreatePromptReportWorker
   end
 
   def unique_in
-    10.minutes
+    1.minute
   end
 
   # Because it is difficult to adjust the degree of parallelism,

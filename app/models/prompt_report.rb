@@ -75,6 +75,13 @@ class PromptReport < ApplicationRecord
     raise StartingFailed.new("#{e.class} #{e.message}")
   end
 
+  def deliver_report_was_stopped_message!
+    dm = DirectMessage.new(retry_sending { send_stopped_message! })
+    update_with_dm!(dm)
+  rescue => e
+    raise StartingFailed.new("#{e.class} #{e.message}")
+  end
+
   class ReportingError < StandardError
   end
 
@@ -141,9 +148,17 @@ class PromptReport < ApplicationRecord
   def send_starting_message!
     template = Rails.root.join('app/views/prompt_reports/start.ja.text.erb')
     message = ERB.new(template.read).result_with_hash(
-        url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_starting', og_tag: 'false'),
-        egotter_url: Rails.application.routes.url_helpers.root_url(via: 'prompt_report_starting'),
-        settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_starting', og_tag: 'false'),
+        url: settings_url(via: 'prompt_report_starting', og_tag: 'false'),
+        egotter_url: root_url(via: 'prompt_report_starting'),
+        settings_url: settings_url(via: 'prompt_report_starting', og_tag: 'false'),
+    )
+    dm_client(user).create_direct_message(User::EGOTTER_UID, message)
+  end
+
+  def send_stopped_message!
+    template = Rails.root.join('app/views/prompt_reports/stopped.ja.text.erb')
+    message = ERB.new(template.read).result_with_hash(
+        settings_url: settings_url(via: 'prompt_report_stopped', follow_dialog: 1, share_dialog: 1, og_tag: 'false'),
     )
     dm_client(user).create_direct_message(User::EGOTTER_UID, message)
   end
@@ -178,6 +193,18 @@ class PromptReport < ApplicationRecord
     end
   end
 
+  module UrlHelpers
+    def method_missing(method, *args, &block)
+      if method.to_s.end_with?('_url')
+        Rails.application.routes.url_helpers.send(method, *args, &block)
+      else
+        super
+      end
+    end
+  end
+
+  include UrlHelpers
+
   # This class is created for testing.
   class EmptyMessageBuilder
     def initialize(*args)
@@ -189,6 +216,7 @@ class PromptReport < ApplicationRecord
   end
 
   class InitializationMessageBuilder
+    include UrlHelpers
     attr_reader :user, :token, :request
 
     def initialize(user, token, request: nil)
@@ -207,11 +235,12 @@ class PromptReport < ApplicationRecord
     end
 
     def timeline_url(screen_name)
-      Rails.application.routes.url_helpers.timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report_initialization', og_tag: 'false')
+      timeline_url(screen_name: screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report_initialization', og_tag: 'false')
     end
   end
 
   class YouAreRemovedMessageBuilder
+    include UrlHelpers
     attr_reader :user, :token, :request
     attr_accessor :previous_twitter_user
     attr_accessor :current_twitter_user
@@ -241,7 +270,7 @@ class PromptReport < ApplicationRecord
             last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
-            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report'),
+            settings_url: settings_url(via: 'prompt_report'),
             request_id: "#{request&.id}-#{token}",
         )
       end
@@ -262,15 +291,16 @@ class PromptReport < ApplicationRecord
     end
 
     def generic_timeline_url
-      @generic_timeline_url ||= Rails.application.routes.url_helpers.profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
+      @generic_timeline_url ||= profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
     end
 
     def timeline_url
-      Rails.application.routes.url_helpers.profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
+      profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
     end
   end
 
   class NotChangedMessageBuilder
+    include UrlHelpers
     attr_reader :user, :token, :request
     attr_accessor :previous_twitter_user
     attr_accessor :current_twitter_user
@@ -299,7 +329,7 @@ class PromptReport < ApplicationRecord
             last_access_at: last_access_at,
             generic_timeline_url: generic_timeline_url,
             timeline_url: timeline_url,
-            settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report'),
+            settings_url: settings_url(via: 'prompt_report'),
             request_id: "#{request&.id}-#{token}",
         )
       end
@@ -320,15 +350,16 @@ class PromptReport < ApplicationRecord
     end
 
     def generic_timeline_url
-      @generic_timeline_url ||= Rails.application.routes.url_helpers.profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
+      @generic_timeline_url ||= profile_url(screen_name: '__SN__', via: 'prompt_report_shortcut')
     end
 
     def timeline_url
-      Rails.application.routes.url_helpers.profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
+      profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
     end
   end
 
   class ReportingFailedMessageBuilder
+    include UrlHelpers
     attr_reader :request
 
     def initialize(request: nil)
@@ -338,8 +369,8 @@ class PromptReport < ApplicationRecord
     def build
       template = Rails.root.join('app/views/prompt_reports/reporting_failed.ja.text.erb')
       ERB.new(template.read).result_with_hash(
-          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'prompt_report_failed'),
-          egotter_url: Rails.application.routes.url_helpers.root_url(via: 'prompt_report_failed'),
+          settings_url: settings_url(via: 'prompt_report_failed'),
+          egotter_url: root_url(via: 'prompt_report_failed'),
       )
 
     end

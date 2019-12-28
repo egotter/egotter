@@ -23,7 +23,7 @@ RSpec.describe CreateTestReportRequest, type: :model do
       before { allow(request).to receive(:communication_test!).and_raise('Anything') }
       it do
         subject
-        expect(request.error).to match(name: RuntimeError, message: 'Anything')
+        expect(request.error).to match(name: RuntimeError.to_s, message: 'Anything')
       end
     end
   end

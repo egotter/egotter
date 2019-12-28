@@ -39,7 +39,12 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def perform!(record_created)
-    error_check! unless @error_check
+    begin
+      error_check!
+    rescue UserInactive => e
+      send_report_was_stopped_message!
+      raise
+    end
 
     unless TwitterUser.exists?(uid: user.uid)
       CreatePromptReportMessageWorker.perform_async(user.id, kind: :initialization, create_prompt_report_request_id: id)
@@ -59,7 +64,7 @@ class CreatePromptReportRequest < ApplicationRecord
       if self.kind == :you_are_removed
         CreatePromptReportMessageWorker.perform_async(user.id, report_options)
       else
-        logger.info "Don't send a report because the data has not changed #{self.inspect}"
+        Sidekiq.logger.info "Don't send a report because the data has not changed #{self.inspect}"
       end
     else
       CreatePromptReportMessageWorker.perform_async(user.id, report_options)
@@ -67,8 +72,10 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def error_check!
-    CreatePromptReportValidator.new(request: self).validate!
-    @error_check = true
+    unless @error_check
+      CreatePromptReportValidator.new(request: self).validate!
+      @error_check = true
+    end
   end
 
   def send_starting_confirmation_message!
@@ -77,6 +84,14 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   rescue PromptReport::StartingFailed => e
     raise StartingConfirmationFailed.new(e.message)
+  end
+
+  def send_report_was_stopped_message!
+    PromptReport.new(user_id: user.id).tap do |report|
+      report.deliver_report_was_stopped_message!
+    end
+  rescue PromptReport::StartingFailed => e
+    raise ReportWasStoppedFailed.new(e.message)
   end
 
   class ReportOptionsBuilder
@@ -264,6 +279,9 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class StartingConfirmationFailed < Error
+  end
+
+  class ReportWasStoppedFailed < Error
   end
 
   class Unknown < StandardError
