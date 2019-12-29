@@ -62,21 +62,23 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
   end
 
   describe '#pick_enqueued_at' do
-    let(:msg) { {'args' => args, 'enqueued_at' => time} }
+    let(:msg) { {'args' => args, 'enqueued_at' => 'dont_use', 'created_at' => 'time in msg'} }
     subject { middleware.pick_enqueued_at(msg) }
 
-    before { allow(middleware).to receive(:parse_time).with(time).and_return('parsed') }
-
     context 'args has enqueued_at' do
-      let(:time) { 'at' }
-      let(:args) { [1, 'enqueued_at' => time] }
-      it { is_expected.to eq('parsed') }
+      let(:args) { [1, 'enqueued_at' => 'time in args'] }
+      it do
+        expect(middleware).to receive(:parse_time).with('time in args').and_return('parsed')
+        is_expected.to eq('parsed')
+      end
     end
 
     context "args doesn't have enqueued_at" do
-      let(:time) { 'at' }
       let(:args) { [1] }
-      it { is_expected.to eq('parsed') }
+      it do
+        expect(middleware).to receive(:parse_time).with('time in msg').and_return('parsed')
+        is_expected.to eq('parsed')
+      end
     end
   end
 
