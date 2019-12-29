@@ -1,5 +1,6 @@
 require_relative '../../app/models/cloud_watch_client'
 
+require_relative '../lib/deploy_ruby'
 require_relative '../lib/aws'
 require_relative '../tasks/launch_task'
 require_relative '../tasks/install_task'
@@ -23,7 +24,7 @@ module Taskbooks
 
     module_function :build
 
-    class Task
+    class Task < ::DeployRuby::Task
       attr_reader :kind, :instance
 
       def initialize
@@ -68,7 +69,7 @@ module Taskbooks
             User         ec2-user
         TEXT
 
-        puts text
+        logger.info text
         File.open('./ssh_config', 'a') { |f| f.puts(text) }
       end
     end

@@ -1,4 +1,5 @@
 require_relative '../lib/aws'
+require_relative '../lib/deploy_ruby'
 
 module TaskBooks
   module DeployTask
@@ -25,16 +26,16 @@ module TaskBooks
       private
 
       def execute(host, cmd)
-        puts green(cmd)
+        logger.info green(cmd)
         system('ssh', host, cmd, exception: true)
       end
 
       def green(str)
-        puts "\e[32m#{str}\e[0m"
+        logger.info "\e[32m#{str}\e[0m"
       end
     end
 
-    class Task
+    class Task < ::DeployRuby::Task
       include DSL
 
       attr_reader :host
