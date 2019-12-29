@@ -1,7 +1,6 @@
-require_relative '../deploy_ruby'
 require_relative './instance'
 
-module Egotter
+module DeployRuby
   module Aws
     class TargetGroup
       def initialize(arn)
@@ -47,13 +46,13 @@ module Egotter
         client.describe_target_health(params).
             target_health_descriptions.
             select { |d| d.target_health.state == state }.map do |description|
-          ::Egotter::Aws::Instance.retrieve(description.target.id)
+          ::DeployRuby::Aws::Instance.retrieve(description.target.id)
         end
       end
 
       def oldest_instance
         id = instances.sort_by(&:launched_at).first.id
-        ::Egotter::Aws::Instance.retrieve(id)
+        ::DeployRuby::Aws::Instance.retrieve(id)
       end
 
       def availability_zone_with_fewest_instances

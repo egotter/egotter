@@ -2,21 +2,25 @@ require 'erb'
 
 require_relative '../../lib/secret_file'
 
-require_relative '../lib/aws/instance'
+require_relative '../lib/deploy_ruby/aws/instance'
 
 module Tasks
   module InstallTask
     module Util
+      def logger
+        DeployRuby.logger
+      end
+
       def yellow(str)
-        puts "\e[33m#{str}\e[0m"
+        logger.info "\e[33m#{str}\e[0m"
       end
 
       def green(str)
-        puts "\e[32m#{str}\e[0m"
+        logger.info "\e[32m#{str}\e[0m"
       end
 
       def red(str)
-        puts "\e[31m#{str}\e[0m"
+        logger.info "\e[31m#{str}\e[0m"
       end
 
       def upload_file(host, src_path, dst_path)
@@ -158,7 +162,7 @@ module Tasks
 
       def initialize(id)
         @id = id
-        @instance = ::Egotter::Aws::Instance.retrieve(id)
+        @instance = ::DeployRuby::Aws::Instance.retrieve(id)
         super(@instance.name)
       end
 
@@ -178,7 +182,7 @@ module Tasks
         sync.restart_processes
       rescue => e
         red("Terminate #{@id} since #{e.class} is raised")
-        #::Egotter::Aws::EC2.terminate_instance(@id)
+        ::DeployRuby::Aws::EC2.terminate_instance(@id)
         raise
       end
 
@@ -221,7 +225,7 @@ module Tasks
 
       def initialize(id)
         @id = id
-        @instance = ::Egotter::Aws::Instance.retrieve(id)
+        @instance = ::DeployRuby::Aws::Instance.retrieve(id)
         super(@instance.name)
       end
 
@@ -240,11 +244,9 @@ module Tasks
       def install
         sync.restart_processes
       rescue => e
-        if @id
-          red("Terminate #{@id} as #{e.class} is raised")
-          before_terminate
-          ::Egotter::Aws::EC2.terminate_instance(@id)
-        end
+        red("Terminate #{@id} as #{e.class} is raised")
+        before_terminate
+        ::DeployRuby::Aws::EC2.terminate_instance(@id)
         raise
       end
 

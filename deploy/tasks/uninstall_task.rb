@@ -1,5 +1,4 @@
-require_relative '../lib/deploy_ruby'
-require_relative '../lib/aws/instance'
+require_relative '../lib/deploy_ruby/aws/instance'
 
 module Tasks
   module UninstallTask
@@ -30,7 +29,7 @@ module Tasks
     class Web < Task
       def initialize(id)
         @id = id
-        super(::Egotter::Aws::Instance.retrieve(id).name)
+        super(::DeployRuby::Aws::Instance.retrieve(id).name)
       end
 
       def uninstall
@@ -52,7 +51,7 @@ module Tasks
     class Sidekiq < Task
       def initialize(id)
         @id = id
-        super(::Egotter::Aws::Instance.retrieve(id).name)
+        super(::DeployRuby::Aws::Instance.retrieve(id).name)
       end
 
       def uninstall

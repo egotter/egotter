@@ -4,7 +4,7 @@ require 'dotenv/load'
 
 require 'optparse'
 
-Dir['./deploy/taskbooks/*.rb'].each { |file| require file }
+require_relative '../taskbooks/all'
 
 STDOUT.sync = true
 

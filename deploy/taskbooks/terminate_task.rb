@@ -1,7 +1,5 @@
 require_relative '../../app/models/cloud_watch_client'
 
-require_relative '../lib/deploy_ruby'
-require_relative '../lib/aws'
 require_relative '../tasks/uninstall_task'
 
 module Taskbooks
@@ -50,7 +48,7 @@ module Taskbooks
         @role = params['role']
 
         target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
-        @target_group = ::Egotter::Aws::TargetGroup.new(target_group_arn)
+        @target_group = ::DeployRuby::Aws::TargetGroup.new(target_group_arn)
       end
 
       def run
@@ -73,7 +71,7 @@ module Taskbooks
       end
 
       def run
-        instance = ::Egotter::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
+        instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
         if instance
           Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
           instance.terminate

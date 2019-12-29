@@ -1,6 +1,3 @@
-require_relative '../lib/aws'
-require_relative '../lib/deploy_ruby'
-
 module TaskBooks
   module DeployTask
     def build(params)
@@ -61,8 +58,8 @@ module TaskBooks
       def initialize(host)
         super
 
-        @instance = ::Egotter::Aws::Instance.retrieve_by(name: host)
-        @target_group = ::Egotter::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
+        @instance = ::DeployRuby::Aws::Instance.retrieve_by(name: host)
+        @target_group = ::DeployRuby::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
       end
 
       def before_run

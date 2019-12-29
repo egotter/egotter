@@ -26,7 +26,7 @@ module Tasks
       end
     end
 
-    class Task
+    class Task < ::DeployRuby::Task
       def initialize(params)
         @params = params
       end
@@ -36,8 +36,8 @@ module Tasks
       end
 
       def launch
-        id = ::Egotter::Aws::EC2.launch_instance(name, @params)
-        ::Egotter::Aws::Instance.retrieve(id)
+        id = ::DeployRuby::Aws::EC2.launch_instance(name, @params)
+        ::DeployRuby::Aws::Instance.retrieve(id)
       end
     end
 

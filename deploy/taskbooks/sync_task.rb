@@ -16,7 +16,7 @@ module Taskbooks
 
     module_function :build
 
-    class Task
+    class Task < ::DeployRuby::Task
       attr_reader :kind, :instance
 
       def initialize

@@ -1,6 +1,6 @@
 require_relative './ec2'
 
-module Egotter
+module DeployRuby
   module Aws
     class Instance
       attr_reader :id, :name, :public_ip, :availability_zone, :launched_at
@@ -18,19 +18,19 @@ module Egotter
       end
 
       def terminate
-        ::Egotter::Aws::EC2.terminate_instance(@id)
+        ::DeployRuby::Aws::EC2.terminate_instance(@id)
       end
 
       class << self
         def retrieve(id)
-          new(::Egotter::Aws::EC2.retrieve_instance(id))
+          new(::DeployRuby::Aws::EC2.retrieve_instance(id))
         end
 
         def retrieve_by(id: nil, name: nil)
           if id
             retrieve(id)
           else
-            new(::Egotter::Aws::EC2.retrieve_instance_by(name: name))
+            new(::DeployRuby::Aws::EC2.retrieve_instance_by(name: name))
           end
         end
       end

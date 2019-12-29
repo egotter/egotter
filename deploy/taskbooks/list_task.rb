@@ -1,5 +1,3 @@
-require_relative '../lib/aws'
-
 module Taskbooks
   module ListTask
     def build(params)
@@ -16,7 +14,7 @@ module Taskbooks
 
     module_function :build
 
-    class Task
+    class Task < ::DeployRuby::Task
       attr_reader :kind
 
       def initialize
@@ -30,7 +28,7 @@ module Taskbooks
         @delim = params['delim'] || ' '
 
         target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
-        @target_group = ::Egotter::Aws::TargetGroup.new(target_group_arn)
+        @target_group = ::DeployRuby::Aws::TargetGroup.new(target_group_arn)
       end
 
       def run
@@ -45,8 +43,8 @@ module Taskbooks
 
       def run
         instances =
-            ::Egotter::Aws::EC2.retrieve_instances.map do |i|
-              ::Egotter::Aws::Instance.new(i)
+            ::DeployRuby::Aws::EC2.retrieve_instances.map do |i|
+              ::DeployRuby::Aws::Instance.new(i)
             end.select do |i|
               i.name.start_with?('egotter_sidekiq')
             end

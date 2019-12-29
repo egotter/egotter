@@ -22,8 +22,8 @@ module DeployRuby
   end
 
   module Logging
-    def logger
-      @logger ||= Logger.logger('log/deploy.log')
+    def logger(file = 'log/deploy.log')
+      @logger ||= Logger.logger(file)
     end
   end
 end

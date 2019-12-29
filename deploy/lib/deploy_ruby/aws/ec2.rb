@@ -1,6 +1,4 @@
-require_relative '../../lib/deploy_ruby'
-
-module Egotter
+module DeployRuby
   module Aws
     module EC2
       module_function
