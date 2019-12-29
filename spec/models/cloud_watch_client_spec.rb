@@ -36,11 +36,11 @@ RSpec.describe CloudWatchClient::Metrics, type: :model do
 
     before do
       client.instance_variable_set(:@changed, true)
-      client.instance_variable_set(:@metrics, {'key' => 'value'})
+      client.instance_variable_set(:@metrics, {'namespace' => [{'key' => 'value'}]})
     end
 
     it do
-      expect(internal_client).to receive(:put_metric_data).with({namespace: 'key', metric_data: 'value'})
+      expect(internal_client).to receive(:put_metric_data).with({namespace: 'namespace', metric_data: [{'key' => 'value'}]})
       client.update
     end
   end
