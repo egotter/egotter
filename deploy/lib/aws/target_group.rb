@@ -1,3 +1,4 @@
+require_relative '../deploy_ruby'
 require_relative './instance'
 
 module Egotter
@@ -14,7 +15,7 @@ module Egotter
             target_group_arn: @arn,
             targets: [{id: instance_id}]
         }
-        puts params.inspect
+        logger.info params.inspect
         client.register_targets(params)
         wait_until(:target_in_service, params)
 
@@ -31,7 +32,7 @@ module Egotter
             target_group_arn: @arn,
             targets: [{id: instance_id}]
         }
-        puts params.inspect
+        logger.info params.inspect
         client.deregister_targets(params)
         wait_until(:target_deregistered, params)
 
@@ -72,11 +73,11 @@ module Egotter
 
         client.wait_until(name, params) do |w|
           w.before_wait do |n, resp|
-            puts "waiting for #{name} #{instance_id}"
+            logger.info "waiting for #{name} #{instance_id}"
           end
         end
       rescue ::Aws::Waiters::Errors::WaiterFailed => e
-        puts "failed waiting for #{name}: #{e.message}"
+        red "failed waiting for #{name}: #{e.message}"
         exit
       end
 
@@ -85,7 +86,15 @@ module Egotter
       end
 
       def green(str)
-        puts "\e[32m#{str}\e[0m"
+        logger.info "\e[32m#{str}\e[0m"
+      end
+
+      def red(str)
+        logger.info "\e[31m#{str}\e[0m"
+      end
+
+      def logger
+        DeployRuby.logger
       end
     end
   end

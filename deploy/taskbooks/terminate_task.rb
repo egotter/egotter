@@ -1,5 +1,6 @@
 require_relative '../../app/models/cloud_watch_client'
 
+require_relative '../lib/deploy_ruby'
 require_relative '../lib/aws'
 require_relative '../tasks/uninstall_task'
 
@@ -19,7 +20,7 @@ module Taskbooks
 
     module_function :build
 
-    class Task
+    class Task < ::DeployRuby::Task
       attr_reader :kind, :instance
 
       def initialize

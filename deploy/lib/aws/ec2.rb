@@ -1,3 +1,5 @@
+require_relative '../../lib/deploy_ruby'
+
 module Egotter
   module Aws
     module EC2
@@ -14,10 +16,10 @@ module Egotter
         instance.create_tags(tags: [{key: 'Name', value: name}])
         instance.id
       rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
-        puts "Invalid params #{params.inspect}"
+        red "Invalid params #{params.inspect}"
         raise
       rescue Interrupt, StandardError => e
-        puts "#{e.class} is raised and terminates already started instance."
+        red "#{e.class} is raised and terminates already started instance."
         if defined?(instance) && instance
           terminate_instance(instance.id)
         end
@@ -57,7 +59,7 @@ module Egotter
       def test_ssh_connection(public_ip)
         cmd = "ssh -q -i ~/.ssh/egotter.pem ec2-user@#{public_ip} exit"
         30.times do |n|
-          puts "waiting for test_ssh_connection #{public_ip}"
+          logger.info "waiting for test_ssh_connection #{public_ip}"
           if system(cmd, exception: false)
             break
           else
@@ -70,16 +72,28 @@ module Egotter
       def wait_until(id, state)
         resource.client.wait_until(state, instance_ids: [id]) do |w|
           w.before_wait do |n, resp|
-            puts "waiting for #{state} #{id}"
+            logger.info "waiting for #{state} #{id}"
           end
         end
       rescue ::Aws::Waiters::Errors::WaiterFailed => e
-        puts "failed waiting for #{state}: #{e.message}"
+        red "failed waiting for #{state}: #{e.message}"
         exit
       end
 
       def resource
         @resource ||= ::Aws::EC2::Resource.new(region: 'ap-northeast-1')
+      end
+
+      def green(str)
+        logger.info "\e[32m#{str}\e[0m"
+      end
+
+      def red(str)
+        logger.info "\e[31m#{str}\e[0m"
+      end
+
+      def logger
+        DeployRuby.logger
       end
     end
   end

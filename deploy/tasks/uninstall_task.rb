@@ -1,20 +1,21 @@
+require_relative '../lib/deploy_ruby'
 require_relative '../lib/aws/instance'
 
 module Tasks
   module UninstallTask
     module Util
       def green(str)
-        puts "\e[32m#{str}\e[0m"
+        logger.info "\e[32m#{str}\e[0m"
       end
 
       def exec_command(host, cmd, dir: '/var/egotter', exception: true)
         raise 'Hostname is empty.' if host.to_s.empty?
         green("#{host} #{cmd}")
-        system('ssh', host, "cd #{dir} && #{cmd}", exception: exception).tap { |r| puts r }
+        system('ssh', host, "cd #{dir} && #{cmd}", exception: exception)
       end
     end
 
-    class Task
+    class Task < ::DeployRuby::Task
       include Util
 
       def initialize(name)
