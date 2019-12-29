@@ -16,7 +16,7 @@ class WebhookController < ApplicationController
           found = dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
           logger.info "#{controller_name}##{action_name} #{found} #{dm.id} #{dm.text}"
 
-          CreateAnswerMessageWorker.perform_async(dm.sender_id, text: "#{dm.id} #{dm.text}") if found
+          CreateAnswerMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text) if found
         end
       end
     end
