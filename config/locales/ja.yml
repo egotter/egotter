@@ -1803,7 +1803,7 @@ ja:
       from_egotter: '@ego_tter から @%{user} へのDM送信テスト'
     testMessage:
       timeline_page: '%{screen_name} さんの結果ページ'
-      communication_test: '%{from} から %{to} へのDM送信テスト。さらにいくつかのDMが届きます。'
+      communication_test: '%{from} から %{to} へのDM送信テスト。さらにいくつかのDMが届きます。#egotter'
       lets_start: 'リムられ通知のテスト送信を開始します。通知の設定変更はこちら #egotter %{url}'
       errors:
         TooShortSendInterval: '前回の送信から時間が経っていない'
