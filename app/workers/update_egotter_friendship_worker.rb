@@ -23,7 +23,6 @@ class UpdateEgotterFriendshipWorker
   end
 
   # options:
-  #   enqueued_at
   def perform(user_id, options = {})
     user = User.find(user_id)
 

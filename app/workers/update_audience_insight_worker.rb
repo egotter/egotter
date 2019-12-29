@@ -28,7 +28,6 @@ class UpdateAudienceInsightWorker
   end
 
   # options:
-  #   enqueued_at
   #   location
   #   twitter_user_id
   def perform(uid, options = {})

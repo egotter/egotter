@@ -27,7 +27,6 @@ class UpdateAuthorizedWorker
   end
 
   # options:
-  #   enqueued_at
   def perform(user_id, options = {})
     user = User.find(user_id)
     t_user = user.api_client.verify_credentials

@@ -9,7 +9,7 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
     let(:msg) { {'args' => [1, 'enqueued_at' => 'time']} }
     let(:expire_in) { 1.minute }
 
-    before { allow(middleware).to receive(:extract_enqueued_at).with(msg).and_return(enqueued_at) }
+    before { allow(middleware).to receive(:pick_enqueued_at).with(msg).and_return(enqueued_at) }
 
     context 'The worker implements #expire_in' do
       before { allow(worker).to receive(:expire_in).and_return(expire_in) }
@@ -61,9 +61,9 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
     end
   end
 
-  describe '#extract_enqueued_at' do
+  describe '#pick_enqueued_at' do
     let(:msg) { {'args' => args, 'enqueued_at' => time} }
-    subject { middleware.extract_enqueued_at(msg) }
+    subject { middleware.pick_enqueued_at(msg) }
 
     before { allow(middleware).to receive(:parse_time).with(time).and_return('parsed') }
 

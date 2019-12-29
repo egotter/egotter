@@ -27,26 +27,26 @@ module Concerns::JobQueueingConcern
         ahoy_visit_id: current_visit&.id)
 
     if user_signed_in?
-      CreateSignedInTwitterUserWorker.perform_async(request.id, enqueued_at: Time.zone.now)
+      CreateSignedInTwitterUserWorker.perform_async(request.id)
     else
-      CreateTwitterUserWorker.perform_async(request.id, enqueued_at: Time.zone.now)
+      CreateTwitterUserWorker.perform_async(request.id)
     end
   end
 
   def enqueue_update_authorized
     return if from_crawler?
     return unless user_signed_in?
-    UpdateAuthorizedWorker.perform_async(current_user.id, enqueued_at: Time.zone.now)
+    UpdateAuthorizedWorker.perform_async(current_user.id)
   end
 
   def enqueue_update_egotter_friendship
     return if from_crawler?
     return unless user_signed_in?
-    UpdateEgotterFriendshipWorker.perform_async(current_user.id, enqueued_at: Time.zone.now)
+    UpdateEgotterFriendshipWorker.perform_async(current_user.id)
   end
 
   def enqueue_audience_insight(uid)
     return if from_crawler?
-    UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: controller_name)
+    UpdateAudienceInsightWorker.perform_async(uid, location: controller_name)
   end
 end

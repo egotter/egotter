@@ -20,7 +20,6 @@ class CreateTwitterUserWorker
   end
 
   # options:
-  #   enqueued_at
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
     task = CreateTwitterUserTask.new(request)
