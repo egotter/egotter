@@ -4,8 +4,11 @@ RSpec.describe WelcomeMessage, type: :model do
   describe '#deliver!' do
     let(:dm_client_class) do
       Class.new do
+        def initialize
+          @count = 0
+        end
+
         def create_direct_message(uid, message)
-          @count ||= 0
           @count += 1
           {event: {id: "id#{@count}", message_create: {message_data: {text: "text#{@count}"}}}}
         end

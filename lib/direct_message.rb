@@ -6,7 +6,7 @@ class DirectMessage
   end
 
   def id
-    @response.dig(:event, :id)&.to_i
+    @response.dig(:event, :id)
   end
 
   def text
