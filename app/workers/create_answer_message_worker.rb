@@ -18,6 +18,7 @@ class CreateAnswerMessageWorker
 
     text = dm_url(screen_name) + "\n" + text
     text = latest_errors(user.id).inspect + "\n" + text if user
+    text = error_check(user.id) + "\n" + text if user
 
     SlackClient.answer_messages.send_message(text, title: "`#{screen_name}`")
   rescue => e
@@ -31,5 +32,12 @@ class CreateAnswerMessageWorker
 
   def latest_errors(user_id)
     CreatePromptReportLog.error_logs_for_one_day(user_id: user_id, request_id: nil).pluck(:error_class)
+  end
+
+  def error_check(user_id)
+    CreatePromptReportRequest.new(user_id: user_id).error_check!
+    'success'
+  rescue => e
+    e.class.to_s
   end
 end
