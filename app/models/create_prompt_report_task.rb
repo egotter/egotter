@@ -9,19 +9,11 @@ class CreatePromptReportTask
   def start!
     @log = CreatePromptReportLog.create_by(request: request)
 
-    start = Time.zone.now
+    twitter_user = nil
 
-    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} Perform request", level: :info) do
-      request.error_check!
-      twitter_user = create_twitter_user!(request.user)
-      request.perform!(twitter_user)
-    end
-
-    elapsed = Time.zone.now - start
-    if elapsed > 30
-      records_size = TwitterUser.where(uid: request.user.uid).size
-      logger.warn { "Benchmark CreatePromptReportTask #{request.id} too slow #{records_size}" }
-    end
+    benchmark('request.error_check!') { request.error_check! }
+    benchmark('create_twitter_user!') { twitter_user = create_twitter_user!(request.user) }
+    benchmark('request.perform!') { request.perform!(twitter_user) }
 
     request.finished!
     @log.update(status: true)
@@ -53,17 +45,15 @@ class CreatePromptReportTask
 
     twitter_user = nil
 
-    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} Create twitter_user", level: :info) do
-      begin
-        twitter_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
-      rescue CreateTwitterUserRequest::NotChanged,
-          CreateTwitterUserRequest::TooShortCreateInterval,
-          CreateTwitterUserRequest::TooManyFriends => e
-      ensure
-        # Regardless of whether or not the TwitterUser record is created, the Unfriendship and the Unfollowership are updated.
-        # Since the internal logic has been changed, otherwise the unfriends and the unfollowers will remain inaccurate.
-        update_unfriendships(TwitterUser.latest_by(uid: user.uid))
-      end
+    begin
+      twitter_user = CreateTwitterUserTask.new(create_request).start!.twitter_user
+    rescue CreateTwitterUserRequest::NotChanged,
+        CreateTwitterUserRequest::TooShortCreateInterval,
+        CreateTwitterUserRequest::TooManyFriends => e
+    ensure
+      # Regardless of whether or not the TwitterUser record is created, the Unfriendship and the Unfollowership are updated.
+      # Since the internal logic has been changed, otherwise the unfriends and the unfollowers will remain inaccurate.
+      update_unfriendships(TwitterUser.latest_by(uid: user.uid))
     end
 
     twitter_user
@@ -72,13 +62,13 @@ class CreatePromptReportTask
   def update_unfriendships(twitter_user)
     return unless twitter_user
 
-    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} Import unfriendship", level: :info) do
+    benchmark('Unfriendship.import_by!') do
       Unfriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
         CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: request.user.id, compressed: true, enqueued_by: 'CreatePromptReportTask Unfriendship.import_by!')
       end
     end
 
-    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} Import unfollowership", level: :info) do
+    benchmark('Unfollowership.import_by!') do
       Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
         CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: request.user.id, compressed: true, force_update: true, enqueued_by: ' CreatePromptReportTaskUnfollowership.import_by!')
       end
@@ -95,7 +85,7 @@ class CreatePromptReportTask
     end
   end
 
-  def logger
-    Sidekiq.logger
+  def benchmark(message, &block)
+    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} #{message}", level: :info, &block)
   end
 end

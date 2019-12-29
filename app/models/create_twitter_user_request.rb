@@ -58,10 +58,12 @@ class CreateTwitterUserRequest < ApplicationRecord
     previous_twitter_user = TwitterUser.latest_by(uid: uid)
 
     unless previous_twitter_user
-      twitter_user = TwitterUser.build_by(user: fetch_user)
-      relations = fetch_relations!(twitter_user)
-      twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
-      twitter_user.build_other_relations(relations)
+      fetched_user = twitter_user = relations = nil
+      benchmark('fetch_user') { fetched_user = fetch_user }
+      benchmark('TwitterUser.build_by') { twitter_user = TwitterUser.build_by(user: fetched_user) }
+      benchmark('fetch_relations!', twitter_user) { relations = fetch_relations!(twitter_user) }
+      benchmark('build_friends_and_followers', twitter_user) { twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
+      benchmark('build_other_relations', twitter_user) { twitter_user.build_other_relations(relations) }
       twitter_user.user_id = user_id
       return twitter_user
     end
@@ -70,19 +72,24 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     raise TooShortCreateInterval if previous_twitter_user.too_short_create_interval?
 
-    current_twitter_user = TwitterUser.build_by(user: fetch_user)
-    relations = fetch_relations!(current_twitter_user)
-    current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids])
+    fetched_user = current_twitter_user = relations = nil
+    benchmark('fetch_user') { fetched_user = fetch_user }
+    benchmark('TwitterUser.build_by') { current_twitter_user = TwitterUser.build_by(user: fetched_user) }
+    benchmark('fetch_relations!', current_twitter_user) { relations = fetch_relations!(current_twitter_user) }
+    benchmark('build_friends_and_followers', current_twitter_user) { current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
 
     if current_twitter_user.no_need_to_import_friendships?
       raise TooManyFriends.new('Already exists')
     end
 
-    if previous_twitter_user.diff(current_twitter_user).empty?
+    diff_not_found = false
+    benchmark('diff', current_twitter_user) { diff_not_found = previous_twitter_user.diff(current_twitter_user).empty? }
+
+    if diff_not_found
       raise NotChanged.new('Before build')
     end
 
-    current_twitter_user.build_other_relations(relations)
+    benchmark('build_other_relations', current_twitter_user) { current_twitter_user.build_other_relations(relations) }
     current_twitter_user.user_id = user_id
     current_twitter_user
 
@@ -127,11 +134,11 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def client
-    if instance_variable_defined?(:@client)
-      @client
-    else
-      @client = user ? user.api_client : Bot.api_client
-    end
+    @client ||= user ? user.api_client : Bot.api_client
+  end
+
+  def benchmark(message, twitter_user = nil, &block)
+    ApplicationRecord.benchmark("Benchmark CreateTwitterUserRequest #{user_id} #{uid} #{message} friends=#{twitter_user&.friends_count} followers=#{twitter_user&.followers_count}", level: :info, &block)
   end
 
   class Error < StandardError
