@@ -9,10 +9,10 @@ class WebhookController < ApplicationController
   end
 
   def twitter
-    logger.info request.headers.sort.inspect
-    logger.info "generated digest #{digest(request.body.read)}"
-    logger.info "passed signature #{request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}"
-    logger.info "match? #{digest(request.body.read) == request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}"
+    logger.info "headers #{request.headers.sort.inspect}" rescue
+    logger.info "generated digest #{digest(request.body.read)}" rescue
+    logger.info "passed signature #{request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}" rescue
+    logger.info "match? #{digest(request.body.read) == request.headers[:X_TWITTER_WEBHOOKS_SIGNATURE]}" rescue
 
     if params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
       params[:direct_message_events].each do |event|
