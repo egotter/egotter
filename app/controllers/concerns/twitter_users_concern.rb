@@ -29,8 +29,9 @@ module Concerns::TwitterUsersConcern
     else
       logger.info "#{self.class}##{action_name} in #build_twitter_user_by #{screen_name} #{current_user_id} #{e.class} #{e.message}}"
       respond_with_error(:bad_request, twitter_exception_messages(e, screen_name))
-      nil
     end
+
+    nil
   end
 
   def build_twitter_user_by_uid(uid)

@@ -3,6 +3,7 @@ require 'active_support/concern'
 module Concerns::SearchRequestConcern
   extend ActiveSupport::Concern
   include Concerns::ValidationConcern
+  include Concerns::SearchRequestInstrumentationConcern
 
   included do
     before_action(only: %i(show all)) { signed_in_user_authorized? }
@@ -16,19 +17,22 @@ module Concerns::SearchRequestConcern
     before_action(only: %i(show all)) { twitter_db_user_persisted?(@twitter_user.uid) } # Not redirected
     before_action(only: %i(show all)) { !too_many_searches?(@twitter_user) && !too_many_requests?(@twitter_user) } # Call after #twitter_user_persisted?
 
-    before_action(only: %i(show all)) do
-      if screen_name_changed?(@twitter_user)
-        flash.now[:notice] = screen_name_changed_message(@twitter_user.screen_name)
-        @new_screen_name = @twitter_user.screen_name
-      end
+    before_action(only: %i(show all)) { set_new_screen_name_if_changed }
+    before_action(only: %i(show all)) { enqueue_logging_job }
+  end
 
-      @twitter_user = TwitterUser.with_delay.latest_by(uid: @twitter_user.uid)
-      @twitter_user.screen_name = @new_screen_name if @new_screen_name
+  def set_new_screen_name_if_changed
+    if screen_name_changed?(@twitter_user)
+      flash.now[:notice] = screen_name_changed_message(@twitter_user.screen_name)
+      @new_screen_name = @twitter_user.screen_name
     end
 
-    before_action(only: %i(show all)) do
-      push_referer
-      create_search_log
-    end
+    @twitter_user = TwitterUser.with_delay.latest_by(uid: @twitter_user.uid)
+    @twitter_user.screen_name = @new_screen_name if @new_screen_name
+  end
+
+  def enqueue_logging_job
+    push_referer
+    create_search_log
   end
 end

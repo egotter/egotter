@@ -114,7 +114,9 @@ module Concerns::ValidationConcern
     end
   end
 
-  # Temporarily suspended users ( user[:suspended] == true ) are not checked.
+  # It is possible not to call Twitter API in this method only when accessing from crawlers,
+  # but since the same Twitter API is called in other places, it's a bit meaningless.
+  # NOTE: The temporarily suspended users ( user[:suspended] == true ) are not checked.
   def forbidden_user?(screen_name)
     SearchRequestValidator.new(current_user).forbidden_user?(screen_name)
   end
@@ -130,6 +132,8 @@ module Concerns::ValidationConcern
     end
   end
 
+  # It is possible not to call Twitter API in this method only when accessing from crawlers,
+  # but since the same Twitter API is called in other places, it's a bit meaningless.
   def not_found_user?(screen_name)
     SearchRequestValidator.new(current_user).not_found_user?(screen_name)
   end
