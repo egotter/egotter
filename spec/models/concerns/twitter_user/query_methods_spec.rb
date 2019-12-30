@@ -3,9 +3,9 @@ require 'rails_helper'
 RSpec.describe Concerns::TwitterUser::QueryMethods do
   let(:uid) { 1 }
   let(:screen_name) { 'sn' }
-  let(:record1) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: 5.seconds.ago) }
-  let(:record2) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: 2.seconds.ago) }
-  let(:record3) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: 1.second.ago) }
+  let(:record1) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: (described_class::DEFAULT_TIMESTAMP_DELAY + 10.seconds).ago) }
+  let(:record2) { build(:twitter_user, uid: uid, screen_name: screen_name) }
+  let(:record3) { build(:twitter_user, uid: uid, screen_name: screen_name) }
 
   before do
     record1.save!(validate: false)
