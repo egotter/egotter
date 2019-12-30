@@ -10,6 +10,7 @@ class CreatePromptReportTask
       if (time = Time.zone.now - start) > 30
         notice = Airbrake.build_notice('CreatePromptReportTask took more than 30 seconds')
         notice[:context][:component] = 'CreatePromptReportTask'
+        notice[:params][:time] = time
         notice[:params][:user] = {id: request.user.id}
         notice[:params][:request] = request.attributes
         notice[:params][:size] = TwitterUser.where(uid: request.user.uid).size
