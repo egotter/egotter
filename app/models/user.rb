@@ -193,6 +193,7 @@ class User < ApplicationRecord
   def sharing_egotter_count
     tweet_requests.where(created_at: SHARE_EGOTTER_DURATION.hour.ago..Time.zone.now).size
   end
+  alias sharing_count sharing_egotter_count
 
   def search_mode
     if following_egotter?

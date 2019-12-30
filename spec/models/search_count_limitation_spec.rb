@@ -19,7 +19,7 @@ RSpec.describe SearchCountLimitation, type: :model do
       context 'user#has_valid_subscription? == false' do
         before do
           allow(user).to receive(:has_valid_subscription?).with(no_args).and_return(false)
-          allow(user).to receive(:sharing_egotter_count).with(no_args).and_return(0)
+          allow(user).to receive(:sharing_count).with(no_args).and_return(0)
         end
         it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS) }
       end
@@ -28,15 +28,15 @@ RSpec.describe SearchCountLimitation, type: :model do
         before do
           allow(user).to receive(:has_valid_subscription?).with(no_args).and_return(true)
           allow(user).to receive(:purchased_search_count).with(no_args).and_return(100)
-          allow(user).to receive(:sharing_egotter_count).with(no_args).and_return(0)
+          allow(user).to receive(:sharing_count).with(no_args).and_return(0)
         end
         it { is_expected.to eq(100) }
       end
 
-      context 'user#sharing_egotter_count == 2' do
+      context 'user#sharing_count == 2' do
         before do
           allow(user).to receive(:has_valid_subscription?).with(no_args).and_return(false)
-          allow(user).to receive(:sharing_egotter_count).with(no_args).and_return(2)
+          allow(user).to receive(:sharing_count).with(no_args).and_return(2)
           allow(described_class).to receive(:current_sharing_bonus).with(user).and_return(99)
         end
         it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 2 * 99) }

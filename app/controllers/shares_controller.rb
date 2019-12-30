@@ -9,7 +9,7 @@ class SharesController < ApplicationController
     if request.valid?
       request.save!
       TweetEgotterWorker.perform_async(request.id)
-      render json: {count: current_user.sharing_egotter_count}
+      render json: {count: current_user.sharing_count}
     else
       render json: {reason: t('welcome.share_modal.error_message')}, status: :bad_request
     end

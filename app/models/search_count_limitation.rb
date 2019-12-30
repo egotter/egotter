@@ -19,8 +19,8 @@ class SearchCountLimitation
         count = user.purchased_search_count
       end
 
-      if user && user.sharing_egotter_count > 0
-        count += user.sharing_egotter_count * current_sharing_bonus(user)
+      if user && user.sharing_count > 0
+        count += user.sharing_count * current_sharing_bonus(user)
       end
 
       count
