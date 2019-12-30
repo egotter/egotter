@@ -3,16 +3,32 @@ require 'rails_helper'
 RSpec.describe CreatePromptReportTask, type: :model do
   let(:user) { create(:user) }
   let(:request) { CreatePromptReportRequest.create!(user_id: user.id) }
-  let(:task) { CreatePromptReportTask.new(request) }
+  let(:task) { described_class.new(request) }
 
   describe '#start!' do
     let(:twitter_user) { create(:twitter_user, uid: user.uid) }
+    subject { task.start! }
+
     it do
       expect(request).to receive(:error_check!).with(no_args)
       expect(task).to receive(:create_twitter_user!).with(request.user).and_return(twitter_user)
+      expect(task).to receive(:update_unfriendships).with(twitter_user)
+      expect(task).to receive(:update_unfollowerships).with(twitter_user)
       expect(request).to receive(:perform!).with(twitter_user)
       expect(request).to receive(:finished!).with(no_args)
-      task.start!
+      subject
+    end
+
+    context 'create_twitter_user! raises an exception' do
+      before do
+        allow(request).to receive(:error_check!).with(no_args)
+        allow(task).to receive(:create_twitter_user!).with(anything).and_raise('Anything')
+      end
+      it do
+        expect(task).to receive(:update_unfriendships).with(twitter_user)
+        expect(task).to receive(:update_unfollowerships).with(twitter_user)
+        expect { subject }.to raise_error('Anything')
+      end
     end
 
     context 'request.kind == :you_are_removed' do
@@ -24,7 +40,7 @@ RSpec.describe CreatePromptReportTask, type: :model do
       end
       it do
         expect(task).to receive(:update_api_caches).with(twitter_user)
-        task.start!
+        subject
       end
     end
 
@@ -37,7 +53,20 @@ RSpec.describe CreatePromptReportTask, type: :model do
       end
       it do
         expect(task).to receive(:update_api_caches).with(twitter_user)
-        task.start!
+        subject
+      end
+    end
+
+    context 'The value of request.kind is neither :you_are_removed nor :no_changed' do
+      before do
+        request.kind = :something_invalid
+        allow(request).to receive(:error_check!).with(no_args)
+        allow(task).to receive(:create_twitter_user!).with(request.user).and_return(twitter_user)
+        allow(request).to receive(:perform!).with(twitter_user)
+      end
+      it do
+        expect(task).not_to receive(:update_api_caches)
+        subject
       end
     end
   end
@@ -45,27 +74,19 @@ RSpec.describe CreatePromptReportTask, type: :model do
   describe '#create_twitter_user!' do
     subject { task.create_twitter_user!(user) }
 
-    before do
-      allow(CreateTwitterUserTask).to receive(:new).with(anything).and_raise(RuntimeError, 'Hello')
+    context 'CreateTwitterUserTask raises CreateTwitterUserRequest::NotChanged' do
+      before { allow(CreateTwitterUserTask).to receive(:new).with(anything).and_raise(CreateTwitterUserRequest::NotChanged) }
+      it { is_expected.to be_nil }
     end
 
-    context 'There is one record' do
-      let(:record) { build(:twitter_user, uid: user.uid) }
-      before { record.save!(validate: false) }
-
-      it do
-        expect(TwitterUser).to receive(:latest_by).with(uid: user.uid).and_return(record)
-        expect(task).to receive(:update_unfriendships).with(record)
-        expect { subject }.to raise_error(RuntimeError, 'Hello')
-      end
+    context 'CreateTwitterUserTask raises CreateTwitterUserRequest::TooShortCreateInterval' do
+      before { allow(CreateTwitterUserTask).to receive(:new).with(anything).and_raise(CreateTwitterUserRequest::TooShortCreateInterval) }
+      it { is_expected.to be_nil }
     end
 
-    context 'There is no records' do
-      it do
-        expect(TwitterUser).to receive(:latest_by).with(uid: user.uid).and_return(nil)
-        expect(task).to receive(:update_unfriendships).with(nil)
-        expect { subject }.to raise_error(RuntimeError, 'Hello')
-      end
+    context 'CreateTwitterUserTask raises CreateTwitterUserRequest::TooManyFriends' do
+      before { allow(CreateTwitterUserTask).to receive(:new).with(anything).and_raise(CreateTwitterUserRequest::TooManyFriends) }
+      it { is_expected.to be_nil }
     end
   end
 
@@ -76,6 +97,16 @@ RSpec.describe CreatePromptReportTask, type: :model do
 
     it do
       expect(Unfriendship).to receive(:import_by!).with(twitter_user: record).and_call_original
+      subject
+    end
+  end
+
+  describe '#update_unfollowerships' do
+    let(:record) { build(:twitter_user, uid: user.uid) }
+    before { record.save!(validate: false) }
+    subject { task.update_unfollowerships(record) }
+
+    it do
       expect(Unfollowership).to receive(:import_by!).with(twitter_user: record).and_call_original
       subject
     end
