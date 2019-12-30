@@ -678,7 +678,7 @@ ja:
       cancel: "やめておく"
     share_modal:
       title_html: 'えごったーを<span class="egotter-pink">ツイート</span>しませんか？'
-      note1_html: '今ツイートしていただくと、<span class="egotter-pink">検索回数にボーナスが付与</span>されます。'
+      note1_html: '今ツイートしていただくと、検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。'
       note_html: '※テキストの最後にえごったーのURLが付きます'
       success_message: 'ツイートに成功しました。ありがとうございます！'
       error_message: 'ツイートに失敗しました。長すぎたり、特殊な文字が入ったりしていませんか？'

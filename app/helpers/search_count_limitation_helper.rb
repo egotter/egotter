@@ -4,7 +4,7 @@ module SearchCountLimitationHelper
     values = {
         limit: SearchCountLimitation.max_search_count(current_user),
         sign_in_bonus: SearchCountLimitation::SIGN_IN_BONUS,
-        sharing_bonus: SearchCountLimitation::SHARING_BONUS,
+        sharing_bonus: SearchCountLimitation.current_sharing_bonus(current_user),
         basic_plan: SearchCountLimitation::BASIC_PLAN,
         reset_in: SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: egotter_visit_id),
         sign_in_url: sign_in_url,

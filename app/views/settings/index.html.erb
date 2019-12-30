@@ -60,7 +60,7 @@
   <div class="col-xs-8">
     <%= t('.sharing_egotter.count', count: current_user.sharing_egotter_count) %>
     <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary"><%= t('.sharing_egotter.see_more') %></a>
-    <div class="text-muted notes"><%= t('.sharing_egotter.promotion_html', hours: User::SHARE_EGOTTER_DURATION, count: SearchCountLimitation::SHARING_BONUS) %></div>
+    <div class="text-muted notes"><%= t('.sharing_egotter.promotion_html', hours: User::SHARE_EGOTTER_DURATION, count: SearchCountLimitation.current_sharing_bonus(current_user)) %></div>
   </div>
 
   <div class="clearfix"></div>

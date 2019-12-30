@@ -12,7 +12,7 @@ class SearchCountLimitation
       count = ANONYMOUS
 
       if user
-        count += SearchCountLimitation::SIGN_IN_BONUS
+        count += SIGN_IN_BONUS
       end
 
       if user&.has_valid_subscription?
@@ -20,15 +20,17 @@ class SearchCountLimitation
       end
 
       if user && user.sharing_egotter_count > 0
-        count += user.sharing_egotter_count * SearchCountLimitation::SHARING_BONUS
+        count += user.sharing_egotter_count * current_sharing_bonus(user)
       end
 
       count
     end
+    alias max_count max_search_count
 
     def remaining_search_count(user: nil, session_id: nil)
       [0, max_search_count(user) - current_search_count(user: user, session_id: session_id)].max
     end
+    alias remaining_count remaining_search_count
 
     def where_condition(user: nil, session_id: nil)
       condition =
@@ -45,10 +47,26 @@ class SearchCountLimitation
     def current_search_count(user: nil, session_id: nil)
       SearchHistory.where(where_condition(user: user, session_id: session_id)).size
     end
+    alias current_count current_search_count
 
     def search_count_reset_in(user: nil, session_id: nil)
       record = SearchHistory.order(created_at: :asc).find_by(where_condition(user: user, session_id: session_id))
       record ? [0, (record.created_at + SEARCH_COUNT_PERIOD.seconds - Time.zone.now).to_i].max : 0
+    end
+    alias count_reset_in search_count_reset_in
+
+    def current_sharing_bonus(user)
+      followers = TwitterUser.latest_by(uid: user.uid)&.followers_count
+      followers = user.api_client.user(user.uid)[:followers_count] unless followers
+
+      case followers
+      when 0..1000 then SHARING_BONUS
+      when 1001..2000 then SHARING_BONUS + 1
+      when 2001..5000 then SHARING_BONUS + 2
+      else SHARING_BONUS + 3
+      end
+    rescue => e
+      SHARING_BONUS
     end
 
     module DateHelper

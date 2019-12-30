@@ -243,7 +243,7 @@
           .modal-body
             %img.center-block{src: image_path('/egotter_thanks_840x483.png'), height: request.from_pc? ? '200px' : '140px'}
             .vertical-spacing
-            %p= t('welcome.share_modal.note1_html')
+            %p= t('welcome.share_modal.note1_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
             .vertical-spacing
             %textarea{rows: '5', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text(without_url: true)
             .share-text-note= t('welcome.share_modal.note_html')

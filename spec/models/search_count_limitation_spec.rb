@@ -37,8 +37,9 @@ RSpec.describe SearchCountLimitation, type: :model do
         before do
           allow(user).to receive(:has_valid_subscription?).with(no_args).and_return(false)
           allow(user).to receive(:sharing_egotter_count).with(no_args).and_return(2)
+          allow(described_class).to receive(:current_sharing_bonus).with(user).and_return(99)
         end
-        it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 2 * described_class::SHARING_BONUS) }
+        it { is_expected.to eq(described_class::ANONYMOUS + described_class::SIGN_IN_BONUS + 2 * 99) }
       end
     end
 
@@ -146,6 +147,40 @@ RSpec.describe SearchCountLimitation, type: :model do
       end
 
       it { is_expected.to be_within(1).of(12.hours.to_i) }
+    end
+  end
+
+  describe '#current_sharing_bonus' do
+    let(:user) { create(:user) }
+    let(:twitter_user) { build(:twitter_user, uid: user.uid, followers_count: count, with_relations: false) }
+    subject { described_class.current_sharing_bonus(user) }
+
+    before { twitter_user.save!(validate: false) }
+
+    context 'followers_count is less than or equal to 1000' do
+      let(:count) { 1000 }
+      it { is_expected.to eq(described_class::SHARING_BONUS) }
+    end
+
+    context 'followers_count is less than or equal to 2000' do
+      let(:count) { 2000 }
+      it { is_expected.to eq(described_class::SHARING_BONUS + 1) }
+    end
+
+    context 'followers_count is less than or equal to 5000' do
+      let(:count) { 5000 }
+      it { is_expected.to eq(described_class::SHARING_BONUS + 2) }
+    end
+
+    context 'followers_count is more than 5000' do
+      let(:count) { 10000 }
+      it { is_expected.to eq(described_class::SHARING_BONUS + 3) }
+    end
+
+    context 'An exception is raised' do
+      let(:count) { 'count' }
+      before { allow(user).to receive(:api_client).and_raise('Anything') }
+      it { is_expected.to eq(described_class::SHARING_BONUS) }
     end
   end
 end

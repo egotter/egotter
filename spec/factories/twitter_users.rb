@@ -17,15 +17,26 @@ FactoryBot.define do
     end
     user_id { -1 }
 
-    after(:build) do |tu|
-      2.times.each do
-        tu.statuses.build(attributes_for(:twitter_db_status))
-        tu.mentions.build(attributes_for(:twitter_db_mention))
-        tu.favorites.build(attributes_for(:twitter_db_favorite))
-      end
+    transient do
+      with_relations { true }
+    end
 
-      tu.friend_uids = tu.friends_count.times.map { create(:twitter_db_user).uid } if tu.friends_count
-      tu.follower_uids = tu.followers_count.times.map { create(:twitter_db_user).uid } if tu.followers_count
+    after(:build) do |user, evaluator|
+      if evaluator.with_relations
+        2.times.each do
+          user.statuses.build(attributes_for(:twitter_db_status))
+          user.mentions.build(attributes_for(:twitter_db_mention))
+          user.favorites.build(attributes_for(:twitter_db_favorite))
+        end
+
+        if user.friends_count
+          user.friend_uids = user.friends_count.times.map { create(:twitter_db_user).uid }
+        end
+
+        if user.followers_count
+          user.follower_uids = user.followers_count.times.map { create(:twitter_db_user).uid }
+        end
+      end
     end
   end
 end
