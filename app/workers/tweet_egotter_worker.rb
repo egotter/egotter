@@ -8,21 +8,22 @@ class TweetEgotterWorker
   end
 
   # options:
+  #   requested_by
   def perform(request_id, options = {})
     request = TweetRequest.find(request_id)
     tweet = request.perform!
     request.finished!
-    send_message_to_slack(request, tweet)
+    send_message_to_slack(request, tweet, options)
   rescue => e
     logger.warn "#{e.class} #{e.message} #{request.inspect} #{options}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   end
 
   def tweet_url(screen_name, tweet_id)
     "https://twitter.com/#{screen_name}/status/#{tweet_id}"
   end
 
-  def send_message_to_slack(request, tweet)
+  def send_message_to_slack(request, tweet, options)
     user = request.user
     params = {
         request_id: request.id,
@@ -34,10 +35,10 @@ class TweetEgotterWorker
             sharing_bonus: SearchCountLimitation.current_sharing_bonus(user),
         },
         shares_count: user.sharing_count,
-        text: request.text,
-        url: tweet_url(user.screen_name, tweet[:id]),
+        text: request.text + ' ',
+        requested_by: options['requested_by'],
     }
-    SlackClient.tweet.send_message(params.to_json)
+    SlackClient.tweet.send_message(params.inspect + ' ' + tweet_url(user.screen_name, tweet.id))
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e)

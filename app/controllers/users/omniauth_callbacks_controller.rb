@@ -29,7 +29,10 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       request = FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
       CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
     end
-    TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}")) if tweet
+    if tweet
+      logger.warn "session['sign_in_tweet'] is true #{user.id}"
+      #TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}"))
+    end
     EnqueuedSearchRequest.new.delete(user.uid)
     DeleteNotFoundUserWorker.perform_async(user.screen_name)
     DeleteForbiddenUserWorker.perform_async(user.screen_name)
