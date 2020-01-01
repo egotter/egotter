@@ -16,13 +16,15 @@ module Api
       def summary
         uids, size = summary_uids
 
-        CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user_id, enqueued_by: 'Api::V1::Base summary')
+        unless from_crawler?
+          CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user_id, enqueued_by: 'Api::V1::Base summary')
+        end
 
         # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
 
-        users = users.map {|user| Hashie::Mash.new(to_summary_hash(user))}
-        chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'),  y: 200.0 / 3.0}]
+        users = users.map { |user| Hashie::Mash.new(to_summary_hash(user)) }
+        chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'), y: 200.0 / 3.0}]
 
         render json: {name: controller_name, count: size, users: users, chart: chart}
       end
@@ -40,7 +42,7 @@ module Api
             controller_name(controller_name).
             decorate
 
-        users = decorator.users.map {|user| Hashie::Mash.new(user)}
+        users = decorator.users.map { |user| Hashie::Mash.new(user) }
 
         response_json = {name: controller_name, max_sequence: paginator.max_sequence, limit: paginator.limit}
 
