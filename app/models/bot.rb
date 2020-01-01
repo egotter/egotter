@@ -38,16 +38,21 @@ class Bot < ApplicationRecord
     def verify_credentials
       processed = Queue.new
       Parallel.each(all, in_threads: 10) do |bot|
+        authorized = true
+        locked = false
+
         begin
-          authorized = !!bot.api_client.verify_credentials
+          bot.api_client.verify_credentials
         rescue => e
-          if e.message == 'Invalid or expired token.'
+          if AccountStatus.unauthorized?(e)
             authorized = false
+          elsif AccountStatus.temporarily_locked?(e)
+            locked = true
           else
             raise
           end
         end
-        processed << {id: bot.id, screen_name: bot.screen_name, authorized: authorized}
+        processed << {id: bot.id, screen_name: bot.screen_name, authorized: authorized, locked: locked}
       end
 
       processed.size.times.map { processed.pop }.sort_by { |p| p[:id] }
