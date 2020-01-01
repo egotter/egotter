@@ -48,7 +48,7 @@ Waiting.AlertBox = function (signedIn, timeoutMessage) {
 Waiting.AlertBox.prototype = {
   constructor: Waiting.AlertBox,
   keepOn: function () {
-    this._progressBar.advance();;
+    this._progressBar.advance();
   },
   finished: function () {
     this._progressBar.set(95);
