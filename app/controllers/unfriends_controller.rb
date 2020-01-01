@@ -10,6 +10,7 @@ class UnfriendsController < ::Page::Base
           when 'removed' then redirect_to(unfollower_path(screen_name: params[:screen_name]), status: 301)
           when 'blocking_or_blocked' then redirect_to(blocking_or_blocked_path(screen_name: params[:screen_name]), status: 301)
         end
+        logger.info "#{controller_name}##{action_name} redirect for backward compatibility"
       end
     else
       head :not_found

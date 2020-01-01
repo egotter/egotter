@@ -9,6 +9,7 @@ class InactiveFriendsController < ::Page::Base
           when 'inactive_followers' then redirect_to(inactive_follower_path(screen_name: params[:screen_name]), status: 301)
           when 'inactive_mutual_friends' then redirect_to(inactive_mutual_friend_path(screen_name: params[:screen_name]), status: 301)
         end
+        logger.info "#{controller_name}##{action_name} redirect for backward compatibility"
       end
     else
       head :not_found

@@ -9,6 +9,7 @@ class FriendsController < ::Page::Base
           when 'followers' then redirect_to(follower_path(screen_name: params[:screen_name]), status: 301)
           when 'statuses' then redirect_to(status_path(screen_name: params[:screen_name]), status: 301)
         end
+        logger.info "#{controller_name}##{action_name} redirect for backward compatibility"
       end
     else
       head :not_found

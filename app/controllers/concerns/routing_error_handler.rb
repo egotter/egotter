@@ -26,6 +26,7 @@ module Concerns::RoutingErrorHandler
       redirect = "https://egotter.com#{$1}"
       logger.info "Redirect to: #{redirect}"
       redirect_to redirect, status: 301
+      logger.info "#not_found redirect for backward compatibility"
 
     else
       self.sidebar_disabled = true
