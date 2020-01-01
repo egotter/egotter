@@ -8,107 +8,110 @@ RSpec.describe CreateTwitterDBUserWorker do
   let(:worker) { CreateTwitterDBUserWorker.new }
 
   describe '#perform' do
+    let(:options) { {'user_id' => 'ui', 'force_update' => 'fu', 'enqueued_by' => 'eb'} }
     subject { worker.perform(uids, options) }
 
-    context 'The options includes only force_update' do
-      let(:options) { {'force_update' => true} }
+    before { allow(worker).to receive(:pick_client).with(options).and_return('client') }
+
+    it do
+      expect(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'client', force_update: 'fu')
+      subject
+    end
+
+    context '#fetch_and_import! raises something unknown exception' do
+      let(:exception) { RuntimeError.new('Unknown') }
+      before { allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(any_args).and_raise(exception) }
       it do
-        expect(User).not_to receive(:find)
-        expect(Bot).to receive(:api_client).with(no_args).and_return(client)
-        expect(worker).to receive(:do_perform).with(uids, client, true, nil, enqueued_by: nil)
+        expect(worker).to receive(:notify_airbrake).with(exception)
         subject
+        expect(worker).to satisfy { |w| w.instance_variable_get(:@retries) == 2 }
       end
     end
 
-    context 'The options includes only user_id' do
-      context 'user_id != -1' do
-        let(:options) { {'user_id' => user.id} }
-        it do
-          expect(User).to receive(:find).with(user.id).and_return(user)
-          expect(user).to receive(:api_client).with(no_args).and_return(client)
-          expect(Bot).not_to receive(:api_client)
-          expect(worker).to receive(:do_perform).with(uids, client, nil, user.id, enqueued_by: nil)
-          subject
-        end
-
-        context 'The user is not authorized' do
-          before { allow(user).to receive(:authorized?).with(no_args).and_return(false) }
-          it do
-            expect(User).to receive(:find).with(user.id).and_return(user)
-            expect(user).not_to receive(:api_client)
-            expect(Bot).to receive(:api_client).with(no_args).and_return(client)
-            expect(worker).to receive(:do_perform).with(uids, client, nil, user.id, enqueued_by: nil)
-            subject
-          end
-        end
+    context '#fetch_and_import! raises something retryable exception' do
+      let(:exception) { RuntimeError.new('Retryable') }
+      before do
+        allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(any_args).and_raise(exception)
+        allow(worker).to receive(:meet_requirements_for_retrying?).with(exception).and_return(true)
       end
-
-      context 'user_id == -1' do
-        let(:options) { {'user_id' => -1} }
-        it do
-          expect(User).not_to receive(:find)
-          expect(Bot).to receive(:api_client).with(no_args).and_return(client)
-          expect(worker).to receive(:do_perform).with(uids, client, nil, -1, enqueued_by: nil)
-          subject
-        end
-      end
-    end
-
-    context "The options is empty" do
-      let(:options) { {} }
       it do
-        expect(User).not_to receive(:find)
-        expect(Bot).to receive(:api_client).and_return(client)
-        expect(worker).to receive(:do_perform).with(uids, client, nil, nil, enqueued_by: nil)
+        expect(Bot).to receive(:api_client).twice
+        expect(worker).to receive(:notify_airbrake).with(exception)
         subject
+        expect(worker).to satisfy { |w| w.instance_variable_get(:@retries) == 0 }
       end
     end
   end
 
-  describe '#do_perform' do
-    subject { worker.do_perform(uids, nil, false, user_id, enqueued_by: nil) }
+  describe '#meet_requirements_for_retrying?' do
+    subject { worker.meet_requirements_for_retrying?(exception) }
 
-    before do
-      allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(any_args).and_raise(exception)
-    end
-
-    context 'An exception is raised' do
-      let(:user_id) { user.id }
-      let(:exception) { RuntimeError.new('Something happened.') }
-
-      it do
-        expect(Bot).not_to receive(:api_client)
-        expect { subject }.to raise_error(RuntimeError)
-      end
-    end
-
-    context 'Twitter::Error::Unauthorized is raised and the valid user_id is passed' do
-      let(:user_id) { user.id }
+    context 'Twitter::Error::Unauthorized is raised' do
       let(:exception) { Twitter::Error::Unauthorized.new('Invalid or expired token.') }
-
-      it do
-        expect(Bot).to receive(:api_client).with(no_args)
-        expect { subject }.to raise_error(Twitter::Error::Unauthorized)
-      end
+      it { is_expected.to be_truthy }
     end
 
-    context 'Twitter::Error::Forbidden is raised and the valid user_id is passed' do
-      let(:user_id) { user.id }
+    context 'Twitter::Error::Unauthorized is raised' do
       let(:exception) { Twitter::Error::Forbidden.new('Message') }
+      it { is_expected.to be_truthy }
+    end
 
+    context 'Connection reset by peer' do
+      let(:exception) { RuntimeError.new('Connection reset by peer') }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'Unknown exception is raised' do
+      let(:exception) { RuntimeError.new('Unknown') }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#pick_client' do
+    let(:options) { {'user_id' => user_id} }
+    let(:client) { 'client' }
+    subject { worker.pick_client(options) }
+
+    context 'The user_id is not set' do
+      let(:user_id) { nil }
       it do
-        expect(Bot).to receive(:api_client).with(no_args)
-        expect { subject }.to raise_error(Twitter::Error::Forbidden)
+        expect(Bot).to receive(:api_client).and_return(client)
+        is_expected.to eq(client)
       end
     end
 
-    context 'A retryable exception is raised and the user_id is nil' do
-      let(:user_id) { nil }
-      let(:exception) { Twitter::Error::Unauthorized.new('Invalid or expired token.') }
+    context 'The user_id is -1' do
+      let(:user_id) { -1 }
+      it do
+        expect(Bot).to receive(:api_client).and_return(client)
+        is_expected.to eq(client)
+      end
+    end
 
+    context 'The user_id is set but the user is unauthorized' do
+      let(:user) { instance_double('User') }
+      let(:user_id) { 100 }
+      before do
+        allow(User).to receive(:find).with(user_id).and_return(user)
+        allow(user).to receive(:authorized?).and_return(false)
+      end
+      it do
+        expect(Bot).to receive(:api_client).and_return(client)
+        is_expected.to eq(client)
+      end
+    end
+
+    context 'The user_id is set and the user is authorized' do
+      let(:user) { instance_double('User') }
+      let(:user_id) { 100 }
+      before do
+        allow(User).to receive(:find).with(user_id).and_return(user)
+        allow(user).to receive(:authorized?).and_return(true)
+      end
       it do
         expect(Bot).not_to receive(:api_client)
-        expect { subject }.to raise_error(Twitter::Error::Unauthorized)
+        expect(user).to receive(:api_client).and_return(client)
+        is_expected.to eq(client)
       end
     end
   end

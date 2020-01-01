@@ -1,5 +1,6 @@
 class CreateTwitterDBUserWorker
   include Sidekiq::Worker
+  include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(uids, options = {})
@@ -20,37 +21,46 @@ class CreateTwitterDBUserWorker
       uids = decompress(uids)
     end
 
-    client = nil
-    if options['user_id'] && options['user_id'] != -1
-      user = User.find(options['user_id'])
-      client = user.api_client if user.authorized?
-    end
-    client = Bot.api_client unless client
+    client = pick_client(options)
+    @retries = 2
 
-    do_perform(uids, client, options['force_update'], options['user_id'], enqueued_by: options['enqueued_by'])
+    begin
+      TwitterDB::User::Batch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
+    rescue => e
+      unless AccountStatus.unauthorized?(e)
+        logger.warn "Retry with a bot client #{options.inspect} #{e.inspect}"
+      end
+
+      if meet_requirements_for_retrying?(e) && @retries > 0
+        client = Bot.api_client
+        @retries -= 1
+        retry
+      else
+        raise
+      end
+    end
 
   rescue => e
     # Errno::EEXIST File exists @ dir_s_mkdir
     # Errno::ENOENT No such file or directory @ rb_sysopen
     logger.warn "#{e.class} #{e.message} #{uids.inspect.truncate(150)} #{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    notify_airbrake(e)
   end
 
-  def do_perform(uids, client, force_update, user_id, enqueued_by:)
-    tries ||= 2
-    TwitterDB::User::Batch.fetch_and_import!(uids.map(&:to_i), client: client, force_update: force_update)
-  rescue => e
-    if (AccountStatus.unauthorized?(e) || e.class == Twitter::Error::Forbidden) && user_id && (tries -= 1) > 0
-      client = Bot.api_client
-      unless AccountStatus.unauthorized?(e)
-        logger.warn "Retry with a bot client #{user_id} #{enqueued_by} #{e.class}"
-      end
-      retry
-    elsif e.message.include?('Connection reset by peer')
-      retry
-    else
-      raise
+  def meet_requirements_for_retrying?(ex)
+    AccountStatus.unauthorized?(ex) ||
+        ex.class == Twitter::Error::Forbidden ||
+        ex.message.include?('Connection reset by peer')
+  end
+
+  def pick_client(options)
+    client = nil
+    if options['user_id'] && options['user_id'] != -1
+      user = User.find(options['user_id'])
+      client = user.api_client if user.authorized?
     end
+
+    client ? client : Bot.api_client
   end
 
   class << self
