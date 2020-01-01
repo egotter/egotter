@@ -37,10 +37,14 @@ Welcome.ShareDialog = function () {
 
 Welcome.ShareDialog.prototype = {
     constructor: Welcome.ShareDialog,
-    show: function () {
-        if (!this._cache['share_dialog']) {
-            this._cache['share_dialog'] = true;
+    show: function (force) {
+        if (force) {
             this._modal.modal();
+        } else {
+            if (!this._cache['share_dialog']) {
+                this._cache['share_dialog'] = true;
+                this._modal.modal();
+            }
         }
     }
 };
