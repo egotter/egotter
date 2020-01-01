@@ -36,6 +36,11 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       before { allow(request).to receive(:fetch_user).and_raise(Twitter::Error::ServiceUnavailable, 'Over capacity') }
       it { expect { subject }.to raise_error(described_class::ServiceUnavailable) }
     end
+
+    context '#fetch_user raises Twitter::Error::Unauthorized(blocked)' do
+      before { allow(request).to receive(:fetch_user).and_raise(Twitter::Error::Unauthorized, "You have been blocked from viewing this user's profile.") }
+      it { expect { subject }.to raise_error(described_class::Blocked) }
+    end
   end
 
   describe '#fetch_user' do

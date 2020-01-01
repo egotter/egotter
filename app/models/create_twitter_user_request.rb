@@ -108,11 +108,13 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise Unauthorized
     elsif AccountStatus.protected?(e)
       raise Protected
+    elsif AccountStatus.blocked?(e)
+      raise Blocked
     elsif ServiceStatus.service_unavailable?(e)
       raise ServiceUnavailable
     elsif ServiceStatus.internal_server_error?(e)
       raise InternalServerError
-    elsif e.message == 'Connection reset by peer'
+    elsif ServiceStatus.connection_reset_by_peer?(e)
       retry
     else
       raise Unknown.new("#{__method__} #{e.class} #{e.message}")
@@ -151,6 +153,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class Protected < Error
+  end
+
+  class Blocked < Error
   end
 
   class TooShortCreateInterval < Error

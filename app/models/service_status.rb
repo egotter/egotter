@@ -27,6 +27,10 @@ class ServiceStatus
   end
 
   class << self
+    def connection_reset_by_peer?(ex)
+      new(ex: ex).connection_reset_by_peer?
+    end
+
     def internal_server_error?(ex)
       new(ex: ex).internal_server_error?
     end

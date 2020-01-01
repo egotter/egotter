@@ -34,6 +34,11 @@ RSpec.describe ServiceStatus, type: :model do
     end
   end
 
+  describe '.connection_reset_by_peer?' do
+    let(:ex) { RuntimeError.new('Connection reset by peer') }
+    it { expect(described_class.connection_reset_by_peer?(ex)).to be_truthy }
+  end
+
   describe '.internal_server_error?' do
     let(:ex) { Twitter::Error::InternalServerError.new('Internal error') }
     it { expect(described_class.internal_server_error?(ex)).to be_truthy }
