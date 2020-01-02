@@ -117,7 +117,7 @@ Twitter.enableUnfollowButton = function (selector) {
   });
 };
 
-Twitter.enableSortButton = function ($buttons, afterClick) {
+Twitter.enableSortButton = function ($buttons, callback) {
   $('.sort-orders').on('click', function (e) {
     var $selected = $(this);
     var $dropdown = $buttons.find('.dropdown-toggle');
@@ -135,12 +135,12 @@ Twitter.enableSortButton = function ($buttons, afterClick) {
     $buttons.find('.dropdown-menu a').removeClass('selected');
     $selected.addClass('selected');
 
-    afterClick.call();
+    callback({sortOrder: $selected.data('sort-order')});
     return false;
   });
 };
 
-Twitter.enableFilterButton = function ($buttons, afterClick) {
+Twitter.enableFilterButton = function ($buttons, callback) {
   $('.filters').on('click', function (e) {
     var $selected = $(this);
     var $dropdown = $buttons.find('.dropdown-toggle');
@@ -166,7 +166,7 @@ Twitter.enableFilterButton = function ($buttons, afterClick) {
       $dropdown.find('.filter-count').text('');
     }
 
-    afterClick.call();
+    callback({filter: $selected.data('filter')});
     return false;
   });
 };

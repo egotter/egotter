@@ -9,7 +9,7 @@ class SortOrder
   ]
 
   def initialize(value)
-    @value = VALUES.map {|o| o[1]}.include?(value) ? value : self.class.default_order
+    @value = VALUES.map { |o| o[1] }.include?(value) ? value : VALUES[0][1]
   end
 
   def apply!(users)
@@ -23,16 +23,6 @@ class SortOrder
   end
 
   def default_order?
-    @value == self.class.default_order
-  end
-
-  class << self
-    def default_order
-      VALUES[0][1]
-    end
-
-    def default_label
-      VALUES[0][0]
-    end
+    @value == VALUES[0][1]
   end
 end

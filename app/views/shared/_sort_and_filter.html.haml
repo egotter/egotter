@@ -1,0 +1,23 @@
+.btn-group.sort-order-and-filter.pull-right{"aria-label" => "Sort and Filter", :role => "group"}
+  .btn-group.sort-order-buttons{:role => "group"}
+    %button.sort-order-dropdown.btn.btn-default.dropdown-toggle{data: {sort_order: SortOrder::VALUES[0][1]}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+      = SortOrder::VALUES[0][0]
+      %span.caret
+    %ul.dropdown-menu
+      - SortOrder::VALUES.each.with_index do |(label, value), i|
+        %li
+          %a.sort-orders{href: "#", class: (i == 0 ? 'selected' : ''), data: {sort_order: value}}
+            %i.fas.fa-check
+            = label
+  .btn-group.filter-buttons{role: "group"}
+    %button.filter-dropdown.btn.btn-default.dropdown-toggle{data: {filter: nil}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
+      = t('filter.title')
+      %span.filter-count
+      %span.caret
+    %ul.dropdown-menu.dropdown-menu-right
+      - Filter::VALUES.each do |label, value|
+        %li
+          %a{href: "#", class: 'filters', data: {filter: value}}
+            %input{type: 'checkbox'}
+            = label
+.clearfix

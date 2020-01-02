@@ -1,27 +1,4 @@
-.btn-group.sort-order-and-filter.pull-right{"aria-label" => "Sort and Filter", :role => "group"}
-  .btn-group.sort-order-buttons{:role => "group"}
-    %button.sort-order-dropdown.btn.btn-default.dropdown-toggle{data: {sort_order: SortOrder.default_order}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
-      = SortOrder.default_label
-      %span.caret
-    %ul.dropdown-menu
-      - SortOrder::VALUES.each do |label, value|
-        %li
-          %a{href: "#", class: 'sort-orders', data: {sort_order: value}}
-            %i.fas.fa-check
-            = label
-  .btn-group.filter-buttons{role: "group"}
-    %button.filter-dropdown.btn.btn-default.dropdown-toggle{data: {filter: nil}, "aria-expanded" => "false", "aria-haspopup" => "true", "data-toggle" => "dropdown", type: "button"}
-      = t('filter.title')
-      %span.filter-count
-      %span.caret
-    %ul.dropdown-menu.dropdown-menu-right
-      - Filter::VALUES.each do |label, value|
-        %li
-          %a{href: "#", class: 'filters', data: {filter: value}}
-            %input{type: 'checkbox'}
-            = label
-
-.clearfix
+= render partial: 'shared/sort_and_filter'
 
 .empty-placeholders-wrapper{style: 'display: none;'}
   = render partial: 'timelines/empty_placeholder', locals: {menu_name: '', menu_or_users: 'users'}
@@ -42,75 +19,100 @@
 .vertical-spacing
 
 :javascript
-  $(function () {
-    var uid = '#{twitter_user.uid}';
-    var url = '#{api_path}';
-    var signInFromSortUrl = '#{sign_in_path(via: build_via('sort_btn'))}';
-    var signInFromFilterUrl = '#{sign_in_path(via: build_via('filter_btn'))}';
-    var signedIn = #{user_signed_in?};
-    var $seeMoreBtn = $('.see-more-btn');
-    var $seeAtOnceBtn = $('.see-at-once-btn');
-    var $sortOrderDropdown = $('.sort-order-dropdown');
-    var $filterDropdown = $('.filter-dropdown');
-    var $placeholders = $('.placeholders-wrapper');
-    var $emptyPlaceholders = $('.empty-placeholders-wrapper');
-    var $usersContainer = $('.main-content.twitter.users');
+  var FetchTask = function (url, uid, options) {
+    if (this === undefined) {
+      throw new TypeError();
+    }
 
-    function fetchUsers (params) {
+    this._url = url;
+    this._uid = uid;
+    this._maxSequence = 0;
+    this._limit = 3;
+    this._sortOrder = options['sortOrder'];
+    this._filter = options['filter'];
+
+    this._$placeholders = $('.placeholders-wrapper');
+    this._$emptyPlaceholders = $('.empty-placeholders-wrapper');
+    this._$usersContainer = $('.main-content.twitter.users');
+
+    this.fetch();
+  };
+
+  FetchTask.prototype = {
+    constructor: FetchTask,
+    reset: function (options) {
+      this._maxSequence = 0;
+      this._limit = 3;
+      if (options['sortOrder']) {
+        this._sortOrder = options['sortOrder'];
+      }
+      if (options['filter']) {
+        this._filter = options['filter'];
+      }
+      this._$placeholders.show();
+      this._$usersContainer.empty();
+      this.fetch();
+    },
+    fetch: function () {
+      var params = {
+        uid: this._uid,
+        html: 1,
+        limit: this._limit,
+        max_sequence: this._maxSequence,
+        sort_order: this._sortOrder,
+        filter: this._filter
+      };
+
       console.log('params', params);
 
-      Twitter.cache().fetch(url, params, function (res) {
+      var self = this;
+
+      Twitter.cache().fetch(this._url, params, function (res) {
         if (res.max_sequence && res.max_sequence >= 0) {
-          $seeMoreBtn.data('max-sequence', res.max_sequence + 1);
-          $seeMoreBtn.data('limit', 10);
+          self._maxSequence = res.max_sequence + 1;
+          self._limit = 10;
         } else {
           // $seeMoreBtn.remove();
           // $seeAtOnceBtn.remove();
         }
 
-        $placeholders.hide();
+        self._$placeholders.hide();
         var $users = $(res.users).hide().fadeIn(1000);
-        $usersContainer.append($users);
+        self._$usersContainer.append($users);
 
-        if ($usersContainer.find('.media').length <= 0) {
-          $emptyPlaceholders.show();
+        if (self._$usersContainer.find('.media').length <= 0) {
+          self._$emptyPlaceholders.show();
         } else {
-          $emptyPlaceholders.hide();
+          self._$emptyPlaceholders.hide();
         }
       });
     }
+  };
 
-    $seeMoreBtn.on('click', function (e) {
-      e.stopPropagation();
-      var params = {
-        uid: uid,
-        html: 1,
-        limit: $(this).data('limit'),
-        max_sequence: $(this).data('max-sequence'),
-        sort_order: $sortOrderDropdown.data('sort-order'),
-        filter: $filterDropdown.data('filter')
-      };
-
-      fetchUsers(params);
-      return false;
-    });
-
-    $sortOrderDropdown.parent().find('.dropdown-menu a').first().addClass('selected');
-    $seeMoreBtn.show();
-    $seeAtOnceBtn.show();
-    $seeMoreBtn.trigger('click');
+  $(function () {
+    var signedIn = #{user_signed_in?};
 
     if (signedIn) {
-      var afterClick = function () {
-        $seeMoreBtn.data('max-sequence', 0).data('limit', 3);
-        $placeholders.show();
-        $usersContainer.empty();
-        $seeMoreBtn.trigger('click');
-      };
+      var url = '#{api_path}';
+      var uid = '#{twitter_user.uid}';
+      var sortOrder = $('.sort-order-dropdown').data('sort-order');
+      var filter = $('.filter-dropdown').data('filter');
+      var task = new FetchTask(url, uid, {sortOrder: sortOrder, filter: filter});
 
-      Twitter.enableSortButton($('.sort-order-buttons'), afterClick);
-      Twitter.enableFilterButton($('.filter-buttons'), afterClick);
+      $('.see-more-btn').on('click', function (e) {
+        e.stopPropagation();
+        task.fetch();
+        return false;
+      }).show();
+
+      $('.see-at-once-btn').show();
+
+      Twitter.enableSortButton($('.sort-order-buttons'), function (options) {task.reset(options)});
+      Twitter.enableFilterButton($('.filter-buttons'), function (options) {task.reset(options)});
+
     } else {
+      var signInFromSortUrl = '#{sign_in_path(via: build_via('sort_btn'))}';
+      var signInFromFilterUrl = '#{sign_in_path(via: build_via('filter_btn'))}';
       $('.sort-orders').attr('href', signInFromSortUrl);
       $('.filters').attr('href', signInFromFilterUrl);
     }
