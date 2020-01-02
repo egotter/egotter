@@ -7,6 +7,10 @@ class AccountStatus
     @ex && @ex.class == Twitter::Error::NotFound && @ex.message == 'User not found.'
   end
 
+  def no_user_matches?
+    @ex && @ex.class == Twitter::Error::NotFound && @ex.message == 'No user matches for specified terms.'
+  end
+
   def suspended?
     @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'User has been suspended.'
   end
@@ -45,6 +49,10 @@ class AccountStatus
   class << self
     def not_found?(ex)
       new(ex: ex).not_found?
+    end
+
+    def no_user_matches?(ex)
+      new(ex: ex).no_user_matches?
     end
 
     def suspended?(ex)

@@ -50,19 +50,19 @@ class Decorator
       []
     end
   rescue Twitter::Error::Unauthorized => e
-    unless e.message == 'Invalid or expired token.'
+    unless AccountStatus.unauthorized?(e)
       logger.warn "#{self.class}##{__method__} Return empty array. #{e.class} #{e.message}}"
       logger.info self.inspect.truncate(100)
       logger.info e.backtrace.join("\n")
     end
     []
   rescue Twitter::Error::NotFound => e
-    unless e.message == 'No user matches for specified terms.'
-      logger.warn "#{self.class}##{__method__} Return empty array. #{e.class} #{e.message}}"
+    unless AccountStatus.no_user_matches?(e)
+      logger.warn "#{self.class}##{__method__} Return an array includes all uids. #{e.class} #{e.message}}"
       logger.info self.inspect.truncate(100)
       logger.info e.backtrace.join("\n")
     end
-    []
+    uids
   rescue => e
     logger.warn "#{self.class}##{__method__} Return empty array. #{e.class} #{e.message}}"
     logger.info self.inspect.truncate(100)
