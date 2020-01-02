@@ -3,7 +3,6 @@ class ReplyingAndRepliedController < ::Page::Base
 
   def all
     initialize_instance_variables
-    @collection = @twitter_user.replying_and_replied.take(300)
     render template: 'friends/all' unless performed?
   end
 

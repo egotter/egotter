@@ -3,7 +3,6 @@ class OneSidedFollowersController < ::Page::Base
 
   def all
     initialize_instance_variables
-    @collection = @twitter_user.one_sided_followers.limit(300)
     render template: 'friends/all' unless performed?
   end
 

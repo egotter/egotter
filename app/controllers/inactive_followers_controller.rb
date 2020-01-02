@@ -3,7 +3,6 @@ class InactiveFollowersController < ::Page::Base
 
   def all
     initialize_instance_variables
-    @collection = @twitter_user.inactive_followers.limit(300)
     render template: 'friends/all' unless performed?
   end
 

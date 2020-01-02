@@ -128,14 +128,16 @@ Twitter.enableSortButton = function ($buttons, callback) {
       console.log('sort_order not changed');
       return false;
     }
-    console.log('sort_order', $selected.data('sort-order'));
+
+    var value = $selected.data('sort-order');
+    console.log('sort_order', value);
 
     $dropdown.html($selected.text() + '&nbsp;<span class="caret"></span>')
-        .data('sort-order', $selected.data('sort-order'));
+        .data('sort-order', value);
     $buttons.find('.dropdown-menu a').removeClass('selected');
     $selected.addClass('selected');
 
-    callback({sortOrder: $selected.data('sort-order')});
+    callback({sortOrder: value});
     return false;
   });
 };
@@ -144,7 +146,6 @@ Twitter.enableFilterButton = function ($buttons, callback) {
   $('.filters').on('click', function (e) {
     var $selected = $(this);
     var $dropdown = $buttons.find('.dropdown-toggle');
-    console.log('filter', $selected.data('filter'));
 
     $dropdown.dropdown('toggle');
 
@@ -158,6 +159,7 @@ Twitter.enableFilterButton = function ($buttons, callback) {
     }
 
     var filterCount = $buttons.find('a.selected').length;
+
     if (filterCount > 0) {
       $dropdown.data('filter', $selected.data('filter')); // Current filters.size == 0
       $dropdown.find('.filter-count').text('(' + filterCount + ')');
@@ -166,7 +168,104 @@ Twitter.enableFilterButton = function ($buttons, callback) {
       $dropdown.find('.filter-count').text('');
     }
 
-    callback({filter: $selected.data('filter')});
+    var value = $dropdown.data('filter');
+    console.log('filter', value);
+
+    callback({filter: value});
     return false;
   });
+};
+
+Twitter.FetchTask = function (url, uid, options) {
+  if (this === undefined) {
+    throw new TypeError();
+  }
+
+  this._url = url;
+  this._uid = uid;
+  this._maxSequence = 0;
+  this._limit = options['limit'];
+  this._minLimit = options['limit'];
+  this._maxLimit = options['maxLimit'];
+  this._sortOrder = options['sortOrder'];
+  this._filter = options['filter'];
+  this._gridClass = options['gridClass'];
+  this._insertAd = options['insertAd'];
+  this._loading = false;
+
+  this._$placeholders = $('.placeholders-wrapper');
+  this._$emptyPlaceholders = $('.empty-placeholders-wrapper');
+  this._$usersContainer = $('.main-content.twitter.users');
+};
+
+Twitter.FetchTask.prototype = {
+  constructor: Twitter.FetchTask,
+  reset: function (options) {
+    this._maxSequence = 0;
+    this._limit = this._minLimit;
+    if ('sortOrder' in options) {
+      this._sortOrder = options['sortOrder'];
+    }
+    if ('filter' in options) {
+      this._filter = options['filter'];
+    }
+    this._$placeholders.show();
+    this._$usersContainer.empty();
+    this.fetch();
+  },
+  fetch: function (callback) {
+    if (this._maxSequence === -1) {
+      return;
+    }
+
+    if (this._loading) {
+      return;
+    }
+    this._loading = true;
+
+    var params = {
+      uid: this._uid,
+      html: 1,
+      limit: this._limit,
+      max_sequence: this._maxSequence,
+      sort_order: this._sortOrder,
+      filter: this._filter,
+      grid_class: this._gridClass,
+      insert_ad: this._insertAd
+    };
+
+    console.log('params', params);
+
+    var self = this;
+
+    Twitter.cache().fetch(this._url, params, function (res) {
+      if (res.max_sequence && res.max_sequence >= 0) {
+        self._maxSequence = res.max_sequence + 1;
+        self._limit = self._maxLimit;
+      } else {
+        self._maxSequence = -1;
+        // $seeMoreBtn.remove();
+        // $seeAtOnceBtn.remove();
+      }
+
+      self._$placeholders.hide();
+      var $users = $(res.users).hide().fadeIn(1000);
+      self._$usersContainer.append($users);
+
+      if (self._$usersContainer.find('.media').length <= 0) {
+        self._$emptyPlaceholders.show();
+      } else {
+        self._$emptyPlaceholders.hide();
+      }
+
+      self._loading = false;
+
+      if (callback) {
+        callback({loaded: true, completed: self._maxSequence === -1});
+      }
+    });
+  },
+  rand: function () {
+    return Math.random().toString(32).substring(2);
+  }
 };

@@ -33,7 +33,7 @@ class Paginator
 
   def limit(value)
     value = value.to_i
-    @limit = (0..10).include?(value) ? value : 10
+    @limit = (0..100).include?(value) ? value : 10
     self
   end
 
