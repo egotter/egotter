@@ -211,7 +211,7 @@ module Tasks
             'sudo service nginx restart',
             'sudo service puma restart',
             'sudo restart datadog-agent',
-            'ab -n 100 -c 10 http://localhost:80/',
+            'ab -n 500 -c 10 http://localhost:80/',
         ].each do |cmd|
           backend(cmd)
         end

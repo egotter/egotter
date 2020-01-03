@@ -89,7 +89,7 @@ module TaskBooks
       end
 
       def after_run
-        backend('ab -n 100 -c 10 http://localhost:80/')
+        backend('ab -n 500 -c 10 http://localhost:80/')
         @target_group.register(@instance.id)
       end
     end
