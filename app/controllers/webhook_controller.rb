@@ -9,7 +9,7 @@ class WebhookController < ApplicationController
   end
 
   def twitter
-    if verified_request? && params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
+    if verified_webhook_request? && params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
       params[:direct_message_events].each do |event|
         if event['type'] == 'message_create'
           dm = DirectMessage.new(event: event.to_unsafe_h.deep_symbolize_keys)
@@ -31,14 +31,15 @@ class WebhookController < ApplicationController
   private
 
   def crc_response
-    digest(params[:crc_token])
+    crc_digest(params[:crc_token])
   end
 
-  def verified_request?
-    digest(request.body.read) == request.headers[:HTTP_X_TWITTER_WEBHOOKS_SIGNATURE]
+  # NOTICE The name #verified_request? conflicts with an existing method in Rails.
+  def verified_webhook_request?
+    crc_digest(request.body.read) == request.headers[:HTTP_X_TWITTER_WEBHOOKS_SIGNATURE]
   end
 
-  def digest(payload)
+  def crc_digest(payload)
     secret = ENV['TWITTER_CONSUMER_SECRET']
     digest = OpenSSL::HMAC::digest('sha256', secret, payload)
     "sha256=#{Base64.encode64(digest).strip!}"

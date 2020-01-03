@@ -18,7 +18,10 @@ module PathsHelper
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{menu} #{screen_name}"
-    notify_airbrake(e)
+
+    # TODO This method is undefined in view context
+    notify_airbrake(e) rescue nil
+
     timeline_path(screen_name: screen_name, via: via)
   end
 
