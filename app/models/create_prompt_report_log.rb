@@ -63,6 +63,7 @@ class CreatePromptReportLog < ApplicationRecord
           where.not(error_class: CreatePromptReportRequest::TooShortRequestInterval).
           where.not(error_class: CreatePromptReportRequest::UserInactive).
           where.not(error_class: CreatePromptReportRequest::InitializationStarted).
+          where.not(error_class: CreateTwitterUserRequest::TooManyRequests).
           order(created_at: :desc).
           limit(3)
     end

@@ -34,6 +34,7 @@ RSpec.describe CreatePromptReportLog, type: :model do
             CreatePromptReportRequest::TooShortRequestInterval,
             CreatePromptReportRequest::UserInactive,
             CreatePromptReportRequest::InitializationStarted,
+            CreateTwitterUserRequest::TooManyRequests,
         ].each do |error_class|
           create(:create_prompt_report_log, user_id: user_id, request_id: request_id + 1, error_class: error_class)
         end
