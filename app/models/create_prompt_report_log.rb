@@ -40,14 +40,15 @@ class CreatePromptReportLog < ApplicationRecord
       )
     end
 
-    def create_test_report_log(user)
+    def reset_too_many_errors(user, reason)
       create(
           user_id: user.id,
           request_id: -1,
           uid: user.uid,
           screen_name: user.screen_name,
-          error_message: 'TestReport was sent'
+          error_message: reason
       )
+      TooManyErrorsUsers.new.delete(user.id)
     end
 
     def latest_by(condition)

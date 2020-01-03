@@ -36,8 +36,7 @@ class CreateTestReportRequest < ApplicationRecord
     end
 
     # Reset the state of TooManyErrors regardless of whether an error has occurred.
-    CreatePromptReportLog.create_test_report_log(user)
-    TooManyErrorsUsers.new.delete(user_id)
+    CreatePromptReportLog.reset_too_many_errors(user, 'TestReport was sent')
   end
 
   def error_check!

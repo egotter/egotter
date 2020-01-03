@@ -1,10 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe CreateTestReportRequest, type: :model do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, with_settings: true) }
   let(:request) { described_class.create!(user_id: user.id) }
 
   describe '#perform!' do
+    subject { request.perform! }
+    it do
+      expect(request).to receive(:error_check!)
+      expect(CreatePromptReportLog).to receive(:reset_too_many_errors).with(user, 'TestReport was sent')
+      subject
+    end
   end
 
   describe '#error_check!' do

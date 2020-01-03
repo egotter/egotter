@@ -57,4 +57,15 @@ RSpec.describe CreatePromptReportLog, type: :model do
       it { is_expected.to satisfy { |records| records.size == 3 } }
     end
   end
+
+  describe '.reset_too_many_errors' do
+    let(:user) { create(:user) }
+    let(:cache) { TooManyErrorsUsers.new }
+    subject { described_class.reset_too_many_errors(user, 'test') }
+    before { allow(TooManyErrorsUsers).to receive(:new).and_return(cache) }
+    it do
+      expect(cache).to receive(:delete).with(user.id)
+      expect { subject }.to change { described_class.all.size }.by(1)
+    end
+  end
 end
