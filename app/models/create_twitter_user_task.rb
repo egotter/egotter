@@ -23,14 +23,32 @@ class CreateTwitterUserTask
 
     self
   rescue Twitter::Error::TooManyRequests => e
-    @log.update(error_class: e.class, error_message: e.message)
     if request.user
       TooManyRequestsUsers.new.add(request.user.id)
       ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, request.user.id)
     end
-    raise CreateTwitterUserRequest::TooManyRequests
+
+    message = request.user ? limited_endpoint(request.user) : e.message
+    exception = CreateTwitterUserRequest::TooManyRequests.new(message)
+    @log.update(error_class: exception.class, error_message: message)
+
+    raise exception
   rescue => e
     @log.update(error_class: e.class, error_message: e.message)
     raise
+  end
+
+  def limited_endpoint(user)
+    ret = {}
+    user.api_client.rate_limit.resources.select do |_, resource|
+      resource.each do |endpoint, limitation|
+        if limitation[:remaining] == 0
+          ret[endpoint] = Time.zone.at(limitation[:reset]).to_s
+        end
+      end
+    end
+    ret.inspect
+  rescue => e
+    "#{__method__} #{e.inspect}"
   end
 end
