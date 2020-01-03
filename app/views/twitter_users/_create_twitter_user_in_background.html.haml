@@ -276,7 +276,7 @@
 
       if (!crawler) {
         Detectors.secretMode(function detected () {
-          if (os === 'Android' && osVersion.startsWith('6')) {
+          if (os === 'Android' && osVersion.match(/^(6|5|4)/)) {
             return;
           }
 
