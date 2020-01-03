@@ -61,6 +61,8 @@
   (function () {
     var signedIn = #{user_signed_in?};
     var crawler = #{from_crawler?};
+    var os = '#{request.os}';
+    var osVersion = '#{request.os_version}';
     var authorized = #{user_signed_in? && current_user.authorized?};
     var removedPage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
     var viaDM = #{via_dm?};
@@ -274,6 +276,10 @@
 
       if (!crawler) {
         Detectors.secretMode(function detected () {
+          if (os === 'Android' && osVersion.startsWith('6')) {
+            return;
+          }
+
           var message = '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}';
           Logger.warn(message);
           setTimeout(function() {
