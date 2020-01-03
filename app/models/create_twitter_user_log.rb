@@ -22,7 +22,7 @@
 class CreateTwitterUserLog < ApplicationRecord
   before_validation do
     if self.error_message
-      self.error_message = self.error_message.truncate(100)
+      self.error_message = self.error_message.truncate(150)
     end
   end
 

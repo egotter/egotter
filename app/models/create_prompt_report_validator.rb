@@ -8,7 +8,7 @@ class CreatePromptReportValidator
 
   def validate!
     raise CreatePromptReportRequest::Unauthorized unless credentials_verified?
-    raise CreatePromptReportRequest::TooManyErrors if too_many_errors?
+    raise CreatePromptReportRequest::TooManyErrors.new(@too_many_errors_reasons) if too_many_errors?
     raise CreatePromptReportRequest::PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
     raise CreatePromptReportRequest::TooShortRequestInterval if too_short_request_interval?
     raise CreatePromptReportRequest::Unauthorized unless user.authorized?
@@ -44,8 +44,9 @@ class CreatePromptReportValidator
         pluck(:error_class)
 
     meet_requirements_for_too_many_errors?(errors).tap do |val|
-      # Save this value in Redis since it is difficult to retrieve this value efficiently with SQL.
       if val
+        @too_many_errors_reasons = errors.inspect
+        # Save this value in Redis since it is difficult to retrieve this value efficiently with SQL.
         (@too_many_errors_users ||= TooManyErrorsUsers.new).add(user.id) # The ivar is used for testing
       end
     end
