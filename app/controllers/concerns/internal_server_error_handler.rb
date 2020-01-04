@@ -25,7 +25,7 @@ module Concerns::InternalServerErrorHandler
     else
       self.sidebar_disabled = true
       flash.now[:alert] = message
-      render template: 'home/new', formats: %i(html), status: :internal_server_error
+      render template: 'home/new', formats: %i(html), status: :internal_server_error unless performed?
     end
   end
 

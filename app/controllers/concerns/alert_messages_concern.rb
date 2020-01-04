@@ -117,7 +117,7 @@ module Concerns::AlertMessagesConcern
     if user_signed_in?
       t('after_sign_in.blocked_html', user: user_link(screen_name), screen_name: screen_name)
     else
-      raise
+      raise "#{__method__} is called and the user is not signed in"
     end
   end
 
@@ -125,7 +125,7 @@ module Concerns::AlertMessagesConcern
     if user_signed_in?
       t('after_sign_in.blocked_with_request_html', user: user_link(screen_name), url: url)
     else
-      raise
+      raise "#{__method__} is called and the user is not signed in"
     end
   end
 
@@ -134,7 +134,7 @@ module Concerns::AlertMessagesConcern
       url = sign_in_path(via: build_via('signed_in_user_not_authorized'))
       t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
     else
-      raise
+      raise "#{__method__} is called and the user is not signed in"
     end
   end
 
@@ -160,7 +160,7 @@ module Concerns::AlertMessagesConcern
 
   def search_limitation_soft_limited_message(screen_name, url)
     if user_signed_in?
-      raise
+      raise "#{__method__} is called and the user is signed in"
     else
       t('before_sign_in.search_limitation_soft_limited_html', user: screen_name, url: url)
     end

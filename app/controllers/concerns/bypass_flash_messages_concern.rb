@@ -2,12 +2,18 @@ require 'active_support/concern'
 
 module Concerns::BypassFlashMessagesConcern
   extend ActiveSupport::Concern
+  include Concerns::AlertMessagesConcern
 
   included do
     before_action do
       if bypassed_notice_message_found?
-        flash.now[:notice] = bypassed_notice_message
-        session.delete(:bypassed_notice_message)
+        begin
+          flash.now[:notice] = bypassed_notice_message
+        rescue => e
+          logger.warn "Cannot create bypassed message for #{session[:bypassed_notice_message]}"
+        ensure
+          session.delete(:bypassed_notice_message)
+        end
       end
     end
   end
@@ -26,6 +32,11 @@ module Concerns::BypassFlashMessagesConcern
         after_sign_in_message
       elsif session[:bypassed_notice_message] == 'after_sign_up'
         after_sign_up_message
+      elsif session[:bypassed_notice_message] == 'search_limitation_soft_limited'
+        url = sign_in_path(via: build_via('search_limitation_soft_limited'))
+        search_limitation_soft_limited_message('user', url) # The user name can be anything
+      elsif session[:bypassed_notice_message] == 'too_many_searches'
+        too_many_searches_message
       end
     end
   end

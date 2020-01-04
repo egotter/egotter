@@ -167,8 +167,8 @@ module Concerns::ValidationConcern
 
     if SearchLimitation.soft_limited?(user)
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
-      SearchLimitationSoftLimitedUsers.new.add(egotter_visit_id)
-      redirect_to profile_path(screen_name: user[:screen_name], notice_message: 'search_limitation_soft_limited')
+      set_bypassed_notice_message('search_limitation_soft_limited')
+      redirect_to profile_path(screen_name: user[:screen_name])
 
       url = sign_in_path(via: build_via(__method__), redirect_path: request.fullpath)
       message = search_limitation_soft_limited_message(user[:screen_name], url)
@@ -195,8 +195,8 @@ module Concerns::ValidationConcern
       respond_with_error(:bad_request, message)
     else
       # Set a parameter notice_message instead of a real message to avoid ActionDispatch::Cookies::CookieOverflow
-      TooManySearchesUsers.new.add(user_signed_in? ? current_user.id : egotter_visit_id)
-      redirect_to profile_path(screen_name: twitter_user.screen_name, notice_message: 'too_many_searches')
+      set_bypassed_notice_message('too_many_searches')
+      redirect_to profile_path(screen_name: twitter_user.screen_name)
       create_search_error_log(__method__, message)
     end
 
