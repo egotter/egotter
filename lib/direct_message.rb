@@ -21,6 +21,10 @@ class DirectMessage
     @response.dig(:event, :message_create, :sender_id)&.to_i
   end
 
+  def recipient_id
+    @response.dig(:event, :message_create, :target, :recipient_id)&.to_i
+  end
+
   class EmptyResponse < StandardError
   end
 end

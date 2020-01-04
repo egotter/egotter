@@ -13,10 +13,12 @@ class WebhookController < ApplicationController
       params[:direct_message_events].each do |event|
         if event['type'] == 'message_create'
           dm = DirectMessage.new(event: event.to_unsafe_h.deep_symbolize_keys)
-          found = dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
-          logger.info "#{controller_name}##{action_name} #{found} #{dm.id} #{dm.text}"
 
-          CreateAnswerMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text) if found
+          if sent_from_user?(dm)
+            SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)
+          elsif sent_from_egotter?(dm)
+            SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
+          end
         end
       end
     end
@@ -29,6 +31,14 @@ class WebhookController < ApplicationController
   end
 
   private
+
+  def sent_from_user?(dm)
+    dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
+  end
+
+  def sent_from_egotter?(dm)
+    dm.text.exclude?('#egotter') && dm.sender_id == User.egotter.uid
+  end
 
   def crc_response
     crc_digest(params[:crc_token])
