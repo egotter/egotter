@@ -275,7 +275,7 @@
       })();
 
       if (!crawler) {
-        Detectors.secretMode(function detected () {
+        Detectors.secretMode(function detected (quota) {
           if (os === 'Android' && osVersion.match(/^(6|5|4)/)) {
             return;
           }
@@ -290,7 +290,7 @@
             hitType: 'event',
             eventCategory: eventCategory,
             eventAction: 'SecretMode detected',
-            eventLabel: JSON.stringify(twitterUser)
+            eventLabel: JSON.stringify($.extend({quota: quota}, twitterUser))
           });
         });
 
