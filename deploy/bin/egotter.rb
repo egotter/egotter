@@ -63,8 +63,8 @@ if params['h'] || params['help']
 end
 
 if params['deploy']
-  tasks = TaskBooks::DeployTask.build(params)
-  tasks.each(&:run)
+  task = Taskbooks::DeployTask.build(params)
+  task.run
 
   if params['git-tag']
     system("git tag deploy-#{params['role']}-all-#{Time.now.to_i}")

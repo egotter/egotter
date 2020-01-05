@@ -1,15 +1,23 @@
 require "open3"
 
-module TaskBooks
+module Taskbooks
   module DeployTask
     def build(params)
       role = params['role']
       hosts = params['hosts'].split(',')
 
       if role == 'web'
-        hosts.map { |host| WebTask.new(host) }
+        if hosts.size > 1
+          EnumerableTask.new(hosts.map { |host| WebTask.new(host) })
+        else
+          WebTask.new(hosts[0])
+        end
       elsif role == 'sidekiq'
-        hosts.map { |host| SidekiqTask.new(host) }
+        if hosts.size > 1
+          EnumerableTask.new(hosts.map { |host| SidekiqTask.new(host) })
+        else
+          SidekiqTask.new(hosts[0])
+        end
       else
         raise "Invalid role #{role}"
       end

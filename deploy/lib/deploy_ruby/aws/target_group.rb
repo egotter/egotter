@@ -18,7 +18,7 @@ module DeployRuby
         client.register_targets(params)
         wait_until(:target_in_service, params)
 
-        green "Current targets count is #{instances.size} (was #{previous_count})"
+        success "Current targets count is #{instances.size} (was #{previous_count})"
 
         self
       end
@@ -35,7 +35,7 @@ module DeployRuby
         client.deregister_targets(params)
         wait_until(:target_deregistered, params)
 
-        green "Current targets count is #{instances.size} (was #{previous_count})"
+        success "Current targets count is #{instances.size} (was #{previous_count})"
 
         true
       end
@@ -76,7 +76,7 @@ module DeployRuby
           end
         end
       rescue ::Aws::Waiters::Errors::WaiterFailed => e
-        red "failed waiting for #{name}: #{e.message}"
+        failure "failed waiting for #{name}: #{e.message}"
         exit
       end
 
@@ -84,11 +84,11 @@ module DeployRuby
         @client ||= ::Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
       end
 
-      def green(str)
-        logger.info "\e[32m#{str}\e[0m"
+      def success(str)
+        logger.info "\e[33m#{str}\e[0m"
       end
 
-      def red(str)
+      def failure(str)
         logger.info "\e[31m#{str}\e[0m"
       end
 
