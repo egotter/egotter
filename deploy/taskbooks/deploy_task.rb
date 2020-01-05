@@ -1,3 +1,5 @@
+require "open3"
+
 module TaskBooks
   module DeployTask
     def build(params)
@@ -23,12 +25,32 @@ module TaskBooks
       private
 
       def execute(host, cmd)
-        logger.info green(cmd)
-        system('ssh', host, cmd, exception: true)
+        logger.info cyan(%Q(ssh #{host})) + ' ' + green(%Q("#{cmd}"))
+        out, err, status = Open3.capture3(%Q(ssh #{host} "#{cmd}"))
+        if status.exitstatus == 0
+          logger.info out
+          logger.info blue("true(success)")
+        else
+          logger.error red(err)
+          logger.error red("false(exit)")
+          exit
+        end
+      end
+
+      def red(str)
+        "\e[31m#{str}\e[0m"
       end
 
       def green(str)
-        logger.info "\e[32m#{str}\e[0m"
+        "\e[32m#{str}\e[0m"
+      end
+
+      def blue(str)
+        "\e[34m#{str}\e[0m"
+      end
+
+      def cyan(str)
+        "\e[36m#{str}\e[0m"
       end
     end
 
@@ -50,7 +72,7 @@ module TaskBooks
       end
 
       def ssh_connection_test
-        backend('echo "ssh connection test" >/dev/null')
+        backend('echo "ssh connection test"')
       end
     end
 
