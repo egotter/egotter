@@ -1804,7 +1804,7 @@ ja:
     new_removed: "新しいリムられ： %{users}"
     omission: " ... 合計%{num}人"
     welcomeMessage:
-      from_egotter: '@ego_tter から @%{user} へのDM送信テスト'
+      from_egotter: '@ego_tter から @%{user} へのDM送信テスト #egotter'
     testMessage:
       timeline_page: '%{screen_name} さんの結果ページ'
       communication_test: '%{from} から %{to} へのDM送信テスト。さらにいくつかのDMが届きます。#egotter'
