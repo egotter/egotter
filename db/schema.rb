@@ -1031,8 +1031,10 @@ ActiveRecord::Schema.define(version: 2019_12_14_123932) do
 
   create_table "tweet_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.bigint "tweet_id"
     t.string "text", null: false
     t.datetime "finished_at"
+    t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_tweet_requests_on_created_at"

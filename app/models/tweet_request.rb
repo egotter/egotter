@@ -4,8 +4,10 @@
 #
 #  id          :bigint(8)        not null, primary key
 #  user_id     :integer          not null
+#  tweet_id    :bigint(8)
 #  text        :string(191)      not null
 #  finished_at :datetime
+#  deleted_at  :datetime
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
 #
@@ -23,7 +25,9 @@ class TweetRequest < ApplicationRecord
   validates :text, format: %r[#{Rails.env.production? ? 'https://egotter\.com' : 'https://egotter\.com|http://localhost:3000'}]
 
   def perform!
-    client.update(text)
+    tweet = client.update(text)
+    update(tweet_id: tweet.id)
+    tweet
   end
 
   def client
