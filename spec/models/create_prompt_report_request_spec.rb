@@ -63,9 +63,9 @@ RSpec.describe CreatePromptReportRequest, type: :model do
   end
 
   describe '#error_check!' do
-    subject { request.error_check! }
+    subject { request.error_check!('flag') }
     it do
-      expect(CreatePromptReportValidator).to receive_message_chain(:new, :validate!).with(request: request).with(no_args)
+      expect(CreatePromptReportValidator).to receive_message_chain(:new, :validate!).with(request: request).with('flag')
       is_expected.to be_truthy
       expect(request.instance_variable_get(:@error_check)).to be_truthy
     end
