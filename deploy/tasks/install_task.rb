@@ -11,16 +11,24 @@ module Tasks
         DeployRuby.logger
       end
 
-      def yellow(str)
-        logger.info "\e[33m#{str}\e[0m"
+      def red(str)
+        "\e[31m#{str}\e[0m"
       end
 
       def green(str)
-        logger.info "\e[32m#{str}\e[0m"
+        "\e[32m#{str}\e[0m"
       end
 
-      def red(str)
-        logger.info "\e[31m#{str}\e[0m"
+      def blue(str)
+        "\e[34m#{str}\e[0m"
+      end
+
+      def cyan(str)
+        "\e[36m#{str}\e[0m"
+      end
+
+      def yellow(str)
+        "\e[33m#{str}\e[0m"
       end
 
       def upload_file(host, src_path, dst_path)
@@ -65,15 +73,36 @@ module Tasks
       end
 
       def frontend(cmd, exception: true)
-        yellow("localhost #{cmd}")
+        logger.info yellow("localhost #{cmd}")
         system(cmd, exception: exception)
       end
 
       def exec_command(host, cmd, dir: '/var/egotter', exception: true)
-        raise 'Hostname is empty.' if host.to_s.empty?
+        if host.to_s.empty?
+          logger.error red('Hostname is empty.')
+          exit
+        end
+
         cmd = "cd #{dir} && #{cmd}"
-        green("#{host} #{cmd}")
-        system('ssh', host, cmd, exception: exception)
+        logger.info cyan(%Q(ssh #{host})) + ' ' + green(%Q("#{cmd}"))
+
+        out, err, status = Open3.capture3(%Q(ssh #{host} "#{cmd}"))
+        if status.exitstatus == 0
+          logger.info out
+          logger.info blue("true(success)")
+        else
+          if exception
+            logger.info out
+            logger.error red(err)
+            logger.error red("false(exit)")
+            exit
+          else
+            logger.info out
+            logger.info err
+          end
+        end
+
+        status.exitstatus == 0
       end
     end
 
@@ -113,7 +142,7 @@ module Tasks
       def pull_latest_code
         backend('git fetch origin >/dev/null')
         backend('git pull origin master >/dev/null')
-        backend('bundle check || bundle install --quiet --path .bundle --without test development')
+        backend('bundle install --path .bundle --without test development | grep -v Using')
         backend('RAILS_ENV=production bundle exec rake assets:precompile')
         backend('RAILS_ENV=production bundle exec rake assets:sync:download')
         self
@@ -181,7 +210,7 @@ module Tasks
       def install
         sync.restart_processes
       rescue => e
-        red("Terminate #{@id} since #{e.class} is raised")
+        logger.error red("Terminate #{@id} since #{e.class} is raised")
         ::DeployRuby::Aws::EC2.terminate_instance(@id)
         raise
       end
@@ -244,7 +273,7 @@ module Tasks
       def install
         sync.restart_processes
       rescue => e
-        red("Terminate #{@id} as #{e.class} is raised")
+        logger.error red("Terminate #{@id} as #{e.class} is raised")
         before_terminate
         ::DeployRuby::Aws::EC2.terminate_instance(@id)
         raise
