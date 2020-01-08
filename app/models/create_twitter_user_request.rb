@@ -28,97 +28,78 @@ class CreateTwitterUserRequest < ApplicationRecord
   validates :user_id, presence: true
   validates :uid, presence: true
 
-  def perform!
-    raise Unauthorized if user&.unauthorized?
+  # context:
+  #   :prompt_report
+  def perform!(context = nil)
+    perform_validation!(context)
 
-    twitter_user = build_twitter_user
-
-    # Don't call #invalid? because it clears errors
-    raise RecordInvalid.new(twitter_user) if twitter_user.errors.any?
+    @snapshot.build_by(@resources)
+    twitter_user = @snapshot.twitter_user
+    twitter_user.user_id = user_id
 
     if twitter_user.save
       update(twitter_user_id: twitter_user.id)
-      return twitter_user
-    end
-
-    if TwitterUser.exists?(uid: twitter_user.uid)
-      raise NotChanged.new('After build')
+      twitter_user
     else
       raise RecordInvalid.new(twitter_user)
     end
   end
 
-  # These methods are not registered as validation callbacks due to too heavy.
-  #
-  # #too_short_create_interval?
-  # #no_need_to_import_friendships?
-  # #diff.empty?
-  #
-  def build_twitter_user
-    previous_twitter_user = TwitterUser.latest_by(uid: uid)
+  def perform_validation!(context)
+    raise Unauthorized if user&.unauthorized?
+    raise TooShortCreateInterval if TwitterUser.too_short_creation_interval?(uid: uid)
+    raise TooManyFriends.new('Already exists') if search_limited_and_already_persisted?
 
-    unless previous_twitter_user
-      fetched_user = twitter_user = relations = nil
-      benchmark('fetch_user') { fetched_user = fetch_user }
-      benchmark('TwitterUser.build_by') { twitter_user = TwitterUser.build_by(user: fetched_user) }
-      benchmark('fetch_relations!', twitter_user) { relations = fetch_relations!(twitter_user) }
-      benchmark('build_friends_and_followers', twitter_user) { twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
-      benchmark('build_other_relations', twitter_user) { twitter_user.build_other_relations(relations) }
-      twitter_user.user_id = user_id
-      return twitter_user
+    @snapshot = TwitterUserSnapshot.initialize_by(user: fetch_user)
+
+    begin
+      @resources = dispatch_resources_fetcher(context).fetch
+    rescue Error => e
+      raise
+    rescue Twitter::Error::TooManyRequests => e
+      raise
+    rescue => e
+      if ServiceStatus.connection_reset_by_peer?(e)
+        retry
+      else
+        raise dispatch_exception(e)
+      end
     end
 
-    # The purpose of this code is to determine as soon as possible whether a record can be created.
+    @snapshot.build_friends(@resources[:friend_ids]).
+        build_followers(@resources[:follower_ids])
 
-    raise TooShortCreateInterval if previous_twitter_user.too_short_create_interval?
-
-    fetched_user = current_twitter_user = relations = nil
-    benchmark('fetch_user') { fetched_user = fetch_user }
-    benchmark('TwitterUser.build_by') { current_twitter_user = TwitterUser.build_by(user: fetched_user) }
-    benchmark('fetch_relations!', current_twitter_user) { relations = fetch_relations!(current_twitter_user) }
-    benchmark('build_friends_and_followers', current_twitter_user) { current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
-
-    if current_twitter_user.no_need_to_import_friendships?
-      raise TooManyFriends.new('Already exists')
+    unless TwitterUser.exists?(uid: uid)
+      return true
     end
 
-    diff_not_found = false
-    benchmark('diff', current_twitter_user) { diff_not_found = previous_twitter_user.diff(current_twitter_user).empty? }
-
-    if diff_not_found
+    if TwitterUser.friendships_changed?(uid, @snapshot)
+      true
+    else
       raise NotChanged.new('Before build')
     end
+  end
 
-    benchmark('build_other_relations', current_twitter_user) { current_twitter_user.build_other_relations(relations) }
-    current_twitter_user.user_id = user_id
-    current_twitter_user
+  def dispatch_exception(ex)
+    if AccountStatus.unauthorized?(ex)
+      Unauthorized
+    elsif AccountStatus.protected?(ex)
+      Protected
+    elsif AccountStatus.blocked?(ex)
+      Blocked
+    elsif AccountStatus.temporarily_locked?(ex)
+      Forbidden
+    elsif ServiceStatus.service_unavailable?(ex)
+      ServiceUnavailable
+    elsif ServiceStatus.internal_server_error?(ex)
+      InternalServerError
+    else
+      Unknown.new("#{__method__} #{ex.class} #{ex.message}")
+    end
+  end
 
-  rescue Error => e
-    raise
-  rescue Twitter::Error::TooManyRequests => e
-    raise
-  rescue Twitter::Error::Forbidden => e
-    if e.message.start_with? 'To protect our users from spam and other malicious activity, this account is temporarily locked.'
-      raise Forbidden
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
-  rescue => e
-    if AccountStatus.unauthorized?(e)
-      raise Unauthorized
-    elsif AccountStatus.protected?(e)
-      raise Protected
-    elsif AccountStatus.blocked?(e)
-      raise Blocked
-    elsif ServiceStatus.service_unavailable?(e)
-      raise ServiceUnavailable
-    elsif ServiceStatus.internal_server_error?(e)
-      raise InternalServerError
-    elsif ServiceStatus.connection_reset_by_peer?(e)
-      retry
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
+  def search_limited_and_already_persisted?
+    SearchLimitation.limited?(fetch_user, signed_in: user) && TwitterUser.exists?(uid: uid)
   end
 
   def fetch_user
@@ -131,12 +112,28 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def fetch_relations!(twitter_user)
-    @fetch_relations ||= TwitterUserFetcher.new(twitter_user, client: client, login_user: user).fetch
+  def dispatch_resources_fetcher(context)
+    fetcher_class =
+        if context == :prompt_report
+          TwitterUserFetcher::PromptReportFetcher
+        else
+          case [search_oneself?, SearchLimitation.limited?(fetch_user, signed_in: user)]
+          when [true, true] then TwitterUserFetcher::SearchOneselfWithoutFriendshipsFetcher
+          when [true, false] then TwitterUserFetcher::SearchOneselfFetcher
+          when [false, true] then TwitterUserFetcher::SearchSomeoneWithoutFriendshipsFetcher
+          when [false, false] then TwitterUserFetcher::SearchSomeoneFetcher
+          end
+        end
+
+    fetcher_class.new(client, uid, fetch_user[:screen_name])
+  end
+
+  def search_oneself?
+    user && user.uid == uid
   end
 
   def client
-    @client ||= user ? user.api_client : Bot.api_client
+    @client ||= (!@user.nil? ? @user.api_client : Bot.api_client)
   end
 
   def benchmark(message, twitter_user = nil, &block)

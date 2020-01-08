@@ -1,57 +1,72 @@
-class TwitterUserFetcher
-  attr_reader :uid, :client, :login_user, :twitter_user
+module TwitterUserFetcher
+  class Fetcher
+    def initialize(client, uid, screen_name)
+      @client = client
+      @uid = uid
+      @screen_name = screen_name
+    end
 
-  def initialize(twitter_user, client:, login_user:)
-    @uid = twitter_user.uid.to_i
-    @client = client
-    @login_user = login_user
-    @twitter_user = twitter_user
-  end
+    def search_query
+      "@#{@screen_name}"
+    end
 
-  def search_query
-    "@#{twitter_user.screen_name}"
-  end
-
-  def fetch
-    fetch_relations # This process takes a few seconds.
-  end
-
-  private
-
-  # Not using uniq for mentions, search_results and favorites intentionally
-  def fetch_relations
-    reject_names = reject_relation_names
-    signatures = fetch_signatures(reject_names)
-    fetch_results =
-      client.parallel do |batch|
-        signatures.each { |signature| batch.send(signature[:method], *signature[:args]) }
+    def fetch
+      @client.parallel do |batch|
+        method_args.each { |args| batch.send(*args) }
       end
-
-    signatures.each_with_object({}).with_index do |(item, memo), i|
-      memo[item[:method]] = fetch_results[i]
     end
   end
 
-  def fetch_signatures(reject_names)
-    [
-      {method: :friend_ids,        args: [uid]},
-      {method: :follower_ids,      args: [uid]},
-      {method: :user_timeline,     args: [uid, {include_rts: false}]},     # replying
-      sign_in_yourself? ? {method: :mentions_timeline, args: []} : {method: :search, args: [search_query]}, # replied
-      {method: :favorites,         args: [uid]}      # favoriting
-    ].delete_if { |item| reject_names.include?(item[:method]) }
-  end
-
-  def reject_relation_names
-    case [sign_in_yourself?, SearchLimitation.limited?(@twitter_user, signed_in: @login_user)]
-      when [true, true]   then %i(friend_ids follower_ids)
-      when [true, false]  then []
-      when [false, true]  then %i(friend_ids follower_ids)
-      when [false, false] then []
+  class SearchOneselfFetcher < Fetcher
+    def method_args
+      [
+          [:friend_ids, @uid],
+          [:follower_ids, @uid],
+          [:user_timeline, @uid, {include_rts: false}], # replying
+          [:mentions_timeline], # replied
+          [:favorites, @uid], # favoriting
+      ]
     end
   end
 
-  def sign_in_yourself?
-    login_user&.uid&.to_i == uid
+  class SearchOneselfWithoutFriendshipsFetcher < Fetcher
+    def method_args
+      [
+          [:user_timeline, @uid, {include_rts: false}], # replying
+          [:mentions_timeline], # replied
+          [:favorites, @uid], # favoriting
+      ]
+    end
+  end
+
+  class SearchSomeoneFetcher < Fetcher
+    def method_args
+      [
+          [:friend_ids, @uid],
+          [:follower_ids, @uid],
+          [:user_timeline, @uid, {include_rts: false}], # replying
+          [:search, search_query], # replied
+          [:favorites, @uid], # favoriting
+      ]
+    end
+  end
+
+  class SearchSomeoneWithoutFriendshipsFetcher < Fetcher
+    def method_args
+      [
+          [:user_timeline, @uid, {include_rts: false}], # replying
+          [:search, search_query], # replied
+          [:favorites, @uid], # favoriting
+      ]
+    end
+  end
+
+  class PromptReportFetcher < Fetcher
+    def method_args
+      [
+          [:friend_ids, @uid],
+          [:follower_ids, @uid],
+      ]
+    end
   end
 end

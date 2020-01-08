@@ -4,6 +4,9 @@ module Concerns::TwitterUser::Dirty
   extend ActiveSupport::Concern
 
   class_methods do
+    def friendships_changed?(uid, snapshot)
+      (record = latest_by(uid: uid)) && record.diff(snapshot).any?
+    end
   end
 
   included do
@@ -22,9 +25,9 @@ module Concerns::TwitterUser::Dirty
       values = [older.send(attr), newer.send(attr)]
       values = values.map(&:sort) if attr.in?(%i(friend_uids follower_uids))
 
-      logger.debug {"#{__method__} #{screen_name} #{attr} #{values.inspect}"}
+      logger.debug { "#{__method__} #{screen_name} #{attr} #{values.inspect}" }
 
       [attr, values]
-    end.to_h.reject {|_, v| v[0] == v[1]}
+    end.to_h.reject { |_, v| v[0] == v[1] }
   end
 end

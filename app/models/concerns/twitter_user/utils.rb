@@ -11,6 +11,7 @@ module Concerns::TwitterUser::Utils
 
   # #diff calls this method in context of new record
   def friend_uids
+    logger.warn "DEBUG #{__method__}"
     if new_record?
       @friend_uids
     else
@@ -26,11 +27,13 @@ module Concerns::TwitterUser::Utils
   end
 
   def friend_uids=(uids)
+    logger.warn "DEBUG #{__method__}"
     @friend_uids = uids
   end
 
   # #diff calls this method in context of new record
   def follower_uids
+    logger.warn "DEBUG #{__method__}"
     if new_record?
       @follower_uids
     else
@@ -46,6 +49,7 @@ module Concerns::TwitterUser::Utils
   end
 
   def follower_uids=(uids)
+    logger.warn "DEBUG #{__method__}"
     @follower_uids = uids
   end
 
@@ -55,6 +59,19 @@ module Concerns::TwitterUser::Utils
 
   CREATE_RECORD_INTERVAL = Rails.configuration.x.constants['twitter_users']['create_record_interval']
 
+  class_methods do
+    # Since the result can be calculated only by existing records,
+    # this method is implemented as a class method instead of the validation method or instance method.
+    def too_short_creation_interval?(uid:)
+      (record = latest_by(uid: uid)) && CREATE_RECORD_INTERVAL.seconds.ago < record.created_at
+    end
+
+    def friendships_changed?(uid:)
+
+    end
+  end
+
+  # TODO Remove later
   def too_short_create_interval?(interval = nil)
     interval = CREATE_RECORD_INTERVAL unless interval
     interval.seconds.ago < created_at

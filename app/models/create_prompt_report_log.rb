@@ -55,7 +55,7 @@ class CreatePromptReportLog < ApplicationRecord
       order(created_at: :desc).find_by(condition)
     end
 
-    def error_logs_for_one_day(user_id:, request_id:)
+    def error_logs_for_one_day(user_id:, request_id:, limit: 3)
       where(user_id: user_id).
           where.not(request_id: request_id).
           where(created_at: 1.day.ago..Time.zone.now).
@@ -66,7 +66,7 @@ class CreatePromptReportLog < ApplicationRecord
           where.not(error_class: CreatePromptReportRequest::InitializationStarted).
           where.not(error_class: CreateTwitterUserRequest::TooManyRequests).
           order(created_at: :desc).
-          limit(3)
+          limit(limit)
     end
   end
 end
