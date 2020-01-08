@@ -28,10 +28,12 @@ class CreateTwitterUserRequest < ApplicationRecord
   validates :user_id, presence: true
   validates :uid, presence: true
 
-  def perform!
+  # context:
+  #   :prompt_reports
+  def perform!(context = nil)
     raise Unauthorized if user&.unauthorized?
 
-    twitter_user = build_twitter_user
+    twitter_user = build_twitter_user(context)
 
     # Don't call #invalid? because it clears errors
     raise RecordInvalid.new(twitter_user) if twitter_user.errors.any?
@@ -54,14 +56,14 @@ class CreateTwitterUserRequest < ApplicationRecord
   # #no_need_to_import_friendships?
   # #diff.empty?
   #
-  def build_twitter_user
+  def build_twitter_user(context = nil)
     previous_twitter_user = TwitterUser.latest_by(uid: uid)
 
     unless previous_twitter_user
       fetched_user = twitter_user = relations = nil
       benchmark('fetch_user') { fetched_user = fetch_user }
       benchmark('TwitterUser.build_by') { twitter_user = TwitterUser.build_by(user: fetched_user) }
-      benchmark('fetch_relations!', twitter_user) { relations = fetch_relations!(twitter_user) }
+      benchmark('fetch_relations!', twitter_user) { relations = fetch_relations!(twitter_user, context) }
       benchmark('build_friends_and_followers', twitter_user) { twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
       benchmark('build_other_relations', twitter_user) { twitter_user.build_other_relations(relations) }
       twitter_user.user_id = user_id
@@ -75,7 +77,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     fetched_user = current_twitter_user = relations = nil
     benchmark('fetch_user') { fetched_user = fetch_user }
     benchmark('TwitterUser.build_by') { current_twitter_user = TwitterUser.build_by(user: fetched_user) }
-    benchmark('fetch_relations!', current_twitter_user) { relations = fetch_relations!(current_twitter_user) }
+    benchmark('fetch_relations!', current_twitter_user) { relations = fetch_relations!(current_twitter_user, context) }
     benchmark('build_friends_and_followers', current_twitter_user) { current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
 
     if current_twitter_user.no_need_to_import_friendships?
@@ -131,8 +133,8 @@ class CreateTwitterUserRequest < ApplicationRecord
     end
   end
 
-  def fetch_relations!(twitter_user)
-    @fetch_relations ||= TwitterUserFetcher.new(twitter_user, client: client, login_user: user).fetch
+  def fetch_relations!(twitter_user, context)
+    @fetch_relations ||= TwitterUserFetcher.new(twitter_user, client: client, login_user: user, context: context).fetch
   end
 
   def client

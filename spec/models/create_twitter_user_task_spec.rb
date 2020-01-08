@@ -13,12 +13,13 @@ RSpec.describe CreateTwitterUserTask, type: :model do
   let(:task) { CreateTwitterUserTask.new(request) }
 
   describe '#start!' do
-    subject { task.start! }
+    let(:context) { 'context' }
+    subject { task.start!(context) }
 
     context 'request.perform! raises Twitter::Error::TooManyRequests' do
       before do
         Redis.client.flushdb
-        allow(request).to receive(:perform!).with(no_args).and_raise(Twitter::Error::TooManyRequests)
+        allow(request).to receive(:perform!).with(context).and_raise(Twitter::Error::TooManyRequests)
       end
 
       it do

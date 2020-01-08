@@ -72,7 +72,7 @@ class CreatePromptReportTask
         user_id: user.id,
         uid: user.uid)
 
-    CreateTwitterUserTask.new(create_request).start!.twitter_user
+    CreateTwitterUserTask.new(create_request).start!(:prompt_reports).twitter_user
 
   rescue CreateTwitterUserRequest::NotChanged,
       CreateTwitterUserRequest::TooShortCreateInterval,

@@ -7,13 +7,13 @@ class CreateTwitterUserTask
   end
 
   # Create a record or raise an exception
-  def start!
+  def start!(context = nil)
     @log = CreateTwitterUserLog.create_by(request: request)
 
     # Regardless of whether or not the TwitterUser record is created, the TwitterDB::User record is updated.
     CreateTwitterDBUserWorker.perform_async([request.uid], user_id: request.user_id, force_update: true, enqueued_by: 'CreateTwitterUserTask request.uid')
 
-    @twitter_user = request.perform!
+    @twitter_user = request.perform!(context)
     request.finished!
     @log.update(status: true)
 

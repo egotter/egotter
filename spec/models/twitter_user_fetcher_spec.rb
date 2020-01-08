@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe TwitterUserFetcher do
   let(:twitter_user) { build(:twitter_user) }
-  let(:fetcher) { TwitterUserFetcher.new(twitter_user, client: nil, login_user: nil) }
+  let(:fetcher) { TwitterUserFetcher.new(twitter_user, client: nil, login_user: nil, context: nil) }
 
   describe '#reject_relation_names' do
     subject { fetcher.send(:reject_relation_names) }

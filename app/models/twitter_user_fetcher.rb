@@ -1,11 +1,12 @@
 class TwitterUserFetcher
   attr_reader :uid, :client, :login_user, :twitter_user
 
-  def initialize(twitter_user, client:, login_user:)
+  def initialize(twitter_user, client:, login_user:, context:)
     @uid = twitter_user.uid.to_i
     @client = client
     @login_user = login_user
     @twitter_user = twitter_user
+    @context = context
   end
 
   def search_query
@@ -22,6 +23,11 @@ class TwitterUserFetcher
   def fetch_relations
     reject_names = reject_relation_names
     signatures = fetch_signatures(reject_names)
+
+    if @context == :prompt_reports
+      signatures.delete_if { |hash| hash[:method] == :user_timeline }
+    end
+
     fetch_results =
       client.parallel do |batch|
         signatures.each { |signature| batch.send(signature[:method], *signature[:args]) }
