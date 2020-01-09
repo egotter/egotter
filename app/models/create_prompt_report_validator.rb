@@ -6,11 +6,11 @@ class CreatePromptReportValidator
     @user = request.user
   end
 
-  def validate!(ignore_request_interval = false)
+  def validate!
     raise CreatePromptReportRequest::Unauthorized unless credentials_verified?
     raise CreatePromptReportRequest::TooManyErrors.new(@too_many_errors_reasons) if too_many_errors?
     raise CreatePromptReportRequest::PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
-    raise CreatePromptReportRequest::TooShortRequestInterval if !ignore_request_interval && too_short_request_interval?
+    raise CreatePromptReportRequest::TooShortRequestInterval if too_short_request_interval?
     raise CreatePromptReportRequest::Unauthorized unless user.authorized?
     raise CreatePromptReportRequest::ReportDisabled unless user.notification_setting.dm_enabled?
     raise CreatePromptReportRequest::TooShortSendInterval unless user.notification_setting.prompt_report_interval_ok?

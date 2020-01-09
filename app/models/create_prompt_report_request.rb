@@ -71,9 +71,9 @@ class CreatePromptReportRequest < ApplicationRecord
     end
   end
 
-  def error_check!(ignore_request_interval = false)
+  def error_check!
     unless @error_check
-      CreatePromptReportValidator.new(request: self).validate!(ignore_request_interval)
+      CreatePromptReportValidator.new(request: self).validate!
       @error_check = true
     end
   end
