@@ -10,10 +10,10 @@ class CreatePromptReportValidator
     raise CreatePromptReportRequest::Unauthorized unless credentials_verified?
     raise CreatePromptReportRequest::TooManyErrors.new(@too_many_errors_reasons) if too_many_errors?
     raise CreatePromptReportRequest::PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
-    raise CreatePromptReportRequest::TooShortRequestInterval if too_short_request_interval?
+    #raise CreatePromptReportRequest::TooShortRequestInterval.new(@latest_request) if too_short_request_interval?
     raise CreatePromptReportRequest::Unauthorized unless user.authorized?
     raise CreatePromptReportRequest::ReportDisabled unless user.notification_setting.dm_enabled?
-    raise CreatePromptReportRequest::TooShortSendInterval unless user.notification_setting.prompt_report_interval_ok?
+    raise CreatePromptReportRequest::TooShortSendInterval.new(user) unless user.notification_setting.prompt_report_interval_ok?
     raise CreatePromptReportRequest::UserSuspended if suspended?
     raise CreatePromptReportRequest::TooManyFriends if SearchLimitation.limited?(fetch_user, signed_in: true)
     raise CreatePromptReportRequest::EgotterBlocked if blocked?
@@ -60,7 +60,13 @@ class CreatePromptReportValidator
     CreatePromptReportRequest.where(user_id: user.id).
         where.not(id: request.id).
         interval_ng_user_ids.
-        any?
+        any?.tap do |val|
+      if val
+        @latest_request = CreatePromptReportRequest.where(user_id: user.id).
+            where.not(id: request.id).
+            order(created_at: :desc).first
+      end
+    end
   end
 
   def suspended?

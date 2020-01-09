@@ -243,9 +243,15 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class TooShortRequestInterval < Error
+    def initialize(request)
+      super("The last time is #{request.created_at.to_s}.")
+    end
   end
 
   class TooShortSendInterval < Error
+    def initialize(user)
+      super("The last time is #{user.notification_setting.last_dm_at.to_s}. The interval is #{user.notification_setting.report_interval}.")
+    end
   end
 
   class Unauthorized < Error

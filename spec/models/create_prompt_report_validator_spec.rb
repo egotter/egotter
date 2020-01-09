@@ -134,8 +134,11 @@ RSpec.describe CreatePromptReportValidator, type: :model do
     it { is_expected.to be_falsey }
 
     context 'Recently created record found' do
-      before { CreatePromptReportRequest.create!(user_id: user.id) }
-      it { is_expected.to be_truthy }
+      let!(:req) { CreatePromptReportRequest.create!(user_id: user.id) }
+      it do
+        is_expected.to be_truthy
+        expect(validator).to satisfy { |v| v.instance_variable_get(:@latest_request).id == req.id }
+      end
     end
   end
 
