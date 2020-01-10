@@ -2,11 +2,12 @@
 #
 # Table name: create_prompt_report_requests
 #
-#  id          :bigint(8)        not null, primary key
-#  user_id     :integer          not null
-#  finished_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id               :bigint(8)        not null, primary key
+#  user_id          :integer          not null
+#  skip_error_check :boolean          default(FALSE), not null
+#  finished_at      :datetime
+#  created_at       :datetime         not null
+#  updated_at       :datetime         not null
 #
 # Indexes
 #
@@ -72,6 +73,8 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   def error_check!
+    return true if skip_error_check
+
     unless @error_check
       CreatePromptReportValidator.new(request: self).validate!
       @error_check = true

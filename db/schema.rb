@@ -286,6 +286,7 @@ ActiveRecord::Schema.define(version: 2019_12_14_123932) do
 
   create_table "create_prompt_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.boolean "skip_error_check", default: false, null: false
     t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

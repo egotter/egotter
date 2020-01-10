@@ -64,10 +64,23 @@ RSpec.describe CreatePromptReportRequest, type: :model do
 
   describe '#error_check!' do
     subject { request.error_check! }
-    it do
-      expect(CreatePromptReportValidator).to receive_message_chain(:new, :validate!).with(request: request).with(no_args)
-      is_expected.to be_truthy
-      expect(request.instance_variable_get(:@error_check)).to be_truthy
+
+    context 'When #skip_error_check is true' do
+      before { request.update!(skip_error_check: true) }
+      it do
+        expect(CreatePromptReportValidator).not_to receive(:new)
+        is_expected.to be_truthy
+        expect(request.instance_variable_get(:@error_check)).to be_nil
+      end
+    end
+
+    context 'When #skip_error_check is false' do
+      before { request.update!(skip_error_check: false) }
+      it do
+        expect(CreatePromptReportValidator).to receive_message_chain(:new, :validate!).with(request: request).with(no_args)
+        is_expected.to be_truthy
+        expect(request.instance_variable_get(:@error_check)).to be_truthy
+      end
     end
   end
 
