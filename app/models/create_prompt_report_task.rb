@@ -2,27 +2,6 @@
 class CreatePromptReportTask
   attr_reader :request, :log
 
-  module Instrumentation
-    def start!(*args, &blk)
-      start = Time.zone.now
-      super
-
-      if (time = Time.zone.now - start) > 30
-        notice = Airbrake.build_notice('CreatePromptReportTask took more than 30 seconds')
-        notice[:context][:component] = 'CreatePromptReportTask'
-        notice[:params][:time] = time
-        notice[:params][:user] = {id: request.user.id}
-        notice[:params][:request] = request.attributes
-        notice[:params][:size] = TwitterUser.where(uid: request.user.uid).size
-        notice[:params][:twitter_user] = TwitterUser.latest_by(uid: request.user.uid)&.attributes
-        Airbrake.notify(notice)
-
-        Rails.logger.info "Benchmark CreatePromptReportTask #{request.id} It took #{time} seconds. #{notice[:params][:size]} #{notice[:params][:twitter_user]}"
-      end
-    end
-  end
-  prepend Instrumentation
-
   def initialize(request)
     @request = request
   end
@@ -30,18 +9,24 @@ class CreatePromptReportTask
   def start!
     @log = CreatePromptReportLog.create_by(request: request)
 
+    benchmark('request.error_check!') { request.error_check! }
+
     twitter_user = nil
 
-    benchmark('request.error_check!') { request.error_check! }
     begin
       benchmark('create_twitter_user!') { twitter_user = create_twitter_user!(request.user) }
     ensure
       # Regardless of whether or not the TwitterUser record is created, the Unfriendship and the Unfollowership are updated.
       # Since the internal logic has been changed, otherwise the unfriends and the unfollowers will remain inaccurate.
-      persisted = TwitterUser.latest_by(uid: request.user.uid)
-      benchmark('update_unfriendships') { update_unfriendships(persisted) }
-      benchmark('update_unfollowerships') { update_unfollowerships(persisted) }
+      if (persisted = TwitterUser.latest_by(uid: request.user.uid))
+        unfriend_uids = unfollower_uids = nil
+        benchmark('calculate_unfriendships') { unfriend_uids = persisted.calc_unfriend_uids }
+        benchmark('update_unfriendships') { update_unfriendships(persisted.uid, unfriend_uids) }
+        benchmark('calculate_unfollowerships') { unfollower_uids = persisted.calc_unfollower_uids }
+        benchmark('update_unfollowerships') { update_unfollowerships(persisted.uid, unfollower_uids) }
+      end
     end
+
     benchmark('request.perform!') { request.perform!(twitter_user) }
 
     request.finished!
@@ -80,21 +65,21 @@ class CreatePromptReportTask
     nil
   end
 
-  def update_unfriendships(twitter_user)
-    return unless twitter_user
+  def update_unfriendships(uid, unfriend_uids)
+    Unfriendship.import_from!(uid, unfriend_uids)
 
-    Unfriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      options = {user_id: request.user.id, compressed: true, enqueued_by: 'CreatePromptReportTask Unfriendship.import_by!'}
+    unfriend_uids.each_slice(100) do |uids|
+      options = {user_id: request.user.id, compressed: true, enqueued_by: 'CreatePromptReportTask Unfriendship.import_from!'}
       CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), options)
     end
   end
 
   # This method was separated from the #update_unfriendships for benchmarking.
-  def update_unfollowerships(twitter_user)
-    return unless twitter_user
+  def update_unfollowerships(uid, unfollower_uids)
+    Unfollowership.import_from!(uid, unfollower_uids)
 
-    Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      options = {user_id: request.user.id, compressed: true, force_update: true, enqueued_by: ' CreatePromptReportTask Unfollowership.import_by!'}
+    unfollower_uids.each_slice(100) do |uids|
+      options = {user_id: request.user.id, compressed: true, force_update: true, enqueued_by: ' CreatePromptReportTask Unfollowership.import_from!'}
       CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), options)
     end
   end
@@ -113,4 +98,25 @@ class CreatePromptReportTask
   def benchmark(message, &block)
     ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} #{message}", level: :info, &block)
   end
+
+  module Instrumentation
+    def start!(*args, &blk)
+      start = Time.zone.now
+      super
+
+      if (time = Time.zone.now - start) > 30
+        notice = Airbrake.build_notice('CreatePromptReportTask took more than 30 seconds')
+        notice[:context][:component] = 'CreatePromptReportTask'
+        notice[:params][:time] = time
+        notice[:params][:user] = {id: request.user.id}
+        notice[:params][:request] = request.attributes
+        notice[:params][:size] = TwitterUser.where(uid: request.user.uid).size
+        notice[:params][:twitter_user] = TwitterUser.latest_by(uid: request.user.uid)&.attributes
+        Airbrake.notify(notice)
+
+        Rails.logger.info "Benchmark CreatePromptReportTask #{request.id} It took #{time} seconds. size=#{notice[:params][:size]} #{notice[:params][:twitter_user]}"
+      end
+    end
+  end
+  prepend Instrumentation
 end

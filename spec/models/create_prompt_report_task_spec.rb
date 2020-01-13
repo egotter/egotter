@@ -6,14 +6,25 @@ RSpec.describe CreatePromptReportTask, type: :model do
   let(:task) { described_class.new(request) }
 
   describe '#start!' do
-    let(:twitter_user) { create(:twitter_user, uid: user.uid) }
+    let(:twitter_user) { build(:twitter_user, uid: user.uid) }
+    let(:persisted_record) { build(:twitter_user, uid: user.uid) }
     subject { task.start! }
+
+    before do
+      twitter_user.save!(validate: false)
+      allow(TwitterUser).to receive(:latest_by).with(uid: request.user.uid).and_return(persisted_record)
+    end
 
     it do
       expect(request).to receive(:error_check!).with(no_args)
       expect(task).to receive(:create_twitter_user!).with(request.user).and_return(twitter_user)
-      expect(task).to receive(:update_unfriendships).with(twitter_user)
-      expect(task).to receive(:update_unfollowerships).with(twitter_user)
+
+      expect(persisted_record).to receive(:calc_unfriend_uids).and_return([1])
+      expect(task).to receive(:update_unfriendships).with(persisted_record.uid, [1])
+
+      expect(persisted_record).to receive(:calc_unfollower_uids).and_return([2])
+      expect(task).to receive(:update_unfollowerships).with(persisted_record.uid, [2])
+
       expect(request).to receive(:perform!).with(twitter_user)
       expect(request).to receive(:finished!).with(no_args)
       subject
@@ -25,8 +36,8 @@ RSpec.describe CreatePromptReportTask, type: :model do
         allow(task).to receive(:create_twitter_user!).with(anything).and_raise('Anything')
       end
       it do
-        expect(task).to receive(:update_unfriendships).with(twitter_user)
-        expect(task).to receive(:update_unfollowerships).with(twitter_user)
+        expect(task).to receive(:update_unfriendships).with(twitter_user.uid, anything)
+        expect(task).to receive(:update_unfollowerships).with(twitter_user.uid, anything)
         expect { subject }.to raise_error('Anything')
       end
     end
@@ -37,6 +48,7 @@ RSpec.describe CreatePromptReportTask, type: :model do
         allow(request).to receive(:error_check!).with(no_args)
         allow(task).to receive(:create_twitter_user!).with(request.user).and_return(twitter_user)
         allow(request).to receive(:perform!).with(twitter_user)
+        allow(TwitterUser).to receive(:latest_by).with(uid: request.user.uid).and_return(twitter_user)
       end
       it do
         expect(task).to receive(:update_api_caches).with(twitter_user)
@@ -50,6 +62,7 @@ RSpec.describe CreatePromptReportTask, type: :model do
         allow(request).to receive(:error_check!).with(no_args)
         allow(task).to receive(:create_twitter_user!).with(request.user).and_return(twitter_user)
         allow(request).to receive(:perform!).with(twitter_user)
+        allow(TwitterUser).to receive(:latest_by).with(uid: request.user.uid).and_return(twitter_user)
       end
       it do
         expect(task).to receive(:update_api_caches).with(twitter_user)
@@ -92,22 +105,24 @@ RSpec.describe CreatePromptReportTask, type: :model do
 
   describe '#update_unfriendships' do
     let(:record) { build(:twitter_user, uid: user.uid) }
+    let(:uids) { [1, 2, 3] }
     before { record.save!(validate: false) }
-    subject { task.update_unfriendships(record) }
+    subject { task.update_unfriendships(record.uid, uids) }
 
     it do
-      expect(Unfriendship).to receive(:import_by!).with(twitter_user: record).and_call_original
+      expect(Unfriendship).to receive(:import_from!).with(record.uid, uids).and_call_original
       subject
     end
   end
 
   describe '#update_unfollowerships' do
     let(:record) { build(:twitter_user, uid: user.uid) }
+    let(:uids) { [1, 2, 3] }
     before { record.save!(validate: false) }
-    subject { task.update_unfollowerships(record) }
+    subject { task.update_unfollowerships(record.uid, uids) }
 
     it do
-      expect(Unfollowership).to receive(:import_by!).with(twitter_user: record).and_call_original
+      expect(Unfollowership).to receive(:import_from!).with(record.uid, uids).and_call_original
       subject
     end
   end

@@ -22,6 +22,7 @@ class Unfollowership < ApplicationRecord
   end
 
   class << self
+    # TODO Want to remove later
     def import_by!(twitter_user:)
       uids = twitter_user.calc_unfollower_uids
       import_from!(twitter_user.uid, uids)
