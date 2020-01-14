@@ -38,6 +38,7 @@ module S3
             uid: uid,
             screen_name: screen_name,
             tweets: ::S3::Util.pack(tweets),
+            time: Time.zone.now.to_s,
         }.to_json
       end
 
