@@ -23,7 +23,7 @@ module Concerns::TwitterUser::Calculator
 
   # private
   def calc_favorite_uids
-    favorites.map {|fav| fav&.user&.id}.compact
+    favorite_tweets.map {|fav| fav&.user&.id}.compact
   end
 
   # private
