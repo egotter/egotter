@@ -71,7 +71,6 @@ gem 'aws-sdk-ec2', require: false
 gem 'aws-sdk-elasticloadbalancingv2', require: false
 gem 'stripe'
 gem 'ahoy_matey'
-gem 'rubocop', require: false
 
 # Datadog APM
 gem 'dogstatsd-ruby'
@@ -104,6 +103,7 @@ group :development do
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
   gem 'spring-watcher-listen', '~> 2.0.0'
+  gem 'rubocop', require: false
 end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
