@@ -13,6 +13,7 @@
   - messaging
   - misc
   - creating_low
+  - deleting_low
   - CreateTestReportWorker
   - ForceCreatePromptReportWorker
   - CreatePromptReportWorker

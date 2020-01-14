@@ -29,9 +29,9 @@ module Concerns::TwitterUser::Reset
 
     logger.info {"checkpoint 2 #{result.inspect}"}
 
-    [::TwitterDB::Status, ::TwitterDB::Favorite, ::TwitterDB::Mention].each do |klass|
-      result[klass.to_s] = klass.where(uid: uid).delete_all
-    end
+    ::S3::StatusTweet.delete(uid: uid)
+    ::S3::FavoriteTweet.delete(uid: uid)
+    ::S3::MentionTweet.delete(uid: uid)
 
     logger.info {"checkpoint 3 #{result.inspect}"}
 

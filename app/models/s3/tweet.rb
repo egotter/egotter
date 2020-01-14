@@ -18,6 +18,11 @@ module S3
         put_object(uid, body)
       end
 
+      def delete(uid: nil, screen_name: nil)
+        uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
+        delete_object(uid)
+      end
+
       def put_object(key, body)
         raise "#{self} The key is blank" if key.blank?
         benchmark("#{self} Import by #{key} with async") do
@@ -30,6 +35,13 @@ module S3
 
         benchmark("#{self} GetObject by #{key}") do
           client.get_object(bucket: bucket_name, key: key.to_s).body.read
+        end
+      end
+
+      def delete_object(key)
+        raise "#{self} The key is blank" if key.blank?
+        benchmark("#{self} Delete by #{key} with async") do
+          DeleteFromS3Worker.perform_async(klass: self, bucket: bucket_name, key: key.to_s)
         end
       end
 
