@@ -54,8 +54,8 @@ module Concerns::TwitterUser::Api
   end
 
   def conversations(other)
-    statuses1 = statuses.select { |status| status.mention_to?(other.mention_name) }
-    statuses2 = other.statuses.select { |status| status.mention_to?(mention_name) }
+    statuses1 = status_tweets.select { |status| status.mention_to?(other.mention_name) }
+    statuses2 = other.status_tweets.select { |status| status.mention_to?(mention_name) }
     (statuses1 + statuses2).sort_by { |status| -status.tweeted_at.to_i }
   end
 

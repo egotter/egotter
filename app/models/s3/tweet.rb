@@ -7,8 +7,8 @@ module S3
     class << self
       def where(uid: nil, screen_name: nil)
         uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
-        obj = Util.parse_json(get_object(uid))
-        Util.unpack(obj['tweets'])
+        obj = ::S3::Util.parse_json(get_object(uid))
+        ::S3::Util.unpack(obj['tweets'])
       rescue Aws::S3::Errors::NoSuchKey => e
         []
       end
@@ -37,7 +37,7 @@ module S3
         {
             uid: uid,
             screen_name: screen_name,
-            tweets: Util.pack(tweets),
+            tweets: ::S3::Util.pack(tweets),
         }.to_json
       end
 

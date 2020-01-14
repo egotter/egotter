@@ -16,8 +16,8 @@ class UpdateUsageStatWorker
 
     twitter_user = TwitterUser.select(:uid, :screen_name).latest_by(uid: uid)
     statuses =
-      if twitter_user.statuses.exists?
-        twitter_user.statuses
+      if twitter_user.status_tweets.any?
+        twitter_user.status_tweets
       else
         user = User.find_by(id: options['user_id'])
         user = User.authorized.find_by(uid: uid) unless user

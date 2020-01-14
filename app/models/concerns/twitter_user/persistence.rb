@@ -23,6 +23,11 @@ module Concerns::TwitterUser::Persistence
         [::TwitterDB::Status, ::TwitterDB::Mention, ::TwitterDB::Favorite].each do |klass|
           klass.import_by!(twitter_user: self)
 
+          if klass == ::TwitterDB::Status
+            tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+            ::S3::StatusTweet.import_from!(uid, screen_name, tweets)
+          end
+
           if klass == ::TwitterDB::Favorite
             tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
             ::S3::FavoriteTweet.import_from!(uid, screen_name, tweets)

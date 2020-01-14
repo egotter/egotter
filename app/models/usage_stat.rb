@@ -71,7 +71,7 @@ class UsageStat < ApplicationRecord
 
   def tweets_stat
     twitter_user = TwitterUser.latest_by(uid: uid)
-    tweets = twitter_user.statuses
+    tweets = twitter_user.status_tweets
     tweet_days = tweets.map(&:tweeted_at).map { |time| "#{time.year}/#{time.month}/#{time.day}" }
     tweets_interval =
       if tweets.any?

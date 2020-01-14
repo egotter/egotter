@@ -21,7 +21,7 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
-      obj.has_many :statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
+      obj.has_many :_statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
       obj.has_many :_favorites, order_by_sequence_asc, class_name: 'TwitterDB::Favorite'
       obj.has_many :_mentions,  order_by_sequence_asc, class_name: 'TwitterDB::Mention'
     end
@@ -81,6 +81,12 @@ module Concerns::TwitterUser::Associations
   end
 
   # TODO Remove later
+  def statuses
+    logger.info ":#{__method__} is deprecated. Use :status_tweets instead"
+    _statuses
+  end
+
+  # TODO Remove later
   def favorites
     logger.info ":#{__method__} is deprecated. Use :favorite_tweets instead"
     _favorites
@@ -90,6 +96,12 @@ module Concerns::TwitterUser::Associations
   def mentions
     logger.info ":#{__method__} is deprecated. Use :mention_tweets instead"
     _mentions
+  end
+
+  def status_tweets
+    ::S3::StatusTweet.where(uid: uid).map do |tweet|
+      ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet['raw_attrs_text'])
+    end
   end
 
   def favorite_tweets
