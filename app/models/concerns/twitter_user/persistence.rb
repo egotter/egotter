@@ -1,4 +1,5 @@
 require 'active_support/concern'
+
 module Concerns::TwitterUser::Persistence
   extend ActiveSupport::Concern
 
@@ -6,27 +7,39 @@ module Concerns::TwitterUser::Persistence
   end
 
   included do
-    # There data are created on `after_commit` in order to avoid long transaction.
+    # This method is processed on `after_commit` to avoid long transaction.
     after_commit(on: :create) do
-      ApplicationRecord.benchmark("Persistence##{__method__} Import data to efs #{id} #{screen_name}", level: :info) do
+      Util.bm("Efs::TwitterUser.import_from! #{id}") do
         Efs::TwitterUser.import_from!(id, uid, screen_name, raw_attrs_text, @friend_uids, @follower_uids)
       end
 
       # Store data to S3 as soon as possible
-      ApplicationRecord.benchmark("Persistence##{__method__} Import data to S3 #{id} #{screen_name}", level: :info) do
+      Util.bm("S3::Friendship.import_from! #{id}") do
         S3::Friendship.import_from!(id, uid, screen_name, @friend_uids, async: true)
+      end
+
+      Util.bm("S3::Followership.import_from! #{id}") do
         S3::Followership.import_from!(id, uid, screen_name, @follower_uids, async: true)
+      end
+
+      Util.bm("S3::Profile.import_from! #{id}") do
         S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text, async: true)
       end
 
-      status_tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-      ::S3::StatusTweet.import_from!(uid, screen_name, status_tweets)
+      Util.bm("S3::StatusTweet.import_from! #{id} #{uid}") do
+        status_tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        S3::StatusTweet.import_from!(uid, screen_name, status_tweets)
+      end
 
-      favorite_tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-      ::S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
+      Util.bm("S3::FavoriteTweet.import_from! #{id} #{uid}") do
+        favorite_tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
+      end
 
-      mention_tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-      ::S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
+      Util.bm("S3::MentionTweet.import_from! #{id} #{uid}") do
+        mention_tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
+      end
 
       # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
 
@@ -36,6 +49,14 @@ module Concerns::TwitterUser::Persistence
       logger.warn "#{__method__}: #{e.class} #{e.message.truncate(120)} #{self.inspect}"
       logger.info e.backtrace.join("\n")
       destroy
+    end
+  end
+
+  module Util
+    module_function
+
+    def bm(message, &block)
+      ApplicationRecord.benchmark("Benchmark Persistence #{message}", level: :info, &block)
     end
   end
 end
