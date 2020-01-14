@@ -73,9 +73,9 @@ module Concerns::TwitterUser::Api
 
   def reply_tweets(login_user: nil)
     if login_user&.uid&.to_i == uid.to_i
-      mentions
+      mention_tweets
     else
-      mentions.select { |status| !status.user&.protected }
+      mention_tweets.select { |status| !status.user&.protected }
     end
   end
 
