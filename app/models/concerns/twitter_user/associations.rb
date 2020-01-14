@@ -80,6 +80,10 @@ module Concerns::TwitterUser::Associations
     unfollowerships.pluck(:follower_uid)
   end
 
+  def favorite_tweets
+    S3::FavoriteTweet.where(uid: uid)
+  end
+
   def users_by(controller_name:, limit: 300)
     users =
         if controller_name == 'blocking_or_blocked'

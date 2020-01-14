@@ -22,6 +22,11 @@ module Concerns::TwitterUser::Persistence
       ApplicationRecord.benchmark("Persistence##{__method__} Save relations to RDB #{id} #{screen_name}", level: :info) do
         [::TwitterDB::Status, ::TwitterDB::Mention, ::TwitterDB::Favorite].each do |klass|
           klass.import_by!(twitter_user: self)
+
+          if klass == ::TwitterDB::Favorite
+            tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+            ::S3::FavoriteTweet.import_from!(uid, screen_name, tweets)
+          end
         rescue => e
           logger.warn "Persistence##{__method__} #{klass}: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"
         end

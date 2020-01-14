@@ -27,21 +27,31 @@ module S3
       Oj.load(text)
     end
 
+    module_function :parse_json
+
     def compress(text)
       Zlib::Deflate.deflate(text)
     end
+
+    module_function :compress
 
     def decompress(data)
       Zlib::Inflate.inflate(data)
     end
 
+    module_function :decompress
+
     def pack(ary)
       Base64.encode64(compress(ary.to_json))
     end
 
+    module_function :pack
+
     def unpack(text)
       parse_json(decompress(Base64.decode64(text)))
     end
+
+    module_function :unpack
 
     def store(key, body, async: true)
       raise 'key is nil' if key.nil?
