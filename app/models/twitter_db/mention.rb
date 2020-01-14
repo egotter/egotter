@@ -17,6 +17,7 @@
 #  index_twitter_db_mentions_on_uid          (uid)
 #
 
+# TODO Remove this class
 module TwitterDB
   class Mention < ApplicationRecord
     # This class doesn't belongs to TwitterDB::User because the user posts this tweet is another user.

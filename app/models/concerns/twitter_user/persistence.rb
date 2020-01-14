@@ -19,28 +19,14 @@ module Concerns::TwitterUser::Persistence
         S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text, async: true)
       end
 
-      ApplicationRecord.benchmark("Persistence##{__method__} Save relations to RDB #{id} #{screen_name}", level: :info) do
-        [::TwitterDB::Status, ::TwitterDB::Mention, ::TwitterDB::Favorite].each do |klass|
-          klass.import_by!(twitter_user: self)
+      status_tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      ::S3::StatusTweet.import_from!(uid, screen_name, status_tweets)
 
-          if klass == ::TwitterDB::Status
-            tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-            ::S3::StatusTweet.import_from!(uid, screen_name, tweets)
-          end
+      favorite_tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      ::S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
 
-          if klass == ::TwitterDB::Favorite
-            tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-            ::S3::FavoriteTweet.import_from!(uid, screen_name, tweets)
-          end
-
-          if klass == ::TwitterDB::Mention
-            tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-            ::S3::MentionTweet.import_from!(uid, screen_name, tweets)
-          end
-        rescue => e
-          logger.warn "Persistence##{__method__} #{klass}: Continue to saving #{e.class} #{e.message.truncate(100)} #{self.inspect}"
-        end
-      end
+      mention_tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      ::S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
 
       # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
 

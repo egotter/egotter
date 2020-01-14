@@ -17,6 +17,7 @@
 #  index_twitter_db_statuses_on_uid          (uid)
 #
 
+# TODO Remove this class
 module TwitterDB
   class Status < ApplicationRecord
     belongs_to :user, primary_key: :uid, foreign_key: :uid, class_name: 'TwitterDB::User', optional: true
