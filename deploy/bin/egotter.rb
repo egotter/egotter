@@ -12,6 +12,7 @@ params = ARGV.getopts(
     'h',
     'help',
     'deploy',
+    'release',
     'role:',
     'hosts:',
     'git-tag',
@@ -61,6 +62,8 @@ if params['h'] || params['help']
 
   exit
 end
+
+params['deploy'] = params['release'] if params['release']
 
 if params['deploy']
   task = Taskbooks::DeployTask.build(params)
