@@ -2,6 +2,8 @@
 
 module Efs
   class Cache
+    attr_reader :ttl
+
     def initialize(key_prefix, klass)
       @key_prefix = key_prefix
       @klass = klass

@@ -25,6 +25,82 @@ RSpec.describe Concerns::TwitterUser::Associations do
     end
   end
 
+  describe '#status_tweets' do
+    let(:tweets) { [{id: 1, text: 'text', raw_attrs_text: '{}'}] }
+    subject { twitter_user.status_tweets }
+
+    context 'The record is new' do
+      it do
+        expect(Efs::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(S3::StatusTweet).not_to receive(:where)
+        expect(subject.size).to eq(1)
+      end
+    end
+
+    context 'The record is old' do
+      before do
+        twitter_user.update(created_at: (Efs::StatusTweet.cache.ttl + 1.second).ago)
+      end
+
+      it do
+        expect(Efs::StatusTweet).not_to receive(:where)
+        expect(S3::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(subject.size).to eq(1)
+      end
+    end
+  end
+
+  describe '#favorite_tweets' do
+    let(:tweets) { [{id: 1, text: 'text', raw_attrs_text: '{}'}] }
+    subject { twitter_user.favorite_tweets }
+
+    context 'The record is new' do
+      it do
+        expect(Efs::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(S3::FavoriteTweet).not_to receive(:where)
+        expect(subject.size).to eq(1)
+      end
+    end
+
+    context 'The record is old' do
+      before do
+        twitter_user.update(created_at: (Efs::FavoriteTweet.cache.ttl + 1.second).ago)
+      end
+
+      it do
+        expect(Efs::FavoriteTweet).not_to receive(:where)
+        expect(S3::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(subject.size).to eq(1)
+      end
+    end
+  end
+
+  describe '#mention_tweets' do
+    let(:tweets) { [{id: 1, text: 'text', raw_attrs_text: '{}'}] }
+    subject { twitter_user.mention_tweets }
+
+    context 'The record is new' do
+      it do
+        expect(Efs::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(S3::MentionTweet).not_to receive(:where)
+        expect(subject.size).to eq(1)
+      end
+    end
+
+    context 'The record is old' do
+      before do
+        twitter_user.update(created_at: (Efs::FavoriteTweet.cache.ttl + 1.second).ago)
+      end
+
+      it do
+        expect(Efs::MentionTweet).not_to receive(:where)
+        expect(S3::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(subject.size).to eq(1)
+      end
+    end
+  end
+
+
   describe '#unfriendships' do
     before do
       Unfriendship.create!(from_uid: twitter_user.uid, friend_uid: 1, sequence: 0)
