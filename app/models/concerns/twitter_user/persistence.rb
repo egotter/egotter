@@ -25,24 +25,38 @@ module Concerns::TwitterUser::Persistence
         S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text, async: true)
       end
 
+      # S3
+
       Util.bm('S3::StatusTweet.import_from!', id, uid) do
-        status_tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-        S3::StatusTweet.import_from!(uid, screen_name, status_tweets)
+        tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        S3::StatusTweet.import_from!(uid, screen_name, tweets)
       end
 
       Util.bm('S3::FavoriteTweet.import_from!', id, uid) do
-        favorite_tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-        S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
+        tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        S3::FavoriteTweet.import_from!(uid, screen_name, tweets)
       end
 
       Util.bm('S3::MentionTweet.import_from!', id, uid) do
-        mention_tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-        S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
+        tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        S3::MentionTweet.import_from!(uid, screen_name, tweets)
+      end
+
+      # EFS
+
+      Util.bm('Efs::StatusTweet.import_from!', id, uid) do
+        tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        Efs::StatusTweet.import_from!(uid, screen_name, tweets)
       end
 
       Util.bm('Efs::FavoriteTweet.import_from!', id, uid) do
-        favorite_tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-        Efs::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
+        tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        Efs::FavoriteTweet.import_from!(uid, screen_name, tweets)
+      end
+
+      Util.bm('Efs::MentionTweet.import_from!', id, uid) do
+        tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        Efs::MentionTweet.import_from!(uid, screen_name, tweets)
       end
 
       # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
