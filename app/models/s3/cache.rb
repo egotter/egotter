@@ -2,6 +2,8 @@
 
 module S3
   class Cache
+    attr_reader :client
+
     def initialize(bucket_name)
       @bucket_name = bucket_name
       @client = Aws::S3::Client.new(region: REGION)

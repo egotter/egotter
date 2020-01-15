@@ -39,6 +39,10 @@ module S3
       def cache
         @cache ||= ::S3::Cache.new(bucket_name)
       end
+
+      def client
+        cache.client
+      end
     end
   end
 end

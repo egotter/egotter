@@ -15,13 +15,7 @@ class DeleteFromS3Worker
   #   bucket
   #   key
   def perform(params, options = {})
-    klass = params['klass'].constantize
-
-    if klass.ancestors.include?(S3::Tweet)
-      klass.delete(uid: params['key'])
-    else
-      klass.client.delete_object(bucket: params['bucket'], key: params['key'])
-    end
+    params['klass'].constantize.client.delete_object(bucket: params['bucket'], key: params['key'])
   rescue => e
     logger.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect} #{options.inspect}"
     logger.info e.backtrace.join("\n")
