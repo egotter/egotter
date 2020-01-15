@@ -3,8 +3,9 @@ require 'rails_helper'
 RSpec.describe Concerns::TwitterUser::QueryMethods do
   let(:uid) { 1 }
   let(:screen_name) { 'sn' }
-  let(:record1) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: (described_class::DEFAULT_TIMESTAMP_DELAY + 10.seconds).ago) }
-  let(:record2) { build(:twitter_user, uid: uid, screen_name: screen_name) }
+  let(:delay) { described_class::DEFAULT_TIMESTAMP_DELAY }
+  let(:record1) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: (delay + 1.second).ago) }
+  let(:record2) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: (delay - 1.second).ago) }
   let(:record3) { build(:twitter_user, uid: uid, screen_name: screen_name) }
 
   before do
@@ -12,6 +13,8 @@ RSpec.describe Concerns::TwitterUser::QueryMethods do
     record2.save!(validate: false)
     record3.save!(validate: false)
   end
+
+  it { expect(delay).to eq(3.seconds) }
 
   describe '.latest_by' do
     context 'With uid' do
