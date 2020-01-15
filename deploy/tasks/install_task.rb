@@ -300,8 +300,8 @@ module Tasks
       def restart_processes
         [
             'sudo service td-agent restart',
-            'sudo service nginx stop',
-            'sudo service puma stop',
+            'sudo service nginx stop || :',
+            'sudo service puma stop || :',
             'sudo start sidekiq',
             'sudo start sidekiq_import',
             'sudo start sidekiq_misc',
@@ -336,8 +336,8 @@ module Tasks
       def restart_processes
         [
             'sudo service td-agent restart',
-            'sudo service nginx stop',
-            'sudo service puma stop',
+            'sudo service nginx stop || :',
+            'sudo service puma stop || :',
             'sudo start sidekiq || :',
             'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',

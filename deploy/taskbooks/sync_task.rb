@@ -17,10 +17,10 @@ module Taskbooks
     module_function :build
 
     class Task < ::DeployRuby::Task
-      attr_reader :kind, :instance
+      attr_reader :action, :instance
 
       def initialize
-        @kind = :sync
+        @action = :sync
         @instance = nil
       end
     end

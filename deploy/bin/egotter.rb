@@ -74,8 +74,8 @@ else
   task = Taskbooks::AwsTask.build(params)
   task.run
 
-  if %i(launch terminate sync).include?(task.kind)
-    %x(git tag #{task.kind}-#{task.instance.name})
+  if %i(launch terminate sync).include?(task.action)
+    %x(git tag #{task.action}-#{task.instance.name})
     %x(git push origin --tags)
   end
 end

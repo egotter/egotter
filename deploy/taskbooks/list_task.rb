@@ -15,10 +15,10 @@ module Taskbooks
     module_function :build
 
     class Task < ::DeployRuby::Task
-      attr_reader :kind
+      attr_reader :action
 
       def initialize
-        @kind = :list
+        @action = :list
       end
     end
 
