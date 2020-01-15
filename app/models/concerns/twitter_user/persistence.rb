@@ -13,7 +13,6 @@ module Concerns::TwitterUser::Persistence
         Efs::TwitterUser.import_from!(id, uid, screen_name, raw_attrs_text, @friend_uids, @follower_uids)
       end
 
-      # Store data to S3 as soon as possible
       Util.bm("S3::Friendship.import_from! #{id}") do
         S3::Friendship.import_from!(id, uid, screen_name, @friend_uids, async: true)
       end
@@ -39,6 +38,11 @@ module Concerns::TwitterUser::Persistence
       Util.bm("S3::MentionTweet.import_from! #{id} #{uid}") do
         mention_tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
         S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
+      end
+
+      Util.bm("Efs::FavoriteTweet.import_from! #{id} #{uid}") do
+        favorite_tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+        Efs::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
       end
 
       # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
