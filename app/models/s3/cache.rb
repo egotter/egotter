@@ -4,30 +4,31 @@ module S3
   class Cache
     attr_reader :client
 
-    def initialize(bucket_name)
+    def initialize(bucket_name, klass)
       @bucket_name = bucket_name
+      @klass = klass
       @client = Aws::S3::Client.new(region: REGION)
     end
 
     def put_object(key, body)
-      raise "#{self} The key is blank" if key.blank?
-      benchmark("#{self} PutObject by #{key} with async") do
-        WriteToS3Worker.perform_async(klass: self, bucket: @bucket_name, key: key.to_s, body: body)
+      raise "#{@klass} The key is blank" if key.blank?
+      benchmark("#{@klass} PutObject by #{key} with async") do
+        WriteToS3Worker.perform_async(klass: @klass, bucket: @bucket_name, key: key.to_s, body: body)
       end
     end
 
     def get_object(key)
-      raise "#{self} The key is blank" if key.blank?
+      raise "#{@klass} The key is blank" if key.blank?
 
-      benchmark("#{self} GetObject by #{key}") do
+      benchmark("#{@klass} GetObject by #{key}") do
         @client.get_object(bucket: @bucket_name, key: key.to_s).body.read
       end
     end
 
     def delete_object(key)
-      raise "#{self} The key is blank" if key.blank?
-      benchmark("#{self} DeleteObject by #{key} with async") do
-        DeleteFromS3Worker.perform_async(klass: self, bucket: @bucket_name, key: key.to_s)
+      raise "#{@klass} The key is blank" if key.blank?
+      benchmark("#{@klass} DeleteObject by #{key} with async") do
+        DeleteFromS3Worker.perform_async(klass: @klass, bucket: @bucket_name, key: key.to_s)
       end
     end
 
