@@ -76,9 +76,9 @@ GEM
       request_store
       safely_block (>= 0.2.1)
       user_agent_parser
-    airbrake (9.5.5)
-      airbrake-ruby (~> 4.8)
-    airbrake-ruby (4.11.1)
+    airbrake (10.0.0)
+      airbrake-ruby (~> 4.12)
+    airbrake-ruby (4.12.0)
       rbtree3 (~> 0.5)
     annotate (3.0.3)
       activerecord (>= 3.2, < 7.0)
