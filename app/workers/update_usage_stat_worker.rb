@@ -14,7 +14,7 @@ class UpdateUsageStatWorker
     stat = UsageStat.find_by(uid: uid)
     return if stat&.fresh?
 
-    twitter_user = TwitterUser.select(:uid, :screen_name).latest_by(uid: uid)
+    twitter_user = TwitterUser.select(:uid, :screen_name, :created_at).latest_by(uid: uid)
     statuses =
       if twitter_user.status_tweets.any?
         twitter_user.status_tweets
