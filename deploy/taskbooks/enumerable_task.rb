@@ -4,8 +4,8 @@ module Taskbooks
       @tasks = tasks
     end
 
-    def kind
-      @tasks[0].kind
+    def action
+      @tasks[0].action
     end
 
     def instance

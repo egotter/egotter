@@ -350,5 +350,65 @@ module Tasks
         self
       end
     end
+
+    class Plain < Task
+      attr_reader :instance
+
+      def initialize(id)
+        @id = id
+        @instance = ::DeployRuby::Aws::Instance.retrieve(id)
+        super(@instance.name)
+      end
+
+      def sync
+        update_misc.
+            upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
+            pull_latest_code.
+            update_egotter.
+            update_crontab.
+            update_nginx.
+            update_puma.
+            update_sidekiq
+      end
+
+      def install
+        sync.stop_processes
+      rescue => e
+        logger.error red("Terminate #{@id} since #{e.class} is raised")
+        ::DeployRuby::Aws::EC2.terminate_instance(@id)
+        raise
+      end
+
+      def update_misc
+        [
+            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
+            'sudo yum install -y httpd-tools',
+            'sudo rm -rf /var/tmp/aws-mon/*',
+            'sudo rm -rf /var/egotter/tmp/cache/*',
+            'sudo rm -rf /var/egotter/log/*',
+        ].each do |cmd|
+          backend(cmd)
+        end
+
+        self
+      end
+
+      def stop_processes
+        [
+            'sudo service td-agent stop || :',
+            'sudo service nginx stop || :',
+            'sudo service puma stop || :',
+            'sudo restart datadog-agent',
+            'sudo stop sidekiq || :',
+            'sudo stop sidekiq_import || :',
+            'sudo stop sidekiq_misc || :',
+            'sudo stop sidekiq_prompt_reports || :',
+        ].each do |cmd|
+          backend(cmd)
+        end
+
+        self
+      end
+    end
   end
 end

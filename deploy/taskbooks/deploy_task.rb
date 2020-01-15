@@ -1,7 +1,7 @@
 require "open3"
 
 module Taskbooks
-  module DeployTask
+  module ReleaseTask
     def build(params)
       role = params['role']
       hosts = params['hosts'].split(',')

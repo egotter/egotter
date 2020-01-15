@@ -15,6 +15,8 @@ module Taskbooks
         SidekiqTask.new(params)
       elsif role == 'sidekiq_prompt_reports'
         SidekiqPromptReportsTask.new(params)
+      elsif role == 'plain'
+        PlainTask.new(params)
       else
         raise "Invalid role #{role}"
       end
@@ -23,10 +25,10 @@ module Taskbooks
     module_function :build
 
     class Task < ::DeployRuby::Task
-      attr_reader :kind, :instance
+      attr_reader :action, :instance
 
       def initialize
-        @kind = :launch
+        @action = :launch
         @instance = nil
         @role = nil
         @launched = nil
@@ -41,6 +43,8 @@ module Taskbooks
       private
 
       def after_launch
+        return if @role == 'plain'
+
         CloudWatchClient::Dashboard.new('egotter-linux-system').
             append_cpu_utilization(@role, @launched.id).
             append_memory_utilization(@role, @launched.id).
@@ -138,6 +142,26 @@ module Taskbooks
         server = Tasks::LaunchTask::Sidekiq.new(params).launch
         append_to_ssh_config(server.id, server.host, server.public_ip)
         Tasks::InstallTask::SidekiqPromptReports.new(server.id).install
+
+        @instance = @launched = server
+
+        super
+      end
+    end
+
+    class PlainTask < Task
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
+      end
+
+      def run
+        az = 'ap-northeast-1b'
+        params = Tasks::LaunchTask::Params.new(@params.merge('availability-zone' => az))
+        server = Tasks::LaunchTask::Plain.new(params).launch
+        append_to_ssh_config(server.id, server.host, server.public_ip)
+        Tasks::InstallTask::Plain.new(server.id).install
 
         @instance = @launched = server
 

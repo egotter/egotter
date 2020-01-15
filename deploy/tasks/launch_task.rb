@@ -52,6 +52,11 @@ module Tasks
         @name ||= "egotter_sidekiq#{Time.now.strftime('%m%d%H%M')}"
       end
     end
-  end
 
+    class Plain < Task
+      def name
+        @name ||= "egotter_plain#{Time.now.strftime('%m%d%H%M')}"
+      end
+    end
+  end
 end

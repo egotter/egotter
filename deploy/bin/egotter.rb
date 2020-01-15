@@ -11,7 +11,6 @@ STDOUT.sync = true
 params = ARGV.getopts(
     'h',
     'help',
-    'deploy',
     'release',
     'role:',
     'hosts:',
@@ -39,10 +38,10 @@ params = ARGV.getopts(
 if params['h'] || params['help']
   puts <<~'TEXT'
     Usage:
-      egotter.rb --deploy --role web --hosts aaa,bbb,ccc
-      egotter.rb --deploy --role web --hosts aaa,bbb,ccc --git-tag
-      egotter.rb --deploy --role sidekiq --hosts aaa,bbb,ccc
-      egotter.rb --deploy --role sidekiq --hosts aaa,bbb,ccc --git-tag
+      egotter.rb --release --role web --hosts aaa,bbb,ccc
+      egotter.rb --release --role web --hosts aaa,bbb,ccc --git-tag
+      egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc
+      egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc --git-tag
 
       egotter.rb --launch --role web
       egotter.rb --launch --role web --rotate
@@ -63,10 +62,8 @@ if params['h'] || params['help']
   exit
 end
 
-params['deploy'] = params['release'] if params['release']
-
-if params['deploy']
-  task = Taskbooks::DeployTask.build(params)
+if params['release']
+  task = Taskbooks::ReleaseTask.build(params)
   task.run
 
   if params['git-tag']
