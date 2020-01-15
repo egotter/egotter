@@ -1,4 +1,6 @@
 # -*- SkipSchemaAnnotations
+
+# This class is outdated. The latest implementation is a subclass of S3::Tweet.
 module S3
   class Profile
     extend S3::Util
