@@ -24,7 +24,7 @@ class ApiClient
 
       raise
     rescue => e
-      logger.info "#{__method__} #{method} #{e.inspect}"
+      logger.info "#{__method__} #{e.inspect} #{method} #{args.inspect.truncate(100)}"
       if ServiceStatus.new(ex: e).retryable?
         if (tries -= 1) < 0
           logger.warn "RETRY EXHAUSTED #{self}##{method}: #{e.class} #{e.message}"
