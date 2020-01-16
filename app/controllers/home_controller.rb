@@ -17,21 +17,7 @@ class HomeController < ApplicationController
 
   def new
     enqueue_update_authorized
-
-    if params[:back_from_twitter] == 'true'
-      flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/back_from_twitter"))
-    end
-
-    if params[:via].to_s.end_with?('secret_mode_detected')
-      flash.now[:alert] = t('before_sign_in.secret_mode_detected', device_type: request.device_type, os: request.os, os_version: request.os_version, browser: request.browser, browser_version: request.browser_version)
-    elsif params[:via].to_s.end_with?('ad_blocker_detected')
-      flash.now[:alert] = t('before_sign_in.ad_blocker_detected')
-    elsif params[:via].to_s.end_with?('unauthorized_detected')
-      if user_signed_in?
-        url = sign_in_path(via: build_via('signed_in_user_not_authorized'))
-        flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
-      end
-    end
+    set_flash_message
 
     if flash.empty? && user_signed_in?
       if TwitterUser.exists?(uid: current_user.uid)
@@ -61,6 +47,23 @@ class HomeController < ApplicationController
     else
       @user = nil
       @screen_name = 'Visitor'
+    end
+  end
+
+  private
+
+  def set_flash_message
+    if params[:back_from_twitter] == 'true'
+      flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/back_from_twitter"))
+    elsif params[:via].to_s.end_with?('secret_mode_detected')
+      flash.now[:alert] = t('before_sign_in.secret_mode_detected', device_type: request.device_type, os: request.os, os_version: request.os_version, browser: request.browser, browser_version: request.browser_version)
+    elsif params[:via].to_s.end_with?('ad_blocker_detected')
+      flash.now[:alert] = t('before_sign_in.ad_blocker_detected')
+    elsif params[:via].to_s.end_with?('unauthorized_detected')
+      if user_signed_in?
+        url = sign_in_path(via: build_via('signed_in_user_not_authorized'))
+        flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
+      end
     end
   end
 end
