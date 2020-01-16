@@ -13,6 +13,7 @@ class ApiClient
   end
 
   class << self
+    # TODO Want to refactor
     def do_request_with_retry(client, method, args, &block)
       tries ||= 5
       client.send(method, *args, &block) # client#parallel uses block.
