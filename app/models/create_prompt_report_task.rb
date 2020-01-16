@@ -96,25 +96,35 @@ class CreatePromptReportTask
   end
 
   def benchmark(message, &block)
+    start = Time.zone.now
+    # TODO Don't use ApplicationRecord.benchmark
     ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} #{message}", level: :info, &block)
+    @benchmark[message] = Time.zone.now - start
   end
 
   module Instrumentation
     def start!(*args, &blk)
+      @benchmark = {}
       start = Time.zone.now
+
       super
 
-      if (time = Time.zone.now - start) > 30
+      elapsed = Time.zone.now - start
+      @benchmark['Total'] = elapsed
+
+      Rails.logger.info "Benchmark CreatePromptReportTask #{request.id} #{@benchmark.inspect}"
+
+      if elapsed > 30
         notice = Airbrake.build_notice('CreatePromptReportTask took more than 30 seconds')
         notice[:context][:component] = 'CreatePromptReportTask'
-        notice[:params][:time] = time
+        notice[:params][:time] = elapsed
         notice[:params][:user] = {id: request.user.id}
         notice[:params][:request] = request.attributes
         notice[:params][:size] = TwitterUser.where(uid: request.user.uid).size
         notice[:params][:twitter_user] = TwitterUser.latest_by(uid: request.user.uid)&.attributes
         Airbrake.notify(notice)
 
-        Rails.logger.info "Benchmark CreatePromptReportTask #{request.id} It took #{time} seconds. size=#{notice[:params][:size]} #{notice[:params][:twitter_user]}"
+        Rails.logger.info "Benchmark CreatePromptReportTask #{request.id} It took #{elapsed} seconds. size=#{notice[:params][:size]} #{notice[:params][:twitter_user]}"
       end
     end
   end
