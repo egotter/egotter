@@ -1,10 +1,9 @@
 <% require 'dotenv/load' %>:concurrency: 5
-:timeout: 60
+:timeout: 5
 :pidfile: ./tmp/pids/sidekiq.pid
 :logfile: ./log/sidekiq.log
 :tag:
   - sidekiq
-  - <%= ENV.fetch("AWS_NAME_TAG") { "NONAME" } %>
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - creating_high

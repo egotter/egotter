@@ -142,7 +142,8 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def benchmark(message, twitter_user = nil, &block)
-    ApplicationRecord.benchmark("Benchmark CreateTwitterUserRequest #{user_id} #{uid} #{message} friends=#{twitter_user&.friends_count} followers=#{twitter_user&.followers_count}", level: :info, &block)
+    count_message = " friends=#{twitter_user.friends_count} followers=#{twitter_user.followers_count}" if twitter_user
+    ApplicationRecord.benchmark("Benchmark CreateTwitterUserRequest #{user_id} #{uid} #{message}#{count_message}", level: :info, &block)
   end
 
   class Error < StandardError
