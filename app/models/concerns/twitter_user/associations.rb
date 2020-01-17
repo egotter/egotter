@@ -20,6 +20,7 @@ module Concerns::TwitterUser::Associations
       obj.has_one :score
     end
 
+    # TODO Remove later
     with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
       obj.has_many :_statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
       obj.has_many :_favorites, order_by_sequence_asc, class_name: 'TwitterDB::Favorite'

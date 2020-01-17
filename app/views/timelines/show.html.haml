@@ -17,6 +17,9 @@
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 .row
+  .col-xs-12.col-md-6
+    = render partial: 'timelines/feeds/summary', locals: {twitter_user: @twitter_user}
+
   - if @chart_builder
     .col-xs-12.col-md-6
       = render partial: 'timelines/feeds/audience_insight', locals: {twitter_user: @twitter_user, chart_builder: @chart_builder}

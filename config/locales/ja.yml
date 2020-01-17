@@ -158,6 +158,14 @@ ja:
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
         view_more: '続きを見る'
     feeds:
+      summary:
+        one_sided_friends: '片思いフォロー'
+        one_sided_followers: '片思われフォロワー'
+        mutual_friends: '両思いフォロー'
+        unfriends: 'リムーブした'
+        unfollowers: 'リムーブされた'
+        blocking_or_blocked: 'ブロックされた'
+        unit: '人'
       friends:
         title: 'フォロー'
         description: '@%{user} がフォローしているユーザーです。'
