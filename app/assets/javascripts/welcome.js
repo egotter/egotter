@@ -44,8 +44,13 @@ Welcome.ShareDialog.prototype = {
       if (!this._cache['share_dialog']) {
         this._cache['share_dialog'] = true;
         this._modal.modal();
+      } else {
+        console.log('share-dialog is already shown')
       }
     }
+  },
+  on: function (event, fn) {
+    this._modal.on(event, fn);
   }
 };
 
@@ -77,6 +82,8 @@ Welcome.FollowDialog.prototype = {
     if (!this._cache['follow_dialog']) {
       this._cache['follow_dialog'] = true;
       this._modal.modal();
+    } else {
+      console.log('follow-dialog is already shown')
     }
   },
   on: function (event, fn) {
@@ -84,28 +91,32 @@ Welcome.FollowDialog.prototype = {
   }
 };
 
-$(function () {
-  function getParameterByName(name, url) {
-    if (!url) url = window.location.href;
-    name = name.replace(/[\[\]]/g, '\\$&');
-    var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-        results = regex.exec(url);
-    if (!results) return null;
-    if (!results[2]) return '';
-    return decodeURIComponent(results[2].replace(/\+/g, ' '));
-  }
+Welcome.getParameterByName = function (name, url) {
+  if (!url) url = window.location.href;
+  name = name.replace(/[\[\]]/g, '\\$&');
+  var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+      results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+};
 
+Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
   var shareDialog = new Welcome.ShareDialog();
   var followDialog = new Welcome.FollowDialog();
 
-  if (getParameterByName('follow_dialog') === '1' && getParameterByName('share_dialog') === '1') {
-    followDialog.on('hidden.bs.modal', function (e) {
-      shareDialog.show();
+  if (Welcome.getParameterByName('follow_dialog') === '1' && Welcome.getParameterByName('share_dialog') === '1') {
+    shareDialog.on('hidden.bs.modal', function (e) {
+      if (!followingEgotter) {
+        followDialog.show();
+      }
     });
-    followDialog.show();
-  } else if (getParameterByName('follow_dialog') === '1') {
-    followDialog.show();
-  } else if (getParameterByName('share_dialog') === '1') {
+    shareDialog.show();
+  } else if (Welcome.getParameterByName('follow_dialog') === '1') {
+    if (!followingEgotter) {
+      followDialog.show();
+    }
+  } else if (Welcome.getParameterByName('share_dialog') === '1') {
     shareDialog.show();
   }
-});
+};

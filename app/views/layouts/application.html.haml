@@ -251,3 +251,9 @@
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.share_modal.cancel')
             %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('welcome.share_modal.success_message'), error_message: t('welcome.share_modal.error_message')}}= t('welcome.share_modal.ok')
+
+:javascript
+  $(function () {
+    var followingEgotter = #{user_signed_in? && current_user.following_egotter?};
+    Welcome.showFollowDialogAndShareDialog(followingEgotter);
+  });
