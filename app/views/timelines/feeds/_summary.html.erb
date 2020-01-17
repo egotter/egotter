@@ -1,3 +1,4 @@
+<% start = Time.zone.now %>
 <div class="summary-on-timeline">
   <div class="list-group">
     <%= link_to one_sided_friend_path(twitter_user), class: 'list-group-item' do %>
@@ -20,3 +21,4 @@
     <% end %>
   </div>
 </div>
+<%= @view_benchmark['summary'] = Time.zone.now - start %>
