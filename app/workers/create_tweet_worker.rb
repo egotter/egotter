@@ -1,5 +1,6 @@
 class CreateTweetWorker
   include Sidekiq::Worker
+  include Concerns::SearchCountSummary
   include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
@@ -26,20 +27,14 @@ class CreateTweetWorker
 
   def send_message_to_slack(request, tweet, options)
     user = request.user
-    params = {
+    params = search_count_summary(user)
+    params.merge!(
         request_id: request.id,
         user_id: user.id,
-        search_count: {
-            max: SearchCountLimitation.max_count(user),
-            remaining: SearchCountLimitation.remaining_count(user: user),
-            current: SearchCountLimitation.current_count(user: user),
-            sharing_bonus: SearchCountLimitation.current_sharing_bonus(user),
-        },
-        sharing_count: user.sharing_count,
         text: request.text + ' ',
-        requested_by: options['requested_by'],
-    }
-    SlackClient.tweet.send_message(params.inspect + ' ' + tweet_url(user.screen_name, tweet.id))
+        requested_by: options['requested_by']
+    )
+    SlackClient.tweet.send_message('`create`' + "\n" + params.inspect + "\n" + tweet_url(user.screen_name, tweet.id))
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e)

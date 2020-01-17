@@ -1,5 +1,6 @@
 class ConfirmTweetWorker
   include Sidekiq::Worker
+  include Concerns::SearchCountSummary
   include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'creating_high', retry: 0, backtrace: false
 
@@ -25,16 +26,17 @@ class ConfirmTweetWorker
   end
 
   def confirm_in(count)
-    count < 10 ? 2.seconds : 10.seconds
+    count < 20 ? 1.seconds : 10.seconds
   end
 
   def send_message_to_slack(request)
-    params = {
-        user_id: request.user_id,
+    user = request.user
+    params = search_count_summary(user)
+    params.merge!(
         request_id: request.id,
-        deleted_at: request.deleted_at
-    }
-    SlackClient.tweet.send_message(params.inspect)
+        user_id: user.id
+    )
+    SlackClient.tweet.send_message('`delete`' + "\n" + params.inspect)
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e)
