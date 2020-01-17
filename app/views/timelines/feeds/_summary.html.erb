@@ -1,22 +1,23 @@
 <% start = Time.zone.now %>
+<% via = build_via('summary_on_timeline') %>
 <div class="summary-on-timeline">
   <div class="list-group">
-    <%= link_to one_sided_friend_path(twitter_user), class: 'list-group-item' do %>
+    <%= link_to one_sided_friend_path(twitter_user, via: via), class: 'list-group-item' do %>
       <span class="badge"><%= twitter_user.one_sided_friendships.size %><%= t('.unit') %></span><%= t('.one_sided_friends') %>
     <% end %>
-    <%= link_to one_sided_follower_path(twitter_user), class: 'list-group-item' do %>
+    <%= link_to one_sided_follower_path(twitter_user, via: via), class: 'list-group-item' do %>
       <span class="badge"><%= twitter_user.one_sided_followerships.size %><%= t('.unit') %></span><%= t('.one_sided_followers') %>
     <% end %>
-    <%= link_to mutual_friend_path(twitter_user), class: 'list-group-item' do %>
+    <%= link_to mutual_friend_path(twitter_user, via: via), class: 'list-group-item' do %>
       <span class="badge"><%= twitter_user.mutual_friendships.size %><%= t('.unit') %></span><%= t('.mutual_friends') %>
     <% end %>
-    <%= link_to unfriend_path(twitter_user), class: 'list-group-item' do %>
+    <%= link_to unfriend_path(twitter_user, via: via), class: 'list-group-item' do %>
       <span class="badge"><%= twitter_user.unfriendships.size %><%= t('.unit') %></span><%= t('.unfriends') %>
     <% end %>
-    <%= link_to unfollower_path(twitter_user), class: 'list-group-item' do %>
+    <%= link_to unfollower_path(twitter_user, via: via), class: 'list-group-item' do %>
       <span class="badge"><%= twitter_user.unfollowerships.size %><%= t('.unit') %></span><%= t('.unfollowers') %>
     <% end %>
-    <%= link_to blocking_or_blocked_path(twitter_user), class: 'list-group-item' do %>
+    <%= link_to blocking_or_blocked_path(twitter_user, via: via), class: 'list-group-item' do %>
       <span class="badge"><%= twitter_user.block_friendships.size %><%= t('.unit') %></span><%= t('.blocking_or_blocked') %>
     <% end %>
   </div>
