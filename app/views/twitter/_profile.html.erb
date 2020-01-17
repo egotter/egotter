@@ -7,11 +7,11 @@
     <div class="profile-overview-overlay">
       <div class="profile-overview-carousel">
         <div class="text-center"><!-- first slide -->
-          <%= link_to(timeline_path(user, via: build_via('icon_on_profile')), class: 'icon-link') do %>
+          <%= link_to(timeline_path(user, via: current_via('icon_on_profile')), class: 'icon-link') do %>
             <%= bigger_icon_img(user) %>
           <% end %>
           <div class="name">
-            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user.name_with_icon}".html_safe, timeline_path(user, via: build_via('mention_name_on_profile'))) %>
+            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user.name_with_icon}".html_safe, timeline_path(user, via: current_via('mention_name_on_profile'))) %>
             <%= user.status_labels %>
           </div>
 
@@ -68,21 +68,21 @@
 <div class="profile-counts-container">
   <div class="row">
     <div class="tweets col-xs-3">
-      <%= link_to status_path(user, via: build_via('statuses_on_profile')) do %>
+      <%= link_to status_path(user, via: current_via('statuses_on_profile')) do %>
         <span><b><%= user.delimited_statuses_count %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:statuses) %></span>
       <% end %>
     </div>
     <div class="friends col-xs-3">
-      <%= link_to friend_path(user, via: build_via('friends_on_profile')) do %>
+      <%= link_to friend_path(user, via: current_via('friends_on_profile')) do %>
         <span><b><%= user.delimited_friends_count %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:friends) %></span>
       <% end %>
     </div>
     <div class="followers col-xs-3">
-      <%= link_to follower_path(user, via: build_via('followers_on_profile')) do %>
+      <%= link_to follower_path(user, via: current_via('followers_on_profile')) do %>
         <span><b><%= user.delimited_followers_count %></b></span>
         <br class="visible-xs-block">
         <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:followers) %></span>

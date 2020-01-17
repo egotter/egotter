@@ -11,7 +11,7 @@ class ProtectedController < ApplicationController
   before_action unless: :twitter_crawler? do
     unless protected_user?(params[:screen_name])
       via = params[:force_update] == 'true' ? 'protected_force_update' : 'protected_redirect'
-      redirect_to timeline_path(screen_name: params[:screen_name], via: build_via(via))
+      redirect_to timeline_path(screen_name: params[:screen_name], via: current_via(via))
     end
   end
 
@@ -25,7 +25,7 @@ class ProtectedController < ApplicationController
     # Even if this value is not set, the sidebar will not be displayed because @twitter_user is not set.
     self.sidebar_disabled = true
 
-    flash.now[:alert] = protected_with_request_message(screen_name, protected_path(screen_name: screen_name, via: build_via('force_update_message'), force_update: 'true'))
+    flash.now[:alert] = protected_with_request_message(screen_name, protected_path(screen_name: screen_name, via: current_via('force_update_message'), force_update: 'true'))
     @user ? render : (render 'not_persisted')
   end
 end

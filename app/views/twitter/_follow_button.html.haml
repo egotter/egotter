@@ -12,6 +12,6 @@
       %i.text-muted.fas.fa-user-plus
       .visible-md-inline.visible-lg-inline{class: "#{'visible-xs-inline' if with_text}"}= t('twitter.follow_button.do_follow')
 - else
-  %a.btn.btn-default.no-follow-require-sign-in{href: sign_in_path(via: build_via('follow_btn'))}
+  %a.btn.btn-default.no-follow-require-sign-in{href: sign_in_path(via: current_via('follow_btn'))}
     %i.text-muted.fas.fa-user-plus
     .visible-md-inline.visible-lg-inline{class: "#{'visible-xs-inline' if with_text}"}= t('twitter.follow_button.do_follow')

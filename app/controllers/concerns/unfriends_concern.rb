@@ -20,19 +20,19 @@ module Concerns::UnfriendsConcern
     counts = related_counts(@twitter_user)
     @meta_title = t('.meta_title', {user: @twitter_user.screen_name}.merge(counts))
 
-    @page_description = t('.page_description_html', user: user_link(@twitter_user.screen_name), url: unfriends_top_path(via: build_via('page_description')))
+    @page_description = t('.page_description_html', user: user_link(@twitter_user.screen_name), url: unfriends_top_path(via: current_via('page_description')))
     @meta_description = t('.meta_description', {user: @twitter_user.screen_name}.merge(counts))
 
     mention_names = @twitter_user.users_by(controller_name: controller_name).
         select(:screen_name).limit(3).map(&:mention_name)
 
-    @tweet_text_for_empty_users = t('unfriends.show.tweet_empty_text', url: unfriends_top_url(via: build_via('tweet_for_empty')))
+    @tweet_text_for_empty_users = t('unfriends.show.tweet_empty_text', url: unfriends_top_url(via: current_via('tweet_for_empty')))
 
     if mention_names.empty?
       @tweet_text = nil
     else
       names = '.' + mention_names.map { |name| honorific_name(name) }.join("\n") + "\n\n"
-      @tweet_text = t('.tweet_text', users: names, url: unfriends_top_url(via: build_via('tweet_for_users')))
+      @tweet_text = t('.tweet_text', users: names, url: unfriends_top_url(via: current_via('tweet_for_users')))
     end
 
     @tabs = tabs(counts)
@@ -61,9 +61,9 @@ module Concerns::UnfriendsConcern
 
   def tabs(counts)
     [
-        {text: t('unfriends.show.unfriends_tab_html', num: counts[:unfriends]), url: unfriend_path(@twitter_user, via: build_via('tab'))},
-        {text: t('unfriends.show.unfollowers_tab_html', num: counts[:unfollowers]), url: unfollower_path(@twitter_user, via: build_via('tab'))},
-        {text: t('unfriends.show.blocking_or_blocked_tab_html', num: counts[:blocking_or_blocked]), url: blocking_or_blocked_path(@twitter_user, via: build_via('tab'))}
+        {text: t('unfriends.show.unfriends_tab_html', num: counts[:unfriends]), url: unfriend_path(@twitter_user, via: current_via('tab'))},
+        {text: t('unfriends.show.unfollowers_tab_html', num: counts[:unfollowers]), url: unfollower_path(@twitter_user, via: current_via('tab'))},
+        {text: t('unfriends.show.blocking_or_blocked_tab_html', num: counts[:blocking_or_blocked]), url: blocking_or_blocked_path(@twitter_user, via: current_via('tab'))}
     ]
   end
 end

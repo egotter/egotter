@@ -17,7 +17,7 @@ module Concerns::ValidationConcern
       message = t('before_sign_in.ajax.need_login_html', url: kick_out_error_path('need_login'))
       respond_with_error(:unauthorized, message)
     else
-      message = t('before_sign_in.need_login_html', url: sign_in_path(via: build_via(__method__), redirect_path: request.fullpath))
+      message = t('before_sign_in.need_login_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
       create_search_error_log(__method__, message)
       flash.now[:alert] = message
       render template: 'home/new', formats: %i(html), status: :unauthorized
@@ -46,7 +46,7 @@ module Concerns::ValidationConcern
     if !from_crawler? && controller_name == 'timelines' && action_name == 'show'
       @screen_name = @twitter_user.screen_name
       @redirect_path = timeline_path(screen_name: @screen_name)
-      @via = params['via'].presence || build_via('render_template')
+      @via = params['via'].presence || current_via('render_template')
       create_search_error_log(__method__, '')
       render template: 'searches/create', formats: %i(html), layout: false
     else
@@ -170,7 +170,7 @@ module Concerns::ValidationConcern
       set_bypassed_notice_message('search_limitation_soft_limited')
       redirect_to profile_path(screen_name: user[:screen_name])
 
-      url = sign_in_path(via: build_via(__method__), redirect_path: request.fullpath)
+      url = sign_in_path(via: current_via(__method__), redirect_path: request.fullpath)
       message = search_limitation_soft_limited_message(user[:screen_name], url)
       create_search_error_log(__method__, message)
       true

@@ -42,7 +42,7 @@ class ProfilesController < ApplicationController
   private
 
   def updated_at_message(user)
-    url = latest_profile_path(screen_name: user.screen_name, via: build_via('request_to_update'))
+    url = latest_profile_path(screen_name: user.screen_name, via: current_via('request_to_update'))
     time = user.updated_at || Time.zone.now
     format = (time.in_time_zone('Tokyo').to_date === Time.zone.now.in_time_zone('Tokyo').to_date) ? :next_creation_short : :next_creation_long
     t("profiles.#{action_name}.displayed_data_is_html", user: user.screen_name, url: url, time: l(time.in_time_zone('Tokyo'), format: format))

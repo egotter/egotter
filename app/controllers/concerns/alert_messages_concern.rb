@@ -131,7 +131,7 @@ module Concerns::AlertMessagesConcern
 
   def signed_in_user_not_authorized_message
     if user_signed_in?
-      url = sign_in_path(via: build_via('signed_in_user_not_authorized'))
+      url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
       t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
     else
       raise "#{__method__} is called and the user is not signed in"
@@ -151,7 +151,7 @@ module Concerns::AlertMessagesConcern
     screen_name = params[:screen_name] || @twitter_user&.screen_name
 
     if screen_name.present?
-      url = timeline_path(screen_name: screen_name, via: build_via('internal_server_error'))
+      url = timeline_path(screen_name: screen_name, via: current_via('internal_server_error'))
       t('application.internal_server_error_with_recovery_html', user: screen_name, url: url)
     else
       t('application.internal_server_error')
@@ -173,9 +173,9 @@ module Concerns::AlertMessagesConcern
         sharing_bonus: SearchCountLimitation.current_sharing_bonus(current_user),
         basic_plan: SearchCountLimitation::BASIC_PLAN,
         reset_in: SearchCountLimitation.search_count_reset_in_words(user: current_user, session_id: egotter_visit_id),
-        sign_in_url: sign_in_path(via: build_via('too_many_searches_message')),
-        pricing_url: pricing_path(via: build_via('too_many_searches_message')),
-        support_url: pricing_path(via: build_via('too_many_searches_message'), anchor: 'enterprise-plan'),
+        sign_in_url: sign_in_path(via: current_via('too_many_searches_message')),
+        pricing_url: pricing_path(via: current_via('too_many_searches_message')),
+        support_url: pricing_path(via: current_via('too_many_searches_message'), anchor: 'enterprise-plan'),
         id_hash: SecureRandom.urlsafe_base64(10),
     }
 

@@ -2,14 +2,14 @@ module TwitterUsersHelper
   def alert_info_box(id, &block)
     tag.div id: id, class: %w(sticky-box alert alert-info alert-dismissable), style: 'display: none;', data: {name: id} do
       tag.a('&times;', class: 'close', href: '#', data: {dismiss: 'alert'}, aria: {label: 'close'}, escape_attributes: false) +
-          tag.span { yield(id, build_via(id.underscore)) }
+          tag.span { yield(id, current_via(id.underscore)) }
     end
   end
 
   def alert_warning_box(id, &block)
     tag.div id: id, class: %w(sticky-box alert alert-warning alert-dismissable), style: 'display: none;', data: {name: id} do
       tag.a('&times;', class: 'close', href: '#', data: {dismiss: 'alert'}, aria: {label: 'close'}, escape_attributes: false) +
-          tag.span { yield(id, build_via(id.underscore)) }
+          tag.span { yield(id, current_via(id.underscore)) }
     end
   end
 

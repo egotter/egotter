@@ -7,34 +7,34 @@
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: one_sided_friends_top_path(via: build_via('footer'))}= t('one_sided_friends.new.footer_title')
+      %a{href: one_sided_friends_top_path(via: current_via('footer'))}= t('one_sided_friends.new.footer_title')
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: unfriends_top_path(via: build_via('footer'))}= t('unfriends.new.footer_title')
+      %a{href: unfriends_top_path(via: current_via('footer'))}= t('unfriends.new.footer_title')
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: inactive_friends_top_path(via: build_via('footer'))}= t('inactive_friends.new.footer_title')
+      %a{href: inactive_friends_top_path(via: current_via('footer'))}= t('inactive_friends.new.footer_title')
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: clusters_top_path(via: build_via('footer'))}= t('clusters.new.footer_title')
+      %a{href: clusters_top_path(via: current_via('footer'))}= t('clusters.new.footer_title')
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: tokimeki_unfollow_top_path(via: build_via('footer'))}= t('tokimeki_unfollow.new.footer_title')
+      %a{href: tokimeki_unfollow_top_path(via: current_via('footer'))}= t('tokimeki_unfollow.new.footer_title')
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: delete_tweets_path(via: build_via('footer'))}= t('delete_tweets.new.footer_title')
+      %a{href: delete_tweets_path(via: current_via('footer'))}= t('delete_tweets.new.footer_title')
       %br
 
     = succeed spaces do
       - if user_signed_in?
-        = link_to t('dictionary.sign_out'), goodbye_path(via: build_via('footer'))
+        = link_to t('dictionary.sign_out'), goodbye_path(via: current_via('footer'))
       - else
-        = link_to t('dictionary.sign_in'), sign_in_path(via: build_via('footer'))
+        = link_to t('dictionary.sign_in'), sign_in_path(via: current_via('footer'))
       %br.visible-xs-block
 
     = succeed spaces do
@@ -71,7 +71,7 @@
       %br.visible-xs-block
 
     = succeed spaces do
-      = link_to t('pricing.new.plans'), pricing_path(via: build_via('footer'))
+      = link_to t('pricing.new.plans'), pricing_path(via: current_via('footer'))
       %br.visible-xs-block
 
     = succeed spaces do

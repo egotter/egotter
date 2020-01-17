@@ -2,13 +2,13 @@
 .media
   .media-inner
     .media-left
-      = search_link user.screen_name, build_via('icon') do
+      = search_link user.screen_name, current_via('icon') do
         = normal_icon_img(user, class: 'media-object img-rounded')
     .media-body.text-left
       %h4.media-heading
         = user.name_with_icon
         = user.status_labels
-      %span.screen-name= search_link user.screen_name, build_via('screen_name')
+      %span.screen-name= search_link user.screen_name, current_via('screen_name')
     .media-right.created-at= tweet_link(tweet)
     .tweet-text.text-left= linkify(tweet.text)
 .vertical-spacing

@@ -6,20 +6,20 @@ class TokimekiUnfollowController < ApplicationController
 
   rescue_from Exception do |ex|
     if AccountStatus.unauthorized?(ex)
-      redirect_to tokimeki_unfollow_top_path(via: build_via('unauthorized')), alert: signed_in_user_not_authorized_message
+      redirect_to tokimeki_unfollow_top_path(via: current_via('unauthorized')), alert: signed_in_user_not_authorized_message
     else
       logger.warn "#{controller_name}##{action_name} #{current_user_id} #{ex.inspect}"
-      redirect_to tokimeki_unfollow_top_path(via: build_via('something_error')), alert: unknown_alert_message(ex)
+      redirect_to tokimeki_unfollow_top_path(via: current_via('something_error')), alert: unknown_alert_message(ex)
     end
   end
 
   before_action only: :cleanup do
     if current_twitter_user[:friends_count] >= 10000
-      redirect_to root_path(via: build_via), alert: t('after_sign_in.tokimeki_unfollow_too_many_friends')
+      redirect_to root_path(via: current_via), alert: t('after_sign_in.tokimeki_unfollow_too_many_friends')
     else
       initialize_data!
       if current_tokimeki_user.processed_count >= current_tokimeki_user.friendships.size
-        redirect_to root_path(via: build_via), notice: t('tokimeki_unfollow.cleanup.finish')
+        redirect_to root_path(via: current_via), notice: t('tokimeki_unfollow.cleanup.finish')
       end
     end
   end

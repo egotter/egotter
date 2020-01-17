@@ -18,7 +18,7 @@
 .vertical-spacing
 
 .text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  - url = searches_path(screen_name: @screen_name, via: build_via('start_button'))
+  - url = searches_path(screen_name: @screen_name, via: current_via('start_button'))
   = link_to t('.start_by', user: @screen_name), url, class: 'btn btn-primary btn-block btn-lg center-block', method: :post
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})

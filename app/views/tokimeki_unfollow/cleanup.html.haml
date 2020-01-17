@@ -8,7 +8,7 @@
   .vertical-spacing
   .unfollow-or-keep.alert.alert-warning.clearfix
     .tokimeki_unfollow.lead= t('.text001_html', screen_name: @friend.screen_name)
-    %a.btn.btn-warning.pull-left.unfollow{href: '#', data: {uid: @friend.uid, url: unfollows_path(via: build_via)}}
+    %a.btn.btn-warning.pull-left.unfollow{href: '#', data: {uid: @friend.uid, url: unfollows_path(via: current_via)}}
       = t('.unfollow')
     %a.btn.btn-warning.pull-right.keep{href: '#'}
       = t('.keep')

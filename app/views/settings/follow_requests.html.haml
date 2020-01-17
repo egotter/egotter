@@ -12,4 +12,4 @@
       %td= l(req.created_at.in_time_zone('Tokyo'), format: :settings_short)
       %td= req.finished_at ? l(req.finished_at.in_time_zone('Tokyo'), format: :settings_short) : ''
 
-.text-center= link_to t('.return'), settings_path(via: build_via('return_to_settings'))
+.text-center= link_to t('.return'), settings_path(via: current_via('return_to_settings'))

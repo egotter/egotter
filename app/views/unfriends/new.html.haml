@@ -10,20 +10,20 @@
 
   .lead= t('.text001_html')
 
-  = sign_in_with_twitter_link(unfriends_top_path(via: build_via('sign_in_with_twitter_on_image')), 'sign_in_with_twitter_on_image') do
+  = sign_in_with_twitter_link(unfriends_top_path(via: current_via('sign_in_with_twitter_on_image')), 'sign_in_with_twitter_on_image') do
     = image_tag '/egotter_unfriends_with_text_400x453.png', class: 'img-rounded', height: '300px'
   .vertical-spacing
   .vertical-spacing
 
   .btn-width-wrapper
     - if user_signed_in?
-      = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('search_by_user')}
+      = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: current_via('search_by_user')}
       .text-right.search-count-wrapper{style: 'visibility: hidden;'}
         %i.fas.fa-check.egotter-pink
         %span.egotter-pink= t('searches.new.pc.check_004_html')
 
     - else
-      = sign_in_with_twitter_link(unfriends_top_path(via: build_via('sign_in_with_twitter')), 'sign_in_with_twitter', class: 'btn btn-primary btn-block')
+      = sign_in_with_twitter_link(unfriends_top_path(via: current_via('sign_in_with_twitter')), 'sign_in_with_twitter', class: 'btn btn-primary btn-block')
       .text-right
         %i.fas.fa-check.egotter-pink
         %span.egotter-pink= t('searches.new.pc.check_002')
@@ -46,7 +46,7 @@
   %h2.h4.text-center= t('.what_is_unfriends.title')
   .vertical-spacing
   .vertical-spacing
-  - url = sign_in_path(via: build_via('what_is_unfriends'), redirect_path: unfriends_top_path(via: build_via('what_is_unfriends')))
+  - url = sign_in_path(via: current_via('what_is_unfriends'), redirect_path: unfriends_top_path(via: current_via('what_is_unfriends')))
   .description= t('.what_is_unfriends.description1_html', url: url)
   .vertical-spacing
   = image_tag '/egotter_rimuru_400x177.png', class: 'img-rounded center-block', height: '100px'
@@ -61,7 +61,7 @@
 .vertical-spacing
 
 #how_to_use_unfriends
-  = render partial: 'shared/feature_section', locals: {title: t('.how_to_use_unfriends.title'), image: '/egotter_only_signin_with_text_400x448.png', description: t('.how_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: build_via('how_to_use_unfriends')), build_via('how_to_use_unfriends_button'), class: 'btn btn-primary btn-block'), check: t('.how_to_use_unfriends.check')}
+  = render partial: 'shared/feature_section', locals: {title: t('.how_to_use_unfriends.title'), image: '/egotter_only_signin_with_text_400x448.png', description: t('.how_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('how_to_use_unfriends')), current_via('how_to_use_unfriends_button'), class: 'btn btn-primary btn-block'), check: t('.how_to_use_unfriends.check')}
 
 .vertical-spacing
 .vertical-spacing
@@ -69,7 +69,7 @@
 .vertical-spacing
 
 #when_to_use_unfriends
-  = render partial: 'shared/feature_section', locals: {title: t('.when_to_use_unfriends.title'), image: '/egotter_hurry_up_with_text_400x448.png', description: t('.when_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: build_via('when_to_use_unfriends')), build_via('when_to_use_unfriends_button'), class: 'btn btn-primary btn-block'), check: t('.when_to_use_unfriends.check')}
+  = render partial: 'shared/feature_section', locals: {title: t('.when_to_use_unfriends.title'), image: '/egotter_hurry_up_with_text_400x448.png', description: t('.when_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('when_to_use_unfriends')), current_via('when_to_use_unfriends_button'), class: 'btn btn-primary btn-block'), check: t('.when_to_use_unfriends.check')}
 
 .vertical-spacing
 .vertical-spacing
@@ -77,7 +77,7 @@
 .vertical-spacing
 
 .screenshot.text-center
-  = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
+  = search_link 'ego_tter', current_via('screenshot_laptop_iphone') do
     %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
 .vertical-spacing
 .vertical-spacing
@@ -87,8 +87,8 @@
 .vertical-spacing
 .vertical-spacing
 
-= render partial: 'shared/feature_section', locals: {title: t('shared.features.title6_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text6_html'), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: build_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check6')}
-= render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(unfriends_top_path(via: build_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('shared.features.check4')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title6_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text6_html'), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check6')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('shared.features.check4')}
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title7_html'), image: '/egotter_chat_with_text_400x448.png', description: t('shared.features.text7_html'), note: nil, link: link_to(t('shared.features.button7'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'), check: t('shared.features.check7')}
 
 .vertical-spacing

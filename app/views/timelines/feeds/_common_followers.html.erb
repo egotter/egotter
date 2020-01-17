@@ -1,7 +1,7 @@
 <%= render partial: 'timelines/placeholder', locals: {menu_name: 'common_followers', menu_or_users: 'menu'} %>
 
 <div class="menu-items media common_followers" style="display: none; position: relative;">
-  <%= link_to common_follower_path(twitter_user, via: build_via('feed_box')), class: 'result-link' do %>
+  <%= link_to common_follower_path(twitter_user, via: current_via('feed_box')), class: 'result-link' do %>
     <h3 class="h4 text-center"><%= t(".title") %></h3>
     <div class="text-center description"><%= t(".description", user1: twitter_user.screen_name, user2: current_user.screen_name) %></div>
   <% end %>
@@ -15,8 +15,8 @@
       <div class="common-chart"></div>
     </div>
 
-    <%= link_to(t('timelines.show.reload_this_page'), timeline_path(twitter_user, via: build_via('reload_common_followers')), class: 'btn btn-info btn-block reload-btn', style: 'display: none;') %>
-    <%= link_to(t('timelines.show.view_more_with_num_html', num: 'NUM'), common_follower_path(twitter_user, via: build_via('feed_text')), class: 'btn btn-info btn-block btn-view-more', style: 'display: none;') %>
+    <%= link_to(t('timelines.show.reload_this_page'), timeline_path(twitter_user, via: current_via('reload_common_followers')), class: 'btn btn-info btn-block reload-btn', style: 'display: none;') %>
+    <%= link_to(t('timelines.show.view_more_with_num_html', num: 'NUM'), common_follower_path(twitter_user, via: current_via('feed_text')), class: 'btn btn-info btn-block btn-view-more', style: 'display: none;') %>
   </div>
 </div>
 

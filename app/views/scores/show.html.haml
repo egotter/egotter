@@ -22,7 +22,7 @@
 .vertical-spacing
 
 - @screen_names.each do |screen_name|
-  = render partial: 'common/search_button', locals: {screen_name: screen_name, via: build_via('scores')}
+  = render partial: 'common/search_button', locals: {screen_name: screen_name, via: current_via('scores')}
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 

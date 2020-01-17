@@ -74,9 +74,9 @@
 
     var urls = {
       twitter_users_changes: '#{twitter_users_changes_path(uid: twitter_user.uid)}',
-      twitter_user: '#{twitter_user_path(uid: twitter_user.uid, via: build_via('update_box'))}',
-      follow: '#{follow_path(via: build_via('follow_box'))}',
-      twitter_users: "#{twitter_users_path(via: build_via('background_update'))}",
+      twitter_user: '#{twitter_user_path(uid: twitter_user.uid, via: current_via('update_box'))}',
+      follow: '#{follow_path(via: current_via('follow_box'))}',
+      twitter_users: "#{twitter_users_path(via: current_via('background_update'))}",
       account_status: "#{account_status_path(uid: twitter_user.uid)}"
     };
 
@@ -250,7 +250,7 @@
             console.log('accountStatus', res);
 
             if (!res.authorized) {
-              var url = "#{root_path(via: build_via('unauthorized_detected'))}";
+              var url = "#{root_path(via: current_via('unauthorized_detected'))}";
               Logger.warn("#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}");
               redirectTo(url);
 
@@ -283,7 +283,7 @@
           var message = '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}';
           Logger.warn(message);
           setTimeout(function() {
-            window.location.href = "#{root_path(via: build_via('secret_mode_detected')).html_safe}";
+            window.location.href = "#{root_path(via: current_via('secret_mode_detected')).html_safe}";
           }, 2000);
 
           ga('send', {
@@ -298,7 +298,7 @@
           var message = '#{t('before_sign_in.ad_blocker_detected_with_count', seconds: 3)}';
           Logger.warn(message);
           setTimeout(function() {
-            window.location.href = "#{root_path(via: build_via('ad_blocker_detected')).html_safe}";
+            window.location.href = "#{root_path(via: current_via('ad_blocker_detected')).html_safe}";
           }, 2000);
 
           ga('send', {

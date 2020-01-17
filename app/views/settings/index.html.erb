@@ -10,7 +10,7 @@
   <div class="col-xs-4"><%= t('.screen_name.title') %></div>
   <div class="col-xs-8">
     <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
-    <%= link_to t('.reset_menu.update_profile_html'), sign_in_path(via: build_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
+    <%= link_to t('.reset_menu.update_profile_html'), sign_in_path(via: current_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
   </div>
 
   <div class="clearfix"></div>
@@ -30,7 +30,7 @@
     <% else %>
       <div>
         <span><%= t('.authorized.false') %></span>
-        <%= link_to t('.authorized.update_now_html'), sign_in_path(via: build_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-danger' %>
+        <%= link_to t('.authorized.update_now_html'), sign_in_path(via: current_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-danger' %>
       </div>
       <div class="text-danger notes"><%= t('.authorized.stop') %></div>
     <% end %>
@@ -47,7 +47,7 @@
     <% else %>
       <div>
         <span><%= t('.following_egotter.false') %></span>
-        <%= link_to t('.following_egotter.follow_now'), '#', data: {url: follows_path(via: build_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary' %>
+        <%= link_to t('.following_egotter.follow_now'), '#', data: {url: follows_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary' %>
       </div>
       <div class="text-muted notes"><%= t('.following_egotter.note_html') %></div>
     <% end %>
@@ -68,7 +68,7 @@
 
   <div class="col-xs-4"><%= t('.swich_account.title') %></div>
   <div class="col-xs-8">
-    <%= link_to t('.swich_account.switch'), sign_in_path(force_login: true, via: build_via('switch_account'), redirect_path: settings_path), class: 'btn btn-default' %>
+    <%= link_to t('.swich_account.switch'), sign_in_path(force_login: true, via: current_via('switch_account'), redirect_path: settings_path), class: 'btn btn-default' %>
     <div class="text-muted notes"><%= t('.swich_account.note_html') %></div>
   </div>
 
@@ -163,7 +163,7 @@
 
   <div class="col-xs-4"><%= t('.notifications.prompt_reports.not_coming') %></div>
   <div class="col-xs-8">
-    <%= link_to t('.notifications.prompt_reports.update_authorized_for_dm'), sign_in_path(force_login: true, via: build_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
+    <%= link_to t('.notifications.prompt_reports.update_authorized_for_dm'), sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
     <div class="notes"><%= t('.notifications.prompt_reports.update_authorized_for_dm_note_html') %></div>
   </div>
 
@@ -173,7 +173,7 @@
   <div class="col-xs-4"><%= t('.notifications.prompt_reports.reporting_test') %></div>
   <div class="col-xs-8">
     <div>
-      <%= link_to t('.notifications.prompt_reports.send_test_report'), sign_in_path(force_login: true, via: build_via('send_test_report'), redirect_path: settings_path), class: 'btn btn-default' %>
+      <%= link_to t('.notifications.prompt_reports.send_test_report'), sign_in_path(force_login: true, via: current_via('send_test_report'), redirect_path: settings_path), class: 'btn btn-default' %>
       <span><a href="<%= settings_create_test_requests_path %>"><%= t('.notifications.prompt_reports.send_test_report_history') %></a></span>
     </div>
     <div class="text-muted notes"><%= t('.notifications.prompt_reports.send_test_report_note_html') %></div>
@@ -301,7 +301,7 @@
   <h2 class="h4 text-center"><i class="fas fa-shopping-cart"></i>&nbsp;<%= t('.order.order_histories') %></h2>
   <div class="vertical-spacing"></div>
 
-  <div class="text-center"><%= link_to t('.order.see_plans'), pricing_path(via: build_via('orders_table')) %></div>
+  <div class="text-center"><%= link_to t('.order.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
   <div class="vertical-spacing"></div>
 
   <% if current_user.orders.any? %>

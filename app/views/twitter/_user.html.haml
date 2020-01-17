@@ -1,4 +1,4 @@
-- via = build_via if !defined?(via) || via.blank?
+- via = current_via if !defined?(via) || via.blank?
 - user = TwitterUserDecorator.new(user)
 
 - if ad && defined?(user_counter) && user_counter == 3

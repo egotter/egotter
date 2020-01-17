@@ -42,8 +42,8 @@
       Twitter.enableFilterButton($('.filter-buttons'), function (options) {task.reset(options)});
 
     } else {
-      var signInFromSortUrl = '#{sign_in_path(via: build_via('sort_btn'))}';
-      var signInFromFilterUrl = '#{sign_in_path(via: build_via('filter_btn'))}';
+      var signInFromSortUrl = '#{sign_in_path(via: current_via('sort_btn'))}';
+      var signInFromFilterUrl = '#{sign_in_path(via: current_via('filter_btn'))}';
       $('.sort-orders').attr('href', signInFromSortUrl);
       $('.filters').attr('href', signInFromFilterUrl);
     }

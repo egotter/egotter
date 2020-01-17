@@ -21,9 +21,9 @@ class HomeController < ApplicationController
 
     if flash.empty? && user_signed_in?
       if TwitterUser.exists?(uid: current_user.uid)
-        url = timeline_path(screen_name: current_user.screen_name, via: build_via('auto_redirect'))
+        url = timeline_path(screen_name: current_user.screen_name, via: current_via('auto_redirect'))
       else
-        url = start_path(via: build_via('auto_redirect'))
+        url = start_path(via: current_via('auto_redirect'))
       end
 
       url = append_query_params(url, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]
@@ -35,7 +35,7 @@ class HomeController < ApplicationController
   def start
     if user_signed_in?
       if params[:save_context] == 'update' && TwitterUser.exists?(uid: current_user.uid)
-        url = timeline_path(screen_name: current_user.screen_name, via: build_via('auto_redirect_from_start'))
+        url = timeline_path(screen_name: current_user.screen_name, via: current_via('auto_redirect_from_start'))
         url = append_query_params(url, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]
         url = append_query_params(url, share_dialog: params[:share_dialog]) if params[:share_dialog]
         redirect_to url
@@ -61,7 +61,7 @@ class HomeController < ApplicationController
       flash.now[:alert] = t('before_sign_in.ad_blocker_detected')
     elsif params[:via].to_s.end_with?('unauthorized_detected')
       if user_signed_in?
-        url = sign_in_path(via: build_via('signed_in_user_not_authorized'))
+        url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
         flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
       end
     end

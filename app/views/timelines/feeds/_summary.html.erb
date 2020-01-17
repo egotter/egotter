@@ -1,5 +1,5 @@
 <% start = Time.zone.now %>
-<% via = build_via('summary_on_timeline') %>
+<% via = current_via('summary_on_timeline') %>
 <div class="summary-on-timeline">
   <div class="list-group">
     <%= link_to one_sided_friend_path(twitter_user, via: via), class: 'list-group-item' do %>

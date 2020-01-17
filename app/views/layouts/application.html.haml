@@ -89,7 +89,7 @@
     - if wrap_in_container?
       %script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}
       %script{id: 'user-template', type: 'x-tmpl-mustache'}
-        = search_link '{{screen_name}}', build_via('{{menu_name}}'), unescape: true, style: 'display: inline-block;' do
+        = search_link '{{screen_name}}', current_via('{{menu_name}}'), unescape: true, style: 'display: inline-block;' do
           %img.img-rounded{src: '{{profile_image_url_https}}', alt: '{{screen_name}}', width: 48, height: 48}
 
       .container{style: 'background-color: #ffffff;'}
@@ -126,26 +126,26 @@
               %span{'aria-hidden' => 'true'} ×
             %h4#search-modal-label.modal-title.text-center= t('searches.common.search_by_egotter')
           .modal-body
-            = render partial: 'common/search_form', locals: {via: build_via('search_modal_input')}
+            = render partial: 'common/search_form', locals: {via: current_via('search_modal_input')}
             .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
               = t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id))
               %div
                 - if user_signed_in?
                   - if current_user.has_valid_subscription?
-                    = link_to current_user.purchased_plan_name, settings_path(via: build_via('plan_button_on_search_modal')), class: 'btn btn-default btn-sm'
+                    = link_to current_user.purchased_plan_name, settings_path(via: current_via('plan_button_on_search_modal')), class: 'btn btn-default btn-sm'
                   - else
-                    = link_to t('search_histories.search_modal.pricing'), pricing_path(via: build_via('purchase_button_on_search_modal')), target: '_blank'
+                    = link_to t('search_histories.search_modal.pricing'), pricing_path(via: current_via('purchase_button_on_search_modal')), target: '_blank'
                     = link_to t('search_histories.search_modal.purchase'), '#', class: 'btn btn-default btn-checkout'
                   %div{style: 'margin-top: 5px;'}
                     %a.btn.btn-default{data: {target: '#share-modal', toggle: 'modal'}}= t('search_histories.search_modal.tweet')
                 - else
-                  = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: build_via('sign_in_button_on_search_modal')))
+                  = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: current_via('sign_in_button_on_search_modal')))
             - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id) == 0
               .vertical-spacing
               .alert.alert-info.text-left
-                - sign_in_url = sign_in_path(via: build_via('too_many_searches_search_modal'))
-                - pricing_url = pricing_path(via: build_via('too_many_searches_search_modal'))
-                - support_url = pricing_path(via: build_via('too_many_searches_search_modal'), anchor: 'enterprise-plan')
+                - sign_in_url = sign_in_path(via: current_via('too_many_searches_search_modal'))
+                - pricing_url = pricing_path(via: current_via('too_many_searches_search_modal'))
+                - support_url = pricing_path(via: current_via('too_many_searches_search_modal'), anchor: 'enterprise-plan')
                 = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
             %h2.text-center= t('search_histories.search_modal.title')
             .twitter.users.row
@@ -162,13 +162,13 @@
         .modal-content
           .modal-body
             %p= t('twitter.create_follow_modal.message_html')
-            %p= t('twitter.create_follow_modal.history_link_html', url: settings_path(via: build_via('create_follow_modal'), anchor: 'follow-count'))
+            %p= t('twitter.create_follow_modal.history_link_html', url: settings_path(via: current_via('create_follow_modal'), anchor: 'follow-count'))
             .dont-confirm
               %input#create-follow-dont-confirm{type: 'checkbox'}
               %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_follow_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: build_via('create_follow_modal'))}}= t('twitter.create_follow_modal.ok')
+            %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: current_via('create_follow_modal'))}}= t('twitter.create_follow_modal.ok')
 
     -# This modal will be initialized in Twitter.enableUnfollowButton('selector') after unfollow buttons are rendered.
     #create-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
@@ -176,13 +176,13 @@
         .modal-content
           .modal-body
             %p= t('twitter.create_unfollow_modal.message_html')
-            %p= t('twitter.create_unfollow_modal.history_link_html', url: settings_path(via: build_via('create_unfollow_modal'), anchor: 'unfollow-count'))
+            %p= t('twitter.create_unfollow_modal.history_link_html', url: settings_path(via: current_via('create_unfollow_modal'), anchor: 'unfollow-count'))
             .dont-confirm
               %input#create-unfollow-dont-confirm{type: 'checkbox'}
               %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_unfollow_modal.cancel')
-            %button.btn.btn-danger.ok{type: 'button', data: {url: unfollows_path(via: build_via('create_unfollow_modal'))}}= t('twitter.create_unfollow_modal.ok')
+            %button.btn.btn-danger.ok{type: 'button', data: {url: unfollows_path(via: current_via('create_unfollow_modal'))}}= t('twitter.create_unfollow_modal.ok')
 
     #follow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
@@ -190,14 +190,14 @@
           .modal-body
             %p= t('twitter.warning_follow_modal.message_html')
           .modal-footer
-            = link_to t('twitter.warning_follow_modal.see_pricing'), pricing_path(via: build_via('follow_limit_warning')), class: 'btn btn-default', target: '_blank'
+            = link_to t('twitter.warning_follow_modal.see_pricing'), pricing_path(via: current_via('follow_limit_warning')), class: 'btn btn-default', target: '_blank'
             - if user_signed_in?
               - if current_user.has_valid_subscription?
                 %button.btn.btn-default{disabled: true}= t('twitter.warning_follow_modal.purchased')
               - else
                 = link_to t('twitter.warning_follow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
             - else
-              = link_to t('twitter.warning_follow_modal.login'), sign_in_path(via: build_via('follow_limit_warning')), class: 'btn btn-primary'
+              = link_to t('twitter.warning_follow_modal.login'), sign_in_path(via: current_via('follow_limit_warning')), class: 'btn btn-primary'
 
     #unfollow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
@@ -205,14 +205,14 @@
           .modal-body
             %p= t('twitter.warning_unfollow_modal.message_html')
           .modal-footer
-            = link_to t('twitter.warning_unfollow_modal.see_pricing'), pricing_path(via: build_via('unfollow_limit_warning')), class: 'btn btn-default', target: '_blank'
+            = link_to t('twitter.warning_unfollow_modal.see_pricing'), pricing_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-default', target: '_blank'
             - if user_signed_in?
               - if current_user.has_valid_subscription?
                 %button.btn.btn-default{disabled: true}= t('twitter.warning_unfollow_modal.purchased')
               - else
                 = link_to t('twitter.warning_unfollow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
             - else
-              = link_to t('twitter.warning_unfollow_modal.login'), sign_in_path(via: build_via('unfollow_limit_warning')), class: 'btn btn-primary'
+              = link_to t('twitter.warning_unfollow_modal.login'), sign_in_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-primary'
 
   - if user_signed_in? && !under_maintenance?
     - if params[:follow_dialog] == '1'
@@ -230,7 +230,7 @@
               %p= t('welcome.follow_modal.note1_html')
             .modal-footer
               %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.follow_modal.cancel')
-              %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: build_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_intent_url('ego_tter')}}= t('welcome.follow_modal.ok')
+              %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: current_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_intent_url('ego_tter')}}= t('welcome.follow_modal.ok')
 
     -# This modal is always embedded because it is used in settings page.
     #share-modal.modal.fade{role: 'dialog', tabindex: '-1'}
@@ -250,4 +250,4 @@
             .share-text-note https://egotter.com #egotter
           .modal-footer
             %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.share_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: build_via('share_egotter_modal')), success_message: t('welcome.share_modal.success_message'), error_message: t('welcome.share_modal.error_message')}}= t('welcome.share_modal.ok')
+            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('welcome.share_modal.success_message'), error_message: t('welcome.share_modal.error_message')}}= t('welcome.share_modal.ok')

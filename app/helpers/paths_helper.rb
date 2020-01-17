@@ -1,6 +1,6 @@
 module PathsHelper
   def root_path_for(controller:)
-    via = build_via("root_path_for_#{controller}")
+    via = current_via("root_path_for_#{controller}")
     case controller
     when 'one_sided_friends', 'unfriends', 'inactive_friends', 'friends', 'clusters' then send("#{controller}_top_path", via: via)
     when 'delete_tweets' then delete_tweets_path(via: via)
@@ -10,7 +10,7 @@ module PathsHelper
   end
 
   def search_path_for(menu, screen_name)
-    via = build_via("search_path_for_#{menu}")
+    via = current_via("search_path_for_#{menu}")
     case menu.to_s
       when 'omniauth_callbacks' then timeline_path(screen_name: screen_name, via: via)
       when *%w(home searches waiting notifications search_histories login misc orders tokimeki_unfollow delete_tweets application) then timeline_path(screen_name: screen_name, via: via)
@@ -38,7 +38,7 @@ module PathsHelper
     block_given? ? link_to(url, options, &block) : link_to(mention_name(screen_name), url, options)
   end
 
-  def build_via(suffix = nil)
+  def current_via(suffix = nil)
     via = "#{controller_name}/#{action_name}"
     via += "/#{suffix}" if suffix
     via

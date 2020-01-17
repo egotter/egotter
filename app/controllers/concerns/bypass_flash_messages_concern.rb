@@ -33,7 +33,7 @@ module Concerns::BypassFlashMessagesConcern
       elsif session[:bypassed_notice_message] == 'after_sign_up'
         after_sign_up_message
       elsif session[:bypassed_notice_message] == 'search_limitation_soft_limited'
-        url = sign_in_path(via: build_via('search_limitation_soft_limited'))
+        url = sign_in_path(via: current_via('search_limitation_soft_limited'))
         search_limitation_soft_limited_message('user', url) # The user name can be anything
       elsif session[:bypassed_notice_message] == 'too_many_searches'
         too_many_searches_message

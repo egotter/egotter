@@ -14,7 +14,7 @@
   .btn-width-wrapper
     - if user_signed_in?
       - if @processing
-        %a.btn.btn-default.btn-block{href: delete_tweets_path(via: build_via('check_progress'))}= t('.see_progress')
+        %a.btn.btn-default.btn-block{href: delete_tweets_path(via: current_via('check_progress'))}= t('.see_progress')
         .text-muted.notes.text-right= t('.requested')
       - else
         .btn.btn-danger.btn-block.delete-tweets-btn{"data-target" => "#delete-tweets-modal", "data-toggle" => "modal"}= t('.delete_tweets')
@@ -23,7 +23,7 @@
           %span.egotter-pink= t('searches.new.pc.check_004_html')
 
     - else
-      = sign_in_with_twitter_link(delete_tweets_path(via: build_via('sign_in_with_twitter')), build_via('sign_in_with_twitter'), class: 'btn btn-primary btn-block')
+      = sign_in_with_twitter_link(delete_tweets_path(via: current_via('sign_in_with_twitter')), current_via('sign_in_with_twitter'), class: 'btn btn-primary btn-block')
       .text-right
         %i.fas.fa-check.egotter-pink
         %span.egotter-pink= t('searches.new.pc.check_002')
@@ -56,7 +56,7 @@
 .vertical-spacing
 
 .screenshot.text-center
-  = search_link 'ego_tter', build_via('screenshot_laptop_iphone') do
+  = search_link 'ego_tter', current_via('screenshot_laptop_iphone') do
     %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
 .vertical-spacing
 .vertical-spacing
@@ -66,10 +66,10 @@
 .vertical-spacing
 .vertical-spacing
 
-= render partial: 'shared/feature_section', locals: {title: t('shared.features.title1_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text1_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check1')}
-= render partial: 'shared/feature_section', locals: {title: t('shared.features.title2_html'), image: '/egotter_trash_with_text_400x448.png', description: t('shared.features.text2_html'), note: t('shared.features.note2'), link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_complete')), 'feature_complete', class: 'btn btn-primary btn-block'), check: t('shared.features.check2')}
-= render partial: 'shared/feature_section', locals: {title: t('shared.features.title3_html'), image: '/egotter_clock_with_text_400x448.png', description: t('shared.features.text3_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_progress')), 'feature_progress', class: 'btn btn-primary btn-block'), check: t('shared.features.check3')}
-= render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(delete_tweets_path(via: build_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('shared.features.check4')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title1_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text1_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check1')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title2_html'), image: '/egotter_trash_with_text_400x448.png', description: t('shared.features.text2_html'), note: t('shared.features.note2'), link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_complete')), 'feature_complete', class: 'btn btn-primary btn-block'), check: t('shared.features.check2')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title3_html'), image: '/egotter_clock_with_text_400x448.png', description: t('shared.features.text3_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_progress')), 'feature_progress', class: 'btn btn-primary btn-block'), check: t('shared.features.check3')}
+= render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('shared.features.check4')}
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title5_html'), image: '/egotter_chat_with_text_400x448.png', description: t('shared.features.text5_html'), note: nil, link: link_to(t('shared.features.button5'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'), check: t('shared.features.check5')}
 
 .vertical-spacing

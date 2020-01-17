@@ -76,14 +76,14 @@ class OrdersController < ApplicationController
     subscription_id = Order::CheckoutSession.new(checkout_session).subscription_id
 
     if Order.exists?(user_id: current_user.id, subscription_id: subscription_id)
-      redirect_to root_path(via: build_via('order_found')), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
+      redirect_to root_path(via: current_via('order_found')), notice: t('.success_html', url: after_purchase_path('after_purchasing'))
     else
-      redirect_to root_path(via: build_via('order_not_found')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error'))
+      redirect_to root_path(via: current_via('order_not_found')), alert: t('.failed_html', url: after_purchase_path('after_purchasing_with_error'))
     end
   end
 
   def cancel
-    redirect_to root_path(via: build_via), notice: t('.canceled_html')
+    redirect_to root_path(via: current_via), notice: t('.canceled_html')
   end
 
   def checkout_session_completed
@@ -131,7 +131,7 @@ class OrdersController < ApplicationController
   private
 
   def after_purchase_path(via)
-    settings_path(anchor: 'orders-table', via: build_via(via))
+    settings_path(anchor: 'orders-table', via: current_via(via))
   end
 
   def send_message_to_slack(text, title:)

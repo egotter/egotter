@@ -19,7 +19,7 @@ class WaitingController < ApplicationController
   end
 
   def new
-    @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user, via: build_via('waiting_redirect')))
+    @redirect_path = sanitized_redirect_path(params[:redirect_path].presence || timeline_path(@twitter_user, via: current_via('waiting_redirect')))
     @jid = params[:jid]
   end
 end

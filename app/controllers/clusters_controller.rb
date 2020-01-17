@@ -29,7 +29,7 @@ class ClustersController < ApplicationController
     else
       @screen_name = @tu.screen_name
       @redirect_path = redirect_path
-      @via = params['via'].presence || build_via('render_template')
+      @via = params['via'].presence || current_via('render_template')
       render template: 'searches/create', formats: %i(html), layout: false
     end
   end

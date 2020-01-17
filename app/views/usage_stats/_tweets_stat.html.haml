@@ -62,7 +62,7 @@
 .vertical-spacing
 
 .search_form-wrapper
-  = render partial: 'common/search_form', locals: {via: build_via('tweets_stat')}
+  = render partial: 'common/search_form', locals: {via: current_via('tweets_stat')}
 .vertical-spacing
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :middle})

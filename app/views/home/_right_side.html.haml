@@ -22,7 +22,7 @@
 .vertical-spacing
 .vertical-spacing
 .center-block{style: 'max-width: 375px; width: 80%;'}
-  = render partial: 'common/search_form', locals: {via: build_via('input')}
+  = render partial: 'common/search_form', locals: {via: current_via('input')}
   .text-notice.text-right.search-hint
     %i.fas.fa-check
     = t('searches.new.pc.check_003')
@@ -40,7 +40,7 @@
 .vertical-spacing
 
 .screenshot.text-center
-  = link_to sign_in_path(via: build_via('screenshots')) do
+  = link_to sign_in_path(via: current_via('screenshots')) do
     %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
 
 .vertical-spacing

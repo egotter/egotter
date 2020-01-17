@@ -8,7 +8,7 @@
 .vertical-spacing
 .text-center{style: 'max-width: 600px; margin: 0 auto;'}
   - if action_name == 'show'
-    - url = latest_forbidden_path(screen_name: @user.screen_name, via: build_via('request_to_update_button'))
+    - url = latest_forbidden_path(screen_name: @user.screen_name, via: current_via('request_to_update_button'))
     = link_to t('.update', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg center-block'
   - else
     %button.btn.btn-default.btn-block.btn-lg.center-block{disabled: true}= t('.displayed_data_is_latest')

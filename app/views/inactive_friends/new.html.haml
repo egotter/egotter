@@ -5,11 +5,11 @@
 .inactive-friends.lead.text-center= t('inactive_friends.new.lead_002').html_safe
 .inactive-friends.lead.text-center= t('inactive_friends.new.lead_003').html_safe
 
-= render partial: 'common/search_form', locals: {via: build_via('top_input')}
+= render partial: 'common/search_form', locals: {via: current_via('top_input')}
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 - if user_signed_in?
-  = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: build_via('top_button')}
+  = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: current_via('top_button')}
 - else
   = sign_in_with_twitter_link(inactive_friends_top_path, 'button', class: 'btn btn-info btn-block')
 

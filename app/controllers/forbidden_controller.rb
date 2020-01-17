@@ -11,7 +11,7 @@ class ForbiddenController < ApplicationController
 
   before_action unless: :twitter_crawler? do
     if !ForbiddenUser.exists?(screen_name: params[:screen_name]) && !forbidden_user?(params[:screen_name])
-      redirect_to timeline_path(screen_name: params[:screen_name], via: build_via('forbidden_redirect')), notice: t('forbidden.show.come_back', user: params[:screen_name])
+      redirect_to timeline_path(screen_name: params[:screen_name], via: current_via('forbidden_redirect')), notice: t('forbidden.show.come_back', user: params[:screen_name])
     end
   end
 
@@ -35,8 +35,8 @@ class ForbiddenController < ApplicationController
   private
 
   def flash_message(screen_name)
-    url = latest_forbidden_path(screen_name: screen_name, via: build_via('request_to_update'))
-    url = sign_in_path(via: build_via('request_to_update'), redirect_path: url) unless user_signed_in?
+    url = latest_forbidden_path(screen_name: screen_name, via: current_via('request_to_update'))
+    url = sign_in_path(via: current_via('request_to_update'), redirect_path: url) unless user_signed_in?
     t("forbidden.#{action_name}.displayed_data_is_html", user: screen_name, url: url)
   end
 end

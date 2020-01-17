@@ -11,7 +11,7 @@ class NotFoundController < ApplicationController
 
   before_action unless: :twitter_crawler? do
     if !NotFoundUser.exists?(screen_name: params[:screen_name]) && !not_found_user?(params[:screen_name])
-      redirect_to timeline_path(screen_name: params[:screen_name], via: build_via('not_found_redirect')), notice: t('not_found.show.come_back', user: params[:screen_name])
+      redirect_to timeline_path(screen_name: params[:screen_name], via: current_via('not_found_redirect')), notice: t('not_found.show.come_back', user: params[:screen_name])
     end
   end
 
@@ -35,8 +35,8 @@ class NotFoundController < ApplicationController
   private
 
   def flash_message(screen_name)
-    url = latest_not_found_path(screen_name: screen_name, via: build_via('request_to_update'))
-    url = sign_in_path(via: build_via('request_to_update'), redirect_path: url) unless user_signed_in?
+    url = latest_not_found_path(screen_name: screen_name, via: current_via('request_to_update'))
+    url = sign_in_path(via: current_via('request_to_update'), redirect_path: url) unless user_signed_in?
     t("not_found.#{action_name}.displayed_data_is_html", user: screen_name, url: url)
   end
 end

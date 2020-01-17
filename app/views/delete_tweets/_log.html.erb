@@ -3,7 +3,7 @@
     if log.error_class.blank?
       message = ''
     else
-      url = sign_in_path(via: build_via('error_log'), redirect_path: delete_tweets_path(via: build_via('error_log')))
+      url = sign_in_path(via: current_via('error_log'), redirect_path: delete_tweets_path(via: current_via('error_log')))
       values = {user: current_user.screen_name, count: log.destroy_count, retry_in: log.retry_in, url: url, default: t('.errors.default_html')}
       message = t(".errors.#{log.error_class.demodulize}_html", values)
     end
