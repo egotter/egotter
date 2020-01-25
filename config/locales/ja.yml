@@ -220,7 +220,7 @@ ja:
         open: 'ツイートクリーナーを開く'
       scheduled_tweets:
         title: 'ツイートを予約投稿'
-        description_html: '「ツイート予約投稿」で @%{user} のツイートを<br>時間指定で作成することができます。'
+        description_html: 'ツイート予約投稿で @%{user} のツイートを<br>時間指定で作成することができます。'
         open: 'ツイート予約投稿を開く'
   usage_stats:
     show:
