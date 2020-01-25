@@ -85,6 +85,9 @@
     .col-md-6
       = render partial: "timelines/feeds/delete_tweets", locals: {twitter_user: @twitter_user}
 
+    .col-md-6
+      = render partial: "timelines/feeds/scheduled_tweets", locals: {twitter_user: @twitter_user}
+
 = render(partial: 'adsense/side_by_side', locals: {vertical: :bottom})
 
 %h2.h4.text-center= t('.about_this_page', user: @twitter_user.mention_name)

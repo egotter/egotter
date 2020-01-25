@@ -1,5 +1,5 @@
 <div class="menu-items media" style="position: relative;">
-  <%= link_to delete_tweets_path(via: current_via('feed_box')), class: 'result-link' do %>
+  <%= link_to "https://scheduled-tweets.egotter.com?via=#{current_via('feed_box')}", class: 'result-link' do %>
 
     <h3 class="h4 text-center"><%= t(".title") %></h3>
     <div class="vertical-spacing"></div>
@@ -9,9 +9,9 @@
 
   <div style="position: absolute; bottom: 15px; left: 15px; right: 15px;">
     <div class="media-body text-center">
-      <%= image_tag '/egotter_trash_with_text_400x448.png', class: 'img-rounded', height: '160px' %>
+      <%= image_tag '/egotter_schedule_with_text_400x448.png', class: 'img-rounded', height: '160px' %>
     </div>
 
-    <%= link_to(t('.open'), delete_tweets_path(via: current_via('feed_text')), class: 'btn btn-info btn-block btn-view-more') %>
+    <%= link_to(t('.open'), "https://scheduled-tweets.egotter.com?via=#{current_via('feed_text')}", class: 'btn btn-info btn-block btn-view-more') %>
   </div>
 </div>

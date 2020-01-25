@@ -216,8 +216,12 @@ ja:
         description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。'
       delete_tweets:
         title: 'ツイートを一括削除'
-        description_html: 'ツイートクリーナーで @%{user} のツイートを<br>一括削除することができます。'
+        description_html: 'ツイートクリーナーで @%{user} のツイートを<br>一括で削除することができます。'
         open: 'ツイートクリーナーを開く'
+      scheduled_tweets:
+        title: 'ツイートを予約投稿'
+        description_html: '「ツイート予約投稿」で @%{user} のツイートを<br>時間指定で作成することができます。'
+        open: 'ツイート予約投稿を開く'
   usage_stats:
     show:
       title: "ツイッター利用状況"
