@@ -51,8 +51,9 @@ module ApplicationHelper
     settings = controller_name == 'settings'
     pricing = controller_name == 'pricing'
     login = controller_name == 'login'
+    misc = controller_name == 'misc'
 
-    !tokimeki && !start && !directory && !settings && !pricing && !login
+    !tokimeki && !start && !directory && !settings && !pricing && !login && !misc
   end
 
   def kick_out_error_path(reason, redirect_path: nil)
