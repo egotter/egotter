@@ -214,6 +214,10 @@ ja:
       inactive_followers:
         title: '最近いないフォロワー'
         description: '@%{user} のフォロワーのうち、最近ツイートしていないユーザーです。'
+      delete_tweets:
+        title: 'ツイートを一括削除'
+        description_html: 'ツイートクリーナーで @%{user} のツイートを<br>一括削除することができます。'
+        open: 'ツイートクリーナーを開く'
   usage_stats:
     show:
       title: "ツイッター利用状況"
