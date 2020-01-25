@@ -27,12 +27,13 @@ yum update -y
 yum groupinstall -y "Development Tools"
 yum install -y git tmux dstat htop monit tree nginx
 yum install -y openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
-set +e
-rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
-set -e
-yum install -y redis --enablerepo=remi
+# set +e
+# rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
+# set -e
+# yum install -y redis --enablerepo=remi
 yum install -y colordiff --enablerepo=epel
 
+# Amazon Linux 1
 rpm -ivh https://dev.mysql.com/get/mysql80-community-release-el6-1.noarch.rpm
 yum install -y mysql-community-server mysql-community-devel
 
@@ -58,10 +59,10 @@ echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
 
 cd /tmp
 # https://github.com/egotter/egotter/wiki/Install-Ruby
-wget http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.4.tar.gz
-tar xvfz ruby-2.6.4.tar.gz
-cd ruby-2.6.4
-./configure && make && make install
+# wget http://cache.ruby-lang.org/pub/ruby/2.6/ruby-2.6.4.tar.gz
+# tar xvfz ruby-2.6.4.tar.gz
+# cd ruby-2.6.4
+# ./configure && make && make install
 
 git config --global user.email "you@example.com"
 git config --global user.name "Your Name"
