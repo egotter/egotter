@@ -198,10 +198,9 @@ Rails.application.routes.draw do
   }, via: :get
 
   require 'sidekiq/web'
-  Sidekiq::Web.use Rack::Auth::Basic do |username, password|
-    username == ENV['SIDEKIQ_USERNAME'] && password == ENV['SIDEKIQ_PASSWORD']
-  end if Rails.env.production?
-  mount Sidekiq::Web, at: '/sidekiq'
+  authenticate :user, lambda { |u| [User::ADMIN_UID, User::EGOTTER_UID].include?(u.uid) } do
+    mount Sidekiq::Web => '/sidekiq'
+  end
 
   if defined?(Blazer::Engine)
     mount Blazer::Engine, at: '/blazer'
