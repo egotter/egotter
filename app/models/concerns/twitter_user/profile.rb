@@ -52,9 +52,9 @@ module Concerns::TwitterUser::Profile
   }
 
   included do
-    attr_accessor :raw_attrs_text
+    attr_accessor :profile_text
 
-    delegate *METHOD_NAME_KEYS, to: :raw_attrs
+    delegate *METHOD_NAME_KEYS, to: :profile
   end
 
   # A url written on profile page as a home page url
@@ -83,48 +83,36 @@ module Concerns::TwitterUser::Profile
   end
 
   def profile_not_found?
-    if instance_variable_defined?(:@profile_not_found)
-      @profile_not_found
-    else
-      raw_attrs
-      @profile_not_found
-    end
+    @profile.blank?
   end
 
   private
 
-  def raw_attrs
+  def profile
     if new_record?
-      attrs = nil
       begin
-        attrs = Oj.load(raw_attrs_text.presence || '{}', symbol_keys: true)
+        attrs = Oj.load(profile_text.presence || '{}')
       rescue => e
         attrs = {}
       end
       Hashie::Mash.new(attrs)
     else
-      if instance_variable_defined?(:@raw_attrs)
-        @raw_attrs
+      if instance_variable_defined?(:@profile)
+        @profile
       else
-        profile = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil)
-        profile = Oj.load(profile, symbol_keys: true) if profile.class == String # Fix me.
-        if profile && profile.class == Hash && !profile.blank?
-          @profile_not_found = false
-          return (@raw_attrs = Hashie::Mash.new(profile))
+        if (text = fetch_profile_text).blank?
+          logger.warn "Profile not found in EFS and S3. #{id} #{sprintf("%.3f sec", Time.zone.now - created_at)}"
+          @profile = Hashie::Mash.new({})
+        else
+          @profile = Hashie::Mash.new(text)
         end
-
-        profile = S3::Profile.find_by(twitter_user_id: id)
-        if !profile.blank? && !profile[:user_info].blank?
-          profile = Oj.load(profile[:user_info], symbol_keys: true)
-          @profile_not_found = false
-          return (@raw_attrs = Hashie::Mash.new(profile))
-        end
-
-        logger.warn "Profile not found in EFS and S3. #{id} #{sprintf("%.3f sec", Time.zone.now - created_at)}"
-
-        @profile_not_found = true
-        @raw_attrs = Hashie::Mash.new({})
       end
     end
+  end
+
+  def fetch_profile_text
+    text = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil)
+    text = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if text.blank?
+    text
   end
 end

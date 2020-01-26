@@ -7,17 +7,17 @@ RSpec.describe Concerns::TwitterUser::Validation do
 
     before { twitter_user.valid? }
 
-    context 'The uid is empty string' do
+    context 'It is empty string' do
       let(:uid_value) { '' }
       it { is_expected.to be_present }
     end
 
-    context 'The uid is nil' do
+    context 'It is nil' do
       let(:uid_value) { nil }
       it { is_expected.to be_present }
     end
 
-    context 'The uid is invalid format' do
+    context 'It is invalid format' do
       let(:uid_value) { 'name' }
       it { is_expected.to be_present }
     end
@@ -37,45 +37,45 @@ RSpec.describe Concerns::TwitterUser::Validation do
 
     before { twitter_user.valid? }
 
-    context 'The screen_name is empty string' do
+    context 'It is empty string' do
       let(:screen_name_value) { '' }
       it { is_expected.to be_present }
     end
 
-    context 'The screen_name is nil' do
+    context 'It is nil' do
       let(:screen_name_value) { nil }
       it { is_expected.to be_present }
     end
 
-    context 'The screen_name is invalid format' do
+    context 'It is invalid format' do
       let(:screen_name_value) { 'name-name' }
       it { is_expected.to be_present }
     end
   end
 
-  describe '#raw_attrs_text' do
-    let(:twitter_user) { build(:twitter_user, raw_attrs_text: text) }
-    subject { twitter_user.errors[:raw_attrs_text] }
+  describe '#profile_text' do
+    let(:twitter_user) { build(:twitter_user, profile_text: text) }
+    subject { twitter_user.errors[:profile_text] }
 
     context 'On create' do
       before { twitter_user.valid? }
 
-      context 'The raw_attrs_text is nil' do
+      context 'It is nil' do
         let(:text) { nil }
         it { is_expected.to be_present }
       end
 
-      context 'The raw_attrs_text is empty string' do
+      context 'It is empty string' do
         let(:text) { '' }
         it { is_expected.to be_present }
       end
 
-      context 'The raw_attrs_text is invalid format' do
+      context 'It is invalid format' do
         let(:text) { 'hello' }
         it { is_expected.to be_present }
       end
 
-      context 'The raw_attrs_text is empty json' do
+      context 'It is empty json' do
         let(:text) { '{}' }
         it { is_expected.to be_blank }
       end
@@ -84,26 +84,24 @@ RSpec.describe Concerns::TwitterUser::Validation do
     context 'On update' do
       before { twitter_user.save!(validate: false) }
 
-      context 'The raw_attrs_text is empty string' do
-        context 'The raw_attrs_text is nil' do
-          let(:text) { nil }
-          it { is_expected.to be_blank }
-        end
+      context 'It is nil' do
+        let(:text) { nil }
+        it { is_expected.to be_blank }
+      end
 
-        context 'The raw_attrs_text is empty string' do
-          let(:text) { '' }
-          it { is_expected.to be_blank }
-        end
+      context 'It is empty string' do
+        let(:text) { '' }
+        it { is_expected.to be_blank }
+      end
 
-        context 'The raw_attrs_text is invalid format' do
-          let(:text) { 'hello' }
-          it { is_expected.to be_blank }
-        end
+      context 'It is invalid format' do
+        let(:text) { 'hello' }
+        it { is_expected.to be_blank }
+      end
 
-        context 'The raw_attrs_text is empty json' do
-          let(:text) { '{}' }
-          it { is_expected.to be_blank }
-        end
+      context 'It is empty json' do
+        let(:text) { '{}' }
+        it { is_expected.to be_blank }
       end
     end
   end

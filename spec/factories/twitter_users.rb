@@ -6,7 +6,7 @@ FactoryBot.define do
     followers_count { rand(2) + 1 }
     friends_size { friends_count }
     followers_size { followers_count }
-    raw_attrs_text do
+    profile_text do
       {
           id: uid,
           screen_name: screen_name,

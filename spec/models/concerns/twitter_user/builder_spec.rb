@@ -20,7 +20,7 @@ RSpec.describe Concerns::TwitterUser::Builder do
                          screen_name: user[:screen_name],
                          friends_count: user[:friends_count],
                          followers_count: user[:followers_count])
-      expect(subject.raw_attrs_text).to match(user.to_json)
+      expect(subject.profile_text).to match(user.to_json)
     end
   end
 

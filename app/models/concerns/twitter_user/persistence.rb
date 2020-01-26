@@ -24,7 +24,7 @@ module Concerns::TwitterUser::Persistence
 
   def perform_after_commit
     benchmark('Efs::TwitterUser.import_from!') do
-      Efs::TwitterUser.import_from!(id, uid, screen_name, raw_attrs_text, @friend_uids, @follower_uids)
+      Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, @friend_uids, @follower_uids)
     end
 
     benchmark('S3::Friendship.import_from!') do
@@ -36,7 +36,7 @@ module Concerns::TwitterUser::Persistence
     end
 
     benchmark('S3::Profile.import_from!') do
-      S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text, async: true)
+      S3::Profile.import_from!(id, uid, screen_name, profile_text, async: true)
     end
 
     # S3
