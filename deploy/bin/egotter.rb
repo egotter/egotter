@@ -66,10 +66,8 @@ if params['release']
   task = Taskbooks::ReleaseTask.build(params)
   task.run
 
-  if params['git-tag']
-    system("git tag deploy-#{params['role']}-all-#{Time.now.to_i}")
-    system('git push origin --tags')
-  end
+  system("git tag release-#{params['role']}-#{Time.now.to_i}")
+  system('git push origin --tags')
 else
   task = Taskbooks::AwsTask.build(params)
   task.run
