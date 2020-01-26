@@ -1,4 +1,7 @@
 ja:
+  layouts:
+    header:
+      sign_in: 'ログイン'
   searches:
     common:
       egotter: "えごったー"

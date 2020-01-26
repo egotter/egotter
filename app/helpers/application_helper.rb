@@ -3,9 +3,10 @@ module ApplicationHelper
     ENV['MAINTENANCE'] == '1'
   end
 
-  def show_simple_header?
-    (controller_name == 'home' && action_name == 'new' && !user_signed_in?) ||
-        (controller_name == 'unfriends' && action_name == 'new' && !user_signed_in?)
+  def show_header?
+    top = controller_name == 'home' && action_name == 'new'
+    unfriends = controller_name == 'unfriends' && action_name == 'new'
+    (!top && !unfriends) && user_signed_in?
   end
 
   def show_sidebar?
@@ -20,8 +21,10 @@ module ApplicationHelper
   end
 
   def wrap_in_container?
-    !(controller_name == 'home' && action_name == 'new') &&
-        !(controller_name == 'settings' && action_name == 'index')
+    top = controller_name == 'home' && action_name == 'new'
+    unfriends = controller_name == 'unfriends' && action_name == 'new'
+    settings = controller_name == 'settings' && action_name == 'index'
+    !top  && !unfriends && !settings
   end
 
   def show_common_friends?(twitter_user)
