@@ -54,48 +54,40 @@
               = link_to mention_name(current_user.screen_name), settings_path(via: current_via('navbar')), class: 'btn btn-default'
 
       #ajax-warning-message.container{style: 'display: none;'}
-        .row
-          .col-xs-12{style: 'background-color: #ffffff;'}
-            .vertical-spacing
-            %p.alert.alert-warning.alert-dismissable
-              %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
+        .vertical-spacing
+        %p.alert.alert-warning.alert-dismissable
+          %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
 
     .container
-      .row
-        .col-xs-12
-          #global-warning-message-box{style: 'display: none;'}
-            .vertical-spacing
-            #global-warning-message.alert.alert-warning.alert-dismissible{role: "alert"}
-              %button.close{"aria-label" => "Close", type: "button"}
-                %span{"aria-hidden" => "true", onclick: "$('#global-warning-message-box').hide().find('.message').empty();"} &times;
-              .message
+      #global-warning-message-box{style: 'display: none;'}
+        .vertical-spacing
+        #global-warning-message.alert.alert-warning.alert-dismissible{role: "alert"}
+          %button.close{"aria-label" => "Close", type: "button"}
+            %span{"aria-hidden" => "true", onclick: "$('#global-warning-message-box').hide().find('.message').empty();"} &times;
+          .message
 
     .container
-      .row
-        .col-xs-12
-          #global-info-message-box{style: 'display: none;'}
-            .vertical-spacing
-            #global-info-message.alert.alert-info.alert-dismissible{role: "alert"}
-              %button.close{"aria-label" => "Close", type: "button"}
-                %span{"aria-hidden" => "true", onclick: "$('#global-info-message-box').hide().find('.message').empty();"} &times;
-              .message
+      #global-info-message-box{style: 'display: none;'}
+        .vertical-spacing
+        #global-info-message.alert.alert-info.alert-dismissible{role: "alert"}
+          %button.close{"aria-label" => "Close", type: "button"}
+            %span{"aria-hidden" => "true", onclick: "$('#global-info-message-box').hide().find('.message').empty();"} &times;
+          .message
 
     - if notice || alert
       .container
-        .row
-          .col-xs-12
-            - if alert
-              .vertical-spacing
-              #header-warning.alert.alert-warning.alert-dismissible{role: "alert"}
-                %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
-                  %span{"aria-hidden" => "true"} &times;
-                = raw alert
-            - elsif notice
-              .vertical-spacing
-              #header-info.alert.alert-info.alert-dismissible{role: "alert"}
-                %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
-                  %span{"aria-hidden" => "true"} &times;
-                = raw notice
+        - if alert
+          .vertical-spacing
+          #header-warning.alert.alert-warning.alert-dismissible{role: "alert"}
+            %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
+              %span{"aria-hidden" => "true"} &times;
+            = raw alert
+        - elsif notice
+          .vertical-spacing
+          #header-info.alert.alert-info.alert-dismissible{role: "alert"}
+            %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
+              %span{"aria-hidden" => "true"} &times;
+            = raw notice
 
     - if wrap_in_container?
       %script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}
