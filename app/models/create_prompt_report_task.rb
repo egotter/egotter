@@ -97,8 +97,7 @@ class CreatePromptReportTask
 
   def benchmark(message, &block)
     start = Time.zone.now
-    # TODO Don't use ApplicationRecord.benchmark
-    ApplicationRecord.benchmark("Benchmark CreatePromptReportTask #{request.id} #{message}", level: :info, &block)
+    yield
     @benchmark[message] = Time.zone.now - start
   end
 

@@ -10,9 +10,7 @@ module Concerns::TwitterUser::Persistence
     # This method is processed on `after_commit` to avoid long transaction.
     after_commit(on: :create) do
 
-      Util.bm('Total', id, uid) do
-        perform_after_commit
-      end
+      perform_after_commit
       # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
 
     rescue => e
@@ -25,62 +23,73 @@ module Concerns::TwitterUser::Persistence
   end
 
   def perform_after_commit
-    Util.bm('Efs::TwitterUser.import_from!', id, uid) do
+    benchmark('Efs::TwitterUser.import_from!') do
       Efs::TwitterUser.import_from!(id, uid, screen_name, raw_attrs_text, @friend_uids, @follower_uids)
     end
 
-    Util.bm('S3::Friendship.import_from!', id, uid) do
+    benchmark('S3::Friendship.import_from!') do
       S3::Friendship.import_from!(id, uid, screen_name, @friend_uids, async: true)
     end
 
-    Util.bm('S3::Followership.import_from!', id, uid) do
+    benchmark('S3::Followership.import_from!') do
       S3::Followership.import_from!(id, uid, screen_name, @follower_uids, async: true)
     end
 
-    Util.bm('S3::Profile.import_from!', id, uid) do
+    benchmark('S3::Profile.import_from!') do
       S3::Profile.import_from!(id, uid, screen_name, raw_attrs_text, async: true)
     end
 
     # S3
 
-    Util.bm('S3::StatusTweet.import_from!', id, uid) do
+    benchmark('S3::StatusTweet.import_from!') do
       tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
       S3::StatusTweet.import_from!(uid, screen_name, tweets)
     end
 
-    Util.bm('S3::FavoriteTweet.import_from!', id, uid) do
+    benchmark('S3::FavoriteTweet.import_from!') do
       tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
       S3::FavoriteTweet.import_from!(uid, screen_name, tweets)
     end
 
-    Util.bm('S3::MentionTweet.import_from!', id, uid) do
+    benchmark('S3::MentionTweet.import_from!') do
       tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
       S3::MentionTweet.import_from!(uid, screen_name, tweets)
     end
 
     # EFS
 
-    Util.bm('Efs::StatusTweet.import_from!', id, uid) do
+    benchmark('Efs::StatusTweet.import_from!') do
       tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
       Efs::StatusTweet.import_from!(uid, screen_name, tweets)
     end
 
-    Util.bm('Efs::FavoriteTweet.import_from!', id, uid) do
+    benchmark('Efs::FavoriteTweet.import_from!') do
       tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
       Efs::FavoriteTweet.import_from!(uid, screen_name, tweets)
     end
 
-    Util.bm('Efs::MentionTweet.import_from!', id, uid) do
+    benchmark('Efs::MentionTweet.import_from!') do
       tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
       Efs::MentionTweet.import_from!(uid, screen_name, tweets)
     end
   end
 
-  module Util
-    module_function
+  module Instrumentation
+    def benchmark(message, &block)
+      start = Time.zone.now
+      yield
+      @benchmark[message] = Time.zone.now - start
+    end
 
-    def bm(message, id, uid, &block)
-      ApplicationRecord.benchmark("Benchmark Persistence #{id} #{message} #{uid}", level: :info, &block)
+    def perform_after_commit(*args, &blk)
+      @benchmark = {}
+      start = Time.zone.now
+
+      super
+
+      @benchmark['Total'] = Time.zone.now - start
+      logger.info "Benchmark Persistence #{id} #{@benchmark.inspect}"
     end
   end
+  prepend Instrumentation
 end
