@@ -15,7 +15,7 @@ module Concerns::SessionsConcern
       session[:egotter_visit_id] = session.id.nil? ? '-1' : session.id
     end
 
-    if session[:egotter_visit_id] == '-1'
+    if session[:egotter_visit_id] == '-1' || session[:egotter_visit_id].class == Hash
       digest = Digest::MD5.hexdigest("#{Time.zone.now.to_i + rand(1000)}")
       session[:egotter_visit_id] = "digest-#{digest}"
     end

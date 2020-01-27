@@ -45,6 +45,8 @@ class SearchCountLimitation
     end
 
     def current_search_count(user: nil, session_id: nil)
+      # The cause of "ActionView::Template::Error (can't quote Hash)" is invalid session_id.
+      # e.g. {"public_id"=>"hash string"}
       SearchHistory.where(where_condition(user: user, session_id: session_id)).size
     end
     alias current_count current_search_count
