@@ -83,7 +83,7 @@ module Concerns::TwitterUser::Profile
   end
 
   def profile_not_found?
-    @profile.blank?
+    profile.blank?
   end
 
   private
