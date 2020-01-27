@@ -32,15 +32,26 @@ module Efs
         cache_client.write(cache_key(twitter_user_id), compress(json))
       end
 
-      def import_from_s3!(twitter_user, skip_if_found: false)
+      def import_from_s3!(twitter_user, skip_if_found: false, threads: true)
         return if skip_if_found && find_by(twitter_user.id)
 
         ApplicationRecord.benchmark("#{self} Import from s3 by #{twitter_user.id}", level: :debug) do
-          profile = parse_json(S3::Profile.find_by(twitter_user_id: twitter_user.id)[:user_info])
-          friend_uids = S3::Friendship.find_by(twitter_user_id: twitter_user.id)[:friend_uids]
-          follower_uids = S3::Followership.find_by(twitter_user_id: twitter_user.id)[:follower_uids]
+          profile, friend_uids, follower_uids = threads ? work_in_threads(twitter_user) : work_direct(twitter_user)
           import_from!(twitter_user.id, twitter_user.uid, twitter_user.screen_name, profile, friend_uids, follower_uids)
         end
+      end
+
+      def work_direct(twitter_user)
+        [
+            S3::Profile.find_by(twitter_user_id: twitter_user.id)[:user_info],
+            S3::Friendship.find_by(twitter_user_id: twitter_user.id)[:friend_uids],
+            S3::Followership.find_by(twitter_user_id: twitter_user.id)[:follower_uids]
+        ]
+      end
+
+      def work_in_threads(twitter_user)
+        results = Parallel.map([S3::Profile, S3::Friendship, S3::Followership], in_threads: 3) { |klass| klass.find_by(twitter_user_id: twitter_user.id) }
+        [results[0][:user_info], results[1][:friend_uids], results[2][:follower_uids]]
       end
 
       def cache_key(twitter_user_id)
@@ -60,6 +71,8 @@ module Efs
 
       def parse_json(text)
         Oj.load(text, symbol_keys: true)
+      rescue Oj::ParseError => e
+        raise TypeError.new("#{text} is not a valid JSON source.")
       end
 
       def compress(text)
