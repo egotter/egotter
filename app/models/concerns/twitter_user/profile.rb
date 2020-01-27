@@ -69,7 +69,7 @@ module Concerns::TwitterUser::Profile
   end
 
   def account_created_at
-    at = raw_attrs[:created_at].to_s
+    at = profile[:created_at].to_s
     if time_zone.present? && at.present?
       ActiveSupport::TimeZone[TIME_ZONE_MAPPING[time_zone.to_s] || time_zone.to_s].parse(at)
     elsif at.present?
