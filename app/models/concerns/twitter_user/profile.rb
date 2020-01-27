@@ -104,6 +104,7 @@ module Concerns::TwitterUser::Profile
           logger.warn "Profile not found in EFS and S3. #{id} #{sprintf("%.3f sec", Time.zone.now - created_at)}"
           @profile = Hashie::Mash.new({})
         else
+          text = Oj.load(text, symbol_keys: true) if text.class == String
           @profile = Hashie::Mash.new(text)
         end
       end
@@ -111,8 +112,8 @@ module Concerns::TwitterUser::Profile
   end
 
   def fetch_profile_text
-    text = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil)
-    text = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if text.blank?
+    text = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil) # Hash
+    text = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if text.blank? # String
     text
   end
 end
