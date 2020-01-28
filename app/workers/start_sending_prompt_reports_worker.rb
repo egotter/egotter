@@ -16,7 +16,7 @@ class StartSendingPromptReportsWorker
   end
 
   def timeout_in
-    20.minutes
+    30.minutes
   end
 
   def after_timeout
@@ -94,4 +94,30 @@ class StartSendingPromptReportsWorker
       CreatePromptReportWorker.perform_async(request.id, options)
     end
   end
+
+  module Instrumentation
+    def start_queueing(*args, &blk)
+      @benchmark = {}
+      start = Time.zone.now
+      result = super
+      @benchmark['Total'] = Time.zone.now - start
+      Rails.logger.info "Benchmark StartSendingPromptReportsWorker #{@benchmark.inspect}"
+      result
+    end
+
+    def create_requests(*args, &blk)
+      start = Time.zone.now
+      result = super
+      @benchmark['create_requests'] = Time.zone.now - start
+      result
+    end
+
+    def enqueue_requests(*args, &blk)
+      start = Time.zone.now
+      result = super
+      @benchmark['enqueue_requests'] = Time.zone.now - start
+      result
+    end
+  end
+  prepend Instrumentation
 end
