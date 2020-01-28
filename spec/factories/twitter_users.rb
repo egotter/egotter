@@ -13,6 +13,8 @@ FactoryBot.define do
           friends_count: friends_count,
           followers_count: followers_count,
           protected: true,
+          created_at: Time.zone.now.to_s,
+          time_zone: 'JST'
       }.to_json
     end
     user_id { -1 }

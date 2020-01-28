@@ -7,20 +7,20 @@ module StoreToFile
 
   def store(key, body, async: true)
     raise 'key is nil' if key.nil?
-    puts "DEBUG #{self} ##{__method__} is mocked"
+    #puts "DEBUG #{self} ##{__method__} is mocked"
     File.write(File.join(dir, key.to_s), body)
   end
 
   def fetch(key)
     raise 'key is nil' if key.nil?
-    puts "DEBUG #{self} ##{__method__} is mocked"
+    #puts "DEBUG #{self} ##{__method__} is mocked"
     File.read(File.join(dir, key.to_s))
   rescue Errno::ENOENT => e
     raise unless e.message.start_with?('No such file or directory')
   end
 
   def clear!
-    puts "DEBUG #{self} ##{__method__} removes #{dir}"
+    #puts "DEBUG #{self} ##{__method__} removes #{dir}"
     FileUtils.rm_r(dir)
   end
 end

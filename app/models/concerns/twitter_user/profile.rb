@@ -69,16 +69,18 @@ module Concerns::TwitterUser::Profile
   end
 
   def account_created_at
-    at = profile[:created_at].to_s
-    if time_zone.present? && at.present?
-      ActiveSupport::TimeZone[TIME_ZONE_MAPPING[time_zone.to_s] || time_zone.to_s].parse(at)
-    elsif at.present?
-      Time.zone.parse(at)
+    time = profile[:created_at].to_s
+
+    if time_zone.present? && time.present?
+      rails_time_zone = ActiveSupport::TimeZone[TIME_ZONE_MAPPING[time_zone] || time_zone]
+      rails_time_zone.parse(time)
+    elsif time.present?
+      Time.zone.parse(time)
     else
       nil
     end
   rescue => e
-    logger.info "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{at}]"
+    logger.info "#{self.class}##{__method__}: #{e.class} #{e.message} [#{time_zone}] [#{time}]"
     nil
   end
 
@@ -100,20 +102,20 @@ module Concerns::TwitterUser::Profile
       if instance_variable_defined?(:@profile)
         @profile
       else
-        if (text = fetch_profile_text).blank?
+        if (hash = fetch_profile).blank?
           logger.warn "Profile not found in EFS and S3. #{id} #{sprintf("%.3f sec", Time.zone.now - created_at)}"
           @profile = Hashie::Mash.new({})
         else
-          text = Oj.load(text, symbol_keys: true) if text.class == String
-          @profile = Hashie::Mash.new(text)
+          hash = Oj.load(hash, symbol_keys: true) if hash.class == String
+          @profile = Hashie::Mash.new(hash)
         end
       end
     end
   end
 
-  def fetch_profile_text
-    text = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil) # Hash
-    text = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if text.blank? # String
-    text
+  def fetch_profile
+    result = Efs::TwitterUser.find_by(id)&.fetch(:profile, nil) # Hash
+    result = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if result.blank? # String
+    result
   end
 end
