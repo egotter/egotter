@@ -1,5 +1,6 @@
 class UnfriendsBuilder
 
+  # TODO Decrease to avoid high loads
   DEFAULT_LIMIT = 100
 
   def initialize(twitter_user, limit: DEFAULT_LIMIT)
@@ -26,7 +27,8 @@ class UnfriendsBuilder
     def users(uid, created_at, limit: DEFAULT_LIMIT)
       TwitterUser.creation_completed.
           where('created_at <= ?', created_at).
-          where(uid: uid).select(:id).
+          where(uid: uid).
+          select(:id).
           order(created_at: :desc).
           limit(limit).
           reverse

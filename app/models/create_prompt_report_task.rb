@@ -27,6 +27,12 @@ class CreatePromptReportTask
       end
     end
 
+    benchmark('import_from_s3!') do
+      TwitterUser.where(uid: request.user.uid).order(created_at: :desc).limit(UnfriendsBuilder::DEFAULT_LIMIT).each do |twitter_user|
+        Efs::TwitterUser.import_from_s3!(twitter_user, skip_if_found: true)
+      end
+    end
+
     benchmark('request.perform!') { request.perform!(twitter_user) }
 
     request.finished!
