@@ -21,7 +21,6 @@ class LoginController < ApplicationController
     end
 
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
-    session[:sign_in_tweet] = 'true' == params[:tweet] ? 'true' : 'false'
 
     session[:redirect_path] = params[:redirect_path] || start_path(via: current_via('after_sign_in'))
 

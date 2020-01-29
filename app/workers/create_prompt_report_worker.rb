@@ -1,3 +1,4 @@
+# CreatePromptReportWorker.set(queue: 'queue_name').perform_async(request.id)
 class CreatePromptReportWorker
   include Sidekiq::Worker
   include Concerns::AirbrakeErrorHandler

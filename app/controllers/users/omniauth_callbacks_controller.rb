@@ -8,13 +8,12 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     referer = session[:sign_in_referer] ? session.delete(:sign_in_referer) : ''
     ab_test = session[:sign_in_ab_test] ? session.delete(:sign_in_ab_test) : ''
     follow = 'true' == session.delete(:sign_in_follow)
-    tweet = 'true' == session.delete(:sign_in_tweet)
     force_login = 'true' == session.delete(:force_login)
 
     save_context = nil
     begin
       user = User.update_or_create_with_token!(user_params) do |user, context|
-        create_sign_in_log(user, context: context, via: via, follow: follow, tweet: tweet, referer: referer, ab_test: ab_test)
+        create_sign_in_log(user, context: context, via: via, follow: follow, tweet: false, referer: referer, ab_test: ab_test)
         CreateWelcomeMessageWorker.perform_async(user.id) if context == :create
         UpdatePermissionLevelWorker.perform_async(user.id, enqueued_at: Time.zone.now, send_test_report: force_login)
         save_context = context
@@ -26,12 +25,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     update_search_histories_when_signing_in(user)
     if follow
+      logger.warn "session['sign_in_follow'] is deprecated"
       request = FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
       CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
-    end
-    if tweet
-      logger.warn "session['sign_in_tweet'] is true #{user.id}"
-      #TweetEgotterWorker.perform_async(user.id, egotter_share_text(shorten_url: false, via: "share_tweet/#{user.screen_name}"))
     end
     EnqueuedSearchRequest.new.delete(user.uid)
     DeleteNotFoundUserWorker.perform_async(user.screen_name)
@@ -59,8 +55,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
       sign_in_referer
       sign_in_ab_test
       sign_in_follow
-      sign_in_tweet
-      sign_in_tweet_text
       redirect_path
       force_login
     ).each { |key| session.delete(key) }
