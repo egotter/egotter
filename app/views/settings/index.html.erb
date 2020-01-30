@@ -16,55 +16,59 @@
 
   <hr>
 
-  <div class="col-xs-4"><%= t('.search_mode.title') %></div>
-  <div class="col-xs-8">
-    <% if current_user.search_mode.fast? %>
-      <div><%= t(".search_mode.fast") %></div>
-      <div class="text-muted notes"><%= t('.search_mode.advantage') %></div>
-    <% else %>
-      <div><%= t(".search_mode.#{current_user.search_mode}") %></div>
-      <div class="text-muted notes"><%= t('.search_mode.advise_html') %></div>
-    <% end %>
+  <div class="row">
+    <div class="col-xs-4"><%= t('.search_mode.title') %></div>
+    <div class="col-xs-8">
+      <% if current_user.search_mode.fast? %>
+        <div><%= t(".search_mode.fast") %></div>
+        <div class="text-muted notes"><%= t('.search_mode.advantage') %></div>
+      <% else %>
+        <div><%= t(".search_mode.#{current_user.search_mode}") %></div>
+        <div class="text-muted notes"><%= t('.search_mode.advise_html') %></div>
+      <% end %>
+    </div>
   </div>
 
-  <div class="clearfix"></div>
   <hr>
 
-  <div class="col-xs-4"><%= t('.search_count.title') %></div>
-  <div class="col-xs-8">
-    <div>
-      <%= t('.search_count.count', count: SearchCountLimitation.max_search_count(current_user)) %>
-      <%= t('.search_count.remaining', count: SearchCountLimitation.remaining_search_count(user: current_user)) %>
-      <span><a href="#" data-target="#search-modal" data-toggle="modal"><%= t('.search_count.history') %></a></span>
+  <div class="row">
+    <div class="col-xs-4"><%= t('.search_count.title') %></div>
+    <div class="col-xs-8">
+      <div>
+        <%= t('.search_count.count', count: SearchCountLimitation.max_search_count(current_user)) %>
+        <%= t('.search_count.remaining', count: SearchCountLimitation.remaining_search_count(user: current_user)) %>
+        <span><a href="#" data-target="#search-modal" data-toggle="modal"><%= t('.search_count.history') %></a></span>
+      </div>
+      <div class="text-muted notes"><%= t('.search_count.note', days: SearchCountLimitation::SEARCH_COUNT_PERIOD / 1.day) %></div>
     </div>
-    <div class="text-muted notes"><%= t('.search_count.note', days: SearchCountLimitation::SEARCH_COUNT_PERIOD / 1.day) %></div>
   </div>
 
-  <div class="clearfix"></div>
   <hr>
 
-  <div id="follow-count" class="col-xs-4"><%= t('.follow_count.title') %></div>
-  <div class="col-xs-8">
-    <div>
-      <%= t('.follow_count.count', count: CreateFollowLimitation.max_count(current_user)) %><%= t('.follow_count.remaining', count: CreateFollowLimitation.remaining_count(current_user)) %>
-      <span><a href="<%= settings_follow_requests_path %>"><%= t('.follow_count.history') %></a></span>
+  <div class="row">
+    <div id="follow-count" class="col-xs-4"><%= t('.follow_count.title') %></div>
+    <div class="col-xs-8">
+      <div>
+        <%= t('.follow_count.count', count: CreateFollowLimitation.max_count(current_user)) %><%= t('.follow_count.remaining', count: CreateFollowLimitation.remaining_count(current_user)) %>
+        <span><a href="<%= settings_follow_requests_path %>"><%= t('.follow_count.history') %></a></span>
+      </div>
+      <div class="text-muted notes"><%= t('.follow_count.note', days: CreateFollowLimitation::CREATE_FOLLOW_PERIOD / 1.day) %></div>
     </div>
-    <div class="text-muted notes"><%= t('.follow_count.note', days: CreateFollowLimitation::CREATE_FOLLOW_PERIOD / 1.day) %></div>
   </div>
 
-  <div class="clearfix"></div>
   <hr>
 
-  <div id="unfollow-count" class="col-xs-4"><%= t('.unfollow_count.title') %></div>
-  <div class="col-xs-8">
-    <div>
-      <%= t('.unfollow_count.count', count: CreateUnfollowLimitation.max_count(current_user)) %><%= t('.unfollow_count.remaining', count: CreateUnfollowLimitation.remaining_count(current_user)) %>
-      <span><a href="<%= settings_unfollow_requests_path %>"><%= t('.unfollow_count.history') %></a></span>
+  <div class="row">
+    <div id="unfollow-count" class="col-xs-4"><%= t('.unfollow_count.title') %></div>
+    <div class="col-xs-8">
+      <div>
+        <%= t('.unfollow_count.count', count: CreateUnfollowLimitation.max_count(current_user)) %><%= t('.unfollow_count.remaining', count: CreateUnfollowLimitation.remaining_count(current_user)) %>
+        <span><a href="<%= settings_unfollow_requests_path %>"><%= t('.unfollow_count.history') %></a></span>
+      </div>
+      <div class="text-muted notes"><%= t('.unfollow_count.note', days: CreateUnfollowLimitation::CREATE_UNFOLLOW_PERIOD / 1.day) %></div>
     </div>
-    <div class="text-muted notes"><%= t('.unfollow_count.note', days: CreateUnfollowLimitation::CREATE_UNFOLLOW_PERIOD / 1.day) %></div>
   </div>
 
-  <div class="clearfix"></div>
   <hr>
 
   <div class="vertical-spacing"></div>
@@ -100,56 +104,60 @@
 
   <hr>
 
-  <div class="col-xs-4"><%= t('.data.updated_at') %></div>
-  <div class="col-xs-8">
-    <div>
-      <%= (twitter_user = TwitterUser.latest_by(uid: current_user.uid)) ? l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : t('.data.no_records') %>
-      <span><a href="<%= settings_twitter_users_path %>"><%= t('.data.history') %></a></span>
-    </div>
-    <div class="text-muted notes"><%= t('.data.note') %></div>
-  </div>
-
-  <div class="clearfix"></div>
-  <hr>
-
-  <div class="col-xs-4"><%= t('.data.reset_cache.title') %></div>
-  <div class="col-xs-8">
-    <div>
-      <% if @reset_cache_request %>
-        <div class="btn btn-warning reset-cache-btn" disabled="disabled"><%= t('.data.reset_cache.do') %></div>
-        <div class="text-muted notes"><%= t('.data.requested') %></div>
-      <% else %>
-        <div class="btn btn-warning reset-cache-btn" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.data.reset_cache.do') %></div>
-        <div class="text-muted notes"><%= t('.data.reset_cache.note') %></div>
-      <% end %>
+  <div class="row">
+    <div class="col-xs-4"><%= t('.data.updated_at') %></div>
+    <div class="col-xs-8">
+      <div>
+        <%= (twitter_user = TwitterUser.latest_by(uid: current_user.uid)) ? l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : t('.data.no_records') %>
+        <span><a href="<%= settings_twitter_users_path %>"><%= t('.data.history') %></a></span>
+      </div>
+      <div class="text-muted notes"><%= t('.data.note') %></div>
     </div>
   </div>
 
-  <div class="clearfix"></div>
   <hr>
 
-  <div class="col-xs-4"><%= t('.data.delete_data.title') %></div>
-  <div class="col-xs-8">
-    <div>
-      <% if @reset_egotter_request %>
-        <div class="btn btn-danger reset-egotter-btn" disabled="disabled"><%= t('.data.delete_data.do') %></div>
-        <div class="text-muted notes"><%= t('.data.requested') %></div>
-      <% else %>
-        <div class="btn btn-danger reset-egotter-btn" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.data.delete_data.do') %></div>
-        <div class="text-danger notes"><%= t('.data.delete_data.note') %></div>
-      <% end %>
+  <div class="row">
+    <div class="col-xs-4"><%= t('.data.reset_cache.title') %></div>
+    <div class="col-xs-8">
+      <div>
+        <% if @reset_cache_request %>
+          <div class="btn btn-warning reset-cache-btn" disabled="disabled"><%= t('.data.reset_cache.do') %></div>
+          <div class="text-muted notes"><%= t('.data.requested') %></div>
+        <% else %>
+          <div class="btn btn-warning reset-cache-btn" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.data.reset_cache.do') %></div>
+          <div class="text-muted notes"><%= t('.data.reset_cache.note') %></div>
+        <% end %>
+      </div>
     </div>
   </div>
 
-  <div class="clearfix"></div>
   <hr>
 
-  <div class="col-xs-4"><%= t('.data.delete_tweets.title') %></div>
-  <div class="col-xs-8">
-    <div><a href="<%= delete_tweets_path %>"><%= t('delete_tweets.new.simple_title') %></a><%= t('.data.delete_tweets.move_to') %></div>
+  <div class="row">
+    <div class="col-xs-4"><%= t('.data.delete_data.title') %></div>
+    <div class="col-xs-8">
+      <div>
+        <% if @reset_egotter_request %>
+          <div class="btn btn-danger reset-egotter-btn" disabled="disabled"><%= t('.data.delete_data.do') %></div>
+          <div class="text-muted notes"><%= t('.data.requested') %></div>
+        <% else %>
+          <div class="btn btn-danger reset-egotter-btn" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.data.delete_data.do') %></div>
+          <div class="text-danger notes"><%= t('.data.delete_data.note') %></div>
+        <% end %>
+      </div>
+    </div>
   </div>
 
-  <div class="clearfix"></div>
+  <hr>
+
+  <div class="row">
+    <div class="col-xs-4"><%= t('.data.delete_tweets.title') %></div>
+    <div class="col-xs-8">
+      <div><a href="<%= delete_tweets_path %>"><%= t('delete_tweets.new.simple_title') %></a><%= t('.data.delete_tweets.move_to') %></div>
+    </div>
+  </div>
+
   <hr>
 
   <div class="vertical-spacing"></div>
