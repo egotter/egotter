@@ -1,6 +1,6 @@
 GIT
-  remote: https://github.com/sferik/twitter.git
-  revision: 844818cad07ce490ccb9d8542ebb6b4fc7a61cb4
+  remote: https://github.com/egotter/twitter.git
+  revision: 2c3d01cd6b7cb8a97d70a8b03352a26bcc1f1048
   specs:
     twitter (6.2.0)
       addressable (~> 2.3)
@@ -219,7 +219,7 @@ GEM
       http_parser.rb (~> 0.6.0)
     http-cookie (1.0.3)
       domain_name (~> 0.5)
-    http-form_data (2.1.1)
+    http-form_data (2.2.0)
     http_parser.rb (0.6.0)
     httparty (0.16.3)
       mime-types (~> 3.0)
