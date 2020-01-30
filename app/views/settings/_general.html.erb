@@ -1,0 +1,78 @@
+<h2 class="h4 text-center"><i class="far fa-address-card">&nbsp;</i><%= t('.title') %></h2>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.screen_name.title') %></div>
+  <div class="col-xs-8">
+    <span>@</span><span class="screen-name"><%= current_user.screen_name %></span>
+    <%= link_to t('.screen_name.button_html'), sign_in_path(via: current_via('update_profile'), redirect_path: settings_path), class: 'btn btn-default' %>
+    <div class="text-muted notes"><%= t('.screen_name.note') %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.email.title') %></div>
+  <div class="col-xs-8"><%= current_user.email %></div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.authorized.title') %></div>
+  <div class="col-xs-8">
+    <% if current_user.authorized? %>
+      <%= t('.authorized.true') %>
+      <div class="text-muted notes"><%= t('.authorized.bonus_html', count: SearchCountLimitation::SIGN_IN_BONUS) %></div>
+    <% else %>
+      <div>
+        <span><%= t('.authorized.false') %></span>
+        <%= link_to t('.authorized.update_now_html'), sign_in_path(via: current_via('update_authorized'), redirect_path: settings_path), class: 'btn btn-danger' %>
+      </div>
+      <div class="text-danger notes"><%= t('.authorized.stop') %></div>
+    <% end %>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.following_egotter.title') %></div>
+  <div class="col-xs-8">
+    <% if current_user.following_egotter? %>
+      <%= t('.following_egotter.true') %>
+      <div class="text-muted notes"><%= t('.following_egotter.fast_mode') %></div>
+    <% else %>
+      <div>
+        <span><%= t('.following_egotter.false') %></span>
+        <%= link_to t('.following_egotter.follow_now'), '#', data: {url: follows_path(via: current_via), uid: User::EGOTTER_UID}, class: 'update-following btn btn-primary' %>
+      </div>
+      <div class="text-muted notes"><%= t('.following_egotter.note_html') %></div>
+    <% end %>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.sharing_egotter.title') %></div>
+  <div class="col-xs-8">
+    <%= t('.sharing_egotter.count', count: current_user.sharing_count) %>
+    <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-primary"><%= t('.sharing_egotter.see_more') %></a>
+    <div class="text-muted notes"><%= t('.sharing_egotter.promotion_html', hours: User::SHARE_EGOTTER_DURATION, count: SearchCountLimitation.current_sharing_bonus(current_user)) %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.swich_account.title') %></div>
+  <div class="col-xs-8">
+    <%= link_to t('.swich_account.switch'), sign_in_path(force_login: true, via: current_via('switch_account'), redirect_path: settings_path), class: 'btn btn-default' %>
+    <div class="text-muted notes"><%= t('.swich_account.note_html') %></div>
+  </div>
+</div>
+
+<hr>

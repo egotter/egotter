@@ -288,7 +288,6 @@ ja:
   settings:
     title: "設定"
     index:
-      general_title: "ユーザー情報"
       data:
         title: 'データ設定'
         updated_at: '最終更新'
@@ -325,10 +324,6 @@ ja:
         delete_tweets:
           title: "ツイート削除"
           move_to: 'に移動しました'
-      reset_menu:
-        profile: 'ユーザー情報'
-        update_profile_html: '<i class="fas fa-sync"></i>&nbsp;更新する'
-        update_profile_note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
       order:
         order_histories: "購入履歴"
         created_at: "（%{date}）"
@@ -343,35 +338,6 @@ ja:
         cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
         has_not_purchased: "まだ購入していません"
         see_plans: '料金プランを見る'
-      screen_name:
-        title: 'Twitter ID'
-      email:
-        title: 'メール'
-      authorized:
-        title: 'ログイン連携'
-        true: 'OK'
-        false: '無効'
-        bonus_html: '%{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
-        update_now_html: 'ログイン連携を更新する&nbsp;<i class="fas fa-sync"></i>'
-        stop: '検索停止中'
-      following_egotter:
-        title: '@ego_tter のフォロー'
-        true: 'OK'
-        false: 'いいえ'
-        fast_mode: '高速モード'
-        follow_now: '@ego_tter をフォローする'
-        note_html: 'フォローしていると<span class="egotter-pink">検索や通知が高速</span>になります'
-      sharing_egotter:
-        title: 'egotter.com をシェア'
-        count: '%{count} 回'
-        true: 'OK'
-        false: 'いいえ'
-        see_more: '詳しく見る'
-        promotion_html: '直近 %{hours} 時間のツイート毎に %{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
-      swich_account:
-        title: '他のアカウントでログイン'
-        switch: '再ログイン'
-        note_html: '複数のツイッターアカウントを切り替えできます'
       search_title: '検索設定'
       search_mode:
         title: '検索速度'
@@ -432,6 +398,39 @@ ja:
       interval:
         title: "通知間隔"
         note: "通知の間隔は目安です"
+    general:
+      title: "ユーザー情報"
+      screen_name:
+        title: 'Twitter ID'
+        button_html: '<i class="fas fa-sync"></i>&nbsp;更新する'
+        note: 'Twitter IDを変更した時やデータがおかしくなった時にお試しください'
+      email:
+        title: 'メール'
+      authorized:
+        title: 'ログイン連携'
+        true: 'OK'
+        false: '無効'
+        bonus_html: '%{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
+        update_now_html: 'ログイン連携を更新する&nbsp;<i class="fas fa-sync"></i>'
+        stop: '検索停止中'
+      following_egotter:
+        title: '@ego_tter のフォロー'
+        true: 'OK'
+        false: 'いいえ'
+        fast_mode: '高速モード'
+        follow_now: '@ego_tter をフォローする'
+        note_html: 'フォローしていると<span class="egotter-pink">検索や通知が高速</span>になります'
+      sharing_egotter:
+        title: 'egotter.com をシェア'
+        count: '%{count} 回'
+        true: 'OK'
+        false: 'いいえ'
+        see_more: '詳しく見る'
+        promotion_html: '直近 %{hours} 時間のツイート毎に %{count} 回の<span class="egotter-pink">検索ボーナス</span>付与'
+      swich_account:
+        title: '他のアカウントでログイン'
+        switch: '再ログイン'
+        note_html: '複数のツイッターアカウントを切り替えできます'
     follow_requests:
       title: 'フォロー 履歴'
       return: '設定ページへ戻る'
