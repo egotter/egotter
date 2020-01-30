@@ -108,6 +108,7 @@ class StartSendingPromptReportsWorker
     def create_requests(*args, &blk)
       start = Time.zone.now
       result = super
+      @benchmark ||= {}
       @benchmark['create_requests'] = Time.zone.now - start
       result
     end
@@ -115,6 +116,7 @@ class StartSendingPromptReportsWorker
     def enqueue_requests(*args, &blk)
       start = Time.zone.now
       result = super
+      @benchmark ||= {}
       @benchmark['enqueue_requests'] = Time.zone.now - start
       result
     end
