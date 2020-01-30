@@ -1,0 +1,70 @@
+<h2 class="h4 text-center"><i class="fas fa-cube"></i>&nbsp;<%= t('.title') %></h2>
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.not_coming.title') %></div>
+  <div class="col-xs-8">
+    <%= link_to t('.not_coming.button'), sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
+    <div class="notes"><%= t('.not_coming.note_html') %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.reporting_test.title') %></div>
+  <div class="col-xs-8">
+    <div>
+      <%= link_to t('.reporting_test.button'), sign_in_path(force_login: true, via: current_via('send_test_report'), redirect_path: settings_path), class: 'btn btn-default' %>
+      <span><a href="<%= settings_create_test_requests_path %>"><%= t('.reporting_test.history') %></a></span>
+    </div>
+    <div class="text-muted notes"><%= t('.reporting_test.note') %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.latest.title') %></div>
+  <div class="col-xs-8">
+    <% if @latest_prompt_report %>
+      <%= l(@latest_prompt_report.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
+      <%= t('.latest.see_html', user_uid: current_user.uid, egotter_uid: User.egotter.uid) %>
+    <% else %>
+      <%= t('.latest.not_sent') %>
+    <% end %>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-xs-4"><%= t('.status.title') %></div>
+  <div class="col-xs-8">
+    <div>
+      <% if @latest_prompt_report_log&.error_class&.present? %>
+        <% error_class = @latest_prompt_report_log.error_class.demodulize %>
+        <%= t('.status.error_html', text: t("dm.testMessage.errors.#{error_class}", default: error_class)) %>
+      <% else %>
+        <%= t('.status.normal') %>
+      <% end %>
+      <span><a href="<%= settings_create_prompt_requests_path %>"><%= t('.status.history') %></a></span>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <label for="report_interval" class="control-label col-xs-4"><%= t('.interval.title') %></label>
+  <div class="col-xs-8">
+    <%= select_tag 'report_interval', report_interval_options_for_select(current_user), style: 'width: 200px;', class: 'form-control' %>
+    <div class="text-muted notes"><%= t('.interval.note') %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="tgl-buttons">
+  <%= render partial: 'tgl_btn', collection: %i(report_if_changed), as: :name %>
+</div>

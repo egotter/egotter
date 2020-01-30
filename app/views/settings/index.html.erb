@@ -157,76 +157,7 @@
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
 
-  <h2 class="h4 text-center"><i class="fas fa-cube"></i>&nbsp;<%= t('.notifications.prompt_report_title') %></h2>
-
-  <hr>
-
-  <div class="col-xs-4"><%= t('.notifications.prompt_reports.not_coming') %></div>
-  <div class="col-xs-8">
-    <%= link_to t('.notifications.prompt_reports.update_authorized_for_dm'), sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
-    <div class="notes"><%= t('.notifications.prompt_reports.update_authorized_for_dm_note_html') %></div>
-  </div>
-
-  <div class="clearfix"></div>
-  <hr>
-
-  <div class="col-xs-4"><%= t('.notifications.prompt_reports.reporting_test') %></div>
-  <div class="col-xs-8">
-    <div>
-      <%= link_to t('.notifications.prompt_reports.send_test_report'), sign_in_path(force_login: true, via: current_via('send_test_report'), redirect_path: settings_path), class: 'btn btn-default' %>
-      <span><a href="<%= settings_create_test_requests_path %>"><%= t('.notifications.prompt_reports.send_test_report_history') %></a></span>
-    </div>
-    <div class="text-muted notes"><%= t('.notifications.prompt_reports.send_test_report_note_html') %></div>
-  </div>
-
-  <div class="clearfix"></div>
-  <hr>
-
-  <div class="col-xs-4"><%= t('.notifications.prompt_reports.latest_prompt_report') %></div>
-  <div class="col-xs-8">
-    <% if @latest_prompt_report %>
-      <%= l(@latest_prompt_report.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) %>
-      <%= t('.notifications.prompt_reports.see_report_dm_html', user_uid: current_user.uid, egotter_uid: User.egotter.uid) %>
-    <% else %>
-      <%= t('.notifications.prompt_reports.not_sent') %>
-    <% end %>
-  </div>
-
-  <div class="clearfix"></div>
-  <hr>
-
-  <div class="col-xs-4"><%= t('.notifications.prompt_reports.status') %></div>
-  <div class="col-xs-8">
-    <div>
-      <% if @latest_prompt_report_log&.error_class&.present? %>
-        <% error_class = @latest_prompt_report_log.error_class.demodulize %>
-        <%= t('.notifications.prompt_reports.error_html', text: t("dm.testMessage.errors.#{error_class}", default: error_class)) %>
-      <% else %>
-        <%= t('.notifications.prompt_reports.running_normally_html') %>
-      <% end %>
-      <span><a href="<%= settings_create_prompt_requests_path %>"><%= t('.notifications.prompt_reports.history') %></a></span>
-    </div>
-  </div>
-
-  <div class="clearfix"></div>
-  <hr>
-
-  <div class="form-group">
-    <label for="report_interval" class="control-label col-xs-4"><%= t('.notifications.prompt_reports.report_interval.title') %></label>
-    <div class="col-xs-8">
-      <%= select_tag 'report_interval', report_interval_options_for_select(current_user), class: 'form-control' %>
-      <div class="text-muted notes"><%= t('.notifications.prompt_reports.report_interval.note') %></div>
-    </div>
-  </div>
-
-  <div class="clearfix"></div>
-  <hr>
-
-  <div class="tgl-buttons">
-    <%= render partial: 'tgl_btn', collection: %i(report_if_changed), as: :name %>
-  </div>
-
-  <div class="clearfix"></div>
+  <%= render partial: 'prompt_report' %>
 
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
@@ -245,7 +176,7 @@
       <%= (twitter_user = TwitterUser.latest_by(uid: current_user.uid)) ? l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : t('.data.no_records') %>
       <span><a href="<%= settings_twitter_users_path %>"><%= t('.data.history') %></a></span>
     </div>
-    <div class="text-muted notes"><%= t('.notifications.prompt_reports.send_test_report_note_html') %></div>
+    <div class="text-muted notes"><%= t('.data.note') %></div>
   </div>
 
   <div class="clearfix"></div>

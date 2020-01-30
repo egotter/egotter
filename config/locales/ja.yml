@@ -294,6 +294,7 @@ ja:
         updated_at: '最終更新'
         no_records: 'データはこれから更新されます'
         history: '履歴'
+        note: '通知が届かない方はお試しください'
         requested: 'リクエスト済み'
         reset_cache:
           title: 'キャッシュのリセット'
@@ -398,28 +399,6 @@ ja:
         note: '直近の %{days} 日が対象'
       notifications:
         title: "通知設定"
-        prompt_report_title: 'リムられ通知設定'
-        prompt_reports:
-          not_coming: "リムられ通知がこない場合"
-          update_authorized_for_dm: 'リムられ通知を復活させる'
-          update_authorized_for_dm_note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>'
-          reporting_test: "リムられ通知のテスト"
-          send_test_report: 'リムられ通知をテスト送信する'
-          send_test_report_history: '履歴'
-          send_test_report_note_html: '通知が届かない方はお試しください'
-          report_interval:
-            title: "通知間隔"
-            note: "通知の間隔は目安です"
-          report_if_changed:
-            title: "通知間隔"
-            note: "通知の間隔は目安です"
-          latest_prompt_report: "最新のリムられ通知"
-          status: "通知ステータス"
-          running_normally_html: '正常'
-          error_html: '<span class="text-warning">失敗：%{text}</span>'
-          history: '履歴'
-          not_sent: 'リムられ通知はこれから送信されます。'
-          see_report_dm_html: '<a href="https://twitter.com/messages/%{user_uid}-%{egotter_uid}" target="_blank">通知DMを見る</a>'
       report_interval:
         confirm: 'レポート間隔を長くしすぎると、リムられの取りこぼしが発生しやすくなります。本当に _INTERVAL_ に変更しますか？'
         3600: "1時間毎（有料プラン限定）"
@@ -430,6 +409,29 @@ ja:
         259200: "3日毎"
         604800: "1週間毎"
       trial_title: "お試し機能 (β)"
+    prompt_report:
+      title: 'リムられ通知設定'
+      not_coming:
+        title: 'リムられ通知がこない場合'
+        button: 'リムられ通知を復活させる'
+        note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>'
+      reporting_test:
+        title: "リムられ通知のテスト"
+        button: 'リムられ通知をテスト送信する'
+        history: '履歴'
+        note: '通知が届かない方はお試しください'
+      latest:
+        title: "最新のリムられ通知"
+        see_html: '<a href="https://twitter.com/messages/%{user_uid}-%{egotter_uid}" target="_blank">通知DMを見る</a>'
+        not_sent: 'リムられ通知はこれから送信されます。'
+      status:
+        title: "通知ステータス"
+        error_html: '<span class="text-warning">失敗：%{text}</span>'
+        normal: '正常'
+        history: '履歴'
+      interval:
+        title: "通知間隔"
+        note: "通知の間隔は目安です"
     follow_requests:
       title: 'フォロー 履歴'
       return: '設定ページへ戻る'
