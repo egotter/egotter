@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2019_12_14_123932) do
+ActiveRecord::Schema.define(version: 2020_01_29_150009) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -383,6 +383,21 @@ ActiveRecord::Schema.define(version: 2019_12_14_123932) do
     t.index ["created_at"], name: "index_create_unfollow_logs_on_created_at"
     t.index ["request_id"], name: "index_create_unfollow_logs_on_request_id"
     t.index ["user_id"], name: "index_create_unfollow_logs_on_user_id"
+  end
+
+  create_table "create_welcome_message_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", default: -1, null: false
+    t.integer "request_id", default: -1, null: false
+    t.bigint "uid", default: -1, null: false
+    t.string "screen_name", default: "", null: false
+    t.boolean "status", default: false, null: false
+    t.string "error_class", default: "", null: false
+    t.string "error_message", default: "", null: false
+    t.datetime "created_at", null: false
+    t.index ["created_at"], name: "index_create_welcome_message_logs_on_created_at"
+    t.index ["request_id"], name: "index_create_welcome_message_logs_on_request_id"
+    t.index ["screen_name"], name: "index_create_welcome_message_logs_on_screen_name"
+    t.index ["uid"], name: "index_create_welcome_message_logs_on_uid"
   end
 
   create_table "delete_tweets_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

@@ -1,55 +1,51 @@
 require 'rails_helper'
 
 RSpec.describe WelcomeMessage, type: :model do
+  let(:user) { create(:user, with_settings: true) }
+
+  describe '.welcome' do
+    it do
+      expect(described_class).to receive(:new).with(user_id: user.id, token: /\w+/)
+      described_class.welcome(user.id)
+    end
+  end
+
   describe '#deliver!' do
-    let(:dm_client_class) do
-      Class.new do
-        def initialize
-          @count = 0
+    let(:welcome_message) { build(:welcome_message, user: user) }
+
+    subject { welcome_message.deliver! }
+
+    let(:dm1) { instance_double(DirectMessage, id: 'id1', truncated_message: 'tm1') }
+    let(:dm2) { instance_double(DirectMessage, id: 'id2', truncated_message: 'tm2') }
+    let(:dm3) { instance_double(DirectMessage, id: 'id3', truncated_message: 'tm3') }
+
+    it do
+      expect(welcome_message).to receive(:send_first_message!).and_return(dm1)
+      expect(welcome_message).to receive(:update!).with(message_id: dm1.id, message: dm1.truncated_message).and_call_original
+
+      expect(welcome_message).to receive(:send_test_message_from_egotter!).and_return(dm2)
+      expect(welcome_message).to receive(:update!).with(message_id: dm2.id, message: dm2.truncated_message).and_call_original
+
+      expect(welcome_message).to receive(:send_initialization_success_message!).and_return(dm3)
+      expect(welcome_message).to receive(:update!).with(message_id: dm3.id, message: dm3.truncated_message).and_call_original
+
+      expect(welcome_message).not_to receive(:send_initialization_failed_message!)
+
+      expect { subject }.to change { CreateWelcomeMessageLog.all.size }.by(1)
+
+      expect(welcome_message.message_id).to eq('id3')
+      expect(welcome_message.message).to eq('tm3')
+    end
+
+    context '#send_first_message! raises an exception' do
+      let(:exception) { WelcomeMessage::StartingFailed.new("#{RuntimeError} failed #{user.id}") }
+      before { allow(welcome_message).to receive(:send_first_message!).and_raise('failed') }
+      it do
+        expect(welcome_message).not_to receive(:update!)
+        expect { subject }.to raise_error(exception.class, exception.message)
+        expect(welcome_message.log).to satisfy do |log|
+          log.error_class == exception.class.to_s && log.error_message == exception.message
         end
-
-        def create_direct_message(uid, message)
-          @count += 1
-          {event: {id: "id#{@count}", message_create: {message_data: {text: "text#{@count}"}}}}
-        end
-      end
-    end
-
-    let(:user) { create(:user) }
-    subject { build(:welcome_message, user: user) }
-
-    before do
-      user.create_notification_setting!
-      allow(subject).to receive(:dm_client).with(anything).and_return(dm_client_class.new)
-    end
-
-    it 'calls #send_first_of_all_message!, #send_test_message_from_egotter! and #send_initialization_success_message!' do
-      is_expected.to receive(:send_first_of_all_message!).with(no_args).and_call_original
-      is_expected.to receive(:send_test_message_from_egotter!).with(no_args).and_call_original
-      is_expected.to receive(:send_initialization_success_message!).with(no_args).and_call_original
-      is_expected.not_to receive(:send_initialization_failed_message!)
-      is_expected.to receive(:update!).with(anything).thrice.and_call_original
-      subject.deliver!
-
-      expect(subject.message_id).to eq('id3')
-      expect(subject.message).to eq('text3')
-    end
-
-    context '#send_test_message_from_egotter! raises an exception' do
-      before do
-        allow(subject).to receive(:send_test_message_from_egotter!).and_raise
-      end
-
-      it 'calls #send_first_of_all_message! and #send_initialization_failed_message!' do
-        is_expected.to receive(:send_first_of_all_message!).with(no_args).and_call_original
-        is_expected.to receive(:send_initialization_failed_message!).with(no_args).and_call_original
-        is_expected.not_to receive(:send_initialization_success_message!)
-        is_expected.to receive(:update!).with(anything).twice.and_call_original
-        expect { subject.deliver! }.to raise_error(WelcomeMessage::TestMessageFailed)
-
-
-        expect(subject.message_id).to eq('id2')
-        expect(subject.message).to eq('text2')
       end
     end
   end

@@ -7,6 +7,10 @@ class CreateWelcomeMessageWorker
     user_id
   end
 
+  def unique_in
+    10.minutes
+  end
+
   # options:
   def perform(user_id, options = {})
     user = User.find(user_id)
@@ -16,10 +20,10 @@ class CreateWelcomeMessageWorker
     begin
       dm = WelcomeMessage.welcome(user.id).deliver!
     rescue => e
-      send_message_to_slack(e.message, title: e.class)
+      send_message_to_slack("#{e.class}\n#{e.message}", title: user_id)
       raise
     else
-      send_message_to_slack(dm.text, title: 'OK')
+      send_message_to_slack('OK', title: user_id)
     end
   rescue => e
     notify_airbrake(e, user_id: user_id, options: options)

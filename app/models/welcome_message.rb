@@ -31,34 +31,50 @@ class WelcomeMessage < ApplicationRecord
     end
   end
 
+  def log
+    @log ||= CreateWelcomeMessageLog.new(user_id: user_id)
+  end
+
   def deliver!
+    log.save
+
     begin
-      dm = DirectMessage.new(retry_sending { send_first_of_all_message! })
+      dm = send_first_message!
       update!(message_id: dm.id, message: dm.truncated_message)
     rescue => e
-      raise StartingFailed.new("#{e.class} #{e.message}")
+      exception = StartingFailed.new("#{e.class} #{e.message} #{user_id}")
+      log.update_by(exception: exception)
+      raise exception
     end
 
     begin
-      dm = DirectMessage.new(retry_sending { send_test_message_from_egotter! })
+      dm = send_test_message_from_egotter!
       update!(message_id: dm.id, message: dm.truncated_message)
     rescue => e
       begin
-        dm = DirectMessage.new(retry_sending { send_initialization_failed_message! })
+        dm = send_initialization_failed_message!
         update!(message_id: dm.id, message: dm.truncated_message)
       rescue => e
-        raise FailedMessageFailed.new("#{e.class} #{e.message}")
+        exception = FailedMessageFailed.new("#{e.class} #{e.message} #{user_id}")
+        log.update_by(exception: exception)
+        raise exception
       end
 
-      raise TestMessageFailed.new("#{e.class} #{e.message}")
+      exception = TestMessageFailed.new("#{e.class} #{e.message} #{user_id}")
+      log.update_by(exception: exception)
+      raise exception
     else
       begin
-        dm = DirectMessage.new(retry_sending { send_initialization_success_message! })
+        dm = send_initialization_success_message!
         update!(message_id: dm.id, message: dm.truncated_message)
       rescue => e
-        raise SuccessMessageFailed.new("#{e.class} #{e.message}")
+        exception = SuccessMessageFailed.new("#{e.class} #{e.message} #{user_id}")
+        log.update_by(exception: exception)
+        raise exception
       end
     end
+
+    log.update(status: true)
 
     dm
   end
@@ -80,24 +96,32 @@ class WelcomeMessage < ApplicationRecord
 
   private
 
-  def dm_client(sender)
-    DirectMessageClient.new(sender.api_client.twitter)
+  def send_dm(sender, recipient, text)
+    retry_sending { sender.api_client.twitter.create_direct_message_event(recipient.uid, text) }
   end
 
-  def send_first_of_all_message!
-    dm_client(user).create_direct_message(User::EGOTTER_UID, FirstOfAllMessageBuilder.new(user, token).build)
+  def send_first_message!
+    resp = send_dm(user, User.egotter, FirstOfAllMessageBuilder.new(user, token).build).to_h
+    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
+    DirectMessage.new({event: resp})
   end
 
   def send_test_message_from_egotter!
-    dm_client(User.egotter).create_direct_message(user.uid, I18n.t('dm.welcomeMessage.from_egotter', user: user.screen_name))
+    resp = send_dm(User.egotter, user, I18n.t('dm.welcomeMessage.from_egotter', user: user.screen_name)).to_h
+    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
+    DirectMessage.new({event: resp})
   end
 
   def send_initialization_success_message!
-    dm_client(user).create_direct_message(User::EGOTTER_UID, InitializationSuccessMessageBuilder.new(user, token).build)
+    resp = send_dm(user, User.egotter, InitializationSuccessMessageBuilder.new(user, token).build).to_h
+    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
+    DirectMessage.new({event: resp})
   end
 
   def send_initialization_failed_message!
-    dm_client(user).create_direct_message(User::EGOTTER_UID, InitializationFailedMessageBuilder.new(user, token).build)
+    resp = send_dm(user, User.egotter, InitializationFailedMessageBuilder.new(user, token).build).to_h
+    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
+    DirectMessage.new({event: resp})
   end
 
   def retry_sending(&block)
@@ -150,6 +174,7 @@ class WelcomeMessage < ApplicationRecord
     def build
       template = Rails.root.join('app/views/welcome_messages/initialization_success.ja.text.erb')
       ERB.new(template.read).result_with_hash(
+          screen_name: user.screen_name,
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           timeline_url: timeline_url,
@@ -175,6 +200,7 @@ class WelcomeMessage < ApplicationRecord
     def build
       template = Rails.root.join('app/views/welcome_messages/initialization_failed.ja.text.erb')
       ERB.new(template.read).result_with_hash(
+          screen_name: user.screen_name,
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           timeline_url: timeline_url,
