@@ -39,39 +39,30 @@ class WelcomeMessage < ApplicationRecord
     log.save
 
     begin
-      dm = send_first_message!
+      dm = send_starting_message!
       update!(message_id: dm.id, message: dm.truncated_message)
     rescue => e
-      exception = StartingFailed.new("#{e.class} #{e.message} #{user_id}")
+      exception = StartingFailed.new("#{e.class} #{e.message}")
       log.update_by(exception: exception)
       raise exception
     end
 
     begin
-      dm = send_test_message_from_egotter!
+      dm = send_initialization_success_message!
       update!(message_id: dm.id, message: dm.truncated_message)
     rescue => e
       begin
         dm = send_initialization_failed_message!
         update!(message_id: dm.id, message: dm.truncated_message)
       rescue => e
-        exception = FailedMessageFailed.new("#{e.class} #{e.message} #{user_id}")
+        exception = FailedMessageFailed.new("#{e.class} #{e.message}")
         log.update_by(exception: exception)
         raise exception
       end
 
-      exception = TestMessageFailed.new("#{e.class} #{e.message} #{user_id}")
+      exception = InitializationFailed.new("#{e.class} #{e.message}")
       log.update_by(exception: exception)
       raise exception
-    else
-      begin
-        dm = send_initialization_success_message!
-        update!(message_id: dm.id, message: dm.truncated_message)
-      rescue => e
-        exception = SuccessMessageFailed.new("#{e.class} #{e.message} #{user_id}")
-        log.update_by(exception: exception)
-        raise exception
-      end
     end
 
     log.update(status: true)
@@ -82,13 +73,13 @@ class WelcomeMessage < ApplicationRecord
   class StartingFailed < StandardError
   end
 
-  class TestMessageFailed < StandardError
-  end
-
   class FailedMessageFailed < StandardError
   end
 
   class SuccessMessageFailed < StandardError
+  end
+
+  class InitializationFailed < StandardError
   end
 
   class RetryExhausted < StandardError
@@ -100,28 +91,19 @@ class WelcomeMessage < ApplicationRecord
     retry_sending { sender.api_client.twitter.create_direct_message_event(recipient.uid, text) }
   end
 
-  def send_first_message!
+  def send_starting_message!
     resp = send_dm(user, User.egotter, FirstOfAllMessageBuilder.new(user, token).build).to_h
-    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
-    DirectMessage.new({event: resp})
-  end
-
-  def send_test_message_from_egotter!
-    resp = send_dm(User.egotter, user, I18n.t('dm.welcomeMessage.from_egotter', user: user.screen_name)).to_h
-    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
-    DirectMessage.new({event: resp})
+    DirectMessage.new(event: resp)
   end
 
   def send_initialization_success_message!
-    resp = send_dm(user, User.egotter, InitializationSuccessMessageBuilder.new(user, token).build).to_h
-    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
-    DirectMessage.new({event: resp})
+    resp = send_dm(User.egotter, user, InitializationSuccessMessageBuilder.new(user, token).build).to_h
+    DirectMessage.new(event: resp)
   end
 
   def send_initialization_failed_message!
     resp = send_dm(user, User.egotter, InitializationFailedMessageBuilder.new(user, token).build).to_h
-    raise DirectMessage::EmptyResponse.new("Response is empty") if resp.blank?
-    DirectMessage.new({event: resp})
+    DirectMessage.new(event: resp)
   end
 
   def retry_sending(&block)
@@ -148,18 +130,22 @@ class WelcomeMessage < ApplicationRecord
     end
 
     def build
-      template = Rails.root.join('app/views/welcome_messages/first_of_all.ja.text.erb')
+      template = Rails.root.join('app/views/welcome_messages/starting.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           screen_name: user.screen_name,
           timeline_url: timeline_url,
-          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_first_of_all'),
+          settings_url: settings_url
       )
     end
 
     private
 
     def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_first_of_all')
+      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_starting')
+    end
+
+    def settings_url
+      Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_starting')
     end
   end
 
@@ -178,7 +164,7 @@ class WelcomeMessage < ApplicationRecord
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           timeline_url: timeline_url,
-          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_success'),
+          settings_url: settings_url
       )
     end
 
@@ -186,6 +172,10 @@ class WelcomeMessage < ApplicationRecord
 
     def timeline_url
       Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_initialization_success')
+    end
+
+    def settings_url
+      Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_success')
     end
   end
 
@@ -204,7 +194,7 @@ class WelcomeMessage < ApplicationRecord
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
           timeline_url: timeline_url,
-          settings_url: Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_failed'),
+          settings_url: settings_url
       )
     end
 
@@ -212,6 +202,10 @@ class WelcomeMessage < ApplicationRecord
 
     def timeline_url
       Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_initialization_failed')
+    end
+
+    def settings_url
+      Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_failed')
     end
   end
 end

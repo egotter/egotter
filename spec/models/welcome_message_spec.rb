@@ -20,11 +20,8 @@ RSpec.describe WelcomeMessage, type: :model do
     let(:dm3) { instance_double(DirectMessage, id: 'id3', truncated_message: 'tm3') }
 
     it do
-      expect(welcome_message).to receive(:send_first_message!).and_return(dm1)
+      expect(welcome_message).to receive(:send_starting_message!).and_return(dm1)
       expect(welcome_message).to receive(:update!).with(message_id: dm1.id, message: dm1.truncated_message).and_call_original
-
-      expect(welcome_message).to receive(:send_test_message_from_egotter!).and_return(dm2)
-      expect(welcome_message).to receive(:update!).with(message_id: dm2.id, message: dm2.truncated_message).and_call_original
 
       expect(welcome_message).to receive(:send_initialization_success_message!).and_return(dm3)
       expect(welcome_message).to receive(:update!).with(message_id: dm3.id, message: dm3.truncated_message).and_call_original
@@ -37,9 +34,9 @@ RSpec.describe WelcomeMessage, type: :model do
       expect(welcome_message.message).to eq('tm3')
     end
 
-    context '#send_first_message! raises an exception' do
-      let(:exception) { WelcomeMessage::StartingFailed.new("#{RuntimeError} failed #{user.id}") }
-      before { allow(welcome_message).to receive(:send_first_message!).and_raise('failed') }
+    context '#send_starting_message! raises an exception' do
+      let(:exception) { WelcomeMessage::StartingFailed.new("#{RuntimeError} failed") }
+      before { allow(welcome_message).to receive(:send_starting_message!).and_raise('failed') }
       it do
         expect(welcome_message).not_to receive(:update!)
         expect { subject }.to raise_error(exception.class, exception.message)
