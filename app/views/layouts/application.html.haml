@@ -203,16 +203,16 @@
           .modal-content
             .modal-header
               %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
-                %span{"aria-hidden" => "true"} ×
-              %h4.modal-title= t('welcome.follow_modal.title_html')
+                %span{"aria-hidden" => "true"} &times;
+              %h4.modal-title= t('.follow_modal.title_html')
             .modal-body
               %img.center-block{src: image_path('/egotter_usagi_840x450.png'), height: request.from_pc? ? '200px' : '140px'}
               .vertical-spacing
               .vertical-spacing
-              %p= t('welcome.follow_modal.note1_html')
+              %p= t('.follow_modal.note_html')
             .modal-footer
-              %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.follow_modal.cancel')
-              %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: current_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_intent_url('ego_tter')}}= t('welcome.follow_modal.ok')
+              %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('.follow_modal.cancel')
+              %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: current_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_intent_url('ego_tter')}}= t('.follow_modal.ok')
 
     -# This modal is always embedded because it is used in settings page.
     #share-modal.modal.fade{role: 'dialog', tabindex: '-1'}
@@ -220,19 +220,19 @@
         .modal-content
           .modal-header
             %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
-              %span{"aria-hidden" => "true"} ×
-            %h4.modal-title= t('welcome.share_modal.title_html')
+              %span{"aria-hidden" => "true"} &times;
+            %h4.modal-title= t('.share_modal.title_html')
           .modal-body
             %img.center-block{src: image_path('/egotter_thanks_840x483.png'), height: request.from_pc? ? '200px' : '140px'}
             .vertical-spacing
-            %p= t('welcome.share_modal.note1_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
+            %p= t('.share_modal.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
             .vertical-spacing
             %textarea{rows: '5', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text(without_url: true)
-            .share-text-note= t('welcome.share_modal.note_html')
+            .share-text-note= t('.share_modal.note_html')
             .share-text-note https://egotter.com #egotter
           .modal-footer
-            %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('welcome.share_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('welcome.share_modal.success_message'), error_message: t('welcome.share_modal.error_message')}}= t('welcome.share_modal.ok')
+            %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('.share_modal.cancel')
+            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('.share_modal.success'), error_message: t('.share_modal.error')}}= t('.share_modal.ok')
 
 :javascript
   $(function () {

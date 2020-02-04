@@ -1,5 +1,19 @@
 ja:
   layouts:
+    application:
+      follow_modal:
+        title_html: 'えごったーを<span class="egotter-pink">フォロー</span>しよう！'
+        note_html: 'えごったーをフォローすると<span class="egotter-pink">検索が早く</span>なります。<span class="egotter-pink">リムられ通知</span>も届きます。早速フォローしましょう！'
+        ok: "フォローする"
+        cancel: "やめておく"
+      share_modal:
+        title_html: 'えごったーを<span class="egotter-pink">ツイート</span>しませんか？'
+        note_html: '※テキストの最後にえごったーのURLが付きます'
+        note_for_count_html: '今ツイートしていただくと、検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。'
+        success: 'ツイートに成功しました。ありがとうございます！'
+        error: 'ツイートに失敗しました。長すぎたり、特殊な文字が入ったりしていませんか？'
+        ok: "ツイートする"
+        cancel: "やめておく"
     header:
       sign_in: 'ログイン'
   searches:
@@ -691,19 +705,6 @@ ja:
       purchased: '購入済み'
       login: 'ログインする'
   welcome:
-    follow_modal:
-      title_html: 'えごったーを<span class="egotter-pink">フォロー</span>しよう！'
-      note1_html: 'えごったーをフォローすると<span class="egotter-pink">検索が早く</span>なります。<span class="egotter-pink">リムられ通知</span>も届きます。早速フォローしましょう！'
-      ok: "フォローする"
-      cancel: "やめておく"
-    share_modal:
-      title_html: 'えごったーを<span class="egotter-pink">ツイート</span>しませんか？'
-      note1_html: '今ツイートしていただくと、検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。'
-      note_html: '※テキストの最後にえごったーのURLが付きます'
-      success_message: 'ツイートに成功しました。ありがとうございます！'
-      error_message: 'ツイートに失敗しました。長すぎたり、特殊な文字が入ったりしていませんか？'
-      ok: "ツイートする"
-      cancel: "やめておく"
     new:
       signed_in: "既にログイン済みです。"
       lead_html: "ログインでえごったーが<br>もっと便利に！"
