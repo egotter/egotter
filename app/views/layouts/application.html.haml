@@ -214,6 +214,20 @@
               %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('.follow_modal.cancel')
               %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: current_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_intent_url('ego_tter')}}= t('.follow_modal.ok')
 
+    #revive-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+      .modal-dialog{role: 'document'}
+        .modal-content
+          .modal-header
+            %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
+              %span{"aria-hidden" => "true"} &times;
+            %h4.modal-title= t('.revive_modal.title_html')
+          .modal-body
+            %img.center-block{src: image_path('/egotter_revive_840x450.png'), height: request.from_pc? ? '200px' : '140px'}
+            .vertical-spacing
+            = t('.revive_modal.body_html', url: t('.revive_modal.url', uid: current_user.uid))
+          .modal-footer
+            %button.btn.btn-primary.ok{type: 'button', data: {url: t('.revive_modal.url', uid: current_user.uid)}}= t('.revive_modal.ok')
+
     -# This modal is always embedded because it is used in settings page.
     #share-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}

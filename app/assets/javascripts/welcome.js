@@ -91,6 +91,31 @@ Welcome.FollowDialog.prototype = {
   }
 };
 
+Welcome.ReviveDialog = function () {
+  if (this === undefined) {
+    throw new TypeError();
+  }
+
+  this._modal = $('#revive-modal');
+  var modal = this._modal;
+
+  modal.find('button.ok').on('click', function () {
+    var $clicked = $(this);
+    window.open($clicked.data('url'), '_blank');
+    modal.modal('hide');
+  });
+};
+
+Welcome.ReviveDialog.prototype = {
+  constructor: Welcome.ReviveDialog,
+  show: function () {
+    this._modal.modal();
+  },
+  on: function (event, fn) {
+    this._modal.on(event, fn);
+  }
+};
+
 Welcome.getParameterByName = function (name, url) {
   if (!url) url = window.location.href;
   name = name.replace(/[\[\]]/g, '\\$&');
@@ -104,19 +129,24 @@ Welcome.getParameterByName = function (name, url) {
 Welcome.showFollowDialogAndShareDialog = function (followingEgotter) {
   var shareDialog = new Welcome.ShareDialog();
   var followDialog = new Welcome.FollowDialog();
+  var reviveDialog = new Welcome.ReviveDialog();
 
-  if (Welcome.getParameterByName('follow_dialog') === '1' && Welcome.getParameterByName('share_dialog') === '1') {
-    shareDialog.on('hidden.bs.modal', function (e) {
+  if (Welcome.getParameterByName('revive_dialog') === '1') {
+    reviveDialog.show();
+  } else {
+    if (Welcome.getParameterByName('follow_dialog') === '1' && Welcome.getParameterByName('share_dialog') === '1') {
+      shareDialog.on('hidden.bs.modal', function (e) {
+        if (!followingEgotter) {
+          followDialog.show();
+        }
+      });
+      shareDialog.show();
+    } else if (Welcome.getParameterByName('follow_dialog') === '1') {
       if (!followingEgotter) {
         followDialog.show();
       }
-    });
-    shareDialog.show();
-  } else if (Welcome.getParameterByName('follow_dialog') === '1') {
-    if (!followingEgotter) {
-      followDialog.show();
+    } else if (Welcome.getParameterByName('share_dialog') === '1') {
+      shareDialog.show();
     }
-  } else if (Welcome.getParameterByName('share_dialog') === '1') {
-    shareDialog.show();
   }
 };

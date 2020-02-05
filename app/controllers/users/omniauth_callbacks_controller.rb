@@ -41,9 +41,9 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     sign_in user, event: :authentication
 
     if save_context == :create
-      redirect_to after_sign_up_path(redirect_path: after_sign_in_path_for(user, save_context: save_context))
+      redirect_to after_sign_up_path(redirect_path: after_sign_in_path_for(user, save_context: save_context, force_login: force_login))
     else
-      redirect_to after_sign_in_path(redirect_path: after_sign_in_path_for(user, save_context: save_context))
+      redirect_to after_sign_in_path(redirect_path: after_sign_in_path_for(user, save_context: save_context, force_login: force_login))
     end
   end
 
@@ -69,10 +69,15 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   private
 
-  def after_sign_in_path_for(user, save_context:)
+  def after_sign_in_path_for(user, save_context:, force_login: false)
     url = session.delete(:redirect_path)
     url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") unless url
-    append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
+
+    if save_context == :update && force_login
+      append_query_params(sanitized_redirect_path(url), revive_dialog: 1)
+    else
+      append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
+    end
   end
 
   def after_failure_message(reason)
