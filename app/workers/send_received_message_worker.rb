@@ -12,6 +12,8 @@ class SendReceivedMessageWorker
     notify_airbrake(e, sender_uid: sender_uid, options: options)
   end
 
+  CONTINUE_NOTIF = 'リムられ通知継続'
+
   def send_message_to_slack(sender_uid, dm_id, text)
     user = User.find_by(uid: sender_uid)
     screen_name = user ? user.screen_name : (Bot.api_client.user(sender_uid)[:screen_name] rescue sender_uid)
@@ -20,7 +22,11 @@ class SendReceivedMessageWorker
     text = latest_errors(user.id).inspect + "\n" + text if user
     text = error_check(user.id) + "\n" + text if user
 
-    SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
+    if text.include?(CONTINUE_NOTIF)
+      SlackClient.continue_notif_messages.send_message(text, title: "`#{screen_name}`")
+    else
+      SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
+    end
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e, sender_uid: sender_uid, text: text)

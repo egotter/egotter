@@ -16,6 +16,7 @@ class SlackClient
       welcome_messages:            ENV['SLACK_WELCOME_MESSAGES_URL'],
       received_messages:           ENV['SLACK_RECEIVED_MESSAGES_URL'],
       sent_messages:               ENV['SLACK_SENT_MESSAGES_URL'],
+      continue_notif_messages:     ENV['SLACK_CONTINUE_NOTIF_MESSAGES_URL'],
       bot:                         ENV['SLACK_BOT_URL'],
       tweet:                       ENV['SLACK_TWEET_URL'],
       reset_egotter:               ENV['SLACK_RESET_EGOTTER_URL'],
