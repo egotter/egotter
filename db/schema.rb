@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_01_29_150009) do
+ActiveRecord::Schema.define(version: 2020_02_06_143238) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -398,6 +398,17 @@ ActiveRecord::Schema.define(version: 2020_01_29_150009) do
     t.index ["request_id"], name: "index_create_welcome_message_logs_on_request_id"
     t.index ["screen_name"], name: "index_create_welcome_message_logs_on_screen_name"
     t.index ["uid"], name: "index_create_welcome_message_logs_on_uid"
+  end
+
+  create_table "credential_tokens", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.string "token"
+    t.string "secret"
+    t.string "instance_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_credential_tokens_on_created_at"
+    t.index ["user_id"], name: "index_credential_tokens_on_user_id", unique: true
   end
 
   create_table "delete_tweets_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

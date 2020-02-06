@@ -11,6 +11,8 @@ Rails.application.routes.draw do
     namespace :v1 do
       Search::API_V1_NAMES.each { |menu| get "#{menu}/summary", to: "#{menu}#summary" }
       Search::API_V1_NAMES.each { |menu| get "#{menu}/list", to: "#{menu}#list" }
+
+      post 'users/update_instance_id', to: 'users#update_instance_id'
     end
   end
 
