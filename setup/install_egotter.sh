@@ -144,7 +144,7 @@ Create .env:
 
     cp /path/to/.env ${APP_ROOT}/.env
     sed -i -e 's/REDIS_HOST=.\+/REDIS_HOST="xxx.xxx.xxx.xxx"/' .env
-    # Copy .google and data/cluster_(good|bad)_words.json
+    # Copy .google, .firebase and data/cluster_(good|bad)_words.json
 
 Precompile assets:
 
