@@ -116,6 +116,7 @@ class User < ApplicationRecord
         transaction do
           user.save!
           user.create_notification_setting!(report_interval: NotificationSetting::DEFAULT_REPORT_INTERVAL)
+          user.create_credential_token!(token: user.token, secret: user.secret)
         end
         yield(user, :create) if block_given?
       else
