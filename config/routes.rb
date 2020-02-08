@@ -202,10 +202,10 @@ Rails.application.routes.draw do
   require 'sidekiq/web'
   authenticate :user, lambda { |u| [User::ADMIN_UID, User::EGOTTER_UID].include?(u.uid) } do
     mount Sidekiq::Web => '/sidekiq'
-  end
 
-  if defined?(Blazer::Engine)
-    mount Blazer::Engine, at: '/blazer'
+    if defined?(Blazer::Engine)
+      mount Blazer::Engine, at: '/blazer'
+    end
   end
 
   match '*unmatched_route', to: 'application#not_found', via: :all
