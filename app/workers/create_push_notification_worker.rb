@@ -32,20 +32,7 @@ class CreatePushNotificationWorker
       "#{access_token['token_type']} #{access_token['access_token']}"
     end
 
-    body = {
-        message: {
-            token: User.find(user_id).credential_token.instance_id,
-            notification: {
-                title: title,
-                body: body
-            },
-            android: {
-                notification: {
-                    channel_id: 'fcm_default_channel'
-                }
-            }
-        }
-    }
+    body = data_payload(user_id, title, body)
 
     uri = URI.parse("https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send")
     https = Net::HTTP.new(uri.host, uri.port)
@@ -56,10 +43,42 @@ class CreatePushNotificationWorker
     req.body = body.to_json
 
     res = https.request(req)
-    res.body
+    logger.info res.body
 
   rescue => e
     logger.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
     notify_airbrake(e, user_id: user_id, title: title, body: body, options: options)
+  end
+
+  private
+
+  def notification_payload(user_id, title, body)
+    {
+        message: {
+            token: User.find(user_id).credential_token.instance_id,
+            notification: {
+                title: title,
+                body: body
+            },
+            android: {
+                collapse_key: '1',
+                notification: {
+                    channel_id: 'fcm_default_channel'
+                }
+            }
+        }
+    }
+  end
+
+  def data_payload(user_id, title, body)
+    {
+        message: {
+            token: User.find(user_id).credential_token.instance_id,
+            data: {
+                title: title,
+                body: body
+            }
+        }
+    }
   end
 end
