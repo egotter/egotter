@@ -21,6 +21,8 @@ ja:
         ok: "DM作成ページを開く"
     header:
       sign_in: 'ログイン'
+    footer:
+      get_it_on: 'Google Play で手に入れよう'
   searches:
     common:
       egotter: "えごったー"

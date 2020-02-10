@@ -82,6 +82,10 @@
       = link_to t('directory.timelines.footer_title'), directory_timeline_path
       %br
 
+    %div
+      %a{href: 'https://play.google.com/store/apps/details?id=com.egotter&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1', target: '_blank'}
+        %img{alt: t('.get_it_on'), width: '100px', src: 'https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png'}/
+
     %span.copy &copy; 2019 EGOTTER
 
     - if user_signed_in? && current_user.admin?
