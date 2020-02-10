@@ -10,7 +10,7 @@ module Api
 
           user.credential_token.update!(instance_id: params[:instance_id])
 
-          request = CreatePromptReportRequest.new(user_id: user.id)
+          request = CreatePromptReportRequest.create(user_id: user.id)
           CreatePromptReportWorker.perform_async(request.id, requested_by: 'android_app')
 
           render json: {uid: user.uid, found: true}
