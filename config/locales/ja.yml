@@ -1824,6 +1824,9 @@ ja:
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
   tweet_text:
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
+  push_notification:
+    you_are_removed: '%{count}人にリムられました'
+    not_removed: '集計期間にリムられはありませんでした'
   dm:
     no_diffs: "フォロー・フォロワーに変化はありません。"
     new_friends: "新しいフォロー： %{users}"

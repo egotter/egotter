@@ -42,22 +42,33 @@ class PromptReport < ApplicationRecord
   UNFOLLOWERS_SIZE_LIMIT = 5
 
   def deliver!
+    dm = nil
+
     if new_record?
       begin
-        dm = DirectMessage.new(retry_sending { send_starting_message! })
-        update_with_dm!(dm)
+        unless user.credential_token.instance_id.present?
+          dm = DirectMessage.new(retry_sending { send_starting_message! })
+          update_with_dm!(dm)
+        end
       rescue => e
         raise StartingFailed.new("#{e.class} #{e.message}")
       end
     end
 
     begin
-      dm = DirectMessage.new(retry_sending { send_reporting_message! })
-      update_with_dm!(dm)
+      if user.credential_token.instance_id.present?
+        push_notification = message_builder.build_push_notification
+        CreatePushNotificationWorker.perform_async(user_id, '', push_notification)
+      else
+        dm = DirectMessage.new(retry_sending { send_reporting_message! })
+        update_with_dm!(dm)
+      end
     rescue => e
       begin
-        dm = DirectMessage.new(retry_sending { send_failed_message! })
-        update_with_dm!(dm)
+        unless user.credential_token.instance_id.present?
+          dm = DirectMessage.new(retry_sending { send_failed_message! })
+          update_with_dm!(dm)
+        end
       rescue => e
         raise FallbackFailed.new("#{e.class} #{e.message}")
       end
@@ -277,6 +288,11 @@ class PromptReport < ApplicationRecord
       end
     end
 
+    def build_push_notification
+      count = (current_twitter_user.unfollowerships.pluck(:follower_uid) - previous_twitter_user.calc_unfollower_uids).size
+      I18n.t('push_notification.you_are_removed', count: count)
+    end
+
     private
 
     def report_interval_in_words
@@ -334,6 +350,10 @@ class PromptReport < ApplicationRecord
             request_id: "#{request&.id}-#{token}",
         )
       end
+    end
+
+    def build_push_notification
+      I18n.t('push_notification.not_removed')
     end
 
     private

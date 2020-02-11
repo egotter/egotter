@@ -7,6 +7,10 @@ class CreatePromptReportMessageWorker
     user_id
   end
 
+  def unique_in
+    1.minute
+  end
+
   def after_skip(user_id, options = {})
     log(Hashie::Mash.new(options)).update(status: false, error_class: DuplicateJobSkipped, error_message: "Direct message not sent #{user_id} #{options.inspect}")
   end

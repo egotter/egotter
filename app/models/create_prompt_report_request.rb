@@ -56,12 +56,14 @@ class CreatePromptReportRequest < ApplicationRecord
         if user.notification_setting.report_if_changed?
           PromptReport.new
         else
-          send_starting_confirmation_message!
+          unless user.credential_token.instance_id.present?
+            send_starting_confirmation_message!
+          end
         end
 
     report_options = ReportOptionsBuilder.new(user, self, record_created, prompt_report.id).build
 
-    if user.notification_setting.report_if_changed?
+    if user.notification_setting.report_if_changed? && user.credential_token.instance_id.blank?
       if self.kind == :you_are_removed
         CreatePromptReportMessageWorker.perform_async(user.id, report_options)
       else
