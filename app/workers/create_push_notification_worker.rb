@@ -71,12 +71,15 @@ class CreatePushNotificationWorker
   end
 
   def data_payload(user_id, title, body)
+    user = User.find(user_id)
     {
         message: {
             token: User.find(user_id).credential_token.instance_id,
             data: {
                 title: title,
-                body: body
+                body: body,
+                uid: user.uid.to_s,
+                screen_name: user.screen_name
             }
         }
     }
