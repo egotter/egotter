@@ -15,7 +15,7 @@ module Egotter
 
       def perform_unique_check(worker, args, history, unique_key)
         if history.exists?(unique_key)
-          worker.logger.info { "#{self.class}:#{worker.class} Skip duplicate job for #{history.ttl} seconds. #{args.inspect.truncate(100)}" }
+          worker.logger.info { "#{self.class}:#{worker.class} Skip duplicate job for #{history.ttl} seconds, remaining #{history.ttl(unique_key)} seconds. #{args.inspect.truncate(100)}" }
 
           perform_callback(worker, :after_skip, args)
 
