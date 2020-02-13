@@ -56,7 +56,9 @@ class CreatePromptReportRequest < ApplicationRecord
         if user.notification_setting.report_if_changed?
           PromptReport.new
         else
-          unless user.credential_token.instance_id.present?
+          if user.credential_token.instance_id.present?
+            PromptReport.new
+          else
             send_starting_confirmation_message!
           end
         end
