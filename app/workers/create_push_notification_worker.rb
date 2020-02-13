@@ -45,9 +45,9 @@ class CreatePushNotificationWorker
     res = JSON.parse(https.request(req).body)
 
     if res.has_key?('error')
-      logger.warn body
+      logger.warn res
     else
-      logger.info body
+      logger.info res
     end
 
   rescue => e
