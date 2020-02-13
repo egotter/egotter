@@ -74,22 +74,26 @@ class CreatePushNotificationWorker
     user = User.find(user_id)
     twitter_user = TwitterUser.latest_by(uid: user.uid)
 
+    data = {
+        title: title,
+        body: body,
+        uid: user.uid,
+        screen_name: user.screen_name,
+        version_code: ENV['ANDROID_VERSION_CODE'],
+        one_sided_friends: twitter_user.one_sided_friendships.size,
+        one_sided_followers: twitter_user.one_sided_followerships.size,
+        mutual_friends: twitter_user.mutual_friendships.size,
+        unfriends: twitter_user.unfriendships.size,
+        unfollowers: twitter_user.unfollowerships.size,
+        blocking_or_blocked: twitter_user.block_friendships.size
+    }
+
+    data.each { |k, v| data[k] = v.to_s }
+
     {
         message: {
             token: User.find(user_id).credential_token.instance_id,
-            data: {
-                title: title,
-                body: body,
-                uid: user.uid,
-                screen_name: user.screen_name,
-                version_code: ENV['ANDROID_VERSION_CODE'],
-                one_sided_friends: twitter_user.one_sided_friendships.size,
-                one_sided_followers: twitter_user.one_sided_followerships.size,
-                mutual_friends: twitter_user.mutual_friendships.size,
-                unfriends: twitter_user.unfriendships.size,
-                unfollowers: twitter_user.unfollowerships.size,
-                blocking_or_blocked: twitter_user.block_friendships.size
-            }
+            data: data
         }
     }
   end
