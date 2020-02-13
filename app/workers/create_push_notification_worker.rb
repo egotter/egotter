@@ -42,8 +42,13 @@ class CreatePushNotificationWorker
     req['Authorization'] = access_key
     req.body = body.to_json
 
-    res = https.request(req)
-    logger.info res.body
+    res = JSON.parse(https.request(req).body)
+
+    if res.has_key?('error')
+      logger.warn body
+    else
+      logger.info body
+    end
 
   rescue => e
     logger.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
