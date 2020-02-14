@@ -57,10 +57,8 @@ class WarningMessage < ApplicationRecord
   end
 
   def deliver!
-    resp = User.egotter.api_client.twitter.create_direct_message_event(user.uid, message).to_h
-    dm = DirectMessage.new(event: resp)
+    dm = User.egotter.api_client.create_direct_message_event(user.uid, message)
     update!(message_id: dm.id, message: dm.truncated_message)
-
     dm
   end
 end

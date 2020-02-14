@@ -39,8 +39,7 @@ class WelcomeMessage < ApplicationRecord
     log.save
 
     begin
-      dm = send_starting_message!
-      update!(message_id: dm.id, message: dm.truncated_message)
+      send_starting_message!
     rescue => e
       exception = StartingFailed.new("#{e.class} #{e.message}")
       log.update_by(exception: exception)
@@ -48,12 +47,10 @@ class WelcomeMessage < ApplicationRecord
     end
 
     begin
-      dm = send_initialization_success_message!
-      update!(message_id: dm.id, message: dm.truncated_message)
+      dm = send_success_message!
     rescue => e
       begin
-        dm = send_initialization_failed_message!
-        update!(message_id: dm.id, message: dm.truncated_message)
+        send_failed_message!
       rescue => e
         exception = FailedMessageFailed.new("#{e.class} #{e.message}")
         log.update_by(exception: exception)
@@ -87,41 +84,28 @@ class WelcomeMessage < ApplicationRecord
 
   private
 
-  def send_dm(sender, recipient, text)
-    retry_sending { sender.api_client.twitter.create_direct_message_event(recipient.uid, text) }
-  end
-
-  def send_starting_message!
-    resp = send_dm(user, User.egotter, FirstOfAllMessageBuilder.new(user, token).build).to_h
-    DirectMessage.new(event: resp)
-  end
-
-  def send_initialization_success_message!
-    resp = send_dm(User.egotter, user, InitializationSuccessMessageBuilder.new(user, token).build).to_h
-    DirectMessage.new(event: resp)
-  end
-
-  def send_initialization_failed_message!
-    resp = send_dm(user, User.egotter, InitializationFailedMessageBuilder.new(user, token).build).to_h
-    DirectMessage.new(event: resp)
-  end
-
-  def retry_sending(&block)
-    tries ||= 3
-    yield
-  rescue => e
-    if e.message.include?('Connection reset by peer')
-      if (tries -= 1) > 0
-        retry
-      else
-        raise RetryExhausted.new("#{e.class} #{e.message}")
-      end
-    else
-      raise
+  def create_dm(sender, recipient, message)
+    sender.api_client.create_direct_message_event(recipient.uid, message).tap do |dm|
+      update!(message_id: dm.id, message: dm.truncated_message)
     end
   end
 
-  class FirstOfAllMessageBuilder
+  def send_starting_message!
+    message = StartingMessageBuilder.new(user, token).build
+    create_dm(user, User.egotter, message)
+  end
+
+  def send_success_message!
+    message = SuccessMessageBuilder.new(user, token).build
+    create_dm(User.egotter, user, message)
+  end
+
+  def send_failed_message!
+    message = FailedMessageBuilder.new(user, token).build
+    create_dm(user, User.egotter, message)
+  end
+
+  class StartingMessageBuilder
     attr_reader :user, :token
 
     def initialize(user, token)
@@ -149,7 +133,7 @@ class WelcomeMessage < ApplicationRecord
     end
   end
 
-  class InitializationSuccessMessageBuilder
+  class SuccessMessageBuilder
     attr_reader :user, :token
 
     def initialize(user, token)
@@ -179,7 +163,7 @@ class WelcomeMessage < ApplicationRecord
     end
   end
 
-  class InitializationFailedMessageBuilder
+  class FailedMessageBuilder
     attr_reader :user, :token
 
     def initialize(user, token)

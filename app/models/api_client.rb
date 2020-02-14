@@ -3,6 +3,18 @@ class ApiClient
     @client = client
   end
 
+  def create_direct_message_event(*args)
+    tries ||= 3
+    resp = @client.twitter.create_direct_message_event(*args).to_h
+    DirectMessage.new(event: resp)
+  rescue => e
+    if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
+      retry
+    else
+      raise
+    end
+  end
+
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
       logger.debug { "ApiClient#method_missing #{method} #{args.inspect.truncate(100)}" } rescue nil

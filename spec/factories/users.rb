@@ -14,6 +14,8 @@ FactoryBot.define do
       if evaluator.with_settings
         user.create_notification_setting!
       end
+
+      user.create_credential_token!
     end
   end
 end

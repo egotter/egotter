@@ -10,6 +10,22 @@ RSpec.describe ApiClient, type: :model do
     }
   end
 
+  describe '#create_direct_message_event' do
+    let(:client) { TwitterWithAutoPagination::Client.new }
+    let(:twitter) { double('twitter') }
+    let(:instance) { ApiClient.new(client) }
+    subject { instance.create_direct_message_event(1, 'text') }
+
+    before { allow(client).to receive(:twitter).and_return(twitter) }
+
+    it do
+      expect(twitter).to receive(:create_direct_message_event).with(1, 'text').and_return(message_create: {message_data: {text: 'text'}})
+      expect(subject).to satisfy do |dm|
+        dm.truncated_message == 'text'
+      end
+    end
+  end
+
   describe '#method_missing' do
     let(:client) { TwitterWithAutoPagination::Client.new }
     let(:instance) { ApiClient.new(client) }
