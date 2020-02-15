@@ -359,31 +359,6 @@ ja:
         cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
         has_not_purchased: "まだ購入していません"
         see_plans: '料金プランを見る'
-      search_title: '検索設定'
-      search_mode:
-        title: '検索速度'
-        fast: '高速モード'
-        slow: '低速モード'
-        advantage: '検索やリムられ通知が早くなります'
-        advise_html: '@ego_tter ををフォローすると<span class="egotter-pink">高速モード</span>になります'
-      search_count:
-        title: '検索回数'
-        count: '合計 %{count} 回'
-        remaining: '（残り %{count} 回）'
-        history: '履歴'
-        note: '直近の %{days} 日が対象'
-      follow_count:
-        title: 'フォロー回数'
-        count: '合計 %{count} 回'
-        remaining: '（残り %{count} 回）'
-        history: '履歴'
-        note: '直近の %{days} 日が対象'
-      unfollow_count:
-        title: 'アンフォロー回数'
-        count: '合計 %{count} 回'
-        remaining: '（残り %{count} 回）'
-        history: '履歴'
-        note: '直近の %{days} 日が対象'
       notifications:
         title: "通知設定"
       report_interval:
@@ -452,6 +427,32 @@ ja:
         title: '他のアカウントでログイン'
         switch: '再ログイン'
         note_html: '複数のツイッターアカウントを切り替えできます'
+    search:
+      title: '検索設定'
+      search_mode:
+        title: '検索速度'
+        fast: '高速モード'
+        slow: '低速モード'
+        advantage: '検索やリムられ通知が早くなります'
+        advise_html: '@ego_tter ををフォローすると<span class="egotter-pink">高速モード</span>になります'
+      search_count:
+        title: '検索回数'
+        count: '合計 %{count} 回'
+        remaining: '（残り %{count} 回）'
+        history: '履歴'
+        note: '直近の %{days} 日が対象'
+      follow_count:
+        title: 'フォロー回数'
+        count: '合計 %{count} 回'
+        remaining: '（残り %{count} 回）'
+        history: '履歴'
+        note: '直近の %{days} 日が対象'
+      unfollow_count:
+        title: 'アンフォロー回数'
+        count: '合計 %{count} 回'
+        remaining: '（残り %{count} 回）'
+        history: '履歴'
+        note: '直近の %{days} 日が対象'
     follow_requests:
       title: 'フォロー 履歴'
       return: '設定ページへ戻る'

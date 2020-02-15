@@ -12,64 +12,7 @@
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
 
-  <h2 class="h4 text-center"><i class="fas fa-search">&nbsp;</i><%= t('.search_title') %></h2>
-
-  <hr>
-
-  <div class="row">
-    <div class="col-xs-4"><%= t('.search_mode.title') %></div>
-    <div class="col-xs-8">
-      <% if current_user.search_mode.fast? %>
-        <div><%= t(".search_mode.fast") %></div>
-        <div class="text-muted notes"><%= t('.search_mode.advantage') %></div>
-      <% else %>
-        <div><%= t(".search_mode.#{current_user.search_mode}") %></div>
-        <div class="text-muted notes"><%= t('.search_mode.advise_html') %></div>
-      <% end %>
-    </div>
-  </div>
-
-  <hr>
-
-  <div class="row">
-    <div class="col-xs-4"><%= t('.search_count.title') %></div>
-    <div class="col-xs-8">
-      <div>
-        <%= t('.search_count.count', count: SearchCountLimitation.max_search_count(current_user)) %>
-        <%= t('.search_count.remaining', count: SearchCountLimitation.remaining_search_count(user: current_user)) %>
-        <span><a href="#" data-target="#search-modal" data-toggle="modal"><%= t('.search_count.history') %></a></span>
-      </div>
-      <div class="text-muted notes"><%= t('.search_count.note', days: SearchCountLimitation::SEARCH_COUNT_PERIOD / 1.day) %></div>
-    </div>
-  </div>
-
-  <hr>
-
-  <div class="row">
-    <div id="follow-count" class="col-xs-4"><%= t('.follow_count.title') %></div>
-    <div class="col-xs-8">
-      <div>
-        <%= t('.follow_count.count', count: CreateFollowLimitation.max_count(current_user)) %><%= t('.follow_count.remaining', count: CreateFollowLimitation.remaining_count(current_user)) %>
-        <span><a href="<%= settings_follow_requests_path %>"><%= t('.follow_count.history') %></a></span>
-      </div>
-      <div class="text-muted notes"><%= t('.follow_count.note', days: CreateFollowLimitation::CREATE_FOLLOW_PERIOD / 1.day) %></div>
-    </div>
-  </div>
-
-  <hr>
-
-  <div class="row">
-    <div id="unfollow-count" class="col-xs-4"><%= t('.unfollow_count.title') %></div>
-    <div class="col-xs-8">
-      <div>
-        <%= t('.unfollow_count.count', count: CreateUnfollowLimitation.max_count(current_user)) %><%= t('.unfollow_count.remaining', count: CreateUnfollowLimitation.remaining_count(current_user)) %>
-        <span><a href="<%= settings_unfollow_requests_path %>"><%= t('.unfollow_count.history') %></a></span>
-      </div>
-      <div class="text-muted notes"><%= t('.unfollow_count.note', days: CreateUnfollowLimitation::CREATE_UNFOLLOW_PERIOD / 1.day) %></div>
-    </div>
-  </div>
-
-  <hr>
+  <%= render partial: 'search' %>
 
   <div class="vertical-spacing"></div>
   <div class="vertical-spacing"></div>
