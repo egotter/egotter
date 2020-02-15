@@ -47,4 +47,15 @@ class TwitterUser < ApplicationRecord
   def to_param
     screen_name
   end
+
+  def summary_counts
+    {
+        one_sided_friends: one_sided_friendships.size,
+        one_sided_followers: one_sided_followerships.size,
+        mutual_friends: mutual_friendships.size,
+        unfriends: unfriendships.size,
+        unfollowers: unfollowerships.size,
+        blocking_or_blocked: block_friendships.size
+    }
+  end
 end

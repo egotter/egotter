@@ -13,7 +13,19 @@ module Api
           request = CreatePromptReportRequest.create(user_id: user.id, skip_error_check: true)
           jid = CreatePromptReportWorker.perform_async(request.id, requested_by: 'android_app')
 
-          render json: {uid: user.uid, screen_name: user.screen_name, version_code: ENV['ANDROID_VERSION_CODE'], found: true, jid: jid}
+          response = {
+              uid: user.uid,
+              screen_name: user.screen_name,
+              version_code: ENV['ANDROID_VERSION_CODE'],
+              found: true,
+              jid: jid
+          }
+
+          if (twitter_user = TwitterUser.latest_by(uid: user.uid))
+            response.merge!(twitter_user.summary_counts)
+          end
+
+          render json: response
         else
           render json: {found: false}, status: :not_found
         end
