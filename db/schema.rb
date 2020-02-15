@@ -680,6 +680,7 @@ ActiveRecord::Schema.define(version: 2020_02_06_143238) do
     t.boolean "prompt_report", default: true, null: false
     t.integer "report_interval", default: 0, null: false
     t.boolean "report_if_changed", default: false, null: false
+    t.boolean "push_notification", default: false, null: false
     t.string "permission_level"
     t.datetime "last_email_at"
     t.datetime "last_dm_at"

@@ -492,12 +492,18 @@ ja:
           <b>検索通知（DM）</b><br>
           えごったーで誰かに検索されたら通知します。配信はなる早です。
         report_if_changed_html: 'リムられに変化があったときのみ通知を送信する <span class="egotter-pink">新機能！</span>'
+        push_notification_html: 'リムられ通知をプッシュ通知で受け取る <span class="egotter-pink">新機能！</span>'
       note:
         email_html: 'メール通知は現在停止中です'
         dm_html: ''
         news_html: ''
         search_html: ''
         report_if_changed_html: 'この設定がオンになっていると、リムられに変化があったときのみ、リムられ通知が届くようになります'
+        push_notification_html: |
+          この設定がオンになっていると、リムられ通知がスマホに直接届くようになります
+          <a href="https://play.google.com/store/apps/details?id=com.egotter&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1" target="_blank">
+            <img src="https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png" width="100px">
+          </a>
   pricing:
     new:
       plans: "料金プラン"
