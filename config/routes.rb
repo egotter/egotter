@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       Search::API_V1_NAMES.each { |menu| get "#{menu}/list", to: "#{menu}#list" }
 
       post 'users/update_instance_id', to: 'users#update_instance_id'
+      post 'users/update_device_token', to: 'users#update_device_token'
     end
   end
 

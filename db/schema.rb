@@ -405,6 +405,7 @@ ActiveRecord::Schema.define(version: 2020_02_06_143238) do
     t.string "token"
     t.string "secret"
     t.string "instance_id"
+    t.string "device_token"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_credential_tokens_on_created_at"
