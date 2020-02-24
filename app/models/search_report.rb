@@ -32,19 +32,12 @@ class SearchReport < ApplicationRecord
   end
 
   def deliver!
-    resp = DirectMessageClient.new(user.api_client.twitter).create_direct_message(User::EGOTTER_UID, start_message)
-    dm = DirectMessage.new(resp)
+    dm = User.egotter.api_client.create_direct_message_event(user.uid, report_message)
 
     transaction do
       update!(message_id: dm.id, message: dm.truncated_message)
       user.notification_setting.update!(search_sent_at: Time.zone.now)
     end
-
-    button = {label: I18n.t('dm.searchNotification.timeline_button', screen_name: user.screen_name), url: timeline_url}
-    resp = DirectMessageRequest.new(User.egotter.api_client.twitter, user.uid, report_message, [button]).perform
-    dm = DirectMessage.new(resp)
-
-    update!(message_id: dm.id, message: dm.truncated_message)
 
     dm
   end
