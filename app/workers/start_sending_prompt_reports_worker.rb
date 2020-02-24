@@ -26,21 +26,31 @@ class StartSendingPromptReportsWorker
   # options:
   #   last_queueing_started_at
   def perform(options = {})
-    unless queueing_interval_too_short?(options)
-      start_queueing
+    if CallCreateDirectMessageEventCount.rate_limited?
+      logger.warn "Creating a direct message is rate limited. Wait for #{30.minutes.inspect}."
+      StartSendingPromptReportsWorker.perform_in(30.minutes, options)
+      return
     end
+
+    if queueing_interval_too_short?(options)
+      wait_time = next_wait_time(options['last_queueing_started_at'])
+      logger.warn "Interval is too short. Wait for #{wait_time.inspect}."
+      StartSendingPromptReportsWorker.perform_in(wait_time, options)
+      return
+    end
+
+    start_queueing
+
   rescue => e
     notify_airbrake(e, options: options)
     logger.warn "#{e.class} #{e.message}"
     logger.info e.backtrace.join("\n")
   end
 
-  def queueing_interval_too_short?(options)
-    wait_time = next_wait_time(options['last_queueing_started_at'])
-    if wait_time > 0
-      logger.info "Interval is too short. Wait for #{wait_time.inspect}."
-      StartSendingPromptReportsWorker.perform_in(wait_time, options)
+  # private
 
+  def queueing_interval_too_short?(options)
+    if next_wait_time(options['last_queueing_started_at']) > 0
       true
     else
       false

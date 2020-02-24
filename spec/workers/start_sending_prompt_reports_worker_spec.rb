@@ -7,7 +7,16 @@ RSpec.describe StartSendingPromptReportsWorker do
     let(:options) { 'options' }
     subject { worker.perform(options) }
 
-    context 'With an appropriate interval' do
+    context 'CallCreateDirectMessageEventCount.rate_limited? returns true' do
+      before { allow(CallCreateDirectMessageEventCount).to receive(:rate_limited?).and_return(true) }
+      it do
+        expect(StartSendingPromptReportsWorker).to receive(:perform_in).with(30.minutes, options)
+        expect(worker).not_to receive(:start_queueing)
+        subject
+      end
+    end
+
+    context '#queueing_interval_too_short? returns false' do
       before { allow(worker).to receive(:queueing_interval_too_short?).with(options).and_return(false) }
       it do
         expect(worker).to receive(:start_queueing)
@@ -15,9 +24,13 @@ RSpec.describe StartSendingPromptReportsWorker do
       end
     end
 
-    context 'Without an appropriate interval' do
-      before { allow(worker).to receive(:queueing_interval_too_short?).with(options).and_return(true) }
+    context '#queueing_interval_too_short? returns true' do
+      before do
+        allow(worker).to receive(:queueing_interval_too_short?).with(options).and_return(true)
+        allow(worker).to receive(:next_wait_time).with(anything).and_return(123)
+      end
       it do
+        expect(StartSendingPromptReportsWorker).to receive(:perform_in).with(123, options)
         expect(worker).not_to receive(:start_queueing)
         subject
       end
@@ -27,16 +40,13 @@ RSpec.describe StartSendingPromptReportsWorker do
   describe '#queueing_interval_too_short?' do
     let(:time) { 'time' }
     let(:options) { {'last_queueing_started_at' => time} }
-    subject { worker.queueing_interval_too_short?(options) }
+    subject { worker.send(:queueing_interval_too_short?, options) }
 
     before { allow(worker).to receive(:next_wait_time).with(time).and_return(wait_time) }
 
     context 'wait_time is greater than zero' do
       let(:wait_time) { 1 }
-      it do
-        expect(StartSendingPromptReportsWorker).to receive(:perform_in).with(wait_time, options)
-        is_expected.to be_truthy
-      end
+      it { is_expected.to be_truthy }
     end
 
     context 'wait_time is zero' do
