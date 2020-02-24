@@ -40,7 +40,7 @@ class ResetEgotterRequest < ApplicationRecord
   def send_goodbye_message
     template = Rails.root.join('app/views/reset_egotter/goodbye.ja.text.erb')
     message = ERB.new(template.read).result
-    DirectMessageClient.new(user.api_client.twitter).create_direct_message(User::EGOTTER_UID, message)
+    user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
   rescue Twitter::Error::Forbidden => e
     if e.message == 'You cannot send messages to this user.' ||
         e.message == 'You cannot send messages to users who are not following you.'
