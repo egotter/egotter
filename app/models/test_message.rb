@@ -51,17 +51,14 @@ class TestMessage < ApplicationRecord
 
   def deliver!
     if permission_level_not_enough
-      dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
-      resp = dm_client.create_direct_message(user.uid, message_builder.build)
+      dm = User.egotter.api_client.create_direct_message_event(user.uid, message_builder.build)
     else
-      dm_client = DirectMessageClient.new(user.api_client.twitter)
-      dm_client.create_direct_message(User::EGOTTER_UID, I18n.t('dm.testMessage.lets_start', url: Rails.application.routes.url_helpers.settings_url(via: 'test_message_lets_start', og_tag: 'false')))
+      url = Rails.application.routes.url_helpers.settings_url(via: 'test_message_lets_start', og_tag: 'false')
+      user.api_client.create_direct_message_event(User::EGOTTER_UID, I18n.t('dm.testMessage.lets_start', url: url))
 
-      dm_client = DirectMessageClient.new(User.egotter.api_client.twitter)
-      resp = dm_client.create_direct_message(user.uid, message_builder.build)
+      dm = User.egotter.api_client.create_direct_message_event(user.uid, message_builder.build)
     end
 
-    dm = DirectMessage.new(resp)
     update!(message_id: dm.id, message: dm.truncated_message)
 
     dm
