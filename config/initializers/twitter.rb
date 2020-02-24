@@ -22,7 +22,7 @@ module Egotter
 
       def create_direct_message_event(*args)
         super
-      rescue Twitter::Error::EnhanceYourCalm => e
+      rescue ::Twitter::Error::EnhanceYourCalm => e
         CallCreateDirectMessageEventCount.new.raised
         raise
       ensure
