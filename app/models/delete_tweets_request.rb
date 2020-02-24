@@ -96,26 +96,22 @@ class DeleteTweetsRequest < ApplicationRecord
     raise FinishedTweetNotSent.new("#{e.class} #{e.message}")
   end
 
-  def send_finished_message(sender)
-    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_dm')
-    dm_client(sender).create_direct_message(user.uid, I18n.t('delete_tweets.dm.message', url: url))
+  def send_finished_message
+    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_dm', og_tag: 'false')
+    User.egotter.api_client.create_direct_message_event(user.uid, I18n.t('delete_tweets.dm.message', url: url))
   rescue => e
     raise FinishedMessageNotSent.new("#{e.class} #{e.message}")
   end
 
-  def send_error_message(sender)
-    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_error_dm')
-    dm_client(sender).create_direct_message(user.uid, I18n.t('delete_tweets.dm.error_message', url: url))
+  def send_error_message
+    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_error_dm', og_tag: 'false')
+    User.egotter.api_client.create_direct_message_event(user.uid, I18n.t('delete_tweets.dm.error_message', url: url))
   rescue => e
     raise ErrorMessageNotSent.new("#{e.class} #{e.message}")
   end
 
   def api_client
     user.api_client.twitter
-  end
-
-  def dm_client(sender)
-    DirectMessageClient.new(sender.api_client.twitter)
   end
 
   class Error < StandardError

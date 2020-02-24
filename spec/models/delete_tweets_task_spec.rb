@@ -23,7 +23,7 @@ RSpec.describe DeleteTweetsTask, type: :model do
       end
 
       it do
-        expect(request).to receive(:send_error_message).with(any_args)
+        expect(request).to receive(:send_error_message)
         expect { subject }.to raise_error('Anything')
       end
     end
