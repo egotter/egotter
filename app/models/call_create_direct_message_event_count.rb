@@ -16,6 +16,11 @@ class CallCreateDirectMessageEventCount < ::Egotter::SortedSet
     Redis.client.setex(key, 1.hour, '1')
   end
 
+  def raised_ttl
+    key = "#{Rails.env}:#{self.class}:raised"
+    Redis.client.ttl(key)
+  end
+
   def raised?
     key = "#{Rails.env}:#{self.class}:raised"
     Redis.client.exists(key)
