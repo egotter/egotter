@@ -31,8 +31,16 @@ class CallCreateDirectMessageEventCount < ::Egotter::SortedSet
   end
 
   class << self
-    def rate_limited?
-      new.rate_limited?
+    %i(
+        increment
+        raised
+        raised_ttl
+        raised?
+        rate_limited?
+    ).each do |method_name|
+      define_method(method_name) do
+        new.send(method_name)
+      end
     end
   end
 end
