@@ -1,4 +1,5 @@
-# CreatePromptReportWorker.set(queue: 'queue_name').perform_async(request.id)
+# Set specific queue per call:
+#   CreatePromptReportWorker.set(queue: 'queue_name').perform_async(request.id)
 class CreatePromptReportWorker
   include Sidekiq::Worker
   include Concerns::AirbrakeErrorHandler
@@ -21,6 +22,11 @@ class CreatePromptReportWorker
   #   start_next_loop
   #   queueing_started_at
   def perform(request_id, options = {})
+    if CallCreateDirectMessageEventCount.rate_limited?
+      SkippedCreatePromptReportWorker.perform_async(request_id, options)
+      return
+    end
+
     request = CreatePromptReportRequest.find(request_id)
     CreatePromptReportTask.new(request).start!
 
@@ -36,6 +42,14 @@ class CreatePromptReportWorker
         StartSendingPromptReportsWorker.perform_in(unique_in + 1.second, last_queueing_started_at: options['queueing_started_at'])
       else
         StartSendingPromptReportsWorker.perform_async(last_queueing_started_at: options['queueing_started_at'])
+      end
+    end
+  end
+
+  class << self
+    def consume_skipped_jobs
+      Sidekiq::Queue.new(SkippedCreatePromptReportWorker).each do |job|
+        CreatePromptReportWorker.perform_async(*job.args)
       end
     end
   end
