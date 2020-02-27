@@ -63,7 +63,7 @@ module DeployRuby
           else
             sleep 5
           end
-          raise if n == 29
+          raise "Retry exhausted" if n == 29
         end
       end
 
