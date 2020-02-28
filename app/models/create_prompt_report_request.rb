@@ -95,7 +95,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
   def send_report_was_stopped_message!
     PromptReport.new(user_id: user.id).tap do |report|
-      report.deliver_report_was_stopped_message!
+      report.deliver_stopped_message!
     end
   rescue PromptReport::StartingFailed => e
     raise ReportWasStoppedFailed.new(e.message)

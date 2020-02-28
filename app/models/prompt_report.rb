@@ -45,51 +45,43 @@ class PromptReport < ApplicationRecord
     dm = nil
 
     if new_record?
-      begin
-        unless user.credential_token.instance_id.present?
-          dm = DirectMessage.new(retry_sending { send_starting_message! })
-          update_with_dm!(dm)
-        end
-      rescue => e
-        raise StartingFailed.new("#{e.class} #{e.message}")
+      unless user.credential_token.instance_id.present?
+        deliver_starting_message!
       end
     end
 
-    begin
-      if user.credential_token.instance_id.present?
-        push_notification = message_builder.build_push_notification
-        CreatePushNotificationWorker.perform_async(user_id, '', push_notification)
-      else
-        dm = DirectMessage.new(retry_sending { send_reporting_message! })
-        update_with_dm!(dm)
-      end
-    rescue => e
-      begin
-        unless user.credential_token.instance_id.present?
-          dm = DirectMessage.new(retry_sending { send_failed_message! })
-          update_with_dm!(dm)
-        end
-      rescue => e
-        raise FallbackFailed.new("#{e.class} #{e.message}")
-      end
-
-      raise ReportingFailed.new("#{e.class} #{e.message}")
+    if user.credential_token.instance_id.present?
+      push_notification = message_builder.build_push_notification
+      CreatePushNotificationWorker.perform_async(user_id, '', push_notification)
+    else
+      dm = deliver_reporting_message!
     end
 
     dm
   end
 
-  # PromptReport.new(user_id: user.id).deliver_starting_message!
+  # Usage:
+  #   PromptReport.new(user_id: user.id).deliver_starting_message!
   def deliver_starting_message!
-    dm = DirectMessage.new(retry_sending { send_starting_message! })
+    dm = send_starting_message!
     update_with_dm!(dm)
+    dm
   rescue => e
     raise StartingFailed.new("#{e.class} #{e.message}")
   end
 
-  def deliver_report_was_stopped_message!
-    dm = DirectMessage.new(retry_sending { send_stopped_message! })
+  def deliver_reporting_message!
+    dm = send_reporting_message!
     update_with_dm!(dm)
+    dm
+  rescue => e
+    raise ReportingFailed.new("#{e.class} #{e.message}")
+  end
+
+  def deliver_stopped_message!
+    dm = send_stopped_message!
+    update_with_dm!(dm)
+    dm
   rescue => e
     raise StartingFailed.new("#{e.class} #{e.message}")
   end
@@ -101,9 +93,6 @@ class PromptReport < ApplicationRecord
   end
 
   class ReportingFailed < ReportingError
-  end
-
-  class FallbackFailed < ReportingError
   end
 
   class << self
@@ -153,10 +142,6 @@ class PromptReport < ApplicationRecord
 
   private
 
-  def dm_client(sender)
-    DirectMessageClient.new(sender.api_client.twitter)
-  end
-
   def send_starting_message!
     template = Rails.root.join('app/views/prompt_reports/start.ja.text.erb')
     message = ERB.new(template.read).result_with_hash(
@@ -164,7 +149,7 @@ class PromptReport < ApplicationRecord
         egotter_url: root_url(via: 'prompt_report_starting'),
         settings_url: settings_url(via: 'prompt_report_starting', og_tag: 'false'),
     )
-    dm_client(user).create_direct_message(User::EGOTTER_UID, message)
+    user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
   end
 
   def send_stopped_message!
@@ -172,36 +157,17 @@ class PromptReport < ApplicationRecord
     message = ERB.new(template.read).result_with_hash(
         settings_url: settings_url(via: 'prompt_report_stopped', follow_dialog: 1, share_dialog: 1, og_tag: 'false'),
     )
-    dm_client(user).create_direct_message(User::EGOTTER_UID, message)
+    user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
   end
 
   def send_reporting_message!
-    dm_client(User.egotter).create_direct_message(user.uid, message_builder.build)
-  end
-
-  def send_failed_message!
-    dm_client(user).create_direct_message(User::EGOTTER_UID, ReportingFailedMessageBuilder.new.build)
+    User.egotter.api_client.create_direct_message_event(user.uid, message_builder.build)
   end
 
   def update_with_dm!(dm)
     ActiveRecord::Base.transaction do
       update!(message_id: dm.id, message: dm.truncated_message)
       user.notification_setting.update!(last_dm_at: Time.zone.now)
-    end
-  end
-
-  def retry_sending(&block)
-    tries ||= 3
-    yield
-  rescue => e
-    if e.message.include?('Connection reset by peer')
-      if (tries -= 1) > 0
-        retry
-      else
-        raise RetryExhausted.new("#{e.class} #{e.message}")
-      end
-    else
-      raise
     end
   end
 
@@ -376,24 +342,6 @@ class PromptReport < ApplicationRecord
 
     def timeline_url
       profile_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'prompt', via: 'prompt_report')
-    end
-  end
-
-  class ReportingFailedMessageBuilder
-    include UrlHelpers
-    attr_reader :request
-
-    def initialize(request: nil)
-      @request = request
-    end
-
-    def build
-      template = Rails.root.join('app/views/prompt_reports/reporting_failed.ja.text.erb')
-      ERB.new(template.read).result_with_hash(
-          settings_url: settings_url(via: 'prompt_report_failed'),
-          egotter_url: root_url(via: 'prompt_report_failed'),
-      )
-
     end
   end
 end

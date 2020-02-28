@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PromptReport, type: :model do
+  let(:user) { create(:user, with_settings: true) }
 
   describe '.generate_token' do
     it 'generates a unique token' do
@@ -9,7 +10,6 @@ RSpec.describe PromptReport, type: :model do
   end
 
   describe '.initialization' do
-    let(:user) { create(:user) }
     let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
     subject { described_class.initialization(user.id, request_id: request.id, id: prompt_report.id) }
 
@@ -25,7 +25,6 @@ RSpec.describe PromptReport, type: :model do
   end
 
   describe '.you_are_removed' do
-    let(:user) { create(:user) }
     let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
     subject do
       described_class.you_are_removed(
@@ -54,7 +53,6 @@ RSpec.describe PromptReport, type: :model do
   end
 
   describe '.not_changed' do
-    let(:user) { create(:user) }
     let(:request) { CreatePromptReportRequest.create(user_id: user.id) }
     subject do
       described_class.not_changed(
@@ -83,89 +81,112 @@ RSpec.describe PromptReport, type: :model do
   end
 
   describe '#deliver!' do
-    let(:dm_client_class) do
-      Class.new do
-        def initialize
-          @count = 0
-        end
-
-        def create_direct_message(*args)
-          @count += 1
-          {event: {id: "id#{@count}", message_create: {message_data: {text: "text#{@count}"}}}}
-        end
-      end
-    end
-
-    let(:user) { create(:user) }
     let(:prompt_report) { build(:prompt_report, user: user) }
     subject { prompt_report.deliver! }
 
-    before do
-      user.create_notification_setting!
-      allow(prompt_report).to receive(:dm_client).with(anything).and_return(dm_client_class.new)
-      prompt_report.message_builder = described_class::EmptyMessageBuilder.new
-    end
+    before { prompt_report.message_builder = described_class::EmptyMessageBuilder.new }
 
-    it 'calls #send_starting_message! and #send_reporting_message!' do
-      expect(prompt_report).to receive(:send_starting_message!).with(no_args).and_call_original
-      expect(prompt_report).to receive(:send_reporting_message!).with(no_args).and_call_original
-      expect(prompt_report).to receive(:update_with_dm!).with(anything).twice.and_call_original
-      subject
-
-      expect(prompt_report.persisted?).to be_truthy
-      expect(prompt_report.message_id).to eq('id2')
-      expect(prompt_report.message).to eq('text2')
-    end
-
-    context '#send_reporting_message! raises an exception' do
-      before { allow(prompt_report).to receive(:send_reporting_message!).and_raise('Anything') }
-
-      it 'calls #send_starting_message! and #send_failed_message!' do
-        expect(prompt_report).to receive(:send_starting_message!).with(no_args).and_call_original
-        expect(prompt_report).to receive(:send_failed_message!).with(no_args).and_call_original
-        expect(prompt_report).to receive(:update_with_dm!).with(anything).twice.and_call_original
-        expect { subject }.to raise_error(PromptReport::ReportingFailed)
-
-        expect(prompt_report.persisted?).to be_truthy
-        expect(prompt_report.message_id).to eq('id2')
-        expect(prompt_report.message).to eq('text2')
-      end
-    end
-
-    context 'prompt_record is persisted' do
-      before { prompt_report.save! }
-      it do
-        expect(prompt_report).not_to receive(:send_starting_message!)
-        subject
-      end
+    it do
+      expect(prompt_report).to receive(:deliver_starting_message!)
+      expect(prompt_report).to receive(:deliver_reporting_message!).and_return('dm')
+      is_expected.to eq('dm')
     end
   end
 
   describe '#deliver_starting_message!' do
-    let(:user) { create(:user) }
-    let(:prompt_report) { build(:prompt_report, user: user) }
-    let(:response) { {event: {id: 'id', message_create: {message_data: {text: 'text'}}}} }
-    subject { prompt_report.deliver_starting_message! }
+    let(:report) { build(:prompt_report, user: user) }
+    subject { report.deliver_starting_message! }
+
+    it do
+      expect(report).to receive(:send_starting_message!).and_return('dm')
+      expect(report).to receive(:update_with_dm!).with('dm')
+      is_expected.to eq('dm')
+    end
+
+    context 'An exception is raised' do
+      before { allow(report).to receive(:send_starting_message!).and_raise('Anything') }
+      it { expect { subject }.to raise_error(described_class::StartingFailed, 'RuntimeError Anything') }
+    end
+  end
+
+  describe '#deliver_reporting_message!' do
+    let(:report) { build(:prompt_report, user: user) }
+    subject { report.deliver_reporting_message! }
+
+    it do
+      expect(report).to receive(:send_reporting_message!).and_return('dm')
+      expect(report).to receive(:update_with_dm!).with('dm')
+      is_expected.to eq('dm')
+    end
+
+    context 'An exception is raised' do
+      before { allow(report).to receive(:send_reporting_message!).and_raise('Anything') }
+      it { expect { subject }.to raise_error(described_class::ReportingFailed, 'RuntimeError Anything') }
+    end
+  end
+
+  describe '#deliver_stopped_message!' do
+    let(:report) { build(:prompt_report, user: user) }
+    subject { report.deliver_stopped_message! }
+
+    it do
+      expect(report).to receive(:send_stopped_message!).and_return('dm')
+      expect(report).to receive(:update_with_dm!).with('dm')
+      is_expected.to eq('dm')
+    end
+
+    context 'An exception is raised' do
+      before { allow(report).to receive(:send_stopped_message!).and_raise('Anything') }
+      it { expect { subject }.to raise_error(described_class::StartingFailed, 'RuntimeError Anything') }
+    end
+  end
+
+  describe '#send_starting_message!' do
+    let(:report) { build(:prompt_report, user: user) }
+    let(:api_client) { instance_double('ApiClient') }
+    subject { report.send(:send_starting_message!) }
+
+    before { allow(user).to receive(:api_client).and_return(api_client) }
+
+    it do
+      expect(api_client).to receive(:create_direct_message_event).with(User::EGOTTER_UID, anything).and_return('dm')
+      is_expected.to eq('dm')
+    end
+  end
+
+  describe '#send_stopped_message!' do
+    let(:report) { build(:prompt_report, user: user) }
+    let(:api_client) { instance_double('ApiClient') }
+    subject { report.send(:send_stopped_message!) }
+
+    before { allow(user).to receive(:api_client).and_return(api_client) }
+
+    it do
+      expect(api_client).to receive(:create_direct_message_event).with(User::EGOTTER_UID, anything).and_return('dm')
+      is_expected.to eq('dm')
+    end
+  end
+
+  describe '#send_reporting_message!' do
+    let(:report) { build(:prompt_report, user: user) }
+    let(:api_client) { instance_double('ApiClient') }
+    subject { report.send(:send_reporting_message!) }
 
     before do
-      user.create_notification_setting!
-      allow(prompt_report).to receive(:send_starting_message!).and_return(response)
+      allow(User).to receive_message_chain(:egotter, :api_client).and_return(api_client)
+      allow(report).to receive(:message_builder).and_return(described_class::EmptyMessageBuilder.new)
     end
 
     it do
-      expect(DirectMessage).to receive(:new).with(response).and_call_original
-      expect(prompt_report).to receive(:update_with_dm!).with(instance_of(DirectMessage))
-      subject
+      expect(api_client).to receive(:create_direct_message_event).with(user.uid, anything).and_return('dm')
+      is_expected.to eq('dm')
     end
   end
 
   describe '#update_with_dm!' do
-    let(:user) { create(:user) }
     let(:prompt_report) { build(:prompt_report, user: user) }
     let(:dm) { double('dm', id: 'id', truncated_message: 'message') }
     subject { prompt_report.send(:update_with_dm!, dm) }
-
-    before { user.create_notification_setting! }
 
     context 'prompt_report is new record' do
       it { expect { subject }.to change { PromptReport.all.size }.by(1) }
