@@ -16,7 +16,7 @@ class StartSendingPromptReportsWorker
   end
 
   def timeout_in
-    30.minutes
+    60.minutes
   end
 
   def after_timeout
