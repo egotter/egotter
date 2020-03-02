@@ -44,12 +44,6 @@ class PromptReport < ApplicationRecord
   def deliver!
     dm = nil
 
-    if new_record?
-      unless user.credential_token.instance_id.present?
-        deliver_starting_message!
-      end
-    end
-
     if user.credential_token.instance_id.present?
       push_notification = message_builder.build_push_notification
       CreatePushNotificationWorker.perform_async(user_id, '', push_notification)
@@ -58,16 +52,6 @@ class PromptReport < ApplicationRecord
     end
 
     dm
-  end
-
-  # Usage:
-  #   PromptReport.new(user_id: user.id).deliver_starting_message!
-  def deliver_starting_message!
-    dm = send_starting_message!
-    update_with_dm!(dm)
-    dm
-  rescue => e
-    raise StartingFailed.new("#{e.class} #{e.message}")
   end
 
   def deliver_reporting_message!

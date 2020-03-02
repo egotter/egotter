@@ -52,18 +52,7 @@ class CreatePromptReportRequest < ApplicationRecord
       return
     end
 
-    prompt_report =
-        if user.notification_setting.report_if_changed?
-          PromptReport.new
-        else
-          if user.credential_token.instance_id.present?
-            PromptReport.new
-          else
-            send_starting_confirmation_message!
-          end
-        end
-
-    report_options = ReportOptionsBuilder.new(user, self, record_created, prompt_report.id).build
+    report_options = ReportOptionsBuilder.new(user, self, record_created, nil).build
 
     if user.notification_setting.report_if_changed? && user.credential_token.instance_id.blank?
       if self.kind == :you_are_removed
@@ -83,14 +72,6 @@ class CreatePromptReportRequest < ApplicationRecord
       CreatePromptReportValidator.new(request: self).validate!
       @error_check = true
     end
-  end
-
-  def send_starting_confirmation_message!
-    PromptReport.new(user_id: user.id).tap do |report|
-      report.deliver_starting_message!
-    end
-  rescue PromptReport::StartingFailed => e
-    raise StartingConfirmationFailed.new(e.message)
   end
 
   def send_report_was_stopped_message!

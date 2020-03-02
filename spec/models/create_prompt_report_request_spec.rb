@@ -27,7 +27,6 @@ RSpec.describe CreatePromptReportRequest, type: :model do
     end
 
     it do
-      expect(request).to receive(:send_starting_confirmation_message!).and_return(prompt_report)
       expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, prompt_report.id).and_return(report_options_builder)
       expect(CreatePromptReportMessageWorker).to receive(:perform_async).with(user.id, 'ok')
       subject
@@ -37,7 +36,6 @@ RSpec.describe CreatePromptReportRequest, type: :model do
       before { user.notification_setting.update!(report_if_changed: true) }
 
       it do
-        expect(request).not_to receive(:send_starting_confirmation_message!)
         expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, nil).and_return(report_options_builder)
         subject
       end
@@ -81,22 +79,6 @@ RSpec.describe CreatePromptReportRequest, type: :model do
         is_expected.to be_truthy
         expect(request.instance_variable_get(:@error_check)).to be_truthy
       end
-    end
-  end
-
-  describe '#send_starting_confirmation_message!' do
-    let(:prompt_report) { PromptReport.new(user_id: user.id) }
-    subject { request.send_starting_confirmation_message! }
-    it do
-      expect(PromptReport).to receive(:new).with(user_id: user.id).and_return(prompt_report)
-      expect(prompt_report).to receive(:deliver_starting_message!)
-      is_expected.to eq(prompt_report)
-    end
-
-    context 'PromptReport::StartingFailed is raised' do
-      let(:exception) { PromptReport::StartingFailed.new('message') }
-      before { allow(PromptReport).to receive(:new).with(any_args).and_raise(exception) }
-      it { expect { subject }.to raise_error(described_class::StartingConfirmationFailed, 'message') }
     end
   end
 end

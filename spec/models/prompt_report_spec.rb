@@ -87,25 +87,8 @@ RSpec.describe PromptReport, type: :model do
     before { prompt_report.message_builder = described_class::EmptyMessageBuilder.new }
 
     it do
-      expect(prompt_report).to receive(:deliver_starting_message!)
       expect(prompt_report).to receive(:deliver_reporting_message!).and_return('dm')
       is_expected.to eq('dm')
-    end
-  end
-
-  describe '#deliver_starting_message!' do
-    let(:report) { build(:prompt_report, user: user) }
-    subject { report.deliver_starting_message! }
-
-    it do
-      expect(report).to receive(:send_starting_message!).and_return('dm')
-      expect(report).to receive(:update_with_dm!).with('dm')
-      is_expected.to eq('dm')
-    end
-
-    context 'An exception is raised' do
-      before { allow(report).to receive(:send_starting_message!).and_raise('Anything') }
-      it { expect { subject }.to raise_error(described_class::StartingFailed, 'RuntimeError Anything') }
     end
   end
 
