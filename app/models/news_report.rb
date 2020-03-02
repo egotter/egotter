@@ -26,17 +26,18 @@ class NewsReport < ApplicationRecord
   belongs_to :user
 
   def deliver
-    user.api_client.verify_credentials
-    DirectMessageRequest.new(user_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start')).perform
-    resp = DirectMessageRequest.new(egotter_client, user.uid, message_builder.build).perform
-    dm = DirectMessage.new(resp)
-
-    ActiveRecord::Base.transaction do
-      update!(message_id: dm.id, message: dm.truncated_message)
-      user.notification_setting.update!(last_news_at: Time.zone.now)
-    end
-
-    dm
+    raise 'NewsReport#deliver is not implemented!'
+    # user.api_client.verify_credentials
+    # DirectMessageRequest.new(user_client, User::EGOTTER_UID, I18n.t('dm.promptReportNotification.lets_start')).perform
+    # resp = DirectMessageRequest.new(egotter_client, user.uid, message_builder.build).perform
+    # dm = DirectMessage.new(resp)
+    #
+    # ActiveRecord::Base.transaction do
+    #   update!(message_id: dm.id, message: dm.truncated_message)
+    #   user.notification_setting.update!(last_news_at: Time.zone.now)
+    # end
+    #
+    # dm
   end
 
   class << self
