@@ -16,7 +16,7 @@ class StartSendingPromptReportsWorker
   end
 
   def timeout_in
-    60.minutes
+    120.minutes
   end
 
   def after_timeout
@@ -27,8 +27,9 @@ class StartSendingPromptReportsWorker
   #   last_queueing_started_at
   def perform(options = {})
     if CallCreateDirectMessageEventCount.rate_limited?
-      logger.warn "Creating a direct message is rate limited. Wait for #{30.minutes.inspect}."
-      StartSendingPromptReportsWorker.perform_in(30.minutes, options)
+      time = CallCreateDirectMessageEventCount.raised_ttl.seconds
+      logger.warn "Creating a direct message is rate limited. Wait for #{time.inspect}."
+      StartSendingPromptReportsWorker.perform_in(time, options)
       return
     end
 
