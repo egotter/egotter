@@ -25,7 +25,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     update_search_histories_when_signing_in(user)
     if follow
-      logger.warn "session['sign_in_follow'] is deprecated"
       request = FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
       CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
     end
