@@ -11,19 +11,20 @@
     .text-center.searches.right-side
       = render partial: 'home/right_side'
   - else
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .container
-      .row{style: 'height: 560px; background-color: #ffffff;'}
-        .hidden-xs.hidden-sm.col-md-6{style: 'display: table; height: 100%;'}
-          = search_link 'ego_tter', current_via('big_icon'), style: 'display: table-cell; vertical-align: bottom;' do
-            = image_tag '/egotter_icon_375x452.png', size: '375x452', class: 'img-rounded', style: 'display: block; margin: 0 auto;'
-
-        .col-md-6.center-block
-          .text-center.searches.right-side{style: 'background-color: #ffffff;'}
-            = render partial: 'home/right_side'
+    %div{style: 'display: flex;'}
+      %div{style: "width: 50%; height: 100vh; max-height: 800px; background-image: url(#{image_path('/egotter_big_background_840x800.png')})"}
+        %div{style: 'width: 100%; height: 100%; position: relative;'}
+          %div{style: ' color:white; font-size: 18px; position: absolute; top: 40%; left: 50%; transform: translateX(-50%);'}
+            %div= t('.text021_html')
+            .vertical-spacing
+            .vertical-spacing
+            %div= t('.text022_html')
+            .vertical-spacing
+            .vertical-spacing
+            %div= t('.text023_html')
+      %div{style: 'width: 50%; height: 100vh; max-height: 800px;'}
+        .text-center.searches.right-side
+          = render partial: 'home/right_side'
 
 .vertical-spacing
 .vertical-spacing

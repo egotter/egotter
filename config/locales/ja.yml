@@ -138,6 +138,9 @@ ja:
       text012_html: '公式アカウント'
       text013_html: '何か分からないことがありますか？<br><span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
       text014_html: '@ego_tter に質問してみる'
+      text021_html: '<span style="font-size: 28px;">350万回</span> 以上の利用実績'
+      text022_html: '<span style="font-size: 28px;">フォロワーが減ったら</span> 通知でお知らせ'
+      text023_html: '<span style="font-size: 28px;">無料</span> で使えます'
     start:
       crumb_title: "@%{user}さん えごったーへようこそ！"
       page_title: "@%{user}さん えごったーへようこそ！"
