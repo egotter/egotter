@@ -1424,6 +1424,10 @@ ja:
         Continue_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
         TooManyRequests_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
         Timeout_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
+  prompt_reports:
+    quick_reply:
+      label1: '通知届きました'
+      description1: 'このボタンを押しておくと、次の通知が届きやすくなります'
   directory:
     profiles:
       footer_title: プロフィール

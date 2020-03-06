@@ -145,7 +145,24 @@ class PromptReport < ApplicationRecord
   end
 
   def send_reporting_message!
-    User.egotter.api_client.create_direct_message_event(user.uid, message_builder.build)
+    User.egotter.api_client.create_direct_message_event(event: {
+        type: 'message_create',
+        message_create: {
+            target: {recipient_id: user.uid},
+            message_data: {
+                text: message_builder.build,
+                quick_reply: {
+                    type: 'options',
+                    options: [
+                        {
+                            label: I18n.t('prompt_reports.quick_reply.label1'),
+                            description: I18n.t('prompt_reports.quick_reply.description1')
+                        }
+                    ]
+                }
+            }
+        }
+    })
   end
 
   def update_with_dm!(dm)
