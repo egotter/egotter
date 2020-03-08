@@ -32,6 +32,7 @@ class CallCreateDirectMessageEventCount < ::Egotter::SortedSet
 
   class << self
     %i(
+        size
         increment
         raised
         raised_ttl
