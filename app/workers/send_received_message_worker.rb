@@ -20,6 +20,8 @@ class SendReceivedMessageWorker
       I18n.t('quick_replies.prompt_reports.label2'),
       I18n.t('quick_replies.welcome_messages.label1'),
       I18n.t('quick_replies.welcome_messages.label2'),
+      I18n.t('quick_replies.test_messages.label1'),
+      I18n.t('quick_replies.test_messages.label2'),
   ]
 
   def send_message_to_slack(sender_uid, dm_id, text)

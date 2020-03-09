@@ -56,7 +56,29 @@ class TestMessage < ApplicationRecord
       url = Rails.application.routes.url_helpers.settings_url(via: 'test_message_lets_start', og_tag: 'false')
       user.api_client.create_direct_message_event(User::EGOTTER_UID, I18n.t('dm.testMessage.lets_start', url: url))
 
-      dm = User.egotter.api_client.create_direct_message_event(user.uid, message_builder.build)
+      dm = User.egotter.api_client.create_direct_message_event(event: {
+          type: 'message_create',
+          message_create: {
+              target: {recipient_id: user.uid},
+              message_data: {
+                  text: message_builder.build,
+                  quick_reply: {
+                      type: 'options',
+                      options: [
+                          {
+                              label: I18n.t('quick_replies.test_messages.label1'),
+                              description: I18n.t('quick_replies.test_messages.description1')
+                          },
+                          {
+                              label: I18n.t('quick_replies.test_messages.label2'),
+                              description: I18n.t('quick_replies.test_messages.description2')
+                          }
+                      ]
+                  }
+              }
+          }
+      })
+
     end
 
     update!(message_id: dm.id, message: dm.truncated_message)

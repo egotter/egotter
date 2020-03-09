@@ -1435,6 +1435,11 @@ ja:
       description1: 'このボタンを押しておくと、リムられ通知が届きやすくなります'
       label2: '初期設定 届いてません'
       description2: '初期設定に失敗した場合に押してください'
+    test_messages:
+      label1: 'テスト送信 届きました'
+      description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
+      label2: 'テスト送信 届いてません'
+      description2: 'テスト送信に失敗した場合に押してください'
   directory:
     profiles:
       footer_title: プロフィール
