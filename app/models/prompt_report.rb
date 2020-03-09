@@ -155,8 +155,12 @@ class PromptReport < ApplicationRecord
                     type: 'options',
                     options: [
                         {
-                            label: I18n.t('prompt_reports.quick_reply.label1'),
-                            description: I18n.t('prompt_reports.quick_reply.description1')
+                            label: I18n.t('quick_replies.prompt_reports.label1'),
+                            description: I18n.t('quick_replies.prompt_reports.description1')
+                        },
+                        {
+                            label: I18n.t('quick_replies.prompt_reports.label2'),
+                            description: I18n.t('quick_replies.prompt_reports.description2')
                         }
                     ]
                 }

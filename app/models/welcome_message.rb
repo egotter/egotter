@@ -96,8 +96,28 @@ class WelcomeMessage < ApplicationRecord
   end
 
   def send_success_message!
-    message = SuccessMessageBuilder.new(user, token).build
-    create_dm(User.egotter, user, message)
+    User.egotter.api_client.create_direct_message_event(event: {
+        type: 'message_create',
+        message_create: {
+            target: {recipient_id: user.uid},
+            message_data: {
+                text: SuccessMessageBuilder.new(user, token).build,
+                quick_reply: {
+                    type: 'options',
+                    options: [
+                        {
+                            label: I18n.t('quick_replies.welcome_messages.label1'),
+                            description: I18n.t('quick_replies.welcome_messages.description1')
+                        },
+                        {
+                            label: I18n.t('quick_replies.welcome_messages.label2'),
+                            description: I18n.t('quick_replies.welcome_messages.description2')
+                        }
+                    ]
+                }
+            }
+        }
+    })
   end
 
   def send_failed_message!

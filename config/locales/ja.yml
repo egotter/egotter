@@ -1424,10 +1424,17 @@ ja:
         Continue_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
         TooManyRequests_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
         Timeout_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
-  prompt_reports:
-    quick_reply:
-      label1: '通知届きました'
-      description1: 'このボタンを押しておくと、次の通知が届きやすくなります'
+  quick_replies:
+    prompt_reports:
+      label1: 'リムられ通知 届きました'
+      description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
+      label2: 'リムられ通知 届いてません'
+      description2: 'リムられ通知が届かない場合に押してください'
+    welcome_messages:
+      label1: '初期設定 届きました'
+      description1: 'このボタンを押しておくと、リムられ通知が届きやすくなります'
+      label2: '初期設定 届いてません'
+      description2: '初期設定に失敗した場合に押してください'
   directory:
     profiles:
       footer_title: プロフィール
@@ -1848,8 +1855,6 @@ ja:
     new_removing: "新しいリムーブ： %{users}"
     new_removed: "新しいリムられ： %{users}"
     omission: " ... 合計%{num}人"
-    welcomeMessage:
-      from_egotter: '@ego_tter から @%{user} へのDM送信テスト #egotter'
     testMessage:
       timeline_page: '%{screen_name} さんの結果ページ'
       communication_test: '%{from} から %{to} へのDM送信テスト。さらにいくつかのDMが届きます。#egotter'
