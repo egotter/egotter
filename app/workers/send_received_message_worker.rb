@@ -15,6 +15,7 @@ class SendReceivedMessageWorker
   CONTINUE_NOTIF = 'リムられ通知継続'
   REVIVE_NOTIF = 'リムられ通知復活'
   FOLLOW_NOTIF = 'フォローしたよ'
+  RECEIVED_NOTIF = '通知届きました'
 
   def send_message_to_slack(sender_uid, dm_id, text)
     user = User.find_by(uid: sender_uid)
@@ -24,7 +25,7 @@ class SendReceivedMessageWorker
     text = latest_errors(user.id).inspect + "\n" + text if user
     text = error_check(user.id) + "\n" + text if user
 
-    if text.include?(CONTINUE_NOTIF) || text.include?(REVIVE_NOTIF) || text.include?(FOLLOW_NOTIF)
+    if text.include?(CONTINUE_NOTIF) || text.include?(REVIVE_NOTIF) || text.include?(FOLLOW_NOTIF) || text.include?(RECEIVED_NOTIF)
       SlackClient.continue_notif_messages.send_message(text, title: "`#{screen_name}`")
     else
       SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
