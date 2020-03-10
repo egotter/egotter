@@ -27,7 +27,7 @@ class CallCreateDirectMessageEventCount < ::Egotter::SortedSet
   end
 
   def rate_limited?
-    raised? # || size > 15000
+    false # raised? # || size > 15000
   end
 
   class << self
