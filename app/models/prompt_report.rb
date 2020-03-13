@@ -126,6 +126,7 @@ class PromptReport < ApplicationRecord
 
   private
 
+  # TODO Remove later
   def send_starting_message!
     template = Rails.root.join('app/views/prompt_reports/start.ja.text.erb')
     message = ERB.new(template.read).result_with_hash(
@@ -145,10 +146,10 @@ class PromptReport < ApplicationRecord
   end
 
   def send_reporting_message!
-    User.egotter.api_client.create_direct_message_event(event: {
+    user.api_client.create_direct_message_event(event: {
         type: 'message_create',
         message_create: {
-            target: {recipient_id: user.uid},
+            target: {recipient_id: User.egotter.uid},
             message_data: {
                 text: message_builder.build,
                 quick_reply: {
