@@ -22,7 +22,16 @@ ja:
     header:
       sign_in: 'ログイン'
     footer:
+      sign_in: "ログイン"
+      sign_out: "ログアウト"
       get_it_on: 'Google Play で手に入れよう'
+      feedback: "ご意見"
+      titles:
+        root: 'トップページ'
+      support: "お問い合わせ"
+      github: "Github"
+      scheduled_tweets: 'ツイート予約投稿'
+      transcription: '文字起こしAI'
   searches:
     common:
       egotter: "えごったー"
@@ -38,8 +47,6 @@ ja:
       search: "検索"
       empty_html: '結果は 0 件です。<br><br>※リムーブした、リムーブされた、新しいフォロー、新しいフォロワーは、これからデータがたまっていきます。<br><br>フォロー・フォロワーが多すぎる場合は、<a href="%{sign_in_path}">ログイン</a> しないと検索できないことがあります。その場合は、<a href="%{sign_in_path}">ログイン</a> してから再度検索してみてください。'
       top: "トップ"
-      support: "お問い合わせ"
-      github: "Github"
       popular: "人気の分析"
       related_pages: "関連ページ"
       related_analysis: "%{user} の他の分析"
@@ -1457,10 +1464,6 @@ ja:
         title: タイムラインディレクトリ
       second_layer:
         title: タイムラインディレクトリ
-  footer:
-    feedback: "ご意見"
-    titles:
-      root: 'トップページ'
   shared:
     review:
       title: 'レビュー'

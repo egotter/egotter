@@ -21,8 +21,6 @@ en:
       top: "Home"
       top_page: "Home Page"
       feedback: "Feedback"
-      support: "Support"
-      github: "Github"
       information: "Information"
       redirect_to: "%{user} の結果を表示します"
       popular: "Popular Analysis"

@@ -3,7 +3,7 @@
     - spaces = '&nbsp;'.html_safe
 
     = succeed spaces do
-      %a{href: root_path}= t('footer.titles.root')
+      %a{href: root_path}= t('.titles.root')
       %br.visible-xs-block
 
     = succeed spaces do
@@ -20,7 +20,7 @@
 
     = succeed spaces do
       %a{href: clusters_top_path(via: current_via('footer'))}= t('clusters.new.footer_title')
-      %br.visible-xs-block
+      %br
 
     = succeed spaces do
       %a{href: tokimeki_unfollow_top_path(via: current_via('footer'))}= t('tokimeki_unfollow.new.footer_title')
@@ -28,17 +28,25 @@
 
     = succeed spaces do
       %a{href: delete_tweets_path(via: current_via('footer'))}= t('delete_tweets.new.footer_title')
+      %br.visible-xs-block
+
+    = succeed spaces do
+      %a{href: "https://scheduled-tweets.egotter.com?via=egotter_footer&utm_source=egotter-footer&utm_medium=web&utm_campaign=egotter", target: '_blank'}= t('.scheduled_tweets')
+      %br.visible-xs-block
+
+    = succeed spaces do
+      %a{href: "https://transcription-ai.com?via=egotter_footer&utm_source=egotter-footer&utm_medium=web&utm_campaign=egotter", target: '_blank'}= t('.transcription')
       %br
 
     = succeed spaces do
       - if user_signed_in?
-        = link_to t('dictionary.sign_out'), goodbye_path(via: current_via('footer'))
+        = link_to t('.sign_out'), goodbye_path(via: current_via('footer'))
       - else
-        = link_to t('dictionary.sign_in'), sign_in_path(via: current_via('footer'))
+        = link_to t('.sign_in'), sign_in_path(via: current_via('footer'))
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('footer.feedback')
+      %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('.feedback')
       %br.visible-xs-block
 
     - if user_signed_in?
@@ -51,11 +59,11 @@
       %br.visible-xs-block
 
     = succeed spaces do
-      = link_to t('searches.common.support'), support_path
+      = link_to t('.support'), support_path
       %br.visible-xs-block
 
     = succeed spaces do
-      %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'}= t('searches.common.github')
+      %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'}= t('.github')
       %br.visible-xs-block
 
     = succeed spaces do
