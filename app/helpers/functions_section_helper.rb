@@ -180,7 +180,7 @@ module FunctionsSectionHelper
     button = link_to t('shared.functions.schedule_tweets.button'), url, class: 'btn btn-primary btn-block'
 
     {
-        path: delete_tweets_path(via: current_via('functions_icon')),
+        path: url,
         title: t('shared.functions.schedule_tweets.title'),
         what_is_this: t('shared.functions.schedule_tweets.what_is_this_html'),
         description: t('shared.functions.schedule_tweets.text_html',
