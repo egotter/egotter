@@ -173,4 +173,22 @@ module FunctionsSectionHelper
         image: '/egotter_delete_tweets_with_text_400x453.png'
     }
   end
+
+
+  def function_schedule_tweets_values
+    url = 'https://scheduled-tweets.egotter.com?via=egotter_functions&utm_source=egotter-functions&utm_medium=web&utm_campaign=egotter'
+    button = link_to t('shared.functions.schedule_tweets.button'), url, class: 'btn btn-primary btn-block'
+
+    {
+        path: delete_tweets_path(via: current_via('functions_icon')),
+        title: t('shared.functions.schedule_tweets.title'),
+        what_is_this: t('shared.functions.schedule_tweets.what_is_this_html'),
+        description: t('shared.functions.schedule_tweets.text_html',
+                       title: strip_tags(t('shared.functions.schedule_tweets.title')),
+                       url: delete_tweets_path(via: current_via('functions_description'))
+        ),
+        button: button,
+        image: '/egotter_schedule_tweets.jpg'
+    }
+  end
 end

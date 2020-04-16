@@ -6,7 +6,5 @@
       (adsbygoogle = window.adsbygoogle || []).push({});
   - if request.from_pc?
     .hidden-xs.hidden-sm.col-md-6
-      %script{async: '', src: '//pagead2.googlesyndication.com/pagead/js/adsbygoogle.js'}
-      %ins.adsbygoogle{'data-ad-client' => 'ca-pub-3146843071247817', 'data-ad-slot' => right_slot_ad_id, style: 'display:inline-block;width:300px;height:250px'}
-      :javascript
-        (adsbygoogle = window.adsbygoogle || []).push({});
+      = link_to 'https://scheduled-tweets.egotter.com?via=egotter_right_ad&utm_source=egotter-right-ad&utm_medium=web&utm_campaign=egotter', target: '_blank' do
+        %img{src: image_path('/egotter_schedule_tweets.jpg'), width: '400'}

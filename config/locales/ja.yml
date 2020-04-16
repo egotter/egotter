@@ -1609,6 +1609,15 @@ ja:
           <a title="%{title}" href="%{url}">%{title}</a>を使うと、これまでのツイートをワンクリックで一括削除することができます。<br>
           <br>
           <a title="%{title}" href="%{url}">%{title}</a>でツイートを一括削除した後は、作業の完了をDMでお知らせします。
+      schedule_tweets:
+        title: 'ツイート予約投稿'
+        button: 'ツイート予約投稿を見てみる'
+        what_is_this_html: >
+          ツイート予約投稿を使うと、ツイートを時間指定で投稿することができます。「予約するツイート」にツイートしたいテキストを入力し、「ツイートを予約する」ボタンを押してください。画像を添付することもできます。
+        text_html: >
+          <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後は、予約したツイートを一覧で管理できます。<br>
+          <br>
+          <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
   common:
     show:
       updating: '%{user} のデータを更新中'
