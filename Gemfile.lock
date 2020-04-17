@@ -241,6 +241,7 @@ GEM
     httpclient (2.8.3)
     i18n (1.8.2)
       concurrent-ruby (~> 1.0)
+    influxdb (0.8.0)
     jaro_winkler (1.5.4)
     jmespath (1.4.0)
     jquery-rails (4.3.5)
@@ -517,6 +518,7 @@ DEPENDENCIES
   hashie
   hiredis
   httparty
+  influxdb
   jquery-rails
   listen (>= 3.0.5, < 3.2)
   mecab

@@ -210,7 +210,7 @@ Rails.application.routes.draw do
       mount Sidekiq::Web => '/sidekiq'
       mount Blazer::Engine, at: '/blazer' if defined?(Blazer::Engine)
     end
-  elsif Rails.env.development?
+  else
     mount Sidekiq::Web => '/sidekiq'
     mount Blazer::Engine, at: '/blazer'
   end
