@@ -26,6 +26,17 @@
 
 class AudienceInsight < ApplicationRecord
 
+  validates :uid, presence: true, uniqueness: true
+
+  before_validation do
+    self.unfriends_text = '' if unfriends_text.blank?
+    self.unfollowers_text = '' if unfollowers_text.blank?
+    self.new_unfriends_text = '' if new_unfriends_text.blank?
+    self.new_unfollowers_text = '' if new_unfollowers_text.blank?
+    self.tweets_categories_text = '' if tweets_categories_text.blank?
+    self.tweets_text = '' if tweets_text.blank?
+  end
+
   # unfriends, unfollowers, new_unfriends, new_unfollowers, tweets_categories and tweets are ignored
   CHART_NAMES = %w(
     categories
