@@ -46,7 +46,7 @@ module Taskbooks
             ::DeployRuby::Aws::EC2.retrieve_instances.map do |i|
               ::DeployRuby::Aws::Instance.new(i)
             end.select do |i|
-              i.name.start_with?('egotter_sidekiq')
+              i.name&.start_with?('egotter_sidekiq')
             end
         puts instances.map(&:name).join(@delim)
       end
