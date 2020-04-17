@@ -68,8 +68,8 @@
     series = [#{@chart_builder.new_followers.to_json.html_safe}];
     AudienceInsights.drawChart('.chart-container.new-followers', categories, series);
 
-    // series = [#{@chart_builder.tweets.to_json.html_safe}];
-    // AudienceInsights.drawChart('.chart-container.tweets', #{@chart_builder.tweets_categories.to_json.html_safe}, series);
+    -#series = [#{@chart_builder.tweets.to_json.html_safe}];
+    -#AudienceInsights.drawChart('.chart-container.tweets', #{@chart_builder.tweets_categories.to_json.html_safe}, series);
   });
 
 = render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
