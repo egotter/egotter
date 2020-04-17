@@ -45,12 +45,12 @@
   .vertical-spacing
   .vertical-spacing
 
-  %h3.audience-insights.text-center= t('.tweets.title')
-  .vertical-spacing
-  .chart-container.tweets
-  .note= t('.tweets.note')
-  .vertical-spacing
-  .vertical-spacing
+  -#%h3.audience-insights.text-center= t('.tweets.title')
+  -#.vertical-spacing
+  -#.chart-container.tweets
+  -#.note= t('.tweets.note')
+  -#.vertical-spacing
+  -#.vertical-spacing
 
 :javascript
   $(function () {
@@ -68,8 +68,8 @@
     series = [#{@chart_builder.new_followers.to_json.html_safe}];
     AudienceInsights.drawChart('.chart-container.new-followers', categories, series);
 
-    series = [#{@chart_builder.tweets.to_json.html_safe}];
-    AudienceInsights.drawChart('.chart-container.tweets', #{@chart_builder.tweets_categories.to_json.html_safe}, series);
+    // series = [#{@chart_builder.tweets.to_json.html_safe}];
+    // AudienceInsights.drawChart('.chart-container.tweets', #{@chart_builder.tweets_categories.to_json.html_safe}, series);
   });
 
 = render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}

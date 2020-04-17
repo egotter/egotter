@@ -26,10 +26,14 @@
 
 class AudienceInsight < ApplicationRecord
 
-  CHART_NAMES =
-      column_names.reject {|name| %w(id uid created_at updated_at).include?(name)}.map do |column_name|
-        column_name.delete_suffix('_text')
-      end
+  # unfriends, unfollowers, new_unfriends, new_unfollowers, tweets_categories and tweets are ignored
+  CHART_NAMES = %w(
+    categories
+    friends
+    followers
+    new_friends
+    new_followers
+  )
 
   CHART_NAMES.each do |chart_name|
     define_method(chart_name) do
