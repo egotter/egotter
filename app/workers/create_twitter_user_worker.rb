@@ -44,7 +44,7 @@ class CreateTwitterUserWorker
   def enqueue_next_jobs(user_id, uid, twitter_user)
     ImportTwitterUserRelationsWorker.perform_async(user_id, uid, twitter_user_id: twitter_user.id, enqueued_at: Time.zone.now)
     UpdateUsageStatWorker.perform_async(uid, user_id: user_id, enqueued_at: Time.zone.now)
-    UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: self.class, twitter_user_id: twitter_user.id)
+    UpdateAudienceInsightWorker.perform_async(uid, location: self.class, twitter_user_id: twitter_user.id)
   end
 
   private

@@ -20,7 +20,7 @@ namespace :twitter_users do
         import_request.finished!
 
         UpdateUsageStatWorker.perform_async(uid, user_id: user_id, enqueued_at: Time.zone.now)
-        UpdateAudienceInsightWorker.perform_async(uid, enqueued_at: Time.zone.now, location: 'rake', twitter_user_id: twitter_user.id)
+        UpdateAudienceInsightWorker.perform_async(uid, location: 'rake', twitter_user_id: twitter_user.id)
       end
 
       break if sigint.trapped?
