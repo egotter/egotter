@@ -5,6 +5,9 @@ class UnfriendsBuilder
 
   def initialize(twitter_user, limit: DEFAULT_LIMIT)
     @users = Util.users(twitter_user.uid, twitter_user.created_at, limit: limit)
+
+    # Experimental preload
+    @users.map { |user| Thread.new { user.friend_uids; user.follower_uids } }.each(&:join)
   end
 
   # Format:
