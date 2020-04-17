@@ -1,6 +1,9 @@
 class FriendsGroupBuilder
   def initialize(uid, limit:)
     @users = Util.users(uid, limit: limit)
+
+    # Experimental preload
+    @users.map { |user| Thread.new { user.friend_uids; user.follower_uids } }.each(&:join)
   end
 
   def users
@@ -17,24 +20,24 @@ class FriendsGroupBuilder
 
   # New friends between old record and new record
   def new_friends
-    @users.each_cons(2).map {|older, newer| Util.new_friends(older, newer)}.compact.tap {|ary| ary.prepend([])}
+    @users.each_cons(2).map { |older, newer| Util.new_friends(older, newer) }.compact.tap { |ary| ary.prepend([]) }
   end
 
   # New followers between old record and new record
   def new_followers
-    @users.each_cons(2).map {|older, newer| Util.new_followers(older, newer)}.compact.tap {|ary| ary.prepend([])}
+    @users.each_cons(2).map { |older, newer| Util.new_followers(older, newer) }.compact.tap { |ary| ary.prepend([]) }
   end
 
   # Used by AudienceInsightChartBuilder
   # TODO Not enough implementation. Rename to new_unfriends
   def unfriends
-    @users.each_cons(2).map {|older, newer| Util.unfriends(older, newer)}.compact.tap {|ary| ary.prepend([])}
+    @users.each_cons(2).map { |older, newer| Util.unfriends(older, newer) }.compact.tap { |ary| ary.prepend([]) }
   end
 
   # Used by AudienceInsightChartBuilder
   # TODO Not enough implementation. Rename to new_unfollowers
   def unfollowers
-    @users.each_cons(2).map {|older, newer| Util.unfollowers(older, newer)}.compact.tap {|ary| ary.prepend([])}
+    @users.each_cons(2).map { |older, newer| Util.unfollowers(older, newer) }.compact.tap { |ary| ary.prepend([]) }
   end
 
   def new_unfriends
