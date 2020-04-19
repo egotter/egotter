@@ -19,7 +19,3 @@
     = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
   - else
     = render(partial: 'twitter/oembed_tweet', collection: @statuses, as: :tweet, cached: true, formats: %i(html))
-
-.gray-separator
-
-= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}

@@ -6,7 +6,7 @@
 %h2.h4= t('searches.new.lead_001')
 .vertical-spacing
 .lead= t('searches.new.lead_002_html')
-.center-block{style: 'max-width: 375px; width: 80%;'}
+.mx-auto{style: 'max-width: 375px; width: 80%;'}
   = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
   .text-notice.text-right.search-hint
     %i.fas.fa-check
@@ -21,7 +21,7 @@
   %span.thin-border
 .vertical-spacing
 .vertical-spacing
-.center-block{style: 'max-width: 375px; width: 80%;'}
+.mx-auto{style: 'max-width: 375px; width: 80%;'}
   = render partial: 'common/search_form', locals: {via: current_via('input')}
   .text-notice.text-right.search-hint
     %i.fas.fa-check
@@ -47,7 +47,7 @@
 %div{style: 'font-size: 14px;'}= t('home.new.text003_html')
 
 .vertical-spacing
-.center-block{style: 'max-width: 375px; width: 80%;'}
+.mx-auto{style: 'max-width: 375px; width: 80%;'}
   = sign_in_with_twitter_link(nil, 'screenshots_button', class: 'btn btn-primary btn-block')
   .text-notice.text-right.search-hint
     %i.fas.fa-check

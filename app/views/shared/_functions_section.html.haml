@@ -1,19 +1,19 @@
-.container.pre-footer
-  #functions-section.container
-    .thin-border
-    .vertical-spacing
-    .vertical-spacing
-    %h2.h4.text-center= t('shared.functions.text_html')
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .row
+.container
+  %p.text-center= t('shared.functions.text_html')
+  .row
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_one_sided_friends_values)
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_unfriends_values)
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_inactive_friends_values)
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_friends_values)
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_clusters_values)
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_tokimeki_unfollow_values)
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_delete_tweets_values)
+    .col-12.mb-5
       = render(partial: 'shared/function_section', locals: function_schedule_tweets_values)

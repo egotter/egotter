@@ -2,13 +2,13 @@ module FunctionsSectionHelper
   def function_one_sided_friends_values
     if user_signed_in?
       url = one_sided_friend_path(screen_name: current_user.screen_name, via: current_via('functions_button'))
-      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary'
 
       url = one_sided_friend_path(screen_name: current_user.screen_name, via: current_via('functions_user_name'))
       name = t('shared.functions.me_html', user: current_user.screen_name, url: url)
     else
       url = one_sided_friends_top_path(via: current_via('functions_button'))
-      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary')
       name = t('shared.functions.visitor')
     end
 
@@ -23,20 +23,21 @@ module FunctionsSectionHelper
                        url: one_sided_friends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_onesided_friends_with_text_400x453.png'
+        image: '/egotter_onesided_friends_with_text_400x453.png',
+        url: url
     }
   end
 
   def function_unfriends_values
     if user_signed_in?
       url = unfriend_path(screen_name: current_user.screen_name, via: current_via('functions_button'))
-      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary'
 
       url = unfriend_path(screen_name: current_user.screen_name, via: current_via('functions_user_name'))
       name = t('shared.functions.me_html', user: current_user.screen_name, url: url)
     else
       url = unfriends_top_path(via: current_via('functions_button'))
-      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary')
       name = t('shared.functions.visitor')
     end
 
@@ -50,20 +51,21 @@ module FunctionsSectionHelper
                        url: unfriends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_unfriends_with_text_400x453.png'
+        image: '/egotter_unfriends_with_text_400x453.png',
+        url: url
     }
   end
 
   def function_inactive_friends_values
     if user_signed_in?
       url = inactive_friend_path(screen_name: current_user.screen_name, via: current_via('functions_button'))
-      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary'
 
       url = inactive_friend_path(screen_name: current_user.screen_name, via: current_via('functions_user_name'))
       name = t('shared.functions.me_html', user: current_user.screen_name, url: url)
     else
       url = inactive_friends_top_path(via: current_via('functions_button'))
-      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary')
       name = t('shared.functions.visitor')
     end
 
@@ -77,20 +79,21 @@ module FunctionsSectionHelper
                        url: inactive_friends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_inactive_friends_with_text_400x453.png'
+        image: '/egotter_inactive_friends_with_text_400x453.png',
+        url: url
     }
   end
 
   def function_friends_values
     if user_signed_in?
       url = friend_path(screen_name: current_user.screen_name, via: current_via('functions_button'))
-      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary'
 
       url = friend_path(screen_name: current_user.screen_name, via: current_via('functions_user_name'))
       name = t('shared.functions.me_html', user: current_user.screen_name, url: url)
     else
       url = friends_top_path(via: current_via('functions_button'))
-      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary')
       name = t('shared.functions.visitor')
     end
 
@@ -104,17 +107,18 @@ module FunctionsSectionHelper
                        url: friends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_friends_with_text_400x453.png'
+        image: '/egotter_friends_with_text_400x453.png',
+        url: url
     }
   end
 
   def function_clusters_values
     if user_signed_in?
       url = cluster_path(screen_name: current_user.screen_name, via: current_via('functions_button'))
-      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary'
     else
       url = clusters_top_path(via: current_via('functions_button'))
-      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary')
     end
 
     {
@@ -126,17 +130,18 @@ module FunctionsSectionHelper
                        url: clusters_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_clusters_with_text_400x453.png'
+        image: '/egotter_clusters_with_text_400x453.png',
+        url: url
     }
   end
 
   def function_tokimeki_unfollow_values
     if user_signed_in?
       url = tokimeki_unfollow_top_path(via: current_via('functions_button'))
-      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary'
     else
       url = tokimeki_unfollow_top_path(via: current_via('functions_button'))
-      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary')
     end
 
     {
@@ -148,17 +153,18 @@ module FunctionsSectionHelper
                        url: tokimeki_unfollow_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_tokimeki_unfollow_with_text_400x453.png'
+        image: '/egotter_tokimeki_unfollow_with_text_400x453.png',
+        url: url
     }
   end
 
   def function_delete_tweets_values
     if user_signed_in?
       url = delete_tweets_path(via: current_via('functions_button'))
-      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary btn-block'
+      button = link_to t('shared.functions.analyze', user: current_user.screen_name), url, class: 'btn btn-primary'
     else
       url = delete_tweets_path(via: current_via('functions_button'))
-      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary btn-block')
+      button = sign_in_with_twitter_link(url, current_via('functions_button'), class: 'btn btn-primary')
     end
 
     {
@@ -170,14 +176,15 @@ module FunctionsSectionHelper
                        url: delete_tweets_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_delete_tweets_with_text_400x453.png'
+        image: '/egotter_delete_tweets_with_text_400x453.png',
+        url: url
     }
   end
 
 
   def function_schedule_tweets_values
     url = 'https://scheduled-tweets.egotter.com?via=egotter_functions&utm_source=egotter-functions&utm_medium=web&utm_campaign=egotter'
-    button = link_to t('shared.functions.schedule_tweets.button'), url, class: 'btn btn-primary btn-block'
+    button = link_to t('shared.functions.schedule_tweets.button'), url, class: 'btn btn-primary'
 
     {
         path: url,
@@ -188,7 +195,8 @@ module FunctionsSectionHelper
                        url: delete_tweets_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_schedule_tweets.jpg'
+        image: '/egotter_schedule_tweets.jpg',
+        url: url
     }
   end
 end

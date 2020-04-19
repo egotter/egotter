@@ -4,7 +4,7 @@ module Api
 
       private
 
-      def summary_uids(limit: 3)
+      def summary_uids(limit: SUMMARY_LIMIT)
         relation = @twitter_user.unfollowerships
         [relation.limit(limit).pluck(:follower_uid), relation.size]
       end

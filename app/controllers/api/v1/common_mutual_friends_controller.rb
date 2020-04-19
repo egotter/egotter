@@ -4,7 +4,7 @@ module Api
 
       private
 
-      def summary_uids(limit: 3)
+      def summary_uids(limit: SUMMARY_LIMIT)
         return [[], 0] unless user_signed_in? && current_user.twitter_user
         uids = @twitter_user.common_mutual_friend_uids(current_user.twitter_user)
         [uids.take(limit), uids.size]

@@ -12,13 +12,15 @@
     = render partial: 'common/meta_tags'
     %meta{content: 'summary_large_image', name: 'twitter:card'}
     %meta{content: '@ego_tter', name: 'twitter:site'}
-    %link{href: '//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css', rel: 'stylesheet'}
+    %link{:crossorigin => "anonymous", :href => "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css", :integrity => "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh", :rel => "stylesheet"}/
     -# For Autocomplete
     %link{href: '//code.jquery.com/ui/1.12.0/themes/cupertino/jquery-ui.min.css', rel: 'stylesheet'}
     = stylesheet_link_tag 'application', media: 'all', crossorigin: 'anonymous'
     = javascript_include_tag 'application', crossorigin: 'anonymous'
     %script{src: '//code.jquery.com/ui/1.12.0/jquery-ui.js'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js'}
+    %script{:crossorigin => "anonymous", :integrity => "sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo", :src => "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"}
+    %script{:crossorigin => "anonymous", :integrity => "sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6", :src => "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"}
     %script{src: '//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js'}
     %link{crossorigin: "anonymous", href: "//use.fontawesome.com/releases/v5.6.3/css/all.css", integrity: "sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", rel: "stylesheet"}
     = csrf_meta_tags
@@ -77,12 +79,23 @@
     - if wrap_in_container?
       .container
         .row
-          .col-xs-12.col-md-9
-            = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
-            = yield
-          .hidden-xs.hidden-sm.col-md-3.sidebar.text-center
-            - if show_sidebar?
-              = render partial: 'layouts/sidebar', locals: {twitter_user: @twitter_user}
+          - if @twitter_user
+            .d-none.d-sm-none.d-md-block.col-md-3
+              .sticky-top.pt-3
+                %ul.list-group
+                  %li.list-group-item= link_to t('timelines.feeds.one_sided_friends.title'), one_sided_friend_path(@twitter_user)
+                  %li.list-group-item= link_to t('timelines.feeds.one_sided_followers.title'), one_sided_follower_path(@twitter_user)
+                  %li.list-group-item= link_to t('timelines.feeds.mutual_friends.title'), mutual_friend_path(@twitter_user)
+                  %li.list-group-item= link_to t('timelines.feeds.unfriends.title'), unfriend_path(@twitter_user)
+                  %li.list-group-item= link_to t('timelines.feeds.unfollowers.title'), unfollower_path(@twitter_user)
+                  %li.list-group-item= link_to t('timelines.feeds.blocking_or_blocked.title'), blocking_or_blocked_path(@twitter_user)
+            .col-sm-12.col-md-9
+              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '&nbsp;&gt;&nbsp;'
+              = yield
+          - else
+            .col-sm-12
+              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '&nbsp;&gt;&nbsp;'
+              = yield
     - else
       = yield
 
@@ -104,24 +117,22 @@
       .modal-dialog.modal-lg{role: 'document'}
         .modal-content
           .modal-header
+            %h4= t('searches.common.search_by_egotter')
             %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
               %span{'aria-hidden' => 'true'} ×
-            %h4#search-modal-label.modal-title.text-center= t('searches.common.search_by_egotter')
           .modal-body
             = render partial: 'common/search_form', locals: {via: current_via('search_modal_input')}
-            .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
-              = t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id))
-              %div
-                - if user_signed_in?
-                  - if current_user.has_valid_subscription?
-                    = link_to current_user.purchased_plan_name, settings_path(via: current_via('plan_button_on_search_modal')), class: 'btn btn-default btn-sm'
-                  - else
-                    = link_to t('search_histories.search_modal.pricing'), pricing_path(via: current_via('purchase_button_on_search_modal')), target: '_blank'
-                    = link_to t('search_histories.search_modal.purchase'), '#', class: 'btn btn-default btn-checkout'
-                  %div{style: 'margin-top: 5px;'}
-                    %a.btn.btn-default{data: {target: '#share-modal', toggle: 'modal'}}= t('search_histories.search_modal.tweet')
-                - else
-                  = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: current_via('sign_in_button_on_search_modal')))
+            .text-right.my-3= t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id))
+            - if user_signed_in?
+              - if current_user.has_valid_subscription?
+                .text-right.mb-3= link_to current_user.purchased_plan_name, settings_path(via: current_via('plan_button_on_search_modal')), class: 'btn btn-outline-dark btn-sm'
+              - else
+                .text-right.mb-3= link_to t('search_histories.search_modal.pricing'), pricing_path(via: current_via('purchase_button_on_search_modal')), target: '_blank'
+                .text-right.mb-3= link_to t('search_histories.search_modal.purchase'), '#', class: 'btn btn-outline-dark btn-checkout'
+              .text-right.mb-3
+                %a.btn.btn-outline-dark{data: {target: '#share-modal', toggle: 'modal'}}= t('search_histories.search_modal.tweet')
+            - else
+              = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: current_via('sign_in_button_on_search_modal')))
             - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id) == 0
               .vertical-spacing
               .alert.alert-info.text-left

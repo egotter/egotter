@@ -1,18 +1,9 @@
-.col-xs-12
-  %h2.h4.title.text-center= raw title
-  .box
-    = link_to path do
-      = image_tag image, class: 'img-responsive', title: strip_tags(title), alt: strip_tags(title)
-  .vertical-spacing
-  .what-is-this= what_is_this
-  .vertical-spacing
-  .description= description
-  .vertical-spacing
-  .vertical-spacing
-  = button
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
+.card.mx-auto{style: 'max-width: 500px;'}
+  = link_to url do
+    = image_tag image, style: 'width: 100%;', title: strip_tags(title), alt: strip_tags(title)
+  .card-body
+    %h5.card-title= raw title
+    %p.card-text
+      %div= what_is_this
+      %div= description
+    .text-center= button

@@ -1,0 +1,38 @@
+<div class="<%= feed_name %> feed-item p-3 p-lg-5">
+  <h3 class="h4 text-center"><%= feed_title %></h3>
+  <div class="text-center"><%= feed_description %></div>
+
+  <%= render partial: 'timelines/placeholder', locals: {menu_name: feed_name, menu_or_users: 'menu'} %>
+
+  <div class="result-not-found" style="display: none;">
+    <div><%= t('timelines.show.empty_result_with_details_html') %></div>
+    <% url = timeline_path(twitter_user, via: current_via("reload_#{feed_name}")) %>
+    <%= link_to(t('timelines.show.reload_this_page'), url, class: 'btn btn-primary btn-block reload-btn') %>
+  </div>
+
+  <div class="show-result" style="display: none;">
+    <div class="users my-5"></div>
+
+    <%= link_to(page_url, class: 'btn btn-primary btn-block btn-view-more mt-auto') do %>
+      <%= t('timelines.show.view_more') %>
+      <span class="count"></span>
+    <% end %>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    var feedName = '<%= feed_name %>';
+    var url = '<%= api_url %>';
+    var fromCrawler = <%= from_crawler? %>;
+    var box = $('.' + feedName + '.feed-item');
+
+    if (fromCrawler) {
+      Timelines.loadFeedItemm(url, feedName);
+    } else {
+      box.lazyload().one('appear', function () {
+        Timelines.loadFeedItemm(url, feedName);
+      });
+    }
+  });
+</script>

@@ -2,6 +2,8 @@ module Api
   module V1
     class Base < ApplicationController
 
+      SUMMARY_LIMIT = 20
+
       layout false
 
       # before_action -> { head :bad_request }, unless: -> { params[:token] }

@@ -37,7 +37,7 @@ ja:
       egotter: "えごったー"
       or: " または "
       twitter_id: "Twitter ID"
-      search_by_twitter_id: "@user_name で検索"
+      search_by_twitter_id: "@TwitterID で検索"
       search_by_egotter: "えごったーで検索"
       search_xxx_by_egotter: "%{user} をえごったーで検索"
       search_a_and_b: "%{user1} と %{user2} を共通検索"
@@ -172,6 +172,7 @@ ja:
       reinvestigate: "再度チェックする"
       sign_in_and_investigate: "ログインして分析する"
       view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
+      view_more: '続きを見る'
       view_more_hacked_with_num_html: '乗っ取りツイートを確認する <span class="badge">%{num}</span>'
       under_calculation_with_details_html: 'フォロー・フォロワーの分析中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
       empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
@@ -180,13 +181,6 @@ ja:
       sign_in_to_protect_html: '<a href="%{url}">ログイン</a> してえごったーを利用すると、乗っ取りツイートのチェックを行います。'
       about_this_page: "%{user} の分析結果について"
       this_page_is_html: "このページでは、%{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。<br>リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
-      other_services: "他のサービス"
-      twitter_link_html: '<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwitterで見る</a>'
-      see_on_twitter: "%{user}をTwitterで見る"
-      twilog_link_html: '<a href="http://twilog.org/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をTwilogで見る</a>'
-      see_on_twilog: "%{user}をTwilogで見る"
-      favstar_link_html: '<a href="http://ja.favstar.fm/users/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}をFavstarで見る</a>'
-      see_on_favstar: "%{user}をFavstarで見る"
       audience_insight:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
@@ -1519,8 +1513,7 @@ ja:
       check7: '質問はお気軽に'
     functions:
       text_html: >
-        えごったーを使えば、他にもたくさんのツイッター分析ができます。<br>
-        <br>
+        えごったーを使えば、他にもたくさんのツイッター分析ができます。<br class="d-none d-lg-block">
         リムられチェック、リムられの自動通知、片思いチェックなどが特に人気です。
       analyze: '@%{user} を分析する'
       visitor: '自分'

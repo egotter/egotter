@@ -9,22 +9,16 @@ module ApplicationHelper
     (!top && !unfriends) && user_signed_in?
   end
 
-  def show_sidebar?
-    %w(home waiting tokimeki_unfollow).exclude?(controller_name) &&
-        %w(new all).exclude?(action_name) &&
-        (from_crawler? || request.from_pc?) &&
-        @twitter_user && !@sidebar_disabled
-  end
-
   def sidebar_disabled=(flag)
     @sidebar_disabled = flag
   end
 
   def wrap_in_container?
     top = controller_name == 'home' && action_name == 'new'
+    start = controller_name == 'home' && action_name == 'start'
     unfriends = controller_name == 'unfriends' && action_name == 'new'
     settings = controller_name == 'settings' && action_name == 'index'
-    !top  && !unfriends && !settings
+    !top && !start && !unfriends && !settings
   end
 
   def show_common_friends?(twitter_user)

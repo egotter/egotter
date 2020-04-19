@@ -11,16 +11,12 @@
     .text-center.searches.right-side
       = render partial: 'home/right_side'
   - else
-    %div{style: 'height: 100vh; display: flex; align-items: center;'}
+    %div.d-flex.align-items-center{style: 'height: 100vh;'}
       %div{style: "width: 50%; height: 100%; background-image: url(#{image_path('/egotter_big_background_840x800.png')}); background-position: center;"}
         %div{style: 'width: 100%; height: 100%; position: relative;'}
           %div{style: ' color:white; font-size: 18px; position: absolute; top: 40%; left: 50%; transform: translateX(-50%);'}
             %div= t('.text021_html')
-            .vertical-spacing
-            .vertical-spacing
             %div= t('.text022_html')
-            .vertical-spacing
-            .vertical-spacing
             %div= t('.text023_html')
       %div{style: 'width: 50%;'}
         .text-center.searches.right-side
