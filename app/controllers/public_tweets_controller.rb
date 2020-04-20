@@ -14,7 +14,7 @@ class PublicTweetsController < ApplicationController
   def fetch_tweets(keyword)
     if ::Util::TweetsCache.exists?(keyword)
       CreateTweetsWorker.perform_async(keyword) if ::Util::TweetsCache.ttl(keyword) < 5.minutes
-      JSON.parse(::Util::TweetsCache.get(keyword)).take(5).map {|tweet| Hashie::Mash.new(tweet)}
+      JSON.parse(::Util::TweetsCache.get(keyword)).take(5).map { |tweet| Hashie::Mash.new(tweet) }
     else
       CreateTweetsWorker.perform_async(keyword)
       []

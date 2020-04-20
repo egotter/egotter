@@ -74,23 +74,23 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def suspended_label
-    suspended? ? '&nbsp;<span class="label label-danger">' + I18n.t('twitter.profile.labels.suspended') + '</span>' : ''
+    suspended? ? '&nbsp;<span class="badge badge-danger">' + I18n.t('twitter.profile.labels.suspended') + '</span>' : ''
   end
 
   def blocked_label
-    blocked? ? '&nbsp;<span class="label label-default">' + I18n.t('twitter.profile.labels.blocked') + '</span>' : ''
+    blocked? ? '&nbsp;<span class="badge badge-secondary">' + I18n.t('twitter.profile.labels.blocked') + '</span>' : ''
   end
 
   def inactive_label
-    inactive? ? '&nbsp;<span class="label label-default">' + I18n.t('twitter.profile.labels.inactive') + '</span>' : ''
+    inactive? ? '&nbsp;<span class="badge badge-secondary">' + I18n.t('twitter.profile.labels.inactive') + '</span>' : ''
   end
 
   def refollow_label
-    refollow? ? '&nbsp;<span class="label label-info">' + I18n.t('twitter.profile.labels.refollow') + '</span>' : ''
+    refollow? ? '&nbsp;<span class="badge badge-info">' + I18n.t('twitter.profile.labels.refollow') + '</span>' : ''
   end
 
   def refollowed_label
-    refollowed? ? '&nbsp;<span class="label label-info">' + I18n.t('twitter.profile.labels.refollowed') + '</span>' : ''
+    refollowed? ? '&nbsp;<span class="badge badge-info">' + I18n.t('twitter.profile.labels.refollowed') + '</span>' : ''
   end
 
   def status_labels

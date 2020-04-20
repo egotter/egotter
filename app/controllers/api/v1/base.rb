@@ -49,7 +49,7 @@ module Api
         response_json = {name: controller_name, max_sequence: paginator.max_sequence, limit: paginator.limit}
 
         if params[:html]
-          grid_class = ['col-xs-12', 'col-xs-12 col-sm-6'].include?(params[:grid_class]) ? params[:grid_class] : 'col-xs-12'
+          grid_class = ['col-12', 'col-12 col-sm-6'].include?(params[:grid_class]) ? params[:grid_class] : 'col-12'
           insert_ad = !(params[:insert_ad] == 'false')
           html = render_to_string partial: 'twitter/user', collection: users, cached: true, locals: {grid_class: grid_class, ad: insert_ad}, formats: %i(html)
           response_json[:users] = html

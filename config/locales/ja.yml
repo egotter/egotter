@@ -50,22 +50,10 @@ ja:
       popular: "人気の分析"
       related_pages: "関連ページ"
       related_analysis: "%{user} の他の分析"
-    sidebar:
-      update_request: "更新リクエスト"
-      update_request_needs_login: "更新リクエストにはログインが必要です。"
-      update_now: "最新の情報に更新する"
-      login_and_update_xxx_now: "ログインして %{user} を最新の情報に更新する"
-      updated_at: "更新日時 %{time}"
-      recommendation: "おすすめユーザー"
-      reasons:
-        removed: "リムられ"
-        close_friends: "仲良し"
     new:
       record_your_friends: "えごったーで フォロー・リムーブ・ブロック を記録しよう"
       record_every_day: "えごったーを利用すると、フォロー・リムーブ(フォローを外すこと)、ブロックを毎日記録することができます。"
       twitter_feeds: "利用者のツイート"
-      lead_001: "スマホでかんたんフォロー確認"
-      lead_002_html: "スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです"
       lead_003_html: '高度な分析が<span class="egotter-pink">今なら無料</span>です'
       feature_001: "簡単に確認できる"
       feature_desc_001_html: "Twitter IDを入れるだけ！<br>スマホもPCも対応済み。"
@@ -135,19 +123,25 @@ ja:
     new:
       page_title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
       page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
+      right_side:
+        title: 'スマホでかんたんフォロー確認'
+        lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
       text001_html: 'フォロワーが減った？ 誰？？'
-      text002_html: '<span class="egotter-pink">フォロワーが減った</span>り<span class="egotter-pink">ブロックされた</span>時に<br>相手がすぐに分かります。'
-      text003_html: '<span class="egotter-pink">350万人</span>以上が利用しているえごったーを、<br>今すぐあなたも使ってみよう！'
+      text002_html: '<span class="egotter-pink">フォロワーが減った</span>り<span class="egotter-pink">ブロックされた</span>時に相手がすぐに分かります。'
+      text003_html: '<span class="egotter-pink">350万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
       text007: 'リムられ通知ですぐに確認'
-      text008_html: '<span class="egotter-pink">リムられ通知</span>が即座にお知らせ。<br>減ったフォロワーを見逃しません。'
+      text008_html: '<span class="egotter-pink">リムられ通知</span>が即座にお知らせ。減ったフォロワーを見逃しません。'
       text009_html: '<span class="egotter-pink">350万回以上</span>の利用実績'
-      text010_html: '便利で面白い。<br>実は<span class="egotter-pink">みんな</span>使ってます。'
+      text010_html: '便利で面白い。実は<span class="egotter-pink">みんな</span>使ってます。'
       text012_html: '公式アカウント'
-      text013_html: '何か分からないことがありますか？<br><span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
+      text013_html: '何か分からないことがありますか？ <span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
       text014_html: '@ego_tter に質問してみる'
       text021_html: '<span style="font-size: 28px;">350万回</span> 以上の利用実績'
       text022_html: '<span style="font-size: 28px;">フォロワーが減ったら</span> 通知でお知らせ'
       text023_html: '<span style="font-size: 28px;">無料</span> で使えます'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} の分析結果へ移動しますか？'
     start:
       crumb_title: "@%{user}さん えごったーへようこそ！"
       page_title: "@%{user}さん えごったーへようこそ！"
@@ -194,6 +188,8 @@ ja:
         unfollowers: 'リムーブされた'
         blocking_or_blocked: 'ブロックされた'
         unit: '人'
+      statuses:
+        title: 'ツイート'
       friends:
         title: 'フォロー'
         description: '@%{user} がフォローしているユーザーです。'
@@ -203,6 +199,12 @@ ja:
       close_friends:
         title: '仲良しランキング'
         description: '@%{user} と仲良しなユーザーの一覧です。仲良しの分析には、リプライした・リプライされた・ふぁぼを使っています。'
+      usage_stats:
+        title: 'ツイッター利用状況'
+        description: '@%{user} のツイッター利用状況分析です。ツイッターを使っている曜日、時間、口ぐせなどが分かります。'
+      clusters:
+        title: 'クラスタ分析'
+        description: '@%{user} が入っているクラスタを表示します。'
       common_friends:
         title: "共通フォロー"
         description: '@%{user1} と @%{user2} の両方がフォローしているユーザーです。'
@@ -797,15 +799,19 @@ ja:
       see_more: 'もっと見る'
   one_sided_friends:
     new:
-      title_html: '<span style="font-size: small; display: inline;">片思いチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '片思いチェック by えごったー'
       plain_title: '片思いチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
       footer_title: '片思いチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
-      lead_001: "スマホでさくっと片思いチェック"
-      lead_002: "保存ユーザー数4,800万人突破！"
-      lead_003: "片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。"
+      right_side:
+        title: 'スマホでさくっと片思いチェック'
+        lead_html: '片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。'
+      lead_002_html: "保存ユーザー数4,800万人突破！"
       lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} の片思いフォロー分析結果へ移動しますか？'
     show: &one_sided_friends_show
       crumb_title: "片思い分析"
       page_title: "%{user} の片思いフォロー"
@@ -813,7 +819,15 @@ ja:
       meta_title: "%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
       summary_title: "片思いフォロー"
       title: "片思いフォロー"
-      page_description: "%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーです。"
+      page_description_html: |
+        「片思い」とは、自分はフォローしているが、相手からはフォローされていない関係のことです。
+        このページでは、@%{user} の片思い（=フォローだけしている）ユーザーを見ることができます。
+        <a id="show-page-description" class="text-right" style="display: block;" onclick="$('#hidden-page-description').show(); $('#' + this.id).hide(); return false;" href="#">続きを読む</a>
+        <div id="hidden-page-description" style="display: none;">
+          <a href="%{url}">片思いチェック</a>を使うことで、@%{user} の片思いは集計されています。
+          <a href="%{url}">片思いチェック</a>を使えば、@%{user} だけでなく他のユーザーの片思いを集計することもできます。
+          よく見られているページほど頻繁にデータが更新されるため、@%{user} の最新の片思いユーザーを見たい場合は、定期的にこのページにアクセスしてください。
+        </div>
       meta_description: "%{user} がフォローしているユーザーのうち、フォロー返しされていないユーザーの一覧 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人"
       tweet_text: "%{user} の片思いフォロー分析 - 片思い %{one_sided_friends}人 片思われ %{one_sided_followers}人 両思い %{mutual_friends}人 #egotter %{url}"
       see_more: 'もっと見る'
@@ -855,18 +869,23 @@ ja:
       crumb_title: "一気に見る"
   unfriends:
     new:
-      title_html: >
-        <span style="font-size: small; display: inline;">リムられチェック</span><br class="visible-xs">
-        &nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>
+      title_html: 'リムられチェック by えごったー'
       page_title: 'リムられチェック - 保存ユーザー数4,800万人突破！スマホから使えて無料！ 一番使われているリムられチェックアプリです'
       simple_title_html: 'リムられチェック'
       footer_title: 'リムられチェック'
       first_title_sub_text: 'スマホでサクッと'
       meta_description: "保存ユーザー数4,800万人突破！ 無料で使える！ スマホ対応OK！ 一番使われているリムられチェッカーです。ツイッターであなたをリムった人を無料で確認できます。自動リムられ通知もあります。データは登録してからたまるので、今すぐ登録しましょう。"
+      right_side:
+        title: 'スマホでサクッとリムられチェック'
+        lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} のリムられ分析結果へ移動しますか？'
       what_is_unfriends:
         title: '「リムり」「リムられ」ってどういう意味？'
         description1_html: >
-          リムるは「<span class="egotter-pink">リムーブする</span>」を省略した言葉です。直訳すると、「取り除く」や「削除する」という意味になります。<br>
+          リムるは「<span class="egotter-pink">リムーブする</span>」を省略した言葉です。
+          直訳すると、「取り除く」や「削除する」という意味になります。<br>
           <br>
           このことから、ツイッターでは「<span class="egotter-pink">フォローを解除する</span>」ことを「リムる」と表現します。
         description2_html: >
@@ -1038,7 +1057,7 @@ ja:
       crumb_title: "一気に見る"
   inactive_friends:
     new:
-      title_html: '<span style="font-size: small; display: inline;">最近いない人検索</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: '最近いない人検索 by えごったー'
       plain_title: '最近いない人検索 - えごったー スマホでかんたん ツイッターのフォロー整理'
       footer_title: '最近いない人検索'
       description: "保存ユーザー数4,800万人突破！ スマホから、自分のフォロー・フォロワーのうち最近いないツイッターユーザーを検索できます。"
@@ -1047,6 +1066,12 @@ ja:
       lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "最近いない人をらくらく検索。<br>スマホから使える無料の分析アプリです。"
       lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない相互フォローのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
+      right_side:
+        title: 'スマホでサクッとフォロー整理'
+        lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} の最近いないフォロー分析結果へ移動しますか？'
     show: &inactive_friends_show
       crumb_title: "最近いないフォロー分析"
       page_title: "%{user} の最近いないフォロー"
@@ -1111,7 +1136,7 @@ ja:
       analyze: '@%{user} を分析する'
   friends:
     new:
-      title_html: '<span style="font-size: small; display: inline;">フォローチェック</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: 'フォローチェック by えごったー'
       plain_title: 'フォローチェック - えごったー スマホでかんたん ツイッターのフォロー整理'
       simple_title: 'フォローチェック'
       description: "保存ユーザー数4,800万人突破！ 無料でスマホからフォローチェック！"
@@ -1120,6 +1145,12 @@ ja:
       lead_002: "保存ユーザー数4,800万人突破！"
       lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
+      right_side:
+        title: 'スマホでサクッとフォロー整理'
+        lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} のフォローチェック結果へ移動しますか？'
     show: &friends_show
       crumb_title: "フォローチェック"
       page_title: "%{user} のフォロー"
@@ -1208,7 +1239,7 @@ ja:
       crumb_title: "一気に見る"
   clusters:
     new:
-      title_html: '<span style="font-size: small; display: inline;">クラスタ判定</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: 'クラスタ判定 by えごったー'
       plain_title: 'クラスタ判定 - えごったー スマホでかんたん ツイッターのフォロー整理'
       crumb_title: 'クラスタ判定'
       footer_title: 'クラスタ判定'
@@ -1218,6 +1249,12 @@ ja:
       lead_002: "保存ユーザー数4,800万人突破！"
       lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
       lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
+      right_side:
+        title: 'スマホでサクッとクラスタ分析'
+        lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} のクラスタ分析結果へ移動しますか？'
     show:
       crumb_title: "入っているクラスタ"
       summary_title: "入っているクラスタ"
@@ -1359,7 +1396,7 @@ ja:
       see_on_twitter: '@%{user} をツイッターで見る'
   tokimeki_unfollow:
     new:
-      title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: 'ときめきアンフォロー✨ by えごったー'
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
       footer_title: 'ときめきアンフォロー✨'
@@ -1370,7 +1407,7 @@ ja:
       continue: '続きから始める'
       disclaimer: 'このツールは、実在するお掃除コンサルタントの考え方を参考にしていますが、ご本人の見解を代表するものではございません。'
     cleanup:
-      title_html: '<span style="font-size: small; display: inline;">ときめきアンフォロー✨</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: 'ときめきアンフォロー✨ by えごったー'
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
       description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
@@ -1388,7 +1425,7 @@ ja:
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   delete_tweets:
     new:
-      title_html: '<span style="font-size: small; display: inline;">ツイートクリーナー🧹</span><br class="visible-xs">&nbsp;<span style="font-size: x-small; display: inline;">by えごったー</span>'
+      title_html: 'ツイートクリーナー🧹 by えごったー'
       page_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
       simple_title: 'ツイートクリーナー🧹'
       footer_title: 'ツイートを一括削除'
@@ -1493,13 +1530,11 @@ ja:
         ツイッターの一括削除にはえごったーを利用しています。<br>
         もし、ツイートの一括削除ができない場合は、<br>
         <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
-      text6_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、<br>安全にリムられをチェックできます。'
+      text6_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にリムられをチェックできます。'
       text7_html: |
-        ユーザーのフォロー解除、リムられは、<br>
-        えごったーが分析したデータから集計しています。<br>
+        ユーザーのフォロー解除、リムられは、えごったーが分析したデータから集計しています。<br>
         <br>
-        フォロー解除やリムられに間違いがある場合は、<br>
-        <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
+        フォロー解除やリムられに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
       note2: '※ツイッターの仕組み上、最大で3200件まで削除できます。'
       note4: '※設定でオフにすることができます。'
       button5: '@ego_tter に質問してみる'
@@ -1611,6 +1646,10 @@ ja:
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後は、予約したツイートを一覧で管理できます。<br>
           <br>
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
+  modal:
+    redirection_modal:
+      'yes': 'はい'
+      'no': 'いいえ'
   common:
     show:
       updating: '%{user} のデータを更新中'

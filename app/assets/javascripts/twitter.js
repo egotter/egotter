@@ -117,65 +117,6 @@ Twitter.enableUnfollowButton = function (selector) {
   });
 };
 
-Twitter.enableSortButton = function ($buttons, callback) {
-  $('.sort-orders').on('click', function (e) {
-    var $selected = $(this);
-    var $dropdown = $buttons.find('.dropdown-toggle');
-    var $oldSelected = $buttons.find('a.selected');
-    $dropdown.dropdown('toggle');
-
-    if ($selected.is($oldSelected)) {
-      console.log('sort_order not changed');
-      return false;
-    }
-
-    var value = $selected.data('sort-order');
-    console.log('sort_order', value);
-
-    $dropdown.html($selected.text() + '&nbsp;<span class="caret"></span>')
-        .data('sort-order', value);
-    $buttons.find('.dropdown-menu a').removeClass('selected');
-    $selected.addClass('selected');
-
-    callback({sortOrder: value});
-    return false;
-  });
-};
-
-Twitter.enableFilterButton = function ($buttons, callback) {
-  $('.filters').on('click', function (e) {
-    var $selected = $(this);
-    var $dropdown = $buttons.find('.dropdown-toggle');
-
-    $dropdown.dropdown('toggle');
-
-    var $checkbox = $selected.find('input');
-    if ($checkbox.prop('checked')) {
-      $checkbox.removeAttr('checked').prop('checked', false);
-      $selected.removeClass('selected');
-    } else {
-      $checkbox.attr('checked', true).prop('checked', true);
-      $selected.addClass('selected');
-    }
-
-    var filterCount = $buttons.find('a.selected').length;
-
-    if (filterCount > 0) {
-      $dropdown.data('filter', $selected.data('filter')); // Current filters.size == 0
-      $dropdown.find('.filter-count').text('(' + filterCount + ')');
-    } else {
-      $dropdown.data('filter', null);
-      $dropdown.find('.filter-count').text('');
-    }
-
-    var value = $dropdown.data('filter');
-    console.log('filter', value);
-
-    callback({filter: value});
-    return false;
-  });
-};
-
 Twitter.FetchTask = function (url, uid, options) {
   if (this === undefined) {
     throw new TypeError();
@@ -252,7 +193,7 @@ Twitter.FetchTask.prototype = {
       var $users = $(res.users).hide().fadeIn(1000);
       self._$usersContainer.append($users);
 
-      if (self._$usersContainer.find('.media').length <= 0) {
+      if (res.users.length <= 0) {
         self._$emptyPlaceholders.show();
       } else {
         self._$emptyPlaceholders.hide();

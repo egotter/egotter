@@ -1,23 +1,16 @@
-.feature-section.text-center
-  %h2.h4= title
-  .vertical-spacing
-  .vertical-spacing
-  = image_tag image, class: 'img-rounded', height: '160px'
-  .vertical-spacing
-  .description= description
-  - if note
-    .text-muted= note
-  .vertical-spacing
-  .small-tips
-    = link
-    - check = [check] unless check.class == Array
-    - check.each do |chk|
-      .text-notice.text-right.search-hint
-        %i.fas.fa-check
-        = chk
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
-  .vertical-spacing
+.container
+  .row
+    .col-12.col-md-8.mx-auto
+      %h2.h4.text-center.my-5= title
+      = image_tag image, class: 'img-rounded d-block mx-auto', height: '250px'
+      .my-5
+        = description
+        - if note
+          .text-muted= note
+      .small-tips.text-center.mx-auto{style: 'width: 300px;'}
+        = link
+        - check = [check] unless check.class == Array
+        - check.each do |chk|
+          .text-notice.text-right
+            %i.fas.fa-check
+            = chk

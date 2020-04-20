@@ -1,0 +1,28 @@
+<% if request.from_smartphone? %>
+  <div class="text-center right-side">
+    <%= render partial: 'home/right_side', locals: right_side %>
+  </div>
+<% else %>
+  <div class="d-flex align-items-center vh-100">
+    <!-- The left side of the screen-->
+    <div class="w-50 h-100" style="background-image: url(<%= image_path('/egotter_big_background_840x800.png') %>); background-position: center;">
+      <div class="w-100 h-100" style="position: relative;">
+        <div style="color:white; font-size: 18px; position: absolute; top: 40%; left: 50%; transform: translateX(-50%);">
+          <div><%= t('home.new.text021_html') %></div>
+          <div><%= t('home.new.text022_html') %></div>
+          <div><%= t('home.new.text023_html') %></div>
+        </div>
+      </div>
+    </div>
+    <!-- The right side of the screen-->
+    <div class="w-50">
+      <div class="text-center right-side"><%= render partial: 'home/right_side', locals: right_side %></div>
+    </div>
+  </div>
+<% end %>
+
+<script>
+  $(function () {
+    Home.setSearchCount('<%= search_count_path %>');
+  });
+</script>

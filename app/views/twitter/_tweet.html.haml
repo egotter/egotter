@@ -1,14 +1,13 @@
 - user = TwitterUserDecorator.new(tweet.user)
-.media
-  .media-inner
-    .media-left
+.card.mb-3.mb-lg-5
+  .row.no-gutters
+    .col
       = search_link user.screen_name, current_via('icon') do
-        = normal_icon_img(user, class: 'media-object img-rounded')
-    .media-body.text-left
-      %h4.media-heading
-        = user.name_with_icon
-        = user.status_labels
-      %span.screen-name= search_link user.screen_name, current_via('screen_name')
-    .media-right.created-at= tweet_link(tweet)
-    .tweet-text.text-left= linkify(tweet.text)
-.vertical-spacing
+        = image_tag bigger_icon_url(user), class: 'rounded', style: 'width: 100%;', alt: user.screen_name
+    .col-10
+      .card-body
+        %h5.card-title{style: 'font-size: small;'}
+          = search_link user.screen_name, current_via('screen_name')
+          = user.name_with_icon
+          = tweet_link(tweet)
+        %p.card-text{style: 'font-size: small;'}= linkify(tweet.text)

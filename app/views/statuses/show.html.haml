@@ -9,12 +9,9 @@
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h2.page-title= page_title
+%h2.h2.text-center.my-5= page_title
 
-= render partial: 'common/search_form', locals: {via: current_via('top_input')}
-= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
-
-#statuses.twitter.tweets.center-block
+#statuses.twitter.tweets.mx-auto
   - if @twitter_user.protected_account?
     = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
   - else

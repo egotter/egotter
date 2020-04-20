@@ -5,7 +5,7 @@ class UsageStatsController < ApplicationController
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i
-    valid_uid?(uid) && twitter_user_persisted?(uid)  && !protected_search?(TwitterUser.latest_by(uid: uid))
+    valid_uid?(uid) && twitter_user_persisted?(uid) && !protected_search?(TwitterUser.latest_by(uid: uid))
   end
 
   def show

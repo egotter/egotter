@@ -1,57 +1,46 @@
-%h1.top_header
+%h1.h2
   = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
   %span= I18n.t('searches.common.egotter')
 
-.vertical-spacing
-%h2.h4= t('searches.new.lead_001')
-.vertical-spacing
-.lead= t('searches.new.lead_002_html')
-.mx-auto{style: 'max-width: 375px; width: 80%;'}
+%h2.h4.my-4= title
+= lead
+
+.mx-auto.pt-3{style: 'max-width: 375px; width: 80%;'}
   = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
-  .text-notice.text-right.search-hint
+  .text-notice.text-right
     %i.fas.fa-check
     = t('searches.new.pc.check_001')
-  .text-notice.text-right.search-hint
+  .text-notice.text-right
     %i.fas.fa-check
     = t('searches.new.pc.check_002')
-.vertical-spacing
-%div
+
+.mt-3.mb-4
   %span.thin-border
   %span.or-text= t('searches.common.or')
   %span.thin-border
-.vertical-spacing
-.vertical-spacing
-.mx-auto{style: 'max-width: 375px; width: 80%;'}
+
+.mx-auto.mb-3{style: 'max-width: 375px; width: 80%;'}
   = render partial: 'common/search_form', locals: {via: current_via('input')}
-  .text-notice.text-right.search-hint
+  .text-notice.text-right
     %i.fas.fa-check
     = t('searches.new.pc.check_003')
-  .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
+  .text-notice.text-right.search-count-wrapper{style: 'visibility: hidden;'}
     %i.fas.fa-check
     = t('searches.new.pc.check_004_html')
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
 
-%h2.h4= t('searches.new.lead_003_html')
-.vertical-spacing
+%h2.h4.mt-5.mb-3= t('searches.new.lead_003_html')
 
 .screenshot.text-center
   = link_to sign_in_path(via: current_via('screenshots')) do
     %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
 
-.vertical-spacing
-%div{style: 'font-size: 14px;'}= t('home.new.text003_html')
+%div.my-4= t('home.new.text003_html')
 
-.vertical-spacing
 .mx-auto{style: 'max-width: 375px; width: 80%;'}
   = sign_in_with_twitter_link(nil, 'screenshots_button', class: 'btn btn-primary btn-block')
-  .text-notice.text-right.search-hint
+  .text-notice.text-right
     %i.fas.fa-check
     = t('searches.new.pc.check_005')
-  .text-notice.text-right.search-hint
+  .text-notice.text-right
     %i.fas.fa-check
     = t('searches.new.pc.check_006')

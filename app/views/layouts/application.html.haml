@@ -21,7 +21,6 @@
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js'}
     %script{:crossorigin => "anonymous", :integrity => "sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo", :src => "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"}
     %script{:crossorigin => "anonymous", :integrity => "sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6", :src => "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"}
-    %script{src: '//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js'}
     %link{crossorigin: "anonymous", href: "//use.fontawesome.com/releases/v5.6.3/css/all.css", integrity: "sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", rel: "stylesheet"}
     = csrf_meta_tags
 
@@ -79,22 +78,39 @@
     - if wrap_in_container?
       .container
         .row
-          - if @twitter_user
+          - if @twitter_user && action_name != 'all'
             .d-none.d-sm-none.d-md-block.col-md-3
               .sticky-top.pt-3
                 %ul.list-group
-                  %li.list-group-item= link_to t('timelines.feeds.one_sided_friends.title'), one_sided_friend_path(@twitter_user)
-                  %li.list-group-item= link_to t('timelines.feeds.one_sided_followers.title'), one_sided_follower_path(@twitter_user)
-                  %li.list-group-item= link_to t('timelines.feeds.mutual_friends.title'), mutual_friend_path(@twitter_user)
-                  %li.list-group-item= link_to t('timelines.feeds.unfriends.title'), unfriend_path(@twitter_user)
-                  %li.list-group-item= link_to t('timelines.feeds.unfollowers.title'), unfollower_path(@twitter_user)
-                  %li.list-group-item= link_to t('timelines.feeds.blocking_or_blocked.title'), blocking_or_blocked_path(@twitter_user)
+                  - with_options(via: current_via('sidenav')) do |obj|
+                    %li.list-group-item= link_to t('timelines.feeds.statuses.title'), obj.status_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.friends.title'), obj.friend_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.followers.title'), obj.follower_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.close_friends.title'), obj.close_friend_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.usage_stats.title'), obj.close_friend_path(@twitter_user)
+                    - if show_common_friends?(@twitter_user)
+                      %li.list-group-item= link_to t('timelines.feeds.common_friends.title'), obj.common_friend_path(@twitter_user)
+                      %li.list-group-item= link_to t('timelines.feeds.common_followers.title'), obj.common_follower_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.clusters.title'), obj.cluster_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.unfriends.title'), obj.unfriend_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.unfollowers.title'), obj.unfollower_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.blocking_or_blocked.title'), obj.blocking_or_blocked_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.mutual_friends.title'), obj.mutual_friend_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.one_sided_friends.title'), obj.one_sided_friend_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.one_sided_followers.title'), obj.one_sided_follower_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.replying.title'), obj.replying_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.replied.title'), obj.replied_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.favorite_friends.title'), obj.favorite_friend_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.inactive_friends.title'), obj.inactive_friend_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.inactive_followers.title'), obj.inactive_follower_path(@twitter_user)
+                    %li.list-group-item= link_to t('timelines.feeds.delete_tweets.title'), obj.delete_tweets_path
+                    %li.list-group-item= link_to t('timelines.feeds.scheduled_tweets.title'), "https://scheduled-tweets.egotter.com?via=#{current_via('sidenav')}"
             .col-sm-12.col-md-9
-              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '&nbsp;&gt;&nbsp;'
+              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '<span class="text-muted">&nbsp;&gt;&nbsp;</span>'
               = yield
           - else
             .col-sm-12
-              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '&nbsp;&gt;&nbsp;'
+              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '<span class="text-muted">&nbsp;&gt;&nbsp;</span>'
               = yield
     - else
       = yield

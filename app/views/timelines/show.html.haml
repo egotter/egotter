@@ -12,14 +12,14 @@
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h3.text-center= t('timelines.show.heading', user: @twitter_user.mention_name)
+%h2.h3.text-center.my-5= t('timelines.show.heading', user: @twitter_user.mention_name)
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 %script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}
 %script{id: 'user-template', type: 'x-tmpl-mustache'}
   = search_link '{{screen_name}}', current_via('{{menu_name}}'), unescape: true, style: 'display: inline-block;' do
-    %img.img-rounded{src: '{{profile_image_url_https}}', alt: '{{screen_name}}', width: 48, height: 48}
+    %img.img-rounded.m-1.shadow{src: '{{profile_image_url_https}}', alt: '{{screen_name}}', width: 48, height: 48}
 
 .row
   .col-12.mb-5
@@ -34,7 +34,7 @@
 
   - if show_friends_stat?(@twitter_user)
     .col-12.mb-5
-      = render partial: 'timelines/feeds/chart', locals: {menu_name: :usage_stats, graph: @twitter_user.usage_stat.wday, twitter_user: @twitter_user}
+      = render partial: 'timelines/feeds/chart', locals: {menu_name: :usage_stats, feed_title: t('timelines.feeds.usage_stats.title'), feed_description: t('timelines.feeds.usage_stats.description', user: @twitter_user.screen_name), graph: @twitter_user.usage_stat.wday, twitter_user: @twitter_user}
 
   - if show_common_friends?(@twitter_user)
     .col-12.mb-5
@@ -44,44 +44,44 @@
 
   - if show_friends_stat?(@twitter_user)
     .col-12.mb-5
-      = render partial: 'timelines/feeds/chart', locals: {menu_name: :clusters, graph: name_y_format(@twitter_user.usage_stat.tweet_clusters), twitter_user: @twitter_user}
+      = render partial: 'timelines/feeds/chart', locals: {menu_name: :clusters, feed_title: t('timelines.feeds.clusters.title'), feed_description: t('timelines.feeds.clusters.description', user: @twitter_user.screen_name), graph: name_y_format(@twitter_user.usage_stat.tweet_clusters), twitter_user: @twitter_user}
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'unfriends', feed_title: t('timelines.feeds.unfriends.title'), feed_description: t('timelines.feeds.unfriends.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfriends_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfriends"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'unfriends', feed_title: t('timelines.feeds.unfriends.title'), feed_description: t('timelines.feeds.unfriends.description', user: @twitter_user.screen_name), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfriends_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfriends"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'unfollowers', feed_title: t('timelines.feeds.unfollowers.title'), feed_description: t('timelines.feeds.unfollowers.description'), page_url: unfollower_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfollowers_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfollowers"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'unfollowers', feed_title: t('timelines.feeds.unfollowers.title'), feed_description: t('timelines.feeds.unfollowers.description', user: @twitter_user.screen_name), page_url: unfollower_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfollowers_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfollowers"))
 
     - if request.from_smartphone?
       .col-12.mb-5
         = render(partial: 'adsense/side_by_side', locals: {vertical: :middle})
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'blocking_or_blocked', feed_title: t('timelines.feeds.blocking_or_blocked.title'), feed_description: t('timelines.feeds.blocking_or_blocked.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_blocking_or_blocked_summary_path(uid: @twitter_user.uid, via: current_via("feed_blocking_or_blocked"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'blocking_or_blocked', feed_title: t('timelines.feeds.blocking_or_blocked.title'), feed_description: t('timelines.feeds.blocking_or_blocked.description', user: @twitter_user.screen_name), page_url: blocking_or_blocked_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_blocking_or_blocked_summary_path(uid: @twitter_user.uid, via: current_via("feed_blocking_or_blocked"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'mutual_friends', feed_title: t('timelines.feeds.mutual_friends.title'), feed_description: t('timelines.feeds.mutual_friends.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_mutual_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_mutual_friends"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'mutual_friends', feed_title: t('timelines.feeds.mutual_friends.title'), feed_description: t('timelines.feeds.mutual_friends.description', user: @twitter_user.screen_name), page_url: mutual_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_mutual_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_mutual_friends"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'one_sided_friends', feed_title: t('timelines.feeds.one_sided_friends.title'), feed_description: t('timelines.feeds.one_sided_friends.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_one_sided_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_one_sided_friends"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'one_sided_friends', feed_title: t('timelines.feeds.one_sided_friends.title'), feed_description: t('timelines.feeds.one_sided_friends.description', user: @twitter_user.screen_name), page_url: one_sided_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_one_sided_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_one_sided_friends"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'one_sided_followers', feed_title: t('timelines.feeds.one_sided_followers.title'), feed_description: t('timelines.feeds.one_sided_followers.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_one_sided_followers_summary_path(uid: @twitter_user.uid, via: current_via("feed_one_sided_followers"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'one_sided_followers', feed_title: t('timelines.feeds.one_sided_followers.title'), feed_description: t('timelines.feeds.one_sided_followers.description', user: @twitter_user.screen_name), page_url: one_sided_follower_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_one_sided_followers_summary_path(uid: @twitter_user.uid, via: current_via("feed_one_sided_followers"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'replying', feed_title: t('timelines.feeds.replying.title'), feed_description: t('timelines.feeds.replying.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_replying_summary_path(uid: @twitter_user.uid, via: current_via("feed_replying"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'replying', feed_title: t('timelines.feeds.replying.title'), feed_description: t('timelines.feeds.replying.description', user: @twitter_user.screen_name), page_url: replying_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_replying_summary_path(uid: @twitter_user.uid, via: current_via("feed_replying"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'replied', feed_title: t('timelines.feeds.replied.title'), feed_description: t('timelines.feeds.replied.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_replied_summary_path(uid: @twitter_user.uid, via: current_via("feed_replied"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'replied', feed_title: t('timelines.feeds.replied.title'), feed_description: t('timelines.feeds.replied.description', user: @twitter_user.screen_name), page_url: replied_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_replied_summary_path(uid: @twitter_user.uid, via: current_via("feed_replied"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'favorite_friends', feed_title: t('timelines.feeds.favorite_friends.title'), feed_description: t('timelines.feeds.favorite_friends.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_favorite_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_favorite_friends"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'favorite_friends', feed_title: t('timelines.feeds.favorite_friends.title'), feed_description: t('timelines.feeds.favorite_friends.description', user: @twitter_user.screen_name), page_url: favorite_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_favorite_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_favorite_friends"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'inactive_friends', feed_title: t('timelines.feeds.inactive_friends.title'), feed_description: t('timelines.feeds.inactive_friends.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_inactive_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_inactive_friends"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'inactive_friends', feed_title: t('timelines.feeds.inactive_friends.title'), feed_description: t('timelines.feeds.inactive_friends.description'), page_url: inactive_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_inactive_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_inactive_friends"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'inactive_followers', feed_title: t('timelines.feeds.inactive_followers.title'), feed_description: t('timelines.feeds.inactive_followers.description'), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_inactive_followers_summary_path(uid: @twitter_user.uid, via: current_via("feed_inactive_followers"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'inactive_followers', feed_title: t('timelines.feeds.inactive_followers.title'), feed_description: t('timelines.feeds.inactive_followers.description', user: @twitter_user.screen_name), page_url: inactive_follower_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_inactive_followers_summary_path(uid: @twitter_user.uid, via: current_via("feed_inactive_followers"))
 
     .col-12.mb-5
       = feed_item :ad, feed_title: t('timelines.feeds.delete_tweets.title'), feed_description: t('timelines.feeds.delete_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/egotter_trash_with_text_400x448.png'), button_text: t('timelines.feeds.delete_tweets.open'), page_url: delete_tweets_path(via: current_via('feed_text'))

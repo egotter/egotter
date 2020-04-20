@@ -1,4 +1,4 @@
-%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_stat)
+%h2.h4.text-center.my-5= UsageStat.human_attribute_name(:tweets_stat)
 
 .tweets-stat-wrapper.text-center
   .row
@@ -35,12 +35,12 @@
 .vertical-spacing
 .vertical-spacing
 
-%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_per_wday)
+%h2.h4.text-center.my-5= UsageStat.human_attribute_name(:tweets_per_wday)
 .wday-chart
 .vertical-spacing
 .vertical-spacing
 
-%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_per_hour)
+%h2.h4.text-center.my-5= UsageStat.human_attribute_name(:tweets_per_hour)
 .hour-chart
 .vertical-spacing
 .vertical-spacing
@@ -50,7 +50,7 @@
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
 .vertical-spacing
 
-%h2.h2.page-title= UsageStat.human_attribute_name(:tweets_breakdown)
+%h2.h4.text-center.my-5= UsageStat.human_attribute_name(:tweets_breakdown)
 .breakdown-chart{style: 'height: 220px;'}
 .vertical-spacing
 .vertical-spacing
@@ -60,12 +60,6 @@
   - tweet_text = t('usage_stats.tweets_stat.breakdown', i18n_options)
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
 .vertical-spacing
-
-.search_form-wrapper
-  = render partial: 'common/search_form', locals: {via: current_via('tweets_stat')}
-.vertical-spacing
-
-= render(partial: 'adsense/side_by_side', locals: {vertical: :middle})
 
 :javascript
   (function () {

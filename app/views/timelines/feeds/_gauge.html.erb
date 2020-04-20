@@ -1,6 +1,6 @@
 <%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
 
-<div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
+<div class="feed-item <%= menu_name %>" style="position: relative;">
   <%= link_to score_path(twitter_user), class: 'result-link' do %>
     <h3 class="h4 text-center"><%= t('scores.show.title') %></h3>
     <div class="text-center description"><%=t('scores.show.page_description', user: twitter_user.mention_name) %></div>
@@ -19,7 +19,6 @@
 
       function drawGauge () {
         $("div[data-replaced-by='" + menuName + "']").remove();
-        $('.menu-items.' + menuName).show();
 
         var gaugeChart = $.extend(true, {}, window.gaugeOptions);
         gaugeChart.series[0].data = <%= raw [(score.to_f * 10000).round].to_json %>;

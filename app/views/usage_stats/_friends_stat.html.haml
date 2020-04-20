@@ -1,4 +1,4 @@
-%h2.h2.page-title= UsageStat.human_attribute_name(:friends_stat)
+%h2.h4.text-center.my-5= UsageStat.human_attribute_name(:friends_stat)
 
 .friends-stat-wrapper.text-center
   .row
@@ -53,10 +53,6 @@
 .tweet-box-wrapper
   - tweet_text = t('usage_stats.friends_stat.tweet', user: twitter_user.mention_name, one_sided_friends: stat[:one_sided_friends_count], one_sided_followers: stat[:one_sided_followers_count], mutual_friends: stat[:mutual_friends_count], url: url)
   = render(partial: 'twitter/tweet_box', locals: {text: tweet_text, twitter_user: twitter_user})
-.vertical-spacing
-
-.search_form-wrapper
-  = render partial: 'common/search_form', locals: {via: current_via('friends_stat')}
 .vertical-spacing
 
 :javascript

@@ -19,17 +19,17 @@ class HomeController < ApplicationController
     enqueue_update_authorized
     set_flash_message
 
-    if flash.empty? && user_signed_in?
-      if TwitterUser.exists?(uid: current_user.uid)
-        url = timeline_path(screen_name: current_user.screen_name, via: current_via('auto_redirect'))
-      else
-        url = start_path(via: current_via('auto_redirect'))
-      end
-
-      url = append_query_params(url, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]
-      url = append_query_params(url, share_dialog: params[:share_dialog]) if params[:share_dialog]
-      redirect_to url
-    end
+    # if flash.empty? && user_signed_in?
+    #   if TwitterUser.exists?(uid: current_user.uid)
+    #     url = timeline_path(screen_name: current_user.screen_name, via: current_via('auto_redirect'))
+    #   else
+    #     url = start_path(via: current_via('auto_redirect'))
+    #   end
+    #
+    #   url = append_query_params(url, follow_dialog: params[:follow_dialog]) if params[:follow_dialog]
+    #   url = append_query_params(url, share_dialog: params[:share_dialog]) if params[:share_dialog]
+    #   redirect_to url
+    # end
   end
 
   def start

@@ -1,34 +1,6 @@
-h1.top_header {
-  background-color: #ffffff;
-  margin: 0 0 0 0;
-  padding: 15px 0 0 0;
-  text-align: center;
-  font-weight: normal;
-  font-size: x-large;
-  color: #333333;
-}
-
-#search-modal {
-  h2 {
-    font-size: 22px;
-  }
-
-  .submit-btn {
-    margin-top: 10px;
-  }
-}
-
 #header-info.alert-info,
 #header-warning.alert-warning,
 #global-info-message,
 #global-warning-message {
   margin-bottom: 0;
-}
-
-.header-container {
-  border-bottom: solid #e7e7e7 1px;
-}
-
-.header-container {
-  background-color: #ffffff;
 }

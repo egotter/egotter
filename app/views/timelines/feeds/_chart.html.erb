@@ -1,6 +1,6 @@
 <div class="<%= menu_name %> feed-item p-3 p-lg-5">
-  <h3 class="h4 text-center"><%= t("#{menu_name}.show.summary_title") %></h3>
-  <div class="text-center description"><%= t("#{menu_name}.show.page_description", user: twitter_user.mention_name) %></div>
+  <h3 class="h4 text-center"><%= feed_title %></h3>
+  <div class="text-center"><%= feed_description %></div>
 
   <%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
 
@@ -17,7 +17,6 @@
 
     function drawChart() {
       $("div[data-replaced-by='" + menuName + "']").remove();
-      $('.menu-items.' + menuName).show();
 
       var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
       graph_option.series[0].data = <%= raw graph.to_json %>;

@@ -1,0 +1,10 @@
+<% title @title %>
+<% set_meta_tags description: t('one_sided_friends.new.description') %>
+
+<%= render partial: 'shared/side_by_side_section', locals: {right_side: {title: t('.right_side.title'), lead: t('.right_side.lead_html')}} %>
+<%= render partial: 'shared/review_section' %>
+<%= render partial: 'shared/features_section' %>
+
+<% if user_signed_in? %>
+  <%= render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: one_sided_friend_path(current_user)} %>
+<% end %>
