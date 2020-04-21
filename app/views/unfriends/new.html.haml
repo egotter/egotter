@@ -1,9 +1,9 @@
 - title t('.page_title')
 - set_meta_tags description: t('.meta_description')
 
-= render partial: 'shared/side_by_side_section', locals: {right_side: {title: t('.right_side.title'), lead: t('.right_side.lead_html')}}
+= render partial: 'shared/side_by_side_section', locals: {right_side: {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')}}
 
-- if user_signed_in?
+- if user_signed_in? && !@has_error
   = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: unfriend_path(current_user)}
 
 %h2.h4.text-center.my-5= t('.what_is_unfriends.title')
@@ -16,7 +16,7 @@
       = t('.what_is_unfriends.description2_html', url: url)
       .text-center.my-5= sign_in_with_twitter_link(url, 'what_is_unfriends_button', class: 'btn btn-primary btn-lg')
 
-= render partial: 'shared/review_section'
+.container= render partial: 'shared/review_section'
 
 .my-5= render partial: 'shared/feature_section', locals: {title: t('.how_to_use_unfriends.title'), image: '/egotter_only_signin_with_text_400x448.png', description: t('.how_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('how_to_use_unfriends')), current_via('how_to_use_unfriends_button'), class: 'btn btn-primary btn-lg btn-block'), check: t('.how_to_use_unfriends.check')}
 .my-5= render partial: 'shared/feature_section', locals: {title: t('.when_to_use_unfriends.title'), image: '/egotter_hurry_up_with_text_400x448.png', description: t('.when_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('when_to_use_unfriends')), current_via('when_to_use_unfriends_button'), class: 'btn btn-primary btn-lg btn-block'), check: t('.when_to_use_unfriends.check')}

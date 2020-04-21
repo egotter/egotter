@@ -14,6 +14,7 @@ module Concerns::RoutingErrorHandler
     elsif from_crawler? || request.method != 'GET'
       self.sidebar_disabled = true
       flash.now[:alert] = routing_not_found_message
+      @has_error = true
       render template: 'home/new', formats: %i(html), status: :not_found
 
     elsif params['screen_name'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
@@ -31,6 +32,7 @@ module Concerns::RoutingErrorHandler
     else
       self.sidebar_disabled = true
       flash.now[:alert] = routing_not_found_message
+      @has_error = true
       render template: 'home/new', formats: %i(html), status: :not_found
     end
   end

@@ -11,16 +11,18 @@ ja:
         note_html: '※テキストの最後にえごったーのURLが付きます'
         note_for_count_html: '今ツイートしていただくと、検索回数が <span class="egotter-pink">%{count}回分</span> 増えます。'
         success: 'ツイートに成功しました。ありがとうございます！'
-        error: 'ツイートに失敗しました。長すぎたり、特殊な文字が入ったりしていませんか？'
+        error: 'ツイートに失敗しました。テキストが長すぎたり、特殊な文字が入ったりしていませんか？'
         ok: "ツイートする"
         cancel: "やめておく"
       revive_modal:
         title_html: 'リムられ通知を復活させる'
-        body_html: 'リムられ通知を復活させるには <a href="%{url}" class="btn btn-default" target="_blank">リムられ通知復活</a> と書いたDMを @ego_tter に送ってください。これで手続きは完了です。'
+        body_html: 'リムられ通知を復活させるには <a href="%{url}" class="btn btn-outline-primary" target="_blank">リムられ通知復活</a> と書いたDMを @ego_tter に送ってください。これで手続きは完了です。'
         url: 'https://twitter.com/messages/%{uid}-187385226?text=リムられ通知復活'
         ok: "DM作成ページを開く"
     header:
       sign_in: 'ログイン'
+      search_by_twitter_id: "@TwitterID で検索"
+      pricing: 'プラン'
     footer:
       sign_in: "ログイン"
       sign_out: "ログアウト"
@@ -106,9 +108,9 @@ ja:
       analyzing: "%{user} のデータを分析中"
       finished: "検索が完了しました。ページを移動します"
       retry_search_by: "@%{user} で再度検索"
-      something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
+      something_wrong_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-outline-primary">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
       retry_timeout_html:
-        アクセスが多すぎるため検索がタイムアウトしました。<a class="btn btn-default" href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。<br>
+        アクセスが多すぎるため検索がタイムアウトしました。<a class="btn btn-primary" href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。<br>
         <br>
         1. これは何？<br>
         検索数が多いときに起きる一時的なエラーです。少し待てば回復します。<br>
@@ -124,7 +126,8 @@ ja:
       page_title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
       page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       right_side:
-        title: 'スマホでかんたんフォロー確認'
+        header: 'えごったー'
+        subheader: 'スマホでかんたんフォロー確認'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
       text001_html: 'フォロワーが減った？ 誰？？'
       text002_html: '<span class="egotter-pink">フォロワーが減った</span>り<span class="egotter-pink">ブロックされた</span>時に相手がすぐに分かります。'
@@ -147,7 +150,7 @@ ja:
       page_title: "@%{user}さん えごったーへようこそ！"
       meta_description: "@%{user}さん えごったーへようこそ！"
       start_by: '@%{user} で始める'
-      dm_setting: 'DMの設定を確認する（公式ページ）'
+      dm_setting: 'DMの設定を確認する'
       ask: '@ego_tter に質問する'
       message1_html: 'えごったーは、ツイッターのデータを分析することで、<span class="egotter-pink">仲良しランキング</span>、<span class="egotter-pink">リムられ（フォロー解除）</span>、入っているクラスタなどを分析していきます。'
       message2: 'それでは、さっそく初めてみましょう。'
@@ -168,10 +171,12 @@ ja:
       view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
       view_more: '続きを見る'
       view_more_hacked_with_num_html: '乗っ取りツイートを確認する <span class="badge">%{num}</span>'
-      under_calculation_with_details_html: 'フォロー・フォロワーの分析中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
-      empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
-      not_hacked_with_details_html: "乗っ取りツイートは見付かりませんでした。<br>今後も安心してツイッターをご利用ください。"
-      hacked_with_details_html: '怪しいツイートが見付かりました。<a href="https://twitter.com/settings/applications" target="_blank" rel="nofollow" class="btn btn-default btn-sm">連携アプリ一覧 (公式)</a> から、怪しいアプリを削除してください。'
+      empty_result_with_details_html: |
+        結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br>
+        <br>
+        ・検索される回数が多いユーザーほど、優先的に分析されます<br>
+        ・ログインしていると検索が早くなります<br>
+        ・ログインしていると表示される項目が増えます
       sign_in_to_protect_html: '<a href="%{url}">ログイン</a> してえごったーを利用すると、乗っ取りツイートのチェックを行います。'
       about_this_page: "%{user} の分析結果について"
       this_page_is_html: "このページでは、%{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。<br>リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
@@ -304,10 +309,10 @@ ja:
     search_modal:
       title: "検索履歴"
       remaining_count_is_html: '残りの検索回数は %{count} 回です。'
-      sign_in_html: '<a href="%{url}" class="btn btn-default btn-sm">ログインして増やす</a>'
+      sign_in_html: '<a href="%{url}" class="btn btn-primary btn-sm">ログインして増やす</a>'
       tweet: 'ツイートして増やす'
       purchase: '購入して増やす'
-      pricing: '※料金プランはこちら'
+      pricing: '料金プラン'
   notifications:
     title: "通知"
     index:
@@ -315,56 +320,6 @@ ja:
   settings:
     title: "設定"
     index:
-      data:
-        title: 'データ設定'
-        updated_at: '最終更新'
-        no_records: 'データはこれから更新されます'
-        history: '履歴'
-        note: '通知が届かない方はお試しください'
-        requested: 'リクエスト済み'
-        reset_cache:
-          title: 'キャッシュのリセット'
-          do: 'リセットする'
-          note: '表示データ（リムられなど）がおかしい方はお試しください'
-          modal:
-            warning_html: >
-              キャッシュ（表示の高速化のためのデータ）をリセットします。<br>
-              本当にリセットしますか？<br>
-              <br>
-              <b>※保存されたデータは残ります</b>
-            ok: 'リセットします'
-            cancel: 'キャンセルする'
-        delete_data:
-          title: 'データの削除'
-          do: 'データを削除する'
-          note: '非常に危険です。この操作は取り消しできません'
-          history: '履歴'
-          modal:
-            warning_html: >
-              データがおかしくなっている場合のみ、@%{screen_name} のえごったーのデータを削除します。<br>
-              本当に削除しますか？<br>
-              <br>
-              <b>※この操作は取り消しできません</b><br>
-              <b>※リセット完了まで少し時間がかかります</b>
-            ok: '削除します'
-            cancel: 'キャンセルする'
-        delete_tweets:
-          title: "ツイート削除"
-          move_to: 'に移動しました'
-      order:
-        order_histories: "購入履歴"
-        created_at: "（%{date}）"
-        not_canceled: '有効期限 キャンセルするまで'
-        canceled_at: "（%{date}）"
-        price: "%{price}円/月（税別）"
-        search_count: "検索回数 %{count}回/日"
-        follow_requests_count: "フォロー %{count}回/日"
-        unfollow_requests_count: "フォロー解除 %{count}回/日"
-        cancel: 'キャンセルする'
-        canceled: 'キャンセル済み'
-        cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
-        has_not_purchased: "まだ購入していません"
-        see_plans: '料金プランを見る'
       notifications:
         title: "通知設定"
       report_interval:
@@ -377,6 +332,54 @@ ja:
         259200: "3日毎"
         604800: "1週間毎"
       trial_title: "お試し機能 (β)"
+    order:
+      order_histories: "購入履歴"
+      created_at: "（%{date}）"
+      not_canceled: '有効期限 キャンセルするまで'
+      canceled_at: "（%{date}）"
+      price: "%{price}円/月（税別）"
+      search_count: "検索回数 %{count}回/日"
+      follow_requests_count: "フォロー %{count}回/日"
+      unfollow_requests_count: "フォロー解除 %{count}回/日"
+      cancel: 'キャンセルする'
+      canceled: 'キャンセル済み'
+      cancel_confirmation: '本当に「%{name}」をキャンセルしますか？'
+      has_not_purchased: "まだ購入していません"
+      see_plans: '料金プランを見る'
+    data:
+      title: 'データ設定'
+      updated_at: '最終更新'
+      no_records: 'データはこれから更新されます'
+      history: '履歴'
+      note: '通知が届かない方はお試しください'
+      requested: 'リクエスト済み'
+      reset_cache:
+        title: 'キャッシュのリセット'
+        do: 'リセットする'
+        note: '表示データ（リムられなど）がおかしい方はお試しください'
+        modal:
+          warning_html: >
+            キャッシュ（表示の高速化のためのデータ）をリセットします。<br>
+            本当にリセットしますか？<br>
+            <br>
+            <b>※保存されたデータは残ります</b>
+          ok: 'リセットします'
+      delete_data:
+        title: 'データの削除'
+        do: 'データを削除する'
+        note: '非常に危険です。この操作は取り消しできません'
+        history: '履歴'
+        modal:
+          warning_html: >
+            データがおかしくなっている場合のみ、@%{screen_name} のえごったーのデータを削除します。<br>
+            本当に削除しますか？<br>
+            <br>
+            <b>※この操作は取り消しできません</b><br>
+            <b>※リセット完了まで少し時間がかかります</b>
+          ok: '削除します'
+      delete_tweets:
+        title: "ツイート削除"
+        move_to: 'に移動しました'
     prompt_report:
       title: 'リムられ通知設定'
       not_coming:
@@ -484,28 +487,30 @@ ja:
       followers_count: 'フォロワー数'
     tgl_btn:
       updated: "更新しました"
-      desc:
-        email_html:
-          <b>リムられ通知（メール）</b><br>
-          フォローを外されたことを<span class="egotter-pink">メール</span>でお知らせ。
-        dm_html:
-          <b>リムられ通知（DM）</b><br>
-          フォローを外されたことを<span class="egotter-pink">DM</span>でお知らせ。
-        news_html:
-          <b>新機能のお知らせ（DM）</b><br>
-          配信は不定期です。
-        search_html:
-          <b>検索通知（DM）</b><br>
-          えごったーで誰かに検索されたら通知します。配信はなる早です。
-        report_if_changed_html: 'リムられに変化があったときのみ通知を送信する <span class="egotter-pink">新機能！</span>'
-        push_notification_html: 'リムられ通知をプッシュ通知で受け取る <span class="egotter-pink">新機能！</span>'
-      note:
-        email_html: 'メール通知は現在停止中です'
-        dm_html: ''
-        news_html: ''
-        search_html: ''
-        report_if_changed_html: 'この設定がオンになっていると、リムられに変化があったときのみ、リムられ通知が届くようになります'
-        push_notification_html: |
+      email:
+        title: 'リムられ通知（メール）'
+        desc_html: 'フォローを外されたことを<span class="egotter-pink">メール</span>でお知らせ。'
+        note_html: 'メール通知は現在停止中です'
+      dm:
+        title: 'リムられ通知（DM）'
+        desc_html: 'フォローを外されたことを<span class="egotter-pink">DM</span>でお知らせ。'
+        note_html: ''
+      news:
+        title: '新機能のお知らせ（DM）'
+        desc_html: '配信は不定期です。'
+        note_html: ''
+      search:
+        title: '検索通知（DM）'
+        desc_html: 'えごったーで誰かに検索されたら通知します。配信はなる早です。'
+        note_html: ''
+      report_if_changed:
+        title: 'リムられに変化があったときのみ通知を送信する'
+        desc_html: '<span class="egotter-pink">新機能！</span>'
+        note_html: 'この設定がオンになっていると、リムられに変化があったときのみ、リムられ通知が届くようになります'
+      push_notification:
+        title: 'リムられ通知をプッシュ通知で受け取る'
+        desc_html: '<span class="egotter-pink">新機能！</span>'
+        note_html: |
           この設定がオンになっていると、リムられ通知がスマホに直接届くようになります
           <a href="https://play.google.com/store/apps/details?id=com.egotter&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1" target="_blank">
             <img src="https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png" width="100px">
@@ -532,14 +537,8 @@ ja:
         basic_html: '〜%{count}'
       remove_notification:
         key: "リム通知"
-        free_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
-        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
-        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
       private_account:
         key: "鍵アカの検索"
-        free_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
-        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
-        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
       search_count:
         key: "検索回数"
         free: "%{count1}〜%{count2}回/日"
@@ -548,19 +547,10 @@ ja:
         pro: "10回"
       ad:
         key: '広告の非表示'
-        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
-        basic_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
-        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
       private:
         key: "自分のデータを非公開"
-        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
-        basic_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
-        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
       delete:
         key: "自分のデータを削除"
-        free_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
-        basic_html: '<span class="glyphicon glyphicon-minus-sign"></span>'
-        pro_html: '<span class="glyphicon glyphicon-ok-sign"></span>'
       pricing:
         key: "価格"
         free: "無料（ログインのみ）"
@@ -597,26 +587,34 @@ ja:
       enterprice_inquiry_by_email: "メールで問い合わせ"
       enterprice_inquiry_by_dm: "DMで問い合わせ"
       enterprice_inquiry_by_dm_note_html: '※DMですと見逃すことがあります。可能な限り、<span class="egotter-pink">メール</span>をご利用ください'
-      ask_me_html: 'ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで<br class="visible-xs-block">お気軽にご連絡ください。'
+      ask_me_html: |
+        ご不明な点は <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで
+        お気軽にご連絡ください。
   orders:
     create:
-      success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
-      failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
     destroy:
-      success_html: 'ベーシックプランを解約しました。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
-      already_canceled_html: '指定されたプランは既に解約済みです。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
-      failed_html: '解約に失敗しました。お手数ですが再度お試しください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      success_html: 'ベーシックプランを解約しました。これまでの購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      already_canceled_html: '指定されたプランは既に解約済みです。これまでの購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      failed_html: '解約に失敗しました。お手数ですが再度お試しください。これまでの購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
     success:
-      success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
-      failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      success_html: 'ベーシックプランの購入ありがとうございます。購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
+      failed_html: '購入に失敗しました。メールアドレスやカード番号に間違いがないかご確認ください。これまでの購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
     cancel:
-      canceled_html: 'えごったーは、350万回以上利用されている安心の実績があります。何か気になることがありますか？ 分からないこと、気になることは、@ego_tter にいつでもご質問ください。<a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">@ego_tter に質問する</a>'
+      canceled_html: |
+        えごったーは、350万回以上利用されている安心の実績があります。何か気になることがありますか？ 分からないこと、気になることは、@ego_tter にいつでもご質問ください。
+        <a href="https://twitter.com/ego_tter" class="btn btn-outline-primary" target="_blank" rel="nofollow">@ego_tter に質問する</a>
   login:
     goodbye:
       signed_out: "既にログアウト済みです。"
       no_tweets: "えごったーは、ユーザーの許可なくツイートすることはありませんのでご安心ください(^ ^)"
       advantage_html: "ログインしたままであれば、<br><br>・自動更新されます<br>・データの検索が早くなります"
       disadvantage_html: "ログアウトすると、<br><br>・検索が遅くなります<br>・鍵垢の検索はできなくなります"
+      sign_out: 'ログアウト'
+      button:
+        sign_out: 'ログアウトする'
+        top_page: 'トップページに戻る'
       realy_sign_out: "それでも本当にログアウトしますか？"
       return_to_top: "トップページに戻る"
     sign_in:
@@ -625,56 +623,58 @@ ja:
       proceccing: 'サインアップ中'
       success_html: |
         ツイッターログインしました。リム通知は【%{status}】になっています。
-        この設定は <a class="btn btn-default btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
+        この設定は <a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
         <br>
         1. これは何？<br>
         えごったーに初めてログインしました。一緒に、リム通知の初期設定が完了しました。<br>
         <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">続きを見る</a>
         <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-        <br>
-        2. えごったーって何？<br>
-        これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。
-        仲良しランキング、片思いチェック、リムられチェックなどの機能があります。<br>
-        <br>
-        3. リム通知って何？<br>
-        誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。えごったーにログインしていれば設定は完了しています。<br>
-        <br>
-        4. 次に何をすればよい？<br>
-        分析機能はいつでも使えます。リム通知は次の更新のタイミングで自動で届きます。<br>
-        <br>
-        5. リム通知が届かない？<br>
-        えごったーに初めてログインしてから数分以内に、@ego_tter からDMが届きましたか？ もし届いていないなら、DMが届くように設定してください。
-        リム通知はDMで届くため、<span class="egotter-pink">リム通知が必要であればこの設定は必須</span>です。<br>
-        <br>
-        6. 公式アカウントはある？<br>
-        @ego_tter が公式アカウントです。分からないことや気になることは、<a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
+          <br>
+          2. えごったーって何？<br>
+          これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。
+          仲良しランキング、片思いチェック、リムられチェックなどの機能があります。<br>
+          <br>
+          3. リム通知って何？<br>
+          誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。えごったーにログインしていれば設定は完了しています。<br>
+          <br>
+          4. 次に何をすればよい？<br>
+          分析機能はいつでも使えます。リム通知は次の更新のタイミングで自動で届きます。<br>
+          <br>
+          5. リム通知が届かない？<br>
+          えごったーに初めてログインしてから数分以内に、@ego_tter からDMが届きましたか？ もし届いていないなら、DMが届くように設定してください。
+          リム通知はDMで届くため、<span class="egotter-pink">リム通知が必要であればこの設定は必須</span>です。<br>
+          <br>
+          6. 公式アカウントはある？<br>
+          @ego_tter が公式アカウントです。分からないことや気になることは、<a href="https://twitter.com/ego_tter" class="btn btn-outline-primary" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
+        </div>
     after_sign_in:
       proceccing: 'ログイン中'
       success_html: |
         ツイッターログインしました。リム通知は【%{status}】になっています。
-        この設定は <a class="btn btn-default btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
+        この設定は <a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
         <br>
         1. これは何？<br>
         えごったーにログインしました。リム通知は以前の設定を引き継いでいます。<br>
         <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">続きを見る</a>
         <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-        <br>
-        2. えごったーって何？<br>
-        これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。
-        仲良しランキング、片思いチェック、リムられチェックなどの機能があります。<br>
-        <br>
-        3. リム通知って何？<br>
-        誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。えごったーにログインしていれば設定は完了しています。<br>
-        <br>
-        4. 次に何をすればよい？<br>
-        分析機能はいつでも使えます。リム通知は次の更新のタイミングで自動で届きます。<br>
-        <br>
-        5. リム通知が届かない？<br>
-        えごったーに初めてログインしてから数分以内に、@ego_tter からDMが届きましたか？ もし届いていないなら、DMが届くように設定してください。
-        リム通知はDMで届くため、<span class="egotter-pink">リム通知が必要であればこの設定は必須</span>です。<br>
-        <br>
-        6. 公式アカウントはある？<br>
-        @ego_tter が公式アカウントです。分からないことや気になることは、<a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
+          <br>
+          2. えごったーって何？<br>
+          これまでに<span class="egotter-pink">350万回</span>以上利用されたツイッター分析アプリです。
+          仲良しランキング、片思いチェック、リムられチェックなどの機能があります。<br>
+          <br>
+          3. リム通知って何？<br>
+          誰かにフォローを外されたときに<span class="egotter-pink">DMで自動で通知がくる機能</span>です。えごったーにログインしていれば設定は完了しています。<br>
+          <br>
+          4. 次に何をすればよい？<br>
+          分析機能はいつでも使えます。リム通知は次の更新のタイミングで自動で届きます。<br>
+          <br>
+          5. リム通知が届かない？<br>
+          えごったーに初めてログインしてから数分以内に、@ego_tter からDMが届きましたか？ もし届いていないなら、DMが届くように設定してください。
+          リム通知はDMで届くため、<span class="egotter-pink">リム通知が必要であればこの設定は必須</span>です。<br>
+          <br>
+          6. 公式アカウントはある？<br>
+          @ego_tter が公式アカウントです。分からないことや気になることは、<a href="https://twitter.com/ego_tter" class="btn btn-outline-primary" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
+        </div>
   twitter:
     user:
       search: "検索する"
@@ -688,14 +688,15 @@ ja:
         refollow: "再フォロー"
         refollowed: "再フォロワー"
     follow_button:
-      do_follow: "フォローする"
+      do_follow: "フォロー"
       following: "フォロー中"
     create_follow_modal:
+      title: 'フォローする'
       message_html: '@<span class="screen-name"></span> さんをフォローしますか？ 数が多い場合は凍結されないようゆっくりフォローしていきます。'
-      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-default" target="_blank">設定 &gt; フォロー回数 &gt; 履歴</a> から見ることができます。'
+      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">設定 &gt; フォロー回数 &gt; 履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
-      ok: "はい"
-      cancel: "いいえ"
+      'yes': 'フォローします'
+      'no': 'キャンセル'
     warning_follow_modal:
       message_html:
         1日にフォローできる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
@@ -708,11 +709,14 @@ ja:
       purchased: '購入済み'
       login: 'ログインする'
     create_unfollow_modal:
+      title: 'フォローを解除する'
       message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？ 数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
-      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-default" target="_blank">設定 &gt; アンフォロー回数 &gt; 履歴</a> から見ることができます。'
+      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">設定 &gt; アンフォロー回数 &gt; 履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       ok: "はい"
       cancel: "いいえ"
+      'yes': 'フォローを解除します'
+      'no': 'キャンセル'
     warning_unfollow_modal:
       message_html:
         1日にフォロー解除できる上限を超えました。ベーシックプランを購入して制限を解除しますか？<br>
@@ -805,7 +809,8 @@ ja:
       description: "保存ユーザー数4,800万人突破！ 無料でスマホから片思いチェック！ 自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       short_description: "自分からはフォローしているけどフォローされていないアカウント、自分からはフォローしていないけどフォローされているアカウントをさくっと見付けることができます。"
       right_side:
-        title: 'スマホでさくっと片思いチェック'
+        header: '片思いチェック'
+        subheader: 'フォロー整理が簡単にできる'
         lead_html: '片思い・片思われチェックの決定版。<br>スマホから使える無料の片思いチェックアプリです。'
       lead_002_html: "保存ユーザー数4,800万人突破！"
       lead_004: '検索されたユーザーの片思い、片思われ、両思いは、えごったーが分析したデータを元に集計しています。<br>もし、片思い、片思われ、両思いのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
@@ -876,7 +881,8 @@ ja:
       first_title_sub_text: 'スマホでサクッと'
       meta_description: "保存ユーザー数4,800万人突破！ 無料で使える！ スマホ対応OK！ 一番使われているリムられチェッカーです。ツイッターであなたをリムった人を無料で確認できます。自動リムられ通知もあります。データは登録してからたまるので、今すぐ登録しましょう。"
       right_side:
-        title: 'スマホでサクッとリムられチェック'
+        header: 'リムられチェック'
+        subheader: '外れたフォロワーをすぐに確認'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
       redirection_modal:
         title: '@%{user} でログイン中です'
@@ -1067,7 +1073,8 @@ ja:
       lead_003: "最近いない人をらくらく検索。<br>スマホから使える無料の分析アプリです。"
       lead_004: '検索されたユーザーの最近いないフォロー、最近いないフォロワー、最近いない両思いは、えごったーが分析したデータを元に集計しています。<br>もし、最近いないフォロー、最近いないフォロワー、最近いない相互フォローのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       right_side:
-        title: 'スマホでサクッとフォロー整理'
+        header: '最近いない人チェック'
+        subheader: 'スマホでサクッとフォロー整理'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
       redirection_modal:
         title: '@%{user} でログイン中です'
@@ -1146,7 +1153,8 @@ ja:
       lead_003: "ツイッター分析の決定版。<br>スマホから使える無料のフォローチェックアプリです。"
       lead_004: '検索されたユーザーのフォロー、フォロワーは、えごったーが分析したデータを元に集計しています。<br>もし、フォロー、フォロワーのいずれかに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       right_side:
-        title: 'スマホでサクッとフォロー整理'
+        header: 'フォローチェック'
+        subheader: 'スマホでサクッとフォロー整理'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
       redirection_modal:
         title: '@%{user} でログイン中です'
@@ -1250,7 +1258,8 @@ ja:
       lead_003_html: "クラスタ判定ならえごったー。<br>スマホから使える無料のクラスタ判定アプリです。"
       lead_004_html: '検索されたユーザーのクラスタは、えごったーが分析したデータを元に集計しています。<br>もし、クラスタに間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       right_side:
-        title: 'スマホでサクッとクラスタ分析'
+        header: 'クラスタ分析'
+        subheader: 'クラスタ分析が簡単できる'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
       redirection_modal:
         title: '@%{user} でログイン中です'
@@ -1290,7 +1299,7 @@ ja:
     in_background:
       latest: '表示されているデータは最新です。'
       failed: 'データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。'
-      updating: '%{user} のデータを更新中'
+      updating: '@%{user} のデータを更新中'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'
       request_to_update: '更新をリクエストする'
@@ -1298,25 +1307,17 @@ ja:
       displayed_data_is_html: '表示されているデータは <b>%{time}</b> に更新されました。次の更新は「フォローまたはフォロワーに変化があったとき」です。'
       go: '%{time}後'
       soon: 'もうすぐ'
-      too_many_friends: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
-      automated_update_stopped_html: |
-        @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。
-        <a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">フォローする</a>
-        <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
+      too_many_friends: '@%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
       automated_update_stopped_and_signing_in_html: |
-        @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。
-        <a href="%{url}" class="btn btn-default">フォローする</a>
-        <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
+        @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。<br>
+        <a href="%{url}" class="btn btn-primary">フォローする</a>
+        <a href="#" class="btn btn-outline-primary btn-just-followed">フォローしました</a>
       automated_update_restarted_html: '@ego_tter のフォローありがとうございます。自動更新は再開されました。'
-      automated_update_not_restarted_html: |
-        まだ @ego_tter をフォローしていないようです。自動更新は停止したままです。
-        <a href="https://twitter.com/ego_tter" class="btn btn-default" target="_blank" rel="nofollow">フォローする</a>
-        <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
       automated_update_not_restarted_and_signing_in_html: |
         まだ @ego_tter をフォローしていないようです。自動更新は停止したままです。
-        <a href="%{url}" class="btn btn-default">フォローする</a>
-        <a href="#" class="btn btn-default btn-just-followed">フォローしました</a>
-      invalid_token: '%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
+        <a href="%{url}" class="btn btn-primary">フォローする</a>
+        <a href="#" class="btn btn-outline-primary btn-just-followed">フォローしました</a>
+      invalid_token: '@%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
       accurate_counting: 'リムられやブロられは、ログインすると結果がより正確になります。'
       via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
       lets_sign_in: 'ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます！'
@@ -1346,10 +1347,10 @@ ja:
         アカウントの持ち主であれば、削除から一定期間内であれば復活させることができます。<br>
         <br>
         3. えごったーでの表示とずれている？<br>
-        削除した直後だったり、削除と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、ツイッターで見ると確実です。
+        削除した直後だったり、削除と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、<span class="egotter-pink">ツイッターで探す</span>と確実です。
         </div>
     not_persisted:
-      see_on_twitter: '@%{user} をツイッターで見る'
+      see_on_twitter: '@%{user} をツイッターで探す'
     latest:
       <<: *not_found_show
   forbidden:
@@ -1377,23 +1378,35 @@ ja:
         凍結された直後だったり、凍結と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、ツイッターで見ると確実です。
         </div>
     not_persisted:
-      see_on_twitter: '@%{user} をツイッターで見る'
+      see_on_twitter: '@%{user} をツイッターで探す'
     latest:
       <<: *forbidden_show
   blocked:
-    show:
+    show: &blocked_show
       crumb_title: "@%{user} のプロフィール（ブロック）"
       page_title: "@%{user} のプロフィール（ブロック）"
       meta_description: "@%{user} のプロフィール（ブロック）"
       request_to_update: '更新をリクエストする'
       see_on_twitter: '@%{user} をツイッターで見る'
+      come_back: '@%{user} はブロックを解除しました。'
+      displayed_data_is_html: '@%{user} からブロックされているため検索できません。'
+    not_persisted:
+      see_on_twitter: '@%{user} をツイッターで探す'
+    latest:
+      <<: *blocked_show
   protected:
-    show:
+    show: &protected_show
       crumb_title: "@%{user} のプロフィール（鍵垢）"
       page_title: "@%{user} のプロフィール（鍵垢）"
       meta_description: "@%{user} のプロフィール（鍵垢）"
       request_to_update: '更新をリクエストする'
       see_on_twitter: '@%{user} をツイッターで見る'
+      come_back: '@%{user} は鍵を外しました。'
+      displayed_data_is_html: '@%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。'
+    not_persisted:
+      see_on_twitter: '@%{user} をツイッターで探す'
+    latest:
+      <<: *protected_show
   tokimeki_unfollow:
     new:
       title_html: 'ときめきアンフォロー✨ by えごったー'
@@ -1401,6 +1414,13 @@ ja:
       simple_title: 'ときめきアンフォロー✨'
       footer_title: 'ときめきアンフォロー✨'
       description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
+      right_side:
+        header: 'ときめきアンフォロー'
+        subheader: 'あなたは今のタイムラインにときめきますか？'
+        lead_html: 'ときめきアンフォローでタイムラインを整理しましょう。<br><span class="egotter-pink">350万人</span>以上が利用するえごったーに新機能が登場！'
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: 'ときめきアンフォローを続きから再開しますか？'
       text001_html: 'あなたは今のタイムラインにときめきますか？'
       text002_html: '最初は良いと思ってフォローしたけど、今はときめかない・・・そんな時は、相手に感謝しつつアンフォローしましょう。'
       text003_html: '今はもうときめかなくなったフォローを解除する。それは、新たな門出ともいえる儀式なのです。ぜひその門出を祝福してあげてください。'
@@ -1411,7 +1431,7 @@ ja:
       plain_title: 'ときめきアンフォロー✨ - あなたのタイムラインにときめきをもう一度'
       simple_title: 'ときめきアンフォロー✨'
       description: "あなたは今のタイムラインにときめいていますか？ ときめきアンフォローでタイムラインを整理しましょう。350万人以上が利用するえごったーに新機能が登場！"
-      text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんに<br class="visible-xs-block">心がときめいていますか？✨'
+      text001_html: 'あなたは今も、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんに心がときめいていますか？✨'
       next_is_html: '次は%{number}人目、<a href="https://twitter.com/%{screen_name}" target="_blank" rel="nofollow">@%{screen_name}</a> さんです。🙂'
       how_to_continue_html: '途中から再開する場合は、再度同じURL <a href="%{url}" class="btn btn-primary">ときめきアンフォロー</a> にアクセスしてください。'
       unfollow: 'フォローを外す'
@@ -1424,18 +1444,27 @@ ja:
         next: "次に進む"
       finish: 'お片付けはこれで終わりです！ お疲れ様でした。'
   delete_tweets:
-    new:
+    new: &delete_tweets_new
       title_html: 'ツイートクリーナー🧹 by えごったー'
       page_title: 'ツイートクリーナー🧹 - ワンクリックでツイートを一括削除'
       simple_title: 'ツイートクリーナー🧹'
       footer_title: 'ツイートを一括削除'
       meta_description: '黒歴史よさようなら！ ワンクリックでツイートを一括削除。350万回以上利用されたえごったーに新機能が登場！'
+      right_side:
+        header: 'ツイートクリーナー'
+        subheader: 'ワンクリックでツイートを一括削除'
+        lead_html: 'ワンクリックでツイートを一括削除。<br><span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！'
       text001_html: >
         ワンクリックでツイートを一括削除<br>
         <span class="egotter-pink">350万回</span>以上利用されたえごったーに新機能が登場！
+      redirection_modal:
+        title: '@%{user} でログイン中です'
+        body: '@%{user} のツイート削除マイページへ移動しますか？'
+    show:
+      <<: *delete_tweets_new
       delete_tweets: 'ツイートを一括削除する'
       see_progress: 'ツイート削除ステータスを見る'
-      delete_tweets_status:
+      status:
         title: 'ツイート削除ステータス'
         description: '@%{user} のツイート削除状況です。'
       requested: '削除リクエスト済み'
@@ -1444,6 +1473,7 @@ ja:
         warning1_html: "@%{screen_name} のツイートをすべて削除します。本当に削除しますか？"
         warning2_html: "<b>※この操作は取り消すことができません。</b>"
         warning3_html: "<b>※削除できるのは最大3200件までです。</b>"
+        dm_after_finishing: "削除の完了後に自分へDMする"
         tweet_after_finishing: "削除の完了後にツイートする"
         ok: "はい、削除します"
         cancel: "いいえ"
@@ -1454,10 +1484,10 @@ ja:
       error_message: 'ツイートの削除中にエラーが起きました。大抵のエラーは一時的なものです。お手数ですが、再度お試しください。#egotter %{url}'
     log:
       errors:
-        default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
-        Unauthorized_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
-        InvalidToken_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
-        Unknown_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-default btn-sm">ログインする</a>'
+        default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
+        Unauthorized_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
+        InvalidToken_html: '@%{user} のTwitterログインに失敗しました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
+        Unknown_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
         TweetsNotFound_html: '完了しました。削除対象のツイートは 0 です。'
         Continue_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
         TooManyRequests_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
@@ -1522,13 +1552,12 @@ ja:
       title5_html: '公式アカウント'
       title6_html: '<span class="egotter-pink">安全に</span>リムられをチェック'
       title7_html: '公式アカウント'
-      text1_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、<br>安全にツイートを削除することができます。'
+      text1_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にツイートを削除することができます。'
       text2_html: '可能な限り完全にツイートを削除します。'
       text3_html: 'どこまで進んでいるのかを簡単に確認できます。'
       text4_html: 'フォローを外されたときにDMが届きます。'
       text5_html: |
-        ツイッターの一括削除にはえごったーを利用しています。<br>
-        もし、ツイートの一括削除ができない場合は、<br>
+        ツイッターの一括削除にはえごったーを利用しています。もし、ツイートの一括削除ができない場合は、
         <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
       text6_html: '<span class="egotter-pink">350万回</span>以上利用されたえごったーなら、安全にリムられをチェックできます。'
       text7_html: |
@@ -1662,21 +1691,35 @@ ja:
       via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
       sign_in: 'ログインする'
       follow: 'フォローする'
-      let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
+      let_me_know_html: |
+        %{user} の%{current}は、えごったーが分析したデータを元に集計しています。
+        もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       share_me: "えごったーをシェアする"
   application:
     twitter_user_not_found: "レコードが見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：TUNF404"
-    searched_uid_not_found: "レコードの作成を開始できませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：SUNF404"
+    searched_uid_not_found: "直近の検索履歴が見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：SUNF404"
     routing_not_found: "お探しのページが見付かりませんでした。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error: "一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。エラー：ISE500"
-    internal_server_error_with_recovery_html: '一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a> エラー：ISEWR500'
+    internal_server_error_with_recovery_html: |
+      一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。
+      <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a> エラー：ISEWR500
     request_timeout_html: '一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。'
-    request_timeout_with_recovery_html: '一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。<a href="%{url}" class="btn btn-default btn-sm">@%{user} で検索</a>'
+    request_timeout_with_recovery_html: |
+      一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。
+      <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a>
     invalid_token:
-      session_expired_html: '一定時間操作がなかったため、セッションの有効期限が切れました。 <a href="%{url}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{url}">ログイン</a> してください。'
-      session_expired_and_recover_html: '一定時間操作がなかったため、@%{user} の検索に失敗しました。 再度結果を見るにはこちら → <a href="%{url1}" class="btn btn-default btn-sm">@%{user} の結果を見る</a> 表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-default btn-sm">ログインして @%{user} の結果を見る</a>'
-      ready_to_search_html: 'データの準備が完了しました。結果を見るにはこちら → <a href="%{url1}" class="btn btn-default btn-sm">@%{user} の結果を見る</a> 表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-default btn-sm">ログインして @%{user} の結果を見る</a>'
+      session_expired_html: |
+        一定時間操作がなかったため、セッションの有効期限が切れました。
+        <a href="%{url}">ログイン</a> していた場合は、お手数ですがもう一度 <a href="%{url}">ログイン</a> してください。
+      session_expired_and_recover_html: |
+        一定時間操作がなかったため、@%{user} の検索に失敗しました。
+        再度結果を見るにはこちら → <a href="%{url1}" class="btn btn-outline-primary btn-sm">@%{user} の結果を見る</a>
+        表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-primary btn-sm">ログインして @%{user} の結果を見る</a>
+      ready_to_search_html: |
+        データの準備が完了しました。
+        結果を見るにはこちら → <a href="%{url1}" class="btn btn-outline-primary btn-sm">@%{user} の結果を見る</a>
+        表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-primary btn-sm">ログインして @%{user} の結果を見る</a>
   charts:
     friends: "フォロー"
     followers: "フォロワー"
@@ -1712,6 +1755,7 @@ ja:
     not_found: "指定された条件での検索結果は0件でした。"
     active: "アクティブのみ"
     inactive: "非アクティブのみ"
+    protected: "鍵付きのみ"
 
   dictionary:
     official_account: "公式アカウント"
@@ -1731,8 +1775,6 @@ ja:
     view_more_detail: "もっと詳しく"
     view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
     reload_this_page: "ページを更新する"
-    under_calculation_with_details_html: 'フォロー・フォロワーの分析中です。もう少々お待ちください。※ 数が多い場合は少し時間がかかります。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます'
-    empty_result_with_details_html: "結果は 0 件です。※ 初めて検索されてからデータがたまっていくため、最初は結果が少なく表示されます。<br><br>・検索される回数が多いユーザーほど、優先的に分析されます<br>・ログインしていると検索が早くなります<br>・ログインしていると表示される項目が増えます"
     tweet_result: "結果をつぶやく"
     do_tweet: "ツイートする"
     do_copy: "コピーする"
@@ -1742,70 +1784,70 @@ ja:
     between_from: "から"
     between_to: "まで"
   before_sign_in:
-    need_login_html: 'このページを見るためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
+    need_login_html: 'このページを見るためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_searches_html: |
-      現在のプランで検索できる上限に達しました。%{limit}回/日 <a class="btn btn-default" href="%{sign_in_url}">ログインして増やす</a><br>
+      現在のプランで検索できる上限に達しました。%{limit}回/日 <a class="btn btn-primary" href="%{sign_in_url}">ログインして増やす</a><br>
       <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-      <br>
-      1. これは何？<br>
-      えごったーで1日に検索できる回数の制限です。<br>
-      <br>
-      2. 次はいつ検索できるの？<br>
-      あと %{reset_in} ほど待てばまた検索できるようになります。<br>
-      <br>
-      3. 検索回数は増やせるの？<br>
-      ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
-      <br>
-      <a class="btn btn-default" href="%{sign_in_url}">ログイン</a>：%{sign_in_bonus}回/日<br>
-      <br>
-      <button class="btn btn-default" disabled>ツイートして増やす</button>：ツイート回数×%{sharing_bonus}回 ※先にログインが必要です<br>
-      <br>
-      <button class="btn btn-default" disabled>購入して増やす</button>：最大%{basic_plan}回/日 ※先にログインが必要です <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
-      <br>
-      4. マーケティングでご利用の方へ<br>
-      ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
+        <br>
+        1. これは何？<br>
+        えごったーで1日に検索できる回数の制限です。<br>
+        <br>
+        2. 次はいつ検索できるの？<br>
+        あと %{reset_in} ほど待てばまた検索できるようになります。<br>
+        <br>
+        3. 検索回数は増やせるの？<br>
+        ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
+        <br>
+        <a class="btn btn-primary" href="%{sign_in_url}">ログイン</a>：%{sign_in_bonus}回/日<br>
+        <br>
+        <button class="btn btn-outline-primary" disabled>ツイートして増やす</button>：ツイート回数×%{sharing_bonus}回 ※先にログインが必要です<br>
+        <br>
+        <button class="btn btn-outline-primary" disabled>購入して増やす</button>：最大%{basic_plan}回/日 ※先にログインが必要です <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
+        <br>
+        4. マーケティングでご利用の方へ<br>
+        ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-outline-primary">問い合わせページ</a> からお問い合わせください。
       </div>
-    too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
+    too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
-    profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。何度も起きる場合は<a class="btn btn-default btn-sm" href="%{url}">ログイン</a>してから検索してください。エラー：PNF'
+    profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。何度も起きる場合は<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a>してから検索してください。エラー：PNF'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     unauthorized_html: 'ツイッター連携に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
-    something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-default">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
+    something_wrong_with_error_html: 'アクセスが多すぎるため検索に失敗しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。（%{error}）'
     search_limitation_soft_limited_html: |
-      検索されたユーザー @%{user} はフォローとフォロワーが多いため、<a class="btn btn-default" href="%{url}">ログイン</a> した後のみ検索できます。<br>
+      検索されたユーザー @%{user} はフォローとフォロワーが多いため、<a class="btn btn-primary" href="%{url}">ログイン</a> した後のみ検索できます。<br>
       <a id="show-detailed-message" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message" style="display: none;">
-      <br>
-      1. これは何？<br>
-      検索されたユーザーのフォロー＋フォロワーが多く、さらに、検索したユーザーがログインしていない時に起きるエラーです。<br>
-      <br>
-      2. どうやったら検索できるの？<br>
-      <a class="btn btn-default" href="%{url}">ログイン</a> して検索すればOKです。<br>
-      <br>
-      3. ログインするとどうなるの？<br>
-      専用のツイッターAPIで検索するので、フォロー＋フォロワー数が多くても検索できるようになります。さらに、検索が早くなったり、リムられ通知が届くようになります。<br>
-      <br>
-      4. 公式アカウントはある？<br>
-      <a class="btn btn-default" href="https://twitter.com/ego_tter" rel="nofollow">@ego_tter</a> が公式アカウントです。分からないことがあれば何でもご質問ください。
+        <br>
+        1. これは何？<br>
+        検索されたユーザーのフォロー＋フォロワーが多く、さらに、検索したユーザーがログインしていない時に起きるエラーです。<br>
+        <br>
+        2. どうやったら検索できるの？<br>
+        <a class="btn btn-primary" href="%{url}">ログイン</a> して検索すればOKです。<br>
+        <br>
+        3. ログインするとどうなるの？<br>
+        専用のツイッターAPIで検索するので、フォロー＋フォロワー数が多くても検索できるようになります。さらに、検索が早くなったり、リムられ通知が届くようになります。<br>
+        <br>
+        4. 公式アカウントはある？<br>
+        <a class="btn btn-outline-primary" href="https://twitter.com/ego_tter" rel="nofollow">@ego_tter</a> が公式アカウントです。分からないことがあれば何でもご質問ください。
       </div>
     ajax:
-      need_login_html: 'この操作を行うためには <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> が必要です。'
+      need_login_html: 'この操作を行うためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     back_from_twitter_html: >
       えごったーは <span class="egotter-pink">350万回</span> 以上利用されている安心のサービスです。<br>
       <br>
       <span class="egotter-pink">ログインすることでデータが貯まります</span>。<br>
       ログインして使い始めよう。<br>
       <br>
-      <a class="btn btn-info btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-default btn-sm" href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">公式アカウントに質問</a>
+      <a class="btn btn-primary btn-sm" href="%{url}">ログインする</a> または <a class="btn btn-outline-primary btn-sm" href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">公式アカウントに質問</a>
     secret_mode_detected: |
-      えごったーはシークレットモードではご利用いただけません。<br>
+      えごったーは<span class="egotter-pink">シークレットモード</span>ではご利用いただけません。<br>
       <br>
       1. これは何？<br>
       シークレットモード（またはプライベートブラウジング）が検出されました。この状態ではえごったーをご利用いただくことができません。<br>
@@ -1816,7 +1858,7 @@ ja:
       3. それでも解決しない方へ<br>
       上記の方法を試してもこの画面が表示されるなら、それはバグかもしれません。<br>
       <br>
-      その場合は、大変お手数ですが、この画面のスクリーンショットを<a class="btn btn-default" href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送っていただけますと助かります。<br>
+      その場合は、大変お手数ですが、この画面のスクリーンショットを<a class="btn btn-outline-primary" href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送っていただけますと助かります。<br>
       <br>
       ブラウザ情報（スクショに入れてください）<br>
       %{os} %{os_version}<br>
@@ -1827,27 +1869,29 @@ ja:
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
   after_sign_in:
     too_many_searches_html: |
-      現在のプランで検索できる上限に達しました。%{limit}回/日 <a href="#" class="btn btn-default btn-checkout">購入して増やす</a> <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">ツイートして増やす</a><br>
+      現在のプランで検索できる上限に達しました。%{limit}回/日
+      <a href="#" class="btn btn-outline-primary btn-checkout">購入して増やす</a>
+      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary">ツイートして増やす</a><br>
       <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
-      <br>
-      1. これは何？<br>
-      えごったーで1日に検索できる回数の制限です。<br>
-      <br>
-      2. 次はいつ検索できるの？<br>
-      あと %{reset_in} ほど待てばまた検索できるようになります。<br>
-      <br>
-      3. 検索回数は増やせるの？<br>
-      ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
-      <br>
-      <button class="btn btn-default" disabled>ログイン済み</button>：%{sign_in_bonus}回/日<br>
-      <br>
-      <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-default">ツイートして増やす</a>：ツイート回数×%{sharing_bonus}回<br>
-      <br>
-      <a href="#" class="btn btn-default btn-checkout">購入して増やす</a>：最大%{basic_plan}回/日 <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
-      <br>
-      4. マーケティングでご利用の方へ<br>
-      ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-default">問い合わせページ</a> からお問い合わせください。
+        <br>
+        1. これは何？<br>
+        えごったーで1日に検索できる回数の制限です。<br>
+        <br>
+        2. 次はいつ検索できるの？<br>
+        あと %{reset_in} ほど待てばまた検索できるようになります。<br>
+        <br>
+        3. 検索回数は増やせるの？<br>
+        ログインや「えごったーのシェア」に応じて、下記のように増やせます。<br>
+        <br>
+        <button class="btn btn-outline-primary" disabled>ログイン済み</button>：%{sign_in_bonus}回/日<br>
+        <br>
+        <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary">ツイートして増やす</a>：ツイート回数×%{sharing_bonus}回<br>
+        <br>
+        <a href="#" class="btn btn-outline-primary btn-checkout">購入して増やす</a>：最大%{basic_plan}回/日 <a href="%{pricing_url}" target="_blank">※料金プランはこちら</a><br>
+        <br>
+        4. マーケティングでご利用の方へ<br>
+        ツイッターでの各種データ調査依頼については、<a href="%{support_url}" class="btn btn-outline-primary">問い合わせページ</a> からお問い合わせください。
       </div>
     too_many_requests_with_reset_in: >
       一時的なエラーが起きました。ツイッターAPIが回復するまで %{seconds}秒 ほど待ってください。<br>
@@ -1860,23 +1904,33 @@ ja:
       <br>
       3. どうして起きたの？<br>
       検索数が多かったり、検索したユーザーのフォロー＋フォロワー数が多いと起きます。
-    screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
-    profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。<a class="btn btn-default btn-sm" href="%{url}">ページを更新</a>してください。エラー：PNF'
-    not_found_html: '検索された %{user} が見付かりません。アカウントが削除されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
-    forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
-    forbidden_with_request_html: '検索された %{user} が見付かりません。アカウントが凍結されています。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
-    unauthorized_html: 'ツイッター連携の有効期限が切れています。一度 <a class="btn btn-default" href="%{sign_out}">ログアウト</a> し、再度 <a class="btn btn-default" href="%{sign_in}">ログイン</a> してから検索してみてください。'
+    screen_name_changed_html: |
+      検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。
+      <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
+    profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。<a class="btn btn-outline-primary btn-sm" href="%{url}">ページを更新</a>してください。エラー：PNF'
+    not_found_html: |
+      検索された %{user} が見付かりません。アカウントが削除されています。
+      <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
+    forbidden_html: |
+      検索された %{user} が見付かりません。アカウントが凍結されています。
+      <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
+    forbidden_with_request_html: |
+      検索された %{user} が見付かりません。アカウントが凍結されています。
+      <a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>
+    unauthorized_html: |
+      ツイッター連携の有効期限が切れています。
+      一度 <a class="btn btn-outline-primary" href="%{sign_out}">ログアウト</a> し、再度 <a class="btn btn-primary" href="%{sign_in}">ログイン</a> してから検索してみてください。
     suspended_html: '検索された %{user} が見付かりません。アカウントが凍結されています。'
     protected_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーであれば、<a href="%{url}">ログイン</a> すれば検索することができます。'
-    protected_with_request_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
-    blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-default btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
-    blocked_with_request_html: '%{user} からブロックされているため検索できません。<a href="%{url}" class="btn btn-default btn-sm">更新をリクエストする</a>'
-    has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-default btn-sm" href="%{url}">設定ページ</a> から確認できます'
+    protected_with_request_html: '%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。<a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>'
+    blocked_html: '%{user} からブロックされているため検索できません。<a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>'
+    blocked_with_request_html: '%{user} からブロックされているため検索できません。<a href="%{url}" class="btn btn-outline-primary btn-sm">更新をリクエストする</a>'
+    has_already_purchased_html: '既に購入済みです。購入履歴は <a class="btn btn-outline-primary btn-sm" href="%{url}">設定ページ</a> から確認できます'
     tokimeki_unfollow_too_many_friends: 'フォロー数が 10,000人 を超えている場合は、ときめきアンフォローをご利用いただくことができません。'
     signed_in_user_not_authorized_html: >
       @%{user} のツイッター連携（API）が無効になっています。<br>
       <br>
-      1. <a class="btn btn-default btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
+      1. <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> してください。ほとんどの場合これで解決します。<br>
       <br>
       2. [1]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>
@@ -1884,9 +1938,9 @@ ja:
     permission_level_not_enough_html: >
       %{user} のツイッター連携（DM）が無効になっています。<br>
       <br>
-      1. <a class="btn btn-default btn-sm" href="%{url}">強制ログイン</a> してください。ほとんどの場合これで解決します。<br>
+      1. <a class="btn btn-primary btn-sm" href="%{url}">強制ログイン</a> してください。ほとんどの場合これで解決します。<br>
       <br>
-      2. <a href="https://twitter.com/settings/applications/185425" class="btn btn-default btn-sm" target="_blank" rel="nofollow">連携アプリ</a> からえごったーを削除した後、ログインしてください。<br>
+      2. <a href="https://twitter.com/settings/applications/185425" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">連携アプリ</a> からえごったーを削除した後、ログインしてください。<br>
       <br>
       3. [1]と[2]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>

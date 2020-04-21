@@ -6,7 +6,9 @@ class LoginController < ApplicationController
   before_action :create_search_log
 
   def goodbye
-    redirect_to root_path(via: current_via('already_signed_out')), notice: t('.signed_out') unless user_signed_in?
+    unless user_signed_in?
+      redirect_to root_path(via: current_via('already_signed_out')), notice: t('.signed_out')
+    end
   end
 
   def sign_in

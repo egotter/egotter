@@ -1,0 +1,40 @@
+<h2 class="h4 text-center my-5"><i class="fas fa-shopping-cart"></i><%= t('.order_histories') %></h2>
+<div class="text-center my-5"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
+
+<% if current_user.orders.any? %>
+  <table id="orders-table" class="table">
+    <tbody>
+    <% current_user.orders.select { |o| !o.purchase_failed? }.each do |order| %>
+      <tr class="<%= 'text-muted' if order.canceled_at %>">
+        <td>
+          <div><%= order.name %></div>
+          <div><%= t('.created_at', date: l(order.created_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
+        </td>
+        <td>
+          <% unless order.canceled_at %>
+            <div><%= t('.not_canceled') %></div>
+          <% end %>
+          <div><%= t('.price', price: order.price) %></div>
+          <% unless order.canceled_at %>
+            <div><%= t('.search_count', count: order.search_count) %></div>
+            <div><%= t('.follow_requests_count', count: order.follow_requests_count) %></div>
+            <div><%= t('.unfollow_requests_count', count: order.unfollow_requests_count) %></div>
+          <% end %>
+        </td>
+        <% if order.canceled_at %>
+          <td>
+            <div><%= t('.canceled') %></div>
+            <div><%= t('.canceled_at', date: l(order.canceled_at.in_time_zone('Tokyo'), format: :order_short)) %></div>
+          </td>
+        <% else %>
+          <td>
+            <div><%= link_to t('.cancel'), order_path(id: order.id), method: :delete, data: {confirm: t('.cancel_confirmation', name: order.name)} %></div>
+          </td>
+        <% end %>
+      </tr>
+    <% end %>
+    </tbody>
+  </table>
+<% else %>
+  <div class="text-center my-5"><%= t('.has_not_purchased') %></div>
+<% end %>

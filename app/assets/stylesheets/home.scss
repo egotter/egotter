@@ -1,33 +1,14 @@
 $egotter-pink: #EA2184;
 
-.small-tips,
-.right-side {
-  h2 {
-    font-size: 22px;
-  }
+.thin-border {
+  border-top: 1px solid #eeeeee;
+  width: 100px;
+  height: 5px;
+  display: inline-block;
+}
 
-  .lead {
-    font-size: 14px;
-  }
-
-  .search-hint {
-    font-size: xx-small;
-  }
-
-  .text-notice {
-    color: $egotter-pink;
-  }
-
-  .thin-border {
-    border-top: 1px solid #eeeeee;
-    width: 100px;
-    height: 5px;
-    display: inline-block;
-  }
-
-  .or-text {
-    color: #999999;
-  }
+.or-text {
+  color: #999999;
 }
 
 .vertical-spacing {

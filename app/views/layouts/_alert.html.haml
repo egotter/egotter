@@ -1,0 +1,11 @@
+.container._debug_alert
+  - if alert
+    .alert.alert-warning.alert-dismissible.mt-3.mb-0{role: "alert"}
+      %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
+        %span{"aria-hidden" => "true"} &times;
+      = raw alert
+  - elsif notice
+    .alert.alert-info.alert-dismissible.mt-3.mb-0{role: "alert"}
+      %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
+        %span{"aria-hidden" => "true"} &times;
+      = raw notice

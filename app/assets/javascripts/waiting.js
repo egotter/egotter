@@ -37,9 +37,6 @@ Waiting.AlertBox = function (signedIn, timeoutMessage) {
   this._waitingMessage = $('#waiting-msg');
   this._finishedMessage = $('#finished-msg');
   this._errorMessage = $('#error-msg');
-  this._retryBtn = $('#retry-btn');
-  this._loginBtn = $('#login-btn');
-  this._supportBtn = $('#support-btn');
 
   this._signedIn = signedIn;
   this._errorMessage.html(timeoutMessage);
@@ -58,11 +55,8 @@ Waiting.AlertBox.prototype = {
   failed: function () {
     this._progressBar.hide();
     this._waitingMessage.hide();
-    this._retryBtn.show();
-    if (!this._signedIn) {
-      this._loginBtn.show();
-    }
-    this._supportBtn.show();
+    this._finishedMessage.hide();
+    $('.buttons').show();
     this._errorMessage.show();
   },
   setErrorMessage: function (message) {

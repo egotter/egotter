@@ -2,47 +2,47 @@
 
 .friends-stat-wrapper.text-center
   .row
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = stat[:friends_count]
       %br
       %span.name
         = UsageStat.human_attribute_name(:friends_count)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = stat[:one_sided_friends_count]
       %br
       %span.name
         = UsageStat.human_attribute_name(:one_sided_friends_count)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = number_to_percentage(stat[:one_sided_friends_rate] * 100, precision: 1)
       %br
       %span.name
         = UsageStat.human_attribute_name(:one_sided_friends_rate)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = stat[:followers_count]
       %br
       %span.name
         = UsageStat.human_attribute_name(:followers_count)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = stat[:one_sided_followers_count]
       %br
       %span.name
         = UsageStat.human_attribute_name(:one_sided_followers_count)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = number_to_percentage(stat[:one_sided_followers_rate] * 100, precision: 1)
       %br
       %span.name
         = UsageStat.human_attribute_name(:one_sided_followers_rate)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = stat[:mutual_friends_count]
       %br
       %span.name
         = UsageStat.human_attribute_name(:mutual_friends_count)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = number_to_percentage(stat[:follow_back_rate] * 100, precision: 1)
       %br
       %span.name
         = UsageStat.human_attribute_name(:follow_back_rate)
-    = button_tag class: 'btn btn-default btn-lg' do
+    = button_tag class: 'btn btn-outline-primary btn-lg' do
       = number_to_percentage(stat[:mutual_friends_rate] * 100, precision: 1)
       %br
       %span.name

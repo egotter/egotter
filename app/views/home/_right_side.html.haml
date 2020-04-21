@@ -1,34 +1,32 @@
-%h1.h2
-  = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
-  %span= I18n.t('searches.common.egotter')
+%h1.h3
+  = image_tag '/logo_96x96.png', size: '48x48', alt: header
+  = header
 
-%h2.h4.my-4= title
-= lead
+%h2.h5.my-4= subheader
+.mb-3= lead
 
-.mx-auto.pt-3{style: 'max-width: 375px; width: 80%;'}
-  = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
-  .text-notice.text-right
-    %i.fas.fa-check
-    = t('searches.new.pc.check_001')
-  .text-notice.text-right
-    %i.fas.fa-check
-    = t('searches.new.pc.check_002')
+= sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
+.egotter-pink.text-right
+  %i.fas.fa-check
+  = t('searches.new.pc.check_001')
+.egotter-pink.text-right
+  %i.fas.fa-check
+  = t('searches.new.pc.check_002')
 
 .mt-3.mb-4
   %span.thin-border
   %span.or-text= t('searches.common.or')
   %span.thin-border
 
-.mx-auto.mb-3{style: 'max-width: 375px; width: 80%;'}
-  = render partial: 'common/search_form', locals: {via: current_via('input')}
-  .text-notice.text-right
-    %i.fas.fa-check
-    = t('searches.new.pc.check_003')
-  .text-notice.text-right.search-count-wrapper{style: 'visibility: hidden;'}
-    %i.fas.fa-check
-    = t('searches.new.pc.check_004_html')
+= render partial: 'common/search_form', locals: {via: current_via('input')}
+.egotter-pink.text-right
+  %i.fas.fa-check
+  = t('searches.new.pc.check_003')
+.egotter-pink.text-right.search-count-wrapper{style: 'visibility: hidden;'}
+  %i.fas.fa-check
+  = t('searches.new.pc.check_004_html')
 
-%h2.h4.mt-5.mb-3= t('searches.new.lead_003_html')
+%h2.h5.mt-5.mb-3= t('searches.new.lead_003_html')
 
 .screenshot.text-center
   = link_to sign_in_path(via: current_via('screenshots')) do
@@ -36,11 +34,10 @@
 
 %div.my-4= t('home.new.text003_html')
 
-.mx-auto{style: 'max-width: 375px; width: 80%;'}
-  = sign_in_with_twitter_link(nil, 'screenshots_button', class: 'btn btn-primary btn-block')
-  .text-notice.text-right
-    %i.fas.fa-check
-    = t('searches.new.pc.check_005')
-  .text-notice.text-right
-    %i.fas.fa-check
-    = t('searches.new.pc.check_006')
+= sign_in_with_twitter_link(nil, 'screenshots_button', class: 'btn btn-primary btn-block')
+.egotter-pink.text-right
+  %i.fas.fa-check
+  = t('searches.new.pc.check_005')
+.egotter-pink.text-right
+  %i.fas.fa-check
+  = t('searches.new.pc.check_006')

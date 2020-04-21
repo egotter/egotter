@@ -6,8 +6,6 @@
 - title @page_title
 - set_meta_tags description: @meta_description, title: @meta_title
 
-= render partial: 'common/background_update_usage_stat', locals: {twitter_user: @twitter_user, stat: @stat, jid: @jid}
-
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
 %h2.h4.text-center.my-5= @page_title

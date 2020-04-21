@@ -61,9 +61,3 @@
     series = [#{@chart_builder.new_followers.to_json.html_safe}];
     AudienceInsights.drawChart('.chart-container.new-followers', categories, series);
   });
-
-= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
-
-.vertical-spacing
-
-= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t('.title'))}

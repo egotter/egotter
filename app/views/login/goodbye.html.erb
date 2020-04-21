@@ -1,0 +1,17 @@
+<%= image_tag '/egotter_icon_400x400.jpg', style: 'max-width: 350px;', class: 'img-rounded d-block mx-auto my-3' %>
+
+<h2 class="h3 text-center my-5"><%= t('.sign_out') %></h2>
+
+<%= t('.no_tweets') %>
+<%= t('.advantage_html') %>
+<%= t('.disadvantage_html') %>
+<%= t('.realy_sign_out') %>
+
+<div class="row text-center my-5">
+  <div class="col">
+    <%= link_to t('.button.sign_out'), sign_out_path, class: 'btn btn-outline-secondary btn-block', method: :delete %>
+  </div>
+  <div class="col">
+    <%= link_to t('.button.top_page'), root_path, class: 'btn btn-primary btn-block' %>
+  </div>
+</div>

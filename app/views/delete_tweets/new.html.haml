@@ -1,70 +1,9 @@
 - title t('.page_title')
 - set_meta_tags description: t('.meta_description')
 
-#delete-tweets.text-center
-  .vertical-spacing
-  %h2.h4= t('.simple_title')
-  .vertical-spacing
+= render partial: 'shared/side_by_side_section', locals: {right_side: {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')}}
 
-  .lead= t('.text001_html')
-
-  = image_tag '/egotter_trash_with_text_400x448.png', class: 'img-rounded', height: '160px'
-  .vertical-spacing
-
-  .btn-width-wrapper
-    - if user_signed_in?
-      - if @processing
-        %a.btn.btn-default.btn-block{href: delete_tweets_path(via: current_via('check_progress'))}= t('.see_progress')
-        .text-muted.notes.text-right= t('.requested')
-      - else
-        .btn.btn-danger.btn-block.delete-tweets-btn{"data-target" => "#delete-tweets-modal", "data-toggle" => "modal"}= t('.delete_tweets')
-        .text-right.search-count-wrapper{style: 'visibility: hidden;'}
-          %i.fas.fa-check.egotter-pink
-          %span.egotter-pink= t('searches.new.pc.check_004_html')
-
-    - else
-      = sign_in_with_twitter_link(delete_tweets_path(via: current_via('sign_in_with_twitter')), current_via('sign_in_with_twitter'), class: 'btn btn-primary btn-block')
-      .text-right
-        %i.fas.fa-check.egotter-pink
-        %span.egotter-pink= t('searches.new.pc.check_002')
-      .text-right.search-count-wrapper{style: 'visibility: hidden;'}
-        %i.fas.fa-check.egotter-pink
-        %span.egotter-pink= t('searches.new.pc.check_004_html')
-
-  - if @logs&.any?
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .vertical-spacing
-    .center-block
-      %h2.h4= t('.delete_tweets_status.title')
-      .vertical-spacing
-      .vertical-spacing
-      .description= t('.delete_tweets_status.description', user: @current_user.screen_name)
-      .vertical-spacing
-      .vertical-spacing
-      %table.text-center.table.table-bordered.table-condensed.table-responsive
-        = render(partial: 'log', collection: @logs, cached: true)
-
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-
-.screenshot.text-center
-  = search_link 'ego_tter', current_via('screenshot_laptop_iphone') do
-    %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
-.vertical-spacing
-.vertical-spacing
-
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
+.container= render partial: 'shared/review_section'
 
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title1_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text1_html'), note: nil, link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-block'), check: t('shared.features.check1')}
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title2_html'), image: '/egotter_trash_with_text_400x448.png', description: t('shared.features.text2_html'), note: t('shared.features.note2'), link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_complete')), 'feature_complete', class: 'btn btn-primary btn-block'), check: t('shared.features.check2')}
@@ -72,41 +11,5 @@
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(delete_tweets_path(via: current_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-block'), check: t('shared.features.check4')}
 = render partial: 'shared/feature_section', locals: {title: t('shared.features.title5_html'), image: '/egotter_chat_with_text_400x448.png', description: t('shared.features.text5_html'), note: nil, link: link_to(t('shared.features.button5'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'), check: t('shared.features.check5')}
 
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-
-.text-center
-  = render partial: 'shared/review_stars'
-  %h2#review-title.h4= t('shared.review.title')
-  #public-tweets-wrapper.twitter.tweets.center-block
-
-- if user_signed_in?
-  #delete-tweets-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-    .modal-dialog{role: 'document'}
-      .modal-content
-        .modal-header
-          %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
-            %span{'aria-hidden' => 'true'} ×
-          %h4.modal-title= t('.modal.title')
-        .modal-body
-          %div= t('.modal.warning1_html', screen_name: current_user.screen_name)
-          .vertical-spacing
-          %div= t('.modal.warning2_html')
-          %div= t('.modal.warning3_html')
-          .vertical-spacing
-          = check_box_tag('tweet-after-finishing', '1', true)
-          %label{for: 'tweet-after-finishing'}= t('.modal.tweet_after_finishing')
-        .modal-footer
-          %button.btn.btn-default{'data-dismiss' => 'modal', type: 'button'}= t('.modal.cancel')
-          %button.btn.btn-danger.ok{'data-url' => delete_tweets_path, type: 'button'}= t('.modal.ok')
-
-:javascript
-  $(function () {
-    Home.setSearchCount('#{search_count_path}');
-    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
-    Settings.enableDeleteTweetsButton();
-  });
+- if user_signed_in? && !@has_error
+  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: delete_tweets_mypage_path}

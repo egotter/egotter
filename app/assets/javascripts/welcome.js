@@ -12,23 +12,21 @@ Welcome.ShareDialog = function () {
 
   var modal = this._modal;
 
-  modal.find('button.ok').on('click', function () {
-    var $clicked = $(this);
+  modal.find('button.positive').on('click', function () {
     var tweet = modal.find('textarea').val();
 
-    $.post($clicked.data('url'), {text: tweet}).done(function (res) {
-      var text = $clicked.data('success-message');
-      $('#global-info-message-box').find('.message').text(text).end().show();
+    $.post(modal.data('url'), {text: tweet}).done(function (res) {
+      SnackMessage.success(modal.data('success-message'));
 
       // if (window.location.pathname.startsWith('/settings')) {
       //   window.location.reload();
       // }
     }).fail(function (xhr) {
-      var reason = $clicked.data('error-message');
+      var reason = modal.data('error-message');
       if (xhr.status === 400 && xhr.responseText && JSON.parse(xhr.responseText)['reason']) {
         reason = JSON.parse(xhr.responseText)['reason'];
       }
-      $('#global-warning-message-box').find('.message').text(reason).end().show();
+      SnackMessage.alert(reason);
     });
 
     modal.modal('hide');
@@ -42,10 +40,11 @@ Welcome.ShareDialog.prototype = {
       this._modal.modal();
     } else {
       if (!this._cache['share_dialog']) {
+        console.log('show share-dialog', this._modal);
         this._cache['share_dialog'] = true;
-        this._modal.modal();
+        this._modal.modal('show');
       } else {
-        console.log('share-dialog is already shown')
+        console.log('share-dialog is already shown');
       }
     }
   },
@@ -64,11 +63,10 @@ Welcome.FollowDialog = function () {
 
   var modal = this._modal;
 
-  modal.find('button.ok').on('click', function () {
-    var $clicked = $(this);
-    window.open($clicked.data('follow-url'), '_blank');
+  modal.find('button.positive').on('click', function () {
+    window.open(modal.data('follow-url'), '_blank');
 
-    $.post($clicked.data('url'), {uid: $clicked.data('uid')}, function (res) {
+    $.post(modal.data('url'), {uid: modal.data('uid')}, function (res) {
       console.log('createFollow', res);
     });
 
@@ -80,10 +78,11 @@ Welcome.FollowDialog.prototype = {
   constructor: Welcome.FollowDialog,
   show: function () {
     if (!this._cache['follow_dialog']) {
+      console.log('show follow-dialog', this._modal);
       this._cache['follow_dialog'] = true;
       this._modal.modal();
     } else {
-      console.log('follow-dialog is already shown')
+      console.log('follow-dialog is already shown');
     }
   },
   on: function (event, fn) {
@@ -98,10 +97,10 @@ Welcome.ReviveDialog = function () {
 
   this._modal = $('#revive-modal');
   var modal = this._modal;
+  var url = modal.data('url');
 
-  modal.find('button.ok').on('click', function () {
-    var $clicked = $(this);
-    window.open($clicked.data('url'), '_blank');
+  modal.find('button.positive').on('click', function () {
+    window.open(url, '_blank');
     modal.modal('hide');
   });
 };

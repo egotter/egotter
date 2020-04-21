@@ -3,7 +3,6 @@ class WaitingController < ApplicationController
 
   before_action :reject_crawler
   before_action { valid_uid?(params[:uid]) }
-  before_action { searched_uid?(params[:uid]) }
   before_action { @twitter_user = build_twitter_user_by_uid(params[:uid]) }
 
   before_action do

@@ -17,8 +17,9 @@ Rails.application.routes.draw do
     end
   end
 
-  post "delete_tweets", to: "delete_tweets#delete"
   get 'delete_tweets', to: 'delete_tweets#new'
+  get 'delete_tweets/mypage', to: 'delete_tweets#show', as: :delete_tweets_mypage
+  post "delete_tweets", to: "delete_tweets#delete"
 
   delete "reset_egotter", to: "reset_egotter#reset"
   post "reset_cache", to: "reset_cache#reset"
@@ -131,7 +132,9 @@ Rails.application.routes.draw do
   resources :forbidden, only: %i(show), param: :screen_name
   get 'forbidden/:screen_name/latest', to: 'forbidden#latest', as: 'latest_forbidden'
   resources :blocked, only: %i(show), param: :screen_name
+  get 'blocked/:screen_name/latest', to: 'blocked#latest', as: 'latest_blocked'
   resources :protected, only: %i(show), param: :screen_name
+  get 'protected/:screen_name/latest', to: 'protected#latest', as: 'latest_protected'
 
   get 'follow', to: 'follows#show'
   resources :follows, only: %i(create)

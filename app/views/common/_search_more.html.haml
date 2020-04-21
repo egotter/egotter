@@ -1,5 +1,0 @@
-.vertical-spacing
-.please-use-egotter= text
-.text-center
-  = link_to t('searches.common.search_xxx_by_egotter', user: twitter_user.mention_name), searches_path(screen_name: twitter_user.screen_name, via: current_via('bottom_button')), class: 'btn btn-info', style: 'margin-top: 15px;', method: :post
-= render partial: 'adsense/side_by_side', locals: {vertical: :bottom}

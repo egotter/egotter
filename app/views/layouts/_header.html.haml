@@ -6,9 +6,14 @@
     %ul.nav
       %li.nav-item
         = link_to '#', class: 'nav-link btn btn-primary', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
-          = t('searches.common.search_by_twitter_id')
+          %i.fas.fa-search
+          %span.d-none.d-sm-none.d-md-inline-block= t('.search_by_twitter_id')
+      %li.nav-item
+        = link_to t('.pricing'), pricing_path(via: current_via('navbar')), class: 'nav-link text-white pr-0'
       %li.nav-item
         - if user_signed_in?
-          = link_to mention_name(current_user.screen_name), settings_path(via: current_via('navbar')), class: 'nav-link text-white'
+          = link_to settings_path(via: current_via('navbar')), class: 'nav-link text-white pr-0' do
+            %i.fas.fa-cog.d-inline-block.d-sm-inline-block.d-md-none
+            %span.d-none.d-sm-none.d-md-inline-block= mention_name(current_user.screen_name)
         - else
-          = link_to t('.sign_in'), sign_in_path(via: current_via('navbar'), redirect_path: root_path_for(controller: controller_name)), class: 'nav-link text-white'
+          = link_to t('.sign_in'), sign_in_path(via: current_via('navbar'), redirect_path: root_path_for(controller: controller_name)), class: 'nav-link text-white pr-0'

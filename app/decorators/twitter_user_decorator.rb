@@ -33,6 +33,14 @@ class TwitterUserDecorator < ApplicationDecorator
     description.present?
   end
 
+  def profile_icon_url?
+    profile_image_url_https.present?
+  end
+
+  def profile_icon_url_for(request)
+    profile_image_url_https.remove('_normal')
+  end
+
   def profile_banner_url?
     profile_banner_url.present?
   end
@@ -63,6 +71,10 @@ class TwitterUserDecorator < ApplicationDecorator
         end
 
     !suspended? && inactive_value
+  end
+
+  def active?
+    !inactive?
   end
 
   def refollow?
@@ -106,11 +118,23 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def protected_icon
-    protected? ? '&nbsp;<span class="glyphicon glyphicon-lock"></span>' : ''
+    if protected?
+      <<~HTML.html_safe
+        &nbsp;<i class="fas fa-lock text-warning"></i>
+      HTML
+    else
+      ''
+    end
   end
 
   def verified_icon
-    verified? ? '&nbsp;<span class="glyphicon glyphicon-ok"></span>' : ''
+    if verified?
+      <<~HTML.html_safe
+        <i class="fas fa-check text-primary"></i>
+      HTML
+    else
+      ''
+    end
   end
 
   def name_with_icon

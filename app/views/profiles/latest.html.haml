@@ -7,16 +7,15 @@
 - title page_title
 - set_meta_tags description: t('.meta_description', user: @user.screen_name)
 
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  = user_link(@user.screen_name, class: 'btn btn-primary btn-block btn-lg center-block') do
+.mt-3
+  = user_link(@user.screen_name, class: 'btn btn-primary btn-block btn-lg') do
     = t('.see_on_twitter', user: @user.screen_name)
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
+.mb-3
   - url = searches_path(screen_name: @user.screen_name, via: current_via('only_profile_page_button'))
-  = link_to t('.analyze', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg center-block', method: :post
-  .vertical-spacing
-  = render partial: 'twitter/profile', locals: {user: @user}
+  = link_to t('.analyze', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg', method: :post
 
-.vertical-spacing
+.mb-3
+  = render partial: 'twitter/profile', locals: {user: @user}

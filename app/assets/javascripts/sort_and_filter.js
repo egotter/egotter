@@ -39,20 +39,25 @@ SortAndFilter.activateFilterButton = function ($container, callback) {
       $checkbox.attr('checked', true).prop('checked', true);
     }
 
-    var filterCount = $container.find("input[type='checkbox']:checked").length;
+    var selectedValues = [];
+    $container.find("input[type='checkbox']:checked").each(function (_, el) {
+      selectedValues.push($(el).parent('a').data('filter'));
+    });
 
-    if (filterCount > 0) {
-      $button.data('filter', $selected.data('filter')); // Current filters.size == 1
-      $button.find('.filter-count').text('(' + filterCount + ')');
+    if (selectedValues.length > 0) {
+      $button.find('.filter-count').text('(' + selectedValues.length + ')');
     } else {
-      $button.data('filter', null);
       $button.find('.filter-count').text('');
     }
 
-    var value = $button.data('filter');
-    console.log('filter', value);
+    var value = '';
+    $.each(selectedValues, function (_, v) {
+      value += v + ','
+    });
 
+    console.log('filter', value);
     callback({filter: value});
+
     return false;
   });
 };

@@ -1,0 +1,65 @@
+<h2 class="h4 text-center my-5"><i class="fas fa-database"></i><%= t('.title') %></h2>
+
+<div class="row">
+  <div class="col-4"><%= t('.updated_at') %></div>
+  <div class="col-8">
+    <div>
+      <%= (twitter_user = TwitterUser.latest_by(uid: current_user.uid)) ? l(twitter_user.created_at.in_time_zone('Tokyo'), format: :prompt_report_short) : t('.no_records') %>
+      <span><a href="<%= settings_twitter_users_path %>"><%= t('.history') %></a></span>
+    </div>
+    <div class="text-muted notes"><%= t('.note') %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.reset_cache.title') %></div>
+  <div class="col-8">
+    <div>
+      <% if @reset_cache_request %>
+        <div class="btn btn-warning reset-cache-btn" disabled="disabled"><%= t('.reset_cache.do') %></div>
+        <div class="text-muted notes"><%= t('.requested') %></div>
+      <% else %>
+        <div class="btn btn-warning reset-cache-btn" data-toggle="modal" data-target="#reset-cache-modal"><%= t('.reset_cache.do') %></div>
+        <div class="text-muted notes"><%= t('.reset_cache.note') %></div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.delete_data.title') %></div>
+  <div class="col-8">
+    <div>
+      <% if @reset_egotter_request %>
+        <div class="btn btn-danger reset-egotter-btn" disabled="disabled"><%= t('.delete_data.do') %></div>
+        <div class="text-muted notes"><%= t('.requested') %></div>
+      <% else %>
+        <div class="btn btn-danger reset-egotter-btn" data-toggle="modal" data-target="#reset-egotter-modal"><%= t('.delete_data.do') %></div>
+        <div class="text-danger notes"><%= t('.delete_data.note') %></div>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-4"><%= t('.delete_tweets.title') %></div>
+  <div class="col-8">
+    <div><a href="<%= delete_tweets_path %>"><%= t('delete_tweets.new.simple_title') %></a><%= t('.delete_tweets.move_to') %></div>
+  </div>
+</div>
+
+<%= modal_dialog(id: 'reset-egotter-modal', title: t('.delete_data.title'), body: t('.delete_data.modal.warning_html', screen_name: current_user.screen_name), button: {positive: t('.delete_data.modal.ok'), category: 'danger'}) %>
+<%= modal_dialog(id: 'reset-cache-modal', title: t('.reset_cache.title'), body: t('.reset_cache.modal.warning_html', screen_name: current_user.screen_name), button: {positive: t('.reset_cache.modal.ok'), category: 'warning'}) %>
+
+<script>
+  $(function () {
+    Settings.activateResetEgotterButton('reset-egotter-modal', '<%= reset_egotter_path %>');
+    Settings.activateResetCacheButton('reset-cache-modal', '<%= reset_cache_path %>');
+  });
+</script>

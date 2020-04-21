@@ -25,6 +25,7 @@ module Concerns::InternalServerErrorHandler
     else
       self.sidebar_disabled = true
       flash.now[:alert] = message
+      @has_error = true
       render template: 'home/new', formats: %i(html), status: :internal_server_error unless performed?
     end
   end
@@ -38,6 +39,7 @@ module Concerns::InternalServerErrorHandler
     else
       self.sidebar_disabled = true
       flash.now[:alert] = request_timeout_message
+      @has_error = true
       render template: 'home/new', formats: %i(html), status: :request_timeout
     end
   end

@@ -23,7 +23,11 @@ Twitter.cache = function () {
 };
 
 Twitter.follow = function (url, uid, callback) {
-  console.log('follow', url, uid);
+  if (!url || !uid) {
+    console.warn('follow', 'url or uid not found');
+    return;
+  }
+
   $.post(url, {uid: uid}).then(function (res) {
     console.log('res', res);
     callback.call();
@@ -39,11 +43,16 @@ Twitter.follow = function (url, uid, callback) {
 // Idempotent
 Twitter.enableFollowButton = function (selector) {
   var $modal = $('#create-follow-modal');
+  var url = $modal.data('url');
+  if (!url) {
+    console.warn('enableFollowButton', 'url not found');
+    return;
+  }
 
   if (!$modal.data('init')) {
-    $modal.find('.btn.ok').on('click', function () {
+    $modal.find('.btn.positive').on('click', function () {
       var $clicked = $(this).data('btn-target');
-      Twitter.follow($(this).data('url'), $clicked.data('uid'), function () {
+      Twitter.follow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.follow').show();
       });
       $modal.modal('hide');
@@ -58,11 +67,11 @@ Twitter.enableFollowButton = function (selector) {
     var dontConfirm = $modal.find('.dont-confirm input').prop('checked');
 
     if (dontConfirm) {
-      Twitter.follow($modal.find('.btn.ok').data('url'), $clicked.data('uid'), function () {
+      Twitter.follow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.follow').show();
       });
     } else {
-      $modal.find('.btn.ok').data('btn-target', $clicked);
+      $modal.find('.btn.positive').data('btn-target', $clicked);
       $modal.find('.screen-name').text($clicked.data('screen-name'));
       $modal.modal();
     }
@@ -71,7 +80,11 @@ Twitter.enableFollowButton = function (selector) {
 };
 
 Twitter.unfollow = function (url, uid, callback) {
-  console.log('unfollow', url, uid);
+  if (!url || !uid) {
+    console.warn('unfollow', 'url or uid not found');
+    return;
+  }
+
   $.post(url, {uid: uid}).then(function (res) {
     console.log('res', res);
     callback.call();
@@ -85,11 +98,16 @@ Twitter.unfollow = function (url, uid, callback) {
 // Idempotent
 Twitter.enableUnfollowButton = function (selector) {
   var $modal = $('#create-unfollow-modal');
+  var url = $modal.data('url');
+  if (!url) {
+    console.warn('enableUnfollowButton', 'url not found');
+    return;
+  }
 
   if (!$modal.data('init')) {
-    $modal.find('.btn.ok').on('click', function () {
+    $modal.find('.btn.positive').on('click', function () {
       var $clicked = $(this).data('btn-target');
-      Twitter.unfollow($(this).data('url'), $clicked.data('uid'), function () {
+      Twitter.unfollow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.no-follow').show();
       });
       $modal.modal('hide');
@@ -105,11 +123,11 @@ Twitter.enableUnfollowButton = function (selector) {
     var dontConfirm = $modal.find('.dont-confirm input').prop('checked');
 
     if (dontConfirm) {
-      Twitter.unfollow($modal.find('.btn.ok').data('url'), $clicked.data('uid'), function () {
+      Twitter.unfollow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.no-follow').show();
       });
     } else {
-      $modal.find('.btn.ok').data('btn-target', $clicked);
+      $modal.find('.btn.positive').data('btn-target', $clicked);
       $modal.find('.screen-name').text($clicked.data('screen-name'));
       $modal.modal();
     }

@@ -1,10 +1,10 @@
 - title @title
 - set_meta_tags description: t('friends.new.description')
 
-= render partial: 'shared/side_by_side_section', locals: {right_side: {title: t('.right_side.title'), lead: t('.right_side.lead_html')}}
+= render partial: 'shared/side_by_side_section', locals: {right_side: {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')}}
 
-- if user_signed_in?
+- if user_signed_in? && !@has_error
   = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: unfriend_path(current_user)}
 
-= render partial: 'shared/review_section'
+.container= render partial: 'shared/review_section'
 = render partial: 'shared/features_section'

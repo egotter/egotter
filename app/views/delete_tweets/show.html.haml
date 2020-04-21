@@ -1,0 +1,31 @@
+.text-center.my-5
+  = image_tag '/egotter_trash_with_text_400x448.png'
+
+.text-center.my-5
+  - if @processing
+    .btn.btn-danger.btn-lg.disabled= t('.requested')
+  - else
+    .btn.btn-danger.btn-lg.delete-tweets-btn{"data-target" => "#delete-tweets-modal", "data-toggle" => "modal"}= t('.delete_tweets')
+
+- if @logs&.any?
+  %h2.h4.text-center.my-5= t('.status.title')
+  .text-center.mb-3= t('.status.description', user: @current_user.screen_name)
+  %table.text-center.table.table-bordered.table-condensed
+    = render(partial: 'log', collection: @logs, cached: true)
+
+= modal_dialog(id: 'delete-tweets-modal', title: t('.modal.title'), button: {positive: t('.modal.ok'), category: 'danger'}) do
+  .mb-3= t('.modal.warning1_html', screen_name: current_user.screen_name)
+  %div= t('.modal.warning2_html')
+  .mb-3= t('.modal.warning3_html')
+  %div
+    = check_box_tag('', '1', true, disabled: true)
+    %label{for: 'tweet-after-finishing'}= t('.modal.dm_after_finishing')
+  %div
+    = check_box_tag('tweet-after-finishing', '1', true)
+    %label{for: 'tweet-after-finishing'}= t('.modal.tweet_after_finishing')
+
+:javascript
+  $(function () {
+    var url = '#{delete_tweets_path}';
+    Settings.enableDeleteTweetsButton('delete-tweets-modal', url);
+  });

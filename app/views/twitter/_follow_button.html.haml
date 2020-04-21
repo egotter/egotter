@@ -1,5 +1,3 @@
-- with_text = false unless defined?(with_text)
-
 - if user_signed_in?
   - if current_user.uid != user.uid && !user.suspended?
     - is_following = current_user.is_following?(user.uid)
