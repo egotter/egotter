@@ -23,24 +23,24 @@ ja:
       sign_in: 'ログイン'
       search_by_twitter_id: "@TwitterID で検索"
       pricing: 'プラン'
+    sidenav:
+      title: '@%{user} の分析'
     footer:
       sign_in: "ログイン"
       sign_out: "ログアウト"
       get_it_on: 'Google Play で手に入れよう'
       feedback: "ご意見"
-      titles:
-        root: 'トップページ'
+      root: 'トップページ'
       support: "お問い合わせ"
       github: "Github"
       scheduled_tweets: 'ツイート予約投稿'
       transcription: '文字起こしAI'
+      official_account: "公式アカウント"
   searches:
     common:
       egotter: "えごったー"
-      or: " または "
       twitter_id: "Twitter ID"
       search_by_twitter_id: "@TwitterID で検索"
-      search_by_egotter: "えごったーで検索"
       search_xxx_by_egotter: "%{user} をえごったーで検索"
       search_a_and_b: "%{user1} と %{user2} を共通検索"
       search_by: "%{user} で検索"
@@ -56,7 +56,6 @@ ja:
       record_your_friends: "えごったーで フォロー・リムーブ・ブロック を記録しよう"
       record_every_day: "えごったーを利用すると、フォロー・リムーブ(フォローを外すこと)、ブロックを毎日記録することができます。"
       twitter_feeds: "利用者のツイート"
-      lead_003_html: '高度な分析が<span class="egotter-pink">今なら無料</span>です'
       feature_001: "簡単に確認できる"
       feature_desc_001_html: "Twitter IDを入れるだけ！<br>スマホもPCも対応済み。"
       feature_002: "すぐに結果を表示"
@@ -72,12 +71,6 @@ ja:
       pc:
         lead_001: "リムーブ、ブロックを逃さずチェック！"
         lead_002_html: "えごったーは、スマホとPCから使える<br>安心で安全なツイッター分析アプリです"
-        check_001: "パスワード不要"
-        check_002: "ワンクリック登録"
-        check_003: "気になるあの人を検索"
-        check_004_html: '現在<span class="search-count"></span>人が利用中'
-        check_005: "フォロワーの増減"
-        check_006: "人気ランキング分析"
         check_007: "フォロー外し"
         check_008: "ブロックチェック"
         check_009: "リムられ通知"
@@ -127,11 +120,10 @@ ja:
       page_description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
       right_side:
         header: 'えごったー'
-        subheader: 'スマホでかんたんフォロー確認'
+        subheader: 'スマホでかんたんフォロー分析'
         lead_html: 'スマホからすぐに確認できる！<br>安心で安全なツイッター分析アプリです'
       text001_html: 'フォロワーが減った？ 誰？？'
       text002_html: '<span class="egotter-pink">フォロワーが減った</span>り<span class="egotter-pink">ブロックされた</span>時に相手がすぐに分かります。'
-      text003_html: '<span class="egotter-pink">350万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
       text007: 'リムられ通知ですぐに確認'
       text008_html: '<span class="egotter-pink">リムられ通知</span>が即座にお知らせ。減ったフォロワーを見逃しません。'
       text009_html: '<span class="egotter-pink">350万回以上</span>の利用実績'
@@ -139,9 +131,6 @@ ja:
       text012_html: '公式アカウント'
       text013_html: '何か分からないことがありますか？ <span class="egotter-pink">リプライ</span>でいつでもお聞きください。'
       text014_html: '@ego_tter に質問してみる'
-      text021_html: '<span style="font-size: 28px;">350万回</span> 以上の利用実績'
-      text022_html: '<span style="font-size: 28px;">フォロワーが減ったら</span> 通知でお知らせ'
-      text023_html: '<span style="font-size: 28px;">無料</span> で使えます'
       redirection_modal:
         title: '@%{user} でログイン中です'
         body: '@%{user} の分析結果へ移動しますか？'
@@ -162,7 +151,7 @@ ja:
       page_title: "@%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
       directory_page_title: "@%{user} の分析"
       short_title: "%{user} の分析"
-      heading: "%{user} の分析結果"
+      heading: "@%{user} の分析結果"
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
       reload_this_page: "ページを更新する"
@@ -178,8 +167,10 @@ ja:
         ・ログインしていると検索が早くなります<br>
         ・ログインしていると表示される項目が増えます
       sign_in_to_protect_html: '<a href="%{url}">ログイン</a> してえごったーを利用すると、乗っ取りツイートのチェックを行います。'
-      about_this_page: "%{user} の分析結果について"
-      this_page_is_html: "このページでは、%{user} のリムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタの分析結果を表示しています。<br>リム通知は、えごったーにログインすると、自動で届きます。えごったーなら全部無料です。"
+      this_page_is_html: |
+        このページは @%{user} のツイッター分析結果です。
+        @%{user} のツイッター分析結果では、リムーブ / 片思い / 片思われ / 両思い / ブロック / 仲良し / クラスタ の分析結果を表示しています。
+        リム通知は、えごったーにログインすると自動で届きます。えごったーなら基本的な分析は全て無料です。
       audience_insight:
         title: 'オーディエンス分析'
         description: '@%{screen_name} のフォロー数 / フォロワー数の推移を表示します。'
@@ -305,14 +296,6 @@ ja:
         title: 'ツイート'
         note: '日付ごとのツイート数です。公式リツイートやリプライも含んでいます。'
       see_more: 'もっと見る'
-  search_histories:
-    search_modal:
-      title: "検索履歴"
-      remaining_count_is_html: '残りの検索回数は %{count} 回です。'
-      sign_in_html: '<a href="%{url}" class="btn btn-primary btn-sm">ログインして増やす</a>'
-      tweet: 'ツイートして増やす'
-      purchase: '購入して増やす'
-      pricing: '料金プラン'
   notifications:
     title: "通知"
     index:
@@ -1526,11 +1509,24 @@ ja:
       second_layer:
         title: タイムラインディレクトリ
   shared:
-    review:
+    side_by_side_section:
+      text021_html: '<span style="font-size: 28px;">350万回</span> 以上の利用実績'
+      text022_html: '<span style="font-size: 28px;">フォロワーが減ったら</span> 通知でお知らせ'
+      text023_html: '<span style="font-size: 28px;">無料</span> で使えます'
+    right_side:
+      check_001: "パスワード不要"
+      check_002: "ワンクリック登録"
+      check_003: "気になるあの人を検索"
+      check_004_html: '現在<span class="search-count"></span>人が利用中'
+      check_005: "フォロワーの増減"
+      check_006: "人気ランキング分析"
+      or: " または "
+      lead_003_html: '高度な分析が<span class="egotter-pink">今なら無料</span>です'
+      text003_html: '<span class="egotter-pink">350万人</span>以上が利用しているえごったーを、今すぐあなたも使ってみよう！'
+    review_section:
       title: 'レビュー'
       description_html: >
-        これまでに<span class="egotter-pink">350万回</span>以上利用されたえごったーは、<br>
-        毎日たくさんの人にツイートされています。
+        これまでに<span class="egotter-pink">350万回</span>以上利用されたえごったーは、毎日たくさんの人にツイートされています。
     announcement:
       title: "お知らせ"
     sign_in_button_at_bottom:
@@ -1576,6 +1572,7 @@ ja:
       check6: '安全で安心'
       check7: '質問はお気軽に'
     functions:
+      title: 'えごったーには他にも便利な機能がたくさん'
       text_html: >
         えごったーを使えば、他にもたくさんのツイッター分析ができます。<br class="d-none d-lg-block">
         リムられチェック、リムられの自動通知、片思いチェックなどが特に人気です。
@@ -1676,6 +1673,14 @@ ja:
           <br>
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
   modal:
+    search_modal:
+      title: 'えごったーで検索'
+      remaining_count_html: '残りの検索回数は %{count} 回です。'
+      sign_in_html: '<a href="%{url}" class="btn btn-primary btn-sm">ログインして増やす</a>'
+      tweet: 'ツイートして増やす'
+      purchase: '購入して増やす'
+      pricing: '料金プラン'
+      history: "検索履歴"
     redirection_modal:
       'yes': 'はい'
       'no': 'いいえ'

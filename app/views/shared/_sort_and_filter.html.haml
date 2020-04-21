@@ -13,5 +13,4 @@
   .dropdown-menu
     - Filter::VALUES.each do |label, value|
       %a.filters.dropdown-item{href: "#", data: {filter: value}}
-        %input{type: 'checkbox'}
         = label

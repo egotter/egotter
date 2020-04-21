@@ -8,11 +8,11 @@
 - set_meta_tags title: title, site: '', description: description
 
 = render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user}
-.vertical-spacing
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h3.text-center.my-5= t('timelines.show.heading', user: @twitter_user.mention_name)
+%h2.h3.text-center.my-5= t('timelines.show.heading', user: @twitter_user.screen_name)
+= t('.this_page_is_html', user: @twitter_user.screen_name)
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
@@ -78,7 +78,7 @@
       = feed_item :users, twitter_user: @twitter_user, feed_name: 'favorite_friends', feed_title: t('timelines.feeds.favorite_friends.title'), feed_description: t('timelines.feeds.favorite_friends.description', user: @twitter_user.screen_name), page_url: favorite_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_favorite_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_favorite_friends"))
 
     .col-12.mb-5
-      = feed_item :users, twitter_user: @twitter_user, feed_name: 'inactive_friends', feed_title: t('timelines.feeds.inactive_friends.title'), feed_description: t('timelines.feeds.inactive_friends.description'), page_url: inactive_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_inactive_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_inactive_friends"))
+      = feed_item :users, twitter_user: @twitter_user, feed_name: 'inactive_friends', feed_title: t('timelines.feeds.inactive_friends.title'), feed_description: t('timelines.feeds.inactive_friends.description', user: @twitter_user.screen_name), page_url: inactive_friend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_inactive_friends_summary_path(uid: @twitter_user.uid, via: current_via("feed_inactive_friends"))
 
     .col-12.mb-5
       = feed_item :users, twitter_user: @twitter_user, feed_name: 'inactive_followers', feed_title: t('timelines.feeds.inactive_followers.title'), feed_description: t('timelines.feeds.inactive_followers.description', user: @twitter_user.screen_name), page_url: inactive_follower_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_inactive_followers_summary_path(uid: @twitter_user.uid, via: current_via("feed_inactive_followers"))
@@ -90,6 +90,3 @@
       = feed_item :ad, feed_title: t('timelines.feeds.scheduled_tweets.title'), feed_description: t('timelines.feeds.scheduled_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/egotter_schedule_with_text_400x448.png'), button_text: t('timelines.feeds.scheduled_tweets.open'), page_url: "https://scheduled-tweets.egotter.com?via=#{current_via('feed_text')}"
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :bottom})
-
-%h2.h4.text-center= t('.about_this_page', user: @twitter_user.mention_name)
-.this-page-is= t('.this_page_is_html', user: @twitter_user.mention_name)

@@ -8,42 +8,24 @@
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-.audience-insights
-  %h2.h2.page-title= @page_title
+%h2.h4.text-center.my-5= @page_title
+.mb-5= @page_description
 
-.audience-insights
-  .page-description.text-center= @page_description
-.vertical-spacing
-.vertical-spacing
+%h3.h5.text-center.my-5= t('.friends.title')
+.mb-5= t('.friends.note')
+.chart-container.friends{style: 'height: 250px;'}
 
-.audience-insights
-  %h3.audience-insights.text-center= t('.friends.title')
-  .vertical-spacing
-  .chart-container.friends
-  .note= t('.friends.note')
-  .vertical-spacing
-  .vertical-spacing
+%h3.h5.text-center.my-5= t('.followers.title')
+.mb-5= t('.followers.note')
+.chart-container.followers{style: 'height: 250px;'}
 
-  %h3.text-center= t('.followers.title')
-  .vertical-spacing
-  .chart-container.followers
-  .note= t('.followers.note')
-  .vertical-spacing
-  .vertical-spacing
+%h3.h5.text-center.my-5= t('.new_friends.title')
+.mb-5= t('.new_friends.note')
+.chart-container.new-friends{style: 'height: 250px;'}
 
-  %h3.audience-insights.text-center= t('.new_friends.title')
-  .vertical-spacing
-  .chart-container.new-friends
-  .note= t('.new_friends.note')
-  .vertical-spacing
-  .vertical-spacing
-
-  %h3.audience-insights.text-center= t('.new_followers.title')
-  .vertical-spacing
-  .chart-container.new-followers
-  .note= t('.new_followers.note')
-  .vertical-spacing
-  .vertical-spacing
+%h3.h5.text-center.my-5= t('.new_followers.title')
+.mb-5= t('.new_followers.note')
+.chart-container.new-followers{style: 'height: 250px;'}
 
 :javascript
   $(function () {

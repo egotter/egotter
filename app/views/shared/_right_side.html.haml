@@ -8,36 +8,36 @@
 = sign_in_with_twitter_link(nil, 'button', class: 'btn btn-primary btn-block')
 .egotter-pink.text-right
   %i.fas.fa-check
-  = t('searches.new.pc.check_001')
+  = t('.check_001')
 .egotter-pink.text-right
   %i.fas.fa-check
-  = t('searches.new.pc.check_002')
+  = t('.check_002')
 
 .mt-3.mb-4
   %span.thin-border
-  %span.or-text= t('searches.common.or')
+  %span.or-text= t('.or')
   %span.thin-border
 
 = render partial: 'common/search_form', locals: {via: current_via('input')}
 .egotter-pink.text-right
   %i.fas.fa-check
-  = t('searches.new.pc.check_003')
+  = t('.check_003')
 .egotter-pink.text-right.search-count-wrapper{style: 'visibility: hidden;'}
   %i.fas.fa-check
-  = t('searches.new.pc.check_004_html')
+  = t('.check_004_html')
 
-%h2.h5.mt-5.mb-3= t('searches.new.lead_003_html')
+%h2.h5.mt-5.mb-3= t('.lead_003_html')
 
 .screenshot.text-center
   = link_to sign_in_path(via: current_via('screenshots')) do
-    %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
+    %img{alt: '', src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
 
-%div.my-4= t('home.new.text003_html')
+%div.my-4= t('.text003_html')
 
 = sign_in_with_twitter_link(nil, 'screenshots_button', class: 'btn btn-primary btn-block')
 .egotter-pink.text-right
   %i.fas.fa-check
-  = t('searches.new.pc.check_005')
+  = t('.check_005')
 .egotter-pink.text-right
   %i.fas.fa-check
-  = t('searches.new.pc.check_006')
+  = t('.check_006')

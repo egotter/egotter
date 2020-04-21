@@ -49,20 +49,6 @@ module ApplicationHelper
     %w(unfriends unfollowers blocking_or_blocked).exclude?(controller_name) && twitter_user.usage_stat
   end
 
-  def show_sign_in_button_at_bottom?
-    !user_signed_in? && show_announcement_section?
-  end
-
-  def show_functions_section?
-    show_announcement_section?
-  end
-
-  def show_announcement_section?
-    top = controller_name == 'home' && action_name == 'new'
-    one_sided_friends = controller_name == 'one_sided_friends' && action_name == 'new'
-    top || one_sided_friends
-  end
-
   def kick_out_error_path(reason, redirect_path: nil)
     if redirect_path
       sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}", redirect_path: redirect_path)

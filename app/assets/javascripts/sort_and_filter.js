@@ -32,16 +32,11 @@ SortAndFilter.activateFilterButton = function ($container, callback) {
     var $button = $container.find('.dropdown-toggle');
     $button.trigger('click');
 
-    var $checkbox = $selected.find('input');
-    if ($checkbox.prop('checked')) {
-      $checkbox.removeAttr('checked').prop('checked', false);
-    } else {
-      $checkbox.attr('checked', true).prop('checked', true);
-    }
+    $selected.toggleClass('active')
 
     var selectedValues = [];
-    $container.find("input[type='checkbox']:checked").each(function (_, el) {
-      selectedValues.push($(el).parent('a').data('filter'));
+    $container.find(".dropdown-item.active").each(function (_, el) {
+      selectedValues.push($(el).data('filter'));
     });
 
     if (selectedValues.length > 0) {

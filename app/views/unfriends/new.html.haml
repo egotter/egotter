@@ -16,10 +16,13 @@
       = t('.what_is_unfriends.description2_html', url: url)
       .text-center.my-5= sign_in_with_twitter_link(url, 'what_is_unfriends_button', class: 'btn btn-primary btn-lg')
 
-.container= render partial: 'shared/review_section'
+= render partial: 'shared/review_section'
 
 .my-5= render partial: 'shared/feature_section', locals: {title: t('.how_to_use_unfriends.title'), image: '/egotter_only_signin_with_text_400x448.png', description: t('.how_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('how_to_use_unfriends')), current_via('how_to_use_unfriends_button'), class: 'btn btn-primary btn-lg btn-block'), check: t('.how_to_use_unfriends.check')}
 .my-5= render partial: 'shared/feature_section', locals: {title: t('.when_to_use_unfriends.title'), image: '/egotter_hurry_up_with_text_400x448.png', description: t('.when_to_use_unfriends.description_html', url: url), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('when_to_use_unfriends')), current_via('when_to_use_unfriends_button'), class: 'btn btn-primary btn-lg btn-block'), check: t('.when_to_use_unfriends.check')}
 .my-5= render partial: 'shared/feature_section', locals: {title: t('shared.features.title6_html'), image: '/egotter_globe_with_text_400x448.png', description: t('shared.features.text6_html'), note: nil, link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('feature_safe')), 'feature_safe', class: 'btn btn-primary btn-lg btn-block'), check: t('shared.features.check6')}
 .my-5= render partial: 'shared/feature_section', locals: {title: t('shared.features.title4_html'), image: '/egotter_email_with_text_400x448.png', description: t('shared.features.text4_html'), note: t('shared.features.note4'), link: sign_in_with_twitter_link(unfriends_top_path(via: current_via('feature_removed')), 'feature_removed', class: 'btn btn-primary btn-lg btn-block'), check: t('shared.features.check4')}
 .my-5= render partial: 'shared/feature_section', locals: {title: t('shared.features.title7_html'), image: '/egotter_chat_with_text_400x448.png', description: t('shared.features.text7_html'), note: nil, link: link_to(t('shared.features.button7'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-lg'), check: t('shared.features.check7')}
+
+= render partial: 'shared/functions_section'
+= render partial: 'shared/announcement_section'

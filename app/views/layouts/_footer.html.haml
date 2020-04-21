@@ -1,74 +1,53 @@
 %footer.footer.bg-light.py-4
   .container.text-center
     %ul.list-inline.mb-4
-      %li.list-inline-item
-        %a{href: root_path}= t('.titles.root')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
+        %a{href: root_path}= t('.root')
+      = footer_item do
         %a{href: one_sided_friends_top_path(via: current_via('footer'))}= t('one_sided_friends.new.footer_title')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
-        %a.d-block{href: unfriends_top_path(via: current_via('footer'))}= t('unfriends.new.footer_title')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
-        %a.d-block{href: inactive_friends_top_path(via: current_via('footer'))}= t('inactive_friends.new.footer_title')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
+        %a{href: unfriends_top_path(via: current_via('footer'))}= t('unfriends.new.footer_title')
+      = footer_item do
+        %a{href: inactive_friends_top_path(via: current_via('footer'))}= t('inactive_friends.new.footer_title')
+      = footer_item do
         %a{href: clusters_top_path(via: current_via('footer'))}= t('clusters.new.footer_title')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         %a{href: tokimeki_unfollow_top_path(via: current_via('footer'))}= t('tokimeki_unfollow.new.footer_title')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         %a{href: delete_tweets_path(via: current_via('footer'))}= t('delete_tweets.new.footer_title')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         %a{href: "https://scheduled-tweets.egotter.com?via=egotter_footer&utm_source=egotter-footer&utm_medium=web&utm_campaign=egotter", target: '_blank'}= t('.scheduled_tweets')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         %a{href: "https://transcription-ai.com?via=egotter_footer&utm_source=egotter-footer&utm_medium=web&utm_campaign=egotter", target: '_blank'}= t('.transcription')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         - if user_signed_in?
           = link_to t('.sign_out'), goodbye_path(via: current_via('footer'))
         - else
           = link_to t('.sign_in'), sign_in_path(via: current_via('footer'))
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         %a{href: 'https://twitter.com/ego_tter', target: '_blank'}= t('.feedback')
       - if user_signed_in?
-        %li.list-inline-item ⋅
-        %li.list-inline-item
+        = footer_item do
           = link_to t('settings.title'), settings_path
-      %li.list-inline-item ⋅
-      %li.list-inline-item
-        %a{href: user_url('ego_tter'), target: '_blank'}= t('dictionary.official_account')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
+        %a{href: user_url('ego_tter'), target: '_blank'}= t('.official_account')
+      = footer_item do
         = link_to t('.support'), support_path
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         %a{href: 'https://github.com/ts-3156/egotter', target: '_blank'}= t('.github')
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         = link_to t('misc.terms_of_service.title'), terms_of_service_path
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         = link_to t('misc.privacy_policy.title'), privacy_policy_path
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         = link_to t('misc.specified_commercial_transactions.title'), specified_commercial_transactions_path
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         = link_to t('misc.specified_commercial_transactions.title'), specified_commercial_transactions_path
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         = link_to t('pricing.new.plans'), pricing_path(via: current_via('footer'))
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         = link_to t('directory.profiles.footer_title'), directory_profile_path
-      %li.list-inline-item ⋅
-      %li.list-inline-item
+      = footer_item do
         = link_to t('directory.timelines.footer_title'), directory_timeline_path
 
     %div

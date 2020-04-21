@@ -2,11 +2,9 @@ en:
   searches:
     common:
       egotter: "egotter"
-      or: " or "
       cluster: "clusters"
       return: "return to Analysis of %{user}"
       twitter_id: "Twitter ID"
-      search_by_egotter: "Search by egotter"
       search_xxx_by_egotter: "Search %{user} by egotter"
       search_a_and_b: "Search %{user1} and %{user2}"
       search_by: "Search %{user}"

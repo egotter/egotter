@@ -34,3 +34,12 @@
     link: link_to(t('home.new.text014_html'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'),
     check: [t('searches.new.pc.check_012')]} %>
 <%= render partial: 'shared/feature_section', locals: options %>
+
+<% options = {
+    title: t('shared.sign_in_button_at_bottom.title_html'),
+    image: '/egotter_useful_with_text_400x448.png',
+    description: t('shared.sign_in_button_at_bottom.description_html'),
+    note: nil,
+    link: sign_in_with_twitter_link(nil, 'sign_in_button_at_bottom', class: 'btn btn-primary btn-block'),
+    check: [t('shared.sign_in_button_at_bottom.check1'), t('shared.sign_in_button_at_bottom.check2'), t('shared.sign_in_button_at_bottom.check3')]} %>
+<%= render partial: 'shared/feature_section', locals: options %>

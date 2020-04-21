@@ -1,10 +1,10 @@
 - user = TwitterUserDecorator.new(tweet.user)
 .card.mb-3
   .row.no-gutters
-    .col
+    .col-auto
       = search_link user.screen_name, current_via('icon') do
         = image_tag bigger_icon_url(user), class: 'rounded', style: 'max-width: 90px; width: 100%;', alt: user.screen_name
-    .col-10
+    .col
       .card-body
         %h5.card-title{style: 'font-size: small;'}
           = search_link user.screen_name, current_via('screen_name')
