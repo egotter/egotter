@@ -33,6 +33,14 @@ class TwitterUserDecorator < ApplicationDecorator
     description.present?
   end
 
+  def profile_icon_url?
+    profile_image_url_https.present?
+  end
+
+  def profile_icon_url_for(request)
+    profile_image_url_https.remove('_normal')
+  end
+
   def profile_banner_url?
     profile_banner_url.present?
   end
@@ -65,6 +73,10 @@ class TwitterUserDecorator < ApplicationDecorator
     !suspended? && inactive_value
   end
 
+  def active?
+    !inactive?
+  end
+
   def refollow?
     respond_to?(:refollow) && refollow
   end
@@ -74,23 +86,23 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def suspended_label
-    suspended? ? '&nbsp;<span class="label label-danger">' + I18n.t('twitter.profile.labels.suspended') + '</span>' : ''
+    suspended? ? '&nbsp;<span class="badge badge-danger">' + I18n.t('twitter.profile.labels.suspended') + '</span>' : ''
   end
 
   def blocked_label
-    blocked? ? '&nbsp;<span class="label label-default">' + I18n.t('twitter.profile.labels.blocked') + '</span>' : ''
+    blocked? ? '&nbsp;<span class="badge badge-secondary">' + I18n.t('twitter.profile.labels.blocked') + '</span>' : ''
   end
 
   def inactive_label
-    inactive? ? '&nbsp;<span class="label label-default">' + I18n.t('twitter.profile.labels.inactive') + '</span>' : ''
+    inactive? ? '&nbsp;<span class="badge badge-secondary">' + I18n.t('twitter.profile.labels.inactive') + '</span>' : ''
   end
 
   def refollow_label
-    refollow? ? '&nbsp;<span class="label label-info">' + I18n.t('twitter.profile.labels.refollow') + '</span>' : ''
+    refollow? ? '&nbsp;<span class="badge badge-info">' + I18n.t('twitter.profile.labels.refollow') + '</span>' : ''
   end
 
   def refollowed_label
-    refollowed? ? '&nbsp;<span class="label label-info">' + I18n.t('twitter.profile.labels.refollowed') + '</span>' : ''
+    refollowed? ? '&nbsp;<span class="badge badge-info">' + I18n.t('twitter.profile.labels.refollowed') + '</span>' : ''
   end
 
   def status_labels
@@ -106,14 +118,30 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def protected_icon
-    protected? ? '&nbsp;<span class="glyphicon glyphicon-lock"></span>' : ''
+    if protected?
+      <<~HTML.html_safe
+        &nbsp;<i class="fas fa-lock text-warning"></i>
+      HTML
+    else
+      ''
+    end
   end
 
   def verified_icon
-    verified? ? '&nbsp;<span class="glyphicon glyphicon-ok"></span>' : ''
+    if verified?
+      <<~HTML.html_safe
+        &nbsp;<i class="fas fa-check text-primary"></i>
+      HTML
+    else
+      ''
+    end
   end
 
   def name_with_icon
     "#{name}#{protected_icon}#{verified_icon}".html_safe
+  end
+
+  def uid_i
+    uid.to_i
   end
 end

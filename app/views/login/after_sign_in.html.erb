@@ -1,7 +1,13 @@
-<html>
+<html lang="ja">
+<head>
+  <meta content='text/html; charset=UTF-8' http-equiv='Content-Type'>
+  <meta charset='utf-8'>
+  <meta content="width=device-width, initial-scale=1" name="viewport">
+  <%= render partial: 'shared/google' %>
+</head>
 <body>
-<%= render partial: 'shared/google' %>
-<%= image_tag '/ajax-loader.gif' %>&nbsp;<%= t('login.after_sign_in.proceccing') %>
+<%= image_tag '/ajax-loader.gif' %>&nbsp;<span style="font-size: 24px;"><%= t('.sign_in') %></span>
+
 <script>
   setTimeout(function () {
     window.location.href = '<%= @redirect_path.html_safe %>';

@@ -1,0 +1,45 @@
+<% options = {
+    title: t('home.new.text001_html'),
+    image: '/egotter_matte_384x432.png',
+    description: t('home.new.text002_html'),
+    note: nil,
+    link: sign_in_with_twitter_link(nil, 'who_unfollow_button', class: 'btn btn-primary btn-block'),
+    check: [t('searches.new.pc.check_007'), t('searches.new.pc.check_008')]} %>
+<%= render partial: 'shared/feature_section', locals: options %>
+
+<% options = {
+    title: t('home.new.text007'),
+    image: '/egotter_email_with_text_400x448.png',
+    description: t('home.new.text008_html'),
+    note: nil,
+    link: sign_in_with_twitter_link(nil, 'remove_notif_button', class: 'btn btn-primary btn-block'),
+    check: [t('searches.new.pc.check_009'),
+            t('searches.new.pc.check_010')]} %>
+<%= render partial: 'shared/feature_section', locals: options %>
+
+<% options = {
+    title: t('home.new.text009_html'),
+    image: '/egotter_chart_346x430.png',
+    description: t('home.new.text010_html'),
+    note: nil,
+    link: sign_in_with_twitter_link(nil, 'chart_button', class: 'btn btn-primary btn-block'),
+    check: [t('searches.new.pc.check_011')]} %>
+<%= render partial: 'shared/feature_section', locals: options %>
+
+<% options = {
+    title: t('home.new.text012_html'),
+    image: '/egotter_chat_with_text_400x448.png',
+    description: t('home.new.text013_html'),
+    note: nil,
+    link: link_to(t('home.new.text014_html'), 'https://twitter.com/ego_tter', target: '_blank', class: 'btn btn-primary btn-block'),
+    check: [t('searches.new.pc.check_012')]} %>
+<%= render partial: 'shared/feature_section', locals: options %>
+
+<% options = {
+    title: t('shared.sign_in_button_at_bottom.title_html'),
+    image: '/egotter_useful_with_text_400x448.png',
+    description: t('shared.sign_in_button_at_bottom.description_html'),
+    note: nil,
+    link: sign_in_with_twitter_link(nil, 'sign_in_button_at_bottom', class: 'btn btn-primary btn-block'),
+    check: [t('shared.sign_in_button_at_bottom.check1'), t('shared.sign_in_button_at_bottom.check2'), t('shared.sign_in_button_at_bottom.check3')]} %>
+<%= render partial: 'shared/feature_section', locals: options %>

@@ -1,6 +1,8 @@
 - content_for :canonical_url do
   %link{href: status_url(@twitter_user), rel: 'canonical'}
 
+- content_for :navbar_title, @navbar_title
+
 - breadcrumb :status, @twitter_user.screen_name
 
 - page_title = t('statuses.show.page_title', user: @twitter_user.mention_name)
@@ -9,17 +11,10 @@
 
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h2.page-title= page_title
+%h2.h2.text-center.my-5= page_title
 
-= render partial: 'common/search_form', locals: {via: current_via('top_input')}
-= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
-
-#statuses.twitter.tweets.center-block
+#statuses.twitter.tweets.mx-auto
   - if @twitter_user.protected_account?
     = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
   - else
     = render(partial: 'twitter/oembed_tweet', collection: @statuses, as: :tweet, cached: true, formats: %i(html))
-
-.gray-separator
-
-= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}

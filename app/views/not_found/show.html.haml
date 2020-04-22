@@ -1,23 +1,23 @@
 - content_for :canonical_url do
-  %link{href: not_found_url(@user), rel: 'canonical'}
+  %link{href: @canonical_url, rel: 'canonical'}
 
 - page_title = t('.page_title', user: @user.screen_name)
 - title page_title
 - set_meta_tags description: t('.meta_description', user: @user.screen_name)
 
-.vertical-spacing
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
+.alert.alert-warning.alert-dismissible.my-3{role: "alert"}
+  = raw @alert
+
+.mt-3
   - if action_name == 'show'
-    - url = latest_not_found_path(screen_name: @user.screen_name, via: current_via('request_to_update_button'))
-    = link_to t('.update', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg center-block'
+    = link_to t('.update', user: @user.screen_name), @latest_resource_path, class: 'btn btn-primary btn-block btn-lg'
   - else
-    %button.btn.btn-default.btn-block.btn-lg.center-block{disabled: true}= t('.displayed_data_is_latest')
+    %button.btn.btn-outline-primary.btn-block.btn-lg.disabled= t('.displayed_data_is_latest')
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  = link_to t('.see_on_twitter', user: @user.screen_name), user_url(@user.screen_name), class: 'btn btn-primary btn-block btn-lg center-block', target: '_blank'
-  .vertical-spacing
-  = render partial: 'twitter/profile', locals: {user: @user}
+.mb-3
+  = link_to t('.see_on_twitter', user: @user.screen_name), user_url(@user.screen_name), class: 'btn btn-outline-primary btn-block btn-lg', target: '_blank'
 
-.vertical-spacing
+.mb-3
+  = render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}

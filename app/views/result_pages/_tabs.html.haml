@@ -1,0 +1,5 @@
+%ul.nav.nav-tabs.nav-justified
+  - tabs.each.with_index do |tab, i|
+    %li.nav-item
+      = link_to tab[:text].html_safe, tab[:url], class: ('nav-link active' if active_tab == i)
+.vertical-spacing

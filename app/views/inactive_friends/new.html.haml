@@ -1,30 +1,12 @@
 - title @title
 - set_meta_tags description: t('inactive_friends.new.description')
 
-%h3.h4.inactive-friends.text-center= t('inactive_friends.new.lead_001')
-.inactive-friends.lead.text-center= t('inactive_friends.new.lead_002').html_safe
-.inactive-friends.lead.text-center= t('inactive_friends.new.lead_003').html_safe
+= render partial: 'shared/side_by_side_section', locals: {right_side: {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')}}
 
-= render partial: 'common/search_form', locals: {via: current_via('top_input')}
-= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
+- if user_signed_in? && !@has_error
+  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: inactive_friend_path(current_user)}
 
-- if user_signed_in?
-  = render partial: 'common/search_button', locals: {screen_name: current_user.screen_name, via: current_via('top_button')}
-- else
-  = sign_in_with_twitter_link(inactive_friends_top_path, 'button', class: 'btn btn-info btn-block')
-
-.row.inactive-friends.screenshot
-  .col-sm-6.text-center
-    %img{alt: "#{t('searches.common.egotter')}", src: image_path('/screenshot_iphone_332x560.png'), height: '160px'}
-  .col-sm-6.text-center
-    %img{alt: "#{t('searches.common.egotter')}", src: image_path('/screenshot_laptop_961x560.png'), height: '160px'}
-
-.inactive-friends.separator
-
-#public-tweets-wrapper.twitter.tweets.center-block
-:javascript
-  $(function () {
-    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
-  });
-
-.inactive-friends.lead.in-top-page.text-center= t('inactive_friends.new.lead_004').html_safe
+= render partial: 'shared/review_section'
+= render partial: 'shared/features_section'
+= render partial: 'shared/functions_section'
+= render partial: 'shared/announcement_section'

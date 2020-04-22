@@ -1,42 +1,32 @@
 class ForbiddenController < ApplicationController
-  before_action :valid_screen_name?
+  include Concerns::CheckExistenceConcern
 
-  before_action only: :latest do
-    request_context_client.user(params[:screen_name])
-  rescue => e
-    notify_airbrake(e)
-  else
-    DeleteForbiddenUserWorker.new.perform(params[:screen_name])
-  end
-
-  before_action unless: :twitter_crawler? do
-    if !ForbiddenUser.exists?(screen_name: params[:screen_name]) && !forbidden_user?(params[:screen_name])
-      redirect_to timeline_path(screen_name: params[:screen_name], via: current_via('forbidden_redirect')), notice: t('forbidden.show.come_back', user: params[:screen_name])
-    end
-  end
-
-  before_action :create_search_log
-
-  def show
-    # Even if this value is not set, the sidebar will not be displayed because @twitter_user is not set.
-    self.sidebar_disabled = true
-    @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
-    @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
-
-    flash.now[:alert] = flash_message(@use&.screen_name || params[:screen_name])
-    @user ? render('show') : render('not_persisted')
-  end
-
-  # Separated endpoint
-  def latest
-    show
+  prepend_before_action do
+    @resource_name = 'forbidden'
   end
 
   private
 
-  def flash_message(screen_name)
-    url = latest_forbidden_path(screen_name: screen_name, via: current_via('request_to_update'))
-    url = sign_in_path(via: current_via('request_to_update'), redirect_path: url) unless user_signed_in?
-    t("forbidden.#{action_name}.displayed_data_is_html", user: screen_name, url: url)
+  def delete_resource_async
+    DeleteForbiddenUserWorker.new.perform(params[:screen_name])
+  end
+
+  def resource_found?
+    !ForbiddenUser.exists?(screen_name: params[:screen_name]) &&
+        !forbidden_user?(params[:screen_name]) &&
+        params['redirect'] != 'false'
+  end
+
+  def latest_resource_path(screen_name)
+    @latest_resource_path = latest_forbidden_path(screen_name: screen_name, via: current_via('request_to_update'))
+  end
+
+  def set_canonical_url
+    @canonical_url =
+        if @user
+          forbidden_url(@user)
+        else
+          forbidden_url(screen_name: @screen_name)
+        end
   end
 end

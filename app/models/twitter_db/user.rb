@@ -51,6 +51,14 @@ module TwitterDB
       status_created_at && status_created_at < 2.weeks.ago
     end
 
+    def active?
+      !inactive?
+    end
+
+    def protected?
+      self.protected
+    end
+
     def follow_back_rate
       TwitterUser.latest_by(uid: uid)&.follow_back_rate
     end

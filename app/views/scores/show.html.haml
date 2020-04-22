@@ -21,9 +21,6 @@
   = render(partial: 'twitter/tweet_box', locals: {text: strip_tags(@tweet_text), twitter_user: @twitter_user})
 .vertical-spacing
 
-- @screen_names.each do |screen_name|
-  = render partial: 'common/search_button', locals: {screen_name: screen_name, via: current_via('scores')}
-
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
 .gray-separator
@@ -33,13 +30,3 @@
   .gray-separator
   = render partial: 'usage_stats/tweets_stat', locals: {stat: @twitter_user.usage_stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
   .gray-separator
-
-= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
-
-.gray-separator
-
-= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t('.title'))}
-
-.gray-separator
-
-= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}

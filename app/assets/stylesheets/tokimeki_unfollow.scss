@@ -60,17 +60,4 @@
   blockquote p {
     margin-bottom: 15px;
   }
-
-  &.lead {
-    font-size: 16px;
-  }
-}
-
-.unfollow-or-keep {
-  padding: 15px;
-  z-index: 10000; // for sticky
-}
-
-#after-unfollow-modal {
-  z-index: 10000; // for sticky
 }

@@ -23,6 +23,8 @@ module Concerns::UnfriendsConcern
     @page_description = t('.page_description_html', user: user_link(@twitter_user.screen_name), url: unfriends_top_path(via: current_via('page_description')))
     @meta_description = t('.meta_description', {user: @twitter_user.screen_name}.merge(counts))
 
+    @navbar_title = t(".navbar_title")
+
     mention_names = @twitter_user.users_by(controller_name: controller_name).
         select(:screen_name).limit(3).map(&:mention_name)
 

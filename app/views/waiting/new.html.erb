@@ -1,75 +1,66 @@
-<%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
+<div class="my-3">
+  <%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
+</div>
 
-<div id="waiting-msg" class="alert alert-info text-center">
+<div id="waiting-msg" class="alert alert-info text-center mb-3">
   <%= t('.analyzing', user: @twitter_user.name) %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
 </div>
 
-<div id="finished-msg" class="alert alert-success text-center" style="display: none;">
+<div id="finished-msg" class="alert alert-success text-center mb-3" style="display: none;">
   <%= t(".finished") %>&nbsp;<%= image_tag '/ajax-loader-blue.gif' %>
 </div>
 
-<div id="error-msg" class="alert alert-warning text-left" style="display: none;">
+<div id="error-msg" class="alert alert-warning text-left mb-3" style="display: none;">
   <%= t('.something_wrong_html', url: sign_in_path(via: current_via('something_wrong'))) %>
 </div>
 
-<div id="waiting-progress" class="row">
-  <div class="hidden-xs hidden-sm col-md-2"></div>
-  <div class="col-md-8">
-    <div class="bar">
-      <div class="progress">
-        <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-          <span class="sr-only">0% Complete</span>
-        </div>
+<div id="waiting-progress">
+  <div class="bar">
+    <div class="progress">
+      <div class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+        <span class="sr-only">0% Complete</span>
       </div>
     </div>
   </div>
-  <div class="hidden-xs hidden-sm col-md-2"></div>
 </div>
 
-<div class="row">
-  <div class="col-sm-4 text-center">
-    <div id="retry-btn" style="display: none;">
-      <%= link_to t('.retry_search_by', user: @twitter_user.screen_name), searches_path(screen_name: @twitter_user.screen_name, via: current_via('waiting_retry')), class: 'btn btn-lg btn-default', method: :post %>
-    </div>
-    <div class="vertical-spacing"></div>
+<div class="buttons row" style="display: none;">
+  <div class="col-12 col-sm-12 col-md-4 text-center mb-3">
+    <%= link_to t('.retry_search_by', user: @twitter_user.screen_name), searches_path(screen_name: @twitter_user.screen_name, via: current_via('waiting_retry')), class: 'btn btn-lg btn-outline-primary', method: :post %>
   </div>
 
-  <div class="col-sm-4 text-center">
-    <div id="login-btn" style="display: none;">
-      <%= sign_in_with_twitter_link(nil, 'sign_in_button', class: 'btn btn-lg btn-info') %>
-    </div>
-    <div class="vertical-spacing"></div>
+  <div class="col-12 col-sm-12 col-md-4 text-center mb-3">
+    <%= sign_in_with_twitter_link(nil, 'sign_in_button', class: 'btn btn-lg btn-primary') %>
   </div>
 
-  <div class="col-sm-4 text-center">
-    <div id="support-btn" style="display: none;">
-      <%= link_to t('.link_to_support'), support_path(via: current_via), class: 'btn btn-lg btn-default' %>
-    </div>
-    <div class="vertical-spacing"></div>
+  <div class="col-12 col-sm-12 col-md-4 text-center mb-3">
+    <%= link_to t('.link_to_support'), support_path(via: current_via), class: 'btn btn-lg btn-outline-primary' %>
   </div>
 </div>
-
-<%= render(partial: 'adsense/side_by_side', locals: {vertical: :top}) %>
 
 <script>
+  function redirectTo(url) {
+    window.location.replace(url);
+  }
+
+  var url = "<%= twitter_user_path(uid: @twitter_user.uid, via: current_via) %>";
+  var redirectPath = "<%= @redirect_path %>";
+  var signedIn = <%= user_signed_in? %>;
+  var timeoutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: current_via('waiting_timeout'))) %>';
+
+  var twitterUser = {
+    userId: '<%= current_user&.id %>',
+    uid: "<%= @twitter_user.uid %>",
+    screenName: "<%= @twitter_user.screen_name %>"
+  };
+
+  var alertBox = new Waiting.AlertBox(signedIn, timeoutMessage);
+
   $(function () {
-    var url = "<%= twitter_user_path(uid: @twitter_user.uid, via: current_via) %>";
-    var redirectPath = "<%= @redirect_path %>";
-    var signedIn = <%= user_signed_in? %>;
-    var timeoutMessage = '<%= t('.retry_timeout_html', url: sign_in_path(via: current_via('waiting_timeout'))) %>';
-
-    var twitterUser = {
-      userId: '<%= current_user&.id %>',
-      uid: "<%= @twitter_user.uid %>",
-      screenName: "<%= @twitter_user.screen_name %>"
-    };
-
-    var alertBox = new Waiting.AlertBox(signedIn, timeoutMessage);
-
     Waiting.poll(url, {interval: 3000}, function done(res) {
       console.log('success', res);
       alertBox.finished();
-      window.location.replace(redirectPath);
+      redirectTo(redirectPath);
 
     }, function keep_on(res, options) {
       console.log('continue', res, options);
@@ -79,12 +70,12 @@
       console.log('stop', res);
       alertBox.failed();
 
-      ga('send', {
-        hitType: 'event',
-        eventCategory: 'waiting#new',
-        eventAction: 'Retry exhausted',
-        eventLabel: JSON.stringify(twitterUser)
-      });
+      // ga('send', {
+      //   hitType: 'event',
+      //   eventCategory: 'waiting#new',
+      //   eventAction: 'Retry exhausted',
+      //   eventLabel: JSON.stringify(twitterUser)
+      // });
     }, function fail(xhr) {
       console.log('failed', xhr.responseText);
 
@@ -94,12 +85,12 @@
       }
       alertBox.failed();
 
-      ga('send', {
-        hitType: 'event',
-        eventCategory: 'Waiting#new',
-        eventAction: 'Failed',
-        eventLabel: JSON.stringify($.extend({status: xhr.status}, twitterUser))
-      });
+      // ga('send', {
+      //   hitType: 'event',
+      //   eventCategory: 'Waiting#new',
+      //   eventAction: 'Failed',
+      //   eventLabel: JSON.stringify($.extend({status: xhr.status}, twitterUser))
+      // });
     });
   });
 </script>

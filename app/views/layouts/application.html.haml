@@ -9,18 +9,23 @@
     %link{href: image_path('/apple-touch-icon.png'), rel: 'apple-touch-icon'}
     %link{href: image_path('/apple-touch-icon-120x120.png'), rel: 'apple-touch-icon', sizes: '120x120'}
     %link{href: image_path('/apple-touch-icon-152x152.png'), rel: 'apple-touch-icon', sizes: '152x152'}
-    = render partial: 'common/meta_tags'
+    -# Set meta-title and meta-description
+    = render partial: 'layouts/meta_tags'
     %meta{content: 'summary_large_image', name: 'twitter:card'}
     %meta{content: '@ego_tter', name: 'twitter:site'}
-    %link{href: '//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css', rel: 'stylesheet'}
+    %link{:crossorigin => "anonymous", :href => "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css", :integrity => "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh", :rel => "stylesheet"}/
     -# For Autocomplete
     %link{href: '//code.jquery.com/ui/1.12.0/themes/cupertino/jquery-ui.min.css', rel: 'stylesheet'}
     = stylesheet_link_tag 'application', media: 'all', crossorigin: 'anonymous'
     = javascript_include_tag 'application', crossorigin: 'anonymous'
     %script{src: '//code.jquery.com/ui/1.12.0/jquery-ui.js'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js'}
-    %script{src: '//maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js'}
+    %script{:crossorigin => "anonymous", :integrity => "sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo", :src => "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"}
+    %script{:crossorigin => "anonymous", :integrity => "sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6", :src => "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"}
     %link{crossorigin: "anonymous", href: "//use.fontawesome.com/releases/v5.6.3/css/all.css", integrity: "sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", rel: "stylesheet"}
+    %link{:crossorigin => "anonymous", :href => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css", :integrity => "sha256-qfsdVqVeKPVy58Hx9qCIn8Nsdh2TU1yicE7B5EHi+Ss=", :rel => "stylesheet"}/
+    %script{:crossorigin => "anonymous", :integrity => "sha256-NOqsQWSGulWF4j0yfFlFwk9rmFpAoRV5nodGqIHyjUo=", :src => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"}
+    %script{:crossorigin => "anonymous", :integrity => "sha256-Z7vZOdzU6nCmyqd53Q0EfBYAZtWilBbFj5cWoYrRs48=", :src => "https://cdnjs.cloudflare.com/ajax/libs/jquery-sidebar/3.3.2/jquery.sidebar.min.js"}
     = csrf_meta_tags
 
     = yield(:canonical_url) if content_for?(:canonical_url)
@@ -36,53 +41,29 @@
     = javascript_include_tag '/adsense.js'
 
     = render partial: 'layouts/header' if show_header? && !under_maintenance?
+    = render partial: 'layouts/sidemenu'
 
     .container
-      #ajax-warning-message.container{style: 'display: none;'}
-        .vertical-spacing
+      #ajax-warning-message.mb-0{style: 'display: none;'}
         %p.alert.alert-warning.alert-dismissable
           %a.close(href="#" data-dismiss="alert" aria-label="close") &times;
 
-    .container
-      #global-warning-message-box{style: 'display: none;'}
-        .vertical-spacing
-        #global-warning-message.alert.alert-warning.alert-dismissible{role: "alert"}
-          %button.close{"aria-label" => "Close", type: "button"}
-            %span{"aria-hidden" => "true", onclick: "$('#global-warning-message-box').hide().find('.message').empty();"} &times;
-          .message
-
-    .container
-      #global-info-message-box{style: 'display: none;'}
-        .vertical-spacing
-        #global-info-message.alert.alert-info.alert-dismissible{role: "alert"}
-          %button.close{"aria-label" => "Close", type: "button"}
-            %span{"aria-hidden" => "true", onclick: "$('#global-info-message-box').hide().find('.message').empty();"} &times;
-          .message
-
-    - if notice || alert
-      .container
-        - if alert
-          .vertical-spacing
-          #header-warning.alert.alert-warning.alert-dismissible{role: "alert"}
-            %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
-              %span{"aria-hidden" => "true"} &times;
-            = raw alert
-        - elsif notice
-          .vertical-spacing
-          #header-info.alert.alert-info.alert-dismissible{role: "alert"}
-            %button.close{"aria-label" => "Close", "data-dismiss" => "alert", type: "button"}
-              %span{"aria-hidden" => "true"} &times;
-            = raw notice
+    = render partial: 'layouts/alert'
 
     - if wrap_in_container?
-      .container
+      .container._debug_header
         .row
-          .col-xs-12.col-md-9
-            = breadcrumbs style: :bootstrap, autoroot: false, link_current: true
-            = yield
-          .hidden-xs.hidden-sm.col-md-3.sidebar.text-center
-            - if show_sidebar?
-              = render partial: 'layouts/sidebar', locals: {twitter_user: @twitter_user}
+          - if show_sidebar?
+            .d-none.d-sm-none.d-md-block.col-md-3
+              .sticky-top
+                = render partial: 'layouts/sidenav', locals: {twitter_user: @twitter_user}
+            .col-12.col-sm-12.col-md-9
+              = render partial: 'layouts/breadcrumbs'
+              = yield
+          - else
+            .col-12
+              = render partial: 'layouts/breadcrumbs'
+              = yield
     - else
       = yield
 
@@ -94,77 +75,27 @@
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/d3/4.2.7/d3.min.js', type: 'text/javascript'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.3/d3.layout.cloud.min.js', type: 'text/javascript'}
 
-    = render partial: 'shared/feature_section', locals: {title: t('shared.sign_in_button_at_bottom.title_html'), image: '/egotter_useful_with_text_400x448.png', description: t('shared.sign_in_button_at_bottom.description_html'), note: nil, link: sign_in_with_twitter_link(nil, 'sign_in_button_at_bottom', class: 'btn btn-primary btn-block'), check: [t('shared.sign_in_button_at_bottom.check1'), t('shared.sign_in_button_at_bottom.check2'), t('shared.sign_in_button_at_bottom.check3')]} if show_sign_in_button_at_bottom?
-    = render partial: 'shared/functions_section' if show_functions_section?
-    = render partial: 'shared/announcement_section' if show_announcement_section?
     = render partial: 'layouts/footer' unless under_maintenance?
 
   - unless under_maintenance?
-    #search-modal.modal.fade{'aria-labelledby' => 'search-modal-label', role: 'dialog', tabindex: '-1', data: {url: search_histories_path}}
-      .modal-dialog.modal-lg{role: 'document'}
-        .modal-content
-          .modal-header
-            %button.close{'aria-label' => 'Close', 'data-dismiss' => 'modal', type: 'button'}
-              %span{'aria-hidden' => 'true'} ×
-            %h4#search-modal-label.modal-title.text-center= t('searches.common.search_by_egotter')
-          .modal-body
-            = render partial: 'common/search_form', locals: {via: current_via('search_modal_input')}
-            .text-muted.text-right{style: 'margin-top: 5px; max-width: 375px; margin: 0 auto;'}
-              = t('search_histories.search_modal.remaining_count_is_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id))
-              %div
-                - if user_signed_in?
-                  - if current_user.has_valid_subscription?
-                    = link_to current_user.purchased_plan_name, settings_path(via: current_via('plan_button_on_search_modal')), class: 'btn btn-default btn-sm'
-                  - else
-                    = link_to t('search_histories.search_modal.pricing'), pricing_path(via: current_via('purchase_button_on_search_modal')), target: '_blank'
-                    = link_to t('search_histories.search_modal.purchase'), '#', class: 'btn btn-default btn-checkout'
-                  %div{style: 'margin-top: 5px;'}
-                    %a.btn.btn-default{data: {target: '#share-modal', toggle: 'modal'}}= t('search_histories.search_modal.tweet')
-                - else
-                  = t('search_histories.search_modal.sign_in_html', url: sign_in_path(via: current_via('sign_in_button_on_search_modal')))
-            - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id) == 0
-              .vertical-spacing
-              .alert.alert-info.text-left
-                - sign_in_url = sign_in_path(via: current_via('too_many_searches_search_modal'))
-                - pricing_url = pricing_path(via: current_via('too_many_searches_search_modal'))
-                - support_url = pricing_path(via: current_via('too_many_searches_search_modal'), anchor: 'enterprise-plan')
-                = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
-            %h2.text-center= t('search_histories.search_modal.title')
-            .twitter.users.row
-
-    :javascript
-      $(function () {
-        SearchHistories.initializeSearchModal();
-      });
+    = render partial: 'modal/search_modal'
 
   - if user_signed_in?
     -# This modal will be initialized in Twitter.enableFollowButton('selector') after follow buttons are rendered.
-    #create-follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-      .modal-dialog{role: 'document'}
-        .modal-content
-          .modal-body
-            %p= t('twitter.create_follow_modal.message_html')
-            %p= t('twitter.create_follow_modal.history_link_html', url: settings_path(via: current_via('create_follow_modal'), anchor: 'follow-count'))
-            .dont-confirm
-              %input#create-follow-dont-confirm{type: 'checkbox'}
-              %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
-          .modal-footer
-            %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_follow_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: current_via('create_follow_modal'))}}= t('twitter.create_follow_modal.ok')
+    = modal_dialog id: 'create-follow-modal', title: t('twitter.create_follow_modal.title'), button: {positive: t('twitter.create_follow_modal.yes'), negative: t('twitter.create_follow_modal.no')}, data: {url: follows_path(via: current_via('create_follow_modal'))} do
+      %p= t('twitter.create_follow_modal.message_html')
+      %p= t('twitter.create_follow_modal.history_link_html', url: settings_path(via: current_via('create_follow_modal'), anchor: 'follow-count'))
+      .dont-confirm
+        %input#create-follow-dont-confirm{type: 'checkbox'}
+        %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
 
     -# This modal will be initialized in Twitter.enableUnfollowButton('selector') after unfollow buttons are rendered.
-    #create-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-      .modal-dialog{role: 'document'}
-        .modal-content
-          .modal-body
-            %p= t('twitter.create_unfollow_modal.message_html')
-            %p= t('twitter.create_unfollow_modal.history_link_html', url: settings_path(via: current_via('create_unfollow_modal'), anchor: 'unfollow-count'))
-            .dont-confirm
-              %input#create-unfollow-dont-confirm{type: 'checkbox'}
-              %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
-          .modal-footer
-            %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('twitter.create_unfollow_modal.cancel')
-            %button.btn.btn-danger.ok{type: 'button', data: {url: unfollows_path(via: current_via('create_unfollow_modal'))}}= t('twitter.create_unfollow_modal.ok')
+    = modal_dialog id: 'create-unfollow-modal', title: t('twitter.create_unfollow_modal.title'), button: {positive: t('twitter.create_unfollow_modal.yes'), negative: t('twitter.create_unfollow_modal.no'), category: 'danger'}, data: {url: unfollows_path(via: current_via('create_unfollow_modal'))} do
+      %p= t('twitter.create_unfollow_modal.message_html')
+      %p= t('twitter.create_unfollow_modal.history_link_html', url: settings_path(via: current_via('create_unfollow_modal'), anchor: 'unfollow-count'))
+      .dont-confirm
+        %input#create-unfollow-dont-confirm{type: 'checkbox'}
+        %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
 
     #follow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
       .modal-dialog{role: 'document'}
@@ -172,10 +103,10 @@
           .modal-body
             %p= t('twitter.warning_follow_modal.message_html')
           .modal-footer
-            = link_to t('twitter.warning_follow_modal.see_pricing'), pricing_path(via: current_via('follow_limit_warning')), class: 'btn btn-default', target: '_blank'
+            = link_to t('twitter.warning_follow_modal.see_pricing'), pricing_path(via: current_via('follow_limit_warning')), class: 'btn btn-outline-primary', target: '_blank'
             - if user_signed_in?
               - if current_user.has_valid_subscription?
-                %button.btn.btn-default{disabled: true}= t('twitter.warning_follow_modal.purchased')
+                %button.btn.btn-outline-primary.disabled= t('twitter.warning_follow_modal.purchased')
               - else
                 = link_to t('twitter.warning_follow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
             - else
@@ -187,66 +118,32 @@
           .modal-body
             %p= t('twitter.warning_unfollow_modal.message_html')
           .modal-footer
-            = link_to t('twitter.warning_unfollow_modal.see_pricing'), pricing_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-default', target: '_blank'
+            = link_to t('twitter.warning_unfollow_modal.see_pricing'), pricing_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-outline-primary', target: '_blank'
             - if user_signed_in?
               - if current_user.has_valid_subscription?
-                %button.btn.btn-default{disabled: true}= t('twitter.warning_unfollow_modal.purchased')
+                %button.btn.btn-outline-primary.disabled= t('twitter.warning_unfollow_modal.purchased')
               - else
                 = link_to t('twitter.warning_unfollow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
             - else
               = link_to t('twitter.warning_unfollow_modal.login'), sign_in_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-primary'
 
   - if user_signed_in? && !under_maintenance?
-    - if params[:follow_dialog] == '1'
-      #follow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-        .modal-dialog{role: 'document'}
-          .modal-content
-            .modal-header
-              %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
-                %span{"aria-hidden" => "true"} &times;
-              %h4.modal-title= t('.follow_modal.title_html')
-            .modal-body
-              %img.center-block{src: image_path('/egotter_usagi_840x450.png'), height: request.from_pc? ? '200px' : '140px'}
-              .vertical-spacing
-              .vertical-spacing
-              %p= t('.follow_modal.note_html')
-            .modal-footer
-              %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('.follow_modal.cancel')
-              %button.btn.btn-primary.ok{type: 'button', data: {url: follows_path(via: current_via('follow_egotter_modal')), uid: User::EGOTTER_UID, follow_url: follow_intent_url('ego_tter')}}= t('.follow_modal.ok')
-
-    #revive-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-      .modal-dialog{role: 'document'}
-        .modal-content
-          .modal-header
-            %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
-              %span{"aria-hidden" => "true"} &times;
-            %h4.modal-title= t('.revive_modal.title_html')
-          .modal-body
-            %img.center-block{src: image_path('/egotter_revive_840x450.png'), height: request.from_pc? ? '200px' : '140px'}
-            .vertical-spacing
-            = t('.revive_modal.body_html', url: t('.revive_modal.url', uid: current_user.uid))
-          .modal-footer
-            %button.btn.btn-primary.ok{type: 'button', data: {url: t('.revive_modal.url', uid: current_user.uid)}}= t('.revive_modal.ok')
-
     -# This modal is always embedded because it is used in settings page.
-    #share-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-      .modal-dialog{role: 'document'}
-        .modal-content
-          .modal-header
-            %button.close{"aria-label" => "Close", "data-dismiss" => "modal", type: 'button'}
-              %span{"aria-hidden" => "true"} &times;
-            %h4.modal-title= t('.share_modal.title_html')
-          .modal-body
-            %img.center-block{src: image_path('/egotter_thanks_840x483.png'), height: request.from_pc? ? '200px' : '140px'}
-            .vertical-spacing
-            %p= t('.share_modal.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
-            .vertical-spacing
-            %textarea{rows: '5', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text(without_url: true)
-            .share-text-note= t('.share_modal.note_html')
-            .share-text-note https://egotter.com #egotter
-          .modal-footer
-            %button.btn.btn-default{"data-dismiss" => 'modal', type: 'button'}= t('.share_modal.cancel')
-            %button.btn.btn-primary.ok{type: 'button', data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('.share_modal.success'), error_message: t('.share_modal.error')}}= t('.share_modal.ok')
+    = modal_dialog id: 'share-modal', title: t('.share_modal.title_html'), button: {positive: t('.share_modal.ok'), negative: t('.share_modal.cancel')}, data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('.share_modal.success'), error_message: t('.share_modal.error')} do
+      %img.d-block.mx-auto{src: image_path('/egotter_thanks_840x483.png'), width: request.from_pc? ? '400' : '300'}
+      %p.mt-3= t('.share_modal.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
+      %textarea{rows: '5', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text(without_url: true)
+      = t('.share_modal.note_html')
+      https://egotter.com #egotter
+
+    - if params[:follow_dialog] == '1'
+      = modal_dialog id: 'follow-modal', title: t('.follow_modal.title_html'), button: {positive: t('.follow_modal.ok'), negative: t('.follow_modal.cancel')}, data: {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')} do
+        %img.d-block.mx-auto{src: image_path('/egotter_usagi_840x450.png'), width: request.from_pc? ? '400' : '300'}
+        .mt-3= t('.follow_modal.note_html')
+
+    = modal_dialog id: 'revive-modal', title: t('.revive_modal.title_html'), button: {positive: t('.revive_modal.ok')}, data: {url: t('.revive_modal.url', uid: current_user.uid)} do
+      %img.d-block.mx-auto{src: image_path('/egotter_revive_840x450.png'), height: request.from_pc? ? '200' : '140'}
+      .mt-3= t('.revive_modal.body_html', url: t('.revive_modal.url', uid: current_user.uid))
 
 :javascript
   $(function () {

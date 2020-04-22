@@ -23,9 +23,7 @@ module Concerns::InternalServerErrorHandler
     if request.xhr?
       render json: {error: message}, status: :internal_server_error
     else
-      self.sidebar_disabled = true
-      flash.now[:alert] = message
-      render template: 'home/new', formats: %i(html), status: :internal_server_error unless performed?
+      render file: "#{Rails.root}/public/500.html", status: :internal_server_error, layout: false unless performed?
     end
   end
 
@@ -36,9 +34,7 @@ module Concerns::InternalServerErrorHandler
     if request.xhr?
       render json: {error: ex.message.truncate(100)}, status: :request_timeout
     else
-      self.sidebar_disabled = true
-      flash.now[:alert] = request_timeout_message
-      render template: 'home/new', formats: %i(html), status: :request_timeout
+      render file: "#{Rails.root}/public/408.html", status: :request_timeout, layout: false unless performed?
     end
   end
 
@@ -73,16 +69,5 @@ module Concerns::InternalServerErrorHandler
         action_name == 'create' &&
         egotter_visit_id.present?
     # SearchLog.exists?(created_at: 3.hours.ago..Time.zone.now, session_id: session[:egotter_visit_id])
-  end
-
-  def request_timeout_message
-    screen_name = params[:screen_name] || @twitter_user&.screen_name
-
-    if screen_name.present?
-      url = timeline_path(screen_name: screen_name, via: current_via('request_timeout'))
-      t('application.request_timeout_with_recovery_html', user: screen_name, url: url)
-    else
-      t('application.request_timeout_html')
-    end
   end
 end

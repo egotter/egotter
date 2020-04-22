@@ -5,7 +5,7 @@ class UnfollowsController < ApplicationController
   before_action :require_login!
   before_action { valid_uid?(params[:uid]) }
 
-  before_action {create_search_log(uid: params[:uid])}
+  before_action { create_search_log(uid: params[:uid]) }
 
   before_action do
     if !referer_is_tokimeki_unfollow? && CreateUnfollowLimitation.remaining_count(current_user) <= 0

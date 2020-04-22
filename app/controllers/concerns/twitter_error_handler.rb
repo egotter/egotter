@@ -27,6 +27,7 @@ module Concerns::TwitterErrorHandler
       else
         flash.now[:alert] = unknown_alert_message(ex)
       end
+      @has_error = true
       render template: 'home/new', formats: %i(html), status: :internal_server_error
     end
   end

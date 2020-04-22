@@ -1,35 +1,19 @@
 - title t('.plain_title')
 - set_meta_tags description: t('.description')
 
-.vertical-spacing
+.text-center.my-5= t('.next_is_html', number: @user.processed_count + 1, screen_name: @friend.screen_name)
 
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  .tokimeki_unfollow.lead= t('.next_is_html', number: @user.processed_count + 1, screen_name: @friend.screen_name)
-  .vertical-spacing
-  .unfollow-or-keep.alert.alert-warning.clearfix
-    .tokimeki_unfollow.lead= t('.text001_html', screen_name: @friend.screen_name)
-    %a.btn.btn-warning.pull-left.unfollow{href: '#', data: {uid: @friend.uid, url: unfollows_path(via: current_via)}}
-      = t('.unfollow')
-    %a.btn.btn-warning.pull-right.keep{href: '#'}
-      = t('.keep')
+.alert.alert-warning.my-5
+  = t('.text001_html', screen_name: @friend.screen_name)
+  .mt-3
+    %a.btn.btn-warning.unfollow{href: '#', data: {uid: @friend.uid, url: unfollows_path(via: current_via)}}= t('.unfollow')
+    %a.btn.btn-warning.keep{href: '#'}= t('.keep')
 
-.twitter.tweets.center-block
-  = render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
+.my-5= render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-.vertical-spacing
-.vertical-spacing
+.twitter.tweets= render(partial: 'twitter/tweet', collection: @statuses, cached: true, formats: %i(html))
 
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  = render partial: 'twitter/profile', locals: {user: @twitter_user}
-
-.vertical-spacing
-.vertical-spacing
-
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  = t('.how_to_continue_html', url: tokimeki_unfollow_top_path)
-
-.vertical-spacing
-.vertical-spacing
+.text-center.my-5= t('.how_to_continue_html', url: tokimeki_unfollow_top_path)
 
 #after-unfollow-modal.modal.fade{role: 'dialog', tabindex: '-1'}
   .modal-dialog{role: 'document'}
@@ -37,7 +21,7 @@
       .modal-body
         %p= t('.after_unfollow_html', screen_name: @friend.screen_name, remaining: @user.friends_count - (@user.processed_count + 1))
       .modal-footer
-        = link_to t('.after_unfollow_modal.next'), tokimeki_unfollow_cleanup_path, class: 'btn btn-default'
+        = link_to t('.after_unfollow_modal.next'), tokimeki_unfollow_cleanup_path, class: 'btn btn-primary'
 
 #after-keep-modal.modal.fade{role: 'dialog', tabindex: '-1'}
   .modal-dialog{role: 'document'}
@@ -45,12 +29,10 @@
       .modal-body
         %p= t('.after_keep_html', screen_name: @friend.screen_name, remaining: @user.friends_count - (@user.processed_count + 1))
       .modal-footer
-        = link_to t('.after_keep_modal.next'), tokimeki_unfollow_cleanup_path, class: 'btn btn-default'
+        = link_to t('.after_keep_modal.next'), tokimeki_unfollow_cleanup_path, class: 'btn btn-primary'
 
 :javascript
   $(function () {
-    $('.unfollow-or-keep').sticky();
-
     $('.btn.unfollow').on('click', function () {
       var $clicked = $(this);
       var $modal = $('#after-unfollow-modal').one('hidden.bs.modal', function (e) {

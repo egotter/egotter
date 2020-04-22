@@ -5,6 +5,6 @@
     :javascript
       (adsbygoogle = window.adsbygoogle || []).push({});
   - if request.from_pc?
-    .hidden-xs.hidden-sm.col-md-6
+    .d-none.d-sm-none.d-md-block.col-md-6
       = link_to 'https://scheduled-tweets.egotter.com?via=egotter_right_ad&utm_source=egotter-right-ad&utm_medium=web&utm_campaign=egotter', target: '_blank' do
         %img{src: image_path('/egotter_schedule_tweets.jpg'), width: '400'}

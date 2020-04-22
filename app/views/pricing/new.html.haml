@@ -1,9 +1,11 @@
-.vertical-spacing
+- check_icon = '<i class="fas fa-check text-primary"></i>'
 
-%h3.text-center= t('.names.free')
-.vertical-spacing
+= image_tag '/egotter_ask_me_840x483.png', style: 'max-width: 350px;', class: 'img-rounded d-block mx-auto my-3'
+.text-center.my-3= t('.ask_me_html')
 
-%table.pricing-table.table.table-bordered
+%h3.text-center.my-5= t('.names.free')
+
+%table.table.table-bordered
   %tbody
     %tr
       %td= t('.pricing.key')
@@ -15,7 +17,7 @@
       %td= t('.search_count.key')
       %td
         = t('.search_count.free', count1: SearchCountLimitation::ANONYMOUS, count2: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
-        %span.text-muted{style: 'font-size: x-small;'}= t('.search_count.free_note', count: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
+        %span.text-muted{style: 'font-size: small;'}= t('.search_count.free_note', count: SearchCountLimitation::ANONYMOUS + SearchCountLimitation::SIGN_IN_BONUS)
     %tr
       %td= t('.follow_requests.key')
       %td= CreateFollowLimitation::ANONYMOUS
@@ -24,10 +26,10 @@
       %td= CreateUnfollowLimitation::ANONYMOUS
     %tr
       %td= t('.remove_notification.key')
-      %td= t('.remove_notification.free_html')
+      %td= raw check_icon
     %tr
       %td= t('.private_account.key')
-      %td= t('.private_account.free_html')
+      %td= raw check_icon
     -#%tr
     -#  %td= t('.ad.key')
     -#  %td= t('.ad.free_html')
@@ -44,17 +46,13 @@
       %td
       %td
         - if user_signed_in?
-          .btn.btn-primary{disabled: 'disabled'}= t('.has_purchased')
+          .btn.btn-outline-primary.disabled= t('.has_purchased')
         - else
           = link_to t('common.show.sign_in'), sign_in_path(via: current_via('pricing')), class: 'btn btn-primary'
 
-.vertical-spacing
-.vertical-spacing
+%h3.text-center.my-5= t('.names.basic')
 
-%h3.text-center= t('.names.basic')
-.vertical-spacing
-
-%table.pricing-table.table.table-bordered
+%table.table.table-bordered
   %tbody
     %tr
       %td= t('.pricing.key')
@@ -73,10 +71,10 @@
       %td.text-primary= t('.unfollow_requests.basic_html', count: CreateUnfollowLimitation::BASIC_PLAN)
     %tr
       %td= t('.remove_notification.key')
-      %td= t('.remove_notification.basic_html')
+      %td= raw check_icon
     %tr
       %td= t('.private_account.key')
-      %td= t('.private_account.basic_html')
+      %td= raw check_icon
     %tr
       %td
       %td= t('.money_back_guarantee', count: Order::TRIAL_DAYS)
@@ -85,19 +83,15 @@
       %td
         - if user_signed_in?
           - if current_user.has_valid_subscription?
-            .btn.btn-primary{disabled: 'disabled'}= t('.has_purchased')
+            .btn.btn-primary.disabled= t('.has_purchased')
           - else
             = render partial: 'stripe/checkout_button'
         - else
           = link_to t('common.show.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
 
-.vertical-spacing
-.vertical-spacing
+%h3#enterprise-plan.text-center.my-5= t('.names.enterprice')
 
-%h3#enterprise-plan.text-center= t('.names.enterprice')
-.vertical-spacing
-
-%table.pricing-table.table.table-bordered
+%table.table.table-bordered
   %tbody
     %tr
       %td= t('.pricing.key')
@@ -117,16 +111,5 @@
         %div= link_to t('.enterprice_inquiry_by_email'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-primary'
         .vertical-spacing
         %div
-          = link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-default'
-          %span{style: 'font-size: x-small;'}= t('.enterprice_inquiry_by_dm_note_html')
-
-.clearfix
-
-.vertical-spacing
-.vertical-spacing
-
-.text-center
-  %img.center-block{src: image_path('/egotter_ask_me_840x483.png'), height: request.from_pc? ? '200px' : '140px'}
-  .vertical-spacing
-  = t('.ask_me_html')
-.vertical-spacing
+          = link_to t('.enterprice_inquiry_by_dm'), direct_message_url(User::EGOTTER_UID), class: 'btn btn-outline-primary'
+          %span{style: 'font-size: small;'}= t('.enterprice_inquiry_by_dm_note_html')

@@ -6,7 +6,9 @@ class LoginController < ApplicationController
   before_action :create_search_log
 
   def goodbye
-    redirect_to root_path(via: current_via('already_signed_out')), notice: t('.signed_out') unless user_signed_in?
+    unless user_signed_in?
+      redirect_to root_path(via: current_via('already_signed_out')), notice: t('.signed_out')
+    end
   end
 
   def sign_in
@@ -22,7 +24,7 @@ class LoginController < ApplicationController
 
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
 
-    session[:redirect_path] = params[:redirect_path] || start_path(via: current_via('after_sign_in'))
+    session[:redirect_path] = params[:redirect_path]
 
     force_login = params[:force_login] && params[:force_login] == 'true'
     session[:force_login] = force_login.to_s

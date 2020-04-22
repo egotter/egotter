@@ -23,7 +23,11 @@ Twitter.cache = function () {
 };
 
 Twitter.follow = function (url, uid, callback) {
-  console.log('follow', url, uid);
+  if (!url || !uid) {
+    console.warn('follow', 'url or uid not found');
+    return;
+  }
+
   $.post(url, {uid: uid}).then(function (res) {
     console.log('res', res);
     callback.call();
@@ -39,11 +43,16 @@ Twitter.follow = function (url, uid, callback) {
 // Idempotent
 Twitter.enableFollowButton = function (selector) {
   var $modal = $('#create-follow-modal');
+  var url = $modal.data('url');
+  if (!url) {
+    console.warn('enableFollowButton', 'url not found');
+    return;
+  }
 
   if (!$modal.data('init')) {
-    $modal.find('.btn.ok').on('click', function () {
+    $modal.find('.btn.positive').on('click', function () {
       var $clicked = $(this).data('btn-target');
-      Twitter.follow($(this).data('url'), $clicked.data('uid'), function () {
+      Twitter.follow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.follow').show();
       });
       $modal.modal('hide');
@@ -58,11 +67,11 @@ Twitter.enableFollowButton = function (selector) {
     var dontConfirm = $modal.find('.dont-confirm input').prop('checked');
 
     if (dontConfirm) {
-      Twitter.follow($modal.find('.btn.ok').data('url'), $clicked.data('uid'), function () {
+      Twitter.follow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.follow').show();
       });
     } else {
-      $modal.find('.btn.ok').data('btn-target', $clicked);
+      $modal.find('.btn.positive').data('btn-target', $clicked);
       $modal.find('.screen-name').text($clicked.data('screen-name'));
       $modal.modal();
     }
@@ -71,7 +80,11 @@ Twitter.enableFollowButton = function (selector) {
 };
 
 Twitter.unfollow = function (url, uid, callback) {
-  console.log('unfollow', url, uid);
+  if (!url || !uid) {
+    console.warn('unfollow', 'url or uid not found');
+    return;
+  }
+
   $.post(url, {uid: uid}).then(function (res) {
     console.log('res', res);
     callback.call();
@@ -85,11 +98,16 @@ Twitter.unfollow = function (url, uid, callback) {
 // Idempotent
 Twitter.enableUnfollowButton = function (selector) {
   var $modal = $('#create-unfollow-modal');
+  var url = $modal.data('url');
+  if (!url) {
+    console.warn('enableUnfollowButton', 'url not found');
+    return;
+  }
 
   if (!$modal.data('init')) {
-    $modal.find('.btn.ok').on('click', function () {
+    $modal.find('.btn.positive').on('click', function () {
       var $clicked = $(this).data('btn-target');
-      Twitter.unfollow($(this).data('url'), $clicked.data('uid'), function () {
+      Twitter.unfollow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.no-follow').show();
       });
       $modal.modal('hide');
@@ -105,73 +123,14 @@ Twitter.enableUnfollowButton = function (selector) {
     var dontConfirm = $modal.find('.dont-confirm input').prop('checked');
 
     if (dontConfirm) {
-      Twitter.unfollow($modal.find('.btn.ok').data('url'), $clicked.data('uid'), function () {
+      Twitter.unfollow(url, $clicked.data('uid'), function () {
         $clicked.hide().siblings('.btn.no-follow').show();
       });
     } else {
-      $modal.find('.btn.ok').data('btn-target', $clicked);
+      $modal.find('.btn.positive').data('btn-target', $clicked);
       $modal.find('.screen-name').text($clicked.data('screen-name'));
       $modal.modal();
     }
-    return false;
-  });
-};
-
-Twitter.enableSortButton = function ($buttons, callback) {
-  $('.sort-orders').on('click', function (e) {
-    var $selected = $(this);
-    var $dropdown = $buttons.find('.dropdown-toggle');
-    var $oldSelected = $buttons.find('a.selected');
-    $dropdown.dropdown('toggle');
-
-    if ($selected.is($oldSelected)) {
-      console.log('sort_order not changed');
-      return false;
-    }
-
-    var value = $selected.data('sort-order');
-    console.log('sort_order', value);
-
-    $dropdown.html($selected.text() + '&nbsp;<span class="caret"></span>')
-        .data('sort-order', value);
-    $buttons.find('.dropdown-menu a').removeClass('selected');
-    $selected.addClass('selected');
-
-    callback({sortOrder: value});
-    return false;
-  });
-};
-
-Twitter.enableFilterButton = function ($buttons, callback) {
-  $('.filters').on('click', function (e) {
-    var $selected = $(this);
-    var $dropdown = $buttons.find('.dropdown-toggle');
-
-    $dropdown.dropdown('toggle');
-
-    var $checkbox = $selected.find('input');
-    if ($checkbox.prop('checked')) {
-      $checkbox.removeAttr('checked').prop('checked', false);
-      $selected.removeClass('selected');
-    } else {
-      $checkbox.attr('checked', true).prop('checked', true);
-      $selected.addClass('selected');
-    }
-
-    var filterCount = $buttons.find('a.selected').length;
-
-    if (filterCount > 0) {
-      $dropdown.data('filter', $selected.data('filter')); // Current filters.size == 0
-      $dropdown.find('.filter-count').text('(' + filterCount + ')');
-    } else {
-      $dropdown.data('filter', null);
-      $dropdown.find('.filter-count').text('');
-    }
-
-    var value = $dropdown.data('filter');
-    console.log('filter', value);
-
-    callback({filter: value});
     return false;
   });
 };
@@ -252,7 +211,7 @@ Twitter.FetchTask.prototype = {
       var $users = $(res.users).hide().fadeIn(1000);
       self._$usersContainer.append($users);
 
-      if (self._$usersContainer.find('.media').length <= 0) {
+      if (res.users.length <= 0) {
         self._$emptyPlaceholders.show();
       } else {
         self._$emptyPlaceholders.hide();

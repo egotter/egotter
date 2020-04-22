@@ -2,59 +2,23 @@
 - set_meta_tags description: t('.description')
 - set_meta_tags og: {image: 'https://egotter.com/egotter_tokimeki_icon_840x450.png'}
 
-.text-center.right-side{style: 'max-width: 600px; margin: 0 auto;'}
-  .vertical-spacing
-  %h2.h4= t('.simple_title')
-  .vertical-spacing
+= render partial: 'shared/side_by_side_section', locals: {right_side: {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')}}
 
-  -#.lead= t('.text001_html')
-  .lead= t('.text002_html')
-  .lead= t('.text003_html')
+- if user_signed_in? && !@has_error
+  = render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: tokimeki_unfollow_cleanup_path}
 
-  .center-block{style: 'width: 80%;'}
-    = sign_in_with_twitter_link(tokimeki_unfollow_cleanup_path, 'button', class: 'btn btn-primary btn-block')
-    .text-notice.text-right.search-hint
-      %i.fas.fa-check
-      = t('searches.new.pc.check_001')
-    .text-notice.text-right.search-hint
-      %i.fas.fa-check
-      = t('searches.new.pc.check_002')
-  .vertical-spacing
-  %div
-    %span.thin-border
-    %span.or-text= t('searches.common.or')
-    %span.thin-border
-  .vertical-spacing
-  .vertical-spacing
-  .center-block{style: 'width: 80%;'}
-    = link_to t('.continue'), sign_in_path(redirect_path: tokimeki_unfollow_cleanup_path), class: 'btn btn-default btn-block'
-    .text-notice.text-right.search-hint
-      %i.fas.fa-check
-      = t('searches.new.pc.check_003')
-    .text-notice.text-right.search-hint.search-count-wrapper{style: 'visibility: hidden;'}
-      %i.fas.fa-check
-      = t('searches.new.pc.check_004_html')
-  .vertical-spacing
+%h2.h4.text-center.my-5= t('.simple_title')
 
-  .tokimeki_unfollow
-    .block-center
-      %blockquote
-        %p.lead= tokimeki_list.sample
-  .vertical-spacing
-  .vertical-spacing
+.container
+  .my-5= t('.text002_html')
+  .my-5= t('.text003_html')
 
-  .screenshot.text-center
-    = search_link 'ego_tter', current_via('screenshot_laptop_iphone') do
-      %img{alt: t('searches.common.egotter'), src: image_path('/screenshot_laptop_iphone_1000x548.gif'), height: '160px'}
-  .vertical-spacing
+.tokimeki_unfollow
+  .block-center
+    %blockquote
+      %p.lead= tokimeki_list.sample
 
-#public-tweets-wrapper.twitter.tweets.center-block
-:javascript
-  $(function () {
-    Home.setSearchCount('#{search_count_path}');
-    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
-  });
-
-.tokimeki_unfollow.lead.text-center= t('.disclaimer')
-
-.tokimeki_unfollow.lead.text-center= t('unfriends.new.lead_004').html_safe
+= render partial: 'shared/review_section'
+= render partial: 'shared/features_section'
+= render partial: 'shared/functions_section'
+= render partial: 'shared/announcement_section'

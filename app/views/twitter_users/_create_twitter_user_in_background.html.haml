@@ -1,8 +1,8 @@
 = alert_info_box('update-box') do
-  = t('twitter_users.in_background.updating', user: twitter_user.mention_name)
+  = t('twitter_users.in_background.updating', user: twitter_user.screen_name)
   = image_tag '/ajax-loader-blue.gif?a=1'
 
-- button_classes = 'btn btn-default btn-sm'
+- button_classes = 'btn btn-outline-primary'
 
 = alert_info_box('update-this-page-box') do |id, via|
   %span.next-creation-note= ''
@@ -13,20 +13,21 @@
   = link_to(t('twitter_users.in_background.request_to_update'), timeline_path(twitter_user, via: via), class: button_classes)
 
 = alert_warning_box('failed-box') do |id, via|
-  %span= t('twitter_users.in_background.failed', user: twitter_user.mention_name)
+  %span= t('twitter_users.in_background.failed')
   = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: via), class: button_classes)
 
 = alert_info_box('refresh-box') do |id, via|
-  %span.message= t('twitter_users.show.update_is_coming', user: twitter_user.mention_name)
+  %span.message= t('twitter_users.show.update_is_coming', user: twitter_user.screen_name)
   = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: via), class: button_classes)
 
 = alert_info_box('too-many-friends-box') do |id, via|
-  = t('twitter_users.in_background.too_many_friends', user: twitter_user.mention_name)
+  = t('twitter_users.in_background.too_many_friends', user: twitter_user.screen_name)
   = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
-= alert_warning_box('follow-box') do |id, via|
-  - url = sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via), follow: true)
-  = t('twitter_users.in_background.automated_update_stopped_and_signing_in_html', user: twitter_user.screen_name, url: url)
+- if user_signed_in?
+  = alert_warning_box('follow-box') do |id, via|
+    - url = sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via), follow: true)
+    = t('twitter_users.in_background.automated_update_stopped_and_signing_in_html', user: current_user.screen_name, url: url)
 
 = alert_info_box('just-followed-box') do |id, via|
   = t('twitter_users.in_background.automated_update_restarted_html')
@@ -36,7 +37,7 @@
   = t('twitter_users.in_background.automated_update_not_restarted_and_signing_in_html', url: url)
 
 = alert_warning_box('invalid-token-box') do |id, via|
-  = t('twitter_users.in_background.invalid_token', user: twitter_user.mention_name)
+  = t('twitter_users.in_background.invalid_token', user: twitter_user.screen_name)
   = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
 = alert_warning_box('accurate-counting-box') do |id, via|
@@ -276,6 +277,9 @@
 
       if (!crawler) {
         Detectors.secretMode(function detected (quota) {
+          if (#{ENV['ALLOW_COGNITE'] == '1'}) {
+            return;
+          }
           if (os === 'Android' && osVersion.match(/^(6|5|4)/)) {
             return;
           }

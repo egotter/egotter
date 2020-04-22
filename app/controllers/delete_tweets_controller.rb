@@ -1,17 +1,18 @@
 class DeleteTweetsController < ApplicationController
-  before_action :require_login!, only: :delete
+  before_action :require_login!, only: [:show, :delete]
 
   before_action { create_search_log }
 
   def new
-    if user_signed_in?
-      requests = current_user.delete_tweets_requests
-      @logs = requests.any? ? requests.first.logs.take(50) : []
-      @processing = requests.where(created_at: 1.hour.ago..Time.zone.now).where(finished_at: nil).exists?
+  end
 
-      unless current_user.authorized?
-        flash.now[:alert] = unauthorized_message(current_user.screen_name)
-      end
+  def show
+    requests = current_user.delete_tweets_requests
+    @logs = requests.any? ? requests.first.logs.take(50) : []
+    @processing = requests.where(created_at: 1.hour.ago..Time.zone.now).where(finished_at: nil).exists?
+
+    unless current_user.authorized?
+      flash.now[:alert] = unauthorized_message(current_user.screen_name)
     end
   end
 

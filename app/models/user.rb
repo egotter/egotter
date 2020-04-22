@@ -131,6 +131,10 @@ class User < ApplicationRecord
     end
   end
 
+  def to_param
+    screen_name
+  end
+
   def twitter_user
     logger.info "Deprecated calling User#twitter_user #{(caller[0][/`([^']*)'/, 1] rescue '')}"
     if instance_variable_defined?(:@twitter_user)

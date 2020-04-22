@@ -1,7 +1,7 @@
 .tweet-preview-box{class: text.object_id}
-  %textarea{readonly: 'readonly', rows: [text.scan(/\R/).size + 3, 6].max}= text
+  %textarea.p-2{readonly: 'readonly', rows: [text.scan(/\R/).size + 3, 6].max}= text
 .tweet-box.text-right
-  = link_to t('dictionary.do_copy'), intent_url(text), class: "btn btn-default btn-copy #{text.object_id}"
+  = link_to t('dictionary.do_copy'), intent_url(text), class: "btn btn-outline-primary btn-copy #{text.object_id}"
   = link_to t('dictionary.do_tweet'), intent_url(text), class: "btn btn-primary btn-tweet #{text.object_id}"
 
 :javascript

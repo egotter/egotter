@@ -4,12 +4,12 @@ class UnfollowersController < ::Page::Base
 
   def all
     initialize_instance_variables
-    render template: 'friends/all' unless performed?
+    render template: 'result_pages/all' unless performed?
   end
 
   def show
     initialize_instance_variables
     @active_tab = 1
-    render template: 'unfriends/show' unless performed?
+    render template: 'result_pages/show' unless performed?
   end
 end

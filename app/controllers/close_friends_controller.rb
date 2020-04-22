@@ -3,11 +3,12 @@ class CloseFriendsController < ::Page::GoodFriends
 
   def all
     super
-    render template: 'friends/all' unless performed?
+    render template: 'result_pages/all' unless performed?
   end
 
   def show
-    @active_tab = 0
     super
+    @active_tab = 0
+    render template: 'result_pages/show' unless performed?
   end
 end

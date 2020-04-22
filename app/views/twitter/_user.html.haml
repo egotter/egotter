@@ -1,4 +1,5 @@
 - via = current_via if !defined?(via) || via.blank?
+- logger.info { "User is rendered by #{user.class} in #{controller_name}##{action_name}" }
 - user = TwitterUserDecorator.new(user)
 
 - if ad && defined?(user_counter) && user_counter == 3
@@ -7,36 +8,33 @@
     .vertical-spacing
 
 %div{class: grid_class}
-  .media
-    .media-inner
-      .media-left
+  .card.mb-3.mb-lg-5
+    .row.no-gutters
+      .col-auto
         = search_link user.screen_name, via do
-          = normal_icon_img(user, class: 'media-object')
-      .media-body
-        %h4.media-heading
-          = search_link user.screen_name, via
-          %br.visible-xs-block
-          = user.name_with_icon
-          = user.status_labels
-        .visible-md-block.visible-lg-block
-          %span
-            %span.friends-count
+          = image_tag bigger_icon_url(user), class: 'rounded', style: 'max-width: 90px; width: 100%;', alt: user.screen_name
+      .col
+        .card-body
+          - if current_user_follower_uids.include?(user.uid_i)
+            .text-muted.mb-3
+              %i.fas.fa-user
+              = t('twitter.profile.labels.followed')
+          %h5.card-title
+            = search_link user.screen_name, via
+            = user.name_with_icon
+            = user.status_labels
+          %p.card-text= linkify(user.description)
+          %p.card-text
+            %span
               %b= user.delimited_friends_count
               %span.text-muted= TwitterUser.human_attribute_name(:friends)
-            %span.followers-count
+            %span
               %b= user.delimited_followers_count
               %span.text-muted= TwitterUser.human_attribute_name(:followers)
-            %span.statuses-count
-              -#%b= user.delimited_statuses_count
-              %span.text-muted= TwitterUser.human_attribute_name(:statuses)
-      .media-right
-        .buttons
-          = render partial: 'twitter/follow_button', locals: {user: user}
+          %p.card-text.text-right
+            = render partial: 'twitter/follow_button', locals: {user: user}
 
-          = search_link user.screen_name, via do
-            %button.btn.btn-info{type: 'button'}
-              %span.glyphicon.glyphicon-search
-              .visible-md-inline.visible-lg-inline= t('twitter.user.search')
-      .description= linkify(user.description)
-
-  .vertical-spacing
+            = search_link user.screen_name, via do
+              %button.btn.btn-primary{type: 'button'}
+                %i.fas.fa-search
+                = t('twitter.user.search')

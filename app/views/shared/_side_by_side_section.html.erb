@@ -1,0 +1,58 @@
+<style type=text/css>
+  /* extra small and small */
+  @media (max-width: 767.98px) {
+    .both-side {
+      display: block;
+    }
+
+    .left-side {
+      display: none;
+    }
+
+    .right-side {
+      width: 100%;
+    }
+  }
+
+  /* others */
+  @media (min-width: 768px) {
+    .both-side {
+      display: flex;
+      align-items: center;
+      height: 100vh;
+    }
+
+    .left-side {
+      width: 50%;
+      height: 100%;
+    }
+
+    .right-side {
+      width: 50%;
+      max-width: 400px;
+    }
+  }
+</style>
+
+<div class="both-side">
+  <!-- The left side of the screen-->
+  <div class="left-side" style="background-image: url(<%= image_path('/egotter_big_background_840x800.png') %>); background-position: center;">
+    <div class="w-100 h-100" style="position: relative;">
+      <div style="color:white; font-size: 18px; position: absolute; top: 40%; left: 50%; transform: translateX(-50%);">
+        <div><%= t('.text021_html') %></div>
+        <div><%= t('.text022_html') %></div>
+        <div><%= t('.text023_html') %></div>
+      </div>
+    </div>
+  </div>
+  <!-- The right side of the screen-->
+  <div class="right-side text-center mx-auto p-3 p-md-0">
+    <%= render partial: 'shared/right_side', locals: right_side %>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    Home.setSearchCount('<%= search_count_path %>');
+  });
+</script>

@@ -4,7 +4,7 @@ module Api
 
       private
 
-      def summary_uids(limit: 3)
+      def summary_uids(limit: SUMMARY_LIMIT)
         uids = @twitter_user.follower_uids.take(limit)
         size = @twitter_user.follower_uids.size
         [uids, size]

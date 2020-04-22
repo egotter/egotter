@@ -2,14 +2,14 @@
 
 var SearchHistories = {};
 
-SearchHistories.initializeSearchModal = function () {
-  var $modal = $('#search-modal');
+SearchHistories.initializeSearchModal = function (id) {
+  var $modal = $('#' + id);
+  var url = $modal.data('url');
 
   $modal.on('show.bs.modal', function (e) {
     if (!$modal.data('loaded')) {
       $modal.data('loaded', true);
 
-      var url = $modal.data('url');
       $.get(url).done(function (res) {
         console.log(url, 'loaded');
         $modal.find('.twitter.users').append(res);

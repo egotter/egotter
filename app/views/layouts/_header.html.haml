@@ -1,19 +1,27 @@
-%nav
-  .container
-    .row
-      .col-xs-6.col-sm-4
-        %h1
-          %a{href: root_path_for(controller: controller_name)}
-            = image_tag '/logo_96x96.png', size: '48x48', alt: t('searches.common.egotter')
-            %span.header-title= find_header_title.html_safe
-      .hidden-xs.col-sm-4
-        = link_to '#', class: 'btn btn-default btn-block', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
-          %i.glyphicon.glyphicon-search
-          %span.placeholder= t('searches.common.search_by_twitter_id')
-      .col-xs-6.col-sm-4.text-right
-        = link_to '#', class: 'visible-xs-inline-block btn btn-default btn-search', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
-          %i.glyphicon.glyphicon-search
+%nav.navbar.navbar-dark.bg-dark
+  .container.px-0.px-sm-0.px-md-3
+    %a.navbar-brand.text-white{href: root_path_for(controller: controller_name)}
+      %img.rounded{alt: "", height: "30", src: "/logo_96x96.png"}
+      %span{style: 'font-size: 1rem;'}= content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
+    %ul.nav
+      %li.nav-item.d-none.d-md-block
+        = link_to '#', class: 'nav-link btn btn-primary', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
+          %i.fas.fa-search
+          = t('.search_by_twitter_id')
+      %li.nav-item.d-none.d-md-block
+        = link_to t('.pricing'), pricing_path(via: current_via('navbar')), class: 'nav-link text-white pr-0'
+      %li.nav-item.d-none.d-md-block
         - if user_signed_in?
-          = link_to mention_name(current_user.screen_name), settings_path(via: current_via('navbar')), class: 'btn btn-default'
+          = link_to mention_name(current_user.screen_name), settings_path(via: current_via('navbar')), class: 'nav-link text-white pr-0'
         - else
-          = link_to t('.sign_in'), sign_in_path(via: current_via('navbar'), redirect_path: root_path_for(controller: controller_name)), class: 'btn btn-default'
+          = link_to t('.sign_in'), sign_in_path(via: current_via('navbar'), redirect_path: root_path_for(controller: controller_name)), class: 'nav-link text-white pr-0'
+      -# Display on extra small and small
+      %li.nav-item.d-block.d-md-none
+        = link_to '#', class: 'nav-link text-white pr-2', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do
+          %i.fas.fa-search
+      %li.nav-item.d-block.d-md-none
+        = link_to '#', class: 'nav-link text-white pr-0' do
+          %i.fas.fa-bars.btn-sidemenu
+      %li.nav-item.d-block.d-md-none
+        - unless user_signed_in?
+          = link_to t('.sign_in'), sign_in_path(via: current_via('navbar'), redirect_path: root_path_for(controller: controller_name)), class: 'nav-link text-white pr-0'

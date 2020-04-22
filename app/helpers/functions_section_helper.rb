@@ -23,7 +23,8 @@ module FunctionsSectionHelper
                        url: one_sided_friends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_onesided_friends_with_text_400x453.png'
+        image: '/egotter_onesided_friends_with_text_400x453.png',
+        url: url
     }
   end
 
@@ -50,7 +51,8 @@ module FunctionsSectionHelper
                        url: unfriends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_unfriends_with_text_400x453.png'
+        image: '/egotter_unfriends_with_text_400x453.png',
+        url: url
     }
   end
 
@@ -77,7 +79,8 @@ module FunctionsSectionHelper
                        url: inactive_friends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_inactive_friends_with_text_400x453.png'
+        image: '/egotter_inactive_friends_with_text_400x453.png',
+        url: url
     }
   end
 
@@ -104,7 +107,8 @@ module FunctionsSectionHelper
                        url: friends_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_friends_with_text_400x453.png'
+        image: '/egotter_friends_with_text_400x453.png',
+        url: url
     }
   end
 
@@ -126,7 +130,8 @@ module FunctionsSectionHelper
                        url: clusters_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_clusters_with_text_400x453.png'
+        image: '/egotter_clusters_with_text_400x453.png',
+        url: url
     }
   end
 
@@ -148,7 +153,8 @@ module FunctionsSectionHelper
                        url: tokimeki_unfollow_top_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_tokimeki_unfollow_with_text_400x453.png'
+        image: '/egotter_tokimeki_unfollow_with_text_400x453.png',
+        url: url
     }
   end
 
@@ -170,7 +176,8 @@ module FunctionsSectionHelper
                        url: delete_tweets_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_delete_tweets_with_text_400x453.png'
+        image: '/egotter_delete_tweets_with_text_400x453.png',
+        url: url
     }
   end
 
@@ -188,7 +195,8 @@ module FunctionsSectionHelper
                        url: delete_tweets_path(via: current_via('functions_description'))
         ),
         button: button,
-        image: '/egotter_schedule_tweets.jpg'
+        image: '/egotter_schedule_tweets.jpg',
+        url: url
     }
   end
 end

@@ -12,9 +12,7 @@ module Concerns::RoutingErrorHandler
       render json: {error: 'not found'}, status: :not_found
 
     elsif from_crawler? || request.method != 'GET'
-      self.sidebar_disabled = true
-      flash.now[:alert] = routing_not_found_message
-      render template: 'home/new', formats: %i(html), status: :not_found
+      render file: "#{Rails.root}/public/404.html", status: :not_found, layout: false
 
     elsif params['screen_name'].to_s.match(Validations::ScreenNameValidator::REGEXP) && request.path == '/searches'
       @screen_name = params['screen_name']
@@ -29,15 +27,7 @@ module Concerns::RoutingErrorHandler
       logger.info "#not_found redirect for backward compatibility"
 
     else
-      self.sidebar_disabled = true
-      flash.now[:alert] = routing_not_found_message
-      render template: 'home/new', formats: %i(html), status: :not_found
+      render file: "#{Rails.root}/public/404.html", status: :not_found, layout: false
     end
-  end
-
-  private
-
-  def routing_not_found_message
-    t('application.routing_not_found')
   end
 end

@@ -1,0 +1,103 @@
+<style type="text/css">
+  .sidemenu {
+    display: none;
+    color: white;
+    position: fixed;
+    top: 10px;
+    right: 0;
+    bottom: 10px;
+    overflow-y: auto;
+    width: 300px;
+    z-index: 9999;
+  }
+</style>
+
+<div class="sidemenu shadow bg-white">
+  <div class="btn-sidemenu text-center py-3">
+    <%= link_to '#', class: 'text-black' do %>
+      <i class="fas fa-times"></i>
+      <%= t('.close') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <% if user_signed_in? %>
+    <div class="text-center text-black py-3"><%= t('.logged_in', user: current_user.screen_name) %></div>
+    <hr class="p-0 m-0">
+
+    <div class="text-center py-3">
+      <%= link_to settings_path(via: current_via('navmenu')) do %>
+        <i class="fas fa-cog"></i>
+        <%= t('.config') %>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center text-black py-3"><%= link_to t('.sign_in'), sign_in_path(via: current_via('navmenu')) %></div>
+  <% end %>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
+    <%= link_to '#', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do %>
+      <i class="fas fa-search"></i>
+      <%= t('.search') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
+    <%= link_to pricing_path(via: current_via('navmenu')) do %>
+      <i class="fas fa-yen-sign"></i>
+      <%= t('.pricing') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <%= render partial: 'layouts/sidenav', locals: {twitter_user: @twitter_user} if @twitter_user %>
+
+  <% if user_signed_in? %>
+    <div class="text-center py-3">
+      <%= link_to t('.sign_out'), goodbye_path(via: current_via('navmenu')) %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  $(function () {
+    var sidemenu = $('.sidemenu');
+    var btn = $('.btn-sidemenu');
+    var isOpened = false;
+
+    sidemenu.sidebar({side: 'right'});
+    sidemenu.show();
+
+    $('body').on('click', function (e) {
+      var clicked = $(e.target);
+
+      if (isOpened && clicked.data('toggle') === 'modal') {
+        sidemenu.trigger('sidebar:close');
+        return true;
+      }
+
+      if (isOpened && clicked.parents('.sidemenu').length === 0) {
+        sidemenu.trigger('sidebar:close');
+        return false;
+      }
+    });
+
+    sidemenu.on("sidebar:opened", function () {
+      isOpened = true
+    });
+
+    sidemenu.on("sidebar:closed", function () {
+      isOpened = false;
+    });
+
+    $('.btn-sidemenu-close').on('click', function () {
+      sidemenu.trigger('sidebar:close');
+    });
+
+    btn.on('click', function () {
+      sidemenu.trigger('sidebar:toggle');
+    });
+  });
+</script>

@@ -1,44 +1,38 @@
-<%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
+<div class="<%= menu_name %> feed-item p-3 p-lg-5">
+  <h3 class="h4 text-center"><%= feed_title %></h3>
+  <div class="text-center"><%= feed_description %></div>
 
-<div class="menu-items media <%= menu_name %>" style="display: none; position: relative;">
-  <%= link_to search_path_for(menu_name, twitter_user.screen_name), class: 'result-link' do %>
-    <h3 class="h4 text-center"><%= t("#{menu_name}.show.summary_title") %></h3>
-    <div class="vertical-spacing"></div>
-    <div class="text-center description"><%= t("#{menu_name}.show.page_description", user: twitter_user.mention_name) %></div>
-  <% end %>
+  <%= render partial: 'timelines/placeholder', locals: {menu_name: menu_name, menu_or_users: 'menu'} %>
 
-  <div style="position: absolute; bottom: 15px; left: 15px; right: 15px;">
-    <div class="media-body">
-      <div id="<%= graph.object_id %>" style="height: 120px;"></div>
-      <script>
-        $(function () {
-          var menuName = '<%= menu_name %>';
-          var fromCrawler = <%= from_crawler? %>;
+  <div id="<%= graph.object_id %>" class="mb-5" style="height: 120px;"></div>
 
-          function drawChart () {
-            $("div[data-replaced-by='" + menuName + "']").remove();
-            $('.menu-items.' + menuName).show();
-
-            var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
-            graph_option.series[0].data = <%= raw graph.to_json %>;
-            graph_option.yAxis.visible = false;
-            $('#<%= graph.object_id %>').highcharts(graph_option);
-          }
-
-          if (fromCrawler) {
-            drawChart();
-          } else {
-            $('.placeholder-wrapper.' + menuName)
-              .lazyload()
-              .one('appear', function () {
-                console.log('appear', menuName);
-                drawChart();
-              });
-          }
-        });
-      </script>
-    </div>
-
-    <%= link_to(t('dictionary.view_more'), search_path_for(menu_name, twitter_user.screen_name), class: 'btn btn-info btn-block btn-view-more') %>
-  </div>
+  <% url = search_path_for(menu_name, twitter_user.screen_name) %>
+  <%= link_to(t('dictionary.view_more'), url, class: 'btn btn-primary btn-block btn-view-more') %>
 </div>
+
+<script>
+  $(function () {
+    var menuName = '<%= menu_name %>';
+    var fromCrawler = <%= from_crawler? %>;
+
+    function drawChart() {
+      $("div[data-replaced-by='" + menuName + "']").remove();
+
+      var graph_option = $.extend(true, {}, window.usage_stats_column_chart_options);
+      graph_option.series[0].data = <%= raw graph.to_json %>;
+      graph_option.yAxis.visible = false;
+      $('#<%= graph.object_id %>').highcharts(graph_option);
+    }
+
+    if (fromCrawler) {
+      drawChart();
+    } else {
+      $('.placeholder-wrapper.' + menuName)
+          .lazyload()
+          .one('appear', function () {
+            console.log('appear', menuName);
+            drawChart();
+          });
+    }
+  });
+</script>

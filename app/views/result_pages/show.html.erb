@@ -1,0 +1,106 @@
+<% content_for :canonical_url do %>
+  <link href="<%= @canonical_url %>" rel="canonical">
+<% end %>
+
+<%= content_for :navbar_title, @navbar_title %>
+
+<% breadcrumb @breadcrumb_name, @twitter_user.screen_name %>
+<% title @page_title %>
+<% set_meta_tags description: @meta_description %>
+
+<% if %w(unfriends unfollowers blocking_or_blocked).include?(controller_name) %>
+  <div class="mb-3"><%= render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user} %></div>
+<% end %>
+
+<%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
+
+<h2 class="h4 text-center my-5"><%= @content_title %></h2>
+<div class="mb-5"><%= raw @page_description %></div>
+
+<% if controller_name == 'close_friends' %>
+  <div class="my-3"><%= render(partial: 'close_friends/friend_map', locals: {twitter_user: @twitter_user}) %></div>
+<% end %>
+
+<% if %w(unfriends unfollowers blocking_or_blocked).include?(controller_name) %>
+  <div class="text-center"><%= t('unfriends.show.tweet.biginner.title_html') %></div>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text_for_empty_users, twitter_user: @twitter_user}) %>
+  <% if @tweet_text %>
+    <div class="text-center"><%= t('unfriends.show.tweet.expert.title_html') %></div>
+    <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
+  <% end %>
+<% else %>
+  <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
+<% end %>
+
+<%= render(partial: 'adsense/side_by_side', locals: {vertical: :top}) %>
+
+<div class="mb-3"><%= render partial: 'result_pages/tabs', locals: {tabs: @tabs, active_tab: @active_tab} %></div>
+<div class="text-right mb-4"><%= render partial: 'shared/sort_and_filter' %></div>
+
+<div class="empty-placeholders-wrapper" style="display: none;">
+  <%= t('filter.not_found') %>
+</div>
+
+<div class="placeholders-wrapper">
+  <% 3.times do %>
+    <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
+  <% end %>
+</div>
+
+<div class="main-content twitter users row"></div>
+
+<div class="row text-center my-5">
+  <div class="col-6">
+    <%= link_to t('dictionary.see_more'), '#', style: 'display: none;', class: 'see-more-btn btn btn-outline-secondary btn-lg' %>
+  </div>
+  <div class="col-6">
+    <%= link_to t('dictionary.see_at_once_more'), send("all_#{controller_name}_path", @twitter_user), style: 'display: none;', class: 'see-at-once-btn btn btn-primary btn-lg' %>
+  </div>
+</div>
+
+<script>
+  $(function () {
+    var signedIn = <%= user_signed_in? %>;
+
+    if (signedIn) {
+      var url = '<%= @api_path %>';
+      var uid = '<%= @twitter_user.uid %>';
+      var sortOrder = $('.sort-order-dropdown').data('sort-order');
+      var filter = $('.filter-dropdown').data('filter');
+
+      var params = {limit: 10, maxLimit: 10, sortOrder: sortOrder, filter: filter, gridClass: 'col-12', insertAd: true};
+      var task = new Twitter.FetchTask(url, uid, params);
+      task.fetch();
+
+      $('.see-more-btn').on('click', function (e) {
+        e.stopPropagation();
+        task.fetch();
+        return false;
+      }).show();
+
+      $('.see-more-btn').show();
+      $('.see-at-once-btn').show();
+
+      SortAndFilter.activateSortButton($('.sort-order-container'), function (options) {
+        task.reset(options)
+      });
+      SortAndFilter.activateFilterButton($('.filter-container'), function (options) {
+        task.reset(options)
+      });
+
+    } else {
+      var signInFromSortUrl = '<%= sign_in_path(via: current_via('sort_btn')) %>';
+      var signInFromFilterUrl = '<%= sign_in_path(via: current_via('filter_btn')) %>';
+      $('.sort-orders').attr('href', signInFromSortUrl);
+      $('.filters').attr('href', signInFromFilterUrl);
+    }
+
+    Twitter.enableFollowButton('.twitter.users');
+    Twitter.enableUnfollowButton('.twitter.users');
+
+    var crawler =<%= from_crawler? %>;
+    if (crawler) {
+      $('#hidden-page-description').show();
+    }
+  });
+</script>

@@ -1,0 +1,23 @@
+<%=
+  og_tag =
+      if params[:og_tag] == 'false'
+        {}
+      else
+        {
+            title: :title,
+            type: (action_name == 'new' ? 'website' : 'article'),
+            url: request.original_url,
+            image: 'https://d3i5r3jvad5gk5.cloudfront.net/egotter_usagi_840x450.jpg?loc=og_image', # image_url('/egotter_usagi_840x450.jpg'),
+            site_name: t('.title'),
+            description: :description,
+            locale: 'ja_JP'
+        }
+      end
+
+  # set default values
+  display_meta_tags(
+      description: t('.description'),
+      title: "#{'[dev] ' if Rails.env.development?}#{t('.title')}",
+      og: og_tag
+  )
+%>

@@ -44,16 +44,16 @@ Settings.enableUpdateReportIntervalButton = function (url, beforeChange) {
   });
 };
 
-Settings.enableDeleteTweetsButton = function () {
-  var $modal = $('#delete-tweets-modal');
-  $modal.find('.ok').on('click', function (e) {
+Settings.enableDeleteTweetsButton = function (id, url) {
+  var $modal = $('#' + id);
+  $modal.find('.positive').on('click', function (e) {
     $modal.modal('hide');
     $('.delete-tweets-btn').attr('disabled', 'disabled')
         .prop("disabled", true);
 
     var tweet = $modal.find('#tweet-after-finishing').prop('checked');
 
-    $.post($(this).data('url'), {tweet: tweet}).done(function (res) {
+    $.post(url, {tweet: tweet}).done(function (res) {
       console.log(res);
 
       setTimeout(function () {
@@ -65,9 +65,9 @@ Settings.enableDeleteTweetsButton = function () {
   });
 };
 
-Settings.enableResetEgotterButton = function () {
-  var $modal = $('#reset-egotter-modal');
-  $modal.find('.ok').on('click', function (e) {
+Settings.activateResetEgotterButton = function (id, url) {
+  var $modal = $('#' + id);
+  $modal.find('.positive').on('click', function (e) {
     $modal.modal('hide');
     $('.reset-egotter-btn').attr('disabled', 'disabled')
         .prop("disabled", true);
@@ -79,9 +79,9 @@ Settings.enableResetEgotterButton = function () {
   });
 };
 
-Settings.enableResetCacheButton = function () {
-  var $modal = $('#reset-cache-modal');
-  $modal.find('.ok').on('click', function (e) {
+Settings.activateResetCacheButton = function (id, url) {
+  var $modal = $('#' + id);
+  $modal.find('.positive').on('click', function (e) {
     $modal.modal('hide');
     $('.reset-cache-btn').attr('disabled', 'disabled')
         .prop("disabled", true);

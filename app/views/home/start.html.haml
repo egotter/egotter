@@ -1,70 +1,44 @@
 - content_for :canonical_url do
   %link{href: start_url(screen_name: @screen_name), rel: 'canonical'}
 
-- breadcrumb :start, @screen_name
-
 - page_title = t('.page_title', user: @screen_name)
 - title page_title
 - set_meta_tags description: t('.meta_description', user: @screen_name)
 
-= image_tag '/egotter_welcome_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-.vertical-spacing
+.container.my-5
+  .card.mx-auto{style: 'max-width: 500px;'}
+    .text-center.pt-3
+      = image_tag '/egotter_welcome_400x448.png', style: 'width: 50%;', class: 'img-rounded'
+    .card-body
+      %p.card-text
+        %div= t('.message1_html')
+        %div= t('.message2')
+      .text-center
+        - url = searches_path(screen_name: @screen_name, via: current_via('start_button'))
+        = link_to t('.start_by', user: @screen_name), url, class: 'btn btn-primary', method: :post
 
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  %div= t('.message1_html')
-  .vertical-spacing
-  %div= t('.message2')
+.container
+  = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
-.vertical-spacing
+.container.my-5
+  .card.mx-auto{style: 'max-width: 500px;'}
+    .text-center.pt-3
+      = image_tag '/egotter_email_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+    .card-body
+      %p.card-text
+        %div= t('.message3_html')
+      .text-center
+        - url = 'https://twitter.com/settings/safety'
+        = link_to t('.dm_setting'), url, target: '_blank', class: 'btn btn-primary'
 
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  - url = searches_path(screen_name: @screen_name, via: current_via('start_button'))
-  = link_to t('.start_by', user: @screen_name), url, class: 'btn btn-primary btn-block btn-lg center-block', method: :post
-
-= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
-
-= image_tag '/egotter_email_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-.vertical-spacing
-
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  %div= t('.message3_html')
-
-.vertical-spacing
-
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  - url = 'https://twitter.com/settings/safety'
-  = link_to t('.dm_setting'), url, target: '_blank', class: 'btn btn-default btn-block btn-lg center-block'
-
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-
-= image_tag '/egotter_chat_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-.vertical-spacing
-
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  %div= t('.message4_html')
-  .vertical-spacing
-  %div= t('.message5_html')
-
-.vertical-spacing
-
-.text-center{style: 'max-width: 600px; margin: 0 auto;'}
-  - url = 'https://twitter.com/ego_tter'
-  = link_to t('.ask'), url, target: '_blank', class: 'btn btn-default btn-block btn-lg center-block'
-
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-.vertical-spacing
-
-- if @user
-  .text-center{style: 'max-width: 600px; margin: 0 auto;'}
-    = render partial: 'twitter/profile', locals: {user: @user}
-
-.vertical-spacing
+.container.my-5
+  .card.mx-auto{style: 'max-width: 500px;'}
+    .text-center.pt-3
+      = image_tag '/egotter_chat_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+    .card-body
+      %p.card-text
+        %div= t('.message4_html')
+        %div= t('.message5_html')
+      .text-center
+        - url = 'https://twitter.com/ego_tter'
+        = link_to t('.ask'), url, target: '_blank', class: 'btn btn-primary'

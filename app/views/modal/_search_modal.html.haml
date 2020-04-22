@@ -1,0 +1,29 @@
+= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path} do
+  = render partial: 'common/search_form', locals: {via: current_via('search_modal_input')}
+  .my-3= t('.remaining_count_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id))
+
+  .mb-3
+    - if user_signed_in?
+      - if current_user.has_valid_subscription?
+        .text-center= link_to current_user.purchased_plan_name, settings_path(anchor: 'orders-table', via: current_via('plan_button_on_search_modal')), class: 'btn btn-outline-dark'
+      - else
+        %a.btn.btn-outline-primary{href: pricing_path(via: current_via('purchase_button_on_search_modal'))}= t('.pricing')
+        %a.btn.btn-outline-primary.btn-checkout{href: '#'}= t('.purchase')
+        %a.btn.btn-primary{href: '#', data: {target: '#share-modal', toggle: 'modal'}}= t('.tweet')
+    - else
+      .text-center= link_to t('.sign_in'), sign_in_path(via: current_via('sign_in_button_on_search_modal')), class: 'btn btn-primary'
+
+  - if SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id) == 0
+    .alert.alert-info
+      - sign_in_url = sign_in_path(via: current_via('too_many_searches_search_modal'))
+      - pricing_url = pricing_path(via: current_via('too_many_searches_search_modal'))
+      - support_url = pricing_path(via: current_via('too_many_searches_search_modal'), anchor: 'enterprise-plan')
+      = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
+
+  %h2.h4.text-center.my-5= t('.history')
+  .twitter.users.row
+
+:javascript
+  $(function () {
+    SearchHistories.initializeSearchModal('search-modal');
+  });

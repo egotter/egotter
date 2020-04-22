@@ -1,11 +1,8 @@
-#review-section.text-center
-  = render partial: 'shared/review_stars'
-  %h2#review-title.h4= t('shared.review.title')
-  .vertical-spacing
-  .vertical-spacing
-  .description= t('shared.review.description_html')
-  .vertical-spacing
-  #public-tweets-wrapper.twitter.tweets.center-block
+.container.text-center.mt-5
+  %h2.h4.my-5= t('.title')
+  .mb-5= render partial: 'shared/review_stars'
+  .mb-5= t('.description_html')
+  #public-tweets-wrapper.twitter.tweets.text-left.mx-auto
 :javascript
   $(function () {
     Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');

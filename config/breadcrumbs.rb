@@ -1,5 +1,5 @@
 crumb :root do
-  link t('searches.common.top'), root_path(via: current_via('breadcrumb_root'))
+  link t('breadcrumb.root'), root_path(via: current_via('breadcrumb_root'))
 end
 
 crumb :start do |screen_name|
@@ -8,7 +8,7 @@ crumb :start do |screen_name|
 end
 
 crumb :timeline do |screen_name|
-  link t('timelines.show.short_title', user: mention_name(screen_name)), timeline_path(screen_name: screen_name, via: current_via('breadcrumb_timeline'))
+  link t('timelines.show.crumb_title', user: mention_name(screen_name)), timeline_path(screen_name: screen_name, via: current_via('breadcrumb_timeline'))
   parent :root
 end
 
@@ -75,16 +75,6 @@ end
 crumb :latest_profile do |screen_name|
   link t('profiles.latest.crumb_title', user: screen_name), latest_profile_path(screen_name: screen_name, via: current_via("breadcrumb_latest_profile"))
   parent :root
-end
-
-crumb :relationship do |src_screen_name, dst_screen_name|
-  link t('relationships.new.simple_title'), relationship_path(src_screen_name: src_screen_name, dst_screen_name: dst_screen_name, via: current_via("breadcrumb_relationship"))
-  parent :timeline, src_screen_name
-end
-
-crumb :conversation do |screen_name|
-  link t('conversations.new.simple_title'), conversation_path(screen_name: screen_name, via: current_via("breadcrumb_conversation"))
-  parent :timeline, screen_name
 end
 
 crumb :cluster do |screen_name|

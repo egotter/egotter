@@ -1,35 +1,34 @@
 - content_for :canonical_url do
   %link{href: @canonical_url, rel: 'canonical'}
 
+- content_for :navbar_title, @navbar_title
+
 - breadcrumb @breadcrumb_name, @twitter_user.screen_name
 
 - title @page_title
 - set_meta_tags description: @meta_description, title: @meta_title
 
-= render partial: 'common/background_update_usage_stat', locals: {twitter_user: @twitter_user, stat: @stat, jid: @jid}
-
 = render partial: 'twitter/profile', locals: {user: @twitter_user}
 
-%h2.h2.page-title= @page_title
+%h2.h4.text-center.my-5= @page_title
 
-.page-description.text-center= t('.page_description', user: @twitter_user.mention_name)
+.mb-5= t('.page_description', user: @twitter_user.mention_name)
 
-%h3.h5 曜日ごとのツイッター利用時間 (分)
+%h3.h5.text-center 曜日ごとのツイッター利用時間 (分)
 .usage-time-chart
 = render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user})
 
 = render(partial: 'adsense/side_by_side', locals: {vertical: :top})
 
-%h3.h5 よく使うハッシュタグ
+%h3.h5.text-center よく使うハッシュタグ
 .hashtags-chart
 
-%h3.h5 ハッシュタグクラウド (クリックできます)
+%h3.h5.text-center ハッシュタグクラウド (クリックできます)
 .cloud-chart{style: 'height: 220px;'}
 
 .tweet-box-wrapper
   - text = t('searches.usage_stats.usage_hashtags', user: @twitter_user.mention_name, hashtags: @stat.hashtags.to_h.keys.take(5).join(' '), url: usage_stat_url(@twitter_user))
   = render(partial: 'twitter/tweet_box', locals: {text: text, twitter_user: @twitter_user})
-.vertical-spacing
 
 :javascript
   $(function () {
@@ -58,20 +57,6 @@
     }
   });
 
-.gray-separator
-
 - if @stat && @stat.persisted?
   = render partial: 'usage_stats/tweets_stat', locals: {stat: @stat.tweets_stat, twitter_user: @twitter_user, url: @canonical_url}
-  .gray-separator
   = render partial: 'usage_stats/friends_stat', locals: {stat: @stat.friends_stat, twitter_user: @twitter_user, url: @canonical_url}
-  .gray-separator
-
-= render partial: 'common/share_more', locals: {text: t('common.show.let_me_know_html', user: @twitter_user.mention_name, current: t('.title'))}
-
-.gray-separator
-
-= render partial: 'common/search_more', locals: {twitter_user: @twitter_user, text: t('common.show.plese_use_egotter', current: t('.title'))}
-
-.gray-separator
-
-= render partial: 'common/related_pages', locals: {twitter_user: @twitter_user}

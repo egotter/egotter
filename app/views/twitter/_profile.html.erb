@@ -1,99 +1,113 @@
 <% user = user.twitter_db_user if switch_to_twitter_db_user?(user) %>
-<% logger.info "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" %>
+<% logger.info { "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" } %>
 <% user = TwitterUserDecorator.new(user) %>
+<% always_expanded = false unless defined?(always_expanded) %>
 
-<div class="profile-overview-container">
-  <div class="profile-overview uid-<%= user.uid %>">
-    <div class="profile-overview-overlay">
-      <div class="profile-overview-carousel">
-        <div class="text-center"><!-- first slide -->
-          <%= link_to(timeline_path(user, via: current_via('icon_on_profile')), class: 'icon-link') do %>
-            <%= bigger_icon_img(user) %>
-          <% end %>
-          <div class="name">
-            <%= link_to("#{mention_name(user.screen_name)}&nbsp;#{user.name_with_icon}".html_safe, timeline_path(user, via: current_via('mention_name_on_profile'))) %>
-            <%= user.status_labels %>
-          </div>
+<style type=text/css>
+  /* extra small */
+  @media (max-width: 575.98px) {
+    .profile-header {
+      border: none !important;
+      border-bottom: 1px solid #dee2e6 !important;
+    }
+  }
 
-          <% if user.location? %>
-            <div class="location visible-md-block visible-lg-block"><span class="glyphicon glyphicon-map-marker"></span>&nbsp;<%= user.location %></div>
-          <% end %>
-          <% if user.account_created_at? %>
-            <div class="calendar visible-md-block visible-lg-block"><span class="glyphicon glyphicon-calendar"></span>&nbsp;<%= l(user.account_created_at) %></div>
-          <% end %>
-        </div>
-      </div>
-    </div>
-  </div><!-- .profile-overview -->
+  /* others */
+  @media (min-width: 576px) {
+    .profile-header {
+      border: 1px solid #dee2e6 !important;
+    }
+  }
 
-  <div class="description-container">
-    <div class="text-center">
-      <span class="text-center">
-        <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
-      </span>
-
-      <span class="text-center">
-        <%= link_to user_url(user.screen_name), class: 'btn btn-default', target: '_blank' do %>
-          <i class="text-muted fab fa-twitter no-follow"></i>
-          <div class="visible-lg-inline visible-md-inline visible-xs-inline"><%= t('twitter.profile.see_on_twitter') %></div>
-        <% end %>
-      </span>
-    </div>
-
-    <div class="vertical-spacing"></div>
-
-    <% if user.description? %>
-      <div class="description text-center"><%= auto_linking(user.description) %></div>
-    <% end %>
-
-    <% if user.url? %>
-      <div class="link text-center">
-        <span class="glyphicon glyphicon-link"></span>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %>
-      </div>
-    <% end %>
-  </div><!-- .description-container -->
-</div>
-
-<style type="text/css">
-  .profile-overview-container .uid-<%= user.uid %> {
-    <% if user.profile_banner_url? %>
-      background-size: cover;
-      background-image: linear-gradient(transparent, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0.298039)), url('<%= "#{user.profile_banner_url_for(request)}" %>');
-    <% else %>
-      background-color: <%= user.profile_link_color_code %>;
-    <% end %>
+  .responsive-icon {
+    min-width: 100px;
+    min-height: 100px;
+    max-width: 130px;
+    max-height: 130px;
+    width: 30%;
+    height: auto;
+    border: 3px solid #fff;
   }
 </style>
 
-<div class="profile-counts-container">
-  <div class="row">
-    <div class="tweets col-xs-3">
+<div class="profile-header p-0 p-sm-3 <%= 'd-none d-md-block' unless always_expanded %>">
+  <div style="height: 180px; overflow: hidden; position: relative;">
+    <% if user.profile_banner_url? %>
+      <img class="w-100" src="<%= user.profile_banner_url_for(request) %>">
+    <% else %>
+      <div class="-100 h-100" style="background-color: <%= user.profile_link_color_code %>;"></div>
+    <% end %>
+
+    <div style="width: 100%; position: absolute; bottom: 0;">
+      <% if user.profile_icon_url? %>
+        <%= image_tag user.profile_icon_url_for(request), class: 'responsive-icon rounded-circle ml-3 mb-3', alt: user.screen_name %>
+      <% else %>
+        <div style="background-color: #868e96;" class="responsive-icon rounded-circle"></div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="my-3">
+    <%= user.name_with_icon %>
+    <span class="text-muted"><%= mention_name(user.screen_name) %></span>
+    <%= user.status_labels %>
+  </div>
+
+  <div class="my-3">
+    <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
+
+    <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
+      <i class="fab fa-twitter no-follow"></i>
+      <%= t('.see_on_twitter') %>
+    <% end %>
+  </div>
+
+  <% if user.description? %>
+    <div class="my-3"><%= auto_linking(user.description) %></div>
+  <% end %>
+
+  <% if user.location? %>
+    <i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %>
+  <% end %>
+
+  <% if user.url? %>
+    <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %>
+  <% end %>
+
+  <% if user.account_created_at? %>
+    <% birthday = user.account_created_at.in_time_zone('Tokyo') %>
+    <div class="my-3"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
+  <% end %>
+
+  <div class="row justify-content-between m-3">
+    <div class="col-6 col-md-3 mb-3">
       <%= link_to status_path(user, via: current_via('statuses_on_profile')) do %>
-        <span><b><%= user.delimited_statuses_count %></b></span>
-        <br class="visible-xs-block">
-        <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:statuses) %></span>
+        <b class="text-black"><%= user.delimited_statuses_count %></b>
+        <br class="d-block d-lg-none">
+        <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
       <% end %>
     </div>
-    <div class="friends col-xs-3">
+
+    <div class="col-6 col-md-3 mb-3">
       <%= link_to friend_path(user, via: current_via('friends_on_profile')) do %>
-        <span><b><%= user.delimited_friends_count %></b></span>
-        <br class="visible-xs-block">
-        <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:friends) %></span>
+        <b class="text-black"><%= user.delimited_friends_count %></b>
+        <br class="d-block d-lg-none">
+        <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
       <% end %>
     </div>
-    <div class="followers col-xs-3">
+
+    <div class="col-6 col-md-3 mb-3">
       <%= link_to follower_path(user, via: current_via('followers_on_profile')) do %>
-        <span><b><%= user.delimited_followers_count %></b></span>
-        <br class="visible-xs-block">
-        <span class="text-muted suffix"><%= TwitterUser.human_attribute_name(:followers) %></span>
+        <b class="text-black"><%= user.delimited_followers_count %></b>
+        <br class="d-block d-lg-none">
+        <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
       <% end %>
     </div>
-    <div class="follow-back-rate col-xs-3">
-      <div>
-        <span><b><%= user.percent_follow_back_rate %></b></span>
-        <br class="visible-xs-block">
-        <span class="text-muted suffix"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
-      </div>
+
+    <div class="col-6 col-md-3">
+      <b><%= user.percent_follow_back_rate %></b>
+      <br class="d-block d-lg-none">
+      <span class="text-muted"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
     </div>
   </div>
 </div>
@@ -101,8 +115,8 @@
 <% if user_signed_in? %>
   <script>
     $(function () {
-      Twitter.enableFollowButton('.profile-overview-container');
-      Twitter.enableUnfollowButton('.profile-overview-container');
+      Twitter.enableFollowButton('.profile-header');
+      Twitter.enableUnfollowButton('.profile-header');
     });
   </script>
 <% end %>

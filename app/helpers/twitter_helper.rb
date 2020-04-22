@@ -51,7 +51,7 @@ module TwitterHelper
   end
 
   def bigger_icon_url(user)
-    user.profile_image_url_https.to_s.gsub(/_normal(\.jpg$)/, '_bigger\1')
+    user.profile_image_url_https.to_s.gsub(/_normal(\.jpe?g|\.png|\.gif)$/, '_bigger\1')
   end
 
   def bigger_icon_img(user, options = {})

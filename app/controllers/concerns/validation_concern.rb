@@ -20,6 +20,7 @@ module Concerns::ValidationConcern
       message = t('before_sign_in.need_login_html', url: sign_in_path(via: current_via(__method__), redirect_path: request.fullpath))
       create_search_error_log(__method__, message)
       flash.now[:alert] = message
+      @has_error = true
       render template: 'home/new', formats: %i(html), status: :unauthorized
     end
   end

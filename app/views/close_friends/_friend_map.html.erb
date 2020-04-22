@@ -1,17 +1,15 @@
-<div class="user-items-chart media">
-  <div class="media-body">
-    <div class="friend-map" style="height: 240px; margin: 0 auto;"></div>
-    <%
-      users = friend_map_users
-      nodes = users.map { |user| user2node(user) }.to_json
-      links = users.map { |user| user2link(twitter_user, user) }.to_json
-    %>
-    <script>
-      $(function () {
-        var nodes = <%= raw nodes %>;
-        var links = <%= raw links %>;
-        draw_friend_map('.friend-map', nodes, links, $('.friend-map').width(), 240);
-      });
-    </script>
-  </div>
+<div class="user-items-chart">
+  <div class="friend-map" style="height: 240px; margin: 0 auto;"></div>
+  <%
+    users = friend_map_users
+    nodes = users.map { |user| user2node(user) }.to_json
+    links = users.map { |user| user2link(twitter_user, user) }.to_json
+  %>
+  <script>
+    $(function () {
+      var nodes = <%= raw nodes %>;
+      var links = <%= raw links %>;
+      draw_friend_map('.friend-map', nodes, links, $('.friend-map').width(), 240);
+    });
+  </script>
 </div>

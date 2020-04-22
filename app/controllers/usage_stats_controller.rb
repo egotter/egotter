@@ -5,7 +5,7 @@ class UsageStatsController < ApplicationController
 
   before_action only: %i(check_for_updates) do
     uid = params[:uid].to_i
-    valid_uid?(uid) && twitter_user_persisted?(uid)  && !protected_search?(TwitterUser.latest_by(uid: uid))
+    valid_uid?(uid) && twitter_user_persisted?(uid) && !protected_search?(TwitterUser.latest_by(uid: uid))
   end
 
   def show
@@ -20,6 +20,8 @@ class UsageStatsController < ApplicationController
     @meta_description = t('.meta_description', {user: @twitter_user.mention_name})
 
     @stat = UsageStat.find_or_initialize_by(uid: @twitter_user.uid)
+
+    @navbar_title = t(".navbar_title")
 
     @tweet_text = usage_time_text(@stat.usage_time, @twitter_user)
 
