@@ -140,7 +140,7 @@ ja:
       navbar_title: '@%{user} の分析'
       page_title: "@%{user} の分析 - リムり %{removing}人 リムられ %{removed}人 ブロックされた …"
       directory_page_title: "@%{user} の分析"
-      short_title: "%{user} の分析"
+      crumb_title: "%{user} の分析"
       heading: "@%{user} の分析結果"
       meta_description: "えごったーなら全部無料！ @%{user} の リムり リムられ 片思い 片思われ ブロック 仲良し クラスタをまるごと分析！ リム通知も届きます。"
       request_login: '%{user} はフォロー・フォロワーが多いため、正確な分析にはログインが必要です。'
@@ -1654,6 +1654,8 @@ ja:
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後は、予約したツイートを一覧で管理できます。<br>
           <br>
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
+  breadcrumb:
+    root: 'トップ'
   modal:
     search_modal:
       title: 'えごったーで検索'

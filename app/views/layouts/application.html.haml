@@ -58,11 +58,11 @@
               .sticky-top
                 = render partial: 'layouts/sidenav', locals: {twitter_user: @twitter_user}
             .col-12.col-sm-12.col-md-9
-              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '<span class="text-muted">&nbsp;&gt;&nbsp;</span>'
+              = render partial: 'layouts/breadcrumbs'
               = yield
           - else
             .col-12
-              = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '<span class="text-muted">&nbsp;&gt;&nbsp;</span>'
+              = render partial: 'layouts/breadcrumbs'
               = yield
     - else
       = yield

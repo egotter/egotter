@@ -1,0 +1,15 @@
+<% breadcrumbs do |links| %>
+  <nav class="mt-3" aria-label="breadcrumb">
+    <% if links.any? %>
+      <ol class="breadcrumb">
+        <% links.each do |link| %>
+          <% next if link.key == :root && links.size >= 3 %>
+          <li class="breadcrumb-item">
+            <% options = link.current? ? {class: 'active', 'aria-current' => 'page'} : {} %>
+            <%= link_to link.text, link.url, options %>
+          </li>
+        <% end %>
+      </ol>
+    <% end %>
+  </nav>
+<% end %>
