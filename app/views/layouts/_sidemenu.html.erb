@@ -1,0 +1,67 @@
+<style type="text/css">
+  .sidemenu {
+    display: none;
+    color: white;
+    position: fixed;
+    top: 10px;
+    right: 0;
+    bottom: 10px;
+    overflow-y: auto;
+    width: 300px;
+    z-index: 9999;
+  }
+</style>
+
+<div class="sidemenu shadow bg-white">
+  <div class="btn-sidemenu text-center py-3">
+    <%= link_to '#', style: 'color: black;' do %>
+      <i class="fas fa-times"></i>
+      <%= t('.close') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <% if user_signed_in? %>
+    <div class="text-center py-3" style="color: black;">
+      <%= t('.logged_in', user: current_user.screen_name) %>
+    </div>
+    <hr class="p-0 m-0">
+  <% end %>
+
+  <div class="text-center py-3">
+    <%= link_to settings_path(twitter_user) do %>
+      <i class="fas fa-cog"></i>
+      <%= t('.config') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
+    <%= link_to pricing_path(via: current_via('navmenu')) do %>
+      <i class="fas fa-yen-sign"></i>
+      <%= t('.pricing') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <%= render partial: 'layouts/sidenav', locals: {twitter_user: twitter_user} if twitter_user %>
+</div>
+
+<script>
+  $(function () {
+    var sidemenu = $('.sidemenu');
+    var btn = $('.btn-sidemenu');
+
+    sidemenu.sidebar({side: 'right'});
+    sidemenu.show();
+
+    $('.btn-sidemenu-close').on('click', function () {
+      sidemenu.trigger('sidebar:close');
+    });
+
+    btn.on('click', function () {
+      console.log('clicked', sidemenu);
+      sidemenu.trigger('sidebar:toggle');
+    });
+  });
+</script>

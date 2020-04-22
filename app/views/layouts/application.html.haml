@@ -25,6 +25,7 @@
     %link{crossorigin: "anonymous", href: "//use.fontawesome.com/releases/v5.6.3/css/all.css", integrity: "sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/", rel: "stylesheet"}
     %link{:crossorigin => "anonymous", :href => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css", :integrity => "sha256-qfsdVqVeKPVy58Hx9qCIn8Nsdh2TU1yicE7B5EHi+Ss=", :rel => "stylesheet"}/
     %script{:crossorigin => "anonymous", :integrity => "sha256-NOqsQWSGulWF4j0yfFlFwk9rmFpAoRV5nodGqIHyjUo=", :src => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"}
+    %script{:crossorigin => "anonymous", :integrity => "sha256-Z7vZOdzU6nCmyqd53Q0EfBYAZtWilBbFj5cWoYrRs48=", :src => "https://cdnjs.cloudflare.com/ajax/libs/jquery-sidebar/3.3.2/jquery.sidebar.min.js"}
     = csrf_meta_tags
 
     = yield(:canonical_url) if content_for?(:canonical_url)
@@ -40,6 +41,7 @@
     = javascript_include_tag '/adsense.js'
 
     = render partial: 'layouts/header' if show_header? && !under_maintenance?
+    = render partial: 'layouts/sidemenu', locals: {twitter_user: @twitter_user}
 
     .container
       #ajax-warning-message.mb-0{style: 'display: none;'}
@@ -53,8 +55,8 @@
         .row
           - if show_sidebar?
             .d-none.d-sm-none.d-md-block.col-md-3
-              .sticky-top.pt-3
-                = render partial: 'layouts/sidenav'
+              .sticky-top
+                = render partial: 'layouts/sidenav', locals: {twitter_user: @twitter_user}
             .col-12.col-sm-12.col-md-9
               = breadcrumbs style: :bootstrap4, autoroot: false, link_current: true, separator: '<span class="text-muted">&nbsp;&gt;&nbsp;</span>'
               = yield

@@ -144,4 +144,8 @@ class TwitterUserDecorator < ApplicationDecorator
   def name_with_icon
     "#{name}#{protected_icon}#{verified_icon}".html_safe
   end
+
+  def uid_i
+    uid.to_i
+  end
 end

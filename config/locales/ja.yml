@@ -23,12 +23,17 @@ ja:
       title: 'えごったー'
       sign_in: 'ログイン'
       search_by_twitter_id: "@TwitterID で検索"
-      pricing: 'プラン'
+      pricing: '料金プラン'
     meta_tags:
       title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
       description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
     sidenav:
       title: '@%{user} の分析'
+    sidemenu:
+      close: 'メニューを閉じる'
+      logged_in: '@%{user} でログイン中'
+      config: '設定'
+      pricing: '料金プラン'
     footer:
       sign_in: "ログイン"
       sign_out: "ログアウト"
