@@ -30,7 +30,8 @@
   }
 </style>
 
-<div class="profile-header p-0 p-sm-3 <%= 'd-none d-md-block' unless always_expanded %>">
+<div class="profile-header <%= 'd-none d-md-block' unless always_expanded %>">
+  <%#= Profile banner %>
   <div style="height: 180px; overflow: hidden; position: relative;">
     <% if user.profile_banner_url? %>
       <img class="w-100" src="<%= user.profile_banner_url_for(request) %>">
@@ -47,67 +48,69 @@
     </div>
   </div>
 
-  <div class="my-3">
-    <%= user.name_with_icon %>
-    <span class="text-muted"><%= mention_name(user.screen_name) %></span>
-    <%= user.status_labels %>
-  </div>
+  <div class="p-0 px-sm-3">
+    <div class="my-3">
+      <%= user.name_with_icon %>
+      <span class="text-muted"><%= mention_name(user.screen_name) %></span>
+      <%= user.status_labels %>
+    </div>
 
-  <div class="my-3">
-    <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
+    <div class="my-3">
+      <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
 
-    <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
-      <i class="fab fa-twitter no-follow"></i>
-      <%= t('.see_on_twitter') %>
+      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
+        <i class="fab fa-twitter no-follow"></i>
+        <%= t('.see_on_twitter') %>
+      <% end %>
+    </div>
+
+    <% if user.description? %>
+      <div class="my-3"><%= auto_linking(user.description) %></div>
     <% end %>
-  </div>
 
-  <% if user.description? %>
-    <div class="my-3"><%= auto_linking(user.description) %></div>
-  <% end %>
+    <% if user.location? %>
+      <i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %>
+    <% end %>
 
-  <% if user.location? %>
-    <i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %>
-  <% end %>
+    <% if user.url? %>
+      <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %>
+    <% end %>
 
-  <% if user.url? %>
-    <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %>
-  <% end %>
+    <% if user.account_created_at? %>
+      <% birthday = user.account_created_at.in_time_zone('Tokyo') %>
+      <div class="my-3"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
+    <% end %>
 
-  <% if user.account_created_at? %>
-    <% birthday = user.account_created_at.in_time_zone('Tokyo') %>
-    <div class="my-3"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
-  <% end %>
+    <div class="row justify-content-between m-3">
+      <div class="col-6 col-md-3 mb-3">
+        <%= link_to status_path(user, via: current_via('statuses_on_profile')) do %>
+          <b class="text-black"><%= user.delimited_statuses_count %></b>
+          <br class="d-block d-lg-none">
+          <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
+        <% end %>
+      </div>
 
-  <div class="row justify-content-between m-3">
-    <div class="col-6 col-md-3 mb-3">
-      <%= link_to status_path(user, via: current_via('statuses_on_profile')) do %>
-        <b class="text-black"><%= user.delimited_statuses_count %></b>
+      <div class="col-6 col-md-3 mb-3">
+        <%= link_to friend_path(user, via: current_via('friends_on_profile')) do %>
+          <b class="text-black"><%= user.delimited_friends_count %></b>
+          <br class="d-block d-lg-none">
+          <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
+        <% end %>
+      </div>
+
+      <div class="col-6 col-md-3 mb-3">
+        <%= link_to follower_path(user, via: current_via('followers_on_profile')) do %>
+          <b class="text-black"><%= user.delimited_followers_count %></b>
+          <br class="d-block d-lg-none">
+          <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
+        <% end %>
+      </div>
+
+      <div class="col-6 col-md-3">
+        <b><%= user.percent_follow_back_rate %></b>
         <br class="d-block d-lg-none">
-        <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
-      <% end %>
-    </div>
-
-    <div class="col-6 col-md-3 mb-3">
-      <%= link_to friend_path(user, via: current_via('friends_on_profile')) do %>
-        <b class="text-black"><%= user.delimited_friends_count %></b>
-        <br class="d-block d-lg-none">
-        <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
-      <% end %>
-    </div>
-
-    <div class="col-6 col-md-3 mb-3">
-      <%= link_to follower_path(user, via: current_via('followers_on_profile')) do %>
-        <b class="text-black"><%= user.delimited_followers_count %></b>
-        <br class="d-block d-lg-none">
-        <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
-      <% end %>
-    </div>
-
-    <div class="col-6 col-md-3">
-      <b><%= user.percent_follow_back_rate %></b>
-      <br class="d-block d-lg-none">
-      <span class="text-muted"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
+        <span class="text-muted"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
+      </div>
     </div>
   </div>
 </div>
