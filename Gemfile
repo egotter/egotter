@@ -71,6 +71,7 @@ gem 'aws-sdk-ec2', require: false
 gem 'aws-sdk-elasticloadbalancingv2', require: false
 gem 'stripe'
 gem 'ahoy_matey'
+gem 'webpacker', '~> 4.0'
 
 # Datadog APM
 gem 'dogstatsd-ruby'
