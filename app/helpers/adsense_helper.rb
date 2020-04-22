@@ -431,4 +431,12 @@ module AdsenseHelper
       left_slot_responsive_ad_id(controller, action, vertical)
     end
   end
+
+  def responsive_ad_id(controller, action, position)
+    case [user_signed_in?, controller.to_s, action.to_s, position.to_s]
+    when [true,  'timelines', 'show', 'top'] then 5788967123 # 0301
+    when [false, 'timelines', 'show', 'top'] then 5788967123 # 0301
+    else 5788967123                                          # 0301
+    end
+  end
 end

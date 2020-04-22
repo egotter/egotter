@@ -15,8 +15,8 @@
 .mt-3.w-100
 = render partial: 'twitter/profile', locals: {user: @twitter_user, always_expanded: true}
 
-%h2.h3.text-center.my-5= t('timelines.show.heading', user: @twitter_user.screen_name)
-= t('.this_page_is_html', user: @twitter_user.screen_name)
+%h2.h3.text-center.my-5= t('.heading', user: @twitter_user.screen_name)
+.mb-3= t('.this_page_is_html', user: @twitter_user.screen_name)
 
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 
