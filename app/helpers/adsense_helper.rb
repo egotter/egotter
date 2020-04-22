@@ -51,22 +51,57 @@ module AdsenseHelper
   GUEST_WAITING       = 9863392014
   GUEST_PROFILES      = 2634814114
 
+  RESPONSIVE_AD_IDS = [
+      5788967123, # 0301
+      6742315516, # 0302
+      2002012770, # 0303
+      9787281250, # 0304
+      6619914631, # 0305
+      5306832964, # 0306
+      2680669624, # 0307
+      3034170646, # 0308
+      8474199583, # 0309
+      9688931108, # 0310
+      5848036246, # 0311
+      8375849431, # 0312
+      7741424618, # 0313
+      8094925634, # 0314
+      7010796875, # 0315  <- Next
+      4116152176, # 0316
+      5585787146, # 0317
+      3802179603, # 0318
+      1390557110, # 0319
+      1646542132, # 0320
+      9077475443, # 0321
+      5697715203, # 0322
+      6335762031, # 0323
+      7764393778, # 0324
+      8020378796, # 0325
+      6707297127, # 0326
+      4436604425, # 0327
+      3123522758, # 0328
+      2489097937, # 0329
+      8717742161, # 0330
+      7404660497, # 0331
+  ]
+
   def left_slot_fixed_ad_id(controller, action, position)
     slot =
         case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME
-        when [true,  'timelines',             'show', :top]    then USER_TIMELINES_TOP
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM
+        when [true,  'timelines',             'show', :middle] then 5848036246 # 0311
+        when [true,  'timelines',             'show', :top]    then 5788967123 # 0301
         when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND
         when [true,  'forbidden',             'show', :top]    then USER_FORBIDDEN
         when [true,  'waiting',               'new',  :top]    then USER_WAITING
         when [true,  'blocking_or_blocked',   'list', :slit]   then USER_BLOCKING_OR_BLOCKED
         when [true,  'blocking_or_blocked',   'show', :bottom] then USER_BLOCKING_OR_BLOCKED
-        when [true,  'blocking_or_blocked',   'show', :top]    then USER_BLOCKING_OR_BLOCKED
+        when [true,  'blocking_or_blocked',   'show', :top]    then 8474199583 # 0309
         when [true,  'close_friends',         'list', :slit]   then USER_CLOSE_FRIENDS
         when [true,  'close_friends',         'show', :bottom] then USER_CLOSE_FRIENDS
         when [true,  'close_friends',         'show', :middle] then USER_CLOSE_FRIENDS
-        when [true,  'close_friends',         'show', :top]    then USER_CLOSE_FRIENDS
+        when [true,  'close_friends',         'show', :top]    then 7741424618 # 0313
         when [true,  'clusters',              'show', :top]    then USER_CLUSTERS
         when [true,  'common_followers',      'list', :slit]   then USER_COMMON_FOLLOWERS
         when [true,  'common_followers',      'show', :bottom] then USER_COMMON_FOLLOWERS
@@ -103,7 +138,7 @@ module AdsenseHelper
         when [true,  'one_sided_friends',     'show', :bottom] then USER_ONE_SIDED_FRIENDS
         when [true,  'one_sided_friends',     'show', :middle] then USER_ONE_SIDED_FRIENDS
         when [true,  'one_sided_friends',     'show', :top]    then USER_ONE_SIDED_FRIENDS
-        when [true,  'profiles',              'show', :top]    then USER_PROFILES
+        when [true,  'profiles',              'show', :top]    then 2002012770 # 0303
         when [true,  'replied',               'show', :bottom] then USER_REPLIED
         when [true,  'replied',               'show', :middle] then USER_REPLIED
         when [true,  'replied',               'show', :top]    then USER_REPLIED
@@ -113,11 +148,11 @@ module AdsenseHelper
         when [true,  'statuses',              'show', :top]    then USER_UNFOLLOWERS
         when [true,  'unfollowers',           'list', :slit]   then USER_UNFOLLOWERS
         when [true,  'unfollowers',           'show', :bottom] then USER_UNFOLLOWERS
-        when [true,  'unfollowers',           'show', :top]    then USER_UNFOLLOWERS
+        when [true,  'unfollowers',           'show', :top]    then 6619914631 # 0305
         when [true,  'unfriends',             'list', :slit]   then USER_UNFRIENDS
         when [true,  'unfriends',             'new',  :top]    then USER_UNFRIENDS
         when [true,  'unfriends',             'show', :bottom] then USER_UNFRIENDS
-        when [true,  'unfriends',             'show', :top]    then USER_UNFRIENDS
+        when [true,  'unfriends',             'show', :top]    then 2680669624 # 0307
         when [true,  'update_histories',      'show', :bottom] then USER_UPDATE_HISTORIES
         when [true,  'update_histories',      'show', :top]    then USER_UPDATE_HISTORIES
         when [true,  'usage_stats',           'show', :bottom] then USER_USAGE_STATS
@@ -125,10 +160,15 @@ module AdsenseHelper
         when [true,  'usage_stats',           'show', :top]    then USER_USAGE_STATS
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME
-        when [false, 'timelines',             'show', :top]    then GUEST_TIMELINES_TOP
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
+        when [false, 'timelines',             'show', :middle] then 8375849431 # 0312
+        when [false, 'timelines',             'show', :top]    then 6742315516 # 0302
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING
-        when [false, 'profiles',              'show', :top]    then GUEST_PROFILES
+        when [false, 'profiles',              'show', :top]    then 9787281250 # 0304
+        when [false, 'unfollowers',           'show', :top]    then 5306832964 # 0306
+        when [false, 'unfriends',             'show', :top]    then 3034170646 # 0308
+        when [false, 'blocking_or_blocked',   'show', :top]    then 9688931108 # 0310
+        when [false, 'close_friends',         'show', :top]    then 8094925634 # 0314
         else nil
         end
 
@@ -429,14 +469,6 @@ module AdsenseHelper
       left_slot_fixed_ad_id(controller, action, vertical)
     else
       left_slot_responsive_ad_id(controller, action, vertical)
-    end
-  end
-
-  def responsive_ad_id(controller, action, position)
-    case [user_signed_in?, controller.to_s, action.to_s, position.to_s]
-    when [true,  'timelines', 'show', 'top'] then 5788967123 # 0301
-    when [false, 'timelines', 'show', 'top'] then 5788967123 # 0301
-    else 5788967123                                          # 0301
     end
   end
 end

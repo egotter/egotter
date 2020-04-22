@@ -16,9 +16,9 @@
 = render partial: 'twitter/profile', locals: {user: @twitter_user, always_expanded: true}
 
 %h2.h3.text-center.my-5= t('.heading', user: @twitter_user.screen_name)
-.mb-3= t('.this_page_is_html', user: @twitter_user.screen_name)
+= t('.this_page_is_html', user: @twitter_user.screen_name)
 
-= render(partial: 'adsense/ad', locals: {vertical: :top})
+.my-3= render(partial: 'adsense/ad', locals: {vertical: :top})
 
 %script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}
 %script{id: 'user-template', type: 'x-tmpl-mustache'}
