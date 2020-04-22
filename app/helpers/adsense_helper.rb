@@ -79,9 +79,9 @@ module AdsenseHelper
       8020378796, # 0325
       6707297127, # 0326
       4436604425, # 0327
-      3123522758, # 0328 <- Next
+      3123522758, # 0328
       2489097937, # 0329
-      8717742161, # 0330
+      8717742161, # 0330 <- Next
       7404660497, # 0331
   ]
 
@@ -90,6 +90,7 @@ module AdsenseHelper
         case [user_signed_in?, controller.to_s, action.to_s, position.to_sym]
         when [true,  'home',                  'new',  :top]    then USER_HOME
         when [true,  'timelines',             'show', :bottom] then USER_TIMELINES_BOTTOM
+        when [true,  'timelines',             'show', :feed]   then 3123522758 # 0328
         when [true,  'timelines',             'show', :middle] then 5848036246 # 0311
         when [true,  'timelines',             'show', :top]    then 5788967123 # 0301
         when [true,  'not_found',             'show', :top]    then USER_NOT_FOUND
@@ -164,6 +165,7 @@ module AdsenseHelper
 
         when [false, 'home',                  'new',  :top]    then GUEST_HOME
         when [false, 'timelines',             'show', :bottom] then GUEST_TIMELINES_BOTTOM
+        when [false, 'timelines',             'show', :feed]   then 2489097937 # 0329
         when [false, 'timelines',             'show', :middle] then 8375849431 # 0312
         when [false, 'timelines',             'show', :top]    then 6742315516 # 0302
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING
