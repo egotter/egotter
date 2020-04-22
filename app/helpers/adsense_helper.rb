@@ -66,7 +66,7 @@ module AdsenseHelper
       8375849431, # 0312
       7741424618, # 0313
       8094925634, # 0314
-      7010796875, # 0315  <- Next
+      7010796875, # 0315
       4116152176, # 0316
       5585787146, # 0317
       3802179603, # 0318
@@ -79,7 +79,7 @@ module AdsenseHelper
       8020378796, # 0325
       6707297127, # 0326
       4436604425, # 0327
-      3123522758, # 0328
+      3123522758, # 0328 <- Next
       2489097937, # 0329
       8717742161, # 0330
       7404660497, # 0331
@@ -97,10 +97,11 @@ module AdsenseHelper
         when [true,  'waiting',               'new',  :top]    then USER_WAITING
         when [true,  'blocking_or_blocked',   'list', :slit]   then USER_BLOCKING_OR_BLOCKED
         when [true,  'blocking_or_blocked',   'show', :bottom] then USER_BLOCKING_OR_BLOCKED
+        when [true,  'blocking_or_blocked',   'show', :middle] then 7010796875 # 0315
         when [true,  'blocking_or_blocked',   'show', :top]    then 8474199583 # 0309
         when [true,  'close_friends',         'list', :slit]   then USER_CLOSE_FRIENDS
-        when [true,  'close_friends',         'show', :bottom] then USER_CLOSE_FRIENDS
-        when [true,  'close_friends',         'show', :middle] then USER_CLOSE_FRIENDS
+        when [true,  'close_friends',         'show', :bottom] then 4116152176 # 0316
+        when [true,  'close_friends',         'show', :middle] then 5585787146 # 0317
         when [true,  'close_friends',         'show', :top]    then 7741424618 # 0313
         when [true,  'clusters',              'show', :top]    then USER_CLUSTERS
         when [true,  'common_followers',      'list', :slit]   then USER_COMMON_FOLLOWERS
@@ -148,10 +149,12 @@ module AdsenseHelper
         when [true,  'statuses',              'show', :top]    then USER_UNFOLLOWERS
         when [true,  'unfollowers',           'list', :slit]   then USER_UNFOLLOWERS
         when [true,  'unfollowers',           'show', :bottom] then USER_UNFOLLOWERS
+        when [true,  'unfollowers',           'show', :middle] then 3802179603 # 0318
         when [true,  'unfollowers',           'show', :top]    then 6619914631 # 0305
         when [true,  'unfriends',             'list', :slit]   then USER_UNFRIENDS
         when [true,  'unfriends',             'new',  :top]    then USER_UNFRIENDS
         when [true,  'unfriends',             'show', :bottom] then USER_UNFRIENDS
+        when [true,  'unfriends',             'show', :middle] then 1390557110 # 0319
         when [true,  'unfriends',             'show', :top]    then 2680669624 # 0307
         when [true,  'update_histories',      'show', :bottom] then USER_UPDATE_HISTORIES
         when [true,  'update_histories',      'show', :top]    then USER_UPDATE_HISTORIES
@@ -165,9 +168,17 @@ module AdsenseHelper
         when [false, 'timelines',             'show', :top]    then 6742315516 # 0302
         when [false, 'waiting',               'new',  :top]    then GUEST_WAITING
         when [false, 'profiles',              'show', :top]    then 9787281250 # 0304
+        when [false, 'unfollowers',           'show', :bottom] then 1646542132 # 0320
+        when [false, 'unfollowers',           'show', :middle] then 9077475443 # 0321
         when [false, 'unfollowers',           'show', :top]    then 5306832964 # 0306
+        when [false, 'unfriends',             'show', :bottom] then 5697715203 # 0322
+        when [false, 'unfriends',             'show', :middle] then 6335762031 # 0323
         when [false, 'unfriends',             'show', :top]    then 3034170646 # 0308
+        when [false, 'blocking_or_blocked',   'show', :bottom] then 7764393778 # 0324
+        when [false, 'blocking_or_blocked',   'show', :middle] then 8020378796 # 0325
         when [false, 'blocking_or_blocked',   'show', :top]    then 9688931108 # 0310
+        when [false, 'close_friends',         'show', :bottom] then 6707297127 # 0326
+        when [false, 'close_friends',         'show', :middle] then 4436604425 # 0327
         when [false, 'close_friends',         'show', :top]    then 8094925634 # 0314
         else nil
         end
