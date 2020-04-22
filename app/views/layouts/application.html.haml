@@ -41,7 +41,7 @@
     = javascript_include_tag '/adsense.js'
 
     = render partial: 'layouts/header' if show_header? && !under_maintenance?
-    = render partial: 'layouts/sidemenu', locals: {twitter_user: @twitter_user}
+    = render partial: 'layouts/sidemenu'
 
     .container
       #ajax-warning-message.mb-0{style: 'display: none;'}

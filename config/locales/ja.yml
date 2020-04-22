@@ -32,8 +32,11 @@ ja:
     sidemenu:
       close: 'メニューを閉じる'
       logged_in: '@%{user} でログイン中'
+      sign_in: 'ログイン'
       config: '設定'
+      search: '検索する'
       pricing: '料金プラン'
+      sign_out: 'ログアウト'
     footer:
       sign_in: "ログイン"
       sign_out: "ログアウト"
@@ -596,7 +599,7 @@ ja:
     sign_in:
       signed_in: "既にログイン済みです。"
     after_sign_up:
-      proceccing: 'サインアップ中'
+      sign_up: 'サインアップ中'
       success_html: |
         ツイッターログインしました。リム通知は【%{status}】になっています。
         この設定は <a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
@@ -624,7 +627,7 @@ ja:
           @ego_tter が公式アカウントです。分からないことや気になることは、<a href="https://twitter.com/ego_tter" class="btn btn-outline-primary" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
         </div>
     after_sign_in:
-      proceccing: 'ログイン中'
+      sign_in: 'ログイン中'
       success_html: |
         ツイッターログインしました。リム通知は【%{status}】になっています。
         この設定は <a class="btn btn-outline-primary btn-sm" href="%{url}" target="_blank">設定ページ</a> から変更できます。<br>
@@ -656,6 +659,7 @@ ja:
       search: "検索する"
     profile:
       see_on_twitter: "ツイッターで見る"
+      birthday: '%{date} からツイッターを使っています'
       unknown_follow_back_rate: '集計中'
       labels:
         suspended: "垢消し"
@@ -1656,11 +1660,14 @@ ja:
           <a title="%{title}" href="%{url}">%{title}</a>を使ってツイートを予約した後に、予約したツイートをキャンセルすることもできます。
   breadcrumb:
     root: 'トップ'
+  users:
+    omniauth_callbacks:
+      login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
   modal:
     search_modal:
       title: 'えごったーで検索'
       remaining_count_html: '残りの検索回数は %{count} 回です。'
-      sign_in_html: '<a href="%{url}" class="btn btn-primary btn-sm">ログインして増やす</a>'
+      sign_in: 'ログインして検索回数を増やす'
       tweet: 'ツイートして増やす'
       purchase: '購入して増やす'
       pricing: '料金プラン'
@@ -1688,15 +1695,10 @@ ja:
   application:
     twitter_user_not_found: "レコードが見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：TUNF404"
     searched_uid_not_found: "直近の検索履歴が見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：SUNF404"
-    routing_not_found: "お探しのページが見付かりませんでした。大変お手数ですが、トップページから再度検索してみてください。"
     internal_server_error: "一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。エラー：ISE500"
     internal_server_error_with_recovery_html: |
       一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。
       <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a> エラー：ISEWR500
-    request_timeout_html: '一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。'
-    request_timeout_with_recovery_html: |
-      一時的なタイムアウトが起きました。大変お手数ですが、トップページから再度検索してみてください。
-      <a href="%{url}" class="btn btn-outline-primary btn-sm">@%{user} で検索</a>
     invalid_token:
       session_expired_html: |
         一定時間操作がなかったため、セッションの有効期限が切れました。
@@ -1775,7 +1777,6 @@ ja:
   before_sign_in:
     need_login_html: 'このページを見るためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
-    login_failed_html: '<a href="%{url}">ログイン</a> に失敗しました。大変お手数ですが、時間をおいてから再度 <a href="%{url}">ログイン</a> してみてください。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_searches_html: |
       現在のプランで検索できる上限に達しました。%{limit}回/日 <a class="btn btn-primary" href="%{sign_in_url}">ログインして増やす</a><br>
@@ -2345,4 +2346,5 @@ ja:
       settings_short: "%m-%d %H:%M"
       short_hour: "%H:%M:%S"
       date_hyphen: "%Y-%m-%d"
+      birthday: "%Y年%-m月%-d日"
     pm: 午後

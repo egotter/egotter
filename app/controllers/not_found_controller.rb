@@ -22,6 +22,11 @@ class NotFoundController < ApplicationController
   end
 
   def set_canonical_url
-    @canonical_url = not_found_url(@user)
+    @canonical_url =
+        if @user
+          not_found_url(@user)
+        else
+          not_found_url(screen_name: @screen_name)
+        end
   end
 end

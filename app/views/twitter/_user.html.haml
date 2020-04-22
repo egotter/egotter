@@ -15,7 +15,10 @@
           = image_tag bigger_icon_url(user), class: 'rounded', style: 'max-width: 90px; width: 100%;', alt: user.screen_name
       .col
         .card-body
-          = user.followed_label_and_text if current_user_follower_uids.include?(user.uid_i)
+          - if current_user_follower_uids.include?(user.uid_i)
+            .text-muted.mb-3
+              %i.fas.fa-user
+              = t('twitter.profile.labels.followed')
           %h5.card-title
             = search_link user.screen_name, via
             = user.name_with_icon

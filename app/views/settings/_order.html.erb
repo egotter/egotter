@@ -1,8 +1,8 @@
-<h2 class="h4 text-center my-5"><i class="fas fa-shopping-cart"></i><%= t('.order_histories') %></h2>
+<h2 id="orders-table" class="h4 text-center my-5"><i class="fas fa-shopping-cart"></i><%= t('.order_histories') %></h2>
 <div class="text-center my-5"><%= link_to t('.see_plans'), pricing_path(via: current_via('orders_table')) %></div>
 
 <% if current_user.orders.any? %>
-  <table id="orders-table" class="table">
+  <table class="table">
     <tbody>
     <% current_user.orders.select { |o| !o.purchase_failed? }.each do |order| %>
       <tr class="<%= 'text-muted' if order.canceled_at %>">

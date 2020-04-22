@@ -1,7 +1,7 @@
 module SearchCountLimitationHelper
 
   def search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
-    values = {
+    options = {
         limit: SearchCountLimitation.max_search_count(current_user),
         sign_in_bonus: SearchCountLimitation::SIGN_IN_BONUS,
         sharing_bonus: SearchCountLimitation.current_sharing_bonus(current_user),
@@ -14,9 +14,9 @@ module SearchCountLimitationHelper
     }
 
     if user_signed_in?
-      t('after_sign_in.too_many_searches_html', values)
+      t('after_sign_in.too_many_searches_html', options)
     else
-      t('before_sign_in.too_many_searches_html', values)
+      t('before_sign_in.too_many_searches_html', options)
     end
   end
 end

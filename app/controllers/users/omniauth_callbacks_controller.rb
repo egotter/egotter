@@ -3,6 +3,24 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
   include Concerns::SanitizationConcern
   include Concerns::JobQueueingConcern
 
+  after_action only: :twitter do
+    if @follow
+      request = FollowRequest.create(user_id: @user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
+      CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
+    end
+
+    update_search_histories_when_signing_in(@user)
+
+    EnqueuedSearchRequest.new.delete(@user.uid)
+    DeleteNotFoundUserWorker.perform_async(@user.screen_name)
+    DeleteForbiddenUserWorker.perform_async(@user.screen_name)
+    CreateTwitterDBUserWorker.perform_async([@user.uid], user_id: @user.id, force_update: true, enqueued_by: 'twitter callback after signing in')
+    FetchUserForCachingWorker.perform_async(@user.uid, user_id: @user.id, enqueued_at: Time.zone.now)
+    FetchUserForCachingWorker.perform_async(@user.screen_name, user_id: @user.id, enqueued_at: Time.zone.now)
+
+    enqueue_create_twitter_user_job_if_needed(@user.uid, user_id: @user.id, requested_by: 'sign_in')
+  end
+
   def twitter
     via = session[:sign_in_via] ? session.delete(:sign_in_via) : ''
     referer = session[:sign_in_referer] ? session.delete(:sign_in_referer) : ''
@@ -18,32 +36,16 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         UpdatePermissionLevelWorker.perform_async(user.id, enqueued_at: Time.zone.now, send_test_report: force_login)
         save_context = context
       end
-    rescue =>  e
+    rescue => e
       logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect}"
-      return redirect_to root_path, alert: t('before_sign_in.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
+      return redirect_to root_path, alert: t('.login_failed_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/sign_in_failed"))
     end
-
-    update_search_histories_when_signing_in(user)
-    if follow
-      request = FollowRequest.create(user_id: user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
-      CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
-    end
-    EnqueuedSearchRequest.new.delete(user.uid)
-    DeleteNotFoundUserWorker.perform_async(user.screen_name)
-    DeleteForbiddenUserWorker.perform_async(user.screen_name)
-    CreateTwitterDBUserWorker.perform_async([user.uid], user_id: user.id, force_update: true, enqueued_by: 'twitter callback after signing in')
-    FetchUserForCachingWorker.perform_async(user.uid, user_id: user.id, enqueued_at: Time.zone.now)
-    FetchUserForCachingWorker.perform_async(user.screen_name, user_id: user.id, enqueued_at: Time.zone.now)
-
-    enqueue_create_twitter_user_job_if_needed(user.uid, user_id: user.id, requested_by: 'sign_in')
 
     sign_in user, event: :authentication
+    redirect_to after_callback_path(save_context: save_context, force_login: force_login)
 
-    if save_context == :create
-      redirect_to after_sign_up_path(redirect_path: after_sign_in_path_for(user, save_context: save_context, force_login: force_login))
-    else
-      redirect_to after_sign_in_path(redirect_path: after_sign_in_path_for(user, save_context: save_context, force_login: force_login))
-    end
+    @user = user
+    @follow = follow
   end
 
   def failure
@@ -68,15 +70,28 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
   private
 
-  def after_sign_in_path_for(user, save_context:, force_login: false)
+  def after_callback_path(save_context:, force_login: false)
+    options = {redirect_path: after_callback_redirect_path(save_context: save_context, force_login: force_login)}
+    if save_context == :create
+      after_sign_up_path(options)
+    else
+      after_sign_in_path(options)
+    end
+  end
+
+  def after_callback_redirect_path(save_context:, force_login:)
     url = session.delete(:redirect_path)
-    url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") unless url
+    url = start_path(save_context: save_context, via: "after_sign_in_#{save_context}") if url.blank?
 
     if save_context == :update && force_login
-      append_query_params(sanitized_redirect_path(url), revive_dialog: 1)
+      url = append_query_params(sanitized_redirect_path(url), revive_dialog: 1)
     else
-      append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
+      url = append_query_params(sanitized_redirect_path(url), follow_dialog: 1, share_dialog: 1)
     end
+
+    logger.info {"after_callback_redirect_path save_context=#{save_context} force_login=#{force_login} url=#{url}"}
+
+    url
   end
 
   def after_failure_message(reason)

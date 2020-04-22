@@ -24,7 +24,7 @@ class LoginController < ApplicationController
 
     session[:sign_in_follow] = 'true' == params[:follow] ? 'true' : 'false'
 
-    session[:redirect_path] = params[:redirect_path] || start_path(via: current_via('after_sign_in'))
+    session[:redirect_path] = params[:redirect_path]
 
     force_login = params[:force_login] && params[:force_login] == 'true'
     session[:force_login] = force_login.to_s

@@ -22,6 +22,11 @@ class ForbiddenController < ApplicationController
   end
 
   def set_canonical_url
-    forbidden_url(@user)
+    @canonical_url =
+        if @user
+          forbidden_url(@user)
+        else
+          forbidden_url(screen_name: @screen_name)
+        end
   end
 end

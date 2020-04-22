@@ -1,24 +1,22 @@
 <% start = Time.zone.now %>
 <% via = current_via('summary_on_timeline') %>
+<% unit = t('.unit') %>
 <div class="summary-on-timeline">
   <div class="list-group">
-    <%= link_to one_sided_friend_path(twitter_user, via: via), class: 'list-group-item' do %>
-      <span class="badge"><%= twitter_user.one_sided_friendships.size %><%= t('.unit') %></span><%= t('.one_sided_friends') %>
-    <% end %>
-    <%= link_to one_sided_follower_path(twitter_user, via: via), class: 'list-group-item' do %>
-      <span class="badge"><%= twitter_user.one_sided_followerships.size %><%= t('.unit') %></span><%= t('.one_sided_followers') %>
-    <% end %>
-    <%= link_to mutual_friend_path(twitter_user, via: via), class: 'list-group-item' do %>
-      <span class="badge"><%= twitter_user.mutual_friendships.size %><%= t('.unit') %></span><%= t('.mutual_friends') %>
-    <% end %>
-    <%= link_to unfriend_path(twitter_user, via: via), class: 'list-group-item' do %>
-      <span class="badge"><%= twitter_user.unfriendships.size %><%= t('.unit') %></span><%= t('.unfriends') %>
-    <% end %>
-    <%= link_to unfollower_path(twitter_user, via: via), class: 'list-group-item' do %>
-      <span class="badge"><%= twitter_user.unfollowerships.size %><%= t('.unit') %></span><%= t('.unfollowers') %>
-    <% end %>
-    <%= link_to blocking_or_blocked_path(twitter_user, via: via), class: 'list-group-item' do %>
-      <span class="badge"><%= twitter_user.block_friendships.size %><%= t('.unit') %></span><%= t('.blocking_or_blocked') %>
+    <% [
+           [one_sided_friend_path(twitter_user, via: via), twitter_user.one_sided_friendships.size, t('.one_sided_friends')],
+           [one_sided_follower_path(twitter_user, via: via), twitter_user.one_sided_followerships.size, t('.one_sided_followers')],
+           [mutual_friend_path(twitter_user, via: via), twitter_user.mutual_friendships.size, t('.mutual_friends')],
+           [unfriend_path(twitter_user, via: via), twitter_user.unfriendships.size, t('.unfriends')],
+           [unfollower_path(twitter_user, via: via), twitter_user.unfollowerships.size, t('.unfollowers')],
+           [blocking_or_blocked_path(twitter_user, via: via), twitter_user.block_friendships.size, t('.blocking_or_blocked')]
+       ].each do |url, count, title| %>
+      <%= link_to url, class: 'list-group-item' do %>
+        <div class="d-flex justify-content-between align-items-center">
+          <%= title %>
+          <span><%= count %><%= unit %></span>
+        </div>
+      <% end %>
     <% end %>
   </div>
 </div>

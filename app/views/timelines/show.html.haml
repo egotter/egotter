@@ -11,7 +11,9 @@
 
 = render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user}
 
-= render partial: 'twitter/profile', locals: {user: @twitter_user}
+-# Adjust the margin-top on only this page
+.mt-3.w-100
+= render partial: 'twitter/profile', locals: {user: @twitter_user, always_expanded: true}
 
 %h2.h3.text-center.my-5= t('timelines.show.heading', user: @twitter_user.screen_name)
 = t('.this_page_is_html', user: @twitter_user.screen_name)

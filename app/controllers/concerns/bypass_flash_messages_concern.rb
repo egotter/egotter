@@ -18,8 +18,8 @@ module Concerns::BypassFlashMessagesConcern
     end
   end
 
-  def set_bypassed_notice_message(value)
-    session[:bypassed_notice_message] = value
+  def set_bypassed_notice_message(key)
+    session[:bypassed_notice_message] = key
   end
 
   def bypassed_notice_message_found?

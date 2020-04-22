@@ -18,4 +18,4 @@
   = link_to t('.analyze', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg', method: :post
 
 .mb-3
-  = render partial: 'twitter/profile', locals: {user: @user}
+  = render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}

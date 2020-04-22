@@ -22,3 +22,6 @@
       %li.nav-item.d-block.d-md-none
         = link_to '#', class: 'nav-link text-white pr-0' do
           %i.fas.fa-bars.btn-sidemenu
+      %li.nav-item.d-block.d-md-none
+        - unless user_signed_in?
+          = link_to t('.sign_in'), sign_in_path(via: current_via('navbar'), redirect_path: root_path_for(controller: controller_name)), class: 'nav-link text-white pr-0'

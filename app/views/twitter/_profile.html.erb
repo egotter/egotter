@@ -1,6 +1,7 @@
 <% user = user.twitter_db_user if switch_to_twitter_db_user?(user) %>
 <% logger.info { "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" } %>
 <% user = TwitterUserDecorator.new(user) %>
+<% always_expanded = false unless defined?(always_expanded) %>
 
 <style type=text/css>
   /* extra small */
@@ -29,7 +30,7 @@
   }
 </style>
 
-<div class="profile-header p-0 p-sm-3">
+<div class="profile-header p-0 p-sm-3 <%= 'd-none d-md-block' unless always_expanded %>">
   <div style="height: 180px; overflow: hidden; position: relative;">
     <% if user.profile_banner_url? %>
       <img class="w-100" src="<%= user.profile_banner_url_for(request) %>">
@@ -57,7 +58,7 @@
 
     <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
       <i class="fab fa-twitter no-follow"></i>
-      <%= t('twitter.profile.see_on_twitter') %>
+      <%= t('.see_on_twitter') %>
     <% end %>
   </div>
 
@@ -66,21 +67,22 @@
   <% end %>
 
   <% if user.location? %>
-    <i class="fas fa-map-marker"></i>&nbsp;<%= user.location %>
+    <i class="fas fa-map-marker text-muted"></i>&nbsp;<%= user.location %>
   <% end %>
 
   <% if user.url? %>
-    <i class="fas fa-link"></i>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %>
+    <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %>
   <% end %>
 
   <% if user.account_created_at? %>
-    <div class="my-3"><i class="fas fa-birthday-cake"></i>&nbsp;<%= l(user.account_created_at) %></div>
+    <% birthday = user.account_created_at.in_time_zone('Tokyo') %>
+    <div class="my-3"><i class="fas fa-birthday-cake text-muted"></i>&nbsp;<%= t('.birthday', date: l(birthday, format: :birthday)) %></div>
   <% end %>
 
   <div class="row justify-content-between m-3">
     <div class="col-6 col-md-3 mb-3">
       <%= link_to status_path(user, via: current_via('statuses_on_profile')) do %>
-        <b style="color: #000;"><%= user.delimited_statuses_count %></b>
+        <b class="text-black"><%= user.delimited_statuses_count %></b>
         <br class="d-block d-lg-none">
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
       <% end %>
@@ -88,7 +90,7 @@
 
     <div class="col-6 col-md-3 mb-3">
       <%= link_to friend_path(user, via: current_via('friends_on_profile')) do %>
-        <b style="color: #000;"><%= user.delimited_friends_count %></b>
+        <b class="text-black"><%= user.delimited_friends_count %></b>
         <br class="d-block d-lg-none">
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
       <% end %>
@@ -96,7 +98,7 @@
 
     <div class="col-6 col-md-3 mb-3">
       <%= link_to follower_path(user, via: current_via('followers_on_profile')) do %>
-        <b style="color: #000;"><%= user.delimited_followers_count %></b>
+        <b class="text-black"><%= user.delimited_followers_count %></b>
         <br class="d-block d-lg-none">
         <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
       <% end %>

@@ -21,6 +21,11 @@ class BlockedController < ApplicationController
   end
 
   def set_canonical_url
-    blocked_url(@user)
+    @canonical_url =
+        if @user
+          blocked_url(@user)
+        else
+          blocked_url(screen_name: @screen_name)
+        end
   end
 end

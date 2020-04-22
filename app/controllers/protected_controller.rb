@@ -19,6 +19,11 @@ class ProtectedController < ApplicationController
   end
 
   def set_canonical_url
-    protected_url(@user)
+    @canonical_url =
+        if @user
+          protected_url(@user)
+        else
+          protected_url(screen_name: @screen_name)
+        end
   end
 end

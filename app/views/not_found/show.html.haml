@@ -20,4 +20,4 @@
   = link_to t('.see_on_twitter', user: @user.screen_name), user_url(@user.screen_name), class: 'btn btn-outline-primary btn-block btn-lg', target: '_blank'
 
 .mb-3
-  = render partial: 'twitter/profile', locals: {user: @user}
+  = render partial: 'twitter/profile', locals: {user: @user, always_expanded: true}
