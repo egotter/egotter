@@ -14,7 +14,7 @@
   - else
     %button.btn.btn-outline-primary.btn-block.btn-lg.disabled= t('.displayed_data_is_latest')
 
-= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
+= render(partial: 'adsense/ad', locals: {vertical: :top})
 
 .mb-3
   = link_to t('.see_on_twitter', user: @user.screen_name), user_url(@user.screen_name), class: 'btn btn-outline-primary btn-block btn-lg', target: '_blank'

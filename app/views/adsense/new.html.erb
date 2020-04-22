@@ -1,0 +1,12 @@
+<% if Rails.env.production? %>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+  <ins class="adsbygoogle"
+       style="display:inline-block;width:300px;height:250px"
+       data-ad-client="ca-pub-3146843071247817"
+       data-ad-slot="<%= @left_slot_ad_id %>"></ins>
+  <script>
+    (adsbygoogle = window.adsbygoogle || []).push({});
+  </script>
+<% else %>
+  <div style="display:inline-block;width:300px;height:250px; border: 1px solid #000;"></div>
+<% end %>

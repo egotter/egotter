@@ -18,7 +18,7 @@
 %h2.h3.text-center.my-5= t('timelines.show.heading', user: @twitter_user.screen_name)
 = t('.this_page_is_html', user: @twitter_user.screen_name)
 
-= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
+= render(partial: 'adsense/ad', locals: {vertical: :top})
 
 %script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}
 %script{id: 'user-template', type: 'x-tmpl-mustache'}
@@ -53,12 +53,11 @@
     .col-12.mb-5
       = feed_item :users, twitter_user: @twitter_user, feed_name: 'unfriends', feed_title: t('timelines.feeds.unfriends.title'), feed_description: t('timelines.feeds.unfriends.description', user: @twitter_user.screen_name), page_url: unfriend_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfriends_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfriends"))
 
-    .col-12.mb-5
+    .col-12.mb-0
       = feed_item :users, twitter_user: @twitter_user, feed_name: 'unfollowers', feed_title: t('timelines.feeds.unfollowers.title'), feed_description: t('timelines.feeds.unfollowers.description', user: @twitter_user.screen_name), page_url: unfollower_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_unfollowers_summary_path(uid: @twitter_user.uid, via: current_via("feed_unfollowers"))
 
-    - if request.from_smartphone?
-      .col-12.mb-5
-        = render(partial: 'adsense/side_by_side', locals: {vertical: :middle})
+    .col-12.mb-5
+      = render(partial: 'adsense/ad', locals: {vertical: :middle})
 
     .col-12.mb-5
       = feed_item :users, twitter_user: @twitter_user, feed_name: 'blocking_or_blocked', feed_title: t('timelines.feeds.blocking_or_blocked.title'), feed_description: t('timelines.feeds.blocking_or_blocked.description', user: @twitter_user.screen_name), page_url: blocking_or_blocked_path(@twitter_user, via: current_via('feed_text')), api_url: api_v1_blocking_or_blocked_summary_path(uid: @twitter_user.uid, via: current_via("feed_blocking_or_blocked"))
@@ -93,4 +92,4 @@
     .col-12.mb-5
       = feed_item :ad, feed_title: t('timelines.feeds.scheduled_tweets.title'), feed_description: t('timelines.feeds.scheduled_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/egotter_schedule_with_text_400x448.png'), button_text: t('timelines.feeds.scheduled_tweets.open'), page_url: "https://scheduled-tweets.egotter.com?via=#{current_via('feed_text')}"
 
-= render(partial: 'adsense/side_by_side', locals: {vertical: :bottom})
+= render(partial: 'adsense/ad', locals: {vertical: :bottom})

@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe TimelinesController, type: :helper do
+RSpec.describe AdsenseHelper, type: :helper do
   describe '#async_adsense_wrapper_id' do
     let(:position) { 'anything' }
     it 'returns same value for the same params' do

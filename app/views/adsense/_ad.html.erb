@@ -1,0 +1,11 @@
+<% unless ad_ng_twitter_user?(@twitter_user) %>
+  <% wrapper_id = async_adsense_wrapper_id(vertical) %>
+  <div id="<%= wrapper_id %>" style="min-height: 290px;"></div>
+  <script>
+    $(function () {
+      var url = '<%= adsense_path(_controller: controller_name, _action: action_name, vertical: vertical).html_safe %>';
+      var selector = '#<%= wrapper_id %>';
+      new AsyncLoader(url, selector).lazyload();
+    });
+  </script>
+<% end %>

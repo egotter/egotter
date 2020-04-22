@@ -11,7 +11,7 @@
   - url = latest_profile_path(screen_name: @user.screen_name, via: current_via('request_to_update_button'))
   = link_to t('.update', user: @user.screen_name), url, class: 'btn btn-primary btn-block btn-lg'
 
-= render(partial: 'adsense/side_by_side', locals: {vertical: :top})
+= render(partial: 'adsense/ad', locals: {vertical: :top})
 
 .mb-3
   - url = searches_path(screen_name: @user.screen_name, via: current_via('analyze_button'))

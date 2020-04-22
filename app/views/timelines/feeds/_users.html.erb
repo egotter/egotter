@@ -1,4 +1,4 @@
-<div class="<%= feed_name %> feed-item p-3 p-lg-5">
+<div class="<%= feed_name %> feed-item p-3 <%= feed_name == 'unfollowers' ? 'px-lg-5 pt-lg-5 pb-lg-3 border-bottom-0' : 'p-lg-5' %>">
   <h3 class="h4 text-center"><%= feed_title %></h3>
   <div class="text-center my-3"><%= feed_description %></div>
 

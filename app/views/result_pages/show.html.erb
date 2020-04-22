@@ -12,6 +12,8 @@
   <div class="mb-3"><%= render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user} %></div>
 <% end %>
 
+<%= render(partial: 'adsense/ad', locals: {vertical: :top}) %>
+
 <%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
 
 <h2 class="h4 text-center my-5"><%= @content_title %></h2>
@@ -25,14 +27,14 @@
   <div class="text-center"><%= t('unfriends.show.tweet.biginner.title_html') %></div>
   <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text_for_empty_users, twitter_user: @twitter_user}) %>
   <% if @tweet_text %>
-    <div class="text-center"><%= t('unfriends.show.tweet.expert.title_html') %></div>
+    <div class="text-center mt-3"><%= t('unfriends.show.tweet.expert.title_html') %></div>
     <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
   <% end %>
 <% else %>
   <%= render(partial: 'twitter/tweet_box', locals: {text: @tweet_text, twitter_user: @twitter_user}) %>
 <% end %>
 
-<%= render(partial: 'adsense/side_by_side', locals: {vertical: :top}) %>
+<%= render(partial: 'adsense/ad', locals: {vertical: :bottom}) %>
 
 <div class="mb-3"><%= render partial: 'result_pages/tabs', locals: {tabs: @tabs, active_tab: @active_tab} %></div>
 <div class="text-right mb-4"><%= render partial: 'shared/sort_and_filter' %></div>
