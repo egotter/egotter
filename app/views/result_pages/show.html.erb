@@ -2,6 +2,8 @@
   <link href="<%= @canonical_url %>" rel="canonical">
 <% end %>
 
+<%= content_for :navbar_title, @navbar_title %>
+
 <% breadcrumb @breadcrumb_name, @twitter_user.screen_name %>
 <% title @page_title %>
 <% set_meta_tags description: @meta_description %>
@@ -79,8 +81,12 @@
       $('.see-more-btn').show();
       $('.see-at-once-btn').show();
 
-      SortAndFilter.activateSortButton($('.sort-order-container'), function (options) {task.reset(options)});
-      SortAndFilter.activateFilterButton($('.filter-container'), function (options) {task.reset(options)});
+      SortAndFilter.activateSortButton($('.sort-order-container'), function (options) {
+        task.reset(options)
+      });
+      SortAndFilter.activateFilterButton($('.filter-container'), function (options) {
+        task.reset(options)
+      });
 
     } else {
       var signInFromSortUrl = '<%= sign_in_path(via: current_via('sort_btn')) %>';

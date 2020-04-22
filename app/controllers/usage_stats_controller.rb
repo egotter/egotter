@@ -21,6 +21,8 @@ class UsageStatsController < ApplicationController
 
     @stat = UsageStat.find_or_initialize_by(uid: @twitter_user.uid)
 
+    @navbar_title = t(".navbar_title")
+
     @tweet_text = usage_time_text(@stat.usage_time, @twitter_user)
 
     unless from_crawler?

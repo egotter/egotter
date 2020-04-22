@@ -1,6 +1,8 @@
 - title t('.page_title')
 - set_meta_tags description: t('.meta_description')
 
+- content_for :navbar_title, t('.navbar_title')
+
 = render partial: 'shared/side_by_side_section', locals: {right_side: {header: t('.right_side.header'), subheader: t('.right_side.subheader'), lead: t('.right_side.lead_html')}}
 
 = render partial: 'shared/review_section'

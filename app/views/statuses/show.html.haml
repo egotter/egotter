@@ -1,6 +1,8 @@
 - content_for :canonical_url do
   %link{href: status_url(@twitter_user), rel: 'canonical'}
 
+- content_for :navbar_title, @navbar_title
+
 - breadcrumb :status, @twitter_user.screen_name
 
 - page_title = t('statuses.show.page_title', user: @twitter_user.mention_name)

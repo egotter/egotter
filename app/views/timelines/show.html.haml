@@ -1,6 +1,8 @@
 - content_for :canonical_url do
   %link{href: timeline_url(@twitter_user), rel: 'canonical'}
 
+- content_for :navbar_title, t('.navbar_title', user: @twitter_user.screen_name)
+
 - breadcrumb :timeline, @twitter_user.screen_name
 
 - title = t('.page_title', user: @twitter_user.screen_name, removing: @twitter_user.unfriendships.size, removed: @twitter_user.unfollowerships.size)

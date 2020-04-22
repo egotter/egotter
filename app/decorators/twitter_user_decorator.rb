@@ -109,6 +109,10 @@ class TwitterUserDecorator < ApplicationDecorator
     "#{suspended_label}#{blocked_label}#{inactive_label}#{refollow_label}#{refollowed_label}".html_safe
   end
 
+  def followed_label_and_text
+    %Q(<i class="fas fa-user" style="color: #bbb;"></i>&nbsp;<span style="color: #bbb;">#{I18n.t('twitter.profile.labels.followed')}</span>).html_safe
+  end
+
   def protected?
     object.protected
   end
@@ -130,7 +134,7 @@ class TwitterUserDecorator < ApplicationDecorator
   def verified_icon
     if verified?
       <<~HTML.html_safe
-        <i class="fas fa-check text-primary"></i>
+        &nbsp;<i class="fas fa-check text-primary"></i>
       HTML
     else
       ''

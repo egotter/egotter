@@ -1,6 +1,8 @@
 - content_for :canonical_url do
   %link{href: @canonical_url, rel: 'canonical'}
 
+- content_for :navbar_title, @navbar_title
+
 - breadcrumb @breadcrumb_name, @twitter_user.screen_name
 
 - title @page_title

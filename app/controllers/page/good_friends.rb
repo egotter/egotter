@@ -30,6 +30,8 @@ class  Page::GoodFriends < ::Page::Base
     @page_description = t('.page_description', user: @twitter_user.mention_name)
     @meta_description = t('.meta_description', users: honorific_names(users.map(&:mention_name)))
 
+    @navbar_title = t(".navbar_title")
+
     @tweet_text = good_friends_text(users, @twitter_user)
 
     @tabs = tabs

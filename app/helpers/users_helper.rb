@@ -20,4 +20,17 @@ module UsersHelper
       false
     end
   end
+
+  def current_user_follower_uids
+    if instance_variable_defined?(:@current_user_follower_uids)
+      @current_user_follower_uids
+    else
+      return (@current_user_follower_uids = []) unless user_signed_in?
+
+      twitter_user = TwitterUser.latest_by(uid: current_user.uid)
+      return (@current_user_follower_uids = []) unless twitter_user
+
+      @current_user_follower_uids = (twitter_user.followers_count < 5000) ? twitter_user.follower_uids : []
+    end
+  end
 end

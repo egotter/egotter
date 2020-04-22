@@ -44,7 +44,7 @@ class Decorator
   def suspended_uids
     if remove_related_page?
       uids = @users.map(&:uid)
-      t_uids = client.users(uids).map {|u| u[:id]}
+      t_uids = client.users(uids).map { |u| u[:id] }
       uids - t_uids
     else
       []
@@ -123,7 +123,8 @@ class Decorator
 
   def to_hash(user)
     {
-        uid: user.uid.to_s,
+        uid: user.uid.to_s, # TODO #to_s is needed?
+        uid_i: user.uid,
         screen_name: user.screen_name,
         name: user.name,
         friends_count: user.friends_count,

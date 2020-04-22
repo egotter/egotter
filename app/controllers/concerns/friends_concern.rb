@@ -30,6 +30,7 @@ module Concerns::FriendsConcern
     url = root_path_for(controller: controller_name)
     @page_description = t('.page_description_html', default: default_description, user: @twitter_user.screen_name, url: url)
 
+    @navbar_title = t(".navbar_title")
 
     @tweet_text = t('.tweet_text', {user: @twitter_user.mention_name, url: @canonical_url}.merge(counts))
 

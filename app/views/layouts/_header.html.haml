@@ -1,8 +1,8 @@
 %nav.navbar.navbar-dark.bg-dark
-  .container
+  .container.px-0.px-sm-0.px-md-3
     %a.navbar-brand.text-white{href: root_path_for(controller: controller_name)}
       %img{alt: "", height: "30", src: "/logo_96x96.png"}
-      = find_header_title.html_safe
+      %span{style: 'font-size: 1rem;'}= content_for?(:navbar_title) ? yield(:navbar_title) : t('.title')
     %ul.nav
       %li.nav-item
         = link_to '#', class: 'nav-link btn btn-primary', 'data-target' => '#search-modal', 'data-toggle' => 'modal' do

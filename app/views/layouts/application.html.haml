@@ -9,7 +9,8 @@
     %link{href: image_path('/apple-touch-icon.png'), rel: 'apple-touch-icon'}
     %link{href: image_path('/apple-touch-icon-120x120.png'), rel: 'apple-touch-icon', sizes: '120x120'}
     %link{href: image_path('/apple-touch-icon-152x152.png'), rel: 'apple-touch-icon', sizes: '152x152'}
-    = render partial: 'common/meta_tags'
+    -# Set meta-title and meta-description
+    = render partial: 'layouts/meta_tags'
     %meta{content: 'summary_large_image', name: 'twitter:card'}
     %meta{content: '@ego_tter', name: 'twitter:site'}
     %link{:crossorigin => "anonymous", :href => "https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css", :integrity => "sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh", :rel => "stylesheet"}/

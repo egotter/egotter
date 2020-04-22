@@ -1,6 +1,8 @@
 - content_for :canonical_url do
   %link{href: cluster_url(@twitter_user), rel: 'canonical'}
 
+- content_for :navbar_title, t(".navbar_title")
+
 - breadcrumb :cluster, @twitter_user.screen_name
 
 - page_title = t('.page_title', user: @twitter_user.mention_name, clusters: @cluster_names.take(3).join(' '))

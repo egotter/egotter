@@ -1,4 +1,5 @@
 - via = current_via if !defined?(via) || via.blank?
+- logger.info { "User is rendered by #{user.class} in #{controller_name}##{action_name}" }
 - user = TwitterUserDecorator.new(user)
 
 - if ad && defined?(user_counter) && user_counter == 3
@@ -14,6 +15,7 @@
           = image_tag bigger_icon_url(user), class: 'rounded', style: 'max-width: 90px; width: 100%;', alt: user.screen_name
       .col
         .card-body
+          = user.followed_label_and_text if current_user_follower_uids.include?(user.uid_i)
           %h5.card-title
             = search_link user.screen_name, via
             = user.name_with_icon

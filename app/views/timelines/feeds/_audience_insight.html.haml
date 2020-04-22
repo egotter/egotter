@@ -1,7 +1,6 @@
 .audience-insight-on-timeline.p-3.p-lg-5
-  %h3.text-center= t('timelines.show.audience_insight.title')
-  .vertical-spacing
-  .text-center= t('timelines.show.audience_insight.description', screen_name: twitter_user.screen_name)
+  %h3.text-center= t('timelines.feeds.audience_insights.title')
+  .text-center.my-3= t('timelines.feeds.audience_insights.description', user: twitter_user.screen_name)
   .chart-container
   .text-center.mt-3
     = link_to t('timelines.show.audience_insight.view_more'), search_path_for('audience_insights', twitter_user.screen_name), class: 'btn btn-primary btn-block'

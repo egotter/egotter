@@ -1,5 +1,5 @@
 <% user = user.twitter_db_user if switch_to_twitter_db_user?(user) %>
-<% logger.info "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" %>
+<% logger.info { "Profile is rendered by #{user.class} in #{controller_name}##{action_name}" } %>
 <% user = TwitterUserDecorator.new(user) %>
 
 <style type=text/css>
