@@ -12,7 +12,7 @@ Detectors.secretMode = function (detected) {
         console.log('Incognito');
         detected(quota);
       } else {
-        console.log('Not Incognito')
+        console.log('Not Incognito');
       }
     });
   } else {
@@ -26,7 +26,7 @@ Detectors.secretMode_old = function () {
     fs(window.TEMPORARY,
         100,
         function (fs) {
-          console.log('Not Incognito')
+          console.log('Not Incognito');
         },
         function (fe) {
           console.log('Incognito');

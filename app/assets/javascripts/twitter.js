@@ -19,7 +19,7 @@ Twitter.cache = function () {
     });
   };
 
-  return {fetch: fetch}
+  return {fetch: fetch};
 };
 
 Twitter.follow = function (url, uid, callback) {
@@ -35,7 +35,7 @@ Twitter.follow = function (url, uid, callback) {
     if (xhr.status === 429) { // Too many requests
       $('#follow-limitation-warning-modal').modal();
     } else {
-      Logger.warn(JSON.parse(xhr.responseText)['message']);
+      SnackMessage.alert(JSON.parse(xhr.responseText)['message']);
     }
   });
 };

@@ -45,7 +45,9 @@ class HomeController < ApplicationController
     if params[:back_from_twitter] == 'true'
       flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/back_from_twitter"))
     elsif params[:via].to_s.end_with?('secret_mode_detected')
-      flash.now[:alert] = t('before_sign_in.secret_mode_detected', device_type: request.device_type, os: request.os, os_version: request.os_version, browser: request.browser, browser_version: request.browser_version)
+      url = sign_in_path(via: current_via('secret_mode_detected'))
+      options = {device_type: request.device_type, os: request.os, os_version: request.os_version, browser: request.browser, browser_version: request.browser_version}
+      flash.now[:alert] = t('before_sign_in.secret_mode_detected', options.merge!(url: url))
     elsif params[:via].to_s.end_with?('ad_blocker_detected')
       flash.now[:alert] = t('before_sign_in.ad_blocker_detected')
     elsif params[:via].to_s.end_with?('unauthorized_detected')

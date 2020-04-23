@@ -60,7 +60,7 @@ Settings.enableDeleteTweetsButton = function (id, url) {
         window.location.reload();
       }, 3000);
     }).fail(function (xhr) {
-      Logger.warn(JSON.parse(xhr.responseText)['message']);
+      SnackMessage.alert(JSON.parse(xhr.responseText)['message']);
     });
   });
 };

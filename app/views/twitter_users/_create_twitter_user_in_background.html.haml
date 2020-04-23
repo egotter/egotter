@@ -252,7 +252,7 @@
 
             if (!res.authorized) {
               var url = "#{root_path(via: current_via('unauthorized_detected'))}";
-              Logger.warn("#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}");
+              SnackMessage.alert("#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}");
               redirectTo(url);
 
               ga('send', {
@@ -280,12 +280,15 @@
           if (#{ENV['ALLOW_COGNITE'] == '1'}) {
             return;
           }
+          if (signedIn) {
+            return;
+          }
           if (os === 'Android' && osVersion.match(/^(6|5|4)/)) {
             return;
           }
 
           var message = '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}';
-          Logger.warn(message);
+          SnackMessage.alert(message);
           setTimeout(function() {
             window.location.href = "#{root_path(via: current_via('secret_mode_detected')).html_safe}";
           }, 2000);
@@ -300,7 +303,7 @@
 
         Detectors.adBlocker(function detected () {
           var message = '#{t('before_sign_in.ad_blocker_detected_with_count', seconds: 3)}';
-          Logger.warn(message);
+          SnackMessage.alert(message);
           setTimeout(function() {
             window.location.href = "#{root_path(via: current_via('ad_blocker_detected')).html_safe}";
           }, 2000);
