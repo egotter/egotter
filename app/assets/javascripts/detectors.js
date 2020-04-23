@@ -5,7 +5,7 @@ var Detectors = {};
 Detectors.secretMode = function (detected) {
   if ('storage' in navigator && 'estimate' in navigator.storage) {
     navigator.storage.estimate().then(function (estimate) {
-      var usage = estimate.usage;
+      // var usage = estimate.usage;
       var quota = estimate.quota;
 
       if (quota < 120000000) {
@@ -16,6 +16,7 @@ Detectors.secretMode = function (detected) {
       }
     });
   } else {
+    // This feature is available only in secure contexts (HTTPS)
     console.log('Can not detect');
   }
 };
@@ -25,10 +26,10 @@ Detectors.secretMode_old = function () {
   if (fs) {
     fs(window.TEMPORARY,
         100,
-        function (fs) {
+        function () {
           console.log('Not Incognito');
         },
-        function (fe) {
+        function () {
           console.log('Incognito');
         });
   } else {

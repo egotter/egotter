@@ -30,6 +30,7 @@ module ApplicationHelper
   def wrap_in_container?
     top = controller_name == 'home' && action_name == 'new'
     start = controller_name == 'home' && action_name == 'start'
+    waiting = controller_name == 'waiting' && action_name == 'new'
     one_sided_friends = controller_name == 'one_sided_friends' && action_name == 'new'
     unfriends = controller_name == 'unfriends' && action_name == 'new'
     inactive_friends = controller_name == 'inactive_friends' && action_name == 'new'
@@ -38,7 +39,7 @@ module ApplicationHelper
     delete_tweets = controller_name == 'delete_tweets' && action_name == 'new'
     settings = controller_name == 'settings' && action_name == 'index'
     tokimeki = controller_name == 'tokimeki_unfollow' && action_name == 'new'
-    !@has_error && !top && !start && !unfriends && !one_sided_friends && !inactive_friends && !friends && !clusters && !delete_tweets && !settings && !tokimeki
+    !@has_error && !top && !start && !waiting && !unfriends && !one_sided_friends && !inactive_friends && !friends && !clusters && !delete_tweets && !settings && !tokimeki
   end
 
   def show_common_friends?(twitter_user)

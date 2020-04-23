@@ -31,10 +31,10 @@
             %span
               %b= user.delimited_followers_count
               %span.text-muted= TwitterUser.human_attribute_name(:followers)
-          %p.card-text.text-right
-            = render partial: 'twitter/follow_button', locals: {user: user}
+        .text-right
+          = render partial: 'twitter/follow_button', locals: {user: user}
 
-            = search_link user.screen_name, via do
-              %button.btn.btn-primary{type: 'button'}
-                %i.fas.fa-search
-                = t('twitter.user.search')
+          = search_link user.screen_name, via do
+            %button.btn.btn-primary{type: 'button'}
+              %i.fas.fa-search
+              = t('twitter.user.search')
