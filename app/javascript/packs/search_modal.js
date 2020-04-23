@@ -5,7 +5,7 @@ class SearchModal {
     var $modal = $('#' + id);
     var url = $modal.data('url');
 
-    $modal.on('show.bs.modal', function (e) {
+    $modal.on('show.bs.modal', function () {
       if (!$modal.data('loaded')) {
         $modal.data('loaded', true);
 
