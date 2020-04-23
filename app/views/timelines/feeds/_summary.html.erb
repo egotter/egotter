@@ -1,6 +1,7 @@
 <% start = Time.zone.now %>
 <% via = current_via('summary_on_timeline') %>
 <% unit = t('.unit') %>
+<% analyzing = t('.analyzing') %>
 <div class="summary-on-timeline">
   <div class="list-group">
     <% [
@@ -14,7 +15,13 @@
       <%= link_to url, class: 'list-group-item' do %>
         <div class="d-flex justify-content-between align-items-center">
           <%= title %>
-          <span><%= count %><%= unit %></span>
+          <span>
+            <% if count > 0 %>
+              <%= count %><%= unit %>
+            <% else %>
+              <%= analyzing %>
+            <% end %>
+          </span>
         </div>
       <% end %>
     <% end %>

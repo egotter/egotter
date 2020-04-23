@@ -17,7 +17,8 @@
   "globals": {
     "$": true,
     "ga": true,
-    "Snackbar": true
+    "Snackbar": true,
+    "SnackMessage": true
   },
   "rules": {
     "semi": "error"

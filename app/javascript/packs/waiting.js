@@ -67,7 +67,7 @@ class ProgressBar {
   }
 }
 
-class AlertBox {
+class State {
   constructor() {
     this.bar = new ProgressBar();
 
@@ -99,4 +99,4 @@ class AlertBox {
   }
 }
 
-window.AlertBox = AlertBox;
+window.State = State;

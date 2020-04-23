@@ -4,6 +4,7 @@ ja:
       follow_modal:
         title_html: 'えごったーを<span class="egotter-pink">フォロー</span>しよう！'
         note_html: 'えごったーをフォローすると<span class="egotter-pink">検索が早く</span>なります。<span class="egotter-pink">リムられ通知</span>も届きます。早速フォローしましょう！'
+        tweet_text: 'えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji}'
         ok: "フォローする"
         cancel: "やめておく"
       share_modal:
@@ -176,6 +177,7 @@ ja:
         unfollowers: 'リムーブされた'
         blocking_or_blocked: 'ブロックされた'
         unit: '人'
+        analyzing: '分析中'
       statuses:
         title: 'ツイート'
       friends:
@@ -1247,10 +1249,6 @@ ja:
       clusters_level: "クラスタレベル"
       clusters_cloud: "クラスタクラウド"
       cluster_name: "%{name}クラスタ"
-  shares:
-    create:
-      text: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji} #egotter %{url}"
-      text_without_url: "えごったー知ってる？？ 仲良しとかツイートの分析ができて面白いよ！ %{kaomoji}"
   twitter_users:
     show:
       new_unfollowers_are_coming: '@%{user} のリムられが %{count}人 増えました。'

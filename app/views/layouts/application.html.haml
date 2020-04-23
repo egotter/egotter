@@ -21,6 +21,7 @@
     = javascript_pack_tag 'application'
     = javascript_pack_tag 'search_modal'
     = javascript_pack_tag 'snack_message'
+    = javascript_pack_tag 'welcome'
     %script{src: '//code.jquery.com/ui/1.12.0/jquery-ui.js'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js'}
     %script{:crossorigin => "anonymous", :integrity => "sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo", :src => "https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"}
@@ -128,9 +129,10 @@
     = modal_dialog id: 'share-modal', title: t('.share_modal.title_html'), button: {positive: t('.share_modal.ok'), negative: t('.share_modal.cancel')}, data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('.share_modal.success'), error_message: t('.share_modal.error')} do
       %img.d-block.mx-auto{src: image_path('/egotter_thanks_840x483.png'), width: request.from_pc? ? '400' : '300'}
       %p.mt-3= t('.share_modal.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
-      %textarea{rows: '5', style: 'width: 100%; -webkit-appearance: none;'}= egotter_share_text(without_url: true)
-      = t('.share_modal.note_html')
-      https://egotter.com #egotter
+      %small
+        %textarea{rows: '3', style: 'width: 100%; -webkit-appearance: none;'}= t('.follow_modal.tweet_text', kaomoji: Kaomoji.happy)
+        = t('.share_modal.note_html')
+        https://egotter.com #egotter
 
     - if params[:follow_dialog] == '1'
       = modal_dialog id: 'follow-modal', title: t('.follow_modal.title_html'), button: {positive: t('.follow_modal.ok'), negative: t('.follow_modal.cancel')}, data: {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')} do

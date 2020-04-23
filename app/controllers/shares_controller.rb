@@ -1,6 +1,4 @@
 class SharesController < ApplicationController
-  include SharesHelper
-
   before_action :reject_crawler
   before_action :require_login!
 
@@ -13,5 +11,12 @@ class SharesController < ApplicationController
     else
       render json: {reason: t('welcome.share_modal.error_message')}, status: :bad_request
     end
+  end
+
+  private
+
+  def egotter_share_url
+    via = "share#{l(Time.zone.now.in_time_zone('Tokyo'), format: :share_text_short)}"
+    root_url(via: via)
   end
 end

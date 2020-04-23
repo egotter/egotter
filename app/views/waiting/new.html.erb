@@ -39,10 +39,10 @@
 <%= javascript_pack_tag 'waiting' %>
 
 <script>
-  var url = "<%= twitter_user_path(uid: @twitter_user.uid, via: current_via) %>";
+  var pollPath = "<%= twitter_user_path(uid: @twitter_user.uid, via: current_via) %>";
   var redirectPath = "<%= @redirect_path %>";
   var signedIn = <%= user_signed_in? %>;
-  var alertBox = null;
+  var state = null;
 
   // var twitterUser = {
   //   userId: '<%= current_user&.id %>',
@@ -56,18 +56,18 @@
 
   function done(res) {
     console.log('done', res);
-    alertBox.finished();
+    state.finished();
     redirectTo();
   }
 
   function keepOn(res, options) {
     console.log('keepOn', res, options);
-    alertBox.keepOn();
+    state.keepOn();
   }
 
   function stopped(res) {
     console.log('stopped', res);
-    alertBox.failed();
+    state.failed();
 
     // ga('send', {
     //   hitType: 'event',
@@ -81,9 +81,9 @@
     console.log('failed', xhr.responseText);
     var res = $.parseJSON(xhr.responseText || null);
     if (res && res.message) {
-      alertBox.setErrorMessage(res.message);
+      state.setErrorMessage(res.message);
     }
-    alertBox.failed();
+    state.failed();
 
     // ga('send', {
     //   hitType: 'event',
@@ -94,11 +94,11 @@
   }
 
   function start() {
-    new Waiting(url, {}, done, keepOn, stopped, failed).start();
+    new Waiting(pollPath, {}, done, keepOn, stopped, failed).start();
   }
 
   $(function () {
-    alertBox = new AlertBox();
+    state = new State();
     start();
   });
 </script>
