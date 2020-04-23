@@ -103,6 +103,11 @@ cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d
 cp -f ./setup/etc/init.d/puma /etc/init.d
 # service puma start
 
+# yarn
+curl --silent --location https://rpm.nodesource.com/setup_10.x | bash -
+wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo
+yum install -y nodejs yarn
+
 # egotter
 cp -f ./setup/etc/init.d/egotter /etc/init.d
 

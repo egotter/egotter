@@ -148,6 +148,13 @@ module Tasks
         self
       end
 
+      def install_yarn
+        backend('sudo sh -c \"curl --silent --location https://rpm.nodesource.com/setup_10.x | bash -\"')
+        backend('sudo wget https://dl.yarnpkg.com/rpm/yarn.repo -O /etc/yum.repos.d/yarn.repo')
+        backend('sudo yum install -y nodejs yarn')
+        self
+      end
+
       def update_egotter
         backend('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
         self
@@ -198,6 +205,7 @@ module Tasks
       def sync
         update_misc.
             update_env.
+            install_yarn.
             upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_egotter.
