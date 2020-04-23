@@ -1,7 +1,0 @@
-- title @title
-- set_meta_tags description: "#{@title}"
-
-.notification-items
-  %h2
-    %small= @title
-  = render(partial: 'notifications/notification', collection: @notifications, locals: {twitter_user: current_user.twitter_user}, cached: true)

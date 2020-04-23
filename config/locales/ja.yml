@@ -293,10 +293,6 @@ ja:
         title: 'ツイート'
         note: '日付ごとのツイート数です。公式リツイートやリプライも含んでいます。'
       see_more: 'もっと見る'
-  notifications:
-    title: "通知"
-    index:
-      title: "%{user} への通知"
   settings:
     title: "設定"
     index:

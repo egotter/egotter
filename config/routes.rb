@@ -148,7 +148,7 @@ Rails.application.routes.draw do
   post 'tokimeki_unfollow/unfollow', to: 'tokimeki_unfollow#unfollow', as: :tokimeki_unfollow_unfollow
   post 'tokimeki_unfollow/keep', to: 'tokimeki_unfollow#keep', as: :tokimeki_unfollow_keep
 
-  resources :notifications, only: :index
+  get 'notifications', to: redirect('/?notifications_not_found=1')
   resources :settings, only: :index
   resource :setting, only: :update
   post 'settings/update_report_interval', to: 'settings#update_report_interval', as: :update_report_interval

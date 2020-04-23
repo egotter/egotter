@@ -9,7 +9,7 @@ class SharesController < ApplicationController
       CreateTweetWorker.perform_async(request.id, requested_by: params[:via])
       render json: {count: current_user.sharing_count}
     else
-      render json: {reason: t('welcome.share_modal.error_message')}, status: :bad_request
+      render json: {reason: t('layouts.application.share_modal.error')}, status: :bad_request
     end
   end
 
