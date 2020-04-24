@@ -1,7 +1,3 @@
-= alert_info_box('update-box') do
-  = t('twitter_users.in_background.updating', user: twitter_user.screen_name)
-  = image_tag '/ajax-loader-blue.gif?a=1'
-
 - button_classes = 'btn btn-outline-primary'
 
 = alert_info_box('update-this-page-box') do |id, via|
@@ -27,7 +23,7 @@
 - if user_signed_in?
   = alert_warning_box('follow-box') do |id, via|
     - url = sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via), follow: true)
-    = t('twitter_users.in_background.automated_update_stopped_and_signing_in_html', user: current_user.screen_name, url: url)
+    = t('twitter_users.in_background.automated_update_stopped_html', user: current_user.screen_name, url: url)
 
 = alert_info_box('just-followed-box') do |id, via|
   = t('twitter_users.in_background.automated_update_restarted_html')
@@ -52,269 +48,127 @@
   = t('twitter_users.in_background.lets_sign_in')
   = link_to(t('twitter_users.in_background.do_sign_in'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
 
+= alert_info_box('retry-later-box') do |id, via|
+  = t('twitter_users.in_background.failed')
+  = link_to(t('twitter_users.in_background.retry'), sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via)), class: button_classes)
+
 = alert_info_box('too-many-searches-box') do |id, via|
   - sign_in_url = sign_in_path(via: via, redirect_path: timeline_path(twitter_user, via: via))
   - pricing_url = pricing_path(via: via)
   - support_url = pricing_path(via: via, anchor: 'enterprise-plan')
   = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
 
+= javascript_pack_tag 'message_box'
+= javascript_pack_tag 'bg_update'
+
 :javascript
-  (function () {
-    var signedIn = #{user_signed_in?};
-    var crawler = #{from_crawler?};
-    var os = '#{request.os}';
-    var osVersion = '#{request.os_version}';
-    var authorized = #{user_signed_in? && current_user.authorized?};
-    var removedPage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
-    var viaDM = #{via_dm?};
-    var profileNotFound = #{twitter_user.profile_not_found?};
-    var tooShortCreateInterval = #{twitter_user.too_short_create_interval?};
-    var nextCreationTimeMessage = '#{next_creation_message(twitter_user)}';
-    var requestToUpdate = #{switch_to_request?(twitter_user)};
-    var eventCategory = '#{controller_name}##{action_name}';
+  var signedIn = #{user_signed_in?};
+  var crawler = #{from_crawler?};
+  var os = '#{request.os}';
+  var osVersion = '#{request.os_version}';
+  var removePage = #{%w(unfriends unfollowers blocking_or_blocked).include?(controller_name)};
+  var viaDM = #{via_dm?};
+  var profileNotFound = #{twitter_user.profile_not_found?};
+  var tooShortCreateInterval = #{twitter_user.too_short_create_interval?};
+  var nextCreationTimeMessage = '#{next_creation_message(twitter_user)}';
+  var requestToUpdate = #{switch_to_request?(twitter_user)};
+  var eventCategory = '#{controller_name}##{action_name}';
 
-    var urls = {
-      twitter_users_changes: '#{twitter_users_changes_path(uid: twitter_user.uid)}',
-      twitter_user: '#{twitter_user_path(uid: twitter_user.uid, via: current_via('update_box'))}',
-      follow: '#{follow_path(via: current_via('follow_box'))}',
-      twitter_users: "#{twitter_users_path(via: current_via('background_update'))}",
-      account_status: "#{account_status_path(uid: twitter_user.uid)}"
-    };
+  var urls = {
+    twitter_users_changes: '#{twitter_users_changes_path(uid: twitter_user.uid)}',
+    twitter_user: '#{twitter_user_path(uid: twitter_user.uid, via: current_via('update_box'))}',
+    follow: '#{follow_path(via: current_via('follow_box'))}',
+    twitter_users: "#{twitter_users_path(via: current_via('background_update'))}",
+    account_status: "#{account_status_path(uid: twitter_user.uid)}"
+  };
 
-    var twitterUser = {
-      userId: '#{current_user&.id}',
-      uid: '#{twitter_user.uid}',
-      screenName: "#{twitter_user.screen_name}",
-      createdAt: #{twitter_user.created_at.to_i}
-    };
+  var twitterUser = {
+    userId: '#{current_user&.id}',
+    uid: '#{twitter_user.uid}',
+    screenName: "#{twitter_user.screen_name}",
+    createdAt: #{twitter_user.created_at.to_i}
+  };
 
-    var alertBox;
+  var messageBox;
 
-    function parseError (xhr) {
-      var err = 'Something';
-      try {
-        err = JSON.parse(xhr.responseText)['error'];
-      } catch (e) {
-        console.error(e);
+  $(function () {
+    if (profileNotFound) {
+      return;
+    }
+
+    // TODO Remove
+    messageBox = new MessageBox(requestToUpdate, nextCreationTimeMessage);
+
+    if (!signedIn) {
+      if (removePage) {
+        messageBox.show('accurateCounting');
+      } else if (viaDM) {
+        messageBox.show('viaDM');
+      } else if (!crawler) {
+        messageBox.show('signIn');
+      } else {
+        // Maybe crawler
       }
-      return err;
+
+      return;
     }
 
-    function enableJustFollowedButton () {
-      $('.btn-just-followed').on('click', function () {
-        TwitterUsers.isFollowingEgotter(urls.follow, function done (res) {
-          if (res.follow) {
-            alertBox.show('justFollowed');
-          } else {
-            alertBox.show('notFollowed');
-          }
-        });
-      });
-    }
-
-    function fetchChangesText (url) {
-      $.get(url).done(function (res) {
-        if (res.text) {
-          alertBox.find('refresh').find('.message').text(res.text);
-        }
-        alertBox.show('refresh');
-      }).fail(function (xhr) {
-        console.warn(url, xhr.responseText);
-        alertBox.show('refresh');
-      });
-    }
-
-    function poll (url) {
-      Timelines.checkLatestTwitterUser(url, {interval: 3000, max_retry_count: 5},
-        function done (res) {
-          console.log('poll', res);
-
-          if (res.created_at > twitterUser.createdAt) {
-            fetchChangesText(urls.twitter_users_changes);
-            return true;
-          } else {
-            return false;
-          }
-        }, function stopped (res, reason) {
-          console.warn('poll', reason, res);
-          TwitterUsers.sneakLogger.warn(reason);
-
-          alertBox.show('updateThisPage');
-
-        }, function failed (xhr) {
-          console.log('poll failed.', xhr.responseText);
-          TwitterUsers.sneakLogger.warn(xhr.responseText);
-
-          alertBox.show('failed');
-
-          ga('send', {
-            hitType: 'event',
-            eventCategory: eventCategory,
-            eventAction: 'poll failed',
-            eventLabel: JSON.stringify($.extend({status: xhr.status, error: parseError(xhr)}, twitterUser))
-          });
-        });
-    }
-
-    function requestToCreateTwitterUser(url, params) {
-      TwitterUsers.requestToCreateTwitterUser(url, params, function done (res) {
-        console.log('requestToCreateTwitterUser', res);
-
-        if (res.jid) {
-          alertBox.show('update');
-          var url = urls.twitter_user;
-          poll(url);
-        } else {
-          console.warn("Don't start polling since a job is not started.");
-          TwitterUsers.sneakLogger.warn("Don't start polling since a job is not started.");
-
-          alertBox.show('update');
-          setTimeout(function () {
-            alertBox.show('updateThisPage');
-          }, 3000);
-        }
-      }, function failed (xhr) {
-        console.warn('requestToCreateTwitterUser failed.', xhr.responseText);
-        TwitterUsers.sneakLogger.warn(xhr.responseText);
-
-        var error = parseError(xhr);
-
-        if (error === 'too_many_searches') {
-          alertBox.show('tooManySearches');
-        } else {
-          alertBox.show('failed');
-        }
-
-        ga('send', {
-          hitType: 'event',
-          eventCategory: eventCategory,
-          eventAction: 'requestToCreateTwitterUser failed',
-          eventLabel: JSON.stringify($.extend({status: xhr.status, error: error}, twitterUser))
-        });
-      });
-    }
-
-    $(function () {
-      if (profileNotFound) {
+    var options = {url: urls.follow};
+    new EgotterFollowerDetector(options).detect(function () {
+      if (tooShortCreateInterval) {
+        console.warn("Don't start polling since the create interval is too short.");
         return;
       }
 
-      alertBox = new TwitterUsers.AlertBox(requestToUpdate, nextCreationTimeMessage, twitterUser, eventCategory);
+      var options = {
+        url: urls.twitter_users,
+        twitterUser: twitterUser
+      };
+      new CreateTwitterUserRequest(options).perform(function () {
 
-      if (signedIn) {
-        if (!authorized) {
-          alertBox.show('invalidToken');
-          return;
-        }
-
-        TwitterUsers.isFollowingEgotter(urls.follow, function done (res) {
-          if (res.follow) {
-            if (tooShortCreateInterval) {
-              console.warn("Don't start polling since the create interval is too short.");
-              TwitterUsers.sneakLogger.warn("Don't start polling since the create interval is too short.");
-
-              alertBox.show('update');
-              setTimeout(function () {
-                alertBox.show('updateThisPage');
-              }, 3000);
-            } else {
-              var params = {uid: twitterUser.uid};
-              requestToCreateTwitterUser(urls.twitter_users, params);
-            }
-          } else {
-            enableJustFollowedButton();
-            alertBox.show('follow');
-          }
-        });
-      } else {
-        if (removedPage) {
-          alertBox.show('accurateCounting');
-        } else if (viaDM) {
-          alertBox.show('viaDM');
-        } else if (!crawler) {
-          alertBox.show('signIn');
-        } else {
-          // Maybe crawler
-        }
-      }
-
-      (function (){
-        function redirectTo (url) {
-          setTimeout(function() {
-            window.location.href = url;
-          }, 2000);
-        }
-
-        if (signedIn && authorized) {
-          var url = urls.account_status;
-          TwitterUsers.confirmAccountStatus(url, function done (res) {
-            console.log('accountStatus', res);
-
-            if (!res.authorized) {
-              var url = "#{root_path(via: current_via('unauthorized_detected'))}";
-              SnackMessage.alert("#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}");
-              redirectTo(url);
-
-              ga('send', {
-                hitType: 'event',
-                eventCategory: eventCategory,
-                eventAction: 'Unauthorized detected',
-                eventLabel: JSON.stringify(twitterUser)
-              });
-            } else if (res.egotter_blocked) {
-              ga('send', {
-                hitType: 'event',
-                eventCategory: eventCategory,
-                eventAction: 'egotterBlocked detected',
-                eventLabel: JSON.stringify(twitterUser)
-              });
-            }
-          }, function failed (xhr) {
-            console.log(url, xhr.responseText);
-          });
-        }
-      })();
-
-      if (!crawler) {
-        Detectors.secretMode(function detected (quota) {
-          if (#{ENV['ALLOW_COGNITE'] == '1'}) {
-            return;
-          }
-          if (signedIn) {
-            return;
-          }
-          if (os === 'Android' && osVersion.match(/^(6|5|4)/)) {
-            return;
-          }
-
-          var message = '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}';
-          SnackMessage.alert(message);
-          setTimeout(function() {
-            window.location.href = "#{root_path(via: current_via('secret_mode_detected')).html_safe}";
-          }, 2000);
-
-          ga('send', {
-            hitType: 'event',
-            eventCategory: eventCategory,
-            eventAction: 'SecretMode detected',
-            eventLabel: JSON.stringify($.extend({quota: quota}, twitterUser))
-          });
-        });
-
-        Detectors.adBlocker(function detected () {
-          var message = '#{t('before_sign_in.ad_blocker_detected_with_count', seconds: 3)}';
-          SnackMessage.alert(message);
-          setTimeout(function() {
-            window.location.href = "#{root_path(via: current_via('ad_blocker_detected')).html_safe}";
-          }, 2000);
-
-          ga('send', {
-            hitType: 'event',
-            eventCategory: eventCategory,
-            eventAction: 'AdBlocker detected',
-            eventLabel: JSON.stringify(twitterUser)
-          });
-        });
-      }
+        var options = {
+          url: urls.twitter_user,
+          changesPath: urls.twitter_users_changes,
+          twitterUser: twitterUser
+        };
+        new Polling(options).start();
+        ToastMessage.show('#{t('twitter_users.in_background.updating_html', user: twitter_user.screen_name)}');
+      });
     });
-  })();
+
+    var options = {
+      force: true,
+      unauthorizedMessage: "#{t('after_sign_in.unauthorized_detected_with_count', seconds: 3)}",
+      blockedMessage: "#{t('after_sign_in.blocked_detected_with_count', seconds: 3)}",
+      url: urls.account_status,
+      unauthorizedRedirectPath: "#{root_path(via: current_via('unauthorized_detected'))}",
+      blockedRedirectPath: "#{root_path(via: current_via('blocked_detected'))}",
+      eventCategory: eventCategory,
+      eventLabel: JSON.stringify(twitterUser)
+    };
+    new UnauthorizedDetector(options).detect();
+
+    if (!crawler) {
+      var options = {
+        force: true,
+        message: '#{t('before_sign_in.secret_mode_detected_with_count', seconds: 3)}',
+        redirectPath: "#{root_path(via: current_via('secret_mode_detected')).html_safe}",
+        allowCognite: #{ENV['ALLOW_COGNITE'] == '1'},
+        signedIn: signedIn,
+        os: os,
+        osVersion: osVersion,
+        eventCategory: eventCategory,
+        eventLabel: JSON.stringify(twitterUser)
+      };
+      new SecretModeDetector(options).detect();
+
+      var options = {
+        force: true,
+        message: '#{t('before_sign_in.ad_blocker_detected_with_count', seconds: 3)}',
+        redirectPath: "#{root_path(via: current_via('ad_blocker_detected')).html_safe}",
+        eventCategory: eventCategory,
+        eventLabel: JSON.stringify(twitterUser)
+      };
+      new AdBlockDetector(options).detect();
+    }
+  });

@@ -21,6 +21,7 @@
     = javascript_pack_tag 'application'
     = javascript_pack_tag 'search_modal'
     = javascript_pack_tag 'snack_message'
+    = javascript_pack_tag 'toast_message'
     = javascript_pack_tag 'welcome'
     %script{src: '//code.jquery.com/ui/1.12.0/jquery-ui.js'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/jquery.lazyload/1.9.1/jquery.lazyload.min.js'}
@@ -30,19 +31,28 @@
     %link{:crossorigin => "anonymous", :href => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.css", :integrity => "sha256-qfsdVqVeKPVy58Hx9qCIn8Nsdh2TU1yicE7B5EHi+Ss=", :rel => "stylesheet"}/
     %script{:crossorigin => "anonymous", :integrity => "sha256-NOqsQWSGulWF4j0yfFlFwk9rmFpAoRV5nodGqIHyjUo=", :src => "https://cdn.jsdelivr.net/npm/node-snackbar@0.1.16/dist/snackbar.min.js"}
     %script{:crossorigin => "anonymous", :integrity => "sha256-Z7vZOdzU6nCmyqd53Q0EfBYAZtWilBbFj5cWoYrRs48=", :src => "https://cdnjs.cloudflare.com/ajax/libs/jquery-sidebar/3.3.2/jquery.sidebar.min.js"}
+    %script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}
     = csrf_meta_tags
+
+    - if Rails.env.development?
+      :css
+        .adsbygoogle {
+          border: 1px dashed black;
+        }
 
     = yield(:canonical_url) if content_for?(:canonical_url)
 
     = render partial: 'shared/google'
     = render partial: 'shared/twitter'
     = render partial: 'shared/airbrake'
+    = render partial: 'shared/templates'
 
     - if user_signed_in?
       = render partial: 'shared/onesignal'
 
   %body
     = javascript_include_tag '/adsense.js'
+    = render partial: 'shared/toast'
 
     = render partial: 'layouts/header' if show_header? && !under_maintenance?
     = render partial: 'layouts/sidemenu'
