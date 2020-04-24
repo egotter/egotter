@@ -84,7 +84,7 @@
     <div class="row justify-content-between m-3">
       <div class="col-6 col-md-3 mb-3">
         <%= link_to status_path(user, via: current_via('statuses_on_profile')) do %>
-          <b class="text-black"><%= user.delimited_statuses_count %></b>
+          <strong class="text-black"><%= user.delimited_statuses_count %></strong>
           <br class="d-block d-lg-none">
           <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
         <% end %>
@@ -92,7 +92,7 @@
 
       <div class="col-6 col-md-3 mb-3">
         <%= link_to friend_path(user, via: current_via('friends_on_profile')) do %>
-          <b class="text-black"><%= user.delimited_friends_count %></b>
+          <strong class="text-black"><%= user.delimited_friends_count %></strong>
           <br class="d-block d-lg-none">
           <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
         <% end %>
@@ -100,7 +100,7 @@
 
       <div class="col-6 col-md-3 mb-3">
         <%= link_to follower_path(user, via: current_via('followers_on_profile')) do %>
-          <b class="text-black"><%= user.delimited_followers_count %></b>
+          <strong class="text-black"><%= user.delimited_followers_count %></strong>
           <br class="d-block d-lg-none">
           <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
         <% end %>

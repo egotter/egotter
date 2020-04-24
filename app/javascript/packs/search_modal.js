@@ -12,6 +12,9 @@ class SearchModal {
         $.get(url).done(function (res) {
           console.log(url, 'loaded');
           $modal.find('.twitter.users').append(res);
+        }).fail(function () {
+          console.warn(url, 'failed');
+          $modal.find('.twitter.users').append('Error');
         });
       }
 

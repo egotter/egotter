@@ -144,4 +144,8 @@ class TwitterUserDecorator < ApplicationDecorator
   def uid_i
     uid.to_i
   end
+
+  def to_param
+    screen_name
+  end
 end

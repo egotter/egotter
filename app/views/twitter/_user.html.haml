@@ -25,11 +25,11 @@
             = user.status_labels
           %p.card-text= linkify(user.description)
           %p.card-text
-            %span
-              %b= user.delimited_friends_count
+            = link_to friend_path(user) do
+              %strong.text-black= user.delimited_friends_count
               %span.text-muted= TwitterUser.human_attribute_name(:friends)
-            %span
-              %b= user.delimited_followers_count
+            = link_to follower_path(user) do
+              %strong.text-black= user.delimited_followers_count
               %span.text-muted= TwitterUser.human_attribute_name(:followers)
         .text-right
           = render partial: 'twitter/follow_button', locals: {user: user}
