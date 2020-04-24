@@ -4,6 +4,6 @@
 <%= render partial: 'shared/functions_section' %>
 <%= render partial: 'shared/announcement_section' %>
 
-<% if user_signed_in? && !@has_error %>
+<% if user_signed_in? && !@has_error && flash[:alert].blank? %>
   <%= render partial: 'modal/redirection_modal', locals: {title: t('.redirection_modal.title', user: current_user.screen_name), body: t('.redirection_modal.body', user: current_user.screen_name), url: timeline_path(current_user)} %>
 <% end %>

@@ -8,9 +8,6 @@ class SnackMessage {
     duration: 7500
   };
 
-  constructor() {
-  }
-
   static success(message) {
     var options = Object.assign({text: '<div class="text-primary">' + message + '</div>'}, this.options);
     Snackbar.show(options);
