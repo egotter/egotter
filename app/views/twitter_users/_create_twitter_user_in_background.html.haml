@@ -1,7 +1,7 @@
 - button_classes = 'btn btn-outline-primary'
 
 = alert_info_box('update-this-page-box') do |id, via|
-  %span.next-creation-note= ''
+  %span.next-creation-note= next_creation_message(twitter_user)
   = link_to(t('twitter_users.in_background.reload_page'), timeline_path(twitter_user, via: via), class: button_classes)
 
 = alert_info_box('request-to-update-box') do |id, via|
@@ -112,9 +112,7 @@
     new EgotterFollowerDetector(options).detect(function () {
       if (tooShortCreateInterval) {
         console.warn("Don't start polling since the create interval is too short.", twitterUser);
-        var message = $('#update-this-page-box .inner');
-        message.find('.next-creation-note').html(nextCreationTimeMessage);
-        ToastMessage.info(message.html());
+        ToastMessage.info($('#update-this-page-box .inner').html());
         return;
       }
 

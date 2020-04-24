@@ -205,6 +205,7 @@ class CreateTwitterUserRequest {
         callback();
       } else {
         console.warn(self.constructor.name, "Job is not started.");
+        ToastMessage.info($('#update-this-page-box .inner').html());
       }
     };
 
