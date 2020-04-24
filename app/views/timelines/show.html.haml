@@ -20,11 +20,6 @@
 
 = render(partial: 'adsense/ad', locals: {vertical: :middle})
 
-%script{src: '//cdnjs.cloudflare.com/ajax/libs/mustache.js/3.0.1/mustache.min.js', type: 'text/javascript', integrity: 'sha256-srhz/t0GOrmVGZryG24MVDyFDYZpvUH2+dnJ8FbpGi0=', crossorigin: 'anonymous'}
-%script{id: 'user-template', type: 'x-tmpl-mustache'}
-  = search_link '{{screen_name}}', current_via('{{menu_name}}'), unescape: true, style: 'display: inline-block;' do
-    %img.rounded.m-1.shadow{src: '{{profile_image_url_https}}', alt: '{{screen_name}}', width: 48, height: 48}
-
 .row
   .col-12.mb-5
     = render partial: 'timelines/feeds/summary', locals: {twitter_user: @twitter_user}

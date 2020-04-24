@@ -55,6 +55,12 @@ class HomeController < ApplicationController
         url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
         flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
       end
+    elsif params[:via].to_s.end_with?('blocked_detected')
+      # TODO Implement
+      if user_signed_in?
+        url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
+        flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
+      end
     end
   end
 end

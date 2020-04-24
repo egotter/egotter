@@ -18,7 +18,9 @@
     "$": true,
     "ga": true,
     "Snackbar": true,
-    "SnackMessage": true
+    "SnackMessage": true,
+    "ToastMessage": true,
+    "Mustache": true
   },
   "rules": {
     "semi": "error"

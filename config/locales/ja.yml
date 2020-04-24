@@ -1261,7 +1261,7 @@ ja:
     in_background:
       latest: '表示されているデータは最新です。'
       failed: 'データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。'
-      updating: '@%{user} のデータを更新中'
+      updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'
       request_to_update: '更新をリクエストする'
@@ -1270,20 +1270,24 @@ ja:
       go: '%{time}後'
       soon: 'もうすぐ'
       too_many_friends: '@%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
+      automated_update_stopped_html: |
+        @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。
+        <a href="%{url}" class="btn btn-primary">フォローする</a>
       automated_update_stopped_and_signing_in_html: |
         @%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。<br>
         <a href="%{url}" class="btn btn-primary">フォローする</a>
-        <a href="#" class="btn btn-outline-primary btn-just-followed">フォローしました</a>
+        <a href="#" class="btn btn-outline-primary btn-just-followed" onclick="window.location.reload();">フォローしました</a>
       automated_update_restarted_html: '@ego_tter のフォローありがとうございます。自動更新は再開されました。'
       automated_update_not_restarted_and_signing_in_html: |
         まだ @ego_tter をフォローしていないようです。自動更新は停止したままです。
         <a href="%{url}" class="btn btn-primary">フォローする</a>
-        <a href="#" class="btn btn-outline-primary btn-just-followed">フォローしました</a>
+        <a href="#" class="btn btn-outline-primary btn-just-followed" onclick="window.location.reload();">フォローしました</a>
       invalid_token: '@%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
       accurate_counting: 'リムられやブロられは、ログインすると結果がより正確になります。'
       via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
       lets_sign_in: 'ログインして検索すると、データが最新になり、検索回数が増えます。リムられ通知も届きます！'
       do_sign_in: 'ログインする'
+      retry: '再度検索する'
       let_me_know_html: '%{user} の%{current}は、えごったーが分析したデータを元に集計しています。もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。'
       plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
       share_me: "えごったーをシェアする"
@@ -1772,7 +1776,10 @@ ja:
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
     invalid_input: "%{count1} 文字以上 %{count2} 文字以内の半角英数字を入力してください。"
     too_many_searches_html: |
-      現在のプランで検索できる上限に達しました。%{limit}回/日 <a class="btn btn-primary" href="%{sign_in_url}">ログインして増やす</a><br>
+      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
+      <br>
+      <a class="btn btn-primary" href="%{sign_in_url}">ログインして増やす</a><br>
+      <br>
       <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
         <br>
@@ -1852,9 +1859,11 @@ ja:
     ad_blocker_detected_with_count: 'えごったーは広告ブロッカーが有効な場合はご利用いただけません。%{seconds}秒後にトップページへ移動します。'
   after_sign_in:
     too_many_searches_html: |
-      現在のプランで検索できる上限に達しました。%{limit}回/日
+      現在のプランで検索できる上限に達しました。%{limit}回/日<br>
+      <br>
       <a href="#" class="btn btn-outline-primary btn-checkout">購入して増やす</a>
       <a href="#" data-target="#share-modal" data-toggle="modal" class="btn btn-outline-primary">ツイートして増やす</a><br>
+      <br>
       <a id="show-detailed-message-%{id_hash}" class="text-right" style="display: block;" onclick="$('#hidden-detailed-message-%{id_hash}').show(); $('#' + this.id).hide(); return false;" href="#">詳しく見る</a>
       <div id="hidden-detailed-message-%{id_hash}" style="display: none;">
         <br>
@@ -1929,6 +1938,7 @@ ja:
       <br>
       エラー：PLNE403
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
+    blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
   tweet_text:
     something_is_wrong: "何かに失敗しました…！ いつもは成功するので、よかったらまた検索してみてください。%{kaomoji} %{url}"
   push_notification:
