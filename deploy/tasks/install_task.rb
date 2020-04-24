@@ -143,6 +143,10 @@ module Tasks
         backend('git fetch origin >/dev/null')
         backend('git pull origin master >/dev/null')
         backend('bundle install --path .bundle --without test development | grep -v Using')
+        self
+      end
+
+      def precompile
         backend('RAILS_ENV=production bundle exec rake assets:precompile')
         backend('RAILS_ENV=production bundle exec rake assets:sync:download')
         self
@@ -208,6 +212,7 @@ module Tasks
             install_yarn.
             upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
+            precompile.
             update_egotter.
             update_crontab.
             update_nginx.
