@@ -81,8 +81,12 @@ module AdsenseHelper
       4436604425, # 0327
       3123522758, # 0328
       2489097937, # 0329
-      8717742161, # 0330 <- Next
+      8717742161, # 0330
       7404660497, # 0331
+      6837043653, # 0332
+      7844957271, # 0333
+      1607933550, # 0334 <- Next
+      4210880319, # 0335
   ]
 
   def left_slot_fixed_ad_id(controller, action, position)
@@ -249,7 +253,7 @@ module AdsenseHelper
   USER_OTHERS_RESP                = 3500630816
 
   USER_HOME_RESP                  = 2721860243
-  USER_TIMELINES_TOP_RESP         = 3564168622
+  USER_TIMELINES_TOP_RESP         = 3564168622 # 0225
   USER_TIMELINES_MIDDLE_RESP      = 4253330115
   USER_TIMELINES_BOTTOM_RESP      = 9147011257
   USER_NOT_FOUND_RESP             = 2206842589
@@ -276,7 +280,7 @@ module AdsenseHelper
   USER_REPLYING_AND_REPLIED_RESP  = 8305445130
   USER_SCORES_RESP                = 1216103231
   USER_STATUSES_RESP              = 8403585859
-  USER_UNFOLLOWERS_RESP           = 2768115790
+  USER_UNFOLLOWERS_RESP           = 2768115790 # 0217
   USER_UNFRIENDS_RESP             = 5925951541
   USER_UPDATE_HISTORIES_RESP      = 3332234330
   USER_USAGE_STATS_RESP           = 7385183503
@@ -294,6 +298,7 @@ module AdsenseHelper
         when [true,  'audience_insights',     'show', :bottom] then USER_AUDIENCE_INSIGHTS_RESP
         when [true,  'blocking_or_blocked',   'list', :slit]   then USER_BLOCKING_OR_BLOCKED_RESP
         when [true,  'blocking_or_blocked',   'show', :bottom] then USER_BLOCKING_OR_BLOCKED_RESP
+        when [true,  'blocking_or_blocked',   'show', :middle] then USER_BLOCKING_OR_BLOCKED_RESP
         when [true,  'blocking_or_blocked',   'show', :top]    then USER_BLOCKING_OR_BLOCKED_RESP
         when [true,  'close_friends',         'list', :slit]   then USER_CLOSE_FRIENDS_RESP
         when [true,  'close_friends',         'show', :bottom] then USER_CLOSE_FRIENDS_RESP
@@ -365,12 +370,14 @@ module AdsenseHelper
         when [true,  'scores',                'show', :middle] then USER_SCORES_RESP
         when [true,  'scores',                'show', :top]    then USER_SCORES_RESP
         when [true,  'statuses',              'show', :top]    then USER_STATUSES_RESP
-        when [true,  'unfollowers',           'list', :slit]   then USER_UNFOLLOWERS_RESP
-        when [true,  'unfollowers',           'show', :bottom] then USER_UNFOLLOWERS_RESP
-        when [true,  'unfollowers',           'show', :top]    then USER_UNFOLLOWERS_RESP
+        when [true,  'unfollowers',           'list', :slit]   then 8717742161 # 0330
+        when [true,  'unfollowers',           'show', :bottom] then 7404660497 # 0331
+        when [true,  'unfollowers',           'show', :middle] then 6837043653 # 0332
+        when [true,  'unfollowers',           'show', :top]    then 7844957271 # 0333
         when [true,  'unfriends',             'list', :slit]   then USER_UNFRIENDS_RESP
         when [true,  'unfriends',             'new',  :top]    then USER_UNFRIENDS_RESP
         when [true,  'unfriends',             'show', :bottom] then USER_UNFRIENDS_RESP
+        when [true,  'unfriends',             'show', :middle] then USER_UNFRIENDS_RESP
         when [true,  'unfriends',             'show', :top]    then USER_UNFRIENDS_RESP
         when [true,  'update_histories',      'show', :bottom] then USER_UPDATE_HISTORIES_RESP
         when [true,  'update_histories',      'show', :top]    then USER_UPDATE_HISTORIES_RESP
