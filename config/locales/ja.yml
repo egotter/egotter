@@ -1322,6 +1322,7 @@ ja:
         削除した直後だったり、削除と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、<span class="egotter-pink">ツイッターで探す</span>と確実です。
         </div>
     not_persisted:
+      update: '最新のデータに更新する'
       see_on_twitter: '@%{user} をツイッターで探す'
     latest:
       <<: *not_found_show
@@ -1350,6 +1351,7 @@ ja:
         凍結された直後だったり、凍結と復活を繰り返していると、えごったー上での表示と一時的にずれることがあります。その時は、ツイッターで見ると確実です。
         </div>
     not_persisted:
+      update: '最新のデータに更新する'
       see_on_twitter: '@%{user} をツイッターで探す'
     latest:
       <<: *forbidden_show
@@ -1363,6 +1365,7 @@ ja:
       come_back: '@%{user} はブロックを解除しました。'
       displayed_data_is_html: '@%{user} からブロックされているため検索できません。'
     not_persisted:
+      update: '最新のデータに更新する'
       see_on_twitter: '@%{user} をツイッターで探す'
     latest:
       <<: *blocked_show
@@ -1376,6 +1379,7 @@ ja:
       come_back: '@%{user} は鍵を外しました。'
       displayed_data_is_html: '@%{user} のツイートは非公開です。本人やフォローしているユーザーでないと検索できません。'
     not_persisted:
+      update: '最新のデータに更新する'
       see_on_twitter: '@%{user} をツイッターで探す'
     latest:
       <<: *protected_show

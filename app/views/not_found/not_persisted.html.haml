@@ -1,7 +1,8 @@
-.alert.alert-warning.alert-dismissible.my-3{role: "alert"}
-  = raw @alert
+.alert.alert-warning.alert-dismissible.my-3{role: "alert"}= raw @alert
+
+= link_to t('.update', user: @screen_name), @latest_resource_path, class: 'btn btn-primary btn-block btn-lg'
+
+= render(partial: 'adsense/ad', locals: {vertical: :top})
 
 = user_link(@screen_name, class: 'btn btn-primary btn-block btn-lg') do
   = t('.see_on_twitter', user: @screen_name)
-
-= render(partial: 'adsense/ad', locals: {vertical: :top})

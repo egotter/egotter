@@ -5,8 +5,7 @@
 - title page_title
 - set_meta_tags description: t('.meta_description', user: @user.screen_name)
 
-.alert.alert-warning.alert-dismissible.my-3{role: "alert"}
-  = raw @alert
+.alert.alert-warning.alert-dismissible.my-3{role: "alert"}= raw @alert
 
 .mt-3
   - if action_name == 'show'
