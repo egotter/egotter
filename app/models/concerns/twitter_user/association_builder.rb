@@ -35,11 +35,21 @@ module Concerns::TwitterUser::AssociationBuilder
     user_timeline, mentions_timeline, _favorites = %i(user_timeline mentions_timeline favorites).map { |key| relations[key] }
 
     if (mentions_timeline.nil? || mentions_timeline.empty?) && relations.has_key?(:search)
-      mentions_timeline = relations[:search].reject {|status| uid == status[:user][:id] || status[:text].start_with?("RT @#{screen_name}")}
+      mentions_timeline = relations[:search].reject { |status| uid == status[:user][:id] || status[:text].start_with?("RT @#{screen_name}") }
     end
 
-    user_timeline.each { |status| statuses.build(TwitterDB::Status.attrs_by(twitter_user: self, status: status)) } if user_timeline&.any?
-    mentions_timeline.each { |status| mentions.build(TwitterDB::Mention.attrs_by(twitter_user: self, status: status)) } if mentions_timeline&.any?
-    _favorites.each { |status| favorites.build(TwitterDB::Favorite.attrs_by(twitter_user: self, status: status)) } if _favorites&.any?
+    message = "Benchmark CreateTwitterUserRequest"
+
+    ApplicationRecord.benchmark("#{message} build user_timeline #{user_id} #{uid}", level: :info) do
+      user_timeline.each { |status| statuses.build(TwitterDB::Status.attrs_by(twitter_user: self, status: status)) } if user_timeline&.any?
+    end
+
+    ApplicationRecord.benchmark("#{message} build mentions_timeline #{user_id} #{uid}", level: :info) do
+      mentions_timeline.each { |status| mentions.build(TwitterDB::Mention.attrs_by(twitter_user: self, status: status)) } if mentions_timeline&.any?
+    end
+
+    ApplicationRecord.benchmark("#{message} build _favorites #{user_id} #{uid}", level: :info) do
+      _favorites.each { |status| favorites.build(TwitterDB::Favorite.attrs_by(twitter_user: self, status: status)) } if _favorites&.any?
+    end
   end
 end

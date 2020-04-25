@@ -41,35 +41,53 @@ module Concerns::TwitterUser::Persistence
 
     # S3
 
-    benchmark('S3::StatusTweet.import_from!') do
+    tweets = []
+    benchmark('S3::StatusTweet.import_from! collect') do
       tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    end
+    benchmark('S3::StatusTweet.import_from! import') do
       S3::StatusTweet.import_from!(uid, screen_name, tweets)
     end
 
-    benchmark('S3::FavoriteTweet.import_from!') do
+    tweets = []
+    benchmark('S3::FavoriteTweet.import_from! collect') do
       tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    end
+    benchmark('S3::FavoriteTweet.import_from! import') do
       S3::FavoriteTweet.import_from!(uid, screen_name, tweets)
     end
 
-    benchmark('S3::MentionTweet.import_from!') do
+    tweets = []
+    benchmark('S3::MentionTweet.import_from! collect') do
       tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    end
+    benchmark('S3::MentionTweet.import_from! import') do
       S3::MentionTweet.import_from!(uid, screen_name, tweets)
     end
 
     # EFS
 
-    benchmark('Efs::StatusTweet.import_from!') do
+    tweets = []
+    benchmark('Efs::StatusTweet.import_from! collect') do
       tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    end
+    benchmark('Efs::StatusTweet.import_from! import') do
       Efs::StatusTweet.import_from!(uid, screen_name, tweets)
     end
 
-    benchmark('Efs::FavoriteTweet.import_from!') do
+    tweets = []
+    benchmark('Efs::FavoriteTweet.import_from! collect') do
       tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    end
+    benchmark('Efs::FavoriteTweet.import_from! import') do
       Efs::FavoriteTweet.import_from!(uid, screen_name, tweets)
     end
 
-    benchmark('Efs::MentionTweet.import_from!') do
+    tweets = []
+    benchmark('Efs::MentionTweet.import_from! collect') do
       tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    end
+    benchmark('Efs::MentionTweet.import_from! import') do
       Efs::MentionTweet.import_from!(uid, screen_name, tweets)
     end
   end
@@ -87,8 +105,12 @@ module Concerns::TwitterUser::Persistence
 
       super
 
-      @benchmark['Total'] = Time.zone.now - start
-      logger.info "Benchmark Persistence #{id} #{@benchmark.inspect}"
+      elapsed = Time.zone.now - start
+      @benchmark['elapsed'] = elapsed
+      @benchmark['sum'] = @benchmark.values.sum
+
+      logger.info "Benchmark CreateTwitterUserRequest persistence id=#{id} user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
+      logger.info "Benchmark CreateTwitterUserRequest persistence id=#{id} user_id=#{user_id} uid=#{uid} #{@benchmark.inspect}"
     end
   end
   prepend Instrumentation

@@ -109,9 +109,11 @@ class CreatePromptReportTask
       super
 
       elapsed = Time.zone.now - start
-      @benchmark['Total'] = elapsed
+      @benchmark['elapsed'] = elapsed
+      @benchmark['sum'] = @benchmark.values.sum
 
-      Rails.logger.info "Benchmark CreatePromptReportTask #{request.id} #{@benchmark.inspect}"
+      Rails.logger.info "Benchmark CreatePromptReportTask request_id=#{request.id} #{sprintf("%.3f sec", elapsed)}"
+      Rails.logger.info "Benchmark CreatePromptReportTask request_id=#{request.id} #{@benchmark.inspect}"
 
       if elapsed > 30
         notice = Airbrake.build_notice('CreatePromptReportTask took more than 30 seconds')

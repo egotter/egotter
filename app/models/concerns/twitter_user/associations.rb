@@ -83,19 +83,19 @@ module Concerns::TwitterUser::Associations
 
   # TODO Remove later
   def statuses
-    logger.info ":#{__method__} is deprecated. Use :status_tweets instead"
+    logger.info "[Associations] :#{__method__} is deprecated. Use :status_tweets instead"
     _statuses
   end
 
   # TODO Remove later
   def favorites
-    logger.info ":#{__method__} is deprecated. Use :favorite_tweets instead"
+    logger.info "[Associations] :#{__method__} is deprecated. Use :favorite_tweets instead"
     _favorites
   end
 
   # TODO Remove later
   def mentions
-    logger.info ":#{__method__} is deprecated. Use :mention_tweets instead"
+    logger.info "[Associations] :#{__method__} is deprecated. Use :mention_tweets instead"
     _mentions
   end
 

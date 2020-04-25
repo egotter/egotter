@@ -142,9 +142,29 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def benchmark(message, twitter_user = nil, &block)
-    count_message = " friends=#{twitter_user.friends_count} followers=#{twitter_user.followers_count}" if twitter_user
-    ApplicationRecord.benchmark("Benchmark CreateTwitterUserRequest #{user_id} #{uid} #{message}#{count_message}", level: :info, &block)
+    start = Time.zone.now
+    yield
+    @benchmark[message] = Time.zone.now - start
   end
+
+  module Instrumentation
+    def perform!(*args, &blk)
+      @benchmark = {}
+      start = Time.zone.now
+
+      result = super
+
+      elapsed = Time.zone.now - start
+      @benchmark['elapsed'] = elapsed
+      @benchmark['sum'] = @benchmark.values.sum
+
+      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
+      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@benchmark.inspect}"
+
+      result
+    end
+  end
+  prepend Instrumentation
 
   class Error < StandardError
   end
