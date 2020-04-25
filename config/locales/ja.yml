@@ -1381,10 +1381,12 @@ ja:
       <<: *protected_show
   follows:
     create:
-      success: '@%{user} のフォローに成功しました。'
+      success: '@%{user} のフォローに成功しました。残りは %{count}回 です。'
+      retry_later: '@%{user} のフォローをリクエストしました。凍結を防ぐために一定時間後にフォローします。'
   unfollows:
     create:
       success: '@%{user} のフォロー解除に成功しました。'
+      retry_later: '@%{user} のフォロー解除をリクエストしました。'
   tokimeki_unfollow:
     new:
       navbar_title: 'ときめきアンフォロー✨'

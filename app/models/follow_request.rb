@@ -49,7 +49,7 @@ class FollowRequest < ApplicationRecord
           where('created_at > ?', created_at).
           where(finished_at: nil).
           where(error_class: '').
-          select {|req| req.logs.empty? }
+          select { |req| req.logs.empty? }
     end
 
     def temporarily_following(user_id:, created_at:)
@@ -75,6 +75,7 @@ class FollowRequest < ApplicationRecord
     elsif e.message.start_with?('Your account is suspended and is not permitted to access this feature.')
       raise Suspended
     elsif e.message.start_with?('You are unable to follow more people at this time.')
+      GlobalFollowLimitation.new.limit_start
       raise TooManyFollows
     else
       raise Forbidden.new(e.message)

@@ -26,4 +26,5 @@
   - deleting
   - follow
   - unfollow
+  - UpdateAudienceInsightWorker
   - rollbar

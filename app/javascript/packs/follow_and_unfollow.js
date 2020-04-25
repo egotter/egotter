@@ -17,7 +17,7 @@ class Twitter {
       if (xhr.status === 429) { // Too many requests
         $('#follow-limitation-warning-modal').modal();
       } else {
-        ToastMessage.alert('Follow is failed');
+        ToastMessage.warn('Follow is failed');
       }
     });
   }
@@ -37,7 +37,7 @@ class Twitter {
       if (xhr.status === 429) { // Too many requests
         $('#unfollow-limitation-warning-modal').modal();
       } else {
-        ToastMessage.alert('Unfollow is failed');
+        ToastMessage.warn('Unfollow is failed');
       }
     });
   }

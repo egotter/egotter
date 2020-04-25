@@ -27,9 +27,18 @@ class FollowsController < ApplicationController
 
   def create
     request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: 'follows#create')
-    CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
-    message = t('.success', user: fetch_target_screen_name(params[:uid]))
-    render json: {request_id: request.id, message: message}.merge(RateLimit.new(current_user).to_h)
+    screen_name = fetch_target_screen_name(params[:uid])
+    rate_limit = RateLimit.new(current_user)
+
+    if GlobalFollowLimitation.new.limited?
+      CreateFollowWorker.perform_in(1.hour + rand(30.minutes), request.id, enqueue_location: controller_name)
+      message = t('.retry_later', user: screen_name)
+    else
+      CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
+      message = t('.success', user: screen_name, count: rate_limit.remaining)
+    end
+
+    render json: {request_id: request.id, message: message}.merge(rate_limit.to_h)
   end
 
   def show

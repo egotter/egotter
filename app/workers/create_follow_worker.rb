@@ -10,16 +10,23 @@ class CreateFollowWorker
     10.minutes
   end
 
+  def retry_in
+    1.hour + rand(30.minutes)
+  end
+
   # options:
   #   enqueue_location
   def perform(request_id, options = {})
-    request = FollowRequest.find(request_id)
-    CreateFollowTask.new(request).start!
+    if GlobalFollowLimitation.new.limited?
+      CreateFollowWorker.perform_in(retry_in, request_id, options)
+    else
+      request = FollowRequest.find(request_id)
+      CreateFollowTask.new(request).start!
+    end
 
   rescue FollowRequest::TooManyFollows => e
-    logger.warn "#{e.class} Sleep for 1 hour"
-    1.hour.times { sleep 1 }
-    CreateFollowWorker.perform_async(request_id, options)
+    logger.warn "#{e.class} Retry later"
+    CreateFollowWorker.perform_in(retry_in, request_id, options)
 
   rescue FollowRequest::RetryableError => e
     CreateFollowWorker.perform_async(request_id, options)

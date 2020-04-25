@@ -54,7 +54,9 @@ class ToastMessage {
 
   static currentTime() {
     var t = new Date();
-    return t.getHours() + ':' + t.getMinutes();
+    var hour = ('' + t.getHours()).padStart(2, '0');
+    var min = ('' + t.getMinutes()).padStart(2, '0');
+    return hour + ':' + min;
   }
 }
 
