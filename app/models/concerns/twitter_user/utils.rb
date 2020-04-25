@@ -17,7 +17,7 @@ module Concerns::TwitterUser::Utils
       if instance_variable_defined?(:@persisted_friend_uids)
         @persisted_friend_uids
       else
-        @persisted_friend_uids = Efs::TwitterUser.find_by(id)&.fetch(:friend_uids, nil)
+        @persisted_friend_uids = Efs::TwitterUser.find_by(id)&.fetch(:friend_uids, nil) unless ENV['DISABLE_EFS_TWITTER_USER'] == '1'
         @persisted_friend_uids = S3::Friendship.find_by(twitter_user_id: id)&.fetch(:friend_uids, nil) if @persisted_friend_uids.nil?
         @persisted_friend_uids = [] if @persisted_friend_uids.nil?
         @persisted_friend_uids
@@ -37,7 +37,7 @@ module Concerns::TwitterUser::Utils
       if instance_variable_defined?(:@persisted_follower_uids)
         @persisted_follower_uids
       else
-        @persisted_follower_uids = Efs::TwitterUser.find_by(id)&.fetch(:follower_uids, nil)
+        @persisted_follower_uids = Efs::TwitterUser.find_by(id)&.fetch(:follower_uids, nil) unless ENV['DISABLE_EFS_TWITTER_USER'] == '1'
         @persisted_follower_uids = S3::Followership.find_by(twitter_user_id: id)&.fetch(:follower_uids, nil) if @persisted_follower_uids.nil?
         @persisted_follower_uids = [] if @persisted_follower_uids.nil?
         @persisted_follower_uids
