@@ -14,7 +14,7 @@ default: &default
   encoding: utf8mb4
   charset: utf8mb4
   collation: utf8mb4_unicode_ci
-  pool: 80
+  pool: 120
   host: <%= ENV['EGOTTER_DATABASE_HOST'] %>
   username: <%= ENV['EGOTTER_DATABASE_USERNAME'] %>
   password: <%= ENV['EGOTTER_DATABASE_PASSWORD'] %>
