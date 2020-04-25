@@ -1,19 +1,9 @@
 module Api
   module V1
     class Base < ApplicationController
+      include Concerns::ApiRequestConcern
 
       SUMMARY_LIMIT = 20
-
-      layout false
-
-      # before_action -> { head :bad_request }, unless: -> { params[:token] }
-      # skip_before_action :verify_authenticity_token
-
-      before_action -> { valid_uid?(params[:uid]) }
-      before_action -> { twitter_user_persisted?(params[:uid]) }
-      before_action -> { twitter_db_user_persisted?(params[:uid]) }
-      before_action -> { @twitter_user = TwitterUser.latest_by(uid: params[:uid]) }
-      before_action -> { !protected_search?(@twitter_user) }
 
       def summary
         uids, size = summary_uids
@@ -24,11 +14,9 @@ module Api
 
         # This method makes the users unique.
         users = TwitterDB::User.where_and_order_by_field(uids: uids)
-
         users = users.map { |user| Hashie::Mash.new(to_summary_hash(user)) }
-        chart = [{name: t("charts.#{controller_name}"), y: 100.0 / 3.0}, {name: t('charts.others'), y: 200.0 / 3.0}]
 
-        render json: {name: controller_name, count: size, users: users, chart: chart}
+        render json: {name: controller_name, count: size, users: users}
       end
 
       def list

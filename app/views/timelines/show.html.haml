@@ -1,3 +1,5 @@
+- render_view_start_time = Time.zone.now
+
 - content_for :canonical_url do
   %link{href: timeline_url(@twitter_user), rel: 'canonical'}
 
@@ -88,3 +90,4 @@
       = feed_item :ad, feed_title: t('timelines.feeds.scheduled_tweets.title'), feed_description: t('timelines.feeds.scheduled_tweets.description_html', user: @twitter_user.screen_name), feed_image: image_path('/egotter_schedule_with_text_400x448.png'), button_text: t('timelines.feeds.scheduled_tweets.open'), page_url: "https://scheduled-tweets.egotter.com?via=#{current_via('feed_text')}"
 
 = render(partial: 'adsense/ad', locals: {vertical: :bottom})
+- @view_benchmark[:total] = Time.zone.now - render_view_start_time

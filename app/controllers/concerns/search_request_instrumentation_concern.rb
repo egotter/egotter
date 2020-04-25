@@ -11,9 +11,12 @@ module Concerns::SearchRequestInstrumentationConcern
 
     after_action do
       time = Time.zone.now - @search_request_start_time
-      @search_request_benchmark[:total] = time
-      logger.info "Benchmark SearchRequest #{controller_name}##{action_name} total #{sprintf("%.3f sec", time)}"
+      @search_request_benchmark[:sum] = @search_request_benchmark.values.sum
+      @search_request_benchmark[:elapsed] = time
+      logger.info "Benchmark SearchRequest #{controller_name}##{action_name} total(elapsed) #{sprintf("%.3f sec", time)}"
       logger.info "Benchmark SearchRequest #{controller_name}##{action_name} #{@search_request_benchmark.inspect}"
+    rescue => e
+      logger.warn "Internal error during benchmarking. Cause: #{e.inspecct}"
     end
   end
 
@@ -33,6 +36,10 @@ module Concerns::SearchRequestInstrumentationConcern
     too_many_requests?
     set_new_screen_name_if_changed
     enqueue_logging_job
+    enqueue_update_authorized
+    enqueue_update_egotter_friendship
+    enqueue_audience_insight
+    find_or_create_chart_builder
   ).each do |method_name|
     define_method(method_name) do |*args, &blk|
       start = Time.zone.now

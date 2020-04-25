@@ -1,30 +1,58 @@
-<% start = Time.zone.now %>
 <% via = current_via('summary_on_timeline') %>
 <% unit = t('.unit') %>
 <% analyzing = t('.analyzing') %>
 <div class="summary-on-timeline">
   <div class="list-group">
     <% [
-           [one_sided_friend_path(twitter_user, via: via), twitter_user.one_sided_friendships.size, t('.one_sided_friends')],
-           [one_sided_follower_path(twitter_user, via: via), twitter_user.one_sided_followerships.size, t('.one_sided_followers')],
-           [mutual_friend_path(twitter_user, via: via), twitter_user.mutual_friendships.size, t('.mutual_friends')],
-           [unfriend_path(twitter_user, via: via), twitter_user.unfriendships.size, t('.unfriends')],
-           [unfollower_path(twitter_user, via: via), twitter_user.unfollowerships.size, t('.unfollowers')],
-           [blocking_or_blocked_path(twitter_user, via: via), twitter_user.block_friendships.size, t('.blocking_or_blocked')]
-       ].each do |url, count, title| %>
+           ['one_sided_friends', one_sided_friend_path(twitter_user, via: via), t('.one_sided_friends')],
+           ['one_sided_followers', one_sided_follower_path(twitter_user, via: via), t('.one_sided_followers')],
+           ['mutual_friends', mutual_friend_path(twitter_user, via: via), t('.mutual_friends')],
+           ['unfriends', unfriend_path(twitter_user, via: via), t('.unfriends')],
+           ['unfollowers', unfollower_path(twitter_user, via: via), t('.unfollowers')],
+           ['blocking_or_blocked', blocking_or_blocked_path(twitter_user, via: via), t('.blocking_or_blocked')]
+       ].each do |name, url, title| %>
       <%= link_to url, class: 'list-group-item' do %>
         <div class="d-flex justify-content-between align-items-center">
           <%= title %>
-          <span>
-            <% if count > 0 %>
-              <%= count %><%= unit %>
-            <% else %>
-              <%= analyzing %>
-            <% end %>
+          <span class="analyzing <%= name %>"><%= analyzing %></span>
+          <span class="result <%= name %>" style="display: none;">
+            <span class="count">0</span><%= unit %>
           </span>
         </div>
       <% end %>
     <% end %>
   </div>
 </div>
-<% @view_benchmark['summary'] = Time.zone.now - start %>
+
+<script>
+  $(function () {
+    var url = '<%= api_v1_summary_summary_path(uid: twitter_user.uid) %>';
+    var names = [
+      'one_sided_friends',
+      'one_sided_followers',
+      'mutual_friends',
+      'unfriends',
+      'unfollowers',
+      'blocking_or_blocked'
+    ];
+
+    $.getJSON(url).done(function (res) {
+      console.log('summary', res);
+
+      var parent = $('.summary-on-timeline');
+      for (var i = 0; i < names.length; i++) {
+        var name = names[i];
+        var count = res[name];
+        if (count <= 0) {
+          continue;
+        }
+
+        parent.find('.result.' + name).find('.count').text(count).end().show();
+        parent.find('.analyzing.' + name).hide();
+      }
+    }).fail(function (xhr) {
+      console.warn('summary', xhr.responseText);
+    });
+
+  });
+</script>

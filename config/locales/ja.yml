@@ -493,6 +493,7 @@ ja:
           </a>
   pricing:
     new:
+      sign_in: 'ログインする'
       plans: "料金プラン"
       names:
         key: "プラン名"
@@ -1672,23 +1673,6 @@ ja:
     redirection_modal:
       'yes': 'はい'
       'no': 'いいえ'
-  common:
-    show:
-      updating: '%{user} のデータを更新中'
-      update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
-      update_result: 'ページを更新する'
-      need_sign_in: '%{user} はフォロー・フォロワーが多いため、正確な集計にはログインが必要です。'
-      need_follow: '%{user} は @ego_tter をフォローしていないため、自動更新が止まっています。'
-      invalid_token: '%{user} のツイッター連携が無効になっているため、自動更新が止まっています。'
-      additional_func: 'リムられやブロられは、ログインすると結果がより正確になります。'
-      via_dm: 'Twitter DMからアクセスしている場合は、ログインするとリムられが正確に更新されます。'
-      sign_in: 'ログインする'
-      follow: 'フォローする'
-      let_me_know_html: |
-        %{user} の%{current}は、えごったーが分析したデータを元に集計しています。
-        もし、%{current}の結果に間違いがある場合は、<a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご連絡ください。
-      plese_use_egotter: 'えごったーでは、%{current}以外にもリムーブした、リムーブされた、ブロックされたなどたくさんの分析ができます。ぜひそちらもご利用ください。'
-      share_me: "えごったーをシェアする"
   application:
     twitter_user_not_found: "レコードが見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：TUNF404"
     searched_uid_not_found: "直近の検索履歴が見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：SUNF404"
@@ -1708,27 +1692,6 @@ ja:
         データの準備が完了しました。
         結果を見るにはこちら → <a href="%{url1}" class="btn btn-outline-primary btn-sm">@%{user} の結果を見る</a>
         表示が遅い場合はこちら → <a href="%{url2}" class="btn btn-primary btn-sm">ログインして @%{user} の結果を見る</a>
-  charts:
-    friends: "フォロー"
-    followers: "フォロワー"
-    replying: "リプ"
-    replied: "@ツイート"
-    favoriting: "ふぁぼ"
-    close_friends: "仲良し"
-    favorite_friends: "いいね"
-    one_sided_friends: "片思い"
-    one_sided_followers: "片思われ"
-    mutual_friends: "両思い"
-    common_friends: "フォロー"
-    common_followers: "フォロワー"
-    inactive_friends: "いない"
-    inactive_followers: "いない"
-    removing: "リム"
-    removed: "リムられ"
-    unfriends: "リム"
-    unfollowers: "リムられ"
-    blocking_or_blocked: "ブロック"
-    others: "その他"
   sort:
     desc: "新しい順"
     asc: "古い順"

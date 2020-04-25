@@ -6,7 +6,7 @@ class TimelinesController < ApplicationController
   after_action { UsageCount.increment }
 
   after_action do
-    logger.info "Benchmark TimelinesController #{@view_benchmark.inspect}"
+    logger.info "Benchmark RenderView #{controller_name}##{action_name} #{@view_benchmark.inspect}"
   end
 
   def show
@@ -21,6 +21,7 @@ class TimelinesController < ApplicationController
       logger.warn "#{controller_name}##{action_name} Profile not found #{@twitter_user.id} #{request.device_type} #{egotter_visit_id} #{sprintf("%.3f sec", Time.zone.now - @twitter_user.created_at)} #{request.referer}"
       flash.now[:alert] = profile_not_found_message(@twitter_user.screen_name, request.path)
     end
+
 
     @view_benchmark = {}
   end

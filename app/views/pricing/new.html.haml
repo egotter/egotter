@@ -48,7 +48,7 @@
         - if user_signed_in?
           .btn.btn-outline-primary.disabled= t('.has_purchased')
         - else
-          = link_to t('common.show.sign_in'), sign_in_path(via: current_via('pricing')), class: 'btn btn-primary'
+          = link_to t('.sign_in'), sign_in_path(via: current_via('pricing')), class: 'btn btn-primary'
 
 %h3.text-center.my-5= t('.names.basic')
 
@@ -87,7 +87,7 @@
           - else
             = render partial: 'stripe/checkout_button'
         - else
-          = link_to t('common.show.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
+          = link_to t('.sign_in'), sign_in_path(via: current_via('pricing_buy')), class: 'btn btn-primary'
 
 %h3#enterprise-plan.text-center.my-5= t('.names.enterprice')
 
