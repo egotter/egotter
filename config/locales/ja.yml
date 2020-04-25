@@ -20,6 +20,11 @@ ja:
         body_html: 'リムられ通知を復活させるには <a href="%{url}" class="btn btn-outline-primary" target="_blank">リムられ通知復活</a> と書いたDMを @ego_tter に送ってください。これで手続きは完了です。'
         url: 'https://twitter.com/messages/%{uid}-187385226?text=リムられ通知復活'
         ok: "DM作成ページを開く"
+      sign_in_modal:
+        title: 'ログインする'
+        body: 'この機能を使うにはえごったーへのログインが必要です。ログインしますか？'
+        'yes': 'ログインします'
+        'no': 'キャンセル'
     header:
       title: 'えごったー'
       sign_in: 'ログイン'
@@ -672,7 +677,7 @@ ja:
     create_follow_modal:
       title: 'フォローする'
       message_html: '@<span class="screen-name"></span> さんをフォローしますか？ 数が多い場合は凍結されないようゆっくりフォローしていきます。'
-      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">設定 &gt; フォロー回数 &gt; 履歴</a> から見ることができます。'
+      history_link_html: 'フォローの履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">フォロー履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       'yes': 'フォローします'
       'no': 'キャンセル'
@@ -690,7 +695,7 @@ ja:
     create_unfollow_modal:
       title: 'フォローを解除する'
       message_html: '@<span class="screen-name"></span> さんをフォロー解除しますか？ 数が多い場合は凍結されないようゆっくりフォロー解除していきます。'
-      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">設定 &gt; アンフォロー回数 &gt; 履歴</a> から見ることができます。'
+      history_link_html: 'フォロー解除の履歴は、<a href="%{url}" class="btn btn-outline-primary" target="_blank">アンフォロー履歴</a> から見ることができます。'
       dont_confirm: '次からは確認しない'
       ok: "はい"
       cancel: "いいえ"
@@ -1374,6 +1379,12 @@ ja:
       see_on_twitter: '@%{user} をツイッターで探す'
     latest:
       <<: *protected_show
+  follows:
+    create:
+      success: '@%{user} のフォローに成功しました。'
+  unfollows:
+    create:
+      success: '@%{user} のフォロー解除に成功しました。'
   tokimeki_unfollow:
     new:
       navbar_title: 'ときめきアンフォロー✨'

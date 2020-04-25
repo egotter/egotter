@@ -40,10 +40,10 @@ module Api
           grid_class = ['col-12', 'col-12 col-sm-6'].include?(params[:grid_class]) ? params[:grid_class] : 'col-12'
           insert_ad = !(params[:insert_ad] == 'false')
           html = render_to_string partial: 'twitter/user', collection: users, cached: true, locals: {grid_class: grid_class, ad: insert_ad}, formats: %i(html)
-          response_json[:users] = html
-        else
-          response_json[:users] = users
+          response_json[:users_html] = html
         end
+
+        response_json[:users] = users
 
         render json: response_json
       end

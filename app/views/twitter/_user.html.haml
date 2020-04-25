@@ -3,9 +3,8 @@
 - user = TwitterUserDecorator.new(user)
 
 - if ad && defined?(user_counter) && user_counter == 3
-  %div{class: grid_class}
+  .mb-3{class: grid_class}
     = render partial: 'adsense/ad', locals: {vertical: :slit}
-    .vertical-spacing
 
 %div{class: grid_class}
   .card.mb-3.mb-lg-5

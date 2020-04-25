@@ -83,17 +83,20 @@
   - unless under_maintenance?
     = render partial: 'modal/search_modal'
 
+  - unless user_signed_in?
+    = modal_dialog id: 'sign-in-modal', title: t('.sign_in_modal.title'), body: t('.sign_in_modal.body'), button: {positive: t('.sign_in_modal.yes'), negative: t('.sign_in_modal.no')}
+
   - if user_signed_in?
-    -# This modal will be initialized in Twitter.enableFollowButton('selector') after follow buttons are rendered.
-    = modal_dialog id: 'create-follow-modal', title: t('twitter.create_follow_modal.title'), button: {positive: t('twitter.create_follow_modal.yes'), negative: t('twitter.create_follow_modal.no')}, data: {url: follows_path(via: current_via('create_follow_modal'))} do
+    -# This modal will be initialized in new FollowButton('selector') after follow buttons are rendered.
+    = modal_dialog id: 'create-follow-modal', title: t('twitter.create_follow_modal.title'), button: {positive: t('twitter.create_follow_modal.yes'), negative: t('twitter.create_follow_modal.no')} do
       %p= t('twitter.create_follow_modal.message_html')
       %p= t('twitter.create_follow_modal.history_link_html', url: settings_path(via: current_via('create_follow_modal'), anchor: 'follow-count'))
       .dont-confirm
         %input#create-follow-dont-confirm{type: 'checkbox'}
         %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
 
-    -# This modal will be initialized in Twitter.enableUnfollowButton('selector') after unfollow buttons are rendered.
-    = modal_dialog id: 'create-unfollow-modal', title: t('twitter.create_unfollow_modal.title'), button: {positive: t('twitter.create_unfollow_modal.yes'), negative: t('twitter.create_unfollow_modal.no'), category: 'danger'}, data: {url: unfollows_path(via: current_via('create_unfollow_modal'))} do
+    -# This modal will be initialized in new UnfollowButton('selector') after unfollow buttons are rendered.
+    = modal_dialog id: 'create-unfollow-modal', title: t('twitter.create_unfollow_modal.title'), button: {positive: t('twitter.create_unfollow_modal.yes'), negative: t('twitter.create_unfollow_modal.no'), category: 'danger'} do
       %p= t('twitter.create_unfollow_modal.message_html')
       %p= t('twitter.create_unfollow_modal.history_link_html', url: settings_path(via: current_via('create_unfollow_modal'), anchor: 'unfollow-count'))
       .dont-confirm

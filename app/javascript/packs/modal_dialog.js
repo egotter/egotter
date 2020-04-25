@@ -33,3 +33,17 @@ class SearchModal {
 }
 
 window.SearchModal = SearchModal;
+
+class SignInModal {
+  constructor(url) {
+    var $el = $('#sign-in-modal');
+
+    $el.find('.btn.positive').on('click', function () {
+      window.location.href = url;
+    });
+
+    $el.modal();
+  }
+}
+
+window.SignInModal = SignInModal;

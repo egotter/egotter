@@ -6,61 +6,76 @@
 <% title @page_title %>
 <% set_meta_tags description: @meta_description %>
 
+<%= render(partial: 'adsense/ad', locals: {vertical: :top}) %>
+
 <%= render partial: 'twitter/profile', locals: {user: @twitter_user} %>
 
-<h2 class="h2 page-title"><%= @content_title %></h2>
+<h2 class="h4 text-center my-5"><%= @content_title %></h2>
+<div class="mb-5"><%= raw @page_description %></div>
 
-<div class="text-center">
-  <%= raw @page_description %>
+<%= render(partial: 'adsense/ad', locals: {vertical: :middle}) %>
+
+<div class="text-right mb-4"><%= render partial: 'shared/sort_and_filter' %></div>
+
+<div class="empty-placeholders-wrapper" style="display: none;">
+  <%= t('filter.not_found') %>
 </div>
 
-<%= render partial: 'shared/sort_and_filter' %>
+<div class="placeholders-wrapper">
+  <% 3.times do %>
+    <%= render partial: 'timelines/placeholder', locals: {menu_name: '', menu_or_users: 'users'} %>
+  <% end %>
+</div>
 
 <div class="main-content twitter users row"></div>
 
-<div id="bottom-reached" class="text-center">
+<div id="bottom-reached" class="text-center my-3">
   <%= image_tag '/ajax-loader.gif' %>
 </div>
 
+<%= javascript_pack_tag 'result_pages' %>
+
 <script>
   $(function () {
+    // The user is always signed in on this page
     var signedIn = <%= user_signed_in? %>;
 
-    if (signedIn) {
-      var url = '<%= @api_path %>';
-      var uid = '<%= @twitter_user.uid %>';
-      var sortOrder = $('.sort-order-dropdown').data('sort-order');
-      var filter = $('.filter-dropdown').data('filter');
-      var params = {limit: 100, maxLimit: 100, sortOrder: sortOrder, filter: filter, gridClass: 'col-12 col-sm-6', insertAd: false};
-      var task = new Twitter.FetchTask(url, uid, params);
+    var url = '<%= @api_path %>';
+    var uid = '<%= @twitter_user.uid %>';
+    var sortOrder = $('.sort-order-dropdown').data('sort-order');
+    var filter = $('.filter-dropdown').data('filter');
+    var params = {limit: 100, maxLimit: 100, sortOrder: sortOrder, filter: filter, gridClass: 'col-12 col-sm-6', insertAd: true};
+    var task = new FetchTask(url, uid, params);
 
-      $('#bottom-reached').lazyload()
-          .on('appear', function () {
-            var $elem = $(this);
-            console.log('appear', $elem.attr('id'));
+    var callback = function (state) {
+      console.log('task.fetch', state);
 
-            $('#bottom-reached').find('img').show();
-            task.fetch(function (event) {
-              if (event.completed) {
-                $elem.off('appear').remove();
-              } else if (event.loaded) {
-                $elem.find('img').hide();
-              }
-            });
-          });
-
-      Twitter.enableSortButton($('.sort-order-buttons'), function (options) {task.reset(options)});
-      Twitter.enableFilterButton($('.filter-buttons'), function (options) {task.reset(options)});
-
-    } else {
-      var signInFromSortUrl = '<%= sign_in_path(via: current_via('sort_btn')) %>';
-      var signInFromFilterUrl = '<%= sign_in_path(via: current_via('filter_btn')) %>';
-      $('.sort-orders').attr('href', signInFromSortUrl);
-      $('.filters').attr('href', signInFromFilterUrl);
+      if (state.completed) {
+        $('#bottom-reached').off('appear').remove();
+      } else if (state.loaded) {
+        $('#bottom-reached').find('img').hide();
+      }
     }
 
-    Twitter.enableFollowButton('.twitter.users');
-    Twitter.enableUnfollowButton('.twitter.users');
+    task.fetch(callback);
+
+    $('#bottom-reached').lazyload()
+        .on('appear', function () {
+          var $elem = $(this);
+          console.log('appear', $elem.attr('id'));
+          $elem.find('img').show();
+          task.fetch(callback);
+        });
+
+    new SortButton(function (options) {
+      task.reset(options, callback)
+    });
+    new FilterButton(function (options) {
+      task.reset(options, callback)
+    });
+
+    new FollowButton('.twitter.users');
+    new UnfollowButton('.twitter.users');
 
     new Welcome.ShareDialog().show(true);
   });
