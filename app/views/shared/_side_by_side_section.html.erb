@@ -53,6 +53,7 @@
 
 <script>
   $(function () {
-    Home.setSearchCount('<%= search_count_path %>');
+    var url = '<%= search_count_path %>';
+    new SearchCount(url);
   });
 </script>

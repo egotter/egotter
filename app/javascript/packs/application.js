@@ -17,3 +17,10 @@
 
 import "core-js/stable";
 import "regenerator-runtime/runtime";
+
+import "./search_modal";
+import "./snack_message";
+import "./toast_message";
+import "./welcome";
+import "./async_loader";
+import "./home";

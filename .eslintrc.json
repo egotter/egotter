@@ -20,7 +20,8 @@
     "Snackbar": true,
     "SnackMessage": true,
     "ToastMessage": true,
-    "Mustache": true
+    "Mustache": true,
+    "AsyncLoader": true
   },
   "rules": {
     "semi": "error"

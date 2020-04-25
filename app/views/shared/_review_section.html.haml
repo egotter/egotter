@@ -5,5 +5,7 @@
   #public-tweets-wrapper.twitter.tweets.text-left.mx-auto
 :javascript
   $(function () {
-    Home.setPublicTweets('#{load_public_tweets_path}', '#public-tweets-wrapper');
+    var url = '#{load_public_tweets_path}';
+    var selector = '#public-tweets-wrapper';
+    new PublicTweets(url, selector);
   });

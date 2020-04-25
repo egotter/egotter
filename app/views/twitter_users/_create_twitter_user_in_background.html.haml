@@ -69,8 +69,6 @@
   var viaDM = #{via_dm?};
   var profileNotFound = #{twitter_user.profile_not_found?};
   var tooShortCreateInterval = #{twitter_user.too_short_create_interval?};
-  var nextCreationTimeMessage = '#{next_creation_message(twitter_user)}';
-  var requestToUpdate = #{switch_to_request?(twitter_user)};
   var eventCategory = '#{controller_name}##{action_name}';
 
   var urls = {
