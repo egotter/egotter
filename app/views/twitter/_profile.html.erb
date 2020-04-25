@@ -118,8 +118,8 @@
 <% if user_signed_in? %>
   <script>
     $(function () {
-      Twitter.enableFollowButton('.profile-header');
-      Twitter.enableUnfollowButton('.profile-header');
+      new FollowButton('.profile-header');
+      new UnfollowButton('.profile-header');
     });
   </script>
 <% end %>

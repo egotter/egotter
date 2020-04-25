@@ -19,7 +19,7 @@
   $(function () {
     $('.update-following').on('click', function () {
       var $clicked = $(this);
-      Twitter.follow($clicked.data('url'), $clicked.data('uid'));
+      new Twitter().follow($clicked.data('uid'));
       return false;
     });
 

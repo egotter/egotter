@@ -18,9 +18,11 @@
 import "core-js/stable";
 import "regenerator-runtime/runtime";
 
-import "./search_modal";
+import "./modal_dialog";
 import "./snack_message";
 import "./toast_message";
 import "./welcome";
 import "./async_loader";
 import "./home";
+import "./follow_and_unfollow";
+import "./sort_and_filter";

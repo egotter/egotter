@@ -20,6 +20,8 @@
   </div>
 </div>
 
+<%= javascript_pack_tag 'timelines' %>
+
 <script>
   $(function () {
     var feedName = '<%= feed_name %>';
@@ -28,10 +30,10 @@
     var box = $('.' + feedName + '.feed-item');
 
     if (fromCrawler) {
-      Timelines.loadFeedItemm(url, feedName);
+      new FeedItem(url, feedName);
     } else {
       box.lazyload().one('appear', function () {
-        Timelines.loadFeedItemm(url, feedName);
+        new FeedItem(url, feedName);
       });
     }
   });

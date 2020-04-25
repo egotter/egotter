@@ -16,10 +16,17 @@ class UnfollowsController < ApplicationController
   def create
     request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid])
     CreateUnfollowWorker.perform_async(request.id, enqueue_location: controller_name)
-    render json: {request_id: request.id}.merge(RateLimit.new(current_user).to_h)
+    message = t('.success', user: fetch_target_screen_name(params[:uid]))
+    render json: {request_id: request.id, message: message}.merge(RateLimit.new(current_user).to_h)
   end
 
   private
+
+  def fetch_target_screen_name(uid)
+    user = TwitterDB::User.find_by(uid: uid)
+    user = TwitterUser.latest_by(uid: uid) unless user
+    user ? user.screen_name : uid
+  end
 
   class RateLimit
     attr_reader :limit, :remaining
