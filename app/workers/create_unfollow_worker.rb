@@ -10,6 +10,10 @@ class CreateUnfollowWorker
     10.minutes
   end
 
+  def retry_in
+    1.hour + rand(30.minutes)
+  end
+
   # options:
   #   enqueue_location
   def perform(request_id, options = {})
@@ -17,9 +21,9 @@ class CreateUnfollowWorker
     CreateUnfollowTask.new(request).start!
 
   rescue UnfollowRequest::TooManyUnfollows => e
-    logger.warn "#{e.class} Sleep for 1 hour"
-    sleep 1.hour
-    CreateUnfollowWorker.perform_async(request_id, options)
+    # This exception is never raised
+    logger.warn "#{e.class} Retry later"
+    CreateUnfollowWorker.perform_in(retry_in, request_id, options)
 
   rescue UnfollowRequest::RetryableError => e
     CreateUnfollowWorker.perform_async(request_id, options)

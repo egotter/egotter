@@ -143,7 +143,6 @@ module Taskbooks
             'sudo restart sidekiq_prompt_reports || :',
             'sudo restart sidekiq || :',
             'sudo restart sidekiq_import || :',
-            'sudo restart sidekiq_follow || :',
             'sudo restart sidekiq_unfollow || :',
         ].each do |cmd|
           backend(cmd)
