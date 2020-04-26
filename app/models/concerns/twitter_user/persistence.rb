@@ -106,8 +106,8 @@ module Concerns::TwitterUser::Persistence
       super
 
       elapsed = Time.zone.now - start
-      @bm_after_commit['elapsed'] = elapsed
       @bm_after_commit['sum'] = @bm_after_commit.values.sum
+      @bm_after_commit['elapsed'] = elapsed
 
       logger.info "Benchmark CreateTwitterUserRequest persistence id=#{id} user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
       logger.info "Benchmark CreateTwitterUserRequest persistence id=#{id} user_id=#{user_id} uid=#{uid} #{@bm_after_commit.inspect}"

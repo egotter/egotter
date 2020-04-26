@@ -65,8 +65,8 @@ module Concerns::TwitterUser::AssociationBuilder
       super
 
       elapsed = Time.zone.now - start
-      @bm_build_relations['elapsed'] = elapsed
       @bm_build_relations['sum'] = @bm_build_relations.values.sum
+      @bm_build_relations['elapsed'] = elapsed
 
       logger.info "Benchmark CreateTwitterUserRequest AssociationBuilder id=#{id} user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
       logger.info "Benchmark CreateTwitterUserRequest AssociationBuilder id=#{id} user_id=#{user_id} uid=#{uid} #{@bm_build_relations.inspect}"

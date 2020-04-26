@@ -9,31 +9,31 @@ class CreatePromptReportTask
   def start!
     @log = CreatePromptReportLog.create_by(request: request)
 
-    benchmark('request.error_check!') { request.error_check! }
+    bm_task_start('request.error_check!') { request.error_check! }
 
     twitter_user = nil
 
     begin
-      benchmark('create_twitter_user!') { twitter_user = create_twitter_user!(request.user) }
+      bm_task_start('create_twitter_user!') { twitter_user = create_twitter_user!(request.user) }
     ensure
       # Regardless of whether or not the TwitterUser record is created, the Unfriendship and the Unfollowership are updated.
       # Since the internal logic has been changed, otherwise the unfriends and the unfollowers will remain inaccurate.
       if (persisted = TwitterUser.latest_by(uid: request.user.uid))
         unfriend_uids = unfollower_uids = nil
-        benchmark('calculate_unfriendships') { unfriend_uids = persisted.calc_unfriend_uids }
-        benchmark('update_unfriendships') { update_unfriendships(persisted.uid, unfriend_uids) }
-        benchmark('calculate_unfollowerships') { unfollower_uids = persisted.calc_unfollower_uids }
-        benchmark('update_unfollowerships') { update_unfollowerships(persisted.uid, unfollower_uids) }
+        bm_task_start('calculate_unfriendships') { unfriend_uids = persisted.calc_unfriend_uids }
+        bm_task_start('update_unfriendships') { update_unfriendships(persisted.uid, unfriend_uids) }
+        bm_task_start('calculate_unfollowerships') { unfollower_uids = persisted.calc_unfollower_uids }
+        bm_task_start('update_unfollowerships') { update_unfollowerships(persisted.uid, unfollower_uids) }
       end
     end
 
-    benchmark('request.perform!') { request.perform!(twitter_user) }
+    bm_task_start('request.perform!') { request.perform!(twitter_user) }
 
     request.finished!
     @log.update(status: true)
 
     if %i(you_are_removed not_changed).include?(request.kind)
-      benchmark('update_api_caches') { update_api_caches(TwitterUser.latest_by(uid: request.user.uid)) }
+      bm_task_start('update_api_caches') { update_api_caches(TwitterUser.latest_by(uid: request.user.uid)) }
     end
 
     self
@@ -95,25 +95,25 @@ class CreatePromptReportTask
     end
   end
 
-  def benchmark(message, &block)
+  def bm_task_start(message, &block)
     start = Time.zone.now
     yield
-    @benchmark[message] = Time.zone.now - start
+    @bm_task_start[message] = Time.zone.now - start
   end
 
   module Instrumentation
     def start!(*args, &blk)
-      @benchmark = {}
+      @bm_task_start = {}
       start = Time.zone.now
 
       super
 
       elapsed = Time.zone.now - start
-      @benchmark['elapsed'] = elapsed
-      @benchmark['sum'] = @benchmark.values.sum
+      @bm_task_start['sum'] = @bm_task_start.values.sum
+      @bm_task_start['elapsed'] = elapsed
 
       Rails.logger.info "Benchmark CreatePromptReportTask request_id=#{request.id} #{sprintf("%.3f sec", elapsed)}"
-      Rails.logger.info "Benchmark CreatePromptReportTask request_id=#{request.id} #{@benchmark.inspect}"
+      Rails.logger.info "Benchmark CreatePromptReportTask request_id=#{request.id} #{@bm_task_start.inspect}"
 
       if elapsed > 30
         notice = Airbrake.build_notice('CreatePromptReportTask took more than 30 seconds')

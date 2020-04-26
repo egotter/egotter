@@ -155,8 +155,8 @@ class CreateTwitterUserRequest < ApplicationRecord
       result = super
 
       elapsed = Time.zone.now - start
-      @benchmark['elapsed'] = elapsed
       @benchmark['sum'] = @benchmark.values.sum
+      @benchmark['elapsed'] = elapsed
 
       Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
       Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@benchmark.inspect}"
