@@ -92,13 +92,9 @@ module Taskbooks
         @target_group = ::DeployRuby::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
       end
 
-      def before_run
+      def run
         ssh_connection_test
         @target_group.deregister(@instance.id)
-      end
-
-      def run
-        before_run
 
         [
             'git fetch origin',
@@ -115,22 +111,14 @@ module Taskbooks
           backend(cmd)
         end
 
-        after_run
-      end
-
-      def after_run
         backend('ab -n 500 -c 10 http://localhost:80/')
         @target_group.register(@instance.id)
       end
     end
 
     class SidekiqTask < Task
-      def before_run
-        ssh_connection_test
-      end
-
       def run
-        before_run
+        ssh_connection_test
 
         [
             'git fetch origin',
@@ -140,9 +128,10 @@ module Taskbooks
             'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
             'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
             'sudo restart sidekiq_misc || :',
-            'sudo restart sidekiq_prompt_reports || :',
+            'sudo restart sidekiq_prompt_reports_workers || :',
             'sudo restart sidekiq || :',
             'sudo restart sidekiq_import || :',
+            'sudo restart sidekiq_follow || :',
             'sudo restart sidekiq_unfollow || :',
         ].each do |cmd|
           backend(cmd)

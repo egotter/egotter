@@ -318,7 +318,7 @@ module Tasks
             'sudo start sidekiq',
             'sudo start sidekiq_import',
             'sudo start sidekiq_misc',
-            'sudo start sidekiq_prompt_reports',
+            'sudo stop sidekiq_prompt_reports_workers',
             'sudo restart datadog-agent',
         ].each do |cmd|
           backend(cmd)
@@ -332,7 +332,7 @@ module Tasks
             'sudo stop sidekiq || :',
             'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',
-            'sudo stop sidekiq_prompt_reports || :',
+            'sudo stop sidekiq_prompt_reports_workers || :',
         ].each do |cmd|
           backend(cmd)
         end
@@ -354,7 +354,7 @@ module Tasks
             'sudo start sidekiq || :',
             'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',
-            'sudo start sidekiq_prompt_reports',
+            'sudo start sidekiq_prompt_reports_workers',
             'sudo restart datadog-agent',
         ].each do |cmd|
           backend(cmd)
@@ -415,7 +415,7 @@ module Tasks
             'sudo stop sidekiq || :',
             'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',
-            'sudo stop sidekiq_prompt_reports || :',
+            'sudo stop sidekiq_prompt_reports_workers || :',
         ].each do |cmd|
           backend(cmd)
         end

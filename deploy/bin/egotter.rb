@@ -68,7 +68,7 @@ if params['release']
 
   system("git tag release-#{params['role']}-#{Time.now.to_i}")
   system('git push origin --tags')
-else
+elsif params['launch'] || params['terminate'] || params['sync'] || params['list']
   task = Taskbooks::AwsTask.build(params)
   task.run
 
@@ -76,4 +76,6 @@ else
     %x(git tag #{task.action}-#{task.instance.name})
     %x(git push origin --tags)
   end
+else
+  raise 'Invalid action'
 end
