@@ -19,7 +19,7 @@ do_stop() {
   stop sidekiq
   stop sidekiq_import
   stop sidekiq_misc
-  stop sidekiq_prompt_reports
+  stop sidekiq_prompt_reports_workers
   stop sidekiq_follow
   stop sidekiq_unfollow
 }
