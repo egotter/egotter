@@ -38,7 +38,9 @@ class CreateTwitterUserRequest < ApplicationRecord
     # Don't call #invalid? because it clears errors
     raise RecordInvalid.new(twitter_user) if twitter_user.errors.any?
 
-    if twitter_user.save
+    save_result = nil
+    bm_perform('twitter_user.save') { save_result = twitter_user.save }
+    if save_result
       update(twitter_user_id: twitter_user.id)
       return twitter_user
     end
