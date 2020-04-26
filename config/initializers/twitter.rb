@@ -24,6 +24,7 @@ module Egotter
         super
       rescue ::Twitter::Error::EnhanceYourCalm => e
         CallCreateDirectMessageEventCount.new.raised
+        GlobalDirectMessageLimitation.new.limit_start
         raise
       ensure
         CallCreateDirectMessageEventCount.new.increment

@@ -23,13 +23,23 @@ class StartSendingPromptReportsWorker
     logger.warn "The job execution is timed out."
   end
 
+  def retry_in
+    1.hour + rand(30.minutes)
+  end
+
   # options:
   #   last_queueing_started_at
   def perform(options = {})
     if CallCreateDirectMessageEventCount.rate_limited?
       time = CallCreateDirectMessageEventCount.raised_ttl.seconds
       logger.warn "Creating a direct message is rate limited. Wait for #{time.inspect}."
-      StartSendingPromptReportsWorker.perform_in(time, options)
+      StartSendingPromptReportsWorker.perform_in(retry_in, options)
+      return
+    end
+
+    if GlobalDirectMessageLimitation.new.limited?
+      logger.warn "Creating a direct message is limited."
+      StartSendingPromptReportsWorker.perform_in(retry_in, options)
       return
     end
 
