@@ -20,13 +20,6 @@ module Concerns::TwitterUser::Associations
       obj.has_one :score
     end
 
-    # TODO Remove later
-    with_options({primary_key: :uid, foreign_key: :uid}.update(default_options)) do |obj|
-      obj.has_many :_statuses,  order_by_sequence_asc, class_name: 'TwitterDB::Status'
-      obj.has_many :_favorites, order_by_sequence_asc, class_name: 'TwitterDB::Favorite'
-      obj.has_many :_mentions,  order_by_sequence_asc, class_name: 'TwitterDB::Mention'
-    end
-
     with_options({primary_key: :uid, foreign_key: :from_uid}.update(default_options)) do |obj|
       obj.has_many :one_sided_friendships,       order_by_sequence_asc
       obj.has_many :one_sided_followerships,     order_by_sequence_asc
@@ -79,24 +72,6 @@ module Concerns::TwitterUser::Associations
 
   def unfollower_uids
     unfollowerships.pluck(:follower_uid)
-  end
-
-  # TODO Remove later
-  def statuses
-    logger.info "[Associations] :#{__method__} is deprecated. Use :status_tweets instead"
-    _statuses
-  end
-
-  # TODO Remove later
-  def favorites
-    logger.info "[Associations] :#{__method__} is deprecated. Use :favorite_tweets instead"
-    _favorites
-  end
-
-  # TODO Remove later
-  def mentions
-    logger.info "[Associations] :#{__method__} is deprecated. Use :mention_tweets instead"
-    _mentions
   end
 
   def status_tweets

@@ -39,7 +39,6 @@ module Concerns::TwitterUser::AssociationBuilder
     end
 
     bm_build_relations("build user_timeline size=#{user_timeline&.size}") do
-      # user_timeline.each { |status| statuses.build(TwitterDB::Status.attrs_by(twitter_user: self, status: status)) } if user_timeline&.any?
       if user_timeline&.any?
         @reserved_statuses = user_timeline.map { |status| TwitterDB::Status.new(TwitterDB::Status.attrs_by(twitter_user: self, status: status)) }
       else
@@ -48,7 +47,6 @@ module Concerns::TwitterUser::AssociationBuilder
     end
 
     bm_build_relations("build mentions_timeline size=#{mentions_timeline&.size}") do
-      # mentions_timeline.each { |status| mentions.build(TwitterDB::Mention.attrs_by(twitter_user: self, status: status)) } if mentions_timeline&.any?
       if mentions_timeline&.any?
         @reserved_mentions = mentions_timeline.map { |status| TwitterDB::Mention.new(TwitterDB::Mention.attrs_by(twitter_user: self, status: status)) }
       else
@@ -57,7 +55,6 @@ module Concerns::TwitterUser::AssociationBuilder
     end
 
     bm_build_relations("build _favorites size=#{_favorites&.size}") do
-      # _favorites.each { |status| favorites.build(TwitterDB::Favorite.attrs_by(twitter_user: self, status: status)) } if _favorites&.any?
       if _favorites&.any?
         @reserved_favorites = _favorites.map { |status| TwitterDB::Favorite.new(TwitterDB::Favorite.attrs_by(twitter_user: self, status: status)) }
       else
