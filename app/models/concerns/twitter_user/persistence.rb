@@ -43,7 +43,7 @@ module Concerns::TwitterUser::Persistence
 
     tweets = []
     bm_after_commit('S3::StatusTweet.import_from! collect') do
-      tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      tweets = @reserved_statuses.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
     end
     bm_after_commit('S3::StatusTweet.import_from! import') do
       S3::StatusTweet.import_from!(uid, screen_name, tweets)
@@ -51,7 +51,7 @@ module Concerns::TwitterUser::Persistence
 
     tweets = []
     bm_after_commit('S3::FavoriteTweet.import_from! collect') do
-      tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      tweets = @reserved_favorites.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
     end
     bm_after_commit('S3::FavoriteTweet.import_from! import') do
       S3::FavoriteTweet.import_from!(uid, screen_name, tweets)
@@ -59,7 +59,7 @@ module Concerns::TwitterUser::Persistence
 
     tweets = []
     bm_after_commit('S3::MentionTweet.import_from! collect') do
-      tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      tweets = @reserved_mentions.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
     end
     bm_after_commit('S3::MentionTweet.import_from! import') do
       S3::MentionTweet.import_from!(uid, screen_name, tweets)
@@ -69,7 +69,7 @@ module Concerns::TwitterUser::Persistence
 
     tweets = []
     bm_after_commit('Efs::StatusTweet.import_from! collect') do
-      tweets = statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      tweets = @reserved_statuses.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
     end
     bm_after_commit('Efs::StatusTweet.import_from! import') do
       Efs::StatusTweet.import_from!(uid, screen_name, tweets)
@@ -77,7 +77,7 @@ module Concerns::TwitterUser::Persistence
 
     tweets = []
     bm_after_commit('Efs::FavoriteTweet.import_from! collect') do
-      tweets = favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      tweets = @reserved_favorites.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
     end
     bm_after_commit('Efs::FavoriteTweet.import_from! import') do
       Efs::FavoriteTweet.import_from!(uid, screen_name, tweets)
@@ -85,7 +85,7 @@ module Concerns::TwitterUser::Persistence
 
     tweets = []
     bm_after_commit('Efs::MentionTweet.import_from! collect') do
-      tweets = mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+      tweets = @reserved_mentions.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
     end
     bm_after_commit('Efs::MentionTweet.import_from! import') do
       Efs::MentionTweet.import_from!(uid, screen_name, tweets)
