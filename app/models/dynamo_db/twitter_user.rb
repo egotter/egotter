@@ -57,15 +57,20 @@ module DynamoDB
     end
 
     module Instrumentation
-      def find_by(twitter_user_id)
-        start = Time.zone.now
+      %i(
+        find_by
+        delete_by
+        import_from
+      ).each do |method_name|
+        define_method(method_name) do |*args, &blk|
+          start = Time.zone.now
+          ret_val = method(method_name).super_method.call(*args, &blk)
 
-        result = super
+          time = sprintf("%.1f", Time.zone.now - start)
+          Rails.logger.info { "#{self} #{method_name} by #{args[0]}#{' HIT' if ret_val} (#{time}ms)" }
 
-        time = sprintf("%.1f", Time.zone.now - start)
-        Rails.logger.info { "#{self} Fetch by #{twitter_user_id}#{' HIT' if result} (#{time}ms)" }
-
-        result
+          ret_val
+        end
       end
     end
     singleton_class.prepend Instrumentation
