@@ -33,7 +33,12 @@ module DynamoDB
             friend_uids: friend_uids,
             follower_uids: follower_uids
         }
-        item = {twitter_user_id: twitter_user_id, json: compress(payload.to_json)}
+
+        item = {
+            twitter_user_id: twitter_user_id,
+            json: compress(payload.to_json),
+            expiration_time: 1.day.since.to_i
+        }
 
         dynamo_db_client.put_item(table_name: TABLE_NAME, item: item)
       end
