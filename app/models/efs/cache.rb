@@ -4,12 +4,12 @@ module Efs
   class Cache
     attr_reader :ttl
 
-    def initialize(key_prefix, klass)
+    def initialize(key_prefix, klass, mounted_dir = nil)
       @key_prefix = key_prefix
       @klass = klass
       @ttl = 1.hour
 
-      dir = Rails.root.join(CacheDirectory.find_by(name: 'efs_tweet_cache')&.dir || "tmp/efs_tweet_cache")
+      dir = Rails.root.join(mounted_dir || 'tmp/tweet')
       FileUtils.mkdir_p(dir) unless File.exists?(dir)
       @client = ActiveSupport::Cache::FileStore.new(dir, expires_in: @ttl)
       @dir = dir

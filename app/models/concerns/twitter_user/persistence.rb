@@ -62,7 +62,7 @@ module Concerns::TwitterUser::Persistence
       S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
 
-    # EFS
+    # EFS (Automatically deleted)
 
     bm_after_commit('Efs::StatusTweet.import_from!') do
       Efs::StatusTweet.import_from!(uid, screen_name, status_tweets)

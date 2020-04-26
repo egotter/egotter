@@ -2,18 +2,23 @@
 
 module Efs
   class Tweet
+
+    def initialize
+      # TODO Implement
+    end
+
     class << self
       def where(uid: nil, screen_name: nil)
         uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
         if (obj = cache.get_object(uid))
-          decode(obj)['tweets']
+          decompress(obj)['tweets']
         else
           []
         end
       end
 
       def import_from!(uid, screen_name, tweets)
-        body = encode(uid, screen_name, tweets)
+        body = compress(uid, screen_name, tweets)
         cache.put_object(uid, body)
       end
 
@@ -22,7 +27,7 @@ module Efs
         cache.delete_object(uid)
       end
 
-      def encode(uid, screen_name, tweets)
+      def compress(uid, screen_name, tweets)
         {
             uid: uid,
             screen_name: screen_name,
@@ -31,14 +36,14 @@ module Efs
         }.to_json
       end
 
-      def decode(obj)
+      def decompress(obj)
         obj = ::S3::Util.parse_json(obj)
         obj['tweets'] = ::S3::Util.unpack(obj['tweets'])
         obj
       end
 
       def cache
-        @cache ||= ::Efs::Cache.new(key_prefix, self)
+        @cache ||= ::Efs::Cache.new(key_prefix, self, mounted_dir)
       end
     end
   end
