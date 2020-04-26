@@ -27,6 +27,11 @@ module Concerns::TwitterUser::Persistence
       Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, @friend_uids, @follower_uids)
     end
 
+    # Experimental import
+    bm_after_commit('DynamoDB::TwitterUser.import_from') do
+      DynamoDB::TwitterUser.import_from(id, uid, screen_name, profile_text, @friend_uids, @follower_uids)
+    end
+
     bm_after_commit('S3::Friendship.import_from!') do
       S3::Friendship.import_from!(id, uid, screen_name, @friend_uids, async: true)
     end
@@ -39,56 +44,36 @@ module Concerns::TwitterUser::Persistence
       S3::Profile.import_from!(id, uid, screen_name, profile_text, async: true)
     end
 
+    status_tweets = @reserved_statuses.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    favorite_tweets = @reserved_favorites.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+    mention_tweets = @reserved_mentions.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
+
     # S3
 
-    tweets = []
-    bm_after_commit('S3::StatusTweet.import_from! collect') do
-      tweets = @reserved_statuses.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-    end
-    bm_after_commit('S3::StatusTweet.import_from! import') do
-      S3::StatusTweet.import_from!(uid, screen_name, tweets)
+    bm_after_commit('S3::StatusTweet.import_from!') do
+      S3::StatusTweet.import_from!(uid, screen_name, status_tweets)
     end
 
-    tweets = []
-    bm_after_commit('S3::FavoriteTweet.import_from! collect') do
-      tweets = @reserved_favorites.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-    end
-    bm_after_commit('S3::FavoriteTweet.import_from! import') do
-      S3::FavoriteTweet.import_from!(uid, screen_name, tweets)
+    bm_after_commit('S3::FavoriteTweet.import_from!') do
+      S3::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
     end
 
-    tweets = []
-    bm_after_commit('S3::MentionTweet.import_from! collect') do
-      tweets = @reserved_mentions.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-    end
-    bm_after_commit('S3::MentionTweet.import_from! import') do
-      S3::MentionTweet.import_from!(uid, screen_name, tweets)
+    bm_after_commit('S3::MentionTweet.import_from!') do
+      S3::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
 
     # EFS
 
-    tweets = []
-    bm_after_commit('Efs::StatusTweet.import_from! collect') do
-      tweets = @reserved_statuses.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-    end
-    bm_after_commit('Efs::StatusTweet.import_from! import') do
-      Efs::StatusTweet.import_from!(uid, screen_name, tweets)
+    bm_after_commit('Efs::StatusTweet.import_from!') do
+      Efs::StatusTweet.import_from!(uid, screen_name, status_tweets)
     end
 
-    tweets = []
-    bm_after_commit('Efs::FavoriteTweet.import_from! collect') do
-      tweets = @reserved_favorites.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-    end
-    bm_after_commit('Efs::FavoriteTweet.import_from! import') do
-      Efs::FavoriteTweet.import_from!(uid, screen_name, tweets)
+    bm_after_commit('Efs::FavoriteTweet.import_from!') do
+      Efs::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
     end
 
-    tweets = []
-    bm_after_commit('Efs::MentionTweet.import_from! collect') do
-      tweets = @reserved_mentions.map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) }
-    end
-    bm_after_commit('Efs::MentionTweet.import_from! import') do
-      Efs::MentionTweet.import_from!(uid, screen_name, tweets)
+    bm_after_commit('Efs::MentionTweet.import_from!') do
+      Efs::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
   end
 
