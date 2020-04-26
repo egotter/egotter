@@ -1,0 +1,73 @@
+# -*- SkipSchemaAnnotations
+module DynamoDB
+  class TwitterUser
+    REGION = 'ap-northeast-1'
+    TABLE_NAME = "egotter.#{Rails.env}.twitter_users"
+
+    class << self
+      # keys: :uid, :screen_name, :profile, :friend_uids, :follower_uids
+      def find_by(twitter_user_id)
+        obj = dynamo_db_client.get_item(db_key(twitter_user_id)).item
+        obj && obj['json'] ? parse_json(decompress(obj['json'])) : nil
+      end
+
+      def delete_by(twitter_user_id)
+        dynamo_db_client.delete_item(db_key(twitter_user_id))
+      end
+
+      def import_from(twitter_user_id, uid, screen_name, profile, friend_uids, follower_uids)
+        profile = parse_json(profile) if profile.class == String
+        payload = {
+            uid: uid,
+            screen_name: screen_name,
+            profile: profile,
+            friend_uids: friend_uids,
+            follower_uids: follower_uids
+        }
+        item = {twitter_user_id: twitter_user_id, json: compress(payload.to_json)}
+
+        dynamo_db_client.put_item(table_name: TABLE_NAME, item: item)
+      end
+
+      def import_from_twitter_user(twitter_user)
+        import_from(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(:profile), twitter_user.friend_uids, twitter_user.follower_uids)
+      end
+
+      def db_key(twitter_user_id)
+        {table_name: TABLE_NAME, key: {twitter_user_id: twitter_user_id}}
+      end
+
+      def dynamo_db_client
+        @dynamo_db_client ||= Aws::DynamoDB::Client.new(region: REGION)
+      end
+
+      def parse_json(text)
+        Oj.load(text, symbol_keys: true)
+      rescue Oj::ParseError => e
+        raise TypeError.new("#{text} is not a valid JSON source.")
+      end
+
+      def compress(text)
+        Base64.encode64(Zlib::Deflate.deflate(text))
+      end
+
+      def decompress(data)
+        Zlib::Inflate.inflate(Base64.decode64(data))
+      end
+    end
+
+    module Instrumentation
+      def find_by(twitter_user_id)
+        start = Time.zone.now
+
+        result = super
+
+        time = sprintf("%.1f", Time.zone.now - start)
+        Rails.logger.info { "#{self} Fetch by #{twitter_user_id}#{' HIT' if result} (#{time}ms)" }
+
+        result
+      end
+    end
+    singleton_class.prepend Instrumentation
+  end
+end

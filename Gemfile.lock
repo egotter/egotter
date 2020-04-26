@@ -95,6 +95,9 @@ GEM
       aws-partitions (~> 1, >= 1.239.0)
       aws-sigv4 (~> 1.1)
       jmespath (~> 1.0)
+    aws-sdk-dynamodb (1.45.0)
+      aws-sdk-core (~> 3, >= 3.71.0)
+      aws-sigv4 (~> 1.1)
     aws-sdk-ec2 (1.129.0)
       aws-sdk-core (~> 3, >= 3.71.0)
       aws-sigv4 (~> 1.1)
@@ -489,6 +492,7 @@ DEPENDENCIES
   airbrake
   annotate
   aws-sdk-cloudwatch
+  aws-sdk-dynamodb
   aws-sdk-ec2
   aws-sdk-elasticloadbalancingv2
   aws-sdk-s3
