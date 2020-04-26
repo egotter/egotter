@@ -4,11 +4,20 @@ module DynamoDB
     REGION = 'ap-northeast-1'
     TABLE_NAME = "egotter.#{Rails.env}.twitter_users"
 
+    attr_reader :uid, :screen_name, :profile, :friend_uids, :follower_uids
+
+    def initialize(attrs)
+      @uid = attrs[:uid]
+      @screen_name = attrs[:screen_name]
+      @profile = attrs[:profile]
+      @friend_uids = attrs[:friend_uids]
+      @follower_uids = attrs[:follower_uids]
+    end
+
     class << self
-      # keys: :uid, :screen_name, :profile, :friend_uids, :follower_uids
       def find_by(twitter_user_id)
         obj = dynamo_db_client.get_item(db_key(twitter_user_id)).item
-        obj && obj['json'] ? parse_json(decompress(obj['json'])) : nil
+        obj && obj['json'] ? new(parse_json(decompress(obj['json']))) : nil
       end
 
       def delete_by(twitter_user_id)
@@ -32,6 +41,8 @@ module DynamoDB
       def import_from_twitter_user(twitter_user)
         import_from(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.send(:profile), twitter_user.friend_uids, twitter_user.follower_uids)
       end
+
+      private
 
       def db_key(twitter_user_id)
         {table_name: TABLE_NAME, key: {twitter_user_id: twitter_user_id}}
