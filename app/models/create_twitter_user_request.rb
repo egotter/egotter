@@ -61,11 +61,11 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     unless previous_twitter_user
       fetched_user = twitter_user = relations = nil
-      benchmark('fetch_user') { fetched_user = fetch_user }
-      benchmark('TwitterUser.build_by') { twitter_user = TwitterUser.build_by(user: fetched_user) }
-      benchmark('fetch_relations!', twitter_user) { relations = fetch_relations!(twitter_user, context) }
-      benchmark('build_friends_and_followers', twitter_user) { twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
-      benchmark('build_other_relations', twitter_user) { twitter_user.build_other_relations(relations) }
+      bm_perform('fetch_user') { fetched_user = fetch_user }
+      bm_perform('TwitterUser.build_by') { twitter_user = TwitterUser.build_by(user: fetched_user) }
+      bm_perform('fetch_relations!') { relations = fetch_relations!(twitter_user, context) }
+      bm_perform('build_friends_and_followers') { twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
+      bm_perform('build_other_relations') { twitter_user.build_other_relations(relations) }
       twitter_user.user_id = user_id
       return twitter_user
     end
@@ -75,23 +75,23 @@ class CreateTwitterUserRequest < ApplicationRecord
     raise TooShortCreateInterval if previous_twitter_user.too_short_create_interval?
 
     fetched_user = current_twitter_user = relations = nil
-    benchmark('fetch_user') { fetched_user = fetch_user }
-    benchmark('TwitterUser.build_by') { current_twitter_user = TwitterUser.build_by(user: fetched_user) }
-    benchmark('fetch_relations!', current_twitter_user) { relations = fetch_relations!(current_twitter_user, context) }
-    benchmark('build_friends_and_followers', current_twitter_user) { current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
+    bm_perform('fetch_user') { fetched_user = fetch_user }
+    bm_perform('TwitterUser.build_by') { current_twitter_user = TwitterUser.build_by(user: fetched_user) }
+    bm_perform('fetch_relations!') { relations = fetch_relations!(current_twitter_user, context) }
+    bm_perform('build_friends_and_followers') { current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
 
     if current_twitter_user.no_need_to_import_friendships?
       raise TooManyFriends.new('Already exists')
     end
 
     diff_not_found = false
-    benchmark('diff', current_twitter_user) { diff_not_found = previous_twitter_user.diff(current_twitter_user).empty? }
+    bm_perform('diff') { diff_not_found = previous_twitter_user.diff(current_twitter_user).empty? }
 
     if diff_not_found
       raise NotChanged.new('Before build')
     end
 
-    benchmark('build_other_relations', current_twitter_user) { current_twitter_user.build_other_relations(relations) }
+    bm_perform('build_other_relations') { current_twitter_user.build_other_relations(relations) }
     current_twitter_user.user_id = user_id
     current_twitter_user
 
@@ -141,26 +141,34 @@ class CreateTwitterUserRequest < ApplicationRecord
     @client ||= user ? user.api_client : Bot.api_client
   end
 
-  def benchmark(message, twitter_user = nil, &block)
-    start = Time.zone.now
-    yield
-    @benchmark[message] = Time.zone.now - start
-  end
-
   module Instrumentation
+    def bm_perform(message, &block)
+      start = Time.zone.now
+      yield
+      @bm_perform[message] = Time.zone.now - start
+    end
+
     def perform!(*args, &blk)
-      @benchmark = {}
+      @bm_perform = {}
       start = Time.zone.now
 
       result = super
 
       elapsed = Time.zone.now - start
-      @benchmark['sum'] = @benchmark.values.sum
-      @benchmark['elapsed'] = elapsed
+      @bm_perform['sum'] = @bm_perform.values.sum
+      @bm_perform['elapsed'] = elapsed
+      @bm_perform['build_twitter_user'] = @bm_build_twitter_user
 
       Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
-      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@benchmark.inspect}"
+      Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@bm_perform.inspect}"
 
+      result
+    end
+
+    def build_twitter_user(*args, &blk)
+      start = Time.zone.now
+      result = super
+      @bm_build_twitter_user = Time.zone.now - start
       result
     end
   end

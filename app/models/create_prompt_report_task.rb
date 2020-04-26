@@ -95,13 +95,13 @@ class CreatePromptReportTask
     end
   end
 
-  def bm_task_start(message, &block)
-    start = Time.zone.now
-    yield
-    @bm_task_start[message] = Time.zone.now - start
-  end
-
   module Instrumentation
+    def bm_task_start(message, &block)
+      start = Time.zone.now
+      yield
+      @bm_task_start[message] = Time.zone.now - start
+    end
+
     def start!(*args, &blk)
       @bm_task_start = {}
       start = Time.zone.now
