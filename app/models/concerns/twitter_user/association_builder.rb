@@ -38,19 +38,39 @@ module Concerns::TwitterUser::AssociationBuilder
       mentions_timeline = relations[:search].reject { |status| uid == status[:user][:id] || status[:text].start_with?("RT @#{screen_name}") }
     end
 
-    prefix = "Benchmark CreateTwitterUserRequest"
-    suffix = "user_id=#{user_id} uid=#{uid}"
-
-    ApplicationRecord.benchmark("#{prefix} build user_timeline #{suffix} size=#{user_timeline&.size}", level: :info) do
+    bm_build_relations("build user_timeline size=#{user_timeline&.size}") do
       user_timeline.each { |status| statuses.build(TwitterDB::Status.attrs_by(twitter_user: self, status: status)) } if user_timeline&.any?
     end
 
-    ApplicationRecord.benchmark("#{prefix} build mentions_timeline #{suffix} size=#{mentions_timeline&.size}", level: :info) do
+    bm_build_relations("build mentions_timeline size=#{mentions_timeline&.size}") do
       mentions_timeline.each { |status| mentions.build(TwitterDB::Mention.attrs_by(twitter_user: self, status: status)) } if mentions_timeline&.any?
     end
 
-    ApplicationRecord.benchmark("#{prefix} build _favorites #{suffix} size=#{_favorites&.size}", level: :info) do
+    bm_build_relations("build _favorites size=#{_favorites&.size}") do
       _favorites.each { |status| favorites.build(TwitterDB::Favorite.attrs_by(twitter_user: self, status: status)) } if _favorites&.any?
     end
   end
+
+  module Instrumentation
+    def bm_build_relations(message, &block)
+      start = Time.zone.now
+      yield
+      @bm_build_relations[message] = Time.zone.now - start
+    end
+
+    def build_other_relations(*args, &blk)
+      @bm_build_relations = {}
+      start = Time.zone.now
+
+      super
+
+      elapsed = Time.zone.now - start
+      @bm_build_relations['elapsed'] = elapsed
+      @bm_build_relations['sum'] = @bm_build_relations.values.sum
+
+      logger.info "Benchmark CreateTwitterUserRequest AssociationBuilder id=#{id} user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
+      logger.info "Benchmark CreateTwitterUserRequest AssociationBuilder id=#{id} user_id=#{user_id} uid=#{uid} #{@bm_build_relations.inspect}"
+    end
+  end
+  prepend Instrumentation
 end
