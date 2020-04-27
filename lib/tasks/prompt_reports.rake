@@ -41,17 +41,26 @@ namespace :prompt_reports do
     limit = ENV['LIMIT'] || 10
     setting = user.notification_setting
 
-    requests = CreatePromptReportRequest.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
-    logs = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
-    reports = PromptReport.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
     error = CreatePromptReportValidator.new(user: user).validate! rescue $!
+    days = user.access_days.order(created_at: :desc).limit(limit)
+    requests = CreatePromptReportRequest.where(user_id: user.id).order(created_at: :desc).limit(limit)
+    logs = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(limit)
+    reports = PromptReport.where(user_id: user.id).order(created_at: :desc).limit(limit)
+
+    blocked_user = BlockedUser.find_by(screen_name: user.screen_name)
 
     puts <<~TEXT
       validate!
       #{error.inspect}
 
+      Days
+      #{days.map(&:date).inspect}
+
       User
       #{user.attributes.symbolize_keys.slice(:id, :uid, :screen_name, :authorized).inspect}
+
+      Blocked
+      #{blocked_user.inspect}
 
       Setting
       #{setting.attributes.symbolize_keys.slice(:dm, :report_interval, :permission_level).inspect}
