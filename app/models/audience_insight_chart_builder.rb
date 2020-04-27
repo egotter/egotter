@@ -1,7 +1,7 @@
 class AudienceInsightChartBuilder
   def initialize(uid, limit: 10)
     @builder = FriendsGroupBuilder.new(uid, limit: limit)
-    @statuses = TwitterDB::User.new(uid: uid).statuses
+    @statuses = TwitterUser.latest_by(uid: uid).status_tweets
   end
 
   DATE_FORMAT = "%Y-%m-%d"

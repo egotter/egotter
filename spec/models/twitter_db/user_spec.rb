@@ -6,30 +6,6 @@ RSpec.describe TwitterDB::User, type: :model do
     let(:rest_users) { users - [users[0]] }
   end
 
-  describe '#statuses' do
-    let(:user) { create(:twitter_db_user) }
-    before { 3.times.each.with_index { |i| create(:twitter_db_status, uid: user.uid, screen_name: user.screen_name, sequence: i) } }
-    it 'has many statuses' do
-      expect(user.statuses.size).to eq(3)
-    end
-  end
-
-  describe '#favorites' do
-    let(:user) { create(:twitter_db_user) }
-    before { 3.times.each.with_index { |i| create(:twitter_db_favorite, uid: user.uid, screen_name: user.screen_name, sequence: i) } }
-    it 'has many favorites' do
-      expect(user.favorites.size).to eq(3)
-    end
-  end
-
-  describe '#mentions' do
-    let(:user) { create(:twitter_db_user) }
-    before { 3.times.each.with_index { |i| create(:twitter_db_mention, uid: user.uid, screen_name: user.screen_name, sequence: i) } }
-    it 'has many mentions' do
-      expect(user.mentions.size).to eq(3)
-    end
-  end
-
   describe '#inactive?' do
     context 'status_created_at is nil' do
       let(:user) { create(:twitter_db_user, status_created_at: nil) }

@@ -1,9 +1,9 @@
 # -*- SkipSchemaAnnotations
+
+require_relative '../dynamo_db'
+
 module DynamoDB
   class TwitterUser
-    REGION = 'ap-northeast-1'
-    TABLE_NAME = "egotter.#{Rails.env}.twitter_users"
-
     attr_reader :uid, :screen_name, :profile, :friend_uids, :follower_uids
 
     def initialize(attrs)
@@ -16,12 +16,12 @@ module DynamoDB
 
     class << self
       def find_by(twitter_user_id)
-        obj = dynamo_db_client.get_item(db_key(twitter_user_id)).item
-        obj && obj['json'] ? new(parse_json(decompress(obj['json']))) : nil
+        item = client.read(twitter_user_id).item
+        item && item['json'] ? new(parse_json(decompress(item['json']))) : nil
       end
 
       def delete_by(twitter_user_id)
-        dynamo_db_client.delete_item(db_key(twitter_user_id))
+        client.delete(twitter_user_id)
       end
 
       def import_from(twitter_user_id, uid, screen_name, profile, friend_uids, follower_uids)
@@ -40,7 +40,7 @@ module DynamoDB
             expiration_time: 1.day.since.to_i
         }
 
-        dynamo_db_client.put_item(table_name: TABLE_NAME, item: item)
+        client.write(twitter_user_id, item)
       end
 
       def import_from_twitter_user(twitter_user)
@@ -49,12 +49,8 @@ module DynamoDB
 
       private
 
-      def db_key(twitter_user_id)
-        {table_name: TABLE_NAME, key: {twitter_user_id: twitter_user_id}}
-      end
-
-      def dynamo_db_client
-        @dynamo_db_client ||= Aws::DynamoDB::Client.new(region: REGION)
+      def client
+        @client ||= ::DynamoDB::Client.new
       end
 
       def parse_json(text)
@@ -71,24 +67,5 @@ module DynamoDB
         Zlib::Inflate.inflate(Base64.decode64(data))
       end
     end
-
-    module Instrumentation
-      %i(
-        find_by
-        delete_by
-        import_from
-      ).each do |method_name|
-        define_method(method_name) do |*args, &blk|
-          start = Time.zone.now
-          ret_val = method(method_name).super_method.call(*args, &blk)
-
-          time = sprintf("%.1f", Time.zone.now - start)
-          Rails.logger.info { "#{self} #{method_name} by #{args[0]}#{' HIT' if ret_val} (#{time}ms)" }
-
-          ret_val
-        end
-      end
-    end
-    singleton_class.prepend Instrumentation
   end
 end

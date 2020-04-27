@@ -1,12 +1,22 @@
 # -*- SkipSchemaAnnotations
 module Efs
   class TwitterUser
+    attr_reader :uid, :screen_name, :profile, :friend_uids, :follower_uids
+
+    def initialize(attrs)
+      @uid = attrs[:uid]
+      @screen_name = attrs[:screen_name]
+      @profile = attrs[:profile]
+      @friend_uids = attrs[:friend_uids]
+      @follower_uids = attrs[:follower_uids]
+    end
+
     class << self
       def find_by(twitter_user_id)
         start = Time.zone.now
 
         obj = cache_client.read(cache_key(twitter_user_id))
-        result = obj ? parse_json(decompress(obj)) : obj
+        result = obj ? new(parse_json(decompress(obj))) : nil
 
         time = sprintf("%.1f", Time.zone.now - start)
         Rails.logger.debug { "#{self} Fetch by #{twitter_user_id}#{' HIT' if result} (#{time}ms)" }
@@ -44,19 +54,24 @@ module Efs
       def work_direct(twitter_user)
         [
             S3::Profile.find_by(twitter_user_id: twitter_user.id)[:user_info],
-            S3::Friendship.find_by(twitter_user_id: twitter_user.id)[:friend_uids],
-            S3::Followership.find_by(twitter_user_id: twitter_user.id)[:follower_uids]
+            S3::Friendship.find_by(twitter_user_id: twitter_user.id)&.friend_uids,
+            S3::Followership.find_by(twitter_user_id: twitter_user.id)&.follower_uids
         ]
       end
 
       def work_in_threads(twitter_user)
-        results = Parallel.map([S3::Profile, S3::Friendship, S3::Followership], in_threads: 3) { |klass| klass.find_by(twitter_user_id: twitter_user.id) }
-        [results[0][:user_info], results[1][:friend_uids], results[2][:follower_uids]]
+        results = Parallel.map([S3::Profile, S3::Friendship, S3::Followership], in_threads: 3) do |klass|
+          klass.find_by(twitter_user_id: twitter_user.id)
+        end
+        [results[0][:user_info], results[1]&.friend_uids, results[2]&.follower_uids]
       end
 
       def cache_key(twitter_user_id)
         "efs_twitter_user_cache:#{twitter_user_id}"
       end
+
+      # TODO Use Efs::Client
+      # TODO Remove redundant benchmark
 
       def cache_client
         if instance_variable_defined?(:@cache_client)

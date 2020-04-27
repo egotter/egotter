@@ -27,12 +27,15 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
     let(:relations) { {user_timeline: [status]} }
     before { twitter_user.build_other_relations(relations) }
 
-    context 'For statuses' do
+    context '#status_tweets' do
       let(:status) { Hashie::Mash.new(text: 'status', user: {id: 1, screen_name: 'sn'}) }
 
       it do
-        expect(twitter_user.statuses[0].text).to eq(status.text)
-        expect(twitter_user.statuses.size).to eq(relations[:user_timeline].size)
+        expect(twitter_user.instance_variable_get(:@reserved_statuses)[0].text).to eq(status.text)
+      end
+
+      it do
+        expect(twitter_user.instance_variable_get(:@reserved_statuses).size).to eq(relations[:user_timeline].size)
       end
     end
   end

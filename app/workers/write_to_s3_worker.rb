@@ -25,7 +25,16 @@ class WriteToS3Worker
   # options:
   #   retry_count
   def perform(params, options = {})
-    params['klass'].constantize.client.put_object(bucket: params['bucket'], key: params['key'], body: params['body'])
+    klass = params['klass'].constantize
+    request_options = {bucket: params['bucket'], key: params['key'].to_s, body: params['body']}
+
+    if [S3::Followership, S3::Friendship, S3::Profile,].include?(klass)
+      client = klass.client
+    else
+      client = klass.client.instance_variable_get(:@s3)
+    end
+
+    client.put_object(request_options)
   rescue => e
     logger.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect.truncate(50)} #{options.inspect}"
     logger.info e.backtrace.join("\n")

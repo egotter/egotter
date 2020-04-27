@@ -2,23 +2,32 @@
 
 module S3
   class Tweet
+
+    def initialize
+      # TODO Implement
+    end
+
     class << self
+      def bucket_name
+        'not-specified'
+      end
+
       def where(uid: nil, screen_name: nil)
         uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
-        obj = cache.get_object(uid)
-        decode(obj)['tweets']
+        obj = client.read(uid)
+        obj ? decode(obj)['tweets'] : []
       rescue Aws::S3::Errors::NoSuchKey => e
         []
       end
 
       def import_from!(uid, screen_name, tweets)
         body = encode(uid, screen_name, tweets)
-        cache.put_object(uid, body)
+        client.write(uid, body)
       end
 
       def delete(uid: nil, screen_name: nil)
         uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
-        cache.delete_object(uid)
+        client.delete(uid)
       end
 
       def encode(uid, screen_name, tweets)
@@ -36,12 +45,8 @@ module S3
         obj
       end
 
-      def cache
-        @cache ||= ::S3::Cache.new(bucket_name, self)
-      end
-
       def client
-        cache.client
+        @client ||= ::S3::Client.new(bucket_name, self)
       end
     end
   end

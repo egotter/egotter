@@ -152,10 +152,12 @@ RSpec.describe SearchCountLimitation, type: :model do
 
   describe '#current_sharing_bonus' do
     let(:user) { create(:user) }
-    let(:twitter_user) { build(:twitter_user, uid: user.uid, followers_count: count, with_relations: false) }
     subject { described_class.current_sharing_bonus(user) }
 
-    before { twitter_user.save!(validate: false) }
+    before do
+      twitter_user = double('twitter_user', followers_count: count)
+      allow(TwitterUser).to receive(:latest_by).with(uid: user.uid).and_return(twitter_user)
+    end
 
     context 'followers_count is less than or equal to 1000' do
       let(:count) { 1000 }
@@ -179,7 +181,7 @@ RSpec.describe SearchCountLimitation, type: :model do
 
     context 'An exception is raised' do
       let(:count) { 'count' }
-      before { allow(user).to receive(:api_client).and_raise('Anything') }
+      before { allow(user).to receive(:uid).and_raise('Anything') }
       it { is_expected.to eq(described_class::SHARING_BONUS) }
     end
   end

@@ -95,11 +95,4 @@ RSpec.configure do |config|
   # as the one that triggered the failure.
   Kernel.srand config.seed
 =end
-
-  config.before(:all) do
-    if Rails.env.test?
-      FileUtils.rm_rf(S3::Friendship.dir)
-      FileUtils.rm_rf(S3::Followership.dir)
-    end
-  end
 end

@@ -27,7 +27,7 @@ RSpec.describe CreatePromptReportRequest, type: :model do
     end
 
     it do
-      expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, prompt_report.id).and_return(report_options_builder)
+      expect(CreatePromptReportRequest::ReportOptionsBuilder).to receive(:new).with(user, request, true, nil).and_return(report_options_builder)
       expect(CreatePromptReportMessageWorker).to receive(:perform_async).with(user.id, 'ok')
       subject
     end

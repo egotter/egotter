@@ -56,17 +56,16 @@ class CreatePromptReportLog < ApplicationRecord
     end
 
     def error_logs_for_one_day(user_id:, request_id: nil)
-      query =
-          where(user_id: user_id).
-              where(created_at: 1.day.ago..Time.zone.now).
-              where.not(error_class: CreatePromptReportRequest::TooManyErrors).
-              where.not(error_class: CreatePromptReportRequest::TooShortSendInterval).
-              where.not(error_class: CreatePromptReportRequest::TooShortRequestInterval).
-              where.not(error_class: CreatePromptReportRequest::UserInactive).
-              where.not(error_class: CreatePromptReportRequest::InitializationStarted).
-              where.not(error_class: CreateTwitterUserRequest::TooManyRequests)
+      query = where(user_id: user_id).
+          where(created_at: 1.day.ago..Time.zone.now).
+          where.not(error_class: CreatePromptReportRequest::TooManyErrors).
+          where.not(error_class: CreatePromptReportRequest::TooShortSendInterval).
+          where.not(error_class: CreatePromptReportRequest::TooShortRequestInterval).
+          where.not(error_class: CreatePromptReportRequest::UserInactive).
+          where.not(error_class: CreatePromptReportRequest::InitializationStarted).
+          where.not(error_class: CreateTwitterUserRequest::TooManyRequests)
 
-      query = where.not(request_id: request_id) if request_id
+      query = query.where.not(request_id: request_id) if request_id
 
       query.order(created_at: :desc).limit(3)
     end

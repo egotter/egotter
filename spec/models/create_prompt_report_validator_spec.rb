@@ -132,14 +132,6 @@ RSpec.describe CreatePromptReportValidator, type: :model do
   describe '#too_short_request_interval?' do
     subject { validator.too_short_request_interval? }
     it { is_expected.to be_falsey }
-
-    context 'Recently created record found' do
-      let!(:req) { CreatePromptReportRequest.create!(user_id: user.id) }
-      it do
-        is_expected.to be_truthy
-        expect(validator).to satisfy { |v| v.instance_variable_get(:@latest_request).id == req.id }
-      end
-    end
   end
 
   describe '#suspended?' do

@@ -1,23 +1,23 @@
 require 'rails_helper'
 
 RSpec.describe TwitterUser, type: :model do
-  let(:user) { create(:twitter_user) }
+  let(:user) { create(:twitter_user, with_relations: true) }
 
-  describe '#statuses' do
-    it 'has many statuses' do
-      expect(user.statuses.size).to eq(2) # TODO Tightly coupled with factory
+  describe '#status_tweets' do
+    it 'has many status_tweets' do
+      expect(user.status_tweets.size).to eq(2) # TODO Tightly coupled with factory
     end
   end
 
-  describe '#favorites' do
-    it 'has many favorites' do
-      expect(user.favorites.size).to eq(2) # TODO Tightly coupled with factory
+  describe '#favorite_tweets' do
+    it 'has many favorite_tweets' do
+      expect(user.favorite_tweets.size).to eq(2) # TODO Tightly coupled with factory
     end
   end
 
-  describe '#mentions' do
-    it 'has many mentions' do
-      expect(user.mentions.size).to eq(2) # TODO Tightly coupled with factory
+  describe '#mention_tweets' do
+    it 'has many mention_tweets' do
+      expect(user.mention_tweets.size).to eq(2) # TODO Tightly coupled with factory
     end
   end
 

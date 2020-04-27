@@ -7,12 +7,9 @@ module S3
       exist(twitter_user_id)
     end
 
-    def find_by!(twitter_user_id:)
-      find_by_current_scope!(payload_key, :twitter_user_id, twitter_user_id)
-    end
-
     def find_by(twitter_user_id:)
-      find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
+      result = find_by_current_scope(payload_key, :twitter_user_id, twitter_user_id)
+      result ? new(result) : nil
     end
 
     def delete_by(twitter_user_id:)

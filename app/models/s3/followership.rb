@@ -8,5 +8,11 @@ module S3
 
     self.bucket_name = "egotter.#{Rails.env}.followerships"
     self.payload_key = :follower_uids
+
+    attr_reader :follower_uids
+
+    def initialize(attrs)
+      @follower_uids = attrs[:follower_uids]
+    end
   end
 end

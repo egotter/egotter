@@ -68,6 +68,7 @@ class SearchCountLimitation
       else SHARING_BONUS + 3
       end
     rescue => e
+      Rails.logger.warn "##{__method__} #{e.inspect}"
       SHARING_BONUS
     end
 

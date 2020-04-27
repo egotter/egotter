@@ -21,7 +21,7 @@ namespace :usage_stats do
           next
         end
 
-        statuses = TwitterUser.latest_by(uid: uid).statuses
+        statuses = TwitterUser.latest_by(uid: uid).status_tweets
         next if statuses.empty?
         stat = UsageStat.builder(uid).statuses(statuses).build
         unless stat.save
