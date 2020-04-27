@@ -49,13 +49,13 @@ namespace :prompt_reports do
     logger.info 'Setting'
     logger.info setting.attributes.symbolize_keys.slice(:dm, :report_interval, :permission_level).inspect
     logger.info ''
-    logger.info 'Requests'
+    logger.info 'Requests desc'
     requests.each { |req| logger.info req.attributes.symbolize_keys.inspect }
     logger.info ''
-    logger.info 'Logs'
+    logger.info 'Logs desc'
     logs.each { |log| logger.info log.attributes.symbolize_keys.inspect }
     logger.info ''
-    logger.info 'PromptReports'
+    logger.info 'PromptReports desc'
     reports.each { |report| logger.info report.attributes.symbolize_keys.inspect }
   end
 end

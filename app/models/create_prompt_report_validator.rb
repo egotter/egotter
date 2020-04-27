@@ -1,16 +1,16 @@
 class CreatePromptReportValidator
   attr_reader :user, :request
 
-  def initialize(request:)
+  def initialize(user:, request: nil)
+    @user = user
     @request = request
-    @user = request.user
   end
 
   def validate!
     raise CreatePromptReportRequest::Unauthorized unless credentials_verified?
     raise CreatePromptReportRequest::TooManyErrors.new(@too_many_errors_reasons) if too_many_errors?
     raise CreatePromptReportRequest::PermissionLevelNotEnough unless user.notification_setting.enough_permission_level?
-    raise CreatePromptReportRequest::TooShortRequestInterval.new(@latest_request) if too_short_request_interval?
+    raise CreatePromptReportRequest::TooShortRequestInterval if too_short_request_interval?
     raise CreatePromptReportRequest::Unauthorized unless user.authorized?
     raise CreatePromptReportRequest::ReportDisabled unless user.notification_setting.dm_enabled?
     raise CreatePromptReportRequest::TooShortSendInterval.new(user) unless user.notification_setting.prompt_report_interval_ok?
@@ -40,7 +40,7 @@ class CreatePromptReportValidator
   # Notice: If the InitializationStarted occurs three times,
   # you will not be able to send a message.
   def too_many_errors?
-    errors = CreatePromptReportLog.error_logs_for_one_day(user_id: user.id, request_id: request.id).
+    errors = CreatePromptReportLog.error_logs_for_one_day(user_id: user.id, request_id: request&.id).
         pluck(:error_class)
 
     meet_requirements_for_too_many_errors?(errors).tap do |val|
@@ -57,16 +57,7 @@ class CreatePromptReportValidator
   end
 
   def too_short_request_interval?
-    CreatePromptReportRequest.where(user_id: user.id).
-        where.not(id: request.id).
-        interval_ng_user_ids.
-        any?.tap do |val|
-      if val
-        @latest_request = CreatePromptReportRequest.where(user_id: user.id).
-            where.not(id: request.id).
-            order(created_at: :desc).first
-      end
-    end
+    CreatePromptReportRequest.interval_ng_user_ids(request&.id).include?(user.id)
   end
 
   def suspended?

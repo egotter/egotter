@@ -31,11 +31,10 @@ class CreatePromptReportRequest < ApplicationRecord
   PROCESS_REQUEST_INTERVAL = 1.hour
 
   class << self
-    def interval_ng_user_ids
-      where(created_at: PROCESS_REQUEST_INTERVAL.ago..Time.zone.now).
-          select(:user_id).
-          distinct.
-          pluck(:user_id)
+    def interval_ng_user_ids(exclude_id = nil)
+      query = where(created_at: PROCESS_REQUEST_INTERVAL.ago..Time.zone.now)
+      query = query.where.not(id: exclude_id) if exclude_id
+      query.select(:user_id).distinct.pluck(:user_id)
     end
   end
 
@@ -69,7 +68,7 @@ class CreatePromptReportRequest < ApplicationRecord
     return true if skip_error_check
 
     unless @error_check
-      CreatePromptReportValidator.new(request: self).validate!
+      CreatePromptReportValidator.new(request: self, user: user).validate!
       @error_check = true
     end
   end
@@ -231,9 +230,6 @@ class CreatePromptReportRequest < ApplicationRecord
   end
 
   class TooShortRequestInterval < Error
-    def initialize(request)
-      super("The last time is #{request.created_at.to_s}.")
-    end
   end
 
   class TooShortSendInterval < Error

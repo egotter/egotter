@@ -3,7 +3,7 @@ require 'rails_helper'
 RSpec.describe CreatePromptReportValidator, type: :model do
   let(:user) { create(:user) }
   let(:request) { CreatePromptReportRequest.create!(user_id: user.id) }
-  let(:validator) { described_class.new(request: request) }
+  let(:validator) { described_class.new(request: request, user: request.user) }
 
   describe '#validate!' do
     let(:notification_setting) { NotificationSetting.new(user: user) }

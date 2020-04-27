@@ -5,7 +5,7 @@ class StartSendingPromptReportsTask
     else
       candidates = User.where(id: too_many_errors_rejected_ids).select(:id, :uid)
       follower_uids = EgotterFollower.pluck(:uid)
-      high, low = candidates.partition {|user| follower_uids.include?(user.uid)}
+      high, low = candidates.partition { |user| follower_uids.include?(user.uid) }
       @users = high + low
     end
   end
