@@ -18,14 +18,16 @@ namespace :prompt_reports do
 
     sleep 10
 
-    logger.info 'Request'
-    logger.info request.inspect
-    logger.info ''
-    logger.info 'Log'
-    logger.info CreatePromptReportLog.find_by(request_id: request.id).inspect
-    logger.info ''
-    logger.info 'Message'
-    logger.info PromptReport.order(created_at: :desc).find_by(user_id: user.id).inspect
+    puts <<~TEXT
+      Requests
+      #{request.inspect}
+
+      Log
+      #{CreatePromptReportLog.find_by(request_id: request.id).inspect}
+
+      Message
+      #{PromptReport.order(created_at: :desc).find_by(user_id: user.id).inspect}
+    TEXT
   end
 
   desc 'Print errors'
@@ -42,20 +44,26 @@ namespace :prompt_reports do
     requests = CreatePromptReportRequest.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
     logs = CreatePromptReportLog.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
     reports = PromptReport.where(user_id: user.id).order(created_at: :desc).limit(limit).reverse
+    error = CreatePromptReportValidator.new(user: user).validate! rescue $!
 
-    logger.info 'User'
-    logger.info user.attributes.symbolize_keys.slice(:id, :uid, :screen_name, :authorized).inspect
-    logger.info ''
-    logger.info 'Setting'
-    logger.info setting.attributes.symbolize_keys.slice(:dm, :report_interval, :permission_level).inspect
-    logger.info ''
-    logger.info 'Requests desc'
-    requests.each { |req| logger.info req.attributes.symbolize_keys.inspect }
-    logger.info ''
-    logger.info 'Logs desc'
-    logs.each { |log| logger.info log.attributes.symbolize_keys.inspect }
-    logger.info ''
-    logger.info 'PromptReports desc'
-    reports.each { |report| logger.info report.attributes.symbolize_keys.inspect }
+    puts <<~TEXT
+      validate!
+      #{error.inspect}
+
+      User
+      #{user.attributes.symbolize_keys.slice(:id, :uid, :screen_name, :authorized).inspect}
+
+      Setting
+      #{setting.attributes.symbolize_keys.slice(:dm, :report_interval, :permission_level).inspect}
+
+      Requests desc
+      #{requests.map { |req| req.attributes.symbolize_keys.inspect }.join("\n")}
+
+      Logs desc
+      #{logs.map { |log| log.attributes.symbolize_keys.inspect }.join("\n")}
+
+      PromptReports desc
+      #{reports.map { |report| report.attributes.symbolize_keys.inspect }.join("\n")}
+    TEXT
   end
 end
