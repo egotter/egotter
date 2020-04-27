@@ -65,11 +65,9 @@ RSpec.describe WelcomeMessage, type: :model do
     let(:instance) { described_class.new(user: user, token: 'token') }
     subject { instance.send(:send_success_message!) }
 
-    before { allow(User).to receive(:egotter).and_return('egotter_user') }
-
     it do
       expect(described_class::SuccessMessageBuilder).to receive_message_chain(:new, :build).with(user, 'token').with(no_args).and_return('text')
-      expect(instance).to receive(:create_dm).with('egotter_user', user, 'text')
+      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(no_args).with(no_args).with(event: anything)
       subject
     end
   end

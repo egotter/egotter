@@ -1,11 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe S3::Tweet do
-  let(:cache) { spy('cache') }
+  let(:client) { spy('client') }
   let(:tweets) { [{'id' => 1, 'text' => 'text'}] }
 
   before do
-    described_class.instance_variable_set(:@cache, cache)
+    allow(described_class).to receive(:client).and_return(client)
   end
 
   describe '.where' do
@@ -13,7 +13,7 @@ RSpec.describe S3::Tweet do
     let(:obj) { {uid: uid, screen_name: 'sn', tweets: ::S3::Util.pack(tweets), time: Time.zone.now.to_s}.to_json }
     subject { described_class.where(uid: uid) }
     it do
-      expect(cache).to receive(:get_object).with(uid).and_return(obj)
+      expect(client).to receive(:read).with(uid).and_return(obj)
       expect(described_class).to receive(:decode).with(obj).and_call_original
       is_expected.to match(tweets)
     end
@@ -23,7 +23,7 @@ RSpec.describe S3::Tweet do
     subject { described_class.import_from!(1, 'sn', tweets) }
     it do
       expect(described_class).to receive(:encode).with(1, 'sn', tweets).and_return('body')
-      expect(cache).to receive(:put_object).with(1, 'body')
+      expect(client).to receive(:write).with(1, 'body')
       subject
     end
   end
@@ -31,7 +31,7 @@ RSpec.describe S3::Tweet do
   describe '.delete' do
     subject { described_class.delete(uid: 1) }
     it do
-      expect(cache).to receive(:delete_object).with(1)
+      expect(client).to receive(:delete).with(1)
       subject
     end
   end

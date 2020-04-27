@@ -39,7 +39,7 @@ RSpec.describe Concerns::TwitterUser::Associations do
 
     context 'The record is old' do
       before do
-        twitter_user.update(created_at: (Efs::StatusTweet.cache.ttl + 1.second).ago)
+        twitter_user.update(created_at: (Efs::StatusTweet.client.ttl + 1.second).ago)
       end
 
       it do
@@ -64,7 +64,7 @@ RSpec.describe Concerns::TwitterUser::Associations do
 
     context 'The record is old' do
       before do
-        twitter_user.update(created_at: (Efs::FavoriteTweet.cache.ttl + 1.second).ago)
+        twitter_user.update(created_at: (Efs::FavoriteTweet.client.ttl + 1.second).ago)
       end
 
       it do
@@ -89,7 +89,7 @@ RSpec.describe Concerns::TwitterUser::Associations do
 
     context 'The record is old' do
       before do
-        twitter_user.update(created_at: (Efs::FavoriteTweet.cache.ttl + 1.second).ago)
+        twitter_user.update(created_at: (Efs::FavoriteTweet.client.ttl + 1.second).ago)
       end
 
       it do

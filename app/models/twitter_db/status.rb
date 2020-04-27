@@ -24,11 +24,5 @@ module TwitterDB
 
     include Concerns::TwitterDB::Status::RawAttrs
     include Concerns::TwitterDB::Status::Importable
-
-    class << self
-      def import_by!(twitter_user:)
-        import_from!(twitter_user.uid, twitter_user.screen_name, twitter_user.statuses.select(&:new_record?))
-      end
-    end
   end
 end

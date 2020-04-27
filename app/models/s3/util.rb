@@ -1,4 +1,7 @@
 # -*- SkipSchemaAnnotations
+
+require_relative '../s3'
+
 module S3
   module Util
     include Querying
@@ -80,7 +83,7 @@ module S3
       raise 'key is nil' if key.nil?
       ApplicationRecord.benchmark("#{self} Delete by #{key} with async #{async}", level: :debug) do
         if async
-          DeleteFromS3Worker.perform_async(klass: self, bucket: bucket_name, key: key.to_s)
+          DeleteFromS3Worker.perform_async(klass: self, bucket: bucket_name, key: key)
         else
           client.delete_object(bucket: bucket_name, key: key.to_s)
         end

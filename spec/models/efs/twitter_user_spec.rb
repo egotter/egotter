@@ -4,10 +4,6 @@ RSpec.describe Efs::TwitterUser do
   let(:twitter_user) { create(:twitter_user) }
 
   before do
-    S3::Profile.clear!
-    S3::Friendship.clear!
-    S3::Followership.clear!
-
     allow(S3::Profile).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(user_info: '{"dummy": true}')
     allow(S3::Friendship).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(friend_uids: 'friend_uids')
     allow(S3::Followership).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(follower_uids: 'follower_uids')

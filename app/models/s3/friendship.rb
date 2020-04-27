@@ -8,5 +8,11 @@ module S3
 
     self.bucket_name = "egotter.#{Rails.env}.friendships"
     self.payload_key = :friend_uids
+
+    attr_reader :friend_uids
+
+    def initialize(attrs)
+      @friend_uids = attrs[:friend_uids]
+    end
   end
 end

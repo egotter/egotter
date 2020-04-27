@@ -23,13 +23,15 @@ FactoryBot.define do
       with_relations { true }
     end
 
+    # To save multiple records that have the same uid, call #save!
+    # record = build(:twitter_user)
+    # record.save!(validate: false)
+
     after(:build) do |user, evaluator|
       if evaluator.with_relations
-        2.times.each do
-          user.statuses.build(attributes_for(:twitter_db_status))
-          user.mentions.build(attributes_for(:twitter_db_mention))
-          user.favorites.build(attributes_for(:twitter_db_favorite))
-        end
+        user.instance_variable_set(:@reserved_statuses, 2.times.map { build(:twitter_db_status) })
+        user.instance_variable_set(:@reserved_favorites, 2.times.map { build(:twitter_db_favorite) })
+        user.instance_variable_set(:@reserved_mentions, 2.times.map { build(:twitter_db_mention) })
 
         if user.friends_count
           user.friend_uids = user.friends_count.times.map { create(:twitter_db_user).uid }

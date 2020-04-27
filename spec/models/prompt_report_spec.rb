@@ -156,13 +156,13 @@ RSpec.describe PromptReport, type: :model do
     subject { report.send(:send_reporting_message!) }
 
     before do
-      allow(User).to receive_message_chain(:egotter, :api_client).and_return(api_client)
+      allow(User).to receive_message_chain(:egotter, :uid).and_return(User::EGOTTER_UID)
       allow(report).to receive(:message_builder).and_return(described_class::EmptyMessageBuilder.new)
     end
 
     it do
-      expect(api_client).to receive(:create_direct_message_event).with(user.uid, anything).and_return('dm')
-      is_expected.to eq('dm')
+      expect(user).to receive_message_chain(:api_client, :create_direct_message_event).with(no_args).with(event: anything)
+      subject
     end
   end
 

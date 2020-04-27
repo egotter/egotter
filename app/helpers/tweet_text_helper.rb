@@ -27,8 +27,8 @@ module TweetTextHelper
     minutes_per_day = total_minutes / stats.map { |obj| obj[:y] }.count { |y| !y.nil? }
     minutes_per_week = minutes_per_day * 7
 
-    tweets_days = tu.statuses.map { |t| t.tweeted_at.to_date.to_s(:long) }.uniq.size
-    hour_count = tu.statuses.each_with_object(Hash.new(0)) { |s, memo| memo[s.tweeted_at.hour] += 1 }
+    tweets_days = tu.status_tweets.map { |t| t.tweeted_at.to_date.to_s(:long) }.uniq.size
+    hour_count = tu.status_tweets.each_with_object(Hash.new(0)) { |s, memo| memo[s.tweeted_at.hour] += 1 }
     tweets_per_hour = hour_count.values.sum.to_f / tweets_days / 24
     level =
       case tweets_per_hour

@@ -8,23 +8,28 @@ module Efs
     end
 
     class << self
+      def key_prefix
+        'not-specified'
+      end
+
+      def mounted_dir
+        'not-specified'
+      end
+
       def where(uid: nil, screen_name: nil)
         uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
-        if (obj = cache.get_object(uid))
-          decompress(obj)['tweets']
-        else
-          []
-        end
+        obj = client.read(uid)
+        obj ? decompress(obj)['tweets'] : []
       end
 
       def import_from!(uid, screen_name, tweets)
         body = compress(uid, screen_name, tweets)
-        cache.put_object(uid, body)
+        client.write(uid, body)
       end
 
       def delete(uid: nil, screen_name: nil)
         uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
-        cache.delete_object(uid)
+        client.delete(uid)
       end
 
       def compress(uid, screen_name, tweets)
@@ -42,8 +47,8 @@ module Efs
         obj
       end
 
-      def cache
-        @cache ||= ::Efs::Cache.new(key_prefix, self, mounted_dir)
+      def client
+        @client ||= ::Efs::Client.new(key_prefix, self, mounted_dir)
       end
     end
   end

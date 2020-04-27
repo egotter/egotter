@@ -1,10 +1,10 @@
 require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::Persistence do
-  let(:twitter_user) { build(:twitter_user, id: rand(10000)) }
-  let(:status_tweets) { twitter_user.statuses.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
-  let(:favorite_tweets) { twitter_user.favorites.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
-  let(:mention_tweets) { twitter_user.mentions.select(&:new_record?).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
+  let(:twitter_user) { build(:twitter_user, with_relations: true, id: rand(10000)) }
+  let(:status_tweets) { twitter_user.instance_variable_get(:@reserved_statuses).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
+  let(:favorite_tweets) { twitter_user.instance_variable_get(:@reserved_favorites).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
+  let(:mention_tweets) { twitter_user.instance_variable_get(:@reserved_mentions).map { |t| t.slice(:uid, :screen_name, :raw_attrs_text) } }
   subject { twitter_user.save!(validate: false) }
 
   it do
