@@ -29,6 +29,9 @@ class SearchCountLimitation
 
     def remaining_search_count(user: nil, session_id: nil)
       [0, max_search_count(user) - current_search_count(user: user, session_id: session_id)].max
+    rescue => e
+      logger.warn "##{__method__} Maybe invalid session_id inspect=#{session_id.inspect}"
+      raise
     end
     alias remaining_count remaining_search_count
 

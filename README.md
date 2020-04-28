@@ -1,6 +1,6 @@
 # egotter
 
-[![Build Status](https://travis-ci.org/egotter/egotter.svg?branch=master)](https://travis-ci.org/ts-3156/egotter) [![Test Coverage](https://api.codeclimate.com/v1/badges/acce8cc6a3fe1964c307/test_coverage)](https://codeclimate.com/github/egotter/egotter/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/acce8cc6a3fe1964c307/maintainability)](https://codeclimate.com/github/egotter/egotter/maintainability)
+[![Build Status](https://travis-ci.org/egotter/egotter.svg?branch=master)](https://travis-ci.org/egotter/egotter) [![Test Coverage](https://api.codeclimate.com/v1/badges/acce8cc6a3fe1964c307/test_coverage)](https://codeclimate.com/github/egotter/egotter/test_coverage) [![Maintainability](https://api.codeclimate.com/v1/badges/acce8cc6a3fe1964c307/maintainability)](https://codeclimate.com/github/egotter/egotter/maintainability)
 
 ![Screenshot](docs/screenshot_pc.png)
 
