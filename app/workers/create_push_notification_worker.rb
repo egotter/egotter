@@ -23,16 +23,26 @@ class CreatePushNotificationWorker
 
   # options:
   def perform(user_id, title, body, options = {})
+    user = User.find(user_id)
+    if user.credential_token.instance_id.blank?
+      raise "instance_id is blank #{user_id}"
+    end
+
     access_key = FirebaseMessagingAuthorization.new.fetch do
+      json_key = '.firebase/client_secret.json'
+      unless File.exist?(json_key)
+        raise "json key file not found #{json_key}"
+      end
+
       authorizer = Google::Auth::ServiceAccountCredentials.make_creds(
-          json_key_io: File.open('.firebase/client_secret.json'),
+          json_key_io: File.open(json_key),
           scope: 'https://www.googleapis.com/auth/firebase.messaging'
       )
       access_token = authorizer.fetch_access_token!
       "#{access_token['token_type']} #{access_token['access_token']}"
     end
 
-    body = data_payload(user_id, title, body)
+    body = data_payload(user, title, body)
 
     uri = URI.parse("https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send")
     https = Net::HTTP.new(uri.host, uri.port)
@@ -75,9 +85,7 @@ class CreatePushNotificationWorker
     }
   end
 
-  def data_payload(user_id, title, body)
-    user = User.find(user_id)
-
+  def data_payload(user, title, body)
     data = {
         title: title,
         body: body,
@@ -94,7 +102,7 @@ class CreatePushNotificationWorker
 
     {
         message: {
-            token: User.find(user_id).credential_token.instance_id,
+            token: user.credential_token.instance_id,
             data: data
         }
     }

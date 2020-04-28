@@ -53,7 +53,7 @@ class CreatePromptReportRequest < ApplicationRecord
 
     report_options = ReportOptionsBuilder.new(user, self, record_created, nil).build
 
-    if user.notification_setting.report_if_changed? && user.credential_token.instance_id.blank?
+    if user.notification_setting.report_if_changed?
       if self.kind == :you_are_removed
         CreatePromptReportMessageWorker.perform_async(user.id, report_options)
       else

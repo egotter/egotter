@@ -42,16 +42,12 @@ class PromptReport < ApplicationRecord
   UNFOLLOWERS_SIZE_LIMIT = 5
 
   def deliver!
-    dm = nil
-
     if user.credential_token.instance_id.present?
-      push_notification = message_builder.build_push_notification
-      CreatePushNotificationWorker.perform_async(user_id, '', push_notification)
-    else
-      dm = deliver_reporting_message!
+      push_notification_message = message_builder.build_push_notification
+      CreatePushNotificationWorker.perform_async(user_id, '', push_notification_message)
     end
 
-    dm
+    deliver_reporting_message!
   end
 
   def deliver_reporting_message!
@@ -177,7 +173,7 @@ class PromptReport < ApplicationRecord
   end
 
   def report_recipient
-    GlobalDirectMessageReceivedFlag.new.received?(user.uid) ? user: User.egotter
+    GlobalDirectMessageReceivedFlag.new.received?(user.uid) ? user : User.egotter
   end
 
   def update_with_dm!(dm)
@@ -201,8 +197,7 @@ class PromptReport < ApplicationRecord
 
   # This class is created for testing.
   class EmptyMessageBuilder
-    def initialize(*args)
-    end
+    def initialize(*args) end
 
     def build
       ''
