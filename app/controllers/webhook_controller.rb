@@ -15,6 +15,7 @@ class WebhookController < ApplicationController
           dm = DirectMessage.new(event: event.to_unsafe_h.deep_symbolize_keys)
 
           if sent_from_user?(dm)
+            GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
             SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)
           elsif sent_from_egotter?(dm)
             SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)

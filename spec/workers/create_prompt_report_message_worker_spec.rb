@@ -90,7 +90,7 @@ RSpec.describe CreatePromptReportMessageWorker do
       let(:kind) { :you_are_removed }
       it do
         expect(user).to receive(:active_access?).with(CreatePromptReportRequest::ACTIVE_DAYS_WARNING).and_return(false)
-        expect(WarningMessage).to receive(:inactive).with(user.id).and_return(double('WarningMessage', deliver!: nil))
+        expect(WarningMessage).to receive(:inactive_message).with(user.id).and_return(double('WarningMessage', deliver!: nil))
         subject
       end
     end
@@ -99,7 +99,7 @@ RSpec.describe CreatePromptReportMessageWorker do
       let(:kind) { :not_changed }
       it do
         expect(user).to receive(:active_access?).with(CreatePromptReportRequest::ACTIVE_DAYS_WARNING).and_return(false)
-        expect(WarningMessage).to receive(:inactive).with(user.id).and_return(double('WarningMessage', deliver!: nil))
+        expect(WarningMessage).to receive(:inactive_message).with(user.id).and_return(double('WarningMessage', deliver!: nil))
         subject
       end
     end

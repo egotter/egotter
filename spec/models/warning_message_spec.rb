@@ -14,7 +14,7 @@ RSpec.describe WarningMessage do
     end
 
     it do
-      expect(client).to receive(:create_direct_message_event).with(user.uid, 'text').and_return(dm)
+      expect(client).to receive(:create_direct_message_event).with(event: anything).and_return(dm)
       expect(instance).to receive(:update!).with(message_id: dm.id, message: dm.truncated_message)
       expect(subject).to eq(dm)
     end

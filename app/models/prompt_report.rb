@@ -145,13 +145,15 @@ class PromptReport < ApplicationRecord
     user.api_client.create_direct_message_event(User::EGOTTER_UID, message)
   end
 
-  def send_reporting_message!
-    user.api_client.create_direct_message_event(event: {
+  def send_reporting_message!(text = nil)
+    text = message_builder.build unless text
+
+    report_sender.api_client.create_direct_message_event(event: {
         type: 'message_create',
         message_create: {
-            target: {recipient_id: User.egotter.uid},
+            target: {recipient_id: report_recipient.uid},
             message_data: {
-                text: message_builder.build,
+                text: text,
                 quick_reply: {
                     type: 'options',
                     options: [
@@ -168,6 +170,14 @@ class PromptReport < ApplicationRecord
             }
         }
     })
+  end
+
+  def report_sender
+    GlobalDirectMessageReceivedFlag.new.received?(user.uid) ? User.egotter : user
+  end
+
+  def report_recipient
+    GlobalDirectMessageReceivedFlag.new.received?(user.uid) ? user: User.egotter
   end
 
   def update_with_dm!(dm)
