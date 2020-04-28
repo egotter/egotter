@@ -30,7 +30,8 @@ RSpec.describe Concerns::TwitterUser::Profile do
 
     context 'Fetch profile from EFS' do
       before do
-        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(profile: {from: 'efs'})
+        data = Efs::TwitterUser.new(profile: {from: 'efs'})
+        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(data)
       end
 
       it { is_expected.to eq(from: 'efs') }
@@ -38,7 +39,8 @@ RSpec.describe Concerns::TwitterUser::Profile do
 
     context 'Fetch profile from S3' do
       before do
-        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(profile: {})
+        data = Efs::TwitterUser.new(profile: {})
+        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(data)
         allow(S3::Profile).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(user_info: '{"from":"s3"}')
       end
 

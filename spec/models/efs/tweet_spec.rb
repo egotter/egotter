@@ -2,10 +2,15 @@ require 'rails_helper'
 
 RSpec.describe Efs::Tweet do
   let(:client) { spy('client', ttl: 'ttl') }
-  let(:tweets) { [{'id' => 1, 'text' => 'text'}] }
+  let(:tweets) do
+    [
+        {'raw_attrs_text' => {'id' => 1, 'text' => 'text1'}.to_json},
+        {'raw_attrs_text' => {'id' => 2, 'text' => 'text2'}.to_json}
+    ]
+  end
 
   before do
-    described_class.instance_variable_set(:@client, client)
+    allow(described_class).to receive(:client).and_return(client)
   end
 
   describe '.where' do
@@ -15,7 +20,11 @@ RSpec.describe Efs::Tweet do
     it do
       expect(client).to receive(:read).with(uid).and_return(obj)
       expect(described_class).to receive(:decompress).with(obj).and_call_original
-      is_expected.to match(tweets)
+
+      is_expected.to satisfy do |result|
+        result[0].raw_attrs_text == tweets[0]['raw_attrs_text'] &&
+            result[1].raw_attrs_text == tweets[1]['raw_attrs_text']
+      end
     end
   end
 

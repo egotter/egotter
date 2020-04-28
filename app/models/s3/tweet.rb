@@ -2,9 +2,10 @@
 
 module S3
   class Tweet
+    attr_reader :raw_attrs_text
 
-    def initialize
-      # TODO Implement
+    def initialize(tweet)
+      @raw_attrs_text = tweet['raw_attrs_text']
     end
 
     class << self
@@ -12,10 +13,14 @@ module S3
         'not-specified'
       end
 
+      def array_from(tweets)
+        tweets.map { |t| new(t) }
+      end
+
       def where(uid: nil, screen_name: nil)
         uid = Bot.api_client.user(screen_name)[:id] unless uid # For debugging
         obj = client.read(uid)
-        obj ? decode(obj)['tweets'] : []
+        obj ? array_from(decode(obj)['tweets']) : []
       rescue Aws::S3::Errors::NoSuchKey => e
         []
       end

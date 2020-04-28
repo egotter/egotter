@@ -78,21 +78,21 @@ module Concerns::TwitterUser::Associations
   def status_tweets
     tweets = ::Efs::StatusTweet.where(uid: uid) if created_at > ::Efs::StatusTweet.client.ttl.ago
     tweets = ::S3::StatusTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet['raw_attrs_text']) }
+    tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 
   # TODO Return an instance of Efs::FavoriteTweet or S3::FavoriteTweet
   def favorite_tweets
     tweets = ::Efs::FavoriteTweet.where(uid: uid) if created_at > ::Efs::FavoriteTweet.client.ttl.ago
     tweets = ::S3::FavoriteTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Favorite.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet['raw_attrs_text']) }
+    tweets.map { |tweet| ::TwitterDB::Favorite.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 
   # TODO Return an instance of Efs::MentionTweet or S3::MentionTweet
   def mention_tweets
     tweets = ::Efs::MentionTweet.where(uid: uid) if created_at > ::Efs::MentionTweet.client.ttl.ago
     tweets = ::S3::MentionTweet.where(uid: uid) if tweets.blank?
-    tweets.map { |tweet| ::TwitterDB::Mention.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet['raw_attrs_text']) }
+    tweets.map { |tweet| ::TwitterDB::Mention.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
 
   def users_by(controller_name:, limit: 300)

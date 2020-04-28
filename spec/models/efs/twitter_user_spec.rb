@@ -5,8 +5,8 @@ RSpec.describe Efs::TwitterUser do
 
   before do
     allow(S3::Profile).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(user_info: '{"dummy": true}')
-    allow(S3::Friendship).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(friend_uids: 'friend_uids')
-    allow(S3::Followership).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(follower_uids: 'follower_uids')
+    allow(S3::Friendship).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(S3::Friendship.new(friend_uids: 'friend_uids'))
+    allow(S3::Followership).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(S3::Followership.new(follower_uids: 'follower_uids'))
   end
 
   describe '.import_from!' do
@@ -15,12 +15,11 @@ RSpec.describe Efs::TwitterUser do
     it do
       subject
       expect(described_class.find_by(twitter_user.id)).to satisfy do |result|
-        result[:twitter_user_id] == twitter_user.id &&
-            result[:uid] == twitter_user.uid &&
-            result[:screen_name] == twitter_user.screen_name &&
-            result[:profile] == {dummy: true} &&
-            result[:friend_uids] == 'friend_uids' &&
-            result[:follower_uids] == 'follower_uids'
+        result.uid == twitter_user.uid &&
+            result.screen_name == twitter_user.screen_name &&
+            result.profile == {dummy: true} &&
+            result.friend_uids == 'friend_uids' &&
+            result.follower_uids == 'follower_uids'
       end
     end
   end

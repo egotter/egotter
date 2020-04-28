@@ -26,14 +26,14 @@ RSpec.describe Concerns::TwitterUser::Associations do
   end
 
   describe '#status_tweets' do
-    let(:tweets) { [{id: 1, text: 'text', raw_attrs_text: '{}'}] }
+    let(:tweets) { [{'id' => 1, 'text' => 'text1', 'raw_attrs_text' => '{}'}, {'id' => 2, 'text' => 'text2', 'raw_attrs_text' => '{}'}] }
     subject { twitter_user.status_tweets }
 
     context 'The record is new' do
       it do
-        expect(Efs::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(Efs::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets.map { |t| Efs::Tweet.new(t) })
         expect(S3::StatusTweet).not_to receive(:where)
-        expect(subject.size).to eq(1)
+        expect(subject.size).to eq(tweets.size)
       end
     end
 
@@ -44,21 +44,21 @@ RSpec.describe Concerns::TwitterUser::Associations do
 
       it do
         expect(Efs::StatusTweet).not_to receive(:where)
-        expect(S3::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
-        expect(subject.size).to eq(1)
+        expect(S3::StatusTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets.map { |t| S3::Tweet.new(t) })
+        expect(subject.size).to eq(tweets.size)
       end
     end
   end
 
   describe '#favorite_tweets' do
-    let(:tweets) { [{id: 1, text: 'text', raw_attrs_text: '{}'}] }
+    let(:tweets) { [{'id' => 1, 'text' => 'text1', 'raw_attrs_text' => '{}'}, {'id' => 2, 'text' => 'text2', 'raw_attrs_text' => '{}'}] }
     subject { twitter_user.favorite_tweets }
 
     context 'The record is new' do
       it do
-        expect(Efs::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(Efs::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets.map { |t| Efs::Tweet.new(t) })
         expect(S3::FavoriteTweet).not_to receive(:where)
-        expect(subject.size).to eq(1)
+        expect(subject.size).to eq(tweets.size)
       end
     end
 
@@ -69,21 +69,21 @@ RSpec.describe Concerns::TwitterUser::Associations do
 
       it do
         expect(Efs::FavoriteTweet).not_to receive(:where)
-        expect(S3::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
-        expect(subject.size).to eq(1)
+        expect(S3::FavoriteTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets.map { |t| S3::Tweet.new(t) })
+        expect(subject.size).to eq(tweets.size)
       end
     end
   end
 
   describe '#mention_tweets' do
-    let(:tweets) { [{id: 1, text: 'text', raw_attrs_text: '{}'}] }
+    let(:tweets) { [{'id' => 1, 'text' => 'text1', 'raw_attrs_text' => '{}'}, {'id' => 2, 'text' => 'text2', 'raw_attrs_text' => '{}'}] }
     subject { twitter_user.mention_tweets }
 
     context 'The record is new' do
       it do
-        expect(Efs::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
+        expect(Efs::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets.map { |t| Efs::Tweet.new(t) })
         expect(S3::MentionTweet).not_to receive(:where)
-        expect(subject.size).to eq(1)
+        expect(subject.size).to eq(tweets.size)
       end
     end
 
@@ -94,8 +94,8 @@ RSpec.describe Concerns::TwitterUser::Associations do
 
       it do
         expect(Efs::MentionTweet).not_to receive(:where)
-        expect(S3::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets)
-        expect(subject.size).to eq(1)
+        expect(S3::MentionTweet).to receive(:where).with(uid: twitter_user.uid).and_return(tweets.map { |t| S3::Tweet.new(t) })
+        expect(subject.size).to eq(tweets.size)
       end
     end
   end
