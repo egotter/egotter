@@ -70,9 +70,9 @@ class CreatePromptReportMessageWorker
   def send_warning_message(kind, user, options)
     if kind == :you_are_removed || kind == :not_changed
       if !user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS_WARNING)
-        WarningMessage.inactive(user.id).deliver!
+        WarningMessage.inactive_message(user.id).deliver!
       elsif !user.following_egotter?
-        WarningMessage.not_following(user.id).deliver!
+        WarningMessage.not_following_message(user.id).deliver!
       end
     elsif kind == :initialization
       log(options).update(status: false, error_class: CreatePromptReportRequest::InitializationStarted)

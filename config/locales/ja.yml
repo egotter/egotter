@@ -16,9 +16,9 @@ ja:
         ok: "ツイートする"
         cancel: "やめておく"
       revive_modal:
-        title_html: 'リムられ通知を復活させる'
-        body_html: 'リムられ通知を復活させるには <a href="%{url}" class="btn btn-outline-primary" target="_blank">リムられ通知復活</a> と書いたDMを @ego_tter に送ってください。これで手続きは完了です。'
-        url: 'https://twitter.com/messages/%{uid}-187385226?text=リムられ通知復活'
+        title_html: 'リムられ通知を再開する'
+        body_html: 'リムられ通知を再開するには <a href="%{url}" class="btn btn-outline-primary" target="_blank">%{label}</a> と書いたDMを @ego_tter に送ってください。これで手続きは完了です。'
+        url: 'https://twitter.com/messages/%{uid}-187385226?text=%{label}'
         ok: "DM作成ページを開く"
       sign_in_modal:
         title: 'ログインする'
@@ -365,7 +365,7 @@ ja:
       title: 'リムられ通知設定'
       not_coming:
         title: 'リムられ通知がこない場合'
-        button: 'リムられ通知を復活させる'
+        button: 'リムられ通知を再開する'
         note_html: '※一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>'
       reporting_test:
         title: "リムられ通知のテスト"
@@ -1477,6 +1477,15 @@ ja:
         TooManyRequests_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
         Timeout_html: '%{count} ツイートを削除しました。次の削除は %{retry_in} 秒後です。'
   quick_replies:
+    continue:
+      label: 'リムられ通知継続'
+      description: '通知を継続する場合は押してください'
+    revive:
+      label: 'リムられ通知再開'
+      description: '通知を再開する場合は押してください'
+    followed:
+      label: 'フォローしました'
+      description: '@ego_tter をフォローした後に押してください'
     prompt_reports:
       label1: 'リムられ通知 届きました'
       description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'

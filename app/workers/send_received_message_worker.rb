@@ -13,9 +13,9 @@ class SendReceivedMessageWorker
   end
 
   QUICK_REPLIES = [
-      'リムられ通知継続',
-      'リムられ通知復活',
-      'フォローしたよ',
+      I18n.t('quick_replies.continue.label'),
+      I18n.t('quick_replies.revive.label'),
+      I18n.t('quick_replies.followed.label'),
       I18n.t('quick_replies.prompt_reports.label1'),
       I18n.t('quick_replies.prompt_reports.label2'),
       I18n.t('quick_replies.welcome_messages.label1'),

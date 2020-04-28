@@ -26,7 +26,7 @@ class WarningMessage < ApplicationRecord
   belongs_to :user
 
   class << self
-    def inactive(user_id)
+    def inactive_message(user_id)
       user = User.find(user_id)
       token = generate_token
 
@@ -39,7 +39,7 @@ class WarningMessage < ApplicationRecord
       new(user_id: user_id, message: message, token: token)
     end
 
-    def not_following(user_id)
+    def not_following_message(user_id)
       user = User.find(user_id)
       token = generate_token
 
@@ -57,7 +57,32 @@ class WarningMessage < ApplicationRecord
   end
 
   def deliver!
-    dm = User.egotter.api_client.create_direct_message_event(user.uid, message)
+    dm = User.egotter.api_client.create_direct_message_event(event: {
+        type: 'message_create',
+        message_create: {
+            target: {recipient_id: user.uid},
+            message_data: {
+                text: message,
+                quick_reply: {
+                    type: 'options',
+                    options: [
+                        {
+                            label: I18n.t('quick_replies.continue.label'),
+                            description: I18n.t('quick_replies.continue.description')
+                        },
+                        {
+                            label: I18n.t('quick_replies.revive.label'),
+                            description: I18n.t('quick_replies.revive.description')
+                        },
+                        {
+                            label: I18n.t('quick_replies.followed.label'),
+                            description: I18n.t('quick_replies.followed.description')
+                        }
+                    ]
+                }
+            }
+        }
+    })
     update!(message_id: dm.id, message: dm.truncated_message)
     dm
   end

@@ -148,9 +148,9 @@
         %img.d-block.mx-auto{src: image_path('/egotter_usagi_840x450.png'), width: request.from_pc? ? '400' : '300'}
         .mt-3= t('.follow_modal.note_html')
 
-    = modal_dialog id: 'revive-modal', title: t('.revive_modal.title_html'), button: {positive: t('.revive_modal.ok')}, data: {url: t('.revive_modal.url', uid: current_user.uid)} do
+    = modal_dialog id: 'revive-modal', title: t('.revive_modal.title_html'), button: {positive: t('.revive_modal.ok')}, data: {url: t('.revive_modal.url', uid: current_user.uid, label: t('quick_replies.revive.label'))} do
       %img.d-block.mx-auto{src: image_path('/egotter_revive_840x450.png'), height: request.from_pc? ? '200' : '140'}
-      .mt-3= t('.revive_modal.body_html', url: t('.revive_modal.url', uid: current_user.uid))
+      .mt-3= t('.revive_modal.body_html', label: t('quick_replies.revive.label'), url: t('.revive_modal.url', uid: current_user.uid, label: t('quick_replies.revive.label')))
 
 :javascript
   $(function () {
