@@ -7,6 +7,20 @@ module Taskbooks
     def build(params)
       role = params['role']
 
+      if role == 'auto'
+        name = params['instance-name']
+
+        if name.to_s.include?('_web')
+          role = 'web'
+        elsif name.to_s.include?('_sidekiq')
+          role = 'sidekiq'
+        else
+          raise 'role is auto, but collect role is not found'
+        end
+
+        params['role'] = role
+      end
+
       if role == 'web'
         WebTask.new(params)
       elsif role == 'sidekiq'
