@@ -50,6 +50,15 @@ class StartSendingPromptReportsWorker
       return
     end
 
+    queue = Sidekiq::Queue.new('SkippedCreatePromptReportWorker')
+    if queue.size > 0
+      queue.each do |job|
+        CreatePromptReportWorker.perform_async(*job.args)
+        job.delete
+      end
+      return
+    end
+
     start_queueing
 
   rescue => e
@@ -61,11 +70,7 @@ class StartSendingPromptReportsWorker
   # private
 
   def queueing_interval_too_short?(options)
-    if next_wait_time(options['last_queueing_started_at']) > 0
-      true
-    else
-      false
-    end
+    (next_wait_time(options['last_queueing_started_at']) > 0) ? true : false
   end
 
   QUEUEING_INTERVAL = CreatePromptReportRequest::PROCESS_REQUEST_INTERVAL
