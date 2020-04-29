@@ -43,9 +43,7 @@
     = render partial: 'shared/twitter'
     = render partial: 'shared/airbrake'
     = render partial: 'shared/templates'
-
-    - if user_signed_in?
-      = render partial: 'shared/onesignal'
+    = render partial: 'shared/onesignal' if user_signed_in?
 
   %body
     = javascript_include_tag '/adsense.js'
@@ -79,82 +77,13 @@
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/d3/4.2.7/d3.min.js', type: 'text/javascript'}
     %script{src: '//cdnjs.cloudflare.com/ajax/libs/d3-cloud/1.2.3/d3.layout.cloud.min.js', type: 'text/javascript'}
 
-    = render partial: 'layouts/footer' unless under_maintenance?
-
   - unless under_maintenance?
+    = render partial: 'layouts/footer'
     = render partial: 'modal/search_modal'
 
-  - unless user_signed_in?
-    = modal_dialog id: 'sign-in-modal', title: t('.sign_in_modal.title'), body: t('.sign_in_modal.body'), button: {positive: t('.sign_in_modal.yes'), negative: t('.sign_in_modal.no')}
-
-  - if user_signed_in?
-    -# This modal will be initialized in new FollowButton('selector') after follow buttons are rendered.
-    = modal_dialog id: 'create-follow-modal', title: t('twitter.create_follow_modal.title'), button: {positive: t('twitter.create_follow_modal.yes'), negative: t('twitter.create_follow_modal.no')} do
-      %p= t('twitter.create_follow_modal.message_html')
-      %p= t('twitter.create_follow_modal.history_link_html', url: settings_path(via: current_via('create_follow_modal'), anchor: 'follow-count'))
-      .dont-confirm
-        %input#create-follow-dont-confirm{type: 'checkbox'}
-        %label{for: 'create-follow-dont-confirm'}= t('twitter.create_follow_modal.dont_confirm')
-
-    -# This modal will be initialized in new UnfollowButton('selector') after unfollow buttons are rendered.
-    = modal_dialog id: 'create-unfollow-modal', title: t('twitter.create_unfollow_modal.title'), button: {positive: t('twitter.create_unfollow_modal.yes'), negative: t('twitter.create_unfollow_modal.no'), category: 'danger'} do
-      %p= t('twitter.create_unfollow_modal.message_html')
-      %p= t('twitter.create_unfollow_modal.history_link_html', url: settings_path(via: current_via('create_unfollow_modal'), anchor: 'unfollow-count'))
-      .dont-confirm
-        %input#create-unfollow-dont-confirm{type: 'checkbox'}
-        %label{for: 'create-unfollow-dont-confirm'}= t('twitter.create_unfollow_modal.dont_confirm')
-
-    #follow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-      .modal-dialog{role: 'document'}
-        .modal-content
-          .modal-body
-            %p= t('twitter.warning_follow_modal.message_html')
-          .modal-footer
-            = link_to t('twitter.warning_follow_modal.see_pricing'), pricing_path(via: current_via('follow_limit_warning')), class: 'btn btn-outline-primary', target: '_blank'
-            - if user_signed_in?
-              - if current_user.has_valid_subscription?
-                %button.btn.btn-outline-primary.disabled= t('twitter.warning_follow_modal.purchased')
-              - else
-                = link_to t('twitter.warning_follow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
-            - else
-              = link_to t('twitter.warning_follow_modal.login'), sign_in_path(via: current_via('follow_limit_warning')), class: 'btn btn-primary'
-
-    #unfollow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
-      .modal-dialog{role: 'document'}
-        .modal-content
-          .modal-body
-            %p= t('twitter.warning_unfollow_modal.message_html')
-          .modal-footer
-            = link_to t('twitter.warning_unfollow_modal.see_pricing'), pricing_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-outline-primary', target: '_blank'
-            - if user_signed_in?
-              - if current_user.has_valid_subscription?
-                %button.btn.btn-outline-primary.disabled= t('twitter.warning_unfollow_modal.purchased')
-              - else
-                = link_to t('twitter.warning_unfollow_modal.purchase'), '#', class: 'btn btn-primary btn-checkout'
-            - else
-              = link_to t('twitter.warning_unfollow_modal.login'), sign_in_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-primary'
-
-  - if user_signed_in? && !under_maintenance?
-    -# This modal is always embedded because it is used in settings page.
-    = modal_dialog id: 'share-modal', title: t('.share_modal.title_html'), button: {positive: t('.share_modal.ok'), negative: t('.share_modal.cancel')}, data: {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('.share_modal.success'), error_message: t('.share_modal.error')} do
-      %img.d-block.mx-auto{src: image_path('/egotter_thanks_840x483.png'), width: request.from_pc? ? '400' : '300'}
-      %p.mt-3= t('.share_modal.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
-      %small
-        %textarea{rows: '3', style: 'width: 100%; -webkit-appearance: none;'}= t('.follow_modal.tweet_text', kaomoji: Kaomoji.happy)
-        = t('.share_modal.note_html')
-        https://egotter.com #egotter
-
-    - if params[:follow_dialog] == '1'
-      = modal_dialog id: 'follow-modal', title: t('.follow_modal.title_html'), button: {positive: t('.follow_modal.ok'), negative: t('.follow_modal.cancel')}, data: {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')} do
-        %img.d-block.mx-auto{src: image_path('/egotter_usagi_840x450.png'), width: request.from_pc? ? '400' : '300'}
-        .mt-3= t('.follow_modal.note_html')
-
-    = modal_dialog id: 'revive-modal', title: t('.revive_modal.title_html'), button: {positive: t('.revive_modal.ok')}, data: {url: t('.revive_modal.url', uid: current_user.uid, label: t('quick_replies.revive.label'))} do
-      %img.d-block.mx-auto{src: image_path('/egotter_revive_840x450.png'), height: request.from_pc? ? '200' : '140'}
-      .mt-3= t('.revive_modal.body_html', label: t('quick_replies.revive.label'), url: t('.revive_modal.url', uid: current_user.uid, label: t('quick_replies.revive.label')))
-
-:javascript
-  $(function () {
-    var followingEgotter = #{user_signed_in? && current_user.following_egotter?};
-    Welcome.showFollowDialogAndShareDialog(followingEgotter);
-  });
+    - if user_signed_in?
+      = render partial: 'modal/follow_modal'
+      = render partial: 'modal/unfollow_modal'
+      = render partial: 'modal/welcome_modal'
+    -  else
+      = modal_dialog id: 'sign-in-modal', title: t('.sign_in_modal.title'), body: t('.sign_in_modal.body'), button: {positive: t('.sign_in_modal.yes'), negative: t('.sign_in_modal.no')}

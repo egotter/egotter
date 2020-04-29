@@ -1,0 +1,26 @@
+-# This modal is always embedded because it is used in settings page.
+- data = {url: shares_path(via: current_via('share_egotter_modal')), success_message: t('.share.success'), error_message: t('.share.error')}
+= modal_dialog id: 'share-modal', title: t('.share.title_html'), button: {positive: t('.share.ok'), negative: t('.share.cancel')}, data: data do
+  %img.d-block.mx-auto{src: image_path('/egotter_thanks_840x483.png'), width: request.from_pc? ? '400' : '300'}
+  %p.mt-3= t('.share.note_for_count_html', count: SearchCountLimitation.current_sharing_bonus(current_user))
+  %small
+    %textarea{rows: '3', style: 'width: 100%; -webkit-appearance: none;'}= t('.follow.tweet_text', kaomoji: Kaomoji.happy)
+    = t('.share.note_html')
+    https://egotter.com #egotter
+
+- if params[:follow_dialog] == '1'
+  - data = {url: follows_path(via: current_via('follow_egotter_modal')), follow_url: follow_intent_url('ego_tter')}
+  = modal_dialog id: 'follow-modal', title: t('.follow.title_html'), button: {positive: t('.follow.ok'), negative: t('.follow.cancel')}, data: data do
+    %img.d-block.mx-auto{src: image_path('/egotter_usagi_840x450.png'), width: request.from_pc? ? '400' : '300'}
+    .mt-3= t('.follow.note_html')
+
+- if params[:revive_dialog] == '1'
+  = modal_dialog id: 'revive-modal', title: t('.revive.title_html'), button: {positive: t('.revive.ok')}, data: {url: t('.revive.url', uid: current_user.uid, label: t('quick_replies.revive.label'))} do
+    %img.d-block.mx-auto{src: image_path('/egotter_revive_840x450.png'), height: request.from_pc? ? '200' : '140'}
+    .mt-3= t('.revive.body_html', label: t('quick_replies.revive.label'), url: t('.revive.url', uid: current_user.uid, label: t('quick_replies.revive.label')))
+
+:javascript
+  $(function () {
+    var followingEgotter = #{user_signed_in? && current_user.following_egotter?};
+    Welcome.showFollowDialogAndShareDialog(followingEgotter);
+  });

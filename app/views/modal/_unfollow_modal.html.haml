@@ -1,0 +1,22 @@
+-# This modal will be initialized in new UnfollowButton('selector') after unfollow buttons are rendered.
+= modal_dialog id: 'create-unfollow-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no'), category: 'danger'} do
+  %p= t('.message_html')
+  %p= t('.history_link_html', url: settings_path(via: current_via('create_unfollow_modal'), anchor: 'unfollow-count'))
+  .dont-confirm
+    %input#create-unfollow-dont-confirm{type: 'checkbox'}
+    %label{for: 'create-unfollow-dont-confirm'}= t('.dont_confirm')
+
+#unfollow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+  .modal-dialog{role: 'document'}
+    .modal-content
+      .modal-body
+        %p= t('.warning.message_html')
+      .modal-footer
+        = link_to t('.warning.see_pricing'), pricing_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-outline-primary', target: '_blank'
+        - if user_signed_in?
+          - if current_user.has_valid_subscription?
+            %button.btn.btn-outline-primary.disabled= t('.warning.purchased')
+          - else
+            = link_to t('.warning.purchase'), '#', class: 'btn btn-primary btn-checkout'
+        - else
+          = link_to t('.warning.login'), sign_in_path(via: current_via('unfollow_limit_warning')), class: 'btn btn-primary'

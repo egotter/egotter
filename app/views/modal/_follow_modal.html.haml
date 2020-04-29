@@ -1,0 +1,22 @@
+-# This modal will be initialized in new FollowButton('selector') after follow buttons are rendered.
+= modal_dialog id: 'create-follow-modal', title: t('.title'), button: {positive: t('.yes'), negative: t('.no')} do
+  %p= t('.message_html')
+  %p= t('.history_link_html', url: settings_path(via: current_via('create_follow_modal'), anchor: 'follow-count'))
+  .dont-confirm
+    %input#create-follow-dont-confirm{type: 'checkbox'}
+    %label{for: 'create-follow-dont-confirm'}= t('.dont_confirm')
+
+#follow-limitation-warning-modal.modal.fade{role: 'dialog', tabindex: '-1'}
+  .modal-dialog{role: 'document'}
+    .modal-content
+      .modal-body
+        %p= t('.warning.message_html')
+      .modal-footer
+        = link_to t('.warning.see_pricing'), pricing_path(via: current_via('follow_limit_warning')), class: 'btn btn-outline-primary', target: '_blank'
+        - if user_signed_in?
+          - if current_user.has_valid_subscription?
+            %button.btn.btn-outline-primary.disabled= t('.warning.purchased')
+          - else
+            = link_to t('.warning.purchase'), '#', class: 'btn btn-primary btn-checkout'
+        - else
+          = link_to t('.warning.login'), sign_in_path(via: current_via('follow_limit_warning')), class: 'btn btn-primary'
