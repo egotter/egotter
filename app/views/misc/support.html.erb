@@ -1,15 +1,12 @@
-<div class="support">
-  <h2><small><%= t('dictionary.support') %></small></h2>
-  <div style="margin-bottom: 10px;"><%= t('dictionary.support_lead') %></div>
+<h2 class="h4 text-center my-5"><%= t('.title') %></h2>
+<p><%= t('.lead') %></p>
 
-  <hr>
+<hr>
 
-  <h2><small><%= t('dictionary.contact_by_reply') %></small></h2>
-  <div><%= t('dictionary.feel_free_to_reply',
-               link: link_to(t('dictionary.official_account'), user_url('ego_tter'), target: '_blank')).html_safe %></div>
+<h2 class="h4 text-center my-5"><%= t('.contact_by_reply') %></h2>
+<p><%= t('.feel_free_to_reply', link: link_to(t('.official_account'), user_url('ego_tter'), target: '_blank')).html_safe %></p>
 
-  <hr>
+<hr>
 
-  <h2><small><%= t('dictionary.faq') %></small></h2>
-  <%= render(partial: 'misc/faq', collection: Faq.list, cached: true) %>
-</div>
+<h2 class="h4 text-center my-5"><%= t('.faq') %></h2>
+<%= render(partial: 'misc/faq', collection: Faq.list, cached: true) %>

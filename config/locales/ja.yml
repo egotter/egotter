@@ -31,6 +31,7 @@ ja:
       feedback: "ご意見"
       root: 'トップページ'
       support: "お問い合わせ"
+      faq: 'よくある質問'
       github: "Github"
       scheduled_tweets: 'ツイート予約投稿'
       transcription: '文字起こしAI'
@@ -136,7 +137,6 @@ ja:
       reload_this_page: "ページを更新する"
       reinvestigate: "再度チェックする"
       sign_in_and_investigate: "ログインして分析する"
-      view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
       view_more: '続きを見る'
       view_more_hacked_with_num_html: '乗っ取りツイートを確認する <span class="badge">%{num}</span>'
       empty_result_with_details_html: |
@@ -659,6 +659,13 @@ ja:
     new:
       sign_in_with_twitter_html: '<i class="fab fa-twitter"></i> Twitter でログイン'
   misc:
+    support:
+      title: "お問い合わせ"
+      lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
+      contact_by_reply: "リプライでお問い合わせ"
+      feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
+      official_account: "公式アカウント"
+      faq: "よくあるご質問"
     terms_of_service:
       title: "利用規約"
     privacy_policy:
@@ -1734,33 +1741,14 @@ ja:
     active: "アクティブのみ"
     inactive: "非アクティブのみ"
     protected: "鍵付きのみ"
-
   dictionary:
-    official_account: "公式アカウント"
-    support_lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
-    sign_in: "ログイン"
-    sign_out: "ログアウト"
-    do_sign_out: "ログアウトする"
-    link: "リンク"
-    this_link: "このリンク"
-    support: "お問い合わせ"
-    contact_by_reply: "リプライでお問い合わせ"
-    feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
-    faq: "よくあるご質問"
     view_more: "続きを見る"
     see_more: "もっと見る"
     see_at_once_more: "一気に見る"
-    view_more_detail: "もっと詳しく"
-    view_more_with_num_html: '続きを見る <span class="badge">%{num}</span>'
-    reload_this_page: "ページを更新する"
-    tweet_result: "結果をつぶやく"
     do_tweet: "ツイートする"
     do_copy: "コピーする"
     delim: "、"
-    asterisk: "*"
     honorific: "さん"
-    between_from: "から"
-    between_to: "まで"
   before_sign_in:
     need_login_html: 'このページを見るためには <a class="btn btn-primary btn-sm" href="%{url}">ログイン</a> が必要です。'
     need_login_for_relationships_html: '共通検索を利用するには <a href="%{url}">ログイン</a> が必要です。'
