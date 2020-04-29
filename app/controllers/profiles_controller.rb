@@ -20,6 +20,7 @@ class ProfilesController < ApplicationController
     @user = TwitterDB::User.find_by(screen_name: params[:screen_name])
     @user = TwitterUser.latest_by(screen_name: params[:screen_name]) unless @user
     @user = build_twitter_user_by(screen_name: params[:screen_name]) unless @user # It's possible to be redirected
+    return if performed?
     @display_time = l((@user.updated_at || Time.zone.now).in_time_zone('Tokyo'), format: :profile_short)
   end
 
