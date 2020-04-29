@@ -24,6 +24,8 @@ class CreateFollowWorker
       CreateFollowTask.new(request).start!
     end
 
+  rescue FollowRequest::AlreadyFollowing, FollowRequest::NotFound, FollowRequest::Suspended, FollowRequest::Unauthorized => e
+    logger.info "Skip #{e.inspect}"
   rescue FollowRequest::TooManyFollows => e
     logger.warn "#{e.class} Retry later"
     CreateFollowWorker.perform_in(retry_in, request_id, options)
