@@ -11,7 +11,7 @@
 - description = t('.meta_description', user: @twitter_user.screen_name)
 - set_meta_tags title: title, site: '', description: description
 
-= render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user}
+= render partial: 'twitter_users/bg_polling', locals: {twitter_user: @twitter_user}
 
 = render(partial: 'adsense/ad', locals: {vertical: :top})
 

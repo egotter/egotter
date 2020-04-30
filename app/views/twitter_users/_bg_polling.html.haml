@@ -58,4 +58,4 @@
   - support_url = pricing_path(via: via, anchor: 'enterprise-plan')
   = search_count_limitation_too_many_searches_message(sign_in_url, pricing_url, support_url)
 
-= render partial: 'twitter_users/create_twitter_user_in_background'
+= render partial: 'twitter_users/bg_polling_js', locals: {twitter_user: twitter_user}

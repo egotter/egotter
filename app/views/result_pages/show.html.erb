@@ -9,7 +9,7 @@
 <% set_meta_tags description: @meta_description %>
 
 <% if %w(unfriends unfollowers blocking_or_blocked).include?(controller_name) %>
-  <div class="mb-3"><%= render partial: 'twitter_users/create_twitter_user_in_background', locals: {twitter_user: @twitter_user} %></div>
+  <div class="mb-3"><%= render partial: 'twitter_users/bg_polling', locals: {twitter_user: @twitter_user} %></div>
 <% end %>
 
 <%= render(partial: 'adsense/ad', locals: {vertical: :top}) %>
