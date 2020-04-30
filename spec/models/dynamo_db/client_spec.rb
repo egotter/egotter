@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DynamoDB::Client do
   let(:dynamo_db) { double('dynamo_db') }
-  let(:instance) { described_class.new('klass') }
+  let(:instance) { described_class.new('klass', 'table', 'partition_key') }
   let(:key) { 1 }
 
   before do
@@ -23,7 +23,7 @@ RSpec.describe DynamoDB::Client do
     subject { instance.write(key, 'input') }
 
     it do
-      expect(dynamo_db).to receive(:put_item).with(table_name: DynamoDB::TABLE_NAME, item: 'input')
+      expect(dynamo_db).to receive(:put_item).with(table_name: 'table', item: 'input')
       subject
     end
   end

@@ -4,9 +4,11 @@ require_relative '../dynamo_db'
 
 module DynamoDB
   class Client
-    def initialize(klass)
+    def initialize(klass, table, partition_key)
       @klass = klass
-      @dynamo_db ||= Aws::DynamoDB::Client.new(region: REGION)
+      @table = table
+      @partition_key = partition_key
+      @dynamo_db = Aws::DynamoDB::Client.new(region: REGION)
     end
 
     def read(key)
@@ -14,7 +16,7 @@ module DynamoDB
     end
 
     def write(key, item)
-      @dynamo_db.put_item(table_name: TABLE_NAME, item: item)
+      @dynamo_db.put_item(table_name: @table, item: item)
     end
 
     def delete(key)
@@ -24,7 +26,7 @@ module DynamoDB
     private
 
     def db_key(key)
-      {table_name: TABLE_NAME, key: {twitter_user_id: key}}
+      {table_name: @table, key: {@partition_key => key}}
     end
 
     module Instrumentation

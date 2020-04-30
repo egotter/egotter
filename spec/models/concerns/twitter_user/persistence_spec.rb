@@ -51,4 +51,19 @@ RSpec.describe Concerns::TwitterUser::Persistence do
     expect(S3::MentionTweet).to receive(:import_from!).with(twitter_user.uid, twitter_user.screen_name, mention_tweets)
     subject
   end
+
+  it do
+    expect(DynamoDB::StatusTweet).to receive(:import_from).with(twitter_user.uid, status_tweets)
+    subject
+  end
+
+  it do
+    expect(DynamoDB::FavoriteTweet).to receive(:import_from).with(twitter_user.uid, favorite_tweets)
+    subject
+  end
+
+  it do
+    expect(DynamoDB::MentionTweet).to receive(:import_from).with(twitter_user.uid, mention_tweets)
+    subject
+  end
 end

@@ -28,6 +28,10 @@ FactoryBot.define do
     # record.save!(validate: false)
 
     after(:build) do |user, evaluator|
+      user.instance_variable_set(:@reserved_statuses, [])
+      user.instance_variable_set(:@reserved_favorites, [])
+      user.instance_variable_set(:@reserved_mentions, [])
+
       if evaluator.with_relations
         user.instance_variable_set(:@reserved_statuses, 2.times.map { build(:twitter_db_status) })
         user.instance_variable_set(:@reserved_favorites, 2.times.map { build(:twitter_db_favorite) })

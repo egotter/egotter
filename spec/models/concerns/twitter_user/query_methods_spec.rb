@@ -4,9 +4,9 @@ RSpec.describe Concerns::TwitterUser::QueryMethods do
   let(:uid) { 1 }
   let(:screen_name) { 'sn' }
   let(:delay) { described_class::DEFAULT_TIMESTAMP_DELAY }
-  let(:record1) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: (delay + 1.second).ago) }
-  let(:record2) { build(:twitter_user, uid: uid, screen_name: screen_name, created_at: (delay - 1.second).ago) }
-  let(:record3) { build(:twitter_user, uid: uid, screen_name: screen_name) }
+  let(:record1) { build(:twitter_user, with_relations: false, uid: uid, screen_name: screen_name, created_at: (delay + 1.second).ago) }
+  let(:record2) { build(:twitter_user, with_relations: false, uid: uid, screen_name: screen_name, created_at: (delay - 1.second).ago) }
+  let(:record3) { build(:twitter_user, with_relations: false, uid: uid, screen_name: screen_name) }
 
   before do
     record1.save!(validate: false)

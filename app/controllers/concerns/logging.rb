@@ -149,7 +149,7 @@ module Concerns::Logging
   def push_referer
     referer = request.referer.to_s.truncate(180)
     if referer.present? && !referer.start_with?('https://egotter.com')
-      Util::RefererList.new(Redis.client).push(egotter_visit_id, referer)
+      ::Util::RefererList.new(Redis.client).push(egotter_visit_id, referer)
     end
   rescue => e
     logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{action_name}"
@@ -157,7 +157,7 @@ module Concerns::Logging
   end
 
   def pushed_referers
-    Util::RefererList.new(Redis.client).to_a(egotter_visit_id)
+    ::Util::RefererList.new(Redis.client).to_a(egotter_visit_id)
   end
 
   private

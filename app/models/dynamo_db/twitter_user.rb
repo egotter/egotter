@@ -4,6 +4,8 @@ require_relative '../dynamo_db'
 
 module DynamoDB
   class TwitterUser
+    extend ::DynamoDB::Util
+
     attr_reader :uid, :screen_name, :profile, :friend_uids, :follower_uids
 
     def initialize(attrs)
@@ -15,6 +17,14 @@ module DynamoDB
     end
 
     class << self
+      def table_name
+        "egotter.#{Rails.env}.twitter_users"
+      end
+
+      def partition_key
+        'twitter_user_id'
+      end
+
       def find_by(twitter_user_id)
         item = client.read(twitter_user_id).item
         item && item['json'] ? new(parse_json(decompress(item['json']))) : nil
@@ -53,21 +63,7 @@ module DynamoDB
       private
 
       def client
-        @client ||= ::DynamoDB::Client.new(self)
-      end
-
-      def parse_json(text)
-        Oj.load(text, symbol_keys: true)
-      rescue Oj::ParseError => e
-        raise TypeError.new("#{text} is not a valid JSON source.")
-      end
-
-      def compress(text)
-        Base64.encode64(Zlib::Deflate.deflate(text))
-      end
-
-      def decompress(data)
-        Zlib::Inflate.inflate(Base64.decode64(data))
+        @client ||= ::DynamoDB::Client.new(self, table_name, partition_key)
       end
     end
   end
