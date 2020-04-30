@@ -11,7 +11,7 @@ module Api
           user.credential_token.update!(instance_id: params[:instance_id])
 
           request = CreatePromptReportRequest.create(user_id: user.id, skip_error_check: true)
-          jid = CreatePromptReportWorker.perform_async(request.id, requested_by: 'android_app')
+          jid = CreatePromptReportWorker.perform_async(request.id, user_id: user.id, requested_by: 'android_app')
 
           response = {
               uid: user.uid,
