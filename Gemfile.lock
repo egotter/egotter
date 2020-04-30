@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/egotter/dd-trace-rb.git
-  revision: 1a87f9b202a390fdd4d9ec1093594f22c57d0e1a
+  revision: 995a86caa09b57ff9b562495a585719bafe2dfd4
   branch: 0.34-stable
   specs:
     ddtrace (0.34.2)
