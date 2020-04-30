@@ -1,4 +1,12 @@
 GIT
+  remote: git@github.com:egotter/dd-trace-rb.git
+  revision: 1a87f9b202a390fdd4d9ec1093594f22c57d0e1a
+  branch: 0.34-stable
+  specs:
+    ddtrace (0.34.2)
+      msgpack
+
+GIT
   remote: https://github.com/egotter/twitter.git
   revision: 7411e9bb8f2dda6a16e2e145074f8fd2c57478ea
   specs:
@@ -139,8 +147,6 @@ GEM
     concurrent-ruby (1.1.6)
     connection_pool (2.2.2)
     crass (1.0.6)
-    ddtrace (0.34.2)
-      msgpack
     declarative (0.0.10)
     declarative-option (0.1.0)
     device_detector (1.0.3)
@@ -499,7 +505,7 @@ DEPENDENCIES
   blazer
   byebug
   capybara (~> 2.13.0)
-  ddtrace
+  ddtrace!
   devise
   dogstatsd-ruby
   dotenv-rails

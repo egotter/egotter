@@ -76,7 +76,7 @@ gem 'webpacker', '~> 4.0'
 
 # Datadog APM
 gem 'dogstatsd-ruby'
-gem 'ddtrace'
+gem 'ddtrace', git: 'git@github.com:egotter/dd-trace-rb.git', branch: '0.34-stable'
 
 group :development, :production do
   gem 'blazer'
