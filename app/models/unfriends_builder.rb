@@ -7,7 +7,7 @@ class UnfriendsBuilder
     @users = Util.users(twitter_user.uid, twitter_user.created_at, limit: limit)
 
     # Experimental preload
-    Parallel.each(@users, in_threads: 20) do |user|
+    Parallel.each(@users, in_threads: 10) do |user|
       user.friend_uids
       user.follower_uids
     end

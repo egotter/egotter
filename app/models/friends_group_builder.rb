@@ -3,7 +3,7 @@ class FriendsGroupBuilder
     @users = Util.users(uid, limit: limit)
 
     # Experimental preload
-    Parallel.each(@users, in_threads: 20) do |user|
+    Parallel.each(@users, in_threads: 10) do |user|
       user.friend_uids
       user.follower_uids
     end
