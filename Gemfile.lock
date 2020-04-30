@@ -1,5 +1,5 @@
 GIT
-  remote: git@github.com:egotter/dd-trace-rb.git
+  remote: https://github.com/egotter/dd-trace-rb.git
   revision: 1a87f9b202a390fdd4d9ec1093594f22c57d0e1a
   branch: 0.34-stable
   specs:
