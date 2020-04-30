@@ -78,17 +78,17 @@ module Concerns::TwitterUser::Persistence
 
     # DynamoDB (Automatically deleted)
 
-    bm_after_commit('DynamoDB::StatusTweet.import_from') do
-      DynamoDB::StatusTweet.import_from(uid, status_tweets)
-    end
-
-    bm_after_commit('DynamoDB::FavoriteTweet.import_from') do
-      DynamoDB::FavoriteTweet.import_from(uid, favorite_tweets)
-    end
-
-    bm_after_commit('DynamoDB::MentionTweet.import_from') do
-      DynamoDB::MentionTweet.import_from(uid, mention_tweets)
-    end
+    # bm_after_commit('DynamoDB::StatusTweet.import_from') do
+    #   DynamoDB::StatusTweet.import_from(uid, status_tweets)
+    # end
+    #
+    # bm_after_commit('DynamoDB::FavoriteTweet.import_from') do
+    #   DynamoDB::FavoriteTweet.import_from(uid, favorite_tweets)
+    # end
+    #
+    # bm_after_commit('DynamoDB::MentionTweet.import_from') do
+    #   DynamoDB::MentionTweet.import_from(uid, mention_tweets)
+    # end
   end
 
   module Instrumentation
