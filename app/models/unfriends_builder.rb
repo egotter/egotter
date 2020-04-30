@@ -34,7 +34,7 @@ class UnfriendsBuilder
       TwitterUser.creation_completed.
           where('created_at <= ?', created_at).
           where(uid: uid).
-          select(:id).
+          select(:id, :created_at).
           order(created_at: :desc).
           limit(limit).
           reverse

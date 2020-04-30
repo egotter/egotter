@@ -114,7 +114,9 @@ module Concerns::TwitterUser::Profile
   end
 
   def fetch_profile
-    result = Efs::TwitterUser.find_by(id)&.profile unless ENV['DISABLE_EFS_TWITTER_USER'] == '1' # Hash
+    result = nil
+    result = DynamoDB::TwitterUser.find_by(id)&.profile if DynamoDB.enabled? && DynamoDB.cache_alive?(created_at) # Hash
+    result = Efs::TwitterUser.find_by(id)&.profile if result.blank? && ENV['DISABLE_EFS_TWITTER_USER'] != '1' # Hash
     result = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if result.blank? # String
     result
   end

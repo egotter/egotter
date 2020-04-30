@@ -18,6 +18,9 @@ module DynamoDB
       def find_by(twitter_user_id)
         item = client.read(twitter_user_id).item
         item && item['json'] ? new(parse_json(decompress(item['json']))) : nil
+      rescue => e
+        Rails.logger.warn "#{self}##{__method__} failed #{e.inspect}"
+        nil
       end
 
       def delete_by(twitter_user_id)
@@ -37,7 +40,7 @@ module DynamoDB
         item = {
             twitter_user_id: twitter_user_id,
             json: compress(payload.to_json),
-            expiration_time: 1.day.since.to_i
+            expiration_time: TABLE_TTL.since.to_i
         }
 
         client.write(twitter_user_id, item)
@@ -50,7 +53,7 @@ module DynamoDB
       private
 
       def client
-        @client ||= ::DynamoDB::Client.new
+        @client ||= ::DynamoDB::Client.new(self)
       end
 
       def parse_json(text)

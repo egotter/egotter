@@ -14,6 +14,12 @@ RSpec.describe Concerns::TwitterUser::Persistence do
   end
 
   it do
+    expect(DynamoDB::TwitterUser).to receive(:import_from).
+        with(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.profile_text, twitter_user.friend_uids, twitter_user.follower_uids)
+    subject
+  end
+
+  it do
     expect(S3::Friendship).to receive(:import_from!).
         with(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.friend_uids, async: true)
     subject

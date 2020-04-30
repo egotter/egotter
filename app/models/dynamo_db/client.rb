@@ -4,7 +4,8 @@ require_relative '../dynamo_db'
 
 module DynamoDB
   class Client
-    def initialize
+    def initialize(klass)
+      @klass = klass
       @dynamo_db ||= Aws::DynamoDB::Client.new(region: REGION)
     end
 
@@ -25,21 +26,21 @@ module DynamoDB
     def db_key(key)
       {table_name: TABLE_NAME, key: {twitter_user_id: key}}
     end
-  end
 
-  module Instrumentation
-    %i(
-      read
-      write
-      delete
-    ).each do |method_name|
-      define_method(method_name) do |*args, &blk|
-        message = "#{@klass} #{method_name} by #{args[0]}"
-        ApplicationRecord.benchmark(message, level: :info) do
-          method(method_name).super_method.call(*args, &blk)
+    module Instrumentation
+      %i(
+        read
+        write
+        delete
+      ).each do |method_name|
+        define_method(method_name) do |*args, &blk|
+          message = "#{@klass} #{method_name} by #{args[0]}"
+          ApplicationRecord.benchmark(message, level: :info) do
+            method(method_name).super_method.call(*args, &blk)
+          end
         end
       end
     end
+    prepend Instrumentation
   end
-  prepend Instrumentation
 end

@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe DynamoDB::Client do
   let(:dynamo_db) { double('dynamo_db') }
-  let(:instance) { described_class.new }
+  let(:instance) { described_class.new('klass') }
   let(:key) { 1 }
 
   before do
