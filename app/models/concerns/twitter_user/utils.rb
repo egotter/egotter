@@ -12,7 +12,7 @@ module Concerns::TwitterUser::Utils
   # #diff calls this method in context of new record
   def friend_uids
     if new_record?
-      @friend_uids
+      @reserved_friend_uids
     else
       if instance_variable_defined?(:@persisted_friend_uids)
         @persisted_friend_uids
@@ -25,14 +25,16 @@ module Concerns::TwitterUser::Utils
     end
   end
 
+  # TODO Remove later
   def friend_uids=(uids)
-    @friend_uids = uids
+    logger.warn '#friend_uids= is deprecated'
+    @reserved_friend_uids = uids
   end
 
   # #diff calls this method in context of new record
   def follower_uids
     if new_record?
-      @follower_uids
+      @reserved_follower_uids
     else
       if instance_variable_defined?(:@persisted_follower_uids)
         @persisted_follower_uids
@@ -45,11 +47,15 @@ module Concerns::TwitterUser::Utils
     end
   end
 
+  # TODO Remove later
   def follower_uids=(uids)
-    @follower_uids = uids
+    logger.warn '#follower_uids= is deprecated'
+    @reserved_follower_uids = uids
   end
 
+  # TODO Remove later
   def size
+    logger.warn 'TwitterUser#size is deprecated'
     TwitterUser.where(uid: uid).size
   end
 

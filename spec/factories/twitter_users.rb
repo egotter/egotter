@@ -34,11 +34,11 @@ FactoryBot.define do
         user.instance_variable_set(:@reserved_mentions, 2.times.map { build(:twitter_db_mention) })
 
         if user.friends_count
-          user.friend_uids = user.friends_count.times.map { create(:twitter_db_user).uid }
+          user.instance_variable_set(:@reserved_friend_uids, user.friends_count.times.map { create(:twitter_db_user).uid })
         end
 
         if user.followers_count
-          user.follower_uids = user.followers_count.times.map { create(:twitter_db_user).uid }
+          user.instance_variable_set(:@reserved_follower_uids, user.followers_count.times.map { create(:twitter_db_user).uid })
         end
       end
     end

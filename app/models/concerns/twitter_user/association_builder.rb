@@ -14,18 +14,18 @@ module Concerns::TwitterUser::AssociationBuilder
     self.friends_size = self.followers_size = 0
 
     if friend_ids&.any?
-      self.friend_uids = friend_ids
+      @reserved_friend_uids = friend_ids
       self.friends_size = friend_ids.size
     else
-      self.friend_uids = []
+      @reserved_friend_uids = []
       self.friends_size = 0
     end
 
     if follower_ids&.any?
-      self.follower_uids = follower_ids
+      @reserved_follower_uids = follower_ids
       self.followers_size = follower_ids.size
     else
-      self.follower_uids = []
+      @reserved_follower_uids = []
       self.followers_size = 0
     end
   end

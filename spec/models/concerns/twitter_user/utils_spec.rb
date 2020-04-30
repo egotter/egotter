@@ -5,7 +5,7 @@ RSpec.describe Concerns::TwitterUser::Utils do
     subject(:twitter_user) { build(:twitter_user) }
 
     context 'With new record' do
-      before { twitter_user.instance_variable_set(:@friend_uids, 'hello') }
+      before { twitter_user.instance_variable_set(:@reserved_friend_uids, 'hello') }
       it do
         expect(twitter_user.friend_uids).to eq('hello')
       end
@@ -39,7 +39,7 @@ RSpec.describe Concerns::TwitterUser::Utils do
     subject(:twitter_user) { build(:twitter_user) }
 
     context 'With new record' do
-      before { twitter_user.instance_variable_set(:@follower_uids, 'hello') }
+      before { twitter_user.instance_variable_set(:@reserved_follower_uids, 'hello') }
       it do
         expect(twitter_user.follower_uids).to eq('hello')
       end

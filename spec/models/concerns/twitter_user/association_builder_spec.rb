@@ -8,7 +8,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
       let(:friend_ids) { [1, 2, 3] }
       before { twitter_user.build_friends_and_followers(friend_ids, nil) }
       it do
-        expect(twitter_user.instance_variable_get(:@friend_uids)).to match_array(friend_ids)
+        expect(twitter_user.instance_variable_get(:@reserved_friend_uids)).to match_array(friend_ids)
         expect(twitter_user.friends_size).to eq(friend_ids.size)
       end
     end
@@ -17,7 +17,7 @@ RSpec.describe Concerns::TwitterUser::AssociationBuilder do
       let(:follower_ids) { [2, 3, 4] }
       before { twitter_user.build_friends_and_followers(nil, follower_ids) }
       it do
-        expect(twitter_user.instance_variable_get(:@follower_uids)).to match_array(follower_ids)
+        expect(twitter_user.instance_variable_get(:@reserved_follower_uids)).to match_array(follower_ids)
         expect(twitter_user.followers_size).to eq(follower_ids.size)
       end
     end

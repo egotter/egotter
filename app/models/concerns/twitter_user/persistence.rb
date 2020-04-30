@@ -24,20 +24,20 @@ module Concerns::TwitterUser::Persistence
 
   def perform_after_commit
     bm_after_commit('Efs::TwitterUser.import_from!') do
-      Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, @friend_uids, @follower_uids)
+      Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, @reserved_friend_uids, @reserved_follower_uids)
     end
 
     # Experimental import
     bm_after_commit('DynamoDB::TwitterUser.import_from') do
-      DynamoDB::TwitterUser.import_from(id, uid, screen_name, profile_text, @friend_uids, @follower_uids)
+      DynamoDB::TwitterUser.import_from(id, uid, screen_name, profile_text, @reserved_friend_uids, @reserved_follower_uids)
     end
 
     bm_after_commit('S3::Friendship.import_from!') do
-      S3::Friendship.import_from!(id, uid, screen_name, @friend_uids, async: true)
+      S3::Friendship.import_from!(id, uid, screen_name, @reserved_friend_uids, async: true)
     end
 
     bm_after_commit('S3::Followership.import_from!') do
-      S3::Followership.import_from!(id, uid, screen_name, @follower_uids, async: true)
+      S3::Followership.import_from!(id, uid, screen_name, @reserved_follower_uids, async: true)
     end
 
     bm_after_commit('S3::Profile.import_from!') do
