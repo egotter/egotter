@@ -3,8 +3,8 @@ class UnfriendsBuilder
   # TODO Decrease to avoid high loads
   DEFAULT_LIMIT = 100
 
-  def initialize(twitter_user, limit: DEFAULT_LIMIT)
-    @users = Util.users(twitter_user.uid, twitter_user.created_at, limit: limit)
+  def initialize(uid, start_date: nil, end_date:, limit: DEFAULT_LIMIT)
+    @users = Util.users(uid, start_date, end_date, limit: limit)
 
     # Experimental preload
     Parallel.each(@users, in_threads: 10) do |user|
@@ -30,11 +30,14 @@ class UnfriendsBuilder
 
     # Fetch users that are created before the specified date without limit
     # Separated for test
-    def users(uid, created_at, limit: DEFAULT_LIMIT)
-      TwitterUser.creation_completed.
-          where('created_at <= ?', created_at).
-          where(uid: uid).
-          select(:id, :created_at).
+    def users(uid, start_date, end_date, limit: DEFAULT_LIMIT)
+      query = TwitterUser.creation_completed.
+          where('created_at <= ?', end_date).
+          where(uid: uid)
+
+      query = query.where('created_at >= ?', start_date) if start_date
+
+      query.select(:id, :created_at).
           order(created_at: :desc).
           limit(limit).
           reverse

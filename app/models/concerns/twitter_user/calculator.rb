@@ -58,7 +58,7 @@ module Concerns::TwitterUser::Calculator
   end
 
   def unfriends_builder
-    @unfriends_builder ||= UnfriendsBuilder.new(self)
+    @unfriends_builder ||= UnfriendsBuilder.new(uid, end_date: created_at)
   end
 
   def calc_unfriend_uids

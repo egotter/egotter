@@ -59,7 +59,7 @@ RSpec.describe Concerns::TwitterUser::Calculator do
   end
 
   describe '#calc_unfriend_uids' do
-    let(:builder) { UnfriendsBuilder.new(twitter_user) }
+    let(:builder) { UnfriendsBuilder.new(twitter_user.uid, end_date: twitter_user.created_at) }
     before { twitter_user.instance_variable_set(:@unfriends_builder, builder) }
     it do
       expect(builder).to receive(:unfriends).with(no_args).and_call_original
@@ -68,7 +68,7 @@ RSpec.describe Concerns::TwitterUser::Calculator do
   end
 
   describe '#calc_unfollower_uids' do
-    let(:builder) { UnfriendsBuilder.new(twitter_user) }
+    let(:builder) { UnfriendsBuilder.new(twitter_user.uid, end_date: twitter_user.created_at) }
     before { twitter_user.instance_variable_set(:@unfriends_builder, builder) }
     it do
       expect(builder).to receive(:unfollowers).with(no_args).and_call_original

@@ -32,7 +32,7 @@ RSpec.describe UnfriendsBuilder::Util do
     let(:time) { Time.zone.now - 10.second }
     let(:uid) { 1 }
     let(:limit) { 2 }
-    let(:users) { described_class.users(uid, @user.created_at) }
+    let(:users) { described_class.users(uid, nil, @user.created_at) }
 
     before do
       build(:twitter_user, uid: uid, created_at: time + 1.second).save!(validate: false)

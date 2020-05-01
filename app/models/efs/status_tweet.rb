@@ -1,7 +1,5 @@
 # -*- SkipSchemaAnnotations
 
-require_relative './tweet'
-
 module Efs
   class StatusTweet < Tweet
     class << self
