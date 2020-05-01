@@ -22,6 +22,7 @@ module Concerns::TwitterUser::Persistence
     end
   end
 
+  # Don't create threads in this method!
   def perform_after_commit
     bm_after_commit('Efs::TwitterUser.import_from!') do
       Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, @reserved_friend_uids, @reserved_follower_uids)
@@ -64,20 +65,16 @@ module Concerns::TwitterUser::Persistence
 
     # EFS (Automatically deleted)
 
-    Parallel.each([1, 2, 3], in_threads: 3) do |i|
-      if i == 1
-        bm_after_commit('Efs::StatusTweet.import_from!') do
-          Efs::StatusTweet.import_from!(uid, screen_name, status_tweets)
-        end
-      elsif i == 2
-        bm_after_commit('Efs::FavoriteTweet.import_from!') do
-          Efs::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
-        end
-      else
-        bm_after_commit('Efs::MentionTweet.import_from!') do
-          Efs::MentionTweet.import_from!(uid, screen_name, mention_tweets)
-        end
-      end
+    bm_after_commit('Efs::StatusTweet.import_from!') do
+      Efs::StatusTweet.import_from!(uid, screen_name, status_tweets)
+    end
+
+    bm_after_commit('Efs::FavoriteTweet.import_from!') do
+      Efs::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
+    end
+
+    bm_after_commit('Efs::MentionTweet.import_from!') do
+      Efs::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
 
     # DynamoDB (Automatically deleted)
