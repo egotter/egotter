@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_02_06_143238) do
+ActiveRecord::Schema.define(version: 2020_05_01_200054) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -264,6 +264,15 @@ ActiveRecord::Schema.define(version: 2020_02_06_143238) do
     t.index ["uid"], name: "index_create_notification_message_logs_on_uid"
     t.index ["user_id", "status"], name: "index_create_notification_message_logs_on_user_id_and_status"
     t.index ["user_id"], name: "index_create_notification_message_logs_on_user_id"
+  end
+
+  create_table "create_periodic_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_create_periodic_report_requests_on_created_at"
+    t.index ["user_id"], name: "index_create_periodic_report_requests_on_user_id"
   end
 
   create_table "create_prompt_report_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
@@ -753,6 +762,20 @@ ActiveRecord::Schema.define(version: 2020_02_06_143238) do
     t.string "channel", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_page_cache_logs_on_created_at"
+  end
+
+  create_table "periodic_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "read_at"
+    t.string "token", null: false
+    t.string "message_id", null: false
+    t.string "message", default: "", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_periodic_reports_on_created_at"
+    t.index ["token"], name: "index_periodic_reports_on_token", unique: true
+    t.index ["user_id", "created_at"], name: "index_periodic_reports_on_user_id_and_created_at"
+    t.index ["user_id"], name: "index_periodic_reports_on_user_id"
   end
 
   create_table "polling_logs", id: :integer, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

@@ -15,6 +15,10 @@ module ReportsHelper
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'prompt'
   end
 
+  def via_periodic_report?
+    params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'periodic'
+  end
+
   def via_search_report?
     params[:token].present? && %i(crawler UNKNOWN).exclude?(request.device_type) && params[:type] == 'search'
   end
