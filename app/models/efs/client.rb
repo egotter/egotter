@@ -2,12 +2,10 @@
 
 module Efs
   class Client
-    attr_reader :ttl
-
     def initialize(key_prefix, klass, mounted_dir = nil)
       @key_prefix = key_prefix
       @klass = klass
-      @ttl = 1.hour
+      @ttl = Tweet::TWEET_TTL
 
       dir = Rails.root.join(mounted_dir || 'tmp/tweet')
       FileUtils.mkdir_p(dir) unless File.exists?(dir)

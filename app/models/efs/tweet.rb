@@ -4,6 +4,8 @@ module Efs
   class Tweet
     attr_reader :raw_attrs_text
 
+    TWEET_TTL = 1.hour
+
     def initialize(tweet)
       @raw_attrs_text = tweet['raw_attrs_text']
     end
@@ -15,6 +17,10 @@ module Efs
 
       def mounted_dir
         'not-specified'
+      end
+
+      def cache_alive?(time)
+        time > TWEET_TTL.ago
       end
 
       def array_from(tweets)

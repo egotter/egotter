@@ -13,6 +13,20 @@ RSpec.describe Efs::Tweet do
     allow(described_class).to receive(:client).and_return(client)
   end
 
+  describe '.cache_alive?' do
+    subject { described_class.cache_alive?(time) }
+
+    context 'The time is a short time ago' do
+      let(:time) { 1.second.ago }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'The time is a long time ago' do
+      let(:time) { 1.year.ago }
+      it { is_expected.to be_falsey }
+    end
+  end
+
   describe '.where' do
     let(:uid) { 1 }
     let(:obj) { {uid: uid, screen_name: 'sn', tweets: ::S3::Util.pack(tweets), time: Time.zone.now.to_s}.to_json }

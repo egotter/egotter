@@ -14,6 +14,6 @@ module DynamoDB
   end
 
   def cache_alive?(time)
-    Time.zone.now - time < TABLE_TTL
+    time > TABLE_TTL.ago
   end
 end

@@ -77,7 +77,7 @@ module Concerns::TwitterUser::Associations
   # TODO Return an instance of Efs::StatusTweet or S3::StatusTweet
   def status_tweets
     tweets = []
-    tweets = ::Efs::StatusTweet.where(uid: uid) if created_at > ::Efs::StatusTweet.client.ttl.ago
+    tweets = Efs::StatusTweet.where(uid: uid) if Efs::Tweet.cache_alive?(created_at)
     tweets = ::S3::StatusTweet.where(uid: uid) if tweets.blank?
     tweets.map { |tweet| ::TwitterDB::Status.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
@@ -85,7 +85,7 @@ module Concerns::TwitterUser::Associations
   # TODO Return an instance of Efs::FavoriteTweet or S3::FavoriteTweet
   def favorite_tweets
     tweets = []
-    tweets = ::Efs::FavoriteTweet.where(uid: uid) if created_at > ::Efs::FavoriteTweet.client.ttl.ago
+    tweets = Efs::FavoriteTweet.where(uid: uid) if Efs::Tweet.cache_alive?(created_at)
     tweets = ::S3::FavoriteTweet.where(uid: uid) if tweets.blank?
     tweets.map { |tweet| ::TwitterDB::Favorite.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
@@ -93,7 +93,7 @@ module Concerns::TwitterUser::Associations
   # TODO Return an instance of Efs::MentionTweet or S3::MentionTweet
   def mention_tweets
     tweets = []
-    tweets = ::Efs::MentionTweet.where(uid: uid) if created_at > ::Efs::MentionTweet.client.ttl.ago
+    tweets = Efs::MentionTweet.where(uid: uid) if Efs::Tweet.cache_alive?(created_at)
     tweets = ::S3::MentionTweet.where(uid: uid) if tweets.blank?
     tweets.map { |tweet| ::TwitterDB::Mention.new(uid: uid, screen_name: screen_name, raw_attrs_text: tweet.raw_attrs_text) }
   end
