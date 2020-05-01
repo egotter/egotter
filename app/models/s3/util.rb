@@ -1,7 +1,5 @@
 # -*- SkipSchemaAnnotations
 
-require_relative '../s3'
-
 module S3
   module Util
     include Querying
