@@ -2109,6 +2109,12 @@ ja:
         uid: "uid"
         screen_name: "screen name"
         user_info: "user_info"
+      periodic_report:
+        period_name:
+          morning: '朝'
+          noon: '昼'
+          evening: '夕方'
+          night: '夜'
 
     errors:
       models:
@@ -2319,6 +2325,7 @@ ja:
       long: "%Y年%m月%d日(%a) %H時%M分%S秒 %z"
       short: "%y/%m/%d %H:%M"
       prompt_report_short: "%m月%d日 %-H時%-M分"
+      periodic_report_short: "%-m月%-d日 %-H時%-M分"
       delete_tweets_short: "%-m月%-d日 %-H時%-M分"
       next_creation_short: "%-H時%-M分"
       next_creation_long: "%-m月%-d日 %-H時%-M分"
