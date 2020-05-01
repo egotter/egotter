@@ -2,7 +2,7 @@ class FriendsGroupBuilder
   def initialize(uid, limit:)
     @users = Util.users(uid, limit: limit)
 
-    # Experimental preload
+    # This code might break the sidekiq process which is processing UpdateAudienceInsightWorker
     Parallel.each(@users, in_threads: 10) do |user|
       user.friend_uids
       user.follower_uids

@@ -42,8 +42,9 @@ module Egotter
 
         if enqueued_at.blank?
           # The msg has both created_at and enqueued_at.
-          # The created_at is a time when #perform_async is called at and the enqueued_at is a time when the job is started at.
-          enqueued_at = parse_time(msg['created_at'])
+          #   created_at: is a time when #perform_async or #perform_in is called
+          #   enqueued_at: is a time when the job is inserted into a queue
+          enqueued_at = parse_time(msg['created_at']) # TODO Use enqueued_at?
           logger.debug { "enqueued_at was found in msg. #{enqueued_at}" } if enqueued_at
         end
 
