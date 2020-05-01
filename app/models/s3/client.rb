@@ -5,7 +5,7 @@ module S3
     def initialize(bucket_name, klass)
       @bucket_name = bucket_name
       @klass = klass
-      @s3 = Aws::S3::Client.new(region: REGION)
+      @s3 = Aws::S3::Client.new(region: REGION, retry_limit: 2, http_open_timeout: 5)
     end
 
     def read(key)
