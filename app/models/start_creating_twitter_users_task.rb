@@ -20,7 +20,7 @@ class StartCreatingTwitterUsersTask
     CreateTwitterUserRequest.import requests, validate: false
 
     CreateTwitterUserRequest.where('created_at > ?', last_request.created_at).find_each do |request|
-      CreateBatchTwitterUserWorker.perform_async(request.id)
+      CreateBatchTwitterUserWorker.perform_async(request.id, user_id: request.user_id)
     end
   end
 end

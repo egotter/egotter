@@ -31,6 +31,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   # context:
   #   :prompt_reports
   def perform!(context = nil)
+    raise AlreadyFinished if finished?
     raise Unauthorized if user&.unauthorized?
 
     twitter_user = build_twitter_user(context)
@@ -204,6 +205,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class NotChanged < Error
+  end
+
+  class AlreadyFinished < Error
   end
 
   class TooManyRequests < Error
