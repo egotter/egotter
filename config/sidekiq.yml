@@ -10,4 +10,5 @@
   - CreateSignedInTwitterUserWorker
   - CreateTwitterUserWorker
   - WriteToS3Worker
+  - CreateBatchTwitterUserWorker
   - CreateTwitterDBUserWorker

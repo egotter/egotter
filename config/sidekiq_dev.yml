@@ -19,6 +19,7 @@
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
+  - CreateBatchTwitterUserWorker
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
   - StartSendingPromptReportsWorker
