@@ -4,7 +4,7 @@ module DynamoDB
   class Client
     class << self
       def dynamo_db
-        @dynamo_db ||= Aws::DynamoDB::Client.new(region: REGION)
+        @dynamo_db ||= Aws::DynamoDB::Client.new(region: REGION, retry_limit: 2, http_open_timeout: 5)
       end
     end
 
