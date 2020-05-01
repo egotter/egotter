@@ -7,7 +7,7 @@ class AudienceInsightChartBuilder
   DATE_FORMAT = "%Y-%m-%d"
 
   def categories
-    @categories ||= @builder.users.map(&:created_at).map {|t| t.strftime(DATE_FORMAT)}
+    @categories ||= @builder.users.map(&:created_at).map { |t| t.strftime(DATE_FORMAT) }
   end
 
   def friends
@@ -43,12 +43,12 @@ class AudienceInsightChartBuilder
   end
 
   def tweets_categories
-    @statuses.map(&:tweeted_at).map {|t| t.strftime(DATE_FORMAT)}.uniq.reverse
+    @statuses.map(&:tweeted_at).map { |t| t.strftime(DATE_FORMAT) }.uniq.reverse
   end
 
   def tweets
-    dates = @statuses.map {|status| status.tweeted_at.strftime(DATE_FORMAT)}
-    {name: I18n.t('activerecord.attributes.audience_insight_chart_builder.tweets'), data: tweets_categories.map {|category| dates.select {|d| d == category}.size}}
+    dates = @statuses.map { |status| status.tweeted_at.strftime(DATE_FORMAT) }
+    {name: I18n.t('activerecord.attributes.audience_insight_chart_builder.tweets'), data: tweets_categories.map { |category| dates.select { |d| d == category }.size }}
   end
 
   def replies

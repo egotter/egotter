@@ -29,12 +29,16 @@ class AudienceInsight < ApplicationRecord
   validates :uid, presence: true, uniqueness: true
 
   before_validation do
-    self.unfriends_text = '' if unfriends_text.blank?
-    self.unfollowers_text = '' if unfollowers_text.blank?
-    self.new_unfriends_text = '' if new_unfriends_text.blank?
-    self.new_unfollowers_text = '' if new_unfollowers_text.blank?
-    self.tweets_categories_text = '' if tweets_categories_text.blank?
-    self.tweets_text = '' if tweets_text.blank?
+    %i(
+      unfriends_text
+      unfollowers_text
+      new_unfriends_text
+      new_unfollowers_text
+      tweets_categories_text
+      tweets_text
+    ).each do |key|
+      self[key] = '' if self[key].blank?
+    end
   end
 
   # unfriends, unfollowers, new_unfriends, new_unfollowers, tweets_categories and tweets are ignored
@@ -67,8 +71,8 @@ class AudienceInsight < ApplicationRecord
     if new_record?
       false
     else
-      seconds = Rails.env.production? ? 30.minutes : 1.minutes
-      Time.zone.now - updated_at < seconds
+      ttl = Rails.env.production? ? 30.minutes : 1.minutes
+      Time.zone.now - updated_at < ttl
     end
   end
 end

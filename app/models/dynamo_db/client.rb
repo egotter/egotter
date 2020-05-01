@@ -1,14 +1,18 @@
 # -*- SkipSchemaAnnotations
 
-require_relative '../dynamo_db'
-
 module DynamoDB
   class Client
+    class << self
+      def dynamo_db
+        @dynamo_db ||= Aws::DynamoDB::Client.new(region: REGION)
+      end
+    end
+
     def initialize(klass, table, partition_key)
       @klass = klass
       @table = table
       @partition_key = partition_key
-      @dynamo_db = Aws::DynamoDB::Client.new(region: REGION)
+      @dynamo_db = self.class.dynamo_db
     end
 
     def read(key)

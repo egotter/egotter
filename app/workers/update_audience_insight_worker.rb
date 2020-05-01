@@ -16,6 +16,7 @@ class UpdateAudienceInsightWorker
 
   def after_timeout(uid, options = {})
     logger.warn "Timeout #{timeout_in} #{uid} #{options}"
+    logger.info "Benchmark UpdateAudienceInsightWorker #{@benchmark.inspect}"
     UpdateAudienceInsightWorker.perform_in(retry_in, uid, options)
   end
 
@@ -31,16 +32,21 @@ class UpdateAudienceInsightWorker
   #   location
   #   twitter_user_id
   def perform(uid, options = {})
-    insight = AudienceInsight.find_or_initialize_by(uid: uid)
+    insight = AudienceInsight.find_or_initialize_by(uid: uid) # TODO Select only specific columns
     return if insight.fresh?
 
-    chart_builder = AudienceInsightChartBuilder.new(uid, limit: 100)
-
-    AudienceInsight::CHART_NAMES.each do |chart_name|
-      insight.send("#{chart_name}_text=", chart_builder.send(chart_name).to_json)
+    chart_builder = nil
+    bm('Builder.new') do
+      chart_builder = AudienceInsightChartBuilder.new(uid, limit: 100)
     end
 
-    insight.save!
+    AudienceInsight::CHART_NAMES.each do |chart_name|
+      bm(chart_name) do
+        insight.send("#{chart_name}_text=", chart_builder.send(chart_name).to_json)
+      end
+    end
+
+    bm('save!') { insight.save! if insight.changed? }
 
   rescue ActiveRecord::RecordNotUnique => e
     logger.info "#{e.class}: #{e.message} #{uid} #{options}"
@@ -48,4 +54,25 @@ class UpdateAudienceInsightWorker
     logger.warn "#{e.class}: #{e.message} #{uid} #{options}"
     logger.info e.backtrace.join("\n")
   end
+
+
+  module Instrumentation
+    def bm(message, &block)
+      start = Time.zone.now
+      yield
+      @benchmark[message] = Time.zone.now - start
+    end
+
+    def perform(*args, &blk)
+      @benchmark = {}
+      start = Time.zone.now
+
+      super
+
+      @benchmark['sum'] = @benchmark.values.sum
+      @benchmark['elapsed'] = Time.zone.now - start
+      logger.info "Benchmark UpdateAudienceInsightWorker #{@benchmark.inspect}"
+    end
+  end
+  prepend Instrumentation
 end

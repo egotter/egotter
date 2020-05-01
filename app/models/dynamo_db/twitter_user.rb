@@ -1,7 +1,5 @@
 # -*- SkipSchemaAnnotations
 
-require_relative '../dynamo_db'
-
 module DynamoDB
   class TwitterUser
     extend ::DynamoDB::Util

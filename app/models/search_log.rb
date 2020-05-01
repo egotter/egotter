@@ -52,17 +52,17 @@ class SearchLog < ApplicationRecord
 
     def user_ids(*args)
       except_crawler
-        .with_login
-        .where(*args)
-        .uniq
-        .pluck(:user_id)
+          .with_login
+          .where(*args)
+          .uniq
+          .pluck(:user_id)
     end
 
     def session_ids(*args)
       except_crawler
-        .where(*args)
-        .uniq
-        .pluck(:session_id)
+          .where(*args)
+          .uniq
+          .pluck(:session_id)
     end
   end
 

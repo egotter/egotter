@@ -1,7 +1,5 @@
 # -*- SkipSchemaAnnotations
 
-require_relative '../dynamo_db'
-
 module DynamoDB
   module Util
     def parse_json(text)
