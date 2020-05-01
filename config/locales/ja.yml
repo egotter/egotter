@@ -1915,6 +1915,7 @@ ja:
       3. [1]と[2]で解決しない場合は、このエラーのスクリーンショットを <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> まで送ってください。<br>
       <br>
       エラー：PLNE403
+    egotter_is_blocked_html: '@%{user} は @ego_tter をブロックしています。えごったーを利用するには、ブロックを解除してください。'
     unauthorized_detected_with_count: 'ツイッター連携が無効になっています。%{seconds}秒後にトップページへ移動します。'
     blocked_detected_with_count: '@ego_tter がブロックされています。%{seconds}秒後にトップページへ移動します。'
   tweet_text:

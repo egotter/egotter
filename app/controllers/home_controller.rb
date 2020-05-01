@@ -42,24 +42,29 @@ class HomeController < ApplicationController
   end
 
   def set_flash_message
+    via = params[:via].to_s
+
     if params[:back_from_twitter] == 'true'
-      flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: "#{controller_name}/#{action_name}/back_from_twitter"))
-    elsif params[:via].to_s.end_with?('secret_mode_detected')
+      flash.now[:notice] = t('before_sign_in.back_from_twitter_html', url: sign_in_path(via: current_via('back_from_twitter')))
+
+    elsif via.end_with?('secret_mode_detected')
       url = sign_in_path(via: current_via('secret_mode_detected'))
       options = {device_type: request.device_type, os: request.os, os_version: request.os_version, browser: request.browser, browser_version: request.browser_version}
       flash.now[:alert] = t('before_sign_in.secret_mode_detected', options.merge!(url: url))
-    elsif params[:via].to_s.end_with?('ad_blocker_detected')
+
+    elsif via.end_with?('ad_blocker_detected')
       flash.now[:alert] = t('before_sign_in.ad_blocker_detected')
-    elsif params[:via].to_s.end_with?('unauthorized_detected')
+
+    elsif via.end_with?('unauthorized_detected')
       if user_signed_in?
         url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
         flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
       end
-    elsif params[:via].to_s.end_with?('blocked_detected')
-      # TODO Implement
+
+    elsif via.end_with?('blocked_detected')
       if user_signed_in?
-        url = sign_in_path(via: current_via('signed_in_user_not_authorized'))
-        flash.now[:alert] = t('after_sign_in.signed_in_user_not_authorized_html', user: current_user.screen_name, url: url)
+        url = sign_in_path(via: current_via('egotter_is_blocked'))
+        flash.now[:alert] = t('after_sign_in.egotter_is_blocked_html', user: current_user.screen_name)
       end
     end
   end
