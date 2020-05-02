@@ -1217,6 +1217,7 @@ ja:
     in_background:
       latest: '表示されているデータは最新です。'
       failed: 'データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。'
+      profile_not_found_html: 'プロフィールを更新中です。10〜30秒後にページを更新してください。<a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>'
       updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'
@@ -1781,7 +1782,6 @@ ja:
       </div>
     too_many_requests_html: 'アクセスが多すぎるため検索数の上限に達しました。<a href="%{url}" class="btn btn-primary">ログイン</a> して検索すると、このエラーはほとんど起きなくなります。'
     screen_name_changed_html: '検索された %{user} はTwitter IDを変えたようです。<a href="%{url}">ログイン</a>して検索すると、結果がより正確になります。'
-    profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。何度も起きる場合は<a class="btn btn-primary btn-sm" href="%{url}">ログイン</a>してから検索してください。エラー：PNF'
     not_found_html: '検索された %{user} が見付かりません。アカウントが削除されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     forbidden_html: '検索された %{user} が見付かりません。アカウントが凍結されたのかもしれません。<a href="%{url}">ログイン</a>して検索すると、見付かることがあります。'
     unauthorized_html: 'ツイッター連携に失敗しました。<a href="%{url}">ログイン</a> して検索するか、5〜10分ほどたってから検索してみてください。'
@@ -1877,7 +1877,6 @@ ja:
     screen_name_changed_html: |
       検索された %{user} はTwitter IDを変えたようです。2〜3日の間は結果が少しずれることがあります。
       <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>
-    profile_not_found_html: '@%{user} のプロフィール表示に失敗しました。<a class="btn btn-outline-primary btn-sm" href="%{url}">ページを更新</a>してください。エラー：PNF'
     not_found_html: |
       検索された %{user} が見付かりません。アカウントが削除されています。
       <a href="https://twitter.com/%{screen_name}" class="btn btn-outline-primary btn-sm" target="_blank" rel="nofollow">ツイッターで見る</a>

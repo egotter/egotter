@@ -92,6 +92,8 @@ module Concerns::TwitterUser::Profile
 
   def profile
     if new_record?
+      # #build_twitter_user_by_uid in WaitingController returns new record and
+      # profile header on #new action renders the record
       begin
         attrs = Oj.load(profile_text.presence || '{}')
       rescue => e
@@ -103,7 +105,6 @@ module Concerns::TwitterUser::Profile
         @profile
       else
         if (hash = fetch_profile).blank?
-          logger.warn "Profile not found in EFS and S3. #{id} #{sprintf("%.3f sec", Time.zone.now - created_at)}"
           @profile = Hashie::Mash.new({})
         else
           hash = Oj.load(hash, symbol_keys: true) if hash.class == String

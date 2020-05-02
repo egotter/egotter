@@ -29,6 +29,7 @@
 
   $(function () {
     if (profileNotFound) {
+      ToastMessage.info('<%= t('twitter_users.in_background.profile_not_found_html', url: timeline_path(twitter_user, via: current_via('profile_not_found'))) %>');
       return;
     }
 
