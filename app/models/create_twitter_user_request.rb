@@ -160,18 +160,10 @@ class CreateTwitterUserRequest < ApplicationRecord
       elapsed = Time.zone.now - start
       @bm_perform['sum'] = @bm_perform.values.sum
       @bm_perform['elapsed'] = elapsed
-      @bm_perform['build_twitter_user'] = @bm_build_twitter_user
 
       Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{sprintf("%.3f sec", elapsed)}"
       Rails.logger.info "Benchmark CreateTwitterUserRequest user_id=#{user_id} uid=#{uid} #{@bm_perform.inspect}"
 
-      result
-    end
-
-    def build_twitter_user(*args, &blk)
-      start = Time.zone.now
-      result = super
-      @bm_build_twitter_user = Time.zone.now - start
       result
     end
   end
