@@ -12,6 +12,8 @@ RSpec.describe Egotter::Sidekiq::UniqueJobUtil do
     let(:args) { [double('Args')] }
     let(:history) { double('History') }
 
+    before { allow(worker).to receive_message_chain(:logger, :debug) }
+
     context 'The worker implements #unique_key' do
       before { allow(worker).to receive(:unique_key).with(*args).and_return('unique_key') }
 
@@ -69,7 +71,7 @@ RSpec.describe Egotter::Sidekiq::UniqueJobUtil do
 
   describe '#run_history' do
     let(:worker) { double('Worker') }
-    let(:queue_class) { Egotter::Sidekiq::RunHistory}
+    let(:queue_class) { Egotter::Sidekiq::RunHistory }
     let(:queueing_context) { 'server_or_client' }
     subject { middleware.run_history(worker, queue_class, queueing_context) }
 
