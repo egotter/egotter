@@ -15,6 +15,7 @@
   - deleting_low
   - CreateTestReportWorker
   - ForceCreatePromptReportWorker
+  - CreatePeriodicReportWorker
   - CreatePromptReportWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
@@ -22,6 +23,7 @@
   - CreateBatchTwitterUserWorker
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
+  - StartSendingPeriodicReportsWorker
   - StartSendingPromptReportsWorker
   - WriteToS3Worker
   - deleting
