@@ -31,13 +31,22 @@ RSpec.describe Concerns::TwitterUser::Persistence do
         expect(Efs::TwitterUser).to receive(:import_from!).with(1, 2, 'sn', profile.to_json, [1, 2], [3, 4])
         subject
       end
-    end
 
-    # it do
-    #   expect(DynamoDB::TwitterUser).to receive(:import_from).
-    #       with(twitter_user.id, twitter_user.uid, twitter_user.screen_name, twitter_user.profile_text, twitter_user.friend_uids, twitter_user.follower_uids)
-    #   subject
-    # end
+      it do
+        expect(Efs::StatusTweet).to receive(:import_from!).with(2, 'sn', status_tweets)
+        subject
+      end
+
+      it do
+        expect(Efs::FavoriteTweet).to receive(:import_from!).with(2, 'sn', favorite_tweets)
+        subject
+      end
+
+      it do
+        expect(Efs::MentionTweet).to receive(:import_from!).with(2, 'sn', mention_tweets)
+        subject
+      end
+    end
 
     context 'S3' do
       it do
@@ -72,19 +81,4 @@ RSpec.describe Concerns::TwitterUser::Persistence do
     end
 
   end
-
-  # it do
-  #   expect(DynamoDB::StatusTweet).to receive(:import_from).with(twitter_user.uid, status_tweets)
-  #   subject
-  # end
-  #
-  # it do
-  #   expect(DynamoDB::FavoriteTweet).to receive(:import_from).with(twitter_user.uid, favorite_tweets)
-  #   subject
-  # end
-  #
-  # it do
-  #   expect(DynamoDB::MentionTweet).to receive(:import_from).with(twitter_user.uid, mention_tweets)
-  #   subject
-  # end
 end

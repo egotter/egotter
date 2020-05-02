@@ -28,11 +28,6 @@ module Concerns::TwitterUser::Persistence
       Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, @reserved_friend_uids, @reserved_follower_uids)
     end
 
-    # Experimental import
-    # bm_after_commit('DynamoDB::TwitterUser.import_from') do
-    #   DynamoDB::TwitterUser.import_from(id, uid, screen_name, profile_text, @reserved_friend_uids, @reserved_follower_uids)
-    # end
-
     bm_after_commit('S3::Friendship.import_from!') do
       S3::Friendship.import_from!(id, uid, screen_name, @reserved_friend_uids, async: true)
     end
@@ -76,20 +71,6 @@ module Concerns::TwitterUser::Persistence
     bm_after_commit('Efs::MentionTweet.import_from!') do
       Efs::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
-
-    # DynamoDB (Automatically deleted)
-
-    # bm_after_commit('DynamoDB::StatusTweet.import_from') do
-    #   DynamoDB::StatusTweet.import_from(uid, status_tweets)
-    # end
-    #
-    # bm_after_commit('DynamoDB::FavoriteTweet.import_from') do
-    #   DynamoDB::FavoriteTweet.import_from(uid, favorite_tweets)
-    # end
-    #
-    # bm_after_commit('DynamoDB::MentionTweet.import_from') do
-    #   DynamoDB::MentionTweet.import_from(uid, mention_tweets)
-    # end
   end
 
   module Instrumentation

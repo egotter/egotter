@@ -1,5 +1,6 @@
 # -*- SkipSchemaAnnotations
 
+# Don't use this class. The read/write capacity of DynamoDB costs too much money
 module DynamoDB
   class TwitterUser
     extend ::DynamoDB::Util
