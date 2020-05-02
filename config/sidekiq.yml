@@ -1,10 +1,11 @@
 <% require 'dotenv/load' %>:concurrency: <%= ENV.fetch("SIDEKIQ_CONCURRENCY") { 5 } %>
 :timeout: 600
-:pidfile: ./tmp/pids/sidekiq.pid
+:pidfile: ./tmp/pids/sidekiq_<%= ENV.fetch("WORKER_INDEX") { "NOINDEX" } %>.pid
 :logfile: ./log/sidekiq.log
 :tag:
   - sidekiq
   - <%= ENV.fetch("AWS_NAME_TAG") { "NONAME" } %>
+  - <%= 'WORKER_' + ENV.fetch("WORKER_INDEX") { "NOINDEX" } %>
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - CreateSignedInTwitterUserWorker
