@@ -6,7 +6,8 @@ module Egotter
 
       def call(worker, msg, queue)
         if worker.respond_to?(:expire_in)
-          if perform_expire_check(worker, msg['args'], worker.expire_in, pick_enqueued_at(msg))
+          picked_time = pick_enqueued_at(msg)
+          if perform_expire_check(worker, msg['args'], worker.expire_in, picked_time)
             yield
           end
         else
@@ -16,12 +17,12 @@ module Egotter
 
       def perform_expire_check(worker, args, expire_in, enqueued_at)
         if enqueued_at.blank?
-          logger.warn { "Can not expire this job because enqueued_at is not found. #{args.inspect.truncate(100)}" }
+          logger.warn { "Can not expire this job because enqueued_at is not found. args=#{args.inspect.truncate(100)}" }
           return true
         end
 
-        if enqueued_at < Time.zone.now - expire_in
-          logger.info { "Skip expired job. #{args.inspect.truncate(100)}" }
+        if enqueued_at < Time.now - expire_in
+          logger.info { "Skip expired job. args=#{args.inspect.truncate(100)}" }
 
           perform_callback(worker, :after_expire, args)
 
@@ -53,9 +54,9 @@ module Egotter
 
       def parse_time(value)
         if value.to_s.match?(/\d+\.\d+/)
-          Time.zone.at(value)
+          Time.at(value)
         else
-          Time.zone.parse(value)
+          Time.parse(value)
         end
       rescue => e
         nil
