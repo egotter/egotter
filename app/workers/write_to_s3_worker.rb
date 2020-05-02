@@ -6,14 +6,28 @@ class WriteToS3Worker
     10.seconds
   end
 
+  def retry_in
+    30.seconds
+  end
+
+  def retry_limit
+    3
+  end
+
+  def pick_retry_count
+
+  end
+
   def after_timeout(params, options = {})
-    options = Hashie::Mash.new(options)
-    options['retry_count'] = 0 unless options['retry_count']
-    if (options['retry_count'] += 1) < 3
-      logger.warn "Retry timeout #{timeout_in} seconds #{params.inspect.truncate(50)} #{options.to_h.inspect}"
-      WriteToS3Worker.perform_in(30.seconds, params, options.to_h)
+    retry_count = options['retry_count']
+    retry_count = 0 unless retry_count
+
+    if retry_count < retry_limit
+      logger.info "Retry later #{params.inspect.truncate(50)} #{options}"
+      options['retry_count'] = retry_count + 1
+      WriteToS3Worker.perform_in(retry_in, params, options)
     else
-      logger.warn "Retry exhausted: Timeout #{timeout_in} seconds #{params.inspect.truncate(50)} #{options.to_h.inspect}"
+      logger.warn "Retry exhausted: Timeout #{timeout_in} seconds #{params.inspect.truncate(50)} #{options}"
     end
   end
 
