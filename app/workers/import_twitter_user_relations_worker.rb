@@ -15,6 +15,8 @@ class ImportTwitterUserRelationsWorker
     DelayedImportTwitterUserRelationsWorker.perform_async(*args)
   end
 
+  # options:
+  #   twitter_user_id
   def perform(user_id, uid, options = {})
     twitter_user = TwitterUser.find(options['twitter_user_id'])
 

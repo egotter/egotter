@@ -3,10 +3,11 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
-    request_id
+    options = options.with_indifferent_access
+    "#{options['user_id']}-#{options['uid']}"
   end
 
-  # Notice: This interval is for the request_id. It is not for creating records.
+  # Notice: This interval is for the job. It is not for creating records.
   def unique_in
     30.minutes
   end
@@ -20,6 +21,11 @@ class CreateTwitterUserWorker
   end
 
   # options:
+  #   requested_by
+  #   session_id
+  #   user_id
+  #   uid
+  #   ahoy_visit_id
   def perform(request_id, options = {})
     request = CreateTwitterUserRequest.find(request_id)
     task = CreateTwitterUserTask.new(request)
