@@ -3,6 +3,10 @@ class AccountStatus
     @ex = ex
   end
 
+  def exception
+    @ex
+  end
+
   def not_found?
     @ex && @ex.class == Twitter::Error::NotFound && @ex.message == 'User not found.'
   end

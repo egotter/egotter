@@ -42,34 +42,36 @@ class AccountStatusesController < ApplicationController
   before_action do
     next if current_user.uid == searchee_uid
 
-    uid = searchee_uid
     status = AccountStatus.new
-
     begin
-      request_context_client.twitter.user_timeline(uid, count: 1)
+      # Raise an exception if the sign-in user is blocked from the searchee user
+      request_context_client.twitter.user_timeline(searchee_uid, count: 1)
     rescue => e
       status = AccountStatus.new(ex: e)
     end
 
     if status.protected? || status.blocked?
       # It's strange to reach here because you can search.
-      render json: {authorized: true, uid: uid, not_authorized: status.protected?, blocked: status.blocked?}
+      res = {authorized: true, uid: searchee_uid, not_permitted: status.protected?, blocked: status.blocked?}
+      logger.debug { "#{controller_name}##{action_name} res=#{res} exception=#{status.exception}" }
+      render json: res
     end
   end
 
 
   before_action do
-    uid = searchee_uid
     status = AccountStatus.new
-
     begin
-      User.egotter.api_client.twitter.user_timeline(uid, count: 1)
+      # Raise an exception if the egotter is blocked from the sign-in user
+      User.egotter.api_client.twitter.user_timeline(current_user.uid, count: 1)
     rescue => e
       status = AccountStatus.new(ex: e)
     end
 
     if status.protected? || status.blocked?
-      render json: {authorized: true, uid: uid, egotter_not_authorized: status.protected?, egotter_blocked: status.blocked?}
+      res = {authorized: true, uid: searchee_uid, egotter_not_permitted: status.protected?, egotter_blocked: status.blocked?}
+      logger.debug { "#{controller_name}##{action_name} res=#{res} exception=#{status.exception}" }
+      render json: res
     end
   end
 
