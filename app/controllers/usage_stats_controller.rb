@@ -25,8 +25,8 @@ class UsageStatsController < ApplicationController
 
     @tweet_text = usage_time_text(@stat.usage_time, @twitter_user)
 
-    unless from_crawler?
-      @jid = UpdateUsageStatWorker.perform_async(@twitter_user.uid, enqueued_at: Time.zone.now)
+    if !from_crawler? && user_signed_in?
+      @jid = UpdateUsageStatWorker.perform_async(@twitter_user.uid, user_id: current_user.id, location: controller_name)
     end
   end
 
