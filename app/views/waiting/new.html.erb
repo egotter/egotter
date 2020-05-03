@@ -44,6 +44,8 @@
   var signedIn = <%= user_signed_in? %>;
   var state = null;
 
+  console.log('jid', '<%= @jid %>' || 'not started'); // debug
+
   // var twitterUser = {
   //   userId: '<%= current_user&.id %>',
   //   uid: "<%= @twitter_user.uid %>",
