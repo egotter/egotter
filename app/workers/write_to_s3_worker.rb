@@ -2,10 +2,6 @@ class WriteToS3Worker
   include Sidekiq::Worker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
-  def timeout_in
-    10.seconds
-  end
-
   def retry_in
     30.seconds
   end
@@ -14,10 +10,7 @@ class WriteToS3Worker
     3
   end
 
-  def pick_retry_count
-
-  end
-
+  # This worker handles Timeout in Aws::S3::Client
   def after_timeout(params, options = {})
     retry_count = options['retry_count']
     retry_count = 0 unless retry_count
@@ -50,7 +43,14 @@ class WriteToS3Worker
 
     client.put_object(request_options)
   rescue => e
-    logger.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect.truncate(50)} #{options.inspect}"
-    logger.info e.backtrace.join("\n")
+    # Seahorse::Client::NetworkingError Net::OpenTimeout
+    # Seahorse::Client::NetworkingError Net::ReadTimeout
+    # RetryErrorsSvc::Errors::RequestLimitExceeded
+    if e.message.downcase.match?(/timeout|limit/)
+      after_timeout(params, options)
+    else
+      logger.warn "#{e.class}: #{e.message.truncate(100)} #{params.inspect.truncate(50)} #{options.inspect}"
+      logger.info e.backtrace.join("\n")
+    end
   end
 end

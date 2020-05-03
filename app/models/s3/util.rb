@@ -21,7 +21,7 @@ module S3
     end
 
     def client
-      @client ||= Aws::S3::Client.new(region: REGION, retry_limit: 2, http_open_timeout: 5)
+      @client ||= Aws::S3::Client.new(region: REGION, retry_limit: 4, http_open_timeout: 3, http_read_timeout: 3)
     end
 
     def parse_json(text)

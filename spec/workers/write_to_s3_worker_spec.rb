@@ -35,5 +35,31 @@ RSpec.describe WriteToS3Worker do
         end
       end
     end
+
+    context 'Raise timeout exception' do
+      let(:klass) { 'any class' }
+      let(:params) { {'klass' => klass} }
+      let(:worker) { described_class.new }
+      subject { worker.perform(params, {}) }
+      before { allow(klass).to receive(:constantize).and_raise('Timeout') }
+
+      it do
+        expect(worker).to receive(:after_timeout).with(params, {})
+        subject
+      end
+    end
+
+    context 'Raise limmit exception' do
+      let(:klass) { 'any class' }
+      let(:params) { {'klass' => klass} }
+      let(:worker) { described_class.new }
+      subject { worker.perform(params, {}) }
+      before { allow(klass).to receive(:constantize).and_raise('Limit') }
+
+      it do
+        expect(worker).to receive(:after_timeout).with(params, {})
+        subject
+      end
+    end
   end
 end
