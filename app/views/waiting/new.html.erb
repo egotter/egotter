@@ -19,7 +19,7 @@
 
   <div class="buttons row" style="display: none;">
     <div class="col-12 col-sm-12 col-md-4 text-center mb-3">
-      <%= link_to t('.retry_search_by', user: @twitter_user.screen_name), searches_path(@twitter_user, via: current_via('waiting_retry')), class: 'btn btn-lg btn-outline-primary', method: :post %>
+      <%= link_to t('.retry_search_by', user: @twitter_user.screen_name), searches_path(screen_name: @twitter_user.screen_name, via: current_via('waiting_retry')), class: 'btn btn-lg btn-outline-primary', method: :post %>
     </div>
 
     <div class="col-12 col-sm-12 col-md-4 text-center mb-3">
