@@ -1,7 +1,7 @@
 require 'parallel'
 
 class CacheLoader
-  def initialize(records, timeout: nil, concurrency: 10, &block)
+  def initialize(records, timeout: nil, concurrency: 2, &block)
     @records = records.to_a
     @timeout = timeout
     @concurrency = concurrency

@@ -33,7 +33,7 @@ class UpdateAudienceInsightWorker
     bm('CacheLoader.load') do
       # This code might break the sidekiq process which is processing UpdateAudienceInsightWorker
       records = chart_builder.builder.users
-      loader = CacheLoader.new(records, timeout: 10.seconds) do |record|
+      loader = CacheLoader.new(records, timeout: 10.seconds, concurrency: 1) do |record|
         record.friend_uids
         record.follower_uids
       end
