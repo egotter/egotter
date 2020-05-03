@@ -11,7 +11,6 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     update_search_histories_when_signing_in(@user)
 
-    EnqueuedSearchRequest.new.delete(@user.uid)
     DeleteNotFoundUserWorker.perform_async(@user.screen_name)
     DeleteForbiddenUserWorker.perform_async(@user.screen_name)
     CreateTwitterDBUserWorker.perform_async([@user.uid], user_id: @user.id, force_update: true, enqueued_by: 'twitter callback after signing in')

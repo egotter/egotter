@@ -62,15 +62,6 @@ module Concerns::ValidationConcern
     TwitterDB::User.exists?(uid: uid)
   end
 
-  def searched_uid?(uid)
-    if EnqueuedSearchRequest.new.exists?(uid)
-      true
-    else
-      respond_with_error(:bad_request, t('application.searched_uid_not_found'))
-      false
-    end
-  end
-
   def signed_in_user_authorized?
     return true unless user_signed_in?
 

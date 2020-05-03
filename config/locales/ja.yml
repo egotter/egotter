@@ -1710,7 +1710,6 @@ ja:
         login: 'ログインする'
   application:
     twitter_user_not_found: "レコードが見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：TUNF404"
-    searched_uid_not_found: "直近の検索履歴が見つかりませんでした。大変お手数ですが、トップページから再度検索してみてください。エラー：SUNF404"
     internal_server_error: "一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。エラー：ISE500"
     internal_server_error_with_recovery_html: |
       一時的なエラーが起きました。大変お手数ですが、トップページから再度検索してみてください。

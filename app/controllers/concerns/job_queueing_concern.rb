@@ -11,14 +11,6 @@ module Concerns::JobQueueingConcern
     return if !user_signed_in? && via_dm?
     return if user_signed_in? && TooManyRequestsUsers.new.exists?(current_user.id)
 
-    # This value is used in #searched_uid? to redirect to an error page when the uid is not searched.
-    queue = EnqueuedSearchRequest.new
-    if queue.exists?(uid)
-      logger.debug { "#{controller_name}##{action_name} Queueing of CreateSignedInTwitterUserWorker is skipped #{user_id} #{uid}" }
-      return
-    end
-    queue.add(uid)
-
     request = CreateTwitterUserRequest.create(
         requested_by: requested_by,
         session_id: egotter_visit_id,
