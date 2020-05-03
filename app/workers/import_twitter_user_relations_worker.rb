@@ -7,6 +7,10 @@ class ImportTwitterUserRelationsWorker
     "#{user_id}-#{uid}-#{options['twitter_user_id']}"
   end
 
+  def unique_in
+    5.minutes
+  end
+
   def expire_in
     1.minute
   end

@@ -9,7 +9,7 @@ class CreateTwitterUserWorker
 
   # Notice: This interval is for the job. It is not for creating records.
   def unique_in
-    30.minutes
+    5.minutes
   end
 
   def expire_in
