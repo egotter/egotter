@@ -40,7 +40,7 @@ class TokimekiUnfollowController < ApplicationController
     rescue => e
       status = AccountStatus.new(ex: e)
       if status.protected?
-        user.increment(:processed_count).save!
+        @user.increment(:processed_count).save!
         retry
       else
         raise
