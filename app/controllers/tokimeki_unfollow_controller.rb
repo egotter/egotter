@@ -34,8 +34,18 @@ class TokimekiUnfollowController < ApplicationController
 
   def cleanup
     @user = current_tokimeki_user
-    @friend = Friend.new(current_friend(@user))
-    @statuses = current_tweets(@friend.uid)
+    begin
+      @friend = Friend.new(current_friend(@user))
+      @statuses = current_tweets(@friend.uid)
+    rescue => e
+      status = AccountStatus.new(ex: e)
+      if status.protected?
+        user.increment(:processed_count).save!
+        retry
+      else
+        raise
+      end
+    end
 
     @twitter_user = TwitterUser.latest_by(uid: @friend.uid)
     @twitter_user = TwitterUser.build_by(user: @friend.user) unless @twitter_user
@@ -87,7 +97,8 @@ class TokimekiUnfollowController < ApplicationController
     request_context_client.user(uid)
 
   rescue => e
-    if AccountStatus.not_found?(e) || AccountStatus.suspended?(e) || AccountStatus.blocked?(e)
+    status = AccountStatus.new(ex: e)
+    if status.not_found? || status.suspended? || status.blocked?
       user.increment(:processed_count).save!
       retry
     else
