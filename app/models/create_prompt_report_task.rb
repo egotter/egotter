@@ -88,11 +88,12 @@ class CreatePromptReportTask
     return unless twitter_user
 
     # TODO Monitor cache hit ratio
-    twitter_user.unfollowers.take(PromptReport::UNFOLLOWERS_SIZE_LIMIT).each do |unfollower|
-      FetchUserForCachingWorker.perform_async(unfollower.uid, user_id: request.user.id, enqueued_at: Time.zone.now)
-      FetchUserForCachingWorker.perform_async(unfollower.screen_name, user_id: request.user.id, enqueued_at: Time.zone.now)
-      # TwitterDB::User has already been forcibly updated in #update_unfriendships .
-    end
+    # Stop caching because of too many jobs
+    # twitter_user.unfollowers.take(PromptReport::UNFOLLOWERS_SIZE_LIMIT).each do |unfollower|
+    #   FetchUserForCachingWorker.perform_async(unfollower.uid, user_id: request.user.id, enqueued_at: Time.zone.now)
+    #   FetchUserForCachingWorker.perform_async(unfollower.screen_name, user_id: request.user.id, enqueued_at: Time.zone.now)
+    #   # TwitterDB::User has already been forcibly updated in #update_unfriendships .
+    # end
   end
 
   module Instrumentation
