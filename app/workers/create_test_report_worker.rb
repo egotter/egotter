@@ -17,6 +17,11 @@ class CreateTestReportWorker
 
   # options:
   def perform(request_id, options = {})
+    if GlobalDirectMessageLimitation.new.limited?
+      CreateTestReportWorker.perform_in(1.hour, request_id, options)
+      return
+    end
+
     request = CreateTestReportRequest.find(request_id)
 
     task = CreateTestReportTask.new(request)
