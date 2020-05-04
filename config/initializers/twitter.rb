@@ -21,9 +21,13 @@ module Egotter
       end
 
       def create_direct_message_event(*args)
+        if GlobalDirectMessageLimitation.new.limited?
+          raise ::Twitter::Error::EnhanceYourCalm
+        end
+
         super
+
       rescue ::Twitter::Error::EnhanceYourCalm => e
-        CallCreateDirectMessageEventCount.new.raised
         GlobalDirectMessageLimitation.new.limit_start
         raise
       ensure

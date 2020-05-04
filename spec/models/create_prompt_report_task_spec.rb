@@ -127,18 +127,18 @@ RSpec.describe CreatePromptReportTask, type: :model do
     end
   end
 
-  describe '#update_api_caches' do
-    let(:twitter_user) { create(:twitter_user, uid: user.uid) }
-    let(:unfollowers) { 3.times.map { |i| double('Unfollower', uid: i, screen_name: "sn#{i}") } }
-    before do
-      allow(twitter_user).to receive(:unfollowers).with(no_args).and_return(unfollowers)
-    end
-    it do
-      unfollowers.each do |unfollower|
-        expect(FetchUserForCachingWorker).to receive(:perform_async).with(unfollower.uid, hash_including(user_id: request.user.id))
-        expect(FetchUserForCachingWorker).to receive(:perform_async).with(unfollower.screen_name, hash_including(user_id: request.user.id))
-      end
-      task.update_api_caches(twitter_user)
-    end
-  end
+  # describe '#update_api_caches' do
+  #   let(:twitter_user) { create(:twitter_user, uid: user.uid) }
+  #   let(:unfollowers) { 3.times.map { |i| double('Unfollower', uid: i, screen_name: "sn#{i}") } }
+  #   before do
+  #     allow(twitter_user).to receive(:unfollowers).with(no_args).and_return(unfollowers)
+  #   end
+  #   it do
+  #     unfollowers.each do |unfollower|
+  #       expect(FetchUserForCachingWorker).to receive(:perform_async).with(unfollower.uid, hash_including(user_id: request.user.id))
+  #       expect(FetchUserForCachingWorker).to receive(:perform_async).with(unfollower.screen_name, hash_including(user_id: request.user.id))
+  #     end
+  #     task.update_api_caches(twitter_user)
+  #   end
+  # end
 end

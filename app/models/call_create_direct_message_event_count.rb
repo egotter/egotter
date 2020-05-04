@@ -11,37 +11,11 @@ class CallCreateDirectMessageEventCount < ::Egotter::SortedSet
     add(Time.zone.now.to_f)
   end
 
-  def raised
-    key = "#{Rails.env}:#{self.class}:raised"
-    Redis.client.setex(key, 1.hour, '1')
+  def soft_limited?
+    size > 14000
   end
 
-  def raised_ttl
-    key = "#{Rails.env}:#{self.class}:raised"
-    Redis.client.ttl(key)
-  end
-
-  def raised?
-    key = "#{Rails.env}:#{self.class}:raised"
-    Redis.client.exists(key)
-  end
-
-  def rate_limited?
-    false # raised? # || size > 15000
-  end
-
-  class << self
-    %i(
-        size
-        increment
-        raised
-        raised_ttl
-        raised?
-        rate_limited?
-    ).each do |method_name|
-      define_method(method_name) do
-        new.send(method_name)
-      end
-    end
+  def hard_limited?
+    size > 15000
   end
 end

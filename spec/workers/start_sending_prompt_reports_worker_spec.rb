@@ -7,17 +7,17 @@ RSpec.describe StartSendingPromptReportsWorker do
     let(:options) { 'options' }
     subject { worker.perform(options) }
 
-    context 'CallCreateDirectMessageEventCount.rate_limited? returns true' do
-      before do
-        allow(worker).to receive(:retry_in).and_return('time')
-        allow(CallCreateDirectMessageEventCount).to receive(:rate_limited?).and_return(true)
-      end
-      it do
-        expect(StartSendingPromptReportsWorker).to receive(:perform_in).with('time', options)
-        expect(worker).not_to receive(:start_queueing)
-        subject
-      end
-    end
+    # context 'CallCreateDirectMessageEventCount.rate_limited? returns true' do
+    #   before do
+    #     allow(worker).to receive(:retry_in).and_return('time')
+    #     allow(CallCreateDirectMessageEventCount).to receive(:rate_limited?).and_return(true)
+    #   end
+    #   it do
+    #     expect(StartSendingPromptReportsWorker).to receive(:perform_in).with('time', options)
+    #     expect(worker).not_to receive(:start_queueing)
+    #     subject
+    #   end
+    # end
 
     context '#queueing_interval_too_short? returns false' do
       before { allow(worker).to receive(:queueing_interval_too_short?).with(options).and_return(false) }

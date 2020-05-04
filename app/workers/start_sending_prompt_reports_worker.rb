@@ -30,23 +30,9 @@ class StartSendingPromptReportsWorker
   # options:
   #   last_queueing_started_at
   def perform(options = {})
-    if CallCreateDirectMessageEventCount.rate_limited?
-      time = CallCreateDirectMessageEventCount.raised_ttl.seconds
-      logger.warn "Creating a direct message is rate limited. Wait for #{time.inspect}."
-      StartSendingPromptReportsWorker.perform_in(retry_in, options)
-      return
-    end
-
     if GlobalDirectMessageLimitation.new.limited?
       logger.warn "Creating a direct message is limited."
       StartSendingPromptReportsWorker.perform_in(retry_in, options)
-      return
-    end
-
-    if queueing_interval_too_short?(options)
-      wait_time = next_wait_time(options['last_queueing_started_at'])
-      logger.warn "Interval is too short. Wait for #{wait_time.inspect}."
-      StartSendingPromptReportsWorker.perform_in(wait_time, options)
       return
     end
 
@@ -56,6 +42,13 @@ class StartSendingPromptReportsWorker
         CreatePromptReportWorker.perform_async(*job.args)
         job.delete
       end
+      return
+    end
+
+    if queueing_interval_too_short?(options)
+      wait_time = next_wait_time(options['last_queueing_started_at'])
+      logger.warn "Interval is too short. Wait for #{wait_time.inspect}."
+      StartSendingPromptReportsWorker.perform_in(wait_time, options)
       return
     end
 

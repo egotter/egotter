@@ -22,8 +22,7 @@ class CreatePromptReportWorker
   #   start_next_loop
   #   queueing_started_at
   def perform(request_id, options = {})
-    if CallCreateDirectMessageEventCount.rate_limited? ||
-        GlobalDirectMessageLimitation.new.limited?
+    if GlobalDirectMessageLimitation.new.limited?
       SkippedCreatePromptReportWorker.perform_async(request_id, options)
       return
     end
