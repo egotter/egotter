@@ -2,10 +2,11 @@ require 'rails_helper'
 
 RSpec.describe CreateTwitterUserWorker do
   describe '#unique_key' do
+    let(:request) { create(:create_twitter_user_request) }
     let(:worker) { described_class.new }
+    subject { worker.unique_key(request.id, {}) }
     it do
-      expect(worker.unique_key(1, {user_id: 2, uid: 3})).to eq('2-3')
-      expect(worker.unique_key(1, {'user_id' => 2, 'uid' => 3})).to eq('2-3')
+      is_expected.to eq("#{request.user_id}-#{request.uid}")
     end
   end
 end

@@ -3,8 +3,8 @@ class CreateTwitterUserWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
-    options = options.with_indifferent_access
-    "#{options['user_id']}-#{options['uid']}"
+    request = CreateTwitterUserRequest.find(request_id)
+    "#{request.user_id}-#{request.uid}"
   end
 
   # Notice: This interval is for the job. It is not for creating records.
