@@ -61,7 +61,7 @@ class SearchCountLimitation
     alias count_reset_in search_count_reset_in
 
     def current_sharing_bonus(user)
-      if user
+      if user&.authorized?
         followers = TwitterUser.latest_by(uid: user.uid)&.followers_count
         followers = user.api_client.user(user.uid)[:followers_count] unless followers
       else
