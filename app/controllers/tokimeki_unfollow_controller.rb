@@ -39,7 +39,7 @@ class TokimekiUnfollowController < ApplicationController
       @statuses = current_tweets(@friend.uid)
     rescue => e
       status = AccountStatus.new(ex: e)
-      if status.protected?
+      if status.not_found? || status.suspended? || status.blocked? || status.protected?
         @user.increment(:processed_count).save!
         retry
       else
@@ -98,7 +98,7 @@ class TokimekiUnfollowController < ApplicationController
 
   rescue => e
     status = AccountStatus.new(ex: e)
-    if status.not_found? || status.suspended? || status.blocked?
+    if status.not_found? || status.suspended? || status.blocked? || status.protected?
       user.increment(:processed_count).save!
       retry
     else
