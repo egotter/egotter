@@ -1,6 +1,6 @@
 require_relative '../../lib/egotter/sidekiq/run_history'
 
-Sidekiq::Logging.logger.level = Logger::DEBUG
+Sidekiq.logger.level = Logger::DEBUG
 
 Sidekiq.configure_server do |config|
   config.redis = {url: "redis://#{ENV['REDIS_HOST']}:6379"}

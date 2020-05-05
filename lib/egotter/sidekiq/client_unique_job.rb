@@ -13,7 +13,11 @@ module Egotter
         if job.has_key?('at')
           yield
         else
-          worker = worker_str.constantize.new
+          if worker_str.class == String
+            worker = worker_str.constantize.new # Sidekiq < 6
+          else
+            worker = worker_str.new
+          end
           history = run_history(worker, @queue_class, @queueing_context)
           perform(worker, job['args'], history, &block)
         end
