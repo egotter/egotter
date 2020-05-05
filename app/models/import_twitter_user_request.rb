@@ -24,12 +24,12 @@ class ImportTwitterUserRequest < ApplicationRecord
   validates :twitter_user_id, presence: true
 
   def perform!
-    import_favorite_friendship
-    import_close_friendship
+    bm('FavoriteFriendship') { import_favorite_friendship }
+    bm('CloseFriendship') { import_close_friendship }
 
     return if twitter_user.no_need_to_import_friendships?
 
-    import_unfollowership
+    bm('Unfollowership') { import_unfollowership }
 
     [
         Unfriendship,
@@ -41,7 +41,7 @@ class ImportTwitterUserRequest < ApplicationRecord
         InactiveFollowership,
         InactiveMutualFriendship,
     ].each do |klass|
-      klass.import_by!(twitter_user: twitter_user)
+      bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
     rescue => e
       logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
       logger.info e.backtrace.join("\n")
@@ -50,7 +50,7 @@ class ImportTwitterUserRequest < ApplicationRecord
 
   def import_unfollowership
     Unfollowership.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, force_update: true, enqueued_by: 'ImportTwitterUserRequest import_unfollowership')
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, force_update: true, enqueued_by: self.class)
     end
   rescue => e
     logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
@@ -59,7 +59,7 @@ class ImportTwitterUserRequest < ApplicationRecord
 
   def import_favorite_friendship
     FavoriteFriendship.import_by!(twitter_user: twitter_user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, enqueued_by: 'ImportTwitterUserRequest import_favorite_friendship')
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, enqueued_by: self.class)
     end
   rescue => e
     logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
@@ -68,7 +68,7 @@ class ImportTwitterUserRequest < ApplicationRecord
 
   def import_close_friendship
     CloseFriendship.import_by!(twitter_user: twitter_user, login_user: user).each_slice(100) do |uids|
-      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, enqueued_by: 'ImportTwitterUserRequest import_close_friendship')
+      CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, enqueued_by: self.class)
     end
   rescue => e
     logger.warn "#{__method__} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
@@ -82,4 +82,27 @@ class ImportTwitterUserRequest < ApplicationRecord
       @client = user ? user.api_client : Bot.api_client
     end
   end
+
+  module Instrumentation
+    def bm(message, &block)
+      start = Time.zone.now
+      yield
+      @benchmark[message] = Time.zone.now - start
+    end
+
+    def perform!(*args, &blk)
+      @benchmark = {}
+      start = Time.zone.now
+
+      super
+
+      elapsed = Time.zone.now - start
+      @benchmark['sum'] = @benchmark.values.sum
+      @benchmark['elapsed'] = elapsed
+
+      logger.info "Benchmark ImportTwitterUserRequest twitter_user_id=#{twitter_user.id} #{sprintf("%.3f sec", elapsed)}"
+      logger.info "Benchmark ImportTwitterUserRequest twitter_user_id=#{twitter_user_id} #{@benchmark.inspect}"
+    end
+  end
+  prepend Instrumentation
 end
