@@ -36,8 +36,6 @@ class ResetCacheRequest < ApplicationRecord
         CreateTwitterDBUserWorker.perform_async(CreateTwitterDBUserWorker.compress(uids), user_id: user_id, compressed: true, force_update: true, enqueued_by: 'ResetCacheRequest Unfollowership.import_by!')
       end
     end
-
-    UpdateEgotterFollowersWorker.perform_async(user_id: user.id, enqueued_at: Time.zone.now)
   end
 
   class AlreadyFinished < StandardError

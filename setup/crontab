@@ -14,6 +14,7 @@ SUFFIX='>>/var/egotter/log/cron.log 2>&1'
 # * * * * *       /bin/sh -c "/var/egotter/bin/cron/rake bots:update_authorized"
 # 30 * * * *      /bin/sh -c "/var/egotter/bin/cron/rake orders:update_stripe_attributes"
 # 15 * * * *      /bin/sh -c "/var/egotter/bin/cron/runner 'SetUsageCountWorker.perform_async'"
+# 25 * * * *      /bin/sh -c "/var/egotter/bin/cron/runner 'UpdateEgotterFollowersWorker.perform_async'"
 # 1-51/10 * * * * /bin/sh -c "/var/egotter/bin/cron/runner 'SendMetricsToSlackWorker.perform_async'"
 # 6-56/10 * * * * /bin/sh -c "/var/egotter/bin/cron/runner 'CalculateMetricsWorker.perform_async'"
 # * * * * *       /bin/sh -c "/var/egotter/bin/cron/runner 'SendMetricsToCloudWatchWorker.new.perform'"
