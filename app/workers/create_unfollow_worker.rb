@@ -20,6 +20,10 @@ class CreateUnfollowWorker
     request = UnfollowRequest.find(request_id)
     CreateUnfollowTask.new(request).start!
 
+  rescue UnfollowRequest::NotFollowing,
+      UnfollowRequest::NotFound,
+      UnfollowRequest::Suspended => e
+    logger.info "Skip #{e.inspect}"
   rescue UnfollowRequest::TooManyUnfollows => e
     # This exception is never raised
     logger.warn "#{e.class} Retry later"
