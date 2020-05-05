@@ -13,7 +13,7 @@ RSpec.describe CreatePromptReportMessageWorker do
     before { allow(User).to receive(:find).with(user.id).and_return(user) }
     it do
       expect(worker).to receive(:send_report).with(kind, user, options)
-      expect(worker).to receive(:send_warning_message).with(kind, user, options)
+      # expect(worker).to receive(:send_warning_message).with(kind, user, options)
       subject
     end
 
@@ -54,7 +54,11 @@ RSpec.describe CreatePromptReportMessageWorker do
     let(:report) { double('PromptReport', deliver!: nil) }
     subject { worker.send_report(kind, user, options) }
 
-    before { allow(worker).to receive(:report_args).with(user, options).and_return(report_args) }
+    before do
+      allow(worker).to receive(:report_args).with(user, options).and_return(report_args)
+      allow(user).to receive(:active_access?).with(CreatePromptReportRequest::ACTIVE_DAYS_WARNING).and_return(true)
+      allow(user).to receive(:following_egotter?).and_return(true)
+    end
 
     context 'kind == :you_are_removed' do
       let(:kind) { :you_are_removed }

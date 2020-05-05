@@ -36,7 +36,6 @@ class CreatePromptReportMessageWorker
 
     kind = options['kind'].to_sym
     send_report(kind, user, options)
-    send_warning_message(kind, user, options)
 
   rescue => e
     notify_airbrake(e, user_id: user_id, options: options)
@@ -53,18 +52,26 @@ class CreatePromptReportMessageWorker
 
   def send_report(kind, user, options)
     if kind == :you_are_removed
-      PromptReport.you_are_removed(*report_args(user, options)).deliver!
+      report = PromptReport.you_are_removed(*report_args(user, options))
     elsif kind == :not_changed
-      PromptReport.not_changed(*report_args(user, options)).deliver!
+      report = PromptReport.not_changed(*report_args(user, options))
     elsif kind == :initialization
-      PromptReport.initialization(
+      report = PromptReport.initialization(
           user.id,
           request_id: options['create_prompt_report_request_id'],
           id: options['prompt_report_id'],
-      ).deliver!
+      )
     else
-      logger.warn "Invalid value #{kind}"
+      raise "Invalid value #{kind}"
     end
+
+    if !user.active_access?(CreatePromptReportRequest::ACTIVE_DAYS_WARNING)
+      report.additional_warning = WarningMessage.inactive_additional_warning(user.id)
+    elsif !user.following_egotter?
+      report.additional_warning = WarningMessage.not_following_additional_warning(user.id)
+    end
+
+    report.deliver!
   end
 
   def send_warning_message(kind, user, options)

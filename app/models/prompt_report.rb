@@ -27,7 +27,7 @@ class PromptReport < ApplicationRecord
   include Concerns::Report::Readable
 
   belongs_to :user
-  attr_accessor :message_builder
+  attr_accessor :message_builder, :additional_warning
 
   before_validation do
     if self.token.blank?
@@ -143,6 +143,7 @@ class PromptReport < ApplicationRecord
 
   def send_reporting_message!(text = nil)
     text = message_builder.build unless text
+    text = additional_warning + text if additional_warning.present?
 
     report_sender.api_client.create_direct_message_event(event: {
         type: 'message_create',

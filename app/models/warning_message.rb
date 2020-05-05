@@ -54,6 +54,22 @@ class WarningMessage < ApplicationRecord
     def timeline_url(*args)
       Rails.application.routes.url_helpers.timeline_url(*args)
     end
+
+    def inactive_additional_warning(user_id)
+      user = User.find(user_id)
+      template = Rails.root.join('app/views/warning_messages/inactive_additional_warning.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          timeline_url: timeline_url(screen_name: user.screen_name, follow_dialog: 1, share_dialog: 1, via: 'inactive_warning'),
+      )
+    end
+
+    def not_following_additional_warning(user_id)
+      user = User.find(user_id)
+      template = Rails.root.join('app/views/warning_messages/not_following_additional_warning.ja.text.erb')
+      ERB.new(template.read).result_with_hash(
+          timeline_url: timeline_url(screen_name: user.screen_name, follow_dialog: 1, share_dialog: 1, via: 'not_following_warning'),
+      )
+    end
   end
 
   def deliver!
