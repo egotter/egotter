@@ -25,13 +25,17 @@ module Egotter
           raise ::Twitter::Error::EnhanceYourCalm.new('Already raised')
         end
 
-        super
+        result = nil
+        begin
+          result = super
+        rescue ::Twitter::Error::EnhanceYourCalm => e
+          GlobalDirectMessageLimitation.new.limit_start
+          raise
+        else
+          CallCreateDirectMessageEventCount.new.increment
+        end
 
-      rescue ::Twitter::Error::EnhanceYourCalm => e
-        GlobalDirectMessageLimitation.new.limit_start
-        raise
-      ensure
-        CallCreateDirectMessageEventCount.new.increment
+        result
       end
     end
   end
