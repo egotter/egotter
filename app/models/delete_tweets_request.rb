@@ -100,7 +100,11 @@ class DeleteTweetsRequest < ApplicationRecord
     url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_dm', og_tag: 'false')
     User.egotter.api_client.create_direct_message_event(user.uid, I18n.t('delete_tweets.dm.message', url: url))
   rescue => e
-    raise FinishedMessageNotSent.new("#{e.class} #{e.message}")
+    if DirectMessageStatus.not_following_you?(e) || DirectMessageStatus.any_reason?(e)
+      # Do nothing
+    else
+      raise FinishedMessageNotSent.new("#{e.class} #{e.message}")
+    end
   end
 
   def send_error_message
