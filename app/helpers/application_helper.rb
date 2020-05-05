@@ -50,6 +50,10 @@ module ApplicationHelper
     %w(unfriends unfollowers blocking_or_blocked).exclude?(controller_name) && twitter_user.usage_stat
   end
 
+  def show_redirection_modal?
+    user_signed_in? && !@has_error && flash[:alert].blank?
+  end
+
   def kick_out_error_path(reason, redirect_path: nil)
     if redirect_path
       sign_in_path(via: "#{controller_name}/#{action_name}/#{reason}", redirect_path: redirect_path)
