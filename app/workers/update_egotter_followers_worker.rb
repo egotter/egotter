@@ -6,8 +6,12 @@ class UpdateEgotterFollowersWorker
     -1
   end
 
+  def unique_in
+    30.minutes
+  end
+
   def timeout_in
-    2.minutes
+    3.minutes
   end
 
   def after_timeout(*args)
@@ -22,29 +26,36 @@ class UpdateEgotterFollowersWorker
   #   user_id
   #   enqueued_at
   def perform(options = {})
-    user = User.find_by(id: options['user_id'])
-    client = user ? user.api_client : User.egotter.api_client
-
-    if client.user(User::EGOTTER_UID)[:followers_count] > 70000 # Max is 5000 * 15 = 75000
-      logger.warn 'Danger! The followers_count is over 70,000!'
-    end
-
-    current_follower_uids = client.follower_ids(User::EGOTTER_UID)
-
-    persisted_followers = EgotterFollower.where(uid: current_follower_uids)
-
-    remaining_uids = current_follower_uids - persisted_followers.map(&:uid)
-    users = client.users(remaining_uids)
-    new_followers = users.map { |user| EgotterFollower.new(uid: user[:id], screen_name: user[:screen_name]) }
-
-    current_followers = persisted_followers + new_followers
+    follower_uids = fetch_follower_uids(User::EGOTTER_UID)
+    followers = follower_uids.map.with_index { |uid, i| EgotterFollower.new(uid: uid, screen_name: "sn#{i}") }
 
     EgotterFollower.transaction do
-      EgotterFollower.where.not(uid: current_followers.map(&:uid)).delete_all
-      EgotterFollower.import current_followers, on_duplicate_key_update: %i(uid screen_name), validate: false
+      EgotterFollower.delete_all
+      Rails.logger.silence do
+        EgotterFollower.import followers, validate: false
+      end
     end
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{options.inspect}"
     logger.info e.backtrace.join("\n")
+  end
+
+  def fetch_follower_uids(uid)
+    options = {count: 5000, cursor: -1}
+    collection = []
+
+    while true do
+      client = Bot.api_client.twitter
+      response = client.follower_ids(uid, options)
+      break if response.nil?
+
+      collection << response.attrs[:ids]
+
+      break if response.attrs[:next_cursor] == 0
+
+      options[:cursor] = response.attrs[:next_cursor]
+    end
+
+    collection.flatten
   end
 end
