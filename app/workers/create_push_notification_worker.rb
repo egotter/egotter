@@ -28,7 +28,47 @@ class CreatePushNotificationWorker
       raise "instance_id is blank #{user_id}"
     end
 
-    access_key = FirebaseMessagingAuthorization.new.fetch do
+    payload = data_payload(user, title, body)
+    res = send_push_notification(payload)
+
+    if res.has_key?('error')
+      if requested_entity_not_found?(res)
+        logger.warn "NOT FOUND #{res}"
+      else
+        logger.warn res
+      end
+    else
+      logger.info res
+    end
+
+  rescue => e
+    logger.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
+    notify_airbrake(e, user_id: user_id, title: title, body: body, options: options)
+  end
+
+  private
+
+  def requested_entity_not_found?(res)
+    (error = res['error']) &&
+        error['code'] == 404 &&
+        error['message'] == 'Requested entity was not found.'
+  end
+
+  def send_push_notification(payload)
+    uri = URI.parse("https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send")
+    https = Net::HTTP.new(uri.host, uri.port)
+    https.use_ssl = true
+    https.open_timeout = 3
+    https.read_timeout = 3
+    req = Net::HTTP::Post.new(uri)
+    req['Content-Type'] = 'application/json'
+    req['Authorization'] = access_key
+    req.body = payload.to_json
+    JSON.parse(https.request(req).body)
+  end
+
+  def access_key
+    FirebaseMessagingAuthorization.new.fetch do
       json_key = '.firebase/client_secret.json'
       unless File.exist?(json_key)
         raise "json key file not found #{json_key}"
@@ -41,31 +81,7 @@ class CreatePushNotificationWorker
       access_token = authorizer.fetch_access_token!
       "#{access_token['token_type']} #{access_token['access_token']}"
     end
-
-    body = data_payload(user, title, body)
-
-    uri = URI.parse("https://fcm.googleapis.com/v1/projects/#{ENV['FIREBASE_PROJECT_ID']}/messages:send")
-    https = Net::HTTP.new(uri.host, uri.port)
-    https.use_ssl = true
-    req = Net::HTTP::Post.new(uri)
-    req['Content-Type'] = 'application/json'
-    req['Authorization'] = access_key
-    req.body = body.to_json
-
-    res = JSON.parse(https.request(req).body)
-
-    if res.has_key?('error')
-      logger.warn res
-    else
-      logger.info res
-    end
-
-  rescue => e
-    logger.warn "#{e.inspect} #{user_id} #{title} #{body} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
-    notify_airbrake(e, user_id: user_id, title: title, body: body, options: options)
   end
-
-  private
 
   def notification_payload(user_id, title, body)
     {
