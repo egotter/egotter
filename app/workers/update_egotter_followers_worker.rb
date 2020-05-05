@@ -29,11 +29,9 @@ class UpdateEgotterFollowersWorker
     follower_uids = fetch_follower_uids(User::EGOTTER_UID)
     followers = follower_uids.map.with_index { |uid, i| EgotterFollower.new(uid: uid, screen_name: "sn#{i}") }
 
-    EgotterFollower.transaction do
-      EgotterFollower.delete_all
-      Rails.logger.silence do
-        EgotterFollower.import followers, validate: false
-      end
+    ActiveRecord::Base.connection.execute('TRUNCATE TABLE egotter_followers')
+    Rails.logger.silence do
+      EgotterFollower.import followers, validate: false
     end
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{options.inspect}"
