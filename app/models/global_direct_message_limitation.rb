@@ -11,6 +11,10 @@ class GlobalDirectMessageLimitation
     @redis.setex(@key, @ttl, true)
   end
 
+  def limit_finish
+    @redis.del(@key)
+  end
+
   def limited?
     @redis.exists(@key)
   end
