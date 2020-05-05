@@ -15,9 +15,19 @@ class UnfollowsController < ApplicationController
 
   def create
     request = UnfollowRequest.create!(user_id: current_user.id, uid: params[:uid])
-    CreateUnfollowWorker.perform_async(request.id, enqueue_location: controller_name)
-    message = t('.success', user: fetch_target_screen_name(params[:uid]))
-    render json: {request_id: request.id, message: message}.merge(RateLimit.new(current_user).to_h)
+    screen_name = fetch_target_screen_name(params[:uid])
+    rate_limit = RateLimit.new(current_user)
+    job_args = [request.id, enqueue_location: controller_name]
+
+    if GlobalUnfollowLimitation.new.limited?
+      CreateUnfollowWorker.perform_in(1.hour + rand(30.minutes), *job_args)
+      message = t('.retry_later', user: screen_name)
+    else
+      CreateUnfollowWorker.perform_async(*job_args)
+      message = t('.success', user: screen_name, count: rate_limit.remaining)
+    end
+
+    render json: {request_id: request.id, message: message}.merge(rate_limit.to_h)
   end
 
   private

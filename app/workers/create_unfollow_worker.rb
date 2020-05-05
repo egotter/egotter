@@ -17,8 +17,12 @@ class CreateUnfollowWorker
   # options:
   #   enqueue_location
   def perform(request_id, options = {})
-    request = UnfollowRequest.find(request_id)
-    CreateUnfollowTask.new(request).start!
+    if GlobalUnfollowLimitation.new.limited?
+      CreateUnfollowWorker.perform_in(retry_in, request_id, options)
+    else
+      request = UnfollowRequest.find(request_id)
+      CreateUnfollowTask.new(request).start!
+    end
 
   rescue UnfollowRequest::NotFollowing,
       UnfollowRequest::NotFound,

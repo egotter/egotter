@@ -29,12 +29,13 @@ class FollowsController < ApplicationController
     request = FollowRequest.create!(user_id: current_user.id, uid: params[:uid], requested_by: 'follows#create')
     screen_name = fetch_target_screen_name(params[:uid])
     rate_limit = RateLimit.new(current_user)
+    job_args = [request.id, enqueue_location: controller_name]
 
     if GlobalFollowLimitation.new.limited?
-      CreateFollowWorker.perform_in(1.hour + rand(30.minutes), request.id, enqueue_location: controller_name)
+      CreateFollowWorker.perform_in(1.hour + rand(30.minutes), *job_args)
       message = t('.retry_later', user: screen_name)
     else
-      CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
+      CreateFollowWorker.perform_async(*job_args)
       message = t('.success', user: screen_name, count: rate_limit.remaining)
     end
 
