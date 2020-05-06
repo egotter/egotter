@@ -42,6 +42,8 @@ module Egotter
       def dig_recipient_uid(args)
         if args.length == 1 && args.last.is_a?(Hash)
           args.last.dig(:event, :message_create, :target, :recipient_id)
+        elsif args.lengh == 2 && args.first.is_a?(Integer)
+          args.first
         else
           nil
         end
