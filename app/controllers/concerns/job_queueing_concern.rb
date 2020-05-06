@@ -18,7 +18,9 @@ module Concerns::JobQueueingConcern
         uid: uid,
         ahoy_visit_id: current_visit&.id)
 
-    if user_signed_in?
+    if controller_name == 'searches' && user_signed_in?
+      CreateHighPriorityTwitterUserWorker.perform_async(request.id)
+    elsif user_signed_in?
       CreateSignedInTwitterUserWorker.perform_async(request.id)
     else
       CreateTwitterUserWorker.perform_async(request.id)

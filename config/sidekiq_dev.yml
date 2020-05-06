@@ -17,6 +17,7 @@
   - ForceCreatePromptReportWorker
   - CreatePeriodicReportWorker
   - CreatePromptReportWorker
+  - CreateHighPriorityTwitterUserWorker
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
