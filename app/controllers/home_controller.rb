@@ -1,7 +1,7 @@
 class HomeController < ApplicationController
   include Concerns::JobQueueingConcern
 
-  before_action :require_login!, only: :start, unless: :from_crawler?
+  before_action :require_login!, only: :start
 
   before_action do
     push_referer
