@@ -13,7 +13,7 @@ class CreateTwitterUserWorker
   end
 
   def after_skip(*args)
-    CreateTwitterUserWorker.set(queue: "skipped_#{self.class}").perform_async(*args)
+    SkippedCreateTwitterUserWorker.perform_async(*args)
   end
 
   def expire_in
@@ -21,7 +21,7 @@ class CreateTwitterUserWorker
   end
 
   def after_expire(*args)
-    CreateTwitterUserWorker.set(queue: "expired_#{self.class}").perform_async(*args)
+    ExpiredCreateTwitterUserWorker.perform_async(*args)
   end
 
   # options:
