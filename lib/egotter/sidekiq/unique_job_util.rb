@@ -7,7 +7,7 @@ module Egotter
         if worker.respond_to?(:unique_key)
           start = Time.now
           result = perform_unique_check(worker, args, history, worker.unique_key(*args))
-          worker.logger.debug { "#perform_unique_check #{sprintf("%.3f sec", Time.now - start)}" }
+          worker.logger.debug { "#perform_unique_check #{sprintf("%.3f sec", Time.now - start)} worker=#{worker} args=#{args}" }
 
           if result
             yield
