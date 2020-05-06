@@ -21,7 +21,8 @@ module Egotter
       end
 
       def create_direct_message_event(*args)
-        if GlobalDirectMessageLimitation.new.limited?
+        if !GlobalDirectMessageReceivedFlag.new.exists?(dig_recipient_uid(args)) &&
+            GlobalDirectMessageLimitation.new.limited?
           raise ::Twitter::Error::EnhanceYourCalm.new('Already raised')
         end
 
@@ -36,6 +37,14 @@ module Egotter
         end
 
         result
+      end
+
+      def dig_recipient_uid(args)
+        if args.length == 1 && args.last.is_a?(Hash)
+          args.last.dig(:event, :message_create, :target, :recipient_id)
+        else
+          nil
+        end
       end
     end
   end
