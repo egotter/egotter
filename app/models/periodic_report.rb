@@ -38,9 +38,9 @@ class PeriodicReport < ApplicationRecord
       end_date = Time.zone.parse(end_date) if end_date.class == String
 
       if unfollowers.any?
-        template = Rails.root.join('app/views/periodic_reports/morning/removed.ja.text.erb')
+        template = Rails.root.join('app/views/periodic_reports/removed.ja.text.erb')
       else
-        template = Rails.root.join('app/views/periodic_reports/morning/not_removed.ja.text.erb')
+        template = Rails.root.join('app/views/periodic_reports/not_removed.ja.text.erb')
       end
 
       token = generate_token
@@ -60,6 +60,32 @@ class PeriodicReport < ApplicationRecord
       )
 
       new(user: user, message: message, token: token)
+    end
+
+    def periodic_push_message(user_id, request_id:, start_date:, end_date:, unfriends:, unfollowers:)
+      user = User.find(user_id)
+      start_date = Time.zone.parse(start_date) if start_date.class == String
+      end_date = Time.zone.parse(end_date) if end_date.class == String
+
+      if unfollowers.any?
+        template = Rails.root.join('app/views/periodic_reports/removed_push.ja.text.erb')
+      else
+        template = Rails.root.join('app/views/periodic_reports/not_removed_push.ja.text.erb')
+      end
+
+      token = generate_token
+      url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
+
+      ERB.new(template.read).result_with_hash(
+          user: user,
+          start_date: start_date,
+          end_date: end_date,
+          period_name: pick_period_name,
+          unfriends: unfriends,
+          unfollowers: unfollowers,
+          timeline_url: timeline_url(user, url_options),
+          date_helper: Class.new { include ActionView::Helpers::DateHelper }.new
+      )
     end
 
     def pick_period_name

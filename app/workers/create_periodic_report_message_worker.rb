@@ -27,7 +27,16 @@ class CreatePeriodicReportMessageWorker
       return
     end
 
-    PeriodicReport.periodic_message(user_id, **options.symbolize_keys!).deliver!
+    options = options.symbolize_keys!
+
+    begin
+      push_message = PeriodicReport.periodic_push_message(user.id, **options)
+      CreatePushNotificationWorker.perform_async(user.id, '', push_message)
+    rescue => e
+      logger.warn "#{e.inspect} user_id=#{user_id}"
+    end
+
+    PeriodicReport.periodic_message(user_id, **options).deliver!
 
   rescue => e
     notify_airbrake(e, user_id: user_id, options: options)
