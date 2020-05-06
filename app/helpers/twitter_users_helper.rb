@@ -14,7 +14,7 @@ module TwitterUsersHelper
   end
 
   def next_creation_message(twitter_user)
-    format = (twitter_user.created_at.in_time_zone('Tokyo').to_date === Time.zone.now.in_time_zone('Tokyo').to_date) ? :next_creation_short : :next_creation_long
+    format = same_tokyo_date?(twitter_user.created_at, Time.zone.now) ? :next_creation_short : :next_creation_long
     time = I18n.l(twitter_user.created_at.in_time_zone('Tokyo'), format: format)
 
     if switch_to_request?(twitter_user)
@@ -33,6 +33,10 @@ module TwitterUsersHelper
     else
       t('twitter_users.in_background.go', time: time_ago_in_words(twitter_user.next_creation_time)) # x分後
     end
+  end
+
+  def same_tokyo_date?(time1, time2)
+    time1.in_time_zone('Tokyo').to_date === time2.in_time_zone('Tokyo').to_date
   end
 
   def switch_to_request?(twitter_user)
