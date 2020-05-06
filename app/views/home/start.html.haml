@@ -29,8 +29,10 @@
       %p.card-text
         %div= t('.notification.message_html')
       .text-center
+        - url = "https://twitter.com/messages/#{current_user.uid}-187385226"
+        = link_to t('.notification.button1'), url, target: '_blank', class: 'btn btn-primary mb-3'
         - url = 'https://twitter.com/settings/safety'
-        = link_to t('.notification.button'), url, target: '_blank', class: 'btn btn-primary'
+        = link_to t('.notification.button2'), url, target: '_blank', class: 'btn btn-outline-primary'
 
 #revive-notification.container.my-5
   .card.mx-auto{style: 'max-width: 500px;'}

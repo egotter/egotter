@@ -24,6 +24,7 @@ ja:
       config: '設定'
       search: '検索する'
       pricing: '料金プラン'
+      notification: 'リムられ通知'
       sign_out: 'ログアウト'
     footer:
       sign_in: "ログイン"
@@ -124,7 +125,8 @@ ja:
       notification:
         title: 'リムられ通知はDMで届きます'
         message_html: '<span class="egotter-pink">リムられ通知</span>は、<span class="egotter-pink">DM</span>で届きます。@ego_tter からのDMが届くように、忘れずに設定しておいてください。'
-        button: 'DMの設定を確認する'
+        button1: 'リムられ通知を見る'
+        button2: 'DMの設定を確認する'
       revive_notification:
         title: 'リムられ通知を復活させる'
         message_html: |

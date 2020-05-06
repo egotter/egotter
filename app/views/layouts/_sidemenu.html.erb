@@ -45,6 +45,14 @@
   <hr class="p-0 m-0">
 
   <div class="text-center py-3">
+    <%= link_to start_path(anchor: 'notification', via: current_via('navmenu')) do %>
+      <i class="far fa-envelope"></i>
+      <%= t('.notification') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
     <%= link_to pricing_path(via: current_via('navmenu')) do %>
       <i class="fas fa-yen-sign"></i>
       <%= t('.pricing') %>
