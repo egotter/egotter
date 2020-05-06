@@ -10,7 +10,8 @@
 :queues:
   - CreateTestReportWorker
   - ForceCreatePromptReportWorker
-  - CreateSelfRequestedPeriodicReportWorker
+  - CreateUserRequestedPeriodicReportWorker
+  - CreateEgotterRequestedPeriodicReportWorker
   - CreatePeriodicReportWorker
   - CreatePromptReportWorker
   - StartSendingPeriodicReportsWorker

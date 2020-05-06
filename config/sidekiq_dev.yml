@@ -15,7 +15,8 @@
   - deleting_low
   - CreateTestReportWorker
   - ForceCreatePromptReportWorker
-  - CreateSelfRequestedPeriodicReportWorker
+  - CreateUserRequestedPeriodicReportWorker
+  - CreateEgotterRequestedPeriodicReportWorker
   - CreatePeriodicReportWorker
   - CreatePromptReportWorker
   - CreateHighPriorityTwitterUserWorker

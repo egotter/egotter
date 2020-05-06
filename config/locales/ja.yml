@@ -1360,7 +1360,7 @@ ja:
       retry_later: '@%{user} のフォロー解除をリクエストしました。凍結を防ぐために一定時間後にフォロー解除します。'
   webhook:
     twitter:
-      request_periodic_report: 'リムられ通知 送信'
+      request_periodic_report: 'リムられ通知 今すぐ'
   tokimeki_unfollow:
     new:
       navbar_title: 'ときめきアンフォロー✨'
