@@ -20,25 +20,42 @@
 .container
   = render(partial: 'adsense/ad', locals: {vertical: :top})
 
-.container.my-5
+#notification.container.my-5
   .card.mx-auto{style: 'max-width: 500px;'}
-    .text-center.pt-3
-      = image_tag '/egotter_email_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-    .card-body
+    .card-body.pt-3
+      %h2.h5.card-title.text-center.mb-3= t('.notification.title')
+      .text-center
+        = image_tag '/egotter_email_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
       %p.card-text
-        %div= t('.message3_html')
+        %div= t('.notification.message_html')
       .text-center
         - url = 'https://twitter.com/settings/safety'
-        = link_to t('.dm_setting'), url, target: '_blank', class: 'btn btn-primary'
+        = link_to t('.notification.button'), url, target: '_blank', class: 'btn btn-primary'
+
+#revive-notification.container.my-5
+  .card.mx-auto{style: 'max-width: 500px;'}
+    .card-body.pt-3
+      %h2.h5.card-title.text-center.mb-3= t('.revive_notification.title')
+      .text-center
+        = image_tag '/egotter_email_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
+      %p.card-text
+        %div= t('.revive_notification.message_html')
+        .my-3= t('.revive_notification.step1_html', uid: current_user.uid)
+        .my-3= t('.revive_notification.step2_html')
+        .my-3= t('.revive_notification.step3_html', user: current_user.screen_name, url: timeline_path(current_user, via: current_via('revive_notification')))
+      .text-center
+        - url = "https://twitter.com/messages/#{current_user.uid}-187385226?text=リムられ通知 復活"
+        = link_to t('.revive_notification.button'), url, target: '_blank', class: 'btn btn-primary'
 
 .container.my-5
   .card.mx-auto{style: 'max-width: 500px;'}
-    .text-center.pt-3
-      = image_tag '/egotter_chat_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
-    .card-body
+    .card-body.pt-3
+      %h2.h5.card-title.text-center.mb-3= t('.question.title')
+      .text-center
+        = image_tag '/egotter_chat_with_text_400x448.png', class: 'img-rounded', height: '160px', style: 'display: block; margin: 0 auto;'
       %p.card-text
-        %div= t('.message4_html')
-        %div= t('.message5_html')
+        %div= t('.question.message1_html')
+        %div= t('.question.message2_html')
       .text-center
         - url = 'https://twitter.com/ego_tter'
-        = link_to t('.ask'), url, target: '_blank', class: 'btn btn-primary'
+        = link_to t('.question.button'), url, target: '_blank', class: 'btn btn-primary'

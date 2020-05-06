@@ -4,21 +4,9 @@
 <div class="row">
   <div class="col-4"><%= t('.not_coming.title') %></div>
   <div class="col-8">
-    <%= link_to t('.not_coming.button'), sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: settings_path), class: 'btn btn-primary' %>
+    <% url = sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: start_path(anchor: 'revive-notification', via: current_via('update_authorized_for_dm'))) %>
+    <%= link_to t('.not_coming.button'), url, class: 'btn btn-primary' %>
     <div class="notes"><%= t('.not_coming.note_html') %></div>
-  </div>
-</div>
-
-<hr>
-
-<div class="row">
-  <div class="col-4"><%= t('.reporting_test.title') %></div>
-  <div class="col-8">
-    <div>
-      <%= link_to t('.reporting_test.button'), sign_in_path(force_login: true, via: current_via('send_test_report'), redirect_path: settings_path), class: 'btn btn-outline-primary' %>
-      <span><a href="<%= settings_create_test_requests_path %>"><%= t('.reporting_test.history') %></a></span>
-    </div>
-    <div class="text-muted notes"><%= t('.reporting_test.note') %></div>
   </div>
 </div>
 

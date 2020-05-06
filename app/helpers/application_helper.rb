@@ -62,9 +62,19 @@ module ApplicationHelper
     end
   end
 
+  ANCHOR_REGEXP = /(#[a-zA-Z0-9_-]+)/
+
   def append_query_params(path, params)
     path += path.include?('?') ? '&' : '?'
     path + params.to_query
+
+    if path.match?(ANCHOR_REGEXP)
+      anchor = path.match(ANCHOR_REGEXP)[0]
+      path.remove!(ANCHOR_REGEXP)
+      path = path + anchor
+    end
+
+    path
   end
 
   def png_image

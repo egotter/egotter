@@ -11,6 +11,7 @@ ja:
       sign_in: 'ログイン'
       search_by_twitter_id: "@TwitterID で検索"
       pricing: '料金プラン'
+      notification: 'リムられ通知'
     meta_tags:
       title: 'えごったー スマホでかんたん ツイッターのフォロー整理'
       description: "ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるのはえごったーだけ！ Twitter IDを入力するだけでいつでもすぐに結果を見ることができます。"
@@ -118,13 +119,26 @@ ja:
       page_title: "@%{user}さん えごったーへようこそ！"
       meta_description: "@%{user}さん えごったーへようこそ！"
       start_by: '@%{user} で始める'
-      dm_setting: 'DMの設定を確認する'
-      ask: '@ego_tter に質問する'
       message1_html: 'えごったーは、ツイッターのデータを分析することで、<span class="egotter-pink">仲良しランキング</span>、<span class="egotter-pink">リムられ（フォロー解除）</span>、入っているクラスタなどを分析していきます。'
       message2: 'それでは、さっそく初めてみましょう。'
-      message3_html: '<span class="egotter-pink">リムられ通知</span>は、<span class="egotter-pink">DM</span>で届きます。@ego_tter からのDMが届くように、忘れずに設定しておいてください。'
-      message4_html: '何か<span class="egotter-pink">分からないこと</span>がありますか？'
-      message5_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご質問ください。'
+      notification:
+        title: 'リムられ通知はDMで届きます'
+        message_html: '<span class="egotter-pink">リムられ通知</span>は、<span class="egotter-pink">DM</span>で届きます。@ego_tter からのDMが届くように、忘れずに設定しておいてください。'
+        button: 'DMの設定を確認する'
+      revive_notification:
+        title: 'リムられ通知を復活させる'
+        message_html: |
+          <span class="egotter-pink">リムられ通知</span>は、一定期間アクセスがないと<span class="egotter-pink">止まります</span>。
+          止まってしまったリムられ通知を復活させるには、下記の3つの手順を行ってください。
+        step1_html: '1. @ego_tter に「リムられ通知 復活」と書いたDMを送信する <a href="https://twitter.com/messages/%{uid}-187385226?text=リムられ通知 復活" target="_blank">DM作成画面を開く</a>'
+        step2_html: '2. @ego_tter をフォローする <a href="https://twitter.com/ego_tter" target="_blank">@ego_tterのページを開く</a>'
+        step3_html: '3. えごったーWebで @%{user} を検索する <a href="%{url}" target="_blank">@%{user}を検索する</a>'
+        button: 'DM作成画面を開く'
+      question:
+        title: '質問はお気軽に'
+        message1_html: '何か<span class="egotter-pink">分からないこと</span>がありますか？'
+        message2_html: 'そんなときは、公式アカウント <a href="https://twitter.com/ego_tter" target="_blank" rel="nofollow">@ego_tter</a> までお気軽にご質問ください。'
+        button: '@ego_tter に質問する'
   timelines:
     show:
       navbar_title: '@%{user} の分析'
