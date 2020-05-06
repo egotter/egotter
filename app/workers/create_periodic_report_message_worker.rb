@@ -29,11 +29,13 @@ class CreatePeriodicReportMessageWorker
 
     options = options.symbolize_keys!
 
-    begin
-      push_message = PeriodicReport.periodic_push_message(user.id, **options)
-      CreatePushNotificationWorker.perform_async(user.id, '', push_message)
-    rescue => e
-      logger.warn "#{e.inspect} user_id=#{user_id}"
+    if user.credential_token.instance_id.present?
+      begin
+        push_message = PeriodicReport.periodic_push_message(user.id, **options)
+        CreatePushNotificationWorker.perform_async(user.id, '', push_message)
+      rescue => e
+        logger.warn "#{e.inspect} user_id=#{user_id}"
+      end
     end
 
     PeriodicReport.periodic_message(user_id, **options).deliver!

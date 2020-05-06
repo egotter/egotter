@@ -6,7 +6,7 @@ class StartSendingPeriodicReportsTask
       @user_ids = user_ids
     else
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
-      user_ids = uids.each_slice(1000).map { |uids_array| User.where(uid: uids_array).pluck(:id) }.flatten
+      user_ids = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
 
       # start_date = CreatePeriodicReportRequest::PERIOD_DURATION.ago unless start_date
       # user_ids += AccessDay.where('created_at > ?', start_date).select(:user_id).distinct.map(&:user_id)
