@@ -19,7 +19,7 @@ module Egotter
             worker = worker_str.new
           end
           history = run_history(worker, @queue_class, @queueing_context)
-          perform(worker, job['args'], history, &block)
+          perform_if_unique(worker, job['args'], history, &block)
         end
       end
     end

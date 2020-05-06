@@ -20,7 +20,7 @@ RSpec.describe Egotter::Sidekiq::ServerUniqueJob do
 
     it do
       expect(middleware).to receive(:run_history).with(worker, queue_class, queueing_context).and_return(history)
-      expect(middleware).to receive(:perform).with(worker, msg['args'], history) { |&blk| expect(blk).to be(block) }
+      expect(middleware).to receive(:perform_if_unique).with(worker, msg['args'], history) { |&blk| expect(blk).to be(block) }
       middleware.call(worker, msg, nil, &block)
     end
   end

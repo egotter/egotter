@@ -11,7 +11,7 @@ module Egotter
 
       def call(worker, msg, queue, &block)
         history = run_history(worker, @queue_class, @queueing_context)
-        perform(worker, msg['args'], history, &block)
+        perform_if_unique(worker, msg['args'], history, &block)
       end
     end
   end

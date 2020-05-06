@@ -3,7 +3,7 @@ module Egotter
     module UniqueJobUtil
       include JobCallbackUtil
 
-      def perform(worker, args, history, &block)
+      def perform_if_unique(worker, args, history, &block)
         if worker.respond_to?(:unique_key)
           start = Time.now
           result = perform_unique_check(worker, args, history, worker.unique_key(*args))
