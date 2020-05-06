@@ -1,7 +1,9 @@
 # Perform a request and log an error
 class StartSendingPeriodicReportsTask
 
-  def initialize(user_ids: nil, start_date: nil)
+  def initialize(user_ids: nil, start_date: nil, delay: nil)
+    @delay = delay
+
     if user_ids.present?
       @user_ids = user_ids
     else
@@ -25,7 +27,13 @@ class StartSendingPeriodicReportsTask
     CreatePeriodicReportRequest.import requests, validate: false
 
     CreatePeriodicReportRequest.where('created_at > ?', last_request.created_at).find_each do |request|
-      CreatePeriodicReportWorker.perform_async(request.id, user_id: request.user_id, create_twitter_user: true)
+      args = [request.id, user_id: request.user_id, create_twitter_user: true]
+
+      if @delay
+        CreatePeriodicReportWorker.perform_in(@delay, *args)
+      else
+        CreatePeriodicReportWorker.perform_async(*args)
+      end
     end
   end
 end
