@@ -199,7 +199,7 @@ Rails.application.routes.draw do
 
   require 'sidekiq/api'
   match 'delay_status' => proc {
-    q1 = Sidekiq::Queue.new(DelayedCreateTwitterUserWorker.name)
+    q1 = []
     q2 = Sidekiq::Queue.new(DelayedImportTwitterUserRelationsWorker.name)
     [200, {'Content-Type' => 'text/plain'}, ["#{q1.size} #{q2.size}"]]
   }, via: :get
