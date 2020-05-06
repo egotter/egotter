@@ -24,7 +24,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
   end
 
-  PERIOD_DURATION = 12.hours
+  PERIOD_DURATION = 1.day
 
   def build_report_options
     start_date = PERIOD_DURATION.ago

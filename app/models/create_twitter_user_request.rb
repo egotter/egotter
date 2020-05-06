@@ -43,7 +43,10 @@ class CreateTwitterUserRequest < ApplicationRecord
     bm_perform('twitter_user.save') { save_result = twitter_user.save }
     if save_result
       update(twitter_user_id: twitter_user.id)
+      logger.debug { "CreateTwitterUserRequest record created twitter_user_id=#{twitter_user.id}" }
       return twitter_user
+    else
+      logger.debug { "CreateTwitterUserRequest record NOT created" }
     end
 
     if TwitterUser.exists?(uid: twitter_user.uid)

@@ -12,13 +12,30 @@ class CreatePeriodicReportWorker
   end
 
   # options:
+  #   user_id
+  #   create_twitter_user
   def perform(request_id, options = {})
-    if GlobalDirectMessageLimitation.new.limited?
+    request = CreatePeriodicReportRequest.find(request_id)
+
+    if !GlobalDirectMessageReceivedFlag.new.exists?(request.user.uid) &&
+        GlobalDirectMessageLimitation.new.limited?
       SkippedCreatePeriodicReportWorker.perform_async(request_id, options)
       return
     end
 
-    request = CreatePeriodicReportRequest.find(request_id)
+    if options['create_twitter_user']
+      create_request = CreateTwitterUserRequest.create(
+          requested_by: self.class,
+          user_id: request.user_id,
+          uid: request.user.uid)
+      task = CreateTwitterUserTask.new(create_request)
+      begin
+        task.start!
+      rescue => e
+        logger.info "#{e.inspect} request_id=#{request_id} create_request_id=#{create_request.id}"
+      end
+    end
+
     CreatePeriodicReportTask.new(request).start!
 
   rescue => e
