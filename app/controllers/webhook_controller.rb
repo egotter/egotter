@@ -18,6 +18,7 @@ class WebhookController < ApplicationController
             GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
             SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)
           elsif sent_from_egotter?(dm)
+            enqueue_periodic_report_if_requested(dm)
             SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
           end
         end
@@ -39,6 +40,18 @@ class WebhookController < ApplicationController
 
   def sent_from_egotter?(dm)
     dm.text.exclude?('#egotter') && dm.sender_id == User.egotter.uid
+  end
+
+  def enqueue_periodic_report_if_requested(dm)
+    if dm.text.include?(t('.request_periodic_report'))
+      user = User.find_by(uid: dm.recipient_id)
+      if user
+        request = CreatePeriodicReportRequest.create(user_id: user.id)
+        CreateSelfRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+      end
+    end
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end
 
   def crc_response
