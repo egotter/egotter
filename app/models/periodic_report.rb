@@ -65,16 +65,18 @@ class PeriodicReport < ApplicationRecord
     def pick_period_name
       time = Time.zone.now.in_time_zone('Tokyo')
       case time.hour
-      when 0..5, 22..23
-        I18n.t('activerecord.attributes.periodic_report.period_name.night')
+      when 0..5
+        I18n.t('activerecord.attributes.periodic_report.period_name.midnight')
       when 6..11
         I18n.t('activerecord.attributes.periodic_report.period_name.morning')
       when 12..14
         I18n.t('activerecord.attributes.periodic_report.period_name.noon')
       when 15..21
         I18n.t('activerecord.attributes.periodic_report.period_name.evening')
+      when 22..23
+        I18n.t('activerecord.attributes.periodic_report.period_name.night')
       else
-        I18n.t('activerecord.attributes.periodic_report.period_name.noon')
+        I18n.t('activerecord.attributes.periodic_report.period_name.irregular')
       end
     end
   end

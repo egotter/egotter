@@ -2113,6 +2113,8 @@ ja:
           noon: '昼'
           evening: '夕方'
           night: '夜'
+          midnight: '深夜'
+          irregular: '不定期'
 
     errors:
       models:
