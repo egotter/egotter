@@ -44,7 +44,7 @@ class WebhookController < ApplicationController
   end
 
   # t('quick_replies.prompt_reports.label3')
-  SEND_NOW_REGEXP = /今すぐ送信/
+  SEND_NOW_REGEXP = /今すぐ送信|いますぐ送信|今すぐそうしん|いますぐそうしん/
 
   def enqueue_user_requested_periodic_report(dm)
     if dm.text.match?(SEND_NOW_REGEXP)
