@@ -19,6 +19,8 @@ class CreatePeriodicReportMessageWorker
   #   request_id
   #   start_date
   #   end_date
+  #   friends_count
+  #   followers_count
   #   unfriends
   #   unfollowers
   #   interval_too_short

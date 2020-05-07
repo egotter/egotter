@@ -51,10 +51,17 @@ class CreatePeriodicReportRequest < ApplicationRecord
     unfriends = TwitterDB::User.where_and_order_by_field(uids: builder.unfriends.flatten.take(10)).map(&:screen_name)
     unfollowers = TwitterDB::User.where_and_order_by_field(uids: builder.unfollowers.flatten.take(10)).map(&:screen_name)
 
+    first_user = builder.first_user
+    last_user = builder.last_user
+
     {
         request_id: id,
         start_date: start_date,
         end_date: end_date,
+        first_friends_count: first_user&.friends_count,
+        first_followers_count: first_user&.followers_count,
+        last_friends_count: last_user&.friends_count,
+        last_followers_count: last_user&.followers_count,
         unfriends: unfriends,
         unfollowers: unfollowers
     }

@@ -25,6 +25,14 @@ class UnfriendsBuilder
     @users.each_cons(2).map { |older, newer| Util.unfollowers(older, newer) }.compact.reverse
   end
 
+  def first_user
+    @users.first
+  end
+
+  def last_user
+    @users.last
+  end
+
   module Util
     module_function
 

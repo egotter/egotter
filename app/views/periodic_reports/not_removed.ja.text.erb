@@ -6,6 +6,9 @@
 集計期間：
 <%= I18n.l(start_date.in_time_zone('Tokyo'), format: :periodic_report_short) %> - <%= I18n.l(end_date.in_time_zone('Tokyo'), format: :periodic_report_short) %>
 
+<% if first_followers_count && last_followers_count %>フォロワー数：
+  <%= first_followers_count %> - <%= last_followers_count %><% end %>
+
 検索結果ページ：
 <%= timeline_url %>
 

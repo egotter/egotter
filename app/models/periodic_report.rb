@@ -32,7 +32,8 @@ class PeriodicReport < ApplicationRecord
   end
 
   class << self
-    def periodic_message(user_id, request_id:, start_date:, end_date:, unfriends:, unfollowers:)
+    def periodic_message(user_id, request_id:, start_date:, end_date:, first_friends_count: nil, first_followers_count: nil,
+                         last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:)
       user = User.find(user_id)
       start_date = Time.zone.parse(start_date) if start_date.class == String
       end_date = Time.zone.parse(end_date) if end_date.class == String
@@ -51,6 +52,10 @@ class PeriodicReport < ApplicationRecord
           start_date: start_date,
           end_date: end_date,
           period_name: pick_period_name,
+          first_friends_count: first_friends_count,
+          first_followers_count: first_followers_count,
+          last_friends_count: last_friends_count,
+          last_followers_count: last_followers_count,
           unfriends: unfriends,
           unfollowers: unfollowers.map { |name| "#{name} #{profile_url(user, url_options)}" },
           request_id: request_id,
@@ -98,7 +103,8 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
-    def periodic_push_message(user_id, request_id:, start_date:, end_date:, unfriends:, unfollowers:)
+    def periodic_push_message(user_id, request_id:, start_date:, end_date:, first_friends_count: nil, first_followers_count: nil,
+                              last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:)
       user = User.find(user_id)
       start_date = Time.zone.parse(start_date) if start_date.class == String
       end_date = Time.zone.parse(end_date) if end_date.class == String
