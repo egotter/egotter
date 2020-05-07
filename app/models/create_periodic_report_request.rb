@@ -24,7 +24,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   attr_accessor :check_interval
 
   def perform!(async: true)
-    if check_interval && interval_too_short?
+    if check_interval && self.class.interval_too_short?(include_user_id: user_id, reject_id: id)
       update(status: 'interval_too_short')
       if async
         CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
@@ -62,18 +62,20 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   INTERVAL = 1.hour
 
-  def interval_too_short?
-    last_request = CreatePeriodicReportRequest.where(user_id: user_id).
-        where(status: '').
-        where.not(finished_at: nil).
-        where.not(id: id).
-        order(created_at: :desc).
-        first
+  class << self
+    def interval_too_short?(include_user_id:, reject_id:)
+      last_request = CreatePeriodicReportRequest.where(user_id: include_user_id).
+          where(status: '').
+          where.not(finished_at: nil).
+          where.not(id: reject_id).
+          order(created_at: :desc).
+          first
 
-    if last_request
-      last_request.finished_at > INTERVAL.ago
-    else
-      false
+      if last_request
+        last_request.finished_at > INTERVAL.ago
+      else
+        false
+      end
     end
   end
 end
