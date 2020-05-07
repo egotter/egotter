@@ -28,22 +28,25 @@ class CreatePeriodicReportMessageWorker
     options = options.symbolize_keys!
 
     if options[:unregistered]
-      message = PeriodicReport.unregistered_message.message
-      User.egotter.api_client.create_direct_message_event(options[:uid], message)
+      report = PeriodicReport.unregistered_message
+      event = report.build_direct_message_event(options[:uid], report.message)
+      User.egotter.api_client.create_direct_message_event(event: event)
       return
     end
 
     user = User.find(user_id)
 
     if options[:permission_level_not_enough] || !user.notification_setting.enough_permission_level?
-      message = PeriodicReport.permission_level_not_enough_message.message
-      User.egotter.api_client.create_direct_message_event(user.uid, message)
+      report = PeriodicReport.permission_level_not_enough_message
+      event = report.build_direct_message_event(user.uid, report.message)
+      User.egotter.api_client.create_direct_message_event(event: event)
       return
     end
 
     if options[:unauthorized] || !user.authorized?
-      message = PeriodicReport.unauthorized_message.message
-      User.egotter.api_client.create_direct_message_event(user.uid, message)
+      report = PeriodicReport.unauthorized_message
+      event = report.build_direct_message_event(user.uid, report.message)
+      User.egotter.api_client.create_direct_message_event(event: event)
       return
     end
 
@@ -65,7 +68,7 @@ class CreatePeriodicReportMessageWorker
 
   rescue => e
     notify_airbrake(e, user_id: user_id, options: options)
-    logger.warn "#{e.class} #{e.message}"
+    logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
     logger.info e.backtrace.join("\n")
   end
 end

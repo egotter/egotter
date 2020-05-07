@@ -144,10 +144,15 @@ class PeriodicReport < ApplicationRecord
   end
 
   def send_direct_message
-    report_sender.api_client.create_direct_message_event(event: {
+    event = build_direct_message_event(report_recipient.uid, message)
+    report_sender.api_client.create_direct_message_event(event: event)
+  end
+
+  def build_direct_message_event(uid, message)
+    {
         type: 'message_create',
         message_create: {
-            target: {recipient_id: report_recipient.uid},
+            target: {recipient_id: uid},
             message_data: {
                 text: message,
                 quick_reply: {
@@ -169,7 +174,7 @@ class PeriodicReport < ApplicationRecord
                 }
             }
         }
-    })
+    }
   end
 
   def report_sender
