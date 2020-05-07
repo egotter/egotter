@@ -11,8 +11,9 @@ class CreatePeriodicReportWorker
     1.minute
   end
 
-  def after_skip(*args)
-    logger.warn "The job execution is skipped args=#{args.inspect}"
+  def after_skip(request_id, options = {})
+    CreatePeriodicReportRequest.find(request_id).update(status: 'skipped')
+    logger.warn "The job execution is skipped request_id=#{request_id} options=#{options.inspect}"
   end
 
   # options:
