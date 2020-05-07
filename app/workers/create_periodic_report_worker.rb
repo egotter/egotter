@@ -4,7 +4,7 @@ class CreatePeriodicReportWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
-    request_id
+    CreatePeriodicReportRequest.find(request_id).user_id
   end
 
   def unique_in
