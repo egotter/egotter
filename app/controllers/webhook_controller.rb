@@ -50,8 +50,14 @@ class WebhookController < ApplicationController
     if dm.text.match?(SEND_NOW_REGEXP)
       user = User.find_by(uid: dm.sender_id)
       if user
-        request = CreatePeriodicReportRequest.create(user_id: user.id)
-        CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+        if user.authorized?
+          request = CreatePeriodicReportRequest.create(user_id: user.id)
+          CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+        else
+          CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
+        end
+      else
+        CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
       end
     end
   rescue => e
@@ -62,8 +68,14 @@ class WebhookController < ApplicationController
     if dm.text.match?(SEND_NOW_REGEXP)
       user = User.find_by(uid: dm.recipient_id)
       if user
-        request = CreatePeriodicReportRequest.create(user_id: user.id)
-        CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+        if user.authorized?
+          request = CreatePeriodicReportRequest.create(user_id: user.id)
+          CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+        else
+          CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
+        end
+      else
+        CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.recipient_id)
       end
     end
   rescue => e

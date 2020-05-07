@@ -71,6 +71,24 @@ class PeriodicReport < ApplicationRecord
       new(user: User.find(user_id), message: message, token: generate_token)
     end
 
+    def unauthorized_message
+      template = Rails.root.join('app/views/periodic_reports/unauthorized.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          url: sign_in_url(via: 'unauthorized_message', og_tag: 'false')
+      )
+
+      new(user: nil, message: message, token: nil)
+    end
+
+    def unregistered_message
+      template = Rails.root.join('app/views/periodic_reports/unregistered.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          url: sign_in_url(via: 'unregistered_message', og_tag: 'false')
+      )
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def periodic_push_message(user_id, request_id:, start_date:, end_date:, unfriends:, unfollowers:)
       user = User.find(user_id)
       start_date = Time.zone.parse(start_date) if start_date.class == String

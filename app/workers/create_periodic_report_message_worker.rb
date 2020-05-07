@@ -22,13 +22,24 @@ class CreatePeriodicReportMessageWorker
   #   unfriends
   #   unfollowers
   #   interval_too_short
+  #   unauthorized
+  #   unregistered and uid
   def perform(user_id, options = {})
-    user = User.find(user_id)
-    unless user.authorized?
+    options = options.symbolize_keys!
+
+    if options[:unregistered]
+      message = PeriodicReport.unregistered_message.message
+      User.egotter.api_client.create_direct_message_event(options[:uid], message)
       return
     end
 
-    options = options.symbolize_keys!
+    user = User.find(user_id)
+
+    if options[:unauthorized] || !user.authorized?
+      message = PeriodicReport.unauthorized_message.message
+      User.egotter.api_client.create_direct_message_event(user.uid, message)
+      return
+    end
 
     if options[:interval_too_short]
       PeriodicReport.interval_too_short_message(user_id).deliver!
