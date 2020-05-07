@@ -32,13 +32,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
   end
 
-  PERIOD_DURATION = 1.day
+  PERIOD_START = 1.day
 
   def build_report_options
-    start_date = PERIOD_DURATION.ago
+    start_date = PERIOD_START.ago
     end_date = Time.zone.now
 
-    # TODO Use TwitterUser#unfriend_uids
+    # To specify start_date, UnfriendsBuilder is used
     builder = UnfriendsBuilder.new(user.uid, start_date: start_date, end_date: end_date)
     unfriends = TwitterDB::User.where_and_order_by_field(uids: builder.unfriends.flatten.take(10)).map(&:screen_name)
     unfollowers = TwitterDB::User.where_and_order_by_field(uids: builder.unfollowers.flatten.take(10)).map(&:screen_name)

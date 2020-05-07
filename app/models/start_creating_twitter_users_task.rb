@@ -5,7 +5,7 @@ class StartCreatingTwitterUsersTask
     if user_ids.present?
       @user_ids = user_ids
     else
-      start_date = CreatePeriodicReportRequest::PERIOD_DURATION.ago unless start_date
+      start_date = CreatePeriodicReportRequest::PERIOD_START.ago unless start_date
       @user_ids = AccessDay.where('created_at > ?', start_date).select(:user_id).distinct.map(&:user_id)
     end
   end
