@@ -35,6 +35,12 @@ class CreatePeriodicReportMessageWorker
 
     user = User.find(user_id)
 
+    if options[:permission_level_not_enough] || !user.notification_setting.enough_permission_level?
+      message = PeriodicReport.permission_level_not_enough_message.message
+      User.egotter.api_client.create_direct_message_event(user.uid, message)
+      return
+    end
+
     if options[:unauthorized] || !user.authorized?
       message = PeriodicReport.unauthorized_message.message
       User.egotter.api_client.create_direct_message_event(user.uid, message)
