@@ -23,12 +23,20 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   attr_accessor :check_interval
 
-  def perform!
+  def perform!(async: true)
     if check_interval && interval_too_short?
       update(status: 'interval_too_short')
-      CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
+      if async
+        CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
+      else
+        CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
+      end
     else
-      CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
+      if async
+        CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
+      else
+        CreatePeriodicReportMessageWorker.new.perform(user_id, build_report_options)
+      end
     end
   end
 
