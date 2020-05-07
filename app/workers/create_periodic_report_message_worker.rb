@@ -12,7 +12,7 @@ class CreatePeriodicReportMessageWorker
   end
 
   def after_skip(*args)
-    logger.warn "The job execution is skipped."
+    logger.warn "The job execution is skipped args=#{args.inspect}"
   end
 
   # options:

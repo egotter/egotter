@@ -11,6 +11,10 @@ class CreatePeriodicReportWorker
     1.minute
   end
 
+  def after_skip(*args)
+    logger.warn "The job execution is skipped args=#{args.inspect}"
+  end
+
   # options:
   #   user_id
   #   create_twitter_user
