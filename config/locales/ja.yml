@@ -1358,9 +1358,6 @@ ja:
     create:
       success: '@%{user} のフォロー解除に成功しました。残りは %{count}回 です。'
       retry_later: '@%{user} のフォロー解除をリクエストしました。凍結を防ぐために一定時間後にフォロー解除します。'
-  webhook:
-    twitter:
-      request_periodic_report: 'リムられ通知 今すぐ'
   tokimeki_unfollow:
     new:
       navbar_title: 'ときめきアンフォロー✨'
@@ -1461,6 +1458,8 @@ ja:
       description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
       label2: 'リムられ通知 届いてません'
       description2: 'リムられ通知が届かない場合に押してください'
+      label3: 'リムられ通知 今すぐ送信'
+      description3: 'リムられ通知を今すぐ送信します'
     welcome_messages:
       label1: '初期設定 届きました'
       description1: 'このボタンを押しておくと、リムられ通知が届きやすくなります'

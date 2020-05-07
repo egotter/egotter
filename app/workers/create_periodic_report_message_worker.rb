@@ -21,6 +21,7 @@ class CreatePeriodicReportMessageWorker
   #   end_date
   #   unfriends
   #   unfollowers
+  #   interval_too_short
   def perform(user_id, options = {})
     user = User.find(user_id)
     unless user.authorized?
@@ -28,6 +29,11 @@ class CreatePeriodicReportMessageWorker
     end
 
     options = options.symbolize_keys!
+
+    if options[:interval_too_short]
+      PeriodicReport.interval_too_short_message(user_id).deliver!
+      return
+    end
 
     if user.credential_token.instance_id.present?
       begin

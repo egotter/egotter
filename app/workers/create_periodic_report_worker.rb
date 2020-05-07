@@ -36,6 +36,10 @@ class CreatePeriodicReportWorker
       end
     end
 
+    if self.class == CreateUserRequestedPeriodicReportWorker
+      request.check_interval = true
+    end
+
     CreatePeriodicReportTask.new(request).start!
 
   rescue => e

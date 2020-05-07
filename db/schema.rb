@@ -268,6 +268,7 @@ ActiveRecord::Schema.define(version: 2020_05_01_200054) do
 
   create_table "create_periodic_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.string "status", default: "", null: false
     t.datetime "finished_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

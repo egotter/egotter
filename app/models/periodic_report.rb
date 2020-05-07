@@ -62,6 +62,15 @@ class PeriodicReport < ApplicationRecord
       new(user: user, message: message, token: token)
     end
 
+    def interval_too_short_message(user_id)
+      template = Rails.root.join('app/views/periodic_reports/interval_too_short.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          interval: I18n.t('datetime.distance_in_words.about_x_hours', count: TwitterUser::CREATE_RECORD_INTERVAL / 1.hour)
+      )
+
+      new(user: User.find(user_id), message: message, token: generate_token)
+    end
+
     def periodic_push_message(user_id, request_id:, start_date:, end_date:, unfriends:, unfollowers:)
       user = User.find(user_id)
       start_date = Time.zone.parse(start_date) if start_date.class == String
@@ -124,6 +133,10 @@ class PeriodicReport < ApplicationRecord
                         {
                             label: I18n.t('quick_replies.prompt_reports.label2'),
                             description: I18n.t('quick_replies.prompt_reports.description2')
+                        },
+                        {
+                            label: I18n.t('quick_replies.prompt_reports.label3'),
+                            description: I18n.t('quick_replies.prompt_reports.description3')
                         }
                     ]
                 }

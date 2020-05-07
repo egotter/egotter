@@ -1,8 +1,9 @@
 class CreateCreatePeriodicReportRequests < ActiveRecord::Migration[5.2]
   def change
     create_table :create_periodic_report_requests do |t|
-      t.integer  :user_id,         null: false
-      t.datetime :finished_at,     null: true, default: nil
+      t.integer  :user_id,     null: false
+      t.string   :status,      null: false, default: ''
+      t.datetime :finished_at, null: true, default: nil
 
       t.timestamps null: false
 

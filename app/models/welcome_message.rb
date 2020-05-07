@@ -112,6 +112,10 @@ class WelcomeMessage < ApplicationRecord
                         {
                             label: I18n.t('quick_replies.welcome_messages.label2'),
                             description: I18n.t('quick_replies.welcome_messages.description2')
+                        },
+                        {
+                            label: I18n.t('quick_replies.prompt_reports.label3'),
+                            description: I18n.t('quick_replies.prompt_reports.description3')
                         }
                     ]
                 }
