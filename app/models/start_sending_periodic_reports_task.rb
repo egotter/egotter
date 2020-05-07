@@ -10,9 +10,9 @@ class StartSendingPeriodicReportsTask
     if user_ids.present?
       @user_ids = user_ids
     else
-      user_ids = dm_received_user_ids
-      user_ids += recent_access_user_ids(start_date).take(limit)
-      user_ids += new_user_ids(start_date).take(limit)
+      user_ids = self.class.dm_received_user_ids
+      user_ids += self.class.recent_access_user_ids(start_date).take(limit)
+      user_ids += self.class.new_user_ids(start_date).take(limit)
       @user_ids = user_ids.uniq
     end
 
@@ -37,19 +37,21 @@ class StartSendingPeriodicReportsTask
     end
   end
 
-  def dm_received_user_ids
-    uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
-    uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
-  end
+  class << self
+    def dm_received_user_ids
+      uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
+      uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
+    end
 
-  def recent_access_user_ids(start_date)
-    start_date = ACCESS_DAYS_START.ago unless start_date
-    user_ids = AccessDay.where('created_at > ?', start_date).select(:user_id).distinct.map(&:user_id)
-    user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
-  end
+    def recent_access_user_ids(start_date)
+      start_date = ACCESS_DAYS_START.ago unless start_date
+      user_ids = AccessDay.where('created_at > ?', start_date).select(:user_id).distinct.map(&:user_id)
+      user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
+    end
 
-  def new_user_ids(start_date)
-    start_date = NEW_USERS_START.ago unless start_date
-    User.where('created_at > ?', start_date).where(authorized: true).pluck(:id)
+    def new_user_ids(start_date)
+      start_date = NEW_USERS_START.ago unless start_date
+      User.where('created_at > ?', start_date).where(authorized: true).pluck(:id)
+    end
   end
 end
