@@ -50,7 +50,7 @@ class WebhookController < ApplicationController
     dm.text.match?(SEND_NOW_REGEXP)
   end
 
-  CONTINUE_REGEXP = /継続|けいぞく/
+  CONTINUE_REGEXP = /継続|けいぞく|再開|復活|届いてません/
 
   def user_request_continue?(dm)
     dm.text.match?(CONTINUE_REGEXP)
