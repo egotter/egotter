@@ -2,6 +2,7 @@
 class StartSendingPeriodicReportsTask
 
   ACCESS_DAYS_START = 12.hours
+  NEW_USERS_START = 1.day
 
   def initialize(user_ids: nil, start_date: nil, delay: nil, limit: 5000)
     @delay = delay
@@ -11,6 +12,7 @@ class StartSendingPeriodicReportsTask
     else
       user_ids = dm_received_user_ids
       user_ids += recent_access_user_ids(start_date).take(limit)
+      user_ids += new_user_ids(start_date).take(limit)
       @user_ids = user_ids.uniq
     end
 
@@ -44,5 +46,10 @@ class StartSendingPeriodicReportsTask
     start_date = ACCESS_DAYS_START.ago unless start_date
     user_ids = AccessDay.where('created_at > ?', start_date).select(:user_id).distinct.map(&:user_id)
     user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
+  end
+
+  def new_user_ids(start_date)
+    start_date = NEW_USERS_START.ago unless start_date
+    User.where('created_at > ?', start_date).where(authorized: true).pluck(:id)
   end
 end
