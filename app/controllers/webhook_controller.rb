@@ -43,8 +43,11 @@ class WebhookController < ApplicationController
     dm.text.exclude?('#egotter') && dm.sender_id == User.egotter.uid
   end
 
+  # t('quick_replies.prompt_reports.label3')
+  SEND_NOW_REGEXP = /リムられ通知.*今すぐ送信/
+
   def enqueue_user_requested_periodic_report(dm)
-    if dm.text.include?(t('quick_replies.prompt_reports.label3'))
+    if dm.text.match?(SEND_NOW_REGEXP)
       user = User.find_by(uid: dm.sender_id)
       if user
         request = CreatePeriodicReportRequest.create(user_id: user.id)
@@ -56,7 +59,7 @@ class WebhookController < ApplicationController
   end
 
   def enqueue_egotter_requested_periodic_report(dm)
-    if dm.text.include?(t('quick_replies.prompt_reports.label3'))
+    if dm.text.match?(SEND_NOW_REGEXP)
       user = User.find_by(uid: dm.recipient_id)
       if user
         request = CreatePeriodicReportRequest.create(user_id: user.id)
