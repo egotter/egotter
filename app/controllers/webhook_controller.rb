@@ -46,22 +46,36 @@ class WebhookController < ApplicationController
   # t('quick_replies.prompt_reports.label3')
   SEND_NOW_REGEXP = /今すぐ送信|いますぐ送信|今すぐそうしん|いますぐそうしん/
 
+  def user_request_send_now?(dm)
+    dm.text.match?(SEND_NOW_REGEXP)
+  end
+
+  CONTINUE_REGEXP = /継続|けいぞく/
+
+  def user_request_continue?(dm)
+    dm.text.match?(CONTINUE_REGEXP)
+  end
+
   def enqueue_user_requested_periodic_report(dm)
-    if dm.text.match?(SEND_NOW_REGEXP)
-      user = User.find_by(uid: dm.sender_id)
-      if user
-        if user.authorized?
-          request = CreatePeriodicReportRequest.create(user_id: user.id)
-          CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
-        elsif !user.notification_setting.enough_permission_level?
-          CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
-        else
-          CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
-        end
-      else
-        CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
-      end
+    if !user_request_send_now?(dm) && !user_request_continue?(dm)
+      return
     end
+
+    user = User.find_by(uid: dm.sender_id)
+
+    if user
+      if user.authorized?
+        request = CreatePeriodicReportRequest.create(user_id: user.id)
+        CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+      elsif !user.notification_setting.enough_permission_level?
+        CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
+      else
+        CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
+      end
+    else
+      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
+    end
+
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end
