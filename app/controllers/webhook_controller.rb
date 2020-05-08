@@ -50,7 +50,21 @@ class WebhookController < ApplicationController
     dm.text.match?(SEND_NOW_REGEXP)
   end
 
-  CONTINUE_WORDS = %w(継続 けいぞく 再開 復活 届いてません フォローしました フォローしたよ テスト送信 届きました 初期設定 届きました 通知がきません 早くしろよ まだですか ぴえん)
+  CONTINUE_WORDS = [
+      '継続',
+      'けいぞく',
+      '再開',
+      '復活',
+      '届いてません',
+      'フォローしました',
+      'フォローしたよ',
+      'テスト送信 届きました',
+      '初期設定 届きました',
+      '通知がきません',
+      '早くしろよ',
+      'まだですか',
+      'ぴえん'
+  ]
   CONTINUE_REGEXP = Regexp.union(CONTINUE_WORDS)
 
   def continue_requested?(dm)

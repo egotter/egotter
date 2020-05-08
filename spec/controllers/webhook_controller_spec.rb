@@ -75,6 +75,11 @@ RSpec.describe WebhookController, type: :controller do
         it { is_expected.to be_truthy }
       end
     end
+
+    context "text is #{I18n.t('quick_replies.prompt_reports.label1')}" do
+      let(:text) { I18n.t('quick_replies.prompt_reports.label1') }
+      it { is_expected.to be_falsey }
+    end
   end
 
   describe '#enqueue_user_requested_periodic_report' do
