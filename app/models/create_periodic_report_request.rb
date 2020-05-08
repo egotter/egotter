@@ -48,11 +48,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
     if check_interval && self.class.interval_too_short?(include_user_id: user_id, reject_id: id)
       update(status: 'interval_too_short')
 
-      if async
-        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
-        update(status: 'interval_too_short,message_skipped') unless jid
-      else
-        CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
+      if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
+        if async
+          jid = CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
+          update(status: 'interval_too_short,message_skipped') unless jid
+        else
+          CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
+        end
       end
 
       return
