@@ -46,34 +46,35 @@ class WebhookController < ApplicationController
   # t('quick_replies.prompt_reports.label3')
   SEND_NOW_REGEXP = /(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知)/
 
-  def user_request_send_now?(dm)
+  def send_now_requested?(dm)
     dm.text.match?(SEND_NOW_REGEXP)
   end
 
-  CONTINUE_REGEXP = /継続|けいぞく|再開|復活|届いてません|フォローしました|フォローしたよ|テスト送信 届きました|初期設定 届きました|通知がきません|早くしろよ|まだですか|ぴえん/
+  CONTINUE_WORDS = %w(継続 けいぞく 再開 復活 届いてません フォローしました フォローしたよ テスト送信 届きました 初期設定 届きました 通知がきません 早くしろよ まだですか ぴえん)
+  CONTINUE_REGEXP = Regexp.union(CONTINUE_WORDS)
 
-  def user_request_continue?(dm)
+  def continue_requested?(dm)
     dm.text.match?(CONTINUE_REGEXP)
   end
 
   def enqueue_user_requested_periodic_report(dm)
-    if !user_request_send_now?(dm) && !user_request_continue?(dm)
+    if !send_now_requested?(dm) && !continue_requested?(dm)
       return
     end
 
     user = User.find_by(uid: dm.sender_id)
-
-    if user
-      if user.authorized?
-        request = CreatePeriodicReportRequest.create(user_id: user.id)
-        CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
-      elsif !user.notification_setting.enough_permission_level?
-        CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
-      else
-        CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
-      end
-    else
+    unless user
       CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
+      return
+    end
+
+    if user.authorized?
+      request = CreatePeriodicReportRequest.create(user_id: user.id)
+      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+    elsif !user.notification_setting.enough_permission_level?
+      CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
+    else
+      CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
     end
 
   rescue => e
@@ -81,23 +82,23 @@ class WebhookController < ApplicationController
   end
 
   def enqueue_egotter_requested_periodic_report(dm)
-    unless dm.text.match?(SEND_NOW_REGEXP)
+    unless send_now_requested?(dm)
       return
     end
 
     user = User.find_by(uid: dm.recipient_id)
-
-    if user
-      if user.authorized?
-        request = CreatePeriodicReportRequest.create(user_id: user.id)
-        CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
-      elsif !user.notification_setting.enough_permission_level?
-        CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
-      else
-        CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
-      end
-    else
+    unless user
       CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.recipient_id)
+      return
+    end
+
+    if user.authorized?
+      request = CreatePeriodicReportRequest.create(user_id: user.id)
+      CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+    elsif !user.notification_setting.enough_permission_level?
+      CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
+    else
+      CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
     end
 
   rescue => e
