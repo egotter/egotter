@@ -21,7 +21,7 @@ RSpec.describe HomeController, type: :controller do
       end
 
       it do
-        expect(controller).not_to receive(:require_login!)
+        expect(controller).to receive(:require_login!)
         get :start
       end
     end
@@ -32,7 +32,7 @@ RSpec.describe HomeController, type: :controller do
       end
 
       it do
-        expect(controller).to receive(:require_login!).with(no_args)
+        expect(controller).to receive(:require_login!)
         get :start
       end
     end

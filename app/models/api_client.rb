@@ -61,11 +61,11 @@ class ApiClient
     end
 
     def instance(options = {})
-      options[:cache_ttl] = 30.minutes
       client =
           if options.blank?
             TwitterWithAutoPagination::Client.new
           else
+            options[:cache_ttl] = 30.minutes
             TwitterWithAutoPagination::Client.new(config(options))
           end
       new(client)

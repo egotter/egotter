@@ -100,14 +100,16 @@ RSpec.describe ApiClient, type: :model do
   end
 
   describe '.instance' do
+    subject { ApiClient.instance }
+
     it 'returns ApiClient' do
-      expect(ApiClient.instance).to be_a_kind_of(ApiClient)
+      is_expected.to be_a_kind_of(ApiClient)
     end
 
     context 'With empty options' do
       it do
-        expect(TwitterWithAutoPagination::Client).to receive(:new).with(no_args)
-        ApiClient.instance
+        expect(TwitterWithAutoPagination::Client).to receive(:new)
+        subject
       end
     end
   end

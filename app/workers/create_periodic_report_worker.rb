@@ -12,8 +12,23 @@ class CreatePeriodicReportWorker
   end
 
   def after_skip(request_id, options = {})
-    CreatePeriodicReportRequest.find(request_id).update(status: 'skipped')
+    request = CreatePeriodicReportRequest.find(request_id)
+    request.update(status: 'skipped')
+
+    if user_requested_job?
+      CreatePeriodicReportMessageWorker.perform_async(request.user_id, interval_too_short: true)
+    end
+
     logger.warn "The job execution is skipped request_id=#{request_id} options=#{options.inspect}"
+  end
+
+  def user_requested_job?
+    self.class == CreateUserRequestedPeriodicReportWorker
+  end
+
+  def sending_dm_limited?(uid)
+    !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
+        GlobalDirectMessageLimitation.new.limited?
   end
 
   # options:
@@ -22,8 +37,7 @@ class CreatePeriodicReportWorker
   def perform(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
 
-    if !GlobalDirectMessageReceivedFlag.new.exists?(request.user.uid) &&
-        GlobalDirectMessageLimitation.new.limited?
+    if sending_dm_limited?(request.user.uid)
       SkippedCreatePeriodicReportWorker.perform_async(request_id, options)
       request.update(status: 'limited')
       return
@@ -33,12 +47,12 @@ class CreatePeriodicReportWorker
 
     request.check_credentials = true
 
-    if self.class == CreateUserRequestedPeriodicReportWorker
+    if user_requested_job?
       request.check_interval = true
     end
 
     if options['create_twitter_user']
-      request.check_twitter_user
+      request.check_twitter_user = true
     end
 
     CreatePeriodicReportTask.new(request).start!

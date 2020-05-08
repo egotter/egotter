@@ -23,40 +23,14 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   attr_accessor :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
+  attr_accessor :sync_flag
 
-  def perform!(async: true)
-    if check_credentials
-      begin
-        user.api_client.verify_credentials
-      rescue => e
-        logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{self.inspect}"
-        update(status: 'unauthorized')
-
-        if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
-          if async
-            jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
-            update(status: 'unauthorized,message_skipped') unless jid
-          else
-            CreatePeriodicReportMessageWorker.new.perform(user_id, unauthorized: true)
-          end
-        end
-
-        return
-      end
+  def perform!
+    if check_credentials && !verify_credentials_before_starting?
+      return
     end
 
-    if check_interval && self.class.interval_too_short?(include_user_id: user_id, reject_id: id)
-      update(status: 'interval_too_short')
-
-      if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
-        if async
-          jid = CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
-          update(status: 'interval_too_short,message_skipped') unless jid
-        else
-          CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
-        end
-      end
-
+    if check_interval && !check_interval_before_starting?
       return
     end
 
@@ -64,11 +38,49 @@ class CreatePeriodicReportRequest < ApplicationRecord
       create_new_twitter_user_record
     end
 
-    if async
+    if sync_flag
+      CreatePeriodicReportMessageWorker.new.perform(user_id, build_report_options)
+    else
       jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
       update(status: 'message_skipped') unless jid
+    end
+  end
+
+  def verify_credentials_before_starting?
+    user.api_client.verify_credentials
+    true
+  rescue => e
+    logger.info "#{self.class}##{__method__} #{e.inspect} request=#{self.inspect}"
+    update(status: 'unauthorized')
+
+    if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
+      if sync_flag
+        CreatePeriodicReportMessageWorker.new.perform(user_id, unauthorized: true)
+      else
+        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
+        update(status: 'unauthorized,message_skipped') unless jid
+      end
+    end
+
+    false
+  end
+
+  def check_interval_before_starting?
+    if self.class.interval_too_short?(include_user_id: user_id, reject_id: id)
+      update(status: 'interval_too_short')
+
+      if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
+        if sync_flag
+          CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
+        else
+          jid = CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
+          update(status: 'interval_too_short,message_skipped') unless jid
+        end
+      end
+
+      false
     else
-      CreatePeriodicReportMessageWorker.new.perform(user_id, build_report_options)
+      true
     end
   end
 
