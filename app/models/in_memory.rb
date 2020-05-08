@@ -13,7 +13,7 @@ module InMemory
   end
 
   def used_memory_peak
-    Redis.client(redis_hostname).info['used_memory_peak']
+    Redis.client(redis_hostname).info['used_memory_peak_human']
   end
 
   def enabled?
