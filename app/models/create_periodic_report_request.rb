@@ -22,6 +22,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   validates :user_id, presence: true
 
   attr_accessor :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :worker_context
 
   def perform!(async: true)
     if check_credentials
@@ -31,11 +32,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
         logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{self.inspect}"
         update(status: 'unauthorized')
 
-        if async
-          jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
-          update(status: 'unauthorized,message_skipped') unless jid
-        else
-          CreatePeriodicReportMessageWorker.new.perform(user_id, unauthorized: true)
+        if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
+          if async
+            jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
+            update(status: 'unauthorized,message_skipped') unless jid
+          else
+            CreatePeriodicReportMessageWorker.new.perform(user_id, unauthorized: true)
+          end
         end
 
         return

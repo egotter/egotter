@@ -29,6 +29,8 @@ class CreatePeriodicReportWorker
       return
     end
 
+    request.worker_context = self.class
+
     request.check_credentials = true
 
     if self.class == CreateUserRequestedPeriodicReportWorker
