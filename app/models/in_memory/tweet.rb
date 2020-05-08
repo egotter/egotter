@@ -11,7 +11,7 @@ module InMemory
     end
 
     class << self
-      def hostname
+      def redis_hostname
         ENV['IN_MEMORY_REDIS_HOST']
       end
 
@@ -43,7 +43,7 @@ module InMemory
       private
 
       def client
-        @client ||= ::InMemory::Client.new(self, hostname)
+        @client ||= ::InMemory::Client.new(self, redis_hostname)
       end
     end
   end
