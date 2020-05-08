@@ -29,21 +29,14 @@ class CreatePeriodicReportWorker
       return
     end
 
-    if options['create_twitter_user']
-      create_request = CreateTwitterUserRequest.create(
-          requested_by: self.class,
-          user_id: request.user_id,
-          uid: request.user.uid)
-      task = CreateTwitterUserTask.new(create_request)
-      begin
-        task.start!
-      rescue => e
-        logger.info "#{e.inspect} request_id=#{request_id} create_request_id=#{create_request.id}"
-      end
-    end
+    request.check_credentials = true
 
     if self.class == CreateUserRequestedPeriodicReportWorker
       request.check_interval = true
+    end
+
+    if options['create_twitter_user']
+      request.check_twitter_user
     end
 
     CreatePeriodicReportTask.new(request).start!

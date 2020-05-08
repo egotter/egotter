@@ -21,9 +21,27 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :check_interval
+  attr_accessor :check_interval, :check_credentials, :check_twitter_user
 
   def perform!(async: true)
+    if check_credentials
+      begin
+        user.api_client.verify_credentials
+      rescue => e
+        logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{self.inspect}"
+        update(status: 'unauthorized')
+
+        if async
+          jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
+          update(status: 'unauthorized,message_skipped') unless jid
+        else
+          CreatePeriodicReportMessageWorker.new.perform(user_id, unauthorized: true)
+        end
+
+        return
+      end
+    end
+
     if check_interval && self.class.interval_too_short?(include_user_id: user_id, reject_id: id)
       update(status: 'interval_too_short')
 
@@ -33,14 +51,31 @@ class CreatePeriodicReportRequest < ApplicationRecord
       else
         CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
       end
-    else
-      if async
-        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
-        update(status: 'message_skipped') unless jid
-      else
-        CreatePeriodicReportMessageWorker.new.perform(user_id, build_report_options)
-      end
+
+      return
     end
+
+    if check_twitter_user
+      create_new_twitter_user_record
+    end
+
+    if async
+      jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
+      update(status: 'message_skipped') unless jid
+    else
+      CreatePeriodicReportMessageWorker.new.perform(user_id, build_report_options)
+    end
+  end
+
+  def create_new_twitter_user_record
+    request = CreateTwitterUserRequest.create(
+        requested_by: self.class,
+        user_id: user_id,
+        uid: user.uid)
+
+    CreateTwitterUserTask.new(request).start!
+  rescue => e
+    logger.info "#{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   end
 
   PERIOD_START = 1.day
