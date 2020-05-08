@@ -13,12 +13,6 @@ RSpec.describe InMemory::Tweet do
     allow(described_class).to receive(:client).and_return(client)
   end
 
-  describe '.redis_hostname' do
-    subject { described_class.redis_hostname }
-    before { ENV['IN_MEMORY_REDIS_HOST'] = 'specified hostname' }
-    it { is_expected.to eq('specified hostname') }
-  end
-
   describe '.find_by' do
     let(:uid) { 1 }
     let(:read_result) { ::S3::Util.pack(tweets) }

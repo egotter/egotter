@@ -28,6 +28,10 @@ module Concerns::TwitterUser::Persistence
       Efs::TwitterUser.import_from!(id, uid, screen_name, profile_text, @reserved_friend_uids, @reserved_follower_uids)
     end
 
+    bm_after_commit('InMemory::TwitterUser.import_from') do
+      InMemory::TwitterUser.import_from(id, uid, screen_name, profile_text, @reserved_friend_uids, @reserved_follower_uids)
+    end
+
     bm_after_commit('S3::Friendship.import_from!') do
       S3::Friendship.import_from!(id, uid, screen_name, @reserved_friend_uids, async: true)
     end

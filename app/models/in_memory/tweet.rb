@@ -11,10 +11,6 @@ module InMemory
     end
 
     class << self
-      def redis_hostname
-        ENV['IN_MEMORY_REDIS_HOST']
-      end
-
       def array_from(tweets)
         tweets.map { |t| new(t) }
       end
@@ -36,14 +32,10 @@ module InMemory
         client.write(uid, compress(tweets.to_json))
       end
 
-      def used_memory
-        client.instance_variable_get(:@redis).info['used_memory_rss_human']
-      end
-
       private
 
       def client
-        @client ||= ::InMemory::Client.new(self, redis_hostname)
+        @client ||= ::InMemory::Client.new(self, ::InMemory.redis_hostname)
       end
     end
   end
