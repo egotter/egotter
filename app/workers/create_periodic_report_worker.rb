@@ -25,6 +25,7 @@ class CreatePeriodicReportWorker
     if !GlobalDirectMessageReceivedFlag.new.exists?(request.user.uid) &&
         GlobalDirectMessageLimitation.new.limited?
       SkippedCreatePeriodicReportWorker.perform_async(request_id, options)
+      request.update(status: 'limited')
       return
     end
 
