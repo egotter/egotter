@@ -12,6 +12,10 @@ module InMemory
     Redis.client(redis_hostname).info['used_memory_rss_human']
   end
 
+  def maxmemory
+    Redis.client(redis_hostname).info['maxmemory_human']
+  end
+
   def enabled?
     ENV['DISABLE_IN_MEMORY_RESOURCES'] != '1'
   end

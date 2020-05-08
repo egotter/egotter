@@ -9,7 +9,12 @@ RSpec.describe InMemory do
 
   describe '.used_memory' do
     subject { described_class.used_memory }
-    it { is_expected.to include('M') }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.maxmemory' do
+    subject { described_class.maxmemory }
+    it { is_expected.to be_truthy }
   end
 
   describe '.enabled?' do
