@@ -2,11 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CreatePeriodicReportWorker do
   let(:user) { create(:user) }
-  let(:request) do
-    CreatePeriodicReportRequest.create(
-        user: user
-    )
-  end
+  let(:request) { create(:create_periodic_report_request, user: user) }
   let(:worker) { described_class.new }
 
   before do
@@ -34,9 +30,11 @@ RSpec.describe CreatePeriodicReportWorker do
   describe '#perform' do
     let(:task) { double('task') }
     subject { worker.perform(request.id) }
+
     before do
       allow(CreatePeriodicReportRequest).to receive(:find).with(request.id).and_return(request)
     end
+
     it do
       expect(CreatePeriodicReportTask).to receive(:new).with(request).and_return(task)
       expect(task).to receive(:start!)
@@ -44,7 +42,7 @@ RSpec.describe CreatePeriodicReportWorker do
       expect(request.worker_context).to eq(described_class)
       expect(request.check_credentials).to be_truthy
       expect(request.check_interval).to be_falsey
-      expect(request.check_twitter_user).to be_falsey
+      expect(request.check_twitter_user).to be_truthy
     end
 
     context 'sending_dm_limited? returns true' do
@@ -60,18 +58,26 @@ RSpec.describe CreatePeriodicReportWorker do
     end
 
     context 'user_requested_job? returns true' do
+      before do
+        allow(worker).to receive(:user_requested_job?).and_return(true)
+      end
       it do
         subject
-        expect(request.check_interval).to be_falsey
+        expect(request.check_interval).to be_truthy
       end
     end
 
-    context 'user_requested_job? returns true' do
-      subject { worker.perform(request.id, 'create_twitter_user' => true) }
-      it do
-        subject
-        expect(request.check_twitter_user).to be_truthy
+    context 'create_twitter_user is specified' do
+      [true, false].each do |value|
+        context "#{value} is passed" do
+          subject { worker.perform(request.id, 'create_twitter_user' => value) }
+          it do
+            subject
+            expect(request.check_twitter_user).to eq(value)
+          end
+        end
       end
     end
+
   end
 end

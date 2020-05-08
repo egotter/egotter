@@ -44,16 +44,11 @@ class CreatePeriodicReportWorker
     end
 
     request.worker_context = self.class
-
     request.check_credentials = true
+    request.check_interval = user_requested_job?
 
-    if user_requested_job?
-      request.check_interval = true
-    end
-
-    if options['create_twitter_user']
-      request.check_twitter_user = true
-    end
+    options['create_twitter_user'] = true unless options.has_key?('create_twitter_user')
+    request.check_twitter_user = options['create_twitter_user']
 
     CreatePeriodicReportTask.new(request).start!
 

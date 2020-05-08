@@ -146,7 +146,7 @@ RSpec.describe SearchCountLimitation, type: :model do
         create(:search_history, user_id: user.id, session_id: 'ccc', uid: 1, created_at: 1.hour.ago)
       end
 
-      it { is_expected.to be_within(1).of(12.hours.to_i) }
+      it { is_expected.to be_within(3).of(12.hours.to_i) }
     end
   end
 

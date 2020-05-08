@@ -81,21 +81,25 @@ class WebhookController < ApplicationController
   end
 
   def enqueue_egotter_requested_periodic_report(dm)
-    if dm.text.match?(SEND_NOW_REGEXP)
-      user = User.find_by(uid: dm.recipient_id)
-      if user
-        if user.authorized?
-          request = CreatePeriodicReportRequest.create(user_id: user.id)
-          CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
-        elsif !user.notification_setting.enough_permission_level?
-          CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
-        else
-          CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
-        end
-      else
-        CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.recipient_id)
-      end
+    unless dm.text.match?(SEND_NOW_REGEXP)
+      return
     end
+
+    user = User.find_by(uid: dm.recipient_id)
+
+    if user
+      if user.authorized?
+        request = CreatePeriodicReportRequest.create(user_id: user.id)
+        CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+      elsif !user.notification_setting.enough_permission_level?
+        CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
+      else
+        CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
+      end
+    else
+      CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.recipient_id)
+    end
+
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end
