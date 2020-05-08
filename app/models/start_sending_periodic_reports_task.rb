@@ -1,9 +1,6 @@
 # Perform a request and log an error
 class StartSendingPeriodicReportsTask
 
-  ACCESS_DAYS_START = 12.hours
-  NEW_USERS_START = 1.day
-
   def initialize(user_ids: nil, start_date: nil, delay: nil, limit: 5000)
     if user_ids.present?
       @user_ids = user_ids
@@ -15,10 +12,12 @@ class StartSendingPeriodicReportsTask
   end
 
   def start!
+    user_ids = initialize_user_ids
+    return if user_ids.empty?
+
     last_request = CreatePeriodicReportRequest.order(created_at: :desc).first
     last_request = CreatePeriodicReportRequest.new(created_at: 1.second.ago) unless last_request
 
-    user_ids = initialize_user_ids
     requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id) }
     CreatePeriodicReportRequest.import requests, validate: false
 
@@ -51,11 +50,15 @@ class StartSendingPeriodicReportsTask
       uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
     end
 
+    ACCESS_DAYS_START = 12.hours
+
     def recent_access_user_ids(start_date)
       start_date = ACCESS_DAYS_START.ago unless start_date
       user_ids = AccessDay.where('created_at > ?', start_date).select(:user_id).distinct.map(&:user_id)
       user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
     end
+
+    NEW_USERS_START = 1.day
 
     def new_user_ids(start_date)
       start_date = NEW_USERS_START.ago unless start_date
