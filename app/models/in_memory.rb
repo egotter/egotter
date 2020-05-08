@@ -12,8 +12,8 @@ module InMemory
     Redis.client(redis_hostname).info['used_memory_rss_human']
   end
 
-  def maxmemory
-    Redis.client(redis_hostname).info['maxmemory_human']
+  def used_memory_peak
+    Redis.client(redis_hostname).info['used_memory_peak']
   end
 
   def enabled?

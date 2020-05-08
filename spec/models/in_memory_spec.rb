@@ -12,8 +12,8 @@ RSpec.describe InMemory do
     it { is_expected.to be_truthy }
   end
 
-  describe '.maxmemory' do
-    subject { described_class.maxmemory }
+  describe '.used_memory_peak' do
+    subject { described_class.used_memory_peak }
     it { is_expected.to be_truthy }
   end
 
