@@ -16,7 +16,7 @@ class CreatePeriodicReportWorker
     request.update(status: 'skipped')
 
     if user_requested_job?
-      CreatePeriodicReportMessageWorker.perform_async(request.user_id, interval_too_short: true)
+      CreatePeriodicReportMessageWorker.perform_in(1.minute, request.user_id, interval_too_short: true)
     end
 
     logger.warn "The job execution is skipped request_id=#{request_id} options=#{options.inspect}"
