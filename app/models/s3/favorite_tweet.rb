@@ -1,7 +1,5 @@
 # -*- SkipSchemaAnnotations
 
-require_relative './tweet'
-
 module S3
   class FavoriteTweet < Tweet
     class << self
