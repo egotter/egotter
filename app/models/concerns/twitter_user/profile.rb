@@ -116,6 +116,7 @@ module Concerns::TwitterUser::Profile
 
   def fetch_profile
     result = nil
+    result = InMemory::TwitterUser.find_by(id)&.profile if InMemory.enabled? && InMemory.cache_alive?(created_at) # Hash
     result = Efs::TwitterUser.find_by(id)&.profile if result.blank? && Efs.enabled? # Hash
     result = S3::Profile.find_by(twitter_user_id: id)&.fetch(:user_info, nil) if result.blank? # String
     result

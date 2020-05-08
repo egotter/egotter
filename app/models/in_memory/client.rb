@@ -3,7 +3,7 @@
 module InMemory
   class Client
     def initialize(klass, hostname)
-      @ttl = 5.minutes
+      @ttl = ::InMemory::TTL
       @klass = klass
       @key_prefix = "#{Rails.env}:#{self.class}:#{@klass}"
       @redis = Redis.client(hostname)

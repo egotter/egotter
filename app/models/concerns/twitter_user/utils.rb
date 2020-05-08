@@ -18,6 +18,7 @@ module Concerns::TwitterUser::Utils
         @persisted_friend_uids
       else
         uids = nil
+        uids = InMemory::TwitterUser.find_by(id)&.friend_uids if InMemory.enabled? && InMemory.cache_alive?(created_at)
         uids = Efs::TwitterUser.find_by(id)&.friend_uids if uids.nil? && Efs.enabled?
         uids = S3::Friendship.find_by(twitter_user_id: id)&.friend_uids if uids.nil?
         uids = [] if uids.nil?
@@ -41,6 +42,7 @@ module Concerns::TwitterUser::Utils
         @persisted_follower_uids
       else
         uids = nil
+        uids = InMemory::TwitterUser.find_by(id)&.follower_uids if InMemory.enabled? && InMemory.cache_alive?(created_at)
         uids = Efs::TwitterUser.find_by(id)&.follower_uids if uids.nil? && Efs.enabled?
         uids = S3::Followership.find_by(twitter_user_id: id)&.follower_uids if uids.nil?
         uids = [] if uids.nil?

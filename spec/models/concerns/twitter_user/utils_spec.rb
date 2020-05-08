@@ -2,74 +2,82 @@ require 'rails_helper'
 
 RSpec.describe Concerns::TwitterUser::Utils do
   describe '#friend_uids' do
-    subject(:twitter_user) { build(:twitter_user) }
-
-    context 'With new record' do
-      before { twitter_user.instance_variable_set(:@reserved_friend_uids, 'hello') }
-      it do
-        expect(twitter_user.friend_uids).to eq('hello')
-      end
+    shared_context 'twitter_user is persisted' do
+      before { twitter_user.save! }
     end
 
-    context 'With persisted records' do
-      before { twitter_user.save! }
+    let(:friend_uids) { [1, 2, 3] }
+    let(:twitter_user) { build(:twitter_user) }
+    subject { twitter_user.friend_uids }
 
-      context 'EFS returns the result' do
-        let(:friend_uids) { [1, 2, 3] }
-        before do
-          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(Efs::TwitterUser.new(friend_uids: friend_uids))
-        end
+    context 'twitter_user is not persisted' do
+      before { twitter_user.instance_variable_set(:@reserved_friend_uids, 'hello') }
+      it { is_expected.to eq('hello') }
+    end
 
-        it { expect(twitter_user.friend_uids).to match_array(friend_uids) }
+    context 'InMemory returns data' do
+      include_context 'twitter_user is persisted'
+      before { allow(InMemory::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(double('InMemory', friend_uids: friend_uids)) }
+      it { is_expected.to match_array(friend_uids) }
+    end
+
+    context 'Efs returns data' do
+      include_context 'twitter_user is persisted'
+      before do
+        allow(InMemory).to receive(:enabled?).and_return(false)
+        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(double('Efs', friend_uids: friend_uids))
       end
+      it { is_expected.to match_array(friend_uids) }
+    end
 
-      context 'S3 returns the result' do
-        let(:friend_uids) { [1, 2, 3] }
-        before do
-          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(nil)
-          allow(S3::Friendship).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(S3::Friendship.new(friend_uids: friend_uids))
-        end
-
-        it { expect(twitter_user.friend_uids).to match_array(friend_uids) }
+    context 'S3 returns data' do
+      include_context 'twitter_user is persisted'
+      before do
+        allow(InMemory).to receive(:enabled?).and_return(false)
+        allow(Efs).to receive(:enabled?).and_return(false)
+        allow(S3::Friendship).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(double('S3', friend_uids: friend_uids))
       end
+      it { is_expected.to match_array(friend_uids) }
     end
   end
 
   describe '#follower_uids' do
-    subject(:twitter_user) { build(:twitter_user) }
-
-    context 'With new record' do
-      before { twitter_user.instance_variable_set(:@reserved_follower_uids, 'hello') }
-      it do
-        expect(twitter_user.follower_uids).to eq('hello')
-      end
+    shared_context 'twitter_user is persisted' do
+      before { twitter_user.save! }
     end
 
-    context 'With persisted records' do
-      before { twitter_user.save! }
+    let(:follower_uids) { [1, 2, 3] }
+    let(:twitter_user) { build(:twitter_user) }
+    subject { twitter_user.follower_uids }
 
-      context 'EFS returns the result' do
-        let(:follower_uids) { [1, 2, 3] }
-        before do
-          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(Efs::TwitterUser.new(follower_uids: follower_uids))
-        end
+    context 'twitter_user is not persisted' do
+      before { twitter_user.instance_variable_set(:@reserved_follower_uids, 'hello') }
+      it { is_expected.to eq('hello') }
+    end
 
-        it do
-          expect(twitter_user.follower_uids).to match_array(follower_uids)
-        end
+    context 'InMemory returns data' do
+      include_context 'twitter_user is persisted'
+      before { allow(InMemory::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(double('InMemory', follower_uids: follower_uids)) }
+      it { is_expected.to match_array(follower_uids) }
+    end
+
+    context 'Efs returns data' do
+      include_context 'twitter_user is persisted'
+      before do
+        allow(InMemory).to receive(:enabled?).and_return(false)
+        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(double('Efs', follower_uids: follower_uids))
       end
+      it { is_expected.to match_array(follower_uids) }
+    end
 
-      context 'S3 returns the result' do
-        let(:follower_uids) { [1, 2, 3] }
-        before do
-          allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(nil)
-          allow(S3::Followership).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(S3::Followership.new(follower_uids: follower_uids))
-        end
-
-        it do
-          expect(twitter_user.follower_uids).to match_array(follower_uids)
-        end
+    context 'S3 returns data' do
+      include_context 'twitter_user is persisted'
+      before do
+        allow(InMemory).to receive(:enabled?).and_return(false)
+        allow(Efs).to receive(:enabled?).and_return(false)
+        allow(S3::Followership).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(double('S3', follower_uids: follower_uids))
       end
+      it { is_expected.to match_array(follower_uids) }
     end
   end
 

@@ -28,6 +28,17 @@ RSpec.describe Concerns::TwitterUser::Persistence do
 
     context 'Efs' do
       it do
+        subject
+        result = Efs::TwitterUser.find_by(twitter_user.id)
+        expect(result).not_to be_nil
+        expect(result.uid).to eq(twitter_user.uid)
+        expect(result.screen_name).to eq(twitter_user.screen_name)
+        expect(result.profile.to_json).to eq(profile.to_json)
+        expect(result.friend_uids).to eq([1, 2])
+        expect(result.follower_uids).to eq([3, 4])
+      end
+
+      it do
         expect(Efs::TwitterUser).to receive(:import_from!).with(1, 2, 'sn', profile.to_json, [1, 2], [3, 4])
         subject
       end
@@ -81,6 +92,17 @@ RSpec.describe Concerns::TwitterUser::Persistence do
     end
 
     context 'InMemory' do
+      it do
+        subject
+        result = InMemory::TwitterUser.find_by(twitter_user.id)
+        expect(result).not_to be_nil
+        expect(result.uid).to eq(twitter_user.uid)
+        expect(result.screen_name).to eq(twitter_user.screen_name)
+        expect(result.profile.to_json).to eq(profile.to_json)
+        expect(result.friend_uids).to eq([1, 2])
+        expect(result.follower_uids).to eq([3, 4])
+      end
+
       it do
         expect(InMemory::TwitterUser).to receive(:import_from).with(1, 2, 'sn', profile.to_json, [1, 2], [3, 4])
         subject

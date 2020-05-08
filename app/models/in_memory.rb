@@ -1,5 +1,7 @@
 # -*- SkipSchemaAnnotations
 module InMemory
+  TTL = 5.minutes
+
   module_function
 
   def redis_hostname
@@ -8,5 +10,13 @@ module InMemory
 
   def used_memory
     Redis.client(redis_hostname).info['used_memory_rss_human']
+  end
+
+  def enabled?
+    ENV['DISABLE_IN_MEMORY_RESOURCES'] != '1'
+  end
+
+  def cache_alive?(time)
+    time > TTL.ago
   end
 end

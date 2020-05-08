@@ -14,9 +14,7 @@ RSpec.describe Concerns::TwitterUser::Profile do
 
   describe '#profile_not_found?' do
     subject { twitter_user.profile_not_found? }
-    it do
-      is_expected.to be_falsey
-    end
+    it { is_expected.to be_falsey }
   end
 
   describe '#profile' do
@@ -28,19 +26,27 @@ RSpec.describe Concerns::TwitterUser::Profile do
   describe '#fetch_profile' do
     subject { twitter_user.send(:fetch_profile) }
 
-    context 'Fetch profile from EFS' do
+    context 'InMemory returns data' do
       before do
-        data = Efs::TwitterUser.new(profile: {from: 'efs'})
-        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(data)
+        allow(InMemory::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(double('InMemory', profile: {from: 'in_memory'}))
+      end
+
+      it { is_expected.to eq(from: 'in_memory') }
+    end
+
+    context 'Efs returns data' do
+      before do
+        allow(InMemory).to receive(:enabled?).and_return(false)
+        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(double('Efs', profile: {from: 'efs'}))
       end
 
       it { is_expected.to eq(from: 'efs') }
     end
 
-    context 'Fetch profile from S3' do
+    context 'S3 returns data' do
       before do
-        data = Efs::TwitterUser.new(profile: {})
-        allow(Efs::TwitterUser).to receive(:find_by).with(twitter_user.id).and_return(data)
+        allow(InMemory).to receive(:enabled?).and_return(false)
+        allow(Efs).to receive(:enabled?).and_return(false)
         allow(S3::Profile).to receive(:find_by).with(twitter_user_id: twitter_user.id).and_return(user_info: '{"from":"s3"}')
       end
 
