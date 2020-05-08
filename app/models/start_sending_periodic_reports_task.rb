@@ -5,25 +5,21 @@ class StartSendingPeriodicReportsTask
   NEW_USERS_START = 1.day
 
   def initialize(user_ids: nil, start_date: nil, delay: nil, limit: 5000)
-    @delay = delay
-
     if user_ids.present?
       @user_ids = user_ids
-    else
-      user_ids = self.class.dm_received_user_ids
-      user_ids += self.class.recent_access_user_ids(start_date).take(limit)
-      user_ids += self.class.new_user_ids(start_date).take(limit)
-      @user_ids = user_ids.uniq
     end
 
-    Rails.logger.debug { "StartSendingPeriodicReportsTask user_ids.size=#{@user_ids.size}" }
+    @start_date = start_date
+    @delay = delay
+    @limit = limit
   end
 
   def start!
     last_request = CreatePeriodicReportRequest.order(created_at: :desc).first
     last_request = CreatePeriodicReportRequest.new(created_at: 1.second.ago) unless last_request
 
-    requests = @user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id) }
+    user_ids = initialize_user_ids
+    requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id) }
     CreatePeriodicReportRequest.import requests, validate: false
 
     CreatePeriodicReportRequest.where('created_at > ?', last_request.created_at).find_each do |request|
@@ -35,6 +31,18 @@ class StartSendingPeriodicReportsTask
         CreatePeriodicReportWorker.perform_async(*args)
       end
     end
+  end
+
+  def initialize_user_ids
+    if @user_ids.nil?
+      user_ids = self.class.dm_received_user_ids
+      user_ids += self.class.recent_access_user_ids(@start_date).take(@limit)
+      user_ids += self.class.new_user_ids(@start_date).take(@limit)
+      @user_ids = user_ids.uniq
+      Rails.logger.debug { "StartSendingPeriodicReportsTask user_ids.size=#{@user_ids.size}" }
+    end
+
+    @user_ids
   end
 
   class << self

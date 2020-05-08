@@ -26,6 +26,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
   attr_accessor :sync_flag
 
   def perform!
+    logger.debug { "#{self.class}##{__method__} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context} sync_flag=#{sync_flag}" }
+
     if check_credentials && !verify_credentials_before_starting?
       return
     end
@@ -53,7 +55,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     logger.info "#{self.class}##{__method__} #{e.inspect} request=#{self.inspect}"
     update(status: 'unauthorized')
 
-    if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
+    if user_or_egotter_requested_job?
       if sync_flag
         CreatePeriodicReportMessageWorker.new.perform(user_id, unauthorized: true)
       else
@@ -69,7 +71,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     if self.class.interval_too_short?(include_user_id: user_id, reject_id: id)
       update(status: 'interval_too_short')
 
-      if worker_context == CreateUserRequestedPeriodicReportWorker || worker_context == CreateEgotterRequestedPeriodicReportWorker
+      if user_or_egotter_requested_job?
         if sync_flag
           CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
         else
@@ -82,6 +84,11 @@ class CreatePeriodicReportRequest < ApplicationRecord
     else
       true
     end
+  end
+
+  def user_or_egotter_requested_job?
+    worker_context == CreateUserRequestedPeriodicReportWorker ||
+        worker_context == CreateEgotterRequestedPeriodicReportWorker
   end
 
   def create_new_twitter_user_record
