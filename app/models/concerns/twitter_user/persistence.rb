@@ -77,6 +77,14 @@ module Concerns::TwitterUser::Persistence
     bm_after_commit('InMemory::StatusTweet.import_from') do
       InMemory::StatusTweet.import_from(uid, status_tweets)
     end
+
+    bm_after_commit('InMemory::FavoriteTweet.import_from') do
+      InMemory::FavoriteTweet.import_from(uid, favorite_tweets)
+    end
+
+    bm_after_commit('InMemory::MentionTweet.import_from') do
+      InMemory::MentionTweet.import_from(uid, mention_tweets)
+    end
   end
 
   module Instrumentation

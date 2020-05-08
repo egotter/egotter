@@ -85,6 +85,16 @@ RSpec.describe Concerns::TwitterUser::Persistence do
         expect(InMemory::StatusTweet).to receive(:import_from).with(2, status_tweets)
         subject
       end
+
+      it do
+        expect(InMemory::FavoriteTweet).to receive(:import_from).with(2, favorite_tweets)
+        subject
+      end
+
+      it do
+        expect(InMemory::MentionTweet).to receive(:import_from).with(2, mention_tweets)
+        subject
+      end
     end
 
   end
