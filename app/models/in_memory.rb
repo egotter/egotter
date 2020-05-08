@@ -1,0 +1,3 @@
+# -*- SkipSchemaAnnotations
+module InMemory
+end

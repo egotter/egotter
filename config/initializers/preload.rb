@@ -14,3 +14,7 @@ Efs::Tweet
 Efs::StatusTweet
 Efs::FavoriteTweet
 Efs::MentionTweet
+
+InMemory
+InMemory::Tweet
+InMemory::StatusTweet

@@ -71,6 +71,12 @@ module Concerns::TwitterUser::Persistence
     bm_after_commit('Efs::MentionTweet.import_from!') do
       Efs::MentionTweet.import_from!(uid, screen_name, mention_tweets)
     end
+
+    # In memory (Automatically deleted)
+
+    bm_after_commit('InMemory::StatusTweet.import_from') do
+      InMemory::StatusTweet.import_from(uid, status_tweets)
+    end
   end
 
   module Instrumentation

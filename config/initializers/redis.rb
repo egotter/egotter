@@ -1,9 +1,14 @@
-Redis.class_eval do
+require 'redis'
+require 'hiredis'
+
+class Redis
   HOST = ENV['REDIS_HOST']
   TTL = 3.days
 
-  def self.client
-    new(host: HOST, driver: :hiredis)
+  class << self
+    def client(host = nil)
+      new(host: host || HOST, driver: :hiredis)
+    end
   end
 
   def fetch(key, ttl: TTL)

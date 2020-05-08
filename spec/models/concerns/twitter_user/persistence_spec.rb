@@ -80,5 +80,12 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       end
     end
 
+    context 'InMemory' do
+      it do
+        expect(InMemory::StatusTweet).to receive(:import_from).with(2, status_tweets)
+        subject
+      end
+    end
+
   end
 end
