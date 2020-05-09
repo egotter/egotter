@@ -33,9 +33,9 @@ class CreatePushNotificationWorker
 
     if res.has_key?('error')
       if requested_entity_not_found?(res)
-        logger.warn "NOT FOUND #{res}"
+        logger.info "response=#{res}"
       else
-        logger.warn res
+        logger.warn "response=#{res}"
       end
     else
       logger.info res

@@ -19,7 +19,7 @@ class CreatePeriodicReportWorker
       CreatePeriodicReportMessageWorker.perform_in(1.minute, request.user_id, interval_too_short: true)
     end
 
-    logger.warn "The job execution is skipped request_id=#{request_id} options=#{options.inspect}"
+    logger.info "The job execution is skipped request_id=#{request_id} options=#{options.inspect}"
   end
 
   def user_requested_job?
