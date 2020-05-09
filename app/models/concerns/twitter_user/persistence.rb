@@ -64,17 +64,17 @@ module Concerns::TwitterUser::Persistence
 
     # EFS (Automatically deleted)
 
-    bm_after_commit('Efs::StatusTweet.import_from!') do
-      Efs::StatusTweet.import_from!(uid, screen_name, status_tweets)
-    end
-
-    bm_after_commit('Efs::FavoriteTweet.import_from!') do
-      Efs::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
-    end
-
-    bm_after_commit('Efs::MentionTweet.import_from!') do
-      Efs::MentionTweet.import_from!(uid, screen_name, mention_tweets)
-    end
+    # bm_after_commit('Efs::StatusTweet.import_from!') do
+    #   Efs::StatusTweet.import_from!(uid, screen_name, status_tweets)
+    # end
+    #
+    # bm_after_commit('Efs::FavoriteTweet.import_from!') do
+    #   Efs::FavoriteTweet.import_from!(uid, screen_name, favorite_tweets)
+    # end
+    #
+    # bm_after_commit('Efs::MentionTweet.import_from!') do
+    #   Efs::MentionTweet.import_from!(uid, screen_name, mention_tweets)
+    # end
 
     # In memory (Automatically deleted)
 
