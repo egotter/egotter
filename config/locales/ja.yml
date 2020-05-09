@@ -1922,7 +1922,7 @@ ja:
       <br>
       エラー：NA403
     permission_level_not_enough_html: >
-      %{user} のツイッター連携（DM）が無効になっています。<br>
+      @%{user} のツイッター連携（DM）が無効になっています。<br>
       <br>
       1. <a class="btn btn-primary btn-sm" href="%{url}">強制ログイン</a> してください。ほとんどの場合これで解決します。<br>
       <br>

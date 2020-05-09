@@ -10,10 +10,10 @@ module Concerns::SearchRequestInstrumentationConcern
     end
 
     after_action do
-      time = Time.zone.now - @search_request_start_time
+      elapsed = Time.zone.now - @search_request_start_time
       @search_request_benchmark[:sum] = @search_request_benchmark.values.sum
-      @search_request_benchmark[:elapsed] = time
-      logger.info "Benchmark SearchRequest #{controller_name}##{action_name} total(elapsed) #{sprintf("%.3f sec", time)}"
+      @search_request_benchmark[:elapsed] = elapsed
+      logger.info "Benchmark SearchRequest #{controller_name}##{action_name} #{sprintf("%.3f sec", elapsed)}"
       logger.info "Benchmark SearchRequest #{controller_name}##{action_name} #{@search_request_benchmark.inspect}"
     rescue => e
       logger.warn "Internal error during benchmarking. Cause: #{e.inspecct}"
@@ -45,7 +45,8 @@ module Concerns::SearchRequestInstrumentationConcern
       start = Time.zone.now
       ret_val = method(method_name).super_method.call(*args, &blk)
 
-      @search_request_benchmark[method_name] = Time.zone.now - start
+      # In test, this instance variable is not defined
+      @search_request_benchmark[method_name] = Time.zone.now - start if @search_request_benchmark
       ret_val
     end
   end

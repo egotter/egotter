@@ -27,6 +27,13 @@ RSpec.describe Concerns::TwitterUser::Persistence do
     end
 
     context 'Efs' do
+      before do
+        Efs::TwitterUser.cache_client.clear
+        Efs::StatusTweet.client.instance_variable_get(:@efs).clear
+        Efs::FavoriteTweet.client.instance_variable_get(:@efs).clear
+        Efs::MentionTweet.client.instance_variable_get(:@efs).clear
+      end
+
       context 'TwitterUser' do
         it do
           subject
@@ -45,47 +52,47 @@ RSpec.describe Concerns::TwitterUser::Persistence do
         end
       end
 
-      context 'StatusTweet' do
-        it do
-          subject
-          Efs::StatusTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
-            expect(result.raw_attrs_text).to eq(status_tweets[i][:raw_attrs_text])
-          end
-        end
-
-        it do
-          expect(Efs::StatusTweet).to receive(:import_from!).with(2, 'sn', status_tweets)
-          subject
-        end
-      end
-
-      context 'FavoriteTweet' do
-        it do
-          subject
-          Efs::FavoriteTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
-            expect(result.raw_attrs_text).to eq(favorite_tweets[i][:raw_attrs_text])
-          end
-        end
-
-        it do
-          expect(Efs::FavoriteTweet).to receive(:import_from!).with(2, 'sn', favorite_tweets)
-          subject
-        end
-      end
-
-      context 'MentionTweet' do
-        it do
-          subject
-          Efs::MentionTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
-            expect(result.raw_attrs_text).to eq(mention_tweets[i][:raw_attrs_text])
-          end
-        end
-
-        it do
-          expect(Efs::MentionTweet).to receive(:import_from!).with(2, 'sn', mention_tweets)
-          subject
-        end
-      end
+        # context 'StatusTweet' do
+        #   it do
+        #     subject
+        #     Efs::StatusTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
+        #       expect(result.raw_attrs_text).to eq(status_tweets[i][:raw_attrs_text])
+        #     end
+        #   end
+        #
+        #   it do
+        #     expect(Efs::StatusTweet).to receive(:import_from!).with(2, 'sn', status_tweets)
+        #     subject
+        #   end
+        # end
+        #
+        # context 'FavoriteTweet' do
+        #   it do
+        #     subject
+        #     Efs::FavoriteTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
+        #       expect(result.raw_attrs_text).to eq(favorite_tweets[i][:raw_attrs_text])
+        #     end
+        #   end
+        #
+        #   it do
+        #     expect(Efs::FavoriteTweet).to receive(:import_from!).with(2, 'sn', favorite_tweets)
+        #     subject
+        #   end
+        # end
+        #
+        # context 'MentionTweet' do
+        #   it do
+        #     subject
+        #     Efs::MentionTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
+        #       expect(result.raw_attrs_text).to eq(mention_tweets[i][:raw_attrs_text])
+        #     end
+        #   end
+        #
+        #   it do
+        #     expect(Efs::MentionTweet).to receive(:import_from!).with(2, 'sn', mention_tweets)
+        #     subject
+        #   end
+        # end
     end
 
     context 'S3' do
@@ -142,8 +149,10 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       context 'StatusTweet' do
         it do
           subject
-          InMemory::StatusTweet.find_by(twitter_user.uid).each.with_index do |result, i|
-            expect(result.raw_attrs_text).to eq(status_tweets[i][:raw_attrs_text])
+          tweets = InMemory::StatusTweet.find_by(twitter_user.uid)
+          expect(tweets.size).to eq(status_tweets.size)
+          tweets.each.with_index do |tweet, i|
+            expect(tweet.raw_attrs_text).to eq(status_tweets[i][:raw_attrs_text])
           end
         end
 
@@ -156,8 +165,9 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       context 'FavoriteTweet' do
         it do
           subject
-          InMemory::FavoriteTweet.find_by(twitter_user.uid).each.with_index do |result, i|
-            expect(result.raw_attrs_text).to eq(favorite_tweets[i][:raw_attrs_text])
+          tweets = InMemory::FavoriteTweet.find_by(twitter_user.uid)
+          tweets.each.with_index do |tweet, i|
+            expect(tweet.raw_attrs_text).to eq(favorite_tweets[i][:raw_attrs_text])
           end
         end
 
@@ -170,8 +180,9 @@ RSpec.describe Concerns::TwitterUser::Persistence do
       context 'MentionTweet' do
         it do
           subject
-          InMemory::MentionTweet.find_by(twitter_user.uid).each.with_index do |result, i|
-            expect(result.raw_attrs_text).to eq(mention_tweets[i][:raw_attrs_text])
+          tweets = InMemory::MentionTweet.find_by(twitter_user.uid)
+          tweets.each.with_index do |tweet, i|
+            expect(tweet.raw_attrs_text).to eq(mention_tweets[i][:raw_attrs_text])
           end
         end
 

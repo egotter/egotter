@@ -24,7 +24,7 @@ RSpec.describe InMemory::Client do
     before { allow(instance).to receive(:db_key).with(key).and_return('key') }
 
     it do
-      expect(redis).to receive(:setex).with('key', 5.minutes, 'input')
+      expect(redis).to receive(:setex).with('key', ::InMemory::TTL, 'input')
       subject
     end
   end

@@ -3,6 +3,12 @@ class SearchRequestValidator
     @user = user
   end
 
+  def user_requested_self_search?(screen_name)
+    client.user(screen_name)[:id] == @user.uid
+  rescue => e
+    false
+  end
+
   def not_found_user?(screen_name)
     client.user(screen_name)
     DeleteNotFoundUserWorker.perform_async(screen_name)

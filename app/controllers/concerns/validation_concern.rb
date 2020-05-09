@@ -79,9 +79,15 @@ module Concerns::ValidationConcern
     if current_user.notification_setting.enough_permission_level?
       true
     else
-      respond_with_error(:unauthorized, t('after_sign_in.permission_level_not_enough_html', user: current_user.mention_name, url: sign_in_path(force_login: true, via: "#{controller_name}/#{action_name}/permission_level_not_enough")))
+      url = sign_in_path(force_login: true, via: "#{controller_name}/#{action_name}/permission_level_not_enough")
+      respond_with_error(:unauthorized, t('after_sign_in.permission_level_not_enough_html', user: current_user.screen_name, url: url))
       false
     end
+  end
+
+  def user_requested_self_search?
+    screen_name = params[:screen_name]
+    user_signed_in? && SearchRequestValidator.new(current_user).user_requested_self_search?(screen_name)
   end
 
   def valid_screen_name?(screen_name = nil)
@@ -138,6 +144,9 @@ module Concerns::ValidationConcern
     blocked_user?(twitter_user.screen_name).tap do |value|
       redirect_to blocked_path(screen_name: twitter_user.screen_name) if value
     end
+  rescue => e
+    respond_with_error(:bad_request, twitter_exception_messages(e, twitter_user.screen_name))
+    false
   end
 
   def protected_user?(screen_name)
