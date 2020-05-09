@@ -27,7 +27,7 @@ module InMemory
       "#{@key_prefix}:#{key}"
     end
 
-    module RescueInvalidHostname
+    module RescueAllRedisErrors
       %i(
         read
         write
@@ -36,15 +36,12 @@ module InMemory
         define_method(method_name) do |*args, &blk|
           super(*args, &blk)
         rescue => e
-          if e.message == 'nodename nor servname provided, or not known'
-            nil
-          else
-            raise
-          end
+          Rails.logger.warn "Rescue all errors in #{@klass}.client##{method_name} #{e.inspect}"
+          nil
         end
       end
     end
-    prepend RescueInvalidHostname
+    prepend RescueAllRedisErrors
 
     module Instrumentation
       %i(
