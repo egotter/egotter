@@ -27,35 +27,64 @@ RSpec.describe Concerns::TwitterUser::Persistence do
     end
 
     context 'Efs' do
-      it do
-        subject
-        result = Efs::TwitterUser.find_by(twitter_user.id)
-        expect(result).not_to be_nil
-        expect(result.uid).to eq(twitter_user.uid)
-        expect(result.screen_name).to eq(twitter_user.screen_name)
-        expect(result.profile.to_json).to eq(profile.to_json)
-        expect(result.friend_uids).to eq([1, 2])
-        expect(result.follower_uids).to eq([3, 4])
+      context 'TwitterUser' do
+        it do
+          subject
+          result = Efs::TwitterUser.find_by(twitter_user.id)
+          expect(result).not_to be_nil
+          expect(result.uid).to eq(twitter_user.uid)
+          expect(result.screen_name).to eq(twitter_user.screen_name)
+          expect(result.profile.to_json).to eq(profile.to_json)
+          expect(result.friend_uids).to eq([1, 2])
+          expect(result.follower_uids).to eq([3, 4])
+        end
+
+        it do
+          expect(Efs::TwitterUser).to receive(:import_from!).with(1, 2, 'sn', profile.to_json, [1, 2], [3, 4])
+          subject
+        end
       end
 
-      it do
-        expect(Efs::TwitterUser).to receive(:import_from!).with(1, 2, 'sn', profile.to_json, [1, 2], [3, 4])
-        subject
+      context 'StatusTweet' do
+        it do
+          subject
+          Efs::StatusTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
+            expect(result.raw_attrs_text).to eq(status_tweets[i][:raw_attrs_text])
+          end
+        end
+
+        it do
+          expect(Efs::StatusTweet).to receive(:import_from!).with(2, 'sn', status_tweets)
+          subject
+        end
       end
 
-      it do
-        expect(Efs::StatusTweet).to receive(:import_from!).with(2, 'sn', status_tweets)
-        subject
+      context 'FavoriteTweet' do
+        it do
+          subject
+          Efs::FavoriteTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
+            expect(result.raw_attrs_text).to eq(favorite_tweets[i][:raw_attrs_text])
+          end
+        end
+
+        it do
+          expect(Efs::FavoriteTweet).to receive(:import_from!).with(2, 'sn', favorite_tweets)
+          subject
+        end
       end
 
-      it do
-        expect(Efs::FavoriteTweet).to receive(:import_from!).with(2, 'sn', favorite_tweets)
-        subject
-      end
+      context 'MentionTweet' do
+        it do
+          subject
+          Efs::MentionTweet.where(uid: twitter_user.uid).each.with_index do |result, i|
+            expect(result.raw_attrs_text).to eq(mention_tweets[i][:raw_attrs_text])
+          end
+        end
 
-      it do
-        expect(Efs::MentionTweet).to receive(:import_from!).with(2, 'sn', mention_tweets)
-        subject
+        it do
+          expect(Efs::MentionTweet).to receive(:import_from!).with(2, 'sn', mention_tweets)
+          subject
+        end
       end
     end
 
@@ -92,35 +121,64 @@ RSpec.describe Concerns::TwitterUser::Persistence do
     end
 
     context 'InMemory' do
-      it do
-        subject
-        result = InMemory::TwitterUser.find_by(twitter_user.id)
-        expect(result).not_to be_nil
-        expect(result.uid).to eq(twitter_user.uid)
-        expect(result.screen_name).to eq(twitter_user.screen_name)
-        expect(result.profile.to_json).to eq(profile.to_json)
-        expect(result.friend_uids).to eq([1, 2])
-        expect(result.follower_uids).to eq([3, 4])
+      context 'TwitterUser' do
+        it do
+          subject
+          result = InMemory::TwitterUser.find_by(twitter_user.id)
+          expect(result).not_to be_nil
+          expect(result.uid).to eq(twitter_user.uid)
+          expect(result.screen_name).to eq(twitter_user.screen_name)
+          expect(result.profile.to_json).to eq(profile.to_json)
+          expect(result.friend_uids).to eq([1, 2])
+          expect(result.follower_uids).to eq([3, 4])
+        end
+
+        it do
+          expect(InMemory::TwitterUser).to receive(:import_from).with(1, 2, 'sn', profile.to_json, [1, 2], [3, 4])
+          subject
+        end
       end
 
-      it do
-        expect(InMemory::TwitterUser).to receive(:import_from).with(1, 2, 'sn', profile.to_json, [1, 2], [3, 4])
-        subject
+      context 'StatusTweet' do
+        it do
+          subject
+          InMemory::StatusTweet.find_by(twitter_user.uid).each.with_index do |result, i|
+            expect(result.raw_attrs_text).to eq(status_tweets[i][:raw_attrs_text])
+          end
+        end
+
+        it do
+          expect(InMemory::StatusTweet).to receive(:import_from).with(2, status_tweets)
+          subject
+        end
       end
 
-      it do
-        expect(InMemory::StatusTweet).to receive(:import_from).with(2, status_tweets)
-        subject
+      context 'FavoriteTweet' do
+        it do
+          subject
+          InMemory::FavoriteTweet.find_by(twitter_user.uid).each.with_index do |result, i|
+            expect(result.raw_attrs_text).to eq(favorite_tweets[i][:raw_attrs_text])
+          end
+        end
+
+        it do
+          expect(InMemory::FavoriteTweet).to receive(:import_from).with(2, favorite_tweets)
+          subject
+        end
       end
 
-      it do
-        expect(InMemory::FavoriteTweet).to receive(:import_from).with(2, favorite_tweets)
-        subject
-      end
+      context 'MentionTweet' do
+        it do
+          subject
+          InMemory::MentionTweet.find_by(twitter_user.uid).each.with_index do |result, i|
+            expect(result.raw_attrs_text).to eq(mention_tweets[i][:raw_attrs_text])
+          end
+        end
 
-      it do
-        expect(InMemory::MentionTweet).to receive(:import_from).with(2, mention_tweets)
-        subject
+        it do
+          expect(InMemory::MentionTweet).to receive(:import_from).with(2, mention_tweets)
+          subject
+        end
       end
     end
 
