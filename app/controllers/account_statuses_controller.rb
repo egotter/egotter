@@ -7,6 +7,8 @@ class AccountStatusesController < ApplicationController
 
   before_action { create_search_log }
 
+  before_action { AccountStatusAccessFlag.new.accessed(current_user.id) }
+
   before_action do
     uid = searchee_uid
     status = AccountStatus.new

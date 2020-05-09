@@ -9,6 +9,7 @@
   var viaDM = <%= via_dm? %>;
   var profileNotFound = <%= twitter_user.profile_not_found? %>;
   var tooShortCreateInterval = <%= twitter_user.too_short_create_interval? %>;
+  var accountStatusAccessed = <%= user_signed_in? && AccountStatusAccessFlag.new.accessed?(current_user.id) %>;
   var eventCategory = '<%= "#{controller_name}/#{action_name}" %>';
 
   var urls = {
@@ -71,17 +72,21 @@
       });
     });
 
-    var options = {
-      force: true,
-      unauthorizedMessage: "<%= t('after_sign_in.unauthorized_detected_with_count', seconds: 3) %>",
-      blockedMessage: "<%= t('after_sign_in.blocked_detected_with_count', seconds: 3) %>",
-      url: urls.account_status,
-      unauthorizedRedirectPath: "<%= root_path(via: current_via('unauthorized_detected')) %>",
-      blockedRedirectPath: "<%= root_path(via: current_via('blocked_detected')) %>",
-      eventCategory: eventCategory,
-      eventLabel: JSON.stringify(twitterUser)
-    };
-    new UnauthorizedDetector(options).detect();
+    if (accountStatusAccessed) {
+      console.log('account_status is skipped');
+    } else {
+      var options = {
+        force: true,
+        unauthorizedMessage: "<%= t('after_sign_in.unauthorized_detected_with_count', seconds: 3) %>",
+        blockedMessage: "<%= t('after_sign_in.blocked_detected_with_count', seconds: 3) %>",
+        url: urls.account_status,
+        unauthorizedRedirectPath: "<%= root_path(via: current_via('unauthorized_detected')) %>",
+        blockedRedirectPath: "<%= root_path(via: current_via('blocked_detected')) %>",
+        eventCategory: eventCategory,
+        eventLabel: JSON.stringify(twitterUser)
+      };
+      new UnauthorizedDetector(options).detect();
+    }
 
     if (!crawler) {
       var options = {
