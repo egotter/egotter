@@ -1,6 +1,6 @@
 # -*- SkipSchemaAnnotations
 module InMemory
-  TTL = 5.minutes
+  TTL = 10.minutes
 
   module_function
 
