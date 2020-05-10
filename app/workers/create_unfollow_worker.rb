@@ -26,7 +26,8 @@ class CreateUnfollowWorker
 
   rescue UnfollowRequest::NotFollowing,
       UnfollowRequest::NotFound,
-      UnfollowRequest::Suspended => e
+      UnfollowRequest::Suspended,
+      UnfollowRequest::CanNotUnfollowYourself => e
     logger.info "Skip #{e.inspect}"
   rescue UnfollowRequest::TooManyUnfollows => e
     # This exception is never raised
