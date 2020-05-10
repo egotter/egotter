@@ -1460,6 +1460,8 @@ ja:
       description2: 'リムられ通知が届かない場合に押してください'
       label3: 'リムられ通知 今すぐ送信'
       description3: 'リムられ通知を今すぐ送信します'
+      label4: 'リムられ通知 再開'
+      description4: 'リムられ通知の定期配信を再開します'
     welcome_messages:
       label1: '初期設定 届きました'
       description1: 'このボタンを押しておくと、リムられ通知が届きやすくなります'

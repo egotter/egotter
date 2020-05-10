@@ -39,7 +39,7 @@ class CreatePeriodicReportMessageWorker
 
     if options[:stop_requested]
       report = PeriodicReport.stop_requested_message
-      event = report.build_direct_message_event(options[:uid], report.message)
+      event = report.build_direct_message_event(options[:uid], report.message, unsubscribe: true)
       User.egotter.api_client.create_direct_message_event(event: event)
       return
     end

@@ -40,9 +40,9 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:stop_now_requested?, dm) }
 
-    %w(今すぐ いますぐ).product(%w(停止 ていし)).each do |word1, word2|
-      context "text is #{word1 + word2}" do
-        let(:text) { SecureRandom.hex(1) + word1 + word2 + SecureRandom.hex(1) }
+    [' ', '　', ''].product(%w(停止 ていし)).each do |word1, word2|
+      context "text is リムられ通知#{word1 + word2}" do
+        let(:text) { "リムられ通知#{word1 + word2}" }
         it { is_expected.to be_truthy }
       end
     end
@@ -203,7 +203,7 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       include_context 'restart_requested? returns true'
       include_context 'find_by returns user'
       it do
-        expect(StopPeriodicReportRequest).to receive(:destroy).with(user_id: user.id)
+        expect(StopPeriodicReportRequest).to receive_message_chain(:find_by, :destroy).with(user_id: user.id).with(no_args)
         subject
       end
     end

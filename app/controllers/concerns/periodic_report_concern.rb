@@ -30,7 +30,7 @@ module Concerns::PeriodicReportConcern
     dm.text.match?(CONTINUE_REGEXP)
   end
 
-  STOP_NOW_REGEXP = /(今すぐ|いますぐ)(停止|ていし)/
+  STOP_NOW_REGEXP = /リムられ通知(\s|　)*(停止|ていし)/
 
   def stop_now_requested?(dm)
     dm.text.match?(STOP_NOW_REGEXP)

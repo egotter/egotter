@@ -167,7 +167,9 @@ class PeriodicReport < ApplicationRecord
     report_sender.api_client.create_direct_message_event(event: event)
   end
 
-  def build_direct_message_event(uid, message)
+  def build_direct_message_event(uid, message, unsubscribe: false)
+    quick_replies = unsubscribe ? UNSUBSCRIBE_QUICK_REPLY_OPTIONS : DEFAULT_QUICK_REPLY_OPTIONS
+
     {
         type: 'message_create',
         message_create: {
@@ -176,20 +178,7 @@ class PeriodicReport < ApplicationRecord
                 text: message,
                 quick_reply: {
                     type: 'options',
-                    options: [
-                        {
-                            label: I18n.t('quick_replies.prompt_reports.label1'),
-                            description: I18n.t('quick_replies.prompt_reports.description1')
-                        },
-                        {
-                            label: I18n.t('quick_replies.prompt_reports.label2'),
-                            description: I18n.t('quick_replies.prompt_reports.description2')
-                        },
-                        {
-                            label: I18n.t('quick_replies.prompt_reports.label3'),
-                            description: I18n.t('quick_replies.prompt_reports.description3')
-                        }
-                    ]
+                    options: quick_replies
                 }
             }
         }
@@ -203,6 +192,32 @@ class PeriodicReport < ApplicationRecord
   def report_recipient
     GlobalDirectMessageReceivedFlag.new.received?(user.uid) ? user : User.egotter
   end
+
+  DEFAULT_QUICK_REPLY_OPTIONS = [
+      {
+          label: I18n.t('quick_replies.prompt_reports.label1'),
+          description: I18n.t('quick_replies.prompt_reports.description1')
+      },
+      {
+          label: I18n.t('quick_replies.prompt_reports.label2'),
+          description: I18n.t('quick_replies.prompt_reports.description2')
+      },
+      {
+          label: I18n.t('quick_replies.prompt_reports.label3'),
+          description: I18n.t('quick_replies.prompt_reports.description3')
+      }
+  ]
+
+  UNSUBSCRIBE_QUICK_REPLY_OPTIONS = [
+      {
+          label: I18n.t('quick_replies.prompt_reports.label4'),
+          description: I18n.t('quick_replies.prompt_reports.description4')
+      },
+      {
+          label: I18n.t('quick_replies.prompt_reports.label3'),
+          description: I18n.t('quick_replies.prompt_reports.description3')
+      }
+  ]
 
   module UrlHelpers
     def method_missing(method, *args, &block)
