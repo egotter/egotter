@@ -43,6 +43,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     if sync_flag
       CreatePeriodicReportMessageWorker.new.perform(user_id, build_report_options)
     else
+      # If an administrator makes a request immediately after processing a user's request, it may be skipped
       jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
       update(status: 'message_skipped') unless jid
     end

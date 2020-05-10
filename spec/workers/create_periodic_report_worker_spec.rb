@@ -22,7 +22,7 @@ RSpec.describe CreatePeriodicReportWorker do
     end
     it do
       expect(request).to receive(:update).with(status: 'skipped')
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).with(1.minute, request.user_id, interval_too_short: true)
+      expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).with(61.seconds, request.user_id, interval_too_short: true)
       subject
     end
   end
