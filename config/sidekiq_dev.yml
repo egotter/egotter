@@ -23,7 +23,6 @@
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
-  - CreateBatchTwitterUserWorker
   - ImportTwitterUserRelationsWorker
   - ResetTooManyRequestsWorker
   - StartSendingPeriodicReportsWorker
