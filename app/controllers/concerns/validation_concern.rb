@@ -204,6 +204,7 @@ module Concerns::ValidationConcern
     true
   end
 
+  # TODO Rename to too_many_api_requests?
   def too_many_requests?(twitter_user)
     return false if from_crawler? || !user_signed_in?
     return false unless TooManyRequestsUsers.new.exists?(current_user_id)

@@ -11,7 +11,7 @@ module Concerns::SearchRequestConcern
     before_action(only: %i(show all)) { valid_screen_name? }
     before_action(only: %i(show all)) do
       @self_search = user_requested_self_search?
-      logger.debug { "SearchRequestConcern user_requested_self_search? returns #{@self_search}" }
+      logger.debug { "SearchRequestConcern #{controller_name}##{action_name} user_requested_self_search? returns #{@self_search}" }
     end
     before_action(only: %i(show all)) { !@self_search && !not_found_screen_name? && !forbidden_screen_name? }
     before_action(only: %i(show all)) { @twitter_user = build_twitter_user_by(screen_name: params[:screen_name]) }
