@@ -18,11 +18,11 @@
             .text-muted.mb-3
               %i.fas.fa-user
               = t('twitter.profile.labels.followed')
-          %h5.card-title
+          %h6.card-title
             = search_link user.screen_name, via
             = user.name_with_icon
             = user.status_labels
-          %p.card-text= linkify(user.description)
+          %p.card-text{style: 'font-size: 14px;'}= linkify(user.description)
           %p.card-text
             = link_to friend_path(user) do
               %strong.text-black= user.delimited_friends_count
