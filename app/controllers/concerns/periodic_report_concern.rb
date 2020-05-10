@@ -79,7 +79,7 @@ module Concerns::PeriodicReportConcern
   def enqueue_user_requested_restarting_periodic_report(dm)
     return unless restart_requested?(dm)
     if (user = User.find_by(uid: dm.sender_id))
-      StopPeriodicReportRequest.destroy(user_id: user.id)
+      StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
     end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
