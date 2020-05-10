@@ -24,7 +24,6 @@ class PeriodicReport < ApplicationRecord
   include Concerns::Report::Readable
 
   belongs_to :user
-  attr_accessor :message
 
   def deliver!
     dm = send_direct_message
@@ -47,21 +46,25 @@ class PeriodicReport < ApplicationRecord
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
 
+      I18n.backend.store_translations :ja, persons: {other: '%{count}人'}
+
       message = ERB.new(template.read).result_with_hash(
           user: user,
           start_date: start_date,
           end_date: end_date,
+          date_range: Class.new { include ActionView::Helpers::DateHelper }.new.time_ago_in_words(start_date),
+          removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: unfollowers.size),
           period_name: pick_period_name,
           first_friends_count: first_friends_count,
           first_followers_count: first_followers_count,
           last_friends_count: last_friends_count,
           last_followers_count: last_followers_count,
           unfriends: unfriends,
-          unfollowers: unfollowers.map { |name| "#{name} #{profile_url(user, url_options)}" },
+          unfollowers: unfollowers,
+          unfollower_urls: unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
           request_id: request_id,
           timeline_url: timeline_url(user, url_options),
           settings_url: settings_url(url_options),
-          date_helper: Class.new { include ActionView::Helpers::DateHelper }.new
       )
 
       new(user: user, message: message, token: token)
@@ -118,15 +121,18 @@ class PeriodicReport < ApplicationRecord
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
 
+      I18n.backend.store_translations :ja, persons: {other: '%{count}人'}
+
       ERB.new(template.read).result_with_hash(
           user: user,
           start_date: start_date,
           end_date: end_date,
+          date_range: Class.new { include ActionView::Helpers::DateHelper }.new.time_ago_in_words(start_date),
+          removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: unfollowers.size),
           period_name: pick_period_name,
           unfriends: unfriends,
           unfollowers: unfollowers,
           timeline_url: timeline_url(user, url_options),
-          date_helper: Class.new { include ActionView::Helpers::DateHelper }.new
       )
     end
 

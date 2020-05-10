@@ -1,7 +1,4 @@
-<%= period_name %>のリムられ通知です。直近の <%= date_helper.time_ago_in_words(start_date) %> にリムられはありませんでした。
-
-通知の継続：
-リムられ通知が必要な方は【<%= I18n.t('quick_replies.prompt_reports.label1') %>】をDMにコピペして送ってください
+<%= period_name %>のリムられ通知です。直近の <%= date_range %> にリムられはありませんでした。
 
 集計期間：
 <%= I18n.l(start_date.in_time_zone('Tokyo'), format: :periodic_report_short) %> - <%= I18n.l(end_date.in_time_zone('Tokyo'), format: :periodic_report_short) %>
@@ -11,6 +8,12 @@
 
 検索結果ページ：
 <%= timeline_url %>
+
+通知の継続：
+リムられ通知が必要な方は【<%= I18n.t('quick_replies.prompt_reports.label1') %>】をDMにコピペして送ってください
+
+今すぐ通知を受信する：
+リムられ通知を今すぐ受信するには【<%= I18n.t('quick_replies.prompt_reports.label3') %>】をDMにコピペして送ってください
 
 通知ID：
 ID-<%= request_id %>
