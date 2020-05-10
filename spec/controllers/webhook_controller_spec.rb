@@ -24,16 +24,48 @@ RSpec.describe WebhookController, type: :controller do
 
     context 'sent_from_user? returns true' do
       let(:dm) { double('dm', id: 1, sender_id: 2, text: 'text') }
+
       before do
+        allow(DirectMessage).to receive(:new).with(anything).and_return(dm)
         allow(controller).to receive(:sent_from_user?).with(dm).and_return(true)
       end
 
       it do
-        expect(DirectMessage).to receive(:new).with(anything).and_return(dm)
         expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(no_args).with(dm.sender_id)
-        expect(controller).to receive(:enqueue_user_requested_periodic_report).with(dm)
         expect(SendReceivedMessageWorker).to receive(:perform_async).with(dm.sender_id, dm_id: dm.id, text: dm.text)
         subject
+      end
+
+      context 'restart_requested? returns true' do
+        before { allow(controller).to receive(:restart_requested?).with(dm).and_return(true) }
+        it do
+          expect(controller).to receive(:enqueue_user_requested_restarting_periodic_report).with(dm)
+          subject
+        end
+      end
+
+      context 'send_now_requested? returns true' do
+        before { allow(controller).to receive(:send_now_requested?).with(dm).and_return(true) }
+        it do
+          expect(controller).to receive(:enqueue_user_requested_periodic_report).with(dm)
+          subject
+        end
+      end
+
+      context 'continue_requested? returns true' do
+        before { allow(controller).to receive(:continue_requested?).with(dm).and_return(true) }
+        it do
+          expect(controller).to receive(:enqueue_user_requested_periodic_report).with(dm)
+          subject
+        end
+      end
+
+      context 'stop_now_requested? returns true' do
+        before { allow(controller).to receive(:stop_now_requested?).with(dm).and_return(true) }
+        it do
+          expect(controller).to receive(:enqueue_user_requested_stopping_periodic_report).with(dm)
+          subject
+        end
       end
     end
 
@@ -57,7 +89,7 @@ RSpec.describe WebhookController, type: :controller do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:send_now_requested?, dm) }
 
-    %w(今すぐ いますぐ).product(%w(送信 そうしん 受信 じゅしん 痩身 通知)).each do |word1, word2|
+    %w(今すぐ いますぐ).product(%w(送信 そうしん 受信 じゅしん 痩身 通知 返信)).each do |word1, word2|
       context "text is #{word1 + word2}" do
         let(:text) { SecureRandom.hex(1) + word1 + word2 + SecureRandom.hex(1) }
         it { is_expected.to be_truthy }
@@ -79,6 +111,30 @@ RSpec.describe WebhookController, type: :controller do
     context "text is #{I18n.t('quick_replies.prompt_reports.label1')}" do
       let(:text) { I18n.t('quick_replies.prompt_reports.label1') }
       it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#stop_now_requested?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:stop_now_requested?, dm) }
+
+    %w(今すぐ いますぐ).product(%w(停止 ていし)).each do |word1, word2|
+      context "text is #{word1 + word2}" do
+        let(:text) { SecureRandom.hex(1) + word1 + word2 + SecureRandom.hex(1) }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#restart_requested?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:restart_requested?, dm) }
+
+    [' ', '　', ''].product(%w(再開 さいかい)).each do |word1, word2|
+      context "text is リムられ通知#{word1 + word2}" do
+        let(:text) { "リムられ通知#{word1 + word2}" }
+        it { is_expected.to be_truthy }
+      end
     end
   end
 
@@ -156,6 +212,92 @@ RSpec.describe WebhookController, type: :controller do
       before do
         allow(controller).to receive(:send_now_requested?).with(dm).and_return(false)
         allow(controller).to receive(:continue_requested?).with(dm).and_return(false)
+      end
+      it do
+        expect(User).not_to receive(:find_by)
+        subject
+      end
+    end
+  end
+
+  describe '#enqueue_user_requested_stopping_periodic_report' do
+    shared_context 'stop_now_requested? returns true' do
+      before { allow(controller).to receive(:stop_now_requested?).with(dm).and_return(true) }
+    end
+
+    shared_context 'find_by returns user' do
+      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
+    end
+
+    let(:user) { create(:user) }
+    let(:dm) { double('dm', sender_id: user.uid) }
+    subject { controller.send(:enqueue_user_requested_stopping_periodic_report, dm) }
+
+    context 'user is found' do
+      include_context 'stop_now_requested? returns true'
+      include_context 'find_by returns user'
+      it do
+        expect(StopPeriodicReportRequest).to receive(:create).with(user_id: user.id)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, stop_requested: true, uid: dm.sender_id)
+        subject
+      end
+    end
+
+    context 'user is not found' do
+      include_context 'stop_now_requested? returns true'
+      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
+      it do
+        expect(StopPeriodicReportRequest).not_to receive(:create)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, stop_requested: true, uid: dm.sender_id)
+        subject
+      end
+    end
+
+    context 'stop_now_requested? returns false' do
+      before do
+        allow(controller).to receive(:stop_now_requested?).with(dm).and_return(false)
+      end
+      it do
+        expect(User).not_to receive(:find_by)
+        subject
+      end
+    end
+  end
+
+  describe '#enqueue_user_requested_restarting_periodic_report' do
+    shared_context 'restart_requested? returns true' do
+      before { allow(controller).to receive(:restart_requested?).with(dm).and_return(true) }
+    end
+
+    shared_context 'find_by returns user' do
+      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
+    end
+
+    let(:user) { create(:user) }
+    let(:dm) { double('dm', sender_id: user.uid) }
+    subject { controller.send(:enqueue_user_requested_restarting_periodic_report, dm) }
+
+    context 'user is found' do
+      include_context 'restart_requested? returns true'
+      include_context 'find_by returns user'
+      it do
+        expect(StopPeriodicReportRequest).to receive(:destroy).with(user_id: user.id)
+        subject
+      end
+    end
+
+    context 'user is not found' do
+      include_context 'restart_requested? returns true'
+      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
+      it do
+        expect(StopPeriodicReportRequest).not_to receive(:destroy)
+        subject
+      end
+    end
+
+    context 'restart_requested? returns false' do
+      before do
+        allow(controller).to receive(:restart_requested?).with(dm).and_return(false)
       end
       it do
         expect(User).not_to receive(:find_by)

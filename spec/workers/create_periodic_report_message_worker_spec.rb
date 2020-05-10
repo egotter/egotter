@@ -8,6 +8,31 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     let(:options) { {} }
     subject { worker.perform(user.id, options) }
 
+    shared_context 'send dm from egotter' do
+      before do
+        allow(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).
+            with(no_args).with(no_args).with(anything)
+      end
+    end
+
+    context 'options[:unregistered] is specified' do
+      include_context 'send dm from egotter'
+      let(:options) { {unregistered: true, uid: 1} }
+      it do
+        expect(PeriodicReport).to receive(:unregistered_message).and_call_original
+        subject
+      end
+    end
+
+    context 'options[:stop_requested] is specified' do
+      include_context 'send dm from egotter'
+      let(:options) { {stop_requested: true, uid: 1} }
+      it do
+        expect(PeriodicReport).to receive(:stop_requested_message).and_call_original
+        subject
+      end
+    end
+
     %i(
       you_have_blocked?
       not_following_you?

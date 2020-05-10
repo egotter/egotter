@@ -16,7 +16,17 @@ class WebhookController < ApplicationController
 
           if sent_from_user?(dm)
             GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
-            enqueue_user_requested_periodic_report(dm)
+
+            if restart_requested?(dm)
+              enqueue_user_requested_restarting_periodic_report(dm)
+            end
+
+            if send_now_requested?(dm) || continue_requested?(dm)
+              enqueue_user_requested_periodic_report(dm)
+            elsif stop_now_requested?(dm)
+              enqueue_user_requested_stopping_periodic_report(dm)
+            end
+
             SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)
           elsif sent_from_egotter?(dm)
             enqueue_egotter_requested_periodic_report(dm)
@@ -43,8 +53,7 @@ class WebhookController < ApplicationController
     dm.text.exclude?('#egotter') && dm.sender_id == User.egotter.uid
   end
 
-  # t('quick_replies.prompt_reports.label3')
-  SEND_NOW_REGEXP = /(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知)/
+  SEND_NOW_REGEXP = /(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知|返信)/
 
   def send_now_requested?(dm)
     dm.text.match?(SEND_NOW_REGEXP)
@@ -71,6 +80,18 @@ class WebhookController < ApplicationController
     dm.text.match?(CONTINUE_REGEXP)
   end
 
+  STOP_NOW_REGEXP = /(今すぐ|いますぐ)(停止|ていし)/
+
+  def stop_now_requested?(dm)
+    dm.text.match?(STOP_NOW_REGEXP)
+  end
+
+  RESTART_REGEXP = /リムられ通知(\s|　)*(再開|さいかい)/
+
+  def restart_requested?(dm)
+    dm.text.match?(RESTART_REGEXP)
+  end
+
   def enqueue_user_requested_periodic_report(dm)
     if !send_now_requested?(dm) && !continue_requested?(dm)
       return
@@ -91,6 +112,25 @@ class WebhookController < ApplicationController
       CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
     end
 
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+  end
+
+  def enqueue_user_requested_stopping_periodic_report(dm)
+    return unless stop_now_requested?(dm)
+    if (user = User.find_by(uid: dm.sender_id))
+      StopPeriodicReportRequest.create(user_id: user.id) # If the same record exists, this process may fail
+    end
+    CreatePeriodicReportMessageWorker.perform_async(nil, stop_requested: true, uid: dm.sender_id)
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+  end
+
+  def enqueue_user_requested_restarting_periodic_report(dm)
+    return unless restart_requested?(dm)
+    if (user = User.find_by(uid: dm.sender_id))
+      StopPeriodicReportRequest.destroy(user_id: user.id)
+    end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end

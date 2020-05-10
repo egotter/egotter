@@ -26,11 +26,19 @@ class CreatePeriodicReportMessageWorker
   #   interval_too_short
   #   unauthorized
   #   unregistered and uid
+  #   stop_requested and uid
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
     if options[:unregistered]
       report = PeriodicReport.unregistered_message
+      event = report.build_direct_message_event(options[:uid], report.message)
+      User.egotter.api_client.create_direct_message_event(event: event)
+      return
+    end
+
+    if options[:stop_requested]
+      report = PeriodicReport.stop_requested_message
       event = report.build_direct_message_event(options[:uid], report.message)
       User.egotter.api_client.create_direct_message_event(event: event)
       return

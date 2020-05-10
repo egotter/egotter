@@ -106,6 +106,13 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
+    def stop_requested_message
+      template = Rails.root.join('app/views/periodic_reports/stop_requested.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash({})
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def periodic_push_message(user_id, request_id:, start_date:, end_date:, first_friends_count: nil, first_followers_count: nil,
                               last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:)
       user = User.find(user_id)

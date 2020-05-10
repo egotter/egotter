@@ -14,6 +14,22 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
     end
   end
 
+  describe '.dm_received_user_ids' do
+    let(:users) { 2.times.map { create(:user) } }
+    subject { described_class.dm_received_user_ids }
+
+    before do
+      GlobalDirectMessageReceivedFlag.new.received(users[1].uid)
+    end
+
+    it { is_expected.to match_array([users[1].id]) }
+
+    context 'unsubscribe is requested' do
+      before { StopPeriodicReportRequest.create!(user_id: users[1].id) }
+      it { is_expected.to be_empty }
+    end
+  end
+
   describe '.recent_access_user_ids' do
     let(:users) { 3.times.map { create(:user) } }
     subject { described_class.recent_access_user_ids }
@@ -25,6 +41,11 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
     end
 
     it { is_expected.to match_array([users[1].id]) }
+
+    context 'unsubscribe is requested' do
+      before { StopPeriodicReportRequest.create!(user_id: users[1].id) }
+      it { is_expected.to be_empty }
+    end
   end
 
   describe '.new_user_ids' do
@@ -37,5 +58,10 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
     end
 
     it { is_expected.to match_array([users[1].id]) }
+
+    context 'unsubscribe is requested' do
+      before { StopPeriodicReportRequest.create!(user_id: users[1].id) }
+      it { is_expected.to be_empty }
+    end
   end
 end

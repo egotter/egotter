@@ -48,7 +48,8 @@ class StartSendingPeriodicReportsTask
   class << self
     def dm_received_user_ids
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
-      uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
+      user_ids = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
+      user_ids - StopPeriodicReportRequest.pluck(:user_id)
     end
 
     ACCESS_DAYS_START = 12.hours
@@ -60,7 +61,8 @@ class StartSendingPeriodicReportsTask
 
       # The target is `created_at`, not 'date'
       user_ids = AccessDay.where(created_at: start_date..end_date).select(:user_id).distinct.map(&:user_id)
-      user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
+      user_ids = user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
+      user_ids - StopPeriodicReportRequest.pluck(:user_id)
     end
 
     NEW_USERS_START = 1.day
@@ -70,7 +72,8 @@ class StartSendingPeriodicReportsTask
       start_date = NEW_USERS_START.ago unless start_date
       end_date = NEW_USERS_END.ago unless end_date
 
-      User.where(created_at: start_date..end_date).where(authorized: true).pluck(:id)
+      user_ids = User.where(created_at: start_date..end_date).where(authorized: true).pluck(:id)
+      user_ids - StopPeriodicReportRequest.pluck(:user_id)
     end
   end
 end
