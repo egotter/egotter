@@ -41,13 +41,23 @@ class CreatePromptReportMessageWorker
     notify_airbrake(e, user_id: user_id, options: options)
     if DirectMessageStatus.you_have_blocked?(e) || (e.cause && DirectMessageStatus.you_have_blocked?(e.cause))
       CreateBlockedUserWorker.perform_async(user.uid, user.screen_name)
-    elsif DirectMessageStatus.cannot_send_messages?(e)
+    elsif not_fatal_error?(e)
+      # Do nothing
     else
       logger.warn "#{e.inspect} #{user_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
       logger.info e.backtrace.join("\n")
     end
 
     log(options).update(status: false, error_class: e.class, error_message: e.message)
+  end
+
+  def not_fatal_error?(ex)
+    DirectMessageStatus.you_have_blocked?(ex) ||
+        DirectMessageStatus.not_following_you?(ex) ||
+        DirectMessageStatus.do_not_follow_you?(ex) ||
+        DirectMessageStatus.cannot_send_messages?(ex) ||
+        DirectMessageStatus.might_be_automated?(ex) ||
+        DirectMessageStatus.not_allowed_to_access_or_delete?(ex)
   end
 
   def send_report(kind, user, options)

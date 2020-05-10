@@ -32,7 +32,7 @@ RSpec.describe CreatePromptReportMessageWorker do
       let(:log) { CreatePromptReportLog.new }
       before { allow(worker).to receive(:send_report).with(any_args).and_raise(exception) }
       it do
-        expect(DirectMessageStatus).to receive(:cannot_send_messages?).with(exception).and_call_original
+        expect(worker).to receive(:not_fatal_error?).with(exception).and_call_original
         expect(worker).to receive(:log).with(options).and_return(log)
         subject
       end
