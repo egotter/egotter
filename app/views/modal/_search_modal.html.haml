@@ -1,4 +1,4 @@
-= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path} do
+= modal_dialog id: 'search-modal', title: t('.title'), data: {url: search_histories_path}, size: 'modal-lg' do
   = render partial: 'common/search_form', locals: {via: current_via('search_modal_input')}
   .my-3= t('.remaining_count_html', count: SearchCountLimitation.remaining_search_count(user: current_user, session_id: egotter_visit_id))
 
