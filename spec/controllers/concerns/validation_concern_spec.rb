@@ -413,4 +413,27 @@ describe Concerns::ValidationConcern, type: :controller do
       end
     end
   end
+
+  describe '#user_requested_self_search?' do
+    let(:screen_name) { 'screen_name' }
+    subject { controller.user_requested_self_search? }
+
+    before do
+      allow(controller.params).to receive(:[]).with(:screen_name).and_return(screen_name)
+    end
+
+    context 'user is signed in' do
+      include_context 'user is signed in'
+      it do
+        expect(SearchRequestValidator).to receive_message_chain(:new, :user_requested_self_search?).
+            with(user).with(screen_name).and_return('result')
+        is_expected.to eq('result')
+      end
+    end
+
+    context 'user is not signed in' do
+      include_context 'user is not signed in'
+      it { is_expected.to be_falsey }
+    end
+  end
 end

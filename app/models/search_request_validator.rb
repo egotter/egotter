@@ -4,8 +4,9 @@ class SearchRequestValidator
   end
 
   def user_requested_self_search?(screen_name)
-    client.user(screen_name)[:id] == @user.uid
+    user_signed_in? && @user.uid == client.user(screen_name)[:id]
   rescue => e
+    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     false
   end
 
@@ -14,6 +15,7 @@ class SearchRequestValidator
     DeleteNotFoundUserWorker.perform_async(screen_name)
     false
   rescue => e
+    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     if AccountStatus.not_found?(e)
       CreateNotFoundUserWorker.perform_async(screen_name)
       true
@@ -27,6 +29,7 @@ class SearchRequestValidator
     DeleteForbiddenUserWorker.perform_async(screen_name)
     false
   rescue => e
+    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     if AccountStatus.suspended?(e)
       CreateForbiddenUserWorker.perform_async(screen_name)
       true
@@ -43,6 +46,7 @@ class SearchRequestValidator
       false
     end
   rescue => e
+    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     AccountStatus.blocked?(e)
   end
 
@@ -55,6 +59,7 @@ class SearchRequestValidator
       user[:protected]
     end
   rescue => e
+    logger.debug { "#{self.class}##{__method__} #{e.inspect} screen_name=#{screen_name}" }
     AccountStatus.protected?(e)
   end
 
@@ -64,5 +69,9 @@ class SearchRequestValidator
 
   def client
     @client ||= (@user ? @user.api_client : Bot.api_client)
+  end
+
+  def logger
+    Rails.logger
   end
 end
