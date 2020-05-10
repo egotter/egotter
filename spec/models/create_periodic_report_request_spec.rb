@@ -2,11 +2,7 @@ require 'rails_helper'
 
 RSpec.describe CreatePeriodicReportRequest, type: :model do
   let(:user) { create(:user) }
-  let(:request) do
-    described_class.create(
-        user: user
-    )
-  end
+  let(:request) { create(:create_periodic_report_request, user: user) }
 
   describe '#perform!' do
     subject { request.perform! }
@@ -65,12 +61,38 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
   describe '#create_new_twitter_user_record' do
     let(:task) { double('task') }
     subject { request.create_new_twitter_user_record }
+
     it do
       expect(CreateTwitterUserRequest).to receive(:create).
           with(requested_by: described_class, user_id: user.id, uid: user.uid).and_return('request')
       expect(CreateTwitterUserTask).to receive(:new).with('request').and_return(task)
       expect(task).to receive(:start!)
       subject
+    end
+
+    [
+        CreateTwitterUserRequest::TooShortCreateInterval,
+        CreateTwitterUserRequest::NotChanged
+    ].each do |error|
+      context "#{error} is raised" do
+        before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
+        it do
+          expect(request.logger).to receive(:info).with(instance_of(String))
+          subject
+        end
+      end
+    end
+
+    [
+        RuntimeError
+    ].each do |error|
+      context "#{error} is raised" do
+        before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
+        it do
+          expect(request.logger).to receive(:warn).with(instance_of(String))
+          subject
+        end
+      end
     end
   end
 end

@@ -69,7 +69,12 @@ class CreatePeriodicReportMessageWorker
     PeriodicReport.periodic_message(user_id, **options).deliver!
 
   rescue => e
-    if !DirectMessageStatus.you_have_blocked?(e) && !DirectMessageStatus.not_following_you?(e)
+    if DirectMessageStatus.you_have_blocked?(e) ||
+        DirectMessageStatus.not_following_you?(e) ||
+        DirectMessageStatus.cannot_find_specified_user?(e) ||
+        DirectMessageStatus.protect_out_users_from_spam?(e)
+      logger.info "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
+    else
       notify_airbrake(e, user_id: user_id, options: options)
       logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
       logger.info e.backtrace.join("\n")
