@@ -1,12 +1,13 @@
 # Perform a request and log an error
 class StartSendingPeriodicReportsTask
 
-  def initialize(user_ids: nil, start_date: nil, delay: nil, limit: 5000)
+  def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000)
     if user_ids.present?
       @user_ids = user_ids
     end
 
     @start_date = start_date
+    @end_date = end_date
     @delay = delay
     @limit = limit
   end
@@ -35,8 +36,8 @@ class StartSendingPeriodicReportsTask
   def initialize_user_ids
     if @user_ids.nil?
       user_ids = self.class.dm_received_user_ids
-      user_ids += self.class.recent_access_user_ids(@start_date).take(@limit)
-      user_ids += self.class.new_user_ids(@start_date).take(@limit)
+      user_ids += self.class.recent_access_user_ids(@start_date, @end_date).take(@limit)
+      user_ids += self.class.new_user_ids(@start_date, @end_date).take(@limit)
       @user_ids = user_ids.uniq
       Rails.logger.debug { "StartSendingPeriodicReportsTask user_ids.size=#{@user_ids.size}" }
     end
@@ -51,18 +52,25 @@ class StartSendingPeriodicReportsTask
     end
 
     ACCESS_DAYS_START = 12.hours
+    ACCESS_DAYS_END = 3.hours
 
-    def recent_access_user_ids(start_date)
+    def recent_access_user_ids(start_date = nil, end_date = nil)
       start_date = ACCESS_DAYS_START.ago unless start_date
-      user_ids = AccessDay.where('created_at > ?', start_date).select(:user_id).distinct.map(&:user_id)
+      end_date = ACCESS_DAYS_END.ago unless end_date
+
+      # The target is `created_at`, not 'date'
+      user_ids = AccessDay.where(created_at: start_date..end_date).select(:user_id).distinct.map(&:user_id)
       user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
     end
 
     NEW_USERS_START = 1.day
+    NEW_USERS_END = 1.second
 
-    def new_user_ids(start_date)
+    def new_user_ids(start_date = nil, end_date = nil)
       start_date = NEW_USERS_START.ago unless start_date
-      User.where('created_at > ?', start_date).where(authorized: true).pluck(:id)
+      end_date = NEW_USERS_END.ago unless end_date
+
+      User.where(created_at: start_date..end_date).where(authorized: true).pluck(:id)
     end
   end
 end
