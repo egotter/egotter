@@ -199,12 +199,12 @@ class PeriodicReport < ApplicationRecord
           description: I18n.t('quick_replies.prompt_reports.description1')
       },
       {
-          label: I18n.t('quick_replies.prompt_reports.label2'),
-          description: I18n.t('quick_replies.prompt_reports.description2')
-      },
-      {
           label: I18n.t('quick_replies.prompt_reports.label3'),
           description: I18n.t('quick_replies.prompt_reports.description3')
+      },
+      {
+          label: I18n.t('quick_replies.prompt_reports.label5'),
+          description: I18n.t('quick_replies.prompt_reports.description5')
       }
   ]
 
