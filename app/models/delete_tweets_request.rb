@@ -33,10 +33,10 @@ class DeleteTweetsRequest < ApplicationRecord
   THREADS_NUM = 3
 
   def perform!
-    error_check! unless @error_check
-
     retries ||= 5
     @destroy_count ||= 0
+
+    error_check! unless @error_check
 
     ::Timeout.timeout(TIMEOUT_SECONDS) do
       tweets = api_client.user_timeline(count: FETCH_COUNT).select { |t| t.created_at < created_at }

@@ -28,13 +28,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
   def perform!
     logger.debug { "#{self.class}##{__method__} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context} sync_flag=#{sync_flag}" }
 
-    if check_credentials && !verify_credentials_before_starting?
-      return
-    end
-
-    if check_interval && !check_interval_before_starting?
-      return
-    end
+    return if check_credentials && !verify_credentials_before_starting?
+    return if check_interval && !check_interval_before_starting?
 
     if check_twitter_user
       create_new_twitter_user_record
