@@ -18,6 +18,15 @@ class CreateEgotterFollowerWorker
       EgotterFollower.create!(uid: user.uid, screen_name: user.screen_name)
     end
   rescue ActiveRecord::RecordNotUnique => e
+  rescue ActiveRecord::Deadlocked => e
+    # Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction:
+    @retry_count ||= 0
+    if @retry_count < 3
+      @retry_count += 1
+      retry
+    else
+      raise
+    end
   rescue => e
     logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
   end
