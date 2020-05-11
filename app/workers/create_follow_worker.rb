@@ -28,6 +28,7 @@ class CreateFollowWorker
       FollowRequest::AlreadyRequestedToFollow,
       FollowRequest::NotFound,
       FollowRequest::Suspended,
+      FollowRequest::Blocked,
       FollowRequest::Unauthorized => e
     logger.info "Skip #{e.inspect}"
   rescue FollowRequest::TooManyFollows => e

@@ -74,6 +74,8 @@ class FollowRequest < ApplicationRecord
       raise TemporarilyLocked
     elsif e.message.start_with?('Your account is suspended and is not permitted to access this feature.')
       raise Suspended
+    elsif e.message == 'You have been blocked from following this account at the request of the user.'
+      raise Blocked
     elsif e.message.start_with?('You are unable to follow more people at this time.')
       GlobalFollowLimitation.new.limit_start
       raise TooManyFollows
@@ -148,6 +150,10 @@ class FollowRequest < ApplicationRecord
 
   # Don't retry
   class Unauthorized < Error
+  end
+
+  # Don't retry
+  class Blocked < Error
   end
 
   class Forbidden < Error
