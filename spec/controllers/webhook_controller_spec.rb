@@ -113,6 +113,13 @@ RSpec.describe WebhookController, type: :controller do
       end
     end
 
+    context 'report_received? returns true' do
+      before { allow(controller).to receive(:report_received?).with(dm).and_return(true) }
+      it do
+        expect(controller).to receive(:enqueue_user_received_periodic_report).with(dm)
+        subject
+      end
+    end
   end
 
   describe '#process_message_from_egotter' do

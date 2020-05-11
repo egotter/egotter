@@ -45,6 +45,12 @@ module Concerns::PeriodicReportConcern
     dm.text.match?(RESTART_REGEXP)
   end
 
+  RECEIVED_REGEXP = /\Aリムられ通知 届きました\z/
+
+  def report_received?(dm)
+    dm.text.match?(RECEIVED_REGEXP)
+  end
+
   def enqueue_user_requested_periodic_report(dm)
     unless (user = User.find_by(uid: dm.sender_id))
       CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
@@ -58,6 +64,16 @@ module Concerns::PeriodicReportConcern
       CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
     else
       CreatePeriodicReportMessageWorker.perform_async(user.id, unauthorized: true)
+    end
+
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+  end
+
+  def enqueue_user_received_periodic_report(dm)
+    if (user = User.find_by(uid: dm.sender_id)) && user.authorized? && CreatePeriodicReportRequest.sufficient_interval?(user.id)
+      request = CreatePeriodicReportRequest.create(user_id: user.id)
+      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
     end
 
   rescue => e

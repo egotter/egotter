@@ -53,6 +53,10 @@ class WebhookController < ApplicationController
       enqueue_user_requested_periodic_report(dm)
     elsif stop_now_requested?(dm)
       enqueue_user_requested_stopping_periodic_report(dm)
+    elsif report_received?(dm)
+      enqueue_user_received_periodic_report(dm)
+    else
+      logger.info { "#{__method__} dm is ignored #{dm.text}" }
     end
 
     SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)

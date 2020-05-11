@@ -133,22 +133,29 @@ class CreatePeriodicReportRequest < ApplicationRecord
     }
   end
 
-  INTERVAL = 1.hour
+  SHORT_INTERVAL = 1.hour
+  SUFFICIENT_INTERVAL = 12.hours
 
   class << self
     def interval_too_short?(include_user_id:, reject_id:)
-      last_request = CreatePeriodicReportRequest.where(user_id: include_user_id).
-          where(status: '').
-          where.not(finished_at: nil).
+      last_request = correctly_completed.where(user_id: include_user_id).
           where.not(id: reject_id).
           order(created_at: :desc).
           first
 
-      if last_request
-        last_request.finished_at > INTERVAL.ago
-      else
-        false
-      end
+      last_request && last_request.finished_at > SHORT_INTERVAL.ago
+    end
+
+    def sufficient_interval?(user_id)
+      last_request = correctly_completed.where(user_id: user_id).
+          order(created_at: :desc).
+          first
+
+      !last_request || last_request.finished_at < SUFFICIENT_INTERVAL.ago
+    end
+
+    def correctly_completed
+      where(status: '').where.not(finished_at: nil)
     end
   end
 end

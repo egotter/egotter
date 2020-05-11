@@ -70,6 +70,16 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
   end
 
+  describe '#report_received?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:report_received?, dm) }
+
+    context "text is 'リムられ通知 届きました'" do
+      let(:text) { "リムられ通知 届きました" }
+      it { is_expected.to be_truthy }
+    end
+  end
+
   describe '#enqueue_user_requested_periodic_report' do
     shared_context 'find_by returns user' do
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
@@ -127,6 +137,25 @@ describe Concerns::PeriodicReportConcern, type: :controller do
 
       it do
         expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
+        subject
+      end
+    end
+  end
+
+  describe '#enqueue_user_received_periodic_report' do
+    let(:user) { create(:user) }
+    let(:dm) { double('dm', sender_id: user.uid) }
+    subject { controller.send(:enqueue_user_received_periodic_report, dm) }
+
+    context 'user is found' do
+      let(:request) { create(:create_periodic_report_request, user: user) }
+
+      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
+
+      it do
+        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
+        expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).
+            with(request.id, user_id: user.id, create_twitter_user: true)
         subject
       end
     end

@@ -95,4 +95,52 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       end
     end
   end
+
+  describe '.interval_too_short?' do
+    shared_context 'record exists' do
+      before { create(:create_periodic_report_request, user_id: user.id, finished_at: time, created_at: time) }
+    end
+
+    subject { described_class.interval_too_short?(include_user_id: user.id, reject_id: nil) }
+
+    context 'first request' do
+      it { is_expected.to be_falsey }
+    end
+
+    context 'recently finished' do
+      include_context 'record exists'
+      let(:time) { 30.minutes.ago }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'finished a long time ago' do
+      include_context 'record exists'
+      let(:time) { 3.hours.ago }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '.sufficient_interval?' do
+    shared_context 'record exists' do
+      before { create(:create_periodic_report_request, user_id: user.id, finished_at: time, created_at: time) }
+    end
+
+    subject { described_class.sufficient_interval?(user.id) }
+
+    context 'first request' do
+      it { is_expected.to be_truthy }
+    end
+
+    context 'recently finished' do
+      include_context 'record exists'
+      let(:time) { 30.minutes.ago }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'finished a long time ago' do
+      include_context 'record exists'
+      let(:time) { 1.day.ago }
+      it { is_expected.to be_truthy }
+    end
+  end
 end
