@@ -13,7 +13,6 @@ class CreateTwitterUserWorker
   end
 
   def after_skip(request_id, options = {})
-    options[:worker] = self.class
     SkippedCreateTwitterUserWorker.perform_async(request_id, options)
   end
 
@@ -22,7 +21,6 @@ class CreateTwitterUserWorker
   end
 
   def after_expire(request_id, options = {})
-    options[:worker] = self.class
     ExpiredCreateTwitterUserWorker.perform_async(request_id, options)
   end
 

@@ -14,7 +14,7 @@ RSpec.describe CreateTwitterUserWorker do
   describe '#after_skip' do
     subject { worker.after_skip(request.id) }
     it do
-      expect(SkippedCreateTwitterUserWorker).to receive(:perform_async).with(request.id, worker: CreateTwitterUserWorker)
+      expect(SkippedCreateTwitterUserWorker).to receive(:perform_async).with(request.id, {})
       subject
     end
   end
@@ -22,7 +22,7 @@ RSpec.describe CreateTwitterUserWorker do
   describe '#after_expire' do
     subject { worker.after_expire(request.id) }
     it do
-      expect(ExpiredCreateTwitterUserWorker).to receive(:perform_async).with(request.id, worker: CreateTwitterUserWorker)
+      expect(ExpiredCreateTwitterUserWorker).to receive(:perform_async).with(request.id, {})
       subject
     end
   end
