@@ -84,4 +84,54 @@ RSpec.describe WebhookController, type: :controller do
       end
     end
   end
+
+  describe '#sent_from_user?' do
+    let(:dm) { double('dm', id: 1, sender_id: 1, text: text) }
+    subject { controller.send(:sent_from_user?, dm) }
+
+    before do
+      allow(User).to receive_message_chain(:egotter, :uid).and_return(2)
+    end
+
+    context 'text includes #egotter' do
+      let(:text) { 'hello #egotter' }
+      it { is_expected.to be_falsey }
+    end
+
+    [
+        I18n.t('quick_replies.prompt_reports.label1'),
+        I18n.t('quick_replies.prompt_reports.label2'),
+        I18n.t('quick_replies.prompt_reports.label3'),
+        I18n.t('quick_replies.prompt_reports.label4'),
+        I18n.t('quick_replies.prompt_reports.label5')
+    ].each do |text_command|
+      context "text is #{text_command}" do
+        let(:text) { text_command }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#sent_from_egotter?' do
+    let(:dm) { double('dm', id: 1, sender_id: 1, text: text) }
+    subject { controller.send(:sent_from_egotter?, dm) }
+
+    before do
+      allow(User).to receive_message_chain(:egotter, :uid).and_return(1)
+    end
+
+    context 'text includes #egotter' do
+      let(:text) { 'hello #egotter' }
+      it { is_expected.to be_falsey }
+    end
+
+    [
+        I18n.t('quick_replies.prompt_reports.label3')
+    ].each do |text_command|
+      context "text is #{text_command}" do
+        let(:text) { text_command }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
 end

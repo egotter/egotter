@@ -7,6 +7,7 @@ class SendReceivedMessageWorker
   #   text
   #   dm_id
   def perform(sender_uid, options = {})
+    return if fixed_message?(options['text'])
     send_message_to_slack(sender_uid, options['dm_id'], options['text'])
   rescue => e
     notify_airbrake(e, sender_uid: sender_uid, options: options)
@@ -23,6 +24,14 @@ class SendReceivedMessageWorker
       I18n.t('quick_replies.test_messages.label1'),
       I18n.t('quick_replies.test_messages.label2'),
   ]
+
+  def fixed_message?(text)
+    text == I18n.t('quick_replies.prompt_reports.label1') ||
+        text == I18n.t('quick_replies.prompt_reports.label2') ||
+        text == I18n.t('quick_replies.prompt_reports.label3') ||
+        text == I18n.t('quick_replies.prompt_reports.label4') ||
+        text == I18n.t('quick_replies.prompt_reports.label5')
+  end
 
   def send_message_to_slack(sender_uid, dm_id, text)
     user = User.find_by(uid: sender_uid)
