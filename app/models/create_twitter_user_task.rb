@@ -7,6 +7,9 @@ class CreateTwitterUserTask
   end
 
   # Create a record or raise an exception
+  # context:
+  #   :prompt_reports
+  #   :periodic_reports
   def start!(context = nil)
     @log = CreateTwitterUserLog.create_by(request: request)
 

@@ -25,6 +25,7 @@ class TwitterUserFetcher
     signatures = fetch_signatures(reject_names)
 
     if @context == :prompt_reports
+      # Requests/24-hour window 100,000
       signatures.delete_if { |hash| hash[:method] == :user_timeline }
     end
 

@@ -30,6 +30,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   # context:
   #   :prompt_reports
+  #   :periodic_reports
   def perform!(context = nil)
     raise AlreadyFinished if finished?
     raise Unauthorized if user&.unauthorized?
@@ -106,7 +107,7 @@ class CreateTwitterUserRequest < ApplicationRecord
   rescue Twitter::Error::TooManyRequests => e
     raise
   rescue Twitter::Error::Forbidden => e
-    if e.message.start_with? 'To protect our users from spam and other malicious activity, this account is temporarily locked.'
+    if AccountStatus.temporarily_locked?(e)
       raise Forbidden
     else
       raise Unknown.new("#{__method__} #{e.class} #{e.message}")

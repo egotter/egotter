@@ -98,7 +98,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
         user_id: user_id,
         uid: user.uid)
 
-    CreateTwitterUserTask.new(request).start!
+    CreateTwitterUserTask.new(request).start!(:periodic_reports)
   rescue CreateTwitterUserRequest::TooShortCreateInterval,
       CreateTwitterUserRequest::NotChanged => e
     logger.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
