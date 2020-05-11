@@ -30,6 +30,16 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       end
     end
 
+    context "text is あ" do
+      let(:text) { 'あ' }
+      it { is_expected.to be_truthy }
+    end
+
+    context "text is あいうえお" do
+      let(:text) { 'あいうえお' }
+      it { is_expected.to be_falsey }
+    end
+
     context "text is #{I18n.t('quick_replies.prompt_reports.label1')}" do
       let(:text) { I18n.t('quick_replies.prompt_reports.label1') }
       it { is_expected.to be_falsey }
