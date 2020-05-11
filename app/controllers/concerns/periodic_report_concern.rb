@@ -3,10 +3,11 @@ require 'active_support/concern'
 module Concerns::PeriodicReportConcern
   extend ActiveSupport::Concern
 
+  SEND_NOW_EXACT_REGEXP = /リムられ通知(\s|　)*(今すぐ|いますぐ)(送信|そうしん)/
   SEND_NOW_REGEXP = /(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知|返信)/
 
   def send_now_requested?(dm)
-    dm.text.match?(SEND_NOW_REGEXP)
+    dm.text.match?(SEND_NOW_EXACT_REGEXP) || dm.text.match?(SEND_NOW_REGEXP)
   end
 
   CONTINUE_WORDS = [
@@ -20,6 +21,7 @@ module Concerns::PeriodicReportConcern
       'テスト送信 届きました',
       '初期設定 届きました',
       '通知がきません',
+      '更新して',
       '早くしろよ',
       'まだですか',
       'ぴえん'
