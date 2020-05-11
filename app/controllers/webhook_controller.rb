@@ -48,7 +48,7 @@ class WebhookController < ApplicationController
   private
 
   def sent_from_user?(dm)
-    dm.text.exclude?('#egotter') && dm.text != I18n.t('quick_replies.prompt_reports.label3') && dm.sender_id != User.egotter.uid
+    dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
   end
 
   def sent_from_egotter?(dm)
