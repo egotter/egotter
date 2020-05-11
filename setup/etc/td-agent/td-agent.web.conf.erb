@@ -34,7 +34,7 @@
   @type rewrite_tag_filter
   <rule>
     key message
-    pattern (WARN|ERROR|Killed|\[error\])
+    pattern ( WARN:? | ERROR:? | Kill(ed)? |\[error\])
     tag ${tag}.$1
   </rule>
 </match>

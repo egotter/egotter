@@ -24,14 +24,6 @@
 
 <source>
   @type tail
-  path /var/egotter/log/sidekiq_import.log
-  pos_file /tmp/sidekiq_import.log.pos
-  tag <%= name %>.sidekiq_import
-  format /^(?<message>.*)$/
-</source>
-
-<source>
-  @type tail
   path /var/egotter/log/sidekiq_misc.log
   pos_file /tmp/sidekiq_misc.log.pos
   tag <%= name %>.sidekiq_misc
@@ -66,7 +58,7 @@
   @type rewrite_tag_filter
   <rule>
     key message
-    pattern (WARN|ERROR|Killed|\[error\])
+    pattern ( WARN:? | ERROR:? | Kill(ed)? |\[error\])
     tag ${tag}.$1
   </rule>
 </match>
@@ -95,15 +87,7 @@
   flush_interval 2s
 </match>
 
-<match <%= name %>.sidekiq_import.*>
-  @type slack
-  webhook_url <%= webhook_sidekiq_import %>
-  channel sidekiq_import
-  username <%= name %>
-  flush_interval 2s
-</match>
-
-  <match <%= name %>.sidekiq_misc.*>
+<match <%= name %>.sidekiq_misc.*>
   @type slack
   webhook_url <%= webhook_sidekiq_misc %>
   channel sidekiq_misc
