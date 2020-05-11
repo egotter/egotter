@@ -11,30 +11,10 @@ class WebhookController < ApplicationController
   end
 
   def twitter
-    if verified_webhook_request? && params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
+    if verified_webhook_request? && direct_message_event_for_egotter?
       params[:direct_message_events].each do |event|
-        if event['type'] == 'message_create'
-          dm = DirectMessage.new(event: event.to_unsafe_h.deep_symbolize_keys)
-
-          if sent_from_user?(dm)
-            GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
-
-            if restart_requested?(dm)
-              enqueue_user_requested_restarting_periodic_report(dm)
-            end
-
-            if send_now_requested?(dm) || continue_requested?(dm)
-              enqueue_user_requested_periodic_report(dm)
-            elsif stop_now_requested?(dm)
-              enqueue_user_requested_stopping_periodic_report(dm)
-            end
-
-            SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)
-          elsif sent_from_egotter?(dm)
-            enqueue_egotter_requested_periodic_report(dm)
-            SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
-          end
-        end
+        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
+        process_direct_message_event(event)
       end
     end
 
@@ -46,6 +26,44 @@ class WebhookController < ApplicationController
   end
 
   private
+
+  def direct_message_event_for_egotter?
+    params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
+  end
+
+  def process_direct_message_event(event)
+    return unless event['type'] == 'message_create'
+
+    dm = DirectMessage.new(event: event.deep_symbolize_keys)
+
+    if sent_from_user?(dm)
+      process_message_from_user(dm)
+    elsif sent_from_egotter?(dm)
+      process_message_from_egotter(dm)
+    end
+  end
+
+  def process_message_from_user(dm)
+    GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
+
+    if restart_requested?(dm)
+      enqueue_user_requested_restarting_periodic_report(dm)
+      enqueue_user_requested_periodic_report(dm)
+    elsif send_now_requested?(dm) || continue_requested?(dm)
+      enqueue_user_requested_periodic_report(dm)
+    elsif stop_now_requested?(dm)
+      enqueue_user_requested_stopping_periodic_report(dm)
+    end
+
+    SendReceivedMessageWorker.perform_async(dm.sender_id, dm_id: dm.id, text: dm.text)
+  end
+
+  def process_message_from_egotter(dm)
+    if send_now_requested?(dm)
+      enqueue_egotter_requested_periodic_report(dm)
+    end
+    SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
+  end
 
   def sent_from_user?(dm)
     dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid

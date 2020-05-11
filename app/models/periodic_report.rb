@@ -106,6 +106,13 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
+    def restart_requested_message
+      template = Rails.root.join('app/views/periodic_reports/restart_requested.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash({})
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def stop_requested_message
       template = Rails.root.join('app/views/periodic_reports/stop_requested.ja.text.erb')
       message = ERB.new(template.read).result_with_hash({})
@@ -163,26 +170,30 @@ class PeriodicReport < ApplicationRecord
   end
 
   def send_direct_message
-    event = build_direct_message_event(report_recipient.uid, message)
+    event = self.class.build_direct_message_event(report_recipient.uid, message)
     report_sender.api_client.create_direct_message_event(event: event)
   end
 
-  def build_direct_message_event(uid, message, unsubscribe: false)
-    quick_replies = unsubscribe ? UNSUBSCRIBE_QUICK_REPLY_OPTIONS : DEFAULT_QUICK_REPLY_OPTIONS
+  class << self
+    # options:
+    #   unsubscribe
+    def build_direct_message_event(uid, message, options = {})
+      quick_replies = options[:unsubscribe] ? UNSUBSCRIBE_QUICK_REPLY_OPTIONS : DEFAULT_QUICK_REPLY_OPTIONS
 
-    {
-        type: 'message_create',
-        message_create: {
-            target: {recipient_id: uid},
-            message_data: {
-                text: message,
-                quick_reply: {
-                    type: 'options',
-                    options: quick_replies
-                }
-            }
-        }
-    }
+      {
+          type: 'message_create',
+          message_create: {
+              target: {recipient_id: uid},
+              message_data: {
+                  text: message,
+                  quick_reply: {
+                      type: 'options',
+                      options: quick_replies
+                  }
+              }
+          }
+      }
+    end
   end
 
   def report_sender

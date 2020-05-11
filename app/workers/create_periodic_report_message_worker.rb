@@ -4,11 +4,15 @@ class CreatePeriodicReportMessageWorker
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
-    user_id
+    if user_id
+      user_id
+    else
+      "uid-#{options[:uid] || options['uid']}"
+    end
   end
 
   def unique_in
-    1.minute
+    3.seconds
   end
 
   def after_skip(*args)
@@ -26,37 +30,35 @@ class CreatePeriodicReportMessageWorker
   #   interval_too_short
   #   unauthorized
   #   unregistered and uid
-  #   stop_requested and uid
+  #   stop_requested
+  #   restart_requested
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
     if options[:unregistered]
-      report = PeriodicReport.unregistered_message
-      event = report.build_direct_message_event(options[:uid], report.message)
-      User.egotter.api_client.create_direct_message_event(event: event)
-      return
-    end
-
-    if options[:stop_requested]
-      report = PeriodicReport.stop_requested_message
-      event = report.build_direct_message_event(options[:uid], report.message, unsubscribe: true)
-      User.egotter.api_client.create_direct_message_event(event: event)
+      perform_unregistered(options[:uid])
       return
     end
 
     user = User.find(user_id)
 
+    if options[:restart_requested]
+      perform_restart_request(user)
+      return
+    end
+
+    if options[:stop_requested]
+      perform_stop_request(user)
+      return
+    end
+
     if options[:permission_level_not_enough] || !user.notification_setting.enough_permission_level?
-      report = PeriodicReport.permission_level_not_enough_message
-      event = report.build_direct_message_event(user.uid, report.message)
-      User.egotter.api_client.create_direct_message_event(event: event)
+      perform_permission_level_not_enough(user)
       return
     end
 
     if options[:unauthorized] || !user.authorized?
-      report = PeriodicReport.unauthorized_message
-      event = report.build_direct_message_event(user.uid, report.message)
-      User.egotter.api_client.create_direct_message_event(event: event)
+      perform_unauthorized(user)
       return
     end
 
@@ -84,6 +86,31 @@ class CreatePeriodicReportMessageWorker
       logger.warn "#{e.class} #{e.message} user_id=#{user_id} options=#{options}"
       logger.info e.backtrace.join("\n")
     end
+  end
+
+  def perform_unregistered(uid)
+    send_message_from_egotter(uid, PeriodicReport.unregistered_message.message)
+  end
+
+  def perform_restart_request(user)
+    send_message_from_egotter(user.uid, PeriodicReport.restart_requested_message.message)
+  end
+
+  def perform_stop_request(user)
+    send_message_from_egotter(user.uid, PeriodicReport.stop_requested_message.message, unsubscribe: true)
+  end
+
+  def perform_permission_level_not_enough(user)
+    send_message_from_egotter(user.uid, PeriodicReport.permission_level_not_enough_message.message)
+  end
+
+  def perform_unauthorized(user)
+    send_message_from_egotter(user.uid, PeriodicReport.unauthorized_message.message)
+  end
+
+  def send_message_from_egotter(uid, message, options = {})
+    event = PeriodicReport.build_direct_message_event(uid, message, options)
+    User.egotter.api_client.create_direct_message_event(event: event)
   end
 
   def not_fatal_error?(e)

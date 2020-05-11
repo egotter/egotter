@@ -46,12 +46,7 @@ module Concerns::PeriodicReportConcern
   end
 
   def enqueue_user_requested_periodic_report(dm)
-    if !send_now_requested?(dm) && !continue_requested?(dm)
-      return
-    end
-
-    user = User.find_by(uid: dm.sender_id)
-    unless user
+    unless (user = User.find_by(uid: dm.sender_id))
       CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
       return
     end
@@ -70,31 +65,25 @@ module Concerns::PeriodicReportConcern
   end
 
   def enqueue_user_requested_stopping_periodic_report(dm)
-    return unless stop_now_requested?(dm)
     if (user = User.find_by(uid: dm.sender_id))
       StopPeriodicReportRequest.create(user_id: user.id) # If the same record exists, this process may fail
+      CreatePeriodicReportMessageWorker.perform_async(user.id, stop_requested: true)
     end
-    CreatePeriodicReportMessageWorker.perform_async(nil, stop_requested: true, uid: dm.sender_id)
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end
 
   def enqueue_user_requested_restarting_periodic_report(dm)
-    return unless restart_requested?(dm)
     if (user = User.find_by(uid: dm.sender_id))
       StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
+      CreatePeriodicReportMessageWorker.perform_async(user.id, restart_requested: true)
     end
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
   end
 
   def enqueue_egotter_requested_periodic_report(dm)
-    unless send_now_requested?(dm)
-      return
-    end
-
-    user = User.find_by(uid: dm.recipient_id)
-    unless user
+    unless (user = User.find_by(uid: dm.recipient_id))
       CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.recipient_id)
       return
     end

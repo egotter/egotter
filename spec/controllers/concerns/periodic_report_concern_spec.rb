@@ -71,10 +71,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
   end
 
   describe '#enqueue_user_requested_periodic_report' do
-    shared_context 'send_now_requested? returns true' do
-      before { allow(controller).to receive(:send_now_requested?).with(dm).and_return(true) }
-    end
-
     shared_context 'find_by returns user' do
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
     end
@@ -88,7 +84,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     subject { controller.send(:enqueue_user_requested_periodic_report, dm) }
 
     context 'user is not found' do
-      include_context 'send_now_requested? returns true'
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
 
       it do
@@ -98,7 +93,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
 
     context 'user is authorized' do
-      include_context 'send_now_requested? returns true'
       include_context 'find_by returns user'
       let(:request) { create(:create_periodic_report_request, user: user) }
 
@@ -111,7 +105,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
 
     context 'enough_permission_level? returns false' do
-      include_context 'send_now_requested? returns true'
       include_context 'find_by returns user'
       include_context 'user is unauthorized'
       before do
@@ -126,7 +119,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
 
     context 'else' do
-      include_context 'send_now_requested? returns true'
       include_context 'find_by returns user'
       include_context 'user is unauthorized'
       before do
@@ -134,29 +126,13 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       end
 
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
-            with(user.id, unauthorized: true)
-        subject
-      end
-    end
-
-    context 'send_now_requested? returns false and continue_requested? return false' do
-      before do
-        allow(controller).to receive(:send_now_requested?).with(dm).and_return(false)
-        allow(controller).to receive(:continue_requested?).with(dm).and_return(false)
-      end
-      it do
-        expect(User).not_to receive(:find_by)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, unauthorized: true)
         subject
       end
     end
   end
 
   describe '#enqueue_user_requested_stopping_periodic_report' do
-    shared_context 'stop_now_requested? returns true' do
-      before { allow(controller).to receive(:stop_now_requested?).with(dm).and_return(true) }
-    end
-
     shared_context 'find_by returns user' do
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
     end
@@ -166,41 +142,24 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     subject { controller.send(:enqueue_user_requested_stopping_periodic_report, dm) }
 
     context 'user is found' do
-      include_context 'stop_now_requested? returns true'
       include_context 'find_by returns user'
       it do
         expect(StopPeriodicReportRequest).to receive(:create).with(user_id: user.id)
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, stop_requested: true, uid: dm.sender_id)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, stop_requested: true)
         subject
       end
     end
 
     context 'user is not found' do
-      include_context 'stop_now_requested? returns true'
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
       it do
         expect(StopPeriodicReportRequest).not_to receive(:create)
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(nil, stop_requested: true, uid: dm.sender_id)
-        subject
-      end
-    end
-
-    context 'stop_now_requested? returns false' do
-      before do
-        allow(controller).to receive(:stop_now_requested?).with(dm).and_return(false)
-      end
-      it do
-        expect(User).not_to receive(:find_by)
         subject
       end
     end
   end
 
   describe '#enqueue_user_requested_restarting_periodic_report' do
-    shared_context 'restart_requested? returns true' do
-      before { allow(controller).to receive(:restart_requested?).with(dm).and_return(true) }
-    end
-
     shared_context 'find_by returns user' do
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
     end
@@ -210,39 +169,24 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     subject { controller.send(:enqueue_user_requested_restarting_periodic_report, dm) }
 
     context 'user is found' do
-      include_context 'restart_requested? returns true'
       include_context 'find_by returns user'
       it do
         expect(StopPeriodicReportRequest).to receive_message_chain(:find_by, :destroy).with(user_id: user.id).with(no_args)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, restart_requested: true)
         subject
       end
     end
 
     context 'user is not found' do
-      include_context 'restart_requested? returns true'
       before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
       it do
-        expect(StopPeriodicReportRequest).not_to receive(:destroy)
-        subject
-      end
-    end
-
-    context 'restart_requested? returns false' do
-      before do
-        allow(controller).to receive(:restart_requested?).with(dm).and_return(false)
-      end
-      it do
-        expect(User).not_to receive(:find_by)
+        expect(StopPeriodicReportRequest).not_to receive(:find_by)
         subject
       end
     end
   end
 
   describe '#enqueue_egotter_requested_periodic_report' do
-    shared_context 'send_now_requested? returns true' do
-      before { allow(controller).to receive(:send_now_requested?).with(dm).and_return(true) }
-    end
-
     shared_context 'find_by returns user' do
       before { allow(User).to receive(:find_by).with(uid: dm.recipient_id).and_return(user) }
     end
@@ -256,7 +200,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     subject { controller.send(:enqueue_egotter_requested_periodic_report, dm) }
 
     context 'user is not found' do
-      include_context 'send_now_requested? returns true'
       before { allow(User).to receive(:find_by).with(uid: dm.recipient_id).and_return(nil) }
 
       it do
@@ -266,7 +209,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
 
     context 'user is authorized' do
-      include_context 'send_now_requested? returns true'
       include_context 'find_by returns user'
       let(:request) { create(:create_periodic_report_request, user: user) }
 
@@ -279,7 +221,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
 
     context 'enough_permission_level? returns false' do
-      include_context 'send_now_requested? returns true'
       include_context 'find_by returns user'
       include_context 'user is unauthorized'
       before do
@@ -294,7 +235,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
 
     context 'else' do
-      include_context 'send_now_requested? returns true'
       include_context 'find_by returns user'
       include_context 'user is unauthorized'
       before do
@@ -304,14 +244,6 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       it do
         expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
             with(user.id, unauthorized: true)
-        subject
-      end
-    end
-
-    context 'send_now_requested? returns false' do
-      before { allow(controller).to receive(:send_now_requested?).with(dm).and_return(false) }
-      it do
-        expect(User).not_to receive(:find_by)
         subject
       end
     end
