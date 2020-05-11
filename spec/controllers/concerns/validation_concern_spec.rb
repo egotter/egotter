@@ -436,4 +436,28 @@ describe Concerns::ValidationConcern, type: :controller do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe '#user_requested_self_search_by_uid?' do
+    # This value is passed from params, so it's String
+    let(:uid) { '1' }
+    subject { controller.user_requested_self_search_by_uid?(uid) }
+
+    before do
+      allow(controller.params).to receive(:[]).with(:uid).and_return(uid)
+    end
+
+    context 'user is signed in' do
+      include_context 'user is signed in'
+      it do
+        expect(SearchRequestValidator).to receive_message_chain(:new, :user_requested_self_search_by_uid?).
+            with(user).with(uid).and_return('result')
+        is_expected.to eq('result')
+      end
+    end
+
+    context 'user is not signed in' do
+      include_context 'user is not signed in'
+      it { is_expected.to be_falsey }
+    end
+  end
 end

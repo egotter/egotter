@@ -10,6 +10,10 @@ class SearchRequestValidator
     false
   end
 
+  def user_requested_self_search_by_uid?(uid)
+    user_signed_in? && @user.uid == uid.to_i
+  end
+
   def not_found_user?(screen_name)
     client.user(screen_name)
     DeleteNotFoundUserWorker.perform_async(screen_name)

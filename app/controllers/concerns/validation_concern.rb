@@ -90,6 +90,10 @@ module Concerns::ValidationConcern
     user_signed_in? && SearchRequestValidator.new(current_user).user_requested_self_search?(screen_name)
   end
 
+  def user_requested_self_search_by_uid?(uid)
+    user_signed_in? && SearchRequestValidator.new(current_user).user_requested_self_search_by_uid?(uid)
+  end
+
   def valid_screen_name?(screen_name = nil)
     screen_name ||= params[:screen_name]
 

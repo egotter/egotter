@@ -40,4 +40,28 @@ RSpec.describe SearchRequestValidator, type: :model do
       it { is_expected.to be_falsey }
     end
   end
+
+  describe '#user_requested_self_search_by_uid?' do
+    # This value is passed from params, so it's String
+    let(:uid) { user&.uid.to_s }
+    subject { instance.user_requested_self_search_by_uid?(uid) }
+
+    context 'user is signed in' do
+      include_context 'user is signed in'
+
+      context 'signed-in user is searching himself' do
+        it { is_expected.to be_truthy }
+      end
+
+      context 'signed-in user is not searching himself' do
+        let(:uid) { '1' }
+        it { is_expected.to be_falsey }
+      end
+    end
+
+    context 'user is not signed in' do
+      include_context 'user is not signed in'
+      it { is_expected.to be_falsey }
+    end
+  end
 end
