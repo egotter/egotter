@@ -71,7 +71,20 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       let(:user_id) { user.id }
       let(:options) { {interval_too_short: true} }
       it do
+        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
         expect(PeriodicReport).to receive_message_chain(:interval_too_short_message, :deliver!).with(user.id).with(no_args)
+        subject
+      end
+    end
+
+    context 'correct option is specified' do
+      let(:user_id) { user.id }
+      let(:options) do
+        {request_id: 1, start_date: 1.day.ago, end_date: Time.zone.now, unfriends: [1], unfollowers: [2]}
+      end
+      it do
+        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
+        expect(PeriodicReport).to receive_message_chain(:periodic_message, :deliver!).with(user.id, **options).with(no_args)
         subject
       end
     end
@@ -150,6 +163,30 @@ RSpec.describe CreatePeriodicReportMessageWorker do
           with('uid', 'message', 'options').and_return('event')
       expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(event: 'event')
       subject
+    end
+  end
+
+  describe '#handle_weird_error' do
+    let(:error) { RuntimeError.new('anything') }
+    let(:block) { Proc.new { raise error } }
+    subject { worker.handle_weird_error(user, &block) }
+
+    context 'the error is weird' do
+      let(:message) { PeriodicReport.cannot_send_messages_message.message }
+
+      before do
+        allow(DirectMessageStatus).to receive(:cannot_send_messages?).with(error).and_return(true)
+        allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return(true)
+      end
+
+      it do
+        expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
+        subject
+      end
+    end
+
+    context 'else' do
+      it { expect { subject }.to raise_error(error) }
     end
   end
 

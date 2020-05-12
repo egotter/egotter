@@ -63,7 +63,9 @@ class CreatePeriodicReportMessageWorker
     end
 
     if options[:interval_too_short]
-      PeriodicReport.interval_too_short_message(user_id).deliver!
+      handle_weird_error(user) do
+        PeriodicReport.interval_too_short_message(user_id).deliver!
+      end
       return
     end
 
@@ -72,11 +74,13 @@ class CreatePeriodicReportMessageWorker
         push_message = PeriodicReport.periodic_push_message(user.id, **options)
         CreatePushNotificationWorker.perform_async(user.id, '', push_message)
       rescue => e
-        logger.warn "#{e.inspect} user_id=#{user_id}"
+        logger.warn "I can't send a push-notification #{e.inspect} user_id=#{user_id}"
       end
     end
 
-    PeriodicReport.periodic_message(user_id, **options).deliver!
+    handle_weird_error(user) do
+      PeriodicReport.periodic_message(user_id, **options).deliver!
+    end
 
   rescue => e
     if not_fatal_error?(e)
@@ -111,6 +115,17 @@ class CreatePeriodicReportMessageWorker
   def send_message_from_egotter(uid, message, options = {})
     event = PeriodicReport.build_direct_message_event(uid, message, options)
     User.egotter.api_client.create_direct_message_event(event: event)
+  end
+
+  def handle_weird_error(user)
+    yield
+  rescue => e
+    if DirectMessageStatus.cannot_send_messages?(e) && GlobalDirectMessageReceivedFlag.new.received?(user.uid)
+      logger.info { "#{__method__} #{e.inspect} user_id=#{user.id}" }
+      send_message_from_egotter(user.uid, PeriodicReport.cannot_send_messages_message.message)
+    else
+      raise
+    end
   end
 
   def not_fatal_error?(e)
