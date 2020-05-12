@@ -86,27 +86,48 @@ class TwitterUserDecorator < ApplicationDecorator
   end
 
   def suspended_label
-    suspended? ? '&nbsp;<span class="badge badge-danger">' + I18n.t('twitter.profile.labels.suspended') + '</span>' : ''
+    if suspended?
+      h.tag.span(class: 'badge badge-danger') { I18n.t('twitter.profile.labels.suspended') }
+    end
   end
 
   def blocked_label
-    blocked? ? '&nbsp;<span class="badge badge-secondary">' + I18n.t('twitter.profile.labels.blocked') + '</span>' : ''
+    if blocked?
+      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.blocked') }
+    end
   end
 
   def inactive_label
-    inactive? ? '&nbsp;<span class="badge badge-secondary">' + I18n.t('twitter.profile.labels.inactive') + '</span>' : ''
+    if inactive?
+      h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.inactive') }
+    end
   end
 
   def refollow_label
-    refollow? ? '&nbsp;<span class="badge badge-info">' + I18n.t('twitter.profile.labels.refollow') + '</span>' : ''
+    if refollow?
+      h.tag.span(class: 'badge badge-info') { I18n.t('twitter.profile.labels.refollow') }
+    end
   end
 
   def refollowed_label
-    refollowed? ? '&nbsp;<span class="badge badge-info">' + I18n.t('twitter.profile.labels.refollowed') + '</span>' : ''
+    if refollowed?
+      h.tag.span(class: 'badge badge-info') { I18n.t('twitter.profile.labels.refollowed')  }
+    end
   end
 
-  def status_labels
-    "#{suspended_label}#{blocked_label}#{inactive_label}#{refollow_label}#{refollowed_label}".html_safe
+  def followed_label
+    h.tag.span(class: 'badge badge-secondary') { I18n.t('twitter.profile.labels.followed')  }
+  end
+
+  def status_labels(with_followed_label = false)
+    [
+        suspended_label,
+        blocked_label,
+        inactive_label,
+        refollow_label,
+        refollowed_label,
+        with_followed_label ? followed_label : nil
+    ].compact.join('&nbsp;').html_safe
   end
 
   def protected?
@@ -119,26 +140,22 @@ class TwitterUserDecorator < ApplicationDecorator
 
   def protected_icon
     if protected?
-      <<~HTML.html_safe
-        &nbsp;<i class="fas fa-lock text-warning"></i>
-      HTML
-    else
-      ''
+      h.tag.i(class: 'fas fa-lock text-warning')
     end
   end
 
   def verified_icon
     if verified?
-      <<~HTML.html_safe
-        &nbsp;<i class="fas fa-check text-primary"></i>
-      HTML
-    else
-      ''
+      h.tag.i(class: 'fas fa-check text-primary')
     end
   end
 
   def name_with_icon
-    "#{name}#{protected_icon}#{verified_icon}".html_safe
+    [
+        name,
+        protected_icon,
+        verified_icon
+    ].compact.join('&nbsp;').html_safe
   end
 
   def uid_i
