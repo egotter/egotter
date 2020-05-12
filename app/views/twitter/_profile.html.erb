@@ -19,49 +19,112 @@
     }
   }
 
-  .responsive-icon {
-    min-width: 100px;
-    min-height: 100px;
-    max-width: 130px;
-    max-height: 130px;
-    width: 30%;
-    height: auto;
-    border: 3px solid #fff;
+  .profile-banner {
+    max-height: 180px;
+    overflow: hidden;
+  }
+
+  .profile-icon-and-buttons {
+    width: 100%;
+    position: relative;
+  }
+
+  .profile-icon-wrapper {
+    width: 100%;
+    position: absolute;
+    transform: translateY(-60px);
+  }
+
+  .profile-icon {
+    width: 120px;
+    height: 120px;
+    border: 2px solid #eee;
+  }
+
+  .profile-buttons {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  .profile-contents {
+    margin-top: 80px;
   }
 </style>
 
 <div class="profile-header <%= 'd-none d-md-block' unless always_expanded %>">
   <%#= Profile banner %>
-  <div style="height: 180px; overflow: hidden; position: relative;">
+  <div class="profile-banner">
     <% if user.profile_banner_url? %>
-      <img class="w-100" src="<%= user.profile_banner_url_for(request) %>">
+      <img class="w-100 h-auto" src="<%= user.profile_banner_url_for(request) %>">
     <% else %>
-      <div class="-100 h-100" style="background-color: <%= user.profile_link_color_code %>;"></div>
+      <div class="w-100 h-100" style="background-color: <%= user.profile_link_color_code %>;"></div>
     <% end %>
+  </div>
 
-    <div style="width: 100%; position: absolute; bottom: 0;">
+  <div class="profile-icon-and-buttons">
+    <%#= Profile icon %>
+    <div class="profile-icon-wrapper">
       <% if user.profile_icon_url? %>
-        <%= image_tag user.profile_icon_url_for(request), class: 'responsive-icon rounded-circle ml-3 mb-3', alt: user.screen_name %>
+        <%= image_tag user.profile_icon_url_for(request), class: 'profile-icon rounded-circle ml-1', alt: user.screen_name %>
       <% else %>
-        <div style="background-color: #868e96;" class="responsive-icon rounded-circle"></div>
+        <div style="background-color: #868e96;" class="profile-icon rounded-circle ml-1"></div>
       <% end %>
+    </div>
+
+    <%#= Profile buttons %>
+    <div class="profile-buttons mt-3 mr-0 mr-sm-3">
+      <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
+
+      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary d-none d-md-inline-block', target: '_blank' do %>
+        <i class="fab fa-twitter no-follow"></i>
+        <%= t('.twitter') %>
+      <% end %>
+
+      <div class="dropdown d-none d-md-inline-block">
+        <button type="button" class="btn btn-outline-primary" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+
+        <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+            <i class="fab fa-twitter no-follow text-muted"></i>
+            <%= t('.twitter') %>
+          <% end %>
+          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+            <i class="fas fa-ban text-muted"></i>
+            <%= t('.block') %>
+          <% end %>
+          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+            <i class="fas fa-volume-mute text-muted"></i>
+            <%= t('.mute') %>
+          <% end %>
+          <%= link_to user_url(user.screen_name), class: 'dropdown-item py-3', target: '_blank' do %>
+            <i class="fas fa-flag text-muted"></i>
+            <%= t('.report_spam') %>
+          <% end %>
+        </div>
+      </div>
+
+      <%# Display on extra small and small %>
+      <div class="d-inline-block d-md-none">
+        <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
+          <i class="fab fa-twitter no-follow"></i>
+        <% end %>
+
+        <button type="button" class="btn btn-outline-primary btn-profilemenu">
+          <i class="fas fa-ellipsis-h"></i>
+        </button>
+      </div>
+      <%= render partial: 'layouts/profilemenu', locals: {user: user} %>
     </div>
   </div>
 
-  <div class="p-0 px-sm-3">
+  <div class="profile-contents p-0 px-sm-3">
     <div class="my-3">
       <%= user.name_with_icon %>
       <span class="text-muted"><%= mention_name(user.screen_name) %></span>
-      <%= user.status_labels %>
-    </div>
-
-    <div class="my-3">
-      <%= render partial: 'twitter/follow_button', locals: {user: user, with_text: true} %>
-
-      <%= link_to user_url(user.screen_name), class: 'btn btn-outline-primary', target: '_blank' do %>
-        <i class="fab fa-twitter no-follow"></i>
-        <%= t('.see_on_twitter') %>
-      <% end %>
+      <%= user.status_labels(user_signed_in? && current_user_follower_uids.include?(user.uid_i)) %>
     </div>
 
     <% if user.description? %>
@@ -73,7 +136,7 @@
     <% end %>
 
     <% if user.url? %>
-      <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url, user.url, target: '_blank', rel: 'nofollow') %>
+      <i class="fas fa-link text-muted"></i>&nbsp;<%= link_to(user.url, user.url, style: 'word-break: break-all;', target: '_blank', rel: 'nofollow') %>
     <% end %>
 
     <% if user.account_created_at? %>
@@ -82,35 +145,21 @@
     <% end %>
 
     <div class="row justify-content-between m-3">
-      <div class="col-6 col-md-3 mb-3">
-        <%= link_to status_path(user, via: current_via('statuses_on_profile')) do %>
-          <strong class="text-black"><%= user.delimited_statuses_count %></strong>
-          <br class="d-block d-lg-none">
-          <span class="text-muted"><%= TwitterUser.human_attribute_name(:statuses) %></span>
-        <% end %>
-      </div>
-
-      <div class="col-6 col-md-3 mb-3">
-        <%= link_to friend_path(user, via: current_via('friends_on_profile')) do %>
-          <strong class="text-black"><%= user.delimited_friends_count %></strong>
-          <br class="d-block d-lg-none">
-          <span class="text-muted"><%= TwitterUser.human_attribute_name(:friends) %></span>
-        <% end %>
-      </div>
-
-      <div class="col-6 col-md-3 mb-3">
-        <%= link_to follower_path(user, via: current_via('followers_on_profile')) do %>
-          <strong class="text-black"><%= user.delimited_followers_count %></strong>
-          <br class="d-block d-lg-none">
-          <span class="text-muted"><%= TwitterUser.human_attribute_name(:followers) %></span>
-        <% end %>
-      </div>
-
-      <div class="col-6 col-md-3">
-        <b><%= user.percent_follow_back_rate %></b>
-        <br class="d-block d-lg-none">
-        <span class="text-muted"><%= UsageStat.human_attribute_name(:follow_back_rate) %></span>
-      </div>
+      <%= via = current_via('profile_header') %>
+      <% [
+             [status_path(user, via: via), user.delimited_statuses_count, :statuses],
+             [friend_path(user, via: via), user.delimited_friends_count, :friends],
+             [follower_path(user, via: via), user.delimited_followers_count, :followers],
+             [usage_stat_path(user, via: via), user.percent_follow_back_rate, :follow_back_rate],
+         ].each do |url, count, name| %>
+        <div class="col-6 col-md-3 mb-3">
+          <%= link_to url do %>
+            <strong class="text-black"><%= count %></strong>
+            <br class="d-block d-lg-none">
+            <span class="text-muted"><%= TwitterUser.human_attribute_name(name) %></span>
+          <% end %>
+        </div>
+      <% end %>
     </div>
   </div>
 </div>
@@ -118,8 +167,8 @@
 <% if user_signed_in? %>
   <script>
     $(function () {
-      new FollowButton('.profile-header');
-      new UnfollowButton('.profile-header');
+      new FollowButton('.profile-buttons');
+      new UnfollowButton('.profile-buttons');
     });
   </script>
 <% end %>

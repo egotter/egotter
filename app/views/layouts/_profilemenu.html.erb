@@ -1,0 +1,117 @@
+<style type="text/css">
+  .profilemenu {
+    display: none;
+    color: white;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100vw;
+    height: 50vh;
+    z-index: 9999;
+  }
+
+  .fade-profilemenu {
+    display: none;
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    width: 100vw;
+    height: 100vh;
+  }
+</style>
+
+<div class="fade-profilemenu"></div>
+
+<div class="profilemenu shadow bg-white">
+  <div class="btn-profilemenu text-center py-3">
+    <%= link_to '#', class: 'text-black' do %>
+      <i class="fas fa-times"></i>
+      <%= t('.close') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
+    <%= link_to user_url(user.screen_name), class: 'dropdown-item', target: '_blank' do %>
+      <i class="fab fa-twitter no-follow text-muted"></i>
+      <%= t('.twitter') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
+    <%= link_to user_url(user.screen_name), class: 'dropdown-item', target: '_blank' do %>
+      <i class="fas fa-ban text-muted"></i>
+      <%= t('.block') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
+    <%= link_to user_url(user.screen_name), class: 'dropdown-item', target: '_blank' do %>
+      <i class="fas fa-volume-mute text-muted"></i>
+      <%= t('.mute') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+
+  <div class="text-center py-3">
+    <%= link_to user_url(user.screen_name), class: 'dropdown-item', target: '_blank' do %>
+      <i class="fas fa-flag text-muted"></i>
+      <%= t('.report_spam') %>
+    <% end %>
+  </div>
+  <hr class="p-0 m-0">
+</div>
+
+<script>
+  $(function () {
+    var menu = $('.profilemenu');
+    var btn = $('.btn-profilemenu');
+    var isOpened = false;
+
+    menu.sidebar({side: 'bottom'});
+    menu.show();
+
+    $('body').on('click', function (e) {
+      var clicked = $(e.target);
+
+      if (isOpened && clicked.data('toggle') === 'modal') {
+        menu.trigger('sidebar:close');
+        return true;
+      }
+
+      if (isOpened && clicked.parents('.profilemenu').length === 0) {
+        menu.trigger('sidebar:close');
+        return false;
+      }
+    });
+
+    menu.on("sidebar:opened", function () {
+      isOpened = true
+      toggled();
+    });
+
+    menu.on("sidebar:closed", function () {
+      isOpened = false;
+      toggled();
+    });
+
+    btn.on('click', function () {
+      menu.trigger('sidebar:toggle');
+    });
+
+    function toggled() {
+      if (isOpened) {
+        $('.fade-profilemenu').show();
+      } else {
+        $('.fade-profilemenu').hide();
+      }
+    }
+  });
+</script>

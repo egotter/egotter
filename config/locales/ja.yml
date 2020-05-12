@@ -26,6 +26,12 @@ ja:
       pricing: '料金プラン'
       notification: 'リムられ通知'
       sign_out: 'ログアウト'
+    profilemenu:
+      close: 'メニューを閉じる'
+      twitter: 'ツイッターで見る'
+      block: 'ブロックする'
+      mute: 'ミュートする'
+      report_spam: 'スパム報告する'
     footer:
       sign_in: "ログイン"
       sign_out: "ログアウト"
@@ -658,7 +664,10 @@ ja:
     user:
       search: "検索する"
     profile:
-      see_on_twitter: "ツイッターで見る"
+      twitter: "ツイッターで見る"
+      block: "ブロックする"
+      mute: "ミュートする"
+      report_spam: "スパム報告する"
       birthday: '%{date} からツイッターを使っています'
       unknown_follow_back_rate: '集計中'
       labels:
@@ -2065,6 +2074,7 @@ ja:
         user_info: "user_info"
         friends_count: "フォロー数"
         followers_count: "フォロワー数"
+        follow_back_rate: "フォロー返し率"
         friends: "フォロー"
         followers: "フォロワー"
         friend_uids: "フォローIDs"
