@@ -109,7 +109,7 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
 
     context 'recently finished' do
       include_context 'record exists'
-      let(:time) { 30.minutes.ago }
+      let(:time) { 20.minutes.ago }
       it { is_expected.to be_truthy }
     end
 

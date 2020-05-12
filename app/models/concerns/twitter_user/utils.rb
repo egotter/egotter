@@ -63,7 +63,7 @@ module Concerns::TwitterUser::Utils
     TwitterUser.where(uid: uid).size
   end
 
-  CREATE_RECORD_INTERVAL = Rails.configuration.x.constants['twitter_users']['create_record_interval']
+  CREATE_RECORD_INTERVAL = 30.minutes
 
   def too_short_create_interval?(interval = nil)
     interval = CREATE_RECORD_INTERVAL unless interval
