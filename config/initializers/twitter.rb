@@ -21,7 +21,9 @@ module Egotter
       end
 
       def create_direct_message_event(*args)
-        if !GlobalDirectMessageReceivedFlag.new.exists?(dig_recipient_uid(args)) &&
+        recipient_uid = dig_recipient_uid(args)
+
+        if !GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid) &&
             GlobalDirectMessageLimitation.new.limited?
           raise ::Twitter::Error::EnhanceYourCalm.new('Already raised')
         end
@@ -33,7 +35,19 @@ module Egotter
           GlobalDirectMessageLimitation.new.limit_start
           raise
         else
-          CallCreateDirectMessageEventCount.new.increment
+          begin
+            # TODO Remove later
+            CallCreateDirectMessageEventCount.new.increment
+
+            GlobalSendDirectMessageCount.new.increment
+            if GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid)
+              GlobalPassiveSendDirectMessageCount.new.increment
+            else
+              GlobalActiveSendDirectMessageCount.new.increment
+            end
+          rescue => e
+            Rails.logger.warn "counting in #{__method__} #{e.inspect}"
+          end
         end
 
         result
