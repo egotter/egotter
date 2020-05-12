@@ -1,7 +1,4 @@
 class Twitter {
-  constructor() {
-  }
-
   follow(uid) {
     if (!uid) {
       console.warn('uid not found');
@@ -39,6 +36,17 @@ class Twitter {
       } else {
         ToastMessage.warn('Unfollow is failed');
       }
+    });
+  }
+
+  block(uid) {
+    var url = '/blocks'; // blocks_path
+    $.post(url, {uid: uid}).done(function (res) {
+      console.log('block done', res);
+      ToastMessage.info(res.message);
+    }).fail(function (xhr) {
+      ToastMessage.warn('Block is failed');
+      console.log(xhr.responseText);
     });
   }
 }

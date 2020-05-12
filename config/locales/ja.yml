@@ -1367,6 +1367,18 @@ ja:
     create:
       success: '@%{user} のフォロー解除に成功しました。残りは %{count}回 です。'
       retry_later: '@%{user} のフォロー解除をリクエストしました。凍結を防ぐために一定時間後にフォロー解除します。'
+  blocks:
+    create:
+      success: '@%{user} をブロックしました。'
+      failed: '@%{user} のブロックに失敗しました。ツイッターから直接ブロックしてください。'
+  mutes:
+    create:
+      success: '@%{user} をミュートしました。'
+      failed: '@%{user} のミュートに失敗しました。ツイッターから直接ミュートしてください。'
+  report_spams:
+    create:
+      success: '@%{user} をスパム報告しました。'
+      failed: '@%{user} のスパム報告に失敗しました。ツイッターから直接スパム報告してください。'
   tokimeki_unfollow:
     new:
       navbar_title: 'ときめきアンフォロー✨'
