@@ -30,9 +30,11 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       end
     end
 
-    context "text is あ" do
-      let(:text) { 'あ' }
-      it { is_expected.to be_truthy }
+    ['あ', 'あー', 'リムられ通知'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
     end
 
     context "text is あいうえお" do

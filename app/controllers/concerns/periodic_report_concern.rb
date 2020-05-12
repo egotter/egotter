@@ -27,7 +27,7 @@ module Concerns::PeriodicReportConcern
       'ぴえん'
   ]
   CONTINUE_REGEXP = Regexp.union(CONTINUE_WORDS)
-  CONTINUE_FUZZY_REGEXP = /\Aあ\z/
+  CONTINUE_FUZZY_REGEXP = /\A(あー?|リムられ通知)\z/
 
   def continue_requested?(dm)
     dm.text.match?(CONTINUE_REGEXP) || dm.text.match?(CONTINUE_FUZZY_REGEXP)
