@@ -62,6 +62,7 @@ class PeriodicReport < ApplicationRecord
           unfriends: unfriends,
           unfollowers: unfollowers,
           unfollower_urls: unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
+          regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user_id),
           request_id: request_id,
           timeline_url: timeline_url(user, url_options),
           settings_url: settings_url(url_options),
@@ -155,9 +156,9 @@ class PeriodicReport < ApplicationRecord
       case time.hour
       when 0..5
         I18n.t('activerecord.attributes.periodic_report.period_name.midnight')
-      when 6..11
+      when 6..10
         I18n.t('activerecord.attributes.periodic_report.period_name.morning')
-      when 12..14
+      when 11..14
         I18n.t('activerecord.attributes.periodic_report.period_name.noon')
       when 15..21
         I18n.t('activerecord.attributes.periodic_report.period_name.evening')
