@@ -44,7 +44,12 @@ module Egotter
               GlobalPassiveSendDirectMessageCount.new.increment
             else
               GlobalActiveSendDirectMessageCount.new.increment
+
+              if recipient_uid != User::EGOTTER_UID
+                GlobalActiveSendDirectMessageFromEgotterCount.new.increment
+              end
             end
+
           rescue => e
             Rails.logger.warn "counting in #{__method__} #{e.inspect}"
           end
