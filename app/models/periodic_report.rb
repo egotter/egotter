@@ -64,7 +64,7 @@ class PeriodicReport < ApplicationRecord
           unfollower_urls: unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user_id),
           request_id: request_id,
-          twitter_user_id: TwitterUser.latest_by(uid: user.uid).id,
+          twitter_user_id: TwitterUser.latest_by(uid: user.uid)&.id,
           timeline_url: timeline_url(user, url_options),
           settings_url: settings_url(url_options),
       )

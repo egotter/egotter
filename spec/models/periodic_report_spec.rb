@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PeriodicReport do
-  let(:user) { create(:user) }
+  let(:user) { create(:user, with_credential_token: true) }
   let(:request) { double('request', id: 1) }
   let(:start_date) { 1.day.ago }
   let(:end_date) { Time.zone.now }

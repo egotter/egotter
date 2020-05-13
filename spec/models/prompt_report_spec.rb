@@ -1,7 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe PromptReport, type: :model do
-  let(:user) { create(:user, with_settings: true) }
+  let(:user) { create(:user, with_settings: true, with_credential_token: true) }
 
   describe '.generate_token' do
     it 'generates a unique token' do

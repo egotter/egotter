@@ -8,6 +8,7 @@ FactoryBot.define do
 
     transient do
       with_settings { false }
+      with_credential_token { false }
     end
 
     after(:create) do |user, evaluator|
@@ -15,7 +16,9 @@ FactoryBot.define do
         user.create_notification_setting!
       end
 
-      user.create_credential_token!
+      if evaluator.with_credential_token
+        user.create_credential_token!(token: user.token, secret: user.secret)
+      end
     end
   end
 end
