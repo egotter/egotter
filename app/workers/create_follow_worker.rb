@@ -31,8 +31,8 @@ class CreateFollowWorker
       FollowRequest::Blocked,
       FollowRequest::Unauthorized => e
     logger.info "Skip #{e.inspect}"
-  rescue FollowRequest::TooManyFollows => e
-    logger.warn "#{e.class} Retry later"
+  rescue FollowRequest::TooManyFollows, FollowRequest::ServiceUnavailable => e
+    logger.warn "Retry later #{e.class}"
     CreateFollowWorker.perform_in(retry_in, request_id, options)
 
   rescue FollowRequest::RetryableError => e

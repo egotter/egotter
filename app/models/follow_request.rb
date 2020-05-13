@@ -82,6 +82,8 @@ class FollowRequest < ApplicationRecord
     else
       raise Forbidden.new(e.message)
     end
+  rescue Twitter::Error::ServiceUnavailable => e
+    raise ServiceUnavailable
   end
 
   def error_check!
@@ -184,5 +186,8 @@ class FollowRequest < ApplicationRecord
 
   # Don't retry
   class AlreadyRequestedToFollow < Error
+  end
+
+  class ServiceUnavailable < Error
   end
 end
