@@ -40,8 +40,16 @@ module Egotter
             CallCreateDirectMessageEventCount.new.increment
 
             GlobalSendDirectMessageCount.new.increment
+            if recipient_uid != User::EGOTTER_UID
+              GlobalSendDirectMessageFromEgotterCount.new.increment
+            end
+
             if GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid)
               GlobalPassiveSendDirectMessageCount.new.increment
+
+              if recipient_uid != User::EGOTTER_UID
+                GlobalPassiveSendDirectMessageFromEgotterCount.new.increment
+              end
             else
               GlobalActiveSendDirectMessageCount.new.increment
 
