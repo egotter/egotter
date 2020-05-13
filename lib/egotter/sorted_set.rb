@@ -47,5 +47,26 @@ module Egotter
     def size
       to_a.size
     end
+
+    module RescueAllRedisErrors
+      %i(
+        ttl
+        clear
+        cleanup
+        exists?
+        add
+        delete
+        to_a
+        size
+      ).each do |method_name|
+        define_method(method_name) do |*args, &blk|
+          super(*args, &blk)
+        rescue => e
+          Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect}"
+          nil
+        end
+      end
+    end
+    prepend RescueAllRedisErrors
   end
 end
