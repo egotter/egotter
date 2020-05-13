@@ -39,8 +39,8 @@ class  Page::GoodFriends < ::Page::Base
 
   def tabs
     [
-      {text: t('close_friends.show.see_close_friends_html', num: @twitter_user.close_friendships.size), url: close_friend_path(@twitter_user)},
-      {text: t('close_friends.show.see_favorite_friends_html', num: @twitter_user.favorite_friendships.size), url: favorite_friend_path(@twitter_user)}
+      {text: t('close_friends.show.close_friends_tab_html', num: @twitter_user.close_friendships.size), url: close_friend_path(@twitter_user)},
+      {text: t('close_friends.show.favorite_friends_tab_html', num: @twitter_user.favorite_friendships.size), url: favorite_friend_path(@twitter_user)}
     ]
   end
 

@@ -715,8 +715,8 @@ ja:
         %{users}
         #egotter %{url}
       see_more: 'もっと見る'
-      see_close_friends_html: '仲良しランキング<br>%{num}'
-      see_favorite_friends_html: 'いいねランキング<br>%{num}'
+      close_friends_tab_html: '仲良しランキング<br>%{num}'
+      favorite_friends_tab_html: 'いいねランキング<br>%{num}'
     all:
       <<: *close_friends_show
       crumb_title: "一気に見る"
@@ -911,6 +911,9 @@ ja:
       tweet_text: "%{users} さようなら(^ ^)/~ #egotter #リムられチェック %{url}"
       tweet_empty_text: "えごったーを使い始めたよ！ リムったらそっこーで分かるからね。(๑ᴖ｡ᴖ๑) #egotter #リムられチェック %{url}"
       see_more: 'もっと見る'
+      unfriends_tab_name: 'リムーブした'
+      unfollowers_tab_name: 'リムーブされた'
+      blocking_or_blocked_tab_name: 'ブロックされた'
       unfriends_tab_html: 'リムーブした<br>%{num}'
       unfollowers_tab_html: 'リムーブされた<br>%{num}'
       blocking_or_blocked_tab_html: 'ブロックされた<br>%{num}'
@@ -1072,6 +1075,9 @@ ja:
     all:
       <<: *inactive_mutual_friends_show
       crumb_title: "一気に見る"
+  result_pages:
+    tabs:
+      analyzing: '分析中'
   profiles:
     show:
       crumb_title: "@%{user} の %{time} のプロフィール"

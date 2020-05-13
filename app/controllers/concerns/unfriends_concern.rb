@@ -63,9 +63,9 @@ module Concerns::UnfriendsConcern
 
   def tabs(counts)
     [
-        {text: t('unfriends.show.unfriends_tab_html', num: counts[:unfriends]), url: unfriend_path(@twitter_user, via: current_via('tab'))},
-        {text: t('unfriends.show.unfollowers_tab_html', num: counts[:unfollowers]), url: unfollower_path(@twitter_user, via: current_via('tab'))},
-        {text: t('unfriends.show.blocking_or_blocked_tab_html', num: counts[:blocking_or_blocked]), url: blocking_or_blocked_path(@twitter_user, via: current_via('tab'))}
+        {name: t('unfriends.show.unfriends_tab_name'), count: counts[:unfriends], text: t('unfriends.show.unfriends_tab_html', num: counts[:unfriends]), url: unfriend_path(@twitter_user, via: current_via('tab'))},
+        {name: t('unfriends.show.unfollowers_tab_name'), count: counts[:unfollowers], text: t('unfriends.show.unfollowers_tab_html', num: counts[:unfollowers]), url: unfollower_path(@twitter_user, via: current_via('tab'))},
+        {name: t('unfriends.show.blocking_or_blocked_tab_name'), count: counts[:blocking_or_blocked], text: t('unfriends.show.blocking_or_blocked_tab_html', num: counts[:blocking_or_blocked]), url: blocking_or_blocked_path(@twitter_user, via: current_via('tab'))}
     ]
   end
 end
