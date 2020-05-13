@@ -8,12 +8,8 @@
   - <%= 'WORKER_' + ENV.fetch("WORKER_INDEX") { "NOINDEX" } %>
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
-  - CreateTestReportWorker
-  - ForceCreatePromptReportWorker
   - CreateUserRequestedPeriodicReportWorker
   - CreateAndroidRequestedPeriodicReportWorker
   - CreateEgotterRequestedPeriodicReportWorker
   - CreatePeriodicReportWorker
-  - CreatePromptReportWorker
   - StartSendingPeriodicReportsWorker
-  - StartSendingPromptReportsWorker
