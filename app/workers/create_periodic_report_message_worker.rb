@@ -1,14 +1,13 @@
+require 'digest/md5'
+
 class CreatePeriodicReportMessageWorker
   include Sidekiq::Worker
   include Concerns::AirbrakeErrorHandler
   sidekiq_options queue: 'messaging', retry: 0, backtrace: false
 
   def unique_key(user_id, options = {})
-    if user_id
-      user_id
-    else
-      "uid-#{options[:uid] || options['uid']}"
-    end
+    picked_id = user_id || "uid-#{options[:uid] || options['uid']}"
+    "#{picked_id}-#{Digest::MD5.hexdigest(options.inspect)}"
   end
 
   def unique_in
@@ -16,7 +15,7 @@ class CreatePeriodicReportMessageWorker
   end
 
   def after_skip(*args)
-    logger.warn "The job execution is skipped args=#{args.inspect}"
+    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   # options:

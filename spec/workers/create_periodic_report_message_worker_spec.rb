@@ -5,11 +5,16 @@ RSpec.describe CreatePeriodicReportMessageWorker do
   let(:worker) { described_class.new }
 
   describe '#unique_key' do
-    it { expect(worker.unique_key(user.id)).to eq(user.id) }
+    let(:user_id) { user.id }
+    let(:options) { {} }
+    subject { worker.unique_key(user_id, options) }
+
+    it { is_expected.to start_with(user.id.to_s) }
 
     context 'user_id is nil' do
-      it { expect(worker.unique_key(nil, {uid: user.uid})).to eq("uid-#{user.uid}") }
-      it { expect(worker.unique_key(nil, {'uid' => user.uid})).to eq("uid-#{user.uid}") }
+      let(:user_id) { nil }
+      let(:options) { {uid: user.uid} }
+      it { is_expected.to start_with("uid-#{user.uid}") }
     end
   end
 

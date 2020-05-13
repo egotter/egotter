@@ -1,3 +1,5 @@
+require 'digest/md5'
+
 class CreateTwitterDBUserWorker
   include Sidekiq::Worker
   include Concerns::AirbrakeErrorHandler
