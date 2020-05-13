@@ -129,7 +129,19 @@ class WelcomeMessage < ApplicationRecord
     create_dm(user, User.egotter, message)
   end
 
+  module UrlHelpers
+    def method_missing(method, *args, &block)
+      if method.to_s.end_with?('_url')
+        Rails.application.routes.url_helpers.send(method, *args, &block)
+      else
+        super
+      end
+    end
+  end
+
   class StartingMessageBuilder
+    include UrlHelpers
+
     attr_reader :user, :token
 
     def initialize(user, token)
@@ -141,23 +153,15 @@ class WelcomeMessage < ApplicationRecord
       template = Rails.root.join('app/views/welcome_messages/starting.ja.text.erb')
       ERB.new(template.read).result_with_hash(
           screen_name: user.screen_name,
-          timeline_url: timeline_url,
-          settings_url: settings_url
+          timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_starting', og_tag: 'false'),
+          settings_url: settings_url(via: 'welcome_message_starting', og_tag: 'false')
       )
-    end
-
-    private
-
-    def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_starting')
-    end
-
-    def settings_url
-      Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_starting')
     end
   end
 
   class SuccessMessageBuilder
+    include UrlHelpers
+
     attr_reader :user, :token
 
     def initialize(user, token)
@@ -171,23 +175,15 @@ class WelcomeMessage < ApplicationRecord
           screen_name: user.screen_name,
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
-          timeline_url: timeline_url,
-          settings_url: settings_url
+          timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_success', og_tag: 'false'),
+          settings_url: settings_url(via: 'welcome_message_success', og_tag: 'false')
       )
-    end
-
-    private
-
-    def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_initialization_success')
-    end
-
-    def settings_url
-      Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_success')
     end
   end
 
   class FailedMessageBuilder
+    include UrlHelpers
+
     attr_reader :user, :token
 
     def initialize(user, token)
@@ -201,19 +197,9 @@ class WelcomeMessage < ApplicationRecord
           screen_name: user.screen_name,
           report_interval: user.notification_setting.report_interval,
           twitter_user: TwitterUser.latest_by(uid: user.uid),
-          timeline_url: timeline_url,
-          settings_url: settings_url
+          timeline_url: timeline_url(user, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_failed', og_tag: 'false'),
+          settings_url: settings_url(via: 'welcome_message_failed', og_tag: 'false')
       )
-    end
-
-    private
-
-    def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'welcome', via: 'welcome_message_initialization_failed')
-    end
-
-    def settings_url
-      Rails.application.routes.url_helpers.settings_url(via: 'welcome_message_initialization_failed')
     end
   end
 end
