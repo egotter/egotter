@@ -110,8 +110,7 @@ describe Concerns::PeriodicReportConcern, type: :controller do
 
       it do
         expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
-        expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).
-            with(request.id, user_id: user.id, create_twitter_user: true)
+        expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
         subject
       end
     end
@@ -156,8 +155,7 @@ describe Concerns::PeriodicReportConcern, type: :controller do
 
       it do
         expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
-        expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).
-            with(request.id, user_id: user.id, create_twitter_user: true)
+        expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
         subject
       end
     end
@@ -245,8 +243,7 @@ describe Concerns::PeriodicReportConcern, type: :controller do
 
       it do
         expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
-        expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).
-            with(request.id, user_id: user.id, create_twitter_user: true)
+        expect(CreateEgotterRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
         subject
       end
     end

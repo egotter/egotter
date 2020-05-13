@@ -59,7 +59,7 @@ module Concerns::PeriodicReportConcern
 
     if user.authorized?
       request = CreatePeriodicReportRequest.create(user_id: user.id)
-      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     elsif !user.notification_setting.enough_permission_level?
       CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
     else
@@ -73,7 +73,7 @@ module Concerns::PeriodicReportConcern
   def enqueue_user_received_periodic_report(dm)
     if (user = User.find_by(uid: dm.sender_id)) && user.authorized? && CreatePeriodicReportRequest.sufficient_interval?(user.id)
       request = CreatePeriodicReportRequest.create(user_id: user.id)
-      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     end
 
   rescue => e
@@ -106,7 +106,7 @@ module Concerns::PeriodicReportConcern
 
     if user.authorized?
       request = CreatePeriodicReportRequest.create(user_id: user.id)
-      CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id, create_twitter_user: true)
+      CreateEgotterRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     elsif !user.notification_setting.enough_permission_level?
       CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
     else

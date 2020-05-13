@@ -30,6 +30,6 @@ RSpec.describe UpdateAuthorizedWorker do
   end
 
   describe '#retry_in' do
-    it { expect(worker.retry_in).to be > worker.unique_in }
+    it { expect(worker.retry_in).to be >= worker.unique_in }
   end
 end
