@@ -71,6 +71,13 @@ class PeriodicReport < ApplicationRecord
       new(user: user, message: message, token: token)
     end
 
+    def remind_reply_message
+      template = Rails.root.join('app/views/periodic_reports/remind_reply.ja.text.erb')
+      message = ERB.new(template.read).result
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def interval_too_short_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
@@ -116,14 +123,14 @@ class PeriodicReport < ApplicationRecord
 
     def restart_requested_message
       template = Rails.root.join('app/views/periodic_reports/restart_requested.ja.text.erb')
-      message = ERB.new(template.read).result_with_hash({})
+      message = ERB.new(template.read).result
 
       new(user: nil, message: message, token: nil)
     end
 
     def stop_requested_message
       template = Rails.root.join('app/views/periodic_reports/stop_requested.ja.text.erb')
-      message = ERB.new(template.read).result_with_hash({})
+      message = ERB.new(template.read).result
 
       new(user: nil, message: message, token: nil)
     end
@@ -179,7 +186,22 @@ class PeriodicReport < ApplicationRecord
 
   def send_direct_message
     event = self.class.build_direct_message_event(report_recipient.uid, message)
-    report_sender.api_client.create_direct_message_event(event: event)
+    sender = report_sender
+    dm = sender.api_client.create_direct_message_event(event: event)
+
+    unless sender.uid == User::EGOTTER_UID
+      send_remind_message
+    end
+
+    dm
+  end
+
+  def send_remind_message
+    message = self.class.remind_reply_message.message
+    event = self.class.build_direct_message_event(user.uid, message)
+    User.egotter.api_client.create_direct_message_event(event: event)
+  rescue => e
+    logger.warn "sending remind-reply message is failed #{e.inspect} user_id=#{user_id}"
   end
 
   class << self
