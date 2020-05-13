@@ -51,15 +51,17 @@ module Concerns::PeriodicReportConcern
     dm.text.match?(RECEIVED_REGEXP)
   end
 
-  def enqueue_user_requested_periodic_report(dm)
+  def enqueue_user_requested_periodic_report(dm, fuzzy: false)
     unless (user = User.find_by(uid: dm.sender_id))
       CreatePeriodicReportMessageWorker.perform_async(nil, unregistered: true, uid: dm.sender_id)
       return
     end
 
     if user.authorized?
-      request = CreatePeriodicReportRequest.create(user_id: user.id)
-      CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
+      if !fuzzy || CreatePeriodicReportRequest.sufficient_interval?(user.id)
+        request = CreatePeriodicReportRequest.create(user_id: user.id)
+        CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
+      end
     elsif !user.notification_setting.enough_permission_level?
       CreatePeriodicReportMessageWorker.perform_async(user.id, permission_level_not_enough: true)
     else

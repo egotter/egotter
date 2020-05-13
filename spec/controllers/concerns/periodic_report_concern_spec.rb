@@ -108,10 +108,37 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       include_context 'find_by returns user'
       let(:request) { create(:create_periodic_report_request, user: user) }
 
-      it do
-        expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
-        expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
-        subject
+      shared_examples 'enqueue one job' do
+        it do
+          expect(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request)
+          expect(CreateUserRequestedPeriodicReportWorker).to receive(:perform_async).with(request.id, user_id: user.id)
+          subject
+        end
+      end
+
+      shared_examples 'enqueue no job' do
+        it do
+          expect(CreatePeriodicReportRequest).not_to receive(:create)
+          subject
+        end
+      end
+
+      context 'fuzzy is false (not specified)' do
+        include_examples 'enqueue one job'
+      end
+
+      context 'fuzzy is true' do
+        subject { controller.send(:enqueue_user_requested_periodic_report, dm, fuzzy: true) }
+
+        context 'sufficient_interval? returns true' do
+          before { allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(true) }
+          include_examples 'enqueue one job'
+        end
+
+        context 'sufficient_interval? returns false' do
+          before { allow(CreatePeriodicReportRequest).to receive(:sufficient_interval?).with(user.id).and_return(false) }
+          include_examples 'enqueue no job'
+        end
       end
     end
 

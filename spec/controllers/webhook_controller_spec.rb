@@ -100,7 +100,7 @@ RSpec.describe WebhookController, type: :controller do
     context 'continue_requested? returns true' do
       before { allow(controller).to receive(:continue_requested?).with(dm).and_return(true) }
       it do
-        expect(controller).to receive(:enqueue_user_requested_periodic_report).with(dm)
+        expect(controller).to receive(:enqueue_user_requested_periodic_report).with(dm, fuzzy: true)
         subject
       end
     end
