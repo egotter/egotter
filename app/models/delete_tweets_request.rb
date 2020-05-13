@@ -98,7 +98,9 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def send_finished_message
     url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_dm', og_tag: 'false')
-    User.egotter.api_client.create_direct_message_event(user.uid, I18n.t('delete_tweets.dm.message', url: url))
+    template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
+    message = ERB.new(template.read).result_with_hash(url: url)
+    User.egotter.api_client.create_direct_message_event(user.uid, message)
   rescue => e
     if DirectMessageStatus.not_following_you?(e) || DirectMessageStatus.cannot_send_messages?(e)
       # Do nothing
@@ -109,7 +111,9 @@ class DeleteTweetsRequest < ApplicationRecord
 
   def send_error_message
     url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_error_dm', og_tag: 'false')
-    User.egotter.api_client.create_direct_message_event(user.uid, I18n.t('delete_tweets.dm.error_message', url: url))
+    template = Rails.root.join('app/views/delete_tweets/not_finished.ja.text.erb')
+    message = ERB.new(template.read).result_with_hash(url: url)
+    User.egotter.api_client.create_direct_message_event(user.uid, message)
   rescue => e
     raise ErrorMessageNotSent.new("#{e.class} #{e.message}")
   end

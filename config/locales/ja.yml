@@ -1445,9 +1445,6 @@ ja:
         cancel: "いいえ"
     tweet:
       message: 'ツイートの削除が完了しました。%{kaomoji} #egotter %{url}'
-    dm:
-      message: 'ツイートの削除が完了しました。#egotter %{url}'
-      error_message: 'ツイートの削除中にエラーが起きました。大抵のエラーは一時的なものです。お手数ですが、再度お試しください。#egotter %{url}'
     log:
       errors:
         default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'
