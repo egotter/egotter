@@ -129,7 +129,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   end
 
   SHORT_INTERVAL = TwitterUser::CREATE_RECORD_INTERVAL
-  SUFFICIENT_INTERVAL = 12.hours
+  SUFFICIENT_INTERVAL = 6.hours
 
   class << self
     def interval_too_short?(include_user_id:, reject_id:)
