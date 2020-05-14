@@ -13,7 +13,14 @@ describe Concerns::PeriodicReportConcern, type: :controller do
 
     %w(今すぐ いますぐ).product(%w(送信 そうしん 受信 じゅしん 痩身 通知 返信)).each do |word1, word2|
       context "text is #{word1 + word2}" do
-        let(:text) { SecureRandom.hex(1) + word1 + word2 + SecureRandom.hex(1) }
+        let(:text) { word1 + word2 }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    ['【リムられ通知 今すぐ送信】'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
         it { is_expected.to be_truthy }
       end
     end
@@ -58,6 +65,13 @@ describe Concerns::PeriodicReportConcern, type: :controller do
         it { is_expected.to be_truthy }
       end
     end
+
+    ['【リムられ通知 停止】'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
   end
 
   describe '#restart_requested?' do
@@ -67,6 +81,13 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     [' ', '　', ''].product(%w(再開 さいかい)).each do |word1, word2|
       context "text is リムられ通知#{word1 + word2}" do
         let(:text) { "リムられ通知#{word1 + word2}" }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    ['【リムられ通知 再開】'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
         it { is_expected.to be_truthy }
       end
     end

@@ -31,7 +31,11 @@ class SendReceivedMessageWorker
         text == I18n.t('quick_replies.prompt_reports.label3') ||
         text == I18n.t('quick_replies.prompt_reports.label4') ||
         text == I18n.t('quick_replies.prompt_reports.label5') ||
-        text.match?(Concerns::PeriodicReportConcern::SEND_NOW_EXACT_REGEXP)
+        text.match?(Concerns::PeriodicReportConcern::SEND_NOW_REGEXP) ||
+        text.match?(Concerns::PeriodicReportConcern::STOP_NOW_REGEXP) ||
+        text.match?(Concerns::PeriodicReportConcern::RESTART_REGEXP) ||
+        text.match?(Concerns::PeriodicReportConcern::RECEIVED_REGEXP) ||
+        text.match?(Concerns::PeriodicReportConcern::CONTINUE_EXACT_REGEXP)
   end
 
   def send_message_to_slack(sender_uid, dm_id, text)
