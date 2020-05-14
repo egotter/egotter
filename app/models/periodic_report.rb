@@ -115,7 +115,9 @@ class PeriodicReport < ApplicationRecord
 
     def not_following_message
       template = Rails.root.join('app/views/periodic_reports/not_following.ja.text.erb')
-      message = ERB.new(template.read).result
+      message = ERB.new(template.read).result_with_hash(
+          url: sign_in_url(force_login: true, follow: true, via: 'not_following_message', og_tag: 'false')
+      )
 
       new(user: nil, message: message, token: nil)
     end
