@@ -1,10 +1,11 @@
 <% require 'dotenv/load' %>:concurrency: <%= ENV.fetch("SIDEKIQ_MISC_CONCURRENCY") { 5 } %>
 :timeout: 600
-:pidfile: ./tmp/pids/sidekiq_misc.pid
+:pidfile: ./tmp/pids/sidekiq_misc_<%= ENV.fetch("WORKER_INDEX") { "NOINDEX" } %>.pid
 :logfile: ./log/sidekiq_misc.log
 :tag:
   - sidekiq_misc
   - <%= ENV.fetch("AWS_NAME_TAG") { "NONAME" } %>
+  - <%= 'WORKER_' + ENV.fetch("WORKER_INDEX") { "NOINDEX" } %>
 :environment: <%= ENV.fetch("RAILS_ENV") { "development" } %>
 :queues:
   - creating_high
