@@ -4,10 +4,11 @@ namespace :twitter do
     task create: :environment do
       name = ENV['NAME']
       user_id = ENV['USER_ID']
-      text = ENV['TEXT']
+      text = ENV['TEXT'] || File.read(ENV['FILE'])
 
       client = User.find(user_id).api_client.twitter
-      puts client.create_welcome_message(text, name).inspect
+      message = client.create_welcome_message(text, name)
+      puts "id=#{message.id} text=#{message.text}"
     end
 
     desc 'List'

@@ -50,7 +50,7 @@
     }
 
     if (signedIn && periodicReportStopped) {
-      ToastMessage.info('<%= t('twitter_users.in_background.periodic_report_stopped_html', uid: current_user&.uid, text: t('quick_replies.prompt_reports.label4')) %>');
+      ToastMessage.info('<%= t('twitter_users.in_background.periodic_report_stopped_html') %>');
       return;
     }
 
