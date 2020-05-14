@@ -21,4 +21,9 @@
   - deleting
   - follow
   - unfollow
+  - CreateUserRequestedPeriodicReportWorker
+  - CreateAndroidRequestedPeriodicReportWorker
+  - CreateEgotterRequestedPeriodicReportWorker
+  - CreatePeriodicReportWorker
+  - StartSendingPeriodicReportsWorker
   - rollbar
