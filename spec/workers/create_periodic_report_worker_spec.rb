@@ -43,6 +43,7 @@ RSpec.describe CreatePeriodicReportWorker do
       expect(request.worker_context).to eq(described_class)
       expect(request.check_credentials).to be_truthy
       expect(request.check_interval).to be_falsey
+      expect(request.check_following_status).to be_falsey
       expect(request.check_twitter_user).to be_truthy
     end
 
@@ -65,6 +66,7 @@ RSpec.describe CreatePeriodicReportWorker do
       it do
         subject
         expect(request.check_interval).to be_truthy
+        expect(request.check_following_status).to be_truthy
       end
     end
 

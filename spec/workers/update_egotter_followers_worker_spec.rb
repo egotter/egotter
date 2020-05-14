@@ -24,7 +24,7 @@ RSpec.describe UpdateEgotterFollowersWorker do
   describe '#import_followers' do
     subject { worker.import_followers('users') }
     it do
-      expect(EgotterFollower).to receive(:import).with('users', on_duplicate_key_update: %i(uid), validate: false, timestamps: false)
+      expect(EgotterFollower).to receive(:import).with('users', on_duplicate_key_update: %i(uid), validate: false)
       subject
     end
   end

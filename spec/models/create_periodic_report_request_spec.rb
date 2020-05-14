@@ -30,6 +30,14 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       end
     end
 
+    context 'check_following_status == true' do
+      before { request.check_following_status = true }
+      it do
+        expect(request).to receive(:check_following_status_before_starting?).and_return(false)
+        subject
+      end
+    end
+
     context 'check_twitter_user == true' do
       before { request.check_twitter_user = true }
       it do
@@ -46,6 +54,32 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     it do
       expect(client).to receive(:verify_credentials)
       subject
+    end
+  end
+
+  describe '#check_following_status_before_starting?' do
+    subject { request.check_following_status_before_starting? }
+
+    context 'EgotterFollower is persisted' do
+      before { allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(true) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'friendship? returns true' do
+      before do
+        allow(user).to receive_message_chain(:api_client, :twitter, :friendship?).
+            with(user.uid, User::EGOTTER_UID).and_return(true)
+      end
+      it { is_expected.to be_truthy }
+    end
+
+    context 'else' do
+      before do
+        allow(EgotterFollower).to receive(:exists?).with(uid: user.uid).and_return(false)
+        allow(user).to receive_message_chain(:api_client, :twitter, :friendship?).
+            with(user.uid, User::EGOTTER_UID).and_return(false)
+      end
+      it { is_expected.to be_falsey }
     end
   end
 

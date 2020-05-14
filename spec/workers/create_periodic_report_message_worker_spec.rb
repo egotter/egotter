@@ -54,6 +54,15 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       end
     end
 
+    context 'options[:not_following] is specified' do
+      let(:user_id) { user.id }
+      let(:options) { {not_following: true} }
+      it do
+        expect(worker).to receive(:perform_not_following).with(user)
+        subject
+      end
+    end
+
     context 'options[:permission_level_not_enough] is specified' do
       let(:user_id) { user.id }
       let(:options) { {permission_level_not_enough: true} }
@@ -139,6 +148,15 @@ RSpec.describe CreatePeriodicReportMessageWorker do
     subject { worker.perform_stop_request(user) }
     it do
       expect(worker).to receive(:send_message_from_egotter).with(user.uid, message, unsubscribe: true)
+      subject
+    end
+  end
+
+  describe '#perform_not_following' do
+    let(:message) { PeriodicReport.not_following_message.message }
+    subject { worker.perform_not_following(user) }
+    it do
+      expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
       subject
     end
   end

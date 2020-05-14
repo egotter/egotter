@@ -21,15 +21,16 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
   attr_accessor :sync_flag
 
   def perform!
-    logger.debug { "#{self.class}##{__method__} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context} sync_flag=#{sync_flag}" }
+    logger.debug { "#{self.class}##{__method__} check_following_status=#{check_following_status} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context} sync_flag=#{sync_flag}" }
 
     return if check_credentials && !verify_credentials_before_starting?
     return if check_interval && !check_interval_before_starting?
+    return if check_following_status && !check_following_status_before_starting?
 
     if check_twitter_user
       create_new_twitter_user_record
@@ -61,6 +62,27 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     false
+  end
+
+  def check_following_status_before_starting?
+    return true if EgotterFollower.exists?(uid: user.uid)
+    return true if user.api_client.twitter.friendship?(user.uid, User::EGOTTER_UID)
+
+    update(status: 'not_following')
+
+    if user_or_egotter_requested_job?
+      if sync_flag
+        CreatePeriodicReportMessageWorker.new.perform(user_id, not_following: true)
+      else
+        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, not_following: true)
+        update(status: 'not_following,message_skipped') unless jid
+      end
+    end
+
+    false
+  rescue => e
+    logger.info "#{self.class}##{__method__} #{e.inspect} request=#{self.inspect}"
+    true
   end
 
   def check_interval_before_starting?

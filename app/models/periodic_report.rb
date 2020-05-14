@@ -113,6 +113,13 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
+    def not_following_message
+      template = Rails.root.join('app/views/periodic_reports/not_following.ja.text.erb')
+      message = ERB.new(template.read).result
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def permission_level_not_enough_message
       template = Rails.root.join('app/views/periodic_reports/permission_level_not_enough.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(

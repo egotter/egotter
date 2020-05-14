@@ -26,11 +26,13 @@ class CreatePeriodicReportMessageWorker
   #   followers_count
   #   unfriends
   #   unfollowers
+  #
   #   interval_too_short
   #   unauthorized
   #   unregistered and uid
   #   stop_requested
   #   restart_requested
+  #   not_following
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
@@ -48,6 +50,11 @@ class CreatePeriodicReportMessageWorker
 
     if options[:stop_requested]
       perform_stop_request(user)
+      return
+    end
+
+    if options[:not_following]
+      perform_not_following(user)
       return
     end
 
@@ -101,6 +108,10 @@ class CreatePeriodicReportMessageWorker
 
   def perform_stop_request(user)
     send_message_from_egotter(user.uid, PeriodicReport.stop_requested_message.message, unsubscribe: true)
+  end
+
+  def perform_not_following(user)
+    send_message_from_egotter(user.uid, PeriodicReport.not_following_message.message)
   end
 
   def perform_permission_level_not_enough(user)
