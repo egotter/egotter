@@ -351,9 +351,9 @@ module Tasks
             'sudo service td-agent restart',
             'sudo service nginx stop || :',
             'sudo service puma stop || :',
-            'sudo start sidekiq || :',
             'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',
+            'sudo start sidekiq_workers || :',
             'sudo start sidekiq_prompt_reports_workers',
             'sudo restart datadog-agent',
         ].each do |cmd|
