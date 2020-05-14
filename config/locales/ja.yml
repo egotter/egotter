@@ -1249,6 +1249,7 @@ ja:
       latest: '表示されているデータは最新です。'
       failed: 'データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。'
       profile_not_found_html: 'プロフィールを更新中です。10〜30秒後にページを更新してください。<a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>'
+      periodic_report_stopped_html: 'リムられ通知の定期配信は停止中です。<a href="https://twitter.com/messages/%{uid}-187385226?text=%{text} （そのまま送ってください）" target="_blank" class="btn btn-outline-primary">通知を再開する</a>'
       updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'

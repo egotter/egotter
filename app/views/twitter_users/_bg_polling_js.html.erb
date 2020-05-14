@@ -10,6 +10,7 @@
   var profileNotFound = <%= twitter_user.profile_not_found? %>;
   var tooShortCreateInterval = <%= twitter_user.too_short_create_interval? %>;
   var accountStatusAccessed = <%= user_signed_in? && AccountStatusAccessFlag.new.accessed?(current_user.id) %>;
+  var periodicReportStopped = <%= user_signed_in? && !GlobalDirectMessageReceivedFlag.new.received?(current_user.uid) && !StopPeriodicReportRequest.exists?(user_id: current_user.id) %>;
   var eventCategory = '<%= "#{controller_name}/#{action_name}" %>';
 
   var urls = {
@@ -45,6 +46,11 @@
         // Maybe crawler
       }
 
+      return;
+    }
+
+    if (signedIn && periodicReportStopped) {
+      ToastMessage.info('<%= t('twitter_users.in_background.periodic_report_stopped_html', uid: current_user&.uid, text: t('quick_replies.prompt_reports.label4')) %>');
       return;
     }
 
