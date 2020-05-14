@@ -28,7 +28,7 @@ class WebhookController < ApplicationController
   private
 
   def direct_message_event_for_egotter?
-    params[:for_user_id].to_i == User.egotter.uid && params[:direct_message_events]
+    params[:for_user_id].to_i == User::EGOTTER_UID && params[:direct_message_events]
   end
 
   def process_direct_message_event(event)
@@ -40,6 +40,12 @@ class WebhookController < ApplicationController
       process_message_from_user(dm)
     elsif sent_from_egotter?(dm)
       process_message_from_egotter(dm)
+    end
+
+    if message_from_user?(dm)
+      GlobalTotalDirectMessageReceivedFlag.new.received(dm.sender_id)
+    elsif message_from_egotter?(dm)
+      GlobalTotalDirectMessageSentFlag.new.received(dm.recipient_id)
     end
   end
 
@@ -65,18 +71,31 @@ class WebhookController < ApplicationController
   end
 
   def process_message_from_egotter(dm)
+    GlobalDirectMessageSentFlag.new.received(dm.recipient_id)
+
     if send_now_requested?(dm)
       enqueue_egotter_requested_periodic_report(dm)
     end
+
     SendSentMessageWorker.perform_async(dm.recipient_id, dm_id: dm.id, text: dm.text)
   end
 
+  # TODO Rename to message_from_user_by_hand?
   def sent_from_user?(dm)
-    dm.text.exclude?('#egotter') && dm.sender_id != User.egotter.uid
+    dm.text.exclude?('#egotter') && dm.sender_id != User::EGOTTER_UID
   end
 
+  # TODO Rename to message_from_egotter_by_hand?
   def sent_from_egotter?(dm)
-    dm.text.exclude?('#egotter') && dm.sender_id == User.egotter.uid
+    dm.text.exclude?('#egotter') && dm.sender_id == User::EGOTTER_UID
+  end
+
+  def message_from_user?(dm)
+    dm.sender_id != User::EGOTTER_UID
+  end
+
+  def message_from_egotter?(dm)
+    dm.sender_id == User::EGOTTER_UID
   end
 
   def crc_response

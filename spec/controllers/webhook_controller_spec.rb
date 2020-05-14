@@ -23,7 +23,6 @@ RSpec.describe WebhookController, type: :controller do
     subject { controller.send(:direct_message_event_for_egotter?) }
     before do
       allow(controller.params).to receive(:[]).with(:for_user_id).and_return(User::EGOTTER_UID.to_s)
-      allow(User).to receive_message_chain(:egotter, :uid).and_return(User::EGOTTER_UID)
       allow(controller.params).to receive(:[]).with(:direct_message_events).and_return('events')
     end
     it { is_expected.to be_truthy }
@@ -35,8 +34,22 @@ RSpec.describe WebhookController, type: :controller do
     end
 
     shared_context 'correct event is passed' do
-      let(:dm) { 'dm' }
+      let(:dm) { double('dm', sender_id: 1, recipient_id: 2, text: 'text') }
       before { allow(DirectMessage).to receive(:new).with(anything).and_return(dm) }
+    end
+
+    shared_context 'skip processing messages' do
+      before do
+        allow(controller).to receive(:sent_from_user?).with(dm).and_return(false)
+        allow(controller).to receive(:sent_from_egotter?).with(dm).and_return(false)
+      end
+    end
+
+    shared_context 'skip setting global flags' do
+      before do
+        allow(controller).to receive(:message_from_user?).with(dm).and_return(false)
+        allow(controller).to receive(:message_from_egotter?).with(dm).and_return(false)
+      end
     end
 
     let(:event) { {'type' => 'type'} }
@@ -49,6 +62,7 @@ RSpec.describe WebhookController, type: :controller do
     context 'sent_from_user? returns true' do
       include_context 'event[type] is message_create'
       include_context 'correct event is passed'
+      include_context 'skip setting global flags'
       before { allow(controller).to receive(:sent_from_user?).with(dm).and_return(true) }
       it do
         expect(controller).to receive(:process_message_from_user).with(dm)
@@ -59,12 +73,38 @@ RSpec.describe WebhookController, type: :controller do
     context 'sent_from_egotter? returns true' do
       include_context 'event[type] is message_create'
       include_context 'correct event is passed'
+      include_context 'skip setting global flags'
       before do
         allow(controller).to receive(:sent_from_user?).with(dm).and_return(false)
         allow(controller).to receive(:sent_from_egotter?).with(dm).and_return(true)
       end
       it do
         expect(controller).to receive(:process_message_from_egotter).with(dm)
+        subject
+      end
+    end
+
+    context 'message_from_user? returns true' do
+      include_context 'event[type] is message_create'
+      include_context 'correct event is passed'
+      include_context 'skip processing messages'
+      before { allow(controller).to receive(:message_from_user?).with(dm).and_return(true) }
+      it do
+        expect(GlobalTotalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
+        subject
+      end
+    end
+
+    context 'message_from_egotter? returns true' do
+      include_context 'event[type] is message_create'
+      include_context 'correct event is passed'
+      include_context 'skip processing messages'
+      before do
+        allow(controller).to receive(:message_from_user?).with(dm).and_return(false)
+        allow(controller).to receive(:message_from_egotter?).with(dm).and_return(true)
+      end
+      it do
+        expect(GlobalTotalDirectMessageSentFlag).to receive_message_chain(:new, :received).with(dm.recipient_id)
         subject
       end
     end
@@ -127,6 +167,7 @@ RSpec.describe WebhookController, type: :controller do
     subject { controller.send(:process_message_from_egotter, dm) }
 
     it do
+      expect(GlobalDirectMessageSentFlag).to receive_message_chain(:new, :received).with(dm.recipient_id)
       expect(SendSentMessageWorker).to receive(:perform_async).with(dm.recipient_id, dm_id: dm.id, text: dm.text)
       subject
     end
@@ -143,10 +184,6 @@ RSpec.describe WebhookController, type: :controller do
   describe '#sent_from_user?' do
     let(:dm) { double('dm', id: 1, sender_id: 1, text: text) }
     subject { controller.send(:sent_from_user?, dm) }
-
-    before do
-      allow(User).to receive_message_chain(:egotter, :uid).and_return(2)
-    end
 
     context 'text includes #egotter' do
       let(:text) { 'hello #egotter' }
@@ -168,12 +205,8 @@ RSpec.describe WebhookController, type: :controller do
   end
 
   describe '#sent_from_egotter?' do
-    let(:dm) { double('dm', id: 1, sender_id: 1, text: text) }
+    let(:dm) { double('dm', id: 1, sender_id: User::EGOTTER_UID, text: text) }
     subject { controller.send(:sent_from_egotter?, dm) }
-
-    before do
-      allow(User).to receive_message_chain(:egotter, :uid).and_return(1)
-    end
 
     context 'text includes #egotter' do
       let(:text) { 'hello #egotter' }
