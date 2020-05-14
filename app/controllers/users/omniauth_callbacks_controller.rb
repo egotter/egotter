@@ -7,7 +7,7 @@ class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
     if @follow
       request = FollowRequest.create(user_id: @user.id, uid: User::EGOTTER_UID, requested_by: 'sign_in')
       CreateFollowWorker.perform_async(request.id, enqueue_location: controller_name)
-      EgotterFollower.create(uid: @user.uid, screen_name: 'sn')
+      CreateEgotterFollowerWorker.perform_async(@user.id)
     end
 
     update_search_histories_when_signing_in(@user)
