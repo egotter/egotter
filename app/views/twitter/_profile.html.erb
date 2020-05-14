@@ -145,7 +145,7 @@
     <% end %>
 
     <div class="row justify-content-between m-3">
-      <%= via = current_via('profile_header') %>
+      <% via = current_via('profile_header') %>
       <% [
              [status_path(user, via: via), user.delimited_statuses_count, :statuses],
              [friend_path(user, via: via), user.delimited_friends_count, :friends],
