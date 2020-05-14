@@ -128,11 +128,10 @@ module Taskbooks
             'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
             'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
             'sudo restart sidekiq_misc || :',
+            'sudo restart sidekiq_prompt_reports || :',
             'sudo restart sidekiq_prompt_reports_workers || :',
             'sudo restart sidekiq || :',
-            'sudo restart sidekiq_import || :',
-            'sudo restart sidekiq_follow || :',
-            'sudo restart sidekiq_unfollow || :',
+            'sudo restart sidekiq_workers || :',
         ].each do |cmd|
           backend(cmd)
         end
