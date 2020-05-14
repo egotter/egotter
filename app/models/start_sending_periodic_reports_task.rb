@@ -3,7 +3,7 @@ class StartSendingPeriodicReportsTask
 
   def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000)
     if user_ids.present?
-      @user_ids = user_ids
+      @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
     end
 
     @start_date = start_date
@@ -46,33 +46,37 @@ class StartSendingPeriodicReportsTask
   end
 
   class << self
-    def dm_received_user_ids
+    def dm_received_user_ids(reject_stop_requested: true)
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
       user_ids = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
-      user_ids - StopPeriodicReportRequest.pluck(:user_id)
+      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
     end
 
     ACCESS_DAYS_START = 12.hours
     ACCESS_DAYS_END = 3.hours
 
-    def recent_access_user_ids(start_date = nil, end_date = nil)
+    def recent_access_user_ids(start_date = nil, end_date = nil, reject_stop_requested: true)
       start_date = ACCESS_DAYS_START.ago unless start_date
       end_date = ACCESS_DAYS_END.ago unless end_date
 
       # The target is `created_at`, not 'date'
       user_ids = AccessDay.where(created_at: start_date..end_date).select(:user_id).distinct.map(&:user_id)
       user_ids = user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
-      user_ids - StopPeriodicReportRequest.pluck(:user_id)
+      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
     end
 
     NEW_USERS_START = 1.day
     NEW_USERS_END = 1.second
 
-    def new_user_ids(start_date = nil, end_date = nil)
+    def new_user_ids(start_date = nil, end_date = nil, reject_stop_requested: true)
       start_date = NEW_USERS_START.ago unless start_date
       end_date = NEW_USERS_END.ago unless end_date
 
       user_ids = User.where(created_at: start_date..end_date).where(authorized: true).pluck(:id)
+      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
+    end
+
+    def reject_stop_requested_user_ids(user_ids)
       user_ids - StopPeriodicReportRequest.pluck(:user_id)
     end
   end

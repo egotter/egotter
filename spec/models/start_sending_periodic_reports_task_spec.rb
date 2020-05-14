@@ -1,6 +1,16 @@
 require 'rails_helper'
 
 RSpec.describe StartSendingPeriodicReportsTask, type: :model do
+  describe '#initialize' do
+    context 'user_ids is passed' do
+      subject { described_class.new(user_ids: 'user_ids') }
+      it do
+        expect(described_class).to receive(:reject_stop_requested_user_ids).with('user_ids')
+        subject
+      end
+    end
+  end
+
   describe '#initialize_user_ids' do
     let(:start_date) { 'start_date' }
     let(:end_date) { 'end_date' }
@@ -18,15 +28,11 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
     let(:users) { 2.times.map { create(:user) } }
     subject { described_class.dm_received_user_ids }
 
-    before do
-      GlobalDirectMessageReceivedFlag.new.received(users[1].uid)
-    end
+    before { GlobalDirectMessageReceivedFlag.new.received(users[1].uid) }
 
-    it { is_expected.to match_array([users[1].id]) }
-
-    context 'unsubscribe is requested' do
-      before { StopPeriodicReportRequest.create!(user_id: users[1].id) }
-      it { is_expected.to be_empty }
+    it do
+      expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')
+      is_expected.to eq('result')
     end
   end
 
@@ -40,11 +46,9 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
       users[2].access_days.create!(date: 1.hours.ago.to_date, created_at: 1.hour.ago)
     end
 
-    it { is_expected.to match_array([users[1].id]) }
-
-    context 'unsubscribe is requested' do
-      before { StopPeriodicReportRequest.create!(user_id: users[1].id) }
-      it { is_expected.to be_empty }
+    it do
+      expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')
+      is_expected.to eq('result')
     end
   end
 
@@ -57,11 +61,18 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
       users[1].update(created_at: 10.hours.ago)
     end
 
-    it { is_expected.to match_array([users[1].id]) }
+    it do
+      expect(described_class).to receive(:reject_stop_requested_user_ids).with([users[1].id]).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
 
+  describe '.reject_stop_requested_user_ids' do
+    let(:user_ids) { [1, 2, 3] }
+    subject { described_class.reject_stop_requested_user_ids(user_ids) }
     context 'unsubscribe is requested' do
-      before { StopPeriodicReportRequest.create!(user_id: users[1].id) }
-      it { is_expected.to be_empty }
+      before { StopPeriodicReportRequest.create!(user_id: user_ids[1]) }
+      it { is_expected.to match_array([1, 3]) }
     end
   end
 end
