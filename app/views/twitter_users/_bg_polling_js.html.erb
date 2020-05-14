@@ -10,6 +10,7 @@
   var profileNotFound = <%= twitter_user.profile_not_found? %>;
   var tooShortCreateInterval = <%= twitter_user.too_short_create_interval? %>;
   var accountStatusAccessed = <%= user_signed_in? && AccountStatusAccessFlag.new.accessed?(current_user.id) %>;
+  var isEgotterFollower = <%= user_signed_in? && EgotterFollower.exists?(uid: current_user.uid) %>;
   var periodicReportStopped = <%= user_signed_in? && !GlobalDirectMessageReceivedFlag.new.received?(current_user.uid) && !StopPeriodicReportRequest.exists?(user_id: current_user.id) %>;
   var eventCategory = '<%= "#{controller_name}/#{action_name}" %>';
 
@@ -46,6 +47,11 @@
         // Maybe crawler
       }
 
+      return;
+    }
+
+    if (signedIn && !isEgotterFollower) {
+      ToastMessage.info('<%= t('twitter_users.in_background.is_not_egotter_follower_html', user: current_user&.screen_name, url: sign_in_path(follow: true)) %>');
       return;
     }
 

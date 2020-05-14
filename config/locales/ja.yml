@@ -1251,7 +1251,12 @@ ja:
       latest: '表示されているデータは最新です。'
       failed: 'データの更新に失敗しました。大半のエラーは一時的なものです。5〜10分ほど後に再度お試しください。'
       profile_not_found_html: 'プロフィールを更新中です。10〜30秒後にページを更新してください。<a href="%{url}" class="btn btn-outline-primary">ページを更新する</a>'
-      periodic_report_stopped_html: 'リムられ通知の定期配信は停止中です。再開するには【リムられ通知 再開】と書いたDMを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に送ってください。<a href="https://twitter.com/messages/compose?recipient_id=187385226&welcome_message_id=1260865386309775364" target="_blank" class="btn btn-outline-primary">通知を再開する</a>'
+      is_not_egotter_follower_html: >-
+        @%{user} は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> をフォローしていないため、自動更新が止まっています。
+        <a href="%{url}" target="_blank" class="btn btn-primary">フォローする</a>
+      periodic_report_stopped_html: >-
+        リムられ通知の定期配信は停止中です。再開するには【リムられ通知 再開】と書いたDMを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に送ってください。
+        <a href="https://twitter.com/messages/compose?recipient_id=187385226&welcome_message_id=1260865386309775364" target="_blank" class="btn btn-primary">通知を再開する</a>
       updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
       reload_page: 'ページを更新する'
