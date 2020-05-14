@@ -184,8 +184,10 @@ ja:
         unfriends: 'リムーブした'
         unfollowers: 'リムーブされた'
         blocking_or_blocked: 'ブロックされた'
+        notice: 'えごったーのデータは最初に使った時から保存されていきます'
         unit: '人'
         analyzing: '分析中'
+        zero: 'これから貯まります'
       statuses:
         title: 'ツイート'
       friends:

@@ -1,6 +1,8 @@
 <% via = current_via('summary_on_timeline') %>
 <% unit = t('.unit') %>
 <% analyzing = t('.analyzing') %>
+<% zero = t('.zero') %>
+
 <div class="summary-on-timeline">
   <div class="list-group">
     <% [
@@ -15,6 +17,7 @@
         <div class="d-flex justify-content-between align-items-center">
           <%= title %>
           <span class="analyzing <%= name %>"><%= analyzing %></span>
+          <span class="zero <%= name %>" style="display: none;"><%= zero %></span>
           <span class="result <%= name %>" style="display: none;">
             <span class="count">0</span><%= unit %>
           </span>
@@ -22,6 +25,7 @@
       <% end %>
     <% end %>
   </div>
+  <div class="text-center text-muted mt-1"><%= t('.notice') %></div>
 </div>
 
 <script>
@@ -43,11 +47,12 @@
       for (var i = 0; i < names.length; i++) {
         var name = names[i];
         var count = res[name];
-        if (count <= 0) {
-          continue;
-        }
 
-        parent.find('.result.' + name).find('.count').text(count).end().show();
+        if (count <= 0) {
+          parent.find('.zero.' + name).show();
+        } else {
+          parent.find('.result.' + name).find('.count').text(count).end().show();
+        }
         parent.find('.analyzing.' + name).hide();
       }
     }).fail(function (xhr) {
