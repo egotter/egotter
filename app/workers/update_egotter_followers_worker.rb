@@ -11,11 +11,11 @@ class UpdateEgotterFollowersWorker
   end
 
   def timeout_in
-    3.minutes
+    1.minute
   end
 
   def after_timeout(*args)
-    logger.warn "Timeout #{timeout_in} #{args.inspect}"
+    logger.warn "Timeout seconds=#{timeout_in} args=#{args.inspect}"
   end
 
   def expire_in
@@ -23,18 +23,13 @@ class UpdateEgotterFollowersWorker
   end
 
   # options:
-  #   user_id
-  #   enqueued_at
   def perform(options = {})
     follower_uids = fetch_follower_uids(User::EGOTTER_UID)
-    followers = follower_uids.map.with_index { |uid, i| EgotterFollower.new(uid: uid, screen_name: "sn#{i}") }
+    followers = build_followers(follower_uids)
+    import_followers(followers)
 
-    ActiveRecord::Base.connection.execute('TRUNCATE TABLE egotter_followers')
-    Rails.logger.silence do
-      EgotterFollower.import followers, validate: false
-    end
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{options.inspect}"
+    logger.warn "#{e.class}: #{e.message.truncate(200)} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 
@@ -55,5 +50,26 @@ class UpdateEgotterFollowersWorker
     end
 
     collection.flatten
+  end
+
+  def build_followers(uids)
+    uids.map.with_index { |uid, i| EgotterFollower.new(uid: uid, screen_name: "sn#{i}") }
+  end
+
+  def import_followers(users)
+    ActiveRecord::Base.connection.execute('TRUNCATE TABLE egotter_followers')
+    Rails.logger.silence do
+      begin
+        retry_count ||= 0
+        EgotterFollower.import users, on_duplicate_key_update: %i(uid), validate: false
+      rescue => e
+        if retry_count < 3
+          retry_count += 1
+          retry
+        else
+          raise
+        end
+      end
+    end
   end
 end
