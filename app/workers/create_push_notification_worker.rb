@@ -14,7 +14,7 @@ class CreatePushNotificationWorker
   end
 
   def after_skip(*args)
-    logger.warn "Skipped #{args.inspect}"
+    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
   end
 
   def timeout_in
