@@ -1,4 +1,4 @@
-module Taskbooks
+module Tasks
   class EnumerableTask
     def initialize(tasks)
       @tasks = tasks

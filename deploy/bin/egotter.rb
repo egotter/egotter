@@ -5,6 +5,7 @@ require 'dotenv/load'
 require 'optparse'
 
 require_relative '../taskbooks/all'
+require_relative '../tasks/task_builder'
 
 STDOUT.sync = true
 
@@ -63,13 +64,13 @@ if params['h'] || params['help']
 end
 
 if params['release']
-  task = Taskbooks::ReleaseTask.build(params)
+  task = Tasks::TaskBuilder.build(params)
   task.run
 
   system("git tag release-#{params['role']}-#{Time.now.to_i}")
   system('git push origin --tags')
 elsif params['launch'] || params['terminate'] || params['sync'] || params['list']
-  task = Taskbooks::AwsTask.build(params)
+  task = Tasks::TaskBuilder.build(params)
   task.run
 
   if %i(launch terminate sync).include?(task.action)
@@ -77,5 +78,5 @@ elsif params['launch'] || params['terminate'] || params['sync'] || params['list'
     %x(git push origin --tags)
   end
 else
-  raise 'Invalid action'
+  raise "Invalid action params=#{params.inspect}"
 end
