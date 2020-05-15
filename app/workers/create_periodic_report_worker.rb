@@ -15,7 +15,7 @@ class CreatePeriodicReportWorker
 
   def after_skip(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
-    request.update(status: 'skipped')
+    request.update(status: 'job_skipped')
 
     if user_requested_job?
       waiting_time = CreatePeriodicReportMessageWorker::UNIQUE_IN + 3.seconds

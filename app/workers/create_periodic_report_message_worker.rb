@@ -35,6 +35,7 @@ class CreatePeriodicReportMessageWorker
   #   stop_requested
   #   restart_requested
   #   not_following
+  #   request_interval_too_short
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
