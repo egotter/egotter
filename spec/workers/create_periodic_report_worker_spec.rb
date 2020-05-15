@@ -22,7 +22,7 @@ RSpec.describe CreatePeriodicReportWorker do
     end
 
     it do
-      expect(request).to receive(:update).with(status: 'skipped')
+      expect(request).to receive(:update).with(status: 'job_skipped')
       subject
     end
 
