@@ -7,8 +7,10 @@ class CreatePeriodicReportWorker
     CreatePeriodicReportRequest.find(request_id).user_id
   end
 
+  UNIQUE_IN = 1.minute
+
   def unique_in
-    1.minute
+    UNIQUE_IN
   end
 
   def after_skip(request_id, options = {})
@@ -16,9 +18,8 @@ class CreatePeriodicReportWorker
     request.update(status: 'skipped')
 
     if user_requested_job?
-      # To avoid this job is skipped, 10 seconds is specified
-      waiting_time = CreatePeriodicReportMessageWorker.new.unique_in + 10.seconds
-      CreatePeriodicReportMessageWorker.perform_in(waiting_time, request.user_id, interval_too_short: true)
+      waiting_time = CreatePeriodicReportMessageWorker::UNIQUE_IN + 3.seconds
+      CreatePeriodicReportMessageWorker.perform_in(waiting_time, request.user_id, request_interval_too_short: true)
     end
 
     logger.info "The job execution is skipped request_id=#{request_id} options=#{options.inspect}"

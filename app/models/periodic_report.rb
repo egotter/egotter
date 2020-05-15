@@ -88,6 +88,15 @@ class PeriodicReport < ApplicationRecord
       new(user: User.find(user_id), message: message, token: generate_token)
     end
 
+    def request_interval_too_short_message(user_id)
+      template = Rails.root.join('app/views/periodic_reports/request_interval_too_short.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportWorker::UNIQUE_IN / 1.minute)
+      )
+
+      new(user: User.find(user_id), message: message, token: generate_token)
+    end
+
     def cannot_send_messages_message
       template = Rails.root.join('app/views/periodic_reports/cannot_send_messages.ja.text.erb')
       message = ERB.new(template.read).result
@@ -184,9 +193,9 @@ class PeriodicReport < ApplicationRecord
         I18n.t('activerecord.attributes.periodic_report.period_name.morning')
       when 11..14
         I18n.t('activerecord.attributes.periodic_report.period_name.noon')
-      when 15..21
+      when 15..19
         I18n.t('activerecord.attributes.periodic_report.period_name.evening')
-      when 22..23
+      when 20..23
         I18n.t('activerecord.attributes.periodic_report.period_name.night')
       else
         I18n.t('activerecord.attributes.periodic_report.period_name.irregular')

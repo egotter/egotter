@@ -15,16 +15,28 @@ RSpec.describe CreatePeriodicReportWorker do
   end
 
   describe '#after_skip' do
-    let(:waiting_time) { CreatePeriodicReportMessageWorker.new.unique_in + 10.seconds }
     subject { worker.after_skip(request.id) }
+
     before do
       allow(CreatePeriodicReportRequest).to receive(:find).with(request.id).and_return(request)
-      allow(worker).to receive(:user_requested_job?).and_return(true)
     end
+
     it do
       expect(request).to receive(:update).with(status: 'skipped')
-      expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).with(waiting_time, request.user_id, interval_too_short: true)
       subject
+    end
+
+    context 'user_requested_job? returns true' do
+      let(:waiting_time) { CreatePeriodicReportMessageWorker::UNIQUE_IN + 3.seconds }
+
+      before do
+        allow(worker).to receive(:user_requested_job?).and_return(true)
+      end
+
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_in).with(waiting_time, request.user_id, request_interval_too_short: true)
+        subject
+      end
     end
   end
 

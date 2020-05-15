@@ -10,8 +10,10 @@ class CreatePeriodicReportMessageWorker
     "#{picked_id}-#{Digest::MD5.hexdigest(options.inspect)}"
   end
 
+  UNIQUE_IN = 3.seconds
+
   def unique_in
-    3.seconds
+    UNIQUE_IN
   end
 
   def after_skip(*args)
@@ -65,6 +67,13 @@ class CreatePeriodicReportMessageWorker
 
     if options[:unauthorized] || !user.authorized?
       perform_unauthorized(user)
+      return
+    end
+
+    if options[:request_interval_too_short]
+      handle_weird_error(user) do
+        PeriodicReport.request_interval_too_short_message(user_id).deliver!
+      end
       return
     end
 
