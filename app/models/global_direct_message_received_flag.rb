@@ -14,4 +14,8 @@ class GlobalDirectMessageReceivedFlag < ::Egotter::SortedSet
   def received?(uid)
     exists?(uid)
   end
+
+  def remaining(uid)
+    ttl(uid)
+  end
 end

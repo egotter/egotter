@@ -199,14 +199,25 @@ class PeriodicReport < ApplicationRecord
     sender = report_sender
     dm = sender.api_client.create_direct_message_event(event: event)
 
-    unless sender.uid == User::EGOTTER_UID
-      send_remind_message
+    if send_remind_reply_message?(sender)
+      send_remind_reply_message
     end
 
     dm
   end
 
-  def send_remind_message
+  REMAINING_TTL_LIMIT = 12.hours
+
+  def send_remind_reply_message?(sender)
+    if sender.uid == User::EGOTTER_UID
+      remaining_ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
+      remaining_ttl && remaining_ttl < REMAINING_TTL_LIMIT
+    else
+      true
+    end
+  end
+
+  def send_remind_reply_message
     message = self.class.remind_reply_message.message
     event = self.class.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)

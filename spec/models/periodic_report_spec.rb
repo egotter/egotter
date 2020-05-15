@@ -52,4 +52,55 @@ RSpec.describe PeriodicReport do
       it { is_expected.to be_truthy }
     end
   end
+
+  describe '#send_direct_message' do
+    let(:report) { described_class.new }
+    let(:sender) { double('sender', uid: 1) }
+    let(:recipient) { double('recipient', uid: 2) }
+    subject { report.send_direct_message }
+
+    before do
+      allow(report).to receive(:user).and_return(user)
+      allow(report).to receive(:report_sender).and_return(sender)
+      allow(report).to receive(:report_recipient).and_return(recipient)
+      allow(sender).to receive_message_chain(:api_client, :create_direct_message_event).with(anything).and_return('dm')
+    end
+
+    context 'send_remind_reply_message? returns true' do
+      before { allow(report).to receive(:send_remind_reply_message?).with(sender).and_return(true) }
+      it do
+        expect(report).to receive(:send_remind_reply_message)
+        subject
+      end
+    end
+  end
+
+  describe '#send_remind_reply_message?' do
+    let(:report) { described_class.new }
+    let(:sender) { double('sender', uid: 1) }
+    subject { report.send_remind_reply_message?(sender) }
+
+    before { allow(report).to receive(:user).and_return(user) }
+
+    context 'sender.uid == egotter uid' do
+      before do
+        allow(sender).to receive(:uid).and_return(User::EGOTTER_UID)
+        allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :remaining).with(user.uid).and_return(ttl)
+      end
+
+      context 'remaining ttl is short' do
+        let(:ttl) { 1.hour }
+        it { is_expected.to be_truthy }
+      end
+
+      context 'remaining ttl is long' do
+        let(:ttl) { 20.hours }
+        it { is_expected.to be_falsey }
+      end
+    end
+
+    context 'sender.uid != egotter uid' do
+      it { is_expected.to be_truthy }
+    end
+  end
 end
