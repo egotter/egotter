@@ -154,6 +154,7 @@ class CreatePeriodicReportMessageWorker
         DirectMessageStatus.cannot_find_specified_user?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
         DirectMessageStatus.your_account_suspended?(e) ||
-        DirectMessageStatus.cannot_send_messages?(e)
+        DirectMessageStatus.cannot_send_messages?(e) ||
+        DirectMessageStatus.might_be_automated?(e)
   end
 end

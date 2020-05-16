@@ -15,7 +15,7 @@ class DeleteTweetsWorker
       DeleteTweetsWorker.perform_in(task.retry_in, request_id, options)
     end
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
+    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 end

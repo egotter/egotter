@@ -34,15 +34,12 @@ class UpdateEgotterFriendshipWorker
     else
       DeleteEgotterFollowerWorker.perform_async(user.id)
     end
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
-      user.update!(authorized: false)
-    else
-      logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"
-      logger.info e.backtrace.join("\n")
-    end
   rescue => e
-    if e.message.include?('Connection reset by peer')
+    if AccountStatus.invalid_or_expired_token?(e)
+      user.update!(authorized: false)
+    elsif AccountStatus.temporarily_locked?(e)
+      # Do nothing
+    elsif ServiceStatus.connection_reset_by_peer?(e)
       retry
     else
       logger.warn "#{e.class} #{e.message} #{user_id} #{options.inspect}"

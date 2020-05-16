@@ -27,6 +27,8 @@ class DeleteTweetsTask
       request.send_finished_message
       send_message_to_slack('Finished', request)
 
+    rescue DeleteTweetsRequest::InvalidToken => e
+      Rails.logger.info "#{e.inspect} request=#{request.inspect}"
     rescue DeleteTweetsRequest::RetryableError => e
       @retry_in = e.retry_in
     rescue => e

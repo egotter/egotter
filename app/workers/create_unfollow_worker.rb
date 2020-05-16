@@ -25,6 +25,7 @@ class CreateUnfollowWorker
     end
 
   rescue UnfollowRequest::NotFollowing,
+      UnfollowRequest::Unauthorized,
       UnfollowRequest::NotFound,
       UnfollowRequest::Suspended,
       UnfollowRequest::CanNotUnfollowYourself => e
