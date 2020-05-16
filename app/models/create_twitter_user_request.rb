@@ -102,6 +102,8 @@ class CreateTwitterUserRequest < ApplicationRecord
     current_twitter_user.user_id = user_id
     current_twitter_user
 
+  rescue TooShortCreateInterval, TooManyFriends, NotChanged => e
+    raise
   rescue Twitter::Error::TooManyRequests => e
     raise
   rescue => e
