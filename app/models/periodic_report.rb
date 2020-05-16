@@ -92,7 +92,7 @@ class PeriodicReport < ApplicationRecord
     def request_interval_too_short_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/request_interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportWorker::UNIQUE_IN / 1.minute)
+          interval: I18n.t('datetime.distance_in_words.x_seconds', count: CreatePeriodicReportWorker::UNIQUE_IN)
       )
 
       new(user: User.find(user_id), message: message, token: generate_token)
