@@ -35,35 +35,38 @@ module Egotter
           GlobalDirectMessageLimitation.new.limit_start
           raise
         else
-          begin
-            # TODO Remove later
-            CallCreateDirectMessageEventCount.new.increment
-
-            GlobalSendDirectMessageCount.new.increment
-            if recipient_uid != User::EGOTTER_UID
-              GlobalSendDirectMessageFromEgotterCount.new.increment
-            end
-
-            if GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid)
-              GlobalPassiveSendDirectMessageCount.new.increment
-
-              if recipient_uid != User::EGOTTER_UID
-                GlobalPassiveSendDirectMessageFromEgotterCount.new.increment
-              end
-            else
-              GlobalActiveSendDirectMessageCount.new.increment
-
-              if recipient_uid != User::EGOTTER_UID
-                GlobalActiveSendDirectMessageFromEgotterCount.new.increment
-              end
-            end
-
-          rescue => e
-            Rails.logger.warn "counting in #{__method__} #{e.inspect}"
-          end
+          set_global_direct_message_flags(recipient_uid)
         end
 
         result
+      end
+
+      def set_global_direct_message_flags(recipient_uid)
+        # TODO Remove later
+        CallCreateDirectMessageEventCount.new.increment
+
+        GlobalSendDirectMessageCount.new.increment
+        if recipient_uid != User::EGOTTER_UID
+          GlobalSendDirectMessageFromEgotterCount.new.increment
+          GlobalSendDirectMessageCountByUser.new.increment(recipient_uid)
+        end
+
+        if GlobalDirectMessageReceivedFlag.new.exists?(recipient_uid)
+          GlobalPassiveSendDirectMessageCount.new.increment
+
+          if recipient_uid != User::EGOTTER_UID
+            GlobalPassiveSendDirectMessageFromEgotterCount.new.increment
+          end
+        else
+          GlobalActiveSendDirectMessageCount.new.increment
+
+          if recipient_uid != User::EGOTTER_UID
+            GlobalActiveSendDirectMessageFromEgotterCount.new.increment
+          end
+        end
+
+      rescue => e
+        Rails.logger.warn "counting in #{__method__} #{e.inspect}"
       end
 
       def dig_recipient_uid(args)

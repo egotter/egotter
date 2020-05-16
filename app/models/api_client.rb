@@ -8,7 +8,7 @@ class ApiClient
     resp = @client.twitter.create_direct_message_event(*args).to_h
     DirectMessage.new(event: resp)
   rescue => e
-    if e.message.include?('Connection reset by peer') && (tries -= 1) > 0
+    if ServiceStatus.connection_reset_by_peer?(e) && (tries -= 1) > 0
       retry
     else
       raise

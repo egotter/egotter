@@ -51,6 +51,7 @@ class WebhookController < ApplicationController
 
   def process_message_from_user(dm)
     GlobalDirectMessageReceivedFlag.new.received(dm.sender_id)
+    GlobalSendDirectMessageCountByUser.new.clear(dm.sender_id)
 
     if restart_requested?(dm)
       enqueue_user_requested_restarting_periodic_report(dm)

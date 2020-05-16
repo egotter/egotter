@@ -116,6 +116,7 @@ RSpec.describe WebhookController, type: :controller do
 
     it do
       expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received).with(dm.sender_id)
+      expect(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :clear).with(dm.sender_id)
       expect(SendReceivedMessageWorker).to receive(:perform_async).with(dm.sender_id, dm_id: dm.id, text: dm.text)
       subject
     end
