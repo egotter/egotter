@@ -252,12 +252,13 @@ class PeriodicReport < ApplicationRecord
     dm
   end
 
-  REMAINING_TTL_LIMIT = 12.hours
+  REMAINING_TTL_SOFT_LIMIT = 12.hours
+  REMAINING_TTL_HARD_LIMIT = 3.hours
 
   def send_remind_reply_message?(sender)
     if sender.uid == User::EGOTTER_UID
       remaining_ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
-      remaining_ttl && remaining_ttl < REMAINING_TTL_LIMIT
+      remaining_ttl && remaining_ttl < REMAINING_TTL_SOFT_LIMIT
     else
       true
     end
