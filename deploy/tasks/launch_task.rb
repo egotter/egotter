@@ -125,13 +125,21 @@ module Tasks
       @role = params['role']
     end
 
-    def run
+    def launch_instance(index = nil)
       az = 'ap-northeast-1b'
-      server = Tasks::LaunchInstanceTask::Sidekiq.new(@params.merge('availability-zone' => az)).launch
-      append_to_ssh_config(server.id, server.host, server.public_ip)
-      Tasks::InstallTask::Sidekiq.new(server.id).install
+      params = @params.merge('availability-zone' => az, 'instance-index' => index)
+      @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
+    end
 
-      @instance = @launched = server
+    def run
+      if @server.nil?
+        launch_instance
+      end
+
+      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+      Tasks::InstallTask::Sidekiq.new(@server.id).install
+
+      @instance = @launched = @server
 
       super
     end
@@ -144,13 +152,21 @@ module Tasks
       @role = params['role']
     end
 
-    def run
+    def launch_instance(index = nil)
       az = 'ap-northeast-1b'
-      server = Tasks::LaunchInstanceTask::Sidekiq.new(@params.merge('availability-zone' => az)).launch
-      append_to_ssh_config(server.id, server.host, server.public_ip)
-      Tasks::InstallTask::SidekiqPromptReports.new(server.id).install
+      params = @params.merge('availability-zone' => az, 'instance-index' => index)
+      @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
+    end
 
-      @instance = @launched = server
+    def run
+      if @server.nil?
+        launch_instance
+      end
+
+      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+      Tasks::InstallTask::SidekiqPromptReports.new(@server.id).install
+
+      @instance = @launched = @server
 
       super
     end
