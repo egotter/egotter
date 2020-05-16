@@ -102,16 +102,8 @@ class CreateTwitterUserRequest < ApplicationRecord
     current_twitter_user.user_id = user_id
     current_twitter_user
 
-  rescue Error => e
-    raise
   rescue Twitter::Error::TooManyRequests => e
     raise
-  rescue Twitter::Error::Forbidden => e
-    if AccountStatus.temporarily_locked?(e)
-      raise Forbidden
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
   rescue => e
     if AccountStatus.unauthorized?(e)
       raise Unauthorized
@@ -119,6 +111,8 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise Protected
     elsif AccountStatus.blocked?(e)
       raise Blocked
+    elsif AccountStatus.temporarily_locked?(e)
+      raise TemporarilyLocked
     elsif ServiceStatus.service_unavailable?(e)
       raise ServiceUnavailable
     elsif ServiceStatus.internal_server_error?(e)
@@ -186,6 +180,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class Blocked < Error
+  end
+
+  class TemporarilyLocked < Error
   end
 
   class TooShortCreateInterval < Error

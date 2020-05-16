@@ -32,6 +32,11 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       it { expect { subject }.to raise_error(described_class::InternalServerError) }
     end
 
+    context '#fetch_user raises Twitter::Error::Forbidden' do
+      before { allow(request).to receive(:fetch_user).and_raise(Twitter::Error::Forbidden, 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.') }
+      it { expect { subject }.to raise_error(described_class::TemporarilyLocked) }
+    end
+
     context '#fetch_user raises Twitter::Error::ServiceUnavailable' do
       before { allow(request).to receive(:fetch_user).and_raise(Twitter::Error::ServiceUnavailable, 'Over capacity') }
       it { expect { subject }.to raise_error(described_class::ServiceUnavailable) }
