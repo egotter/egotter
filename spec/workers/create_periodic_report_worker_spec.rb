@@ -56,6 +56,7 @@ RSpec.describe CreatePeriodicReportWorker do
       expect(request.check_credentials).to be_truthy
       expect(request.check_interval).to be_falsey
       expect(request.check_following_status).to be_falsey
+      expect(request.check_allotted_messages_count).to be_truthy
       expect(request.check_twitter_user).to be_truthy
     end
 
@@ -82,6 +83,16 @@ RSpec.describe CreatePeriodicReportWorker do
       end
     end
 
+
+    context 'batch_requested_job? returns true' do
+      before do
+        allow(worker).to receive(:batch_requested_job?).and_return(true)
+      end
+      it do
+        subject
+        expect(request.check_allotted_messages_count).to be_truthy
+      end
+    end
     context 'create_twitter_user is specified' do
       [true, false].each do |value|
         context "#{value} is passed" do

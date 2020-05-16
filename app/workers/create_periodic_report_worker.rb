@@ -29,6 +29,10 @@ class CreatePeriodicReportWorker
     self.class == CreateUserRequestedPeriodicReportWorker
   end
 
+  def batch_requested_job?
+    self.class == CreatePeriodicReportWorker
+  end
+
   def sending_dm_limited?(uid)
     !GlobalDirectMessageReceivedFlag.new.exists?(uid) &&
         GlobalDirectMessageLimitation.new.limited?
@@ -50,6 +54,7 @@ class CreatePeriodicReportWorker
     request.check_credentials = true
     request.check_interval = user_requested_job?
     request.check_following_status = user_requested_job?
+    request.check_allotted_messages_count = batch_requested_job?
 
     options['create_twitter_user'] = true unless options.has_key?('create_twitter_user')
     request.check_twitter_user = options['create_twitter_user']

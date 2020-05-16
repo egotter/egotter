@@ -25,6 +25,8 @@ class PeriodicReport < ApplicationRecord
 
   belongs_to :user
 
+  attr_accessor :soft_limited_message
+
   def deliver!
     dm = send_direct_message
     update!(message_id: dm.id, message: dm.truncated_message)
@@ -78,6 +80,13 @@ class PeriodicReport < ApplicationRecord
       message = ERB.new(template.read).result
 
       new(user: nil, message: message, token: nil)
+    end
+
+    def sending_soft_limited_message(user_id)
+      template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
+      message = ERB.new(template.read).result
+
+      new(user: User.find(user_id), message: message, token: generate_token, soft_limited_message: true)
     end
 
     def interval_too_short_message(user_id)
@@ -245,7 +254,7 @@ class PeriodicReport < ApplicationRecord
     sender = report_sender
     dm = sender.api_client.create_direct_message_event(event: event)
 
-    if send_remind_reply_message?(sender)
+    if !soft_limited_message && send_remind_reply_message?(sender)
       send_remind_reply_message
     end
 

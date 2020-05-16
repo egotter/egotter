@@ -21,15 +21,16 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :check_following_status, :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
 
   def perform!
-    logger.debug { "#{self.class}##{__method__} check_following_status=#{check_following_status} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context}" }
+    logger.debug { "#{self.class}##{__method__} check_allotted_messages_count=#{check_allotted_messages_count} check_following_status=#{check_following_status} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context}" }
 
     return if check_credentials && !verify_credentials_before_starting?
     return if check_interval && !check_interval_before_starting?
     return if check_following_status && !check_following_status_before_starting?
+    return if check_allotted_messages_count && !check_allotted_messages_count_before_starting?
 
     if check_twitter_user
       create_new_twitter_user_record
@@ -85,6 +86,20 @@ class CreatePeriodicReportRequest < ApplicationRecord
     else
       true
     end
+  end
+
+  def check_allotted_messages_count_before_starting?
+    return true unless GlobalDirectMessageReceivedFlag.new.received?(user.uid)
+
+    send_count = GlobalSendDirectMessageCountByUser.new.count(user.uid)
+    return true if send_count <= 3
+
+    update(status: 'soft_limited')
+
+    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, sending_soft_limited: true)
+    update(status: 'soft_limited,message_skipped') unless jid
+
+    false
   end
 
   def user_or_egotter_requested_job?

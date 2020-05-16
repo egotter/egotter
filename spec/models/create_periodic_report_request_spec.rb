@@ -38,6 +38,14 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       end
     end
 
+    context 'check_allotted_messages_count == true' do
+      before { request.check_allotted_messages_count = true }
+      it do
+        expect(request).to receive(:check_allotted_messages_count_before_starting?).and_return(false)
+        subject
+      end
+    end
+
     context 'check_twitter_user == true' do
       before { request.check_twitter_user = true }
       it do
@@ -80,6 +88,33 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
             with(user.uid, User::EGOTTER_UID).and_return(false)
       end
       it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '#check_allotted_messages_count_before_starting?' do
+    subject { request.check_allotted_messages_count_before_starting? }
+
+    before do
+      allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).
+          with(user.uid).and_return(true)
+      allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).
+          with(user.uid).and_return(send_count)
+    end
+
+    context 'sending count is less than or equal to 3' do
+      let(:send_count) { 3 }
+      it do
+        expect(CreatePeriodicReportMessageWorker).not_to receive(:perform_async)
+        subject
+      end
+    end
+
+    context 'else' do
+      let(:send_count) { 4 }
+      it do
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, sending_soft_limited: true)
+        subject
+      end
     end
   end
 

@@ -37,6 +37,7 @@ class CreatePeriodicReportMessageWorker
   #   restart_requested
   #   not_following
   #   request_interval_too_short
+  #   sending_soft_limited
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
@@ -82,6 +83,13 @@ class CreatePeriodicReportMessageWorker
     if options[:interval_too_short]
       handle_weird_error(user) do
         PeriodicReport.interval_too_short_message(user_id).deliver!
+      end
+      return
+    end
+
+    if options[:sending_soft_limited]
+      handle_weird_error(user) do
+        PeriodicReport.sending_soft_limited_message(user_id).deliver!
       end
       return
     end
