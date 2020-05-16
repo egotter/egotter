@@ -28,6 +28,7 @@ class CreatePeriodicReportMessageWorker
   #   followers_count
   #   unfriends
   #   unfollowers
+  #   worker_context
   #
   #   interval_too_short
   #   unauthorized

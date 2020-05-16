@@ -23,10 +23,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   attr_accessor :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
-  attr_accessor :sync_flag
 
   def perform!
-    logger.debug { "#{self.class}##{__method__} check_following_status=#{check_following_status} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context} sync_flag=#{sync_flag}" }
+    logger.debug { "#{self.class}##{__method__} check_following_status=#{check_following_status} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context}" }
 
     return if check_credentials && !verify_credentials_before_starting?
     return if check_interval && !check_interval_before_starting?
@@ -36,13 +35,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
       create_new_twitter_user_record
     end
 
-    if sync_flag
-      CreatePeriodicReportMessageWorker.new.perform(user_id, build_report_options)
-    else
-      # If an administrator makes a request immediately after processing a user's request, it may be skipped
-      jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
-      update(status: 'message_skipped') unless jid
-    end
+    # If an administrator makes a request immediately after processing a user's request, it may be skipped
+    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
+    update(status: 'message_skipped') unless jid
   end
 
   def verify_credentials_before_starting?
@@ -53,12 +48,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
     update(status: 'unauthorized')
 
     if user_or_egotter_requested_job?
-      if sync_flag
-        CreatePeriodicReportMessageWorker.new.perform(user_id, unauthorized: true)
-      else
-        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
-        update(status: 'unauthorized,message_skipped') unless jid
-      end
+      jid = CreatePeriodicReportMessageWorker.perform_async(user_id, unauthorized: true)
+      update(status: 'unauthorized,message_skipped') unless jid
     end
 
     false
@@ -71,12 +62,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
     update(status: 'not_following')
 
     if user_or_egotter_requested_job?
-      if sync_flag
-        CreatePeriodicReportMessageWorker.new.perform(user_id, not_following: true)
-      else
-        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, not_following: true)
-        update(status: 'not_following,message_skipped') unless jid
-      end
+      jid = CreatePeriodicReportMessageWorker.perform_async(user_id, not_following: true)
+      update(status: 'not_following,message_skipped') unless jid
     end
 
     false
@@ -90,12 +77,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
       update(status: 'interval_too_short')
 
       if user_or_egotter_requested_job?
-        if sync_flag
-          CreatePeriodicReportMessageWorker.new.perform(user_id, interval_too_short: true)
-        else
-          jid = CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
-          update(status: 'interval_too_short,message_skipped') unless jid
-        end
+        jid = CreatePeriodicReportMessageWorker.perform_async(user_id, interval_too_short: true)
+        update(status: 'interval_too_short,message_skipped') unless jid
       end
 
       false
@@ -146,7 +129,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
         last_friends_count: last_user&.friends_count,
         last_followers_count: last_user&.followers_count,
         unfriends: unfriends,
-        unfollowers: unfollowers
+        unfollowers: unfollowers,
+        worker_context: worker_context
     }
   end
 

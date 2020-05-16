@@ -30,25 +30,27 @@ class PeriodicReport < ApplicationRecord
     update!(message_id: dm.id, message: dm.truncated_message)
   end
 
+  # Keep a minimum of files in the cache to avoid "NameError: undefined local variable or method"
+  TEMPLATES = {
+      removed: Rails.root.join('app/views/periodic_reports/removed.ja.text.erb').read,
+      not_removed: Rails.root.join('app/views/periodic_reports/not_removed.ja.text.erb').read
+  }
+
   class << self
     def periodic_message(user_id, request_id:, start_date:, end_date:, first_friends_count: nil, first_followers_count: nil,
-                         last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:)
+                         last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:, worker_context: nil)
       user = User.find(user_id)
       start_date = Time.zone.parse(start_date) if start_date.class == String
       end_date = Time.zone.parse(end_date) if end_date.class == String
 
-      if unfollowers.any?
-        template = Rails.root.join('app/views/periodic_reports/removed.ja.text.erb')
-      else
-        template = Rails.root.join('app/views/periodic_reports/not_removed.ja.text.erb')
-      end
+      template = unfollowers.any? ? TEMPLATES[:removed] : TEMPLATES[:not_removed]
 
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
 
       I18n.backend.store_translations :ja, persons: {other: '%{count}人'}
 
-      message = ERB.new(template.read).result_with_hash(
+      message = ERB.new(template).result_with_hash(
           user: user,
           start_date: start_date,
           end_date: end_date,
@@ -63,8 +65,7 @@ class PeriodicReport < ApplicationRecord
           unfollowers: unfollowers,
           unfollower_urls: unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user_id),
-          request_id: request_id,
-          twitter_user_id: TwitterUser.latest_by(uid: user.uid)&.id,
+          request_id_text: request_id_text(user, request_id, worker_context),
           timeline_url: timeline_url(user, url_options),
           settings_url: settings_url(url_options),
       )
@@ -199,6 +200,42 @@ class PeriodicReport < ApplicationRecord
         I18n.t('activerecord.attributes.periodic_report.period_name.night')
       else
         I18n.t('activerecord.attributes.periodic_report.period_name.irregular')
+      end
+    end
+
+    def request_id_text(user, request_id, worker_context)
+      [
+          request_id,
+          TwitterUser.latest_by(uid: user.uid)&.id || -1,
+          remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
+          worker_context_text(worker_context)
+      ].join('-')
+    rescue => e
+      'er'
+    end
+
+    def remaining_ttl_text(ttl)
+      if ttl.nil?
+        '0'
+      elsif ttl < 1.hour
+        "#{(ttl / 1.minute).to_i}m"
+      else
+        "#{(ttl / 1.hour).to_i}h"
+      end
+    end
+
+    def worker_context_text(context)
+      case context
+      when CreateUserRequestedPeriodicReportWorker.name
+        'u'
+      when CreateAndroidRequestedPeriodicReportWorker.name
+        'a'
+      when CreateEgotterRequestedPeriodicReportWorker.name
+        'e'
+      when CreatePeriodicReportWorker.name
+        'b'
+      else
+        'un'
       end
     end
   end
