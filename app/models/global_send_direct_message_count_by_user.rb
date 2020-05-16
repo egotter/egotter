@@ -18,6 +18,14 @@ class GlobalSendDirectMessageCountByUser
     val ? val.to_i : 0
   end
 
+  def keys
+    @redis.hkeys(@key).map(&:to_i)
+  end
+
+  def values
+    @redis.hvals(@key).map(&:to_i)
+  end
+
   def soft_limited?(uid)
     count(uid) >= 4
   end
