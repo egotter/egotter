@@ -74,7 +74,7 @@ elsif params['launch'] || params['terminate'] || params['sync'] || params['list'
   task.run
 
   if %i(launch terminate sync).include?(task.action)
-    %x(git tag #{task.action}-#{task.instance.name})
+    %x(git tag #{task.action}-#{task.instance.name}) # Cannot add the existing tag
     %x(git push origin --tags)
   end
 else

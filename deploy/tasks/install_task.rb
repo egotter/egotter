@@ -224,7 +224,7 @@ module Tasks
         sync.restart_processes
       rescue => e
         logger.error red("Terminate #{@id} since #{e.class} is raised")
-        ::DeployRuby::Aws::EC2.terminate_instance(@id)
+        ::DeployRuby::Aws::EC2.new.terminate_instance(@id)
         raise
       end
 
@@ -288,7 +288,7 @@ module Tasks
       rescue => e
         logger.error red("Terminate #{@id} as #{e.class} is raised")
         before_terminate
-        ::DeployRuby::Aws::EC2.terminate_instance(@id)
+        ::DeployRuby::Aws::EC2.new.terminate_instance(@id)
         raise
       end
 
@@ -388,7 +388,7 @@ module Tasks
         sync.stop_processes
       rescue => e
         logger.error red("Terminate #{@id} since #{e.class} is raised")
-        ::DeployRuby::Aws::EC2.terminate_instance(@id)
+        ::DeployRuby::Aws::EC2.new.terminate_instance(@id)
         raise
       end
 

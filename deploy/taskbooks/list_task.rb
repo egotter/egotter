@@ -3,10 +3,13 @@ module Taskbooks
     def build(params)
       role = params['role']
 
-      if role == 'web'
+      case role
+      when 'web'
         WebTask.new(params)
-      elsif role == 'sidekiq'
+      when 'sidekiq'
         SidekiqTask.new(params)
+      when 'plain'
+        PlainTask.new(params)
       else
         raise "Invalid role #{role}"
       end
@@ -32,7 +35,7 @@ module Taskbooks
       end
 
       def run
-        puts @target_group.instances(state: @state).map(&:name).join(@delim)
+        puts @target_group.registered_instances(state: @state).map(&:name).join(@delim)
       end
     end
 
@@ -43,10 +46,26 @@ module Taskbooks
 
       def run
         instances =
-            ::DeployRuby::Aws::EC2.retrieve_instances.map do |i|
+            ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
               ::DeployRuby::Aws::Instance.new(i)
             end.select do |i|
               i.name&.start_with?('egotter_sidekiq')
+            end
+        puts instances.map(&:name).join(@delim)
+      end
+    end
+
+    class PlainTask < Task
+      def initialize(params)
+        @delim = params['delim'] || ' '
+      end
+
+      def run
+        instances =
+            ::DeployRuby::Aws::EC2.new.retrieve_instances.map do |i|
+              ::DeployRuby::Aws::Instance.new(i)
+            end.select do |i|
+              i.name&.start_with?('egotter_plain')
             end
         puts instances.map(&:name).join(@delim)
       end

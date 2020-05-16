@@ -1,10 +1,9 @@
 module DeployRuby
   module Aws
-    module EC2
-      module_function
+    class EC2
 
       def launch_instance(name, params)
-        instance = resource.create_instances(params).first
+        instance = ec2_resource.create_instances(params).first
         wait_until(instance.id, :instance_running)
         wait_until(instance.id, :instance_status_ok)
 
@@ -14,7 +13,7 @@ module DeployRuby
         instance.create_tags(tags: [{key: 'Name', value: name}])
         instance.id
       rescue ::Aws::EC2::Errors::InvalidParameterCombination => e
-        red "Invalid params #{params.inspect}"
+        red "Invalid params params=#{params.inspect}"
         raise
       rescue Interrupt, StandardError => e
         red "#{e.class} is raised and terminates already started instance."
@@ -25,15 +24,15 @@ module DeployRuby
       end
 
       def terminate_instance(id)
-        resource.client.terminate_instances({instance_ids: [id]})
-        wait_until(id, :instance_terminated)
+        ec2_resource.client.terminate_instances({instance_ids: [id]})
+        # wait_until(id, :instance_terminated)
         id
       end
 
       def retrieve_instance(id)
         instance = nil
-        filters = [name: 'instance-id', values: [id]]
-        resource.instances(filters: filters).each do |i|
+        filters = [{name: 'instance-id', values: [id]}]
+        ec2_resource.instances(filters: filters).each do |i|
           instance = i
           break
         end
@@ -42,8 +41,8 @@ module DeployRuby
 
       def retrieve_instance_by(name:)
         instance = nil
-        filters = [name: 'tag:Name', values: [name]]
-        resource.instances(filters: filters).each do |i|
+        filters = [{name: 'tag:Name', values: [name]}, {name: 'instance-state-name', values: ['running']}]
+        ec2_resource.instances(filters: filters).each do |i|
           instance = i
           break
         end
@@ -51,7 +50,8 @@ module DeployRuby
       end
 
       def retrieve_instances
-        resource.instances
+        filters = [{name: 'instance-state-name', values: ['running']}]
+        ec2_resource.instances(filters: filters)
       end
 
       def test_ssh_connection(public_ip)
@@ -68,7 +68,7 @@ module DeployRuby
       end
 
       def wait_until(id, state)
-        resource.client.wait_until(state, instance_ids: [id]) do |w|
+        ec2_resource.client.wait_until(state, instance_ids: [id]) do |w|
           w.before_wait do |n, resp|
             logger.info "waiting for #{state} #{id}"
           end
@@ -78,8 +78,8 @@ module DeployRuby
         exit
       end
 
-      def resource
-        @resource ||= ::Aws::EC2::Resource.new(region: 'ap-northeast-1')
+      def ec2_resource
+        @ec2_resource ||= ::Aws::EC2::Resource.new(region: 'ap-northeast-1')
       end
 
       def green(str)

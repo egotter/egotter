@@ -8,16 +8,7 @@ module Taskbooks
       role = params['role']
 
       if role == 'auto'
-        name = params['instance-name']
-
-        if name.to_s.include?('_web')
-          role = 'web'
-        elsif name.to_s.include?('_sidekiq')
-          role = 'sidekiq'
-        else
-          raise 'role is auto, but collect role is not found'
-        end
-
+        role = auto_detect_role(params)
         params['role'] = role
       end
 
@@ -25,12 +16,30 @@ module Taskbooks
         WebTask.new(params)
       elsif role == 'sidekiq'
         SidekiqTask.new(params)
+      elsif role == 'plain'
+        PlainTask.new(params)
       else
         raise "Invalid role #{role}"
       end
     end
 
     module_function :build
+
+    def auto_detect_role(params)
+      name = params['instance-name']
+
+      if name.to_s.include?('_web')
+        'web'
+      elsif name.to_s.include?('_sidekiq')
+        'sidekiq'
+      elsif name.to_s.include?('_plain')
+        'plain'
+      else
+        raise 'role is auto, but collect role is not found'
+      end
+    end
+
+    module_function :auto_detect_role
 
     class Task < ::DeployRuby::Task
       attr_reader :action, :instance
@@ -43,7 +52,7 @@ module Taskbooks
       end
 
       def run
-        after_terminate if @terminated
+        after_terminate if @terminated && %w(web sidekiq).include?(@role)
       end
 
       def after_terminate
@@ -88,6 +97,24 @@ module Taskbooks
         instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
         if instance
           Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
+          instance.terminate
+          @instance = @terminated = instance
+        end
+
+        super
+      end
+    end
+
+    class PlainTask < Task
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
+      end
+
+      def run
+        instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
+        if instance
           instance.terminate
           @instance = @terminated = instance
         end

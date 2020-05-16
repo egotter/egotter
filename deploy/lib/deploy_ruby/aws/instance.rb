@@ -18,19 +18,19 @@ module DeployRuby
       end
 
       def terminate
-        ::DeployRuby::Aws::EC2.terminate_instance(@id)
+        ::DeployRuby::Aws::EC2.new.terminate_instance(@id)
       end
 
       class << self
         def retrieve(id)
-          new(::DeployRuby::Aws::EC2.retrieve_instance(id))
+          new(::DeployRuby::Aws::EC2.new.retrieve_instance(id))
         end
 
         def retrieve_by(id: nil, name: nil)
           if id
             retrieve(id)
           else
-            new(::DeployRuby::Aws::EC2.retrieve_instance_by(name: name))
+            new(::DeployRuby::Aws::EC2.new.retrieve_instance_by(name: name))
           end
         end
       end

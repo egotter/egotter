@@ -8,7 +8,7 @@ module DeployRuby
       end
 
       def register(instance_id)
-        previous_count = instances.size
+        previous_count = registered_instances.size
 
         params = {
             target_group_arn: @arn,
@@ -18,13 +18,13 @@ module DeployRuby
         client.register_targets(params)
         wait_until(:target_in_service, params)
 
-        success "Current targets count is #{instances.size} (was #{previous_count})"
+        success "Current targets count is #{registered_instances.size} (was #{previous_count})"
 
         self
       end
 
       def deregister(instance_id)
-        previous_count = instances.size
+        previous_count = registered_instances.size
         return false if previous_count <= 1
 
         params = {
@@ -35,12 +35,12 @@ module DeployRuby
         client.deregister_targets(params)
         wait_until(:target_deregistered, params)
 
-        success "Current targets count is #{instances.size} (was #{previous_count})"
+        success "Current targets count is #{registered_instances.size} (was #{previous_count})"
 
         true
       end
 
-      def instances(state: 'healthy')
+      def registered_instances(state: 'healthy')
         params = {target_group_arn: @arn}
 
         client.describe_target_health(params).
@@ -51,7 +51,7 @@ module DeployRuby
       end
 
       def oldest_instance
-        id = instances.sort_by(&:launched_at).first.id
+        id = registered_instances.sort_by(&:launched_at).first.id
         ::DeployRuby::Aws::Instance.retrieve(id)
       end
 
@@ -61,7 +61,7 @@ module DeployRuby
             'ap-northeast-1c' => 0,
             'ap-northeast-1d' => 0,
         }
-        instances.each { |i| count[i.availability_zone] += 1 }
+        registered_instances.each { |i| count[i.availability_zone] += 1 }
         count.sort_by { |k, v| v }[0][0]
       end
 

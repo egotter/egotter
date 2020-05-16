@@ -11,13 +11,13 @@ module Tasks
 
       case role
       when 'web'
-        WebTask.new(params)
+        LaunchWebTask.new(params)
       when 'sidekiq'
-        SidekiqTask.new(params)
+        LaunchSidekiqTask.new(params)
       when 'sidekiq_prompt_reports'
-        SidekiqPromptReportsTask.new(params)
+        LaunchSidekiqPromptReportsTask.new(params)
       when 'plain'
-        PlainTask.new(params)
+        LaunchPlainTask.new(params)
       else
         raise "Invalid role params=#{params.inspect}"
       end
@@ -88,14 +88,22 @@ module Tasks
       @target_group = ::DeployRuby::Aws::TargetGroup.new(target_group_arn)
     end
 
-    def run
+    def launch_instance(index = nil)
       az = @target_group.availability_zone_with_fewest_instances
-      server = Tasks::LaunchInstanceTask::Web.new(@params.merge('availability-zone' => az)).launch
-      append_to_ssh_config(server.id, server.host, server.public_ip)
-      Tasks::InstallTask::Web.new(server.id).install
+      params = @params.merge('availability-zone' => az, 'instance-index' => index)
+      @server = Tasks::LaunchInstanceTask::Web.new(params).launch
+    end
 
-      @target_group.register(server.id)
-      @instance = @launched = server
+    def run
+      if @server.nil?
+        launch_instance
+      end
+
+      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+      Tasks::InstallTask::Web.new(@server.id).install
+
+      @target_group.register(@server.id)
+      @instance = @launched = @server
 
       if @params['rotate']
         instance = @target_group.oldest_instance
@@ -155,13 +163,21 @@ module Tasks
       @role = params['role']
     end
 
-    def run
+    def launch_instance(index = nil)
       az = 'ap-northeast-1b'
-      server = Tasks::LaunchInstanceTask::Plain.new(@params.merge('availability-zone' => az)).launch
-      append_to_ssh_config(server.id, server.host, server.public_ip)
-      Tasks::InstallTask::Plain.new(server.id).install
+      params = @params.merge('availability-zone' => az, 'instance-index' => index)
+      @server = Tasks::LaunchInstanceTask::Plain.new(params).launch
+    end
 
-      @instance = @launched = server
+    def run
+      if @server.nil?
+        launch_instance
+      end
+
+      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+      Tasks::InstallTask::Plain.new(@server.id).install
+
+      @instance = @launched = @server
 
       super
     end

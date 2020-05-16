@@ -46,7 +46,17 @@ module Tasks
 
     def build_launch_task(params)
       if multiple_task?(params)
-        Tasks::EnumerableTask.new(params['count'].to_i.times.map { Tasks::LaunchTask.build(params) })
+        count = params['count'].to_i
+        tasks = count.times.map { Tasks::LaunchTask.build(params) }
+
+        if %w(web plain).include?(params['role'])
+          DeployRuby.logger.info "Launch instances in parallel params=#{params.inspect}"
+          tasks.map.with_index do |task, i|
+            Thread.new { task.launch_instance(i) }
+          end.each(&:join)
+        end
+
+        Tasks::EnumerableTask.new(tasks)
       else
         Tasks::LaunchTask.build(params)
       end
