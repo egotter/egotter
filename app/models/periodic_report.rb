@@ -156,7 +156,7 @@ class PeriodicReport < ApplicationRecord
     end
 
     def periodic_push_message(user_id, request_id:, start_date:, end_date:, first_friends_count: nil, first_followers_count: nil,
-                              last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:)
+                              last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:, worker_context: nil)
       user = User.find(user_id)
       start_date = Time.zone.parse(start_date) if start_date.class == String
       end_date = Time.zone.parse(end_date) if end_date.class == String
