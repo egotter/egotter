@@ -197,12 +197,11 @@ Rails.application.routes.draw do
     get '_sign_out' => 'users/sessions#destroy', :as => :destroy_user_session
   end
 
-  require 'sidekiq/api'
-  match 'delay_status' => proc {
-    q1 = []
-    q2 = Sidekiq::Queue.new(DelayedImportTwitterUserRelationsWorker.name)
-    [200, {'Content-Type' => 'text/plain'}, ["#{q1.size} #{q2.size}"]]
-  }, via: :get
+  authenticate :user, lambda { |u| [User::ADMIN_UID, User::EGOTTER_UID].include?(u.uid) } do
+    match 'dm_stats' => proc {
+      [200, {'Content-Type' => 'text/plain'}, [DirectMessageStats.new.to_s]]
+    }, via: :get
+  end
 
   require 'sidekiq/web'
   if Rails.env.production?
