@@ -30,6 +30,10 @@ class GlobalSendDirectMessageCountByUser
     @redis.hlen(@key)
   end
 
+  def debug_object
+    @redis.debug('object', @key)
+  end
+
   def soft_limited?(uid)
     count(uid) >= 4
   end
