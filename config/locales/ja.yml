@@ -1255,7 +1255,7 @@ ja:
         @%{user} は <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> をフォローしていないため、自動更新が止まっています。
         <a href="%{url}" target="_blank" class="btn btn-primary">フォローする</a>
       periodic_report_stopped_html: >-
-        リムられ通知の定期配信は停止中です。再開するには【リムられ通知 再開】と書いたDMを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に送ってください。
+        リムられ通知の有効期限が切れています。再開するには【リムられ通知 再開】と書いたDMを <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> に送ってください。
         <a href="https://twitter.com/messages/compose?recipient_id=187385226&welcome_message_id=1260865386309775364" target="_blank" class="btn btn-primary">通知を再開する</a>
       updating_html: '@%{user} のデータを更新中 <img src="/ajax-loader-blue.gif?a=1">'
       update_of_usage_stat_is_coming: '%{user} のデータが更新されました。'
