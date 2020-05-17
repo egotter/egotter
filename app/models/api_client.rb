@@ -55,8 +55,7 @@ class ApiClient
           consumer_key: ENV['TWITTER_CONSUMER_KEY'],
           consumer_secret: ENV['TWITTER_CONSUMER_SECRET'],
           access_token: nil,
-          access_token_secret: nil,
-          cache_dir: CacheDirectory.find_by(name: 'twitter')&.dir || ENV['TWITTER_CACHE_DIR']
+          access_token_secret: nil
       }.merge(options)
     end
 
@@ -65,8 +64,7 @@ class ApiClient
           if options.blank?
             TwitterWithAutoPagination::Client.new
           else
-            redis = Redis.client(ENV['TWITTER_API_REDIS_HOST'])
-            options[:cache_store] = ActiveSupport::Cache::RedisCacheStore.new(namespace: "#{Rails.env}:twitter", expires_in: 20.minutes, race_condition_ttl: 3.minutes, redis: redis)
+            options[:cache_store] = CacheStore.new
             TwitterWithAutoPagination::Client.new(config(options))
           end
       new(client)
@@ -81,5 +79,38 @@ class ApiClient
 
   def logger
     self.class.logger
+  end
+
+  class CacheStore < ActiveSupport::Cache::RedisCacheStore
+    def initialize
+      super(
+          namespace: "#{Rails.env}:twitter",
+          expires_in: 20.minutes,
+          race_condition_ttl: 3.minutes,
+          redis: self.class.redis_client
+      )
+    end
+
+    class << self
+      # Intentionally not cached
+      def redis_client
+        Redis.client(ENV['TWITTER_API_REDIS_HOST'])
+      end
+    end
+
+    module RescueAllRedisErrors
+      %i(
+        read
+        write
+      ).each do |method_name|
+        define_method(method_name) do |*args, &blk|
+          super(*args, &blk)
+        rescue => e
+          Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect}"
+          nil
+        end
+      end
+    end
+    prepend RescueAllRedisErrors
   end
 end

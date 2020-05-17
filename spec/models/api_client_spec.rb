@@ -128,3 +128,30 @@ RSpec.describe ApiClient, type: :model do
     end
   end
 end
+
+RSpec.describe ApiClient::CacheStore, type: :model do
+  let(:instance) { described_class.new }
+  let(:redis) { Redis.new }
+
+  before { allow(described_class).to receive(:redis_client).and_return(redis) }
+
+  describe '#read' do
+    subject { instance.read('key') }
+    before { allow(redis).to receive(:get).with(anything).and_raise('read error') }
+
+    it do
+      expect(Rails.logger).to receive(:warn).with(instance_of(String))
+      is_expected.to be_nil
+    end
+  end
+
+  describe '#write' do
+    subject { instance.write('key', 'value') }
+    before { allow(redis).to receive(:set).with(any_args).and_raise('write error') }
+
+    it do
+      expect(Rails.logger).to receive(:warn).with(instance_of(String))
+      is_expected.to be_nil
+    end
+  end
+end
