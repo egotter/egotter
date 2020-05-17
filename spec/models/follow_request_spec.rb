@@ -18,6 +18,19 @@ RSpec.describe FollowRequest, type: :model do
       before { allow(request.client).to receive(:follow!).with(1).and_raise(Twitter::Error::Unauthorized) }
       it { expect { subject }.to raise_error(described_class::Unauthorized) }
     end
+
+    context 'Twitter::Error::Forbidden is raised' do
+      before { allow(request.client).to receive(:follow!).with(1).and_raise(Twitter::Error::Forbidden) }
+
+      context 'temporarily_locked? returns true' do
+        let(:status) { instance_double(AccountStatus) }
+        before do
+          allow(AccountStatus).to receive(:new).with(anything).and_return(status)
+          allow(status).to receive(:temporarily_locked?).and_return(true)
+        end
+        it { expect { subject }.to raise_error(described_class::TemporarilyLocked) }
+      end
+    end
   end
 
   describe '#error_check!' do

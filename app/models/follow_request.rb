@@ -70,13 +70,15 @@ class FollowRequest < ApplicationRecord
   rescue Twitter::Error::Unauthorized => e
     raise Unauthorized.new(e.message)
   rescue Twitter::Error::Forbidden => e
-    if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
+    status = AccountStatus.new(ex: e)
+    case
+    when status.temporarily_locked?
       raise TemporarilyLocked
-    elsif e.message.start_with?('Your account is suspended and is not permitted to access this feature.')
+    when status.your_account_suspended?
       raise Suspended
-    elsif e.message == 'You have been blocked from following this account at the request of the user.'
+    when status.blocked_from_following?
       raise Blocked
-    elsif e.message.start_with?('You are unable to follow more people at this time.')
+    when status.unable_to_follow?
       GlobalFollowLimitation.new.limit_start
       raise TooManyFollows
     else

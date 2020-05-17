@@ -19,12 +19,22 @@ class AccountStatus
     @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'User has been suspended.'
   end
 
-  # This exception is raised when calling #user_timeline .
+  # This exception is raised when calling #user_timeline
   def blocked?
     @ex && @ex.class == Twitter::Error::Unauthorized && @ex.message == "You have been blocked from viewing this user's profile."
   end
 
-  # This exception is raised when calling #user_timeline .
+  # This exception is raised when calling #follow!
+  def blocked_from_following?
+    @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'You have been blocked from following this account at the request of the user.'
+  end
+
+  # This exception is raised when calling #follow!
+  def unable_to_follow?
+    @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'You are unable to follow more people at this time.'
+  end
+
+  # This exception is raised when calling #user_timeline
   def protected?
     @ex && @ex.class == Twitter::Error::Unauthorized && @ex.message == "Not authorized."
   end
@@ -48,6 +58,10 @@ class AccountStatus
 
   def temporarily_locked?
     @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'To protect our users from spam and other malicious activity, this account is temporarily locked. Please log in to https://twitter.com to unlock your account.'
+  end
+
+  def your_account_suspended?
+    @ex.class == Twitter::Error::Forbidden && @ex.message == "Your account is suspended and is not permitted to access this feature."
   end
 
   class << self
@@ -86,6 +100,18 @@ class AccountStatus
 
     def temporarily_locked?(ex)
       new(ex: ex).temporarily_locked?
+    end
+
+    def your_account_suspended?(ex)
+      new(ex: ex).your_account_suspended?
+    end
+
+    def blocked_from_following?(ex)
+      new(ex: ex).blocked_from_following?
+    end
+
+    def unable_to_follow?(ex)
+      new(ex: ex).unable_to_follow?
     end
   end
 end
