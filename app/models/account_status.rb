@@ -31,7 +31,7 @@ class AccountStatus
 
   # This exception is raised when calling #follow!
   def unable_to_follow?
-    @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == 'You are unable to follow more people at this time.'
+    @ex && @ex.class == Twitter::Error::Forbidden && @ex.message == "You are unable to follow more people at this time. Learn more <a href='http://support.twitter.com/articles/66885-i-can-t-follow-people-follow-limits'>here</a>."
   end
 
   # This exception is raised when calling #user_timeline
