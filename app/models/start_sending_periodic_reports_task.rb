@@ -19,16 +19,19 @@ class StartSendingPeriodicReportsTask
     last_request = CreatePeriodicReportRequest.order(created_at: :desc).first
     last_request = CreatePeriodicReportRequest.new(created_at: 1.second.ago) unless last_request
 
+    sleep 1 # Increase created_at of imported records
     requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id) }
     CreatePeriodicReportRequest.import requests, validate: false
 
     CreatePeriodicReportRequest.where('created_at > ?', last_request.created_at).find_each do |request|
-      args = [request.id, user_id: request.user_id, create_twitter_user: true]
+      next if request.status.present? || request.finished_at.present?
+
+      job_args = [request.id, user_id: request.user_id, create_twitter_user: true]
 
       if @delay
-        CreatePeriodicReportWorker.perform_in(@delay, *args)
+        CreatePeriodicReportWorker.perform_in(@delay, *job_args)
       else
-        CreatePeriodicReportWorker.perform_async(*args)
+        CreatePeriodicReportWorker.perform_async(*job_args)
       end
     end
   end
@@ -39,7 +42,7 @@ class StartSendingPeriodicReportsTask
       user_ids += self.class.recent_access_user_ids(@start_date, @end_date).take(@limit)
       user_ids += self.class.new_user_ids(@start_date, @end_date).take(@limit)
       @user_ids = user_ids.uniq
-      Rails.logger.debug { "StartSendingPeriodicReportsTask user_ids.size=#{@user_ids.size}" }
+      Rails.logger.debug { "#{self.class} user_ids.size=#{@user_ids.size}" }
     end
 
     @user_ids
