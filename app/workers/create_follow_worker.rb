@@ -29,7 +29,8 @@ class CreateFollowWorker
       FollowRequest::NotFound,
       FollowRequest::Suspended,
       FollowRequest::Blocked,
-      FollowRequest::Unauthorized => e
+      FollowRequest::Unauthorized,
+      FollowRequest::TemporarilyLocked => e
     logger.info "Skip #{e.inspect}"
   rescue FollowRequest::TooManyFollows, FollowRequest::ServiceUnavailable => e
     logger.warn "Retry later #{e.class}"
@@ -39,10 +40,10 @@ class CreateFollowWorker
     CreateFollowWorker.perform_async(request_id, options)
 
   rescue FollowRequest::Error => e
-    logger.warn "Don't care. #{e.inspect}"
+    logger.warn "Don't care. #{e.inspect} request_id=#{request_id} options=#{options.inspect}"
 
   rescue => e
-    logger.warn "Don't retry. #{e.class} #{e.message} #{request_id} #{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
+    logger.warn "Don't retry. #{e.class} #{e.message} request_id=#{request_id} options=#{options.inspect} #{"Caused by #{e.cause.inspect}" if e.cause}"
     logger.info e.backtrace.join("\n")
   end
 
