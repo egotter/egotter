@@ -65,7 +65,8 @@ class ApiClient
           if options.blank?
             TwitterWithAutoPagination::Client.new
           else
-            options[:cache_ttl] = 20.minutes
+            redis = Redis.client(ENV['TWITTER_API_REDIS_HOST'])
+            options[:cache_store] = ActiveSupport::Cache::RedisCacheStore.new(namespace: "#{Rails.env}:twitter", expires_in: 20.minutes, race_condition_ttl: 3.minutes, redis: redis)
             TwitterWithAutoPagination::Client.new(config(options))
           end
       new(client)
