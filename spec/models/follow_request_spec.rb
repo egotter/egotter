@@ -5,57 +5,79 @@ RSpec.describe FollowRequest, type: :model do
   let(:request) { described_class.new(user: user, uid: 1) }
 
   describe '#perform!' do
-    let(:client) { ApiClient.instance.twitter }
     subject { request.perform! }
-    let(:from_uid) { user.uid }
-    let(:to_uid) { request.uid }
 
-    before do
-      allow(request).to receive(:client).with(no_args).and_return(client)
-      allow(request).to receive(:unauthorized?).with(no_args).and_return(false)
-    end
+    before { allow(request).to receive(:error_check!) }
 
-    it 'calls client#follow!' do
-      allow(client).to receive(:user?).with(to_uid).and_return(true)
-      allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
-      allow(request).to receive(:friendship_outgoing?).with(no_args).and_return(false)
-      expect(client).to receive(:follow!).with(to_uid)
+    it do
+      expect(request.client).to receive(:follow!).with(1)
       subject
     end
 
+    context 'Twitter::Error::Unauthorized is raised' do
+      before { allow(request.client).to receive(:follow!).with(1).and_raise(Twitter::Error::Unauthorized) }
+      it { expect { subject }.to raise_error(described_class::Unauthorized) }
+    end
+  end
+
+  describe '#error_check!' do
+    subject { request.error_check! }
+
+    context 'logs.size == 5' do
+      before { allow(request).to receive_message_chain(:logs, :size).and_return(5) }
+      it { expect { subject }.to raise_error(described_class::TooManyRetries) }
+    end
+
+    context 'finished? returns true' do
+      before { allow(request).to receive(:finished?).and_return(true) }
+      it { expect { subject }.to raise_error(described_class::AlreadyFinished) }
+    end
+
+    context 'unauthorized? returns true' do
+      before do
+        allow(request).to receive(:finished?).and_return(false)
+        allow(request).to receive(:unauthorized?).and_return(true)
+      end
+      it { expect { subject }.to raise_error(described_class::Unauthorized) }
+    end
+
     context 'from_uid == to_uid' do
-      before { request.uid = user.uid }
-      it do
-        expect { subject }.to raise_error(FollowRequest::CanNotFollowYourself)
-      end
-    end
-
-    context 'User not found.' do
-      before { allow(client).to receive(:user?).with(to_uid).and_return(false) }
-      it do
-        expect { subject }.to raise_error(FollowRequest::NotFound)
-      end
-    end
-
-    context "You've already followed the user." do
       before do
-        allow(client).to receive(:user?).with(to_uid).and_return(true)
-        allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(true)
+        allow(request).to receive(:finished?).and_return(false)
+        allow(request).to receive(:unauthorized?).and_return(false)
+        request.uid = user.uid
       end
-      it do
-        expect { subject }.to raise_error(FollowRequest::AlreadyFollowing)
-      end
+      it { expect { subject }.to raise_error(described_class::CanNotFollowYourself) }
     end
 
-    context "You've already requested to follow." do
+    context 'not_found? returns true' do
       before do
-        allow(client).to receive(:user?).with(to_uid).and_return(true)
-        allow(client).to receive(:friendship?).with(from_uid, to_uid).and_return(false)
-        allow(request).to receive(:friendship_outgoing?).with(no_args).and_return(true)
+        allow(request).to receive(:finished?).and_return(false)
+        allow(request).to receive(:unauthorized?).and_return(false)
+        allow(request).to receive(:not_found?).and_return(true)
       end
-      it do
-        expect { subject }.to raise_error(FollowRequest::AlreadyRequestedToFollow)
+      it { expect { subject }.to raise_error(described_class::NotFound) }
+    end
+
+    context "friendship_outgoing? returns true" do
+      before do
+        allow(request).to receive(:finished?).and_return(false)
+        allow(request).to receive(:unauthorized?).and_return(false)
+        allow(request).to receive(:not_found?).and_return(false)
+        allow(request).to receive(:friendship_outgoing?).and_return(true)
       end
+      it { expect { subject }.to raise_error(described_class::AlreadyRequestedToFollow) }
+    end
+
+    context "friendship? returns true" do
+      before do
+        allow(request).to receive(:finished?).and_return(false)
+        allow(request).to receive(:unauthorized?).and_return(false)
+        allow(request).to receive(:not_found?).and_return(false)
+        allow(request).to receive(:friendship_outgoing?).and_return(false)
+        allow(request).to receive(:friendship?).and_return(true)
+      end
+      it { expect { subject }.to raise_error(described_class::AlreadyFollowing) }
     end
   end
 
@@ -64,8 +86,8 @@ RSpec.describe FollowRequest, type: :model do
     subject { request.friendship_outgoing? }
 
     before do
-      allow(client).to receive(:friendships_outgoing).with(no_args).and_raise('Something happened.')
-      allow(request).to receive(:client).with(no_args).and_return(client)
+      allow(client).to receive(:friendships_outgoing).and_raise('Something happened.')
+      allow(request).to receive(:client).and_return(client)
     end
 
     it do
@@ -79,14 +101,14 @@ RSpec.describe FollowRequest, type: :model do
     let(:user) { create(:user) }
     let!(:time) { Time.zone.now }
 
-    let!(:req1) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: 'Error') }
-    let!(:req2) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: '') }
-    let!(:req3) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: 'Error') }
-    let!(:req4) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: '') }
+    let!(:req1) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second, error_class: 'Error') }
+    let!(:req2) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second, error_class: '') }
+    let!(:req3) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time - 1.second, error_class: 'Error') }
+    let!(:req4) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time - 1.second, error_class: '') }
     let!(:req5) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: 'Error') }
     let!(:req6) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: '') }
-    let!(:req7) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: 'Error') }
-    let!(:req8) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: '') }
+    let!(:req7) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time + 1.second, error_class: 'Error') }
+    let!(:req8) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time + 1.second, error_class: '') }
 
     it { is_expected.to match_array([req6]) }
   end
@@ -96,15 +118,15 @@ RSpec.describe FollowRequest, type: :model do
     let(:user) { create(:user) }
     let!(:time) { Time.zone.now }
 
-    let!(:req1) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: 'Error') }
-    let!(:req2) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second,  error_class: '') }
-    let!(:req3) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: 'Error') }
-    let!(:req4) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time - 1.second,  error_class: '') }
+    let!(:req1) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second, error_class: 'Error') }
+    let!(:req2) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time - 1.second, error_class: '') }
+    let!(:req3) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time - 1.second, error_class: 'Error') }
+    let!(:req4) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time - 1.second, error_class: '') }
     let!(:req5) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: 'Error') }
     let!(:req6) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: Time.zone.now, created_at: time + 1.second, error_class: '') }
-    let!(:req7) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: 'Error') }
-    let!(:req8) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: '') }
-    let!(:req9) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil,           created_at: time + 1.second, error_class: '') }
+    let!(:req7) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time + 1.second, error_class: 'Error') }
+    let!(:req8) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time + 1.second, error_class: '') }
+    let!(:req9) { described_class.create!(user_id: user.id, uid: user.uid, finished_at: nil, created_at: time + 1.second, error_class: '') }
 
     before { req8.logs.create }
 
