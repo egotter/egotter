@@ -1,3 +1,5 @@
+require 'active_support/cache/redis_cache_store'
+
 class ApiClient
   def initialize(client)
     @client = client
