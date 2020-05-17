@@ -35,7 +35,7 @@ module Taskbooks
       end
 
       def run
-        puts @target_group.registered_instances(state: @state).map(&:name).join(@delim)
+        puts @target_group.registered_instances(state: @state).map(&:name).sort.join(@delim)
       end
     end
 
