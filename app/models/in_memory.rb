@@ -9,11 +9,11 @@ module InMemory
   end
 
   def used_memory
-    Redis.client(redis_hostname).info['used_memory_rss_human']
+    Redis.client(redis_hostname).used_memory
   end
 
   def used_memory_peak
-    Redis.client(redis_hostname).info['used_memory_peak_human']
+    Redis.client(redis_hostname).used_memory_peak
   end
 
   def enabled?
