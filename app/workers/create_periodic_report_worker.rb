@@ -7,7 +7,7 @@ class CreatePeriodicReportWorker
     CreatePeriodicReportRequest.find(request_id).user_id
   end
 
-  UNIQUE_IN = 30.seconds
+  UNIQUE_IN = 5.seconds
 
   def unique_in
     UNIQUE_IN
