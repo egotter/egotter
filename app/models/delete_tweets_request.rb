@@ -118,7 +118,7 @@ class DeleteTweetsRequest < ApplicationRecord
       raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
     elsif AccountStatus.unauthorized?(e)
       raise InvalidToken.new(e.message)
-    elsif ServiceStatus.retryable?(e)
+    elsif ServiceStatus.retryable_error?(e)
       if !@retries.nil? && @retries <= 0
         raise RetryExhausted.new("#{e.class} #{e.message}")
       end

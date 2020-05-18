@@ -129,6 +129,10 @@ class User < ApplicationRecord
       logger.warn "#{self}##{__method__}: #{e.class} #{e.message} #{e.respond_to?(:record) ? e.record.inspect : 'NONE'} #{values.inspect}"
       raise e
     end
+
+    def find_by_token(token, secret)
+      find_by(token: token, secret: secret)
+    end
   end
 
   def to_param

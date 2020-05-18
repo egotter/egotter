@@ -22,7 +22,7 @@ class ServiceStatus
     @ex && @ex.class == Twitter::Error && @ex.message == 'execution expired'
   end
 
-  def retryable?
+  def retryable_error?
     connection_reset_by_peer? || internal_server_error? || service_unavailable? || execution_expired?
   end
 
@@ -39,8 +39,8 @@ class ServiceStatus
       new(ex: ex).service_unavailable?
     end
 
-    def retryable?(ex)
-      new(ex: ex).retryable?
+    def retryable_error?(ex)
+      new(ex: ex).retryable_error?
     end
   end
 end

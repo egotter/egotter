@@ -10,69 +10,105 @@ RSpec.describe ApiClient, type: :model do
     }
   end
 
+  let(:client) { double('client') }
+  let(:instance) { ApiClient.new(client) }
+
   describe '#create_direct_message_event' do
-    let(:client) { TwitterWithAutoPagination::Client.new }
-    let(:twitter) { double('twitter') }
-    let(:instance) { ApiClient.new(client) }
+    let(:response) { {message_create: {message_data: {text: 'text'}}} }
     subject { instance.create_direct_message_event(1, 'text') }
 
-    before { allow(client).to receive(:twitter).and_return(twitter) }
-
     it do
-      expect(twitter).to receive(:create_direct_message_event).with(1, 'text').and_return(message_create: {message_data: {text: 'text'}})
-      expect(subject).to satisfy do |dm|
-        dm.truncated_message == 'text'
-      end
+      expect(client).to receive_message_chain(:twitter, :create_direct_message_event).
+          with(1, 'text').and_return(response)
+      expect(DirectMessage).to receive(:new).with(event: response).and_return('dm')
+      is_expected.to eq('dm')
     end
   end
 
   describe '#method_missing' do
-    let(:client) { TwitterWithAutoPagination::Client.new }
-    let(:instance) { ApiClient.new(client) }
+    subject { instance.send(:method_missing, :user, 1) }
 
-    let(:method_name) { :user }
-    let(:args) { ['ts_3156'] }
+    context 'client responds to specified method' do
+      before { allow(client).to receive(:respond_to?).with(:user).and_return(true) }
+      it do
+        expect(client).to receive(:user).with(1).and_return('user')
+        is_expected.to eq('user')
+      end
+    end
 
-    it 'calls ApiClient.do_request_with_retry' do
-      expect(client).to receive(:respond_to?).with(method_name).and_call_original
-      expect(ApiClient).to receive(:do_request_with_retry).with(client, method_name, args)
-      instance.user('ts_3156')
+    context "client doesn't respond to specified method" do
+      before { allow(client).to receive(:respond_to?).with(:user).and_return(false) }
+      it do
+        expect(client).not_to receive(:user)
+        expect { subject }.to raise_error(NoMethodError)
+      end
     end
   end
 
-  describe '.do_request_with_retry' do
-    let(:client) { instance_double(TwitterWithAutoPagination::Client) }
-    let(:method_name) { :user }
-    let(:args) { ['ts_3156'] }
-    subject { ApiClient.do_request_with_retry(client, method_name, args) }
+  describe '#request_with_retry_handler' do
+    let(:block) { Proc.new { 'block_result' } }
+    subject { instance.request_with_retry_handler(:method_name, &block) }
 
-    it 'passes params to client' do
-      expect(client).to receive(method_name).with(*args)
-      subject
-    end
+    it { is_expected.to eq('block_result') }
 
-    context 'The client raises unauthorized exception' do
-      let(:exception) { Twitter::Error::Unauthorized.new('Invalid or expired token.') }
-      before do
-        allow(client).to receive(method_name).with(*args).and_raise(exception)
-      end
+    context 'exception is raised' do
+      let(:error) { RuntimeError.new('error') }
+      let(:block) { Proc.new { raise error } }
 
       it do
-        expect(client).to receive(method_name).with(*args)
-        expect(AccountStatus).to receive(:unauthorized?).with(exception)
-        expect { subject }.to raise_error(Twitter::Error::Unauthorized)
+        expect(instance).to receive(:update_authorization_status).with(error)
+        expect { subject }.to raise_error(error)
+      end
+
+      context 'the exception is not retryable' do
+        it do
+          expect(instance).to receive(:handle_retryable_error).with(error, :method_name).and_call_original
+          expect { subject }.to raise_error(error)
+        end
+      end
+
+      context 'the exception is retryable' do
+        let(:retry_count) { described_class::MAX_RETRIES + 1 }
+        before { allow(ServiceStatus).to receive(:retryable_error?).with(error).and_return(true) }
+        it do
+          expect(instance).to receive(:handle_retryable_error).with(error, :method_name).exactly(retry_count).times.and_call_original
+          expect { subject }.to raise_error(described_class::RetryExhausted)
+          expect(instance.instance_variable_get(:@retries)).to eq(method_name: retry_count)
+        end
       end
     end
+  end
 
-    context 'The client raises retryable exception' do
+  describe '#update_authorization_status' do
+    let(:error) { RuntimeError.new('error') }
+    subject { instance.update_authorization_status(error) }
+
+    context 'token is invalid' do
+      let(:client) { double('client', access_token: 'at', access_token_secret: 'ats') }
+      let(:user) { create(:user) }
       before do
-        allow(client).to receive(method_name).with(*args).and_raise(Twitter::Error::InternalServerError)
+        allow(AccountStatus).to receive(:unauthorized?).with(error).and_return(true)
+        allow(User).to receive_message_chain(:select, :find_by_token).
+            with(:id).with(client.access_token, client.access_token_secret).and_return(user)
       end
-
       it do
-        expect(client).to receive(method_name).with(*args).exactly(6).times
-        expect { subject }.to raise_error(Twitter::Error::InternalServerError)
+        expect(UpdateAuthorizedWorker).to receive(:perform_async).with(user.id)
+        subject
       end
+    end
+  end
+
+  describe '#handle_retryable_error' do
+    let(:error) { RuntimeError.new('error') }
+    subject { instance.handle_retryable_error(error, :method_name) }
+
+    context 'exception is retryable' do
+      before { allow(ServiceStatus).to receive(:retryable_error?).with(error).and_return(true) }
+      it { expect { subject }.not_to raise_error }
+    end
+
+    context 'exception is not retryable' do
+      it { expect { subject }.to raise_error(error) }
     end
   end
 
@@ -111,20 +147,6 @@ RSpec.describe ApiClient, type: :model do
         expect(TwitterWithAutoPagination::Client).to receive(:new)
         subject
       end
-    end
-  end
-
-  describe '.logger' do
-    it 'calls Rails.logger' do
-      expect(Rails).to receive(:logger).with(no_args)
-      ApiClient.logger
-    end
-  end
-
-  describe '#logger' do
-    it 'calls ApiClient.logger' do
-      expect(ApiClient).to receive(:logger).with(no_args)
-      ApiClient.new(nil).send(:logger)
     end
   end
 end

@@ -28,7 +28,7 @@ class CreatePromptReportValidator
   end
 
   def credentials_verified?
-    ApiClient.do_request_with_retry(client.twitter, :verify_credentials, [])
+    client.twitter.verify_credentials
   rescue => e
     if AccountStatus.unauthorized?(e)
       false

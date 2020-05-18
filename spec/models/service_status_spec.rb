@@ -25,16 +25,17 @@ RSpec.describe ServiceStatus, type: :model do
     it { is_expected.to be_truthy }
   end
 
-  describe '#retryable?' do
+  describe '#retryable_error?' do
     let(:ex) { RuntimeError.new('Anything') }
     let(:status) { described_class.new(ex: ex) }
+    subject { status.retryable_error? }
 
     it do
       expect(status).to receive(:connection_reset_by_peer?).with(no_args).and_return(false)
       expect(status).to receive(:internal_server_error?).with(no_args).and_return(false)
       expect(status).to receive(:service_unavailable?).with(no_args).and_return(false)
       expect(status).to receive(:execution_expired?).with(no_args).and_return(true)
-      expect(status.retryable?).to be_truthy
+      is_expected.to be_truthy
     end
   end
 

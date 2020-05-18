@@ -39,6 +39,7 @@ class UpdateAuthorizedWorker
     if status.unauthorized?
       user.update!(authorized: false)
     elsif status.not_found? || status.suspended? || status.too_many_requests?
+      # Do nothing
     else
       logger.warn "#{e.class}: #{e.message} #{user_id} #{options.inspect}"
       logger.info e.backtrace.join("\n")

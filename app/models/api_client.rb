@@ -3,55 +3,62 @@ require 'active_support/cache/redis_cache_store'
 class ApiClient
   def initialize(client)
     @client = client
+    @retries = Hash.new(0)
   end
 
   def create_direct_message_event(*args)
-    tries ||= 3
-    resp = @client.twitter.create_direct_message_event(*args).to_h
-    DirectMessage.new(event: resp)
-  rescue => e
-    if ServiceStatus.connection_reset_by_peer?(e) && (tries -= 1) > 0
-      retry
-    else
-      raise
+    request_with_retry_handler(__method__) do
+      resp = @client.twitter.create_direct_message_event(*args).to_h
+      DirectMessage.new(event: resp)
     end
   end
 
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
-      logger.debug { "ApiClient#method_missing #{method} #{args.inspect.truncate(100)}" } rescue nil
-      self.class.do_request_with_retry(@client, method, args, &block)
+      request_with_retry_handler(method) do
+        # client#parallel uses block
+        @client.send(method, *args, &block)
+      end
     else
       super
     end
   end
 
-  class << self
-    # TODO Want to refactor
-    def do_request_with_retry(client, method, args, &block)
-      tries ||= 5
-      client.send(method, *args, &block) # client#parallel uses block.
-    rescue Twitter::Error::Unauthorized => e
-      if AccountStatus.unauthorized?(e)
-        user = User.select(:id).find_by(token: client.access_token, secret: client.access_token_secret)
-        UpdateAuthorizedWorker.perform_async(user.id, enqueued_at: Time.zone.now) if user
-      end
+  def request_with_retry_handler(method, &block)
+    yield
+  rescue => e
+    @retries[method] += 1
+    update_authorization_status(e)
+    handle_retryable_error(e, method)
+    retry
+  end
 
-      raise
-    rescue => e
-      logger.info "#{__method__} #{e.inspect} #{method} #{args.inspect.truncate(100)}"
-      if ServiceStatus.new(ex: e).retryable?
-        if (tries -= 1) < 0
-          logger.warn "RETRY EXHAUSTED #{self}##{method}: #{e.class} #{e.message}"
-          raise
-        else
-          retry
-        end
-      else
-        raise
+  def update_authorization_status(e)
+    if AccountStatus.unauthorized?(e)
+      if (user = User.select(:id).find_by_token(@client.access_token, @client.access_token_secret))
+        UpdateAuthorizedWorker.perform_async(user.id)
       end
     end
+  end
 
+  MAX_RETRIES = 3
+
+  def handle_retryable_error(e, method_name)
+    if ServiceStatus.retryable_error?(e)
+      if @retries[method_name] > MAX_RETRIES
+        raise RetryExhausted.new("#{e.inspect} method=#{method_name} retries=#{@retries[method_name]}")
+      else
+        # Do nothing
+      end
+    else
+      raise e
+    end
+  end
+
+  class RetryExhausted < StandardError
+  end
+
+  class << self
     def config(options = {})
       {
           consumer_key: ENV['TWITTER_CONSUMER_KEY'],
@@ -71,17 +78,9 @@ class ApiClient
           end
       new(client)
     end
-
-    def logger
-      Rails.logger
-    end
   end
 
   private
-
-  def logger
-    self.class.logger
-  end
 
   class CacheStore < ActiveSupport::Cache::RedisCacheStore
     def initialize
