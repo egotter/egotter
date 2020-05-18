@@ -10,7 +10,8 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     it do
       expect(request).to receive(:verify_credentials!)
       expect(request).to receive(:tweets_exist!)
-      expect(request).to receive(:destroy_statuses!)
+      expect(request).to receive(:fetch_statuses!).and_return('tweets')
+      expect(request).to receive(:destroy_statuses!).with('tweets')
       expect { subject }.to raise_error(described_class::Continue)
     end
   end
@@ -67,25 +68,42 @@ RSpec.describe DeleteTweetsRequest, type: :model do
     end
   end
 
-  describe '#destroy_statuses!' do
+  describe '#fetch_statuses!' do
     let(:tweets) do
-      [
-          double('tweet', id: 1, created_at: 1.day.ago),
-          double('tweet', id: 2, created_at: 1.day.ago)
-      ]
+      [double('tweet', created_at: 1.day.ago), double('tweet', created_at: 1.day.ago)]
     end
-    subject { request.destroy_statuses! }
+    subject { request.fetch_statuses! }
 
     before do
       allow(request).to receive_message_chain(:api_client, :user_timeline).
           with(count: described_class::FETCH_COUNT).and_return(tweets)
     end
-    it do
-      tweets.each do |tweet|
-        expect(request).to receive(:destroy_status!).with(tweet.id)
-      end
 
+    it { is_expected.to match_array(tweets) }
+
+    context 'tweets is empty' do
+      let(:tweets) { [] }
+      it do
+        expect { subject }.to raise_error(described_class::TweetsNotFound)
+      end
+    end
+  end
+
+  describe '#destroy_statuses!' do
+    let(:tweets) do
+      [double('tweet', id: 1), double('tweet', id: 2)]
+    end
+    let(:timeout) { described_class::TIMEOUT_SECONDS }
+    subject { request.destroy_statuses!(tweets, timeout: timeout) }
+
+    it do
+      tweets.each { |tweet| expect(request).to receive(:destroy_status!).with(tweet.id) }
       subject
+    end
+
+    context 'it runs out of time' do
+      let(:timeout) { 0 }
+      it { expect { subject }.to raise_error(described_class::Timeout) }
     end
   end
 

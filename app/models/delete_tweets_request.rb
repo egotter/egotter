@@ -37,7 +37,8 @@ class DeleteTweetsRequest < ApplicationRecord
 
     verify_credentials!
     tweets_exist!
-    destroy_statuses!
+    tweets = fetch_statuses!
+    destroy_statuses!(tweets)
 
     raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
   end
@@ -64,18 +65,21 @@ class DeleteTweetsRequest < ApplicationRecord
     retry
   end
 
-  def destroy_statuses!
-    start = Time.zone.now
-
+  def fetch_statuses!
     tweets = api_client.user_timeline(count: FETCH_COUNT).select { |t| t.created_at < created_at }
     raise TweetsNotFound if tweets.empty?
+    tweets
+  end
+
+  def destroy_statuses!(tweets, timeout: TIMEOUT_SECONDS)
+    start = Time.zone.now
 
     @destroy_count = 0
     error = nil
 
     Parallel.each(tweets, in_threads: THREADS_NUM) do |tweet|
-      if Time.zone.now - start > TIMEOUT_SECONDS
-        error = Timeout
+      if Time.zone.now - start > timeout
+        error = Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
         raise Parallel::Break
       end
 
