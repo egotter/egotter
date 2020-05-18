@@ -117,7 +117,8 @@ class PeriodicReport < ApplicationRecord
     def unauthorized_message
       template = Rails.root.join('app/views/periodic_reports/unauthorized.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: sign_in_url(via: 'unauthorized_message', og_tag: 'false')
+          sign_in_url: sign_in_url(via: 'unauthorized_message', og_tag: 'false'),
+          sign_in_and_follow_url: sign_in_url(follow: true, via: 'unauthorized_message', og_tag: 'false'),
       )
 
       new(user: nil, message: message, token: nil)
