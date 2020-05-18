@@ -24,7 +24,7 @@ class DeleteTweetsRequest < ApplicationRecord
   validates :session_id, presence: true
   validates :user_id, presence: true
 
-  attr_reader :destroy_count, :retry_in
+  attr_reader :retry_in
 
   TIMEOUT_SECONDS = 10
   RETRY_INTERVAL = 10
@@ -33,49 +33,93 @@ class DeleteTweetsRequest < ApplicationRecord
   THREADS_NUM = 3
 
   def perform!
-    retries ||= 5
-    @destroy_count ||= 0
+    @retries = 5
 
-    error_check! unless @error_check
+    verify_credentials!
+    tweets_exist!
+    destroy_statuses!
 
-    ::Timeout.timeout(TIMEOUT_SECONDS) do
-      tweets = api_client.user_timeline(count: FETCH_COUNT).select { |t| t.created_at < created_at }
-      raise TweetsNotFound if tweets.empty?
+    raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
+  end
 
-      Parallel.each(tweets, in_threads: THREADS_NUM) do |tweet|
-        destroy_status!(tweet.id)
-        @destroy_count += 1
-      end
+  def verify_credentials!
+    if user.authorized?
+      api_client.verify_credentials
+    else
+      raise Unauthorized
     end
-
-    raise Continue.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
-
-  rescue Twitter::Error::TooManyRequests => e
-    raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: destroy_count)
-  rescue ::Timeout::Error => e
-    raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: destroy_count)
-  rescue Error, RetryableError => e
-    raise
   rescue => e
-    exception_handler(e, retries)
-    retries -= 1
+    exception_handler(e)
+    @retries -= 1
     retry
   end
 
-  def error_check!
-    raise Unauthorized unless user.authorized?
-    api_client.verify_credentials
-    raise TweetsNotFound if api_client.user[:statuses_count] == 0
-    @error_check = true
+  def tweets_exist!
+    if api_client.user.statuses_count == 0
+      raise TweetsNotFound
+    end
+  rescue => e
+    exception_handler(e)
+    @retries -= 1
+    retry
   end
 
-  def exception_handler(e, retries)
-    if AccountStatus.unauthorized?(e)
+  def destroy_statuses!
+    start = Time.zone.now
+
+    tweets = api_client.user_timeline(count: FETCH_COUNT).select { |t| t.created_at < created_at }
+    raise TweetsNotFound if tweets.empty?
+
+    @destroy_count = 0
+    error = nil
+
+    Parallel.each(tweets, in_threads: THREADS_NUM) do |tweet|
+      if Time.zone.now - start > TIMEOUT_SECONDS
+        error = Timeout
+        raise Parallel::Break
+      end
+
+      begin
+        destroy_status!(tweet.id)
+      rescue => e
+        error = e
+        raise Parallel::Break
+      end
+
+      @destroy_count += 1
+    end
+
+    if error
+      raise error
+    end
+
+  rescue => e
+    exception_handler(e)
+    @retries -= 1
+    retry
+  end
+
+  def destroy_status!(tweet_id)
+    api_client.destroy_status(tweet_id)
+  rescue Twitter::Error::NotFound => e
+    if e.message != 'No status found with that ID.'
+      raise
+    end
+  end
+
+  def exception_handler(e)
+    if e.is_a?(Error) || e.is_a?(RetryableError)
+      raise e
+    end
+
+    if e.class == Twitter::Error::TooManyRequests
+      raise TooManyRequests.new(retry_in: e.rate_limit.reset_in.to_i + 1, destroy_count: @destroy_count)
+    elsif e.class == ::Timeout::Error
+      raise Timeout.new(retry_in: RETRY_INTERVAL, destroy_count: @destroy_count)
+    elsif AccountStatus.unauthorized?(e)
       raise InvalidToken.new(e.message)
     elsif ServiceStatus.retryable?(e)
-      if retries > 0
-        return true
-      else
+      if !@retries.nil? && @retries <= 0
         raise RetryExhausted.new("#{e.class} #{e.message}")
       end
     else
@@ -83,43 +127,86 @@ class DeleteTweetsRequest < ApplicationRecord
     end
   end
 
-  def destroy_status!(tweet_id)
-    api_client.destroy_status(tweet_id)
-  rescue Twitter::Error::NotFound => e
-    raise unless e.message == 'No status found with that ID.'
-  end
-
   def tweet_finished_message
-    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_tweet')
-    api_client.update(I18n.t('delete_tweets.tweet.message', url: url, kaomoji: Kaomoji.unhappy))
+    api_client.update(Report.finished_tweet(user).message)
   rescue => e
     raise FinishedTweetNotSent.new("#{e.class} #{e.message}")
   end
 
   def send_finished_message
-    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_finished_dm', og_tag: 'false')
-    template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
-    message = ERB.new(template.read).result_with_hash(url: url)
-    User.egotter.api_client.create_direct_message_event(user.uid, message)
+    Report.finished_message_from_user(user).deliver!
+    Report.finished_message(user).deliver!
   rescue => e
-    if DirectMessageStatus.not_following_you?(e) || DirectMessageStatus.cannot_send_messages?(e)
-      # Do nothing
-    else
+    if !DirectMessageStatus.not_following_you?(e) && !DirectMessageStatus.cannot_send_messages?(e)
       raise FinishedMessageNotSent.new("#{e.class} #{e.message}")
     end
   end
 
   def send_error_message
-    url = Rails.application.routes.url_helpers.delete_tweets_url(via: 'delete_tweets_error_dm', og_tag: 'false')
-    template = Rails.root.join('app/views/delete_tweets/not_finished.ja.text.erb')
-    message = ERB.new(template.read).result_with_hash(url: url)
-    User.egotter.api_client.create_direct_message_event(user.uid, message)
+    Report.finished_message_from_user(user).deliver!
+    Report.error_message(user).deliver!
   rescue => e
     raise ErrorMessageNotSent.new("#{e.class} #{e.message}")
   end
 
   def api_client
     user.api_client.twitter
+  end
+
+  class Report
+    attr_reader :message
+
+    def initialize(sender, recipient, message)
+      @sender = sender
+      @recipient = recipient
+      @message = message
+    end
+
+    def deliver!
+      @sender.api_client.create_direct_message_event(@recipient.uid, @message)
+    end
+
+    class << self
+      def finished_tweet(user)
+        template = Rails.root.join('app/views/delete_tweets/finished_tweet.ja.text.erb')
+        message = ERB.new(template.read).result_with_hash(
+            url: current_url('delete_tweets_finished_tweet'), kaomoji: Kaomoji.unhappy)
+        new(nil, nil, message)
+      end
+
+      def finished_message(user)
+        template = Rails.root.join('app/views/delete_tweets/finished.ja.text.erb')
+        message = ERB.new(template.read).result_with_hash(url: current_url('delete_tweets_finished_dm'))
+        new(User.egotter, user, message)
+      end
+
+      def finished_message_from_user(user)
+        template = Rails.root.join('app/views/delete_tweets/finished_from_user.ja.text.erb')
+        message = ERB.new(template.read).result
+        new(user, User.egotter, message)
+      end
+
+      def error_message(user)
+        template = Rails.root.join('app/views/delete_tweets/not_finished.ja.text.erb')
+        message = ERB.new(template.read).result_with_hash(url: current_url('delete_tweets_error_dm'))
+        new(User.egotter, user, message)
+      end
+
+      def current_url(via)
+        delete_tweets_url(via: via, og_tag: 'false')
+      end
+    end
+
+    module UrlHelpers
+      def method_missing(method, *args, &block)
+        if method.to_s.end_with?('_url')
+          Rails.application.routes.url_helpers.send(method, *args, &block)
+        else
+          super
+        end
+      end
+    end
+    extend UrlHelpers
   end
 
   class Error < StandardError

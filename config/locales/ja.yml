@@ -1451,8 +1451,6 @@ ja:
         tweet_after_finishing: "削除の完了後にツイートする"
         ok: "はい、削除します"
         cancel: "いいえ"
-    tweet:
-      message: 'ツイートの削除が完了しました。%{kaomoji} #egotter %{url}'
     log:
       errors:
         default_html: '一時的なエラーが起きました。再ログイン後にお試しください。<a href="%{url}" class="btn btn-primary btn-sm">ログインする</a>'

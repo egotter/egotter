@@ -35,7 +35,7 @@ class DeleteTweetsTask
       request.send_error_message
       raise
     else
-      raise "#{self.class}##{__method__} DeleteTweetsRequest#perform! must raise an exception #{request.id}"
+      raise "#{self.class}##{__method__} DeleteTweetsRequest#perform! must raise an exception request_id=#{request.id}"
     ensure
       if e
         @log.assign_attributes(error_class: e.class, error_message: e.message)
