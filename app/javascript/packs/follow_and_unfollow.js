@@ -50,15 +50,16 @@ class Modal {
     this.$el = $(selector);
     this.callback = null;
     var $el = this.$el;
-    var self = this;
 
     if (!$el.data('init')) {
-      $el.find('.btn.positive').on('click', function () {
-        self.callback();
-        $el.modal('hide');
-      });
+      $el.find('.btn.positive').on('click', this.btnClicked.bind(this));
       $el.data('init', true);
     }
+  }
+
+  btnClicked() {
+    this.$el.data('callback')();
+    this.$el.modal('hide');
   }
 
   skipConfirmation() {
@@ -69,8 +70,11 @@ class Modal {
     this.$el.find('.screen-name').text(value);
   }
 
-  show(callback) {
-    this.callback = callback;
+  setCallback(fn) {
+    this.$el.data('callback', fn);
+  }
+
+  show() {
     this.$el.modal();
   }
 }
@@ -98,6 +102,7 @@ class Button {
     });
   }
 
+  // Open follow/unfollow modal or do follow/unfollow
   click(target) {
     var $clicked = $(target);
     var self = this;
@@ -106,9 +111,10 @@ class Button {
       this.perform($clicked);
     } else {
       this.modal.setScreenName($clicked.data('screen-name'));
-      this.modal.show(function () {
+      this.modal.setCallback(function () {
         self.perform($clicked);
       });
+      this.modal.show();
     }
   }
 
