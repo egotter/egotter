@@ -13,11 +13,6 @@ class ApplicationController < ActionController::Base
   include Concerns::BypassFlashMessagesConcern
   include Concerns::Logging
 
-  # Avoid `uninitialized constant` or `Unable to autoload constant`
-  ::TwitterUser
-  ::TwitterDB::User
-  ::Api::V1
-
   before_action :set_locale
 
   def set_locale

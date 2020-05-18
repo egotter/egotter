@@ -1,4 +1,5 @@
 ::S3.class
+::S3::Util.class
 ::S3::Friendship.class
 ::S3::Followership.class
 ::S3::Profile.class
@@ -23,3 +24,8 @@
 ::InMemory.class
 ::InMemory::Tweet.class
 ::InMemory::StatusTweet.class
+
+# Avoid `uninitialized constant` or `Unable to autoload constant`
+::TwitterUser
+::TwitterDB::User
+::Api::V1
