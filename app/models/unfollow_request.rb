@@ -48,7 +48,7 @@ class UnfollowRequest < ApplicationRecord
           where('created_at > ?', created_at).
           where(finished_at: nil).
           where(error_class: '').
-          select {|req| req.logs.empty? }
+          select { |req| req.logs.empty? }
     end
 
     def temporarily_unfollowing(user_id:, created_at:)
@@ -57,6 +57,22 @@ class UnfollowRequest < ApplicationRecord
   end
 
   def perform!
+    error_check! unless @error_check
+    client.unfollow(uid)
+
+  rescue Error, RetryableError => e
+    raise
+  rescue Twitter::Error::Unauthorized => e
+    raise Unauthorized.new(e.message)
+  rescue Twitter::Error::Forbidden => e
+    if AccountStatus.temporarily_locked?(e)
+      raise TemporarilyLocked
+    else
+      raise Forbidden.new(e.message)
+    end
+  end
+
+  def error_check!
     raise TooManyRetries if logs.size >= 5
     raise AlreadyFinished if finished?
     raise Unauthorized if unauthorized?
@@ -64,23 +80,13 @@ class UnfollowRequest < ApplicationRecord
     raise NotFound if not_found?
     raise NotFollowing unless friendship?
 
-    begin
-      client.unfollow(uid)
-    rescue Twitter::Error::Unauthorized => e
-      raise Unauthorized.new(e.message)
-    rescue Twitter::Error::Forbidden => e
-      if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
-        raise TemporarilyLocked
-      else
-        raise Forbidden.new(e.message)
-      end
-    end
+    @error_check = true
   end
 
   def unauthorized?
     !user.authorized? || !client.verify_credentials
-  rescue Twitter::Error::Unauthorized => e
-    if e.message == 'Invalid or expired token.'
+  rescue => e
+    if AccountStatus.invalid_or_expired_token?(e)
       true
     else
       raise
@@ -90,7 +96,7 @@ class UnfollowRequest < ApplicationRecord
   def not_found?
     !client.user?(uid)
   rescue => e
-    if e.message.start_with?('To protect our users from spam and other malicious activity, this account is temporarily locked.')
+    if AccountStatus.temporarily_locked?(e)
       raise TemporarilyLocked
     elsif AccountStatus.suspended?(e)
       raise Suspended

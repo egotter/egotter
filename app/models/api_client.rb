@@ -3,34 +3,25 @@ require 'active_support/cache/redis_cache_store'
 class ApiClient
   def initialize(client)
     @client = client
-    @retries = Hash.new(0)
   end
 
   def create_direct_message_event(*args)
-    request_with_retry_handler(__method__) do
-      resp = @client.twitter.create_direct_message_event(*args).to_h
-      DirectMessage.new(event: resp)
-    end
+    resp = twitter.create_direct_message_event(*args).to_h
+    DirectMessage.new(event: resp)
   end
 
   def method_missing(method, *args, &block)
     if @client.respond_to?(method)
-      request_with_retry_handler(method) do
+      RequestWithRetryHandler.new(method).perform do
         # client#parallel uses block
         @client.send(method, *args, &block)
       end
     else
       super
     end
-  end
-
-  def request_with_retry_handler(method, &block)
-    yield
   rescue => e
-    @retries[method] += 1
     update_authorization_status(e)
-    handle_retryable_error(e, method)
-    retry
+    raise
   end
 
   def update_authorization_status(e)
@@ -41,21 +32,8 @@ class ApiClient
     end
   end
 
-  MAX_RETRIES = 3
-
-  def handle_retryable_error(e, method_name)
-    if ServiceStatus.retryable_error?(e)
-      if @retries[method_name] > MAX_RETRIES
-        raise RetryExhausted.new("#{e.inspect} method=#{method_name} retries=#{@retries[method_name]}")
-      else
-        # Do nothing
-      end
-    else
-      raise e
-    end
-  end
-
-  class RetryExhausted < StandardError
+  def twitter
+    TwitterWrapper.new(self, @client.twitter)
   end
 
   class << self
@@ -81,6 +59,60 @@ class ApiClient
   end
 
   private
+
+  class TwitterWrapper
+    def initialize(api_client, twitter)
+      @api_client = api_client
+      @twitter = twitter
+    end
+
+    def method_missing(method, *args, &block)
+      if @twitter.respond_to?(method)
+        RequestWithRetryHandler.new(method).perform do
+          @twitter.send(method, *args, &block)
+        end
+      else
+        super
+      end
+    rescue => e
+      @api_client.update_authorization_status(e)
+      raise
+    end
+  end
+
+  class RequestWithRetryHandler
+    def initialize(method)
+      @method = method
+      @retries = 0
+    end
+
+    def perform(&block)
+      yield
+    rescue => e
+      @retries += 1
+      handle_retryable_error(e)
+      retry
+    end
+
+    private
+
+    MAX_RETRIES = 3
+
+    def handle_retryable_error(e)
+      if ServiceStatus.retryable_error?(e)
+        if @retries > MAX_RETRIES
+          raise RetryExhausted.new("#{e.inspect} method=#{@method} retries=#{@retries}")
+        else
+          # Do nothing
+        end
+      else
+        raise e
+      end
+    end
+
+    class RetryExhausted < StandardError
+    end
+  end
 
   class CacheStore < ActiveSupport::Cache::RedisCacheStore
     def initialize

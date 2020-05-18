@@ -2,7 +2,10 @@ require 'rails_helper'
 
 RSpec.describe FollowRequest, type: :model do
   let(:user) { create(:user) }
+  let(:client) { double('twitter') }
   let(:request) { described_class.new(user: user, uid: 1) }
+
+  before { allow(request).to receive(:client).and_return(client) }
 
   describe '#perform!' do
     subject { request.perform! }
