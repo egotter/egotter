@@ -6,6 +6,7 @@ module Concerns::SearchRequestConcern
   include Concerns::SearchRequestInstrumentationConcern
 
   included do
+    before_action(only: %i(show all)) { search_request_concern_bm_start }
     before_action(only: %i(show all)) { signed_in_user_authorized? }
     before_action(only: %i(show all)) { enough_permission_level? }
     before_action(only: %i(show all)) { valid_screen_name? }
@@ -23,6 +24,7 @@ module Concerns::SearchRequestConcern
 
     before_action(only: %i(show all)) { set_new_screen_name_if_changed }
     before_action(only: %i(show all)) { enqueue_logging_job }
+    before_action(only: %i(show all)) { search_request_concern_bm_finish }
   end
 
   def set_new_screen_name_if_changed

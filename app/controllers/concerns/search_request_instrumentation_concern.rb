@@ -3,21 +3,21 @@ require 'active_support/concern'
 module Concerns::SearchRequestInstrumentationConcern
   extend ActiveSupport::Concern
 
-  included do
-    prepend_before_action do
-      @search_request_benchmark = {}
-      @search_request_start_time = Time.zone.now
-    end
+  # Don't use #prepend_before_action to prevent the extra processing from being included
+  def search_request_concern_bm_start
+    @search_request_benchmark = {}
+    @search_request_start_time = Time.zone.now
+  end
 
-    after_action do
-      elapsed = Time.zone.now - @search_request_start_time
-      @search_request_benchmark[:sum] = @search_request_benchmark.values.sum
-      @search_request_benchmark[:elapsed] = elapsed
-      logger.info "Benchmark SearchRequest #{controller_name}##{action_name} #{sprintf("%.3f sec", elapsed)}"
-      logger.info "Benchmark SearchRequest #{controller_name}##{action_name} #{@search_request_benchmark.inspect}"
-    rescue => e
-      logger.warn "Internal error during benchmarking. Cause: #{e.inspecct}"
-    end
+  # Don't use #after_action to prevent the extra processing from being included
+  def search_request_concern_bm_finish
+    elapsed = Time.zone.now - @search_request_start_time
+    @search_request_benchmark[:sum] = @search_request_benchmark.values.sum
+    @search_request_benchmark[:elapsed] = elapsed
+    logger.info "Benchmark SearchRequestConcern #{controller_name}##{action_name} #{sprintf("%.3f sec", elapsed)}"
+    logger.info "Benchmark SearchRequestConcern #{controller_name}##{action_name} #{@search_request_benchmark.inspect}"
+  rescue => e
+    logger.warn "Benchmark SearchRequestConcern Internal error during benchmarking. Cause: #{e.inspecct}"
   end
 
   %i(

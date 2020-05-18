@@ -4,13 +4,13 @@ class UnfriendsController < ::Page::Base
 
   before_action(only: %i(show)) do
     if request.format.html?
-      if valid_screen_name?(params[:screen_name])
+      if params[:type].present? && valid_screen_name?(params[:screen_name])
         case params[:type]
           when 'removing' then redirect_to(unfriend_path(screen_name: params[:screen_name]), status: 301)
           when 'removed' then redirect_to(unfollower_path(screen_name: params[:screen_name]), status: 301)
           when 'blocking_or_blocked' then redirect_to(blocking_or_blocked_path(screen_name: params[:screen_name]), status: 301)
         end
-        logger.info "#{controller_name}##{action_name} redirect for backward compatibility"
+        logger.info "#{controller_name}##{action_name} redirect for backward compatibility type=#{params[:type]}"
       end
     else
       head :not_found

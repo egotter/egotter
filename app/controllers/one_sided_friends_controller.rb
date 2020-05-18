@@ -3,13 +3,13 @@ class OneSidedFriendsController < ::Page::Base
 
   before_action(only: %i(show)) do
     if request.format.html?
-      if valid_screen_name?(params[:screen_name])
+      if params[:type].present? && valid_screen_name?(params[:screen_name])
         case params[:type]
           when 'one_sided_friends' then redirect_to(one_sided_friend_path(screen_name: params[:screen_name]), status: 301)
           when 'one_sided_followers' then redirect_to(one_sided_follower_path(screen_name: params[:screen_name]), status: 301)
           when 'mutual_friends' then redirect_to(mutual_friend_path(screen_name: params[:screen_name]), status: 301)
         end
-        logger.info "#{controller_name}##{action_name} redirect for backward compatibility"
+        logger.info "#{controller_name}##{action_name} redirect for backward compatibility type=#{params[:type]}"
       end
     else
       head :not_found
