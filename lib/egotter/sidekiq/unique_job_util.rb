@@ -6,8 +6,14 @@ module Egotter
       def perform_if_unique(worker, args, history, &block)
         if worker.respond_to?(:unique_key)
           start = Time.now
-          result = perform_unique_check(worker, args, history, worker.unique_key(*args))
-          worker.logger.debug { "#perform_unique_check #{sprintf("%.3f sec", Time.now - start)} worker=#{worker} args=#{args.inspect.truncate(100)}" }
+
+          unique_key = worker.unique_key(*args).to_s
+          if unique_key.nil? || unique_key.empty?
+            worker.logger.warn { "#{__method__} Key is blank worker=#{worker} args=#{args.inspect.truncate(100)}" }
+          end
+
+          result = perform_unique_check(worker, args, history, unique_key)
+          worker.logger.debug { "#{__method__} elapsed=#{sprintf("%.3f sec", Time.now - start)} worker=#{worker} args=#{args.inspect.truncate(100)}" }
 
           if result
             yield
@@ -19,7 +25,7 @@ module Egotter
 
       def perform_unique_check(worker, args, history, unique_key)
         if history.exists?(unique_key)
-          worker.logger.info { "#{self.class}:#{worker.class} Skip duplicate job for #{history.ttl} seconds, remaining #{history.ttl(unique_key)} seconds. args=#{args.inspect.truncate(100)}" }
+          worker.logger.info { "#{__method__} Skip duplicate job for #{history.ttl} seconds, remaining #{history.ttl(unique_key)} seconds worker=#{worker} args=#{args.inspect.truncate(100)}" }
 
           perform_callback(worker, :after_skip, args)
 
