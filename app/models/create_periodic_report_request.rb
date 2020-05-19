@@ -40,8 +40,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   def validate_report!
     return if check_credentials && !CredentialsValidator.new(self).validate_and_deliver!
-    return if check_interval && !IntervalValidator.new(self).validate_and_deliver!
     return if check_following_status && !FollowingStatusValidator.new(self).validate_and_deliver!
+    return if check_interval && !IntervalValidator.new(self).validate_and_deliver!
     return if check_allotted_messages_count && !AllottedMessagesCountValidator.new(self).validate_and_deliver!
 
     true
@@ -118,7 +118,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
             jid = CreatePeriodicReportMessageWorker.perform_async(user_id, scheduled_job_exists: true, scheduled_jid: scheduled_jid)
             @request.update(status: 'interval_too_short,scheduled_job_exists,message_skipped') unless jid
           else
-            logger.warn "#{self.class}##{__method__} scheduled job exists and jid is invalid request=#{@request.inspect}"
+            logger.warn "#{self.class}##{__method__} scheduled job exists but jid is invalid request=#{@request.inspect}"
             @request.update(status: 'interval_too_short,scheduled_job_exists,jid_not_found')
           end
         else
@@ -129,7 +129,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
             jid = CreatePeriodicReportMessageWorker.perform_async(user_id, scheduled_job_created: true, scheduled_jid: scheduled_jid)
             @request.update(status: 'interval_too_short,scheduled_job_created,message_skipped') unless jid
           else
-            logger.warn "#{self.class}##{__method__} scheduled job is created and jid is invalid request=#{@request.inspect}"
+            logger.warn "#{self.class}##{__method__} scheduled job is created but jid is invalid request=#{@request.inspect}"
             @request.update(status: 'interval_too_short,scheduled_job_created,jid_not_found')
           end
         end
