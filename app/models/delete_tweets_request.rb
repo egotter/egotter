@@ -16,6 +16,8 @@
 #  index_delete_tweets_requests_on_user_id     (user_id)
 #
 
+require 'parallel'
+
 class DeleteTweetsRequest < ApplicationRecord
   include Concerns::Request::Runnable
   belongs_to :user

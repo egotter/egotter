@@ -98,6 +98,40 @@ class PeriodicReport < ApplicationRecord
       new(user: User.find(user_id), message: message, token: generate_token)
     end
 
+    def scheduled_job_exists_message(user_id, jid)
+      scheduled_job = CreatePeriodicReportRequest::ScheduledJob.find_by(jid: jid)
+
+      if scheduled_job
+        template = Rails.root.join('app/views/periodic_reports/scheduled_job_exists.ja.text.erb')
+        message = ERB.new(template.read).result_with_hash(
+            interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute),
+            sent_at: I18n.t('datetime.distance_in_words.x_minutes', count: (scheduled_job.perform_at - Time.zone.now).to_i / 1.minute)
+        )
+
+        new(user: User.find(user_id), message: message, token: generate_token)
+      else
+        logger.warn "#{self}##{__method__} scheduled job not found user_id=#{user_id} jid=#{jid}"
+        interval_too_short_message(user_id)
+      end
+    end
+
+    def scheduled_job_created_message(user_id, jid)
+      scheduled_job = CreatePeriodicReportRequest::ScheduledJob.find_by(jid: jid)
+
+      if scheduled_job
+        template = Rails.root.join('app/views/periodic_reports/scheduled_job_created.ja.text.erb')
+        message = ERB.new(template.read).result_with_hash(
+            interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute),
+            sent_at: I18n.t('datetime.distance_in_words.x_minutes', count: (scheduled_job.perform_at - Time.zone.now).to_i / 1.minute)
+        )
+
+        new(user: User.find(user_id), message: message, token: generate_token)
+      else
+        logger.warn "#{self}##{__method__} scheduled job not found user_id=#{user_id} jid=#{jid}"
+        interval_too_short_message(user_id)
+      end
+    end
+
     def request_interval_too_short_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/request_interval_too_short.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(

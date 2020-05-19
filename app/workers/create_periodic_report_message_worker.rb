@@ -38,6 +38,8 @@ class CreatePeriodicReportMessageWorker
   #   not_following
   #   request_interval_too_short
   #   sending_soft_limited
+  #   scheduled_job_exists and scheduled_jid
+  #   scheduled_job_created and scheduled_jid
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
@@ -83,6 +85,20 @@ class CreatePeriodicReportMessageWorker
     if options[:interval_too_short]
       handle_weird_error(user) do
         PeriodicReport.interval_too_short_message(user_id).deliver!
+      end
+      return
+    end
+
+    if options[:scheduled_job_exists]
+      handle_weird_error(user) do
+        PeriodicReport.scheduled_job_exists_message(user_id, options[:scheduled_jid]).deliver!
+      end
+      return
+    end
+
+    if options[:scheduled_job_created]
+      handle_weird_error(user) do
+        PeriodicReport.scheduled_job_created_message(user_id, options[:scheduled_jid]).deliver!
       end
       return
     end

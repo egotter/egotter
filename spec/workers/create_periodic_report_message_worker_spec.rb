@@ -101,6 +101,26 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       end
     end
 
+    context 'options[:scheduled_job_exists] is specified' do
+      let(:user_id) { user.id }
+      let(:options) { {scheduled_job_exists: true, jid: 'jid'} }
+      it do
+        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
+        expect(PeriodicReport).to receive_message_chain(:scheduled_job_exists_message, :deliver!).with(user.id, 'jid').with(no_args)
+        subject
+      end
+    end
+
+    context 'options[:scheduled_job_created] is specified' do
+      let(:user_id) { user.id }
+      let(:options) { {scheduled_job_created: true, jid: 'jid'} }
+      it do
+        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
+        expect(PeriodicReport).to receive_message_chain(:scheduled_job_created_message, :deliver!).with(user.id, 'jid').with(no_args)
+        subject
+      end
+    end
+
     context 'options[:sending_soft_limited] is specified' do
       let(:user_id) { user.id }
       let(:options) { {sending_soft_limited: true} }

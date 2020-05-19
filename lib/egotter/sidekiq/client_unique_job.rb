@@ -11,6 +11,7 @@ module Egotter
 
       def call(worker_str, job, queue, redis_pool, &block)
         if job.has_key?('at')
+          # perform_in or perform_at
           yield
         else
           if worker_str.class == String
