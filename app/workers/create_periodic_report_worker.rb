@@ -52,7 +52,7 @@ class CreatePeriodicReportWorker
 
     request.worker_context = self.class
     request.check_credentials = true
-    request.check_interval = user_requested_job?
+    request.check_interval = user_requested_job? && !options.has_key?('scheduled_request')
     request.check_following_status = user_requested_job?
     request.check_allotted_messages_count = batch_requested_job?
 
