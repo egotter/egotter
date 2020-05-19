@@ -2,12 +2,13 @@
 #
 # Table name: create_periodic_report_requests
 #
-#  id          :bigint(8)        not null, primary key
-#  user_id     :integer          not null
-#  status      :string(191)      default(""), not null
-#  finished_at :datetime
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id           :bigint(8)        not null, primary key
+#  user_id      :integer          not null
+#  requested_by :string(191)
+#  status       :string(191)      default(""), not null
+#  finished_at  :datetime
+#  created_at   :datetime         not null
+#  updated_at   :datetime         not null
 #
 # Indexes
 #
