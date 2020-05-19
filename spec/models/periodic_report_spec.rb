@@ -103,4 +103,18 @@ RSpec.describe PeriodicReport do
       it { is_expected.to be_truthy }
     end
   end
+
+  describe '#send_remind_reply_message' do
+    let(:report) { described_class.new }
+    subject { report.send_remind_reply_message }
+
+    before { allow(report).to receive(:user).and_return(user) }
+
+    it do
+      expect(described_class).to receive_message_chain(:remind_reply_message, :message).and_return('message')
+      expect(described_class).to receive(:build_direct_message_event).with(user.uid, 'message').and_return('event')
+      expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(no_args).with(event: 'event')
+      subject
+    end
+  end
 end
