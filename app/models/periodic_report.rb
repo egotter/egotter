@@ -301,8 +301,7 @@ class PeriodicReport < ApplicationRecord
 
   def send_remind_reply_message?(sender)
     if sender.uid == User::EGOTTER_UID
-      remaining_ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
-      remaining_ttl && remaining_ttl < REMAINING_TTL_SOFT_LIMIT
+      self.class.allotted_messages_will_expire_soon?(user)
     else
       true
     end
@@ -339,6 +338,15 @@ class PeriodicReport < ApplicationRecord
               }
           }
       }
+    end
+
+    def allotted_messages_will_expire_soon?(user)
+      remaining_ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
+      remaining_ttl && remaining_ttl < REMAINING_TTL_SOFT_LIMIT
+    end
+
+    def allotted_messages_left?(user, count: 4)
+      GlobalSendDirectMessageCountByUser.new.count(user.uid) <= count
     end
   end
 

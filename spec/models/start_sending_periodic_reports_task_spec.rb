@@ -11,6 +11,38 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
     end
   end
 
+  describe '#start!' do
+    let(:instance) {described_class.new}
+    subject { instance.start! }
+
+    context '@remind_only is set' do
+      before { instance.instance_variable_set(:@remind_only, true) }
+      it do
+        expect(instance).to receive(:start_reminding!)
+        subject
+      end
+    end
+
+    context '@remind_only is not set' do
+      it do
+        expect(instance).to receive(:start_sending!)
+        subject
+      end
+    end
+  end
+
+  describe '#start_sending!' do
+
+  end
+
+  describe '#start_reminding!' do
+
+  end
+
+  describe '#initialize_remind_only_user_ids' do
+
+  end
+
   describe '#initialize_user_ids' do
     let(:start_date) { 'start_date' }
     let(:end_date) { 'end_date' }
@@ -74,5 +106,8 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
       before { StopPeriodicReportRequest.create!(user_id: user_ids[1]) }
       it { is_expected.to match_array([1, 3]) }
     end
+  end
+
+  describe '.allotted_messages_will_expire_user_ids' do
   end
 end

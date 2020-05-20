@@ -218,12 +218,12 @@ class CreatePeriodicReportRequest < ApplicationRecord
       user = @request.user
       return true unless GlobalDirectMessageReceivedFlag.new.received?(user.uid)
 
-      send_count = GlobalSendDirectMessageCountByUser.new.count(user.uid)
-      return true if send_count <= 3
-
-      @request.update(status: 'soft_limited')
-
-      false
+      if PeriodicReport.allotted_messages_left?(user, count: 3)
+        true
+      else
+        @request.update(status: 'soft_limited')
+        false
+      end
     end
 
     def deliver!

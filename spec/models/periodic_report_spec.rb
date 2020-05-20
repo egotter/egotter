@@ -77,25 +77,16 @@ RSpec.describe PeriodicReport do
 
   describe '#send_remind_reply_message?' do
     let(:report) { described_class.new }
-    let(:sender) { double('sender', uid: 1) }
+    let(:sender) { double('sender', uid: nil) }
     subject { report.send_remind_reply_message?(sender) }
 
     before { allow(report).to receive(:user).and_return(user) }
 
     context 'sender.uid == egotter uid' do
-      before do
-        allow(sender).to receive(:uid).and_return(User::EGOTTER_UID)
-        allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :remaining).with(user.uid).and_return(ttl)
-      end
-
-      context 'remaining ttl is short' do
-        let(:ttl) { 1.hour }
-        it { is_expected.to be_truthy }
-      end
-
-      context 'remaining ttl is long' do
-        let(:ttl) { 20.hours }
-        it { is_expected.to be_falsey }
+      before { allow(sender).to receive(:uid).and_return(User::EGOTTER_UID) }
+      it do
+        expect(described_class).to receive(:allotted_messages_will_expire_soon?).with(user).and_return('result')
+        is_expected.to eq('result')
       end
     end
 
@@ -116,5 +107,38 @@ RSpec.describe PeriodicReport do
       expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(no_args).with(event: 'event')
       subject
     end
+  end
+
+  describe '.allotted_messages_will_expire_soon?' do
+    subject { described_class.allotted_messages_will_expire_soon?(user) }
+
+    before do
+      allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :remaining).with(user.uid).and_return(ttl)
+    end
+
+    context 'remaining ttl is short' do
+      let(:ttl) { 1.hour }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'remaining ttl is long' do
+      let(:ttl) { 20.hours }
+      it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '.allotted_messages_left?' do
+    subject { described_class.allotted_messages_left?(user) }
+
+    context 'Sending DMs count is less than or equal to 4' do
+      before { allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).with(user.uid).and_return(4) }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'Sending DMs count is greater than 3' do
+      before { allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).with(user.uid).and_return(5) }
+      it { is_expected.to be_falsey }
+    end
+
   end
 end

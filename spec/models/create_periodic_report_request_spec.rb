@@ -286,13 +286,13 @@ RSpec.describe CreatePeriodicReportRequest::AllottedMessagesCountValidator, type
     context 'DM received flag is set' do
       before { allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return(true) }
 
-      context 'Sending DMs count is less than or equal to 3' do
-        before { allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).with(user.uid).and_return(3) }
+      context 'allotted_messages_left? returns true' do
+        before { allow(PeriodicReport).to receive(:allotted_messages_left?).with(user, count: 3).and_return(true) }
         it { is_expected.to be_truthy }
       end
 
-      context 'Sending DMs count is greater than 3' do
-        before { allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).with(user.uid).and_return(4) }
+      context 'allotted_messages_left? returns false' do
+        before { allow(PeriodicReport).to receive(:allotted_messages_left?).with(user, count: 3).and_return(false) }
         it { is_expected.to be_falsey }
       end
     end
