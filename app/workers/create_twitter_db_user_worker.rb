@@ -29,7 +29,7 @@ class CreateTwitterDBUserWorker
     begin
       TwitterDB::User::Batch.fetch_and_import!(uids, client: client, force_update: options['force_update'])
     rescue => e
-      if !AccountStatus.unauthorized?(e) && !AccountStatus.temporarily_locked?(e)
+      if !AccountStatus.unauthorized?(e) && !AccountStatus.temporarily_locked?(e) && !AccountStatus.too_many_requests?(e)
         logger.warn "Retry with a bot client #{e.inspect} options=#{options.inspect}"
       end
 
