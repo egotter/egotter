@@ -40,6 +40,7 @@ class CreatePeriodicReportMessageWorker
   #   sending_soft_limited
   #   scheduled_job_exists and scheduled_jid
   #   scheduled_job_created and scheduled_jid
+  #   allotted_messages_will_expire
   def perform(user_id, options = {})
     options = options.symbolize_keys!
 
@@ -106,6 +107,13 @@ class CreatePeriodicReportMessageWorker
     if options[:sending_soft_limited]
       handle_weird_error(user) do
         PeriodicReport.sending_soft_limited_message(user_id).deliver!
+      end
+      return
+    end
+
+    if options[:allotted_messages_will_expire]
+      handle_weird_error(user) do
+        PeriodicReport.allotted_messages_will_expire_message(user_id).deliver!
       end
       return
     end

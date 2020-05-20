@@ -131,6 +131,16 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       end
     end
 
+    context 'options[:allotted_messages_will_expire] is specified' do
+      let(:user_id) { user.id }
+      let(:options) { {allotted_messages_will_expire: true} }
+      it do
+        expect(worker).to receive(:handle_weird_error).with(user).and_call_original
+        expect(PeriodicReport).to receive_message_chain(:allotted_messages_will_expire_message, :deliver!).with(user.id).with(no_args)
+        subject
+      end
+    end
+
     context 'correct option is specified' do
       let(:user_id) { user.id }
       let(:options) do

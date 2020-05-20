@@ -82,6 +82,11 @@ RSpec.describe PeriodicReport do
 
     before { allow(report).to receive(:user).and_return(user) }
 
+    context 'dont_send_remind_reply is set' do
+      before { report.dont_send_remind_reply = true }
+      it { is_expected.to be_falsey }
+    end
+
     context 'sender.uid == egotter uid' do
       before { allow(sender).to receive(:uid).and_return(User::EGOTTER_UID) }
       it do

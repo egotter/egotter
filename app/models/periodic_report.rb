@@ -25,7 +25,7 @@ class PeriodicReport < ApplicationRecord
 
   belongs_to :user
 
-  attr_accessor :soft_limited_message
+  attr_accessor :dont_send_remind_reply
 
   def deliver!
     dm = send_direct_message
@@ -82,11 +82,28 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
+    def allotted_messages_will_expire_message(user_id)
+      user = User.find(user_id)
+      template = Rails.root.join('app/views/periodic_reports/allotted_messages_will_expire.ja.text.erb')
+
+      ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
+      if ttl.nil? || ttl <= 0
+        logger.warn "#{self}##{__method__} remaining ttl is nil or less than 0 user_id=#{user_id}"
+        ttl = 5.minutes + rand(300)
+      end
+
+      message = ERB.new(template.read).result_with_hash(
+          interval: Class.new { include ActionView::Helpers::DateHelper }.new.distance_of_time_in_words(ttl)
+      )
+
+      new(user: user, message: message, token: generate_token, dont_send_remind_reply: true)
+    end
+
     def sending_soft_limited_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
       message = ERB.new(template.read).result
 
-      new(user: User.find(user_id), message: message, token: generate_token, soft_limited_message: true)
+      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_reply: true)
     end
 
     def interval_too_short_message(user_id)
@@ -289,7 +306,7 @@ class PeriodicReport < ApplicationRecord
     sender = report_sender
     dm = sender.api_client.create_direct_message_event(event: event)
 
-    if !soft_limited_message && send_remind_reply_message?(sender)
+    if send_remind_reply_message?(sender)
       send_remind_reply_message
     end
 
@@ -300,6 +317,8 @@ class PeriodicReport < ApplicationRecord
   REMAINING_TTL_HARD_LIMIT = 3.hours
 
   def send_remind_reply_message?(sender)
+    return false if dont_send_remind_reply
+
     if sender.uid == User::EGOTTER_UID
       self.class.allotted_messages_will_expire_soon?(user)
     else
