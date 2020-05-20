@@ -127,7 +127,7 @@ RSpec.describe PeriodicReport do
     end
 
     context 'remaining ttl is long' do
-      let(:ttl) { 20.hours }
+      let(:ttl) { 6.hours }
       it { is_expected.to be_falsey }
     end
   end

@@ -361,7 +361,7 @@ class PeriodicReport < ApplicationRecord
 
     def allotted_messages_will_expire_soon?(user)
       remaining_ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
-      remaining_ttl && remaining_ttl < REMAINING_TTL_SOFT_LIMIT
+      remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT
     end
 
     def allotted_messages_left?(user, count: 4)
