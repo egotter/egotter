@@ -117,10 +117,18 @@ RSpec.describe ApiClient::TwitterWrapper, type: :model do
 
   describe '#method_missing' do
     subject { instance.send(:method_missing, :user, 1) }
+    before { allow(twitter).to receive(:respond_to?).with(:user).and_return(true) }
+
+    it do
+      expect(twitter).to receive(:user).with(1)
+      subject
+    end
+
     context 'exception is raised' do
+      before { allow(twitter).to receive(:user).with(1).and_raise('error') }
       it do
         expect(api_client).to receive(:update_authorization_status).with(anything)
-        expect { subject }.to raise_error(NoMethodError)
+        expect { subject }.to raise_error('error')
       end
     end
   end

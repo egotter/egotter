@@ -20,7 +20,7 @@ class StartSendingPeriodicReportsTask
     last_request = CreatePeriodicReportRequest.new(created_at: 1.second.ago) unless last_request
 
     sleep 1 # Increase created_at of imported records
-    requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id) }
+    requests = user_ids.map { |user_id| CreatePeriodicReportRequest.new(user_id: user_id, requested_by: 'batch') }
     CreatePeriodicReportRequest.import requests, validate: false
 
     CreatePeriodicReportRequest.where('created_at > ?', last_request.created_at).find_each do |request|

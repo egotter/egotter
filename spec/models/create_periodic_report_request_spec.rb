@@ -318,7 +318,7 @@ RSpec.describe CreatePeriodicReportRequest::ScheduledJob, type: :model do
 
   describe '.create' do
     subject { described_class.create(user_id: user.id) }
-    before { allow(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id).and_return(request) }
+    before { allow(CreatePeriodicReportRequest).to receive(:create).with(user_id: user.id, requested_by: described_class).and_return(request) }
     it do
       expect(described_class::WORKER_CLASS).to receive(:perform_at).
           with(anything, request.id, user_id: user.id, scheduled_request: true).and_return('jid')

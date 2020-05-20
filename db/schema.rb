@@ -266,13 +266,9 @@ ActiveRecord::Schema.define(version: 2020_05_10_154038) do
     t.index ["user_id"], name: "index_create_notification_message_logs_on_user_id"
   end
 
-  create_table "create_periodic_report_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "create_periodic_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
+    t.string "requested_by"
     t.string "status", default: "", null: false
     t.datetime "finished_at"
     t.datetime "created_at", null: false

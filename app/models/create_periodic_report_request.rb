@@ -157,7 +157,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       end
 
       def create(user_id:)
-        request = CreatePeriodicReportRequest.create(user_id: user_id)
+        request = CreatePeriodicReportRequest.create(user_id: user_id, requested_by: self)
         time = CreatePeriodicReportRequest.next_creation_time(user_id)
         jid = WORKER_CLASS.perform_at(time, request.id, user_id: user_id, scheduled_request: true)
         new(jid, time)
