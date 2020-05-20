@@ -160,6 +160,11 @@ class CreatePeriodicReportRequest < ApplicationRecord
         request = CreatePeriodicReportRequest.create(user_id: user_id, requested_by: self)
         time = CreatePeriodicReportRequest.next_creation_time(user_id)
         jid = WORKER_CLASS.perform_at(time, request.id, user_id: user_id, scheduled_request: true)
+
+        unless jid
+          Rails.logger.warn "job skipped user_id=#{user_id} time=#{time} request=#{request}"
+        end
+
         new(jid, time)
       end
 
