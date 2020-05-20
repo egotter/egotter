@@ -108,17 +108,21 @@ class StartSendingPeriodicReportsTask
     end
 
     def reject_stop_requested_user_ids(user_ids)
-      user_ids - StopPeriodicReportRequest.pluck(:user_id)
+      StopPeriodicReportRequest.select(:id, :user_id).find_in_batches do |requests|
+        user_ids -= requests.map(&:user_id)
+      end
+      user_ids
     end
 
-    def allotted_messages_will_expire_user_ids
+    def allotted_messages_will_expire_user_ids(reject_stop_requested: true)
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
       users = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).select(:id, :uid) }.flatten
       users.sort_by! { |user| uids.index(user.uid) }
-      users.select do |user|
+      user_ids = users.select do |user|
         PeriodicReport.allotted_messages_will_expire_soon?(user) &&
             PeriodicReport.allotted_messages_left?(user)
       end.map(&:id)
+      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
     end
   end
 end

@@ -102,6 +102,11 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
   describe '.reject_stop_requested_user_ids' do
     let(:user_ids) { [1, 2, 3] }
     subject { described_class.reject_stop_requested_user_ids(user_ids) }
+
+    context 'unsubscribe is not requested' do
+      it { is_expected.to match_array([1, 2, 3]) }
+    end
+
     context 'unsubscribe is requested' do
       before { StopPeriodicReportRequest.create!(user_id: user_ids[1]) }
       it { is_expected.to match_array([1, 3]) }
