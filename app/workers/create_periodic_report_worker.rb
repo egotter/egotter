@@ -22,7 +22,7 @@ class CreatePeriodicReportWorker
       CreatePeriodicReportMessageWorker.perform_in(waiting_time, request.user_id, request_interval_too_short: true)
     end
 
-    logger.info "The job execution is skipped request_id=#{request_id} options=#{options.inspect}"
+    logger.info "The job of #{self.class} is skipped request_id=#{request_id} options=#{options.inspect}"
   end
 
   def user_requested_job?
@@ -41,6 +41,7 @@ class CreatePeriodicReportWorker
   # options:
   #   user_id
   #   create_twitter_user
+  #   scheduled_request
   def perform(request_id, options = {})
     request = CreatePeriodicReportRequest.find(request_id)
 
