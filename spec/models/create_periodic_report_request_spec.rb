@@ -109,12 +109,76 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     end
   end
 
-  describe '.interval_too_short?' do
+  describe '.next_creation_time' do
+    let(:request) { build(:create_periodic_report_request, user_id: user.id) }
+
     shared_context 'record exists' do
-      before { create(:create_periodic_report_request, user_id: user.id, finished_at: time, created_at: time) }
+      before do
+        request.save!
+        allow(described_class).to receive(:fetch_last_request).
+            with(include_user_id: user.id, reject_id: nil).and_return(request)
+      end
     end
 
-    subject { described_class.interval_too_short?(include_user_id: user.id, reject_id: nil) }
+    subject { described_class.next_creation_time(user.id) }
+
+    context 'first request' do
+      it do
+        freeze_time do
+          is_expected.to eq(Time.zone.now + described_class::SHORT_INTERVAL + 1.second)
+        end
+      end
+    end
+
+    context 'record exists' do
+      include_context 'record exists'
+      let(:time) { 1.day.ago }
+      before { request.update!(finished_at: time) }
+      it { is_expected.to be_within(3).of(time + described_class::SHORT_INTERVAL + 1.second) }
+    end
+  end
+
+  describe '.fetch_last_request' do
+    let(:request) { build(:create_periodic_report_request, user_id: user.id) }
+    let(:include_user_id) { user.id }
+    let(:reject_id) { nil }
+
+    shared_context 'record exists' do
+      before do
+        request.save!
+        allow(described_class).to receive(:correctly_completed).and_return(described_class.where(id: request.id))
+      end
+    end
+
+    subject { described_class.fetch_last_request(include_user_id: include_user_id, reject_id: reject_id) }
+
+    context 'first request' do
+      it { is_expected.to be_nil }
+    end
+
+    context 'record exists' do
+      include_context 'record exists'
+      it { is_expected.to satisfy { |result| result.id == request.id } }
+    end
+
+    context 'reject_id is specified' do
+      include_context 'record exists'
+      let(:reject_id) { request.id }
+      it { is_expected.to be_nil }
+    end
+  end
+
+  describe '.interval_too_short?' do
+    let(:request) { build(:create_periodic_report_request, user_id: user.id, finished_at: Time.zone.now) }
+    shared_context 'record exists' do
+      before do
+        request.save!
+        allow(described_class).to receive(:fetch_last_request).
+            with(include_user_id: 'include_user_id', reject_id: 'reject_id').and_return(request)
+      end
+    end
+
+    subject { described_class.interval_too_short?(include_user_id: 'include_user_id', reject_id: 'reject_id') }
 
     context 'first request' do
       it { is_expected.to be_falsey }
@@ -122,13 +186,12 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
 
     context 'recently finished' do
       include_context 'record exists'
-      let(:time) { 20.minutes.ago }
       it { is_expected.to be_truthy }
     end
 
     context 'finished a long time ago' do
       include_context 'record exists'
-      let(:time) { 3.hours.ago }
+      before { request.update!(finished_at: 3.hours.ago) }
       it { is_expected.to be_falsey }
     end
   end

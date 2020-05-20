@@ -280,7 +280,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   class << self
     def next_creation_time(user_id)
       last_request = fetch_last_request(include_user_id: user_id, reject_id: nil)
-      previous_time = last_request ? last_request.created_at : Time.zone.now
+      previous_time = last_request ? last_request.finished_at : Time.zone.now
       previous_time + SHORT_INTERVAL + 1.second
     end
 
