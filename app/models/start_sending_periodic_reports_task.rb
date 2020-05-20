@@ -114,6 +114,7 @@ class StartSendingPeriodicReportsTask
     def allotted_messages_will_expire_user_ids
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
       users = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).select(:id, :uid) }.flatten
+      users.sort_by! { |user| uids.index(user.uid) }
       users.select do |user|
         PeriodicReport.allotted_messages_will_expire_soon?(user) &&
             PeriodicReport.allotted_messages_left?(user)
