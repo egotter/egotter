@@ -22,7 +22,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :send_only_if_changed, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
 
   def perform!
@@ -31,12 +31,16 @@ class CreatePeriodicReportRequest < ApplicationRecord
     return unless validate_report!
 
     if check_twitter_user
+      track_records_count if send_only_if_changed
       create_new_twitter_user_record
+      track_records_count if send_only_if_changed
     end
 
-    # If an administrator makes a request immediately after processing a user's request, it may be skipped
-    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
-    update(status: 'message_skipped') unless jid
+    if send_report?
+      send_report!
+    else
+      logger.info "#{self.class}##{__method__} Don't send a report as records are not changed request_id=#{id} user_id=#{user_id}"
+    end
   end
 
   def validate_report!
@@ -46,6 +50,31 @@ class CreatePeriodicReportRequest < ApplicationRecord
     return if check_allotted_messages_count && !AllottedMessagesCountValidator.new(self).validate_and_deliver!
 
     true
+  end
+
+  def send_report?
+    !send_only_if_changed || (send_only_if_changed && records_count_changed?)
+  end
+
+  def send_report!
+    # If an administrator makes a request immediately after processing a user's request, it may be skipped
+    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
+    update(status: 'message_skipped') unless jid
+  end
+
+  class RecordsCount < Array
+    def changed?
+      size == 2 && self[0] != self[1]
+    end
+  end
+
+  def track_records_count
+    @records_count ||= RecordsCount.new
+    @records_count << TwitterUser.where(uid: user.uid).size
+  end
+
+  def records_count_changed?
+    !@records_count.nil? && @records_count.changed?
   end
 
   class Validator

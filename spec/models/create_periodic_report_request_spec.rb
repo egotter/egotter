@@ -9,30 +9,66 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
 
     it do
       expect(request).to receive(:validate_report!).and_return(true)
+      expect(request).to receive(:send_report!)
       subject
     end
 
     context 'check_twitter_user == true' do
-      before do
-        allow(request).to receive(:validate_report!).and_return(true)
-        request.check_twitter_user = true
-      end
+      before { request.check_twitter_user = true }
+
       it do
         expect(request).to receive(:create_new_twitter_user_record)
         subject
       end
+
+      context 'send_only_if_changed == true' do
+        before { request.send_only_if_changed = true }
+        it do
+          expect(request).to receive(:track_records_count).twice
+          subject
+        end
+      end
     end
 
-    context 'validation is succeeded' do
-      before do
-        allow(request).to receive(:validate_report!).and_return(true)
-        allow(request).to receive(:build_report_options).and_return('options')
-      end
-
+    context 'validation is failed' do
+      before { allow(request).to receive(:validate_report!).and_return(false) }
       it do
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, 'options').and_return('jid')
+        expect(request).not_to receive(:send_report!)
         subject
       end
+    end
+  end
+
+  describe '#send_report?' do
+    subject { request.send_report? }
+
+    it { is_expected.to be_truthy }
+
+    context 'send_only_if_changed is false' do
+      before { request.send_only_if_changed = false }
+      it { is_expected.to be_truthy }
+    end
+
+    context 'send_only_if_changed is true' do
+      before { request.send_only_if_changed = true }
+
+      context 'records_count_changed? is false' do
+        it { is_expected.to be_falsey }
+      end
+
+      context 'records_count_changed? is true' do
+        before { allow(request).to receive(:records_count_changed?).and_return(true) }
+        it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#send_report!' do
+    subject { request.send_report! }
+    before { allow(request).to receive(:build_report_options).and_return('options') }
+    it do
+      expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, 'options').and_return('jid')
+      subject
     end
   end
 

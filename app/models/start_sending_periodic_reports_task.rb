@@ -1,7 +1,7 @@
 # Perform a request and log an error
 class StartSendingPeriodicReportsTask
 
-  def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000, remind_only: false)
+  def initialize(user_ids: nil, start_date: nil, end_date: nil, delay: nil, limit: 5000, remind_only: false, send_only_if_changed: false)
     if user_ids.present?
       @user_ids = self.class.reject_stop_requested_user_ids(user_ids)
     end
@@ -11,6 +11,7 @@ class StartSendingPeriodicReportsTask
     @delay = delay
     @limit = limit
     @remind_only = remind_only
+    @send_only_if_changed = send_only_if_changed
   end
 
   def start!
@@ -35,7 +36,7 @@ class StartSendingPeriodicReportsTask
     CreatePeriodicReportRequest.where('created_at > ?', last_request.created_at).find_each do |request|
       next if request.status.present? || request.finished_at.present?
 
-      job_args = [request.id, user_id: request.user_id, create_twitter_user: true]
+      job_args = [request.id, user_id: request.user_id, create_twitter_user: true, send_only_if_changed: @send_only_if_changed]
 
       if @delay
         CreatePeriodicReportWorker.perform_in(@delay, *job_args)
