@@ -56,7 +56,7 @@ class PeriodicReport < ApplicationRecord
           user: user,
           start_date: start_date,
           end_date: end_date,
-          date_range: Class.new { include ActionView::Helpers::DateHelper }.new.time_ago_in_words(start_date),
+          date_range: date_helper.time_ago_in_words(start_date),
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: unfollowers.size),
           period_name: pick_period_name,
           first_friends_count: options[:first_friends_count],
@@ -95,7 +95,7 @@ class PeriodicReport < ApplicationRecord
       end
 
       message = ERB.new(template.read).result_with_hash(
-          interval: Class.new { include ActionView::Helpers::DateHelper }.new.distance_of_time_in_words(ttl)
+          interval: date_helper.distance_of_time_in_words(ttl)
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_reply: true)
@@ -123,8 +123,8 @@ class PeriodicReport < ApplicationRecord
       if scheduled_job
         template = Rails.root.join('app/views/periodic_reports/scheduled_job_exists.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
-            interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute),
-            sent_at: I18n.t('datetime.distance_in_words.x_minutes', count: (scheduled_job.perform_at - Time.zone.now).to_i / 1.minute)
+            interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
+            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at)
         )
 
         new(user: User.find(user_id), message: message, token: generate_token)
@@ -140,8 +140,8 @@ class PeriodicReport < ApplicationRecord
       if scheduled_job
         template = Rails.root.join('app/views/periodic_reports/scheduled_job_created.ja.text.erb')
         message = ERB.new(template.read).result_with_hash(
-            interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute),
-            sent_at: I18n.t('datetime.distance_in_words.x_minutes', count: (scheduled_job.perform_at - Time.zone.now).to_i / 1.minute)
+            interval: date_helper.distance_of_time_in_words(CreatePeriodicReportRequest::SHORT_INTERVAL),
+            sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at)
         )
 
         new(user: User.find(user_id), message: message, token: generate_token)
@@ -239,7 +239,7 @@ class PeriodicReport < ApplicationRecord
           user: user,
           start_date: start_date,
           end_date: end_date,
-          date_range: Class.new { include ActionView::Helpers::DateHelper }.new.time_ago_in_words(start_date),
+          date_range: date_helper.time_ago_in_words(start_date),
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: unfollowers.size),
           period_name: pick_period_name,
           unfriends: options[:unfriends],
@@ -307,6 +307,10 @@ class PeriodicReport < ApplicationRecord
       date = options[key]
       date = Time.zone.parse(date) if date.class == String
       date
+    end
+
+    def date_helper
+      @date_helper ||= Class.new { include ActionView::Helpers::DateHelper }.new
     end
   end
 
