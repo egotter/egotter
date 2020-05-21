@@ -180,7 +180,8 @@ class PeriodicReport < ApplicationRecord
     def unregistered_message
       template = Rails.root.join('app/views/periodic_reports/unregistered.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          url: sign_in_url(via: 'unregistered_message', og_tag: 'false')
+          sign_in_url: sign_in_url(via: 'unregistered_message', og_tag: 'false'),
+          sign_in_and_follow_url: sign_in_url(follow: true, via: 'unregistered_message', og_tag: 'false'),
       )
 
       new(user: nil, message: message, token: nil)
