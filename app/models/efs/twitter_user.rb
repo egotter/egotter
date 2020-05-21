@@ -1,4 +1,8 @@
 # -*- SkipSchemaAnnotations
+
+require 'active_support'
+require 'active_support/cache/file_store'
+
 module Efs
   class TwitterUser
     attr_reader :uid, :screen_name, :profile, :friend_uids, :follower_uids
