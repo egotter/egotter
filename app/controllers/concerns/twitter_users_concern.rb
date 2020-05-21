@@ -10,7 +10,7 @@ module Concerns::TwitterUsersConcern
   # See also #not_found_user? in #not_found_screen_name? or #forbidden_user? in #forbidden_screen_name?
   def build_twitter_user_by(screen_name:)
     user = request_context_client.user(screen_name)
-    twitter_user = TwitterUser.build_by(user: user)
+    twitter_user = ::TwitterUser.build_by(user: user)
 
     DeleteNotFoundUserWorker.perform_async(screen_name)
     DeleteForbiddenUserWorker.perform_async(screen_name)
