@@ -6,7 +6,6 @@ class CreateCreateTwitterUserRequests < ActiveRecord::Migration[5.1]
       t.bigint   :uid,             null: false
       t.integer  :twitter_user_id, null: true
       t.string   :requested_by,    null: false, default: ''
-      t.string   :diff_keys,       null: true, default: nil
       t.datetime :finished_at,     null: true
       t.bigint   :ahoy_visit_id,   null: true
 

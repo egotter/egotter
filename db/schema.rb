@@ -374,7 +374,6 @@ ActiveRecord::Schema.define(version: 2020_05_20_202502) do
     t.bigint "uid", null: false
     t.integer "twitter_user_id"
     t.string "requested_by", default: "", null: false
-    t.string "diff_keys"
     t.datetime "finished_at"
     t.bigint "ahoy_visit_id"
     t.datetime "created_at", null: false

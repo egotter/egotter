@@ -8,7 +8,6 @@
 #  uid             :bigint(8)        not null
 #  twitter_user_id :integer
 #  requested_by    :string(191)      default(""), not null
-#  diff_keys       :string(191)
 #  finished_at     :datetime
 #  ahoy_visit_id   :bigint(8)
 #  created_at      :datetime         not null
