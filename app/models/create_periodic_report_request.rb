@@ -254,8 +254,14 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     # To specify start_date, UnfriendsBuilder is used
     builder = UnfriendsBuilder.new(user.uid, start_date: start_date, end_date: end_date)
-    unfriends = TwitterDB::User.where_and_order_by_field(uids: builder.unfriends.flatten.take(10)).map(&:screen_name)
-    unfollowers = TwitterDB::User.where_and_order_by_field(uids: builder.unfollowers.flatten.take(10)).map(&:screen_name)
+
+    unfriend_uids = builder.unfriends.flatten
+    unfriends = TwitterDB::User.where_and_order_by_field(uids: unfriend_uids.take(10)).map(&:screen_name)
+    unfriends_count = unfriend_uids.size
+
+    unfollower_uids = builder.unfollowers.flatten
+    unfollowers = TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(10)).map(&:screen_name)
+    unfollowers_count = unfollower_uids.size
 
     first_user = TwitterUser.find_by(id: builder.first_user&.id)
     last_user = TwitterUser.find_by(id: builder.last_user&.id)
@@ -269,7 +275,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
         last_friends_count: last_user&.friends_count,
         last_followers_count: last_user&.followers_count,
         unfriends: unfriends,
+        unfriends_count: unfriends_count,
         unfollowers: unfollowers,
+        unfollowers_count: unfollowers_count,
         worker_context: worker_context
     }
   end

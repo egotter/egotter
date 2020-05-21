@@ -148,7 +148,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
       end
       it do
         expect(worker).to receive(:handle_weird_error).with(user).and_call_original
-        expect(PeriodicReport).to receive_message_chain(:periodic_message, :deliver!).with(user.id, **options).with(no_args)
+        expect(PeriodicReport).to receive_message_chain(:periodic_message, :deliver!).with(user.id, options).with(no_args)
         subject
       end
     end

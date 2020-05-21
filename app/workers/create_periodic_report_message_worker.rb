@@ -120,7 +120,7 @@ class CreatePeriodicReportMessageWorker
 
     if user.credential_token.instance_id.present?
       begin
-        push_message = PeriodicReport.periodic_push_message(user.id, **options)
+        push_message = PeriodicReport.periodic_push_message(user.id, options)
         CreatePushNotificationWorker.perform_async(user.id, '', push_message)
       rescue => e
         logger.warn "I can't send a push-notification #{e.inspect} user_id=#{user_id}"
@@ -128,7 +128,7 @@ class CreatePeriodicReportMessageWorker
     end
 
     handle_weird_error(user) do
-      PeriodicReport.periodic_message(user_id, **options).deliver!
+      PeriodicReport.periodic_message(user_id, options).deliver!
     end
 
   rescue => e

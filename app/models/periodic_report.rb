@@ -39,12 +39,12 @@ class PeriodicReport < ApplicationRecord
   }
 
   class << self
-    def periodic_message(user_id, request_id:, start_date:, end_date:, first_friends_count: nil, first_followers_count: nil,
-                         last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:, worker_context: nil)
+    def periodic_message(user_id, options = {})
       user = User.find(user_id)
-      start_date = Time.zone.parse(start_date) if start_date.class == String
-      end_date = Time.zone.parse(end_date) if end_date.class == String
+      start_date = extract_date(:start_date, options)
+      end_date = extract_date(:end_date, options)
 
+      unfollowers = options[:unfollowers]
       template = unfollowers.any? ? TEMPLATES[:removed] : TEMPLATES[:not_removed]
 
       token = generate_token
@@ -59,15 +59,17 @@ class PeriodicReport < ApplicationRecord
           date_range: Class.new { include ActionView::Helpers::DateHelper }.new.time_ago_in_words(start_date),
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: unfollowers.size),
           period_name: pick_period_name,
-          first_friends_count: first_friends_count,
-          first_followers_count: first_followers_count,
-          last_friends_count: last_friends_count,
-          last_followers_count: last_followers_count,
-          unfriends: unfriends,
+          first_friends_count: options[:first_friends_count],
+          first_followers_count: options[:first_followers_count],
+          last_friends_count: options[:last_friends_count],
+          last_followers_count: options[:last_followers_count],
+          unfriends_count: options[:unfriends_count],
+          unfollowers_count: options[:unfollowers_count],
+          unfriends: options[:unfriends],
           unfollowers: unfollowers,
           unfollower_urls: unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
-          regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user_id),
-          request_id_text: request_id_text(user, request_id, worker_context),
+          regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user.id),
+          request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
           settings_url: settings_url(url_options),
       )
@@ -216,12 +218,12 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
-    def periodic_push_message(user_id, request_id:, start_date:, end_date:, first_friends_count: nil, first_followers_count: nil,
-                              last_friends_count: nil, last_followers_count: nil, unfriends:, unfollowers:, worker_context: nil)
+    def periodic_push_message(user_id, options = {})
       user = User.find(user_id)
-      start_date = Time.zone.parse(start_date) if start_date.class == String
-      end_date = Time.zone.parse(end_date) if end_date.class == String
+      start_date = extract_date(:start_date, options)
+      end_date = extract_date(:end_date, options)
 
+      unfollowers = options[:unfollowers]
       if unfollowers.any?
         template = Rails.root.join('app/views/periodic_reports/removed_push.ja.text.erb')
       else
@@ -240,7 +242,7 @@ class PeriodicReport < ApplicationRecord
           date_range: Class.new { include ActionView::Helpers::DateHelper }.new.time_ago_in_words(start_date),
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: unfollowers.size),
           period_name: pick_period_name,
-          unfriends: unfriends,
+          unfriends: options[:unfriends],
           unfollowers: unfollowers,
           timeline_url: timeline_url(user, url_options),
       )
@@ -266,13 +268,14 @@ class PeriodicReport < ApplicationRecord
 
     def request_id_text(user, request_id, worker_context)
       [
-          request_id,
-          TwitterUser.latest_by(uid: user.uid)&.id || -1,
+          request_id % 1000,
+          (TwitterUser.latest_by(uid: user.uid)&.id || 999) % 1000,
           remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
           worker_context_text(worker_context)
       ].join('-')
     rescue => e
-      'er'
+      logger.warn "#{self}##{__method__} #{e.inspect} user_id=#{user.id}"
+      "#{rand(10000)}-er"
     end
 
     def remaining_ttl_text(ttl)
@@ -298,6 +301,12 @@ class PeriodicReport < ApplicationRecord
       else
         'un'
       end
+    end
+
+    def extract_date(key, options)
+      date = options[key]
+      date = Time.zone.parse(date) if date.class == String
+      date
     end
   end
 
@@ -334,7 +343,7 @@ class PeriodicReport < ApplicationRecord
     if DirectMessageStatus.cannot_send_messages?(e)
       # Do nothing
     else
-      logger.warn "sending remind-reply message is failed #{e.inspect} user_id=#{user_id}"
+      logger.warn "#{self}##{__method__} sending remind-reply message is failed #{e.inspect} user_id=#{user_id}"
     end
   end
 
