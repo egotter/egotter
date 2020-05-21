@@ -3,7 +3,7 @@ require 'active_support/concern'
 module Concerns::PeriodicReportConcern
   extend ActiveSupport::Concern
 
-  SEND_NOW_REGEXP = /【?(リムられ通知)?(\s|　)*(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知|返信)】?/
+  SEND_NOW_REGEXP = /【?(リムられ通知)?(\s|　)*(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知|返信|配信|はいしん)】?/
 
   def send_now_requested?(dm)
     dm.text.match?(SEND_NOW_REGEXP)
@@ -39,7 +39,7 @@ module Concerns::PeriodicReportConcern
     dm.text.match?(STOP_NOW_REGEXP)
   end
 
-  RESTART_REGEXP = /【?リムられ通知(\s|　)*(再開|さいかい)】?/
+  RESTART_REGEXP = /【?リムられ通知(\s|　)*(再開|さいかい|再会)】?/
 
   def restart_requested?(dm)
     dm.text.match?(RESTART_REGEXP)
