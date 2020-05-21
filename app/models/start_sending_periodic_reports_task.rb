@@ -49,6 +49,9 @@ class StartSendingPeriodicReportsTask
     user_ids = initialize_remind_only_user_ids
     return if user_ids.empty?
 
+    requests = user_ids.map { |user_id| RemindPeriodicReportRequest.new(user_id: user_id) }
+    RemindPeriodicReportRequest.import requests, validate: false
+
     user_ids.each do |user_id|
       CreatePeriodicReportMessageWorker.perform_async(user_id, allotted_messages_will_expire: true)
     end
@@ -114,7 +117,7 @@ class StartSendingPeriodicReportsTask
       user_ids
     end
 
-    def allotted_messages_will_expire_user_ids(reject_stop_requested: true)
+    def allotted_messages_will_expire_user_ids(reject_stop_requested: true, reject_remind_requested: true)
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
       users = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).select(:id, :uid) }.flatten
       users.sort_by! { |user| uids.index(user.uid) }
@@ -122,7 +125,15 @@ class StartSendingPeriodicReportsTask
         PeriodicReport.allotted_messages_will_expire_soon?(user) &&
             PeriodicReport.allotted_messages_left?(user)
       end.map(&:id)
-      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
+      user_ids = reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
+      reject_remind_requested ? reject_remind_requested_user_ids(user_ids) : user_ids
+    end
+
+    def reject_remind_requested_user_ids(user_ids)
+      RemindPeriodicReportRequest.select(:id, :user_id).find_in_batches do |requests|
+        user_ids -= requests.map(&:user_id)
+      end
+      user_ids
     end
   end
 end

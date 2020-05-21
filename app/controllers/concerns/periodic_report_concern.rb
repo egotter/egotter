@@ -57,6 +57,8 @@ module Concerns::PeriodicReportConcern
       return
     end
 
+    DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+
     if user.authorized?
       if !fuzzy || CreatePeriodicReportRequest.sufficient_interval?(user.id)
         request = CreatePeriodicReportRequest.create(user_id: user.id)
@@ -74,6 +76,8 @@ module Concerns::PeriodicReportConcern
 
   def enqueue_user_received_periodic_report(dm)
     if (user = User.find_by(uid: dm.sender_id)) && user.authorized? && CreatePeriodicReportRequest.sufficient_interval?(user.id)
+      DeleteRemindPeriodicReportRequestWorker.perform_async(user.id)
+
       request = CreatePeriodicReportRequest.create(user_id: user.id)
       CreateUserRequestedPeriodicReportWorker.perform_async(request.id, user_id: user.id)
     end

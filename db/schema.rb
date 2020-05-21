@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_10_154038) do
+ActiveRecord::Schema.define(version: 2020_05_20_202502) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -818,6 +818,14 @@ ActiveRecord::Schema.define(version: 2020_05_10_154038) do
     t.index ["token"], name: "index_prompt_reports_on_token", unique: true
     t.index ["user_id", "created_at"], name: "index_prompt_reports_on_user_id_and_created_at"
     t.index ["user_id"], name: "index_prompt_reports_on_user_id"
+  end
+
+  create_table "remind_periodic_report_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_remind_periodic_report_requests_on_created_at"
+    t.index ["user_id"], name: "index_remind_periodic_report_requests_on_user_id", unique: true
   end
 
   create_table "reset_cache_logs", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
