@@ -9,6 +9,7 @@ module Concerns::TwitterUser::Dirty
   included do
   end
 
+  # return:
   # {
   #    friends_count: [before ,after],
   #    followers_count: [before, after],
@@ -22,7 +23,7 @@ module Concerns::TwitterUser::Dirty
       values = [older.send(attr), newer.send(attr)]
       values = values.map(&:sort) if attr.in?(%i(friend_uids follower_uids))
 
-      logger.debug {"#{__method__} #{screen_name} #{attr} #{values.inspect}"}
+      logger.debug {"#{self.class}##{__method__} uid=#{uid} screen_name=#{screen_name} attr=#{attr} values[0]=#{values[0].inspect} values[1]=#{values[1].inspect}"}
 
       [attr, values]
     end.to_h.reject {|_, v| v[0] == v[1]}
