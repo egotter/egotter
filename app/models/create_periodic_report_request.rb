@@ -31,9 +31,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     return unless validate_report!
 
     if check_twitter_user
-      track_records_count if send_only_if_changed
       create_new_twitter_user_record
-      track_records_count if send_only_if_changed
     end
 
     if send_report?
@@ -53,28 +51,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
   end
 
   def send_report?
-    !send_only_if_changed || (send_only_if_changed && records_count_changed?)
+    !send_only_if_changed || (send_only_if_changed && report_options_builder.unfollowers_increased?)
   end
 
   def send_report!
     # If an administrator makes a request immediately after processing a user's request, it may be skipped
-    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, build_report_options)
+    jid = CreatePeriodicReportMessageWorker.perform_async(user_id, report_options_builder.build)
     update(status: 'message_skipped') unless jid
-  end
-
-  class RecordsCount < Array
-    def changed?
-      size == 2 && self[0] != self[1]
-    end
-  end
-
-  def track_records_count
-    @records_count ||= RecordsCount.new
-    @records_count << TwitterUser.where(uid: user.uid).size
-  end
-
-  def records_count_changed?
-    !@records_count.nil? && @records_count.changed?
   end
 
   class Validator
@@ -275,40 +258,63 @@ class CreatePeriodicReportRequest < ApplicationRecord
     logger.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   end
 
-  PERIOD_START = 1.day
+  class ReportOptionsBuilder
+    PERIOD_START = 1.day
 
-  def build_report_options
-    start_date = PERIOD_START.ago
-    end_date = Time.zone.now
+    def initialize(user, request)
+      @request = request
+      @start_date = PERIOD_START.ago
+      @end_date = Time.zone.now
 
-    # To specify start_date, UnfriendsBuilder is used
-    builder = UnfriendsBuilder.new(user.uid, start_date: start_date, end_date: end_date)
+      # To specify start_date, UnfriendsBuilder is used
+      @builder = UnfriendsBuilder.new(user.uid, start_date: @start_date, end_date: @end_date)
+    end
 
-    unfriend_uids = builder.unfriends.flatten
-    unfriends = TwitterDB::User.where_and_order_by_field(uids: unfriend_uids.take(10)).map(&:screen_name)
-    unfriends_count = unfriend_uids.size
+    def build
+      first_user = TwitterUser.find_by(id: @builder.first_user&.id)
+      last_user = TwitterUser.find_by(id: @builder.last_user&.id)
 
-    unfollower_uids = builder.unfollowers.flatten
-    unfollowers = TwitterDB::User.where_and_order_by_field(uids: unfollower_uids.take(10)).map(&:screen_name)
-    unfollowers_count = unfollower_uids.size
+      {
+          request_id: @request.id,
+          start_date: @start_date,
+          end_date: @end_date,
+          first_friends_count: first_user&.friends_count,
+          first_followers_count: first_user&.followers_count,
+          last_friends_count: last_user&.friends_count,
+          last_followers_count: last_user&.followers_count,
+          unfriends: fetch_screen_names(unfriend_uids),
+          unfriends_count: unfriend_uids.size,
+          unfollowers: fetch_screen_names(unfollower_uids),
+          unfollowers_count: unfollower_uids.size,
+          worker_context: @request.worker_context
+      }
+    end
 
-    first_user = TwitterUser.find_by(id: builder.first_user&.id)
-    last_user = TwitterUser.find_by(id: builder.last_user&.id)
+    def unfollowers_increased?
+      users = @builder.twitter_users
+      users.size >= 2 && users.last.created_at > TwitterUser::CREATE_RECORD_INTERVAL.ago && UnfriendsBuilder::Util.unfollowers_increased?(users[-2], users[-1])
+    rescue => e
+      logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
+      false
+    end
 
-    {
-        request_id: id,
-        start_date: start_date,
-        end_date: end_date,
-        first_friends_count: first_user&.friends_count,
-        first_followers_count: first_user&.followers_count,
-        last_friends_count: last_user&.friends_count,
-        last_followers_count: last_user&.followers_count,
-        unfriends: unfriends,
-        unfriends_count: unfriends_count,
-        unfollowers: unfollowers,
-        unfollowers_count: unfollowers_count,
-        worker_context: worker_context
-    }
+    private
+
+    def unfriend_uids
+      @unfriend_uids ||= @builder.unfriends.flatten
+    end
+
+    def unfollower_uids
+      @unfollower_uids ||= @builder.unfollowers.flatten
+    end
+
+    def fetch_screen_names(uids, limit: 10)
+      TwitterDB::User.where_and_order_by_field(uids: uids.take(limit)).map(&:screen_name)
+    end
+  end
+
+  def report_options_builder
+    @report_options_builder ||= ReportOptionsBuilder.new(user, self)
   end
 
   SHORT_INTERVAL = TwitterUser::CREATE_RECORD_INTERVAL

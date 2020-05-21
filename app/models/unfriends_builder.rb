@@ -33,6 +33,10 @@ class UnfriendsBuilder
     @users.last
   end
 
+  def twitter_users
+    @users
+  end
+
   module Util
     module_function
 
@@ -57,6 +61,11 @@ class UnfriendsBuilder
 
     def unfollowers(older, newer)
       newer ? older.follower_uids - newer.follower_uids : nil
+    end
+
+    def unfollowers_increased?(older, newer)
+      result = unfollowers(older, newer)
+      !result.nil? && result.any?
     end
   end
 end

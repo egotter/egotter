@@ -15,18 +15,9 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
 
     context 'check_twitter_user == true' do
       before { request.check_twitter_user = true }
-
       it do
         expect(request).to receive(:create_new_twitter_user_record)
         subject
-      end
-
-      context 'send_only_if_changed == true' do
-        before { request.send_only_if_changed = true }
-        it do
-          expect(request).to receive(:track_records_count).twice
-          subject
-        end
       end
     end
 
@@ -52,12 +43,13 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     context 'send_only_if_changed is true' do
       before { request.send_only_if_changed = true }
 
-      context 'records_count_changed? is false' do
+      context 'report_options_builder.unfollowers_increased? is false' do
+        before { allow(request).to receive_message_chain(:report_options_builder, :unfollowers_increased?).and_return(false) }
         it { is_expected.to be_falsey }
       end
 
-      context 'records_count_changed? is true' do
-        before { allow(request).to receive(:records_count_changed?).and_return(true) }
+      context 'report_options_builder.unfollowers_increased? is true' do
+        before { allow(request).to receive_message_chain(:report_options_builder, :unfollowers_increased?).and_return(true) }
         it { is_expected.to be_truthy }
       end
     end
@@ -65,7 +57,7 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
 
   describe '#send_report!' do
     subject { request.send_report! }
-    before { allow(request).to receive(:build_report_options).and_return('options') }
+    before { allow(request).to receive_message_chain(:report_options_builder, :build).and_return('options') }
     it do
       expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, 'options').and_return('jid')
       subject
