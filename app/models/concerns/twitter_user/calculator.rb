@@ -9,6 +9,24 @@ module Concerns::TwitterUser::Calculator
   class_methods do
   end
 
+  def calc_uids_for(klass)
+    if klass == S3::OneSidedFriendship
+      calc_one_sided_friend_uids
+    elsif klass == S3::OneSidedFollowership
+      calc_one_sided_follower_uids
+    elsif klass == S3::MutualFriendship
+      calc_mutual_friend_uids
+    elsif klass == S3::InactiveFriendship
+      calc_inactive_friend_uids
+    elsif klass == S3::InactiveFollowership
+      calc_inactive_follower_uids
+    elsif klass == S3::InactiveMutualFriendship
+      calc_inactive_mutual_friend_uids
+    else
+      raise "#{__method__} Invalid klass is passed klass=#{klass}"
+    end
+  end
+
   def calc_one_sided_friend_uids
     friend_uids - follower_uids
   end
@@ -23,12 +41,12 @@ module Concerns::TwitterUser::Calculator
 
   # private
   def calc_favorite_uids
-    favorite_tweets.map {|fav| fav&.user&.id}.compact
+    favorite_tweets.map { |fav| fav&.user&.id }.compact
   end
 
   # private
   def sort_by_count_desc(ids)
-    ids.each_with_object(Hash.new(0)) {|id, memo| memo[id] += 1}.sort_by {|_, v| -v}.map(&:first)
+    ids.each_with_object(Hash.new(0)) { |id, memo| memo[id] += 1 }.sort_by { |_, v| -v }.map(&:first)
   end
 
   def calc_favorite_friend_uids(uniq: true)

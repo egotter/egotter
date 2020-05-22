@@ -33,59 +33,28 @@ class ImportTwitterUserRequest < ApplicationRecord
 
     [
         Unfriendship,
-        OneSidedFriendship,
-        OneSidedFollowership,
-        MutualFriendship,
-        BlockFriendship,
-        InactiveFriendship,
-        InactiveFollowership,
-        InactiveMutualFriendship,
+        BlockFriendship
     ].each do |klass|
-      if klass == MutualFriendship
-        bm("#{klass}(s3)") do
-          uids = twitter_user.calc_mutual_friend_uids
-          MutualFriendship.import_from!(twitter_user.uid, uids)
-          S3::MutualFriendship.import_from!(twitter_user.uid, uids)
-        end
+      bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
+    rescue => e
+      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
+      logger.info e.backtrace.join("\n")
+    end
 
-      elsif klass == InactiveFriendship
-        bm("#{klass}(s3)") do
-          uids = twitter_user.calc_inactive_friend_uids
-          S3::InactiveFriendship.import_from!(twitter_user.uid, uids)
-        end
-
-      elsif klass == InactiveFollowership
-        bm("#{klass}(s3)") do
-          uids = twitter_user.calc_inactive_follower_uids
-          S3::InactiveFollowership.import_from!(twitter_user.uid, uids)
-        end
-
-      elsif klass == InactiveMutualFriendship
-        bm("#{klass}(s3)") do
-          uids = twitter_user.calc_inactive_mutual_friend_uids
-          InactiveMutualFriendship.import_from!(twitter_user.uid, uids)
-          S3::InactiveMutualFriendship.import_from!(twitter_user.uid, uids)
-        end
-
-      elsif klass == OneSidedFriendship
-        bm("#{klass}(s3)") do
-          uids = twitter_user.calc_one_sided_friend_uids
-          OneSidedFriendship.import_from!(twitter_user.uid, uids)
-          S3::OneSidedFriendship.import_from!(twitter_user.uid, uids)
-        end
-
-      elsif klass == OneSidedFollowership
-        bm("#{klass}(s3)") do
-          uids = twitter_user.calc_one_sided_follower_uids
-          OneSidedFollowership.import_from!(twitter_user.uid, uids)
-          S3::OneSidedFollowership.import_from!(twitter_user.uid, uids)
-        end
-
-      else
-        bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
+    [
+        S3::OneSidedFriendship,
+        S3::OneSidedFollowership,
+        S3::MutualFriendship,
+        S3::InactiveFriendship,
+        S3::InactiveFollowership,
+        S3::InactiveMutualFriendship
+    ].each do |klass|
+      bm("#{klass}(s3)") do
+        uids = twitter_user.calc_uids_for(klass)
+        klass.import_from!(twitter_user.uid, uids)
       end
     rescue => e
-      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
+      logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} twitter_user_id=#{twitter_user.id}"
       logger.info e.backtrace.join("\n")
     end
   end
