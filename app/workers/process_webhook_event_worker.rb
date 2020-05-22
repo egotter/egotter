@@ -36,7 +36,10 @@ class ProcessWebhookEventWorker
   private
 
   def process_direct_message_event(event)
-    return unless event['type'] == 'message_create'
+    unless event['type'] == 'message_create'
+      logger.info "event is not message_create event=#{event.inspect}"
+      return
+    end
 
     dm = DirectMessage.new(event: event.deep_symbolize_keys)
 
