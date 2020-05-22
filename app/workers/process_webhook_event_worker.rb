@@ -1,36 +1,39 @@
-require 'openssl'
-require 'base64'
+require 'digest/md5'
 
-class WebhookController < ApplicationController
+class ProcessWebhookEventWorker
+  include Sidekiq::Worker
   include Concerns::PeriodicReportConcern
+  sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
-  skip_before_action :verify_authenticity_token, only: :twitter
-
-  def challenge
-    render json: {response_token: crc_response}
+  def unique_key(event, options = {})
+    Digest::MD5.hexdigest(event.inspect)
   end
 
-  def twitter
-    if verified_webhook_request? && direct_message_event_for_egotter?
-      params[:direct_message_events].each do |event|
-        event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-        process_direct_message_event(event)
-        ProcessWebhookEventWorker.perform_async(event)
-      end
-    end
+  def unique_in
+    1.second
+  end
 
-    head :ok
+  def after_skip(*args)
+    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
+  end
+
+  def timeout_in
+    1.minute
+  end
+
+  def after_timeout(*args)
+    logger.warn "The job of #{self.class} timed out args=#{args.inspect}"
+  end
+
+  # options:
+  def perform(event, options = {})
+    # process_direct_message_event(event)
+    logger.info "event=#{event.inspect}"
   rescue => e
-    logger.warn "#{controller_name}##{action_name} #{e.inspect}"
-    notify_airbrake(e)
-    head :ok
+    logger.warn "#{e.inspect} event=#{event.inspect}"
   end
 
   private
-
-  def direct_message_event_for_egotter?
-    params[:for_user_id].to_i == User::EGOTTER_UID && params[:direct_message_events]
-  end
 
   def process_direct_message_event(event)
     return unless event['type'] == 'message_create'
@@ -98,20 +101,5 @@ class WebhookController < ApplicationController
 
   def message_from_egotter?(dm)
     dm.sender_id == User::EGOTTER_UID
-  end
-
-  def crc_response
-    crc_digest(params[:crc_token])
-  end
-
-  # NOTICE The name #verified_request? conflicts with an existing method in Rails.
-  def verified_webhook_request?
-    crc_digest(request.body.read) == request.headers[:HTTP_X_TWITTER_WEBHOOKS_SIGNATURE]
-  end
-
-  def crc_digest(payload)
-    secret = ENV['TWITTER_CONSUMER_SECRET']
-    digest = OpenSSL::HMAC::digest('sha256', secret, payload)
-    "sha256=#{Base64.encode64(digest).strip!}"
   end
 end
