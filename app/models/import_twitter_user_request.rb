@@ -42,16 +42,14 @@ class ImportTwitterUserRequest < ApplicationRecord
         InactiveMutualFriendship,
     ].each do |klass|
       if klass == InactiveFriendship
-        bm(klass.to_s) do
+        bm("#{klass}(s3)") do
           uids = twitter_user.calc_inactive_friend_uids
-          InactiveFriendship.import_from!(twitter_user.uid, uids)
           S3::InactiveFriendship.import_from!(twitter_user.uid, uids)
         end
 
       elsif klass == InactiveFollowership
-        bm(klass.to_s) do
+        bm("#{klass}(s3)") do
           uids = twitter_user.calc_inactive_follower_uids
-          InactiveFollowership.import_from!(twitter_user.uid, uids)
           S3::InactiveFollowership.import_from!(twitter_user.uid, uids)
         end
 
