@@ -27,8 +27,8 @@ class ProcessWebhookEventWorker
 
   # options:
   def perform(event, options = {})
-    # process_direct_message_event(event)
     logger.info "event=#{event.inspect}"
+    process_direct_message_event(event)
   rescue => e
     logger.warn "#{e.inspect} event=#{event.inspect}"
   end

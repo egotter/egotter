@@ -14,7 +14,6 @@ class WebhookController < ApplicationController
     if verified_webhook_request? && direct_message_event_for_egotter?
       params[:direct_message_events].each do |event|
         event = event.to_unsafe_h if event.respond_to?(:to_unsafe_h)
-        process_direct_message_event(event)
         ProcessWebhookEventWorker.perform_async(event)
       end
     end
