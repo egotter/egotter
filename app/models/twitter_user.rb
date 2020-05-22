@@ -33,6 +33,7 @@ class TwitterUser < ApplicationRecord
   include Concerns::TwitterUser::QueryMethods
   include Concerns::TwitterUser::Utils
   include Concerns::TwitterUser::Api
+  include Concerns::TwitterUser::MultiplePeopleApi
   include Concerns::TwitterUser::Dirty
   include Concerns::TwitterUser::Persistence
   include Concerns::TwitterUser::Reset

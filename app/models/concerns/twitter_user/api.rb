@@ -29,30 +29,6 @@ module Concerns::TwitterUser::Api
     mutual_friendships.pluck(:friend_uid)
   end
 
-  def common_friend_uids(other)
-    friend_uids & other.friend_uids
-  end
-
-  def common_friends(other)
-    friends.select { |f| other.friend_uids.include?(f.uid) }
-  end
-
-  def common_follower_uids(other)
-    follower_uids & other.follower_uids
-  end
-
-  def common_followers(other)
-    followers.select { |f| other.follower_uids.include?(f.uid) }
-  end
-
-  def common_mutual_friend_uids(other)
-    mutual_friend_uids & other.mutual_friend_uids
-  end
-
-  def common_mutual_friends(other)
-    TwitterDB::User.where_and_order_by_field(uids: common_mutual_friend_uids(other))
-  end
-
   def conversations(other)
     statuses1 = status_tweets.select { |status| status.mention_to?(other.mention_name) }
     statuses2 = other.status_tweets.select { |status| status.mention_to?(mention_name) }
