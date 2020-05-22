@@ -3,7 +3,7 @@ require 'active_support/concern'
 module Concerns::PeriodicReportConcern
   extend ActiveSupport::Concern
 
-  SEND_NOW_REGEXP = /【?(リムられ通知)?(\s|　)*(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知|返信|配信|はいしん)】?/
+  SEND_NOW_REGEXP = /【?(リム(られ)?通知)?(\s|　)*(今すぐ|いますぐ)(送信|そうしん|受信|じゅしん|痩身|通知|返信|配信|はいしん|更新|こうしん)】?/
 
   def send_now_requested?(dm)
     dm.text.match?(SEND_NOW_REGEXP)
@@ -27,25 +27,25 @@ module Concerns::PeriodicReportConcern
   ]
   CONTINUE_REGEXP = Regexp.union(CONTINUE_WORDS)
   CONTINUE_FUZZY_REGEXP = /\A(あー?|リムられ通知)\z/
-  CONTINUE_EXACT_REGEXP = /【?リムられ通知(\s|　)*継続】?/
+  CONTINUE_EXACT_REGEXP = /【?リム(られ)?通知(\s|　)*継続】?/
 
   def continue_requested?(dm)
     dm.text.match?(CONTINUE_REGEXP) || dm.text.match?(CONTINUE_FUZZY_REGEXP)
   end
 
-  STOP_NOW_REGEXP = /【?リムられ通知(\s|　)*(停止|ていし)】?/
+  STOP_NOW_REGEXP = /【?リム(られ)?通知(\s|　)*(停止|ていし)】?/
 
   def stop_now_requested?(dm)
     dm.text.match?(STOP_NOW_REGEXP)
   end
 
-  RESTART_REGEXP = /【?リムられ通知(\s|　)*(再開|さいかい|再会)】?/
+  RESTART_REGEXP = /【?リム(られ)?通知(\s|　)*(再開|さいかい|再会)】?/
 
   def restart_requested?(dm)
     dm.text.match?(RESTART_REGEXP)
   end
 
-  RECEIVED_REGEXP = /\Aリムられ通知(\s|　)*届きました\z/
+  RECEIVED_REGEXP = /\Aリム(られ)?通知(\s|　)*届きました\z/
 
   def report_received?(dm)
     dm.text.match?(RECEIVED_REGEXP)
