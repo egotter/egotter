@@ -53,6 +53,20 @@ class ImportTwitterUserRequest < ApplicationRecord
           S3::InactiveFollowership.import_from!(twitter_user.uid, uids)
         end
 
+      elsif klass == OneSidedFriendship
+        bm("#{klass}(s3)") do
+          uids = twitter_user.calc_one_sided_friend_uids
+          OneSidedFriendship.import_from!(twitter_user.uid, uids)
+          S3::OneSidedFriendship.import_from!(twitter_user.uid, uids)
+        end
+
+      elsif klass == OneSidedFollowership
+        bm("#{klass}(s3)") do
+          uids = twitter_user.calc_one_sided_follower_uids
+          OneSidedFollowership.import_from!(twitter_user.uid, uids)
+          S3::OneSidedFollowership.import_from!(twitter_user.uid, uids)
+        end
+
       else
         bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
       end

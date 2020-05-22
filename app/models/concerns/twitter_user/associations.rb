@@ -21,8 +21,8 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options({primary_key: :uid, foreign_key: :from_uid}.update(default_options)) do |obj|
-      obj.has_many :one_sided_friendships,       order_by_sequence_asc
-      obj.has_many :one_sided_followerships,     order_by_sequence_asc
+      # obj.has_many :one_sided_friendships,       order_by_sequence_asc
+      # obj.has_many :one_sided_followerships,     order_by_sequence_asc
       obj.has_many :mutual_friendships,          order_by_sequence_asc
 
       # obj.has_many :inactive_friendships,        order_by_sequence_asc
@@ -34,8 +34,8 @@ module Concerns::TwitterUser::Associations
     end
 
     with_options({class_name: 'TwitterDB::User'}.update(default_options)) do |obj|
-      obj.has_many :one_sided_friends,       through: :one_sided_friendships
-      obj.has_many :one_sided_followers,     through: :one_sided_followerships
+      # obj.has_many :one_sided_friends,       through: :one_sided_friendships
+      # obj.has_many :one_sided_followers,     through: :one_sided_followerships
       obj.has_many :mutual_friends,          through: :mutual_friendships
 
       # obj.has_many :inactive_friends,        through: :inactive_friendships
@@ -86,6 +86,22 @@ module Concerns::TwitterUser::Associations
     end
   end
 
+  def one_sided_friendships
+    if (from_s3 = S3::OneSidedFriendship.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      OneSidedFriendship.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
+  def one_sided_followerships
+    if (from_s3 = S3::OneSidedFollowership.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      OneSidedFollowership.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
   def inactive_friendships
     if (from_s3 = S3::InactiveFriendship.where(uid: uid))
       RelationshipProxy.new(from_s3)
@@ -100,6 +116,14 @@ module Concerns::TwitterUser::Associations
     else
       InactiveFollowership.where(from_uid: uid).order(sequence: :asc)
     end
+  end
+
+  def one_sided_friends(limit: 10_000)
+    TwitterDB::User.where_and_order_by_field(uids: one_sided_friendships.pluck(:friend_uid).take(limit))
+  end
+
+  def one_sided_followers(limit: 10_000)
+    TwitterDB::User.where_and_order_by_field(uids: one_sided_followerships.pluck(:follower_uid).take(limit))
   end
 
   def inactive_friends(limit: 10_000)
