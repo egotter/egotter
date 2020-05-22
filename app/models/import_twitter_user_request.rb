@@ -41,7 +41,23 @@ class ImportTwitterUserRequest < ApplicationRecord
         InactiveFollowership,
         InactiveMutualFriendship,
     ].each do |klass|
-      bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
+      if klass == InactiveFriendship
+        bm(klass.to_s) do
+          uids = twitter_user.calc_inactive_friend_uids
+          InactiveFriendship.import_from!(twitter_user.uid, uids)
+          S3::InactiveFriendship.import_from!(twitter_user.uid, uids)
+        end
+
+      elsif klass == InactiveFollowership
+        bm(klass.to_s) do
+          uids = twitter_user.calc_inactive_follower_uids
+          InactiveFollowership.import_from!(twitter_user.uid, uids)
+          S3::InactiveFollowership.import_from!(twitter_user.uid, uids)
+        end
+
+      else
+        bm(klass.to_s) { klass.import_by!(twitter_user: twitter_user) }
+      end
     rescue => e
       logger.warn "#{klass} #{e.class} #{e.message.truncate(100)} #{twitter_user.id}"
       logger.info e.backtrace.join("\n")
