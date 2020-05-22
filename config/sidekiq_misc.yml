@@ -10,6 +10,7 @@
 :queues:
   - creating_high
   - deleting_high
+  - webhook
   - logging
   - messaging
   - misc
