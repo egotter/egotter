@@ -25,7 +25,7 @@ module Concerns::TwitterUser::Associations
       obj.has_many :one_sided_followerships,     order_by_sequence_asc
       obj.has_many :mutual_friendships,          order_by_sequence_asc
 
-      obj.has_many :inactive_friendships,        order_by_sequence_asc
+      # obj.has_many :inactive_friendships,        order_by_sequence_asc
       obj.has_many :inactive_followerships,      order_by_sequence_asc
       obj.has_many :inactive_mutual_friendships, order_by_sequence_asc
 
@@ -38,7 +38,7 @@ module Concerns::TwitterUser::Associations
       obj.has_many :one_sided_followers,     through: :one_sided_followerships
       obj.has_many :mutual_friends,          through: :mutual_friendships
 
-      obj.has_many :inactive_friends,        through: :inactive_friendships
+      # obj.has_many :inactive_friends,        through: :inactive_friendships
       obj.has_many :inactive_followers,      through: :inactive_followerships
       obj.has_many :inactive_mutual_friends, through: :inactive_mutual_friendships
 
@@ -60,6 +60,42 @@ module Concerns::TwitterUser::Associations
       obj.has_many :unfollowers,   through: :unfollowerships
       obj.has_many :block_friends, through: :block_friendships
     end
+  end
+
+  class RelationshipProxy
+    def initialize(data)
+      @data = data
+      @limit = nil
+    end
+
+    def size
+      @data.uids.size
+    end
+
+    def limit(count)
+      @limit = count
+      self
+    end
+
+    def pluck(*args)
+      if @limit
+        @data.uids.take(@limit)
+      else
+        @data.uids
+      end
+    end
+  end
+
+  def inactive_friendships
+    if (from_s3 = S3::InactiveFriendship.where(uid: uid))
+      RelationshipProxy.new(from_s3)
+    else
+      InactiveFriendship.where(from_uid: uid).order(sequence: :asc)
+    end
+  end
+
+  def inactive_friends(limit: 10_000)
+    TwitterDB::User.where_and_order_by_field(uids: inactive_friendships.pluck(:friend_uid).take(limit))
   end
 
   def friends(limit: 100_000)
