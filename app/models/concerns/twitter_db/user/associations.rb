@@ -6,10 +6,29 @@ module Concerns::TwitterDB::User::Associations
   class_methods do
     # This method makes the result unique.
     def where_and_order_by_field(uids:)
-      where(uid: uids).sort_by {|user| uids.index(user.uid)}.tap do |users|
-        unless uids.size == users.size
-          CreateTwitterDBUserWorker.perform_async(uids - users.map(&:uid), enqueued_by: 'where_and_order_by_field')
-        end
+      uids.uniq.each_slice(1000).map do |uids_array|
+        where_and_order_by_field_each_slice(uids_array)
+      end.flatten
+    end
+
+    def where_and_order_by_field_each_slice(uids)
+      # result = where(uid: uids_array).sort_by {|user| uids_array.index(user.uid)}
+      result = where(uid: uids).order_by_field(uids).to_a
+
+      unless uids.size == result.size
+        enqueue_update_job(uids - result.map(&:uid))
+      end
+
+      result
+    end
+
+    def order_by_field(uids)
+      order(Arel.sql("field(uid, #{uids.join(',')})"))
+    end
+
+    def enqueue_update_job(uids)
+      uids.each_slice(100) do |uids_array|
+        CreateTwitterDBUserWorker.perform_async(uids_array, enqueued_by: 'where_and_order_by_field')
       end
     end
   end
