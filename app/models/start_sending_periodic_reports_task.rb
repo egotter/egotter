@@ -54,7 +54,11 @@ class StartSendingPeriodicReportsTask
     RemindPeriodicReportRequest.import requests, validate: false
 
     user_ids.each do |user_id|
-      CreatePeriodicReportMessageWorker.perform_async(user_id, allotted_messages_will_expire: true)
+      if @delay
+        CreatePeriodicReportMessageWorker.perform_in(@dekay, user_id, allotted_messages_will_expire: true)
+      else
+        CreatePeriodicReportMessageWorker.perform_async(user_id, allotted_messages_will_expire: true)
+      end
     end
   end
 
