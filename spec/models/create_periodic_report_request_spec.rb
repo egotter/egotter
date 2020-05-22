@@ -24,7 +24,7 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
     context 'validation is failed' do
       before { allow(request).to receive(:validate_report!).and_return(false) }
       it do
-        expect(request).not_to receive(:send_report!)
+        expect(request).not_to receive(:send_report?)
         subject
       end
     end

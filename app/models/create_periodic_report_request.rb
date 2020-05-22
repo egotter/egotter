@@ -42,10 +42,10 @@ class CreatePeriodicReportRequest < ApplicationRecord
   end
 
   def validate_report!
-    return if check_credentials && !CredentialsValidator.new(self).validate_and_deliver!
-    return if check_following_status && !FollowingStatusValidator.new(self).validate_and_deliver!
-    return if check_interval && !IntervalValidator.new(self).validate_and_deliver!
-    return if check_allotted_messages_count && !AllottedMessagesCountValidator.new(self).validate_and_deliver!
+    return if check_credentials && !validate_credentials!
+    return if check_following_status && !validate_following_status!
+    return if check_interval && !validate_interval!
+    return if check_allotted_messages_count && !validate_messages_count!
 
     true
   end
@@ -59,6 +59,63 @@ class CreatePeriodicReportRequest < ApplicationRecord
     jid = CreatePeriodicReportMessageWorker.perform_async(user_id, report_options_builder.build)
     update(status: 'message_skipped') unless jid
   end
+
+  def validate_credentials!
+    CredentialsValidator.new(self).validate_and_deliver!
+  end
+
+  def validate_following_status!
+    FollowingStatusValidator.new(self).validate_and_deliver!
+  end
+
+  def validate_interval!
+    IntervalValidator.new(self).validate_and_deliver!
+  end
+
+  def validate_messages_count!
+    AllottedMessagesCountValidator.new(self).validate_and_deliver!
+  end
+
+  module Instrumentation
+    %i(
+      validate_credentials!
+      validate_following_status!
+      validate_interval!
+      validate_messages_count!
+      create_new_twitter_user_record
+      send_report?
+      report_options_builder
+      send_report!
+    ).each do |method_name|
+      define_method(method_name) do |*args, &blk|
+        bm_perform(method_name) { method(method_name).super_method.call(*args, &blk) }
+      end
+    end
+
+    def bm_perform(message, &block)
+      start = Time.zone.now
+      result = yield
+      @bm_perform[message] = Time.zone.now - start if @bm_perform
+      result
+    end
+
+    def perform!(*args, &blk)
+      @bm_perform = {}
+      start = Time.zone.now
+
+      result = super
+
+      elapsed = Time.zone.now - start
+      @bm_perform[:sum] = @bm_perform.values.sum
+      @bm_perform[:elapsed] = elapsed
+
+      Rails.logger.info "Benchmark CreatePeriodicReportRequest user_id=#{user_id} request_id=#{id} #{sprintf("%.3f sec", elapsed)}"
+      Rails.logger.info "Benchmark CreatePeriodicReportRequest user_id=#{user_id} request_id=#{id} #{@bm_perform.inspect}"
+
+      result
+    end
+  end
+  prepend Instrumentation
 
   class Validator
     def initialize(request)
