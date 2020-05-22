@@ -41,7 +41,14 @@ class ImportTwitterUserRequest < ApplicationRecord
         InactiveFollowership,
         InactiveMutualFriendship,
     ].each do |klass|
-      if klass == InactiveFriendship
+      if klass == MutualFriendship
+        bm("#{klass}(s3)") do
+          uids = twitter_user.calc_mutual_friend_uids
+          MutualFriendship.import_from!(twitter_user.uid, uids)
+          S3::MutualFriendship.import_from!(twitter_user.uid, uids)
+        end
+
+      elsif klass == InactiveFriendship
         bm("#{klass}(s3)") do
           uids = twitter_user.calc_inactive_friend_uids
           S3::InactiveFriendship.import_from!(twitter_user.uid, uids)
@@ -51,6 +58,13 @@ class ImportTwitterUserRequest < ApplicationRecord
         bm("#{klass}(s3)") do
           uids = twitter_user.calc_inactive_follower_uids
           S3::InactiveFollowership.import_from!(twitter_user.uid, uids)
+        end
+
+      elsif klass == InactiveMutualFriendship
+        bm("#{klass}(s3)") do
+          uids = twitter_user.calc_inactive_mutual_friend_uids
+          InactiveMutualFriendship.import_from!(twitter_user.uid, uids)
+          S3::InactiveMutualFriendship.import_from!(twitter_user.uid, uids)
         end
 
       elsif klass == OneSidedFriendship
