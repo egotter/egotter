@@ -3,25 +3,44 @@ require 'rails_helper'
 RSpec.describe Concerns::TwitterUser::Associations do
   let(:twitter_user) { create(:twitter_user) }
 
-  describe '#friends' do
+  describe '#mutual_friends' do
+    subject { twitter_user.mutual_friends }
+    before { allow(twitter_user).to receive(:mutual_friend_uids).and_return([1]) }
     it 'calls TwitterDB::User.where_and_order_by_field' do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: twitter_user.friend_uids)
-      twitter_user.friends
+      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: [1], inactive: nil)
+      subject
     end
+  end
 
-    it 'returns friends sorted by friend_uids' do
-      expect(twitter_user.friends.map(&:uid)).to match_array(twitter_user.friend_uids)
+  describe '#friends' do
+    subject { twitter_user.friends }
+    it 'calls TwitterDB::User.where_and_order_by_field' do
+      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: twitter_user.friend_uids, inactive: nil)
+      subject
     end
   end
 
   describe '#followers' do
+    subject { twitter_user.followers }
     it 'calls TwitterDB::User.where_and_order_by_field' do
-      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: twitter_user.follower_uids)
-      twitter_user.followers
+      expect(TwitterDB::User).to receive(:where_and_order_by_field).with(uids: twitter_user.follower_uids, inactive: nil)
+      subject
     end
+  end
 
-    it 'returns followers sorted by friend_uids' do
-      expect(twitter_user.followers.map(&:uid)).to match_array(twitter_user.follower_uids)
+  describe '#mutual_friend_uids' do
+    subject { twitter_user.mutual_friend_uids }
+    it do
+      expect(twitter_user).to receive_message_chain(:mutual_friendships, :pluck).with(:friend_uid).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
+  describe '#inactive_mutual_friend_uids' do
+    subject { twitter_user.inactive_mutual_friend_uids }
+    it do
+      expect(twitter_user).to receive_message_chain(:inactive_mutual_friendships, :pluck).with(:friend_uid).and_return('result')
+      is_expected.to eq('result')
     end
   end
 

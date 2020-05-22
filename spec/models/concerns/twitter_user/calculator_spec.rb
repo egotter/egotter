@@ -108,6 +108,33 @@ RSpec.describe Concerns::TwitterUser::Calculator do
     end
   end
 
+  describe '#calc_inactive_friend_uids' do
+    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    subject { twitter_user.calc_inactive_friend_uids }
+    it do
+      expect(twitter_user).to receive(:friends).with(inactive: true).and_return(users)
+      is_expected.to eq(users.map(&:uid))
+    end
+  end
+
+  describe '#calc_inactive_mutual_friend_uids' do
+    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    subject { twitter_user.calc_inactive_mutual_friend_uids }
+    it do
+      expect(twitter_user).to receive(:mutual_friends).with(inactive: true).and_return(users)
+      is_expected.to eq(users.map(&:uid))
+    end
+  end
+
+  describe '#calc_inactive_follower_uids' do
+    let(:users) { 3.times.map { create(:twitter_db_user) } }
+    subject { twitter_user.calc_inactive_follower_uids }
+    it do
+      expect(twitter_user).to receive(:followers).with(inactive: true).and_return(users)
+      is_expected.to eq(users.map(&:uid))
+    end
+  end
+
   describe '#unfriends_builder' do
     subject { twitter_user.unfriends_builder }
     it do

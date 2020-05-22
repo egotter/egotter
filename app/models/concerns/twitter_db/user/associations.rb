@@ -5,17 +5,22 @@ module Concerns::TwitterDB::User::Associations
 
   class_methods do
     # This method makes the result unique.
-    def where_and_order_by_field(uids:)
+    def where_and_order_by_field(uids:, inactive: nil)
       uids.uniq.each_slice(1000).map do |uids_array|
-        where_and_order_by_field_each_slice(uids_array)
+        where_and_order_by_field_each_slice(uids_array, inactive)
       end.flatten
     end
 
-    def where_and_order_by_field_each_slice(uids)
+    def where_and_order_by_field_each_slice(uids, inactive)
       # result = where(uid: uids_array).sort_by {|user| uids_array.index(user.uid)}
-      result = where(uid: uids).order_by_field(uids).to_a
 
-      unless uids.size == result.size
+      result = where(uid: uids)
+      result = result.inactive_user if !inactive.nil? && inactive
+      result = result.order_by_field(uids).to_a
+
+      if !inactive.nil? && inactive
+        enqueue_update_job(result.map(&:uid))
+      elsif uids.size != result.size
         enqueue_update_job(uids - result.map(&:uid))
       end
 

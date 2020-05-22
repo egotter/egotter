@@ -60,15 +60,15 @@ module Concerns::TwitterUser::Calculator
   end
 
   def calc_inactive_friend_uids
-    friends.select(&:inactive?).map(&:uid)
+    friends(inactive: true).map(&:uid)
   end
 
   def calc_inactive_follower_uids
-    followers.select(&:inactive?).map(&:uid)
+    followers(inactive: true).map(&:uid)
   end
 
   def calc_inactive_mutual_friend_uids
-    mutual_friends.select(&:inactive?).map(&:uid)
+    mutual_friends(inactive: true).map(&:uid)
   end
 
   def calc_block_friend_uids

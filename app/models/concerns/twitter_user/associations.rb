@@ -134,8 +134,8 @@ module Concerns::TwitterUser::Associations
     end
   end
 
-  def mutual_friends(limit: 10_000)
-    TwitterDB::User.where_and_order_by_field(uids: mutual_friendships.pluck(:friend_uid).take(limit))
+  def mutual_friends(limit: 10_000, inactive: nil)
+    TwitterDB::User.where_and_order_by_field(uids: mutual_friend_uids.take(limit), inactive: inactive)
   end
 
   def one_sided_friends(limit: 10_000)
@@ -155,15 +155,23 @@ module Concerns::TwitterUser::Associations
   end
 
   def inactive_mutual_friends(limit: 10_000)
-    TwitterDB::User.where_and_order_by_field(uids: inactive_mutual_friendships.pluck(:friend_uid).take(limit))
+    TwitterDB::User.where_and_order_by_field(uids: inactive_mutual_friend_uids.take(limit))
   end
 
-  def friends(limit: 100_000)
-    TwitterDB::User.where_and_order_by_field(uids: friend_uids.take(limit))
+  def friends(limit: 100_000, inactive: nil)
+    TwitterDB::User.where_and_order_by_field(uids: friend_uids.take(limit), inactive: inactive)
   end
 
-  def followers(limit: 100_000)
-    TwitterDB::User.where_and_order_by_field(uids: follower_uids.take(limit))
+  def followers(limit: 100_000, inactive: nil)
+    TwitterDB::User.where_and_order_by_field(uids: follower_uids.take(limit), inactive: inactive)
+  end
+
+  def mutual_friend_uids
+    mutual_friendships.pluck(:friend_uid)
+  end
+
+  def inactive_mutual_friend_uids
+    inactive_mutual_friendships.pluck(:friend_uid)
   end
 
   def unfollower_uids

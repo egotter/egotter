@@ -25,10 +25,6 @@ module Concerns::TwitterUser::Api
     0.0
   end
 
-  def mutual_friend_uids
-    mutual_friendships.pluck(:friend_uid)
-  end
-
   def conversations(other)
     statuses1 = status_tweets.select { |status| status.mention_to?(other.mention_name) }
     statuses2 = other.status_tweets.select { |status| status.mention_to?(mention_name) }

@@ -7,73 +7,49 @@ RSpec.describe TwitterDB::User, type: :model do
   end
 
   describe '#inactive?' do
+    let(:user) { create(:twitter_db_user, status_created_at: time) }
+    subject { user.inactive? }
+
     context 'status_created_at is nil' do
-      let(:user) { create(:twitter_db_user, status_created_at: nil) }
-      it do
-        expect(user.inactive?).to be_falsey
-      end
+      let(:time) { nil }
+      it { is_expected.to be_falsey }
     end
 
     context 'status_created_at is 1.month.ago' do
-      let(:user) { create(:twitter_db_user, status_created_at: 1.month.ago) }
-      it do
-        expect(user.inactive?).to be_truthy
-      end
+      let(:time) { 1.month.ago }
+      it { is_expected.to be_truthy }
     end
 
     context 'status_created_at is 1.day.ago' do
-      let(:user) { create(:twitter_db_user, status_created_at: 1.day.ago) }
-      it do
-        expect(user.inactive?).to be_falsey
-      end
+      let(:time) { 1.day.ago }
+      it { is_expected.to be_falsey }
     end
   end
 
-  describe '.build_by' do
-    let(:t_user) { build(:t_user) }
-    let(:user) { TwitterDB::User.build_by(user: t_user) }
+  describe '.inactive_user' do
+    let!(:user) { create(:twitter_db_user, status_created_at: time) }
+    subject { TwitterDB::User.inactive_user }
 
-    it do
-      expect(user.screen_name).to eq(t_user[:screen_name])
-      expect(user.friends_count).to eq(t_user[:friends_count])
-      expect(user.followers_count).to eq(t_user[:followers_count])
-      expect(user.protected).to eq(t_user[:protected])
-      expect(user.suspended).to eq(t_user[:suspended])
-      expect(user.status_created_at).to eq(t_user[:status][:created_at])
-      expect(user.account_created_at).to eq(t_user[:created_at])
-      expect(user.statuses_count).to eq(t_user[:statuses_count])
-      expect(user.favourites_count).to eq(t_user[:favourites_count])
-      expect(user.listed_count).to eq(t_user[:listed_count])
-      expect(user.name).to eq(t_user[:name])
-      expect(user.location).to eq(t_user[:location])
-      expect(user.description).to eq(t_user[:description])
-      expect(user.geo_enabled).to eq(t_user[:geo_enabled])
-      expect(user.verified).to eq(t_user[:verified])
-      expect(user.lang).to eq(t_user[:lang])
-      expect(user.profile_image_url_https).to eq(t_user[:profile_image_url_https])
-      expect(user.profile_banner_url).to eq(t_user[:profile_banner_url])
-      expect(user.profile_link_color).to eq(t_user[:profile_link_color])
-
-      expect(user.valid?).to be_truthy
+    context 'status_created_at is nil' do
+      let(:time) { nil }
+      it { is_expected.to satisfy { |result| result.empty? } }
     end
 
-    context 'With suspended user' do
-      let(:t_user) { build(:t_user, id: 123, screen_name: 'screen_name') }
-      let(:user) { TwitterDB::User.build_by(user: t_user) }
+    context 'status_created_at is 1.month.ago' do
+      let(:time) { 1.month.ago }
+      it { is_expected.to satisfy { |result| result.size == 1 && result.first.id == user.id } }
+    end
 
-      it do
-        expect(user.uid).to eq(t_user[:id])
-        expect(user.screen_name).to eq(t_user[:screen_name])
-      end
+    context 'status_created_at is 1.day.ago' do
+      let(:time) { 1.day.ago }
+      it { is_expected.to satisfy { |result| result.empty? } }
     end
   end
 
   describe '.import_by!' do
     let(:t_users) { 3.times.map { build(:t_user) } }
-
-    it do
-      expect { TwitterDB::User.import_by!(users: t_users) }.to change { TwitterDB::User.all.size }.by(t_users.size)
-    end
+    subject { TwitterDB::User.import_by!(users: t_users) }
+    it { expect { subject }.to change { TwitterDB::User.all.size }.by(t_users.size) }
   end
 end
 
