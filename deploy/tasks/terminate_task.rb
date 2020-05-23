@@ -1,8 +1,8 @@
 require_relative '../../app/models/cloud_watch_client'
 
-require_relative '../tasks/uninstall_task'
+require_relative './uninstall_task'
 
-module Taskbooks
+module Tasks
   module TerminateTask
     def build(params)
       role = params['role']

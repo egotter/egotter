@@ -4,6 +4,7 @@ require 'dotenv/load'
 
 require 'optparse'
 
+require_relative '../lib/deploy_ruby'
 require_relative '../taskbooks/all'
 require_relative '../tasks/task_builder'
 

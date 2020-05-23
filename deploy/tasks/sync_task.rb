@@ -1,6 +1,6 @@
-require_relative '../tasks/install_task'
+require_relative './install_task'
 
-module Taskbooks
+module Tasks
   module SyncTask
     def build(params)
       role = params['role']

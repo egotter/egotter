@@ -1,4 +1,4 @@
-module Taskbooks
+module Tasks
   module ListTask
     def build(params)
       role = params['role']

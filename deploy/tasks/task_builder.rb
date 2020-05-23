@@ -1,6 +1,9 @@
 require_relative './enumerable_task'
 require_relative './release_task'
 require_relative './launch_task'
+require_relative './terminate_task'
+require_relative './sync_task'
+require_relative './list_task'
 
 module Tasks
   module TaskBuilder
@@ -62,18 +65,18 @@ module Tasks
 
     def build_terminate_task(params)
       if multiple_task?(params)
-        Tasks::EnumerableTask.new(params['count'].to_i.times.map { Taskbooks::TerminateTask.build(params) })
+        Tasks::EnumerableTask.new(params['count'].to_i.times.map { Tasks::TerminateTask.build(params) })
       else
-        Taskbooks::TerminateTask.build(params)
+        Tasks::TerminateTask.build(params)
       end
     end
 
     def build_sync_task(params)
-      Taskbooks::SyncTask.build(params)
+      Tasks::SyncTask.build(params)
     end
 
     def build_list_task(params)
-      Taskbooks::ListTask.build(params)
+      Tasks::ListTask.build(params)
     end
 
     def multiple_task?(params)
