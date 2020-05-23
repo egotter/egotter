@@ -82,8 +82,8 @@ RSpec.describe PeriodicReport do
 
     before { allow(report).to receive(:user).and_return(user) }
 
-    context 'dont_send_remind_reply is set' do
-      before { report.dont_send_remind_reply = true }
+    context 'dont_send_remind_message is set' do
+      before { report.dont_send_remind_message = true }
       it { is_expected.to be_falsey }
     end
 
