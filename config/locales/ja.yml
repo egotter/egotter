@@ -1494,6 +1494,11 @@ ja:
       description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
       label2: 'テスト送信 届いてません'
       description2: 'テスト送信に失敗した場合に押してください'
+    search_reports:
+      label1: '検索通知 届きました'
+      description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
+      label2: '検索通知 届いてません'
+      description2: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
   directory:
     profiles:
       footer_title: プロフィール

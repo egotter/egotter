@@ -32,7 +32,12 @@ class SearchReport < ApplicationRecord
   end
 
   def deliver!
-    dm = User.egotter.api_client.create_direct_message_event(user.uid, report_message)
+    if !GlobalDirectMessageReceivedFlag.new.received?(user.uid) || !PeriodicReport.allotted_messages_left?(user)
+      user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message)
+    end
+
+    event = self.class.build_direct_message_event(user.uid, report_message)
+    dm = User.egotter.api_client.create_direct_message_event(event: event)
 
     transaction do
       update!(message_id: dm.id, message: dm.truncated_message)
@@ -43,6 +48,35 @@ class SearchReport < ApplicationRecord
   end
 
   private
+
+  class << self
+    def build_direct_message_event(uid, message)
+      {
+          type: 'message_create',
+          message_create: {
+              target: {recipient_id: uid},
+              message_data: {
+                  text: message,
+                  quick_reply: {
+                      type: 'options',
+                      options: QUICK_REPLY_OPTIONS
+                  }
+              }
+          }
+      }
+    end
+  end
+
+  QUICK_REPLY_OPTIONS = [
+      {
+          label: I18n.t('quick_replies.search_reports.label1'),
+          description: I18n.t('quick_replies.search_reports.description1')
+      },
+      {
+          label: I18n.t('quick_replies.search_reports.label2'),
+          description: I18n.t('quick_replies.search_reports.description2')
+      }
+  ]
 
   def start_message
     template = Rails.root.join('app/views/search_reports/start.ja.text.erb')
@@ -65,9 +99,9 @@ class SearchReport < ApplicationRecord
         relationship: relationship,
         settings_url: Rails.application.routes.url_helpers.settings_url(via: 'search_report', og_tag: 'false')
     )
-    end
-
-    def timeline_url
-      Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'search', via: 'search_report', og_tag: 'false')
-    end
   end
+
+  def timeline_url
+    Rails.application.routes.url_helpers.timeline_url(screen_name: user.screen_name, token: token, medium: 'dm', type: 'search', via: 'search_report', og_tag: 'false')
+  end
+end
