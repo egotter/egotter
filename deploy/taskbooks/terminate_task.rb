@@ -14,7 +14,7 @@ module Taskbooks
 
       if role == 'web'
         WebTask.new(params)
-      elsif role == 'sidekiq'
+      elsif role == 'sidekiq' || role == 'sidekiq_prompt_reports'
         SidekiqTask.new(params)
       elsif role == 'plain'
         PlainTask.new(params)
@@ -52,7 +52,7 @@ module Taskbooks
       end
 
       def run
-        after_terminate if @terminated && %w(web sidekiq).include?(@role)
+        after_terminate if @terminated && %w(web sidekiq sidekiq_prompt_reports).include?(@role)
       end
 
       def after_terminate
@@ -94,7 +94,7 @@ module Taskbooks
       end
 
       def run
-        instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'])
+        instance = ::DeployRuby::Aws::Instance.retrieve_by(id: @params['instance-id'], name: @params['instance-name'], name_regexp: @params['instance-name-regexp'])
         if instance
           Tasks::UninstallTask::Sidekiq.new(instance.id).uninstall
           instance.terminate
