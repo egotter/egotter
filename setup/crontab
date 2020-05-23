@@ -13,6 +13,8 @@ SUFFIX='>>/var/egotter/log/cron.log 2>&1'
 # 40 19 * * *     /bin/sh -c "/bin/rm -rf /efs_twitter/*remove_ok"
 # * * * * *       /bin/sh -c "/var/egotter/bin/cron/rake bots:update_authorized"
 # 30 * * * *      /bin/sh -c "/var/egotter/bin/cron/rake orders:update_stripe_attributes"
+# 30 2,11,22 * * * /bin/sh -c "/var/egotter/bin/cron/rake periodic_reports:send_messages"
+# 45 */2 * * *    /bin/sh -c "/var/egotter/bin/cron/rake periodic_reports:send_remind_messages"
 # 15 * * * *      /bin/sh -c "/var/egotter/bin/cron/runner 'SetUsageCountWorker.perform_async'"
 # 25 * * * *      /bin/sh -c "/var/egotter/bin/cron/runner 'UpdateEgotterFollowersWorker.perform_async'"
 # 1-51/10 * * * * /bin/sh -c "/var/egotter/bin/cron/runner 'SendMetricsToSlackWorker.perform_async'"
