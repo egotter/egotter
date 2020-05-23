@@ -366,7 +366,17 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
 
     def fetch_screen_names(uids, limit: 10)
-      TwitterDB::User.where_and_order_by_field(uids: uids.take(limit)).map(&:screen_name)
+      target_uids = uids.take(limit)
+      return [] if target_uids.empty?
+
+      users = TwitterDB::User.where_and_order_by_field(uids: target_uids)
+
+      if target_uids.size != users.size
+        not_found = target_uids - users.map(&:uid)
+        logger.warn "#{self.class}##{__method__} the size of uids doesn't match with the size of users request=#{@request.inspect} not_found=#{not_found}"
+      end
+
+      users.map(&:screen_name)
     end
   end
 

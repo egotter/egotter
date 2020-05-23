@@ -50,7 +50,7 @@ class PeriodicReport < ApplicationRecord
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
 
-      I18n.backend.store_translations :ja, persons: {other: '%{count}人'}
+      I18n.backend.store_translations :ja, persons: {one: '%{count}人', other: '%{count}人'}
 
       message = ERB.new(template).result_with_hash(
           user: user,
@@ -234,7 +234,7 @@ class PeriodicReport < ApplicationRecord
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
 
-      I18n.backend.store_translations :ja, persons: {other: '%{count}人'}
+      I18n.backend.store_translations :ja, persons: {one: '%{count}人', other: '%{count}人'}
 
       ERB.new(template.read).result_with_hash(
           user: user,
