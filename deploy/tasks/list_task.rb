@@ -30,8 +30,7 @@ module Tasks
         @state = params['state'].to_s.empty? ? 'healthy' : params['state']
         @delim = params['delim'] || ' '
 
-        target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
-        @target_group = ::DeployRuby::Aws::TargetGroup.new(target_group_arn)
+        @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
       end
 
       def run

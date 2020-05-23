@@ -70,8 +70,7 @@ module Tasks
         super()
         @role = params['role']
 
-        target_group_arn = params['target-group'] || ENV['AWS_TARGET_GROUP']
-        @target_group = ::DeployRuby::Aws::TargetGroup.new(target_group_arn)
+        @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
       end
 
       def run

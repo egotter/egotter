@@ -4,7 +4,7 @@ module DeployRuby
   module Aws
     class TargetGroup
       def initialize(arn)
-        @arn = arn
+        @arn = arn || ENV['AWS_TARGET_GROUP']
       end
 
       def register(instance_id)
@@ -14,7 +14,7 @@ module DeployRuby
             target_group_arn: @arn,
             targets: [{id: instance_id}]
         }
-        logger.info params.inspect
+
         client.register_targets(params)
         wait_until(:target_in_service, params)
 
@@ -25,13 +25,16 @@ module DeployRuby
 
       def deregister(instance_id)
         previous_count = registered_instances.size
-        return false if previous_count <= 1
+        if previous_count < 2
+          failure 'Cannot deregister as instances size is less than 2'
+          exit
+        end
 
         params = {
             target_group_arn: @arn,
             targets: [{id: instance_id}]
         }
-        logger.info params.inspect
+
         client.deregister_targets(params)
         wait_until(:target_deregistered, params)
 
@@ -46,21 +49,17 @@ module DeployRuby
         client.describe_target_health(params).
             target_health_descriptions.
             select { |d| d.target_health.state == state }.map do |description|
-          ::DeployRuby::Aws::Instance.retrieve(description.target.id)
+          Instance.retrieve(description.target.id)
         end
       end
 
       def oldest_instance
         id = registered_instances.sort_by(&:launched_at).first.id
-        ::DeployRuby::Aws::Instance.retrieve(id)
+        Instance.retrieve(id)
       end
 
       def availability_zone_with_fewest_instances
-        count = {
-            'ap-northeast-1b' => 0,
-            'ap-northeast-1c' => 0,
-            'ap-northeast-1d' => 0,
-        }
+        count = Hash.new(0)
         registered_instances.each { |i| count[i.availability_zone] += 1 }
         count.sort_by { |k, v| v }[0][0]
       end
