@@ -62,7 +62,9 @@ RSpec.describe Efs::Tweet do
   describe '.compress' do
     subject { described_class.compress(1, 'sn', tweets) }
     it do
-      is_expected.to eq({uid: 1, screen_name: 'sn', tweets: ::S3::Util.pack(tweets), time: Time.zone.now.to_s}.to_json)
+      freeze_time do
+        is_expected.to eq({uid: 1, screen_name: 'sn', tweets: ::S3::Util.pack(tweets), time: Time.zone.now.to_s}.to_json)
+      end
     end
   end
 
@@ -70,7 +72,9 @@ RSpec.describe Efs::Tweet do
     let(:obj) { {uid: 1, screen_name: 'sn', tweets: ::S3::Util.pack(tweets), time: Time.zone.now.to_s}.to_json }
     subject { described_class.decompress(obj) }
     it do
-      is_expected.to eq({'uid' => 1, 'screen_name' => 'sn', 'tweets' => tweets, 'time' => Time.zone.now.to_s})
+      freeze_time do
+        is_expected.to eq({'uid' => 1, 'screen_name' => 'sn', 'tweets' => tweets, 'time' => Time.zone.now.to_s})
+      end
     end
   end
 end

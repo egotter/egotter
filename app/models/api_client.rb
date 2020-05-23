@@ -1,6 +1,8 @@
 require 'active_support'
 require 'active_support/cache/redis_cache_store'
 
+require 'twitter_with_auto_pagination'
+
 class ApiClient
   def initialize(client)
     @client = client

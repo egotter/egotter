@@ -15,7 +15,8 @@ class Redis
 
   class << self
     def client(host = nil)
-      new(host: host || HOST, driver: :hiredis)
+      db = Rails.env.test? ? 1 : 0
+      new(host: host || HOST, db: db, driver: :hiredis)
     end
   end
 
