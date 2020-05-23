@@ -5,12 +5,10 @@
   <div class="container my-5">
     <h2 class="h4 text-center my-5"><i class="far fa-envelope"></i><%= t('.notifications.title') %></h2>
     <div class="tgl-buttons">
-      <hr>
-      <%= render partial: 'tgl_btn', collection: %i(dm email news search), as: :name %>
+      <%= render partial: 'periodic_report_setting' %>
     </div>
   </div>
 
-  <div class="container my-5"><%= render partial: 'prompt_report' %></div>
   <div class="container my-5"><%= render partial: 'data' %></div>
   <div class="container my-5"><%= render partial: 'order' %></div>
 </div>

@@ -501,6 +501,31 @@ ja:
           <a href="https://play.google.com/store/apps/details?id=com.egotter&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1" target="_blank">
             <img src="https://play.google.com/intl/en_us/badges/static/images/badges/ja_badge_web_generic.png" width="100px">
           </a>
+    periodic_report_setting:
+      not_coming:
+        button: '通知を再開する'
+        note_html: '一定期間アクセスがないとリムられ通知は<span class="egotter-pink">止まります</span>。止まった通知はすぐに<span class="egotter-pink">再開できます</span>。'
+      revive: 'リムられ通知の再開'
+      period_of_time: '時間帯の指定'
+      period_of_time_note_html: '時間帯の指定はベータ版のお試し機能です。<span class="egotter-pink">New</span>'
+      report_timing: '通知する条件'
+      report_timing_note_html: '通知する条件の指定はベータ版のお試し機能です。<span class="egotter-pink">New</span>'
+      morning:
+        name: '朝のリムられ通知'
+        desc: '7〜8時頃に届く通知です。'
+      afternoon:
+        name: '昼のリムられ通知'
+        desc: '12〜13時頃に届く通知です。'
+      evening:
+        name: '夕方のリムられ通知'
+        desc: '17〜18時頃に届く通知です。'
+      night:
+        name: '夜のリムられ通知'
+        desc_html: '21〜22時頃に届く通知です。この通知は<span class="egotter-pink">変化があってもなくても</span>届きます。'
+      send_only_if_changed:
+        name: 'リムられたときのみ通知する'
+        desc: 'リムられに変化があったときのみ、リムられ通知が届くようになります。'
+        confirm: 'ツイッターDMの仕組み上、この設定をオンにするとリムられ通知の送信が不安定になります。それでも本当によろしいですか？'
   pricing:
     new:
       sign_in: 'ログインする'

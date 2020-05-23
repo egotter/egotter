@@ -15,6 +15,7 @@ Rails.application.routes.draw do
 
       post 'users/update_instance_id', to: 'users#update_instance_id'
       post 'users/update_device_token', to: 'users#update_device_token'
+      post 'periodic_report_settings', to: 'periodic_report_settings#update'
     end
   end
 
