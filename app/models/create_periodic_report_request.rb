@@ -351,7 +351,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
       users = @builder.twitter_users
       users.size >= 2 && users.last.created_at > TwitterUser::CREATE_RECORD_INTERVAL.ago && UnfriendsBuilder::Util.unfollowers_increased?(users[-2], users[-1])
     rescue => e
-      logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
+      Rails.logger.warn "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
       false
     end
 
@@ -373,7 +373,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
       if target_uids.size != users.size
         not_found = target_uids - users.map(&:uid)
-        logger.warn "#{self.class}##{__method__} the size of uids doesn't match with the size of users request=#{@request.inspect} not_found=#{not_found}"
+        Rails.logger.warn "#{self.class}##{__method__} the size of uids doesn't match with the size of users request=#{@request.inspect} not_found=#{not_found}"
       end
 
       users.map(&:screen_name)
