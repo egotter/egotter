@@ -20,7 +20,9 @@ class CreateSearchReportWorker
     SearchReport.you_are_searched(searchee.id, options['searcher_uid']).deliver!
 
   rescue => e
-    if AccountStatus.unauthorized?(e) || DirectMessageStatus.protect_out_users_from_spam?(e)
+    if AccountStatus.unauthorized?(e) ||
+        DirectMessageStatus.protect_out_users_from_spam?(e) ||
+        DirectMessageStatus.you_have_blocked?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} searchee_id=#{searchee_id} options=#{options.inspect}"
