@@ -73,6 +73,17 @@ RSpec.describe PeriodicReport do
         subject
       end
     end
+
+    context 'send_remind_access_message? returns true' do
+      before do
+        allow(report).to receive(:send_remind_reply_message?).with(sender).and_return(false)
+        allow(report).to receive(:send_remind_access_message?).with(sender).and_return(true)
+      end
+      it do
+        expect(report).to receive(:send_remind_access_message)
+        subject
+      end
+    end
   end
 
   describe '#send_remind_reply_message?' do
@@ -100,6 +111,31 @@ RSpec.describe PeriodicReport do
     end
   end
 
+  describe '#send_remind_access_message?' do
+    let(:report) { described_class.new }
+    let(:sender) { double('sender', uid: nil) }
+    subject { report.send_remind_access_message?(sender) }
+
+    before { allow(report).to receive(:user).and_return(user) }
+
+    context 'dont_send_remind_message is set' do
+      before { report.dont_send_remind_message = true }
+      it { is_expected.to be_falsey }
+    end
+
+    context 'sender.uid == egotter uid' do
+      before { allow(sender).to receive(:uid).and_return(User::EGOTTER_UID) }
+      it do
+        expect(described_class).to receive(:no_access_days_user?).with(user).and_return('result')
+        is_expected.to eq('result')
+      end
+    end
+
+    context 'sender.uid != egotter uid' do
+      it { is_expected.to be_truthy }
+    end
+  end
+
   describe '#send_remind_reply_message' do
     let(:report) { described_class.new }
     subject { report.send_remind_reply_message }
@@ -107,7 +143,32 @@ RSpec.describe PeriodicReport do
     before { allow(report).to receive(:user).and_return(user) }
 
     it do
-      expect(described_class).to receive_message_chain(:remind_reply_message, :message).and_return('message')
+      expect(described_class).to receive(:remind_reply_message).and_call_original
+      expect(report).to receive(:send_remind_message).with(instance_of(String))
+      subject
+    end
+  end
+
+  describe '#send_remind_access_message' do
+    let(:report) { described_class.new }
+    subject { report.send_remind_access_message }
+
+    before { allow(report).to receive(:user).and_return(user) }
+
+    it do
+      expect(described_class).to receive(:remind_access_message).and_call_original
+      expect(report).to receive(:send_remind_message).with(instance_of(String))
+      subject
+    end
+  end
+
+  describe '#send_remind_message' do
+    let(:report) { described_class.new }
+    subject { report.send_remind_message('message') }
+
+    before { allow(report).to receive(:user).and_return(user) }
+
+    it do
       expect(described_class).to receive(:build_direct_message_event).with(user.uid, 'message').and_return('event')
       expect(User).to receive_message_chain(:egotter, :api_client, :create_direct_message_event).with(no_args).with(event: 'event')
       subject
@@ -129,6 +190,25 @@ RSpec.describe PeriodicReport do
     context 'remaining ttl is long' do
       let(:ttl) { 6.hours }
       it { is_expected.to be_falsey }
+    end
+  end
+
+  describe '.no_access_days_user?' do
+    subject { described_class.no_access_days_user?(user) }
+
+    context "user doesn't have access_days" do
+      it { is_expected.to be_nil }
+    end
+
+    context "user has recent access_days" do
+      let(:user) {create(:user, with_access_days: 1)}
+      it { is_expected.to be_falsey }
+    end
+
+    context "user has access_days but the value is a long time ago" do
+      let(:user) {create(:user, with_access_days: 1)}
+      before { user.access_days.last.update!(date: 1.month.ago.to_date) }
+      it { is_expected.to be_truthy }
     end
   end
 

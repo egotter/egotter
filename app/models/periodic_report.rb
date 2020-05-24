@@ -84,6 +84,15 @@ class PeriodicReport < ApplicationRecord
       new(user: nil, message: message, token: nil)
     end
 
+    def remind_access_message
+      template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
+      message = ERB.new(template.read).result_with_hash(
+          campaign_name: I18n.l(Time.zone.now, format: :date_hyphen)
+      )
+
+      new(user: nil, message: message, token: nil)
+    end
+
     def allotted_messages_will_expire_message(user_id)
       user = User.find(user_id)
       template = Rails.root.join('app/views/periodic_reports/allotted_messages_will_expire.ja.text.erb')
@@ -322,6 +331,8 @@ class PeriodicReport < ApplicationRecord
 
     if send_remind_reply_message?(sender)
       send_remind_reply_message
+    elsif send_remind_access_message?(sender)
+      send_remind_access_message
     end
 
     dm
@@ -340,15 +351,34 @@ class PeriodicReport < ApplicationRecord
     end
   end
 
+  ACCESS_DAYS_HARD_LIMIT = 1.week
+
+  def send_remind_access_message?(sender)
+    return false if dont_send_remind_message
+
+    if sender.uid == User::EGOTTER_UID
+      self.class.no_access_days_user?(user)
+    else
+      true
+    end
+  end
+
   def send_remind_reply_message
-    message = self.class.remind_reply_message.message
+    send_remind_message(self.class.remind_reply_message.message)
+  end
+
+  def send_remind_access_message
+    send_remind_message(self.class.remind_access_message.message)
+  end
+
+  def send_remind_message(message)
     event = self.class.build_direct_message_event(user.uid, message)
     User.egotter.api_client.create_direct_message_event(event: event)
   rescue => e
     if DirectMessageStatus.cannot_send_messages?(e)
       # Do nothing
     else
-      logger.warn "#{self}##{__method__} sending remind-reply message is failed #{e.inspect} user_id=#{user_id}"
+      logger.warn "#{self}##{__method__} sending remind message is failed #{e.inspect} user_id=#{user_id}"
     end
   end
 
@@ -376,6 +406,13 @@ class PeriodicReport < ApplicationRecord
     def allotted_messages_will_expire_soon?(user)
       remaining_ttl = GlobalDirectMessageReceivedFlag.new.remaining(user.uid)
       remaining_ttl && remaining_ttl < REMAINING_TTL_HARD_LIMIT
+    end
+
+    def no_access_days_user?(user)
+      access_day = user.access_days.last
+      logger.info "#{self}##{__method__} access_days not found user_id=#{user.id}" if access_day.nil?
+
+      access_day && access_day.date < ACCESS_DAYS_HARD_LIMIT.ago
     end
 
     def allotted_messages_left?(user, count: 4)
