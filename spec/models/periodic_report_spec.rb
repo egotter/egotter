@@ -54,20 +54,26 @@ RSpec.describe PeriodicReport do
   end
 
   describe '#send_direct_message' do
-    let(:report) { described_class.new }
-    let(:sender) { double('sender', uid: 1) }
+    let(:report) { described_class.new(message: 'message') }
     let(:recipient) { double('recipient', uid: 2) }
     subject { report.send_direct_message }
 
-    before do
-      allow(report).to receive(:user).and_return(user)
-      allow(report).to receive(:report_sender).and_return(sender)
-      allow(report).to receive(:report_recipient).and_return(recipient)
-      allow(sender).to receive_message_chain(:api_client, :create_direct_message_event).with(anything).and_return('dm')
+    before { allow(report).to receive(:report_recipient).and_return(recipient) }
+
+    it do
+      expect(described_class).to receive(:build_direct_message_event).with(recipient.uid, 'message').and_return('event')
+      expect(report).to receive_message_chain(:report_sender, :api_client, :create_direct_message_event).with(event: 'event').and_return('dm')
+      expect(report).to receive(:send_remind_message_if_needed)
+      is_expected.to eq('dm')
     end
+  end
+
+  describe '#send_remind_message_if_needed' do
+    let(:report) { described_class.new }
+    subject { report.send_remind_message_if_needed }
 
     context 'send_remind_reply_message? returns true' do
-      before { allow(report).to receive(:send_remind_reply_message?).with(sender).and_return(true) }
+      before { allow(report).to receive(:send_remind_reply_message?).and_return(true) }
       it do
         expect(report).to receive(:send_remind_reply_message)
         subject
@@ -76,8 +82,8 @@ RSpec.describe PeriodicReport do
 
     context 'send_remind_access_message? returns true' do
       before do
-        allow(report).to receive(:send_remind_reply_message?).with(sender).and_return(false)
-        allow(report).to receive(:send_remind_access_message?).with(sender).and_return(true)
+        allow(report).to receive(:send_remind_reply_message?).and_return(false)
+        allow(report).to receive(:send_remind_access_message?).and_return(true)
       end
       it do
         expect(report).to receive(:send_remind_access_message)
@@ -88,8 +94,7 @@ RSpec.describe PeriodicReport do
 
   describe '#send_remind_reply_message?' do
     let(:report) { described_class.new }
-    let(:sender) { double('sender', uid: nil) }
-    subject { report.send_remind_reply_message?(sender) }
+    subject { report.send_remind_reply_message? }
 
     before { allow(report).to receive(:user).and_return(user) }
 
@@ -98,23 +103,23 @@ RSpec.describe PeriodicReport do
       it { is_expected.to be_falsey }
     end
 
-    context 'sender.uid == egotter uid' do
-      before { allow(sender).to receive(:uid).and_return(User::EGOTTER_UID) }
+    context 'messages_allotted? returns true' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
       it do
         expect(described_class).to receive(:allotted_messages_will_expire_soon?).with(user).and_return('result')
         is_expected.to eq('result')
       end
     end
 
-    context 'sender.uid != egotter uid' do
+    context 'messages_allotted? returns false' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
       it { is_expected.to be_truthy }
     end
   end
 
   describe '#send_remind_access_message?' do
     let(:report) { described_class.new }
-    let(:sender) { double('sender', uid: nil) }
-    subject { report.send_remind_access_message?(sender) }
+    subject { report.send_remind_access_message? }
 
     before { allow(report).to receive(:user).and_return(user) }
 
@@ -123,15 +128,16 @@ RSpec.describe PeriodicReport do
       it { is_expected.to be_falsey }
     end
 
-    context 'sender.uid == egotter uid' do
-      before { allow(sender).to receive(:uid).and_return(User::EGOTTER_UID) }
+    context 'messages_allotted? returns true' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
       it do
         expect(described_class).to receive(:no_access_days_user?).with(user).and_return('result')
         is_expected.to eq('result')
       end
     end
 
-    context 'sender.uid != egotter uid' do
+    context 'messages_allotted? returns false' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
       it { is_expected.to be_truthy }
     end
   end

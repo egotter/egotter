@@ -326,25 +326,28 @@ class PeriodicReport < ApplicationRecord
 
   def send_direct_message
     event = self.class.build_direct_message_event(report_recipient.uid, message)
-    sender = report_sender
-    dm = sender.api_client.create_direct_message_event(event: event)
+    dm = report_sender.api_client.create_direct_message_event(event: event)
 
-    if send_remind_reply_message?(sender)
-      send_remind_reply_message
-    elsif send_remind_access_message?(sender)
-      send_remind_access_message
-    end
+    send_remind_message_if_needed
 
     dm
+  end
+
+  def send_remind_message_if_needed
+    if send_remind_reply_message?
+      send_remind_reply_message
+    elsif send_remind_access_message?
+      send_remind_access_message
+    end
   end
 
   REMAINING_TTL_SOFT_LIMIT = 12.hours
   REMAINING_TTL_HARD_LIMIT = 3.hours
 
-  def send_remind_reply_message?(sender)
+  def send_remind_reply_message?
     return false if dont_send_remind_message
 
-    if sender.uid == User::EGOTTER_UID
+    if self.class.messages_allotted?(user)
       self.class.allotted_messages_will_expire_soon?(user)
     else
       true
@@ -353,10 +356,10 @@ class PeriodicReport < ApplicationRecord
 
   ACCESS_DAYS_HARD_LIMIT = 1.week
 
-  def send_remind_access_message?(sender)
+  def send_remind_access_message?
     return false if dont_send_remind_message
 
-    if sender.uid == User::EGOTTER_UID
+    if self.class.messages_allotted?(user)
       self.class.no_access_days_user?(user)
     else
       true
