@@ -32,7 +32,7 @@ class SearchReport < ApplicationRecord
   end
 
   def deliver!
-    if !GlobalDirectMessageReceivedFlag.new.received?(user.uid) || !PeriodicReport.allotted_messages_left?(user)
+    if send_starting_message_from_user?
       user.api_client.create_direct_message_event(User::EGOTTER_UID, start_message)
     end
 
@@ -48,6 +48,10 @@ class SearchReport < ApplicationRecord
   end
 
   private
+
+  def send_starting_message_from_user?
+    !PeriodicReport.messages_allotted?(user) || !PeriodicReport.allotted_messages_left?(user)
+  end
 
   class << self
     def build_direct_message_event(uid, message)

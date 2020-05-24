@@ -369,13 +369,13 @@ RSpec.describe CreatePeriodicReportRequest::AllottedMessagesCountValidator, type
   describe '#validate!' do
     subject { instance.validate! }
 
-    context 'DM received flag is not set' do
-      before { allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return(false) }
+    context 'messages are not allotted' do
+      before { allow(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(false) }
       it { is_expected.to be_truthy }
     end
 
-    context 'DM received flag is set' do
-      before { allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return(true) }
+    context 'messages are allotted' do
+      before { allow(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(true) }
 
       context 'allotted_messages_left? returns true' do
         before { allow(PeriodicReport).to receive(:allotted_messages_left?).with(user, count: 3).and_return(true) }

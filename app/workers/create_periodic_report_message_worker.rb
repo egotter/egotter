@@ -173,12 +173,16 @@ class CreatePeriodicReportMessageWorker
   def handle_weird_error(user)
     yield
   rescue => e
-    if DirectMessageStatus.cannot_send_messages?(e) && GlobalDirectMessageReceivedFlag.new.received?(user.uid)
+    if weird_error?(e, user)
       logger.info { "#{__method__} #{e.inspect} user_id=#{user.id}" }
       send_message_from_egotter(user.uid, PeriodicReport.cannot_send_messages_message.message)
     else
       raise
     end
+  end
+
+  def weird_error?(e, user)
+    DirectMessageStatus.cannot_send_messages?(e) && PeriodicReport.messages_allotted?(user)
   end
 
   def not_fatal_error?(e)

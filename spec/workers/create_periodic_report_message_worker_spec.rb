@@ -246,11 +246,7 @@ RSpec.describe CreatePeriodicReportMessageWorker do
 
     context 'the error is weird' do
       let(:message) { PeriodicReport.cannot_send_messages_message.message }
-
-      before do
-        allow(DirectMessageStatus).to receive(:cannot_send_messages?).with(error).and_return(true)
-        allow(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return(true)
-      end
+      before { allow(worker).to receive(:weird_error?).with(error, user).and_return(true) }
 
       it do
         expect(worker).to receive(:send_message_from_egotter).with(user.uid, message)
@@ -260,6 +256,17 @@ RSpec.describe CreatePeriodicReportMessageWorker do
 
     context 'else' do
       it { expect { subject }.to raise_error(error) }
+    end
+  end
+
+  describe '#weird_error?' do
+    let(:error) { 'error' }
+    subject { worker.weird_error?(error, user) }
+
+    it do
+      expect(DirectMessageStatus).to receive(:cannot_send_messages?).with(error).and_return(true)
+      expect(PeriodicReport).to receive(:messages_allotted?).with(user).and_return(true)
+      is_expected.to be_truthy
     end
   end
 

@@ -11,7 +11,7 @@
   var tooShortCreateInterval = <%= twitter_user.too_short_create_interval? %>;
   var accountStatusAccessed = <%= user_signed_in? && AccountStatusAccessFlag.new.accessed?(current_user.id) %>;
   var isEgotterFollower = <%= user_signed_in? && EgotterFollower.exists?(uid: current_user.uid) %>;
-  var periodicReportStopped = <%= user_signed_in? && !GlobalDirectMessageReceivedFlag.new.received?(current_user.uid) && !StopPeriodicReportRequest.exists?(user_id: current_user.id) %>;
+  var periodicReportStopped = <%= user_signed_in? && !PeriodicReport.messages_allotted?(current_user) && !StopPeriodicReportRequest.exists?(user_id: current_user.id) %>;
   var eventCategory = '<%= "#{controller_name}/#{action_name}" %>';
 
   var urls = {

@@ -418,14 +418,18 @@ class PeriodicReport < ApplicationRecord
     def allotted_messages_left?(user, count: 4)
       GlobalSendDirectMessageCountByUser.new.count(user.uid) <= count
     end
+
+    def messages_allotted?(user)
+      GlobalDirectMessageReceivedFlag.new.received?(user.uid)
+    end
   end
 
   def report_sender
-    GlobalDirectMessageReceivedFlag.new.received?(user.uid) ? User.egotter : user
+    self.class.messages_allotted?(user) ? User.egotter : user
   end
 
   def report_recipient
-    GlobalDirectMessageReceivedFlag.new.received?(user.uid) ? user : User.egotter
+    self.class.messages_allotted?(user) ? user : User.egotter
   end
 
   DEFAULT_QUICK_REPLY_OPTIONS = [

@@ -201,12 +201,12 @@ RSpec.describe PeriodicReport do
     end
 
     context "user has recent access_days" do
-      let(:user) {create(:user, with_access_days: 1)}
+      let(:user) { create(:user, with_access_days: 1) }
       it { is_expected.to be_falsey }
     end
 
     context "user has access_days but the value is a long time ago" do
-      let(:user) {create(:user, with_access_days: 1)}
+      let(:user) { create(:user, with_access_days: 1) }
       before { user.access_days.last.update!(date: 1.month.ago.to_date) }
       it { is_expected.to be_truthy }
     end
@@ -224,6 +224,52 @@ RSpec.describe PeriodicReport do
       before { allow(GlobalSendDirectMessageCountByUser).to receive_message_chain(:new, :count).with(user.uid).and_return(5) }
       it { is_expected.to be_falsey }
     end
+  end
 
+  describe '.messages_allotted?' do
+    subject { described_class.messages_allotted?(user) }
+
+    it do
+      expect(GlobalDirectMessageReceivedFlag).to receive_message_chain(:new, :received?).with(user.uid).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
+  describe '#report_sender' do
+    let(:report) { described_class.new }
+    subject { report.report_sender }
+    before { allow(report).to receive(:user).and_return(user) }
+
+    context 'messages are allotted' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
+      it do
+        expect(User).to receive(:egotter).and_return('result')
+        is_expected.to eq('result')
+      end
+    end
+
+    context 'messages are not allotted' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
+      it { is_expected.to eq(user) }
+    end
+  end
+
+  describe '#report_recipient' do
+    let(:report) { described_class.new }
+    subject { report.report_recipient }
+    before { allow(report).to receive(:user).and_return(user) }
+
+    context 'messages are allotted' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(true) }
+      it { is_expected.to eq(user) }
+    end
+
+    context 'messages are not allotted' do
+      before { allow(described_class).to receive(:messages_allotted?).with(user).and_return(false) }
+      it do
+        expect(User).to receive(:egotter).and_return('result')
+        is_expected.to eq('result')
+      end
+    end
   end
 end

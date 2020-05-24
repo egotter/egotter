@@ -285,7 +285,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   class AllottedMessagesCountValidator < Validator
     def validate!
       user = @request.user
-      return true unless GlobalDirectMessageReceivedFlag.new.received?(user.uid)
+      return true unless PeriodicReport.messages_allotted?(user)
 
       if PeriodicReport.allotted_messages_left?(user, count: 3)
         true
