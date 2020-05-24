@@ -66,7 +66,7 @@ class CreatePeriodicReportWorker
 
   rescue => e
     notify_airbrake(e, request_id: request_id, options: options)
-    logger.warn "#{e.class} #{e.message}"
+    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info e.backtrace.join("\n")
   end
 end
