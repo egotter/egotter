@@ -358,11 +358,11 @@ class CreatePeriodicReportRequest < ApplicationRecord
     private
 
     def unfriend_uids
-      @unfriend_uids ||= @builder.unfriends.flatten
+      @unfriend_uids ||= @builder.unfriends.flatten.uniq
     end
 
     def unfollower_uids
-      @unfollower_uids ||= @builder.unfollowers.flatten
+      @unfollower_uids ||= @builder.unfollowers.flatten.uniq
     end
 
     def fetch_screen_names(uids, limit: 10)
