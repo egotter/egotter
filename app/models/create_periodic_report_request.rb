@@ -373,7 +373,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
       if target_uids.size != users.size
         not_found = target_uids - users.map(&:uid)
-        Rails.logger.warn "#{self.class}##{__method__} the size of uids doesn't match with the size of users request=#{@request.inspect} not_found=#{not_found}"
+        Rails.logger.warn "#{self.class}##{__method__} the size of uids doesn't match with the size of users request=#{@request.inspect} uids_size=#{target_uids.size} users_size=#{users.size} uids=#{target_uids} not_found=#{not_found}"
       end
 
       users.map(&:screen_name)
