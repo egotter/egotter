@@ -11,7 +11,6 @@ module Concerns::TwitterUser::Persistence
     after_commit(on: :create) do
 
       perform_after_commit
-      # Set friends_size and followers_size in AssociationBuilder#build_friends_and_followers
 
     rescue => e
       # ActiveRecord::RecordNotFound Couldn't find TwitterUser with 'id'=00000

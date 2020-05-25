@@ -1,9 +1,9 @@
 class TwitterUserFetcher
   attr_reader :uid, :client, :login_user, :twitter_user
 
-  def initialize(twitter_user, client:, login_user:, context:)
+  def initialize(twitter_user, login_user:, context:)
     @uid = twitter_user.uid.to_i
-    @client = client
+    @client = login_user ? login_user.api_client : Bot.api_client
     @login_user = login_user
     @twitter_user = twitter_user
     @context = context

@@ -32,81 +32,115 @@ class CreateTwitterUserRequest < ApplicationRecord
   #   :prompt_reports
   #   :periodic_reports
   def perform!(context = nil)
+    validate_request!
+
+    twitter_user, relations = build_twitter_user(context)
+    validate_twitter_user!(twitter_user)
+
+    assemble_twitter_user(twitter_user, relations)
+    save_twitter_user(twitter_user)
+
+    twitter_user
+  end
+
+  def validate_request!
     raise AlreadyFinished if finished?
     raise Unauthorized if user&.unauthorized?
+    # TODO Implement #too_short_create_interval? as class method
+    raise TooShortCreateInterval if TwitterUser.select(:id, :created_at).latest_by(uid: uid)&.too_short_create_interval?
+  end
 
-    twitter_user = build_twitter_user(context)
+  def build_twitter_user(context = nil)
+    fetched_user = fetch_user
+    twitter_user = build_twitter_user_by(fetched_user)
+    relations = fetch_relations(twitter_user, context)
 
-    # Don't call #invalid? because it clears errors
-    raise RecordInvalid.new(twitter_user) if twitter_user.errors.any?
+    attach_friend_uids(twitter_user, relations[:friend_ids])
+    attach_follower_uids(twitter_user, relations[:follower_ids])
 
-    save_result = nil
-    bm_perform('twitter_user.save') { save_result = twitter_user.save }
-    if save_result
-      update(twitter_user_id: twitter_user.id)
-      logger.debug { "CreateTwitterUserRequest record created twitter_user_id=#{twitter_user.id}" }
-      return twitter_user
-    else
-      logger.debug { "CreateTwitterUserRequest record NOT created" }
-    end
+    [twitter_user, relations]
+  rescue => e
+    exception_handler(e)
+    retry
+  end
 
-    if TwitterUser.exists?(uid: twitter_user.uid)
-      raise NotChanged.new('After build')
-    else
-      raise RecordInvalid.new(twitter_user)
+  def validate_twitter_user!(twitter_user)
+    if TwitterUser.exists?(uid: uid)
+      # TODO Implement #no_need_to_import_friendships? as class method
+      if twitter_user.no_need_to_import_friendships?
+        raise TooManyFriends.new('Already exists')
+      end
+
+      if diff_values_empty?(twitter_user)
+        raise NotChanged.new('Before build')
+      end
     end
   end
 
-  # These methods are not registered as validation callbacks due to too heavy.
-  #
-  # #too_short_create_interval?
-  # #no_need_to_import_friendships?
-  # #diff.empty?
-  #
-  def build_twitter_user(context = nil)
-    previous_twitter_user = TwitterUser.latest_by(uid: uid)
+  def assemble_twitter_user(twitter_user, relations)
+    attach_user_timeline(twitter_user, relations[:user_timeline])
+    attach_mentions_timeline(twitter_user, relations[:mentions_timeline], relations[:search])
+    attach_favorite_tweets(twitter_user, relations[:favorites])
 
-    unless previous_twitter_user
-      fetched_user = twitter_user = relations = nil
-      bm_perform('fetch_user') { fetched_user = fetch_user }
-      bm_perform('TwitterUser.build_by') { twitter_user = TwitterUser.build_by(user: fetched_user) }
-      bm_perform('fetch_relations!') { relations = fetch_relations!(twitter_user, context) }
-      bm_perform('build_friends_and_followers') { twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
-      bm_perform('build_other_relations') { twitter_user.build_other_relations(relations) }
-      twitter_user.user_id = user_id
-      return twitter_user
+    twitter_user.user_id = user_id
+  end
+
+  def save_twitter_user(twitter_user)
+    twitter_user.save!
+    update(twitter_user_id: twitter_user.id)
+  end
+
+  def fetch_user
+    @fetch_user ||= client.user(uid)
+  end
+
+  def build_twitter_user_by(user)
+    TwitterUser.build_by(user: user)
+  end
+
+  def fetch_relations(twitter_user, context)
+    @fetch_relations ||= TwitterUserFetcher.new(twitter_user, login_user: user, context: context).fetch
+  end
+
+  def attach_friend_uids(twitter_user, uids)
+    twitter_user.attach_friend_uids(uids)
+  end
+
+  def attach_follower_uids(twitter_user, uids)
+    twitter_user.attach_follower_uids(uids)
+  end
+
+  def attach_user_timeline(twitter_user, tweets)
+    twitter_user.attach_user_timeline(tweets)
+  end
+
+  def attach_mentions_timeline(twitter_user, tweets, search_result)
+    twitter_user.attach_mentions_timeline(tweets, search_result)
+  end
+
+  def attach_favorite_tweets(twitter_user, tweets)
+    twitter_user.attach_favorite_tweets(tweets)
+  end
+
+  def diff_values_empty?(twitter_user)
+    TwitterUser.latest_by(uid: uid).diff(twitter_user).empty?
+  end
+
+  def exception_handler(e)
+    if ServiceStatus.retryable_error?(e)
+      @retries ||= 3
+      if @retries <= 0
+        raise RetryExhausted.new(e.inspect)
+      else
+        @retries -= 1
+        return
+      end
     end
 
-    # The purpose of this code is to determine as soon as possible whether a record can be created.
-
-    raise TooShortCreateInterval if previous_twitter_user.too_short_create_interval?
-
-    fetched_user = current_twitter_user = relations = nil
-    bm_perform('fetch_user') { fetched_user = fetch_user }
-    bm_perform('TwitterUser.build_by') { current_twitter_user = TwitterUser.build_by(user: fetched_user) }
-    bm_perform('fetch_relations!') { relations = fetch_relations!(current_twitter_user, context) }
-    bm_perform('build_friends_and_followers') { current_twitter_user.build_friends_and_followers(relations[:friend_ids], relations[:follower_ids]) }
-
-    if current_twitter_user.no_need_to_import_friendships?
-      raise TooManyFriends.new('Already exists')
+    if e.is_a?(Error)
+      raise e
     end
 
-    diff_not_found = false
-    bm_perform('diff') { diff_not_found = previous_twitter_user.diff(current_twitter_user).empty? }
-
-    if diff_not_found
-      raise NotChanged.new('Before build')
-    end
-
-    bm_perform('build_other_relations') { current_twitter_user.build_other_relations(relations) }
-    current_twitter_user.user_id = user_id
-    current_twitter_user
-
-  rescue TooShortCreateInterval, TooManyFriends, NotChanged => e
-    raise
-  rescue Twitter::Error::TooManyRequests => e
-    raise
-  rescue => e
     if AccountStatus.unauthorized?(e)
       raise Unauthorized
     elsif AccountStatus.protected?(e)
@@ -115,29 +149,9 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise Blocked
     elsif AccountStatus.temporarily_locked?(e)
       raise TemporarilyLocked
-    elsif ServiceStatus.service_unavailable?(e)
-      raise ServiceUnavailable
-    elsif ServiceStatus.internal_server_error?(e)
-      raise InternalServerError
-    elsif ServiceStatus.connection_reset_by_peer?(e)
-      retry
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
     end
-  end
 
-  def fetch_user
-    @fetch_user ||= client.user(uid)
-  rescue => e
-    if AccountStatus.unauthorized?(e)
-      raise Unauthorized
-    else
-      raise Unknown.new("#{__method__} #{e.class} #{e.message}")
-    end
-  end
-
-  def fetch_relations!(twitter_user, context)
-    @fetch_relations ||= TwitterUserFetcher.new(twitter_user, client: client, login_user: user, context: context).fetch
+    raise Unknown.new(e.inspect)
   end
 
   def client
@@ -145,10 +159,28 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   module Instrumentation
+    %i(
+      fetch_user
+      build_twitter_user_by
+      fetch_relations
+      attach_friend_uids
+      attach_follower_uids
+      attach_user_timeline
+      attach_mentions_timeline
+      attach_favorite_tweets
+      diff_values_empty?
+      save_twitter_user
+    ).each do |method_name|
+      define_method(method_name) do |*args, &blk|
+        bm_perform(method_name) { method(method_name).super_method.call(*args, &blk) }
+      end
+    end
+
     def bm_perform(message, &block)
       start = Time.zone.now
-      yield
-      @bm_perform[message] = Time.zone.now - start
+      result = yield
+      @bm_perform[message] = Time.zone.now - start if @bm_perform
+      result
     end
 
     def perform!(*args, &blk)
@@ -212,6 +244,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class InternalServerError < Error
+  end
+
+  class RetryExhausted < Error
   end
 
   class Unknown < StandardError
