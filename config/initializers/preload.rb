@@ -1,7 +1,10 @@
 ::S3.class
 ::S3::Util.class
+::S3::Querying.class
+::S3::Api.class
 ::S3::Friendship.class
 ::S3::Followership.class
+::S3::ProfileApi.class
 ::S3::Profile.class
 ::S3::Friendship.client
 ::S3::Followership.client
