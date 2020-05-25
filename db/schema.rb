@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_20_202502) do
+ActiveRecord::Schema.define(version: 2020_05_22_084451) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -764,6 +764,19 @@ ActiveRecord::Schema.define(version: 2020_05_20_202502) do
     t.string "channel", default: "", null: false
     t.datetime "created_at", null: false
     t.index ["created_at"], name: "index_page_cache_logs_on_created_at"
+  end
+
+  create_table "periodic_report_settings", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.boolean "morning", default: true, null: false
+    t.boolean "afternoon", default: true, null: false
+    t.boolean "evening", default: true, null: false
+    t.boolean "night", default: true, null: false
+    t.boolean "send_only_if_changed", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_periodic_report_settings_on_created_at"
+    t.index ["user_id"], name: "index_periodic_report_settings_on_user_id", unique: true
   end
 
   create_table "periodic_reports", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|

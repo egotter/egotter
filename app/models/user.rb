@@ -58,6 +58,7 @@ class User < ApplicationRecord
     obj.has_many :tweet_requests,                order_by_desc
 
     obj.has_one :notification_setting
+    obj.has_one :periodic_report_setting
     obj.has_one :credential_token
     obj.has_many :orders
     obj.has_many :access_days
