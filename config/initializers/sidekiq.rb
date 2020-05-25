@@ -10,6 +10,7 @@ Sidekiq.configure_server do |config|
     chain.add Egotter::Sidekiq::ServerUniqueJob
     chain.add ExpireJob::Middleware
     chain.add TimeoutJob::Middleware
+    chain.add Egotter::Sidekiq::LockJob
   end
   config.client_middleware do |chain|
     chain.add Egotter::Sidekiq::ClientUniqueJob, 'server'
