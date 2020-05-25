@@ -66,6 +66,7 @@ class CreateTwitterDBUserWorker
   def meet_requirements_for_retrying?(e)
     AccountStatus.unauthorized?(e) ||
         AccountStatus.forbidden?(e) ||
+        AccountStatus.too_many_requests?(e) ||
         ServiceStatus.retryable_error?(e)
   end
 

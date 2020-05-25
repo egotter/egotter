@@ -86,6 +86,7 @@ RSpec.describe CreateTwitterDBUserWorker do
     it do
       expect(AccountStatus).to receive(:unauthorized?).with(error).and_return(false)
       expect(AccountStatus).to receive(:forbidden?).with(error).and_return(false)
+      expect(AccountStatus).to receive(:too_many_requests?).with(error).and_return(false)
       expect(ServiceStatus).to receive(:retryable_error?).with(error).and_return(false)
       is_expected.to be_falsey
     end
