@@ -1,118 +1,139 @@
 require 'rails_helper'
 
 RSpec.describe CreateTwitterDBUserWorker do
-  let(:bot) { create(:bot) }
-  let(:client) { bot.api_client }
-  let(:user) { create(:user) }
-  let(:uids) { [1, 2] }
-  let(:worker) { CreateTwitterDBUserWorker.new }
+  let(:worker) { described_class.new }
 
   describe '#perform' do
-    let(:options) { {'user_id' => 'ui', 'force_update' => 'fu', 'enqueued_by' => 'eb'} }
-    subject { worker.perform(uids, options) }
-
-    before { allow(worker).to receive(:pick_client).with(options).and_return('client') }
+    subject { worker.perform('uids', 'options') }
+    before { allow(worker).to receive(:pick_client).with('options').and_return('client') }
 
     it do
-      expect(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'client', force_update: 'fu')
+      expect(worker).to receive(:do_perform).with('client', 'uids', 'options')
+      subject
+    end
+  end
+
+  describe '#do_perform' do
+    let(:uids) { 'uids' }
+    let(:client) { double('client') }
+    let(:options) { {'user_id' => 'ui', 'force_update' => 'fu', 'enqueued_by' => 'eb'} }
+    subject { worker.send(:do_perform, client, uids, options) }
+
+    it do
+      expect(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu')
       subject
     end
 
-    context '#fetch_and_import! raises something unknown exception' do
-      let(:exception) { RuntimeError.new('Unknown') }
-      before { allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(any_args).and_raise(exception) }
-      it do
-        expect(worker).to receive(:notify_airbrake).with(exception)
-        subject
-        expect(worker).to satisfy { |w| w.instance_variable_get(:@retries) == 2 }
-      end
-    end
+    context '#fetch_and_import! raises exception' do
+      let(:error) { RuntimeError.new }
+      before { allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: client, force_update: 'fu').and_raise(error) }
 
-    context '#fetch_and_import! raises something retryable exception' do
-      let(:exception) { RuntimeError.new('Retryable') }
-      before do
-        allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(any_args).and_raise(exception)
-        allow(worker).to receive(:meet_requirements_for_retrying?).with(exception).and_return(true)
+      context 'the exception is retryable' do
+        before { allow(worker).to receive(:exception_handler).with(error, options) }
+        it do
+          expect(Bot).to receive(:api_client).and_return('bot_client')
+          allow(TwitterDB::User::Batch).to receive(:fetch_and_import!).with(uids, client: 'bot_client', force_update: 'fu')
+          subject
+        end
       end
-      it do
-        expect(Bot).to receive(:api_client).twice
-        expect(worker).to receive(:notify_airbrake).with(exception)
-        subject
-        expect(worker).to satisfy { |w| w.instance_variable_get(:@retries) == 0 }
+
+      context 'the exception is not retryable' do
+        before { allow(worker).to receive(:exception_handler).with(error, options).and_raise(error) }
+        it do
+          expect(Bot).not_to receive(:api_client)
+          expect { subject }.to raise_error(error)
+        end
       end
     end
   end
 
-  describe '#meet_requirements_for_retrying?' do
-    subject { worker.meet_requirements_for_retrying?(exception) }
+  describe 'exception_handler' do
+    let(:error) { 'error' }
+    subject { worker.send(:exception_handler, error, 'options') }
 
-    context 'Twitter::Error::Unauthorized is raised' do
-      let(:exception) { Twitter::Error::Unauthorized.new('Invalid or expired token.') }
-      it { is_expected.to be_truthy }
+    it do
+      expect(worker).to receive(:log_error?).with(error)
+      expect(worker).to receive(:meet_requirements_for_retrying?).with(error)
+      expect { subject }.to raise_error(described_class::RetryExhausted)
     end
 
-    context 'Twitter::Error::Unauthorized is raised' do
-      let(:exception) { Twitter::Error::Forbidden.new('Message') }
-      it { is_expected.to be_truthy }
-    end
+    context 'meet_requirements_for_retrying? returns true' do
+      before { allow(worker).to receive(:meet_requirements_for_retrying?).with(error).and_return(true) }
+      it { expect { subject }.not_to raise_error }
 
-    context 'Connection reset by peer' do
-      let(:exception) { RuntimeError.new('Connection reset by peer') }
-      it { is_expected.to be_truthy }
+      context 'retry is repeated' do
+        it do
+          expect { 3.times { worker.send(:exception_handler, error, 'options') } }.to raise_error(described_class::RetryExhausted)
+        end
+      end
     end
+  end
 
-    context 'Unknown exception is raised' do
-      let(:exception) { RuntimeError.new('Unknown') }
-      it { is_expected.to be_falsey }
+  describe 'log_error?' do
+    let(:error) { 'error' }
+    subject { worker.send(:log_error?, error) }
+    it do
+      expect(AccountStatus).to receive(:unauthorized?).with(error)
+      expect(AccountStatus).to receive(:temporarily_locked?).with(error)
+      expect(AccountStatus).to receive(:too_many_requests?).with(error)
+      is_expected.to be_truthy
+    end
+  end
+
+  describe 'meet_requirements_for_retrying?' do
+    let(:error) { 'error' }
+    subject { worker.send(:meet_requirements_for_retrying?, error) }
+    it do
+      expect(AccountStatus).to receive(:unauthorized?).with(error).and_return(false)
+      expect(AccountStatus).to receive(:forbidden?).with(error).and_return(false)
+      expect(ServiceStatus).to receive(:retryable_error?).with(error).and_return(false)
+      is_expected.to be_falsey
     end
   end
 
   describe '#pick_client' do
     let(:options) { {'user_id' => user_id} }
-    let(:client) { 'client' }
-    subject { worker.pick_client(options) }
+    subject { worker.send(:pick_client, options) }
 
-    context 'The user_id is not set' do
+    shared_examples 'it returns bot client' do
+      it do
+        expect(Bot).to receive(:api_client).and_return('result')
+        is_expected.to eq('result')
+      end
+    end
+
+    context 'user_id is not set' do
       let(:user_id) { nil }
-      it do
-        expect(Bot).to receive(:api_client).and_return(client)
-        is_expected.to eq(client)
-      end
+      include_examples 'it returns bot client'
     end
 
-    context 'The user_id is -1' do
+    context 'user_id is -1' do
       let(:user_id) { -1 }
-      it do
-        expect(Bot).to receive(:api_client).and_return(client)
-        is_expected.to eq(client)
-      end
+      include_examples 'it returns bot client'
     end
 
-    context 'The user_id is set but the user is unauthorized' do
-      let(:user) { instance_double('User') }
-      let(:user_id) { 100 }
-      before do
-        allow(User).to receive(:find).with(user_id).and_return(user)
-        allow(user).to receive(:authorized?).and_return(false)
-      end
-      it do
-        expect(Bot).to receive(:api_client).and_return(client)
-        is_expected.to eq(client)
-      end
+    context 'user_id is set but the user is not persisted' do
+      let(:user_id) { 123 }
+      include_examples 'it returns bot client'
     end
 
-    context 'The user_id is set and the user is authorized' do
-      let(:user) { instance_double('User') }
-      let(:user_id) { 100 }
+    context 'user_id is set but the user is unauthorized' do
+      let(:user) { create(:user, authorized: false) }
+      let(:user_id) { user.id }
+      include_examples 'it returns bot client'
+    end
+
+    context 'user_id is set and the user is authorized' do
+      let(:user) { create(:user) }
+      let(:user_id) { user.id }
       before do
-        allow(User).to receive(:find).with(user_id).and_return(user)
-        allow(user).to receive(:authorized?).and_return(true)
+        allow(User).to receive(:find_by).with(id: user_id).and_return(user)
       end
       it do
-        expect(Bot).not_to receive(:api_client)
-        expect(user).to receive(:api_client).and_return(client)
-        is_expected.to eq(client)
+        expect(user).to receive(:api_client).and_return('result')
+        is_expected.to eq('result')
       end
     end
   end
+
 end
