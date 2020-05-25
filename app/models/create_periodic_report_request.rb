@@ -22,7 +22,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   validates :user_id, presence: true
 
-  attr_accessor :send_only_if_changed, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
+  attr_accessor :send_only_if_changed, :check_creation_status, :check_allotted_messages_count, :check_following_status, :check_interval, :check_credentials, :check_twitter_user
   attr_accessor :worker_context
 
   def perform!
@@ -32,20 +32,27 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
     if check_twitter_user
       create_new_twitter_user_record
+      return unless validate_new_record_creation!
     end
 
     if send_report?
       send_report!
     else
-      logger.info "#{self.class}##{__method__} Don't send a report as records are not changed request_id=#{id} user_id=#{user_id}"
+      update(status: 'not_send')
     end
   end
 
   def validate_report!
-    return if check_credentials && !validate_credentials!
-    return if check_following_status && !validate_following_status!
-    return if check_interval && !validate_interval!
-    return if check_allotted_messages_count && !validate_messages_count!
+    return false if check_credentials && !validate_credentials!
+    return false if check_following_status && !validate_following_status!
+    return false if check_interval && !validate_interval!
+    return false if check_allotted_messages_count && !validate_messages_count!
+
+    true
+  end
+
+  def validate_new_record_creation!
+    return false if check_creation_status && !validate_creation_status!
 
     true
   end
@@ -66,6 +73,10 @@ class CreatePeriodicReportRequest < ApplicationRecord
 
   def validate_following_status!
     FollowingStatusValidator.new(self).validate_and_deliver!
+  end
+
+  def validate_creation_status!
+    CreationStatusValidator.new(self).validate_and_deliver!
   end
 
   def validate_interval!
@@ -282,6 +293,23 @@ class CreatePeriodicReportRequest < ApplicationRecord
     end
   end
 
+  class CreationStatusValidator < Validator
+    def validate!
+      return true unless @request.creation_failed?
+
+      @request.update(status: 'creation_failed')
+
+      false
+    rescue => e
+      logger.info "#{self.class}##{__method__} #{e.inspect} request=#{@request.inspect}"
+      true
+    end
+
+    def deliver!
+      # Do nothing
+    end
+  end
+
   class AllottedMessagesCountValidator < Validator
     def validate!
       user = @request.user
@@ -310,9 +338,15 @@ class CreatePeriodicReportRequest < ApplicationRecord
     CreateTwitterUserTask.new(request).start!(:periodic_reports)
   rescue CreateTwitterUserRequest::TooShortCreateInterval,
       CreateTwitterUserRequest::NotChanged => e
-    logger.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
+    # Do nothing
+  rescue CreateTwitterUserRequest::TooManyFriends => e
+    @creation_failed = true
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
+  end
+
+  def creation_failed?
+    @creation_failed
   end
 
   class ReportOptionsBuilder

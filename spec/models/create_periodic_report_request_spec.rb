@@ -17,6 +17,7 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       before { request.check_twitter_user = true }
       it do
         expect(request).to receive(:create_new_twitter_user_record)
+        expect(request).to receive(:creation_failed?)
         subject
       end
     end
@@ -118,8 +119,20 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
       context "#{error} is raised" do
         before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
         it do
-          expect(request.logger).to receive(:info).with(instance_of(String))
+          expect(request.logger).not_to receive(:info)
           subject
+        end
+      end
+    end
+
+    [
+        CreateTwitterUserRequest::TooManyFriends
+    ].each do |error|
+      context "#{error} is raised" do
+        before { allow(CreateTwitterUserTask).to receive(:new).and_raise(error) }
+        it do
+          subject
+          expect(request).to satisfy { |result| result.instance_variable_get(:@creation_failed) }
         end
       end
     end
@@ -134,6 +147,16 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
           subject
         end
       end
+    end
+  end
+
+  describe '#creation_failed?' do
+    subject { request.creation_failed? }
+    it { is_expected.to be_falsey }
+
+    context '@creation_failed is set' do
+      before { request.instance_variable_set(:@creation_failed, 'result') }
+      it { is_expected.to eq('result') }
     end
   end
 
