@@ -78,13 +78,16 @@ module Efs
       # TODO Remove redundant benchmark
 
       def cache_client
-        if instance_variable_defined?(:@cache_client)
-          @cache_client
-        else
-          dir = Rails.root.join(CacheDirectory.find_by(name: 'efs_twitter_user')&.dir || 'tmp/efs_cache')
-          FileUtils.mkdir_p(dir) unless File.exists?(dir)
-          options = {expires_in: 1.month, race_condition_ttl: 5.minutes}
-          @cache_client = ActiveSupport::Cache::FileStore.new(dir, options)
+        @m ||= Mutex.new
+        @m.synchronize do
+          if instance_variable_defined?(:@cache_client)
+            @cache_client
+          else
+            dir = Rails.root.join(CacheDirectory.find_by(name: 'efs_twitter_user')&.dir || 'tmp/efs_cache')
+            FileUtils.mkdir_p(dir) unless File.exists?(dir)
+            options = {expires_in: 1.month, race_condition_ttl: 5.minutes}
+            @cache_client = ActiveSupport::Cache::FileStore.new(dir, options)
+          end
         end
       end
 
