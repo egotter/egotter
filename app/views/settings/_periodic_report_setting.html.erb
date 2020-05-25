@@ -1,0 +1,100 @@
+<% setting = current_user.periodic_report_setting %>
+
+<h5 class="mt-5 mb-1"><%= t(".revive") %></h5>
+
+<hr>
+
+<% url = sign_in_path(force_login: true, via: current_via('update_authorized_for_dm'), redirect_path: start_path(anchor: 'revive-notification', via: current_via('update_authorized_for_dm'))) %>
+<%= link_to t('.not_coming.button'), url, class: 'btn btn-primary' %>
+<span class="text-muted"><%= t('.not_coming.note_html') %></span>
+
+<h5 class="mt-5 mb-1"><%= t(".period_of_time") %></h5>
+
+<div class="my-3"><%= t(".period_of_time_note_html") %></div>
+
+<hr>
+
+<div class="row">
+  <div class="col-auto">
+    <%= check_box_tag :morning, true, setting.morning?, {id: 'morning', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="morning"></label>
+  </div>
+
+  <div class="col">
+    <h6><%= t(".morning.name") %></h6>
+    <div class="text-muted"><%= t(".morning.desc") %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-auto">
+    <%= check_box_tag :afternoon, true, setting.afternoon?, {id: 'afternoon', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="afternoon"></label>
+  </div>
+
+  <div class="col">
+    <h6><%= t(".afternoon.name") %></h6>
+    <div class="text-muted"><%= t(".afternoon.desc") %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-auto">
+    <%= check_box_tag :evening, true, setting.evening?, {id: 'evening', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="evening"></label>
+  </div>
+
+  <div class="col">
+    <h6><%= t(".evening.name") %></h6>
+    <div class="text-muted"><%= t(".evening.desc") %></div>
+  </div>
+</div>
+
+<hr>
+
+<div class="row">
+  <div class="col-auto">
+    <%= check_box_tag :night, true, setting.night?, {disabled: true, id: 'night', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="night"></label>
+  </div>
+
+  <div class="col">
+    <h6><%= t(".night.name") %></h6>
+    <div class="text-muted"><%= t(".night.desc_html") %></div>
+  </div>
+</div>
+
+<hr>
+
+<h5 class="mt-5 mb-1"><%= t(".report_timing") %></h5>
+
+<div class="my-3"><%= t(".report_timing_note_html") %></div>
+
+<hr>
+
+<div class="row">
+  <div class="col-auto">
+    <%= check_box_tag :send_only_if_changed, true, setting.send_only_if_changed?, {id: 'send_only_if_changed', class: 'tgl tgl-ios'} %>
+    <label class='tgl-btn' for="send_only_if_changed"></label>
+  </div>
+
+  <div class="col">
+    <h6><%= t(".send_only_if_changed.name") %></h6>
+    <div class="text-muted"><%= t(".send_only_if_changed.desc") %></div>
+  </div>
+</div>
+
+<hr>
+
+<script>
+  var url = '<%= api_v1_periodic_report_settings_path %>';
+  var confirmMessage = '<%= t('.send_only_if_changed.confirm') %>';
+
+  $(function () {
+    new PeriodicReportSetting(url, confirmMessage);
+  });
+</script>
