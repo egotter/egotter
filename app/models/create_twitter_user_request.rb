@@ -66,6 +66,14 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def validate_twitter_user!(twitter_user)
     if TwitterUser.exists?(uid: uid)
+      if twitter_user.too_little_friends?
+        raise TooLittleFriends.new('no_friends_and_followers')
+      end
+
+      if SearchLimitation.hard_limited?(twitter_user)
+        raise TooManyFriends.new('hard_limited')
+      end
+
       # TODO Implement #no_need_to_import_friendships? as class method
       if twitter_user.no_need_to_import_friendships?
         raise TooManyFriends.new('Already exists')
@@ -220,6 +228,9 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class TooShortCreateInterval < Error
+  end
+
+  class TooLittleFriends < Error
   end
 
   class TooManyFriends < Error

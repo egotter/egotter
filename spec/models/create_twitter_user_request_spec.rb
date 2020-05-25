@@ -74,23 +74,38 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
     let(:twitter_user) { build(:twitter_user) }
     subject { request.validate_twitter_user!(twitter_user) }
 
-    context 'twitter_user is persisted' do
+    shared_context 'twitter_user is persisted' do
       before { allow(TwitterUser).to receive(:exists?).with(uid: request.uid).and_return(true) }
+    end
 
-      context 'no_need_to_import_friendships? returns true' do
-        before { allow(twitter_user).to receive(:no_need_to_import_friendships?).and_return(true) }
-        it { expect { subject }.to raise_error(described_class::TooManyFriends) }
-      end
+    context 'there is no friends and followers' do
+      include_context 'twitter_user is persisted'
+      before { allow(twitter_user).to receive(:too_little_friends?).and_return(true) }
+      it { expect { subject }.to raise_error(described_class::TooLittleFriends) }
+    end
 
-      context 'diff_values_empty? returns true' do
-        before { allow(request).to receive(:diff_values_empty?).with(twitter_user).and_return(true) }
-        it { expect { subject }.to raise_error(described_class::NotChanged) }
-      end
+    context 'there are too many friends and followers' do
+      include_context 'twitter_user is persisted'
+      before { allow(SearchLimitation).to receive(:hard_limited?).with(twitter_user).and_return(true) }
+      it { expect { subject }.to raise_error(described_class::TooManyFriends) }
+    end
 
-      context 'else' do
-        before { allow(request).to receive(:diff_values_empty?).with(twitter_user).and_return(false) }
-        it { expect { subject }.not_to raise_error }
-      end
+    context 'no_need_to_import_friendships? returns true' do
+      include_context 'twitter_user is persisted'
+      before { allow(twitter_user).to receive(:no_need_to_import_friendships?).and_return(true) }
+      it { expect { subject }.to raise_error(described_class::TooManyFriends) }
+    end
+
+    context 'diff_values_empty? returns true' do
+      include_context 'twitter_user is persisted'
+      before { allow(request).to receive(:diff_values_empty?).with(twitter_user).and_return(true) }
+      it { expect { subject }.to raise_error(described_class::NotChanged) }
+    end
+
+    context 'else' do
+      include_context 'twitter_user is persisted'
+      before { allow(request).to receive(:diff_values_empty?).with(twitter_user).and_return(false) }
+      it { expect { subject }.not_to raise_error }
     end
 
     context 'twitter_user is not persisted' do

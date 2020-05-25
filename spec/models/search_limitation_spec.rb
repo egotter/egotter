@@ -23,13 +23,8 @@ RSpec.describe SearchLimitation, type: :model do
   end
 
   describe '.soft_limited?' do
-    let(:user) { double('User') }
-    subject { described_class.soft_limited?(user) }
-
-    before do
-      allow(user).to receive(:[]).with(:friends_count).and_return(friends_count)
-      allow(user).to receive(:[]).with(:followers_count).and_return(followers_count)
-    end
+    let(:twitter_user) { build(:twitter_user, friends_count: friends_count, followers_count: followers_count, with_relations: false) }
+    subject { described_class.soft_limited?(twitter_user) }
 
     context 'friends_count + followers_count > 2000' do
       let(:friends_count) { 1000 }
@@ -47,13 +42,8 @@ RSpec.describe SearchLimitation, type: :model do
   end
 
   describe '.hard_limited?' do
-    let(:user) { double('User') }
-    subject { described_class.hard_limited?(user) }
-
-    before do
-      allow(user).to receive(:[]).with(:friends_count).and_return(friends_count)
-      allow(user).to receive(:[]).with(:followers_count).and_return(followers_count)
-    end
+    let(:twitter_user) { build(:twitter_user, friends_count: friends_count, followers_count: followers_count, with_relations: false) }
+    subject { described_class.hard_limited?(twitter_user) }
 
     context 'friends_count + followers_count > 60000' do
       let(:friends_count) { 30000 }

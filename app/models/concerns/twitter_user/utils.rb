@@ -9,6 +9,10 @@ module Concerns::TwitterUser::Utils
     friends_size == 0 && followers_size == 0
   end
 
+  def too_little_friends?
+    friends_count == 0 && followers_count == 0 && friends_size == 0 && followers_size == 0
+  end
+
   # #diff calls this method in context of new record
   def friend_uids
     if new_record?
