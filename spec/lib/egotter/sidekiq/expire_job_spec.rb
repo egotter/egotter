@@ -1,106 +1,7 @@
 require 'rails_helper'
 
-RSpec.describe Egotter::Sidekiq::ExpireJob do
+RSpec.describe ExpireJob::Middleware do
   let(:middleware) { described_class.new }
-
-  describe '#call' do
-    let(:worker) { double('Worker') }
-    let(:enqueued_at) { 'ok' }
-    let(:msg) { {'args' => [1, 'enqueued_at' => 'time']} }
-    let(:expire_in) { 1.minute }
-
-    before { allow(middleware).to receive(:pick_enqueued_at).with(msg).and_return(enqueued_at) }
-
-    context 'The worker implements #expire_in' do
-      before { allow(worker).to receive(:expire_in).and_return(expire_in) }
-
-      it do
-        expect(middleware).to receive(:perform_expire_check).with(worker, msg['args'], expire_in, enqueued_at)
-        middleware.call(worker, msg, nil) {}
-      end
-
-      context '#perform_expire_check returns true' do
-        before { expect(middleware).to receive(:perform_expire_check).with(any_args).and_return(true) }
-        it { expect { |b| middleware.call(worker, msg, nil, &b) }.to yield_control }
-      end
-
-      context '#perform_expire_check returns false' do
-        before { expect(middleware).to receive(:perform_expire_check).with(any_args).and_return(false) }
-        it { expect { |b| middleware.call(worker, msg, nil, &b) }.not_to yield_control }
-      end
-    end
-
-    context "The worker doesn't implement #expire_in" do
-      before { allow(worker).to receive(:respond_to?).with(:expire_in).and_return(false) }
-      it do
-        expect(middleware).not_to receive(:perform_expire_check)
-        expect { |b| middleware.call(worker, msg, nil, &b) }.to yield_control
-      end
-    end
-  end
-
-  describe '#perform_expire_check' do
-    let(:worker) { double('Worker') }
-    let(:args) { [1, 'enqueued_at' => enqueued_at] }
-    let(:expire_in) { 1.minute }
-    subject { middleware.perform_expire_check(worker, args, expire_in, enqueued_at) }
-
-    before { allow(worker).to receive(:logger).and_return(Logger.new(nil)) }
-
-    context 'enqueued_at is nil' do
-      let(:enqueued_at) { nil }
-      it { is_expected.to be_truthy }
-    end
-
-    context 'enqueued_at < Time.zone.now - expire_in' do
-      let(:enqueued_at) { Time.zone.now - expire_in - 1.second }
-      it do
-        expect(middleware).to receive(:perform_callback).with(worker, :after_expire, args)
-        is_expected.to be_falsey
-      end
-    end
-  end
-
-  describe '#pick_enqueued_at' do
-    let(:msg) { {'args' => args, 'enqueued_at' => 'dont_use', 'created_at' => 'time in msg'} }
-    subject { middleware.pick_enqueued_at(msg) }
-
-    context 'args has enqueued_at' do
-      let(:args) { [1, 'enqueued_at' => 'time in args'] }
-      it do
-        expect(middleware).to receive(:parse_time).with('time in args').and_return('parsed')
-        is_expected.to eq('parsed')
-      end
-    end
-
-    context "args doesn't have enqueued_at" do
-      let(:args) { [1] }
-      it do
-        expect(middleware).to receive(:parse_time).with('time in msg').and_return('parsed')
-        is_expected.to eq('parsed')
-      end
-    end
-  end
-
-  describe '#parse_time' do
-    let(:time) { Time.zone.now }
-    subject { middleware.parse_time(value) }
-
-    context 'The value is a floating point number' do
-      let(:value) { time.to_f }
-      it { is_expected.to be_within(1.second).of(time) }
-    end
-
-    context 'The value is a string' do
-      let(:value) { time.to_s }
-      it { is_expected.to be_within(1.second).of(time) }
-    end
-
-    context 'The value is something invalid' do
-      let(:value) { nil }
-      it { is_expected.to be_nil }
-    end
-  end
 
   context 'Server side job running' do
     class TestExpireWorker
@@ -125,7 +26,7 @@ RSpec.describe Egotter::Sidekiq::ExpireJob do
 
     before do
       Sidekiq::Testing.server_middleware do |chain|
-        chain.add Egotter::Sidekiq::ExpireJob
+        chain.add ExpireJob::Middleware
       end
 
       Redis.client.flushdb

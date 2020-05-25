@@ -8,7 +8,7 @@ Sidekiq.configure_server do |config|
   config.redis = {url: "redis://#{ENV['REDIS_HOST']}:6379/#{database}"}
   config.server_middleware do |chain|
     chain.add Egotter::Sidekiq::ServerUniqueJob
-    chain.add Egotter::Sidekiq::ExpireJob
+    chain.add ExpireJob::Middleware
     chain.add Egotter::Sidekiq::TimeoutJob
   end
   config.client_middleware do |chain|
