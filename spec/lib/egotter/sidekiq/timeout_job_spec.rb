@@ -42,6 +42,7 @@ RSpec.describe TimeoutJob::Middleware do
 
       TestTimeoutWorker.drain
       expect(TestTimeoutWorker.class_variable_get(:@@count)).to eq(0)
+      expect(TestTimeoutWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
   end
 end

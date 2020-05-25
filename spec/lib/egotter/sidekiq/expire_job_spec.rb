@@ -48,18 +48,20 @@ RSpec.describe ExpireJob::Middleware do
       expect(TestExpireWorker.class_variable_get(:@@callback_count)).to eq(1)
     end
 
-    specify 'Sidekiq server expires jobs with no enqueued_at specified' do
-      expect(TestExpireWorker.jobs.size).to eq(0)
+    context 'Even if no value is explicitly specified' do
+      specify 'Sidekiq server expires jobs' do
+        expect(TestExpireWorker.jobs.size).to eq(0)
 
-      TestExpireWorker.perform_async(1)
-      expect(TestExpireWorker.jobs.size).to eq(1)
+        TestExpireWorker.perform_async(1)
+        expect(TestExpireWorker.jobs.size).to eq(1)
 
-      travel 1.hour
+        travel 1.hour
 
-      TestExpireWorker.drain
-      expect(TestExpireWorker.jobs.size).to eq(0)
-      expect(TestExpireWorker.class_variable_get(:@@count)).to eq(0)
-      expect(TestExpireWorker.class_variable_get(:@@callback_count)).to eq(1)
+        TestExpireWorker.drain
+        expect(TestExpireWorker.jobs.size).to eq(0)
+        expect(TestExpireWorker.class_variable_get(:@@count)).to eq(0)
+        expect(TestExpireWorker.class_variable_get(:@@callback_count)).to eq(1)
+      end
     end
   end
 end
