@@ -1,8 +1,6 @@
 require 'rails_helper'
 
 RSpec.describe ExpireJob::Middleware do
-  let(:middleware) { described_class.new }
-
   context 'Server side job running' do
     class TestExpireWorker
       include Sidekiq::Worker
