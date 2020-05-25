@@ -49,8 +49,9 @@ class CreateTwitterUserWorker
     import_request.finished!
 
   rescue CreateTwitterUserRequest::Error => e
+    # Do nothing
   rescue => e
-    logger.warn "#{e.class} #{e.message} #{request_id} #{options.inspect}"
+    logger.warn "#{e.inspect} request_id=#{request_id} options=#{options.inspect}"
     logger.info "Caused by #{e.cause.inspect}" if e.cause
     logger.info e.backtrace.join("\n")
   end
