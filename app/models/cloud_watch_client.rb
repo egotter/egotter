@@ -25,7 +25,7 @@ class CloudWatchClient
     def initialize
       @client = CloudWatchClient.new
       @metrics = Hash.new { |hash, key| hash[key] = [] }
-      @changed = false
+      @appended = false
     end
 
     def append(name, value, namespace:, dimensions: nil)
@@ -36,16 +36,16 @@ class CloudWatchClient
           value: value,
           unit: 'Count'
       }
-      @changed = true
+      @appended = true
 
       self
     end
 
     def update
-      if @changed
+      if @appended
         @metrics.each do |namespace, metric_data|
           logger.info "Send #{metric_data.size} metrics to #{namespace}"
-          logger.info metric_data.inspect
+          # logger.info metric_data.inspect
 
           metric_data.each_slice(20).each do |data|
             params = {

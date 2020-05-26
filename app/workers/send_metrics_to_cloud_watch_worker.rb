@@ -20,8 +20,7 @@ class SendMetricsToCloudWatchWorker
   # Run every minute
   def perform
     %i(send_google_analytics_metrics
-       send_sidekiq_metrics
-       send_prompt_reports_metrics
+       send_periodic_reports_metrics
        send_search_error_logs_metrics
        send_twitter_users_metrics
        send_create_twitter_user_logs_metrics
@@ -100,7 +99,7 @@ class SendMetricsToCloudWatchWorker
       active_users = GoogleAnalyticsClient.new.active_users
       put_metric_data('rt:activeUsers', active_users, options)
     rescue => e
-      logger.warn "#{e.class} #{e.message} activeUsers=#{active_users} #{options.inspect}"
+      logger.warn "#{e.class} #{e.message} active_users=#{active_users} options=#{options.inspect}"
     end
 
     # There are many kinds of sources.
@@ -152,6 +151,28 @@ class SendMetricsToCloudWatchWorker
       if send_count > 0 && read_count > 0
         read_rate = 100.0 * read_count / send_count
         options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
+        put_metric_data('ReadRate', read_rate, options)
+      end
+    end
+  end
+
+  def send_periodic_reports_metrics
+    namespace = "PeriodicReports#{"/#{Rails.env}" unless Rails.env.production?}"
+
+    [10.minutes, 1.hour].each do |duration|
+      condition = {created_at: duration.ago..Time.zone.now}
+
+      send_count = PeriodicReport.where(condition).size
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}, {name: 'Type', value: 'Total'}]}
+      put_metric_data('SendCount', send_count, options) if send_count > 0
+
+      read_count = PeriodicReport.where(condition).where.not(read_at: nil).size
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}, {name: 'Type', value: 'Total'}]}
+      put_metric_data('ReadCount', read_count, options) if read_count > 0
+
+      if send_count > 0 && read_count > 0
+        read_rate = 100.0 * read_count / send_count
+        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}, {name: 'Type', value: 'Total'}]}
         put_metric_data('ReadRate', read_rate, options)
       end
     end
