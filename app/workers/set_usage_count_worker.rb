@@ -6,6 +6,10 @@ class SetUsageCountWorker
     -1
   end
 
+  def unique_in
+    1.minute
+  end
+
   def perform
     count = User.all.size
     UsageCount.set(count)
