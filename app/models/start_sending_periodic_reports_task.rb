@@ -85,6 +85,20 @@ class StartSendingPeriodicReportsTask
   end
 
   class << self
+    def morning_user_ids
+      ids1 = dm_received_user_ids
+      ids2 = new_user_ids(2.days.ago, Time.zone.now)
+      (ids1 + ids2).uniq
+    end
+
+    def afternoon_user_ids
+      morning_user_ids
+    end
+
+    def night_user_ids
+      morning_user_ids
+    end
+
     def dm_received_user_ids(reject_stop_requested: true)
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
       user_ids = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
