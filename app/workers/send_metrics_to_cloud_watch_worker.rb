@@ -22,8 +22,6 @@ class SendMetricsToCloudWatchWorker
     %i(send_google_analytics_metrics
        send_periodic_reports_metrics
        send_search_error_logs_metrics
-       send_twitter_users_metrics
-       send_create_twitter_user_logs_metrics
        send_twitter_db_users_metrics
        send_search_histories_metrics
        send_sign_in_logs_metrics
