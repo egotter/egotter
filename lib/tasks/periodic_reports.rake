@@ -27,7 +27,7 @@ namespace :periodic_reports do
     date_range = start_date.beginning_of_day..end_date.end_of_day
     puts "start_date=#{date_range.first} end_date=#{date_range.last}"
 
-    users = User.where(created_at: date_range, authorized: true).select(:id, :uid)
+    users = User.where(created_at: date_range, authorized: true).select(:id, :uid).to_a
     puts "users1=#{users.size}"
 
     users.select! do |user|
