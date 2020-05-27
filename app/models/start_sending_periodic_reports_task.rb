@@ -87,7 +87,7 @@ class StartSendingPeriodicReportsTask
   class << self
     def morning_user_ids
       ids1 = dm_received_user_ids
-      ids2 = new_user_ids(2.days.ago, Time.zone.now)
+      ids2 = new_user_ids(1.day.ago, Time.zone.now)
       (ids1 + ids2).uniq
     end
 
