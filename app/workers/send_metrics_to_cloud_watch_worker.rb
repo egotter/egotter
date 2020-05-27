@@ -21,6 +21,7 @@ class SendMetricsToCloudWatchWorker
   def perform
     %i(send_google_analytics_metrics
        send_periodic_reports_metrics
+       send_create_periodic_report_requests_metrics
        send_search_error_logs_metrics
        send_twitter_db_users_metrics
        send_search_histories_metrics
@@ -155,7 +156,7 @@ class SendMetricsToCloudWatchWorker
   end
 
   def send_periodic_reports_metrics
-    namespace = "PeriodicReports#{"/#{Rails.env}" unless Rails.env.production?}"
+    namespace = "#{PeriodicReport.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
 
     [10.minutes, 1.hour].each do |duration|
       condition = {created_at: duration.ago..Time.zone.now}
@@ -172,6 +173,20 @@ class SendMetricsToCloudWatchWorker
         read_rate = 100.0 * read_count / send_count
         options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}, {name: 'Type', value: 'Total'}]}
         put_metric_data('ReadRate', read_rate, options)
+      end
+    end
+  end
+
+  def send_create_periodic_report_requests_metrics
+    namespace = "#{CreatePeriodicReportRequest.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
+
+    [10.minutes, 1.hour].each do |duration|
+      condition = {created_at: duration.ago..Time.zone.now}
+
+      CreatePeriodicReportRequest.where(condition).group(:status).count.each do |status, count|
+        next if status.blank?
+        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
+        put_metric_data(status, count, options)
       end
     end
   end
