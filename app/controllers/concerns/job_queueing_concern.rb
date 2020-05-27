@@ -27,6 +27,16 @@ module Concerns::JobQueueingConcern
     end
   end
 
+  def enqueue_assemble_twitter_user(twitter_user)
+    return if from_crawler?
+    return unless user_signed_in?
+
+    if twitter_user.assembled_at.blank?
+      request = AssembleTwitterUserRequest.create(twitter_user: twitter_user)
+      AssembleTwitterUserWorker.perform_async(request.id, requested_by: controller_name)
+    end
+  end
+
   def enqueue_update_authorized
     return if from_crawler?
     return unless user_signed_in?

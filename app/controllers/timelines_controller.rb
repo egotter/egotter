@@ -14,6 +14,7 @@ class TimelinesController < ApplicationController
     enqueue_update_authorized
     enqueue_update_egotter_friendship
     enqueue_audience_insight(@twitter_user.uid)
+    enqueue_assemble_twitter_user(@twitter_user)
 
     @chart_builder = find_or_create_chart_builder(@twitter_user)
 
