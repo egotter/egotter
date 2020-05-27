@@ -35,8 +35,6 @@ class CreateTwitterUserWorker
     task = CreateTwitterUserTask.new(request)
     task.start!
 
-    UpdateUsageStatWorker.perform_async(request.uid, user_id: request.user_id, location: self.class)
-    UpdateAudienceInsightWorker.perform_async(request.uid, location: self.class)
     notify(request.user, request.uid)
 
     # Saved values and relations At this point:
@@ -44,9 +42,8 @@ class CreateTwitterUserWorker
     #   friendships(efs+s3), followerships(efs+s3)
     #   statuses, mentions, favorites
 
-    import_request = ImportTwitterUserRequest.create!(user_id: request.user_id, twitter_user: task.twitter_user)
-    import_request.perform!
-    import_request.finished!
+    assemble_request = AssembleTwitterUserRequest.create!(twitter_user: task.twitter_user)
+    AssembleTwitterUserWorker.new.perform(assemble_request.id)
 
   rescue CreateTwitterUserRequest::Error => e
     # Do nothing
@@ -58,6 +55,7 @@ class CreateTwitterUserWorker
 
   private
 
+  # TODO Implement as separated worker
   def notify(searcher, searchee_uid)
     searchee = User.authorized.select(:id).find_by(uid: searchee_uid)
     if searchee && (!searcher || searcher.id != searchee.id)

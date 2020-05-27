@@ -21,7 +21,7 @@
   - CreateSignedInTwitterUserWorker
   - CreateTwitterDBUserWorker
   - CreateTwitterUserWorker
-  - ImportTwitterUserRelationsWorker
+  - AssembleTwitterUserWorker
   - ResetTooManyRequestsWorker
   - StartSendingPeriodicReportsWorker
   - WriteToS3Worker

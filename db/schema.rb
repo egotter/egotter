@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_05_22_084451) do
+ActiveRecord::Schema.define(version: 2020_05_27_090719) do
 
   create_table "access_days", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
     t.integer "user_id", null: false
@@ -70,6 +70,16 @@ ActiveRecord::Schema.define(version: 2020_05_22_084451) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_announcements_on_created_at"
+  end
+
+  create_table "assemble_twitter_user_requests", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
+    t.integer "twitter_user_id", null: false
+    t.string "status", default: "", null: false
+    t.datetime "finished_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_assemble_twitter_user_requests_on_created_at"
+    t.index ["twitter_user_id"], name: "index_assemble_twitter_user_requests_on_twitter_user_id"
   end
 
   create_table "audience_insights", options: "ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci", force: :cascade do |t|
