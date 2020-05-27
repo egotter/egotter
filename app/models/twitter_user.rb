@@ -11,6 +11,7 @@
 #  friends_count   :integer          default(-1), not null
 #  followers_count :integer          default(-1), not null
 #  created_by      :string(191)      default(""), not null
+#  assembled_at    :datetime
 #  created_at      :datetime         not null
 #  updated_at      :datetime         not null
 #

@@ -1246,6 +1246,7 @@ ActiveRecord::Schema.define(version: 2020_05_22_084451) do
     t.integer "friends_count", default: -1, null: false
     t.integer "followers_count", default: -1, null: false
     t.string "created_by", default: "", null: false
+    t.datetime "assembled_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["created_at"], name: "index_twitter_users_on_created_at"
