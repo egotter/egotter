@@ -3,7 +3,7 @@ class AssembleTwitterUserWorker
   sidekiq_options queue: self, retry: 0, backtrace: false
 
   def unique_key(request_id, options = {})
-    AssembleTwitterUserRequest.find(request_id).uid
+    AssembleTwitterUserRequest.find(request_id).twitter_user.uid
   end
 
   def unique_in
