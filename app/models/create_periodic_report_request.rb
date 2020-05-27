@@ -31,9 +31,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     return unless validate_report!
 
     if check_twitter_user
-      if twitter_user_records_count_changed? { create_new_twitter_user_record }
-        assemble_twitter_user_record
-      end
+      create_new_twitter_user_record
     end
 
     if send_report?
