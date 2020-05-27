@@ -31,7 +31,9 @@ class CreatePeriodicReportRequest < ApplicationRecord
     return unless validate_report!
 
     if check_twitter_user
-      create_new_twitter_user_record
+      if twitter_user_records_count_changed? { create_new_twitter_user_record }
+        assemble_twitter_user_record
+      end
     end
 
     if send_report?
@@ -307,12 +309,25 @@ class CreatePeriodicReportRequest < ApplicationRecord
         user_id: user_id,
         uid: user.uid)
 
-    CreateTwitterUserTask.new(request).start!(:periodic_reports)
+    task = CreateTwitterUserTask.new(request)
+    task.start!(:periodic_reports)
+
   rescue CreateTwitterUserRequest::TooShortCreateInterval,
       CreateTwitterUserRequest::NotChanged => e
     logger.info "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
   rescue => e
     logger.warn "#{self.class}##{__method__} #{e.inspect} request_id=#{id} create_request_id=#{request&.id}"
+  end
+
+  def twitter_user_records_count_changed?(&block)
+    records_count = TwitterUser.where(uid: user.uid).size
+    yield
+    TwitterUser.where(uid: user.uid).size != records_count
+  end
+
+  def assemble_twitter_user_record
+    assemble_request = AssembleTwitterUserRequest.create!(twitter_user: TwitterUser.latest_by(uid: user.uid))
+    AssembleTwitterUserWorker.perform_async(assemble_request.id)
   end
 
   class ReportOptionsBuilder

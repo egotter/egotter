@@ -19,6 +19,14 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
         expect(request).to receive(:create_new_twitter_user_record)
         subject
       end
+
+      context 'twitter_user_records_count_changed? returns true' do
+        before { allow(request).to receive(:twitter_user_records_count_changed?).and_return(true) }
+        it do
+          expect(request).to receive(:assemble_twitter_user_record)
+          subject
+        end
+      end
     end
 
     context 'validation is failed' do
@@ -134,6 +142,26 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
           subject
         end
       end
+    end
+  end
+
+  describe '#twitter_user_records_count_changed?' do
+    let(:request) { build(:create_periodic_report_request, user_id: user.id) }
+    let(:block) { Proc.new { create(:twitter_user, uid: user.uid, with_relations: false) } }
+    subject { request.twitter_user_records_count_changed?(&block) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '#assemble_twitter_user_record' do
+    let(:twitter_user) { create(:twitter_user, uid: user.uid, with_relations: false) }
+    let(:request) { build(:create_periodic_report_request, user_id: user.id) }
+    let(:assemble_request) { create(:assemble_twitter_user_request, twitter_user: twitter_user) }
+    subject { request.assemble_twitter_user_record }
+    before { allow(TwitterUser).to receive(:latest_by).with(uid: user.uid).and_return(twitter_user) }
+    it do
+      expect(AssembleTwitterUserRequest).to receive(:create!).with(twitter_user: twitter_user).and_return(assemble_request)
+      expect(AssembleTwitterUserWorker).to receive(:perform_async).with(assemble_request.id)
+      subject
     end
   end
 
