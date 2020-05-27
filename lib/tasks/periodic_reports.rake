@@ -20,6 +20,34 @@ namespace :periodic_reports do
     puts "user_ids=#{user_ids.size}"
   end
 
+  desc 'Send re-engage messages'
+  task send_reengage_messages: :environment do
+    start_date = ENV['START_DATE'] ? Time.zone.parse(ENV['START_DATE']) : 7.days.ago
+    end_date = ENV['END_DATE'] ? Time.zone.parse(ENV['END_DATE']) : Time.zone.now
+    date_range = start_date.beginning_of_day..end_date.end_of_day
+    puts "start_date=#{date_range.first} end_date=#{date_range.last}"
+
+    users = User.where(created_at: date_range, authorized: true).select(:id, :uid)
+    puts "users1=#{users.size}"
+
+    users.select! do |user|
+      !CreatePeriodicReportRequest.exists?(user_id: user.id)
+    end
+    puts "users2=#{users.size}"
+
+    users.select! do |user|
+      !StopPeriodicReportRequest.exists?(user_id: user.id)
+    end
+    puts "users3=#{users.size}"
+
+    users.select! do |user|
+      !PeriodicReport.messages_allotted?(user)
+    end
+    puts "users4=#{users.size}"
+
+    StartSendingPeriodicReportsTask.new(user_ids: users.map(&:id), delay: 1.second).start!
+  end
+
   namespace :send_messages do
     desc 'Send morning messages'
     task morning: :environment do
