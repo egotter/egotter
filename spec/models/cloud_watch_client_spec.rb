@@ -25,7 +25,7 @@ RSpec.describe CloudWatchClient::Metrics, type: :model do
       freeze_time do
         subject
         expect(client.instance_variable_get(:@metrics)).to match({namespace => [send_data]})
-        expect(client.instance_variable_get(:@changed)).to be_truthy
+        expect(client.instance_variable_get(:@appended)).to be_truthy
       end
     end
   end
@@ -35,7 +35,7 @@ RSpec.describe CloudWatchClient::Metrics, type: :model do
     let(:internal_client) { client.instance_variable_get(:@client).instance_variable_get(:@client) }
 
     before do
-      client.instance_variable_set(:@changed, true)
+      client.instance_variable_set(:@appended, true)
       client.instance_variable_set(:@metrics, {'namespace' => [{'key' => 'value'}]})
     end
 
