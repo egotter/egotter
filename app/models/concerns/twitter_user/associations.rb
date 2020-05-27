@@ -170,8 +170,24 @@ module Concerns::TwitterUser::Associations
     mutual_friendships.pluck(:friend_uid)
   end
 
+  def one_sided_friend_uids
+    one_sided_friendships.pluck(:friend_uid)
+  end
+
+  def one_sided_follower_uids
+    one_sided_followerships.pluck(:follower_uid)
+  end
+
   def inactive_mutual_friend_uids
     inactive_mutual_friendships.pluck(:friend_uid)
+  end
+
+  def inactive_friend_uids
+    inactive_friendships.pluck(:friend_uid)
+  end
+
+  def inactive_follower_uids
+    inactive_followerships.pluck(:follower_uid)
   end
 
   def unfollower_uids

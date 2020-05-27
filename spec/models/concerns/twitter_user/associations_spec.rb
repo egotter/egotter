@@ -36,10 +36,42 @@ RSpec.describe Concerns::TwitterUser::Associations do
     end
   end
 
+  describe '#one_sided_friend_uids' do
+    subject { twitter_user.one_sided_friend_uids }
+    it do
+      expect(twitter_user).to receive_message_chain(:one_sided_friendships, :pluck).with(:friend_uid).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
+  describe '#one_sided_follower_uids' do
+    subject { twitter_user.one_sided_follower_uids }
+    it do
+      expect(twitter_user).to receive_message_chain(:one_sided_followerships, :pluck).with(:follower_uid).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
   describe '#inactive_mutual_friend_uids' do
     subject { twitter_user.inactive_mutual_friend_uids }
     it do
       expect(twitter_user).to receive_message_chain(:inactive_mutual_friendships, :pluck).with(:friend_uid).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
+  describe '#inactive_friend_uids' do
+    subject { twitter_user.inactive_friend_uids }
+    it do
+      expect(twitter_user).to receive_message_chain(:inactive_friendships, :pluck).with(:friend_uid).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
+  describe '#inactive_follower_uids' do
+    subject { twitter_user.inactive_follower_uids }
+    it do
+      expect(twitter_user).to receive_message_chain(:inactive_followerships, :pluck).with(:follower_uid).and_return('result')
       is_expected.to eq('result')
     end
   end
