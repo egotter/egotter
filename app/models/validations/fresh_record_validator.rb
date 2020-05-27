@@ -5,7 +5,7 @@ module Validations
       return if latest.nil?
 
       if latest.too_short_create_interval?
-        new_record.errors[:base] << "[#{latest.id}] is recently updated."
+        new_record.errors[:base] << "id=#{latest.id} is created #{(Time.zone.now - latest.created_at).to_i} seconds ago"
       end
     end
   end
