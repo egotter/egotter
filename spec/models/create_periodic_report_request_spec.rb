@@ -20,13 +20,13 @@ RSpec.describe CreatePeriodicReportRequest, type: :model do
         subject
       end
 
-      context 'twitter_user_records_count_changed? returns true' do
-        before { allow(request).to receive(:twitter_user_records_count_changed?).and_return(true) }
-        it do
-          expect(request).to receive(:assemble_twitter_user_record)
-          subject
-        end
-      end
+      # context 'twitter_user_records_count_changed? returns true' do
+      #   before { allow(request).to receive(:twitter_user_records_count_changed?).and_return(true) }
+      #   it do
+      #     expect(request).to receive(:assemble_twitter_user_record)
+      #     subject
+      #   end
+      # end
     end
 
     context 'validation is failed' do
