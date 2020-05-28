@@ -51,6 +51,27 @@ class Order < ApplicationRecord
     end
   end
 
+  def save_stripe_attributes!
+    if stripe_customer
+      self.email = stripe_customer.email
+    end
+
+    if stripe_subscription
+      self.name = stripe_subscription.name
+      self.price = stripe_subscription.price
+
+      if stripe_subscription.canceled_at
+        self.canceled_at = stripe_subscription.canceled_at
+      end
+    end
+
+    if changed?
+      save!
+      SlackClient.orders.send_message("#{id} #{saved_changes.inspect}", title: '`Updated`')
+      puts "Updated order_id=#{id} saved_changes=#{saved_changes.inspect}"
+    end
+  end
+
   def stripe_customer
     @stripe_customer ||= (customer_id ? Customer.new(::Stripe::Customer.retrieve(customer_id)) : nil)
   end
