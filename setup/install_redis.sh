@@ -16,9 +16,11 @@ root hard nofile 65536
 * hard nofile 65536
 EOS
 
-echo "net.ipv4.tcp_max_syn_backlog = 512" >>/etc/sysctl.conf
-echo "net.core.somaxconn = 512" >>/etc/sysctl.conf
-echo "vm.overcommit_memory = 1" >>/etc/sysctl.conf
+cat << EOS >>/etc/sysctl.conf
+net.ipv4.tcp_max_syn_backlog = 2048
+net.core.somaxconn = 2048
+vm.overcommit_memory = 1
+EOS
 sysctl -p
 
 echo "echo never > /sys/kernel/mm/transparent_hugepage/enabled" >>/etc/rc.local
