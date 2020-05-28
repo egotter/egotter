@@ -41,8 +41,8 @@
 
 <match <%= name %>.rails.*>
   @type slack
-  webhook_url <%= webhook_rails %>
-  channel rails
+  webhook_url <%= webhook_rails_web %>
+  channel rails_web
   username <%= name %>
   flush_interval 2s
 </match>

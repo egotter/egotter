@@ -127,6 +127,8 @@ module Tasks
         conf = ERB.new(File.read(src)).result_with_hash(
             name: host,
             webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
+            webhook_rails_web: ENV['SLACK_TD_AGENT_RAILS_WEB'],
+            webhook_rails_sidekiq: ENV['SLACK_TD_AGENT_RAILS_SIDEKIQ'],
             webhook_puma: ENV['SLACK_TD_AGENT_PUMA'],
             webhook_sidekiq: ENV['SLACK_TD_AGENT_SIDEKIQ'],
             webhook_sidekiq_import: ENV['SLACK_TD_AGENT_SIDEKIQ_IMPORT'],
