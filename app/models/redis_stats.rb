@@ -4,7 +4,7 @@ class RedisStats
         Redis.client,
         InMemory,
         ApiClient::CacheStore.redis_client
-    ].map { |obj| [obj, obj.used_memory_peak] }
+    ].map { |obj| [obj, "#{obj.used_memory} / #{obj.used_memory_peak}"] }
   end
 
   def to_s
