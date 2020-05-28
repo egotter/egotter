@@ -3,9 +3,11 @@ require 'aws-sdk-cloudwatch'
 class CloudWatchClient
   REGION = 'ap-northeast-1'
 
-  module Util
+  module Logging
     def logger
-      if defined?(Sidekiq)
+      if File.basename($0) == 'rake'
+        Logger.new(STDOUT)
+      elsif defined?(Sidekiq)
         Sidekiq.logger
       elsif defined?(Rails)
         Rails.logger
@@ -20,7 +22,7 @@ class CloudWatchClient
   end
 
   class Metrics
-    include Util
+    include Logging
 
     def initialize
       @client = CloudWatchClient.new
@@ -88,7 +90,7 @@ class CloudWatchClient
   end
 
   class Dashboard
-    include Util
+    include Logging
 
     def initialize(name)
       @client = CloudWatchClient.new
