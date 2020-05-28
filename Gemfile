@@ -49,8 +49,8 @@ gem 'timeout_job'
 # gem 'sidekiq-benchmark'
 # gem 'sidekiq-status'
 gem 'sinatra', require: false
-gem 'redis'
 gem 'hiredis'
+gem 'redis', require: %w[redis redis/connection/hiredis]
 gem 'newrelic_rpm'
 gem 'httparty'
 gem 'rack-timeout'

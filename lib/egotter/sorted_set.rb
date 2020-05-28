@@ -31,8 +31,10 @@ module Egotter
     end
 
     def add(val)
-      cleanup
-      redis.zadd(key, Time.zone.now.to_i, val.to_s)
+      redis.pipelined do
+        cleanup
+        redis.zadd(key, Time.zone.now.to_i, val.to_s)
+      end
     end
 
     def delete(val)
