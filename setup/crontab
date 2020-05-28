@@ -6,7 +6,7 @@ RUNNER='/var/egotter/bin/cron/runner.sh'
 # 30 19 * * *     /bin/sh -c "$RAKE cache_directories:rotate"
 # * * * * *       /bin/sh -c "$RAKE bots:update_authorized"
 # 30 * * * *      /bin/sh -c "$RAKE orders:update_stripe_attributes"
-# 45 */2 * * *    /bin/sh -c "$RAKE periodic_reports:send_remind_messages"
+# 45 * * * *      /bin/sh -c "$RAKE periodic_reports:send_remind_messages"
 # 25 * * * *      /bin/sh -c "$RUNNER 'UpdateEgotterFollowersWorker.perform_async'"
 # 1-51/10 * * * * /bin/sh -c "$RUNNER 'SendMetricsToSlackWorker.perform_async'"
 # 6-56/10 * * * * /bin/sh -c "$RUNNER 'CalculateMetricsWorker.perform_async'"
