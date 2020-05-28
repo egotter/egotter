@@ -2,11 +2,12 @@ require 'rails_helper'
 
 RSpec.describe Egotter::SortedSet do
   let(:instance) { described_class.new(Redis.client) }
+  let(:default_ttl) { 60 }
 
   before do
     Redis.client.flushdb
     instance.instance_variable_set(:@key, 'key')
-    instance.instance_variable_set(:@ttl, 60)
+    instance.instance_variable_set(:@ttl, default_ttl)
   end
 
   describe '#ttl' do
@@ -14,7 +15,7 @@ RSpec.describe Egotter::SortedSet do
 
     context 'val == nil' do
       let(:val) { nil }
-      it { is_expected.to eq(60) }
+      it { is_expected.to eq(default_ttl) }
     end
 
     context 'val != nil' do
@@ -23,9 +24,9 @@ RSpec.describe Egotter::SortedSet do
       context "The set includes specified value" do
         before { instance.add(val) }
         it do
-          expect(instance.ttl(val)).to eq(60)
+          expect(instance.ttl(val)).to eq(default_ttl)
           travel 10.seconds
-          expect(instance.ttl(val)).to eq(60 - 10)
+          expect(instance.ttl(val)).to eq(default_ttl - 10)
         end
       end
 
@@ -41,11 +42,11 @@ RSpec.describe Egotter::SortedSet do
 
     context "The set includes specified value" do
       before { instance.add(val) }
-      it { is_expected.to be_truthy }
+      it { is_expected.to eq(true) }
     end
 
     context "The set doesn't include specified value" do
-      it { is_expected.to be_falsey }
+      it { is_expected.to eq(false) }
     end
   end
 
@@ -61,6 +62,18 @@ RSpec.describe Egotter::SortedSet do
   end
 
   describe '#to_a' do
+    subject { instance.to_a }
 
+    it do
+      expect(instance.to_a).to eq([])
+      instance.add(1)
+      expect(instance.to_a).to eq(['1'])
+      instance.add(2)
+      expect(instance.to_a).to eq(['1', '2'])
+
+      travel default_ttl + 1.second
+
+      expect(instance.to_a).to eq([])
+    end
   end
 end

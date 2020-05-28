@@ -26,8 +26,10 @@ module Egotter
     end
 
     def exists?(val)
-      cleanup
-      redis.zrank(key, val.to_s).present?
+      redis.pipelined do
+        cleanup
+        redis.zrank(key, val.to_s)
+      end.last.present?
     end
 
     def add(val)
@@ -42,8 +44,10 @@ module Egotter
     end
 
     def to_a
-      cleanup
-      redis.zrangebyscore(key, 0, current_time)
+      redis.pipelined do
+        cleanup
+        redis.zrangebyscore(key, 0, current_time)
+      end.last
     end
 
     def size

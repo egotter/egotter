@@ -31,14 +31,14 @@ RSpec.describe ApiClient, type: :model do
       before { allow(client).to receive(:respond_to?).with(:user).and_return(false) }
       it do
         expect(client).not_to receive(:user)
-        expect { subject }.to raise_error(NoMethodError)
+        expect { subject }.to raise_error(NameError) # Or NoMethodError
       end
     end
 
     context 'exception is raised' do
       it do
         expect(instance).to receive(:update_authorization_status).with(anything)
-        expect { subject }.to raise_error(NoMethodError)
+        expect { subject }.to raise_error(NameError) # Or NoMethodError
       end
     end
   end
