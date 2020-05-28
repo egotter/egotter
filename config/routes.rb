@@ -199,8 +199,8 @@ Rails.application.routes.draw do
   end
 
   authenticate :user, lambda { |u| [User::ADMIN_UID, User::EGOTTER_UID].include?(u.uid) } do
-    match 'dm_stats' => proc {
-      [200, {'Content-Type' => 'text/plain'}, [DirectMessageStats.new.to_s]]
+    match 'app_stats' => proc {
+      [200, {'Content-Type' => 'text/plain'}, [DirectMessageStats.new.to_s + "\n\n" + RedisStats.new.to_s]]
     }, via: :get
   end
 
