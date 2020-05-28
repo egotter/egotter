@@ -9,7 +9,7 @@ class CreateTwitterUserWorker
 
   # Notice: This interval is for the job. It is not for creating records.
   def unique_in
-    5.minutes
+    TwitterUser::CREATE_RECORD_INTERVAL - 1.minute
   end
 
   def after_skip(request_id, options = {})
