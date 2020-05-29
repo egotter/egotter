@@ -21,8 +21,12 @@ module Egotter
       redis.del(key)
     end
 
-    def cleanup
-      redis.zremrangebyscore(key, 0, current_time - ttl)
+    def cleanup(sync_flag = true)
+      if sync_flag
+        redis.zremrangebyscore(key, 0, current_time - ttl)
+      else
+        SortedSetCleanupWorker.perform_async(self.class)
+      end
     end
 
     def exists?(val)
