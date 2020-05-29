@@ -17,8 +17,8 @@ root hard nofile 65536
 EOS
 
 cat << EOS >>/etc/sysctl.conf
-net.ipv4.tcp_max_syn_backlog = 2048
-net.core.somaxconn = 2048
+net.ipv4.tcp_max_syn_backlog = 10240
+net.core.somaxconn = 10240
 vm.overcommit_memory = 1
 EOS
 sysctl -p
