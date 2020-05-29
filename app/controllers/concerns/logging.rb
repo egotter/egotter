@@ -59,10 +59,10 @@ module Concerns::Logging
       end
     end
   rescue Encoding::UndefinedConversionError => e
-    logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
     notify_airbrake(e)
   rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
     notify_airbrake(e)
   end
 
@@ -97,7 +97,7 @@ module Concerns::Logging
 
     CreateSearchErrorLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
     notify_airbrake(e)
   end
 
@@ -116,7 +116,7 @@ module Concerns::Logging
     }
     CreateCrawlerLogWorker.perform_async(attrs)
   rescue => e
-    logger.warn "#{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
+    logger.warn "#{self.class}##{__method__}: #{e.class} #{e.message} #{params.inspect} #{request.user_agent}"
     notify_airbrake(e)
   end
 

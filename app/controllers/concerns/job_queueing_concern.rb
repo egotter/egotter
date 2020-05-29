@@ -33,6 +33,9 @@ module Concerns::JobQueueingConcern
     else
       CreateTwitterUserWorker.perform_async(request.id, debug_info: debug_info)
     end
+
+  rescue => e
+    logger.warn "#{self.class}##{__method__}: #{e.inspect} uid=#{uid} user_id=#{user_id} requested_by=#{requested_by}"
   end
 
   def enqueue_assemble_twitter_user(twitter_user)
