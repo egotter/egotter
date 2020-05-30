@@ -1,11 +1,11 @@
 require 'rails_helper'
 
-RSpec.describe CallCreateDirectMessageEventCount, type: :model do
+RSpec.describe GlobalSendDirectMessageFromEgotterCount, type: :model do
   let(:instance) { described_class.new }
 
   describe '#key' do
     subject { instance.key }
-    it { is_expected.to eq("#{Rails.env}:CallCreateDirectMessageEventCount:86400:any_ids") }
+    it { is_expected.to eq("#{Rails.env}:GlobalSendDirectMessageFromEgotterCount:86400:any_ids") }
   end
 
   describe '#increment' do

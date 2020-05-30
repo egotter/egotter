@@ -3,7 +3,12 @@ module Egotter
 
     def initialize(redis)
       super(redis)
-      @async_flag = nil
+      @async_flag = true
+    end
+
+    def sync_mode
+      @async_flag = false
+      self
     end
 
     def cleanup

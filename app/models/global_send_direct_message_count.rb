@@ -1,4 +1,4 @@
-class GlobalSendDirectMessageCount < ::Egotter::SortedSet
+class GlobalSendDirectMessageCount < ::Egotter::AsyncSortedSet
 
   def initialize
     super(Redis.client)

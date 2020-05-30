@@ -1,4 +1,4 @@
-class CallCreateDirectMessageEventCount < ::Egotter::SortedSet
+class CallCreateDirectMessageEventCount < ::Egotter::AsyncSortedSet
 
   def initialize
     super(Redis.client)
