@@ -36,6 +36,14 @@ RSpec.describe Egotter::SortedSet do
     end
   end
 
+  describe 'cleanup' do
+    subject { instance.cleanup }
+    it do
+      expect(instance.redis).to receive(:zremrangebyscore).with(any_args)
+      subject
+    end
+  end
+
   describe '#exists?' do
     let(:val) { 123 }
     subject { instance.exists?(val) }
