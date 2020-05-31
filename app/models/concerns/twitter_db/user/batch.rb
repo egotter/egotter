@@ -16,20 +16,20 @@ module Concerns::TwitterDB::User::Batch
 
     def self.fetch(uids, client:)
       client.users(uids)
-    rescue Twitter::Error::NotFound => e
-      if e.message == 'No user matches for specified terms.'
+    rescue => e
+      if AccountStatus.no_user_matches?(e)
         []
       else
         raise
       end
     end
 
-    UPDATE_RECORD_INTERVAL = Rails.configuration.x.constants['twitter_db_users']['update_record_interval']
+    UPDATE_RECORD_INTERVAL = 6.hours
 
     def self.import(users, force_update: false)
       unless force_update
         # Note: This query uses the index on uid instead of the index on updated_at.
-        persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }, updated_at: UPDATE_RECORD_INTERVAL.seconds.ago..Time.zone.now).pluck(:uid)
+        persisted_uids = TwitterDB::User.where(uid: users.map { |user| user[:id] }, updated_at: UPDATE_RECORD_INTERVAL.ago..Time.zone.now).pluck(:uid)
         users = users.reject { |user| persisted_uids.include? user[:id] }
       end
 
@@ -68,15 +68,16 @@ module Concerns::TwitterDB::User::Batch
         sleep(rand * 5)
         retry
       else
-        logger.warn "RETRY EXHAUSTED #{e.class} #{e.message.truncate(100)}"
-        raise
+        raise RetryExhausted.new("#{e.class} #{e.message.truncate(100)}")
       end
     end
 
     def self.retryable_exception?(ex)
       (ex.class == ActiveRecord::StatementInvalid && ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
-          (ex.class == ActiveRecord::Deadlocked && ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction')) ||
-          ex.message.include?('Connection reset by peer')
+          (ex.class == ActiveRecord::Deadlocked && ex.message.start_with?('Mysql2::Error: Deadlock found when trying to get lock; try restarting transaction'))
+    end
+
+    class RetryExhausted < StandardError
     end
   end
 end

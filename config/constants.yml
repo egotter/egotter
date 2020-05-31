@@ -1,6 +1,4 @@
 default: &default
-  twitter_db_users:
-    update_record_interval: <%= 6.hours %>
   usage_stat_recently_created: <%= 30.minutes %>
   search_limitation:
     soft_limit: 2000
