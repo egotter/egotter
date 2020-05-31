@@ -21,8 +21,6 @@ class SendReceivedMessageWorker
       I18n.t('quick_replies.prompt_reports.label2'),
       I18n.t('quick_replies.welcome_messages.label1'),
       I18n.t('quick_replies.welcome_messages.label2'),
-      I18n.t('quick_replies.test_messages.label1'),
-      I18n.t('quick_replies.test_messages.label2'),
   ]
 
   def fixed_message?(text)
@@ -43,7 +41,6 @@ class SendReceivedMessageWorker
     screen_name = user ? user.screen_name : (Bot.api_client.user(sender_uid)[:screen_name] rescue sender_uid)
 
     text = dm_url(screen_name) + "\n" + text
-    text = latest_errors(user.id).inspect + "\n" + text if user
     text = error_check(user.id) + "\n" + text if user
 
     if QUICK_REPLIES.any? { |message| text.include?(message) }
@@ -58,10 +55,6 @@ class SendReceivedMessageWorker
 
   def dm_url(screen_name)
     "https://twitter.com/direct_messages/create/#{screen_name}"
-  end
-
-  def latest_errors(user_id)
-    CreatePromptReportLog.error_logs_for_one_day(user_id: user_id, request_id: nil).pluck(:error_class)
   end
 
   def error_check(user_id)

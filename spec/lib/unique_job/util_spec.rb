@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UniqueJob::Util do
   let(:middleware) do
-    Class.new do
+    class Middleware
       include UniqueJob::Util
     end.new
   end
@@ -77,7 +77,7 @@ RSpec.describe UniqueJob::Util do
     context 'worker.respond_to?(:unique_in) == true' do
       before { allow(worker).to receive(:unique_in).and_return(10.hours) }
       it do
-        expect(UniqueJob::JobHistory).to receive(:new).with(worker.class, middleware.class, 10.hours)
+        expect(UniqueJob::JobHistory).to receive(:new).with(worker.class, middleware.class.name.demodulize, 10.hours)
         subject
       end
     end
@@ -85,7 +85,7 @@ RSpec.describe UniqueJob::Util do
     context 'worker.respond_to?(:unique_in) == false' do
       before { allow(worker).to receive(:respond_to?).with(:unique_in).and_return(false) }
       it do
-        expect(UniqueJob::JobHistory).to receive(:new).with(worker.class, middleware.class, 1.hour)
+        expect(UniqueJob::JobHistory).to receive(:new).with(worker.class, middleware.class.name.demodulize, 3600)
         subject
       end
     end

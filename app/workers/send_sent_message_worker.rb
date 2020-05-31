@@ -22,7 +22,6 @@ class SendSentMessageWorker
     screen_name = user ? user.screen_name : (Bot.api_client.user(recipient_uid)[:screen_name] rescue recipient_uid)
 
     text = dm_url(screen_name) + "\n" + text
-    text = latest_errors(user.id).inspect + "\n" + text if user
     text = error_check(user.id) + "\n" + text if user
 
     SlackClient.sent_messages.send_message(text, title: "`#{screen_name}`")
@@ -33,10 +32,6 @@ class SendSentMessageWorker
 
   def dm_url(screen_name)
     "https://twitter.com/direct_messages/create/#{screen_name}"
-  end
-
-  def latest_errors(user_id)
-    CreatePromptReportLog.error_logs_for_one_day(user_id: user_id, request_id: nil).pluck(:error_class)
   end
 
   def error_check(user_id)

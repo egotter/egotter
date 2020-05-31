@@ -1511,11 +1511,6 @@ ja:
       description1: 'このボタンを押しておくと、リムられ通知が届きやすくなります'
       label2: '初期設定 届いてません'
       description2: '初期設定に失敗した場合に押してください'
-    test_messages:
-      label1: 'テスト送信 届きました'
-      description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
-      label2: 'テスト送信 届いてません'
-      description2: 'テスト送信に失敗した場合に押してください'
     search_reports:
       label1: '検索通知 届きました'
       description1: 'このボタンを押しておくと、次のリムられ通知が届きやすくなります'
@@ -1997,49 +1992,6 @@ ja:
     new_removing: "新しいリムーブ： %{users}"
     new_removed: "新しいリムられ： %{users}"
     omission: " ... 合計%{num}人"
-    testMessage:
-      timeline_page: '%{screen_name} さんの結果ページ'
-      communication_test: '%{from} から %{to} へのDM送信テスト。さらにいくつかのDMが届きます。#egotter'
-      lets_start: 'リムられ通知のテスト送信を開始します。通知の設定変更はこちら #egotter %{url}'
-      errors:
-        TooShortSendInterval: 'リムられ通知の送信間隔が短すぎます'
-        TooShortRequestInterval: '前回の更新から規定の時間が経っていません'
-        ReportDisabled: 'リムられ通知が無効になっています'
-        EgotterBlocked: '@ego_tter がブロックされています'
-        TooManyFriends: 'フォロー・フォロワーが多すぎます'
-        TooManyErrors: 'エラーの回数が多すぎます'
-        RemovedMessageNotSent: 'DMの送信ができていません'
-        MaybeImportBatchFailed: 'データの更新に失敗しました'
-        UserInactive: 'Webサイトへのアクセスが一定期間ありませんでした'
-      messages:
-        TooShortSendInterval: '一定の時間が経過すればまた届きます。'
-        TooShortRequestInterval: '一定の時間が経過すればまた届きます。'
-        ReportDisabled: '設定ページからリムられ通知を有効に設定してください。'
-        EgotterBlocked: '@ego_tter のブロックを解除してください。'
-        TooManyFriends: 'フォロー・フォロワーが多すぎる場合、通知が止まることがあります。'
-        TooManyErrors: |
-          @ego_tter からDMを送れるように設定してください。手順は下記の通りです。
-
-          1. @ego_tter にDMを1つ送る
-          DMの内容は何でも大丈夫です。1つだけDMを送ってください。
-          この操作をすることで、「DMのやり取りが始まった」という状態になり、@ego_tter からリムられ通知が送れるようになります。
-
-          2.「フォローしているユーザーからしかDMを受信しない」をオンにしている場合は @ego_tter をフォローする
-          この設定をオンにしている場合は、@ego_tter をフォローしないとリムられ通知が届きません。
-          設定しているかどうかは、ツイッターの設定画面 https://twitter.com/settings/safety から確認できます。
-
-          3. できるだけ @ego_tter をフォローする
-          ツイッターの仕組み上、フォローされていないユーザーに継続してDMを送ることができません。そのため、リムられ通知が必ず届いて欲しい方は @ego_tter をフォローしてください。
-
-          4. それでも解決しない場合
-          ツイッター連携アプリ一覧からえごったーを削除し、再度えごったーにログインしてください。
-          連携アプリ一覧 https://twitter.com/settings/applications
-          えごったーログイン https://egotter.com/?via=TooManyErrors
-
-          ※上記の手順を実施した後に、再度リムられ通知のテスト送信を行ってください。
-        RemovedMessageNotSent: 'DMの送信ができない'
-        MaybeImportBatchFailed: '一時的なエラーです。次の通知は届くと思います。'
-        UserInactive: 'Webサイトへのアクセスが一定期間ないと、リムられ通知は止まってしまいます。アクセスすれば、また届くようになります。'
     searchNotification:
       title: 'えごったーで %{user} が検索されました。'
       message: '結果を見る %{url} #egotter ※この検索通知は、誰かに検索された時のみ、最大で1時間に1回ほど届きます。'

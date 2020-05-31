@@ -82,7 +82,7 @@ RSpec.describe UniqueJob::ClientMiddleware do
         expect(TestClientWorker.jobs.size).to eq(1)
         expect(TestClientWorker.class_variable_get(:@@callback_count)).to eq(1)
 
-        UniqueJob::JobHistory.new(TestClientWorker, described_class, nil).delete_all
+        UniqueJob::JobHistory.new(TestClientWorker, described_class.name.demodulize, nil).delete_all
 
         TestClientWorker.perform_async(*args)
         expect(TestClientWorker.jobs.size).to eq(2)

@@ -127,34 +127,6 @@ class SendMetricsToCloudWatchWorker
     #end
   end
 
-  def send_prompt_reports_metrics
-    namespace = "PromptReports#{"/#{Rails.env}" unless Rails.env.production?}"
-
-    [[10.minutes.ago, '10 minutes'], [1.hour.ago, '1 hour']].each do |duration_start, duration_label|
-      duration = {created_at: duration_start..Time.zone.now}
-
-      CreatePromptReportLog.where(duration).where.not(error_class: '').group(:error_class).count.each do |key, count|
-        name = key.demodulize
-        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Error reason'}]}
-        put_metric_data(name, count, options)
-      end
-
-      send_count = PromptReport.where(duration).size
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
-      put_metric_data('SendCount', send_count, options) if send_count > 0
-
-      read_count = PromptReport.where(duration).where.not(read_at: nil).size
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
-      put_metric_data('ReadCount', read_count, options) if read_count > 0
-
-      if send_count > 0 && read_count > 0
-        read_rate = 100.0 * read_count / send_count
-        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration_label}, {name: 'Type', value: 'Total'}]}
-        put_metric_data('ReadRate', read_rate, options)
-      end
-    end
-  end
-
   def send_periodic_reports_metrics
     namespace = "#{PeriodicReport.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
 
@@ -307,7 +279,6 @@ class SendMetricsToCloudWatchWorker
 
     [
         CreatePromptReportRequest,
-        CreateTestReportRequest,
         CreateTwitterUserRequest,
         DeleteTweetsRequest,
         FollowRequest,

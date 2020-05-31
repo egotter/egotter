@@ -57,12 +57,12 @@ RSpec.describe UniqueJob::ServerMiddleware do
       TestServerWorker.perform_async(1)
       expect(TestServerWorker.jobs.size).to eq(1)
 
-      UniqueJob::JobHistory.new(TestServerWorker, UniqueJob::ClientMiddleware, nil).delete_all
+      UniqueJob::JobHistory.new(TestServerWorker, UniqueJob::ClientMiddleware.name.demodulize, nil).delete_all
 
       TestServerWorker.perform_async(1)
       expect(TestServerWorker.jobs.size).to eq(2)
 
-      UniqueJob::JobHistory.new(TestServerWorker, UniqueJob::ClientMiddleware, nil).delete_all
+      UniqueJob::JobHistory.new(TestServerWorker, UniqueJob::ClientMiddleware.name.demodulize, nil).delete_all
 
       TestServerWorker.drain
       expect(TestServerWorker.jobs.size).to eq(0)
@@ -82,8 +82,8 @@ RSpec.describe UniqueJob::ServerMiddleware do
         expect(TestServerWorker.class_variable_get(:@@count)).to eq(1)
         expect(TestServerWorker.class_variable_get(:@@callback_count)).to eq(0)
 
-        UniqueJob::JobHistory.new(TestServerWorker, UniqueJob::ClientMiddleware, nil).delete_all
-        UniqueJob::JobHistory.new(TestServerWorker, described_class, nil).delete_all
+        UniqueJob::JobHistory.new(TestServerWorker, UniqueJob::ClientMiddleware.name.demodulize, nil).delete_all
+        UniqueJob::JobHistory.new(TestServerWorker, described_class.name.demodulize, nil).delete_all
 
         TestServerWorker.perform_async(1)
         expect(TestServerWorker.jobs.size).to eq(1)
