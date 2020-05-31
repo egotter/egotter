@@ -55,7 +55,6 @@ module Concerns::Logging
         when via_news_report?     then UpdateNewsReportWorker.perform_async(job_options)
         when via_welcome_message? then UpdateWelcomeMessageWorker.perform_async(job_options)
         when via_warning_message? then UpdateWarningMessageWorker.perform_async(job_options)
-        when via_test_message?    then UpdateTestMessageWorker.perform_async(job_options)
       end
     end
   rescue Encoding::UndefinedConversionError => e
