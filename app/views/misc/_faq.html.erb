@@ -1,2 +1,91 @@
-<h3 class="h5 my-5"><%= "Q.#{faq_counter + 1} #{faq[:q]}" %></h3>
-<div><%= faq[:a].html_safe %></div>
+<h3 class="h5 my-5">えごったー全般</h3>
+
+
+<div class="text-primary mt-3 mb-1">えごったーとは何ですか？</div>
+<div class="mb-5">ツイッターで仲良しの人、リムーブした・された人、ブロックされた人、片思い・両思いが分かるWebサイトです。使い方は Twitter ID 入力するだけ！ いつでもすぐに結果を見ることができます。</div>
+
+<div class="text-primary mt-3 mb-1">えごったーに公式アカウントはありますか？</div>
+<div class="mb-5"><a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> が公式アカウントです。気になることはいつでもご質問ください。質問する際はリプライですと見逃しが少なくなります。</div>
+
+
+<h3 class="h5 my-5">プライバシーとセキュリティ</h3>
+
+
+<div class="text-primary my-3">えごったーは安全ですか？</div>
+<div class="mb-5">安全です。TLS/SSLを用いた通信の暗号化により、プライバシーとセキュリティは強固に守られています。</div>
+
+<div class="text-primary mt-3 mb-1">えごったーを使ったことは誰かにバレますか？</div>
+<div class="mb-5">バレません。通信内容は暗号化されているため、このWebサイトの利用状況を他の人に知られることはありません。</div>
+
+
+<h3 class="h5 my-5">リムられ通知</h3>
+
+
+<div class="text-primary mt-3 mb-1">リムられ通知とは何ですか？</div>
+<div class="mb-5">「誰かにフォローを外されたこと」をDMで通知する機能のことです。Webサイトにログインすると自動で設定されます。後から通知を止めることもできます。</div>
+
+<div class="text-primary mt-3 mb-1">リムられ通知はどうすれば届きますか？</div>
+<div class="mb-5">Webサイトにログインすればその後は自動で届きます。</div>
+
+<div class="text-primary mt-3 mb-1">リムられ通知の有効期限とは何ですか？</div>
+<div class="mb-5">ツイッターの仕様上、DMを一方的に送り続けることはできません。そのため、リムられ通知を受け取るには、定期的に @ego_tter にDMを送る必要があります。これがリムられ通知の有効期限です。これは<span class="egotter-pink">ツイッターの仕様</span>です。</div>
+
+<div class="text-primary mt-3 mb-1">@ego_tter をフォローしたのにリムられ通知が届きません。どうしてですか？</div>
+<div class="mb-5">Webサイトにログインしてください。@ego_tter のフォローだけではリムられ通知は届きません。</div>
+
+<div class="text-primary mt-3 mb-1">リムられ通知はどれくらいの頻度で届きますか？</div>
+<div class="mb-5">今のところは、朝・昼・夜の1日3回届きます。届く回数を調整する機能は今後用意する予定です。</div>
+
+<div class="text-primary mt-3 mb-1">リムられ通知をすぐに受け取ることはできますか？</div>
+<div class="mb-5">@ego_tter に「リムられ通知 今すぐ送信」とDMしてください。そうすれば、すぐにリムられ通知が届きます。</div>
+
+
+<h3 class="h5 my-5">データの正確性</h3>
+
+
+<div class="text-primary mt-3 mb-1">「フォローを外されたユーザーは0人です」と表示されます。このデータは正しいですか？</div>
+<div class="mb-5">えごったーのデータは初めて検索した時から溜まっていきます。そのため、初めて使った時は必ず0人になっています。今後使っていくうちにリムられのデータは増えていきます。</div>
+
+<div class="text-primary mt-3 mb-1">「フォローを外されたユーザー」が0人のまま増えません。このデータは正しいですか？</div>
+<div class="mb-5">何回か使っていくうちにデータが溜まっていくはずですが、もし更新されない場合は、@ego_tter までお気軽にお問い合わせください。</div>
+
+<div class="text-primary mt-3 mb-1">データが表示されない項目がいくつかあります。このデータは正しいですか？</div>
+<div class="mb-5">フォロー・フォロワーがとても多いユーザーは、いくつかの項目の表示がスキップされます。フォロー・フォロワーが多くないのに結果が表示されない場合は、@ego_tter までお気軽にお問い合わせください。</div>
+
+<div class="text-primary mt-3 mb-1">自分からブロックしたユーザーもリムられに表示されます。このデータは正しいですか？</div>
+<div class="mb-5">リムり（フォローを外した）、リムられ（フォローを外された）は、どっちが先に行動したのかと関係なくフォローが外れたことを検出しています。そのため、自分からブロックしたとしてもリムられに表示されます。</div>
+
+
+<h3 class="h5 my-5">データの更新間隔</h3>
+
+
+<div class="text-primary mt-3 mb-1">データはいつ更新されるのですか？</div>
+<div class="mb-5">リムられ通知を設定している場合は、リムられ通知が届くタイミングで更新されます。リムられ通知を設定していないユーザーは、Webサイトを使うタイミングで更新されます。</div>
+
+<div class="text-primary mt-3 mb-1">データの更新間隔はどれくらいですか？</div>
+<div class="mb-5">最短で <%= distance_of_time_in_words(TwitterUser::CREATE_RECORD_INTERVAL) %> に一度更新されます。Webサイトにログインしたことがある、リムられ通知が設定されている、@ego_tter をフォローしているという条件を満たしているほど早く更新されます。</div>
+
+<div class="text-primary mt-3 mb-1">データを自動的に更新することはできますか？</div>
+<div class="mb-5">リムられ通知が設定されていれば、データは自動的に更新されます。</div>
+
+<div class="text-primary mt-3 mb-1">鍵付きアカウントも検索できますか？</div>
+<div class="mb-5">えごったーでは、「自分が見れるデータ」であれば検索することができます。例えば、鍵付きアカウントが自分自身であったり、フォローしているユーザーであれば検索できます。</div>
+
+<div class="text-primary mt-3 mb-1">データの更新を通知してもらうことはできますか？</div>
+<div class="mb-5">リムられ通知が設定されていればデータの更新が通知されます。</div>
+
+<div class="text-primary mt-3 mb-1">データの更新通知はどれくらいの頻度で届きますか？</div>
+<div class="mb-5">リムられ通知でデータの更新は通知されます。標準では1日に3回ほど通知されます。</div>
+
+<div class="text-primary mt-3 mb-1">自分がえごったーで検索されたことを通知してもらうことはできますか？</div>
+<div class="mb-5">はい、できます。この設定は標準で有効になっているので、誰かがえごったーであなたを検索すると、@ego_tter からあなたにそのことを知らせるDMが届きます。検索したのが誰なのかは分かりません。</div>
+
+
+<h3 class="h5">その他</h3>
+
+
+<div class="text-primary mt-3 mb-1">昔のえごったーの機能はもう使えないのですか？</div>
+<div class="mb-5">必要であれば復活させますのでどの機能がほしいか　@ego_tter　までお気軽にご連絡ください。</div>
+
+<div class="text-primary mt-3 mb-1">ここに載っていない質問をするにはどうすればよいですか？</div>
+<div class="mb-5">@ego_tter までお気軽にご連絡ください。DMで質問が届いても気付かないことが多いため、できればリプライで質問してもらえると助かります。</div>

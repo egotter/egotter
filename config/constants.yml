@@ -18,7 +18,6 @@ default: &default
     basic_plan: 20
   cluster_bad_words_path: 'data/cluster_bad_words.json'
   cluster_good_words_path: 'data/cluster_good_words.json'
-  faq_path: 'data/faq.json'
 development:
   <<: *default
   usage_stat_recently_created: <%= 1.minute %>

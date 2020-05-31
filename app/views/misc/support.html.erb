@@ -1,12 +1,7 @@
 <h2 class="h4 text-center my-5"><%= t('.title') %></h2>
-<p><%= t('.lead') %></p>
-
-<hr>
-
-<h2 class="h4 text-center my-5"><%= t('.contact_by_reply') %></h2>
-<p><%= t('.feel_free_to_reply', link: link_to(t('.official_account'), user_url('ego_tter'), target: '_blank')).html_safe %></p>
+<p><%= t('.lead_html') %></p>
 
 <hr>
 
 <h2 class="h4 text-center my-5"><%= t('.faq') %></h2>
-<%= render(partial: 'misc/faq', collection: Faq.list, cached: true) %>
+<%= render partial: 'misc/faq' %>

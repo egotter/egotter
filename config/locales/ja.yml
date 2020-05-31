@@ -713,10 +713,7 @@ ja:
   misc:
     support:
       title: "お問い合わせ"
-      lead: "気になることや分からないことについて、お気軽にお問い合わせください。"
-      contact_by_reply: "リプライでお問い合わせ"
-      feel_free_to_reply: "%{link} までお気軽にご連絡ください。"
-      official_account: "公式アカウント"
+      lead_html: '気になることや分からないことについて、お気軽にお問い合わせください。公式アカウントは <a href="https://twitter.com/ego_tter" target="_blank">@ego_tter</a> です。'
       faq: "よくあるご質問"
     terms_of_service:
       title: "利用規約"
