@@ -15,7 +15,7 @@ module Concerns::TwitterDB::User::Batch
     end
 
     def self.fetch(uids, client:)
-      client.users(uids)
+      client.twitter.users(uids).map(&:to_h)
     rescue => e
       if AccountStatus.no_user_matches?(e)
         []

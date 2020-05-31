@@ -23,6 +23,10 @@ class CreateTwitterDBUserWorker
       uids = decompress(uids)
     end
 
+    if uids.size > 100
+      logger.warn "the size of uids is greater than 100 options=#{options.inspect}"
+    end
+
     client = pick_client(options)
     do_perform(client, uids, options)
 
