@@ -33,7 +33,7 @@ module UniqueJob
 
     def job_history(worker)
       time = worker.respond_to?(:unique_in) ? worker.unique_in : 3600
-      JobHistory.new(worker.class, self.class, time)
+      JobHistory.new(worker.class, self.class.name.demodulize, time)
     end
 
     def truncate(text, length: 100)
