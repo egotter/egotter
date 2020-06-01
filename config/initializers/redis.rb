@@ -18,7 +18,7 @@ class Redis
       host = host || HOST
       db = Rails.env.test? ? 1 : 0
 
-      new(host: host, db: db, connect_timeout: 0.2, read_timeout: 1.0, write_timeout: 0.5, driver: :hiredis)
+      new(host: host, db: db, connect_timeout: 1.5, read_timeout: 1.0, write_timeout: 0.5, driver: :hiredis)
     end
   end
 
