@@ -123,7 +123,9 @@ class TokimekiUnfollowController < ApplicationController
     user = current_twitter_user
     friend_uids = request_context_client.friend_ids(user[:id])
 
-    CreateTwitterDBUserWorker.perform_async(friend_uids, user_id: current_user.id, enqueued_by: 'tokimeki unfollow')
+    friend_uids.each_slice(100) do |uids|
+      CreateTwitterDBUserWorker.perform_async(uids, user_id: current_user.id, enqueued_by: 'tokimeki unfollow')
+    end
 
     ActiveRecord::Base.transaction do
       Tokimeki::User.create!(uid: user[:id], screen_name: user[:screen_name], friends_count: user[:friends_count], processed_count: 0)
