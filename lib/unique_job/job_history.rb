@@ -34,5 +34,21 @@ module UniqueJob
     def key(val)
       "#{@key}:#{val}"
     end
+
+    module RescueAllRedisErrors
+      %i(
+        ttl
+        exists?
+        add
+      ).each do |method_name|
+        define_method(method_name) do |*args, &blk|
+          super(*args, &blk)
+        rescue => e
+          Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect}"
+          nil
+        end
+      end
+    end
+    prepend RescueAllRedisErrors
   end
 end

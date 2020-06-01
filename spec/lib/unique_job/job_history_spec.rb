@@ -2,6 +2,7 @@ require 'rails_helper'
 
 RSpec.describe UniqueJob::JobHistory do
   let(:instance) { described_class.new(Class, Class, 1.minute) }
+  let(:redis) { instance.instance_variable_get(:@redis) }
 
   before { Redis.client.flushdb }
 
@@ -15,18 +16,29 @@ RSpec.describe UniqueJob::JobHistory do
       before { instance.add(val) }
       it { is_expected.to be_truthy }
     end
+
+    context '@redis raises an exception' do
+      before { allow(redis).to receive(:exists).with(any_args).and_raise('error') }
+      it { expect { subject }.not_to raise_error }
+    end
   end
 
   describe '#add' do
     let(:val) { 'value' }
-    let(:redis) { instance.instance_variable_get(:@redis) }
     subject { instance.add(val) }
+
     before { allow(instance).to receive(:key).with(val).and_return('key') }
+
     it do
       expect(redis).to receive(:setex).with('key', 1.minute, true).and_call_original
       subject
       expect(redis.get('key')).to eq('true')
       expect(redis.ttl('key')).to eq(60)
+    end
+
+    context '@redis raises an exception' do
+      before { allow(redis).to receive(:setex).with(any_args).and_raise('error') }
+      it { expect { subject }.not_to raise_error }
     end
   end
 
