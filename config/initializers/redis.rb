@@ -15,8 +15,10 @@ class Redis
 
   class << self
     def client(host = nil)
+      host = host || HOST
       db = Rails.env.test? ? 1 : 0
-      new(host: host || HOST, db: db, timeout: 3.0, driver: :hiredis)
+
+      new(host: host, db: db, connect_timeout: 0.2, read_timeout: 1.0, write_timeout: 0.5, driver: :hiredis)
     end
   end
 
