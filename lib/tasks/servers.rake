@@ -7,7 +7,7 @@ namespace :servers do
     params = {
         'launch' => true,
         'role' => 'sidekiq_prompt_reports',
-        'instance-type' => 'm5.large'
+        'instance-type' => 'm5.xlarge'
     }
 
     task = Tasks::TaskBuilder.build(params)
