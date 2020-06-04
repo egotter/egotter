@@ -2,9 +2,6 @@ require 'redis'
 require 'hiredis'
 
 class Redis
-  HOST = ENV['REDIS_HOST']
-  TTL = 3.days
-
   def used_memory
     info['used_memory_rss_human']
   end
@@ -13,12 +10,18 @@ class Redis
     info['used_memory_peak_human']
   end
 
+  HOST = ENV['REDIS_HOST']
+  TTL = 3.days
+  CONNECT_TIMEOUT = 0.2
+  READ_TIMEOUT = 1.0
+  WRITE_TIMEOUT = 0.5
+
   class << self
     def client(host = nil)
       host = host || HOST
       db = Rails.env.test? ? 1 : 0
 
-      new(host: host, db: db, connect_timeout: 1.5, read_timeout: 1.0, write_timeout: 0.5, driver: :hiredis)
+      new(host: host, db: db, connect_timeout: CONNECT_TIMEOUT, read_timeout: READ_TIMEOUT, write_timeout: WRITE_TIMEOUT, driver: :hiredis)
     end
   end
 

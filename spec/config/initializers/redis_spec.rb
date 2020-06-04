@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Redis do
   let(:options) do
-    {host: host, db: 1, connect_timeout: 1.5, read_timeout: 1.0, write_timeout: 0.5, driver: :hiredis}
+    {host: host, db: 1, connect_timeout: described_class::CONNECT_TIMEOUT, read_timeout: described_class::READ_TIMEOUT, write_timeout: described_class::WRITE_TIMEOUT, driver: :hiredis}
   end
 
   describe '.client' do
