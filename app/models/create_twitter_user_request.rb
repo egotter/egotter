@@ -65,6 +65,14 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   def validate_twitter_user!(twitter_user)
+    if twitter_user.friend_uids.any? { |uid| uid.nil? || uid == 0 }
+      Rails.logger.warn "#{self.class}##{__method__} friend_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
+    end
+
+    if twitter_user.follower_uids.any? { |uid| uid.nil? || uid == 0 }
+      Rails.logger.warn "#{self.class}##{__method__} follower_uids includes nil or 0 user_id=#{user_id} uid=#{uid}"
+    end
+
     if TwitterUser.exists?(uid: uid)
       if twitter_user.too_little_friends?
         raise TooLittleFriends.new('no_friends_and_followers')
