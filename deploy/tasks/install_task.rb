@@ -345,7 +345,7 @@ module Tasks
       attr_reader :instance
 
       def update_env
-        upload_env(@name, 'env/sidekiq_prompt_reports.env.enc')
+        upload_env(@name, 'env/sidekiq.env.enc')
       end
 
       def restart_processes
