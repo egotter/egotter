@@ -130,7 +130,7 @@ class ApiClient
     class << self
       # Intentionally not cached
       def redis_client
-        Redis.client(ENV['TWITTER_API_REDIS_HOST'])
+        @redis_client ||= Redis.client(ENV['TWITTER_API_REDIS_HOST'])
       end
     end
 
