@@ -124,7 +124,7 @@ module Tasks
             '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
         ].each { |cmd| backend(cmd) }
 
-        conf = ERB.new(File.read(src)).result_with_hash(
+        options = {
             name: host,
             webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
             webhook_rails_web: ENV['SLACK_TD_AGENT_RAILS_WEB'],
@@ -136,9 +136,13 @@ module Tasks
             webhook_sidekiq_prompt_reports: ENV['SLACK_TD_AGENT_SIDEKIQ_PROMPT_REPORTS'],
             webhook_syslog: ENV['SLACK_TD_AGENT_SYSLOG'],
             webhook_error_log: ENV['SLACK_TD_AGENT_ERROR_LOG'],
-        )
+        }
+        logger.info "#{__method__} options=#{options}"
 
+        conf = ERB.new(File.read(src)).result_with_hash(options)
         upload_contents(host, conf, '/etc/td-agent/td-agent.conf')
+
+        self
       end
 
       def pull_latest_code
@@ -318,7 +322,6 @@ module Tasks
             'sudo service nginx stop || :',
             'sudo service puma stop || :',
             'sudo start sidekiq',
-            'sudo start sidekiq_import',
             'sudo start sidekiq_misc',
             'sudo stop sidekiq_prompt_reports_workers',
             'sudo restart datadog-agent',
@@ -332,7 +335,6 @@ module Tasks
       def before_terminate
         [
             'sudo stop sidekiq || :',
-            'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',
             'sudo stop sidekiq_prompt_reports_workers || :',
         ].each do |cmd|
@@ -353,7 +355,6 @@ module Tasks
             'sudo service td-agent restart',
             'sudo service nginx stop || :',
             'sudo service puma stop || :',
-            'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',
             'sudo start sidekiq_workers || :',
             'sudo start sidekiq_prompt_reports_workers',
@@ -415,7 +416,6 @@ module Tasks
             'sudo service puma stop || :',
             'sudo restart datadog-agent',
             'sudo stop sidekiq || :',
-            'sudo stop sidekiq_import || :',
             'sudo stop sidekiq_misc || :',
             'sudo stop sidekiq_prompt_reports_workers || :',
         ].each do |cmd|

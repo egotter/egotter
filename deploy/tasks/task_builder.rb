@@ -53,6 +53,7 @@ module Tasks
         tasks = count.times.map { Tasks::LaunchTask.build(params) }
 
         DeployRuby.logger.info 'Launch instances in parallel'
+
         tasks.map.with_index do |task, i|
           Thread.new { task.launch_instance(i) }
         end.each(&:join)
