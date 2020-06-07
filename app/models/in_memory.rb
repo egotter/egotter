@@ -8,12 +8,16 @@ module InMemory
     ENV['IN_MEMORY_REDIS_HOST']
   end
 
+  def redis_instance
+    Redis.client(redis_hostname)
+  end
+
   def used_memory
-    Redis.client(redis_hostname).used_memory
+    redis_instance.used_memory
   end
 
   def used_memory_peak
-    Redis.client(redis_hostname).used_memory_peak
+    redis_instance.used_memory_peak
   end
 
   def enabled?

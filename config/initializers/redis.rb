@@ -18,10 +18,18 @@ class Redis
 
   class << self
     def client(host = nil)
-      host = host || HOST
-      db = Rails.env.test? ? 1 : 0
+      options = {
+          host: (host || HOST),
+          db: (Rails.env.test? ? 1 : 0),
+          connect_timeout: CONNECT_TIMEOUT,
+          read_timeout: READ_TIMEOUT,
+          write_timeout: WRITE_TIMEOUT,
+          driver: :hiredis
+      }
 
-      new(host: host, db: db, connect_timeout: CONNECT_TIMEOUT, read_timeout: READ_TIMEOUT, write_timeout: WRITE_TIMEOUT, driver: :hiredis)
+      Rails.logger.debug { "Initialize Redis options=#{options}" }
+
+      new(options)
     end
   end
 
