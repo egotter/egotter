@@ -143,6 +143,7 @@ class ApiClient
           super(*args, &blk)
         rescue => e
           Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect}"
+          Rails.logger.debug { e.backtrace.join("\n") }
           nil
         end
       end

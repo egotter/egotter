@@ -9,8 +9,8 @@ module Concerns::User::ApiAccess
   included do
   end
 
-  def api_client(options = {})
-    ::ApiClient.instance({access_token: token, access_token_secret: secret}.merge(options))
+  def api_client
+    ::ApiClient.instance(access_token: token, access_token_secret: secret)
   end
 
   def rate_limit
