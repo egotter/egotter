@@ -1,38 +1,46 @@
 module UniqueJob
   class JobHistory
     def initialize(worker_class, queueing_class, ttl)
-      @redis = Redis.client
-
       @key = "#{self.class}:#{queueing_class}:#{worker_class}"
       @ttl = ttl
     end
 
     def ttl(val = nil)
       if val
-        @redis.ttl(key(val))
+        redis.ttl(key(val))
       else
         @ttl
       end
     end
 
     def delete_all
-      @redis.keys("#{@key}:*").each do |key|
-        @redis.del(key)
+      redis.keys("#{@key}:*").each do |key|
+        redis.del(key)
       end
     end
 
     def exists?(val)
-      @redis.exists(key(val))
+      redis.exists(key(val))
     end
 
     def add(val)
-      @redis.setex(key(val), @ttl, true)
+      redis.setex(key(val), @ttl, true)
     end
 
     private
 
     def key(val)
       "#{@key}:#{val}"
+    end
+
+    def redis
+      self.class.redis
+    end
+
+    class << self
+      def redis
+        @redis ||= Redis.client(ENV['REDIS_HOST'])
+      end
     end
 
     module RescueAllRedisErrors
@@ -47,6 +55,7 @@ module UniqueJob
         rescue => e
           elapsed = Time.zone.now - start
           Rails.logger.warn "Rescue all errors in #{self.class}##{method_name} #{e.inspect} elapsed=#{sprintf("%.3f sec", elapsed)}"
+          Rails.logger.debug { e.backtrace.join("\n") }
           nil
         end
       end
