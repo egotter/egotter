@@ -13,13 +13,15 @@ RUNNER='/var/egotter/bin/cron/runner.sh'
 # * * * * *       /bin/sh -c "$RUNNER 'SendMetricsToCloudWatchWorker.new.perform'"
 # * * * * *       /bin/sh -c "$RUNNER 'CreateFollowWorker.fetch_one'"
 
-# PeriodicReport
+# PeriodicReport(morning)
 # 25 22 * * * /bin/sh -c "$RAKE servers:launch"
 # 30 22 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:morning"
 # 20  0 * * * /bin/sh -c "$RAKE servers:terminate"
+# PeriodicReport(afternoon)
 # 25  2 * * * /bin/sh -c "$RAKE servers:launch"
 # 30  2 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:afternoon"
 # 20  4 * * * /bin/sh -c "$RAKE servers:terminate"
+# PeriodicReport(night)
 # 25 11 * * * /bin/sh -c "$RAKE servers:launch"
 # 30 11 * * * /bin/sh -c "$RAKE periodic_reports:send_messages:night"
 # 20 13 * * * /bin/sh -c "$RAKE servers:terminate"
