@@ -27,23 +27,29 @@ namespace :periodic_reports do
     date_range = start_date.beginning_of_day..end_date.end_of_day
     puts "start_date=#{date_range.first} end_date=#{date_range.last}"
 
+    limit = ENV['LIMIT'] ? ENV['LIMIT'].to_i : 10000
+    puts "limit=#{limit}"
+
     users = User.where(created_at: date_range, authorized: true).select(:id, :uid).to_a
-    puts "users1=#{users.size}"
+    puts "users=#{users.size} (authorized)"
 
     users.select! do |user|
       !CreatePeriodicReportRequest.exists?(user_id: user.id)
     end
-    puts "users2=#{users.size}"
+    puts "users=#{users.size} (not requested)"
 
     users.select! do |user|
       !StopPeriodicReportRequest.exists?(user_id: user.id)
     end
-    puts "users3=#{users.size}"
+    puts "users=#{users.size} (not stop requested)"
 
     users.select! do |user|
       !PeriodicReport.messages_allotted?(user)
     end
-    puts "users4=#{users.size}"
+    puts "users=#{users.size} (DM not received)"
+
+    users = users.take(limit)
+    puts "users=#{users.size} (limit)"
 
     StartSendingPeriodicReportsTask.new(user_ids: users.map(&:id), delay: 1.second).start!
   end
