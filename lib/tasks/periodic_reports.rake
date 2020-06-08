@@ -30,7 +30,10 @@ namespace :periodic_reports do
     limit = ENV['LIMIT'] ? ENV['LIMIT'].to_i : 10000
     puts "limit=#{limit}"
 
-    users = User.where(created_at: date_range, authorized: true).select(:id, :uid).to_a
+    users = User.where(created_at: date_range).select(:id, :uid, :authorized).to_a
+    puts "users=#{users.size} (all)"
+
+    users.select!(&:authorized)
     puts "users=#{users.size} (authorized)"
 
     users.select! do |user|
