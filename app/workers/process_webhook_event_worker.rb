@@ -6,7 +6,7 @@ class ProcessWebhookEventWorker
   sidekiq_options queue: 'webhook', retry: 0, backtrace: false
 
   def unique_key(event, options = {})
-    Digest::MD5.hexdigest(event.inspect)
+    digest(event)
   end
 
   def unique_in
@@ -14,7 +14,7 @@ class ProcessWebhookEventWorker
   end
 
   def after_skip(*args)
-    logger.warn "The job of #{self.class} is skipped args=#{args.inspect}"
+    logger.warn "The job of #{self.class} is skipped digest=#{digest(args[0])} args=#{args.inspect.truncate(150)}"
   end
 
   def timeout_in
@@ -22,12 +22,16 @@ class ProcessWebhookEventWorker
   end
 
   def after_timeout(*args)
-    logger.warn "The job of #{self.class} timed out args=#{args.inspect}"
+    logger.warn "The job of #{self.class} timed out digest=#{digest(args[0])} args=#{args.inspect.truncate(150)}"
   end
 
   # options:
   def perform(event, options = {})
-    logger.info "event=#{event.inspect}"
+    unless event['type'] == 'message_create'
+      logger.info "event is not message_create event_type=#{event['type']}"
+      return
+    end
+
     process_direct_message_event(event)
   rescue => e
     logger.warn "#{e.inspect} event=#{event.inspect}"
@@ -35,12 +39,11 @@ class ProcessWebhookEventWorker
 
   private
 
-  def process_direct_message_event(event)
-    unless event['type'] == 'message_create'
-      logger.info "event is not message_create event=#{event.inspect}"
-      return
-    end
+  def digest(obj)
+    Digest::MD5.hexdigest(obj.inspect)
+  end
 
+  def process_direct_message_event(event)
     dm = DirectMessage.new(event: event.deep_symbolize_keys)
 
     if sent_from_user?(dm)

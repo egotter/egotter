@@ -3,15 +3,40 @@ require 'rails_helper'
 RSpec.describe ProcessWebhookEventWorker do
   let(:worker) { described_class.new }
 
-  describe '#perform' do
+  describe '#unique_key' do
+    subject { worker.unique_key('event') }
+    it { is_expected.to eq(Digest::MD5.hexdigest('event'.inspect)) }
+  end
 
+  describe '#after_skip' do
+    subject { worker.after_skip('event') }
+    it do
+      expect(worker.logger).to receive(:warn).with(instance_of(String))
+      subject
+    end
+  end
+
+  describe '#perform' do
+    subject { worker.perform(event) }
+
+    context 'event[type] is not message_create' do
+      let(:event) { {'type' => 'type'} }
+      it do
+        expect(worker).not_to receive(:process_direct_message_event)
+        subject
+      end
+    end
+
+    context 'event[type] is message_create' do
+      let(:event) { {'type' => 'message_create'} }
+      it do
+        expect(worker).to receive(:process_direct_message_event).with(event)
+        subject
+      end
+    end
   end
 
   describe '#process_direct_message_event' do
-    shared_context 'event[type] is message_create' do
-      before { allow(event).to receive(:[]).with('type').and_return('message_create') }
-    end
-
     shared_context 'correct event is passed' do
       let(:dm) { double('dm', sender_id: 1, recipient_id: 2, text: 'text') }
       before { allow(DirectMessage).to receive(:new).with(anything).and_return(dm) }
@@ -34,12 +59,7 @@ RSpec.describe ProcessWebhookEventWorker do
     let(:event) { {'type' => 'type'} }
     subject { worker.send(:process_direct_message_event, event) }
 
-    context 'event[type] is not message_create' do
-      it { is_expected.to be_falsey }
-    end
-
     context 'sent_from_user? returns true' do
-      include_context 'event[type] is message_create'
       include_context 'correct event is passed'
       include_context 'skip setting global flags'
       before { allow(worker).to receive(:sent_from_user?).with(dm).and_return(true) }
@@ -50,7 +70,6 @@ RSpec.describe ProcessWebhookEventWorker do
     end
 
     context 'sent_from_egotter? returns true' do
-      include_context 'event[type] is message_create'
       include_context 'correct event is passed'
       include_context 'skip setting global flags'
       before do
@@ -64,7 +83,6 @@ RSpec.describe ProcessWebhookEventWorker do
     end
 
     context 'message_from_user? returns true' do
-      include_context 'event[type] is message_create'
       include_context 'correct event is passed'
       include_context 'skip processing messages'
       before { allow(worker).to receive(:message_from_user?).with(dm).and_return(true) }
@@ -75,7 +93,6 @@ RSpec.describe ProcessWebhookEventWorker do
     end
 
     context 'message_from_egotter? returns true' do
-      include_context 'event[type] is message_create'
       include_context 'correct event is passed'
       include_context 'skip processing messages'
       before do
