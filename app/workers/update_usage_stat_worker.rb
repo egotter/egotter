@@ -32,7 +32,9 @@ class UpdateUsageStatWorker
     end
 
   rescue => e
-    if AccountStatus.invalid_or_expired_token?(e) || AccountStatus.not_authorized?(e)
+    if AccountStatus.invalid_or_expired_token?(e) ||
+        AccountStatus.not_authorized?(e) ||
+        AccountStatus.temporarily_locked?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
