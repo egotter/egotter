@@ -75,7 +75,7 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     if TwitterUser.exists?(uid: uid)
       if twitter_user.too_little_friends?
-        raise TooLittleFriends.new('no_friends_and_followers')
+        raise TooLittleFriends.new("screen_name=#{twitter_user.screen_name}")
       end
 
       if SearchLimitation.hard_limited?(twitter_user)
