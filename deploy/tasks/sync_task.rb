@@ -16,12 +16,16 @@ module Tasks
 
     module_function :build
 
-    class Task < ::DeployRuby::Task
+    class Task
       attr_reader :action, :instance
 
       def initialize
         @action = :sync
         @instance = nil
+      end
+
+      def logger
+        DeployRuby.logger
       end
     end
 

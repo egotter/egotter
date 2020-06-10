@@ -41,7 +41,7 @@ module Tasks
 
     module_function :auto_detect_role
 
-    class Task < ::DeployRuby::Task
+    class Task
       attr_reader :action, :instance
 
       def initialize
@@ -62,6 +62,10 @@ module Tasks
             remove_cpu_credit_balance(@role, @terminated.id).
             remove_disk_space_utilization(@role, @terminated.id).
             update
+      end
+
+      def logger
+        DeployRuby.logger
       end
     end
 

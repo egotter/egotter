@@ -39,7 +39,7 @@ module Tasks
       end
     end
 
-    class Base < ::DeployRuby::Task
+    class Base
       include DSL
 
       attr_reader :host
@@ -58,6 +58,10 @@ module Tasks
 
       def ssh_connection_test
         backend('echo "ssh connection test"')
+      end
+
+      def logger
+        DeployRuby.logger
       end
     end
   end

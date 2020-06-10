@@ -17,11 +17,15 @@ module Tasks
 
     module_function :build
 
-    class Task < ::DeployRuby::Task
+    class Task
       attr_reader :action
 
       def initialize
         @action = :list
+      end
+
+      def logger
+        DeployRuby.logger
       end
     end
 

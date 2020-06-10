@@ -27,8 +27,6 @@ module Tasks
     module_function :build
 
     class Base
-      include DeployRuby::Logging
-
       attr_reader :action, :instance
 
       def initialize
@@ -77,6 +75,10 @@ module Tasks
 
         logger.info text
         File.open('./ssh_config', 'a') { |f| f.puts(text) }
+      end
+
+      def logger
+        DeployRuby.logger
       end
     end
 

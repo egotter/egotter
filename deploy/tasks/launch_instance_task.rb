@@ -1,4 +1,3 @@
-require_relative '../lib/deploy_ruby/logger'
 require_relative '../lib/deploy_ruby/aws/params'
 require_relative '../lib/deploy_ruby/aws/ec2'
 require_relative '../lib/deploy_ruby/aws/instance'
@@ -6,8 +5,6 @@ require_relative '../lib/deploy_ruby/aws/instance'
 module Tasks
   module LaunchInstanceTask
     class Base
-      include DeployRuby::Logging
-
       def initialize(params)
         @params = ::DeployRuby::Aws::Params.new(params)
         @index = params.delete('instance-index')
