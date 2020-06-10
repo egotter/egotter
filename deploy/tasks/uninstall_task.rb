@@ -3,33 +3,76 @@ require_relative '../lib/deploy_ruby/aws/instance'
 module Tasks
   module UninstallTask
     module Util
-      def green(str)
-        logger.info "\e[32m#{str}\e[0m"
+      def logger
+        DeployRuby.logger
       end
 
-      def exec_command(host, cmd, dir: '/var/egotter', exception: true)
-        raise 'Hostname is empty.' if host.to_s.empty?
-        green("#{host} #{cmd}")
-        system('ssh', host, "cd #{dir} && #{cmd}", exception: exception)
+      def red(str)
+        "\e[31m#{str}\e[0m"
+      end
+
+      def green(str)
+        "\e[32m#{str}\e[0m"
+      end
+
+      def blue(str)
+        "\e[34m#{str}\e[0m"
+      end
+
+      def cyan(str)
+        "\e[36m#{str}\e[0m"
+      end
+
+      def exec_command(cmd, dir: '/var/egotter', exception: true)
+        if @ip_address.to_s.empty?
+          logger.error red("ip_address is empty cmd=#{cmd}")
+          exit
+        end
+
+        cmd = "cd #{dir} && #{cmd}"
+        ssh_cmd = "ssh -i ~/.ssh/egotter.pem ec2-user@#{@ip_address}"
+
+        logger.info cyan(ssh_cmd) + ' ' + green(%Q("#{cmd}"))
+
+        start = Time.now
+        out, err, status = Open3.capture3(%Q(#{ssh_cmd} "#{cmd}"))
+        elapsed = Time.now - start
+        out = out.to_s.chomp
+        err = err.to_s.chomp
+
+        logger.info out unless out.empty?
+
+        if status.exitstatus == 0
+          logger.info blue("success elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+        else
+          if exception
+            logger.error red(err) unless err.empty?
+            logger.error red("fail(exit) elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+            exit
+          else
+            logger.info err unless err.empty?
+            logger.error red("fail(continue) elapsed=#{sprintf("%.3f sec", elapsed)}\n")
+          end
+        end
+
+        status.exitstatus == 0
       end
     end
 
-    class Task < ::DeployRuby::Task
+    class Task
       include Util
 
-      def initialize(name)
+      def initialize(name, ip_address)
         @name = name
-      end
-
-      def run_command(cmd, exception: true)
-        exec_command(@name, cmd, exception: exception)
+        @ip_address = ip_address
       end
     end
 
     class Web < Task
       def initialize(id)
         @id = id
-        super(::DeployRuby::Aws::Instance.retrieve(id).name)
+        instance = ::DeployRuby::Aws::Instance.retrieve(id)
+        super(instance.name, instance.public_ip)
       end
 
       def uninstall
@@ -41,7 +84,7 @@ module Tasks
             'sudo service nginx stop',
             'sudo service puma stop',
         ].each do |cmd|
-          run_command(cmd)
+          exec_command(cmd)
         end
 
         self
@@ -51,7 +94,8 @@ module Tasks
     class Sidekiq < Task
       def initialize(id)
         @id = id
-        super(::DeployRuby::Aws::Instance.retrieve(id).name)
+        instance = ::DeployRuby::Aws::Instance.retrieve(id)
+        super(instance.name, instance.public_ip)
       end
 
       def uninstall
@@ -67,7 +111,7 @@ module Tasks
             'sudo stop sidekiq_misc_workers && tail -n 6 log/sidekiq_misc.log || :',
             'sudo stop sidekiq_prompt_reports_workers && tail -n 6 log/sidekiq_prompt_reports.log || :',
         ].each do |cmd|
-          run_command(cmd)
+          exec_command(cmd)
         end
 
         self

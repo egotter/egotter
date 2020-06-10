@@ -31,74 +31,102 @@ module Tasks
         "\e[33m#{str}\e[0m"
       end
 
-      def upload_file(host, src_path, dst_path)
-        tmp_file = "#{File.basename(dst_path)}.#{Process.pid}.tmp"
+      def run_rsync(src_path, dst_path)
+        cmd = "rsync -auz -e 'ssh -i ~/.ssh/egotter.pem' #{src_path} ec2-user@#{@ip_address}:#{dst_path}"
+        logger.info yellow('localhost') + ' ' + green(cmd)
+        system(cmd, exception: true)
+      end
+
+      def run_copy(src_path, dst_path)
+        if !src_path.include?('*') && !dst_path.include?('*')
+          if exec_command("sudo test -f #{dst_path}", exception: false, colored: false)
+            diff_src = dst_path
+          else
+            diff_src = '/dev/null'
+          end
+
+          unless exec_command("sudo colordiff -u #{diff_src} #{dst_path}", exception: false, colored: false)
+            exec_command("sudo cp -f #{src_path} #{dst_path}")
+          end
+        else
+          exec_command("sudo cp -f #{src_path} #{dst_path}")
+        end
+      end
+
+      def upload_file(src_path, dst_path)
+        tmp_file = "#{File.basename(dst_path)}.#{Time.now.to_f}.#{Process.pid}.tmp"
         tmp_path = File.join('/var/egotter', tmp_file)
 
-        frontend("rsync -auz #{src_path} #{host}:#{tmp_path}")
+        run_rsync(src_path, tmp_path)
 
-        diff_src =
-            if exec_command(host, "sudo test -f #{dst_path}", exception: false)
-              dst_path
-            else
-              '/dev/null'
-            end
-
-        if exec_command(host, "sudo colordiff -u #{diff_src} #{tmp_path}", exception: false)
-          exec_command(host, "rm #{tmp_path}")
+        if exec_command("sudo test -f #{dst_path}", exception: false, colored: false)
+          diff_src = dst_path
         else
-          exec_command(host, "sudo mv #{tmp_path} #{dst_path}")
+          diff_src = '/dev/null'
+        end
+
+        if exec_command("sudo colordiff -u #{diff_src} #{tmp_path}", exception: false, colored: false)
+          exec_command("rm #{tmp_path}")
+        else
+          exec_command("sudo mv #{tmp_path} #{dst_path}")
         end
 
         self
       end
 
-      def upload_contents(host, contents, dst_path)
-        tmp_file = "upload_contents.#{Time.now.to_f}.#{Process.pid}.tmp"
+      def upload_text(text, dst_path)
+        tmp_file = "#{File.basename(dst_path)}.#{Time.now.to_f}.#{Process.pid}.tmp"
         tmp_path = File.join(Dir.tmpdir, tmp_file)
-        IO.binwrite(tmp_path, contents)
-        upload_file(host, tmp_path, dst_path)
+
+        IO.binwrite(tmp_path, text)
+        upload_file(tmp_path, dst_path)
       ensure
         File.delete(tmp_path) if File.exists?(tmp_path)
       end
 
-      def upload_env(host, src)
-        contents = ::SecretFile.read(src)
+      def upload_env(encoded_src_path)
+        text = ::SecretFile.read(encoded_src_path)
 
-        if contents.match?(/AWS_NAME_TAG="NONAME"/)
-          contents.gsub!(/AWS_NAME_TAG="NONAME"/, "AWS_NAME_TAG=\"#{host}\"")
+        if text.match?(/AWS_NAME_TAG="NONAME"/)
+          text.gsub!(/AWS_NAME_TAG="NONAME"/, "AWS_NAME_TAG=\"#{@name}\"")
         end
 
-        upload_contents(host, contents, '/var/egotter/.env')
+        upload_text(text, '/var/egotter/.env')
       end
 
-      def frontend(cmd, exception: true)
-        logger.info yellow("localhost #{cmd}")
-        system(cmd, exception: exception)
-      end
-
-      def exec_command(host, cmd, dir: '/var/egotter', exception: true)
-        if host.to_s.empty?
-          logger.error red('Hostname is empty.')
+      def exec_command(cmd, dir: '/var/egotter', exception: true, colored: true)
+        if @ip_address.to_s.empty?
+          logger.error red("ip_address is empty cmd=#{cmd}")
           exit
         end
 
         cmd = "cd #{dir} && #{cmd}"
-        logger.info cyan(%Q(ssh #{host})) + ' ' + green(%Q("#{cmd}"))
+        ssh_cmd = "ssh -i ~/.ssh/egotter.pem ec2-user@#{@ip_address}"
 
-        out, err, status = Open3.capture3(%Q(ssh #{host} "#{cmd}"))
+        if colored
+          logger.info cyan(ssh_cmd) + ' ' + green(%Q("#{cmd}"))
+        else
+          logger.info ssh_cmd + ' ' + %Q("#{cmd}")
+        end
+
+        start = Time.now
+        out, err, status = Open3.capture3(%Q(#{ssh_cmd} "#{cmd}"))
+        elapsed = Time.now - start
+        out = out.to_s.chomp
+        err = err.to_s.chomp
+
+        logger.info out unless out.empty?
+
         if status.exitstatus == 0
-          logger.info out
-          logger.info blue("true(success)")
+          logger.info blue("success elapsed=#{sprintf("%.3f sec", elapsed)}\n")
         else
           if exception
-            logger.info out
-            logger.error red(err)
-            logger.error red("false(exit)")
+            logger.error red(err) unless err.empty?
+            logger.error red("fail(exit) elapsed=#{sprintf("%.3f sec", elapsed)}\n")
             exit
           else
-            logger.info out
-            logger.info err
+            logger.info err unless err.empty?
+            logger.error red("fail(continue) elapsed=#{sprintf("%.3f sec", elapsed)}\n")
           end
         end
 
@@ -109,15 +137,16 @@ module Tasks
     class Task
       include Util
 
-      def initialize(name)
+      def initialize(name, ip_address)
         @name = name
+        @ip_address = ip_address
       end
 
       def backend(cmd, exception: true)
-        exec_command(@name, cmd, exception: exception)
+        exec_command(cmd, exception: exception)
       end
 
-      def install_td_agent(host, src)
+      def install_td_agent(src)
         [
             'test -f "/usr/sbin/td-agent" || curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh',
             '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-slack" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-slack',
@@ -125,7 +154,7 @@ module Tasks
         ].each { |cmd| backend(cmd) }
 
         options = {
-            name: host,
+            name: @name,
             webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
             webhook_rails_web: ENV['SLACK_TD_AGENT_RAILS_WEB'],
             webhook_rails_sidekiq: ENV['SLACK_TD_AGENT_RAILS_SIDEKIQ'],
@@ -140,7 +169,7 @@ module Tasks
         logger.info "#{__method__} options=#{options}"
 
         conf = ERB.new(File.read(src)).result_with_hash(options)
-        upload_contents(host, conf, '/etc/td-agent/td-agent.conf')
+        upload_text(conf, '/etc/td-agent/td-agent.conf')
 
         self
       end
@@ -166,39 +195,40 @@ module Tasks
       end
 
       def update_egotter
-        backend('sudo cp -f ./setup/etc/init.d/egotter /etc/init.d')
+        run_copy('./setup/etc/init.d/egotter', '/etc/init.d/egotter')
         self
       end
 
       def update_crontab
         backend('crontab -r || :')
         backend('sudo crontab -r || :')
-        upload_file(@name, './setup/etc/crontab', '/etc/crontab')
+        upload_file('./setup/etc/crontab', '/etc/crontab')
         backend('sudo chown root:root /etc/crontab')
         self
       end
 
       def update_nginx
-        backend('sudo cp -f ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf')
+        run_copy('./setup/etc/nginx/nginx.conf', '/etc/nginx/nginx.conf')
         self
       end
 
       def update_puma
-        backend('sudo cp -f ./setup/etc/init.d/puma /etc/init.d')
+        run_copy('./setup/etc/init.d/puma', '/etc/init.d/puma')
         self
       end
 
       def update_sidekiq
-        backend('sudo cp -f ./setup/etc/init.d/sidekiq* /etc/init.d')
-        backend('sudo cp -f ./setup/etc/init/sidekiq* /etc/init')
-        backend('sudo cp -f ./setup/etc/init.d/patient_sidekiqctl.rb /etc/init.d')
+        run_copy('./setup/etc/init.d/sidekiq*', '/etc/init.d')
+        run_copy('./setup/etc/init/sidekiq*', '/etc/init')
+        run_copy('./setup/etc/init.d/patient_sidekiqctl.rb', '/etc/init.d/patient_sidekiqctl.rb')
         self
       end
 
       def update_datadog
-        frontend("rsync -auz ./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml #{@name}:/var/egotter/datadog.sidekiq.conf.yaml.tmp")
+        tmp_file = '/var/egotter/datadog.sidekiq.conf.yaml.tmp'
+        run_rsync('./setup/etc/datadog-agent/conf.d/sidekiq.d/conf.yaml', tmp_file)
         backend('test -e "/etc/datadog-agent/conf.d/sidekiq.d" || sudo mkdir /etc/datadog-agent/conf.d/sidekiq.d')
-        backend('sudo mv /var/egotter/datadog.sidekiq.conf.yaml.tmp /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml')
+        backend("sudo mv #{tmp_file} /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml")
         self
       end
     end
@@ -209,21 +239,21 @@ module Tasks
       def initialize(id)
         @id = id
         @instance = ::DeployRuby::Aws::Instance.retrieve(id)
-        super(@instance.name)
+        super(@instance.name, @instance.public_ip)
       end
 
       def sync
         update_misc.
             update_env.
             install_yarn.
-            upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
+            upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             precompile.
             update_egotter.
             update_crontab.
             update_nginx.
             update_puma.
-            install_td_agent(@name, './setup/etc/td-agent/td-agent.web.conf.erb')
+            install_td_agent('./setup/etc/td-agent/td-agent.web.conf.erb')
       end
 
       def install
@@ -235,13 +265,12 @@ module Tasks
       end
 
       def update_env
-        upload_env(@name, 'env/web.env.enc')
+        upload_env('env/web.env.enc')
       end
 
       def update_misc
         [
             'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
-            'sudo yum install -y httpd-tools',
             'sudo rm -rf /var/tmp/aws-mon/*',
             'sudo rm -rf /var/egotter/tmp/cache/*',
             'sudo rm -rf /var/egotter/log/*',
@@ -274,19 +303,19 @@ module Tasks
       def initialize(id)
         @id = id
         @instance = ::DeployRuby::Aws::Instance.retrieve(id)
-        super(@instance.name)
+        super(@instance.name, @instance.public_ip)
       end
 
       def sync
         update_misc.
             update_env.
-            upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
+            upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_datadog.
             update_egotter.
             update_crontab.
             update_sidekiq.
-            install_td_agent(@name, './setup/etc/td-agent/td-agent.sidekiq.conf.erb')
+            install_td_agent('./setup/etc/td-agent/td-agent.sidekiq.conf.erb')
       end
 
       def install
@@ -299,7 +328,7 @@ module Tasks
       end
 
       def update_env
-        upload_env(@name, 'env/sidekiq.env.enc')
+        upload_env('env/sidekiq.env.enc')
       end
 
       def update_misc
@@ -347,7 +376,7 @@ module Tasks
       attr_reader :instance
 
       def update_env
-        upload_env(@name, 'env/sidekiq.env.enc')
+        upload_env('env/sidekiq.env.enc')
       end
 
       def restart_processes
@@ -373,12 +402,12 @@ module Tasks
       def initialize(id)
         @id = id
         @instance = ::DeployRuby::Aws::Instance.retrieve(id)
-        super(@instance.name)
+        super(@instance.name, @instance.public_ip)
       end
 
       def sync
         update_misc.
-            upload_file(@name, './setup/root/.irbrc', '/root/.irbrc').
+            upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
             update_egotter.
             update_crontab.
@@ -398,7 +427,6 @@ module Tasks
       def update_misc
         [
             'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
-            'sudo yum install -y httpd-tools',
             'sudo rm -rf /var/tmp/aws-mon/*',
             'sudo rm -rf /var/egotter/tmp/cache/*',
             'sudo rm -rf /var/egotter/log/*',

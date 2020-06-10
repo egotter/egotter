@@ -1,5 +1,6 @@
 require_relative '../../app/models/cloud_watch_client'
 
+require_relative '../lib/deploy_ruby/logger'
 require_relative './launch_instance_task'
 require_relative './install_task'
 require_relative './uninstall_task'
@@ -11,13 +12,13 @@ module Tasks
 
       case role
       when 'web'
-        LaunchWebTask.new(params)
+        Web.new(params)
       when 'sidekiq'
-        LaunchSidekiqTask.new(params)
+        Sidekiq.new(params)
       when 'sidekiq_prompt_reports'
-        LaunchSidekiqPromptReportsTask.new(params)
+        SidekiqPromptReports.new(params)
       when 'plain'
-        LaunchPlainTask.new(params)
+        Plain.new(params)
       else
         raise "Invalid role params=#{params.inspect}"
       end
@@ -25,7 +26,9 @@ module Tasks
 
     module_function :build
 
-    class Base < ::DeployRuby::Task
+    class Base
+      include DeployRuby::Logging
+
       attr_reader :action, :instance
 
       def initialize
@@ -76,125 +79,125 @@ module Tasks
         File.open('./ssh_config', 'a') { |f| f.puts(text) }
       end
     end
-  end
 
-  class LaunchWebTask < LaunchTask::Base
-    def initialize(params)
-      super()
-      @params = params
-      @role = params['role']
+    class Web < Base
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
 
-      @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
-    end
-
-    def launch_instance(index = nil)
-      az = @target_group.availability_zone_with_fewest_instances
-      params = @params.merge('availability-zone' => az, 'instance-index' => index)
-      @server = Tasks::LaunchInstanceTask::Web.new(params).launch
-    end
-
-    def run
-      if @server.nil?
-        launch_instance
+        @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
       end
 
-      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
-      Tasks::InstallTask::Web.new(@server.id).install
+      def launch_instance(index = nil)
+        az = @target_group.availability_zone_with_fewest_instances
+        params = @params.merge('availability-zone' => az, 'instance-index' => index)
+        @server = Tasks::LaunchInstanceTask::Web.new(params).launch
+      end
 
-      @target_group.register(@server.id)
-      @instance = @launched = @server
-
-      if @params['rotate']
-        instance = @target_group.oldest_instance
-        if instance && @target_group.deregister(instance.id)
-          Tasks::UninstallTask::Web.new(instance.id).uninstall
-          instance.terminate
-          @terminated = instance
+      def run
+        if @server.nil?
+          launch_instance
         end
+
+        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+        Tasks::InstallTask::Web.new(@server.id).install
+
+        @target_group.register(@server.id)
+        @instance = @launched = @server
+
+        if @params['rotate']
+          instance = @target_group.oldest_instance
+          if instance && @target_group.deregister(instance.id)
+            Tasks::UninstallTask::Web.new(instance.id).uninstall
+            instance.terminate
+            @terminated = instance
+          end
+        end
+
+        super
+      end
+    end
+
+    class Sidekiq < Base
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
       end
 
-      super
-    end
-  end
-
-  class LaunchSidekiqTask < LaunchTask::Base
-    def initialize(params)
-      super()
-      @params = params
-      @role = params['role']
-    end
-
-    def launch_instance(index = nil)
-      az = 'ap-northeast-1b'
-      params = @params.merge('availability-zone' => az, 'instance-index' => index)
-      @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
-    end
-
-    def run
-      if @server.nil?
-        launch_instance
+      def launch_instance(index = nil)
+        az = 'ap-northeast-1b'
+        params = @params.merge('availability-zone' => az, 'instance-index' => index)
+        @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
       end
 
-      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
-      Tasks::InstallTask::Sidekiq.new(@server.id).install
+      def run
+        if @server.nil?
+          launch_instance
+        end
 
-      @instance = @launched = @server
+        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+        Tasks::InstallTask::Sidekiq.new(@server.id).install
 
-      super
-    end
-  end
+        @instance = @launched = @server
 
-  class LaunchSidekiqPromptReportsTask < LaunchTask::Base
-    def initialize(params)
-      super()
-      @params = params
-      @role = params['role']
+        super
+      end
     end
 
-    def launch_instance(index = nil)
-      az = 'ap-northeast-1b'
-      params = @params.merge('availability-zone' => az, 'instance-index' => index)
-      @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
-    end
-
-    def run
-      if @server.nil?
-        launch_instance
+    class SidekiqPromptReports < Base
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
       end
 
-      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
-      Tasks::InstallTask::SidekiqPromptReports.new(@server.id).install
-
-      @instance = @launched = @server
-
-      super
-    end
-  end
-
-  class LaunchPlainTask < LaunchTask::Base
-    def initialize(params)
-      super()
-      @params = params
-      @role = params['role']
-    end
-
-    def launch_instance(index = nil)
-      az = 'ap-northeast-1b'
-      params = @params.merge('availability-zone' => az, 'instance-index' => index)
-      @server = Tasks::LaunchInstanceTask::Plain.new(params).launch
-    end
-
-    def run
-      if @server.nil?
-        launch_instance
+      def launch_instance(index = nil)
+        az = 'ap-northeast-1b'
+        params = @params.merge('availability-zone' => az, 'instance-index' => index)
+        @server = Tasks::LaunchInstanceTask::Sidekiq.new(params).launch
       end
 
-      append_to_ssh_config(@server.id, @server.host, @server.public_ip)
-      Tasks::InstallTask::Plain.new(@server.id).install
+      def run
+        if @server.nil?
+          launch_instance
+        end
 
-      @instance = @launched = @server
+        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+        Tasks::InstallTask::SidekiqPromptReports.new(@server.id).install
 
-      super
+        @instance = @launched = @server
+
+        super
+      end
+    end
+
+    class Plain < Base
+      def initialize(params)
+        super()
+        @params = params
+        @role = params['role']
+      end
+
+      def launch_instance(index = nil)
+        az = 'ap-northeast-1b'
+        params = @params.merge('availability-zone' => az, 'instance-index' => index)
+        @server = Tasks::LaunchInstanceTask::Plain.new(params).launch
+      end
+
+      def run
+        if @server.nil?
+          launch_instance
+        end
+
+        append_to_ssh_config(@server.id, @server.host, @server.public_ip)
+        Tasks::InstallTask::Plain.new(@server.id).install
+
+        @instance = @launched = @server
+
+        super
+      end
     end
   end
 end

@@ -1,11 +1,13 @@
-require_relative '../lib/deploy_ruby/task'
+require_relative '../lib/deploy_ruby/logger'
 require_relative '../lib/deploy_ruby/aws/params'
 require_relative '../lib/deploy_ruby/aws/ec2'
 require_relative '../lib/deploy_ruby/aws/instance'
 
 module Tasks
   module LaunchInstanceTask
-    class Task < ::DeployRuby::Task
+    class Base
+      include DeployRuby::Logging
+
       def initialize(params)
         @params = ::DeployRuby::Aws::Params.new(params)
         @index = params.delete('instance-index')
@@ -25,19 +27,19 @@ module Tasks
       end
     end
 
-    class Web < Task
+    class Web < Base
       def name
         @name ||= "egotter_web#{Time.now.strftime('%m%d%H%M')}#{name_suffix}"
       end
     end
 
-    class Sidekiq < Task
+    class Sidekiq < Base
       def name
         @name ||= "egotter_sidekiq#{Time.now.strftime('%m%d%H%M')}#{name_suffix}"
       end
     end
 
-    class Plain < Task
+    class Plain < Base
       def name
         @name ||= "egotter_plain#{Time.now.strftime('%m%d%H%M')}#{name_suffix}"
       end

@@ -54,7 +54,7 @@ module Tasks
         count = params['count'].to_i
         tasks = count.times.map { Tasks::LaunchTask.build(params) }
 
-        DeployRuby.logger.info 'Launch instances in parallel'
+        logger.info 'Launch instances in parallel'
 
         tasks.map.with_index do |task, i|
           Thread.new { task.launch_instance(i) }
@@ -72,10 +72,14 @@ module Tasks
 
       if count > current_count
         params['count'] = count - current_count
+        logger.info "Launch #{params['count']} #{params['role']} instances"
         build_launch_task(params)
+
       elsif count < current_count
         params['count'] = current_count - count
+        logger.info "Terminate #{params['count']} #{params['role']} instances"
         build_terminate_task(params)
+
       else
         raise "Already adjusted params=#{params.inspect}"
       end
@@ -99,6 +103,10 @@ module Tasks
 
     def multiple_task?(params)
       params['count'] && params['count'].to_i > 1
+    end
+
+    def logger
+      DeployRuby.logger
     end
   end
 end
