@@ -25,7 +25,7 @@ sudo_cmd="sudo -u ${USER} -H bash -l -c"
 
 yum update -y
 yum groupinstall -y "Development Tools"
-yum install -y git tmux dstat htop monit tree nginx
+yum install -y git tmux dstat htop monit tree nginx httpd-tools
 yum install -y openssl-devel libyaml-devel libffi-devel readline-devel zlib-devel gdbm-devel ncurses-devel
 # set +e
 # rpm -ivh http://rpms.famillecollet.com/enterprise/remi-release-6.rpm
@@ -132,7 +132,7 @@ chmod +rx /var/log/nginx
 # [ ! -f "/etc/td-agent/td-agent.conf.bak" ] && cp /etc/td-agent/td-agent.conf /etc/td-agent/td-agent.conf.bak
 # cp -f ./setup/etc/td-agent/* /etc/td-agent/
 # /usr/sbin/td-agent-gem install fluent-plugin-slack
-# /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter
+# /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"
 # chkconfig td-agent on
 # service td-agent start
 # echo '$FileCreateMode 0644' >>/etc/rsyslog.conf

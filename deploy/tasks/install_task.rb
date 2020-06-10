@@ -147,12 +147,6 @@ module Tasks
       end
 
       def install_td_agent(src)
-        [
-            'test -f "/usr/sbin/td-agent" || curl -L https://toolbelt.treasuredata.com/sh/install-redhat-td-agent2.sh | sh',
-            '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-slack" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-slack',
-            '/usr/sbin/td-agent-gem list | egrep "fluent-plugin-rewrite-tag-filter.+2\.2\.0" >/dev/null 2>&1 || sudo /usr/sbin/td-agent-gem install fluent-plugin-rewrite-tag-filter -v "2.2.0"',
-        ].each { |cmd| backend(cmd) }
-
         options = {
             name: @name,
             webhook_rails: ENV['SLACK_TD_AGENT_RAILS'],
