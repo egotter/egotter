@@ -4,14 +4,28 @@ namespace :servers do
 
     require_relative '../../deploy/bin/egotter'
 
-    params = {
-        'launch' => true,
-        'role' => 'sidekiq_prompt_reports',
-        'instance-type' => 'm5.xlarge'
-    }
+    begin
+      params = {
+          'adjust' => true,
+          'role' => 'web',
+          'count' => '4'
+      }
+      Tasks::TaskBuilder.build(params).run
+    rescue => e
+      puts "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
+    end
 
-    task = Tasks::TaskBuilder.build(params)
-    task.run
+    begin
+      params = {
+          'launch' => true,
+          'role' => 'sidekiq_prompt_reports',
+          'instance-type' => 'm5.xlarge'
+      }
+      Tasks::TaskBuilder.build(params).run
+    rescue => e
+      puts "launch task failed params=#{params.inspect} exception=#{e.inspect}"
+    end
+
   end
 
   desc 'Terminate'
@@ -19,13 +33,27 @@ namespace :servers do
 
     require_relative '../../deploy/bin/egotter'
 
-    params = {
-        'terminate' => true,
-        'role' => 'sidekiq_prompt_reports',
-        'instance-name-regexp' => 'egotter_sidekiq\\d{8}'
-    }
+    begin
+      params = {
+          'adjust' => true,
+          'role' => 'web',
+          'count' => '2'
+      }
+      Tasks::TaskBuilder.build(params).run
+    rescue => e
+      puts "adjust task failed params=#{params.inspect} exception=#{e.inspect}"
+    end
 
-    task = Tasks::TaskBuilder.build(params)
-    task.run
+    begin
+      params = {
+          'terminate' => true,
+          'role' => 'sidekiq_prompt_reports',
+          'instance-name-regexp' => 'egotter_sidekiq\\d{8}'
+      }
+      Tasks::TaskBuilder.build(params).run
+    rescue => e
+      puts "launch task failed params=#{params.inspect} exception=#{e.inspect}"
+    end
+
   end
 end
