@@ -32,6 +32,7 @@ def main
       'state:',
       'launch',
       'count:',
+      'adjust',
       'terminate',
       'sync',
       'rotate',
@@ -72,7 +73,7 @@ def main
 
     system("git tag release-#{params['role']}-#{Time.now.to_i}")
     system('git push origin --tags')
-  elsif params['launch'] || params['terminate'] || params['sync'] || params['list']
+  elsif params['launch'] || params['adjust'] || params['terminate'] || params['sync'] || params['list']
     task = Tasks::TaskBuilder.build(params)
     task.run
 

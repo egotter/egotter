@@ -15,6 +15,8 @@ module Tasks
         build_release_task(params)
       when params['launch']
         build_launch_task(params)
+      when params['adjust']
+        build_adjust_task(params)
       when params['terminate']
         build_terminate_task(params)
       when params['sync']
@@ -61,6 +63,21 @@ module Tasks
         Tasks::EnumerableTask.new(tasks)
       else
         Tasks::LaunchTask.build(params)
+      end
+    end
+
+    def build_adjust_task(params)
+      count = params['count'].to_i
+      current_count = ::DeployRuby::Aws::TargetGroup.new(params['target-group']).registered_instances.size
+
+      if count > current_count
+        params['count'] = count - current_count
+        build_launch_task(params)
+      elsif count < current_count
+        params['count'] = current_count - count
+        build_terminate_task(params)
+      else
+        raise "Already adjusted params=#{params.inspect}"
       end
     end
 
