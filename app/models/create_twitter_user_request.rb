@@ -75,20 +75,20 @@ class CreateTwitterUserRequest < ApplicationRecord
 
     if TwitterUser.exists?(uid: uid)
       if twitter_user.too_little_friends?
-        raise TooLittleFriends.new("screen_name=#{twitter_user.screen_name}")
+        raise TooLittleFriends.new("no_friends_and_followers screen_name=#{twitter_user.screen_name}")
       end
 
       if SearchLimitation.hard_limited?(twitter_user)
-        raise TooManyFriends.new('hard_limited')
+        raise TooManyFriends.new("hard_limited screen_name=#{twitter_user.screen_name}")
       end
 
       # TODO Implement #no_need_to_import_friendships? as class method
       if twitter_user.no_need_to_import_friendships?
-        raise TooManyFriends.new('Already exists')
+        raise TooManyFriends.new("already_exists screen_name=#{twitter_user.screen_name}")
       end
 
       if diff_values_empty?(twitter_user)
-        raise NotChanged.new('Before build')
+        raise NotChanged.new("empty_diff screen_name=#{twitter_user.screen_name}")
       end
     end
   end
@@ -164,7 +164,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     elsif AccountStatus.blocked?(e)
       raise Blocked
     elsif AccountStatus.temporarily_locked?(e)
-      raise TemporarilyLocked
+      raise TemporarilyLocked.new("locked uid=#{uid}")
     end
 
     raise Unknown.new(e.inspect)
