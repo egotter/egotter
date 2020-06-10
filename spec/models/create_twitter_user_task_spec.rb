@@ -17,18 +17,6 @@ RSpec.describe CreateTwitterUserTask, type: :model do
       expect(task).to receive(:update_friends_and_followers).with(twitter_user)
       subject
     end
-
-    context 'request.perform! raises Twitter::Error::TooManyRequests' do
-      before do
-        Redis.client.flushdb
-        allow(request).to receive(:perform!).with(context).and_raise(Twitter::Error::TooManyRequests)
-      end
-
-      it do
-        expect { subject }.to raise_error(CreateTwitterUserRequest::TooManyRequests).
-            and change { TooManyRequestsUsers.new.size }.by(1)
-      end
-    end
   end
 
   describe '#update_target_user' do

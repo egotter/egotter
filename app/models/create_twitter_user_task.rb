@@ -22,16 +22,6 @@ class CreateTwitterUserTask
     update_friends_and_followers(@twitter_user)
 
     self
-  rescue Twitter::Error::TooManyRequests => e
-    if request.user
-      TooManyRequestsUsers.new.add(request.user.id)
-      ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, request.user.id)
-    end
-
-    exception = CreateTwitterUserRequest::TooManyRequests.new(e.message)
-    @log.update(error_class: exception.class, error_message: e.message)
-
-    raise exception
   rescue => e
     @log.update(error_class: e.class, error_message: e.message)
     raise

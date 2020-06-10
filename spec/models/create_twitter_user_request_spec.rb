@@ -259,6 +259,12 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
       it { expect { subject }.to raise_error(described_class::TemporarilyLocked) }
     end
 
+    context 'rate limit exceeded' do
+      let(:error) { Twitter::Error::TooManyRequests.new }
+      before { allow(AccountStatus).to receive(:too_many_requests?).with(error).and_return(true) }
+      it { expect { subject }.to raise_error(described_class::TooManyRequests) }
+    end
+
     context 'else' do
       it { expect { subject }.to raise_error(described_class::Unknown) }
     end

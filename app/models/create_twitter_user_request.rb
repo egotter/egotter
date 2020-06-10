@@ -167,6 +167,14 @@ class CreateTwitterUserRequest < ApplicationRecord
       raise TemporarilyLocked.new("locked uid=#{uid}")
     end
 
+    if AccountStatus.too_many_requests?(e)
+      if user
+        TooManyRequestsUsers.new.add(user.id)
+        ResetTooManyRequestsWorker.perform_in(e.rate_limit.reset_in.to_i, user.id)
+      end
+      raise TooManyRequests.new('rate_limit_exceeded')
+    end
+
     raise Unknown.new(e.inspect)
   end
 
