@@ -188,7 +188,7 @@ GEM
     ffi-compiler (1.0.1)
       ffi (>= 1.0.0)
       rake
-    geocoder (1.5.1)
+    geocoder (1.6.3)
     get_process_mem (0.2.5)
       ffi (~> 1.0)
     globalid (0.4.2)
