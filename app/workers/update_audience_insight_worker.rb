@@ -52,13 +52,18 @@ class UpdateAudienceInsightWorker
 
     bm('save!') { insight.save! if insight.changed? }
 
-  rescue ActiveRecord::RecordNotUnique => e
-    logger.info "#{e.class}: #{e.message} #{uid} #{options}"
   rescue => e
-    logger.warn "#{e.class}: #{e.message} #{uid} #{options}"
-    logger.info e.backtrace.join("\n")
+    handle_exception(e, uid, options)
   end
 
+  def handle_exception(e, uid, options)
+    if e.class == ActiveRecord::RecordNotUnique
+      return
+    end
+
+    logger.warn "#{e.inspect} uid=#{uid} options=#{options}"
+    logger.info e.backtrace.join("\n")
+  end
 
   module Instrumentation
     def bm(message, &block)
