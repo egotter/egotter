@@ -54,7 +54,7 @@ module Tasks
         count = params['count'].to_i
         tasks = count.times.map { Tasks::LaunchTask.build(params) }
 
-        logger.info 'Launch instances in parallel'
+        logger.info "Launch #{count} instances in parallel"
 
         tasks.map.with_index do |task, i|
           Thread.new { task.launch_instance(i) }

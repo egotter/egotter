@@ -1,10 +1,15 @@
+require 'aws-sdk-elasticloadbalancingv2'
+
 require_relative './instance'
 
 module DeployRuby
   module Aws
     class TargetGroup
+      include Logging
+
       def initialize(arn)
         @arn = arn || ENV['AWS_TARGET_GROUP']
+        @elb_client = ::Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
       end
 
       def register(instance_id)
@@ -15,7 +20,7 @@ module DeployRuby
             targets: [{id: instance_id}]
         }
 
-        client.register_targets(params)
+        @elb_client.register_targets(params)
         wait_until(:target_in_service, params)
 
         success "Current targets count is #{registered_instances.size} (was #{previous_count})"
@@ -35,7 +40,7 @@ module DeployRuby
             targets: [{id: instance_id}]
         }
 
-        client.deregister_targets(params)
+        @elb_client.deregister_targets(params)
         wait_until(:target_deregistered, params)
 
         success "Current targets count is #{registered_instances.size} (was #{previous_count})"
@@ -46,7 +51,7 @@ module DeployRuby
       def registered_instances(state: 'healthy')
         params = {target_group_arn: @arn}
 
-        client.describe_target_health(params).
+        @elb_client.describe_target_health(params).
             target_health_descriptions.
             select { |d| d.target_health.state == state }.map do |description|
           Instance.retrieve(description.target.id)
@@ -69,7 +74,7 @@ module DeployRuby
       def wait_until(name, params)
         instance_id = params[:targets][0][:id]
 
-        client.wait_until(name, params) do |w|
+        @elb_client.wait_until(name, params) do |w|
           w.before_wait do |n, resp|
             logger.info "waiting for #{name} #{instance_id}"
           end
@@ -77,22 +82,6 @@ module DeployRuby
       rescue ::Aws::Waiters::Errors::WaiterFailed => e
         failure "failed waiting for #{name}: #{e.message}"
         exit
-      end
-
-      def client
-        @client ||= ::Aws::ElasticLoadBalancingV2::Client.new(region: 'ap-northeast-1')
-      end
-
-      def success(str)
-        logger.info "\e[33m#{str}\e[0m"
-      end
-
-      def failure(str)
-        logger.info "\e[31m#{str}\e[0m"
-      end
-
-      def logger
-        DeployRuby.logger
       end
     end
   end

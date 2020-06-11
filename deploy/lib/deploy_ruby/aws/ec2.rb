@@ -1,6 +1,11 @@
+require 'aws-sdk-ec2'
+
+require_relative './logging'
+
 module DeployRuby
   module Aws
     class EC2
+      include Logging
 
       def initialize
         @ec2_resource = ::Aws::EC2::Resource.new(region: 'ap-northeast-1')
@@ -84,18 +89,6 @@ module DeployRuby
       rescue ::Aws::Waiters::Errors::WaiterFailed => e
         red "failed waiting for #{state}: #{e.message}"
         exit
-      end
-
-      def green(str)
-        logger.info "\e[32m#{str}\e[0m"
-      end
-
-      def red(str)
-        logger.info "\e[31m#{str}\e[0m"
-      end
-
-      def logger
-        DeployRuby.logger
       end
     end
   end
