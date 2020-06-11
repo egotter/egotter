@@ -35,8 +35,8 @@ def print_help
   TEXT
 end
 
-def main
-  params = ARGV.getopts(
+def parse_params
+  ARGV.getopts(
       'h',
       'help',
       'release',
@@ -63,11 +63,13 @@ def main
       'rotate',
       'list',
       'debug',
-  )
+      )
+end
 
+def main(params)
   if params['h'] || params['help']
     print_help
-    exit
+    return
   end
 
   task = Tasks::TaskBuilder.build(params)
@@ -80,5 +82,5 @@ def main
 end
 
 if __FILE__ == $0
-  main
+  main(parse_params)
 end

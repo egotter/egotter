@@ -162,6 +162,19 @@ module Tasks
         backend("sudo mv #{tmp_file} /etc/datadog-agent/conf.d/sidekiq.d/conf.yaml")
         self
       end
+
+      def update_misc
+        [
+            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a status',
+            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
+            'sudo rm -rf /var/tmp/aws-mon/*',
+            'sudo rm -rf /var/egotter/tmp/cache/*',
+            'sudo rm -rf /var/egotter/log/*',
+        ].each do |cmd|
+          backend(cmd)
+        end
+        self
+      end
     end
 
     class Web < Task
@@ -175,6 +188,7 @@ module Tasks
 
       def sync
         update_misc.
+            update_bashrc.
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
@@ -198,17 +212,8 @@ module Tasks
         upload_env('env/web.env.enc')
       end
 
-      def update_misc
-        [
-            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
-            'sudo rm -rf /var/tmp/aws-mon/*',
-            'sudo rm -rf /var/egotter/tmp/cache/*',
-            'sudo rm -rf /var/egotter/log/*',
-            "sed -i -e 's/web3/#{@name}/g' ~/.bashrc",
-        ].each do |cmd|
-          backend(cmd)
-        end
-
+      def update_bashrc
+        backend("sed -i -e 's/web3/#{@name}/g' ~/.bashrc")
         self
       end
 
@@ -238,6 +243,7 @@ module Tasks
 
       def sync
         update_misc.
+            update_bashrc.
             update_env.
             upload_file('./setup/root/.irbrc', '/root/.irbrc').
             pull_latest_code.
@@ -261,17 +267,8 @@ module Tasks
         upload_env('env/sidekiq.env.enc')
       end
 
-      def update_misc
-        [
-            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
-            'sudo rm -rf /var/tmp/aws-mon/*',
-            'sudo rm -rf /var/egotter/tmp/cache/*',
-            'sudo rm -rf /var/egotter/log/*',
-            "sed -i -e 's/web3/#{@name}/g' ~/.bashrc",
-        ].each do |cmd|
-          backend(cmd)
-        end
-
+      def update_bashrc
+        backend("sed -i -e 's/web3/#{@name}/g' ~/.bashrc")
         self
       end
 
@@ -352,19 +349,6 @@ module Tasks
         logger.error red("Terminate #{@id} since #{e.class} is raised")
         ::DeployRuby::Aws::EC2.new.terminate_instance(@id)
         raise
-      end
-
-      def update_misc
-        [
-            'sudo /opt/aws/amazon-cloudwatch-agent/bin/amazon-cloudwatch-agent-ctl -m ec2 -a stop',
-            'sudo rm -rf /var/tmp/aws-mon/*',
-            'sudo rm -rf /var/egotter/tmp/cache/*',
-            'sudo rm -rf /var/egotter/log/*',
-        ].each do |cmd|
-          backend(cmd)
-        end
-
-        self
       end
 
       def stop_processes
