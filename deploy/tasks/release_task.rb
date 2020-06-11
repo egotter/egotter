@@ -1,8 +1,12 @@
 require "open3"
 
+require_relative './util'
+
 module Tasks
   module ReleaseTask
     module DSL
+      include ::Tasks::Util
+
       def backend(host, dir, cmd)
         execute(host, "cd #{dir} && #{cmd}")
       end
@@ -20,22 +24,6 @@ module Tasks
           logger.error red("false(exit)")
           exit
         end
-      end
-
-      def red(str)
-        "\e[31m#{str}\e[0m"
-      end
-
-      def green(str)
-        "\e[32m#{str}\e[0m"
-      end
-
-      def blue(str)
-        "\e[34m#{str}\e[0m"
-      end
-
-      def cyan(str)
-        "\e[36m#{str}\e[0m"
       end
     end
 
@@ -59,64 +47,60 @@ module Tasks
       def ssh_connection_test
         backend('echo "ssh connection test"')
       end
-
-      def logger
-        DeployRuby.logger
-      end
-    end
-  end
-
-  class ReleaseWebTask < ReleaseTask::Base
-    def initialize(host)
-      super
-
-      @instance = ::DeployRuby::Aws::Instance.retrieve_by(name: host)
-      @target_group = ::DeployRuby::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
     end
 
-    def run
-      ssh_connection_test
-      @target_group.deregister(@instance.id)
+    class Web < Base
+      def initialize(host)
+        super
 
-      [
-          'git fetch origin',
-          'git log --oneline master..origin/master',
-          'git pull origin master',
-          'bundle check || bundle install --path .bundle --without test development',
-          'RAILS_ENV=production bundle exec rake assets:precompile',
-          'sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf',
-          'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
-          'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
-          'sudo service nginx restart',
-          'sudo service puma restart',
-      ].each do |cmd|
-        backend(cmd)
+        @instance = ::DeployRuby::Aws::Instance.retrieve_by(name: host)
+        @target_group = ::DeployRuby::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
       end
 
-      backend('ab -n 500 -c 10 http://localhost:80/')
-      @target_group.register(@instance.id)
+      def run
+        ssh_connection_test
+        @target_group.deregister(@instance.id)
+
+        [
+            'git fetch origin',
+            'git log --oneline master..origin/master',
+            'git pull origin master',
+            'bundle check || bundle install --path .bundle --without test development',
+            'RAILS_ENV=production bundle exec rake assets:precompile',
+            'sudo cp ./setup/etc/nginx/nginx.conf /etc/nginx/nginx.conf',
+            'sudo cp ./setup/etc/init.d/puma /etc/init.d/',
+            'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
+            'sudo service nginx restart',
+            'sudo service puma restart',
+        ].each do |cmd|
+          backend(cmd)
+        end
+
+        backend('ab -n 500 -c 10 http://localhost:80/')
+        @target_group.register(@instance.id)
+      end
     end
-  end
 
-  class ReleaseSidekiqTask < ReleaseTask::Base
-    def run
-      ssh_connection_test
+    class Sidekiq < Base
+      def run
+        ssh_connection_test
 
-      [
-          'git fetch origin',
-          'git log --oneline master..origin/master',
-          'git pull origin master',
-          'bundle check || bundle install --path .bundle --without test development',
-          'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
-          'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
-          'sudo restart sidekiq_misc || :',
-          'sudo restart sidekiq_misc_workers || :',
-          'sudo restart sidekiq_prompt_reports || :',
-          'sudo restart sidekiq_prompt_reports_workers || :',
-          'sudo restart sidekiq || :',
-          'sudo restart sidekiq_workers || :',
-      ].each do |cmd|
-        backend(cmd)
+        [
+            'git fetch origin',
+            'git log --oneline master..origin/master',
+            'git pull origin master',
+            'bundle check || bundle install --path .bundle --without test development',
+            'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
+            'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
+            'sudo restart sidekiq_misc || :',
+            'sudo restart sidekiq_misc_workers || :',
+            'sudo restart sidekiq_prompt_reports || :',
+            'sudo restart sidekiq_prompt_reports_workers || :',
+            'sudo restart sidekiq || :',
+            'sudo restart sidekiq_workers || :',
+        ].each do |cmd|
+          backend(cmd)
+        end
       end
     end
   end

@@ -3,33 +3,12 @@ require 'erb'
 require_relative '../../lib/secret_file'
 
 require_relative '../lib/deploy_ruby/aws/instance'
+require_relative './util'
 
 module Tasks
   module InstallTask
     module Util
-      def logger
-        DeployRuby.logger
-      end
-
-      def red(str)
-        "\e[31m#{str}\e[0m"
-      end
-
-      def green(str)
-        "\e[32m#{str}\e[0m"
-      end
-
-      def blue(str)
-        "\e[34m#{str}\e[0m"
-      end
-
-      def cyan(str)
-        "\e[36m#{str}\e[0m"
-      end
-
-      def yellow(str)
-        "\e[33m#{str}\e[0m"
-      end
+      include ::Tasks::Util
 
       def run_rsync(src_path, dst_path)
         cmd = "rsync -auz -e 'ssh -i ~/.ssh/egotter.pem' #{src_path} ec2-user@#{@ip_address}:#{dst_path}"

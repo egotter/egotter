@@ -1,27 +1,11 @@
 require_relative '../lib/deploy_ruby/aws/instance'
 
+require_relative './util'
+
 module Tasks
   module UninstallTask
     module Util
-      def logger
-        DeployRuby.logger
-      end
-
-      def red(str)
-        "\e[31m#{str}\e[0m"
-      end
-
-      def green(str)
-        "\e[32m#{str}\e[0m"
-      end
-
-      def blue(str)
-        "\e[34m#{str}\e[0m"
-      end
-
-      def cyan(str)
-        "\e[36m#{str}\e[0m"
-      end
+      include ::Tasks::Util
 
       def exec_command(cmd, dir: '/var/egotter', exception: true)
         if @ip_address.to_s.empty?

@@ -18,22 +18,22 @@ module DeployRuby
       end
 
       def terminate
-        ::DeployRuby::Aws::EC2.new.terminate_instance(@id)
+        EC2.new.terminate_instance(@id)
       end
 
       class << self
         def retrieve(id)
-          new(::DeployRuby::Aws::EC2.new.retrieve_instance(id))
+          new(EC2.new.retrieve_instance(id))
         end
 
         def retrieve_by(id: nil, name: nil, name_regexp: nil)
           if id
             retrieve(id)
           elsif name
-            new(::DeployRuby::Aws::EC2.new.retrieve_instance_by(name: name))
+            new(EC2.new.retrieve_instance_by(name: name))
           elsif name_regexp
             regexp = Regexp.new(name_regexp)
-            found = ::DeployRuby::Aws::EC2.new.retrieve_instances.find do |instance|
+            found = EC2.new.retrieve_instances.find do |instance|
               name_tag = instance.tags.find { |t| t.key == 'Name' }.value
               regexp.match?(name_tag)
             end

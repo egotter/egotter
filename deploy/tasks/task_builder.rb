@@ -34,15 +34,15 @@ module Tasks
 
       if role == 'web'
         if hosts.size > 1
-          Tasks::EnumerableTask.new(hosts.map { |host| Tasks::ReleaseWebTask.new(host) })
+          Tasks::EnumerableTask.new(hosts.map { |host| Tasks::ReleaseTask::Web.new(host) })
         else
-          Tasks::ReleaseWebTask.new(hosts[0])
+          Tasks::ReleaseTask::Web.new(hosts[0])
         end
       elsif role == 'sidekiq'
         if hosts.size > 1
-          Tasks::EnumerableTask.new(hosts.map { |host| Tasks::ReleaseSidekiqTask.new(host) })
+          Tasks::EnumerableTask.new(hosts.map { |host| Tasks::ReleaseTask::Sidekiq.new(host) })
         else
-          Tasks::ReleaseSidekiqTask.new(hosts[0])
+          Tasks::ReleaseTask::Sidekiq.new(hosts[0])
         end
       else
         raise "Invalid role params=#{params.inspect}"
