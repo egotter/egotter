@@ -10,6 +10,31 @@ require_relative '../tasks/task_builder'
 
 STDOUT.sync = true
 
+def print_help
+  puts <<~'TEXT'
+      Usage:
+        egotter.rb --release --role web --hosts aaa,bbb,ccc
+        egotter.rb --release --role web --hosts aaa,bbb,ccc --git-tag
+        egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc
+        egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc --git-tag
+
+        egotter.rb --launch --role web
+        egotter.rb --launch --role web --rotate
+        egotter.rb --launch --role web --rotate --count 3
+        egotter.rb --launch --role sidekiq --instance-type m5.large
+
+        egotter.rb --sync --role web --instance-id i-0000
+        egotter.rb --sync --role sidekiq --instance-id i-0000
+
+        egotter.rb --list --role web
+        egotter.rb --list --role sidekiq
+
+        egotter.rb --terminate --role web
+        egotter.rb --terminate --role web --count 3
+        egotter.rb --terminate --role sidekiq --instance-id i-0000
+  TEXT
+end
+
 def main
   params = ARGV.getopts(
       'h',
@@ -41,48 +66,16 @@ def main
   )
 
   if params['h'] || params['help']
-    puts <<~'TEXT'
-      Usage:
-        egotter.rb --release --role web --hosts aaa,bbb,ccc
-        egotter.rb --release --role web --hosts aaa,bbb,ccc --git-tag
-        egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc
-        egotter.rb --release --role sidekiq --hosts aaa,bbb,ccc --git-tag
-  
-        egotter.rb --launch --role web
-        egotter.rb --launch --role web --rotate
-        egotter.rb --launch --role web --rotate --count 3
-        egotter.rb --launch --role sidekiq --instance-type m5.large
-  
-        egotter.rb --sync --role web --instance-id i-0000
-        egotter.rb --sync --role sidekiq --instance-id i-0000
-  
-        egotter.rb --list --role web
-        egotter.rb --list --role sidekiq
-  
-        egotter.rb --terminate --role web
-        egotter.rb --terminate --role web --count 3
-        egotter.rb --terminate --role sidekiq --instance-id i-0000
-    TEXT
-
+    print_help
     exit
   end
 
-  if params['release']
-    task = Tasks::TaskBuilder.build(params)
-    task.run
+  task = Tasks::TaskBuilder.build(params)
+  task.run
 
-    system("git tag release-#{params['role']}-#{Time.now.to_i}")
+  if !task.action.to_s.empty? && task.action != :list
+    system("git tag #{task.action}-#{params['role']}-#{Time.now.to_i}")
     system('git push origin --tags')
-  elsif params['launch'] || params['adjust'] || params['terminate'] || params['sync'] || params['list']
-    task = Tasks::TaskBuilder.build(params)
-    task.run
-
-    if %i(launch terminate sync).include?(task.action)
-      %x(git tag #{task.action}-#{task.instance.name}) # Cannot add the existing tag
-      %x(git push origin --tags)
-    end
-  else
-    raise "Invalid action params=#{params.inspect}"
   end
 end
 

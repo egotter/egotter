@@ -10,17 +10,15 @@ module Tasks
         @index = params.delete('instance-index')
       end
 
-      def name
-        raise NotImplementedError
-      end
-
-      def name_suffix
-        @index ? "_#{@index}" : ''
-      end
-
       def launch
         id = ::DeployRuby::Aws::EC2.new.launch_instance(name, @params)
         ::DeployRuby::Aws::Instance.retrieve(id)
+      end
+
+      private
+
+      def name_suffix
+        @index ? "_#{@index}" : ''
       end
     end
 

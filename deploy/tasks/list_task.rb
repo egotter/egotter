@@ -5,11 +5,11 @@ module Tasks
 
       case role
       when 'web'
-        WebTask.new(params)
+        Web.new(params)
       when 'sidekiq'
-        SidekiqTask.new(params)
+        Sidekiq.new(params)
       when 'plain'
-        PlainTask.new(params)
+        Plain.new(params)
       else
         raise "Invalid role #{role}"
       end
@@ -17,11 +17,12 @@ module Tasks
 
     module_function :build
 
-    class Task
+    class Base
       attr_reader :action
 
-      def initialize
+      def initialize(params)
         @action = :list
+        @delim = params['delim'] || ' '
       end
 
       def logger
@@ -29,11 +30,10 @@ module Tasks
       end
     end
 
-    class WebTask < Task
+    class Web < Base
       def initialize(params)
+        super
         @state = params['state'].to_s.empty? ? 'healthy' : params['state']
-        @delim = params['delim'] || ' '
-
         @target_group = ::DeployRuby::Aws::TargetGroup.new(params['target-group'])
       end
 
@@ -42,9 +42,9 @@ module Tasks
       end
     end
 
-    class SidekiqTask < Task
+    class Sidekiq < Base
       def initialize(params)
-        @delim = params['delim'] || ' '
+        super
       end
 
       def run
@@ -58,9 +58,9 @@ module Tasks
       end
     end
 
-    class PlainTask < Task
+    class Plain < Base
       def initialize(params)
-        @delim = params['delim'] || ' '
+        super
       end
 
       def run

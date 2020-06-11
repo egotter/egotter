@@ -7,7 +7,10 @@ module Tasks
     class Base
       include ::Tasks::Util
 
+      attr_reader :action
+
       def initialize(host)
+        @action = :release
         @instance = ::DeployRuby::Aws::Instance.retrieve_by(name: host)
       end
     end
