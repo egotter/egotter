@@ -164,7 +164,7 @@ class CreateTwitterUserRequest < ApplicationRecord
     elsif AccountStatus.blocked?(e)
       raise Blocked
     elsif AccountStatus.temporarily_locked?(e)
-      raise TemporarilyLocked.new("locked uid=#{uid}")
+      raise TemporarilyLocked.new(uid)
     end
 
     if AccountStatus.too_many_requests?(e)
@@ -241,6 +241,13 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class TemporarilyLocked < Error
+    def initialize(uid)
+      if (user = User.find_by(uid: uid))
+        super("locked screen_name=#{user.screen_name}")
+      else
+        super("locked uid=#{uid}")
+      end
+    end
   end
 
   class TooShortCreateInterval < Error
