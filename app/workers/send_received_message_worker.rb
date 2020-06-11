@@ -7,8 +7,8 @@ class SendReceivedMessageWorker
   #   text
   #   dm_id
   def perform(sender_uid, options = {})
-    return if fixed_message?(options['text'])
-    send_message_to_slack(sender_uid, options['dm_id'], options['text'])
+    return if static_message?(options['text'])
+    send_message_to_slack(sender_uid, options['text'])
   rescue => e
     notify_airbrake(e, sender_uid: sender_uid, options: options)
   end
@@ -21,9 +21,11 @@ class SendReceivedMessageWorker
       /\A【?#{I18n.t('quick_replies.prompt_reports.label2')}】?\z/,
       /\A【?#{I18n.t('quick_replies.welcome_messages.label1')}】?\z/,
       /\A【?#{I18n.t('quick_replies.welcome_messages.label2')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.search_reports.label1')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.search_reports.label2')}】?\z/,
   ]
 
-  def fixed_message?(text)
+  def static_message?(text)
     text == I18n.t('quick_replies.prompt_reports.label1') ||
         text == I18n.t('quick_replies.prompt_reports.label2') ||
         text == I18n.t('quick_replies.prompt_reports.label3') ||
@@ -33,21 +35,22 @@ class SendReceivedMessageWorker
         text.match?(Concerns::PeriodicReportConcern::STOP_NOW_REGEXP) ||
         text.match?(Concerns::PeriodicReportConcern::RESTART_REGEXP) ||
         text.match?(Concerns::PeriodicReportConcern::RECEIVED_REGEXP) ||
-        text.match?(Concerns::PeriodicReportConcern::CONTINUE_EXACT_REGEXP)
+        text.match?(Concerns::PeriodicReportConcern::CONTINUE_EXACT_REGEXP) ||
+        QUICK_REPLIES.any? { |regexp| regexp.match?(text) }
   end
 
-  def send_message_to_slack(sender_uid, dm_id, text)
-    if QUICK_REPLIES.none? { |regexp| regexp.match?(text) }
-      user = User.find_by(uid: sender_uid)
-      screen_name = user ? user.screen_name : (Bot.api_client.user(sender_uid)[:screen_name] rescue sender_uid)
-
-      text = dm_url(screen_name) + "\n" + text
-
-      SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
-    end
+  def send_message_to_slack(sender_uid, text)
+    screen_name = fetch_screen_name(sender_uid)
+    text = dm_url(screen_name) + "\n" + text
+    SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e, sender_uid: sender_uid, text: text)
+  end
+
+  def fetch_screen_name(uid)
+    user = User.find_by(uid: uid)
+    user ? user.screen_name : (Bot.api_client.user(uid)[:screen_name] rescue uid)
   end
 
   def dm_url(screen_name)

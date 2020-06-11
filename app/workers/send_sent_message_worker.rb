@@ -7,37 +7,31 @@ class SendSentMessageWorker
   #   text
   #   dm_id
   def perform(recipient_uid, options = {})
-    return if fixed_message?(options['text'])
-    send_message_to_slack(recipient_uid, options['dm_id'], options['text'])
+    return if static_message?(options['text'])
+    send_message_to_slack(recipient_uid, options['text'])
   rescue => e
     notify_airbrake(e, recipient_uid: recipient_uid, options: options)
   end
 
-  def fixed_message?(text)
+  def static_message?(text)
     text == I18n.t('quick_replies.prompt_reports.label3')
   end
 
-  def send_message_to_slack(recipient_uid, dm_id, text)
-    user = User.find_by(uid: recipient_uid)
-    screen_name = user ? user.screen_name : (Bot.api_client.user(recipient_uid)[:screen_name] rescue recipient_uid)
-
+  def send_message_to_slack(recipient_uid, text)
+    screen_name = fetch_screen_name(recipient_uid)
     text = dm_url(screen_name) + "\n" + text
-    text = error_check(user.id) + "\n" + text if user
-
     SlackClient.sent_messages.send_message(text, title: "`#{screen_name}`")
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e, recipient_uid: recipient_uid, text: text)
   end
 
-  def dm_url(screen_name)
-    "https://twitter.com/direct_messages/create/#{screen_name}"
+  def fetch_screen_name(uid)
+    user = User.find_by(uid: uid)
+    user ? user.screen_name : (Bot.api_client.user(uid)[:screen_name] rescue uid)
   end
 
-  def error_check(user_id)
-    CreatePromptReportRequest.new(user_id: user_id).error_check!
-    'success'
-  rescue => e
-    e.class.to_s
+  def dm_url(screen_name)
+    "https://twitter.com/direct_messages/create/#{screen_name}"
   end
 end
