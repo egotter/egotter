@@ -37,12 +37,12 @@ class SendReceivedMessageWorker
   end
 
   def send_message_to_slack(sender_uid, dm_id, text)
-    user = User.find_by(uid: sender_uid)
-    screen_name = user ? user.screen_name : (Bot.api_client.user(sender_uid)[:screen_name] rescue sender_uid)
-
-    text = dm_url(screen_name) + "\n" + text
-
     if QUICK_REPLIES.none? { |regexp| regexp.match?(text) }
+      user = User.find_by(uid: sender_uid)
+      screen_name = user ? user.screen_name : (Bot.api_client.user(sender_uid)[:screen_name] rescue sender_uid)
+
+      text = dm_url(screen_name) + "\n" + text
+
       SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
     end
   rescue => e
