@@ -14,13 +14,13 @@ class SendReceivedMessageWorker
   end
 
   QUICK_REPLIES = [
-      I18n.t('quick_replies.continue.label'),
-      I18n.t('quick_replies.revive.label'),
-      I18n.t('quick_replies.followed.label'),
-      I18n.t('quick_replies.prompt_reports.label1'),
-      I18n.t('quick_replies.prompt_reports.label2'),
-      I18n.t('quick_replies.welcome_messages.label1'),
-      I18n.t('quick_replies.welcome_messages.label2'),
+      /\A【?#{I18n.t('quick_replies.continue.label')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.revive.label')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.followed.label')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.prompt_reports.label1')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.prompt_reports.label2')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.welcome_messages.label1')}】?\z/,
+      /\A【?#{I18n.t('quick_replies.welcome_messages.label2')}】?\z/,
   ]
 
   def fixed_message?(text)
@@ -41,11 +41,8 @@ class SendReceivedMessageWorker
     screen_name = user ? user.screen_name : (Bot.api_client.user(sender_uid)[:screen_name] rescue sender_uid)
 
     text = dm_url(screen_name) + "\n" + text
-    text = error_check(user.id) + "\n" + text if user
 
-    if QUICK_REPLIES.any? { |message| text.include?(message) }
-      SlackClient.continue_notif_messages.send_message(text, title: "`#{screen_name}`")
-    else
+    if QUICK_REPLIES.none? { |regexp| regexp.match?(text) }
       SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
     end
   rescue => e
@@ -55,12 +52,5 @@ class SendReceivedMessageWorker
 
   def dm_url(screen_name)
     "https://twitter.com/direct_messages/create/#{screen_name}"
-  end
-
-  def error_check(user_id)
-    CreatePromptReportRequest.new(user_id: user_id).error_check!
-    'success'
-  rescue => e
-    e.class.to_s
   end
 end
