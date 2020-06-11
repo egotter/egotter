@@ -5,7 +5,7 @@ module Concerns::RoutingErrorHandler
   include Concerns::DebugConcern
 
   def not_found
-    Airbrake.notify("No route matches #{request.fullpath}", request_details_json)
+    Airbrake.notify("No route matches fullpath=|#{request.fullpath}|", request_details_json)
     logger.info "Not found: #{request_details}"
 
     if request.xhr?
