@@ -4,61 +4,22 @@ require_relative './util'
 
 module Tasks
   module ReleaseTask
-    module DSL
+    class Base
       include ::Tasks::Util
 
-      def backend(host, dir, cmd)
-        execute(host, "cd #{dir} && #{cmd}")
-      end
-
-      private
-
-      def execute(host, cmd)
-        logger.info cyan(%Q(ssh #{host})) + ' ' + green(%Q("#{cmd}"))
-        out, err, status = Open3.capture3(%Q(ssh #{host} "#{cmd}"))
-        if status.exitstatus == 0
-          logger.info out
-          logger.info blue("true(success)")
-        else
-          logger.error red(err)
-          logger.error red("false(exit)")
-          exit
-        end
-      end
-    end
-
-    class Base
-      include DSL
-
-      attr_reader :host
-
       def initialize(host)
-        @host = host
-      end
-
-      def current_dir
-        '/var/egotter'
-      end
-
-      def backend(cmd)
-        super(@host, current_dir, cmd)
-      end
-
-      def ssh_connection_test
-        backend('echo "ssh connection test"')
+        @instance = ::DeployRuby::Aws::Instance.retrieve_by(name: host)
       end
     end
 
     class Web < Base
       def initialize(host)
         super
-
-        @instance = ::DeployRuby::Aws::Instance.retrieve_by(name: host)
         @target_group = ::DeployRuby::Aws::TargetGroup.new(ENV['AWS_TARGET_GROUP'])
       end
 
       def run
-        ssh_connection_test
+        ssh_connection_test(@instance.public_ip)
         @target_group.deregister(@instance.id)
 
         [
@@ -72,18 +33,22 @@ module Tasks
             'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
             'sudo service nginx restart',
             'sudo service puma restart',
+            'ab -n 500 -c 10 http://localhost:80/'
         ].each do |cmd|
-          backend(cmd)
+          exec_command(@instance.public_ip, cmd)
         end
 
-        backend('ab -n 500 -c 10 http://localhost:80/')
         @target_group.register(@instance.id)
       end
     end
 
     class Sidekiq < Base
+      def initialize(host)
+        super
+      end
+
       def run
-        ssh_connection_test
+        ssh_connection_test(@instance.public_ip)
 
         [
             'git fetch origin',
@@ -99,7 +64,7 @@ module Tasks
             'sudo restart sidekiq || :',
             'sudo restart sidekiq_workers || :',
         ].each do |cmd|
-          backend(cmd)
+          exec_command(@instance.public_ip, cmd)
         end
       end
     end
