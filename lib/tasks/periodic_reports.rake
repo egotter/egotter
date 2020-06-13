@@ -52,7 +52,7 @@ namespace :periodic_reports do
     puts "users=#{users.size} (DM not received)"
 
     users = users.take(limit)
-    puts "users=#{users.size} (limit)"
+    puts "users=#{users.size} (limited)"
 
     StartSendingPeriodicReportsTask.new(user_ids: users.map(&:id), delay: 1.second).start!
   end
