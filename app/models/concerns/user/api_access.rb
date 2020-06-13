@@ -17,6 +17,12 @@ module Concerns::User::ApiAccess
     path = '/1.1/application/rate_limit_status.json'
     request = Twitter::REST::Request.new(api_client.twitter, :get, path, {})
     RateLimit.new(request.perform)
+  rescue => e
+    if ServiceStatus.retryable_error?(e)
+      retry
+    else
+      raise
+    end
   end
 
   class RateLimit
