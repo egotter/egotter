@@ -1,11 +1,12 @@
 require 'rails_helper'
 
 RSpec.describe Egotter::SortedSet do
-  let(:instance) { described_class.new(Redis.client) }
+  let(:redis_instance) { Redis.client }
+  let(:instance) { described_class.new(redis_instance) }
   let(:default_ttl) { 60 }
 
   before do
-    Redis.client.flushdb
+    redis_instance.flushdb
     instance.instance_variable_set(:@key, 'key')
     instance.instance_variable_set(:@ttl, default_ttl)
   end
@@ -39,7 +40,7 @@ RSpec.describe Egotter::SortedSet do
   describe 'cleanup' do
     subject { instance.cleanup }
     it do
-      expect(instance.redis).to receive(:zremrangebyscore).with(any_args)
+      expect(redis_instance).to receive(:zremrangebyscore).with(any_args)
       subject
     end
   end

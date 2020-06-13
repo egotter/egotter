@@ -1,6 +1,6 @@
 module Egotter
   class SortedSet
-    attr_reader :redis, :key
+    attr_reader :key
 
     def initialize(redis)
       @redis = redis
@@ -10,7 +10,7 @@ module Egotter
 
     def ttl(val = nil)
       if val
-        score = redis.zscore(key, val.to_s)
+        score = @redis.zscore(key, val.to_s)
         score ? (ttl - (current_time - score)) : nil
       else
         @ttl
@@ -18,35 +18,35 @@ module Egotter
     end
 
     def clear
-      redis.del(key)
+      @redis.del(key)
     end
 
     def cleanup
-      redis.zremrangebyscore(key, 0, current_time - ttl)
+      @redis.zremrangebyscore(key, 0, current_time - ttl)
     end
 
     def exists?(val)
-      redis.pipelined do
+      @redis.pipelined do
         cleanup
-        redis.zrank(key, val.to_s)
+        @redis.zrank(key, val.to_s)
       end.last.present?
     end
 
     def add(val)
-      redis.pipelined do
+      @redis.pipelined do
         cleanup
-        redis.zadd(key, current_time, val.to_s)
+        @redis.zadd(key, current_time, val.to_s)
       end
     end
 
     def delete(val)
-      redis.zrem(key, val.to_s)
+      @redis.zrem(key, val.to_s)
     end
 
     def to_a
-      redis.pipelined do
+      @redis.pipelined do
         cleanup
-        redis.zrangebyscore(key, 0, current_time)
+        @redis.zrangebyscore(key, 0, current_time)
       end.last
     end
 
