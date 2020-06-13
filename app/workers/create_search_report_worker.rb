@@ -22,7 +22,8 @@ class CreateSearchReportWorker
   rescue => e
     if AccountStatus.unauthorized?(e) ||
         DirectMessageStatus.protect_out_users_from_spam?(e) ||
-        DirectMessageStatus.you_have_blocked?(e)
+        DirectMessageStatus.you_have_blocked?(e) ||
+        DirectMessageStatus.not_allowed_to_access_or_delete?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} searchee_id=#{searchee_id} options=#{options.inspect}"
