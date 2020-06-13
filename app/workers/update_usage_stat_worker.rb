@@ -21,10 +21,8 @@ class UpdateUsageStatWorker
     statuses = twitter_user&.status_tweets
 
     if statuses.blank?
-      user = User.find_by(id: options['user_id'])
-      user = User.authorized.find_by(uid: uid) unless user
-      client = user ? user.api_client : Bot.api_client
-      statuses = client.user_timeline(uid.to_i).map { |s| TwitterDB::Status.build_by(twitter_user: twitter_user, status: s) }
+      tweets = fetch_tweets(uid, options)
+      statuses = tweets.map { |s| TwitterDB::Status.build_by(twitter_user: twitter_user, status: s) }
     end
 
     if statuses.any?
@@ -40,5 +38,17 @@ class UpdateUsageStatWorker
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
       logger.info e.backtrace.join("\n")
     end
+  end
+
+  def fetch_tweets(uid, options)
+    user = User.find_by(id: options['user_id'])
+    user = User.authorized.find_by(uid: uid) unless user
+    client = user ? user.api_client : Bot.api_client
+    client.user_timeline(uid.to_i)
+  rescue => e
+    if AccountStatus.blocked?(e)
+      logger.warn "#{client.user[:screen_name]} is blocked" rescue nil
+    end
+    raise
   end
 end
