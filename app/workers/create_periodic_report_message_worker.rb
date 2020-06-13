@@ -121,9 +121,9 @@ class CreatePeriodicReportMessageWorker
     if user.credential_token.instance_id.present?
       begin
         push_message = PeriodicReport.periodic_push_message(user.id, options)
-        CreatePushNotificationWorker.perform_async(user.id, '', push_message)
+        CreatePushNotificationWorker.perform_async(user.id, '', push_message, request_id: options[:request_id])
       rescue => e
-        logger.warn "I can't send a push-notification #{e.inspect} user_id=#{user_id}"
+        logger.warn "I can't send a push-notification #{e.inspect} user_id=#{user_id} request_id=#{options[:request_id]}"
       end
     end
 
