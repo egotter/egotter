@@ -19,8 +19,6 @@ class SendMetricsToSlackWorker
           :send_search_histories_metrics,
           :send_visitors_metrics,
           :send_sign_in_metrics,
-          :send_prompt_report_metrics,
-          :send_prompt_report_error_metrics,
           :send_rate_limit_metrics,
           :send_search_error_metrics,
       ]
@@ -52,16 +50,6 @@ class SendMetricsToSlackWorker
     ].each do |name|
       SlackClient.twitter_users_monitoring.send_message(fetch_gauges(name, :average), title: name)
     end
-  end
-
-  def send_prompt_report_metrics
-    name = 'prompt_report'
-    SlackClient.messaging_monitoring.send_message(fetch_gauges(name, :sum), title: name)
-  end
-
-  def send_prompt_report_error_metrics
-    name = 'prompt_report_error'
-    SlackClient.messaging_monitoring.send_message(fetch_gauges(name, :sum), title: name)
   end
 
   def send_sidekiq_queue_metrics

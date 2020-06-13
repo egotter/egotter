@@ -19,8 +19,6 @@ class CalculateMetricsWorker
           :send_search_histories_metrics,
           :send_visitors_metrics,
           :send_sign_in_metrics,
-          :send_prompt_report_metrics,
-          :send_prompt_report_error_metrics,
           :send_rate_limit_metrics,
           :send_search_error_metrics,
       ]
@@ -129,41 +127,6 @@ class CalculateMetricsWorker
         max: followers_size.max
     }
     Gauge.create_by_hash('twitter_user followers_size', stats)
-  end
-
-  def send_prompt_report_metrics
-    condition_value = 10.minutes.ago..Time.zone.now
-    condition = {created_at: condition_value}
-    stats = {
-        prompt_reports: PromptReport.where(condition).size,
-        'prompt_reports(read)' => PromptReport.where(condition.merge(read_at: condition_value)).size,
-        'prompt_reports(timelines)' => SearchLog.where(condition).where(via: 'prompt_report_shortcut').size,
-        create_prompt_report_logs: CreatePromptReportLog.where(condition).size,
-    }
-    Gauge.create_by_hash('prompt_report', stats)
-  end
-
-  def send_prompt_report_error_metrics
-    condition = {created_at: 10.minutes.ago..Time.zone.now}
-    stats =
-        CreatePromptReportLog.select('error_class, count(*) cnt').
-            where(condition).
-            group('error_class').
-            order('cnt desc').map do |record|
-          [record.error_class, record.cnt]
-        end.to_h
-
-    stats.transform_keys! do |key|
-      if key.include?(':')
-        key.split(':')[-1]
-      elsif key.empty?
-        'EMPTY'
-      else
-        key
-      end
-    end
-
-    Gauge.create_by_hash('prompt_report_error', stats)
   end
 
   def send_sidekiq_queue_metrics
