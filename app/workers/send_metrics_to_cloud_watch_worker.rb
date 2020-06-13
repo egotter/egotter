@@ -130,7 +130,7 @@ class SendMetricsToCloudWatchWorker
   def send_periodic_reports_metrics
     namespace = "#{PeriodicReport.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
 
-    [10.minutes, 1.hour].each do |duration|
+    [1.minute, 10.minutes, 1.hour].each do |duration|
       condition = {created_at: duration.ago..Time.zone.now}
 
       send_count = PeriodicReport.where(condition).size
@@ -152,7 +152,7 @@ class SendMetricsToCloudWatchWorker
   def send_create_periodic_report_requests_metrics
     namespace = "#{CreatePeriodicReportRequest.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
 
-    [10.minutes, 1.hour].each do |duration|
+    [1.minute, 10.minutes, 1.hour].each do |duration|
       condition = {created_at: duration.ago..Time.zone.now}
 
       CreatePeriodicReportRequest.where(condition).group(:status).count.each do |status, count|
