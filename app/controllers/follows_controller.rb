@@ -5,6 +5,12 @@ class FollowsController < ApplicationController
   before_action :require_login!
   before_action(only: :create) { valid_uid?(params[:uid]) }
 
+  before_action only: :create do
+    if params[:uid].to_i == current_user.uid
+      head :bad_request
+    end
+  end
+
   before_action do
     if action_name == 'create'
       create_search_log(uid: params[:uid])
