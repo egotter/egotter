@@ -130,20 +130,18 @@ class SendMetricsToCloudWatchWorker
   def send_periodic_reports_metrics
     namespace = "#{PeriodicReport.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
 
-    [1.minute, 10.minutes, 1.hour].each do |duration|
+    [1.minute].each do |duration|
       condition = {created_at: duration.ago..Time.zone.now}
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
 
       send_count = PeriodicReport.where(condition).size
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}, {name: 'Type', value: 'Total'}]}
       put_metric_data('SendCount', send_count, options) if send_count > 0
 
       read_count = PeriodicReport.where(condition).where.not(read_at: nil).size
-      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}, {name: 'Type', value: 'Total'}]}
       put_metric_data('ReadCount', read_count, options) if read_count > 0
 
       if send_count > 0 && read_count > 0
         read_rate = 100.0 * read_count / send_count
-        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}, {name: 'Type', value: 'Total'}]}
         put_metric_data('ReadRate', read_rate, options)
       end
     end
@@ -152,12 +150,12 @@ class SendMetricsToCloudWatchWorker
   def send_create_periodic_report_requests_metrics
     namespace = "#{CreatePeriodicReportRequest.name.pluralize}#{"/#{Rails.env}" unless Rails.env.production?}"
 
-    [1.minute, 10.minutes, 1.hour].each do |duration|
+    [1.minute].each do |duration|
       condition = {created_at: duration.ago..Time.zone.now}
+      options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
 
       CreatePeriodicReportRequest.where(condition).group(:status).count.each do |status, count|
         next if status.blank?
-        options = {namespace: namespace, dimensions: [{name: 'Duration', value: duration.inspect}]}
         put_metric_data(status, count, options)
       end
     end

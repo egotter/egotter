@@ -10,7 +10,7 @@ RSpec.describe SendMetricsToCloudWatchWorker do
       PeriodicReport.create!(user_id: user.id, token: PeriodicReport.generate_token, message_id: 1, read_at: Time.zone.now)
     end
     it do
-      expect(worker).to receive(:put_metric_data).with(any_args).exactly(9).times
+      expect(worker).to receive(:put_metric_data).with(any_args).exactly(3).times
       subject
     end
   end
@@ -19,10 +19,12 @@ RSpec.describe SendMetricsToCloudWatchWorker do
     let(:user) { create(:user) }
     subject { worker.send(:send_create_periodic_report_requests_metrics) }
     before do
-      CreatePeriodicReportRequest.create!(user_id: user.id, status: 'test')
+      CreatePeriodicReportRequest.create!(user_id: user.id, status: 'test1')
+      CreatePeriodicReportRequest.create!(user_id: user.id, status: 'test2')
+      CreatePeriodicReportRequest.create!(user_id: user.id, status: '')
     end
     it do
-      expect(worker).to receive(:put_metric_data).with(any_args).exactly(3).times
+      expect(worker).to receive(:put_metric_data).with(any_args).exactly(2).times
       subject
     end
   end
