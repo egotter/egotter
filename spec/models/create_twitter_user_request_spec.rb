@@ -48,12 +48,13 @@ RSpec.describe CreateTwitterUserRequest, type: :model do
   end
 
   describe '#build_twitter_user' do
+    let(:fetched_user) { {id: 1, screen_name: 'sn'} }
     let(:relations_result) { {friend_ids: 'ids1', follower_ids: 'ids2'} }
     subject { request.build_twitter_user('context') }
 
     it do
-      expect(request).to receive(:fetch_user).and_return('fetch_user')
-      expect(request).to receive(:build_twitter_user_by).with('fetch_user').and_return('twitter_user')
+      expect(request).to receive(:fetch_user).and_return(fetched_user)
+      expect(request).to receive(:build_twitter_user_by).with(fetched_user).and_return('twitter_user')
       expect(request).to receive(:fetch_relations).with('twitter_user', 'context').and_return(relations_result)
       expect(request).to receive(:attach_friend_uids).with('twitter_user', 'ids1')
       expect(request).to receive(:attach_follower_uids).with('twitter_user', 'ids2')

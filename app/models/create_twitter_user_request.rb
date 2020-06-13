@@ -52,6 +52,8 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def build_twitter_user(context = nil)
     fetched_user = fetch_user
+    raise SoftSuspended if fetched_user[:suspended]
+
     twitter_user = build_twitter_user_by(fetched_user)
     relations = fetch_relations(twitter_user, context)
 
@@ -108,6 +110,12 @@ class CreateTwitterUserRequest < ApplicationRecord
 
   def fetch_user
     @fetch_user ||= client.user(uid)
+  rescue => e
+    if AccountStatus.suspended?(e)
+      raise HardSuspended
+    else
+      raise
+    end
   end
 
   def build_twitter_user_by(user)
@@ -232,6 +240,12 @@ class CreateTwitterUserRequest < ApplicationRecord
   end
 
   class Forbidden < Error
+  end
+
+  class SoftSuspended < Error
+  end
+
+  class HardSuspended < Error
   end
 
   class Protected < Error
