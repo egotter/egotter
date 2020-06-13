@@ -140,19 +140,27 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   def send_finished_message
-    Report.finished_message_from_user(user).deliver!
-    Report.finished_message(user).deliver!
+    report = Report.finished_message_from_user(user)
+    report.deliver!
+
+    report = Report.finished_message(user)
+    report.deliver!
   rescue => e
-    if !DirectMessageStatus.not_following_you?(e) && !DirectMessageStatus.cannot_send_messages?(e)
-      raise FinishedMessageNotSent.new("#{e.class} #{e.message}")
+    if !DirectMessageStatus.not_following_you?(e) &&
+        !DirectMessageStatus.cannot_send_messages?(e) &&
+        !DirectMessageStatus.you_have_blocked?(e)
+      raise FinishedMessageNotSent.new("#{e.inspect} sender_uid=#{report.sender.uid}")
     end
   end
 
   def send_error_message
-    Report.finished_message_from_user(user).deliver!
-    Report.error_message(user).deliver!
+    report = Report.finished_message_from_user(user)
+    report.deliver!
+
+    report = Report.error_message(user)
+    report.deliver!
   rescue => e
-    raise ErrorMessageNotSent.new("#{e.class} #{e.message}")
+    raise ErrorMessageNotSent.new("#{e.inspect} sender_uid=#{report.sender.uid}")
   end
 
   def api_client
@@ -160,7 +168,7 @@ class DeleteTweetsRequest < ApplicationRecord
   end
 
   class Report
-    attr_reader :message
+    attr_reader :message, :sender
 
     def initialize(sender, recipient, message)
       @sender = sender
