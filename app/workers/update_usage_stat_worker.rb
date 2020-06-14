@@ -32,7 +32,8 @@ class UpdateUsageStatWorker
   rescue => e
     if AccountStatus.invalid_or_expired_token?(e) ||
         AccountStatus.not_authorized?(e) ||
-        AccountStatus.temporarily_locked?(e)
+        AccountStatus.temporarily_locked?(e) ||
+        AccountStatus.blocked?(e)
       # Do nothing
     else
       logger.warn "#{e.inspect} uid=#{uid} options=#{options.inspect}"
@@ -45,10 +46,5 @@ class UpdateUsageStatWorker
     user = User.authorized.find_by(uid: uid) unless user
     client = user ? user.api_client : Bot.api_client
     client.user_timeline(uid.to_i)
-  rescue => e
-    if AccountStatus.blocked?(e)
-      logger.warn "#{client.user[:screen_name]} is blocked" rescue nil
-    end
-    raise
   end
 end
