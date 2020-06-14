@@ -63,3 +63,38 @@ RSpec.describe UniqueJob::JobHistory do
     it { is_expected.to eq("UniqueJob::JobHistory:Class:Class:value") }
   end
 end
+
+RSpec.describe UniqueJob::JobHistory::RescueAllRedisErrors do
+  let(:instance) do
+    Class.new {
+      def ttl(*args)
+        raise 'error'
+      end
+
+      def exists?(*args)
+        raise 'error'
+      end
+
+      def add(*args)
+        raise 'error'
+      end
+
+      prepend UniqueJob::JobHistory::RescueAllRedisErrors
+    }.new
+  end
+
+  describe '#ttl' do
+    subject { instance.ttl }
+    it { expect { subject }.not_to raise_error }
+  end
+
+  describe '#exists?' do
+    subject { instance.exists? }
+    it { expect { subject }.not_to raise_error }
+  end
+
+  describe '#add' do
+    subject { instance.add }
+    it { expect { subject }.not_to raise_error }
+  end
+end

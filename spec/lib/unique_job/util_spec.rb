@@ -1,10 +1,14 @@
 require 'rails_helper'
 
 RSpec.describe UniqueJob::Util do
-  let(:middleware) do
-    class Middleware
+  module TestUniqueJob
+    class TestClass
       include UniqueJob::Util
-    end.new
+    end
+  end
+
+  let(:middleware) do
+    TestUniqueJob::TestClass.new
   end
 
   describe '#perform_if_unique' do
@@ -100,5 +104,18 @@ RSpec.describe UniqueJob::Util do
         subject
       end
     end
+  end
+
+  describe '#perform_callback' do
+
+  end
+
+  describe '#truncate' do
+
+  end
+
+  describe '#class_name' do
+    subject { middleware.class_name }
+    it { is_expected.to eq('TestClass') }
   end
 end
