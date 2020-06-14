@@ -1,5 +1,7 @@
+require_relative 'sorted_set'
+
 module Egotter
-  class AsyncSortedSet < SortedSet
+  class AsyncSortedSet < ::Egotter::SortedSet
 
     def initialize(redis)
       super(redis)
