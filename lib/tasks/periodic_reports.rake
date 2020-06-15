@@ -54,7 +54,9 @@ namespace :periodic_reports do
     users = users.take(limit)
     puts "users=#{users.size} (limited)"
 
-    StartSendingPeriodicReportsTask.new(user_ids: users.map(&:id), delay: 1.second).start!
+    if users.any?
+      StartSendingPeriodicReportsTask.new(user_ids: users.map(&:id), delay: 1.second).start!
+    end
   end
 
   namespace :send_messages do
