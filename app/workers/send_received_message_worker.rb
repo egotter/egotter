@@ -41,8 +41,8 @@ class SendReceivedMessageWorker
 
   def send_message_to_slack(sender_uid, text)
     screen_name = fetch_screen_name(sender_uid)
-    text = dm_url(sender_uid) + "\n" + text
-    SlackClient.received_messages.send_message(text, title: "`#{screen_name}`")
+    text = dm_url(screen_name) + "\n" + text
+    SlackClient.received_messages.send_message(text, title: "`#{screen_name}` `#{sender_uid}`")
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e, sender_uid: sender_uid, text: text)
@@ -53,7 +53,7 @@ class SendReceivedMessageWorker
     user ? user.screen_name : (Bot.api_client.user(uid)[:screen_name] rescue uid)
   end
 
-  def dm_url(uid)
-    "https://twitter.com/messages/#{uid}-#{User::EGOTTER_UID}"
+  def dm_url(screen_name)
+    "https://twitter.com/direct_messages/create/#{screen_name}"
   end
 end

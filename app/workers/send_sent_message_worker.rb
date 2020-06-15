@@ -20,7 +20,7 @@ class SendSentMessageWorker
   def send_message_to_slack(recipient_uid, text)
     screen_name = fetch_screen_name(recipient_uid)
     text = dm_url(screen_name) + "\n" + text
-    SlackClient.sent_messages.send_message(text, title: "`#{screen_name}`")
+    SlackClient.sent_messages.send_message(text, title: "`#{screen_name}` `#{recipient_uid}`")
   rescue => e
     logger.warn "Sending a message to slack is failed #{e.inspect}"
     notify_airbrake(e, recipient_uid: recipient_uid, text: text)
