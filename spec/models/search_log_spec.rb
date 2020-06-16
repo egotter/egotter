@@ -1,6 +1,17 @@
 require 'rails_helper'
 
 RSpec.describe SearchLog, type: :model do
+
+  describe '#truncate_attrs' do
+    let(:log) { SearchLog.new(via: 'a' * 200, user_agent: 'b' * 200, referer: 'c' * 200) }
+    it do
+      log.truncate_attrs
+      expect(log.via.length).to eq(150)
+      expect(log.user_agent.length).to eq(150)
+      expect(log.referer.length).to eq(150)
+    end
+  end
+
   describe '#with_login?' do
     subject { SearchLog.new(user_id: user_id).with_login? }
 

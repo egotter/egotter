@@ -40,6 +40,14 @@
 class SearchLog < ApplicationRecord
   belongs_to :user, optional: true
 
+  before_validation :truncate_attrs
+
+  def truncate_attrs
+    %i(via user_agent referer).each do |attr|
+      self[attr] = self[attr].truncate(150) if self[attr]
+    end
+  end
+
   class << self
     def except_crawler
       # device_type NOT IN ('crawler', 'UNKNOWN') AND session_id != '-1'
