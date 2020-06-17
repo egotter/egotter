@@ -39,7 +39,7 @@ module Concerns::PeriodicReportConcern
     dm.text.match?(STOP_NOW_REGEXP)
   end
 
-  RESTART_REGEXP = /【?リム(られ)?通知(\s|　)*(再開|さいかい|再会)】?/
+  RESTART_REGEXP = /【?リム(られ)?通知(\s|　)*(再開|さいかい|再会|復活|ふっかつ)】?/
 
   def restart_requested?(dm)
     dm.text.match?(RESTART_REGEXP)
