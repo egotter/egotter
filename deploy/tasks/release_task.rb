@@ -54,8 +54,8 @@ module Tasks
         ssh_connection_test(@instance.public_ip)
 
         [
-            'sudo stop sidekiq_misc_workers || :',
-            'sudo stop sidekiq || :',
+            'sudo stop sidekiq_misc_workers && tail -n 6 log/sidekiq_misc.log || :',
+            'sudo stop sidekiq && tail -n 6 log/sidekiq.log || :',
         ].each do |cmd|
           exec_command(@instance.public_ip, cmd)
         end
