@@ -61,24 +61,24 @@ namespace :periodic_reports do
 
   namespace :send_messages do
     desc 'Send morning messages'
-    task morning: :environment do
+    task morning: :environment do |task|
       user_ids = StartSendingPeriodicReportsTask.morning_user_ids
       StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
-      puts "user_ids=#{user_ids.size}"
+      puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
 
     desc 'Send afternoon messages'
-    task afternoon: :environment do
+    task afternoon: :environment do |task|
       user_ids = StartSendingPeriodicReportsTask.afternoon_user_ids
       StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
-      puts "user_ids=#{user_ids.size}"
+      puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
 
     desc 'Send night messages'
-    task night: :environment do
+    task night: :environment do |task|
       user_ids = StartSendingPeriodicReportsTask.night_user_ids
       StartSendingPeriodicReportsTask.new(user_ids: user_ids, delay: 1.second).start!
-      puts "user_ids=#{user_ids.size}"
+      puts "user_ids=#{user_ids.size} task_name=#{task.name}"
     end
   end
 end
