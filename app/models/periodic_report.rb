@@ -79,7 +79,9 @@ class PeriodicReport < ApplicationRecord
 
     def remind_reply_message
       template = Rails.root.join('app/views/periodic_reports/remind_reply.ja.text.erb')
-      message = ERB.new(template.read).result
+      message = ERB.new(template.read).result_with_hash(
+          url: support_url(og_tag: false, utm_source: 'remind_reply', utm_medium: 'dm', utm_campaign: "remind_reply_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
+      )
 
       new(user: nil, message: message, token: nil)
     end
@@ -112,7 +114,9 @@ class PeriodicReport < ApplicationRecord
 
     def sending_soft_limited_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
-      message = ERB.new(template.read).result
+      message = ERB.new(template.read).result_with_hash(
+          url: support_url(og_tag: false, utm_source: 'soft_limited', utm_medium: 'dm', utm_campaign: "soft_limited_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
+      )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
     end
