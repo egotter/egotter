@@ -54,18 +54,26 @@ module Tasks
         ssh_connection_test(@instance.public_ip)
 
         [
+            'sudo stop sidekiq_misc_workers || :',
+            'sudo stop sidekiq || :',
+        ].each do |cmd|
+          exec_command(@instance.public_ip, cmd)
+        end
+
+        [
             'git fetch origin',
             'git log --oneline master..origin/master',
             'git pull origin master',
             'bundle check || bundle install --path .bundle --without test development',
             'sudo cp ./setup/etc/init/sidekiq* /etc/init/',
             'sudo cp ./setup/etc/init.d/egotter /etc/init.d/',
-            'sudo restart sidekiq_misc || :',
-            'sudo restart sidekiq_misc_workers || :',
-            'sudo restart sidekiq_prompt_reports || :',
-            'sudo restart sidekiq_prompt_reports_workers || :',
-            'sudo restart sidekiq || :',
-            'sudo restart sidekiq_workers || :',
+        ].each do |cmd|
+          exec_command(@instance.public_ip, cmd)
+        end
+
+        [
+            'sudo start sidekiq_misc_workers || :',
+            'sudo start sidekiq || :',
         ].each do |cmd|
           exec_command(@instance.public_ip, cmd)
         end
