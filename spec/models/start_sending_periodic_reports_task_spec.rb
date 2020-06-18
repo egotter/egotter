@@ -12,7 +12,7 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
   end
 
   describe '#start!' do
-    let(:instance) {described_class.new}
+    let(:instance) { described_class.new }
     subject { instance.start! }
 
     context '@remind_only is set' do
@@ -54,6 +54,43 @@ RSpec.describe StartSendingPeriodicReportsTask, type: :model do
       expect(described_class).to receive(:new_user_ids).with(start_date, end_date).and_return([3, 4])
       is_expected.to match_array([1, 2, 3, 4])
     end
+  end
+
+  describe '.morning_user_ids' do
+    let(:user) { create(:user) }
+    subject { described_class.morning_user_ids }
+    it do
+      expect(described_class).to receive(:reject_specific_period_stopped_user_ids).with([user.id], :morning).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
+  describe '.afternoon_user_ids' do
+    let(:user) { create(:user) }
+    subject { described_class.afternoon_user_ids }
+    it do
+      expect(described_class).to receive(:reject_specific_period_stopped_user_ids).with([user.id], :afternoon).and_return('result')
+      is_expected.to eq('result')
+    end
+  end
+
+  describe '.night_user_ids' do
+    let!(:user) { create(:user) }
+    subject { described_class.night_user_ids }
+    it { is_expected.to eq([user.id]) }
+  end
+
+  describe '#reject_specific_period_stopped_user_ids' do
+    let(:users) { 2.times.map { create(:user) } }
+    let(:user_ids) { users.map(&:id) }
+    subject { described_class.reject_specific_period_stopped_user_ids(user_ids, :morning) }
+
+    before do
+      users.each { |user| user.create_periodic_report_setting! }
+      users[0].periodic_report_setting.update!(morning: false)
+    end
+
+    it { is_expected.to eq([users[1].id]) }
   end
 
   describe '.dm_received_user_ids' do

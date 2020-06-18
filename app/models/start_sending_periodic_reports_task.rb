@@ -86,47 +86,55 @@ class StartSendingPeriodicReportsTask
 
   class << self
     def morning_user_ids
-      ids1 = dm_received_user_ids
-      ids2 = new_user_ids(1.day.ago, Time.zone.now)
-      (ids1 + ids2).uniq
+      user_ids = (dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
+      reject_specific_period_stopped_user_ids(user_ids, :morning)
     end
 
     def afternoon_user_ids
-      morning_user_ids
+      user_ids = (dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
+      reject_specific_period_stopped_user_ids(user_ids, :afternoon)
     end
 
     def night_user_ids
-      morning_user_ids
+      (dm_received_user_ids + new_user_ids(1.day.ago, Time.zone.now)).uniq
     end
 
-    def dm_received_user_ids(reject_stop_requested: true)
+    def reject_specific_period_stopped_user_ids(user_ids, period_name)
+      user_ids.each_slice(1000).each do |user_ids_array|
+        settings = PeriodicReportSetting.where(user_id: user_ids_array).where(period_name => false).select(:id, :user_id)
+        user_ids -= settings.map(&:user_id)
+      end
+      user_ids
+    end
+
+    def dm_received_user_ids
       uids = GlobalDirectMessageReceivedFlag.new.to_a.map(&:to_i)
       user_ids = uids.each_slice(1000).map { |uids_array| User.where(authorized: true, uid: uids_array).pluck(:id) }.flatten
-      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
+      reject_stop_requested_user_ids(user_ids)
     end
 
     ACCESS_DAYS_START = 12.hours
     ACCESS_DAYS_END = 3.hours
 
-    def recent_access_user_ids(start_date = nil, end_date = nil, reject_stop_requested: true)
+    def recent_access_user_ids(start_date = nil, end_date = nil)
       start_date = ACCESS_DAYS_START.ago unless start_date
       end_date = ACCESS_DAYS_END.ago unless end_date
 
       # The target is `created_at`, not 'date'
       user_ids = AccessDay.where(created_at: start_date..end_date).select(:user_id).distinct.map(&:user_id)
       user_ids = user_ids.each_slice(1000).map { |ids_array| User.where(authorized: true, id: ids_array).pluck(:id) }.flatten
-      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
+      reject_stop_requested_user_ids(user_ids)
     end
 
     NEW_USERS_START = 1.day
     NEW_USERS_END = 1.second
 
-    def new_user_ids(start_date = nil, end_date = nil, reject_stop_requested: true)
+    def new_user_ids(start_date = nil, end_date = nil)
       start_date = NEW_USERS_START.ago unless start_date
       end_date = NEW_USERS_END.ago unless end_date
 
       user_ids = User.where(created_at: start_date..end_date).where(authorized: true).pluck(:id)
-      reject_stop_requested ? reject_stop_requested_user_ids(user_ids) : user_ids
+      reject_stop_requested_user_ids(user_ids)
     end
 
     def reject_stop_requested_user_ids(user_ids)
