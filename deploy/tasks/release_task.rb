@@ -22,7 +22,7 @@ module Tasks
       end
 
       def run
-        yellow("#{@action} #{@instance.public_ip}")
+        logger.info yellow("#{@action} #{@instance.public_ip}")
 
         ssh_connection_test(@instance.public_ip)
         @target_group.deregister(@instance.id)
@@ -53,7 +53,7 @@ module Tasks
       end
 
       def run
-        yellow("#{@action} #{@instance.public_ip}")
+        logger.info yellow("#{@action} #{@instance.public_ip}")
 
         ssh_connection_test(@instance.public_ip)
 
