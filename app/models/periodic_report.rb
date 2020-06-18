@@ -87,7 +87,7 @@ class PeriodicReport < ApplicationRecord
     def remind_access_message
       template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
       message = ERB.new(template.read).result_with_hash(
-          campaign_name: "remind_access_#{I18n.l(Time.zone.now, format: :date_hyphen)}"
+          url: root_url(share_dialog: 1, follow_dialog: 1, og_tag: false, utm_source: 'remind_access', utm_medium: 'dm', utm_campaign: "remind_access_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
       )
 
       new(user: nil, message: message, token: nil)
