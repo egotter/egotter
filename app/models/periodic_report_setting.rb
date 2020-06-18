@@ -19,4 +19,7 @@
 #
 
 class PeriodicReportSetting < ApplicationRecord
+  def period_flags
+    "#{morning ? 't' : 'f'}#{afternoon ? 't' : 'f'}#{night ? 't' : 'f'}"
+  end
 end

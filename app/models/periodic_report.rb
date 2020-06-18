@@ -281,12 +281,16 @@ class PeriodicReport < ApplicationRecord
     end
 
     def request_id_text(user, request_id, worker_context)
+      setting = user.periodic_report_setting
+
       [
           request_id % 1000,
           (TwitterUser.latest_by(uid: user.uid)&.id || 999) % 1000,
           remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
+          setting.period_flags,
           worker_context_text(worker_context)
       ].join('-')
+
     rescue => e
       logger.warn "#{self}##{__method__} #{e.inspect} user_id=#{user.id}"
       "#{rand(10000)}-er"

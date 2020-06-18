@@ -53,6 +53,12 @@ RSpec.describe PeriodicReport do
     end
   end
 
+  describe '.request_id_text' do
+    subject { described_class.request_id_text(user, 1, 'CreateUserRequestedPeriodicReportWorker') }
+    before { user.create_periodic_report_setting! }
+    it { is_expected.to be_truthy }
+  end
+
   describe '#send_direct_message' do
     let(:report) { described_class.new(message: 'message') }
     let(:recipient) { double('recipient', uid: 2) }
