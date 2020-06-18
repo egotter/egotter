@@ -9,6 +9,12 @@ module Concerns::PeriodicReportConcern
     dm.text.match?(SEND_NOW_REGEXP)
   end
 
+  SEND_NOW_EXACTLY_REGEXP = /\Aリムられ通知 今すぐ送信\z/
+
+  def send_now_exactly_requested?(dm)
+    dm.text.match?(SEND_NOW_EXACTLY_REGEXP)
+  end
+
   CONTINUE_WORDS = [
       '継続',
       'けいぞく',
@@ -39,10 +45,22 @@ module Concerns::PeriodicReportConcern
     dm.text.match?(STOP_NOW_REGEXP)
   end
 
+  STOP_NOW_EXACTLY_REGEXP = /\Aリムられ通知 停止\z/
+
+  def stop_now_exactly_requested?(dm)
+    dm.text.match?(STOP_NOW_EXACTLY_REGEXP)
+  end
+
   RESTART_REGEXP = /【?リム(られ)?通知(\s|　)*(再開|さいかい|再会|復活|ふっかつ)】?/
 
   def restart_requested?(dm)
     dm.text.match?(RESTART_REGEXP)
+  end
+
+  RESTART_EXACTLY_REGEXP = /\Aリムられ通知 再開\z/
+
+  def restart_exactly_requested?(dm)
+    dm.text.match?(RESTART_EXACTLY_REGEXP)
   end
 
   RECEIVED_REGEXP = /\Aリム(られ)?通知(\s|　)*届きました\z/
@@ -87,21 +105,11 @@ module Concerns::PeriodicReportConcern
   end
 
   def enqueue_user_requested_stopping_periodic_report(dm)
-    if (user = User.find_by(uid: dm.sender_id))
-      StopPeriodicReportRequest.create(user_id: user.id) # If the same record exists, this process may fail
-      CreatePeriodicReportMessageWorker.perform_async(user.id, stop_requested: true)
-    end
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+    stop_periodic_report(dm.sender_id)
   end
 
   def enqueue_user_requested_restarting_periodic_report(dm)
-    if (user = User.find_by(uid: dm.sender_id))
-      StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
-      CreatePeriodicReportMessageWorker.perform_async(user.id, restart_requested: true)
-    end
-  rescue => e
-    logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+    restart_periodic_report(dm.sender_id)
   end
 
   def enqueue_egotter_requested_periodic_report(dm)
@@ -121,5 +129,33 @@ module Concerns::PeriodicReportConcern
 
   rescue => e
     logger.warn "##{__method__} #{e.inspect} dm=#{dm.inspect}"
+  end
+
+  def enqueue_egotter_requested_stopping_periodic_report(dm)
+    stop_periodic_report(dm.recipient_id)
+  end
+
+  def enqueue_egotter_requested_restarting_periodic_report(dm)
+    restart_periodic_report(dm.recipient_id)
+  end
+
+  private
+
+  def stop_periodic_report(uid)
+    if (user = User.find_by(uid: uid))
+      StopPeriodicReportRequest.create(user_id: user.id) # If the same record exists, this process may fail
+      CreatePeriodicReportMessageWorker.perform_async(user.id, stop_requested: true)
+    end
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
+  end
+
+  def restart_periodic_report(uid)
+    if (user = User.find_by(uid: uid))
+      StopPeriodicReportRequest.find_by(user_id: user.id)&.destroy
+      CreatePeriodicReportMessageWorker.perform_async(user.id, restart_requested: true)
+    end
+  rescue => e
+    logger.warn "##{__method__} #{e.inspect} uid=#{uid}"
   end
 end

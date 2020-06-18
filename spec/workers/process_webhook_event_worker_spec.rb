@@ -169,10 +169,26 @@ RSpec.describe ProcessWebhookEventWorker do
       subject
     end
 
-    context 'send_now_requested? returns true' do
-      before { allow(worker).to receive(:send_now_requested?).with(dm).and_return(true) }
+    context 'send_now_exactly_requested? returns true' do
+      before { allow(worker).to receive(:send_now_exactly_requested?).with(dm).and_return(true) }
       it do
         expect(worker).to receive(:enqueue_egotter_requested_periodic_report).with(dm)
+        subject
+      end
+    end
+
+    context 'stop_now_exactly_requested? returns true' do
+      before { allow(worker).to receive(:stop_now_exactly_requested?).with(dm).and_return(true) }
+      it do
+        expect(worker).to receive(:enqueue_egotter_requested_stopping_periodic_report).with(dm)
+        subject
+      end
+    end
+
+    context 'restart_exactly_requested? returns true' do
+      before { allow(worker).to receive(:restart_exactly_requested?).with(dm).and_return(true) }
+      it do
+        expect(worker).to receive(:enqueue_egotter_requested_restarting_periodic_report).with(dm)
         subject
       end
     end

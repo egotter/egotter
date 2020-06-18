@@ -26,6 +26,25 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
   end
 
+  describe '#send_now_exactly_requested?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:send_now_exactly_requested?, dm) }
+
+    ['リムられ通知 今すぐ送信'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    ['【リムられ通知 今すぐ送信】'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
+      end
+    end
+  end
+
   describe '#continue_requested?' do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:continue_requested?, dm) }
@@ -74,6 +93,25 @@ describe Concerns::PeriodicReportConcern, type: :controller do
     end
   end
 
+  describe '#stop_now_exactly_requested?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:stop_now_exactly_requested?, dm) }
+
+    ['リムられ通知 停止'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    ['【リムられ通知 停止】'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
+      end
+    end
+  end
+
   describe '#restart_requested?' do
     let(:dm) { double('dm', text: text) }
     subject { controller.send(:restart_requested?, dm) }
@@ -89,6 +127,25 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       context "text is #{word}" do
         let(:text) { word }
         it { is_expected.to be_truthy }
+      end
+    end
+  end
+
+  describe '#restart_exactly_requested?' do
+    let(:dm) { double('dm', text: text) }
+    subject { controller.send(:restart_exactly_requested?, dm) }
+
+    ['リムられ通知 再開'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_truthy }
+      end
+    end
+
+    ['【リムられ通知 再開】'].each do |word|
+      context "text is #{word}" do
+        let(:text) { word }
+        it { is_expected.to be_falsey }
       end
     end
   end
@@ -210,56 +267,20 @@ describe Concerns::PeriodicReportConcern, type: :controller do
   end
 
   describe '#enqueue_user_requested_stopping_periodic_report' do
-    shared_context 'find_by returns user' do
-      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
-    end
-
-    let(:user) { create(:user) }
-    let(:dm) { double('dm', sender_id: user.uid) }
+    let(:dm) { double('dm', sender_id: 1) }
     subject { controller.send(:enqueue_user_requested_stopping_periodic_report, dm) }
-
-    context 'user is found' do
-      include_context 'find_by returns user'
-      it do
-        expect(StopPeriodicReportRequest).to receive(:create).with(user_id: user.id)
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, stop_requested: true)
-        subject
-      end
-    end
-
-    context 'user is not found' do
-      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
-      it do
-        expect(StopPeriodicReportRequest).not_to receive(:create)
-        subject
-      end
+    it do
+      expect(controller).to receive(:stop_periodic_report).with(dm.sender_id)
+      subject
     end
   end
 
   describe '#enqueue_user_requested_restarting_periodic_report' do
-    shared_context 'find_by returns user' do
-      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(user) }
-    end
-
-    let(:user) { create(:user) }
-    let(:dm) { double('dm', sender_id: user.uid) }
+    let(:dm) { double('dm', sender_id: 1) }
     subject { controller.send(:enqueue_user_requested_restarting_periodic_report, dm) }
-
-    context 'user is found' do
-      include_context 'find_by returns user'
-      it do
-        expect(StopPeriodicReportRequest).to receive_message_chain(:find_by, :destroy).with(user_id: user.id).with(no_args)
-        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, restart_requested: true)
-        subject
-      end
-    end
-
-    context 'user is not found' do
-      before { allow(User).to receive(:find_by).with(uid: dm.sender_id).and_return(nil) }
-      it do
-        expect(StopPeriodicReportRequest).not_to receive(:find_by)
-        subject
-      end
+    it do
+      expect(controller).to receive(:restart_periodic_report).with(dm.sender_id)
+      subject
     end
   end
 
@@ -320,6 +341,70 @@ describe Concerns::PeriodicReportConcern, type: :controller do
       it do
         expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).
             with(user.id, unauthorized: true)
+        subject
+      end
+    end
+  end
+
+  describe '#enqueue_egotter_requested_stopping_periodic_report' do
+    let(:dm) { double('dm', recipient_id: 1) }
+    subject { controller.send(:enqueue_egotter_requested_stopping_periodic_report, dm) }
+    it do
+      expect(controller).to receive(:stop_periodic_report).with(dm.recipient_id)
+      subject
+    end
+  end
+
+  describe '#enqueue_egotter_requested_restarting_periodic_report' do
+    let(:dm) { double('dm', recipient_id: 1) }
+    subject { controller.send(:enqueue_egotter_requested_restarting_periodic_report, dm) }
+    it do
+      expect(controller).to receive(:restart_periodic_report).with(dm.recipient_id)
+      subject
+    end
+  end
+
+  describe '#stop_periodic_report' do
+    let(:uid) { 1 }
+    subject { controller.send(:stop_periodic_report, uid) }
+
+    context 'user is found' do
+      let(:user) { create(:user, uid: uid) }
+      before { allow(User).to receive(:find_by).with(uid: uid).and_return(user) }
+      it do
+        expect(StopPeriodicReportRequest).to receive(:create).with(user_id: user.id)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, stop_requested: true)
+        subject
+      end
+    end
+
+    context 'user is not found' do
+      before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
+      it do
+        expect(StopPeriodicReportRequest).not_to receive(:create)
+        subject
+      end
+    end
+  end
+
+  describe '#restart_periodic_report' do
+    let(:uid) { 1 }
+    subject { controller.send(:restart_periodic_report, uid) }
+
+    context 'user is found' do
+      let(:user) { create(:user, uid: uid) }
+      before { allow(User).to receive(:find_by).with(uid: uid).and_return(user) }
+      it do
+        expect(StopPeriodicReportRequest).to receive_message_chain(:find_by, :destroy).with(user_id: user.id).with(no_args)
+        expect(CreatePeriodicReportMessageWorker).to receive(:perform_async).with(user.id, restart_requested: true)
+        subject
+      end
+    end
+
+    context 'user is not found' do
+      before { allow(User).to receive(:find_by).with(uid: uid).and_return(nil) }
+      it do
+        expect(StopPeriodicReportRequest).not_to receive(:find_by)
         subject
       end
     end
