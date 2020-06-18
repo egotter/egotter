@@ -37,7 +37,7 @@ class Bot < ApplicationRecord
 
     def verify_credentials
       processed = Queue.new
-      Parallel.each(all, in_threads: 10) do |bot|
+      all.each do |bot|
         authorized = true
         locked = false
 
@@ -60,7 +60,7 @@ class Bot < ApplicationRecord
 
     def rate_limit
       processed = Queue.new
-      Parallel.each(all, in_threads: 10) do |bot|
+      all.each do |bot|
         processed << {id: bot.id, rate_limit: bot.rate_limit}
       end
 

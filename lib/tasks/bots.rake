@@ -1,9 +1,6 @@
 namespace :bots do
   desc 'update authorized'
   task update_authorized: :environment do
-    ApiClient # Avoid circular dependency
-    CacheDirectory
-
     Bot.verify_credentials.each do |cred|
       bot = Bot.find(cred[:id])
       bot.authorized = cred[:authorized]
