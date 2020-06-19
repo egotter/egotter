@@ -4,7 +4,7 @@ module CrawlersHelper
   end
 
   def from_crawler?
-    request.from_crawler? || !!from_minor_crawler?(request.user_agent)
+    request.from_crawler? || from_minor_crawler?(request.user_agent)
   end
 
   def twitter_crawler?
@@ -29,6 +29,23 @@ module CrawlersHelper
       'NetcraftSurveyAgent',
       'https://',
       'http://',
+      'PetalBot',
+      'Seekport Crawler',
+      'YandexBot',
+      'ias-va/3.1',
+      'ias-or/3.1',
+      'ias-jp/3.1',
+      'TTD-Content',
+      'Barkrowler',
+      'Hatena Antenna',
+      'Daum/4.1',
+      'TrendsmapResolver',
+      'YaK/1.0',
+      'Linespider',
+      'PaperLiBot',
+      'YandexMobileBot',
+      'Yeti/1.1',
+      'zgrab/0.x',
   ]
   CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
 
@@ -41,12 +58,13 @@ module CrawlersHelper
       'Mozilla/5.0 (compatible; evc-batch/2.0)',
       'Mozilla/5.0 zgrab/0.x',
       'Ruby',
+      'bot',
       '',
   ]
 
   def from_minor_crawler?(user_agent)
     ua = user_agent.to_s
-    CRAWLERS_FULL_UA.include?(ua) || ua.match?(CRAWLERS_REGEXP)
+    ua.include?('Bot') || CRAWLERS_FULL_UA.include?(ua) || ua.match?(CRAWLERS_REGEXP)
   end
 
   def maybe_bot?
