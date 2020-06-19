@@ -120,7 +120,8 @@ class PeriodicReport < ApplicationRecord
       end
 
       message = ERB.new(template.read).result_with_hash(
-          interval: date_helper.distance_of_time_in_words(ttl)
+          interval: date_helper.distance_of_time_in_words(ttl),
+          url: support_url(og_tag: false, utm_source: 'will_expire', utm_medium: 'dm', utm_campaign: "will_expire_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
