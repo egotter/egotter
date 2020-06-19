@@ -39,13 +39,26 @@ class PeriodicReport < ApplicationRecord
   }
 
   class << self
+    # options:
+    #   request_id
+    #   start_date (required)
+    #   end_date (required)
+    #   first_friends_count
+    #   first_followers_count
+    #   last_friends_count
+    #   last_followers_count
+    #   unfriends
+    #   unfriends_count
+    #   unfollowers (required)
+    #   unfollowers_count
+    #   worker_context
     def periodic_message(user_id, options = {})
       user = User.find(user_id)
       start_date = extract_date(:start_date, options)
       end_date = extract_date(:end_date, options)
 
       unfollowers = options[:unfollowers]
-      template = unfollowers.any? ? TEMPLATES[:removed] : TEMPLATES[:not_removed]
+      template = unfollowers.empty? ? TEMPLATES[:not_removed] : TEMPLATES[:removed]
 
       token = generate_token
       url_options = {token: token, medium: 'dm', type: 'periodic', via: 'periodic_report', og_tag: 'false'}
@@ -58,6 +71,7 @@ class PeriodicReport < ApplicationRecord
           end_date: end_date,
           date_range: date_helper.time_ago_in_words(start_date),
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: options[:unfollowers_count]),
+          aggregation_period: calc_aggregation_period(start_date, end_date),
           period_name: pick_period_name,
           first_friends_count: options[:first_friends_count],
           first_followers_count: options[:first_followers_count],
@@ -280,11 +294,15 @@ class PeriodicReport < ApplicationRecord
       end
     end
 
+    def calc_aggregation_period(start_date, end_date)
+      "#{I18n.l(start_date.in_time_zone('Tokyo'), format: :periodic_report_short)} - #{I18n.l(end_date.in_time_zone('Tokyo'), format: :periodic_report_short)}"
+    end
+
     def request_id_text(user, request_id, worker_context)
       setting = user.periodic_report_setting
 
       [
-          request_id % 1000,
+          request_id.to_i % 1000,
           (TwitterUser.latest_by(uid: user.uid)&.id || 999) % 1000,
           remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
           setting.period_flags,

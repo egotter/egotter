@@ -26,8 +26,6 @@ class CreatePeriodicReportRequest < ApplicationRecord
   attr_accessor :worker_context
 
   def perform!
-    logger.debug { "#{self.class}##{__method__} check_allotted_messages_count=#{check_allotted_messages_count} check_following_status=#{check_following_status} check_interval=#{check_interval} check_credentials=#{check_credentials} check_twitter_user=#{check_twitter_user} worker_context=#{worker_context}" }
-
     return unless validate_report!
 
     if check_twitter_user
