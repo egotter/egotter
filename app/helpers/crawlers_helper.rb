@@ -13,7 +13,25 @@ module CrawlersHelper
 
   private
 
-  CRAWLERS_REGEXP = /Applebot|Jooblebot|SBooksNet|AdsBot-Google-Mobile|FlipboardProxy|HeartRails_Capture|Mail\.RU_Bot|360Spider|Yahoo Ad monitoring|KZ BRAIN Mobile|Researchscan\/t13rl|Y!J-BRW\/1.0|NetcraftSurveyAgent|https?:\/\//
+  CRAWLER_WORDS = [
+      'Applebot',
+      'Jooblebot',
+      'SBooksNet',
+      'AdsBot-Google-Mobile',
+      'FlipboardProxy',
+      'HeartRails_Capture',
+      'Mail.RU_Bot',
+      '360Spider',
+      'Yahoo Ad monitoring',
+      'KZ BRAIN Mobile',
+      'Researchscan/t13rl',
+      'Y!J-BRW/1.0',
+      'NetcraftSurveyAgent',
+      'https://',
+      'http://',
+  ]
+  CRAWLERS_REGEXP = Regexp.union(CRAWLER_WORDS)
+
   CRAWLERS_FULL_UA = [
       'WWWC/1.13',
       'Chrome',
