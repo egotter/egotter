@@ -331,6 +331,14 @@ class PeriodicReport < ApplicationRecord
       end
     end
 
+    def profile_url(screen_name, options)
+      super(screen_name, campaign_params('report_profile').merge(options))
+    end
+
+    def timeline_url(user, options)
+      super(user, campaign_params('report_timeline').merge(options))
+    end
+
     def request_id_text(user, request_id, worker_context)
       setting = user.periodic_report_setting
       access_day = user.access_days.last
