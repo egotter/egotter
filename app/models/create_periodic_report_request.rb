@@ -355,7 +355,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
           unfriends_count: unfriend_uids.size,
           unfollowers: fetch_screen_names(unfollower_uids),
           unfollowers_count: unfollower_uids.size,
-          total_unfollowers: fetch_screen_names(total_unfollower_uids),
+          total_unfollowers: fetch_screen_names(total_unfollower_uids, limit: 5),
           worker_context: @request.worker_context
       }
     end
