@@ -18,4 +18,9 @@ class AccessDay < ApplicationRecord
 
   validates :user_id, presence: true
   validates :date, presence: true
+
+  def short_date
+    words = date.split('-')
+    words[1] + words[2]
+  end
 end

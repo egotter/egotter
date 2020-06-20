@@ -322,12 +322,14 @@ class PeriodicReport < ApplicationRecord
 
     def request_id_text(user, request_id, worker_context)
       setting = user.periodic_report_setting
+      access_day = user.access_days.last
 
       [
           request_id.to_i % 1000,
           (TwitterUser.latest_by(uid: user.uid)&.id || 999) % 1000,
           remaining_ttl_text(GlobalDirectMessageReceivedFlag.new.remaining(user.uid)),
           setting.period_flags,
+          access_day ? access_day.short_date : '0000',
           worker_context_text(worker_context)
       ].join('-')
 
