@@ -151,6 +151,11 @@ RSpec.describe PeriodicReport do
     it { is_expected.to be_truthy }
   end
 
+  describe '.calc_followers_count_change' do
+    subject { described_class.calc_followers_count_change(1, 2, 3) }
+    it { is_expected.to eq('1 - 2') }
+  end
+
   describe '.request_id_text' do
     subject { described_class.request_id_text(user, 1, 'CreateUserRequestedPeriodicReportWorker') }
     before { user.create_periodic_report_setting! }

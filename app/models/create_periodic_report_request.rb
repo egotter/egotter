@@ -365,6 +365,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
     def build
       first_user = TwitterUser.find_by(id: @builder.first_user&.id)
       last_user = TwitterUser.find_by(id: @builder.last_user&.id)
+      latest_user = TwitterUser.latest_by(uid: @request.user.uid)
 
       {
           request_id: @request.id,
@@ -374,6 +375,8 @@ class CreatePeriodicReportRequest < ApplicationRecord
           first_followers_count: first_user&.followers_count,
           last_friends_count: last_user&.friends_count,
           last_followers_count: last_user&.followers_count,
+          latest_friends_count: latest_user&.friends_count,
+          latest_followers_count: latest_user&.followers_count,
           unfriends: fetch_screen_names(unfriend_uids),
           unfriends_count: unfriend_uids.size,
           unfollowers: fetch_screen_names(unfollower_uids),

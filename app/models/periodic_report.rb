@@ -47,6 +47,8 @@ class PeriodicReport < ApplicationRecord
     #   first_followers_count
     #   last_friends_count
     #   last_followers_count
+    #   latest_friends_count
+    #   latest_followers_count
     #   unfriends
     #   unfriends_count
     #   unfollowers (required)
@@ -75,6 +77,7 @@ class PeriodicReport < ApplicationRecord
           removed_by: unfollowers.size == 1 ? unfollowers.first : I18n.t(:persons, count: options[:unfollowers_count]),
           aggregation_period: calc_aggregation_period(start_date, end_date),
           period_name: pick_period_name,
+          followers_count_change: calc_followers_count_change(options[:first_followers_count], options[:last_followers_count], options[:latest_followers_count]),
           first_friends_count: options[:first_friends_count],
           first_followers_count: options[:first_followers_count],
           last_friends_count: options[:last_friends_count],
@@ -318,6 +321,14 @@ class PeriodicReport < ApplicationRecord
 
     def calc_aggregation_period(start_date, end_date)
       "#{I18n.l(start_date.in_time_zone('Tokyo'), format: :periodic_report_short)} - #{I18n.l(end_date.in_time_zone('Tokyo'), format: :periodic_report_short)}"
+    end
+
+    def calc_followers_count_change(first_count, last_count, latest_count)
+      if first_count && last_count
+        "#{first_count} - #{last_count}"
+      else
+        latest_count.to_s
+      end
     end
 
     def request_id_text(user, request_id, worker_context)
