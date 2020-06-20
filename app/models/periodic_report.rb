@@ -166,7 +166,7 @@ class PeriodicReport < ApplicationRecord
           interval: I18n.t('datetime.distance_in_words.x_minutes', count: CreatePeriodicReportRequest::SHORT_INTERVAL / 1.minute)
       )
 
-      new(user: User.find(user_id), message: message, token: generate_token)
+      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
     end
 
     def scheduled_job_exists_message(user_id, jid)
@@ -179,7 +179,7 @@ class PeriodicReport < ApplicationRecord
             sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at)
         )
 
-        new(user: User.find(user_id), message: message, token: generate_token)
+        new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
       else
         logger.warn "#{self}##{__method__} scheduled job not found user_id=#{user_id} jid=#{jid}"
         interval_too_short_message(user_id)
@@ -196,7 +196,7 @@ class PeriodicReport < ApplicationRecord
             sent_at: date_helper.time_ago_in_words(scheduled_job.perform_at)
         )
 
-        new(user: User.find(user_id), message: message, token: generate_token)
+        new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
       else
         logger.warn "#{self}##{__method__} scheduled job not found user_id=#{user_id} jid=#{jid}"
         interval_too_short_message(user_id)
@@ -209,7 +209,7 @@ class PeriodicReport < ApplicationRecord
           interval: I18n.t('datetime.distance_in_words.x_seconds', count: CreatePeriodicReportWorker::UNIQUE_IN)
       )
 
-      new(user: User.find(user_id), message: message, token: generate_token)
+      new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
     end
 
     def cannot_send_messages_message
