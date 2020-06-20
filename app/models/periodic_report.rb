@@ -97,8 +97,9 @@ class PeriodicReport < ApplicationRecord
 
     def remind_reply_message
       template = Rails.root.join('app/views/periodic_reports/remind_reply.ja.text.erb')
+      url_params = campaign_params('remind_reply').merge(og_tag: false)
       message = ERB.new(template.read).result_with_hash(
-          url: support_url(og_tag: false, utm_source: 'remind_reply', utm_medium: 'dm', utm_campaign: "remind_reply_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
+          url: support_url(url_params),
       )
 
       new(user: nil, message: message, token: nil)
@@ -106,8 +107,9 @@ class PeriodicReport < ApplicationRecord
 
     def remind_access_message
       template = Rails.root.join('app/views/periodic_reports/remind_access.ja.text.erb')
+      url_params = campaign_params('remind_access').merge(share_dialog: 1, follow_dialog: 1, og_tag: false)
       message = ERB.new(template.read).result_with_hash(
-          url: root_url(share_dialog: 1, follow_dialog: 1, og_tag: false, utm_source: 'remind_access', utm_medium: 'dm', utm_campaign: "remind_access_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
+          url: root_url(url_params),
       )
 
       new(user: nil, message: message, token: nil)
@@ -123,9 +125,11 @@ class PeriodicReport < ApplicationRecord
         ttl = 5.minutes + rand(300)
       end
 
+      url_params = campaign_params('will_expire').merge(og_tag: false)
+
       message = ERB.new(template.read).result_with_hash(
           interval: date_helper.distance_of_time_in_words(ttl),
-          url: support_url(og_tag: false, utm_source: 'will_expire', utm_medium: 'dm', utm_campaign: "will_expire_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
+          url: support_url(url_params),
       )
 
       new(user: user, message: message, token: generate_token, dont_send_remind_message: true)
@@ -133,8 +137,9 @@ class PeriodicReport < ApplicationRecord
 
     def sending_soft_limited_message(user_id)
       template = Rails.root.join('app/views/periodic_reports/sending_soft_limited.ja.text.erb')
+      url_params = campaign_params('soft_limited').merge(og_tag: false)
       message = ERB.new(template.read).result_with_hash(
-          url: support_url(og_tag: false, utm_source: 'soft_limited', utm_medium: 'dm', utm_campaign: "soft_limited_#{I18n.l(Time.zone.now, format: :date_hyphen)}"),
+          url: support_url(url_params),
       )
 
       new(user: User.find(user_id), message: message, token: generate_token, dont_send_remind_message: true)
@@ -348,6 +353,10 @@ class PeriodicReport < ApplicationRecord
       date = options[key]
       date = Time.zone.parse(date) if date.class == String
       date
+    end
+
+    def campaign_params(name)
+      {utm_source: name, utm_medium: 'dm', utm_campaign: "#{name}_#{I18n.l(Time.zone.now, format: :date_hyphen)}"}
     end
 
     def date_helper

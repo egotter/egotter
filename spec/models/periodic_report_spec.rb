@@ -2,13 +2,14 @@ require 'rails_helper'
 
 RSpec.describe PeriodicReport do
   let(:user) { create(:user, with_credential_token: true) }
-  let(:request) { double('request', id: 1) }
-  let(:start_date) { 1.day.ago }
-  let(:end_date) { Time.zone.now }
-  let(:unfriends) { %w(a b c) }
-  let(:total_unfollowers) { %w(x1 y1 z1) }
 
   describe '.periodic_message' do
+    let(:request) { double('request', id: 1) }
+    let(:start_date) { 1.day.ago }
+    let(:end_date) { Time.zone.now }
+    let(:unfriends) { %w(a b c) }
+    let(:total_unfollowers) { %w(x1 y1 z1) }
+
     subject do
       described_class.periodic_message(
           user.id,
@@ -32,7 +33,87 @@ RSpec.describe PeriodicReport do
     end
   end
 
+  describe '.remind_reply_message' do
+    subject { described_class.remind_reply_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.remind_access_message' do
+    subject { described_class.remind_access_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.allotted_messages_will_expire_message' do
+    subject { described_class.allotted_messages_will_expire_message(user.id) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.sending_soft_limited_message' do
+    subject { described_class.sending_soft_limited_message(user.id) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.interval_too_short_message' do
+    subject { described_class.interval_too_short_message(user.id) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.scheduled_job_exists_message' do
+    subject { described_class.scheduled_job_exists_message(user.id, 'jid') }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.scheduled_job_created_message' do
+    subject { described_class.scheduled_job_created_message(user.id, 'jid') }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.request_interval_too_short_message' do
+    subject { described_class.request_interval_too_short_message(user.id) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.cannot_send_messages_message' do
+    subject { described_class.cannot_send_messages_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.unauthorized_message' do
+    subject { described_class.unauthorized_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.unregistered_message' do
+    subject { described_class.unregistered_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.not_following_message' do
+    subject { described_class.not_following_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.permission_level_not_enough_message' do
+    subject { described_class.permission_level_not_enough_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.restart_requested_message' do
+    subject { described_class.restart_requested_message }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.stop_requested_message' do
+    subject { described_class.stop_requested_message }
+    it { is_expected.to be_truthy }
+  end
+
   describe '.periodic_push_message' do
+    let(:request) { double('request', id: 1) }
+    let(:start_date) { 1.day.ago }
+    let(:end_date) { Time.zone.now }
+    let(:unfriends) { %w(a b c) }
+
     subject do
       described_class.periodic_push_message(
           user.id,
@@ -55,9 +136,45 @@ RSpec.describe PeriodicReport do
     end
   end
 
+  describe '.pick_period_name' do
+    subject { described_class.pick_period_name }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.calc_aggregation_period' do
+    subject { described_class.calc_aggregation_period(1.day.ago, Time.zone.now) }
+    it { is_expected.to be_truthy }
+  end
+
   describe '.request_id_text' do
     subject { described_class.request_id_text(user, 1, 'CreateUserRequestedPeriodicReportWorker') }
     before { user.create_periodic_report_setting! }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.remaining_ttl_text' do
+    subject { described_class.remaining_ttl_text(12.hours) }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.worker_context_text' do
+    subject { described_class.worker_context_text('CreateUserRequestedPeriodicReportWorker') }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.extract_date' do
+    let(:time) { 1.day.ago }
+    subject { described_class.extract_date('start_date', 'start_date' => time) }
+    it { is_expected.to eq(time) }
+  end
+
+  describe '.campaign_params' do
+    subject { described_class.campaign_params('name') }
+    it { is_expected.to be_truthy }
+  end
+
+  describe '.date_helper' do
+    subject { described_class.date_helper }
     it { is_expected.to be_truthy }
   end
 
