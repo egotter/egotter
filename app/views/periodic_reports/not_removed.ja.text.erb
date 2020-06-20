@@ -3,8 +3,11 @@
 集計期間：
 <%= aggregation_period %>
 
-<% if first_followers_count && last_followers_count %>フォロワー数：
-  <%= first_followers_count %> - <%= last_followers_count %><% end %>
+フォロワー数：
+<%= first_followers_count || '?' %> - <%= last_followers_count || '?' %>
+
+最新のリムられ：
+<%= total_unfollower_urls.join("\n") %>
 
 検索結果ページ：
 <%= timeline_url %>

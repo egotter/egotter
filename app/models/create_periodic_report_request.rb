@@ -330,13 +330,13 @@ class CreatePeriodicReportRequest < ApplicationRecord
   class ReportOptionsBuilder
     PERIOD_START = 1.day
 
-    def initialize(user, request)
+    def initialize(request)
       @request = request
       @start_date = PERIOD_START.ago
       @end_date = Time.zone.now
 
       # To specify start_date, UnfriendsBuilder is used
-      @builder = UnfriendsBuilder.new(user.uid, start_date: @start_date, end_date: @end_date)
+      @builder = UnfriendsBuilder.new(request.user.uid, start_date: @start_date, end_date: @end_date)
     end
 
     def build
@@ -355,6 +355,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
           unfriends_count: unfriend_uids.size,
           unfollowers: fetch_screen_names(unfollower_uids),
           unfollowers_count: unfollower_uids.size,
+          total_unfollowers: fetch_screen_names(total_unfollower_uids),
           worker_context: @request.worker_context
       }
     end
@@ -377,6 +378,14 @@ class CreatePeriodicReportRequest < ApplicationRecord
       @unfollower_uids ||= @builder.unfollowers.flatten.uniq
     end
 
+    def total_unfollower_uids
+      if unfollower_uids.empty?
+        UnfriendsBuilder.new(@request.user.uid, end_date: Time.zone.now, limit: 20).unfollowers.flatten.uniq
+      else
+        []
+      end
+    end
+
     def fetch_screen_names(uids, limit: 10)
       target_uids = uids.take(limit)
       return [] if target_uids.empty?
@@ -393,7 +402,7 @@ class CreatePeriodicReportRequest < ApplicationRecord
   end
 
   def report_options_builder
-    @report_options_builder ||= ReportOptionsBuilder.new(user, self)
+    @report_options_builder ||= ReportOptionsBuilder.new(self)
   end
 
   SHORT_INTERVAL = TwitterUser::CREATE_RECORD_INTERVAL

@@ -6,6 +6,7 @@ RSpec.describe PeriodicReport do
   let(:start_date) { 1.day.ago }
   let(:end_date) { Time.zone.now }
   let(:unfriends) { %w(a b c) }
+  let(:total_unfollowers) { %w(x1 y1 z1) }
 
   describe '.periodic_message' do
     subject do
@@ -15,7 +16,8 @@ RSpec.describe PeriodicReport do
           start_date: start_date,
           end_date: end_date,
           unfriends: unfriends,
-          unfollowers: unfollowers
+          unfollowers: unfollowers,
+          total_unfollowers: total_unfollowers
       )
     end
 

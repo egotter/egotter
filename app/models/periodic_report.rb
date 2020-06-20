@@ -51,6 +51,7 @@ class PeriodicReport < ApplicationRecord
     #   unfriends_count
     #   unfollowers (required)
     #   unfollowers_count
+    #   total_unfollowers
     #   worker_context
     def periodic_message(user_id, options = {})
       user = User.find(user_id)
@@ -58,6 +59,7 @@ class PeriodicReport < ApplicationRecord
       end_date = extract_date(:end_date, options)
 
       unfollowers = options[:unfollowers]
+      total_unfollowers = options[:total_unfollowers]
       template = unfollowers.empty? ? TEMPLATES[:not_removed] : TEMPLATES[:removed]
 
       token = generate_token
@@ -82,6 +84,8 @@ class PeriodicReport < ApplicationRecord
           unfriends: options[:unfriends],
           unfollowers: unfollowers,
           unfollower_urls: unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
+          total_unfollowers: total_unfollowers,
+          total_unfollower_urls: total_unfollowers.map { |name| "#{name} #{profile_url(name, url_options)}" },
           regular_subscription: !StopPeriodicReportRequest.exists?(user_id: user.id),
           request_id_text: request_id_text(user, options[:request_id], options[:worker_context]),
           timeline_url: timeline_url(user, url_options),
